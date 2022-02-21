@@ -2,144 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291E0C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 16:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEF0C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 16:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232344AbiBUQfN (ORCPT
+        id S1381273AbiBUQtI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 11:35:13 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44244 "EHLO
+        Mon, 21 Feb 2022 11:49:08 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbiBUQfM (ORCPT
+        with ESMTP id S1381237AbiBUQs6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Feb 2022 11:35:12 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03ACA1DA6E;
-        Mon, 21 Feb 2022 08:34:48 -0800 (PST)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CFB9F482;
-        Mon, 21 Feb 2022 17:34:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1645461287;
-        bh=pH812wBkwmwahgNdQmrpdAadbxYpF5mQrxwGyx+vH/s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=toOsy0irqhmaBh+Ui4+gshtDANbR/YDMwYwNqtKwkNEh3bGgXZ7Zbc7Bjx+kW4xNK
-         2P5/6AOh0FHBCojRddxB6vgl7kusGmiRk0IgxLCJzPvLcO31gpJqC5OmTZAKL9WDbX
-         q5WVCex9dfOVsGJwHfXWc9xIQ4G4HAxo9SMraR9Y=
-Date:   Mon, 21 Feb 2022 18:34:37 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Michael Rodin <mrodin@de.adit-jv.com>
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, michael@rodin.online,
-        efriedrich@de.adit-jv.com, erosca@de.adit-jv.com,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH] drm: rcar-du: do not restart rcar-du groups on gen3
-Message-ID: <YhO/HVluRy5g0i4q@pendragon.ideasonboard.com>
-References: <1637680811-90510-1-git-send-email-mrodin@de.adit-jv.com>
+        Mon, 21 Feb 2022 11:48:58 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E4A237D3;
+        Mon, 21 Feb 2022 08:48:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645462114; x=1676998114;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JMvx6HdjljRIyEJnTyPEGxbsrX44dVlOO6YTuBmXXRM=;
+  b=VrLNDo3tcp2IlRv6CXY3cC1WhaDDsxgQ/ETbaeiCsm06jPXSOPxr+4IP
+   cWyHuNw7I1nN1AlJbvv9Y1iAsr5UK2GcjqwIXW3GbolThkyPnYry2CCwF
+   rj89follcMQVGO18ezEkd4ID5lSqWCuOklsGJCCeGR2AJJiVMV5ku3brf
+   tppQLsdGb69ylHoOH/4mW9RGmmDyQkDInvJLHkgtZeLYjignqCni4V723
+   BElb93z0IaS+tQKG6WjEu1yvY4KdT0JF1GqnPco1aMAYnKEqENfiCJ35Q
+   +403se73nQWCI3Wtqy5xOou5ZIGeGOPTrCe8exuyhY45RgGbPEJCoRKJy
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10265"; a="251492664"
+X-IronPort-AV: E=Sophos;i="5.88,386,1635231600"; 
+   d="scan'208";a="251492664"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2022 08:48:34 -0800
+X-IronPort-AV: E=Sophos;i="5.88,386,1635231600"; 
+   d="scan'208";a="591017878"
+Received: from smile.fi.intel.com ([10.237.72.59])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2022 08:48:30 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nMBqb-006rBq-PG;
+        Mon, 21 Feb 2022 18:47:37 +0200
+Date:   Mon, 21 Feb 2022 18:47:37 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Laetitia MARIOTTINI <laetitia.mariottini@se.com>
+Subject: Re: [PATCH 4/8] dma: dmamux: Introduce RZN1 DMA router support
+Message-ID: <YhPCKbMtB3jnhBo4@smile.fi.intel.com>
+References: <20220218181226.431098-1-miquel.raynal@bootlin.com>
+ <20220218181226.431098-5-miquel.raynal@bootlin.com>
+ <YhIeQlwmt/yCc8Uu@smile.fi.intel.com>
+ <20220221161320.449b2d4d@xps13>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1637680811-90510-1-git-send-email-mrodin@de.adit-jv.com>
+In-Reply-To: <20220221161320.449b2d4d@xps13>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Michael,
+On Mon, Feb 21, 2022 at 04:13:20PM +0100, Miquel Raynal wrote:
+> andriy.shevchenko@linux.intel.com wrote on Sun, 20 Feb 2022 12:56:02
+> +0200:
+> > On Fri, Feb 18, 2022 at 07:12:22PM +0100, Miquel Raynal wrote:
 
-Sorry for getting back to you so late, your patch got burried in my
-inbox.
+...
 
-On Tue, Nov 23, 2021 at 04:20:11PM +0100, Michael Rodin wrote:
-> Restarting a display unit group can cause a visible flicker on the display.
-> Particularly when a LVDS display is connected to a Salvator board and an
-> HDMI display is (re)connected, then there will be 2 visible flickers on the
-> LVDS display:
-
-I can confirm the symptoms.
-
->  1. during atomic_flush (The need_restart flag is set in this case by
->     rcar_du_vsp_enable.):
->   rcar_du_crtc_atomic_flush
->     rcar_du_crtc_update_planes
->       ...
->       ...
->       /* Restart the group if plane sources have changed. */
->       if (rcrtc->group->need_restart)
->               rcar_du_group_restart(rcrtc->group);
->  2. during atomic_enable:
->   rcar_du_crtc_atomic_enable
->     rcar_du_crtc_start
->       rcar_du_group_start_stop(rcrtc->group, true);
+> > > +		dev_err(&pdev->dev, "Missing DMAC requests information\n");
+> > > +		of_node_put(dmac_node);
+> > > +		return -EINVAL;  
+> > 
+> > First put node, then simply use dev_err_probe().
 > 
-> To avoid flickers in all use cases, do not restart DU groups on the Gen3
-> SoCs at all, since it is not required any more.
+> I don't get the point here. dev_err_probe() is useful when -EPROBE_DEFER
+> can be returned, right? I don't understand what it would bring here nor
+> how I should use it to simplify error handling.
 
-I've tested this patch, and it breaks the HDMI output on my Salvator-XS
-M3N board. My test setup has a panel connected to LVDS0 and an HDMI
-monitor connected to HDMI0. The kernel is configured with fbdev
-emulation enabled. When the system boots, I get two penguins on the LVDS
-panel and the HDMI monitor. I then run
-
-$ modetest -M rcar-du -s HDMI-A-1@60:1024x768@XR24
-
-(you may need to change the CRTC number depending on your setup)
-
-Without this patch, I see a brief flicker on the LVDS panel, and a test
-pattern on the HDMI monitor. With this patch, the flicker is gone, but
-my HDMI monitor show an error message that complains about unsupported
-timings.
-
-The Gen3 documentation still documents many register bits as being
-updated on DRES. I don't think we can get rid of group restart like
-this.
-
-> Signed-off-by: Michael Rodin <mrodin@de.adit-jv.com>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_group.c | 5 ++++-
->  drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 2 --
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> index 8665a1d..ff0a1c8 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> @@ -250,7 +250,7 @@ void rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
->  	 * when the display controller will have to be restarted.
->  	 */
->  	if (start) {
-> -		if (rgrp->used_crtcs++ != 0)
-> +		if (rgrp->used_crtcs++ != 0 && rgrp->dev->info->gen != 3)
->  			__rcar_du_group_start_stop(rgrp, false);
->  		__rcar_du_group_start_stop(rgrp, true);
->  	} else {
-> @@ -263,6 +263,9 @@ void rcar_du_group_restart(struct rcar_du_group *rgrp)
->  {
->  	rgrp->need_restart = false;
->  
-> +	if (rgrp->dev->info->gen == 3)
-> +		return;
-> +
->  	__rcar_du_group_start_stop(rgrp, false);
->  	__rcar_du_group_start_stop(rgrp, true);
->  }
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> index b7fc5b0..a652c06 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> @@ -88,8 +88,6 @@ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
->  	 * Ensure that the plane source configuration takes effect by requesting
->  	 * a restart of the group. See rcar_du_plane_atomic_update() for a more
->  	 * detailed explanation.
-> -	 *
-> -	 * TODO: Check whether this is still needed on Gen3.
->  	 */
->  	crtc->group->need_restart = true;
->  
+Less LOCs, and it's fine to call it here. This usecase is described in the
+dev_err_probe() documentation.
 
 -- 
-Regards,
+With Best Regards,
+Andy Shevchenko
 
-Laurent Pinchart
+
