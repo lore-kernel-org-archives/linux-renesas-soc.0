@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EA1C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B08E3C4167D
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 15:45:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379459AbiBUPpn (ORCPT
+        id S1379466AbiBUPpp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:45:43 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36892 "EHLO
+        Mon, 21 Feb 2022 10:45:45 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379477AbiBUPo4 (ORCPT
+        with ESMTP id S1379481AbiBUPo4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 21 Feb 2022 10:44:56 -0500
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10F0823BC2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Feb 2022 07:43:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77EA123BDC
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Feb 2022 07:43:54 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
         by michel.telenet-ops.be with bizsmtp
-        id xrjr260063YJRAw06rjrUG; Mon, 21 Feb 2022 16:43:52 +0100
+        id xrjr2600Z3YJRAw06rjrUN; Mon, 21 Feb 2022 16:43:52 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqs-001TTm-PZ; Mon, 21 Feb 2022 16:43:50 +0100
+        id 1nMAqt-001TTt-Cn; Mon, 21 Feb 2022 16:43:51 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqs-006EhS-Av; Mon, 21 Feb 2022 16:43:50 +0100
+        id 1nMAqs-006Ei9-Fb; Mon, 21 Feb 2022 16:43:50 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -34,11 +34,10 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 01/12] dt-bindings: pinctrl: renesas,pfc: Document r8a779f0 support
-Date:   Mon, 21 Feb 2022 16:43:36 +0100
-Message-Id: <d51828853396773be2d6837f3301ac9da8b6f29e.1645457792.git.geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 07/12] pinctrl: renesas: r8a779f0: Add INTC-EX pins, groups, and function
+Date:   Mon, 21 Feb 2022 16:43:42 +0100
+Message-Id: <dc6e25da42ac4bd19ca31b5b32b43a10a0e1aa7e.1645457792.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1645457792.git.geert+renesas@glider.be>
 References: <cover.1645457792.git.geert+renesas@glider.be>
@@ -48,33 +47,115 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: LUU HOAI <hoai.luu.ub@renesas.com>
+Add pins, groups, and function for the Interrupt Controller for External
+Devices (INTC-EX) on the Renesas R-Car S4-8 (R8A779F0) SoC.
 
-Document Pin Function Controller (PFC) support for the Renesas R-Car
-S4-8 (R8A779F0) SoC.
+Based on a larger patch in the BSP by LUU HOAI.
 
-Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
 v2:
-  - Add Reviewed-by.
----
- Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+  - No changes.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
-index 8548e3639b7549da..2a57df75d832f14b 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
-@@ -44,6 +44,7 @@ properties:
-       - renesas,pfc-r8a77990    # R-Car E3
-       - renesas,pfc-r8a77995    # R-Car D3
-       - renesas,pfc-r8a779a0    # R-Car V3U
-+      - renesas,pfc-r8a779f0    # R-Car S4-8
-       - renesas,pfc-sh73a0      # SH-Mobile AG5
+Changes compared to the BSP:
+  - Add IRQ[45] pin groups.
+---
+ drivers/pinctrl/renesas/pfc-r8a779f0.c | 61 ++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779f0.c b/drivers/pinctrl/renesas/pfc-r8a779f0.c
+index b323b291fd97adb2..89da0cc179f51f2b 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779f0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779f0.c
+@@ -634,6 +634,51 @@ static const unsigned int i2c5_mux[] = {
+ 	SDA5_MARK, SCL5_MARK,
+ };
  
-   reg:
++
++/* - INTC-EX ---------------------------------------------------------------- */
++static const unsigned int intc_ex_irq0_pins[] = {
++	/* IRQ0 */
++	RCAR_GP_PIN(0, 17),
++};
++static const unsigned int intc_ex_irq0_mux[] = {
++	IRQ0_MARK,
++};
++static const unsigned int intc_ex_irq1_pins[] = {
++	/* IRQ1 */
++	RCAR_GP_PIN(0, 18),
++};
++static const unsigned int intc_ex_irq1_mux[] = {
++	IRQ1_MARK,
++};
++static const unsigned int intc_ex_irq2_pins[] = {
++	/* IRQ2 */
++	RCAR_GP_PIN(0, 19),
++};
++static const unsigned int intc_ex_irq2_mux[] = {
++	IRQ2_MARK,
++};
++static const unsigned int intc_ex_irq3_pins[] = {
++	/* IRQ3 */
++	RCAR_GP_PIN(0, 20),
++};
++static const unsigned int intc_ex_irq3_mux[] = {
++	IRQ3_MARK,
++};
++static const unsigned int intc_ex_irq4_pins[] = {
++	/* IRQ4 */
++	RCAR_GP_PIN(0, 11),
++};
++static const unsigned int intc_ex_irq4_mux[] = {
++	IRQ4_MARK,
++};
++static const unsigned int intc_ex_irq5_pins[] = {
++	/* IRQ5 */
++	RCAR_GP_PIN(0, 15),
++};
++static const unsigned int intc_ex_irq5_mux[] = {
++	IRQ5_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX0, TX0 */
+@@ -754,6 +799,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(i2c3),
+ 	SH_PFC_PIN_GROUP(i2c4),
+ 	SH_PFC_PIN_GROUP(i2c5),
++	SH_PFC_PIN_GROUP(intc_ex_irq0),
++	SH_PFC_PIN_GROUP(intc_ex_irq1),
++	SH_PFC_PIN_GROUP(intc_ex_irq2),
++	SH_PFC_PIN_GROUP(intc_ex_irq3),
++	SH_PFC_PIN_GROUP(intc_ex_irq4),
++	SH_PFC_PIN_GROUP(intc_ex_irq5),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -817,6 +868,15 @@ static const char * const i2c5_groups[] = {
+ 	"i2c5",
+ };
+ 
++static const char * const intc_ex_groups[] = {
++	"intc_ex_irq0",
++	"intc_ex_irq1",
++	"intc_ex_irq2",
++	"intc_ex_irq3",
++	"intc_ex_irq4",
++	"intc_ex_irq5",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -856,6 +916,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(i2c3),
+ 	SH_PFC_FUNCTION(i2c4),
+ 	SH_PFC_FUNCTION(i2c5),
++	SH_PFC_FUNCTION(intc_ex),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif3),
 -- 
 2.25.1
 
