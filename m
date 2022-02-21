@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C55C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 15:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D68C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 15:44:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379437AbiBUPpF (ORCPT
+        id S1379545AbiBUPpG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:45:05 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37236 "EHLO
+        Mon, 21 Feb 2022 10:45:06 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379455AbiBUPoz (ORCPT
+        with ESMTP id S1379459AbiBUPo4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Feb 2022 10:44:55 -0500
+        Mon, 21 Feb 2022 10:44:56 -0500
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C80F722B21
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B5B23BC3
         for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Feb 2022 07:43:53 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
         by laurent.telenet-ops.be with bizsmtp
-        id xrjr2600P3YJRAw01rjrfY; Mon, 21 Feb 2022 16:43:52 +0100
+        id xrjr2600L3YJRAw01rjrfW; Mon, 21 Feb 2022 16:43:52 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqt-001TTn-7I; Mon, 21 Feb 2022 16:43:51 +0100
+        id 1nMAqt-001TTr-4U; Mon, 21 Feb 2022 16:43:51 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqs-006EhO-9q; Mon, 21 Feb 2022 16:43:50 +0100
+        id 1nMAqs-006Ehv-EH; Mon, 21 Feb 2022 16:43:50 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,73 +35,153 @@ Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/12] pinctrl: renesas: Add R-Car S4-8 support
-Date:   Mon, 21 Feb 2022 16:43:35 +0100
-Message-Id: <cover.1645457792.git.geert+renesas@glider.be>
+Subject: [PATCH v2 05/12] pinctrl: renesas: r8a779f0: Add I2C pins, groups, and functions
+Date:   Mon, 21 Feb 2022 16:43:40 +0100
+Message-Id: <217f5b3e3888b5899c375d3cb1ec8780f6a9e19b.1645457792.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1645457792.git.geert+renesas@glider.be>
+References: <cover.1645457792.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Add pins, groups, and functions for the I2C Bus Interfaces (I2C) on the
+Renesas R-Car S4-8 (R8A779F0) SoC.
 
-This patch series adds pin control support for the Renesas R-Car S4-8
-Soc.  It is based on patches in the BSP by LUU HOAI, with many changes
-on top (see the individual patches).
+Extracted from a larger patch in the BSP by LUU HOAI.
 
-Changes compared to v1[1]:
-  - Add Reviewed-by,
-  - Fix whitespace in Makefile,
-  - Remove GPIO and No-GPIO pins, pin function definitions, and
-    registers that can only be accessed from the Control Domain,
-  - Spin off clock and DTS patches into separate series,
-  - Drop RFC state and widen audience.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ drivers/pinctrl/renesas/pfc-r8a779f0.c | 90 ++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-Serial console and I2C have been tested on the Renesas Spider
-development board.
-
-Thanks for your comments!
-
-[1] "[PATCH/RFC 00/15] arm64: renesas: Add-R-Car S4-8 Pin control support"
-    https://lore.kernel.org/r/cover.1642599415.git.geert+renesas@glider.be
-
-Geert Uytterhoeven (11):
-  pinctrl: renesas: Add PORT_GP_CFG_19 macros
-  pinctrl: renesas: Initial R8A779F0 PFC support
-  pinctrl: renesas: r8a779f0: Add SCIF pins, groups, and functions
-  pinctrl: renesas: r8a779f0: Add I2C pins, groups, and functions
-  pinctrl: renesas: r8a779f0: Add HSCIF pins, groups, and functions
-  pinctrl: renesas: r8a779f0: Add INTC-EX pins, groups, and function
-  pinctrl: renesas: r8a779f0: Add MMC pins, groups, and function
-  pinctrl: renesas: r8a779f0: Add MSIOF pins, groups, and functions
-  pinctrl: renesas: r8a779f0: Add PCIe pins, groups, and function
-  pinctrl: renesas: r8a779f0: Add QSPI pins, groups, and functions
-  pinctrl: renesas: r8a779f0: Add Ethernet pins, groups, and functions
-
-LUU HOAI (1):
-  dt-bindings: pinctrl: renesas,pfc: Document r8a779f0 support
-
- .../bindings/pinctrl/renesas,pfc.yaml         |    1 +
- drivers/pinctrl/renesas/Kconfig               |    5 +
- drivers/pinctrl/renesas/Makefile              |    1 +
- drivers/pinctrl/renesas/core.c                |    6 +
- drivers/pinctrl/renesas/pfc-r8a779f0.c        | 2126 +++++++++++++++++
- drivers/pinctrl/renesas/sh_pfc.h              |    9 +-
- 6 files changed, 2146 insertions(+), 2 deletions(-)
- create mode 100644 drivers/pinctrl/renesas/pfc-r8a779f0.c
-
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779f0.c b/drivers/pinctrl/renesas/pfc-r8a779f0.c
+index 26f6eec3da4ef067..84a473f5214edcf3 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779f0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779f0.c
+@@ -488,6 +488,60 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
+ };
+ 
++/* - I2C0 ------------------------------------------------------------------- */
++static const unsigned int i2c0_pins[] = {
++	/* SDA0, SCL0 */
++	RCAR_GP_PIN(1, 1), RCAR_GP_PIN(1, 0),
++};
++static const unsigned int i2c0_mux[] = {
++	SDA0_MARK, SCL0_MARK,
++};
++
++/* - I2C1 ------------------------------------------------------------------- */
++static const unsigned int i2c1_pins[] = {
++	/* SDA1, SCL1 */
++	RCAR_GP_PIN(1, 3), RCAR_GP_PIN(1, 2),
++};
++static const unsigned int i2c1_mux[] = {
++	SDA1_MARK, SCL1_MARK,
++};
++
++/* - I2C2 ------------------------------------------------------------------- */
++static const unsigned int i2c2_pins[] = {
++	/* SDA2, SCL2 */
++	RCAR_GP_PIN(1, 5), RCAR_GP_PIN(1, 4),
++};
++static const unsigned int i2c2_mux[] = {
++	SDA2_MARK, SCL2_MARK,
++};
++
++/* - I2C3 ------------------------------------------------------------------- */
++static const unsigned int i2c3_pins[] = {
++	/* SDA3, SCL3 */
++	RCAR_GP_PIN(1, 7), RCAR_GP_PIN(1, 6),
++};
++static const unsigned int i2c3_mux[] = {
++	SDA3_MARK, SCL3_MARK,
++};
++
++/* - I2C4 ------------------------------------------------------------------- */
++static const unsigned int i2c4_pins[] = {
++	/* SDA4, SCL4 */
++	RCAR_GP_PIN(1, 9), RCAR_GP_PIN(1, 8),
++};
++static const unsigned int i2c4_mux[] = {
++	SDA4_MARK, SCL4_MARK,
++};
++
++/* - I2C5 ------------------------------------------------------------------- */
++static const unsigned int i2c5_pins[] = {
++	/* SDA5, SCL5 */
++	RCAR_GP_PIN(1, 11), RCAR_GP_PIN(1, 10),
++};
++static const unsigned int i2c5_mux[] = {
++	SDA5_MARK, SCL5_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX0, TX0 */
+@@ -590,6 +644,12 @@ static const unsigned int scif_clk_mux[] = {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(i2c0),
++	SH_PFC_PIN_GROUP(i2c1),
++	SH_PFC_PIN_GROUP(i2c2),
++	SH_PFC_PIN_GROUP(i2c3),
++	SH_PFC_PIN_GROUP(i2c4),
++	SH_PFC_PIN_GROUP(i2c5),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -605,6 +665,30 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(scif_clk),
+ };
+ 
++static const char * const i2c0_groups[] = {
++	"i2c0",
++};
++
++static const char * const i2c1_groups[] = {
++	"i2c1",
++};
++
++static const char * const i2c2_groups[] = {
++	"i2c2",
++};
++
++static const char * const i2c3_groups[] = {
++	"i2c3",
++};
++
++static const char * const i2c4_groups[] = {
++	"i2c4",
++};
++
++static const char * const i2c5_groups[] = {
++	"i2c5",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -634,6 +718,12 @@ static const char * const scif_clk_groups[] = {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(i2c0),
++	SH_PFC_FUNCTION(i2c1),
++	SH_PFC_FUNCTION(i2c2),
++	SH_PFC_FUNCTION(i2c3),
++	SH_PFC_FUNCTION(i2c4),
++	SH_PFC_FUNCTION(i2c5),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif3),
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
