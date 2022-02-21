@@ -2,112 +2,132 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8C9C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 10:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3A3C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 10:38:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354505AbiBUKbo (ORCPT
+        id S1354368AbiBUKjQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 05:31:44 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45322 "EHLO
+        Mon, 21 Feb 2022 05:39:16 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354834AbiBUKa2 (ORCPT
+        with ESMTP id S1355304AbiBUKjC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Feb 2022 05:30:28 -0500
-Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217D263EE;
-        Mon, 21 Feb 2022 01:51:39 -0800 (PST)
-Received: from pro2.mail.ovh.net (unknown [10.108.1.79])
-        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id CC381E72481C;
-        Mon, 21 Feb 2022 10:51:09 +0100 (CET)
-Received: from localhost.localdomain (88.125.132.78) by DAG1EX2.emp2.local
- (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Mon, 21 Feb
- 2022 10:51:08 +0100
-From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-To:     <linux-renesas-soc@vger.kernel.org>, <geert+renesas@glider.be>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 0/5] ARM: r9a06g032: add support for the watchdogs
-Date:   Mon, 21 Feb 2022 10:50:26 +0100
-Message-ID: <20220221095032.95054-1-jjhiblot@traphandler.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 21 Feb 2022 05:39:02 -0500
+Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6259B473A5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Feb 2022 02:00:55 -0800 (PST)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id C1D8A580261;
+        Mon, 21 Feb 2022 04:59:55 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 21 Feb 2022 04:59:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; bh=lZx6QJtY1OfVXkk4liNafMSMojXN0L
+        YL8ej+OsuKSTs=; b=o3T+u2xCPGKJpW3Ad+/ePTsbc3R4zBSrqz0qPGJQF72QPD
+        FR3QcXRio/DseBsFY600wAuchj4uWvQVReCeDOKd43MBrs6b2veiO8MkOmXeNuAB
+        LcnA8bbc8bz7GwF5bh17Oj0xgyZknhlxPOnY/aTJKcWR3isIa4ls7/7b/0XiwNRU
+        GTZEOLcBOIjRKD0ZJ5+1cKE+8cW9wcaR1lWclQeq8aazVz03QgW8ldJyyb8aDznQ
+        77ADP6+WuXW1je2fNO33D8kYWiSO4li0JQc7cMvmJgTMfHaRaHIQqIym3A6CZ9RY
+        VdjdE0qjT6JwODHFuYkcdqp28+fbspa+EqvbPCaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=lZx6QJ
+        tY1OfVXkk4liNafMSMojXN0LYL8ej+OsuKSTs=; b=cIqFvO6Cz18A312yduXARt
+        mzPlgpbYcrb+1MpSItVgPr5oY9OlXkGc6ZWtlv5t7Zhwtt54ZngcxlX558iebSRh
+        aOg64zg/krWGbpOyyuOxNw0tZsYAdid/bSdoee3ppuXvOiN0GsNampaGMNp570Eb
+        ZDVcydekyjkywvyT40FRe09N2Un7zVar02dquZdte5qpY6OjX49lNO1myjn8IMfw
+        acz73LvOrADNRqeRr+uhXYGOApy3yZHIPom85Pifk6oC3OwvH8WRXDLvE9yAiJ2A
+        Ix9trPBgX9JH/UDOCQg/7C8VCavK9zeY4C1YrWmeWZ3p47+lu9JZActu4fWJzhOA
+        ==
+X-ME-Sender: <xms:m2ITYlviEYzWQvejmzsBBYT6kS61fd2E_RNO48O1hhqXsZUq7C2b6A>
+    <xme:m2ITYuc-1ZKMNGnzHXCZiRGXDTXzYL4CPzPxYTHV-qC8O4ID_s-k4shqxd_FAMz0X
+    gdhk29KQmGAgoDPu3s>
+X-ME-Received: <xmr:m2ITYoyqo2Ffjba_eG8sgJ4RFYsvvS020D3jksA07zb7UBib6KZItkUkQZbAZ3ICRJH-WaM-ZPsTSnJLXW5Mp7Gh6dltc7aERLVlIDw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigddtlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
+    vdenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:m2ITYsPR3INsVkYdqxV4R0cuXM4OJt4RVi4nrxG8I7RP8WQhMIayUg>
+    <xmx:m2ITYl9Ggj8SL_xUFB77KcsuYBUMwuNezNPliTKWBLbEoBrvuHC0Og>
+    <xmx:m2ITYsXsK9iaSZSimaNfKCB1IbaxJU0AlxxXUaCUOXm6tbKHc18DkA>
+    <xmx:m2ITYsW62qJvRunI2p6YKYSZmlWpUL7KSIa6z4BWC4VN28h9DZsJuQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Feb 2022 04:59:55 -0500 (EST)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v2 15/22] drm/rcar: plane: Remove redundant zpos initialisation
+Date:   Mon, 21 Feb 2022 10:59:11 +0100
+Message-Id: <20220221095918.18763-16-maxime@cerno.tech>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220221095918.18763-1-maxime@cerno.tech>
+References: <20220221095918.18763-1-maxime@cerno.tech>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [88.125.132.78]
-X-ClientProxiedBy: CAS3.emp2.local (172.16.1.3) To DAG1EX2.emp2.local
- (172.16.2.2)
-X-Ovh-Tracer-Id: 6957217000239806939
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigddtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepjedugfffleelheehveevuedtjeffgfejkedukeekudfguedtfeefuefhueevheeinecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkpheptddrtddrtddrtddpkeekrdduvdehrddufedvrdejkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi all,
+The rcar-du KMS driver will call drm_plane_create_zpos_property() with an
+init value depending on the plane type.
 
-This series adds support for the watchdog timers of the RZ/N1.
-The watchdog driver (rzn1-wdt.c) is derived from the driver available at
-https://github.com/renesas-rz/rzn1_linux.git with a few modifications
+Since the initial value wasn't carried over in the state, the driver had
+to set it again in rcar_du_plane_reset() and rcar_du_vsp_plane_reset().
+However, the helpers have been adjusted to set it properly at reset, so
+this is not needed anymore.
 
-In order to be able to reset the board when a watchdog timer expires,
-the RSTEN register must be configured. it is the responsability of the
-bootloader to set those bits (or not, depending on the chosen policy).
+Cc: linux-renesas-soc@vger.kernel.org
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c | 1 -
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 1 -
+ 2 files changed, 2 deletions(-)
 
-If the watchdog reset source is not enabled, an interrupt is triggered
-when the watchdog expires. Currently this interrupt doesn't much apart
-from printing a message.
-
-Changes v2 -> v3:
-* dts: changed compatible strings to include "renesas,r9a06g032-wdt" and
-  "renesas,rzn1-wdt".
-* driver: removed the SOC-specific "renesas,r9a06g032-wdt".
-* removed all the changes in the clock driver: the watchdog reset source
-  are not disabled anymore when the machine is halted.
-* fixed the clock rate type in the computations.
-* removed unnecessary printout and call to clk_disable_unprepare() in the
-  driver probe().
-    
-Changes v1 -> v2:
-* Modified the clock driver to not enable the watchdog reset sources.
-  On other renesas platforms, those bits are by the bootloader. The
-  watchdog reset sources are still disabled when the platform is halted
-  to prevent a watchdog reset.
-* Added a SOC-specific compatible "renesas,r9a06g032-wdt"
-* reordered the dts/i entries
-* default timeout is 60 seconds
-* reworked the probe function of the wdt driver to better error cases
-* removed the set_timeout() and use a fixed period computed in probe().
-  This removes the confusion and makes it clear that the period defined
-  by the user space in indeed handled by the watchdog core
-
-Jean-Jacques Hiblot (4):
-  dt-bindings: clock: r9a06g032: Add the definition of the watchdog
-    clock
-  dt-bindings: watchdog: renesas,wdt: Add support for RZ/N1
-  ARM: dts: r9a06g032: Add the watchdog nodes
-  ARM: dts: r9a06g032-rzn1d400-db: Enable watchdog0 with a 60s timeout
-
-Phil Edworthy (1):
-  watchdog: Add Renesas RZ/N1 Watchdog driver
-
- .../bindings/watchdog/renesas,wdt.yaml        |   6 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts   |   5 +
- arch/arm/boot/dts/r9a06g032.dtsi              |  16 ++
- drivers/watchdog/Kconfig                      |   8 +
- drivers/watchdog/Makefile                     |   1 +
- drivers/watchdog/rzn1_wdt.c                   | 206 ++++++++++++++++++
- include/dt-bindings/clock/r9a06g032-sysctrl.h |   1 +
- 7 files changed, 243 insertions(+)
- create mode 100644 drivers/watchdog/rzn1_wdt.c
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+index 862197be1e01..9dda5e06457d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+@@ -696,7 +696,6 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
+ 	state->hwindex = -1;
+ 	state->source = RCAR_DU_PLANE_MEMORY;
+ 	state->colorkey = RCAR_DU_COLORKEY_NONE;
+-	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
+ }
+ 
+ static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index b7fc5b069cbc..719c60034952 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -362,7 +362,6 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
+ 		return;
+ 
+ 	__drm_atomic_helper_plane_reset(plane, &state->state);
+-	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
+ }
+ 
+ static const struct drm_plane_funcs rcar_du_vsp_plane_funcs = {
 -- 
-2.25.1
+2.35.1
 
