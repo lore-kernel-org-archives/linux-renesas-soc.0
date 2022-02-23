@@ -2,53 +2,53 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEFAC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Feb 2022 02:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3771C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Feb 2022 03:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236089AbiBWCyL (ORCPT
+        id S237705AbiBWDWm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Feb 2022 21:54:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58262 "EHLO
+        Tue, 22 Feb 2022 22:22:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236856AbiBWCyL (ORCPT
+        with ESMTP id S230118AbiBWDWl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Feb 2022 21:54:11 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB977506EF
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Feb 2022 18:53:44 -0800 (PST)
+        Tue, 22 Feb 2022 22:22:41 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 346CC31352
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Feb 2022 19:22:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645584824; x=1677120824;
+  t=1645586535; x=1677122535;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=Xh4BxDbraAG+gqyjETjP6ftrTNqjtrvVVE1vmSUg9tE=;
-  b=NzsQ59dQ63l0Quo83Oiuhts48ZreuUJngqoou+Ic3s1M4FrfqxRZj+qq
-   rAGBuAqwFDQdoHxA5F1M4CyQ16fMqVzjEw2h1PNtIVp+67grWaVrz4aBE
-   ckb++dJZ/sRCPxOAKb4nS/nelfvHXaWY7Swvj090EZ6Eb+XIVO1jnHqPT
-   eXrBxceVJBefQ95GMQXY1Ril9VVYzvVWWy481CgAfp0TBk5VKGgp+L/9M
-   oar9aXFf1qfw3ea+oAzOptfKDbX6hvKswmuWd/gXCj79d4lO6CXmZe0jF
-   5kHYM+hojUhj3+lUtDegOsiuoql7VRVkBgRKs4qF9T8HAjO9CxlCp0H5E
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="276484460"
+  bh=E6xdPl9wOLziEn4vBvZ+A692I1qxZ0fKLfddtDXlGqg=;
+  b=CK4mmq0imK07qER+UJa6CYJ+M7BxbxPP6AT16l1Bo6gMrVlvkIDro56/
+   iyrTU7CrFuIU8gBHLfO6ZWgCbAVXyIRXY7sAEVVcERkS1sPre4oNrevoE
+   l+PsSLUWyBTjNwLavFui5gaMfZTgjyMOuT7E7vveju6S2DCTPvi/iTmPk
+   8ek/J6rULkEOgp5jLbZfy+XTxRRxusqq1f0jDT6GaIckaE9GpgsijAsR1
+   msjMNv/K2nntHY2XCCGXC1XttvHIc7om263V9XEvUELD4nrbblrXusVlG
+   vs9oCYmrL04EEE0R90Q4S+9E39exP+a8fRoS+KvYrwmn8Ockg4owbzONU
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="250699543"
 X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
-   d="scan'208";a="276484460"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2022 18:52:14 -0800
+   d="scan'208";a="250699543"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2022 19:22:14 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
-   d="scan'208";a="543169131"
+   d="scan'208";a="637259957"
 Received: from lkp-server01.sh.intel.com (HELO 788b1cd46f0d) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 22 Feb 2022 18:52:13 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 22 Feb 2022 19:22:13 -0800
 Received: from kbuild by 788b1cd46f0d with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nMhlE-0000tw-Lz; Wed, 23 Feb 2022 02:52:12 +0000
-Date:   Wed, 23 Feb 2022 10:51:18 +0800
+        id 1nMiEH-0000va-5G; Wed, 23 Feb 2022 03:22:13 +0000
+Date:   Wed, 23 Feb 2022 11:22:04 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:topic/r8a779f0-i2c-v1] BUILD SUCCESS
- 539fb932ae7c793cb7a6caa526ec4d15ac9fa3c3
-Message-ID: <6215a126.PS/rChvnTNBA/YAz%lkp@intel.com>
+Subject: [geert-renesas-drivers:topic/r8a779f0-wdt-v1] BUILD SUCCESS
+ 42550e320f8c08a31699ed0a7e9eaa4afc543296
+Message-ID: <6215a85c.fQldl/xVX0JDeoQD%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +57,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/r8a779f0-i2c-v1
-branch HEAD: 539fb932ae7c793cb7a6caa526ec4d15ac9fa3c3  arm64: dts: renesas: spider: Add Ethernet sub-board
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/r8a779f0-wdt-v1
+branch HEAD: 42550e320f8c08a31699ed0a7e9eaa4afc543296  watchdog: renesas_wdt: Add R-Car Gen4 support
 
-elapsed time: 720m
+elapsed time: 750m
 
 configs tested: 162
-configs skipped: 3
+configs skipped: 4
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -74,6 +74,7 @@ arm64                            allyesconfig
 arm64                               defconfig
 arm                              allyesconfig
 arm                              allmodconfig
+i386                          randconfig-c001
 i386                 randconfig-c001-20220221
 sh                      rts7751r2d1_defconfig
 arm                             pxa_defconfig
