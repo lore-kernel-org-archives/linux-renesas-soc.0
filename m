@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6D5C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Feb 2022 16:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3714AC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Feb 2022 16:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241597AbiBWQBu (ORCPT
+        id S239634AbiBWQGq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Feb 2022 11:01:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53278 "EHLO
+        Wed, 23 Feb 2022 11:06:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242037AbiBWQBt (ORCPT
+        with ESMTP id S239208AbiBWQGq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Feb 2022 11:01:49 -0500
+        Wed, 23 Feb 2022 11:06:46 -0500
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4D34BC336F
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Feb 2022 08:01:21 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A714BC4850
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Feb 2022 08:06:18 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.88,391,1635174000"; 
-   d="scan'208";a="111356446"
+   d="scan'208";a="111356432"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Feb 2022 01:01:21 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 Feb 2022 01:01:15 +0900
 Received: from localhost.localdomain (unknown [10.226.93.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D249E4004923;
-        Thu, 24 Feb 2022 01:01:18 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5D7934004923;
+        Thu, 24 Feb 2022 01:01:13 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -34,9 +34,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 6/6] watchdog: rzg2l_wdt: Add set_timeout callback
-Date:   Wed, 23 Feb 2022 16:01:00 +0000
-Message-Id: <20220223160100.23543-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v4 4/6] watchdog: rzg2l_wdt: Add error check for reset_control_deassert
+Date:   Wed, 23 Feb 2022 16:00:58 +0000
+Message-Id: <20220223160100.23543-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220223160100.23543-1-biju.das.jz@bp.renesas.com>
 References: <20220223160100.23543-1-biju.das.jz@bp.renesas.com>
@@ -44,67 +44,64 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds support for set_timeout callback.
+If reset_control_deassert() fails, then we won't be able to
+access the device registers. Therefore check the return code of
+reset_control_deassert() and bailout in case of error.
 
-Once WDT is started, the WDT cycle setting register(WDTSET) can be updated
-only after issuing a module reset. Otherwise, it will ignore the writes
-and will hold the previous value. This patch updates the WDTSET register
-if it is active.
+While at it change reset_control_assert->reset_control_reset in
+rzg2l_wdt_stop() and remove unnecessary reset_control_deassert()
+from rzg2l_wdt_start().
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-V3->v4:
+v3->v4:
+ * Made reset usage counter balanced
  * Updated commit description
- * Simplified the logic for updating timeout register, if wdt is active.
 v2->v3:
- * Patch reodering Patch 3 -> patch 4
- * Updated commit description.
-V1->V2:
+ * Patch reordering from Patch 2 -> Patch 3
  * Updated commit description
- * Removed stop/start and started using reset() instead.
- * After reset, Start WDT based on watchdog timer state.
+v1->v2:
+ * Updated commit description and removed Rb tag from Guenter,
+   since there is code change
+ * Replaced reset_control_assert with reset_control_reset in stop
+   and removed reset_control_deassert() from start.
 ---
- drivers/watchdog/rzg2l_wdt.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/watchdog/rzg2l_wdt.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index 4e7107655cc2..6eea0ee4af49 100644
+index 48dfe6e5e64f..73b667ed3e99 100644
 --- a/drivers/watchdog/rzg2l_wdt.c
 +++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -115,6 +115,25 @@ static int rzg2l_wdt_stop(struct watchdog_device *wdev)
+@@ -88,7 +88,6 @@ static int rzg2l_wdt_start(struct watchdog_device *wdev)
+ {
+ 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+ 
+-	reset_control_deassert(priv->rstc);
+ 	pm_runtime_get_sync(wdev->parent);
+ 
+ 	/* Initialize time out */
+@@ -108,7 +107,7 @@ static int rzg2l_wdt_stop(struct watchdog_device *wdev)
+ 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+ 
+ 	pm_runtime_put(wdev->parent);
+-	reset_control_assert(priv->rstc);
++	reset_control_reset(priv->rstc);
+ 
  	return 0;
  }
+@@ -204,7 +203,10 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(priv->rstc),
+ 				     "failed to get cpg reset");
  
-+static int rzg2l_wdt_set_timeout(struct watchdog_device *wdev, unsigned int timeout)
-+{
-+	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+-	reset_control_deassert(priv->rstc);
++	ret = reset_control_deassert(priv->rstc);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to deassert");
 +
-+	wdev->timeout = timeout;
-+
-+	/*
-+	 * If the watchdog is active, reset the module for updating the WDTSET
-+	 * register so that it is updated with new timeout values.
-+	 */
-+	if (watchdog_active(wdev)) {
-+		pm_runtime_put(wdev->parent);
-+		reset_control_reset(priv->rstc);
-+		rzg2l_wdt_start(wdev);
-+	}
-+
-+	return 0;
-+}
-+
- static int rzg2l_wdt_restart(struct watchdog_device *wdev,
- 			     unsigned long action, void *data)
- {
-@@ -151,6 +170,7 @@ static const struct watchdog_ops rzg2l_wdt_ops = {
- 	.start = rzg2l_wdt_start,
- 	.stop = rzg2l_wdt_stop,
- 	.ping = rzg2l_wdt_ping,
-+	.set_timeout = rzg2l_wdt_set_timeout,
- 	.restart = rzg2l_wdt_restart,
- };
+ 	pm_runtime_enable(&pdev->dev);
  
+ 	priv->wdev.info = &rzg2l_wdt_ident;
 -- 
 2.17.1
 
