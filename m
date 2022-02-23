@@ -2,106 +2,130 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3714AC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Feb 2022 16:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF261C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Feb 2022 16:16:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239634AbiBWQGq (ORCPT
+        id S242682AbiBWQRP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Feb 2022 11:06:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59258 "EHLO
+        Wed, 23 Feb 2022 11:17:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239208AbiBWQGq (ORCPT
+        with ESMTP id S236228AbiBWQRO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Feb 2022 11:06:46 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A714BC4850
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Feb 2022 08:06:18 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.88,391,1635174000"; 
-   d="scan'208";a="111356432"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Feb 2022 01:01:15 +0900
-Received: from localhost.localdomain (unknown [10.226.93.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5D7934004923;
-        Thu, 24 Feb 2022 01:01:13 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-watchdog@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 4/6] watchdog: rzg2l_wdt: Add error check for reset_control_deassert
-Date:   Wed, 23 Feb 2022 16:00:58 +0000
-Message-Id: <20220223160100.23543-5-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220223160100.23543-1-biju.das.jz@bp.renesas.com>
-References: <20220223160100.23543-1-biju.das.jz@bp.renesas.com>
+        Wed, 23 Feb 2022 11:17:14 -0500
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C071132EE6;
+        Wed, 23 Feb 2022 08:16:45 -0800 (PST)
+Received: by mail-vs1-f44.google.com with SMTP id w4so3756744vsq.1;
+        Wed, 23 Feb 2022 08:16:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+DmRxbGCCqQ2m+24/NebsHhzJx4jsfKGvSXWFxae1yA=;
+        b=ZOi1uGwN1ih30N4KAESygop4U2HEmLo98IMLCkiwrukbj6Z5ZA3henrkafv6Q19wF7
+         2vt4z7/iW5hmSum00cwCvGMfsqwPLLBcZwyXV/9pMjqm2/OLzhprkrJcbGYS1hRimSqM
+         UDcNg8B86v0IQLGySr6mI7jKyfIEYogRnhaJsM08UcpNAKRm0JmM2QtkqEW7eCo6ClOs
+         GWBeZdLifX2VTuIxamk/nS5bilmewRklCynhdBdyFXDh0vUuLcdZ590Eey3jhX671rsc
+         arz4kvWtREJ1EJZ9f9mZcRe1hZ0qEeTITz12FnonSMPPryV5r1At6EB9Wp4sOaQ0sYpE
+         b+og==
+X-Gm-Message-State: AOAM532QnS1eOjt5qS7d/J62O0zx1gY8xT3nx/O7y4dLIrfZMaDK3I54
+        mVamaQ1efT2jAcTQN4ckMClnCM2MrkJprA==
+X-Google-Smtp-Source: ABdhPJxwEZwp3t7bQsz4sX7ugyEbisuE75649jrfekkqcqeduEyWOOl9aWtV5YVrJtpaxyKNlwpahw==
+X-Received: by 2002:a05:6102:3a06:b0:31b:d9c6:c169 with SMTP id b6-20020a0561023a0600b0031bd9c6c169mr216596vsu.22.1645633004672;
+        Wed, 23 Feb 2022 08:16:44 -0800 (PST)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id i13sm1017860uap.12.2022.02.23.08.16.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Feb 2022 08:16:44 -0800 (PST)
+Received: by mail-vs1-f49.google.com with SMTP id u10so3706079vsu.13;
+        Wed, 23 Feb 2022 08:16:43 -0800 (PST)
+X-Received: by 2002:a67:af08:0:b0:31b:9451:bc39 with SMTP id
+ v8-20020a67af08000000b0031b9451bc39mr226177vsl.68.1645633003682; Wed, 23 Feb
+ 2022 08:16:43 -0800 (PST)
+MIME-Version: 1.0
+References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
+ <20220222103437.194779-3-miquel.raynal@bootlin.com> <CAMuHMdVzMiBn-rZgWkp=v7VWqEf1CX9kPTF7qn0cx9va9Z9dWg@mail.gmail.com>
+ <20220223164950.18de06a8@xps13>
+In-Reply-To: <20220223164950.18de06a8@xps13>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 23 Feb 2022 17:16:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVN4Xc7Wo_5B7dv3N2wJCWMRQg=Z6Rx2tMrH=OvNO26ew@mail.gmail.com>
+Message-ID: <CAMuHMdVN4Xc7Wo_5B7dv3N2wJCWMRQg=Z6Rx2tMrH=OvNO26ew@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] dt-bindings: dma: Introduce RZN1 DMA compatible
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-If reset_control_deassert() fails, then we won't be able to
-access the device registers. Therefore check the return code of
-reset_control_deassert() and bailout in case of error.
+Hi Miquel,
 
-While at it change reset_control_assert->reset_control_reset in
-rzg2l_wdt_stop() and remove unnecessary reset_control_deassert()
-from rzg2l_wdt_start().
+On Wed, Feb 23, 2022 at 4:49 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> geert@linux-m68k.org wrote on Wed, 23 Feb 2022 13:21:47 +0100:
+> > On Tue, Feb 22, 2022 at 11:35 AM Miquel Raynal
+> > <miquel.raynal@bootlin.com> wrote:
+> > > Just like for the NAND controller that is also on this SoC, let's
+> > > provide a SoC generic and a more specific couple of compatibles for the
+> > > DMA controller.
+> > >
+> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> >
+> > > +++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+> >
+> > Perhaps you want to add the power-domains property?
+> > The RZ/N1 clock driver is also a clock-domain provider.
+>
+> I haven't looked at the power domains yet, but I don't plan to invest
+> time on it right now. Unless I don't understand your request, and you
+> are telling me that someone else added the description and we should
+> now point to the right domain from each new node?
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v3->v4:
- * Made reset usage counter balanced
- * Updated commit description
-v2->v3:
- * Patch reordering from Patch 2 -> Patch 3
- * Updated commit description
-v1->v2:
- * Updated commit description and removed Rb tag from Guenter,
-   since there is code change
- * Replaced reset_control_assert with reset_control_reset in stop
-   and removed reset_control_deassert() from start.
----
- drivers/watchdog/rzg2l_wdt.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+The RZ/N1 System Controller is a clock-domain provider.  This means
+it can automatically manage the module clocks of devices that are
+part of the clock domain, assuming device drivers are using Runtime PM.
 
-diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index 48dfe6e5e64f..73b667ed3e99 100644
---- a/drivers/watchdog/rzg2l_wdt.c
-+++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -88,7 +88,6 @@ static int rzg2l_wdt_start(struct watchdog_device *wdev)
- {
- 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
- 
--	reset_control_deassert(priv->rstc);
- 	pm_runtime_get_sync(wdev->parent);
- 
- 	/* Initialize time out */
-@@ -108,7 +107,7 @@ static int rzg2l_wdt_stop(struct watchdog_device *wdev)
- 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
- 
- 	pm_runtime_put(wdev->parent);
--	reset_control_assert(priv->rstc);
-+	reset_control_reset(priv->rstc);
- 
- 	return 0;
- }
-@@ -204,7 +203,10 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, PTR_ERR(priv->rstc),
- 				     "failed to get cpg reset");
- 
--	reset_control_deassert(priv->rstc);
-+	ret = reset_control_deassert(priv->rstc);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to deassert");
-+
- 	pm_runtime_enable(&pdev->dev);
- 
- 	priv->wdev.info = &rzg2l_wdt_ident;
--- 
-2.17.1
+The upstream RZ/N1 DTS doesn't have many devices enabled yet.
+Most of them are (variants of) Synopsis IP cores, and their drivers
+manage clocks explicitly, instead of relying on Runtime PM.
 
+BTW, I have just noticed the system-controller node[1] even lacks
+the #power-domain-cells property, while the example[2] does have it.
+When that is added, device nodes can gain "power-domains = <&sysctrl>",
+and module clocks can be managed from Runtime PM.  Perhaps the NAND
+driver would be a good target for conversion to Runtime PM, as its
+driver is not shared with SoCs from other vendors yet?
+Note this is not mandatory, and drivers can keep on using explicit
+clock handling (until the IP core is reused on an SoC that not only
+has a clock-domain, but also real power-domains).
+
+[1] arch/arm/boot/dts/r9a06g032.dtsi
+[2] Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
