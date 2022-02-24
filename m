@@ -2,63 +2,140 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F3EC43217
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Feb 2022 09:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48568C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Feb 2022 09:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232701AbiBXJPl (ORCPT
+        id S232776AbiBXJSY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 04:15:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46394 "EHLO
+        Thu, 24 Feb 2022 04:18:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232699AbiBXJPj (ORCPT
+        with ESMTP id S232739AbiBXJSX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Feb 2022 04:15:39 -0500
-X-Greylist: delayed 454 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Feb 2022 01:15:06 PST
-Received: from mail.onlinesuccesses.pl (mail.onlinesuccesses.pl [198.244.150.235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDE92790A8
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Feb 2022 01:15:06 -0800 (PST)
-Received: by mail.onlinesuccesses.pl (Postfix, from userid 1002)
-        id B3466A4DE1; Thu, 24 Feb 2022 09:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onlinesuccesses.pl;
-        s=mail; t=1645693608;
-        bh=nE8HqilgMh4dy7+Z8ksfg7Bc9rmPeQtYFq3/3YR2ODU=;
-        h=Date:From:To:Subject:From;
-        b=nC90nIJongxDM/BAkQAmlG11c1/uatDBd/Sqv4Zx3K8RMWtY4v4UioYxKM7vLmPTF
-         U/qaIbNz/Rud/pXW6Hs3WQlAwts6RialmlJXQID/FcCH4na2eGNdBf/gB/t9yzCTA7
-         8+6nqCfYMRWl03c+rNiNHo2Xrf5eo1c1PDbe8y8pPd9FO96CGuP4Zy7BiiTwYrf2ck
-         RRTcJ3LwUVmV1uEohaquLs6cMSPQvBag0lQ4AbAyocwAnGqfkLoaqtdhCHuvPZdvlN
-         N8U5+ta0/Ugfq10VHX6atNSt08oTvZw1735auHXjpAhI2w1CjebQUypfy2qgYVAfv+
-         +SbIT+PWtlfYg==
-Received: by mail.onlinesuccesses.pl for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Feb 2022 09:05:53 GMT
-Message-ID: <20220224074501-0.1.2r.houq.0.2rl2l54698@onlinesuccesses.pl>
-Date:   Thu, 24 Feb 2022 09:05:53 GMT
-From:   "Wiktor Zielonko" <wiktor.zielonko@onlinesuccesses.pl>
-To:     <linux-renesas-soc@vger.kernel.org>
-Subject: Ruch z pierwszej pozycji w Google
-X-Mailer: mail.onlinesuccesses.pl
+        Thu, 24 Feb 2022 04:18:23 -0500
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088951B9884;
+        Thu, 24 Feb 2022 01:17:54 -0800 (PST)
+Received: by mail-vk1-f171.google.com with SMTP id x62so827351vkg.6;
+        Thu, 24 Feb 2022 01:17:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YGOodK82VUO9G8FX7AR6GFtS5XZEXOhl5R6zSovlVqo=;
+        b=NMG+qJt9VHJQdFPGyBJbrYMswdIXvcx2U4UkYTmHgyOt3UjSproz+PHHMpo5IB07Ag
+         8tKjJrMvCzl4rLHI4PyDBrI1vL89RyoZKH3H3C0zbLqspFVfyq+uPsGnnrsBcgBhwioF
+         idUkhV+unyZmjJqaFHHoyYTryiuCBTKDUNxd7eJ26aPH1qmL4gXcreFAN1Bte9Zojtdm
+         Xnab+ohauQi1Q2Qy2oBFYXW/7HNeSlIBJdSHxvdwml7LXlCNKlP81nGjB/R16zg6PYTY
+         FPHZCW5iQAQqLMQO3PS7BN9r8DtrqMW0x6Yl8esPBVcV96X7n49RPUOrMxKSMLo2rbem
+         M7dw==
+X-Gm-Message-State: AOAM530lbRzy2iEuJGMU61ho7JnveIROn6e11+0AiDI5/L66man8soK2
+        UFz5/XSnU8FwrMIHydJ8Fw7oosk2FF5wAA==
+X-Google-Smtp-Source: ABdhPJwdfYGjm2MOQ/FABlRCaYQ0w4bnY+yPqKvA2AJRstJGJnNUa0ymjawz8o8bYe9TVK9haeOhnQ==
+X-Received: by 2002:a05:6122:180e:b0:330:1b9e:732d with SMTP id ay14-20020a056122180e00b003301b9e732dmr636711vkb.5.1645694273044;
+        Thu, 24 Feb 2022 01:17:53 -0800 (PST)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id o11sm315154vsl.0.2022.02.24.01.17.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Feb 2022 01:17:52 -0800 (PST)
+Received: by mail-vs1-f49.google.com with SMTP id g20so1414550vsb.9;
+        Thu, 24 Feb 2022 01:17:52 -0800 (PST)
+X-Received: by 2002:a67:e10e:0:b0:31b:956b:70cf with SMTP id
+ d14-20020a67e10e000000b0031b956b70cfmr644365vsl.77.1645694272225; Thu, 24 Feb
+ 2022 01:17:52 -0800 (PST)
 MIME-Version: 1.0
+References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
+ <20220222103437.194779-8-miquel.raynal@bootlin.com> <CAMuHMdWoH3vySMiCaRxZzT474NwtXfYRAga==SyNsKKaEpiU1Q@mail.gmail.com>
+ <20220223181403.11744043@xps13>
+In-Reply-To: <20220223181403.11744043@xps13>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 24 Feb 2022 10:17:41 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUsTii548DJjOKNG1smLZNsn1fkKTk_KQt7GdEe+w8wEw@mail.gmail.com>
+Message-ID: <CAMuHMdUsTii548DJjOKNG1smLZNsn1fkKTk_KQt7GdEe+w8wEw@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] ARM: dts: r9a06g032: Add the two DMA nodes
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
+Hi Miquel,
 
-jaki=C5=9B czas temu zg=C5=82osi=C5=82a si=C4=99 do nas firma, kt=C3=B3re=
-j strona internetowa nie pozycjonowa=C5=82a si=C4=99 wysoko w wyszukiwarc=
-e Google.=20
+On Wed, Feb 23, 2022 at 6:14 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> geert@linux-m68k.org wrote on Wed, 23 Feb 2022 13:54:20 +0100:
+> > On Tue, Feb 22, 2022 at 11:35 AM Miquel Raynal
+> > <miquel.raynal@bootlin.com> wrote:
+> > > Describe the two DMA controllers available on this SoC.
+> > >
+> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> > > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> > > @@ -184,6 +184,36 @@ nand_controller: nand-controller@40102000 {
+> > >                         status = "disabled";
+> > >                 };
+> > >
+> > > +               dma0: dma-controller@40104000 {
+> > > +                       compatible = "renesas,r9a06g032-dma", "renesas,rzn1-dma";
+> > > +                       reg = <0x40104000 0x1000>;
+> > > +                       interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+> > > +                       clock-names = "hclk";
+> > > +                       clocks = <&sysctrl R9A06G032_HCLK_DMA0>;
+> >
+> > power-domains?
+> >
+> > > +                       dma-channels = <8>;
+> > > +                       dma-requests = <16>;
+> > > +                       dma-masters = <1>;
+> > > +                       #dma-cells = <3>;
+> >
+> > <4>? The dmamux bindings say:
+> >
+> > +      The first four cells are dedicated to the master DMA
+> > controller. The fifth
+> > +      cell gives the DMA mux bit index that must be set starting from 0. The
+> > +      sixth cell gives the binary value that must be written there, ie. 0 or 1.
+>
+> The DMAC bindings had initially 3 cells, and then received a fourth
+> optional one. We do not need it here, that's why I'm keeping #dma-cells
+> to 3.
+>
+> But on the mux side, I don't want to deal with the presence or absence
+> of the optional cell so I assumed we would always request 4 cells for
+> the DMAC to be on the safe side.
+>
+> Is this assumption wrong?
 
-Na podstawie wykonanego przez nas audytu SEO zoptymalizowali=C5=9Bmy tre=C5=
-=9Bci na stronie pod k=C4=85tem wcze=C5=9Bniej opracowanych s=C5=82=C3=B3=
-w kluczowych. Nasz wewn=C4=99trzny system codziennie analizuje prawid=C5=82=
-owe dzia=C5=82anie witryny.  Dzi=C4=99ki indywidualnej strategii, firma z=
-dobywa coraz wi=C4=99cej Klient=C3=B3w. =20
+OK.
 
-Czy chcieliby Pa=C5=84stwo zwi=C4=99kszy=C4=87 liczb=C4=99 os=C3=B3b odwi=
-edzaj=C4=85cych stron=C4=99 internetow=C4=85 firmy? M=C3=B3g=C5=82bym prz=
-edstawi=C4=87 ofert=C4=99?=20
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
-Pozdrawiam serdecznie,
-Wiktor Zielonko
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
