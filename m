@@ -2,53 +2,53 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD6FC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Feb 2022 02:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D0DC43219
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Feb 2022 02:52:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236841AbiBYCxR (ORCPT
+        id S236848AbiBYCxT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 21:53:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34548 "EHLO
+        Thu, 24 Feb 2022 21:53:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236848AbiBYCxP (ORCPT
+        with ESMTP id S236851AbiBYCxQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Feb 2022 21:53:15 -0500
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B79F24FA0E
+        Thu, 24 Feb 2022 21:53:16 -0500
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C261724FA18
         for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Feb 2022 18:52:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1645757565; x=1677293565;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=80JoRM9EMdja2Vcs0WkOyd9NNNbqJHk1dlJtcS0osHk=;
-  b=TBn7ZJh7+dtpTQBXrAzzwjpY2Mx/kkBIN7FX8i6oEWhS8IbYLSBrg5KE
-   x9wvGQ9nDLXm+qLg9WxaMFUvpjT8MR3u8/IRcwNprTQFBy8h9H8jS0sPm
-   O9wi7oisJuMoeTF4vobOUvbP9GI3dCJP4VL8FsRAReFlFCZlRMxfh5Upl
-   RWp/Rvj8VE/BPq0sV+V2zB6gDpNDVoJlcY8nV8OdjUBNE3XNR1MfWDS0V
-   TMagP1dk89UN5Jti5ueuZ3OfwVyEifYJzX90cIYJU7oHv5adJTNw/+SOH
-   Gbq+XHYgyZhhWgii/0L4lRX/81FQlslMCp0aaGah9eaiYfhDzqAV2OcdF
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10268"; a="233028734"
+  bh=TuxW0ZDFHwop3xWGjhfWVAIyZkGhmJ5DzrTsqLYs84w=;
+  b=IPYOXjMRhhBCeEBF0JWGaVG3yWpZnUV87siLwoy4qSycrX48CyymX1RI
+   xyy1iaCghF8xfqh4gDTJ+aq/a9pc/1YgxsVslDJZeGt5i9aZNi62SSsVL
+   +66n1RHt4Ki+10QxKRAgBXistKVyMMT1kD0dCr5nxJ9LgjHddKzrHbu4y
+   R+48v+cGM9KCg7JUqoMMIrbxLGTv1OdM/4CfVovgOqcMc6XddVP/Nhkqc
+   /l5bzrhckBjjMJ6ZNZm+Xbpb3U2PatXtFa9lDB+skQkHvWsa+sQdJqNn3
+   wNwSFBIoRKeK0wKgySLBpeqITWJjWAOGUopW/u5gcrXH5lZtc5KWf9FUx
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10268"; a="252135141"
 X-IronPort-AV: E=Sophos;i="5.90,134,1643702400"; 
-   d="scan'208";a="233028734"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2022 18:52:44 -0800
+   d="scan'208";a="252135141"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2022 18:52:44 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,134,1643702400"; 
-   d="scan'208";a="684507353"
+   d="scan'208";a="639965978"
 Received: from lkp-server01.sh.intel.com (HELO 788b1cd46f0d) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Feb 2022 18:52:43 -0800
+  by orsmga004.jf.intel.com with ESMTP; 24 Feb 2022 18:52:42 -0800
 Received: from kbuild by 788b1cd46f0d with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nNQio-0003lU-Ca; Fri, 25 Feb 2022 02:52:42 +0000
-Date:   Fri, 25 Feb 2022 10:51:58 +0800
+        id 1nNQio-0003lM-92; Fri, 25 Feb 2022 02:52:42 +0000
+Date:   Fri, 25 Feb 2022 10:52:05 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:next] BUILD SUCCESS
- f9181078bb481b09d2fdf252bdc8cebd02fee093
-Message-ID: <6218444e.g+D2xziN0g74nLmc%lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-drivers-for-v5.18] BUILD SUCCESS
+ 088659ad2a830124407edc38da278010c95bcc96
+Message-ID: <62184455.jUrJbsouZNyUmqNX%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,10 +57,10 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: f9181078bb481b09d2fdf252bdc8cebd02fee093  Merge branches 'renesas-arm-dt-for-v5.18' and 'renesas-drivers-for-v5.18' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.18
+branch HEAD: 088659ad2a830124407edc38da278010c95bcc96  soc: renesas: Kconfig: Introduce ARCH_RZG2L config option
 
-elapsed time: 734m
+elapsed time: 733m
 
 configs tested: 140
 configs skipped: 5
