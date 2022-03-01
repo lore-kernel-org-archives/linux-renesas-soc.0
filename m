@@ -2,66 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA319C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  1 Mar 2022 17:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 853DEC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  1 Mar 2022 19:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232756AbiCARIE (ORCPT
+        id S229546AbiCATFE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 1 Mar 2022 12:08:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43220 "EHLO
+        Tue, 1 Mar 2022 14:05:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236377AbiCARID (ORCPT
+        with ESMTP id S229473AbiCATFD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Mar 2022 12:08:03 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2014FBC;
-        Tue,  1 Mar 2022 09:07:22 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAA5EED1;
-        Tue,  1 Mar 2022 09:07:21 -0800 (PST)
-Received: from e123427-lin.home (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4829B3F73D;
-        Tue,  1 Mar 2022 09:07:20 -0800 (PST)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     marek.vasut@gmail.com, linux-pci@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH v5 1/2] PCI: rcar: Finish transition to L1 state in rcar_pcie_config_access()
-Date:   Tue,  1 Mar 2022 17:07:08 +0000
-Message-Id: <164615441330.28960.10937638212220997224.b4-ty@arm.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220219034604.603656-1-marek.vasut@gmail.com>
-References: <20220219034604.603656-1-marek.vasut@gmail.com>
+        Tue, 1 Mar 2022 14:05:03 -0500
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217273D482;
+        Tue,  1 Mar 2022 11:04:21 -0800 (PST)
+Received: by mail-ot1-f46.google.com with SMTP id s1-20020a056830148100b005acfdcb1f4bso12989727otq.4;
+        Tue, 01 Mar 2022 11:04:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W6dJaxiOp1gz+LypeQFfrkYd+uggMOKCgfxzK1OLdFs=;
+        b=01CzNnXhalUKWfK13abO3CdncPweDa+98fRHeVHxxqwF9dz2iwcYahwYAsKDejbALe
+         cVAE9k1qpqGtel3dz85iJydy5DM/Oqj79LKXuUVJRD/4KSPXMaPonHq8JjIO/46DkSmZ
+         mhzLT8KMsjd8/miecDstgmIwxyjBhjMqvp5noxNbWnejnPUIwoAroMUNk7HLBWkBfvyt
+         bi6lomz8YPn8ZpLcrjq08a+8OFNEKLZ3cFpw5BQX4BuUi7elw6NN6me6Gfw8aMl70bUO
+         XFy4WDobNcwkVJWMpeZO9wVWIieRIUIPlFj3x9KMSgD/IO4bzQK7zZZddvI0D5vYV5Sg
+         MDdw==
+X-Gm-Message-State: AOAM531nx1A3lDJ7xjtecx6eKu5xsrE1xW7/H008VOBi+A5tdoVoHgoA
+        XRq8HnhmnKFpOYNxen5dLQ==
+X-Google-Smtp-Source: ABdhPJx/wSYI8AKhpxxGP2pKtOBTLTlhS4dgno53M3yvL99mzPXPB/8amZsdzoZiwMk0AChQHpQGKw==
+X-Received: by 2002:a05:6830:1bc7:b0:5af:8e92:aff6 with SMTP id v7-20020a0568301bc700b005af8e92aff6mr12994215ota.147.1646161460391;
+        Tue, 01 Mar 2022 11:04:20 -0800 (PST)
+Received: from xps15.herring.priv (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.googlemail.com with ESMTPSA id z3-20020a9d2483000000b005acf7a66184sm6667429ota.76.2022.03.01.11.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Mar 2022 11:04:19 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: renesas: Make example 'clocks' parsable
+Date:   Tue,  1 Mar 2022 13:03:59 -0600
+Message-Id: <20220301190400.1644150-1-robh@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, 19 Feb 2022 04:46:03 +0100, marek.vasut@gmail.com wrote:
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> 
-> In case the controller is transitioning to L1 in rcar_pcie_config_access(),
-> any read/write access to PCIECDR triggers asynchronous external abort. This
-> is because the transition to L1 link state must be manually finished by the
-> driver. The PCIe IP can transition back from L1 state to L0 on its own.
-> 
-> [...]
+'clocks' in the example is not parsable with the 0 phandle value
+because the number of #clock-cells is unknown in the previous entry.
+Solve this by adding the clock provider node. Only 'cpg_clocks' is
+needed as the examples are built with fixups which can be used to
+identify phandles.
 
-Applied to pci/rcar, thanks!
+This is in preparation to support schema validation on .dtb files.
 
-[1/2] PCI: rcar: Finish transition to L1 state in rcar_pcie_config_access()
-      https://git.kernel.org/lpieralisi/pci/c/de6b5097f5
-[2/2] PCI: rcar: Use PCI_SET_ERROR_RESPONSE after read which triggered an exception
-      https://git.kernel.org/lpieralisi/pci/c/9775965dba
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/clock/renesas,cpg-div6-clock.yaml       | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Thanks,
-Lorenzo
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clock.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clock.yaml
+index c55a7c494e01..2197c952e21d 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clock.yaml
+@@ -51,6 +51,18 @@ additionalProperties: false
+ examples:
+   - |
+     #include <dt-bindings/clock/r8a73a4-clock.h>
++
++    cpg_clocks: cpg_clocks@e6150000 {
++            compatible = "renesas,r8a73a4-cpg-clocks";
++            reg = <0xe6150000 0x10000>;
++            clocks = <&extal1_clk>, <&extal2_clk>;
++            #clock-cells = <1>;
++            clock-output-names = "main", "pll0", "pll1", "pll2",
++                                  "pll2s", "pll2h", "z", "z2",
++                                  "i", "m3", "b", "m1", "m2",
++                                  "zx", "zs", "hp";
++    };
++
+     sdhi2_clk: sdhi2_clk@e615007c {
+             compatible = "renesas,r8a73a4-div6-clock", "renesas,cpg-div6-clock";
+             reg = <0xe615007c 4>;
+-- 
+2.32.0
+
