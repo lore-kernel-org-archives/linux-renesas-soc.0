@@ -2,116 +2,277 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60DCC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Mar 2022 16:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2477C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  6 Mar 2022 20:02:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240524AbiCDQcC (ORCPT
+        id S232643AbiCFUCw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Mar 2022 11:32:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43430 "EHLO
+        Sun, 6 Mar 2022 15:02:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239323AbiCDQcB (ORCPT
+        with ESMTP id S231193AbiCFUCw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Mar 2022 11:32:01 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66AE41CBAAC
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Mar 2022 08:31:13 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id s1so11405649edd.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Mar 2022 08:31:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kipyyfQhII/lUc7ysFVEiW0FpeN/L7xlD0io3E8wlvc=;
-        b=V9VXpoR2CA3L+SEaFUZyvVoeyi/77ttHxWBlqvxLVMmPTjoYR/nKzSOkXUSlRFawnH
-         SUWqu7YOXW9wdIjUgiRAmaJXZDwLokkfZ19LAfe5+A5R7Y0l4IQWKyO/T7HW2uT5KIoS
-         +IIi0cc+vsdq4W/QrEKG3xPPXJ5ATrszY1WkM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kipyyfQhII/lUc7ysFVEiW0FpeN/L7xlD0io3E8wlvc=;
-        b=hwW6QuyTe5ZUOHNtTwv8TM15nHXY+v9fWCD/C85yAii0pJYE64+lSX2qGZHP9Z3VHE
-         76ioMWrcanzYmJD9kinD7erx7YUDyygQGZbpkJeUdZ09DRzL/c6KRpmgn8QwS76mf7u5
-         pth9X0bDiG3NxtkSjQMXANiHOgs66PBYUHRJWLI2tRwPYjGXgTFItB63da8TJaCD2D4s
-         UhwNpYM1ZkRq/MrQju0xb/LMMiniA9hF6mBKOPfCRR9OlASEur0hEb3RtvrRLvh1SR4I
-         59YXQVfRvAMvX6eZlMxJLjftzci/93bIa1QsbHnYnKD6GPHTHGi8bKqhecPrtOMbFXUJ
-         n8uA==
-X-Gm-Message-State: AOAM531mlZ5zQwckVpVwxQcGjPTofTVyMaTnUmwehqvO5dUMVGmYgQZI
-        CzLTbx0ivCK+oULacZ91tz8Jw9kDyFtircKv
-X-Google-Smtp-Source: ABdhPJy2rL80Pd0YbUQocD3aeUTAVySPtJGc0lF4CGXIHtXxEyOBbRhnKBR9hQkhPbGSPlAe/+18aw==
-X-Received: by 2002:a05:6402:40d0:b0:415:db98:c263 with SMTP id z16-20020a05640240d000b00415db98c263mr8647538edb.82.1646411471582;
-        Fri, 04 Mar 2022 08:31:11 -0800 (PST)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
-        by smtp.gmail.com with ESMTPSA id u3-20020a17090657c300b006d01de78926sm1933667ejr.22.2022.03.04.08.31.09
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Mar 2022 08:31:10 -0800 (PST)
-Received: by mail-wm1-f50.google.com with SMTP id n33-20020a05600c3ba100b003832caf7f3aso4252717wms.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Mar 2022 08:31:09 -0800 (PST)
-X-Received: by 2002:a7b:c0c1:0:b0:385:be1b:e6a with SMTP id
- s1-20020a7bc0c1000000b00385be1b0e6amr8416576wmh.73.1646411469246; Fri, 04 Mar
- 2022 08:31:09 -0800 (PST)
+        Sun, 6 Mar 2022 15:02:52 -0500
+Received: from smtp1.de.adit-jv.com (smtp1.de.adit-jv.com [93.241.18.167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 619B91928E;
+        Sun,  6 Mar 2022 12:01:58 -0800 (PST)
+Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 5AEE13C00BF;
+        Sun,  6 Mar 2022 21:01:56 +0100 (CET)
+Received: from vmlxhi-121.adit-jv.com (10.72.92.132) by hi2exch02.adit-jv.com
+ (10.72.92.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.21; Sun, 6 Mar
+ 2022 21:01:56 +0100
+Date:   Sun, 6 Mar 2022 21:01:51 +0100
+From:   Michael Rodin <mrodin@de.adit-jv.com>
+To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+CC:     "Rodin, Michael (ADITG/ESA1)" <mrodin@de.adit-jv.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH 3/4] rcar-vin: Stop stream when subdevice signal transfer
+ error
+Message-ID: <20220306200151.GA26691@vmlxhi-121.adit-jv.com>
+References: <20211108160220.767586-1-niklas.soderlund+renesas@ragnatech.se>
+ <20211108160220.767586-4-niklas.soderlund+renesas@ragnatech.se>
+ <1fddc966-5a23-63b4-185e-c17aa6d65b54@xs4all.nl>
+ <YYlvqY21JvTtKysK@oden.dyn.berto.se>
+ <9e405ed3-fb65-c16d-f84f-2530adbdc9b7@xs4all.nl>
+ <20220302164834.GA23637@vmlxhi-121.adit-jv.com>
+ <Yh/Q4XOc4HqY0W/h@oden.dyn.berto.se>
 MIME-Version: 1.0
-References: <20210322030128.2283-1-laurent.pinchart+renesas@ideasonboard.com>
- <20210322030128.2283-12-laurent.pinchart+renesas@ideasonboard.com>
- <CAD=FV=XeUbw44OZ0H6hJhS3Pb7LgknVpKynHFxWpPx_qPQ6+QA@mail.gmail.com>
- <YNPDAyODcvlWtxpj@pendragon.ideasonboard.com> <CAD=FV=W6npK+NhethhY8ghtt7gwDHYfpX00w07nHE82anqx5aA@mail.gmail.com>
- <164563818901.4066078.3221991328451321918@Monstersaurus> <CAD=FV=VxOOhZMjVWzXHbEV_EZKRLxtuKgbko-7SUFMsj7upz0g@mail.gmail.com>
- <164640875638.4039516.894310137608889285@Monstersaurus>
-In-Reply-To: <164640875638.4039516.894310137608889285@Monstersaurus>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 4 Mar 2022 08:30:57 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WC09+-H+pFTgxFHa8B+fqMkJPO0Jm81FLJiu6+PeNn7w@mail.gmail.com>
-Message-ID: <CAD=FV=WC09+-H+pFTgxFHa8B+fqMkJPO0Jm81FLJiu6+PeNn7w@mail.gmail.com>
-Subject: Re: [RFC PATCH 11/11] drm/bridge: ti-sn65dsi86: Support hotplug detection
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Yh/Q4XOc4HqY0W/h@oden.dyn.berto.se>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.92.132]
+X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
+ hi2exch02.adit-jv.com (10.72.92.28)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+Hi Niklas,
+On Wed, Mar 02, 2022 at 09:17:37PM +0100, Niklas Söderlund wrote:
+> Hi Michael,
+> 
+> Thanks for your feedback.
+> 
+> On 2022-03-02 17:48:34 +0100, Michael Rodin wrote:
+> > Hi Niklas, Hans,
+> > 
+> > On Mon, Nov 15, 2021 at 03:26:53PM +0100, Hans Verkuil wrote:
+> > > On 08/11/2021 19:42, Niklas Söderlund wrote:
+> > > > Hi Hans,
+> > > > 
+> > > > On 2021-11-08 18:36:25 +0100, Hans Verkuil wrote:
+> > > >> On 08/11/2021 17:02, Niklas Söderlund wrote:
+> > > >>> When a subdevice signals a transfer error stop the VIN in addition to
+> > > >>> informing user-space of the event.
+> > > >>>
+> > > >>> Signed-off-by: Niklas Söderlund <https://urldefense.proofpoint.com/v2/url?u=http-3A__niklas.soderlund-2Brenesas-40ragnatech.se&d=DwIDAw&c=euGZstcaTDllvimEN8b7jXrwqOf-v5A_CdpgnVfiiMM&r=sWsgk3pKkv5GeIDM2RZlPY8TjNFU2D0oBeOj6QNBadE&m=iHMOF-_0M012_DHC6tHxMudpVvpBDqktUtXsKy4xpY0&s=isB_ZRIMVizn-pFdEQpwsKeg81nAE-QHMhjUzSozUZg&e=>
+> > > >>> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > >>> ---
+> > > >>> * Changes since v3
+> > > >>> - Switch to new V4L2_EVENT_XFER_ERROR from V4L2_EVENT_EOS.
+> > > >>> - Call vb2_queue_error() when encountering the event.
+> > > >>>
+> > > >>> * Changes since v2
+> > > >>> - Log using vin_dbg() instead of v4l2_info().
+> > > >>> ---
+> > > >>>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 17 ++++++++++++++++-
+> > > >>>  1 file changed, 16 insertions(+), 1 deletion(-)
+> > > >>>
+> > > >>> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > >>> index a5bfa76fdac6e55a..bf17fdefe90aabf5 100644
+> > > >>> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > >>> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > >>> @@ -992,9 +992,24 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
+> > > >>>  static void rvin_notify_video_device(struct rvin_dev *vin,
+> > > >>>  				     unsigned int notification, void *arg)
+> > > >>>  {
+> > > >>> +	const struct v4l2_event *event;
+> > > >>> +
+> > > >>>  	switch (notification) {
+> > > >>>  	case V4L2_DEVICE_NOTIFY_EVENT:
+> > > >>> -		v4l2_event_queue(&vin->vdev, arg);
+> > > >>> +		event = arg;
+> > > >>> +
+> > > >>> +		switch (event->type) {
+> > > >>> +		case V4L2_EVENT_XFER_ERROR:
+> > > >>> +			vin_dbg(vin,
+> > > >>> +				"Subdevice signaled transfer error, stopping.\n");
+> > > >>> +			rvin_stop_streaming(vin);
+> > > >>> +			vb2_queue_error(&vin->queue);
+> > > >>
+> > > >> Hmm, wouldn't it be the case that every driver that calls vb2_queue_error()
+> > > >> would also have to send this new event? Would it be possible to modify
+> > > >> vb2_queue_error() to raise this event? I haven't analyzed all the drivers
+> > > >> that call this function to see if that makes sense.
+> > > >>
+> > > >> Perhaps a separate new function vb2_queue_error_with_event() would also be
+> > > >> an option.
+> > > > 
+> > > > I think that maybe a good idea, but I think that would be needed on-top 
+> > > > of this work as I can't really test it. Here the rcar-csi2.ko is a 
+> > > > subdevice which detects the error condition and generates the event. And 
+> > > > this code is in rcar-vin.ko, the video device driver which reacts to the 
+> > > > event and then forwards it to user-space.
+> > > > 
+> > > > Or am I misunderstanding you? And you think I should remove the 
+> > > > v4l2_event_queue() below in favor of a new vb2_queue_error_with_event() 
+> > > > call?
+> > > 
+> > > Yes. And use vb2_queue_error_with_event in other drivers as well where
+> > > applicable. Hmm, it can't be called vb2_ since it is v4l2_ specific, so
+> > > perhaps v4l2_queue_error which takes a video_device and a vb2_queue as
+> > > arguments. I don't want this just in rcar since it makes perfect sense
+> > > as a generic event for such situations.
+> > 
+> > Handling errors in this way could be problematic, because a (CSI2) transfer
+> > error does not mean a total hardware failure on Rcar3. From my experience
+> > there are 3 kinds of CSI2 errors:
+> >   1. errors which occur sometimes, but do not affect video streaming
+> >   2. errors which occur on every start of streaming but usually do not
+> >      affect actual video streaming to VIN module after the start
+> >   3. fatal errors which require a "Software Reset" mentioned by Renesas in
+> >      the chapter 25.3.13 of the hardware manual in order to continue
+> >      video streaming
+> > This patch set makes the video pipeline unusable if we get errors described
+> > in the first scenario if I am not mistaken. In the second scenario the
+> > video pipeline was already not usable before because we end up in a
+> > continuous restart loop in rcar-csi2.c. And the third scenario is not
+> > really addressed by this patch set (or maybe the job is offloaded on to
+> > userspace)?
+> > 
+> > Maybe it's better to implement a recovery in a different way, which would
+> > consider the three mentioned error scenarios above:
+> >   1. Monitor rvin_irq after streaming has started, e.g. by using a timer
+> >      (I tried someting similar in [1])
+> >   2. restart the complete video pipeline via rvin_stop_streaming and
+> >      rvin_start_streaming if no frame is captured in a reasonable amount
+> >      of time (optionally after checking if a subdevice has sent a
+> >      V4L2_EVENT_XFER_ERROR).
+> > This would make the complete recovery process almost invisible for the
+> > application and avoid any application changes.
+> > 
+> > What do you think?
+> 
+> I think you bring up a few interesting points and for discussions sake I 
+> think we need to split it in two. One on how we could implement 
+> V4L2_EVENT_XFER_ERROR in a generic sens and one on how to best deal with 
+> errors in the R-Car Gen3 capture pipeline.
+> 
+> For the proposed V4L2_EVENT_XFER_ERROR the idea from my side is that a 
+> driver in the pipeline shall only raise this error (and propagate it to 
+> the effected video node) when there is no way to recover without 
+> involving user-space. So when this event happens an application at the 
+> very least needs to do a full s_stream cycle to restart the capture 
+> session.
 
-On Fri, Mar 4, 2022 at 7:46 AM Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
->
-> > > What about:
-> > >
-> > >         pdata->no_hpd = of_property_read_bool(np, "no-hpd");
-> > >         if (panel && !pdata->no_hpd) {
-> > >                 DRM_ERROR("Panels will not function with HPD. Enforcing no-hpd\n");
-> > >                 pdata->no_hpd = true;
-> > >         }
-> > >
-> > > That leaves it still optional to DP connectors, but enforced on eDP?
-> >
-> > Yeah, that's fine with me. Nits would be to use "warn" instead of
-> > "error" since this isn't fatal and use the non-SHOUTING versions of
-> > the prints since the SHOUTING versions are deprecated.
->
-> Could you clarify this please? The whole driver uses DRM_ERROR style. Is
-> there a new debug macro somewhere?
+Isn't a "full s_stream cycle" something what _every_ capture driver or even
+vb2 framework could execute internally without offloading the task to user
+space? This new event will probably burden userspace too much. Every V4L2
+capture application which worked fine on other SoCs will fail on RCar3 in
+the use cases where transfer errors occur until application developers
+implement handling of this event. Signalling an error via vb2_queue_error
+should be probably sufficient, because it already signals via EPOLLERR/EIO
+to userspace to do a streamoff to clear this error (as per videobuf2-core.h).
+Maybe we just have to document that userspace should try to do a streamon
+after this? EPOLLERR/EIO errors will be propagated to any application, but
+not every application subscribes to V4L2 events...
 
-Mostly looking at commit 306589856399 ("drm/print: Add deprecation
-notes to DRM_...() functions"), which I added a few months ago.
-Despite the fact that I added the documentation, though, I'm not the
-one driving the transition away from the SHOUTing versions. If you
-look through history you can see this is driven by more senior DRM
-people.
+I took a look at the other drivers and found that imx-media-csi.c seems to
+follow a similar approach to what I described in my last email. There is a
+2 second timer, which monitors the csi_idmac_eof_interrupt and signals a
+fatal error to the capture device via vb2_queue_error when this timer
+expires. Monitoring end-of-frame interrupts looks also like a more robust
+solution, because in this way we know reliably when something has failed
+in the pipeline in contrast to reacting to start-of-transfer errors, which
+can be false positives. I think it would be good to follow a similar
+approach by adding an EOF timer to rvin_irq. This should also cover errors
+on the digital pin camera interface if we get any in the future. After
+this we could add a few additional improvements:
+ 1. configurability of the EOF timeout. 2 seconds can be too much,
+    especially for automotive use cases. Probably this timeout could be
+    reduced depending on the source frame rate.
+ 2. internal streamoff/streamon cycle after the timer expires instead of
+    calling vb2_queue_error
 
-IMO it's fine to transition slowly to the new non-shouting versions
-and it doesn't bother me to have some code in a file using the old
-SHOUTing versions and some using the newer functions. Basically for
-new code or when we're touching code anyway we do the transition then.
-That being said, if you want to
+> On the particulars of the VIN capture pipeline the only way I found so 
+> far to freak out the CSI-2 receiver enough to trigger the event with this 
+> patch series is to disconnect the HDMI source from the ADV7481 while 
+> streaming and I don't think any in kernel recover method can fix that 
+> ;-)
 
--Doug
+In this case I would expect an V4L2_EVENT_EOS or V4L2_EVENT_SOURCE_CHANGE
+from the adv748x driver. Maybe we should call vb2_queue_error for these
+events as well. But the described EOF timeout approach could also cover
+this use case.
+
+> Over all I do agree with your idea that if we can recover from errors 
+> that are recovererable that is good. For this series I would like to 
+> focus on the former to get V4L2_EVENT_XFER_ERROR in and then if we have 
+> ways to provoke and test recovery in the Gen3 pipeline we can add such 
+> things to the drivers. Do this make sens or do you think the change in 
+> the R-Car CSI-2 driver to raise V4L2_EVENT_XFER_ERROR is to harsh? My 
+> motivation for is is the new datasheet and discussions with Renesas, but 
+> then again my only way to trigger CSI-2 errors is to pull cables while 
+> streaming so maybe I'm biased as such issues can't really be recover 
+> from...
+> 
+> Let me know what you think, I was about to spin a new version of this 
+> series.
+
+I believe this event might be useful for subdevice drivers which want to
+request a streamoff/streamon cycle from the capture driver but it's
+probably not useful for the RCar3 CSI2 driver in the current state because
+reacting to start-of-transfer errors can be risky due to false positives.
+
+What do you think about implementing an approach similar to imx-media-csi.c
+first?
+
+> > 
+> > [1] https://urldefense.proofpoint.com/v2/url?u=https-3A__lore.kernel.org_linux-2Drenesas-2Dsoc_1592588777-2D100596-2D1-2Dgit-2Dsend-2Demail-2Dmrodin-40de.adit-2Djv.com_&d=DwIDAw&c=euGZstcaTDllvimEN8b7jXrwqOf-v5A_CdpgnVfiiMM&r=sWsgk3pKkv5GeIDM2RZlPY8TjNFU2D0oBeOj6QNBadE&m=iHMOF-_0M012_DHC6tHxMudpVvpBDqktUtXsKy4xpY0&s=B4GPIasxu8VP04sLBFvhbmr8yhotp6GcfDQqEKjqeAc&e=
+> > 
+> > > Regards,
+> > > 
+> > > 	Hans
+> > > 
+> > > > 
+> > > >>
+> > > >> Regards,
+> > > >>
+> > > >> 	Hans
+> > > >>
+> > > >>> +			break;
+> > > >>> +		default:
+> > > >>> +			break;
+> > > >>> +		}
+> > > >>> +
+> > > >>> +		v4l2_event_queue(&vin->vdev, event);
+> > > >>>  		break;
+> > > >>>  	default:
+> > > >>>  		break;
+> > > >>>
+> > > >>
+> > > > 
+> > > 
+> > 
+> > -- 
+> > Best Regards,
+> > Michael
+> 
+> -- 
+> Kind Regards,
+> Niklas Söderlund
+
+-- 
+Best Regards,
+Michael
