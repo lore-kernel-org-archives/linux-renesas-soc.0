@@ -2,78 +2,70 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFC2C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Mar 2022 21:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0C2C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Mar 2022 21:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348245AbiCHVRO (ORCPT
+        id S1348290AbiCHVY2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 16:17:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50942 "EHLO
+        Tue, 8 Mar 2022 16:24:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234717AbiCHVRM (ORCPT
+        with ESMTP id S234333AbiCHVY0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Mar 2022 16:17:12 -0500
+        Tue, 8 Mar 2022 16:24:26 -0500
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4060F4739F;
-        Tue,  8 Mar 2022 13:16:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6999832ED5;
+        Tue,  8 Mar 2022 13:23:28 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.90,165,1643641200"; 
-   d="scan'208";a="113751042"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Mar 2022 06:16:14 +0900
+   d="scan'208";a="113751372"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 09 Mar 2022 06:23:27 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B24134007547;
-        Wed,  9 Mar 2022 06:16:11 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1EACA40ED6B8;
+        Wed,  9 Mar 2022 06:23:24 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] dt-bindings: gpu: mali-bifrost: Document RZ/V2L SoC
-Date:   Tue,  8 Mar 2022 21:15:43 +0000
-Message-Id: <20220308211543.3081-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] dt-bindings: thermal: rzg2l-thermal: Document RZ/V2L bindings
+Date:   Tue,  8 Mar 2022 21:23:15 +0000
+Message-Id: <20220308212315.4551-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The Renesas RZ/V2L SoC (a.k.a R9A07G054) has a Bifrost Mali-G31 GPU,
-add a compatible string for it.
+Document RZ/V2L TSU bindings. The TSU block on RZ/V2L is identical to one
+found on RZ/G2L SoC. No driver changes are required as generic compatible
+string "renesas,rzg2l-tsu" will be used as a fallback.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-index 4d6bfae0653c..85f8d4764740 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-@@ -20,6 +20,7 @@ properties:
-           - mediatek,mt8183-mali
-           - realtek,rtd1619-mali
-           - renesas,r9a07g044-mali
-+          - renesas,r9a07g054-mali
-           - rockchip,px30-mali
-           - rockchip,rk3568-mali
-       - const: arm,mali-bifrost # Mali Bifrost GPU model/revision is fully discoverable
-@@ -109,7 +110,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: renesas,r9a07g044-mali
-+            enum:
-+              - renesas,r9a07g044-mali
-+              - renesas,r9a07g054-mali
-     then:
-       properties:
-         interrupts:
+diff --git a/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml b/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
+index ccab9511a042..dfb6dce5652a 100644
+--- a/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
+@@ -18,6 +18,7 @@ properties:
+     items:
+       - enum:
+           - renesas,r9a07g044-tsu # RZ/G2{L,LC}
++          - renesas,r9a07g054-tsu # RZ/V2L
+       - const: renesas,rzg2l-tsu
+ 
+   reg:
 -- 
 2.17.1
 
