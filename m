@@ -2,81 +2,167 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6313C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Mar 2022 00:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFD1C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Mar 2022 03:38:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344135AbiCHA4W (ORCPT
+        id S234284AbiCHDjp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 19:56:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52408 "EHLO
+        Mon, 7 Mar 2022 22:39:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233022AbiCHA4V (ORCPT
+        with ESMTP id S229956AbiCHDjo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Mar 2022 19:56:21 -0500
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C1FBF9;
-        Mon,  7 Mar 2022 16:55:26 -0800 (PST)
-Received: by mail-oo1-f43.google.com with SMTP id x26-20020a4a621a000000b00320d7d4af22so6907708ooc.4;
-        Mon, 07 Mar 2022 16:55:26 -0800 (PST)
+        Mon, 7 Mar 2022 22:39:44 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 273E133A04
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Mar 2022 19:38:49 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id mr24-20020a17090b239800b001bf0a375440so1045256pjb.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Mar 2022 19:38:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=VvVKQ0xuMFwrLIZBShHsq9d26IHdBD29zkULBJa+UFk=;
+        b=d9IJW/V+7vk2zigZajhopRr12GSIMkoTePW8DvOzn7t2DzI9+055H+an9UkIvC1PIV
+         S8mmfgGw4tZ6REwq6tWN4hx64ZZfwLPnmRbv3mYSAxddjjygEgePi1X7OrE4H18smimB
+         bYiPseFaIa3oiadyabRqZ/b34C4ifnyp2cwQk3vPSYy088bhuHONcbUW4Txb05eyiUDt
+         WnFOXxnzqJcILNxs+u+yJkcuFu4xjwrfBpqO/GmnTPj4e1TXAmqfFgfQlCAVMxW5Jr0l
+         eQ1YkXtKFVEubABJTx0i9NyTvU3EnTpdGrhgHXqKh9dt1pPe3yl4S1sXG62TJ+Zsem+4
+         foCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0y79HsrV/cQcEV63BhYFdq2yxZda7SPsjwaT5lakNbY=;
-        b=EXzWj5RRXwnbJHazRtRd9X5z4j8lSIHVmtkHDxF+V7RbhKC5TJOe2U0x+0xd2zBT7Y
-         Fga0nlYJq/HRU4NYBdh+yMwrnSezHHaU0009miZLxPbvQqM8oVwzJ6suhiZy7Veou+iF
-         d3YAwv/ZEUl5XRT0lQyertfNaWslvnFCpbnVJmLcChP1JaQyDyhNAsamWfzQgLwIIIUs
-         9DaF1fdwHJP6lbeI4jKPaQmrOzHi931USH92ZRgALxXcmFodk8wOQ4lJdxiWCBoMxu3o
-         +g3MkIak7QfhZvOVG+wqQ/VIZZREm0J2B17ZI/xS0/kl2ztzFT448zSkDqwdwSBBcRQL
-         /Wwg==
-X-Gm-Message-State: AOAM532IQkDyScefg5MVDG3W8jg1oOOrAupPj8qPyoe2M2PyVKSD9wT4
-        D9EJA5Yaaubc5MgPN84oAsQVuqxsHg==
-X-Google-Smtp-Source: ABdhPJy8FFrI9eysOJJFkX3bjPTiMmIv2K2yQxiFxk6/nslmQXUfuUZFzvcBmqu55ohmUfMuFtH5+Q==
-X-Received: by 2002:a05:6870:891d:b0:da:b3f:2b3f with SMTP id i29-20020a056870891d00b000da0b3f2b3fmr943332oao.222.1646700925478;
-        Mon, 07 Mar 2022 16:55:25 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n128-20020a4a4086000000b0032118eda64bsm825770ooa.38.2022.03.07.16.55.24
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=VvVKQ0xuMFwrLIZBShHsq9d26IHdBD29zkULBJa+UFk=;
+        b=GKNAnxASmzQCC7behT5xC9fsYaTD1/63rqo1xUBd38Z8y8fy63sg2ThVerVpgtJ5X9
+         0Y8TB4vKde1EHdYh0uD6VwpikZX932/G2Ht/RCYz+rzynm8DWJ19z/oWE7KPYbLlLnC7
+         3Ug4YsvUart3vuQPhUAVUufxzuJdk/QjF6VWXTLAFpwtooxi1gkXIfaYEmnjRch9XP8L
+         N5fi4hOpGYvZfQhn8aG9Wm94S6M+E7/lEh1LN1daDABjsOjVtprsKgMDlx9GK2O1w81N
+         mh1G0k79AnZrN87LFkUUOLy7h9suSs2+qXvoqk+mBsCh7aEAdCMatsRdGc5Xjsv9ftXD
+         zXZw==
+X-Gm-Message-State: AOAM5312f85wCLsCU4fqcz25WeP2jyAYxr0kdm2BxODRgJFubchLoGHR
+        HdL4kSYUQ+M3BSRMI5i97mQI2GAkn2de2r8Rr1w=
+X-Google-Smtp-Source: ABdhPJyUTAVLjKBB2OO5p+o5ejWHwWz9O5jvvvo5pYAU6uNXIDkFRTKcWklSGGECZrSAYv4OmLv7BQ==
+X-Received: by 2002:a17:902:b945:b0:14e:e5c4:7bcd with SMTP id h5-20020a170902b94500b0014ee5c47bcdmr15534983pls.48.1646710728489;
+        Mon, 07 Mar 2022 19:38:48 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id l13-20020a056a00140d00b004e13da93eaasm17794456pfu.62.2022.03.07.19.38.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 16:55:24 -0800 (PST)
-Received: (nullmailer pid 3603384 invoked by uid 1000);
-        Tue, 08 Mar 2022 00:55:23 -0000
-Date:   Mon, 7 Mar 2022 18:55:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V2 4/7] dt-bindings: clock: renesas: Document RZ/G2UL SoC
-Message-ID: <YiapeywStLiZpJxw@robh.at.kernel.org>
-References: <20220303162634.6572-1-biju.das.jz@bp.renesas.com>
- <20220303162634.6572-5-biju.das.jz@bp.renesas.com>
+        Mon, 07 Mar 2022 19:38:48 -0800 (PST)
+Message-ID: <6226cfc8.1c69fb81.2cbca.e2fd@mx.google.com>
+Date:   Mon, 07 Mar 2022 19:38:48 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220303162634.6572-5-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: renesas-devel-2022-03-07-v5.17-rc7
+Subject: renesas/master baseline-nfs: 54 runs,
+ 2 regressions (renesas-devel-2022-03-07-v5.17-rc7)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 03 Mar 2022 16:26:31 +0000, Biju Das wrote:
-> Document the device tree binding for the Renesas RZ/G2UL Type-1
-> and Type-2 SoC. RZ/G2UL Type-2 has fewer clocks than RZ/G2UL Type-1
-> SoC.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2:
->  * No change
-> ---
->  .../devicetree/bindings/clock/renesas,rzg2l-cpg.yaml     | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
+renesas/master baseline-nfs: 54 runs, 2 regressions (renesas-devel-2022-03-=
+07-v5.17-rc7)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Regressions Summary
+-------------------
+
+platform            | arch  | lab          | compiler | defconfig        | =
+regressions
+--------------------+-------+--------------+----------+------------------+-=
+-----------
+r8a77950-salvator-x | arm64 | lab-baylibre | gcc-10   | defconfig+crypto | =
+1          =
+
+r8a77950-salvator-x | arm64 | lab-baylibre | gcc-10   | defconfig        | =
+1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-03-07-v5.17-rc7/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-03-07-v5.17-rc7
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      09bb57453137ffbcb765c7dbb8f431a710096d59 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform            | arch  | lab          | compiler | defconfig        | =
+regressions
+--------------------+-------+--------------+----------+------------------+-=
+-----------
+r8a77950-salvator-x | arm64 | lab-baylibre | gcc-10   | defconfig+crypto | =
+1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6226a08073684892b4c62a79
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+crypto
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-03-07-v5.17-rc7/arm64/defconfig+crypto/gcc-10/lab-baylibre/baseline-nfs=
+-r8a77950-salvator-x.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-03-07-v5.17-rc7/arm64/defconfig+crypto/gcc-10/lab-baylibre/baseline-nfs=
+-r8a77950-salvator-x.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220228.1/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/6226a08073684892b=
+4c62a7a
+        failing since 13 days (last pass: renesas-devel-2022-02-21-v5.17-rc=
+5, first fail: renesas-devel-2022-02-22-v5.17-rc5) =
+
+ =
+
+
+
+platform            | arch  | lab          | compiler | defconfig        | =
+regressions
+--------------------+-------+--------------+----------+------------------+-=
+-----------
+r8a77950-salvator-x | arm64 | lab-baylibre | gcc-10   | defconfig        | =
+1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6226abadac75af1177c62968
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-03-07-v5.17-rc7/arm64/defconfig/gcc-10/lab-baylibre/baseline-nfs-r8a779=
+50-salvator-x.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-03-07-v5.17-rc7/arm64/defconfig/gcc-10/lab-baylibre/baseline-nfs-r8a779=
+50-salvator-x.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220228.1/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/6226abadac75af117=
+7c62969
+        failing since 7 days (last pass: renesas-devel-2022-02-22-v5.17-rc5=
+, first fail: renesas-devel-2022-02-28-v5.17-rc6) =
+
+ =20
