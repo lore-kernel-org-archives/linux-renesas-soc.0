@@ -2,127 +2,105 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65537C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Mar 2022 16:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD453C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Mar 2022 16:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234018AbiCIQgw (ORCPT
+        id S236756AbiCIQgx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Mar 2022 11:36:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33478 "EHLO
+        Wed, 9 Mar 2022 11:36:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234340AbiCIQdw (ORCPT
+        with ESMTP id S234830AbiCIQcr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Mar 2022 11:33:52 -0500
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A96376E06;
-        Wed,  9 Mar 2022 08:29:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1646843160;
+        Wed, 9 Mar 2022 11:32:47 -0500
+Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [85.215.255.102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B03DF5403;
+        Wed,  9 Mar 2022 08:28:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1646843176;
     s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=Uq80fOiGqpSIpwp9BdSSfbQcuCBRb30aYGTDHn4N09c=;
-    b=VgCPa6fg5PmIfnCObiaXGdc1Fq5FiOFuYVHYeJ/Oy8QmxuJl6Qshy5DkeSmSA3Wml8
-    r9sDlGGbFgGs9i+ZP+SuLIbi9Se5D7Ehfjqbo5mPsLt9xk39H+daEhopHQ7KJku2IsPU
-    FMPzEbM900pFBerXxI/vP/0jSnPkjahUWoC2iY3jCHBMyNlRTvQvK9qguaCNEGVngM99
-    myrTZeeFIpZg3Bh0hwCD3RBhls0YsisjZhgrOHbFNE6CZeAIYGPmccGQLkHUEyHvWjuv
-    MKa5TaRTtgidolIWEPAxaO/jUbcG1AIesMcgMqHzMFLoAM8hzFLn9Y6M0N2seeQSmlZR
-    4BcA==
+    bh=+VSCMatbyH76KC33hEonHOTYQE2t7bjYbaDc7Ro+kQY=;
+    b=Quz1wpa7Nm2lKtSzxsxlI31HbReJxOEeR3CWkgEgLa5w2J1RV9RvrmjA3Lsp9M6VU/
+    BhvzpbHfJ22t0lFfLnTpUIKXEqRmY/fKS4Qahk8qLwJiIkFxx/uO7nGtV4lyruopaFS7
+    KUNzD4MHGzASC2S8g11qmwdQgVt6wt0jKx7bVuDdXXxSLlifHKIFZzm2B/j1LRCeEeo0
+    vP9zAJqhhhzrvXIdJidEZOe+9u+plUYPa96nbhWX2NaATWlsiiFZqjc+B8wk5GgiQt+M
+    VuyotUfmW3qjKev8ChsJ05OtVSdtCJo2YM34A1uT4EeHvan757AW4UPArr6CaDpQ1NQp
+    GYzg==
 Authentication-Results: strato.com;
     dkim=none
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fCs/87J3I0="
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82Fcd2Ywjw=="
 X-RZG-CLASS-ID: mo00
-Received: from oxapp05-03.back.ox.d0m.de
-    by smtp-ox.front (RZmta 47.40.1 AUTH)
-    with ESMTPSA id 646b0ey29GPxJW3
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+Received: from gummo.fritz.box
+    by smtp.strato.de (RZmta 47.40.1 DYNA|AUTH)
+    with ESMTPSA id 646b0ey29GQFJWE
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Wed, 9 Mar 2022 17:25:59 +0100 (CET)
-Date:   Wed, 9 Mar 2022 17:25:59 +0100 (CET)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Vincent MAILHOL <mailhol.vincent@wanadoo.fr>,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net, linux-can@vger.kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
+    Wed, 9 Mar 2022 17:26:15 +0100 (CET)
+From:   Ulrich Hecht <uli+renesas@fpond.eu>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     netdev@vger.kernel.org, davem@davemloft.net,
+        linux-can@vger.kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
         biju.das.jz@bp.renesas.com, wsa@kernel.org,
         yoshihiro.shimoda.uh@renesas.com, wg@grandegger.com,
-        mkl@pengutronix.de, kuba@kernel.org, socketcan@hartkopp.net,
-        geert@linux-m68k.org, kieran.bingham@ideasonboard.com
-Message-ID: <616372185.25555.1646843159934@webmail.strato.com>
-In-Reply-To: <CAMZ6RqK_39QmvZAjBZhoH2qbbmws9ac4JgrayR=d5m5p+e39XA@mail.gmail.com>
-References: <20220209163806.18618-1-uli+renesas@fpond.eu>
- <20220209163806.18618-2-uli+renesas@fpond.eu>
- <CAMZ6RqK_39QmvZAjBZhoH2qbbmws9ac4JgrayR=d5m5p+e39XA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] can: rcar_canfd: Add support for r8a779a0 SoC
+        mkl@pengutronix.de, kuba@kernel.org, mailhol.vincent@wanadoo.fr,
+        socketcan@hartkopp.net, geert@linux-m68k.org,
+        kieran.bingham@ideasonboard.com, horms@verge.net.au,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 3/4] arm64: dts: renesas: r8a779a0-falcon: enable CANFD 0 and 1
+Date:   Wed,  9 Mar 2022 17:26:08 +0100
+Message-Id: <20220309162609.3726306-4-uli+renesas@fpond.eu>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220309162609.3726306-1-uli+renesas@fpond.eu>
+References: <20220309162609.3726306-1-uli+renesas@fpond.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.5-Rev39
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Thanks for your review!
+Enables confirmed-working CAN interfaces 0 and 1 on the Falcon board.
 
-> On 02/14/2022 8:10 AM Vincent MAILHOL <mailhol.vincent@wanadoo.fr> wrote:
-> > -#define RCANFD_GERFL_ERR(gpriv, x)     ((x) & (RCANFD_GERFL_EEF1 |\
-> > -                                       RCANFD_GERFL_EEF0 | RCANFD_GERFL_MES |\
-> > -                                       (gpriv->fdmode ?\
-> > -                                        RCANFD_GERFL_CMPOF : 0)))
-> > +#define RCANFD_GERFL_ERR(x)            ((x) & (reg_v3u(gpriv, RCANFD_GERFL_EEF0_7, \
-> > +                                       RCANFD_GERFL_EEF0 | RCANFD_GERFL_EEF1) | \
-> > +                                       RCANFD_GERFL_MES | ((gpriv)->fdmode ? \
-> > +                                       RCANFD_GERFL_CMPOF : 0)))
-> 
-> Instead of packing everything on the right, I suggest putting in a bit more air.
-> Something like that:
-> 
-> #define RCANFD_GERFL_ERR(x)                                             \
->         ((x) & (reg_v3u(gpriv, RCANFD_GERFL_EEF0_7,                     \
->                         RCANFD_GERFL_EEF0 | RCANFD_GERFL_EEF1) |        \
->                 RCANFD_GERFL_MES |                                      \
->                 ((gpriv)->fdmode ? RCANFD_GERFL_CMPOF : 0)))
-> 
-> Same comment applies to other macros.
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../boot/dts/renesas/r8a779a0-falcon.dts      | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-That does indeed look a lot better.
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+index e46dc9aa0a43..75e27f950ac0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -65,4 +65,28 @@ pins_mii {
+ 		};
+ 
+ 	};
++
++	canfd0_pins: canfd0 {
++		groups = "canfd0_data";
++		function = "canfd0";
++	};
++
++	canfd1_pins: canfd1 {
++		groups = "canfd1_data";
++		function = "canfd1";
++	};
++};
++
++&canfd {
++	pinctrl-0 = <&canfd0_pins>, <&canfd1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	channel0 {
++		status = "okay";
++	};
++
++	channel1 {
++		status = "okay";
++	};
+ };
+-- 
+2.30.2
 
-> >  /* Helper functions */
-> > +static inline bool is_v3u(struct rcar_canfd_global *gpriv)
-> > +{
-> > +       return gpriv->chip_id == RENESAS_R8A779A0;
-> > +}
-> > +
-> > +static inline u32 reg_v3u(struct rcar_canfd_global *gpriv,
-> > +                         u32 v3u, u32 not_v3u)
-> > +{
-> > +       return is_v3u(gpriv) ? v3u : not_v3u;
-> > +}
-> 
-> Nitpick but I would personally prefer if is_v3u() and reg_v3u()
-> were declared before the macros in which they are being used.
-
-So would I, but that would require extensive reshuffling of the code, which I think is not worth the effort for such a minor issue.
-
-> > +               if (is_v3u(gpriv)) {
-> > +                       cfg = (RCANFD_NCFG_NTSEG1(tseg1) |
-> > +                              RCANFD_NCFG_NBRP(brp) |
-> > +                              RCANFD_NCFG_NSJW(sjw) |
-> > +                              RCANFD_NCFG_NTSEG2(tseg2));
-> > +               } else {
-> > +                       cfg = (RCANFD_CFG_TSEG1(tseg1) |
-> > +                              RCANFD_CFG_BRP(brp) |
-> > +                              RCANFD_CFG_SJW(sjw) |
-> > +                              RCANFD_CFG_TSEG2(tseg2));
-> > +               }
-> 
-> Nitpick: can't you use one of your reg_v3u() functions here?
-> |        cfg = reg_v3u(gpriv, ..., ...)?
-
-Technically yes, but I think of reg_v3u() as choosing between two register layouts, and this is something else.
-
-CU
-Uli
