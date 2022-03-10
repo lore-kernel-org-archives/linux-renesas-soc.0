@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8F9C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Mar 2022 16:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D22C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Mar 2022 16:17:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242146AbiCJQSp (ORCPT
+        id S239354AbiCJQSq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Mar 2022 11:18:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37694 "EHLO
+        Thu, 10 Mar 2022 11:18:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242215AbiCJQSG (ORCPT
+        with ESMTP id S242217AbiCJQSG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 10 Mar 2022 11:18:06 -0500
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6758A190B6A
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Mar 2022 08:17:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B62F190B65
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Mar 2022 08:17:03 -0800 (PST)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id D726AC000A;
-        Thu, 10 Mar 2022 16:16:56 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id D781FC0010;
+        Thu, 10 Mar 2022 16:17:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1646929018;
+        t=1646929022;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TNEWGrWM8MEFCyuhFvcwN9AqeFVgL6hJKTp6D8Wa6aw=;
-        b=LzKToIzjJfKeaST+C0vREtqd+dePn1INiJJoqRM/wvRSCcCXvzTXzVMKOu8ddU4h59jXGb
-        AaO32n3ds703Fr8aJv2dQWC/CBHac0IIhsL4itjJdHu5ozNmJwRLHbq0lP9qeZdiKhNmu1
-        enjuJPl7aUtomGJtUGujUQ4CoxBwOTZyC+0mMMuWahxDiLc6XlNwn7of98Nb3CI4+P1E/q
-        Q0fbrHwxcplLsuLsOYjkde7J/uaxg5W6xBNvk5gx/SZqTRBMWq96GG6SNqnmO4OOX7JRjo
-        XEyRUKWqKp2rFvYtvkOfbYmQ5KOBiqTSltKbqRzRD2xBdywVNdn/jFIP5LqWMA==
+        bh=FPCSyHd7wkuRRyYu2juVlQEYNZijKkKxdQfMbYXWDos=;
+        b=Yc5tsTQC2tsD3R1Nxu1KKab3oHy1kAXFfdc7MytzOdO44xiwC4Fkg6kFRsqpGS1PFJN/PR
+        +dZIllOMm2a5wweNCIhZuAp/gC8dSMyfjNvCuRYs1NB8uVEHLE808vpkKuUaMP3+izvAgs
+        rYAh0KMERNv+O+tz0gtR1qpYnBLKfmNfirJ3Gq19y40bSCc8MOMoEfcS0669GtUZZj+FL7
+        IQ4/3cuO+lfrT5OgNkP5Ah3oo+w0iinA+jhZvWipWazhsH9pjbV2a9VeSN5VByZ9qnEHtQ
+        9P194hravE96WtdsmURc0zNO/SLwYPwLOKW5RyHkZQ2FBTvNn28mxgUdPZw/Kg==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     linux-renesas-soc@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -48,9 +48,9 @@ Cc:     Jiri Slaby <jirislaby@kernel.org>,
         Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 2/7] serial: 8250_dw: Move the per-device structure
-Date:   Thu, 10 Mar 2022 17:16:45 +0100
-Message-Id: <20220310161650.289387-3-miquel.raynal@bootlin.com>
+Subject: [PATCH 4/7] serial: 8250_dw: Provide the RZN1 CPR register value
+Date:   Thu, 10 Mar 2022 17:16:47 +0100
+Message-Id: <20220310161650.289387-5-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220310161650.289387-1-miquel.raynal@bootlin.com>
 References: <20220310161650.289387-1-miquel.raynal@bootlin.com>
@@ -61,72 +61,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+On the RZN1 SoC, the DW serial IP has been synthesized without CPR
+support. In order to continue being able to parse the hardware
+capabilities, provide the equivalent register value as platform data.
 
-This structure needs to be reused from dwlib, so let's move it into a
-shared header. There is no functional change.
-
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-[miquel.raynal@bootlin.com: Extracted from a bigger change]
+Suggested-by: Phil Edworthy <phil.edworthy@renesas.com>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/tty/serial/8250/8250_dw.c    | 16 ----------------
- drivers/tty/serial/8250/8250_dwlib.h | 16 ++++++++++++++++
- 2 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/tty/serial/8250/8250_dw.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 1769808031c5..ee7562a9ec76 100644
+index ee7562a9ec76..1f7a423d6ef2 100644
 --- a/drivers/tty/serial/8250/8250_dw.c
 +++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -37,22 +37,6 @@
- /* DesignWare specific register fields */
- #define DW_UART_MCR_SIRE		BIT(6)
- 
--struct dw8250_data {
--	struct dw8250_port_data	data;
--
--	u8			usr_reg;
--	int			msr_mask_on;
--	int			msr_mask_off;
--	struct clk		*clk;
--	struct clk		*pclk;
--	struct notifier_block	clk_notifier;
--	struct work_struct	clk_work;
--	struct reset_control	*rst;
--
--	unsigned int		skip_autocfg:1;
--	unsigned int		uart_16550_compatible:1;
--};
--
- static inline struct dw8250_data *to_dw8250_data(struct dw8250_port_data *data)
- {
- 	return container_of(data, struct dw8250_data, data);
-diff --git a/drivers/tty/serial/8250/8250_dwlib.h b/drivers/tty/serial/8250/8250_dwlib.h
-index 83d528e5cc21..ef63eaf7e598 100644
---- a/drivers/tty/serial/8250/8250_dwlib.h
-+++ b/drivers/tty/serial/8250/8250_dwlib.h
-@@ -16,5 +16,21 @@ struct dw8250_port_data {
- 	u8			dlf_size;
+@@ -677,11 +677,15 @@ static const struct dev_pm_ops dw8250_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(dw8250_runtime_suspend, dw8250_runtime_resume, NULL)
  };
  
-+struct dw8250_data {
-+	struct dw8250_port_data	data;
-+
-+	u8			usr_reg;
-+	int			msr_mask_on;
-+	int			msr_mask_off;
-+	struct clk		*clk;
-+	struct clk		*pclk;
-+	struct notifier_block	clk_notifier;
-+	struct work_struct	clk_work;
-+	struct reset_control	*rst;
-+
-+	unsigned int		skip_autocfg:1;
-+	unsigned int		uart_16550_compatible:1;
++static const struct dw8250_platform_data rzn1_pdata = {
++	.cpr = 0x00012f32,
 +};
 +
- void dw8250_do_set_termios(struct uart_port *p, struct ktermios *termios, struct ktermios *old);
- void dw8250_setup_port(struct uart_port *p);
+ static const struct of_device_id dw8250_of_match[] = {
+ 	{ .compatible = "snps,dw-apb-uart" },
+ 	{ .compatible = "cavium,octeon-3860-uart" },
+ 	{ .compatible = "marvell,armada-38x-uart" },
+-	{ .compatible = "renesas,rzn1-uart" },
++	{ .compatible = "renesas,rzn1-uart", .data = &rzn1_pdata },
+ 	{ .compatible = "starfive,jh7100-uart" },
+ 	{ /* Sentinel */ }
+ };
 -- 
 2.27.0
 
