@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6293C4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Mar 2022 16:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A840C4167D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Mar 2022 16:17:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242070AbiCJQSl (ORCPT
+        id S241803AbiCJQSl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 10 Mar 2022 11:18:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37652 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242244AbiCJQSI (ORCPT
+        with ESMTP id S242207AbiCJQSG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Mar 2022 11:18:08 -0500
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703C5190C28
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Mar 2022 08:17:06 -0800 (PST)
+        Thu, 10 Mar 2022 11:18:06 -0500
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22056190C38
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Mar 2022 08:17:01 -0800 (PST)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id DE54DC000E;
-        Thu, 10 Mar 2022 16:17:02 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id B7057C0005;
+        Thu, 10 Mar 2022 16:16:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1646929025;
+        t=1646929020;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QfuY4BPsPm4y8C369DK0IcrB8LFleBUBPeKx7mPUKMc=;
-        b=ZgkAxhHsTWsS4dqDk7Gf4CSbFZtSWOs6XVNw3sLh6Pf+BMuNgJ69/yO8bB5ZjUudMKABiF
-        w9FeqUIcxWhxuiSmLezyoJsHvdPesB3JjrTlOnqHTzGfv0nX9b/Rq7Hdlqpzw8BV05kD8k
-        iaIs2Zimhs/JrnTZin5bJ9/PT7mHwUTGf+4KDlKsLUofb8BfHF+36dzI1I/Vy+//iMYzem
-        WTm+vGXGhjNXHaUWWtiWWZ3ja6hUBFgEMQ0sAs5Bhgqq7vUFv7k1tvC8O0Jtwg+NOhMtye
-        8JSD6Njo4XtsQDEOaTobnELZ0HYZMNa+sr6dNA/xK2aszX5B5tTH+HKMj+3FGA==
+        bh=CJZBZm79jOepeJwYz+AdnFA8gp47gjCL5Z1SD7IGsiA=;
+        b=DZgGosu/Kfy2qhe+UyyPoAgETCzi225XY0Zht+wbAoOivCQEg98kJj3vq/ODk2wWsdqoGh
+        iCgNPaEm9dLYFUy4RIjLZYASU+3YM/FcII9xGCu98FMbDqeIjNd1YbFQuwJnUe2bcA9jYo
+        fKBzCNCZ1+4CFZscKQ2b2qA1VoMrytdhIEvAZm3lK9WXpOOrcYA4MH2BD9Rgj6bAjTZYOI
+        tkYyokxEGNUAqLI2LOjDNLhvcL4GN3r+RP8wRURCzd+oIeKVhZAUyR1NEIrn2Mj9B1IGWR
+        4RGzbVeCfTsALayDzuk/jGbLdFkHEjZAPHmlhg6FFg2PqpfT8I9MFsGClK84KQ==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     linux-renesas-soc@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -48,9 +48,9 @@ Cc:     Jiri Slaby <jirislaby@kernel.org>,
         Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 5/7] serial: 8250_dw: Add a dma_capable bit to the platform data
-Date:   Thu, 10 Mar 2022 17:16:48 +0100
-Message-Id: <20220310161650.289387-6-miquel.raynal@bootlin.com>
+Subject: [PATCH 3/7] serial: 8250_dw: Use a fallback CPR value if not synthesized
+Date:   Thu, 10 Mar 2022 17:16:46 +0100
+Message-Id: <20220310161650.289387-4-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220310161650.289387-1-miquel.raynal@bootlin.com>
 References: <20220310161650.289387-1-miquel.raynal@bootlin.com>
@@ -63,76 +63,66 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Phil Edworthy <phil.edworthy@renesas.com>
 
-The CPR register can give the information whether the IP is DMA capable
-or not. Let's extract this information and use it to discriminate when
-the DMA can be hooked up or not.
+This UART controller can be synthesized without the CPR register.
+In that case, let's use the platform information to provide a CPR value.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/tty/serial/8250/8250_dw.c    | 4 ++--
- drivers/tty/serial/8250/8250_dwlib.c | 7 +++++--
- drivers/tty/serial/8250/8250_dwlib.h | 1 +
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/tty/serial/8250/8250_dwlib.c | 10 ++++++++--
+ drivers/tty/serial/8250/8250_dwlib.h |  4 ++++
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 1f7a423d6ef2..c0f54284bc70 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -556,8 +556,8 @@ static int dw8250_probe(struct platform_device *pdev)
- 	if (!data->skip_autocfg)
- 		dw8250_setup_port(p);
- 
--	/* If we have a valid fifosize, try hooking up DMA */
--	if (p->fifosize) {
-+	/* If we have a valid fifosize and DMA support, try hooking up DMA */
-+	if (p->fifosize && data->dma_capable) {
- 		data->data.dma.rxconf.src_maxburst = p->fifosize / 4;
- 		data->data.dma.txconf.dst_maxburst = p->fifosize / 4;
- 		up->dma = &data->data.dma;
 diff --git a/drivers/tty/serial/8250/8250_dwlib.c b/drivers/tty/serial/8250/8250_dwlib.c
-index 5cf298c5a0f9..5ec7c12ed117 100644
+index 622d3b0d89e7..5cf298c5a0f9 100644
 --- a/drivers/tty/serial/8250/8250_dwlib.c
 +++ b/drivers/tty/serial/8250/8250_dwlib.c
-@@ -92,6 +92,8 @@ void dw8250_setup_port(struct uart_port *p)
+@@ -3,6 +3,7 @@
+ 
+ #include <linux/bitops.h>
+ #include <linux/device.h>
++#include <linux/of_device.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/serial_8250.h>
+@@ -90,6 +91,7 @@ EXPORT_SYMBOL_GPL(dw8250_do_set_termios);
+ void dw8250_setup_port(struct uart_port *p)
  {
  	struct uart_8250_port *up = up_to_u8250p(p);
- 	const struct dw8250_platform_data *plat = of_device_get_match_data(up->port.dev);
-+	struct dw8250_port_data *d = p->private_data;
-+	struct dw8250_data *data = container_of(d, struct dw8250_data, data);
++	const struct dw8250_platform_data *plat = of_device_get_match_data(up->port.dev);
  	u32 reg;
  
  	/*
-@@ -110,8 +112,6 @@ void dw8250_setup_port(struct uart_port *p)
- 	dw8250_writel_ext(p, DW_UART_DLF, 0);
+@@ -116,8 +118,12 @@ void dw8250_setup_port(struct uart_port *p)
+ 	}
  
- 	if (reg) {
--		struct dw8250_port_data *d = p->private_data;
--
- 		d->dlf_size = fls(reg);
- 		p->get_divisor = dw8250_get_divisor;
- 		p->set_divisor = dw8250_set_divisor;
-@@ -138,5 +138,8 @@ void dw8250_setup_port(struct uart_port *p)
- 
- 	if (reg & DW_UART_CPR_SIR_MODE)
- 		up->capabilities |= UART_CAP_IRDA;
+ 	reg = dw8250_readl_ext(p, DW_UART_CPR);
+-	if (!reg)
+-		return;
++	if (!reg) {
++		if (!plat)
++			return;
 +
-+	if (reg & DW_UART_CPR_DMA_EXTRA)
-+		data->dma_capable = 1;
- }
- EXPORT_SYMBOL_GPL(dw8250_setup_port);
++		reg = plat->cpr;
++	}
+ 
+ 	/* Select the type based on FIFO */
+ 	if (reg & DW_UART_CPR_FIFO_MODE) {
 diff --git a/drivers/tty/serial/8250/8250_dwlib.h b/drivers/tty/serial/8250/8250_dwlib.h
-index ffce2744a28e..900b2321aff0 100644
+index ef63eaf7e598..ffce2744a28e 100644
 --- a/drivers/tty/serial/8250/8250_dwlib.h
 +++ b/drivers/tty/serial/8250/8250_dwlib.h
-@@ -34,6 +34,7 @@ struct dw8250_data {
- 
- 	unsigned int		skip_autocfg:1;
- 	unsigned int		uart_16550_compatible:1;
-+	unsigned int		dma_capable:1;
+@@ -16,6 +16,10 @@ struct dw8250_port_data {
+ 	u8			dlf_size;
  };
  
- void dw8250_do_set_termios(struct uart_port *p, struct ktermios *termios, struct ktermios *old);
++struct dw8250_platform_data {
++	u32 cpr;
++};
++
+ struct dw8250_data {
+ 	struct dw8250_port_data	data;
+ 
 -- 
 2.27.0
 
