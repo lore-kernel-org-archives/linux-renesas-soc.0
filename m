@@ -2,137 +2,149 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5C6C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Mar 2022 16:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1280FC43219
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Mar 2022 16:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243650AbiCJQZe (ORCPT
+        id S241596AbiCJQ31 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Mar 2022 11:25:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32846 "EHLO
+        Thu, 10 Mar 2022 11:29:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243748AbiCJQZ0 (ORCPT
+        with ESMTP id S244754AbiCJQ3Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Mar 2022 11:25:26 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA11CC12EA;
-        Thu, 10 Mar 2022 08:23:45 -0800 (PST)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D02AC491;
-        Thu, 10 Mar 2022 17:23:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1646929424;
-        bh=8BMTDuJBP99Os/IKhek1rCKEHx67jgTzaUFDr49pmYQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I8Brbwg4IWTKv4g2p/5GgiX4QiP//QkoOhl7C1luoMXAUKNmdzmN0pS3SWAq2OYqd
-         WUQXCjntm0iNJb3UwvFeS0vdccnzu9VNM6F/NUqULtqZ/I9vt3POF1ZwGH5SFV1qGH
-         39DA+x6DWZy1kxJCdkq4YG5KVi5qNZXqMz6yMTwg=
-Date:   Thu, 10 Mar 2022 18:23:27 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3 2/3] drm/bridge: ti-sn65dsi86: Implement bridge
- connector operations
-Message-ID: <Yiol/+wnFlAaybGY@pendragon.ideasonboard.com>
-References: <20220310152227.2122960-1-kieran.bingham+renesas@ideasonboard.com>
- <20220310152227.2122960-3-kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220310152227.2122960-3-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 10 Mar 2022 11:29:24 -0500
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 421624C425;
+        Thu, 10 Mar 2022 08:28:23 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.90,171,1643641200"; 
+   d="scan'208";a="113116595"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2022 01:28:22 +0900
+Received: from localhost.localdomain (unknown [10.226.92.47])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CBA1240A24E6;
+        Fri, 11 Mar 2022 01:28:19 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 1/3] media: dt-bindings: media: renesas,vsp1: Document RZ/{G2L,V2L} VSPD bindings
+Date:   Thu, 10 Mar 2022 16:28:12 +0000
+Message-Id: <20220310162814.22234-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220310162814.22234-1-biju.das.jz@bp.renesas.com>
+References: <20220310162814.22234-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+Document VSPD found in RZ/G2L and RZ/V2L family SoC's. VSPD block is
+similar to VSP2-D found on R-Car SoC's, but it does not have a version
+register and it has 3 clocks compared to 1 clock on vsp1 and vsp2.
 
-Thank you for the patch.
+This patch introduces a new compatible 'renesas,rzg2l-vsp2' to handle
+these differences.
 
-On Thu, Mar 10, 2022 at 03:22:26PM +0000, Kieran Bingham wrote:
-> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> Implement the bridge connector-related .get_edid() operation, and report
-> the related bridge capabilities and type.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
-> Changes since v1:
-> 
-> - The connector .get_modes() operation doesn't rely on EDID anymore,
->   __ti_sn_bridge_get_edid() and ti_sn_bridge_get_edid() got merged
->   together
->  - Fix on top of Sam Ravnborg's DRM_BRIDGE_STATE_OPS
-> 
-> Changes since v2: [Kieran]
->  - Only support EDID on DRM_MODE_CONNECTOR_DisplayPort modes.
-> 
->  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> index 93b54fcba8ba..d581c820e5d8 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> @@ -1135,10 +1135,24 @@ static void ti_sn_bridge_atomic_post_disable(struct drm_bridge *bridge,
->  	pm_runtime_put_sync(pdata->dev);
->  }
->  
-> +static struct edid *ti_sn_bridge_get_edid(struct drm_bridge *bridge,
-> +					  struct drm_connector *connector)
-> +{
-> +	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
-> +	struct edid *edid;
-> +
-> +	pm_runtime_get_sync(pdata->dev);
-> +	edid = drm_get_edid(connector, &pdata->aux.ddc);
-> +	pm_runtime_put_autosuspend(pdata->dev);
-> +
-> +	return edid;
-> +}
-> +
->  static const struct drm_bridge_funcs ti_sn_bridge_funcs = {
->  	.attach = ti_sn_bridge_attach,
->  	.detach = ti_sn_bridge_detach,
->  	.mode_valid = ti_sn_bridge_mode_valid,
-> +	.get_edid = ti_sn_bridge_get_edid,
->  	.atomic_pre_enable = ti_sn_bridge_atomic_pre_enable,
->  	.atomic_enable = ti_sn_bridge_atomic_enable,
->  	.atomic_disable = ti_sn_bridge_atomic_disable,
-> @@ -1233,6 +1247,9 @@ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
->  	pdata->bridge.type = pdata->next_bridge->type == DRM_MODE_CONNECTOR_DisplayPort
->  			   ? DRM_MODE_CONNECTOR_DisplayPort : DRM_MODE_CONNECTOR_eDP;
->  
-> +	if (pdata->bridge.type == DRM_MODE_CONNECTOR_DisplayPort)
-> +		pdata->bridge.ops = DRM_BRIDGE_OP_EDID;
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v1->v2:
+ * Changed compatible from vsp2-rzg2l->rzg2l-vsp2
+RFC->v1:
+ * Updated commit description
+ * Changed compatible from vsp2-r9a07g044->vsp2-rzg2l
+ * Defined the clocks
+ * Clock max Items is based on SoC Compatible string
+RFC:
+ * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-20-biju.das.jz@bp.renesas.com/
+---
+ .../bindings/media/renesas,vsp1.yaml          | 52 ++++++++++++++-----
+ 1 file changed, 39 insertions(+), 13 deletions(-)
 
-You could write this as
-
-	if (pdata->bridge.type == DRM_MODE_CONNECTOR_DisplayPort)
-		pdata->bridge.ops |= DRM_BRIDGE_OP_EDID;
-
-to be ready to support other ops, but that doesn't help
-DRM_BRIDGE_OP_DETECT in 3/3, and I don't foresee the need for other ops.
-
-In any case,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +
->  	drm_bridge_add(&pdata->bridge);
->  
->  	ret = ti_sn_attach_host(pdata);
-
+diff --git a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
+index 990e9c1dbc43..2696a4582251 100644
+--- a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
+@@ -19,6 +19,7 @@ properties:
+     enum:
+       - renesas,vsp1 # R-Car Gen2 and RZ/G1
+       - renesas,vsp2 # R-Car Gen3 and RZ/G2
++      - renesas,rzg2l-vsp2 # RZ/G2L and RZ/V2L
+ 
+   reg:
+     maxItems: 1
+@@ -26,8 +27,8 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
+-  clocks:
+-    maxItems: 1
++  clocks: true
++  clock-names: true
+ 
+   power-domains:
+     maxItems: 1
+@@ -50,17 +51,42 @@ required:
+ 
+ additionalProperties: false
+ 
+-if:
+-  properties:
+-    compatible:
+-      items:
+-        - const: renesas,vsp1
+-then:
+-  properties:
+-    renesas,fcp: false
+-else:
+-  required:
+-    - renesas,fcp
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,vsp1
++    then:
++      properties:
++        renesas,fcp: false
++    else:
++      required:
++        - renesas,fcp
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,rzg2l-vsp2
++    then:
++      properties:
++        clocks:
++          items:
++            - description: LCDC Main clock
++            - description: LCDC Register Access Clock
++            - description: LCDC Video Clock
++        clock-names:
++          items:
++            - const: du.0
++            - const: pclk
++            - const: vclk
++      required:
++        - clock-names
++    else:
++      properties:
++        clocks:
++          maxItems: 1
+ 
+ examples:
+   # R8A7790 (R-Car H2) VSP1-S
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
