@@ -2,221 +2,194 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B76CC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Mar 2022 08:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA037C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Mar 2022 21:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231444AbiCLInZ (ORCPT
+        id S232723AbiCLVZa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 12 Mar 2022 03:43:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45330 "EHLO
+        Sat, 12 Mar 2022 16:25:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiCLInZ (ORCPT
+        with ESMTP id S231661AbiCLVZ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Mar 2022 03:43:25 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6128E2965C9;
-        Sat, 12 Mar 2022 00:42:19 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.90,175,1643641200"; 
-   d="scan'208";a="114165840"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Mar 2022 17:42:19 +0900
-Received: from localhost.localdomain (unknown [10.226.93.53])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CABC6423991B;
-        Sat, 12 Mar 2022 17:42:16 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Sat, 12 Mar 2022 16:25:29 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E333C2B26F;
+        Sat, 12 Mar 2022 13:24:22 -0800 (PST)
+Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 7E8B4820A0;
+        Sat, 12 Mar 2022 22:24:20 +0100 (CET)
+From:   marek.vasut@gmail.com
+To:     linux-pci@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 3/3] media: vsp1: Add support for RZ/G2L VSPD
-Date:   Sat, 12 Mar 2022 08:42:05 +0000
-Message-Id: <20220312084205.31462-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220312084205.31462-1-biju.das.jz@bp.renesas.com>
-References: <20220312084205.31462-1-biju.das.jz@bp.renesas.com>
+        Bjorn Helgaas <bhelgaas@google.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 2/2] PCI: rcar: Use PCI_SET_ERROR_RESPONSE after read which triggered an exception
+Date:   Sat, 12 Mar 2022 22:23:49 +0100
+Message-Id: <20220312212349.781799-2-marek.vasut@gmail.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220312212349.781799-1-marek.vasut@gmail.com>
+References: <20220312212349.781799-1-marek.vasut@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZ/G2L VSPD provides a single VSPD instance. It has the following
-sub modules MAU, CTU, RPF, DPR, LUT, BRS, WPF and LIF.
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-The VSPD block on RZ/G2L does not have a version register, so added a
-new compatible string "renesas,rzg2l-vsp2" with a data pointer containing
-the info structure. Also the reset line is shared with the DU module.
+In case the controller is transitioning to L1 in rcar_pcie_config_access(),
+any read/write access to PCIECDR triggers asynchronous external abort. This
+is because the transition to L1 link state must be manually finished by the
+driver. The PCIe IP can transition back from L1 state to L0 on its own.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The current asynchronous external abort hook implementation restarts
+the instruction which finally triggered the fault, which can be a
+different instruction than the read/write instruction which started
+the faulting access. Usually the instruction which finally triggers
+the fault is one which has some data dependency on the result of the
+read/write. In case of read, the read value after fixup is undefined,
+while a read value of faulting read should be PCI_ERROR_RESPONSE.
+
+It is possible to enforce the fault using 'isb' instruction placed
+right after the read/write instruction which started the faulting
+access. Add custom register accessors which perform the read/write
+followed immediately by 'isb'.
+
+This way, the fault always happens on the 'isb' and in case of read,
+which is located one instruction before the 'isb', it is now possible
+to fix up the return value of the read in the asynchronous external
+abort hook and make that read return PCI_ERROR_RESPONSE.
+
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Wilczyński <kw@linux.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
-v4->v5:
- * Fixed typo VI6_IP_VERSION_MODEL_MASK->VI6_IP_VERSION_MASK
- * To be consistent with other SoC's, introduced VI6_IP_VERSION_SOC_G2L
-   for RZ/G2L SoC's.
-v3->v4:
- * Added Rb tag from Geert
- * Add switch() for LIF0 buffer attribute handling for RZ/G2L and V3M
-v2->v3:
- * Fixed version comparison in vsp1_lookup()
-v1->v2:
- * Changed the compatible from vsp2-rzg2l->rzg2l-vsp2
- * Added standalone device info for rzg2l-vsp2.
- * Added vsp1_lookup helper function.
- * Updated comments for LIF0 buffer attribute register
- * Used last ID for rzg2l-vsp2.
-RFC->v1:
- * Used data pointer containing info structure to retrieve version information
-RFC:
- * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-21-biju.das.jz@bp.renesas.com/
+V2: Rebase on 1/2
+V3: - Add .text.fixup on all three ldr/str/isb instructions and call
+      fixup_exception() in the abort handler to trigger the fixup.
+    - Propagate return value from read/write accessors, in case the
+      access fails, return PCIBIOS_SET_FAILED, else PCIBIOS_SUCCESSFUL.
+V4: - Cover both ldr/str and isb with the fixup
+    - Add RB from Arnd
+    - Use PCI_SET_ERROR_RESPONSE instead of val = 0xffffffff
+    - Update commit message
+V5: - Replace all Fs with PCI_ERROR_RESPONSE in commit message
+    - Make rcar_pci_{read,write}_reg_workaround() static
+V6: - Add RB/TB from Geert
+    - Add .arch armv7-a to __rcar_pci_rw_reg_workaround() to fix clang
+      build as suggested by Arnd
 ---
- drivers/media/platform/vsp1/vsp1_drv.c  | 44 +++++++++++++++++++------
- drivers/media/platform/vsp1/vsp1_lif.c  | 16 +++++----
- drivers/media/platform/vsp1/vsp1_regs.h |  4 +++
- 3 files changed, 48 insertions(+), 16 deletions(-)
+ drivers/pci/controller/pcie-rcar-host.c | 56 +++++++++++++++++++++++--
+ 1 file changed, 52 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 699d7d985df4..4eef6d525eda 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -811,11 +811,37 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 	},
- };
- 
-+static const struct vsp1_device_info rzg2l_vsp2_device_info = {
-+		.version = VI6_IP_VERSION_MODEL_VSPD_RZG2L,
-+		.model = "VSP2-D",
-+		.gen = 3,
-+		.features = VSP1_HAS_BRS | VSP1_HAS_WPF_VFLIP | VSP1_HAS_EXT_DL,
-+		.lif_count = 1,
-+		.rpf_count = 2,
-+		.wpf_count = 1,
-+};
-+
-+static const struct vsp1_device_info *vsp1_lookup(struct vsp1_device *vsp1,
-+						  u32 version)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(vsp1_device_infos); ++i) {
-+		if ((version & VI6_IP_VERSION_MODEL_MASK) ==
-+		    vsp1_device_infos[i].version) {
-+			vsp1->info = &vsp1_device_infos[i];
-+			break;
-+		}
-+	}
-+
-+	return vsp1->info;
-+}
-+
- static int vsp1_probe(struct platform_device *pdev)
- {
- 	struct vsp1_device *vsp1;
- 	struct device_node *fcp_node;
--	unsigned int i;
-+	u32 version;
- 	int ret;
- 	int irq;
- 
-@@ -871,24 +897,21 @@ static int vsp1_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto done;
- 
--	vsp1->version = vsp1_read(vsp1, VI6_IP_VERSION);
--
--	for (i = 0; i < ARRAY_SIZE(vsp1_device_infos); ++i) {
--		if ((vsp1->version & VI6_IP_VERSION_MODEL_MASK) ==
--		    vsp1_device_infos[i].version) {
--			vsp1->info = &vsp1_device_infos[i];
--			break;
--		}
-+	vsp1->info = of_device_get_match_data(&pdev->dev);
-+	if (!vsp1->info) {
-+		version = vsp1_read(vsp1, VI6_IP_VERSION);
-+		vsp1->info = vsp1_lookup(vsp1, version);
- 	}
- 
- 	if (!vsp1->info) {
- 		dev_err(&pdev->dev, "unsupported IP version 0x%08x\n",
--			vsp1->version);
-+			version);
- 		vsp1_device_put(vsp1);
- 		ret = -ENXIO;
- 		goto done;
- 	}
- 
-+	vsp1->version = vsp1->info->version;
- 	dev_dbg(&pdev->dev, "IP version 0x%08x\n", vsp1->version);
- 
- 	/*
-@@ -940,6 +963,7 @@ static int vsp1_remove(struct platform_device *pdev)
- static const struct of_device_id vsp1_of_match[] = {
- 	{ .compatible = "renesas,vsp1" },
- 	{ .compatible = "renesas,vsp2" },
-+	{ .compatible = "renesas,rzg2l-vsp2", .data = &rzg2l_vsp2_device_info },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, vsp1_of_match);
-diff --git a/drivers/media/platform/vsp1/vsp1_lif.c b/drivers/media/platform/vsp1/vsp1_lif.c
-index 6a6857ac9327..35abed29f269 100644
---- a/drivers/media/platform/vsp1/vsp1_lif.c
-+++ b/drivers/media/platform/vsp1/vsp1_lif.c
-@@ -107,6 +107,7 @@ static void lif_configure_stream(struct vsp1_entity *entity,
- 
- 	case VI6_IP_VERSION_MODEL_VSPDL_GEN3:
- 	case VI6_IP_VERSION_MODEL_VSPD_V3:
-+	case VI6_IP_VERSION_MODEL_VSPD_RZG2L:
- 		hbth = 0;
- 		obth = 1500;
- 		lbth = 0;
-@@ -130,16 +131,19 @@ static void lif_configure_stream(struct vsp1_entity *entity,
- 			VI6_LIF_CTRL_REQSEL | VI6_LIF_CTRL_LIF_EN);
- 
- 	/*
--	 * On R-Car V3M the LIF0 buffer attribute register has to be set to a
--	 * non-default value to guarantee proper operation (otherwise artifacts
--	 * may appear on the output). The value required by the manual is not
--	 * explained but is likely a buffer size or threshold.
-+	 * On R-Car V3M and RZ/G2L the LIF0 buffer attribute register has to be
-+	 * set to a non-default value to guarantee proper operation (otherwise
-+	 * artifacts may appear on the output). The value required by the
-+	 * manual is not explained but is likely a buffer size or threshold.
- 	 */
--	if ((entity->vsp1->version & VI6_IP_VERSION_MASK) ==
--	    (VI6_IP_VERSION_MODEL_VSPD_V3 | VI6_IP_VERSION_SOC_V3M))
-+	switch (entity->vsp1->version & VI6_IP_VERSION_MASK) {
-+	case (VI6_IP_VERSION_MODEL_VSPD_V3 | VI6_IP_VERSION_SOC_V3M):
-+	case (VI6_IP_VERSION_MODEL_VSPD_RZG2L | VI6_IP_VERSION_SOC_G2L):
- 		vsp1_lif_write(lif, dlb, VI6_LIF_LBA,
- 			       VI6_LIF_LBA_LBA0 |
- 			       (1536 << VI6_LIF_LBA_LBA1_SHIFT));
-+		break;
-+	}
+diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+index 0966cf63d9b3..997c4df6a1e7 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -114,6 +114,54 @@ static u32 rcar_read_conf(struct rcar_pcie *pcie, int where)
+ 	return val >> shift;
  }
  
- static const struct vsp1_entity_operations lif_entity_ops = {
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index fae7286eb01e..3963119eecc5 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -767,8 +767,12 @@
- #define VI6_IP_VERSION_MODEL_VSPDL_GEN3	(0x19 << 8)
- #define VI6_IP_VERSION_MODEL_VSPBS_GEN3	(0x1a << 8)
- #define VI6_IP_VERSION_MODEL_VSPD_V3U	(0x1c << 8)
-+/* RZ/G2L SoC's have no version register, So using last ID for the version */
-+#define VI6_IP_VERSION_MODEL_VSPD_RZG2L	(0xff << 8)
++#ifdef CONFIG_ARM
++#define __rcar_pci_rw_reg_workaround(instr)				\
++		"	.arch armv7-a\n"				\
++		"1:	" instr " %1, [%2]\n"				\
++		"2:	isb\n"						\
++		"3:	.pushsection .text.fixup,\"ax\"\n"		\
++		"	.align	2\n"					\
++		"4:	mov	%0, #" __stringify(PCIBIOS_SET_FAILED) "\n" \
++		"	b	3b\n"					\
++		"	.popsection\n"					\
++		"	.pushsection __ex_table,\"a\"\n"		\
++		"	.align	3\n"					\
++		"	.long	1b, 4b\n"				\
++		"	.long	2b, 4b\n"				\
++		"	.popsection\n"
++#endif
++
++static int rcar_pci_write_reg_workaround(struct rcar_pcie *pcie, u32 val,
++					 unsigned int reg)
++{
++	int error = PCIBIOS_SUCCESSFUL;
++#ifdef CONFIG_ARM
++	asm volatile(
++		__rcar_pci_rw_reg_workaround("str")
++	: "+r"(error):"r"(val), "r"(pcie->base + reg) : "memory");
++#else
++	rcar_pci_write_reg(pcie, val, reg);
++#endif
++	return error;
++}
++
++static int rcar_pci_read_reg_workaround(struct rcar_pcie *pcie, u32 *val,
++					unsigned int reg)
++{
++	int error = PCIBIOS_SUCCESSFUL;
++#ifdef CONFIG_ARM
++	asm volatile(
++		__rcar_pci_rw_reg_workaround("ldr")
++	: "+r"(error), "=r"(*val) : "r"(pcie->base + reg) : "memory");
++
++	if (error != PCIBIOS_SUCCESSFUL)
++		PCI_SET_ERROR_RESPONSE(val);
++#else
++	*val = rcar_pci_read_reg(pcie, reg);
++#endif
++	return error;
++}
++
+ /* Serialization is provided by 'pci_lock' in drivers/pci/access.c */
+ static int rcar_pcie_config_access(struct rcar_pcie_host *host,
+ 		unsigned char access_type, struct pci_bus *bus,
+@@ -185,14 +233,14 @@ static int rcar_pcie_config_access(struct rcar_pcie_host *host,
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
  
- #define VI6_IP_VERSION_SOC_MASK		(0xff << 0)
-+/* RZ/G2L SoC's have no version register, So use '0' for SoC Identification */
-+#define VI6_IP_VERSION_SOC_G2L		(0x00 << 0)
- #define VI6_IP_VERSION_SOC_H2		(0x01 << 0)
- #define VI6_IP_VERSION_SOC_V2H		(0x01 << 0)
- #define VI6_IP_VERSION_SOC_V3M		(0x01 << 0)
+ 	if (access_type == RCAR_PCI_ACCESS_READ)
+-		*data = rcar_pci_read_reg(pcie, PCIECDR);
++		ret = rcar_pci_read_reg_workaround(pcie, data, PCIECDR);
+ 	else
+-		rcar_pci_write_reg(pcie, *data, PCIECDR);
++		ret = rcar_pci_write_reg_workaround(pcie, *data, PCIECDR);
+ 
+ 	/* Disable the configuration access */
+ 	rcar_pci_write_reg(pcie, 0, PCIECCTLR);
+ 
+-	return PCIBIOS_SUCCESSFUL;
++	return ret;
+ }
+ 
+ static int rcar_pcie_read_conf(struct pci_bus *bus, unsigned int devfn,
+@@ -1097,7 +1145,7 @@ static struct platform_driver rcar_pcie_driver = {
+ static int rcar_pcie_aarch32_abort_handler(unsigned long addr,
+ 		unsigned int fsr, struct pt_regs *regs)
+ {
+-	return !!rcar_pcie_wakeup(pcie_dev, pcie_base);
++	return !fixup_exception(regs);
+ }
+ 
+ static const struct of_device_id rcar_pcie_abort_handler_of_match[] __initconst = {
 -- 
-2.17.1
+2.35.1
 
