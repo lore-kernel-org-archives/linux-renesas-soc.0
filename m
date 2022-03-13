@@ -2,1142 +2,260 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FA3C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Mar 2022 07:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC8FC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Mar 2022 10:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231244AbiCMHXb (ORCPT
+        id S231452AbiCMKNb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 13 Mar 2022 03:23:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46240 "EHLO
+        Sun, 13 Mar 2022 06:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233848AbiCMHXZ (ORCPT
+        with ESMTP id S231351AbiCMKNa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 Mar 2022 03:23:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECA81945DE;
-        Sat, 12 Mar 2022 23:21:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8C446B80C75;
-        Sun, 13 Mar 2022 07:21:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5840FC340F5;
-        Sun, 13 Mar 2022 07:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647156114;
-        bh=GHziQy0Uk4uTJH7a17gyMNm8mew5G6o5Vt+QUWf5uiQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=oiHsWppUezI4z1jSNg19Rxm4LFjBd1agV5AYdAZO2S+tUl5R15IIMEhzLVHHs5DaR
-         U0gJusXv6HsiyrvB5UbunVnF/CkbShjCl/rJvGrTDsHOcBJKKRQZbk8o8Q4oDRfvhi
-         Fq9E6DiOfp0J0VZ1KZMalHgjitojcNVCNYbnKhoVYpwPH0P86fJEpiD/GMYIZ7uPiu
-         +w1OmW9fsctQJfp8hMimXwXM8qXURoh31LWADte9b27+c5G3kZMXmfLApYE0O/givN
-         9dXwGxk6NwWgrAg6EahEvjoqypeEez7A6xqFD0aj3e6kiQOzHUnUFPX3LZ4kabAXIh
-         HXREFoPBASacQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1nTIY2-0012vV-Ur; Sun, 13 Mar 2022 08:21:50 +0100
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Andy Walls <awalls@md.metrocast.net>,
-        Benoit Parrot <bparrot@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Dafna Hirschfeld <dafna@fastmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Eddie James <eajames@linux.ibm.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Fabio Estevam <festevam@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Robert Foss <robert.foss@linaro.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shijie Qin <shijie.qin@nxp.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        Zhou Peng <eagle.zhou@nxp.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, openbmc@lists.ozlabs.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v3 00/39]  Sort Makefiles and platform/Kconfig
-Date:   Sun, 13 Mar 2022 08:21:09 +0100
-Message-Id: <cover.1647155572.git.mchehab@kernel.org>
-X-Mailer: git-send-email 2.35.1
+        Sun, 13 Mar 2022 06:13:30 -0400
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2092.outbound.protection.outlook.com [40.107.114.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207C0A66C1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Mar 2022 03:12:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MFLIdznnAOxdZrC7kkgZ7OP3osYONEK1YElcxRS2gOaJl1xyylQa6ZZntFAc/NIlnCRiA6GrXoeqq9NUNkRQxnhaz5dPHKPiOpqTKaq63BcwiPhhrVoAbV4g42R2qrQ9xaHSkhQsIV71RKA/+Dxmny8kUALJE8ayhK2SqMVmgCi07cx2yLAqZo+u7cmM8eGVVQSGB5NJ6RiD6c2FKX2DgqzGRCBpkqEcqUD6wK+iTYS1fwFKZm3u/FPV5OquKsGyA6qN05gB4lqq11OBDMYhw2f1uCczXSQrZACAlQWk8clW58e99hPd9ZfM+aJLbOW3Wg61QOUuWYgToy9ZWQJZTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=muTI3/q+il7FI3ZYSQWJMK6YKvvqGFCpDKPNtICTUTA=;
+ b=HaJhzkrlazmuo/5juu8htIi0gDyoFYiTxxlXNnk3+79oKscqMks8SQ1A2KjJGVKM1U2q+l3/Nt2oeQVkMqD75vbFXY6olWUp70MFdbCkIirm/9mNs/tK1AGVzCB96sJUOYtk0ouEjHXOYauaJrTnY/K3uT+iSbUdSdf8Eudwq27IIqjWEioDC0e4sV8ie7NbE01fHaLh2/X+E6jw27BnJVnVKwsRxiFnoEZcdwJiexA0Dy1P4F0cCNSADvagpvtq86nqH6q0CjrVtdDb3I8u4+lFt/wAJSFVZA6/mF7iNLrMxvmSYQg0VomfEIwNJ1QJmCJtyH27m/PZ5qUClzLLjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=muTI3/q+il7FI3ZYSQWJMK6YKvvqGFCpDKPNtICTUTA=;
+ b=GmEBjkA+kxKvG58BIMojrY1gZPvvx2qlcXmZ8gaa2cgEsN2OqMZAAKqhozOza6GlWF5QsbJHMOUBsNvejQ0Gr1TrnIl6ahxvHgT80YqnwYrxvD4jSp26ioMG8jXirvfPI30YrpduSMhuovsvwDOijsotgS9vT4mJrTSbiIgFpW0=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by OSBPR01MB4901.jpnprd01.prod.outlook.com (2603:1096:604:7d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.25; Sun, 13 Mar
+ 2022 10:12:18 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::cc77:910b:66c1:524b]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::cc77:910b:66c1:524b%5]) with mapi id 15.20.5061.026; Sun, 13 Mar 2022
+ 10:12:17 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [RFC 11/28] drm: rcar-du: Add num_rpf to struct
+ rcar_du_device_info
+Thread-Topic: [RFC 11/28] drm: rcar-du: Add num_rpf to struct
+ rcar_du_device_info
+Thread-Index: AQHYB9xfc1STQwyhr0ScFdMwC/73h6xwsg8AgEzC8CA=
+Date:   Sun, 13 Mar 2022 10:12:17 +0000
+Message-ID: <OS0PR01MB5922D1536F7C90A154F0515C860E9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20220112174612.10773-1-biju.das.jz@bp.renesas.com>
+ <20220112174612.10773-12-biju.das.jz@bp.renesas.com>
+ <Ye1eVmxyPtrmKzlK@pendragon.ideasonboard.com>
+In-Reply-To: <Ye1eVmxyPtrmKzlK@pendragon.ideasonboard.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 26d09fe8-32e4-4464-7a2a-08da04d9f3ee
+x-ms-traffictypediagnostic: OSBPR01MB4901:EE_
+x-microsoft-antispam-prvs: <OSBPR01MB4901DDBF1A7AA79AF9FF45A4860E9@OSBPR01MB4901.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: BisXu7IhLcUkDl7FPBhrRTuwlN4HvqARVgsr5n61JuQ+2aalaTBdcwHpN/3dSK+A9S0hk0p07H5NVHiNCYcAgBGWF1JwWmEDxmjsiFRvFTIagasJY+sM5401qi96QXH2RJAWP5xwPd54DSfBJZ1/S4PpqWilBL8eysMOTPK8IwwLiqlJQ2n4eavcMZk3eMZkwLpPV6N3j/Y+LiWCgp225MLRvXptQIA28JUokXdO4xnnlS+lkPzlXzKqXctPfzJyJkKoGKeh0u5adt+OP7xep3O1lvKq7jncxWGLTsMZREhh5r1OWJ38lfp5zkJa96Mjei2Kl/SeZCNh/upIfQ2vV428nsko5W+LXmUDZ+hz/f//SlHAy0mD+9yA1KUaoZWdCcwrD86N+Sb71LOX8LdD1fc9+cjs48Ue4CEjUaQ5X3jB4kTTSkr7sMk9NWND44U/PBBgUIbQ2vdffcWkPb6G07tjS+TKcGvgzSzYWjsAA+cMgwP5OS1MzHUCm+nYRfoeYwTMD40Jxq2U07jnrnzmxB+hBy6+AJDkeVuyY35mN9+BsrsFgIcIa9EJ+mZ5G5cZTvN+pRSulStas98xPN6S/bB8DERfB5vGnlv6GYLr/fl/XC0ohkB9IUeIGhOOce8miPgjbOxikEXQFxO0zfizr0NEk8CcYtQJrSDizQnUH9jCede68fFpJGhyOhFnGuPb81U00yBIwh3eMSiX44z/qut9FJmbbH2pOzNyHXns4QtFBzp6e+jzlktxYCpbwMkbvyOIEq13RQ2UZcWqkreoeCUrFI0ssZlY9gBRMbm4jXc=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(83380400001)(66476007)(64756008)(66446008)(66556008)(76116006)(4326008)(966005)(71200400001)(66946007)(316002)(8676002)(38070700005)(54906003)(55016003)(6916009)(33656002)(508600001)(9686003)(86362001)(52536014)(8936002)(107886003)(5660300002)(7696005)(38100700002)(26005)(2906002)(186003)(122000001)(6506007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eGhRM2dPUTYzUGZhcFU4WDJpcDVFcXZZU2NjU1hYaWxBSGpidUNjbzFqbk9Y?=
+ =?utf-8?B?NjhmSG4weVVXeFkvQ3YvWWdydnpyOVcrTVFidTZuZVZwU0IxVXBNUzZSOGxr?=
+ =?utf-8?B?djRNNkRicGtWMUtOMFpseThrQVBCNGZSa1pEMUIzL29WV01Memk4WU9DMXQ2?=
+ =?utf-8?B?bmZXa1pBeTQxOUNQajhHUjlQMzVrdU5hUVdqQ1EzeTRoblRDWFpFNE55bGR3?=
+ =?utf-8?B?bGVkTmc1Y0RqM2wvd0VOZWRtNU1iQzhNamhNcUF5NXlNY0tQQmJEMkxGVHM4?=
+ =?utf-8?B?QWVVcURyQ1ZaQlVENXdDV3hBWTcvZ1RmVTRidExWRjBQZ0diNTA3V21ITUFl?=
+ =?utf-8?B?YWVSK0JqbnZBUTVncTNsQkdZbnoyVnlySHZ5UDFWMmg4VVJqUmZYdWpiaXJj?=
+ =?utf-8?B?OVBubGJuTnpGbUdVQWFobXJQT1lDR0xieHk5aVluVUNaSlhOMjNaa01FOWZt?=
+ =?utf-8?B?eTFFMm1jNFYrS2FUWS9VeDJPVU5pVU9NM243aDhaME5GUGpUTHkrbEJzLzkr?=
+ =?utf-8?B?b2p5S0ZnNHNLQU04WVJJSS9aUFRFSzlqK2lram54eTBsVUFWOU9PY3FWbGJH?=
+ =?utf-8?B?OGt0SUEvQkNmZzRBM1dKT2pMRVpleDlGSnNJTUEwT0tOV2Q1S3dWRkkrL1BC?=
+ =?utf-8?B?dVpmaGZzR3A5QkRmTGozQitWMGJTWjBkVWZOMU1UeDU5akY5ZkN1T0NtK0Ix?=
+ =?utf-8?B?SEtiMnVrRDVKUWNQTjZQbUdCQ3RLbEFYMlpUMGg2S2FZeUQ1VjN2cWJCaDFk?=
+ =?utf-8?B?WDVLdmFMcDdlWEZJdHpoTlJVZitXdmRDNjYwZ0ZPbkl0OWZXQmYvS2FNR2d0?=
+ =?utf-8?B?VE11Y2V1YnVDYzRWbWpJYWZCZE4xNG4zVkxpRGtwYVJhRHhZeS9PbVc3MGVv?=
+ =?utf-8?B?Z1pZNnp1dTd4a1FjV1k2bFhySEZoZC84Ym1abzZObVN3cWRrQUFHRWxJdy9N?=
+ =?utf-8?B?STFHSHVPdGpoZytOVjR5aW56aHlZclpBSFZ4UGZZWVhmQmM0Z2JKL0dUY3pE?=
+ =?utf-8?B?eWJRRTRDNGgrNDBGZGhSSHZ1Y0F0dGdMdnp2eCtYdWtINUkxWjlRc2tkNkRU?=
+ =?utf-8?B?STk4aGpZWkVTaDZTYVl4NUlMSVhpN0ZlZHFsT001SC9SWXN1YVpFVGhVNVlp?=
+ =?utf-8?B?cm5FME95amthNktQTDhDdXhwelZwY1NPTjNLaGl6RFZNV1hvV3hVZElrWlRp?=
+ =?utf-8?B?Rk92RWlCa3owcUFDZFRrNUN3SzdWL0pSaVhxZW83ZkxiaFFML0FhWXQ5cGhE?=
+ =?utf-8?B?SStQNW9VKzVGZEduSHY0eGNHSTUyUTJnekpaOHZIdGcrYUJWQlNzZXBHR3U1?=
+ =?utf-8?B?ZVphSWkxeW9aSndLdGlpMW1NRElNV3hiSHJjY3dVL24ydVFQVllQUGR5Tm5z?=
+ =?utf-8?B?UDNmd0d6K0ZGY1dJVHFKL2JINmdvWU1hU3VFZk5hZGlqMVpmSUZwOVY5WXRj?=
+ =?utf-8?B?VkQrMXgzWkREWSt6N0t2Ty92NldnNTBBdm5yWlg3eEZ3Rk1EVGZpdW9aeHJk?=
+ =?utf-8?B?OHMxR0hBMzBIa0RRZUJmN3FIKy9jQ2d0a2V4Z1JyM0RtWS9rendxMU5mQk9z?=
+ =?utf-8?B?UFFDaitObFllb3YrMFJmYW84UWdQb2hCQnMvMXdzN09EYkk2bWUvaHcrQS9Y?=
+ =?utf-8?B?d2UzVmRnOEVySDdndlBRNGRNS0svZjR6M1JKSUZyTVVBdjIyM2piTks1c0Q4?=
+ =?utf-8?B?b3dMTm1iOEs2WUpuKzl4L1d5Nm1JdU9uY3d2TXFBcktkcGtBQW84Q3hPY0Yz?=
+ =?utf-8?B?amw2VlJNT1lGMGl4L3QzcTAzall1WFNwd05qdHVoL2d6QlNQRmthNDZnZkhn?=
+ =?utf-8?B?TUZjYlNhYXJZZHl2SHBoVThhNGYrRGhPdmhtd0pENkRUVjFKNG1XblNQS2N6?=
+ =?utf-8?B?a1daNU1hMWRsWVNrQjNyVzI4U290a3hPcXEvN081VW5FZitkUzBySTB2TWtj?=
+ =?utf-8?B?RmZabHM4dnI2S3phM0NZalduT2xqbXlkUTlOVVpabHQ1L0YrU0NON3NjNUNS?=
+ =?utf-8?B?SXF6dzdCa1NRPT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26d09fe8-32e4-4464-7a2a-08da04d9f3ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2022 10:12:17.2472
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Yt6lK2FE0EmMKQchVv07lqYVXuoEmkK0nrHDx8g4bop/5EjavB+rAdeK3gBggmepF0L4z3D/eDkgbikp1v4LCttPDa3K1S7+EDZExNbvQ3E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB4901
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Entries at Makefiles and Kconfig files end being merged on random order. 
-
-Sort Makefile entries in alphabetical order. 
-
-Sorting Kconfig is harder. So, for now, do it only for platform/Kconfig.
-
-On platform/Kconfig, there is a mix of:
-	- two ancillary drivers;
-	- per-SoC drivers whose Kconfig/Makefile is on separate files;
-	- per-SoC drivers whose Makefile is on separate files, but the
-	  driver is at platform/Makefile;
-	- per-SoC drivers that are specified inside platform/Makefile and
-	  platform/Kconfig.
-
-Give some order by ensuring that all non-generic drivers will be on
-subdirectories.
-
-The end goal is to have one directory below platform per manufacturer,
-This series prepare for that.
-
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
--
-
-v3:
-  - used ASCII sort instead of LC-dependent sort;
-  - add a comment about the sort at the files;
-  - moved vsp1 driver ro renesas/ dir;
-  - moved imx drivers to nxp/ dir;
-  - the new MEDIA_PLATFORM_DRIVERS menu is on a separate patch and defaults to "Y";
-  - split the several obj-y at usb/Makefile into one line per driver (sorted).
-
-v2:
-  - removed some renames at DVB frontend;
-  - added patches for platform/Kconfig sort.
-
-Mauro Carvalho Chehab (39):
-  media: xc2028: rename the driver from tuner-xc2028
-  media: Makefiles: remove extra spaces
-  media: Makefiles: sort entries where it fits
-  media: platform: Makefile: reorganize its contents
-  media: platform: move platform menu dependencies to drivers
-  media: platform: place Aspeed driver on a separate dir
-  media: platform: place NXP drivers on a separate dir
-  media: platform: place Intel drivers on a separate dir
-  media: platform: place Via drivers on a separate dir
-  media: platform: place Renesas drivers on a separate dir
-  media: platform: allegro-dvt: move config to its own file
-  media: platform: amphion: move config to its own file
-  media: platform: coda: move config to its own file
-  media: platform: exynos-gsc: move config to its own file
-  media: platform: ge2d: move config to its own file
-  media: platform: mtk-jpeg: move config to its own file
-  media: platform: mtk-mdp: move config to its own file
-  media: platform: mtk-vcodec: move config to its own file
-  media: platform: mtk-vpu: move config to its own file
-  media: platform: omap3isp: move config to its own file
-  media: platform: camss: move config to its own file
-  media: platform: venus: move config to its own file
-  media: platform: rga: move config to its own file
-  media: platform: s3c-camif: move config to its own file
-  media: platform: s5p-g2d: move config to its own file
-  media: platform: hva: move config to its own file
-  media: platform: stm32: move config to its own file
-  media: platform: sun8i-di: move config to its own file
-  media: platform: sun8i-rotate: move config to its own file
-  media: platform: vde: move config to its own file
-  media: platform: ti-vpe: move config to its own file
-  media: platform: rkisp1: move config to its own file
-  media: platform: delta: move config to its own file
-  media: platform: bdisp: move config to its own file
-  media: platform: s5p-mfc: move config to its own file
-  media: platform: s5p-jpeg: move config to its own file
-  media: platform: Kconfig: sort entries
-  media: platform: move some manufacturer entries
-  media: platform: Kconfig: place platform drivers on a submenu
-
- .../admin-guide/media/i2c-cardlist.rst        |   2 +-
- MAINTAINERS                                   |  24 +-
- drivers/media/Kconfig                         |   8 +-
- drivers/media/Makefile                        |   4 +-
- drivers/media/cec/platform/Makefile           |  16 +-
- drivers/media/common/Makefile                 |   5 +-
- drivers/media/common/videobuf2/Makefile       |   8 +-
- drivers/media/dvb-frontends/Makefile          | 193 ++---
- drivers/media/firewire/Makefile               |   2 +-
- drivers/media/i2c/Makefile                    |  92 +--
- drivers/media/pci/Makefile                    |  21 +-
- drivers/media/pci/cx18/cx18-driver.c          |   2 +-
- drivers/media/pci/cx18/cx18-dvb.c             |   2 +-
- drivers/media/pci/cx18/cx18-gpio.c            |   2 +-
- drivers/media/pci/cx23885/cx23885-cards.c     |   2 +-
- drivers/media/pci/cx23885/cx23885-dvb.c       |   2 +-
- drivers/media/pci/cx23885/cx23885-video.c     |   2 +-
- drivers/media/pci/cx88/cx88.h                 |   2 +-
- drivers/media/pci/ivtv/ivtv-driver.c          |   2 +-
- drivers/media/pci/ivtv/ivtv-gpio.c            |   2 +-
- drivers/media/pci/saa7134/saa7134-cards.c     |   2 +-
- drivers/media/pci/saa7134/saa7134-dvb.c       |   2 +-
- drivers/media/platform/Kconfig                | 753 ++----------------
- drivers/media/platform/Makefile               | 132 +--
- drivers/media/platform/allegro-dvt/Kconfig    |  16 +
- drivers/media/platform/am437x/Kconfig         |   1 +
- drivers/media/platform/amphion/Kconfig        |  20 +
- drivers/media/platform/aspeed/Kconfig         |  10 +
- drivers/media/platform/aspeed/Makefile        |   2 +
- .../platform/{ => aspeed}/aspeed-video.c      |   0
- drivers/media/platform/atmel/Kconfig          |   4 +
- drivers/media/platform/cadence/Kconfig        |   1 +
- drivers/media/platform/coda/Kconfig           |  17 +
- drivers/media/platform/davinci/Kconfig        |   6 +
- drivers/media/platform/exynos-gsc/Kconfig     |  10 +
- drivers/media/platform/exynos4-is/Kconfig     |   1 +
- drivers/media/platform/imx/Kconfig            |  24 -
- drivers/media/platform/imx/Makefile           |   1 -
- drivers/media/platform/intel/Kconfig          |  11 +
- drivers/media/platform/intel/Makefile         |   2 +
- .../media/platform/{ => intel}/pxa_camera.c   |   0
- drivers/media/platform/marvell-ccic/Kconfig   |   2 +
- drivers/media/platform/meson/ge2d/Kconfig     |  14 +
- drivers/media/platform/mtk-jpeg/Kconfig       |  16 +
- drivers/media/platform/mtk-mdp/Kconfig        |  17 +
- drivers/media/platform/mtk-vcodec/Kconfig     |  36 +
- drivers/media/platform/mtk-vpu/Kconfig        |  15 +
- drivers/media/platform/nxp/Kconfig            |  66 ++
- drivers/media/platform/nxp/Makefile           |   8 +
- drivers/media/platform/{ => nxp}/fsl-viu.c    |   0
- .../media/platform/{ => nxp}/imx-jpeg/Kconfig |   1 +
- .../platform/{ => nxp}/imx-jpeg/Makefile      |   0
- .../platform/{ => nxp}/imx-jpeg/mxc-jpeg-hw.c |   0
- .../platform/{ => nxp}/imx-jpeg/mxc-jpeg-hw.h |   0
- .../platform/{ => nxp}/imx-jpeg/mxc-jpeg.c    |   0
- .../platform/{ => nxp}/imx-jpeg/mxc-jpeg.h    |   0
- .../platform/{imx => nxp}/imx-mipi-csis.c     |   0
- drivers/media/platform/{ => nxp}/imx-pxp.c    |   0
- drivers/media/platform/{ => nxp}/imx-pxp.h    |   0
- .../media/platform/{ => nxp}/mx2_emmaprp.c    |   0
- drivers/media/platform/omap/Kconfig           |   1 +
- drivers/media/platform/omap3isp/Kconfig       |  21 +
- drivers/media/platform/qcom/Kconfig           |   3 +
- drivers/media/platform/qcom/camss/Kconfig     |   9 +
- drivers/media/platform/qcom/venus/Kconfig     |  14 +
- drivers/media/platform/renesas/Kconfig        | 119 +++
- drivers/media/platform/renesas/Makefile       |  15 +
- .../media/platform/{ => renesas}/rcar-fcp.c   |   0
- .../media/platform/{ => renesas}/rcar-isp.c   |   0
- .../platform/{ => renesas}/rcar-vin/Kconfig   |   2 +
- .../platform/{ => renesas}/rcar-vin/Makefile  |   0
- .../{ => renesas}/rcar-vin/rcar-core.c        |   0
- .../{ => renesas}/rcar-vin/rcar-csi2.c        |   0
- .../{ => renesas}/rcar-vin/rcar-dma.c         |   0
- .../{ => renesas}/rcar-vin/rcar-v4l2.c        |   0
- .../{ => renesas}/rcar-vin/rcar-vin.h         |   0
- .../media/platform/{ => renesas}/rcar_drif.c  |   0
- .../media/platform/{ => renesas}/rcar_fdp1.c  |   0
- .../media/platform/{ => renesas}/rcar_jpu.c   |   0
- .../platform/{ => renesas}/renesas-ceu.c      |   0
- drivers/media/platform/{ => renesas}/sh_vou.c |   0
- .../platform/{ => renesas}/vsp1/Makefile      |   0
- .../media/platform/{ => renesas}/vsp1/vsp1.h  |   0
- .../platform/{ => renesas}/vsp1/vsp1_brx.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_brx.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_clu.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_clu.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_dl.c     |   0
- .../platform/{ => renesas}/vsp1/vsp1_dl.h     |   0
- .../platform/{ => renesas}/vsp1/vsp1_drm.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_drm.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_drv.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_entity.c |   0
- .../platform/{ => renesas}/vsp1/vsp1_entity.h |   0
- .../platform/{ => renesas}/vsp1/vsp1_hgo.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_hgo.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_hgt.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_hgt.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_histo.c  |   0
- .../platform/{ => renesas}/vsp1/vsp1_histo.h  |   0
- .../platform/{ => renesas}/vsp1/vsp1_hsit.c   |   0
- .../platform/{ => renesas}/vsp1/vsp1_hsit.h   |   0
- .../platform/{ => renesas}/vsp1/vsp1_lif.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_lif.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_lut.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_lut.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_pipe.c   |   0
- .../platform/{ => renesas}/vsp1/vsp1_pipe.h   |   0
- .../platform/{ => renesas}/vsp1/vsp1_regs.h   |   0
- .../platform/{ => renesas}/vsp1/vsp1_rpf.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_rwpf.c   |   0
- .../platform/{ => renesas}/vsp1/vsp1_rwpf.h   |   0
- .../platform/{ => renesas}/vsp1/vsp1_sru.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_sru.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_uds.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_uds.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_uif.c    |   0
- .../platform/{ => renesas}/vsp1/vsp1_uif.h    |   0
- .../platform/{ => renesas}/vsp1/vsp1_video.c  |   0
- .../platform/{ => renesas}/vsp1/vsp1_video.h  |   0
- .../platform/{ => renesas}/vsp1/vsp1_wpf.c    |   0
- drivers/media/platform/rockchip/Kconfig       |   3 +
- drivers/media/platform/rockchip/rga/Kconfig   |  14 +
- .../media/platform/rockchip/rkisp1/Kconfig    |  19 +
- drivers/media/platform/s3c-camif/Kconfig      |  15 +
- drivers/media/platform/s5p-g2d/Kconfig        |  11 +
- drivers/media/platform/s5p-jpeg/Kconfig       |  12 +
- drivers/media/platform/s5p-mfc/Kconfig        |   9 +
- drivers/media/platform/sti/Kconfig            |   5 +
- drivers/media/platform/sti/bdisp/Kconfig      |  10 +
- drivers/media/platform/sti/c8sectpfe/Kconfig  |   1 +
- drivers/media/platform/sti/delta/Kconfig      |  36 +
- drivers/media/platform/sti/hva/Kconfig        |  26 +
- drivers/media/platform/stm32/Kconfig          |  31 +
- drivers/media/platform/sunxi/Kconfig          |   2 +
- .../media/platform/sunxi/sun4i-csi/Kconfig    |   1 +
- .../media/platform/sunxi/sun6i-csi/Kconfig    |   1 +
- drivers/media/platform/sunxi/sun8i-di/Kconfig |  14 +
- .../media/platform/sunxi/sun8i-rotate/Kconfig |  14 +
- drivers/media/platform/tegra/vde/Kconfig      |  17 +
- drivers/media/platform/ti-vpe/Kconfig         |  62 ++
- drivers/media/platform/via/Kconfig            |  11 +
- drivers/media/platform/via/Makefile           |   2 +
- drivers/media/platform/{ => via}/via-camera.c |   0
- drivers/media/platform/{ => via}/via-camera.h |   0
- drivers/media/platform/xilinx/Kconfig         |   1 +
- drivers/media/radio/Makefile                  |  43 +-
- drivers/media/rc/Makefile                     |  47 +-
- drivers/media/rc/keymaps/Makefile             |  34 +-
- drivers/media/spi/Makefile                    |   7 +-
- drivers/media/test-drivers/Makefile           |  14 +-
- drivers/media/tuners/Makefile                 |  66 +-
- drivers/media/tuners/tuner-types.c            |   2 +-
- .../{tuner-xc2028-types.h => xc2028-types.h}  |   6 +-
- .../media/tuners/{tuner-xc2028.c => xc2028.c} |   6 +-
- .../media/tuners/{tuner-xc2028.h => xc2028.h} |   2 +-
- drivers/media/tuners/xc4000.c                 |   2 +-
- drivers/media/usb/Makefile                    |  40 +-
- drivers/media/usb/dvb-usb/cxusb.c             |   2 +-
- drivers/media/usb/dvb-usb/dib0700_devices.c   |   2 +-
- drivers/media/usb/em28xx/em28xx-i2c.c         |   2 +-
- drivers/media/usb/em28xx/em28xx.h             |   2 +-
- drivers/media/usb/gspca/Makefile              |  88 +-
- drivers/media/usb/tm6000/tm6000-cards.c       |   2 +-
- drivers/media/usb/tm6000/tm6000-dvb.c         |   2 +-
- drivers/media/usb/tm6000/tm6000-i2c.c         |   2 +-
- drivers/media/v4l2-core/Makefile              |  34 +-
- drivers/media/v4l2-core/tuner-core.c          |   2 +-
- 168 files changed, 1316 insertions(+), 1175 deletions(-)
- create mode 100644 drivers/media/platform/allegro-dvt/Kconfig
- create mode 100644 drivers/media/platform/amphion/Kconfig
- create mode 100644 drivers/media/platform/aspeed/Kconfig
- create mode 100644 drivers/media/platform/aspeed/Makefile
- rename drivers/media/platform/{ => aspeed}/aspeed-video.c (100%)
- create mode 100644 drivers/media/platform/coda/Kconfig
- create mode 100644 drivers/media/platform/exynos-gsc/Kconfig
- delete mode 100644 drivers/media/platform/imx/Kconfig
- delete mode 100644 drivers/media/platform/imx/Makefile
- create mode 100644 drivers/media/platform/intel/Kconfig
- create mode 100644 drivers/media/platform/intel/Makefile
- rename drivers/media/platform/{ => intel}/pxa_camera.c (100%)
- create mode 100644 drivers/media/platform/meson/ge2d/Kconfig
- create mode 100644 drivers/media/platform/mtk-jpeg/Kconfig
- create mode 100644 drivers/media/platform/mtk-mdp/Kconfig
- create mode 100644 drivers/media/platform/mtk-vcodec/Kconfig
- create mode 100644 drivers/media/platform/mtk-vpu/Kconfig
- create mode 100644 drivers/media/platform/nxp/Kconfig
- create mode 100644 drivers/media/platform/nxp/Makefile
- rename drivers/media/platform/{ => nxp}/fsl-viu.c (100%)
- rename drivers/media/platform/{ => nxp}/imx-jpeg/Kconfig (91%)
- rename drivers/media/platform/{ => nxp}/imx-jpeg/Makefile (100%)
- rename drivers/media/platform/{ => nxp}/imx-jpeg/mxc-jpeg-hw.c (100%)
- rename drivers/media/platform/{ => nxp}/imx-jpeg/mxc-jpeg-hw.h (100%)
- rename drivers/media/platform/{ => nxp}/imx-jpeg/mxc-jpeg.c (100%)
- rename drivers/media/platform/{ => nxp}/imx-jpeg/mxc-jpeg.h (100%)
- rename drivers/media/platform/{imx => nxp}/imx-mipi-csis.c (100%)
- rename drivers/media/platform/{ => nxp}/imx-pxp.c (100%)
- rename drivers/media/platform/{ => nxp}/imx-pxp.h (100%)
- rename drivers/media/platform/{ => nxp}/mx2_emmaprp.c (100%)
- create mode 100644 drivers/media/platform/omap3isp/Kconfig
- create mode 100644 drivers/media/platform/qcom/Kconfig
- create mode 100644 drivers/media/platform/qcom/camss/Kconfig
- create mode 100644 drivers/media/platform/qcom/venus/Kconfig
- create mode 100644 drivers/media/platform/renesas/Kconfig
- create mode 100644 drivers/media/platform/renesas/Makefile
- rename drivers/media/platform/{ => renesas}/rcar-fcp.c (100%)
- rename drivers/media/platform/{ => renesas}/rcar-isp.c (100%)
- rename drivers/media/platform/{ => renesas}/rcar-vin/Kconfig (93%)
- rename drivers/media/platform/{ => renesas}/rcar-vin/Makefile (100%)
- rename drivers/media/platform/{ => renesas}/rcar-vin/rcar-core.c (100%)
- rename drivers/media/platform/{ => renesas}/rcar-vin/rcar-csi2.c (100%)
- rename drivers/media/platform/{ => renesas}/rcar-vin/rcar-dma.c (100%)
- rename drivers/media/platform/{ => renesas}/rcar-vin/rcar-v4l2.c (100%)
- rename drivers/media/platform/{ => renesas}/rcar-vin/rcar-vin.h (100%)
- rename drivers/media/platform/{ => renesas}/rcar_drif.c (100%)
- rename drivers/media/platform/{ => renesas}/rcar_fdp1.c (100%)
- rename drivers/media/platform/{ => renesas}/rcar_jpu.c (100%)
- rename drivers/media/platform/{ => renesas}/renesas-ceu.c (100%)
- rename drivers/media/platform/{ => renesas}/sh_vou.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/Makefile (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_brx.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_brx.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_clu.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_clu.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_dl.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_dl.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_drm.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_drm.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_drv.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_entity.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_entity.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_hgo.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_hgo.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_hgt.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_hgt.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_histo.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_histo.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_hsit.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_hsit.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_lif.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_lif.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_lut.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_lut.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_pipe.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_pipe.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_regs.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_rpf.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_rwpf.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_rwpf.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_sru.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_sru.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_uds.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_uds.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_uif.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_uif.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_video.c (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_video.h (100%)
- rename drivers/media/platform/{ => renesas}/vsp1/vsp1_wpf.c (100%)
- create mode 100644 drivers/media/platform/rockchip/Kconfig
- create mode 100644 drivers/media/platform/rockchip/rga/Kconfig
- create mode 100644 drivers/media/platform/rockchip/rkisp1/Kconfig
- create mode 100644 drivers/media/platform/s3c-camif/Kconfig
- create mode 100644 drivers/media/platform/s5p-g2d/Kconfig
- create mode 100644 drivers/media/platform/s5p-jpeg/Kconfig
- create mode 100644 drivers/media/platform/s5p-mfc/Kconfig
- create mode 100644 drivers/media/platform/sti/Kconfig
- create mode 100644 drivers/media/platform/sti/bdisp/Kconfig
- create mode 100644 drivers/media/platform/sti/delta/Kconfig
- create mode 100644 drivers/media/platform/sti/hva/Kconfig
- create mode 100644 drivers/media/platform/stm32/Kconfig
- create mode 100644 drivers/media/platform/sunxi/sun8i-di/Kconfig
- create mode 100644 drivers/media/platform/sunxi/sun8i-rotate/Kconfig
- create mode 100644 drivers/media/platform/tegra/vde/Kconfig
- create mode 100644 drivers/media/platform/ti-vpe/Kconfig
- create mode 100644 drivers/media/platform/via/Kconfig
- create mode 100644 drivers/media/platform/via/Makefile
- rename drivers/media/platform/{ => via}/via-camera.c (100%)
- rename drivers/media/platform/{ => via}/via-camera.h (100%)
- rename drivers/media/tuners/{tuner-xc2028-types.h => xc2028-types.h} (96%)
- rename drivers/media/tuners/{tuner-xc2028.c => xc2028.c} (99%)
- rename drivers/media/tuners/{tuner-xc2028.h => xc2028.h} (99%)
-
-Diff from v2:
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5a5cc49e27a6..848640546398 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12024,7 +12024,7 @@ L:	linux-renesas-soc@vger.kernel.org
- S:	Supported
- T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/devicetree/bindings/media/renesas,vsp1.yaml
--F:	drivers/media/platform/vsp1/
-+F:	drivers/media/platform/renesas/vsp1/
- 
- MEDIA DRIVERS FOR ST STV0910 DEMODULATOR ICs
- L:	linux-media@vger.kernel.org
-diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
-index f3f24c63536b..01b536863657 100644
---- a/drivers/media/Kconfig
-+++ b/drivers/media/Kconfig
-@@ -216,13 +216,12 @@ menu "Media drivers"
- comment "Drivers filtered as selected at 'Filter media drivers'"
- 	depends on MEDIA_SUPPORT_FILTER
- 
-+comment "media drivers"
-+
- source "drivers/media/usb/Kconfig"
- source "drivers/media/pci/Kconfig"
- source "drivers/media/radio/Kconfig"
- 
--# Common driver options
--source "drivers/media/common/Kconfig"
--
- if MEDIA_PLATFORM_SUPPORT
- source "drivers/media/platform/Kconfig"
- source "drivers/media/mmc/Kconfig"
-@@ -234,6 +233,9 @@ endif
- 
- source "drivers/media/firewire/Kconfig"
- 
-+# Common driver options
-+source "drivers/media/common/Kconfig"
-+
- endmenu
- 
- #
-diff --git a/drivers/media/common/Makefile b/drivers/media/common/Makefile
-index 2e3cc25c5695..ce84391ce664 100644
---- a/drivers/media/common/Makefile
-+++ b/drivers/media/common/Makefile
-@@ -1,7 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-y += b2c2/ saa7146/ siano/ v4l2-tpg/ videobuf2/
- 
--# Please keep it alphabetically sorted
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_VIDEO_CX2341X) += cx2341x.o
- obj-$(CONFIG_CYPRESS_FIRMWARE) += cypress_firmware.o
- obj-$(CONFIG_TTPCI_EEPROM) += ttpci-eeprom.o
-diff --git a/drivers/media/common/videobuf2/Makefile b/drivers/media/common/videobuf2/Makefile
-index 7036e5d56e04..a6fe3f304685 100644
---- a/drivers/media/common/videobuf2/Makefile
-+++ b/drivers/media/common/videobuf2/Makefile
-@@ -6,6 +6,8 @@ ifeq ($(CONFIG_TRACEPOINTS),y)
-   videobuf2-common-objs += vb2-trace.o
- endif
- 
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_VIDEOBUF2_CORE) += videobuf2-common.o
- obj-$(CONFIG_VIDEOBUF2_DMA_CONTIG) += videobuf2-dma-contig.o
- obj-$(CONFIG_VIDEOBUF2_DMA_SG) += videobuf2-dma-sg.o
-diff --git a/drivers/media/dvb-frontends/Makefile b/drivers/media/dvb-frontends/Makefile
-index 2cb52330fba3..a93146cb428c 100644
---- a/drivers/media/dvb-frontends/Makefile
-+++ b/drivers/media/dvb-frontends/Makefile
-@@ -16,7 +16,8 @@ drxk-objs := drxk_hard.o
- stb0899-objs := stb0899_drv.o stb0899_algo.o
- stv0900-objs := stv0900_core.o stv0900_sw.o
- 
--# Please keep it alphabetically sorted
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- 
- obj-$(CONFIG_DVB_A8293) += a8293.o
- obj-$(CONFIG_DVB_AF9013) += af9013.o
-diff --git a/drivers/media/pci/Makefile b/drivers/media/pci/Makefile
-index b234a5d78777..2aa7027b6807 100644
---- a/drivers/media/pci/Makefile
-+++ b/drivers/media/pci/Makefile
-@@ -3,6 +3,8 @@
- # Makefile for the kernel multimedia device drivers.
- #
- 
-+# Please keep it alphabetically sorted by directory
-+# (e. g. LC_ALL=C sort Makefile)
- obj-y        +=	ttpci/		\
- 		b2c2/		\
- 		pluto2/		\
-@@ -19,7 +21,8 @@ obj-y        +=	ttpci/		\
- 
- obj-$(CONFIG_STA2X11_VIP) += sta2x11/
- 
--# Please keep it alphabetically sorted
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_VIDEO_BT848) += bt8xx/
- obj-$(CONFIG_VIDEO_COBALT) += cobalt/
- obj-$(CONFIG_VIDEO_CX18) += cx18/
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index a3ad25c6a56c..721f27ef0130 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -5,6 +5,7 @@
- 
- menuconfig MEDIA_PLATFORM_DRIVERS
- 	bool "Media platform devices"
-+	default "y"
- 	help
- 	  Say Y here to enable support for platform-specific media drivers.
- 
-@@ -47,6 +48,7 @@ config VIDEO_MEM2MEM_DEINTERLACE
- 	select V4L2_MEM2MEM_DEV
- 	help
- 	    Generic deinterlacing V4L2 driver.
-+
- config VIDEO_MUX
- 	tristate "Video Multiplexer"
- 	depends on V4L_PLATFORM_DRIVERS
-@@ -71,10 +73,8 @@ source "drivers/media/platform/atmel/Kconfig"
- source "drivers/media/platform/cadence/Kconfig"
- source "drivers/media/platform/coda/Kconfig"
- source "drivers/media/platform/davinci/Kconfig"
--source "drivers/media/platform/exynos4-is/Kconfig"
- source "drivers/media/platform/exynos-gsc/Kconfig"
--source "drivers/media/platform/imx-jpeg/Kconfig"
--source "drivers/media/platform/imx/Kconfig"
-+source "drivers/media/platform/exynos4-is/Kconfig"
- source "drivers/media/platform/intel/Kconfig"
- source "drivers/media/platform/marvell-ccic/Kconfig"
- source "drivers/media/platform/meson/ge2d/Kconfig"
-@@ -83,8 +83,8 @@ source "drivers/media/platform/mtk-mdp/Kconfig"
- source "drivers/media/platform/mtk-vcodec/Kconfig"
- source "drivers/media/platform/mtk-vpu/Kconfig"
- source "drivers/media/platform/nxp/Kconfig"
--source "drivers/media/platform/omap3isp/Kconfig"
- source "drivers/media/platform/omap/Kconfig"
-+source "drivers/media/platform/omap3isp/Kconfig"
- source "drivers/media/platform/qcom/Kconfig"
- source "drivers/media/platform/renesas/Kconfig"
- source "drivers/media/platform/rockchip/Kconfig"
-@@ -100,4 +100,4 @@ source "drivers/media/platform/ti-vpe/Kconfig"
- source "drivers/media/platform/via/Kconfig"
- source "drivers/media/platform/xilinx/Kconfig"
- 
--endif #MEDIA_PLATFORM_DRIVERS
-+endif # MEDIA_PLATFORM_DRIVERS
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index 1a6c41e6e261..20b07ae3ebf1 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -3,7 +3,8 @@
- # Makefile for the video capture/playback device drivers.
- #
- 
--# Place here, alphabetically sorted, all directories
-+# Place here, alphabetically sorted by directory
-+# (e. g. LC_ALL=C sort Makefile)
- obj-y += allegro-dvt/
- obj-y += aspeed/
- obj-y += am437x/
-@@ -12,10 +13,8 @@ obj-y += atmel/
- obj-y += cadence/
- obj-y += coda/
- obj-y += davinci/
--obj-y += exynos4-is/
- obj-y += exynos-gsc/
--obj-y += imx/
--obj-y += imx-jpeg/
-+obj-y += exynos4-is/
- obj-y += intel/
- obj-y += marvell-ccic/
- obj-y += meson/ge2d/
-@@ -44,9 +43,10 @@ obj-y += sunxi/
- obj-y += tegra/vde/
- obj-y += ti-vpe/
- obj-y += via/
--obj-y += vsp1/
- obj-y += xilinx/
- 
- # Please place here only ancillary drivers that aren't SoC-specific
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_VIDEO_MEM2MEM_DEINTERLACE)	+= m2m-deinterlace.o
- obj-$(CONFIG_VIDEO_MUX)			+= video-mux.o
-diff --git a/drivers/media/platform/aspeed/Makefile b/drivers/media/platform/aspeed/Makefile
-index 4ee15b3ddd90..b8394b7e537d 100644
---- a/drivers/media/platform/aspeed/Makefile
-+++ b/drivers/media/platform/aspeed/Makefile
-@@ -1 +1,2 @@
--obj-$(CONFIG_VIDEO_ASPEED)		+= aspeed-video.o
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_VIDEO_ASPEED) += aspeed-video.o
-diff --git a/drivers/media/platform/imx/Kconfig b/drivers/media/platform/imx/Kconfig
-deleted file mode 100644
-index 7cd0617c9b1b..000000000000
---- a/drivers/media/platform/imx/Kconfig
-+++ /dev/null
-@@ -1,25 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0-only
--
--menuconfig VIDEO_IMX
--	bool "V4L2 capture drivers for NXP i.MX devices"
--	depends on V4L_PLATFORM_DRIVERS
--	depends on ARCH_MXC || COMPILE_TEST
--	depends on VIDEO_DEV && VIDEO_V4L2
--	help
--	  Say yes here to enable support for capture drivers on i.MX SoCs.
--	  Support for the single SoC features are selectable in the sub-menu
--	  options.
--
--if VIDEO_IMX
--
--config VIDEO_IMX_MIPI_CSIS
--	tristate "MIPI CSI-2 CSIS receiver found on i.MX7 and i.MX8 models"
--	select MEDIA_CONTROLLER
--	select V4L2_FWNODE
--	select VIDEO_V4L2_SUBDEV_API
--	default n
--	help
--	  Video4Linux2 sub-device driver for the MIPI CSI-2 CSIS receiver
--	  v3.3/v3.6.3 found on some i.MX7 and i.MX8 SoCs.
--
--endif # VIDEO_IMX
-diff --git a/drivers/media/platform/imx/Makefile b/drivers/media/platform/imx/Makefile
-deleted file mode 100644
-index f72bdbe8e6ef..000000000000
---- a/drivers/media/platform/imx/Makefile
-+++ /dev/null
-@@ -1 +0,0 @@
--obj-$(CONFIG_VIDEO_IMX_MIPI_CSIS) += imx-mipi-csis.o
-diff --git a/drivers/media/platform/intel/Makefile b/drivers/media/platform/intel/Makefile
-index 10ea23fb2bcc..45b5c59d57da 100644
---- a/drivers/media/platform/intel/Makefile
-+++ b/drivers/media/platform/intel/Makefile
-@@ -1 +1,2 @@
--obj-$(CONFIG_VIDEO_PXA27x)		+= pxa_camera.o
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_VIDEO_PXA27x) += pxa_camera.o
-diff --git a/drivers/media/platform/nxp/Kconfig b/drivers/media/platform/nxp/Kconfig
-index 92724121ff91..df52d32ebe50 100644
---- a/drivers/media/platform/nxp/Kconfig
-+++ b/drivers/media/platform/nxp/Kconfig
-@@ -2,6 +2,30 @@
- 
- # V4L drivers
- 
-+menuconfig VIDEO_IMX
-+	bool "V4L2 capture drivers for NXP i.MX devices"
-+	depends on V4L_PLATFORM_DRIVERS
-+	depends on ARCH_MXC || COMPILE_TEST
-+	depends on VIDEO_DEV && VIDEO_V4L2
-+	help
-+	  Say yes here to enable support for capture drivers on i.MX SoCs.
-+	  Support for the single SoC features are selectable in the sub-menu
-+	  options.
-+
-+if VIDEO_IMX
-+
-+config VIDEO_IMX_MIPI_CSIS
-+	tristate "MIPI CSI-2 CSIS receiver found on i.MX7 and i.MX8 models"
-+	select MEDIA_CONTROLLER
-+	select V4L2_FWNODE
-+	select VIDEO_V4L2_SUBDEV_API
-+	default n
-+	help
-+	  Video4Linux2 sub-device driver for the MIPI CSI-2 CSIS receiver
-+	  v3.3/v3.6.3 found on some i.MX7 and i.MX8 SoCs.
-+
-+endif # VIDEO_IMX
-+
- config VIDEO_VIU
- 	tristate "Freescale/NXP VIU Video Driver"
- 	depends on V4L_PLATFORM_DRIVERS
-@@ -38,3 +62,5 @@ config VIDEO_MX2_EMMAPRP
- 	    MX2X chips have a PrP that can be used to process buffers from
- 	    memory to memory. Operations include resizing and format
- 	    conversion.
-+
-+source "drivers/media/platform/nxp/imx-jpeg/Kconfig"
-diff --git a/drivers/media/platform/nxp/Makefile b/drivers/media/platform/nxp/Makefile
-index 147bd7ad4ef4..a217cf7f109d 100644
---- a/drivers/media/platform/nxp/Makefile
-+++ b/drivers/media/platform/nxp/Makefile
-@@ -1,5 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-$(CONFIG_VIDEO_IMX_PXP)		+= imx-pxp.o
--obj-$(CONFIG_VIDEO_VIU)			+= fsl-viu.o
--obj-$(CONFIG_VIDEO_MX2_EMMAPRP)		+= mx2_emmaprp.o
-+obj-y += imx-jpeg/
-+
-+obj-$(CONFIG_VIDEO_IMX_MIPI_CSIS) += imx-mipi-csis.o
-+obj-$(CONFIG_VIDEO_IMX_PXP) += imx-pxp.o
-+obj-$(CONFIG_VIDEO_MX2_EMMAPRP) += mx2_emmaprp.o
-+obj-$(CONFIG_VIDEO_VIU) += fsl-viu.o
-diff --git a/drivers/media/platform/imx-jpeg/Kconfig b/drivers/media/platform/nxp/imx-jpeg/Kconfig
-similarity index 100%
-rename from drivers/media/platform/imx-jpeg/Kconfig
-rename to drivers/media/platform/nxp/imx-jpeg/Kconfig
-diff --git a/drivers/media/platform/imx-jpeg/Makefile b/drivers/media/platform/nxp/imx-jpeg/Makefile
-similarity index 100%
-rename from drivers/media/platform/imx-jpeg/Makefile
-rename to drivers/media/platform/nxp/imx-jpeg/Makefile
-diff --git a/drivers/media/platform/imx-jpeg/mxc-jpeg-hw.c b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg-hw.c
-similarity index 100%
-rename from drivers/media/platform/imx-jpeg/mxc-jpeg-hw.c
-rename to drivers/media/platform/nxp/imx-jpeg/mxc-jpeg-hw.c
-diff --git a/drivers/media/platform/imx-jpeg/mxc-jpeg-hw.h b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg-hw.h
-similarity index 100%
-rename from drivers/media/platform/imx-jpeg/mxc-jpeg-hw.h
-rename to drivers/media/platform/nxp/imx-jpeg/mxc-jpeg-hw.h
-diff --git a/drivers/media/platform/imx-jpeg/mxc-jpeg.c b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-similarity index 100%
-rename from drivers/media/platform/imx-jpeg/mxc-jpeg.c
-rename to drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-diff --git a/drivers/media/platform/imx-jpeg/mxc-jpeg.h b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.h
-similarity index 100%
-rename from drivers/media/platform/imx-jpeg/mxc-jpeg.h
-rename to drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.h
-diff --git a/drivers/media/platform/imx/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-similarity index 100%
-rename from drivers/media/platform/imx/imx-mipi-csis.c
-rename to drivers/media/platform/nxp/imx-mipi-csis.c
-diff --git a/drivers/media/platform/renesas/Makefile b/drivers/media/platform/renesas/Makefile
-index fd2e0c5a8953..9518e6dd794d 100644
---- a/drivers/media/platform/renesas/Makefile
-+++ b/drivers/media/platform/renesas/Makefile
-@@ -4,11 +4,12 @@
- #
- 
- obj-y += rcar-vin/
-+obj-y += vsp1/
- 
--obj-$(CONFIG_VIDEO_RCAR_DRIF)		+= rcar_drif.o
--obj-$(CONFIG_VIDEO_RCAR_ISP)		+= rcar-isp.o
--obj-$(CONFIG_VIDEO_RENESAS_CEU)		+= renesas-ceu.o
--obj-$(CONFIG_VIDEO_RENESAS_FCP)		+= rcar-fcp.o
--obj-$(CONFIG_VIDEO_RENESAS_FDP1)	+= rcar_fdp1.o
--obj-$(CONFIG_VIDEO_RENESAS_JPU)		+= rcar_jpu.o
--obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
-+obj-$(CONFIG_VIDEO_RCAR_DRIF) += rcar_drif.o
-+obj-$(CONFIG_VIDEO_RCAR_ISP) += rcar-isp.o
-+obj-$(CONFIG_VIDEO_RENESAS_CEU) += renesas-ceu.o
-+obj-$(CONFIG_VIDEO_RENESAS_FCP) += rcar-fcp.o
-+obj-$(CONFIG_VIDEO_RENESAS_FDP1) += rcar_fdp1.o
-+obj-$(CONFIG_VIDEO_RENESAS_JPU) += rcar_jpu.o
-+obj-$(CONFIG_VIDEO_SH_VOU) += sh_vou.o
-diff --git a/drivers/media/platform/vsp1/Makefile b/drivers/media/platform/renesas/vsp1/Makefile
-similarity index 100%
-rename from drivers/media/platform/vsp1/Makefile
-rename to drivers/media/platform/renesas/vsp1/Makefile
-diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/renesas/vsp1/vsp1.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1.h
-rename to drivers/media/platform/renesas/vsp1/vsp1.h
-diff --git a/drivers/media/platform/vsp1/vsp1_brx.c b/drivers/media/platform/renesas/vsp1/vsp1_brx.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_brx.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_brx.c
-diff --git a/drivers/media/platform/vsp1/vsp1_brx.h b/drivers/media/platform/renesas/vsp1/vsp1_brx.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_brx.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_brx.h
-diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/renesas/vsp1/vsp1_clu.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_clu.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_clu.c
-diff --git a/drivers/media/platform/vsp1/vsp1_clu.h b/drivers/media/platform/renesas/vsp1/vsp1_clu.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_clu.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_clu.h
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/renesas/vsp1/vsp1_dl.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_dl.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_dl.c
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/renesas/vsp1/vsp1_dl.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_dl.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_dl.h
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_drm.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_drm.c
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/renesas/vsp1/vsp1_drm.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_drm.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_drm.h
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_drv.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_drv.c
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/renesas/vsp1/vsp1_entity.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_entity.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_entity.c
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.h b/drivers/media/platform/renesas/vsp1/vsp1_entity.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_entity.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_entity.h
-diff --git a/drivers/media/platform/vsp1/vsp1_hgo.c b/drivers/media/platform/renesas/vsp1/vsp1_hgo.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_hgo.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_hgo.c
-diff --git a/drivers/media/platform/vsp1/vsp1_hgo.h b/drivers/media/platform/renesas/vsp1/vsp1_hgo.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_hgo.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_hgo.h
-diff --git a/drivers/media/platform/vsp1/vsp1_hgt.c b/drivers/media/platform/renesas/vsp1/vsp1_hgt.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_hgt.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_hgt.c
-diff --git a/drivers/media/platform/vsp1/vsp1_hgt.h b/drivers/media/platform/renesas/vsp1/vsp1_hgt.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_hgt.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_hgt.h
-diff --git a/drivers/media/platform/vsp1/vsp1_histo.c b/drivers/media/platform/renesas/vsp1/vsp1_histo.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_histo.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_histo.c
-diff --git a/drivers/media/platform/vsp1/vsp1_histo.h b/drivers/media/platform/renesas/vsp1/vsp1_histo.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_histo.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_histo.h
-diff --git a/drivers/media/platform/vsp1/vsp1_hsit.c b/drivers/media/platform/renesas/vsp1/vsp1_hsit.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_hsit.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_hsit.c
-diff --git a/drivers/media/platform/vsp1/vsp1_hsit.h b/drivers/media/platform/renesas/vsp1/vsp1_hsit.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_hsit.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_hsit.h
-diff --git a/drivers/media/platform/vsp1/vsp1_lif.c b/drivers/media/platform/renesas/vsp1/vsp1_lif.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_lif.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_lif.c
-diff --git a/drivers/media/platform/vsp1/vsp1_lif.h b/drivers/media/platform/renesas/vsp1/vsp1_lif.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_lif.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_lif.h
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/renesas/vsp1/vsp1_lut.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_lut.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_lut.c
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.h b/drivers/media/platform/renesas/vsp1/vsp1_lut.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_lut.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_lut.h
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_pipe.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_pipe.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_pipe.h
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_regs.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_regs.h
-diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_rpf.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_rpf.c
-diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.c b/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_rwpf.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_rwpf.c
-diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/platform/renesas/vsp1/vsp1_rwpf.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_rwpf.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_rwpf.h
-diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/renesas/vsp1/vsp1_sru.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_sru.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_sru.c
-diff --git a/drivers/media/platform/vsp1/vsp1_sru.h b/drivers/media/platform/renesas/vsp1/vsp1_sru.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_sru.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_sru.h
-diff --git a/drivers/media/platform/vsp1/vsp1_uds.c b/drivers/media/platform/renesas/vsp1/vsp1_uds.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_uds.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_uds.c
-diff --git a/drivers/media/platform/vsp1/vsp1_uds.h b/drivers/media/platform/renesas/vsp1/vsp1_uds.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_uds.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_uds.h
-diff --git a/drivers/media/platform/vsp1/vsp1_uif.c b/drivers/media/platform/renesas/vsp1/vsp1_uif.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_uif.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_uif.c
-diff --git a/drivers/media/platform/vsp1/vsp1_uif.h b/drivers/media/platform/renesas/vsp1/vsp1_uif.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_uif.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_uif.h
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/renesas/vsp1/vsp1_video.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_video.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_video.c
-diff --git a/drivers/media/platform/vsp1/vsp1_video.h b/drivers/media/platform/renesas/vsp1/vsp1_video.h
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_video.h
-rename to drivers/media/platform/renesas/vsp1/vsp1_video.h
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
-similarity index 100%
-rename from drivers/media/platform/vsp1/vsp1_wpf.c
-rename to drivers/media/platform/renesas/vsp1/vsp1_wpf.c
-diff --git a/drivers/media/platform/via/Makefile b/drivers/media/platform/via/Makefile
-index e5cd95d27523..a5c04c825840 100644
---- a/drivers/media/platform/via/Makefile
-+++ b/drivers/media/platform/via/Makefile
-@@ -1 +1,2 @@
--obj-$(CONFIG_VIDEO_VIA_CAMERA)		+= via-camera.o
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_VIDEO_VIA_CAMERA) += via-camera.o
-diff --git a/drivers/media/radio/Makefile b/drivers/media/radio/Makefile
-index 615070803429..cfb6af7d3bc3 100644
---- a/drivers/media/radio/Makefile
-+++ b/drivers/media/radio/Makefile
-@@ -5,7 +5,8 @@
- 
- shark2-objs := radio-shark2.o radio-tea5777.o
- 
--# Please keep it alphabetically sorted
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_RADIO_AZTECH) += radio-aztech.o
- obj-$(CONFIG_RADIO_CADET) += radio-cadet.o
- obj-$(CONFIG_RADIO_GEMTEK) += radio-gemtek.o
-diff --git a/drivers/media/rc/Makefile b/drivers/media/rc/Makefile
-index be8657391f74..a9285266e944 100644
---- a/drivers/media/rc/Makefile
-+++ b/drivers/media/rc/Makefile
-@@ -9,7 +9,8 @@ rc-core-$(CONFIG_BPF_LIRC_MODE2) += bpf-lirc.o
- 
- obj-$(CONFIG_RC_CORE) += rc-core.o
- 
--# IR decoders - please keep it alphabetically sorted
-+# IR decoders - please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_IR_IMON_DECODER) += ir-imon-decoder.o
- obj-$(CONFIG_IR_JVC_DECODER) += ir-jvc-decoder.o
- obj-$(CONFIG_IR_MCE_KBD_DECODER) += ir-mce_kbd-decoder.o
-@@ -22,7 +23,8 @@ obj-$(CONFIG_IR_SHARP_DECODER) += ir-sharp-decoder.o
- obj-$(CONFIG_IR_SONY_DECODER) += ir-sony-decoder.o
- obj-$(CONFIG_IR_XMP_DECODER) += ir-xmp-decoder.o
- 
--# stand-alone IR receivers/transmitters  - please keep it alphabetically sorted
-+# stand-alone IR receivers/transmitters  - please keep it alphabetically
-+# sorted by Kconfig name (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_IR_ENE) += ene_ir.o
- obj-$(CONFIG_IR_FINTEK) += fintek-cir.o
- obj-$(CONFIG_IR_GPIO_CIR) += gpio-ir-recv.o
-diff --git a/drivers/media/rc/keymaps/Makefile b/drivers/media/rc/keymaps/Makefile
-index a7e34ed39424..f513ff5caf4e 100644
---- a/drivers/media/rc/keymaps/Makefile
-+++ b/drivers/media/rc/keymaps/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--# Please keep keymaps alphabetically sorted
-+# Please keep keymaps alphabetically sorted by directory name
-+#(e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_RC_MAP) += \
- 			rc-adstech-dvb-t-pci.o \
- 			rc-alink-dtu-m.o \
-diff --git a/drivers/media/spi/Makefile b/drivers/media/spi/Makefile
-index 3c7c67cd048e..6ac7adc64124 100644
---- a/drivers/media/spi/Makefile
-+++ b/drivers/media/spi/Makefile
-@@ -2,5 +2,7 @@
- 
- ccflags-y += -I $(srctree)/drivers/media/dvb-frontends/cxd2880
- 
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_CXD2880_SPI_DRV) += cxd2880-spi.o
- obj-$(CONFIG_VIDEO_GS1662) += gs1662.o
-diff --git a/drivers/media/test-drivers/Makefile b/drivers/media/test-drivers/Makefile
-index b0951a57dcc0..ff390b687189 100644
---- a/drivers/media/test-drivers/Makefile
-+++ b/drivers/media/test-drivers/Makefile
-@@ -3,7 +3,8 @@
- # Makefile for the test drivers.
- #
- 
--# Please keep it alphabetically sorted
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- 
- obj-$(CONFIG_DVB_VIDTV) += vidtv/
- 
-diff --git a/drivers/media/tuners/Makefile b/drivers/media/tuners/Makefile
-index 3657e89acdd1..bd350a285aad 100644
---- a/drivers/media/tuners/Makefile
-+++ b/drivers/media/tuners/Makefile
-@@ -6,8 +6,8 @@
- ccflags-y += -I$(srctree)/drivers/media/dvb-frontends
- tda18271-objs := tda18271-maps.o tda18271-common.o tda18271-fe.o
- 
--# Please keep it alphabetically sorted
--
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_MEDIA_TUNER_E4000) += e4000.o
- obj-$(CONFIG_MEDIA_TUNER_FC0011) += fc0011.o
- obj-$(CONFIG_MEDIA_TUNER_FC0012) += fc0012.o
-diff --git a/drivers/media/usb/Makefile b/drivers/media/usb/Makefile
-index f3daa71e8396..044bd46c799c 100644
---- a/drivers/media/usb/Makefile
-+++ b/drivers/media/usb/Makefile
-@@ -3,11 +3,20 @@
- # Makefile for the USB media device drivers
- #
- 
--# DVB USB-only drivers
--obj-y += ttusb-dec/ ttusb-budget/ dvb-usb/ dvb-usb-v2/ siano/ b2c2/
--obj-y += zr364xx/ stkwebcam/ s2255/
-+# DVB USB-only drivers. Please keep it alphabetically sorted by directory name
-+# (e. g. LC_ALL=C sort Makefile)
-+obj-y += b2c2/
-+obj-y += dvb-usb/
-+obj-y += dvb-usb-v2/
-+obj-y += s2255/
-+obj-y += siano/
-+obj-y += stkwebcam/
-+obj-y += ttusb-budget/
-+obj-y += ttusb-dec/
-+obj-y += zr364xx/
- 
--# Please keep it alphabetically sorted
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- obj-$(CONFIG_DVB_AS102) += as102/
- obj-$(CONFIG_USB_AIRSPY) += airspy/
- obj-$(CONFIG_USB_GSPCA) += gspca/
-diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
-index b7440f0a6710..1ec7e9cae1fa 100644
---- a/drivers/media/v4l2-core/Makefile
-+++ b/drivers/media/v4l2-core/Makefile
-@@ -13,12 +13,17 @@ videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
- 			v4l2-ctrls-core.o v4l2-ctrls-api.o \
- 			v4l2-ctrls-request.o v4l2-ctrls-defs.o
- 
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
- videodev-$(CONFIG_COMPAT) += v4l2-compat-ioctl32.o
- videodev-$(CONFIG_MEDIA_CONTROLLER) += v4l2-mc.o
- videodev-$(CONFIG_SPI) += v4l2-spi.o
- videodev-$(CONFIG_TRACEPOINTS) += v4l2-trace.o
- videodev-$(CONFIG_VIDEO_V4L2_I2C) += v4l2-i2c.o
- 
-+# Please keep it alphabetically sorted by Kconfig name
-+# (e. g. LC_ALL=C sort Makefile)
-+
- obj-$(CONFIG_V4L2_ASYNC) += v4l2-async.o
- obj-$(CONFIG_V4L2_FLASH_LED_CLASS) += v4l2-flash-led-class.o
- obj-$(CONFIG_V4L2_FWNODE) += v4l2-fwnode.o
-
-
-
-
+SGkgTGF1cmVudCwNCg0KVGhhbmtzIGZvciB0aGUgZmVlZGJhY2suDQoNCj4gU3ViamVjdDogUmU6
+IFtSRkMgMTEvMjhdIGRybTogcmNhci1kdTogQWRkIG51bV9ycGYgdG8gc3RydWN0DQo+IHJjYXJf
+ZHVfZGV2aWNlX2luZm8NCj4gDQo+IEhpIEJpanUsDQo+IA0KPiBUaGFuayB5b3UgZm9yIHRoZSBw
+YXRjaC4NCj4gDQo+IE9uIFdlZCwgSmFuIDEyLCAyMDIyIGF0IDA1OjQ1OjU1UE0gKzAwMDAsIEJp
+anUgRGFzIHdyb3RlOg0KPiA+IE51bWJlciBvZiBSUEYncyBWU1AgaXMgZGlmZmVyZW50IG9uIFIt
+Q2FyIGFuZCBSWi9HMkwgIFItQ2FyIEdlbjMgLT4gNQ0KPiA+IFJQRidzICBSLUNhciBHZW4yIC0+
+IDQgUlBGJ3MgIFJaL0cyTCAtPiAyIFJQRidzDQo+ID4NCj4gPiBBZGQgbnVtX3JwZiB0byBzdHJ1
+Y3QgcmNhcl9kdV9kZXZpY2VfaW5mbyB0byBzdXBwb3J0IGxhdGVyIFNvQyB3aXRob3V0DQo+ID4g
+YW55IGNvZGUgY2hhbmdlcy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxiaWp1
+LmRhcy5qekBicC5yZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9ncHUvZHJtL3Jj
+YXItZHUvcmNhcl9kdV9kcnYuYyB8IDE3ICsrKysrKysrKysrKysrKysrDQo+ID4gZHJpdmVycy9n
+cHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuaCB8ICAyICsrDQo+ID4gZHJpdmVycy9ncHUvZHJt
+L3JjYXItZHUvcmNhcl9kdV92c3AuYyB8ICA2ICstLS0tLQ0KPiA+ICAzIGZpbGVzIGNoYW5nZWQs
+IDIwIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuYw0KPiA+IGIvZHJpdmVycy9ncHUv
+ZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuYw0KPiA+IGluZGV4IDVhODEzMWVmODFkNS4uNWNhN2Nk
+MDg1Nzk0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVf
+ZHJ2LmMNCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5jDQo+
+ID4gQEAgLTU2LDYgKzU2LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9p
+bmZvDQo+IHJ6ZzFfZHVfcjhhNzc0M19pbmZvID0gew0KPiA+ICAJCX0sDQo+ID4gIAl9LA0KPiA+
+ICAJLm51bV9sdmRzID0gMSwNCj4gPiArCS5udW1fcnBmID0gNCwNCj4gPiAgfTsNCj4gPg0KPiA+
+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHJjYXJfZHVfZGV2aWNlX2luZm8gcnpnMV9kdV9yOGE3NzQ1
+X2luZm8gPSB7IEBADQo+ID4gLTc4LDYgKzc5LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2Fy
+X2R1X2RldmljZV9pbmZvDQo+IHJ6ZzFfZHVfcjhhNzc0NV9pbmZvID0gew0KPiA+ICAJCQkucG9y
+dCA9IDEsDQo+ID4gIAkJfSwNCj4gPiAgCX0sDQo+ID4gKwkubnVtX3JwZiA9IDQsDQo+ID4gIH07
+DQo+ID4NCj4gPiAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZvIHJ6ZzFf
+ZHVfcjhhNzc0NzBfaW5mbyA9IHsgQEANCj4gPiAtMTA1LDYgKzEwNyw3IEBAIHN0YXRpYyBjb25z
+dCBzdHJ1Y3QgcmNhcl9kdV9kZXZpY2VfaW5mbw0KPiByemcxX2R1X3I4YTc3NDcwX2luZm8gPSB7
+DQo+ID4gIAkJCS5wb3J0ID0gMiwNCj4gPiAgCQl9LA0KPiA+ICAJfSwNCj4gPiArCS5udW1fcnBm
+ID0gNCwNCj4gPiAgfTsNCj4gPg0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHJjYXJfZHVfZGV2
+aWNlX2luZm8gcmNhcl9kdV9yOGE3NzRhMV9pbmZvID0geyBAQA0KPiA+IC0xMzQsNiArMTM3LDcg
+QEAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZvDQo+IHJjYXJfZHVfcjhh
+Nzc0YTFfaW5mbyA9IHsNCj4gPiAgCQl9LA0KPiA+ICAJfSwNCj4gPiAgCS5udW1fbHZkcyA9IDEs
+DQo+ID4gKwkubnVtX3JwZiA9IDUsDQo+ID4gIAkuZHBsbF9tYXNrID0gIEJJVCgxKSwNCj4gPiAg
+fTsNCj4gPg0KPiA+IEBAIC0xNjQsNiArMTY4LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2Fy
+X2R1X2RldmljZV9pbmZvDQo+IHJjYXJfZHVfcjhhNzc0YjFfaW5mbyA9IHsNCj4gPiAgCQl9LA0K
+PiA+ICAJfSwNCj4gPiAgCS5udW1fbHZkcyA9IDEsDQo+ID4gKwkubnVtX3JwZiA9IDUsDQo+ID4g
+IAkuZHBsbF9tYXNrID0gIEJJVCgxKSwNCj4gPiAgfTsNCj4gPg0KPiA+IEBAIC0xOTEsNiArMTk2
+LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZvDQo+IHJjYXJfZHVf
+cjhhNzc0YzBfaW5mbyA9IHsNCj4gPiAgCQl9LA0KPiA+ICAJfSwNCj4gPiAgCS5udW1fbHZkcyA9
+IDIsDQo+ID4gKwkubnVtX3JwZiA9IDQsDQo+ID4gIAkubHZkc19jbGtfbWFzayA9ICBCSVQoMSkg
+fCBCSVQoMCksDQo+ID4gIH07DQo+ID4NCj4gPiBAQCAtMjIxLDYgKzIyNyw3IEBAIHN0YXRpYyBj
+b25zdCBzdHJ1Y3QgcmNhcl9kdV9kZXZpY2VfaW5mbw0KPiByY2FyX2R1X3I4YTc3NGUxX2luZm8g
+PSB7DQo+ID4gIAkJfSwNCj4gPiAgCX0sDQo+ID4gIAkubnVtX2x2ZHMgPSAxLA0KPiA+ICsJLm51
+bV9ycGYgPSA1LA0KPiA+ICAJLmRwbGxfbWFzayA9ICBCSVQoMSksDQo+ID4gIH07DQo+ID4NCj4g
+PiBAQCAtMjczLDYgKzI4MCw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcmNhcl9kdV9kZXZpY2Vf
+aW5mbw0KPiByY2FyX2R1X3I4YTc3OTBfaW5mbyA9IHsNCj4gPiAgCQl9LA0KPiA+ICAJfSwNCj4g
+PiAgCS5udW1fbHZkcyA9IDIsDQo+ID4gKwkubnVtX3JwZiA9IDQsDQo+ID4gIH07DQo+ID4NCj4g
+PiAgLyogTTItVyAocjhhNzc5MSkgYW5kIE0yLU4gKHI4YTc3OTMpIGFyZSBpZGVudGljYWwgKi8g
+QEAgLTI5OCw2DQo+ID4gKzMwNiw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcmNhcl9kdV9kZXZp
+Y2VfaW5mbyByY2FyX2R1X3I4YTc3OTFfaW5mbyA9DQo+IHsNCj4gPiAgCQl9LA0KPiA+ICAJfSwN
+Cj4gPiAgCS5udW1fbHZkcyA9IDEsDQo+ID4gKwkubnVtX3JwZiA9IDQsDQo+ID4gIH07DQo+ID4N
+Cj4gPiAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZvIHJjYXJfZHVfcjhh
+Nzc5Ml9pbmZvID0geyBAQA0KPiA+IC0zMTgsNiArMzI3LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVj
+dCByY2FyX2R1X2RldmljZV9pbmZvDQo+IHJjYXJfZHVfcjhhNzc5Ml9pbmZvID0gew0KPiA+ICAJ
+CQkucG9ydCA9IDEsDQo+ID4gIAkJfSwNCj4gPiAgCX0sDQo+ID4gKwkubnVtX3JwZiA9IDQsDQo+
+ID4gIH07DQo+ID4NCj4gPiAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZv
+IHJjYXJfZHVfcjhhNzc5NF9pbmZvID0geyBAQA0KPiA+IC0zNDEsNiArMzUxLDcgQEAgc3RhdGlj
+IGNvbnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZvDQo+IHJjYXJfZHVfcjhhNzc5NF9pbmZv
+ID0gew0KPiA+ICAJCQkucG9ydCA9IDEsDQo+ID4gIAkJfSwNCj4gPiAgCX0sDQo+ID4gKwkubnVt
+X3JwZiA9IDQsDQo+ID4gIH07DQo+ID4NCj4gPiAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2FyX2R1
+X2RldmljZV9pbmZvIHJjYXJfZHVfcjhhNzc5NV9pbmZvID0geyBAQA0KPiA+IC0zNzQsNiArMzg1
+LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZvDQo+IHJjYXJfZHVf
+cjhhNzc5NV9pbmZvID0gew0KPiA+ICAJCX0sDQo+ID4gIAl9LA0KPiA+ICAJLm51bV9sdmRzID0g
+MSwNCj4gPiArCS5udW1fcnBmID0gNSwNCj4gPiAgCS5kcGxsX21hc2sgPSAgQklUKDIpIHwgQklU
+KDEpLA0KPiA+ICB9Ow0KPiA+DQo+ID4gQEAgLTQwNCw2ICs0MTYsNyBAQCBzdGF0aWMgY29uc3Qg
+c3RydWN0IHJjYXJfZHVfZGV2aWNlX2luZm8NCj4gcmNhcl9kdV9yOGE3Nzk2X2luZm8gPSB7DQo+
+ID4gIAkJfSwNCj4gPiAgCX0sDQo+ID4gIAkubnVtX2x2ZHMgPSAxLA0KPiA+ICsJLm51bV9ycGYg
+PSA1LA0KPiA+ICAJLmRwbGxfbWFzayA9ICBCSVQoMSksDQo+ID4gIH07DQo+ID4NCj4gPiBAQCAt
+NDM0LDYgKzQ0Nyw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcmNhcl9kdV9kZXZpY2VfaW5mbw0K
+PiByY2FyX2R1X3I4YTc3OTY1X2luZm8gPSB7DQo+ID4gIAkJfSwNCj4gPiAgCX0sDQo+ID4gIAku
+bnVtX2x2ZHMgPSAxLA0KPiA+ICsJLm51bV9ycGYgPSA1LA0KPiA+ICAJLmRwbGxfbWFzayA9ICBC
+SVQoMSksDQo+ID4gIH07DQo+ID4NCj4gPiBAQCAtNDYwLDYgKzQ3NCw3IEBAIHN0YXRpYyBjb25z
+dCBzdHJ1Y3QgcmNhcl9kdV9kZXZpY2VfaW5mbw0KPiByY2FyX2R1X3I4YTc3OTcwX2luZm8gPSB7
+DQo+ID4gIAkJfSwNCj4gPiAgCX0sDQo+ID4gIAkubnVtX2x2ZHMgPSAxLA0KPiA+ICsJLm51bV9y
+cGYgPSA1LA0KPiA+ICB9Ow0KPiA+DQo+ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcmNhcl9kdV9k
+ZXZpY2VfaW5mbyByY2FyX2R1X3I4YTc3OTl4X2luZm8gPSB7IEBADQo+ID4gLTQ4Nyw2ICs1MDIs
+NyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHJjYXJfZHVfZGV2aWNlX2luZm8NCj4gcmNhcl9kdV9y
+OGE3Nzk5eF9pbmZvID0gew0KPiA+ICAJCX0sDQo+ID4gIAl9LA0KPiA+ICAJLm51bV9sdmRzID0g
+MiwNCj4gPiArCS5udW1fcnBmID0gNSwNCj4gPiAgCS5sdmRzX2Nsa19tYXNrID0gIEJJVCgxKSB8
+IEJJVCgwKSwNCj4gPiAgfTsNCj4gPg0KPiA+IEBAIC01MDYsNiArNTIyLDcgQEAgc3RhdGljIGNv
+bnN0IHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZvDQo+IHJjYXJfZHVfcjhhNzc5YTBfaW5mbyA9
+IHsNCj4gPiAgCQkJLnBvcnQgPSAxLA0KPiA+ICAJCX0sDQo+ID4gIAl9LA0KPiA+ICsJLm51bV9y
+cGYgPSA1LA0KPiA+ICAJLmRzaV9jbGtfbWFzayA9ICBCSVQoMSkgfCBCSVQoMCksDQo+ID4gIH07
+DQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9k
+cnYuaA0KPiA+IGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuaA0KPiA+IGlu
+ZGV4IDEwMWY0MmRmODZlYS4uOTc5MmE3NzU5MGJlIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfZHJ2LmgNCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+cmNhci1kdS9yY2FyX2R1X2Rydi5oDQo+ID4gQEAgLTY5LDYgKzY5LDcgQEAgc3RydWN0IHJjYXJf
+ZHVfb3V0cHV0X3JvdXRpbmcgew0KPiA+ICAgKiBAY2hhbm5lbHNfbWFzazogYml0IG1hc2sgb2Yg
+YXZhaWxhYmxlIERVIGNoYW5uZWxzDQo+ID4gICAqIEByb3V0ZXM6IGFycmF5IG9mIENSVEMgdG8g
+b3V0cHV0IHJvdXRlcywgaW5kZXhlZCBieSBvdXRwdXQNCj4gKFJDQVJfRFVfT1VUUFVUXyopDQo+
+ID4gICAqIEBudW1fbHZkczogbnVtYmVyIG9mIGludGVybmFsIExWRFMgZW5jb2RlcnMNCj4gPiAr
+ICogQG51bV9ycGY6IG1heCBudW1iZXIgb2YgcnBmJ3MgaW4gdnNwDQo+IA0KPiBzL3JwZidzL1JQ
+RnMvIGFuZCBzL3ZzcC9WU1AvDQo+IA0KPiBXaGlsZSB0aGUgcGF0Y2ggaXRzZWxmIGxvb2tzIGZp
+bmUgdG8gbWUsIHRoZSBSWi9HMkwgaGFzIGEgZGlzcGxheQ0KPiBjb250cm9sbGVyIHRoYXQgaXMg
+Y29tcGxldGVseSB1bnJlbGF0ZWQgdG8gdGhlIERVLCBkZXNwaXRlIHNoYXJpbmcgdGhlDQo+IHNh
+bWUgbmFtZS4gSSdkIHJhdGhlciBoYXZlIGEgcnpnMmxfZHUgZHJpdmVyLiBJdCBtYXkgYmUgcG9z
+c2libHkgdG8gc2hhcmUNCj4gc29tZSBjb2RlIHdpdGggdGhlIHJjYXJfZHUgZHJpdmVyIChJJ20g
+dGhpbmtpbmcgYWJvdXQgdGhlIFZTUCBoYW5kbGluZyBmb3INCj4gaW5zdGFuY2UpLCBidXQgaW4g
+dGhlIGVuZCBJJ20gbm90IHN1cmUgaWYgZXZlbiB0aGF0IHdvdWxkIGJlIHdvcnRoIGl0Lg0KDQpP
+SywgSSBoYXZlIGNyZWF0ZWQgc2VwYXJhdGUgUlovRzJMIGRpc3BsYXkgZHJpdmVyIHdpdGggbWlu
+aW1hbCBjb2RlIGNoYW5nZXMgYW5kIA0KTWF4aW11bSBjb2RlIHJldXNlLiBQbGVhc2UgcHJvdmlk
+ZSBmZWVkYmFjayBvbiBuZXcgcGF0Y2ggc2Vycmllc1sxXQ0KDQpbMV0gaHR0cHM6Ly9sb3JlLmtl
+cm5lbC5vcmcvbGludXgtcmVuZXNhcy1zb2MvMjAyMjAzMTIyMTU0MTcuODAyMy0xLWJpanUuZGFz
+Lmp6QGJwLnJlbmVzYXMuY29tL1QvI3QNCg0KUmVnYXJkcywNCkJpanUNCg0KPiANCj4gPiAgICog
+QGRwbGxfbWFzazogYml0IG1hc2sgb2YgRFUgY2hhbm5lbHMgZXF1aXBwZWQgd2l0aCBhIERQTEwN
+Cj4gPiAgICogQGRzaV9jbGtfbWFzazogYml0bWFzayBvZiBjaGFubmVscyB0aGF0IGNhbiB1c2Ug
+dGhlIERTSSBjbG9jayBhcyBkb3QNCj4gY2xvY2sNCj4gPiAgICogQGx2ZHNfY2xrX21hc2s6IGJp
+dG1hc2sgb2YgY2hhbm5lbHMgdGhhdCBjYW4gdXNlIHRoZSBMVkRTIGNsb2NrIGFzDQo+ID4gZG90
+IGNsb2NrIEBAIC04MCw2ICs4MSw3IEBAIHN0cnVjdCByY2FyX2R1X2RldmljZV9pbmZvIHsNCj4g
+PiAgCXVuc2lnbmVkIGludCBjaGFubmVsc19tYXNrOw0KPiA+ICAJc3RydWN0IHJjYXJfZHVfb3V0
+cHV0X3JvdXRpbmcgcm91dGVzW1JDQVJfRFVfT1VUUFVUX01BWF07DQo+ID4gIAl1bnNpZ25lZCBp
+bnQgbnVtX2x2ZHM7DQo+ID4gKwl1bnNpZ25lZCBpbnQgbnVtX3JwZjsNCj4gPiAgCXVuc2lnbmVk
+IGludCBkcGxsX21hc2s7DQo+ID4gIAl1bnNpZ25lZCBpbnQgZHNpX2Nsa19tYXNrOw0KPiA+ICAJ
+dW5zaWduZWQgaW50IGx2ZHNfY2xrX21hc2s7DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9yY2FyLWR1L3JjYXJfZHVfdnNwLmMNCj4gPiBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1
+L3JjYXJfZHVfdnNwLmMNCj4gPiBpbmRleCBiN2ZjNWIwNjljYmMuLmNmMDQ1YTIwM2FhNSAxMDA2
+NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3ZzcC5jDQo+ID4g
+KysrIGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV92c3AuYw0KPiA+IEBAIC00MTUs
+MTEgKzQxNSw3IEBAIGludCByY2FyX2R1X3ZzcF9pbml0KHN0cnVjdCByY2FyX2R1X3ZzcCAqdnNw
+LA0KPiBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wLA0KPiA+ICAJaWYgKHJldCA8IDApDQo+ID4gIAkJ
+cmV0dXJuIHJldDsNCj4gPg0KPiA+IC0JIC8qDQo+ID4gLQkgICogVGhlIFZTUDJEIChHZW4zKSBo
+YXMgNSBSUEZzLCBidXQgdGhlIFZTUDFEIChHZW4yKSBpcyBsaW1pdGVkIHRvDQo+ID4gLQkgICog
+NCBSUEZzLg0KPiA+IC0JICAqLw0KPiA+IC0JbnVtX3BsYW5lcyA9IHJjZHUtPmluZm8tPmdlbiA+
+PSAzID8gNSA6IDQ7DQo+ID4gKwludW1fcGxhbmVzID0gcmNkdS0+aW5mby0+bnVtX3JwZjsNCj4g
+Pg0KPiA+ICAJdnNwLT5wbGFuZXMgPSBrY2FsbG9jKG51bV9wbGFuZXMsIHNpemVvZigqdnNwLT5w
+bGFuZXMpLCBHRlBfS0VSTkVMKTsNCj4gPiAgCWlmICghdnNwLT5wbGFuZXMpDQo+IA0KPiAtLQ0K
+PiBSZWdhcmRzLA0KPiANCj4gTGF1cmVudCBQaW5jaGFydA0K
