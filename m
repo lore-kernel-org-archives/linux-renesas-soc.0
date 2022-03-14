@@ -2,26 +2,26 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916ACC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67B2C433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Mar 2022 22:00:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245420AbiCNWBy (ORCPT
+        id S245422AbiCNWBy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 14 Mar 2022 18:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42790 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238329AbiCNWBw (ORCPT
+        with ESMTP id S245421AbiCNWBy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Mar 2022 18:01:52 -0400
+        Mon, 14 Mar 2022 18:01:54 -0400
 Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FAFC3BF8A;
-        Mon, 14 Mar 2022 15:00:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F4083BF8A;
+        Mon, 14 Mar 2022 15:00:44 -0700 (PDT)
 Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 983108026F;
-        Mon, 14 Mar 2022 23:00:39 +0100 (CET)
+        by phobos.denx.de (Postfix) with ESMTPSA id DE7B083937;
+        Mon, 14 Mar 2022 23:00:40 +0100 (CET)
 From:   marek.vasut@gmail.com
 To:     linux-clk@vger.kernel.org
 Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -31,10 +31,12 @@ Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] clk: renesas: r8a7795: Add ZG clocks
-Date:   Mon, 14 Mar 2022 23:00:10 +0100
-Message-Id: <20220314220012.218731-1-marek.vasut@gmail.com>
+Subject: [PATCH 3/3] clk: renesas: r8a77965: Add ZG clocks
+Date:   Mon, 14 Mar 2022 23:00:12 +0100
+Message-Id: <20220314220012.218731-3-marek.vasut@gmail.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220314220012.218731-1-marek.vasut@gmail.com>
+References: <20220314220012.218731-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -55,29 +57,29 @@ Cc: Wolfram Sang <wsa@the-dreams.de>
 Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 ++
+ drivers/clk/renesas/r8a77965-cpg-mssr.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 991a44315d71..35fb0922d924 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -83,6 +83,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+index d687c29efa3c..854b0173827d 100644
+--- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+@@ -80,6 +80,7 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
+ 
  	/* Core Clock Outputs */
- 	DEF_GEN3_Z("z",         R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
- 	DEF_GEN3_Z("z2",        R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z,  CLK_PLL2, 2, 0),
-+	DEF_GEN3_Z("zg",        R8A7795_CLK_ZG,    CLK_TYPE_GEN3_Z,  CLK_PLL4, 2, 0),
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
-@@ -129,6 +130,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+ 	DEF_GEN3_Z("z",		R8A77965_CLK_Z,		CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
++	DEF_GEN3_Z("zg",	R8A77965_CLK_ZG,	CLK_TYPE_GEN3_Z,  CLK_PLL4, 2, 0),
+ 	DEF_FIXED("ztr",	R8A77965_CLK_ZTR,	CLK_PLL1_DIV2,	6, 1),
+ 	DEF_FIXED("ztrd2",	R8A77965_CLK_ZTRD2,	CLK_PLL1_DIV2,	12, 1),
+ 	DEF_FIXED("zt",		R8A77965_CLK_ZT,	CLK_PLL1_DIV2,	4, 1),
+@@ -126,6 +127,7 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
  };
  
- static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
-+	DEF_MOD("3dge",			 112,	R8A7795_CLK_ZG),
- 	DEF_MOD("fdp1-2",		 117,	R8A7795_CLK_S2D1), /* ES1.x */
- 	DEF_MOD("fdp1-1",		 118,	R8A7795_CLK_S0D1),
- 	DEF_MOD("fdp1-0",		 119,	R8A7795_CLK_S0D1),
+ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
++	DEF_MOD("3dge",			112,	R8A77965_CLK_ZG),
+ 	DEF_MOD("fdp1-0",		119,	R8A77965_CLK_S0D1),
+ 	DEF_MOD("tmu4",			121,	R8A77965_CLK_S0D6),
+ 	DEF_MOD("tmu3",			122,	R8A77965_CLK_S3D2),
 -- 
 2.35.1
 
