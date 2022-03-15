@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16354C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Mar 2022 15:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2DDC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Mar 2022 15:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349900AbiCOQAs (ORCPT
+        id S1349903AbiCOQAx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Mar 2022 12:00:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34718 "EHLO
+        Tue, 15 Mar 2022 12:00:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349899AbiCOQAs (ORCPT
+        with ESMTP id S1349901AbiCOQAx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Mar 2022 12:00:48 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C378455BEC;
-        Tue, 15 Mar 2022 08:59:35 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,183,1643641200"; 
-   d="scan'208";a="114500155"
+        Tue, 15 Mar 2022 12:00:53 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A279C55BDC;
+        Tue, 15 Mar 2022 08:59:40 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,184,1643641200"; 
+   d="scan'208";a="113587967"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Mar 2022 00:59:35 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Mar 2022 00:59:40 +0900
 Received: from localhost.localdomain (unknown [10.226.92.209])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8848F4017C3F;
-        Wed, 16 Mar 2022 00:59:33 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5B5F04017C4E;
+        Wed, 16 Mar 2022 00:59:38 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -32,9 +32,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5/7] arm64: dts: renesas: rzg2ul-smarc: Enable microSD on SMARC platform
-Date:   Tue, 15 Mar 2022 15:59:17 +0000
-Message-Id: <20220315155919.23451-6-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 7/7] arm64: dts: renesas: rzg2ul-smarc-som: Enable Ethernet on SMARC platform
+Date:   Tue, 15 Mar 2022 15:59:19 +0000
+Message-Id: <20220315155919.23451-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220315155919.23451-1-biju.das.jz@bp.renesas.com>
 References: <20220315155919.23451-1-biju.das.jz@bp.renesas.com>
@@ -42,155 +42,160 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable the microSD card slot connected to SDHI1 on the RZ/G2UL SMARC
-platform by removing the sdhi1 override which disabled it, and by adding
-the necessary pinmux required for SDHI1.
+Enable Ethernet{0,1} interfaces on RZ/G2UL SMARC EVK.
 
-This patch also overrides vqmmc-supply for SDHI1.
+Ethernet0 pins are muxed with CAN0, CAN1, SSI1 and RSPI1 pins and Ethernet0
+device selection is based on the SW1[3] switch position.
+
+Set SW1[3] to position OFF for selecting CAN0, CAN1, SSI1 and RSPI1.
+Set SW1[3] to position ON for selecting Ethernet0.
+
+This patch disables Ethernet0 on RZ/G2UL SMARC platform by default.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../boot/dts/renesas/r9a07g043u11-smarc.dts   | 12 +-----
- .../dts/renesas/rzg2ul-smarc-pinfunction.dtsi | 39 +++++++++++++++++++
- .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    |  9 +++++
- arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 27 +++++++++++++
- 4 files changed, 76 insertions(+), 11 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+ .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 97 ++++++++++++++++++-
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi |  2 +
+ 2 files changed, 98 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-index 64370faf8f6d..08a0404c6f0b 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-@@ -7,9 +7,7 @@
- 
- /dts-v1/;
- #include "r9a07g043.dtsi"
--#include "rzg2ul-smarc-som.dtsi"
--#include "rzg2ul-smarc-pinfunction.dtsi"
--#include "rz-smarc-common.dtsi"
-+#include "rzg2ul-smarc.dtsi"
- 
- / {
- 	model = "Renesas SMARC EVK based on r9a07g043u11";
-@@ -74,14 +72,6 @@
- 	status = "disabled";
- };
- 
--&sdhi1 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-1;
--	/delete-property/ pinctrl-names;
--	/delete-property/ vmmc-supply;
--	status = "disabled";
--};
--
- &spi1 {
- 	/delete-property/ pinctrl-0;
- 	/delete-property/ pinctrl-names;
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-pinfunction.dtsi
-index 2db9c92cf01f..b515748e6a9a 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-pinfunction.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-pinfunction.dtsi
-@@ -17,6 +17,45 @@
- 			 <RZG2L_PORT_PINMUX(6, 3, 6)>; /* RxD */
- 	};
- 
-+	sd1-pwr-en-hog {
-+		gpio-hog;
-+		gpios = <RZG2L_GPIO(0, 3) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "sd1_pwr_en";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		sd1_data {
-+			pins = "SD1_DATA0", "SD1_DATA1", "SD1_DATA2", "SD1_DATA3";
-+			power-source = <3300>;
-+		};
-+
-+		sd1_ctrl {
-+			pins = "SD1_CLK", "SD1_CMD";
-+			power-source = <3300>;
-+		};
-+
-+		sd1_mux {
-+			pinmux = <RZG2L_PORT_PINMUX(0, 2, 1)>; /* SD1_CD */
-+		};
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		sd1_data_uhs {
-+			pins = "SD1_DATA0", "SD1_DATA1", "SD1_DATA2", "SD1_DATA3";
-+			power-source = <1800>;
-+		};
-+
-+		sd1_ctrl_uhs {
-+			pins = "SD1_CLK", "SD1_CMD";
-+			power-source = <1800>;
-+		};
-+
-+		sd1_mux_uhs {
-+			pinmux = <RZG2L_PORT_PINMUX(0, 2, 1)>; /* SD1_CD */
-+		};
-+	};
-+
- 	sound_clk_pins: sound_clk {
- 		pins = "AUDIO_CLK1", "AUDIO_CLK2";
- 		input-enable;
 diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-index 3bbb8fcd604c..8ecc650099a7 100644
+index 0d6fc0d84783..b0822679a55b 100644
 --- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
 +++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-@@ -18,6 +18,15 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
+@@ -9,8 +9,13 @@
+ #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+ 
+ / {
++	aliases {
++		ethernet0 = &eth0;
++		ethernet1 = &eth1;
 +	};
++
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=on";
+ 	};
+ 
+ 	memory@48000000 {
+@@ -52,11 +57,101 @@
+ #endif
  };
  
- &extal_clk {
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-new file mode 100644
-index 000000000000..a3f2e0eb4f80
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-@@ -0,0 +1,27 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2UL Type-1 SMARC EVK parts
-+ *
-+ * Copyright (C) 2022 Renesas Electronics Corp.
-+ */
++#if (!SW_ET0_EN_N)
++&eth0 {
++	pinctrl-0 = <&eth0_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy0>;
++	phy-mode = "rgmii-id";
++	status = "okay";
 +
-+#include "rzg2ul-smarc-som.dtsi"
-+#include "rzg2ul-smarc-pinfunction.dtsi"
-+#include "rz-smarc-common.dtsi"
++	phy0: ethernet-phy@7 {
++		compatible = "ethernet-phy-id0022.1640",
++			     "ethernet-phy-ieee802.3-c22";
++		reg = <7>;
++		rxc-skew-psec = <2400>;
++		txc-skew-psec = <2400>;
++		rxdv-skew-psec = <0>;
++		txdv-skew-psec = <0>;
++		rxd0-skew-psec = <0>;
++		rxd1-skew-psec = <0>;
++		rxd2-skew-psec = <0>;
++		rxd3-skew-psec = <0>;
++		txd0-skew-psec = <0>;
++		txd1-skew-psec = <0>;
++		txd2-skew-psec = <0>;
++		txd3-skew-psec = <0>;
++	};
++};
++#endif
 +
-+/ {
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
-+		compatible = "regulator-gpio";
-+		regulator-name = "SDHI1 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&pinctrl RZG2L_GPIO(6, 1) GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1>, <1800000 0>;
++&eth1 {
++	pinctrl-0 = <&eth1_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy1>;
++	phy-mode = "rgmii-id";
++	status = "okay";
++
++	phy1: ethernet-phy@7 {
++		compatible = "ethernet-phy-id0022.1640",
++			     "ethernet-phy-ieee802.3-c22";
++		reg = <7>;
++		rxc-skew-psec = <2400>;
++		txc-skew-psec = <2400>;
++		rxdv-skew-psec = <0>;
++		txdv-skew-psec = <0>;
++		rxd0-skew-psec = <0>;
++		rxd1-skew-psec = <0>;
++		rxd2-skew-psec = <0>;
++		rxd3-skew-psec = <0>;
++		txd0-skew-psec = <0>;
++		txd1-skew-psec = <0>;
++		txd2-skew-psec = <0>;
++		txd3-skew-psec = <0>;
 +	};
 +};
 +
-+&sdhi1 {
-+	vqmmc-supply = <&vccq_sdhi1>;
-+};
+ &extal_clk {
+ 	clock-frequency = <24000000>;
+ };
+ 
+ &pinctrl {
++	eth0_pins: eth0 {
++		pinmux = <RZG2L_PORT_PINMUX(4, 5, 1)>, /* ET0_LINKSTA */
++			 <RZG2L_PORT_PINMUX(4, 3, 1)>, /* ET0_MDC */
++			 <RZG2L_PORT_PINMUX(4, 4, 1)>, /* ET0_MDIO */
++			 <RZG2L_PORT_PINMUX(1, 0, 1)>, /* ET0_TXC */
++			 <RZG2L_PORT_PINMUX(1, 1, 1)>, /* ET0_TX_CTL */
++			 <RZG2L_PORT_PINMUX(1, 2, 1)>, /* ET0_TXD0 */
++			 <RZG2L_PORT_PINMUX(1, 3, 1)>, /* ET0_TXD1 */
++			 <RZG2L_PORT_PINMUX(1, 4, 1)>, /* ET0_TXD2 */
++			 <RZG2L_PORT_PINMUX(2, 0, 1)>, /* ET0_TXD3 */
++			 <RZG2L_PORT_PINMUX(3, 0, 1)>, /* ET0_RXC */
++			 <RZG2L_PORT_PINMUX(3, 1, 1)>, /* ET0_RX_CTL */
++			 <RZG2L_PORT_PINMUX(3, 2, 1)>, /* ET0_RXD0 */
++			 <RZG2L_PORT_PINMUX(3, 3, 1)>, /* ET0_RXD1 */
++			 <RZG2L_PORT_PINMUX(4, 0, 1)>, /* ET0_RXD2 */
++			 <RZG2L_PORT_PINMUX(4, 1, 1)>; /* ET0_RXD3 */
++	};
 +
++	eth1_pins: eth1 {
++		pinmux = <RZG2L_PORT_PINMUX(10, 4, 1)>, /* ET1_LINKSTA */
++			 <RZG2L_PORT_PINMUX(10, 2, 1)>, /* ET1_MDC */
++			 <RZG2L_PORT_PINMUX(10, 3, 1)>, /* ET1_MDIO */
++			 <RZG2L_PORT_PINMUX(7, 0, 1)>, /* ET1_TXC */
++			 <RZG2L_PORT_PINMUX(7, 1, 1)>, /* ET1_TX_CTL */
++			 <RZG2L_PORT_PINMUX(7, 2, 1)>, /* ET1_TXD0 */
++			 <RZG2L_PORT_PINMUX(7, 3, 1)>, /* ET1_TXD1 */
++			 <RZG2L_PORT_PINMUX(7, 4, 1)>, /* ET1_TXD2 */
++			 <RZG2L_PORT_PINMUX(8, 0, 1)>, /* ET1_TXD3 */
++			 <RZG2L_PORT_PINMUX(8, 4, 1)>, /* ET1_RXC */
++			 <RZG2L_PORT_PINMUX(9, 0, 1)>, /* ET1_RX_CTL */
++			 <RZG2L_PORT_PINMUX(9, 1, 1)>, /* ET1_RXD0 */
++			 <RZG2L_PORT_PINMUX(9, 2, 1)>, /* ET1_RXD1 */
++			 <RZG2L_PORT_PINMUX(9, 3, 1)>, /* ET1_RXD2 */
++			 <RZG2L_PORT_PINMUX(10, 0, 1)>; /* ET1_RXD3 */
++	};
++
+ 	sdhi0_emmc_pins: sd0emmc {
+ 		sd0_emmc_data {
+ 			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3",
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+index b8caa833e349..81da096d0704 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+@@ -9,9 +9,11 @@
+  * DIP-Switch SW1 setting
+  * 1 : High; 0: Low
+  * SW1-2 : SW_SD0_DEV_SEL	(0: uSD; 1: eMMC)
++ * SW1-3 : SW_ET0_EN_N		(0: ETHER0; 1: CAN0, CAN1, SSI1, RSPI1)
+  * Please change below macros according to SW1 setting
+  */
+ #define SW_SW0_DEV_SEL	1
++#define SW_ET0_EN_N	1
+ 
+ #include "rzg2ul-smarc-som.dtsi"
+ #include "rzg2ul-smarc-pinfunction.dtsi"
 -- 
 2.17.1
 
