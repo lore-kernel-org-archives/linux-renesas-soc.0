@@ -2,206 +2,153 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3238C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Mar 2022 15:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4181C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Mar 2022 19:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349905AbiCOQAx (ORCPT
+        id S245710AbiCOTOU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Mar 2022 12:00:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34996 "EHLO
+        Tue, 15 Mar 2022 15:14:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349899AbiCOQAx (ORCPT
+        with ESMTP id S245232AbiCOTOT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Mar 2022 12:00:53 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2639056220;
-        Tue, 15 Mar 2022 08:59:40 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,183,1643641200"; 
-   d="scan'208";a="114500162"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Mar 2022 00:59:38 +0900
-Received: from localhost.localdomain (unknown [10.226.92.209])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E659F4017C4D;
-        Wed, 16 Mar 2022 00:59:35 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 15 Mar 2022 15:14:19 -0400
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACCC4C78;
+        Tue, 15 Mar 2022 12:13:00 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id E1059C0003;
+        Tue, 15 Mar 2022 19:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1647371579;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=u/D6SPGhBpyZWC2aFb7aJ6eFgcFPSvIErLak7uOUgJw=;
+        b=i36aWtw+u0tKkOfg00+abz853z0qOK6sKfT3Vlcw7y24U5AO6XehDFkk2y+Yu0gwqMvk30
+        6+AXFGV7xre+YUd0GUMrfOx2BUAFO0cRXy9m5io2AXDNh57WCQhTf98zD/YC7vBatyJz5t
+        Opz2abLPnaPJsKekuFEHQHDSSc7ZHFa8cFwlr3Q7Ow/SKOgq/8C+upbuuL0rHqPtnzLUaW
+        mi6YzGb8wysMtHu/axGKMkMW91/J6Ueo0jYfrQ9oONkuYQ1MMcyT+dyRA/6opAzI0r7RRZ
+        6K/9jawK+WrlUM26GrDWXlKVKj/49kEUmQPmQ7Z7mLytacYygq7KeTfqikTinQ==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     linux-renesas-soc@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6/7] arm64: dts: renesas: rzg2ul-smarc-som: Enable eMMC on SMARC platform
-Date:   Tue, 15 Mar 2022 15:59:18 +0000
-Message-Id: <20220315155919.23451-7-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220315155919.23451-1-biju.das.jz@bp.renesas.com>
-References: <20220315155919.23451-1-biju.das.jz@bp.renesas.com>
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        dmaengine@vger.kernel.org
+Cc:     Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v5 0/8] RZN1 DMA support
+Date:   Tue, 15 Mar 2022 20:12:47 +0100
+Message-Id: <20220315191255.221473-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RZ/G2UL SoM has both 64GB eMMC and microSD connected to SDHI0.
+Hello,
 
-Both these interfaces are mutually exclusive and the SD0 device
-selection is based on SW1[2] on SoM module.
+Here is a first series bringing DMA support to RZN1 platforms. Soon a
+second series will come with changes made to the UART controller
+driver, in order to interact with the RZN1 DMA controller.
 
-Set SW1[2] to position OFF for selecting eMMC
-Set SW1[2] to position ON for selecting microSD
+Cheers,
+Miquèl
 
-This patch enables eMMC on RZ/G2UL SMARC platform by default.
+Changes in v5:
+* Used gotos in rzn1_dmamux_route_allocate().
+* Changed the prefix to "dmaengine:".
+* Dropped the partial transfers fix.
+* Added Rob's acks.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 104 ++++++++++++++++++
- arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi |   8 ++
- 2 files changed, 112 insertions(+)
+Changes in v4:
+* Freed "map" in the error path of the dmamux driver.
+* Improved a bit the style as requested by Prabhakar.
+* Dropped a __maybe_unused.
+* Reorder the includes.
+* Added a dependency on ARCH_RZN1.
+* Added Rob's Ack.
+* Added a reg property to the dmamux binding file.
+* Referenced the dmamux binding from the system controller file.
+* Called of_platform_populate from the end of the system controller
+  (clock) driver probe in order to probe the dmamux if it was
+  populated.
+* Added DMA properties to all the relevant UARTs.
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-index 8ecc650099a7..0d6fc0d84783 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-@@ -19,6 +19,15 @@
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
- 
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	reg_3p3v: regulator1 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
-@@ -27,8 +36,103 @@
- 		regulator-boot-on;
- 		regulator-always-on;
- 	};
-+
-+#if !(SW_SW0_DEV_SEL)
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		states = <3300000 1>, <1800000 0>;
-+		regulator-boot-on;
-+		gpios = <&pinctrl RZG2L_GPIO(6, 2) GPIO_ACTIVE_HIGH>;
-+		regulator-always-on;
-+	};
-+#endif
- };
- 
- &extal_clk {
- 	clock-frequency = <24000000>;
- };
-+
-+&pinctrl {
-+	sdhi0_emmc_pins: sd0emmc {
-+		sd0_emmc_data {
-+			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3",
-+			       "SD0_DATA4", "SD0_DATA5", "SD0_DATA6", "SD0_DATA7";
-+			power-source = <1800>;
-+		};
-+
-+		sd0_emmc_ctrl {
-+			pins = "SD0_CLK", "SD0_CMD";
-+			power-source = <1800>;
-+		};
-+
-+		sd0_emmc_rst {
-+			pins = "SD0_RST#";
-+			power-source = <1800>;
-+		};
-+	};
-+
-+	sdhi0_pins: sd0 {
-+		sd0_data {
-+			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
-+			power-source = <3300>;
-+		};
-+
-+		sd0_ctrl {
-+			pins = "SD0_CLK", "SD0_CMD";
-+			power-source = <3300>;
-+		};
-+
-+		sd0_mux {
-+			pinmux = <RZG2L_PORT_PINMUX(0, 0, 1)>; /* SD0_CD */
-+		};
-+	};
-+
-+	sdhi0_pins_uhs: sd0_uhs {
-+		sd0_data_uhs {
-+			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
-+			power-source = <1800>;
-+		};
-+
-+		sd0_ctrl_uhs {
-+			pins = "SD0_CLK", "SD0_CMD";
-+			power-source = <1800>;
-+		};
-+
-+		sd0_mux_uhs {
-+			pinmux = <RZG2L_PORT_PINMUX(0, 0, 1)>; /* SD0_CD */
-+		};
-+	};
-+};
-+
-+#if (SW_SW0_DEV_SEL)
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_emmc_pins>;
-+	pinctrl-1 = <&sdhi0_emmc_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	fixed-emmc-driver-type = <1>;
-+	status = "okay";
-+};
-+#else
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+#endif
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-index a3f2e0eb4f80..b8caa833e349 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-@@ -5,6 +5,14 @@
-  * Copyright (C) 2022 Renesas Electronics Corp.
-  */
- 
-+/*
-+ * DIP-Switch SW1 setting
-+ * 1 : High; 0: Low
-+ * SW1-2 : SW_SD0_DEV_SEL	(0: uSD; 1: eMMC)
-+ * Please change below macros according to SW1 setting
-+ */
-+#define SW_SW0_DEV_SEL	1
-+
- #include "rzg2ul-smarc-som.dtsi"
- #include "rzg2ul-smarc-pinfunction.dtsi"
- #include "rz-smarc-common.dtsi"
+Changes in v3:
+* Added Reviewed-by tags.
+* Exported the set_dmamux* symbol properly.
+* Dropped a useless check in the probe and moved the sysctrl_priv
+  assignation to the end of the probe.
+* Renamed the dmamux driver
+* Added a couple of missing MODULE_ macros in the dmamux driver.
+* Decided to use a regular platform init call instead of the
+  arch_initcall() initially proposed.
+* s/%d/%u/ in printk's when appropriate.
+* Used a hardcoded value instead of dmamux->dmac_requests when
+  appropriate.
+* Changed the variable name "master" to "dmac_idx" to be more
+  descriptive.
+* Dropped most of the of_* calls in favor of #define's.
+* Fixed a typo.
+* Exported two symbols from 8250_dma.c.
+
+Changes in v2:
+* Clarified that the 'fix' regarding non aligned reads would only apply
+  to the DEV_TO_MEM case.
+* Fix the DMA controller compatible string (copy-paste error).
+* s/syscon/sysctrl/ as advised by Geert.
+* Disabled irqs when taking the spinlock from the clocks driver.
+* Moved the DMAMUX offset inside the driver.
+* Removed extra commas.
+* Improved the style as suggested by Andy.
+* Removed a dupplicated check against the device node presence.
+* Reduced the number of lines of code by using dev_err_probe().
+* Created a Kconfig symbol for DMAMUX to fix the two robot reports
+  received and be sure there was no useless overhead with other
+  platforms.
+* Exported the serial8250_{tx,rx}_dma() symbols.
+
+Miquel Raynal (8):
+  dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
+  dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
+  dt-bindings: dmaengine: Introduce RZN1 DMA compatible
+  soc: renesas: rzn1-sysc: Export function to set dmamux
+  dmaengine: dw: dmamux: Introduce RZN1 DMA router support
+  dmaengine: dw: Add RZN1 compatible
+  ARM: dts: r9a06g032: Add the two DMA nodes
+  ARM: dts: r9a06g032: Describe the DMA router
+
+ .../clock/renesas,r9a06g032-sysctrl.yaml      |  11 ++
+ .../bindings/dma/renesas,rzn1-dmamux.yaml     |  51 ++++++
+ .../bindings/dma/snps,dma-spear1340.yaml      |   8 +-
+ MAINTAINERS                                   |   1 +
+ arch/arm/boot/dts/r9a06g032.dtsi              |  40 +++++
+ drivers/clk/renesas/r9a06g032-clocks.c        |  36 +++-
+ drivers/dma/dw/Kconfig                        |   9 +
+ drivers/dma/dw/Makefile                       |   2 +
+ drivers/dma/dw/platform.c                     |   1 +
+ drivers/dma/dw/rzn1-dmamux.c                  | 157 ++++++++++++++++++
+ include/linux/soc/renesas/r9a06g032-sysctrl.h |  11 ++
+ 11 files changed, 325 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ create mode 100644 drivers/dma/dw/rzn1-dmamux.c
+ create mode 100644 include/linux/soc/renesas/r9a06g032-sysctrl.h
+
 -- 
-2.17.1
+2.27.0
 
