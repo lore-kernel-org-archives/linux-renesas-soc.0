@@ -2,191 +2,134 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA583C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Mar 2022 14:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D27C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Mar 2022 14:49:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348162AbiCPOmR (ORCPT
+        id S235960AbiCPOua (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Mar 2022 10:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48664 "EHLO
+        Wed, 16 Mar 2022 10:50:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243855AbiCPOmN (ORCPT
+        with ESMTP id S244238AbiCPOu3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Mar 2022 10:42:13 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B592D5F261;
-        Wed, 16 Mar 2022 07:40:57 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 5F69860006;
-        Wed, 16 Mar 2022 14:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1647441653;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KZrHkZTxdSaDlw1duqlnaB5GO9gaLPPnJ7VLgxAsVCM=;
-        b=Sgy6Uw3Hq4bzryd7jgDrLxnlDuFcQNzwj1Ol0d0ZRL2IKeNetEX12zWFLqe3fxDNHq/Mwl
-        lnJRskBlK23oye0baB8eF2Zz3e7H5OInJ9Rm4BIcnXpcAD6N+UaO34Sqtnn07N8/o6vlCy
-        Rh0wAh2fPy/Nw0qz05pub9Rd6wUDCj7fJBZsxo0XO6Y5C+HMvjosDIAV60pQe7NfIRnutB
-        d3ex+/92laIOVgA/Io8u/1uy45zAkQCUlIc7iZg6kwQuY+jfeaYNsmsLigfhNp86cyjDdN
-        Ozh9FDuteZlicqM+Bs1K656LgEBvTZ2naPyx8jNDjPV5V4Erruyn9EKudLUhuQ==
-Date:   Wed, 16 Mar 2022 15:40:50 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] serial: 8250_dw: Use device tree match data
-Message-ID: <20220316154050.317fee11@xps13>
-In-Reply-To: <20220311144814.21944-1-kernel@esmil.dk>
-References: <20220311105934.5827d0d6@xps13>
-        <20220311144814.21944-1-kernel@esmil.dk>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 16 Mar 2022 10:50:29 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02EA039BA1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Mar 2022 07:49:13 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id bi12so4739890ejb.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Mar 2022 07:49:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GrK4oI0aL0m0aF0KR8HpVMlkXWy3+EkhMGIps7oxctg=;
+        b=eGepqlx2x6laABIAUKkLN3dFp0ta+pgrr3/Ky9x7h/Fuh/VJpoWIGjUCzdSK28wHP2
+         X9ajg2mT4mxxYQTwccanODm6yqSnXiah3xCKj9nFI4nStuVnR4SsNwwYHYNeZROPbzfx
+         g+Q5FcVdREaK8lktXHQfF8WCXRYAa1+U8QSi5m/ztm/aa29NRptbFkdBGPT9JfjYX2iq
+         q/HVIk0thVBelkDwVrrVLP3eQjP5yn0r5eOVX3GJo2Ukzg78X/Mlz4D9CLKEdkvcPKiN
+         0p2lIK7U3/MWhQQM/aaXI+KsPj3b3vMrSaef2ZabEhFr547jbv1i7/zaDla2wS+6riDM
+         Fc/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GrK4oI0aL0m0aF0KR8HpVMlkXWy3+EkhMGIps7oxctg=;
+        b=TSyinuKXV3nYC4t0PUpAAilWmCPOe6LM3BxWWGSYF3tbx0oybqhP1sdi9T5d1Y0yty
+         5sEJELuoiJlAHHBkitLH+uRcHcx1C9Ot/qi74eZVh2D7paReQL7nnTFzCAo4vrkuNYTi
+         DaoAaY7pu8hSwX0FJ7gK19AONYovp5XautIxJhbSynmanqrX0JBYMWtRd8Xvb1J/WbEo
+         5fLsKIvhiHDQb7ECjIUXUDEocvN03GjoLWUTyYGg7q3+jRB/SRWPR/WBB69wE47fWIJL
+         4+48uyXSWuf2v26LMo5hekFBtNrP5R3jE9dcL0sOBIJtvJu3PddB5Rf0nxhUoEv4M7XF
+         Eodg==
+X-Gm-Message-State: AOAM531vJEpOkxuo1P46FaeiSCjmGyLjGuKhOFTAWD0OIHsJ11DQArDy
+        3lWzqmFSvvuw8QR9W3ISa2eJfg==
+X-Google-Smtp-Source: ABdhPJyMIMnxC8odPNy1UjAfJDtvUstvou20fBBVuhdUzeTNGd4u0R32pdbVrsqHZGAcBMpet/rAww==
+X-Received: by 2002:a17:907:3d89:b0:6df:802d:df43 with SMTP id he9-20020a1709073d8900b006df802ddf43mr325627ejc.76.1647442151543;
+        Wed, 16 Mar 2022 07:49:11 -0700 (PDT)
+Received: from bismarck.berto.se (p54ac5043.dip0.t-ipconnect.de. [84.172.80.67])
+        by smtp.googlemail.com with ESMTPSA id f26-20020a50ee9a000000b004160c295356sm1084337edr.5.2022.03.16.07.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Mar 2022 07:49:11 -0700 (PDT)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] media: rcar-vin: Add check that input interface and format are valid
+Date:   Wed, 16 Mar 2022 15:48:39 +0100
+Message-Id: <20220316144839.2312556-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Emil,
+Add a check to make sure the input interface (CSI-2 or parallel) allow
+for the requested input bus format. If not inform the user and error out
+rather then try to continue with incorrect settings.
 
-kernel@esmil.dk wrote on Fri, 11 Mar 2022 15:48:14 +0100:
+While at it add the missing define for RGB666 that is not yet supported
+in the driver but we can preemptively check for it in this context
+already.
 
-> ..rather than multiple calls to of_device_is_compatible().
->=20
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> ---
->=20
-> Hi Miquel,
->=20
-> > > > > --- a/drivers/tty/serial/8250/8250_dma.c
-> > > > > +++ b/drivers/tty/serial/8250/8250_dma.c =3D20 =20
-> > > > =3D20 =20
-> > > > > @@ -501,6 +589,8 @@ static int dw8250_probe(struct platform_devic=
-e *p=3D =20
-> > dev) =20
-> > > > >                 data->msr_mask_off |=3D3D UART_MSR_TERI;
-> > > > >         }
-> > > > >
-> > > > > +       data->is_rzn1 =3D3D of_device_is_compatible(dev->of_node,=
- "rene=3D =20
-> > sas,rzn1-uart"); =3D20 =20
-> > > >
-> > > > Explicit checks for compatible values are frowned upon if you have
-> > > > a match table.
-> > > > Please handle this through of_device.data, cfr. the various quirks.=
- =3D20 =20
-> > >=3D20
-> > > Oops, these are not yet upstream, but present in my tree due to inclu=
-ding
-> > > support for StarLight, cfr.
-> > > https://github.com/esmil/linux/commits/visionfive/drivers/tty/serial/=
-8250=3D =20
-> > /8250_dw.c
-> >=20
-> > Oh thanks for pointing it! Too bad that these quirks were not
-> > introduced inside a wider structure, I think it's always a must even if
-> > there is only one parameter there. Anyway, I'll introduce a wider
-> > specific structure and use it. =20
->=20
-> For reference this is the patch I wrote for the StarFive JH7100 tree.
-> Feel free to use it or do something better as you see fit.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Thanks for the pointers, I've fetched the three 8250_dw patches from
-your tree directly, and will build on top of them!
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 8136bc75e7c47cdd..950cadd7c3133ba1 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -77,6 +77,7 @@
+ 
+ /* Register bit fields for R-Car VIN */
+ /* Video n Main Control Register bits */
++#define VNMC_INF_MASK		(7 << 16)
+ #define VNMC_DPINE		(1 << 27) /* Gen3 specific */
+ #define VNMC_SCLE		(1 << 26) /* Gen3 specific */
+ #define VNMC_FOC		(1 << 21)
+@@ -88,6 +89,7 @@
+ #define VNMC_INF_RAW8		(4 << 16)
+ #define VNMC_INF_YUV16		(5 << 16)
+ #define VNMC_INF_RGB888		(6 << 16)
++#define VNMC_INF_RGB666		(7 << 16)
+ #define VNMC_VUP		(1 << 10)
+ #define VNMC_IM_ODD		(0 << 3)
+ #define VNMC_IM_ODD_EVEN	(1 << 3)
+@@ -707,6 +709,29 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	}
+ 
++	/* Make sure input interface and input format is valid. */
++	if (vin->info->model == RCAR_GEN3) {
++		switch (vnmc & VNMC_INF_MASK) {
++		case VNMC_INF_YUV8_BT656:
++		case VNMC_INF_YUV10_BT656:
++		case VNMC_INF_YUV16:
++		case VNMC_INF_RGB666:
++			if (vin->is_csi) {
++				vin_err(vin, "Invalid setting in MIPI CSI2\n");
++				return -EINVAL;
++			}
++			break;
++		case VNMC_INF_RAW8:
++			if (!vin->is_csi) {
++				vin_err(vin, "Invalid setting in Digital Pins\n");
++				return -EINVAL;
++			}
++			break;
++		default:
++			break;
++		}
++	}
++
+ 	/* Enable VSYNC Field Toggle mode after one VSYNC input */
+ 	if (vin->info->model == RCAR_GEN3)
+ 		dmr2 = VNDMR2_FTEV;
+-- 
+2.35.1
 
-Cheers,
-Miqu=C3=A8l
-
->=20
-> /Emil
->=20
->  drivers/tty/serial/8250/8250_dw.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/=
-8250_dw.c
-> index 1769808031c5..f564a019a7be 100644
-> --- a/drivers/tty/serial/8250/8250_dw.c
-> +++ b/drivers/tty/serial/8250/8250_dw.c
-> @@ -37,6 +37,11 @@
->  /* DesignWare specific register fields */
->  #define DW_UART_MCR_SIRE		BIT(6)
-> =20
-> +/* Quirks */
-> +#define DW_UART_QUIRK_OCTEON		BIT(0)
-> +#define DW_UART_QUIRK_ARMADA_38X	BIT(1)
-> +#define DW_UART_QUIRK_SKIP_SET_RATE	BIT(2)
-> +
->  struct dw8250_data {
->  	struct dw8250_port_data	data;
-> =20
-> @@ -389,6 +394,7 @@ static void dw8250_quirks(struct uart_port *p, struct=
- dw8250_data *data)
->  	struct device_node *np =3D p->dev->of_node;
-> =20
->  	if (np) {
-> +		unsigned long quirks =3D (unsigned long)of_device_get_match_data(p->de=
-v);
->  		int id;
-> =20
->  		/* get index of serial line, if found in DT aliases */
-> @@ -396,7 +402,7 @@ static void dw8250_quirks(struct uart_port *p, struct=
- dw8250_data *data)
->  		if (id >=3D 0)
->  			p->line =3D id;
->  #ifdef CONFIG_64BIT
-> -		if (of_device_is_compatible(np, "cavium,octeon-3860-uart")) {
-> +		if (quirks & DW_UART_QUIRK_OCTEON) {
->  			p->serial_in =3D dw8250_serial_inq;
->  			p->serial_out =3D dw8250_serial_outq;
->  			p->flags =3D UPF_SKIP_TEST | UPF_SHARE_IRQ | UPF_FIXED_TYPE;
-> @@ -412,9 +418,9 @@ static void dw8250_quirks(struct uart_port *p, struct=
- dw8250_data *data)
->  			p->serial_out =3D dw8250_serial_out32be;
->  		}
-> =20
-> -		if (of_device_is_compatible(np, "marvell,armada-38x-uart"))
-> +		if (quirks & DW_UART_QUIRK_ARMADA_38X)
->  			p->serial_out =3D dw8250_serial_out38x;
-> -		if (of_device_is_compatible(np, "starfive,jh7100-uart"))
-> +		if (quirks & DW_UART_QUIRK_SKIP_SET_RATE)
->  			p->set_termios =3D dw8250_do_set_termios;
-> =20
->  	} else if (acpi_dev_present("APMC0D08", NULL, -1)) {
-> @@ -695,10 +701,10 @@ static const struct dev_pm_ops dw8250_pm_ops =3D {
-> =20
->  static const struct of_device_id dw8250_of_match[] =3D {
->  	{ .compatible =3D "snps,dw-apb-uart" },
-> -	{ .compatible =3D "cavium,octeon-3860-uart" },
-> -	{ .compatible =3D "marvell,armada-38x-uart" },
-> +	{ .compatible =3D "cavium,octeon-3860-uart", .data =3D (void *)DW_UART_=
-QUIRK_OCTEON },
-> +	{ .compatible =3D "marvell,armada-38x-uart", .data =3D (void *)DW_UART_=
-QUIRK_ARMADA_38X },
->  	{ .compatible =3D "renesas,rzn1-uart" },
-> -	{ .compatible =3D "starfive,jh7100-uart" },
-> +	{ .compatible =3D "starfive,jh7100-uart",    .data =3D (void *)DW_UART_=
-QUIRK_SKIP_SET_RATE },
->  	{ /* Sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, dw8250_of_match);
-
-
-Thanks,
-Miqu=C3=A8l
