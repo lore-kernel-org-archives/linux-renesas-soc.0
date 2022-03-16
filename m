@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4480CC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Mar 2022 15:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D46C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Mar 2022 15:47:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356924AbiCPPsV (ORCPT
+        id S1357346AbiCPPsX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Mar 2022 11:48:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54092 "EHLO
+        Wed, 16 Mar 2022 11:48:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357347AbiCPPsR (ORCPT
+        with ESMTP id S1357349AbiCPPsW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Mar 2022 11:48:17 -0400
+        Wed, 16 Mar 2022 11:48:22 -0400
 Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36096D394;
-        Wed, 16 Mar 2022 08:47:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB2D6D394;
+        Wed, 16 Mar 2022 08:47:07 -0700 (PDT)
 Received: (Authenticated sender: jacopo@jmondi.org)
-        by mail.gandi.net (Postfix) with ESMTPSA id 2CEFF240005;
-        Wed, 16 Mar 2022 15:46:59 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 6ADB0240004;
+        Wed, 16 Mar 2022 15:47:03 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         tomi.valkeinen@ideasonboard.com, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 04/10] media: adv748x: Implement .get_frame_desc()
-Date:   Wed, 16 Mar 2022 16:46:35 +0100
-Message-Id: <20220316154641.511667-5-jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 06/10] media: rcar-csi2: Add support for multiplexed streams
+Date:   Wed, 16 Mar 2022 16:46:37 +0100
+Message-Id: <20220316154641.511667-7-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220316154641.511667-1-jacopo+renesas@jmondi.org>
 References: <20220316154641.511667-1-jacopo+renesas@jmondi.org>
@@ -36,133 +36,128 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Implement the get_frame_desc subdev pad operation.
+Create and initialize the v4l2_subdev_state for the R-Car CSI-2 receiver
+in order to prepare to support multiplexed transmitters.
 
-Implement the get_frame_desc pad operation to allow retrieving the
-stream configuration of the adv748x csi2 subdevice.
+Create the subdevice state with v4l2_subdev_init_finalize() and
+implement the init_cfg() operation to guarantee the state is initialized
+correctly with a set of default routes.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/i2c/adv748x/adv748x-csi2.c | 94 ++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 66 ++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 8326cfe6192a..91cd70739e9d 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -14,6 +14,50 @@
- 
- #include "adv748x.h"
- 
-+/* Describes a format bit depth and CSI-2 defined Data Type. */
-+struct adv748x_csi2_format_info {
-+	u8 dt;
-+	u8 bpp;
-+};
-+
-+static int adv748x_csi2_get_format_info(struct adv748x_csi2 *tx,
-+					u32 mbus_code,
-+					struct adv748x_csi2_format_info *fmt)
-+{
-+	switch (mbus_code) {
-+	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_YUYV8_2X8:
-+		fmt->dt = 0x1e;
-+		fmt->bpp = 16;
-+		break;
-+	case MEDIA_BUS_FMT_YUYV10_2X10:
-+	case MEDIA_BUS_FMT_YUYV10_1X20:
-+		fmt->dt = 0x1f;
-+		fmt->bpp = 20;
-+		break;
-+	case MEDIA_BUS_FMT_RGB565_1X16:
-+	case MEDIA_BUS_FMT_RGB565_2X8_LE:
-+	case MEDIA_BUS_FMT_RGB565_2X8_BE:
-+		fmt->dt = 0x22;
-+		fmt->bpp = 16;
-+		break;
-+	case MEDIA_BUS_FMT_RGB666_1X18:
-+		fmt->dt = 0x23;
-+		fmt->bpp = 18;
-+		break;
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		fmt->dt = 0x24;
-+		fmt->bpp = 24;
-+		break;
-+	default:
-+		dev_err(tx->state->dev,
-+			"Unsupported media bus code: %u\n", mbus_code);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx, unsigned int vc)
- {
- 	return tx_write(tx, ADV748X_CSI_VC_REF, vc << ADV748X_CSI_VC_REF_SHIFT);
-@@ -221,11 +265,61 @@ static int adv748x_csi2_get_mbus_config(struct v4l2_subdev *sd, unsigned int pad
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index d48356d99590..f4786081e3a0 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -911,11 +911,65 @@ static int rcsi2_get_pad_format(struct v4l2_subdev *sd,
  	return 0;
  }
  
-+static int adv748x_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-+				       struct v4l2_mbus_frame_desc *fd)
++static int rcsi2_init_cfg(struct v4l2_subdev *sd,
++			  struct v4l2_subdev_state *state)
 +{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct adv748x_csi2_format_info info = {};
-+	struct v4l2_mbus_frame_desc_entry *entry;
-+	struct v4l2_subdev_route *route;
-+	struct v4l2_subdev_state *state;
-+	struct v4l2_mbus_framefmt *fmt;
-+	int ret;
++	/*
++	 * Routing is fixed for this device: which stream goes to the next
++	 * processing block (VIN) is controlled by link enablement between the
++	 * CSI-2 and the VIN itself.
++	 *
++	 * In example, to route VC 3 to VIN1, as an example: "csi2:3 -> vin1:0"
++	 *
++	 * The routing table is then fixed as streams transmitted on VC x will
++	 * be directed to csi:0/x and will be transmitted to VINs on media link
++	 * csi2:x->vin:0.
++	 */
++	struct v4l2_subdev_route routes[] = {
++		{
++			.sink_pad = RCAR_CSI2_SINK,
++			.sink_stream = 0,
++			.source_pad = RCAR_CSI2_SOURCE_VC0,
++			.source_stream = 0,
++			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
++		},
++		{
++			.sink_pad = RCAR_CSI2_SINK,
++			.sink_stream = 1,
++			.source_pad = RCAR_CSI2_SOURCE_VC1,
++			.source_stream = 0,
++			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
++		},
++		{
++			.sink_pad = RCAR_CSI2_SINK,
++			.sink_stream = 2,
++			.source_pad = RCAR_CSI2_SOURCE_VC2,
++			.source_stream = 0,
++			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
++		},
++		{
++			.sink_pad = RCAR_CSI2_SINK,
++			.sink_stream = 3,
++			.source_pad = RCAR_CSI2_SOURCE_VC3,
++			.source_stream = 0,
++			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
++		},
++	};
 +
-+	if (pad != ADV748X_CSI2_SOURCE)
-+		return -EINVAL;
++	struct v4l2_subdev_krouting routing = {
++		.num_routes = ARRAY_SIZE(routes),
++		.routes = routes,
++	};
 +
-+	state = v4l2_subdev_lock_and_get_active_state(sd);
-+
-+	/* A single route is available. */
-+	route = &state->routing.routes[0];
-+	fmt = v4l2_subdev_state_get_stream_format(state, pad,
-+						  route->source_stream);
-+	if (!fmt) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	ret = adv748x_csi2_get_format_info(tx, fmt->code, &info);
-+	if (ret)
-+		goto out;
-+
-+	memset(fd, 0, sizeof(*fd));
-+
-+	/* A single stream is available. */
-+	fd->num_entries = 1;
-+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-+
-+	entry = &fd->entry[0];
-+	entry->stream = 0;
-+	entry->flags = V4L2_MBUS_FRAME_DESC_FL_LEN_MAX;
-+	entry->length = fmt->width * fmt->height * info.bpp / 8;
-+	entry->pixelcode = fmt->code;
-+	entry->bus.csi2.vc = route->source_stream;
-+	entry->bus.csi2.dt = info.dt;
-+
-+out:
-+	v4l2_subdev_unlock_state(state);
-+
-+	return ret;
++	return v4l2_subdev_set_routing(sd, state, &routing);
 +}
 +
- static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
- 	.init_cfg = adv748x_csi2_init_cfg,
- 	.get_fmt = v4l2_subdev_get_fmt,
- 	.set_fmt = adv748x_csi2_set_format,
- 	.get_mbus_config = adv748x_csi2_get_mbus_config,
-+	.get_frame_desc = adv748x_csi2_get_frame_desc,
+ static const struct v4l2_subdev_video_ops rcar_csi2_video_ops = {
+ 	.s_stream = rcsi2_s_stream,
  };
  
- /* -----------------------------------------------------------------------------
+ static const struct v4l2_subdev_pad_ops rcar_csi2_pad_ops = {
++	.init_cfg = rcsi2_init_cfg,
+ 	.set_fmt = rcsi2_set_pad_format,
+ 	.get_fmt = rcsi2_get_pad_format,
+ };
+@@ -1537,7 +1591,8 @@ static int rcsi2_probe(struct platform_device *pdev)
+ 	v4l2_set_subdevdata(&priv->subdev, &pdev->dev);
+ 	snprintf(priv->subdev.name, V4L2_SUBDEV_NAME_SIZE, "%s %s",
+ 		 KBUILD_MODNAME, dev_name(&pdev->dev));
+-	priv->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
++	priv->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE |
++			     V4L2_SUBDEV_FL_MULTIPLEXED;
+ 
+ 	priv->subdev.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
+ 	priv->subdev.entity.ops = &rcar_csi2_entity_ops;
+@@ -1558,14 +1613,20 @@ static int rcsi2_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ret = v4l2_subdev_init_finalize(&priv->subdev);
++	if (ret)
++		goto error_async;
++
+ 	ret = v4l2_async_register_subdev(&priv->subdev);
+ 	if (ret < 0)
+-		goto error_async;
++		goto error_subdev;
+ 
+ 	dev_info(priv->dev, "%d lanes found\n", priv->lanes);
+ 
+ 	return 0;
+ 
++error_subdev:
++	v4l2_subdev_cleanup(&priv->subdev);
+ error_async:
+ 	v4l2_async_nf_unregister(&priv->notifier);
+ 	v4l2_async_nf_cleanup(&priv->notifier);
+@@ -1582,6 +1643,7 @@ static int rcsi2_remove(struct platform_device *pdev)
+ 	v4l2_async_nf_unregister(&priv->notifier);
+ 	v4l2_async_nf_cleanup(&priv->notifier);
+ 	v4l2_async_unregister_subdev(&priv->subdev);
++	v4l2_subdev_cleanup(&priv->subdev);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
 -- 
 2.35.1
 
