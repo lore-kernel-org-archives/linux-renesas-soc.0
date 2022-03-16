@@ -2,106 +2,88 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C540AC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Mar 2022 15:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1114C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Mar 2022 17:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357363AbiCPPs3 (ORCPT
+        id S245170AbiCPRyk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Mar 2022 11:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54514 "EHLO
+        Wed, 16 Mar 2022 13:54:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357356AbiCPPs3 (ORCPT
+        with ESMTP id S235933AbiCPRyj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Mar 2022 11:48:29 -0400
-Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF3C6D39E
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Mar 2022 08:47:14 -0700 (PDT)
-Received: (Authenticated sender: jacopo@jmondi.org)
-        by mail.gandi.net (Postfix) with ESMTPSA id 90F1B240014;
-        Wed, 16 Mar 2022 15:47:08 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        tomi.valkeinen@ideasonboard.com, linux-media@vger.kernel.org,
+        Wed, 16 Mar 2022 13:54:39 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 79DB52717E;
+        Wed, 16 Mar 2022 10:53:23 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,187,1643641200"; 
+   d="scan'208";a="114638884"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Mar 2022 02:53:22 +0900
+Received: from localhost.localdomain (unknown [10.226.92.179])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8119040C92AF;
+        Thu, 17 Mar 2022 02:53:20 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-spi@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 09/10] media: rcar-csi2: Implement set_routing
-Date:   Wed, 16 Mar 2022 16:46:40 +0100
-Message-Id: <20220316154641.511667-10-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220316154641.511667-1-jacopo+renesas@jmondi.org>
-References: <20220316154641.511667-1-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH] spi: Fix erroneous sgs value with min_t()
+Date:   Wed, 16 Mar 2022 17:53:17 +0000
+Message-Id: <20220316175317.465-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the set_routing() subdev operation to allow userspace to activate
-routes on the R-Car CSI-2 receiver.
+While computing sgs in spi_map_buf(), the data type
+used in min_t() for max_seg_size is 'unsigned int' where
+as that of ctlr->max_dma_len is 'size_t'.
 
-Routing for this device is fixed. Validate that the provided route
-respects it.
+min_t(unsigned int,x,y) gives wrong results if one of x/y is
+'size_t'
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Consider the below examples on a 64-bit machine (ie size_t is
+64-bits, and unsigned int is 32-bit).
+    case 1) min_t(unsigned int, 5, 0x100000001);
+    case 2) min_t(size_t, 5, 0x100000001);
+
+Case 1 returns '1', where as case 2 returns '5'. As you can see
+the result from case 1 is wrong.
+
+This patch fixes the above issue by using the data type of the
+parameters that are used in min_t with maximum data length.
+
+Fixes: commit 1a4e53d2fc4f68aa ("spi: Fix invalid sgs value")
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/media/platform/rcar-vin/rcar-csi2.c | 37 +++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/spi/spi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 39545e631e42..0f1f667a7aee 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -968,6 +968,42 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
- 	return 0;
- }
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index d96082dc3340..fb2896cdb3ce 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1019,10 +1019,10 @@ int spi_map_buf(struct spi_controller *ctlr, struct device *dev,
+ 	int i, ret;
  
-+static int rcsi2_set_routing(struct v4l2_subdev *sd,
-+			     struct v4l2_subdev_state *state,
-+			     enum v4l2_subdev_format_whence which,
-+			     struct v4l2_subdev_krouting *routing)
-+{
-+	unsigned int i;
-+	int ret = 0;
-+
-+	ret = v4l2_subdev_routing_validate(sd, routing,
-+					   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Routing is fixed for this device.
-+	 *
-+	 * Only routes in the form of CSI2:0/x->CSI2:x+1/0 are allowed.
-+	 *
-+	 * We have anyway to implement set_routing to mark the route as active.
-+	 */
-+	for (i = 0; i < routing->num_routes; ++i) {
-+		const struct v4l2_subdev_route *route = &routing->routes[i];
-+		unsigned int vc = route->sink_stream;
-+		unsigned int pad = vc + 1;
-+
-+		if (route->sink_pad != 0)
-+			return -EINVAL;
-+
-+		if (route->source_pad != pad ||
-+		    route->source_stream != 0)
-+			return -EINVAL;
-+	}
-+
-+	return v4l2_subdev_set_routing(sd, state, routing);
-+}
-+
- static int rcsi2_init_cfg(struct v4l2_subdev *sd,
- 			  struct v4l2_subdev_state *state)
- {
-@@ -1029,6 +1065,7 @@ static const struct v4l2_subdev_pad_ops rcar_csi2_pad_ops = {
- 	.init_cfg = rcsi2_init_cfg,
- 	.set_fmt = rcsi2_set_pad_format,
- 	.get_fmt = v4l2_subdev_get_fmt,
-+	.set_routing = rcsi2_set_routing,
- };
- 
- static const struct v4l2_subdev_ops rcar_csi2_subdev_ops = {
+ 	if (vmalloced_buf || kmap_buf) {
+-		desc_len = min_t(unsigned int, max_seg_size, PAGE_SIZE);
++		desc_len = min_t(unsigned long, max_seg_size, PAGE_SIZE);
+ 		sgs = DIV_ROUND_UP(len + offset_in_page(buf), desc_len);
+ 	} else if (virt_addr_valid(buf)) {
+-		desc_len = min_t(unsigned int, max_seg_size, ctlr->max_dma_len);
++		desc_len = min_t(size_t, max_seg_size, ctlr->max_dma_len);
+ 		sgs = DIV_ROUND_UP(len, desc_len);
+ 	} else {
+ 		return -EINVAL;
 -- 
-2.35.1
+2.17.1
 
