@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85A9C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Mar 2022 17:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E66EC3527C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Mar 2022 17:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237080AbiCQRsM (ORCPT
+        id S237052AbiCQRsK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Mar 2022 13:48:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57558 "EHLO
+        Thu, 17 Mar 2022 13:48:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237142AbiCQRsE (ORCPT
+        with ESMTP id S237114AbiCQRsA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Mar 2022 13:48:04 -0400
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2E71F1D3C;
-        Thu, 17 Mar 2022 10:46:46 -0700 (PDT)
+        Thu, 17 Mar 2022 13:48:00 -0400
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A6711F0815;
+        Thu, 17 Mar 2022 10:46:43 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id E1E4AFF805;
-        Thu, 17 Mar 2022 17:46:43 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 4211EFF813;
+        Thu, 17 Mar 2022 17:46:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1647539205;
+        t=1647539202;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lSHph0VTBom+559Fi7bRZ9k06sbXDhuXFhEKUBs8oOM=;
-        b=im7Ha6agx2Gi49dEXWsVbRyvy0tfgsv/e4dpdt2Hz88+x9Wtn4I5thKMYeq+nw/9HBGP8B
-        l1M9idEfJa7EQat40sCAZFp88sp5CHBdWqNSu1lPwGMR97Vt20SEh1PD2kXavvsdS+o3Wm
-        wMDvQME+1FK9NfdDNp+uoB6mlE7rhhDic4sqaL+NeOhnsn8W+jp2ugO1097oIj7UsnEeHM
-        V11Hmpsn4573gI4e7OlnnAzhyfJApcC9IdssZko3sPk0Xb3yR7A0Tj0zP9Ftfe0DY4Dwhu
-        36pLyajzYKFOOfVzjs6tInnX5+qLNM158fZyp2PunMW4JfVipMVESKQ6rlp+LQ==
+        bh=Y2lJyEILsp8NDkKtykYkfjKRpqQEf+GhkYUQftZF+0c=;
+        b=DZMrNVil6pfIDjQOGubuc++NjYI5c4vF4y1ohjcxlaqDDYrUUEJKDjXFj08UpaRppHJV7t
+        6sC6VgXObWvegGo9HE70SWzggkntlXIvdkMptqVNnDcZUqKH3HcmjMJ3ZXlBFos025sBuE
+        /D/qzwR9EpBMqaS3V9bPq94jJRXfgHK4V+SOcJoy7LhDYoXZltXNt1zgKoWNuoD+CrYt4u
+        KpPw5W17Tk7jgJtYXNaePR+1gvjaw164Tj5+n/nngg+WRVnbx2v4kkM1bhQq6sMie5x2b8
+        mFx7rgeV01T3CljpZZIx6oVDSjlAoqNu9bszSdm3XjaAPfYwykpHRBovqA792w==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     linux-renesas-soc@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -48,9 +48,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Clement Leger <clement.leger@bootlin.com>,
         linux-serial@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 08/10] serial: 8250: dw: Add support for DMA flow controlling devices
-Date:   Thu, 17 Mar 2022 18:46:25 +0100
-Message-Id: <20220317174627.360815-9-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 06/10] serial: 8250: dma: Allow driver operations before starting DMA transfers
+Date:   Thu, 17 Mar 2022 18:46:23 +0100
+Message-Id: <20220317174627.360815-7-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220317174627.360815-1-miquel.raynal@bootlin.com>
 References: <20220317174627.360815-1-miquel.raynal@bootlin.com>
@@ -61,138 +61,77 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+One situation where this could be used is when configuring the UART
+controller to be the DMA flow controller. This is a typical case where
+the driver might need to program a few more registers before starting a
+DMA transfer. Provide the necessary infrastructure to support this
+case.
 
-DW based controllers like the one on Renesas RZ/N1 must be programmed as
-flow controllers when using DMA.
-
-* Table 11.45 of the system manual, "Flow Control Combinations", states
-  that using UART with DMA requires setting the DMA in the peripheral
-  flow controller mode regardless of the direction.
-
-* Chapter 11.6.1.3 of the system manual, "Basic Interface Definitions",
-  explains that the burst size in the above case must be configured in
-  the peripheral's register DEST/SRC_BURST_SIZE.
-
-Experiments shown that upon Rx timeout, the DMA transaction needed to be
-manually cleared as well.
-
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Co-developed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/tty/serial/8250/8250_dw.c | 62 +++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ drivers/tty/serial/8250/8250.h     | 18 ++++++++++++++++++
+ drivers/tty/serial/8250/8250_dma.c |  4 ++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index c27f32f67680..edb3f347be8e 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -34,14 +34,23 @@
+diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
+index db784ace25d8..d19f24e4d13e 100644
+--- a/drivers/tty/serial/8250/8250.h
++++ b/drivers/tty/serial/8250/8250.h
+@@ -17,6 +17,8 @@
+ struct uart_8250_dma {
+ 	int (*tx_dma)(struct uart_8250_port *p);
+ 	int (*rx_dma)(struct uart_8250_port *p);
++	void (*prepare_tx_dma)(struct uart_8250_port *p);
++	void (*prepare_rx_dma)(struct uart_8250_port *p);
  
- /* Offsets for the DesignWare specific registers */
- #define DW_UART_USR	0x1f /* UART Status Register */
-+#define DW_UART_DMASA	0xa8 /* DMA Software Ack */
-+#define DW_UART_TDMACR	0x10c /* DMA Control Register Transmit Mode */
-+#define DW_UART_RDMACR	0x110 /* DMA Control Register Receive Mode */
- 
- /* DesignWare specific register fields */
- #define DW_UART_MCR_SIRE		BIT(6)
-+#define DW_UART_xDMACR_DMA_EN		BIT(0)
-+#define DW_UART_xDMACR_1_WORD_BURST	(0 << 1)
-+#define DW_UART_xDMACR_4_WORD_BURST	(1 << 1)
-+#define DW_UART_xDMACR_8_WORD_BURST	(3 << 1)
-+#define DW_UART_xDMACR_BLK_SZ(x)	((x) << 3)
- 
- /* Quirks */
- #define DW_UART_QUIRK_OCTEON		BIT(0)
- #define DW_UART_QUIRK_ARMADA_38X	BIT(1)
- #define DW_UART_QUIRK_SKIP_SET_RATE	BIT(2)
-+#define DW_UART_QUIRK_IS_DMA_FLOW_CONTROLLER BIT(3)
- 
- static inline struct dw8250_data *to_dw8250_data(struct dw8250_port_data *data)
- {
-@@ -225,6 +234,7 @@ static unsigned int dw8250_serial_in32be(struct uart_port *p, int offset)
- 
- static int dw8250_handle_irq(struct uart_port *p)
- {
-+	const struct dw8250_platform_data *pdata = device_get_match_data(p->dev);
- 	struct uart_8250_port *up = up_to_u8250p(p);
- 	struct dw8250_data *d = to_dw8250_data(p->private_data);
- 	unsigned int iir = p->serial_in(p, UART_IIR);
-@@ -252,6 +262,16 @@ static int dw8250_handle_irq(struct uart_port *p)
- 		spin_unlock_irqrestore(&p->lock, flags);
- 	}
- 
-+	/* Manually stop the Rx DMA transfer when acting as flow controller */
-+	if (up->dma && up->dma->rx_running && rx_timeout && pdata &&
-+	    pdata->quirks & DW_UART_QUIRK_IS_DMA_FLOW_CONTROLLER) {
-+		status = p->serial_in(p, UART_LSR);
-+		if (status & (UART_LSR_DR | UART_LSR_BI)) {
-+			writel(0, p->membase + DW_UART_RDMACR);
-+			writel(1, p->membase + DW_UART_DMASA);
-+		}
-+	}
+ 	/* Filter function */
+ 	dma_filter_fn		fn;
+@@ -301,6 +303,22 @@ extern int serial8250_rx_dma(struct uart_8250_port *);
+ extern void serial8250_rx_dma_flush(struct uart_8250_port *);
+ extern int serial8250_request_dma(struct uart_8250_port *);
+ extern void serial8250_release_dma(struct uart_8250_port *);
 +
- 	if (serial8250_handle_irq(p, iir))
- 		return 1;
- 
-@@ -375,6 +395,42 @@ static bool dw8250_idma_filter(struct dma_chan *chan, void *param)
- 	return param == chan->device->dev;
- }
- 
-+static u32 dw8250_rzn1_get_dmacr_burst(int max_burst)
++static inline void serial8250_do_prepare_tx_dma(struct uart_8250_port *p)
 +{
-+	if (max_burst >= 8)
-+		return DW_UART_xDMACR_8_WORD_BURST;
-+	else if (max_burst >= 4)
-+		return DW_UART_xDMACR_4_WORD_BURST;
-+	else
-+		return DW_UART_xDMACR_1_WORD_BURST;
-+}
-+
-+static void dw8250_prepare_tx_dma(struct uart_8250_port *p)
-+{
-+	struct uart_port *up = &p->port;
 +	struct uart_8250_dma *dma = p->dma;
-+	u32 val;
 +
-+	writel(0, up->membase + DW_UART_TDMACR);
-+	val = dw8250_rzn1_get_dmacr_burst(dma->txconf.dst_maxburst) |
-+	      DW_UART_xDMACR_BLK_SZ(dma->tx_size) |
-+	      DW_UART_xDMACR_DMA_EN;
-+	writel(val, up->membase + DW_UART_TDMACR);
++	if (dma->prepare_tx_dma)
++		dma->prepare_tx_dma(p);
 +}
 +
-+static void dw8250_prepare_rx_dma(struct uart_8250_port *p)
++static inline void serial8250_do_prepare_rx_dma(struct uart_8250_port *p)
 +{
-+	struct uart_port *up = &p->port;
 +	struct uart_8250_dma *dma = p->dma;
-+	u32 val;
 +
-+	writel(0, up->membase + DW_UART_RDMACR);
-+	val = dw8250_rzn1_get_dmacr_burst(dma->rxconf.src_maxburst) |
-+	      DW_UART_xDMACR_BLK_SZ(dma->rx_size) |
-+	      DW_UART_xDMACR_DMA_EN;
-+	writel(val, up->membase + DW_UART_RDMACR);
++	if (dma->prepare_rx_dma)
++		dma->prepare_rx_dma(p);
 +}
-+
- static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
+ #else
+ static inline int serial8250_tx_dma(struct uart_8250_port *p)
  {
- 	struct device_node *np = p->dev->of_node;
-@@ -409,6 +465,12 @@ static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
- 			p->serial_out = dw8250_serial_out38x;
- 		if (quirks & DW_UART_QUIRK_SKIP_SET_RATE)
- 			p->set_termios = dw8250_do_set_termios;
-+		if (quirks & DW_UART_QUIRK_IS_DMA_FLOW_CONTROLLER) {
-+			data->data.dma.txconf.device_fc = 1;
-+			data->data.dma.rxconf.device_fc = 1;
-+			data->data.dma.prepare_tx_dma = dw8250_prepare_tx_dma;
-+			data->data.dma.prepare_rx_dma = dw8250_prepare_rx_dma;
-+		}
+diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
+index 890fa7ddaa7f..558d3a2ac65b 100644
+--- a/drivers/tty/serial/8250/8250_dma.c
++++ b/drivers/tty/serial/8250/8250_dma.c
+@@ -77,6 +77,8 @@ int serial8250_tx_dma(struct uart_8250_port *p)
  
- 	} else if (acpi_dev_present("APMC0D08", NULL, -1)) {
- 		p->iotype = UPIO_MEM32;
+ 	dma->tx_size = CIRC_CNT_TO_END(xmit->head, xmit->tail, UART_XMIT_SIZE);
+ 
++	serial8250_do_prepare_tx_dma(p);
++
+ 	desc = dmaengine_prep_slave_single(dma->txchan,
+ 					   dma->tx_addr + xmit->tail,
+ 					   dma->tx_size, DMA_MEM_TO_DEV,
+@@ -114,6 +116,8 @@ int serial8250_rx_dma(struct uart_8250_port *p)
+ 	if (dma->rx_running)
+ 		return 0;
+ 
++	serial8250_do_prepare_rx_dma(p);
++
+ 	desc = dmaengine_prep_slave_single(dma->rxchan, dma->rx_addr,
+ 					   dma->rx_size, DMA_DEV_TO_MEM,
+ 					   DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
 -- 
 2.27.0
 
