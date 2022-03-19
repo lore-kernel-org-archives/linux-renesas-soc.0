@@ -2,95 +2,66 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9E4C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Mar 2022 21:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C851AC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Mar 2022 21:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230216AbiCRVp2 (ORCPT
+        id S244268AbiCSV6n (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Mar 2022 17:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55872 "EHLO
+        Sat, 19 Mar 2022 17:58:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240149AbiCRVp1 (ORCPT
+        with ESMTP id S244271AbiCSV6n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Mar 2022 17:45:27 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FE0C30A889;
-        Fri, 18 Mar 2022 14:44:07 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0EECEE;
-        Fri, 18 Mar 2022 22:44:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1647639845;
-        bh=lkM33JzxB8ZwQlccUVMWHTdzLZc6UWqnwEQ6ggU1SSg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=VdrcIW9RSjtT/OwU4U72oryvMN/ksi61aAtr+DIS9yYv7ZC8A5a7BlF2s/rQ5qh7s
-         WiqSDum/8b1v0sn6d4vtt2Vl615RNrLFNGJkKaCwfqTW+a8cPY+Qq6/7NGqOwL4mLf
-         YReOSbFnTaGXj3JVusQc2l9/qyvJtnH9iqvpukP4=
-Content-Type: text/plain; charset="utf-8"
+        Sat, 19 Mar 2022 17:58:43 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF5E260C78
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 19 Mar 2022 14:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=FtnBv3NwSYnAwC
+        XCzYASJ4qK/5v+QADuDK1OAuRHufE=; b=E1IkDHUPe+tNp8Jf0X/rwKSC2CHzqu
+        DKWcXCfAw0FQTbzj6wfaglRKgEywYWOQxaLhJ1XQZEn+FZHCQchPdKyOqqwfpZ+7
+        vcaXp1TMoFIKLieprURpxTxVDDAyooZDAgIWkZVB3DU4J8CYDn4Mm4iOkBgi/7hs
+        VpOqqew+ruRQs=
+Received: (qmail 244822 invoked from network); 19 Mar 2022 22:57:17 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Mar 2022 22:57:17 +0100
+X-UD-Smtp-Session: l3s3148p1@dLK6WJnaotwgAQnoAFEUAKkXZRZ8X9Wv
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     linux-gpio@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/2] pinctrl: renesas: allow up to 10 fields for drive_regs
+Date:   Sat, 19 Mar 2022 22:57:05 +0100
+Message-Id: <20220319215706.59519-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220319215706.59519-1-wsa+renesas@sang-engineering.com>
+References: <20220319215706.59519-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220318211446.11543-3-laurent.pinchart+renesas@ideasonboard.com>
-References: <20220318211446.11543-1-laurent.pinchart+renesas@ideasonboard.com> <20220318211446.11543-3-laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH 2/3] media: vsp1: Don't open-code vb2_fop_release()
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Date:   Fri, 18 Mar 2022 21:44:03 +0000
-Message-ID: <164763984378.2211712.3085801061791359128@Monstersaurus>
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Laurent Pinchart (2022-03-18 21:14:45)
-> Use the vb2_fop_release() helper to replace the open-coded version. The
-> video->lock is assigned to the queue lock, used by vb2_fop_release(), so
-> the only functional difference is that v4l2_fh_release() is now called
-> before vsp1_device_put(). This should be harmless.
->=20
+Needed to support E3 drive regs.
 
-Seems to check out.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/pinctrl/renesas/sh_pfc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index 2479b4fb9cf9..86cdcb292e23 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -181,7 +181,7 @@ struct pinmux_drive_reg_field {
+ 
+ struct pinmux_drive_reg {
+ 	u32 reg;
+-	const struct pinmux_drive_reg_field fields[8];
++	const struct pinmux_drive_reg_field fields[10];
+ };
+ 
+ #define PINMUX_DRIVE_REG(name, r) \
+-- 
+2.30.2
 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
-m>
-> ---
->  drivers/media/platform/renesas/vsp1/vsp1_video.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
->=20
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_video.c b/drivers/m=
-edia/platform/renesas/vsp1/vsp1_video.c
-> index 044eb5778820..8f53abc71db2 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_video.c
-> @@ -1129,19 +1129,11 @@ static int vsp1_video_open(struct file *file)
->  static int vsp1_video_release(struct file *file)
->  {
->         struct vsp1_video *video =3D video_drvdata(file);
-> -       struct v4l2_fh *vfh =3D file->private_data;
-> =20
-> -       mutex_lock(&video->lock);
-> -       if (video->queue.owner =3D=3D vfh) {
-> -               vb2_queue_release(&video->queue);
-> -               video->queue.owner =3D NULL;
-> -       }
-> -       mutex_unlock(&video->lock);
-> +       vb2_fop_release(file);
-> =20
->         vsp1_device_put(video->vsp1);
-> =20
-> -       v4l2_fh_release(file);
-> -
->         file->private_data =3D NULL;
-> =20
->         return 0;
-> --=20
-> Regards,
->=20
-> Laurent Pinchart
->
