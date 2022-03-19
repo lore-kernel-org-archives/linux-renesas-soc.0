@@ -2,54 +2,131 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BE7C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Mar 2022 21:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D1EC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Mar 2022 21:57:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244273AbiCSV6n (ORCPT
+        id S244275AbiCSV6o (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 19 Mar 2022 17:58:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59364 "EHLO
+        Sat, 19 Mar 2022 17:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244266AbiCSV6m (ORCPT
+        with ESMTP id S244270AbiCSV6m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Sat, 19 Mar 2022 17:58:42 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BAD260C74
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA482260C76
         for <linux-renesas-soc@vger.kernel.org>; Sat, 19 Mar 2022 14:57:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=ZANJSblX0TZCK+Nkrd6vqR9UqAP
-        caPEfKPQvNgD9izI=; b=YXiVgMczmIRUgwOcbsjW3hk5n7YeHsNhVEtBE+zPJXv
-        pHb8seruffLBdnsMZvcq6BhUW9pnAUcRQioGMV3OfnSd+P2Tcw/Fvj151zZHXYc2
-        Ql17F+hiEdVtuzwvhuK0lKtDbCqY2K4Ly7lDS1ik8qMRuFVFLL+R6RWd9Lm2+YoU
-        =
-Received: (qmail 244794 invoked from network); 19 Mar 2022 22:57:16 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Mar 2022 22:57:16 +0100
-X-UD-Smtp-Session: l3s3148p1@JyGyWJnaoNwgAQnoAFEUAKkXZRZ8X9Wv
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=ku5KNiHCiV1R0p
+        A7y/89CTCEj4KZhXTivGuAFWgThF0=; b=JU1DD4dE9bnjIgIH/6iguuy4CHVkMv
+        GDR/tEo2gU8H9/yx5kK3K+ZA7W/+ThN8YMmPHuk8wGFprWa0GAd7oy561tHry125
+        eynbMoCp+PwZteGJ0bCZFSgiVAK2y1V/fqYFxh9WDgFNUYAufduz8rjPeBZ6f/yo
+        EeP2r0FWQjj68=
+Received: (qmail 244854 invoked from network); 19 Mar 2022 22:57:17 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Mar 2022 22:57:17 +0100
+X-UD-Smtp-Session: l3s3148p1@1aLBWJnapNwgAQnoAFEUAKkXZRZ8X9Wv
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-gpio@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/2] pinctrl: renesas: r8a77990: add drive-strength
-Date:   Sat, 19 Mar 2022 22:57:04 +0100
-Message-Id: <20220319215706.59519-1-wsa+renesas@sang-engineering.com>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        LUU HOAI <hoai.luu.ub@renesas.com>
+Subject: [PATCH 2/2] pinctrl: renesas: r8a77990: add drive-strength
+Date:   Sat, 19 Mar 2022 22:57:06 +0100
+Message-Id: <20220319215706.59519-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220319215706.59519-1-wsa+renesas@sang-engineering.com>
+References: <20220319215706.59519-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This series upports a BSP patch. Please check the notes on the patches.
+According to HW documentation 2.20 onwards, drive-strength is introduced
+to r8a77990. Add it to the pinctrl driver.
 
-Wolfram Sang (2):
-  pinctrl: renesas: allow up to 10 fields for drive_regs
-  pinctrl: renesas: r8a77990: add drive-strength
+Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+Original BSP commit: f479c5a4e5e5 ("pinctrl: renesas: r8a77990: Add driver-strength for R8A77990")
+
+However, this was incomplete and missed 6 pins of table 6D.6 which were
+on a separate page. Adding them simplifies PORT_GP updates a lot.
+However, a preparational patch is needed then which is patch 1 of this
+series.
 
  drivers/pinctrl/renesas/pfc-r8a77990.c | 38 ++++++++++++++++++++++++--
- drivers/pinctrl/renesas/sh_pfc.h       |  2 +-
- 2 files changed, 37 insertions(+), 3 deletions(-)
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77990.c b/drivers/pinctrl/renesas/pfc-r8a77990.c
+index f44c7da3ec16..cc825100f2fe 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77990.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77990.c
+@@ -22,12 +22,12 @@
+ 	PORT_GP_CFG_18(0, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_23(1, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_26(2, fn, sfx, CFG_FLAGS), \
+-	PORT_GP_CFG_12(3, fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE), \
++	PORT_GP_CFG_12(3, fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE | SH_PFC_PIN_CFG_DRIVE_STRENGTH), \
+ 	PORT_GP_CFG_1(3, 12, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_1(3, 13, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_1(3, 14, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_1(3, 15, fn, sfx, CFG_FLAGS), \
+-	PORT_GP_CFG_11(4, fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE), \
++	PORT_GP_CFG_11(4, fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE | SH_PFC_PIN_CFG_DRIVE_STRENGTH), \
+ 	PORT_GP_CFG_20(5, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_9(6, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_1(6, 9, fn, sfx, SH_PFC_PIN_CFG_PULL_UP), \
+@@ -5104,6 +5104,39 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	{ },
+ };
+ 
++static const struct pinmux_drive_reg pinmux_drive_regs[] = {
++	{ PINMUX_DRIVE_REG("DRVCTRL8", 0xe6060320) {
++		{ RCAR_GP_PIN(3,  0), 18, 2 },	/* SD0_CLK */
++		{ RCAR_GP_PIN(3,  1), 15, 2 },	/* SD0_CMD */
++		{ RCAR_GP_PIN(3,  2), 12, 2 },	/* SD0_DAT0 */
++		{ RCAR_GP_PIN(3,  3),  9, 2 },	/* SD0_DAT1 */
++		{ RCAR_GP_PIN(3,  4),  6, 2 },	/* SD0_DAT2 */
++		{ RCAR_GP_PIN(3,  5),  3, 2 },	/* SD0_DAT3 */
++		{ RCAR_GP_PIN(3,  6),  0, 2 },	/* SD1_CLK */
++	} },
++	{ PINMUX_DRIVE_REG("DRVCTRL9", 0xe6060324) {
++		{ RCAR_GP_PIN(3,  7), 29, 2 },	/* SD1_CMD */
++		{ RCAR_GP_PIN(3,  8), 26, 2 },	/* SD1_DAT0 */
++		{ RCAR_GP_PIN(3,  9), 23, 2 },	/* SD1_DAT1 */
++		{ RCAR_GP_PIN(3, 10), 20, 2 },	/* SD1_DAT2 */
++		{ RCAR_GP_PIN(3, 11), 17, 2 },	/* SD1_DAT3 */
++		{ RCAR_GP_PIN(4,  0), 14, 2 },	/* SD3_CLK */
++		{ RCAR_GP_PIN(4,  1), 11, 2 },	/* SD3_CMD */
++		{ RCAR_GP_PIN(4,  2),  8, 2 },	/* SD3_DAT0 */
++		{ RCAR_GP_PIN(4,  3),  5, 2 },	/* SD3_DAT1 */
++		{ RCAR_GP_PIN(4,  4),  2, 2 },	/* SD3_DAT2 */
++	} },
++	{ PINMUX_DRIVE_REG("DRVCTRL10", 0xe6060328) {
++		{ RCAR_GP_PIN(4,  5), 29, 2 },	/* SD3_DAT3 */
++		{ RCAR_GP_PIN(4,  6), 26, 2 },	/* SD3_DAT4 */
++		{ RCAR_GP_PIN(4,  7), 23, 2 },	/* SD3_DAT5 */
++		{ RCAR_GP_PIN(4,  8), 20, 2 },	/* SD3_DAT6 */
++		{ RCAR_GP_PIN(4,  9), 17, 2 },	/* SD3_DAT7 */
++		{ RCAR_GP_PIN(4, 10), 14, 2 },	/* SD3_DS */
++	} },
++	{ },
++};
++
+ enum ioctrl_regs {
+ 	POCCTRL0,
+ 	TDSELCTRL,
+@@ -5387,6 +5420,7 @@ const struct sh_pfc_soc_info r8a77990_pinmux_info = {
+ 		ARRAY_SIZE(pinmux_functions.automotive),
+ 
+ 	.cfg_regs = pinmux_config_regs,
++	.drive_regs = pinmux_drive_regs,
+ 	.bias_regs = pinmux_bias_regs,
+ 	.ioctrl_regs = pinmux_ioctrl_regs,
+ 
 -- 
 2.30.2
 
