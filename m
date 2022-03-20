@@ -2,37 +2,37 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A94C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Mar 2022 09:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E288BC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Mar 2022 12:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243184AbiCTJ1P (ORCPT
+        id S245077AbiCTMcF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Mar 2022 05:27:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53262 "EHLO
+        Sun, 20 Mar 2022 08:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237201AbiCTJ1L (ORCPT
+        with ESMTP id S245065AbiCTMcD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Mar 2022 05:27:11 -0400
+        Sun, 20 Mar 2022 08:32:03 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3912A3F336
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Mar 2022 02:25:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77BDEEF0AC
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Mar 2022 05:30:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=DUYiFiBNVrzlJrG624xlJzcZvwd
-        1a2JMHswyD5TH+IM=; b=D7xBmdx7MJcY+A4GPdwVR7W9+LoTD4QdMKBwpaLZxWx
-        O2FCxbOElzgSVC7PEc7vEDVZk7GjY9CpbBwg0f0H7kzUhIma38TCsCws/xPjI237
-        VALQ1+lobi1UBNF9MHPGWj87vnNjN3VXe/0DTWpLxVOC0l1Am0DIVAAdO8OrGHok
+        :content-transfer-encoding; s=k1; bh=LyZEibhHtlO/qw4MHivepLmzXwI
+        rfMLU/TYNPQ0JpjI=; b=Pkn8fr71SthIH6YYeeFUJQ57HQtvp04/5oOAoOmF0q3
+        26N4z96AikWMFL6Dl9jUNETcl8YA0remg8Wtf/2sKCH2nMorj7WilRPmO9ifyhm6
+        +hHy/xroplhdv0G89QrcMC3pAUZniodvw85dixUsUuFkg60cO1vGVgFGrQ5gB7JY
         =
-Received: (qmail 413072 invoked from network); 20 Mar 2022 10:25:46 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Mar 2022 10:25:46 +0100
-X-UD-Smtp-Session: l3s3148p1@5hnx9qLa/rcgAQnoAFbkANnMMFqLOUjD
+Received: (qmail 461083 invoked from network); 20 Mar 2022 13:30:35 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Mar 2022 13:30:35 +0100
+X-UD-Smtp-Session: l3s3148p1@Xyjii6XaerkgAQnoAFbkANnMMFqLOUjD
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-gpio@vger.kernel.org,
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 0/2] pinctrl: renesas: r8a77990: add drive-strength
-Date:   Sun, 20 Mar 2022 10:25:40 +0100
-Message-Id: <20220320092542.2308-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/6] mmc: renesas_sdhi: internal_dmac: updates after refactoring
+Date:   Sun, 20 Mar 2022 13:30:10 +0100
+Message-Id: <20220320123016.57991-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,18 +40,32 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This series upports a BSP patch. Please check the notes on the patches.
+Shimoda-san's much appreciated refactoring of the quirk handling allows
+for further cleanups which you can find in this series plus some other
+improvements found on the way. Finally, 'soc_dma_quirks' can be removed
+in favor of regular quirks.
 
-Changes since V1:
-* support RZ/G2E as well
+The series is based on mmc/next as of today and was tested on Salvator-X
+(H3 ES1.0), Salvator XS (H3 ES2.0 as well as M3-N).
 
-Wolfram Sang (2):
-  pinctrl: renesas: allow up to 10 fields for drive_regs
-  pinctrl: renesas: r8a77990: add drive-strength
+Looking forward for tests and comments.
 
- drivers/pinctrl/renesas/pfc-r8a77990.c | 39 ++++++++++++++++++++++++--
- drivers/pinctrl/renesas/sh_pfc.h       |  2 +-
- 2 files changed, 38 insertions(+), 3 deletions(-)
+All the best,
+
+   Wolfram
+
+Wolfram Sang (6):
+  mmc: renesas_sdhi: remove outdated headers
+  mmc: renesas_sdhi: R-Car D3 also has no HS400
+  mmc: renesas_sdhi: make setup selection more understandable
+  mmc: renesas_sdhi: remove a stale comment
+  mmc: renesas_sdhi: make 'fixed_addr_mode' a quirk
+  mmc: renesas_sdhi: make 'dmac_only_one_rx' a quirk
+
+ drivers/mmc/host/renesas_sdhi.h               |  2 +
+ drivers/mmc/host/renesas_sdhi_core.c          |  2 -
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 70 ++++++++-----------
+ 3 files changed, 33 insertions(+), 41 deletions(-)
 
 -- 
 2.30.2
