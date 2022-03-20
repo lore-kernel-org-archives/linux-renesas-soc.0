@@ -2,84 +2,66 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 254C7C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Mar 2022 09:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A41C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Mar 2022 09:25:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243124AbiCTJZm (ORCPT
+        id S243173AbiCTJ1N (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Mar 2022 05:25:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46992 "EHLO
+        Sun, 20 Mar 2022 05:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237201AbiCTJZk (ORCPT
+        with ESMTP id S243143AbiCTJ1L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Mar 2022 05:25:40 -0400
-X-Greylist: delayed 399 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 20 Mar 2022 02:24:15 PDT
+        Sun, 20 Mar 2022 05:27:11 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338CA2FE7B
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Mar 2022 02:24:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90ECA3F33B
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Mar 2022 02:25:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=DPFdoQCQmmhj9TUQ4Pre53eqE/f1
-        FELjCE0PsZqk8LA=; b=t1X6KZ97L2zE6vEei/vcsQNAljIACR/1cEd/0i387rRg
-        REFwPJyTKLCtK4ZrtLNygW1/m0kgVEkJXwx4c0tSFkdJPgHHXJl/qvFD/obobrCa
-        7lhc6PjtOohBFAxYZNBvkvUccB0Qip3g2iREtfuoA031G+xBvX9eI7KURqS3LPE=
-Received: (qmail 411040 invoked from network); 20 Mar 2022 10:17:32 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Mar 2022 10:17:32 +0100
-X-UD-Smtp-Session: l3s3148p1@yLtH2aLa/LcgAQnoAFbkANnMMFqLOUjD
-Date:   Sun, 20 Mar 2022 10:17:28 +0100
-From:   Wolfram Sang <wsa-dev@sang-engineering.com>
-To:     kernel test robot <lkp@intel.com>
-Cc:     linux-renesas-soc@vger.kernel.org, llvm@lists.linux.dev,
-        kbuild-all@lists.01.org, linux-gpio@vger.kernel.org,
-        LUU HOAI <hoai.luu.ub@renesas.com>
-Subject: Re: [PATCH 2/2] pinctrl: renesas: r8a77990: add drive-strength
-Message-ID: <YjbxKGNwkyjdUF9Z@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa-dev@sang-engineering.com>,
-        kernel test robot <lkp@intel.com>,
-        linux-renesas-soc@vger.kernel.org, llvm@lists.linux.dev,
-        kbuild-all@lists.01.org, linux-gpio@vger.kernel.org,
-        LUU HOAI <hoai.luu.ub@renesas.com>
-References: <20220319215706.59519-3-wsa+renesas@sang-engineering.com>
- <202203200832.RD8XJhU1-lkp@intel.com>
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=b7ijZZZwtRzxO7
+        n6kp5r+RKLP/N56zH/wHWn0zfmhh4=; b=uxmVzY+U7b1BGwWhdX5wf9Z5YkqADU
+        EQLr9avVKXqtXYPM99TDaBQ5m3ZRDg8HwpST8TEMj4GF5YRm+zhYpoV+7rBYeLuj
+        G1ONDXP4lF783EY9KQGCxNBaAI2vdbz2dqsKFS9JLPvGHJ2DXxXN5Z8YKapfmPaJ
+        LiejnE40QoeJk=
+Received: (qmail 413092 invoked from network); 20 Mar 2022 10:25:46 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Mar 2022 10:25:46 +0100
+X-UD-Smtp-Session: l3s3148p1@6ZT39qLaALggAQnoAFbkANnMMFqLOUjD
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     linux-gpio@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 1/2] pinctrl: renesas: allow up to 10 fields for drive_regs
+Date:   Sun, 20 Mar 2022 10:25:41 +0100
+Message-Id: <20220320092542.2308-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220320092542.2308-1-wsa+renesas@sang-engineering.com>
+References: <20220320092542.2308-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wRCmqLVtDslRCPnB"
-Content-Disposition: inline
-In-Reply-To: <202203200832.RD8XJhU1-lkp@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Needed to support E3 and G2E drive regs.
 
---wRCmqLVtDslRCPnB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/pinctrl/renesas/sh_pfc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index 2479b4fb9cf9..86cdcb292e23 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -181,7 +181,7 @@ struct pinmux_drive_reg_field {
+ 
+ struct pinmux_drive_reg {
+ 	u32 reg;
+-	const struct pinmux_drive_reg_field fields[8];
++	const struct pinmux_drive_reg_field fields[10];
+ };
+ 
+ #define PINMUX_DRIVE_REG(name, r) \
+-- 
+2.30.2
 
-> >> drivers/pinctrl/renesas/pfc-r8a77990.c:5033:38: warning: unused variable 'pinmux_drive_regs' [-Wunused-const-variable]
->    static const struct pinmux_drive_reg pinmux_drive_regs[] = {
-
-Right, G2E has drive_regs as well. Will update!
-
-
---wRCmqLVtDslRCPnB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmI28SQACgkQFA3kzBSg
-KbZZaw/9EE+MPCH3hN5mCBQBGHAFrXTUyvS7r9eJDjBxuCz9LI/XFxd23ObdDk3O
-Srl5/SgGt9TkmDdeyKZwkPCP8Z7qaQd+rTIreeWa7k5QYALB7zRptmXs58zYBWPq
-44/+Ss9HrdpD61UwPSSRpGHNO9Hk5B7UkrG+Z05ZIdpZWBjQbQgQHiBDDoIM1njP
-IafMVBPK9Uui/gKA68REjkHW2SG8gs3Pp7l+1JJ+B1csX78gxDgJzfWq6dTMOHci
-1jYb+8W7ssQs2MLsa4Ou+UBCtFM+k7ptLwAA7yqwbyOBxL6fZhfI7rW60K0P8pyG
-0FYTRfga04DwBh9/aeZ9wODD2mtdojoeMbyMu7K1fK/4QZRWzg1e5n5hyPxtUGOv
-dVXQPDy0Kf1WuxX+t2ugE+kaZB7wvGTsVv8ELGu9Qy/pd0UbVzXgfC4nKN8Kv7MR
-i40PZLdJc+TysUG76JruQcZPbk3qrbx+VconcXDJdQgb1fhlT4Zs4ZgNZuo1b7ws
-z0/OHiULN9PH492RGyBVRpNoVbU0dfTDGuylq2LCL8xwD9fSnSwjQo0AXTtEOA3F
-1LUvrgj6K8JE+Di7iCKb7/i0ecZDoiZLfA9/RDCl/PfbHNHnwDrhJ5SC/DbMkBtE
-qRGND+D4ft5eh5Cf8jfv5P+Fm4boE9OIcdsO3RdraH3Wp9OaVXE=
-=14dA
------END PGP SIGNATURE-----
-
---wRCmqLVtDslRCPnB--
