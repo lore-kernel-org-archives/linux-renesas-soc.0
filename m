@@ -2,70 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71635C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 16:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D69C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 16:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350776AbiCUQOL (ORCPT
+        id S1350964AbiCUQQf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Mar 2022 12:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50534 "EHLO
+        Mon, 21 Mar 2022 12:16:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350878AbiCUQOE (ORCPT
+        with ESMTP id S1350877AbiCUQQd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Mar 2022 12:14:04 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B84E69CD1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Mar 2022 09:12:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=ZF/5DkLLg4JB5G
-        /b0aYVQ/D+wqP6oAiAQ+xCOCsTTQc=; b=IUEbapHp97buscEQL/BaRHHUTDr2Yy
-        l5+rn7+1+m27S/cdp6+f1ZY/mD4cXumVba9ef/aRWGN/w2aXDYEUDl/2Z4yhMHaZ
-        e8e7HZNmc4qQyelqAt5HxQaQb+qHrId37lWCBZjRh19WHUjzwPtT/NqwUsYKyRr6
-        A9kFogw/eB4FM=
-Received: (qmail 958006 invoked from network); 21 Mar 2022 17:12:35 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Mar 2022 17:12:35 +0100
-X-UD-Smtp-Session: l3s3148p1@bTeow7zaNNkgAwDPXxCoAIeNYiWy88zT
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 13/15] thermal: tegra: use new name 'usleep_autoyield' instead of 'fsleep'
-Date:   Mon, 21 Mar 2022 17:12:21 +0100
-Message-Id: <20220321161223.2837-14-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
-References: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
+        Mon, 21 Mar 2022 12:16:33 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70F0D26C4;
+        Mon, 21 Mar 2022 09:15:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1647879308; x=1679415308;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zpL1KC/LzFW3XuDbWTk/8gL8h7ax9edy561qrE2wzY0=;
+  b=iSlxh+qKJhugBVJVdrRWVspVnBiG7ewWUgWgyNlfObIM1Finp/vT0a5j
+   i74fK4RTMy6qzkAi/zx3nAknfFoyze1Dq/a06xkM+SYLdl0O72Cd+hVq5
+   DAwXtkahXHmXpoCPoddEAYk/YffI26pXffTH11Nuy/GmM3SXuo4Nymy2J
+   Y4JcJhdGzSrQD7E1BQ8jAB52Q+wUUSpjg50u80SMqhiCHsdHg/KI4dWhK
+   TW1fMCojGStPRhNi4hYtq90Gt7CXvsXTzvn2ynLhnUdWwR8BasBDwiwDU
+   /wswymrgRaInlPe+c0UCklyqi4imfSIiZcfw8CSI717FqhWwMODp5p92l
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10292"; a="257306807"
+X-IronPort-AV: E=Sophos;i="5.90,199,1643702400"; 
+   d="scan'208";a="257306807"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2022 09:15:08 -0700
+X-IronPort-AV: E=Sophos;i="5.90,199,1643702400"; 
+   d="scan'208";a="559934756"
+Received: from smile.fi.intel.com ([10.237.72.59])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2022 09:15:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nWKfr-0040kY-OS;
+        Mon, 21 Mar 2022 18:14:27 +0200
+Date:   Mon, 21 Mar 2022 18:14:27 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Johan Hovold <johan@kernel.org>,
+        "Maciej W. Rozycki" <macro@orcam.me.uk>,
+        Al Cooper <alcooperx@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 06/14] serial: 8250: Make SERIAL_8250_EM available for
+ arm64 systems
+Message-ID: <YjikYxGyUQfvqsiO@smile.fi.intel.com>
+References: <20220321154232.56315-1-phil.edworthy@renesas.com>
+ <20220321154232.56315-7-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220321154232.56315-7-phil.edworthy@renesas.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The function was just renamed to be easier understandable. No functional
-change.
+On Mon, Mar 21, 2022 at 03:42:24PM +0000, Phil Edworthy wrote:
+> This is needed for the Renesas RZ/V2M (r9a09g011) SoC.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-RFC, please do not apply yet
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
- drivers/thermal/tegra/tegra30-tsensor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  drivers/tty/serial/8250/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+> index cd93ea6eed65..fdb6c4188695 100644
+> --- a/drivers/tty/serial/8250/Kconfig
+> +++ b/drivers/tty/serial/8250/Kconfig
+> @@ -380,7 +380,7 @@ config SERIAL_8250_DW
+>  config SERIAL_8250_EM
+>  	tristate "Support for Emma Mobile integrated serial port"
+>  	depends on SERIAL_8250 && HAVE_CLK
+> -	depends on (ARM && ARCH_RENESAS) || COMPILE_TEST
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+>  	help
+>  	  Selecting this option will add support for the integrated serial
+>  	  port hardware found on the Emma Mobile line of processors.
+> -- 
+> 2.32.0
+> 
 
-diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
-index 9b6b693cbcf8..705981f74a8d 100644
---- a/drivers/thermal/tegra/tegra30-tsensor.c
-+++ b/drivers/thermal/tegra/tegra30-tsensor.c
-@@ -105,7 +105,7 @@ static int tegra_tsensor_hw_enable(const struct tegra_tsensor *ts)
- 		return err;
- 	}
- 
--	fsleep(1000);
-+	usleep_autoyield(1000);
- 
- 	err = reset_control_deassert(ts->rst);
- 	if (err) {
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
