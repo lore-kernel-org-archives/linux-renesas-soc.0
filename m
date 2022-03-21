@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E69C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 16:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E50C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 16:12:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350886AbiCUQOI (ORCPT
+        id S1350869AbiCUQOI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 21 Mar 2022 12:14:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50378 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350869AbiCUQOD (ORCPT
+        with ESMTP id S1350893AbiCUQOG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Mar 2022 12:14:03 -0400
+        Mon, 21 Mar 2022 12:14:06 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03242E6BC
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Mar 2022 09:12:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2EFD6E4D0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Mar 2022 09:12:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=q8EBMwoNwuBouz
-        0Xkf/HfJBH6XF1wekxxBDWocbe3sA=; b=l9yO2KSTfNQqBcPWMmkEhCvHF2xnqg
-        5XkBnabzQ961G6ct5qiho3ibyS3N0UuYa+4OnF1yXjMQ3HqXyDaXT/SfWPes6X6O
-        JPkgzuxla78ig+7SE2KafmIg3nIXvXZJ4+d/7Em7MyywOHQx0a45xs7+avfP9cve
-        HA5FSNR2Xdkko=
-Received: (qmail 957921 invoked from network); 21 Mar 2022 17:12:33 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Mar 2022 17:12:33 +0100
-X-UD-Smtp-Session: l3s3148p1@/huQw7zaLNkgAwDPXxCoAIeNYiWy88zT
+        :mime-version:content-transfer-encoding; s=k1; bh=jEz2JWGFyUlDzW
+        pfIqps0dXpIbCRQKaLSS5PMn2F+2E=; b=FLZH/45CYwgJsS+RdBouMD3gfVgMPJ
+        FazvroCNq3fvPRCocLvcZLkK0ABFtem4TUW8wqUyGBi4CI71tWVOycgHO8uypnEC
+        nKEBP9YHMf9DnudZXgKtNsedhRs9jww2Nurv+61T70dmoD7ajPfJaRGVLLqtsIMi
+        wwY+iI6i4fw3o=
+Received: (qmail 958078 invoked from network); 21 Mar 2022 17:12:36 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Mar 2022 17:12:36 +0100
+X-UD-Smtp-Session: l3s3148p1@u9y4w7zaONkgAwDPXxCoAIeNYiWy88zT
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Heiner Kallweit <hkallweit1@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 10/15] net: phy: use new name 'usleep_autoyield' instead of 'fsleep'
-Date:   Mon, 21 Mar 2022 17:12:18 +0100
-Message-Id: <20220321161223.2837-11-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 15/15] delay: remove the fallback for fsleep
+Date:   Mon, 21 Mar 2022 17:12:23 +0100
+Message-Id: <20220321161223.2837-16-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
 References: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
@@ -43,61 +43,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The function was just renamed to be easier understandable. No functional
-change.
+All users are converted to usleep_autoyield now.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 RFC, please do not apply yet
 
- drivers/net/phy/broadcom.c    | 2 +-
- drivers/net/phy/mdio_bus.c    | 4 ++--
- drivers/net/phy/mdio_device.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/delay.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
-index 3c683e0e40e9..26a8665ab245 100644
---- a/drivers/net/phy/broadcom.c
-+++ b/drivers/net/phy/broadcom.c
-@@ -446,7 +446,7 @@ static int bcm54xx_resume(struct phy_device *phydev)
- 	/* Upon exiting power down, the PHY remains in an internal reset state
- 	 * for 40us
- 	 */
--	fsleep(40);
-+	usleep_autoyield(40);
- 
- 	/* Issue a soft reset after clearing the power down bit
- 	 * and before doing any other configuration.
-diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index 58d602985877..dfd4c2e1e1e3 100644
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -570,10 +570,10 @@ int __mdiobus_register(struct mii_bus *bus, struct module *owner)
- 		return err;
- 	} else	if (gpiod) {
- 		bus->reset_gpiod = gpiod;
--		fsleep(bus->reset_delay_us);
-+		usleep_autoyield(bus->reset_delay_us);
- 		gpiod_set_value_cansleep(gpiod, 0);
- 		if (bus->reset_post_delay_us > 0)
--			fsleep(bus->reset_post_delay_us);
-+			usleep_autoyield(bus->reset_post_delay_us);
- 	}
- 
- 	if (bus->reset) {
-diff --git a/drivers/net/phy/mdio_device.c b/drivers/net/phy/mdio_device.c
-index 250742ffdfd9..9941a38c3631 100644
---- a/drivers/net/phy/mdio_device.c
-+++ b/drivers/net/phy/mdio_device.c
-@@ -132,7 +132,7 @@ void mdio_device_reset(struct mdio_device *mdiodev, int value)
- 
- 	d = value ? mdiodev->reset_assert_delay : mdiodev->reset_deassert_delay;
- 	if (d)
--		fsleep(d);
-+		usleep_autoyield(d);
+diff --git a/include/linux/delay.h b/include/linux/delay.h
+index d0919f52fec8..f1bf8d4103c0 100644
+--- a/include/linux/delay.h
++++ b/include/linux/delay.h
+@@ -88,6 +88,4 @@ static inline void usleep_autoyield(unsigned long usecs)
+ 		msleep(DIV_ROUND_UP(usecs, 1000));
  }
- EXPORT_SYMBOL(mdio_device_reset);
  
+-#define fsleep usleep_autoyield
+-
+ #endif /* defined(_LINUX_DELAY_H) */
 -- 
 2.34.1
 
