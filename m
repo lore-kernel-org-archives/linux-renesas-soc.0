@@ -2,79 +2,114 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F29DC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61307C433EF
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 16:12:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234996AbiCUQN7 (ORCPT
+        id S1350838AbiCUQOA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Mar 2022 12:13:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49962 "EHLO
+        Mon, 21 Mar 2022 12:14:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350715AbiCUQN6 (ORCPT
+        with ESMTP id S243809AbiCUQN6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 21 Mar 2022 12:13:58 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4172E6BC
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B1A2B1A4
         for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Mar 2022 09:12:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=Olo2Uqd/vUiEwq
-        7fC0KME5v7jxlFjg6geezBJLWQIFQ=; b=qoKEAx2sBOI4aUgpFuP764d7Pz/1Z9
-        kpGEG9DrJOfTU8fbLJa5V2fbMFKkL6bLVSZxK+zeDAg0qsYQM+mdJsOdu9nISaTc
-        762A8OJN5MJBgs6GNac0yLruTEI0jEf+RdY0TwGW3dqyizv2K5KUZonCRzsbTgro
-        fBX2L1OlRTv2A=
-Received: (qmail 957674 invoked from network); 21 Mar 2022 17:12:29 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Mar 2022 17:12:29 +0100
-X-UD-Smtp-Session: l3s3148p1@oNRNw7zaGtkgAwDPXxCoAIeNYiWy88zT
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=jAxbIQUDN4uvFhBZPHKWfmWfwUw
+        ggpRe45TqNvbcPEQ=; b=rIQpjLbMem3sQnGRGTvmlIobA+wYxnhNxICC8qdVl48
+        1OgABgj/rtr73schbXCTGOSo7EzgqeNXw9YWwCGis6evu2yEPK4rh+DTwl+hYsaI
+        l0/y9Hd6He7sgAWYw4II7oPByOCwLqEOoG9Dgw7tG7EZy8lkm2+yY6K13NO48n80
+        =
+Received: (qmail 957618 invoked from network); 21 Mar 2022 17:12:27 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Mar 2022 17:12:27 +0100
+X-UD-Smtp-Session: l3s3148p1@v0I7w7zaFtkgAwDPXxCoAIeNYiWy88zT
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Heiner Kallweit <hkallweit1@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 02/15] base: regmap: use new name 'usleep_autoyield' instead of 'fsleep'
-Date:   Mon, 21 Mar 2022 17:12:10 +0100
-Message-Id: <20220321161223.2837-3-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 00/15] treewide: rename fsleep
+Date:   Mon, 21 Mar 2022 17:12:08 +0100
+Message-Id: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
-References: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The function was just renamed to be easier understandable. No functional
-change.
+Hi,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-RFC, please do not apply yet
+I recently stumbled over the relatively new function fsleep(). While I
+think it is usful, I also think the name is too short to be
+self-explanatory. This is why I suggest a rename before it gets even
+wider use in the kernel, see patch 1.  As you can see from the
+statistics below, the churn is still in the acceptable range IMO.
 
- drivers/base/regmap/regmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The name 'usleep_autoyield' is the best I could come up with, but if you
+can think of something better I am all ears. This is why the series is
+still RFC and not sent to subsystem mailing lists. The base is v5.17-rc8
+but my plan is to resend it after 5.18-rc1 with all new fsleep-users
+fixed as well. And remove the fallback late in the 5.18 cycle. If we can
+agree on something that is.
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 8f9fe5fd4707..27c75611d177 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -2429,7 +2429,7 @@ static int _regmap_range_multi_paged_reg_write(struct regmap *map,
- 
- 				if (regs[i].delay_us) {
- 					if (map->can_sleep)
--						fsleep(regs[i].delay_us);
-+						usleep_autoyield(regs[i].delay_us);
- 					else
- 						udelay(regs[i].delay_us);
- 				}
-@@ -2470,7 +2470,7 @@ static int _regmap_multi_reg_write(struct regmap *map,
- 
- 			if (regs[i].delay_us) {
- 				if (map->can_sleep)
--					fsleep(regs[i].delay_us);
-+					usleep_autoyield(regs[i].delay_us);
- 				else
- 					udelay(regs[i].delay_us);
- 			}
+buildbot is happy with the changes. A branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/usleep_autoyield
+
+Please let me know what you think!
+
+All the best,
+
+   Wolfram
+
+
+Wolfram Sang (15):
+  delay: rename fsleep to usleep_autoyield
+  base: regmap: use new name 'usleep_autoyield' instead of 'fsleep'
+  bus: mhi: core: use new name 'usleep_autoyield' instead of 'fsleep'
+  iio: adc: use new name 'usleep_autoyield' instead of 'fsleep'
+  memory: tegra: use new name 'usleep_autoyield' instead of 'fsleep'
+  mfd: use new name 'usleep_autoyield' instead of 'fsleep'
+  mux: use new name 'usleep_autoyield' instead of 'fsleep'
+  net: ethernet: realtek: use new name 'usleep_autoyield' instead of
+    'fsleep'
+  net: mdio: use new name 'usleep_autoyield' instead of 'fsleep'
+  net: phy: use new name 'usleep_autoyield' instead of 'fsleep'
+  net: wireless: realtek: rtw88: use new name 'usleep_autoyield' instead
+    of 'fsleep'
+  net: wireless: realtek: rtw89: use new name 'usleep_autoyield' instead
+    of 'fsleep'
+  thermal: tegra: use new name 'usleep_autoyield' instead of 'fsleep'
+  usb: chipidea: use new name 'usleep_autoyield' instead of 'fsleep'
+  delay: remove the fallback for fsleep
+
+ Documentation/timers/timers-howto.rst             | 2 +-
+ drivers/base/regmap/regmap.c                      | 4 ++--
+ drivers/bus/mhi/core/main.c                       | 2 +-
+ drivers/iio/adc/ti-tsc2046.c                      | 2 +-
+ drivers/memory/tegra/tegra20.c                    | 2 +-
+ drivers/mfd/acer-ec-a500.c                        | 2 +-
+ drivers/mux/core.c                                | 2 +-
+ drivers/net/ethernet/realtek/r8169_main.c         | 8 ++++----
+ drivers/net/mdio/mdio-ipq4019.c                   | 2 +-
+ drivers/net/phy/broadcom.c                        | 2 +-
+ drivers/net/phy/mdio_bus.c                        | 4 ++--
+ drivers/net/phy/mdio_device.c                     | 2 +-
+ drivers/net/wireless/realtek/rtw88/rtw8822c.c     | 8 ++++----
+ drivers/net/wireless/realtek/rtw89/fw.c           | 2 +-
+ drivers/net/wireless/realtek/rtw89/mac.c          | 6 +++---
+ drivers/net/wireless/realtek/rtw89/pci.c          | 2 +-
+ drivers/net/wireless/realtek/rtw89/rtw8852a.c     | 4 ++--
+ drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c | 8 ++++----
+ drivers/thermal/tegra/tegra30-tsensor.c           | 2 +-
+ drivers/usb/chipidea/ci_hdrc_tegra.c              | 6 +++---
+ include/linux/delay.h                             | 2 +-
+ 21 files changed, 37 insertions(+), 37 deletions(-)
+
 -- 
 2.34.1
 
