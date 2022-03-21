@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E50C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 16:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D20C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 16:12:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350869AbiCUQOI (ORCPT
+        id S1350905AbiCUQOK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Mar 2022 12:14:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50708 "EHLO
+        Mon, 21 Mar 2022 12:14:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350893AbiCUQOG (ORCPT
+        with ESMTP id S1350887AbiCUQOG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 21 Mar 2022 12:14:06 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2EFD6E4D0
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B16746D3A5
         for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Mar 2022 09:12:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=jEz2JWGFyUlDzW
-        pfIqps0dXpIbCRQKaLSS5PMn2F+2E=; b=FLZH/45CYwgJsS+RdBouMD3gfVgMPJ
-        FazvroCNq3fvPRCocLvcZLkK0ABFtem4TUW8wqUyGBi4CI71tWVOycgHO8uypnEC
-        nKEBP9YHMf9DnudZXgKtNsedhRs9jww2Nurv+61T70dmoD7ajPfJaRGVLLqtsIMi
-        wwY+iI6i4fw3o=
-Received: (qmail 958078 invoked from network); 21 Mar 2022 17:12:36 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Mar 2022 17:12:36 +0100
-X-UD-Smtp-Session: l3s3148p1@u9y4w7zaONkgAwDPXxCoAIeNYiWy88zT
+        :mime-version:content-transfer-encoding; s=k1; bh=5MrQJ81W3H7h1h
+        lBoztx6HsQhX66IRi+nKSmYm1dJzo=; b=bvXH7IDmr9RE9lEbI2qCsyOOKylIuJ
+        85wLll12YLhvc4hJNmBYuHrqHgTsEpkDm1DJegePsaz4/AtOeXLqg5U+gqy6Jb1f
+        cE6ZSG6zELtD9Rw4CvUBz4mfCijhmzijqPhpFiyI76h8UyrMG+kQPO87wsj/hEKE
+        e3bBEdkk9Bhpw=
+Received: (qmail 958041 invoked from network); 21 Mar 2022 17:12:35 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Mar 2022 17:12:35 +0100
+X-UD-Smtp-Session: l3s3148p1@tO6ww7zaNtkgAwDPXxCoAIeNYiWy88zT
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Heiner Kallweit <hkallweit1@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 15/15] delay: remove the fallback for fsleep
-Date:   Mon, 21 Mar 2022 17:12:23 +0100
-Message-Id: <20220321161223.2837-16-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 14/15] usb: chipidea: use new name 'usleep_autoyield' instead of 'fsleep'
+Date:   Mon, 21 Mar 2022 17:12:22 +0100
+Message-Id: <20220321161223.2837-15-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
 References: <20220321161223.2837-1-wsa+renesas@sang-engineering.com>
@@ -43,26 +43,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-All users are converted to usleep_autoyield now.
+The function was just renamed to be easier understandable. No functional
+change.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 RFC, please do not apply yet
 
- include/linux/delay.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/delay.h b/include/linux/delay.h
-index d0919f52fec8..f1bf8d4103c0 100644
---- a/include/linux/delay.h
-+++ b/include/linux/delay.h
-@@ -88,6 +88,4 @@ static inline void usleep_autoyield(unsigned long usecs)
- 		msleep(DIV_ROUND_UP(usecs, 1000));
- }
- 
--#define fsleep usleep_autoyield
--
- #endif /* defined(_LINUX_DELAY_H) */
+diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+index a72a9474afea..767f13abfe91 100644
+--- a/drivers/usb/chipidea/ci_hdrc_tegra.c
++++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+@@ -189,13 +189,13 @@ static int tegra_usb_internal_port_reset(struct ehci_hcd *ehci,
+ 		temp = ehci_readl(ehci, portsc_reg);
+ 		temp |= PORT_RESET;
+ 		ehci_writel(ehci, temp, portsc_reg);
+-		fsleep(10000);
++		usleep_autoyield(10000);
+ 		temp &= ~PORT_RESET;
+ 		ehci_writel(ehci, temp, portsc_reg);
+-		fsleep(1000);
++		usleep_autoyield(1000);
+ 		tries = 100;
+ 		do {
+-			fsleep(1000);
++			usleep_autoyield(1000);
+ 			/*
+ 			 * Up to this point, Port Enable bit is
+ 			 * expected to be set after 2 ms waiting.
 -- 
 2.34.1
 
