@@ -2,37 +2,45 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA2AC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 15:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7F4C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Mar 2022 15:46:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350500AbiCUPrX (ORCPT
+        id S1350512AbiCUPr2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Mar 2022 11:47:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56204 "EHLO
+        Mon, 21 Mar 2022 11:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350498AbiCUPrS (ORCPT
+        with ESMTP id S244522AbiCUPrZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Mar 2022 11:47:18 -0400
+        Mon, 21 Mar 2022 11:47:25 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 082B957148;
-        Mon, 21 Mar 2022 08:45:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ACFF150073
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Mar 2022 08:46:00 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,198,1643641200"; 
-   d="scan'208";a="114269496"
+   d="scan'208";a="114269529"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Mar 2022 00:45:28 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 22 Mar 2022 00:46:00 +0900
 Received: from vb.home (unknown [10.226.92.216])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C8F744007539;
-        Tue, 22 Mar 2022 00:45:26 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1D1C84001960;
+        Tue, 22 Mar 2022 00:45:56 +0900 (JST)
 From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 10/14] clk: renesas: rzg2l: Add support for RZ/V2M reset monitor reg
-Date:   Mon, 21 Mar 2022 15:42:28 +0000
-Message-Id: <20220321154232.56315-11-phil.edworthy@renesas.com>
+Subject: [PATCH 12/14] arm64: defconfig: Enable Renesas RZ/V2M SoC
+Date:   Mon, 21 Mar 2022 15:42:30 +0000
+Message-Id: <20220321154232.56315-13-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220321154232.56315-1-phil.edworthy@renesas.com>
 References: <20220321154232.56315-1-phil.edworthy@renesas.com>
@@ -42,72 +50,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZ/V2M doesn't have a matching set of reset monitor regs for each reset
-reg like the RZ/G2L. Instead, it has a single CPG_RST_MON reg which has a
-single bit per module.
+Enable the Renesas RZ/V2M SoC and the uart it uses.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c |  6 +++++-
- drivers/clk/renesas/rzg2l-cpg.h | 10 ++++++++--
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index c357b0bfa119..220955366538 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -748,8 +748,12 @@ static int rzg2l_cpg_status(struct reset_controller_dev *rcdev,
- 	const struct rzg2l_cpg_info *info = priv->info;
- 	unsigned int reg = info->resets[id].off;
- 	u32 bitmask = BIT(info->resets[id].bit);
-+	u32 monbitmask = BIT(info->resets[id].monbit);
- 
--	return !(readl(priv->base + CLK_MRST_R(reg)) & bitmask);
-+	if (info->has_clk_mon_regs)
-+		return !(readl(priv->base + CLK_MRST_R(reg)) & bitmask);
-+	else
-+		return !!(readl(priv->base + CPG_RST_MON) & monbitmask);
- }
- 
- static const struct reset_control_ops rzg2l_cpg_reset_ops = {
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index f04671376af5..d1d08669066b 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -18,6 +18,7 @@
- #define CPG_PL3_SSEL		(0x408)
- #define CPG_PL6_SSEL		(0x414)
- #define CPG_PL6_ETH_SSEL	(0x418)
-+#define CPG_RST_MON		(0x680)
- 
- #define CPG_CLKSTATUS_SELSDHI0_STS	BIT(28)
- #define CPG_CLKSTATUS_SELSDHI1_STS	BIT(29)
-@@ -151,17 +152,22 @@ struct rzg2l_mod_clk {
-  *
-  * @off: register offset
-  * @bit: reset bit
-+ * @monbit: monitor bit in CPG_RST_MON register, -1 if none
-  */
- struct rzg2l_reset {
- 	u16 off;
- 	u8 bit;
-+	s8 monbit;
- };
- 
--#define DEF_RST(_id, _off, _bit)	\
-+#define DEF_RST_MON(_id, _off, _bit, _monbit)	\
- 	[_id] = { \
- 		.off = (_off), \
--		.bit = (_bit) \
-+		.bit = (_bit), \
-+		.monbit = (_monbit) \
- 	}
-+#define DEF_RST(_id, _off, _bit)	\
-+	DEF_RST_MON(_id, _off, _bit, -1)
- 
- /**
-  * struct rzg2l_cpg_info - SoC-specific CPG Description
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 813e644b6af1..cc8196c48029 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -428,6 +428,7 @@ CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_8250_OMAP=y
+ CONFIG_SERIAL_8250_MT6577=y
+ CONFIG_SERIAL_8250_UNIPHIER=y
++CONFIG_SERIAL_8250_EM=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_SERIAL_AMBA_PL011=y
+ CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
+@@ -1106,6 +1107,7 @@ CONFIG_ARCH_R8A774E1=y
+ CONFIG_ARCH_R8A774A1=y
+ CONFIG_ARCH_R8A774B1=y
+ CONFIG_ARCH_R9A07G044=y
++CONFIG_ARCH_R9A09G011=y
+ CONFIG_ROCKCHIP_IODOMAIN=y
+ CONFIG_ROCKCHIP_PM_DOMAINS=y
+ CONFIG_ARCH_TEGRA_132_SOC=y
 -- 
 2.32.0
 
