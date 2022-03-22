@@ -2,95 +2,117 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4F4C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Mar 2022 06:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0183C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Mar 2022 09:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237057AbiCVGpg (ORCPT
+        id S232271AbiCVJ4w (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Mar 2022 02:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58608 "EHLO
+        Tue, 22 Mar 2022 05:56:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237045AbiCVGpe (ORCPT
+        with ESMTP id S232053AbiCVJ4v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Mar 2022 02:45:34 -0400
+        Tue, 22 Mar 2022 05:56:51 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1235053B51
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Mar 2022 23:44:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C2346BDD2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Mar 2022 02:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=bhAaAoHzDrHU3De5X0RjnAUGIT+O
-        wJfzwQ5eF0K/cVQ=; b=O1PKZFbygdvZvUPjWOql2HeAuNmG+Mqzue+CrPt+BXKJ
-        k+GX/2eEhNr6I7MDSJy99FdhNAeg6ArjWNMTC/3LJJSOSY6oY6OQ4/xGOvEwwF66
-        f8G+ucaN20R3cPf3ZJ8WmSkaK7+cNqNO1H9eQ570kLH1nvWceNuF9eAbQMRA+yY=
-Received: (qmail 1202223 invoked from network); 22 Mar 2022 07:44:02 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Mar 2022 07:44:02 +0100
-X-UD-Smtp-Session: l3s3148p1@O7gT8MjaPpQgAQnoAGKBAM/VPJLYEVe1
-Date:   Tue, 22 Mar 2022 07:43:59 +0100
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=v4TU6n+0IjTs8E
+        6rTT022lrYu3Lmvg3F7yMkGKc4Je8=; b=2RkHTD01v2/+AQ1Fm+PzgehyEDZ7DW
+        Je0gE08xukT6nni7SpEVfXilsN1Twb9KzOl7wt3JwKMx0T1toKHFHWzhafS5vvzb
+        lzbup/QDVuU+PQq8IhdTOxI7jVXdtNyYvwwHoZebhXqgDiYNTGSTM2VG1wpmIMKr
+        t4c1HWfRJGsAk=
+Received: (qmail 1276064 invoked from network); 22 Mar 2022 10:55:19 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Mar 2022 10:55:19 +0100
+X-UD-Smtp-Session: l3s3148p1@Hy5UnMvaQOsgAQnoAGKBAIBddhzCa5pi
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ath10k@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com,
-        brcm80211-dev-list.pdl@broadcom.com,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        SHA-cyfmac-dev-list@infineon.com
-Subject: Re: [RFC PATCH 00/10] mmc: improve API to make clear {h|s}w_reset is
- for cards
-Message-ID: <YjlwLzxxxR1QIpDK@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ath10k@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        brcm80211-dev-list.pdl@broadcom.com,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        SHA-cyfmac-dev-list@infineon.com
-References: <20220321115059.21803-1-wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     devicetree@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/5] ARM: dts: rcar-gen2: add interrupt property to the watchdog node
+Date:   Tue, 22 Mar 2022 10:55:08 +0100
+Message-Id: <20220322095512.4707-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220322095512.4707-1-wsa+renesas@sang-engineering.com>
+References: <20220322095512.4707-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="WMfMF+E/rJD23w9V"
-Content-Disposition: inline
-In-Reply-To: <20220321115059.21803-1-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Driver doesn't use it yet, but let's describe the HW properly.
 
---WMfMF+E/rJD23w9V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 1 +
+ arch/arm/boot/dts/r8a7791.dtsi | 1 +
+ arch/arm/boot/dts/r8a7792.dtsi | 1 +
+ arch/arm/boot/dts/r8a7793.dtsi | 1 +
+ arch/arm/boot/dts/r8a7794.dtsi | 1 +
+ 5 files changed, 5 insertions(+)
 
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index ed6dd4fcc503..a640488d513b 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -274,6 +274,7 @@ rwdt: watchdog@e6020000 {
+ 			compatible = "renesas,r8a7790-wdt",
+ 				     "renesas,rcar-gen2-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
++			interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 402>;
+ 			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 			resets = <&cpg 402>;
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 0ccc162d3c2c..542ed0a71872 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -161,6 +161,7 @@ rwdt: watchdog@e6020000 {
+ 			compatible = "renesas,r8a7791-wdt",
+ 				     "renesas,rcar-gen2-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
++			interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 402>;
+ 			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 			resets = <&cpg 402>;
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 9cdb73894ac2..a6d9367f8fa0 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -111,6 +111,7 @@ rwdt: watchdog@e6020000 {
+ 			compatible = "renesas,r8a7792-wdt",
+ 				     "renesas,rcar-gen2-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
++			interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 402>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+ 			resets = <&cpg 402>;
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index dea4b1e108af..9ebe7bfaf0ed 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -146,6 +146,7 @@ rwdt: watchdog@e6020000 {
+ 			compatible = "renesas,r8a7793-wdt",
+ 				     "renesas,rcar-gen2-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
++			interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 402>;
+ 			power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 			resets = <&cpg 402>;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index eac9ed8df0be..b601ee6f7580 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -128,6 +128,7 @@ rwdt: watchdog@e6020000 {
+ 			compatible = "renesas,r8a7794-wdt",
+ 				     "renesas,rcar-gen2-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
++			interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 402>;
+ 			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
+ 			resets = <&cpg 402>;
+-- 
+2.34.1
 
-> I tested it with my Renesas boards, so far no regressions. Buildbots are
-> currently checking the series.
-
-Update: buildbots are happy \o/
-
-
---WMfMF+E/rJD23w9V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmI5cCsACgkQFA3kzBSg
-Kbau+Q//bVoc4SoG8It5AVIpQdUks3DAupSbmrT8ebI7arPQCFlUV7n9abCA3RZW
-aH9m01itrfZ7TWxSJ2gUp4VR49LlweNqQEcyo/TEkzfZ558St7Wu8pRV9rPfEleo
-v310K9zePQwzipMwNJ1htVYvN6wapEoromv45gj//La15GSw3pc8GJxSZBp+AxHa
-VaeazFG6z9uAL3MGjpTwU8cEu4vWZFP8txloEVXTtT7iRu26H9/x/Rrmu+8xuchk
-ReGG2mn/rAMo3JAzEJvvempkzHSUpjnMq2kDYOqqYvGT8yRGjVcEMSSjp5bVKevz
-vi9zIkfJ8Q+Q/oXSC1jOFP7y98lXv8mIOyPlnHev6KhIZMGVooNWDFpnJqPAaTa7
-HU8mQ1IEqoNsZ7/OCdCliRZGQG5NL0XJDGyxcZyBoUSiAvegDlh8v17A5ukm/jBS
-eWGHjajY/McPxd8LM78WOANF0sQD5Adiyhrx1U5gStqWRYrVE5ppRig38LvSQ3ZH
-GOg3rN2Jfjq/PJv38Ykow9fv4TPIywy/UlZuVGpt3GlqcN1rNojffDYTzbKCPUwX
-83cEyZW4/ngtKZf6scgipsHntN7WDQ/xbSWDHb7uZux/x+cIsZuKQiHB61mqecwa
-k1BwoutPwvyQkK9gHC3hlPEDa+S5CRl5NIQlnPkB1Fic4C1/S1k=
-=nk9X
------END PGP SIGNATURE-----
-
---WMfMF+E/rJD23w9V--
