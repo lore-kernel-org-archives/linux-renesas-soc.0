@@ -2,89 +2,154 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA0DC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Mar 2022 20:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C704C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Mar 2022 21:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242610AbiCWUHN (ORCPT
+        id S1345006AbiCWVs6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Mar 2022 16:07:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50416 "EHLO
+        Wed, 23 Mar 2022 17:48:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244359AbiCWUHN (ORCPT
+        with ESMTP id S232814AbiCWVs4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Mar 2022 16:07:13 -0400
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FB486E2B;
-        Wed, 23 Mar 2022 13:05:43 -0700 (PDT)
-Received: by mail-oi1-f172.google.com with SMTP id z8so2796527oix.3;
-        Wed, 23 Mar 2022 13:05:43 -0700 (PDT)
+        Wed, 23 Mar 2022 17:48:56 -0400
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A1648E18A;
+        Wed, 23 Mar 2022 14:47:26 -0700 (PDT)
+Received: by mail-oi1-f173.google.com with SMTP id r8so3053430oib.5;
+        Wed, 23 Mar 2022 14:47:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=gR3650OK4Kk4y8p0bJ8B5cWOD9FNq9cookGajVqOgH8=;
-        b=eaTzxYX2tWl3IMWmKp4862ik3+IWEw24C+etcIam/bhMgiyDySD7BB6cMFa+yQ1ene
-         RFfRP4ZAAcqUCWT/pbCGOd20DXl2UKfgFT4uHByZULF/6C8nI1TUDh2LhyGbzSQDovKg
-         1ZgrEK6OTNG/kpKUrGgOlGFqS7nQbD5UCJBApEj7dyt54hI7lXMYAVN3rzrOOf7uCaqK
-         3Hj5RlthO9j1qZMqEoRMuPg3bFpm8uT2l3HmiH/NcoTIV0iliLS8IgWM6spGfc37srz7
-         weFAtXSq+UZWjm5HQNbgMWT54YVQfo8JtfWlIu6PM91QXZFdsvz6CIvQ5ocPonKOaGy0
-         PwrA==
-X-Gm-Message-State: AOAM531lwptYimRdYAYyXBuPXbeC3EoiHDI1qePtVPsVbGIAbNyOGG/C
-        BRKNkqZR0LA51q66k6/kOw==
-X-Google-Smtp-Source: ABdhPJytsw/Iu8lzVzWw09sb/tW8nq9AKE1yUUK4QZT1ga++TGAD+SxkJPnMP8020ukMFZCVHMpfrg==
-X-Received: by 2002:a05:6808:c:b0:2ef:8913:354 with SMTP id u12-20020a056808000c00b002ef89130354mr3422949oic.201.1648065941050;
-        Wed, 23 Mar 2022 13:05:41 -0700 (PDT)
+        bh=OkkqPejIvAtlOMyVAYvOIwcHM2WzlIdgAOpzjXKoJU4=;
+        b=GBv4ySwhhFjefQgVBpAab2mkEET9ddtSOgzepQ1wEogrprQM0Vqb7xbxA3JZi57s1S
+         5bMoonjgTlcbuLESOho1yqSqnEETjIQYXMElb4Wh2bYtbj9D5DNVZ3/TBZssjGHdA5U6
+         Rpw359ezp3sjvY56Aoo2QfLyb0ZY/bkzcw2kd7v4ohzs+VNvSnKHhfCfF27Qc+IJqCPU
+         2+qN7yCr8cCeu/pXfa9tuI5a5HGGjaEqDOpinHNbiyXjCKpNNNx61xBvwPE6RNjaEFpM
+         f7mPBC1lmabAMBc9ExxPuUfwAWr0B8c5LkRDJvZzlUAGhHuTx3u7nYtqcZLBm1aifnTy
+         97BQ==
+X-Gm-Message-State: AOAM531qofpn/el0U9Tr9SdPAIj+RqK8ydgeo3ddQFRQdAV8451CdSAq
+        6sXNZTlB9ilcFioLiEbmEA==
+X-Google-Smtp-Source: ABdhPJxWMtgj0H9DbEOzxF/FOzBu64GXgF8jadPVZ/QU9gzyJsiWf8KipKX16vZYBZk3dCF5pko6Yg==
+X-Received: by 2002:a05:6808:146:b0:2f4:748:5588 with SMTP id h6-20020a056808014600b002f407485588mr495090oie.292.1648072045865;
+        Wed, 23 Mar 2022 14:47:25 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n128-20020a4a4086000000b0032118eda64bsm418856ooa.38.2022.03.23.13.05.39
+        by smtp.gmail.com with ESMTPSA id q6-20020acaf206000000b002ef960f65b3sm498887oih.25.2022.03.23.14.47.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Mar 2022 13:05:40 -0700 (PDT)
-Received: (nullmailer pid 361968 invoked by uid 1000);
-        Wed, 23 Mar 2022 20:05:39 -0000
-Date:   Wed, 23 Mar 2022 15:05:39 -0500
+        Wed, 23 Mar 2022 14:47:25 -0700 (PDT)
+Received: (nullmailer pid 512768 invoked by uid 1000);
+        Wed, 23 Mar 2022 21:47:24 -0000
+Date:   Wed, 23 Mar 2022 16:47:24 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Chris Paterson <Chris.Paterson2@renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        linux-renesas-soc@vger.kernel.org,
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] dt-bindings: display: renesas,du: Document
- r9a07g044l bindings
-Message-ID: <Yjt9kxLDLlJSB8sd@robh.at.kernel.org>
-References: <20220316131100.30685-1-biju.das.jz@bp.renesas.com>
- <20220316131100.30685-2-biju.das.jz@bp.renesas.com>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: display: bridge: Document RZ/G2L MIPI
+ DSI TX bindings
+Message-ID: <YjuVbBck5RE79EPl@robh.at.kernel.org>
+References: <20220314161004.14765-1-biju.das.jz@bp.renesas.com>
+ <20220314161004.14765-2-biju.das.jz@bp.renesas.com>
+ <YjtkMxC0X7mMvMKX@robh.at.kernel.org>
+ <TYCPR01MB593341D2E966F3C60ADAC8E986189@TYCPR01MB5933.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220316131100.30685-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <TYCPR01MB593341D2E966F3C60ADAC8E986189@TYCPR01MB5933.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 16 Mar 2022 13:10:54 +0000, Biju Das wrote:
-> Extend the Renesas DU display bindings to support the r9a07g044l
-> DU module found on RZ/G2L LCDC.
+On Wed, Mar 23, 2022 at 06:26:31PM +0000, Biju Das wrote:
+> Hi Rob,
 > 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Updated commit description.
->  * Removed LCDC references
->  * Changed clock name from du.0->aclk
->  * Changed reset name from du.0->du
-> RFC->v1:
->  * Changed  minItems->maxItems for renesas,vsps.
-> RFC:
->  https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-18-biju.das.jz@bp.renesas.com/
-> ---
->  .../bindings/display/renesas,du.yaml          | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
+> Thanks for the feedback.
 > 
+> > Subject: Re: [PATCH 1/2] dt-bindings: display: bridge: Document RZ/G2L
+> > MIPI DSI TX bindings
+> > 
+> > On Mon, Mar 14, 2022 at 04:10:02PM +0000, Biju Das wrote:
+> > > The RZ/G2L MIPI DSI TX is embedded in the Renesas RZ/G2L family SoC's.
+> > > It can operate in DSI mode, with up to four data lanes.
+> > >
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > ---
+> > > RFC->v1:
+> > >  * Added a ref to dsi-controller.yaml.
+> > > RFC:-
+> > >  *
+> > > ---
+> > >  .../bindings/display/bridge/renesas,dsi.yaml  | 146
+> > > ++++++++++++++++++
+> > >  1 file changed, 146 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> > > b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> > > new file mode 100644
+> > > index 000000000000..74bc3782d230
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yam
+> > > +++ l
+> > > @@ -0,0 +1,146 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > > +---
+> > > +$id:
+> > > +
+> > > +title: Renesas RZ/G2L MIPI DSI Encoder
+> > > +
+> > > +maintainers:
+> > > +  - Biju Das <biju.das.jz@bp.renesas.com>
+> > > +
+> > > +description: |
+> > > +  This binding describes the MIPI DSI encoder embedded in the Renesas
+> > > +  RZ/G2L family of SoC's. The encoder can operate in DSI mode with up
+> > > +  to four data lanes.
+> > > +
+> > > +allOf:
+> > > +  - $ref: ../dsi-controller.yaml#
+> > 
+> > Full path preferred:
+> > 
+> > /schemas/display/dsi-controller.yaml#
+> 
+> OK. Will fix this.
+> 
+> > 
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - renesas,rzg2l-mipi-dsi # RZ/G2L and RZ/V2L
+> > > +
+> > > +  reg:
+> > > +    items:
+> > > +      - description: Link register
+> > > +      - description: D-PHY register
+> > 
+> > D-PHY is not a separate block?
+> 
+> Basically D-PHY is integrated inside MIPI-DSI Tx module.
+> 
+> MIPI-DSI Tx module consists of MIPI DSI-2 Host controller (LINK)
+> and MIPI D-PHY Tx(D-PHY).
+> 
+> That is the reason I have modelled like this.
+> 
+> Is this model ok or am I missing something here? Please let me know.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I don't know the details of the h/w so I can't say. We do see blocks 
+with a phy modeled as 1 block only to need to separate them when the phy 
+part changes in the next process node. I imagine we have it done both 
+ways for DSI + D-PHY.
+
+Rob
