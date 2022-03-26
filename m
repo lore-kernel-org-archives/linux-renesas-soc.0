@@ -2,144 +2,117 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA36C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Mar 2022 20:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1F7C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Mar 2022 08:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232365AbiCYUIv (ORCPT
+        id S232142AbiCZInR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Mar 2022 16:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52190 "EHLO
+        Sat, 26 Mar 2022 04:43:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232378AbiCYUH6 (ORCPT
+        with ESMTP id S229491AbiCZInQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Mar 2022 16:07:58 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 576F7140A2;
-        Fri, 25 Mar 2022 13:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648238661; x=1679774661;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5sK09O1uc6ZSl4vR7vWfGqwrFgZiRRMtY41JRk11RA8=;
-  b=OUGP2dgAzHx2mlnynnamky6jCGR7RzWYyBGar7D6VHIMcz+ScXrm6ZV9
-   4i2oxRs5CR6bW3BqUr6RCDWEPOnwydn1V+heVZGPcc0AmIA2eI2IXYzCb
-   SlJ1Oyt2ZN30OoxZhPKDw09f4W1+3m7UR35UL3tOHQc+lgwPBfK6/57zJ
-   Dl6Jevm1RbJnEtd5H+EYCAFr2T6/YEZP/j8+k5odIIWZT5DgWjH50bPBX
-   yLiy0/mLLZK+F90mfJnkgGesbbXFmmwR2SxqRBQ8vQcPWjc5Wz119JUd4
-   ZV6gRjukVA+phUDlATCf325/L5CdyuQtAPj5MJdpTFcT7UpOAw2NRfA8X
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10297"; a="345146243"
-X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
-   d="scan'208";a="345146243"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2022 13:04:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
-   d="scan'208";a="602159418"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Mar 2022 13:04:16 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 98EFD217; Fri, 25 Mar 2022 22:04:30 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        Sat, 26 Mar 2022 04:43:16 -0400
+Received: from mxout03.lancloud.ru (mxout03.lancloud.ru [45.84.86.113])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC21DB6E7D;
+        Sat, 26 Mar 2022 01:41:35 -0700 (PDT)
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru DA04E20A8247
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+Subject: Re: [PATCH v1 5/5] pinctrl: armada-37xx: Replace custom code by
+ gpiochip_count() call
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Gregory CLEMENT <gregory.clement@bootlin.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Fabien Dessenne <fabien.dessenne@foss.st.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+CC:     Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
         Andrew Lunn <andrew@lunn.ch>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 4/5] pinctrl: meson: Replace custom code by gpiochip_count() call
-Date:   Fri, 25 Mar 2022 22:03:37 +0200
-Message-Id: <20220325200338.54270-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220325200338.54270-1-andriy.shevchenko@linux.intel.com>
 References: <20220325200338.54270-1-andriy.shevchenko@linux.intel.com>
+ <20220325200338.54270-5-andriy.shevchenko@linux.intel.com>
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <3415996d-e8b5-2416-fb66-e65779a9b507@omp.ru>
+Date:   Sat, 26 Mar 2022 11:41:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220325200338.54270-5-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.11.198]
+X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
+ LFEX1907.lancloud.ru (fd00:f066::207)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since we have generic function to count GPIO controller nodes
-under given device, there is no need to open code it. Replace
-custom code by gpiochip_count() call.
+Hello!
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/meson/pinctrl-meson.c | 28 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+On 3/25/22 11:03 PM, Andy Shevchenko wrote:
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 49851444a6e3..7db70d4e214a 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -49,6 +49,7 @@
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/seq_file.h>
- 
-@@ -662,27 +663,22 @@ static struct regmap *meson_map_resource(struct meson_pinctrl *pc,
- 	return devm_regmap_init_mmio(pc->dev, base, &meson_regmap_config);
- }
- 
--static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
--				  struct device_node *node)
-+static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc)
- {
--	struct device_node *np, *gpio_np = NULL;
-+	struct device_node *gpio_np;
-+	unsigned int chips;
- 
--	for_each_child_of_node(node, np) {
--		if (!of_find_property(np, "gpio-controller", NULL))
--			continue;
--		if (gpio_np) {
--			dev_err(pc->dev, "multiple gpio nodes\n");
--			of_node_put(np);
--			return -EINVAL;
--		}
--		gpio_np = np;
--	}
--
--	if (!gpio_np) {
-+	chips = gpiochip_count(pc->dev);
-+	if (!chips) {
- 		dev_err(pc->dev, "no gpio node found\n");
- 		return -EINVAL;
- 	}
-+	if (chips > 1) {
-+		dev_err(pc->dev, "multiple gpio nodes\n");
-+		return -EINVAL;
-+	}
- 
-+	gpio_np = to_of_node(device_get_named_child_node(pc->dev, "gpio-controller"));
- 	pc->of_node = gpio_np;
- 
- 	pc->reg_mux = meson_map_resource(pc, gpio_np, "mux");
-@@ -751,7 +747,7 @@ int meson_pinctrl_probe(struct platform_device *pdev)
- 	pc->dev = dev;
- 	pc->data = (struct meson_pinctrl_data *) of_device_get_match_data(dev);
- 
--	ret = meson_pinctrl_parse_dt(pc, dev->of_node);
-+	ret = meson_pinctrl_parse_dt(pc);
- 	if (ret)
- 		return ret;
- 
--- 
-2.35.1
+> Since we have generic function to count GPIO controller nodes
+> under given device, there is no need to open code it. Replace
+> custom code by gpiochip_count() call.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 24 +++++++++------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> index 08cad14042e2..ba94125f6566 100644
+> --- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> @@ -728,22 +728,18 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+>  	struct gpio_irq_chip *girq = &gc->irq;
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np;
+> -	int ret = -ENODEV, i, nr_irq_parent;
+> +	unsigned int nr_child_nodes, i;
+> +	int ret;
+>  
+>  	/* Check if we have at least one gpio-controller child node */
+> -	for_each_child_of_node(dev->of_node, np) {
+> -		if (of_property_read_bool(np, "gpio-controller")) {
+> -			ret = 0;
+> -			break;
+> -		}
+> -	}
+> -	if (ret)
+> -		return dev_err_probe(dev, ret, "no gpio-controller child node\n");
+> +	nr_child_nodes = gpiochip_count(dev);
+> +	if (!nr_child_nodes)
+> +		return dev_err_probe(dev, -ENODEV, "no gpio-controller child node\n");
+>  
+> -	nr_irq_parent = of_irq_count(np);
+>  	spin_lock_init(&info->irq_lock);
+>  
+> -	if (!nr_irq_parent) {
+> +	nr_child_nodes = of_irq_count(np);
 
+   Mhm, 'np' is no longer assigned to at this point...
+
+> +	if (!nr_child_nodes) {
+>  		dev_err(dev, "invalid or no IRQ\n");
+>  		return 0;
+>  	}
+[...]
+
+MBR, Sergey
