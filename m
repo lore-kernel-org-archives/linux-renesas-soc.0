@@ -2,45 +2,45 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4027EC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Mar 2022 15:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FFBC4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Mar 2022 15:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238622AbiC2PbD (ORCPT
+        id S238683AbiC2PbX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 11:31:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59280 "EHLO
+        Tue, 29 Mar 2022 11:31:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238587AbiC2PbA (ORCPT
+        with ESMTP id S238674AbiC2PbV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Mar 2022 11:31:00 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0357F954B;
-        Tue, 29 Mar 2022 08:29:17 -0700 (PDT)
+        Tue, 29 Mar 2022 11:31:21 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48110108190;
+        Tue, 29 Mar 2022 08:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648567757; x=1680103757;
+  t=1648567768; x=1680103768;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=of6aC29MFt/gFsErfEks/90Bjvx9npiRIawi0g8JJ7E=;
-  b=hyRYld4NDmOkFRP7s51f6/pe1DGgIY9oxXnkT37EqYQdjC7V7/32imhc
-   Dsi2h+7aBtpQ0WvSYS7omUV6YhaaiyRDJlXx05rsZo7xN0nFCKlNS6Xt8
-   s/pgwTvyTQJZf3wORn51zxE/XcGn9kUl6DxRpVWVP9akgW9Ctji1kYPP0
-   Ql3Eot+H28SOWHWuUBpNXKyb2v73KUfGkVrji0X/cN2l49RMMudhvoGME
-   cTGcby+x6FlKtSKhgu4uc6fENZ6KuDvNYaBVXnkjJ0BEs0W6W+HGHjfGD
-   QZqRamircyNrGBL+lgx6oJw5qtmMVX4JpLwIW1C5mh04+OgAKbWhgIWKG
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="239207789"
+  bh=Hkl8/8feuNYMImY/ozo/322V2NGiY6bRDjU8vGAhPTw=;
+  b=R8CxdZKwkLvSSfg/BxT1XYiaujnrex42FBEmdFYys+8jXqyiM3yGk6jl
+   M/9xKVTc3y9gimhsKLhTcgzT687230O17IUYcIbcG5jHL4gebAghraBaX
+   SBxHwaNWDNmYiuacA7JlgjDZD6WUWFfZspyydTU+avkQtwL2MjOoQvtwh
+   vIy5j8SqZJ/YZNPF/fDtLYVEQeUf18iosupZjslJozaqMHhlFT4PrwhL2
+   MqGwMhvfgDyBmzlLk6f4FOzeuaLzpMrDVt8nYHUPcTV912tqLYAziV9ig
+   sPyAOjZWkeVgnGsduXeEcRjVgE9PbG2/mBXLNZJR+NbFhcEivfkZOmlyq
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="246767250"
 X-IronPort-AV: E=Sophos;i="5.90,220,1643702400"; 
-   d="scan'208";a="239207789"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2022 08:29:15 -0700
+   d="scan'208";a="246767250"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2022 08:29:24 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,220,1643702400"; 
-   d="scan'208";a="564710306"
+   d="scan'208";a="653044903"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 29 Mar 2022 08:29:07 -0700
+  by orsmga004.jf.intel.com with ESMTP; 29 Mar 2022 08:29:16 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 02BDB11E; Tue, 29 Mar 2022 18:29:28 +0300 (EEST)
+        id 89A4940B; Tue, 29 Mar 2022 18:29:29 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Qianggui Song <qianggui.song@amlogic.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -73,9 +73,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH v2 01/13] gpiolib: Introduce for_each_gpiochip_node() loop helper
-Date:   Tue, 29 Mar 2022 18:29:14 +0300
-Message-Id: <20220329152926.50958-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 10/13] pinctrl: meson: Enable COMPILE_TEST
+Date:   Tue, 29 Mar 2022 18:29:23 +0300
+Message-Id: <20220329152926.50958-11-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
 References: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
@@ -85,43 +85,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Introduce for_each_gpiochip_node() loop helper which iterates over
-the GPIO controller child nodes of a given device.
+Enable COMPILE_TEST for a better test coverage.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- include/linux/gpio/driver.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/pinctrl/meson/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index be2fc9b15cf3..e6b9c17614ef 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -3,13 +3,14 @@
- #define __LINUX_GPIO_DRIVER_H
- 
- #include <linux/device.h>
--#include <linux/types.h>
- #include <linux/irq.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
- #include <linux/lockdep.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/property.h>
-+#include <linux/types.h>
- 
- struct gpio_desc;
- struct seq_file;
-@@ -750,4 +751,8 @@ static inline void gpiochip_unlock_as_irq(struct gpio_chip *gc,
- }
- #endif /* CONFIG_GPIOLIB */
- 
-+#define for_each_gpiochip_node(dev, child)					\
-+	device_for_each_child_node(dev, child)					\
-+		if (!fwnode_property_present(child, "gpio-controller")) {} else
-+
- #endif /* __LINUX_GPIO_DRIVER_H */
+diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
+index d1955c65b4b6..64fb9e074ac6 100644
+--- a/drivers/pinctrl/meson/Kconfig
++++ b/drivers/pinctrl/meson/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ menuconfig PINCTRL_MESON
+ 	tristate "Amlogic SoC pinctrl drivers"
+-	depends on ARCH_MESON
++	depends on ARCH_MESON || COMPILE_TEST
+ 	depends on OF
+ 	default y
+ 	select PINMUX
 -- 
 2.35.1
 
