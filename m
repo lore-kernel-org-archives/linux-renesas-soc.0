@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F37C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Mar 2022 15:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9FBC43219
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Mar 2022 15:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238542AbiC2P1A (ORCPT
+        id S238543AbiC2P1C (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 11:27:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42918 "EHLO
+        Tue, 29 Mar 2022 11:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238541AbiC2P0n (ORCPT
+        with ESMTP id S238549AbiC2P0n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 29 Mar 2022 11:26:43 -0400
 Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D3DA6C4B2;
-        Tue, 29 Mar 2022 08:24:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E86B6D96E;
+        Tue, 29 Mar 2022 08:24:54 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 05FEF100012;
-        Tue, 29 Mar 2022 15:24:45 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 5D6E8100014;
+        Tue, 29 Mar 2022 15:24:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1648567487;
+        t=1648567492;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TmaAsB7MqjQxsyG3QKoQoE2YuJlDhMcg46WoB4wFkog=;
-        b=fTWrE9mhfARobgafXrvOLPz49CFyfqrpzsPh8ep/ulQuNWIfhyLde0GU/aqXilhx35I7Ko
-        0YcjT02Kok+hed3mSCZy7oCqruhblV5vYc+jNFcL+PL3txNHzrE8GHngXkKpHwvC5qxPhp
-        2a6+io9buhe0CVnsyTXDil1ukJCneCPzhThv8u8vQUiw+rzFZYJ8AzW4skrWuu1sPyPnB3
-        4yU6WqCYIzdAHD/CWlh5SCbUFv5NSrIspF2mWQuivlqwXTaWcfbyem5J1I+RDx66RRP2cq
-        TS0GVczvCpH2QTOkzNfuNVTb9uv68ixfTzuM0Ji2jl2Efo1NpPS/fAxuByNpIw==
+        bh=VjUPIaxQ1WBMLteeByIABCjhVWOu3Y3N20N5eUaJ/3w=;
+        b=TxC19+bpPR0/mVX5SJ7VYjUSKKNtl6/WK99FJnSs7ljlIh3weSe3uhQiWxFKUut4/ETKwe
+        +DUEf9g1Y7l+7u4iVXFJ+9s3W2zgR6fjsn/GBN3W7m2diNf74GdUHI6hsHyiMjc62u1Y0c
+        PGipiWl5BHSSnp6h+qHG/2zV7C6FD0AJDCtvBECOqrUGsuOGlQpoppYUyC+nA5GgsAB+nI
+        wzTGOfr7VoGAKEga4rGMVi42YBmcJaIl0MqCJFK8MG5ofmkEF+Xh2mMLsNFd70rf3kvH4v
+        l+GixIKsoqJ8G6p6771bi0gQGqZa8/sFfEdg6JyVu3Qimx4YWtQrzjRVGDPNEg==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -45,9 +45,9 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>
-Subject: [PATCH v3 07/10] serial: 8250: dw: Introduce an rx_timeout variable in the IRQ path
-Date:   Tue, 29 Mar 2022 17:24:27 +0200
-Message-Id: <20220329152430.756947-8-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 10/10] ARM: dts: r9a06g032: Fill the UART DMA properties
+Date:   Tue, 29 Mar 2022 17:24:30 +0200
+Message-Id: <20220329152430.756947-11-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220329152430.756947-1-miquel.raynal@bootlin.com>
 References: <20220329152430.756947-1-miquel.raynal@bootlin.com>
@@ -58,37 +58,76 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In a next change we are going to need the same Rx timeout condition as
-we already have in the IRQ handling code. Let's just create a boolean to
-clarify what this operation does before reusing it.
+UART 0 to 2 do not have DMA support, while UART 3 to 7 do.
 
-There is no functional change.
+Fill the "dmas" and "dma-names" properties for each of these nodes.
+
+Please mind that these nodes go through the dmamux node which will
+redirect the requests to the right DMA controller. The first 4 cells of
+the "dmas" properties will be transferred as-is to the DMA
+controllers. The last 2 cells are consumed by the dmamux. Which means
+cell 0 and 4 are almost redundant, one giving the controller request ID
+and the other the dmamux channel which is a 1:1 translation of the
+request IDs, shifted by 16 when pointing to the second DMA controller.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/tty/serial/8250/8250_dw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r9a06g032.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 95c4321022d5..1a6932d69332 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -228,6 +228,7 @@ static int dw8250_handle_irq(struct uart_port *p)
- 	struct uart_8250_port *up = up_to_u8250p(p);
- 	struct dw8250_data *d = to_dw8250_data(p->private_data);
- 	unsigned int iir = p->serial_in(p, UART_IIR);
-+	bool rx_timeout = (iir & 0x3f) == UART_IIR_RX_TIMEOUT;
- 	unsigned int status;
- 	unsigned long flags;
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 804f2d6f416f..aa447e2622e0 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -128,6 +128,9 @@ uart3: serial@50000000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART3>, <&sysctrl R9A06G032_HCLK_UART3>;
+ 			clock-names = "baudclk", "apb_pclk";
++			dmas =  <&dmamux 0 0 0 0 0 1>,
++				<&dmamux 1 0 0 0 1 1>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
  
-@@ -241,7 +242,7 @@ static int dw8250_handle_irq(struct uart_port *p)
- 	 * This problem has only been observed so far when not in DMA mode
- 	 * so we limit the workaround only to non-DMA mode.
- 	 */
--	if (!up->dma && ((iir & 0x3f) == UART_IIR_RX_TIMEOUT)) {
-+	if (!up->dma && rx_timeout) {
- 		spin_lock_irqsave(&p->lock, flags);
- 		status = p->serial_in(p, UART_LSR);
+@@ -139,6 +142,9 @@ uart4: serial@50001000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART4>, <&sysctrl R9A06G032_HCLK_UART4>;
+ 			clock-names = "baudclk", "apb_pclk";
++			dmas =  <&dmamux 2 0 0 0 2 1>,
++				<&dmamux 3 0 0 0 3 1>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -150,6 +156,9 @@ uart5: serial@50002000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART5>, <&sysctrl R9A06G032_HCLK_UART5>;
+ 			clock-names = "baudclk", "apb_pclk";
++			dmas =  <&dmamux 4 0 0 0 4 1>,
++				<&dmamux 5 0 0 0 5 1>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -161,6 +170,9 @@ uart6: serial@50003000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART6>, <&sysctrl R9A06G032_HCLK_UART6>;
+ 			clock-names = "baudclk", "apb_pclk";
++			dmas =  <&dmamux 6 0 0 0 6 1>,
++				<&dmamux 7 0 0 0 7 1>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -172,6 +184,9 @@ uart7: serial@50004000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART7>, <&sysctrl R9A06G032_HCLK_UART7>;
+ 			clock-names = "baudclk", "apb_pclk";
++			dmas =  <&dmamux 4 0 0 0 20 1>,
++				<&dmamux 5 0 0 0 21 1>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
  
 -- 
 2.27.0
