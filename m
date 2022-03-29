@@ -2,40 +2,40 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12159C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496F1C43219
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Mar 2022 12:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236234AbiC2MVz (ORCPT
+        id S236240AbiC2MV4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 08:21:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34680 "EHLO
+        Tue, 29 Mar 2022 08:21:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236240AbiC2MVw (ORCPT
+        with ESMTP id S236239AbiC2MVw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 29 Mar 2022 08:21:52 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E597344C7
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E147A340C7
         for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Mar 2022 05:20:09 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:d553:ff0a:6830:6bde])
-        by laurent.telenet-ops.be with bizsmtp
-        id CCL72700c49QC4401CL7F2; Tue, 29 Mar 2022 14:20:08 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id CCL82700649QC4406CL8PU; Tue, 29 Mar 2022 14:20:08 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nZApT-007GW6-HT; Tue, 29 Mar 2022 14:20:07 +0200
+        id 1nZApT-007GW8-Oy; Tue, 29 Mar 2022 14:20:07 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nZApS-00CDdi-K6; Tue, 29 Mar 2022 14:20:06 +0200
+        id 1nZApS-00CDdw-Ls; Tue, 29 Mar 2022 14:20:06 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/5] arm64: dts: renesas: ebisu: Add RPC HyperFlash device node
-Date:   Tue, 29 Mar 2022 14:20:03 +0200
-Message-Id: <b14c769f62211b67d90dbd2f127357756e6cb4fa.1648548339.git.geert+renesas@glider.be>
+Subject: [PATCH 5/5] arm64: dts: renesas: ulcb: Add RPC HyperFlash device node
+Date:   Tue, 29 Mar 2022 14:20:05 +0200
+Message-Id: <61a63e819d4296760ca7ae83ef5226a2c4d7bd93.1648548339.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648548339.git.geert+renesas@glider.be>
 References: <cover.1648548339.git.geert+renesas@glider.be>
@@ -46,38 +46,33 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Add the RPC HyperFlash device node along with its partitions to the
-common Ebisu board DTS file.
+common ULCB board DTS file.
+
+Based on a patch in the BSP by Valentine Barshak.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/ebisu.dtsi | 58 ++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+Changes compared to the BSP:
+  - Update label,
+  - Keep RPC disabled,
+  - Add missing "cypress,hyperflash" compatible value,
+  - Drop leading zeroes from unit addresses,
+  - Use lower-case hexadecimal values.
+  - Enlarge uboot partition,
+  - Drop uboot-env partition.
+---
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 49 +++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
-index 67231c8576c52b18..ae688707f8c69a32 100644
---- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
-@@ -600,6 +600,12 @@ pwm5_pins: pwm5 {
- 		function = "pwm5";
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index b4bdb2d7e4bacb9d..90a4c0629d240fdb 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -426,6 +426,55 @@ rsnd_for_hdmi: endpoint {
  	};
- 
-+	rpc_pins: rpc {
-+		groups = "rpc_clk2", "rpc_ctrl", "rpc_data", "rpc_reset",
-+			 "rpc_int";
-+		function = "rpc";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
-@@ -711,6 +717,58 @@ dai0 {
- 
  };
  
 +&rpc {
-+	pinctrl-0 = <&rpc_pins>;
-+	pinctrl-names = "default";
-+
 +	/* Left disabled.  To be enabled by firmware when unlocked. */
 +
 +	flash@0 {
