@@ -2,125 +2,125 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EB4C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Mar 2022 14:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F1CC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Mar 2022 14:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346709AbiC3OWJ (ORCPT
+        id S1347307AbiC3OwJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 10:22:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
+        Wed, 30 Mar 2022 10:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346706AbiC3OWJ (ORCPT
+        with ESMTP id S1347279AbiC3OwH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 10:22:09 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BFECC526;
-        Wed, 30 Mar 2022 07:20:23 -0700 (PDT)
+        Wed, 30 Mar 2022 10:52:07 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA16D1CFEC;
+        Wed, 30 Mar 2022 07:50:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648650023; x=1680186023;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eYFvp/7iPp9R6X31PSbuF5mo1ECcI06+2yE4CXhJT4A=;
-  b=YHBegQpZq8bBbKSfOS1rnjo9gkbRbIrp9683uJcb5UzsjpsCvd9ymxB2
-   W15y80CEoFTZSXQUy2OPU1pn1zbiKoA+7KHsLYxbDIytTpIdlGKFx4MFZ
-   NiULY8SyOXgBRxz9bk5fwTI8zdVbEDb9q914Am14+dSV/kRJnFlTCZv3n
-   QcXCkXmq6BwlxGUgcfYH8uFzsFYt2polJYALsZFrz5LfoRJ/EAkak5PUS
-   qbU9Zhfc2zD1CdP5bn/Hfy/jaCvMEE8VFHhGWUrdM5ELpRC2AfY48CzOl
-   4rtGlHE0aq9ah1hFQJH3gx39tyySuUfVBQ8GJ18oMOPc6hHqX87hRAN3k
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="259739167"
+  t=1648651822; x=1680187822;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=i+XLNp2iVCE62baGP2Gp0lU65sQmnL0penjqJcUdxuU=;
+  b=aKPyr84Lpy67IAP7miYKwlAEQJK1IGOoM54MSo3egt21U1aZBkJl8/wC
+   xYe8TEi+4A5QVLjSOHvtMdYJbSKQ4k9XZaKDPGRRwA9rHdE3odOHe2AcW
+   5IEyneHS96uBBMitPTyXJNDLQopQpwy8fwINGMipkL8okWjeu4h25vCkD
+   fEReFrtdiosWCPHbCqS91sFzZATZoueMQZsI/4vPeDbtTG1rMuWEbZLCj
+   31sbv8l3ixaqF04yGaPxA5dsrFc12it985WgtNv5tHeUFsyje1dtiS40B
+   2KNhLeZJ2rmiXXryuGeTVSX//I6mKNyuTxLSAt4CKKqmQkCBQ5SekOkXm
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="257139574"
 X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="259739167"
+   d="scan'208";a="257139574"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 07:20:23 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 07:50:19 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="565561989"
-Received: from smile.fi.intel.com ([10.237.72.59])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 07:20:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nZZAn-009Rmj-W5;
-        Wed, 30 Mar 2022 17:19:45 +0300
-Date:   Wed, 30 Mar 2022 17:19:45 +0300
+   d="scan'208";a="565571103"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 30 Mar 2022 07:50:11 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 408CA1F5; Wed, 30 Mar 2022 17:50:33 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: Re: [PATCH v4 8/9] serial: 8250: dw: Improve RZN1 support
-Message-ID: <YkRnAfb7O0tcNXOz@smile.fi.intel.com>
-References: <20220330132038.808679-1-miquel.raynal@bootlin.com>
- <20220330132038.808679-9-miquel.raynal@bootlin.com>
+To:     Qianggui Song <qianggui.song@amlogic.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v3 03/13] pinctrl: stm32: Replace custom code by gpiochip_node_count() call
+Date:   Wed, 30 Mar 2022 17:50:20 +0300
+Message-Id: <20220330145030.1562-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220330145030.1562-1-andriy.shevchenko@linux.intel.com>
+References: <20220330145030.1562-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220330132038.808679-9-miquel.raynal@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 03:20:37PM +0200, Miquel Raynal wrote:
-> From: Phil Edworthy <phil.edworthy@renesas.com>
-> 
-> Renesas RZ/N1 SoC features a slightly modified DW UART.
-> 
-> On this SoC, the CPR register value is known but not synthetized in
-> hardware. We hence need to provide a CPR value in the platform
-> data. This version of the controller also relies on acting as flow
-> controller when using DMA, so we need to provide the
-> "is dma flow controller" quirk.
+Since we have generic function to count GPIO controller nodes
+under a given device, there is no need to open code it. Replace
+custom code by gpiochip_node_count() call.
 
-After modifying one of previous patches...
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Co-developed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/tty/serial/8250/8250_dw.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-> index 977a473535e8..195aa4516b2b 100644
-> --- a/drivers/tty/serial/8250/8250_dw.c
-> +++ b/drivers/tty/serial/8250/8250_dw.c
-> @@ -755,7 +755,10 @@ static const struct dw8250_platform_data dw8250_armada_38x_data = {
->  	.quirks = DW_UART_QUIRK_ARMADA_38X,
->  };
->  
-> -static const struct dw8250_platform_data dw8250_renesas_rzn1_data = {};
-> +static const struct dw8250_platform_data dw8250_renesas_rzn1_data = {
-
-...this change...
-
-> +	.quirks = DW_UART_QUIRK_IS_DMA_FC,
-> +	.cpr = 0x00012f32,
-
-> +};
-
-...and this will disappear from this patch.
-
-With it rebased,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
->  static const struct dw8250_platform_data dw8250_starfive_jh7100_data = {
->  	.quirks = DW_UART_QUIRK_SKIP_SET_RATE,
-> -- 
-> 2.27.0
-> 
-
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 9ed764731570..91b9a64b649e 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1423,7 +1423,8 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct stm32_pinctrl *pctl;
+ 	struct pinctrl_pin_desc *pins;
+-	int i, ret, hwlock_id, banks = 0;
++	int i, ret, hwlock_id;
++	unsigned int banks;
+ 
+ 	if (!np)
+ 		return -EINVAL;
+@@ -1513,10 +1514,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 		return PTR_ERR(pctl->pctl_dev);
+ 	}
+ 
+-	for_each_available_child_of_node(np, child)
+-		if (of_property_read_bool(child, "gpio-controller"))
+-			banks++;
+-
++	banks = gpiochip_node_count(dev);
+ 	if (!banks) {
+ 		dev_err(dev, "at least one GPIO bank is required\n");
+ 		return -EINVAL;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.35.1
 
