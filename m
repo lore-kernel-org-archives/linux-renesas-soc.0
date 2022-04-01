@@ -2,114 +2,97 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20625C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Apr 2022 15:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F52DC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Apr 2022 15:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345107AbiDAP4W (ORCPT
+        id S234449AbiDAP40 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Apr 2022 11:56:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60562 "EHLO
+        Fri, 1 Apr 2022 11:56:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348692AbiDAPPL (ORCPT
+        with ESMTP id S1353711AbiDAPug (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Apr 2022 11:15:11 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C0D892B658A;
-        Fri,  1 Apr 2022 07:57:08 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,227,1643641200"; 
-   d="scan'208";a="116451900"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Apr 2022 23:57:08 +0900
-Received: from localhost.localdomain (unknown [10.226.92.166])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0BC68400F95D;
-        Fri,  1 Apr 2022 23:57:05 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3] arm64: dts: renesas: rzg2lc-smarc: Enable RSPI1 on carrier board
-Date:   Fri,  1 Apr 2022 15:57:02 +0100
-Message-Id: <20220401145702.17954-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 1 Apr 2022 11:50:36 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 118FCDF4B0
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Apr 2022 08:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=VyfdU1PyrPlWhUYcuazzRtnicqZv
+        MbVTN2xYeimlwHQ=; b=ZR5WGjKzdP9Aw/MNoOapcduCWbHDVST4vJ2yzkZ0sCos
+        f5f401sMxy/0+KZjZkAym9SpS1LDTSCHlNbV713sb4Y8JiMQDlltBRKjoXl5fnbF
+        49dlJWtYsdhkmkle5XpBLhikJmtK0+ONSj0cSx95tHTud8hpodqimX3QZjapO2Y=
+Received: (qmail 785507 invoked from network); 1 Apr 2022 17:23:51 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Apr 2022 17:23:51 +0200
+X-UD-Smtp-Session: l3s3148p1@DwyiXZnbWKYgAQnoAGGbAFirbAEmXd1u
+Date:   Fri, 1 Apr 2022 17:23:50 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77961: Add CAN-FD node
+Message-ID: <YkcZBiX75NT/uqH5@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+References: <20220319223306.60782-1-wsa+renesas@sang-engineering.com>
+ <20220319223306.60782-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUc_MUXFPmkEzHaTGG5oyJNS2QROpe-RdgTpfRcOstU6Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="JOP95n6tgijJ98yf"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUc_MUXFPmkEzHaTGG5oyJNS2QROpe-RdgTpfRcOstU6Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RSPI1 (SPI1) interface is available on PMOD0 connector (J1) on the
-carrier board.  This patch adds pinmux and spi1 nodes to the carrier
-board dtsi file and drops deleting pinctl* properties from DTS file.
 
-RSPI1 interface is tested by setting the macro SW_RSPI_CAN to 0.
+--JOP95n6tgijJ98yf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v2->v3:
- * Removed redundant spi1 node, as it is already enabled in common.
-v1->v2:
- * Sorted the node alphabetically
- * Delete/disable pinctrl/spi node, when SW_RSPI_CAN macro is set to 1.
-   This change is done in common file, so that both single core and 
-   dual core RZ/G2LC SMARC EVK can reuse the same.
----
- arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts         | 6 ------
- arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi | 7 +++++++
- arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi             | 8 ++++++++
- 3 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-index 74a2f2bade10..fc34058002e2 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-@@ -13,9 +13,3 @@
- 	model = "Renesas SMARC EVK based on r9a07g044c2";
- 	compatible = "renesas,smarc-evk", "renesas,r9a07g044c2", "renesas,r9a07g044";
- };
--
--&spi1 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-index d275a55333e3..a78a8def363e 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-@@ -106,6 +106,13 @@
- 		input-enable;
- 	};
- 
-+	spi1_pins: spi1 {
-+		pinmux = <RZG2L_PORT_PINMUX(44, 0, 1)>, /* CK */
-+			 <RZG2L_PORT_PINMUX(44, 1, 1)>, /* MOSI */
-+			 <RZG2L_PORT_PINMUX(44, 2, 1)>, /* MISO */
-+			 <RZG2L_PORT_PINMUX(44, 3, 1)>; /* SSL */
-+	};
-+
- 	ssi0_pins: ssi0 {
- 		pinmux = <RZG2L_PORT_PINMUX(45, 0, 1)>, /* BCK */
- 			 <RZG2L_PORT_PINMUX(45, 1, 1)>, /* RCK */
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-index 74ad1ede3d0b..9ec8c503b0a3 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-@@ -158,3 +158,11 @@
- 	status = "okay";
- };
- #endif
-+
-+#if (SW_RSPI_CAN)
-+&spi1 {
-+	/delete-property/ pinctrl-0;
-+	/delete-property/ pinctrl-names;
-+	status = "disabled";
-+};
-+#endif
--- 
-2.17.1
+> > Fixes: 92c406ed0a7f ("arm64: dts: renesas: r8a77961: Add CAN nodes")
+>=20
+> I don't think it was forgotten, and think this is not really a fix:
+> CAN and CAN-FD are two different devices, with different drivers.
 
+I thought Goda-san tested both interfaces back then, but maybe I was
+wrong. Yeah, Fixes tag may be dropped probably.
+
+> > +                       compatible =3D "renesas,r8a77961-canfd",
+>=20
+> Can you please send a patch to augment the DT bindings?
+
+Sure, will do.
+
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v5.19, with the Fixes tag removed.
+
+Thanks!
+
+
+--JOP95n6tgijJ98yf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJHGQYACgkQFA3kzBSg
+KbbHbw//Yy1KJje5RE1G/DTvnNWjxlbTh2e46LqvqhkoWr1iztl4u9UKSeP+47q5
+FpUMr6dTNXjv3NgGzD7RdFnVvpSJsJ1sPgbAjaRSi2CTLzyKnzSX9pLas7oaFg8H
+afhxg6cCghUORAZLJ80E7dcYxadqwDpV+yVTI6e2ek/fEbRply8BjdJUQZMVQqoe
+qpOHZwz7PkvlXtbzFyamapgtEw7u4fgSLQKddkoYKFo1S7TVFEk3eaUwdcCpW2e8
+LOng5QLH0YbDO9PxbAlQ/UM5lLiod53RBhwr6NZL1i+qSK9jeaIaAA7lLyxZE888
+UYhzSWkldzcFqAHcclUvPr49kfXH0F2pA83dzQ6aIQwRetdNx4KqD/HxtXRSQPho
+YdU90v2H7jqXMUWOxxtKtaetT4DESq1OO368sEKlQc7w3iSMKb32wfqtLX4keMgq
+od8vU0+dvxB4vCJV8u+PR1lUNXUasxFZViEiT+COsS49I6yRDZKQV54LI9P9HYdD
+/eskQrXNAX7oddkpceyphgsNDtEZTZ9XaeKarlXyKgbZwPxcOjr+egdsBifbQg/1
+oPja4dgHwB1h+VhBQtVPaN/Tf8IY2q5p9uDROfmjwqmDVy8cKIWUAR1iE0UDT8k1
+6QIXMifed9ESM+V8bp6l+wIBYnBJTnW8mWxTQhsI8VNG7bWA8XU=
+=gXh1
+-----END PGP SIGNATURE-----
+
+--JOP95n6tgijJ98yf--
