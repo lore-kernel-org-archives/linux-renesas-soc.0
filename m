@@ -2,83 +2,89 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 484C6C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Apr 2022 15:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561DCC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Apr 2022 15:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343771AbiDAP4n (ORCPT
+        id S1345831AbiDAP4r (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Apr 2022 11:56:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54742 "EHLO
+        Fri, 1 Apr 2022 11:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355011AbiDAPvB (ORCPT
+        with ESMTP id S1354623AbiDAPpd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Apr 2022 11:51:01 -0400
+        Fri, 1 Apr 2022 11:45:33 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02A3B1D914D
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Apr 2022 08:25:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E866A01F
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Apr 2022 08:20:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=RfkHJ05n93dl6PkNsnNiP58Jaxf0
-        RYOuUs+2H4Vs28E=; b=r5+pHAnJdS5peIzRC6px+kwx8Q/sFkko8aNGVSqaJlR5
-        X8dC/3iBfAArUQo2q4W5xbgl+DPAhXxFG0SFqMXUygUnLzs3fx8jY+0WrjCffpuH
-        yr8Mk0CXuB6ai90tuEUGmL8fepcyAaddefLMMAJaUDWN6MCYz3UwTpRnlcTrhHY=
-Received: (qmail 785964 invoked from network); 1 Apr 2022 17:25:28 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Apr 2022 17:25:28 +0200
-X-UD-Smtp-Session: l3s3148p1@DJ1qY5nbXKYgAQnoAGGbAFirbAEmXd1u
-Date:   Fri, 1 Apr 2022 17:25:27 +0200
+        :content-type:in-reply-to; s=k1; bh=FEFxfssSSTU22YXch7aVrtelpaE7
+        WagHES7sL502rZY=; b=Ziz9m6B1gzVQe1cPSM8+XVqJcbrztrHyNP2UDvUnVShN
+        YuGTd2peo4vynJTtteFDOswuel+Y7bM4mTdxJaYN/LI2Pasebj+8s2WNjdk6fpuh
+        wUcgUUtgi7xxCveP53JS9iMpewnH6/wni9mHNKzxmVB1fvnRI4siVf6YTqbdUiw=
+Received: (qmail 784814 invoked from network); 1 Apr 2022 17:20:50 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Apr 2022 17:20:50 +0200
+X-UD-Smtp-Session: l3s3148p1@s/7hUpnbNKYgAQnoAGGbAFirbAEmXd1u
+Date:   Fri, 1 Apr 2022 17:20:49 +0200
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        LUU HOAI <hoai.luu.ub@renesas.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77961: Add i2c aliases
-Message-ID: <YkcZZ4PJ+Uhp/z+T@ninjato>
+Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/6] mmc: renesas_sdhi: R-Car D3 also has no HS400
+Message-ID: <YkcYUatquGqQHynX@ninjato>
 Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        LUU HOAI <hoai.luu.ub@renesas.com>
-References: <20220319223306.60782-1-wsa+renesas@sang-engineering.com>
- <20220319223306.60782-3-wsa+renesas@sang-engineering.com>
- <CAMuHMdVTDZ+_4in0x6vJViw2d-gjWfXSVyA0cV=3AZZ3kXpAEw@mail.gmail.com>
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20220320123016.57991-1-wsa+renesas@sang-engineering.com>
+ <20220320123016.57991-3-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUso+a2UqMTZByGQryj+GvT4go4GB9EOM60D1Ue9oMi_A@mail.gmail.com>
+ <YkcTQCZceQcRQo5A@ninjato>
+ <CAMuHMdWDPncJ7Rny6ZOxbgUMnTJPzyu6kmmYUUPkHVfuqi=7NA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YQ82rD2jBXcYqirg"
+        protocol="application/pgp-signature"; boundary="zRyTQKlt48aTGFvG"
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVTDZ+_4in0x6vJViw2d-gjWfXSVyA0cV=3AZZ3kXpAEw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWDPncJ7Rny6ZOxbgUMnTJPzyu6kmmYUUPkHVfuqi=7NA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---YQ82rD2jBXcYqirg
+--zRyTQKlt48aTGFvG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 
-> Unless you have a good reason to keep them, I'd rather remove them
-> everywhere.
+> BTW, SDHI0 and SDHI1 don't have the DS signal neither.
+> Does that mean we never support HS400 on these?
 
-Would you agree to move them to salvator-common.dtsi then? The
-schematics name them that way, also on the connectors.
+Yes, those don't even support eMMC.
+
+> We do have SD0H and SD1H clocks.
+> Upstream DTS uses at most sd-uhs-sdr104 on SDHI[01].
+
+Yes, SDnH (and SCC) is also needed for SDR104.
 
 
---YQ82rD2jBXcYqirg
+--zRyTQKlt48aTGFvG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJHGWcACgkQFA3kzBSg
-KbauVBAArsOctuQwHQRpKLwAAE2XWqb5+An7uCUl5RGs1+Tof9wgyUk6mPKE+vZV
-JrJ7bj75syauOsySfL43/86eQyP7ia4DahxIPemn0m9ZAPd0slRrNJT/n4voyOUv
-ICuYup/0hwCw9O0vJN2+kA/ySSbwYMwFPtISGUJYqsH2CRwtbaEx0HsksS826Q5P
-YRrtGU3sqk7APlsY4OS1J8VpF5hGS3CKLOdU3vcvrfxShgInlYh/+MHdLvmVicoa
-q2bIf+t9dEQLLkpv1o3fTUPM1Q5IDHlfiXVaLXPl8Y8SjUVJJd4Woo1zjmenmKSD
-VG6ZSK+AaqpPKeKYRPSyQeVeC4K0GZcSuBNnZhvGt9OMAkY9ioiYre8bowC2u2Hl
-xigMNI7d2w/B7BlnWFheBPtmyJVEsXpjtxoduTCD4lz/qqL98B/aqrwSoftKL056
-qSmTQbuj4+OUcQZh43JNn0di9J0gXto/39qBqU+6ScuDPt1/DMLFcuzBKAkyuLX6
-NjeNTKNcroTjM4w5Dt1/hR2haWYQXIXX1SQlCnMXtR25s4qXrgH+VmjzjIxvoKN/
-k2RTLvGUk3b5YeJVHcQcgslRHQxfb0vlK2aaauXBMh02zOY23wJW5LE0dHfJ32jQ
-GHjl++GU3t5qNDXTUb+JLpFEBQEEeFuK4fslOD8j8QcNDrhw2Jk=
-=xero
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJHGFEACgkQFA3kzBSg
+KbaiMhAAlPO2o/VoeXigCGmDrnKFz+QOl8rQa0+s/+yjT7mvLmEs4G5EmaYweRcv
+tiVcMjYqGvj3PPK2/B/k50akz1SxDick2KrOOShwQuUb0amAcX8VwWAWIsaQG6Eo
+cDMKsYGZqSDtRSVTzu/8A00zMzLuL3vi+4QK28XLnScJj385veRq/EP9k4qaYpmF
+sh8EJ/C2J5Weq3REDSxiBD3CYMRurxlsPtyqjOj1Ld0mFlOza/+jN0Befrafg4rS
+yoD5TmKVm/bOgxMZBUx6g9eTyyYqw94nHnePXt6iDYSp5wEDCGeVMyGQ8SBdA8bG
+MveI96dExvS6Gt8RTBbhAVyA6Qi8qtkKPP7vPzRV2X8+71TpqmyO2Q6gt8cx25km
+3ED5w9JTwqrInqteaYYO8FIA1reiWwYmr4SL7cL9WthLmcWstdLhwDjfXbk6DsCV
+Ts7+PO73oqVuGaaStmVlezDyW9N71Xy9h92qtn/qXrZOxOcoZE+dyrHXPis/Eu41
+YRUBbgJnpvFxbQ1xkAZrNrDyExbJSf1WYI7IkDsYpQnNgGyE2DEMXNOD/vmy+iUJ
+zPw90FMCKs9sL3AX9ReeHfI3zXfVUHoIYeZOtuIMxrp1LgJ7tp81d2xfkOXSrSEv
+0dz9c7aw6cYjMD+jZDD+zewIGsasYSrWY7S6EYvrOzfJIsZwN58=
+=UH/u
 -----END PGP SIGNATURE-----
 
---YQ82rD2jBXcYqirg--
+--zRyTQKlt48aTGFvG--
