@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B571DC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97EFC4167B
 	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Apr 2022 08:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242346AbiDBIPf (ORCPT
+        id S242461AbiDBIPg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 2 Apr 2022 04:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44482 "EHLO
+        Sat, 2 Apr 2022 04:15:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344207AbiDBIPd (ORCPT
+        with ESMTP id S243942AbiDBIPc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Apr 2022 04:15:33 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 88DD61EAD1;
-        Sat,  2 Apr 2022 01:13:40 -0700 (PDT)
+        Sat, 2 Apr 2022 04:15:32 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E5CB50073;
+        Sat,  2 Apr 2022 01:13:33 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,229,1643641200"; 
-   d="scan'208";a="115485145"
+   d="scan'208";a="116499421"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2022 17:13:40 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 17:13:32 +0900
 Received: from localhost.localdomain (unknown [10.226.92.166])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1FC0641F41F7;
-        Sat,  2 Apr 2022 17:13:37 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id ECD3241F41F7;
+        Sat,  2 Apr 2022 17:13:30 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -32,70 +32,48 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 3/7] arm64: dts: renesas: r9a07g043: Add SDHI nodes
-Date:   Sat,  2 Apr 2022 09:13:24 +0100
-Message-Id: <20220402081328.26292-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 0/7] Enable Ethernet and SDHI on RZ/G2UL SMARC EVK
+Date:   Sat,  2 Apr 2022 09:13:21 +0100
+Message-Id: <20220402081328.26292-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220402081328.26292-1-biju.das.jz@bp.renesas.com>
-References: <20220402081328.26292-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add SDHI{0, 1} nodes to RZ/G2UL SoC DTSI.
+This patch series aims to enable Ethernet and SDHI on RZ/G2UL
+SMARC EVK. This patches also adds pinctrl support to SoC
+dtsi and enables scif0 and audio clk pins.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+This patch series depend upon [1], [2], [3]  and [4]
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=628396
+[2] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220401180230.19950-1-biju.das.jz@bp.renesas.com/
+[3] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=628401
+[4] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220401175427.19078-1-biju.das.jz@bp.renesas.com/
+
 v1->v2:
  * Added Rb tag from Geert
----
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 26 ++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ * Updated gpios property for vccq_sdhi1 regulator and removed
+   sdhi1 node as it is enabled in common.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-index ffba6007e3cc..f60186240912 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-@@ -334,13 +334,35 @@
- 		};
- 
- 		sdhi0: mmc@11c00000  {
-+			compatible = "renesas,sdhi-r9a07g043",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0x0 0x11c00000 0 0x10000>;
--			/* place holder */
-+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G043_SDHI0_IMCLK>,
-+				 <&cpg CPG_MOD R9A07G043_SDHI0_CLK_HS>,
-+				 <&cpg CPG_MOD R9A07G043_SDHI0_IMCLK2>,
-+				 <&cpg CPG_MOD R9A07G043_SDHI0_ACLK>;
-+			clock-names = "core", "clkh", "cd", "aclk";
-+			resets = <&cpg R9A07G043_SDHI0_IXRST>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
- 		};
- 
- 		sdhi1: mmc@11c10000 {
-+			compatible = "renesas,sdhi-r9a07g043",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0x0 0x11c10000 0 0x10000>;
--			/* place holder */
-+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G043_SDHI1_IMCLK>,
-+				 <&cpg CPG_MOD R9A07G043_SDHI1_CLK_HS>,
-+				 <&cpg CPG_MOD R9A07G043_SDHI1_IMCLK2>,
-+				 <&cpg CPG_MOD R9A07G043_SDHI1_ACLK>;
-+			clock-names = "core", "clkh", "cd", "aclk";
-+			resets = <&cpg R9A07G043_SDHI1_IXRST>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
- 		};
- 
- 		phyrst: usbphy-ctrl@11c40000 {
+Biju Das (7):
+  arm64: dts: renesas: r9a07g043: Fillup the pinctrl stub node
+  arm64: dts: renesas: rzg2ul-smarc: Add scif0 and audio clk pins
+  arm64: dts: renesas: r9a07g043: Add SDHI nodes
+  arm64: dts: renesas: r9a07g043: Add GbEthernet nodes
+  arm64: dts: renesas: rzg2ul-smarc: Enable microSD on SMARC platform
+  arm64: dts: renesas: rzg2ul-smarc-som: Enable eMMC on SMARC platform
+  arm64: dts: renesas: rzg2ul-smarc-som: Enable Ethernet on SMARC
+    platform
+
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |  74 +++++-
+ .../boot/dts/renesas/r9a07g043u11-smarc.dts   |  16 +-
+ .../dts/renesas/rzg2ul-smarc-pinfunction.dtsi |  63 ++++++
+ .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 210 +++++++++++++++++-
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi |  24 ++
+ 5 files changed, 368 insertions(+), 19 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2ul-smarc-pinfunction.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+
 -- 
 2.17.1
 
