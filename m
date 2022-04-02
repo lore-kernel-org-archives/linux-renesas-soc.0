@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B797C35273
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B75C4167E
 	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Apr 2022 08:13:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242803AbiDBIPh (ORCPT
+        id S243942AbiDBIPh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Sat, 2 Apr 2022 04:15:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44532 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352566AbiDBIPc (ORCPT
+        with ESMTP id S242803AbiDBIPe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Apr 2022 04:15:32 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D32DC527CA;
-        Sat,  2 Apr 2022 01:13:35 -0700 (PDT)
+        Sat, 2 Apr 2022 04:15:34 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EF3CB5D5D2;
+        Sat,  2 Apr 2022 01:13:42 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,229,1643641200"; 
-   d="scan'208";a="116499425"
+   d="scan'208";a="115485150"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 17:13:35 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2022 17:13:42 +0900
 Received: from localhost.localdomain (unknown [10.226.92.166])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5B82441F41FD;
-        Sat,  2 Apr 2022 17:13:33 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7DD0D41F41ED;
+        Sat,  2 Apr 2022 17:13:40 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -32,9 +32,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/7] arm64: dts: renesas: r9a07g043: Fillup the pinctrl stub node
-Date:   Sat,  2 Apr 2022 09:13:22 +0100
-Message-Id: <20220402081328.26292-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 4/7] arm64: dts: renesas: r9a07g043: Add GbEthernet nodes
+Date:   Sat,  2 Apr 2022 09:13:25 +0100
+Message-Id: <20220402081328.26292-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220402081328.26292-1-biju.das.jz@bp.renesas.com>
 References: <20220402081328.26292-1-biju.das.jz@bp.renesas.com>
@@ -42,7 +42,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fillup the pinctrl(GPIO) stub node in RZ/G2UL SoC DTSI.
+Add Gigabit Ethernet{0,1} nodes to SoC DTSI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -51,31 +51,60 @@ Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 v1->v2:
  * Added Rb tag from Geert
 ---
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-index ad898cab64a6..ffba6007e3cc 100644
+index f60186240912..850081cdf6a0 100644
 --- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-@@ -275,10 +275,16 @@
+@@ -365,6 +365,46 @@
+ 			status = "disabled";
  		};
  
- 		pinctrl: pinctrl@11030000 {
-+			compatible = "renesas,r9a07g043-pinctrl";
- 			reg = <0 0x11030000 0 0x10000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			/* place holder */
-+			gpio-ranges = <&pinctrl 0 0 152>;
-+			clocks = <&cpg CPG_MOD R9A07G043_GPIO_HCLK>;
++		eth0: ethernet@11c20000 {
++			compatible = "renesas,r9a07g043-gbeth",
++				     "renesas,rzg2l-gbeth";
++			reg = <0 0x11c20000 0 0x10000>;
++			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "mux", "fil", "arp_ns";
++			phy-mode = "rgmii";
++			clocks = <&cpg CPG_MOD R9A07G043_ETH0_CLK_AXI>,
++				 <&cpg CPG_MOD R9A07G043_ETH0_CLK_CHI>,
++				 <&cpg CPG_CORE R9A07G043_CLK_HP>;
++			clock-names = "axi", "chi", "refclk";
++			resets = <&cpg R9A07G043_ETH0_RST_HW_N>;
 +			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G043_GPIO_RSTN>,
-+				 <&cpg R9A07G043_GPIO_PORT_RESETN>,
-+				 <&cpg R9A07G043_GPIO_SPARE_RESETN>;
- 		};
- 
- 		dmac: dma-controller@11820000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		eth1: ethernet@11c30000 {
++			compatible = "renesas,r9a07g043-gbeth",
++				     "renesas,rzg2l-gbeth";
++			reg = <0 0x11c30000 0 0x10000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "mux", "fil", "arp_ns";
++			phy-mode = "rgmii";
++			clocks = <&cpg CPG_MOD R9A07G043_ETH1_CLK_AXI>,
++				 <&cpg CPG_MOD R9A07G043_ETH1_CLK_CHI>,
++				 <&cpg CPG_CORE R9A07G043_CLK_HP>;
++			clock-names = "axi", "chi", "refclk";
++			resets = <&cpg R9A07G043_ETH1_RST_HW_N>;
++			power-domains = <&cpg>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		phyrst: usbphy-ctrl@11c40000 {
+ 			reg = <0 0x11c40000 0 0x10000>;
+ 			/* place holder */
 -- 
 2.17.1
 
