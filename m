@@ -2,122 +2,71 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85342C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E07C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:29:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382535AbiDDVaz (ORCPT
+        id S1382541AbiDDVbF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:30:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39518 "EHLO
+        Mon, 4 Apr 2022 17:31:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379815AbiDDSKn (ORCPT
+        with ESMTP id S1380400AbiDDUCS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 14:10:43 -0400
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED3B263C8;
-        Mon,  4 Apr 2022 11:08:45 -0700 (PDT)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-2eb46d33db9so56222287b3.12;
-        Mon, 04 Apr 2022 11:08:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EOXzNn8YJXSBSPBTfEilUNoggTZ9fchh0UKh2uaYCkg=;
-        b=kAwacWRlbua9Upr4P4y0HifVnz+enwieMp9UuW7TasoWWdBMX2U1ohTaSBrWezI3J4
-         n8Y4/cnYmT1N5OVNnylsiVtO6xKHI0MRuTuJS1fgouuJ8TeX+ppvsGKAlvAyRLmkJJBg
-         ikjG+PwSNdCzzWi8FuMpWlnjrJQqZwsLh19qWQh2Xuex9MvgE4RIICVNs/JpWawpigvy
-         HLW0LKiUj7j8CdpRNQdOmvXk1DXFGpZvgZHNB7aKQxfGq643HieiLatKxO0S0EHIgK9E
-         ApgQB6v2DcSfa0DJqSPnvW8XZE/CJP/ykJcn89IfSqAMBeb0T690o7Nx9p6lUGpZM4d5
-         z81w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EOXzNn8YJXSBSPBTfEilUNoggTZ9fchh0UKh2uaYCkg=;
-        b=G2C0nKfLgbw7gwcL+90Q/aVsOfWDic1DYBhmWxXd2aMKyd1GgnbQXpu4XGeMdVVsJd
-         u94gZl/6dK1EWxPHtqfvPBmzDS1cspsE34s935HSd+M72G9l4gTzPVcDWLH5KpKfsCUo
-         gLb2ndG4QtPcF/lmiJBoZLqe1rFBEBmlKfHPt7OFADKah2ykFHENbJ6rNlAVb6Wv8K6b
-         fYBIDOcsH6deBOmKmFPYfnG+9zDaBJ3f1uZJLEbBICYJnm33weHEr19YM1l0o7wLluDo
-         q49TWCY5VnhvvGnlkDnx2MCYy/+2VrbdWWIebKS0hdKSc//4FInzXEklrjGQIZjdNghd
-         6FIg==
-X-Gm-Message-State: AOAM53053lOXLSO8DoVoTvgGAWa7dUzgK7MXIt/es2BGOripESEsqVx0
-        3FgkoM0rQzPfojybpUIn+JMn/+tAsCef8I3SXXo=
-X-Google-Smtp-Source: ABdhPJwHTThe++LzZaFuJJpiBj0G7KqdzDNbWhNKwST/OCct//gzRJbyQFkNoyVVqsf/wWrhLf7CMN5kZJcG5A4F2gc=
-X-Received: by 2002:a0d:e212:0:b0:2eb:4f2b:6e91 with SMTP id
- l18-20020a0de212000000b002eb4f2b6e91mr1221175ywe.78.1649095724281; Mon, 04
- Apr 2022 11:08:44 -0700 (PDT)
+        Mon, 4 Apr 2022 16:02:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD0EF30576;
+        Mon,  4 Apr 2022 13:00:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 84BDBB819DC;
+        Mon,  4 Apr 2022 20:00:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48557C340F3;
+        Mon,  4 Apr 2022 20:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649102418;
+        bh=UnyFj8CQeTLpyLgUK0Q+kXJzH9zPVxCwJuLgHavoWvE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=A1oDYnj2Q3HEO8kAOG2E7zNw8Zqiex/H6fwLixIdABdPaOMBMB6YZY9aRLMdkR1VP
+         jDhECmzqeQECXvVpjM/MqTrZVE6k+hXqNXGg8Jtlw/rt91YrevQaFRBLzoNFA1+4gA
+         qp9k9cU/ne9vMy5koCF5m3fO2nQbmetPcJS+WOf4ViZ7cwenI9rYgKbkBH/yg626QN
+         0pLMDJp835CfxwqDRe+R5FJjOsz/E40/1pfp7s64ZbcfyK01baX/rVvEXMBY9WdKbX
+         MYZaB/lYiSJdXiylUIgvQhItnBpP6x4cCakUC6InD5hnlYGL5iSCBg1BIj7Y8wvswL
+         0yxcwmN+nWevA==
+Received: by mail-il1-f182.google.com with SMTP id y16so7691170ilq.6;
+        Mon, 04 Apr 2022 13:00:18 -0700 (PDT)
+X-Gm-Message-State: AOAM532ApUfzpSkt68elZ3JU+1Mwcy3AiDD4NRHxboJzCWDG3wsK9kvN
+        nzI1T77TxwI09ya1DlfKG5rHxt1EVJhKQvRv5A==
+X-Google-Smtp-Source: ABdhPJy2I+THynd3YKwgtuqP1Z+qNUJvNfI+KxmiDjCSv83RkgMVAwjROABfaejv1c+IbVRz1hHVNh3x5d/12zN6G3A=
+X-Received: by 2002:a05:6e02:1685:b0:2c9:a9e9:846 with SMTP id
+ f5-20020a056e02168500b002c9a9e90846mr696618ila.273.1649102417418; Mon, 04 Apr
+ 2022 13:00:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220404172322.32578-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220404172322.32578-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <OS0PR01MB5922182F6302386EFF2ED66B86E59@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922182F6302386EFF2ED66B86E59@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Mon, 4 Apr 2022 19:08:18 +0100
-Message-ID: <CA+V-a8tdkw8-dUfrFG9kZizok8OQdcGHitAdb4E2tsBW3Xrh-g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: renesas_sdhi: Jump to error path instead of
- returning directly
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
+References: <20220401153743.77871-1-wsa+renesas@sang-engineering.com> <20220404193101.nqe2s4rin3bzp6vx@pengutronix.de>
+In-Reply-To: <20220404193101.nqe2s4rin3bzp6vx@pengutronix.de>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 4 Apr 2022 15:00:06 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJCZKFrucY_JJOZ-px0js82Dkgmbz7KmvDnwhU9UFyS5g@mail.gmail.com>
+Message-ID: <CAL_JsqJCZKFrucY_JJOZ-px0js82Dkgmbz7KmvDnwhU9UFyS5g@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: can: renesas,rcar-canfd: Document r8a77961 support
+To:     Marc Kleine-Budde <mkl@pengutronix.de>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Pavel Machek <pavel@denx.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
+Cc:     linux-can@vger.kernel.org,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+On Mon, Apr 4, 2022 at 2:31 PM Marc Kleine-Budde <mkl@pengutronix.de> wrote:
+>
+> Cc += Rob, devicetree
 
-Thank you for the review.
+That's a roll of the dice whether I see it, but for compatible string
+additions I don't really need to.
 
-On Mon, Apr 4, 2022 at 7:02 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
->
-> Hi Prabhakar and Pavel,
->
-> Thanks for the patch.
->
-> > Subject: [PATCH 1/2] mmc: renesas_sdhi: Jump to error path instead of
-> > returning directly
-> >
-> > Jump to error path "edisclk" instead of returning directly in case of
-> > devm_reset_control_get_optional_exclusive() failure.
-> >
-> > Fixes: b4d86f37eacb7 ("mmc: renesas_sdhi: do hard reset if possible")
-> > Reported-by: Pavel Machek <pavel@denx.de>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  drivers/mmc/host/renesas_sdhi_core.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/renesas_sdhi_core.c
-> > b/drivers/mmc/host/renesas_sdhi_core.c
-> > index 2797a9c0f17d..cddb0185f5fb 100644
-> > --- a/drivers/mmc/host/renesas_sdhi_core.c
-> > +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> > @@ -1033,8 +1033,10 @@ int renesas_sdhi_probe(struct platform_device
-> > *pdev,
-> >               goto efree;
-> >
-> >       priv->rstc = devm_reset_control_get_optional_exclusive(&pdev->dev,
-> > NULL);
-> > -     if (IS_ERR(priv->rstc))
-> > -             return PTR_ERR(priv->rstc);
-> > +     if (IS_ERR(priv->rstc)) {
-> > +             ret = PTR_ERR(priv->rstc);
-> > +             goto edisclk;
-> > +     }
->
-> Why can't devm_reset_control_get_optional_exclusive to be moved up before devm_clk_get?
->
-In that case we will have to jump to the "efree" label Or if you don't
-want goto at all this can be moved to the very beginning of the probe.
+In any case, the only way automated checks run is if the patch goes to
+the DT list. IOW, use get_maintainers.pl.
 
-Wolfram, what is your preference on the above?
-
-Cheers,
-Prabhakar
+Rob
