@@ -2,78 +2,139 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A90C2C4167D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 15:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76350C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 15:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378312AbiDDPby (ORCPT
+        id S237757AbiDDPhi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 11:31:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56276 "EHLO
+        Mon, 4 Apr 2022 11:37:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378549AbiDDPbx (ORCPT
+        with ESMTP id S230240AbiDDPhi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 11:31:53 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 670222559D
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Apr 2022 08:29:54 -0700 (PDT)
+        Mon, 4 Apr 2022 11:37:38 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9E535AB3
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Apr 2022 08:35:40 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6d4d:d9ec:3c70:7c2c])
-        by andre.telenet-ops.be with bizsmtp
-        id EfVr2700Q40M8zK01fVrcq; Mon, 04 Apr 2022 17:29:52 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id Efbe2700840M8zK06fbemZ; Mon, 04 Apr 2022 17:35:38 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nbOeN-008Mgw-EV; Mon, 04 Apr 2022 17:29:51 +0200
+        id 1nbOjx-008Mia-N2; Mon, 04 Apr 2022 17:35:37 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nbOeM-00CdSx-TD; Mon, 04 Apr 2022 17:29:50 +0200
+        id 1nbOjx-00CdZd-7o; Mon, 04 Apr 2022 17:35:37 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] dt-bindings: gpio: renesas,rcar-gpio: Add r8a779f0 support
-Date:   Mon,  4 Apr 2022 17:29:48 +0200
-Message-Id: <fb9dacf4c4e656355795f1086ea21376ea34a9eb.1649085875.git.geert+renesas@glider.be>
+Subject: [PATCH v2] arm64: dts: renesas: r8a779f0: Add GPIO nodes
+Date:   Mon,  4 Apr 2022 17:35:32 +0200
+Message-Id: <7fb68561026fa8bb5d9baf0596560c5c719a38cc.1649086225.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1649085875.git.geert+renesas@glider.be>
-References: <cover.1649085875.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document support for the GPIO controller blocks in the Renesas R-Car
-S4-8 (R8A779F0) SoC, including a new family-specific compatible value
-for the R-Car Gen4 family.
+Add device nodes for the General Purpose Input/Output (GPIO) blocks on
+the Renesas R-Car S4-8 (R8A779F0) SoC.
+
+Note that GPIO blocks 4-7 are not added, as they can only be accessed
+from the Control Domain.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - No changes.
----
- .../devicetree/bindings/gpio/renesas,rcar-gpio.yaml          | 5 +++++
- 1 file changed, 5 insertions(+)
+Tested with i2c-gpio, by reading the contents from the I2C EEPROMs
+connected to I2C4 (GP1_[89]) on the Spider development board.
+Note that this requires manual setting of MOD_SEL1 to zero in U-Boot, as
+the pin control driver does not handle this special case yet.
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-index f2541739ee3b9f7c..0681a4790cd62e23 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-@@ -51,6 +51,11 @@ properties:
-       - items:
-           - const: renesas,gpio-r8a779a0  # R-Car V3U
+v2:
+  - Drop gpio4-7],
+  - Drop RFC,
+  - Split series in DT bindings+driver series and DTS patch.
+---
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 60 +++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+index f4e549867371184c..e44b8a44919dc91d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+@@ -75,6 +75,66 @@ pfc: pinctrl@e6050000 {
+ 			      <0 0xe6051000 0 0x16c>, <0 0xe6051800 0 0x16c>;
+ 		};
  
-+      - items:
-+          - enum:
-+              - renesas,gpio-r8a779f0     # R-Car S4-8
-+          - const: renesas,rcar-gen4-gpio # R-Car Gen4
++		gpio0: gpio@e6050180 {
++			compatible = "renesas,gpio-r8a779f0",
++				     "renesas,rcar-gen4-gpio";
++			reg = <0 0xe6050180 0 0x54>;
++			interrupts = <GIC_SPI 822 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pfc 0 0 21>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
 +
-   reg:
-     maxItems: 1
- 
++		gpio1: gpio@e6050980 {
++			compatible = "renesas,gpio-r8a779f0",
++				     "renesas,rcar-gen4-gpio";
++			reg = <0 0xe6050980 0 0x54>;
++			interrupts = <GIC_SPI 823 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pfc 0 32 25>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio2: gpio@e6051180 {
++			compatible = "renesas,gpio-r8a779f0",
++				     "renesas,rcar-gen4-gpio";
++			reg = <0 0xe6051180 0 0x54>;
++			interrupts = <GIC_SPI 824 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pfc 0 64 17>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio3: gpio@e6051980 {
++			compatible = "renesas,gpio-r8a779f0",
++				     "renesas,rcar-gen4-gpio";
++			reg = <0 0xe6051980 0 0x54>;
++			interrupts = <GIC_SPI 825 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pfc 0 96 19>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a779f0-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x4000>;
 -- 
 2.25.1
 
