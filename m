@@ -2,87 +2,152 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B89C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 13:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFF5C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 13:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355041AbiDDNjt (ORCPT
+        id S1355357AbiDDNlM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 09:39:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53174 "EHLO
+        Mon, 4 Apr 2022 09:41:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355040AbiDDNjr (ORCPT
+        with ESMTP id S1355344AbiDDNlL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 09:39:47 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 402A13DDD0;
-        Mon,  4 Apr 2022 06:37:51 -0700 (PDT)
-Received: by mail-qt1-f177.google.com with SMTP id o15so6290444qtv.8;
-        Mon, 04 Apr 2022 06:37:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M3S8rKWNusBO1bmzZNw58V6gdJEmEIoLbaxiTEXlC8o=;
-        b=q4UPJ47FFqaXEme/9uU4c/C9IAzbqYi3bFIlEyWrjslV5i3itmRCrGXgPEFdoVKcBS
-         OWmwx+sAVEyZO4gDVrCcTOwqk0Kg1LjYDdRj+gBkR5ALWsea/jwxhta7SMTCjYp3ZPfc
-         dy1wdtDk3ZOwyeJPJxKT9YGSymiRwagGr7lPkKtbPbK5behTHfydBhqtQ4PCj2qQ7Vpm
-         ttH3ee6l2JrqMUjbD6xRS5vvd6AP985uubV7FSXP5jC9DIdgT8dsVnMeYGkG959IZLim
-         c9L8kROurd63Qin5J3hq8gWTqF8LDsMtU+3VFTxqFhZv6kVEywFLwtgbieuTH5eiB+e5
-         UODw==
-X-Gm-Message-State: AOAM533WWOgWUe27pcN1Y83HCdpuBps2CJ/uNyInu0c5OK459J4kfD2w
-        KWKex4jUuRWncaQCT3IDKtTmYrbYA93O7Q==
-X-Google-Smtp-Source: ABdhPJzA2b637Z5hetIBSmVCwQ6zVb1Uh0mknDaJpOeXYNCPNCL1yorOEVGpCU0etjpUmw1fYi4O4g==
-X-Received: by 2002:ac8:57c3:0:b0:2e1:e283:ed50 with SMTP id w3-20020ac857c3000000b002e1e283ed50mr70334qta.200.1649079470038;
-        Mon, 04 Apr 2022 06:37:50 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id k2-20020a37ba02000000b0067dc1b0104asm6267661qkf.124.2022.04.04.06.37.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Apr 2022 06:37:49 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-2eb680211d9so29075377b3.9;
-        Mon, 04 Apr 2022 06:37:49 -0700 (PDT)
-X-Received: by 2002:a81:618b:0:b0:2db:d952:8a39 with SMTP id
- v133-20020a81618b000000b002dbd9528a39mr22538045ywb.132.1649079469315; Mon, 04
- Apr 2022 06:37:49 -0700 (PDT)
+        Mon, 4 Apr 2022 09:41:11 -0400
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 032132BF4;
+        Mon,  4 Apr 2022 06:39:13 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 8AC46E000A;
+        Mon,  4 Apr 2022 13:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649079552;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wNpjgkUaNWn1Mm4Df5e8ycR/tOrOcvbl1JoeRb1Ktqk=;
+        b=jU8IBFdVgB2NraQUFr/dnYcmJeAYDeRtz+uhB5SBJKlRNNpSJ88jmUxDUTewdETKn137m5
+        18ALgWoK0pcFvG8BxLVbTdgVDiSlWKR3dnXOTO1eFis2rCILBXaiKcqV0sZEfRbDoldq2y
+        BBT02uPZ1Sz3Ayi4D0LwFusGV15RWQaigq13sjHCt/eW+szIReaP4+oIBBYy5MhOUozurY
+        FrZPgyDDxjGukQQvvefMevykaG1X+rpieeF6DrdMeYpNx4oxEOax8UTzu9vRkUhZ27zBx+
+        /eahqo8V2MDEmH/yfQIoK/J6PR6vuE35r7BCWwAvD8zLENJleI2NdHCC6NO6bA==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc:     Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v6 1/8] dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
+Date:   Mon,  4 Apr 2022 15:38:57 +0200
+Message-Id: <20220404133904.1296258-2-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220404133904.1296258-1-miquel.raynal@bootlin.com>
+References: <20220404133904.1296258-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-References: <20220404130551.20209-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20220404130551.20209-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 4 Apr 2022 15:37:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXjomnBk38vCjLnNW75_c9pK7W5vn6fHufyOk-dZew6jg@mail.gmail.com>
-Message-ID: <CAMuHMdXjomnBk38vCjLnNW75_c9pK7W5vn6fHufyOk-dZew6jg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: remove superfluous specific M3W entry
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+dmamux register located in the system control area which can take up to
+32 requests (16 per DMA controller). Each DMA channel can be wired to
+two different peripherals.
 
-On Mon, Apr 4, 2022 at 3:05 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> We don't need to specify the Gen3 compatible entry for M3W because it
-> will be provided by the generic Gen3 fallback.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/dma/renesas,rzn1-dmamux.yaml     | 51 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
 
-Initially, arch/arm64/boot/dts/renesas/r8a7796.dtsi did not have
-the family-specific compatible value.  As commit e871efc9a4f48c9b
-("arm64: dts: renesas: r8a7796: Use R-Car SDHI Gen3 fallback compat
-string") is included in v4.16 and later, this change should be fine.
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+new file mode 100644
+index 000000000000..d83013b0dd74
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/renesas,rzn1-dmamux.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 DMA mux
++
++maintainers:
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++allOf:
++  - $ref: "dma-router.yaml#"
++
++properties:
++  compatible:
++    const: renesas,rzn1-dmamux
++
++  reg:
++    maxItems: 1
++    description: DMA mux first register offset within the system control parent.
++
++  '#dma-cells':
++    const: 6
++    description:
++      The first four cells are dedicated to the master DMA controller. The fifth
++      cell gives the DMA mux bit index that must be set starting from 0. The
++      sixth cell gives the binary value that must be written there, ie. 0 or 1.
++
++  dma-masters:
++    minItems: 1
++    maxItems: 2
++
++  dma-requests:
++    const: 32
++
++required:
++  - reg
++  - dma-requests
++
++additionalProperties: false
++
++examples:
++  - |
++    dma-router@a0 {
++      compatible = "renesas,rzn1-dmamux";
++      reg = <0xa0 4>;
++      #dma-cells = <6>;
++      dma-masters = <&dma0 &dma1>;
++      dma-requests = <32>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fd768d43e048..120d3ae57a4b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19040,6 +19040,7 @@ SYNOPSYS DESIGNWARE DMAC DRIVER
+ M:	Viresh Kumar <vireshk@kernel.org>
+ R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ F:	Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+ F:	drivers/dma/dw/
+ F:	include/dt-bindings/dma/dw-dmac.h
+-- 
+2.27.0
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
