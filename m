@@ -2,116 +2,94 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388BDC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 15:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C537C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 15:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359499AbiDDPbS (ORCPT
+        id S1378573AbiDDPby (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 11:31:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53476 "EHLO
+        Mon, 4 Apr 2022 11:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356192AbiDDPbQ (ORCPT
+        with ESMTP id S1358178AbiDDPbw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 11:31:16 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF082528C;
-        Mon,  4 Apr 2022 08:29:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649086160; x=1680622160;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=vndZ3kJZ6l/muoOzYrxE6LSO++WUAQUZd7dQKpa+WZA=;
-  b=ObtEAb8EKGpdF+rQn/f0EM+QXiEXayxbxvX432mj3varJ9wBS4YBFskI
-   omv1dv1P0TFlc6OTQ01suqdin3fYktVrQE5QiQMj/idT9R/hemp3ECQM0
-   Z40ni53CdZy15nEm9ngQZVBMkfxpH4v36MXwMjhrxywNjWGeAU88ZZtVy
-   YVRKB6Ir1r5kQnJzPeS5rXGTOz8zmwMloRyKyq/2PsTQzA++7UnvvV87D
-   oV8mZqPJI/R+NUSzyNQxe3ihQCYjiU8EKprHJZx6QaLhTnPUN7+ZscWfp
-   fIiJplU29Weg3H02CSMHr++UviGIeFNLbngz3er6kk5gvOi8l6bxNtA1I
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="248053708"
-X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="248053708"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 08:29:18 -0700
-X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="569428775"
-Received: from rhamza-mobl.ger.corp.intel.com ([10.251.211.126])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 08:29:14 -0700
-Date:   Mon, 4 Apr 2022 18:29:11 +0300 (EEST)
-From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-serial <linux-serial@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: Re: [PATCH v4 7/9] serial: 8250: dw: Add support for DMA flow
- controlling devices
-In-Reply-To: <20220404172033.56c55a37@xps13>
-Message-ID: <dcf9f1b3-87fa-2171-3f2d-f4a45c9efdb@linux.intel.com>
-References: <20220330132038.808679-1-miquel.raynal@bootlin.com>        <20220330132038.808679-8-miquel.raynal@bootlin.com>        <24becf8-82c5-5a12-690-5b9e067ec1c@linux.intel.com>        <Ykc4kGLEnwdoUqZ6@smile.fi.intel.com>
- <20220404172033.56c55a37@xps13>
+        Mon, 4 Apr 2022 11:31:52 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E3425589
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Apr 2022 08:29:54 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6d4d:d9ec:3c70:7c2c])
+        by xavier.telenet-ops.be with bizsmtp
+        id EfVs2700G40M8zK01fVs8G; Mon, 04 Apr 2022 17:29:52 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nbOeO-008Mgy-08; Mon, 04 Apr 2022 17:29:52 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nbOeM-00CdT3-Ty; Mon, 04 Apr 2022 17:29:50 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/2] gpio: rcar: Add R-Car Gen4 support
+Date:   Mon,  4 Apr 2022 17:29:49 +0200
+Message-Id: <9ee064071b7d9b06df471e981cc6123ff19fead9.1649085875.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1649085875.git.geert+renesas@glider.be>
+References: <cover.1649085875.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-746848247-1649086158=:11904"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+R-Car V3U (R8A779A0) was the first member of the R-Car Gen4 family.
+Generalize the support for R-Car V3U to other SoCs in the R-Car Gen4
+family by adding a family-specific compatible value.
 
---8323329-746848247-1649086158=:11904
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ drivers/gpio/gpio-rcar.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-On Mon, 4 Apr 2022, Miquel Raynal wrote:
-
-> Hi Andy, Ilpo,
-> 
-> andriy.shevchenko@linux.intel.com wrote on Fri, 1 Apr 2022 20:38:24
-> +0300:
-> 
-> > On Fri, Apr 01, 2022 at 01:56:49PM +0300, Ilpo Järvinen wrote:
-> > > On Wed, 30 Mar 2022, Miquel Raynal wrote:  
-> > 
-> > ...
-> > 
-> > > > +			writel(0, p->membase + RZN1_UART_RDMACR);
-> > > > +			writel(1, p->membase + DW_UART_DMASA);  
-> > > 
-> > > Currently there is serial_out(), dw8250_writel_ext(), and a few writel()s 
-> > > too for writing to registers. It would be nice to move towards more 
-> > > homogeneous approach rather than adding more writel()s.  
-> > 
-> > Actually a good catch!
-> > 
-> > > I suggest dw8250_writel_ext() is moved to dwlib.h. Then it could be used 
-> > > here (and dw8250_readl_ext() too should be moved but IIRC there wasn't 
-> > > any reads added by this series).  
-> > 
-> > I agree that for the sake of symmetry it's good to move both.
-> 
-> I moved them both to dwlib.h as suggested.
-> 
-> I had a look at the current uses of readb/l and writeb/l in dw.c but
-> converting all these function calls is not as straightforward as I
-> initially thought so I decided to limit myself to moving these helpers
-> and using them in my additions, I hope this is fine.
-
-Yes, I think it's enough for this series.
-
-
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index bd2e16d6e21c40cf..5fc52341b98263c6 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -411,7 +411,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
+ 	.has_inen = false,
+ };
+ 
+-static const struct gpio_rcar_info gpio_rcar_info_v3u = {
++static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
+ 	.has_outdtsel = true,
+ 	.has_both_edge_trigger = true,
+ 	.has_always_in = true,
+@@ -421,7 +421,7 @@ static const struct gpio_rcar_info gpio_rcar_info_v3u = {
+ static const struct of_device_id gpio_rcar_of_table[] = {
+ 	{
+ 		.compatible = "renesas,gpio-r8a779a0",
+-		.data = &gpio_rcar_info_v3u,
++		.data = &gpio_rcar_info_gen4,
+ 	}, {
+ 		.compatible = "renesas,rcar-gen1-gpio",
+ 		.data = &gpio_rcar_info_gen1,
+@@ -431,6 +431,9 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 	}, {
+ 		.compatible = "renesas,rcar-gen3-gpio",
+ 		.data = &gpio_rcar_info_gen3,
++	}, {
++		.compatible = "renesas,rcar-gen4-gpio",
++		.data = &gpio_rcar_info_gen4,
+ 	}, {
+ 		.compatible = "renesas,gpio-rcar",
+ 		.data = &gpio_rcar_info_gen1,
 -- 
- i.
+2.25.1
 
---8323329-746848247-1649086158=:11904--
