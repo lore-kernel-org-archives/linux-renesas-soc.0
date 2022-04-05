@@ -2,85 +2,86 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D94BC35273
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51445C38A2C
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 10:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353992AbiDEKKV (ORCPT
+        id S1353998AbiDEKK0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 06:10:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60068 "EHLO
+        Tue, 5 Apr 2022 06:10:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347090AbiDEJp7 (ORCPT
+        with ESMTP id S236072AbiDEJbC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Apr 2022 05:45:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AEDC51588;
-        Tue,  5 Apr 2022 02:32:22 -0700 (PDT)
+        Tue, 5 Apr 2022 05:31:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85BA9B;
+        Tue,  5 Apr 2022 02:18:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AFF6616C1;
-        Tue,  5 Apr 2022 09:32:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88018C385A2;
-        Tue,  5 Apr 2022 09:32:19 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 74380B81C6C;
+        Tue,  5 Apr 2022 09:18:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C493C385A0;
+        Tue,  5 Apr 2022 09:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649151141;
-        bh=VRTf+8SLE8ZMTKojd3EASetnluqVW687H4SXF0zsW2E=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=JGtBZ/oDh86pEqP+OmDia+U3LygBe08H1yRMKvoSoDISAgKGXy9tazlTO7w983gk8
-         tRYxp5nx+OL45gpWUhCLHHHVZcisMk6kb9WrRhpJPki1J88iS4hLxtKUjHiSVklUSh
-         Rb15NCy14wT1yiNxK3cKubuuTUB7A/+rav0vyE0QxGG8ryr7l0xzlR0s2ZBfeR3lsg
-         LqpAthEpMyNIaQN8XWNaJGEkWFRZOZhezzEgkukHfO8jnH4i2YwJr0RzgPmYIO6+MJ
-         Nd644F067ZxZDUOCGMdwXw9YKd2rYSWqDl23K4eVZwjZo1wB+cY1qcI29ZP4LaZwE0
-         H+hZtYTka4yUg==
-From:   Mark Brown <broonie@kernel.org>
-To:     vigneshr@ti.com, richard@nod.at, wsa+renesas@sang-engineering.com,
-        geert+renesas@glider.be, biju.das.jz@bp.renesas.com,
-        prabhakar.mahadev-lad.rj@bp.renesas.com, miquel.raynal@bootlin.com,
-        krzk@kernel.org
-Cc:     linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-In-Reply-To: <d196bb5849843993557a9b10f3bd28a752e5e8e0.1648562287.git.geert+renesas@glider.be>
-References: <d196bb5849843993557a9b10f3bd28a752e5e8e0.1648562287.git.geert+renesas@glider.be>
-Subject: Re: (subset) [PATCH 1/2] mtd: hyperbus: rpc-if: Fix RPM imbalance in probe error path
-Message-Id: <164915113927.276894.7805335417707613893.b4-ty@kernel.org>
-Date:   Tue, 05 Apr 2022 10:32:19 +0100
+        s=k20201202; t=1649150307;
+        bh=KqfmPx/FGZuQc1QjAMWhBBJLn80U3WK0f+K5lsmzmv8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ooEXi9RjMzMSxfLeOZEDjlTKA2kg1ILji4AeosSD72b5yu7U90rI1zHsW27BxBtKH
+         7S8+M5MPtdndh01Bnz7seefyYKzBuRNKUTnluAM9otDxptJ3nIg7ouNT41fRPe38C3
+         24rladwUbzaGGuxtmr75bnWKos85SB+LTOgZSkOtz9mcz+J6qJ9eARSqo/6k8s0bRx
+         c1Q19JrIqmUCO9hws+/YyGFdZI7ww06cB4Pc4Dvxq7kHGtVz3M+TU0+LuP5F+EHiHe
+         76X5+yA1xiB9Ldt/IEEN9vWR5GlwqqXxR2+tM12JtD1a90BmYUEmis6S9g10FOiLmT
+         Nq1mgmt1lNq+Q==
+Date:   Tue, 5 Apr 2022 14:48:22 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v6 5/8] dmaengine: dw: dmamux: Introduce RZN1 DMA router
+ support
+Message-ID: <YkwJXq+8tAPJ9saP@matsya>
+References: <20220404133904.1296258-1-miquel.raynal@bootlin.com>
+ <20220404133904.1296258-6-miquel.raynal@bootlin.com>
+ <YkvaOKmamLF+Mp7m@matsya>
+ <YkvqsO0aecSjGqx2@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YkvqsO0aecSjGqx2@smile.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, 29 Mar 2022 16:00:38 +0200, Geert Uytterhoeven wrote:
-> If rpcif_hw_init() fails, Runtime PM is left enabled.
+On 05-04-22, 10:07, Andy Shevchenko wrote:
+> On Tue, Apr 05, 2022 at 11:27:12AM +0530, Vinod Koul wrote:
+> > On 04-04-22, 15:39, Miquel Raynal wrote:
 > 
+> ...
 > 
+> > > +MODULE_LICENSE("GPL");
+> > 
+> > This is not consistent with the SPDX tag..
+> 
+> Actually it is. "GPLv2" is obsolete form, in new code we are supposed using
+> "GPL" as per Documentation.
 
-Applied to
+Yes this has been updated, thanks for pointing out.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[2/2] spi: rpc-if: Fix RPM imbalance in probe error path
-      commit: 2f8cf5f642e80f8b6b0e660a9c86924a1f41cd80
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+~Vinod
