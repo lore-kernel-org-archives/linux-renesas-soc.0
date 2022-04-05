@@ -2,35 +2,34 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBF6C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 20:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7059C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 20:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239290AbiDEUMQ (ORCPT
+        id S240038AbiDEUMV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 16:12:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55398 "EHLO
+        Tue, 5 Apr 2022 16:12:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1573295AbiDESt0 (ORCPT
+        with ESMTP id S1573293AbiDEStW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Apr 2022 14:49:26 -0400
+        Tue, 5 Apr 2022 14:49:22 -0400
 Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BFCAF1DD;
-        Tue,  5 Apr 2022 11:47:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3AB2AF1DD;
+        Tue,  5 Apr 2022 11:47:21 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id CEBCB200006;
-        Tue,  5 Apr 2022 18:47:21 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 9DC36200004;
+        Tue,  5 Apr 2022 18:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649184443;
+        t=1649184439;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0wCROVhxQkzi01xQZ7CtsJyXoDnqptRHhKKgXAf97I8=;
-        b=nZgbol2lDFRyYnzqBtJaMKxRbItRYY9JnbB1a5Y+UcpARzJUkFKNDstOqUNCes3VX8N/2f
-        c7Xn9vYwgvePaycby+DlY5IFtH6sCptZ0SL2r6cjsf+IFGpwVY+6ny3X0NqWYDjhQ0UMHG
-        /3gywrTtSC/Ye3t1OQkQgIiH19PGwe9Li9hCeI530bBQbxme/WXNAZ6Cfk4AOC6fxf2xdG
-        3ntESKddPzvde6rL1rlZG9PL1Xe2zwoYk97tncuZ8A/7I8F4HLVDFSHgfZDtALzvulePyn
-        c7/o1sy3kD7K9I7oLpiPdMQssy5xBY0/gFkks6b5dHF6tDMESJ4PVJRzwqJwgQ==
+         content-transfer-encoding:content-transfer-encoding;
+        bh=AlS3iJ+EMBIdu3DwukTkmu3d5S17/P8BS9spNb/Ba7A=;
+        b=ovTLWGBmZBlXw85uPL5X6YZwA+kKi9xhS4WzLGT+Ktdp5ydyX1i+EiNrA6fGk2LH/8NNwH
+        k1dxdAJx6sXCstShEpnRSdnXhujo5MVJ4LtLn2hjEGZJv9SMPpd6ZuvpzzViZ90RE0lzDp
+        xA8SOqFrIEM/WJBP8/pkzO3iEJNIZcq23FifHctf0V3K5YRrV/oRmc0+034G+2D91qS3NC
+        +rOFdsAy1yVujV17FVbdPFd/IWLc4BYllOIKytXLXKU10V5O227K8HiRECHHkEmFZtD5KZ
+        LHIwXL0wFcUMk2TRUUB24mkSP+s0B3H7mfyxgJzXciQJJgNnC6Owsk4m+MBb9w==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
@@ -52,12 +51,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Clement Leger <clement.leger@bootlin.com>,
         linux-rtc@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a function to enable/disable the RTC
-Date:   Tue,  5 Apr 2022 20:47:11 +0200
-Message-Id: <20220405184716.1578385-3-miquel.raynal@bootlin.com>
+Subject: [PATCH 0/7] RZN1 RTC support
+Date:   Tue,  5 Apr 2022 20:47:09 +0200
+Message-Id: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
-References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -65,99 +62,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There are two RTC registers located within the system controller.
+Hello,
 
-Like with the dmamux register, let's add a new helper to enable/disable
-the power, reset and clock of the RTC.
+This small series adds support for the RZN1 RTC.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/clk/renesas/r9a06g032-clocks.c        | 49 +++++++++++++++++++
- include/linux/soc/renesas/r9a06g032-sysctrl.h |  2 +
- 2 files changed, 51 insertions(+)
+Despite its limitations, I found useful to at least have alarm and
+offset support.
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 1df56d7ab3e1..7e61db39a43b 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -26,6 +26,13 @@
- #include <dt-bindings/clock/r9a06g032-sysctrl.h>
- 
- #define R9A06G032_SYSCTRL_DMAMUX 0xA0
-+#define R9A06G032_SYSCTRL_PWRCTRL_RTC 0x140
-+#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN BIT(0)
-+#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_RST BIT(1)
-+#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ BIT(2)
-+#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW BIT(3)
-+#define R9A06G032_SYSCTRL_PWRSTAT_RTC 0x144
-+#define   R9A06G032_SYSCTRL_PWRSTAT_RTC_IDLE BIT(1)
- 
- struct r9a06g032_gate {
- 	u16 gate, reset, ready, midle,
-@@ -343,6 +350,48 @@ int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val)
- }
- EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
- 
-+/* Exported helper to enable/disable the RTC */
-+int r9a06g032_sysctrl_enable_rtc(bool enable)
-+{
-+	unsigned long flags;
-+	u32 val;
-+
-+	if (!sysctrl_priv)
-+		return -EPROBE_DEFER;
-+
-+	spin_lock_irqsave(&sysctrl_priv->lock, flags);
-+
-+	if (enable) {
-+		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_RST;
-+		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN;
-+		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW;
-+		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ;
-+		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRSTAT_RTC);
-+		if (val & R9A06G032_SYSCTRL_PWRSTAT_RTC_IDLE)
-+			return -EIO;
-+	} else {
-+		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ;
-+		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW;
-+		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN;
-+		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_RST;
-+		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-+	}
-+
-+	spin_unlock_irqrestore(&sysctrl_priv->lock, flags);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_enable_rtc);
-+
- /* register/bit pairs are encoded as an uint16_t */
- static void
- clk_rdesc_set(struct r9a06g032_priv *clocks,
-diff --git a/include/linux/soc/renesas/r9a06g032-sysctrl.h b/include/linux/soc/renesas/r9a06g032-sysctrl.h
-index 066dfb15cbdd..914c8789149c 100644
---- a/include/linux/soc/renesas/r9a06g032-sysctrl.h
-+++ b/include/linux/soc/renesas/r9a06g032-sysctrl.h
-@@ -4,8 +4,10 @@
- 
- #ifdef CONFIG_CLK_R9A06G032
- int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val);
-+int r9a06g032_sysctrl_enable_rtc(bool enable);
- #else
- static inline int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val) { return -ENODEV; }
-+static inline int r9a06g032_sysctrl_enable_rtc(bool enable) { return -ENODEV; }
- #endif
- 
- #endif /* __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__ */
+This depends on the previous sysctrl/dma/uart changes on the sysctrl
+side.
+
+Cheers,
+Miquèl
+
+Michel Pollet (1):
+  rtc: rzn1: Add new RTC driver
+
+Miquel Raynal (6):
+  dt-bindings: rtc: rzn1: Describe the RZN1 RTC
+  soc: renesas: rzn1-sysc: Export a function to enable/disable the RTC
+  rtc: rzn1: Add alarm support
+  rtc: rzn1: Add oscillator offset support
+  MAINTAINERS: Add myself as maintainer of the RZN1 RTC driver
+  ARM: dts: r9a06g032: Describe the RTC
+
+ .../bindings/rtc/renesas,rzn1-rtc.yaml        |  69 +++
+ MAINTAINERS                                   |   8 +
+ arch/arm/boot/dts/r9a06g032.dtsi              |  12 +
+ drivers/clk/renesas/r9a06g032-clocks.c        |  49 ++
+ drivers/rtc/Kconfig                           |   7 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-rzn1.c                        | 436 ++++++++++++++++++
+ include/linux/soc/renesas/r9a06g032-sysctrl.h |   2 +
+ 8 files changed, 584 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+ create mode 100644 drivers/rtc/rtc-rzn1.c
+
 -- 
 2.27.0
 
