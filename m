@@ -2,64 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77B0C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 08:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F2FC47088
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 08:36:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233264AbiDEIFk (ORCPT
+        id S232913AbiDEIdv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 04:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48404 "EHLO
+        Tue, 5 Apr 2022 04:33:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234407AbiDEH6N (ORCPT
+        with ESMTP id S235682AbiDEIVe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Apr 2022 03:58:13 -0400
-X-Greylist: delayed 511 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Apr 2022 00:52:30 PDT
-Received: from mail.bizcall.pl (mail.bizcall.pl [192.71.213.112])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8CD0A1457
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Apr 2022 00:52:26 -0700 (PDT)
-Received: by mail.bizcall.pl (Postfix, from userid 1001)
-        id B042F41602; Tue,  5 Apr 2022 09:43:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizcall.pl; s=mail;
-        t=1649144635; bh=L7rZPDqncV/PGNK3vBL4eFyhOA8rMHMu3jCfxnl4mEc=;
-        h=Date:From:To:Subject:From;
-        b=QKw1d9TkF1r2Un8Zf5wusXnHRW8BBbWE3LX0r5joZCGRp9aQdxWRPKzHD+qRzHgSm
-         oIHCmreTYReKXoZHZ4VIwAOEmL+HJFwfxb+NngrvinxR34MI274p3QwWmk1occixmh
-         ShHGdYwx6Iwthhh+agJtATjP+8U7Lno4QeOqygTE9mYqc9GuMUt5hoNAFjL7/19W/9
-         F/ELNyYR7TaLC83cWOR6wzjq298tqkNWkY7NVgrGCykPR1DNj7FC2FolrBgLzN6Sfp
-         Eb8cMFiqznSoO10MWmj/knSYnApkeJQzzqiqpaC3fOrCSujJ/vyL4IXxmvWhf2xnKZ
-         D8qpQO4ISQ9Sw==
-Received: by mail.bizcall.pl for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Apr 2022 07:43:50 GMT
-Message-ID: <20220405084501-0.1.1v.5hst.0.1hpekoi9yj@bizcall.pl>
-Date:   Tue,  5 Apr 2022 07:43:50 GMT
-From:   "Marek Onufrowicz" <marek.onufrowicz@bizcall.pl>
-To:     <linux-renesas-soc@vger.kernel.org>
-Subject: Prezentacja
-X-Mailer: mail.bizcall.pl
+        Tue, 5 Apr 2022 04:21:34 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E99A462F9;
+        Tue,  5 Apr 2022 01:19:19 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 275B14000D;
+        Tue,  5 Apr 2022 08:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649146758;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ufacyo2BIZ8ell+Qh9P+IyEHIkAIPJ9lkLf9WuXjjMM=;
+        b=L2wKbRaixSiV7iOpPF9bZwPJ+lmkoEesTUzBI7hg9YXUeEGHRNf0zcu3l/EVM3emlAmDbH
+        5elhFyjKEKbatDiUXMtAGx30e1nA0qUlwm/JypIP8A2ix+55gPCUmh4QDp/Ya/TuMH/uqV
+        03ynAtIFN3jSr3ZVVCeDaxflYHWT7YsIEo5Q7Wkh+MuMcdCMmoKBVfXcXFtinzn6pOu91h
+        WhfNPhJpmG6B/5rbQ4mbkm8BS7To55qdjfz1dgwXKGkk9+k/MhHSGS3qQB3LI4g7w4xhy8
+        EA64z8eNY4Nv+WfZCZ8lX8F4qJocSWhXExacZuH1cguhfGYJro+Is/eeInevtg==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v7 2/9] dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
+Date:   Tue,  5 Apr 2022 10:19:04 +0200
+Message-Id: <20220405081911.1349563-3-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
+References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dzie=C5=84 dobry!
+This system controller contains several registers that have nothing to
+do with the clock handling, like the DMA mux register. Describe this
+part of the system controller as a subnode.
 
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
-=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
-zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ .../bindings/clock/renesas,r9a06g032-sysctrl.yaml     | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
-=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
-dostaw.
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+index 25dbb0fac065..95bf485c6cec 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+@@ -39,6 +39,17 @@ properties:
+   '#power-domain-cells':
+     const: 0
+ 
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 1
++
++patternProperties:
++  "^dma-router@[a-f0-9]+$":
++    type: object
++    $ref: "../dma/renesas,rzn1-dmamux.yaml#"
++
+ required:
+   - compatible
+   - reg
+-- 
+2.27.0
 
-Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
-nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
- co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
-
-Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
-=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
-zania w Pa=C5=84stwa firmie.
-
-
-Pozdrawiam,
-Marek Onufrowicz
