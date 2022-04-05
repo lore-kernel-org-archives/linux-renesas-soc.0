@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6AAC352A8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E0AC41535
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 08:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234115AbiDEIiJ (ORCPT
+        id S234139AbiDEIiE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 04:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55700 "EHLO
+        Tue, 5 Apr 2022 04:38:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239883AbiDEIVo (ORCPT
+        with ESMTP id S235683AbiDEIVe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Apr 2022 04:21:44 -0400
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236542AE2;
-        Tue,  5 Apr 2022 01:19:21 -0700 (PDT)
+        Tue, 5 Apr 2022 04:21:34 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF3DF625C;
+        Tue,  5 Apr 2022 01:19:18 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id BE1A74000F;
-        Tue,  5 Apr 2022 08:19:18 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 06B5440012;
+        Tue,  5 Apr 2022 08:19:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649146760;
+        t=1649146757;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=psSRZJhAOXsPUtZ0dZbzo0PztnR1Q8vauZShn+Y/BqQ=;
-        b=ErW22Sr5/714P2xbxHEmvZ151D2k4+B/cMd7kIpWrdqheRaWwE1ezKy78tFea34WkxZtdB
-        voHuIlHmzPiKixFunA4XbcWUIa1/9ZF3yegRT5fqt4+2k4qTHT6eu+Z5G/65/UDh4gpMO0
-        aEz2/+/O4vY3oh+XLIZKBGSXCqUMUANaFJ0fVB0JrqUJZesVQnHy+FRJ2ZRsobA8kDYwtK
-        8BmmSfEI7LspAxVbDOynmT7afqrNgZ+Cvfa3x1JGZHnsUZFW4mCuYxx1qsXTpVSvHZiGh+
-        IuI8ZOKb3UNkuCA7RLQiW7KP2Xkda5xzB+WpK2FafokI6P9LCu5biIu6awpkSA==
+        bh=wNpjgkUaNWn1Mm4Df5e8ycR/tOrOcvbl1JoeRb1Ktqk=;
+        b=VWOvJUv57KfPUNd4/7pjJolyj0apnRjPWls37Dp1giQhXTHORTFH+rhgFL0RbX58YLmPUK
+        6BDTvizcvg437CTA8S+iieBMbYAs1/WoToemKbhBVYbZlQgRxNDksKnW2/0LSQs/RfMw3w
+        mPLl7w/7IMoUAHk6LKPH7ZH8bKRaQD9ZLPEGWqzJWYZxmaFRcp6Gbu0AkvemsT8gMB0sUm
+        EJp+FOmRzajzmlpBjYzI7VJrKNAN3eEGjKtmJUfXv3xyALCOvA3WYA9KelGyxsQ4UnADNf
+        QqMAOWelXU4p2eN9cZeEOc70PGckbCWoGS+F28TQQplMQQ8PfZWICpWVQGf9Qw==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
@@ -52,9 +52,9 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v7 3/9] dt-bindings: dmaengine: Introduce RZN1 DMA compatible
-Date:   Tue,  5 Apr 2022 10:19:05 +0200
-Message-Id: <20220405081911.1349563-4-miquel.raynal@bootlin.com>
+Subject: [PATCH v7 1/9] dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
+Date:   Tue,  5 Apr 2022 10:19:03 +0200
+Message-Id: <20220405081911.1349563-2-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
 References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
@@ -65,36 +65,89 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Just like for the NAND controller that is also on this SoC, let's
-provide a SoC generic and a more specific couple of compatibles for the
-DMA controller.
+The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+dmamux register located in the system control area which can take up to
+32 requests (16 per DMA controller). Each DMA channel can be wired to
+two different peripherals.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/dma/snps,dma-spear1340.yaml       | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ .../bindings/dma/renesas,rzn1-dmamux.yaml     | 51 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
 
-diff --git a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-index 6b35089ac017..c13649bf7f19 100644
---- a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-+++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-@@ -15,7 +15,13 @@ allOf:
- 
- properties:
-   compatible:
--    const: snps,dma-spear1340
-+    oneOf:
-+      - const: snps,dma-spear1340
-+      - items:
-+          - enum:
-+              - renesas,r9a06g032-dma
-+          - const: renesas,rzn1-dma
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+new file mode 100644
+index 000000000000..d83013b0dd74
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/renesas,rzn1-dmamux.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 
-   "#dma-cells":
-     minimum: 3
++title: Renesas RZ/N1 DMA mux
++
++maintainers:
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++allOf:
++  - $ref: "dma-router.yaml#"
++
++properties:
++  compatible:
++    const: renesas,rzn1-dmamux
++
++  reg:
++    maxItems: 1
++    description: DMA mux first register offset within the system control parent.
++
++  '#dma-cells':
++    const: 6
++    description:
++      The first four cells are dedicated to the master DMA controller. The fifth
++      cell gives the DMA mux bit index that must be set starting from 0. The
++      sixth cell gives the binary value that must be written there, ie. 0 or 1.
++
++  dma-masters:
++    minItems: 1
++    maxItems: 2
++
++  dma-requests:
++    const: 32
++
++required:
++  - reg
++  - dma-requests
++
++additionalProperties: false
++
++examples:
++  - |
++    dma-router@a0 {
++      compatible = "renesas,rzn1-dmamux";
++      reg = <0xa0 4>;
++      #dma-cells = <6>;
++      dma-masters = <&dma0 &dma1>;
++      dma-requests = <32>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fd768d43e048..120d3ae57a4b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19040,6 +19040,7 @@ SYNOPSYS DESIGNWARE DMAC DRIVER
+ M:	Viresh Kumar <vireshk@kernel.org>
+ R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ F:	Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+ F:	drivers/dma/dw/
+ F:	include/dt-bindings/dma/dw-dmac.h
 -- 
 2.27.0
 
