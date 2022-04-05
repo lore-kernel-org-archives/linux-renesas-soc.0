@@ -2,116 +2,201 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225B7C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5C6C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 00:45:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382548AbiDDVbK (ORCPT
+        id S229482AbiDEArp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:31:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48694 "EHLO
+        Mon, 4 Apr 2022 20:47:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380343AbiDDTgG (ORCPT
+        with ESMTP id S229453AbiDEAro (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 15:36:06 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5535C13F10
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Apr 2022 12:34:10 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1nbSSl-0005DZ-JF; Mon, 04 Apr 2022 21:34:07 +0200
-Received: from pengutronix.de (2a03-f580-87bc-d400-3524-91ca-8473-ba45.ip6.dokom21.de [IPv6:2a03:f580:87bc:d400:3524:91ca:8473:ba45])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id D56DE5A455;
-        Mon,  4 Apr 2022 19:34:06 +0000 (UTC)
-Date:   Mon, 4 Apr 2022 21:34:06 +0200
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     mkl@blackshift.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-can@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: can: renesas,rcar-canfd: Document r8a77961
- support
-Message-ID: <20220404193406.dxn6m5xl5jcxlxqg@pengutronix.de>
-References: <20220401153743.77871-1-wsa+renesas@sang-engineering.com>
- <20220403110534.2k3ojnkkrsdjzimb@pengutronix.de>
- <CAMuHMdX2Ut9A57UkOO4f+q8Awu0K9Oek2Qhujr+TaKNTpkVU=g@mail.gmail.com>
+        Mon, 4 Apr 2022 20:47:44 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A82826E035
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Apr 2022 17:36:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649119006; x=1680655006;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xmyqYqEMGKdGoRzBuE7IEYdpyGjIAOJyz6lsogXgStM=;
+  b=N91pe4AGpESqnklrYo0q3fvWEEa7ZSDOcBFICYRBnQGbVLFXXe9JRral
+   gvUJB64Iz9pjnhTR9HVjqGcGF1hbovh4JaFelE2PrbLlrpaDZuP2hQ+/i
+   o/GaFSEwtvgWv13c2antPTJf9KdeHkChLlqgIy+u9m+BIItE/7ErF5tFs
+   xi9rGha99nO2IvjNneafbZgGhE4tC5lKdd1vaE7M1tV+QhljNRwX+qLqi
+   zijCVossH/dT3sxeK3IAS+BO74b3oRUH1FAwHJoEwhWdk39Kaij55lfuL
+   x8yB9HpsFlnLDktijr2qVkG5XdGW4smUM5eMP54l7K/RAwYWyqaRFnyRf
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="259467007"
+X-IronPort-AV: E=Sophos;i="5.90,235,1643702400"; 
+   d="scan'208";a="259467007"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 17:25:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,235,1643702400"; 
+   d="scan'208";a="548855893"
+Received: from lkp-server02.sh.intel.com (HELO a44fdfb70b94) ([10.239.97.151])
+  by orsmga007.jf.intel.com with ESMTP; 04 Apr 2022 17:25:40 -0700
+Received: from kbuild by a44fdfb70b94 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nbX0t-0002UX-69;
+        Tue, 05 Apr 2022 00:25:39 +0000
+Date:   Tue, 05 Apr 2022 08:24:52 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ d2f27dc76d3d5a290f9dfcafae3047e5c9d0ba2b
+Message-ID: <624b8c54.G3Vm6FV/71MrCg6c%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wpphrtucuuhblxqu"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX2Ut9A57UkOO4f+q8Awu0K9Oek2Qhujr+TaKNTpkVU=g@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: d2f27dc76d3d5a290f9dfcafae3047e5c9d0ba2b  Merge branch 'renesas-next' into renesas-devel
 
---wpphrtucuuhblxqu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+elapsed time: 769m
 
-On 04.04.2022 14:02:52, Geert Uytterhoeven wrote:
-> Hi Marc,
->=20
-> On Sun, Apr 3, 2022 at 1:05 PM Marc Kleine-Budde <mkl@blackshift.org> wro=
-te:
-> > On 01.04.2022 17:37:43, Wolfram Sang wrote:
-> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-> > Wolfram, thanks for the patch. I think usually Geert takes the renesas
-> > DT binding patches. (If it would go via the CAN and net tree, that patch
->=20
-> Usually only for Renesas core patches, unless the I/O maintainers
-> are unresponsive...
+configs tested: 122
+configs skipped: 5
 
-Ok, I wasn't sure. I'm taking this patch.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> > should get a patch description, my upstream doesn't take patches
-> > without.)
+gcc tested configs:
+arm64                               defconfig
+arm64                            allyesconfig
+arm                              allmodconfig
+arm                                 defconfig
+arm                              allyesconfig
+i386                 randconfig-c001-20220404
+arc                    vdk_hs38_smp_defconfig
+arm                        mini2440_defconfig
+arm                        clps711x_defconfig
+arc                        nsimosci_defconfig
+m68k                          sun3x_defconfig
+sh                                  defconfig
+xtensa                              defconfig
+alpha                            alldefconfig
+s390                          debug_defconfig
+sh                            shmin_defconfig
+sh                          rsk7264_defconfig
+m68k                          hp300_defconfig
+powerpc                      ep88xc_defconfig
+sh                               j2_defconfig
+arc                      axs103_smp_defconfig
+sh                          rsk7201_defconfig
+sh                           se7722_defconfig
+arm                  randconfig-c002-20220404
+x86_64               randconfig-c001-20220404
+ia64                                defconfig
+ia64                             allmodconfig
+ia64                             allyesconfig
+m68k                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+arc                              allyesconfig
+nios2                               defconfig
+nios2                            allyesconfig
+alpha                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+arc                                 defconfig
+sh                               allmodconfig
+h8300                            allyesconfig
+xtensa                           allyesconfig
+s390                                defconfig
+s390                             allmodconfig
+parisc                              defconfig
+parisc64                            defconfig
+parisc                           allyesconfig
+s390                             allyesconfig
+sparc                               defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+i386                                defconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                           allnoconfig
+powerpc                          allmodconfig
+x86_64               randconfig-a015-20220404
+x86_64               randconfig-a011-20220404
+x86_64               randconfig-a014-20220404
+x86_64               randconfig-a016-20220404
+x86_64               randconfig-a012-20220404
+x86_64               randconfig-a013-20220404
+i386                 randconfig-a014-20220404
+i386                 randconfig-a013-20220404
+i386                 randconfig-a016-20220404
+i386                 randconfig-a015-20220404
+i386                 randconfig-a011-20220404
+i386                 randconfig-a012-20220404
+arc                  randconfig-r043-20220404
+s390                 randconfig-r044-20220404
+riscv                randconfig-r042-20220404
+riscv                            allmodconfig
+riscv                    nommu_k210_defconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                          rv32_defconfig
+riscv                            allyesconfig
+riscv                               defconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+x86_64                              defconfig
+x86_64                           allyesconfig
+x86_64                                  kexec
+x86_64                          rhel-8.3-func
+x86_64                               rhel-8.3
+x86_64                         rhel-8.3-kunit
+x86_64                    rhel-8.3-kselftests
 
-I've added a patch description while applying.
+clang tested configs:
+powerpc              randconfig-c003-20220404
+arm                  randconfig-c002-20220404
+x86_64               randconfig-c007-20220404
+mips                 randconfig-c004-20220404
+i386                 randconfig-c001-20220404
+riscv                randconfig-c006-20220404
+s390                 randconfig-c005-20220404
+powerpc                     skiroot_defconfig
+mips                      maltaaprp_defconfig
+arm                         lpc32xx_defconfig
+powerpc                      obs600_defconfig
+powerpc                   microwatt_defconfig
+powerpc               mpc834x_itxgp_defconfig
+arm                     am200epdkit_defconfig
+hexagon                             defconfig
+mips                         tb0287_defconfig
+powerpc                     akebono_defconfig
+arm                        multi_v5_defconfig
+powerpc                        icon_defconfig
+powerpc                       ebony_defconfig
+powerpc                     kmeter1_defconfig
+x86_64               randconfig-a006-20220404
+x86_64               randconfig-a002-20220404
+x86_64               randconfig-a001-20220404
+x86_64               randconfig-a005-20220404
+x86_64               randconfig-a003-20220404
+x86_64               randconfig-a004-20220404
+i386                 randconfig-a001-20220404
+i386                 randconfig-a006-20220404
+i386                 randconfig-a002-20220404
+i386                 randconfig-a004-20220404
+i386                 randconfig-a003-20220404
+i386                 randconfig-a005-20220404
+hexagon              randconfig-r045-20220404
+hexagon              randconfig-r041-20220404
 
-> The other usual suspects are the DT people, but they weren't CCed?
-
-I've added them on Cc.
-
-> Of course I can take it, too. Are you willing to provide an Acked-by?
-> Thanks!
-
-regard,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
-
---wpphrtucuuhblxqu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmJLSCwACgkQrX5LkNig
-011u+Qf/YButwC5LuxJ0EjEWyTxSUsWfcn8Uw5jZf8AQXQQ09WycP2s3Ct4WcRZT
-7ruaJh/uShoQ2OYv6s4+wKRC8nR+/KXL0cjJxU15PhPbYHjpUZfUYq4JeZfEILPz
-7gbW5QeevJyFAMjyQ2dmdKx9um03oIsWSI2Uu+sEHd9MrBwRy0xfDqHgEuu3yKEB
-W/7WrGEj9/DFgDtN7txpahsas6LGbWwkPs/iltDRLjKh9c2Zqtbk9qOE8no7wFXh
-l61DNgKLBl3D1U7NdoAK1E+xf8WxelJ0FM7pijD6Opkupxn2XzMw0vinH9KWN4A1
-6xMFoAjOPnvfw4A9lKCU+040GU2nCw==
-=NL01
------END PGP SIGNATURE-----
-
---wpphrtucuuhblxqu--
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
