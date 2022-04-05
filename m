@@ -2,36 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C12C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 20:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D6BC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 20:16:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237242AbiDEULs (ORCPT
+        id S238592AbiDEULy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 16:11:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55310 "EHLO
+        Tue, 5 Apr 2022 16:11:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1573294AbiDESt0 (ORCPT
+        with ESMTP id S1573304AbiDESth (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Apr 2022 14:49:26 -0400
-X-Greylist: delayed 116333 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Apr 2022 11:47:23 PDT
+        Tue, 5 Apr 2022 14:49:37 -0400
 Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [217.70.178.232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECCEAF1E0;
-        Tue,  5 Apr 2022 11:47:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56E1AAF1F0;
+        Tue,  5 Apr 2022 11:47:35 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id EE4CF200007;
-        Tue,  5 Apr 2022 18:47:19 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 908BC200006;
+        Tue,  5 Apr 2022 18:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649184441;
+        t=1649184454;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=H31g2lSzg7n7VxTobwZqrUHtLT3mR7JfXrSowetcS0w=;
-        b=EQxDMFEwl4Uxy8D2SwWeQ8tAQ+2j2I/zKbmGibaOzOVWJoZmunWjeF3lcUcR8DeYJkhEvY
-        abGqGR71XtqDseu8jLNaClkZZpO7sYWiO78kDpbCrS8+QboA2xSH91qLv5HdyFNhMwbUH9
-        pWuhCApaCc/SLHyplkTin48tYeGFe0powHkt/6UCZu8CabRQA1C5C56W3m/fco8oDb+XZR
-        bRxW/LLJctxd4MRQWOai45lQVw5DyIMYzHftJAV6/9I0ufMBgw+///8Hy1cWBEGWnjevXb
-        Invmw8YRhSNc35i5XHPgZUx0wrQ2HMhuDCUKxspmm599ZMXc5xVuX9T1W84tYQ==
+        bh=Xxdt0tyZWd8zeGpcOomewbA36qGbMLLM+1tWmHX19c8=;
+        b=NJFDnHyej9QXSnfYFN+Nd9Y6DySfU/M34GWjlzY/xKl5ohq8pspgXHHbCZ2VnRB6xm0mP6
+        pDB8+w8a6Ja8ftDsQQcTAX4Y9+9t2IGNZxprl72OGFuwe3M4bOKdFEM/s6tZd8DbozcxvY
+        EsyPdSEv0o2UzQhmFBdP/4mG4nhq6ySpMYMKVAWwQSnErp7mYGxQk0LiLKh2ErQ6ww2iW1
+        qUY/zR8rzya5GfuKAfkTn1wx58+DOm5aToTNEIYkhdjngk8rTw2H8j6bsK7X2OtwYYdfom
+        8TsYmWS9rROGKzFBvJKQrrB0BHzA5i13oSCo21Hi6wWlyM6cLTwSOEg4P0xU6Q==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
@@ -53,9 +52,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Clement Leger <clement.leger@bootlin.com>,
         linux-rtc@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 1/7] dt-bindings: rtc: rzn1: Describe the RZN1 RTC
-Date:   Tue,  5 Apr 2022 20:47:10 +0200
-Message-Id: <20220405184716.1578385-2-miquel.raynal@bootlin.com>
+Subject: [PATCH 7/7] ARM: dts: r9a06g032: Describe the RTC
+Date:   Tue,  5 Apr 2022 20:47:16 +0200
+Message-Id: <20220405184716.1578385-8-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
 References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
@@ -66,89 +65,36 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add new binding file for this RTC.
+Describe the SoC RTC which counts time and provides alarm support.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- .../bindings/rtc/renesas,rzn1-rtc.yaml        | 69 +++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+ arch/arm/boot/dts/r9a06g032.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-new file mode 100644
-index 000000000000..903f0cd361fa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/rtc/renesas,rzn1-rtc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 4288b935fcea..7d380a38c7cd 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -103,6 +103,18 @@ dmamux: dma-router@a0 {
+ 			};
+ 		};
+ 
++		rtc0: rtc@40006000 {
++			compatible = "renesas,r9a06g032-rtc", "renesas,rzn1-rtc";
++			reg = <0x40006000 0x1000>;
++			interrupts = <GIC_SPI 66 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 67 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 68 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "alarm", "timer", "pps";
++			clocks = <&sysctrl R9A06G032_HCLK_RTC>;
++			clock-names = "hclk";
++			status = "disabled";
++		};
 +
-+title: Renesas RZ/N1 SoCs Real-Time Clock DT bindings
-+
-+maintainers:
-+  - Miquel Raynal <miquel.raynal@bootlin.com>
-+
-+allOf:
-+  - $ref: rtc.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - renesas,r9a06g032-rtc
-+          - const: renesas,rzn1-rtc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    minItems: 3
-+    maxItems: 3
-+
-+  interrupt-names:
-+    items:
-+      - const: alarm
-+      - const: timer
-+      - const: pps
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: hclk
-+
-+  start-year: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - start-year
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+    rtc@40006000 {
-+       compatible = "renesas,r9a06g032-rtc", "renesas,rzn1-rtc";
-+       reg = <0x40006000 0x1000>;
-+       interrupts = <GIC_SPI 66 IRQ_TYPE_EDGE_RISING>,
-+                    <GIC_SPI 67 IRQ_TYPE_EDGE_RISING>,
-+                    <GIC_SPI 68 IRQ_TYPE_EDGE_RISING>;
-+       interrupt-names = "alarm", "timer", "pps";
-+       clocks = <&sysctrl R9A06G032_HCLK_RTC>;
-+       clock-names = "hclk";
-+       start-year = <2000>;
-+     };
+ 		uart0: serial@40060000 {
+ 			compatible = "renesas,r9a06g032-uart", "renesas,rzn1-uart", "snps,dw-apb-uart";
+ 			reg = <0x40060000 0x400>;
 -- 
 2.27.0
 
