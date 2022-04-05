@@ -2,132 +2,106 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E76EC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 14:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA40C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Apr 2022 20:16:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344351AbiDEOfS (ORCPT
+        id S233655AbiDEULm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 10:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52800 "EHLO
+        Tue, 5 Apr 2022 16:11:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378107AbiDENNR (ORCPT
+        with ESMTP id S1355305AbiDEOmM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Apr 2022 09:13:17 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D229A98D
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Apr 2022 05:13:20 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id bq8so26221757ejb.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Apr 2022 05:13:20 -0700 (PDT)
+        Tue, 5 Apr 2022 10:42:12 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B9ED2250F
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Apr 2022 06:19:55 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a6so15734291ejk.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Apr 2022 06:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=w/Z5VzjPaah7N0YUbtAhapqjSjMXfGCadaBASbAspD0=;
-        b=7dOiBFDRRvuhX8nNQguHmbWm8+QE2DPP5lE6QQD4Pd+x55V/KnhDuzAmKXTJfOARUL
-         v+TNzqGFPW3+EGqiUCPOVmiDKgZxsGTSTnC0X5ZQVtl974YDs4B5Iz5CXjBqWbou2Awp
-         yWqAzw62kex2Pk0y9GpVAT1Se8ZGHdxfLA76vbdm1RNCzc9+ANL/kg7ntkI2zIpHTr/m
-         Llp/luaTI55RpNSJ/yjFbyWKipC98B7qcWuHW98I4ksMx0B2VYan5xfJEd3fz9r65Fbo
-         yYv+658/+ggJ1eqVFoc8k39bYRCt6XFnmBAmyIWw26HtjOd8PhMgKFU8rHcLxqexneSl
-         iQZw==
+        bh=DX7l2sM9QqiFOKXhsLfPsQIRCmsC3YYcfigAqtbzngw=;
+        b=MIIuNLWwZ8KZnliB5S7EokleWD/rLB9gDpC+rSIhM934CcyyANhIJZVpIts8INYuek
+         43DojUsQl8/+1hmzew/jJYwNv8GRFitnp9+IE0TFrNQi4fHz3+SNNGBYRZFbuhM38tT4
+         +sEeCg+J4oLLfaLMQkcSiF4bGHcFq//+pDz+lx1omRM4p0/lP+xCgOyzBqUvMguk2Al7
+         SB2Savh02L/DSVDCdV1o5z0vgKttGVjH5G6g7bJQgZNH9xfrdeNU8914hipmWyEvqoDN
+         87GaAGwit9a/glHMnbyJTwSw+pY+vsu8JlHJqcZKU+T97MidDgCvsfn2RRFbTXobbBDt
+         OgtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=w/Z5VzjPaah7N0YUbtAhapqjSjMXfGCadaBASbAspD0=;
-        b=cGyvKohshD23FkabqMmcE3KN8PZnbA4doFEf0GDbKm0CgBQnd2Ar0Vdhx2tDjv5mBv
-         y/Q64h7YAs08/V3QHIPqZsO6BzznTsNXm7zXL6l/wDOFcQvkiMXrFJCdhV2/aujco7cE
-         PproANLhUXDxixAhZ75/xy0BgUwTK13hvUT43ACu12fQIhXJSftiMirM+DboJzM9IJPB
-         8/SsFCcxuawAlTrqk9WQwrpih4Ui1SagqN486L0iD6XSou1QwcUxAYr1dSflvwnhY9kI
-         EgJhVYHLePU3ATOieOLSxIvkYipmHq6sJCAIuqGiYWS6YyP7zZvG7SQpeoWmiZcZ+j2t
-         ER5A==
-X-Gm-Message-State: AOAM532KsBmfub9m1phJOqUlDuqpeIIuiKVGqulqQq8+OSSyWaEDDVHq
-        z0bOSOL61ekKy7F9HLJ8E1hC2Ls8nhcowR6MqEsL7Q==
-X-Google-Smtp-Source: ABdhPJxVvhV5WZmApCq0DsgEovGa26+9MHznvNSVzqBc6ACt4ofBrfoHmbUA4s/kOIOSyV1hrsGZJlqKWGVuGtI+4qo=
-X-Received: by 2002:a17:906:6a1d:b0:6e8:35a:4439 with SMTP id
- qw29-20020a1709066a1d00b006e8035a4439mr3387538ejc.734.1649160799105; Tue, 05
- Apr 2022 05:13:19 -0700 (PDT)
+        bh=DX7l2sM9QqiFOKXhsLfPsQIRCmsC3YYcfigAqtbzngw=;
+        b=AMFTlJRpSsf57oZHRdHrTJSGeGFiHkOslG50O5glfSYtsAWgfaTWQru0JaQtdsO5JX
+         3FFeiGm0BkKrmuH/flB5sVzQ5Odq0LcK6/4N45m61cB1lilNbJy1+f7oVkqYAjzLpo6a
+         ZMgb43cLrv4CsZ9JKO+Ffjf9IhIz3B/raBYRiAlYuNLb1UIh6SI+aFIekIYdi7hNl7Sz
+         DjeItZLsQ0KylpgMOoX62aO9Wh10h0zM2TpSQBBsLwOvruuAG8BgngWC6ToNfP+HQHwi
+         bjKWmzYN7sec8ua84xDb45I2l4dPAKxL2kst32SiG/NTZ+nd0bCmMxDwzQv7F/0mPo3W
+         mEWw==
+X-Gm-Message-State: AOAM5306o9HzCiPqab87Pj2Ww/3YB5vdRMMOVZJT5JrYYOh1DpN5yLlG
+        qJA607LAkjpmidulR/WOuhpB/P/m/fFd1m/sKB7pvg==
+X-Google-Smtp-Source: ABdhPJxdkpcqywi0Dnnv3TZA7cMfATjjPrQEcps7eS+U2c2eZK6FJLlYj9QgffOiSwol2BYhsCWYsZ1FW7SXEGnJj+g=
+X-Received: by 2002:a17:907:968e:b0:6db:aed5:43c8 with SMTP id
+ hd14-20020a170907968e00b006dbaed543c8mr3580349ejc.636.1649164793827; Tue, 05
+ Apr 2022 06:19:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com> <20220401103604.8705-3-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20220401103604.8705-3-andriy.shevchenko@linux.intel.com>
+References: <cover.1649085875.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1649085875.git.geert+renesas@glider.be>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 5 Apr 2022 14:13:08 +0200
-Message-ID: <CAMRc=MeaSC6kvwfGAhX7XbeFvaw7MiozTj1p+ThZYCHZFppSzg@mail.gmail.com>
-Subject: Re: [PATCH v4 02/13] gpiolib: Introduce gpiochip_node_count() helper
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Qianggui Song <qianggui.song@amlogic.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Date:   Tue, 5 Apr 2022 15:19:43 +0200
+Message-ID: <CAMRc=MdapT5rWfijUDQYj-GDvJ8ZrrpnZ6dwScev0WirCsuAyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] gpio: rcar: Add-R-Car S4-8 GPIO support
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
+        devicetree <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Apr 1, 2022 at 12:36 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Mon, Apr 4, 2022 at 5:29 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 >
-> The gpiochip_node_count() helper iterates over the device child nodes that
-> have the "gpio-controller" property set. It returns the number of such nodes
-> under a given device.
+>         Hi Linus, Bartosz,
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  include/linux/gpio/driver.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> This patch series adds support for the Renesas R-Car S4-8 Soc to the
+> R-Car GPIO DT bindings and driver.  It has been tested with i2c-gpio,
+> by reading the contents from the I2C EEPROMs on the Spider development
+> board.
 >
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index bfc91f122d5f..12de0b22b4ef 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -755,4 +755,15 @@ static inline void gpiochip_unlock_as_irq(struct gpio_chip *gc,
->         device_for_each_child_node(dev, child)                                  \
->                 if (!fwnode_property_present(child, "gpio-controller")) {} else
+> Changes compared to v1:
+>   - Drop RFC,
+>   - Split series in DT bindings+driver and DTS series.
 >
-> +static inline unsigned int gpiochip_node_count(struct device *dev)
-> +{
-> +       struct fwnode_handle *child;
-> +       unsigned int count = 0;
-> +
-> +       for_each_gpiochip_node(dev, child)
-> +               count++;
-> +
-> +       return count;
-> +}
-> +
->  #endif /* __LINUX_GPIO_DRIVER_H */
+> Thanks!
+>
+> Geert Uytterhoeven (2):
+>   dt-bindings: gpio: renesas,rcar-gpio: Add r8a779f0 support
+>   gpio: rcar: Add R-Car Gen4 support
+>
+>  .../devicetree/bindings/gpio/renesas,rcar-gpio.yaml        | 5 +++++
+>  drivers/gpio/gpio-rcar.c                                   | 7 +++++--
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+>
 > --
-> 2.35.1
+> 2.25.1
 >
+> Gr{oetje,eeting}s,
+>
+>                                                 Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                                             -- Linus Torvalds
 
-Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Applied, thanks!
+
+Bart
