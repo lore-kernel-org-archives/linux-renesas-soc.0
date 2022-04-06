@@ -2,110 +2,120 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA74C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F458C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232876AbiDFMT3 (ORCPT
+        id S233183AbiDFM1S (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54876 "EHLO
+        Wed, 6 Apr 2022 08:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232779AbiDFMTE (ORCPT
+        with ESMTP id S232921AbiDFM1K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:19:04 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0DA0109A65
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Apr 2022 00:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=KaJn7Gi/gqVuEmNrjPS40alhwYrU
-        tCotnu4qjAqSYL0=; b=L33fG8W7PM+IzXsntCFBZZSbQ86rEscCp16Vqa6gMSHB
-        ZDI/f9dGPAuIneLHQqoDhOX5NpcDnzM6+/jf4Gl6jfMG9e0lEQR+W9S476LKu7ba
-        2PomVEJh929eu//4Hs+wtZZP8OLSV6gUeHZAA9c0ztXc8+ix4K8hccLc6LCTWLQ=
-Received: (qmail 2627153 invoked from network); 6 Apr 2022 09:58:49 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Apr 2022 09:58:49 +0200
-X-UD-Smtp-Session: l3s3148p1@qlYeu/fbSJQgAQnoAH8rAO83AtqmbDBd
-Date:   Wed, 6 Apr 2022 09:58:46 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 01/10] mmc: core: improve API to make clear
- mmc_hw_reset is for cards
-Message-ID: <Yk1INkxW/i5p8yxf@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220321115059.21803-1-wsa+renesas@sang-engineering.com>
- <20220321115059.21803-2-wsa+renesas@sang-engineering.com>
- <CAPDyKFqt8UUfGVHvpSX5ciP7qJReTYed=sffCGWPP9psS3vC_w@mail.gmail.com>
+        Wed, 6 Apr 2022 08:27:10 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB793B120E;
+        Wed,  6 Apr 2022 01:17:05 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id y38so2724931ybi.8;
+        Wed, 06 Apr 2022 01:17:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vrgQWoWyB5y62bEoUfojWKqj8rDJrUtN2w1+bXGXRNI=;
+        b=NKy9MbIr/mGh2TiFzd/eiHPj42EQXvCCaQeuYu/RvH7JJTLZdVUH0VcMDNsMMDfKfe
+         CrfWbqUshjJ1nYkUjy1oBFQESesK2xslFONY1luaUl0a6TP/oAk8Hcn//gITAXlHNHEj
+         oslvzJXMqjJgdssfKkxushn5ALO4npvXdNlMKR017hHxxyHTXjBRXuuik7ij9AAiTa9c
+         3yRx5BS8/OLXN3DOVG5/40nJhr7DMmMGXv3O4SOOfJKlKLIIvpJg1C/cjYxZpfBmzxo6
+         d6g5jCMsfKzPyDfqt0b0U12xjhh0dPmqMiNLYf3yo3F/RuqEeWmmqPev1TTtWpa963z0
+         onmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vrgQWoWyB5y62bEoUfojWKqj8rDJrUtN2w1+bXGXRNI=;
+        b=3SAQ6KKhn0mlkMaT/rzSjx9x1wGLJEvKiVXNhTMoyfw01goGEzvAA5Oeu80ecAHDHi
+         rs69YutNB6pi0vfM64GUoVzTTPQq5jbuNowAqs9gao95K52Ygl8251drisKABvJ9yaFu
+         foTzot71E8rc+LlV6714LtVf8BLa6ob/OX8YqeUhKmw06RWGEfElwSH359aqrbtvr2Hq
+         FZZ/bK/oLKWSbH8OhA8FmASf+mYHoDIg+5dLiPm+KXUnLVRtcgsHusnO+t4mL8TWvCm/
+         FNHZtN901Kx2jniLVPxNFFVfPsVK9bgl1UL+j7uUcXggQ10ZJ9+hlz/nRC2WxPxqu9Sv
+         fxFw==
+X-Gm-Message-State: AOAM530lKhZevOQvld3TyxkJTx/QHgzPx8F25ldLL2dd62MZMpI/bE/Q
+        UDD2y+crQkivpU88XmgEIHhamjJU9ldrv2EoxNY=
+X-Google-Smtp-Source: ABdhPJzIGX4X6wQ3/0KaVtUXKipS8SltQuKn2tGDJJTtWysBh46/b/bDrEbDdoAAe1895xTV1smSrAMigR3+jtt64cY=
+X-Received: by 2002:a25:e0d3:0:b0:63d:c615:afb8 with SMTP id
+ x202-20020a25e0d3000000b0063dc615afb8mr5380270ybg.182.1649233024822; Wed, 06
+ Apr 2022 01:17:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cQf4rzNHPH4cfRh2"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqt8UUfGVHvpSX5ciP7qJReTYed=sffCGWPP9psS3vC_w@mail.gmail.com>
+References: <20220406072417.14185-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <6419fd7b-8213-3a51-268b-a9602c770991@linaro.org>
+In-Reply-To: <6419fd7b-8213-3a51-268b-a9602c770991@linaro.org>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Wed, 6 Apr 2022 09:16:38 +0100
+Message-ID: <CA+V-a8sZdrpYMy-FSbaZzbKw_F_jEhTpOExPXr8_jDXD4_pooA@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/renesas-ostm: Add support for RZ/V2L SoC
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Daniel,
 
---cQf4rzNHPH4cfRh2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Apr 6, 2022 at 9:03 AM Daniel Lezcano <daniel.lezcano@linaro.org> w=
+rote:
+>
+> On 06/04/2022 09:24, Lad Prabhakar wrote:
+> > The OSTM block is identical on Renesas RZ/G2L and RZ/V2L SoC's, so inst=
+ead
+> > of adding dependency for each SoC's add dependency on ARCH_RZG2L. The
+> > ARCH_RZG2L config option is already selected by ARCH_R9A07G044 and
+> > ARCH_R9A07G054.
+> >
+> > With the above change OSTM will be enabled on RZ/V2L SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >   drivers/clocksource/renesas-ostm.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/r=
+enesas-ostm.c
+> > index 21d1392637b8..8da972dc1713 100644
+> > --- a/drivers/clocksource/renesas-ostm.c
+> > +++ b/drivers/clocksource/renesas-ostm.c
+> > @@ -224,7 +224,7 @@ static int __init ostm_init(struct device_node *np)
+> >
+> >   TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
+> >
+> > -#ifdef CONFIG_ARCH_R9A07G044
+> > +#ifdef CONFIG_ARCH_RZG2L
+>
+> I'm not finding this option anywhere
+>
+ARCH_RZG2L config option is part of v5.18-rc1 [0]
 
-Hi Ulf,
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/soc/renesas/Kconfig?h=3Dv5.18-rc1#n43
 
-> > To make it unambiguous that mmc_hw_reset() is for cards and not for
-> > controllers, we a) add 'card' to the function name and b) make the
-> > function argument mmc_card instead of mmc_host. A fallback is provided
-> > until all users are converted.
->=20
-> In my opinion, I think b) is sufficient and would be a nice improvement.
-
-If you say so... but I do wonder why we can't be super clear with the
-function name alone without the function argument as an additional
-source of information? Kernel hacking is complicated enough.
-
-> In this regard, I suggest we make one big cross-subsystem patch (the
-> smallest change as possible) then I can pick it up and send it for the
-> v5.18-rc2.
-
-Ok, I can prepare this.
-
-> > -static void mmc_hw_reset_for_init(struct mmc_host *host)
-> > +/* we can't use mmc_card as a parameter, it is not populated yet */
->=20
-> Please drop this. The function is internal/static and at least to me,
-> rather self-explanatory.
-
-All other ?w_reset() functions have a card as a parameter. For people
-trying to get into the MMC core, this comment might be helpful to
-understand the anomaly? I know that you as the maintainer do know this
-by heart, this comment is meant for people learning the stuff.
-
-All the best,
-
-   Wolfram
-
---cQf4rzNHPH4cfRh2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJNSDIACgkQFA3kzBSg
-KbZeZxAApOuKoRg/pcDM9Aqk/r5xQr0MifjkJ89D9Km+0feVU7H+g9UOwQnenXZ1
-Ki6NIoiXNQQAUhRJP5gKjLZ1uA/mNNzYQqjLBmeRP/5r8y2CeNbR8wm83EdbmoRO
-O8CR/2wwfWAhPtXz35yLq9+RKmKdiK3/UI/BYp9bupmM5nClDlVnMJa28qkp1TSg
-dyiIQ40Smc1mbr9YTVIaZ8cxtookuczxhrUd+UyQ9MtBwq3LQ1DKR05BqRsv6AQF
-J86gbBtjOr6ZyO4+3AS5+BLwQ2b1ZoZjQfPOcgor5+DYETIK66prurPL/ZEKLML9
-YVoS77jnlyODq3LdMtYhLrJUZultkfO7f3r/3y66JBMuw8bNfLG8nbozT/7q81Mp
-nHxARkZbV7syIRILUFcTE3MnhysgN55REfE4EuA2CnJ2dvmxCOI+HoscNIFE8X1e
-wBTMz3LLnNmSHuCXh5mBT+dKMiKy0PsD0zs8ki7BhNPogOYC8evBobruUtxVo5ro
-Z3cGAkRqF4GB7oCGFqEddbjeex2IOWBi1d/b8aA1RO40bxtyY2GfFewnCP2S4K5n
-2kJY9B4zUMoA/jrZdWZzQJXgwsrOpJ2Lt57lkUOu6J4Tv3gaYYzG/TqFvH+IJZ4R
-VfwSURSReiLjxIJCEzMYwYssXQkFr55vvexiTeeE47kjoHdkgC0=
-=CuG5
------END PGP SIGNATURE-----
-
---cQf4rzNHPH4cfRh2--
+Cheers,
+Prabhakar
+>
+> >   static int __init ostm_probe(struct platform_device *pdev)
+> >   {
+> >       struct device *dev =3D &pdev->dev;
+>
+>
+> --
+> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
+M SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
