@@ -2,120 +2,141 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F458C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D96C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:41:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233183AbiDFM1S (ORCPT
+        id S230040AbiDFMmP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:27:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35400 "EHLO
+        Wed, 6 Apr 2022 08:42:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232921AbiDFM1K (ORCPT
+        with ESMTP id S232170AbiDFMlt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:27:10 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB793B120E;
-        Wed,  6 Apr 2022 01:17:05 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id y38so2724931ybi.8;
-        Wed, 06 Apr 2022 01:17:05 -0700 (PDT)
+        Wed, 6 Apr 2022 08:41:49 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C59B1B2C41
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Apr 2022 01:42:59 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id d3so2082743wrb.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Apr 2022 01:42:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vrgQWoWyB5y62bEoUfojWKqj8rDJrUtN2w1+bXGXRNI=;
-        b=NKy9MbIr/mGh2TiFzd/eiHPj42EQXvCCaQeuYu/RvH7JJTLZdVUH0VcMDNsMMDfKfe
-         CrfWbqUshjJ1nYkUjy1oBFQESesK2xslFONY1luaUl0a6TP/oAk8Hcn//gITAXlHNHEj
-         oslvzJXMqjJgdssfKkxushn5ALO4npvXdNlMKR017hHxxyHTXjBRXuuik7ij9AAiTa9c
-         3yRx5BS8/OLXN3DOVG5/40nJhr7DMmMGXv3O4SOOfJKlKLIIvpJg1C/cjYxZpfBmzxo6
-         d6g5jCMsfKzPyDfqt0b0U12xjhh0dPmqMiNLYf3yo3F/RuqEeWmmqPev1TTtWpa963z0
-         onmg==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=UbK4RBSd0yuJs4TmZuJR2YyTKgeyXT9QjtmlpxRzZh8=;
+        b=JAr2POc58WMdiI6hHHtXn4NZAcuZEtBVynJuBo+HcVSzObZkeKA62juntxIX2PefnD
+         /oS4CxISFNDf4kF9m+Ny3B/ha9ND19AYwAGGZ0Ex7yId9QHZ0aWH+tqSCj4lQpQ/n4w9
+         0vHfPQBz6oGFLJUtXe8aQfleIIX0puOpykpgUuwEX13ifgWYxPBIc/q+6xPUWaqOsxIx
+         IyJCtJx4Gz2C4S10JxNOsSm/Q9GaStcxM7sJuW6VJshsNTKRlMkrF1Hr+6yN6RVjYMOL
+         sKACCH7mbUbDESk5uViqX/q/5QvCUgPTa8Ge4MvrgtNh4HDkzt4D7w3B9oaGo+kOM5tD
+         siSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vrgQWoWyB5y62bEoUfojWKqj8rDJrUtN2w1+bXGXRNI=;
-        b=3SAQ6KKhn0mlkMaT/rzSjx9x1wGLJEvKiVXNhTMoyfw01goGEzvAA5Oeu80ecAHDHi
-         rs69YutNB6pi0vfM64GUoVzTTPQq5jbuNowAqs9gao95K52Ygl8251drisKABvJ9yaFu
-         foTzot71E8rc+LlV6714LtVf8BLa6ob/OX8YqeUhKmw06RWGEfElwSH359aqrbtvr2Hq
-         FZZ/bK/oLKWSbH8OhA8FmASf+mYHoDIg+5dLiPm+KXUnLVRtcgsHusnO+t4mL8TWvCm/
-         FNHZtN901Kx2jniLVPxNFFVfPsVK9bgl1UL+j7uUcXggQ10ZJ9+hlz/nRC2WxPxqu9Sv
-         fxFw==
-X-Gm-Message-State: AOAM530lKhZevOQvld3TyxkJTx/QHgzPx8F25ldLL2dd62MZMpI/bE/Q
-        UDD2y+crQkivpU88XmgEIHhamjJU9ldrv2EoxNY=
-X-Google-Smtp-Source: ABdhPJzIGX4X6wQ3/0KaVtUXKipS8SltQuKn2tGDJJTtWysBh46/b/bDrEbDdoAAe1895xTV1smSrAMigR3+jtt64cY=
-X-Received: by 2002:a25:e0d3:0:b0:63d:c615:afb8 with SMTP id
- x202-20020a25e0d3000000b0063dc615afb8mr5380270ybg.182.1649233024822; Wed, 06
- Apr 2022 01:17:04 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=UbK4RBSd0yuJs4TmZuJR2YyTKgeyXT9QjtmlpxRzZh8=;
+        b=VruVSiE+L9DSm8BU/8ov/3fI85w3wWmcTYkHkYF3L0voEhaj85HyNv+X06d0UPhPZb
+         Qp/qSp6xHow6pVQbB4/ktKL1qxHwhDYQwqmgsc7BbCoEmk2cRct2f7ZG8hHPtP4P6uVR
+         I8nnCTeMUxaTr5McQNISkNaFIHAVzq4ga6na6/sJoao4f2neWiUO0RE0dvuJCA+9g3R5
+         Heo37IkKxUsaGFi1ANbcAqP52pRLK6LgjAmxEf+1p8UymZBv8XixuFRsE1oCwrJILhTm
+         bhmL1YwQFu1Q3axtMw05JOJlqHaUbwTIdHHfdqLmnSkcMWCGmdTw5rVSiky1jew693Dh
+         mkTQ==
+X-Gm-Message-State: AOAM532iiaLO1m0D446IPB2EBS/8FjHafnqHD5dmF0Vh2hw5a7Ot7Uue
+        mG2MWjMI/NarNoM2ML70WjmOKw==
+X-Google-Smtp-Source: ABdhPJwt5POiwqFcwAJHu+CJKfOSdMY7MGAHgfwGFWwu6TDk8N+rhFOlTkF49gRMx+8a6bDs6y+Cgw==
+X-Received: by 2002:a05:6000:1841:b0:204:ebf:1181 with SMTP id c1-20020a056000184100b002040ebf1181mr5758309wri.681.1649234577926;
+        Wed, 06 Apr 2022 01:42:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e34:ed2f:f020:261f:c14c:d23b:d177? ([2a01:e34:ed2f:f020:261f:c14c:d23b:d177])
+        by smtp.googlemail.com with ESMTPSA id z5-20020a05600c0a0500b0037bb8df81a2sm4983659wmp.13.2022.04.06.01.42.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Apr 2022 01:42:57 -0700 (PDT)
+Message-ID: <8162900c-054d-6260-94ab-82ea090de499@linaro.org>
+Date:   Wed, 6 Apr 2022 10:42:55 +0200
 MIME-Version: 1.0
-References: <20220406072417.14185-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <6419fd7b-8213-3a51-268b-a9602c770991@linaro.org>
-In-Reply-To: <6419fd7b-8213-3a51-268b-a9602c770991@linaro.org>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Wed, 6 Apr 2022 09:16:38 +0100
-Message-ID: <CA+V-a8sZdrpYMy-FSbaZzbKw_F_jEhTpOExPXr8_jDXD4_pooA@mail.gmail.com>
-Subject: Re: [PATCH] clocksource/drivers/renesas-ostm: Add support for RZ/V2L SoC
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] clocksource/drivers/renesas-ostm: Add support for RZ/V2L
+ SoC
+Content-Language: en-US
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         LKML <linux-kernel@vger.kernel.org>,
         LAK <linux-arm-kernel@lists.infradead.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20220406072417.14185-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <6419fd7b-8213-3a51-268b-a9602c770991@linaro.org>
+ <CA+V-a8sZdrpYMy-FSbaZzbKw_F_jEhTpOExPXr8_jDXD4_pooA@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CA+V-a8sZdrpYMy-FSbaZzbKw_F_jEhTpOExPXr8_jDXD4_pooA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Daniel,
 
-On Wed, Apr 6, 2022 at 9:03 AM Daniel Lezcano <daniel.lezcano@linaro.org> w=
-rote:
->
-> On 06/04/2022 09:24, Lad Prabhakar wrote:
-> > The OSTM block is identical on Renesas RZ/G2L and RZ/V2L SoC's, so inst=
-ead
-> > of adding dependency for each SoC's add dependency on ARCH_RZG2L. The
-> > ARCH_RZG2L config option is already selected by ARCH_R9A07G044 and
-> > ARCH_R9A07G054.
-> >
-> > With the above change OSTM will be enabled on RZ/V2L SoC.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >   drivers/clocksource/renesas-ostm.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/r=
-enesas-ostm.c
-> > index 21d1392637b8..8da972dc1713 100644
-> > --- a/drivers/clocksource/renesas-ostm.c
-> > +++ b/drivers/clocksource/renesas-ostm.c
-> > @@ -224,7 +224,7 @@ static int __init ostm_init(struct device_node *np)
-> >
-> >   TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
-> >
-> > -#ifdef CONFIG_ARCH_R9A07G044
-> > +#ifdef CONFIG_ARCH_RZG2L
->
-> I'm not finding this option anywhere
->
-ARCH_RZG2L config option is part of v5.18-rc1 [0]
+Hi Lad,
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/soc/renesas/Kconfig?h=3Dv5.18-rc1#n43
+On 06/04/2022 10:16, Lad, Prabhakar wrote:
+> Hi Daniel,
+> 
+> On Wed, Apr 6, 2022 at 9:03 AM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 06/04/2022 09:24, Lad Prabhakar wrote:
+>>> The OSTM block is identical on Renesas RZ/G2L and RZ/V2L SoC's, so instead
+>>> of adding dependency for each SoC's add dependency on ARCH_RZG2L. The
+>>> ARCH_RZG2L config option is already selected by ARCH_R9A07G044 and
+>>> ARCH_R9A07G054.
+>>>
+>>> With the above change OSTM will be enabled on RZ/V2L SoC.
+>>>
+>>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>> ---
+>>>    drivers/clocksource/renesas-ostm.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
+>>> index 21d1392637b8..8da972dc1713 100644
+>>> --- a/drivers/clocksource/renesas-ostm.c
+>>> +++ b/drivers/clocksource/renesas-ostm.c
+>>> @@ -224,7 +224,7 @@ static int __init ostm_init(struct device_node *np)
+>>>
+>>>    TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
+>>>
+>>> -#ifdef CONFIG_ARCH_R9A07G044
+>>> +#ifdef CONFIG_ARCH_RZG2L
+>>
+>> I'm not finding this option anywhere
+>>
+> ARCH_RZG2L config option is part of v5.18-rc1 [0]
+> 
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/soc/renesas/Kconfig?h=v5.18-rc1#n43
 
-Cheers,
-Prabhakar
->
-> >   static int __init ostm_probe(struct platform_device *pdev)
-> >   {
-> >       struct device *dev =3D &pdev->dev;
->
->
-> --
-> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
-M SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
+Ok, thanks
+
+   -- Daniel
+
+> Cheers,
+> Prabhakar
+>>
+>>>    static int __init ostm_probe(struct platform_device *pdev)
+>>>    {
+>>>        struct device *dev = &pdev->dev;
+>>
+>>
+>> --
+>> <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+>>
+>> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+>> <http://twitter.com/#!/linaroorg> Twitter |
+>> <http://www.linaro.org/linaro-blog/> Blog
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
