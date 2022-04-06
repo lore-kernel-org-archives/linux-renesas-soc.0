@@ -2,67 +2,113 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7F9C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFF3C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:09:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232238AbiDFMKj (ORCPT
+        id S229646AbiDFMLa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:10:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43508 "EHLO
+        Wed, 6 Apr 2022 08:11:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230100AbiDFMKa (ORCPT
+        with ESMTP id S229677AbiDFMLM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:10:30 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D9F491544A2;
-        Wed,  6 Apr 2022 00:53:37 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,239,1643641200"; 
-   d="scan'208";a="115880851"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Apr 2022 16:53:37 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A2A75400F941;
-        Wed,  6 Apr 2022 16:53:35 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] pinctrl: renesas: Kconfig: Select PINCTRL_RZG2L if ARCH_RZG2L is enabled
-Date:   Wed,  6 Apr 2022 08:53:18 +0100
-Message-Id: <20220406075318.14385-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 6 Apr 2022 08:11:12 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4243751FD5C
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Apr 2022 01:03:11 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id n63-20020a1c2742000000b0038d0c31db6eso1097462wmn.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Apr 2022 01:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=AsNQPl7XwXuX2WAvg4rLC1LCZqhZGP7Ik6P3va1VwEg=;
+        b=K3EdZM8mcFbYT7dtM+CtBrf3JsqmnVU8klaSh8QuC87mQ6I2UZBbBWDVsLyDXivLin
+         +jsd4iv86dMV/fc20qaYKCgbYC4D3b82pRJUIRZg+fnLTxPsbS2fM3vi3r2RX3avdCOg
+         RSZzsX884aDRmw+Kcw7u7J5IUlp1d90ao9b/1/wmYiRWgrMYW8LIBS2mdrtILsaCCH7F
+         QiWAEtxRv1+LQFpBTGK8MW89ti5EE4bAKjuH2OdImw/z+o3RsxKAS/8v9kXsKXUN4LKn
+         Mj3X0fshu+zxYBctBjVgmHfyuzKnK7YXxI2/wYgHMkxxRQvOQefR3wV1Y1+lCRgEeZUX
+         rX4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=AsNQPl7XwXuX2WAvg4rLC1LCZqhZGP7Ik6P3va1VwEg=;
+        b=fSWZqXcjpIeSgkKiSluDO4WAoTSsiMK0r9MO+1E9XKpSRaJola8OcODK7KJRPN/Nc6
+         vWXgjpy75OI9U8WQ3lhR+WQoxkM7nrxAcIqtLoOeucpczHbKYLqdr6or3XUkHDtXVqL0
+         PW52zaXI/1VuhHhmLBnqh3woXPvrt4kfqSMEqbeXyKhZLSFHWjbXrxkMZhKeJaWR1WQS
+         MQUnhXbTr95TMch+MKRQ9AMnzvAlbZWi4PhiO0h9e1fP1OzlI3eAnj0oEOVfzHDrWR69
+         iCD9akqlk3/4dotu0cqLLHw8nOpwAygk4jyXSCcMgzThcDU6B82uQxL3gj1mdrTNj2pN
+         ytzA==
+X-Gm-Message-State: AOAM530J1BENlQgtjc4xwhJnxh0dCQYOt85ghR8ySDtYg/+60yTy30cq
+        /KFOyATsuIcOVXK6yAkNnsknqw==
+X-Google-Smtp-Source: ABdhPJyEGfgOxaVvfj11uScInCMKRFZYCH/NJehxzp/gPbS+4SSjoS2Lxm7d1aUTKXwLeNu/zYb4ng==
+X-Received: by 2002:a7b:c922:0:b0:383:e7e2:4a1a with SMTP id h2-20020a7bc922000000b00383e7e24a1amr6487169wml.51.1649232188901;
+        Wed, 06 Apr 2022 01:03:08 -0700 (PDT)
+Received: from ?IPV6:2a01:e34:ed2f:f020:261f:c14c:d23b:d177? ([2a01:e34:ed2f:f020:261f:c14c:d23b:d177])
+        by smtp.googlemail.com with ESMTPSA id e9-20020a5d5009000000b002060f7faa02sm8276556wrt.116.2022.04.06.01.03.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Apr 2022 01:03:08 -0700 (PDT)
+Message-ID: <6419fd7b-8213-3a51-268b-a9602c770991@linaro.org>
+Date:   Wed, 6 Apr 2022 10:03:07 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] clocksource/drivers/renesas-ostm: Add support for RZ/V2L
+ SoC
+Content-Language: en-US
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+References: <20220406072417.14185-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20220406072417.14185-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-GPIO (PINCTRL) block is identical on Renesas RZ/G2L, RZ/G2UL and RZ/V2L
-SoC's, so instead of selecting PINCTRL_RZG2L config for each SoC select
-PINCTRL_RZG2L config option if ARCH_RZG2L is enabled. The ARCH_RZG2L
-config option is already selected by ARCH_R9A07G043, ARCH_R9A07G044 and
-ARCH_R9A07G054.
+On 06/04/2022 09:24, Lad Prabhakar wrote:
+> The OSTM block is identical on Renesas RZ/G2L and RZ/V2L SoC's, so instead
+> of adding dependency for each SoC's add dependency on ARCH_RZG2L. The
+> ARCH_RZG2L config option is already selected by ARCH_R9A07G044 and
+> ARCH_R9A07G054.
+> 
+> With the above change OSTM will be enabled on RZ/V2L SoC.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>   drivers/clocksource/renesas-ostm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
+> index 21d1392637b8..8da972dc1713 100644
+> --- a/drivers/clocksource/renesas-ostm.c
+> +++ b/drivers/clocksource/renesas-ostm.c
+> @@ -224,7 +224,7 @@ static int __init ostm_init(struct device_node *np)
+>   
+>   TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
+>   
+> -#ifdef CONFIG_ARCH_R9A07G044
+> +#ifdef CONFIG_ARCH_RZG2L
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/pinctrl/renesas/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I'm not finding this option anywhere
 
-diff --git a/drivers/pinctrl/renesas/Kconfig b/drivers/pinctrl/renesas/Kconfig
-index 6b38720c56e3..217c8ca9896a 100644
---- a/drivers/pinctrl/renesas/Kconfig
-+++ b/drivers/pinctrl/renesas/Kconfig
-@@ -38,8 +38,7 @@ config PINCTRL_RENESAS
- 	select PINCTRL_PFC_R8A77995 if ARCH_R8A77995
- 	select PINCTRL_PFC_R8A779A0 if ARCH_R8A779A0
- 	select PINCTRL_PFC_R8A779F0 if ARCH_R8A779F0
--	select PINCTRL_RZG2L if ARCH_R9A07G044
--	select PINCTRL_RZG2L if ARCH_R9A07G054
-+	select PINCTRL_RZG2L if ARCH_RZG2L
- 	select PINCTRL_PFC_SH7203 if CPU_SUBTYPE_SH7203
- 	select PINCTRL_PFC_SH7264 if CPU_SUBTYPE_SH7264
- 	select PINCTRL_PFC_SH7269 if CPU_SUBTYPE_SH7269
+
+>   static int __init ostm_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+
+
 -- 
-2.17.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
