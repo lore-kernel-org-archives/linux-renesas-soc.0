@@ -2,128 +2,67 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8AFC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7F9C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231781AbiDFMIG (ORCPT
+        id S232238AbiDFMKj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48132 "EHLO
+        Wed, 6 Apr 2022 08:10:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233065AbiDFMHy (ORCPT
+        with ESMTP id S230100AbiDFMKa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:07:54 -0400
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 790521D2;
-        Wed,  6 Apr 2022 00:49:13 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id BCE68FF816;
-        Wed,  6 Apr 2022 07:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649231352;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=v+Um5lcXyFGsJu7XXClC2r25jtPHetLl/vRWs5TLU7A=;
-        b=XSa7K7eEsA5vD799sP0Ueq8b6b5wG8u6GscKYgcCywD8uL8GnDaldmyJXkVO0jBYOcn7IW
-        UNaJQ1SemC4STYvW0xE7pd9MkT3hvZZOppJFktp3e0gVJKHsU3q/iHNQ+neyvxLA39k1e0
-        SjDXQFfJ0pU4VSl06zfCU7Nq9ErvGPplK+aUOIV6m2mJsZRQ551KJWt16gxM9Imoj8bcFg
-        fOYbRq7DxdYlKoTd4/g+XJfvYhuicyG7jSrQ+yU0xHLJAdCtYC89gsw5oK/r2ZNu9EvEDf
-        F+JXuMliiZ9mTKPEJujJMNA0Z0sUfShVcxW9e9hDUto+wmCe04esaEU431j5TQ==
-Date:   Wed, 6 Apr 2022 09:49:08 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v7 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
- support
-Message-ID: <20220406094908.48ecc4bb@xps13>
-In-Reply-To: <YkxXUdMA75b8keSd@smile.fi.intel.com>
-References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
-        <20220405081911.1349563-6-miquel.raynal@bootlin.com>
-        <YkxXUdMA75b8keSd@smile.fi.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Wed, 6 Apr 2022 08:10:30 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D9F491544A2;
+        Wed,  6 Apr 2022 00:53:37 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,239,1643641200"; 
+   d="scan'208";a="115880851"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 06 Apr 2022 16:53:37 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A2A75400F941;
+        Wed,  6 Apr 2022 16:53:35 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] pinctrl: renesas: Kconfig: Select PINCTRL_RZG2L if ARCH_RZG2L is enabled
+Date:   Wed,  6 Apr 2022 08:53:18 +0100
+Message-Id: <20220406075318.14385-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Andy,
+GPIO (PINCTRL) block is identical on Renesas RZ/G2L, RZ/G2UL and RZ/V2L
+SoC's, so instead of selecting PINCTRL_RZG2L config for each SoC select
+PINCTRL_RZG2L config option if ARCH_RZG2L is enabled. The ARCH_RZG2L
+config option is already selected by ARCH_R9A07G043, ARCH_R9A07G044 and
+ARCH_R9A07G054.
 
-andriy.shevchenko@linux.intel.com wrote on Tue, 5 Apr 2022 17:50:57
-+0300:
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/pinctrl/renesas/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> On Tue, Apr 05, 2022 at 10:19:07AM +0200, Miquel Raynal wrote:
-> > The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
-> > dmamux register located in the system control area which can take up to
-> > 32 requests (16 per DMA controller). Each DMA channel can be wired to
-> > two different peripherals.
-> >=20
-> > We need two additional information from the 'dmas' property: the channel
-> > (bit in the dmamux register) that must be accessed and the value of the
-> > mux for this channel. =20
->=20
-> ...
->=20
-> >  dw_dmac-y			:=3D platform.o
-> >  dw_dmac-$(CONFIG_OF)		+=3D of.o =20
->=20
-> > +obj-$(CONFIG_RZN1_DMAMUX)	+=3D rzn1-dmamux.o =20
->=20
-> I would move it down in the file to distinguish more generic drivers
-> from specific quirks.
+diff --git a/drivers/pinctrl/renesas/Kconfig b/drivers/pinctrl/renesas/Kconfig
+index 6b38720c56e3..217c8ca9896a 100644
+--- a/drivers/pinctrl/renesas/Kconfig
++++ b/drivers/pinctrl/renesas/Kconfig
+@@ -38,8 +38,7 @@ config PINCTRL_RENESAS
+ 	select PINCTRL_PFC_R8A77995 if ARCH_R8A77995
+ 	select PINCTRL_PFC_R8A779A0 if ARCH_R8A779A0
+ 	select PINCTRL_PFC_R8A779F0 if ARCH_R8A779F0
+-	select PINCTRL_RZG2L if ARCH_R9A07G044
+-	select PINCTRL_RZG2L if ARCH_R9A07G054
++	select PINCTRL_RZG2L if ARCH_RZG2L
+ 	select PINCTRL_PFC_SH7203 if CPU_SUBTYPE_SH7203
+ 	select PINCTRL_PFC_SH7264 if CPU_SUBTYPE_SH7264
+ 	select PINCTRL_PFC_SH7269 if CPU_SUBTYPE_SH7269
+-- 
+2.17.1
 
-Ok.
-
->=20
-> >  obj-$(CONFIG_DW_DMAC_PCI)	+=3D dw_dmac_pci.o
-> >  dw_dmac_pci-y			:=3D pci.o =20
->=20
-> ...
->=20
-> > +#define RZN1_DMAMUX_SPLIT 16 =20
->=20
-> I would name it more explicitly:
->=20
-> #define RZN1_DMAMUX_SPLIT_1_0	 16
-
-I am sorry but I don't understand this suffix, which probably means
-that it is not as clear as we wish. Do you mind if I stick to
-RZN1_DMAMUX_SPLIT?
-
-> ...
->=20
-> > +	dmac_idx =3D map->req_idx < RZN1_DMAMUX_SPLIT ? 0 : 1; =20
->=20
-> ...and hence use positive conditional:
->=20
-> 	dmac_idx =3D map->req_idx >=3D RZN1_DMAMUX_SPLIT_1_0 ? 1 : 0;
-
-I will.
-
->=20
-> With above addressed
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->=20
-
-
-Thanks,
-Miqu=C3=A8l
