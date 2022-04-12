@@ -2,104 +2,204 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B87C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 05:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CC8C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:01:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240419AbiDLGAW (ORCPT
+        id S1344141AbiDLKDa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 02:00:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+        Tue, 12 Apr 2022 06:03:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235747AbiDLGAV (ORCPT
+        with ESMTP id S1387732AbiDLJJJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 02:00:21 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E8F22B19;
-        Mon, 11 Apr 2022 22:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1649743077;
-        bh=rr0cTwDe1vq8z9C294X+ZlMMl95EgN8jvthj5DoY4H4=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=CEWKapWzZz2/XVAiysEQ5YfaLui69WUpAkSquQoNEmmJaZ+JR3FMdKxD83blLMplf
-         7zrN1rRholDLVBrPQOR+8bqth0P+m9cgq7lJLEMqrhcHbIZV7xZQQawz+wxqVfmR68
-         Jp8u//TcOG3j8d9nxHtjA7F22oNMeOVBJ/ywVAQY=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.20.60] ([92.116.135.215]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MkHMP-1oOFv340eP-00ke0g; Tue, 12
- Apr 2022 07:57:57 +0200
-Message-ID: <28bf52e7-e0b3-19b2-a617-5783aa352db0@gmx.de>
-Date:   Tue, 12 Apr 2022 07:56:13 +0200
+        Tue, 12 Apr 2022 05:09:09 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A43CEB
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Apr 2022 01:22:28 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id 2so17751417pjw.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Apr 2022 01:22:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=EoPQEWTnvTGdLJD5EA090gGEZDaz3E4D+PKNG3xuv/o=;
+        b=Y7jpuusyQvmczsHY0bJm5P6HQwQFrbXdRnIzVLnlqIpe8aknk7dDhlZ13pNIzDgpCn
+         6fRV6c1vhkSyKY8n7mYbuuTSZy4jSOlKZLsHbUAbiNcJz663lW8NFFy/i/7pVGvt2xdJ
+         IDjAvZstl732PsREaAhOu08nRN3q1hpiZwWmnsuyGzjZwL+F8N3r+HYno5fDBHDPd/X1
+         drbAi7q16SgaHOMw4bhkxm9W4l6XDVdtesg6OSgaPCbwvt+xgR8qZijr0U+BBabcDDmO
+         Ar2/UuUZ1HijFvuGgaJd9K+HjB5r8ZYFfPdIlXt4utAHw2mtx//KfmGrGW4G//d5P7Rl
+         wCpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=EoPQEWTnvTGdLJD5EA090gGEZDaz3E4D+PKNG3xuv/o=;
+        b=MMyiXpxX6y+peJK3o1QWk/TcVtt9QP42J6VndbPE5nqjn5AKy0/1iurEVFn2frAkHK
+         t2289gZTvW69vwSK5Dh4fazRGVsrE4PWsKMpS7ESUeitVmr5RrF80/J1YHBOrSUICQWz
+         Lex1W2YJIVd/32fW8G3Nu8aj0Uk0UkcduVqja70qhf8cTK37QqB2fM/bpUpPZCc30Z74
+         AdrF9mrrH0XYjE+8gdebcK4uVgKgIWl16A1lbTDNcJ1QNN6fcUVvGmD+ZS+DXR7kmcEP
+         ehgp5bL1mH8HbnNI7iDz3PfljAUyywrXdawewRICpoIPC9fQisAnCSn14TocqocUzccg
+         /aMA==
+X-Gm-Message-State: AOAM532kWS4ATbvZX0qMef1nFKj1NBcuj3FO2dDeGr2yI96lL3Ya5kn4
+        +OUVkDttz0m7gLJnUO/BonQp6AWerLjkc4Zr
+X-Google-Smtp-Source: ABdhPJxtOf1S8W0GKp2K26zPIR9RhqdbVf5pS56fH1ef5JpHvLj+XUk6OxSathHU8KH1oAhW87zxrw==
+X-Received: by 2002:a17:90a:8b91:b0:1be:db25:eecd with SMTP id z17-20020a17090a8b9100b001bedb25eecdmr3702104pjn.10.1649751747716;
+        Tue, 12 Apr 2022 01:22:27 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id x123-20020a623181000000b004fdf99d25f6sm29954306pfx.80.2022.04.12.01.22.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Apr 2022 01:22:27 -0700 (PDT)
+Message-ID: <625536c3.1c69fb81.435d2.fc24@mx.google.com>
+Date:   Tue, 12 Apr 2022 01:22:27 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] video: fbdev: sh_mobile_lcdcfb: Remove
- sh_mobile_lcdc_check_var() declaration
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org
-References: <632d1ef6be69c93cd37b9336a133f8c5ec779c8a.1649681814.git.geert+renesas@glider.be>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <632d1ef6be69c93cd37b9336a133f8c5ec779c8a.1649681814.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MCxYGl9zg2NsAk9i/emy/b74fdIkDL4xhiCcEoQMixeAEZe/3GC
- Ou6mn2tqXQJAz5Hp1gBg2I0NyYD1SqZCXYcYXGh5QTVoZQM2eVWuQe6UIQdAkVNlzaelXdj
- ezlaKNVFUJRT6Je+4HLmp1coExdk/c2o4z150K4zh3M6jiGepr/Mwp9jZw9govU5PpXdRJL
- A5ggvRHXQ9wK+A2G4+GTA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WpNuwGH0NWs=:G/VFxMIk222Z5dbaI5KNkM
- KklJYcokwElTBfNuvo+6NOsCYzW3lvOpk9M8WufDdpx1uxsU1CiloFPo3WjWU5PDz/DykbDeg
- 23mhPxftaF4Xr3a2cZIkBP9y5wPw7gagvp6asbhG/8C0342eghgjz5fyEX/SaMxRQOtbJRotT
- +lV+oOkWVcLixiJd0ef+04NJJ3l4LoFfWcvRmZOyZpLSZpxFdFN4YGqZC84EHInzpgkOihsOm
- flDOs4rIyn5y/eU3lP80aTc0D6NBsOhQhMQVrtYwmhV/YZMxt+0OAuaNDfLQiosKd5e5ccDpM
- v0ZN5JBYllMDJAfOtvV6Ip/VDsJae0F7UkY6mAFXRgia2dqdjatGpsc77ZkaidvbqrFMtP9WI
- cinU5Ee8dzExpsuruesHGVW7ENX03adi4/75YbIzjZC8i5Wj169eQuRILIcQLNKITPDaHa1e3
- XtCqOPBN47AFzUP59CLPU/+Mc8ypwX2nu8ldqQQ/mrsXPBKWHcAXB9feaiugKFe0PCcbyz8ZT
- H3JadqftZBfiCzzC+AMsLmeJjdEFNmk1TBMh9frE5YxeY1UqJ6jMIGhV9AKOhlcZoCFK/FKJC
- BZNa78xg8Q9beEM7/9h7hQXdj/MXjzAPexlkDZN4LNTkv7/vUbopfi2i+MqtfYty/CWhQGI8N
- rp0la2nAu5EbGj15MB+Xv1UuKaLqOFFsUnTrIU8X5FTV4HU4htMNbjGLYflLklemnR6l6zfl1
- lT5zrqVRfc9SnOVCk6htt1Rww88DbBrQqoZ3VwKQMLZYZYieI8jwNzL+fupBtwMghGi7epCha
- y2q9BKYbj2g4/1WJl3FEm5hVlU4uO214Mvzxic7bou2G1Iu4l/UWVZlOUZjv6Y68H5oCcTt6p
- tzYMCrnrtmaPWj7+SQXzBwNFGZc2gURg16xcPWzUalH6fjlWKx5Lm9X10ruCVXAkUsSuYy0a5
- Aam9OKgEIV9qd1qQ5lb5EZlj4eDbIw3Noxfq2LcI3VfK0wb0PFQOeN66uo4ND3V+8Qpc0Qro2
- Syfyo3cKcBRvCs18ikGeKjSV8bLywgZHhC/lI9k8UvUf5rfpPJobppkdVw8uBhchvWxvkdZJO
- ZNUmqViX04HGmQ=
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: renesas-devel-2022-04-11-v5.18-rc2
+X-Kernelci-Report-Type: test
+Subject: renesas/master baseline-nfs: 55 runs,
+ 3 regressions (renesas-devel-2022-04-11-v5.18-rc2)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 4/11/22 14:58, Geert Uytterhoeven wrote:
-> As of commit 0fe66f327c464943 ("fbdev/sh_mobile: remove
-> sh_mobile_lcdc_display_notify"), there is no longer a need for a foward
-> declaration of sh_mobile_lcdc_check_var().
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+renesas/master baseline-nfs: 55 runs, 3 regressions (renesas-devel-2022-04-=
+11-v5.18-rc2)
 
-applied.
+Regressions Summary
+-------------------
 
-Thanks!
-Helge
+platform            | arch  | lab           | compiler | defconfig         =
+           | regressions
+--------------------+-------+---------------+----------+-------------------=
+-----------+------------
+r8a77950-salvator-x | arm64 | lab-baylibre  | gcc-10   | defconfig+CON...OM=
+IZE_BASE=3Dy | 1          =
 
-> ---
->  drivers/video/fbdev/sh_mobile_lcdcfb.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbde=
-v/sh_mobile_lcdcfb.c
-> index aa4ebe3192ec9735..9a4417430b4e948f 100644
-> --- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
-> +++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-> @@ -531,9 +531,6 @@ static void sh_mobile_lcdc_display_off(struct sh_mob=
-ile_lcdc_chan *ch)
->  		ch->tx_dev->ops->display_off(ch->tx_dev);
->  }
->
-> -static int sh_mobile_lcdc_check_var(struct fb_var_screeninfo *var,
-> -				    struct fb_info *info);
-> -
->  /* --------------------------------------------------------------------=
----------
->   * Format helpers
->   */
+r8a77950-salvator-x | arm64 | lab-baylibre  | gcc-10   | defconfig+ima     =
+           | 1          =
 
+rk3399-gru-kevin    | arm64 | lab-collabora | gcc-10   | defconfig+arm64-ch=
+romebook   | 1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-04-11-v5.18-rc2/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-04-11-v5.18-rc2
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      ea5bee24e7143e88663f6497f6f9defd9ae0f77a =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform            | arch  | lab           | compiler | defconfig         =
+           | regressions
+--------------------+-------+---------------+----------+-------------------=
+-----------+------------
+r8a77950-salvator-x | arm64 | lab-baylibre  | gcc-10   | defconfig+CON...OM=
+IZE_BASE=3Dy | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254f6d747369b2a24ae067f
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-10/lab-ba=
+ylibre/baseline-nfs-r8a77950-salvator-x.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-10/lab-ba=
+ylibre/baseline-nfs-r8a77950-salvator-x.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220401.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/6254f6d747369b2a2=
+4ae0680
+        new failure (last pass: renesas-devel-2022-04-04-v5.18-rc1) =
+
+ =
+
+
+
+platform            | arch  | lab           | compiler | defconfig         =
+           | regressions
+--------------------+-------+---------------+----------+-------------------=
+-----------+------------
+r8a77950-salvator-x | arm64 | lab-baylibre  | gcc-10   | defconfig+ima     =
+           | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254fb373dab65aa64ae0696
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+ima
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+ima/gcc-10/lab-baylibre/baseline-nfs-r8=
+a77950-salvator-x.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+ima/gcc-10/lab-baylibre/baseline-nfs-r8=
+a77950-salvator-x.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220401.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/6254fb373dab65aa6=
+4ae0697
+        new failure (last pass: renesas-devel-2022-04-04-v5.18-rc1) =
+
+ =
+
+
+
+platform            | arch  | lab           | compiler | defconfig         =
+           | regressions
+--------------------+-------+---------------+----------+-------------------=
+-----------+------------
+rk3399-gru-kevin    | arm64 | lab-collabora | gcc-10   | defconfig+arm64-ch=
+romebook   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254f096065a0c7fd1ae06a5
+
+  Results:     82 PASS, 6 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/b=
+aseline-nfs-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/b=
+aseline-nfs-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220401.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.rockchip-i2s1-probed: https://kernelci.org/test/cas=
+e/id/6254f096065a0c7fd1ae06c7
+        failing since 34 days (last pass: renesas-devel-2022-02-28-v5.17-rc=
+6, first fail: renesas-devel-2022-03-08-v5.17-rc7)
+
+    2022-04-12T03:22:45.567026  /lava-6069403/1/../bin/lava-test-case   =
+
+ =20
