@@ -2,100 +2,153 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63890C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11625C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:59:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236781AbiDLK62 (ORCPT
+        id S234942AbiDLLCF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:58:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
+        Tue, 12 Apr 2022 07:02:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352634AbiDLKxw (ORCPT
+        with ESMTP id S234907AbiDLLAD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 06:53:52 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6633822523
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Apr 2022 02:49:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=Fj8VO6yUX/TG+ZwJZmOwkh7zNQnO
-        gn90D0zMWyzIvnU=; b=lKHbOYSHXrHXzoAU0xuLD4BzV2ze1u63QPuRIEgJhIFL
-        X9sTyU4Jv8qE7LzoB5wW7DmVxTNj/YMhzpZPyjjxhmEvSH8SsSa1hEFGO0hui6E4
-        muRRWsVrk2hjNF6YzGn6AJdgDFATY/OvX2Y6/FXb1q4LJNtUyVS9zpT0lJBDmjU=
-Received: (qmail 987440 invoked from network); 12 Apr 2022 11:49:07 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Apr 2022 11:49:07 +0200
-X-UD-Smtp-Session: l3s3148p1@WEzI+HHcDucgAQnoAGZ4AFi7qjeMIP6q
-Date:   Tue, 12 Apr 2022 11:49:06 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Duc Nguyen <duc.nguyen.ub@renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memory: renesas-rpc-if: Simplify single/double data
- register access
-Message-ID: <YlVLEnRaARVmWZnZ@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Duc Nguyen <duc.nguyen.ub@renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <19358863deae03b1b26f473e878305a1c6e40d19.1649681638.git.geert+renesas@glider.be>
- <YlVJc3z1xXT2emIc@ninjato>
- <CAMuHMdUGkba3hiRJPEw26oBdc6_MK_eBO==Z9QeinaoeZv8Qbw@mail.gmail.com>
+        Tue, 12 Apr 2022 07:00:03 -0400
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D8B0652DD;
+        Tue, 12 Apr 2022 02:50:57 -0700 (PDT)
+Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id AD279C953C;
+        Tue, 12 Apr 2022 09:41:04 +0000 (UTC)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id D013B4000C;
+        Tue, 12 Apr 2022 09:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649756456;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WLMGN8W4KzuVPgqbnvRFLH6IcEpJsrhI1QCKS4t1hsA=;
+        b=CFoXbTCP8qW+mBf6EviV28hbHNhNM0yDmlj6OgshmaDq+VJ9fH6ho67hSEohJZ+NV6TmHG
+        qTWY6scDoR7TI1uLaEPrNBnDbzPmN73e8J6n3yXX4Wk9WAbCmz3qof01Q5/pzrNOHHSmCb
+        Tm7IxRiB6Z8qbySVOPAAKuSDsKjWt4sIjxw2XraM0Ogui2ot9tkwpzNXy7VWD+OlfChZqu
+        dktUZ7ixvUHaa8h+YpZM2THvKJ024WAwDgEyB1w/UbDaXR3aH8daa81uNUPCtJndQrG7Ro
+        apd6c270L+B4YIhG3+lcfiH/TLxQjKNsUKX+pf4q/n2Vkpl2uFc+5h0OPiGlkQ==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+Cc:     Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH 1/6] PCI: rcar-gen2: Add support for clocks
+Date:   Tue, 12 Apr 2022 11:40:24 +0200
+Message-Id: <20220412094029.287562-2-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220412094029.287562-1-herve.codina@bootlin.com>
+References: <20220412094029.287562-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="S735XdVRzV/i3nen"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUGkba3hiRJPEw26oBdc6_MK_eBO==Z9QeinaoeZv8Qbw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The PCI rcar-gen2 does not call any clk_prepare_enable().
+This lead to an access failure when the driver tries to access
+the IP (at least on a RZ/N1D platform).
 
---S735XdVRzV/i3nen
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Prepare and enable clocks using the bulk version of
+clk_prepare_enable() in order to prepare and enable all clocks
+attached to this device.
 
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ drivers/pci/controller/pci-rcar-gen2.c | 28 ++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-> > > +                     regmap_write(rpc->regmap, RPCIF_SMWDR0, *p++);
-> >
-> > Last '++' can be omitted?
->=20
-> I know. But I think it looks nicer this way ;-)
+diff --git a/drivers/pci/controller/pci-rcar-gen2.c b/drivers/pci/controller/pci-rcar-gen2.c
+index 35804ea394fd..528bc3780e01 100644
+--- a/drivers/pci/controller/pci-rcar-gen2.c
++++ b/drivers/pci/controller/pci-rcar-gen2.c
+@@ -8,6 +8,7 @@
+  * Author: Valentine Barshak <valentine.barshak@cogentembedded.com>
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+@@ -99,6 +100,8 @@ struct rcar_pci {
+ 	struct resource mem_res;
+ 	struct resource *cfg_res;
+ 	int irq;
++	struct clk_bulk_data *clocks;
++	int nclocks;
+ };
+ 
+ /* PCI configuration space operations */
+@@ -282,6 +285,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	struct rcar_pci *priv;
+ 	struct pci_host_bridge *bridge;
+ 	void __iomem *reg;
++	int ret;
+ 
+ 	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*priv));
+ 	if (!bridge)
+@@ -305,13 +309,25 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	priv->mem_res = *mem_res;
+ 	priv->cfg_res = cfg_res;
+ 
++	ret = devm_clk_bulk_get_all(dev, &priv->clocks);
++	if (ret < 0) {
++		dev_err(dev, "failed to get clocks %d\n", ret);
++		return ret;
++	}
++	priv->nclocks = ret;
++
++	ret = clk_bulk_prepare_enable(priv->nclocks, priv->clocks);
++	if (ret)
++		return ret;
++
+ 	priv->irq = platform_get_irq(pdev, 0);
+ 	priv->reg = reg;
+ 	priv->dev = dev;
+ 
+ 	if (priv->irq < 0) {
+ 		dev_err(dev, "no valid irq found\n");
+-		return priv->irq;
++		ret = priv->irq;
++		goto disable_clocks;
+ 	}
+ 
+ 	bridge->ops = &rcar_pci_ops;
+@@ -320,7 +336,15 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 
+ 	rcar_pci_setup(priv);
+ 
+-	return pci_host_probe(bridge);
++	ret = pci_host_probe(bridge);
++	if (ret < 0)
++		goto disable_clocks;
++
++	return 0;
++
++disable_clocks:
++	clk_bulk_disable_unprepare(priv->nclocks, priv->clocks);
++	return ret;
+ }
+ 
+ static const struct of_device_id rcar_pci_of_match[] = {
+-- 
+2.35.1
 
-I have to admit it looks a little like "I copy&pasted without thinking"
-to me :)
-
-
---S735XdVRzV/i3nen
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJVSxIACgkQFA3kzBSg
-KbYQCw//Tg4IDheuIWgzV7n9xNtp7Dk17Iz4LggQVlK/eKuuSJbsCwoapbtTVzGi
-tM+BG5tigk87t1bjkhUzbjK9vxclhEcLmi80UquzPswl4frW4nM/1SBFCuIlXmV9
-YqZnJlyM2e7RXjiftKfvmZO85x2eyvjv4nqEtj8b4tzog6HaPACQdQJYuxMxBz+Q
-635MoH0kP20jKL/7u+2lyAq97IkuR0sSXngakNiAB92T2WGJUTUcmBJaVGV7qQNG
-Zh0FH96JrX2RIq1Yl+s6Tfipsfgivw+l2gsgxQOKwuvcTyUZcuvWkZtL1A1tf0d4
-crws5bMBIxXJV1oKU/gU/azoy3xoGDOoz2TFn9dulprQSogW+/5sx2mA/usdU2j/
-IpbjZ4wiS6piDlXzplqXQDZjfVMSfnncfGjqmWRAmBVV0KV6BdSzEFBNsDqnx31D
-PkcY8ezxBL34YzKRJ2N+CwdozzAAxisA6DtuvK5nLdNbjz0P6tQsYYZjJUSsE587
-4g5cUbCpV72ZFYCuqNbcQFvuYA9/+fJQDdf/IrF4kvYP6LudwXRsIp0Nb79Xo4Z9
-9QQ/TmDDv6wQ4cEhDobBY/DcVhbvB+SOZ5dbPMJhIKooi0YWhNw7MikbVMmmDzRD
-jBXKkFQRfM8aShBo+dTG+Fs1MmZWiKoNLhYGpG3+9If+aZBcd/0=
-=C8Jw
------END PGP SIGNATURE-----
-
---S735XdVRzV/i3nen--
