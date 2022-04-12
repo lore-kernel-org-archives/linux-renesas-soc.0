@@ -2,81 +2,123 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 502CBC43217
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE30C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:03:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238289AbiDLKE7 (ORCPT
+        id S240187AbiDLKFH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:04:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39168 "EHLO
+        Tue, 12 Apr 2022 06:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349491AbiDLJk3 (ORCPT
+        with ESMTP id S1355045AbiDLIGy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 05:40:29 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E9668FBD;
-        Tue, 12 Apr 2022 01:45:53 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id z16so2536921qtq.6;
-        Tue, 12 Apr 2022 01:45:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NtJgxMX7kuge/OzsJhgIVePckDKGAXzPV+JSxJ4S3Qk=;
-        b=X3ee2v9pdymvznXSFZGy4RIDzTKmh2khVEjVWQVmersA9tb24ElBJsmJrPJ63BEGhI
-         dl+qzJL4vbdmRCVX1274qKVsFjKjQyU104l5e/o0W6LsaMMf1KEeWPwAkW4uaUh61QOx
-         98WTQgIMlV+OzovFlLgd1+G2fmtnrBaqIfRwn5pFxBa+WIxAd1+jl6ZX+HKgF55DxF4O
-         bEoSQFV/9CgRAiGSyDOez2hdwYV15ooMhxAL3OsspWLJijTd6E+cKTZqaWuZ4UJkJpHo
-         bVJzYnsq5MycXC9ykdYy4WA/TIoCfWNtsrKZow2S2woJC3MdF8fmK5Bwlf9mgdmB23fA
-         n0KA==
-X-Gm-Message-State: AOAM5309mmD+s0QpTynU3Sdj4gTWZ3o4xSfgxA0xLGjEOv987kxmFBlc
-        F9W4mVAjU8Gf3bIiSdxE1LJOj97S98NBl3Gz
-X-Google-Smtp-Source: ABdhPJxtF+BeUpkIbM9hgnn0rlERtXoFR9YhuH/gRyZVKB8vihT8ka7eBFVz9hTLn+9ipv+Pec/ZzA==
-X-Received: by 2002:a05:622a:408c:b0:2f0:7b56:e798 with SMTP id cg12-20020a05622a408c00b002f07b56e798mr1402461qtb.504.1649753152829;
-        Tue, 12 Apr 2022 01:45:52 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id g28-20020a05620a109c00b0069c25d4fee4sm3066687qkk.32.2022.04.12.01.45.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 01:45:52 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id f38so31907636ybi.3;
-        Tue, 12 Apr 2022 01:45:52 -0700 (PDT)
-X-Received: by 2002:a5b:984:0:b0:63f:8c38:676c with SMTP id
- c4-20020a5b0984000000b0063f8c38676cmr15153985ybq.393.1649753152317; Tue, 12
- Apr 2022 01:45:52 -0700 (PDT)
+        Tue, 12 Apr 2022 04:06:54 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E756B4A3F3;
+        Tue, 12 Apr 2022 00:37:07 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,253,1643641200"; 
+   d="scan'208";a="117519934"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 12 Apr 2022 16:37:06 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DA0AE400F501;
+        Tue, 12 Apr 2022 16:37:06 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     alim.akhtar@samsung.com, avri.altman@wdc.com, robh+dt@kernel.org,
+        krzk+dt@kernel.org
+Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/7] dt-bindings: ufs: Document Renesas R-Car UFS host controller
+Date:   Tue, 12 Apr 2022 16:36:41 +0900
+Message-Id: <20220412073647.3808493-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-References: <20220322095512.4707-1-wsa+renesas@sang-engineering.com> <20220322095512.4707-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20220322095512.4707-3-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Apr 2022 10:45:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXJdjv9HV+5tGRhisu4JJHznta_u1JDFbop762RZAweEA@mail.gmail.com>
-Message-ID: <CAMuHMdXJdjv9HV+5tGRhisu4JJHznta_u1JDFbop762RZAweEA@mail.gmail.com>
-Subject: Re: [PATCH 2/5] ARM: dts: rzg1: add interrupt property to the
- watchdog node
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 22, 2022 at 11:02 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Driver doesn't use it yet, but let's describe the HW properly.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Document Renesas R-Car UFS host controller for R-Car S4-8 (r8a779f0).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.19.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ .../devicetree/bindings/ufs/renesas,ufs.yaml  | 63 +++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
 
-Gr{oetje,eeting}s,
+diff --git a/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml b/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
+new file mode 100644
+index 000000000000..04ff0ffd6efb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ufs/renesas,ufs.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas R-Car UFS Host Controller
++
++maintainers:
++  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
++
++allOf:
++  - $ref: ufs-common.yaml
++
++properties:
++  compatible:
++    items:
++      - const: renesas,r8a779f0-ufs
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 2
++
++  clock-names:
++    maxItems: 2
++    items:
++      - const: fck
++      - const: ref_clk
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r8a779f0-cpg-mssr.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/power/r8a779f0-sysc.h>
++
++    ufs: scsi@e686000 {
++            compatible = "renesas,r8a779f0-ufs";
++            reg = <0xe6860000 0x100>;
++            interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
++            clocks = <&cpg CPG_MOD 1514>, <&ufs30_clk>;
++            clock-names = "fck", "ref_clk";
++            freq-table-hz = <200000000 200000000>, <38400000 38400000>;
++            power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++            resets = <&cpg 1514>;
++    };
+-- 
+2.25.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
