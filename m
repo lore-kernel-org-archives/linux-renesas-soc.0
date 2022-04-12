@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240ACC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBABC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 11:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241045AbiDLLCJ (ORCPT
+        id S238903AbiDLLCR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 07:02:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44594 "EHLO
+        Tue, 12 Apr 2022 07:02:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237083AbiDLLAI (ORCPT
+        with ESMTP id S239320AbiDLLAg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 07:00:08 -0400
+        Tue, 12 Apr 2022 07:00:36 -0400
 Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DAB365406;
-        Tue, 12 Apr 2022 02:50:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48CAA90FCE;
+        Tue, 12 Apr 2022 02:51:02 -0700 (PDT)
 Received: from relay2-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::222])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 75E75CE289;
-        Tue, 12 Apr 2022 09:41:06 +0000 (UTC)
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 812ADCE59E;
+        Tue, 12 Apr 2022 09:41:28 +0000 (UTC)
 Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 1001D40005;
-        Tue, 12 Apr 2022 09:40:57 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 4102D4000A;
+        Tue, 12 Apr 2022 09:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649756458;
+        t=1649756465;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Xc7elETUhx4Ylc8cUvJvfmJyb8bpXLKnBKj1vDU7LOQ=;
-        b=UAqUgyzAD5RDK5aUtx8RhEHu5pV/ZosSkZZ9QbAentA8pU2q0I6B1QxgWtu66bB37VuRmq
-        /ApiySh5muMEsucwjUgknODrJ6ejhlX3POD2nBfRln2Cc7D+zlMHdzTHYtpI1NDRQSGE7y
-        G2iF/wa5LEH4oWmJ6pZ6G7SegecdiJPRrDo1yoOq2pSKcc7yQJcpgJF2GkclPfhKzZxvUA
-        arWxwRTsR1aL7dyvKjhHu8QmPrSZJHLGR4ljkNUd7B1gWvyf/CzCLinzp6V29prOWlWZtj
-        L4Tkmr0QPeOMWp5ZyMMMAZDoE87iXmi8gHzsnsdTGqqopdkMjsxMeiexVu764A==
+        bh=MSoUOv1wgDHI3oFS8YQWwDYPcvakH7oUF/A6hDRmPCQ=;
+        b=fsXFQ3NJwB1gy6uZQXEB0OChIjuKqRUZp5oRLfEzzwNNr1yFQanEPnnDfNxhjBmEfwZ4wg
+        KxGrEzjbA2b8vx+PmkHFsK0w7/hRpzStWRjM9+/q9FBLTfOO3j8QL6yg6VcE5Wf3m5DvAq
+        jpEjI2cbAJ81j3Eu9VoeVIlWZTPBebeF+P/IDdmEffiUiFg7OE7GQk8qcbiQrPuVeNOJYa
+        cFG6PYBRD/85B06xnt1PSIwdnDkaoBs9gsWxrBhJgMB6SMIzEkQoBfmIqgC1iBURWtKq9a
+        sc+X1Gg+X7l2tthZSGPXBp6XtHO+4JEztJWh3Ilq25RHlRpvDvbbC2/5ig4n+Q==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -51,9 +51,9 @@ Cc:     Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
         Clement Leger <clement.leger@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH 2/6] dt-bindings: PCI: pci-rcar-gen2: Add device tree support for r9a06g032
-Date:   Tue, 12 Apr 2022 11:40:25 +0200
-Message-Id: <20220412094029.287562-3-herve.codina@bootlin.com>
+Subject: [PATCH 5/6] ARM: dts: r9a06g032: Add USB PHY DT support
+Date:   Tue, 12 Apr 2022 11:40:28 +0200
+Message-Id: <20220412094029.287562-6-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220412094029.287562-1-herve.codina@bootlin.com>
 References: <20220412094029.287562-1-herve.codina@bootlin.com>
@@ -63,30 +63,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add internal PCI bridge support for the r9a06g032 SoC. The Renesas
-RZ/N1D (R9A06G032) internal PCI bridge is compatible with the one
-present in the R-Car Gen2 family.
+Define the r9a06g032 generic part of the USB PHY device node.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r9a06g032.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-index aeba38f0a387..098ea12e6c95 100644
---- a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-+++ b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-@@ -15,7 +15,9 @@ Required properties:
- 	      "renesas,pci-r8a7793" for the R8A7793 SoC;
- 	      "renesas,pci-r8a7794" for the R8A7794 SoC;
- 	      "renesas,pci-rcar-gen2" for a generic R-Car Gen2 or
--				      RZ/G1 compatible device.
-+				      RZ/G1 compatible device;
-+	      "renesas,pci-r9a06g032" for the R9A06G032 (RZ/N1D) SoC;
-+	      "renesas,pci-rzn1" for a generic RZ/N1 compatible device.
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index c6a99b2a8fb3..c9336dc4888a 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -59,6 +59,12 @@ ext_rtc_clk: extrtcclk {
+ 		clock-frequency = <0>;
+ 	};
  
- 
- 	      When compatible with the generic version, nodes must list the
++	usbphy: usbphy {
++		#phy-cells = <0>;
++		compatible = "usb-nop-xceiv";
++		status = "disabled";
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
 2.35.1
 
