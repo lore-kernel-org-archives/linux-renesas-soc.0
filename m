@@ -2,92 +2,107 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8166C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA164C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244384AbiDLKmF (ORCPT
+        id S1359494AbiDLKtM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:42:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57862 "EHLO
+        Tue, 12 Apr 2022 06:49:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354646AbiDLKdm (ORCPT
+        with ESMTP id S1356783AbiDLKpk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 06:33:42 -0400
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 277C85BD03;
-        Tue, 12 Apr 2022 02:33:53 -0700 (PDT)
-Received: by mail-qk1-f171.google.com with SMTP id d71so5104722qkg.12;
-        Tue, 12 Apr 2022 02:33:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3nnLePtPQXcraZo9xuBzZJTepa7ubGhqT6Zw37Swgqs=;
-        b=Cnc4wr/lKqtygyZkVkW65KzNmQSNokhV+ifnFjacSOinmFqUnQWmGB9Wj8ba3MVqQB
-         cEYGnOTTsiuw99/ixOpdjo4ouPlBJ7g+GN2f7znZcFq8xYBKgTQfeb7i06gH2/8zQfDO
-         XuGuDgeYO3dQGoguWyXEecuKPlihz9grzfi4CX0GEx9RpL5MhRsj/tr90xphIT85/sL0
-         cotsvIAL+Uh3BAbJCtQGRq1XzM7rpVLtnJqns1HfHzFo8qJZH/iWSNy1VGy2+9+wSZnm
-         Jl9YqvpGOtArRxVuaMxOXzXnJtHk5UfClCUzj3SYM3Tho1NoaNI7YqS/UKs6NfmPO7An
-         WlNQ==
-X-Gm-Message-State: AOAM533sSxkvPsvucMDzY5xSyvYxLGlTspnDl31Zt66A3G1Xt+YxyGt6
-        H7hFJK/K6BXLdgLUvXljkfL2zTP6w2fkmTq3
-X-Google-Smtp-Source: ABdhPJwsQp+bUZ+kZJh9+u7xwD2SRxHnFhML+LvOxJvLF9QCdbJp0mNTBv+HZYOiSz1SqY5omQ+uPQ==
-X-Received: by 2002:a37:a554:0:b0:69b:e220:bc17 with SMTP id o81-20020a37a554000000b0069be220bc17mr2337582qke.740.1649756032053;
-        Tue, 12 Apr 2022 02:33:52 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id f15-20020a379c0f000000b0069bf3430cc4sm6794892qke.100.2022.04.12.02.33.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 02:33:51 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-2ec42eae76bso44828487b3.10;
-        Tue, 12 Apr 2022 02:33:51 -0700 (PDT)
-X-Received: by 2002:a0d:e743:0:b0:2eb:3106:9b32 with SMTP id
- q64-20020a0de743000000b002eb31069b32mr30276252ywe.512.1649756031507; Tue, 12
- Apr 2022 02:33:51 -0700 (PDT)
+        Tue, 12 Apr 2022 06:45:40 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E25FC85668
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Apr 2022 02:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=/gXUO03nZs5ebrOzcOsVdIdl53Fr
+        WrU9ROXrk54ZXmQ=; b=y8fK2ZqQ0qZhKrAAy0b8yau0wzvfPfhqtXNe8mTnTQlp
+        +Q4R/TpV+XThrTJMk3fWmqRRo+d8qI08xvc2HvMQoszleAmz8KC9kEXPBfCR7lwZ
+        JkwYJT+J9z2hDI7kFNQ2TqbXgXQ3EYCfAYNmRNY3VnLWfiY0YF6fUgguF5SQSow=
+Received: (qmail 985089 invoked from network); 12 Apr 2022 11:42:11 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Apr 2022 11:42:11 +0200
+X-UD-Smtp-Session: l3s3148p1@aYgJ4HHcCucgAQnoAGZ4AFi7qjeMIP6q
+Date:   Tue, 12 Apr 2022 11:42:11 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Duc Nguyen <duc.nguyen.ub@renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        linux-renesas-soc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memory: renesas-rpc-if: Simplify single/double data
+ register access
+Message-ID: <YlVJc3z1xXT2emIc@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Duc Nguyen <duc.nguyen.ub@renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        linux-renesas-soc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <19358863deae03b1b26f473e878305a1c6e40d19.1649681638.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20220401180230.19950-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220401180230.19950-1-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Apr 2022 11:33:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXxDKKnt_L8EgruCDSZjQJvpSx30RGXysV-TMZHN94=Gw@mail.gmail.com>
-Message-ID: <CAMuHMdXxDKKnt_L8EgruCDSZjQJvpSx30RGXysV-TMZHN94=Gw@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: renesas: rzg2l: Add RZ/G2UL support
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="OELpkJhUqDCsaz5D"
+Content-Disposition: inline
+In-Reply-To: <19358863deae03b1b26f473e878305a1c6e40d19.1649681638.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Apr 1, 2022 at 8:02 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> RZ/G2UL SoC has fewer pins compared to RZ/G2L and the port pin
-> definitions are different compared to RZ/G2L.
->
-> This patch adds a new compatible to take care of this differences
-> by adding r9a07g043_data with r9a07g043_gpio_configs and
-> rzg2l_dedicated_pins.common.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v1->v2:
->  * Moved QSPI_INT# pin from common to rzg2l_pins
->  * Added Rb tag from Geert.
 
-Thanks for the update! Will queue in renesas-pinctrl-for-v5.19.
+--OELpkJhUqDCsaz5D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gr{oetje,eeting}s,
+On Mon, Apr 11, 2022 at 02:55:29PM +0200, Geert Uytterhoeven wrote:
+> For manual write and read, factor out the common access to the first
+> data register by keeping track of the current data pointer.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-                        Geert
+Works fine with reading/writing on a V3U, so:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I agree the code is more concise. I am not sure, though, if it is really
+more readable. But I don't mind very much, so except for a small nit:
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+> +			if (nbytes =3D=3D 8)
+> +				regmap_write(rpc->regmap, RPCIF_SMWDR1, *p++);
+> +			regmap_write(rpc->regmap, RPCIF_SMWDR0, *p++);
+
+Last '++' can be omitted?
+
+
+--OELpkJhUqDCsaz5D
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJVSW8ACgkQFA3kzBSg
+KbYcQw//didRmuvAcnLljb4mtQ3VPVMZBcqWDjRgDKtOO8dvvB1ikHVUDTCWDQbS
+++a0GC/UfJ9vlC+1Q7Qi6+QeRfA9UEE7BWjGpleY25NNW+BHqAidlG8vYQYQRW8v
+axaCY+ifH5k4ui1j3w0peVy2HZp4ruVROEKhOSZP06gHGIg+rTG27ZUPW1/koKd8
+4uvyZxaFkv6eqsWUOp7wy3SYBv6lwaNl111u6DdmxMRW/iSYlC220HQKmDFlIr94
+aNcHTOjFHyuP3RqNoxqPTKEilUKnaM6Brvu9f2RxThL6qt+Mks6AvkMwvbYxnzan
+7X7PWhj8NNiW0BxmoCPgqAp6GMSq0saZr4zO7cXeEa5Kxf5gyb2u+qM+V1bK+WpK
+Io4RgYLSss3zONMx8dB4EApzBHga1pk0Z7bssK23GrMHhq52w40ntbLhpg0Ep7PS
+NEQ2HhyGi43iH3/hufjAbX+tkmeRmUjrPC4xEA9QGGDyMVoVx379KmYhXQjixAar
+B6b675RYUQ7zFZ5bd3sgZaTTsOlhEq7a5tdzesC7b1w2dPTFGXnBeRg8IniSsP/R
+rsZFmvPEVb39UlvqoEoKgjDI+EJqfVVo5RhacONnCVYAuyN8oJn2ObtOoe31Y8rn
+Lg6exmSkJlMZsFnHzG1GBjOtUtXzk8cyuVSN1Vzv6SR30EfnoS8=
+=Kp1i
+-----END PGP SIGNATURE-----
+
+--OELpkJhUqDCsaz5D--
