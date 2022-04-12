@@ -2,90 +2,127 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A24C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA55EC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:02:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234992AbiDLKE0 (ORCPT
+        id S229839AbiDLKEf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:04:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55194 "EHLO
+        Tue, 12 Apr 2022 06:04:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355060AbiDLIGz (ORCPT
+        with ESMTP id S1377928AbiDLHyl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 04:06:55 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B9BB84A933;
-        Tue, 12 Apr 2022 00:37:10 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,253,1643641200"; 
-   d="scan'208";a="117519940"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Apr 2022 16:37:07 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7E75C400F504;
-        Tue, 12 Apr 2022 16:37:07 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     alim.akhtar@samsung.com, avri.altman@wdc.com, robh+dt@kernel.org,
-        krzk+dt@kernel.org
-Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 6/7] arm64: dts: renesas: r8a779f0: Add UFS node
-Date:   Tue, 12 Apr 2022 16:36:46 +0900
-Message-Id: <20220412073647.3808493-7-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 12 Apr 2022 03:54:41 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9FF506D2;
+        Tue, 12 Apr 2022 00:32:00 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 87B521BF204;
+        Tue, 12 Apr 2022 07:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649748719;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X35WNGkpzJuR8QwsexhB4AiDSNFg4aYG2MXJXgXQfu4=;
+        b=MftXS1qpch3u8BR/zUR5NpnKYwxy/YXxXE6EbNy5pCKENpwvf1eRA88j2ojUrqJ7NGFW+X
+        7zPncsxaft5BZNtXXU1nKt2EBbajHilEQN3dVe745BDKCbYTOenH/NKbuo+0bww6O2u3DH
+        MyaMUm+FaoEXY5ZITJQcDU+V9mv26k9BMIchkDW7RORJ/IiPssHvpAGxf3FTRT1wcwg8DC
+        RMbf+2ItuOAWmXdQeOTLgwbunN6fzeY+FKdjMVNiMFO9b+Ta3d4fhnxz46U5xabDqpQ+tu
+        QZVYxbLyHzjIw81FCtF63yQltACz2EJq7xJ/suXor6CVW6o5C8poPAVDzDXmCg==
+Date:   Tue, 12 Apr 2022 09:31:55 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v8 0/9] RZN1 DMA support
+Message-ID: <20220412093155.090de9d6@xps13>
+In-Reply-To: <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com>
+References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
+        <20220407004511.3A6D1C385A3@smtp.kernel.org>
+        <20220407101605.7d2a17cc@xps13>
+        <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add UFS node for R-Car S4-8 (r8a779f0).
+Hi Geert,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+geert@linux-m68k.org wrote on Mon, 11 Apr 2022 17:09:50 +0200:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index b0241aa29fc8..8bf418a4232f 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -40,6 +40,13 @@ extalr_clk: extalr {
- 		clock-frequency = <0>;
- 	};
- 
-+	ufs30_clk: ufs30_refclk_v {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
- 	pmu_a55 {
- 		compatible = "arm,cortex-a55-pmu";
- 		interrupts-extended = <&gic GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-@@ -258,6 +265,18 @@ i2c5: i2c@e66e0000 {
- 			status = "disabled";
- 		};
- 
-+		ufs: scsi@e6860000 {
-+			compatible = "renesas,r8a779f0-ufs";
-+			reg = <0 0xe6860000 0 0x100>;
-+			interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1514>, <&ufs30_clk>;
-+			clock-names = "fck", "ref_clk";
-+			freq-table-hz = <200000000 200000000>, <38400000 38400000>;
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1514>;
-+			status = "disabled";
-+		};
-+
- 		scif3: serial@e6c50000 {
- 			compatible = "renesas,scif-r8a779f0",
- 				     "renesas,rcar-gen4-scif", "renesas,scif";
--- 
-2.25.1
+> Hi Miquel,
+>=20
+> On Thu, Apr 7, 2022 at 10:16 AM Miquel Raynal <miquel.raynal@bootlin.com>=
+ wrote:
+> > sboyd@kernel.org wrote on Wed, 06 Apr 2022 17:45:09 -0700: =20
+> > > Quoting Miquel Raynal (2022-04-06 09:18:47) =20
+> > > > Here is a first series bringing DMA support to RZN1 platforms. Soon=
+ a
+> > > > second series will come with changes made to the UART controller
+> > > > driver, in order to interact with the RZN1 DMA controller.
+> > > >
+> > > > Stephen acked the sysctrl patch (in the clk driver) but somehow I f=
+eel
+> > > > like it would be good to have this patch applied on both sides
+> > > > (dmaengine and clk) because more changes will depend on the additio=
+n of
+> > > > this helper, that are not related to DMA at all. I'll let you folks
+> > > > figure out what is best. =20
+> > >
+> > > Are you sending more patches in the next 7 weeks or so that will touch
+> > > the same area? If so, then it sounds like I'll need to take the clk
+> > > patch through clk tree. I don't know what is best because I don't have
+> > > the information about what everyone plans to do in that file. =20
+> >
+> > This series brings DMA support and needs to access the dmamux registers
+> > that are in the sysctrl area.
+> >
+> > I've sent an RTC series which needs to access this area as well, but
+> > it is not fully ready yet as it was advised to go for a reset
+> > controller in this case. The reset controller would be registered by
+> > the clock driver, so yes it would touch the same file.
+> >
+> > Finally, there is an USB series that is coming soon, I don't know if
+> > it will be ready for merge for 5.19, but it needs to access a specific
+> > register in this area as well (h2mode).
+> >
+> > So provided that we are able to contribute this reset driver quickly
+> > enough, I would argue that it is safer to merge the clk changes in the
+> > clk tree. =20
+>=20
+> The clk tree or the renesas-clk tree? ;-)
 
+Actually I forgot about this tree, would you mind to merge *all* the
+patches that depend on the sysctrl changes in the renesas/renesas-clk
+tree? This also stands for the UART and RTC for instance. Otherwise
+you'll need to set up immutable branches and share them with the
+dmaengine, serial and rtc trees. I'm fine either way, it's just much
+less work in the first situation IMHO.
+
+Thanks,
+Miqu=C3=A8l
