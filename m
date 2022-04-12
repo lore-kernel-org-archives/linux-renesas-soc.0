@@ -2,86 +2,92 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF7CC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839F7C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380371AbiDLK0V (ORCPT
+        id S1379653AbiDLK0X (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:26:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50372 "EHLO
+        Tue, 12 Apr 2022 06:26:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379653AbiDLKTq (ORCPT
+        with ESMTP id S1358401AbiDLKKI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 06:19:46 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B80BB7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Apr 2022 02:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=hGN3hbcr46V0pF/9JiBvXu2YhE7A
-        2TWOogM7BL0HuyA=; b=zZhbEnUZq6eIR3HqnMZyFZLZhYZe/KzlIqyOxf6aQCdk
-        Hs11Sb8YvbBxwvvYplrrM/RDYhINVCVBRe/bQ6iqFhoypJz6Ckhu7iV5MNdykHHU
-        bl2pM46A0lShTtT54ipYBsddC88qRPZHoV8RRSYZQKgkgkhYT4ZF6OmR/Hw5J4c=
-Received: (qmail 979298 invoked from network); 12 Apr 2022 11:23:00 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Apr 2022 11:23:00 +0200
-X-UD-Smtp-Session: l3s3148p1@YeVem3HcAOcgAQnoAGZ4AFi7qjeMIP6q
-Date:   Tue, 12 Apr 2022 11:22:59 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] mmc: sh_mmcif: move platform_data header to proper
- location
-Message-ID: <YlVE8785QA4JjyTs@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20220407063114.1433-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdV=_QBTzd=yzD0kwvi2gNOp+oj3VjRursynto-Nbt4cLA@mail.gmail.com>
+        Tue, 12 Apr 2022 06:10:08 -0400
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D73B972E10;
+        Tue, 12 Apr 2022 02:12:51 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id s6so4087412qta.1;
+        Tue, 12 Apr 2022 02:12:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AkECA0wcXPkNVP5UUzbpxuKdY10vBfhtx3lvTK3ip6U=;
+        b=Z/iymKhNeD2J2v2XHjIE0ytcg1BA+GIQuwJpHfoMh4pCwaNJeXvhAaNc6hejSkc3m3
+         jRkbdIQ1lUs9955JdaaMKjT4x8KHIwXQ8qdrZXTr+79XEI6bxaz0XNb/ERaZWNNcgqUi
+         qKlu/s7ydSGccPiwIBuz/gNMZ0O6N7emGxq1SAJDGbbjK5cutc880O90q6R3L55cST9m
+         TY1tRzwumEj2siJM3hd/rDqIFxiZqVVoS9iyi2yssr8y3xEoQlWq/cMiOYU4DozBKjhf
+         Vt1Uz9bWqCy+fiowGEl8GJ39RTksQDjUk4Xgtr9hQpeXFwvUj5oQBUA60JY4zZ8ijkJZ
+         JdJA==
+X-Gm-Message-State: AOAM533si6dTyjKmg/T/utuAUSrtAHK7pWXEtK0oqP29dI3wrYsIaWW4
+        IJuxxbKSpLzkhdTiA2dNt7Tgh2vX/21Ynvo9
+X-Google-Smtp-Source: ABdhPJyD/i/77zfWNKW+mEm/kTnlXvC0xn4ydoYn5kZhOF5U/BxUtQTXMf7vAzoiaIcusIJleFrmsA==
+X-Received: by 2002:ac8:5893:0:b0:2e1:c7f6:9992 with SMTP id t19-20020ac85893000000b002e1c7f69992mr2480536qta.23.1649754770846;
+        Tue, 12 Apr 2022 02:12:50 -0700 (PDT)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id v67-20020a379346000000b0069bdb3bb132sm7949931qkd.37.2022.04.12.02.12.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Apr 2022 02:12:50 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id m132so2744592ybm.4;
+        Tue, 12 Apr 2022 02:12:50 -0700 (PDT)
+X-Received: by 2002:a5b:24e:0:b0:63d:cba0:3d55 with SMTP id
+ g14-20020a5b024e000000b0063dcba03d55mr24406484ybp.613.1649754770194; Tue, 12
+ Apr 2022 02:12:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uCf1cxL/q58P0jnc"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV=_QBTzd=yzD0kwvi2gNOp+oj3VjRursynto-Nbt4cLA@mail.gmail.com>
+References: <20220411173115.6619-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220411173115.6619-1-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 12 Apr 2022 11:12:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWifFd1P941mNdvmvRTYCG0Fg0XagwPTkdVts27664t6w@mail.gmail.com>
+Message-ID: <CAMuHMdWifFd1P941mNdvmvRTYCG0Fg0XagwPTkdVts27664t6w@mail.gmail.com>
+Subject: Re: [PATCH] spi: spi-rspi: Remove setting {src,dst}_{addr,addr_width}
+ based on DMA direction
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Mon, Apr 11, 2022 at 7:31 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The direction field in the DMA config is deprecated. The rspi driver
+> sets {src,dst}_{addr,addr_width} based on the DMA direction and
+> it results in dmaengine_slave_config() failure as RZ DMAC driver
+> validates {src,dst}_addr_width values independent of DMA direction.
+>
+> This patch fixes the issue by passing both {src,dst}_{addr,addr_width}
+> values independent of DMA direction.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Suggested-by: Vinod Koul <vkoul@kernel.org>
 
---uCf1cxL/q58P0jnc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(QSPI on Koelsch)
 
+Gr{oetje,eeting}s,
 
-> >  #include <linux/platform_device.h>
-> > +#include <linux/platform_data/sh_mmcif.h>
->=20
-> Is this intended to be sorted? a < e.
+                        Geert
 
-Yes, can be argued. I was giving the subdirectory a priority, but
-probably keeping the lexical sorting is better.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
---uCf1cxL/q58P0jnc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJVRPMACgkQFA3kzBSg
-KbZw8Q//dc+SlqRHHEF3pRSFUsf9USM+Hbn2FtioP4KZeC2W2F9vxGfbnVdH1SUF
-4jBHHR7EG62EDi0Dleb3cxP7FkOT2QFiVqUriqwy5blGKeuXIlmQ/mBVTaeibpGJ
-D6eYP4YS0dJe6Uj/Zh5qBkH+fHYOoCn19LyTGpVAtQIjzotEouZXMWCyTgiyee2H
-O6F8yOLKANx7HL2qmu9G02EcCSRW9/jLHm0NzCsa9s0CDPtduEA36EiH96+ZiHlY
-gXVi2oB/DkLPi9AJ6yz9iUS6446DCI3Ypw/T+S1ky3qdeJ2nyC9/V4aSK2SGnbuX
-BwUw2aDU84ENH6R7G76oJuTm/1njR0FXfgKiL6G7Z7+FNdlGyLUU0aTbqslMcVkw
-+n4FEiRt3VXjGmNEPaoUSOBG5GyaO3LpP6Ox59wL1GNX3d/QlxByd+fw7XJcnxRp
-mF4Awboumc5phDd4/hX90Jjc0U/lP4vTtMpeNVJ7soroBbF8wiJGT01yH+74lXQE
-ExAl3upxJelMTzB24d47G++7Tzj7S2qKYCbBKV7D3IJGsD4qxW2I6WeUrsuW4VSZ
-Il1HU0Eke1PpunOUCbOe33EJJ1xZbuqaVVjzy9w3HIErLHeqZA2EMvsrGhck7kQ5
-owpgzGYbYjDxW5BWIFGJpw8DRzlJUPntEc1ztwHWD0hgnHQ7W7k=
-=+juU
------END PGP SIGNATURE-----
-
---uCf1cxL/q58P0jnc--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
