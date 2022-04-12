@@ -2,68 +2,76 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C240C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 12:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BE2C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 12:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352924AbiDLMVC (ORCPT
+        id S1354078AbiDLMuk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 08:21:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55174 "EHLO
+        Tue, 12 Apr 2022 08:50:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355096AbiDLMSn (ORCPT
+        with ESMTP id S1355259AbiDLMsJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 08:18:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31DCB3ED38;
-        Tue, 12 Apr 2022 04:20:03 -0700 (PDT)
+        Tue, 12 Apr 2022 08:48:09 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 027FC1E3F0;
+        Tue, 12 Apr 2022 05:15:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5002A619F1;
-        Tue, 12 Apr 2022 11:20:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D74C385A5;
-        Tue, 12 Apr 2022 11:20:01 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BA53DB818BB;
+        Tue, 12 Apr 2022 12:15:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B343EC385A1;
+        Tue, 12 Apr 2022 12:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649762402;
-        bh=yLeKbNWYA2L/zMPRL5zlItCvNfHvvxoYrOJc3j6Phwk=;
+        s=k20201202; t=1649765731;
+        bh=PHuuUHC1EMHAlVwrozyUlRYMOXmSm9Pzxt5VCBTOWmM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SDpBg+JrUEtSuWLQweNE9fw3i9YJS/+h2m19RIP8WgFGKDPQDkvaPzrjh09TGhPAJ
-         27Qm5wrlnW60NWhmEJQQpb241jWqg5KjdsmdLrCoFuAYmgQ98RGWfOZhDyfnCIJM2O
-         AjdO2YgNEp2bS6We74m4Swduuv5YJ4Aw5v6pSJkP+pSO4tOhbLOYAEic8rxSww1k2Y
-         Jh1yGftSz7bJbMeLtxEnXCfAQMs4AdF9tPzxCK2I31iM9WBxIPqQzataLIXBOE91/t
-         qfruqL5vHsVN0E8omNHVRheOrw7i0tMKTOYfluHjZkOfut6InrauzUj3l5ot53sF/d
-         drJDlR1QvDV7A==
-Date:   Tue, 12 Apr 2022 16:49:58 +0530
+        b=k+XL+J8cL2GEnPcYUjnOGXX7Nojg40gDn+QLCqzX3hwl8hk0pjp/d9Hw1AyBHMDS7
+         e0ob8h+0Cnflc1SriggOMJQqKm1oTb/6LEY7dFEEFTUqFHy7Vh3/UJ67+arVXwwNul
+         bFtnKa3govPw44pf2H9B7A9iUXvusQyh06psCr3Yldynq2oaVHZbr2CL3JmfWMS7Lt
+         anyds2yxOjpzwXkmQiDI9uCjah7KuDSmz7fSN8OdlCyOLsaPBBFipqHNUXBQUrl3FP
+         lXf3x0VpzxYFJCIl5rrlO+nXQbEQwLVzbYG5yeN9X2H/CIXehCfFCtrzlioUZFzwt+
+         FnEo7Xhn598TQ==
+Date:   Tue, 12 Apr 2022 17:45:27 +0530
 From:   Vinod Koul <vkoul@kernel.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] spi: spi-rspi: Remove setting
- {src,dst}_{addr,addr_width} based on DMA direction
-Message-ID: <YlVgXuhyNhXuRQmg@matsya>
-References: <20220411173115.6619-1-biju.das.jz@bp.renesas.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v9 7/9] dmaengine: dw: Add RZN1 compatible
+Message-ID: <YlVtX2Lkvaj0Lehv@matsya>
+References: <20220412102138.45975-1-miquel.raynal@bootlin.com>
+ <20220412102138.45975-8-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220411173115.6619-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220412102138.45975-8-miquel.raynal@bootlin.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 11-04-22, 18:31, Biju Das wrote:
-> The direction field in the DMA config is deprecated. The rspi driver
-> sets {src,dst}_{addr,addr_width} based on the DMA direction and
-> it results in dmaengine_slave_config() failure as RZ DMAC driver
-> validates {src,dst}_addr_width values independent of DMA direction.
-> 
-> This patch fixes the issue by passing both {src,dst}_{addr,addr_width}
-> values independent of DMA direction.
+On 12-04-22, 12:21, Miquel Raynal wrote:
+> The Renesas RZN1 DMA IP is very close to the original DW DMA IP, a DMA
+> router has been introduced to handle the wiring options that have been
+> added.
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Acked-By: Vinod Koul <vkoul@kernel.org>
 
 -- 
 ~Vinod
