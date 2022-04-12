@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2D4C3525B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 11:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBADBC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 11:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351038AbiDLLo2 (ORCPT
+        id S1345820AbiDLLo1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 07:44:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55238 "EHLO
+        Tue, 12 Apr 2022 07:44:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345930AbiDLLlM (ORCPT
+        with ESMTP id S1349501AbiDLLlb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 07:41:12 -0400
+        Tue, 12 Apr 2022 07:41:31 -0400
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B20F17A9A6;
-        Tue, 12 Apr 2022 03:21:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB7997A9BC;
+        Tue, 12 Apr 2022 03:22:05 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 96844FF806;
-        Tue, 12 Apr 2022 10:21:43 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id E7652FF80F;
+        Tue, 12 Apr 2022 10:22:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649758906;
+        t=1649758924;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wNpjgkUaNWn1Mm4Df5e8ycR/tOrOcvbl1JoeRb1Ktqk=;
-        b=F1u+2eOcN78M3C3CZOZ/EZB2ScMt0y3hEauhcF7aUR4/CaW09owF+7ZoM5AWs0gVpT07Wp
-        QsQBUtZVYWoQgJKFPECVJlKonNyvxqJs/7Lf/67JXf0RmUKC70Ef/RndweGzr809Kqzkva
-        nRrkr4rQX/Lb1peM/IIGRZQaKGF886WBvBeBZFlCBGWGQrlsxlyspL4VYm9bWrGSw1Kkzz
-        ywABhVU05FRoP65d/drqm3NNgyZwtv4A8OKgMgA/v8n7wxzpMhdnYOgtp2olQwRrdZASgZ
-        H+LGiLW+tokeQ0FWcwWsOXn81GyOMz96F2Mz1y1WsVdaFwEZigyXX6/7p45BlA==
+        bh=zAtIbUPsxkJ2Vkxs0B9jhzXSzY5HA+HvzfhgI4EksRw=;
+        b=K7Es0urn8T+Jp/OAerup1y43sH9UNAaiPcaZupJQF+Ru8T/cFcMbvVDd7IUQOwErYfjiHf
+        KdUeyoDvWqav40FbjFg9cSvBwjcAx57CXzeJt/ljbP4LhSMTPnicolyHFMP+T/FPhtwNkB
+        dV1YE/zvdBtqGNaH2wIxDXQMmOBztMGcR6UCBF6V/vfqHRpV9PVZKxhp3nArz22qmQ3PZA
+        FvpRBOuupeqUOimYfOy9NpInxedZZkJbvOgqYogUR6Dwo7QwzkYED8lO6CT6avVTA/nGrX
+        wZJLzalkr4jRKl8OutrrRJnWrievAcqr+XbZuSEttopEvDgQyV+sfKk0ar4c6Q==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
@@ -50,11 +50,10 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v9 1/9] dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
-Date:   Tue, 12 Apr 2022 12:21:30 +0200
-Message-Id: <20220412102138.45975-2-miquel.raynal@bootlin.com>
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v9 6/9] clk: renesas: r9a06g032: Probe possible children
+Date:   Tue, 12 Apr 2022 12:21:35 +0200
+Message-Id: <20220412102138.45975-7-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220412102138.45975-1-miquel.raynal@bootlin.com>
 References: <20220412102138.45975-1-miquel.raynal@bootlin.com>
@@ -65,89 +64,43 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
-dmamux register located in the system control area which can take up to
-32 requests (16 per DMA controller). Each DMA channel can be wired to
-two different peripherals.
+The clock controller device on r9a06g032 takes all the memory range that
+is described as being a system controller. This range contains many
+different (unrelated?) registers besides the ones belonging to the clock
+controller, that can necessitate to be accessed from other peripherals.
+
+For instance, the dmamux registers are there. The dmamux "device" will
+be described as a child node of the clock/system controller node, which
+means we need the top device driver (the clock controller driver in this
+case) to populate its children manually.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- .../bindings/dma/renesas,rzn1-dmamux.yaml     | 51 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ drivers/clk/renesas/r9a06g032-clocks.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
-new file mode 100644
-index 000000000000..d83013b0dd74
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/renesas,rzn1-dmamux.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas RZ/N1 DMA mux
-+
-+maintainers:
-+  - Miquel Raynal <miquel.raynal@bootlin.com>
-+
-+allOf:
-+  - $ref: "dma-router.yaml#"
-+
-+properties:
-+  compatible:
-+    const: renesas,rzn1-dmamux
-+
-+  reg:
-+    maxItems: 1
-+    description: DMA mux first register offset within the system control parent.
-+
-+  '#dma-cells':
-+    const: 6
-+    description:
-+      The first four cells are dedicated to the master DMA controller. The fifth
-+      cell gives the DMA mux bit index that must be set starting from 0. The
-+      sixth cell gives the binary value that must be written there, ie. 0 or 1.
-+
-+  dma-masters:
-+    minItems: 1
-+    maxItems: 2
-+
-+  dma-requests:
-+    const: 32
-+
-+required:
-+  - reg
-+  - dma-requests
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    dma-router@a0 {
-+      compatible = "renesas,rzn1-dmamux";
-+      reg = <0xa0 4>;
-+      #dma-cells = <6>;
-+      dma-masters = <&dma0 &dma1>;
-+      dma-requests = <32>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fd768d43e048..120d3ae57a4b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19040,6 +19040,7 @@ SYNOPSYS DESIGNWARE DMAC DRIVER
- M:	Viresh Kumar <vireshk@kernel.org>
- R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
- S:	Maintained
-+F:	Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
- F:	Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
- F:	drivers/dma/dw/
- F:	include/dt-bindings/dma/dw-dmac.h
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 052d99059981..1df56d7ab3e1 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -16,6 +16,7 @@
+ #include <linux/math64.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+@@ -996,7 +997,7 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 
+ 	sysctrl_priv = clocks;
+ 
+-	return 0;
++	return of_platform_populate(np, NULL, NULL, dev);
+ }
+ 
+ static const struct of_device_id r9a06g032_match[] = {
 -- 
 2.27.0
 
