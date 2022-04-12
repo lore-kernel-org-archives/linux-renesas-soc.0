@@ -2,186 +2,318 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6996C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90027C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354632AbiDLKEN (ORCPT
+        id S231666AbiDLKES (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:04:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
+        Tue, 12 Apr 2022 06:04:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383870AbiDLIiZ (ORCPT
+        with ESMTP id S1387738AbiDLJJL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 04:38:25 -0400
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A735839F;
-        Tue, 12 Apr 2022 01:03:07 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 563D6FF816;
-        Tue, 12 Apr 2022 08:03:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649750586;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NnvDEEExY37Xv5wSccm3tc8qzWAN9+4FKDvuyDplVRY=;
-        b=R5s2ELhONPy26eG7hZH8wA7hpK/ahyrHOLlK97/xc1FxMnxSFNFB57rRdYz9gHCmUuBZIi
-        JMt8XZqT9vwzVSOmT4hOFqwAv7xeCRKCoPa6X0vOL+QCvROFILRKEpTqVTTDH0FnclRGOP
-        6mSiCmGy7Dq5IGCHSYLLj2wEeNLXtIrj9FvZZaNDiP8u6ff4ui9OaLzn1R60d6jQ7Ei6VW
-        P7CmbSb/cCTl2sEtg4i/HXfn4BW+MBFheSljDrtUDaceW3pfTFYy0lLPs+w4eL9M7ChDFw
-        K+kDw3AzuwCnITQLZBwvlwr1vujUFCIzxUrUEJ6nZjrdMyvN+yozPuVVed3tBw==
-Date:   Tue, 12 Apr 2022 10:03:01 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v8 0/9] RZN1 DMA support
-Message-ID: <20220412100301.03ccece8@xps13>
-In-Reply-To: <CAMuHMdVaWskmiqUEyGyz7HKUjgzFhx+5hAJxd5od7Hp4hFD1KA@mail.gmail.com>
-References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
-        <20220407004511.3A6D1C385A3@smtp.kernel.org>
-        <20220407101605.7d2a17cc@xps13>
-        <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com>
-        <20220412093155.090de9d6@xps13>
-        <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
-        <20220412094338.382e8754@xps13>
-        <CAMuHMdVaWskmiqUEyGyz7HKUjgzFhx+5hAJxd5od7Hp4hFD1KA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 12 Apr 2022 05:09:11 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA95AF8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Apr 2022 01:22:30 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id z16so16865339pfh.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Apr 2022 01:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=X4Z32MVZgg6AYw1EOfZjAnsU3XPcNV7oDMYtotSG5Pw=;
+        b=mTeCIu0RrWI4KgrpEsoxxnzHliDVTv/8hTJix8CnK0LDAFl7fieWAHXkGUcEBSJYgw
+         BzDvgrtkP/4SoQD5YkQ9EG16tFEr7JfcCT1yNQek2ahnMXGaw/I0jHbWQVLMJjTZx+7g
+         m8qfxhOmuZGsfVtnUoZU8vIx7O8jMbXHSLe8DDbM61gkDk1IS5kcSoxxfOS0s9Dwdh3n
+         ZMOvK/aKCEntaihWGdZ+jJdE7bPdCx5vJmqeW7DKGwKpXCeYNSby+kXrINH+3Z2ShQxd
+         0yX2KeKhkipYE82kx4LlZPLshnhe9nxtRs4jr1N05I/ILRNJcECkWkMtbE3cejEq+p2F
+         fltg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=X4Z32MVZgg6AYw1EOfZjAnsU3XPcNV7oDMYtotSG5Pw=;
+        b=bvWk4FrZIU9Ykfq5g9sUzsD+aTNpxqhFPkLYn0i9GZpVT40/FIs+DIqYs4qO3ENQLn
+         klkCqgbLIREGnHLdrYhlce+c3FijOMU1peiMDSxMfYyrI7+bc0uWoeaSPJkX9tSxrJsR
+         fUtKuBGTUR9SkP052P0jC/6k6mhrzvc2BhB/VCXVLO/irfmyoEEwy58taJqIBElpF1zJ
+         cgTEHRzNoMpjVUgfTg/DvNr6ngf/yED/9+hluQa4CUWcJVv218SyBLLH/W1ahxvljv4N
+         hd5oi34NG9SYvRoK6KJUyoHyRgxKbant1ace1yN99Hw5TTZ48Vlr17H9DwLTKn5dAgUz
+         cQqg==
+X-Gm-Message-State: AOAM533bRNXTRLHzPdupWaZ0B5013Iyku1j1RUxXM/rrEsp+QWlgRylR
+        fezAsmPFtB0sNJ8raGgeYbng7BAQTh83AAwG
+X-Google-Smtp-Source: ABdhPJw0o8y0xiN+J6CrJ58Tn9+lem4vJAK+4KhFQnml8rrQaHYKZ+crOFE8UBwc5KLwjvrcSbtVJg==
+X-Received: by 2002:a65:6051:0:b0:39d:1b00:e473 with SMTP id a17-20020a656051000000b0039d1b00e473mr12505414pgp.578.1649751750042;
+        Tue, 12 Apr 2022 01:22:30 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id z16-20020a637e10000000b00382b21c6b0bsm1997249pgc.51.2022.04.12.01.22.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Apr 2022 01:22:29 -0700 (PDT)
+Message-ID: <625536c5.1c69fb81.8b511.5ea5@mx.google.com>
+Date:   Tue, 12 Apr 2022 01:22:29 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: renesas-devel-2022-04-11-v5.18-rc2
+X-Kernelci-Report-Type: test
+Subject: renesas/master baseline: 315 runs,
+ 6 regressions (renesas-devel-2022-04-11-v5.18-rc2)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+renesas/master baseline: 315 runs, 6 regressions (renesas-devel-2022-04-11-=
+v5.18-rc2)
 
-geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:52:25 +0200:
+Regressions Summary
+-------------------
 
-> Hi Miquel,
->=20
-> On Tue, Apr 12, 2022 at 9:43 AM Miquel Raynal <miquel.raynal@bootlin.com>=
- wrote:
-> > geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:37:22 +0200: =20
-> > > On Tue, Apr 12, 2022 at 9:32 AM Miquel Raynal <miquel.raynal@bootlin.=
-com> wrote: =20
-> > > > geert@linux-m68k.org wrote on Mon, 11 Apr 2022 17:09:50 +0200: =20
-> > > > > On Thu, Apr 7, 2022 at 10:16 AM Miquel Raynal <miquel.raynal@boot=
-lin.com> wrote: =20
-> > > > > > sboyd@kernel.org wrote on Wed, 06 Apr 2022 17:45:09 -0700: =20
-> > > > > > > Quoting Miquel Raynal (2022-04-06 09:18:47) =20
-> > > > > > > > Here is a first series bringing DMA support to RZN1 platfor=
-ms. Soon a
-> > > > > > > > second series will come with changes made to the UART contr=
-oller
-> > > > > > > > driver, in order to interact with the RZN1 DMA controller.
-> > > > > > > >
-> > > > > > > > Stephen acked the sysctrl patch (in the clk driver) but som=
-ehow I feel
-> > > > > > > > like it would be good to have this patch applied on both si=
-des
-> > > > > > > > (dmaengine and clk) because more changes will depend on the=
- addition of
-> > > > > > > > this helper, that are not related to DMA at all. I'll let y=
-ou folks
-> > > > > > > > figure out what is best. =20
-> > > > > > >
-> > > > > > > Are you sending more patches in the next 7 weeks or so that w=
-ill touch
-> > > > > > > the same area? If so, then it sounds like I'll need to take t=
-he clk
-> > > > > > > patch through clk tree. I don't know what is best because I d=
-on't have
-> > > > > > > the information about what everyone plans to do in that file.=
+platform                   | arch  | lab           | compiler | defconfig  =
+                | regressions
+---------------------------+-------+---------------+----------+------------=
+----------------+------------
+qemu_arm64-virt-gicv2-uefi | arm64 | lab-baylibre  | gcc-10   | defconfig+d=
+ebug            | 1          =
+
+qemu_arm64-virt-gicv2-uefi | arm64 | lab-broonie   | gcc-10   | defconfig+d=
+ebug            | 1          =
+
+qemu_arm64-virt-gicv3-uefi | arm64 | lab-baylibre  | gcc-10   | defconfig+d=
+ebug            | 1          =
+
+qemu_arm64-virt-gicv3-uefi | arm64 | lab-broonie   | gcc-10   | defconfig+d=
+ebug            | 1          =
+
+r8a77950-salvator-x        | arm64 | lab-baylibre  | gcc-10   | defconfig+i=
+ma              | 1          =
+
+rk3399-gru-kevin           | arm64 | lab-collabora | gcc-10   | defconfig+a=
+rm64-chromebook | 1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-04-11-v5.18-rc2/plan/baseline/
+
+  Test:     baseline
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-04-11-v5.18-rc2
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      ea5bee24e7143e88663f6497f6f9defd9ae0f77a =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                   | arch  | lab           | compiler | defconfig  =
+                | regressions
+---------------------------+-------+---------------+----------+------------=
+----------------+------------
+qemu_arm64-virt-gicv2-uefi | arm64 | lab-baylibre  | gcc-10   | defconfig+d=
+ebug            | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254f641ecd074f0e6ae0702
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+debug
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+debug/gcc-10/lab-baylibre/baseline-qemu=
+_arm64-virt-gicv2-uefi.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+debug/gcc-10/lab-baylibre/baseline-qemu=
+_arm64-virt-gicv2-uefi.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220401.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/6254f641ecd074f0e6ae0=
+703
+        failing since 56 days (last pass: renesas-devel-2022-02-08-v5.17-rc=
+3, first fail: renesas-devel-2022-02-14-v5.17-rc4) =
+
+ =
+
+
+
+platform                   | arch  | lab           | compiler | defconfig  =
+                | regressions
+---------------------------+-------+---------------+----------+------------=
+----------------+------------
+qemu_arm64-virt-gicv2-uefi | arm64 | lab-broonie   | gcc-10   | defconfig+d=
+ebug            | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254f2a4b4e1b07f50ae067c
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+debug
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-qemu_=
+arm64-virt-gicv2-uefi.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-qemu_=
+arm64-virt-gicv2-uefi.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220401.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/6254f2a4b4e1b07f50ae0=
+67d
+        failing since 56 days (last pass: renesas-devel-2022-02-08-v5.17-rc=
+3, first fail: renesas-devel-2022-02-14-v5.17-rc4) =
+
+ =
+
+
+
+platform                   | arch  | lab           | compiler | defconfig  =
+                | regressions
+---------------------------+-------+---------------+----------+------------=
+----------------+------------
+qemu_arm64-virt-gicv3-uefi | arm64 | lab-baylibre  | gcc-10   | defconfig+d=
+ebug            | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254f62d2614504751ae06a0
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+debug
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+debug/gcc-10/lab-baylibre/baseline-qemu=
+_arm64-virt-gicv3-uefi.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+debug/gcc-10/lab-baylibre/baseline-qemu=
+_arm64-virt-gicv3-uefi.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220401.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/6254f62d2614504751ae0=
+6a1
+        failing since 56 days (last pass: renesas-devel-2022-02-08-v5.17-rc=
+3, first fail: renesas-devel-2022-02-14-v5.17-rc4) =
+
+ =
+
+
+
+platform                   | arch  | lab           | compiler | defconfig  =
+                | regressions
+---------------------------+-------+---------------+----------+------------=
+----------------+------------
+qemu_arm64-virt-gicv3-uefi | arm64 | lab-broonie   | gcc-10   | defconfig+d=
+ebug            | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254f27b1a90c06793ae0703
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+debug
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-qemu_=
+arm64-virt-gicv3-uefi.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-qemu_=
+arm64-virt-gicv3-uefi.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220401.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/6254f27b1a90c06793ae0=
+704
+        failing since 56 days (last pass: renesas-devel-2022-02-08-v5.17-rc=
+3, first fail: renesas-devel-2022-02-14-v5.17-rc4) =
+
+ =
+
+
+
+platform                   | arch  | lab           | compiler | defconfig  =
+                | regressions
+---------------------------+-------+---------------+----------+------------=
+----------------+------------
+r8a77950-salvator-x        | arm64 | lab-baylibre  | gcc-10   | defconfig+i=
+ma              | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254fb9b53c0878a04ae06dc
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+ima
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+ima/gcc-10/lab-baylibre/baseline-r8a779=
+50-salvator-x.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+ima/gcc-10/lab-baylibre/baseline-r8a779=
+50-salvator-x.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220401.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/6254fb9b53c0878a04ae0=
+6dd
+        new failure (last pass: renesas-devel-2022-04-04-v5.18-rc1) =
+
+ =
+
+
+
+platform                   | arch  | lab           | compiler | defconfig  =
+                | regressions
+---------------------------+-------+---------------+----------+------------=
+----------------+------------
+rk3399-gru-kevin           | arm64 | lab-collabora | gcc-10   | defconfig+a=
+rm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6254f2621a90c06793ae0689
+
+  Results:     88 PASS, 4 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/b=
+aseline-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-04-11-v5.18-rc2/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/b=
+aseline-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220401.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.rockchip-i2s1-probed: https://kernelci.org/test/case/id=
+/6254f2621a90c06793ae06ab
+        failing since 34 days (last pass: renesas-devel-2022-02-28-v5.17-rc=
+6, first fail: renesas-devel-2022-03-08-v5.17-rc7)
+
+    2022-04-12T03:30:16.002656  /lava-6069418/1/../bin/lava-test-case
+    2022-04-12T03:30:16.013463  <8>[   35.620785] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-i2s1-probed RESULT=3Dfail>   =
+
  =20
-> > > > > >
-> > > > > > This series brings DMA support and needs to access the dmamux r=
-egisters
-> > > > > > that are in the sysctrl area.
-> > > > > >
-> > > > > > I've sent an RTC series which needs to access this area as well=
-, but
-> > > > > > it is not fully ready yet as it was advised to go for a reset
-> > > > > > controller in this case. The reset controller would be register=
-ed by
-> > > > > > the clock driver, so yes it would touch the same file.
-> > > > > >
-> > > > > > Finally, there is an USB series that is coming soon, I don't kn=
-ow if
-> > > > > > it will be ready for merge for 5.19, but it needs to access a s=
-pecific
-> > > > > > register in this area as well (h2mode).
-> > > > > >
-> > > > > > So provided that we are able to contribute this reset driver qu=
-ickly
-> > > > > > enough, I would argue that it is safer to merge the clk changes=
- in the
-> > > > > > clk tree. =20
-> > > > >
-> > > > > The clk tree or the renesas-clk tree? ;-) =20
-> > > >
-> > > > Actually I forgot about this tree, would you mind to merge *all* the
-> > > > patches that depend on the sysctrl changes in the renesas/renesas-c=
-lk
-> > > > tree? This also stands for the UART and RTC for instance. Otherwise
-> > > > you'll need to set up immutable branches and share them with the
-> > > > dmaengine, serial and rtc trees. I'm fine either way, it's just much
-> > > > less work in the first situation IMHO. =20
-> > >
-> > > Sure, I can do that, given acks from the DMA, UART, and RTC
-> > > maintainers. =20
-> >
-> > Ok, I'll say so in the cover letter of the v9.
-> > =20
-> > > So far I've been rather terse in giving feedback on these series,
-> > > as I'm in wait-and-see mode w.r.t. what else you've planned for the
-> > > sysctrl DT node[1] and clock/sys controller code...
-> > >
-> > > [1] Did I say I'm not that fond of child nodes? But for the dmamux,
-> > >     it looks like a good solution to handle this. =20
-> >
-> > O:-)
-> >
-> > I plan in the coming days to write a proper reset controller driver
-> > that will be queried by the rtc driver (as proposed by Alexandre). =20
->=20
-> OK.
->=20
-> > Which means I'll have to declare this reset controller as a child of
-> > the systrl node. If you disagree with it, you may jump-in, see this
-> > thread :
-> >
-> >         Subject: Re: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a
-> >                  function to  enable/disable the RTC
-> >         Date: Wed, 6 Apr 2022 10:32:31 +0200 =20
->=20
-> But do you need a child node for that? All(most all) other Renesas
-> clock drivers provide reset functionality, and none of them use a
-> child node for that.
-
-How do you "request" the reset handle from the consumer driver if it's
-not described in the DT? Do you have examples to share?
-
-Thanks,
-Miqu=C3=A8l
