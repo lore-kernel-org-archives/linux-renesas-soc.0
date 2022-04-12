@@ -2,81 +2,92 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95DEC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA9BC433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230079AbiDLKEX (ORCPT
+        id S231588AbiDLKEZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:04:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55292 "EHLO
+        Tue, 12 Apr 2022 06:04:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358952AbiDLJrs (ORCPT
+        with ESMTP id S1355061AbiDLIGz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 05:47:48 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C066762C8E;
-        Tue, 12 Apr 2022 01:53:37 -0700 (PDT)
-Received: by mail-qk1-f179.google.com with SMTP id c199so11483973qkg.4;
-        Tue, 12 Apr 2022 01:53:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l+5QLEkfnkcIMk5JXvTP2/pWavVT6LD4E3jbjn1v9iw=;
-        b=Pm1oJI158xAUAlcmvWSJHbD0D8oB9Knm5zV7/ebK+m8O7OE67aWqe0UW+G9ZnL7GIE
-         9OvruRHj5fFdSkW417WHoQ4y5a2X55CVbobkHiy2Ql6rI6QYrAbX4T03wgm2hPAq5Hel
-         E9DpqczziHeuJD1rqCqG0In2PcrnMkFpWvKkc+VySIaflG9Bl5jxP8nAy2jEDEGkuRw5
-         jkis65AnnIM41GN2JeaBkisLdkug3H6CwKDvLQfZkTnHoXWEUxUJzfjyT4jGOtyPlcPz
-         CV/EiTsYRCy0oTru3nEzZrqt+VV14u9lybTN2TcnmtYR6oOL19LfmyzfHu+GcYFvQA9T
-         ByQQ==
-X-Gm-Message-State: AOAM533q6m6cLdv1sxjW+7C/gDmXvXQdzP8ybz0fhy3SCQ4/jfk2Tiam
-        fW3kC7dg2iuKQlL4QUZE0vzwBcc357fUBzfP
-X-Google-Smtp-Source: ABdhPJyTHYmKM7AYy+Shwi+ArGdcwINe40RVOgahUFGaRVWlRMPHeLR3xi+SVTdV+IjvlP7Qjf37Pg==
-X-Received: by 2002:a05:620a:448d:b0:67d:b59e:8720 with SMTP id x13-20020a05620a448d00b0067db59e8720mr2279663qkp.769.1649753616549;
-        Tue, 12 Apr 2022 01:53:36 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id d17-20020a05622a101100b002ed11f71ed9sm7117727qte.17.2022.04.12.01.53.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 01:53:36 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id z33so31938707ybh.5;
-        Tue, 12 Apr 2022 01:53:36 -0700 (PDT)
-X-Received: by 2002:a5b:24e:0:b0:63d:cba0:3d55 with SMTP id
- g14-20020a5b024e000000b0063dcba03d55mr24367733ybp.613.1649753616014; Tue, 12
- Apr 2022 01:53:36 -0700 (PDT)
+        Tue, 12 Apr 2022 04:06:55 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B9DB54A934;
+        Tue, 12 Apr 2022 00:37:10 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,253,1643641200"; 
+   d="scan'208";a="117519937"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 12 Apr 2022 16:37:07 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 254A2400F4F6;
+        Tue, 12 Apr 2022 16:37:07 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     alim.akhtar@samsung.com, avri.altman@wdc.com, robh+dt@kernel.org,
+        krzk+dt@kernel.org
+Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/7] ufs: add UFSHCD_QUIRK_HIBERN_FASTAUTO
+Date:   Tue, 12 Apr 2022 16:36:43 +0900
+Message-Id: <20220412073647.3808493-4-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-References: <20220322095512.4707-1-wsa+renesas@sang-engineering.com> <20220322095512.4707-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20220322095512.4707-6-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Apr 2022 10:53:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUZ=gpqXKkxogV+jhrvZUuRjO_buzYntQ-PFOsy6YnYyA@mail.gmail.com>
-Message-ID: <CAMuHMdUZ=gpqXKkxogV+jhrvZUuRjO_buzYntQ-PFOsy6YnYyA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: renesas: rcar-gen4: add interrupt
- property to the watchdog node
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 22, 2022 at 10:58 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Driver doesn't use it yet, but let's describe the HW properly.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add UFSHCD_QUIRK_HIBERN_FASTAUTO for a broken host controller of
+the auto-hibernate capability but it's FASTAUTO only.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.19.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/scsi/ufs/ufshcd.c | 9 +++++++--
+ drivers/scsi/ufs/ufshcd.h | 6 ++++++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index a7bb3945c7c6..adc059a86e1e 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -4247,8 +4247,13 @@ static int ufshcd_get_max_pwr_mode(struct ufs_hba *hba)
+ 	if (hba->max_pwr_info.is_valid)
+ 		return 0;
+ 
+-	pwr_info->pwr_tx = FAST_MODE;
+-	pwr_info->pwr_rx = FAST_MODE;
++	if (hba->quirks & UFSHCD_QUIRK_HIBERN_FASTAUTO) {
++		pwr_info->pwr_tx = FASTAUTO_MODE;
++		pwr_info->pwr_rx = FASTAUTO_MODE;
++	} else {
++		pwr_info->pwr_tx = FAST_MODE;
++		pwr_info->pwr_rx = FAST_MODE;
++	}
+ 	pwr_info->hs_rate = PA_HS_MODE_B;
+ 
+ 	/* Get the connected lane count */
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 1745144eb904..d14cc48226ce 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -608,6 +608,12 @@ enum ufshcd_quirks {
+ 	 * 64-bit addressing supported capability but it doesn't work.
+ 	 */
+ 	UFSHCD_QUIRK_BROKEN_64BIT_ADDRESS		= 1 << 17,
++
++	/*
++	 * This quirk needs to be enabled if the host controller has
++	 * auto-hibernate capability but it's FASTAUTO only.
++	 */
++	UFSHCD_QUIRK_HIBERN_FASTAUTO			= 1 << 18,
+ };
+ 
+ enum ufshcd_caps {
+-- 
+2.25.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
