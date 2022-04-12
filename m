@@ -2,81 +2,71 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E3EC4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19619C433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354593AbiDLKD7 (ORCPT
+        id S240356AbiDLKDn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:03:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37232 "EHLO
+        Tue, 12 Apr 2022 06:03:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391578AbiDLJaZ (ORCPT
+        with ESMTP id S1355072AbiDLIGz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 05:30:25 -0400
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B7A55C856;
-        Tue, 12 Apr 2022 01:43:51 -0700 (PDT)
-Received: by mail-qv1-f49.google.com with SMTP id ke15so15605949qvb.11;
-        Tue, 12 Apr 2022 01:43:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SMgJTejebzSsoCA0bmYeszZ3G1uAWNOffFqDWqFqdBk=;
-        b=Uo8uFuFYUk/Wpd4clANKUu85Npy6Zi3JXKfGsXRE2r39/cV+JDaACkAoITqXpZNB+L
-         M3jn4KuV9OUUeTxhxdmXQgEVyuL0d7OPk3+nwWx8TQ1xDUrvUzJmCizJSeAr9BQc2Ro1
-         4MedUE5LGnDCXK6sskmQJp6Ok7iR1epyhNeTKWztCuqHMozR1AYIPUDRmQ+FAiszT69n
-         YJy0y+OXp6fWh3mlKbucu9IDNWct5R9fTr/0XTw+DkQAY2HSehE26fgY4QTYZ3SMGhW5
-         dkDvuNvy9IGET9tNqMFhi0NQo7DEqYWdy/DpHup5nui2EeftfMyMNNB32lQQhSSmn98k
-         VMCA==
-X-Gm-Message-State: AOAM532qvZZL8eGeeFolYGLkxug8iIPntsaFQ7LOT+6wOtWfhlSNZ4Jw
-        OA3buYfPFBbnsQupqkdoPrYzse2BKCuw0Tn9
-X-Google-Smtp-Source: ABdhPJwBYN4U7vve6hoCYi85lACXgLhRbRxvfmm82QH2fafnTD2aH7kjmqN7mEz2SPEq/NGs3SAz9Q==
-X-Received: by 2002:a05:6214:e4c:b0:444:4ce3:890a with SMTP id o12-20020a0562140e4c00b004444ce3890amr2699457qvc.72.1649753030186;
-        Tue, 12 Apr 2022 01:43:50 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id h27-20020ac8777b000000b002eff87a2c42sm1645348qtu.4.2022.04.12.01.43.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 01:43:49 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-2ebf4b91212so94998927b3.8;
-        Tue, 12 Apr 2022 01:43:49 -0700 (PDT)
-X-Received: by 2002:a81:c703:0:b0:2d0:cc6b:3092 with SMTP id
- m3-20020a81c703000000b002d0cc6b3092mr29042137ywi.449.1649753029692; Tue, 12
- Apr 2022 01:43:49 -0700 (PDT)
+        Tue, 12 Apr 2022 04:06:55 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A458251E48;
+        Tue, 12 Apr 2022 00:37:13 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,253,1643641200"; 
+   d="scan'208";a="116447082"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 12 Apr 2022 16:37:07 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5B8DD400F504;
+        Tue, 12 Apr 2022 16:37:07 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     alim.akhtar@samsung.com, avri.altman@wdc.com, robh+dt@kernel.org,
+        krzk+dt@kernel.org
+Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 5/7] scsi: MAINTAINERS: Add maintainer for Renesas UFS driver
+Date:   Tue, 12 Apr 2022 16:36:45 +0900
+Message-Id: <20220412073647.3808493-6-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-References: <20220322095512.4707-1-wsa+renesas@sang-engineering.com> <20220322095512.4707-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20220322095512.4707-2-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Apr 2022 10:43:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXdj1RvH3SOvqh+Lu89ze=KNNVsvYt2wmGty-d8Z+VAjA@mail.gmail.com>
-Message-ID: <CAMuHMdXdj1RvH3SOvqh+Lu89ze=KNNVsvYt2wmGty-d8Z+VAjA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] ARM: dts: rcar-gen2: add interrupt property to the
- watchdog node
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 22, 2022 at 11:22 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Driver doesn't use it yet, but let's describe the HW properly.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add maintainer for Renesas UFS driver.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.19.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Gr{oetje,eeting}s,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f8db959c10a5..3a10f293ded9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20219,6 +20219,13 @@ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	drivers/scsi/ufs/ufs-mediatek*
+ 
++UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER RENESAS HOOKS
++M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
++L:	linux-renesas-soc@vger.kernel.org
++L:	linux-scsi@vger.kernel.org
++S:	Maintained
++F:	drivers/scsi/ufs/*renesas*
++
+ UNSORTED BLOCK IMAGES (UBI)
+ M:	Richard Weinberger <richard@nod.at>
+ L:	linux-mtd@lists.infradead.org
+-- 
+2.25.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
