@@ -2,56 +2,56 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3681AC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 11:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E39C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 11:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236843AbiDLLuI (ORCPT
+        id S1344654AbiDLL6m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 07:50:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39228 "EHLO
+        Tue, 12 Apr 2022 07:58:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350733AbiDLLrw (ORCPT
+        with ESMTP id S1351860AbiDLL6U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 07:47:52 -0400
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8627857B18;
-        Tue, 12 Apr 2022 03:28:34 -0700 (PDT)
-Received: by mail-qv1-f51.google.com with SMTP id kl29so15773509qvb.2;
-        Tue, 12 Apr 2022 03:28:34 -0700 (PDT)
+        Tue, 12 Apr 2022 07:58:20 -0400
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F2563386;
+        Tue, 12 Apr 2022 03:48:09 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id n11so4983266qvl.0;
+        Tue, 12 Apr 2022 03:48:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UIsiI6nAuLSTs00L7fFaZKGAhz5k0aDEXaH8Oo6l32U=;
-        b=EqkrHvnA56r9L3jPf5JuvfzMLS6ty1cmWcxDqwZ7ieIZK0SAk3L78RZyY7SA2CZdFt
-         wW2jkH02BnPvXT3FS8IMvT53GgWytwWDW+vXRy4V1SUbceJg5sxt9+yhAZ6BWuZ2Yq/y
-         t0bnIm5zIt5fPordz/i+nzbElFigkBtgJVD7VwOqRFDLOIindlfnS0El9ZuSVMweyIm5
-         IdVeQJDeQN0UiRnRoJ/37xyEqWjQ0LSRmYXFzAc57sLRmwUNnOvJR7wNKbBeBo84uPd+
-         sUY9W/6MVfNHHXWUJVWEnWHGtuHIhDc1bkrUMXycPQgsH+ChiXEyoD696N1a1Kt2MD5d
-         0rWg==
-X-Gm-Message-State: AOAM530Xw2N+pgkagnX2yOM5We7TbXa2WElA+jx8WNDZoicP1ogZzyQs
-        nm50rf1yskj7SMwY4FemhrZDj6t/BA6OBA==
-X-Google-Smtp-Source: ABdhPJy7nWw9Ik9et+AaRczYspMx19HI7CNka7i6evXXwIT1hdRmAXW+M9NdOqdNtDf0KFJkHRWnEw==
-X-Received: by 2002:a05:6214:1bce:b0:441:2d37:1fd1 with SMTP id m14-20020a0562141bce00b004412d371fd1mr30216046qvc.10.1649759313599;
-        Tue, 12 Apr 2022 03:28:33 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id u5-20020a05622a198500b002ee933faf83sm4217533qtc.73.2022.04.12.03.28.32
+        bh=cmMr1t3KO1cqq+NQ7Llb8RhrxPtjgdQXmjqSwz4aJlY=;
+        b=geTDtp9VWmjd3+A9a5/9fIE4pUcl2lcvKDPdmr64fw02cciwlmmd3PDkOS1zPs1C3Q
+         kA1GYg14tv87TwaBqZ1SDYvpCACsK2mJEhiNsmoavfTCgcxmNReoetmdoeXVDbFwVt+R
+         uvcYGysPMdL7/o4/3CUSoc8HCADam4rQ20HRr4cOCvSb7z80tVVKj7mRrZpm+qVm/a6y
+         jFSyABZEYx1sq6afueeTr6ghgNiwOsxasYUR6+B111JKG1koRyE0INp2UBcr4hBA27S9
+         E4oj5l4XzmIVmuzJ5BWaVJgNYb/G4CGcPR6gwuwXjD93jH9whX7+KEeqlzlH1zhb9Qgd
+         QvsQ==
+X-Gm-Message-State: AOAM5305tmrHEMWeu+3vpAgCIuqfVqt238egyX8IVr5S6y1ug+FtRMq0
+        BhD56lLMsASMGRf0s9bgg3upINTNVsdNqA==
+X-Google-Smtp-Source: ABdhPJy37H2eiD3NrvWDyYM8sBi5Uyao5KKmJWcEkTp01dRMFzdtfIMBVBQRSzlXDpmiUAVtJvjF9g==
+X-Received: by 2002:a05:6214:5289:b0:443:a062:1b4 with SMTP id kj9-20020a056214528900b00443a06201b4mr3116940qvb.24.1649760488473;
+        Tue, 12 Apr 2022 03:48:08 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id d11-20020a37680b000000b0069ab73d9981sm8599697qkc.38.2022.04.12.03.48.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 03:28:33 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-2eafabbc80aso195442197b3.11;
-        Tue, 12 Apr 2022 03:28:32 -0700 (PDT)
-X-Received: by 2002:a81:413:0:b0:2ec:31d7:7e60 with SMTP id
- 19-20020a810413000000b002ec31d77e60mr6899514ywe.62.1649759312631; Tue, 12 Apr
- 2022 03:28:32 -0700 (PDT)
+        Tue, 12 Apr 2022 03:48:08 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-2ebf4b91212so98022197b3.8;
+        Tue, 12 Apr 2022 03:48:08 -0700 (PDT)
+X-Received: by 2002:a81:4782:0:b0:2eb:1cb1:5441 with SMTP id
+ u124-20020a814782000000b002eb1cb15441mr28595696ywa.479.1649760487910; Tue, 12
+ Apr 2022 03:48:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220402073234.24625-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220402073234.24625-1-biju.das.jz@bp.renesas.com>
+References: <20220402081328.26292-1-biju.das.jz@bp.renesas.com> <20220402081328.26292-6-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220402081328.26292-6-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Apr 2022 12:28:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW0_u7ffY7YQOvXz1VW1=DRhUukNaTOn1qKWmuGKb0T0w@mail.gmail.com>
-Message-ID: <CAMuHMdW0_u7ffY7YQOvXz1VW1=DRhUukNaTOn1qKWmuGKb0T0w@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] dt-bindings: arm: renesas: Document Renesas
- RZ/G2UL SMARC EVK
+Date:   Tue, 12 Apr 2022 12:47:56 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXru-w+OFFnzq-kdW5JMb3mSf9Cm+3bzAF-sXtggQzQcQ@mail.gmail.com>
+Message-ID: <CAMuHMdXru-w+OFFnzq-kdW5JMb3mSf9Cm+3bzAF-sXtggQzQcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] arm64: dts: renesas: rzg2ul-smarc: Enable microSD
+ on SMARC platform
 To:     Biju Das <biju.das.jz@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -66,16 +66,24 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Apr 2, 2022 at 9:32 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Document the Renesas SMARC EVK board which is based on the Renesas
-> RZ/G2UL Type-1 (R9A07G043U11) SoC.  The SMARC EVK consists of an
-> RZ/G2UL Type-1 SoM module and a SMARC carrier board.  The SoM module
-> sits on top of the carrier board.
+On Sat, Apr 2, 2022 at 10:13 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Enable the microSD card slot connected to SDHI1 on the RZ/G2UL SMARC
+> platform by removing the sdhi1 override which disabled it, and by adding
+> the necessary pinmux required for SDHI1.
+>
+> This patch also adds gpios property to vccq_sdhi1 regulator.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Updated gpios property for vccq_sdhi1 regulator and removed
+>    sdhi1 node as it is enabled in common.
+>  * Updated commit description
+
+Thanks for the update!
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.19.
 
 Gr{oetje,eeting}s,
 
