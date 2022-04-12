@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22635C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A59FCC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:02:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347618AbiDLKEI (ORCPT
+        id S1350045AbiDLKEL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55188 "EHLO
+        Tue, 12 Apr 2022 06:04:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355011AbiDLIGo (ORCPT
+        with ESMTP id S1355189AbiDLIH3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 04:06:44 -0400
+        Tue, 12 Apr 2022 04:07:29 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D3AAD4A3D4;
-        Tue, 12 Apr 2022 00:37:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0A91A51E49;
+        Tue, 12 Apr 2022 00:37:13 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,253,1643641200"; 
-   d="scan'208";a="116447073"
+   d="scan'208";a="116447085"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 12 Apr 2022 16:37:06 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Apr 2022 16:37:07 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id BF08B400F4F6;
-        Tue, 12 Apr 2022 16:37:06 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 986BF400F501;
+        Tue, 12 Apr 2022 16:37:07 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     alim.akhtar@samsung.com, avri.altman@wdc.com, robh+dt@kernel.org,
         krzk+dt@kernel.org
@@ -30,51 +30,41 @@ Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com,
         linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/7] treewide: scsi: ufs: Add support for Renesas R-Car UFS controller
-Date:   Tue, 12 Apr 2022 16:36:40 +0900
-Message-Id: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 7/7] arm64: dts: renesas: r8a779f0: spider-cpu: Enable UFS device
+Date:   Tue, 12 Apr 2022 16:36:47 +0900
+Message-Id: <20220412073647.3808493-8-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20220412073647.3808493-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series adds support Renesas R-Car S4-8 UFS controller.
-This controller has some restrictions so adds some quirks for it.
-Before using this driver, we have to initialize a clock generator
-on the environment board (named "Spider") by using the commands of
-U-Boot like below:
- => i2c dev 0
- => i2c mw 0x6c 0x26 0x05
- => i2c olen 0x6c 2
- => i2c mw 0x6c 0x26c 0x2e
+Enable UFS device for R-Car S4-8 Spider CPU board.
 
-To use the UFS controller, we need the following patch too:
-https://lore.kernel.org/all/20220411124932.3765571-1-yoshihiro.shimoda.uh@renesas.com/
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Yoshihiro Shimoda (7):
-  dt-bindings: ufs: Document Renesas R-Car UFS host controller
-  ufs: add UFSHCD_QUIRK_BROKEN_64BIT_ADDRESS
-  ufs: add UFSHCD_QUIRK_HIBERN_FASTAUTO
-  scsi: ufs-renesas: Add support for Renesas R-Car UFS controller
-  scsi: MAINTAINERS: Add maintainer for Renesas UFS driver
-  arm64: dts: renesas: r8a779f0: Add UFS node
-  arm64: dts: renesas: r8a779f0: spider-cpu: Enable UFS device
-
- .../devicetree/bindings/ufs/renesas,ufs.yaml  |  63 +++
- MAINTAINERS                                   |   7 +
- .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi |   8 +
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi     |  19 +
- drivers/scsi/ufs/Kconfig                      |  12 +
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-renesas.c                | 418 ++++++++++++++++++
- drivers/scsi/ufs/ufshcd.c                     |  12 +-
- drivers/scsi/ufs/ufshcd.h                     |  12 +
- 9 files changed, 549 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
- create mode 100644 drivers/scsi/ufs/ufs-renesas.c
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+index 41aa8591b3b1..999c823719bc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+@@ -82,3 +82,11 @@ &scif3 {
+ &scif_clk {
+ 	clock-frequency = <24000000>;
+ };
++
++&ufs {
++	status = "okay";
++};
++
++&ufs30_clk {
++	clock-frequency = <38400000>;
++};
 -- 
 2.25.1
 
