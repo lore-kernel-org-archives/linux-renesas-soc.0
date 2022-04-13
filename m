@@ -2,78 +2,87 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34144C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Apr 2022 08:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236A1C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Apr 2022 08:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233735AbiDMIYm (ORCPT
+        id S233754AbiDMI2B (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 04:24:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44186 "EHLO
+        Wed, 13 Apr 2022 04:28:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233729AbiDMIYl (ORCPT
+        with ESMTP id S233752AbiDMI2A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Apr 2022 04:24:41 -0400
-Received: from mail.meizu.com (edge07.meizu.com [112.91.151.210])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7549C340CE;
-        Wed, 13 Apr 2022 01:22:19 -0700 (PDT)
-Received: from IT-EXMB-1-125.meizu.com (172.16.1.125) by mz-mail11.meizu.com
- (172.16.1.15) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 13 Apr
- 2022 16:22:18 +0800
-Received: from meizu.meizu.com (172.16.137.70) by IT-EXMB-1-125.meizu.com
- (172.16.1.125) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.14; Wed, 13 Apr
- 2022 16:22:17 +0800
-From:   Haowen Bai <baihaowen@meizu.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Haowen Bai <baihaowen@meizu.com>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: renesas: Fix memory leak of 'cpg'
-Date:   Wed, 13 Apr 2022 16:22:16 +0800
-Message-ID: <1649838136-19851-1-git-send-email-baihaowen@meizu.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 13 Apr 2022 04:28:00 -0400
+Received: from smtpout1.mo3004.mail-out.ovh.net (smtpout1.mo3004.mail-out.ovh.net [79.137.123.219])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D28971DA5A;
+        Wed, 13 Apr 2022 01:25:39 -0700 (PDT)
+Received: from pro2.mail.ovh.net (unknown [10.108.16.97])
+        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id 63508242720;
+        Wed, 13 Apr 2022 08:25:38 +0000 (UTC)
+Received: from localhost.localdomain (88.125.132.16) by DAG1EX2.emp2.local
+ (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 13 Apr
+ 2022 10:25:36 +0200
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+To:     <wim@linux-watchdog.org>, <geert+renesas@glider.be>,
+        <tzungbi@kernel.org>, <linux-watchdog@vger.kernel.org>
+CC:     <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v6 1/2] dt-bindings: watchdog: renesas,wdt: Add support for RZ/N1
+Date:   Wed, 13 Apr 2022 10:25:26 +0200
+Message-ID: <20220413082527.155740-2-jjhiblot@traphandler.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220413082527.155740-1-jjhiblot@traphandler.com>
+References: <20220413082527.155740-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.137.70]
-X-ClientProxiedBy: IT-EXMB-1-126.meizu.com (172.16.1.126) To
- IT-EXMB-1-125.meizu.com (172.16.1.125)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [88.125.132.16]
+X-ClientProxiedBy: DAG8EX1.emp2.local (172.16.2.81) To DAG1EX2.emp2.local
+ (172.16.2.2)
+X-Ovh-Tracer-Id: 9872453335666407889
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudeltddgtdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeefueeggfeiuedthfdvgeevtedvueevgfevgeelieelveevheefjeejfffguddukeenucfkpheptddrtddrtddrtddpkeekrdduvdehrddufedvrdduieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix this issue by freeing the cpg when exiting the function in the
-error/normal path.
+Describe the WDT hardware in the RZ/N1 series.
 
-Signed-off-by: Haowen Bai <baihaowen@meizu.com>
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/renesas/clk-r8a73a4.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/renesas/clk-r8a73a4.c b/drivers/clk/renesas/clk-r8a73a4.c
-index cfed11c659d9..5a8d976f49e0 100644
---- a/drivers/clk/renesas/clk-r8a73a4.c
-+++ b/drivers/clk/renesas/clk-r8a73a4.c
-@@ -215,7 +215,7 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+index d060438e1402..e929d17ac995 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+@@ -19,6 +19,11 @@ properties:
+               - renesas,r7s9210-wdt      # RZ/A2
+           - const: renesas,rza-wdt       # RZ/A
  
- 	cpg->reg = of_iomap(np, 0);
- 	if (WARN_ON(cpg->reg == NULL))
--		return;
-+		goto out_free_cpg;
- 
- 	for (i = 0; i < num_clks; ++i) {
- 		const char *name;
-@@ -233,6 +233,9 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+out_free_cpg:
-+	kfree(cpg);
-+	kfree(clks);
- }
- CLK_OF_DECLARE(r8a73a4_cpg_clks, "renesas,r8a73a4-cpg-clocks",
- 	       r8a73a4_cpg_clocks_init);
++      - items:
++          - enum:
++              - renesas,r9a06g032-wdt    # RZ/N1D
++          - const: renesas,rzn1-wdt      # RZ/N1
++
+       - items:
+           - enum:
+               - renesas,r9a07g044-wdt    # RZ/G2{L,LC}
+@@ -94,6 +99,7 @@ allOf:
+             contains:
+               enum:
+                 - renesas,rza-wdt
++                - renesas,rzn1-wdt
+     then:
+       required:
+         - power-domains
 -- 
-2.7.4
+2.25.1
 
