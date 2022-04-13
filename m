@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25061C3527C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A2AC43219
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Apr 2022 17:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237323AbiDMR0y (ORCPT
+        id S237306AbiDMR0y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 13 Apr 2022 13:26:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32906 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237315AbiDMR0p (ORCPT
+        with ESMTP id S237304AbiDMR0p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 13 Apr 2022 13:26:45 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84B946257
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Apr 2022 10:24:18 -0700 (PDT)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302243B2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Apr 2022 10:24:17 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c9b8:20d3:ee2b:1cda])
-        by andre.telenet-ops.be with bizsmtp
-        id JHQG2700P2t8Arn01HQGQC; Wed, 13 Apr 2022 19:24:16 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id JHQF2700w2t8Arn01HQFXM; Wed, 13 Apr 2022 19:24:16 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj2-000Tqf-08; Wed, 13 Apr 2022 19:24:16 +0200
+        id 1negj1-000TqG-CH; Wed, 13 Apr 2022 19:24:15 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj0-00DfU8-Nq; Wed, 13 Apr 2022 19:24:14 +0200
+        id 1negj1-00DfWg-7s; Wed, 13 Apr 2022 19:24:15 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 22/50] pinctrl: renesas: sh7734: Use shorthands for reserved fields
-Date:   Wed, 13 Apr 2022 19:23:44 +0200
-Message-Id: <3ab96d28494b8c5a2d427ba25f31a04ca0cc7305.1649865241.git.geert+renesas@glider.be>
+Subject: [PATCH 36/50] pinctrl: renesas: r8a779a0: Optimize fixed-width reserved fields
+Date:   Wed, 13 Apr 2022 19:23:58 +0200
+Message-Id: <7db3751ecf96fcc469bd14eeb02d69e565956151.1649865241.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649865241.git.geert+renesas@glider.be>
 References: <cover.1649865241.git.geert+renesas@glider.be>
@@ -43,206 +43,387 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the full descriptions of reserved register fields by shorthands
-with a negative field width, and merge adjacent reserved fields.
+Describe registers with fixed-width register fields and many reserved
+fields using the PINMUX_CFG_REG_VAR() macro, as the latter supports a
+shorthand not requiring dummy values.
 
-This reduces kernel size by 174 bytes.
+This reduces kernel size by 556 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-sh7734.c | 94 +++++++---------------------
- 1 file changed, 22 insertions(+), 72 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a779a0.c | 203 +++++++++----------------
+ 1 file changed, 72 insertions(+), 131 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-sh7734.c b/drivers/pinctrl/renesas/pfc-sh7734.c
-index a4e02fc7ea34f1f5..54f60b37c211e039 100644
---- a/drivers/pinctrl/renesas/pfc-sh7734.c
-+++ b/drivers/pinctrl/renesas/pfc-sh7734.c
-@@ -1895,10 +1895,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_A16, FN_ST0_PWM, FN_LCD_DON_A, FN_TIOC4A_C ))
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+index 081a14fbe5a4af87..70551ba8b524656d 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+@@ -389,7 +389,6 @@
+ #define IP3SR1_19_16	FM(GP1_28)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)		FM(D0)		F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3SR1_23_20	FM(GP1_29)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)		FM(D1)		F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3SR1_27_24	FM(GP1_30)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)		FM(D2)		F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP3SR1_31_28	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 
+ /* IP0SR2 */		/* 0 */			/* 1 */			/* 2 */		/* 3 */		/* 4 */		/* 5 */		/* 6 - F */
+ #define IP0SR2_3_0	FM(IPC_CLKIN)		FM(IPC_CLKEN_IN)	F_(0, 0)	F_(0, 0)	FM(DU_DOTCLKIN)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -420,11 +419,8 @@
+ #define IP2SR2_31_28	FM(TCLK1_A)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	FM(EX_WAIT0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 
+ /* IP0SR3 */		/* 0 */		/* 1 */			/* 2 */		/* 3 */			/* 4 */		/* 5 */		/* 6 - F */
+-#define IP0SR3_3_0	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR3_7_4	FM(CANFD0_TX)	FM(FXR_TXDA_B)		FM(TX1_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR3_11_8	FM(CANFD0_RX)	FM(RXDA_EXTFXR_B)	FM(RX1_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR3_15_12	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR3_19_16	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR3_23_20	FM(CANFD2_TX)	FM(TPU0TO2)		FM(PWM0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR3_27_24	FM(CANFD2_RX)	FM(TPU0TO3)		FM(PWM1)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR3_31_28	FM(CANFD3_TX)	F_(0, 0)		FM(PWM2)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -435,8 +431,6 @@
+ #define IP1SR3_15_12	FM(CANFD5_TX)	F_(0, 0)		F_(0, 0)	FM(FXR_TXENA_N)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR3_19_16	FM(CANFD5_RX)	F_(0, 0)		F_(0, 0)	FM(FXR_TXENB_N)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR3_23_20	FM(CANFD6_TX)	F_(0, 0)		F_(0, 0)	FM(STPWT_EXTFXR)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP1SR3_27_24	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP1SR3_31_28	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 
+ /* IP0SR4 */		/* 0 */		/* 1 */			/* 2 */		/* 3 */		/* 4 */		/* 5 */		/* 6 - F */
+ #define IP0SR4_3_0	FM(AVB0_RX_CTL)	FM(AVB0_MII_RX_DV)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -457,14 +451,10 @@
+ #define IP1SR4_27_24	FM(AVB0_MDC)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR4_31_28	FM(AVB0_MAGIC)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ /* IP2SR4 */		/* 0 */			/* 1 */			/* 2 */		/* 3 */		/* 4 */		/* 5 */		/* 6 - F */
+-#define IP2SR4_3_0	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2SR4_7_4	FM(AVB0_LINK)		FM(AVB0_MII_TX_ER)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2SR4_11_8	FM(AVB0_AVTP_MATCH)	FM(AVB0_MII_RX_ER)	FM(CC5_OSCOUT)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2SR4_15_12	FM(AVB0_AVTP_CAPTURE)	FM(AVB0_MII_CRS)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2SR4_19_16	FM(AVB0_AVTP_PPS)	FM(AVB0_MII_COL)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP2SR4_23_20	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP2SR4_27_24	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP2SR4_31_28	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 
+ /* IP0SR5 */		/* 0 */			/* 1 */			/* 2 */		/* 3 */		/* 4 */		/* 5 */		/* 6 - F */
+ #define IP0SR5_3_0	FM(AVB1_RX_CTL)		FM(AVB1_MII_RX_DV)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -485,14 +475,10 @@
+ #define IP1SR5_27_24	FM(AVB1_MDC)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR5_31_28	FM(AVB1_MAGIC)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ /* IP2SR5 */		/* 0 */			/* 1 */			/* 2 */		/* 3 */		/* 4 */		/* 5 */		/* 6 - F */
+-#define IP2SR5_3_0	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2SR5_7_4	FM(AVB1_LINK)		FM(AVB1_MII_TX_ER)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2SR5_11_8	FM(AVB1_AVTP_MATCH)	FM(AVB1_MII_RX_ER)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2SR5_15_12	FM(AVB1_AVTP_CAPTURE)	FM(AVB1_MII_CRS)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2SR5_19_16	FM(AVB1_AVTP_PPS)	FM(AVB1_MII_COL)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP2SR5_23_20	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP2SR5_27_24	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP2SR5_31_28	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 
+ #define PINMUX_GPSR		\
+ 				\
+@@ -537,7 +523,7 @@ FM(IP0SR1_15_12)	IP0SR1_15_12	FM(IP1SR1_15_12)	IP1SR1_15_12	FM(IP2SR1_15_12)	IP2
+ FM(IP0SR1_19_16)	IP0SR1_19_16	FM(IP1SR1_19_16)	IP1SR1_19_16	FM(IP2SR1_19_16)	IP2SR1_19_16	FM(IP3SR1_19_16)	IP3SR1_19_16 \
+ FM(IP0SR1_23_20)	IP0SR1_23_20	FM(IP1SR1_23_20)	IP1SR1_23_20	FM(IP2SR1_23_20)	IP2SR1_23_20	FM(IP3SR1_23_20)	IP3SR1_23_20 \
+ FM(IP0SR1_27_24)	IP0SR1_27_24	FM(IP1SR1_27_24)	IP1SR1_27_24	FM(IP2SR1_27_24)	IP2SR1_27_24	FM(IP3SR1_27_24)	IP3SR1_27_24 \
+-FM(IP0SR1_31_28)	IP0SR1_31_28	FM(IP1SR1_31_28)	IP1SR1_31_28	FM(IP2SR1_31_28)	IP2SR1_31_28	FM(IP3SR1_31_28)	IP3SR1_31_28 \
++FM(IP0SR1_31_28)	IP0SR1_31_28	FM(IP1SR1_31_28)	IP1SR1_31_28	FM(IP2SR1_31_28)	IP2SR1_31_28 \
+ \
+ FM(IP0SR2_3_0)		IP0SR2_3_0	FM(IP1SR2_3_0)		IP1SR2_3_0	FM(IP2SR2_3_0)		IP2SR2_3_0 \
+ FM(IP0SR2_7_4)		IP0SR2_7_4	FM(IP1SR2_7_4)		IP1SR2_7_4	FM(IP2SR2_7_4)		IP2SR2_7_4 \
+@@ -548,32 +534,32 @@ FM(IP0SR2_23_20)	IP0SR2_23_20	FM(IP1SR2_23_20)	IP1SR2_23_20	FM(IP2SR2_23_20)	IP2
+ FM(IP0SR2_27_24)	IP0SR2_27_24	FM(IP1SR2_27_24)	IP1SR2_27_24	FM(IP2SR2_27_24)	IP2SR2_27_24 \
+ FM(IP0SR2_31_28)	IP0SR2_31_28	FM(IP1SR2_31_28)	IP1SR2_31_28	FM(IP2SR2_31_28)	IP2SR2_31_28 \
+ \
+-FM(IP0SR3_3_0)		IP0SR3_3_0	FM(IP1SR3_3_0)		IP1SR3_3_0	\
++					FM(IP1SR3_3_0)		IP1SR3_3_0	\
+ FM(IP0SR3_7_4)		IP0SR3_7_4	FM(IP1SR3_7_4)		IP1SR3_7_4	\
+ FM(IP0SR3_11_8)		IP0SR3_11_8	FM(IP1SR3_11_8)		IP1SR3_11_8	\
+-FM(IP0SR3_15_12)	IP0SR3_15_12	FM(IP1SR3_15_12)	IP1SR3_15_12	\
+-FM(IP0SR3_19_16)	IP0SR3_19_16	FM(IP1SR3_19_16)	IP1SR3_19_16	\
++					FM(IP1SR3_15_12)	IP1SR3_15_12	\
++					FM(IP1SR3_19_16)	IP1SR3_19_16	\
+ FM(IP0SR3_23_20)	IP0SR3_23_20	FM(IP1SR3_23_20)	IP1SR3_23_20	\
+-FM(IP0SR3_27_24)	IP0SR3_27_24	FM(IP1SR3_27_24)	IP1SR3_27_24	\
+-FM(IP0SR3_31_28)	IP0SR3_31_28	FM(IP1SR3_31_28)	IP1SR3_31_28	\
++FM(IP0SR3_27_24)	IP0SR3_27_24	\
++FM(IP0SR3_31_28)	IP0SR3_31_28	\
+ \
+-FM(IP0SR4_3_0)		IP0SR4_3_0	FM(IP1SR4_3_0)		IP1SR4_3_0	FM(IP2SR4_3_0)		IP2SR4_3_0 \
++FM(IP0SR4_3_0)		IP0SR4_3_0	FM(IP1SR4_3_0)		IP1SR4_3_0	\
+ FM(IP0SR4_7_4)		IP0SR4_7_4	FM(IP1SR4_7_4)		IP1SR4_7_4	FM(IP2SR4_7_4)		IP2SR4_7_4 \
+ FM(IP0SR4_11_8)		IP0SR4_11_8	FM(IP1SR4_11_8)		IP1SR4_11_8	FM(IP2SR4_11_8)		IP2SR4_11_8 \
+ FM(IP0SR4_15_12)	IP0SR4_15_12	FM(IP1SR4_15_12)	IP1SR4_15_12	FM(IP2SR4_15_12)	IP2SR4_15_12 \
+ FM(IP0SR4_19_16)	IP0SR4_19_16	FM(IP1SR4_19_16)	IP1SR4_19_16	FM(IP2SR4_19_16)	IP2SR4_19_16 \
+-FM(IP0SR4_23_20)	IP0SR4_23_20	FM(IP1SR4_23_20)	IP1SR4_23_20	FM(IP2SR4_23_20)	IP2SR4_23_20 \
+-FM(IP0SR4_27_24)	IP0SR4_27_24	FM(IP1SR4_27_24)	IP1SR4_27_24	FM(IP2SR4_27_24)	IP2SR4_27_24 \
+-FM(IP0SR4_31_28)	IP0SR4_31_28	FM(IP1SR4_31_28)	IP1SR4_31_28	FM(IP2SR4_31_28)	IP2SR4_31_28 \
++FM(IP0SR4_23_20)	IP0SR4_23_20	FM(IP1SR4_23_20)	IP1SR4_23_20	\
++FM(IP0SR4_27_24)	IP0SR4_27_24	FM(IP1SR4_27_24)	IP1SR4_27_24	\
++FM(IP0SR4_31_28)	IP0SR4_31_28	FM(IP1SR4_31_28)	IP1SR4_31_28	\
+ \
+-FM(IP0SR5_3_0)		IP0SR5_3_0	FM(IP1SR5_3_0)		IP1SR5_3_0	FM(IP2SR5_3_0)		IP2SR5_3_0 \
++FM(IP0SR5_3_0)		IP0SR5_3_0	FM(IP1SR5_3_0)		IP1SR5_3_0	\
+ FM(IP0SR5_7_4)		IP0SR5_7_4	FM(IP1SR5_7_4)		IP1SR5_7_4	FM(IP2SR5_7_4)		IP2SR5_7_4 \
+ FM(IP0SR5_11_8)		IP0SR5_11_8	FM(IP1SR5_11_8)		IP1SR5_11_8	FM(IP2SR5_11_8)		IP2SR5_11_8 \
+ FM(IP0SR5_15_12)	IP0SR5_15_12	FM(IP1SR5_15_12)	IP1SR5_15_12	FM(IP2SR5_15_12)	IP2SR5_15_12 \
+ FM(IP0SR5_19_16)	IP0SR5_19_16	FM(IP1SR5_19_16)	IP1SR5_19_16	FM(IP2SR5_19_16)	IP2SR5_19_16 \
+-FM(IP0SR5_23_20)	IP0SR5_23_20	FM(IP1SR5_23_20)	IP1SR5_23_20	FM(IP2SR5_23_20)	IP2SR5_23_20 \
+-FM(IP0SR5_27_24)	IP0SR5_27_24	FM(IP1SR5_27_24)	IP1SR5_27_24	FM(IP2SR5_27_24)	IP2SR5_27_24 \
+-FM(IP0SR5_31_28)	IP0SR5_31_28	FM(IP1SR5_31_28)	IP1SR5_31_28	FM(IP2SR5_31_28)	IP2SR5_31_28
++FM(IP0SR5_23_20)	IP0SR5_23_20	FM(IP1SR5_23_20)	IP1SR5_23_20	\
++FM(IP0SR5_27_24)	IP0SR5_27_24	FM(IP1SR5_27_24)	IP1SR5_27_24	\
++FM(IP0SR5_31_28)	IP0SR5_31_28	FM(IP1SR5_31_28)	IP1SR5_31_28
+ 
+ /* MOD_SEL2 */			/* 0 */		/* 1 */		/* 2 */		/* 3 */
+ #define MOD_SEL2_15_14		FM(SEL_I2C6_0)	F_(0, 0)	F_(0, 0)	FM(SEL_I2C6_3)
+@@ -3223,14 +3209,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_1_1_FN,	GPSR1_1,
+ 		GP_1_0_FN,	GPSR1_0, ))
  	},
- 	{ PINMUX_CFG_REG_VAR("IPSR2", 0xFFFC0024, 32,
--			     GROUP(1, 3, 3, 2, 3, 3, 3, 3, 3, 3, 2, 3),
-+			     GROUP(-1, 3, 3, 2, 3, 3, 3, 3, 3, 3, 2, 3),
- 			     GROUP(
--		/* IP2_31 [1] */
+-	{ PINMUX_CFG_REG("GPSR2", 0xe6050840, 32, 1, GROUP(
 -		0, 0,
-+		/* IP2_31 [1] RESERVED */
- 		/* IP2_30_28 [3] */
- 		FN_D14, FN_TX2_B, 0, FN_FSE_A,
- 			FN_ET0_TX_CLK_B, 0, 0, 0,
-@@ -1932,10 +1931,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 			FN_FD4_A, 0, 0, 0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR3", 0xFFFC0028, 32,
--			     GROUP(2, 3, 3, 3, 1, 2, 3, 3, 3, 3, 3, 1, 2),
-+			     GROUP(-2, 3, 3, 3, 1, 2, 3, 3, 3, 3, 3, 1, 2),
- 			     GROUP(
--	    /* IP3_31_30 [2] */
--		0, 0, 0, 0,
-+	    /* IP3_31_30 [2] RESERVED */
- 	    /* IP3_29_27 [3] */
- 		FN_DRACK0, FN_SD1_DAT2_A, FN_ATAG, FN_TCLK1_A,
- 		FN_ET0_ETXD7, 0, 0, 0,
-@@ -2006,19 +2004,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 			FN_ET0_ERXD7, 0, 0, 0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR5", 0xFFFC0030, 32,
--			     GROUP(1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3,
--				   3, 3, 3),
-+			     GROUP(-5, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3),
- 			     GROUP(
--	    /* IP5_31 [1] */
--	    0, 0,
--	    /* IP5_30 [1] */
--	    0, 0,
--	    /* IP5_29 [1] */
--	    0, 0,
--	    /* IP5_28 [1] */
--	    0, 0,
--	    /* IP5_27 [1] */
--	    0, 0,
-+	    /* IP5_31_27 [5] RESERVED */
- 	    /* IP5_26_25 [2] */
- 		FN_REF50CK, FN_CTS1_E, FN_HCTS0_D, 0,
- 	    /* IP5_24_23 [2] */
-@@ -2048,25 +2036,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_ET0_RX_CLK_B, 0, 0, 0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR6", 0xFFFC0034, 32,
--			     GROUP(1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 2, 2,
--				   2, 2, 2, 2, 3, 3),
-+			     GROUP(-8, 3, 3, 2, 2, 2, 2, 2, 2, 3, 3),
- 			     GROUP(
--	    /* IP5_31 [1] */
--	    0, 0,
--	    /* IP6_30 [1] */
--	    0, 0,
--	    /* IP6_29 [1] */
--	    0, 0,
--	    /* IP6_28 [1] */
--	    0, 0,
--	    /* IP6_27 [1] */
--	    0, 0,
--	    /* IP6_26 [1] */
--	    0, 0,
--	    /* IP6_25 [1] */
--	    0, 0,
--	    /* IP6_24 [1] */
--	    0, 0,
-+	    /* IP5_31_24 [8] RESERVED */
- 	    /* IP6_23_21 [3] */
- 		FN_DU0_DG1, FN_CTS1_C, FN_HRTS0_D, FN_TIOC1B_A,
- 		FN_HIFD09, 0, 0, 0,
-@@ -2093,10 +2065,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_TCLKA_A, FN_HIFD00, 0, 0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR7", 0xFFFC0038, 32,
--			     GROUP(1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-+			     GROUP(-1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3),
- 			     GROUP(
--	    /* IP7_31 [1] */
--	    0, 0,
-+	    /* IP7_31 [1] RESERVED */
- 	    /* IP7_30_29 [2] */
- 		FN_DU0_DB4, 0, FN_HIFINT, 0,
- 	    /* IP7_28_27 [2] */
-@@ -2130,11 +2101,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_HIFD10, 0, 0, 0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR8", 0xFFFC003C, 32,
--			     GROUP(2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2,
-+			     GROUP(-2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2,
- 				   2, 2, 2),
- 			     GROUP(
--	    /* IP9_31_30 [2] */
--	    0, 0, 0, 0,
-+	    /* IP9_31_30 [2] RESERVED */
- 	    /* IP8_29_28 [2] */
- 		FN_IRQ3_A, FN_RTS0_A, FN_HRTS0_B, FN_ET0_ERXD3_A,
- 	    /* IP8_27_26 [2] */
-@@ -2168,11 +2138,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_DU0_DB5, 0, FN_HIFDREQ, 0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR9", 0xFFFC0040, 32,
--			     GROUP(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-+			     GROUP(-2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
- 				   2, 2, 2, 2),
- 			     GROUP(
--	    /* IP9_31_30 [2] */
--	    0, 0, 0, 0,
-+	    /* IP9_31_30 [2] RESERVED */
- 	    /* IP9_29_28 [2] */
- 		FN_SSI_SDATA1_A, FN_VI1_3_B, FN_LCD_DATA14_B, 0,
- 	    /* IP9_27_26 [2] */
-@@ -2205,10 +2174,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_VI1_CLK_A, 0, FN_FD0_B, FN_LCD_DATA0_B ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR10", 0xFFFC0044, 32,
--			     GROUP(2, 2, 2, 1, 2, 1, 3, 3, 1, 3, 3, 3, 3, 3),
-+			     GROUP(-2, 2, 2, 1, 2, 1, 3, 3, 1, 3, 3, 3, 3, 3),
- 			     GROUP(
--	    /* IP9_31_30 [2] */
--	    0, 0, 0, 0,
-+	    /* IP9_31_30 [2] RESERVED */
- 	    /* IP10_29_28 [2] */
- 		FN_CAN1_TX_A, FN_TX5_C, FN_MLB_DAT, 0,
- 	    /* IP10_27_26 [2] */
-@@ -2244,11 +2212,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_LCD_DATA15_B, 0, 0, 0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR11", 0xFFFC0048, 32,
--			     GROUP(3, 1, 2, 3, 2, 2, 3, 3, 1, 2, 3, 3,
-+			     GROUP(-3, 1, 2, 3, 2, 2, 3, 3, 1, 2, 3, 3,
- 				   1, 1, 1, 1),
- 			     GROUP(
--	    /* IP11_31_29 [3] */
--	    0, 0, 0, 0, 0, 0, 0, 0,
-+	    /* IP11_31_29 [3] RESERVED */
- 	    /* IP11_28 [1] */
- 		FN_PRESETOUT, FN_ST_CLKOUT,
- 	    /* IP11_27_26 [2] */
-@@ -2286,11 +2253,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_SCL1, FN_SCIF_CLK_C ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xFFFC004C, 32,
--			     GROUP(3, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2,
-+			     GROUP(-3, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2,
- 				   2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
- 			     GROUP(
--		/* SEL1_31_29 [3] */
--		0, 0, 0, 0, 0, 0, 0, 0,
-+		/* SEL1_31_29 [3] RESERVED */
- 		/* SEL1_28 [1] */
- 		FN_SEL_IEBUS_0, FN_SEL_IEBUS_1,
- 		/* SEL1_27 [1] */
-@@ -2343,25 +2309,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_SEL_INTC_0, FN_SEL_INTC_1 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL2", 0xFFFC0050, 32,
--			     GROUP(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
--				   2, 1, 2, 2, 3, 2, 3, 2, 2),
-+			     GROUP(-8, 1, 1, 1, 2, 2, 1, 2, 2, 3, 2, 3, 2, 2),
- 			     GROUP(
--		/* SEL2_31 [1] */
 -		0, 0,
--		/* SEL2_30 [1] */
 -		0, 0,
--		/* SEL2_29 [1] */
 -		0, 0,
--		/* SEL2_28 [1] */
 -		0, 0,
--		/* SEL2_27 [1] */
 -		0, 0,
--		/* SEL2_26 [1] */
 -		0, 0,
--		/* SEL2_25 [1] */
++	{ PINMUX_CFG_REG_VAR("GPSR2", 0xe6050840, 32,
++			     GROUP(-7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
++				   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++			     GROUP(
++		/* GP2_31_25 RESERVED */
+ 		GP_2_24_FN,	GPSR2_24,
+ 		GP_2_23_FN,	GPSR2_23,
+ 		GP_2_22_FN,	GPSR2_22,
+@@ -3257,22 +3240,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_2_1_FN,	GPSR2_1,
+ 		GP_2_0_FN,	GPSR2_0, ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR3", 0xe6058840, 32, 1, GROUP(
 -		0, 0,
--		/* SEL2_24 [1] */
 -		0, 0,
-+		/* SEL2_31_24 [8] RESERVED */
- 		/* SEL2_23 [1] */
- 		FN_SEL_MTU2_CLK_0, FN_SEL_MTU2_CLK_1,
- 		/* SEL2_22 [1] */
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
++	{ PINMUX_CFG_REG_VAR("GPSR3", 0xe6058840, 32,
++			     GROUP(-15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
++				   1, 1, 1, 1, 1, 1),
++			     GROUP(
++		/* GP3_31_17 RESERVED */
+ 		GP_3_16_FN,	GPSR3_16,
+ 		GP_3_15_FN,	GPSR3_15,
+ 		GP_3_14_FN,	GPSR3_14,
+@@ -3325,18 +3297,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_4_1_FN,	GPSR4_1,
+ 		GP_4_0_FN,	GPSR4_0, ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR5", 0xe6060840, 32, 1, GROUP(
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
++	{ PINMUX_CFG_REG_VAR("GPSR5", 0xe6060840, 32,
++			     GROUP(-11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
++				   1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++			     GROUP(
++		/* GP5_31_21 RESERVED */
+ 		GP_5_20_FN,	GPSR5_20,
+ 		GP_5_19_FN,	GPSR5_19,
+ 		GP_5_18_FN,	GPSR5_18,
+@@ -3359,18 +3324,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_5_1_FN,	GPSR5_1,
+ 		GP_5_0_FN,	GPSR5_0, ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR6", 0xe6068040, 32, 1, GROUP(
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
++	{ PINMUX_CFG_REG_VAR("GPSR6", 0xe6068040, 32,
++			     GROUP(-11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
++				   1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++			     GROUP(
++		/* GP6_31_21 RESERVED */
+ 		GP_6_20_FN,	GPSR6_20,
+ 		GP_6_19_FN,	GPSR6_19,
+ 		GP_6_18_FN,	GPSR6_18,
+@@ -3393,18 +3351,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_6_1_FN,	GPSR6_1,
+ 		GP_6_0_FN,	GPSR6_0, ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR7", 0xe6068840, 32, 1, GROUP(
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
++	{ PINMUX_CFG_REG_VAR("GPSR7", 0xe6068840, 32,
++			     GROUP(-11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
++				   1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++			     GROUP(
++		/* GP7_31_21 RESERVED */
+ 		GP_7_20_FN,	GPSR7_20,
+ 		GP_7_19_FN,	GPSR7_19,
+ 		GP_7_18_FN,	GPSR7_18,
+@@ -3427,18 +3378,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_7_1_FN,	GPSR7_1,
+ 		GP_7_0_FN,	GPSR7_0, ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR8", 0xe6069040, 32, 1, GROUP(
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
++	{ PINMUX_CFG_REG_VAR("GPSR8", 0xe6069040, 32,
++			     GROUP(-11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
++				   1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++			     GROUP(
++		/* GP8_31_21 RESERVED */
+ 		GP_8_20_FN,	GPSR8_20,
+ 		GP_8_19_FN,	GPSR8_19,
+ 		GP_8_18_FN,	GPSR8_18,
+@@ -3461,18 +3405,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_8_1_FN,	GPSR8_1,
+ 		GP_8_0_FN,	GPSR8_0, ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR9", 0xe6069840, 32, 1, GROUP(
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
+-		0, 0,
++	{ PINMUX_CFG_REG_VAR("GPSR9", 0xe6069840, 32,
++			     GROUP(-11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
++				   1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++			     GROUP(
++		/* GP9_31_21 RESERVED */
+ 		GP_9_20_FN,	GPSR9_20,
+ 		GP_9_19_FN,	GPSR9_19,
+ 		GP_9_18_FN,	GPSR9_18,
+@@ -3530,8 +3467,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		IP2SR1_7_4
+ 		IP2SR1_3_0))
+ 	},
+-	{ PINMUX_CFG_REG("IP3SR1", 0xe605006c, 32, 4, GROUP(
+-		IP3SR1_31_28
++	{ PINMUX_CFG_REG_VAR("IP3SR1", 0xe605006c, 32,
++			      GROUP(-4, 4, 4, 4, 4, 4, 4, 4),
++			      GROUP(
++		/* IP3SR1_31_28 RESERVED */
+ 		IP3SR1_27_24
+ 		IP3SR1_23_20
+ 		IP3SR1_19_16
+@@ -3570,19 +3509,21 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		IP2SR2_7_4
+ 		IP2SR2_3_0))
+ 	},
+-	{ PINMUX_CFG_REG("IP0SR3", 0xe6058860, 32, 4, GROUP(
++	{ PINMUX_CFG_REG_VAR("IP0SR3", 0xe6058860, 32,
++			     GROUP(4, 4, 4, -8, 4, 4, -4),
++			     GROUP(
+ 		IP0SR3_31_28
+ 		IP0SR3_27_24
+ 		IP0SR3_23_20
+-		IP0SR3_19_16
+-		IP0SR3_15_12
++		/* IP0SR3_19_12 RESERVED */
+ 		IP0SR3_11_8
+ 		IP0SR3_7_4
+-		IP0SR3_3_0))
++		/* IP0SR3_3_0 RESERVED */ ))
+ 	},
+-	{ PINMUX_CFG_REG("IP1SR3", 0xe6058864, 32, 4, GROUP(
+-		IP1SR3_31_28
+-		IP1SR3_27_24
++	{ PINMUX_CFG_REG_VAR("IP1SR3", 0xe6058864, 32,
++			     GROUP(-8, 4, 4, 4, 4, 4, 4),
++			     GROUP(
++		/* IP1SR3_31_24 RESERVED */
+ 		IP1SR3_23_20
+ 		IP1SR3_19_16
+ 		IP1SR3_15_12
+@@ -3610,15 +3551,15 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		IP1SR4_7_4
+ 		IP1SR4_3_0))
+ 	},
+-	{ PINMUX_CFG_REG("IP2SR4", 0xe6060068, 32, 4, GROUP(
+-		IP2SR4_31_28
+-		IP2SR4_27_24
+-		IP2SR4_23_20
++	{ PINMUX_CFG_REG_VAR("IP2SR4", 0xe6060068, 32,
++			     GROUP(-12, 4, 4, 4, 4, -4),
++			     GROUP(
++		/* IP2SR4_31_20 RESERVED */
+ 		IP2SR4_19_16
+ 		IP2SR4_15_12
+ 		IP2SR4_11_8
+ 		IP2SR4_7_4
+-		IP2SR4_3_0))
++		/* IP2SR4_3_0 RESERVED */ ))
+ 	},
+ 	{ PINMUX_CFG_REG("IP0SR5", 0xe6060860, 32, 4, GROUP(
+ 		IP0SR5_31_28
+@@ -3640,15 +3581,15 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		IP1SR5_7_4
+ 		IP1SR5_3_0))
+ 	},
+-	{ PINMUX_CFG_REG("IP2SR5", 0xe6060868, 32, 4, GROUP(
+-		IP2SR5_31_28
+-		IP2SR5_27_24
+-		IP2SR5_23_20
++	{ PINMUX_CFG_REG_VAR("IP2SR5", 0xe6060868, 32,
++			     GROUP(-12, 4, 4, 4, 4, -4),
++			     GROUP(
++		/* IP2SR5_31_20 RESERVED */
+ 		IP2SR5_19_16
+ 		IP2SR5_15_12
+ 		IP2SR5_11_8
+ 		IP2SR5_7_4
+-		IP2SR5_3_0))
++		/* IP2SR5_3_0 RESERVED */ ))
+ 	},
+ #undef F_
+ #undef FM
 -- 
 2.25.1
 
