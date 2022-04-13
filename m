@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6491AC4167E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E206FC43219
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Apr 2022 17:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237280AbiDMR1E (ORCPT
+        id S237349AbiDMR1G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 13:27:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60986 "EHLO
+        Wed, 13 Apr 2022 13:27:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236491AbiDMR0m (ORCPT
+        with ESMTP id S237300AbiDMR0x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Apr 2022 13:26:42 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6706CCA
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Apr 2022 10:24:17 -0700 (PDT)
+        Wed, 13 Apr 2022 13:26:53 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0604E205E1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Apr 2022 10:24:19 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c9b8:20d3:ee2b:1cda])
-        by xavier.telenet-ops.be with bizsmtp
-        id JHQF2700g2t8Arn01HQFtD; Wed, 13 Apr 2022 19:24:16 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id JHQH270082t8Arn06HQHDn; Wed, 13 Apr 2022 19:24:17 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj1-000TqD-BV; Wed, 13 Apr 2022 19:24:15 +0200
+        id 1negj2-000TsY-Rn; Wed, 13 Apr 2022 19:24:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj0-00DfSG-56; Wed, 13 Apr 2022 19:24:14 +0200
+        id 1negj1-00DfZn-Hf; Wed, 13 Apr 2022 19:24:15 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/50] pinctrl: renesas: r8a7778: Use shorthands for reserved fields
-Date:   Wed, 13 Apr 2022 19:23:28 +0200
-Message-Id: <1af5225c81ac871a461f7d824619275e2e0ed8df.1649865241.git.geert+renesas@glider.be>
+Subject: [PATCH 44/50] pinctrl: renesas: sh7723: Optimize fixed-width reserved fields
+Date:   Wed, 13 Apr 2022 19:24:06 +0200
+Message-Id: <5d7ef2fa02c2137d2d243fc183d18220c9aaf7b8.1649865241.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649865241.git.geert+renesas@glider.be>
 References: <cover.1649865241.git.geert+renesas@glider.be>
@@ -43,226 +43,160 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the full descriptions of reserved register fields by shorthands
-with a negative field width, and merge adjacent reserved fields.
+Describe registers with fixed-width register fields and many reserved
+fields using the PINMUX_CFG_REG_VAR() macro, as the latter supports a
+shorthand not requiring dummy values.
 
-This reduces kernel size by 142 bytes.
+This reduces kernel size by 105 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a7778.c | 98 +++++++--------------------
- 1 file changed, 24 insertions(+), 74 deletions(-)
+ drivers/pinctrl/renesas/pfc-sh7723.c | 70 ++++++++++++++++------------
+ 1 file changed, 39 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a7778.c b/drivers/pinctrl/renesas/pfc-r8a7778.c
-index a24672ca3c01babe..35bdb9af81607566 100644
---- a/drivers/pinctrl/renesas/pfc-r8a7778.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a7778.c
-@@ -2240,11 +2240,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+diff --git a/drivers/pinctrl/renesas/pfc-sh7723.c b/drivers/pinctrl/renesas/pfc-sh7723.c
+index 94c7acf591d68a29..95344281966e6eb0 100644
+--- a/drivers/pinctrl/renesas/pfc-sh7723.c
++++ b/drivers/pinctrl/renesas/pfc-sh7723.c
+@@ -1546,9 +1546,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		PTD1_FN, PTD1_OUT, 0, PTD1_IN,
+ 		PTD0_FN, PTD0_OUT, 0, PTD0_IN ))
  	},
- 
- 	{ PINMUX_CFG_REG_VAR("IPSR0", 0xfffc0020, 32,
--			     GROUP(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-+			     GROUP(-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
- 				   1, 1, 1, 1, 1, 3, 4, 3, 3, 2),
- 			     GROUP(
--		/* IP0_31 [1] */
--		0,	0,
-+		/* IP0_31 [1] RESERVED */
- 		/* IP0_30 [1] */
- 		FN_A19,	0,
- 		/* IP0_29 [1] */
-@@ -2296,13 +2295,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		))
+-	{ PINMUX_CFG_REG("PECR", 0xa4050108, 16, 2, GROUP(
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
++	{ PINMUX_CFG_REG_VAR("PECR", 0xa4050108, 16,
++			     GROUP(-4, 2, 2, 2, 2, 2, 2),
++			     GROUP(
++		/* RESERVED [4] */
+ 		PTE5_FN, PTE5_OUT, 0, PTE5_IN,
+ 		PTE4_FN, PTE4_OUT, 0, PTE4_IN,
+ 		PTE3_FN, PTE3_OUT, 0, PTE3_IN,
+@@ -1566,9 +1567,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		PTF1_FN, PTF1_OUT, 0, PTF1_IN,
+ 		PTF0_FN, PTF0_OUT, 0, PTF0_IN ))
  	},
- 	{ PINMUX_CFG_REG_VAR("IPSR1", 0xfffc0024, 32,
--			     GROUP(1, 1, 2, 3, 1, 3, 3, 1, 2, 4, 3, 3,
-+			     GROUP(-2, 2, 3, 1, 3, 3, 1, 2, 4, 3, 3,
- 				   3, 1, 1),
- 			     GROUP(
--		/* IP1_31 [1] */
--		0,	0,
--		/* IP1_30 [1] */
--		0,	0,
-+		/* IP1_31_30 [2] RESERVED */
- 		/* IP1_29_28 [2] */
- 		FN_EX_CS1,	FN_MMC_D4,	0,	0,
- 		/* IP1_27_25 [3] */
-@@ -2437,11 +2433,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		))
+-	{ PINMUX_CFG_REG("PGCR", 0xa405010c, 16, 2, GROUP(
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
++	{ PINMUX_CFG_REG_VAR("PGCR", 0xa405010c, 16,
++			     GROUP(-4, 2, 2, 2, 2, 2, 2),
++			     GROUP(
++		/* RESERVED [4] */
+ 		PTG5_FN, PTG5_OUT, 0, 0,
+ 		PTG4_FN, PTG4_OUT, 0, 0,
+ 		PTG3_FN, PTG3_OUT, 0, 0,
+@@ -1586,11 +1588,13 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		PTH1_FN, PTH1_OUT, 0, PTH1_IN,
+ 		PTH0_FN, PTH0_OUT, 0, PTH0_IN ))
  	},
- 	{ PINMUX_CFG_REG_VAR("IPSR4", 0xfffc0030, 32,
--			     GROUP(1, 2, 2, 2, 4, 4, 2, 2, 2, 2, 1, 1,
-+			     GROUP(-1, 2, 2, 2, 4, 4, 2, 2, 2, 2, 1, 1,
- 				   3, 3, 1),
- 			     GROUP(
--		/* IP4_31 [1] */
--		0,	0,
-+		/* IP4_31 [1] RESERVED */
- 		/* IP4_30_29 [2] */
- 		FN_VI0_R4_B,	FN_DU0_DB4,	FN_LCDOUT20,	0,
- 		/* IP4_28_27 [2] */
-@@ -2481,12 +2476,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		))
+-	{ PINMUX_CFG_REG("PJCR", 0xa4050110, 16, 2, GROUP(
++	{ PINMUX_CFG_REG_VAR("PJCR", 0xa4050110, 16,
++			     GROUP(2, -2, 2, -2, 2, 2, 2, 2),
++			     GROUP(
+ 		PTJ7_FN, PTJ7_OUT, 0, 0,
+-		0, 0, 0, 0,
++		/* RESERVED [2] */
+ 		PTJ5_FN, PTJ5_OUT, 0, 0,
+-		0, 0, 0, 0,
++		/* RESERVED [2] */
+ 		PTJ3_FN, PTJ3_OUT, 0, PTJ3_IN,
+ 		PTJ2_FN, PTJ2_OUT, 0, PTJ2_IN,
+ 		PTJ1_FN, PTJ1_OUT, 0, PTJ1_IN,
+@@ -1636,11 +1640,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		PTN1_FN, PTN1_OUT, 0, PTN1_IN,
+ 		PTN0_FN, PTN0_OUT, 0, PTN0_IN ))
  	},
- 	{ PINMUX_CFG_REG_VAR("IPSR5", 0xfffc0034, 32,
--			     GROUP(1, 2, 3, 3, 2, 3, 3, 2, 1, 2, 2, 1,
-+			     GROUP(-1, 2, 3, 3, 2, 3, 3, 2, 1, 2, 2, 1,
- 				   1, 2, 2, 2),
- 			     GROUP(
- 
--		/* IP5_31 [1] */
--		0, 0,
-+		/* IP5_31 [1] RESERVED */
- 		/* IP5_30_29 [2] */
- 		FN_SSI_SDATA7,	FN_HSPI_TX0_B,	FN_RX2_A,	FN_CAN0_RX_B,
- 		/* IP5_28_26 [3] */
-@@ -2619,12 +2613,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		))
+-	{ PINMUX_CFG_REG("PQCR", 0xa405011a, 16, 2, GROUP(
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
++	{ PINMUX_CFG_REG_VAR("PQCR", 0xa405011a, 16,
++			     GROUP(-8, 2, 2, 2, 2),
++			     GROUP(
++		/* RESERVED [8] */
+ 		PTQ3_FN, 0, 0, PTQ3_IN,
+ 		PTQ2_FN, 0, 0, PTQ2_IN,
+ 		PTQ1_FN, 0, 0, PTQ1_IN,
+@@ -1666,9 +1669,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		PTS1_FN, PTS1_OUT, 0, PTS1_IN,
+ 		PTS0_FN, PTS0_OUT, 0, PTS0_IN ))
  	},
- 	{ PINMUX_CFG_REG_VAR("IPSR8", 0xfffc0040, 32,
--			     GROUP(1, 1, 3, 3, 2, 3, 3, 2, 3, 2, 3, 3, 3),
-+			     GROUP(-2, 3, 3, 2, 3, 3, 2, 3, 2, 3, 3, 3),
- 			     GROUP(
--		/* IP8_31 [1] */
--		0, 0,
--		/* IP8_30 [1] */
--		0, 0,
-+		/* IP8_31_30 [2] RESERVED */
- 		/* IP8_29_27 [3] */
- 		FN_VI0_G3,	FN_SD2_CMD_B,	FN_VI1_DATA5,	FN_DU1_DR5,
- 		0,		FN_HRX1_B,	0,		0,
-@@ -2660,12 +2651,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		))
+-	{ PINMUX_CFG_REG("PTCR", 0xa4050140, 16, 2, GROUP(
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
++	{ PINMUX_CFG_REG_VAR("PTCR", 0xa4050140, 16,
++			     GROUP(-4, 2, 2, 2, 2, 2, 2),
++			     GROUP(
++		/* RESERVED [4] */
+ 		PTT5_FN, PTT5_OUT, 0, PTT5_IN,
+ 		PTT4_FN, PTT4_OUT, 0, PTT4_IN,
+ 		PTT3_FN, PTT3_OUT, 0, PTT3_IN,
+@@ -1676,9 +1680,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		PTT1_FN, PTT1_OUT, 0, PTT1_IN,
+ 		PTT0_FN, PTT0_OUT, 0, PTT0_IN ))
  	},
- 	{ PINMUX_CFG_REG_VAR("IPSR9", 0xfffc0044, 32,
--			     GROUP(1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-+			     GROUP(-2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
- 			     GROUP(
--		/* IP9_31 [1] */
--		0, 0,
--		/* IP9_30 [1] */
--		0, 0,
-+		/* IP9_31_30 [2] RESERVED */
- 		/* IP9_29_27 [3] */
- 		FN_VI1_DATA11_A,	FN_DU1_EXHSYNC_DU1_HSYNC,
- 		FN_ETH_RXD1,		FN_FMIN_C,
-@@ -2703,24 +2691,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		))
+-	{ PINMUX_CFG_REG("PUCR", 0xa4050142, 16, 2, GROUP(
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
++	{ PINMUX_CFG_REG_VAR("PUCR", 0xa4050142, 16,
++			     GROUP(-4, 2, 2, 2, 2, 2, 2),
++			     GROUP(
++		/* RESERVED [4] */
+ 		PTU5_FN, PTU5_OUT, 0, PTU5_IN,
+ 		PTU4_FN, PTU4_OUT, 0, PTU4_IN,
+ 		PTU3_FN, PTU3_OUT, 0, PTU3_IN,
+@@ -1736,35 +1741,38 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		PTZ1_FN, PTZ1_OUT, 0, PTZ1_IN,
+ 		PTZ0_FN, PTZ0_OUT, 0, PTZ0_IN ))
  	},
- 	{ PINMUX_CFG_REG_VAR("IPSR10", 0xfffc0048, 32,
--			     GROUP(1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 4,
--				   3, 3, 3),
-+			     GROUP(-7, 3, 3, 3, 3, 4, 3, 3, 3),
- 			     GROUP(
- 
--		/* IP10_31 [1] */
--		0, 0,
--		/* IP10_30 [1] */
--		0, 0,
--		/* IP10_29 [1] */
--		0, 0,
--		/* IP10_28 [1] */
--		0, 0,
--		/* IP10_27 [1] */
--		0, 0,
--		/* IP10_26 [1] */
--		0, 0,
--		/* IP10_25 [1] */
--		0, 0,
-+		/* IP10_31_25 [7] RESERVED */
- 		/* IP10_24_22 [3] */
- 		FN_SD2_WP_A,	FN_VI1_DATA15,	FN_EX_WAIT2_B,	FN_DACK0_B,
- 		FN_HSPI_TX2_B,	FN_CAN_CLK_C,	0,		0,
-@@ -2754,12 +2728,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		))
+-	{ PINMUX_CFG_REG("PSELA", 0xa405014e, 16, 2, GROUP(
++	{ PINMUX_CFG_REG_VAR("PSELA", 0xa405014e, 16,
++			     GROUP(2, 2, 2, -4, 2, 2, -2),
++			     GROUP(
+ 		PSA15_PSA14_FN1, PSA15_PSA14_FN2, 0, 0,
+ 		PSA13_PSA12_FN1, PSA13_PSA12_FN2, 0, 0,
+ 		PSA11_PSA10_FN1, PSA11_PSA10_FN2, 0, 0,
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
++		/* RESERVED [4] */
+ 		PSA5_PSA4_FN1, PSA5_PSA4_FN2, PSA5_PSA4_FN3, 0,
+ 		PSA3_PSA2_FN1, PSA3_PSA2_FN2, 0, 0,
+-		0, 0, 0, 0 ))
++		/* RESERVED [2] */ ))
  	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL0", 0xfffc0050, 32,
--			     GROUP(1, 1, 2, 2, 3, 2, 2, 1, 1, 1, 1, 2,
--				   1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1),
-+			     GROUP(-1, 1, 2, 2, 3, 2, 2, -1, 1, 1, 1, 2,
-+				   -1, 1, 1, 1, 2, 1, -1, 1, 1, 1, 1, 1),
- 			     GROUP(
- 
--		/* SEL 31  [1] */
--		0, 0,
-+		/* SEL 31  [1] RESERVED */
- 		/* SEL_30 (SCIF5) [1] */
- 		FN_SEL_SCIF5_A,		FN_SEL_SCIF5_B,
- 		/* SEL_29_28 (SCIF4) [2] */
-@@ -2779,8 +2752,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* SEL_20_19 (SCIF0) [2] */
- 		FN_SEL_SCIF0_A,		FN_SEL_SCIF0_B,
- 		FN_SEL_SCIF0_C,		FN_SEL_SCIF0_D,
--		/* SEL_18 [1] */
--		0, 0,
-+		/* SEL_18 [1] RESERVED */
- 		/* SEL_17 (SSI2) [1] */
- 		FN_SEL_SSI2_A,		FN_SEL_SSI2_B,
- 		/* SEL_16 (SSI1) [1] */
-@@ -2790,8 +2762,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* SEL_14_13 (VI0) [2] */
- 		FN_SEL_VI0_A,		FN_SEL_VI0_B,
- 		FN_SEL_VI0_C,		FN_SEL_VI0_D,
--		/* SEL_12 [1] */
--		0, 0,
-+		/* SEL_12 [1] RESERVED */
- 		/* SEL_11 (SD2) [1] */
- 		FN_SEL_SD2_A,		FN_SEL_SD2_B,
- 		/* SEL_10 (SD1) [1] */
-@@ -2803,8 +2774,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_SEL_IRQ2_C,		0,
- 		/* SEL_6 (IRQ1) [1] */
- 		FN_SEL_IRQ1_A,		FN_SEL_IRQ1_B,
--		/* SEL_5 [1] */
--		0, 0,
-+		/* SEL_5 [1] RESERVED */
- 		/* SEL_4 (DREQ2) [1] */
- 		FN_SEL_DREQ2_A,		FN_SEL_DREQ2_B,
- 		/* SEL_3 (DREQ1) [1] */
-@@ -2818,18 +2788,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		))
+-	{ PINMUX_CFG_REG("PSELB", 0xa4050150, 16, 2, GROUP(
++	{ PINMUX_CFG_REG_VAR("PSELB", 0xa4050150, 16,
++			     GROUP(2, 2, -2, 2, 2, 2, 2, -2),
++			     GROUP(
+ 		PSB15_PSB14_FN1, PSB15_PSB14_FN2, 0, 0,
+ 		PSB13_PSB12_LCDC_RGB, PSB13_PSB12_LCDC_SYS, 0, 0,
+-		0, 0, 0, 0,
++		/* RESERVED [2] */
+ 		PSB9_PSB8_FN1, PSB9_PSB8_FN2, PSB9_PSB8_FN3, 0,
+ 		PSB7_PSB6_FN1, PSB7_PSB6_FN2, 0, 0,
+ 		PSB5_PSB4_FN1, PSB5_PSB4_FN2, 0, 0,
+ 		PSB3_PSB2_FN1, PSB3_PSB2_FN2, 0, 0,
+-		0, 0, 0, 0 ))
++		/* RESERVED [2] */ ))
  	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xfffc0054, 32,
--			     GROUP(1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1,
--				   1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1),
-+			     GROUP(-4, 1, 1, 2, 1, 1, -7,
-+				   2, 2, 2, 1, 1, 1, 1, 2, 2, 1),
- 			     GROUP(
- 
--		/* SEL_31 [1] */
--		0, 0,
--		/* SEL_30 [1] */
--		0, 0,
--		/* SEL_29 [1] */
--		0, 0,
--		/* SEL_28 [1] */
--		0, 0,
-+		/* SEL_31_28 [4] RESERVED */
- 		/* SEL_27 (CAN1) [1] */
- 		FN_SEL_CAN1_A,		FN_SEL_CAN1_B,
- 		/* SEL_26 (CAN0) [1] */
-@@ -2841,20 +2804,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_SEL_HSCIF1_A,	FN_SEL_HSCIF1_B,
- 		/* SEL_22 (HSCIF0) [1] */
- 		FN_SEL_HSCIF0_A,	FN_SEL_HSCIF0_B,
--		/* SEL_21 [1] */
--		0, 0,
--		/* SEL_20 [1] */
--		0, 0,
--		/* SEL_19 [1] */
--		0, 0,
--		/* SEL_18 [1] */
--		0, 0,
--		/* SEL_17 [1] */
--		0, 0,
--		/* SEL_16 [1] */
--		0, 0,
--		/* SEL_15 [1] */
--		0, 0,
-+		/* SEL_21_15 [7] RESERVED */
- 		/* SEL_14_13 (REMOCON) [2] */
- 		FN_SEL_REMOCON_A,	FN_SEL_REMOCON_B,
- 		FN_SEL_REMOCON_C,	0,
+-	{ PINMUX_CFG_REG("PSELC", 0xa4050152, 16, 2, GROUP(
++	{ PINMUX_CFG_REG_VAR("PSELC", 0xa4050152, 16,
++			     GROUP(2, 2, 2, 2, 2, -6),
++			     GROUP(
+ 		PSC15_PSC14_FN1, PSC15_PSC14_FN2, 0, 0,
+ 		PSC13_PSC12_FN1, PSC13_PSC12_FN2, 0, 0,
+ 		PSC11_PSC10_FN1, PSC11_PSC10_FN2, PSC11_PSC10_FN3, 0,
+ 		PSC9_PSC8_FN1, PSC9_PSC8_FN2, 0, 0,
+ 		PSC7_PSC6_FN1, PSC7_PSC6_FN2, PSC7_PSC6_FN3, 0,
+-		0, 0, 0, 0,
+-		0, 0, 0, 0,
+-		0, 0, 0, 0 ))
++		/* RESERVED [3] */ ))
+ 	},
+ 	{ PINMUX_CFG_REG("PSELD", 0xa4050154, 16, 2, GROUP(
+ 		PSD15_PSD14_FN1, PSD15_PSD14_FN2, 0, 0,
 -- 
 2.25.1
 
