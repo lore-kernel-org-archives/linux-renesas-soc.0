@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD93C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7022C43219
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Apr 2022 17:24:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237313AbiDMR0p (ORCPT
+        id S233434AbiDMR0q (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 13:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60834 "EHLO
+        Wed, 13 Apr 2022 13:26:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233434AbiDMR0l (ORCPT
+        with ESMTP id S234828AbiDMR0l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 13 Apr 2022 13:26:41 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CD7D692B3
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A5A6AA4C
         for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Apr 2022 10:24:17 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c9b8:20d3:ee2b:1cda])
-        by andre.telenet-ops.be with bizsmtp
-        id JHQF2700Y2t8Arn01HQFPh; Wed, 13 Apr 2022 19:24:15 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id JHQF2700H2t8Arn01HQFt1; Wed, 13 Apr 2022 19:24:15 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj1-000Tq7-5W; Wed, 13 Apr 2022 19:24:15 +0200
+        id 1negj0-000TqK-Vp; Wed, 13 Apr 2022 19:24:14 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1negj0-00DfRv-1C; Wed, 13 Apr 2022 19:24:14 +0200
+        id 1negj0-00DfSw-C5; Wed, 13 Apr 2022 19:24:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/50] pinctrl: renesas: rmobile: Mark unused PORTCR bits reserved
-Date:   Wed, 13 Apr 2022 19:23:25 +0200
-Message-Id: <1b123d8f04c2314d5a7a87004971868ba2176499.1649865241.git.geert+renesas@glider.be>
+Subject: [PATCH 12/50] pinctrl: renesas: r8a77950: Use shorthands for reserved fields
+Date:   Wed, 13 Apr 2022 19:23:34 +0200
+Message-Id: <1866c399e94408439a469c12dc53557b55a00f3a.1649865241.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649865241.git.geert+renesas@glider.be>
 References: <cover.1649865241.git.geert+renesas@glider.be>
@@ -43,39 +43,95 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The PULMD bits and the SEC bit in the PORTCR register descriptions on
-SH/R-Mobile SoCs are either unused or unsupported.  Describe them as
-reserved bits using a negative field width value, and drop the
-corresponding dummy enum IDs.
+Replace the full descriptions of reserved register fields by shorthands
+with a negative field width, and merge adjacent reserved fields.
 
-This reduces kernel size by 2832 (R-Mobile APE6), 2544 (R-Mobile A1),
-and/or 3228 (SH-Mobile AG5) bytes.
+This reduces kernel size by 232 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/sh_pfc.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a77950.c | 39 ++++++--------------------
+ 1 file changed, 8 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
-index 64e3dde997347ad5..12bc279f573311d5 100644
---- a/drivers/pinctrl/renesas/sh_pfc.h
-+++ b/drivers/pinctrl/renesas/sh_pfc.h
-@@ -739,14 +739,12 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
-  * PORTnCR helper macro for SH-Mobile/R-Mobile
-  */
- #define PORTCR(nr, reg) {						\
--	PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8, GROUP(2, 2, 1, 3),	\
-+	PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8, GROUP(-2, 2, -1, 3),	\
- 			   GROUP(					\
- 		/* PULMD[1:0], handled by .set_bias() */		\
--		0, 0, 0, 0,						\
- 		/* IE and OE */						\
- 		0, PORT##nr##_OUT, PORT##nr##_IN, 0,			\
- 		/* SEC, not supported */				\
--		0, 0,							\
- 		/* PTMD[2:0] */						\
- 		PORT##nr##_FN0, PORT##nr##_FN1,				\
- 		PORT##nr##_FN2, PORT##nr##_FN3,				\
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77950.c b/drivers/pinctrl/renesas/pfc-r8a77950.c
+index 63c9f6d6468b3869..b573da6475c2c211 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77950.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77950.c
+@@ -5164,10 +5164,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ #define F_(x, y)	x,
+ #define FM(x)		FN_##x,
+ 	{ PINMUX_CFG_REG_VAR("MOD_SEL0", 0xe6060500, 32,
+-			     GROUP(1, 2, 2, 3, 1, 1, 2, 1, 1, 1, 2, 1,
+-				   1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 1),
++			     GROUP(-1, 2, 2, 3, 1, 1, 2, 1, 1, 1, 2, 1,
++				   1, 1, 1, 1, 1, 1, 2, 2, 1, 2, -1),
+ 			     GROUP(
+-		0, 0, /* RESERVED 31 */
++		/* RESERVED 31 */
+ 		MOD_SEL0_30_29
+ 		MOD_SEL0_28_27
+ 		MOD_SEL0_26_25_24
+@@ -5189,11 +5189,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL0_5_4
+ 		MOD_SEL0_3
+ 		MOD_SEL0_2_1
+-		0, 0, /* RESERVED 0 */ ))
++		/* RESERVED 0 */ ))
+ 	},
+ 	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xe6060504, 32,
+ 			     GROUP(2, 3, 1, 2, 3, 1, 1, 2, 1, 2, 1, 1,
+-				   1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1),
++				   1, 1, 1, -2, 1, 1, 1, 1, 1, 1, 1),
+ 			     GROUP(
+ 		MOD_SEL1_31_30
+ 		MOD_SEL1_29_28_27
+@@ -5210,7 +5210,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL1_11
+ 		MOD_SEL1_10
+ 		MOD_SEL1_9
+-		0, 0, 0, 0, /* RESERVED 8, 7 */
++		/* RESERVED 8, 7 */
+ 		MOD_SEL1_6
+ 		MOD_SEL1_5
+ 		MOD_SEL1_4
+@@ -5220,35 +5220,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		MOD_SEL1_0 ))
+ 	},
+ 	{ PINMUX_CFG_REG_VAR("MOD_SEL2", 0xe6060508, 32,
+-			     GROUP(1, 1, 1, 1, 4, 4, 4, 4, 4, 4, 1, 2, 1),
++			     GROUP(1, 1, 1, -28, 1),
+ 			     GROUP(
+ 		MOD_SEL2_31
+ 		MOD_SEL2_30
+ 		MOD_SEL2_29
+-		/* RESERVED 28 */
+-		0, 0,
+-		/* RESERVED 27, 26, 25, 24 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 23, 22, 21, 20 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 19, 18, 17, 16 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 15, 14, 13, 12 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 11, 10, 9, 8 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 7, 6, 5, 4 */
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		/* RESERVED 3 */
+-		0, 0,
+-		/* RESERVED 2, 1 */
+-		0, 0, 0, 0,
++		/* RESERVED 28-1 */
+ 		MOD_SEL2_0 ))
+ 	},
+ 	{ },
 -- 
 2.25.1
 
