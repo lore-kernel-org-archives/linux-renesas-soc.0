@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6B1C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFD3C433EF
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 12:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243288AbiDNMdQ (ORCPT
+        id S238975AbiDNMdR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 08:33:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50798 "EHLO
+        Thu, 14 Apr 2022 08:33:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243310AbiDNMdN (ORCPT
+        with ESMTP id S243279AbiDNMdN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 14 Apr 2022 08:33:13 -0400
 Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D96F8275E3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 05:30:47 -0700 (PDT)
-Received: from relay2-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::222])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id CB2C3CF231
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 12:24:59 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7648C286F7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 05:30:48 -0700 (PDT)
+Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id D6D8FCF235
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 12:25:02 +0000 (UTC)
 Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id DB01040011;
-        Thu, 14 Apr 2022 12:24:51 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 37F4A40012;
+        Thu, 14 Apr 2022 12:24:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649939093;
+        t=1649939096;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=cK1q3GoW1XIF/YF8LlVHAMZt+VQi14OcCuETPC0h7lg=;
-        b=ktdbfLdoTLhrltw28ZpmX9o+ZahqCBw4lZHR1TrsNLUFjYV7ve7qb8CkVYm6MwLNT61lFp
-        iAeJgkpap8p8+GfoFN+7pyiu5HIBZcgzPmDIhHRRgvD713Y15IdlphDDUGuzo/jt6HUrFR
-        Oum0LWPPemQ5iY3lSBRKQS0wtSdf2LoGpftCsBI3THWQjJhw6SRtPdSIolak+BdTJyz5Ar
-        Dz1guQ97kz/PCKXDwKO0uLygU7B2O9YrTTDAZuuBKGgRAQwkyDuiDhbU6HTkxsPTmjuzsX
-        qxaMzo4nWLBu2wpHUSRfNkOgpu7khaH8d6Ee18HvLinNjC8J0H3KjRABNg/T3w==
+        bh=LvyGZlJTusHjC+6cCCIqRpU/42tp9G7ZAYkwBVky9go=;
+        b=GfGFZlgr9FzycVFAky/ByRitXjy+YGeUNyCd/YSu5hXmaHr5V2ZF3InpXsS/tz9tf1C6OB
+        JtAv0ERemUIuRnsUUr3+FTalOdHvShv76MxPYxKvgi6GDcg6QqtMF7dJD5FFD63jSSekJ8
+        zL1MK+hd3FUp8M7N0phYiYsK98YSiQqGakuqmF9acJDj7x/VRsxxPtDyY2boAKRIzi3SsZ
+        kP3RNmtjhOyOlbW0vUfFlYI0SzPEtQBYtkwZmiTm08kRK0rBoW1NtIiaExMCypjs/AGJYM
+        AZkhyXGzRacRH3Z7D+AEMMKXknqgY1KwPSDk1k9iTSb9voF6ogwTwMtJDJE8Uw==
 From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@gmail.com>,
@@ -56,9 +56,9 @@ Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH net-next 07/12] net: dsa: rzn1-a5psw: add statistics support
-Date:   Thu, 14 Apr 2022 14:22:45 +0200
-Message-Id: <20220414122250.158113-8-clement.leger@bootlin.com>
+Subject: [PATCH net-next 09/12] ARM: dts: r9a06g032: describe MII converter
+Date:   Thu, 14 Apr 2022 14:22:47 +0200
+Message-Id: <20220414122250.158113-10-clement.leger@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220414122250.158113-1-clement.leger@bootlin.com>
 References: <20220414122250.158113-1-clement.leger@bootlin.com>
@@ -69,169 +69,58 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add per-port statistics. This support requries to add a stat lock since
-statistics are stored in two 32 bits registers, the hi part one being
-global and latched when accessing the lo part.
+Add the MII converter node which describes the MII converter that is
+present on the RZ/N1 SoC.
 
 Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 ---
- drivers/net/dsa/rzn1_a5psw.c | 101 +++++++++++++++++++++++++++++++++++
- drivers/net/dsa/rzn1_a5psw.h |   2 +
- 2 files changed, 103 insertions(+)
+ arch/arm/boot/dts/r9a06g032.dtsi | 33 ++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
-index 5bee999f7050..7ab7d9054427 100644
---- a/drivers/net/dsa/rzn1_a5psw.c
-+++ b/drivers/net/dsa/rzn1_a5psw.c
-@@ -16,6 +16,59 @@
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 636a6ab31c58..fd174df268e8 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -200,6 +200,39 @@ nand_controller: nand-controller@40102000 {
+ 			status = "disabled";
+ 		};
  
- #include "rzn1_a5psw.h"
- 
-+struct a5psw_stats {
-+	u16 offset;
-+	const char *name;
-+};
++		eth_miic: eth-miic@44030000 {
++			compatible = "renesas,rzn1-miic";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x44030000 0x10000>;
++			clocks = <&sysctrl R9A06G032_CLK_MII_REF>,
++				 <&sysctrl R9A06G032_CLK_RGMII_REF>,
++				 <&sysctrl R9A06G032_CLK_RMII_REF>,
++				 <&sysctrl R9A06G032_HCLK_SWITCH_RG>;
++			clock-names = "mii_ref", "rgmii_ref", "rmii_ref", "hclk_switch_rg";
++			status = "disabled";
 +
-+#define STAT_DESC(_offset, _name) {.offset = _offset, .name = _name}
++			mii_conv0: mii-conv@0 {
++				reg = <0>;
++			};
 +
-+static const struct a5psw_stats a5psw_stats[] = {
-+	STAT_DESC(0x868, "aFrameTransmitted"),
-+	STAT_DESC(0x86C, "aFrameReceived"),
-+	STAT_DESC(0x870, "aFrameCheckSequenceErrors"),
-+	STAT_DESC(0x874, "aAlignmentErrors"),
-+	STAT_DESC(0x878, "aOctetsTransmitted"),
-+	STAT_DESC(0x87C, "aOctetsReceived"),
-+	STAT_DESC(0x880, "aTxPAUSEMACCtrlFrames"),
-+	STAT_DESC(0x884, "aRxPAUSEMACCtrlFrames"),
-+	/* If */
-+	STAT_DESC(0x888, "ifInErrors"),
-+	STAT_DESC(0x88C, "ifOutErrors"),
-+	STAT_DESC(0x890, "ifInUcastPkts"),
-+	STAT_DESC(0x894, "ifInMulticastPkts"),
-+	STAT_DESC(0x898, "ifInBroadcastPkts"),
-+	STAT_DESC(0x89C, "ifOutDiscards"),
-+	STAT_DESC(0x8A0, "ifOutUcastPkts"),
-+	STAT_DESC(0x8A4, "ifOutMulticastPkts"),
-+	STAT_DESC(0x8A8, "ifOutBroadcastPkts"),
-+	/* Ether */
-+	STAT_DESC(0x8AC, "etherStatsDropEvents"),
-+	STAT_DESC(0x8B0, "etherStatsOctets"),
-+	STAT_DESC(0x8B4, "etherStatsPkts"),
-+	STAT_DESC(0x8B8, "etherStatsUndersizePkts"),
-+	STAT_DESC(0x8BC, "etherStatsetherStatsOversizePktsDropEvents"),
-+	STAT_DESC(0x8C0, "etherStatsPkts64Octets"),
-+	STAT_DESC(0x8C4, "etherStatsPkts65to127Octets"),
-+	STAT_DESC(0x8C8, "etherStatsPkts128to255Octets"),
-+	STAT_DESC(0x8CC, "etherStatsPkts256to511Octets"),
-+	STAT_DESC(0x8D0, "etherStatsPkts512to1023Octets"),
-+	STAT_DESC(0x8D4, "etherStatsPkts1024to1518Octets"),
-+	STAT_DESC(0x8D8, "etherStatsPkts1519toXOctets"),
-+	STAT_DESC(0x8DC, "etherStatsJabbers"),
-+	STAT_DESC(0x8E0, "etherStatsFragments"),
++			mii_conv1: mii-conv@1 {
++				reg = <1>;
++			};
 +
-+	STAT_DESC(0x8E8, "VLANReceived"),
-+	STAT_DESC(0x8EC, "VLANTransmitted"),
++			mii_conv2: mii-conv@2 {
++				reg = <2>;
++			};
 +
-+	STAT_DESC(0x910, "aDeferred"),
-+	STAT_DESC(0x914, "aMultipleCollisions"),
-+	STAT_DESC(0x918, "aSingleCollisions"),
-+	STAT_DESC(0x91C, "aLateCollisions"),
-+	STAT_DESC(0x920, "aExcessiveCollisions"),
-+	STAT_DESC(0x924, "aCarrierSenseErrors"),
-+};
++			mii_conv3: mii-conv@3 {
++				reg = <3>;
++			};
 +
- static void a5psw_reg_writel(struct a5psw *a5psw, int offset, u32 value)
- {
- 	writel(value, a5psw->base + offset);
-@@ -316,6 +369,50 @@ static void a5psw_port_fast_age(struct dsa_switch *ds, int port)
- 	a5psw_port_fdb_flush(a5psw, port);
- }
- 
-+static void a5psw_get_strings(struct dsa_switch *ds, int port, u32 stringset,
-+			      uint8_t *data)
-+{
-+	unsigned int u;
++			mii_conv4: mii-conv@4 {
++				reg = <4>;
++			};
++		};
 +
-+	if (stringset != ETH_SS_STATS)
-+		return;
-+
-+	for (u = 0; u < ARRAY_SIZE(a5psw_stats); u++) {
-+		strncpy(data + u * ETH_GSTRING_LEN, a5psw_stats[u].name,
-+			ETH_GSTRING_LEN);
-+	}
-+}
-+
-+static void a5psw_get_ethtool_stats(struct dsa_switch *ds, int port,
-+				    uint64_t *data)
-+{
-+	struct a5psw *a5psw = ds->priv;
-+	u32 reg_lo, reg_hi;
-+	unsigned int u;
-+
-+	for (u = 0; u < ARRAY_SIZE(a5psw_stats); u++) {
-+		/* A5PSW_STATS_HIWORD is global and thus, access must be
-+		 * exclusive
-+		 */
-+		spin_lock(&a5psw->stats_lock);
-+		reg_lo = a5psw_reg_readl(a5psw, a5psw_stats[u].offset +
-+					 A5PSW_PORT_OFFSET(port));
-+		/* A5PSW_STATS_HIWORD is latched on stat read */
-+		reg_hi = a5psw_reg_readl(a5psw, A5PSW_STATS_HIWORD);
-+
-+		data[u] = ((u64)reg_hi << 32) | reg_lo;
-+		spin_unlock(&a5psw->stats_lock);
-+	}
-+}
-+
-+static int a5psw_get_sset_count(struct dsa_switch *ds, int port, int sset)
-+{
-+	if (sset != ETH_SS_STATS)
-+		return 0;
-+
-+	return ARRAY_SIZE(a5psw_stats);
-+}
-+
- static int a5psw_setup(struct dsa_switch *ds)
- {
- 	struct a5psw *a5psw = ds->priv;
-@@ -395,6 +492,9 @@ const struct dsa_switch_ops a5psw_switch_ops = {
- 	.phylink_mac_link_up = a5psw_phylink_mac_link_up,
- 	.port_change_mtu = a5psw_port_change_mtu,
- 	.port_max_mtu = a5psw_port_max_mtu,
-+	.get_sset_count = a5psw_get_sset_count,
-+	.get_strings = a5psw_get_strings,
-+	.get_ethtool_stats = a5psw_get_ethtool_stats,
- 	.set_ageing_time = a5psw_set_ageing_time,
- 	.port_bridge_join = a5psw_port_bridge_join,
- 	.port_bridge_leave = a5psw_port_bridge_leave,
-@@ -580,6 +680,7 @@ static int a5psw_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	a5psw->dev = dev;
-+	spin_lock_init(&a5psw->stats_lock);
- 	spin_lock_init(&a5psw->lk_lock);
- 	spin_lock_init(&a5psw->reg_lock);
- 	a5psw->base = devm_platform_ioremap_resource(pdev, 0);
-diff --git a/drivers/net/dsa/rzn1_a5psw.h b/drivers/net/dsa/rzn1_a5psw.h
-index 2d96a2afbc3a..b34ea549e936 100644
---- a/drivers/net/dsa/rzn1_a5psw.h
-+++ b/drivers/net/dsa/rzn1_a5psw.h
-@@ -177,6 +177,7 @@
-  * @mdio_freq: MDIO bus frequency requested
-  * @pcs: Array of PCS connected to the switch ports (not for the CPU)
-  * @ds: DSA switch struct
-+ * @stats_lock: lock to access statistics (shared HI counter)
-  * @lk_lock: Lock for the lookup table
-  * @reg_lock: Lock for register read-modify-write operation
-  * @flooding_ports: List of ports that should be flooded
-@@ -190,6 +191,7 @@ struct a5psw {
- 	u32 mdio_freq;
- 	struct phylink_pcs *pcs[A5PSW_PORTS_NUM - 1];
- 	struct dsa_switch ds;
-+	spinlock_t stats_lock;
- 	spinlock_t lk_lock;
- 	spinlock_t reg_lock;
- 	u32 flooding_ports;
+ 		gic: interrupt-controller@44101000 {
+ 			compatible = "arm,gic-400", "arm,cortex-a7-gic";
+ 			interrupt-controller;
 -- 
 2.34.1
 
