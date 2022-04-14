@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10FFC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72175C4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 12:30:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243256AbiDNMdN (ORCPT
+        id S242748AbiDNMdN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 14 Apr 2022 08:33:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50564 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239025AbiDNMdL (ORCPT
+        with ESMTP id S243282AbiDNMdL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 14 Apr 2022 08:33:11 -0400
 Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E372286E2
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E540286F7
         for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 05:30:45 -0700 (PDT)
-Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id BACB5CF22B
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 12:24:51 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::222])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 85B52CE04F
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 12:24:57 +0000 (UTC)
 Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 59F2940003;
-        Thu, 14 Apr 2022 12:24:42 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 0E01D4000C;
+        Thu, 14 Apr 2022 12:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649939084;
+        t=1649939088;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TwDxNSRrfQ0fwbGL5JfChMYmoOedvb2POPLu1+VI9fs=;
-        b=mxv/3mdrs1ZRE2G4jRlJUKnhx4QvHcUxICZ/dnBY1HfoYqvWx8UcKdWjJrPsVBPjO8lE5j
-        7N4AS6z5rgZOiJr9/qeBKRgAcJ9yD6EEgW2fHVrcxwgJSj5w572rVg2L81HSG50QfXX/RR
-        fFv1z0h3Fin5WOgxYU6i/3goa+cweBWnJqnSTBjhZpisiV32NJOEz0rvoCaTwN6zCorD6C
-        Jb7J5IKDtTI3zzpRnTIx6guWqjZrUqZxGXLrmzUSewlVP5YTmfS1nEIu/iIoTenFgSfPdn
-        PQu/aEZQU1YKKPZEPzSNb97djG662523O4v/926xJXaAF1VNW1tq/yB6VLar7g==
+        bh=ssNs5yXTL9mvQvG0qY2xgZ2mvkOGo3Ko6vSPOCq9GNo=;
+        b=U+HJNqnvnsQEWFZyAznl6TMK1DIZELxWm2PPMsz2JJKDE5NXNbgJUT+k9S3QT91JCBAfcD
+        YglLbqm+LIP/mQvWQ16EsJhdBbMrSYPM76IWJ0ByEX8VHVIzuQkzPVOjkeYhjspEssskH+
+        2vAezjKNpSqLjKwFFFFjiCj+JSFQi7McYpT5I7ZuH3Uxs6dCRGZYVj2rKt/zUEkHqAZmoF
+        u2Tg98gr6pfuibIm+TulEjCDfRvWZbWWcH/4JurYUQZGKqOH7w4sLNYhBl3iKQ2yI9MSI7
+        8nlwv3mrUyhkGhYeuBuRDH2KFYXy6/Wu9sLCIOIR9TwRWAZBJBvgDnQSbVc/UA==
 From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@gmail.com>,
@@ -56,9 +56,9 @@ Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH net-next 02/12] net: dsa: add Renesas RZ/N1 switch tag driver
-Date:   Thu, 14 Apr 2022 14:22:40 +0200
-Message-Id: <20220414122250.158113-3-clement.leger@bootlin.com>
+Subject: [PATCH net-next 04/12] net: pcs: add Renesas MII converter driver
+Date:   Thu, 14 Apr 2022 14:22:42 +0200
+Message-Id: <20220414122250.158113-5-clement.leger@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220414122250.158113-1-clement.leger@bootlin.com>
 References: <20220414122250.158113-1-clement.leger@bootlin.com>
@@ -69,171 +69,428 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The switch that is present on the Renesas RZ/N1 SoC uses a specific
-VLAN value followed by 6 bytes which contains forwarding configuration.
+Add PCS driver for the MII converter that is present on Renesas RZ/N1
+SoC. This MII converter is reponsible of converting MII to RMII/RGMII
+or act as a MII passtrough. Exposing it as a PCS allows to reuse it
+in both the switch driver and the stmmac driver. Currently, this driver
+only allows the PCS to be used by the dual Cortex-A7 subsystem since
+the register locking system is not used.
 
 Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 ---
- net/dsa/Kconfig          |   8 +++
- net/dsa/Makefile         |   1 +
- net/dsa/tag_rzn1_a5psw.c | 112 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 121 insertions(+)
- create mode 100644 net/dsa/tag_rzn1_a5psw.c
+ drivers/net/pcs/Kconfig         |   7 +
+ drivers/net/pcs/Makefile        |   1 +
+ drivers/net/pcs/pcs-rzn1-miic.c | 350 ++++++++++++++++++++++++++++++++
+ include/linux/pcs-rzn1-miic.h   |  18 ++
+ 4 files changed, 376 insertions(+)
+ create mode 100644 drivers/net/pcs/pcs-rzn1-miic.c
+ create mode 100644 include/linux/pcs-rzn1-miic.h
 
-diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
-index 8cb87b5067ee..e5b17108fa22 100644
---- a/net/dsa/Kconfig
-+++ b/net/dsa/Kconfig
-@@ -132,6 +132,13 @@ config NET_DSA_TAG_RTL8_4
- 	  Say Y or M if you want to enable support for tagging frames for Realtek
- 	  switches with 8 byte protocol 4 tags, such as the Realtek RTL8365MB-VC.
+diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
+index 22ba7b0b476d..fb0d36d46ffb 100644
+--- a/drivers/net/pcs/Kconfig
++++ b/drivers/net/pcs/Kconfig
+@@ -18,4 +18,11 @@ config PCS_LYNX
+ 	  This module provides helpers to phylink for managing the Lynx PCS
+ 	  which is part of the Layerscape and QorIQ Ethernet SERDES.
  
-+config NET_DSA_TAG_RZN1_A5PSW
-+	tristate "Tag driver for Renesas RZ/N1 A5PSW switch"
++config PCS_RZN1_MIIC
++	tristate "Renesas RZN1 MII converter"
 +	help
-+	  Say Y or M if you want to enable support for tagging frames for
-+	  Renesas RZ/N1 embedded switch that uses a 8 byte tag located after
-+	  destination MAC address.
++	  This module provides a driver for the MII converter that is available
++	  on RZN1 SoC. This PCS convert MII to RMII/RGMII or can be in
++	  passthrough mode for MII.
 +
- config NET_DSA_TAG_LAN9303
- 	tristate "Tag driver for SMSC/Microchip LAN9303 family of switches"
- 	help
-@@ -159,4 +166,5 @@ config NET_DSA_TAG_XRS700X
- 	  Say Y or M if you want to enable support for tagging frames for
- 	  Arrow SpeedChips XRS700x switches that use a single byte tag trailer.
+ endmenu
+diff --git a/drivers/net/pcs/Makefile b/drivers/net/pcs/Makefile
+index 0603d469bd57..0ff5388fcdea 100644
+--- a/drivers/net/pcs/Makefile
++++ b/drivers/net/pcs/Makefile
+@@ -5,3 +5,4 @@ pcs_xpcs-$(CONFIG_PCS_XPCS)	:= pcs-xpcs.o pcs-xpcs-nxp.o
  
-+
- endif
-diff --git a/net/dsa/Makefile b/net/dsa/Makefile
-index 9f75820e7c98..af28c24ead18 100644
---- a/net/dsa/Makefile
-+++ b/net/dsa/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_NET_DSA_TAG_OCELOT_8021Q) += tag_ocelot_8021q.o
- obj-$(CONFIG_NET_DSA_TAG_QCA) += tag_qca.o
- obj-$(CONFIG_NET_DSA_TAG_RTL4_A) += tag_rtl4_a.o
- obj-$(CONFIG_NET_DSA_TAG_RTL8_4) += tag_rtl8_4.o
-+obj-$(CONFIG_NET_DSA_TAG_RZN1_A5PSW) += tag_rzn1_a5psw.o
- obj-$(CONFIG_NET_DSA_TAG_SJA1105) += tag_sja1105.o
- obj-$(CONFIG_NET_DSA_TAG_TRAILER) += tag_trailer.o
- obj-$(CONFIG_NET_DSA_TAG_XRS700X) += tag_xrs700x.o
-diff --git a/net/dsa/tag_rzn1_a5psw.c b/net/dsa/tag_rzn1_a5psw.c
+ obj-$(CONFIG_PCS_XPCS)		+= pcs_xpcs.o
+ obj-$(CONFIG_PCS_LYNX)		+= pcs-lynx.o
++obj-$(CONFIG_PCS_RZN1_MIIC)	+= pcs-rzn1-miic.o
+diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
 new file mode 100644
-index 000000000000..7818c1c0fca2
+index 000000000000..84599e767689
 --- /dev/null
-+++ b/net/dsa/tag_rzn1_a5psw.c
-@@ -0,0 +1,112 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/drivers/net/pcs/pcs-rzn1-miic.c
+@@ -0,0 +1,350 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2022 Schneider Electric
 + *
 + * Clément Léger <clement.leger@bootlin.com>
 + */
 +
-+#include <linux/bitfield.h>
-+#include <linux/etherdevice.h>
-+#include <net/dsa.h>
++#include <linux/clk.h>
++#include <linux/mdio.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/phylink.h>
++#include <linux/pcs-rzn1-miic.h>
 +
-+#include "dsa_priv.h"
++#define MIIC_PRCMD			0x0
++#define MIIC_ESID_CODE			0x4
 +
-+/* To define the outgoing port and to discover the incoming port a TAG is
-+ * inserted after Src MAC :
-+ *
-+ *       Dest MAC       Src MAC           TAG         Type
-+ * ...| 1 2 3 4 5 6 | 1 2 3 4 5 6 | 1 2 3 4 5 6 7 8 | 1 2 |...
-+ *                                |<--------------->|
-+ *
-+ * See struct a5psw_tag for layout
++#define MIIC_MODCTRL			0x20
++#define MIIC_MODCTRL_SW_MODE		GENMASK(4, 0)
++
++#define MIIC_CONVCTRL(port)		(0x100 + (port) * 4)
++#define MIIC_CONVCTRL_CONV_MODE		GENMASK(4, 0)
++#define CONV_MODE_MII			0
++#define CONV_MODE_RMII			BIT(2)
++#define CONV_MODE_RGMII			BIT(3)
++#define CONV_MODE_10MBPS		0
++#define CONV_MODE_100MBPS		BIT(0)
++#define CONV_MODE_1000MBPS		BIT(1)
++#define MIIC_CONVCTRL_FULLD		BIT(8)
++#define MIIC_CONVCTRL_RGMII_LINK	BIT(12)
++#define MIIC_CONVCTRL_RGMII_DUPLEX	BIT(13)
++#define MIIC_CONVCTRL_RGMII_SPEED	GENMASK(15, 14)
++
++#define MIIC_CONVRST			0x114
++#define MIIC_CONVRST_PHYIF_RST(port)	BIT(port)
++#define MIIC_CONVRST_PHYIF_RST_MASK	GENMASK(4, 0)
++
++#define MIIC_SWCTRL			0x304
++#define MIIC_SWDUPC			0x308
++
++#define MIIC_MAX_NR_PORTS		5
++
++#define phylink_pcs_to_miic_port(pcs) container_of((pcs), struct miic_port, pcs)
++
++/**
++ * struct miic - MII converter structure
++ * @base: base address of the MII converter
++ * @dev: Device associated to the MII converter
++ * @lock: Lock used for read-modify-write access
 + */
-+
-+#define A5PSW_TAG_VALUE			0xE001
-+#define A5PSW_TAG_LEN			8
-+#define A5PSW_CTRL_DATA_FORCE_FORWARD	BIT(0)
-+/* This is both used for xmit tag and rcv tagging */
-+#define A5PSW_CTRL_DATA_PORT		GENMASK(3, 0)
-+
-+struct a5psw_tag {
-+	u16 ctrl_tag;
-+	u16 ctrl_data;
-+	u32 ctrl_data2;
++struct miic {
++	void __iomem *base;
++	struct device *dev;
++	spinlock_t lock;
 +};
 +
-+static struct sk_buff *a5psw_tag_xmit(struct sk_buff *skb, struct net_device *dev)
++/**
++ * struct miic_port - Per port MII converter struct
++ * @miic: backiling to MII converter structure
++ * @pcs: PCS structure associated to the port
++ * @port: port number
++ */
++struct miic_port {
++	struct miic *miic;
++	struct phylink_pcs pcs;
++	int port;
++};
++
++static void miic_reg_writel(struct miic *miic, int offset, u32 value)
 +{
-+	struct a5psw_tag *ptag, tag = {0};
-+	struct dsa_port *dp = dsa_slave_to_port(dev);
-+	u32 data2_val;
-+
-+	/* The Ethernet switch we are interfaced with needs packets to be at
-+	 * least 64 bytes (including FCS) otherwise they will be discarded when
-+	 * they enter the switch port logic. When tagging is enabled, we need
-+	 * to make sure that packets are at least 68 bytes (including FCS and
-+	 * tag).
-+	 */
-+	if (__skb_put_padto(skb, ETH_ZLEN + sizeof(tag), false))
-+		return NULL;
-+
-+	/* provide 'A5PSW_TAG_LEN' bytes additional space */
-+	skb_push(skb, A5PSW_TAG_LEN);
-+
-+	/* make room between MACs and Ether-Type to insert tag */
-+	dsa_alloc_etype_header(skb, A5PSW_TAG_LEN);
-+
-+	ptag = dsa_etype_header_pos_tx(skb);
-+
-+	data2_val = FIELD_PREP(A5PSW_CTRL_DATA_PORT, BIT(dp->index));
-+	tag.ctrl_tag = htons(A5PSW_TAG_VALUE);
-+	tag.ctrl_data = htons(A5PSW_CTRL_DATA_FORCE_FORWARD);
-+	tag.ctrl_data2 = htonl(data2_val);
-+
-+	memcpy(ptag, &tag, sizeof(struct a5psw_tag));
-+
-+	return skb;
++	writel(value, miic->base + offset);
 +}
 +
-+static struct sk_buff *a5psw_tag_rcv(struct sk_buff *skb,
-+				     struct net_device *dev)
++static u32 miic_reg_readl(struct miic *miic, int offset)
 +{
-+	struct a5psw_tag *tag;
++	return readl(miic->base + offset);
++}
++
++static void miic_reg_rmw(struct miic *miic, int offset, u32 mask, u32 val)
++{
++	u32 reg;
++
++	spin_lock(&miic->lock);
++
++	reg = miic_reg_readl(miic, offset);
++	reg &= ~mask;
++	reg |= val;
++	miic_reg_writel(miic, offset, reg);
++
++	spin_unlock(&miic->lock);
++}
++
++static void miic_converter_enable(struct miic *miic, int port, int enable)
++{
++	u32 val = 0;
++
++	if (enable)
++		val = MIIC_CONVRST_PHYIF_RST(port);
++
++	miic_reg_rmw(miic, MIIC_CONVRST, MIIC_CONVRST_PHYIF_RST(port), val);
++}
++
++static int miic_config(struct phylink_pcs *pcs, unsigned int mode,
++		       phy_interface_t interface,
++		       const unsigned long *advertising, bool permit)
++{
++	struct miic_port *miic_port = phylink_pcs_to_miic_port(pcs);
++	struct miic *miic = miic_port->miic;
++	int port = miic_port->port;
++	u32 val;
++
++	switch (interface) {
++	case PHY_INTERFACE_MODE_RMII:
++		val = CONV_MODE_RMII | CONV_MODE_1000MBPS;
++		break;
++	case PHY_INTERFACE_MODE_RGMII:
++		val = CONV_MODE_RGMII | CONV_MODE_1000MBPS;
++		break;
++	case PHY_INTERFACE_MODE_MII:
++		val = CONV_MODE_MII;
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	miic_reg_rmw(miic, MIIC_CONVCTRL(port), MIIC_CONVCTRL_CONV_MODE, val);
++	miic_converter_enable(miic_port->miic, miic_port->port, 1);
++
++	return 0;
++}
++
++static void miic_link_up(struct phylink_pcs *pcs, unsigned int mode,
++			 phy_interface_t interface, int speed, int duplex)
++{
++	struct miic_port *miic_port = phylink_pcs_to_miic_port(pcs);
++	struct miic *miic = miic_port->miic;
++	int port = miic_port->port;
++	u32 val = 0;
++
++	if (duplex == DUPLEX_FULL)
++		val |= MIIC_CONVCTRL_FULLD;
++
++	switch (interface) {
++	case PHY_INTERFACE_MODE_RMII:
++		val |= CONV_MODE_RMII;
++		break;
++	case PHY_INTERFACE_MODE_RGMII:
++		val |= CONV_MODE_RGMII;
++		break;
++	case PHY_INTERFACE_MODE_MII:
++		val |= CONV_MODE_MII;
++		break;
++	default:
++		dev_err(miic->dev, "Unsupported interface %s\n",
++			phy_modes(interface));
++		return;
++	}
++
++	/* No speed in MII through-mode */
++	if (interface != PHY_INTERFACE_MODE_MII) {
++		switch (speed) {
++		case SPEED_1000:
++			val |= CONV_MODE_1000MBPS;
++			break;
++		case SPEED_100:
++			val |= CONV_MODE_100MBPS;
++			break;
++		case SPEED_10:
++			val |= CONV_MODE_10MBPS;
++			break;
++		case SPEED_UNKNOWN:
++			pr_err("Invalid speed\n");
++			/* Silently don't do anything */
++			return;
++		default:
++			dev_err(miic->dev, "Invalid PCS speed %d\n", speed);
++			return;
++		}
++	}
++
++	miic_reg_rmw(miic, MIIC_CONVCTRL(port),
++		     (MIIC_CONVCTRL_CONV_MODE | MIIC_CONVCTRL_FULLD), val);
++}
++
++static bool miic_mode_supported(phy_interface_t interface)
++{
++	return (interface == PHY_INTERFACE_MODE_RGMII ||
++		interface == PHY_INTERFACE_MODE_RMII ||
++		interface == PHY_INTERFACE_MODE_MII);
++}
++
++static int miic_validate(struct phylink_pcs *pcs, unsigned long *supported,
++			 const struct phylink_link_state *state)
++{
++	struct miic_port *miic_port = phylink_pcs_to_miic_port(pcs);
++	struct miic *miic = miic_port->miic;
++
++	if (state->interface != PHY_INTERFACE_MODE_NA &&
++	    !miic_mode_supported(state->interface)) {
++		dev_err(miic->dev, "phy mode %s is unsupported on port %d\n",
++			phy_modes(state->interface), miic_port->port);
++		linkmode_zero(supported);
++		return -EOPNOTSUPP;
++	}
++
++	return 0;
++}
++
++static const struct phylink_pcs_ops miic_phylink_ops = {
++	.pcs_config = miic_config,
++	.pcs_link_up = miic_link_up,
++	.pcs_validate = miic_validate,
++};
++
++struct phylink_pcs *miic_create(struct device_node *np)
++{
++	struct platform_device *pdev;
++	struct miic_port *miic_port;
++	struct device_node *pcs_np;
++	u32 port;
++
++	if (of_property_read_u32(np, "reg", &port))
++		return ERR_PTR(-EINVAL);
++
++	if (port >= MIIC_MAX_NR_PORTS)
++		return ERR_PTR(-EINVAL);
++
++	/* The PCS pdev is attached to the parent node */
++	pcs_np = of_get_parent(np);
++	if (!pcs_np)
++		return ERR_PTR(-EINVAL);
++
++	pdev = of_find_device_by_node(pcs_np);
++	if (!pdev || !platform_get_drvdata(pdev))
++		return ERR_PTR(-EPROBE_DEFER);
++
++	miic_port = kzalloc(sizeof(*miic_port), GFP_KERNEL);
++	if (!miic_port)
++		return ERR_PTR(-ENOMEM);
++
++	miic_port->miic = platform_get_drvdata(pdev);
++	miic_port->port = port;
++	miic_port->pcs.ops = &miic_phylink_ops;
++
++	return &miic_port->pcs;
++}
++EXPORT_SYMBOL(miic_create);
++
++void miic_destroy(struct phylink_pcs *pcs)
++{
++	struct miic_port *miic_port = phylink_pcs_to_miic_port(pcs);
++
++	miic_converter_enable(miic_port->miic, miic_port->port, 0);
++	kfree(miic_port);
++}
++EXPORT_SYMBOL(miic_destroy);
++
++static int miic_init_hw(struct miic *miic, u32 mode)
++{
 +	int port;
 +
-+	if (unlikely(!pskb_may_pull(skb, A5PSW_TAG_LEN))) {
-+		dev_warn_ratelimited(&dev->dev,
-+				     "Dropping packet, cannot pull\n");
-+		return NULL;
++	/* Unlock write access to accessory registers (cf datasheet). If this
++	 * is going to be used in conjunction with the Cortex-M3, this sequence
++	 * will have to be moved in register write
++	 */
++	miic_reg_writel(miic, MIIC_PRCMD, 0x00A5);
++	miic_reg_writel(miic, MIIC_PRCMD, 0x0001);
++	miic_reg_writel(miic, MIIC_PRCMD, 0xFFFE);
++	miic_reg_writel(miic, MIIC_PRCMD, 0x0001);
++
++	miic_reg_writel(miic, MIIC_MODCTRL,
++			FIELD_PREP(MIIC_MODCTRL_SW_MODE, mode));
++
++	for (port = 0; port < MIIC_MAX_NR_PORTS; port++) {
++		miic_converter_enable(miic, port, 0);
++		/* Disable speed/duplex control from these registers, datasheet
++		 * says switch registers should be used to setup switch port
++		 * speed and duplex.
++		 */
++		miic_reg_writel(miic, MIIC_SWCTRL, 0x0);
++		miic_reg_writel(miic, MIIC_SWDUPC, 0x0);
 +	}
 +
-+	tag = dsa_etype_header_pos_rx(skb);
-+
-+	if (tag->ctrl_tag != htons(A5PSW_TAG_VALUE)) {
-+		dev_warn_ratelimited(&dev->dev, "Dropping packet due to invalid TAG marker\n");
-+		return NULL;
-+	}
-+
-+	port = FIELD_GET(A5PSW_CTRL_DATA_PORT, ntohs(tag->ctrl_data));
-+
-+	skb->dev = dsa_master_find_slave(dev, 0, port);
-+	if (!skb->dev)
-+		return NULL;
-+
-+	skb_pull_rcsum(skb, A5PSW_TAG_LEN);
-+	dsa_strip_etype_header(skb, A5PSW_TAG_LEN);
-+
-+	dsa_default_offload_fwd_mark(skb);
-+
-+	return skb;
++	return 0;
 +}
 +
-+static const struct dsa_device_ops a5psw_netdev_ops = {
-+	.name	= "a5psw",
-+	.proto	= DSA_TAG_PROTO_RZN1_A5PSW,
-+	.xmit	= a5psw_tag_xmit,
-+	.rcv	= a5psw_tag_rcv,
-+	.needed_headroom = A5PSW_TAG_LEN,
-+};
++static int miic_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_bulk_data *clks;
++	struct miic *miic;
++	u32 mode_cfg;
++	int nclk;
++	int ret;
 +
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS_DSA_TAG_DRIVER(DSA_TAG_PROTO_A5PSW);
-+module_dsa_tag_driver(a5psw_netdev_ops);
++	if (of_property_read_u32(dev->of_node, "renesas,miic-cfg-mode", &mode_cfg)) {
++		dev_err(dev, "Missing renesas,miic-cfg-mode property for miic\n");
++		return -EINVAL;
++	}
++
++	miic = devm_kzalloc(dev, sizeof(*miic), GFP_KERNEL);
++	if (!miic)
++		return -ENOMEM;
++
++	spin_lock_init(&miic->lock);
++	miic->dev = dev;
++	miic->base = devm_platform_ioremap_resource(pdev, 0);
++	if (!miic->base)
++		return -EINVAL;
++
++	nclk = devm_clk_bulk_get_all(dev, &clks);
++	if (nclk < 0)
++		return nclk;
++
++	ret = clk_bulk_prepare_enable(nclk, clks);
++	if (ret)
++		return ret;
++
++	ret = miic_init_hw(miic, mode_cfg);
++	if (ret)
++		goto disable_clocks;
++
++	platform_set_drvdata(pdev, miic);
++
++	return 0;
++
++disable_clocks:
++	clk_bulk_disable_unprepare(nclk, clks);
++
++	return ret;
++}
++
++static const struct of_device_id miic_of_mtable[] = {
++	{ .compatible = "renesas,rzn1-miic" },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, miic_of_mtable);
++
++static struct platform_driver miic_driver = {
++	.driver = {
++		.name	 = "mtip_miic",
++		.of_match_table = of_match_ptr(miic_of_mtable),
++	},
++	.probe = miic_probe,
++};
++module_platform_driver(miic_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Renesas MII converter PCS driver");
++MODULE_AUTHOR("Clément Léger <clement.leger@bootlin.com>");
+diff --git a/include/linux/pcs-rzn1-miic.h b/include/linux/pcs-rzn1-miic.h
+new file mode 100644
+index 000000000000..7a303af57e40
+--- /dev/null
++++ b/include/linux/pcs-rzn1-miic.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2022 Schneider Electric
++ *
++ * Clément Léger <clement.leger@bootlin.com>
++ */
++
++#ifndef __LINUX_PCS_MIIC_H
++#define __LINUX_PCS_MIIC_H
++
++struct phylink;
++struct device_node;
++
++struct phylink_pcs *miic_create(struct device_node *np);
++
++void miic_destroy(struct phylink_pcs *pcs);
++
++#endif /* __LINUX_PCS_MIIC_H */
 -- 
 2.34.1
 
