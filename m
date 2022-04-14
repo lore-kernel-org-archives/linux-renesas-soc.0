@@ -2,81 +2,153 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97681C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 15:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF38C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 15:09:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242920AbiDNPLa (ORCPT
+        id S241445AbiDNPLi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 11:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46388 "EHLO
+        Thu, 14 Apr 2022 11:11:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238430AbiDNO7W (ORCPT
+        with ESMTP id S1351308AbiDNOav (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 10:59:22 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188C22AEE
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 07:44:11 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7915:bbfe:555b:5456])
-        by baptiste.telenet-ops.be with bizsmtp
-        id Jek92700S4TB7ht01ek9kJ; Thu, 14 Apr 2022 16:44:09 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nf0hc-000cG8-Vh; Thu, 14 Apr 2022 16:44:08 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nf0hc-00E9xB-GG; Thu, 14 Apr 2022 16:44:08 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: defconfig: Refresh for v5.18-rc1
-Date:   Thu, 14 Apr 2022 16:44:07 +0200
-Message-Id: <922ba60d81a71acfae5d88c1991d8c96bb2b3527.1649947421.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Thu, 14 Apr 2022 10:30:51 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FFBB91376;
+        Thu, 14 Apr 2022 07:20:18 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (153.162-64-87.adsl-dyn.isp.belgacom.be [87.64.162.153])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 99ED6494;
+        Thu, 14 Apr 2022 16:20:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1649946015;
+        bh=xxUyYOR4Zi1vV+LnaRqNcvhcTxxAI9TQX/+/nk5J+Z4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HB0a3jXmrsFIkuhC/OenB2eDh4dyJH1UTrcY0U6VRuEYsNV01lfoBap4wiwL9wP9P
+         dx/KZ951GOGnewI2useVM5KphPdljiQTmWRURSjqbUHjL9h2M4AyTgshwwOV0TRcHb
+         nVHXC5F41T5GsL7IFzRgl0PNlJWNjzFRv56JNPH4=
+Date:   Thu, 14 Apr 2022 17:20:14 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Michael Rodin <mrodin@de.adit-jv.com>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        LUU HOAI <hoai.luu.ub@renesas.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH] media: v4l: vsp1: Fix offset calculation for plane
+ cropping
+Message-ID: <YlgtnlL8Loehk2cA@pendragon.ideasonboard.com>
+References: <20220228120058.9755-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20220302110012.GB11173@vmlxhi-121.adit-jv.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220302110012.GB11173@vmlxhi-121.adit-jv.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Refresh the defconfig for Renesas ARM systems:
-  - Move CONFIG_V4L_MEM2MEM_DRIVERS (moved in commit 256bf685691d8646
-    ("media: platform: move platform menu dependencies to drivers")),
-  - Move CONFIG_DEBUG_FS (moved in commit f9b3cd24578401e7
-    ("Kconfig.debug: make DEBUG_INFO selectable from a choice")).
+Hi Michael,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-devel for v5.19.
----
- arch/arm/configs/shmobile_defconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Your previous mail slipped through the cracks, sorry about that.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index db8df8a3a7b12d13..362643cbeffdc539 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -119,9 +119,9 @@ CONFIG_MEDIA_SUPPORT=y
- CONFIG_MEDIA_CAMERA_SUPPORT=y
- CONFIG_MEDIA_PLATFORM_SUPPORT=y
- CONFIG_V4L_PLATFORM_DRIVERS=y
-+CONFIG_V4L_MEM2MEM_DRIVERS=y
- CONFIG_VIDEO_RENESAS_CEU=y
- CONFIG_VIDEO_RCAR_VIN=y
--CONFIG_V4L_MEM2MEM_DRIVERS=y
- CONFIG_VIDEO_RENESAS_FDP1=y
- CONFIG_VIDEO_RENESAS_JPU=y
- CONFIG_VIDEO_RENESAS_VSP1=y
-@@ -224,5 +224,5 @@ CONFIG_NLS_ISO8859_1=y
- CONFIG_DMA_CMA=y
- CONFIG_CMA_SIZE_MBYTES=64
- CONFIG_PRINTK_TIME=y
--CONFIG_DEBUG_FS=y
- CONFIG_DEBUG_KERNEL=y
-+CONFIG_DEBUG_FS=y
+On Wed, Mar 02, 2022 at 12:00:12PM +0100, Michael Rodin wrote:
+> Hi Laurent,
+> 
+> thank you for your work!
+> 
+> On Mon, Feb 28, 2022 at 02:00:58PM +0200, Laurent Pinchart wrote:
+> > From: Michael Rodin <mrodin@de.adit-jv.com>
+> > 
+> > The vertical subsampling factor is currently not considered in the
+> > offset calculation for plane cropping done in rpf_configure_partition.
+> > This causes a distortion (shift of the color plane) when formats with
+> > the vsub factor larger than 1 are used (e.g. NV12, see
+> > vsp1_video_formats in vsp1_pipe.c). This commit considers vsub factor
+> > for all planes except plane 0 (luminance).
+> > 
+> > Fixes: e5ad37b64de9 ("[media] v4l: vsp1: Add cropping support")
+> > Signed-off-by: Michael Rodin <mrodin@de.adit-jv.com>
+> > Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
+> > 
+> > Drop generalization of the offset calculation to reduce the binary size.
+> 
+> Dropping generalization which I have done in my initial patch [1] is ok as
+> long as this will not cause any troubles. I am not aware of any case where
+> bytesperline and bpp could be different between the chroma planes, so
+> probably it's fine.
+> 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/vsp1/vsp1_rpf.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
+> > index 85587c1b6a37..75083cb234fe 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_rpf.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+> > @@ -291,11 +291,11 @@ static void rpf_configure_partition(struct vsp1_entity *entity,
+> >  		     + crop.left * fmtinfo->bpp[0] / 8;
+> >  
+> >  	if (format->num_planes > 1) {
+> > +		unsigned int bpl = format->plane_fmt[1].bytesperline;
+> >  		unsigned int offset;
+> >  
+> > -		offset = crop.top * format->plane_fmt[1].bytesperline
+> > -		       + crop.left / fmtinfo->hsub
+> > -		       * fmtinfo->bpp[1] / 8;
+> > +		offset = crop.top / fmtinfo->vsub * bpl
+> > +		       + crop.left / fmtinfo->hsub * fmtinfo->bpp[1] / 8;
+> 
+> Probably it makes sense to do the division after all multiplications are
+> done in order to avoid rounding errors? Consider the case when left = 3,
+> hsub = 2, bpp = 32. Then we would get for the second part of the offset:
+>   3 / 2 * 32 / 8 = 1 * 32 / 8 = 4
+> and if we do division as the last operation:
+>   (3 * 32) / (8 * 2) = 96 / 16 = 6
+
+This was actually done on purpose :-) If the horizontal subsampling
+factor is equal to 2, for instance for the NV12 chroma plane, the
+horizontal offset must effectively be a multiple of 2. Otherwise you'll
+swap the Cr and Cb components.
+
+Taking your above example with a NV12 format (left=3, hsub=2, but
+bpp=16), with the rounding in this patch,
+
+	offset = crop.top / fmtinfo->vsub * bpl
+	       + crop.left / fmtinfo->hsub * fmtinfo->bpp[1] / 8;
+	       = [vertical offset]
+	       + 3 / 2 * 16 / 8;
+	       = [vertical offset]
+	       + 2;
+
+Byte: 0  1  2  3  4  5
+      Cr Cb Cr Cb Cr Cb ...
+            ^
+            offset
+
+With your rounding proposal,
+
+	offset = crop.top / fmtinfo->vsub * bpl
+	       + (crop.left * fmtinfo->bpp[1]) / (fmtinfo->hsub * 8);
+	       = [vertical offset]
+	       + (3 * 16) / (2 * 8);
+	       = [vertical offset]
+	       + 3;
+
+Byte: 0  1  2  3  4  5
+      Cr Cb Cr Cb Cr Cb ...
+               ^
+               offset
+
+> The first part of the offset can probably also cause the same rounding
+> issue.
+> 
+> >  		mem.addr[1] += offset;
+> >  		mem.addr[2] += offset;
+> >  	}
+> > 
+> 
+> [1] https://lore.kernel.org/all/1637679566-76975-1-git-send-email-mrodin@de.adit-jv.com/T/
+
 -- 
-2.25.1
+Regards,
 
+Laurent Pinchart
