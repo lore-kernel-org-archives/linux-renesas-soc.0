@@ -2,90 +2,123 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A53C4167D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 14:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E54C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 14:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343958AbiDNOYD (ORCPT
+        id S1343973AbiDNOYE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 10:24:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49686 "EHLO
+        Thu, 14 Apr 2022 10:24:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348013AbiDNOCC (ORCPT
+        with ESMTP id S1343613AbiDNNuU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 10:02:02 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4792CC94;
-        Thu, 14 Apr 2022 06:57:36 -0700 (PDT)
-Received: by mail-qt1-f177.google.com with SMTP id ay4so3537636qtb.11;
-        Thu, 14 Apr 2022 06:57:36 -0700 (PDT)
+        Thu, 14 Apr 2022 09:50:20 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B574A6E30;
+        Thu, 14 Apr 2022 06:44:11 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id v4so6418729edl.7;
+        Thu, 14 Apr 2022 06:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=5coa3OBWaIiXyJ1TJsvTvbGW8ucgi9WcCkL0M7ii1Ac=;
+        b=nrNu1svoISX1APZ50+JiEAl8u9jDBuz8d9Cxyz6EuUVB/sY5Ykf1r7CgRiowPFTY7b
+         Le13noEzoOmLbca8xuw39YtKrgs0gf7eyF8i9mrtfw9PfEVfNzNGnWZWLLCi7Uyu1S/R
+         dkY13N/1vInqBApx9uuZC8/NyKPQnhECC1m92z8HhjLbrRs8IXLm/2ILivrKpx2n7cLZ
+         +SRLPDxhRyaCwRTV3DHRoJbFxLdqC77dEBsT6JLzRN5a30di6rb3TcTuaGL80D5+ZMUr
+         rfa9qUZc4fdOfvWdibJ5h82FWUEhD1TPBSUCg6qzSlS1F/dP3TLhd2LyxItRws/6H+NE
+         pXvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=lN0U24O7GQEePSLIhlC3MYeJd10ydIu4wu7Inmy1OV8=;
-        b=ad3jdsbyWRQuTd5b4uMZCEkC3HvbUsz19H0MbxjveBmDa8eV5oNRSF3tn26urO5BP1
-         wVUEaaO8TUyfjrqX0D2Kc59oT40iLmi5GWqnPcsk+vkus+fPjBZZds6uJqvNA1xlaJgE
-         xk0pcGw1LPDCL4QStnA18f3BUv6Z+DZcCK7OiWUdPKyhk343/nEtNCDFi2gJ3HMZez7O
-         CuRNyrQPRRIp/09Ct1cXQY/xjqc03xzuqc+v9YrE/l37whQa3B2KxNuPiBXWcZyOOQ+y
-         z/N4KjRdqrWCgpBVhE7N8PsV1WdkjvxdURG9gyIseUpIvtZw6UXTomKVoMryMRGFnuVF
-         4SQQ==
-X-Gm-Message-State: AOAM531qdh4pqf/vRTFHVRywVg1zhBCfo6SL8a3q20LeSdHJkaeyrUvO
-        usO6oavEVLhx8Lb4Rgl1HVzBsN8hMWAxUQ==
-X-Google-Smtp-Source: ABdhPJy/FtnS5VfengaK5Rx2F3b8/7cFjjxFZRvAweFw1BSuIHgIneZ/EFug4MfExOZqGOm0OWzIEQ==
-X-Received: by 2002:ac8:4501:0:b0:2ed:b5a:536 with SMTP id q1-20020ac84501000000b002ed0b5a0536mr1788784qtn.463.1649944654932;
-        Thu, 14 Apr 2022 06:57:34 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id i7-20020ac85e47000000b002e22bad4717sm1221008qtx.1.2022.04.14.06.57.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Apr 2022 06:57:34 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id m132so9567656ybm.4;
-        Thu, 14 Apr 2022 06:57:34 -0700 (PDT)
-X-Received: by 2002:a5b:24e:0:b0:63d:cba0:3d55 with SMTP id
- g14-20020a5b024e000000b0063dcba03d55mr1696393ybp.613.1649944654265; Thu, 14
- Apr 2022 06:57:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=5coa3OBWaIiXyJ1TJsvTvbGW8ucgi9WcCkL0M7ii1Ac=;
+        b=FXATKJ5mMijKM6wWHzdFqlCK4ndW2L/hDWuCB88nqbhtgOAYhoJ15azNbZJlDJgZgw
+         FP51ynXGtbakXVvs4fVzDSiY/luKb4nkUMBX3mMKCA+QsIygADWwLskyOCLoNTG5cGCJ
+         8l3q8D0rd9wmRIosNeSKYoUHEIsgMwL18ThJSV2cOPdt2FCSoCTer7YHAHPhb8zwTnig
+         pUQ0cpJGHRlT6yfP015E1IBj6qhXDFLxeY6EvnhkrTi585DkrDmJyClY4NP9dYCgRd3x
+         Tg4RdqoMmvRKFQ01XYw6oYsFDztACsSZrqBXO0zDp2BJ+0mtfHIoMALZJyz6bFOkDx6F
+         qgjQ==
+X-Gm-Message-State: AOAM530DOHgC9fv09MUkdGDS+xM1PJ3fJvpvwHTTf4noVVnRXaUp2mTp
+        SvU48P2TRcdutRufO0gpVZw=
+X-Google-Smtp-Source: ABdhPJzkQUDBsDWQTu01bvGCEc2uVQV5houVOM1xZHAxz4SHp+vELS6VLTdLSUAfysTUbV9b6QBWNA==
+X-Received: by 2002:a05:6402:5c9:b0:420:aac6:257b with SMTP id n9-20020a05640205c900b00420aac6257bmr3086166edx.128.1649943849435;
+        Thu, 14 Apr 2022 06:44:09 -0700 (PDT)
+Received: from skbuf ([188.26.57.45])
+        by smtp.gmail.com with ESMTPSA id k14-20020a50e18e000000b0041b6f23f7f6sm1039363edl.22.2022.04.14.06.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Apr 2022 06:44:09 -0700 (PDT)
+Date:   Thu, 14 Apr 2022 16:44:06 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 01/12] net: dsa: add support for Renesas RZ/N1
+ A5PSW switch tag code
+Message-ID: <20220414134406.qk6zxlmsqwaamg4c@skbuf>
+References: <20220414122250.158113-1-clement.leger@bootlin.com>
+ <20220414122250.158113-2-clement.leger@bootlin.com>
 MIME-Version: 1.0
-References: <e44426a99b20e5f5681ede894d08e36870bcb47f.1649865163.git.geert+renesas@glider.be>
- <Yle0vODAp89idGxl@shikoro>
-In-Reply-To: <Yle0vODAp89idGxl@shikoro>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 14 Apr 2022 15:57:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV4ch6Da0jyuAOn9T+Z8ZOAqeJ70Y5EDZw3-TOgONW6jQ@mail.gmail.com>
-Message-ID: <CAMuHMdV4ch6Da0jyuAOn9T+Z8ZOAqeJ70Y5EDZw3-TOgONW6jQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: checker: Fix for drive reg field increase
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220414122250.158113-2-clement.leger@bootlin.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+On Thu, Apr 14, 2022 at 02:22:39PM +0200, Clément Léger wrote:
+> Add DSA tag code for Renesas RZ/N1 Advanced 5 port switch. This switch
+> uses a special VLAN type followed by 6 bytes which contains other
+> useful information (port, timestamp, etc).
+> 
+> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+> ---
 
-On Thu, Apr 14, 2022 at 7:44 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > This happens because the checker still uses the old number of fields.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > To be folded into commit d5c9688095d29a6c ("pinctrl: renesas: Allow up
-> > to 10 fields for drive_regs") in renesas-pinctrl-for-v5.19.
-> >
-> > Ideally, some iterator or index helper should be introduced.
->
-> What about a #define instead of a hard-coded value until then?
+Please squash this with the next patch.
 
-That would be an option. But I bit the bullet, and introduced a few
-helpers in v2 instead.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>  include/net/dsa.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/net/dsa.h b/include/net/dsa.h
+> index 934958fda962..2aa8eaae4eb9 100644
+> --- a/include/net/dsa.h
+> +++ b/include/net/dsa.h
+> @@ -53,6 +53,7 @@ struct phylink_link_state;
+>  #define DSA_TAG_PROTO_SJA1110_VALUE		23
+>  #define DSA_TAG_PROTO_RTL8_4_VALUE		24
+>  #define DSA_TAG_PROTO_RTL8_4T_VALUE		25
+> +#define DSA_TAG_PROTO_RZN1_A5PSW_VALUE		26
+>  
+>  enum dsa_tag_protocol {
+>  	DSA_TAG_PROTO_NONE		= DSA_TAG_PROTO_NONE_VALUE,
+> @@ -81,6 +82,7 @@ enum dsa_tag_protocol {
+>  	DSA_TAG_PROTO_SJA1110		= DSA_TAG_PROTO_SJA1110_VALUE,
+>  	DSA_TAG_PROTO_RTL8_4		= DSA_TAG_PROTO_RTL8_4_VALUE,
+>  	DSA_TAG_PROTO_RTL8_4T		= DSA_TAG_PROTO_RTL8_4T_VALUE,
+> +	DSA_TAG_PROTO_RZN1_A5PSW	= DSA_TAG_PROTO_RZN1_A5PSW_VALUE,
+>  };
+>  
+>  struct dsa_switch;
+> -- 
+> 2.34.1
+> 
