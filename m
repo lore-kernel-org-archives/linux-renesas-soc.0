@@ -2,163 +2,81 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DBCC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97681C4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 15:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243726AbiDNPLe (ORCPT
+        id S242920AbiDNPLa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 11:11:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55198 "EHLO
+        Thu, 14 Apr 2022 11:11:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353061AbiDNOfC (ORCPT
+        with ESMTP id S238430AbiDNO7W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 10:35:02 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21C00CF4B3;
-        Thu, 14 Apr 2022 07:26:16 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,259,1643641200"; 
-   d="scan'208";a="117980235"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Apr 2022 23:26:16 +0900
-Received: from localhost.localdomain (unknown [10.226.92.190])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A112F42B069B;
-        Thu, 14 Apr 2022 23:26:12 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH v7 1/3] media: dt-bindings: media: renesas,vsp1: Document RZ/{G2L,V2L} VSPD bindings To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Date:   Thu, 14 Apr 2022 15:26:03 +0100
-Message-Id: <20220414142605.26235-2-biju.das.jz@bp.renesas.com>
+        Thu, 14 Apr 2022 10:59:22 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188C22AEE
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 07:44:11 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7915:bbfe:555b:5456])
+        by baptiste.telenet-ops.be with bizsmtp
+        id Jek92700S4TB7ht01ek9kJ; Thu, 14 Apr 2022 16:44:09 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nf0hc-000cG8-Vh; Thu, 14 Apr 2022 16:44:08 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nf0hc-00E9xB-GG; Thu, 14 Apr 2022 16:44:08 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: defconfig: Refresh for v5.18-rc1
+Date:   Thu, 14 Apr 2022 16:44:07 +0200
+Message-Id: <922ba60d81a71acfae5d88c1991d8c96bb2b3527.1649947421.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220414142605.26235-1-biju.das.jz@bp.renesas.com>
-References: <20220414142605.26235-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document VSPD found in RZ/G2L and RZ/V2L family SoC's. VSPD block is
-similar to VSP2-D found on R-Car SoC's, but it does not have a version
-register and it has 3 clocks compared to 1 clock on vsp1 and vsp2.
+Refresh the defconfig for Renesas ARM systems:
+  - Move CONFIG_V4L_MEM2MEM_DRIVERS (moved in commit 256bf685691d8646
+    ("media: platform: move platform menu dependencies to drivers")),
+  - Move CONFIG_DEBUG_FS (moved in commit f9b3cd24578401e7
+    ("Kconfig.debug: make DEBUG_INFO selectable from a choice")).
 
-This patch introduces a new compatible 'renesas,rzg2l-vsp2' to handle
-these differences.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v6->v7:
- * No change
-v5->v6:
- * Removed LCDC reference clock description
- * Changed the clock name from du.0->aclk
-v4->v5:
- * No change
-v3->v4:
- * No change
-v2->v3:
- * Added Rb tag from Krzysztof.
-v1->v2:
- * Changed compatible from vsp2-rzg2l->rzg2l-vsp2
-RFC->v1:
- * Updated commit description
- * Changed compatible from vsp2-r9a07g044->vsp2-rzg2l
- * Defined the clocks
- * Clock max Items is based on SoC Compatible string
-RFC:
- * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-20-biju.das.jz@bp.renesas.com/
+To be queued in renesas-devel for v5.19.
 ---
- .../bindings/media/renesas,vsp1.yaml          | 52 ++++++++++++++-----
- 1 file changed, 39 insertions(+), 13 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
-index 990e9c1dbc43..a236b266fa4b 100644
---- a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
-+++ b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
-@@ -19,6 +19,7 @@ properties:
-     enum:
-       - renesas,vsp1 # R-Car Gen2 and RZ/G1
-       - renesas,vsp2 # R-Car Gen3 and RZ/G2
-+      - renesas,rzg2l-vsp2 # RZ/G2L and RZ/V2L
- 
-   reg:
-     maxItems: 1
-@@ -26,8 +27,8 @@ properties:
-   interrupts:
-     maxItems: 1
- 
--  clocks:
--    maxItems: 1
-+  clocks: true
-+  clock-names: true
- 
-   power-domains:
-     maxItems: 1
-@@ -50,17 +51,42 @@ required:
- 
- additionalProperties: false
- 
--if:
--  properties:
--    compatible:
--      items:
--        - const: renesas,vsp1
--then:
--  properties:
--    renesas,fcp: false
--else:
--  required:
--    - renesas,fcp
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,vsp1
-+    then:
-+      properties:
-+        renesas,fcp: false
-+    else:
-+      required:
-+        - renesas,fcp
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,rzg2l-vsp2
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Main clock
-+            - description: Register access clock
-+            - description: Video clock
-+        clock-names:
-+          items:
-+            - const: aclk
-+            - const: pclk
-+            - const: vclk
-+      required:
-+        - clock-names
-+    else:
-+      properties:
-+        clocks:
-+          maxItems: 1
- 
- examples:
-   # R8A7790 (R-Car H2) VSP1-S
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index db8df8a3a7b12d13..362643cbeffdc539 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -119,9 +119,9 @@ CONFIG_MEDIA_SUPPORT=y
+ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_PLATFORM_SUPPORT=y
+ CONFIG_V4L_PLATFORM_DRIVERS=y
++CONFIG_V4L_MEM2MEM_DRIVERS=y
+ CONFIG_VIDEO_RENESAS_CEU=y
+ CONFIG_VIDEO_RCAR_VIN=y
+-CONFIG_V4L_MEM2MEM_DRIVERS=y
+ CONFIG_VIDEO_RENESAS_FDP1=y
+ CONFIG_VIDEO_RENESAS_JPU=y
+ CONFIG_VIDEO_RENESAS_VSP1=y
+@@ -224,5 +224,5 @@ CONFIG_NLS_ISO8859_1=y
+ CONFIG_DMA_CMA=y
+ CONFIG_CMA_SIZE_MBYTES=64
+ CONFIG_PRINTK_TIME=y
+-CONFIG_DEBUG_FS=y
+ CONFIG_DEBUG_KERNEL=y
++CONFIG_DEBUG_FS=y
 -- 
 2.25.1
 
