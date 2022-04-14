@@ -2,123 +2,72 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E54C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 14:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE54AC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 15:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343973AbiDNOYE (ORCPT
+        id S235864AbiDNPKw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 10:24:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36102 "EHLO
+        Thu, 14 Apr 2022 11:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343613AbiDNNuU (ORCPT
+        with ESMTP id S1355961AbiDNPHg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 09:50:20 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B574A6E30;
-        Thu, 14 Apr 2022 06:44:11 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id v4so6418729edl.7;
-        Thu, 14 Apr 2022 06:44:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=5coa3OBWaIiXyJ1TJsvTvbGW8ucgi9WcCkL0M7ii1Ac=;
-        b=nrNu1svoISX1APZ50+JiEAl8u9jDBuz8d9Cxyz6EuUVB/sY5Ykf1r7CgRiowPFTY7b
-         Le13noEzoOmLbca8xuw39YtKrgs0gf7eyF8i9mrtfw9PfEVfNzNGnWZWLLCi7Uyu1S/R
-         dkY13N/1vInqBApx9uuZC8/NyKPQnhECC1m92z8HhjLbrRs8IXLm/2ILivrKpx2n7cLZ
-         +SRLPDxhRyaCwRTV3DHRoJbFxLdqC77dEBsT6JLzRN5a30di6rb3TcTuaGL80D5+ZMUr
-         rfa9qUZc4fdOfvWdibJ5h82FWUEhD1TPBSUCg6qzSlS1F/dP3TLhd2LyxItRws/6H+NE
-         pXvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=5coa3OBWaIiXyJ1TJsvTvbGW8ucgi9WcCkL0M7ii1Ac=;
-        b=FXATKJ5mMijKM6wWHzdFqlCK4ndW2L/hDWuCB88nqbhtgOAYhoJ15azNbZJlDJgZgw
-         FP51ynXGtbakXVvs4fVzDSiY/luKb4nkUMBX3mMKCA+QsIygADWwLskyOCLoNTG5cGCJ
-         8l3q8D0rd9wmRIosNeSKYoUHEIsgMwL18ThJSV2cOPdt2FCSoCTer7YHAHPhb8zwTnig
-         pUQ0cpJGHRlT6yfP015E1IBj6qhXDFLxeY6EvnhkrTi585DkrDmJyClY4NP9dYCgRd3x
-         Tg4RdqoMmvRKFQ01XYw6oYsFDztACsSZrqBXO0zDp2BJ+0mtfHIoMALZJyz6bFOkDx6F
-         qgjQ==
-X-Gm-Message-State: AOAM530DOHgC9fv09MUkdGDS+xM1PJ3fJvpvwHTTf4noVVnRXaUp2mTp
-        SvU48P2TRcdutRufO0gpVZw=
-X-Google-Smtp-Source: ABdhPJzkQUDBsDWQTu01bvGCEc2uVQV5houVOM1xZHAxz4SHp+vELS6VLTdLSUAfysTUbV9b6QBWNA==
-X-Received: by 2002:a05:6402:5c9:b0:420:aac6:257b with SMTP id n9-20020a05640205c900b00420aac6257bmr3086166edx.128.1649943849435;
-        Thu, 14 Apr 2022 06:44:09 -0700 (PDT)
-Received: from skbuf ([188.26.57.45])
-        by smtp.gmail.com with ESMTPSA id k14-20020a50e18e000000b0041b6f23f7f6sm1039363edl.22.2022.04.14.06.44.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 06:44:09 -0700 (PDT)
-Date:   Thu, 14 Apr 2022 16:44:06 +0300
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 01/12] net: dsa: add support for Renesas RZ/N1
- A5PSW switch tag code
-Message-ID: <20220414134406.qk6zxlmsqwaamg4c@skbuf>
-References: <20220414122250.158113-1-clement.leger@bootlin.com>
- <20220414122250.158113-2-clement.leger@bootlin.com>
+        Thu, 14 Apr 2022 11:07:36 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9128F91550
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 07:45:57 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7915:bbfe:555b:5456])
+        by andre.telenet-ops.be with bizsmtp
+        id Jelv2700M4TB7ht01elwA9; Thu, 14 Apr 2022 16:45:56 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nf0jL-000cGz-F4; Thu, 14 Apr 2022 16:45:55 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nf0jK-00E9zE-Uy; Thu, 14 Apr 2022 16:45:54 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: defconfig: Enable Maxim MAX96712 Quad GMSL2 Deserializer support
+Date:   Thu, 14 Apr 2022 16:45:52 +0200
+Message-Id: <7b5ea7eaabc1da79fd974f9d9845a5a527f2fb14.1649947458.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220414122250.158113-2-clement.leger@bootlin.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 02:22:39PM +0200, Clément Léger wrote:
-> Add DSA tag code for Renesas RZ/N1 Advanced 5 port switch. This switch
-> uses a special VLAN type followed by 6 bytes which contains other
-> useful information (port, timestamp, etc).
-> 
-> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-> ---
+Increase build and test coverage by enabling modular support for the
+Maxim MAX96712 Quad GMSL2 Deserializer, as used on the Renesas Falcon
+board.
 
-Please squash this with the next patch.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-devel for v5.19.
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
->  include/net/dsa.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/net/dsa.h b/include/net/dsa.h
-> index 934958fda962..2aa8eaae4eb9 100644
-> --- a/include/net/dsa.h
-> +++ b/include/net/dsa.h
-> @@ -53,6 +53,7 @@ struct phylink_link_state;
->  #define DSA_TAG_PROTO_SJA1110_VALUE		23
->  #define DSA_TAG_PROTO_RTL8_4_VALUE		24
->  #define DSA_TAG_PROTO_RTL8_4T_VALUE		25
-> +#define DSA_TAG_PROTO_RZN1_A5PSW_VALUE		26
->  
->  enum dsa_tag_protocol {
->  	DSA_TAG_PROTO_NONE		= DSA_TAG_PROTO_NONE_VALUE,
-> @@ -81,6 +82,7 @@ enum dsa_tag_protocol {
->  	DSA_TAG_PROTO_SJA1110		= DSA_TAG_PROTO_SJA1110_VALUE,
->  	DSA_TAG_PROTO_RTL8_4		= DSA_TAG_PROTO_RTL8_4_VALUE,
->  	DSA_TAG_PROTO_RTL8_4T		= DSA_TAG_PROTO_RTL8_4T_VALUE,
-> +	DSA_TAG_PROTO_RZN1_A5PSW	= DSA_TAG_PROTO_RZN1_A5PSW_VALUE,
->  };
->  
->  struct dsa_switch;
-> -- 
-> 2.34.1
-> 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 2836f3c5d3614de2..9ceb8c82ae16f0fa 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -984,6 +984,7 @@ CONFIG_STAGING=y
+ CONFIG_STAGING_MEDIA=y
+ CONFIG_VIDEO_HANTRO=m
+ CONFIG_VIDEO_IMX_MEDIA=m
++CONFIG_VIDEO_MAX96712=m
+ CONFIG_CHROME_PLATFORMS=y
+ CONFIG_CROS_EC=y
+ CONFIG_CROS_EC_I2C=y
+-- 
+2.25.1
+
