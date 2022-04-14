@@ -2,130 +2,178 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A47E5C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 13:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8ECC4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 14:21:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240664AbiDNNEv (ORCPT
+        id S245198AbiDNOWf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 09:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58478 "EHLO
+        Thu, 14 Apr 2022 10:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232078AbiDNNEu (ORCPT
+        with ESMTP id S1348023AbiDNOCD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 09:04:50 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2075F8EB67;
-        Thu, 14 Apr 2022 06:02:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=se7TDjKdD4lTbs4/EAs3EJoTc89hcEiop1DKf6IJ6Ts=; b=O24dwONDjdolTVYJL/Mivk0Css
-        Nam3xqr0eUKo8jnldPTeolq4WDbIxlwcwk2ZvbLTynj3gOn8SRkPyuY2xpVFiHkisvZqLR6e96TpZ
-        iROwj/LKQwBHC+aUkXGrfIYm2lRQ1wWUaWwIv6ZKyGAxPzDmVgqgNjupkad6z4uXeYQ+RsbNqcIIm
-        h1guXKEYNI1lRPmhu/Z0AWZDKKi6Ky88Hddzh0K6yR2quLxW5i3GKNrTf3tCc/TuH9ngsHT9zhOZS
-        vCdRX3d6WVkPGIi1Zd3sAHCMe6ZCla7x6BJrtBvNBOijo3EeHFWRnOOun6b/wu+WU2f1XxP8ZASRL
-        FDEipquA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58262)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1nez70-0004Zy-SF; Thu, 14 Apr 2022 14:02:14 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1nez6w-0004KB-Vf; Thu, 14 Apr 2022 14:02:10 +0100
-Date:   Thu, 14 Apr 2022 14:02:10 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-        Laurent Gonzales <laurent.gonzales@non.se.com>,
-        Jean-Pierre Geslin <jean-pierre.geslin@non.se.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: Re: [PATCH net-next 06/12] net: dsa: rzn1-a5psw: add Renesas RZ/N1
- advanced 5 port switch driver
-Message-ID: <YlgbUiXzHa0UNRK+@shell.armlinux.org.uk>
-References: <20220414122250.158113-1-clement.leger@bootlin.com>
- <20220414122250.158113-7-clement.leger@bootlin.com>
+        Thu, 14 Apr 2022 10:02:03 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEFE83DDF6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 06:57:41 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7915:bbfe:555b:5456])
+        by xavier.telenet-ops.be with bizsmtp
+        id Jdxe2700X4TB7ht01dxe0g; Thu, 14 Apr 2022 15:57:39 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nezyc-000bwo-Ed; Thu, 14 Apr 2022 15:57:38 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nezyb-00E8Aa-PX; Thu, 14 Apr 2022 15:57:37 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] pinctrl: renesas: checker: Rework drive and bias pin iteration
+Date:   Thu, 14 Apr 2022 15:57:36 +0200
+Message-Id: <1848e56e6496b8d5ed50fd6adc8ef2078b454ce4.1649944305.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220414122250.158113-7-clement.leger@bootlin.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 02:22:44PM +0200, Clément Léger wrote:
-> Add Renesas RZ/N1 advanced 5 port switch driver. This switch handles 5
-> ports including 1 CPU management port. A MDIO bus is also exposed by
-> this switch and allows to communicate with PHYs connected to the ports.
-> Each switch port (except for the CPU management ports) are connected to
-> the MII converter.
-> 
-> This driver include basic bridging support, more support will be added
-> later (vlan, etc).
+The checker code to iterate over all drive strength and bias register
+description items is cumbersome, due to the repeated calculation of
+indices, and the use of hardcoded array sizes.  The latter was done
+under the assumption they would never need to be changed, which turned
+out to be false.
 
-This patch looks to me like it needs to be updated...
+Increase readability by introducing helper macros to access drive
+strength and bias register description items.
+Increase maintainability by replacing hardcoded numbers by array sizes
+calculated at compile-time.
 
-> +static void a5psw_phylink_validate(struct dsa_switch *ds, int port,
-> +				   unsigned long *supported,
-> +				   struct phylink_link_state *state)
-> +{
-> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(mask) = { 0 };
-> +
-> +	phylink_set_port_modes(mask);
-> +
-> +	phylink_set(mask, Autoneg);
-> +	phylink_set(mask, Pause);
-> +	phylink_set(mask, Asym_Pause);
-> +
-> +	phylink_set(mask, 1000baseT_Full);
-> +	if (!dsa_is_cpu_port(ds, port)) {
-> +		phylink_set(mask, 10baseT_Half);
-> +		phylink_set(mask, 10baseT_Full);
-> +		phylink_set(mask, 100baseT_Half);
-> +		phylink_set(mask, 100baseT_Full);
-> +	}
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is v2 of "pinctrl: renesas: checker: Fix for drive reg field
+increase".
 
-If the port supports e.g. RGMII (as it does via the media converter)
-then it also supports 1000baseX modes as well - because a PHY attached
-to the RGMII port can convert to 1000baseX.
+To be inserted into renesas-pinctrl-for-v5.19 before commit
+d5c9688095d29a6c ("pinctrl: renesas: Allow up to 10 fields for
+drive_regs").
+---
+ drivers/pinctrl/renesas/core.c | 59 ++++++++++++++++++----------------
+ 1 file changed, 31 insertions(+), 28 deletions(-)
 
-> +
-> +	linkmode_and(supported, supported, mask);
-> +	linkmode_and(state->advertising, state->advertising, mask);
-> +}
-
-This basically means "I support every phy_interface_t mode that has ever
-been implemented" which surely is not what you want. I doubt from the
-above that you support 10GBASE-KR for example.
-
-Please instead implement the .phylink_get_caps DSA switch interface, and
-fill in the config->supported_interfaces for all interface modes that
-the port supports (that including the media converter as well) and the
-config->mac_capabilities members.
-
+diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
+index d0d4714731c14cf5..afab836c102c3826 100644
+--- a/drivers/pinctrl/renesas/core.c
++++ b/drivers/pinctrl/renesas/core.c
+@@ -1007,7 +1007,16 @@ static void __init sh_pfc_compare_groups(const char *drvname,
+ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ {
+ 	const struct pinmux_drive_reg *drive_regs = info->drive_regs;
++#define drive_nfields	ARRAY_SIZE(drive_regs->fields)
++#define drive_reg(i)	drive_regs[(i) / drive_nfields].reg
++#define drive_bit(i)	((i) % drive_nfields)
++#define drive_field(i)	drive_regs[(i) / drive_nfields].fields[drive_bit(i)]
+ 	const struct pinmux_bias_reg *bias_regs = info->bias_regs;
++#define bias_npins	ARRAY_SIZE(bias_regs->pins)
++#define bias_puen(i)	bias_regs[(i) / bias_npins].puen
++#define bias_pud(i)	bias_regs[(i) / bias_npins].pud
++#define bias_bit(i)	((i) % bias_npins)
++#define bias_pin(i)	bias_regs[(i) / bias_npins].pins[bias_bit(i)]
+ 	const char *drvname = info->name;
+ 	unsigned int *refcnts;
+ 	unsigned int i, j, k;
+@@ -1076,17 +1085,17 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 			if (!drive_regs) {
+ 				sh_pfc_err_once(drive, "SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set but drive_regs missing\n");
+ 			} else {
+-				for (j = 0; drive_regs[j / 8].reg; j++) {
+-					if (!drive_regs[j / 8].fields[j % 8].pin &&
+-					    !drive_regs[j / 8].fields[j % 8].offset &&
+-					    !drive_regs[j / 8].fields[j % 8].size)
++				for (j = 0; drive_reg(j); j++) {
++					if (!drive_field(j).pin &&
++					    !drive_field(j).offset &&
++					    !drive_field(j).size)
+ 						continue;
+ 
+-					if (drive_regs[j / 8].fields[j % 8].pin == pin->pin)
++					if (drive_field(j).pin == pin->pin)
+ 						break;
+ 				}
+ 
+-				if (!drive_regs[j / 8].reg)
++				if (!drive_reg(j))
+ 					sh_pfc_err("pin %s: SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set but not in drive_regs\n",
+ 						   pin->name);
+ 			}
+@@ -1164,20 +1173,17 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	for (i = 0; drive_regs && drive_regs[i].reg; i++)
+ 		sh_pfc_check_drive_reg(info, &drive_regs[i]);
+ 
+-	for (i = 0; drive_regs && drive_regs[i / 8].reg; i++) {
+-		if (!drive_regs[i / 8].fields[i % 8].pin &&
+-		    !drive_regs[i / 8].fields[i % 8].offset &&
+-		    !drive_regs[i / 8].fields[i % 8].size)
++	for (i = 0; drive_regs && drive_reg(i); i++) {
++		if (!drive_field(i).pin && !drive_field(i).offset &&
++		    !drive_field(i).size)
+ 			continue;
+ 
+ 		for (j = 0; j < i; j++) {
+-			if (drive_regs[i / 8].fields[i % 8].pin ==
+-			    drive_regs[j / 8].fields[j % 8].pin &&
+-			    drive_regs[j / 8].fields[j % 8].offset &&
+-			    drive_regs[j / 8].fields[j % 8].size) {
++			if (drive_field(i).pin == drive_field(j).pin &&
++			    drive_field(j).offset && drive_field(j).size) {
+ 				sh_pfc_err("drive_reg 0x%x:%u/0x%x:%u: pin conflict\n",
+-					   drive_regs[i / 8].reg, i % 8,
+-					   drive_regs[j / 8].reg, j % 8);
++					   drive_reg(i), drive_bit(i),
++					   drive_reg(j), drive_bit(j));
+ 			}
+ 		}
+ 	}
+@@ -1186,26 +1192,23 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	for (i = 0; bias_regs && (bias_regs[i].puen || bias_regs[i].pud); i++)
+ 		sh_pfc_check_bias_reg(info, &bias_regs[i]);
+ 
+-	for (i = 0; bias_regs &&
+-		    (bias_regs[i / 32].puen || bias_regs[i / 32].pud); i++) {
+-		if (bias_regs[i / 32].pins[i % 32] == SH_PFC_PIN_NONE)
++	for (i = 0; bias_regs && (bias_puen(i) || bias_pud(i)); i++) {
++		if (bias_pin(i) == SH_PFC_PIN_NONE)
+ 			continue;
+ 
+ 		for (j = 0; j < i; j++) {
+-			if (bias_regs[i / 32].pins[i % 32] !=
+-			    bias_regs[j / 32].pins[j % 32])
++			if (bias_pin(i) != bias_pin(j))
+ 				continue;
+ 
+-			if (bias_regs[i / 32].puen && bias_regs[j / 32].puen)
++			if (bias_puen(i) && bias_puen(j))
+ 				sh_pfc_err("bias_reg 0x%x:%u/0x%x:%u: pin conflict\n",
+-					   bias_regs[i / 32].puen, i % 32,
+-					   bias_regs[j / 32].puen, j % 32);
+-			if (bias_regs[i / 32].pud && bias_regs[j / 32].pud)
++					   bias_puen(i), bias_bit(i),
++					   bias_puen(j), bias_bit(j));
++			if (bias_pud(i) && bias_pud(j))
+ 				sh_pfc_err("bias_reg 0x%x:%u/0x%x:%u: pin conflict\n",
+-					   bias_regs[i / 32].pud, i % 32,
+-					   bias_regs[j / 32].pud, j % 32);
++					   bias_pud(i), bias_bit(i),
++					   bias_pud(j), bias_bit(j));
+ 		}
+-
+ 	}
+ 
+ 	/* Check ioctrl registers */
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+2.25.1
+
