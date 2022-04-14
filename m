@@ -2,119 +2,132 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70976C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82617C4321E
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 14:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343883AbiDNOYD (ORCPT
+        id S1343905AbiDNOYD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 14 Apr 2022 10:24:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46324 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347709AbiDNN7a (ORCPT
+        with ESMTP id S1345131AbiDNNpL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 09:59:30 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4259BB0A8;
-        Thu, 14 Apr 2022 06:51:56 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id l7so10218372ejn.2;
-        Thu, 14 Apr 2022 06:51:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VkVkOAS9A0MIQPbsfpNua8Mc2ZR7CENLAnkVniIdPoc=;
-        b=CXFcqAASxG+Z7VaPl8afDddAJZU3KVfQsH4a1JGZ1EjQwUWtZOh58dCXqu1CRt0nRH
-         GbroBEhSONj1yEyS1nlMjO2dTZs5iIHj3amuNDroTKV8vuWjGlUxmp6N8l0rJzVuL9iS
-         SK1pfqweFFp8qNmsy1ouvojo1qwb0OkgYbmw5cI1wWa07tZDoFoyAqHiu63K1oCpvGXv
-         JCFOxbvoB1FH365GTO/MeElQ0rQQ182PE1dbIz0Nw0J7NGFvquCeeFsdv6sqLOE6QIn0
-         C7C+hEmjvWZeIfvuZm9FyH27VeOaKjraYed4fP9gI2wtI0kf1Yw8FEPqUkn+IykqKHnl
-         lMFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VkVkOAS9A0MIQPbsfpNua8Mc2ZR7CENLAnkVniIdPoc=;
-        b=mvf5AbjI6CIGozSsows67t6PVUnH9LUF6Nvvzx4ISOXuYWk01KyRSSLcNt0grvSB9h
-         PYDjR314Oor82yrhW2EJGLVGn3hUZVcLOPDJA/q4L3LE+q5xcv99NrUT9oj6KJfLZSZA
-         0tnkqcrUKPOBvIpwdvYb57vBtxowwtV7G82I+hJSzF9JsxC+D3PSXy6W13eKw7S8Oups
-         EhGuOkrAUpKwbc4On0+xJL9NUKgSuFoINI0ifp0bucTpFANArCZn6xJsZmzw7FMMjXcI
-         LQHDqCpzGUPXZcTRpCllo1rZ0np/lUbQd8D0aQP/Mjc6eF3NV2uRGlm/AZuWvM/t5lY8
-         2KCA==
-X-Gm-Message-State: AOAM530WlAdB4kBkghUgnW2cZ2eaReGhhVfc6HLYf3E06ENVULtSbzhi
-        rZRr7nMdAeq1nx6mkJcG9VKqDWLr/ApmEZ+HFdc=
-X-Google-Smtp-Source: ABdhPJxL5jFoyaZVlB5dK/sqGFzMiTnpEAX7i3HpaSvcMs3Sr81F+WGQbyWSGSsYbk2dWKrwQ76KhtaYazmSqwcH7pQ=
-X-Received: by 2002:a17:907:628e:b0:6d9:c6fa:6168 with SMTP id
- nd14-20020a170907628e00b006d9c6fa6168mr2412944ejc.132.1649944315429; Thu, 14
- Apr 2022 06:51:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
- <CGME20220414063849eucas1p126e41b53ff0d342f5c48408994b704e9@eucas1p1.samsung.com>
- <20220401103604.8705-12-andriy.shevchenko@linux.intel.com> <3a24ef01-3231-1bee-7429-dce5680c5682@samsung.com>
-In-Reply-To: <3a24ef01-3231-1bee-7429-dce5680c5682@samsung.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 14 Apr 2022 16:51:19 +0300
-Message-ID: <CAHp75VfMPpfeMpawRyLo_GtLR8+gVGgm8zW-fatp6=9a9wK18A@mail.gmail.com>
-Subject: Re: [PATCH v4 11/13] pinctrl: meson: Replace custom code by
- gpiochip_node_count() call
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Qianggui Song <qianggui.song@amlogic.com>,
+        Thu, 14 Apr 2022 09:45:11 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 502D8140DE;
+        Thu, 14 Apr 2022 06:42:45 -0700 (PDT)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 047581BF20C;
+        Thu, 14 Apr 2022 13:42:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649943763;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uf/NUgWHuhWSypo4uHHoAgWnaBAtZS72tioBfXir5rw=;
+        b=RH9+J969PE/jWaLdsCV+Jg1ttNMgnWmL2DqDCmlGulbszBjD9NE52I2J8RVKtHvaLsECs9
+        S8j67gnG0CdrH/urV5Uw8cdGR4XfehozZgFSA6Eg7ukBmemeWcBtEsm45Q6wloI5KV7rbX
+        Fy1xTIHQyDpWpZ7/AthMJAEHBuy4ptwTA4uoeVdplikQzQx5jG5FeLj+uPWcStSohLc28N
+        KAAWjoFcxPN+HmjvfAAD+dE+5eo8GyyKzsL/4WqsfD4BjmhB6//KozDJPHWWWcoYawa3FI
+        wwZPzGot1uDZ4YL894ldPzkehTWSGlL7VU3yYbmpYpXogF/aXiFowNMKUC6JKQ==
+Date:   Thu, 14 Apr 2022 15:42:32 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v2 1/8] PCI: rcar-gen2: Add support for clocks
+Message-ID: <20220414154232.098a4451@bootlin.com>
+In-Reply-To: <CAMuHMdUCvJ6rAwnV=w9iFqnm=c0U_BpGiYEw109shsrWAeUJCA@mail.gmail.com>
+References: <20220414074011.500533-1-herve.codina@bootlin.com>
+        <20220414074011.500533-2-herve.codina@bootlin.com>
+        <CAMuHMdW8q5AjDtTE83yVPfmgnQy02UgLSns33z06WMFBUULWEw@mail.gmail.com>
+        <20220414132534.35467781@bootlin.com>
+        <CAMuHMdUCvJ6rAwnV=w9iFqnm=c0U_BpGiYEw109shsrWAeUJCA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 12:44 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> On 01.04.2022 12:36, Andy Shevchenko wrote:
-> > Since we have generic function to count GPIO controller nodes
-> > under a given device, there is no need to open code it. Replace
-> > custom code by gpiochip_node_count() call.
+Hi Geert,
 
-...
+On Thu, 14 Apr 2022 13:48:22 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-> This patch landed in linux next-20220413 as commit 88834c75cae5
-> ("pinctrl: meson: Replace custom code by gpiochip_node_count() call").
-> Unfortunately it breaks booting of all my Amlogic-based test boards
-> (Odroid C4, N2, Khadas VIM3, VIM3l). MMC driver is no longer probed and
-> boards are unable to mount rootfs. Reverting this patch on top of
-> linux-next fixes the issue.
+> Hi Herv=C3=A9,
+>=20
+> On Thu, Apr 14, 2022 at 1:29 PM Herve Codina <herve.codina@bootlin.com> w=
+rote:
+> > On Thu, 14 Apr 2022 10:45:54 +0200
+> > Geert Uytterhoeven <geert@linux-m68k.org> wrote: =20
+> > > On Thu, Apr 14, 2022 at 9:40 AM Herve Codina <herve.codina@bootlin.co=
+m> wrote: =20
+> > > > The PCI rcar-gen2 does not call any clk_prepare_enable(). =20
+> > >
+> > > Correct, this driver manages the clocks indirectly through Runtime PM.
+> > > =20
+> > > > This lead to an access failure when the driver tries to access
+> > > > the IP (at least on a RZ/N1D platform). =20
+> > >
+> > > I expect adding
+> > >
+> > >     power-domans =3D <&sysctrl>;
+> > >
+> > > to the pci_usb node makes this patch redundant. =20
+> >
+> > Seems not enough.
+> > I tried what you suggest :
+> >  - Added 'power-domains =3D <&systrl>;' to the pci_usb node
+> >  - Added missing '#power-domain-cells =3D <0>;' to sysctrl node
+> >  - Reverted my patch.
+> >
+> > The system crashed at boot: =20
+>=20
+> > [    0.832958] Unhandled fault: external abort on non-linefetch (0x1008=
+) at 0x90b5f848 =20
+>=20
+> That's indeed a typical symptom of accessing a module's registers
+> while the module's clock is disabled.
+>=20
+> > I also added a trace printk in r9a06g032-clocks.c and
+> > r9a06g032_attach_dev() was never called.
+> >
+> > Did I miss to set something ? =20
+>=20
+> Do you have CONFIG_PM and CONFIG_PM_GENERIC_DOMAINS
+> enabled?
+> Apparently ARCH_RZN1 does not select these options yet.
+>=20
 
-Thank you for letting me know, I'll withdraw it and investigate.
+Thanks a lot for pointing this.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I added select CONFIG_PM and CONFIG_PM_GENERIC_DOMAINS
+in ARCH_RZN1 and it works.
+
+I will remove my patch calling clk_bulk_prepare_enable() and
+add some new patches to enable power domains in the v3 series.
+
+Regards,
+Herv=C3=A9
+
