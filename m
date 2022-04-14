@@ -2,90 +2,85 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C98C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 07:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4A2C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 07:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232431AbiDNHau (ORCPT
+        id S240377AbiDNHnG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 03:30:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48588 "EHLO
+        Thu, 14 Apr 2022 03:43:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232125AbiDNHau (ORCPT
+        with ESMTP id S240570AbiDNHm6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 03:30:50 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 488531D30C
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 00:28:26 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id c64so5200292edf.11
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 00:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=R74GtmZ8/eMYWWCWuYgOVriNQWIHf2AARvZd2OkuZF0=;
-        b=eBxM/YwxID4Ni/TPXYUXJJ73zHPnp4UTyYhQ3sCYniBpv6uNurbjPclVftWHUzSbf9
-         UZ3u0jmE6WZMizp4tddKCCDhc0e0frrhiaULiyDULyM1QDXtPdsFcYCDX0lFc8729v33
-         pVMoUGWX+uzs9MId0hz5dhuhORSQVEWxsj2uY1FrXW4HwTYgCMzvfC1JL3x4LoUb4B4s
-         GWpfLnULMNeIrGIbDe2xqBW7vUgHVMGH/qsOmxIPoGK2gORcH78c4P1lSLXX1yqintcS
-         2asDRRIa8CLlBishtBlGoXb2KMgD2ZM+CM3zKlxlt55tX62+db8+PIJ4yVCLBoDRsUpz
-         3DKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=R74GtmZ8/eMYWWCWuYgOVriNQWIHf2AARvZd2OkuZF0=;
-        b=pDQEWkyjnqJfNAH5LZi6w+oLzbwPVSf5OJsJtKj9bYjDH4CQJiKrs3NkeAW769Aehf
-         +HVNVjlcpXokaZBS2GJAzSJBfgBj7UuCJCZcvInhOZgr0jhr94R1KB5NCq+TcJ5HW3QC
-         3W/LIlqcVQHM429E4I7Qm7TsY18dYuX2TsJOvD5E7zlIvbtdolYzpwn78aQTVokBOeiP
-         DW6YwwxVismAnjkgXRRM4PTr7fJd5c/brhM4KWglI9/AKvYkWIrO6GtepzVgPdKGywxY
-         6VMwswxN43JH3npHzhySzNEwBm5YBn/IZETPICKn0M/FxZ07Pmky77hpP7wKAfwakX3k
-         TTJg==
-X-Gm-Message-State: AOAM533GZwO9LgaqD5TIZakzGSZ6EGbVWloeJZKMwXvS/o0ttNRDE7V7
-        MvUdglKfRtylf3to2Mdzmn/+wA==
-X-Google-Smtp-Source: ABdhPJyj2kyU0EJnWAQ1cHHp1KDTEzl7iVeNPJETiPaZWyg/RnuYYBxLn6zDHCUMhls1PW0pZNwA+Q==
-X-Received: by 2002:a50:c014:0:b0:41d:5ee9:f354 with SMTP id r20-20020a50c014000000b0041d5ee9f354mr1514653edb.257.1649921304926;
-        Thu, 14 Apr 2022 00:28:24 -0700 (PDT)
-Received: from [192.168.0.209] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id n16-20020a05640204d000b0042062f9f0e1sm636450edw.15.2022.04.14.00.28.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Apr 2022 00:28:24 -0700 (PDT)
-Message-ID: <50714f3e-7561-37fd-7a05-222fd6185c47@linaro.org>
-Date:   Thu, 14 Apr 2022 09:28:23 +0200
+        Thu, 14 Apr 2022 03:42:58 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 576B540931;
+        Thu, 14 Apr 2022 00:40:33 -0700 (PDT)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id 8E5581C0014;
+        Thu, 14 Apr 2022 07:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649922031;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jS+PmEe67ZVUOMWY42bQ+yym/wpbxNw3llVW9z5Zvxw=;
+        b=KVnXTTE22AbVbwbeB0FbqQg3/x3nd6RBedmXmH9vAqrks3IFm+BAC4f9AxuD0ashSUP7EY
+        M9eYJM0mtTIlPG/wYH4lvt+5vUPnl0e7Stmzbe74qF34+Jk4y5VgxtKW/AiuMQU9hzTKV0
+        nnzrDpbcx4dcVp4gqFuPcqV8OfHfM5dtRZzNTCgYyUjes7OsWdzeHlTzmEeCFCvwwryrJS
+        FAdQhdXlrvTEIPF2+e+n0do5Aw4ea8spZJXRkwPMpMkwu4tRyRCKml2gZbdu2Cjd8a1Ho2
+        96uEu4xqD1h6A9U6F4Swd5+cc59A+1W6NkO0SK25d7rD5Pzo1Z1NOi60qyDcgg==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+Cc:     Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH v2 3/8] dt-bindings: PCI: renesas-pci-usb: Allow multiple clocks
+Date:   Thu, 14 Apr 2022 09:40:06 +0200
+Message-Id: <20220414074011.500533-4-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220414074011.500533-1-herve.codina@bootlin.com>
+References: <20220414074011.500533-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2] memory: renesas-rpc-if: Simplify single/double data
- register access
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        linux-renesas-soc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <c3b2a8d1a69f1b1e8d1a460148406cfb83e52eb4.1649857740.git.geert+renesas@glider.be>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <c3b2a8d1a69f1b1e8d1a460148406cfb83e52eb4.1649857740.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 13/04/2022 15:49, Geert Uytterhoeven wrote:
-> For manual write and read, factor out the common access to the first
-> data register by keeping track of the current data pointer.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Define that multiple clocks can be present at clocks property.
 
-This does not apply on a next branch. Maybe because I put "memory:
-renesas-rpc-if: Fix HF/OSPI data transfer in Manual Mode" for fixes?
-Does this patch depend on that fix?
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ Documentation/devicetree/bindings/pci/renesas,pci-usb.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/pci/renesas,pci-usb.yaml b/Documentation/devicetree/bindings/pci/renesas,pci-usb.yaml
+index 3f8d79b746c7..5b85be751b88 100644
+--- a/Documentation/devicetree/bindings/pci/renesas,pci-usb.yaml
++++ b/Documentation/devicetree/bindings/pci/renesas,pci-usb.yaml
+@@ -54,7 +54,8 @@ properties:
+       Standard property that helps to define the interrupt mapping.
+ 
+   clocks:
+-    description: The reference to the device clock.
++    description:
++      The references to the device clocks (several clocks can be referenced).
+ 
+   bus-range:
+     description: |
+-- 
+2.35.1
 
-Best regards,
-Krzysztof
