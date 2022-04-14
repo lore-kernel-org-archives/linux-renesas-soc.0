@@ -2,134 +2,198 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9985DC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C635C433EF
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 15:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243560AbiDNPuO (ORCPT
+        id S243491AbiDNPuL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 11:50:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39218 "EHLO
+        Thu, 14 Apr 2022 11:50:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359712AbiDNPrM (ORCPT
+        with ESMTP id S237221AbiDNPJq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 11:47:12 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A379EF47FF;
-        Thu, 14 Apr 2022 08:32:26 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id r13so10780075ejd.5;
-        Thu, 14 Apr 2022 08:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zNo0g28tlK9vSNHNGKqqjmBjPaYSOEtIiawAODAYH3c=;
-        b=cW++jIHdTWB0e/u7vyX0744QVnVIpLHeGh5WEu4BOxVM9uRZh7gq6XNbmyhxdiX0XR
-         DnNObAKYV/atK29rtd9VDxytlGyydSI3GK7gv8UXn2s61BkOk7SirtAUukWezAkshDlq
-         S/vxhU3aqvdD4Zqx1321bK8UkTZ5MlXIcTcawWigG3NoYBFnJf5STvdVx3TUpJBfsLar
-         EQAclsSro41RYhUaHhwMeeWqdSJWbXVcjR24H6KwhSZsIWtZvTUOcbxQYsJQYQDPhirF
-         VFdLgQ3N+EYyMsyuH2QM2c0kXC8IiDC08CHcYMnXhx4rxUrl3t3+RKGADf5TY3AHrxf3
-         qKKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zNo0g28tlK9vSNHNGKqqjmBjPaYSOEtIiawAODAYH3c=;
-        b=x3K3tLr7937Mz1u38hefxbTOFldKb5QKIaBNWKWBEnIfHqisPljWqb/sEsmO6numWJ
-         10T7FNHVAYjremfYQy4BvvegUJ9BOhWb/ncyy1YVx+q4dDwUL1HgGLLwBE/Sj6SCFXaM
-         +bAQfxD/2jTWgyoi1tql/mRZWr5e1TB/Zu7y3kXrKHGEBMO1xWbgMw7ORiOnfQqyBlc2
-         eh/ZMGo7k8yUIcmR+y0Rn6QuPmtPi4udDJ3ZFlQL1JEoqDkIK03oPbB+xUFUSLyipkEw
-         EPqukydwfQMFoiPS5asCJEzeiVBJHj8bYRMMcW/NNp5Ans9Sy5j44JdLvZtjo91I1/HM
-         mxdw==
-X-Gm-Message-State: AOAM532RGhJwSbEiUlg97cvkMK7KQitETUNg3c+UCRA63WzGDCNL/Ghg
-        +pNSEKMtYaPO4XunducDbc3JbhBbdSMtvaVcic0VecYsbm8=
-X-Google-Smtp-Source: ABdhPJzbycImSsBidIp4JSSW5b5SF1qL/I1dfcfErig8MjQOErRGdzGC2WsE7sy1HibLlRHnfGkpr6ZwwcMbQbIMAXs=
-X-Received: by 2002:a17:907:3f03:b0:6df:b04b:8712 with SMTP id
- hq3-20020a1709073f0300b006dfb04b8712mr2856347ejc.290.1649950345064; Thu, 14
- Apr 2022 08:32:25 -0700 (PDT)
+        Thu, 14 Apr 2022 11:09:46 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D82E9952
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Apr 2022 07:46:49 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7915:bbfe:555b:5456])
+        by xavier.telenet-ops.be with bizsmtp
+        id Jemn2700F4TB7ht01emnRT; Thu, 14 Apr 2022 16:46:48 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nf0kB-000cHM-GZ; Thu, 14 Apr 2022 16:46:47 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nf0kA-00EA1F-VC; Thu, 14 Apr 2022 16:46:46 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v5.18-rc1
+Date:   Thu, 14 Apr 2022 16:46:41 +0200
+Message-Id: <2ca6b74c5a4e954319625281b8e35a16d992ba8f.1649947562.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
- <CGME20220414063849eucas1p126e41b53ff0d342f5c48408994b704e9@eucas1p1.samsung.com>
- <20220401103604.8705-12-andriy.shevchenko@linux.intel.com>
- <3a24ef01-3231-1bee-7429-dce5680c5682@samsung.com> <CAHp75VfMPpfeMpawRyLo_GtLR8+gVGgm8zW-fatp6=9a9wK18A@mail.gmail.com>
-In-Reply-To: <CAHp75VfMPpfeMpawRyLo_GtLR8+gVGgm8zW-fatp6=9a9wK18A@mail.gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 14 Apr 2022 17:32:14 +0200
-Message-ID: <CAFBinCCCtZvdp+01DdEE=-f7rZ8V46O125wKDqE1muA645sdUg@mail.gmail.com>
-Subject: Re: [PATCH v4 11/13] pinctrl: meson: Replace custom code by
- gpiochip_node_count() call
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Andy,
+Refresh the defconfig for Renesas ARM systems:
+  - Disable CONFIG_ARM64_ERRATUM_2051678 (no Cortex-A510),
+  - Disable CONFIG_ARM64_ERRATUM_2077057 (no Cortex-A510),
+  - Shuffle media configuration,
+  - Enable CONFIG_VIDEO_MAX96712 and dependencies (R-Car V3U Falcon),
+  - Enable RZ/V2L (R9A07G054) SoC support,
+  - Move CONFIG_DEBUG_KERNEL (moved in commit f9b3cd24578401e7
+    ("Kconfig.debug: make DEBUG_INFO selectable from a choice")).
 
-On Thu, Apr 14, 2022 at 3:51 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-[...]
-> > This patch landed in linux next-20220413 as commit 88834c75cae5
-> > ("pinctrl: meson: Replace custom code by gpiochip_node_count() call").
-> > Unfortunately it breaks booting of all my Amlogic-based test boards
-> > (Odroid C4, N2, Khadas VIM3, VIM3l). MMC driver is no longer probed and
-> > boards are unable to mount rootfs. Reverting this patch on top of
-> > linux-next fixes the issue.
->
-> Thank you for letting me know, I'll withdraw it and investigate.
-If needed I can investigate further later today/tomorrow. I think the
-problem is that our node name doesn't follow the .dts recommendation.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
+To be applied to the topic/renesas-defconfig branch.
+---
+ arch/arm64/configs/renesas_defconfig | 78 +++++++++++++++-------------
+ 1 file changed, 42 insertions(+), 36 deletions(-)
 
-For GXL (arch/arm64/boot/dts/amlogic/meson-gxl.dtsi) the GPIO
-controller nodes are for example:
-  gpio: bank@4b0 {
-      ...
-  }
-and
-  gpio_ao: bank@14 {
-      ...
-  }
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 8702f71b2e205a87..4f7421ba76fa9fe9 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -29,6 +29,8 @@ CONFIG_PROFILING=y
+ CONFIG_ARCH_RENESAS=y
+ # CONFIG_ARM64_ERRATUM_1542419 is not set
+ # CONFIG_ARM64_ERRATUM_1508412 is not set
++# CONFIG_ARM64_ERRATUM_2051678 is not set
++# CONFIG_ARM64_ERRATUM_2077057 is not set
+ # CONFIG_ARM64_ERRATUM_2054223 is not set
+ # CONFIG_ARM64_ERRATUM_2067961 is not set
+ # CONFIG_CAVIUM_ERRATUM_22375 is not set
+@@ -188,58 +190,58 @@ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_SDR_SUPPORT=y
+ CONFIG_MEDIA_PLATFORM_SUPPORT=y
+ CONFIG_V4L_PLATFORM_DRIVERS=y
++CONFIG_SDR_PLATFORM_DRIVERS=y
++CONFIG_V4L_MEM2MEM_DRIVERS=y
++CONFIG_VIDEO_RCAR_ISP=y
+ CONFIG_VIDEO_RCAR_CSI2=y
+ CONFIG_VIDEO_RCAR_VIN=y
+-CONFIG_VIDEO_RCAR_ISP=y
+-CONFIG_V4L_MEM2MEM_DRIVERS=y
+-CONFIG_VIDEO_RENESAS_FDP1=y
+ CONFIG_VIDEO_RENESAS_FCP=y
++CONFIG_VIDEO_RENESAS_FDP1=y
+ CONFIG_VIDEO_RENESAS_VSP1=y
+-CONFIG_SDR_PLATFORM_DRIVERS=y
+ CONFIG_VIDEO_RCAR_DRIF=y
++CONFIG_VIDEO_IMX219=y
++CONFIG_VIDEO_OV5645=y
+ CONFIG_VIDEO_ADV7180=y
+ CONFIG_VIDEO_ADV748X=y
+ CONFIG_VIDEO_ADV7604=y
+ CONFIG_VIDEO_ADV7604_CEC=y
+-CONFIG_VIDEO_IMX219=y
+-CONFIG_VIDEO_OV5645=y
+-# CONFIG_MEDIA_TUNER_SIMPLE is not set
+-# CONFIG_MEDIA_TUNER_TDA18250 is not set
+-# CONFIG_MEDIA_TUNER_TDA8290 is not set
+-# CONFIG_MEDIA_TUNER_TDA827X is not set
+-# CONFIG_MEDIA_TUNER_TDA18271 is not set
+-# CONFIG_MEDIA_TUNER_TDA9887 is not set
+-# CONFIG_MEDIA_TUNER_TEA5761 is not set
+-# CONFIG_MEDIA_TUNER_TEA5767 is not set
++# CONFIG_MEDIA_TUNER_E4000 is not set
++# CONFIG_MEDIA_TUNER_FC0011 is not set
++# CONFIG_MEDIA_TUNER_FC0012 is not set
++# CONFIG_MEDIA_TUNER_FC0013 is not set
++# CONFIG_MEDIA_TUNER_FC2580 is not set
++# CONFIG_MEDIA_TUNER_IT913X is not set
++# CONFIG_MEDIA_TUNER_M88RS6000T is not set
++# CONFIG_MEDIA_TUNER_MAX2165 is not set
++# CONFIG_MEDIA_TUNER_MC44S803 is not set
+ # CONFIG_MEDIA_TUNER_MSI001 is not set
+-# CONFIG_MEDIA_TUNER_MT20XX is not set
+ # CONFIG_MEDIA_TUNER_MT2060 is not set
+ # CONFIG_MEDIA_TUNER_MT2063 is not set
+-# CONFIG_MEDIA_TUNER_MT2266 is not set
++# CONFIG_MEDIA_TUNER_MT20XX is not set
+ # CONFIG_MEDIA_TUNER_MT2131 is not set
+-# CONFIG_MEDIA_TUNER_QT1010 is not set
+-# CONFIG_MEDIA_TUNER_XC2028 is not set
+-# CONFIG_MEDIA_TUNER_XC5000 is not set
+-# CONFIG_MEDIA_TUNER_XC4000 is not set
++# CONFIG_MEDIA_TUNER_MT2266 is not set
++# CONFIG_MEDIA_TUNER_MXL301RF is not set
+ # CONFIG_MEDIA_TUNER_MXL5005S is not set
+ # CONFIG_MEDIA_TUNER_MXL5007T is not set
+-# CONFIG_MEDIA_TUNER_MC44S803 is not set
+-# CONFIG_MEDIA_TUNER_MAX2165 is not set
+-# CONFIG_MEDIA_TUNER_TDA18218 is not set
+-# CONFIG_MEDIA_TUNER_FC0011 is not set
+-# CONFIG_MEDIA_TUNER_FC0012 is not set
+-# CONFIG_MEDIA_TUNER_FC0013 is not set
++# CONFIG_MEDIA_TUNER_QM1D1B0004 is not set
++# CONFIG_MEDIA_TUNER_QM1D1C0042 is not set
++# CONFIG_MEDIA_TUNER_QT1010 is not set
++# CONFIG_MEDIA_TUNER_R820T is not set
++# CONFIG_MEDIA_TUNER_SI2157 is not set
++# CONFIG_MEDIA_TUNER_SIMPLE is not set
+ # CONFIG_MEDIA_TUNER_TDA18212 is not set
+-# CONFIG_MEDIA_TUNER_E4000 is not set
+-# CONFIG_MEDIA_TUNER_FC2580 is not set
+-# CONFIG_MEDIA_TUNER_M88RS6000T is not set
++# CONFIG_MEDIA_TUNER_TDA18218 is not set
++# CONFIG_MEDIA_TUNER_TDA18250 is not set
++# CONFIG_MEDIA_TUNER_TDA18271 is not set
++# CONFIG_MEDIA_TUNER_TDA827X is not set
++# CONFIG_MEDIA_TUNER_TDA8290 is not set
++# CONFIG_MEDIA_TUNER_TDA9887 is not set
++# CONFIG_MEDIA_TUNER_TEA5761 is not set
++# CONFIG_MEDIA_TUNER_TEA5767 is not set
+ # CONFIG_MEDIA_TUNER_TUA9001 is not set
+-# CONFIG_MEDIA_TUNER_SI2157 is not set
+-# CONFIG_MEDIA_TUNER_IT913X is not set
+-# CONFIG_MEDIA_TUNER_R820T is not set
+-# CONFIG_MEDIA_TUNER_MXL301RF is not set
+-# CONFIG_MEDIA_TUNER_QM1D1C0042 is not set
+-# CONFIG_MEDIA_TUNER_QM1D1B0004 is not set
++# CONFIG_MEDIA_TUNER_XC2028 is not set
++# CONFIG_MEDIA_TUNER_XC4000 is not set
++# CONFIG_MEDIA_TUNER_XC5000 is not set
+ CONFIG_DRM=y
+ CONFIG_DRM_I2C_NXP_TDA998X=y
+ CONFIG_DRM_RCAR_DU=y
+@@ -318,6 +320,9 @@ CONFIG_VIRTIO_PCI=y
+ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
+ # CONFIG_XEN_PCIDEV_STUB is not set
++CONFIG_STAGING=y
++CONFIG_STAGING_MEDIA=y
++CONFIG_VIDEO_MAX96712=y
+ CONFIG_CHROME_PLATFORMS=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
+ CONFIG_COMMON_CLK_VC5=y
+@@ -345,6 +350,7 @@ CONFIG_ARCH_R8A774E1=y
+ CONFIG_ARCH_R8A774A1=y
+ CONFIG_ARCH_R8A774B1=y
+ CONFIG_ARCH_R9A07G044=y
++CONFIG_ARCH_R9A07G054=y
+ CONFIG_EXTCON_USB_GPIO=y
+ CONFIG_MEMORY=y
+ CONFIG_RENESAS_RPCIF=y
+@@ -382,9 +388,9 @@ CONFIG_DMA_CMA=y
+ CONFIG_CMA_SIZE_MBYTES=128
+ CONFIG_CMA_ALIGNMENT=9
+ CONFIG_PRINTK_TIME=y
++CONFIG_DEBUG_KERNEL=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_FS=y
+-CONFIG_DEBUG_KERNEL=y
+ # CONFIG_SCHED_DEBUG is not set
+ # CONFIG_DEBUG_PREEMPT is not set
+ CONFIG_PROVE_LOCKING=y
+-- 
+2.25.1
 
-See also:
-$ git grep -C6 gpio-controller arch/arm64/boot/dts/amlogic/*.dtsi
-
-Marek did not state which error he's getting but I suspect it fails
-with "no gpio node found".
-
-
-Best regards,
-Martin
