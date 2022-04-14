@@ -2,167 +2,104 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA336C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 00:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75314C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Apr 2022 01:07:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232879AbiDNAkc (ORCPT
+        id S239357AbiDNBJl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 20:40:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41500 "EHLO
+        Wed, 13 Apr 2022 21:09:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233185AbiDNAkb (ORCPT
+        with ESMTP id S239348AbiDNBJk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Apr 2022 20:40:31 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49C71C911
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Apr 2022 17:38:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649896688; x=1681432688;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sb0SpLxFHTrzjCQoUkvtMoZwh6V05rrDkAjChijRqwY=;
-  b=V76BaSNfEcnEhJJH+3hw0tEKloQt6YIvOu2sKATKcj47AN2OdgIc/b71
-   UYw/W3E8asMRHGHPnFjzjTSo5wCMr+QE0cdxodMjULI/SOzyUmlOWuIyp
-   MDN/Pni7knOa8CMrL5oq9qK8VQ7i6d81UypqqlaJvkAKHFPPnT3gJbsPw
-   BgGDaPWNU+SQXHgzjoWJioNX+xXK5hrAVDVyZTXQxaaPyetbJ3GS2wd3y
-   TCnWbwDk5FO338svDGfrU7dTpkPVnpfpFkq7fKRN1myGyBkgr5BMKllJW
-   7LoL7cvdzbiUW0wBAj2hbD2lC10C/iyL7jT/8tmED6ZF4FGzcXw1K+tSs
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10316"; a="323256818"
-X-IronPort-AV: E=Sophos;i="5.90,258,1643702400"; 
-   d="scan'208";a="323256818"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 17:38:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,258,1643702400"; 
-   d="scan'208";a="559965232"
-Received: from lkp-server01.sh.intel.com (HELO 3abc53900bec) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 13 Apr 2022 17:38:06 -0700
-Received: from kbuild by 3abc53900bec with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nenUs-0000jd-7u;
-        Thu, 14 Apr 2022 00:38:06 +0000
-Date:   Thu, 14 Apr 2022 08:37:29 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:next] BUILD SUCCESS
- a868de20e8c0b389498edad18108aa42815e79ee
-Message-ID: <62576cc9.S9OIirE+hkOwqCSZ%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Wed, 13 Apr 2022 21:09:40 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE7651E51;
+        Wed, 13 Apr 2022 18:07:17 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id z8so3901987oix.3;
+        Wed, 13 Apr 2022 18:07:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=R82RD8v5prr4Rd3tq2uqvwCSz+WljHxj6XlBXJR4q0I=;
+        b=q0sj9WYj1RcX3fH2xYq70ju0+/eZJEgNaSjDgZtDtGTSUN8gQPElAZktoKGSnY6CYA
+         d6wp/pA2wMDXEC27LERtDkg5FpoBMcHKe0mL9fk3s1xXvKe8V5mKL2jeSyD+/fvAWdtt
+         JA/dlMqRQxmb4frk4DRYAydQmnajSGOlfhXaXZmK/TJzJmrzMVtcfMiD7oaES14KOxBq
+         fkHnATrpP51tWWIwtCJxg2xJvE9cURvCNVTCmLf9pg2Yh7x93JeRusjHgPrcRGM3zksR
+         818/s9D1ieQzYoTgqneQ7xXwNcMFLdqMs0qgxFFS0r/qjGHfik3fAE2+74dhPPpMvIZL
+         XtXA==
+X-Gm-Message-State: AOAM533J2mE+ZqRMV302DuSRUUd2gCAlLmMSLMx47iJl0vnmuxEestdh
+        lgg727erMS1cCHXikppBHhv5lZGUvA==
+X-Google-Smtp-Source: ABdhPJxJC8sVa21CHJYMxU6uS+2mJLyhydv3zxPuOBKBwslWEpFW7sJZO3uLi4b1xaUDCrYgK54RBQ==
+X-Received: by 2002:a05:6808:1827:b0:2da:5085:2e78 with SMTP id bh39-20020a056808182700b002da50852e78mr661056oib.172.1649898437146;
+        Wed, 13 Apr 2022 18:07:17 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id r10-20020a056830448a00b005c9344dac06sm252742otv.19.2022.04.13.18.07.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Apr 2022 18:07:16 -0700 (PDT)
+Received: (nullmailer pid 113330 invoked by uid 1000);
+        Thu, 14 Apr 2022 01:07:15 -0000
+Date:   Wed, 13 Apr 2022 20:07:15 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Marian-Cristian Rotariu 
+        <marian-cristian.rotariu.rb@bp.renesas.com>
+Subject: Re: [WARNING: UNSCANNABLE EXTRACTION FAILED][PATCH v2] dt-bindings:
+ ata: renesas,rcar-sata: Add r8a774e1 support
+Message-ID: <Yldzw63tIdKhhtA1@robh.at.kernel.org>
+References: <5861565a79a2bdadc07ae84e23e6d96dbb764823.1649680949.git.geert+renesas@glider.be>
+ <4716ac8b-acee-da06-5fa1-34eed07ba4d0@opensource.wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <4716ac8b-acee-da06-5fa1-34eed07ba4d0@opensource.wdc.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: a868de20e8c0b389498edad18108aa42815e79ee  Merge branches 'renesas-arm-dt-for-v5.19' and 'renesas-dt-bindings-for-v5.19' into renesas-next
+On Tue, Apr 12, 2022 at 08:05:42AM +0900, Damien Le Moal wrote:
+> On 4/11/22 21:43, Geert Uytterhoeven wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > 
+> > Document SATA support for the RZ/G2H SoC, no driver change required.
+> > 
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Acked-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+> > ---
+> > v2:
+> >   - Add Acked-by.
+> > ---
+> >  Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml b/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
+> > index c060c7914cae6573..c4e4a9eab658056d 100644
+> > --- a/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
+> > +++ b/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
+> > @@ -26,6 +26,7 @@ properties:
+> >        - items:
+> >            - enum:
+> >                - renesas,sata-r8a774b1     # RZ/G2N
+> > +              - renesas,sata-r8a774e1     # RZ/G2H
+> >                - renesas,sata-r8a7795      # R-Car H3
+> >                - renesas,sata-r8a77965     # R-Car M3-N
+> >            - const: renesas,rcar-gen3-sata # generic R-Car Gen3 or RZ/G2
+> 
+> Rob,
+> 
+> Will you take this patch or do you want me to queue it ?
 
-elapsed time: 726m
+Please take it. If I've acked or reviewed it, I'm expecting others to 
+take.
 
-configs tested: 88
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm64                               defconfig
-arm64                            allyesconfig
-arm                              allmodconfig
-arm                                 defconfig
-arm                              allyesconfig
-i386                          randconfig-c001
-powerpc                 mpc837x_mds_defconfig
-sh                             sh03_defconfig
-arm                           sunxi_defconfig
-xtensa                           alldefconfig
-x86_64                              defconfig
-arm                           u8500_defconfig
-arm                        spear6xx_defconfig
-arm                            mps2_defconfig
-arm                        oxnas_v6_defconfig
-x86_64                        randconfig-c001
-arm                  randconfig-c002-20220413
-ia64                             allmodconfig
-ia64                             allyesconfig
-ia64                                defconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-nios2                               defconfig
-arc                              allyesconfig
-csky                                defconfig
-nios2                            allyesconfig
-alpha                               defconfig
-alpha                            allyesconfig
-h8300                            allyesconfig
-xtensa                           allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-s390                                defconfig
-s390                             allmodconfig
-parisc                              defconfig
-parisc64                            defconfig
-parisc                           allyesconfig
-s390                             allyesconfig
-sparc                               defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-i386                                defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                           allnoconfig
-powerpc                          allmodconfig
-i386                          randconfig-a012
-i386                          randconfig-a014
-i386                          randconfig-a016
-riscv                randconfig-r042-20220413
-arc                  randconfig-r043-20220413
-s390                 randconfig-r044-20220413
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-riscv                    nommu_k210_defconfig
-riscv                             allnoconfig
-riscv                            allmodconfig
-riscv                            allyesconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                          rhel-8.3-func
-x86_64                                  kexec
-x86_64                           allyesconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                         rhel-8.3-kunit
-x86_64                               rhel-8.3
-
-clang tested configs:
-x86_64                        randconfig-c007
-powerpc              randconfig-c003-20220413
-arm                  randconfig-c002-20220413
-i386                          randconfig-c001
-riscv                randconfig-c006-20220413
-mips                 randconfig-c004-20220413
-arm                       spear13xx_defconfig
-mips                malta_qemu_32r6_defconfig
-x86_64                        randconfig-a005
-x86_64                        randconfig-a003
-x86_64                        randconfig-a001
-i386                          randconfig-a002
-i386                          randconfig-a006
-i386                          randconfig-a004
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-hexagon              randconfig-r041-20220413
-hexagon              randconfig-r045-20220413
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Rob
