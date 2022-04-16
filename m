@@ -2,89 +2,114 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD88BC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Apr 2022 21:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3621DC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Apr 2022 11:15:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356118AbiDOVjL (ORCPT
+        id S231730AbiDPLR6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Apr 2022 17:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51292 "EHLO
+        Sat, 16 Apr 2022 07:17:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356119AbiDOVjF (ORCPT
+        with ESMTP id S231733AbiDPLR5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Apr 2022 17:39:05 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539BC3CFC5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Apr 2022 14:36:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=KcELiUq4UXkjbcAbGj+sesWF2rJC
-        rUIBupy8gzNtfbU=; b=ubFGBk2TPg6e9D+xvl4vLucv3Fo5xV6Zojj1Zboa09Gq
-        /qCx1WsqXPlEnog9q4IbbCvSvzI2I+Etb/4x7xrKeV9S4rLNPozj29lQqCOQtWzy
-        zhfC0cPO+K9V2w4o39wb5VtlCFBRtPYSNPMMxrU3aQrE6juArOETszvoZANYMPw=
-Received: (qmail 2350265 invoked from network); 15 Apr 2022 23:36:31 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Apr 2022 23:36:31 +0200
-X-UD-Smtp-Session: l3s3148p1@a500NLjcurIgAwDtxwyoAOfJPDZkSTZ/
-Date:   Fri, 15 Apr 2022 23:36:31 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Bhuvanesh Surachari <bhuvanesh_surachari@mentor.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>
-Subject: Re: [PATCH v4] i2c: rcar: add support for I2C_M_RECV_LEN
-Message-ID: <YlnlXwHTqFR7yRs+@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Bhuvanesh Surachari <bhuvanesh_surachari@mentor.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>
-References: <20220405100756.42920-1-wsa+renesas@sang-engineering.com>
+        Sat, 16 Apr 2022 07:17:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF9A6377FD;
+        Sat, 16 Apr 2022 04:15:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7BA4B60E99;
+        Sat, 16 Apr 2022 11:15:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A895DC385A5;
+        Sat, 16 Apr 2022 11:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650107724;
+        bh=nqtzCAVG0UydeJj9805KTNz5rLFTdeSKGY2+Q6Dlv4k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=K+2dJ9pFOvsCgPHvg2S0S3x366hrjxBuSmjcsqUiS9p72g3EW0juNGCqpdL86ne4T
+         MjOu7YszoKpmLWSUOMXdSfzXKBX594H9cwF4evc/r9gSO6xo3+JGt2/0l8g1HWIk4F
+         n0n1QlN4xII1Yao19ZLH7czyqaFwIhgOdwwVRrv8BUQgMQlFUg0jImftfoVuBKMqeE
+         q3LdFkVbxgXu3/S5T7WPHZfpksGMxZ5KldpcQq+JPqXTX1E3uQ1rmgrroMZClUGoP9
+         iVWbwtWMYgHtQim1ovjFVL3d9OVlDDhRcfmRh5F0W47w6JMFBNuXHOeSSzxAVasYt/
+         Ey49IWzqDZNeQ==
+Date:   Sat, 16 Apr 2022 12:23:22 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH] iio: adc: Kconfig: Make RZG2L_ADC depend on ARCH_RZG2L
+Message-ID: <20220416122322.7aa14706@jic23-huawei>
+In-Reply-To: <CAMuHMdViXg2ZpKG+fJJyMjA_uY-7Tu2E1WwWed97OX5LOMq4tQ@mail.gmail.com>
+References: <20220406070315.13862-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        <20220410174713.1a4e013f@jic23-huawei>
+        <CAMuHMdViXg2ZpKG+fJJyMjA_uY-7Tu2E1WwWed97OX5LOMq4tQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VzUhE8JpOvSImoqk"
-Content-Disposition: inline
-In-Reply-To: <20220405100756.42920-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Mon, 11 Apr 2022 16:40:20 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
---VzUhE8JpOvSImoqk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi Jonathan,
+> 
+> On Sun, Apr 10, 2022 at 7:52 PM Jonathan Cameron <jic23@kernel.org> wrote:
+> > On Wed,  6 Apr 2022 08:03:15 +0100
+> > Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> >  
+> > > ADC block is common on Renesas RZ/G2L and RZ/V2L SoC's, so instead of
+> > > adding dependency for each SoC's add dependency on ARCH_RZG2L. The
+> > > ARCH_RZG2L config option is already selected by ARCH_R9A07G044 and
+> > > ARCH_R9A07G054.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>  
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Applied. Thanks,
 
-On Tue, Apr 05, 2022 at 12:07:56PM +0200, Wolfram Sang wrote:
-> With this feature added, SMBus Block reads and Proc calls are now
-> supported. This patch is the best of two independent developments by
-> Wolfram and Bhuvanesh + Andrew, refactored again by Wolfram.
->=20
-> Signed-off-by: Bhuvanesh Surachari <bhuvanesh_surachari@mentor.com>
-> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Jonathan
 
-Applied to for-next, thanks!
+> 
+> > Sounds like a fix?
+> >
+> > If so, please supply a Fixes tag.
+> > no need to resend, just reply with one to this email.  
+> 
+> This is not really a fix, as the original dependency was correct at
+> that time.
+> This is a change to add support for the RZ/V2L (r9a07g054) SoC, and
+> avoiding the need to update the dependencies when support is added
+> for more SoCs of the RZ/G2L family later.
+> 
+> > > --- a/drivers/iio/adc/Kconfig
+> > > +++ b/drivers/iio/adc/Kconfig
+> > > @@ -910,7 +910,7 @@ config ROCKCHIP_SARADC
+> > >
+> > >  config RZG2L_ADC
+> > >       tristate "Renesas RZ/G2L ADC driver"
+> > > -     depends on ARCH_R9A07G044 || COMPILE_TEST
+> > > +     depends on ARCH_RZG2L || COMPILE_TEST
+> > >       help
+> > >         Say yes here to build support for the ADC found in Renesas
+> > >         RZ/G2L family.  
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-
---VzUhE8JpOvSImoqk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJZ5V8ACgkQFA3kzBSg
-KbY5bw/9HolaQiOxvC5o9RMyWkwnUjCjG5ltNOHIXF5JCj76/SubNH0YoVSEH7Bh
-BiwTJDuV/O9Db0SUUzmD/RKpZcyC7QS/iiWqdnwP0xYlBxWi3pgXYmD/+rBLlefP
-PGD8+igxJV5guKHzz2RQhZIAjBcbX8LQRLzJOKRD6ydD3uYMuGvGiXJWfehjlH9+
-b3IsYolXsS2nDBjql2mu6/helqrlJQnmhjME4tijKz3cUrx6/CvWXflE7aAHn4KF
-gHHwif/QT1VqZuCpkc2sjElmjt6pbbu4vo6iDZz/luXUoOq27aC4LaHENXoDvOyi
-iwZR6x0evOH0AmuucL0Pv3B0Bc5ERaUNWHfp1bfGwpGwMGIhfxuORh66RMgUKsDo
-qwX+S0YvO9gnjVgBZYYvrphMGaTRsvtDdvoSgyXFebD1uSDLmZ/iGkVoaj1U359O
-BaHR2PYBg0n+qXuKnw1fwkJFeNW3jti/li64fhJXSFxM46jiXNV6gVQSUgmNIGF3
-Gf9GwgTz1xGIxreJyk3wmvNGyGFreIZNW9xUre2gq5lnCmHawcqRx+ZQ1JQYd8WO
-rX0ppWNkjdEpUK5omxXEsRKoSRJMU4M9Ie/EKWkmlHN01su2qnMDGIfqctTXemF8
-OOofkyZb0mO1xyZ6ctcGBOiRrEC26HolF4QxlXPSfG5VA0r/ts4=
-=rVkV
------END PGP SIGNATURE-----
-
---VzUhE8JpOvSImoqk--
