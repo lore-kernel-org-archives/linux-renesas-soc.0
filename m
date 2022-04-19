@@ -2,30 +2,29 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AD2C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Apr 2022 18:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B19FC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Apr 2022 18:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351150AbiDSS0H (ORCPT
+        id S1357179AbiDSS0J (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Apr 2022 14:26:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38758 "EHLO
+        Tue, 19 Apr 2022 14:26:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358259AbiDSSYY (ORCPT
+        with ESMTP id S1358333AbiDSSY3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Apr 2022 14:24:24 -0400
+        Tue, 19 Apr 2022 14:24:29 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C4060473B6;
-        Tue, 19 Apr 2022 11:18:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9E64F4754F;
+        Tue, 19 Apr 2022 11:18:20 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,273,1643641200"; 
-   d="scan'208";a="118471404"
+   d="scan'208";a="118471410"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Apr 2022 03:18:12 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Apr 2022 03:18:19 +0900
 Received: from localhost.localdomain (unknown [10.226.92.15])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 28B5340031CE;
-        Wed, 20 Apr 2022 03:18:08 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CDFDD40031CE;
+        Wed, 20 Apr 2022 03:18:16 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -34,9 +33,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v8 2/5] media: renesas: vsp1: Add support to deassert/assert reset line
-Date:   Tue, 19 Apr 2022 19:17:54 +0100
-Message-Id: <20220419181757.63346-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v8 4/5] media: renesas: vsp1: Add VSP1_HAS_NON_ZERO_LBA feature bit
+Date:   Tue, 19 Apr 2022 19:17:56 +0100
+Message-Id: <20220419181757.63346-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220419181757.63346-1-biju.das.jz@bp.renesas.com>
 References: <20220419181757.63346-1-biju.das.jz@bp.renesas.com>
@@ -46,117 +45,93 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As the resets DT property is mandatory, and is present in all .dtsi
-in mainline, add support to perform deassert/assert using reference
-counted reset handle.
+As per HW manual V3M and RZ/G2L SoC's has non zero LIF buffer
+attributes. So introduce a feature bit for handling the same.
+
+This patch also add separate device info structure for V3M and V3H
+SoC, as both these SoC's share the same model ID, but V3H does not
+have VSP1_HAS_NON_ZERO_LBA feature bit.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v7->v8:
- * No Change
-v6->v7:
- * No change
-v5->v6:
- * Rebased to media_staging and updated commit header
- * Added Rb tag from Laurent
- * Added forward declaration for struct reset_control
- * Updated vsp1_device_get() with changes suggested by Laurent
- * Updated error message for reset_control_get form ctrl->control.
-v4->v5:
- * Added Rb tag from Geert
-v3->v4:
- * Restored error check for pm_runtime_resume_and_get and calls
-   assert() in case of failure.
-v2->v3:
- * Added Rb tag from Philipp
- * If reset_control_deassert() failed, return ret directly. 
-v1->v2:
- * Used reference counted reset handle to perform deassert/assert
-RFC->v1:
- * Added reset support as separate patch
- * Moved rstc just after the bus_master field in struct vsp1_device
-RFC:
- * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-21-biju.das.jz@bp.renesas.com/
+v8:
+ * New patch
 ---
- drivers/media/platform/renesas/vsp1/vsp1.h    |  2 ++
- .../media/platform/renesas/vsp1/vsp1_drv.c    | 19 ++++++++++++++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ drivers/media/platform/renesas/vsp1/vsp1.h     |  1 +
+ drivers/media/platform/renesas/vsp1/vsp1_drv.c | 18 +++++++++++++++++-
+ drivers/media/platform/renesas/vsp1/vsp1_lif.c |  3 +--
+ 3 files changed, 19 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/media/platform/renesas/vsp1/vsp1.h b/drivers/media/platform/renesas/vsp1/vsp1.h
-index 37cf33c7e6ca..baf898d577ec 100644
+index ff4435705abb..2f6f0c6ae555 100644
 --- a/drivers/media/platform/renesas/vsp1/vsp1.h
 +++ b/drivers/media/platform/renesas/vsp1/vsp1.h
-@@ -22,6 +22,7 @@
- struct clk;
- struct device;
- struct rcar_fcp_device;
-+struct reset_control;
+@@ -55,6 +55,7 @@ struct vsp1_uif;
+ #define VSP1_HAS_HGT		BIT(8)
+ #define VSP1_HAS_BRS		BIT(9)
+ #define VSP1_HAS_EXT_DL		BIT(10)
++#define VSP1_HAS_NON_ZERO_LBA	BIT(11)
  
- struct vsp1_drm;
- struct vsp1_entity;
-@@ -79,6 +80,7 @@ struct vsp1_device {
- 	void __iomem *mmio;
- 	struct rcar_fcp_device *fcp;
- 	struct device *bus_master;
-+	struct reset_control *rstc;
- 
- 	struct vsp1_brx *brs;
- 	struct vsp1_brx *bru;
+ struct vsp1_device_info {
+ 	u32 version;
 diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-index 502c7d9d6890..159b68fa0829 100644
+index c2e242c503d2..181f2ed8604b 100644
 --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
 +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-@@ -16,6 +16,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/videodev2.h>
+@@ -782,6 +782,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPD_V3,
+ 		.model = "VSP2-D",
++		.soc = VI6_IP_VERSION_SOC_V3H,
+ 		.gen = 3,
+ 		.features = VSP1_HAS_BRS | VSP1_HAS_BRU,
+ 		.lif_count = 1,
+@@ -789,6 +790,17 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.uif_count = 1,
+ 		.wpf_count = 1,
+ 		.num_bru_inputs = 5,
++	}, {
++		.version = VI6_IP_VERSION_MODEL_VSPD_V3,
++		.model = "VSP2-D",
++		.soc = VI6_IP_VERSION_SOC_V3M,
++		.gen = 3,
++		.features = VSP1_HAS_BRS | VSP1_HAS_BRU | VSP1_HAS_NON_ZERO_LBA,
++		.lif_count = 1,
++		.rpf_count = 5,
++		.uif_count = 1,
++		.wpf_count = 1,
++		.num_bru_inputs = 5,
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPDL_GEN3,
+ 		.model = "VSP2-DL",
+@@ -832,8 +844,12 @@ static const struct vsp1_device_info *vsp1_lookup_info(struct vsp1_device *vsp1)
+ 	for (i = 0; i < ARRAY_SIZE(vsp1_device_infos); ++i) {
+ 		info = &vsp1_device_infos[i];
  
- #include <media/rcar-fcp.h>
-@@ -569,7 +570,17 @@ static void vsp1_mask_all_interrupts(struct vsp1_device *vsp1)
-  */
- int vsp1_device_get(struct vsp1_device *vsp1)
- {
--	return pm_runtime_resume_and_get(vsp1->dev);
-+	int ret;
-+
-+	ret = reset_control_deassert(vsp1->rstc);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(vsp1->dev);
-+	if (ret < 0)
-+		reset_control_assert(vsp1->rstc);
-+
-+	return ret;
- }
+-		if ((vsp1->version & VI6_IP_VERSION_MODEL_MASK) == info->version)
++		if ((vsp1->version & VI6_IP_VERSION_MODEL_MASK) == info->version) {
++			if (info->version == VI6_IP_VERSION_MODEL_VSPD_V3 &&
++			    ((vsp1->version & VI6_IP_VERSION_SOC_MASK) != info->soc))
++				continue;
+ 			break;
++		}
+ 	}
  
- /*
-@@ -581,6 +592,7 @@ int vsp1_device_get(struct vsp1_device *vsp1)
- void vsp1_device_put(struct vsp1_device *vsp1)
- {
- 	pm_runtime_put_sync(vsp1->dev);
-+	reset_control_assert(vsp1->rstc);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -827,6 +839,11 @@ static int vsp1_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
- 
-+	vsp1->rstc = devm_reset_control_get_shared(&pdev->dev, NULL);
-+	if (IS_ERR(vsp1->rstc))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(vsp1->rstc),
-+				     "failed to get reset control\n");
-+
- 	/* FCP (optional). */
- 	fcp_node = of_parse_phandle(pdev->dev.of_node, "renesas,fcp", 0);
- 	if (fcp_node) {
+ 	if (i == ARRAY_SIZE(vsp1_device_infos)) {
+diff --git a/drivers/media/platform/renesas/vsp1/vsp1_lif.c b/drivers/media/platform/renesas/vsp1/vsp1_lif.c
+index 6a6857ac9327..9adb892edcdc 100644
+--- a/drivers/media/platform/renesas/vsp1/vsp1_lif.c
++++ b/drivers/media/platform/renesas/vsp1/vsp1_lif.c
+@@ -135,8 +135,7 @@ static void lif_configure_stream(struct vsp1_entity *entity,
+ 	 * may appear on the output). The value required by the manual is not
+ 	 * explained but is likely a buffer size or threshold.
+ 	 */
+-	if ((entity->vsp1->version & VI6_IP_VERSION_MASK) ==
+-	    (VI6_IP_VERSION_MODEL_VSPD_V3 | VI6_IP_VERSION_SOC_V3M))
++	if (vsp1_feature(entity->vsp1, VSP1_HAS_NON_ZERO_LBA))
+ 		vsp1_lif_write(lif, dlb, VI6_LIF_LBA,
+ 			       VI6_LIF_LBA_LBA0 |
+ 			       (1536 << VI6_LIF_LBA_LBA1_SHIFT));
 -- 
 2.25.1
 
