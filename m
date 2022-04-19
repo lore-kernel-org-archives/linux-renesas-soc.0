@@ -2,123 +2,85 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38261C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Apr 2022 12:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C38C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Apr 2022 12:57:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352117AbiDSMK1 (ORCPT
+        id S242340AbiDSNAb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Apr 2022 08:10:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53630 "EHLO
+        Tue, 19 Apr 2022 09:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350377AbiDSMIR (ORCPT
+        with ESMTP id S240912AbiDSNAb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Apr 2022 08:08:17 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 30CF56369;
-        Tue, 19 Apr 2022 05:03:57 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,272,1643641200"; 
-   d="scan'208";a="118449895"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Apr 2022 21:03:54 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 49B8F427EAC9;
-        Tue, 19 Apr 2022 21:03:54 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     alim.akhtar@samsung.com, avri.altman@wdc.com, robh+dt@kernel.org,
-        krzk+dt@kernel.org
-Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 1/7] dt-bindings: ufs: Document Renesas R-Car UFS host controller
-Date:   Tue, 19 Apr 2022 21:03:10 +0900
-Message-Id: <20220419120316.209151-2-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220419120316.209151-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20220419120316.209151-1-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 19 Apr 2022 09:00:31 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00BE43388C;
+        Tue, 19 Apr 2022 05:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=8WBVcaV6iEXDOrTecuRrSTx95lLOpawtAYD16O9vexE=; b=VjL15INsCpOnI7UDTwDOjC1Ccr
+        Oz6NOqDOqp5VE8iQDKxVC9SNLs8DLGNJGXxHDAo4hYqT9q9MaPgReKl0744ilAFiowXf00llHmDL8
+        MY4a/6OUgQM7+RywlBbMU7wLSOJFOZ7ZpFjAa8y3DHNUIHM0OoWOa/a2spK3G5TkyxXY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ngnQI-00GV3L-45; Tue, 19 Apr 2022 14:57:38 +0200
+Date:   Tue, 19 Apr 2022 14:57:38 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
+Cc:     Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 09/12] ARM: dts: r9a06g032: describe MII
+ converter
+Message-ID: <Yl6xwmbsTLWMaXAv@lunn.ch>
+References: <YlismVi8y3Vf6PZ0@lunn.ch>
+ <20220415102453.1b5b3f77@fixe.home>
+ <Yll+Tpnwo5410B9H@lunn.ch>
+ <20220415163853.683c0b6d@fixe.home>
+ <YlmLWv4Hsm2uk8pa@lunn.ch>
+ <20220415172954.64e53086@fixe.home>
+ <YlmbIjoIZ8Xb4Kh/@lunn.ch>
+ <20220415184541.0a6928f5@fixe.home>
+ <YlrJQ47tkmQdhtMu@lunn.ch>
+ <20220419110328.0241fb1f@fixe.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220419110328.0241fb1f@fixe.home>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document Renesas R-Car UFS host controller for R-Car S4-8 (r8a779f0).
+> Hum, that could be done but since only some values/combinations are
+> allowed, it would potentially require to validate the setting at each
+> request, leading to potential non working devices due to invalid MUX
+> configuration required.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/ufs/renesas,ufs.yaml  | 61 +++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
+Yes, validation is messy, you have to incrementally validate as each
+device probes and requests its PCS. I would not only return -EINVAL,
+but also dump the current partial configuration to the kernel log. I
+guess the implementation would have a big table as shown in the
+datasheet. You walk the table trying to find a match for those
+settings you have so far, and wildcard those you don't know yet. Fun
+little coding problem.
 
-diff --git a/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml b/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
-new file mode 100644
-index 000000000000..f04f9f61fa9f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/ufs/renesas,ufs.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas R-Car UFS Host Controller
-+
-+maintainers:
-+  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-+
-+allOf:
-+  - $ref: ufs-common.yaml
-+
-+properties:
-+  compatible:
-+    const: renesas,r8a779f0-ufs
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: fck
-+      - const: ref_clk
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - resets
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r8a779f0-cpg-mssr.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/r8a779f0-sysc.h>
-+
-+    ufs: ufs@e686000 {
-+            compatible = "renesas,r8a779f0-ufs";
-+            reg = <0xe6860000 0x100>;
-+            interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&cpg CPG_MOD 1514>, <&ufs30_clk>;
-+            clock-names = "fck", "ref_clk";
-+            freq-table-hz = <200000000 200000000>, <38400000 38400000>;
-+            power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+            resets = <&cpg 1514>;
-+    };
--- 
-2.25.1
-
+	 Andrew
