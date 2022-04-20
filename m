@@ -2,130 +2,199 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F229AC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Apr 2022 19:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BACFC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Apr 2022 20:11:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243019AbiDTUAP (ORCPT
+        id S1344099AbiDTUOR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Apr 2022 16:00:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41214 "EHLO
+        Wed, 20 Apr 2022 16:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382005AbiDTUAH (ORCPT
+        with ESMTP id S233033AbiDTUOP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Apr 2022 16:00:07 -0400
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 117B648E5A;
-        Wed, 20 Apr 2022 12:56:38 -0700 (PDT)
-Received: by mail-oi1-f179.google.com with SMTP id b188so3247533oia.13;
-        Wed, 20 Apr 2022 12:56:37 -0700 (PDT)
+        Wed, 20 Apr 2022 16:14:15 -0400
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC06337BFE;
+        Wed, 20 Apr 2022 13:11:28 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-e2afb80550so3196660fac.1;
+        Wed, 20 Apr 2022 13:11:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OyeWgb/U4rnVtnxBVHnhz7nKAu2v5/SnAMiyr6yT0DY=;
-        b=lIBAUr6lUBTbGfhbxt/8RBCVnrfZL7OV6XAwZ6IffIpZ677jVTtE5lFs5RjxsZe1G3
-         eHmzf22tfIQDaQoz34rhqWiphw5vl5tr+gtNqQjmJfaOfdOzZ91kOGk5Th/0UiesO2kZ
-         uj4xp1/Gti0JgWIdX1gIUtsWo3LkrLsNX+aQWj9IHBDEKO2Zdn0VCoWZYXKMbCnlq3ab
-         QWgNWghUYOPieusND/CmLYKJuzC0f0oFg+mq5WHzvUoNMAqitiGK9R5vGW3DJEUOdBM6
-         cePt9o48dDfcfRsPg5eumtToTvLW+jKQh+K79kyHZdKzqQ8kUQEE7ZupEMDXAxIq5pTD
-         9CYA==
-X-Gm-Message-State: AOAM531Y6oIlXYmq+hWUsMZGOGaeEJRj29QLvcIwwFCdVcTcIFh0zpE5
-        Eh3AnDF6hk2QwQJ6hV7f0w==
-X-Google-Smtp-Source: ABdhPJyj+vjWS3Xi9zNx7tqjswIgQJkTRSUgANyjKvQv0BOw6vDI4yXWSqcqH1OdfMHyl2Mgrf0rbw==
-X-Received: by 2002:aca:1811:0:b0:2ef:3c0f:f169 with SMTP id h17-20020aca1811000000b002ef3c0ff169mr2523761oih.61.1650484597182;
-        Wed, 20 Apr 2022 12:56:37 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=yg1QMdJD0jJidIacTdvCTSB235cSU+8ZTTNRkM2ZhJM=;
+        b=c4pIxYy1XlZmICyjmUlFECXjMtsTtDdB+SOS0fPzI41ybSOyINq5r38bIuBYfQ+ziv
+         IgkYJFjB1EcAnAJxdLfJmoKSbyhhEV8o4l/6v3V506iJHTwQINViNnElCLzo6uiuQmJ8
+         sycqnJDi5WN7tqt0sei8zTpeacaQo+0ey+ORuwXZjQg0t56k04N+pbGkSvnTQLdtKQVF
+         dAxVNwMg7cFRGy/urYDCYlq7SpGbGDYE7oejLzd0lSDCnsBq1/238uqcswXHZOV2l/f1
+         wZLXX1tP/eY9xek5ui3xOCgpjnqEbZkViN1TBn5O/B4a5sCvELv29pawvxAqJcMBhZ32
+         iuLQ==
+X-Gm-Message-State: AOAM532mzbjlZf1c43nwqiIdawSvldirDCTjyZ4q2E5TwIpR6UFwkFAT
+        L+wTZA3l6ij+S2+2LBgZSA==
+X-Google-Smtp-Source: ABdhPJzk0iwR/4QLK+YIVMDxkKcItJAz53c1pSD6X7dA6YF5QyXZfuX7erDU2k1C6MEjztKQmcAGiw==
+X-Received: by 2002:a05:6870:4252:b0:e6:3ad5:cff6 with SMTP id v18-20020a056870425200b000e63ad5cff6mr2290495oac.196.1650485488205;
+        Wed, 20 Apr 2022 13:11:28 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id x2-20020a4a2a42000000b0033a3c4392c3sm4066899oox.26.2022.04.20.12.56.35
+        by smtp.gmail.com with ESMTPSA id g5-20020a9d5f85000000b006057056774esm380928oti.33.2022.04.20.13.11.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Apr 2022 12:56:36 -0700 (PDT)
-Received: (nullmailer pid 1749528 invoked by uid 1000);
-        Wed, 20 Apr 2022 19:56:35 -0000
-Date:   Wed, 20 Apr 2022 14:56:35 -0500
+        Wed, 20 Apr 2022 13:11:27 -0700 (PDT)
+Received: (nullmailer pid 1770236 invoked by uid 1000);
+        Wed, 20 Apr 2022 20:11:26 -0000
+Date:   Wed, 20 Apr 2022 15:11:26 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc:     Herve Codina <herve.codina@bootlin.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+To:     =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v2 6/8] ARM: dts: r9a06g032: Add internal PCI bridge node
-Message-ID: <YmBlc7e69INL4bfI@robh.at.kernel.org>
-References: <20220414074011.500533-1-herve.codina@bootlin.com>
- <20220414074011.500533-7-herve.codina@bootlin.com>
- <05c96b4d-313b-1aad-0ee5-61e54672765e@omp.ru>
+        Herve Codina <herve.codina@bootlin.com>,
+        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 03/12] dt-bindings: net: pcs: add bindings for
+ Renesas RZ/N1 MII converter
+Message-ID: <YmBo7sj+PXoJaqo8@robh.at.kernel.org>
+References: <20220414122250.158113-1-clement.leger@bootlin.com>
+ <20220414122250.158113-4-clement.leger@bootlin.com>
+ <Yl68k22fUw7uBgV9@robh.at.kernel.org>
+ <20220419170044.450050ca@fixe.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <05c96b4d-313b-1aad-0ee5-61e54672765e@omp.ru>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220419170044.450050ca@fixe.home>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Apr 18, 2022 at 12:02:52PM +0300, Sergey Shtylyov wrote:
-> Hello!
+On Tue, Apr 19, 2022 at 05:00:44PM +0200, Clément Léger wrote:
+> Le Tue, 19 Apr 2022 08:43:47 -0500,
+> Rob Herring <robh@kernel.org> a écrit :
 > 
-> On 4/14/22 10:40 AM, Herve Codina wrote:
-> 
-> > Add the device node for the r9a06g032 internal PCI bridge device.
+> > > +  clocks:
+> > > +    items:
+> > > +      - description: MII reference clock
+> > > +      - description: RGMII reference clock
+> > > +      - description: RMII reference clock
+> > > +      - description: AHB clock used for the MII converter register interface
+> > > +
+> > > +  renesas,miic-cfg-mode:
+> > > +    description: MII mux configuration mode. This value should use one of the
+> > > +                 value defined in dt-bindings/net/pcs-rzn1-miic.h.  
 > > 
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > ---
-> >  arch/arm/boot/dts/r9a06g032.dtsi | 28 ++++++++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
+> > Describe possible values here as constraints. At present, I don't see 
+> > the point of this property if there is only 1 possible value and it is 
+> > required.
+> 
+> The ethernet subsystem contains a number of internal muxes that allows
+> to configure ethernet routing. This configuration option allows to set
+> the register that configure these muxes.
+> 
+> After talking with Andrew, I considered moving to something like this:
+> 
+> eth-miic@44030000 {
+>   compatible = "renesas,rzn1-miic";
+> 
+>   mii_conv1: mii-conv-1 {
+>     renesas,miic-input = <MIIC_GMAC1_PORT>;
+>     port = <1>;
+
+'port' is already used, find another name. Maybe 'reg' here. Don't know. 
+What do 1 and 2 represent?
+
+
+>   };
+>   mii_conv2: mii-conv-2 {
+>     renesas,miic-input = <MIIC_SWITCHD_PORT>;
+>     port = <2>;
+>   };
+>    ...
+> };
+> 
+> Which would allow embedding the configuration inside the port
+> sub-nodes. Moreover, it allows a better validation of the values using
+> the schema validation directly since only a limited number of values
+> are allowed for each port.
+> 
 > > 
-> > diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-> > index 636a6ab31c58..848dc034bb8c 100644
-> > --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> > @@ -211,6 +211,34 @@ gic: interrupt-controller@44101000 {
-> >  			interrupts =
-> >  				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-> >  		};
-> > +
-> > +		pci_usb: pci@40030000 {
-> > +			compatible = "renesas,pci-r9a06g032", "renesas,pci-rzn1";
-> > +			device_type = "pci";
-> > +			clocks = <&sysctrl R9A06G032_HCLK_USBH>,
-> > +				 <&sysctrl R9A06G032_HCLK_USBPM>,
-> > +				 <&sysctrl R9A06G032_CLK_PCI_USB>;
-> > +			clock-names = "hclk_usbh", "hclk_usbpm", "clk_pci_usb";
-> > +			reg = <0x40030000 0xc00>,
-> > +			      <0x40020000 0x1100>;
-> > +			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
-> > +			status = "disabled";
-> > +
-> > +			bus-range = <0 0>;
-> > +			#address-cells = <3>;
-> > +			#size-cells = <2>;
-> > +			#interrupt-cells = <1>;
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +  
+> > > +patternProperties:
+> > > +  "^mii-conv@[0-4]$":
+> > > +    type: object  
+> > 
+> >        additionalProperties: false
+> > 
+> > > +    description: MII converter port
+> > > +
+> > > +    properties:
+> > > +      reg:
+> > > +        maxItems: 1  
+> > 
+> > Why do you need sub-nodes? They don't have any properties. A simple mask 
+> > property could tell you which ports are present/active/enabled if that's 
+> > what you are tracking. Or the SoC specific compatibles you need to add 
+> > can imply the ports if they are SoC specific.
 > 
->    Really? I don't think this PCI bridge is also an interrupt controller...
+> The MACs are using phandles to these sub-nodes to query a specific MII
+> converter port PCS:
+> 
+> switch@44050000 {
+>     compatible = "renesas,rzn1-a5psw";
+> 
+>     ports {
+>         port@0 {
 
-'interrupt-map' depends on '#interrupt-cells'.
+ethernet-ports and ethernet-port so we don't collide with the graph 
+binding.
+
+
+>             reg = <0>;
+>             label = "lan0";
+>             phy-handle = <&switch0phy3>;
+>             pcs-handle = <&mii_conv4>;
+>         };
+>     };
+> };
+> 
+> According to Andrew, this is not a good idea to represent the PCS as a
+> bus since it is indeed not a bus. I could also switch to something like
+> pcs-handle = <&eth_mii 4> but i'm not sure what you'd prefer. We could
+> also remove this from the device-tree and consider each driver to
+> request the MII ouput to be configured using something like this for
+> instance:
+
+I'm pretty sure we already defined pcs-handle as only a phandle. If you 
+want variable cells, then it's got to be extended like all the other 
+properties using that pattern.
 
 > 
-> > +			ranges = <0x02000000 0 0x40020000 0x40020000 0 0x00010000>;
-> > +			/* Should map all possible DDR as inbound ranges, but
-> > +			 * the IP only supports a 256MB, 512MB, or 1GB window.
-> > +			 * flags, PCI addr (64-bit), CPU addr, PCI size (64-bit)
-> > +			 */
-> > +			dma-ranges = <0x42000000 0 0x80000000 0x80000000 0 0x40000000>;
-> > +			interrupt-map-mask = <0xf800 0 0 0x7>;
-> > +			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH
-> > +					 0x0800 0 0 1 &gic GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH
-> > +					 0x1000 0 0 2 &gic GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
-> > +		};
-> >  	};
-> >  
-> >  	timer {
+>  miic_request_pcs(pcs_np, miic_port_nr, MIIC_SWITCHD_PORT);
 > 
-> MBR, Sergey
+> But I'm not really fan of this because it requires the drivers to
+> assume some specificities of the MII converter (port number are not in
+> the same order of the switch for instance) and thus I would prefer this
+> to be in the device-tree.
+> 
+> Let me know if you can think of something that would suit you
+> better but  keep in mind that I need to correctly match a switch/MAC
+> port with a PCS port and that I also need to configure MII internal
+> muxes. 
+> 
+> For more information, you can look at section 8 of the manual at [1].
+
+I can't really. Other people want their bindings reviewed too.
+
+Rob
