@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B808C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D1BC4167E
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Apr 2022 12:13:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352746AbiDTMPs (ORCPT
+        id S1352807AbiDTMPs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 20 Apr 2022 08:15:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55572 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352807AbiDTMPl (ORCPT
+        with ESMTP id S1352850AbiDTMPm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Apr 2022 08:15:41 -0400
+        Wed, 20 Apr 2022 08:15:42 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1F7D393EE
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Apr 2022 05:12:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D360740931
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Apr 2022 05:12:55 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nh9CU-00022V-CW; Wed, 20 Apr 2022 14:12:50 +0200
+        id 1nh9CT-00022I-QD; Wed, 20 Apr 2022 14:12:49 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nh9CV-0049dR-2D; Wed, 20 Apr 2022 14:12:49 +0200
+        id 1nh9CU-0049dI-2K; Wed, 20 Apr 2022 14:12:48 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nh9CS-004Tjg-Ap; Wed, 20 Apr 2022 14:12:48 +0200
+        id 1nh9CR-004TjY-V0; Wed, 20 Apr 2022 14:12:47 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,15 +38,15 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Lee Jones <lee.jones@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
         kernel@pengutronix.de
-Subject: [PATCH v2 6/6] pwm: renesas-tpu: Improve precision of period and duty_cycle calculation
-Date:   Wed, 20 Apr 2022 14:12:40 +0200
-Message-Id: <20220420121240.67781-7-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH v2 4/6] pwm: renesas-tpu: Rename variables to match the usual naming
+Date:   Wed, 20 Apr 2022 14:12:38 +0200
+Message-Id: <20220420121240.67781-5-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220420121240.67781-1-u.kleine-koenig@pengutronix.de>
 References: <20220420121240.67781-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3068; h=from:subject; bh=qhmj+/kClimdnaMQquEEOOHX5xZ+ZRCX9FU00iWnViM=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiX/i09g8CTVqTyKus3foEapayKgO+ir799otZKwof S7D4f3qJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYl/4tAAKCRDB/BR4rcrsCb1fCA CSWg4qs1CDKt47OWQYbajjaAIkiiTZiL6UiB7gD8Rk9sq+I4g3X3dyD+5LAtCYwVHm+p1lgQa1a0PS fAqLWMPfKBYRwPrsekaR4qa2FfQ42NOq3sN7JA2Vkj8wb7/kECp9j2n3dI1M0pGJrZAurXDDnUt/sn AK3lN79Q3Or/NRbsULoEAIj3HyvhyfoBarxzGg/o4gj/JbpKzzkq0+AWMBOKT66EtLIIKaeA4w76pr sifzthRq27fo+KsTH0w9qPrwrUekqHj/0xn3jvWVTvsKh4UBkF65jHOIzWIiThmXMGN9QGbi2wvSlM b5nuyxPpah01sQ+Zsw3bIkNB0C1XeH
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11426; h=from:subject; bh=vV57d6AreuVFiBrIu5rjQqcCl2bAMR8gpBs3bRF3tvA=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiX/itCffj6vn3ekULQbjGueD00eYgVkhLDFmNSLQr K6WgsdmJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYl/4rQAKCRDB/BR4rcrsCTWFCA CVcjW1+OXhBXHvUlD15w/O6TVrvCouFx9VPSTr+XDkFMTHXP8+fJy5ogTtb9NcE2rshbEEQ8O/ZbsC M4tPe3fDcwryaNn/qFOm4m0hvOkh0n8AEb59kLkt2Fg4Oyb7zyUDxr1K6h5c3ozIQLLFFWdsgFBpXs ljzMfgMe2zTU0IKBzm7JITPBY04TrvKrYyg+b02Ea9G9UaCyKjye+BduB/xikS5+uPj/gAV7mD6yX3 4BH3RdG3K5Bu1TDQS2clkGmz8tElWLlqa3Vnl6LLZgCuSMCTki3r1NIzfvH5eW6D3KnFfmold1rYLS EeTcdaEotzGHooUD9USIHnnX6o67B1
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -57,96 +57,352 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dividing by the result of a division looses precision. Consider for example
-clk_rate = 33000000 and period_ns = 500001. Then
+The driver used "pwm" for struct tpu_pwm_device pointers. This name is
+usually only used for struct pwm_device pointers which this driver calls
+"_pwm". So rename to the driver data pointers to "tpd" which then allows
+to drop the underscore from "_pwm".
 
-	clk_rate / (NSEC_PER_SEC / period_ns)
-
-has the exact value 16500.033, but in C this evaluates to 16508. It gets
-worse for even bigger values of period_ns, so with period_ns = 500000001,
-the exact result is 16500000.033 while in C we get 33000000.
-
-For that reason use
-
-	clk_rate * period_ns / NSEC_PER_SEC
-
-instead which doesn't suffer from this problem. To ensure this doesn't
-overflow add a safeguard check for clk_rate.
-
-Note that duty > period can never happen, so the respective check can be
-dropped.
-
-Incidentally this fixes a division by zero if period_ns > NSEC_PER_SEC.
-Another side effect is that values bigger than INT_MAX for period and
-duty_cyle are not wrongly discarded any more.
-
-Fixes: 99b82abb0a35 ("pwm: Add Renesas TPU PWM driver")
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/pwm/pwm-renesas-tpu.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ drivers/pwm/pwm-renesas-tpu.c | 172 +++++++++++++++++-----------------
+ 1 file changed, 86 insertions(+), 86 deletions(-)
 
 diff --git a/drivers/pwm/pwm-renesas-tpu.c b/drivers/pwm/pwm-renesas-tpu.c
-index 60ba7cf275c7..9e6978c39788 100644
+index bebae65a6ed7..5bced2050ece 100644
 --- a/drivers/pwm/pwm-renesas-tpu.c
 +++ b/drivers/pwm/pwm-renesas-tpu.c
-@@ -242,20 +242,29 @@ static void tpu_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+@@ -89,71 +89,71 @@ struct tpu_device {
+ 
+ #define to_tpu_device(c)	container_of(c, struct tpu_device, chip)
+ 
+-static void tpu_pwm_write(struct tpu_pwm_device *pwm, int reg_nr, u16 value)
++static void tpu_pwm_write(struct tpu_pwm_device *tpd, int reg_nr, u16 value)
+ {
+-	void __iomem *base = pwm->tpu->base + TPU_CHANNEL_OFFSET
+-			   + pwm->channel * TPU_CHANNEL_SIZE;
++	void __iomem *base = tpd->tpu->base + TPU_CHANNEL_OFFSET
++			   + tpd->channel * TPU_CHANNEL_SIZE;
+ 
+ 	iowrite16(value, base + reg_nr);
  }
  
- static int tpu_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
--			  int duty_ns, int period_ns, bool enabled)
-+			  u64 duty_ns, u64 period_ns, bool enabled)
+-static void tpu_pwm_set_pin(struct tpu_pwm_device *pwm,
++static void tpu_pwm_set_pin(struct tpu_pwm_device *tpd,
+ 			    enum tpu_pin_state state)
  {
- 	struct tpu_pwm_device *tpd = pwm_get_chip_data(pwm);
+ 	static const char * const states[] = { "inactive", "PWM", "active" };
+ 
+-	dev_dbg(&pwm->tpu->pdev->dev, "%u: configuring pin as %s\n",
+-		pwm->channel, states[state]);
++	dev_dbg(&tpd->tpu->pdev->dev, "%u: configuring pin as %s\n",
++		tpd->channel, states[state]);
+ 
+ 	switch (state) {
+ 	case TPU_PIN_INACTIVE:
+-		tpu_pwm_write(pwm, TPU_TIORn,
+-			      pwm->polarity == PWM_POLARITY_INVERSED ?
++		tpu_pwm_write(tpd, TPU_TIORn,
++			      tpd->polarity == PWM_POLARITY_INVERSED ?
+ 			      TPU_TIOR_IOA_1 : TPU_TIOR_IOA_0);
+ 		break;
+ 	case TPU_PIN_PWM:
+-		tpu_pwm_write(pwm, TPU_TIORn,
+-			      pwm->polarity == PWM_POLARITY_INVERSED ?
++		tpu_pwm_write(tpd, TPU_TIORn,
++			      tpd->polarity == PWM_POLARITY_INVERSED ?
+ 			      TPU_TIOR_IOA_0_SET : TPU_TIOR_IOA_1_CLR);
+ 		break;
+ 	case TPU_PIN_ACTIVE:
+-		tpu_pwm_write(pwm, TPU_TIORn,
+-			      pwm->polarity == PWM_POLARITY_INVERSED ?
++		tpu_pwm_write(tpd, TPU_TIORn,
++			      tpd->polarity == PWM_POLARITY_INVERSED ?
+ 			      TPU_TIOR_IOA_0 : TPU_TIOR_IOA_1);
+ 		break;
+ 	}
+ }
+ 
+-static void tpu_pwm_start_stop(struct tpu_pwm_device *pwm, int start)
++static void tpu_pwm_start_stop(struct tpu_pwm_device *tpd, int start)
+ {
+ 	unsigned long flags;
+ 	u16 value;
+ 
+-	spin_lock_irqsave(&pwm->tpu->lock, flags);
+-	value = ioread16(pwm->tpu->base + TPU_TSTR);
++	spin_lock_irqsave(&tpd->tpu->lock, flags);
++	value = ioread16(tpd->tpu->base + TPU_TSTR);
+ 
+ 	if (start)
+-		value |= 1 << pwm->channel;
++		value |= 1 << tpd->channel;
+ 	else
+-		value &= ~(1 << pwm->channel);
++		value &= ~(1 << tpd->channel);
+ 
+-	iowrite16(value, pwm->tpu->base + TPU_TSTR);
+-	spin_unlock_irqrestore(&pwm->tpu->lock, flags);
++	iowrite16(value, tpd->tpu->base + TPU_TSTR);
++	spin_unlock_irqrestore(&tpd->tpu->lock, flags);
+ }
+ 
+-static int tpu_pwm_timer_start(struct tpu_pwm_device *pwm)
++static int tpu_pwm_timer_start(struct tpu_pwm_device *tpd)
+ {
+ 	int ret;
+ 
+-	if (!pwm->timer_on) {
++	if (!tpd->timer_on) {
+ 		/* Wake up device and enable clock. */
+-		pm_runtime_get_sync(&pwm->tpu->pdev->dev);
+-		ret = clk_prepare_enable(pwm->tpu->clk);
++		pm_runtime_get_sync(&tpd->tpu->pdev->dev);
++		ret = clk_prepare_enable(tpd->tpu->clk);
+ 		if (ret) {
+-			dev_err(&pwm->tpu->pdev->dev, "cannot enable clock\n");
++			dev_err(&tpd->tpu->pdev->dev, "cannot enable clock\n");
+ 			return ret;
+ 		}
+-		pwm->timer_on = true;
++		tpd->timer_on = true;
+ 	}
+ 
+ 	/*
+@@ -161,8 +161,8 @@ static int tpu_pwm_timer_start(struct tpu_pwm_device *pwm)
+ 	 * completely. First drive the pin to the inactive state to avoid
+ 	 * glitches.
+ 	 */
+-	tpu_pwm_set_pin(pwm, TPU_PIN_INACTIVE);
+-	tpu_pwm_start_stop(pwm, false);
++	tpu_pwm_set_pin(tpd, TPU_PIN_INACTIVE);
++	tpu_pwm_start_stop(tpd, false);
+ 
+ 	/*
+ 	 * - Clear TCNT on TGRB match
+@@ -172,80 +172,80 @@ static int tpu_pwm_timer_start(struct tpu_pwm_device *pwm)
+ 	 * - Output 1 until TGRA, output 0 until TGRB (active high polarity
+ 	 * - PWM mode
+ 	 */
+-	tpu_pwm_write(pwm, TPU_TCRn, TPU_TCR_CCLR_TGRB | TPU_TCR_CKEG_RISING |
+-		      pwm->prescaler);
+-	tpu_pwm_write(pwm, TPU_TMDRn, TPU_TMDR_MD_PWM);
+-	tpu_pwm_set_pin(pwm, TPU_PIN_PWM);
+-	tpu_pwm_write(pwm, TPU_TGRAn, pwm->duty);
+-	tpu_pwm_write(pwm, TPU_TGRBn, pwm->period);
++	tpu_pwm_write(tpd, TPU_TCRn, TPU_TCR_CCLR_TGRB | TPU_TCR_CKEG_RISING |
++		      tpd->prescaler);
++	tpu_pwm_write(tpd, TPU_TMDRn, TPU_TMDR_MD_PWM);
++	tpu_pwm_set_pin(tpd, TPU_PIN_PWM);
++	tpu_pwm_write(tpd, TPU_TGRAn, tpd->duty);
++	tpu_pwm_write(tpd, TPU_TGRBn, tpd->period);
+ 
+-	dev_dbg(&pwm->tpu->pdev->dev, "%u: TGRA 0x%04x TGRB 0x%04x\n",
+-		pwm->channel, pwm->duty, pwm->period);
++	dev_dbg(&tpd->tpu->pdev->dev, "%u: TGRA 0x%04x TGRB 0x%04x\n",
++		tpd->channel, tpd->duty, tpd->period);
+ 
+ 	/* Start the channel. */
+-	tpu_pwm_start_stop(pwm, true);
++	tpu_pwm_start_stop(tpd, true);
+ 
+ 	return 0;
+ }
+ 
+-static void tpu_pwm_timer_stop(struct tpu_pwm_device *pwm)
++static void tpu_pwm_timer_stop(struct tpu_pwm_device *tpd)
+ {
+-	if (!pwm->timer_on)
++	if (!tpd->timer_on)
+ 		return;
+ 
+ 	/* Disable channel. */
+-	tpu_pwm_start_stop(pwm, false);
++	tpu_pwm_start_stop(tpd, false);
+ 
+ 	/* Stop clock and mark device as idle. */
+-	clk_disable_unprepare(pwm->tpu->clk);
+-	pm_runtime_put(&pwm->tpu->pdev->dev);
++	clk_disable_unprepare(tpd->tpu->clk);
++	pm_runtime_put(&tpd->tpu->pdev->dev);
+ 
+-	pwm->timer_on = false;
++	tpd->timer_on = false;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+  * PWM API
+  */
+ 
+-static int tpu_pwm_request(struct pwm_chip *chip, struct pwm_device *_pwm)
++static int tpu_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+ 	struct tpu_device *tpu = to_tpu_device(chip);
+-	struct tpu_pwm_device *pwm;
++	struct tpu_pwm_device *tpd;
+ 
+-	if (_pwm->hwpwm >= TPU_CHANNEL_MAX)
++	if (pwm->hwpwm >= TPU_CHANNEL_MAX)
+ 		return -EINVAL;
+ 
+-	pwm = kzalloc(sizeof(*pwm), GFP_KERNEL);
+-	if (pwm == NULL)
++	tpd = kzalloc(sizeof(*tpd), GFP_KERNEL);
++	if (tpd == NULL)
+ 		return -ENOMEM;
+ 
+-	pwm->tpu = tpu;
+-	pwm->channel = _pwm->hwpwm;
+-	pwm->polarity = PWM_POLARITY_NORMAL;
+-	pwm->prescaler = 0;
+-	pwm->period = 0;
+-	pwm->duty = 0;
++	tpd->tpu = tpu;
++	tpd->channel = pwm->hwpwm;
++	tpd->polarity = PWM_POLARITY_NORMAL;
++	tpd->prescaler = 0;
++	tpd->period = 0;
++	tpd->duty = 0;
+ 
+-	pwm->timer_on = false;
++	tpd->timer_on = false;
+ 
+-	pwm_set_chip_data(_pwm, pwm);
++	pwm_set_chip_data(pwm, tpd);
+ 
+ 	return 0;
+ }
+ 
+-static void tpu_pwm_free(struct pwm_chip *chip, struct pwm_device *_pwm)
++static void tpu_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct tpu_pwm_device *pwm = pwm_get_chip_data(_pwm);
++	struct tpu_pwm_device *tpd = pwm_get_chip_data(pwm);
+ 
+-	tpu_pwm_timer_stop(pwm);
+-	kfree(pwm);
++	tpu_pwm_timer_stop(tpd);
++	kfree(tpd);
+ }
+ 
+-static int tpu_pwm_config(struct pwm_chip *chip, struct pwm_device *_pwm,
++static int tpu_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			  int duty_ns, int period_ns, bool enabled)
+ {
+ 	static const unsigned int prescalers[] = { 1, 4, 16, 64 };
+-	struct tpu_pwm_device *pwm = pwm_get_chip_data(_pwm);
++	struct tpu_pwm_device *tpd = pwm_get_chip_data(pwm);
  	struct tpu_device *tpu = to_tpu_device(chip);
  	unsigned int prescaler;
  	bool duty_only = false;
- 	u32 clk_rate;
--	u32 period;
-+	u64 period;
- 	u32 duty;
+@@ -285,29 +285,29 @@ static int tpu_pwm_config(struct pwm_chip *chip, struct pwm_device *_pwm,
+ 		"rate %u, prescaler %u, period %u, duty %u\n",
+ 		clk_rate, prescalers[prescaler], period, duty);
+ 
+-	if (pwm->prescaler == prescaler && pwm->period == period)
++	if (tpd->prescaler == prescaler && tpd->period == period)
+ 		duty_only = true;
+ 
+-	pwm->prescaler = prescaler;
+-	pwm->period = period;
+-	pwm->duty = duty;
++	tpd->prescaler = prescaler;
++	tpd->period = period;
++	tpd->duty = duty;
+ 
+ 	/* If the channel is disabled we're done. */
+ 	if (!enabled)
+ 		return 0;
+ 
+-	if (duty_only && pwm->timer_on) {
++	if (duty_only && tpd->timer_on) {
+ 		/*
+ 		 * If only the duty cycle changed and the timer is already
+ 		 * running, there's no need to reconfigure it completely, Just
+ 		 * modify the duty cycle.
+ 		 */
+-		tpu_pwm_write(pwm, TPU_TGRAn, pwm->duty);
+-		dev_dbg(&tpu->pdev->dev, "%u: TGRA 0x%04x\n", pwm->channel,
+-			pwm->duty);
++		tpu_pwm_write(tpd, TPU_TGRAn, tpd->duty);
++		dev_dbg(&tpu->pdev->dev, "%u: TGRA 0x%04x\n", tpd->channel,
++			tpd->duty);
+ 	} else {
+ 		/* Otherwise perform a full reconfiguration. */
+-		ret = tpu_pwm_timer_start(pwm);
++		ret = tpu_pwm_timer_start(tpd);
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+@@ -317,29 +317,29 @@ static int tpu_pwm_config(struct pwm_chip *chip, struct pwm_device *_pwm,
+ 		 * To avoid running the timer when not strictly required, handle
+ 		 * 0% and 100% duty cycles as fixed levels and stop the timer.
+ 		 */
+-		tpu_pwm_set_pin(pwm, duty ? TPU_PIN_ACTIVE : TPU_PIN_INACTIVE);
+-		tpu_pwm_timer_stop(pwm);
++		tpu_pwm_set_pin(tpd, duty ? TPU_PIN_ACTIVE : TPU_PIN_INACTIVE);
++		tpu_pwm_timer_stop(tpd);
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static int tpu_pwm_set_polarity(struct pwm_chip *chip, struct pwm_device *_pwm,
++static int tpu_pwm_set_polarity(struct pwm_chip *chip, struct pwm_device *pwm,
+ 				enum pwm_polarity polarity)
+ {
+-	struct tpu_pwm_device *pwm = pwm_get_chip_data(_pwm);
++	struct tpu_pwm_device *tpd = pwm_get_chip_data(pwm);
+ 
+-	pwm->polarity = polarity;
++	tpd->polarity = polarity;
+ 
+ 	return 0;
+ }
+ 
+-static int tpu_pwm_enable(struct pwm_chip *chip, struct pwm_device *_pwm)
++static int tpu_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct tpu_pwm_device *pwm = pwm_get_chip_data(_pwm);
++	struct tpu_pwm_device *tpd = pwm_get_chip_data(pwm);
  	int ret;
  
- 	clk_rate = clk_get_rate(tpu->clk);
-+	if (unlikely(clk_rate > NSEC_PER_SEC)) {
-+		/*
-+		 * This won't happen in the nearer future, so this is only a
-+		 * safeguard to prevent the following calculation from
-+		 * overflowing. With this clk_rate * period_ns / NSEC_PER_SEC is
-+		 * not greater than period_ns and so fits into an u64.
-+		 */
-+		return -EINVAL;
-+	}
+-	ret = tpu_pwm_timer_start(pwm);
++	ret = tpu_pwm_timer_start(tpd);
+ 	if (ret < 0)
+ 		return ret;
  
--	period = clk_rate / (NSEC_PER_SEC / period_ns);
-+	period = mul_u64_u64_div_u64(clk_rate, period_ns, NSEC_PER_SEC);
+@@ -347,23 +347,23 @@ static int tpu_pwm_enable(struct pwm_chip *chip, struct pwm_device *_pwm)
+ 	 * To avoid running the timer when not strictly required, handle 0% and
+ 	 * 100% duty cycles as fixed levels and stop the timer.
+ 	 */
+-	if (pwm->duty == 0 || pwm->duty == pwm->period) {
+-		tpu_pwm_set_pin(pwm, pwm->duty ?
++	if (tpd->duty == 0 || tpd->duty == tpd->period) {
++		tpu_pwm_set_pin(tpd, tpd->duty ?
+ 				TPU_PIN_ACTIVE : TPU_PIN_INACTIVE);
+-		tpu_pwm_timer_stop(pwm);
++		tpu_pwm_timer_stop(tpd);
+ 	}
  
- 	/*
- 	 * Find the minimal prescaler in [0..3] such that
-@@ -292,18 +301,15 @@ static int tpu_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	return 0;
+ }
  
- 	period >>= 2 * prescaler;
+-static void tpu_pwm_disable(struct pwm_chip *chip, struct pwm_device *_pwm)
++static void tpu_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct tpu_pwm_device *pwm = pwm_get_chip_data(_pwm);
++	struct tpu_pwm_device *tpd = pwm_get_chip_data(pwm);
  
--	if (duty_ns) {
--		duty = (clk_rate >> 2 * prescaler)
--		     / (NSEC_PER_SEC / duty_ns);
--		if (duty > period)
--			return -EINVAL;
--	} else {
-+	if (duty_ns)
-+		duty = mul_u64_u64_div_u64(clk_rate, duty_ns,
-+					   (u64)NSEC_PER_SEC << (2 * prescaler));
-+	else
- 		duty = 0;
--	}
+ 	/* The timer must be running to modify the pin output configuration. */
+-	tpu_pwm_timer_start(pwm);
+-	tpu_pwm_set_pin(pwm, TPU_PIN_INACTIVE);
+-	tpu_pwm_timer_stop(pwm);
++	tpu_pwm_timer_start(tpd);
++	tpu_pwm_set_pin(tpd, TPU_PIN_INACTIVE);
++	tpu_pwm_timer_stop(tpd);
+ }
  
- 	dev_dbg(&tpu->pdev->dev,
- 		"rate %u, prescaler %u, period %u, duty %u\n",
--		clk_rate, 1 << (2 * prescaler), period, duty);
-+		clk_rate, 1 << (2 * prescaler), (u32)period, duty);
- 
- 	if (tpd->prescaler == prescaler && tpd->period == period)
- 		duty_only = true;
+ static int tpu_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
 -- 
 2.35.1
 
