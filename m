@@ -2,120 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F35B6C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Apr 2022 20:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F23C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Apr 2022 20:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352519AbiDTUOi (ORCPT
+        id S1382048AbiDTUTE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Apr 2022 16:14:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56856 "EHLO
+        Wed, 20 Apr 2022 16:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351344AbiDTUOh (ORCPT
+        with ESMTP id S1351156AbiDTUTD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Apr 2022 16:14:37 -0400
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43B1A4615B;
-        Wed, 20 Apr 2022 13:11:49 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id r18so3271117ljp.0;
-        Wed, 20 Apr 2022 13:11:49 -0700 (PDT)
+        Wed, 20 Apr 2022 16:19:03 -0400
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC443EF3B;
+        Wed, 20 Apr 2022 13:16:16 -0700 (PDT)
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-d6e29fb3d7so3184801fac.7;
+        Wed, 20 Apr 2022 13:16:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kituK6OBdqTi+kxAeHHv4yFs1BiJnSRSgcn1u3Ell74=;
-        b=iiBTwI/x1GL+h0uosviF8NDkpNvDIKwbQie12nqQrfFob9vxSGJzNHzl5YJPCpif4U
-         dTamnNBzcBFi9MQKZ+DCzrBc904Dmw80scj2s2rr5pQ8ruwuOgnWesEgtbH2FUVSPnTO
-         5wcvIljHDLeU2EL7nmqffRp2wyhaKSDpCBUof3qqWYxcakoXttCQAjfwO4Ali58vckyd
-         HAbyaHzQGnNJZQSGNhlRAp5I9aYHNoqSH8vRKOQGw1yflzI77+3xUm4kqdX3iPeovKhF
-         grC6ch6eT93zFGfEVCILGIra51bVqeALCnZpB+vKU17YjeSCR9o+Fr/YhB0tG5ixqTP9
-         BvIg==
-X-Gm-Message-State: AOAM531ZYrJNKUBNArre6MjJynQczBj/t7uE5q869GE93hRYdDplL9Y2
-        O0lkJSW+SsmhvQ2f9mPRmIVHWwY6eylzZKpfgLY=
-X-Google-Smtp-Source: ABdhPJybRBIjDP+5BAIib8bSg9t516qHkD6xvIc7IexyqYv45hzQlZwIieiIhem1fSD/qEfR01uOTg==
-X-Received: by 2002:a2e:9ecb:0:b0:24b:4e2a:a555 with SMTP id h11-20020a2e9ecb000000b0024b4e2aa555mr14496285ljk.149.1650485506839;
-        Wed, 20 Apr 2022 13:11:46 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id k10-20020a19560a000000b0046d1707fcbdsm1927162lfb.215.2022.04.20.13.11.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 13:11:43 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id b21so4963738lfb.5;
-        Wed, 20 Apr 2022 13:11:39 -0700 (PDT)
-X-Received: by 2002:a05:6512:b0e:b0:44a:a5a0:f60e with SMTP id
- w14-20020a0565120b0e00b0044aa5a0f60emr15727328lfu.669.1650485498400; Wed, 20
- Apr 2022 13:11:38 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qfLxNw/Z6CX1khyFmjfq8cACHEEegbYn3QHyCBKvKsY=;
+        b=1+JuM08Au4CacNkNUEbZto/6GrAmnOtPMfP5UOAZvKuE63b6826O1uP5rTqa4BQgr9
+         L2SZlxkmgj8Q8VfBOG4uTKXXhRatMd2LBzfTFxYZR6YywlXuWcIzqDVQiGPyIAHZgtUj
+         1Tnj0E1EEo7oOPsg8ReFquvd9IUdFbHKtEi2EbkHtfYwj1WleiZ2Bs73XhUk7kTx7kMU
+         Jq3lUzZEd2S4bb38pckR4t46yb/CnYTWs243B2N1AXy42TUCK1RJ+Qk/LOahNvmKXq9W
+         RNspF2lFdxWXBMhXnwKa7rUGWKxR+HSqm3bgSv2jtL+mpLy79x5gQxVPoV0YKP+LZQoL
+         J7Lw==
+X-Gm-Message-State: AOAM531oqjfjsSMDoM5xbVoWvyphtUXgggD5fH0FSQxo8ZQZEhNEsQIP
+        daW+VNnu2KZaxgUYCkViZA==
+X-Google-Smtp-Source: ABdhPJxuOYvC5Gpqs6wwcVd4TuKcKNNOXwHGHLqV6hTp9CfiNJGQn5MwjgPanHyu1mjcrt0Vf0ieAQ==
+X-Received: by 2002:a05:6870:b4aa:b0:e5:f100:608f with SMTP id y42-20020a056870b4aa00b000e5f100608fmr2357101oap.25.1650485775723;
+        Wed, 20 Apr 2022 13:16:15 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id o17-20020a9d5c11000000b005b2611a13edsm6864486otk.61.2022.04.20.13.16.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Apr 2022 13:16:15 -0700 (PDT)
+Received: (nullmailer pid 1777332 invoked by uid 1000);
+        Wed, 20 Apr 2022 20:16:13 -0000
+Date:   Wed, 20 Apr 2022 15:16:13 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 09/12] ARM: dts: r9a06g032: describe MII
+ converter
+Message-ID: <YmBqDTXYiESRHLCW@robh.at.kernel.org>
+References: <20220414122250.158113-1-clement.leger@bootlin.com>
+ <20220414122250.158113-10-clement.leger@bootlin.com>
+ <YlismVi8y3Vf6PZ0@lunn.ch>
+ <20220415102453.1b5b3f77@fixe.home>
+ <Yll+Tpnwo5410B9H@lunn.ch>
+ <20220415163853.683c0b6d@fixe.home>
+ <YlmLWv4Hsm2uk8pa@lunn.ch>
+ <20220415172954.64e53086@fixe.home>
+ <YlmbIjoIZ8Xb4Kh/@lunn.ch>
 MIME-Version: 1.0
-References: <20220330154024.112270-1-phil.edworthy@renesas.com>
-In-Reply-To: <20220330154024.112270-1-phil.edworthy@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 20 Apr 2022 22:11:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVV=PBfboHUk-wi1coAy7rcpDngKGSTqDWh-5vnSc91pg@mail.gmail.com>
-Message-ID: <CAMuHMdVV=PBfboHUk-wi1coAy7rcpDngKGSTqDWh-5vnSc91pg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] Add new Renesas RZ/V2M SoC and Renesas RZ/V2M
- EVK support
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YlmbIjoIZ8Xb4Kh/@lunn.ch>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Phil,
+On Fri, Apr 15, 2022 at 06:19:46PM +0200, Andrew Lunn wrote:
+> > I think it would be good to modify it like this:
+> > 
+> > eth-miic@44030000 {
+> >     ...
+> >   converters {
+> >     mii_conv0: mii-conv@0 {
+> >       // Even if useless, maybe keeping it for the sake of coherency
+> >       renesas,miic-input = <MIIC_GMAC1>;
+> >       reg = <0>;
+> >     };
+> 
+> This is not a 'bus', so using reg, and @0, etc is i think wrong.  You
+> just have a collection of properties.
 
-On Wed, Mar 30, 2022 at 5:40 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> RZ/V2M has a dual-core Cortex-A53 (1.0 GHz) CPU and built-in AI
-> accelerator "DRP-AI" for vision, which is Renesas' original technology.
-> It also has a 32-bit LPDDR4 interface and video codec (H.264).
->
-> The RZ/V2M is used with ISP firmware that runs on one of the Cortex-A53
-> cores. The firmware is an integral part of the SoC such that the HW
-> User's Manual documents which of the peripheral modules are used by the
-> firmware.
->
-> Initial patches enables minimal peripherals on Renesas RZ/V2M EVK board
-> and booted via nfs. Ethernet is broadly compatible with the
-> etheravb-rcar-gen3 driver, but interrupts need some work so it's not
-> been included in this patch set.
->
-> Below blocks are enabled on Renesas RZ/V2M EVK board:
-> - memory
-> - External input clock
-> - CPG
-> - UART
+'reg' can be for anything you need to address, not just buses.
 
-Thanks for your series!
-
-> v2:
->  * Removed SYS dt-bindings patch and corresponding SoC identification
->    as we only used the LSI version register. This can be dealt with
->    later on.
-
-That patch[1] also introduced the ARCH_R9A09G011 config symbol,
-without which none of the new code in this series is built.
-
-[1] [PATCH 07/14] soc: renesas: Identify RZ/V2M SoC
-    https://lore.kernel.org/all/20220321154232.56315-8-phil.edworthy@renesas.com/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
