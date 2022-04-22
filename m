@@ -2,106 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 921EEC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 16:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2981C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 18:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1449828AbiDVQum (ORCPT
+        id S229683AbiDVSN0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 12:50:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48932 "EHLO
+        Fri, 22 Apr 2022 14:13:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386269AbiDVQul (ORCPT
+        with ESMTP id S234779AbiDVSKE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Apr 2022 12:50:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5B685F265;
-        Fri, 22 Apr 2022 09:47:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 81FCB62117;
-        Fri, 22 Apr 2022 16:47:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7928BC385A0;
-        Fri, 22 Apr 2022 16:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650646066;
-        bh=w1qcxjgX+1d8NUij8QnC2gvBWuSGhmDYEIfSULLHp4Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Gezo8m3gEr5nx5XLkdGXI42ucp3Bepkhw4Oxz5QNc1duj2Uz86gVqCOF2l0Z1ICSA
-         k5/AXoBRPP2BT3IpoqC88gbJDQAE68D+rGlnyWWVjL2bMSUQmfMAiCeANXm54M6JMa
-         ctxWozcf59fUm1193SB4kKBF7mi3RK0wS8WD71wSxXIy7coP9BRTJKTJTeMao5IqLY
-         VTadPGYReNmekFi5o6RcNGM7IdM4vsyFFRM7I0J/gskPkRLmCTOyJ9KbfsOmOYMQ9f
-         nJpuI+bMIns67RdQhib9TTWWuuFHyuIlNXXdnjga+w2c2knL+JvRVH/kB2eFEtWVlQ
-         x1r2KzfrI4kaA==
-Date:   Fri, 22 Apr 2022 11:47:44 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fri, 22 Apr 2022 14:10:04 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC3815B46C;
+        Fri, 22 Apr 2022 11:07:10 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id C5A51100008;
+        Fri, 22 Apr 2022 18:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1650650796;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=InYlcnp2sDm4ChkUXG4xyc4b9OP+smT4t/tQR4FHwzw=;
+        b=krxB/j1VLxHYflaeOYpxgSRpNiHJQuzzRMPvW9G3vmAIXiI/kFL0esitjydF+WMV4EzJye
+        fyCRh+hiS47pns/xwZHQ9tzsSOMZrsbfmyTa0uCVuDfYQWR6VO3OH5b1WNrnjOIZrpYC7C
+        fHazs+P2lwCwiMnAZMngU4qLGVMAfI5nPRlQQ2CQPEKY9loQWmWUJDWkRBSlsKl1eBTTgw
+        0Rs/3HlgUZX08hhoW8hQp3yn+ls097RcRGt9KhQoosEZ15eVrNT0TTvGDdoJQej0fwHrSu
+        ZSD7Ryh7x2KmZ7t0lfX3MNWfPD890BisxRSj0+LHqhyAH5IqORdG4h6xkpJ32g==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v3 3/8] PCI: rcar-gen2: Add RZ/N1 SOCs support
-Message-ID: <20220422164744.GA1460864@bhelgaas>
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v7 9/9] serial: 8250: dw: Improve RZN1 support
+Date:   Fri, 22 Apr 2022 20:06:15 +0200
+Message-Id: <20220422180615.9098-10-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220422180615.9098-1-miquel.raynal@bootlin.com>
+References: <20220422180615.9098-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220422120850.769480-4-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 02:08:45PM +0200, Herve Codina wrote:
-> Add Renesas RZ/N1 SOCs family support to the Renesas R-Car
-> gen2 PCI bridge driver.
-> The Renesas RZ/N1 SOCs internal PCI bridge is comptible with
-> the one available in the R-Car Gen2 family.
-> Tested with the RZ/N1D (R9A06G032) SOC.
+From: Phil Edworthy <phil.edworthy@renesas.com>
 
-Nits (only address if you have some other reason to repost this
-series):
+Renesas RZ/N1 SoC features a slightly modified DW UART.
 
-  - Subject claims this adds "support," which suggests that this adds
-    some piece of new functionality.  But it adds no new
-    functionality, it merely adds a new compatible string.  I would
-    say "Add RZ/N1 SOC compatible string"
+On this SoC, the CPR register value is known but not synthetized in
+hardware. We hence need to provide a CPR value in the platform
+data. This version of the controller also relies on acting as flow
+controller when using DMA, so we need to provide the
+"is dma flow controller" quirk.
 
-  - Add blank lines between paragraphs
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Co-developed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/tty/serial/8250/8250_dw.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  - Rewrap paragraphs to fill 75 characters
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 90e64c8bd4bf..0cf1a99dc124 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -761,6 +761,8 @@ static const struct dw8250_platform_data dw8250_armada_38x_data = {
+ 
+ static const struct dw8250_platform_data dw8250_renesas_rzn1_data = {
+ 	.usr_reg = DW_UART_USR,
++	.cpr_val = 0x00012f32,
++	.quirks = DW_UART_QUIRK_IS_DMA_FC,
+ };
+ 
+ static const struct dw8250_platform_data dw8250_starfive_jh7100_data = {
+-- 
+2.27.0
 
-  - s/comptible/compatible/
-
-  - s/R-Car gen2/R-Car Gen2/ to write this consistently instead of
-    capitalizing "Gen2" sometimes but not others
-
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  drivers/pci/controller/pci-rcar-gen2.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/pci-rcar-gen2.c b/drivers/pci/controller/pci-rcar-gen2.c
-> index 35804ea394fd..839695791757 100644
-> --- a/drivers/pci/controller/pci-rcar-gen2.c
-> +++ b/drivers/pci/controller/pci-rcar-gen2.c
-> @@ -328,6 +328,7 @@ static const struct of_device_id rcar_pci_of_match[] = {
->  	{ .compatible = "renesas,pci-r8a7791", },
->  	{ .compatible = "renesas,pci-r8a7794", },
->  	{ .compatible = "renesas,pci-rcar-gen2", },
-> +	{ .compatible = "renesas,pci-rzn1", },
->  	{ },
->  };
->  
-> -- 
-> 2.35.1
-> 
