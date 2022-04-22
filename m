@@ -2,133 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C04B9C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 07:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331A6C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 07:30:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444730AbiDVHTy (ORCPT
+        id S1380440AbiDVHdA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 03:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40676 "EHLO
+        Fri, 22 Apr 2022 03:33:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1444651AbiDVHTx (ORCPT
+        with ESMTP id S1444855AbiDVHcb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Apr 2022 03:19:53 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34099506CA
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Apr 2022 00:17:01 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id r13so14604044ejd.5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Apr 2022 00:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=kKzqFYULcaKbgHWS4pm8RBaixFS7n+6/vYUvELbma6o=;
-        b=X5T5yN3xfhW0CQder3imIIGFrrjcK3Y6Es7wJHGpMRRQGT64qmbLdN+s473tScuOYX
-         fVPPQk5NgCUd/BXhYOPXohHkApEDuDbazZopyQDl/kxEQkf0U9uQi+wa0O9GUBSeait5
-         XOMSJtS3nprM5punmsUKhNqVprhZ0ucMAEwBFHzOJPEeT/6MrjmP2eegOfYEVjXIwlnf
-         r/QoOA8HZk8NDayqV06u5zphUw2ycosjHFRYFDbjPgjetXJAbLE1S1q/LHJpUhzUqrzA
-         Zxos7gpgYeibbTZrsYi1/yVwdgdlhNO8JHiN3FwqYF2+uo2vLjwDUPHFfYhTipkwwCJM
-         IJaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=kKzqFYULcaKbgHWS4pm8RBaixFS7n+6/vYUvELbma6o=;
-        b=RgE20Onfi/3GPOTzFGwbfTtqLF5sjGcNEidF6OKiUV+4AhO9fO2jbjABcprN4ZDTHc
-         U+H3UUnrnsGlou091IlnUojMMvlf6gBCUzuRoGb4aYp3uCaEKTopvoxZdl/rOo5++Ypj
-         /QFCEJFA/hSb6u74wHrE4wE/5BUj0ECOyk8n1kRRZMH14+t4OlfEi8cabzBmfw+aw7wH
-         N3DEfMO+7sPGSpclE9kuJAsGaAiovaju+LVNG1POVMigQY/t0ZTaLkiI01OHZSSZpRHn
-         ldnFP5xXJD1K5HJzR2KhmTdilKbyBCh8xwjCkdKD7LiDVPGGegC0j1HfuBdeF/zzL/Kj
-         qKqg==
-X-Gm-Message-State: AOAM531Wwkhq3RIKEArXBlb30J0Ejuwl7IjDK/5Ugsf3dZXXz5cPfodd
-        50bPB/+nEc9SCjFbV2C3ph7kdw==
-X-Google-Smtp-Source: ABdhPJyaQK+LejRxdXC/EaYZE+04lv8g6ZxZaowwRLuHiGG3jXNYNdbPSmsEhAr8bx6Sdg9uV5VEPA==
-X-Received: by 2002:a17:906:a08b:b0:6cf:65bc:e7de with SMTP id q11-20020a170906a08b00b006cf65bce7demr2978338ejy.220.1650611819709;
-        Fri, 22 Apr 2022 00:16:59 -0700 (PDT)
-Received: from [192.168.0.230] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id x12-20020a170906710c00b006ef8f9ee226sm456452ejj.115.2022.04.22.00.16.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Apr 2022 00:16:59 -0700 (PDT)
-Message-ID: <d953b4e8-4e0a-8a6d-16cf-1ea4e4bd0190@linaro.org>
-Date:   Fri, 22 Apr 2022 09:16:58 +0200
+        Fri, 22 Apr 2022 03:32:31 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D70005132B
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Apr 2022 00:29:37 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:2928:9f72:c4af:fbd9])
+        by albert.telenet-ops.be with bizsmtp
+        id MjVa270052Ah9RF06jVaTK; Fri, 22 Apr 2022 09:29:35 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nhnjR-001acF-LX; Fri, 22 Apr 2022 09:29:33 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nhnjR-00CIuc-6m; Fri, 22 Apr 2022 09:29:33 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] pinctrl: renesas: r8a779f0: Fix GPIO function on I2C-capable pins
+Date:   Fri, 22 Apr 2022 09:29:31 +0200
+Message-Id: <c12c60ec1058140a37f03650043ab73f730f104f.1650610471.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1650610471.git.geert+renesas@glider.be>
+References: <cover.1650610471.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 07/15] dt-bindings: clock: Add r8a779g0 CPG Core Clock
- Definitions
-Content-Language: en-US
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-References: <20220420084255.375700-1-yoshihiro.shimoda.uh@renesas.com>
- <20220420084255.375700-8-yoshihiro.shimoda.uh@renesas.com>
- <c86f78ac-ccf5-30ad-5de4-33211ca8b351@linaro.org>
- <TYBPR01MB5341D2CAB8DD77E95C14AF8CD8F79@TYBPR01MB5341.jpnprd01.prod.outlook.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <TYBPR01MB5341D2CAB8DD77E95C14AF8CD8F79@TYBPR01MB5341.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 22/04/2022 07:32, Yoshihiro Shimoda wrote:
-> Hello Krzysztof,
-> 
->> From: Krzysztof Kozlowski, Sent: Thursday, April 21, 2022 4:49 PM
->>
->> On 20/04/2022 10:42, Yoshihiro Shimoda wrote:
->>> Add all Clock Pulse Generator Core Clock Outputs for the Renesas
->>> R-Car V4H (R8A779G0) SoC.
->>>
->>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->>> ---
->>>  include/dt-bindings/clock/r8a779g0-cpg-mssr.h | 87 +++++++++++++++++++
->>>  1 file changed, 87 insertions(+)
->>>  create mode 100644 include/dt-bindings/clock/r8a779g0-cpg-mssr.h
->>>
->>> diff --git a/include/dt-bindings/clock/r8a779g0-cpg-mssr.h b/include/dt-bindings/clock/r8a779g0-cpg-mssr.h
->>> new file mode 100644
->>> index 000000000000..07a94cf45581
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/r8a779g0-cpg-mssr.h
->>> @@ -0,0 +1,87 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0 or MIT) */
->>
->> Any reason why not licensing it the same as bindings document
->> (GPL-2.0-only OR BSD-2-Clause)? The same applies to patch 5.
->>
->> MIT and BSD-2-clause are almost the same, AFAIR, so let's stick to one
->> (BSD-2-clause) for consistency?
-> 
-> Since r8a779g0.dtsi (which uses this) is under (GPL-2.0 or MIT), I use it here.
-> Also, r8a779g0.dtsi includes dt-bindings/interrupt-controller/arm-gic.h and
-> the arm-gic.h is under (GPL-2.0 or MIT). So, using it is better, IIUC.
+Unlike on R-Car Gen3 SoCs, setting a bit to zero in a GPIO / Peripheral
+Function Select Register (GPSRn) on R-Car S4-8 is not always sufficient
+to configure a pin for GPIO.  For I2C-capable pins, the I2C function
+must also be explicitly disabled in the corresponding Module Select
+Register (MODSELn).
 
-This would mean we want to license the bindings the same as we license
-the DTS. It's not the case. For the bindings we have the strong
-preference - GPL-2.0 or BSD-2-clause. For the DTS - not that much, just
-recommendation, I think.
+Add the missing FN_SEL_I2Ci_0 function enums to the pinmux_data[] array
+by temporarily overriding the GP_2_j_FN function enum to expand to two
+enums: the original GP_2_j_FN enum to configure the GPSR register bits,
+and the missing FN_SEL_I2Ci_0 enum to configure the MODSEL register
+bits.
 
-> In other words, r8a779g0.dtsi doesn't include any the bindings document
-> so that there is not needed to use the same license, I think.
-> # I'm not a lawyer though...
+Fixes: 030ac6d7eeff81e3 ("pinctrl: renesas: Initial R8A779F0 PFC support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/renesas/pfc-r8a779f0.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-If you would like to follow your recommendation, you should license also
-schema as MIT, because your DTS uses it as well (as a derivative work).
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779f0.c b/drivers/pinctrl/renesas/pfc-r8a779f0.c
+index 69f3abca1e22b2b5..23676e509bba4fba 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779f0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779f0.c
+@@ -254,7 +254,28 @@ enum {
+ };
+ 
+ static const u16 pinmux_data[] = {
++/* Using GP_1_[9-0] requires disabling I2C in MOD_SEL1 */
++#define GP_1_0_FN	GP_1_0_FN,	FN_SEL_I2C0_0
++#define GP_1_1_FN	GP_1_1_FN,	FN_SEL_I2C0_0
++#define GP_1_2_FN	GP_1_2_FN,	FN_SEL_I2C1_0
++#define GP_1_3_FN	GP_1_3_FN,	FN_SEL_I2C1_0
++#define GP_1_4_FN	GP_1_4_FN,	FN_SEL_I2C2_0
++#define GP_1_5_FN	GP_1_5_FN,	FN_SEL_I2C2_0
++#define GP_1_6_FN	GP_1_6_FN,	FN_SEL_I2C3_0
++#define GP_1_7_FN	GP_1_7_FN,	FN_SEL_I2C3_0
++#define GP_1_8_FN	GP_1_8_FN,	FN_SEL_I2C4_0
++#define GP_1_9_FN	GP_1_9_FN,	FN_SEL_I2C4_0
+ 	PINMUX_DATA_GP_ALL(),
++#undef GP_1_0_FN
++#undef GP_1_1_FN
++#undef GP_1_2_FN
++#undef GP_1_3_FN
++#undef GP_1_4_FN
++#undef GP_1_5_FN
++#undef GP_1_6_FN
++#undef GP_1_7_FN
++#undef GP_1_8_FN
++#undef GP_1_9_FN
+ 
+ 	PINMUX_SINGLE(SD_WP),
+ 	PINMUX_SINGLE(SD_CD),
+-- 
+2.25.1
 
-Anyway MIT and BSD-2-c are very similar, so there is no much difference
-here.
-
-
-Best regards,
-Krzysztof
