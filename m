@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22AF3C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 18:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D765BC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 18:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232958AbiDVSNi (ORCPT
+        id S233203AbiDVSNj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 14:13:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40448 "EHLO
+        Fri, 22 Apr 2022 14:13:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238396AbiDVSJQ (ORCPT
+        with ESMTP id S234683AbiDVSJX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Apr 2022 14:09:16 -0400
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A86FA120128;
-        Fri, 22 Apr 2022 11:06:21 -0700 (PDT)
+        Fri, 22 Apr 2022 14:09:23 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31CCC120D27;
+        Fri, 22 Apr 2022 11:06:27 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 673B5100007;
-        Fri, 22 Apr 2022 18:06:18 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 40745100002;
+        Fri, 22 Apr 2022 18:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1650650780;
+        t=1650650786;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nmsT1v66CywnMC5pd1HYcLiX68Qd1cxasJCF38vdWXo=;
-        b=hO0D3kOpOeoejXVXlWHf/oWs+luebNBMtiDHELwXqqyeff/a/2HWm/Gf6+3IE3n0i4pZvc
-        94LXB0KQGyEYyAesi7EF+Rwi2isuLMFJgvaR6wCL+rnKmPMwSXP7ikdcaolVrNa5d8I2ls
-        cdWgBPxpMqqZl3z5BrSg10E0mt9M/thC0QDbBxgDdGrq2TrTWLnvCQO1cv7DQ165KOU/j2
-        S/+GOe2JY3Tq1JYqGqJXnoFmaGZjaxPwdxG6rkfQk+2k35qRZ8HzcHaKDsgmPwaO2DhzVs
-        mqPRxk9Xf4BZh1aZH6ZIoBygM3Fh1EVrx1HpqXFfvr801YcCoUnVWGDhabjE8g==
+        bh=GW04PeL3gt042YVBAD6j+Utxak9HjtBATEu5WEj2ZLE=;
+        b=j5DF08Nt8FD++0RdXayZC9UP8O+Z+sLE9pAUQ7eYg4aJh7Gcb390h38PrgMjOpkFUThhFC
+        UitcwnFVGsPgyJ7CVMOFdRTl+S8caw5D2K9rkbPSAGAr6dmcqrhLFHbqw46QkLfEpL6OWe
+        +nJA8rGaoFHZjAlZYsZXph3L4pE2uWtZnnisD/MDdpj44p/b+XWtM5Yd8SMOxi7PPKiUBW
+        3EK2yYXEfPXWV1vZDMvGw9SP4Egj6jRDVDLZMKrSnRFMEKs/DcvLWLuavdWOoU7vha01qx
+        bPV6imS0jXN5vvLGBthac6Z67IqT0dYi5qnnSDCIkbRh1ESsk4f+fk2VEBRqJw==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -47,9 +47,9 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
         Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v7 1/9] serial: 8250: dw: Move definitions to the shared header
-Date:   Fri, 22 Apr 2022 20:06:07 +0200
-Message-Id: <20220422180615.9098-2-miquel.raynal@bootlin.com>
+Subject: [PATCH v7 4/9] serial: 8250: dw: Allow to use a fallback CPR value if not synthesized
+Date:   Fri, 22 Apr 2022 20:06:10 +0200
+Message-Id: <20220422180615.9098-5-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220422180615.9098-1-miquel.raynal@bootlin.com>
 References: <20220422180615.9098-1-miquel.raynal@bootlin.com>
@@ -60,101 +60,63 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+DW UART controllers can be synthesized without the CPR register.
+In this case, allow to the platform information to provide a CPR value.
 
-Move the per-device structure and a helper out of the main .c file, into
-a shared header as they will both be reused from another .c file.
-
-There is no functional change.
-
+Co-developed-by: Phil Edworthy <phil.edworthy@renesas.com>
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-[miquel.raynal@bootlin.com: Extracted from a bigger change]
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/tty/serial/8250/8250_dw.c    | 21 ---------------------
- drivers/tty/serial/8250/8250_dwlib.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 26 insertions(+), 21 deletions(-)
+ drivers/tty/serial/8250/8250_dwlib.c | 10 +++++++---
+ drivers/tty/serial/8250/8250_dwlib.h |  1 +
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 1769808031c5..dcbe54ccd16b 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -37,27 +37,6 @@
- /* DesignWare specific register fields */
- #define DW_UART_MCR_SIRE		BIT(6)
+diff --git a/drivers/tty/serial/8250/8250_dwlib.c b/drivers/tty/serial/8250/8250_dwlib.c
+index 622d3b0d89e7..f1fb20353612 100644
+--- a/drivers/tty/serial/8250/8250_dwlib.c
++++ b/drivers/tty/serial/8250/8250_dwlib.c
+@@ -89,6 +89,8 @@ EXPORT_SYMBOL_GPL(dw8250_do_set_termios);
  
--struct dw8250_data {
--	struct dw8250_port_data	data;
--
--	u8			usr_reg;
--	int			msr_mask_on;
--	int			msr_mask_off;
--	struct clk		*clk;
--	struct clk		*pclk;
--	struct notifier_block	clk_notifier;
--	struct work_struct	clk_work;
--	struct reset_control	*rst;
--
--	unsigned int		skip_autocfg:1;
--	unsigned int		uart_16550_compatible:1;
--};
--
--static inline struct dw8250_data *to_dw8250_data(struct dw8250_port_data *data)
--{
--	return container_of(data, struct dw8250_data, data);
--}
--
- static inline struct dw8250_data *clk_to_dw8250_data(struct notifier_block *nb)
+ void dw8250_setup_port(struct uart_port *p)
  {
- 	return container_of(nb, struct dw8250_data, clk_notifier);
++	struct dw8250_port_data *pd = p->private_data;
++	struct dw8250_data *data = to_dw8250_data(pd);
+ 	struct uart_8250_port *up = up_to_u8250p(p);
+ 	u32 reg;
+ 
+@@ -108,14 +110,16 @@ void dw8250_setup_port(struct uart_port *p)
+ 	dw8250_writel_ext(p, DW_UART_DLF, 0);
+ 
+ 	if (reg) {
+-		struct dw8250_port_data *d = p->private_data;
+-
+-		d->dlf_size = fls(reg);
++		pd->dlf_size = fls(reg);
+ 		p->get_divisor = dw8250_get_divisor;
+ 		p->set_divisor = dw8250_set_divisor;
+ 	}
+ 
+ 	reg = dw8250_readl_ext(p, DW_UART_CPR);
++	if (!reg) {
++		reg = data->pdata->cpr_val;
++		dev_dbg(p->dev, "CPR is not available, using 0x%08x instead\n", reg);
++	}
+ 	if (!reg)
+ 		return;
+ 
 diff --git a/drivers/tty/serial/8250/8250_dwlib.h b/drivers/tty/serial/8250/8250_dwlib.h
-index 83d528e5cc21..72e7dbcccad0 100644
+index 0df6baa6eaee..36a839ef5d9a 100644
 --- a/drivers/tty/serial/8250/8250_dwlib.h
 +++ b/drivers/tty/serial/8250/8250_dwlib.h
-@@ -1,10 +1,15 @@
- /* SPDX-License-Identifier: GPL-2.0+ */
- /* Synopsys DesignWare 8250 library header file. */
+@@ -23,6 +23,7 @@ struct dw8250_port_data {
  
-+#include <linux/notifier.h>
- #include <linux/types.h>
-+#include <linux/workqueue.h>
- 
- #include "8250.h"
- 
-+struct clk;
-+struct reset_control;
-+
- struct dw8250_port_data {
- 	/* Port properties */
- 	int			line;
-@@ -16,5 +21,26 @@ struct dw8250_port_data {
- 	u8			dlf_size;
+ struct dw8250_platform_data {
+ 	u8 usr_reg;
++	u32 cpr_val;
+ 	unsigned int quirks;
  };
  
-+struct dw8250_data {
-+	struct dw8250_port_data	data;
-+
-+	u8			usr_reg;
-+	int			msr_mask_on;
-+	int			msr_mask_off;
-+	struct clk		*clk;
-+	struct clk		*pclk;
-+	struct notifier_block	clk_notifier;
-+	struct work_struct	clk_work;
-+	struct reset_control	*rst;
-+
-+	unsigned int		skip_autocfg:1;
-+	unsigned int		uart_16550_compatible:1;
-+};
-+
- void dw8250_do_set_termios(struct uart_port *p, struct ktermios *termios, struct ktermios *old);
- void dw8250_setup_port(struct uart_port *p);
-+
-+static inline struct dw8250_data *to_dw8250_data(struct dw8250_port_data *data)
-+{
-+	return container_of(data, struct dw8250_data, data);
-+}
 -- 
 2.27.0
 
