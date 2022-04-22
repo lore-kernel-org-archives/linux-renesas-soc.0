@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFA5C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 18:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3C5C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 18:10:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231557AbiDVSNc (ORCPT
+        id S232051AbiDVSNe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 14:13:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44686 "EHLO
+        Fri, 22 Apr 2022 14:13:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234737AbiDVSKD (ORCPT
+        with ESMTP id S238397AbiDVSJS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Apr 2022 14:10:03 -0400
+        Fri, 22 Apr 2022 14:09:18 -0400
 Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E47DF15B452;
-        Fri, 22 Apr 2022 11:07:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D3EB120D13;
+        Fri, 22 Apr 2022 11:06:23 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id A08E4100002;
-        Fri, 22 Apr 2022 18:06:30 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 7ADC6100008;
+        Fri, 22 Apr 2022 18:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1650650792;
+        t=1650650782;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:  content-type:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CQTwgZcq4HqCPFwdxSXAHd+ul51T09kMifPhktLxBDE=;
-        b=Yr0yFRMw1BcKoQJF907x86oadQeKZUTGkFJE9LcV+uA7kR7pbwKbrRrp15GPzrBVRy/nEI
-        rOQao+8bIE+I/eUN/T7V+rkffPbQ992yoEWJA65lzmjRBuYMP+lgtT86K/b+H1YLC7SpL8
-        Mu40n6/8eN1VCfG5VAaSavvIQSMQdw240M3FHQXDeil1yXgGmafbvfJeNsICr7UKodT+9X
-        iLf+nzhEx8becApRo71MUUU6WqzP0qhBr9/VVH0RVVdt+JlZihVJCUtHDCTzp2dOY0VFmp
-        rgv47UptJGC+FR9fBcj4r//wgyTEd17pxPmVNckR2t8XOZpF4bQWcX+DH+XA+w==
+        bh=fH8vPkT4dWPPGb/8XoLObFxHw6R65IrJ2LRqxUIBB1A=;
+        b=P8pOAIJPCn/P5/2cwdN3czs8QkcEMf4U24eU+4V9+rhDqP35ErLXjo+h/p1D4LKjYy2zx6
+        sqBzNT5UC9bDPd4R/BjpGxMlNkilnq+Lg/U/tqGRyk0UY8tONdybkU2JvcsbJlUIxZLpoZ
+        Z2Crh5Oyl3g63h0kpmtFnPQT9wOKLMp53jIhVlFutO/QhrwGyhen8Mf2DYE1pjnOl+JVNB
+        Sq0Av8XKF37WGpc8ezxBBokon1CkSvLAj6DCtUTNUxC0qCpf4/rPrhbaT0+7uGAeOOElpi
+        3FpbM4Ws85nDIjYIt5JkxWRmCbjxCi7fk3kkuW/N7NOLuaqNWBfCtC/Q9w6ctw==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -45,103 +45,155 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v7 7/9] serial: 8250: dw: Move the IO accessors to 8250_dwlib.h
-Date:   Fri, 22 Apr 2022 20:06:13 +0200
-Message-Id: <20220422180615.9098-8-miquel.raynal@bootlin.com>
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Emil Renner Berthing <kernel@esmil.dk>
+Subject: [PATCH v7 2/9] serial: 8250: dw: Create a generic platform data structure
+Date:   Fri, 22 Apr 2022 20:06:08 +0200
+Message-Id: <20220422180615.9098-3-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220422180615.9098-1-miquel.raynal@bootlin.com>
 References: <20220422180615.9098-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-These accessors should be used instead of the regular readl/writel()
-helpers. In order to use them also from 8250_dw.c in this directory,
-move the helpers to 8250_dwlib.h
+From: Emil Renner Berthing <kernel@esmil.dk>
 
-There is no functional change.
+Use device tree match data rather than multiple calls to
+of_device_is_compatible() by introducing a platform data structure and
+adding a quirks mask.
 
-There is no need for declaring `struct uart_port` or even UPIO_MEM32BE
-which both are already included in the 8250_dwlib.h header by 8250.h.
+Provide a stub to the compatibles without quirks to simplify the
+handling of the upcoming changes.
 
-Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+[<miquel.raynal@bootlin.com: Minor changes + creation of a real pdata structure]
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/tty/serial/8250/8250_dwlib.c | 16 ----------------
- drivers/tty/serial/8250/8250_dwlib.h | 16 ++++++++++++++++
- 2 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/tty/serial/8250/8250_dw.c    | 42 ++++++++++++++++++++++------
+ drivers/tty/serial/8250/8250_dwlib.h |  5 ++++
+ 2 files changed, 39 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dwlib.c b/drivers/tty/serial/8250/8250_dwlib.c
-index f1fb20353612..b3df6dee9ceb 100644
---- a/drivers/tty/serial/8250/8250_dwlib.c
-+++ b/drivers/tty/serial/8250/8250_dwlib.c
-@@ -3,7 +3,6 @@
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index dcbe54ccd16b..7fdb2683f534 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -19,6 +19,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <linux/workqueue.h>
+ #include <linux/notifier.h>
+ #include <linux/slab.h>
+@@ -37,6 +38,11 @@
+ /* DesignWare specific register fields */
+ #define DW_UART_MCR_SIRE		BIT(6)
  
- #include <linux/bitops.h>
- #include <linux/device.h>
--#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/serial_8250.h>
- #include <linux/serial_core.h>
-@@ -32,21 +31,6 @@
- /* Helper for FIFO size calculation */
- #define DW_UART_CPR_FIFO_SIZE(a)	(((a >> 16) & 0xff) * 16)
++/* Quirks */
++#define DW_UART_QUIRK_OCTEON		BIT(0)
++#define DW_UART_QUIRK_ARMADA_38X	BIT(1)
++#define DW_UART_QUIRK_SKIP_SET_RATE	BIT(2)
++
+ static inline struct dw8250_data *clk_to_dw8250_data(struct notifier_block *nb)
+ {
+ 	return container_of(nb, struct dw8250_data, clk_notifier);
+@@ -366,6 +372,7 @@ static bool dw8250_idma_filter(struct dma_chan *chan, void *param)
+ static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
+ {
+ 	struct device_node *np = p->dev->of_node;
++	unsigned int quirks = data->pdata->quirks;
  
--static inline u32 dw8250_readl_ext(struct uart_port *p, int offset)
--{
--	if (p->iotype == UPIO_MEM32BE)
--		return ioread32be(p->membase + offset);
--	return readl(p->membase + offset);
--}
--
--static inline void dw8250_writel_ext(struct uart_port *p, int offset, u32 reg)
--{
--	if (p->iotype == UPIO_MEM32BE)
--		iowrite32be(reg, p->membase + offset);
--	else
--		writel(reg, p->membase + offset);
--}
--
- /*
-  * divisor = div(I) + div(F)
-  * "I" means integer, "F" means fractional
+ 	if (np) {
+ 		int id;
+@@ -375,7 +382,7 @@ static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
+ 		if (id >= 0)
+ 			p->line = id;
+ #ifdef CONFIG_64BIT
+-		if (of_device_is_compatible(np, "cavium,octeon-3860-uart")) {
++		if (quirks & DW_UART_QUIRK_OCTEON) {
+ 			p->serial_in = dw8250_serial_inq;
+ 			p->serial_out = dw8250_serial_outq;
+ 			p->flags = UPF_SKIP_TEST | UPF_SHARE_IRQ | UPF_FIXED_TYPE;
+@@ -391,9 +398,9 @@ static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
+ 			p->serial_out = dw8250_serial_out32be;
+ 		}
+ 
+-		if (of_device_is_compatible(np, "marvell,armada-38x-uart"))
++		if (quirks & DW_UART_QUIRK_ARMADA_38X)
+ 			p->serial_out = dw8250_serial_out38x;
+-		if (of_device_is_compatible(np, "starfive,jh7100-uart"))
++		if (quirks & DW_UART_QUIRK_SKIP_SET_RATE)
+ 			p->set_termios = dw8250_do_set_termios;
+ 
+ 	} else if (acpi_dev_present("APMC0D08", NULL, -1)) {
+@@ -456,6 +463,7 @@ static int dw8250_probe(struct platform_device *pdev)
+ 
+ 	data->data.dma.fn = dw8250_fallback_dma_filter;
+ 	data->usr_reg = DW_UART_USR;
++	data->pdata = device_get_match_data(p->dev);
+ 	p->private_data = &data->data;
+ 
+ 	data->uart_16550_compatible = device_property_read_bool(dev,
+@@ -672,12 +680,30 @@ static const struct dev_pm_ops dw8250_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(dw8250_runtime_suspend, dw8250_runtime_resume, NULL)
+ };
+ 
++static const struct dw8250_platform_data dw8250_dw_apb = {
++};
++
++static const struct dw8250_platform_data dw8250_octeon_3860_data = {
++	.quirks = DW_UART_QUIRK_OCTEON,
++};
++
++static const struct dw8250_platform_data dw8250_armada_38x_data = {
++	.quirks = DW_UART_QUIRK_ARMADA_38X,
++};
++
++static const struct dw8250_platform_data dw8250_renesas_rzn1_data = {
++};
++
++static const struct dw8250_platform_data dw8250_starfive_jh7100_data = {
++	.quirks = DW_UART_QUIRK_SKIP_SET_RATE,
++};
++
+ static const struct of_device_id dw8250_of_match[] = {
+-	{ .compatible = "snps,dw-apb-uart" },
+-	{ .compatible = "cavium,octeon-3860-uart" },
+-	{ .compatible = "marvell,armada-38x-uart" },
+-	{ .compatible = "renesas,rzn1-uart" },
+-	{ .compatible = "starfive,jh7100-uart" },
++	{ .compatible = "snps,dw-apb-uart", .data = &dw8250_dw_apb },
++	{ .compatible = "cavium,octeon-3860-uart", .data = &dw8250_octeon_3860_data },
++	{ .compatible = "marvell,armada-38x-uart", .data = &dw8250_armada_38x_data },
++	{ .compatible = "renesas,rzn1-uart", .data = &dw8250_renesas_rzn1_data },
++	{ .compatible = "starfive,jh7100-uart", .data = &dw8250_starfive_jh7100_data },
+ 	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, dw8250_of_match);
 diff --git a/drivers/tty/serial/8250/8250_dwlib.h b/drivers/tty/serial/8250/8250_dwlib.h
-index 36a839ef5d9a..b10e60a5d16a 100644
+index 72e7dbcccad0..68bb81bee660 100644
 --- a/drivers/tty/serial/8250/8250_dwlib.h
 +++ b/drivers/tty/serial/8250/8250_dwlib.h
-@@ -1,6 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0+ */
- /* Synopsys DesignWare 8250 library header file. */
+@@ -21,8 +21,13 @@ struct dw8250_port_data {
+ 	u8			dlf_size;
+ };
  
-+#include <linux/io.h>
- #include <linux/notifier.h>
- #include <linux/types.h>
- #include <linux/workqueue.h>
-@@ -50,3 +51,18 @@ static inline struct dw8250_data *to_dw8250_data(struct dw8250_port_data *data)
- {
- 	return container_of(data, struct dw8250_data, data);
- }
++struct dw8250_platform_data {
++	unsigned int quirks;
++};
 +
-+static inline u32 dw8250_readl_ext(struct uart_port *p, int offset)
-+{
-+	if (p->iotype == UPIO_MEM32BE)
-+		return ioread32be(p->membase + offset);
-+	return readl(p->membase + offset);
-+}
-+
-+static inline void dw8250_writel_ext(struct uart_port *p, int offset, u32 reg)
-+{
-+	if (p->iotype == UPIO_MEM32BE)
-+		iowrite32be(reg, p->membase + offset);
-+	else
-+		writel(reg, p->membase + offset);
-+}
+ struct dw8250_data {
+ 	struct dw8250_port_data	data;
++	const struct dw8250_platform_data *pdata;
+ 
+ 	u8			usr_reg;
+ 	int			msr_mask_on;
 -- 
 2.27.0
 
