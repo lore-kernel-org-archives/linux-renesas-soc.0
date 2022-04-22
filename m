@@ -2,40 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF6AC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 14:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 091E7C4167B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Apr 2022 14:55:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1448626AbiDVO6F (ORCPT
+        id S1391828AbiDVO6F (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 22 Apr 2022 10:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41494 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1448637AbiDVO57 (ORCPT
+        with ESMTP id S1449033AbiDVO6C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Apr 2022 10:57:59 -0400
+        Fri, 22 Apr 2022 10:58:02 -0400
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F3960C6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Apr 2022 07:54:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC34A19A
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Apr 2022 07:55:08 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:2928:9f72:c4af:fbd9])
         by baptiste.telenet-ops.be with bizsmtp
-        id Mqux2700A2Ah9RF01quxTH; Fri, 22 Apr 2022 16:54:57 +0200
+        id Mqv72700c2Ah9RF01qv7Vh; Fri, 22 Apr 2022 16:55:07 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nhugS-001cQ7-MT; Fri, 22 Apr 2022 16:54:56 +0200
+        id 1nhugd-001cR4-8c; Fri, 22 Apr 2022 16:55:07 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nhugR-00COl7-MQ; Fri, 22 Apr 2022 16:54:55 +0200
+        id 1nhugc-00COnU-GI; Fri, 22 Apr 2022 16:55:06 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/4] Renesas ARM defconfig updates for v5.19
-Date:   Fri, 22 Apr 2022 16:54:49 +0200
-Message-Id: <cover.1650638502.git.geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.19
+Date:   Fri, 22 Apr 2022 16:55:05 +0200
+Message-Id: <cover.1650638810.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,53 +42,76 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi SoC folks,
+	Hi Mike, Stephen,
 
-This is my first pull request for the inclusion of Renesas SoC updates
-for v5.19.
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
 
-It consists of 4 parts:
+  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
 
-  [GIT PULL 1/4] Renesas ARM defconfig updates for v5.19
+are available in the Git repository at:
 
-    - Enable support for the Renesas RZ/V2L SoC and the Maxim MAX96712
-      Quad GMSL2 Deserializer in the arm64 defconfig,
-    - Refresh shmobile_defconfig for v5.18-rc1.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.19-tag1
 
-  [GIT PULL 2/4] Renesas ARM DT updates for v5.19
+for you to fetch changes up to 59086e4193f4fc920a23d2045a473f62450b4269:
 
-    - ADC, SDHI, CAN-FD, I2C, QSPI, timer, watchdog, sound, USB, SPI, GPU,
-      cpufreq, and thermal support for the RZ/V2L SoC, and the RZ/V2L
-      SMARC EVK development board,
-    - USB, I2C, Audio, NOR Flash, timer, SPI support for RZ/G2LC SMARC EVK
-      development board,
-    - Can-FD support for the R-Car M30W+ and V3U SoCs, and the Falcon
-      development board,
-    - I2C and GPIO support for the R-Car S4-8 SoC,
-    - I2C EEPROM support for the Falcon development board,
-    - SPI Multi I/O Bus Controller (RPC-IF) support for the R-Car H3,
-      M3-W(+), M3-N, E3, and D3 SoCs,
-    - RPC HyperFlash support for the Draak, Ebisu, Salvator-X(S), and ULCB
-      development boards,
-    - Initial support (UART, DMAC, pin control, SDHI, eMMC, Ethernet) for
-      the RZ/G2UL SoC, and the RZ/G2UL SMARC EVK development board,
-    - Miscellaneous fixes and improvements.
+  clk: renesas: r9a07g043: Add SDHI clock and reset entries (2022-04-13 12:30:19 +0200)
 
-  [GIT PULL 3/4] Renesas driver updates for v5.19
+----------------------------------------------------------------
+clk: renesas: Updates for v5.19
 
-    - Initial support for the new RZ/G2UL SoC.
-
-  [GIT PULL 4/4] Renesas DT binding updates for v5.19
-
-    - Document support for the new RZ/G2UL SoC and the RZ/G2UL SMARC EVK
-      development board.
+  - Add support for the new RZ/G2UL SoC,
+  - Add RPC (QSPI/HyperFlash) clocks on R-Car E3 and D3,
+  - Miscellaneous fixes and improvements.
 
 Note that the new Renesas RZ/G2UL DT Binding Definitions are shared by
 driver and DT source files, and thus included in multiple pull requests:
-  - "[GIT PULL] clk: renesas: Updates for v5.19" (for clk),
-  - "[GIT PULL 2/4] Renesas ARM DT updates for v5.19" (for soc).
+  - "[GIT PULL 2/4] Renesas ARM DT updates for v5.19" (for soc),
+  - "[GIT PULL] clk: renesas: Updates for v5.19" (for clk).
 
 Thanks for pulling!
+----------------------------------------------------------------
+Biju Das (7):
+      dt-bindings: clock: renesas: Document RZ/G2UL SoC
+      dt-bindings: clock: Add R9A07G043 CPG Clock and Reset Definitions
+      clk: renesas: Add support for RZ/G2UL SoC
+      clk: renesas: r9a07g043: Add GPIO clock and reset entries
+      clk: renesas: r9a07g043: Add ethernet clock sources
+      clk: renesas: r9a07g043: Add GbEthernet clock/reset
+      clk: renesas: r9a07g043: Add SDHI clock and reset entries
+
+Geert Uytterhoeven (5):
+      clk: renesas: r8a77990: Add RPC clocks
+      clk: renesas: r8a77995: Add RPC clocks
+      clk: renesas: rzg2l: Simplify multiplication/shift logic
+      clk: renesas: Move RPC core clocks
+      Merge tag 'renesas-r9a07g043-dt-binding-defs-tag' into renesas-clk-for-v5.19
+
+Phil Edworthy (1):
+      clk: renesas: rzg2l: Remove unused notifiers
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml          |   7 +-
+ drivers/clk/renesas/Kconfig                        |   7 +-
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c            |   8 +-
+ drivers/clk/renesas/r8a774e1-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |   9 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |   9 +-
+ drivers/clk/renesas/r8a77965-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r8a77980-cpg-mssr.c            |  10 +-
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            |   7 +
+ drivers/clk/renesas/r8a77995-cpg-mssr.c            |  11 +-
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            |  11 +-
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r9a07g043-cpg.c                | 220 +++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h                |   5 +-
+ drivers/clk/renesas/rzg2l-cpg.c                    |  10 +-
+ drivers/clk/renesas/rzg2l-cpg.h                    |   1 +
+ include/dt-bindings/clock/r9a07g043-cpg.h          | 184 +++++++++++++++++
+ 20 files changed, 488 insertions(+), 57 deletions(-)
+ create mode 100644 drivers/clk/renesas/r9a07g043-cpg.c
+ create mode 100644 include/dt-bindings/clock/r9a07g043-cpg.h
 
 Gr{oetje,eeting}s,
 
