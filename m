@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65676C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Apr 2022 14:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB615C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Apr 2022 14:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235038AbiDWOKC (ORCPT
+        id S235287AbiDWOKQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 23 Apr 2022 10:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52328 "EHLO
+        Sat, 23 Apr 2022 10:10:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234505AbiDWOKC (ORCPT
+        with ESMTP id S235161AbiDWOKF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 23 Apr 2022 10:10:02 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6DEE45FBA;
-        Sat, 23 Apr 2022 07:07:04 -0700 (PDT)
+        Sat, 23 Apr 2022 10:10:05 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CE7EBDF1;
+        Sat, 23 Apr 2022 07:07:07 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,284,1643641200"; 
-   d="scan'208";a="117761731"
+   d="scan'208";a="118907817"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Apr 2022 23:07:03 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 23 Apr 2022 23:07:07 +0900
 Received: from localhost.localdomain (unknown [10.226.92.16])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 60F924000689;
-        Sat, 23 Apr 2022 23:07:00 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 06BF34000689;
+        Sat, 23 Apr 2022 23:07:03 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
@@ -33,10 +33,12 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/2] arm64: dts: renesas: r9a07g044: Fix external clk node names
-Date:   Sat, 23 Apr 2022 15:06:57 +0100
-Message-Id: <20220423140658.145000-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 2/2] arm64: dts: renesas: r9a07g054: Fix external clk node names
+Date:   Sat, 23 Apr 2022 15:06:58 +0100
+Message-Id: <20220423140658.145000-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220423140658.145000-1-biju.das.jz@bp.renesas.com>
+References: <20220423140658.145000-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -48,13 +50,13 @@ extal clks.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 8 ++++----
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 19287cccb1f0..4f9a84d7af08 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index f35aa0311e9c..4313b9e3abed 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
 @@ -13,14 +13,14 @@ / {
  	#address-cells = <2>;
  	#size-cells = <2>;
