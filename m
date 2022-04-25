@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D189C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Apr 2022 18:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B20C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Apr 2022 18:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244205AbiDYSFd (ORCPT
+        id S244209AbiDYSFh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 Apr 2022 14:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49086 "EHLO
+        Mon, 25 Apr 2022 14:05:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241982AbiDYSFd (ORCPT
+        with ESMTP id S244207AbiDYSFg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Apr 2022 14:05:33 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4FDDE4667B;
-        Mon, 25 Apr 2022 11:02:28 -0700 (PDT)
+        Mon, 25 Apr 2022 14:05:36 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DB40D47041;
+        Mon, 25 Apr 2022 11:02:31 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,289,1643641200"; 
-   d="scan'208";a="117941061"
+   d="scan'208";a="119108224"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Apr 2022 03:02:27 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 26 Apr 2022 03:02:31 +0900
 Received: from localhost.localdomain (unknown [10.226.93.95])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3D2DD40C73AC;
-        Tue, 26 Apr 2022 03:02:23 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id DAA2E40C73DE;
+        Tue, 26 Apr 2022 03:02:27 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
@@ -33,10 +33,12 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/2] arm64: dts: renesas: r9a07g044: Fix external clk node names
-Date:   Mon, 25 Apr 2022 19:02:19 +0100
-Message-Id: <20220425180220.204058-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 2/2] arm64: dts: renesas: r9a07g054: Fix external clk node names
+Date:   Mon, 25 Apr 2022 19:02:20 +0100
+Message-Id: <20220425180220.204058-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220425180220.204058-1-biju.das.jz@bp.renesas.com>
+References: <20220425180220.204058-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -52,13 +54,13 @@ Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 v1->v2:
  * Replaced clk node names audio_clk{1,2} with clk-{1,2}.
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 8 ++++----
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 19287cccb1f0..8fe585085c58 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index f35aa0311e9c..65f965669c6b 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
 @@ -13,14 +13,14 @@ / {
  	#address-cells = <2>;
  	#size-cells = <2>;
