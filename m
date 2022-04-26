@@ -2,107 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E25C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Apr 2022 07:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D026C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Apr 2022 08:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344353AbiDZHxZ (ORCPT
+        id S1345715AbiDZI6Q (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Apr 2022 03:53:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49612 "EHLO
+        Tue, 26 Apr 2022 04:58:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344314AbiDZHxM (ORCPT
+        with ESMTP id S1345607AbiDZI53 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Apr 2022 03:53:12 -0400
+        Tue, 26 Apr 2022 04:57:29 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4D4B5201AA;
-        Tue, 26 Apr 2022 00:50:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 22B3C84EFF
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Apr 2022 01:42:04 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,290,1643641200"; 
-   d="scan'208";a="118016712"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Apr 2022 16:50:02 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E19074248B19;
-        Tue, 26 Apr 2022 16:49:57 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 3/3] ASoC: sh: rz-ssi: Release the DMA channels in rz_ssi_probe() error path
-Date:   Tue, 26 Apr 2022 08:49:22 +0100
-Message-Id: <20220426074922.13319-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220426074922.13319-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220426074922.13319-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+   d="scan'208";a="118023982"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Apr 2022 17:42:03 +0900
+Received: from localhost.localdomain (unknown [10.226.92.117])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id AE0E840071E2;
+        Tue, 26 Apr 2022 17:41:59 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2] drm: rcar-du: Fix Alpha blending issue on Gen3
+Date:   Tue, 26 Apr 2022 09:41:57 +0100
+Message-Id: <20220426084157.10979-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-DMA channels requested by rz_ssi_dma_request() in rz_ssi_probe() were
-never released in the error path apart from one place. This patch fixes
-this issue by calling rz_ssi_release_dma_channels() in the error path.
+From: LUU HOAI <hoai.luu.ub@renesas.com>
 
-Fixes: 26ac471c5354 ("ASoC: sh: rz-ssi: Add SSI DMAC support")
-Reported-by: Pavel Machek <pavel@denx.de>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2
-* Dropped devers action and instead called rz_ssi_release_dma_channels()
-  in the error path.
----
- sound/soc/sh/rz-ssi.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+As per R-Car-Gen3_Common_OPC_Customer_Notifications_V30.1.pdf,
+unexpected image output(such as incorrect colors or planes being
+invisible) can happen on the below conditions, as PnALPHAR register
+is not initialized by reset.
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index d9a684e71ec3..e392de7a262e 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -976,14 +976,18 @@ static int rz_ssi_probe(struct platform_device *pdev)
+When alpha blending (PpMRm.PpSPIM=0b101) is performed and:
+	•two Planes are enabled on any DUn (n=0,1,2,3)
+		oDSPRn= 0x0000 0031 or 0x0000 0013
+	•or DU0 and DU1 is used for display at the same time
+		oDSPR0= 0x0000 0001 and DSPR1= 0x0000 0003
+		oDSPR0= 0x0000 0003 and DSPR1= 0x0000 0001
+	•or DU2 and DU3(H3 Only) is used for display at the same time
+		oDSPR2= 0x0000 0001 and DSPR3= 0x0000 0003
+		oDSPR2= 0x0000 0003 and DSPR3= 0x0000 0001
+
+This patch set PnALPHAR register to 0 to avoid this issue.
+
+Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v1->v2:
+ * Updated commit description
+ * Updated the code comments
+---
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+index f214a8b6cfd3..aa80c44dd8d7 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+@@ -510,6 +510,18 @@ static void rcar_du_plane_setup_format_gen3(struct rcar_du_group *rgrp,
  
- 	/* Error Interrupt */
- 	ssi->irq_int = platform_get_irq_byname(pdev, "int_req");
--	if (ssi->irq_int < 0)
-+	if (ssi->irq_int < 0) {
-+		rz_ssi_release_dma_channels(ssi);
- 		return ssi->irq_int;
-+	}
+ 	rcar_du_plane_write(rgrp, index, PnDDCR4,
+ 			    state->format->edf | PnDDCR4_CODE);
++
++	/*
++	 * On Gen3, some DU channels have two planes, each being wired to a
++	 * separate VSPD instance. The DU can then blend two planes. While
++	 * this feature isn't used by the driver, issues related to alpha
++	 * blending (such as incorrect colors or planes being invisible) may
++	 * still occur if the PnALPHAR register has a stale value. Set the
++	 * register to 0 to avoid this.
++	 */
++
++	/* TODO: Check if alpha-blending should be disabled in PnMR. */
++	rcar_du_plane_write(rgrp, index, PnALPHAR, 0);
+ }
  
- 	ret = devm_request_irq(&pdev->dev, ssi->irq_int, &rz_ssi_interrupt,
- 			       0, dev_name(&pdev->dev), ssi);
--	if (ret < 0)
-+	if (ret < 0) {
-+		rz_ssi_release_dma_channels(ssi);
- 		return dev_err_probe(&pdev->dev, ret,
- 				     "irq request error (int_req)\n");
-+	}
- 
- 	if (!rz_ssi_is_dma_enabled(ssi)) {
- 		/* Tx and Rx interrupts (pio only) */
-@@ -1011,13 +1015,16 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 	}
- 
- 	ssi->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
--	if (IS_ERR(ssi->rstc))
-+	if (IS_ERR(ssi->rstc)) {
-+		rz_ssi_release_dma_channels(ssi);
- 		return PTR_ERR(ssi->rstc);
-+	}
- 
- 	reset_control_deassert(ssi->rstc);
- 	pm_runtime_enable(&pdev->dev);
- 	ret = pm_runtime_resume_and_get(&pdev->dev);
- 	if (ret < 0) {
-+		rz_ssi_release_dma_channels(ssi);
- 		pm_runtime_disable(ssi->dev);
- 		reset_control_assert(ssi->rstc);
- 		return dev_err_probe(ssi->dev, ret, "pm_runtime_resume_and_get failed\n");
+ static void rcar_du_plane_setup_format(struct rcar_du_group *rgrp,
 -- 
 2.25.1
 
