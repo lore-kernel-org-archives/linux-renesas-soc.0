@@ -2,103 +2,102 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE51C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Apr 2022 09:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A11CC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Apr 2022 10:34:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229730AbiD0KAg (ORCPT
+        id S229561AbiD0Khw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Apr 2022 06:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47764 "EHLO
+        Wed, 27 Apr 2022 06:37:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbiD0KAf (ORCPT
+        with ESMTP id S229441AbiD0Khv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Apr 2022 06:00:35 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9EF6F404AC9;
-        Wed, 27 Apr 2022 02:53:51 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,292,1643641200"; 
-   d="scan'208";a="119361620"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Apr 2022 18:49:00 +0900
-Received: from localhost.localdomain (unknown [10.226.93.29])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BB9B94265645;
-        Wed, 27 Apr 2022 18:48:57 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 9/9] clk: renesas: r9a07g044: Add DSI clock and reset entries
-Date:   Wed, 27 Apr 2022 10:48:23 +0100
-Message-Id: <20220427094823.3319-10-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220427094823.3319-1-biju.das.jz@bp.renesas.com>
-References: <20220427094823.3319-1-biju.das.jz@bp.renesas.com>
+        Wed, 27 Apr 2022 06:37:51 -0400
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [IPv6:2001:4b98:dc4:8::240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11BC438EE0;
+        Wed, 27 Apr 2022 03:16:06 -0700 (PDT)
+Received: from relay12.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::232])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 5C7B3CC51C;
+        Wed, 27 Apr 2022 09:57:57 +0000 (UTC)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 13C56200019;
+        Wed, 27 Apr 2022 09:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1651053437;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=UxzMEOqhe0N5yp6GmaQi9cglbTWdIMVSkvcspvfYAsA=;
+        b=WtY8Rp/wzqRTZj3Sfbvox6ilJE6pxreJnw4mczmp6V6fZzYr+mZifk+JPUSh4WW+bkGIvx
+        yxeSLhqTZu1k7+Ab52/DGhPZ+EclGHG5pZvOhiuMeo6zFy59ducknxROc/PB5vdzlAApKR
+        uH6RUAYTaZBgy91RDHgGmYM5X/xYSftk9LT0e8HNDG7iQpYyO5mXYSJCUAMFea4S5KUj69
+        C7iHIKlbt5xZOWaoFr9wM8yxAGr6auzqOqlTJBT0vVvRahuaBulRsl30KgXhtGky0LZcuE
+        EO5Pwm/5JDl7A20zghrZPymdSjNuh7UKtQcMR6EwGZXOUXI4YRtGrgJN+AH81A==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v12 9/9] ARM: dts: r9a06g032: Describe the DMA router
+Date:   Wed, 27 Apr 2022 11:56:53 +0200
+Message-Id: <20220427095653.91804-10-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+References: <20220427095653.91804-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add DSI clock and reset entries to CPG driver.
+There is a dmamux on this SoC which allows picking two different sources
+for a single DMA request.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-V1->V2:
- * No Change
-RFC->V1:
- * Added Rb tag from Geert
----
- drivers/clk/renesas/r9a07g044-cpg.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r9a06g032.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index b5ddc5058670..57ec50659bb3 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -194,7 +194,7 @@ static const struct {
- };
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 1e90bfc76417..37c2eb7bbb7f 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -91,6 +91,16 @@ sysctrl: system-controller@4000c000 {
+ 			clocks = <&ext_mclk>, <&ext_rtc_clk>,
+ 					<&ext_jtag_clk>, <&ext_rgmii_ref>;
+ 			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			dmamux: dma-router@a0 {
++				compatible = "renesas,rzn1-dmamux";
++				reg = <0xa0 4>;
++				#dma-cells = <6>;
++				dma-requests = <32>;
++				dma-masters = <&dma0 &dma1>;
++			};
+ 		};
  
- static const struct {
--	struct rzg2l_mod_clk common[65];
-+	struct rzg2l_mod_clk common[71];
- #ifdef CONFIG_CLK_R9A07G054
- 	struct rzg2l_mod_clk drp[0];
- #endif
-@@ -254,6 +254,18 @@ static const struct {
- 					0x558, 1),
- 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
- 					0x558, 2),
-+		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
-+					0x568, 0),
-+		DEF_MOD("dsi_sys_clk",	R9A07G044_MIPI_DSI_SYSCLK, CLK_M2_DIV2,
-+					0x568, 1),
-+		DEF_MOD("dsi_aclk",	R9A07G044_MIPI_DSI_ACLK, R9A07G044_CLK_P1,
-+					0x568, 2),
-+		DEF_MOD("dsi_pclk",	R9A07G044_MIPI_DSI_PCLK, R9A07G044_CLK_P2,
-+					0x568, 3),
-+		DEF_MOD("dsi_vclk",	R9A07G044_MIPI_DSI_VCLK, R9A07G044_CLK_M3,
-+					0x568, 4),
-+		DEF_MOD("dsi_lpclk",	R9A07G044_MIPI_DSI_LPCLK, R9A07G044_CLK_M4,
-+					0x568, 5),
- 		DEF_COUPLED("lcdc_a",	R9A07G044_LCDC_CLK_A, R9A07G044_CLK_M0,
- 					0x56c, 0),
- 		DEF_COUPLED("lcdc_p",	R9A07G044_LCDC_CLK_P, R9A07G044_CLK_ZT,
-@@ -355,6 +367,9 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
- 	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
- 	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
-+	DEF_RST(R9A07G044_MIPI_DSI_CMN_RSTB, 0x868, 0),
-+	DEF_RST(R9A07G044_MIPI_DSI_ARESET_N, 0x868, 1),
-+	DEF_RST(R9A07G044_MIPI_DSI_PRESET_N, 0x868, 2),
- 	DEF_RST(R9A07G044_LCDC_RESET_N, 0x86c, 0),
- 	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
- 	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
+ 		uart0: serial@40060000 {
 -- 
-2.25.1
+2.27.0
 
