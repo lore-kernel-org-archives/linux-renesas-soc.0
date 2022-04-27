@@ -2,147 +2,182 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2AAC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Apr 2022 10:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4D2C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Apr 2022 10:48:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbiD0KqN (ORCPT
+        id S229964AbiD0Kvg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Apr 2022 06:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51762 "EHLO
+        Wed, 27 Apr 2022 06:51:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbiD0KqC (ORCPT
+        with ESMTP id S230286AbiD0Kve (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Apr 2022 06:46:02 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5814282B41;
-        Wed, 27 Apr 2022 03:29:36 -0700 (PDT)
-Received: from relay1-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::221])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 32924C16AE;
-        Wed, 27 Apr 2022 09:39:31 +0000 (UTC)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 145C6240002;
-        Wed, 27 Apr 2022 09:38:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651052290;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qRN/OeTEoBAbIZfKfZap1cmQDF6MJtwTJ3zeNwUxoKI=;
-        b=Vci9XarbySArRis0diY3Wj2ybIy1BxKjhRzYzgwauFxRTjLkMQkslZtdTLdCZ8Vhr1cO03
-        lzM2ftL2t6PTk7ms9ucBQfnQTctjKFDxcNcPLpIZjtwEB5Q4rTmCTMWNxzkIyz4GoBkRAz
-        dXTfaiFDBrJkf8CPkjp5W/UJUSi9FMoyLaB8qPrd04N+9n2F4LAOfcsSm1K2cjcGHx3a74
-        ArUt4DOIltWVX7H1FGJ8aabsqAU9j9qy5rNnT3nxsnQbr5FXsExl+PZPwVJ4S6rabidWyL
-        3Qd3cEDLdGC65MtJbxwMF6oGCTiGkr/3Fd53ckiZQP/N+fl8jmPaoJ1FnkiElQ==
-Date:   Wed, 27 Apr 2022 11:38:05 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v11 8/9] ARM: dts: r9a06g032: Add the two DMA nodes
-Message-ID: <20220427113805.45717559@xps13>
-In-Reply-To: <CAMuHMdUdJtwOkYT86H5TneMmrVRDrsRqhhaxMp3ruyEkiG+XqA@mail.gmail.com>
-References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
-        <20220421085112.78858-9-miquel.raynal@bootlin.com>
-        <CAMuHMdXkrdjETcgN9yruL_J_mL3q7OEMj2DbY36ppwg1eDU5SA@mail.gmail.com>
-        <20220427111449.338d9579@xps13>
-        <CAMuHMdUdJtwOkYT86H5TneMmrVRDrsRqhhaxMp3ruyEkiG+XqA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 27 Apr 2022 06:51:34 -0400
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19CAA3AB7CF;
+        Wed, 27 Apr 2022 03:22:57 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id ke5so733441qvb.5;
+        Wed, 27 Apr 2022 03:22:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DFvDs4UX2zax4adbziwn0RYfIrK/tqgpmI5wyJl9xWk=;
+        b=txl9N971Mitb19L/rporh9pX+gSFiofYsUEsWQqmAP8yoWcvMfaiKi0HoyXVykX9YZ
+         +BVFExqw44qOaaUGTGPFgGsoZAAXlnhsT5fnc8/c3iMQJjWJ1gcKbNW5isoK/0ed9a1b
+         mwZFgZW4D/xhp6dg6tRjHzCNE0fvbrW0PVeReKZ86PIzkjJ62+uQDDjd13yID1y7rgh0
+         jh2EvZt07FXfG5Ifg0KIiw0NjqR5xgMV05b08n6HiwsVYmmC2NEeqmxF2inFogQrb/k6
+         3lepXM4uGARxFNsaXcicxgi49dphhOZZPDSvttlPoIZYo7AzgPgLL26ZxY4aQDlUykCy
+         abHA==
+X-Gm-Message-State: AOAM530unhwEdaKc69mkv3lc8vhloUsAkN+WoZkhGEIadOmoln2zpnhq
+        qFdW2V/89CK7ahJkCjNVzhtZt5Xkje/Fag==
+X-Google-Smtp-Source: ABdhPJz6UTZZL4BURTn67KGPUyleLdhEDIehR5hbmEP7UX3/qw0Fi0yopLbmmzlkt/pHta1qP3CD8w==
+X-Received: by 2002:a05:6214:248c:b0:441:2a61:659d with SMTP id gi12-20020a056214248c00b004412a61659dmr19331590qvb.59.1651054976735;
+        Wed, 27 Apr 2022 03:22:56 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id q17-20020a05622a031100b002f1d478c218sm10090861qtw.62.2022.04.27.03.22.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Apr 2022 03:22:56 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-2f7bb893309so12858617b3.12;
+        Wed, 27 Apr 2022 03:22:56 -0700 (PDT)
+X-Received: by 2002:a81:8489:0:b0:2f7:edff:239f with SMTP id
+ u131-20020a818489000000b002f7edff239fmr14119456ywf.256.1651054976217; Wed, 27
+ Apr 2022 03:22:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20210922091007.5516-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20210922091007.5516-1-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Apr 2022 12:22:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWJZM=-Py=W+qKUfCQU=Y5=G6qdp9uubNv56o+5JztaGA@mail.gmail.com>
+Message-ID: <CAMuHMdWJZM=-Py=W+qKUfCQU=Y5=G6qdp9uubNv56o+5JztaGA@mail.gmail.com>
+Subject: Re: [RFC PATCH] memory: renesas-rpc-if: Correct QSPI data transfer in
+ Manual mode
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi Wolfram,
 
-geert@linux-m68k.org wrote on Wed, 27 Apr 2022 11:36:23 +0200:
+On Wed, Sep 22, 2021 at 11:10 AM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> This patch fixes 2 problems:
+> [1] The output warning logs and data loss when performing
+> mount/umount then remount the device with jffs2 format.
+> [2] The access width of SMWDR[0:1]/SMRDR[0:1] register is wrong.
 
-> Hi Miquel,
->=20
-> On Wed, Apr 27, 2022 at 11:14 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > geert@linux-m68k.org wrote on Mon, 25 Apr 2022 18:29:58 +0200:
-> > > On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
-> > > <miquel.raynal@bootlin.com> wrote:
-> > > > Describe the two DMA controllers available on this SoC.
-> > > >
-> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > >
-> > > Still, a few comments below, valid for both instances...
-> > >
-> > > > --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> > > > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> > > > @@ -200,6 +200,36 @@ nand_controller: nand-controller@40102000 {
-> > > >                         status =3D "disabled";
-> > > >                 };
-> > > >
-> > > > +               dma0: dma-controller@40104000 {
-> > > > +                       compatible =3D "renesas,r9a06g032-dma", "re=
-nesas,rzn1-dma";
-> > > > +                       reg =3D <0x40104000 0x1000>;
-> > > > +                       interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_H=
-IGH>;
-> > > > +                       clock-names =3D "hclk";
-> > > > +                       clocks =3D <&sysctrl R9A06G032_HCLK_DMA0>;
-> > > > +                       dma-channels =3D <8>;
-> > > > +                       dma-requests =3D <16>;
-> > > > +                       dma-masters =3D <1>;
-> > > > +                       #dma-cells =3D <3>;
-> > > > +                       block_size =3D <0xfff>;
-> > > > +                       data_width =3D <3>;
-> > >
-> > > This property is deprecated, in favor of "dma-width".
-> >
-> > Indeed,
-> >         data_width =3D <3>;
-> > is deprecated.
-> >
-> > However, dma-width does not seem to be described anywhere. Do you mean:
-> >         data-width =3D <8>;
-> > instead?
->=20
-> Oops, I did mean "data-width".
->=20
-> > > > +                       status =3D "disabled";
-> > >
-> > > Why not keep it enabled?
-> >
-> > I'm used to always disable all the nodes from the SoC descriptions,
-> > but it's true that for a DMA controller it might make sense to keep
-> > it enabled.
-> >
-> > Would dropping the status property be enough or do you prefer a proper
-> >         status =3D "okay";
-> > instead?
->=20
-> Please just drop the status property, like is done in other Renesas .dtsi
-> files.
+Revisiting commit fff53a551db50f5e ("memory: renesas-rpc-if: Correct
+QSPI data transfer in Manual mode") in  v5.16-rc1...
 
-Sure.
+> --- a/drivers/memory/renesas-rpc-if.c
+> +++ b/drivers/memory/renesas-rpc-if.c
 
-Thanks,
-Miqu=C3=A8l
+>  int rpcif_manual_xfer(struct rpcif *rpc)
+>  {
+> -       u32 smenr, smcr, pos = 0, max = 4;
+> +       u32 smenr, smcr, pos = 0, max = rpc->bus_size == 2 ? 8 : 4;
+>         int ret = 0;
+>
+> -       if (rpc->bus_size == 2)
+> -               max = 8;
+> -
+>         pm_runtime_get_sync(rpc->dev);
+>
+>         regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
+> @@ -378,37 +424,36 @@ int rpcif_manual_xfer(struct rpcif *rpc)
+>         regmap_write(rpc->regmap, RPCIF_SMOPR, rpc->option);
+>         regmap_write(rpc->regmap, RPCIF_SMDMCR, rpc->dummy);
+>         regmap_write(rpc->regmap, RPCIF_SMDRENR, rpc->ddr);
+> +       regmap_write(rpc->regmap, RPCIF_SMADR, rpc->smadr);
+>         smenr = rpc->enable;
+>
+>         switch (rpc->dir) {
+>         case RPCIF_DATA_OUT:
+>                 while (pos < rpc->xferlen) {
+> -                       u32 nbytes = rpc->xferlen - pos;
+> -                       u32 data[2];
+> +                       u32 bytes_left = rpc->xferlen - pos;
+> +                       u32 nbytes, data[2];
+>
+>                         smcr = rpc->smcr | RPCIF_SMCR_SPIE;
+> -                       if (nbytes > max) {
+> -                               nbytes = max;
+> +
+> +                       /* nbytes may only be 1, 2, 4, or 8 */
+> +                       nbytes = bytes_left >= max ? max : (1 << ilog2(bytes_left));
+> +                       if (bytes_left > nbytes)
+>                                 smcr |= RPCIF_SMCR_SSLKP;
+> -                       }
+> +
+> +                       smenr |= RPCIF_SMENR_SPIDE(rpcif_bits_set(rpc, nbytes));
+> +                       regmap_write(rpc->regmap, RPCIF_SMENR, smenr);
+>
+>                         memcpy(data, rpc->buffer + pos, nbytes);
+> -                       if (nbytes > 4) {
+> +                       if (nbytes == 8) {
+>                                 regmap_write(rpc->regmap, RPCIF_SMWDR1,
+>                                              data[0]);
+>                                 regmap_write(rpc->regmap, RPCIF_SMWDR0,
+>                                              data[1]);
+> -                       } else if (nbytes > 2) {
+> +                       } else {
+>                                 regmap_write(rpc->regmap, RPCIF_SMWDR0,
+>                                              data[0]);
+> -                       } else  {
+> -                               regmap_write(rpc->regmap, RPCIF_SMWDR0,
+> -                                            data[0] << 16);
+>                         }
+>
+> -                       regmap_write(rpc->regmap, RPCIF_SMADR,
+> -                                    rpc->smadr + pos);
+
+Removing this implies SMADR is auto-incrementing for writes...
+
+> -                       regmap_write(rpc->regmap, RPCIF_SMENR, smenr);
+>                         regmap_write(rpc->regmap, RPCIF_SMCR, smcr);
+>                         ret = wait_msg_xfer_end(rpc);
+>                         if (ret)
+> @@ -448,14 +493,16 @@ int rpcif_manual_xfer(struct rpcif *rpc)
+>                         break;
+>                 }
+>                 while (pos < rpc->xferlen) {
+> -                       u32 nbytes = rpc->xferlen - pos;
+> -                       u32 data[2];
+> +                       u32 bytes_left = rpc->xferlen - pos;
+> +                       u32 nbytes, data[2];
+>
+> -                       if (nbytes > max)
+> -                               nbytes = max;
+> +                       /* nbytes may only be 1, 2, 4, or 8 */
+> +                       nbytes = bytes_left >= max ? max : (1 << ilog2(bytes_left));
+>
+>                         regmap_write(rpc->regmap, RPCIF_SMADR,
+>                                      rpc->smadr + pos);
+
+... while keeping this assumes SMADR is not auto-incrementing for
+reads?
+
+Figure 62.17 "Example of Data Transfer Setting Flow in Manual Operating
+Mode" does show writing SMADR in each loop iteration.
+I cannot find anything about auto-incrementing in the documentation,
+except for Figure 62.28 "Write Buffer Usage Sequence", which does
+not apply as Linux does not support the write buffer yet.
+
+Given you tested this, and the BSP commit 0d37f69cacb33435 ("memory:
+renesas-rpc-if: Correct QSPI data transfer in Manual mode") does the
+same, I assume it's working fine?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
