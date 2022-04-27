@@ -2,135 +2,134 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C14C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Apr 2022 11:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01D4C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Apr 2022 12:20:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231915AbiD0LHR (ORCPT
+        id S234045AbiD0MX6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Apr 2022 07:07:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60796 "EHLO
+        Wed, 27 Apr 2022 08:23:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232117AbiD0LHF (ORCPT
+        with ESMTP id S234001AbiD0MX5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Apr 2022 07:07:05 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178633C9D7F;
-        Wed, 27 Apr 2022 03:58:56 -0700 (PDT)
-Received: from relay12.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::232])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id D1355C896E;
-        Wed, 27 Apr 2022 09:15:32 +0000 (UTC)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 2CBDF200006;
-        Wed, 27 Apr 2022 09:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651050892;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EF8d+JX3EYB+I0ayIkuUN92XzLSdkI83EhToeObeC3M=;
-        b=LCSXuEipxkS0lJn503o46UXDhki98dwWKBsNGdNECJktwiS05x4fqayWHWzBB9OLRcyrEQ
-        o4LBp03pKI0qumyoTQ18f1U2MQ2YvN0QSuZIfl//ltZJ0ogZlsQEQdJetMzRDTIbI0pRUl
-        D6SJaxADdyTX6+dXmhUhhQLBz7lMpG1KtEp901MDnJduXcJzS93JUtlRMqPgqgLolYxwkS
-        v+sDrgXFBUAlclqJCih2oDzycmr5YH6as7V4kPbF0FdUK2RP6I3WcwJqAA8eqdlhFn+zhn
-        rJoI8dN5O7spFelPcvuyvZUJNXPC0v+nfqJN9n8bdPbZVT37W/mAR4ZMXrgVWw==
-Date:   Wed, 27 Apr 2022 11:14:49 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
+        Wed, 27 Apr 2022 08:23:57 -0400
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BBDA3A5DE;
+        Wed, 27 Apr 2022 05:20:46 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id a5so915896qvx.1;
+        Wed, 27 Apr 2022 05:20:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7IblRXw+IlRsIpma65z+vY+J/pcL54rFKRWppWIp02E=;
+        b=O3CdkQv4cYeQR75NZsj42LjUgccfGNp/y6NotezEn4kTtTka21SMi7uwxsFiN09zpC
+         uahxVZs73d7B2rXBfV1kfzM1A15v1buMS9JMTcUydE8IosadZCvEPiNp3xdC3Zj9PQpn
+         eBrShPkKOaM83wt1IpBSm2N3/XHin+c4nVGdO+jwe/R2nh0oPwpEytjX69GEiByNaZxO
+         Y1qnBPwq8aYIxcKl092guD+Yh5phHs6pkyJ1a0B0EmLy6g5rkxKsSquTUIlLfj0hsBqn
+         teFqNSaGFT80uCa1tpEUpXXMuH/WcSRep726ZKztZScEwAPl1RNmGDnQx4uXLlNENjcf
+         1W+Q==
+X-Gm-Message-State: AOAM533+3++Fou2ASMFTSOIZBBfoeNnsFfoVD3C3IYD7u8ujmwUoHf4Y
+        RGUGdGYXQrES84nr6FdegFjjdTPMClD0yQ==
+X-Google-Smtp-Source: ABdhPJyVQRDiG1YrApjp41wD1Jo0ktqu1HzK4hDe/+jDGHwfNgHMPIkn1Yz+S6jPqiZ9B4gA8gf7IQ==
+X-Received: by 2002:a05:6214:2aa7:b0:446:2f18:d005 with SMTP id js7-20020a0562142aa700b004462f18d005mr19705064qvb.33.1651062045462;
+        Wed, 27 Apr 2022 05:20:45 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id v12-20020a05620a0a8c00b0069eabadd6dasm7711882qkg.41.2022.04.27.05.20.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Apr 2022 05:20:44 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id w17so2993689ybh.9;
+        Wed, 27 Apr 2022 05:20:44 -0700 (PDT)
+X-Received: by 2002:a5b:24e:0:b0:63d:cba0:3d55 with SMTP id
+ g14-20020a5b024e000000b0063dcba03d55mr24895863ybp.613.1651062044076; Wed, 27
+ Apr 2022 05:20:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220414122250.158113-1-clement.leger@bootlin.com> <20220414122250.158113-6-clement.leger@bootlin.com>
+In-Reply-To: <20220414122250.158113-6-clement.leger@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Apr 2022 14:20:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU+kosUPavthyPcWVAC_WhdwXiFKt61oSmgdV6Qxk_0xg@mail.gmail.com>
+Message-ID: <CAMuHMdU+kosUPavthyPcWVAC_WhdwXiFKt61oSmgdV6Qxk_0xg@mail.gmail.com>
+Subject: Re: [PATCH net-next 05/12] dt-bindings: net: dsa: add bindings for
+ Renesas RZ/N1 Advanced 5 port switch
+To:     =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
+        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v11 8/9] ARM: dts: r9a06g032: Add the two DMA nodes
-Message-ID: <20220427111449.338d9579@xps13>
-In-Reply-To: <CAMuHMdXkrdjETcgN9yruL_J_mL3q7OEMj2DbY36ppwg1eDU5SA@mail.gmail.com>
-References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
-        <20220421085112.78858-9-miquel.raynal@bootlin.com>
-        <CAMuHMdXkrdjETcgN9yruL_J_mL3q7OEMj2DbY36ppwg1eDU5SA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi Clément,
 
-geert@linux-m68k.org wrote on Mon, 25 Apr 2022 18:29:58 +0200:
+On Thu, Apr 14, 2022 at 2:24 PM Clément Léger <clement.leger@bootlin.com> wrote:
+> Add bindings for Renesas RZ/N1 Advanced 5 port switch. This switch is
+> present on Renesas RZ/N1 SoC and was probably provided by MoreThanIP.
+> This company does not exists anymore and has been bought by Synopsys.
+> Since this IP can't be find anymore in the Synospsy portfolio, lets use
+> Renesas as the vendor compatible for this IP.
+>
+> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 
-> Hi Miquel,
->=20
-> On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > Describe the two DMA controllers available on this SoC.
-> >
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> =20
->=20
-> Still, a few comments below, valid for both instances...
->=20
-> > --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> > @@ -200,6 +200,36 @@ nand_controller: nand-controller@40102000 {
-> >                         status =3D "disabled";
-> >                 };
-> >
-> > +               dma0: dma-controller@40104000 {
-> > +                       compatible =3D "renesas,r9a06g032-dma", "renesa=
-s,rzn1-dma";
-> > +                       reg =3D <0x40104000 0x1000>;
-> > +                       interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clock-names =3D "hclk";
-> > +                       clocks =3D <&sysctrl R9A06G032_HCLK_DMA0>;
-> > +                       dma-channels =3D <8>;
-> > +                       dma-requests =3D <16>;
-> > +                       dma-masters =3D <1>;
-> > +                       #dma-cells =3D <3>;
-> > +                       block_size =3D <0xfff>;
-> > +                       data_width =3D <3>; =20
->=20
-> This property is deprecated, in favor of "dma-width".
+Thanks for your patch!
 
-Indeed,
-	data_width =3D <3>;
-is deprecated.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> @@ -0,0 +1,128 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/dsa/renesas,rzn1-a5psw.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas RZ/N1 Advanced 5 ports ethernet switch
+> +
+> +maintainers:
+> +  - Clément Léger <clement.leger@bootlin.com>
+> +
+> +description: |
+> +  The advanced 5 ports switch is present on the Renesas RZ/N1 SoC family and
+> +  handles 4 ports + 1 CPU management port.
+> +
+> +allOf:
+> +  - $ref: dsa.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: renesas,rzn1-a5psw
 
-However, dma-width does not seem to be described anywhere. Do you mean:
-	data-width =3D <8>;
-instead?
+Please document an SoC-specific compatible value
+"renesas,r9a06g032-a5psw", too, so we can easily handle differences
+between members within the RZ/N1 family, if ever needed.
 
->=20
-> > +                       status =3D "disabled"; =20
->=20
-> Why not keep it enabled?
+Gr{oetje,eeting}s,
 
-I'm used to always disable all the nodes from the SoC descriptions,
-but it's true that for a DMA controller it might make sense to keep
-it enabled.
+                        Geert
 
-Would dropping the status property be enough or do you prefer a proper
-	status =3D "okay";
-instead?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks a lot,
-Miqu=C3=A8l
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
