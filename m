@@ -2,66 +2,66 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 620D0C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Apr 2022 09:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB72C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Apr 2022 09:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229625AbiD1JRO (ORCPT
+        id S229788AbiD1JXA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 05:17:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
+        Thu, 28 Apr 2022 05:23:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345056AbiD1JMl (ORCPT
+        with ESMTP id S1345715AbiD1JS7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Apr 2022 05:12:41 -0400
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C125E155;
-        Thu, 28 Apr 2022 02:09:23 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id B55D4FF805;
-        Thu, 28 Apr 2022 09:09:18 +0000 (UTC)
+        Thu, 28 Apr 2022 05:18:59 -0400
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C31971260D;
+        Thu, 28 Apr 2022 02:15:40 -0700 (PDT)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 6C0E160009;
+        Thu, 28 Apr 2022 09:15:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651136961;
+        t=1651137339;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Cyjk/rYZ5RbPgXHXClEZBRH80ut/XSY3BS5BdGb88a8=;
-        b=MpFCGfDt1NXLuUbjX/3/cWVgWOMWIeQAdGZOW9ufWTR4sgbVscriQ1y91tyhm3X9n4VmHM
-        Sa5dQbjK1qhQWXx613BBTD2MyQx08MXoJ3U2Z6UpS5QAi3SXqduI9FJ8lWAl0QcooatqJX
-        JMs/8M/ri/e6pXv+SDvifFju9kCezV2MLHiVNEzczchJr35I5M7gckrwINYKbPiWEQPkfj
-        y9lCJenSedXBQUAejC7cl/C5thpgyitXB2q/+m9niAWPOP/trg2IZ9BhL0jTF/EtGBN2A/
-        h3chtUgQjIIhWxSpif/q3qQ7igeoRMdNHnfAMMUJf2Ogt384lRstmyCw3QM5VQ==
-Date:   Thu, 28 Apr 2022 11:09:17 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
+        bh=601hOmZZ+FfI38UJ5XOFnA3K1IMHPaxWsKoMipp8iH8=;
+        b=jUV/lrLJBVuq9ZQB/l/IXNc1u5fLXgsjkw6We9t7h9ghH1hr1PsCYjQBV6r20yG2bjj2tq
+        rnsm90AuBdguGeEa8kyjzPeATTX/s5WjE/XfmfnC6V3U3LZ9NF22tS+2t0kZO0S4oDHikc
+        c53S2dnJu+pFxcjpRyvel9eIdhcsTnSBNPc8SmNVd1Oi4llQNTZe3T2dOIQ3/KKQRlyqzD
+        FhdIVSsqZlSrXobw/rmBBlQiACrkNZhSaHMVVOpb3pHTbL6w5gj8a5RRdD3L201ipJ6lMV
+        TD5CnoYmzt26cTgO9/1JQMtJUun2wUq85q5GL0zpISRS7PF9XoPbNM1th3LaJg==
+Date:   Thu, 28 Apr 2022 11:15:35 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-rtc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>
-Subject: Re: [PATCH v2 3/7] rtc: rzn1: Add new RTC driver
-Message-ID: <20220428110917.6b1a19ce@xps13>
-In-Reply-To: <CAMuHMdVBxeH=G8Dj0d=vS80c356Z+D2fsxRr6n+bzMxXX=D9+Q@mail.gmail.com>
-References: <20220421090016.79517-1-miquel.raynal@bootlin.com>
-        <20220421090016.79517-4-miquel.raynal@bootlin.com>
-        <CAMuHMdVBxeH=G8Dj0d=vS80c356Z+D2fsxRr6n+bzMxXX=D9+Q@mail.gmail.com>
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v3 4/8] soc: renesas: rzn1: Select PM and
+ PM_GENERIC_DOMAINS configs
+Message-ID: <20220428111535.51833857@bootlin.com>
+In-Reply-To: <CAMuHMdWmcBXRxZ_SDLCnimh7GqzkR0_qz178s51EtXsMm39ddg@mail.gmail.com>
+References: <20220422120850.769480-1-herve.codina@bootlin.com>
+        <20220422120850.769480-5-herve.codina@bootlin.com>
+        <CAMuHMdWmcBXRxZ_SDLCnimh7GqzkR0_qz178s51EtXsMm39ddg@mail.gmail.com>
 Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -71,91 +71,38 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Geert,
 
-geert@linux-m68k.org wrote on Thu, 28 Apr 2022 10:58:03 +0200:
+On Wed, 27 Apr 2022 16:58:07 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-> Hi Miquel,
->=20
-> On Thu, Apr 21, 2022 at 11:00 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > From: Michel Pollet <michel.pollet@bp.renesas.com>
+> On Fri, Apr 22, 2022 at 2:09 PM Herve Codina <herve.codina@bootlin.com> w=
+rote:
+> > PM and PM_GENERIC_DOMAINS configs are required for RZ/N1 SOCs.
+> > Without these configs, the clocks used by the PCI bridge are not
+> > enabled and so accessing the devices leads to a kernel crash:
+> >   [    0.832958] Unhandled fault: external abort on non-linefetch (0x10=
+08) at 0x90b5f848
 > >
-> > Add a basic RTC driver for the RZ/N1.
+> > Select PM and PM_GENERIC_DOMAINS for ARCH_RZN1
 > >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > Co-developed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com> =20
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com> =20
 >=20
-> Thanks for your patch!
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v5.19.
 >=20
-> > --- a/drivers/rtc/Kconfig
-> > +++ b/drivers/rtc/Kconfig
-> > @@ -1548,6 +1548,13 @@ config RTC_DRV_RS5C313
-> >         help
-> >           If you say yes here you get support for the Ricoh RS5C313 RTC=
- chips.
-> >
-> > +config RTC_DRV_RZN1
-> > +       tristate "Renesas RZN1 RTC" =20
->=20
-> RZ/N1
->=20
-> > +       depends on ARCH_RZN1 || COMPILE_TEST
-> > +       depends on OF && HAS_IOMEM
-> > +       help
-> > +         If you say yes here you get support for the Renesas RZ/N1 RTC.
-> > +
-> >  config RTC_DRV_GENERIC
-> >         tristate "Generic RTC support"
-> >         # Please consider writing a new RTC driver instead of using the=
- generic =20
->=20
-> > --- /dev/null
-> > +++ b/drivers/rtc/rtc-rzn1.c =20
->=20
-> > +static int rzn1_rtc_probe(struct platform_device *pdev)
-> > +{
-> > +       struct rzn1_rtc *rtc;
-> > +       int ret;
-> > +
-> > +       rtc =3D devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
-> > +       if (!rtc)
-> > +               return -ENOMEM;
-> > +
-> > +       platform_set_drvdata(pdev, rtc);
-> > +
-> > +       rtc->clk =3D devm_clk_get(&pdev->dev, "hclk");
-> > +       if (IS_ERR(rtc->clk))
-> > +               return dev_err_probe(&pdev->dev, PTR_ERR(rtc->clk), "Mi=
-ssing hclk\n"); =20
->=20
-> As you don't care about the clock rate, only about enabling/disabling
-> the clock, I recommend using Runtime PM instead of explicit clock
-> handling.
 
-That's right.
+I plan to send a v4 of this series.
 
-> That does depend on:
-> [PATCH v3 4/8] soc: renesas: rzn1: Select PM and PM_GENERIC_DOMAINS confi=
-gs[1]
-> [PATCH v3 5/8] ARM: dts: r9a06g032: Add missing '#power-domain-cells'[2]
+As this patch (4/8) and the following one (5/8) will be
+queued for v5.19, I plan to remove them from the v4 version
+of the series.
 
-There should not be any dependency with the RTC tree so that should not
-be too complex to handle.
+Is that ok for you or do you prefer to still have them
+in v4 ?
 
-> and on documenting the power-domains property to the RTC DT bindings,
-> and on adding a proper power-domains property to the RTC node in DTS.
+Regards,
+Herv=C3=A9
 
-Right.
-
-Do we need to define these properties in the UART, DMA and NAND
-controller nodes as well? I seem to remember that you mentioned it but
-I don't recall for which one and I was too focused (lazy?) on other
-features so I forgot about it.
-
-> [1] https://lore.kernel.org/linux-renesas-soc/20220422120850.769480-5-her=
-ve.codina@bootlin.com
-> [2] https://lore.kernel.org/linux-renesas-soc/20220422120850.769480-6-her=
-ve.codina@bootlin.com
-
-Thanks,
-Miqu=C3=A8l
+--=20
+Herv=C3=A9 Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
