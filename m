@@ -2,90 +2,116 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A27C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Apr 2022 09:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C13C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Apr 2022 10:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbiD1JuN (ORCPT
+        id S233085AbiD1KDo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 05:50:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56862 "EHLO
+        Thu, 28 Apr 2022 06:03:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbiD1JhI (ORCPT
+        with ESMTP id S231760AbiD1KDH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Apr 2022 05:37:08 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A1B6A95486;
-        Thu, 28 Apr 2022 02:33:53 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,295,1643641200"; 
-   d="scan'208";a="118308451"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Apr 2022 18:33:53 +0900
-Received: from localhost.localdomain (unknown [10.226.92.182])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id AB39D40065BC;
-        Thu, 28 Apr 2022 18:33:49 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] thermal/drivers/rz2gl: Fix OTP Calibration Register values
-Date:   Thu, 28 Apr 2022 10:33:46 +0100
-Message-Id: <20220428093346.7552-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 28 Apr 2022 06:03:07 -0400
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE7BDB6469;
+        Thu, 28 Apr 2022 02:49:42 -0700 (PDT)
+Received: by mail-qk1-f170.google.com with SMTP id e128so3167366qkd.7;
+        Thu, 28 Apr 2022 02:49:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WDmfPpadZf0LBFbdDJYdxQ5ahsqbbrqVM35oCxvqkdU=;
+        b=QRLIGin6HvtekZfg3fQ0LDqqEBawaEnOLMqRB1OCg/oStzxRH7zX7rr9IT264MyFeR
+         /APy8eq4UB0w4WvVoP9G/cTFNjCx5TVzaGY4eJCkuXGpUzhahIcdwYJAMLqiEFZFVw4P
+         c+dnz4DWeapZ3mqRDLdRn7wd6t+owcuL9W8oX7W/oHbONYaXpOp4wAErtqOLmObWYRF5
+         Q23gGzZHolU5q1j8h5RAqyDCksU8Wv+FpxY+fM0HAeiTV24sBNtN74GbXuDJRWFyO2Kb
+         44AID8aObrAPSUY621a9UQ0DsWV9aIpBw6JgSkXWI1Vx0dZsoUr4FDHYZn5wtMpukRN9
+         0qTA==
+X-Gm-Message-State: AOAM533gZMxvJHzLQ7s9v1d3gIy+rF42EyZIy5vQS8l/VUw1G8ZavwJe
+        L80RR7eJRU7UfIJD8hWFmeoWeehWuV4msg==
+X-Google-Smtp-Source: ABdhPJzEgp776Kf5FOKXJ1wlPqwsx9CFCvBqF0vZwU9mVicqmEv42VOJUhleQanhAYqWL2PhOfeCHA==
+X-Received: by 2002:a05:620a:1981:b0:507:4a52:f310 with SMTP id bm1-20020a05620a198100b005074a52f310mr19186194qkb.611.1651139381708;
+        Thu, 28 Apr 2022 02:49:41 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id r83-20020a37a856000000b0069ed4436a49sm9458658qke.87.2022.04.28.02.49.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Apr 2022 02:49:41 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-2f7ca2ce255so46509367b3.7;
+        Thu, 28 Apr 2022 02:49:41 -0700 (PDT)
+X-Received: by 2002:a81:1cd5:0:b0:2f4:c3fc:2174 with SMTP id
+ c204-20020a811cd5000000b002f4c3fc2174mr32391381ywc.512.1651139380892; Thu, 28
+ Apr 2022 02:49:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220422120850.769480-1-herve.codina@bootlin.com> <20220422120850.769480-7-herve.codina@bootlin.com>
+In-Reply-To: <20220422120850.769480-7-herve.codina@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 28 Apr 2022 11:49:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWfbbQ64CipqoVPEOGhE08HYckhyOaeSi+V7ar+F45PMw@mail.gmail.com>
+Message-ID: <CAMuHMdWfbbQ64CipqoVPEOGhE08HYckhyOaeSi+V7ar+F45PMw@mail.gmail.com>
+Subject: Re: [PATCH v3 6/8] ARM: dts: r9a06g032: Add internal PCI bridge node
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As per the latest RZ/G2L Hardware User's Manual (Rev.1.10 Apr, 2022),
-the bit 31 of TSU OTP Calibration Register(OTPTSUTRIM) indicates
-whether bit [11:0] of OTPTSUTRIM is valid or invalid.
+Hi Hervé
 
-This patch updates the code to reflect this change.
+On Fri, Apr 22, 2022 at 2:09 PM Herve Codina <herve.codina@bootlin.com> wrote:
+> Add the device node for the r9a06g032 internal PCI bridge device.
+>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/thermal/rzg2l_thermal.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Thanks for your patch!
 
-diff --git a/drivers/thermal/rzg2l_thermal.c b/drivers/thermal/rzg2l_thermal.c
-index 7a9cdc1f37ca..be07e04c6926 100644
---- a/drivers/thermal/rzg2l_thermal.c
-+++ b/drivers/thermal/rzg2l_thermal.c
-@@ -32,6 +32,8 @@
- #define TSU_SS		0x10
- 
- #define OTPTSUTRIM_REG(n)	(0x18 + ((n) * 0x4))
-+#define OTPTSUTRIM_EN_MASK	BIT(31)
-+#define OTPTSUTRIM_MASK		GENMASK(11, 0)
- 
- /* Sensor Mode Register(TSU_SM) */
- #define TSU_SM_EN_TS		BIT(0)
-@@ -183,11 +185,15 @@ static int rzg2l_thermal_probe(struct platform_device *pdev)
- 	pm_runtime_get_sync(dev);
- 
- 	priv->calib0 = rzg2l_thermal_read(priv, OTPTSUTRIM_REG(0));
--	if (!priv->calib0)
-+	if (priv->calib0 & OTPTSUTRIM_EN_MASK)
-+		priv->calib0 &= OTPTSUTRIM_MASK;
-+	else
- 		priv->calib0 = SW_CALIB0_VAL;
- 
- 	priv->calib1 = rzg2l_thermal_read(priv, OTPTSUTRIM_REG(1));
--	if (!priv->calib1)
-+	if (priv->calib1 & OTPTSUTRIM_EN_MASK)
-+		priv->calib1 &= OTPTSUTRIM_MASK;
-+	else
- 		priv->calib1 = SW_CALIB1_VAL;
- 
- 	platform_set_drvdata(pdev, priv);
--- 
-2.25.1
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -212,6 +212,35 @@ gic: interrupt-controller@44101000 {
+>                         interrupts =
+>                                 <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+>                 };
+> +
+> +               pci_usb: pci@40030000 {
+> +                       compatible = "renesas,pci-r9a06g032", "renesas,pci-rzn1";
+> +                       device_type = "pci";
+> +                       clocks = <&sysctrl R9A06G032_HCLK_USBH>,
+> +                                <&sysctrl R9A06G032_HCLK_USBPM>,
+> +                                <&sysctrl R9A06G032_CLK_PCI_USB>;
+> +                       clock-names = "hclk_usbh", "hclk_usbpm", "clk_pci_usb";
 
+The clock names need an update, cfr. my comment on the bindings.
+
+The rest LGTM, so with the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
