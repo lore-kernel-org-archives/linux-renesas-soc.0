@@ -2,55 +2,56 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE896C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Apr 2022 09:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E77C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Apr 2022 09:47:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231963AbiD1JuL (ORCPT
+        id S231983AbiD1JuM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 05:50:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53752 "EHLO
+        Thu, 28 Apr 2022 05:50:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349306AbiD1Jph (ORCPT
+        with ESMTP id S1347895AbiD1Jfe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Apr 2022 05:45:37 -0400
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B3599180;
-        Thu, 28 Apr 2022 02:42:23 -0700 (PDT)
-Received: by mail-qk1-f180.google.com with SMTP id b20so576448qkc.6;
-        Thu, 28 Apr 2022 02:42:23 -0700 (PDT)
+        Thu, 28 Apr 2022 05:35:34 -0400
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E15BF95486;
+        Thu, 28 Apr 2022 02:32:20 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id s4so3195791qkh.0;
+        Thu, 28 Apr 2022 02:32:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KqTvPqe9Ior33TBYfq0U+wCDWY6AJ5fZdCKmCA3PjQ8=;
-        b=WL1xPPcrzziq9BGQBl6z0pmwjgeKugguQU1vb+ygzfnb8jEGPEvCdHJN8huF/EJ41m
-         EDH3wBjEvySIxz89Y3Qz+OjtpdyBswlf3nHvzuy9S/SXhT0kxb0oIfYjRZGUOWKVlfKO
-         VdzI3F89g2ZHIbgvpZsJ5u/eSPetrrRMYUX5TifyNtR346OGDBwhCjjZs1JqzkhP9O97
-         rpgvsSZeYFFYECoGStL2J6LTkPWmRXWVqSs95MwiFTiKPkw+qigepc7hWo5zJL3YwVi3
-         38tnLYAbnLTr0JLGAJK1gNKSxmct7l9KnMNRa3l6SuhQbT6qOUDAnYKVkUDsEEnyrLne
-         1Xgg==
-X-Gm-Message-State: AOAM532KbCiIjFdMDX/q9xjowURphsc4iXFnoWf9Khi17XuOpxStMYzW
-        8nuJG6tyB2aa5kLwnm4ERYRP8scmf/jakg==
-X-Google-Smtp-Source: ABdhPJx27jkCZ/2U/QKFvGdfUHx5AJrVPFc3d6rvyjjpLG0eVJIgLLuvEYe/1MPSXjYzbS7u3I1bxQ==
-X-Received: by 2002:a05:620a:1432:b0:69f:87c4:adc9 with SMTP id k18-20020a05620a143200b0069f87c4adc9mr6097536qkj.16.1651138942023;
-        Thu, 28 Apr 2022 02:42:22 -0700 (PDT)
+        bh=XxrucvC/NAbMhAGxWgmP+P246fNaW3Hi7ZrfYXkN5TU=;
+        b=JUOn690e8hRPPVUa5vhEFKjj719h6ekxjI8U1Z3FWaiCTeTTRNgJaJUSXRSfjd801W
+         ZqUv3kzdBFk0Bpw0DWYz5XGfDSr5LaL3UqYNyU0qfp7F2FAG5M75OqWV/nnV1INIbCQ+
+         S1rdpqOhPbn7LwUejCGhKOhDAVyLyIWIx5eO6fKTEsnffubW6rXvkjP7R7+WgHWXeFxS
+         9unMT/kSvhSDccsPHudCWzoAtqI1fvkftoViIJrRqlUGEHi97+wMSfvMmYMkVNPALJyH
+         tQEXKX43khIrYspHEFXTSu30OdgeV/EYyuCJgH52v6+AN1Z8R+JKcjJvQm+3YbwEnGIa
+         Nv7Q==
+X-Gm-Message-State: AOAM5320tCIZu9PcPtp7VnIKaCuJIRgDAPoLnqRGNZq0XKaNcnJCwuRu
+        d1TkKKJLF3PuPkQgUp+aU0Gn3NFG8wklcg==
+X-Google-Smtp-Source: ABdhPJx4S8vUCcoVz/XiyfC23GM4Dmtj+/2Xg4SoVTsz2XZbbLg1QFb+OXVM2p5ZXg9xRJBla5oynQ==
+X-Received: by 2002:a05:620a:404e:b0:69e:a5db:22cb with SMTP id i14-20020a05620a404e00b0069ea5db22cbmr18894611qko.735.1651138339897;
+        Thu, 28 Apr 2022 02:32:19 -0700 (PDT)
 Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id p14-20020a05622a13ce00b002f20a695972sm11820482qtk.14.2022.04.28.02.42.21
+        by smtp.gmail.com with ESMTPSA id i198-20020a379fcf000000b0069f869bcd49sm3039513qke.75.2022.04.28.02.32.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Apr 2022 02:42:21 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id g28so7960688ybj.10;
-        Thu, 28 Apr 2022 02:42:21 -0700 (PDT)
-X-Received: by 2002:a25:d84c:0:b0:648:7d5e:e2d4 with SMTP id
- p73-20020a25d84c000000b006487d5ee2d4mr16788803ybg.6.1651138940792; Thu, 28
- Apr 2022 02:42:20 -0700 (PDT)
+        Thu, 28 Apr 2022 02:32:18 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id w17so7923266ybh.9;
+        Thu, 28 Apr 2022 02:32:18 -0700 (PDT)
+X-Received: by 2002:a25:d393:0:b0:648:4871:3b91 with SMTP id
+ e141-20020a25d393000000b0064848713b91mr20880320ybf.506.1651138338366; Thu, 28
+ Apr 2022 02:32:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220421221159.31729-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220421221159.31729-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220421221159.31729-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220421221159.31729-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220421221159.31729-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20220421221159.31729-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 28 Apr 2022 11:42:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVqk1ryzzK9-BZCMDPeyjfF1-8hMpzUoEPCcg8pJ2-ang@mail.gmail.com>
-Message-ID: <CAMuHMdVqk1ryzzK9-BZCMDPeyjfF1-8hMpzUoEPCcg8pJ2-ang@mail.gmail.com>
-Subject: Re: [PATCH 2/2] irqchip: Add RZ/G2L IA55 Interrupt Controller driver
+Date:   Thu, 28 Apr 2022 11:32:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVrcT5iHUZUiCYmD12sS4F66BETBih36G7BzLTLuoQ9eQ@mail.gmail.com>
+Message-ID: <CAMuHMdVrcT5iHUZUiCYmD12sS4F66BETBih36G7BzLTLuoQ9eQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: interrupt-controller: Add Renesas RZ/G2L
+ Interrupt Controller
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Cc:     Marc Zyngier <maz@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -59,6 +60,7 @@ Cc:     Marc Zyngier <maz@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Prabhakar <prabhakar.csengg@gmail.com>,
@@ -72,94 +74,57 @@ Hi Prabhakar,
 
 On Fri, Apr 22, 2022 at 12:12 AM Lad Prabhakar
 <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Add a driver for the Renesas RZ/G2L Interrupt Controller.
->
-> This supports external pins being used as interrupts. It supports
-> one line for NMI, 8 external pins and 32 GPIO pins (out of 123)
-> to be used as IRQ lines.
+> Add DT bindings for the Renesas RZ/G2L Interrupt Controller.
 >
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 Thanks for your patch!
 
 > --- /dev/null
-> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-> @@ -0,0 +1,447 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Renesas RZ/G2L IRQC Driver
-> + *
-> + * Copyright (C) 2022 Renesas Electronics Corporation.
-> + *
-> + * Author: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> + */
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+> @@ -0,0 +1,131 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/renesas,rzg2l-irqc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +#include <linux/clk.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset.h>
-> +#include <linux/spinlock.h>
+> +title: Renesas RZ/G2L (and alike SoC's) Interrupt Controller (IA55)
 > +
-> +#define IRQC_IRQ_START                 1
-> +#define IRQC_IRQ_COUNT                 8
-> +#define IRQC_TINT_START                        9
-
-= IRQC_IRQ_START + IRQC_IRQ_COUNT
-
-> +#define IRQC_TINT_COUNT                        32
-> +#define IRQC_NUM_IRQ                   41
-
-= IRQC_TINT_START + IRQC_TINT_COUNT
-
-Should these be in a DT binding header file?
-
-Combining all types into a single linear number space makes it hard
-to extend the range, when reusing for an SoC that supports more
-interrupt sources.
-
-> +static void rzg2l_irq_eoi(struct irq_data *d)
-> +{
-> +       struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
-> +       unsigned int hw_irq = irqd_to_hwirq(d) - IRQC_IRQ_START;
-> +       u16 bit = BIT(hw_irq);
-
-I guess you can just use u32?
-
-> +       u32 reg;
+> +maintainers:
+> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> +  - Geert Uytterhoeven <geert+renesas@glider.be>
 > +
-> +       reg = readl_relaxed(priv->base + ISCR);
-> +       if (reg & bit)
-> +               writel_relaxed(GENMASK(IRQC_IRQ_COUNT - 1, 0) & ~bit,
-
-As writes to the unused upper bits are ignored, you can drop the
-masking with GENMASK(IRQC_IRQ_COUNT - 1, 0), and be prepared for more
-interrupt sources.
-
-> +                              priv->base + ISCR);
-> +}
+> +description: |
+> +  IA55 performs various interrupt controls including synchronization for the external
+> +  interrupts of NMI, IRQ, and GPIOINT and the interrupts of the built-in peripheral
+> +  interrupts output by each IP. And it notifies the interrupt to the GIC
+> +    - IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI interrupts
+> +    - GPIO pins used as external interrupt input pins, mapped to 32 GIC SPI interrupts
+> +    - NMI edge select (NMI is not treated as NMI exception and supports fall edge and
+> +      stand-up edge detection interrupts)
 > +
-> +static void rzg2l_tint_eoi(struct irq_data *d)
-> +{
-> +       struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
-> +       unsigned int hw_irq = irqd_to_hwirq(d);
-
-"irqd_to_hwirq(d) - IRQC_TINT_START", for symmetry with
-rzg2l_irq_eoi()?
-
-> +       u32 bit = BIT(hw_irq - IRQC_TINT_START);
-> +       u32 reg;
+> +allOf:
+> +  - $ref: /schemas/interrupt-controller.yaml#
 > +
-> +       reg = readl_relaxed(priv->base + TSCR);
-> +       if (reg & bit)
-> +               writel_relaxed(GENMASK(IRQC_TINT_COUNT - 1, 0) & ~bit,
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - renesas,r9a07g044-irqc    # RZ/G2L
+> +      - const: renesas,rzg2l-irqc
+> +
+> +  '#interrupt-cells':
+> +    const: 2
 
-Drop the masking with all-ones?
+What is the meaning of the cells? IRQ number + flags, I assume?
+How are the numbers mapped, do you need a DT bindings header?
+Perhaps it would make sense to increase to 3 cells, so you can use
+one cell for the type (cfr. e.g. GIC_SPI), and the second for the
+plain index within the type?
 
-> +                              priv->base + TSCR);
-> +}
+The rest LGTM, but I'm not an interrupt expert, so I'm curious in
+hearing Marc's opinion.
 
 Gr{oetje,eeting}s,
 
