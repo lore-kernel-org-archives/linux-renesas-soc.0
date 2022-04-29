@@ -2,96 +2,126 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 150B7C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Apr 2022 13:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AC7C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Apr 2022 14:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376378AbiD2Np7 (ORCPT
+        id S1377653AbiD2Ok1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Apr 2022 09:45:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46614 "EHLO
+        Fri, 29 Apr 2022 10:40:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376406AbiD2Npl (ORCPT
+        with ESMTP id S1377552AbiD2OkX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Apr 2022 09:45:41 -0400
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7420DCD32B;
-        Fri, 29 Apr 2022 06:42:17 -0700 (PDT)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id BDF3E1BF214;
-        Fri, 29 Apr 2022 13:42:13 +0000 (UTC)
+        Fri, 29 Apr 2022 10:40:23 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04672E6A3;
+        Fri, 29 Apr 2022 07:36:32 -0700 (PDT)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 340BB40014;
+        Fri, 29 Apr 2022 14:36:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651239736;
+        t=1651242991;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3sbzBzsCcC7x9s3vXEvDzSjrA2nDIAK9IYFPPKABIDw=;
-        b=VgmmLpFKEBOrCWjhyHy1u93i2hwuJ9+LJaKQYruUNJ68ZywpJL3NzYzwR8c/vK1ug69DyA
-        +cYiBTNzMOsBkjxiLEHs5dYd8A6B3j8+s8RaZTRHYOZYsPfo6lAPnPhE/LNt8wI7ZzPyiD
-        nZEVzwb/0ULVSiY7mp+LbA9QH75aoiDC6aH+GE8urnSufnCi1O8izetwLt/nWdnvoV9me1
-        JsU2hi6Jj/plNBijhZoD/E41HK8RGpVTU+JaQoyAqepmYQnYfvuH/cm8O9UFqgBG1jOTRH
-        RnI42ewV4JIwdMFp2bg/0FqDLz8swiIHWw4JK2kl0XTqcuCqpmyj6xHvOjI17A==
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        bh=qd07jAlJK0X44yitg7a8fD9rpKx9BwtFEFGsfhVdf/w=;
+        b=K2tXe5QuZHzf+LlNCxY+MZ68z3KVoZbzp1sZCGtSj36Bi0xSdaO7WFxX1ukqhO3JGqN15M
+        gtoiifiONnlqT9qOCwg2iyCVTepnSE9OehefJ2aMyYLgYlidS2Nl3gj7NG52ZqyF1ZCuKM
+        +Z4Ir10BrC+aPNWOZlNqFd6Nw6fllxOwIz42wan8Ej4T0U437lgbWykx4Cz8tUr++lKgZP
+        9ejRj/DfO1jRwgEfpa0a/ImBOtwSGoUoRADXtE/TjdfuBumlOFkXFTt8J8j6loH3j/BS0Q
+        M5KAefoq6h7LCVRr0RCvXGm1v1wtZTNM+/vgF2BmLwL3EUtx8W1OwLMwJs3Qfw==
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
-Cc:     Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v5 6/6] ARM: dts: r9a06g032: Link the PCI USB devices to the USB PHY
-Date:   Fri, 29 Apr 2022 15:41:43 +0200
-Message-Id: <20220429134143.628428-8-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220429134143.628428-1-herve.codina@bootlin.com>
-References: <20220429134143.628428-1-herve.codina@bootlin.com>
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
+Subject: [net-next v2 01/12] net: dsa: add support for ethtool get_rmon_stats()
+Date:   Fri, 29 Apr 2022 16:34:54 +0200
+Message-Id: <20220429143505.88208-2-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220429143505.88208-1-clement.leger@bootlin.com>
+References: <20220429143505.88208-1-clement.leger@bootlin.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Describe the PCI USB devices that are behind the PCI bridge, adding
-necessary links to the USB PHY device.
+Add support to allow dsa drivers to specify the .get_rmon_stats()
+operation.
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ include/net/dsa.h |  3 +++
+ net/dsa/slave.c   | 13 +++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 8cedc08ba3b9..db1e35381d9b 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -121,6 +121,18 @@ pci_usb: pci@40030000 {
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x800 0 0 0 0>;
-+				phys = <&usbphy>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x1000 0 0 0 0>;
-+				phys = <&usbphy>;
-+				phy-names = "usb";
-+			};
- 		};
+diff --git a/include/net/dsa.h b/include/net/dsa.h
+index 934958fda962..d9da32aacbf1 100644
+--- a/include/net/dsa.h
++++ b/include/net/dsa.h
+@@ -873,6 +873,9 @@ struct dsa_switch_ops {
+ 				     struct ethtool_eth_mac_stats *mac_stats);
+ 	void	(*get_eth_ctrl_stats)(struct dsa_switch *ds, int port,
+ 				      struct ethtool_eth_ctrl_stats *ctrl_stats);
++	void	(*get_rmon_stats)(struct dsa_switch *ds, int port,
++				  struct ethtool_rmon_stats *rmon_stats,
++				  const struct ethtool_rmon_hist_range **ranges);
+ 	void	(*get_stats64)(struct dsa_switch *ds, int port,
+ 				   struct rtnl_link_stats64 *s);
+ 	void	(*self_test)(struct dsa_switch *ds, int port,
+diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+index 5ee0aced9410..27c8d28fd9d8 100644
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -1026,6 +1026,18 @@ dsa_slave_get_eth_ctrl_stats(struct net_device *dev,
+ 		ds->ops->get_eth_ctrl_stats(ds, dp->index, ctrl_stats);
+ }
  
- 		uart0: serial@40060000 {
++static void
++dsa_slave_get_rmon_stats(struct net_device *dev,
++			 struct ethtool_rmon_stats *rmon_stats,
++			 const struct ethtool_rmon_hist_range **ranges)
++{
++	struct dsa_port *dp = dsa_slave_to_port(dev);
++	struct dsa_switch *ds = dp->ds;
++
++	if (ds->ops->get_rmon_stats)
++		ds->ops->get_rmon_stats(ds, dp->index, rmon_stats, ranges);
++}
++
+ static void dsa_slave_net_selftest(struct net_device *ndev,
+ 				   struct ethtool_test *etest, u64 *buf)
+ {
+@@ -2105,6 +2117,7 @@ static const struct ethtool_ops dsa_slave_ethtool_ops = {
+ 	.get_eth_phy_stats	= dsa_slave_get_eth_phy_stats,
+ 	.get_eth_mac_stats	= dsa_slave_get_eth_mac_stats,
+ 	.get_eth_ctrl_stats	= dsa_slave_get_eth_ctrl_stats,
++	.get_rmon_stats		= dsa_slave_get_rmon_stats,
+ 	.set_wol		= dsa_slave_set_wol,
+ 	.get_wol		= dsa_slave_get_wol,
+ 	.set_eee		= dsa_slave_set_eee,
 -- 
-2.35.1
+2.34.1
 
