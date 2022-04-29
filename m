@@ -2,34 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8207C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Apr 2022 10:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4ACC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Apr 2022 10:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237494AbiD2K4D (ORCPT
+        id S238752AbiD2K4F (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Apr 2022 06:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58922 "EHLO
+        Fri, 29 Apr 2022 06:56:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237725AbiD2Kzz (ORCPT
+        with ESMTP id S238336AbiD2Kzz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 29 Apr 2022 06:55:55 -0400
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4BD4EDEA;
-        Fri, 29 Apr 2022 03:52:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 819824F440;
+        Fri, 29 Apr 2022 03:52:37 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 411FDFF808;
-        Fri, 29 Apr 2022 10:52:30 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id A5899FF80B;
+        Fri, 29 Apr 2022 10:52:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651229552;
+        t=1651229556;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=47f5CkZ51Myfo+gccHSm9Z0rncUryFnISEYnNJWOrTs=;
-        b=UPGki2FZclsfBmCdsbMiTTjrDUacq2Si4WhmmKVZ1R3o+7OHmsZtSQ1bbqVfjnjvx53FER
-        fFvOjtEqi5Et/H57h1hH4uM/tKH4mmhalyZjr9iJ3FxgLzIGtPHyveBTAooQFSIyXgSA6M
-        2OTCwRT5cRI5BctQwaZ2d0jiiOngIuVMFM8qCPfGbYcFGDvk/U/x7yjTfseXkUOUW7oStI
-        RYOrzljRIUAs2+X/PDsWHq0u1pJ6AQdtAK450uICdqrSDMjmbEXCxG0qSa7s/hxdMohL5d
-        8IGDh/a25kXwzsQP1gXzcBXFLtv2kc8Qhb9WiMTUqFqPoMP6bm5XRu0HY8upJA==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wzW9cUh6UOXVytZ7otTBtN11xju/vNGhzQGZ27ZQgbI=;
+        b=R9uxkzpFYbyvxiWMln9FuBgLN77uBY6Nck0tPzEFtFKmWVlyqv4vEun836cJ3IG+hT+S7Y
+        Gj1qus7dsakEk1gWuWdltdmNyQndF89BUy8gIxCcwV4pj+uu3WpG1jDJJS/jvNBsjOEXJg
+        N7/1JaGvq3vNtBfDY6ug3+P5k8EerY63xk2LnXCPuHgQED3nR2XAmOkobvG6vjprZxXDdj
+        fDKrotVfhk2asvBfatN0KD9d7TurbnIIkEJXcx34H1lL0IvksYEPMQBK3N9eUMRViWBiLY
+        p5qfFozZyzIrR7iMLkCXBp+iJrtIVq8Yu9uzoarB3ZQ9NSZJFl4aXeiJdqD7bQ==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
@@ -46,10 +47,12 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         devicetree@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 0/3] mtd: rawnand: renesas: Runtime PM use
-Date:   Fri, 29 Apr 2022 12:52:26 +0200
-Message-Id: <20220429105229.368728-1-miquel.raynal@bootlin.com>
+Subject: [PATCH 2/3] ARM: dts: r9a06g032: Fix the NAND controller node
+Date:   Fri, 29 Apr 2022 12:52:28 +0200
+Message-Id: <20220429105229.368728-3-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220429105229.368728-1-miquel.raynal@bootlin.com>
+References: <20220429105229.368728-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -57,24 +60,25 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There was a small mistake when first introducing this controller driver:
-the power-domain property was missing in the device tree because there
-was only one controller supported at this time (UART) and this is a
-Synopsis IP which did not support power domains. The idea is to always
-use these power domains when available, so let's add it to the bindings,
-the DT and use it from the driver through the runtimpe PM API instead of
-doing raw clk API calls.
+Add the missing power-domains property which is mandatory.
 
-Miquel Raynal (3):
-  dt-bindings: mtd: renesas: Fix the NAND controller description
-  ARM: dts: r9a06g032: Fix the NAND controller node
-  mtd: rawnand: renesas: Use runtime PM instead of the raw clock API
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ arch/arm/boot/dts/r9a06g032.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/mtd/renesas-nandc.yaml           |  5 ++
- arch/arm/boot/dts/r9a06g032.dtsi              |  1 +
- .../mtd/nand/raw/renesas-nand-controller.c    | 58 +++++++++----------
- 3 files changed, 32 insertions(+), 32 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index a35bd19c616a..b3ca904c8647 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -234,6 +234,7 @@ nand_controller: nand-controller@40102000 {
+ 			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&sysctrl R9A06G032_HCLK_NAND>, <&sysctrl R9A06G032_CLK_NAND>;
+ 			clock-names = "hclk", "eclk";
++			power-domains = <&sysctrl>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
 -- 
 2.27.0
 
