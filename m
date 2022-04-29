@@ -2,59 +2,58 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EF4C4167D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Apr 2022 10:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E23C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Apr 2022 10:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358050AbiD2Kwa (ORCPT
+        id S237455AbiD2K4C (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Apr 2022 06:52:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47580 "EHLO
+        Fri, 29 Apr 2022 06:56:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358073AbiD2KvL (ORCPT
+        with ESMTP id S237696AbiD2Kzz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Apr 2022 06:51:11 -0400
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A6DC8BEB;
-        Fri, 29 Apr 2022 03:46:09 -0700 (PDT)
+        Fri, 29 Apr 2022 06:55:55 -0400
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8D294EDFA;
+        Fri, 29 Apr 2022 03:52:35 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 42C6B10000F;
-        Fri, 29 Apr 2022 10:46:06 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 04BDDFF805;
+        Fri, 29 Apr 2022 10:52:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651229168;
+        t=1651229554;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8ahdxlylHUe3mADgzeD98ByHKZe3nsmtka5ti0feGmk=;
-        b=A8ymcAf4cZE365VPUPzKtLgpGVYVP2s1wHBf1xHUQYmdXcBnGREKeNdd5/ynePp2rUJc8b
-        kkIDxUDSBdcR6cGuQEZ89CakNYkJkMG4CPVP0k2Jw/LtwHiBTsJixpb3n6qOpgJOfcWod7
-        ejs5tqS1hiN7s+WyNDTOdYV8BIzWm3vw48iNeBc/5x9Kmuof+TnO9OE3N2d3HRLqQ//w84
-        GWbIJKvpzFsSTmnmVlmTOyjgkbu2oUpw4hGj4JY/x6NxEk3OUNFvW0hRnsrwRI4hyYah3f
-        INzueq2Wly314RRFgzZ0IzvNtZSF0JCSyh04MaBW7mYhmkYBMXwt6W/z1w1aHA==
+        bh=dJ+tLuwq1BPOlvX+T85enpsOsl9owZcJnnnX3M9eI/E=;
+        b=WYeu8IauKgebNrE5LqW60Ux/HLh2WCDLAb64VJegHbKgp3WSYNtafUn/rqJmQTw8rT01J4
+        D5UOZ3iDAFzhJn34qLr5uhirP5kHez7jtrrE9lc8KI3b1qiNQKvrhdxPFO/RDCjXBlGLRu
+        uefh6mKF7PCzemDKkxdMZFN7MKmMDWkptpAY8kOOVhDEu25a3WL0dPQ+gLd6n190h9Sc2W
+        Ik1YJ7zWO4zsOsauwJK5pzyb4LuXSXXR8F7xKHu6+W/DP7taurlq30HIqJJcZdpXCtUEzj
+        Rv02bSkR/EhVn/oBP2+p4uMdSc+TcxcJy3PlUJ59d3jXvTtC37nCDjnVpKlC/w==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+To:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Pratyush Yadav <p.yadav@ti.com>,
+        Michael Walle <michael@walle.cc>,
+        <linux-mtd@lists.infradead.org>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 1/6] dt-bindings: rtc: rzn1: Describe the RZN1 RTC
-Date:   Fri, 29 Apr 2022 12:45:57 +0200
-Message-Id: <20220429104602.368055-2-miquel.raynal@bootlin.com>
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] dt-bindings: mtd: renesas: Fix the NAND controller description
+Date:   Fri, 29 Apr 2022 12:52:27 +0200
+Message-Id: <20220429105229.368728-2-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220429104602.368055-1-miquel.raynal@bootlin.com>
-References: <20220429104602.368055-1-miquel.raynal@bootlin.com>
+In-Reply-To: <20220429105229.368728-1-miquel.raynal@bootlin.com>
+References: <20220429105229.368728-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -62,92 +61,43 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add new binding file for this RTC.
+Add the missing power-domain property which is needed on all the
+RZ/N1 SoC IPs.
 
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/rtc/renesas,rzn1-rtc.yaml        | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+ Documentation/devicetree/bindings/mtd/renesas-nandc.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-new file mode 100644
-index 000000000000..2d4741f51663
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/rtc/renesas,rzn1-rtc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas RZ/N1 SoCs Real-Time Clock DT bindings
-+
-+maintainers:
-+  - Miquel Raynal <miquel.raynal@bootlin.com>
-+
-+allOf:
-+  - $ref: rtc.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a06g032-rtc
-+      - const: renesas,rzn1-rtc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    minItems: 3
-+    maxItems: 3
-+
-+  interrupt-names:
-+    items:
-+      - const: alarm
-+      - const: timer
-+      - const: pps
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: hclk
-+
+diff --git a/Documentation/devicetree/bindings/mtd/renesas-nandc.yaml b/Documentation/devicetree/bindings/mtd/renesas-nandc.yaml
+index 2870d36361c4..7b18bc5cc8b3 100644
+--- a/Documentation/devicetree/bindings/mtd/renesas-nandc.yaml
++++ b/Documentation/devicetree/bindings/mtd/renesas-nandc.yaml
+@@ -36,11 +36,15 @@ properties:
+       - const: hclk
+       - const: eclk
+ 
 +  power-domains:
 +    maxItems: 1
 +
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
+ required:
+   - compatible
+   - reg
+   - clocks
+   - clock-names
 +  - power-domains
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+    rtc@40006000 {
-+       compatible = "renesas,r9a06g032-rtc", "renesas,rzn1-rtc";
-+       reg = <0x40006000 0x1000>;
-+       interrupts = <GIC_SPI 66 IRQ_TYPE_EDGE_RISING>,
-+                    <GIC_SPI 67 IRQ_TYPE_EDGE_RISING>,
-+                    <GIC_SPI 68 IRQ_TYPE_EDGE_RISING>;
-+       interrupt-names = "alarm", "timer", "pps";
-+       clocks = <&sysctrl R9A06G032_HCLK_RTC>;
-+       clock-names = "hclk";
-+       power-domains = <&sysctrl>;
-+       start-year = <2000>;
-+     };
+   - interrupts
+ 
+ unevaluatedProperties: false
+@@ -56,6 +60,7 @@ examples:
+         interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+         clocks = <&sysctrl R9A06G032_HCLK_NAND>, <&sysctrl R9A06G032_CLK_NAND>;
+         clock-names = "hclk", "eclk";
++        power-domains = <&sysctrl>;
+         #address-cells = <1>;
+         #size-cells = <0>;
+     };
 -- 
 2.27.0
 
