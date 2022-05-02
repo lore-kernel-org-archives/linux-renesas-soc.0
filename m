@@ -2,55 +2,42 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6341CC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 May 2022 13:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6560EC41535
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 May 2022 13:36:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235920AbiEBNjh (ORCPT
+        id S235994AbiEBNji (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 2 May 2022 09:39:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42912 "EHLO
+        Mon, 2 May 2022 09:39:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385391AbiEBNix (ORCPT
+        with ESMTP id S1385440AbiEBNjA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 May 2022 09:38:53 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F405659A
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  2 May 2022 06:35:20 -0700 (PDT)
+        Mon, 2 May 2022 09:39:00 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D0C395
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  2 May 2022 06:35:31 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:194e:5782:c420:7f87])
-        by albert.telenet-ops.be with bizsmtp
-        id Rpb52700828fWK506pb5V8; Mon, 02 May 2022 15:35:18 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id RpbX2700328fWK501pbXeS; Mon, 02 May 2022 15:35:31 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nlWCe-002mri-Lv; Mon, 02 May 2022 15:35:04 +0200
+        id 1nlWD4-002mvQ-K6; Mon, 02 May 2022 15:35:30 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nlWCe-002vAY-2e; Mon, 02 May 2022 15:35:04 +0200
+        id 1nlWD3-002vFx-TM; Mon, 02 May 2022 15:35:29 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+To:     Magnus Damm <magnus.damm@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/7] dt-bindings: serial: renesas,hscif: R-Car V3U is R-Car Gen4
-Date:   Mon,  2 May 2022 15:34:57 +0200
-Message-Id: <dd734aaa4e5e0b32864b038b79eafe72907fb99f.1651497024.git.geert+renesas@glider.be>
+Subject: [PATCH] soc: renesas: R-Car V3U is R-Car Gen4
+Date:   Mon,  2 May 2022 15:35:24 +0200
+Message-Id: <2bbecad7b6c24c0d5c1797b3f7f0733d5ba33842.1651497066.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1651497024.git.geert+renesas@glider.be>
-References: <cover.1651497024.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -58,31 +45,34 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Despite the name, R-Car V3U is the first member of the R-Car Gen4
-family.  Hence move its compatible value to the R-Car Gen4 section.
+family.  Hence reflect this in the SoC Family field.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/serial/renesas,hscif.yaml | 2 +-
+To be queued in renesas-devel for v5.19.
+
+See also:
+[1] [PATCH 0/7] dt-bindings: renesas: R-Car V3U is R-Car Gen4
+    https://lore.kernel.org/cover.1651497024.git.geert+renesas@glider.be
+[2] [PATCH] arm64: dts: renesas: r8a779a0: Update to R-Car Gen4 compatible values
+    https://lore.kernel.org/73cea9d5e1a6639422c67e4df4285042e31c9fd5.1651497071.git.geert+renesas@glider.be
+---
+ drivers/soc/renesas/renesas-soc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-index d688a07a0e2970cd..87180d95cd4c5d14 100644
---- a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-@@ -51,12 +51,12 @@ properties:
-               - renesas,hscif-r8a77980     # R-Car V3H
-               - renesas,hscif-r8a77990     # R-Car E3
-               - renesas,hscif-r8a77995     # R-Car D3
--              - renesas,hscif-r8a779a0     # R-Car V3U
-           - const: renesas,rcar-gen3-hscif # R-Car Gen3 and RZ/G2
-           - const: renesas,hscif           # generic HSCIF compatible UART
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index bc53aae90ced8efc..c848c3209ff5cb37 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -233,7 +233,7 @@ static const struct renesas_soc soc_rcar_d3 __initconst __maybe_unused = {
+ };
  
-       - items:
-           - enum:
-+              - renesas,hscif-r8a779a0     # R-Car V3U
-               - renesas,hscif-r8a779g0     # R-Car V4H
-           - const: renesas,rcar-gen4-hscif # R-Car Gen4
-           - const: renesas,hscif           # generic HSCIF compatible UART
+ static const struct renesas_soc soc_rcar_v3u __initconst __maybe_unused = {
+-	.family	= &fam_rcar_gen3,
++	.family	= &fam_rcar_gen4,
+ 	.id	= 0x59,
+ };
+ 
 -- 
 2.25.1
 
