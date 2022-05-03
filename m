@@ -2,122 +2,76 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B60CC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 May 2022 14:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D63E3C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 May 2022 14:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237543AbiECO7U (ORCPT
+        id S237531AbiECPDU convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 May 2022 10:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52938 "EHLO
+        Tue, 3 May 2022 11:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237528AbiECO7S (ORCPT
+        with ESMTP id S237620AbiECPDU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 May 2022 10:59:18 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7F017338BD;
-        Tue,  3 May 2022 07:55:45 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5361F12FC;
-        Tue,  3 May 2022 07:55:45 -0700 (PDT)
-Received: from lakrids (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F33AD3F5A1;
-        Tue,  3 May 2022 07:55:43 -0700 (PDT)
-Date:   Tue, 3 May 2022 15:55:41 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3 04/12] dt-bindings: timer: arm,arch_timer: Add
- optional clock and reset
-Message-ID: <YnFCbe4ULoRRft4u@lakrids>
-References: <20220503115557.53370-1-phil.edworthy@renesas.com>
- <20220503115557.53370-5-phil.edworthy@renesas.com>
- <6fb57bcc87e091d6e88217d2b82af9da@kernel.org>
- <CAMuHMdU4j=Uaz5fAODFrPud0i40TdHUo6bYq0YpdnUzWaM3-Og@mail.gmail.com>
+        Tue, 3 May 2022 11:03:20 -0400
+X-Greylist: delayed 470 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 03 May 2022 07:59:47 PDT
+Received: from mail.megasoftsol.com (mail.megasoftsol.com [43.231.250.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F6839811
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 May 2022 07:59:47 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.megasoftsol.com (Postfix) with ESMTP id 3C93F90D6AF
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 May 2022 20:17:00 +0530 (IST)
+Received: from mail.megasoftsol.com ([127.0.0.1])
+        by localhost (mail.megasoftsol.com [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 7jKFBBAIdvTT for <linux-renesas-soc@vger.kernel.org>;
+        Tue,  3 May 2022 20:16:59 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.megasoftsol.com (Postfix) with ESMTP id C2CB190D6BF
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 May 2022 20:16:59 +0530 (IST)
+X-Virus-Scanned: amavisd-new at megasoftsol.com
+Received: from mail.megasoftsol.com ([127.0.0.1])
+        by localhost (mail.megasoftsol.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id BGgjOD3lSqAe for <linux-renesas-soc@vger.kernel.org>;
+        Tue,  3 May 2022 20:16:59 +0530 (IST)
+Received: from asda.co.uk (unknown [20.97.211.134])
+        (Authenticated sender: admin)
+        by mail.megasoftsol.com (Postfix) with ESMTPSA id 042A790D6AF
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 May 2022 20:16:58 +0530 (IST)
+Reply-To: sales@asdaa.uk
+From:   ASDA Stores Limited <Hanes.Thomas23877@asda.co.uk>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: 2nd Quater puchase request
+Date:   03 May 2022 14:49:27 +0000
+Message-ID: <20220503092157.9349A842B7A71BEF@asda.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU4j=Uaz5fAODFrPud0i40TdHUo6bYq0YpdnUzWaM3-Og@mail.gmail.com>
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Dear linux-renesas-soc
 
-On Tue, May 03, 2022 at 04:22:35PM +0200, Geert Uytterhoeven wrote:
-> On Tue, May 3, 2022 at 3:12 PM Marc Zyngier <maz@kernel.org> wrote:
-> > On 2022-05-03 12:55, Phil Edworthy wrote:
-> > > Some SoCs use a gated clock for the timer and the means to reset the
-> > > timer.
-> > > Hence add these as optional.
-> >
-> > The architecture is crystal clear on the subject: the counter
-> > is in an always-on domain. Why should this be visible to SW?
-> > Also, reseting the counter breaks the guaranteed monotonicity
-> > we rely on.
-> 
-> The DT bindings do state:
-> 
->   always-on:
->     type: boolean
->     description: If present, the timer is powered through an always-on power
->       domain, therefore it never loses context.
-> 
-> and (surprisingly?) the absence of this property seems to be the
-> norm...
-
-That's the *timer* (i.e. the comparator logic within each CPU which
-fires an interrupt), not the *counter* (i.e. the incrementing value fed
-by a clock). What this is trying to say is whether that can be relied
-upon to cause a wakeup while the CPU is in a low-power state, or whether
-it cannot (and hence SW needs to use another timer for the wakeup).
-
-It's legitimate for each timer to not be in an always-on power domain
-because it is part of each CPU, whereas the counter is global to the
-system.
-
-We can clear up the wording here since it's apparently confusing.
-
-> And:
-> 
->   arm,no-tick-in-suspend:
->     type: boolean
->     description: The main counter does not tick when the system is in
->       low-power system suspend on some SoCs. This behavior does not match the
->       Architecture Reference Manual's specification that the system
-> counter "must
->       be implemented in an always-on power domain."
-
-This is admittedly a workaround for an integration bug, but it's quite
-different and only affects the time jump that can be observed when going
-into suspend an exiting from it. Whenever software is running the
-counter is incrementing.
-
-> So there's already precedent for clocks that can be disabled.
-
-There's precedent for the clock being disabled in a specific deep sleep
-state, not when SW is actively running.
-
-> > Worse case, this belongs to the boot firmware, not the kernel,
-> > and I don't think this should be described in the DT.
-> 
-> "DT describes hardware, not software policy"?
-
-It's still describing the HW. There's plenty of other always-on stuff
-that we don't describe because for all intents and purposes it is always
-on.
-
-Note that this being always-on isn't just a Linux thing; that affects
-plenty of other SW which may run and it's an *architectural property*
-that's apparently being violated.
-
-Thanks,
-Mark.
+We are interested in having some of your hot selling product in 
+our stores and outlets spread all over United Kingdom, Northern 
+Island and Africa. ASDA Stores Limited is one of the highest-
+ranking Wholesale & Retail outlets in the United Kingdom. 
+  
+We shall furnish our detailed company profile in our next 
+correspondent. However, it would be appreciated if you can send 
+us your catalog through email to learn more about your company's 
+products and wholesale quote. It is hopeful that we can start a 
+viable long-lasting business relationship (partnership) with you.  
+  
+  
+Your prompt response would be delightfully appreciated. 
+  
+Best Wishes 
+  
+  
+Hanes S. Thomas 
+Procurement Office. 
+ASDA Stores Limited 
+Tel:  + 44 - 7451271650 
+WhatsApp: + 44 – 7441440360 
+Website: www.asda.co.uk
