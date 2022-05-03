@@ -2,37 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB982C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 May 2022 12:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C47C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 May 2022 12:02:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235091AbiECMFt (ORCPT
+        id S234201AbiECMGU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 May 2022 08:05:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51968 "EHLO
+        Tue, 3 May 2022 08:06:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235089AbiECMFr (ORCPT
+        with ESMTP id S235125AbiECMGM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 May 2022 08:05:47 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6F2D43206A;
-        Tue,  3 May 2022 05:02:15 -0700 (PDT)
+        Tue, 3 May 2022 08:06:12 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E8620366B5;
+        Tue,  3 May 2022 05:02:33 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.91,195,1647270000"; 
-   d="scan'208";a="119861819"
+   d="scan'208";a="118643206"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 03 May 2022 21:02:14 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 May 2022 21:02:33 +0900
 Received: from localhost.localdomain (unknown [10.226.92.6])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 924584226AFC;
-        Tue,  3 May 2022 21:02:12 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B409D4226AEF;
+        Tue,  3 May 2022 21:02:30 +0900 (JST)
 From:   Phil Edworthy <phil.edworthy@renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v3 09/12] clk: renesas: rzg2l: Add support for RZ/V2M reset monitor reg
-Date:   Tue,  3 May 2022 12:55:54 +0100
-Message-Id: <20220503115557.53370-10-phil.edworthy@renesas.com>
+Subject: [PATCH v3 11/12] arm64: dts: renesas: Add initial DTSI for RZ/V2M SoC
+Date:   Tue,  3 May 2022 12:55:56 +0100
+Message-Id: <20220503115557.53370-12-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220503115557.53370-1-phil.edworthy@renesas.com>
 References: <20220503115557.53370-1-phil.edworthy@renesas.com>
@@ -42,79 +43,124 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZ/V2M doesn't have a matching set of reset monitor regs for each reset
-reg like the RZ/G2L. Instead, it has a single CPG_RST_MON reg which has a
-single bit per module.
+Details of the SoC can be found here:
+https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-cortex-a-mpus/rzv2m-dual-cortex-a53-lpddr4x32bit-ai-accelerator-isp-4k-video-codec-4k-camera-input-fhd-display-output
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v3:
- - If no clk mon regs and no clk monitor bit specified, return an error
+ - Replace CPG_CORE with CPG_MOD
+ - Add UART pclk
+ - Add gic clk
+ - Fix cpg and uart0 register region
+ - Remove sys as we are currently not using it and binding not accepted
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 10 +++++++++-
- drivers/clk/renesas/rzg2l-cpg.h | 10 ++++++++--
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a09g011.dtsi | 95 ++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g011.dtsi
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index eaa7c9186163..89f63c09f089 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1177,8 +1177,16 @@ static int rzg2l_cpg_status(struct reset_controller_dev *rcdev,
- 	const struct rzg2l_cpg_info *info = priv->info;
- 	unsigned int reg = info->resets[id].off;
- 	u32 bitmask = BIT(info->resets[id].bit);
-+	s8 monbit = info->resets[id].monbit;
- 
--	return !(readl(priv->base + CLK_MRST_R(reg)) & bitmask);
-+	if (info->has_clk_mon_regs) {
-+		return !(readl(priv->base + CLK_MRST_R(reg)) & bitmask);
-+	} else if (monbit >= 0) {
-+		u32 monbitmask = BIT(monbit);
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
+new file mode 100644
+index 000000000000..dafc0837775b
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/V2M SoC
++ *
++ * Copyright (C) 2022 Renesas Electronics Corp.
++ */
 +
-+		return !!(readl(priv->base + CPG_RST_MON) & monbitmask);
-+	}
-+	return -ENOTSUPP;
- }
- 
- static const struct reset_control_ops rzg2l_cpg_reset_ops = {
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 43ce319a477f..6fbb431fb331 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -25,6 +25,7 @@
- #define CPG_PL6_SSEL		(0x414)
- #define CPG_PL6_ETH_SSEL	(0x418)
- #define CPG_PL5_SDIV		(0x420)
-+#define CPG_RST_MON		(0x680)
- #define CPG_OTHERFUNC1_REG	(0xBE8)
- 
- #define CPG_SIPLL5_STBY_RESETB		BIT(0)
-@@ -206,17 +207,22 @@ struct rzg2l_mod_clk {
-  *
-  * @off: register offset
-  * @bit: reset bit
-+ * @monbit: monitor bit in CPG_RST_MON register, -1 if none
-  */
- struct rzg2l_reset {
- 	u16 off;
- 	u8 bit;
-+	s8 monbit;
- };
- 
--#define DEF_RST(_id, _off, _bit)	\
-+#define DEF_RST_MON(_id, _off, _bit, _monbit)	\
- 	[_id] = { \
- 		.off = (_off), \
--		.bit = (_bit) \
-+		.bit = (_bit), \
-+		.monbit = (_monbit) \
- 	}
-+#define DEF_RST(_id, _off, _bit)	\
-+	DEF_RST_MON(_id, _off, _bit, -1)
- 
- /**
-  * struct rzg2l_cpg_info - SoC-specific CPG Description
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/r9a09g011-cpg.h>
++
++/ {
++	compatible = "renesas,r9a09g011";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	/* clock can be either from exclk or crystal oscillator (XIN/XOUT) */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&cpu0>;
++				};
++			};
++		};
++
++		cpu0: cpu@0 {
++			compatible = "arm,cortex-a53";
++			reg = <0>;
++			device_type = "cpu";
++			clocks = <&cpg CPG_MOD R9A09G011_CA53_CLK>;
++		};
++	};
++
++	soc: soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gic: interrupt-controller@82000000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x0 0x82010000 0 0x1000>,
++			      <0x0 0x82020000 0 0x20000>,
++			      <0x0 0x82040000 0 0x20000>,
++			      <0x0 0x82060000 0 0x20000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD R9A09G011_GIC_CLK>;
++			clock-names = "clk";
++		};
++
++		cpg: clock-controller@a3500000 {
++			compatible = "renesas,r9a09g011-cpg";
++			reg = <0 0xa3500000 0 0x1000>;
++			clocks = <&extal_clk>;
++			clock-names = "extal";
++			#clock-cells = <2>;
++			#reset-cells = <1>;
++			#power-domain-cells = <0>;
++		};
++
++		uart0: serial@a4040000 {
++			compatible = "renesas,r9a09g011-uart", "renesas,em-uart";
++			reg = <0 0xa4040000 0 0x80>;
++			interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A09G011_URT0_CLK>,
++				 <&cpg CPG_MOD R9A09G011_URT_PCLK>;
++			clock-names = "sclk", "pclk";
++			status = "disabled";
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++		clocks = <&cpg CPG_MOD R9A09G011_SYC_CNT_CLK>;
++		resets = <&cpg R9A09G011_SYC_RST_N>;
++	};
++};
 -- 
 2.32.0
 
