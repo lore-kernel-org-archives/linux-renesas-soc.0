@@ -2,140 +2,130 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E60C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 May 2022 14:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAC3C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 May 2022 14:47:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234023AbiECO0W (ORCPT
+        id S237319AbiECOuV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 May 2022 10:26:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53604 "EHLO
+        Tue, 3 May 2022 10:50:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232563AbiECO0W (ORCPT
+        with ESMTP id S232623AbiECOuU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 May 2022 10:26:22 -0400
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D1282CE0F;
-        Tue,  3 May 2022 07:22:49 -0700 (PDT)
-Received: by mail-qt1-f170.google.com with SMTP id t11so13476807qto.11;
-        Tue, 03 May 2022 07:22:49 -0700 (PDT)
+        Tue, 3 May 2022 10:50:20 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C216201A4
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 May 2022 07:46:48 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id w5-20020a17090aaf8500b001d74c754128so2454639pjq.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 May 2022 07:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=G+4oq2//P4l9lmQAI6Ffhs4i+UEf3c34TCtlhdVgcoo=;
+        b=zWAM2KWK1rCUuF2x8+NdiJI7YBLrIH5ARKLafvy6+C4hmB4sAqA0f6/U9H95Li3NZG
+         bTMISV/Lhc0zzDk8Cyz2ldil3ByQeQbRwqrlv2E7Tmt8aPdkWcSxfTNlH3FmZocYg9X/
+         P42nUNQVVrx6z6L9lT88Tw1Ffc9zv+z9NTuynw7g9MgL/I3HYwUGfVvHX8ZiIleDgtbe
+         S996Pw3CuC9WO6+6sO2bmlKyCTF7bCeyWKu7XoA7l3s2w4bCYCoLKM7+CuhsdwN/QfQd
+         UuErxAwjD7zkRe3GFx5RBo3czjSZ5zRrMtBffieGgAPM3QLGg6ItlEXnJ7+wEKpydzFP
+         xpmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3t6SRW/DjuDAlbfHDheZgdCnYyoKNEk8ORQglJBIxaM=;
-        b=61iJRRCwP2Zxr1bmTANdq0PWM7wirPKq3Q0VKIvLBce/HdspMlzso9Q5J84kkWVrhO
-         FDW2Ltwp1NcJIuyO9fvK844EPqcKKie3hr3w4ed2905RjFqI5TD3l786vkZaYguf2OWG
-         G6tVEWAUU3VpUtwgFf+Bkbgcf6W8nYVHa1f0n1ai3Bio1U984Z/QmlaoxWagYOIZ2Mln
-         COOaN1UlJMv0D8+omUmErlPZUT6Rk4H8FXRbF53G8HVnMHS2zxshONKy3Eq1r5uUgvM2
-         SreJcQbnumM1oUxwAeYSFVJmsgrS+5EFuy4rQDnTwG09NJYU/7g2ylWOrTrlv2vm9/ce
-         aqsg==
-X-Gm-Message-State: AOAM531bPSzteXZtZk0xMJwlgHScvfI/AgYpRuPYP39uYVZekfhlwBBT
-        nLqMJL4nPhLik3MkzK+LpDqrEIz/WDiYAA==
-X-Google-Smtp-Source: ABdhPJzr8STgTUcOAvo0wR7Yr1A8UCuRUgJOCFym0UGApXLBtqMaaLNhgQmuh/T7u32cZTCGDgvV+w==
-X-Received: by 2002:ac8:5a4a:0:b0:2f3:9ddf:2cdd with SMTP id o10-20020ac85a4a000000b002f39ddf2cddmr12749377qta.112.1651587768291;
-        Tue, 03 May 2022 07:22:48 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 184-20020a3704c1000000b0069fc13ce1f5sm6022653qke.38.2022.05.03.07.22.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 May 2022 07:22:47 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id m128so31341315ybm.5;
-        Tue, 03 May 2022 07:22:47 -0700 (PDT)
-X-Received: by 2002:a25:6157:0:b0:645:8d0e:f782 with SMTP id
- v84-20020a256157000000b006458d0ef782mr14945254ybb.36.1651587767157; Tue, 03
- May 2022 07:22:47 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=G+4oq2//P4l9lmQAI6Ffhs4i+UEf3c34TCtlhdVgcoo=;
+        b=w27aMUdf87KMzeyEShkh+Hc1ULW69e/R4K5gVVtiBetG0XVhFmIyfUc1a8M1H/DHmH
+         9Q/EQopCWQMMYI7k5KRp3tWbVuR178bo/HOgcLjrFGb9yPKYkN2+8MQYGUXdnrPlXi02
+         abebexiGaUbONimapfQPcGIPnUGWKU4IEgUO//zdmnMlaNPyobSoRqLAkzGF+vEx3sJW
+         irVON9FckaGIMozay6Ld68iqIOWh6MoSeYpAE32UtP0Ycko2/QmblzCyrVQWKpp/Jt3q
+         F0ZD3xNwN0LHxzEByiHMZVIALy5uhv54tAxqUeIIVgpiUuixIg8s6u9W6pvApnJiQB3N
+         LTOA==
+X-Gm-Message-State: AOAM5327B+WR0GPXPLiO49NUN0YrZ6cl7E4CuHFfScXo3r41hL2CRLxT
+        ZrbhnI14OK4keTARDN/LRFTRy1SNrjxf0UVwMic=
+X-Google-Smtp-Source: ABdhPJzD3a1w9MpSaRd7fBpdkSfiTta6LELLw7VAg4Fqod7mNuy8AsgBSkHWmlHrTYYWiR+4uWJ/ag==
+X-Received: by 2002:a17:90b:4d0c:b0:1d9:aee3:fac1 with SMTP id mw12-20020a17090b4d0c00b001d9aee3fac1mr5160505pjb.15.1651589204498;
+        Tue, 03 May 2022 07:46:44 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id f1-20020a170902ff0100b0015e8d4eb2bbsm6427920plj.261.2022.05.03.07.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 May 2022 07:46:44 -0700 (PDT)
+Message-ID: <62714054.1c69fb81.b4810.fa1d@mx.google.com>
+Date:   Tue, 03 May 2022 07:46:44 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220503115557.53370-1-phil.edworthy@renesas.com>
- <20220503115557.53370-5-phil.edworthy@renesas.com> <6fb57bcc87e091d6e88217d2b82af9da@kernel.org>
-In-Reply-To: <6fb57bcc87e091d6e88217d2b82af9da@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 May 2022 16:22:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU4j=Uaz5fAODFrPud0i40TdHUo6bYq0YpdnUzWaM3-Og@mail.gmail.com>
-Message-ID: <CAMuHMdU4j=Uaz5fAODFrPud0i40TdHUo6bYq0YpdnUzWaM3-Og@mail.gmail.com>
-Subject: Re: [PATCH v3 04/12] dt-bindings: timer: arm,arch_timer: Add optional
- clock and reset
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-devel-2022-05-03-v5.18-rc5
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master baseline: 306 runs,
+ 1 regressions (renesas-devel-2022-05-03-v5.18-rc5)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marc,
+renesas/master baseline: 306 runs, 1 regressions (renesas-devel-2022-05-03-=
+v5.18-rc5)
 
-On Tue, May 3, 2022 at 3:12 PM Marc Zyngier <maz@kernel.org> wrote:
-> On 2022-05-03 12:55, Phil Edworthy wrote:
-> > Some SoCs use a gated clock for the timer and the means to reset the
-> > timer.
-> > Hence add these as optional.
->
-> The architecture is crystal clear on the subject: the counter
-> is in an always-on domain. Why should this be visible to SW?
-> Also, reseting the counter breaks the guaranteed monotonicity
-> we rely on.
+Regressions Summary
+-------------------
 
-The DT bindings do state:
+platform   | arch | lab          | compiler | defconfig                    =
+| regressions
+-----------+------+--------------+----------+------------------------------=
++------------
+jetson-tk1 | arm  | lab-baylibre | gcc-10   | multi_v7_defc...G_ARM_LPAE=3D=
+y | 1          =
 
-  always-on:
-    type: boolean
-    description: If present, the timer is powered through an always-on power
-      domain, therefore it never loses context.
 
-and (surprisingly?) the absence of this property seems to be the
-norm...
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-05-03-v5.18-rc5/plan/baseline/
 
-And:
+  Test:     baseline
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-05-03-v5.18-rc5
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      1446b22ccdefd16ccef5ba375037418bae2fee53 =
 
-  arm,no-tick-in-suspend:
-    type: boolean
-    description: The main counter does not tick when the system is in
-      low-power system suspend on some SoCs. This behavior does not match the
-      Architecture Reference Manual's specification that the system
-counter "must
-      be implemented in an always-on power domain."
 
-So there's already precedent for clocks that can be disabled.
 
-> Worse case, this belongs to the boot firmware, not the kernel,
-> and I don't think this should be described in the DT.
+Test Regressions
+---------------- =
 
-"DT describes hardware, not software policy"?
 
-> > --- a/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
-> > +++ b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
-> > @@ -64,6 +64,13 @@ properties:
-> >        CNTFRQ on all CPUs to a uniform correct value. Use of this
-> > property is
-> >        strongly discouraged; fix your firmware unless absolutely
-> > impossible.
-> >
-> > +  clocks:
-> > +    description: Optional clock for the timer.
-> > +    maxItems: 1
-> > +
-> > +  resets:
-> > +    maxItems: 1
-> > +
-> >    always-on:
-> >      type: boolean
-> >      description: If present, the timer is powered through an always-on
-> > power
 
-Gr{oetje,eeting}s,
+platform   | arch | lab          | compiler | defconfig                    =
+| regressions
+-----------+------+--------------+----------+------------------------------=
++------------
+jetson-tk1 | arm  | lab-baylibre | gcc-10   | multi_v7_defc...G_ARM_LPAE=3D=
+y | 1          =
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  Details:     https://kernelci.org/test/plan/id/627110af32ef9e60f7dc7b42
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-05-03-v5.18-rc5/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=
+=3Dy/gcc-10/lab-baylibre/baseline-jetson-tk1.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-05-03-v5.18-rc5/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=
+=3Dy/gcc-10/lab-baylibre/baseline-jetson-tk1.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220428.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/627110af32ef9e60f7dc7=
+b43
+        failing since 3 days (last pass: renesas-devel-2022-04-13-v5.18-rc2=
+, first fail: renesas-devel-2022-04-29-v5.18-rc4) =
+
+ =20
