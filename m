@@ -2,129 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51B5C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 May 2022 09:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A1AC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 May 2022 09:45:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347449AbiEDJg1 (ORCPT
+        id S1347684AbiEDJsm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 May 2022 05:36:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41824 "EHLO
+        Wed, 4 May 2022 05:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347454AbiEDJgE (ORCPT
+        with ESMTP id S238227AbiEDJsk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 May 2022 05:36:04 -0400
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547B026552;
-        Wed,  4 May 2022 02:31:45 -0700 (PDT)
-Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 317E240012;
-        Wed,  4 May 2022 09:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651656704;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=s6gIGss4SIbDlM5Wfn6yHq9sUNz8kfouiZ73FU29oxY=;
-        b=JV0hQbEeDvK12iIcB262JvihEFhjf7JwyfAE/rfz2lmwDtYa0d5eLx1rxV/d/pvQENVEAp
-        DvcIkrKhpX83bzVdWMUvIXmcuSzY4vpxfrnFB54ObhGMsaSYn3QmznEGgfzPhtNsqtciO7
-        z0VHUly1yg6UaMBz92IcF7ByqCkEClVaEUJxoMe5tVq1YQffOa9CsQWB6GdejrO4PgoXSE
-        iGwRAk3gJuAoztIiuWlIaLH/aXMkNFMmXDjICXbEGkP4HWD1rmkmD2DklTvdTKAby7Jq+D
-        sqzXi5fsr2w56hG8M53IZ7Xti5C4pF5vkTY0qo9I6NH8fEslXqMdVO5p9k5QaA==
-From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 4 May 2022 05:48:40 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E913A27B29;
+        Wed,  4 May 2022 02:45:04 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,197,1647270000"; 
+   d="scan'208";a="118702209"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 04 May 2022 18:45:04 +0900
+Received: from localhost.localdomain (unknown [10.226.93.27])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7C5B94009679;
+        Wed,  4 May 2022 18:44:59 +0900 (JST)
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH net-next v3 09/12] ARM: dts: r9a06g032: describe MII converter
-Date:   Wed,  4 May 2022 11:29:57 +0200
-Message-Id: <20220504093000.132579-10-clement.leger@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220504093000.132579-1-clement.leger@bootlin.com>
-References: <20220504093000.132579-1-clement.leger@bootlin.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] Add new Renesas RZ/V2M SoC and Renesas RZ/V2M EVK support
+Date:   Wed,  4 May 2022 10:44:54 +0100
+Message-Id: <20220504094456.24386-1-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the MII converter node which describes the MII converter that is
-present on the RZ/N1 SoC.
+Hello,
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 38 ++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+RZ/V2M has a dual-core Cortex-A53 (1.0 GHz) CPU and built-in AI
+accelerator "DRP-AI" for vision, which is Renesas' original technology.
+It also has a 32-bit LPDDR4 interface and video codec (H.264).
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 20286433d3c6..ada5b1db0790 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -201,6 +201,44 @@ nand_controller: nand-controller@40102000 {
- 			status = "disabled";
- 		};
- 
-+		eth_miic: eth-miic@44030000 {
-+			compatible = "renesas,r9a06g032-miic", "renesas,rzn1-miic";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x44030000 0x10000>;
-+			clocks = <&sysctrl R9A06G032_CLK_MII_REF>,
-+				 <&sysctrl R9A06G032_CLK_RGMII_REF>,
-+				 <&sysctrl R9A06G032_CLK_RMII_REF>,
-+				 <&sysctrl R9A06G032_HCLK_SWITCH_RG>;
-+			power-domains = <&sysctrl>;
-+			status = "disabled";
-+
-+			mii_conv1: mii-conv@1 {
-+				reg = <1>;
-+				status = "disabled";
-+			};
-+
-+			mii_conv2: mii-conv@2 {
-+				reg = <2>;
-+				status = "disabled";
-+			};
-+
-+			mii_conv3: mii-conv@3 {
-+				reg = <3>;
-+				status = "disabled";
-+			};
-+
-+			mii_conv4: mii-conv@4 {
-+				reg = <4>;
-+				status = "disabled";
-+			};
-+
-+			mii_conv5: mii-conv@5 {
-+				reg = <5>;
-+				status = "disabled";
-+			};
-+		};
-+
- 		gic: interrupt-controller@44101000 {
- 			compatible = "arm,gic-400", "arm,cortex-a7-gic";
- 			interrupt-controller;
--- 
-2.34.1
+The RZ/V2M is used with ISP firmware that runs on one of the Cortex-A53
+cores. The firmware is an integral part of the SoC such that the HW
+User's Manual documents which of the peripheral modules are used by the
+firmware.
 
+Initial patches enables minimal peripherals on Renesas RZ/V2M EVK board
+and booted via nfs. Ethernet is broadly compatible with the
+etheravb-rcar-gen3 driver, but interrupts need some work so it's not
+been included in this patch set.
+
+Below blocks are enabled on Renesas RZ/V2M EVK board:
+- memory
+- External input clock
+- CPG
+- UART
+
+Links for SoC and EVK:
+[*] https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-cortex-a-mpus/rzv2m-dual-cortex-a53-lpddr4x32bit-ai-accelerator-isp-4k-video-codec-4k-camera-input-fhd-display-output
+
+
+Sorry for cross posting the patches to multiple subsystems, as these are
+just the dt-binding patches included as part of initial bringup patches.
+
+v4:
+ * Removed arm,arch_timer optional clock and reset
+ * Removed "optional" from description of renesas,em-uart clock.
+
+v3:
+ * Feedback addressed
+ * Added patch [0001] for renesas,em-uart dt-bindings RZ/V2M clock for the regs
+ * Added patch [0004] for arm,arch_timer dt-bindings optional clock and reset
+ * Added patch [0005] for rzg2l clk to move the DEF_MUX array size calc into the macro
+ * Added patch [0006] for rzg2l clk to add read-only versions of the macros
+
+v2:
+ * Removed SYS dt-bindings patch and corresponding SoC identification
+   as we only used the LSI version register. This can be dealt with
+   later on.
+ * Fixed em-uart dt-bindings.
+ * Included reviewed-by tags.
+
+Thanks
+Phil
