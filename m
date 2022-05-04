@@ -2,41 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52419C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 May 2022 14:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4CAC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 May 2022 14:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351640AbiEDPA2 (ORCPT
+        id S243441AbiEDPA7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 May 2022 11:00:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49212 "EHLO
+        Wed, 4 May 2022 11:00:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351596AbiEDPA0 (ORCPT
+        with ESMTP id S1351601AbiEDPAi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 May 2022 11:00:26 -0400
+        Wed, 4 May 2022 11:00:38 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3CC102A73B;
-        Wed,  4 May 2022 07:56:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9C31D286F6;
+        Wed,  4 May 2022 07:57:02 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.91,198,1647270000"; 
-   d="scan'208";a="118715050"
+   d="scan'208";a="118715133"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 04 May 2022 23:56:42 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 04 May 2022 23:57:01 +0900
 Received: from localhost.localdomain (unknown [10.226.93.27])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 257334250F0B;
-        Wed,  4 May 2022 23:56:38 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4E18C4250F07;
+        Wed,  4 May 2022 23:56:59 +0900 (JST)
 From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 7/9] ravb: Add support for RZ/V2M
-Date:   Wed,  4 May 2022 15:54:52 +0100
-Message-Id: <20220504145454.71287-8-phil.edworthy@renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH 9/9] arm64: dts: renesas: rzv2m evk: Enable ethernet
+Date:   Wed,  4 May 2022 15:54:54 +0100
+Message-Id: <20220504145454.71287-10-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220504145454.71287-1-phil.edworthy@renesas.com>
 References: <20220504145454.71287-1-phil.edworthy@renesas.com>
@@ -46,68 +43,43 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RZ/V2M Ethernet is very similar to R-Car Gen3 Ethernet-AVB, though
-some small parts are the same as R-Car Gen2.
-Other differences are:
-* It has separate data (DI), error (Line 1) and management (Line 2) irqs
-  rather than one irq for all three.
-* Instead of using the High-speed peripheral bus clock for gPTP, it has a
-  separate gPTP reference clock.
+Enable Ethernet interface on RZ/V2M EVK.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-Note: gPTP was tested using an RZ/V2M EVK and an R-Car M3N Salvator-XS
-board, connected with a Summit X440 AVB switch, using ptp4l.
----
- drivers/net/ethernet/renesas/ravb_main.c | 27 ++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index ded87cb51650..03b127faf52f 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2461,6 +2461,32 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.magic_pkt = 1,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts b/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
+index 41cba82c2252..ec7099211cab 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
+@@ -14,6 +14,7 @@ / {
  
-+static const struct ravb_hw_info ravb_rzv2m_hw_info = {
-+	.rx_ring_free = ravb_rx_ring_free_rcar,
-+	.rx_ring_format = ravb_rx_ring_format_rcar,
-+	.alloc_rx_desc = ravb_alloc_rx_desc_rcar,
-+	.receive = ravb_rx_rcar,
-+	.set_rate = ravb_set_rate_rcar,
-+	.set_feature = ravb_set_features_rcar,
-+	.dmac_init = ravb_dmac_init_rcar,
-+	.emac_init = ravb_emac_init_rcar,
-+	.gstrings_stats = ravb_gstrings_stats,
-+	.gstrings_size = sizeof(ravb_gstrings_stats),
-+	.net_hw_features = NETIF_F_RXCSUM,
-+	.net_features = NETIF_F_RXCSUM,
-+	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
-+	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
-+	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
-+	.rx_max_buf_size = SZ_2K,
-+	.multi_irqs = 1,
-+	.err_mgmt_irqs = 1,
-+	.gptp = 1,
-+	.gptp_ptm_gic = 1,
-+	.gptp_ref_clk = 1,
-+	.nc_queues = 1,
-+	.magic_pkt = 1,
-+};
-+
- static const struct ravb_hw_info gbeth_hw_info = {
- 	.rx_ring_free = ravb_rx_ring_free_gbeth,
- 	.rx_ring_format = ravb_rx_ring_format_gbeth,
-@@ -2488,6 +2514,7 @@ static const struct of_device_id ravb_match_table[] = {
- 	{ .compatible = "renesas,etheravb-rcar-gen2", .data = &ravb_gen2_hw_info },
- 	{ .compatible = "renesas,etheravb-r8a7795", .data = &ravb_gen3_hw_info },
- 	{ .compatible = "renesas,etheravb-rcar-gen3", .data = &ravb_gen3_hw_info },
-+	{ .compatible = "renesas,etheravb-rzv2m", .data = &ravb_rzv2m_hw_info },
- 	{ .compatible = "renesas,rzg2l-gbeth", .data = &gbeth_hw_info },
- 	{ }
+ 	aliases {
+ 		serial0 = &uart0;
++		ethernet0 = &avb;
+ 	};
+ 
+ 	chosen {
+@@ -42,3 +43,16 @@ &extal_clk {
+ &uart0 {
+ 	status = "okay";
  };
++
++&avb {
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++	phy-mode = "gmii";
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		compatible = "ethernet-phy-id0022.1622",
++			     "ethernet-phy-ieee802.3-c22";
++		reg = <0>;
++	};
++};
 -- 
 2.32.0
 
