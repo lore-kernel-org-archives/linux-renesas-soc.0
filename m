@@ -2,181 +2,112 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67782C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 May 2022 13:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7BAC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 May 2022 13:05:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378615AbiEENEg convert rfc822-to-8bit (ORCPT
+        id S1376648AbiEENJG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 May 2022 09:04:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47176 "EHLO
+        Thu, 5 May 2022 09:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378489AbiEENEe (ORCPT
+        with ESMTP id S1378750AbiEENIr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 May 2022 09:04:34 -0400
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BAC452E7B;
-        Thu,  5 May 2022 06:00:48 -0700 (PDT)
-Received: by mail-qk1-f176.google.com with SMTP id b20so3062848qkc.6;
-        Thu, 05 May 2022 06:00:48 -0700 (PDT)
+        Thu, 5 May 2022 09:08:47 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3643256743
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  5 May 2022 06:05:07 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id g6so8625050ejw.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 May 2022 06:05:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sxVJoGvxoT/BfORhwUe0lF83tKeGUQ56jY7vzgfAHU4=;
+        b=Y0K2T7eDDIErEPqMy8O6G47SIMuNV/FV2iBabtCwdZYCRksLJj+E+c7fbrSt9ZBBXD
+         DaXJNvwCp8O95B7G3qBBBXd/ZY5LglYP8OcOlRsRkLkFbnOz5YGjf1+Kq+Cej6sf1PKz
+         8jox3zcMMsB69mnVMtXKZEg+/RyB0rS4FojXfONdqL7k9Dw/I4yA/G/3RFFnSgWC8agR
+         bsZsTNdQJo4ur+mN0mOVzXqc/pW10pVTqbvQpkdO4R2oawKCjQrPZ/LhQquGSb8INoG5
+         zUIcx6Usp3yJ11Kt8LC8bG4AgtPbYUl5xx+MqNZTXX94AuUxIh18hRHgvcWzdek9DC0O
+         2i3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZlNgXSwILcEbA0TzwSgffqQ9c6KRlsAYre6fYSWbxKU=;
-        b=kzhcQUprjhgZd37XulTGo1bzlJoi71HVa7DhdwEeBd/HvsbR2Qw2WoFytSgEs+FHSB
-         QX+3BY36LH2ZvsKbX2yBVj4FAnGjh6cIa4xTB6PpCiFBsi/UzmJWr6NsnM5fm3xz7X/+
-         awt5ex7cCaaJWcNFO3TpZzW3jF0ctzNdZVFT8oEvpMp5NirPe+o82yjIm3e51DnVm7+M
-         H7ofnTazq/TIN07QKS5FwDVmTDXTy5ZlgF9VKfV/898NC2pfxRP9G89YiBXxYcgyKeLK
-         25FMzf477VtO3zyMdxzTmGs5ByDSL/P09hrz0kbI1f3JK5qP5uu8+IeKgLdUwGvlpx1D
-         2tzA==
-X-Gm-Message-State: AOAM532brV1ecb5DVXZekzX8940vZALJtGArnriQjUKwJ82As4FUw8/F
-        fM5AFL4m+68t6Lizz5+xILLG9OwUsuM87Q==
-X-Google-Smtp-Source: ABdhPJzL2MGiGi+EeRP7s8f+pCkwWx+GoWkAYbWOGaYLI1GRugaWllrtFX758bU6zHFL4w6M4g7yYQ==
-X-Received: by 2002:a37:9243:0:b0:69b:6009:856d with SMTP id u64-20020a379243000000b0069b6009856dmr19033735qkd.274.1651755641548;
-        Thu, 05 May 2022 06:00:41 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id o28-20020a05620a0d5c00b0069fc167df92sm733004qkl.82.2022.05.05.06.00.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 May 2022 06:00:40 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-2ef5380669cso47198277b3.9;
-        Thu, 05 May 2022 06:00:40 -0700 (PDT)
-X-Received: by 2002:a0d:d953:0:b0:2f7:d5ce:f204 with SMTP id
- b80-20020a0dd953000000b002f7d5cef204mr23313149ywe.502.1651755639797; Thu, 05
- May 2022 06:00:39 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=sxVJoGvxoT/BfORhwUe0lF83tKeGUQ56jY7vzgfAHU4=;
+        b=hZnjtNBEw8xqqAQ6Pu3TB5GlnR43NlkAnS9/UjxU/OUmC8QVFWiQILsVdKb9g3Zrse
+         NOR5a9VVFCLRk7HjRvzZXq2NsP89ecDYXZcXMoDHz6LxsDnUlASPRzy5ZmD2Mhmh6u71
+         FnqMZ0TG1HlGcP0rBdtXukKsVA+yYQWNFWSsZ0nZIy9orsQyjfrbFSkzD6dQ6QUVtPck
+         M3RPztsb0ttdOPWlctoSdINt81i4avnawrOHkf9RMf0X84frO30jkzNNxuKpnv2nN7pg
+         GDa2/xLGjkxZN8DQpZgzQZz/BBlE1bUvKaKHqYUuau850zi2ORlQZObzLWOBIN0KsUHl
+         Zkpg==
+X-Gm-Message-State: AOAM530Ay2hWAm4aoWlQZ5bibpXe75gGCbwo7yD9Q4Nd44tGuEqt4U1b
+        wvndugJ6oLRJPh3gZ9XVTizYLGpGM3jwmddvfeqs1A==
+X-Google-Smtp-Source: ABdhPJxyNkSLwouP3OR63NyFLRxUlmDS+dFIZZqJlV9mcUABNttg9TsG8+o4n8l4yoY3YgwsQa8BiV83N6jWTpdMxkc=
+X-Received: by 2002:a17:907:3e28:b0:6f4:3900:78f8 with SMTP id
+ hp40-20020a1709073e2800b006f4390078f8mr21714935ejc.736.1651755905797; Thu, 05
+ May 2022 06:05:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220504093000.132579-1-clement.leger@bootlin.com>
- <20220504093000.132579-5-clement.leger@bootlin.com> <CAMuHMdU1dF25eKeihBO3xRarW-acG0vUSggWfKOwG3v=7eN+bg@mail.gmail.com>
- <20220505143236.31fc6b58@fixe.home>
-In-Reply-To: <20220505143236.31fc6b58@fixe.home>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 5 May 2022 15:00:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU1DZeigT1ES4FMrtLpnRA0fMp6k4ZhDs7U0=CvAuOxgA@mail.gmail.com>
-Message-ID: <CAMuHMdU1DZeigT1ES4FMrtLpnRA0fMp6k4ZhDs7U0=CvAuOxgA@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 04/12] net: pcs: add Renesas MII converter driver
-To:     =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+References: <cover.1651497024.git.geert+renesas@glider.be> <5628a862688bd9d3b4f6c66cb338671211058641.1651497024.git.geert+renesas@glider.be>
+In-Reply-To: <5628a862688bd9d3b4f6c66cb338671211058641.1651497024.git.geert+renesas@glider.be>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 5 May 2022 15:04:55 +0200
+Message-ID: <CAMRc=MeQZ_T_AoHUO3qx7oW68UMC6HH9CaC041vYr7wQisqjHA@mail.gmail.com>
+Subject: Re: [PATCH 1/7] dt-bindings: gpio: renesas,rcar-gpio: R-Car V3U is
+ R-Car Gen4
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dmaengine@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, linux-serial@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Clément,
-
-On Thu, May 5, 2022 at 2:33 PM Clément Léger <clement.leger@bootlin.com> wrote:
-> Le Thu, 5 May 2022 09:16:38 +0200,
-> Geert Uytterhoeven <geert@linux-m68k.org> a écrit :
-> > On Wed, May 4, 2022 at 11:31 AM Clément Léger <clement.leger@bootlin.com> wrote:
-> > > Add a PCS driver for the MII converter that is present on the Renesas
-> > > RZ/N1 SoC. This MII converter is reponsible for converting MII to
-> > > RMII/RGMII or act as a MII pass-trough. Exposing it as a PCS allows to
-> > > reuse it in both the switch driver and the stmmac driver. Currently,
-> > > this driver only allows the PCS to be used by the dual Cortex-A7
-> > > subsystem since the register locking system is not used.
-> > >
-> > > Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-> >
-> > Thanks for your patch!
-> >
-> > > --- /dev/null
-> > > +++ b/drivers/net/pcs/pcs-rzn1-miic.c
-> >
-> > > +static int miic_probe(struct platform_device *pdev)
-> > > +{
-> > > +       struct device *dev = &pdev->dev;
-> > > +       struct miic *miic;
-> > > +       u32 mode_cfg;
-> > > +       int ret;
-> > > +
-> > > +       ret = miic_parse_dt(dev, &mode_cfg);
-> > > +       if (ret < 0)
-> > > +               return -EINVAL;
-> > > +
-> > > +       miic = devm_kzalloc(dev, sizeof(*miic), GFP_KERNEL);
-> > > +       if (!miic)
-> > > +               return -ENOMEM;
-> > > +
-> > > +       spin_lock_init(&miic->lock);
-> > > +       miic->dev = dev;
-> > > +       miic->base = devm_platform_ioremap_resource(pdev, 0);
-> > > +       if (!miic->base)
-> > > +               return -EINVAL;
-> > > +
-> > > +       pm_runtime_enable(dev);
-> > > +       ret = pm_runtime_resume_and_get(dev);
-> > > +       if (ret < 0)
-> >
-> > Missing pm_runtime_disable(dev).
+On Mon, May 2, 2022 at 3:35 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 >
-> Maybe using devm_pm_runtime_enable() would be sufficient and avoid such
-> calls.
+> Despite the name, R-Car V3U is the first member of the R-Car Gen4
+> family.  Hence move its compatible value to the R-Car Gen4 section.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> index 0681a4790cd62e23..75e5da6a7cc04bbd 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> @@ -48,11 +48,9 @@ properties:
+>                - renesas,gpio-r8a77995     # R-Car D3
+>            - const: renesas,rcar-gen3-gpio # R-Car Gen3 or RZ/G2
+>
+> -      - items:
+> -          - const: renesas,gpio-r8a779a0  # R-Car V3U
+> -
+>        - items:
+>            - enum:
+> +              - renesas,gpio-r8a779a0     # R-Car V3U
+>                - renesas,gpio-r8a779f0     # R-Car S4-8
+>            - const: renesas,rcar-gen4-gpio # R-Car Gen4
+>
+> --
+> 2.25.1
+>
 
-That's an option.
-Note that that still won't allow you to get rid of the .remove() callback,
-as you still have to call pm_runtime_put() manually.
-
-> >
-> > > +               return ret;
-> > > +
-> > > +       ret = miic_init_hw(miic, mode_cfg);
-> > > +       if (ret)
-> > > +               goto disable_runtime_pm;
-> > > +
-> > > +       /* miic_create() relies on that fact that data are attached to the
-> > > +        * platform device to determine if the driver is ready so this needs to
-> > > +        * be the last thing to be done after everything is initialized
-> > > +        * properly.
-> > > +        */
-> > > +       platform_set_drvdata(pdev, miic);
-> > > +
-> > > +       return 0;
-> > > +
-> > > +disable_runtime_pm:
-> > > +       pm_runtime_put(dev);
-> >
-> > Missing pm_runtime_disable(dev).
-> >
-> > > +
-> > > +       return ret;
-> > > +}
-> > > +
-> > > +static int miic_remove(struct platform_device *pdev)
-> > > +{
-> > > +       pm_runtime_put(&pdev->dev);
-> >
-> > Missing pm_runtime_disable(dev).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
