@@ -2,95 +2,73 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A456BC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 May 2022 18:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3549C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 May 2022 18:45:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232388AbiEESRL (ORCPT
+        id S1384257AbiEESs4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 May 2022 14:17:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34036 "EHLO
+        Thu, 5 May 2022 14:48:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383036AbiEESRE (ORCPT
+        with ESMTP id S1384722AbiEESsZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 May 2022 14:17:04 -0400
-Received: from mxout03.lancloud.ru (mxout03.lancloud.ru [45.84.86.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A66425C373;
-        Thu,  5 May 2022 11:13:21 -0700 (PDT)
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru ECC7A20326CC
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: Re: [PATCH 6/9] ravb: Use separate clock for gPTP
-To:     Phil Edworthy <phil.edworthy@renesas.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Thu, 5 May 2022 14:48:25 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E3E276160A;
+        Thu,  5 May 2022 11:40:53 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,201,1647270000"; 
+   d="scan'208";a="118801312"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 06 May 2022 03:40:53 +0900
+Received: from localhost.localdomain (unknown [10.226.92.72])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 548C540078C4;
+        Fri,  6 May 2022 03:40:50 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-References: <20220504145454.71287-1-phil.edworthy@renesas.com>
- <20220504145454.71287-7-phil.edworthy@renesas.com>
-Organization: Open Mobile Platform
-Message-ID: <1bbb8044-a8a8-3fa1-b90b-cae9dfbb64cd@omp.ru>
-Date:   Thu, 5 May 2022 21:13:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 2/2] iio: adc: rzg2l_adc: Remove unnecessary channel check from rzg2l_adc_read_label()
+Date:   Thu,  5 May 2022 19:40:37 +0100
+Message-Id: <20220505184037.511295-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220505184037.511295-1-biju.das.jz@bp.renesas.com>
+References: <20220505184037.511295-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20220504145454.71287-7-phil.edworthy@renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT02.lancloud.ru (fd00:f066::142) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+Remove unnecessary channel check from rzg2l_adc_read_label(), as the channel error
+handling is already done in probe(). Therefore no need to validate at runtime.
 
-On 5/4/22 5:54 PM, Phil Edworthy wrote:
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2:
+ * New patch
+---
+ drivers/iio/adc/rzg2l_adc.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> RZ/V2M has a separate gPTP reference clock that is used when the
-> AVB-DMAC Mode Register (CCC) gPTP Clock Select (CSEL) bits are
-> set to "01: High-speed peripheral bus clock".
-> Therefore, add a feature that allows this clock to be used for
-> gPTP.
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+index 7585144b9715..bee5f9861acb 100644
+--- a/drivers/iio/adc/rzg2l_adc.c
++++ b/drivers/iio/adc/rzg2l_adc.c
+@@ -260,9 +260,6 @@ static int rzg2l_adc_read_label(struct iio_dev *iio_dev,
+ 				const struct iio_chan_spec *chan,
+ 				char *label)
+ {
+-	if (chan->channel >= RZG2L_ADC_MAX_CHANNELS)
+-		return -EINVAL;
+-
+ 	return sysfs_emit(label, "%s\n", rzg2l_adc_channel_name[chan->channel]);
+ }
+ 
+-- 
+2.25.1
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-
-[...]
-> diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-> index 73976a392457..f8706897ea41 100644
-> --- a/drivers/net/ethernet/renesas/ravb.h
-> +++ b/drivers/net/ethernet/renesas/ravb.h
-> @@ -1032,6 +1032,7 @@ struct ravb_hw_info {
->  	unsigned gptp:1;		/* AVB-DMAC has gPTP support */
->  	unsigned ccc_gac:1;		/* AVB-DMAC has gPTP support active in config mode */
->  	unsigned gptp_ptm_gic:1;	/* gPTP enables Presentation Time Match irq via GIC */
-> +	unsigned gptp_ref_clk:1;	/* gPTP has separate reference clock */
-
-   Perhaps just gptp_clk?
-
-[...]
-> @@ -1043,6 +1044,7 @@ struct ravb_private {
->  	void __iomem *addr;
->  	struct clk *clk;
->  	struct clk *refclk;
-
-   I wonder what that refclk feeds -- no word of it in the commit adding it...
-
-> +	struct clk *gptp_clk;
->  	struct mdiobb_ctrl mdiobb;
->  	u32 num_rx_ring[NUM_RX_QUEUE];
->  	u32 num_tx_ring[NUM_TX_QUEUE];
-[...]
-
-MBR, Sergey
