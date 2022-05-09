@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B61C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 May 2022 15:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE68C4167B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 May 2022 15:46:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238557AbiEIPuW (ORCPT
+        id S238578AbiEIPuY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 May 2022 11:50:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45746 "EHLO
+        Mon, 9 May 2022 11:50:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238578AbiEIPuS (ORCPT
+        with ESMTP id S238580AbiEIPuO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 May 2022 11:50:18 -0400
-Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52DC2BD0D6;
-        Mon,  9 May 2022 08:46:18 -0700 (PDT)
+        Mon, 9 May 2022 11:50:14 -0400
+Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [217.70.178.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 379A91D7341;
+        Mon,  9 May 2022 08:46:12 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 7802020000C;
-        Mon,  9 May 2022 15:46:06 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 13879200003;
+        Mon,  9 May 2022 15:46:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1652111168;
+        t=1652111171;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pkR0h+3BY+/54j85v/2/n8ptjwQCo4hTlh7FZqPbIls=;
-        b=FN3wEYfCMQ2pCIJsb+sR5sYi1lIDSX0Qki1KJ+wazDtkHLNtL0T140ht1nsiw4g+nXlfsW
-        dnUs3gpS+hwls4FU4sRCxZZKctcHq6vG7TANDH+O67Ih1U5zzCAkdX3weMi4NuCt51IZCk
-        bnsU3IKyG/wP11Dbx8uILDqf/ii/ud6EFEpzBttNqgMq6kIbZX7AhLW3wwwhAs8yCngz4z
-        sj4jbcngpSOG5V8/23oyQiuHR6vWhYq1IPWdinkhuB8U/VPN9dNJkwiA9hMLK/yGR9F6lW
-        e8iFLt1GmitA79jz+fea0VO6CNL0VfQYTAAA7Xbbv8xwHSKxdmRyEer+vV3ulQ==
+        bh=AeURFA21azT2WZg6+haUTuGeT1PTBOnmz+vdgDPsEgY=;
+        b=Jcc+lLWGNptb7ngZ58iDE317h9qxwhywG54JBrhfCbApP4Zu1pOkYFK3s5hkWiXxRKeTwq
+        FYVgSEMOAP9H/4gQZVe/zNMpgHlk9DcGmzG8A72VWVixtsdXgIQtZe44S4tDUsvvX9PdGK
+        bykHTnwCiNe3vsjh5JgMxv39biP4vLlEkIxWv78LjeiedPV1mvdi/1X1UADQa0Xzmpx5PV
+        LhP4NG8lKJBkwzeVeyBsb0zRFePmjJxDRbykJ9T5pIk0WJ5EUpGD5lmoduAumrOqjh9ZPi
+        URmc8nk7UoFJGhZOsFKNRNFI+eaJrVgG0J19/DMiVfYiWHi5QOkW43VpiBiI+g==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -48,9 +48,9 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>
-Subject: [PATCH v4 3/5] rtc: rzn1: Add alarm support
-Date:   Mon,  9 May 2022 17:45:57 +0200
-Message-Id: <20220509154559.24851-4-miquel.raynal@bootlin.com>
+Subject: [PATCH v4 5/5] MAINTAINERS: Add myself as maintainer of the RZN1 RTC driver
+Date:   Mon,  9 May 2022 17:45:59 +0200
+Message-Id: <20220509154559.24851-6-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220509154559.24851-1-miquel.raynal@bootlin.com>
 References: <20220509154559.24851-1-miquel.raynal@bootlin.com>
@@ -61,162 +61,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZN1 RTC can trigger an interrupt when reaching a particular date up
-to 7 days ahead. Bring support for this alarm.
-
-One drawback though, the granularity is about a minute.
+After contributing it, I'll volunteer to maintain it.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/rtc/rtc-rzn1.c | 106 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 105 insertions(+), 1 deletion(-)
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
-index 1d4e7a782749..7e0609ac8aa8 100644
---- a/drivers/rtc/rtc-rzn1.c
-+++ b/drivers/rtc/rtc-rzn1.c
-@@ -159,14 +159,107 @@ static int rzn1_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	return 0;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9cf74e4eacce..cc4a3cca022e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16847,6 +16847,14 @@ S:	Supported
+ F:	Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+ F:	drivers/iio/adc/rzg2l_adc.c
  
-+static irqreturn_t rzn1_rtc_alarm_irq(int irq, void *dev_id)
-+{
-+	struct rzn1_rtc *rtc = dev_id;
++RENESAS RZ/N1 RTC CONTROLLER DRIVER
++M:	Miquel Raynal <miquel.raynal@bootlin.com>
++L:	linux-rtc@vger.kernel.org
++L:	linux-renesas-soc@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
++F:	drivers/rtc/rtc-rzn1.c
 +
-+	rtc_update_irq(rtc->rtcdev, 1, RTC_AF | RTC_IRQF);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int rzn1_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
-+{
-+	struct rzn1_rtc *rtc = dev_get_drvdata(dev);
-+	u32 ctl1 = readl(rtc->base + RZN1_RTC_CTL1);
-+
-+	if (enable)
-+		ctl1 |= RZN1_RTC_CTL1_ALME;
-+	else
-+		ctl1 &= ~RZN1_RTC_CTL1_ALME;
-+
-+	writel(ctl1, rtc->base + RZN1_RTC_CTL1);
-+
-+	return 0;
-+}
-+
-+static int rzn1_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct rzn1_rtc *rtc = dev_get_drvdata(dev);
-+	struct rtc_time *tm = &alrm->time;
-+	unsigned int min, hour, wday, delta_days;
-+	time64_t alarm;
-+	u32 ctl1;
-+	int ret;
-+
-+	ret = rzn1_rtc_read_time(dev, tm);
-+	if (ret)
-+		return ret;
-+
-+	min = readl(rtc->base + RZN1_RTC_ALM);
-+	hour = readl(rtc->base + RZN1_RTC_ALH);
-+	wday = readl(rtc->base + RZN1_RTC_ALW);
-+
-+	tm->tm_sec = 0;
-+	tm->tm_min = bcd2bin(min);
-+	tm->tm_hour = bcd2bin(hour);
-+	delta_days = ((fls(wday) - 1) - tm->tm_wday + 7) % 7;
-+	tm->tm_wday = fls(wday) - 1;
-+
-+	if (delta_days) {
-+		alarm = rtc_tm_to_time64(tm) + (delta_days * 86400);
-+		rtc_time64_to_tm(alarm, tm);
-+	}
-+
-+	ctl1 = readl(rtc->base + RZN1_RTC_CTL1);
-+	alrm->enabled = !!(ctl1 & RZN1_RTC_CTL1_ALME);
-+
-+	return 0;
-+}
-+
-+static int rzn1_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct rzn1_rtc *rtc = dev_get_drvdata(dev);
-+	struct rtc_time *tm = &alrm->time, tm_now;
-+	unsigned long alarm, farest;
-+	unsigned int days_ahead, wday;
-+	int ret;
-+
-+	ret = rzn1_rtc_read_time(dev, &tm_now);
-+	if (ret)
-+		return ret;
-+
-+	/* We cannot set alarms more than one week ahead */
-+	farest = rtc_tm_to_time64(&tm_now) + (7 * 86400);
-+	alarm = rtc_tm_to_time64(tm);
-+	if (time_after(alarm, farest))
-+		return -ERANGE;
-+
-+	/* Convert alarm day into week day */
-+	days_ahead = tm->tm_mday - tm_now.tm_mday;
-+	wday = (tm_now.tm_wday + days_ahead) % 7;
-+
-+	writel(bin2bcd(tm->tm_min), rtc->base + RZN1_RTC_ALM);
-+	writel(bin2bcd(tm->tm_hour), rtc->base + RZN1_RTC_ALH);
-+	writel(BIT(wday), rtc->base + RZN1_RTC_ALW);
-+
-+	rzn1_rtc_alarm_irq_enable(dev, alrm->enabled);
-+
-+	return 0;
-+}
-+
- static const struct rtc_class_ops rzn1_rtc_ops = {
- 	.read_time = rzn1_rtc_read_time,
- 	.set_time = rzn1_rtc_set_time,
-+	.read_alarm = rzn1_rtc_read_alarm,
-+	.set_alarm = rzn1_rtc_set_alarm,
-+	.alarm_irq_enable = rzn1_rtc_alarm_irq_enable,
- };
- 
- static int rzn1_rtc_probe(struct platform_device *pdev)
- {
- 	struct rzn1_rtc *rtc;
-+	int alarm_irq;
- 	int ret;
- 
- 	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
-@@ -179,6 +272,10 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 	if (IS_ERR(rtc->base))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->base), "Missing reg\n");
- 
-+	alarm_irq = platform_get_irq(pdev, 0);
-+	if (alarm_irq < 0)
-+		return alarm_irq;
-+
- 	rtc->rtcdev = devm_rtc_allocate_device(&pdev->dev);
- 	if (IS_ERR(rtc->rtcdev))
- 		return PTR_ERR(rtc);
-@@ -186,7 +283,7 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 	rtc->rtcdev->range_min = RTC_TIMESTAMP_BEGIN_2000;
- 	rtc->rtcdev->range_max = RTC_TIMESTAMP_END_2099;
- 	rtc->rtcdev->ops = &rzn1_rtc_ops;
--	clear_bit(RTC_FEATURE_ALARM, rtc->rtcdev->features);
-+	set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
- 	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->rtcdev->features);
- 
- 	devm_pm_runtime_enable(&pdev->dev);
-@@ -204,6 +301,13 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 	/* Disable all interrupts */
- 	writel(0, rtc->base + RZN1_RTC_CTL1);
- 
-+	ret = devm_request_irq(&pdev->dev, alarm_irq, rzn1_rtc_alarm_irq, 0,
-+			       dev_name(&pdev->dev), rtc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "RTC timer interrupt not available\n");
-+		goto dis_runtime_pm;
-+	}
-+
- 	ret = devm_rtc_register_device(rtc->rtcdev);
- 	if (ret)
- 		goto dis_runtime_pm;
+ RENESAS R-CAR GEN3 & RZ/N1 NAND CONTROLLER DRIVER
+ M:	Miquel Raynal <miquel.raynal@bootlin.com>
+ L:	linux-mtd@lists.infradead.org
 -- 
 2.27.0
 
