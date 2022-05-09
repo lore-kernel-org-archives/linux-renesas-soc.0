@@ -2,183 +2,346 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A354C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 May 2022 16:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9344C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 May 2022 05:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235257AbiEHQRy (ORCPT
+        id S231463AbiEIFUi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 8 May 2022 12:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36906 "EHLO
+        Mon, 9 May 2022 01:20:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235339AbiEHQRx (ORCPT
+        with ESMTP id S234434AbiEIFOj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 May 2022 12:17:53 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECB8101DA
-        for <linux-renesas-soc@vger.kernel.org>; Sun,  8 May 2022 09:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652026442; x=1683562442;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vQDAUQz8Tpu9M4+ZIgphrcZdnRinpgE+HAXoTpM84Kk=;
-  b=cAOTbz3Jsm4g5QeQGMU68WDteQ6vL5SshJWKV4yLkXWFnp9q5i/YqSWG
-   N0OpUya5PG81NRetfF+3BVeNObaCoXn5qR7C7ed5ObbNUfOplbvfY6KMf
-   lRZhOmuxbD/mbIPnFaoWOdlSYz/Dgc0AWx18RvM42bxvnkzezCeSGeTIH
-   cDqBXH1ADytNx09sFD6sffa+aue2EEu3cFs/Udf/meZYSCAbPQsGkZXoZ
-   ZKKtUjHgNeqCH6dUwp/F+k4Pa/kNb3jhvrfAIhNCxYyDO3SiXHFGUUIJq
-   gu8LAmVgs3uAzmWYJAaKOEN5Ygu+8uLZOJfBL5+zyXD9q2+WjOI48VMJy
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10341"; a="294077170"
-X-IronPort-AV: E=Sophos;i="5.91,208,1647327600"; 
-   d="scan'208";a="294077170"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2022 09:13:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,208,1647327600"; 
-   d="scan'208";a="695969489"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 08 May 2022 09:13:56 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nnjXf-000Fbq-DJ;
-        Sun, 08 May 2022 16:13:55 +0000
-Date:   Mon, 09 May 2022 00:13:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:master] BUILD SUCCESS
- d1312c8c2b58ca08cd1d871e77474e7b2af0d3ce
-Message-ID: <6277ec26.gzCX86DyJwinHBKa%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 9 May 2022 01:14:39 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A4EB3DEB7;
+        Sun,  8 May 2022 22:10:45 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,210,1647270000"; 
+   d="scan'208";a="120333447"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 09 May 2022 14:10:45 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D773E40083F7;
+        Mon,  9 May 2022 14:10:40 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 5/5] pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to handle GPIO interrupt
+Date:   Mon,  9 May 2022 06:09:53 +0100
+Message-Id: <20220509050953.11005-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
-branch HEAD: d1312c8c2b58ca08cd1d871e77474e7b2af0d3ce  Merge branch 'renesas-next' into renesas-devel
+Add IRQ domian to RZ/G2L pinctrl driver to handle GPIO interrupt.
 
-elapsed time: 4638m
+GPIO0-GPIO122 pins can be used as IRQ lines but only 32 pins can be
+used as IRQ lines at given time. Selection of pins as IRQ lines
+is handled by IA55 (which is the IRQC block) which sits in between the
+GPIO and GIC.
 
-configs tested: 106
-configs skipped: 3
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 205 ++++++++++++++++++++++++
+ 1 file changed, 205 insertions(+)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                              allmodconfig
-arm                                 defconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm64                            allyesconfig
-i386                          randconfig-c001
-mips                 randconfig-c004-20220505
-s390                       zfcpdump_defconfig
-ia64                          tiger_defconfig
-mips                            gpr_defconfig
-h8300                       h8s-sim_defconfig
-sparc                       sparc64_defconfig
-mips                            ar7_defconfig
-m68k                        mvme16x_defconfig
-m68k                            q40_defconfig
-powerpc                    klondike_defconfig
-mips                         rt305x_defconfig
-powerpc                   currituck_defconfig
-arm                  randconfig-c002-20220505
-x86_64                        randconfig-c001
-ia64                                defconfig
-ia64                             allmodconfig
-ia64                             allyesconfig
-m68k                                defconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-nios2                               defconfig
-arc                              allyesconfig
-alpha                               defconfig
-csky                                defconfig
-alpha                            allyesconfig
-nios2                            allyesconfig
-sh                               allmodconfig
-arc                                 defconfig
-h8300                            allyesconfig
-xtensa                           allyesconfig
-parisc                              defconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
-parisc64                            defconfig
-s390                             allyesconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-i386                                defconfig
-i386                             allyesconfig
-sparc                               defconfig
-sparc                            allyesconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                           allnoconfig
-powerpc                          allmodconfig
-powerpc                          allyesconfig
-i386                          randconfig-a001
-i386                          randconfig-a003
-i386                          randconfig-a005
-x86_64                        randconfig-a013
-x86_64                        randconfig-a011
-x86_64                        randconfig-a015
-i386                          randconfig-a014
-i386                          randconfig-a012
-i386                          randconfig-a016
-x86_64                        randconfig-a002
-x86_64                        randconfig-a004
-x86_64                        randconfig-a006
-arc                  randconfig-r043-20220505
-riscv                randconfig-r042-20220505
-s390                 randconfig-r044-20220505
-riscv                             allnoconfig
-riscv                            allyesconfig
-riscv                            allmodconfig
-riscv                    nommu_k210_defconfig
-riscv                          rv32_defconfig
-riscv                    nommu_virt_defconfig
-riscv                               defconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                                  kexec
-x86_64                           rhel-8.3-syz
-x86_64                          rhel-8.3-func
-x86_64                               rhel-8.3
-x86_64                         rhel-8.3-kunit
-
-clang tested configs:
-powerpc                 mpc832x_rdb_defconfig
-s390                             alldefconfig
-powerpc                     mpc512x_defconfig
-powerpc                 mpc8272_ads_defconfig
-mips                      bmips_stb_defconfig
-mips                          rm200_defconfig
-arm                          ixp4xx_defconfig
-i386                          randconfig-a002
-i386                          randconfig-a004
-i386                          randconfig-a006
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-i386                          randconfig-a013
-i386                          randconfig-a015
-i386                          randconfig-a011
-x86_64                        randconfig-a001
-x86_64                        randconfig-a003
-x86_64                        randconfig-a005
-hexagon              randconfig-r045-20220505
-hexagon              randconfig-r041-20220505
-
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index a48cac55152c..275dfec74329 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -9,8 +9,10 @@
+ #include <linux/clk.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/io.h>
++#include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_irq.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -89,6 +91,7 @@
+ #define PIN(n)			(0x0800 + 0x10 + (n))
+ #define IOLH(n)			(0x1000 + (n) * 8)
+ #define IEN(n)			(0x1800 + (n) * 8)
++#define ISEL(n)			(0x2c80 + (n) * 8)
+ #define PWPR			(0x3014)
+ #define SD_CH(n)		(0x3000 + (n) * 4)
+ #define QSPI			(0x3008)
+@@ -112,6 +115,10 @@
+ #define RZG2L_PIN_ID_TO_PORT_OFFSET(id)	(RZG2L_PIN_ID_TO_PORT(id) + 0x10)
+ #define RZG2L_PIN_ID_TO_PIN(id)		((id) % RZG2L_PINS_PER_PORT)
+ 
++#define RZG2L_TINT_MAX_INTERRUPT	32
++#define RZG2L_TINT_IRQ_START_INDEX	9
++#define RZG2L_PACK_HWIRQ(t, i)		(((t) << 16) | (i))
++
+ struct rzg2l_dedicated_configs {
+ 	const char *name;
+ 	u32 config;
+@@ -137,6 +144,9 @@ struct rzg2l_pinctrl {
+ 
+ 	struct gpio_chip		gpio_chip;
+ 	struct pinctrl_gpio_range	gpio_range;
++	DECLARE_BITMAP(tint_slot, RZG2L_TINT_MAX_INTERRUPT);
++	spinlock_t			bitmap_lock;
++	unsigned int			hwirq[RZG2L_TINT_MAX_INTERRUPT];
+ 
+ 	spinlock_t			lock;
+ };
+@@ -883,6 +893,8 @@ static int rzg2l_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 
+ static void rzg2l_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
++	unsigned int virq;
++
+ 	pinctrl_gpio_free(chip->base + offset);
+ 
+ 	/*
+@@ -890,6 +902,10 @@ static void rzg2l_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ 	 * drive the GPIO pin as an output.
+ 	 */
+ 	rzg2l_gpio_direction_input(chip, offset);
++
++	virq = irq_find_mapping(chip->irq.domain, offset);
++	if (virq)
++		irq_dispose_mapping(virq);
+ }
+ 
+ static const char * const rzg2l_gpio_names[] = {
+@@ -1104,14 +1120,193 @@ static struct {
+ 	}
+ };
+ 
++static int rzg2l_gpio_get_gpioint(unsigned int virq)
++{
++	unsigned int gpioint = 0;
++	unsigned int i = 0;
++	u32 port, bit;
++
++	port = virq / 8;
++	bit = virq % 8;
++
++	if (port >= ARRAY_SIZE(rzg2l_gpio_configs))
++		return -EINVAL;
++
++	for (i = 0; i < port; i++)
++		gpioint += RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[i]);
++
++	if (bit >= RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[i]))
++		return -EINVAL;
++
++	gpioint += bit;
++
++	return gpioint;
++}
++
++static void rzg2l_gpio_irq_domain_free(struct irq_domain *domain, unsigned int virq,
++				       unsigned int nr_irqs)
++{
++	struct irq_data *d;
++
++	d = irq_domain_get_irq_data(domain, virq);
++	if (d) {
++		struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++		struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
++		irq_hw_number_t hwirq = irqd_to_hwirq(d);
++		unsigned long flags;
++		unsigned int i;
++
++		for (i = 0; i < RZG2L_TINT_MAX_INTERRUPT; i++) {
++			if (pctrl->hwirq[i] == hwirq) {
++				spin_lock_irqsave(&pctrl->bitmap_lock, flags);
++				bitmap_release_region(pctrl->tint_slot, i, get_order(1));
++				spin_unlock_irqrestore(&pctrl->bitmap_lock, flags);
++				pctrl->hwirq[i] = 0;
++				break;
++			}
++		}
++	}
++	irq_domain_free_irqs_common(domain, virq, nr_irqs);
++}
++
++static void rzg2l_gpio_irq_disable(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
++	unsigned int hwirq = irqd_to_hwirq(d);
++	unsigned long flags;
++	void __iomem *addr;
++	u32 port;
++	u8 bit;
++
++	port = RZG2L_PIN_ID_TO_PORT(hwirq);
++	bit = RZG2L_PIN_ID_TO_PIN(hwirq);
++
++	addr = pctrl->base + ISEL(port);
++	if (bit >= 4) {
++		bit -= 4;
++		addr += 4;
++	}
++
++	spin_lock_irqsave(&pctrl->lock, flags);
++	writel(readl(addr) & ~BIT(bit * 8), addr);
++	spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	irq_chip_disable_parent(d);
++}
++
++static void rzg2l_gpio_irq_enable(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
++	unsigned int hwirq = irqd_to_hwirq(d);
++	unsigned long flags;
++	void __iomem *addr;
++	u32 port;
++	u8 bit;
++
++	port = RZG2L_PIN_ID_TO_PORT(hwirq);
++	bit = RZG2L_PIN_ID_TO_PIN(hwirq);
++
++	addr = pctrl->base + ISEL(port);
++	if (bit >= 4) {
++		bit -= 4;
++		addr += 4;
++	}
++
++	spin_lock_irqsave(&pctrl->lock, flags);
++	writel(readl(addr) | BIT(bit * 8), addr);
++	spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	irq_chip_enable_parent(d);
++}
++
++static int rzg2l_gpio_irq_set_type(struct irq_data *d, unsigned int type)
++{
++	return irq_chip_set_type_parent(d, type);
++}
++
++static void rzg2l_gpio_irqc_eoi(struct irq_data *d)
++{
++	irq_chip_eoi_parent(d);
++}
++
++static struct irq_chip rzg2l_gpio_irqchip = {
++	.name = "rzg2l-gpio",
++	.irq_disable = rzg2l_gpio_irq_disable,
++	.irq_enable = rzg2l_gpio_irq_enable,
++	.irq_mask = irq_chip_mask_parent,
++	.irq_unmask = irq_chip_unmask_parent,
++	.irq_set_type = rzg2l_gpio_irq_set_type,
++	.irq_eoi = rzg2l_gpio_irqc_eoi,
++};
++
++static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
++					    unsigned int child,
++					    unsigned int child_type,
++					    unsigned int *parent,
++					    unsigned int *parent_type)
++{
++	struct rzg2l_pinctrl *pctrl = gpiochip_get_data(gc);
++	unsigned long flags;
++	int gpioint, irq;
++
++	gpioint = rzg2l_gpio_get_gpioint(child);
++	if (gpioint < 0)
++		return gpioint;
++
++	spin_lock_irqsave(&pctrl->bitmap_lock, flags);
++	irq = bitmap_find_free_region(pctrl->tint_slot, RZG2L_TINT_MAX_INTERRUPT, get_order(1));
++	spin_unlock_irqrestore(&pctrl->bitmap_lock, flags);
++	if (irq < 0)
++		return -ENOSPC;
++	pctrl->hwirq[irq] = child;
++	irq += RZG2L_TINT_IRQ_START_INDEX;
++
++	/* All these interrupts are level high in the CPU */
++	*parent_type = IRQ_TYPE_LEVEL_HIGH;
++	*parent = RZG2L_PACK_HWIRQ(gpioint, irq);
++	return 0;
++}
++
++static void *rzg2l_gpio_populate_parent_fwspec(struct gpio_chip *chip,
++					       unsigned int parent_hwirq,
++					       unsigned int parent_type)
++{
++	struct irq_fwspec *fwspec;
++
++	fwspec = kzalloc(sizeof(*fwspec), GFP_KERNEL);
++	if (!fwspec)
++		return NULL;
++
++	fwspec->fwnode = chip->irq.parent_domain->fwnode;
++	fwspec->param_count = 2;
++	fwspec->param[0] = parent_hwirq;
++	fwspec->param[1] = parent_type;
++
++	return fwspec;
++}
++
+ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
+ {
+ 	struct device_node *np = pctrl->dev->of_node;
+ 	struct gpio_chip *chip = &pctrl->gpio_chip;
+ 	const char *name = dev_name(pctrl->dev);
++	struct irq_domain *parent_domain;
+ 	struct of_phandle_args of_args;
++	struct device_node *parent_np;
++	struct gpio_irq_chip *girq;
+ 	int ret;
+ 
++	parent_np = of_irq_find_parent(np);
++	if (!parent_np)
++		return -ENXIO;
++
++	parent_domain = irq_find_host(parent_np);
++	of_node_put(parent_np);
++	if (!parent_domain)
++		return -EPROBE_DEFER;
++
+ 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &of_args);
+ 	if (ret) {
+ 		dev_err(pctrl->dev, "Unable to parse gpio-ranges\n");
+@@ -1138,6 +1333,15 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
+ 	chip->base = -1;
+ 	chip->ngpio = of_args.args[2];
+ 
++	girq = &chip->irq;
++	girq->chip = &rzg2l_gpio_irqchip;
++	girq->fwnode = of_node_to_fwnode(np);
++	girq->parent_domain = parent_domain;
++	girq->child_to_parent_hwirq = rzg2l_gpio_child_to_parent_hwirq;
++	girq->populate_parent_alloc_arg = rzg2l_gpio_populate_parent_fwspec;
++	girq->child_irq_domain_ops.free = rzg2l_gpio_irq_domain_free;
++	girq->ngirq = RZG2L_TINT_MAX_INTERRUPT;
++
+ 	pctrl->gpio_range.id = 0;
+ 	pctrl->gpio_range.pin_base = 0;
+ 	pctrl->gpio_range.base = 0;
+@@ -1253,6 +1457,7 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	spin_lock_init(&pctrl->lock);
++	spin_lock_init(&pctrl->bitmap_lock);
+ 
+ 	platform_set_drvdata(pdev, pctrl);
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.25.1
+
