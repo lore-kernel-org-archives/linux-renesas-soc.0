@@ -2,144 +2,237 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A59C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 May 2022 08:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB184C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 May 2022 08:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233370AbiEIIMP (ORCPT
+        id S229952AbiEIIyV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 May 2022 04:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52450 "EHLO
+        Mon, 9 May 2022 04:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233897AbiEIHud (ORCPT
+        with ESMTP id S237556AbiEIIYV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 May 2022 03:50:33 -0400
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0A2617CC87;
-        Mon,  9 May 2022 00:46:38 -0700 (PDT)
-Received: by mail-qt1-f174.google.com with SMTP id hf18so10439352qtb.0;
-        Mon, 09 May 2022 00:46:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3XPGjru+uW0hOeRykS42TNYyIx8ZkoC8DFG5cF+O4o4=;
-        b=41F9GyWZlsfocB5MenQJl7d0bF5bQN5+OHhw7IwhQxihHqhhYlAwOGtex2kpjR0nap
-         3KGJyib2NQ5zz1sidV1zAHrPdoPy3m2SNZKaCBT9W38BBGzrA1tciu2RylX2SteqAllA
-         LLehhLi/JSu34sDMJ/AaPp6Zkhr7pYzq2WN3PaMe65tShsZni2Fw1RR3wKMxtmo1fY6h
-         ge6NTGekiWrRiRN4KMseD4yqI/ErHE5DvVy7b66yV8g6bEv6Od4TFvfCvislmTHz4quo
-         Dqx11FZoM1WEuPg1p1+f8qanvEPJtnJnb074yBcVtZMAhtiewu5SdbV/t/N7rLKEVQFU
-         9SpA==
-X-Gm-Message-State: AOAM531ngeJfEyi/zsqFB7W0egtP9qBf3rw2rEG70Zf6DPfEbA0a5+81
-        JCeZiiUYHQrqBCmtE5GLjyaaJDlcoISUqQ==
-X-Google-Smtp-Source: ABdhPJy4TyR1k/BcB6Il7OOSsz4Ai0gOSQz4I1J9xfUsRwEOEjElDVeCSVQEoRs/W1+8J27CkS5Y7Q==
-X-Received: by 2002:a05:622a:13d2:b0:2f3:d2aa:7c5a with SMTP id p18-20020a05622a13d200b002f3d2aa7c5amr7638987qtk.155.1652082397698;
-        Mon, 09 May 2022 00:46:37 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id o12-20020ac8554c000000b002f39b99f6a8sm6913691qtr.66.2022.05.09.00.46.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 May 2022 00:46:37 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-2f83983782fso134895587b3.6;
-        Mon, 09 May 2022 00:46:37 -0700 (PDT)
-X-Received: by 2002:a81:9b0c:0:b0:2f4:c522:7d3c with SMTP id
- s12-20020a819b0c000000b002f4c5227d3cmr12831128ywg.316.1652082396821; Mon, 09
- May 2022 00:46:36 -0700 (PDT)
+        Mon, 9 May 2022 04:24:21 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [176.9.125.105])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38D57154B31
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2022 01:20:19 -0700 (PDT)
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 7ED4822239;
+        Mon,  9 May 2022 10:20:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1652084417;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=B6f1TBH+COXI1PwND1GIIasif+oFluPhIWcr3mTeh3w=;
+        b=drn6vOHeupGbeHAiIcV3396mhxQ9FzHDrlyWkHYJ2Ju1SBLW8iH9s3/G46VJpT/aM2EKnG
+        hSn9ySPJLplHpop3Fu09civCrppHSg6Qizvo6nvTUqldO2Lf6EdDAYD5tKO6Q6Yvkd4fL9
+        49Zkt7i/XqiYj/LZc6dIQt6AX61F9rk=
 MIME-Version: 1.0
-References: <YjeEbHL8ITkW692W@rowland.harvard.edu> <YmKt3kH+85kjzdbL@kroah.com>
- <YmSc29YZvxgT5fEJ@rowland.harvard.edu> <YmSo6fU1FlNq8cOZ@rowland.harvard.edu>
- <YmSpKpnWR8WWEk/p@rowland.harvard.edu> <YmSpdxaDNeC2BBOf@rowland.harvard.edu>
- <alpine.DEB.2.22.394.2205031209030.681336@ramsan.of.borg> <YnFCEn45XwDWM/9Y@rowland.harvard.edu>
- <CAMuHMdVDK0W0T3=+2c1E6wtwy5JTUemTGYyj3PFuVUhK++AzrA@mail.gmail.com>
- <YnFO0Qr8RY7peFCg@rowland.harvard.edu> <YnaR8LaaPTdLTiok@rowland.harvard.edu>
-In-Reply-To: <YnaR8LaaPTdLTiok@rowland.harvard.edu>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 May 2022 09:46:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUpOiHHMktPk_-NauDW2ufvGThnkFU7Pok376pM6OEyYw@mail.gmail.com>
-Message-ID: <CAMuHMdUpOiHHMktPk_-NauDW2ufvGThnkFU7Pok376pM6OEyYw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] USB: gadget: Add a new bus for gadgets
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        USB mailing list <linux-usb@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 09 May 2022 10:20:14 +0200
+From:   Michael Walle <michael@walle.cc>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Pratyush Yadav <p.yadav@ti.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] mtd: spi-nor: Add Renesas AT25QL128A serial nor flash
+In-Reply-To: <20220502185613.83483-1-biju.das.jz@bp.renesas.com>
+References: <20220502185613.83483-1-biju.das.jz@bp.renesas.com>
+User-Agent: Roundcube Webmail/1.4.13
+Message-ID: <27018c54344051e409161b7554dfa49f@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Alan,
+Hi,
 
-On Sat, May 7, 2022 at 5:36 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Tue, May 03, 2022 at 11:48:33AM -0400, Alan Stern wrote:
-> > On Tue, May 03, 2022 at 05:27:08PM +0200, Geert Uytterhoeven wrote:
-> > > On Tue, May 3, 2022 at 5:14 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > > > On Tue, May 03, 2022 at 12:14:30PM +0200, Geert Uytterhoeven wrote:
-> > > > > On Sat, 23 Apr 2022, Alan Stern wrote:
-> > > > > > This patch adds a "gadget" bus and uses it for registering gadgets and
-> > > > > > their drivers.  From now on, bindings will be managed by the driver
-> > > > > > core rather than through ad-hoc manipulations in the UDC core.
-> > > > > >
-> > > > > > As part of this change, the driver_pending_list is removed.  The UDC
-> > > > > > core won't need to keep track of unbound drivers for later binding,
-> > > > > > because the driver core handles all of that for us.
-> > > > > >
-> > > > > > However, we do need one new feature: a way to prevent gadget drivers
-> > > > > > from being bound to more than one gadget at a time.  The existing code
-> > > > > > does this automatically, but the driver core doesn't -- it's perfectly
-> > > > > > happy to bind a single driver to all the matching devices on the bus.
-> > > > > > The patch adds a new bitflag to the usb_gadget_driver structure for
-> > > > > > this purpose.
-> > > > > >
-> > > > > > A nice side effect of this change is a reduction in the total lines of
-> > > > > > code, since now the driver core will do part of the work that the UDC
-> > > > > > used to do.
-> > > > > >
-> > > > > > A possible future patch could add udc devices to the gadget bus, say
-> > > > > > as a separate device type.
-> > > > > >
-> > > > > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> > > > >
-> > > > > Thanks for your patch, which is now commit fc274c1e997314bf ("USB:
-> > > > > gadget: Add a new bus for gadgets") in usb-next.
-> > > > >
-> > > > > This patch cause a regression on the Renesas Salvator-XS development
-> > > > > board, as R-Car H3 has multiple USB gadget devices:
-> > > >
-> > > > Then these gadgets ought to have distinct names in order to avoid the
-> > > > conflict below:
->
-> Geert:
->
-> Can you test the patch below?  It ought to fix the problem (although it
+Am 2022-05-02 20:56, schrieb Biju Das:
+> Add support for Renesas AT25QL128A serial nor flash.
+> Details of flash chip can be found here [1]
+> 
+> [1] 
+> https://www.dialog-semiconductor.com/sites/default/files/2022-04/DS-AT25QL128A-129F-022022.pdf
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> $  xxd -p sfdp
+> 53464450060101ff00060110300000ff1f00010280000001ffffffffffff
+> ffffffffffffffffffffffffffffffffffffe520f1ffffffff0744eb086b
+> 083b80bbfeffffffffff00ffffff42eb0c200f5210d800ff3362d5008429
+> 01ceeca1073d7a757a75f7a2d55c19f61cffe810c080ffffffffffffffff
+> ffffffffffffffff501650190000ffff
 
 Thanks!
 
-root@h3-salvator-xs:~# ls -l /sys/bus/gadget/devices/
-total 0
-lrwxrwxrwx 1 root root 0 Feb 14  2019 gadget.0 ->
-../../../devices/platform/soc/e659c000.usb/gadget.0
-lrwxrwxrwx 1 root root 0 Feb 14  2019 gadget.1 ->
-../../../devices/platform/soc/ee020000.usb/gadget.1
-lrwxrwxrwx 1 root root 0 Feb 14  2019 gadget.2 ->
-../../../devices/platform/soc/e6590000.usb/gadget.2
+> :~# md5sum
+> /sys/devices/platform/soc/10060000.spi/rpc-if-spi/spi_master/spi1/spi1.0/spi-nor/sfdp
+> 23e3ec56b5b8f986d0488ba4727239dd
+> 
+> ~# cat
+> /sys/devices/platform/soc/10060000.spi/rpc-if-spi/spi_master/spi1/spi1.0/spi-nor/jedec_id
+> 1f4218
+> 
+> ~# cat
+> /sys/devices/platform/soc/10060000.spi/rpc-if-spi/spi_master/spi1/spi1.0/spi-nor/partname
+> at25ql128a
+> 
+> ~# cat
+> /sys/devices/platform/soc/10060000.spi/rpc-if-spi/spi_master/spi1/spi1.0/spi-nor/manufacturer
+> renesas
+> 
+> RFC->v1:
+>  * Moved the flash definitions to atmel.c
+>  * Remove macro related to locking as it is untested.
+>  * Replaced INFO macro with SNOR_ID3
+> 
+> RFC:
+>  *
+> https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220501185512.51158-1-biju.das.jz@bp.renesas.com/
+> ---
+>  drivers/mtd/spi-nor/atmel.c | 55 +++++++++++++++++++++++++++++++++++++
+>  drivers/mtd/spi-nor/core.c  |  1 +
+>  drivers/mtd/spi-nor/core.h  |  1 +
+>  3 files changed, 57 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/atmel.c b/drivers/mtd/spi-nor/atmel.c
+> index 656dd80a0be7..61cff6de7db2 100644
+> --- a/drivers/mtd/spi-nor/atmel.c
+> +++ b/drivers/mtd/spi-nor/atmel.c
+> @@ -10,6 +10,15 @@
+> 
+>  #define ATMEL_SR_GLOBAL_PROTECT_MASK GENMASK(5, 2)
+> 
+> +#define SNOR_ID3(_jedec_id) \
+> +	.id = { \
+> +		((_jedec_id) >> 16) & 0xff, \
+> +		((_jedec_id) >> 8) & 0xff, \
+> +		(_jedec_id) & 0xff, \
+> +	}, \
+> +	.id_len = 3, \
+> +	.parse_sfdp = true
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Put that into core.h below the INFO macros.
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> +
+>  /*
+>   * The Atmel AT25FS010/AT25FS040 parts have some weird configuration 
+> for the
+>   * block protection bits. We don't support them. But legacy behavior 
+> in linux
+> @@ -204,6 +213,52 @@ static const struct flash_info atmel_nor_parts[] = 
+> {
+>  		NO_SFDP_FLAGS(SECT_4K) },
+>  };
+> 
+> +static const struct flash_info renesas_nor_parts[] = {
+> +	{ "at25ql128a", SNOR_ID3(0x1f4218) },
 
-> might end up causing other problems down the line...)
+Put that into the atmel list, no need for an own list.
 
-Can you please elaborate? I'm not too familiar with UBS gadgets.
+> +};
+> +
+> +/**
+> + * renesas_nor_set_4byte_addr_mode() - Set 4-byte address mode for 
+> Renesas
+> + * flashes.
+> + * @nor:	pointer to 'struct spi_nor'.
+> + * @enable:	true to enter the 4-byte address mode, false to exit the 
+> 4-byte
+> + *		address mode.
+> + *
+> + * Return: 0 on success, -errno otherwise.
+> + */
+> +static int renesas_nor_set_4byte_addr_mode(struct spi_nor *nor, bool 
+> enable)
 
-Gr{oetje,eeting}s,
+Please expand the SFDP parser. This should be contained in 16th dword,
+there.
 
-                        Geert
+> +{
+> +	int ret;
+> +
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = spi_nor_set_4byte_addr_mode(nor, enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return spi_nor_write_disable(nor);
+> +}
+> +
+> +static void renesas_nor_default_init(struct spi_nor *nor)
+> +{
+> +	nor->flags &= ~SNOR_F_HAS_16BIT_SR;
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Why is that?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +	nor->params->quad_enable = NULL;
+> +	nor->params->set_4byte_addr_mode = renesas_nor_set_4byte_addr_mode;
+> +}
+> +
+> +static const struct spi_nor_fixups renesas_nor_fixups = {
+> +	.default_init = renesas_nor_default_init,
+> +};
+> +
+> +const struct spi_nor_manufacturer spi_nor_renesas = {
+> +	.name = "renesas",
+> +	.parts = renesas_nor_parts,
+> +	.nparts = ARRAY_SIZE(renesas_nor_parts),
+> +	.fixups = &renesas_nor_fixups,
+> +};
+
+Not needed.
+
+-michael
+
+> +
+>  const struct spi_nor_manufacturer spi_nor_atmel = {
+>  	.name = "atmel",
+>  	.parts = atmel_nor_parts,
+> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+> index b4f141ad9c9c..ba9f222da00b 100644
+> --- a/drivers/mtd/spi-nor/core.c
+> +++ b/drivers/mtd/spi-nor/core.c
+> @@ -1621,6 +1621,7 @@ static const struct spi_nor_manufacturer
+> *manufacturers[] = {
+>  	&spi_nor_issi,
+>  	&spi_nor_macronix,
+>  	&spi_nor_micron,
+> +	&spi_nor_renesas,
+>  	&spi_nor_st,
+>  	&spi_nor_spansion,
+>  	&spi_nor_sst,
+> diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
+> index b7fd760e3b47..3d2e39329079 100644
+> --- a/drivers/mtd/spi-nor/core.h
+> +++ b/drivers/mtd/spi-nor/core.h
+> @@ -511,6 +511,7 @@ extern const struct spi_nor_manufacturer 
+> spi_nor_intel;
+>  extern const struct spi_nor_manufacturer spi_nor_issi;
+>  extern const struct spi_nor_manufacturer spi_nor_macronix;
+>  extern const struct spi_nor_manufacturer spi_nor_micron;
+> +extern const struct spi_nor_manufacturer spi_nor_renesas;
+>  extern const struct spi_nor_manufacturer spi_nor_st;
+>  extern const struct spi_nor_manufacturer spi_nor_spansion;
+>  extern const struct spi_nor_manufacturer spi_nor_sst;
