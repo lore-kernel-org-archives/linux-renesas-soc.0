@@ -2,136 +2,126 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5593CC43219
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 May 2022 05:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D735CC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 May 2022 07:05:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232579AbiEIFVp (ORCPT
+        id S230394AbiEIHIS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 May 2022 01:21:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36600 "EHLO
+        Mon, 9 May 2022 03:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231476AbiEIFOR (ORCPT
+        with ESMTP id S234672AbiEIHEa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 May 2022 01:14:17 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0DB4513FD67;
-        Sun,  8 May 2022 22:10:21 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.91,210,1647270000"; 
-   d="scan'208";a="120333377"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 09 May 2022 14:10:19 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5FCAB40041A0;
-        Mon,  9 May 2022 14:10:15 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/5] Renesas RZ/G2L IRQC support
-Date:   Mon,  9 May 2022 06:09:48 +0100
-Message-Id: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 9 May 2022 03:04:30 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1FA1FC
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2022 00:00:35 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id bv19so24922163ejb.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 May 2022 00:00:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=10+UzFhJUXUE/m7JFftwGBDXxzJS2yQN7xf9L3FQsJY=;
+        b=fu5e+GgqRHJzTtZ3kal25qzqR+wfPA2xl9VjVKrAtR/wf9GRNhxSBe77yHnT8WTjV7
+         LvfJ9+OhI1+9+RpMfAkZX9QU5PXGu70Lp9qgQb64riRZRAypCNolfEjJZxeU2ORhh+t2
+         k8s5Y5TyxC/V+py89mZdkZCMXLTpCTrXAbv+SKRogomeGxBcPPoCOHnfg6/aVl8zrxdo
+         nHctqvSeXt2ygsFKcyrF2tl0lHORk2XWaWHFDtkcVeedHPoue2SQWRrFomzPOxOMoZYA
+         uGlNCNflJD8XFYbYV8JzaYE4EsOtromc7hr3AWu0Fv5Cxwrzinhm60hC0WO3PjweozLl
+         tRmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=10+UzFhJUXUE/m7JFftwGBDXxzJS2yQN7xf9L3FQsJY=;
+        b=HOJMv8sp/PkZctTybH1hnbDTgatWpuSz0oC2ynP6yeC67wdhrcEFSkvj9P2Nk9Eymp
+         hS2OqLnsGJZFRRTDnC2g/YOHyIKHpyc4EQrN7M8nawk31UTaoTOLTcntDTBU9K13/Jt/
+         i4cWtY3DciYrl5tt4w2+i0jVjZ81pgHmyFOQdsulkbrB7loVEO1hnIpJg6JN6h2NviVP
+         taCfS+7ryqlfM5UOJgE6C5DGql2YjoMCRNS7DuH5t6dEEc24ch+FQwow+coBfl9WFxe2
+         UX4FEAj6iGihHnSASikxKrDLXWzqhZ95zdAXSkTqWl1K7+E6q1meIHIyMKqZsN5XV0hQ
+         NE3A==
+X-Gm-Message-State: AOAM531diC5C85YTRXwtgpgO4zMpiVDtcOTX2Bdmy8v5YRCQ302RQ600
+        okVFg4GBJhnmXF5ZBnyD2JGfvQ==
+X-Google-Smtp-Source: ABdhPJx+W8N0wDBux4Nviec94vEc13Cct6fPOWv1Zrt8QYQrOJjntM1uzd1nkPPpUe1+c7WPTHRJ3w==
+X-Received: by 2002:a17:906:a2c2:b0:6e7:efc2:17f2 with SMTP id by2-20020a170906a2c200b006e7efc217f2mr12668739ejb.542.1652079633872;
+        Mon, 09 May 2022 00:00:33 -0700 (PDT)
+Received: from [192.168.0.242] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id y5-20020a50f1c5000000b0042617ba63afsm5909016edl.57.2022.05.09.00.00.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 May 2022 00:00:33 -0700 (PDT)
+Message-ID: <84d8e292-1bae-6088-5a06-88c635275672@linaro.org>
+Date:   Mon, 9 May 2022 09:00:32 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v2 02/14] thermal/core: Add a thermal sensor structure in
+ the thermal zone
+Content-Language: en-US
+To:     Daniel Lezcano <daniel.lezcano@linexp.org>,
+        daniel.lezcano@linaro.org, rafael@kernel.org
+Cc:     khilman@baylibre.com, abailon@baylibre.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20220507125443.2766939-1-daniel.lezcano@linexp.org>
+ <20220507125443.2766939-3-daniel.lezcano@linexp.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220507125443.2766939-3-daniel.lezcano@linexp.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+On 07/05/2022 14:54, Daniel Lezcano wrote:
+> The thermal sensor ops is directly defined in the thermal zone but
+> still its data structuration makes the sensor ops and the thermal zone
+> too much interconnected for multiple sensors per thermal zone.
+> 
+> Create a dedicated structure for the thermal sensor to be included in
+> the thermal zone structure so these components are clearly separated.
+> 
+> Cc: Alexandre Bailon <abailon@baylibre.com>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Cc; Eduardo Valentin <eduval@amazon.com>
 
-The RZ/G2L Interrupt Controller is a front-end for the GIC found on
-Renesas RZ/G2L SoC's with below pins:
-- IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI interrupts
-- GPIO pins used as external interrupt input pins out of GPIOINT0-122 a
-  maximum of only 32 can be mapped to 32 GIC SPI interrupts,
-- NMI edge select.
+You have a ';' typo here.
 
-                                                                _____________
-                                                                |    GIC     |
-                                                                |  ________  |
-                                         ____________           | |        | |
-NMI ------------------------------------>|          |  SPI0-479 | | GIC-600| |
-                _______                  |          |------------>|        | |
-                |      |                 |          |  PPI16-31 | |        | |
-                |      | IRQ0-IRQ7       |   IRQC   |------------>|        | |
-P0_P48_4 ------>| GPIO |---------------->|          |           | |________| |
-                |      |GPIOINT0-122     |          |           |            |
-                |      |---------------->| TINT0-31 |           |            |
-                |______|                 |__________|           |____________|
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
+> ---
+>  drivers/thermal/broadcom/bcm2835_thermal.c |  2 +-
+>  drivers/thermal/gov_bang_bang.c            |  6 +--
+>  drivers/thermal/gov_fair_share.c           |  6 +--
+>  drivers/thermal/gov_power_allocator.c      | 18 ++++----
+>  drivers/thermal/gov_step_wise.c            |  4 +-
+>  drivers/thermal/rcar_gen3_thermal.c        |  6 +--
+>  drivers/thermal/samsung/exynos_tmu.c       |  6 +--
 
-The proposed patches add hierarchical IRQ domain, one in IRQC driver and another in
-pinctrl driver. Upon interrupt requests map the interrupt to GIC. Out of GPIOINT0-122
-only 32 can be mapped to GIC SPI, this mapping is handled by the pinctrl and IRQC driver.
+For Samsung:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Cheers,
-Prabhakar
 
-Changes for v1->v2:
-* Included RB tag from Rob
-* Fixed review comments pointed by Geert
-* included GPIO driver changes
-
-Changes for RFCV4 -> V1:
-* Used unevaluatedProperties.
-* Altered the sequence of reg property
-* Set the parent type
-* Used raw_spin_lock() instead of raw_spin_lock_irqsave()
-* Simplified parsing IRQ map.
-* Will send the GPIO and pinctrl changes as part of separate series
-
-Changes for RFC v4:
-* Used locking while RMW
-* Now using interrupts property instead of interrupt-map
-* Patch series depends on [0]
-* Updated binding doc
-* Fixed comments pointed by Andy
-
-[0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/
-20220316200633.28974-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Changes for RFC v3:
--> Re-structured the driver as a hierarchical irq domain instead of chained
--> made use of IRQCHIP_* macros
--> dropped locking
--> Added support for IRQ0-7 interrupts
--> Introduced 2 new patches for GPIOLIB
--> Switched to using GPIOLIB for irqdomains in pinctrl
-
-RFC v2: https://patchwork.kernel.org/project/linux-renesas-soc/cover/
-20210921193028.13099-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-RFC v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/
-20210803175109.1729-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Lad Prabhakar (5):
-  dt-bindings: interrupt-controller: Add Renesas RZ/G2L Interrupt
-    Controller
-  irqchip: Add RZ/G2L IA55 Interrupt Controller driver
-  gpio: gpiolib: Allow free() callback to be overridden
-  gpio: gpiolib: Add ngirq member to struct gpio_irq_chip
-  pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to handle GPIO
-    interrupt
-
- .../renesas,rzg2l-irqc.yaml                   | 131 ++++++
- drivers/gpio/gpiolib.c                        |  13 +-
- drivers/irqchip/Kconfig                       |   8 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-renesas-rzg2l.c           | 445 ++++++++++++++++++
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 205 ++++++++
- include/linux/gpio/driver.h                   |   8 +
- 7 files changed, 806 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
- create mode 100644 drivers/irqchip/irq-renesas-rzg2l.c
-
--- 
-2.25.1
-
+Best regards,
+Krzysztof
