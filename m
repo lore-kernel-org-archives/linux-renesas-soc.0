@@ -2,137 +2,128 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 050A0C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39944C4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 May 2022 09:35:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232327AbiEIJiN (ORCPT
+        id S233831AbiEIJiO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 May 2022 05:38:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53908 "EHLO
+        Mon, 9 May 2022 05:38:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235704AbiEIJY5 (ORCPT
+        with ESMTP id S233097AbiEIJBK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 May 2022 05:24:57 -0400
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD2EB131F22;
-        Mon,  9 May 2022 02:21:01 -0700 (PDT)
-Received: by mail-qk1-f173.google.com with SMTP id z126so10302506qkb.2;
-        Mon, 09 May 2022 02:21:01 -0700 (PDT)
+        Mon, 9 May 2022 05:01:10 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AEBE15A3CE;
+        Mon,  9 May 2022 01:57:14 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id h3so10488247qtn.4;
+        Mon, 09 May 2022 01:57:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gMtmW3ArowZdX4IsaNSLBpR+NhLcfUq95yoUD9gi7Sw=;
-        b=RPbtzqE7rsbQATU6SraHZ5WF8sqL/dJMsdRf3VxMG2l0nyGHyJnVeR1CbqgVgiZwk7
-         K1cckVRnICC1Ttt/J+vIz1+8hg5h+QsziFaqrJmHfKRWUYjfvSxW0IPzoW30Ycvtfqbr
-         LoWndeocqBDIPgtNck0MoZHx4HjJ0lqEFa0hLFNYy4smuKdUmcfolZ1j+xDxBptDU/Xg
-         32atW/LVRs28O66Vheo+fJqFaeGiyCyp/erqy7i0uKWGKDfXR0fipzGqm+mFGBNfGzJD
-         hMAubUMZzWeB9o0I2WBUBPUPnayKzdFJJ8kjdqSbhguMF4rsQXGHwusQpvWIqaCFzdkt
-         vCZg==
-X-Gm-Message-State: AOAM532LFEsIpxM5WTRCEERrNv9b5cC8eNYIx8Qt41ds9PoaToFJYDW8
-        +Oj2xyFjFF6gi2GNnMbfvOT+878GxtTFoA==
-X-Google-Smtp-Source: ABdhPJxnCxGOKIp1bvvTmGtnVq0s0cmUaxXisxLRgd67SYcfs1XylGWC/N82+lVAr1wxirT3+vyUEA==
-X-Received: by 2002:a05:620a:4488:b0:6a0:2aab:a736 with SMTP id x8-20020a05620a448800b006a02aaba736mr11287091qkp.717.1652088060478;
-        Mon, 09 May 2022 02:21:00 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id w24-20020ac87198000000b002f39b99f697sm7235538qto.49.2022.05.09.02.20.59
+        bh=fkNL9UF9gn3bo4ZBmPpkTUdSu1SkuvIXS7tPfz0O7Z4=;
+        b=WxLPzbiNEEJgF+73W19C4piyoT9Rk94USD83uAZjnJuYs2nUh07S0InPXZUHLyiCpd
+         MausihgTOysVgKkhtHJET9/0U6bPQ8cVvL9niJr+fSWDIXrsVHUQpiQlnxyK4X8eznYa
+         Ane25Xviw+lG+sGXOAA1PTeTvDwFh8dxma8mkqkzeuqoUop0+qxFrxQaOUFreiKdxLBs
+         WNVDk3pcJ95iJREWMvUXQhV5X+np8k6SbeAyVS/LnBsvG2Zt+aT5j0Kk+kbQObubeWZf
+         /QE/AJWhTwVfJhqOL5TkW+qTM5D46ua9uNQ0yfg0aMRYPRGbVPpUws7yRmoV98ihQXVo
+         HcDA==
+X-Gm-Message-State: AOAM530QIC5fvJhPjQw17nu8dxVJFC899efiRFKFKFh1KpzqggW5K68T
+        zGPOqArHts7WWXmtLVolm2zqJaGqvKqq6g==
+X-Google-Smtp-Source: ABdhPJziinEhRR9kq9fTEUIXGw1u6VGoI1Xd9iZX4Sdh99qd6a/LWRQP5UPyaQ3eIMyGte0Gtr4rAQ==
+X-Received: by 2002:ac8:578a:0:b0:2e1:a0d2:c3a with SMTP id v10-20020ac8578a000000b002e1a0d20c3amr14075087qta.261.1652086633446;
+        Mon, 09 May 2022 01:57:13 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id cm11-20020a05622a250b00b002f39b99f66fsm7505297qtb.9.2022.05.09.01.57.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 May 2022 02:20:59 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id g28so23731968ybj.10;
-        Mon, 09 May 2022 02:20:59 -0700 (PDT)
+        Mon, 09 May 2022 01:57:13 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id m128so23647360ybm.5;
+        Mon, 09 May 2022 01:57:12 -0700 (PDT)
 X-Received: by 2002:a25:4506:0:b0:648:cfc2:301d with SMTP id
- s6-20020a254506000000b00648cfc2301dmr12295875yba.380.1652088059134; Mon, 09
- May 2022 02:20:59 -0700 (PDT)
+ s6-20020a254506000000b00648cfc2301dmr12216717yba.380.1652086632606; Mon, 09
+ May 2022 01:57:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220507125443.2766939-1-daniel.lezcano@linexp.org> <20220507125443.2766939-2-daniel.lezcano@linexp.org>
-In-Reply-To: <20220507125443.2766939-2-daniel.lezcano@linexp.org>
+References: <20220509050953.11005-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220509050953.11005-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20220509050953.11005-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 May 2022 11:20:47 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXXMzR+ukK9Bm+eWhLuWOozU6n96hTcGV5xf9omQvoHCA@mail.gmail.com>
-Message-ID: <CAMuHMdXXMzR+ukK9Bm+eWhLuWOozU6n96hTcGV5xf9omQvoHCA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/14] thermal/core: Change thermal_zone_ops to thermal_sensor_ops
-To:     daniel.lezcano@linexp.org
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+Date:   Mon, 9 May 2022 10:57:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW0RF=ESX+WmLTrMYyhQ_M18FVn_g3A83WOe6gBzn19mg@mail.gmail.com>
+Message-ID: <CAMuHMdW0RF=ESX+WmLTrMYyhQ_M18FVn_g3A83WOe6gBzn19mg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: interrupt-controller: Add Renesas
+ RZ/G2L Interrupt Controller
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>,
-        Raju Rangoju <rajur@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Ido Schimmel <idosch@nvidia.com>,
-        Petr Machata <petrm@nvidia.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@kernel.org>, Peter Kaestle <peter@piie.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Chuansheng Liu <chuansheng.liu@intel.com>,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
-        Antoine Tenart <atenart@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:ACPI THERMAL DRIVER" <linux-acpi@vger.kernel.org>,
-        "open list:CXGB4 ETHERNET DRIVER (CXGB4)" <netdev@vger.kernel.org>,
-        "open list:INTEL WIRELESS WIFI LINK (iwlwifi)" 
-        <linux-wireless@vger.kernel.org>,
-        "open list:ACER ASPIRE ONE TEMPERATURE AND FAN DRIVER" 
-        <platform-driver-x86@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Daniel,
+Hi Prabhakar,
+
+On Mon, May 9, 2022 at 7:10 AM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add DT bindings for the Renesas RZ/G2L Interrupt Controller.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
 Thanks for your patch!
 
-On Sat, May 7, 2022 at 3:03 PM Daniel Lezcano <daniel.lezcano@linexp.org> wrote:
-> A thermal zone is software abstraction of a sensor associated with
-> properties and cooling devices if any.
->
-> The fact that we have thermal_zone and thermal_zone_ops mixed is
-> confusing and does not clearly identify the different components
-> entering in the thermal management process. A thermal zone appears to
-> be a sensor while it is not.
->
-> In order to set the scene for multiple thermal sensors aggregated into
-> a single thermal zone. Rename the thermal_zone_ops to
-> thermal_sensor_ops, that will appear clearyl the thermal zone is not a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+> @@ -0,0 +1,131 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/renesas,rzg2l-irqc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas RZ/G2L (and alike SoC's) Interrupt Controller (IA55)
+> +
+> +maintainers:
+> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> +  - Geert Uytterhoeven <geert+renesas@glider.be>
+> +
+> +description: |
+> +  IA55 performs various interrupt controls including synchronization for the external
+> +  interrupts of NMI, IRQ, and GPIOINT and the interrupts of the built-in peripheral
+> +  interrupts output by each IP. And it notifies the interrupt to the GIC
+> +    - IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI interrupts
+> +    - GPIO pins used as external interrupt input pins, mapped to 32 GIC SPI interrupts
+> +    - NMI edge select (NMI is not treated as NMI exception and supports fall edge and
+> +      stand-up edge detection interrupts)
+> +
+> +allOf:
+> +  - $ref: /schemas/interrupt-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - renesas,r9a07g044-irqc    # RZ/G2L
+> +      - const: renesas,rzg2l-irqc
+> +
+> +  '#interrupt-cells':
+> +    const: 2
 
-to make it clear
+Please document the meaning of the cells.
 
-> sensor but an abstraction of one [or multiple] sensor(s).
->
-> Cc: Alexandre Bailon <abailon@baylibre.com>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc; Eduardo Valentin <eduval@amazon.com>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
-
->  drivers/thermal/rcar_thermal.c                            | 4 ++--
-
+The rest LGTM, so
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
