@@ -2,41 +2,43 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD938C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 May 2022 15:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B3DC4707A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 May 2022 15:24:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345888AbiEJP1Y (ORCPT
+        id S243055AbiEJP1I (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 May 2022 11:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57804 "EHLO
+        Tue, 10 May 2022 11:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345791AbiEJP0E (ORCPT
+        with ESMTP id S1345764AbiEJP0C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 May 2022 11:26:04 -0400
+        Tue, 10 May 2022 11:26:02 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9841B13CA28;
-        Tue, 10 May 2022 08:11:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A3B7D11C355;
+        Tue, 10 May 2022 08:11:29 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.91,214,1647270000"; 
-   d="scan'208";a="120533861"
+   d="scan'208";a="120533853"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 11 May 2022 00:11:37 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 May 2022 00:11:29 +0900
 Received: from localhost.localdomain (unknown [10.226.92.112])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8CF00400A11D;
-        Wed, 11 May 2022 00:11:34 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B679A400A0E7;
+        Wed, 11 May 2022 00:11:24 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [RFC 4/8] pwm: rzg2l-gpt: Add support for linking with POEG
-Date:   Tue, 10 May 2022 16:11:08 +0100
-Message-Id: <20220510151112.16249-5-biju.das.jz@bp.renesas.com>
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC 2/8] drivers: soc: renesas: Add POEG driver support
+Date:   Tue, 10 May 2022 16:11:06 +0100
+Message-Id: <20220510151112.16249-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220510151112.16249-1-biju.das.jz@bp.renesas.com>
 References: <20220510151112.16249-1-biju.das.jz@bp.renesas.com>
@@ -46,129 +48,227 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch add support for linking POEG group with pwm, so that
-POEG can control the output disable function.
+The output pins of the general PWM timer (GPT) can be disabled by
+using the port output enabling function for the GPT (POEG).
+
+This patch series add basic support using s/w control through
+sysfs to enable/disable output from GPT.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pwm/pwm-rzg2l-gpt.c | 59 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ drivers/soc/renesas/Kconfig           |   2 +
+ drivers/soc/renesas/Makefile          |   2 +
+ drivers/soc/renesas/poeg/Kconfig      |  12 +++
+ drivers/soc/renesas/poeg/Makefile     |   2 +
+ drivers/soc/renesas/poeg/poeg-rzg2l.c | 148 ++++++++++++++++++++++++++
+ 5 files changed, 166 insertions(+)
+ create mode 100644 drivers/soc/renesas/poeg/Kconfig
+ create mode 100644 drivers/soc/renesas/poeg/Makefile
+ create mode 100644 drivers/soc/renesas/poeg/poeg-rzg2l.c
 
-diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
-index d5d22b1ff792..8eaf96b2052d 100644
---- a/drivers/pwm/pwm-rzg2l-gpt.c
-+++ b/drivers/pwm/pwm-rzg2l-gpt.c
-@@ -21,6 +21,7 @@
- #define GTCR		0x2c
- #define GTUDDTYC	0x30
- #define GTIOR		0x34
-+#define GTINTAD		0x38
- #define GTBER		0x40
- #define GTCNT		0x48
- #define GTCCRA		0x4c
-@@ -37,9 +38,14 @@
- #define UP_COUNTING	(GTUDDTYC_UP | GTUDDTYC_UDF)
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index c50a6ce1b99d..363bfe3340fa 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -330,6 +330,8 @@ config ARCH_R9A09G011
+ 	help
+ 	  This enables support for the Renesas RZ/V2M SoC.
  
- #define GTIOR_GTIOA_MASK			GENMASK(4, 0)
-+#define GTIOR_OADF_MASK				GENMASK(10, 9)
- #define GTIOR_GTIOB_MASK			GENMASK(20, 16)
-+#define GTIOR_OBDF_MASK				GENMASK(26, 25)
++source "drivers/soc/renesas/poeg/Kconfig"
 +
- #define GTIOR_OAE				BIT(8)
- #define GTIOR_OBE				BIT(24)
-+#define GTIOR_OADF_HIGH_IMP_ON_OUT_DISABLE	(1 << 9)
-+#define GTIOR_OBDF_HIGH_IMP_ON_OUT_DISABLE	(1 << 25)
+ endif # ARM64
  
- #define INIT_OUT_LO_OUT_LO_END_TOGGLE		(0x07)
- #define INIT_OUT_HI_OUT_HI_END_TOGGLE		(0x1B)
-@@ -48,6 +54,13 @@
- #define GTIOR_GTIOB_OUT_HI_END_TOGGLE_CMP_MATCH	((INIT_OUT_HI_OUT_HI_END_TOGGLE << 16) | GTIOR_OBE)
- #define GTIOR_GTIOB_OUT_LO_END_TOGGLE_CMP_MATCH	((INIT_OUT_LO_OUT_LO_END_TOGGLE << 16) | GTIOR_OBE)
- 
-+#define GTINTAD_GRP_MASK	GENMASK(25, 24)
-+#define GRP_INVALID		(0xFF)
-+#define POEG_GRP_A_ADDR		(0x10048800)
-+#define POEG_GRP_B_ADDR		(0x10048c00)
-+#define POEG_GRP_C_ADDR		(0x10049000)
-+#define POEG_GRP_D_ADDR		(0x10049400)
+ config RST_RCAR
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 535868c9c7e4..935bf2cbf31e 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -36,3 +36,5 @@ obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
+ obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
+ obj-$(CONFIG_SYSC_RCAR_GEN4)	+= rcar-gen4-sysc.o
+ obj-$(CONFIG_SYSC_RMOBILE)	+= rmobile-sysc.o
 +
- struct phase {
- 	u32 value;
- 	u32 mask;
-@@ -85,6 +98,7 @@ struct rzg2l_gpt_chip {
- 	void __iomem *mmio;
- 	struct reset_control *rstc;
- 	struct clk *clk;
-+	u8 poeg_grp;
- };
- 
- static inline struct rzg2l_gpt_chip *to_rzg2l_gpt_chip(struct pwm_chip *chip)
-@@ -220,6 +234,17 @@ static int rzg2l_gpt_config(struct pwm_chip *chip, struct pwm_device *_pwm,
- 	/* Set period */
- 	rzg2l_gpt_write(pc, GTPR, pv);
- 
-+	if (pc->poeg_grp != GRP_INVALID) {
-+		rzg2l_gpt_modify(pc, GTINTAD, GTINTAD_GRP_MASK, pc->poeg_grp << 24);
++obj-$(CONFIG_POEG_RZG2L)	+= poeg/
+diff --git a/drivers/soc/renesas/poeg/Kconfig b/drivers/soc/renesas/poeg/Kconfig
+new file mode 100644
+index 000000000000..d0f123adb8da
+--- /dev/null
++++ b/drivers/soc/renesas/poeg/Kconfig
+@@ -0,0 +1,12 @@
++# SPDX-License-Identifier: GPL-2.0
++config POEG_RZG2L
++	tristate "RZ/G2L poeg support"
++	depends on ARCH_R9A07G044
++	depends on PWM_RZG2L_GPT
++	depends on HAS_IOMEM
++	help
++	  This driver exposes the General Port Output Enable for PWM found
++	  in RZ/G2L.
 +
-+		if (pwm->channel)
-+			rzg2l_gpt_modify(pc, GTIOR, GTIOR_OBDF_MASK,
-+					 GTIOR_OBDF_HIGH_IMP_ON_OUT_DISABLE);
-+		else
-+			rzg2l_gpt_modify(pc, GTIOR, GTIOR_OADF_MASK,
-+					 GTIOR_OADF_HIGH_IMP_ON_OUT_DISABLE);
-+	}
++	  To compile this driver as a module, choose M here: the module
++	  will be called poeg-rzg2l.
+diff --git a/drivers/soc/renesas/poeg/Makefile b/drivers/soc/renesas/poeg/Makefile
+new file mode 100644
+index 000000000000..cc1ec08d2021
+--- /dev/null
++++ b/drivers/soc/renesas/poeg/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_POEG_RZG2L)	+= poeg-rzg2l.o
+diff --git a/drivers/soc/renesas/poeg/poeg-rzg2l.c b/drivers/soc/renesas/poeg/poeg-rzg2l.c
+new file mode 100644
+index 000000000000..34f638dc45a6
+--- /dev/null
++++ b/drivers/soc/renesas/poeg/poeg-rzg2l.c
+@@ -0,0 +1,148 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas RZ/G2L Port Output Enable for GPT (POEG) driver
++ *
++ * Copyright (C) 2022 Renesas Electronics Corporation
++ */
 +
- 	/* Enable pin output */
- 	rzg2l_gpt_modify(pc, GTIOR, pwm->ph->mask, pwm->ph->value);
- 
-@@ -266,6 +291,36 @@ static int rzg2l_gpt_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	return ret;
- }
- 
-+static int rzg2l_gpt_parse_properties(struct platform_device *pdev,
-+				      struct rzg2l_gpt_chip *pc)
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/reset.h>
++
++#define POEGG		0
++#define POEGG_SSF	BIT(3)
++
++struct rzg2l_poeg_chip {
++	struct reset_control *rstc;
++	void __iomem *mmio;
++};
++
++static void rzg2l_poeg_write(struct rzg2l_poeg_chip *chip, u32 reg, u32 data)
 +{
-+	static const u64 poeg_grp_addr[] = {
-+		POEG_GRP_A_ADDR, POEG_GRP_B_ADDR, POEG_GRP_C_ADDR, POEG_GRP_D_ADDR
-+	};
-+	struct device_node *np;
-+	unsigned int i;
-+	u64 addr;
++	iowrite32(data, chip->mmio + reg);
++}
 +
-+	pc->poeg_grp = GRP_INVALID;
-+	np = of_parse_phandle(pdev->dev.of_node, "renesas,poeg-group", 0);
-+	if (!np)
-+		return 0;
++static u32 rzg2l_poeg_read(struct rzg2l_poeg_chip *chip, u32 reg)
++{
++	return ioread32(chip->mmio + reg);
++}
 +
-+	if (!of_property_read_u64(np, "reg", &addr)) {
-+		for (i = 0; i < ARRAY_SIZE(poeg_grp_addr); i++) {
-+			if (addr == poeg_grp_addr[i]) {
-+				pc->poeg_grp = i;
-+				break;
-+			}
-+		}
++static ssize_t output_disable_store(struct device *dev,
++				    struct device_attribute *attr,
++				    const char *buf, size_t count)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rzg2l_poeg_chip *chip = platform_get_drvdata(pdev);
++	unsigned int val;
++	u32 reg;
++	int ret;
++
++	ret = kstrtouint(buf, 0, &val);
++	if (ret)
++		return ret;
++
++	reg = rzg2l_poeg_read(chip, POEGG);
++	if (val)
++		reg |= POEGG_SSF;
++	else
++		reg &= ~POEGG_SSF;
++
++	rzg2l_poeg_write(chip, POEGG, reg);
++
++	return ret ? : count;
++}
++
++static ssize_t output_disable_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rzg2l_poeg_chip *chip = platform_get_drvdata(pdev);
++	u32 reg;
++
++	reg = rzg2l_poeg_read(chip, POEGG);
++
++	return sprintf(buf, "%u\n", (reg & POEGG_SSF) ? 1 : 0);
++}
++static DEVICE_ATTR_RW(output_disable);
++
++static const struct of_device_id rzg2l_poeg_of_table[] = {
++	{ .compatible = "renesas,rzg2l-poeg", },
++	{ /* Sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, rzg2l_poeg_of_table);
++
++static int rzg2l_poeg_probe(struct platform_device *pdev)
++{
++	struct rzg2l_poeg_chip *chip;
++	int ret;
++
++	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->mmio = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(chip->mmio))
++		return PTR_ERR(chip->mmio);
++
++	chip->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
++	if (IS_ERR(chip->rstc))
++		return dev_err_probe(&pdev->dev, PTR_ERR(chip->rstc),
++				     "get reset failed\n");
++
++	ret = reset_control_deassert(chip->rstc);
++	if (ret)
++		return ret;
++
++	pm_runtime_enable(&pdev->dev);
++	platform_set_drvdata(pdev, chip);
++
++	ret = pm_runtime_resume_and_get(&pdev->dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "pm_runtime_resume_and_get failed: %d\n", ret);
++		goto err;
 +	}
 +
-+	if (np)
-+		of_node_put(np);
++	ret = device_create_file(&pdev->dev, &dev_attr_output_disable);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to create poeg sysfs: %d\n", ret);
++		goto err;
++	}
++
++	return 0;
++
++err:
++	pm_runtime_disable(&pdev->dev);
++	reset_control_assert(chip->rstc);
++
++	return ret;
++}
++
++static int rzg2l_poeg_remove(struct platform_device *pdev)
++{
++	struct rzg2l_poeg_chip *chip = platform_get_drvdata(pdev);
++
++	device_remove_file(&pdev->dev, &dev_attr_output_disable);
++	pm_runtime_put(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++	reset_control_assert(chip->rstc);
 +
 +	return 0;
 +}
 +
- static const struct pwm_ops rzg2l_gpt_ops = {
- 	.request = rzg2l_gpt_request,
- 	.free = rzg2l_gpt_free,
-@@ -288,6 +343,10 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
- 	if (!rzg2l_gpt)
- 		return -ENOMEM;
- 
-+	ret = rzg2l_gpt_parse_properties(pdev, rzg2l_gpt);
-+	if (ret)
-+		return ret;
++static struct platform_driver rzg2l_poeg_driver = {
++	.driver = {
++		.name = "poeg-rzg2l",
++		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(rzg2l_poeg_of_table),
++	},
++	.probe = rzg2l_poeg_probe,
++	.remove = rzg2l_poeg_remove,
++};
++module_platform_driver(rzg2l_poeg_driver);
 +
- 	rzg2l_gpt->mmio = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(rzg2l_gpt->mmio))
- 		return PTR_ERR(rzg2l_gpt->mmio);
++MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
++MODULE_DESCRIPTION("Renesas RZ/G2L POEG Driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.25.1
 
