@@ -2,80 +2,136 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA00C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 May 2022 08:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CA1C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 May 2022 11:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242365AbiEQIuQ (ORCPT
+        id S1345566AbiEQLzj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 May 2022 04:50:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49642 "EHLO
+        Tue, 17 May 2022 07:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234860AbiEQIuO (ORCPT
+        with ESMTP id S239440AbiEQLzi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 May 2022 04:50:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 836C743AEC
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 May 2022 01:50:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1B8276133A
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 May 2022 08:50:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 79B23C385B8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 May 2022 08:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652777412;
-        bh=5rWmaHKpzqVfcXgt5AFcelOB3NaB1EzlrI9slSs1klY=;
-        h=Subject:From:Date:To:From;
-        b=mcEzkgEAKWV/l7mqi9LRUM8JBmhdDvfYs0mIHxAdqU+T9VYXqdv8uLgY8pAgXwVig
-         /6VcyfxYBC6HuitKbMo9837DSLGQkc+Blkq5Pj+eMhcDBNzSCmI6LaYJ2OBTOMtciL
-         2+FrPfWkI52tc2eYb5BBw47B/a7YtBLFTldyTBLur6Tn/86Kq8Ue5xgCbFz3QvsAlp
-         Koz2vPnxWy3p18qh8kCYdPg7pZKngktnqQ+GxhXlffEevbXwv4/wvYuoN95OZn7tAv
-         5Xw7WyCfld6McXHt7pYEG+kw9r0ZnWlFz6LmPXxAiAtQjckdi4yzXW7gHo23h6LObH
-         F2TU1enW7oblg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5697EF0389D
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 May 2022 08:50:12 +0000 (UTC)
+        Tue, 17 May 2022 07:55:38 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E1A74667F
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 May 2022 04:55:37 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id o13-20020a17090a9f8d00b001df3fc52ea7so2182745pjp.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 May 2022 04:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=RlepMiPuAVonZgviS80Tf3krO22PqqCiyJEWYLfV07E=;
+        b=Ybnp8Kxt6ASWvfbuRGgVnXrR11vcbpIzo5amP9k0dcL1InBuzI8O9GCgT5NR3QIdI2
+         GqgKQ7vj5qPD1pOy7YMY8dd8sbT316K/ZlmIF71mKP5j+DaR62HtPS9INo8WB+qL2JpS
+         qtZ+xibvfn/C7KCukiSQBd0VLKQWOWpNpWkMybp5IxIpwe1rnN+PF7lnz8LAqKHZq6Ya
+         6oT18GSuZQIUP/m1PyB20YiFWBkKI4oNv9cjpHSxcpx246qyDufwmWCsSImYnF3N0KT+
+         1IoSEfHjhTyhxYlkkAtNHBD+vIoW+jOapEJxvF1l+joOCpW+7oKQHrP65+5+A+Gc5Wug
+         vaDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=RlepMiPuAVonZgviS80Tf3krO22PqqCiyJEWYLfV07E=;
+        b=7EzoO1q7dZ6pDBpX8sHSuOehJ3mB8x33VX9KzUE79UqE90932eoTF4fOkNq4FAYyew
+         dX7XJokEwyL86TjsjxOY4SGjiSoouHb90yyVGyE2GtVrJrWbmZmEXyW+K2pNeoDWG56j
+         h1Nw7EIiPE18GcrWDWi9OSVvTzG1yOb7y4xj5SZFSkQ9f8NiDhBfPTeLWahvjhasN1dD
+         +isq3517taw9HurCPhWR8qwRpG7eOkDY77DDNT7YFpgqDawgExslLcWTci4XE1cMSFtF
+         LcKlYvQzfqQyJkqFNOsJG+oKL/aGBLxmOv/to0eb3qXX0Ti42XuKjay5he0uszrpCW1x
+         dTgg==
+X-Gm-Message-State: AOAM531RTQ4moJQmOexOdKIuerp+1xxTizGnZk8OGXWA7M3HFUvc196M
+        Yv08f+Kn/l8Mbr5woUnW9BM0C8YqF0/ZQpeqmTk=
+X-Google-Smtp-Source: ABdhPJx1IOmLgsTXNPbaAJ1MpW96GaDfWRf9lrNg74xOXIDqMwZZA6KVu68HWTYcpACeobP8WjqV+w==
+X-Received: by 2002:a17:90a:760d:b0:1df:6423:d0b9 with SMTP id s13-20020a17090a760d00b001df6423d0b9mr8633405pjk.33.1652788536625;
+        Tue, 17 May 2022 04:55:36 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id 193-20020a6214ca000000b0050dc76281ecsm1133056pfu.198.2022.05.17.04.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 May 2022 04:55:36 -0700 (PDT)
+Message-ID: <62838d38.1c69fb81.27531.201e@mx.google.com>
+Date:   Tue, 17 May 2022 04:55:36 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <165277741227.14485.12288574970387996116.git-patchwork-summary@kernel.org>
-Date:   Tue, 17 May 2022 08:50:12 +0000
-To:     linux-renesas-soc@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2022-05-17-v5.18-rc7
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master cros-ec: 8 runs,
+ 1 regressions (renesas-devel-2022-05-17-v5.18-rc7)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+renesas/master cros-ec: 8 runs, 1 regressions (renesas-devel-2022-05-17-v5.=
+18-rc7)
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+Regressions Summary
+-------------------
 
-Patch: arm64: dts: renesas: beacon: Fix regulator node names
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=640523
-  Lore link: https://lore.kernel.org/r/a9ac82bdf108162487289d091c53a9b3de393f13.1652263918.git.geert+renesas@glider.be
-
-Patch: arm64: dts: renesas: r9a07g043: Add ADC node
-  Submitter: Biju Das <biju.das.jz@bp.renesas.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=638860
-  Lore link: https://lore.kernel.org/r/20220505184353.512133-1-biju.das.jz@bp.renesas.com
-
-Patch: arm64: dts: renesas: Rename numbered regulators
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=640527
-  Lore link: https://lore.kernel.org/r/b90dfeb834c4d7dabd22bf03396f33df58f54507.1652264651.git.geert+renesas@glider.be
+platform        | arch  | lab           | compiler | defconfig             =
+     | regressions
+----------------+-------+---------------+----------+-----------------------=
+-----+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrome=
+book | 1          =
 
 
-Total patches: 3
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-05-17-v5.18-rc7/plan/cros-ec/
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+  Test:     cros-ec
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-05-17-v5.18-rc7
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      6bd98cbba53cd9f63aaf4d82982dff95c824b92a
+
+  Test suite revisions:
+    cros-ec-tests
+      URL:  https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform=
+/cros-ec-tests.git
+      SHA:  86181a7fbd379fc42314c450740d2cea8cdf04c1 =
 
 
+
+Test Regressions
+---------------- =
+
+
+
+platform        | arch  | lab           | compiler | defconfig             =
+     | regressions
+----------------+-------+---------------+----------+-----------------------=
+-----+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrome=
+book | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62837b535db56e3355a39c05
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-05-17-v5.18-rc7/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/c=
+ros-ec-mt8173-elm-hana.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-05-17-v5.18-rc7/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/c=
+ros-ec-mt8173-elm-hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220513.0/arm64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.login: https://kernelci.org/test/case/id/62837b535db56e3355a39c=
+06
+        failing since 0 day (last pass: renesas-devel-2022-05-09-v5.18-rc6,=
+ first fail: renesas-devel-2022-05-16-v5.18-rc7) =
+
+ =20
