@@ -2,118 +2,62 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0418DC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 May 2022 21:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84967C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 May 2022 23:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243108AbiERVKi (ORCPT
+        id S231199AbiERXYw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 May 2022 17:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52776 "EHLO
+        Wed, 18 May 2022 19:24:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243004AbiERVKh (ORCPT
+        with ESMTP id S231221AbiERXYw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 May 2022 17:10:37 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693AE2550B5;
-        Wed, 18 May 2022 14:10:36 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id c10so4605689edr.2;
-        Wed, 18 May 2022 14:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JKV9lVU79l7/vRGdMw2VsgQs72ssBgmwLYPjAHdPP+k=;
-        b=j0k+UnRq5J9c8xRJb8t2ZFQxvhVMSIEUS06QQ3g8MRSG0RhOcHfvHDar/OqRnEUMSg
-         eLv81Hp3bTCBl+auQwcV8fuWNnk59F1lpJk1UDYmNTfW00LGRqRRk+I/WpfcCJQmQt2j
-         VCnlZy66/ZMgr9Yugy5li82Be3EDvd6utsKvcuG5NZh8YxO7IMo6n11HLKUAZlSjfbFc
-         MXGDevQ8kZOJYsd/s1gs8SQXjTVumsBsc6B7Ga/ZUrFFBXFm6n8SBu3y9BbHOtJGf9h7
-         UgI0BNHUEchB+aB89eR7A5JeNbs/Jfdz5AI5GZ4dOCqaSLxkz3D0SUNG/GqhTdtpflb4
-         Za6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JKV9lVU79l7/vRGdMw2VsgQs72ssBgmwLYPjAHdPP+k=;
-        b=nJebd5kGxH9Q2BXDqsQD7FHSWw5ylvNxrH+4RPk+YqyAy9Bbci+cXQ2hO44mWHM2C7
-         FDMBIW/fGYLIXbGZ/5mIQcUbZLTeGS5jol2CdM3cm4CQT0QVVTjJsePAtuK1HVwaZ92C
-         ZkQPT9CbdHg4r2qkcjERO79gF0elHRKcgaHOlb1xZnqoknRrrc317ZFINc+9lGp5D6jr
-         Rb03r5+HckqlzHm2cwM4cEiC1GpHkzjK8Hauh7mkIQwMoFzt8MxxtWZrq7JIEEogV1Aa
-         euvh0/RaFRhQnY7o+diQKTUhOXDC6URYR1LiTamvIhI50hxIzMvoG2GT8OO/LxW+vghT
-         xfYg==
-X-Gm-Message-State: AOAM532h8f9I6vxqH0ogtYPBGaagmiSHl82h9hbC1UIziYXuN62KrN2q
-        lkUsfZLbNwWjvNCGNbpE3tGuaW6W2Qv4BTTr6VM=
-X-Google-Smtp-Source: ABdhPJw51DfdxfGRtfLi5oKyYAPymH2LdfYbR1w83oGWn93l2R5ph/BmGYdd3FNyq5X+5mv5vg8vCwJVKWA3RHzvv80=
-X-Received: by 2002:aa7:d911:0:b0:42a:af69:e167 with SMTP id
- a17-20020aa7d911000000b0042aaf69e167mr1825172edr.54.1652908234980; Wed, 18
- May 2022 14:10:34 -0700 (PDT)
+        Wed, 18 May 2022 19:24:52 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46B68F583;
+        Wed, 18 May 2022 16:24:50 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VDhNW0k_1652916287;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VDhNW0k_1652916287)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 19 May 2022 07:24:47 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     miquel.raynal@bootlin.com
+Cc:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] rtc: rzn1: fix platform_no_drv_owner.cocci warning
+Date:   Thu, 19 May 2022 07:24:45 +0800
+Message-Id: <20220518232445.79156-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-References: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 18 May 2022 23:09:58 +0200
-Message-ID: <CAHp75VeyU4Ox76wz9VfT8qEKHsE1eAo2iw27Lro1tmjJB0npMg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] Renesas RZ/G2L IRQC support
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, May 18, 2022 at 9:29 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
->
-> Hi All,
->
-> The RZ/G2L Interrupt Controller is a front-end for the GIC found on
-> Renesas RZ/G2L SoC's with below pins:
-> - IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI
->   interrupts
-> - GPIO pins used as external interrupt input pins out of GPIOINT0-122 a
->   maximum of only 32 can be mapped to 32 GIC SPI interrupts,
-> - NMI edge select.
->
->                                                              _____________
->                                                              |    GIC     |
->                                                              |  ________  |
->                                       ____________           | |        | |
-> NMI --------------------------------->|          |  SPI0-479 | | GIC-600| |
->              _______                  |          |------------>|        | |
->              |      |                 |          |  PPI16-31 | |        | |
->              |      | IRQ0-IRQ7       |   IRQC   |------------>|        | |
-> P0_P48_4 --->| GPIO |---------------->|          |           | |________| |
->              |      |GPIOINT0-122     |          |           |            |
->              |      |---------------->| TINT0-31 |           |            |
->              |______|                 |__________|           |____________|
->
-> The proposed patches add hierarchical IRQ domain, one in IRQC driver and
-> another in pinctrl driver. Upon interrupt requests map the interrupt to
-> GIC. Out of GPIOINT0-122 only 32 can be mapped to GIC SPI, this mapping is
-> handled by the pinctrl and IRQC driver.
+Remove .owner field if calls are used which set it automatically.
+./drivers/rtc/rtc-rzn1.c:411:3-8: No need to set .owner here. The core
+will do it.
 
-Where is the explanation on why valid_mask can't be used instead?
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/rtc/rtc-rzn1.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-
+diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
+index 980ade8c9601..f92d1398b0f1 100644
+--- a/drivers/rtc/rtc-rzn1.c
++++ b/drivers/rtc/rtc-rzn1.c
+@@ -408,7 +408,6 @@ static struct platform_driver rzn1_rtc_driver = {
+ 	.remove = rzn1_rtc_remove,
+ 	.driver = {
+ 		.name	= "rzn1-rtc",
+-		.owner	= THIS_MODULE,
+ 		.of_match_table = rzn1_rtc_of_match,
+ 	},
+ };
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1.7.g153144c
+
