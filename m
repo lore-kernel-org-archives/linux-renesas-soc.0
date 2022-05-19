@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC424C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 May 2022 15:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E039EC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 May 2022 15:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240983AbiESPci (ORCPT
+        id S241032AbiESPcu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 19 May 2022 11:32:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57072 "EHLO
+        Thu, 19 May 2022 11:32:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240935AbiESPch (ORCPT
+        with ESMTP id S241008AbiESPcp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 May 2022 11:32:37 -0400
+        Thu, 19 May 2022 11:32:45 -0400
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823405C84D;
-        Thu, 19 May 2022 08:32:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60ECE5E16E;
+        Thu, 19 May 2022 08:32:39 -0700 (PDT)
 Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 52196FF804;
-        Thu, 19 May 2022 15:32:32 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 453BAFF816;
+        Thu, 19 May 2022 15:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1652974354;
+        t=1652974358;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=H/loyWDzc9X11Tf8C5CPf6PW/Ft0RiVlInj9tX+NPZg=;
-        b=X+gHFMidJYS9rXgUSgxi0wcZgQRBBccLYdh1vd2TtM1ngJlViD3n8U2EEe4fM/7s1ejXtz
-        OywKjjr+VOSTiVUJmxRhQLFhwIwZkFCXQIqycuxFBe1OgyXEUe0/KGF/rCcGBw7QJ6+i75
-        HkpmZUlWpnwd+E0a8cEVCJBKbGOVNQgDlrts4q7Iq2v1G9u8tqMDnv/rW6KzDT5GyKL0VX
-        JyKXWQ0KYT/F1A3ifJxML5JPFKiydCtzHWn3QuULXAwddXt1LwNdtfaECKW8jrxCLXB40M
-        kado6ht4AA/CrLzCeFBEpEx1ENg6hC/v2CbQkY46ZP/Hm84S2HwIkGcNZk0iRA==
+        bh=9rZs6A3tpOgkVP31XH4z2cunOX0YK2fskMjH+iHPQO8=;
+        b=lWZesX3UrHOJXZ1psQ27F0pP7k7Dyx2u0KuPlJjgavCvAwo8rorxEnTGntkY5BP886TKnk
+        hyTubT84VzPWuxQJ0hdhFX7OZXrxi5KK3NwsfaZJoCI19tX12sRvZjRTR8Frmv4eP0os/0
+        dXmRdIrtkPp0+9AT/6f0uA3eL1xUFIYKyrCYlMKk+ja5wlVQYXtcSgkU1yak3cpd7hvUAn
+        QSBG4BorngZZHRDR4HiXSl/xA4YwbxjvOzahy4Bxtnu7IA7SOUpnmhMp7xT+K4NWI8QWj7
+        kJqRfgC8aMjDez9aOejZV3PXQAcU61xOldpupL8f5I/H+C9Uj97vtWUpX//Irg==
 From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@gmail.com>,
@@ -54,10 +54,11 @@ Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         Pascal Eberhard <pascal.eberhard@se.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH net-next v5 02/13] net: dsa: add support for ethtool get_rmon_stats()
-Date:   Thu, 19 May 2022 17:30:56 +0200
-Message-Id: <20220519153107.696864-3-clement.leger@bootlin.com>
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH net-next v5 04/13] dt-bindings: net: pcs: add bindings for Renesas RZ/N1 MII converter
+Date:   Thu, 19 May 2022 17:30:58 +0200
+Message-Id: <20220519153107.696864-5-clement.leger@bootlin.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220519153107.696864-1-clement.leger@bootlin.com>
 References: <20220519153107.696864-1-clement.leger@bootlin.com>
@@ -68,62 +69,227 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support to allow dsa drivers to specify the .get_rmon_stats()
-operation.
+This MII converter can be found on the RZ/N1 processor family. The MII
+converter ports are declared as subnodes which are then referenced by
+users of the PCS driver such as the switch.
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 ---
- include/net/dsa.h |  3 +++
- net/dsa/slave.c   | 13 +++++++++++++
- 2 files changed, 16 insertions(+)
+ .../bindings/net/pcs/renesas,rzn1-miic.yaml   | 162 ++++++++++++++++++
+ include/dt-bindings/net/pcs-rzn1-miic.h       |  33 ++++
+ 2 files changed, 195 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+ create mode 100644 include/dt-bindings/net/pcs-rzn1-miic.h
 
-diff --git a/include/net/dsa.h b/include/net/dsa.h
-index 14f07275852b..64da5ed27fdc 100644
---- a/include/net/dsa.h
-+++ b/include/net/dsa.h
-@@ -888,6 +888,9 @@ struct dsa_switch_ops {
- 				     struct ethtool_eth_mac_stats *mac_stats);
- 	void	(*get_eth_ctrl_stats)(struct dsa_switch *ds, int port,
- 				      struct ethtool_eth_ctrl_stats *ctrl_stats);
-+	void	(*get_rmon_stats)(struct dsa_switch *ds, int port,
-+				  struct ethtool_rmon_stats *rmon_stats,
-+				  const struct ethtool_rmon_hist_range **ranges);
- 	void	(*get_stats64)(struct dsa_switch *ds, int port,
- 				   struct rtnl_link_stats64 *s);
- 	void	(*self_test)(struct dsa_switch *ds, int port,
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index 291197859cea..6cfe07ce06d6 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -1002,6 +1002,18 @@ dsa_slave_get_eth_ctrl_stats(struct net_device *dev,
- 		ds->ops->get_eth_ctrl_stats(ds, dp->index, ctrl_stats);
- }
- 
-+static void
-+dsa_slave_get_rmon_stats(struct net_device *dev,
-+			 struct ethtool_rmon_stats *rmon_stats,
-+			 const struct ethtool_rmon_hist_range **ranges)
-+{
-+	struct dsa_port *dp = dsa_slave_to_port(dev);
-+	struct dsa_switch *ds = dp->ds;
+diff --git a/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml b/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+new file mode 100644
+index 000000000000..81a2f7d414a6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+@@ -0,0 +1,162 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/pcs/renesas,rzn1-miic.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	if (ds->ops->get_rmon_stats)
-+		ds->ops->get_rmon_stats(ds, dp->index, rmon_stats, ranges);
-+}
++title: Renesas RZ/N1 MII converter
 +
- static void dsa_slave_net_selftest(struct net_device *ndev,
- 				   struct ethtool_test *etest, u64 *buf)
- {
-@@ -2081,6 +2093,7 @@ static const struct ethtool_ops dsa_slave_ethtool_ops = {
- 	.get_eth_phy_stats	= dsa_slave_get_eth_phy_stats,
- 	.get_eth_mac_stats	= dsa_slave_get_eth_mac_stats,
- 	.get_eth_ctrl_stats	= dsa_slave_get_eth_ctrl_stats,
-+	.get_rmon_stats		= dsa_slave_get_rmon_stats,
- 	.set_wol		= dsa_slave_set_wol,
- 	.get_wol		= dsa_slave_get_wol,
- 	.set_eee		= dsa_slave_set_eee,
++maintainers:
++  - Clément Léger <clement.leger@bootlin.com>
++
++description: |
++  This MII converter is present on the Renesas RZ/N1 SoC family. It is
++  responsible to do MII passthrough or convert it to RMII/RGMII.
++
++properties:
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a06g032-miic
++      - const: renesas,rzn1-miic
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: MII reference clock
++      - description: RGMII reference clock
++      - description: RMII reference clock
++      - description: AHB clock used for the MII converter register interface
++
++  renesas,miic-switch-portin:
++    description: MII Switch PORTIN configuration. This value should use one of
++      the values defined in dt-bindings/net/pcs-rzn1-miic.h.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [1, 2]
++
++  power-domains:
++    maxItems: 1
++
++patternProperties:
++  "^mii-conv@[0-5]$":
++    type: object
++    description: MII converter port
++
++    properties:
++      reg:
++        description: MII Converter port number.
++        enum: [1, 2, 3, 4, 5]
++
++      renesas,miic-input:
++        description: Converter input port configuration. This value should use
++          one of the values defined in dt-bindings/net/pcs-rzn1-miic.h.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
++    required:
++      - reg
++      - renesas,miic-input
++
++    additionalProperties: false
++
++    allOf:
++      - if:
++          properties:
++            reg:
++              const: 1
++        then:
++          properties:
++            renesas,miic-input:
++              const: 0
++      - if:
++          properties:
++            reg:
++              const: 2
++        then:
++          properties:
++            renesas,miic-input:
++              enum: [1, 11]
++      - if:
++          properties:
++            reg:
++              const: 3
++        then:
++          properties:
++            renesas,miic-input:
++              enum: [7, 10]
++      - if:
++          properties:
++            reg:
++              const: 4
++        then:
++          properties:
++            renesas,miic-input:
++              enum: [4, 6, 9, 13]
++      - if:
++          properties:
++            reg:
++              const: 5
++        then:
++          properties:
++            renesas,miic-input:
++              enum: [3, 5, 8, 12]
++
++required:
++  - '#address-cells'
++  - '#size-cells'
++  - compatible
++  - reg
++  - clocks
++  - power-domains
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/net/pcs-rzn1-miic.h>
++    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
++
++    eth-miic@44030000 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      compatible = "renesas,r9a06g032-miic", "renesas,rzn1-miic";
++      reg = <0x44030000 0x10000>;
++      clocks = <&sysctrl R9A06G032_CLK_MII_REF>,
++              <&sysctrl R9A06G032_CLK_RGMII_REF>,
++              <&sysctrl R9A06G032_CLK_RMII_REF>,
++              <&sysctrl R9A06G032_HCLK_SWITCH_RG>;
++      renesas,miic-switch-portin = <MIIC_GMAC2_PORT>;
++      power-domains = <&sysctrl>;
++
++      mii_conv1: mii-conv@1 {
++        renesas,miic-input = <MIIC_GMAC1_PORT>;
++        reg = <1>;
++      };
++
++      mii_conv2: mii-conv@2 {
++        renesas,miic-input = <MIIC_SWITCH_PORTD>;
++        reg = <2>;
++      };
++
++      mii_conv3: mii-conv@3 {
++        renesas,miic-input = <MIIC_SWITCH_PORTC>;
++        reg = <3>;
++      };
++
++      mii_conv4: mii-conv@4 {
++        renesas,miic-input = <MIIC_SWITCH_PORTB>;
++        reg = <4>;
++      };
++
++      mii_conv5: mii-conv@5 {
++        renesas,miic-input = <MIIC_SWITCH_PORTA>;
++        reg = <5>;
++      };
++    };
+diff --git a/include/dt-bindings/net/pcs-rzn1-miic.h b/include/dt-bindings/net/pcs-rzn1-miic.h
+new file mode 100644
+index 000000000000..784782eaec9e
+--- /dev/null
++++ b/include/dt-bindings/net/pcs-rzn1-miic.h
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2022 Schneider-Electric
++ *
++ * Clément Léger <clement.leger@bootlin.com>
++ */
++
++#ifndef _DT_BINDINGS_PCS_RZN1_MIIC
++#define _DT_BINDINGS_PCS_RZN1_MIIC
++
++/*
++ * Reefer to the datasheet [1] section 8.2.1, Internal Connection of Ethernet
++ * Ports to check the available combination
++ *
++ * [1] REN_r01uh0750ej0140-rzn1-introduction_MAT_20210228.pdf
++ */
++
++#define MIIC_GMAC1_PORT			0
++#define MIIC_GMAC2_PORT			1
++#define MIIC_RTOS_PORT			2
++#define MIIC_SERCOS_PORTA		3
++#define MIIC_SERCOS_PORTB		4
++#define MIIC_ETHERCAT_PORTA		5
++#define MIIC_ETHERCAT_PORTB		6
++#define MIIC_ETHERCAT_PORTC		7
++#define MIIC_SWITCH_PORTA		8
++#define MIIC_SWITCH_PORTB		9
++#define MIIC_SWITCH_PORTC		10
++#define MIIC_SWITCH_PORTD		11
++#define MIIC_HSR_PORTA			12
++#define MIIC_HSR_PORTB			13
++
++#endif
 -- 
 2.36.0
 
