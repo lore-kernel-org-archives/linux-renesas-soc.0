@@ -2,144 +2,232 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E42C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 May 2022 08:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC60DC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 May 2022 08:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347059AbiETI3w convert rfc822-to-8bit (ORCPT
+        id S1347160AbiETIeU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 20 May 2022 04:29:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39552 "EHLO
+        Fri, 20 May 2022 04:34:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347014AbiETI3o (ORCPT
+        with ESMTP id S1347463AbiETIdp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 May 2022 04:29:44 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A2F5E166;
-        Fri, 20 May 2022 01:29:43 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id 11so4201836qtp.9;
-        Fri, 20 May 2022 01:29:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vQOf+Td+ygkeVxH/Q4rPVYerZmfW/Jb9XT+06okoXpI=;
-        b=3zG89MuHpotbf+Ws6VqTyT4EWHR8D275ghcUJfZobqyP6jxYOYe/lWBA2EwoVMmAD8
-         vfZoQq4IyYdRJuNXSfVYYbocrousz+jwPzkk/RN0ivwbLqAfOfudIe4L8W2KBSYS26oF
-         bjfmZO8sW/MlD3jk4y77WW+kjXwu6r3vpOOVYZf5ilT/XIvj2sE70kExTIBVsJLZ3QQb
-         F/aQokyus9yU2aDW0zglu4PStivKK3hGUSoiZXE+QLIkkY/U7Dn3Giby6mjYEd69up+n
-         BZadpuqeMoZj5dg03NT0Zeq7UrJOaD7BV+3E3ZKaa8n7B1/AT4GY8iDMQRfgyUIPBFAz
-         hc+Q==
-X-Gm-Message-State: AOAM533yeRvGdTI7F5B2tDzrtAk9tNT99Omryo78IkX3Mpv3W9chOwfr
-        dNccvF/VlkcvEUCnV2zuSq29wsyTSYLMFg==
-X-Google-Smtp-Source: ABdhPJwlZmN9N3HbUeX50IpW7oo4V5w3MCII46HPIX4xlZ3znPCqOSlUCEYOymQ7RxNuUCJu63popQ==
-X-Received: by 2002:ac8:58c9:0:b0:2f3:d8f0:185f with SMTP id u9-20020ac858c9000000b002f3d8f0185fmr6798687qta.381.1653035382854;
-        Fri, 20 May 2022 01:29:42 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id bs26-20020ac86f1a000000b002f39b99f6bdsm2699378qtb.87.2022.05.20.01.29.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 May 2022 01:29:42 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-2ff39b44b06so79589747b3.13;
-        Fri, 20 May 2022 01:29:42 -0700 (PDT)
-X-Received: by 2002:a81:9b0c:0:b0:2f4:c522:7d3c with SMTP id
- s12-20020a819b0c000000b002f4c5227d3cmr8935563ywg.316.1653035382015; Fri, 20
- May 2022 01:29:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220429134143.628428-1-herve.codina@bootlin.com>
- <20220429134143.628428-4-herve.codina@bootlin.com> <29ba3db6-e5c7-06d3-29d9-918ee5b34555@linaro.org>
- <20220520102329.6b0a58d0@bootlin.com>
-In-Reply-To: <20220520102329.6b0a58d0@bootlin.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 20 May 2022 10:29:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX6zXbFXo-tojpvrbobkWBe0MsjONEgZJismwFvhZ7SKA@mail.gmail.com>
-Message-ID: <CAMuHMdX6zXbFXo-tojpvrbobkWBe0MsjONEgZJismwFvhZ7SKA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] dt-bindings: PCI: renesas,pci-rcar-gen2: Add
- device tree support for r9a06g032
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        Fri, 20 May 2022 04:33:45 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A83A158948;
+        Fri, 20 May 2022 01:33:08 -0700 (PDT)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id A58A124001C;
+        Fri, 20 May 2022 08:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1653035587;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8uycxO5fJimk0zTNVtpGUm4BdARppNdHxB7/Xtb6ANM=;
+        b=gPStD7GoQ1fffRcB8mNyIeGO4ElBHqlR+svkzdvU8QApZyJqS1PVnyFh7PeqBwiNpTMn7d
+        ouuZxIXXLukQpNS3trpXZDxz6MQ501jIhKFYwZo0rTAn5UOvzx4Q5v3EVmZEJ4uNF0s8ny
+        y2Cqj5hCfUaR8PeKkFvkLiXfXw2WYRb3OZW2Ce0gsEfHAQljuQC+1tdNhrWYhkWq/EvkGf
+        3BAFdvPdRW+rvd0Koff9tM6D9NW16Xt59P4VFnjBltmgINsAdWDqq9fyjB1sCD6RLOX6tp
+        v5jAShkIh6yeXsnvBHrQ5aphV3gIMPONSezL3gjvsSw3mf+mLTXJFpzN13yPDQ==
+Date:   Fri, 20 May 2022 10:31:52 +0200
+From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?B?TWlxdcOobA==?= Raynal <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 11/13] ARM: dts: r9a06g032: describe GMAC2
+Message-ID: <20220520103152.48f7b178@fixe.home>
+In-Reply-To: <CAMuHMdXTrZnGVt44hg5QUvuS5cZABmRncgNYtatkmk8VcH7gew@mail.gmail.com>
+References: <20220519153107.696864-1-clement.leger@bootlin.com>
+        <20220519153107.696864-12-clement.leger@bootlin.com>
+        <CAMuHMdUJpNSyX0qK64+W1G6P1S-78mb_+D0-w3kHOFY3VVkANQ@mail.gmail.com>
+        <20220520101332.0905739f@fixe.home>
+        <CAMuHMdXTrZnGVt44hg5QUvuS5cZABmRncgNYtatkmk8VcH7gew@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hervé,
+Le Fri, 20 May 2022 10:25:37 +0200,
+Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit :
 
-On Fri, May 20, 2022 at 10:23 AM Herve Codina <herve.codina@bootlin.com> wrote:
-
-> On Sun, 1 May 2022 10:51:43 +0200
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
->
-> [...]
-> > >    resets:
-> > >      maxItems: 1
-> > > @@ -106,13 +106,45 @@ required:
-> > >    - interrupt-map
-> > >    - interrupt-map-mask
-> > >    - clocks
-> > > -  - resets
-> > >    - power-domains
-> > >    - bus-range
-> > >    - "#address-cells"
-> > >    - "#size-cells"
-> > >    - "#interrupt-cells"
+> Hi Cl=C3=A9ment,
+>=20
+> On Fri, May 20, 2022 at 10:14 AM Cl=C3=A9ment L=C3=A9ger
+> <clement.leger@bootlin.com> wrote:
+> > Le Fri, 20 May 2022 09:18:58 +0200,
+> > Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit : =20
+> > > On Thu, May 19, 2022 at 5:32 PM Cl=C3=A9ment L=C3=A9ger <clement.lege=
+r@bootlin.com> wrote: =20
+> > > > RZ/N1 SoC includes two MAC named GMACx that are compatible with the
+> > > > "snps,dwmac" driver. GMAC1 is connected directly to the MII convert=
+er
+> > > > port 1. GMAC2 however can be used as the MAC for the switch CPU
+> > > > management port or can be muxed to be connected directly to the MII
+> > > > converter port 2. This commit add description for the GMAC2 which w=
+ill
+> > > > be used by the switch description.
+> > > >
+> > > > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> =
+=20
+>=20
+> > > > --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> > > > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> > > > @@ -200,6 +200,23 @@ nand_controller: nand-controller@40102000 {
+> > > >                         status =3D "disabled";
+> > > >                 };
+> > > >
+> > > > +               gmac2: ethernet@44002000 {
+> > > > +                       compatible =3D "snps,dwmac"; =20
 > > >
-> > > +if:
+> > > Does this need an SoC-specific compatible value? =20
 > >
-> > allOf.
+> > Indeed, it might be useful to introduce a specific SoC compatible since
+> > in a near future, there might be some specific support for that gmac.
+> > Here is an overview of the gmac connection on the SoC:
 > >
-> > > +  properties:
-> > > +    compatible:
-> > > +      contains:
-> > > +        enum:
->
-> I Have an issue with this allOf.
->
-> The yaml has the following structure and so has 2 AllOf:
->   ...
->   allOf:
->   - $ref: /schemas/pci/pci-bus.yaml#
->
->   properties:
->     compatible:
->   ...
->   allOf:
->   - if:
->       properties:
->         compatible:
->           contains:
->   ...
-> Is having a 'allOf' for schemas inclusion and a 'allOf' for conditionnal
-> parts allowed ?
+> >                                           =E2=94=8C=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90   =
+=E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=90
+> >                                           =E2=94=82         =E2=94=82  =
+ =E2=94=82          =E2=94=82
+> >                                           =E2=94=82  GMAC2  =E2=94=82  =
+ =E2=94=82  GMAC1   =E2=94=82
+> >                                           =E2=94=82         =E2=94=82  =
+ =E2=94=82          =E2=94=82
+> >                                           =E2=94=94=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98   =
+=E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=98
+> >                                               =E2=94=82               =
+=E2=94=82
+> >                                               =E2=94=82               =
+=E2=94=82
+> >                                               =E2=94=82               =
+=E2=94=82
+> >                                          =E2=94=8C=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=96=BC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=90        =E2=94=82
+> >                                          =E2=94=82           =E2=94=82 =
+       =E2=94=82
+> >             =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=A4  SWITCH   =
+=E2=94=82        =E2=94=82
+> >             =E2=94=82                            =E2=94=82           =
+=E2=94=82        =E2=94=82
+> >             =E2=94=82          =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=AC=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=98        =E2=94=82
+> >             =E2=94=82          =E2=94=82            =E2=94=8C=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98    =E2=94=82        =
+     =E2=94=82
+> >             =E2=94=82          =E2=94=82            =E2=94=82          =
+ =E2=94=82             =E2=94=82
+> >        =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=96=BC=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=96=BC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=96=BC=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=96=BC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=96=BC=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> >        =E2=94=82                      MII Converter                    =
+    =E2=94=82
+> >        =E2=94=82                                                       =
+    =E2=94=82
+> >        =E2=94=82                                                       =
+    =E2=94=82
+> >        =E2=94=82 port 1      port 2       port 3      port 4       port=
+ 5  =E2=94=82
+> >        =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=98
+> >
+> > As you can see, the GMAC1 is directly connected to MIIC converter and
+> > thus will need a "pcs-handle" property to point on the MII converter
+> > port whereas the GMAC2 is directly connected to the switch in GMII.
+> >
+> > Is "renesas,r9a06g032-gmac2", "renesas,rzn1-switch-gmac2" looks ok
+> > for you for this one ? =20
+>=20
+> Why "switch" in the family-specific value, but not in the SoC-specific
+> value?
 
-Just combine them into a single "allOf".
-See e.g. Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml.
+That's a typo, switch should be removed.
 
-{oetje,eeting}s,
+>=20
+> Are GMAC1 and GMAC2 really different, or are they identical, and is
+> the only difference in the wiring, which can be detected at run-time
+> using this "pcs-handle" property? If they're identical, they should
+> use the same compatible value.
 
-                        Geert
+They are actually identical except the requirement for a "pcs-handle"
+for gmac1. I thought about using different compatible to enforce this by
+making it "required" with the "renesas,r9a06g032-gmac1" compatible but
+not the "renesas,r9a06g032-gmac2" one. If it's ok for you to let it
+optional and use a single compatible, I'm ok with that !
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks !
+
+>=20
+> Thanks!
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>=20
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+
+
+
+--=20
+Cl=C3=A9ment L=C3=A9ger,
+Embedded Linux and Kernel engineer at Bootlin
+https://bootlin.com
