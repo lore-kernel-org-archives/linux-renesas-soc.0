@@ -2,272 +2,153 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3155BC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 May 2022 21:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69808C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 May 2022 07:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244510AbiESVA3 (ORCPT
+        id S1345990AbiETHJm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 19 May 2022 17:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42404 "EHLO
+        Fri, 20 May 2022 03:09:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232073AbiESVA0 (ORCPT
+        with ESMTP id S1345889AbiETHJk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 May 2022 17:00:26 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5661EC3EE
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 May 2022 14:00:23 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id h8so7606754ljb.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 May 2022 14:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=jJ5ibJyWgXSEVtzkRw4+wBg9lBfLq6hkUK/PMQO4gu8=;
-        b=ruiqItQaoeqAgrJoFFwJ/UR0y1kFMIA4/jFsRXtqkA/UzGJaMIfiqZww1gW8BwBhDH
-         YCKHxoyVRuF9CHRNB+qAziSMUqD1JEltX2KQSlMDQ3e2jtR76Fy82aBCGjVPyYNwrNdy
-         MwkftIr89LES3mjhfPw3qBR5l1hKK/aFssC1kLYJXCAhOEKBQ7tKPPGtZXaZPQF+qSqO
-         sGQR18LNpEO8xu3tNL0RObIImk83UlGl22zjMHmHJyWtdDQ96jgEPvaSJWzrBRB9qp6d
-         GiC7oCQuLDj+64B6mFx3acaFfU/xQj3yzdoeThqgPcd5bLhllXm45BzTQF47BEdR/i29
-         JB5w==
+        Fri, 20 May 2022 03:09:40 -0400
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F47C14D7BA;
+        Fri, 20 May 2022 00:09:38 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id 14so207266qkl.6;
+        Fri, 20 May 2022 00:09:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jJ5ibJyWgXSEVtzkRw4+wBg9lBfLq6hkUK/PMQO4gu8=;
-        b=htEZsrbb71xt02xCUJemojLHvnK7175ChC7RI7YgtLLqSOMmHC08T43fVKYRKKjkbE
-         iB8iS2nBn++fuuq3u08SZ8sz9eaCHgjoZsVQWe6oF+kivwHCCRKEy6LgbFJR1pp+BAYG
-         e6ciByy1QimDbJxlUO63Q3ysjs1FfDzWzHKj72/13vvGELVFJLBluROQbsb1IUn0aP1K
-         v/jU20bmCFdQ40iLm4qyG897E2BvoBJbwbT5qOIPXGWnJ2uMQO2Fo1JgPTyrMTUYPAny
-         R0gjZEWJVTw/g/XI8KoUWHfTStbJYbOzVZM54DFq3GKtE0JJ9bIlEP0AFE1iSkjFLu12
-         SJ3A==
-X-Gm-Message-State: AOAM532R8K1v30+Mnadq5kF2llPVSy/T15R7LPhyzW9LfslzzhlPhAih
-        9A/bi+aHMMIMigMiyNzMO60tSg==
-X-Google-Smtp-Source: ABdhPJz8OynJaFv5FD/dGoBy3yUXY/Dc5t8MtNwMt5B41FEmq0MCX+2wnuKUQ8pm5p1f9Ytf7jiVsQ==
-X-Received: by 2002:a2e:a445:0:b0:24a:c1ba:b62f with SMTP id v5-20020a2ea445000000b0024ac1bab62fmr3744675ljn.81.1652994021950;
-        Thu, 19 May 2022 14:00:21 -0700 (PDT)
-Received: from localhost (h-85-24-188-65.A463.priv.bahnhof.se. [85.24.188.65])
-        by smtp.gmail.com with ESMTPSA id x12-20020a19f60c000000b00477c619f47fsm363543lfe.92.2022.05.19.14.00.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 May 2022 14:00:21 -0700 (PDT)
-Date:   Thu, 19 May 2022 23:00:20 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Michael Rodin <mrodin@de.adit-jv.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, michael@rodin.online,
-        erosca@de.adit-jv.com
-Subject: Re: [PATCH 3/3] rcar-vin: handle transfer errors from subdevices and
- stop streaming if required
-Message-ID: <Yoav5KjnbIlpkR6c@oden.dyn.berto.se>
-References: <1652983210-1194-1-git-send-email-mrodin@de.adit-jv.com>
- <1652983210-1194-4-git-send-email-mrodin@de.adit-jv.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/gd2QrNW920jKEDeNc6oH0JJgiKsVitkuy57vUL4Nt8=;
+        b=zJEYFOCH88VTDjpb6Re2XR51abX5fHhhqQmIIZ2AC5cgWAMfdpGB4XOEyP8JwD0pAU
+         f6aLzuWdneinCzdBCbWyqUywNV2gcu6lx5xg+8BqyjWOA8Rwxosh3q8AA/rn6DxMXaDu
+         36xU72IkqujUiAS8jhzWcz/geZsmTmoomSOntBXiU4YwfTD4zenx0ge8fbEDyNkbDihm
+         4Z584mYYKJPNanuYJR6B9r6g7aJsjLDgxLq2bzVC3tRh9fAXUdMih1J22/ijocC3B2+t
+         qJAeP4zEs5hogWUX/tbJfqDj/74q1Va5dS7h1hW+2mRYvV5VRfqDLrew7q+7ANthMhO1
+         uxBQ==
+X-Gm-Message-State: AOAM531kfI+CChePhytdYb8Fyy2TtSge7iSXzZEXUToZ3egLf3GXZPOx
+        zg9WC+dZDinUaVQESzjDubeBoMtgZQSQKQ==
+X-Google-Smtp-Source: ABdhPJyquiVofAh1ku48QqyP8uC8wSBQtT7lK5ZBBF7uLh3iVl68HLy98JZsCCY6C+0g1qJqC/ZPYw==
+X-Received: by 2002:a37:6247:0:b0:6a3:3620:b07e with SMTP id w68-20020a376247000000b006a33620b07emr3975545qkb.339.1653030576830;
+        Fri, 20 May 2022 00:09:36 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id h18-20020ac87152000000b002f39b99f69asm2470384qtp.52.2022.05.20.00.09.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 May 2022 00:09:36 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-2f83983782fso78286537b3.6;
+        Fri, 20 May 2022 00:09:35 -0700 (PDT)
+X-Received: by 2002:a81:ad11:0:b0:2fe:fb00:a759 with SMTP id
+ l17-20020a81ad11000000b002fefb00a759mr8671091ywh.283.1653030575421; Fri, 20
+ May 2022 00:09:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1652983210-1194-4-git-send-email-mrodin@de.adit-jv.com>
+References: <20220519153107.696864-1-clement.leger@bootlin.com> <20220519153107.696864-5-clement.leger@bootlin.com>
+In-Reply-To: <20220519153107.696864-5-clement.leger@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 20 May 2022 09:09:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUdsgoOyFqMq--F3d67QwE4V=CTEedm=uC7grmWZZEHJg@mail.gmail.com>
+Message-ID: <CAMuHMdUdsgoOyFqMq--F3d67QwE4V=CTEedm=uC7grmWZZEHJg@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 04/13] dt-bindings: net: pcs: add bindings for
+ Renesas RZ/N1 MII converter
+To:     =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Michael,
+Hi Clément,
 
-Thanks for your work.
+On Thu, May 19, 2022 at 5:32 PM Clément Léger <clement.leger@bootlin.com> wrote:
+> This MII converter can be found on the RZ/N1 processor family. The MII
+> converter ports are declared as subnodes which are then referenced by
+> users of the PCS driver such as the switch.
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 
-I like this patch, I think it captures the issue discussed in the 
-previous thread quiet nicely. One small nit below.
+Thanks for your patch!
 
-On 2022-05-19 20:00:09 +0200, Michael Rodin wrote:
-> When a subdevice sends a transfer error event during streaming and we can
-> not capture new frames, then we know for sure that this is an unrecoverable
-> failure and not just a temporary glitch. In this case we can not ignore the
-> transfer error any more and have to notify userspace. In response to the
-> transfer error event userspace can try to restart streaming and hope that
-> it works again.
-> 
-> This patch is based on the patch [1] from Niklas S�derlund, however it adds
-> more logic to check whether the VIN hardware module is actually affected by
-> the transfer errors reported by the usptream device. For this it takes some
-> ideas from the imx driver where EOF interrupts are monitored by the
-> eof_timeout_timer added by commit 4a34ec8e470c ("[media] media: imx: Add
-> CSI subdev driver").
-> 
-> [1] https://lore.kernel.org/linux-renesas-soc/20211108160220.767586-4-niklas.soderlund+renesas@ragnatech.se/
-> 
-> Signed-off-by: Michael Rodin <mrodin@de.adit-jv.com>
-> ---
->  drivers/media/platform/renesas/rcar-vin/rcar-dma.c | 34 ++++++++++++++++++++++
->  .../media/platform/renesas/rcar-vin/rcar-v4l2.c    | 18 +++++++++++-
->  drivers/media/platform/renesas/rcar-vin/rcar-vin.h |  7 +++++
->  3 files changed, 58 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-> index 2272f1c..596a367 100644
-> --- a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-> @@ -13,6 +13,7 @@
->  #include <linux/delay.h>
->  #include <linux/interrupt.h>
->  #include <linux/pm_runtime.h>
-> +#include <media/v4l2-event.h>
->  
->  #include <media/videobuf2-dma-contig.h>
->  
-> @@ -1060,6 +1061,9 @@ static irqreturn_t rvin_irq(int irq, void *data)
->  		vin_dbg(vin, "Dropping frame %u\n", vin->sequence);
->  	}
->  
-> +	cancel_delayed_work(&vin->frame_timeout);
-> +	schedule_delayed_work(&vin->frame_timeout, msecs_to_jiffies(FRAME_TIMEOUT_MS));
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+> @@ -0,0 +1,162 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/pcs/renesas,rzn1-miic.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  	vin->sequence++;
->  
->  	/* Prepare for next frame */
-> @@ -1283,6 +1287,7 @@ int rvin_start_streaming(struct rvin_dev *vin)
->  	spin_lock_irqsave(&vin->qlock, flags);
->  
->  	vin->sequence = 0;
-> +	vin->xfer_error = false;
->  
->  	ret = rvin_capture_start(vin);
->  	if (ret)
-> @@ -1290,6 +1295,10 @@ int rvin_start_streaming(struct rvin_dev *vin)
->  
->  	spin_unlock_irqrestore(&vin->qlock, flags);
->  
-> +	/* We start the frame watchdog only after we have successfully started streaming */
-> +	if (!ret)
-> +		schedule_delayed_work(&vin->frame_timeout, msecs_to_jiffies(FRAME_TIMEOUT_MS));
+> +title: Renesas RZ/N1 MII converter
 > +
->  	return ret;
->  }
->  
-> @@ -1332,6 +1341,12 @@ void rvin_stop_streaming(struct rvin_dev *vin)
->  	}
->  
->  	vin->state = STOPPING;
-> +	/*
-> +	 * Since we are now stopping and don't expect more frames to be captured, make sure that
-> +	 * there is no pending work for error handling.
-> +	 */
-> +	cancel_delayed_work_sync(&vin->frame_timeout);
-> +	vin->xfer_error = false;
+> +maintainers:
+> +  - Clément Léger <clement.leger@bootlin.com>
+> +
+> +description: |
+> +  This MII converter is present on the Renesas RZ/N1 SoC family. It is
+> +  responsible to do MII passthrough or convert it to RMII/RGMII.
+> +
+> +properties:
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - renesas,r9a06g032-miic
+> +      - const: renesas,rzn1-miic
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: MII reference clock
+> +      - description: RGMII reference clock
+> +      - description: RMII reference clock
+> +      - description: AHB clock used for the MII converter register interface
 
-Do we need to set xfer_error to false here? The delayed work is canceled 
-and we reset the xfer_error when we start in rvin_start_streaming().
+Please add clock-names (and make it required), as there are multiple clocks.
 
->  
->  	/* Wait until only scratch buffer is used, max 3 interrupts. */
->  	retries = 0;
-> @@ -1424,6 +1439,23 @@ void rvin_dma_unregister(struct rvin_dev *vin)
->  	v4l2_device_unregister(&vin->v4l2_dev);
->  }
->  
-> +static void rvin_frame_timeout(struct work_struct *work)
-> +{
-> +	struct delayed_work *dwork = to_delayed_work(work);
-> +	struct rvin_dev *vin = container_of(dwork, struct rvin_dev, frame_timeout);
-> +	struct v4l2_event event = {
-> +		.type = V4L2_EVENT_XFER_ERROR,
-> +	};
-> +
-> +	vin_dbg(vin, "Frame timeout!\n");
-> +
-> +	if (!vin->xfer_error)
-> +		return;
-> +	vin_err(vin, "Unrecoverable transfer error detected, stopping streaming\n");
-> +	vb2_queue_error(&vin->queue);
-> +	v4l2_event_queue(&vin->vdev, &event);
-> +}
-> +
->  int rvin_dma_register(struct rvin_dev *vin, int irq)
->  {
->  	struct vb2_queue *q = &vin->queue;
-> @@ -1470,6 +1502,8 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
->  		goto error;
->  	}
->  
-> +	INIT_DELAYED_WORK(&vin->frame_timeout, rvin_frame_timeout);
-> +
->  	return 0;
->  error:
->  	rvin_dma_unregister(vin);
-> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-> index 2e2aa9d..bd7f6fe2 100644
-> --- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-> @@ -648,6 +648,8 @@ static int rvin_subscribe_event(struct v4l2_fh *fh,
->  	switch (sub->type) {
->  	case V4L2_EVENT_SOURCE_CHANGE:
->  		return v4l2_event_subscribe(fh, sub, 4, NULL);
-> +	case V4L2_EVENT_XFER_ERROR:
-> +		return v4l2_event_subscribe(fh, sub, 1, NULL);
->  	}
->  	return v4l2_ctrl_subscribe_event(fh, sub);
->  }
-> @@ -1000,9 +1002,23 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
->  static void rvin_notify_video_device(struct rvin_dev *vin,
->  				     unsigned int notification, void *arg)
->  {
-> +	const struct v4l2_event *event;
-> +
->  	switch (notification) {
->  	case V4L2_DEVICE_NOTIFY_EVENT:
-> -		v4l2_event_queue(&vin->vdev, arg);
-> +		event = arg;
-> +
-> +		switch (event->type) {
-> +		case V4L2_EVENT_XFER_ERROR:
-> +			if (vin->state != STOPPED && vin->state != STOPPING) {
-> +				vin_dbg(vin, "Subdevice signaled transfer error.\n");
-> +				vin->xfer_error = true;
-> +			}
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +
->  		break;
->  	default:
->  		break;
-> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-vin.h b/drivers/media/platform/renesas/rcar-vin/rcar-vin.h
-> index 1f94589..4726a69 100644
-> --- a/drivers/media/platform/renesas/rcar-vin/rcar-vin.h
-> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-vin.h
-> @@ -31,6 +31,9 @@
->  /* Max number on VIN instances that can be in a system */
->  #define RCAR_VIN_NUM 32
->  
-> +/* maximum time we wait before signalling an error to userspace */
-> +#define FRAME_TIMEOUT_MS 1000
-> +
->  struct rvin_group;
->  
->  enum model_id {
-> @@ -207,6 +210,8 @@ struct rvin_info {
->   * @std:		active video standard of the video source
->   *
->   * @alpha:		Alpha component to fill in for supported pixel formats
-> + * @xfer_error:		Indicates if any transfer errors occurred in the current streaming session.
-> + * @frame_timeout:	Watchdog for monitoring regular capturing of frames in rvin_irq.
->   */
->  struct rvin_dev {
->  	struct device *dev;
-> @@ -251,6 +256,8 @@ struct rvin_dev {
->  	v4l2_std_id std;
->  
->  	unsigned int alpha;
-> +	bool xfer_error;
-> +	struct delayed_work frame_timeout;
->  };
->  
->  #define vin_to_source(vin)		((vin)->parallel.subdev)
-> -- 
-> 2.7.4
-> 
+The rest LGTM (from an SoC integration PoV), so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--- 
-Kind Regards,
-Niklas S�derlund
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
