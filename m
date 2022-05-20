@@ -2,169 +2,87 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57353C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 May 2022 10:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F0FC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 May 2022 11:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348146AbiETKdg (ORCPT
+        id S1348883AbiETL6U (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 20 May 2022 06:33:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37194 "EHLO
+        Fri, 20 May 2022 07:58:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348138AbiETKdf (ORCPT
+        with ESMTP id S1348933AbiETL6J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 May 2022 06:33:35 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B12A8CB12
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2022 03:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=whHSXYbHza0AY8
-        tPCXiERYHBIKvKIgdfZhENGZbjFiQ=; b=JlAjoJYAiEuOaTjZ6fFuw+nCs+TvSK
-        Wdj/x/+6TJsX9AVTqmksIdzTdM6ThdtzeKhfvT+/tL02GaUwVcHGAwIcc2FA7ZYd
-        PclA3ubraOg9pC19hvs4Fr3C5jkkUvO4fPKpkvTXWUSbj5mpp2JxN9cB8dN7E9e+
-        AA1LyHjNfEo0U=
-Received: (qmail 3736505 invoked from network); 20 May 2022 12:33:31 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 May 2022 12:33:31 +0200
-X-UD-Smtp-Session: l3s3148p1@xgCRBW/fOXJZD+8D
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] i2c: rcar: avoid race condition with SMIs
-Date:   Fri, 20 May 2022 12:33:24 +0200
-Message-Id: <20220520103325.81110-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220520103325.81110-1-wsa+renesas@sang-engineering.com>
-References: <20220520103325.81110-1-wsa+renesas@sang-engineering.com>
+        Fri, 20 May 2022 07:58:09 -0400
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8804B1EE;
+        Fri, 20 May 2022 04:57:57 -0700 (PDT)
+Received: by mail-qv1-f41.google.com with SMTP id c9so5814580qvx.8;
+        Fri, 20 May 2022 04:57:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2IAxyNFiX31GZAM0PzOF2DeAruq3MmtBLyN0dST9sLA=;
+        b=v5SVO2w2/nI44PwnGncpBcsI8Qurg/oh3Afl2jT1t39Aol0qivXpQWZ+8hF9Ci0eK3
+         s2ndRfxm4taiN2smaGfMGiwH+6+mkfHnkKvj95h1qWeRu68arYxQuV2hHHtu1zoZs9KA
+         rfZtUoVWOJ6DSv+s49fXQdZa2Do81uEO3EVBSicW14YAf/x6KFlk1guxG6oFIJZEQtaD
+         YHiSsX0xXGhySrhbp4rGup5099e+qSayl4jwDnAnKQ15M33SDTUQOIcOds7jxKDgyeqb
+         fcKf+ouSUxZFkmEc6P+TmdydSW14jHtVXWelTadmKebTGzP8PpYZcl3e3yP+jJpeno6y
+         F4fw==
+X-Gm-Message-State: AOAM531NtLeFrGpA17BtTK3VRQb7/J6HOrOmcus4P15JCP6VDKE9VXj5
+        djMcvcr2EidPOho4dPU00bySLVbLhGDFag==
+X-Google-Smtp-Source: ABdhPJxNI6flLrfs/o+0ihyC9YZnomXAsxAxTTPT8vSb3WbA0GWUBE5oVkyzQGQnBBn/EY4AhuVSwQ==
+X-Received: by 2002:a05:6214:1c43:b0:45b:b4:3e18 with SMTP id if3-20020a0562141c4300b0045b00b43e18mr7725390qvb.56.1653047875970;
+        Fri, 20 May 2022 04:57:55 -0700 (PDT)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id x26-20020ac84d5a000000b002f918680d80sm1761940qtv.78.2022.05.20.04.57.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 May 2022 04:57:55 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id x2so13464642ybi.8;
+        Fri, 20 May 2022 04:57:55 -0700 (PDT)
+X-Received: by 2002:a25:e04d:0:b0:64d:6f23:b906 with SMTP id
+ x74-20020a25e04d000000b0064d6f23b906mr9073964ybg.380.1653047875122; Fri, 20
+ May 2022 04:57:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220520100736.15182-1-phil.edworthy@renesas.com>
+In-Reply-To: <20220520100736.15182-1-phil.edworthy@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 20 May 2022 13:57:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVNCHeYdJANh6LMMhRrjhsJCB0dvffjrgHYooHiCxXEZA@mail.gmail.com>
+Message-ID: <CAMuHMdVNCHeYdJANh6LMMhRrjhsJCB0dvffjrgHYooHiCxXEZA@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: dts: renesas: rzv2m evk: Enable ethernet
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-A customer experienced a race condition with 'repeated starts' when a
-System Management Interrupt took over for 30us and more. The problem was
-that during the SMI a new MAT interrupt came in because we set up the
-'repeated start' condition. But the old one was not acknowledged yet.
-So, when it was acknowledged after the SMI, the new MAT interrupt was
-lost, confusing the state machine of the driver.
+On Fri, May 20, 2022 at 12:07 PM Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> Enable Ethernet interface on RZ/V2M EVK.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v3:
+>  - Fix PHY id
 
-The fix consists of two parts. First, we do not clear the status
-register for 'repeated starts' when preparing the next message anymore.
-The interrupt handlers for sending and receiving data is now solely
-responsible for that and it makes the code easier to follow, in fact.
-Secondly, clearing the status register is now split up to handle MAT
-interrupts independently. This avoids the race condition because the old
-MAT interrupt will be now cleared before we initiate the "repeated
-start" condition.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.20.
 
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index ca61dbe218bf..143cb4186daa 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -97,9 +97,6 @@
- #define RCAR_IRQ_RECV	(MNR | MAL | MST | MAT | MDR)
- #define RCAR_IRQ_STOP	(MST)
- 
--#define RCAR_IRQ_ACK_SEND	(~(MAT | MDE) & 0x7F)
--#define RCAR_IRQ_ACK_RECV	(~(MAT | MDR) & 0x7F)
--
- #define ID_LAST_MSG	(1 << 0)
- #define ID_FIRST_MSG	(1 << 1)
- #define ID_DONE		(1 << 2)
-@@ -161,6 +158,11 @@ static u32 rcar_i2c_read(struct rcar_i2c_priv *priv, int reg)
- 	return readl(priv->io + reg);
- }
- 
-+static void rcar_i2c_clear_irq(struct rcar_i2c_priv *priv, u32 val)
-+{
-+	writel(~val & 0x7f, priv->io + ICMSR);
-+}
-+
- static int rcar_i2c_get_scl(struct i2c_adapter *adap)
- {
- 	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
-@@ -356,7 +358,7 @@ static void rcar_i2c_prepare_msg(struct rcar_i2c_priv *priv)
- 			priv->flags &= ~ID_P_REP_AFTER_RD;
- 		else
- 			rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_START);
--		rcar_i2c_write(priv, ICMSR, 0);
-+		/* ICMSR is cleared in interrupt handlers */
- 	}
- }
- 
-@@ -476,11 +478,15 @@ static bool rcar_i2c_dma(struct rcar_i2c_priv *priv)
- static void rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
- {
- 	struct i2c_msg *msg = priv->msg;
-+	u32 irqs_to_clear = MDE;
- 
- 	/* FIXME: sometimes, unknown interrupt happened. Do nothing */
- 	if (!(msr & MDE))
- 		return;
- 
-+	if (msr & MAT)
-+		irqs_to_clear |= MAT;
-+
- 	/* Check if DMA can be enabled and take over */
- 	if (priv->pos == 1 && rcar_i2c_dma(priv))
- 		return;
-@@ -504,32 +510,32 @@ static void rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
- 		 * [ICRXTX] -> [SHIFT] -> [I2C bus]
- 		 */
- 
--		if (priv->flags & ID_LAST_MSG) {
-+		if (priv->flags & ID_LAST_MSG)
- 			/*
- 			 * If current msg is the _LAST_ msg,
- 			 * prepare stop condition here.
- 			 * ID_DONE will be set on STOP irq.
- 			 */
- 			rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_STOP);
--		} else {
-+		else
- 			rcar_i2c_next_msg(priv);
--			return;
--		}
- 	}
- 
--	rcar_i2c_write(priv, ICMSR, RCAR_IRQ_ACK_SEND);
-+	rcar_i2c_clear_irq(priv, irqs_to_clear);
- }
- 
- static void rcar_i2c_irq_recv(struct rcar_i2c_priv *priv, u32 msr)
- {
- 	struct i2c_msg *msg = priv->msg;
- 	bool recv_len_init = priv->pos == 0 && msg->flags & I2C_M_RECV_LEN;
-+	u32 irqs_to_clear = MDR;
- 
- 	/* FIXME: sometimes, unknown interrupt happened. Do nothing */
- 	if (!(msr & MDR))
- 		return;
- 
- 	if (msr & MAT) {
-+		irqs_to_clear |= MAT;
- 		/*
- 		 * Address transfer phase finished, but no data at this point.
- 		 * Try to use DMA to receive data.
-@@ -570,8 +576,8 @@ static void rcar_i2c_irq_recv(struct rcar_i2c_priv *priv, u32 msr)
- 
- 	if (priv->pos == msg->len && !(priv->flags & ID_LAST_MSG))
- 		rcar_i2c_next_msg(priv);
--	else
--		rcar_i2c_write(priv, ICMSR, RCAR_IRQ_ACK_RECV);
-+
-+	rcar_i2c_clear_irq(priv, irqs_to_clear);
- }
- 
- static bool rcar_i2c_slave_irq(struct rcar_i2c_priv *priv)
--- 
-2.35.1
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
