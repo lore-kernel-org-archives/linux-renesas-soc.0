@@ -2,128 +2,117 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D53C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 May 2022 15:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CF0C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 May 2022 17:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237712AbiEWPUZ (ORCPT
+        id S241125AbiEWRd6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 23 May 2022 11:20:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48296 "EHLO
+        Mon, 23 May 2022 13:33:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237715AbiEWPUR (ORCPT
+        with ESMTP id S241189AbiEWRcr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 May 2022 11:20:17 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08AF5DA7F
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 May 2022 08:20:16 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id b135so2255151pfb.12
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 May 2022 08:20:16 -0700 (PDT)
+        Mon, 23 May 2022 13:32:47 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4427982A;
+        Mon, 23 May 2022 10:27:28 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-30007f11f88so24447917b3.7;
+        Mon, 23 May 2022 10:27:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=igm4D2G+CD8AllZwlcYZVFlP5/SBhymVjdWH429ya+M=;
-        b=qtDXvq87y4y2UJsD0nhKRBMTkSazoVdL8OLaSA4hySFuN/7uXXmd8mOpwmg1bHWPgs
-         EKlTcP9puBmFhfJ1p5kDs20X2QkPb/BOQOhicPozSFG+6gZebPQi0jWpDUS2pHSn1L+e
-         M019rMjv91zeA1AtNrcQL+DEw2iit9xTXnUl63V4uffzX2MiwF8F4LNsYUxxiQi9Ym8v
-         SJoxzryNUM1GukNZyeumr8880IczUGib28NK33rnaAX8V6snTR83u6vS1XmRK3Xf6CoY
-         qToRlP5+sW/FSvvUk5PMKXvALmylgDv36Clmi/8VwbbaKP8sJxHW27/R8dAvJT2Ko2DV
-         VFrQ==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sTAZGlEUmX/o2HerHezmpZJYpBk/Tk//TO+SFL1h0zA=;
+        b=pN4ceqx3jRqPDNbZxMO8S9NplGCGhu5NZGlEejwVpgTIpU/7Eyj86+mcv240DqoKIB
+         TPReO8r/4SM21FZvUgntCTTdurUlJ5mLo9g7bqG2ocJDosfEmIwHXyrGOCjbU6wDOs83
+         fG+rkIVl2t+Wktu9X0gBXqVOb6OuX/sxcB1Tg84f8HyAyOknb8mjSP/YMihayC/Qx7NP
+         fuFYzJxMzGEv7uzFInqftcmOkkT9vmmRLaOns7cghOZG5ZeJcBheQyROBJE9eWAN0EMF
+         +DsJDJdA3qPlMOz334GBPaxozXAt7G7i852jHnf7qWw6v0Rv3Ozp3qB31ZCsWZ22wW2M
+         B/CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=igm4D2G+CD8AllZwlcYZVFlP5/SBhymVjdWH429ya+M=;
-        b=29r8QMRItSkHhdjrORALG/q2RYfo7CCAQLjiyuRJuhqYgL0C85UQA5VjRqbURfXM3/
-         BEOw4kYLOL5twnRQYLM3uu/+bWRKJsDJ/7XTqiTRRGZmuref5OCy9s1agKUgSlpWRBfB
-         2ZXgVQbg2RJU8RX7qo/u7g6Xl4G6xZNh7IDPtHiQ/d5QN1jAgGG0SC7vNmYYbH35xB23
-         aNtUYoS3NqPsZ9ZPC8VlbOIs1+5lR1knYK1xc7Q52NGMYnFEmFf/fAu8/n6kJsuiRIOG
-         PZxrEblhVeZUAMqTq5MhmPDqOR25+nXDKJLBQ7YhGpjfe6mFXEoX6JpuPri2w5CKTwF5
-         8+Yg==
-X-Gm-Message-State: AOAM5333Pz33KQwYLxeTOvGa/7VcyS4rPExWjgoft+TVJwp+jKRmTRUy
-        4BjVleTD0vQ7DLcCC269V+ztn/hZea58RIQ09Ko=
-X-Google-Smtp-Source: ABdhPJzCuN9ZJmSK94oU8+rMpioP0OCWAT/Ot9YA9rFyq4w6fW/gnhDlvl84v8GzomtT25AD6fXp2w==
-X-Received: by 2002:a63:6b42:0:b0:3da:ebd8:2e38 with SMTP id g63-20020a636b42000000b003daebd82e38mr20935237pgc.273.1653319215840;
-        Mon, 23 May 2022 08:20:15 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id x21-20020a1709027c1500b0015e8d4eb272sm5258723pll.188.2022.05.23.08.20.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 08:20:15 -0700 (PDT)
-Message-ID: <628ba62f.1c69fb81.7db13.c107@mx.google.com>
-Date:   Mon, 23 May 2022 08:20:15 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sTAZGlEUmX/o2HerHezmpZJYpBk/Tk//TO+SFL1h0zA=;
+        b=fM4WvityEK09LtVeUHKX7MRRqGhtDxoXenIoCogx6bicGf5m511pZfKIx4oe+8HUyz
+         bJKgsKUPaxsOvxh4zUGE3Yk/gzzO+YRuc6FPkmSXrjo7lmZpTIIQfv65yf/Khof2r6Ue
+         3h1kIh8qXwVKWCleBFZPrbwmMs/1dVuMWqFl9lD6eQGXmcKhyI1iy+7HyDqDpNLXG3Cf
+         +3aUHR+H3WZhsYQvTcDUgo55p7IGI84/GN9DlJXmjwpQv7NvAfJNFkq6qpnxTpQJJxOf
+         MyfKzwdejX+xdlsg+eSngjUTu0BZReI/YJM0FKo/JJNv5DxxVQ0zkrR/qdZUMPocNAPr
+         TSag==
+X-Gm-Message-State: AOAM530RLopEba7IH4Wh/08EUH9tfM/RCXnPugXdUft0Iz8UFOPknU/J
+        T5nJz69PrMBW6K4uI6zxZpZGQM/SqLtdFqMXiOeMeIlvjt4=
+X-Google-Smtp-Source: ABdhPJyfb8N3rzOUX/Kjr0IcB2wzgmkTx8SdieSrc6hUMHn9O6f7sUVSBxw6MHCLQeIkZi6lnS9ZRTgE+qAWFNZBBrU=
+X-Received: by 2002:a0d:e2ca:0:b0:2ff:369c:a3ee with SMTP id
+ l193-20020a0de2ca000000b002ff369ca3eemr25119387ywe.292.1653326847797; Mon, 23
+ May 2022 10:27:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: renesas-devel-2022-05-23-v5.18
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-Subject: renesas/master sleep: 7 runs,
- 1 regressions (renesas-devel-2022-05-23-v5.18)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+References: <20220518192924.20948-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220518192924.20948-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CACRpkda1pfL8tk0S_0bHvj4kWYrLTTeOz3b_A9qK5DJwHWeTXw@mail.gmail.com>
+In-Reply-To: <CACRpkda1pfL8tk0S_0bHvj4kWYrLTTeOz3b_A9qK5DJwHWeTXw@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 23 May 2022 18:27:01 +0100
+Message-ID: <CA+V-a8uR6EHr9ZqbBkLLKwLTPO4asthYaWTYE8c4NGFUt9Gmcg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] gpio: gpiolib: Add ngirq member to struct gpio_irq_chip
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master sleep: 7 runs, 1 regressions (renesas-devel-2022-05-23-v5.18)
+Hi Linus,
 
-Regressions Summary
--------------------
+Thank you for the review.
 
-platform        | arch  | lab           | compiler | defconfig             =
-     | regressions
-----------------+-------+---------------+----------+-----------------------=
------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrome=
-book | 1          =
+On Thu, May 19, 2022 at 2:26 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Wed, May 18, 2022 at 9:30 PM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+>
+> > Supported GPIO IRQs by the chip is not always equal to the number of GPIO
+> > pins. For example on Renesas RZ/G2L SoC where it has GPIO0-122 pins but at
+> > a given point a maximum of only 32 GPIO pins can be used as IRQ lines in
+> > the IRQC domain.
+> >
+> > This patch adds ngirq member to struct gpio_irq_chip and passes this as a
+> > size to irq_domain_create_hierarchy()/irq_domain_create_simple() if it is
+> > being set in the driver otherwise fallbacks to using ngpio.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> NAK
+>
+> As pointed out this is a property of the hardware and thus you should
+> derive this property of the hardware from the compatible string.
+>
+> For example by passing per-variant .data in struct of_device_id.
+>
+> Unique hardware properties means unique hardware means it should
+> have a unique compatible string. Otherwise something is wrong
+> with the compatibles.
+>
+Agreed, I will drop this.
 
-
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2022-05-23-v5.18/plan/sleep/
-
-  Test:     sleep
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2022-05-23-v5.18
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      d7344501bd97263caeccbd7a972c0db04024a081 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform        | arch  | lab           | compiler | defconfig             =
-     | regressions
-----------------+-------+---------------+----------+-----------------------=
------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrome=
-book | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/628b99019b14d43f43a39bef
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-05-23-v5.18/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/sleep=
--mt8173-elm-hana.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-05-23-v5.18/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/sleep=
--mt8173-elm-hana.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-220513.0/arm64/rootfs.cpio.gz =
-
-
-
-  * sleep.login: https://kernelci.org/test/case/id/628b99019b14d43f43a39bf0
-        failing since 6 days (last pass: renesas-devel-2022-05-09-v5.18-rc6=
-, first fail: renesas-devel-2022-05-16-v5.18-rc7) =
-
- =20
+Cheers,
+Prabhakar
