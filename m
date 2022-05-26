@@ -2,128 +2,174 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9E1C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 May 2022 17:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85ECEC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 May 2022 20:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245638AbiEYRP4 (ORCPT
+        id S1344828AbiEZUmp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 25 May 2022 13:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36486 "EHLO
+        Thu, 26 May 2022 16:42:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240696AbiEYRP4 (ORCPT
+        with ESMTP id S1348946AbiEZUmi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 May 2022 13:15:56 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93866AE26D
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2022 10:15:54 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id w14so36988007lfl.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2022 10:15:54 -0700 (PDT)
+        Thu, 26 May 2022 16:42:38 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A14A22ADB
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 May 2022 13:42:35 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id q21so5189925ejm.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 May 2022 13:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=sI2Wocy1ntKwbEGnl4R+SFzpoCuuRMbqnsuPfEzI51w=;
-        b=BmLpY+TC2QEXNErk3B5qUbojsrHYedpcVGjRX5c0z89L7OaMpOPOwVJ4RjhcalhjKI
-         PD/+LL8PvHNh/gDDfy0Vnca+9RyCRmBYP/PlKAul5ez101mr39cDRdEs+gh5kVscQd1E
-         YXD1Yg07UbWFeeDD2dNw+KqbTtEYmxXpyrimq2o076zFUXA+9GMQtpAAKn06ouvfIozT
-         K4VAxvA65ZjsRNNn/ohvqgq8OyCjIHOMlgk9KCJpVs8be6n4CqBBK8XV9rRklGtpGO3s
-         r9lnk41dFTYhZoylNEGz2E27xavSqikhxg40gtHO9tySdQ3IXTPA9bvhZquFVX98f8rD
-         N8TA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zBSottq5B2GJ9FFPovyG/bRnnI/fVKoW6GgzyoAPPks=;
+        b=mqm2TyTwLe9J3JzIvwLX0t7OOCi6SC7Ci5LT4ey3rSWSr8XLS4LfCEMPkzVFr2g1gn
+         WFOBsQO10LJuTz0PS5+KKEd6B4piYrbVXwbQFbPk16xZzidpogTh/2p8GawS9uDlK2EJ
+         75ijNM9oNz2CrSCWfYq9OeQEKcMbdccezQIUnlECkj+1Ga47rpvvfNnmRoEUXS/wX/Bu
+         nkpptkYm+hQ2SdifCTJRPuhVGA+ZlcolTCOXKto5mcNNxXpk3MLqekCzj6lywkPtYamB
+         J8TOImHlRF9NHnRL5G0QAbZtmRebyd4kErEdpW61miRlVEmQfh/SkdF0KsXxs8jzxrJ6
+         jcqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=sI2Wocy1ntKwbEGnl4R+SFzpoCuuRMbqnsuPfEzI51w=;
-        b=MaGegxWBrT6s/Ny0gTNC3Lcbjke7wNSKTpS5GwgpElhxAIBOGXrZDkx2+CvW8NWbLR
-         3tZvsFbn41UraSX5MzDPJE/cMlMQFvBcvKnT63+CVP/7vxymk6kGuEZ2vh5lkMxEqDXU
-         GcJBl0pVkl/VZxeut84u+tHhhKL+vrKAhYlgFh+C+VQGwUhH4jp6fxR+DVDblGmcj4dm
-         18m1EMg5jWnOVK7nMO87Gz36NEMETZxytWSVoT0S6soJFtrqKd3zGgS7DexN3vH7EKfc
-         dbNWq++e4oIe3J3/jqrp82laAD/wXhM66bOHY2bf9terKahxMkH7GyfzlrUk0d2bQqZC
-         ijvg==
-X-Gm-Message-State: AOAM533rd6+7HkUvWEISwSrCpb6wIhf1thJgj/sd5/7qguGqzAf36Tqv
-        OfeeShMHZ8XpTwl4M3cdMYRbLQ==
-X-Google-Smtp-Source: ABdhPJw9mZOmDbw8QxxV8w/apB2QQOz7tzAqEp0FDcRF4KN8AKQLDDmUd2YbM07YMjVJtq1emlzrRw==
-X-Received: by 2002:a05:6512:3b88:b0:478:5a4e:8c90 with SMTP id g8-20020a0565123b8800b004785a4e8c90mr17665303lfv.43.1653498952954;
-        Wed, 25 May 2022 10:15:52 -0700 (PDT)
-Received: from localhost (h-85-24-188-65.A463.priv.bahnhof.se. [85.24.188.65])
-        by smtp.gmail.com with ESMTPSA id e17-20020a05651236d100b004787d40697dsm1538418lfs.228.2022.05.25.10.15.52
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zBSottq5B2GJ9FFPovyG/bRnnI/fVKoW6GgzyoAPPks=;
+        b=hNcKBSaiMgij1enrmWGPZq8jVNZwY48ccNQ69W+QRatocwQG83lSv3gurS/SE8AE0d
+         rxoO+wGqGefJdKjTxYU2msj4mmG+HyCXvK9S0hURxuKdZa2A+VVQ8Nd26z+C50ySTgTo
+         6AVW7qHTABvWZgr0f9dTbxDh1NHW2apbUCt1sLpaG7ofIMgYYCD/LjduuWhXosYZmI0F
+         YZWdB1MCikrVqj76grU6onuCayERrsk4QkQL82XkVbOM8NECDTdoTMo8ZjwoNWsu9qmC
+         B49hALoJo0s1k6EqdFGMpF9PBUL24n9gwVQjjWIXrHfJTC7uU8eG+q2gk3Ci0RkMiiez
+         HEAQ==
+X-Gm-Message-State: AOAM533hRh6rDRTZwh5RAHBZwNAJvJpZSm+8jlmA6xdnIWfJf194RtGE
+        QV6BwpAnbFzN0HUMSdPgVT6TQst12Jj9LVvs
+X-Google-Smtp-Source: ABdhPJz7O6I5XI5FpXBZSFKsMcuwni2DNPsFAGM+js5EZkfB37k56jQ/r1s0n1NCr6XaDCKTFlOHaQ==
+X-Received: by 2002:a17:906:49c6:b0:6fe:95bb:93cc with SMTP id w6-20020a17090649c600b006fe95bb93ccmr34838737ejv.30.1653597754194;
+        Thu, 26 May 2022 13:42:34 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id ay21-20020a170906d29500b006feba4ef020sm798012ejb.180.2022.05.26.13.42.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 May 2022 10:15:52 -0700 (PDT)
-Date:   Wed, 25 May 2022 19:15:51 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        Thu, 26 May 2022 13:42:33 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org, soc@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] thermal: rcar_gen3_thermal: improve logging during
- probe
-Message-ID: <Yo5kRyBNxiCAWQV4@oden.dyn.berto.se>
-References: <20220525151216.24133-1-wsa+renesas@sang-engineering.com>
- <20220525151216.24133-2-wsa+renesas@sang-engineering.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] arm64: dts: renesas: adjust whitespace around '='
+Date:   Thu, 26 May 2022 22:42:31 +0200
+Message-Id: <20220526204231.832090-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220525151216.24133-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Fix whitespace coding style: use single space instead of tabs or
+multiple spaces around '=' sign in property assignment.  No functional
+changes (same DTB).
 
-Thanks for your work.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On 2022-05-25 17:12:16 +0200, Wolfram Sang wrote:
-> When setting up a new board, a plain "Can't register thermal zone"
-> didn't help me much because the thermal zones in DT were all fine. I
-> just had a sensor entry too much in the parent TSC node. Reword the
-> failure/success messages to contain the sensor number to make it easier
-> to understand which sensor is affected. Example output now:
-> 
-> rcar_gen3_thermal e6198000.thermal: Sensor 0: Trip points loaded: 1
-> rcar_gen3_thermal e6198000.thermal: Sensor 1: Trip points loaded: 1
-> rcar_gen3_thermal e6198000.thermal: Sensor 2: Trip points loaded: 1
-> rcar_gen3_thermal e6198000.thermal: Sensor 3: Can't register thermal zone
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+Output compared with dtx_diff and fdtdump.
+---
+ arch/arm64/boot/dts/renesas/draak.dtsi           |  2 +-
+ arch/arm64/boot/dts/renesas/ebisu.dtsi           |  2 +-
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |  2 +-
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi         | 14 +++++++-------
+ arch/arm64/boot/dts/renesas/ulcb.dtsi            |  2 +-
+ 5 files changed, 11 insertions(+), 11 deletions(-)
 
-> ---
->  drivers/thermal/rcar_gen3_thermal.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-> index ccdf8a24ddc7..ca5558178374 100644
-> --- a/drivers/thermal/rcar_gen3_thermal.c
-> +++ b/drivers/thermal/rcar_gen3_thermal.c
-> @@ -511,7 +511,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->  		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
->  							    &rcar_gen3_tz_of_ops);
->  		if (IS_ERR(zone)) {
-> -			dev_err(dev, "Can't register thermal zone\n");
-> +			dev_err(dev, "Sensor %u: Can't register thermal zone\n", i);
->  			ret = PTR_ERR(zone);
->  			goto error_unregister;
->  		}
-> @@ -533,7 +533,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->  		if (ret < 0)
->  			goto error_unregister;
->  
-> -		dev_info(dev, "TSC%u: Loaded %d trip points\n", i, ret);
-> +		dev_info(dev, "Sensor %u: Trip points loaded: %u\n", i, ret);
->  	}
->  
->  	if (!priv->num_tscs) {
-> -- 
-> 2.35.1
-> 
-
+diff --git a/arch/arm64/boot/dts/renesas/draak.dtsi b/arch/arm64/boot/dts/renesas/draak.dtsi
+index 7231f820d601..ef3bb835d5c0 100644
+--- a/arch/arm64/boot/dts/renesas/draak.dtsi
++++ b/arch/arm64/boot/dts/renesas/draak.dtsi
+@@ -630,7 +630,7 @@ rsnd_for_ak4613: endpoint {
+ 				bitclock-master = <&rsnd_for_ak4613>;
+ 				frame-master = <&rsnd_for_ak4613>;
+ 				playback = <&ssi3>, <&src5>, <&dvc0>;
+-				capture  = <&ssi4>, <&src6>, <&dvc1>;
++				capture = <&ssi4>, <&src6>, <&dvc1>;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+index 72f359efa23e..aef0896b2f5f 100644
+--- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
++++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+@@ -711,7 +711,7 @@ &rcar_sound {
+ 	rcar_sound,dai {
+ 		dai0 {
+ 			playback = <&ssi0>, <&src0>, <&dvc0>;
+-			capture  = <&ssi1>, <&src1>, <&dvc1>;
++			capture = <&ssi1>, <&src1>, <&dvc1>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 31837fcd7bf0..09ff1708cfa6 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -832,7 +832,7 @@ rsnd_endpoint0: endpoint {
+ 				frame-master = <&rsnd_endpoint0>;
+ 
+ 				playback = <&ssi0>, <&src0>, <&dvc0>;
+-				capture  = <&ssi1>, <&src1>, <&dvc1>;
++				capture = <&ssi1>, <&src1>, <&dvc1>;
+ 			};
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 5bcb84403ef6..408871c2859d 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -206,12 +206,12 @@ pcm3168a: audio-codec@44 {
+ 				clocks = <&clksndsel>;
+ 				clock-names = "scki";
+ 
+-				VDD1-supply	= <&snd_3p3v>;
+-				VDD2-supply	= <&snd_3p3v>;
+-				VCCAD1-supply	= <&snd_vcc5v>;
+-				VCCAD2-supply	= <&snd_vcc5v>;
+-				VCCDA1-supply	= <&snd_vcc5v>;
+-				VCCDA2-supply	= <&snd_vcc5v>;
++				VDD1-supply = <&snd_3p3v>;
++				VDD2-supply = <&snd_3p3v>;
++				VCCAD1-supply = <&snd_vcc5v>;
++				VCCAD2-supply = <&snd_vcc5v>;
++				VCCDA1-supply = <&snd_vcc5v>;
++				VCCDA2-supply = <&snd_vcc5v>;
+ 
+ 				ports {
+ 					#address-cells = <1>;
+@@ -438,7 +438,7 @@ rsnd_for_pcm3168a_capture: endpoint {
+ 				bitclock-master;
+ 				frame-master;
+ 				dai-tdm-slot-num = <6>;
+-				capture  = <&ssi4>;
++				capture = <&ssi4>;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 90a4c0629d24..5f390865a4cd 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -411,7 +411,7 @@ rsnd_for_ak4613: endpoint {
+ 				bitclock-master;
+ 				frame-master;
+ 				playback = <&ssi0>, <&src0>, <&dvc0>;
+-				capture  = <&ssi1>, <&src1>, <&dvc1>;
++				capture = <&ssi1>, <&src1>, <&dvc1>;
+ 			};
+ 		};
+ 		rsnd_port1: port@1 {
 -- 
-Kind Regards,
-Niklas Söderlund
+2.34.1
+
