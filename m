@@ -2,212 +2,85 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B34C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jun 2022 09:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB6FC43334
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jun 2022 11:05:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242953AbiFCJNB (ORCPT
+        id S243924AbiFCLFk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Jun 2022 05:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38052 "EHLO
+        Fri, 3 Jun 2022 07:05:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241874AbiFCJNA (ORCPT
+        with ESMTP id S243922AbiFCLFk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Jun 2022 05:13:00 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B59ED20BF7;
-        Fri,  3 Jun 2022 02:12:58 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id hh4so5103571qtb.10;
-        Fri, 03 Jun 2022 02:12:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xrZu3JWLdC5Y2R17LStLOEC4phCuKGH0ZqwdOEha4HQ=;
-        b=Q7o3fsbqEzZjd6lbzXzmzRTc03mMEKrsYvp9S/nPHIbwtj6+4pBsT55pLmcd+KE186
-         W8DQ3HeBEzBP3+Kef3hgofIYF46cfDN3U6T2ld2hgQ35xcH1+GnmYN1DlRAZp7FOfLr0
-         dCm6enNlqwijYjt4+M6R/VmREbV6jIs6+1beH+4HEYNvODB7kaoF+qNKj25JqjWSBjtr
-         BovZL14pHNbtyMGH2o+8oqmu55qsKgESEePrNbC1ZQ3c3nn6eerfuIBkgiVw4+cR+KGS
-         f7cHeu5k/u82x/7yIYzZfvNI0GFy6EQy6i8sLMS57ioqZ8DXTeYSv7fKEqPVW6vhCm/7
-         n1Bg==
-X-Gm-Message-State: AOAM533XZXN4CEDbAoLYwhXpjbMDNek7x/8IeS9+5WHpurdurt/O2Z40
-        OxuZssgKSy316q4IgM/lNM8YjLs3mOP2cw==
-X-Google-Smtp-Source: ABdhPJw+3hUzlJEz7/ycUqnnBaSsBrk4qYBjZjYddalyLFA+voNNHXgSQq+l5rEWW7AolUxxx3DpuQ==
-X-Received: by 2002:ac8:5a86:0:b0:303:fba5:ed5e with SMTP id c6-20020ac85a86000000b00303fba5ed5emr6604827qtc.330.1654247577638;
-        Fri, 03 Jun 2022 02:12:57 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id v7-20020ac873c7000000b002f93be3ccfdsm284865qtp.18.2022.06.03.02.12.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jun 2022 02:12:57 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id w2so12678738ybi.7;
-        Fri, 03 Jun 2022 02:12:57 -0700 (PDT)
-X-Received: by 2002:a05:6902:120e:b0:634:6f29:6b84 with SMTP id
- s14-20020a056902120e00b006346f296b84mr10146637ybu.604.1654247576916; Fri, 03
- Jun 2022 02:12:56 -0700 (PDT)
+        Fri, 3 Jun 2022 07:05:40 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D57C13BFBB;
+        Fri,  3 Jun 2022 04:05:38 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,274,1647270000"; 
+   d="scan'208";a="121822511"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 03 Jun 2022 20:05:37 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E489342849B3;
+        Fri,  3 Jun 2022 20:05:37 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     alim.akhtar@samsung.com, avri.altman@wdc.com, robh+dt@kernel.org,
+        krzk+dt@kernel.org
+Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v6 2/7] ufs: add UFSHCD_QUIRK_BROKEN_64BIT_ADDRESS
+Date:   Fri,  3 Jun 2022 20:05:19 +0900
+Message-Id: <20220603110524.1997825-3-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220603110524.1997825-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20220603110524.1997825-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-References: <87mteu49tm.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87mteu49tm.wl-kuninori.morimoto.gx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 3 Jun 2022 11:12:45 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUWCjFRnjVDzrjDh4ODDyh5hV5zdM9o4i20c4mLXhNpHg@mail.gmail.com>
-Message-ID: <CAMuHMdUWCjFRnjVDzrjDh4ODDyh5hV5zdM9o4i20c4mLXhNpHg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] pinctrl: renesas: r8a779g0: Add pins, groups and functions
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Morimoto-san,
+Add UFSHCD_QUIRK_BROKEN_64BIT_ADDRESS for a broken host controller
+of the 64-bit addressing supported capability.
 
-On Fri, Jun 3, 2022 at 7:04 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> These are for V4H (r8a779g0) pinctrl patches.
->
-> I have separate new macro definition from original patch [1/3].
-> I have cleanuped original initial patch, and merged its fixup patch [2/3].
-> I have merged original many device settings patches into one [3/3].
->
->   [1/3] pinctrl: renesas: Add PORT_GP_CFG_13 macros
->   [2/3] pinctrl: renesas: Initial R8A779G0 (V4H) PFC support
->   [3/3] pinctrl: renesas: r8a779g0: Add pins, groups and functions
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/ufs/core/ufshcd.c | 2 ++
+ include/ufs/ufshcd.h      | 6 ++++++
+ 2 files changed, 8 insertions(+)
 
-Thanks for your series!
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 01fb4bad86be..88e567c3ba0b 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -2216,6 +2216,8 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
+ 	int err;
+ 
+ 	hba->capabilities = ufshcd_readl(hba, REG_CONTROLLER_CAPABILITIES);
++	if (hba->quirks & UFSHCD_QUIRK_BROKEN_64BIT_ADDRESS)
++		hba->capabilities &= ~MASK_64_ADDRESSING_SUPPORT;
+ 
+ 	/* nutrs and nutmrs are 0 based values */
+ 	hba->nutrs = (hba->capabilities & MASK_TRANSFER_REQUESTS_SLOTS) + 1;
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index a92271421718..795c8951341d 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -577,6 +577,12 @@ enum ufshcd_quirks {
+ 	 * support physical host configuration.
+ 	 */
+ 	UFSHCD_QUIRK_SKIP_PH_CONFIGURATION		= 1 << 16,
++
++	/*
++	 * This quirk needs to be enabled if the host controller has
++	 * 64-bit addressing supported capability but it doesn't work.
++	 */
++	UFSHCD_QUIRK_BROKEN_64BIT_ADDRESS		= 1 << 17,
+ };
+ 
+ enum ufshcd_caps {
+-- 
+2.25.1
 
-Here's a first set of quick comments. More will follow later.
-
-Note that this does not apply cleanly against renesas-pinctrl, as
-drivers/pinctrl/renesas/Kconfig has received some changes in the
-meantime.
-
-Please fix the following issues reported by scripts/checkpatch.pl:
-  - code indent should use tabs where possible,
-  - please, no spaces at the start of a line,
-  - please, no space before tabs.
-
-Please enable CONFIG_DEBUG_PINCTRL=y to run the sh-pfc checker (this
-works even when running on another Renesas platform than R-Car V4H;
-all included drivers will be checked), and fix the issues reported:
-
-    r8a779g0_pfc: pin GP_1_23: SH_PFC_PIN_CFG_IO_VOLTAGE set but
-invalid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_1_24: SH_PFC_PIN_CFG_IO_VOLTAGE set but
-invalid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_1_25: SH_PFC_PIN_CFG_IO_VOLTAGE set but
-invalid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_1_26: SH_PFC_PIN_CFG_IO_VOLTAGE set but
-invalid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_1_27: SH_PFC_PIN_CFG_IO_VOLTAGE set but
-invalid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_1_28: SH_PFC_PIN_CFG_IO_VOLTAGE set but
-invalid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_3_19: SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set
-but not in drive_regs
-    r8a779g0_pfc: pin GP_4_0: SH_PFC_PIN_CFG_IO_VOLTAGE not set but
-valid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_5_0: SH_PFC_PIN_CFG_IO_VOLTAGE not set but
-valid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_5_20: SH_PFC_PIN_CFG_PULL_UP flag set but pin
-not in bias_regs
-    r8a779g0_pfc: pin GP_5_20: SH_PFC_PIN_CFG_PULL_DOWN flag set but
-pin not in bias_regs
-    r8a779g0_pfc: pin GP_6_0: SH_PFC_PIN_CFG_IO_VOLTAGE not set but
-valid pin_to_pocctrl()
-    r8a779g0_pfc: pin GP_7_0: SH_PFC_PIN_CFG_IO_VOLTAGE not set but
-valid pin_to_pocctrl()
-    r8a779g0_pfc: drive_reg 0xe6058888:5/0xe6058888:4: pin conflict
-    r8a779g0_pfc: bias_reg 0xe60608c0:20/0xe60608c0:19: pin conflict
-    r8a779g0_pfc: bias_reg 0xe60608e0:20/0xe60608e0:19: pin conflict
-
-It is also a good idea to follow the suggestions about pin group subsets
-and reserved fields, as that will reduce table sizes:
-
-    r8a779g0_pfc: group mmc_data1 is a subset of mmc_data4
-    r8a779g0_pfc: group mmc_data1 is a subset of mmc_data8
-    r8a779g0_pfc: group mmc_data4 is a subset of mmc_data8
-    r8a779g0_pfc: group qspi0_data2 is a subset of qspi0_data4
-    r8a779g0_pfc: group qspi1_data2 is a subset of qspi1_data4
-    r8a779g0_pfc: reg 0xe6050040 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6058040 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6060840 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6061040 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6061840 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6068040 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6050068 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe605086c can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6058068 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe605886c can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6061068 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6061868 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6068064 can be described with variable-width
-reserved fields
-    r8a779g0_pfc: reg 0xe6060100: field [0:3] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060100: field [4:7] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060100: field [8:11] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060100: field [14:15] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060100: field [18:18] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060100: field [20:21] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060100: field [24:25] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060100: field [27:28] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060100: field [31:31] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [0:3] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [4:7] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [8:11] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [13:14] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [17:18] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [21:22] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [24:24] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [27:28] can be described as reserved
-    r8a779g0_pfc: reg 0xe6060900: field [30:30] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [0:3] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [4:7] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [8:11] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [12:12] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [14:14] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [16:17] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [20:20] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [22:23] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [27:28] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061100: field [31:31] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [0:3] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [4:7] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [8:11] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [12:13] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [14:14] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [17:17] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [19:19] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [22:23] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [26:27] can be described as reserved
-    r8a779g0_pfc: reg 0xe6061900: field [30:30] can be described as reserved
-    r8a779g0_pfc: reg 0xe6068100: field [0:3] can be described as reserved
-    r8a779g0_pfc: reg 0xe6068100: field [4:7] can be described as reserved
-    r8a779g0_pfc: reg 0xe6068100: field [8:11] can be described as reserved
-    r8a779g0_pfc: reg 0xe6068100: field [12:15] can be described as reserved
-    r8a779g0_pfc: reg 0xe6068100: field [16:19] can be described as reserved
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
