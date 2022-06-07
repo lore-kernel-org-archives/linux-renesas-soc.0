@@ -2,197 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 181E4C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jun 2022 10:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4603DC43334
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jun 2022 10:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240266AbiFGKLI (ORCPT
+        id S241434AbiFGKoX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 7 Jun 2022 06:11:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56236 "EHLO
+        Tue, 7 Jun 2022 06:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240653AbiFGKLG (ORCPT
+        with ESMTP id S241435AbiFGKoU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Jun 2022 06:11:06 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41BDA33A5
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Jun 2022 03:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654596665; x=1686132665;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=VKdQroTfei2NJhsq43MBd/KqOxVaqvmOTKrGRqwGXKA=;
-  b=QpWB5fLiY/bUuueRHEBap2VICoSu0vbfPw2VcOIcBJHyZjKOPatqwLMM
-   zq5caU2v+XX9C/wvn04C/QStB/ogWqJfzj27zkJXoV37WVrADGqp8yJ5Q
-   rXPfHTbBPcC7ZL27TO8/O70/6Ltwn7NjDmpvuDZcMbN+P09pRHnYFU/HC
-   IX2tzko/4Mv49Z3pX8Dj5j8D0hlF5sVGHw1kwyOWcEkoprwIejKAGHZsh
-   GeFLBkgvABur0r1Tilo14ca2W+ItqeD4SwBl9O4bdfvYi5WXEpjFUxWXw
-   lcd60qGKnott0td9UsPya3ZLytzkEDXj2sDP2iDiUOEAnDWVr1Kf+Yi1x
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="338045362"
-X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
-   d="scan'208";a="338045362"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 03:09:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
-   d="scan'208";a="682679292"
-Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2022 03:09:50 -0700
-Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nyW9l-000DZl-Qe;
-        Tue, 07 Jun 2022 10:09:49 +0000
-Date:   Tue, 07 Jun 2022 18:09:05 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-pinctrl-for-v5.20] BUILD SUCCESS
- 5223c511eb4f919e6b423b2f66e02674e97e77e3
-Message-ID: <629f23c1.EjLp7OHfzh44k0I4%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Tue, 7 Jun 2022 06:44:20 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E8842F3A2
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Jun 2022 03:44:13 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id be31so27662703lfb.10
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Jun 2022 03:44:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oldIK4x+0l/Bv7OoKE6IDpTyHYosL/5Va89KOtvyPN0=;
+        b=sdSbJGbW1OUJvXPvD8Q9Hy5IA42Qek4A5YuRNjE8ookhoq+Z2IAwImXwP49rWgD9SU
+         Hqsj+WzN80ZUlUVCvYiTLy84llXtk+/Aho3Re7A88Vzpw96Wv2fMCFp+iCC0JMTd5snp
+         9cmBizKTETYF+QSAQ97VqAE1Rjr3r8bT4R2AZvAcQdSfZl0WzvxI9JtzNqX5ePIc8gxj
+         ShaCHsx22gOPo67BpDkIiKCD4nmLzFTsAtc9q5D6+5hwZJ/fW8hz8CvquGsZamyANBfG
+         Kn6QAf7oI9jlGmRubPGC9ThRM0EGIzsoQsLgPeO1TTJatbrqihzY50UTKV5djIboTX/t
+         UFxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oldIK4x+0l/Bv7OoKE6IDpTyHYosL/5Va89KOtvyPN0=;
+        b=Kvh6xaG76zLK6r9hb3i5vx3CSA81PXqJSqX+eU0fUvzsi0K0nJfrCnNNJHKrxZRi72
+         t053I7sIffwryLXmDUbDWt7akZG/EwBELKpOnMNJuy+VJ2qRVUYIuHVBAOQUe7np5v7R
+         Hki8/ngpt6Z9b1IqbuRRAkVy0Xw3wqa0ZKIv0aih+Xyu4piiy89wT/wOCR5wGIkPLSnc
+         TNq08vqEiDjCG1vqrXd2hBHu6rWFY8fSbxjEM/iaicALf44bggjXNfOQuDiKgWKTifeR
+         OVYNJfyDG9hOf8REgdRxqrDxRKjOBbJj2vSu/pCTF0uyrQGm7OHqwKU3s07XepiLCLGx
+         MwSg==
+X-Gm-Message-State: AOAM533co5H+Uhn8C1X3SiThsynsYK9pwOfGgR2Tbegbm5vFbyW/qrBr
+        94GGGUXvoTKfV/UyW/Maj4SUvOIjxa35hbRNAuyHIw==
+X-Google-Smtp-Source: ABdhPJw8xKe/6musFxtIt/kptw9pdvrPuaN8AtcTfG6jYGUVqCbiWhCGQ5tX61Q3upwDXaY7xQ+Bq9LVDyiHzOqOGeE=
+X-Received: by 2002:a19:ac42:0:b0:478:593c:e6fe with SMTP id
+ r2-20020a19ac42000000b00478593ce6femr17809585lfc.254.1654598653115; Tue, 07
+ Jun 2022 03:44:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <20220603233810.21972-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20220603233810.21972-1-wsa+renesas@sang-engineering.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 7 Jun 2022 12:43:36 +0200
+Message-ID: <CAPDyKFpr_XYj7R=ofgh00jyKi__3k_m8zmFMJYfcfnM5Z_nLGw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: renesas,sdhi: Document R-Car S4-8 and
+ generic Gen4 support
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-pinctrl-for-v5.20
-branch HEAD: 5223c511eb4f919e6b423b2f66e02674e97e77e3  pinctrl: renesas: rzg2l: Return -EINVAL for pins which have input disabled
+On Sat, 4 Jun 2022 at 01:38, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-elapsed time: 1428m
+Applied for next, thanks!
 
-configs tested: 119
-configs skipped: 3
+Kind regards
+Uffe
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
 
-gcc tested configs:
-i386                          randconfig-c001
-m68k                         amcore_defconfig
-arm                          pxa3xx_defconfig
-sh                   rts7751r2dplus_defconfig
-sh                         ap325rxa_defconfig
-arc                     haps_hs_smp_defconfig
-xtensa                generic_kc705_defconfig
-arc                      axs103_smp_defconfig
-mips                        vocore2_defconfig
-arm                      jornada720_defconfig
-sh                ecovec24-romimage_defconfig
-powerpc                     taishan_defconfig
-sh                            shmin_defconfig
-sh                           se7750_defconfig
-sh                          sdk7786_defconfig
-arm                        mvebu_v7_defconfig
-ia64                        generic_defconfig
-powerpc                    sam440ep_defconfig
-powerpc                      chrp32_defconfig
-nios2                         10m50_defconfig
-arc                          axs103_defconfig
-powerpc                     rainier_defconfig
-arc                            hsdk_defconfig
-arm                            qcom_defconfig
-openrisc                    or1ksim_defconfig
-x86_64                        randconfig-c001
-arm                  randconfig-c002-20220605
-riscv                             allnoconfig
-h8300                            allyesconfig
-m68k                             allyesconfig
-xtensa                           allyesconfig
-m68k                             allmodconfig
-csky                                defconfig
-arc                                 defconfig
-mips                             allyesconfig
-nios2                            allyesconfig
-m68k                                defconfig
-nios2                               defconfig
-arc                              allyesconfig
-alpha                               defconfig
-alpha                            allyesconfig
-mips                             allmodconfig
-sh                               allmodconfig
-parisc                              defconfig
-riscv                    nommu_k210_defconfig
-riscv                            allmodconfig
-riscv                            allyesconfig
-s390                                defconfig
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-s390                             allmodconfig
-riscv                          rv32_defconfig
-parisc64                            defconfig
-parisc                           allyesconfig
-s390                             allyesconfig
-sparc                               defconfig
-powerpc                          allyesconfig
-i386                             allyesconfig
-um                           x86_64_defconfig
-powerpc                           allnoconfig
-sparc                            allyesconfig
-powerpc                          allmodconfig
-i386                                defconfig
-um                             i386_defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-ia64                             allmodconfig
-arm64                               defconfig
-ia64                             allyesconfig
-arm64                            allyesconfig
-arm                              allmodconfig
-arm                                 defconfig
-arm                              allyesconfig
-ia64                                defconfig
-x86_64                        randconfig-a011
-x86_64                        randconfig-a004
-x86_64                        randconfig-a002
-i386                          randconfig-a003
-i386                          randconfig-a001
-i386                          randconfig-a005
-i386                          randconfig-a010
-i386                          randconfig-a012
-x86_64                        randconfig-a006
-x86_64                        randconfig-a008
-i386                          randconfig-a007
-i386                          randconfig-a009
-x86_64                    rhel-8.3-kselftests
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                                  kexec
-x86_64                           rhel-8.3-syz
-x86_64                          rhel-8.3-func
-x86_64                               rhel-8.3
-x86_64                         rhel-8.3-kunit
-
-clang tested configs:
-powerpc              randconfig-c003-20220606
-riscv                randconfig-c006-20220606
-s390                 randconfig-c005-20220606
-i386                 randconfig-c001-20220606
-mips                 randconfig-c004-20220606
-x86_64               randconfig-c007-20220606
-arm                  randconfig-c002-20220606
-powerpc                      walnut_defconfig
-mips                        omega2p_defconfig
-powerpc                   microwatt_defconfig
-powerpc                 mpc8272_ads_defconfig
-arm                                 defconfig
-mips                           rs90_defconfig
-arm                         s3c2410_defconfig
-i386                          randconfig-a002
-x86_64                        randconfig-a009
-x86_64                        randconfig-a007
-i386                          randconfig-a006
-x86_64                        randconfig-a010
-i386                          randconfig-a011
-x86_64                        randconfig-a005
-x86_64                        randconfig-a001
-x86_64                        randconfig-a003
-i386                          randconfig-a008
-i386                          randconfig-a004
-x86_64                        randconfig-a012
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+> ---
+>  Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> index 9ac4986988c5..b46a90eb2063 100644
+> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> @@ -61,6 +61,10 @@ properties:
+>                - renesas,sdhi-r9a07g044 # RZ/G2{L,LC}
+>                - renesas,sdhi-r9a07g054 # RZ/V2L
+>            - const: renesas,rcar-gen3-sdhi # R-Car Gen3 or RZ/G2
+> +      - items:
+> +          - enum:
+> +              - renesas,sdhi-r8a779f0  # R-Car S4-8
+> +          - const: renesas,rcar-gen4-sdhi # R-Car Gen4
+>
+>    reg:
+>      maxItems: 1
+> --
+> 2.35.1
+>
