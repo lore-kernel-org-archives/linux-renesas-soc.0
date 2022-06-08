@@ -2,93 +2,77 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB216C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 15:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD764C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 15:40:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243323AbiFHPV2 (ORCPT
+        id S244453AbiFHPkc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 11:21:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46478 "EHLO
+        Wed, 8 Jun 2022 11:40:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244860AbiFHPTz (ORCPT
+        with ESMTP id S244488AbiFHPkb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jun 2022 11:19:55 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61BDB3FBE0
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 08:14:28 -0700 (PDT)
+        Wed, 8 Jun 2022 11:40:31 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F94A1CC605
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 08:40:27 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:243a:e14b:d107:1f56])
-        by laurent.telenet-ops.be with bizsmtp
-        id gfEQ270041qF9lr01fEQPt; Wed, 08 Jun 2022 17:14:24 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id gfgR270021qF9lr01fgRkL; Wed, 08 Jun 2022 17:40:25 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nyxO3-003DnB-MZ; Wed, 08 Jun 2022 17:14:23 +0200
+        id 1nyxnE-003E0B-Kx; Wed, 08 Jun 2022 17:40:24 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nyxO3-008jwH-0r; Wed, 08 Jun 2022 17:14:23 +0200
+        id 1nyxnE-008kJT-5P; Wed, 08 Jun 2022 17:40:24 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] soc: renesas: rcar-sysc: Optimize rcar_sysc_area struct sizes
-Date:   Wed,  8 Jun 2022 17:14:21 +0200
-Message-Id: <cbbc8f464743d636895c048de61aa610d75392de.1654701156.git.geert+renesas@glider.be>
+Subject: [PATCH 1/4] arm64: dts: renesas: r8a779f0: Add L3 cache controller
+Date:   Wed,  8 Jun 2022 17:40:19 +0200
+Message-Id: <a63715ce1d2d2fcc7ab987f7a1b40847965e8d6a.1654701480.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1654701480.git.geert+renesas@glider.be>
+References: <cover.1654701480.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Reduce the sizes of the rcar_sysc_area and rcar_gen4_sysc_area
-structures:
-  - parent is in the range [-1..32] or [-1..64], so s8 is sufficient,
-  - flags needs just 3 bits (for now), so u8 is plenty.
+Describe the cache configuration for the first Cortex-A55 CPU core on
+the Renesas R-Car S4-8 (R8A779F0) SoC.
 
-This reduces kernel size by:
-  - 288 bytes for an R-Car Gen1+Gen2 kernel (arm32),
-  - 1772 bytes for an R-Car Gen3+Gen4 kernel (arm64).
+Extracted from a larger patch in the BSP by LUU HOAI.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To be queued in renesas-devel-for-v5.20.
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- drivers/soc/renesas/rcar-gen4-sysc.h | 4 ++--
- drivers/soc/renesas/rcar-sysc.h      | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/soc/renesas/rcar-gen4-sysc.h b/drivers/soc/renesas/rcar-gen4-sysc.h
-index fe2d9825475423f0..388cfa8f8f9fd656 100644
---- a/drivers/soc/renesas/rcar-gen4-sysc.h
-+++ b/drivers/soc/renesas/rcar-gen4-sysc.h
-@@ -25,8 +25,8 @@
- struct rcar_gen4_sysc_area {
- 	const char *name;
- 	u8 pdr;			/* PDRn */
--	int parent;		/* -1 if none */
--	unsigned int flags;	/* See PD_* */
-+	s8 parent;		/* -1 if none */
-+	u8 flags;		/* See PD_* */
- };
- 
- /*
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 8d861c1cfdf78b6f..266c599a0a9b9198 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -31,8 +31,8 @@ struct rcar_sysc_area {
- 	u16 chan_offs;		/* Offset of PWRSR register for this area */
- 	u8 chan_bit;		/* Bit in PWR* (except for PWRUP in PWRSR) */
- 	u8 isr_bit;		/* Bit in SYSCI*R */
--	int parent;		/* -1 if none */
--	unsigned int flags;	/* See PD_* */
-+	s8 parent;		/* -1 if none */
-+	u8 flags;		/* See PD_* */
- };
- 
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+index ad8c77edb12699d5..41aa23e557179af8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+@@ -23,6 +23,14 @@ a55_0: cpu@0 {
+ 			reg = <0>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A779F0_PD_A1E0D0C0>;
++			next-level-cache = <&L3_CA55_0>;
++		};
++
++		L3_CA55_0: cache-controller-0 {
++			compatible = "cache";
++			power-domains = <&sysc R8A779F0_PD_A2E0D0>;
++			cache-unified;
++			cache-level = <3>;
+ 		};
+ 	};
  
 -- 
 2.25.1
