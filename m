@@ -2,134 +2,187 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02816C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 21:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017C4C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 21:08:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230483AbiFHVEj (ORCPT
+        id S233140AbiFHVIE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 17:04:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34382 "EHLO
+        Wed, 8 Jun 2022 17:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235001AbiFHVEh (ORCPT
+        with ESMTP id S230483AbiFHVIC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jun 2022 17:04:37 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94E202271AB
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 14:04:33 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id u23so35074773lfc.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2022 14:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=3og44WXkQ15rtspRUHybs2AJ6uWnEPTknKE2/uTVFhk=;
-        b=c9xQrWqUh3Y4y7wrrShTgfIjJfpd+ZpKRWC1HqYB9YTGBsndvDvQ9cfoHXRsCTr7fg
-         DpZTYZrXWeOQVFKT1Oj+a+8fWZuO+gj894/2qkaeh6Mh0Mg/nqsl+KeZonNzjx+kciDI
-         3OvoDonBlGyAnUfyd+0ej7hSwrjhsacmDpywsibtSC4TegswuwuHhPJVRY9fBGTcRqLn
-         dq/GIqfb6FFtkTPV3w6HPstioV4BsjXoFFCDgZgesBgZKuey3gwQBzp9QVilvmjolP85
-         Qys9ZClOx5k/vtufUzMJe6/Qr8oPJiVJ+yUIGFoWlmA/6DbBzLTKtQ5AXawsuVpWaRCh
-         Yv+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=3og44WXkQ15rtspRUHybs2AJ6uWnEPTknKE2/uTVFhk=;
-        b=w8C6zxxvpLYsu3fSHSlAzEexJDYUvIH3+Z6Nwg7MQotZpz+3XxRUlL4KuoV/D96jFJ
-         cKBa7k7qrC8mcClF4PWxbjmWBL1HnHJN8Bl5kiTJdxldYf6z53VjoxVRScD+B/lE6nmf
-         cIEE0GyyWFvxo33xB267yq+BQDHjAAVKd0712oZB2V1iFkuyuyEbUuiZpe2c+gJY/ThL
-         xoBaV7j0VLKZmrwK+8LJTFHnfMt95X4DtojoSnRAEg2Pd5TV1sTirwiOj3apmZRzx/28
-         tccSlJWFw5zdLuMWFOV2J6A7394kiN+2ItCYRg8DIQVYOvaj/b+ded2XxXQ1euJvzaHU
-         7S4A==
-X-Gm-Message-State: AOAM531XipJ+ESPOFkWBQjMyIb82cceKmCciLv0YylvmrlL0JF0EdgtR
-        7jWGZ3QFw4hMkAVtlO8coRmjLw==
-X-Google-Smtp-Source: ABdhPJznMyIMvmIa9+UbNg9WB1mTMChsKt3TSYKKErioRbkh5g61JmjB1k+SFRhuuel2BnXY69ASYQ==
-X-Received: by 2002:a05:6512:1504:b0:478:d3a1:11 with SMTP id bq4-20020a056512150400b00478d3a10011mr23059178lfb.622.1654722271860;
-        Wed, 08 Jun 2022 14:04:31 -0700 (PDT)
-Received: from localhost (h-85-24-188-65.A463.priv.bahnhof.se. [85.24.188.65])
-        by smtp.gmail.com with ESMTPSA id x36-20020a0565123fa400b004744bfd620fsm3864284lfa.236.2022.06.08.14.04.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jun 2022 14:04:31 -0700 (PDT)
-Date:   Wed, 8 Jun 2022 23:04:31 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Michael Rodin <mrodin@de.adit-jv.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, michael@rodin.online,
-        erosca@de.adit-jv.com
-Subject: Re: [PATCH 3/3] rcar-vin: handle transfer errors from subdevices and
- stop streaming if required
-Message-ID: <YqEO3/KekkZhVjW+@oden.dyn.berto.se>
-References: <1652983210-1194-1-git-send-email-mrodin@de.adit-jv.com>
- <1652983210-1194-4-git-send-email-mrodin@de.adit-jv.com>
- <Yoav5KjnbIlpkR6c@oden.dyn.berto.se>
- <20220520195041.GA18056@vmlxhi-121.adit-jv.com>
+        Wed, 8 Jun 2022 17:08:02 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1686AA5007
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 14:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654722482; x=1686258482;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JLbY0sS1YzN3fBaQSIVCkSAZjgtIoeoGe0IN8rlL7oo=;
+  b=bpuMr5tUZ02873UUddGIKxJjYRfVYvJDocaXGaRCA/dk8UpAHa4nsVVY
+   8Q2+VSm0zCbjB7h6bpOD/LWpmAnKdiDYGpY7z4GRcumqsP9UtmezCvvxq
+   P/acPVBxICzED48mNLP79Xc374LxBVMV6RyL8Q1AiF7fLNvma/4SXnvLa
+   4RdfCxGp7TFgRIf6TGs+bgNEHvE64BBp/wsObvRvnoaEDtrvvgFmqeHAR
+   f2px5P3NKRp61giJmOaJ76vwtiUHN9hymQe7TePlRHktF3vhJVo+pgWrA
+   4qkO/PJ+0rzo/lSiacEITPgzEf1Nccj/Cex+vKAUwDWlxWGkKIfwdQG1L
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10372"; a="302410609"
+X-IronPort-AV: E=Sophos;i="5.91,286,1647327600"; 
+   d="scan'208";a="302410609"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2022 14:08:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,286,1647327600"; 
+   d="scan'208";a="670781895"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Jun 2022 14:08:00 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nz2uF-000F17-S2;
+        Wed, 08 Jun 2022 21:07:59 +0000
+Date:   Thu, 09 Jun 2022 05:07:53 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:renesas-arm-dt-for-v5.20] BUILD SUCCESS
+ b36be13ed6cb4619f26f9e963e41ffd74c3a2ef7
+Message-ID: <62a10fa9.qZ7W54xYAPanOy8Q%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220520195041.GA18056@vmlxhi-121.adit-jv.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Michael,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.20
+branch HEAD: b36be13ed6cb4619f26f9e963e41ffd74c3a2ef7  arm64: dts: renesas: r8a779f0: Add iommus to DMAC nodes
 
-On 2022-05-20 21:50:41 +0200, Michael Rodin wrote:
+elapsed time: 2144m
 
-[snip]
+configs tested: 106
+configs skipped: 110
 
-> > 
-> > Do we need to set xfer_error to false here? The delayed work is canceled 
-> > and we reset the xfer_error when we start in rvin_start_streaming().
-> > 
-> 
-> You are right, this seems to be redundant. But I think that there might be
-> a different case where we have to reset xfer_error:
-> 
->  1. A non-critical transfer error has occurred during streaming from a
->     HDMI source.
->  2. Frames are still captured for an hour without any further problems,
->     since it was just a short glitch
->  3. Now the source (e.g. HDMI signal generator) has been powered off by the
->     user so it does not send new frames.
->  4. Timeout occurs due to 3 but since xfer_error has been set 1 hour ago,
->     userspace is notified about a transfer error and assumes that streaming
->     has been stopped because of this.
-> 
-> To avoid this scenario I think maybe we have to restrict validity of
-> xfer_error. Maybe it would be better to make xfer_error a counter which is
-> set after a transfer error to e.g. 10 frames and then decremented after
-> each captured frame so after 10 successfully captured frames we know that a
-> timeout has occurred definitely not due to a transfer error?
-> 
-> Another possible improvement might be to make FRAME_TIMEOUT_MS configurable,
-> maybe via a v4l2 control from userspace? Or we could also define the timeout
-> as a multiple of the frame interval of the source. This would allow us to
-> reduce the timeout further based on the particular source so the userspace
-> does not have to wait for a second until it knows that it has to restart
-> streaming.
-> 
-> What do you think?
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-I discussed this problem last week at a conference and the consensus was 
-that this problem of timeouts and the like should in the first hand be 
-handled in user-space. The reason being that there might be use-cases 
-that are better dealt with there.
+gcc tested configs:
+arm64                               defconfig
+arm64                            allyesconfig
+arm                              allmodconfig
+arm                                 defconfig
+arm                              allyesconfig
+i386                          randconfig-c001
+mips                 randconfig-c004-20220607
+sh                           se7206_defconfig
+powerpc                    adder875_defconfig
+sh                         apsh4a3a_defconfig
+sh                          r7785rp_defconfig
+powerpc                      ppc6xx_defconfig
+arm                        shmobile_defconfig
+parisc                generic-64bit_defconfig
+openrisc                 simple_smp_defconfig
+powerpc                 mpc837x_rdb_defconfig
+powerpc                      tqm8xx_defconfig
+powerpc                 mpc834x_itx_defconfig
+alpha                            alldefconfig
+m68k                            mac_defconfig
+x86_64                        randconfig-c001
+arm                  randconfig-c002-20220607
+ia64                                defconfig
+x86_64                            allnoconfig
+csky                                defconfig
+nios2                            allyesconfig
+alpha                               defconfig
+alpha                            allyesconfig
+h8300                            allyesconfig
+xtensa                           allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+mips                             allyesconfig
+mips                             allmodconfig
+s390                                defconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+s390                             allmodconfig
+riscv                          rv32_defconfig
+parisc                              defconfig
+parisc64                            defconfig
+riscv                    nommu_k210_defconfig
+riscv                             allnoconfig
+parisc                           allyesconfig
+riscv                            allmodconfig
+riscv                            allyesconfig
+s390                             allyesconfig
+m68k                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+nios2                               defconfig
+arc                              allyesconfig
+sparc                               defconfig
+powerpc                          allyesconfig
+um                           x86_64_defconfig
+powerpc                           allnoconfig
+sparc                            allyesconfig
+powerpc                          allmodconfig
+i386                                defconfig
+um                             i386_defconfig
+i386                             allyesconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+ia64                             allmodconfig
+i386                          randconfig-a012
+i386                          randconfig-a014
+i386                          randconfig-a016
+x86_64                        randconfig-a011
+x86_64                        randconfig-a006
+x86_64                        randconfig-a004
+x86_64                        randconfig-a002
+i386                          randconfig-a003
+i386                          randconfig-a001
+i386                          randconfig-a005
+x86_64                    rhel-8.3-kselftests
+x86_64                                  kexec
+x86_64                              defconfig
+x86_64                           allyesconfig
+x86_64                               rhel-8.3
+x86_64                          rhel-8.3-func
+x86_64                           rhel-8.3-syz
+x86_64                         rhel-8.3-kunit
 
-If the monitor thread is is strictly needed for some reason in kernel 
-thread it should likely be moved to the V4L2 core as all drivers would 
-then be able to use it instead of deeding on slightly different 
-implementations in each driver.
-
-So I fear we are back to only try to signal xfer errors in the driver 
-and then leave it to either user-space or some new V4L2 code to help 
-monitoring.
-
-Sorry for only understanding this so late in the review, it took some 
-time for me to understand it but once explained to me it made sens.
+clang tested configs:
+powerpc              randconfig-c003-20220607
+x86_64                        randconfig-c007
+riscv                randconfig-c006-20220607
+i386                          randconfig-c001
+s390                 randconfig-c005-20220607
+mips                 randconfig-c004-20220607
+arm                  randconfig-c002-20220607
+mips                      pic32mzda_defconfig
+arm                         socfpga_defconfig
+powerpc                  mpc866_ads_defconfig
+powerpc                        fsp2_defconfig
+powerpc                          g5_defconfig
+arm64                            allyesconfig
+powerpc                     akebono_defconfig
+powerpc                 mpc832x_mds_defconfig
+arm                         mv78xx0_defconfig
+arm                         lpc32xx_defconfig
+i386                          randconfig-a002
+i386                          randconfig-a006
+i386                          randconfig-a004
+x86_64                        randconfig-a005
+x86_64                        randconfig-a003
+x86_64                        randconfig-a001
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+x86_64                        randconfig-a016
+hexagon              randconfig-r045-20220608
+hexagon              randconfig-r041-20220608
 
 -- 
-Kind Regards,
-Niklas Söderlund
+0-DAY CI Kernel Test Service
+https://01.org/lkp
