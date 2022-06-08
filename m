@@ -2,216 +2,190 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CEDCCA47A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 21:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F71C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 22:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234901AbiFHVIY (ORCPT
+        id S234785AbiFHWnK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 17:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51262 "EHLO
+        Wed, 8 Jun 2022 18:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230483AbiFHVIY (ORCPT
+        with ESMTP id S236686AbiFHWnJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jun 2022 17:08:24 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D862271A5
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 14:08:22 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-31332df12a6so74341217b3.4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2022 14:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b5ReOqAs2o3gzeqG3OL7V4il5yL5akHyIyGPxcacfBA=;
-        b=Ba4mwhCNe1k/SVYGgiax1RHLVYaE16PYm+5fiQboXFgD/ag+N5cvz705MN4rVjpIPI
-         20mqv9SEpUPx3PtChBxCddPxC3gpwz6N5PF+G0ZElhJAMs7eaWr/Z+J8nMSxF5pOKofY
-         CLFQyzIeUPghYqThB66mUFHJcWTC93ASqEVRt3LVLl9QPXBD+PYs/yU2uLqcxreGwdik
-         4HASNcsIvuV/mOpjIf/knlk/2pymeg4ut2QXPF/hi4finuKXsMk29G9quSLgCq5XjL9S
-         aWkJqkdgxfW8i8wPGvE0N8YcrI2ZFizB9Lbxi1u9CnGJusfu9M2jfO6bciIlSU/xqWwh
-         708Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b5ReOqAs2o3gzeqG3OL7V4il5yL5akHyIyGPxcacfBA=;
-        b=ye1sH5MCFdIuwqujzWXqz/RmG2LpbF9yNFJOGJGImm6xLxu8vot/aUL57zds5HE7i9
-         cT85c65RVILuIZT3kz5DQXX0hE8AnV99hM1XZYsYSSKGuDGYB1g7XNunO1UfqpBgdJ/K
-         jM8p7KqQTqsQQswH40t/NblkkxpX9NbQU7iLZM9eTQRvmYmLyXaEfG0RggYwznICSu9l
-         LH+b+fL0T8+XmyAvza+lJtgzYru5+7doABTLIlUQWZWRuJaSrrtUmUDDHmNsENwPQdwD
-         WrZaa3U0OFWRzlxU6BKDONtdPpY45D7mQ5EidN/Fhz33HkBMxqhz2jwaU5qexglBNfA/
-         tEtg==
-X-Gm-Message-State: AOAM532kiwtHLZXUjd3aThcX3vAbmbVEPXBKY8i4jMxMIdtifOTL4K1F
-        TRuJUjDW1cN2mBi6RwUPCNY6Nd1/6wzGMliV5PdPnw==
-X-Google-Smtp-Source: ABdhPJwApqB8Aa/s/hWKyN1cGMg0w6J6U6ZpPLsgPu6Z8rVbvyvZo/4KRS+qCvxDCZ36rJaIIDOHULExfT8EFh33Nno=
-X-Received: by 2002:a0d:c984:0:b0:30c:c95c:21d0 with SMTP id
- l126-20020a0dc984000000b0030cc95c21d0mr41306613ywd.218.1654722500963; Wed, 08
- Jun 2022 14:08:20 -0700 (PDT)
+        Wed, 8 Jun 2022 18:43:09 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CA3A24FA0A
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 15:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654728187; x=1686264187;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3baUNOVpEY+VGrKBZBpakpFceTV8UHCawJLuySWrQe4=;
+  b=fld0MQwZ7qQzDX7dKz9y2too3JoccBZg0uo7sasmiEhCRLI5jG3AEpHl
+   5gZhdUD2Nn9J9tioLNqmF8CTy8ZpnIB4Dd1aEuF2CftNdBem6RsIhWigx
+   3FXZ+0GPVxQEB6pNkIyDWAb+aPxSz67A1Y1H6KtDQddZIWdxTBLj5B36B
+   BIGCUHuxsA6qWcmG2gr+LuaTnLkE50YlFMPLkUcWV42juKXeEgpYQeQRM
+   vlSyCJbIIpKlOLTO822L/kYZOnymTwkrPXUtj6PVk68h/k3KnPGP0A/9H
+   Zc/g2Mngy7ylSMh7LwTv7K0nTIX8cMp0a+RqH5aZaRADPzlg9vxRdLvSl
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10372"; a="278235018"
+X-IronPort-AV: E=Sophos;i="5.91,287,1647327600"; 
+   d="scan'208";a="278235018"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2022 15:43:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,287,1647327600"; 
+   d="scan'208";a="637106830"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 08 Jun 2022 15:43:05 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nz4OH-000FBT-3V;
+        Wed, 08 Jun 2022 22:43:05 +0000
+Date:   Thu, 09 Jun 2022 06:42:21 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ 6f4a1ec70aeccaabaae9ae3860561c6f48965c31
+Message-ID: <62a125cd.b8nDzpL6D4J0EpJX%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <20220601070707.3946847-1-saravanak@google.com>
- <CAMuHMdXkX-SXtBuTRGJOUnpw9goSP6RFr_PTt_3w_yWgBpWsqg@mail.gmail.com>
- <CAGETcx9f0UBhpp6dM+KJwtYpLx19wwsq6_ygi3En7FrXobOSpA@mail.gmail.com>
- <CAGETcx8VM+xOCe7HEx9FUU-1B9nrX8Q=tE=NjTyb9uX2_8RXLQ@mail.gmail.com>
- <CAMuHMdXzu8Vp=a7fyjOB=xt04aee=vWXV=TcRZeeKUGYFFZ1CA@mail.gmail.com>
- <CAGETcx_Nqo4ju7cWwO3dP3YM2wpCb0jx23OHOReexOjpT5pATA@mail.gmail.com> <CAMuHMdXQCwMQj_ZiOBAzusdCxd8w6NbTqD_7nzykhVs+UWx8Gw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXQCwMQj_ZiOBAzusdCxd8w6NbTqD_7nzykhVs+UWx8Gw@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 8 Jun 2022 14:07:44 -0700
-Message-ID: <CAGETcx8UO=4mk31tU4QaWU3RaNM_myA9woe0idBp6p7+X5AEgg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] deferred_probe_timeout logic clean up
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Ahern <dsahern@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jun 8, 2022 at 11:54 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Saravana,
->
-> On Wed, Jun 8, 2022 at 8:13 PM Saravana Kannan <saravanak@google.com> wrote:
-> > On Wed, Jun 8, 2022 at 3:26 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Wed, Jun 8, 2022 at 6:17 AM Saravana Kannan <saravanak@google.com> wrote:
-> > > > On Tue, Jun 7, 2022 at 5:55 PM Saravana Kannan <saravanak@google.com> wrote:
-> > > > > On Tue, Jun 7, 2022 at 11:13 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > On Wed, Jun 1, 2022 at 12:46 PM Saravana Kannan <saravanak@google.com> wrote:
-> > > > > > > This series is based on linux-next + these 2 small patches applies on top:
-> > > > > > > https://lore.kernel.org/lkml/20220526034609.480766-1-saravanak@google.com/
-> > > > > > >
-> > > > > > > A lot of the deferred_probe_timeout logic is redundant with
-> > > > > > > fw_devlink=on.  Also, enabling deferred_probe_timeout by default breaks
-> > > > > > > a few cases.
-> > > > > > >
-> > > > > > > This series tries to delete the redundant logic, simplify the frameworks
-> > > > > > > that use driver_deferred_probe_check_state(), enable
-> > > > > > > deferred_probe_timeout=10 by default, and fixes the nfsroot failure
-> > > > > > > case.
-> > > > > > >
-> > > > > > > The overall idea of this series is to replace the global behavior of
-> > > > > > > driver_deferred_probe_check_state() where all devices give up waiting on
-> > > > > > > supplier at the same time with a more granular behavior:
-> > > > > > >
-> > > > > > > 1. Devices with all their suppliers successfully probed by late_initcall
-> > > > > > >    probe as usual and avoid unnecessary deferred probe attempts.
-> > > > > > >
-> > > > > > > 2. At or after late_initcall, in cases where boot would break because of
-> > > > > > >    fw_devlink=on being strict about the ordering, we
-> > > > > > >
-> > > > > > >    a. Temporarily relax the enforcement to probe any unprobed devices
-> > > > > > >       that can probe successfully in the current state of the system.
-> > > > > > >       For example, when we boot with a NFS rootfs and no network device
-> > > > > > >       has probed.
-> > > > > > >    b. Go back to enforcing the ordering for any devices that haven't
-> > > > > > >       probed.
-> > > > > > >
-> > > > > > > 3. After deferred probe timeout expires, we permanently give up waiting
-> > > > > > >    on supplier devices without drivers. At this point, whatever devices
-> > > > > > >    can probe without some of their optional suppliers end up probing.
-> > > > > > >
-> > > > > > > In the case where module support is disabled, it's fairly
-> > > > > > > straightforward and all device probes are completed before the initcalls
-> > > > > > > are done.
-> > > > > > >
-> > > > > > > Patches 1 to 3 are fairly straightforward and can probably be applied
-> > > > > > > right away.
-> > > > > > >
-> > > > > > > Patches 4 to 6 are for fixing the NFS rootfs issue and setting the
-> > > > > > > default deferred_probe_timeout back to 10 seconds when modules are
-> > > > > > > enabled.
-> > > > > > >
-> > > > > > > Patches 7 to 9 are further clean up of the deferred_probe_timeout logic
-> > > > > > > so that no framework has to know/care about deferred_probe_timeout.
-> > > > > > >
-> > > > > > > Yoshihiro/Geert,
-> > > > > > >
-> > > > > > > If you can test this patch series and confirm that the NFS root case
-> > > > > > > works, I'd really appreciate that.
-> > > > > >
-> > > > > > Thanks, I gave this a try on various boards I have access to.
-> > > > > > The results were quite positive. E.g. the compile error I saw on v1
-> > > > > > (implicit declation of fw_devlink_unblock_may_probe(), which is no longer
-> > > > > >  used in v2) is gone.
-> > > > >
-> > > > > Thanks a lot for testing these.
-> > > > >
-> > > > > > However, I'm seeing a weird error when userspace (Debian9 nfsroot) is
-> > > > > > starting:
->
-> > > Setting fw_devlink_strict to true vs. false seems to influence which of
-> > > two different failures will happen:
-> > >   - rcar-csi2: probe of feaa0000.csi2 failed with error -22
-> > >   - rcar-vin: probe of e6ef5000.video failed with error -22
-> > > The former causes the NULL pointer dereference later.
-> > > The latter existed before, but I hadn't noticed it, and bisection
-> > > led to the real culprit (commit 3e52419ec04f9769 ("media: rcar-{csi2,vin}:
-> > > Move to full Virtual Channel routing per CSI-2 IP").
-> >
-> > If you revert that patch, does this series work fine? If yes, are you
-> > happy with giving this a Tested-by?
->
-> Sure, sorry for forgetting that ;-)
->
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: 6f4a1ec70aeccaabaae9ae3860561c6f48965c31  Merge branch 'renesas-arm-dt-for-v5.20' into renesas-next
 
-+few folks who I forgot to add.
+elapsed time: 2239m
 
-Geert,
+configs tested: 109
+configs skipped: 126
 
-Thanks for the extensive testing!
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Linus W, Ulf, Kevin, Will, Rob, Vladimir,
+gcc tested configs:
+arm64                               defconfig
+arm64                            allyesconfig
+arm                              allmodconfig
+arm                                 defconfig
+arm                              allyesconfig
+i386                          randconfig-c001
+mips                 randconfig-c004-20220607
+sh                           se7206_defconfig
+powerpc                    adder875_defconfig
+sh                         apsh4a3a_defconfig
+sh                          r7785rp_defconfig
+powerpc                      ppc6xx_defconfig
+arm                        shmobile_defconfig
+parisc                generic-64bit_defconfig
+openrisc                 simple_smp_defconfig
+powerpc                 mpc837x_rdb_defconfig
+powerpc                      tqm8xx_defconfig
+powerpc                 mpc834x_itx_defconfig
+alpha                            alldefconfig
+m68k                            mac_defconfig
+x86_64                        randconfig-c001
+arm                  randconfig-c002-20220607
+arm                  randconfig-c002-20220608
+x86_64                            allnoconfig
+riscv                             allnoconfig
+s390                                defconfig
+s390                             allmodconfig
+parisc                              defconfig
+parisc64                            defconfig
+parisc                           allyesconfig
+s390                             allyesconfig
+sparc                               defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+i386                                defconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                    nommu_k210_defconfig
+riscv                            allmodconfig
+riscv                            allyesconfig
+h8300                            allyesconfig
+m68k                             allyesconfig
+xtensa                           allyesconfig
+m68k                             allmodconfig
+csky                                defconfig
+arc                                 defconfig
+mips                             allyesconfig
+nios2                            allyesconfig
+m68k                                defconfig
+nios2                               defconfig
+arc                              allyesconfig
+alpha                               defconfig
+alpha                            allyesconfig
+mips                             allmodconfig
+sh                               allmodconfig
+powerpc                          allyesconfig
+um                           x86_64_defconfig
+powerpc                           allnoconfig
+powerpc                          allmodconfig
+um                             i386_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+i386                          randconfig-a012
+i386                          randconfig-a014
+i386                          randconfig-a016
+x86_64                        randconfig-a011
+x86_64                        randconfig-a006
+x86_64                        randconfig-a004
+x86_64                        randconfig-a002
+i386                          randconfig-a003
+i386                          randconfig-a001
+i386                          randconfig-a005
+x86_64                    rhel-8.3-kselftests
+x86_64                                  kexec
+x86_64                              defconfig
+x86_64                           allyesconfig
+x86_64                               rhel-8.3
+x86_64                          rhel-8.3-func
+x86_64                           rhel-8.3-syz
+x86_64                         rhel-8.3-kunit
 
-Can I get your reviews for the deletion of
-driver_deferred_probe_check_state() please? We can finally remove it
-and have frameworks not needing to know about it.
+clang tested configs:
+powerpc              randconfig-c003-20220607
+x86_64                        randconfig-c007
+riscv                randconfig-c006-20220607
+i386                          randconfig-c001
+s390                 randconfig-c005-20220607
+mips                 randconfig-c004-20220607
+arm                  randconfig-c002-20220607
+mips                      pic32mzda_defconfig
+arm                         socfpga_defconfig
+powerpc                  mpc866_ads_defconfig
+powerpc                        fsp2_defconfig
+powerpc                          g5_defconfig
+arm64                            allyesconfig
+mips                        maltaup_defconfig
+powerpc                       ebony_defconfig
+powerpc                     akebono_defconfig
+powerpc                 mpc832x_mds_defconfig
+arm                         mv78xx0_defconfig
+arm                         lpc32xx_defconfig
+i386                          randconfig-a002
+i386                          randconfig-a006
+i386                          randconfig-a004
+x86_64                        randconfig-a005
+x86_64                        randconfig-a003
+x86_64                        randconfig-a001
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+x86_64                        randconfig-a016
+hexagon              randconfig-r045-20220608
+hexagon              randconfig-r041-20220608
 
-Greg, Rafael,
-
-Can you review the wait_for_init_devices_probe() patch and the other
-trivial driver core changes please?
-
-David/Jakub,
-
-Do the IP4 autoconfig changes look reasonable to you?
-
-Thanks,
-Saravana
-
-
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
