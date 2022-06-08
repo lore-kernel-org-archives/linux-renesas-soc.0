@@ -2,244 +2,86 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AF8C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 15:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D5ECCA47E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 15:40:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244488AbiFHPkd (ORCPT
+        id S244503AbiFHPkd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 8 Jun 2022 11:40:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60594 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244140AbiFHPkb (ORCPT
+        with ESMTP id S244478AbiFHPkb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 8 Jun 2022 11:40:31 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EFEA1CC5EA
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F7C01CC5FB
         for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 08:40:27 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:243a:e14b:d107:1f56])
-        by xavier.telenet-ops.be with bizsmtp
-        id gfgR270071qF9lr01fgRmT; Wed, 08 Jun 2022 17:40:25 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id gfgR270061qF9lr01fgRkM; Wed, 08 Jun 2022 17:40:25 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nyxnE-003E0C-Nu; Wed, 08 Jun 2022 17:40:24 +0200
+        id 1nyxnE-003E0A-PR; Wed, 08 Jun 2022 17:40:24 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nyxnE-008kJa-60; Wed, 08 Jun 2022 17:40:24 +0200
+        id 1nyxnE-008kJP-4K; Wed, 08 Jun 2022 17:40:24 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] arm64: dts: renesas: r8a779f0: Add secondary CA55 CPU cores
-Date:   Wed,  8 Jun 2022 17:40:20 +0200
-Message-Id: <d6af5975090d5830cb053b52400439bd1cbe8fc7.1654701480.git.geert+renesas@glider.be>
+Subject: [PATCH 0/4] arm64: dts: renesas: r8a779f0: CPU topology improvements
+Date:   Wed,  8 Jun 2022 17:40:18 +0200
+Message-Id: <cover.1654701480.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1654701480.git.geert+renesas@glider.be>
-References: <cover.1654701480.git.geert+renesas@glider.be>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Complete the description of the Cortex-A55 CPU cores and L3 cache
-controllers on the Renesas R-Car S4-8 (R8A779F0) SoC, including CPU
-topology and PSCI support for enabling CPU cores.
+	Hi all,
 
-R-Car S4-8 has 8 Cortex-A55 cores, grouped in 4 clusters.
+Currently, the R-Car S4-8 DTS describes a single Cortex-A55 CPU core
+only.  This patch series completes the description of the Cortex-A55
+lusters by describing L3 caches, CPU cores 1-7, CPU map, PSCI for CPU bring up,
+CPUIdle, and CPU core clocks.
 
-Based on patches in the BSP by Takeshi Kihara.
+This has been tested on the Spider development board, where now all 8
+Cortex-A55 CPU cores are available after boot.  All but the first CPU
+core can be controlled from sysfs (/sys/*/*/cpu/cpu[0-7]/online).
+CPU core performance follows the CPU core clocks, when changing the
+frequency of the latter.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 138 +++++++++++++++++++++-
- 1 file changed, 133 insertions(+), 5 deletions(-)
+I plan to queue this in renesas-devel for v5.20.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index 41aa23e557179af8..197e452c8623dffb 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -18,12 +18,114 @@ cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&a55_0>;
-+				};
-+				core1 {
-+					cpu = <&a55_1>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&a55_2>;
-+				};
-+				core1 {
-+					cpu = <&a55_3>;
-+				};
-+			};
-+
-+			cluster2 {
-+				core0 {
-+					cpu = <&a55_4>;
-+				};
-+				core1 {
-+					cpu = <&a55_5>;
-+				};
-+			};
-+
-+			cluster3 {
-+				core0 {
-+					cpu = <&a55_6>;
-+				};
-+				core1 {
-+					cpu = <&a55_7>;
-+				};
-+			};
-+		};
-+
- 		a55_0: cpu@0 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A779F0_PD_A1E0D0C0>;
- 			next-level-cache = <&L3_CA55_0>;
-+			enable-method = "psci";
-+		};
-+
-+		a55_1: cpu@100 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x100>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779F0_PD_A1E0D0C1>;
-+			next-level-cache = <&L3_CA55_0>;
-+			enable-method = "psci";
-+		};
-+
-+		a55_2: cpu@10000 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x10000>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779F0_PD_A1E0D1C0>;
-+			next-level-cache = <&L3_CA55_1>;
-+			enable-method = "psci";
-+		};
-+
-+		a55_3: cpu@10100 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x10100>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779F0_PD_A1E0D1C1>;
-+			next-level-cache = <&L3_CA55_1>;
-+			enable-method = "psci";
-+		};
-+
-+		a55_4: cpu@20000 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x20000>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779F0_PD_A1E1D0C0>;
-+			next-level-cache = <&L3_CA55_2>;
-+			enable-method = "psci";
-+		};
-+
-+		a55_5: cpu@20100 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x20100>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779F0_PD_A1E1D0C1>;
-+			next-level-cache = <&L3_CA55_2>;
-+			enable-method = "psci";
-+		};
-+
-+		a55_6: cpu@30000 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x30000>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779F0_PD_A1E1D1C0>;
-+			next-level-cache = <&L3_CA55_3>;
-+			enable-method = "psci";
-+		};
-+
-+		a55_7: cpu@30100 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x30100>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779F0_PD_A1E1D1C1>;
-+			next-level-cache = <&L3_CA55_3>;
-+			enable-method = "psci";
- 		};
- 
- 		L3_CA55_0: cache-controller-0 {
-@@ -32,6 +134,27 @@ L3_CA55_0: cache-controller-0 {
- 			cache-unified;
- 			cache-level = <3>;
- 		};
-+
-+		L3_CA55_1: cache-controller-1 {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A779F0_PD_A2E0D1>;
-+			cache-unified;
-+			cache-level = <3>;
-+		};
-+
-+		L3_CA55_2: cache-controller-2 {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A779F0_PD_A2E1D0>;
-+			cache-unified;
-+			cache-level = <3>;
-+		};
-+
-+		L3_CA55_3: cache-controller-3 {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A779F0_PD_A2E1D1>;
-+			cache-unified;
-+			cache-level = <3>;
-+		};
- 	};
- 
- 	extal_clk: extal {
-@@ -53,6 +176,11 @@ pmu_a55 {
- 		interrupts-extended = <&gic GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
- 	};
- 
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
- 	/* External SCIF clock - to be overridden by boards that provide it */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
-@@ -421,7 +549,7 @@ gic: interrupt-controller@f1000000 {
- 			reg = <0x0 0xf1000000 0 0x20000>,
- 			      <0x0 0xf1060000 0 0x110000>;
- 			interrupts = <GIC_PPI 9
--				      (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+				      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
- 
- 		prr: chipid@fff00044 {
-@@ -432,9 +560,9 @@ prr: chipid@fff00044 {
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- };
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  arm64: dts: renesas: r8a779f0: Add L3 cache controller
+  arm64: dts: renesas: r8a779f0: Add secondary CA55 CPU cores
+  arm64: dts: renesas: r8a779f0: Add CPU core clocks
+
+Tho Vu (1):
+  arm64: dts: renesas: r8a779f0: Add CPUIdle support
+
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 175 +++++++++++++++++++++-
+ 1 file changed, 170 insertions(+), 5 deletions(-)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
