@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2790C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 17:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC19CCA481
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 17:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231229AbiFHRam (ORCPT
+        id S229515AbiFHRan (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 13:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55788 "EHLO
+        Wed, 8 Jun 2022 13:30:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbiFHRah (ORCPT
+        with ESMTP id S231254AbiFHRal (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jun 2022 13:30:37 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C7650B9;
-        Wed,  8 Jun 2022 10:30:33 -0700 (PDT)
+        Wed, 8 Jun 2022 13:30:41 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ED6841AD;
+        Wed,  8 Jun 2022 10:30:37 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.91,286,1647270000"; 
-   d="scan'208";a="122304135"
+   d="scan'208";a="123763348"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Jun 2022 02:30:33 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 09 Jun 2022 02:30:37 +0900
 Received: from localhost.localdomain (unknown [10.226.92.52])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B970440CE62B;
-        Thu,  9 Jun 2022 02:30:29 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D1D6E40CE9B7;
+        Thu,  9 Jun 2022 02:30:33 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
@@ -33,27 +33,79 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 0/2] Enable ADC, RSPI1
-Date:   Wed,  8 Jun 2022 18:30:23 +0100
-Message-Id: <20220608173025.22792-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 1/2] arm64: dts: renesas: rzg2ul-smarc: Enable RSPI1 on carrier board
+Date:   Wed,  8 Jun 2022 18:30:24 +0100
+Message-Id: <20220608173025.22792-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220608173025.22792-1-biju.das.jz@bp.renesas.com>
+References: <20220608173025.22792-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series aims to enable ADC and RSPI1 on RZ/G2UL SMARC EVK.
+RSPI1 (SPI1) interface is available on PMOD0 connector (J1) on the
+carrier board.  This patch adds pinmux and spi1 nodes to the carrier
+board dtsi file and drops deleting pinctl* properties from board
+DTS file.
 
-Biju Das (2):
-  arm64: dts: renesas: rzg2ul-smarc: Enable RSPI1 on carrier board
-  arm64: dts: renesas: rzg2ul-smarc-som: Enable ADC on SMARC platform
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts | 6 ------
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi  | 7 +++++++
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi      | 6 ++++++
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
- .../boot/dts/renesas/r9a07g043u11-smarc.dts   |  6 ------
- .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 19 +++++++++++++++++++
- arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi |  6 ++++++
- 3 files changed, 25 insertions(+), 6 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+index 2d740bd420ca..121e55282d18 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+@@ -13,9 +13,3 @@ / {
+ 	model = "Renesas SMARC EVK based on r9a07g043u11";
+ 	compatible = "renesas,smarc-evk", "renesas,r9a07g043u11", "renesas,r9a07g043";
+ };
+-
+-&spi1 {
+-	/delete-property/ pinctrl-0;
+-	/delete-property/ pinctrl-names;
+-	status = "disabled";
+-};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+index 429bdde579c3..8fdc956cd6c7 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+@@ -209,6 +209,13 @@ sd0_mux_uhs {
+ 			pinmux = <RZG2L_PORT_PINMUX(0, 0, 1)>; /* SD0_CD */
+ 		};
+ 	};
++
++	spi1_pins: rspi1 {
++		pinmux = <RZG2L_PORT_PINMUX(4, 0, 2)>, /* CK */
++			 <RZG2L_PORT_PINMUX(4, 1, 2)>, /* MOSI */
++			 <RZG2L_PORT_PINMUX(4, 2, 2)>, /* MISO */
++			 <RZG2L_PORT_PINMUX(4, 3, 2)>; /* SSL */
++	};
+ };
+ 
+ #if (SW_SW0_DEV_SEL)
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+index 0051634d7b1c..f9835c12023e 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+@@ -51,6 +51,12 @@ &snd_rzg2l {
+ 	status = "disabled";
+ };
+ 
++&spi1 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
+ &ssi1 {
+ 	/delete-property/ pinctrl-0;
+ 	/delete-property/ pinctrl-names;
 -- 
 2.25.1
 
