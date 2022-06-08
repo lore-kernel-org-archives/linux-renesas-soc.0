@@ -2,86 +2,148 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D5ECCA47E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 15:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 612CDCCA481
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 15:40:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244503AbiFHPkd (ORCPT
+        id S244140AbiFHPkf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 11:40:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60596 "EHLO
+        Wed, 8 Jun 2022 11:40:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244478AbiFHPkb (ORCPT
+        with ESMTP id S244517AbiFHPkc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jun 2022 11:40:31 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F7C01CC5FB
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 08:40:27 -0700 (PDT)
+        Wed, 8 Jun 2022 11:40:32 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E1FA1CC5E6
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 08:40:26 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:243a:e14b:d107:1f56])
-        by andre.telenet-ops.be with bizsmtp
-        id gfgR270061qF9lr01fgRkM; Wed, 08 Jun 2022 17:40:25 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id gfgR270041qF9lr01fgRRD; Wed, 08 Jun 2022 17:40:25 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nyxnE-003E0A-PR; Wed, 08 Jun 2022 17:40:24 +0200
+        id 1nyxnE-003E0D-Jf; Wed, 08 Jun 2022 17:40:24 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nyxnE-008kJP-4K; Wed, 08 Jun 2022 17:40:24 +0200
+        id 1nyxnE-008kJh-6g; Wed, 08 Jun 2022 17:40:24 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
+        Tho Vu <tho.vu.wh@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] arm64: dts: renesas: r8a779f0: CPU topology improvements
-Date:   Wed,  8 Jun 2022 17:40:18 +0200
-Message-Id: <cover.1654701480.git.geert+renesas@glider.be>
+Subject: [PATCH 3/4] arm64: dts: renesas: r8a779f0: Add CPUIdle support
+Date:   Wed,  8 Jun 2022 17:40:21 +0200
+Message-Id: <5310792ce4c06515a5373ff44ceb9b925f007489.1654701480.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1654701480.git.geert+renesas@glider.be>
+References: <cover.1654701480.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+From: Tho Vu <tho.vu.wh@renesas.com>
 
-Currently, the R-Car S4-8 DTS describes a single Cortex-A55 CPU core
-only.  This patch series completes the description of the Cortex-A55
-lusters by describing L3 caches, CPU cores 1-7, CPU map, PSCI for CPU bring up,
-CPUIdle, and CPU core clocks.
+Support CPUIdle for ARM Cortex-A55 on R-Car S4-8.
 
-This has been tested on the Spider development board, where now all 8
-Cortex-A55 CPU cores are available after boot.  All but the first CPU
-core can be controlled from sysfs (/sys/*/*/cpu/cpu[0-7]/online).
-CPU core performance follows the CPU core clocks, when changing the
-frequency of the latter.
+Signed-off-by: Tho Vu <tho.vu.wh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-I plan to queue this in renesas-devel for v5.20.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  arm64: dts: renesas: r8a779f0: Add L3 cache controller
-  arm64: dts: renesas: r8a779f0: Add secondary CA55 CPU cores
-  arm64: dts: renesas: r8a779f0: Add CPU core clocks
-
-Tho Vu (1):
-  arm64: dts: renesas: r8a779f0: Add CPUIdle support
-
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 175 +++++++++++++++++++++-
- 1 file changed, 170 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+index 197e452c8623dffb..bcee482803e888cc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+@@ -63,6 +63,7 @@ a55_0: cpu@0 {
+ 			power-domains = <&sysc R8A779F0_PD_A1E0D0C0>;
+ 			next-level-cache = <&L3_CA55_0>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a55_1: cpu@100 {
+@@ -72,6 +73,7 @@ a55_1: cpu@100 {
+ 			power-domains = <&sysc R8A779F0_PD_A1E0D0C1>;
+ 			next-level-cache = <&L3_CA55_0>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a55_2: cpu@10000 {
+@@ -81,6 +83,7 @@ a55_2: cpu@10000 {
+ 			power-domains = <&sysc R8A779F0_PD_A1E0D1C0>;
+ 			next-level-cache = <&L3_CA55_1>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a55_3: cpu@10100 {
+@@ -90,6 +93,7 @@ a55_3: cpu@10100 {
+ 			power-domains = <&sysc R8A779F0_PD_A1E0D1C1>;
+ 			next-level-cache = <&L3_CA55_1>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a55_4: cpu@20000 {
+@@ -99,6 +103,7 @@ a55_4: cpu@20000 {
+ 			power-domains = <&sysc R8A779F0_PD_A1E1D0C0>;
+ 			next-level-cache = <&L3_CA55_2>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a55_5: cpu@20100 {
+@@ -108,6 +113,7 @@ a55_5: cpu@20100 {
+ 			power-domains = <&sysc R8A779F0_PD_A1E1D0C1>;
+ 			next-level-cache = <&L3_CA55_2>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a55_6: cpu@30000 {
+@@ -117,6 +123,7 @@ a55_6: cpu@30000 {
+ 			power-domains = <&sysc R8A779F0_PD_A1E1D1C0>;
+ 			next-level-cache = <&L3_CA55_3>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a55_7: cpu@30100 {
+@@ -126,6 +133,7 @@ a55_7: cpu@30100 {
+ 			power-domains = <&sysc R8A779F0_PD_A1E1D1C1>;
+ 			next-level-cache = <&L3_CA55_3>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		L3_CA55_0: cache-controller-0 {
+@@ -155,6 +163,19 @@ L3_CA55_3: cache-controller-3 {
+ 			cache-unified;
+ 			cache-level = <3>;
+ 		};
++
++		idle-states {
++			entry-method = "psci";
++
++			CPU_SLEEP_0: cpu-sleep-0 {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x0010000>;
++				local-timer-stop;
++				entry-latency-us = <400>;
++				exit-latency-us = <500>;
++				min-residency-us = <4000>;
++			};
++		};
+ 	};
+ 
+ 	extal_clk: extal {
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
