@@ -2,290 +2,158 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAFEC43334
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 12:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B69FCCA47B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jun 2022 13:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239303AbiFHMgi (ORCPT
+        id S240463AbiFHNlc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 08:36:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38724 "EHLO
+        Wed, 8 Jun 2022 09:41:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239182AbiFHMgg (ORCPT
+        with ESMTP id S240386AbiFHNlZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jun 2022 08:36:36 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F36E31213
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 05:36:33 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id h23so33017413lfe.4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2022 05:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=/LdWDWdRoOk0cE/d/55wUE4sguHEBk5WdYZtIA6mO60=;
-        b=ncjCbenm2QRZINItHJM/uOwt0TyPUA74Y2IcJ4gv3TEH/elraHL2TiJilLR0brqhFN
-         xF+hVTUJ0BUtzjDY2VeVuiNSKl0XLX5OImCtuY3RcAXYqskFxta26COn8cNK2tewDMn6
-         HxhDqFBsHUNZGAf/cPRFygN9q00NOYnP/lJp6Fxh6l6vg9C6vao3KXmEwQGnRV/GC215
-         N5l3RWHHlxVDRse47aqPbJjVaoFDoK00oDmL6qCQWuAQHZk64hi1vc7TY5Uy43Clb5B6
-         8mIhDHvBLTmdxcKoj6AQkSoo4EIm4dHyxQpF+ZC9HqCd1kVkfRqGjdmN5SMREntTCPLZ
-         HK+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=/LdWDWdRoOk0cE/d/55wUE4sguHEBk5WdYZtIA6mO60=;
-        b=ML/dVu48rPNxnz3fSTROPt0yFIVwZPVxPh0rZca67os4MAFC/UPnDeBcGPCqeUibAp
-         aatL05JW48M9cgX31Phn2K2tTzOd95cqgY/qbUyO4KZoltBWxNkdC1tr/jsL6Rgb1zKn
-         NtcN4PrNEWfeLEj8mXhRhLEasRxxIRiLLCACof0vrLdybKpIUk41A/aaENK7FH37wcIG
-         1PWdVMxN1vlvFrE29kASbQKApmUgRVnpXTMBWxEO0TNTCUOBV11oBbo1/3sRy1XUV9a8
-         jsU3hMTobUP4MgXYC8JGP949V54M8lg3ZGwr6FaFsHrX+gAjgkjYDAjIEYWZmS6q3xfd
-         L+IA==
-X-Gm-Message-State: AOAM5338tQStkKNEgX3OJIGcxT3ZIF/ebgruenWD+ai3qnP4FJUpR4MG
-        TyK9DKa44qIx0g1krADuoFJWcQ==
-X-Google-Smtp-Source: ABdhPJwV74EzmSXjjiDSet9dMmtul8TB5G2AKrFerpSOr5LZGxTUJMoVREXNT5Fkx8LYjglWS778yQ==
-X-Received: by 2002:a05:6512:a95:b0:479:2b1e:25c3 with SMTP id m21-20020a0565120a9500b004792b1e25c3mr13614646lfu.655.1654691791420;
-        Wed, 08 Jun 2022 05:36:31 -0700 (PDT)
-Received: from localhost (h-85-24-188-65.A463.priv.bahnhof.se. [85.24.188.65])
-        by smtp.gmail.com with ESMTPSA id e26-20020ac2547a000000b004791f9ea46esm2162247lfn.231.2022.06.08.05.36.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jun 2022 05:36:30 -0700 (PDT)
-Date:   Wed, 8 Jun 2022 14:36:29 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3 3/3] media: rcar-{csi2,vin}: Move to full Virtual
- Channel routing per CSI-2 IP
-Message-ID: <YqCXzX+rpFb5V03n@oden.dyn.berto.se>
-References: <20220124124858.571363-1-niklas.soderlund+renesas@ragnatech.se>
- <20220124124858.571363-4-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdUvtGKnL=bzty4wYoCJ3vqm0PYunJV1jwyYUwB84mQusQ@mail.gmail.com>
+        Wed, 8 Jun 2022 09:41:25 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 730EA1DE2C6
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Jun 2022 06:41:19 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:243a:e14b:d107:1f56])
+        by michel.telenet-ops.be with bizsmtp
+        id gdhH270091qF9lr06dhHUq; Wed, 08 Jun 2022 15:41:17 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nyvvw-003D7i-Vt; Wed, 08 Jun 2022 15:41:16 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nyvvw-008Koc-EY; Wed, 08 Jun 2022 15:41:16 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/6] clk: renesas: rza1: Remove struct rz_cpg
+Date:   Wed,  8 Jun 2022 15:41:15 +0200
+Message-Id: <2380285576edaa4ad3dc5eca7e0ca418f068c6ef.1654694831.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1654694831.git.geert+renesas@glider.be>
+References: <cover.1654694831.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUvtGKnL=bzty4wYoCJ3vqm0PYunJV1jwyYUwB84mQusQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+The register block base pointer as stored in the reg member of the
+rz_cpg structure is only used during initialization.  Hence move
+it to a local variable, and pass it as a parameter to
+rz_cpg_register_clock().
 
-Thanks for your bug report.
+After this, the data member is the only remaining member of the rz_cpg
+structure, so the whole structure can be replaced by the data member.
 
-The issue looks to be related to the nested V4L2 async notifiers. I 
-tried to recreate the DT setup on M3-N but failed to trigger the issue.  
-I will try to get hold of an Ebisu board and try to trigger the issue 
-and get back to you.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-rz.c | 33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
 
-On 2022-06-08 12:16:48 +0200, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Mon, Jan 24, 2022 at 8:13 PM Niklas Söderlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > When Gen3 support was first added to this R-Car VIN and CSI-2 driver the
-> > routing was centred around the CHSEL register which multiplexes the
-> > different parallel buses that sit between the CSI-2 receivers source
-> > side and the VIN dma engines. This was a bad design as the multiplexing
-> > do allow for only a few combinations and do not play nice with many
-> > video streams in the system.
-> >
-> > For example it's only possible for CSI-2 Virtual Channels 0 and 1 of any
-> > given CSI-2 receiver to be used together with the scaler.
-> >
-> > Later datasheets have expanded the documentation and it is now possible
-> > to improve on this design by allowing any Virtual Channel to be routed
-> > to any R-Car VIN instance, provided that there exists a parallel bus
-> > between them. This increases the flexibility as all Virtual Channels can
-> > now be used together with the scaler for example.
-> >
-> > The redesign is not however perfect. While the new design allows for
-> > many more routes, two constrains limit a small portion of routes that
-> > was possible in the old design but are no more.
-> >
-> > - It is no longer possible to route the same CSI-2 and VC to more then
-> >   one VIN at a time. This was theoretically possible before if the
-> >   specific SoC allowed for the same CSI-2 and VC to be routed to two
-> >   different VIN capture groups.
-> >
-> > - It is no longer possible to simultaneously mix links from two CSI-2 IP
-> >   blocks to the same VIN capture group.
-> >
-> >   For example if VIN2 is capturing from CSI40 then VIN{0,1,3} must also
-> >   capture from CSI40. While VIN{4,5,6,7} is still free to capture from
-> >   any other CSI-2 IP in the system. Once all VIN{0,1,2,3} links to CSI40
-> >   are disabled that VIN capture group is free again to capture from any
-> >   other CSI-2 IP it is connected to.
-> >
-> > At the core of the redesign is greater cooperator of the R-Car VIN and
-> > CSI-2 drivers in configuring the routing. The VIN driver is after this
-> > change only responsible to configure the full VIN capture groups
-> > parallel buses to be to a particular CSI-2 IP. While the configuration
-> > of which CSI-2 Virtual Channel is outputted on which of the R-Car CSI-2
-> > IP output ports is handled by the CSI-2 driver.
-> >
-> > Before this change the CSI-2 Virtual Channel to output port was static
-> > in the CSI-2 driver and the different links only manipulated the VIN
-> > capture groups CHSEL register. With this change both the CHSEl register
-> > and the CSI-2 routing VCDT registers are modified for greater
-> > flexibility.
-> >
-> > This change touches both the R-Car VIN and R-Car CSI-2 drivers in the
-> > same commit as both drivers cooperate closely and one change without the
-> > other would more or less break video capture.
-> >
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> 
-> Thanks for your patch, which is now commit 3e52419ec04f9769 ("media:
-> rcar-{csi2,vin}: Move to full Virtual Channel routing per CSI-2 IP")
-> in v5.18-rc1.
-> 
-> This patch causes, depending on probe order, either one of the two
-> failures below (with some debug info added) on Ebisu-4D (but not
-> on Salvator-X(S)):
-> 
->   1. rcar-vin: probe of e6ef5000.video failed with error -22
-> 
->      Probing e6500000.i2c
->      Probing adv748x
->        adv748x 0-0070: Endpoint
-> /soc/i2c@e6500000/video-receiver@70/ports/port@7/endpoint on port 7
->        adv748x 0-0070: Endpoint
-> /soc/i2c@e6500000/video-receiver@70/ports/port@8/endpoint on port 8
->        adv748x 0-0070: Endpoint
-> /soc/i2c@e6500000/video-receiver@70/ports/port@a/endpoint on port 10
->      Probing feaa0000.csi2
->        Probing e6ef4000.video
->          rcar-csi2 feaa0000.csi2: Consider updating driver rcar-csi2
-> to match on endpoints
->          rcar-vin e6ef4000.video: Device registered as video0
->        Probing e6ef5000.video
->          rcar-vin e6ef5000.video: Device registered as video1
->          rcar-vin e6ef4000.video: Removing video0
->          rcar-vin e6ef5000.video: Removing video1
->          rcar-vin e6ef5000.video: Notifier registration failed
->          rcar-vin e6ef5000.video: rcar_vin_probe: rvin_csi2_init()
-> returned -EINVAL
->          rcar-vin: probe of e6ef5000.video failed with error -22
-> 
->      This is seen with v5.18-rc1 and later, but somehow I never noticed before.
-> 
->   2. rcar-csi2: probe of feaa0000.csi2 failed with error -22
-> 
->      Probing e6500000.i2c
->      Probing adv748x
->        adv748x 0-0070: Endpoint
-> /soc/i2c@e6500000/video-receiver@70/ports/port@7/endpoint on port 7
->        adv748x 0-0070: Endpoint
-> /soc/i2c@e6500000/video-receiver@70/ports/port@8/endpoint on port 8
->        adv748x 0-0070: Endpoint
-> /soc/i2c@e6500000/video-receiver@70/ports/port@a/endpoint on port 10
->      Probing feaa0000.csi2
->        rcar-csi2 feaa0000.csi2: Consider updating driver rcar-csi2 to
-> match on endpoints
->          Probing e6ef4000
->            rcar-vin e6ef4000.video: Device registered as video0
->          Probing e6ef5000
->            rcar-vin e6ef5000.video: Device registered as video1
->        rcar-vin e6ef4000.video: Removing video0
->        rcar-vin e6ef5000.video: Removing video1
->        rcar-csi2 feaa0000.csi2: rcsi2_probe:
-> v4l2_async_register_subdev() returned -EINVAL
->        rcar-csi2: probe of feaa0000.csi2 failed with error -22
-> 
->      This is seen with[1], and did draw my attention, as it causes
->      a big splat later:
-> 
->          [  OK  ] Started D-Bus System Message Bus.
->          Unable to handle kernel NULL pointer dereference at virtual
-> address 0000000000000000
->          Unable to handle kernel NULL pointer dereference at virtual
-> address 0000000000000000
->          Mem abort info:
->            ESR = 0x0000000096000004
->          Mem abort info:
->            ESR = 0x0000000096000004
->            EC = 0x25: DABT (current EL), IL = 32 bits
->            SET = 0, FnV = 0
->            EC = 0x25: DABT (current EL), IL = 32 bits
->            EA = 0, S1PTW = 0
->            FSC = 0x04: level 0 translation fault
->            SET = 0, FnV = 0
->          Data abort info:
->            ISV = 0, ISS = 0x00000004
->            EA = 0, S1PTW = 0
->            FSC = 0x04: level 0 translation fault
->            CM = 0, WnR = 0
->          user pgtable: 4k pages, 48-bit VAs, pgdp=000000004ec45000
->          [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
->          Data abort info:
->          Internal error: Oops: 96000004 [#1] PREEMPT SMP
->          CPU: 0 PID: 374 Comm: v4l_id Tainted: G        W
-> 5.19.0-rc1-arm64-renesas-00799-gc13c3e49e8bd #1660
->            ISV = 0, ISS = 0x00000004
->          Hardware name: Renesas Ebisu-4D board based on r8a77990 (DT)
->          pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->            CM = 0, WnR = 0
->          pc : subdev_open+0x8c/0x128
->          lr : subdev_open+0x78/0x128
->          sp : ffff80000aadba60
->          x29: ffff80000aadba60 x28: 0000000000000000 x27: ffff80000aadbc58
->          x26: 0000000000020000 x25: ffff00000b3aaf00 x24: 0000000000000000
->          x23: ffff00000c331c00 x22: ffff000009aa61b8 x21: ffff000009aa6000
->          x20: ffff000008bae3e8 x19: ffff00000c3fe200 x18: 0000000000000000
->          x17: ffff800076945000 x16: ffff800008004000 x15: 00008cc6bf550c7c
->          x14: 000000000000038f x13: 000000000000001a x12: ffff00007fba8618
->          x11: 0000000000000001 x10: 0000000000000000 x9 : ffff800009253954
->          x8 : ffff00000b3aaf00 x7 : 0000000000000004 x6 : 000000000000001a
->          x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000001
->          x2 : 0000000100000001 x1 : 0000000000000000 x0 : 0000000000000000
->          Call trace:
->           subdev_open+0x8c/0x128
->           v4l2_open+0xa4/0x120
->           chrdev_open+0x78/0x178
->           do_dentry_open+0xfc/0x398
->           vfs_open+0x28/0x30
->           path_openat+0x584/0x9c8
->           do_filp_open+0x80/0x108
->           do_sys_openat2+0x20c/0x2d8
->           user pgtable: 4k pages, 48-bit VAs, pgdp=000000004ec53000
->           do_sys_open+0x54/0xa0
->           __arm64_sys_openat+0x20/0x28
->           invoke_syscall+0x40/0xf8
->           el0_svc_common.constprop.0+0xf0/0x110
->           do_el0_svc+0x20/0x78
->           el0_svc+0x48/0xd0
->           el0t_64_sync_handler+0xb0/0xb8
->           el0t_64_sync+0x148/0x14c
->          Code: f9405280 f9400400 b40000e0 f9400280 (f9400000)
->          ---[ end trace 0000000000000000 ]---
-> 
->      Adding debug prints to subdev_open() shows the opened files are
->      v4l-subdev1 and v4l-subdev2, which correspond to subdevs on
->      /soc/e6500000.i2c/i2c-0/0-0070.
-> 
-> Reverting this commit fixes the issue.
-> 
-> [1] "[PATCH v2 0/9] deferred_probe_timeout logic clean up"
->     https://lore.kernel.org/r/20220601070707.3946847-1-saravanak@google.com
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
+diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
+index 7b703f14e20bb7f1..e770f09a27ed7758 100644
+--- a/drivers/clk/renesas/clk-rz.c
++++ b/drivers/clk/renesas/clk-rz.c
+@@ -15,11 +15,6 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ 
+-struct rz_cpg {
+-	struct clk_onecell_data data;
+-	void __iomem *reg;
+-};
+-
+ #define CPG_FRQCR	0x10
+ #define CPG_FRQCR2	0x14
+ 
+@@ -49,7 +44,8 @@ static u16 __init rz_cpg_read_mode_pins(void)
+ }
+ 
+ static struct clk * __init
+-rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *name)
++rz_cpg_register_clock(struct device_node *np, void __iomem *base,
++		      const char *name)
+ {
+ 	u32 val;
+ 	unsigned mult;
+@@ -65,7 +61,7 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
+ 	}
+ 
+ 	/* If mapping regs failed, skip non-pll clocks. System will boot anyhow */
+-	if (!cpg->reg)
++	if (!base)
+ 		return ERR_PTR(-ENXIO);
+ 
+ 	/* FIXME:"i" and "g" are variable clocks with non-integer dividers (e.g. 2/3)
+@@ -73,9 +69,9 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
+ 	 * let them run at fixed current speed and implement the details later.
+ 	 */
+ 	if (strcmp(name, "i") == 0)
+-		val = (readl(cpg->reg + CPG_FRQCR) >> 8) & 3;
++		val = (readl(base + CPG_FRQCR) >> 8) & 3;
+ 	else if (strcmp(name, "g") == 0)
+-		val = readl(cpg->reg + CPG_FRQCR2) & 3;
++		val = readl(base + CPG_FRQCR2) & 3;
+ 	else
+ 		return ERR_PTR(-EINVAL);
+ 
+@@ -85,8 +81,9 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
+ 
+ static void __init rz_cpg_clocks_init(struct device_node *np)
+ {
+-	struct rz_cpg *cpg;
++	struct clk_onecell_data *data;
+ 	struct clk **clks;
++	void __iomem *base;
+ 	unsigned i;
+ 	int num_clks;
+ 
+@@ -94,14 +91,14 @@ static void __init rz_cpg_clocks_init(struct device_node *np)
+ 	if (WARN(num_clks <= 0, "can't count CPG clocks\n"))
+ 		return;
+ 
+-	cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	clks = kcalloc(num_clks, sizeof(*clks), GFP_KERNEL);
+-	BUG_ON(!cpg || !clks);
++	BUG_ON(!data || !clks);
+ 
+-	cpg->data.clks = clks;
+-	cpg->data.clk_num = num_clks;
++	data->clks = clks;
++	data->clk_num = num_clks;
+ 
+-	cpg->reg = of_iomap(np, 0);
++	base = of_iomap(np, 0);
+ 
+ 	for (i = 0; i < num_clks; ++i) {
+ 		const char *name;
+@@ -109,15 +106,15 @@ static void __init rz_cpg_clocks_init(struct device_node *np)
+ 
+ 		of_property_read_string_index(np, "clock-output-names", i, &name);
+ 
+-		clk = rz_cpg_register_clock(np, cpg, name);
++		clk = rz_cpg_register_clock(np, base, name);
+ 		if (IS_ERR(clk))
+ 			pr_err("%s: failed to register %pOFn %s clock (%ld)\n",
+ 			       __func__, np, name, PTR_ERR(clk));
+ 		else
+-			cpg->data.clks[i] = clk;
++			data->clks[i] = clk;
+ 	}
+ 
+-	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++	of_clk_add_provider(np, of_clk_src_onecell_get, data);
+ 
+ 	cpg_mstp_add_clk_domain(np);
+ }
 -- 
-Kind Regards,
-Niklas Söderlund
+2.25.1
+
