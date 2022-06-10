@@ -2,93 +2,103 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2D6C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jun 2022 10:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67EDCCA481
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jun 2022 10:30:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239080AbiFJKKM (ORCPT
+        id S1348328AbiFJKaQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Jun 2022 06:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57862 "EHLO
+        Fri, 10 Jun 2022 06:30:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241672AbiFJKKL (ORCPT
+        with ESMTP id S241672AbiFJKaP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Jun 2022 06:10:11 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC753EFEA1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jun 2022 03:10:09 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:6907:80d7:a5b:48f8])
-        by xavier.telenet-ops.be with bizsmtp
-        id hNA52700Z35NJNs01NA5zX; Fri, 10 Jun 2022 12:10:08 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nzbaf-003RO3-4G; Fri, 10 Jun 2022 12:10:05 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nzbae-00BJvU-J6; Fri, 10 Jun 2022 12:10:04 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Fri, 10 Jun 2022 06:30:15 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 726A0419B1;
+        Fri, 10 Jun 2022 03:30:13 -0700 (PDT)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 3B6D3100002;
+        Fri, 10 Jun 2022 10:30:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1654857011;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GyK/HEB8Y6ske/BNNq6/G70klLzxtTJDCFXseTBmW2M=;
+        b=RHJfg92FiznXmVedTTV7m6LhD73PN6mJA+U6/1CcRYHFtEUw/LQkuRCjIMh2kYGh56JZW0
+        h0FvGuPkIcJWIMAe7N90R1jd2nwlJY1IlfIzocbEAMABlCnSJizek72wao6zPSHqxLphdS
+        6ylhEQrpg/BHxYhIJA4301lqaWgzyGKIXnwCUzoTkaVwD7HImTHfOWEpQ8Elbb43Wfyo+p
+        1YZinXw9YtDrAY866RIAAKaa+YLSGnjQBbozxBT3JQgitA15efxqb1jGNhuMlXh+K7+uEL
+        cCegJRqXq9IalgSGazZh+JBQSyMTLQkOjjwerb8b1lPP4/cS9CmjuebU3DapAA==
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2] dt-bindings: iommu: renesas,ipmmu-vmsa: R-Car V3U is R-Car Gen4
-Date:   Fri, 10 Jun 2022 12:10:03 +0200
-Message-Id: <36400fe2cc6b6dcc0d6984fb77338d4d163e84dc.1654855711.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Jose Abreu <joabreu@synopsys.com>
+Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH net-next v7 01/16] net: dsa: allow port_bridge_join() to override extack message
+Date:   Fri, 10 Jun 2022 12:28:18 +0200
+Message-Id: <20220610102833.541098-2-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220610102833.541098-1-clement.leger@bootlin.com>
+References: <20220610102833.541098-1-clement.leger@bootlin.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Despite the name, R-Car V3U is the first member of the R-Car Gen4
-family.  Hence move its compatible value to the R-Car Gen4 section.
+Some drivers might report that they are unable to bridge ports by
+returning -EOPNOTSUPP, but still wants to override extack message.
+In order to do so, in dsa_slave_changeupper(), if port_bridge_join()
+returns -EOPNOTSUPP, check if extack message is set and if so, do not
+override it.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Joerg Roedel <jroedel@suse.de>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 ---
-v2:
-  - Add Acked-by, Reviewed-by,
-  - Add blank lines to improve readability.
----
- .../devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml       | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/dsa/slave.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-index 8854569ca3a6c949..26d0a5121f02a153 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-@@ -29,6 +29,7 @@ properties:
-               - renesas,ipmmu-r8a7793  # R-Car M2-N
-               - renesas,ipmmu-r8a7794  # R-Car E2
-           - const: renesas,ipmmu-vmsa  # R-Mobile APE6 or R-Car Gen2 or RZ/G1
-+
-       - items:
-           - enum:
-               - renesas,ipmmu-r8a774a1 # RZ/G2M
-@@ -43,10 +44,11 @@ properties:
-               - renesas,ipmmu-r8a77980 # R-Car V3H
-               - renesas,ipmmu-r8a77990 # R-Car E3
-               - renesas,ipmmu-r8a77995 # R-Car D3
--              - renesas,ipmmu-r8a779a0 # R-Car V3U
-+
-       - items:
-           - enum:
--              - renesas,ipmmu-r8a779f0 # R-Car S4-8
-+              - renesas,ipmmu-r8a779a0           # R-Car V3U
-+              - renesas,ipmmu-r8a779f0           # R-Car S4-8
-           - const: renesas,rcar-gen4-ipmmu-vmsa  # R-Car Gen4
- 
-   reg:
+diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+index 2e1ac638d135..509b98dd9954 100644
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -2460,8 +2460,9 @@ static int dsa_slave_changeupper(struct net_device *dev,
+ 			if (!err)
+ 				dsa_bridge_mtu_normalization(dp);
+ 			if (err == -EOPNOTSUPP) {
+-				NL_SET_ERR_MSG_MOD(extack,
+-						   "Offloading not supported");
++				if (!extack->_msg)
++					NL_SET_ERR_MSG_MOD(extack,
++							   "Offloading not supported");
+ 				err = 0;
+ 			}
+ 			err = notifier_from_errno(err);
 -- 
-2.25.1
+2.36.1
 
