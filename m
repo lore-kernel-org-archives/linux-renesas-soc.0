@@ -2,114 +2,152 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4F1CCA47F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jun 2022 20:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B63BC43334
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jun 2022 21:26:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350572AbiFJURW (ORCPT
+        id S1348385AbiFJVZ7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Jun 2022 16:17:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46408 "EHLO
+        Fri, 10 Jun 2022 17:25:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350566AbiFJURU (ORCPT
+        with ESMTP id S1350927AbiFJVZ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Jun 2022 16:17:20 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B498A263DF0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jun 2022 13:17:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=hNV1WlueTAONPz2Y8SW3TAXCUDV
-        2QsHbUFKgF3Q7K8A=; b=fpqNppWEgz0ms0ypFuFC4b5varfz0sKyROTDibVnEMd
-        K37XQzd2KccWm2PBS7V4RM1Sg891IKU8l2wKTMy+btQnvIeS8eb0tAnNZNZ0CmoV
-        2YsSf4qMyr8QNP6jwPRam0UkjgBzdOUF8guFG/VsPS4QlzvfMDvigLTbOEGe9A4k
-        =
-Received: (qmail 365587 invoked from network); 10 Jun 2022 22:17:09 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jun 2022 22:17:09 +0200
-X-UD-Smtp-Session: l3s3148p1@Url1nx3h9ktZD+3R
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] dt-bindings: thermal: rcar-gen3-thermal: use positive logic
-Date:   Fri, 10 Jun 2022 22:17:00 +0200
-Message-Id: <20220610201701.7946-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
+        Fri, 10 Jun 2022 17:25:58 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C63962065ED
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jun 2022 14:25:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654896354; x=1686432354;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=81omDJst/LL7AZCI738/LOGStfhlb4KzjJSa7AhRwRE=;
+  b=h5Wcv6VQukBpRAlAhsvYomU4U6iDf+6DRJnrBBOuKkEvEwq79KkKJoB7
+   gn93uuRgRoOlNB/sV6uHNZHOzU89/x0sehJh/4Ty40cz0PRPk0PYqQLcV
+   cMhnUuEPHcfjm6SJZMmOVQA+eZQ3NotX/f4Q5mISGKoWVkKKrTU0gPlU2
+   UGiaL4ofLiibNTvfmlMeGsKDi0PjZfpWNPAzvdRyNZNd8yTcsE/pHCB8Z
+   rOMSSf5C0fw5BCBSpRJsqyYosi0+MZliMNOeDM4dt1BUsDQGC5+pUNIsD
+   2FzdkBkfI4ItOpa4jAkEx+oA/0DLDx2+0t37H/ZCvwU5GnKqahP8VPDhN
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10374"; a="341808840"
+X-IronPort-AV: E=Sophos;i="5.91,291,1647327600"; 
+   d="scan'208";a="341808840"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2022 14:25:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,291,1647327600"; 
+   d="scan'208";a="828448456"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Jun 2022 14:25:53 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nzm8e-000IID-Ga;
+        Fri, 10 Jun 2022 21:25:52 +0000
+Date:   Sat, 11 Jun 2022 05:25:31 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:master] BUILD SUCCESS
+ 64961e6e6d1cd0dc8242c2ef787619ddfde9344d
+Message-ID: <62a3b6cb.SPaKujUKLjvYaVuZ%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When handling the V3U/r8a779a0 exception, avoid using 'not:' because
-then its subschemas are far away in the 'else:' branch. Keep them
-together using positive logic.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: 64961e6e6d1cd0dc8242c2ef787619ddfde9344d  [LOCAL] arm64: renesas: defconfig: Update renesas_defconfig
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+elapsed time: 4730m
 
-Changes since v2:
-* new patch
+configs tested: 75
+configs skipped: 3
 
-Tested with:
-make dtbs_check DT_SCHEMA_FILES=thermal/rcar-gen3-thermal.yaml
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
- .../bindings/thermal/rcar-gen3-thermal.yaml   | 21 +++++++++----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+gcc tested configs:
+arm                              allyesconfig
+arm                              allmodconfig
+arm64                            allyesconfig
+arm                                 defconfig
+arm64                               defconfig
+i386                          randconfig-c001
+mips                         rt305x_defconfig
+arm                        mini2440_defconfig
+powerpc                    klondike_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                                defconfig
+m68k                             allyesconfig
+m68k                             allmodconfig
+nios2                               defconfig
+arc                              allyesconfig
+alpha                               defconfig
+csky                                defconfig
+alpha                            allyesconfig
+nios2                            allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+xtensa                           allyesconfig
+parisc                              defconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+s390                                defconfig
+parisc64                            defconfig
+s390                             allyesconfig
+sparc                            allyesconfig
+i386                              debian-10.3
+i386                             allyesconfig
+i386                   debian-10.3-kselftests
+i386                                defconfig
+sparc                               defconfig
+mips                             allmodconfig
+mips                             allyesconfig
+riscv                    nommu_k210_defconfig
+riscv                          rv32_defconfig
+riscv                    nommu_virt_defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+powerpc                           allnoconfig
+powerpc                          allmodconfig
+powerpc                          allyesconfig
+i386                          randconfig-a001
+x86_64                        randconfig-a004
+i386                          randconfig-a003
+i386                          randconfig-a005
+x86_64                        randconfig-a002
+x86_64                        randconfig-a011
+x86_64                        randconfig-a006
+i386                          randconfig-a012
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                            allmodconfig
+riscv                               defconfig
+x86_64                              defconfig
+x86_64                           allyesconfig
+x86_64                                  kexec
+x86_64                          rhel-8.3-func
+x86_64                               rhel-8.3
+x86_64                           rhel-8.3-syz
+x86_64                         rhel-8.3-kunit
+x86_64                    rhel-8.3-kselftests
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-index 1368d90da0e8..72dc7eb27f8d 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-@@ -57,31 +57,30 @@ required:
-   - "#thermal-sensor-cells"
- 
- if:
--  not:
--    properties:
--      compatible:
--        contains:
--          enum:
--            - renesas,r8a779a0-thermal
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - renesas,r8a779a0-thermal
- then:
-   properties:
-     reg:
--      minItems: 2
-       items:
-+        - description: TSC0 registers
-         - description: TSC1 registers
-         - description: TSC2 registers
-         - description: TSC3 registers
--  required:
--    - interrupts
-+        - description: TSC4 registers
- else:
-   properties:
-     reg:
-+      minItems: 2
-       items:
--        - description: TSC0 registers
-         - description: TSC1 registers
-         - description: TSC2 registers
-         - description: TSC3 registers
--        - description: TSC4 registers
-+  required:
-+    - interrupts
- 
- additionalProperties: false
- 
+clang tested configs:
+i386                          randconfig-a002
+i386                          randconfig-a006
+i386                          randconfig-a011
+x86_64                        randconfig-a005
+x86_64                        randconfig-a001
+x86_64                        randconfig-a003
+i386                          randconfig-a004
+x86_64                        randconfig-a012
+
 -- 
-2.35.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
