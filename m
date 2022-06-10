@@ -2,394 +2,558 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D953CCA47D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jun 2022 15:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7861C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jun 2022 15:57:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349436AbiFJPxj (ORCPT
+        id S1348217AbiFJP5u (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Jun 2022 11:53:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50858 "EHLO
+        Fri, 10 Jun 2022 11:57:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349386AbiFJPxU (ORCPT
+        with ESMTP id S241014AbiFJP5u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Jun 2022 11:53:20 -0400
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3D92C110;
-        Fri, 10 Jun 2022 08:53:18 -0700 (PDT)
-Received: by mail-qk1-x730.google.com with SMTP id c83so7717437qke.3;
-        Fri, 10 Jun 2022 08:53:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=yhiWlIGhbuZmmSfDVxbp8Dfh9EAKlh+Pg7Cz8rcIYp8=;
-        b=jGMORZ2t0/US8hVh5+7ZmIZriYNuhSM6OIGyulLhTB7H0gQkSmPJYSB5xLPS7d22aP
-         D+tz/mT5y4gtZtMFdJ954oID+mstf9COy6e93A5nnpuQFllAdJj5o8yIwMdUjHpqvalL
-         lFh9G5kAf21MS2Dr6EZE+AHHdYotrT29w1su/Ldqu/ukHHqLipCwDAKwvN/GYw2u3dIz
-         sKWYfoJLxjyVTRnGgzvKwImY72wft0H6epKkKr2FJoHFgGQzxhZkEi9nxjT+kdqp1B2t
-         VGVO/ogDyl7OgUDIhtK2S8mzdsKJv4TeoUwFCSzSYu0HHPVfZoFj1E++fPponlge746g
-         5sGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=yhiWlIGhbuZmmSfDVxbp8Dfh9EAKlh+Pg7Cz8rcIYp8=;
-        b=H8dczrRMbe6JEoI0q8gfIWk/r73cDnlGgV1bE9NJTLgv/lXh450Zx5Ka2oIc7c/pIu
-         MIbj8oJvymnWWJ7z6ppDsJw6X6RYLRyo2VQ7ADSpYxQPO2O+DJYraeWdETsRNMF7zJpZ
-         HzYiZjgUmUbcejybSSgVmLTVhS9rJmnFLMlniIjg1D6z6BvybNq7FSKbKD8j0f/c2zMV
-         qtTjuT2vSfpNq/+N/yOWm5KcdPHoWBpsNOJGP4eC/cCQV3gzlVlY3GjNCxbahDnT9eq4
-         Lo4VXsiTJPe/itu8rvg3wIYuJ+S7a5SPbhjy77TVWBmuie18y6Tv/z3E6Bmy7+JROvfi
-         t38w==
-X-Gm-Message-State: AOAM532QRfwDkyTeIV7DelSQm1WM4s3XjHK8VSYuzwn/1bJqxAHICO3a
-        bZL68bs4+EMpBzJsWlvVbbQ=
-X-Google-Smtp-Source: ABdhPJzRextq/3cg41qdTg/dMr4D8hpI+nm7RgN1SE+Jb+3+lwY6nJSL58jBT92WELa3x3rvHmk61g==
-X-Received: by 2002:a37:4454:0:b0:69f:c339:e2dc with SMTP id r81-20020a374454000000b0069fc339e2dcmr29221348qka.771.1654876397181;
-        Fri, 10 Jun 2022 08:53:17 -0700 (PDT)
-Received: from spruce (c-71-206-142-238.hsd1.va.comcast.net. [71.206.142.238])
-        by smtp.gmail.com with ESMTPSA id j74-20020a37a04d000000b006a7284e5741sm3245028qke.54.2022.06.10.08.53.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jun 2022 08:53:16 -0700 (PDT)
-Date:   Fri, 10 Jun 2022 11:53:13 -0400
-From:   Joe Simmons-Talbott <joetalbott@gmail.com>
-To:     Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
-Cc:     linux-imx@nxp.com, linux-renesas-soc@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-        openbmc@lists.ozlabs.org, Cai Huoqing <cai.huoqing@linux.dev>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Jishnu Prakash <quic_jprakash@quicinc.com>,
+        Fri, 10 Jun 2022 11:57:50 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 990E31BBAC3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Jun 2022 08:57:46 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:54ee:7869:f586:4612])
+        by baptiste.telenet-ops.be with bizsmtp
+        id hTxk270014ZqkGq01Txkrc; Fri, 10 Jun 2022 17:57:44 +0200
+Received: from geert (helo=localhost)
+        by ramsan.of.borg with local-esmtp (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nzh15-003Ta2-NO; Fri, 10 Jun 2022 17:57:43 +0200
+Date:   Fri, 10 Jun 2022 17:57:43 +0200 (CEST)
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+X-X-Sender: geert@ramsan.of.borg
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Benson Leung <bleung@chromium.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Christophe Branchereau <cbranchereau@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Arnd Bergmann <arnd@arndb.de>, Nancy Yuen <yuenn@google.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Saravanan Sekar <sravanhome@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH 34/34] iio: inkern: fix coding style warnings
-Message-ID: <YqNo6U8r80aNFzUr@spruce>
-References: <20220610084545.547700-1-nuno.sa@analog.com>
- <20220610084545.547700-35-nuno.sa@analog.com>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] pinctrl: renesas: Initial R8A779G0 (V4H) PFC
+ support
+In-Reply-To: <87v8tdgu1t.wl-kuninori.morimoto.gx@renesas.com>
+Message-ID: <alpine.DEB.2.22.394.2206101756520.828669@ramsan.of.borg>
+References: <87zgipgu3s.wl-kuninori.morimoto.gx@renesas.com> <87v8tdgu1t.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220610084545.547700-35-nuno.sa@analog.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jun 10, 2022 at 10:45:45AM +0200, Nuno Sá wrote:
-> Just cosmetics. No functional change intended...
-> 
-> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-> ---
->  drivers/iio/inkern.c | 64 ++++++++++++++++++++++----------------------
->  1 file changed, 32 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> index 7eb536560ded..526519cefcb9 100644
-> --- a/drivers/iio/inkern.c
-> +++ b/drivers/iio/inkern.c
-> @@ -45,13 +45,13 @@ int iio_map_array_register(struct iio_dev *indio_dev, struct iio_map *maps)
->  	int i = 0, ret = 0;
->  	struct iio_map_internal *mapi;
->  
-> -	if (maps == NULL)
-> +	if (!maps)
->  		return 0;
->  
->  	mutex_lock(&iio_map_list_lock);
-> -	while (maps[i].consumer_dev_name != NULL) {
-> +	while (!maps[i].consumer_dev_name) {
+ 	Hi Morimoto-san,
 
-Shouldn't this be?:
-while (maps[i].consumer_dev_name) {
+On Tue, 7 Jun 2022, Kuninori Morimoto wrote:
+> From: LUU HOAI <hoai.luu.ub@renesas.com>
+>
+> This patch adds initial pinctrl support for the R8A779G0 (V4H) SoC,
+> including bias, drive strength and voltage control.
+>
+> [Morimoto merged Kihara-san's MODSEL8 fixup patch,
+> and cleanuped white space, care reserved bit on each configs,
+> fixup setting miss]
+> Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Thanks,
-Joe
->  		mapi = kzalloc(sizeof(*mapi), GFP_KERNEL);
-> -		if (mapi == NULL) {
-> +		if (!mapi) {
->  			ret = -ENOMEM;
->  			goto error_ret;
->  		}
-> @@ -69,7 +69,6 @@ int iio_map_array_register(struct iio_dev *indio_dev, struct iio_map *maps)
->  }
->  EXPORT_SYMBOL_GPL(iio_map_array_register);
->  
-> -
->  /*
->   * Remove all map entries associated with the given iio device
->   */
-> @@ -163,7 +162,7 @@ static int __fwnode_iio_channel_get(struct iio_channel *channel,
->  
->  	idev = bus_find_device(&iio_bus_type, NULL, iiospec.fwnode,
->  			       iio_dev_node_match);
-> -	if (idev == NULL) {
-> +	if (!idev) {
->  		fwnode_handle_put(iiospec.fwnode);
->  		return -EPROBE_DEFER;
->  	}
-> @@ -196,7 +195,7 @@ static struct iio_channel *fwnode_iio_channel_get(struct fwnode_handle *fwnode,
->  		return ERR_PTR(-EINVAL);
->  
->  	channel = kzalloc(sizeof(*channel), GFP_KERNEL);
-> -	if (channel == NULL)
-> +	if (!channel)
->  		return ERR_PTR(-ENOMEM);
->  
->  	err = __fwnode_iio_channel_get(channel, fwnode, index);
-> @@ -293,7 +292,7 @@ static struct iio_channel *fwnode_iio_channel_get_all(struct device *dev)
->  
->  	/* NULL terminated array to save passing size */
->  	chans = kcalloc(nummaps + 1, sizeof(*chans), GFP_KERNEL);
-> -	if (chans == NULL)
-> +	if (!chans)
->  		return ERR_PTR(-ENOMEM);
->  
->  	/* Search for FW matches */
-> @@ -318,7 +317,7 @@ static struct iio_channel *iio_channel_get_sys(const char *name,
->  	struct iio_channel *channel;
->  	int err;
->  
-> -	if (name == NULL && channel_name == NULL)
-> +	if (!name && !channel_name)
->  		return ERR_PTR(-ENODEV);
->  
->  	/* first find matching entry the channel map */
-> @@ -333,11 +332,11 @@ static struct iio_channel *iio_channel_get_sys(const char *name,
->  		break;
->  	}
->  	mutex_unlock(&iio_map_list_lock);
-> -	if (c == NULL)
-> +	if (!c)
->  		return ERR_PTR(-ENODEV);
->  
->  	channel = kzalloc(sizeof(*channel), GFP_KERNEL);
-> -	if (channel == NULL) {
-> +	if (!channel) {
->  		err = -ENOMEM;
->  		goto error_no_mem;
->  	}
-> @@ -349,7 +348,7 @@ static struct iio_channel *iio_channel_get_sys(const char *name,
->  			iio_chan_spec_from_name(channel->indio_dev,
->  						c->map->adc_channel_label);
->  
-> -		if (channel->channel == NULL) {
-> +		if (!channel->channel) {
->  			err = -EINVAL;
->  			goto error_no_chan;
->  		}
-> @@ -441,7 +440,7 @@ struct iio_channel *iio_channel_get_all(struct device *dev)
->  	int mapind = 0;
->  	int i, ret;
->  
-> -	if (dev == NULL)
-> +	if (!dev)
->  		return ERR_PTR(-EINVAL);
->  
->  	chans = fwnode_iio_channel_get_all(dev);
-> @@ -465,7 +464,7 @@ struct iio_channel *iio_channel_get_all(struct device *dev)
->  
->  	/* NULL terminated array to save passing size */
->  	chans = kcalloc(nummaps + 1, sizeof(*chans), GFP_KERNEL);
-> -	if (chans == NULL) {
-> +	if (!chans) {
->  		ret = -ENOMEM;
->  		goto error_ret;
->  	}
-> @@ -479,7 +478,7 @@ struct iio_channel *iio_channel_get_all(struct device *dev)
->  		chans[mapind].channel =
->  			iio_chan_spec_from_name(chans[mapind].indio_dev,
->  						c->map->adc_channel_label);
-> -		if (chans[mapind].channel == NULL) {
-> +		if (!chans[mapind].channel) {
->  			ret = -EINVAL;
->  			goto error_free_chans;
->  		}
-> @@ -541,14 +540,14 @@ struct iio_channel *devm_iio_channel_get_all(struct device *dev)
->  EXPORT_SYMBOL_GPL(devm_iio_channel_get_all);
->  
->  static int iio_channel_read(struct iio_channel *chan, int *val, int *val2,
-> -	enum iio_chan_info_enum info)
-> +			    enum iio_chan_info_enum info)
->  {
->  	int unused;
->  	int vals[INDIO_MAX_RAW_ELEMENTS];
->  	int ret;
->  	int val_len = 2;
->  
-> -	if (val2 == NULL)
-> +	if (!val2)
->  		val2 = &unused;
->  
->  	if (!iio_channel_has_info(chan->channel, info))
-> @@ -560,9 +559,10 @@ static int iio_channel_read(struct iio_channel *chan, int *val, int *val2,
->  					vals, &val_len, info);
->  		*val = vals[0];
->  		*val2 = vals[1];
-> -	} else
-> +	} else {
->  		ret = chan->indio_dev->info->read_raw(chan->indio_dev,
->  					chan->channel, val, val2, info);
-> +	}
->  
->  	return ret;
->  }
-> @@ -573,7 +573,7 @@ int iio_read_channel_raw(struct iio_channel *chan, int *val)
->  	int ret;
->  
->  	mutex_lock(&iio_dev_opaque->info_exist_lock);
-> -	if (chan->indio_dev->info == NULL) {
-> +	if (!chan->indio_dev->info) {
->  		ret = -ENODEV;
->  		goto err_unlock;
->  	}
-> @@ -592,7 +592,7 @@ int iio_read_channel_average_raw(struct iio_channel *chan, int *val)
->  	int ret;
->  
->  	mutex_lock(&iio_dev_opaque->info_exist_lock);
-> -	if (chan->indio_dev->info == NULL) {
-> +	if (!chan->indio_dev->info) {
->  		ret = -ENODEV;
->  		goto err_unlock;
->  	}
-> @@ -606,7 +606,8 @@ int iio_read_channel_average_raw(struct iio_channel *chan, int *val)
->  EXPORT_SYMBOL_GPL(iio_read_channel_average_raw);
->  
->  static int iio_convert_raw_to_processed_unlocked(struct iio_channel *chan,
-> -	int raw, int *processed, unsigned int scale)
-> +						 int raw, int *processed,
-> +						 unsigned int scale)
->  {
->  	int scale_type, scale_val, scale_val2;
->  	int offset_type, offset_val, offset_val2;
-> @@ -639,7 +640,7 @@ static int iio_convert_raw_to_processed_unlocked(struct iio_channel *chan,
->  	}
->  
->  	scale_type = iio_channel_read(chan, &scale_val, &scale_val2,
-> -					IIO_CHAN_INFO_SCALE);
-> +				      IIO_CHAN_INFO_SCALE);
->  	if (scale_type < 0) {
->  		/*
->  		 * If no channel scaling is available apply consumer scale to
-> @@ -684,19 +685,19 @@ static int iio_convert_raw_to_processed_unlocked(struct iio_channel *chan,
->  }
->  
->  int iio_convert_raw_to_processed(struct iio_channel *chan, int raw,
-> -	int *processed, unsigned int scale)
-> +				 int *processed, unsigned int scale)
->  {
->  	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(chan->indio_dev);
->  	int ret;
->  
->  	mutex_lock(&iio_dev_opaque->info_exist_lock);
-> -	if (chan->indio_dev->info == NULL) {
-> +	if (!chan->indio_dev->info) {
->  		ret = -ENODEV;
->  		goto err_unlock;
->  	}
->  
->  	ret = iio_convert_raw_to_processed_unlocked(chan, raw, processed,
-> -							scale);
-> +						    scale);
->  err_unlock:
->  	mutex_unlock(&iio_dev_opaque->info_exist_lock);
->  
-> @@ -711,7 +712,7 @@ int iio_read_channel_attribute(struct iio_channel *chan, int *val, int *val2,
->  	int ret;
->  
->  	mutex_lock(&iio_dev_opaque->info_exist_lock);
-> -	if (chan->indio_dev->info == NULL) {
-> +	if (!chan->indio_dev->info) {
->  		ret = -ENODEV;
->  		goto err_unlock;
->  	}
-> @@ -737,7 +738,7 @@ int iio_read_channel_processed_scale(struct iio_channel *chan, int *val,
->  	int ret;
->  
->  	mutex_lock(&iio_dev_opaque->info_exist_lock);
-> -	if (chan->indio_dev->info == NULL) {
-> +	if (!chan->indio_dev->info) {
->  		ret = -ENODEV;
->  		goto err_unlock;
->  	}
-> @@ -815,7 +816,7 @@ int iio_read_avail_channel_raw(struct iio_channel *chan,
->  	int type;
->  
->  	ret = iio_read_avail_channel_attribute(chan, vals, &type, length,
-> -					 IIO_CHAN_INFO_RAW);
-> +					       IIO_CHAN_INFO_RAW);
->  
->  	if (ret >= 0 && type != IIO_VAL_INT)
->  		/* raw values are assumed to be IIO_VAL_INT */
-> @@ -899,7 +900,7 @@ int iio_get_channel_type(struct iio_channel *chan, enum iio_chan_type *type)
->  	/* Need to verify underlying driver has not gone away */
->  
->  	mutex_lock(&iio_dev_opaque->info_exist_lock);
-> -	if (chan->indio_dev->info == NULL) {
-> +	if (!chan->indio_dev->info) {
->  		ret = -ENODEV;
->  		goto err_unlock;
->  	}
-> @@ -926,7 +927,7 @@ int iio_write_channel_attribute(struct iio_channel *chan, int val, int val2,
->  	int ret;
->  
->  	mutex_lock(&iio_dev_opaque->info_exist_lock);
-> -	if (chan->indio_dev->info == NULL) {
-> +	if (!chan->indio_dev->info) {
->  		ret = -ENODEV;
->  		goto err_unlock;
->  	}
-> @@ -960,9 +961,8 @@ unsigned int iio_get_channel_ext_info_count(struct iio_channel *chan)
->  }
->  EXPORT_SYMBOL_GPL(iio_get_channel_ext_info_count);
->  
-> -static const struct iio_chan_spec_ext_info *iio_lookup_ext_info(
-> -						const struct iio_channel *chan,
-> -						const char *attr)
-> +static const struct iio_chan_spec_ext_info *
-> +iio_lookup_ext_info(const struct iio_channel *chan, const char *attr)
->  {
->  	const struct iio_chan_spec_ext_info *ext_info;
->  
-> -- 
-> 2.36.1
-> 
+Thanks for your patch!
+
+Below is a first set of comments.
+You can expect a second set of comments after the weekend.
+
+> --- /dev/null
+> +++ b/drivers/pinctrl/renesas/pfc-r8a779g0.c
+> @@ -0,0 +1,2467 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * R8A779A0 processor support - PFC hardware block.
+> + *
+> + * Copyright (C) 2021 Renesas Electronics Corp.
+> + *
+> + * This file is based on the drivers/pinctrl/renesas/pfc-r8a779a0.c
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +
+> +#include "core.h"
+
+There is no need to include "core.h".
+
+> +#include "sh_pfc.h"
+> +
+> +#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+> +
+> +#define CPU_ALL_GP(fn, sfx)								\
+> +	PORT_GP_CFG_19(0,	fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE_18_33),	\
+> +	PORT_GP_CFG_29(1,	fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE_18_33),	\
+
+GP1_23 to GP1_28 do not support voltage control.
+
+> +	PORT_GP_CFG_20(2,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_13(3,	fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE_18_33),	\
+> +	PORT_GP_CFG_1(3, 13,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 14,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 15,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 16,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 17,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 18,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 19,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 20,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 21,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 22,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 23,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 24,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 25,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 26,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 27,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 28,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_1(3, 29,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_25(4,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_21(5,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_21(6,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_21(7,	fn, sfx, CFG_FLAGS),					\
+> +	PORT_GP_CFG_14(8,	fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE_18_33)
+> +
+> +#define CPU_ALL_NOGP(fn)									\
+> +	PIN_NOGP_CFG(PRESETOUT_N,	"PRESETOUT#",	fn, SH_PFC_PIN_CFG_PULL_UP_DOWN),	\
+
+As the PUDSYS register is not documented, I cannot verify that this pin
+supports both pull-up and pull-down.
+
+> +	PIN_NOGP_CFG(PRESETOUT0_N,	"PRESETOUT0#",	fn, SH_PFC_PIN_CFG_PULL_DOWN),		\
+> +	PIN_NOGP_CFG(PRESETOUT1_N,	"PRESETOUT1#",	fn, SH_PFC_PIN_CFG_PULL_DOWN),		\
+
+"PRESETOUT0#" and "PRESETOUT1#" do not seem to exist.
+
+> +	PIN_NOGP_CFG(EXTALR,		"EXTALR",	fn, SH_PFC_PIN_CFG_PULL_UP_DOWN),	\
+
+As the PUDSYS register is not documented, I cannot verify that this pin
+supports both pull-up and pull-down.
+
+> +	PIN_NOGP_CFG(DCUTRST0_N,	"DCUTRST0#",	fn, SH_PFC_PIN_CFG_PULL_DOWN),		\
+
+DCUTRST_N_LPDRST_N and "DCUTRST#/LPDRST#"?
+
+> +	PIN_NOGP_CFG(DCUTCK0,		"DCUTCK0",	fn, SH_PFC_PIN_CFG_PULL_UP),		\
+
+DCUTCK_LPDCLK and "DCUTCK/LPDCLK"?
+
+> +	PIN_NOGP_CFG(DCUTMS0,		"DCUTMS0",	fn, SH_PFC_PIN_CFG_PULL_UP),		\
+
+DCUTMS and "DCUTMS"?
+
+> +	PIN_NOGP_CFG(DCUTDI0,		"DCUTDI0",	fn, SH_PFC_PIN_CFG_PULL_UP),		\
+
+DCUTDI_LPDI and "DCUTDI/LPDI"?
+
+> +	PIN_NOGP_CFG(DCUTRST1_N,	"DCUTRST1#",	fn, SH_PFC_PIN_CFG_PULL_DOWN),		\
+> +	PIN_NOGP_CFG(DCUTCK1,		"DCUTCK1",	fn, SH_PFC_PIN_CFG_PULL_UP),		\
+> +	PIN_NOGP_CFG(DCUTMS1,		"DCUTMS1",	fn, SH_PFC_PIN_CFG_PULL_UP),		\
+> +	PIN_NOGP_CFG(DCUTDI1,		"DCUTDI1",	fn, SH_PFC_PIN_CFG_PULL_UP),		\
+> +	PIN_NOGP_CFG(EVTI_N,		"EVTI#",	fn, SH_PFC_PIN_CFG_PULL_UP),		\
+> +	PIN_NOGP_CFG(MSYN_N,		"MSYN#",	fn, SH_PFC_PIN_CFG_PULL_UP)
+
+The above 6 pins do not seem to exist.
+
+Regardless of the above, pull up/down support for the NOGP pins is not
+supported yet, as this driver does not use PINMUX_NOGP_ALL(), and it
+does not have definitions for the PUENSYS register.
+
+Perhaps the CPU_ALL_NOGP() macro should just be dropped for now?
+
+> +/* SR0 */
+> +/* IP0SR0 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP0SR0_3_0	F_(0, 0)		FM(ERROROUTC)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									^^^^^^^^
+Missing TCLK2_A
+
+> +#define IP0SR0_7_4	F_(0, 0)		FM(MSIOF3_SS1)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR0_11_8	F_(0, 0)		FM(MSIOF3_SS2)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR0_15_12	FM(IRQ3)		FM(MSIOF3_SCK)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR0_19_16	FM(IRQ2)		FM(MSIOF3_TXD)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR0_23_20	FM(IRQ1)		FM(MSIOF3_RXD)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR0_27_24	FM(IRQ0)		FM(MSIOF3_SYNC)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR0_31_28	FM(MSIOF5_SS2)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +
+> +/* IP1SR0 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP1SR0_3_0	FM(MSIOF5_SS1)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR0_7_4	FM(MSIOF5_SYNC)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR0_11_8	FM(MSIOF5_TXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR0_15_12	FM(MSIOF5_SCK)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR0_19_16	FM(MSIOF5_RXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR0_23_20	FM(MSIOF2_SS2)		FM(TCLK1)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									^^^^^^^^
+Missing IRQ2_A
+
+> +#define IP1SR0_27_24	FM(MSIOF2_SS1)		FM(HTX1)		FM(TX1)		F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR0_31_28	FM(MSIOF2_SYNC)		FM(HRX1)		FM(RX1)		F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +
+> +/* IP2SR0 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP2SR0_3_0	FM(MSIOF2_TXD)		FM(HCTS1_N)		FM(CTS1_N)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR0_7_4	FM(MSIOF2_SCK)		FM(HRTS1_N)		FM(RTS1_N)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR0_11_8	FM(MSIOF2_RXD)		FM(HSCK1)		FM(SCK1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR0_15_12	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR0_19_16	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR0_23_20	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR0_27_24	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR0_31_28	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+
+Due to the recently-introduced reserved field handling, if the
+definition of an IPxSRy_n_m() macro consists of a series of "F_(0, 0)"
+only, you can just omit that definition, and omit its use in the
+definition of the PINMUX_IPSR() macro below.
+
+This applies to several other defitions below.
+
+> +
+> +/* SR1 */
+> +/* IP0SR1 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP0SR1_3_0	FM(MSIOF1_SS2)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR1_7_4	FM(MSIOF1_SS1)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR1_11_8	FM(MSIOF1_SYNC)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR1_15_12	FM(MSIOF1_SCK)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR1_19_16	FM(MSIOF1_TXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 						^^^^^^^^		^^^^^^^^
+Missing alternative set "A" for the five HSCIF3 signals
+Missing primary set of five SCIF3 signals
+
+> +#define IP0SR1_23_20	FM(MSIOF1_RXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR1_27_24	FM(MSIOF0_SS2)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR1_31_28	FM(MSIOF0_SS1)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +
+> +/* IP1SR1 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP1SR1_3_0	FM(MSIOF0_SYNC)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR1_7_4	FM(MSIOF0_TXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 											^^^^^^^^
+Missing CANFD5_[TR]X_B
+
+> +#define IP1SR1_11_8	FM(MSIOF0_SCK)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 						^^^^^^^^		^^^^^^^^
+Missing sets for the five HSCIF1 and five SCIF1 signals.
+For both, the set name is not documented, so we do not know if this is
+the primary or an alternative set.
+
+> +#define IP1SR1_15_12	FM(MSIOF0_RXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR1_19_16	FM(HTX0)		FM(TX0)			F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR1_23_20	FM(HCTS0_N)		FM(CTS0_N)		FM(PWM8)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									   ^^^^
+PWM8_A
+
+> +#define IP1SR1_27_24	FM(HRTS0_N)		FM(RTS0_N)		FM(PWM9)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									   ^^^^
+PWM9_A
+
+> +#define IP1SR1_31_28	FM(HSCK0)		FM(SCK0)		FM(PWM0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									   ^^^^
+PWM0_A
+
+> +
+> +/* IP2SR1 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP2SR1_3_0	FM(HRX0)		FM(RX0)			F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR1_7_4	FM(SCIF_CLK)		FM(IRQ4)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 						   ^^^^
+IRQ4_A
+
+> +#define IP2SR1_11_8	FM(SSI_SCK)		FM(TCLK3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR1_15_12	FM(SSI_WS)		FM(TCLK4)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR1_19_16	FM(SSI_SD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR1_23_20	FM(AUDIO_CLKOUT)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 						^^^^^^^^
+Missing IRQ0_A and IRQ1_A
+
+> +#define IP2SR1_27_24	FM(AUDIO_CLKIN)		FM(PWM3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 						   ^^^^
+PWM3_A
+
+> +#define IP2SR1_31_28	F_(0, 0)		FM(TCLK2)		FM(MSIOF4_SS1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 											^^^^^^^^
+Missing IRQ3_B
+
+> +
+> +/* IP3SR1 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP3SR1_3_0	FM(HRX3)		FM(SCK3)		FM(MSIOF4_SS2)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP3SR1_7_4	FM(HSCK3)		FM(CTS3_N)		FM(MSIOF4_SCK)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP3SR1_11_8	FM(HRTS3_N)		FM(RTS3_N)		FM(MSIOF4_TXD)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 											^^^^^^^^
+Missing TPU0TO[01]_A
+
+> +#define IP3SR1_15_12	FM(HCTS3_N)		FM(RX3)			FM(MSIOF4_RXD)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP3SR1_19_16	FM(HTX3)		FM(TX3)			FM(MSIOF4_SYNC)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 						^^^^^^^^
+According to the pin function spreadsheet, thse 5 pins are actually the
+"A" set for SCIF3
+
+> +#define IP3SR1_23_20	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP3SR1_27_24	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP3SR1_31_28	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +
+> +/* SR2 */
+> +/* IP0SR2 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP0SR2_3_0	FM(FXR_TXDA)		FM(CANFD1_TX)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									^^^^^^^^
+Missing TPU0TO2_A
+
+> +#define IP0SR2_7_4	FM(FXR_TXENA_N)		FM(CANFD1_RX)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									^^^^^^^^
+Missing TPU0TO3_A
+
+> +#define IP0SR2_11_8	FM(RXDA_EXTFXR)		FM(CANFD5_TX)		FM(IRQ5)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR2_15_12	FM(CLK_EXTFXR)		FM(CANFD5_RX)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									^^^^^^^^
+Missing IRQ4_B
+
+> +#define IP0SR2_19_16	FM(RXDB_EXTFXR)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR2_23_20	FM(FXR_TXENB_N)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR2_27_24	FM(FXR_TXDB)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR2_31_28	FM(TPU0TO1)		FM(CANFD6_TX)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 											^^^^^^^^
+Missing TCLK2_B
+
+> +
+> +/* IP1SR2 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP1SR2_3_0	FM(TPU0TO0)		FM(CANFD6_RX)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 											^^^^^^^^
+Missing TCLK1_A
+
+> +#define IP1SR2_7_4	FM(CAN_CLK)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR2_11_8	FM(CANFD0_TX)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 						^^^^^^^^
+Missing set (undocumented name) for FXR_TXEN[AB]_N.
+
+> +#define IP1SR2_15_12	FM(CANFD0_RX)		FM(STPWT_EXTFXR)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR2_19_16	FM(CANFD2_TX)		FM(TPU0TO2)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 											^^^^^^^^
+Missing TCLK3_A
+
+> +#define IP1SR2_23_20	FM(CANFD2_RX)		FM(TPU0TO3)		FM(PWM1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									   ^^^^		^^^^^^^^
+PWM1_B
+Missing TCLK4_A
+
+> +#define IP1SR2_27_24	FM(CANFD3_TX)		F_(0, 0)		FM(PWM2)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									   ^^^^
+PWM2_B
+
+> +#define IP1SR2_31_28	FM(CANFD3_RX)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									^^^^^^^^
+Missing PWM3_B
+
+> +
+> +/* IP2SR2 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP2SR2_3_0	FM(CANFD4_TX)		F_(0, 0)		FM(PWM4)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR2_7_4	FM(CANFD4_RX)		F_(0, 0)		FM(PWM5)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR2_11_8	FM(CANFD7_TX)		F_(0, 0)		FM(PWM6)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR2_15_12	FM(CANFD7_RX)		F_(0, 0)		FM(PWM7)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR2_19_16	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR2_23_20	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR2_27_24	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP2SR2_31_28	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +
+> +/* SR3 */
+> +/* IP0SR3 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP0SR3_3_0	FM(MMC_SD_D1)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR3_7_4	FM(MMC_SD_D0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR3_11_8	FM(MMC_SD_D2)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR3_15_12	FM(MMC_SD_CLK)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR3_19_16	FM(MMC_DS)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR3_23_20	FM(MMC_SD_D3)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR3_27_24	FM(MMC_D5)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP0SR3_31_28	FM(MMC_D4)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +
+> +/* IP1SR3 */		/* 0 */			/* 1 */			/* 2 */		/* 3	 4	  5	   6	    7	     8	      9	       A	B	 C	  D	   E	    F */
+> +#define IP1SR3_3_0	FM(MMC_D7)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR3_7_4	FM(MMC_D6)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR3_11_8	FM(MMC_SD_CMD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR3_15_12	FM(SD_CD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR3_19_16	FM(SD_WP)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+> +#define IP1SR3_23_20	FM(IPC_CLKIN)		FM(IPC_CLKEN_IN)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									^^^^^^^^	^^^^^^^^
+Missing PWM1_A and TCLK3 (unnamed, but conflicting with IP2SR1_11_8)
+
+> +#define IP1SR3_27_24	FM(IPC_CLKOUT)		FM(IPC_CLKEN_OUT)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 									^^^^^^^^	^^^^^^^^
+Missing ERROROUTC_A and TCLK4 (unnamed, but conflicting with IP2SR1_15_12)
+
+> +#define IP1SR3_31_28	FM(QSPI0_SSL)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+
+> +	{ PINMUX_DRIVE_REG("DRV0CTRL2", 0xE6058080) {
+> +		{ RCAR_GP_PIN(2,  7), 28, 3 },	/* TPU0TO1 */
+> +		{ RCAR_GP_PIN(2,  6), 24, 3 },	/* FXR_TXDB */
+> +		{ RCAR_GP_PIN(2,  5), 20, 3 },	/* FXR_TXENB_N */
+> +		{ RCAR_GP_PIN(2,  4), 16, 3 },	/* RXDB_EXTFXR */
+> +		{ RCAR_GP_PIN(2,  3), 12, 3 },	/* CLK_EXTFXR */
+> +		{ RCAR_GP_PIN(2,  2),  8, 3 },	/* RXDA_EXTFXR */
+> +		{ RCAR_GP_PIN(2,  1),  4, 3 },	/* XR_TXENA_N */
+
+FXR_TXENA_N
+
+> +		{ RCAR_GP_PIN(2,  0),  0, 3 },	/* FXR_TXDA */
+> +	} },
+
+> +	{ PINMUX_DRIVE_REG("DRV2CTRL2", 0xE6058088) {
+> +		{ RCAR_GP_PIN(2, 19), 12, 3 },	/* CANFD7_RX DRV1 */
+> +		{ RCAR_GP_PIN(2, 18),  8, 3 },	/* CANFD7_TX DRV1 */
+> +		{ RCAR_GP_PIN(2, 17),  4, 3 },	/* CANFD4_RX DRV1 */
+> +		{ RCAR_GP_PIN(2, 16),  0, 3 },	/* CANFD4_TX DRV1 */
+
+Please drop "DRV1" from the above four comments.
+
+> +	} },
+
+> +	{ PINMUX_DRIVE_REG("DRV3CTRL3", 0xE605888C) {
+> +		{ RCAR_GP_PIN(3, 29), 20, 2 },	/* RPC_INT_N */
+> +		{ RCAR_GP_PIN(3, 28), 16, 2 },	/* RPC_WP_N */
+> +		{ RCAR_GP_PIN(3, 27), 12, 2 },	/* RPC_RESET */
+
+RPC_RESET_N
+
+> +		{ RCAR_GP_PIN(3, 26),  8, 2 },	/* QSPI1_IO3 */
+> +		{ RCAR_GP_PIN(3, 25),  4, 2 },	/* QSPI1_SSL */
+> +		{ RCAR_GP_PIN(3, 24),  0, 2 },	/* QSPI1_IO2 */
+> +	} },
+
+> +enum ioctrl_regs {
+> +	POC0,
+> +	POC1,
+> +	POC2,
+
+POC 2 is unused, and not documented.  Please remove it.
+
+> +	POC3,
+> +	POC4,
+> +	POC5,
+> +	POC6,
+> +	POC7,
+> +	POC8,
+> +	TD0SEL3,
+> +};
+> +
+> +static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
+> +	[POC0]		= { 0xE60500A0, },
+> +	[POC1]		= { 0xE60508A0, },
+> +	[POC2]		= { 0xE60580A0, },
+
+POC 2 is unused, and not documented.  Please remove it.
+
+> +	[POC3]		= { 0xE60588A0, },
+> +	[POC4]		= { 0xE60600A0, },
+> +	[POC5]		= { 0xE60608A0, },
+> +	[POC6]		= { 0xE60610A0, },
+> +	[POC7]		= { 0xE60618A0, },
+> +	[POC8]		= { 0xE60680A0, },
+> +	[TD0SEL3]	= { 0xE60589C0, },
+
+TD0SEL3 is not used.
+As all fields must be written all zeroes, there is no point in keeping
+it here.
+
+> +	{ /* sentinel */ },
+> +};
+> +
+> +static int r8a779g0_pin_to_pocctrl(unsigned int pin, u32 *pocctrl)
+> +{
+> +	int bit = pin & 0x1f;
+> +
+> +	*pocctrl = pinmux_ioctrl_regs[POC0].reg;
+> +	if (pin >= RCAR_GP_PIN(0, 0) && pin <= RCAR_GP_PIN(0, 18))
+> +		return bit;
+> +
+> +	*pocctrl = pinmux_ioctrl_regs[POC1].reg;
+> +	if (pin >= RCAR_GP_PIN(1, 0) && pin <= RCAR_GP_PIN(1, 28))
+
+"<= RCAR_GP_PIN(1, 22)", as GP1_23 to GP1_28 do not support voltage
+control.
+
+> +		return bit;
+> +
+> +	*pocctrl = pinmux_ioctrl_regs[POC3].reg;
+> +	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 12))
+> +		return bit;
+
+We probably want to add voltage control for TSN0 and AVB[0-2] someday...
+
+> +
+> +	*pocctrl = pinmux_ioctrl_regs[POC8].reg;
+> +	if (pin >= RCAR_GP_PIN(8, 0) && pin <= RCAR_GP_PIN(8, 13))
+> +		return bit;
+> +
+> +	return -EINVAL;
+> +}
+
+> +	{ PINMUX_BIAS_REG("PUEN2", 0xE60580C0, "PUD2", 0xE60580E0) {
+> +		[ 0] = RCAR_GP_PIN(2,  0),	/* FXR_TXDA */
+> +		[ 1] = RCAR_GP_PIN(2,  1),	/* FXR_TXENA_N */
+> +		[ 2] = RCAR_GP_PIN(2,  2),	/* RXDA_EXTFXR */
+> +		[ 3] = RCAR_GP_PIN(2,  3),	/* CLK_EXTFXR */
+> +		[ 4] = RCAR_GP_PIN(2,  4),	/* RXDB_EXTFXR */
+> +		[ 5] = RCAR_GP_PIN(2,  5),	/* FXR_TXENB_N */
+> +		[ 6] = RCAR_GP_PIN(2,  6),	/* FXR_TXDB */
+> +		[ 7] = RCAR_GP_PIN(2,  7),	/* TPU0TO0 */
+
+TPU0TO1
+
+> +		[ 8] = RCAR_GP_PIN(2,  8),	/* TPU0TO1 */
+
+TPU0TO0
+
+> +		[ 9] = RCAR_GP_PIN(2,  9),	/* CAN_CLK */
+> +		[10] = RCAR_GP_PIN(2, 10),	/* CANFD0_TX */
+> +		[11] = RCAR_GP_PIN(2, 11),	/* CANFD0_RX */
+> +		[12] = RCAR_GP_PIN(2, 12),	/* CANFD2_TX */
+> +		[13] = RCAR_GP_PIN(2, 13),	/* CANFD2_RX */
+> +		[14] = RCAR_GP_PIN(2, 14),	/* CANFD3_TX */
+> +		[15] = RCAR_GP_PIN(2, 15),	/* CANFD3_RX */
+> +		[16] = RCAR_GP_PIN(2, 16),	/* CANFD4_TX */
+> +		[17] = RCAR_GP_PIN(2, 17),	/* CANFD4_RX */
+> +		[18] = RCAR_GP_PIN(2, 18),	/* CANFD7_TX */
+> +		[19] = RCAR_GP_PIN(2, 19),	/* CANFD7_RX */
+> +		[20] = SH_PFC_PIN_NONE,
+> +		[21] = SH_PFC_PIN_NONE,
+> +		[22] = SH_PFC_PIN_NONE,
+> +		[23] = SH_PFC_PIN_NONE,
+> +		[24] = SH_PFC_PIN_NONE,
+> +		[25] = SH_PFC_PIN_NONE,
+> +		[26] = SH_PFC_PIN_NONE,
+> +		[27] = SH_PFC_PIN_NONE,
+> +		[28] = SH_PFC_PIN_NONE,
+> +		[29] = SH_PFC_PIN_NONE,
+> +		[30] = SH_PFC_PIN_NONE,
+> +		[31] = SH_PFC_PIN_NONE,
+> +	} },
+
+> +static const struct sh_pfc_soc_operations pinmux_ops = {
+
+Please rename this to r8a779g0_pfc_ops, to avoid confusion with struct
+pinmux_ops.
+Cfr. commit c614d12c4bc003a7 ("pinctrl: renesas: Rename
+sh_pfc_soc_operations instances").
+
+> +	.pin_to_pocctrl = r8a779g0_pin_to_pocctrl,
+> +	.get_bias = rcar_pinmux_get_bias,
+> +	.set_bias = rcar_pinmux_set_bias,
+> +};
+
+Gr{oetje,eeting}s,
+
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
+
+Gr{oetje,eeting}s,
+
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
