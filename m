@@ -2,84 +2,174 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F51ACCA47B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jun 2022 15:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE2DCCA47C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jun 2022 15:53:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243783AbiFJPvH (ORCPT
+        id S1349338AbiFJPxf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Jun 2022 11:51:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40812 "EHLO
+        Fri, 10 Jun 2022 11:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344090AbiFJPvG (ORCPT
+        with ESMTP id S1349547AbiFJPx2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Jun 2022 11:51:06 -0400
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E846B49D;
-        Fri, 10 Jun 2022 08:51:03 -0700 (PDT)
-Received: by mail-qk1-f178.google.com with SMTP id 15so14971293qki.6;
-        Fri, 10 Jun 2022 08:51:03 -0700 (PDT)
+        Fri, 10 Jun 2022 11:53:28 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2E1227B04;
+        Fri, 10 Jun 2022 08:53:27 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id j8so16862116qtn.13;
+        Fri, 10 Jun 2022 08:53:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=pWs4ss5mKp4GC86T6reEfw/x1pDguv6pIi7weRK02oM=;
-        b=XIwn89P38zB+O8Uqadr+FSHnUKoGYSnZWmjT1lovdAtucdebfOjaE/tatJ+nqk7VkB
-         4t0eLsjHc9EzUq+BgWSt0b8FhDIudR+YLPZMB+Z6/B5Ruv5xvPeaclLpTooBBJY8lmom
-         GxKpabGmDoXBVVUvB5yxEK8YzBdEfYZ7lp55aXM/QxkF+7GBsME1tP22d+bnbrLFsl5m
-         S4AJSVo/uAkaK8Marwa6LfiNihSl5HTeAjF2Zg6+QC6DqESAAhGW3mDAymw6ivS5E00U
-         bNpCdZfX3hEArKfojfJEr88/9/8N269e/Xe50hFJGz78k16WiSvWM6R1wKGWmfsUkBft
-         7h7w==
-X-Gm-Message-State: AOAM5308LcUWu7z2CItdu8mFjrs3ajbdxi93Q9uqmclJx2FxtPelFisN
-        UFSW2Clz4fjCBwgLzegoAeQM4rYGoLyUSA==
-X-Google-Smtp-Source: ABdhPJwOHUt9VoIxC/igKBGKmkp+XHhZBnQYORU06dCCKsQPlyI90AIRucRqBLikFcysNV0b/pj04w==
-X-Received: by 2002:a05:620a:2606:b0:6a7:1dd:1904 with SMTP id z6-20020a05620a260600b006a701dd1904mr9758897qko.106.1654876262399;
-        Fri, 10 Jun 2022 08:51:02 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id q6-20020a05620a0d8600b006a693e46d5csm20011769qkl.11.2022.06.10.08.51.01
+         :message-id:subject:to:cc;
+        bh=QIQPQERQ4h6a/mn0vM41vP5nYn79+EtRah0A94Bw7/M=;
+        b=m4au56NhtX1V8/WpLoCXHOkubotlDE1azvcVe0dFcKRLjD9Pavlk+z0gRD5vMOKgbn
+         64oTkecbGm7CmuPzt6p6IK3vRxfAsZni7xcDJuGcbved5JuzPGlbmtPbw3XWGBJSfyMQ
+         ima8mv2b07bAVjZzC0fSPccw0v2TySRs899KT98pgWvwiIusLXH/tPDiLjNTjL8sJnGV
+         lIATsZMdg7O6zaLgTdWJhfy268x1PR88UWgj+SQZ/BRlOoT/Q8HZ92Pg8N5rNTnDvk/S
+         hqjqfyKWip52UoFZ5oKc83slRnxnnL7Xia432OJnyalbDk/adAvkMRGwgaPjhQRdvlVA
+         Bw5g==
+X-Gm-Message-State: AOAM5319I4VFXM79ZNuRZphKBYky+z6OaefymMuN9ZPKRz8VXx+46ZP2
+        QQmZfY9s8VMLa4ad1qwv20DHqmvFEfdzHA==
+X-Google-Smtp-Source: ABdhPJxnBwF06xaV0CKrocVgoSe1Tp8d+A1w2mj+LtTl5OtpEHkabpI3uHzGr8T7ZEoCn51qVxCuaA==
+X-Received: by 2002:ac8:5e4d:0:b0:304:e82f:9423 with SMTP id i13-20020ac85e4d000000b00304e82f9423mr25874096qtx.173.1654876406643;
+        Fri, 10 Jun 2022 08:53:26 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id t69-20020a374648000000b006a71c420460sm5429694qka.22.2022.06.10.08.53.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jun 2022 08:51:01 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id w2so47662953ybi.7;
-        Fri, 10 Jun 2022 08:51:01 -0700 (PDT)
-X-Received: by 2002:a25:d748:0:b0:65c:6b00:55af with SMTP id
- o69-20020a25d748000000b0065c6b0055afmr44087669ybg.365.1654876261202; Fri, 10
- Jun 2022 08:51:01 -0700 (PDT)
+        Fri, 10 Jun 2022 08:53:26 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id w2so47673236ybi.7;
+        Fri, 10 Jun 2022 08:53:26 -0700 (PDT)
+X-Received: by 2002:a05:6902:120e:b0:634:6f29:6b84 with SMTP id
+ s14-20020a056902120e00b006346f296b84mr46738024ybu.604.1654876406072; Fri, 10
+ Jun 2022 08:53:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220609200709.4455-1-wsa+renesas@sang-engineering.com>
- <YqNAXofRPsDasXi4@oden.dyn.berto.se> <YqNBye5avNNQqQPm@shikoro>
-In-Reply-To: <YqNBye5avNNQqQPm@shikoro>
+References: <87zgipgu3s.wl-kuninori.morimoto.gx@renesas.com> <87tu8xgu1f.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87tu8xgu1f.wl-kuninori.morimoto.gx@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 10 Jun 2022 17:50:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWfq5wpy0bj_yrdm_kNwS7K=X=7BTiE0GNrte4E_-niQw@mail.gmail.com>
-Message-ID: <CAMuHMdWfq5wpy0bj_yrdm_kNwS7K=X=7BTiE0GNrte4E_-niQw@mail.gmail.com>
-Subject: Re: [PATCH v2] thermal: rcar_gen3_thermal: improve logging during probe
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+Date:   Fri, 10 Jun 2022 17:53:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU0EsXBRmv36=UFWUetKvUeK6MAUj8zPO9AKdocTcW6Eg@mail.gmail.com>
+Message-ID: <CAMuHMdU0EsXBRmv36=UFWUetKvUeK6MAUj8zPO9AKdocTcW6Eg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] pinctrl: renesas: r8a779g0: Add pins, groups and functions
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Hi Morimoto-san,
 
-On Fri, Jun 10, 2022 at 3:13 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > Bikeshedding, I'm not keen on this style as it makes it harder IMHO to
-> > grep for log strings in the code. But I don't dislike it enough to ask
-> > you to change it ;-) So if you and Geert are happy with this style,
+On Tue, Jun 7, 2022 at 3:08 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Phong Hoang <phong.hoang.wz@renesas.com>
 >
-> Seems reasonable to me, Geert what do you think?
+> This patch adds SCIF, I2C, EthernetAVB, HSCIF, MMC, QSPI,
+> MSIOF, PWM, CAN-FD, Ethernet-TSN, PCIe pins, groups, and functions
+>
+> [Morimoto merged above patches into one]
+> Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
+> Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
+> Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
+> Signed-off-by: CongDang <cong.dang.xn@renesas.com>
+> Signed-off-by: Kazuya Mizuguch <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Tho Vu <tho.vu.wh@renesas.com>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  drivers/pinctrl/renesas/pfc-r8a779g0.c | 1619 +++++++++++++++++++++++-
+>  1 file changed, 1618 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/renesas/pfc-r8a779g0.c b/drivers/pinctrl/renesas/pfc-r8a779g0.c
+> index 0f4a84283ee8..3a484638038a 100644
+> --- a/drivers/pinctrl/renesas/pfc-r8a779g0.c
+> +++ b/drivers/pinctrl/renesas/pfc-r8a779g0.c
+> @@ -1212,12 +1212,1629 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+>         PINMUX_GPIO_GP_ALL(),
+>  };
+>
+> +/* - AVB0 ------------------------------------------------ */
+> +static const unsigned int avb0_link_pins[] = {
+> +       /* AVB0_LINK */
+> +       RCAR_GP_PIN(7, 4),
+> +};
+> +static const unsigned int avb0_link_mux[] = {
+> +       AVB0_LINK_MARK,
+> +};
+> +static const unsigned int avb0_magic_pins[] = {
+> +       /* AVB0_MAGIC */
+> +       RCAR_GP_PIN(7, 10),
+> +};
+> +static const unsigned int avb0_magic_mux[] = {
+> +       AVB0_MAGIC_MARK,
+> +};
+> +static const unsigned int avb0_phy_int_pins[] = {
+> +       /* AVB0_PHY_INT */
+> +       RCAR_GP_PIN(7, 5),
+> +};
+> +static const unsigned int avb0_phy_int_mux[] = {
+> +       AVB0_PHY_INT_MARK,
+> +};
+> +static const unsigned int avb0_mdio_pins[] = {
+> +       /* AVB0_MDC, AVB0_MDIO */
+> +       RCAR_GP_PIN(7, 13), RCAR_GP_PIN(7, 14),
+> +};
+> +static const unsigned int avb0_mdio_mux[] = {
+> +       AVB0_MDC_MARK, AVB0_MDIO_MARK,
+> +};
+> +static const unsigned int avb0_rgmii_pins[] = {
+> +       /*
+> +        * AVB0_TX_CTL, AVB0_TXC, AVB0_TD0, AVB0_TD1, AVB0_TD2, AVB0_TD3,
+> +        * AVB0_RX_CTL, AVB0_RXC, AVB0_RD0, AVB0_RD1, AVB0_RD2, AVB0_RD3,
+> +        */
+> +       RCAR_GP_PIN(7, 16), RCAR_GP_PIN(7, 15),
+> +       RCAR_GP_PIN(7, 11), RCAR_GP_PIN(7,  7),
+> +       RCAR_GP_PIN(7,  6), RCAR_GP_PIN(7,  3),
+> +       RCAR_GP_PIN(7, 20), RCAR_GP_PIN(7, 19),
+> +       RCAR_GP_PIN(7, 18), RCAR_GP_PIN(7, 17),
+> +       RCAR_GP_PIN(7, 12), RCAR_GP_PIN(7,  8),
+> +};
+> +static const unsigned int avb0_rgmii_mux[] = {
+> +       AVB0_TX_CTL_MARK,       AVB0_TXC_MARK,
+> +       AVB0_TD0_MARK,          AVB0_TD1_MARK,
+> +       AVB0_TD2_MARK,          AVB0_TD3_MARK,
+> +       AVB0_RX_CTL_MARK,       AVB0_RXC_MARK,
+> +       AVB0_RD0_MARK,          AVB0_RD1_MARK,
+> +       AVB0_RD2_MARK,          AVB0_RD3_MARK,
+> +};
+> +static const unsigned int avb0_txcrefclk_pins[] = {
+> +       /* AVB0_TXCREFCLK */
+> +       RCAR_GP_PIN(7, 9),
+> +};
+> +static const unsigned int avb0_txcrefclk_mux[] = {
+> +       AVB0_TXCREFCLK_MARK,
+> +};
+> +static const unsigned int avb0_avtp_pps_pins[] = {
+> +       /* AVB0_AVTP_PPS */
+> +       RCAR_GP_PIN(7, 0),
+> +};
+> +static const unsigned int avb0_avtp_pps_mux[] = {
+> +       AVB0_AVTP_PPS_MARK,
+> +};
+> +static const unsigned int avb0_avtp_capture_pins[] = {
+> +       /* AVB0_AVTP_CAPTURE */
+> +       RCAR_GP_PIN(7, 1),
+> +};
+> +static const unsigned int avb0_avtp_capture_mux[] = {
+> +       AVB0_AVTP_CAPTURE_MARK,
+> +};
+> +static const unsigned int avb0_avtp_match_pins[] = {
+> +       /* AVB0_AVTP_MATCH */
+> +       RCAR_GP_PIN(7, 2),
+> +};
+> +static const unsigned int avb0_avtp_match_mux[] = {
+> +       AVB0_AVTP_MATCH_MARK,
+> +};
 
-I plead guilty, too, as my OCD cannot stand those plural/singular
-mismatches ;-)
+This lacks a set for the RMII pins. The same is true for AVB1.
 
-But Niklas does have a valid point...
+See e.g. gether_rmii_pins[] on R-Car V3H.
 
 Gr{oetje,eeting}s,
 
