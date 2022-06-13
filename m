@@ -2,67 +2,87 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CF1C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 15:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDDDC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 17:07:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244255AbiFMPhN (ORCPT
+        id S235787AbiFMRHP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 11:37:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52238 "EHLO
+        Mon, 13 Jun 2022 13:07:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240239AbiFMPgt (ORCPT
+        with ESMTP id S239560AbiFMRGi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Jun 2022 11:36:49 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9A8E2018A
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jun 2022 06:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=k2/EGuG8SaS4N9bPQn1lwA6rR4D
-        xpryQq6eDqkQAtL4=; b=OoTPRgyjGFHwh521dCXTeAvh2O+caoJj9/zecZen1Ca
-        1PaR/0bX1O+sizEXGCg13p6pFO7gByD44Atuda+Q/PmNjkRQJcxrNp6HbNseWf12
-        jR/TQCRLYlgkq4SugHOiN4DBW0WjZmCiGsreFdJ433IWOvlEgXFdvJ7zuk6dsZCI
-        =
-Received: (qmail 1304294 invoked from network); 13 Jun 2022 15:09:59 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jun 2022 15:09:59 +0200
-X-UD-Smtp-Session: l3s3148p1@3itJAVThEwVZD+yY
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a779f0: Add HSCIF0+1 clocks
-Date:   Mon, 13 Jun 2022 15:09:49 +0200
-Message-Id: <20220613130949.10001-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
+        Mon, 13 Jun 2022 13:06:38 -0400
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35DB12559B;
+        Mon, 13 Jun 2022 05:05:56 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id l192so1663867qke.13;
+        Mon, 13 Jun 2022 05:05:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cwLyOilx9WOqvNt/3Yiyfo9fY3D0D5JL9svjFDzxcJc=;
+        b=mirG+pXYdWmT/wWIEW46KPdRMH8MivKaZ/dKt1JgRO4IcipqNlZQ2fZ+lvJssw66K9
+         kZCeOmE02qq1pT/JNuUZOu4KUo15Psce3yKzggqVi4b5QVxin9vPhWbOZC6t63c3MUv4
+         NqTHZlyocexLMKY3KjjTXcsxJGvVnDN+c+CwhcYNcdlX94ZGvcvZvEIhYVO9/SaLbpxr
+         Snqw13uQY7lDllq0/K5/9gbDyKQvGUATXyrqxCII6zdUedpYp+ogfa5DBwc2WoEwJ23J
+         rj6fRmY7d2qR4WjRRgfjmaF6gfmFmmwjpyyTci7tfzindOYDw+RlFPC4kXBtNXB5rlaq
+         rolw==
+X-Gm-Message-State: AOAM533EyBjxxtZPjbdXEB4TZeVC2nQVnM5O5p59Af+zByw3vXqzxK/S
+        k3KRcny8Q05L7HVNy4j+XyO0o11rij4z1Q==
+X-Google-Smtp-Source: ABdhPJyG1Z+ss0PDfZyxXSVEb2nP2BBLomzlw8szdGzyWol2HPyjMMZZUVT5aABs6ygf5y2cuJmc3w==
+X-Received: by 2002:ae9:f107:0:b0:69c:232b:bf39 with SMTP id k7-20020ae9f107000000b0069c232bbf39mr38809443qkg.310.1655121954596;
+        Mon, 13 Jun 2022 05:05:54 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id ca21-20020a05622a1f1500b00304e5839734sm4874647qtb.55.2022.06.13.05.05.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jun 2022 05:05:54 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-30c143c41e5so49016067b3.3;
+        Mon, 13 Jun 2022 05:05:54 -0700 (PDT)
+X-Received: by 2002:a0d:d481:0:b0:30c:44f1:2721 with SMTP id
+ w123-20020a0dd481000000b0030c44f12721mr64775617ywd.283.1655121953732; Mon, 13
+ Jun 2022 05:05:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <4dcd5c4ef92318dfa3298eb0c03945a8ce9b5833.1654942925.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4dcd5c4ef92318dfa3298eb0c03945a8ce9b5833.1654942925.git.christophe.jaillet@wanadoo.fr>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 13 Jun 2022 14:05:41 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWT+sFoa9spFk1FYZb=Kyck8gPL4gRU5E8YOhdmmGAZxA@mail.gmail.com>
+Message-ID: <CAMuHMdWT+sFoa9spFk1FYZb=Kyck8gPL4gRU5E8YOhdmmGAZxA@mail.gmail.com>
+Subject: Re: [PATCH] media: rcar_drif: Remove useless license text when
+ SPDX-License-Identifier is already used
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Those have been successfully tested. HSCIF2+3 still need verification.
+On Sat, Jun 11, 2022 at 12:28 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> An SPDX-License-Identifier is already in place. There is no need to
+> duplicate part of the corresponding license.
+>
+> This is a left-over from commit adeb69705682 ("media: rcar_drif: convert to
+> SPDX identifiers")
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 0aec5e8ffd96..a7c16e72515f 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -118,6 +118,8 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
- };
- 
- static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
-+	DEF_MOD("hscif0",	514,	R8A779F0_CLK_S0D3),
-+	DEF_MOD("hscif1",	515,	R8A779F0_CLK_S0D3),
- 	DEF_MOD("i2c0",		518,	R8A779F0_CLK_S0D6_PER),
- 	DEF_MOD("i2c1",		519,	R8A779F0_CLK_S0D6_PER),
- 	DEF_MOD("i2c2",		520,	R8A779F0_CLK_S0D6_PER),
--- 
-2.35.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
