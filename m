@@ -2,127 +2,186 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51C6CCA47F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 18:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C7CC43334
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 18:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344455AbiFMSoX (ORCPT
+        id S243066AbiFMSrs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 14:44:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50584 "EHLO
+        Mon, 13 Jun 2022 14:47:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346500AbiFMSnt (ORCPT
+        with ESMTP id S1344214AbiFMSr2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Jun 2022 14:43:49 -0400
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB05EDFD37;
-        Mon, 13 Jun 2022 08:19:13 -0700 (PDT)
-Received: by mail-qk1-f174.google.com with SMTP id 15so4246930qki.6;
-        Mon, 13 Jun 2022 08:19:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LcgDoi8Ks07zUpb/ZR8TTydtN5e8nq+lNn0ycM26yjg=;
-        b=gZXI7jpai/YTdNRT3Ksr92tqPDqA9F/ajvyabGggCIAyEVauyRZqcXL6MeyG1Vbc2H
-         azC7d0UjS+6PqPjlO2Jpc79vew/MFi0NsBx6vhQQwRaymW1FdhWgfQbLXr9tE/dKNYtG
-         R6K0T5BRJyrCU/XG4Q44CVmiKu7JyGar2WbE4hstre0qiXBrAkyClhfOV6Qq2WdmZpNA
-         pE5fVHAkFab7eHE6O8gZ3WdXZITL2p/oYPUhTz17JKAmSsICWzgevE1TwueolPeIZie+
-         xxRXCSNEj4AM3kixoso7urRJ7sz9MAESDMbCC6xzbm1w2MCeuDD2JjFe+xKSxk9ctXEE
-         67iw==
-X-Gm-Message-State: AOAM531bA8rEGmVyxMnfN50FH8Mt9ia5jGW4RKk0xaMtEAjsmWktUrc2
-        pRaIA998cVAUeKVR60tQa4v9O7OOeJevsQ==
-X-Google-Smtp-Source: ABdhPJw6KfdrKkB2U5sttUmCqFYOXPRMrmUqGIEgCVcU2flYNvhHzHJSJT8h8I9ac8zd12PZmJHpGQ==
-X-Received: by 2002:ae9:f405:0:b0:6a7:1892:8603 with SMTP id y5-20020ae9f405000000b006a718928603mr337044qkl.293.1655133552655;
-        Mon, 13 Jun 2022 08:19:12 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id n7-20020a37a407000000b006a66f3d3708sm6500542qke.129.2022.06.13.08.19.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jun 2022 08:19:12 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id l204so10372485ybf.10;
-        Mon, 13 Jun 2022 08:19:12 -0700 (PDT)
-X-Received: by 2002:a25:cc53:0:b0:65c:b19c:fac1 with SMTP id
- l80-20020a25cc53000000b0065cb19cfac1mr68276ybf.89.1655133551763; Mon, 13 Jun
- 2022 08:19:11 -0700 (PDT)
+        Mon, 13 Jun 2022 14:47:28 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4E6D4D9EA6;
+        Mon, 13 Jun 2022 08:06:11 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,297,1647270000"; 
+   d="scan'208";a="122769637"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 14 Jun 2022 00:06:10 +0900
+Received: from localhost.localdomain (unknown [10.226.93.20])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6579642130CE;
+        Tue, 14 Jun 2022 00:06:07 +0900 (JST)
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 1/2] dt-bindings: watchdog: renesas,wdt: Add r9a09g011 (RZ/V2M) support
+Date:   Mon, 13 Jun 2022 16:05:49 +0100
+Message-Id: <20220613150550.70334-2-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220613150550.70334-1-phil.edworthy@renesas.com>
+References: <20220613150550.70334-1-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-References: <87zgipgu3s.wl-kuninori.morimoto.gx@renesas.com>
- <87v8tdgu1t.wl-kuninori.morimoto.gx@renesas.com> <alpine.DEB.2.22.394.2206101756520.828669@ramsan.of.borg>
- <877d5l1lv9.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <877d5l1lv9.wl-kuninori.morimoto.gx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 13 Jun 2022 17:18:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWUeynL0YSV4Qr25TymN49guTHLwVe2UgtFcHeyjJvvVg@mail.gmail.com>
-Message-ID: <CAMuHMdWUeynL0YSV4Qr25TymN49guTHLwVe2UgtFcHeyjJvvVg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] pinctrl: renesas: Initial R8A779G0 (V4H) PFC support
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Morimoto-san,
+Add the documentation for the r9a09g011 SoC, but in doing so also
+reorganise the doc to make it easier to read.
+Additionally, make the binding require an interrupt to be specified.
+Whilst the driver does not need an interrupt, all of the SoCs that use
+this binding actually provide one.
 
-On Mon, Jun 13, 2022 at 1:51 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> > > From: LUU HOAI <hoai.luu.ub@renesas.com>
-> > >
-> > > This patch adds initial pinctrl support for the R8A779G0 (V4H) SoC,
-> > > including bias, drive strength and voltage control.
-> > >
-> > > [Morimoto merged Kihara-san's MODSEL8 fixup patch,
-> > > and cleanuped white space, care reserved bit on each configs,
-> > > fixup setting miss]
-> > > Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
-> > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> > Below is a first set of comments.
-> > You can expect a second set of comments after the weekend.
->
-> May I suggest ?
->
-> v1 patch was almost as-is of working implementation,
-> I did was just cleanup.
-> v2 patch was tidyup implementation which found via runtime.
-> So far, I think we can say "v2 patch is cleanup version of working implementation".
->
-> But, v3 needs too many tidyups, and it is related to very deep parts.
-> I'm very afraid it breaks working implementation for some reasons.
-> In such case, it is very difficult to find and/or fix the issue
-> because PFC file is too big and too complicated.
->
-> I'm happy to fix all of you pointed, but I want to make it as additional patch.
-> But what do you think ?
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2:
+ - Added minItems for interrupt-names and clock-names
+---
+ .../bindings/watchdog/renesas,wdt.yaml        | 71 ++++++++++++-------
+ 1 file changed, 47 insertions(+), 24 deletions(-)
 
-For missing features (e.g. missing alternative functions, missing
-support for using I2C-capable pins as GPIOs, ...) I agree: these can
-be added incrementally.
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+index a8d7dde5271b..7bb6ca6af882 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+@@ -31,6 +31,11 @@ properties:
+               - renesas,r9a07g054-wdt    # RZ/V2L
+           - const: renesas,rzg2l-wdt
+ 
++      - items:
++          - enum:
++              - renesas,r9a09g011-wdt    # RZ/V2M
++          - const: renesas,rzv2m-wdt     # RZ/V2M
++
+       - items:
+           - enum:
+               - renesas,r8a7742-wdt      # RZ/G1H
+@@ -70,13 +75,29 @@ properties:
+   reg:
+     maxItems: 1
+ 
+-  interrupts: true
+-
+-  interrupt-names: true
+-
+-  clocks: true
+-
+-  clock-names: true
++  interrupts:
++    minItems: 1
++    items:
++      - description: Timeout
++      - description: Parity error
++
++  interrupt-names:
++    minItems: 1
++    items:
++      - const: wdt
++      - const: perrout
++
++  clocks:
++    minItems: 1
++    items:
++      - description: Register access clock
++      - description: Main clock
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: pclk
++      - const: oscclk
+ 
+   power-domains:
+     maxItems: 1
+@@ -89,6 +110,7 @@ properties:
+ required:
+   - compatible
+   - reg
++  - interrupts
+   - clocks
+ 
+ allOf:
+@@ -113,31 +135,30 @@ allOf:
+           contains:
+             enum:
+               - renesas,rzg2l-wdt
++              - renesas,rzv2m-wdt
+     then:
+       properties:
+-        interrupts:
+-          maxItems: 2
+-        interrupt-names:
+-          items:
+-            - const: wdt
+-            - const: perrout
+         clocks:
+-          items:
+-            - description: Register access clock
+-            - description: Main clock
++          minItems: 2
+         clock-names:
+-          items:
+-            - const: pclk
+-            - const: oscclk
++          minItems: 2
+       required:
+         - clock-names
+-        - interrupt-names
+-    else:
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,rzg2l-wdt
++    then:
+       properties:
+         interrupts:
+-          maxItems: 1
+-        clocks:
+-          maxItems: 1
++          minItems: 2
++        interrupt-names:
++          minItems: 2
++      required:
++        - interrupt-names
+ 
+ additionalProperties: false
+ 
+@@ -145,9 +166,11 @@ examples:
+   - |
+     #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+     #include <dt-bindings/power/r8a7795-sysc.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+     wdt0: watchdog@e6020000 {
+             compatible = "renesas,r8a7795-wdt", "renesas,rcar-gen3-wdt";
+             reg = <0xe6020000 0x0c>;
++            interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+             clocks = <&cpg CPG_MOD 402>;
+             power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+             resets = <&cpg 402>;
+-- 
+2.34.1
 
-For descriptions that are wrong, I disagree: please try to fix them
-in the patch that introduces them, if possible.
-This is especially true for descriptions that become user-visible:
-e.g. set names (no suffix vs. "_A" vs. "_B" suffixes) become DT ABI
-once their pin groups have been defined.
-
-Unfortunately some of the (lack of) set names need confirmation or
-clarification from the hardware documentation team.
-
-BTW, do you know which devices and pin groups have been tested on
-actual hardware?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
