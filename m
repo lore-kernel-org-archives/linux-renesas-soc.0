@@ -2,92 +2,127 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45585C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 18:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C51C6CCA47F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 18:44:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243663AbiFMSRp (ORCPT
+        id S1344455AbiFMSoX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 14:17:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55932 "EHLO
+        Mon, 13 Jun 2022 14:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244010AbiFMSRa (ORCPT
+        with ESMTP id S1346500AbiFMSnt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Jun 2022 14:17:30 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDEAE37A18;
-        Mon, 13 Jun 2022 07:15:50 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-30c2f288f13so52886037b3.7;
-        Mon, 13 Jun 2022 07:15:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YWdwEmU6cz3JA10QQ644kKHbnA8ElW/c1q4MJrDh3Ic=;
-        b=ixm/NKcovdWUOfA86VJFXawWospGoFsoennDCjLbyl9qD8s+Lls97D/aLHRDrRlxNG
-         JMXpQOT/teuMiiCEdz7Gi/mHQ4eelG8PcZ4O+OpycaHwnEzvErhtdoW01diQL+/EqP+T
-         eRyAT9hXp052vpsHjeMujgEVRCuky2059j3xCuycW2mXQsMx3Fl2wkqI2M33HSsSk/4t
-         DEPKAaWNVHRVMhw5nguPP3ukyFyZJqzM2Px+8LduhCFjaJ2mnW4MhLf22ypv0RTyWlW/
-         pE3LUHdAuynklAq4FwdnTuIuGElI2t0zoCWV5tHhxHFmuTgyNl/QQG2LF5Zyq4pP6PEf
-         LrAA==
+        Mon, 13 Jun 2022 14:43:49 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB05EDFD37;
+        Mon, 13 Jun 2022 08:19:13 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id 15so4246930qki.6;
+        Mon, 13 Jun 2022 08:19:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YWdwEmU6cz3JA10QQ644kKHbnA8ElW/c1q4MJrDh3Ic=;
-        b=fJNpm3diICmD2i3X9Q7xMrcKzOPHb067jikLHLyHL+8ukp6H6xicSrMzYa+RQrtK8o
-         GzRynpD+sFhBiihzwWqvNwR1wRZ5PgHibgqKOW9S5YH33m1EWrRE7ePEmArIb93Q/V68
-         vNZERtVBS44/QU6cVn1agHxbI4PT6QAIhh0Skxchza/oBmYkI+tb6JAGV1A9ID4xLKJa
-         /9ft0vEKdTY7HXH/YopCEdJrSo4lXpjx/UGt8+kYOdlRbMHQ4NhulkDttzu4paIl/kWF
-         nyVUew8NOr73LCYflAp9JjqHzfNJ6uVFNL5KJ+31om0mdfVRtt+aDzgVLA58pZGqy7q1
-         G1QA==
-X-Gm-Message-State: AOAM533QHsCqlsRX4S7QflYjHGfbooD+EZLgkzStTkr/pRp58rC4adnC
-        MnIgIKM3bEsMeHfSlS8vyncJlJMg73/CysHozJvY4V9rw4PGkQ==
-X-Google-Smtp-Source: ABdhPJxYOhmW3DAPX2IL/CcItOqjV2ZWF6ro4pUuLDKaJBi+TkZZxSd0bFjb2nN90fRkk42kyMWulXwUGY6IK8lA+Rw=
-X-Received: by 2002:a81:4885:0:b0:30c:4632:5722 with SMTP id
- v127-20020a814885000000b0030c46325722mr65218118ywa.16.1655129749905; Mon, 13
- Jun 2022 07:15:49 -0700 (PDT)
+        bh=LcgDoi8Ks07zUpb/ZR8TTydtN5e8nq+lNn0ycM26yjg=;
+        b=gZXI7jpai/YTdNRT3Ksr92tqPDqA9F/ajvyabGggCIAyEVauyRZqcXL6MeyG1Vbc2H
+         azC7d0UjS+6PqPjlO2Jpc79vew/MFi0NsBx6vhQQwRaymW1FdhWgfQbLXr9tE/dKNYtG
+         R6K0T5BRJyrCU/XG4Q44CVmiKu7JyGar2WbE4hstre0qiXBrAkyClhfOV6Qq2WdmZpNA
+         pE5fVHAkFab7eHE6O8gZ3WdXZITL2p/oYPUhTz17JKAmSsICWzgevE1TwueolPeIZie+
+         xxRXCSNEj4AM3kixoso7urRJ7sz9MAESDMbCC6xzbm1w2MCeuDD2JjFe+xKSxk9ctXEE
+         67iw==
+X-Gm-Message-State: AOAM531bA8rEGmVyxMnfN50FH8Mt9ia5jGW4RKk0xaMtEAjsmWktUrc2
+        pRaIA998cVAUeKVR60tQa4v9O7OOeJevsQ==
+X-Google-Smtp-Source: ABdhPJw6KfdrKkB2U5sttUmCqFYOXPRMrmUqGIEgCVcU2flYNvhHzHJSJT8h8I9ac8zd12PZmJHpGQ==
+X-Received: by 2002:ae9:f405:0:b0:6a7:1892:8603 with SMTP id y5-20020ae9f405000000b006a718928603mr337044qkl.293.1655133552655;
+        Mon, 13 Jun 2022 08:19:12 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id n7-20020a37a407000000b006a66f3d3708sm6500542qke.129.2022.06.13.08.19.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jun 2022 08:19:12 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id l204so10372485ybf.10;
+        Mon, 13 Jun 2022 08:19:12 -0700 (PDT)
+X-Received: by 2002:a25:cc53:0:b0:65c:b19c:fac1 with SMTP id
+ l80-20020a25cc53000000b0065cb19cfac1mr68276ybf.89.1655133551763; Mon, 13 Jun
+ 2022 08:19:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220316200633.28974-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMSo37US03pKhPR=a1sJnWMF6L+WDvhWz469G=+0XY2WX-p=bg@mail.gmail.com>
- <CA+V-a8t2w14bJVCiiHQq8bwgetw5za1-t_OSfyr6Cwo4eZOt2Q@mail.gmail.com> <CAMSo37V4ye8wb_ctKQO0QE6QCJXUEaPC1-27911zCcXHN-+C2Q@mail.gmail.com>
-In-Reply-To: <CAMSo37V4ye8wb_ctKQO0QE6QCJXUEaPC1-27911zCcXHN-+C2Q@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Mon, 13 Jun 2022 15:15:23 +0100
-Message-ID: <CA+V-a8uL6_Ac33=romJE=AyVHR49jmwow=gtiFWTRbq_7UHJTg@mail.gmail.com>
-Subject: Re: [RFC PATCH] of/platform: Drop static setup of IRQ resource from
- DT core
-To:     Yongqin Liu <yongqin.liu@linaro.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+References: <87zgipgu3s.wl-kuninori.morimoto.gx@renesas.com>
+ <87v8tdgu1t.wl-kuninori.morimoto.gx@renesas.com> <alpine.DEB.2.22.394.2206101756520.828669@ramsan.of.borg>
+ <877d5l1lv9.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <877d5l1lv9.wl-kuninori.morimoto.gx@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 13 Jun 2022 17:18:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWUeynL0YSV4Qr25TymN49guTHLwVe2UgtFcHeyjJvvVg@mail.gmail.com>
+Message-ID: <CAMuHMdWUeynL0YSV4Qr25TymN49guTHLwVe2UgtFcHeyjJvvVg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] pinctrl: renesas: Initial R8A779G0 (V4H) PFC support
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jun 13, 2022 at 1:41 PM Yongqin Liu <yongqin.liu@linaro.org> wrote:
->
-> Hi, Lad
->
-> Thanks a lot for the links and suggestions!
-> Finally I resolved the problem with the call of
-> platform_get_irq_byname and irq_get_trigger_type.
->
-> Btw, I just have a question about  the of_irq_to_resource function.
-> At the beginning I tried to use platform_get_irq and of_irq_to_resource
-> to get the irq name and flags information, but it seems of_irq_to_resource
-> does not work as expected, maybe I called incorrectly somewhere,
-> here I just want to ask, do you think that if of_irq_to_resource still
-> could be used to
-> get the resource with the irq returned from platform_get_irq?
->
->
-Yes of_irq_to_resource() can be used to get the irq number.
+Hi Morimoto-san,
 
-Cheers,
-Prabhakar
+On Mon, Jun 13, 2022 at 1:51 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> > > From: LUU HOAI <hoai.luu.ub@renesas.com>
+> > >
+> > > This patch adds initial pinctrl support for the R8A779G0 (V4H) SoC,
+> > > including bias, drive strength and voltage control.
+> > >
+> > > [Morimoto merged Kihara-san's MODSEL8 fixup patch,
+> > > and cleanuped white space, care reserved bit on each configs,
+> > > fixup setting miss]
+> > > Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
+> > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> > Below is a first set of comments.
+> > You can expect a second set of comments after the weekend.
+>
+> May I suggest ?
+>
+> v1 patch was almost as-is of working implementation,
+> I did was just cleanup.
+> v2 patch was tidyup implementation which found via runtime.
+> So far, I think we can say "v2 patch is cleanup version of working implementation".
+>
+> But, v3 needs too many tidyups, and it is related to very deep parts.
+> I'm very afraid it breaks working implementation for some reasons.
+> In such case, it is very difficult to find and/or fix the issue
+> because PFC file is too big and too complicated.
+>
+> I'm happy to fix all of you pointed, but I want to make it as additional patch.
+> But what do you think ?
+
+For missing features (e.g. missing alternative functions, missing
+support for using I2C-capable pins as GPIOs, ...) I agree: these can
+be added incrementally.
+
+For descriptions that are wrong, I disagree: please try to fix them
+in the patch that introduces them, if possible.
+This is especially true for descriptions that become user-visible:
+e.g. set names (no suffix vs. "_A" vs. "_B" suffixes) become DT ABI
+once their pin groups have been defined.
+
+Unfortunately some of the (lack of) set names need confirmation or
+clarification from the hardware documentation team.
+
+BTW, do you know which devices and pin groups have been tested on
+actual hardware?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
