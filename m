@@ -2,130 +2,67 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32ADFCCA47B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 14:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CF1C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 15:37:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243833AbiFMO4s (ORCPT
+        id S244255AbiFMPhN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 10:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53126 "EHLO
+        Mon, 13 Jun 2022 11:37:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351910AbiFMO4F (ORCPT
+        with ESMTP id S240239AbiFMPgt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Jun 2022 10:56:05 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6DA52D4117;
-        Mon, 13 Jun 2022 04:58:04 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.91,297,1647270000"; 
-   d="scan'208";a="122758913"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Jun 2022 20:57:22 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B62DD422104E;
-        Mon, 13 Jun 2022 20:57:22 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
-        bhelgaas@google.com, krzk+dt@kernel.org, geert+renesas@glider.be,
-        magnus.damm@gmail.com
-Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 7/7] arm64: dts: renesas: r8a779f0: spider: Enable PCIe Host ch0
-Date:   Mon, 13 Jun 2022 20:57:12 +0900
-Message-Id: <20220613115712.2831386-8-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220613115712.2831386-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20220613115712.2831386-1-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 13 Jun 2022 11:36:49 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9A8E2018A
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jun 2022 06:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=k2/EGuG8SaS4N9bPQn1lwA6rR4D
+        xpryQq6eDqkQAtL4=; b=OoTPRgyjGFHwh521dCXTeAvh2O+caoJj9/zecZen1Ca
+        1PaR/0bX1O+sizEXGCg13p6pFO7gByD44Atuda+Q/PmNjkRQJcxrNp6HbNseWf12
+        jR/TQCRLYlgkq4SugHOiN4DBW0WjZmCiGsreFdJ433IWOvlEgXFdvJ7zuk6dsZCI
+        =
+Received: (qmail 1304294 invoked from network); 13 Jun 2022 15:09:59 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jun 2022 15:09:59 +0200
+X-UD-Smtp-Session: l3s3148p1@3itJAVThEwVZD+yY
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a779f0: Add HSCIF0+1 clocks
+Date:   Mon, 13 Jun 2022 15:09:49 +0200
+Message-Id: <20220613130949.10001-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable PCIe Host controller channel 0 on R-Car S4-8 Spider board.
+Those have been successfully tested. HSCIF2+3 still need verification.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
-index 41aa8591b3b1..d5fe22355e20 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2021 Renesas Electronics Corp.
-  */
- 
-+#include <dt-bindings/gpio/gpio.h>
- #include "r8a779f0.dtsi"
- 
- / {
-@@ -31,6 +32,28 @@ &extalr_clk {
- 	clock-frequency = <32768>;
+diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+index 0aec5e8ffd96..a7c16e72515f 100644
+--- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+@@ -118,6 +118,8 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
  };
  
-+&i2c0 {
-+	pinctrl-0 = <&i2c0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	gpio_exp_20: gpio@20 {
-+		compatible = "ti,tca9554";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		pcie-perst-hog {
-+			gpio-hog;
-+			gpios = <0 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "PCIE_PERSTn";
-+		};
-+	};
-+};
-+
- &i2c4 {
- 	pinctrl-0 = <&i2c4_pins>;
- 	pinctrl-names = "default";
-@@ -46,15 +69,35 @@ eeprom@50 {
- 	};
- };
- 
-+&pcie_bus_clk {
-+	clock-frequency = <100000000>;
-+};
-+
-+&pciec0 {
-+	pinctrl-0 = <&pcie0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &pfc {
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	i2c0_pins: i2c0 {
-+		groups = "i2c0";
-+		function = "i2c0";
-+	};
-+
- 	i2c4_pins: i2c4 {
- 		groups = "i2c4";
- 		function = "i2c4";
- 	};
- 
-+	pcie0_pins: pcie0 {
-+		groups = "pcie0_clkreq_n";
-+		function = "pcie";
-+	};
-+
- 	scif3_pins: scif3 {
- 		groups = "scif3_data", "scif3_ctrl";
- 		function = "scif3";
+ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
++	DEF_MOD("hscif0",	514,	R8A779F0_CLK_S0D3),
++	DEF_MOD("hscif1",	515,	R8A779F0_CLK_S0D3),
+ 	DEF_MOD("i2c0",		518,	R8A779F0_CLK_S0D6_PER),
+ 	DEF_MOD("i2c1",		519,	R8A779F0_CLK_S0D6_PER),
+ 	DEF_MOD("i2c2",		520,	R8A779F0_CLK_S0D6_PER),
 -- 
-2.25.1
+2.35.1
 
