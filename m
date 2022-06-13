@@ -2,67 +2,92 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED7FCCA47D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 18:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45585C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jun 2022 18:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243957AbiFMSFH (ORCPT
+        id S243663AbiFMSRp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 14:05:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
+        Mon, 13 Jun 2022 14:17:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245223AbiFMSCy (ORCPT
+        with ESMTP id S244010AbiFMSRa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Jun 2022 14:02:54 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A21C19C745
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jun 2022 06:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=npWjvzhsC/I+KDz3b5Enp28V0QP
-        Y/tcnzIoOp9yAwTI=; b=3pbk5bzXIwJ4Fo+lYWHScCMXRcasByP0u2JjaH+mdcT
-        PLnzj4DOJncnwbwT8VwvZXtte3HZrcOwtROk1QrDfqmMEK3VpdWaPlfLUzARiHUH
-        uQKUY/CRz/23IyvcIUmiFWQvMP0pkpniZymPduKkONCnZLE8w+DLPgEXQYGaTbHQ
-        =
-Received: (qmail 1316216 invoked from network); 13 Jun 2022 15:49:18 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jun 2022 15:49:18 +0200
-X-UD-Smtp-Session: l3s3148p1@zD7sjVThX2pZD+yY
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] arm64: dts: renesas: r8a779f0: Add DMA properties to SCIF3
-Date:   Mon, 13 Jun 2022 15:49:12 +0200
-Message-Id: <20220613134914.18655-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
+        Mon, 13 Jun 2022 14:17:30 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDEAE37A18;
+        Mon, 13 Jun 2022 07:15:50 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-30c2f288f13so52886037b3.7;
+        Mon, 13 Jun 2022 07:15:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YWdwEmU6cz3JA10QQ644kKHbnA8ElW/c1q4MJrDh3Ic=;
+        b=ixm/NKcovdWUOfA86VJFXawWospGoFsoennDCjLbyl9qD8s+Lls97D/aLHRDrRlxNG
+         JMXpQOT/teuMiiCEdz7Gi/mHQ4eelG8PcZ4O+OpycaHwnEzvErhtdoW01diQL+/EqP+T
+         eRyAT9hXp052vpsHjeMujgEVRCuky2059j3xCuycW2mXQsMx3Fl2wkqI2M33HSsSk/4t
+         DEPKAaWNVHRVMhw5nguPP3ukyFyZJqzM2Px+8LduhCFjaJ2mnW4MhLf22ypv0RTyWlW/
+         pE3LUHdAuynklAq4FwdnTuIuGElI2t0zoCWV5tHhxHFmuTgyNl/QQG2LF5Zyq4pP6PEf
+         LrAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YWdwEmU6cz3JA10QQ644kKHbnA8ElW/c1q4MJrDh3Ic=;
+        b=fJNpm3diICmD2i3X9Q7xMrcKzOPHb067jikLHLyHL+8ukp6H6xicSrMzYa+RQrtK8o
+         GzRynpD+sFhBiihzwWqvNwR1wRZ5PgHibgqKOW9S5YH33m1EWrRE7ePEmArIb93Q/V68
+         vNZERtVBS44/QU6cVn1agHxbI4PT6QAIhh0Skxchza/oBmYkI+tb6JAGV1A9ID4xLKJa
+         /9ft0vEKdTY7HXH/YopCEdJrSo4lXpjx/UGt8+kYOdlRbMHQ4NhulkDttzu4paIl/kWF
+         nyVUew8NOr73LCYflAp9JjqHzfNJ6uVFNL5KJ+31om0mdfVRtt+aDzgVLA58pZGqy7q1
+         G1QA==
+X-Gm-Message-State: AOAM533QHsCqlsRX4S7QflYjHGfbooD+EZLgkzStTkr/pRp58rC4adnC
+        MnIgIKM3bEsMeHfSlS8vyncJlJMg73/CysHozJvY4V9rw4PGkQ==
+X-Google-Smtp-Source: ABdhPJxYOhmW3DAPX2IL/CcItOqjV2ZWF6ro4pUuLDKaJBi+TkZZxSd0bFjb2nN90fRkk42kyMWulXwUGY6IK8lA+Rw=
+X-Received: by 2002:a81:4885:0:b0:30c:4632:5722 with SMTP id
+ v127-20020a814885000000b0030c46325722mr65218118ywa.16.1655129749905; Mon, 13
+ Jun 2022 07:15:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220316200633.28974-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMSo37US03pKhPR=a1sJnWMF6L+WDvhWz469G=+0XY2WX-p=bg@mail.gmail.com>
+ <CA+V-a8t2w14bJVCiiHQq8bwgetw5za1-t_OSfyr6Cwo4eZOt2Q@mail.gmail.com> <CAMSo37V4ye8wb_ctKQO0QE6QCJXUEaPC1-27911zCcXHN-+C2Q@mail.gmail.com>
+In-Reply-To: <CAMSo37V4ye8wb_ctKQO0QE6QCJXUEaPC1-27911zCcXHN-+C2Q@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 13 Jun 2022 15:15:23 +0100
+Message-ID: <CA+V-a8uL6_Ac33=romJE=AyVHR49jmwow=gtiFWTRbq_7UHJTg@mail.gmail.com>
+Subject: Re: [RFC PATCH] of/platform: Drop static setup of IRQ resource from
+ DT core
+To:     Yongqin Liu <yongqin.liu@linaro.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+On Mon, Jun 13, 2022 at 1:41 PM Yongqin Liu <yongqin.liu@linaro.org> wrote:
+>
+> Hi, Lad
+>
+> Thanks a lot for the links and suggestions!
+> Finally I resolved the problem with the call of
+> platform_get_irq_byname and irq_get_trigger_type.
+>
+> Btw, I just have a question about  the of_irq_to_resource function.
+> At the beginning I tried to use platform_get_irq and of_irq_to_resource
+> to get the irq name and flags information, but it seems of_irq_to_resource
+> does not work as expected, maybe I called incorrectly somewhere,
+> here I just want to ask, do you think that if of_irq_to_resource still
+> could be used to
+> get the resource with the irq returned from platform_get_irq?
+>
+>
+Yes of_irq_to_resource() can be used to get the irq number.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index ebc4a052207a..c872030ec4fe 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -314,6 +314,9 @@ scif3: serial@e6c50000 {
- 				 <&cpg CPG_CORE R8A779F0_CLK_S0D3_PER>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x57>, <&dmac0 0x56>,
-+			       <&dmac1 0x57>, <&dmac1 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
- 			resets = <&cpg 704>;
- 			status = "disabled";
--- 
-2.35.1
-
+Cheers,
+Prabhakar
