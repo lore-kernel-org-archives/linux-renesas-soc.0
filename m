@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD79CCA47E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jun 2022 15:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5ABC43334
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jun 2022 15:15:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346062AbiFOPPo (ORCPT
+        id S1346877AbiFOPPq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jun 2022 11:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37764 "EHLO
+        Wed, 15 Jun 2022 11:15:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345955AbiFOPPh (ORCPT
+        with ESMTP id S1347422AbiFOPPn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jun 2022 11:15:37 -0400
+        Wed, 15 Jun 2022 11:15:43 -0400
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3EBD369DD
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jun 2022 08:15:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEFD3E0C1;
+        Wed, 15 Jun 2022 08:15:40 -0700 (PDT)
 Received: (Authenticated sender: jacopo@jmondi.org)
-        by mail.gandi.net (Postfix) with ESMTPSA id 47EFF24000E;
-        Wed, 15 Jun 2022 15:15:28 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 717F7240017;
+        Wed, 15 Jun 2022 15:15:36 +0000 (UTC)
 From:   Jacopo Mondi <jacopo@jmondi.org>
 To:     dave.stevenson@raspberrypi.com
 Cc:     Jacopo Mondi <jacopo@jmondi.org>, david.plowman@raspberrypi.com,
         laurent.pinchart@ideasonboard.com,
         Valentine Barshak <valentine.barshak@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH 2/5] media: ov5647: Support HFLIP and VFLIP
-Date:   Wed, 15 Jun 2022 17:14:54 +0200
-Message-Id: <20220615151457.415038-3-jacopo@jmondi.org>
+Subject: [PATCH 5/5] media: ov5647: Add support for test patterns
+Date:   Wed, 15 Jun 2022 17:14:57 +0200
+Message-Id: <20220615151457.415038-6-jacopo@jmondi.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220615151457.415038-1-jacopo@jmondi.org>
 References: <20220615151457.415038-1-jacopo@jmondi.org>
@@ -37,187 +37,79 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: David Plowman <david.plowman@raspberrypi.com>
+Add support for V4L2_CID_TEST_PATTERN.
 
-Add these missing V4L2 controls. Tested binned and full resolution
-modes in all four orientations using Raspberry Pi running libcamera.
+Based on a patch from Renesas R-Car BSP 4.1.0 from
+Valentine Barshak <valentine.barshak@cogentembedded.com>
 
-Signed-off-by: David Plowman <david.plowman@raspberrypi.com>
 Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
 ---
- drivers/media/i2c/ov5647.c | 72 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 66 insertions(+), 6 deletions(-)
+ drivers/media/i2c/ov5647.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-index 98b72094ef68..c292e5d09eab 100644
+index 0a3e4acec036..68e56b0d8153 100644
 --- a/drivers/media/i2c/ov5647.c
 +++ b/drivers/media/i2c/ov5647.c
-@@ -54,6 +54,8 @@
- #define OV5647_REG_GAIN_LO		0x350b
- #define OV5647_REG_VTS_HI		0x380e
- #define OV5647_REG_VTS_LO		0x380f
-+#define OV5647_REG_VFLIP		0x3820
-+#define OV5647_REG_HFLIP		0x3821
- #define OV5647_REG_FRAME_OFF_NUMBER	0x4202
+@@ -60,6 +60,7 @@
  #define OV5647_REG_MIPI_CTRL00		0x4800
  #define OV5647_REG_MIPI_CTRL14		0x4814
-@@ -108,6 +110,8 @@ struct ov5647 {
- 	struct v4l2_ctrl		*hblank;
- 	struct v4l2_ctrl		*vblank;
- 	struct v4l2_ctrl		*exposure;
-+	struct v4l2_ctrl		*hflip;
-+	struct v4l2_ctrl		*vflip;
- 	bool				streaming;
- };
+ #define OV5647_REG_AWB			0x5001
++#define OV5647_REG_ISP_CTRL3D		0x503d
  
-@@ -136,7 +140,7 @@ static struct regval_list ov5647_2592x1944_10bpp[] = {
- 	{0x3036, 0x69},
- 	{0x303c, 0x11},
- 	{0x3106, 0xf5},
--	{0x3821, 0x06},
-+	{0x3821, 0x00},
- 	{0x3820, 0x00},
- 	{0x3827, 0xec},
- 	{0x370c, 0x03},
-@@ -225,7 +229,7 @@ static struct regval_list ov5647_1080p30_10bpp[] = {
- 	{0x3036, 0x62},
- 	{0x303c, 0x11},
- 	{0x3106, 0xf5},
--	{0x3821, 0x06},
-+	{0x3821, 0x00},
- 	{0x3820, 0x00},
- 	{0x3827, 0xec},
- 	{0x370c, 0x03},
-@@ -389,7 +393,7 @@ static struct regval_list ov5647_2x2binned_10bpp[] = {
- 	{0x4800, 0x24},
- 	{0x3503, 0x03},
- 	{0x3820, 0x41},
--	{0x3821, 0x07},
-+	{0x3821, 0x01},
- 	{0x350a, 0x00},
- 	{0x350b, 0x10},
- 	{0x3500, 0x00},
-@@ -405,7 +409,7 @@ static struct regval_list ov5647_640x480_10bpp[] = {
- 	{0x3035, 0x11},
- 	{0x3036, 0x46},
- 	{0x303c, 0x11},
--	{0x3821, 0x07},
-+	{0x3821, 0x01},
- 	{0x3820, 0x41},
- 	{0x370c, 0x03},
- 	{0x3612, 0x59},
-@@ -918,6 +922,21 @@ static const struct v4l2_subdev_video_ops ov5647_subdev_video_ops = {
- 	.s_stream =		ov5647_s_stream,
- };
+ #define REG_TERM 0xfffe
+ #define VAL_TERM 0xfe
+@@ -812,6 +813,22 @@ static const struct ov5647_mode ov5647_8_bpp_modes[] = {
+ #define OV5647_DEFAULT_MODE	(&ov5647_10_bpp_modes[3])
+ #define OV5647_DEFAULT_FORMAT	(ov5647_10_bpp_modes[3].format)
  
-+static u32 ov5647_get_mbus_code(struct v4l2_subdev *sd)
-+{
-+	struct ov5647 *sensor = to_sensor(sd);
-+	int index = sensor->hflip->val | (sensor->vflip->val << 1);
++static const char * const ov5647_test_pattern_menu[] = {
++	"Disabled",
++	"Color Bars",
++	"Color Squares",
++	"Random Data",
++	"Input Data"
++};
 +
-+	static const u32 codes[4] = {
-+		MEDIA_BUS_FMT_SGBRG10_1X10,
-+		MEDIA_BUS_FMT_SBGGR10_1X10,
-+		MEDIA_BUS_FMT_SRGGB10_1X10,
-+		MEDIA_BUS_FMT_SGRBG10_1X10
-+	};
++static u8 ov5647_test_pattern_val[] = {
++	0x00,	/* Disabled */
++	0x80,	/* Color Bars */
++	0x82,	/* Color Squares */
++	0x81,	/* Random Data */
++	0x83,	/* Input Data */
++};
 +
-+	return codes[index];
-+}
-+
- static int ov5647_enum_mbus_code(struct v4l2_subdev *sd,
- 				 struct v4l2_subdev_state *sd_state,
- 				 struct v4l2_subdev_mbus_code_enum *code)
-@@ -925,7 +944,7 @@ static int ov5647_enum_mbus_code(struct v4l2_subdev *sd,
- 	if (code->index > 0)
- 		return -EINVAL;
- 
--	code->code = MEDIA_BUS_FMT_SBGGR10_1X10;
-+	code->code = ov5647_get_mbus_code(sd);
- 
- 	return 0;
- }
-@@ -936,7 +955,7 @@ static int ov5647_enum_frame_size(struct v4l2_subdev *sd,
+ static int ov5647_write16(struct v4l2_subdev *sd, u16 reg, u16 val)
  {
- 	const struct v4l2_mbus_framefmt *fmt;
- 
--	if (fse->code != MEDIA_BUS_FMT_SBGGR10_1X10 ||
-+	if (fse->code != ov5647_get_mbus_code(sd) ||
- 	    fse->index >= ARRAY_SIZE(ov5647_modes))
- 		return -EINVAL;
- 
-@@ -969,6 +988,8 @@ static int ov5647_get_pad_fmt(struct v4l2_subdev *sd,
- 	}
- 
- 	*fmt = *sensor_format;
-+	/* The code we pass back must reflect the current h/vflips. */
-+	fmt->code = ov5647_get_mbus_code(sd);
- 	mutex_unlock(&sensor->lock);
- 
- 	return 0;
-@@ -1016,6 +1037,8 @@ static int ov5647_set_pad_fmt(struct v4l2_subdev *sd,
- 					 exposure_def);
- 	}
- 	*fmt = mode->format;
-+	/* The code we pass back must reflect the current h/vflips. */
-+	fmt->code = ov5647_get_mbus_code(sd);
- 	mutex_unlock(&sensor->lock);
- 
- 	return 0;
-@@ -1191,6 +1214,25 @@ static int ov5647_s_exposure(struct v4l2_subdev *sd, u32 val)
- 	return ov5647_write(sd, OV5647_REG_EXP_LO, (val & 0xf) << 4);
- }
- 
-+static int ov5647_s_flip(struct v4l2_subdev *sd, u16 reg, u32 ctrl_val)
-+{
-+	u8 reg_val;
-+	int ret;
-+
-+	/* Set or clear bit 1 and leave everything else alone. */
-+	ret = ov5647_read(sd, reg, &reg_val);
-+	if (ret == 0) {
-+		if (ctrl_val)
-+			reg_val |= 2;
-+		else
-+			reg_val &= ~2;
-+
-+		ret = ov5647_write(sd, reg, reg_val);
-+	}
-+
-+	return ret;
-+}
-+
- static int ov5647_s_ctrl(struct v4l2_ctrl *ctrl)
- {
- 	struct ov5647 *sensor = container_of(ctrl->handler,
-@@ -1249,6 +1291,14 @@ static int ov5647_s_ctrl(struct v4l2_ctrl *ctrl)
- 		/* Read-only, but we adjust it based on mode. */
+ 	unsigned char data[4] = { reg >> 8, reg & 0xff, val >> 8, val & 0xff};
+@@ -1582,6 +1599,10 @@ static int ov5647_s_ctrl(struct v4l2_ctrl *ctrl)
+ 		ov5647_s_flip(sd, OV5647_REG_VFLIP, ctrl->val);
  		break;
  
-+	case V4L2_CID_HFLIP:
-+		/* There's an in-built hflip in the sensor, so account for that here. */
-+		ov5647_s_flip(sd, OV5647_REG_HFLIP, !ctrl->val);
++	case V4L2_CID_TEST_PATTERN:
++		ret = ov5647_write(sd, OV5647_REG_ISP_CTRL3D,
++				   ov5647_test_pattern_val[ctrl->val]);
 +		break;
-+	case V4L2_CID_VFLIP:
-+		ov5647_s_flip(sd, OV5647_REG_VFLIP, ctrl->val);
-+		break;
-+
  	default:
  		dev_info(&client->dev,
  			 "Control (id:0x%x, val:0x%x) not supported\n",
-@@ -1315,6 +1365,16 @@ static int ov5647_init_controls(struct ov5647 *sensor, struct device *dev)
- 					   sensor->mode->vts -
- 					   sensor->mode->format.height);
+@@ -1604,7 +1625,7 @@ static int ov5647_init_controls(struct ov5647 *sensor, struct device *dev)
+ 	int hblank, exposure_max, exposure_def;
+ 	struct v4l2_fwnode_device_properties props;
  
-+	sensor->hflip = v4l2_ctrl_new_std(&sensor->ctrls, &ov5647_ctrl_ops,
-+					  V4L2_CID_HFLIP, 0, 1, 1, 0);
-+	if (sensor->hflip)
-+		sensor->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-+
-+	sensor->vflip = v4l2_ctrl_new_std(&sensor->ctrls, &ov5647_ctrl_ops,
-+					  V4L2_CID_VFLIP, 0, 1, 1, 0);
-+	if (sensor->vflip)
-+		sensor->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+-	v4l2_ctrl_handler_init(&sensor->ctrls, 10);
++	v4l2_ctrl_handler_init(&sensor->ctrls, 11);
+ 
+ 	v4l2_ctrl_new_std(&sensor->ctrls, &ov5647_ctrl_ops,
+ 			  V4L2_CID_AUTOGAIN, 0, 1, 1, 0);
+@@ -1658,6 +1679,11 @@ static int ov5647_init_controls(struct ov5647 *sensor, struct device *dev)
+ 	if (sensor->vflip)
+ 		sensor->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+ 
++	v4l2_ctrl_new_std_menu_items(&sensor->ctrls, &ov5647_ctrl_ops,
++				     V4L2_CID_TEST_PATTERN,
++				     ARRAY_SIZE(ov5647_test_pattern_menu) - 1,
++				     0, 0, ov5647_test_pattern_menu);
 +
  	v4l2_fwnode_device_parse(dev, &props);
  
