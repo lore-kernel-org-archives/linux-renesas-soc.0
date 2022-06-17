@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6951BC43334
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96609CCA479
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jun 2022 18:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230477AbiFQSTh (ORCPT
+        id S232771AbiFQSTi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jun 2022 14:19:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51692 "EHLO
+        Fri, 17 Jun 2022 14:19:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234434AbiFQSTg (ORCPT
+        with ESMTP id S234555AbiFQSTh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jun 2022 14:19:36 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA2882EA3C
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jun 2022 11:19:34 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id y196so4813257pfb.6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jun 2022 11:19:34 -0700 (PDT)
+        Fri, 17 Jun 2022 14:19:37 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE4C3054F
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jun 2022 11:19:36 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id g8so4532434plt.8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jun 2022 11:19:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=wan/ZjxtGpP7Mg7PmROWD/zTsIUcB85ZAhUCP8iZWH8=;
-        b=KDbT7kGNu/UschEo3CpnDDmg0W+/N9DyDUKSkkqUzicsdbaA3T945w3vFXAFIsv7Fo
-         RrnRIrA1ampuRSCVqhJOFrwjKpatBBmIRcKN9f4qawIxmgc36BNUHZRu7i0+uIVpaD6H
-         DxDdilujHl49CKGp7K8tPDPBsJMoaxg3s0y2LilGr/maYVmPdaeRGnRmj8GLMxm76xgH
-         Fm5/SvyUTl16irTWrjjk14rkH/mWPh5y2M2vFSXUN7dvXtEJbvC4L86WQrluRc/Saq3/
-         QN1QfBSpAzi5VfTFQCJ7raQE9zSKK9ZTbZIKHpndw/ceeVkfGJIR7GHVnlxTnl7d60P3
-         fnSg==
+        bh=YT2ENEn7SbarBVfSzjtqRnOlQB2FCYuNi/NAOzcZIHU=;
+        b=uyi7crk2Xl51IFsIpuuS6TRNpKfCIJiGRrY9dOAwD6fItGgiY5qD8TOSMPjf8ciC4G
+         82dkp/t67ODAbczV8oZO3sP6g11qr+ebA1eyqbos3Fhk6fZsxe5Qoy8FJQxhEnDcG5tG
+         Jd2kg8uu9TcfOs5fB11TFN1bN0qpoWZCSlAMdOU4+tkdbEN2tsuyXa0fT9/LQRthCYiW
+         BaXBIKZFaSRIOJeHYz8ehwigS+ScX3UOVnP06GL3HkPU3HbsCfXk8a7qJ5hxnAPiquIB
+         LEXKanDmP31cllOtfHPRCWFwfWmdGAd3SU17mZOBw+O0NavRs08/AwD6QLkWmxypygxW
+         +bcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=wan/ZjxtGpP7Mg7PmROWD/zTsIUcB85ZAhUCP8iZWH8=;
-        b=KEo1K7z5tDlXCV1k78pUoc/Qc6EhvI4qdKk3PWfWg18VFYtZ16Z0KglVaUtiJlv2Tz
-         OEqRoAU+2Qjs7hnU+pSPDbWMEoWyoF8E8C6vzhidYI9eqMAd4b7RnavTaUIjGN4uAZtK
-         A9TlXrZ3TeLhzYIjuWKzJfgXJoZl0QfVcRp4dhcV6oHe88nmOzgir7IzNW5bFcEu2YH4
-         k/62DBFjdsKVTmO9vNEqlceGXgBFY+7O0vhmmRmSm/PxRFINz8olEKF0dK+lQVKRmY7Q
-         antwSBKsCBFSsxlBYxFkgGK1g/TilQVJ+jEjh227IfCOqkDdkcn5oeSyBPiSg9fxJzZu
-         OfDQ==
-X-Gm-Message-State: AJIora+LBzxOwY+sR0sWnkdD4wpmQTYYv5nPh7W2nGRmlHVLcZmuX3c9
-        qdPhlo5y0yd7vTAXxmdy/SB978lxwiwa6ds8hnI=
-X-Google-Smtp-Source: AGRyM1vIFFNDfVyFbI5kIK0TWGhW/WfSgl9YVzExC5b1j8AS0hjvafmBfcLcaYnpanHjLz0C0RoF3Q==
-X-Received: by 2002:a05:6a00:16d2:b0:522:81c0:a635 with SMTP id l18-20020a056a0016d200b0052281c0a635mr11569415pfc.0.1655489973929;
-        Fri, 17 Jun 2022 11:19:33 -0700 (PDT)
+        bh=YT2ENEn7SbarBVfSzjtqRnOlQB2FCYuNi/NAOzcZIHU=;
+        b=KFptFZCZJT55izGuoaP87mdGnWR+hyTHg14jLvyxqwDKQ3D9gQ01kcXWmJQcMU/99A
+         EfFMrLOZW9HRanvpU/O4wB3xRxhzurLJmfQCbkWFNp+ij/N/Rp6q4rzVrLvno9vDRmoX
+         KOsKz9kg+IwhPZ1ZUexcWEss7bFWkvSX1vxF+cUcHHNM3oeoTh/7ASca4iaO4Ad7g+qT
+         por+ThBDdjIOYSVqw0gI6Bpz7RQe4TVAYvFdGEyuBoapb7xtnbDuPHXyAkeFbDX6ryPD
+         cGtadHpwMjZeZI7sd9+PcbSBPVE0RxZbTZ76qYTe8Pt7wbMxM8lTRWaULcQG9UzoFbkd
+         Srdg==
+X-Gm-Message-State: AJIora/YFh2x4XaRbdUfzmFzoSr8i7lz2LMrzAvjg7kjrW57VMN5YPb5
+        r9L0g84pzvzHqqiNtLyk9QYuzrzcm30t2KphrFY=
+X-Google-Smtp-Source: AGRyM1uY+GnGM9GmbUaTvv3AeVT4eNcAZb/YV1DvGj7045CEQnYdrcbfK+51Bg53mPMjk1R1+f4/dQ==
+X-Received: by 2002:a17:902:8bc2:b0:167:7645:e76a with SMTP id r2-20020a1709028bc200b001677645e76amr11058725plo.115.1655489975899;
+        Fri, 17 Jun 2022 11:19:35 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id jj21-20020a170903049500b001616e19537esm3847255plb.213.2022.06.17.11.19.33
+        by smtp.gmail.com with ESMTPSA id y6-20020aa79ae6000000b00524e640e9a4sm843695pfp.185.2022.06.17.11.19.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jun 2022 11:19:33 -0700 (PDT)
-Message-ID: <62acc5b5.1c69fb81.3b4ba.6084@mx.google.com>
-Date:   Fri, 17 Jun 2022 11:19:33 -0700 (PDT)
+        Fri, 17 Jun 2022 11:19:35 -0700 (PDT)
+Message-ID: <62acc5b7.1c69fb81.6e338.117b@mx.google.com>
+Date:   Fri, 17 Jun 2022 11:19:35 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,7 +58,7 @@ X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: renesas-next-2022-06-17-v5.19-rc1
 X-Kernelci-Branch: next
 X-Kernelci-Tree: renesas
-Subject: renesas/next cros-ec: 10 runs,
+Subject: renesas/next usb: 4 runs,
  2 regressions (renesas-next-2022-06-17-v5.19-rc1)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
@@ -66,8 +66,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next cros-ec: 10 runs, 2 regressions (renesas-next-2022-06-17-v5.19=
--rc1)
+renesas/next usb: 4 runs, 2 regressions (renesas-next-2022-06-17-v5.19-rc1)
 
 Regressions Summary
 -------------------
@@ -84,21 +83,15 @@ tegra124-nyan-big | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
 
 
   Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
-s-next-2022-06-17-v5.19-rc1/plan/cros-ec/
+s-next-2022-06-17-v5.19-rc1/plan/usb/
 
-  Test:     cros-ec
+  Test:     usb
   Tree:     renesas
   Branch:   next
   Describe: renesas-next-2022-06-17-v5.19-rc1
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      64d15244c4805618b3bfc0886094481e9ac91762
-
-  Test suite revisions:
-    cros-ec-tests
-      URL:  https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform=
-/cros-ec-tests.git
-      SHA:  86181a7fbd379fc42314c450740d2cea8cdf04c1 =
+  SHA:      64d15244c4805618b3bfc0886094481e9ac91762 =
 
 
 
@@ -115,25 +108,24 @@ rk3288-veyron-jaq | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62acc41314522f1b12a39bce
+  Details:     https://kernelci.org/test/plan/id/62acc29de0f44509faa39bee
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
   Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
--06-17-v5.19-rc1/arm/multi_v7_defconfig/gcc-10/lab-collabora/cros-ec-rk3288=
--veyron-jaq.txt
+-06-17-v5.19-rc1/arm/multi_v7_defconfig/gcc-10/lab-collabora/usb-rk3288-vey=
+ron-jaq.txt
   HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
--06-17-v5.19-rc1/arm/multi_v7_defconfig/gcc-10/lab-collabora/cros-ec-rk3288=
--veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
-os-ec/20220610.0/armhf/rootfs.cpio.gz =
+-06-17-v5.19-rc1/arm/multi_v7_defconfig/gcc-10/lab-collabora/usb-rk3288-vey=
+ron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220610.0/armhf/rootfs.cpio.gz =
 
 
 
-  * cros-ec.login: https://kernelci.org/test/case/id/62acc41314522f1b12a39b=
-cf
+  * usb.login: https://kernelci.org/test/case/id/62acc29de0f44509faa39bef
         failing since 10 days (last pass: renesas-next-2022-05-05-v5.18-rc1=
 , first fail: renesas-next-2022-06-07-v5.19-rc1) =
 
@@ -149,25 +141,24 @@ tegra124-nyan-big | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62acbd193cc0408c87a39bcd
+  Details:     https://kernelci.org/test/plan/id/62acb8a85ce5cec09ea39bec
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
   Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
--06-17-v5.19-rc1/arm/multi_v7_defconfig/gcc-10/lab-collabora/cros-ec-tegra1=
-24-nyan-big.txt
+-06-17-v5.19-rc1/arm/multi_v7_defconfig/gcc-10/lab-collabora/usb-tegra124-n=
+yan-big.txt
   HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
--06-17-v5.19-rc1/arm/multi_v7_defconfig/gcc-10/lab-collabora/cros-ec-tegra1=
-24-nyan-big.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
-os-ec/20220610.0/armhf/rootfs.cpio.gz =
+-06-17-v5.19-rc1/arm/multi_v7_defconfig/gcc-10/lab-collabora/usb-tegra124-n=
+yan-big.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220610.0/armhf/rootfs.cpio.gz =
 
 
 
-  * cros-ec.login: https://kernelci.org/test/case/id/62acbd193cc0408c87a39b=
-ce
+  * usb.login: https://kernelci.org/test/case/id/62acb8a85ce5cec09ea39bed
         failing since 10 days (last pass: renesas-next-2022-05-05-v5.18-rc1=
 , first fail: renesas-next-2022-06-07-v5.19-rc1) =
 
