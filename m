@@ -2,436 +2,263 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC444C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jun 2022 10:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77D3C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jun 2022 11:09:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239006AbiFTKtD (ORCPT
+        id S240717AbiFTLJv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Jun 2022 06:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43106 "EHLO
+        Mon, 20 Jun 2022 07:09:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240610AbiFTKs5 (ORCPT
+        with ESMTP id S239471AbiFTLJu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Jun 2022 06:48:57 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B151180E
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jun 2022 03:48:55 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id r66so4013700pgr.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jun 2022 03:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=IT7WIw617JoJlznAECf4W36uCpZzll8ehgK3Y2/+DlQ=;
-        b=UiAv6QhujFJiNLcilb4/UrIQuUpYgpT8S/rfXsKmHO8lXL9PAtNRHLuBKFGdRU5ZgT
-         uu0bsQ2Nx77sp0xzPfa/o500t8lLgDf0Uj2i6gA12BjoNfYw7YBzGJCqCJzi9UvoHrOQ
-         A5MMW1pHNFT8vltIb6PUWRRliOWyuJajgOqQFh9ZRoJ3irXDPD5MkvqeERIp3sdIvEL0
-         pHgWwnm91vH6tx4/bevJ3LRdRcgtGX6vWxXFLX1JwY7dEQdvpOjMc91jG/yxRGCAC1Qt
-         /p2di1q2r5getaIWeX37kzhhSRxCCeyMJmw8qs4KZNpfqOtBH4LZsiUyy7SfKhZOi+Bt
-         P/Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=IT7WIw617JoJlznAECf4W36uCpZzll8ehgK3Y2/+DlQ=;
-        b=S7BLq7una45WcFic12m6AXhYcR8RyTD+W2qycE2L+fgATZy/oPvKt87hcFIInlEPu8
-         9S7+2Af7c8+2nW7xA1fsioQ31sAu2IeBAfAcHPMHr9qhFXnmfyxyu0IH/nPq4NsTL40c
-         MSdW/cFBoTw6bBXS9R1qi/TTAauBYfalIXirS9Kh80jtos7LKHxit2QAEltJNlHhXXok
-         UnQTLsmfWqMyKYE2fMjSDHUUYGEq4xMqxTd6JCXpksXDIhYXrx6RS00Cj0vvF2RJruxz
-         FiA3uqYp9n7JjgCgJnGnatRFqWZzmnPn4ZsB2VrfQZrNtbYwFh7Ovgyuf8tI7+Owb7b3
-         9hKw==
-X-Gm-Message-State: AJIora+QKWxWWquip9uuHqOnvkIHONQuO6hIJF2L6ipRy0U2KPCOlC2i
-        43EYN9BqOTA4BVCs/zSij/LP21ud594G1IZasLI=
-X-Google-Smtp-Source: AGRyM1vhivdyP1tVw2bX5eduMugHyQdwbMMmp/oEyT1PoWy5muR2QnhUvrHaVB9WVbDcTHGXDUs2Tw==
-X-Received: by 2002:a63:3c14:0:b0:40c:a165:b85 with SMTP id j20-20020a633c14000000b0040ca1650b85mr6293501pga.504.1655722134619;
-        Mon, 20 Jun 2022 03:48:54 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id w9-20020a639349000000b003fc5fd21752sm8871980pgm.50.2022.06.20.03.48.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 03:48:54 -0700 (PDT)
-Message-ID: <62b05096.1c69fb81.45afc.c151@mx.google.com>
-Date:   Mon, 20 Jun 2022 03:48:54 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 20 Jun 2022 07:09:50 -0400
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [217.70.178.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66F72300;
+        Mon, 20 Jun 2022 04:09:48 -0700 (PDT)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id F332C240002;
+        Mon, 20 Jun 2022 11:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1655723387;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=GhK13aE2W9V1IMFj9H2nj7dXjpabXccEMQjxsFgSFbA=;
+        b=YFCl2+ycErli0xajzcOXoT94uW7QJivPGdnhYXy7JymqDePKrXsLIVridWRyzs2wgykyvI
+        WzVB3v0X5qTl0e/0xEuDwYOzjTGOwNwwwrsCWbqKb+P6h2H4PkPwxSQD7xrvbfqTWBnr8q
+        M0Y6CHI9dI4UVMQPPy+77NvRSrR0NEGruX7MqASC9wqqe2tkbxEd8v89iBhaVrw6S5rvGP
+        dJlrfhIPuYvtSpLr7nEcGtmpGdrJEu2mUVDBTrWHen4zsGS5vwFTapXeVfPt8sxMtvfUo6
+        Romq9iuOipbWQPFceyz13tR7w640eiAZIzxS5IwlAB9hAdqnMcZRmBNS1YA5fw==
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Jose Abreu <joabreu@synopsys.com>
+Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH net-next v8 00/16] add support for Renesas RZ/N1 ethernet subsystem devices
+Date:   Mon, 20 Jun 2022 13:08:30 +0200
+Message-Id: <20220620110846.374787-1-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: renesas-devel-2022-06-20-v5.19-rc3
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-Subject: renesas/master igt-kms-rockchip: 2 runs,
- 11 regressions (renesas-devel-2022-06-20-v5.19-rc3)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-kms-rockchip: 2 runs, 11 regressions (renesas-devel-2022=
--06-20-v5.19-rc3)
+The Renesas RZ/N1 SoCs features an ethernet subsystem which contains
+(most notably) a switch, two GMACs, and a MII converter [1]. This
+series adds support for the switch and the MII converter.
+
+The MII converter present on this SoC has been represented as a PCS
+which sit between the MACs and the PHY. This PCS driver is probed from
+the device-tree since it requires to be configured. Indeed the MII
+converter also contains the registers that are handling the muxing of
+ports (Switch, MAC, HSR, RTOS, etc) internally to the SoC.
+
+The switch driver is based on DSA and exposes 4 ports + 1 CPU
+management port. It include basic bridging support as well as FDB and
+statistics support.
+
+This series needs commits 14f11da778ff6421 ("soc: renesas: rzn1: Select
+PM and PM_GENERIC_DOMAINS configs") and ed66b37f916ee23b ("ARM: dts:
+r9a06g032: Add missing '#power-domain-cells'") which are available on
+the renesas-devel tree in order to enable generic power domain on
+RZ/N1.
+
+Link: [1] https://www.renesas.com/us/en/document/mah/rzn1d-group-rzn1s-group-rzn1l-group-users-manual-r-engine-and-ethernet-peripherals
+
+-----
+Changes in V8:
+- Commits:
+  - Reorder Acked-By and Rewieved-by chronologically adn add Florian
+    Fainelli Reviewed-By.
+- PCS:
+  - Fix of node leaks
+- MAINTAINERS:
+  - Reorder L: before S:
+
+Resent V7 due to messed up cover letter.
+
+Changes in V7:
+- Commits:
+  - Add Rob Herring Acked-by for commit "dt-bindings: net: snps,dwmac: add
+    "power-domains" property"
+  - Rebased on net-next/master
+- MAINTAINERS:
+  - Add renesas-soc and netdev mailing lists
+
+Changes in V6:
+- Commits:
+  - Add commit which enable ethernet switch on RZ/N1D-DB board
+  - Add commit which adds "renesas,rzn1-gmac" compatible t
+    "snps,dwmac" bindings
+  - Fix mutex change being done in FDB feature commit
+  - Add commit which  adds"power-domains" to "snps,dwmac" bindings
+- Bindings and DT
+  - Add clock-names to MII converter and make it required
+  - Added Reviewed-by Geert on MII converter binding
+  - Added "power-domains" to switch bindings and to switch description
+  - Use new compatible "renesas,rzn1-gmac" for GMAC2
+  - Describe all switch ports in ethernet switch node
+  - Add phy-mode = "internal" to cpu port
+- PCS:
+  - use phy_interface_mode_is_rgmii() instead of open coded check
+  - Add device_link_add() call in miic_create()
+- Switch:
+  - Fix missing of_node_put(port) in case of loop break.
+  - Fix comment alignment for statistics defines
+  - Move lk_lock mutex locking outside of the fdb_dump loop
+
+Changes in V5:
+- MAINTAINERS:
+  - Add Florian Fainelli Reviewed-by
+- Switch:
+  - Switch Lookup table lock to a mutex instead of a spinlock
+  - Only handle "ethernet-ports" property for switch ports
+  - Handle RGMII_ID/RXID/TXID
+  - Add check for pdata to be non null in remove
+  - Add missing of_node_put() for mdio and ports
+  - Applied Florian Fainelli patch which makes stats description
+    shorter
+  - Add Kconfig dependency on ARCH_RZN1 to avoid Kconfig "unmet direct
+    dependency"
+- PCS:
+  - Handle RGMII_ID/RXID/TXID
+  - Use value instead of BIT() for speed/mode
+- Tag driver:
+  - Add Florian Fainelli Reviewed-by
+
+Changes in V4:
+- Add ETH_P_DSA_A5PSW in uapi/linux/if_ether.h
+- PCS:
+  - Use devm_pm_runtime_enable() instead of pm_runtime_enable()
+- Switch:
+  - Return -EOPNOTSUPP and set extack when multiple bridges are created
+  - Remove error messages in fdb_del if entry does not exists
+  - Add compatibility with "ethernet-ports" device-tree property
+- Tag driver:
+  - Use ETH_ZLEN as padding len
+
+Changes in V3:
+- PCS:
+  - Fixed reverse christmas tree declaration
+  - Remove spurious pr_err
+  - Use pm_runtime functions
+- Tag driver:
+  - Remove packed attribute from the tag struct
+- Switch:
+  - Fix missing spin_unlock in fdb_dump in case of error
+  - Add static qualifier to dsa_switch_ops
+  - Add missing documentation for hclk and clk members of struct a5psw
+  - Changed types of fdb_entry to u16 to discard GCC note on char
+    packed bitfields and add reserved field
+- Added Reviewed-by tag from Florian Fainelli
+
+Changes in V2:
+- PCS:
+  - Fix Reverse Christmas tree declaration
+  - Removed stray newline
+  - Add PCS remove function and disable clocks in them
+  - Fix miic_validate function to return correct values
+  - Split PCS CONV_MODE definition
+  - Reordered phylink_pcs_ops in definition order
+  - Remove interface setting in miic_link_up
+  - Remove useless checks for invalid interface/speed and error prints
+  - Replace phylink_pcs_to_miic_port macro by a static function
+  - Add comment in miic_probe about platform_set_drvdata
+- Bindings:
+ - Fix wrong path for mdio.yaml $ref
+ - Fix yamllint errors
+- Tag driver:
+  - Squashed commit that added tag value with tag driver
+  - Add BUILD_BUG_ON for tag size
+  - Split control_data2 in 2 16bits values
+- Switch:
+  - Use .phylink_get_caps instead of .phylink_validate and fill
+    supported_interface correctly
+  - Use fixed size (ETH_GSTRING_LEN) string for stats and use memcpy
+  - Remove stats access locking since RTNL lock is used in upper layers
+  - Check for non C45 addresses in mdio_read/write and return
+    -EOPNOTSUPP
+  - Add get_eth_mac_stats, get_eth_mac_ctrl_stat, get_rmon_stats
+  - Fix a few indentation problems
+  - Remove reset callback from MDIO bus operation
+  - Add phy/mac/rmon stats
+- Add get_rmon_stat to dsa_ops
+
+Clément Léger (16):
+  net: dsa: allow port_bridge_join() to override extack message
+  net: dsa: add support for ethtool get_rmon_stats()
+  net: dsa: add Renesas RZ/N1 switch tag driver
+  dt-bindings: net: pcs: add bindings for Renesas RZ/N1 MII converter
+  net: pcs: add Renesas MII converter driver
+  dt-bindings: net: dsa: add bindings for Renesas RZ/N1 Advanced 5 port
+    switch
+  net: dsa: rzn1-a5psw: add Renesas RZ/N1 advanced 5 port switch driver
+  net: dsa: rzn1-a5psw: add statistics support
+  net: dsa: rzn1-a5psw: add FDB support
+  dt-bindings: net: snps,dwmac: add "power-domains" property
+  dt-bindings: net: snps,dwmac: add "renesas,rzn1" compatible
+  ARM: dts: r9a06g032: describe MII converter
+  ARM: dts: r9a06g032: describe GMAC2
+  ARM: dts: r9a06g032: describe switch
+  ARM: dts: r9a06g032-rzn1d400-db: add switch description
+  MAINTAINERS: add Renesas RZ/N1 switch related driver entry
+
+ .../bindings/net/dsa/renesas,rzn1-a5psw.yaml  |  134 +++
+ .../bindings/net/pcs/renesas,rzn1-miic.yaml   |  171 +++
+ .../devicetree/bindings/net/snps,dwmac.yaml   |    5 +
+ MAINTAINERS                                   |   13 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts   |  117 ++
+ arch/arm/boot/dts/r9a06g032.dtsi              |  108 ++
+ drivers/net/dsa/Kconfig                       |    9 +
+ drivers/net/dsa/Makefile                      |    1 +
+ drivers/net/dsa/rzn1_a5psw.c                  | 1062 +++++++++++++++++
+ drivers/net/dsa/rzn1_a5psw.h                  |  259 ++++
+ drivers/net/pcs/Kconfig                       |    8 +
+ drivers/net/pcs/Makefile                      |    1 +
+ drivers/net/pcs/pcs-rzn1-miic.c               |  520 ++++++++
+ include/dt-bindings/net/pcs-rzn1-miic.h       |   33 +
+ include/linux/pcs-rzn1-miic.h                 |   18 +
+ include/net/dsa.h                             |    5 +
+ include/uapi/linux/if_ether.h                 |    1 +
+ net/dsa/Kconfig                               |    7 +
+ net/dsa/Makefile                              |    1 +
+ net/dsa/slave.c                               |   18 +-
+ net/dsa/tag_rzn1_a5psw.c                      |  113 ++
+ 21 files changed, 2602 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+ create mode 100644 Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+ create mode 100644 drivers/net/dsa/rzn1_a5psw.c
+ create mode 100644 drivers/net/dsa/rzn1_a5psw.h
+ create mode 100644 drivers/net/pcs/pcs-rzn1-miic.c
+ create mode 100644 include/dt-bindings/net/pcs-rzn1-miic.h
+ create mode 100644 include/linux/pcs-rzn1-miic.h
+ create mode 100644 net/dsa/tag_rzn1_a5psw.c
+
+-- 
+2.36.1
 
-Regressions Summary
--------------------
-
-platform          | arch  | lab           | compiler | defconfig           =
-       | regressions
-------------------+-------+---------------+----------+---------------------=
--------+------------
-rk3288-veyron-jaq | arm   | lab-collabora | gcc-10   | multi_v7_defconfig  =
-       | 1          =
-
-rk3399-gru-kevin  | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chro=
-mebook | 10         =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2022-06-20-v5.19-rc3/plan/igt-kms-rockchip/
-
-  Test:     igt-kms-rockchip
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2022-06-20-v5.19-rc3
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      ebde835d00b25f6852cef819b7b8c96e07c709b5
-
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  f83ad09dc04c9f918ee8836bac9d88dac5de6745
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  0189ca288f7188e60f5eda356b190040bf8ec704 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform          | arch  | lab           | compiler | defconfig           =
-       | regressions
-------------------+-------+---------------+----------+---------------------=
--------+------------
-rk3288-veyron-jaq | arm   | lab-collabora | gcc-10   | multi_v7_defconfig  =
-       | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62b0493b796cfab5fda39c10
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-06-20-v5.19-rc3/arm/multi_v7_defconfig/gcc-10/lab-collabora/igt-kms-roc=
-kchip-rk3288-veyron-jaq.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-06-20-v5.19-rc3/arm/multi_v7_defconfig/gcc-10/lab-collabora/igt-kms-roc=
-kchip-rk3288-veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
-t/20220610.0/armhf/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.login: https://kernelci.org/test/case/id/62b0493b796cf=
-ab5fda39c11
-        failing since 13 days (last pass: renesas-devel-2022-05-23-v5.18, f=
-irst fail: renesas-devel-2022-06-06-v5.19-rc1) =
-
- =
-
-
-
-platform          | arch  | lab           | compiler | defconfig           =
-       | regressions
-------------------+-------+---------------+----------+---------------------=
--------+------------
-rk3399-gru-kevin  | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chro=
-mebook | 10         =
-
-
-  Details:     https://kernelci.org/test/plan/id/62b03f6d75d819fc41a39bfa
-
-  Results:     65 PASS, 24 FAIL, 148 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-06-20-v5.19-rc3/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/i=
-gt-kms-rockchip-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-06-20-v5.19-rc3/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/i=
-gt-kms-rockchip-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
-t/20220610.0/arm64/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-forked-busy: https://kernelci.o=
-rg/test/case/id/62b03f6e75d819fc41a39c88
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:39.409544  /igt_kms.c:2251:
-    2022-06-20T09:33:39.416744  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2022-06-20T09:33:39.420404  Pipe D does not exist or not enabled
-    2022-06-20T09:33:39.432135  Test requirement not met in function igt_re=
-quire_pipe, f<6>[   71.363786] Console: switching to colour dummy device 80=
-x25
-    2022-06-20T09:33:39.437571  <14>[   71.363867] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:39.444587  <14>[   71.365673] [IGT] kms_vblank: starti=
-ng subtest pipe-A-wait-forked-busy
-    2022-06-20T09:33:39.448150  ile ../lib/igt_kms.c:2251:
-    2022-06-20T09:33:39.454935  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2022-06-20T09:33:39.459118  Pipe E does not exist or not enabled
-    2022-06-20T09:33:39.467714  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2251: =
-
-    ... (100 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-busy: https://kernelci.org/test=
-/case/id/62b03f6e75d819fc41a39c8a
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:38.392120  nes
-    2022-06-20T09:33:38.400577  (kms_vblank:630) igt_kms-DEBUG: display:   =
-  Fixing up initial rotation pipe B, plane 3
-    2022-06-20T09:33:38.410457  (kms_vblank:630) igt_kms-DEBUG: di<6>[   70=
-.340651] Console: switching to colour dummy device 80x25
-    2022-06-20T09:33:38.415310  <14>[   70.340734] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:38.418700  splay:     SetCursor pipe B, disabling
-    2022-06-20T09:33:38.428082  (kms_vblank:630) igt_kms<14>[   70.358150] =
-[IGT] kms_vblank: starting subtest pipe-A-wait-busy
-    2022-06-20T09:33:38.433130  -DEBUG: display:     MoveCursor pipe B, (0,=
- 0)
-    2022-06-20T09:33:38.437011  (kms_vblank:630) igt_kms-DEBUG: display: }
-    2022-06-20T09:33:38.445905  (kms_vblank:630) igt_debugfs-DEBUG: Opening=
- debugfs directory '/sys/kernel/debug/dri/0'
-    2022-06-20T09:33:38.453266  (kms_vblank:630) INFO: Beginning pipe-A-wai=
-t-forked on pipe A, connector eDP-1 =
-
-    ... (119 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-forked: https://kernelci.org/te=
-st/case/id/62b03f6e75d819fc41a39c8c
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:37.450753  pipes[pipe].enabled)
-    2022-06-20T09:33:37.454700  Pipe C does not exist or not enabled
-    2022-06-20T09:33:37.467667  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/i<6>[   69.397404] Console: switching to colour dum=
-my device 80x25
-    2022-06-20T09:33:37.472422  <14>[   69.397457] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:37.479571  <14>[   69.406479] [IGT] kms_vblank: starti=
-ng subtest pipe-A-wait-forked
-    2022-06-20T09:33:37.481438  gt_kms.c:2251:
-    2022-06-20T09:33:37.488823  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2022-06-20T09:33:37.492550  Pipe D does not exist or not enabled
-    2022-06-20T09:33:37.501025  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2251:
-    2022-06-20T09:33:37.508866  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled) =
-
-    ... (99 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-idle: https://kernelci.org/test=
-/case/id/62b03f6e75d819fc41a39c8e
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:36.410537  (kms_vblank:612) igt_kms-DEBUG: display:   =
-  SetCursor pip<8>[   68.338537] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Dpipe-=
-A-query-forked-busy-hang RESULT=3Dskip>
-    2022-06-20T09:33:36.411718  e B, disabling
-    2022-06-20T09:33:36.419083  (kms_vblank:612) igt_kms-DEBUG: display:   =
-  MoveCursor pipe B, (0, 0)
-    2022-06-20T09:33:36.423335  (kms_vblank:612) igt_kms-DEBUG: display: }
-    2022-06-20T09:33:36.434767  (kms_vblank:612) igt_debugfs-DEBUG: Opening=
- debugfs director<6>[   68.366623] Console: switching to colour dummy devic=
-e 80x25
-    2022-06-20T09:33:36.440129  <14>[   68.366715] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:36.447098  <14>[   68.368522] [IGT] kms_vblank: starti=
-ng subtest pipe-A-wait-idle
-    2022-06-20T09:33:36.450183  y '/sys/kernel/debug/dri/0'
-    2022-06-20T09:33:36.458224  (kms_vblank:612) INFO: Beginning pipe-A-que=
-ry-forked-busy on pipe A, connector eDP-1
-    2022-06-20T09:33:36.462821  (kms_vblank:612) DEBUG: Spawning 6 threads =
-
-    ... (119 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-forked-busy: https://kernelci.=
-org/test/case/id/62b03f6e75d819fc41a39c90
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:35.399193  enabled)
-    2022-06-20T09:33:35.402824  Pipe F does not exist or not enabled
-    2022-06-20T09:33:35.409647  IGT-Version: 1.26-g0189ca2 (aarch64) (Linux=
-: 5.19.0-rc3 aarch64)
-    2022-06-20T09:33:35.413302  Starting subtest: pipe-A-query-busy-hang
-    2022-06-20T09:33:35.423438  Test requirement not met in function<6>[   =
-67.352309] Console: switching to colour dummy device 80x25
-    2022-06-20T09:33:35.428217  <14>[   67.352394] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:35.442158   gem_context_require_bannable, file ../lib/=
-i915/gem_context.c:32<14>[   67.371119] [IGT] kms_vblank: starting subtest =
-pipe-A-query-forked-busy
-    2022-06-20T09:33:35.442250  4:
-    2022-06-20T09:33:35.447455  Test requirement: has_ban_period || has_ban=
-nable
-    2022-06-20T09:33:35.450752  Last errno: 22, Invalid argument =
-
-    ... (115 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-busy: https://kernelci.org/tes=
-t/case/id/62b03f6e75d819fc41a39c92
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:34.429720  ms-DEBUG: display: }
-    2022-06-20T09:33:34.437705  (kms_vblank:594) igt_debugfs-DEBUG: Opening=
- debugfs directory '/sys/kernel/debug/dri/0'
-    2022-06-20T09:33:34.446135  (kms_vblank:594) INFO: Beginning pipe-A-que=
-ry-forked on pipe A, connector eDP-1
-    2022-06-20T09:33:34.452450  <6>[   66.383148] Console: switching to col=
-our dummy device 80x25
-    2022-06-20T09:33:34.456810  <14>[   66.383239] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:34.464580  <14>[   66.385147] [IGT] kms_vblank: starti=
-ng subtest pipe-A-query-busy
-    2022-06-20T09:33:34.468292  (kms_vblank:594) DEBUG: Spawning 6 threads
-    2022-06-20T09:33:34.470613  ****  END  ****
-    2022-06-20T09:33:34.475434  [1mSubtest pipe-A-query-forked: FAIL (0.748=
-s)[0m
-    2022-06-20T09:33:34.483506  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2251: =
-
-    ... (105 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-forked: https://kernelci.org/t=
-est/case/id/62b03f6e75d819fc41a39c94
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:33.394066  6-g0189ca2 (aarch64) (Linux: 5.19.0-rc3 aar=
-ch64)
-    2022-06-20T09:33:33.397833  Starting subtest: pipe-A-query-idle-hang
-    2022-06-20T09:33:33.408428  Test requirement not met in function gem_co=
-ntext_require_bannable, file ../lib/i915/gem_context.c:324:
-    2022-06-20T09:33:33.413241  Test requirement: has_ban_period || has_ban=
-nable
-    2022-06-20T09:33:33.420605  Last errno<6>[   65.346364] Console: switch=
-ing to colour dummy device 80x25
-    2022-06-20T09:33:33.425414  <14>[   65.346454] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:33.432869  <14>[   65.347934] [IGT] kms_vblank: starti=
-ng subtest pipe-A-query-forked
-    2022-06-20T09:33:33.434843  : 22, Invalid argument
-    2022-06-20T09:33:33.440385  [1mSubtest pipe-A-query-idle-hang: SKIP (0.=
-000s)[0m
-    2022-06-20T09:33:33.448309  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2251: =
-
-    ... (114 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-idle: https://kernelci.org/tes=
-t/case/id/62b03f6e75d819fc41a39c96
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:32.367520  IGT-Version: 1.26-g0189ca2 (aarch64) (Linux=
-: 5.19.0-rc3 aarch64)<6>[   64.295702] Console: switching to colour dummy d=
-evice 80x25
-    2022-06-20T09:33:32.372290  <14>[   64.295785] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:32.378620  <14>[   64.298642] [IGT] kms_vblank: starti=
-ng subtest pipe-A-query-idle
-    2022-06-20T09:33:32.379247  =
-
-    2022-06-20T09:33:32.383209  Starting subtest: pipe-A-query-idle
-    2022-06-20T09:33:32.454490  Beginning pipe-A-query-idle on pipe A, conn=
-ector eDP-1
-    2022-06-20T09:33:32.793632  (kms_vblank:588) CRITICAL: Test assertion f=
-ailure function vblank_query, file ../tests/kms_vblank.c:290:
-    2022-06-20T09:33:32.800932  (kms_vblank:588) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
-    2022-06-20T09:33:32.806689  (kms_vblank:588) CRITICAL: Last errno: 22, =
-Invalid argument
-    2022-06-20T09:33:32.811426  (kms_vblank:588) CRITICAL: error: -22 !=3D =
-0 =
-
-    ... (68 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-accuracy-idle: https://kernelci.org/=
-test/case/id/62b03f6e75d819fc41a39c97
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:31.292830  IGT-Version: 1.26-g0189ca2 (aarch64) (Linux=
-: 5.19.0-rc3 aarch64)<6>[   63.221120] Console: switching to colour dummy d=
-evice 80x25
-    2022-06-20T09:33:31.292917  =
-
-    2022-06-20T09:33:31.297158  <14>[   63.221224] [IGT] kms_vblank: execut=
-ing
-    2022-06-20T09:33:31.305589  <14>[   63.225677] [IGT] kms_vblank: starti=
-ng subtest pipe-A-accuracy-idle
-    2022-06-20T09:33:31.309138  Starting subtest: pipe-A-accuracy-idle
-    2022-06-20T09:33:31.388808  Beginning pipe-A-accuracy-idle on pipe A, c=
-onnector eDP-1
-    2022-06-20T09:33:31.777752  (kms_vblank:585) CRITICAL: Test assertion f=
-ailure function accuracy, file ../tests/kms_vblank.c:255:
-    2022-06-20T09:33:31.784811  (kms_vblank:585) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
-    2022-06-20T09:33:31.791068  (kms_vblank:585) CRITICAL: Last errno: 22, =
-Invalid argument
-    2022-06-20T09:33:31.794790  (kms_vblank:585) CRITICAL: error: -22 !=3D =
-0 =
-
-    ... (80 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_setmode.basic: https://kernelci.org/test/case/id/6=
-2b03f6e75d819fc41a39ca0
-        failing since 2 days (last pass: renesas-devel-2022-06-06-v5.19-rc1=
-, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-06-20T09:33:28.184561  <8>[   60.120072] <LAVA_SIGNAL_TESTSET STOP>
-    2022-06-20T09:33:28.216975  <8>[   60.151304] <LAVA_SIGNAL_TESTSET STAR=
-T kms_setmode>
-    2022-06-20T09:33:28.248205  IGT-Version: 1.26-g0189ca2 (aarch64) (Linux=
-: 5.19.0-rc3 aarch64)<6>[   60.176323] Console: switching to colour dummy d=
-evice 80x25
-    2022-06-20T09:33:28.248802  =
-
-    2022-06-20T09:33:28.252638  <14>[   60.176409] [IGT] kms_setmode: execu=
-ting
-    2022-06-20T09:33:28.256246  Starting subtest: basic
-    2022-06-20T09:33:28.262125  <14>[   60.194564] [IGT] kms_setmode: start=
-ing subtest basic
-    2022-06-20T09:33:28.265863  Testing: basic 1 connector combinations
-    2022-06-20T09:33:28.380159  Starting dynamic subtest: pipe-A-eDP-1
-    2022-06-20T09:33:28.389736    Test id#1 CRTC count 1<14>[   60.317136] =
-[IGT] kms_setmode: starting dynamic subtest pipe-A-eDP-1 =
-
-    ... (76 line(s) more)  =
-
- =20
