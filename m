@@ -2,151 +2,198 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7780CC43334
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jun 2022 10:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCC5C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jun 2022 10:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240445AbiFTK0p (ORCPT
+        id S240264AbiFTKs7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Jun 2022 06:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53638 "EHLO
+        Mon, 20 Jun 2022 06:48:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240421AbiFTK0m (ORCPT
+        with ESMTP id S240153AbiFTKsz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Jun 2022 06:26:42 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 833AF13E8B;
-        Mon, 20 Jun 2022 03:26:31 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.92,306,1650898800"; 
-   d="scan'208";a="125005518"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Jun 2022 19:26:31 +0900
-Received: from localhost.localdomain (unknown [10.226.93.116])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id ED9534273C85;
-        Mon, 20 Jun 2022 19:26:28 +0900 (JST)
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-watchdog@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v3 2/2] watchdog: rzg2l_wdt: Add rzv2m support
-Date:   Mon, 20 Jun 2022 11:26:00 +0100
-Message-Id: <20220620102600.52349-3-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220620102600.52349-1-phil.edworthy@renesas.com>
-References: <20220620102600.52349-1-phil.edworthy@renesas.com>
+        Mon, 20 Jun 2022 06:48:55 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0A4B1F2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jun 2022 03:48:54 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id f8so9380094plo.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jun 2022 03:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=1EP9zU2CMp72DCAojd2wN+dIHgB+eaLhdWU4xSahf38=;
+        b=WG5irN1WeO6tffu4CjawhvAsxonFzAwMonKtT7Lfqyot7oHofNcOE8L9FhhRmKZZJW
+         XjPKuC13u9CU6+a02DhN839LayixsgmrHpsN4IFF/x1iPOaFoH6Eqts75D+IBhqQuAJM
+         k7l7zB2ZPJT2yE53sZpJNmxeXF30ZN3Nk8AtT62Jtg5/hq7Ih/wOVDQu3Rs6xjqUjXdz
+         BhtS9rsHBO9mLcB5WApgRxru3LqdaERQi6yM7rSt8PNgF25F615Jr/OhaElV/Lxtpayy
+         5Ms4Z6a6jCJa3r/Q3USo9r2l7GYZtVJPvHVTWhuMWxAPBSv1VCPcyFQharJA+OlOUtez
+         28FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=1EP9zU2CMp72DCAojd2wN+dIHgB+eaLhdWU4xSahf38=;
+        b=IrgHhjlMEvODGFIC5/JAuU2P06w5nkL1rSIOvi6Jxl0vw7WvVfhB8kLseNJ+qlROh0
+         3m/oVMIiZpTgy99LB+EWH9Dzav0XKPunyxALgt4KnqNkuKbYWLx4nHy0hQAappDHzitc
+         gvSgbJq89aK+mNw3KMZGG03at8EwOVP+2/aU6E+0A+PY/Wer9Q50iWP0GJxliLGLfJz9
+         IhuNgOgtotrKLJyJNhKb7Z5JhpbuDavJJF8KpiLfnFr0yzpcaHMbUG5QAl5JMyCCtrp4
+         mZMZL8QTjNsnbT922iNt6nc4Zn9KMatWEtQJI6ZY6t5noD136roQz3KXiI8sJxG77dXu
+         MiIw==
+X-Gm-Message-State: AJIora9ZmbGV9ce0TXXo5RRAI6XOd4nhXgD5DQN3cbgXTLLHkPdg9hPd
+        /U9wXX52+42mgf+dDBbGIX+WKsV/mWLYcijMzkk=
+X-Google-Smtp-Source: AGRyM1vTXHRpqOe4OLB9r7pjOyf2ZEbMvV4THSTBpcozFoMn1Dc7mp9ZlT29bTXhl1qHFa5EjvewzQ==
+X-Received: by 2002:a17:90a:2d82:b0:1eb:6ee0:9d68 with SMTP id p2-20020a17090a2d8200b001eb6ee09d68mr22040755pjd.28.1655722133877;
+        Mon, 20 Jun 2022 03:48:53 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id b16-20020a170902d89000b001616b71e5e3sm8368602plz.171.2022.06.20.03.48.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jun 2022 03:48:53 -0700 (PDT)
+Message-ID: <62b05095.1c69fb81.c602d.bb17@mx.google.com>
+Date:   Mon, 20 Jun 2022 03:48:53 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2022-06-20-v5.19-rc3
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master igt-gpu-panfrost: 2 runs,
+ 2 regressions (renesas-devel-2022-06-20-v5.19-rc3)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The WDT on RZ/V2M devices is basically the same as RZ/G2L, but without
-the parity error registers. This means the driver has to reset the
-hardware plus set the minimum timeout in order to do a restart and has
-a single interrupt.
+renesas/master igt-gpu-panfrost: 2 runs, 2 regressions (renesas-devel-2022-=
+06-20-v5.19-rc3)
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v3:
- - Don't call pm_runtime_get_sync() in restart()
- - Use mdelay instead of udelay, avoids DIV64_U64_ROUND_UP
-v2:
- - Replace use of parity error registers in restart
- - Commit msg modified to reflect different contents
----
- drivers/watchdog/rzg2l_wdt.c | 39 ++++++++++++++++++++++++++++++------
- 1 file changed, 33 insertions(+), 6 deletions(-)
+Regressions Summary
+-------------------
 
-diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index 6eea0ee4af49..70cbd9ba01fe 100644
---- a/drivers/watchdog/rzg2l_wdt.c
-+++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -10,7 +10,7 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
-@@ -40,6 +40,11 @@ module_param(nowayout, bool, 0);
- MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
- 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
- 
-+enum rz_wdt_type {
-+	I2C_RZG2L,
-+	I2C_RZV2M,
-+};
-+
- struct rzg2l_wdt_priv {
- 	void __iomem *base;
- 	struct watchdog_device wdev;
-@@ -48,6 +53,7 @@ struct rzg2l_wdt_priv {
- 	unsigned long delay;
- 	struct clk *pclk;
- 	struct clk *osc_clk;
-+	enum rz_wdt_type devtype;
- };
- 
- static void rzg2l_wdt_wait_delay(struct rzg2l_wdt_priv *priv)
-@@ -142,11 +148,29 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
- 	clk_prepare_enable(priv->pclk);
- 	clk_prepare_enable(priv->osc_clk);
- 
--	/* Generate Reset (WDTRSTB) Signal on parity error */
--	rzg2l_wdt_write(priv, 0, PECR);
-+	if (priv->devtype == I2C_RZG2L) {
-+		/* Generate Reset (WDTRSTB) Signal on parity error */
-+		rzg2l_wdt_write(priv, 0, PECR);
-+
-+		/* Force parity error */
-+		rzg2l_wdt_write(priv, PEEN_FORCE, PEEN);
-+	} else {
-+		/* RZ/V2M doesn't have parity error registers */
-+
-+		wdev->timeout = 0;
-+
-+		/* Initialize time out */
-+		rzg2l_wdt_init_timeout(wdev);
- 
--	/* Force parity error */
--	rzg2l_wdt_write(priv, PEEN_FORCE, PEEN);
-+		/* Initialize watchdog counter register */
-+		rzg2l_wdt_write(priv, 0, WDTTIM);
-+
-+		/* Enable watchdog timer*/
-+		rzg2l_wdt_write(priv, WDTCNT_WDTEN, WDTCNT);
-+
-+		/* Wait 2 consecutive overflow cycles for reset */
-+		mdelay(DIV_ROUND_UP(2 * 0xFFFFF * 1000, priv->osc_clk_rate));
-+	}
- 
- 	return 0;
- }
-@@ -227,6 +251,8 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to deassert");
- 
-+	priv->devtype = (enum rz_wdt_type)of_device_get_match_data(dev);
-+
- 	pm_runtime_enable(&pdev->dev);
- 
- 	priv->wdev.info = &rzg2l_wdt_ident;
-@@ -255,7 +281,8 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id rzg2l_wdt_ids[] = {
--	{ .compatible = "renesas,rzg2l-wdt", },
-+	{ .compatible = "renesas,rzg2l-wdt", .data = (void *)I2C_RZG2L },
-+	{ .compatible = "renesas,rzv2m-wdt", .data = (void *)I2C_RZV2M },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, rzg2l_wdt_ids);
--- 
-2.34.1
+platform          | arch  | lab           | compiler | defconfig           =
+       | regressions
+------------------+-------+---------------+----------+---------------------=
+-------+------------
+rk3288-veyron-jaq | arm   | lab-collabora | gcc-10   | multi_v7_defconfig  =
+       | 1          =
 
+rk3399-gru-kevin  | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chro=
+mebook | 1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-06-20-v5.19-rc3/plan/igt-gpu-panfrost/
+
+  Test:     igt-gpu-panfrost
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-06-20-v5.19-rc3
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      ebde835d00b25f6852cef819b7b8c96e07c709b5
+
+  Test suite revisions:
+    drm
+      URL:  git://anongit.freedesktop.org/mesa/drm
+      SHA:  f83ad09dc04c9f918ee8836bac9d88dac5de6745
+    igt-gpu-tools
+      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
+      SHA:  0189ca288f7188e60f5eda356b190040bf8ec704 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform          | arch  | lab           | compiler | defconfig           =
+       | regressions
+------------------+-------+---------------+----------+---------------------=
+-------+------------
+rk3288-veyron-jaq | arm   | lab-collabora | gcc-10   | multi_v7_defconfig  =
+       | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62b04bf2180d4c198aa39be7
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-06-20-v5.19-rc3/arm/multi_v7_defconfig/gcc-10/lab-collabora/igt-gpu-pan=
+frost-rk3288-veyron-jaq.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-06-20-v5.19-rc3/arm/multi_v7_defconfig/gcc-10/lab-collabora/igt-gpu-pan=
+frost-rk3288-veyron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
+t/20220610.0/armhf/rootfs.cpio.gz =
+
+
+
+  * igt-gpu-panfrost.login: https://kernelci.org/test/case/id/62b04bf2180d4=
+c198aa39be8
+        failing since 13 days (last pass: renesas-devel-2022-05-23-v5.18, f=
+irst fail: renesas-devel-2022-06-06-v5.19-rc1) =
+
+ =
+
+
+
+platform          | arch  | lab           | compiler | defconfig           =
+       | regressions
+------------------+-------+---------------+----------+---------------------=
+-------+------------
+rk3399-gru-kevin  | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chro=
+mebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62b03f7a3d29062d8fa39be1
+
+  Results:     15 PASS, 2 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-06-20-v5.19-rc3/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/i=
+gt-gpu-panfrost-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-06-20-v5.19-rc3/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/i=
+gt-gpu-panfrost-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
+t/20220610.0/arm64/rootfs.cpio.gz =
+
+
+
+  * igt-gpu-panfrost.panfrost_submit.pan-unhandled-pagefault: https://kerne=
+lci.org/test/case/id/62b03f7a3d29062d8fa39be4
+        new failure (last pass: renesas-devel-2022-06-17-v5.19-rc2)
+
+    2022-06-20T09:35:35.705712  <8>[   41.320703] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dpan-submit-and-close RESULT=3Dpass>
+    2022-06-20T09:35:35.728405  IGT-Version: 1.26-g0189ca2 (aarch64) (Linux=
+: 5.19.0-rc3 aarch64)<6>[   41.347421] Console: switching to colour dummy d=
+evice 80x25
+    2022-06-20T09:35:35.733544  <14>[   41.347510] [IGT] panfrost_submit: e=
+xecuting
+    2022-06-20T09:35:35.741829  <14>[   41.359328] [IGT] panfrost_submit: s=
+tarting subtest pan-unhandled-pagefault
+    2022-06-20T09:35:35.742334  =
+
+    2022-06-20T09:35:35.746139  Starting subtest: pan-unhandled-pagefault
+    2022-06-20T09:35:35.843921  (panfrost_submit:349) CRITICAL: Test assert=
+ion failure function __igt_unique____real_main65, file ../tests/panfrost_su=
+bmit.c:178:
+    2022-06-20T09:35:35.857071  (panfrost_submit:349) CRITICAL: Failed asse=
+rtion: syncobj_wait(fd, &submit->args->out_sync, 1, abs_timeout(SHORT_TIME_=
+NSEC), 0, NULL)
+    2022-06-20T09:35:35.858437  Stack trace:
+    2022-06-20T09:35:35.863430    #0 ../lib/igt_core.c:1819 __igt_fail_asse=
+rt() =
+
+    ... (10 line(s) more)  =
+
+ =20
