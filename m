@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9949AC43334
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Jun 2022 14:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44387CCA473
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Jun 2022 14:43:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231387AbiFXOnT (ORCPT
+        id S233157AbiFXOnV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 24 Jun 2022 10:43:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42514 "EHLO
+        Fri, 24 Jun 2022 10:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233273AbiFXOm2 (ORCPT
+        with ESMTP id S233251AbiFXOm1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Jun 2022 10:42:28 -0400
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B636DB0C;
-        Fri, 24 Jun 2022 07:42:03 -0700 (PDT)
+        Fri, 24 Jun 2022 10:42:27 -0400
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD94E69983;
+        Fri, 24 Jun 2022 07:41:56 -0700 (PDT)
 Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id D552BE0002;
-        Fri, 24 Jun 2022 14:41:59 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 91F21E0002;
+        Fri, 24 Jun 2022 14:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1656081722;
+        t=1656081715;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6xeNLWQP+bLd9S9YzewjHuqXtx801Yffd7R3+nQry8U=;
-        b=HhFS6yL4dbKvDNrCg/WqhxvHPf5uhyxKYtFFH0CEibGbNOwjGLDYBKpRqWm8VqRbTzdVEp
-        Ad9vSV6X6AcbaQFUzUPLoJfvFL3Xf1wyvRNVUrUPD5qHEgyN9f5MY5rnbc23r0N/6fmgOs
-        u8pJdLRbGhS0mLy4haacWvWl2uzNrDs9dwWXfLtZXe8k86MnzfjrgNWOvPYvpV8aC3STsC
-        14dPFbW6uSKJ4Tyo2y/yLSQNFxyjQq9oQ5180djmHmnPhjYz7Z9IGR7xP0KxnQCRH+bNxx
-        9PlyICBnw/JEVrOXVPULaEvDO69Vq+IYDbST4CrwDeocRMKB5wL8q/7H5j4Nsg==
+        bh=FoSJsUOkb08Wd+kRslbIkovos/fLvnCrsl/qKDBg3nc=;
+        b=WxW2758WXD8QMf7pby78ZcRMxRWeIbG0QAe6cqfTbGU1TWQrq4KG46hybrV44tX+ZRhuoy
+        ch5QO3wX62AGocTBfs+c6LRNX8T8mzo7dj7oaTunAQlESnHABTrl6VlMjdPpGnZCy0x2Jx
+        g5ZF/+zjoMZV7XXKCiyK4IR/+M8K8+lascK1PBmiY2LJx/NAp2qkB5OmUC1MX8Iie6LzzS
+        Xv+Q2aLLetYwjcDu7soVLyvtqDpB6Jq69QecSHF7LYzJImGr98JgZeQQGcAAQMMX9OPHoW
+        KQzEyMmYLR0SrByKBT7cZD3CvQN+tIdy3lsxtAog7opd3Iui0XI4D4uehJJHUw==
 From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@gmail.com>,
@@ -57,10 +57,11 @@ Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         Pascal Eberhard <pascal.eberhard@se.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH net-next v9 14/16] ARM: dts: r9a06g032: describe switch
-Date:   Fri, 24 Jun 2022 16:39:59 +0200
-Message-Id: <20220624144001.95518-15-clement.leger@bootlin.com>
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH net-next v9 11/16] dt-bindings: net: snps,dwmac: add "renesas,rzn1" compatible
+Date:   Fri, 24 Jun 2022 16:39:56 +0200
+Message-Id: <20220624144001.95518-12-clement.leger@bootlin.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220624144001.95518-1-clement.leger@bootlin.com>
 References: <20220624144001.95518-1-clement.leger@bootlin.com>
@@ -71,79 +72,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add description of the switch that is present on the RZ/N1 SoC. This
-description includes ethernet-ports description for all the ports that
-are present on the switch along with their connection to the MII
-converter ports and to the GMAC for the CPU port.
+Add "renesas,rzn1-gmac" and "renesas,r9a06g032-gmac" compatible strings.
 
 Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 51 ++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ Documentation/devicetree/bindings/net/snps,dwmac.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 42ce02e51e8d..5b97fa85474f 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -361,6 +361,57 @@ mii_conv5: mii-conv@5 {
- 			};
- 		};
- 
-+		switch: switch@44050000 {
-+			compatible = "renesas,r9a06g032-a5psw", "renesas,rzn1-a5psw";
-+			reg = <0x44050000 0x10000>;
-+			clocks = <&sysctrl R9A06G032_HCLK_SWITCH>,
-+				 <&sysctrl R9A06G032_CLK_SWITCH>;
-+			clock-names = "hclk", "clk";
-+			power-domains = <&sysctrl>;
-+			status = "disabled";
-+
-+			ethernet-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				switch_port0: port@0 {
-+					reg = <0>;
-+					pcs-handle = <&mii_conv5>;
-+					status = "disabled";
-+				};
-+
-+				switch_port1: port@1 {
-+					reg = <1>;
-+					pcs-handle = <&mii_conv4>;
-+					status = "disabled";
-+				};
-+
-+				switch_port2: port@2 {
-+					reg = <2>;
-+					pcs-handle = <&mii_conv3>;
-+					status = "disabled";
-+				};
-+
-+				switch_port3: port@3 {
-+					reg = <3>;
-+					pcs-handle = <&mii_conv2>;
-+					status = "disabled";
-+				};
-+
-+				switch_port4: port@4 {
-+					reg = <4>;
-+					ethernet = <&gmac2>;
-+					label = "cpu";
-+					phy-mode = "internal";
-+					status = "disabled";
-+					fixed-link {
-+						speed = <1000>;
-+						full-duplex;
-+					};
-+				};
-+			};
-+		};
-+
- 		gic: interrupt-controller@44101000 {
- 			compatible = "arm,gic-400", "arm,cortex-a7-gic";
- 			interrupt-controller;
+diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+index 09f97fb5596d..491597c02edf 100644
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -65,6 +65,8 @@ properties:
+         - ingenic,x2000-mac
+         - loongson,ls2k-dwmac
+         - loongson,ls7a-dwmac
++        - renesas,r9a06g032-gmac
++        - renesas,rzn1-gmac
+         - rockchip,px30-gmac
+         - rockchip,rk3128-gmac
+         - rockchip,rk3228-gmac
 -- 
 2.36.1
 
