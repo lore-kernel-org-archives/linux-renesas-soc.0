@@ -2,353 +2,335 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C36ACCA485
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jun 2022 15:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE618C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jun 2022 17:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236721AbiF0Pbe (ORCPT
+        id S236561AbiF0RjR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 Jun 2022 11:31:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51182 "EHLO
+        Mon, 27 Jun 2022 13:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238199AbiF0Pb3 (ORCPT
+        with ESMTP id S230102AbiF0RjQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Jun 2022 11:31:29 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62F9E19C3E
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jun 2022 08:31:24 -0700 (PDT)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id oFXJ270064C55Sk01FXJap; Mon, 27 Jun 2022 17:31:23 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1o5qhp-0014yd-Dz; Mon, 27 Jun 2022 17:31:17 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1o5qho-004jEv-IF; Mon, 27 Jun 2022 17:31:16 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>
-Cc:     Mark Brown <broonie@kernel.org>, linux-mtd@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 6/7] memory: renesas-rpc-if: Pass device instead of rpcif to rpcif_*()
-Date:   Mon, 27 Jun 2022 17:31:13 +0200
-Message-Id: <e313b7f9a856fd8546aabb20d44d10e3af6676c6.1656341824.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1656341824.git.geert+renesas@glider.be>
-References: <cover.1656341824.git.geert+renesas@glider.be>
+        Mon, 27 Jun 2022 13:39:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49E39BC11;
+        Mon, 27 Jun 2022 10:39:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DFC7BB81062;
+        Mon, 27 Jun 2022 17:39:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520D6C3411D;
+        Mon, 27 Jun 2022 17:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656351552;
+        bh=Zn0Dfb4M02qxEfqvQzrDg8XHxtNPpoaNnFOSN6zyqcQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XzH3tXT3H9L7KDQzTdC3I4DnJaB+mhExMuomvsSJVtjPdDWa53REixFOQ4tlRaRgB
+         Dau6EcVZT097k2R5PlMlSrrircErH+zgXxRd58ebu2yILqYResOpDx/qkBJTybJBzC
+         aDXOIeZZUz0J7nebzfXbkmrHNYk9fI5HGXWgwb5Xn+1I3ATXg/w1Zr1+1dAv0MqP7q
+         WiGRgSQRZHKR8Gsh2phfFlHXTXRPqESdF1VSYROT2m6CwKL6V/eYcSBUpOLYaYlQbO
+         HknfH8oBojGD2/28mzQuQqXBpLqdZk2/o5t6sdWVMqBh7o8TUMTIFcX3MnJ8pPjU9c
+         hgu088FI8qugw==
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
+        Jakub Kicinski <kuba@kernel.org>, geert+renesas@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH net-next] Revert the ARM/dts changes for Renesas RZ/N1
+Date:   Mon, 27 Jun 2022 10:39:00 -0700
+Message-Id: <20220627173900.3136386-1-kuba@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Most rpcif_*() API functions do not need access to any other fields in
-the rpcif structure than the device pointer.  Simplify dependencies by
-passing the device pointer instead.
+Based on a request from Geert:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Revert "ARM: dts: r9a06g032-rzn1d400-db: add switch description"
+This reverts commit 9aab31d66ec97d7047e42feacc356bc9c21a5bf5.
+
+Revert "ARM: dts: r9a06g032: describe switch"
+This reverts commit cf9695d8a7e927f7563ce6ea0a4e54b8214a12f1.
+
+Revert "ARM: dts: r9a06g032: describe GMAC2"
+This reverts commit 3f5261f1c2a8d7b178f9f65c6dda92523329486e.
+
+Revert "ARM: dts: r9a06g032: describe MII converter"
+This reverts commit 066c3bd358355185d9313358281fe03113c0a9ad.
+
+to let these changes flow thru the platform and SoC trees.
+
+Link: https://lore.kernel.org/r/CAMuHMdUvSLFU56gsp1a9isOiP9otdCJ2-BqhbrffcoHuA6JNig@mail.gmail.com/
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 ---
- drivers/memory/renesas-rpc-if.c | 32 ++++++++++++++++----------------
- drivers/mtd/hyperbus/rpc-if.c   | 18 +++++++++---------
- drivers/spi/spi-rpc-if.c        | 14 +++++++-------
- include/memory/renesas-rpc-if.h | 16 ++++++++--------
- 4 files changed, 40 insertions(+), 40 deletions(-)
+CC: geert+renesas@glider.be
+CC: magnus.damm@gmail.com
+CC: robh+dt@kernel.org
+CC: krzysztof.kozlowski+dt@linaro.org
+CC: linux-renesas-soc@vger.kernel.org
+CC: devicetree@vger.kernel.org
+---
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 117 --------------------
+ arch/arm/boot/dts/r9a06g032.dtsi            | 108 ------------------
+ 2 files changed, 225 deletions(-)
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index ef0336cbb4c196fb..ec76e603ad24d214 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -299,13 +299,13 @@ static void rpcif_rzg2l_timing_adjust_sdr(struct rpcif_priv *rpc)
- 	regmap_write(rpc->regmap, RPCIF_PHYADD, 0x80000032);
- }
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+index 4227aba70c30..3f8f3ce87e12 100644
+--- a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -8,8 +8,6 @@
  
--int rpcif_hw_init(struct rpcif *rpcif, bool hyperflash)
-+int rpcif_hw_init(struct device *dev, bool hyperflash)
- {
--	struct rpcif_priv *rpc = dev_get_drvdata(rpcif->dev);
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
- 	u32 dummy;
- 	int ret;
+ /dts-v1/;
  
--	ret = pm_runtime_resume_and_get(rpc->dev);
-+	ret = pm_runtime_resume_and_get(dev);
- 	if (ret)
- 		return ret;
+-#include <dt-bindings/pinctrl/rzn1-pinctrl.h>
+-#include <dt-bindings/net/pcs-rzn1-miic.h>
+ #include "r9a06g032.dtsi"
  
-@@ -352,7 +352,7 @@ int rpcif_hw_init(struct rpcif *rpcif, bool hyperflash)
- 	regmap_write(rpc->regmap, RPCIF_SSLDR, RPCIF_SSLDR_SPNDL(7) |
- 		     RPCIF_SSLDR_SLNDL(7) | RPCIF_SSLDR_SCKDL(7));
- 
--	pm_runtime_put(rpc->dev);
-+	pm_runtime_put(dev);
- 
- 	rpc->bus_size = hyperflash ? 2 : 1;
- 
-@@ -382,10 +382,10 @@ static u8 rpcif_bit_size(u8 buswidth)
- 	return buswidth > 4 ? 2 : ilog2(buswidth);
- }
- 
--void rpcif_prepare(struct rpcif *rpcif, const struct rpcif_op *op, u64 *offs,
-+void rpcif_prepare(struct device *dev, const struct rpcif_op *op, u64 *offs,
- 		   size_t *len)
- {
--	struct rpcif_priv *rpc = dev_get_drvdata(rpcif->dev);
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
- 
- 	rpc->smcr = 0;
- 	rpc->smadr = 0;
-@@ -470,13 +470,13 @@ void rpcif_prepare(struct rpcif *rpcif, const struct rpcif_op *op, u64 *offs,
- }
- EXPORT_SYMBOL(rpcif_prepare);
- 
--int rpcif_manual_xfer(struct rpcif *rpcif)
-+int rpcif_manual_xfer(struct device *dev)
- {
--	struct rpcif_priv *rpc = dev_get_drvdata(rpcif->dev);
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
- 	u32 smenr, smcr, pos = 0, max = rpc->bus_size == 2 ? 8 : 4;
- 	int ret = 0;
- 
--	ret = pm_runtime_resume_and_get(rpc->dev);
-+	ret = pm_runtime_resume_and_get(dev);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -588,13 +588,13 @@ int rpcif_manual_xfer(struct rpcif *rpcif)
- 	}
- 
- exit:
--	pm_runtime_put(rpc->dev);
-+	pm_runtime_put(dev);
- 	return ret;
- 
- err_out:
- 	if (reset_control_reset(rpc->rstc))
--		dev_err(rpc->dev, "Failed to reset HW\n");
--	rpcif_hw_init(rpcif, rpc->bus_size == 2);
-+		dev_err(dev, "Failed to reset HW\n");
-+	rpcif_hw_init(dev, rpc->bus_size == 2);
- 	goto exit;
- }
- EXPORT_SYMBOL(rpcif_manual_xfer);
-@@ -641,9 +641,9 @@ static void memcpy_fromio_readw(void *to,
- 	}
- }
- 
--ssize_t rpcif_dirmap_read(struct rpcif *rpcif, u64 offs, size_t len, void *buf)
-+ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
- {
--	struct rpcif_priv *rpc = dev_get_drvdata(rpcif->dev);
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
- 	loff_t from = offs & (rpc->size - 1);
- 	size_t size = rpc->size - from;
- 	int ret;
-@@ -651,7 +651,7 @@ ssize_t rpcif_dirmap_read(struct rpcif *rpcif, u64 offs, size_t len, void *buf)
- 	if (len > size)
- 		len = size;
- 
--	ret = pm_runtime_resume_and_get(rpc->dev);
-+	ret = pm_runtime_resume_and_get(dev);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -671,7 +671,7 @@ ssize_t rpcif_dirmap_read(struct rpcif *rpcif, u64 offs, size_t len, void *buf)
- 	else
- 		memcpy_fromio(buf, rpc->dirmap + from, len);
- 
--	pm_runtime_put(rpc->dev);
-+	pm_runtime_put(dev);
- 
- 	return len;
- }
-diff --git a/drivers/mtd/hyperbus/rpc-if.c b/drivers/mtd/hyperbus/rpc-if.c
-index d00d302434030b20..41734e337ac00e40 100644
---- a/drivers/mtd/hyperbus/rpc-if.c
-+++ b/drivers/mtd/hyperbus/rpc-if.c
-@@ -56,7 +56,7 @@ static void rpcif_hb_prepare_read(struct rpcif *rpc, void *to,
- 	op.data.nbytes = len;
- 	op.data.buf.in = to;
- 
--	rpcif_prepare(rpc, &op, NULL, NULL);
-+	rpcif_prepare(rpc->dev, &op, NULL, NULL);
- }
- 
- static void rpcif_hb_prepare_write(struct rpcif *rpc, unsigned long to,
-@@ -70,7 +70,7 @@ static void rpcif_hb_prepare_write(struct rpcif *rpc, unsigned long to,
- 	op.data.nbytes = len;
- 	op.data.buf.out = from;
- 
--	rpcif_prepare(rpc, &op, NULL, NULL);
-+	rpcif_prepare(rpc->dev, &op, NULL, NULL);
- }
- 
- static u16 rpcif_hb_read16(struct hyperbus_device *hbdev, unsigned long addr)
-@@ -81,7 +81,7 @@ static u16 rpcif_hb_read16(struct hyperbus_device *hbdev, unsigned long addr)
- 
- 	rpcif_hb_prepare_read(&hyperbus->rpc, &data, addr, 2);
- 
--	rpcif_manual_xfer(&hyperbus->rpc);
-+	rpcif_manual_xfer(hyperbus->rpc.dev);
- 
- 	return data.x[0];
- }
-@@ -94,7 +94,7 @@ static void rpcif_hb_write16(struct hyperbus_device *hbdev, unsigned long addr,
- 
- 	rpcif_hb_prepare_write(&hyperbus->rpc, addr, &data, 2);
- 
--	rpcif_manual_xfer(&hyperbus->rpc);
-+	rpcif_manual_xfer(hyperbus->rpc.dev);
- }
- 
- static void rpcif_hb_copy_from(struct hyperbus_device *hbdev, void *to,
-@@ -105,7 +105,7 @@ static void rpcif_hb_copy_from(struct hyperbus_device *hbdev, void *to,
- 
- 	rpcif_hb_prepare_read(&hyperbus->rpc, to, from, len);
- 
--	rpcif_dirmap_read(&hyperbus->rpc, from, len, to);
-+	rpcif_dirmap_read(hyperbus->rpc.dev, from, len, to);
- }
- 
- static const struct hyperbus_ops rpcif_hb_ops = {
-@@ -130,9 +130,9 @@ static int rpcif_hb_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, hyperbus);
- 
--	rpcif_enable_rpm(&hyperbus->rpc);
-+	rpcif_enable_rpm(hyperbus->rpc.dev);
- 
--	error = rpcif_hw_init(&hyperbus->rpc, true);
-+	error = rpcif_hw_init(hyperbus->rpc.dev, true);
- 	if (error)
- 		goto out_disable_rpm;
- 
-@@ -150,7 +150,7 @@ static int rpcif_hb_probe(struct platform_device *pdev)
- 	return 0;
- 
- out_disable_rpm:
--	rpcif_disable_rpm(&hyperbus->rpc);
-+	rpcif_disable_rpm(hyperbus->rpc.dev);
- 	return error;
- }
- 
-@@ -160,7 +160,7 @@ static int rpcif_hb_remove(struct platform_device *pdev)
- 
- 	hyperbus_unregister_device(&hyperbus->hbdev);
- 
--	rpcif_disable_rpm(&hyperbus->rpc);
-+	rpcif_disable_rpm(hyperbus->rpc.dev);
- 
- 	return 0;
- }
-diff --git a/drivers/spi/spi-rpc-if.c b/drivers/spi/spi-rpc-if.c
-index 24ec1c83f379ceec..5063587d2c724c7c 100644
---- a/drivers/spi/spi-rpc-if.c
-+++ b/drivers/spi/spi-rpc-if.c
-@@ -58,7 +58,7 @@ static void rpcif_spi_mem_prepare(struct spi_device *spi_dev,
- 		rpc_op.data.dir = RPCIF_NO_DATA;
- 	}
- 
--	rpcif_prepare(rpc, &rpc_op, offs, len);
-+	rpcif_prepare(rpc->dev, &rpc_op, offs, len);
- }
- 
- static bool rpcif_spi_mem_supports_op(struct spi_mem *mem,
-@@ -86,7 +86,7 @@ static ssize_t rpcif_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
- 
- 	rpcif_spi_mem_prepare(desc->mem->spi, &desc->info.op_tmpl, &offs, &len);
- 
--	return rpcif_dirmap_read(rpc, offs, len, buf);
-+	return rpcif_dirmap_read(rpc->dev, offs, len, buf);
- }
- 
- static int rpcif_spi_mem_dirmap_create(struct spi_mem_dirmap_desc *desc)
-@@ -117,7 +117,7 @@ static int rpcif_spi_mem_exec_op(struct spi_mem *mem,
- 
- 	rpcif_spi_mem_prepare(mem->spi, op, NULL, NULL);
- 
--	return rpcif_manual_xfer(rpc);
-+	return rpcif_manual_xfer(rpc->dev);
- }
- 
- static const struct spi_controller_mem_ops rpcif_spi_mem_ops = {
-@@ -147,7 +147,7 @@ static int rpcif_spi_probe(struct platform_device *pdev)
- 
- 	ctlr->dev.of_node = parent->of_node;
- 
--	rpcif_enable_rpm(rpc);
-+	rpcif_enable_rpm(rpc->dev);
- 
- 	ctlr->num_chipselect = 1;
- 	ctlr->mem_ops = &rpcif_spi_mem_ops;
-@@ -156,7 +156,7 @@ static int rpcif_spi_probe(struct platform_device *pdev)
- 	ctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_TX_QUAD | SPI_RX_QUAD;
- 	ctlr->flags = SPI_CONTROLLER_HALF_DUPLEX;
- 
--	error = rpcif_hw_init(rpc, false);
-+	error = rpcif_hw_init(rpc->dev, false);
- 	if (error)
- 		goto out_disable_rpm;
- 
-@@ -169,7 +169,7 @@ static int rpcif_spi_probe(struct platform_device *pdev)
- 	return 0;
- 
- out_disable_rpm:
--	rpcif_disable_rpm(rpc);
-+	rpcif_disable_rpm(rpc->dev);
- 	return error;
- }
- 
-@@ -179,7 +179,7 @@ static int rpcif_spi_remove(struct platform_device *pdev)
- 	struct rpcif *rpc = spi_controller_get_devdata(ctlr);
- 
- 	spi_unregister_controller(ctlr);
--	rpcif_disable_rpm(rpc);
-+	rpcif_disable_rpm(rpc->dev);
- 
- 	return 0;
- }
-diff --git a/include/memory/renesas-rpc-if.h b/include/memory/renesas-rpc-if.h
-index ddf94356752d3315..d2130c2c8c82fbd5 100644
---- a/include/memory/renesas-rpc-if.h
-+++ b/include/memory/renesas-rpc-if.h
-@@ -69,20 +69,20 @@ struct rpcif {
+ / {
+@@ -33,118 +31,3 @@ &wdt0 {
+ 	timeout-sec = <60>;
+ 	status = "okay";
  };
+-
+-&gmac2 {
+-	status = "okay";
+-	phy-mode = "gmii";
+-	fixed-link {
+-		speed = <1000>;
+-		full-duplex;
+-	};
+-};
+-
+-&switch {
+-	status = "okay";
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pins_mdio1>, <&pins_eth3>, <&pins_eth4>;
+-
+-	dsa,member = <0 0>;
+-
+-	mdio {
+-		clock-frequency = <2500000>;
+-
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		switch0phy4: ethernet-phy@4 {
+-			reg = <4>;
+-			micrel,led-mode = <1>;
+-		};
+-
+-		switch0phy5: ethernet-phy@5 {
+-			reg = <5>;
+-			micrel,led-mode = <1>;
+-		};
+-	};
+-};
+-
+-&switch_port0 {
+-	label = "lan0";
+-	phy-mode = "mii";
+-	phy-handle = <&switch0phy5>;
+-	status = "okay";
+-};
+-
+-&switch_port1 {
+-	label = "lan1";
+-	phy-mode = "mii";
+-	phy-handle = <&switch0phy4>;
+-	status = "okay";
+-};
+-
+-&switch_port4 {
+-	status = "okay";
+-};
+-
+-&eth_miic {
+-	status = "okay";
+-	renesas,miic-switch-portin = <MIIC_GMAC2_PORT>;
+-};
+-
+-&mii_conv4 {
+-	renesas,miic-input = <MIIC_SWITCH_PORTB>;
+-	status = "okay";
+-};
+-
+-&mii_conv5 {
+-	renesas,miic-input = <MIIC_SWITCH_PORTA>;
+-	status = "okay";
+-};
+-
+-&pinctrl{
+-	pins_mdio1: pins_mdio1 {
+-		pinmux = <
+-			RZN1_PINMUX(152, RZN1_FUNC_MDIO1_SWITCH)
+-			RZN1_PINMUX(153, RZN1_FUNC_MDIO1_SWITCH)
+-		>;
+-	};
+-	pins_eth3: pins_eth3 {
+-		pinmux = <
+-			RZN1_PINMUX(36, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(37, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(38, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(39, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(40, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(41, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(42, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(43, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(44, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(45, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(46, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(47, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-		>;
+-		drive-strength = <6>;
+-		bias-disable;
+-	};
+-	pins_eth4: pins_eth4 {
+-		pinmux = <
+-			RZN1_PINMUX(48, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(49, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(50, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(51, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(52, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(53, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(54, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(55, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(56, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(57, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(58, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-			RZN1_PINMUX(59, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)
+-		>;
+-		drive-strength = <6>;
+-		bias-disable;
+-	};
+-};
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 5b97fa85474f..d3665910958b 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -304,114 +304,6 @@ dma1: dma-controller@40105000 {
+ 			data-width = <8>;
+ 		};
  
- int rpcif_sw_init(struct rpcif *rpc, struct device *dev);
--int rpcif_hw_init(struct rpcif *rpc, bool hyperflash);
--void rpcif_prepare(struct rpcif *rpc, const struct rpcif_op *op, u64 *offs,
-+int rpcif_hw_init(struct device *dev, bool hyperflash);
-+void rpcif_prepare(struct device *dev, const struct rpcif_op *op, u64 *offs,
- 		   size_t *len);
--int rpcif_manual_xfer(struct rpcif *rpc);
--ssize_t rpcif_dirmap_read(struct rpcif *rpc, u64 offs, size_t len, void *buf);
-+int rpcif_manual_xfer(struct device *dev);
-+ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf);
- 
--static inline void rpcif_enable_rpm(struct rpcif *rpc)
-+static inline void rpcif_enable_rpm(struct device *dev)
- {
--	pm_runtime_enable(rpc->dev);
-+	pm_runtime_enable(dev);
- }
- 
--static inline void rpcif_disable_rpm(struct rpcif *rpc)
-+static inline void rpcif_disable_rpm(struct device *dev)
- {
--	pm_runtime_disable(rpc->dev);
-+	pm_runtime_disable(dev);
- }
- 
- #endif // __RENESAS_RPC_IF_H
+-		gmac2: ethernet@44002000 {
+-			compatible = "renesas,r9a06g032-gmac", "renesas,rzn1-gmac", "snps,dwmac";
+-			reg = <0x44002000 0x2000>;
+-			interrupt-parent = <&gic>;
+-			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi";
+-			clocks = <&sysctrl R9A06G032_HCLK_GMAC1>;
+-			clock-names = "stmmaceth";
+-			power-domains = <&sysctrl>;
+-			snps,multicast-filter-bins = <256>;
+-			snps,perfect-filter-entries = <128>;
+-			tx-fifo-depth = <2048>;
+-			rx-fifo-depth = <4096>;
+-			status = "disabled";
+-		};
+-
+-		eth_miic: eth-miic@44030000 {
+-			compatible = "renesas,r9a06g032-miic", "renesas,rzn1-miic";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			reg = <0x44030000 0x10000>;
+-			clocks = <&sysctrl R9A06G032_CLK_MII_REF>,
+-				 <&sysctrl R9A06G032_CLK_RGMII_REF>,
+-				 <&sysctrl R9A06G032_CLK_RMII_REF>,
+-				 <&sysctrl R9A06G032_HCLK_SWITCH_RG>;
+-			clock-names = "mii_ref", "rgmii_ref", "rmii_ref", "hclk";
+-			power-domains = <&sysctrl>;
+-			status = "disabled";
+-
+-			mii_conv1: mii-conv@1 {
+-				reg = <1>;
+-				status = "disabled";
+-			};
+-
+-			mii_conv2: mii-conv@2 {
+-				reg = <2>;
+-				status = "disabled";
+-			};
+-
+-			mii_conv3: mii-conv@3 {
+-				reg = <3>;
+-				status = "disabled";
+-			};
+-
+-			mii_conv4: mii-conv@4 {
+-				reg = <4>;
+-				status = "disabled";
+-			};
+-
+-			mii_conv5: mii-conv@5 {
+-				reg = <5>;
+-				status = "disabled";
+-			};
+-		};
+-
+-		switch: switch@44050000 {
+-			compatible = "renesas,r9a06g032-a5psw", "renesas,rzn1-a5psw";
+-			reg = <0x44050000 0x10000>;
+-			clocks = <&sysctrl R9A06G032_HCLK_SWITCH>,
+-				 <&sysctrl R9A06G032_CLK_SWITCH>;
+-			clock-names = "hclk", "clk";
+-			power-domains = <&sysctrl>;
+-			status = "disabled";
+-
+-			ethernet-ports {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-
+-				switch_port0: port@0 {
+-					reg = <0>;
+-					pcs-handle = <&mii_conv5>;
+-					status = "disabled";
+-				};
+-
+-				switch_port1: port@1 {
+-					reg = <1>;
+-					pcs-handle = <&mii_conv4>;
+-					status = "disabled";
+-				};
+-
+-				switch_port2: port@2 {
+-					reg = <2>;
+-					pcs-handle = <&mii_conv3>;
+-					status = "disabled";
+-				};
+-
+-				switch_port3: port@3 {
+-					reg = <3>;
+-					pcs-handle = <&mii_conv2>;
+-					status = "disabled";
+-				};
+-
+-				switch_port4: port@4 {
+-					reg = <4>;
+-					ethernet = <&gmac2>;
+-					label = "cpu";
+-					phy-mode = "internal";
+-					status = "disabled";
+-					fixed-link {
+-						speed = <1000>;
+-						full-duplex;
+-					};
+-				};
+-			};
+-		};
+-
+ 		gic: interrupt-controller@44101000 {
+ 			compatible = "arm,gic-400", "arm,cortex-a7-gic";
+ 			interrupt-controller;
 -- 
-2.25.1
+2.36.1
 
