@@ -2,286 +2,135 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D00CCA497
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jun 2022 12:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3662AC43334
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jun 2022 12:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234285AbiF0MYk (ORCPT
+        id S235806AbiF0M2T (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 Jun 2022 08:24:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58630 "EHLO
+        Mon, 27 Jun 2022 08:28:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240703AbiF0MYf (ORCPT
+        with ESMTP id S235822AbiF0M2O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Jun 2022 08:24:35 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9ECF6BF40;
-        Mon, 27 Jun 2022 05:24:33 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.92,226,1650898800"; 
-   d="scan'208";a="124258821"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 27 Jun 2022 21:24:29 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BD9BB4290412;
-        Mon, 27 Jun 2022 21:24:29 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
-        bhelgaas@google.com, krzk+dt@kernel.org, geert+renesas@glider.be,
-        magnus.damm@gmail.com
-Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 10/13] PCI: renesas: Add R-Car Gen4 PCIe Endpoint support
-Date:   Mon, 27 Jun 2022 21:24:14 +0900
-Message-Id: <20220627122417.809615-11-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220627122417.809615-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20220627122417.809615-1-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 27 Jun 2022 08:28:14 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 976E363F4;
+        Mon, 27 Jun 2022 05:28:13 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id ay16so18822773ejb.6;
+        Mon, 27 Jun 2022 05:28:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Elsn1kdcp1T0aFss4s1Yn5n0Fewq2VGTa3vav17sj6c=;
+        b=T++L9c9Wrp7TLX3Coa2qMb2pFJ7wXTapRDHRv6uk6BV75+qlhlNOoLuXpRecpu4W4v
+         y6AUq2ckXD8LCT52aOCtqHxHtjwSGNIgpUr+S6cbXtL5gxkxOtxwlUMrRxvw8MQ5ZgCm
+         onofVTt+wbq4XQ58cUuY1hq520R6YjogzN+E6pzeS2uipAb1LxfCWhJf5g4Xx5frrrwj
+         jC0PrEkBRYG8d528lrEHQIwhV0XOgFVjYJoHnNGKsGTaJoiQ/LoDcClnXLG6bPNfPxie
+         oSaikNWNcscK4cjfAAphFn9wqbZkEMmNC5Y0ngxLXZBZp2H95SKOvvaWskvvQ4BlDyRe
+         vvrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Elsn1kdcp1T0aFss4s1Yn5n0Fewq2VGTa3vav17sj6c=;
+        b=uocuFIiZR8Mj9tBz5g2ejmolunwy/EUY/fGp+Wa5QowGVrJrF5OK1nKf0BiBMvR7IM
+         onQRdAnkQ0VzYmBgtExNonZFYNBS4SdrZSVXuzeXrhVsE+ocBPFJm5oGFa1DYJznAmSE
+         M+XyihObXODXKI30u7StUgnGvyVBb1VqoxWlZzP2NaDB+CDd9KtmMvhMvESZweTZTDy7
+         qXUk4WDi0INoashYY0Sgl4FiLQXB05zqAOuF+Ij12Y4JETNlp0AOPaEcauqMkjZfKtle
+         o8yzHD1ZvxsnzjG0+grpn9VakJUPeM9BnJ8CQegaMkL4LsqCgPKZ59c8Ky2UzH26IGM4
+         ZwzA==
+X-Gm-Message-State: AJIora/rbZsJgBt52pytzziqWiO+KJ/dx4IV+82D3A/NirXsgJ6o7rC7
+        3UtoFHtcMSCqZsp8ahx/i2B0jrCA07EN3ccw4QpaX3tqAME=
+X-Google-Smtp-Source: AGRyM1sVp1iVWM23LPMLvWA8ATPnDg1VhspCYWfwAdDmgWn2gEDaIH/aDkyrg7GJPh57jqsKQn+pRxKUCbei30tyBbY=
+X-Received: by 2002:a17:907:72c4:b0:726:9406:f760 with SMTP id
+ du4-20020a17090772c400b007269406f760mr9104598ejc.247.1656332892065; Mon, 27
+ Jun 2022 05:28:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220626004326.8548-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220626004326.8548-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <87tu87eh5h.wl-maz@kernel.org>
+In-Reply-To: <87tu87eh5h.wl-maz@kernel.org>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 27 Jun 2022 13:27:45 +0100
+Message-ID: <CA+V-a8sihw9=Ychakh6tV+1+MpRayr=1VSnhSYZNp0F+f4Hdnw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: interrupt-controller: sifive,plic:
+ Document Renesas RZ/Five SoC
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add R-Car Gen4 PCIe Endpoint support. This controller is based on
-Synopsys DesignWare PCIe.
+Hi Marc,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pci/controller/dwc/Kconfig            |   9 +
- drivers/pci/controller/dwc/Makefile           |   2 +
- .../pci/controller/dwc/pcie-rcar-gen4-ep.c    | 192 ++++++++++++++++++
- 3 files changed, 203 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-rcar-gen4-ep.c
+Thank you for the review.
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index bee273968720..e8ded6d486f9 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -393,4 +393,13 @@ config PCIE_RCAR_GEN4
- 	  Say Y here if you want PCIe host controller support on R-Car Gen4 SoCs.
- 	  This uses the DesignWare core.
- 
-+config PCIE_RCAR_GEN4_EP
-+	tristate "Renesas R-Car Gen4 PCIe Endpoint controller"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	help
-+	  Say Y here if you want PCIe endpoint controller support on R-Car Gen4
-+	  SoCs. This uses the DesignWare core.
-+
- endmenu
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index 108fcbc61d9b..925a32a1f772 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -27,6 +27,8 @@ obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
- obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
- pcie-rcar-gen4-host-drv-objs := pcie-rcar-gen4.o pcie-rcar-gen4-host.o
- obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4-host-drv.o
-+pcie-rcar-gen4-ep-drv-objs := pcie-rcar-gen4.o pcie-rcar-gen4-ep.o
-+obj-$(CONFIG_PCIE_RCAR_GEN4_EP) += pcie-rcar-gen4-ep-drv.o
- 
- # The following drivers are for devices that use the generic ACPI
- # pci_root.c driver but don't support standard ECAM config access.
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4-ep.c b/drivers/pci/controller/dwc/pcie-rcar-gen4-ep.c
-new file mode 100644
-index 000000000000..4f11e3c37182
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4-ep.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCIe Endpoint driver for Renesas R-Car Gen4 Series SoCs
-+ * Copyright (C) 2022 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/pci.h>
-+#include <linux/platform_device.h>
-+
-+#include "pcie-rcar-gen4.h"
-+#include "pcie-designware.h"
-+
-+/* Configuration */
-+#define PCICONF3		0x000c
-+#define  MULTI_FUNC		BIT(23)
-+
-+static void rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+	int val;
-+
-+	rcar_gen4_pcie_set_device_type(rcar, false, dw->num_lanes);
-+
-+	dw_pcie_dbi_ro_wr_en(dw);
-+
-+	/* Single function */
-+	val = dw_pcie_readl_dbi(dw, PCICONF3);
-+	val &= ~MULTI_FUNC;
-+	dw_pcie_writel_dbi(dw, PCICONF3, val);
-+
-+	rcar_gen4_pcie_disable_bar(dw, BAR2MASKF);
-+	rcar_gen4_pcie_disable_bar(dw, BAR3MASKF);
-+
-+	rcar_gen4_pcie_set_max_link_width(dw, dw->num_lanes);
-+
-+	dw_pcie_dbi_ro_wr_dis(dw);
-+}
-+
-+static int rcar_gen4_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				       enum pci_epc_irq_type type,
-+				       u16 interrupt_num)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_EPC_IRQ_LEGACY:
-+		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
-+	case PCI_EPC_IRQ_MSI:
-+		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	default:
-+		dev_err(dw->dev, "UNKNOWN IRQ type\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pci_epc_features rcar_gen4_pcie_epc_features = {
-+	.linkup_notifier = false,
-+	.msi_capable = true,
-+	.msix_capable = false,
-+	.align = SZ_1M,
-+};
-+
-+static const struct pci_epc_features*
-+rcar_gen4_pcie_ep_get_features(struct dw_pcie_ep *ep)
-+{
-+	return &rcar_gen4_pcie_epc_features;
-+}
-+
-+static const struct dw_pcie_ep_ops pcie_ep_ops = {
-+	.ep_pre_init = rcar_gen4_pcie_ep_pre_init,
-+	.raise_irq = rcar_gen4_pcie_ep_raise_irq,
-+	.get_features = rcar_gen4_pcie_ep_get_features,
-+};
-+
-+static int rcar_gen4_add_pcie_ep(struct rcar_gen4_pcie *rcar,
-+				 struct platform_device *pdev)
-+{
-+	struct dw_pcie *dw = &rcar->dw;
-+	struct dw_pcie_ep *ep;
-+	int ret;
-+
-+	ep = &dw->ep;
-+	ep->ops = &pcie_ep_ops;
-+	ep->reset_all_bars = true;
-+
-+	ret = dw_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to initialize endpoint\n");
-+		return ret;
-+	}
-+
-+	dw->ops->start_link(dw);
-+
-+	return 0;
-+}
-+
-+static void rcar_gen4_remove_pcie_ep(struct rcar_gen4_pcie *rcar)
-+{
-+	dw_pcie_ep_exit(&rcar->dw.ep);
-+}
-+
-+static int rcar_gen4_pcie_ep_get_resources(struct rcar_gen4_pcie *rcar,
-+					   struct platform_device *pdev)
-+{
-+	struct dw_pcie *dw = &rcar->dw;
-+	struct device *dev = dw->dev;
-+
-+	/* Renesas-specific registers */
-+	rcar->base = devm_platform_ioremap_resource_byname(pdev, "appl");
-+	if (IS_ERR(rcar->base))
-+		return PTR_ERR(rcar->base);
-+
-+	return rcar_gen4_pcie_devm_reset_get(rcar, dev);
-+}
-+
-+static int rcar_gen4_pcie_ep_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rcar_gen4_pcie *rcar;
-+	int err;
-+
-+	rcar = rcar_gen4_pcie_devm_alloc(dev);
-+	if (!rcar)
-+		return -ENOMEM;
-+
-+	err = rcar_gen4_pcie_pm_runtime_enable(dev);
-+	if (err < 0) {
-+		dev_err(dev, "pm_runtime_get_sync failed\n");
-+		return err;
-+	}
-+
-+	err = rcar_gen4_pcie_ep_get_resources(rcar, pdev);
-+	if (err < 0) {
-+		dev_err(dev, "failed to request resource: %d\n", err);
-+		goto err_pm_put;
-+	}
-+
-+	platform_set_drvdata(pdev, rcar);
-+
-+	err = rcar_gen4_pcie_prepare(rcar);
-+	if (err < 0)
-+		goto err_pm_put;
-+
-+	err = rcar_gen4_add_pcie_ep(rcar, pdev);
-+	if (err < 0)
-+		goto err_ep_disable;
-+
-+	return 0;
-+
-+err_ep_disable:
-+	rcar_gen4_pcie_unprepare(rcar);
-+
-+err_pm_put:
-+	rcar_gen4_pcie_pm_runtime_disable(dev);
-+
-+	return err;
-+}
-+
-+static int rcar_gen4_pcie_ep_remove(struct platform_device *pdev)
-+{
-+	struct rcar_gen4_pcie *rcar = platform_get_drvdata(pdev);
-+
-+	rcar_gen4_remove_pcie_ep(rcar);
-+	rcar_gen4_pcie_unprepare(rcar);
-+	rcar_gen4_pcie_pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rcar_gen4_pcie_of_match[] = {
-+	{ .compatible = "renesas,rcar-gen4-pcie-ep", },
-+	{},
-+};
-+
-+static struct platform_driver rcar_gen4_pcie_ep_driver = {
-+	.driver = {
-+		.name = "pcie-rcar-gen4-ep",
-+		.of_match_table = rcar_gen4_pcie_of_match,
-+	},
-+	.probe = rcar_gen4_pcie_ep_probe,
-+	.remove = rcar_gen4_pcie_ep_remove,
-+};
-+module_platform_driver(rcar_gen4_pcie_ep_driver);
-+
-+MODULE_DESCRIPTION("Renesas R-Car Gen4 PCIe endpoint controller driver");
-+MODULE_LICENSE("GPL");
--- 
-2.25.1
+On Sun, Jun 26, 2022 at 1:35 PM Marc Zyngier <maz@kernel.org> wrote:
+>
+> On Sun, 26 Jun 2022 01:43:25 +0100,
+> Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> >
+> > Document Renesas RZ/Five (R9A07G043) SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2:
+> > * Fixed binding doc
+> > * Fixed review comments pointed by Krzysztof.
+> >
+> > RFC->v1:
+> > * Fixed Review comments pointed by Geert and Rob
+> > ---
+> >  .../sifive,plic-1.0.0.yaml                    | 44 +++++++++++++++++--
+> >  1 file changed, 41 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> > index 27092c6a86c4..59df367d1e44 100644
+> > --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> > @@ -28,7 +28,10 @@ description:
+> >
+> >    While the PLIC supports both edge-triggered and level-triggered interrupts,
+> >    interrupt handlers are oblivious to this distinction and therefore it is not
+> > -  specified in the PLIC device-tree binding.
+> > +  specified in the PLIC device-tree binding for SiFive PLIC (and similar PLIC's),
+> > +  but for the Renesas RZ/Five Soc (AX45MP AndesCore) which has NCEPLIC100 we need
+> > +  to specify the interrupt type as the flow for EDGE interrupts is different
+> > +  compared to LEVEL interrupts.
+> >
+> >    While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
+> >    "sifive,plic-1.0.0" device is a concrete implementation of the PLIC that
+> > @@ -57,6 +60,7 @@ properties:
+> >            - enum:
+> >                - allwinner,sun20i-d1-plic
+> >            - const: thead,c900-plic
+> > +      - const: renesas,r9a07g043-plic
+>
+> Since it is the NCEPLIC100 that is broken, shouldn't the compatible
+> string actually reflect that? I'd rather see 'andes,nceplic100' once
+> and for all instead of starting with Renesas, quickly followed by all
+> the other licensees that will inevitably integrate the same IP (which
+> isn't even specific to the AX45MP).
+>
+> This IP also comes with all sort of added (mis-)features, which may or
+> may not be used in the future, and it would make sense to identify it
+> specifically.
+>
+Agreed, I'll update it as above.
 
+Cheers,
+Prabhakar
