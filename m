@@ -2,95 +2,111 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E154EC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Jun 2022 12:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FF8C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Jun 2022 12:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345376AbiF1MHg (ORCPT
+        id S1345620AbiF1MXo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 08:07:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36642 "EHLO
+        Tue, 28 Jun 2022 08:23:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238286AbiF1MHf (ORCPT
+        with ESMTP id S1344426AbiF1MXm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 08:07:35 -0400
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E842B252;
-        Tue, 28 Jun 2022 05:06:52 -0700 (PDT)
-Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 99E5D1C0003;
-        Tue, 28 Jun 2022 12:06:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1656418001;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XlX9ERJmg7cC3AkJQeMdny26Pdns8t34JvkB+XE5gyc=;
-        b=m+1FJ8iO8oFZ5uIfj+dYWDKny3tQZosgAUIQL1F7mZnu9S9bM2V7V3EFx6BQHpWo8JCind
-        YROxNiVVz1Ciq8/mB/AVbcRb6WY5wXhm2+6tvlzzkAGu43GQh+BPqVT5KrIxVzAcYGc1ZM
-        WNBY/lScn+/Jf63NYsenDZU+Kf6lKz81ImGcZtXX7khdGgHBrrI/kwzTDfGKsQYhDnptzr
-        P95MryH/gCbuhS+1r2unZZUAGQSQ0Z5EU3GNruBiPDsnIwGS8uig0zZrl2yldblvjC8/3d
-        Wa4DEay9XdgFyDVwWwPiOJ08u8kpT7aJb7WvVi/cdFVenJ9CDEPUcnPeuzLdEg==
-Date:   Tue, 28 Jun 2022 14:05:53 +0200
-From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <olteanv@gmail.com>,
-        <f.fainelli@gmail.com>, <davem@davemloft.net>
-Subject: Re: [PATCH -next] net: pcs-rzn1-miic: fix return value check in
- miic_probe()
-Message-ID: <20220628140553.5174825b@fixe.home>
-In-Reply-To: <20220628120850.3425568-1-yangyingliang@huawei.com>
-References: <20220628120850.3425568-1-yangyingliang@huawei.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+        Tue, 28 Jun 2022 08:23:42 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C3D71208B
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jun 2022 05:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=J9ejt2rP4pl4lEYcgk5dd94+Tph
+        d3sBI6yFRvsuSWV8=; b=OVXWVnpLIxgmS0J8kr9LHpgQMyL4aXG8o06Cu90Iag6
+        Ma8YXoyjRiUxU4pWoxAEuoqOtGD6++wYkKFmufHGVAConB3Yilkvk+dffSV2AbUH
+        jFSc2RUc9XObNLAkNh6rTZMPx+81gy1OaCifgrIxhmc+zszJNAtI19rz+EwbSHfQ
+        =
+Received: (qmail 2860617 invoked from network); 28 Jun 2022 14:23:37 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jun 2022 14:23:37 +0200
+X-UD-Smtp-Session: l3s3148p1@q5ofG4HirgVZD+zG
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH] arm64: dts: renesas: ebisu: add port node to ak4613
+Date:   Tue, 28 Jun 2022 14:23:30 +0200
+Message-Id: <20220628122330.28323-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Le Tue, 28 Jun 2022 20:08:50 +0800,
-Yang Yingliang <yangyingliang@huawei.com> a =C3=A9crit :
+My Ebisu complains about the missing node when booting:
 
-> If devm_platform_ioremap_resource() fails, it never return
-> NULL pointer, replace NULL test with IS_ERR().
+ OF: graph: no port node found in /soc/i2c@e66d0000/codec@10
+ ------------[ cut here ]------------
+ WARNING: CPU: 1 PID: 37 at sound/soc/codecs/ak4613.c:873 ak4613_i2c_probe+0x274/0x2a0
+ CPU: 1 PID: 37 Comm: kworker/u4:2 Not tainted 5.19.0-rc3-arm64-renesas-00003-g57c83727d651 #50
+ Hardware name: Renesas Ebisu board based on r8a77990 (DT)
 
-Thanks for your patch, maybe this description would be better:
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-"On failure, devm_platform_ioremap_resource() returns a ERR_PTR() value
-and not NULL. Fix return value checking by using IS_ERR() and
-return PTR_ERR() as error value."
+Hi Morimoto-san, I have never done any sound stuff with R-Car. Is this
+the correct approach which I copied over from Salvator boards?
 
-Cl=C3=A9ment
+All the best,
 
->=20
-> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
->  drivers/net/pcs/pcs-rzn1-miic.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-m=
-iic.c
-> index 8f5e910f443d..d896961e48cc 100644
-> --- a/drivers/net/pcs/pcs-rzn1-miic.c
-> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
-> @@ -461,8 +461,8 @@ static int miic_probe(struct platform_device *pdev)
->  	spin_lock_init(&miic->lock);
->  	miic->dev =3D dev;
->  	miic->base =3D devm_platform_ioremap_resource(pdev, 0);
-> -	if (!miic->base)
-> -		return -EINVAL;
-> +	if (IS_ERR(miic->base))
-> +		return PTR_ERR(miic->base);
-> =20
->  	ret =3D devm_pm_runtime_enable(dev);
->  	if (ret < 0)
+   Wolfram
 
---=20
-Cl=C3=A9ment L=C3=A9ger,
-Embedded Linux and Kernel engineer at Bootlin
-https://bootlin.com
+ arch/arm64/boot/dts/renesas/ebisu.dtsi | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+index 8fc03491a11c..cec23a3287c0 100644
+--- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
++++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+@@ -478,6 +478,12 @@ ak4613: codec@10 {
+ 		asahi-kasei,out4-single-end;
+ 		asahi-kasei,out5-single-end;
+ 		asahi-kasei,out6-single-end;
++
++		port {
++			ak4613_endpoint: endpoint {
++				remote-endpoint = <&rsnd_endpoint0>;
++			};
++		};
+ 	};
+ 
+ 	cs2000: clk-multiplier@4f {
+@@ -708,13 +714,23 @@ &rcar_sound {
+ 		 <&audio_clk_a>, <&cs2000>, <&audio_clk_c>,
+ 		 <&cpg CPG_CORE R8A77990_CLK_ZA2>;
+ 
+-	rcar_sound,dai {
+-		dai0 {
+-			playback = <&ssi0>, <&src0>, <&dvc0>;
+-			capture = <&ssi1>, <&src1>, <&dvc1>;
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		rsnd_port0: port@0 {
++			reg = <0>;
++			rsnd_endpoint0: endpoint {
++				remote-endpoint = <&ak4613_endpoint>;
++
++				dai-format = "left_j";
++				bitclock-master = <&rsnd_endpoint0>;
++				frame-master = <&rsnd_endpoint0>;
++
++				playback = <&ssi0>, <&src0>, <&dvc0>;
++				capture = <&ssi1>, <&src1>, <&dvc1>;
++			};
+ 		};
+ 	};
+-
+ };
+ 
+ &rpc {
+-- 
+2.35.1
+
