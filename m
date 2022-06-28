@@ -2,76 +2,130 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F78C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Jun 2022 11:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EB9C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Jun 2022 12:05:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344711AbiF1L7A (ORCPT
+        id S245104AbiF1MFY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 07:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57450 "EHLO
+        Tue, 28 Jun 2022 08:05:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231223AbiF1L67 (ORCPT
+        with ESMTP id S230446AbiF1MFX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 07:58:59 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F90AA446;
-        Tue, 28 Jun 2022 04:58:57 -0700 (PDT)
-Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.56])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4LXNQb5DPfz9srD;
-        Tue, 28 Jun 2022 19:58:15 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 28 Jun 2022 19:58:55 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Tue, 28 Jun
- 2022 19:58:54 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-CC:     <clement.leger@bootlin.com>, <olteanv@gmail.com>,
-        <f.fainelli@gmail.com>, <davem@davemloft.net>
-Subject: [PATCH -next] net: pcs-rzn1-miic: fix return value check in miic_probe()
-Date:   Tue, 28 Jun 2022 20:08:50 +0800
-Message-ID: <20220628120850.3425568-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 28 Jun 2022 08:05:23 -0400
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D0932055;
+        Tue, 28 Jun 2022 05:04:52 -0700 (PDT)
+Received: by mail-qv1-f41.google.com with SMTP id 2so4652923qvc.0;
+        Tue, 28 Jun 2022 05:04:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zlmmkmS67MAx6J5t/JGg1s0oRcCGTGtJn2BOovrT090=;
+        b=8RkH+W+ryhhz/FoQncAXKmUE6sUpCvQE+7+qqqXGUJrf+vsSZSfxugraKxEFSZnN1W
+         t1+U5+6qbYVEVFBfYexEBi3waJBvXJt4hORFfq6TH8E6ieGeKYsITGws0VPMAcJ85Q+U
+         2S81G3NYjPeja4ko4cOqewS/vrLwEjDjA03LjbyjjxOmlrx0FCO/Am6hXCOAu8CBirtK
+         SGr0UFHlUMFA3I62ObHUm6KS7t6qtqbSXvgxk6Y2LEEjVq3QLGtdTQz+68niJ21zFRHw
+         u4GnuN4EaE8GthiXVZroE2PK8IC6OEAgFWWqeXt0uz6hGVgDsHwYtHobLfors+JcnGL+
+         wfyQ==
+X-Gm-Message-State: AJIora/N8UHnL7xf5JPQ4e6BaIdX+R4nRJUAj3IgzOIHvzQZpYNCcfvb
+        Hi5yLlvzTGh1GTb2YeEOJiXUKmD4eVoajw==
+X-Google-Smtp-Source: AGRyM1sz72p4COf8/RBcOlJtUES927w++F6UxKr7nj5/nlr5TQghovBDSJXWvWDBmnQpFNqQTo4xoQ==
+X-Received: by 2002:a05:6214:5841:b0:470:4b9c:9c95 with SMTP id ml1-20020a056214584100b004704b9c9c95mr3102799qvb.41.1656417891375;
+        Tue, 28 Jun 2022 05:04:51 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id bq30-20020a05620a469e00b006a785ba0c25sm533130qkb.77.2022.06.28.05.04.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jun 2022 05:04:51 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-31bf327d4b5so25092717b3.13;
+        Tue, 28 Jun 2022 05:04:50 -0700 (PDT)
+X-Received: by 2002:a0d:c787:0:b0:31b:a963:e1de with SMTP id
+ j129-20020a0dc787000000b0031ba963e1demr13694935ywd.283.1656417890619; Tue, 28
+ Jun 2022 05:04:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+References: <20220615101227.13463-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdVX9_qO2Ydi=_57NC2fFRy=YAzuSV7xH=huAamXKOKwCA@mail.gmail.com> <YrrhO+kb5d2rtTNA@shikoro>
+In-Reply-To: <YrrhO+kb5d2rtTNA@shikoro>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 28 Jun 2022 14:04:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXVJV0Or_6HbusKdFhVAi3OQKw=udYBS2B0-iH7DpjS7w@mail.gmail.com>
+Message-ID: <CAMuHMdXVJV0Or_6HbusKdFhVAi3OQKw=udYBS2B0-iH7DpjS7w@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen4: implement SDSRC properly
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-If devm_platform_ioremap_resource() fails, it never return
-NULL pointer, replace NULL test with IS_ERR().
+Hi Wolfram,
 
-Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/net/pcs/pcs-rzn1-miic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Jun 28, 2022 at 1:08 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> > > Tested on my Spider board (r8a779f0). Only build tested for r8a779g0 but
+> > > the docs for the registers are the same.
+> >
+> > While the SDSRCSEL bits are the same, the register at offset 0x8a4 is
+> > called SD0CKCR1 on R-Car S4-8, and CKSRCSELCR on R-Car V4H.
+> > I guess that is why you removed the definition of SD0CKCR1, and stored
+> > the register offset in DEF_GEN4_SDSRC(), despite both being the same?
+>
+> TBH, no :) I did that to be future proof in case the register gets moved
+> somewhere else. Also, this is consistent how we did it with DEF_GEN3_SD.
 
-diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
-index 8f5e910f443d..d896961e48cc 100644
---- a/drivers/net/pcs/pcs-rzn1-miic.c
-+++ b/drivers/net/pcs/pcs-rzn1-miic.c
-@@ -461,8 +461,8 @@ static int miic_probe(struct platform_device *pdev)
- 	spin_lock_init(&miic->lock);
- 	miic->dev = dev;
- 	miic->base = devm_platform_ioremap_resource(pdev, 0);
--	if (!miic->base)
--		return -EINVAL;
-+	if (IS_ERR(miic->base))
-+		return PTR_ERR(miic->base);
- 
- 	ret = devm_pm_runtime_enable(dev);
- 	if (ret < 0)
--- 
-2.25.1
+In case of DEF_GEN3_SD(), we have a register offset parameter because
+most affected SoCs have multiple SDHI instances, and multiple registers
+to control their clocks.
 
+> > >         case CLK_TYPE_GEN4_SDSRC:
+> > > -               div = ((readl(base + SD0CKCR1) >> 29) & 0x03) + 4;
+> > > +               value = (readl(base + core->offset) >> 29) & 3;
+> > > +               if (value) {
+> > > +                       div = value + 4;
+> > > +               } else {
+> > > +                       parent = clks[core->parent >> 16];
+> > > +                       if (IS_ERR(parent))
+> > > +                               return ERR_CAST(parent);
+> > > +                       div = 2;
+> > > +               }
+> >
+> > So this gives the exact same divider of PLL5 before.
+> >
+> > The clock diagram indeed shows different paths for value 0
+> > (PLL5 -> 1/2 -> 1/2) and values 1 and 2 (PLL5 -> {1/5 or 1/6}).
+> > But the textual description for SDSRC says "The SDSRC divider divides
+> > PLL5 output clock", matching the original code.
+> >
+> > Do we have to complicate the code? ;-)
+> > I guess the clock diagram was based on the diagram for R-Car H3
+> > (which has two daisy-chained fixed 1/2 dividers), with the new 1/5
+> > and 1/6 dividers added.
+>
+> We don't have to complicate the code unnecessarily. If you think the
+> diagram is flawed, then we can keep the current code. I changed the code
+> because I was confused when checking 'clk_summary' with the diagram and
+> wanted to make it proper to reduce my confusion.
+>
+> My patches to enable eMMC on Spider have a significantly lower
+> throughput than the BSP, so this was the first step of trying to verify
+> things and get the clocks in shape.
+>
+> If you call it superfluous, then we can drop it. No hard feelings here.
+
+OK, so let's drop this.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
