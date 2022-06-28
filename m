@@ -2,180 +2,159 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719BAC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Jun 2022 07:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5049DC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Jun 2022 09:30:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343653AbiF1Hzh (ORCPT
+        id S1344253AbiF1JaA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 03:55:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51148 "EHLO
+        Tue, 28 Jun 2022 05:30:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343659AbiF1Hzf (ORCPT
+        with ESMTP id S229747AbiF1JaA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 03:55:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E441581C;
-        Tue, 28 Jun 2022 00:55:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FE5560EC8;
-        Tue, 28 Jun 2022 07:55:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06D4C341C6;
-        Tue, 28 Jun 2022 07:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656402933;
-        bh=IupijrcDgqt6dfkeSK5H+pNqJwXwR4adqvvRmmKP5sc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=paGx7XfbzxmoD6s8mMOY4mzGbS2u9WekunAOEYaz+9lezGJxV4BJ3ivCKJIMv12s2
-         sIG7TOcSHwTl/IhgC090IGhxSjQX/HvKsRipbz7GIQ9GSjYB4sn8dxAHNTr51LTY+I
-         6XUA2Mz0i/z4ZacC46QQM/aXopEgvL4qxGXimz5dD3/fcJe5BEpV04BkCr66vmARPG
-         KAnfMCt2Q0STLg6k6gG90Wp/xabYeF2/+odjNEUzZ+sE6wJivs4ej5VS8iU77M58dI
-         CXOTtjtKp9GtqzE/x+vzWb0PkcjWiiJEljuvb6/rVFvUVHrzi/upwI/dbFXHN7AfTv
-         rS+hYZCmVVUhg==
-Received: by mail-vs1-f45.google.com with SMTP id w187so11268297vsb.1;
-        Tue, 28 Jun 2022 00:55:32 -0700 (PDT)
-X-Gm-Message-State: AJIora/pljw6rbFqvhFH6AIcQ5gKmT4dbn+O/AzGl/gmwbit73ItCBt5
-        USi1ZVCjw7K7I9zEEd93smNFxVupDhUbM+Cvots=
-X-Google-Smtp-Source: AGRyM1sZHbrnSo9VFN7K3myYkXRhM98Iy11cmoI8nqJ+4ldlVk/ZiXXwVXgC4FMCw2mOFBDVLbXR+0jMWfuApvm2ZAg=
-X-Received: by 2002:a05:6102:f8b:b0:354:57e8:4c1b with SMTP id
- e11-20020a0561020f8b00b0035457e84c1bmr1315164vsv.8.1656402931955; Tue, 28 Jun
- 2022 00:55:31 -0700 (PDT)
+        Tue, 28 Jun 2022 05:30:00 -0400
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B0F1D327;
+        Tue, 28 Jun 2022 02:29:58 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id q4so19106283qvq.8;
+        Tue, 28 Jun 2022 02:29:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8nl+YSQWi5co5//msD4X8kc4HSNtS5aQKM6ed50ckE0=;
+        b=EG9UGNgZEr8oLHOzQnIYIHMJL42S4cenMv1+1hLf82UhcMK8VCuTiyiVQI/vX/N8vt
+         WQhaHhiUEQiO97KojsxnrmiGaZRMDks22+/9fM4DIDyKd6trwNmZP4ldWYpqVxMLrJlC
+         lkvkjPX343SqX68qcV7v6MtrJtZErh0tEu/QoYEaTUpSTc3LuiXeIYAU46djC/kzHhip
+         cGoIdkFKPIh5r8A7g3iGjzWC9XBLhHRAfs1zO+f3t6GJV7gAa6vxXTYJ4M1vTCA+PXQ6
+         OjEPQE4dj4ulr0NcIihy+JY5Ug1VP+KwyyMJ4P+Ou//kXbak+lHnAqdSee2/xr7y57n7
+         xDXg==
+X-Gm-Message-State: AJIora8yXaa+ldWibxFWZYvIvj8cc7gko8AP2UZQkwE0CBst+rJ+Lfju
+        b4XGu9pMBcftQNsBULbV5ixeQaKXQS8p4w==
+X-Google-Smtp-Source: AGRyM1t17bZZUtAr7/2L7IAyQRDQwiw/bhYfIO4KAWnapufGYvpqrK86QPT6elN37HIgnOU3qXRdQw==
+X-Received: by 2002:ac8:5bca:0:b0:31b:eb73:7ec with SMTP id b10-20020ac85bca000000b0031beb7307ecmr3120412qtb.272.1656408597806;
+        Tue, 28 Jun 2022 02:29:57 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id b20-20020ae9eb14000000b006aee8580a37sm10349035qkg.10.2022.06.28.02.29.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jun 2022 02:29:57 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-317741c86fdso110575987b3.2;
+        Tue, 28 Jun 2022 02:29:57 -0700 (PDT)
+X-Received: by 2002:a81:3a81:0:b0:317:7dcf:81d4 with SMTP id
+ h123-20020a813a81000000b003177dcf81d4mr19723908ywa.47.1656408597026; Tue, 28
+ Jun 2022 02:29:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220627051257.38543-1-samuel@sholland.org> <20220627051257.38543-2-samuel@sholland.org>
-In-Reply-To: <20220627051257.38543-2-samuel@sholland.org>
-From:   Guo Ren <guoren@kernel.org>
-Date:   Tue, 28 Jun 2022 15:55:20 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTuBagHb0SHZqFjUP9bryVs=AnOTF8z2pxqEfmX4g14zQ@mail.gmail.com>
-Message-ID: <CAJF2gTTuBagHb0SHZqFjUP9bryVs=AnOTF8z2pxqEfmX4g14zQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] dt-bindings: interrupt-controller: Require trigger
- type for T-HEAD PLIC
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>
+References: <20220615101227.13463-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20220615101227.13463-1-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 28 Jun 2022 11:29:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVX9_qO2Ydi=_57NC2fFRy=YAzuSV7xH=huAamXKOKwCA@mail.gmail.com>
+Message-ID: <CAMuHMdVX9_qO2Ydi=_57NC2fFRy=YAzuSV7xH=huAamXKOKwCA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen4: implement SDSRC properly
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Reviewed-by: Guo Ren <guoren@kernel.org>
+Hi Wolfram,
 
-On Mon, Jun 27, 2022 at 1:13 PM Samuel Holland <samuel@sholland.org> wrote:
+On Wed, Jun 15, 2022 at 12:12 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Depending on the divider setting, SDSRC can have a different parent.
+> Implement this when reading the divider, to get a correct clock tree.
+> Setting the divider is left to the bootloader for now.
 >
-> The RISC-V PLIC specification unfortunately allows PLIC implementations
-> to ignore edges seen while an edge-triggered interrupt is being handled:
->
->   Depending on the design of the device and the interrupt handler,
->   in between sending an interrupt request and receiving notice of its
->   handler=E2=80=99s completion, the gateway might either ignore additiona=
-l
->   matching edges or increment a counter of pending interrupts.
->
-> For PLICs with that misfeature, software needs to know the trigger type
-> of each interrupt. This allows it to work around the issue by completing
-> edge-triggered interrupts before handling them. Such a workaround is
-> required to avoid missing any edges.
->
-> The T-HEAD C9xx PLIC is an example of a PLIC with this behavior.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> ---
->
->  .../sifive,plic-1.0.0.yaml                    | 31 ++++++++++++++++---
->  1 file changed, 27 insertions(+), 4 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifiv=
-e,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/=
-sifive,plic-1.0.0.yaml
-> index 27092c6a86c4..3c589cbca851 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-=
-1.0.0.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-=
-1.0.0.yaml
-> @@ -26,9 +26,13 @@ description:
->    with priority below this threshold will not cause the PLIC to raise it=
-s
->    interrupt line leading to the context.
->
-> -  While the PLIC supports both edge-triggered and level-triggered interr=
-upts,
-> -  interrupt handlers are oblivious to this distinction and therefore it =
-is not
-> -  specified in the PLIC device-tree binding.
-> +  The PLIC supports both edge-triggered and level-triggered interrupts. =
-For
-> +  edge-triggered interrupts, the RISC-V PLIC spec allows two responses t=
-o edges
-> +  seen while an interrupt handler is active; the PLIC may either queue t=
-hem or
-> +  ignore them. In the first case, handlers are oblivious to the trigger =
-type, so
-> +  it is not included in the interrupt specifier. In the second case, sof=
-tware
-> +  needs to know the trigger type, so it can reorder the interrupt flow t=
-o avoid
-> +  missing interrupts.
->
->    While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
->    "sifive,plic-1.0.0" device is a concrete implementation of the PLIC th=
-at
-> @@ -65,7 +69,8 @@ properties:
->      const: 0
->
->    '#interrupt-cells':
-> -    const: 1
-> +    minimum: 1
-> +    maximum: 2
->
->    interrupt-controller: true
->
-> @@ -91,6 +96,24 @@ required:
->    - interrupts-extended
->    - riscv,ndev
->
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - thead,c900-plic
-> +
-> +    then:
-> +      properties:
-> +        '#interrupt-cells':
-> +          const: 2
-> +
-> +    else:
-> +      properties:
-> +        '#interrupt-cells':
-> +          const: 1
-> +
->  additionalProperties: false
->
->  examples:
-> --
-> 2.35.1
->
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Thanks for your patch!
 
---=20
-Best Regards
- Guo Ren
+> Tested on my Spider board (r8a779f0). Only build tested for r8a779g0 but
+> the docs for the registers are the same.
 
-ML: https://lore.kernel.org/linux-csky/
+While the SDSRCSEL bits are the same, the register at offset 0x8a4 is
+called SD0CKCR1 on R-Car S4-8, and CKSRCSELCR on R-Car V4H.
+I guess that is why you removed the definition of SD0CKCR1, and stored
+the register offset in DEF_GEN4_SDSRC(), despite both being the same?
+
+> --- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+> @@ -71,7 +71,7 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
+>         DEF_FIXED(".pll6_div2", CLK_PLL6_DIV2,  CLK_PLL6,       2, 1),
+>         DEF_FIXED(".s0",        CLK_S0,         CLK_PLL1_DIV2,  2, 1),
+>
+> -       DEF_BASE(".sdsrc",      CLK_SDSRC,      CLK_TYPE_GEN4_SDSRC, CLK_PLL5),
+> +       DEF_GEN4_SDSRC(".sdsrc", CLK_SDSRC,     CLK_PLL5_DIV2,  CLK_PLL5, 0x08a4),
+>         DEF_RATE(".oco",        CLK_OCO,        32768),
+>
+>         DEF_BASE(".rpcsrc",     CLK_RPCSRC,     CLK_TYPE_GEN4_RPCSRC, CLK_PLL5),
+> diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+> index 3fc4233b1ead..c8cd32cf4606 100644
+> --- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+> @@ -86,7 +86,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
+>         DEF_FIXED(".s0_hsc",    CLK_S0_HSC,     CLK_PLL1_DIV2,  2, 1),
+>         DEF_FIXED(".sv_vip",    CLK_SV_VIP,     CLK_PLL1,       5, 1),
+>         DEF_FIXED(".sv_ir",     CLK_SV_IR,      CLK_PLL1,       5, 1),
+> -       DEF_BASE(".sdsrc",      CLK_SDSRC,      CLK_TYPE_GEN4_SDSRC, CLK_PLL5),
+> +       DEF_GEN4_SDSRC(".sdsrc", CLK_SDSRC,     CLK_PLL5_DIV2,  CLK_PLL5, 0x08a4),
+>         DEF_RATE(".oco",        CLK_OCO,        32768),
+>
+>         DEF_BASE(".rpcsrc",     CLK_RPCSRC,             CLK_TYPE_GEN4_RPCSRC, CLK_PLL5),
+> diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+> index c7ed43d6aa67..c6662ec10292 100644
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+> @@ -240,7 +240,15 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
+>                                           base, core->div, core->offset);
+>
+>         case CLK_TYPE_GEN4_SDSRC:
+> -               div = ((readl(base + SD0CKCR1) >> 29) & 0x03) + 4;
+> +               value = (readl(base + core->offset) >> 29) & 3;
+> +               if (value) {
+> +                       div = value + 4;
+> +               } else {
+> +                       parent = clks[core->parent >> 16];
+> +                       if (IS_ERR(parent))
+> +                               return ERR_CAST(parent);
+> +                       div = 2;
+> +               }
+
+So this gives the exact same divider of PLL5 before.
+
+The clock diagram indeed shows different paths for value 0
+(PLL5 -> 1/2 -> 1/2) and values 1 and 2 (PLL5 -> {1/5 or 1/6}).
+But the textual description for SDSRC says "The SDSRC divider divides
+PLL5 output clock", matching the original code.
+
+Do we have to complicate the code? ;-)
+I guess the clock diagram was based on the diagram for R-Car H3
+(which has two daisy-chained fixed 1/2 dividers), with the new 1/5
+and 1/6 dividers added.
+
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.h
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.h
+> @@ -67,7 +71,6 @@ struct rcar_gen4_cpg_pll_config {
+>  };
+>
+>  #define CPG_RPCCKCR    0x874
+> -#define SD0CKCR1       0x8a4
+>
+>  struct clk *rcar_gen4_cpg_clk_register(struct device *dev,
+>         const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
