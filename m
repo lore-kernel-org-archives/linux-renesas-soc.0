@@ -2,46 +2,48 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268D4C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 09:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792DCC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 09:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230109AbiF2JQV (ORCPT
+        id S231839AbiF2J2N (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 05:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56888 "EHLO
+        Wed, 29 Jun 2022 05:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbiF2JQV (ORCPT
+        with ESMTP id S231277AbiF2J2N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 05:16:21 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD4B2C660;
-        Wed, 29 Jun 2022 02:16:20 -0700 (PDT)
+        Wed, 29 Jun 2022 05:28:13 -0400
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [217.70.178.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A48002BF;
+        Wed, 29 Jun 2022 02:28:11 -0700 (PDT)
 Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 45647C0013;
-        Wed, 29 Jun 2022 09:16:17 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 03FBB240012;
+        Wed, 29 Jun 2022 09:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1656494178;
+        t=1656494890;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=jkmESM416SslUHNUzzLOc5OQPCjAoAiRojL4STsH4VU=;
-        b=fNliQTwONPTuoMJsnDb9UahqAmJ3jHbaFFsB4wuOrAHVu8bPD7mzobr9c1X+n3dfttWfWk
-        y/zfYDyx5s1xMMTmASN31l8o/z78PFoClLu8foJwMG3TD49WI2a4N2N5mzSKX8M7V4VExB
-        9OqVQKKyp6a6Iq341OZ+dZwPhEjaAkU0Zcbo1h/roWVKB56Bg7mGoNg0ZyeA0gb53RJUf3
-        DfekaSnXgs8EyVHBZwo8oRdKf/CVg+iZp/Ht4UY25q9qU1nBo2MZUj9xc9sMeCLYyXDIFr
-        EqzvDxqPGhtW/srfnejWTX08tgf4kftNwcQSw5gvOM4ipQG5MO/ZWiKqnYeSGg==
-Date:   Wed, 29 Jun 2022 11:15:30 +0200
+        bh=6n3CIs9RxVSb+aOC/z04UOZ6/DtdTS73o2Frum+oK/A=;
+        b=aH1yGbnUXRqJ8259krN+JCkO6nhY0K7zbLcsxwc/NXGHrS++ob3xejpYmp9KuzZsCqvcYX
+        VVjZbIxbKdSnVurEXvqmWAwll9mFDBn4qsYL48PwuGPv/3wV7NVJisWL5KAIOoaUkqr+XD
+        y9RmiRfc20rJzRfW4FGXaFNRQyV3kaGaog3xzfZsGFV6IcjxXBzxOU30G5BgbI8eWdqMlL
+        ttTWrXxIWyFCbI0HLr2newo7M5UMuUGylJI1Hnzll7lSqGB7Ai3PdFxdnZc+QS+ZF6ffTP
+        y1jMlv1e6Q+6JjPXA1gSfblorwq9e/QpCV7SJMpoRijHouUauJ9R36rIT7zvGQ==
+Date:   Wed, 29 Jun 2022 11:27:20 +0200
 From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <olteanv@gmail.com>,
-        <f.fainelli@gmail.com>, <davem@davemloft.net>
-Subject: Re: [PATCH -next v2] net: pcs-rzn1-miic: fix return value check in
- miic_probe()
-Message-ID: <20220629111530.3b74c014@fixe.home>
-In-Reply-To: <20220628131259.3109124-1-yangyingliang@huawei.com>
-References: <20220628131259.3109124-1-yangyingliang@huawei.com>
+To:     Peng Wu <wupeng58@huawei.com>
+Cc:     <andrew@lunn.ch>, <vivien.didelot@gmail.com>,
+        <f.fainelli@gmail.com>, <olteanv@gmail.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <linux-renesas-soc@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <liwei391@huawei.com>
+Subject: Re: [PATCH] net: dsa: rzn1-a5psw: fix a NULL vs IS_ERR() check in
+ a5psw_probe()
+Message-ID: <20220629112720.648619a8@fixe.home>
+In-Reply-To: <20220628130920.49493-1-wupeng58@huawei.com>
+References: <20220628130920.49493-1-wupeng58@huawei.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -51,41 +53,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Le Tue, 28 Jun 2022 21:12:59 +0800,
-Yang Yingliang <yangyingliang@huawei.com> a =C3=A9crit :
+Le Tue, 28 Jun 2022 13:09:20 +0000,
+Peng Wu <wupeng58@huawei.com> a =C3=A9crit :
 
-> On failure, devm_platform_ioremap_resource() returns a ERR_PTR() value
-> and not NULL. Fix return value checking by using IS_ERR() and return
-> PTR_ERR() as error value.
+> The devm_platform_ioremap_resource() function never returns NULL.
+> It returns error pointers.
 >=20
-> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
+> Signed-off-by: Peng Wu <wupeng58@huawei.com>
 > Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 > ---
-> v2:
->   change commit message as Cl=C3=A9ment suggested.
-> ---
->  drivers/net/pcs/pcs-rzn1-miic.c | 4 ++--
+>  drivers/net/dsa/rzn1_a5psw.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
 >=20
-> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-m=
-iic.c
-> index 8f5e910f443d..d896961e48cc 100644
-> --- a/drivers/net/pcs/pcs-rzn1-miic.c
-> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
-> @@ -461,8 +461,8 @@ static int miic_probe(struct platform_device *pdev)
->  	spin_lock_init(&miic->lock);
->  	miic->dev =3D dev;
->  	miic->base =3D devm_platform_ioremap_resource(pdev, 0);
-> -	if (!miic->base)
+> diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
+> index 3e910da98ae2..5b14e2ba9b79 100644
+> --- a/drivers/net/dsa/rzn1_a5psw.c
+> +++ b/drivers/net/dsa/rzn1_a5psw.c
+> @@ -946,8 +946,8 @@ static int a5psw_probe(struct platform_device *pdev)
+>  	mutex_init(&a5psw->lk_lock);
+>  	spin_lock_init(&a5psw->reg_lock);
+>  	a5psw->base =3D devm_platform_ioremap_resource(pdev, 0);
+> -	if (!a5psw->base)
 > -		return -EINVAL;
-> +	if (IS_ERR(miic->base))
-> +		return PTR_ERR(miic->base);
+> +	if (IS_ERR(a5psw->base))
+> +		return PTR_ERR(a5psw->base);
 > =20
->  	ret =3D devm_pm_runtime_enable(dev);
->  	if (ret < 0)
+>  	ret =3D a5psw_pcs_get(a5psw);
+>  	if (ret)
 
-LGTM, thanks.
+Thanks,
 
 Reviewed-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
 
