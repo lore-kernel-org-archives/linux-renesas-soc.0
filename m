@@ -2,122 +2,73 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3082CC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 09:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D526FC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 09:14:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232215AbiF2JOA (ORCPT
+        id S232640AbiF2JOs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 05:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54836 "EHLO
+        Wed, 29 Jun 2022 05:14:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiF2JOA (ORCPT
+        with ESMTP id S231339AbiF2JOr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 05:14:00 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D356720F46;
-        Wed, 29 Jun 2022 02:13:57 -0700 (PDT)
-Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id AF7EA24000A;
-        Wed, 29 Jun 2022 09:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1656494036;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=rDHvQvZTZ+R6+aUdOzyCj3VSYkqM3jPLAofXVQtDdKs=;
-        b=bydiXHqeu+ipQRkYLeFH2JmHxjH2WIGFKp3qA2p8qTs6a7F26ADptQeOoLq2C0Fpn6/OsY
-        RH/OZ56cmcDgYw3ABqTGhrukKF/i70oh7D2Qe54WuPO/M1hGw41LBL/j36W/ixGKt7mLGx
-        M4S3FMhE4QvMqyi5rMGcfDcTa/U2nSxTE2G1W570/nsTzP9XBnJ1SDQIizh+1WIabXS4sC
-        wkPDB1ZWxn1S9Lq9B/xveASOcGrUVdEH5ymjgnQcX7Dl/lAMR1oyoRl/0Waiq9pPvp32gZ
-        7yb621L4HpCDyzIVlZfIxTJqoXcIZx/oWa6hQTZDxv1l2yHkMluV2KTcOzSwnQ==
-From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>
-Subject: [PATCH net-next] dt-bindings: net: dsa: renesas,rzn1-a5psw: add interrupts description
-Date:   Wed, 29 Jun 2022 11:13:04 +0200
-Message-Id: <20220629091305.125291-1-clement.leger@bootlin.com>
-X-Mailer: git-send-email 2.36.1
+        Wed, 29 Jun 2022 05:14:47 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0437C286E5;
+        Wed, 29 Jun 2022 02:14:45 -0700 (PDT)
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4LXwgN3LzBzTgFY;
+        Wed, 29 Jun 2022 17:11:12 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Wed, 29 Jun 2022 17:14:42 +0800
+Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 29 Jun
+ 2022 17:14:42 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+CC:     <clement.leger@bootlin.com>, <olteanv@gmail.com>,
+        <f.fainelli@gmail.com>, <davem@davemloft.net>
+Subject: [PATCH -next] net: dsa: rzn1-a5psw: add missing of_node_put() in a5psw_pcs_get()
+Date:   Wed, 29 Jun 2022 17:24:35 +0800
+Message-ID: <20220629092435.496051-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Describe the switch interrupts (dlr, switch, prp, hub, pattern) which
-are connected to the GIC.
+of_parse_phandle() will increase the refcount of 'pcs_node', so add
+of_node_put() before return from a5psw_pcs_get().
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+Fixes: 888cdb892b61 ("net: dsa: rzn1-a5psw: add Renesas RZ/N1 advanced 5 port switch driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- .../bindings/net/dsa/renesas,rzn1-a5psw.yaml  | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/net/dsa/rzn1_a5psw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-index 103b1ef5af1b..51f274c16ed1 100644
---- a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-@@ -26,6 +26,22 @@ properties:
-   reg:
-     maxItems: 1
+diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
+index 3e910da98ae2..301171ee1061 100644
+--- a/drivers/net/dsa/rzn1_a5psw.c
++++ b/drivers/net/dsa/rzn1_a5psw.c
+@@ -923,6 +923,7 @@ static int a5psw_pcs_get(struct a5psw *a5psw)
+ 	return 0;
  
-+  interrupts:
-+    items:
-+      - description: DLR interrupt
-+      - description: Switch interrupt
-+      - description: PRP interrupt
-+      - description: Integrated HUB module interrupt
-+      - description: RX Pattern interrupt
-+
-+  interrupts-names:
-+    items:
-+      - const: dlr
-+      - const: switch
-+      - const: prp
-+      - const: hub
-+      - const: ptrn
-+
-   power-domains:
-     maxItems: 1
- 
-@@ -76,6 +92,7 @@ examples:
-   - |
-     #include <dt-bindings/gpio/gpio.h>
-     #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     switch@44050000 {
-         compatible = "renesas,r9a06g032-a5psw", "renesas,rzn1-a5psw";
-@@ -83,6 +100,12 @@ examples:
-         clocks = <&sysctrl R9A06G032_HCLK_SWITCH>, <&sysctrl R9A06G032_CLK_SWITCH>;
-         clock-names = "hclk", "clk";
-         power-domains = <&sysctrl>;
-+        interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupts-name = "dlr", "switch", "prp", "hub", "ptrn";
- 
-         dsa,member = <0 0>;
- 
+ free_pcs:
++	of_node_put(pcs_node);
+ 	of_node_put(port);
+ 	of_node_put(ports);
+ 	a5psw_pcs_free(a5psw);
 -- 
-2.36.1
+2.25.1
 
