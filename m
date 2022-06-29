@@ -2,107 +2,136 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 046C7C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 18:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1344DCCA47C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 19:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230399AbiF2Swp (ORCPT
+        id S229838AbiF2TGv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 14:52:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38682 "EHLO
+        Wed, 29 Jun 2022 15:06:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231689AbiF2Swb (ORCPT
+        with ESMTP id S229617AbiF2TGu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 14:52:31 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E1C51C939
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 11:52:30 -0700 (PDT)
-Received: by mail-qk1-f169.google.com with SMTP id f14so12841416qkm.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 11:52:30 -0700 (PDT)
+        Wed, 29 Jun 2022 15:06:50 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB7B1F632
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 12:06:49 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id x138so13279383pfc.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 12:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=s6pppYCg+xN6yU5OXcSWeZaVEFtlYPN+hBOePn639pU=;
+        b=eaCJ8wx05ND+baOlNNJvIVYTYZo449HqYbVsv8iqv8wIMiPYufZQoBYbeMiebJV6N6
+         faX0diAkXLiWuFJBE6nAL4gmIkVF+PauAG0QZtPPg/pWM+75Lrmd93JXfYGvwN70SWP0
+         Gkf7XO5RxHdR8iJFbEgSw0TunCvKLyaJLmdmVC+1lnr/BJX7FV4luw2VaHsdzKZmjKlT
+         TTp1SrAvu/8zZefdEkcje52JIeHI2gXE3bPVgFXLO8XKLRxWwbP1M9WzKVXOj0RKQ7pX
+         T/aBCTtNeyG/Ri/7RITRZqUKcJwk5G7W9HYuMXUNyDN/NoOeNQ5WBb7qwMdkYT41EFAh
+         KQ2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w5UKm3+Et8OqHZy7MpIkkYAEAWMnJqoLySy1bjVmmsc=;
-        b=AXvIZg/QkSVX2wayg1on2xPvJFZp/0IljSRAhlWJnaw2TXCN/bLUfMmRqck4eDB1WZ
-         coazCIgKBcCMmcgsMGaSLeeXDQpJOXjSK8vk+zXJq+iCxvxjYuitdbQ/8obzF55ZYU+F
-         SFAX10TZ3JDBduYNCvGMSdknUT0oyNaArcaj+z7QwmFL8bmqbJtEQkF6CEwM6O/E+YKQ
-         57D4xgk25Y/pWmekdzL8iinygoU3RKEYGj9dp1GODH4JZQwT371RRKT6yJ90MprWGI9F
-         OEKHb3wdC/Y08a//2+s2wVxWUsr5yZn7ykrXS+9P3SMrumh127IwjUQzymmn2WiBHcr2
-         VjbA==
-X-Gm-Message-State: AJIora+OgPd2wAM00dTUGc8AY/9iBu+e786F5vP2QaXYEfua2ETigkdi
-        D9k6LAf6KuO4PjiZoLiMshx5hPblbQEfXQ==
-X-Google-Smtp-Source: AGRyM1u6k46tUVNV9I1bjiuBHVlUVmHQpaBEBX3RspaEz7sqsuASHcEg1oDgYtuyGAQZwJer197eOg==
-X-Received: by 2002:a37:a782:0:b0:6ae:e87b:5a23 with SMTP id q124-20020a37a782000000b006aee87b5a23mr3326417qke.0.1656528749180;
-        Wed, 29 Jun 2022 11:52:29 -0700 (PDT)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
-        by smtp.gmail.com with ESMTPSA id l6-20020a37bb06000000b006a981a2c483sm13255440qkf.39.2022.06.29.11.52.28
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 11:52:28 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id p7so28161503ybm.7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 11:52:28 -0700 (PDT)
-X-Received: by 2002:a5b:6c1:0:b0:669:a7c3:4c33 with SMTP id
- r1-20020a5b06c1000000b00669a7c34c33mr4996065ybq.543.1656528748030; Wed, 29
- Jun 2022 11:52:28 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=s6pppYCg+xN6yU5OXcSWeZaVEFtlYPN+hBOePn639pU=;
+        b=WFlTwrh9Cy8xeVgTVUo6B/7Q5Z9qpGoDBLvMYjG1QssWxvhsYe9NBVUgFd7Zo05LH8
+         2j6Ab3rQEW5QA4pyOin70vfiAgoiB8b9+xNbpBeJ7Y/pwTTvoWLm1EiWGnI08nOQnX5O
+         eevB1iHofYp/Qt5CzmqYok/CB3Lnil+/R1vJ06Q4FPzcCnpb3LEnvAh6v7VsDvA2uB/E
+         LlaCJpiKYPfUW/QF3i3kiy2txl9ob1i9TyExrgW0oUwUUn2nQXMlOqF5DasYRABIXsAl
+         uX28l1KQv5k2F9AFK/af+WFCLafWojNoOtY0hHmv0g0GCFaDeQpZZqMTez1DfY1no+hY
+         VSFA==
+X-Gm-Message-State: AJIora+9ROiXJ69XORiQSNw8+CeVF3nJW2xulK2BOQkmq/ZJuLK4+k8K
+        ydkRUPlzSHPucnFahi5zbvILNk4rV9tpHC5549A=
+X-Google-Smtp-Source: AGRyM1tr7ljFToimJI6gt9Ea8CoUhLIoathaALoNVUR1OLC1x5st7pKgyd1rbI2MgkurLSAwJHhhyA==
+X-Received: by 2002:a63:2a4e:0:b0:40c:6ff9:9978 with SMTP id q75-20020a632a4e000000b0040c6ff99978mr4102500pgq.447.1656529608920;
+        Wed, 29 Jun 2022 12:06:48 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id t2-20020a1709028c8200b0016a3248376esm11660183plo.181.2022.06.29.12.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 12:06:48 -0700 (PDT)
+Message-ID: <62bca2c8.1c69fb81.c8246.0c1c@mx.google.com>
+Date:   Wed, 29 Jun 2022 12:06:48 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <202206300252.mQeUSfuW-lkp@intel.com>
-In-Reply-To: <202206300252.mQeUSfuW-lkp@intel.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 29 Jun 2022 20:52:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVJ08qp9c5uG=A_G1kZo_ocw9zYR+8F7sOvJeQzmKyFLg@mail.gmail.com>
-Message-ID: <CAMuHMdVJ08qp9c5uG=A_G1kZo_ocw9zYR+8F7sOvJeQzmKyFLg@mail.gmail.com>
-Subject: Re: [geert-renesas-drivers:renesas-pinctrl-for-v5.20 5/5]
- drivers/pinctrl/renesas/pinctrl-rzv2m.c:37:33: error: implicit declaration of
- function 'FIELD_GET'
-To:     kernel test robot <lkp@intel.com>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>, kbuild-all@lists.01.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2022-06-29-v5.19-rc4
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master cros-ec: 9 runs,
+ 1 regressions (renesas-devel-2022-06-29-v5.19-rc4)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kernel Test Robot,
+renesas/master cros-ec: 9 runs, 1 regressions (renesas-devel-2022-06-29-v5.=
+19-rc4)
 
-On Wed, Jun 29, 2022 at 8:38 PM kernel test robot <lkp@intel.com> wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-pinctrl-for-v5.20
-> head:   1e18476c392f4491a93c29937c4d6a49c27661c8
-> commit: 1e18476c392f4491a93c29937c4d6a49c27661c8 [5/5] pinctrl: renesas: Add RZ/V2M pin and gpio controller driver
-> config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20220630/202206300252.mQeUSfuW-lkp@intel.com/config)
-> compiler: sh4-linux-gcc (GCC) 11.3.0
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?id=1e18476c392f4491a93c29937c4d6a49c27661c8
->         git remote add geert-renesas-drivers https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
->         git fetch --no-tags geert-renesas-drivers renesas-pinctrl-for-v5.20
->         git checkout 1e18476c392f4491a93c29937c4d6a49c27661c8
->         # save the config file
->         mkdir build_dir && cp config build_dir/.config
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=sh SHELL=/bin/bash
->
-> If you fix the issue, kindly add following tag where applicable
-> Reported-by: kernel test robot <lkp@intel.com>
+Regressions Summary
+-------------------
 
-Thanks for your report!
+platform          | arch | lab           | compiler | defconfig          | =
+regressions
+------------------+------+---------------+----------+--------------------+-=
+-----------
+tegra124-nyan-big | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
+1          =
 
-> All errors (new ones prefixed by >>):
->
->    drivers/pinctrl/renesas/pinctrl-rzv2m.c: In function 'rzv2m_dt_subnode_to_map':
-> >> drivers/pinctrl/renesas/pinctrl-rzv2m.c:37:33: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
 
-Missing #include <linux/bitfield.h>.
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-06-29-v5.19-rc4/plan/cros-ec/
 
-Will amend to fix.
+  Test:     cros-ec
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-06-29-v5.19-rc4
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      33401641a5eb2a82fb3eeeb71752594b1d8016bc
 
-Gr{oetje,eeting}s,
+  Test suite revisions:
+    cros-ec-tests
+      URL:  https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform=
+/cros-ec-tests.git
+      SHA:  86181a7fbd379fc42314c450740d2cea8cdf04c1 =
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Test Regressions
+---------------- =
+
+
+
+platform          | arch | lab           | compiler | defconfig          | =
+regressions
+------------------+------+---------------+----------+--------------------+-=
+-----------
+tegra124-nyan-big | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
+1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62bc989926b5b2967aa39bea
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-06-29-v5.19-rc4/arm/multi_v7_defconfig/gcc-10/lab-collabora/cros-ec-teg=
+ra124-nyan-big.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-06-29-v5.19-rc4/arm/multi_v7_defconfig/gcc-10/lab-collabora/cros-ec-teg=
+ra124-nyan-big.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220624.0/armhf/rootfs.cpio.gz =
+
+
+
+  * cros-ec.login: https://kernelci.org/test/case/id/62bc989926b5b2967aa39b=
+eb
+        failing since 37 days (last pass: renesas-devel-2022-05-17-v5.18-rc=
+7, first fail: renesas-devel-2022-05-23-v5.18) =
+
+ =20
