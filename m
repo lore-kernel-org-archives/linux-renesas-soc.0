@@ -2,108 +2,91 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EC2CCA483
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 06:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53985C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 07:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232773AbiF2G7F (ORCPT
+        id S230200AbiF2HQt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 02:59:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38290 "EHLO
+        Wed, 29 Jun 2022 03:16:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232016AbiF2G6M (ORCPT
+        with ESMTP id S231381AbiF2HQq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 02:58:12 -0400
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B10E533890;
-        Tue, 28 Jun 2022 23:57:49 -0700 (PDT)
-Received: by mail-qv1-f41.google.com with SMTP id 2so8563906qvc.0;
-        Tue, 28 Jun 2022 23:57:49 -0700 (PDT)
+        Wed, 29 Jun 2022 03:16:46 -0400
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DF96338A4;
+        Wed, 29 Jun 2022 00:16:45 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id b133so11398103qkc.6;
+        Wed, 29 Jun 2022 00:16:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZAl0DXeEP1iLPwgoXgupmgF0KTbHxLpZfpaYD3ShJsE=;
-        b=OTxVhQ/ZEvmc31F6e1vp0os8oMrLc60IMhgr21uxW+1GEg3U8S4ZcMaDu+6JxmCWXU
-         At4JDqbcjeP+wS2xjcVqaM8bG6FUloFe6yjGarcf739UUvVexWjCmhzbLBx+JGyAnh8v
-         fjXt30Rv7VzP2q9i7hMVLM+y5OY9RALts9xPmnl4TEirFXfroFjNUivUS/xjC7UupKhd
-         DQ4mbKpd+/B/xWIX1crGbmXshqcVfkLKegSEr72+SFf7OtvsaLGdU/VZkutMJQ4ZnC1L
-         s11GlmU55Jm209HqPuLh48426gjM+cYXWczL2sM8OaKaEdkfQIvszscMF8ADZkEnbmNp
-         qKPA==
-X-Gm-Message-State: AJIora8Y9dmDWARgXmpovCgLl/D5bWl7YHGd70sbUv/5my4/ZGqal3tG
-        puTLJwE/zF1FDpKu4Vi0vopvx/mfzRwwgQ==
-X-Google-Smtp-Source: AGRyM1u1RVeuTga1wg8IdQGfk9J+YZtYhxkRrNqimPW/6kREgHPaRqBzykiMYturPbUOesG62dL8+Q==
-X-Received: by 2002:a05:6214:410c:b0:470:46e6:bbbf with SMTP id kc12-20020a056214410c00b0047046e6bbbfmr6609302qvb.42.1656485868593;
-        Tue, 28 Jun 2022 23:57:48 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id a20-20020ac84d94000000b0030515120916sm10149793qtw.44.2022.06.28.23.57.48
+        bh=QHnTw+1dh39iLHqR9tM/upSF9rPKTfu4pJ0mDQbSipM=;
+        b=bJBiHgnxN3gFCdJ0nMSn0I8Gbgmzz/I65rE6Ss1RW2tgA6wwcZb65OXBRYzMvYH8in
+         Xf5d7oEazg+Y6lTPhsT8V6aSOaMZhpi3bdLAd5xi9p1GOGulPVAqSngKfB+HH0jWINnw
+         BLyrtplFe9BeZdLvpAL1HTDKGUBfMP6oZDrcL0VPiHB2EmAtvL62hBjltlhvYXmnSGpo
+         At0xqdHqIeLtq/1d4KW3AKFqZmuQpNQAxtc3NFtgKjDVuHxZ7Lx8z4zruSEOKrXnV3nx
+         CO37PC6FV1hUFm/dyUQTGkZ2ZUNqd01V30bYY1GT+DX0OQq+hN47IGhpmq87KntNAvO7
+         wl6w==
+X-Gm-Message-State: AJIora+CvGDkEOflQ9eN6JmvwGjg2l8TeViatHLthh4fOm7ReN6sIkKN
+        80nzc5nsyBZsFfNiRtsQQRen93s6IY0wZA==
+X-Google-Smtp-Source: AGRyM1sn/xFg4j+kAILXah5nPATN/CoZ7OOZ9YSfbXZHkAmUj2K+WErd2Xc1mIwBrDG5FJ9jdCIo/Q==
+X-Received: by 2002:a05:620a:294a:b0:6ae:fb7f:831 with SMTP id n10-20020a05620a294a00b006aefb7f0831mr1004462qkp.130.1656487004135;
+        Wed, 29 Jun 2022 00:16:44 -0700 (PDT)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id s12-20020a05620a29cc00b006a36b0d7f27sm13510541qkp.76.2022.06.29.00.16.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jun 2022 23:57:48 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id i15so26355535ybp.1;
-        Tue, 28 Jun 2022 23:57:48 -0700 (PDT)
-X-Received: by 2002:a05:6902:905:b0:64a:2089:f487 with SMTP id
- bu5-20020a056902090500b0064a2089f487mr1809912ybb.202.1656485560287; Tue, 28
- Jun 2022 23:52:40 -0700 (PDT)
+        Wed, 29 Jun 2022 00:16:43 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id q132so26304148ybg.10;
+        Wed, 29 Jun 2022 00:16:43 -0700 (PDT)
+X-Received: by 2002:a5b:6c1:0:b0:669:a7c3:4c33 with SMTP id
+ r1-20020a5b06c1000000b00669a7c34c33mr1776911ybq.543.1656487003120; Wed, 29
+ Jun 2022 00:16:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220628194526.111501-1-phil.edworthy@renesas.com>
- <20220628194526.111501-3-phil.edworthy@renesas.com> <YrttwplV9zEgCFji@smile.fi.intel.com>
-In-Reply-To: <YrttwplV9zEgCFji@smile.fi.intel.com>
+References: <874k0nlrbw.wl-kuninori.morimoto.gx@renesas.com>
+ <87r13rkcos.wl-kuninori.morimoto.gx@renesas.com> <CAMuHMdVVPN-dhnjw1y7WqQJjZNO-YG8PjaFjmCvawMAhZJJLsA@mail.gmail.com>
+ <87r138jm3r.wl-kuninori.morimoto.gx@renesas.com> <87k090ji9t.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87k090ji9t.wl-kuninori.morimoto.gx@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 29 Jun 2022 08:52:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV1xkCvico_f359xBzkwU5pG3VVJV7O3dHRyy5a9QvyGw@mail.gmail.com>
-Message-ID: <CAMuHMdV1xkCvico_f359xBzkwU5pG3VVJV7O3dHRyy5a9QvyGw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] i2c: Add Renesas RZ/V2M controller
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wolfram Sang <wsa@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh@kernel.org>, Sven Peter <sven@svenpeter.dev>,
-        Jan Dabros <jsd@semihalf.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Tyrone Ting <kfting@nuvoton.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Wed, 29 Jun 2022 09:16:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWPWzhBoDeTR-ueS9Y9sBVWx_zUAM+6b168Tb8LYcGxcg@mail.gmail.com>
+Message-ID: <CAMuHMdWPWzhBoDeTR-ueS9Y9sBVWx_zUAM+6b168Tb8LYcGxcg@mail.gmail.com>
+Subject: Re: [PATCH v3 09/21] pinctrl: renesas: r8a779g0: add missing TCLKx_A/TCLK_B/TCLKx_X
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Andy,
+Hi Morimoto-san,
 
-On Tue, Jun 28, 2022 at 11:08 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Tue, Jun 28, 2022 at 08:45:26PM +0100, Phil Edworthy wrote:
-> > Yet another i2c controller from Renesas that is found on the RZ/V2M
-> > (r9a09g011) SoC. It can support only 100kHz and 400KHz operation.
-
-> > +static int rzv2m_i2c_send(struct rzv2m_i2c_priv *priv, struct i2c_msg *msg,
-> > +                       unsigned int *count)
-> > +{
-> > +     unsigned int i;
-> > +     int ret = 0;
+On Wed, Jun 29, 2022 at 4:49 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> > > LGTM, but as the suffixes become part of the DT ABI when defining
+> > > pin groups, we should get the conflicts resolved, and this cannot
+> > > be applied as-is.
+> >
+> > It seems HW team / Doc team are now fixuping suffixes.
+> > I think I need to use new Doc for v4.
 >
-> Redundant assignment, you may return 0 directly.
-
-Can you prove msg->len is never zero, and the loop below is always
-executed at least once?
-The driver does set I2C_AQ_NO_ZERO_LEN, but I don't think the static
-checkers know ;-)
-
+> We don't know when new Doc comming,
+> and I don't think there is someone who will get DT naming exchange issue for now
+> (Because no uses).
 >
-> > +     for (i = 0; i < msg->len; i++) {
-> > +             ret = rzv2m_i2c_write_with_ack(priv, msg->buf[i]);
-> > +             if (ret < 0)
-> > +                     return ret;
-> > +     }
-> > +     *count = i;
-> > +
-> > +     return ret;
-> > +}
+> So, I'm happy if you can accept my next v4 patch-set (suffix is still using _X).
+> and I'm happy to post new incremental patch which is for
+> "update PFC to adjust to latest Datasheet" in such case.
+
+My worry is not about the group of pins marked _X, but about its
+siblings without _X.  E.g. your patches have SCIF1 and SCIF1_X,
+but we do not know yet if SCIF1 should be renamed, too.
+
+I agree it is unlikely to become an issue with TCLK soon, but (H)SCIF1
+are more likely to become enabled, also on real products.
 
 Gr{oetje,eeting}s,
 
