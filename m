@@ -2,110 +2,96 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8064FC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 13:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F96C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jun 2022 14:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbiF2Nuf (ORCPT
+        id S231579AbiF2OkV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 09:50:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51652 "EHLO
+        Wed, 29 Jun 2022 10:40:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbiF2Nue (ORCPT
+        with ESMTP id S231898AbiF2OkV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 09:50:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2AC6DFE0;
-        Wed, 29 Jun 2022 06:50:33 -0700 (PDT)
+        Wed, 29 Jun 2022 10:40:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A6ED369D5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 07:40:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CDB261E88;
-        Wed, 29 Jun 2022 13:50:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB75C341C8;
-        Wed, 29 Jun 2022 13:50:32 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 381DBB824BC
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 14:40:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CC2DBC34114
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 14:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656510632;
-        bh=VMfYKMWvhAYlNBRE5+J2Dkfi0eUU5Q30vFi/V4AWzHU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GETHWCkoSunTjq5u/0ujktPGg6qtbdHdVHdWoYf1iSUuprFkUAPWvwpaMVasEEMgH
-         ck4EhHotuESssRD0XtA51/KmRvIz0Px+QWuMvmoyKKYZ7hphq4EOup14rzDny0ltYu
-         qfrWbQWPN67T9bwHwCuJBB6twuWGKP1l9vg4itG6tBtpw6jkIHx+P6DiidGOfUdoYs
-         ZTyTEkTORxkaxp/voyd8v8VBgVa8bFQVCz9Vk7Qnd4T/zdUniGqYmL56VwEJ8ccG4C
-         fwwFdGiUcdcHjhdjM53dP+qF+OhNT1zPeDjL8HTEZLX4UoMnHLP1aY/cT7OKYT7KNV
-         e5EgHi251y34g==
-Received: by mail-ua1-f47.google.com with SMTP id s4so2632872uad.0;
-        Wed, 29 Jun 2022 06:50:32 -0700 (PDT)
-X-Gm-Message-State: AJIora9+FZiZJjDZeswQMYWNyHlRN/KUpbm1x36djzlRZAJKtbTwegXO
-        Va12xI6cOCW3eNNCEdUS5XPWOBcHMp7jLDVnmQ==
-X-Google-Smtp-Source: AGRyM1vKGXqFayysL8pEeROfaIV0o7ghK/bslJjjPn8tNlKPkGvn1x3tqB9tWvX/xYVyIkhnRX8ry8eIzxcL8s3QRD4=
-X-Received: by 2002:a05:6130:3aa:b0:37f:26c0:e196 with SMTP id
- az42-20020a05613003aa00b0037f26c0e196mr1628527uab.43.1656510631830; Wed, 29
- Jun 2022 06:50:31 -0700 (PDT)
+        s=k20201202; t=1656513616;
+        bh=EzaynbBWdxNoUBucVr65jASxz0BFGXQHvKDEvaVFcBM=;
+        h=Subject:From:Date:To:From;
+        b=DHsdsdVYySyCrRwnZNB7tOEhvq26uz556sFj44o50zpRgBgJSFY2JySdwkkLxiKYk
+         kh6LKPHfkgC7NZV4/UpTEngLrk6tCoCwJxIZ/+g8g1ItsfsaYEVReMcdrXzCZldms3
+         QkyRwHT9HeYwYbW8NdFqJfT0j9hVAC/niL165ohSe5TNarhwFNNx0LMoKyTYbUUy3i
+         6PRG5Y7OTn7pIfdaEj/+AH/aLKQ5n5ekUX5bu+IOhdV0gbj7DREwCH0LTVtX/Bh8QW
+         fLA93+WU2Cl/QZxWWqx1VcYOfi4ZnhlMvxnWsA5d9/zjFtVBWdF5rcKoHzFwZo/7xl
+         PU38YqnXc4KSw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A54EEE49BBA
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2022 14:40:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220628194526.111501-1-phil.edworthy@renesas.com>
- <20220628194526.111501-2-phil.edworthy@renesas.com> <1656468579.925440.1403681.nullmailer@robh.at.kernel.org>
- <CAMuHMdVsdh1YpVtq7570_kNOWUm5sMb=Fm=Dv_8qOS=hg3iuKA@mail.gmail.com> <43a19f7f-016a-0820-adf1-41419fe82d28@linaro.org>
-In-Reply-To: <43a19f7f-016a-0820-adf1-41419fe82d28@linaro.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 29 Jun 2022 07:50:20 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJfrqPbu3RZ0wuY9GiiJ6tNmOSqdmdjRHXOYqoL=xUE9w@mail.gmail.com>
-Message-ID: <CAL_JsqJfrqPbu3RZ0wuY9GiiJ6tNmOSqdmdjRHXOYqoL=xUE9w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: Document RZ/V2M I2C controller
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <165651361660.3962.12523807540292298757.git-patchwork-summary@kernel.org>
+Date:   Wed, 29 Jun 2022 14:40:16 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 2:15 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 29/06/2022 08:53, Geert Uytterhoeven wrote:
-> > Hi Rob,
-> >
-> > On Wed, Jun 29, 2022 at 4:09 AM Rob Herring <robh@kernel.org> wrote:
-> >> On Tue, 28 Jun 2022 20:45:25 +0100, Phil Edworthy wrote:
-> >>> Document Renesas RZ/V2M (r9a09g011) I2C controller bindings.
-> >>>
-> >>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> >>> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> >>> ---
-> >>> v2:
-> >>>  - Use an enum and set the default for clock-frequency
-> >>>  - Add resets property
-> >>> ---
-> >>>  .../bindings/i2c/renesas,rzv2m.yaml           | 80 +++++++++++++++++++
-> >>>  1 file changed, 80 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
-> >>>
-> >>
-> >> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> >> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> >>
-> >> yamllint warnings/errors:
-> >>
-> >> dtschema/dtc warnings/errors:
-> >> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml: patternProperties:^thermistor@:properties:adi,excitation-current-nanoamp: '$ref' should not be valid under {'const': '$ref'}
-> >>         hint: Standard unit suffix properties don't need a type $ref
-> >>         from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> >> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml: ignoring, error in schema: patternProperties: ^thermistor@: properties: adi,excitation-current-nanoamp
-> >> Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.example.dtb:0:0: /example-0/spi/ltc2983@0: failed to match any schema with compatible: ['adi,ltc2983']
-> >
-> > All of these look like false-positives, i.e. not related to this patch?
->
-> Few other patches also got it, I think the bot got some problem.
+Hello:
 
-Yes, and the bot's overlord failed to see that too. A change yesterday
-in dtschema main branch introduced a new warning and that requires
-clearing the CI cache which I didn't do til now.
+The following patches were marked "mainlined", because they were applied to
+geert/renesas-devel.git (master):
 
-Rob
+Patch: MAINTAINERS: Add Renesas SoC DT bindings to Renesas Architecture sections
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=651338
+  Lore link: https://lore.kernel.org/r/f99c03a95a103517418f0b23d3da45e0dd0ffb3b.1655456310.git.geert+renesas@glider.be
+
+Patch: ARM: dts: renesas: Fix DA9063 watchdog sub node names
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=652380
+  Lore link: https://lore.kernel.org/r/1dafdce285f7d14bec9e2033ac87fb30135895db.1655818230.git.geert+renesas@glider.be
+
+Patch: arm64: dts: renesas: r9a07g054l2-smarc: Correct SoC name in comment
+  Submitter: Chris Paterson <chris.paterson2@renesas.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=653144
+  Lore link: https://lore.kernel.org/r/20220623103024.24222-1-chris.paterson2@renesas.com
+
+Series: add support for Renesas RZ/N1 ethernet subsystem devices
+  Submitter: Clément Léger <clement.leger@bootlin.com>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=653622
+  Lore link: https://lore.kernel.org/r/20220624144001.95518-1-clement.leger@bootlin.com
+    Patches: [net-next,v9,01/16] net: dsa: allow port_bridge_join() to override extack message
+             [net-next,v9,12/16] ARM: dts: r9a06g032: describe MII converter
+             [net-next,v9,13/16] ARM: dts: r9a06g032: describe GMAC2
+             [net-next,v9,14/16] ARM: dts: r9a06g032: describe switch
+             [net-next,v9,15/16] ARM: dts: r9a06g032-rzn1d400-db: add switch description
+
+Patch: arm64: dts: renesas: r8a779m8: Drop operating points above 1.5 GHz
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=651350
+  Lore link: https://lore.kernel.org/r/aeb4530f7fbac8329b334dcb169382c836a5f32d.1655458564.git.geert+renesas@glider.be
+
+
+Total patches: 9
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
