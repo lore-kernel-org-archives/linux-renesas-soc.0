@@ -2,144 +2,72 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52651C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Jul 2022 08:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C861C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Jul 2022 08:55:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232319AbiGAIhE (ORCPT
+        id S235359AbiGAIzE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Jul 2022 04:37:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43690 "EHLO
+        Fri, 1 Jul 2022 04:55:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232635AbiGAIhD (ORCPT
+        with ESMTP id S234895AbiGAIzB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jul 2022 04:37:03 -0400
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8810970E59
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Jul 2022 01:37:02 -0700 (PDT)
-Received: by mail-qv1-f49.google.com with SMTP id cs6so3524401qvb.6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Jul 2022 01:37:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y6xbP5PTiQoZS7m826Yo17/fn7Y0x0N2lgWgGZeXXEs=;
-        b=tl/QDedkDjqZzuWyZMz3d+eMer5eHlrfmdA0E4/t7+BnJ4duhMRA7b+emppVTacpoG
-         y5N9+J6Te0sMupuLWdqF5jyT8o2v+xQ9wXPxqfe5gxxGN7UJFjBRTGIr/iU2VsW81I0k
-         2PX1uSkVlu0IUySV571rzoHrl6bz7MNQls6dS/UtenD1AhDC48tjVl7wXb1H4lkZznG7
-         vw+e+fdnOOAJ4nKwlLLIiQpogbvwXc2i64jVvcWGMX6EAaGk5kIWu7Cm+tDS83ZPjNw8
-         HmK49+oOam02vnlq/6FlAyeh3j4MLf2zvKuuXP5V/QdGr0WOf2MAVPTjWSQMoupvLjAN
-         Sx6A==
-X-Gm-Message-State: AJIora+eOFGFYLODHWvCfZtsBGLcEv44y9BELZG3ASFnDfgywhMpsYt9
-        hxjbSwXA6quVzTnDkyA43VtZ/l3OS2wy4g==
-X-Google-Smtp-Source: AGRyM1tzN+6UrkBg958nP7Ast+kYsDYW29iRcENDyR3TC2aRdNSBJYqRcDy4rEKAq//j8LkqkzlERQ==
-X-Received: by 2002:ac8:4e56:0:b0:31d:38c0:b749 with SMTP id e22-20020ac84e56000000b0031d38c0b749mr1019933qtw.682.1656664621513;
-        Fri, 01 Jul 2022 01:37:01 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id o4-20020ac87c44000000b003164efd0a5fsm2441551qtv.41.2022.07.01.01.37.01
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Jul 2022 01:37:01 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id r3so2834918ybr.6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Jul 2022 01:37:01 -0700 (PDT)
-X-Received: by 2002:a05:6902:905:b0:64a:2089:f487 with SMTP id
- bu5-20020a056902090500b0064a2089f487mr14315948ybb.202.1656664620824; Fri, 01
- Jul 2022 01:37:00 -0700 (PDT)
+        Fri, 1 Jul 2022 04:55:01 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9625617AB2;
+        Fri,  1 Jul 2022 01:54:59 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.92,236,1650898800"; 
+   d="scan'208";a="126337061"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Jul 2022 17:54:59 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D2E3C43E0092;
+        Fri,  1 Jul 2022 17:54:58 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
+        bhelgaas@google.com, krzk+dt@kernel.org, geert+renesas@glider.be,
+        magnus.damm@gmail.com
+Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 01/13] PCI: Add PCI_EXP_LNKCAP_MLW macros
+Date:   Fri,  1 Jul 2022 17:54:08 +0900
+Message-Id: <20220701085420.870306-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220701085420.870306-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20220701085420.870306-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-References: <20220628173947.91519-1-phil.edworthy@renesas.com>
-In-Reply-To: <20220628173947.91519-1-phil.edworthy@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Jul 2022 10:36:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV=f5OxQQdYYusfSVfW71+USqw3bEQ3BMOtxac6=GRCvw@mail.gmail.com>
-Message-ID: <CAMuHMdV=f5OxQQdYYusfSVfW71+USqw3bEQ3BMOtxac6=GRCvw@mail.gmail.com>
-Subject: Re: [RFC] soc: renesas: Add RZ/V2M SYS driver
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Phil,
+Add macros defining Maximum Link Width bits in Link Capabilities
+Register.
 
-Thanks for your patch!
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ include/uapi/linux/pci_regs.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-On Tue, Jun 28, 2022 at 7:40 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> The System Configuration (SYS) module on the Renesas RZ/V2M (r9a09g011)
-> contains registers for many different aspects of the SoC.
->
-> Some of the peripherals on the SoC are only 32-bit address capable bus
-> masters. To select the lower 4GiB or upper 4GiB of memory, the
-> SYS PERI0_BANK and SYS_PERI1_BANK registers can be programmed to set
-> the 33rd address bit.
-> Due to the use of firmware with the SoC, uboot is often set up such that
-> these peripherals can only access the upper 4GiB. In order to allow
-> Linux to use bounce buffers for drivers, we set aside some memory in the
-> lower 4GiB for Linux.
-> Thus this requires the SYS PERIx_BANK registers to be reprogrammed.
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index 108f8523fa04..c619b108df06 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -538,6 +538,13 @@
+ #define  PCI_EXP_LNKCAP_SLS_16_0GB 0x00000004 /* LNKCAP2 SLS Vector bit 3 */
+ #define  PCI_EXP_LNKCAP_SLS_32_0GB 0x00000005 /* LNKCAP2 SLS Vector bit 4 */
+ #define  PCI_EXP_LNKCAP_SLS_64_0GB 0x00000006 /* LNKCAP2 SLS Vector bit 5 */
++#define  PCI_EXP_LNKCAP_MLW_X1	0x00000010 /* Maximum Link Width x1 */
++#define  PCI_EXP_LNKCAP_MLW_X2	0x00000020 /* Maximum Link Width x2 */
++#define  PCI_EXP_LNKCAP_MLW_X4	0x00000040 /* Maximum Link Width x4 */
++#define  PCI_EXP_LNKCAP_MLW_X8	0x00000080 /* Maximum Link Width x8 */
++#define  PCI_EXP_LNKCAP_MLW_X12	0x000000c0 /* Maximum Link Width x12 */
++#define  PCI_EXP_LNKCAP_MLW_X16	0x00000100 /* Maximum Link Width x16 */
++#define  PCI_EXP_LNKCAP_MLW_X32	0x00000200 /* Maximum Link Width x32 */
+ #define  PCI_EXP_LNKCAP_MLW	0x000003f0 /* Maximum Link Width */
+ #define  PCI_EXP_LNKCAP_ASPMS	0x00000c00 /* ASPM Support */
+ #define  PCI_EXP_LNKCAP_ASPM_L0S 0x00000400 /* ASPM L0s Support */
+-- 
+2.25.1
 
-Does this interfere with the firmware?
-If yes, why is this not bad?
-If not, why can't U-Boot set this up correctly for Linux?
-
-As most RAM available to Linux is in the upper 4 GiB, wouldn't it be
-better to use the upper 4 GiB, so bounce buffer can be avoided for most
-transfers? Or is it impossible to set up bounce buffers in the upper 4 GiB?
-
-> --- /dev/null
-> +++ b/drivers/soc/renesas/r9a09g011-sys.c
-> @@ -0,0 +1,67 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Renesas RZ/V2M SYS driver
-> + *
-> + * Copyright (C) 2022  Renesas Electronics Corporation
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-> +
-> +#define SYS_PERI0_BANK         0x30
-> +#define SDI0_SHIFT             0
-> +#define SDI1_SHIFT             2
-> +#define EMMC_SHIFT             4
-> +#define USB_HOST_SHIFT         8
-> +#define USB_PERI_SHIFT         10
-> +#define PCIE_SHIFT             12
-> +
-> +#define SYS_PERI1_BANK         0x34
-> +#define ETH_SHIFT              0
-
-These fields look like perfect users of GENMASK() and FIELD_PREP().
-
-#define PERI0_SDI0    GENMASK(1, 0)
-
-> +
-> +#define BANK_LOWER_4GB         0
-> +#define BANK_UPPER_4GB         1
-
-I'm not sure these are useful.  The values are just the high
-address bits.
-
-> +
-> +static const struct of_device_id renesas_socs[] __initconst = {
-> +       { .compatible = "renesas,r9a09g011-sys" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static void write_peri_bank(void __iomem *addr, uint32_t val, int shift)
-> +{
-> +       /* Set the write enable bits */
-> +       writel(((3 << 16) | val) << shift, addr);
-
-writel((field << 16) | FIELD_PREP(field, addr_high), addr)?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
