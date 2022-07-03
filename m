@@ -2,95 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0664CCA473
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 Jul 2022 15:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F811C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 Jul 2022 18:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232685AbiGCPmf (ORCPT
+        id S232568AbiGCSA2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 3 Jul 2022 11:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43748 "EHLO
+        Sun, 3 Jul 2022 14:00:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbiGCPmd (ORCPT
+        with ESMTP id S229549AbiGCSA1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 3 Jul 2022 11:42:33 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2850D633C;
-        Sun,  3 Jul 2022 08:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656862952; x=1688398952;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PSyqYyC0J2kJSoqRvHgJQSUMUuLg3p+H4Cjpxh3d8gQ=;
-  b=MUxtuedVSVXOvdRdCQ0MlYirX5stqMxuiJLfq3gn0UCP1JxMcTnnxqkj
-   aj2ZVIrvu8GEQNcgbng5eXnf1iuJ4oOfduqFzLbdUDYGrhboVdaCtf8WQ
-   zqH96fG+RqPFe4DH/vGyhBnYQO8pcZfgo2zD+aPWCa9dqB+ObWTDFsroB
-   qSQuAj5ecZxsI1rT+Nxbsi6kcPhmsD5Fk2Ll6B9Y1/CaSdSxwjDlLkDhG
-   K8Ng7RT7GLDcEVZY4Svgfd/Okr1yja7E0mzuPBbblf2498owNPx6EMvL2
-   NZ+cJVsHrjpOTySHoFfeKvoBo1PCh8RxjYNcnNtk9QXaci9Dlje5h0TRg
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10397"; a="265986455"
-X-IronPort-AV: E=Sophos;i="5.92,241,1650956400"; 
-   d="scan'208";a="265986455"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2022 08:42:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,241,1650956400"; 
-   d="scan'208";a="596759636"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Jul 2022 08:42:27 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id CF93111D; Sun,  3 Jul 2022 18:42:33 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Michael Walle <michael@walle.cc>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Till Harbaum <till@harbaum.org>, Wolfram Sang <wsa@kernel.org>
-Subject: [PATCH v2 1/2] lib/string_helpers: Add str_read_write() helper
-Date:   Sun,  3 Jul 2022 18:42:31 +0300
-Message-Id: <20220703154232.55549-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 3 Jul 2022 14:00:27 -0400
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF9C60D1;
+        Sun,  3 Jul 2022 11:00:27 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id r133so6794929iod.3;
+        Sun, 03 Jul 2022 11:00:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=0oH4Qv2b3hpacaeJbha5xxiRLG21WNmxbvy8dgQr22s=;
+        b=AOdSmEqL9Y8VBUpOZIj0YWcHxqSgD8G34oP4xKwAYbD/yD+tr4pbjAfSofsdVu5PKl
+         S6pFfxRkF3LZfCd0jy+hh2DGblxHGgpXN9wRw/jQO7ndIMxoXpg25CUoZdTLL35YQsmN
+         sMTNdQyqXDJeYSFeYiSVZ+wL0D1510itUVv+fJSU82LyaW7o5kvFnelk3biCfQx7Cjrg
+         EL3upJq+M7lgOVPTLTvBuC7ZT6lZu0JgCzLl9isHhkZbzWIYwr3DE4c31DofmGsvCilL
+         bBEawBrHeIpgDJFzbwT5dC5nuhc/mJvYWpU+i1VdqTeHzvwmpfSqTUMWdBN2Vtfb+wDm
+         brLA==
+X-Gm-Message-State: AJIora97s5xsLgxyO1ejAwKhYWCbULXC59hS2Lj3I2kWdCK1GFCsaY8o
+        NZKz85AdclsEyKgxeRxXQg==
+X-Google-Smtp-Source: AGRyM1uyZ/IzOLxMLM1fHCuuqlCDAZS8xqzT04cCI/FH8YEh27fssyASXY5sxh0osk4DmVvORf72xw==
+X-Received: by 2002:a5e:c908:0:b0:675:7f2c:b266 with SMTP id z8-20020a5ec908000000b006757f2cb266mr13808388iol.7.1656871226347;
+        Sun, 03 Jul 2022 11:00:26 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id z7-20020a923207000000b002d1d3b1abbesm11176112ile.80.2022.07.03.11.00.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Jul 2022 11:00:25 -0700 (PDT)
+Received: (nullmailer pid 1705438 invoked by uid 1000);
+        Sun, 03 Jul 2022 18:00:23 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>, linux-can@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Eric Dumazet <edumazet@google.com>
+In-Reply-To: <20220703104705.341070-2-biju.das.jz@bp.renesas.com>
+References: <20220703104705.341070-1-biju.das.jz@bp.renesas.com> <20220703104705.341070-2-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: can: sja1000: Convert to json-schema
+Date:   Sun, 03 Jul 2022 12:00:23 -0600
+Message-Id: <1656871223.903187.1705437.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add str_read_write() helper to retun 'read' or 'write' string literal.
+On Sun, 03 Jul 2022 11:47:00 +0100, Biju Das wrote:
+> Convert the NXP SJA1000 CAN Controller Device Tree binding
+> documentation to json-schema.
+> 
+> Update the example to match reality.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Moved $ref: can-controller.yaml# to top along with if conditional to
+>    avoid multiple mapping issues with the if conditional in the subsequent
+>    patch.
+> ---
+>  .../bindings/net/can/nxp,sja1000.yaml         | 102 ++++++++++++++++++
+>  .../devicetree/bindings/net/can/sja1000.txt   |  58 ----------
+>  2 files changed, 102 insertions(+), 58 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/can/nxp,sja1000.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/net/can/sja1000.txt
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: no changes
- include/linux/string_helpers.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
-index 4d72258d42fd..9e22cd78f3b8 100644
---- a/include/linux/string_helpers.h
-+++ b/include/linux/string_helpers.h
-@@ -126,4 +126,9 @@ static inline const char *str_enabled_disabled(bool v)
- 	return v ? "enabled" : "disabled";
- }
- 
-+static inline const char *str_read_write(bool v)
-+{
-+	return v ? "read" : "write";
-+}
-+
- #endif
--- 
-2.35.1
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
+
+Full log is available here: https://patchwork.ozlabs.org/patch/
+
+
+can@4,0: nxp,tx-output-config:0:0: 22 is not one of [1, 2, 4, 6, 8, 16, 32, 48]
+	arch/arm/boot/dts/imx27-phytec-phycore-rdk.dtb
+
+can@4,0: 'reg-io-width' is a required property
+	arch/arm/boot/dts/imx27-phytec-phycore-rdk.dtb
 
