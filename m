@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289B7C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Jul 2022 13:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE00CCA47C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Jul 2022 13:07:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234641AbiGDNHF (ORCPT
+        id S234129AbiGDNHH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Jul 2022 09:07:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46704 "EHLO
+        Mon, 4 Jul 2022 09:07:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234643AbiGDNHA (ORCPT
+        with ESMTP id S234610AbiGDNHD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jul 2022 09:07:00 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059FADF22
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Jul 2022 06:06:41 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id r1so8517278plo.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2022 06:06:41 -0700 (PDT)
+        Mon, 4 Jul 2022 09:07:03 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4BC5DF95
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Jul 2022 06:06:42 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id s27so8879744pga.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2022 06:06:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=8DNo7ij4co0VdvwYRf4d61rx/BlNn90kl7xtOUpC3PY=;
-        b=x6hEFTO9Vt7Kcw8wMZEWX+M7+1M+ARbW2S0RHKeFm3Ho+M2XD6VP2/Prk8F75412dG
-         Gv+ZDwFsPZ8l+o8LF6rhvv+uGjheZCs96Fy47QuBGL1Hjl47JTOV6PXQIHkra70OA0SN
-         +DK/236a2krnzfvzsu2h9N/WlMwCdCPHBwkaeeMrvr6/qYjpxaB+SqqGK4T/LADOz9nT
-         zYCQZBu01Kd89kPIuYoyoUhFBTR8ZSL8L6Q0m0hAoB/5/fDXauNaaXX2IS/LaeJeAgHY
-         56u0zb9A4rDeO5E5CiSFyBbY7f6APDQY1CsR/KgwEXfzmCDT86/r1gd1xxPtxzxj5nKo
-         vI2A==
+        bh=Bbsagg6muK+R3fzekU/EHEYABTeY8iNhwenkN2v9gIM=;
+        b=iq4+3iq7aGNH/OYYctZFIuBj2ElGy9aVXNKKCYqRKzIxGo/0NWw0guwf5Tr3Svy9iw
+         2NZBQ30bCL2qbnzGs5M1YMhawHvb900rz9YDAOHZIF9p1JAl2Ai56AxusHQxOJhg3yrQ
+         BiKeJqywgiiYH00d2Q736PCjdFlM/0K5wAhBfGcL4xkfEh9n5uk7se6sVAPFdtPqzerz
+         SC/jEVNBJDcTr9aCvQkXHFpFjtXJvjRgfgooc8jeCTZw58jALNdD2eCYMeUI13T/c6c6
+         fcNaCasz8gisoNtBd1pKmlAtg9pwD/fNeNz4384mBSnzDvW5nfY2uXOsLlNfcnprLEaz
+         HXjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=8DNo7ij4co0VdvwYRf4d61rx/BlNn90kl7xtOUpC3PY=;
-        b=huiLdc3EgTeqIGRwt4Udqj8PPYsXrDrWCJho0bYwBUPTAD6/XI4+QhE8cnKGreWlcH
-         DPcI+js37KDESm1RjbKMKvcrRwlnHRSmEseKn8hpdPV7PH+1hyIsxU6kzR8FAt8gjqtU
-         UOo1bEcCy5wfbrZVQfEgQmZ5Po9mkrIjxBwcy8PlizjrbmjGjk3oWf1OZdDhzjpGdDUq
-         ULsZ4vgGGWmejtENBBKi9qlAYRlYWmm6GWtPe/3wRJwzDoNvCMIRKH8Xna7zD7iUxPz5
-         8FM5M49/AK5LylQ8seOS4b26haLZAU13Itg0ZvLxXNlKM5y5GvjMQw0vyDN3TKFW6EVL
-         kxdA==
-X-Gm-Message-State: AJIora/OBRSWyqiBB+0om9sRJZN7HPSLno+NhK/TBq0twDrS6Lbjuz+t
-        X3PNN0r59HHuYlDmuQ6+ZBHVIK4/g3JtzfhX
-X-Google-Smtp-Source: AGRyM1uSMKRqMpcJGX5x217EuluWhysSCsBeFCEMw6ihL3zqVAhNGO3SWjA5T4aMy1YAel6GnrX3aQ==
-X-Received: by 2002:a17:902:e052:b0:16a:1257:152e with SMTP id x18-20020a170902e05200b0016a1257152emr35542409plx.172.1656940001113;
-        Mon, 04 Jul 2022 06:06:41 -0700 (PDT)
+        bh=Bbsagg6muK+R3fzekU/EHEYABTeY8iNhwenkN2v9gIM=;
+        b=RH1dG6l0Fdt0U6r4OgANeynq9ZkQoa4g03tihoejQTqLyWuvLam5qFH5vVzJLyOZ66
+         hY8KrnbpNA+pfACf5SeSPJbKBfhlfO1rinijIznLQ1iuDCVtcLS2X1pVdTdJfIjGPGbQ
+         5TDA9NZJf+eG3O8crcdv4cgxnaPPGBNcstDu5wlQKK0PNF2qwj0hjwdKmus2Keb8ZB1R
+         1FhKA0KnK4ru8/1tJI4P0WOY7BuubSXeSxK1fsJ0a965ATr0KDkegcJdSSgjfc6Xn+sz
+         QXY0Ua+bV200Zp1HTvMhXQdftqUGHkJFd3KSasB19rt/QQwE2BtC4EgNDGzoHH3/zcOs
+         YWDw==
+X-Gm-Message-State: AJIora8dDa45K+dN202n4o9gWtmxFFnIUz9PutcUO9Mz0EFJdSHQsJEG
+        LsSIyVLeIIaZ/oYV+QpFAZZWlWKHXcGk2Z7F
+X-Google-Smtp-Source: AGRyM1veCLhH93YSdGo+INVnzguVeo/68rJJWEsbJylnqShw+JLJIbA6ZrWb5Yy2glKHdG5qJzxjTA==
+X-Received: by 2002:aa7:9a4e:0:b0:527:c943:54d9 with SMTP id x14-20020aa79a4e000000b00527c94354d9mr34805322pfj.31.1656940002006;
+        Mon, 04 Jul 2022 06:06:42 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id c10-20020a170903234a00b0016b9b6d67a2sm11849659plh.155.2022.07.04.06.06.40
+        by smtp.gmail.com with ESMTPSA id n1-20020a170902dc8100b00163c6ac211fsm21142437pld.111.2022.07.04.06.06.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 06:06:40 -0700 (PDT)
-Message-ID: <62c2e5e0.1c69fb81.3622c.0c01@mx.google.com>
-Date:   Mon, 04 Jul 2022 06:06:40 -0700 (PDT)
+        Mon, 04 Jul 2022 06:06:41 -0700 (PDT)
+Message-ID: <62c2e5e1.1c69fb81.27b27.e26e@mx.google.com>
+Date:   Mon, 04 Jul 2022 06:06:41 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,7 +58,7 @@ X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: renesas-devel-2022-07-04-v5.19-rc5
 X-Kernelci-Branch: master
 X-Kernelci-Tree: renesas
-Subject: renesas/master ltp-ipc: 7 runs,
+Subject: renesas/master v4l2-compliance on uvcvideo: 2 runs,
  1 regressions (renesas-devel-2022-07-04-v5.19-rc5)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
@@ -66,24 +66,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master ltp-ipc: 7 runs, 1 regressions (renesas-devel-2022-07-04-v5.=
-19-rc5)
+renesas/master v4l2-compliance on uvcvideo: 2 runs, 1 regressions (renesas-=
+devel-2022-07-04-v5.19-rc5)
 
 Regressions Summary
 -------------------
 
-platform                 | arch  | lab     | compiler | defconfig        | =
-regressions
--------------------------+-------+---------+----------+------------------+-=
------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig+crypto | =
-1          =
+platform        | arch  | lab           | compiler | defconfig             =
+     | regressions
+----------------+-------+---------------+----------+-----------------------=
+-----+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrome=
+book | 1          =
 
 
   Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2022-07-04-v5.19-rc5/plan/ltp-ipc/
+sas-devel-2022-07-04-v5.19-rc5/plan/v4l2-compliance-uvc/
 
-  Test:     ltp-ipc
+V4L2 Compliance on the uvcvideo driver.
+
+This test ran "v4l2-compliance -s" from v4l-utils:
+
+    https://www.linuxtv.org/wiki/index.php/V4l2-utils
+
+See each detailed section in the report below to find out the git URL and
+particular revision that was used to build the test binaries.
+
+
   Tree:     renesas
   Branch:   master
   Describe: renesas-devel-2022-07-04-v5.19-rc5
@@ -92,9 +101,9 @@ evel.git
   SHA:      53f4b75e60cf6c4bedcc6638ff37f56eab20dc19
 
   Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  e98f9465925434349d0aa6eb71e81b5464e76df4 =
+    v4l2-compliance
+      URL:  git://linuxtv.org/v4l-utils.git
+      SHA:  ef8c5223b4a5b2610e0dfbdff5257cf96c124f96 =
 
 
 
@@ -103,33 +112,34 @@ Test Regressions
 
 
 
-platform                 | arch  | lab     | compiler | defconfig        | =
-regressions
--------------------------+-------+---------+----------+------------------+-=
------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig+crypto | =
-1          =
+platform        | arch  | lab           | compiler | defconfig             =
+     | regressions
+----------------+-------+---------------+----------+-----------------------=
+-----+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrome=
+book | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62c2dace307173614ba39c07
+  Details:     https://kernelci.org/test/plan/id/62c2d6a2219f27ed3ea39bd8
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+crypto
+  Full config: defconfig+arm64-chromebook
   Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
 110)
   Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-07-04-v5.19-rc5/arm64/defconfig+crypto/gcc-10/lab-cip/ltp-ipc-r8a774a1-=
-hihope-rzg2m-ex.txt
+022-07-04-v5.19-rc5/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/v=
+4l2-compliance-uvc-mt8173-elm-hana.txt
   HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-07-04-v5.19-rc5/arm64/defconfig+crypto/gcc-10/lab-cip/ltp-ipc-r8a774a1-=
-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20220610.0/arm64/initrd.cpio.gz =
+022-07-04-v5.19-rc5/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/v=
+4l2-compliance-uvc-mt8173-elm-hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-v4=
+l2/20220624.0/arm64/rootfs.cpio.gz =
 
 
 
-  * ltp-ipc.login: https://kernelci.org/test/case/id/62c2dace307173614ba39c=
-08
-        new failure (last pass: renesas-devel-2022-06-29-v5.19-rc4) =
+  * v4l2-compliance-uvc.login: https://kernelci.org/test/case/id/62c2d6a221=
+9f27ed3ea39bd9
+        failing since 4 days (last pass: renesas-devel-2022-06-20-v5.19-rc3=
+, first fail: renesas-devel-2022-06-29-v5.19-rc4) =
 
  =20
