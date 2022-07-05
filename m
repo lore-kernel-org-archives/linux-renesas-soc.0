@@ -2,77 +2,129 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C13C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Jul 2022 19:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44126CCA47F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Jul 2022 20:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230398AbiGETzg (ORCPT
+        id S231624AbiGEUr6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 15:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51018 "EHLO
+        Tue, 5 Jul 2022 16:47:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbiGETzg (ORCPT
+        with ESMTP id S231567AbiGEUr5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jul 2022 15:55:36 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6441261C
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Jul 2022 12:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=k1; bh=OysgCQ7vE3ol1bxYAexhfbPj0E+
-        wUGULttD/BT0D6rY=; b=BW9RCuvlx2YFfzSIQtytwF8186wIFAcAdMdWVvKWX5j
-        vgKs5mRwsYhar5OP0zTZf5OjmQbbTDJCf56k7KBoYwISIHqFvekZz+V+GHcV7kDR
-        r8ZT71/Spb9OGdI8Gmijqeo2zxOfnAo5mtOmjCB3oL8cjHQMHgl7KW5WmFTlK8ZU
-        =
-Received: (qmail 1425490 invoked from network); 5 Jul 2022 21:55:28 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Jul 2022 21:55:28 +0200
-X-UD-Smtp-Session: l3s3148p1@vNb1OxTjkg5ZD+96
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] thermal: rcar_gen3_thermal: Add r8a779f0 support
-Date:   Tue,  5 Jul 2022 21:55:20 +0200
-Message-Id: <20220705195520.2581-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
+        Tue, 5 Jul 2022 16:47:57 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E29EB843
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Jul 2022 13:47:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657054076; x=1688590076;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=M1kXNeqrPSb17PHsJavqaN5YWG/4A+zL7kZBDY0Msj4=;
+  b=Lu2unsDnDZruNXVRUxSz6Wi5SkKQn/OrndGoYNaDu1os+bLPJVJVEx7Q
+   FXNXnRmacPMicnB7w0dmFHoEkJEKw97NUyoX+GrOheQFoxbDI/7o0YEe2
+   MIRI+z+G1a5Kt6+X2Y/ju/V+4FGRrQ8cTT2+NsJfAeGC2ORr4jubRsgDo
+   euzet4B+uU9C4h/NSDMLHb4TeypFJZsVMaomiD38GDBwEbOeNxiMp5dLt
+   VqkUDSPLkEEAF8vo+9uz/9CzTH6Wo8Vznq8tg2+2f9BTXi4YrC03+4ZQs
+   sIHVJRUmR0sshShjHmglRsuyjaXrd6ng3P8B2NhHhx4nWX9i4fsei/VF9
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="284612825"
+X-IronPort-AV: E=Sophos;i="5.92,247,1650956400"; 
+   d="scan'208";a="284612825"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 13:47:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,247,1650956400"; 
+   d="scan'208";a="735296600"
+Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Jul 2022 13:47:54 -0700
+Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o8pSc-000JYz-8m;
+        Tue, 05 Jul 2022 20:47:54 +0000
+Date:   Wed, 06 Jul 2022 04:47:41 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ b83d3c70c208b5154097ddfcf4be9a802b12966e
+Message-ID: <62c4a36d.zjb9mpt9IjDXxk4s%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for R-Car S4.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: b83d3c70c208b5154097ddfcf4be9a802b12966e  Merge branch 'renesas-next' into renesas-devel
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Change since V1: added tags from Niklas and Geert (Thanks!)
+elapsed time: 728m
 
- drivers/thermal/rcar_gen3_thermal.c | 4 ++++
- 1 file changed, 4 insertions(+)
+configs tested: 52
+configs skipped: 2
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index e2020c6308cc..cda7c52f2319 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -399,6 +399,10 @@ static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
- 		.compatible = "renesas,r8a779a0-thermal",
- 		.data = &rcar_gen3_ths_tj_1,
- 	},
-+	{
-+		.compatible = "renesas,r8a779f0-thermal",
-+		.data = &rcar_gen3_ths_tj_1,
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+ia64                             allmodconfig
+powerpc                           allnoconfig
+sh                               allmodconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+arc                              allyesconfig
+alpha                            allyesconfig
+m68k                             allmodconfig
+m68k                             allyesconfig
+i386                                defconfig
+i386                             allyesconfig
+i386                          randconfig-a001
+i386                          randconfig-a003
+i386                          randconfig-a005
+x86_64                        randconfig-a004
+x86_64                        randconfig-a002
+x86_64                        randconfig-a006
+x86_64                        randconfig-a015
+x86_64                        randconfig-a013
+x86_64                        randconfig-a011
+i386                          randconfig-a014
+i386                          randconfig-a012
+i386                          randconfig-a016
+riscv                randconfig-r042-20220703
+arc                  randconfig-r043-20220703
+s390                 randconfig-r044-20220703
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                          rhel-8.3-func
+x86_64                         rhel-8.3-kunit
+x86_64                    rhel-8.3-kselftests
+x86_64                           rhel-8.3-syz
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                           allyesconfig
+
+clang tested configs:
+i386                          randconfig-a002
+i386                          randconfig-a004
+i386                          randconfig-a006
+x86_64                        randconfig-a005
+x86_64                        randconfig-a001
+x86_64                        randconfig-a003
+x86_64                        randconfig-a016
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+i386                          randconfig-a013
+i386                          randconfig-a011
+i386                          randconfig-a015
+hexagon              randconfig-r041-20220703
+hexagon              randconfig-r045-20220703
+
 -- 
-2.35.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
