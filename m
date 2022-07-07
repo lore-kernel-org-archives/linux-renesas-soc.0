@@ -2,155 +2,220 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E82BC43334
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Jul 2022 17:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A18C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Jul 2022 18:24:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235904AbiGGRwR (ORCPT
+        id S236162AbiGGSYB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Jul 2022 13:52:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56930 "EHLO
+        Thu, 7 Jul 2022 14:24:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235801AbiGGRwQ (ORCPT
+        with ESMTP id S235637AbiGGSYA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Jul 2022 13:52:16 -0400
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C2559253;
-        Thu,  7 Jul 2022 10:52:15 -0700 (PDT)
-Received: by mail-qt1-f182.google.com with SMTP id g14so23839980qto.9;
-        Thu, 07 Jul 2022 10:52:15 -0700 (PDT)
+        Thu, 7 Jul 2022 14:24:00 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5648D205F3;
+        Thu,  7 Jul 2022 11:23:59 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id j3so8398331pfb.6;
+        Thu, 07 Jul 2022 11:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hQHooeYpBPLqhLw4iyaicqWZ8U8iT/gDaXg8Zs9aODs=;
+        b=Sx5FRvZ7QwI1k5mlx5HVc8zV8L6yX8BkzuLV6xWaMYwxoV9IEmxav452EFSv1yaRTg
+         6M1f/Zr4ijUYy3UQeqKtjrfc41NnV117hgRxVDKfruhh6G1V0nGzk2OQVqmrQikUniul
+         AkJD85s/nJQVbExGSDJK3Wy+q93j1ASFedP+Ck4MiZL6OOllxLimyBmeGFwyxngUvHJh
+         4NQiYwY1QTsPZhlKYVmVZOb4FacQZ/3GTthgegHvJIdrVQPHZShTniSSvPO+Y0Iq+gM/
+         8Xv6RNkMduZJ7MY5fQ1BisYQTMmlmYlcyil4ysUeNllSstSSfGJ9BA8R6W8F07krorZM
+         6rMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y4yV5HHKbO1opktHoXPqxBu+ZNPPa7vz6WkZ9AN0KN4=;
-        b=mI7RCR41bUJczfiwZBbgMtj79iWdYnp0glfKo9pDnhffP5yDXVS/yoMwVkIPaZOeP8
-         Th3nM5nUETso6FibIvPqkh4RFBYRPhDNiJy48zYui/T9o6f5v1IYaJ5ArZVaRWPzdNeV
-         eO9c4W33m9Tm9y9s/uvYE5d3qiGg75e+DL9PC0RTMxWpdLF7uq3RjHDS4lpRDHcE+20v
-         TIS/WZeA3M2RhBIQogtcVkESCv/RR9JMMk3eCtSDrssgv+MM4GUNEEV/iII/haBXtYSD
-         5540RalqVcrMn0MrwCA2OuWMm6f8xM3CRq7LfawwUJl4WBlvHej5/D9noV0QjRKeSioF
-         xIHA==
-X-Gm-Message-State: AJIora+phiK9XG7duhRUbycsUNJQJ8P3UEFYOljIEXKLFxT1uLe1zt8K
-        SFdEdwuxUTkfnAcKbsbm1wfq2dzGpfspFA==
-X-Google-Smtp-Source: AGRyM1tJkCyB9socbM+lJbOENc7pkQbbzBmHKdNM/aflNGcFASr3nGOqCe3CfvARZkW8ih8UESyDcw==
-X-Received: by 2002:ac8:7d90:0:b0:31d:32ae:b352 with SMTP id c16-20020ac87d90000000b0031d32aeb352mr32243614qtd.649.1657216334701;
-        Thu, 07 Jul 2022 10:52:14 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id s11-20020a05622a1a8b00b003196e8eda26sm21704435qtc.69.2022.07.07.10.52.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Jul 2022 10:52:14 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id g4so33818476ybg.9;
-        Thu, 07 Jul 2022 10:52:14 -0700 (PDT)
-X-Received: by 2002:a0d:c787:0:b0:31b:a963:e1de with SMTP id
- j129-20020a0dc787000000b0031ba963e1demr53415058ywd.283.1657215950691; Thu, 07
- Jul 2022 10:45:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220701163916.111435-1-phil.edworthy@renesas.com>
- <20220701163916.111435-3-phil.edworthy@renesas.com> <YsAxSrcAk4jtRYx4@smile.fi.intel.com>
- <CAMuHMdU1-LQJUCsDAfaC4OhRW7ijcpAG9VEUHu_Gu1qE7LdweA@mail.gmail.com>
- <YsGy2rqk1tKQJJ/b@smile.fi.intel.com> <TYYPR01MB7086921244A6D1B764368A54F5839@TYYPR01MB7086.jpnprd01.prod.outlook.com>
- <TYYPR01MB70869DD9107B4A3B2319AF4DF5839@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYYPR01MB70869DD9107B4A3B2319AF4DF5839@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 7 Jul 2022 19:45:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUnR819KRVke=ob21cvsMnOcQHFq3ym-oAg0dKcpWCGtw@mail.gmail.com>
-Message-ID: <CAMuHMdUnR819KRVke=ob21cvsMnOcQHFq3ym-oAg0dKcpWCGtw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] i2c: Add Renesas RZ/V2M controller
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wolfram Sang <wsa@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh@kernel.org>, Sven Peter <sven@svenpeter.dev>,
-        Jan Dabros <jsd@semihalf.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Tyrone Ting <kfting@nuvoton.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hQHooeYpBPLqhLw4iyaicqWZ8U8iT/gDaXg8Zs9aODs=;
+        b=4I7WjUhhVVxftbZHkqf819lHlZ6PmxG9VhDM2tjS/tGVmyuT9ECBQ+i7gnw8edmCxo
+         kdAqJZRmPwqscvuI4BlLHv5Z6g6623GxWdwkTNn4JuO4jif4rUbwxRqndVbd05U//DSX
+         EqqNKYRKGaR9HJIqGt+2EjfSy/nCDN1Xrseu3Rm4AHFvx8awlXokZ/i/tqN65ODpkt05
+         DMZuml6tF7vdm2pXoC22ZKxNecMnDTUUltW53LhQV5NuVJOlGXz7EymoqI31m7gcFgIr
+         SZzKcUSknChK/LOL+hQrXB4YDYkpKormnZD5zJHUJup2M05p6uYghJlNm2260u9NvQqB
+         XyPQ==
+X-Gm-Message-State: AJIora8ISDASUxODQ7NQQuBOyP/9mKqU7KuDtIRE75PU/sMO2DrRRMlL
+        G9KuTxVPX2DJ6oibSnt54JIo+PzrD+8=
+X-Google-Smtp-Source: AGRyM1uU7YSCIUD0jrjk1cuFuvNKKMo0gPiJm0l1nzNXzfY/UMVr9kZrx4Ww+2U3XI1Kk8Pv4SIWNQ==
+X-Received: by 2002:a17:90b:4f48:b0:1ed:45e5:dc8c with SMTP id pj8-20020a17090b4f4800b001ed45e5dc8cmr6732899pjb.131.1657218238815;
+        Thu, 07 Jul 2022 11:23:58 -0700 (PDT)
+Received: from prasmi.domain.name ([103.219.60.85])
+        by smtp.gmail.com with ESMTPSA id o12-20020a170902d4cc00b0016a3f9e4865sm28589279plg.148.2022.07.07.11.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jul 2022 11:23:58 -0700 (PDT)
+From:   prabhakar.csengg@gmail.com
+X-Google-Original-From: prabhakar.mahadev-lad.rj@bp.renesas.com
+To:     Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v8 0/6] Renesas RZ/G2L IRQC support
+Date:   Thu,  7 Jul 2022 19:23:08 +0100
+Message-Id: <20220707182314.66610-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Phil,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Thu, Jul 7, 2022 at 6:37 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On 07 July 2022 08:21 Phil Edworthy wrote:
-> > On 03 July 2022 16:17 Andy Shevchenko wrote:
-> > > On Sun, Jul 03, 2022 at 10:41:45AM +0200, Geert Uytterhoeven wrote:
-> > > > On Sat, Jul 2, 2022 at 1:51 PM Andy Shevchenko
-> > > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > On Fri, Jul 01, 2022 at 05:39:16PM +0100, Phil Edworthy wrote:
-> > > > > > Yet another i2c controller from Renesas that is found on the
-> > RZ/V2M
-> > > > > > (r9a09g011) SoC. It can support only 100kHz and 400KHz operation.
-> > >
-> > > ...
-> > All other suggested changes are ok.
-> >
-> >
-> > > > > > +     pm_runtime_get_sync(dev);
-> > > >
-> > > > pm_runtime_resume_and_get() ;-)
-> > >
-> > > This makes sense only if we test for error. Otherwise the put might
-> > > imbalance
-> > > counter.
-> > I added code to check the return value and to my surprise it returned
-> > -EACCES.
-> > Some digging later, this only happens when I have an i2c controller
-> > enabled that doesn't have any children.
-> >
-> > rpm_resume() returns -EACCES [1] because runtime_status and last_status
-> > are set to RPM_SUSPENDED.
-> >
-> > The i2c controller that does have a child has runtime_status = RPM_ACTIVE
-> > as there is a call to pm_runtime_resume_and_get() on it due to the i2c
-> > controller performing an i2c transfer for the slave device.
-> >
-> > I am currently struggling to work out why this is happening...
->
-> First pm_suspend() works it's way down to __pm_runtime_disable():
->   __pm_runtime_disable+0x134/0x1e0
->   __device_suspend_late+0x28/0x1c4
->   dpm_suspend_late+0x158/0x230
->   suspend_devices_and_enter+0x1c8/0x4b4
->   pm_suspend+0x210/0x28c
-> At the end of which, runtime_status and last_status are both RPM_SUSPENDED,
-> and disable_depth = 1 [1]
->
-> After that rzv2m_i2c_suspend() is called triggering the EACCES error
-> condition [2]:
->   rpm_resume+0x338/0x630
->   __pm_runtime_resume+0x4c/0x80
->   rzv2m_i2c_suspend+0x24/0xb0
->   pm_generic_suspend_noirq+0x30/0x50
->   genpd_finish_suspend+0xb0/0x130
->   genpd_suspend_noirq+0x14/0x20
->   __device_suspend_noirq+0x68/0x1d0
->   dpm_noirq_suspend_devices+0x110/0x1dc
->   dpm_suspend_noirq+0x24/0xa0
->   suspend_devices_and_enter+0x2f0/0x4b4
->   pm_suspend+0x210/0x28c
->
-> I think using runtime PM from within driver suspend/resume is simply not
-> supported. However I had some difficulty following the runtime PM code,
-> so I could be wrong.
+Hi All,
 
-Oh, it's a NOIRQ system sleep op. You indeed cannot use runtime resume
-from such a callback, as the latter may sleep.
+The RZ/G2L Interrupt Controller is a front-end for the GIC found on
+Renesas RZ/G2L SoC's with below pins:
+- IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI
+  interrupts
+- GPIO pins used as external interrupt input pins out of GPIOINT0-122 a
+  maximum of only 32 can be mapped to 32 GIC SPI interrupts,
+- NMI edge select.
 
-Gr{oetje,eeting}s,
+                                                             _____________
+                                                             |    GIC     |
+                                                             |  ________  |
+                                      ____________           | |        | |
+NMI --------------------------------->|          |  SPI0-479 | | GIC-600| |
+             _______                  |          |------------>|        | |
+             |      |                 |          |  PPI16-31 | |        | |
+             |      | IRQ0-IRQ7       |   IRQC   |------------>|        | |
+P0_P48_4 --->| GPIO |---------------->|          |           | |________| |
+             |      |GPIOINT0-122     |          |           |            |
+             |      |---------------->| TINT0-31 |           |            |
+             |______|                 |__________|           |____________|
 
-                        Geert
+The proposed patches add hierarchical IRQ domain, one in IRQC driver and
+another in pinctrl driver. Upon interrupt requests map the interrupt to
+GIC. Out of GPIOINT0-122 only 32 can be mapped to GIC SPI, this mapping is
+handled by the pinctrl and IRQC driver.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Cheers,
+Prabhakar
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+v7->v8
+* Fixed return value in case of devm_reset_control_get_exclusive() failure.
+* Included patch [0] from Marc ([0] https://git.kernel.org/pub/scm/linux/kernel/
+  git/maz/arm-platforms.git/patch/?id=178b7e21459e9a7e2a2c369711ef0cc9b1cfbcd7)
+
+v6->v7:
+* Used devm_reset_control_get_exclusive() instead of
+  devm_reset_control_get_exclusive_by_index()
+* Included RB tag from Linus for patch 5/5
+* Switched to newer version of populate_parent_alloc_arg() (patch depends
+  on https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/
+  patch/?id=178b7e21459e9a7e2a2c369711ef0cc9b1cfbcd7)
+
+v5->v6:
+* Fixed review comments pointed by Marc
+* Included Ack from Rob
+
+v4->v5:
+* Updated commit message for patch 3/5
+* Dropped interrupt-parent from and included RB tag from Geert
+  for patch 4/5
+* Implemented init_valid_mask() callback
+* Dropped ngirq patch from previous series
+* Dropped patches 4/7 and 5/7 from previous patch series will handle
+  it separately.
+
+v3->v4:
+* Updated description for interrupts-cells property in patch #1
+* Dropped the patch which overriding free callback in gpiolib
+* Used devm helpers in patch#2
+* Patch #4, #5 and #6 are newly added
+* In patch #7 dropped using gpio offset as hwirq
+* Implemented immutable GPIO in patch #7
+* Implemented child_offset_to_irq() callback in patch #7
+
+v2->v3:
+* Updated description for interrupts-cells property in patch #1
+* Included RB tag from Geert for binding patch
+* Fixed review comments pointed by Geert, Biju and Sergei.
+
+v1->v2:
+* Included RB tag from Rob
+* Fixed review comments pointed by Geert
+* included GPIO driver changes
+
+RFCV4 -> V1:
+* Used unevaluatedProperties.
+* Altered the sequence of reg property
+* Set the parent type
+* Used raw_spin_lock() instead of raw_spin_lock_irqsave()
+* Simplified parsing IRQ map.
+* Will send the GPIO and pinctrl changes as part of separate series
+
+RFC v4:
+* Used locking while RMW
+* Now using interrupts property instead of interrupt-map
+* Patch series depends on [0]
+* Updated binding doc
+* Fixed comments pointed by Andy
+
+[0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/
+20220316200633.28974-1-prabhakar.mahadev-lad.rj@xxxxxxxxxxxxxx/
+
+RFC v3:
+-> Re-structured the driver as a hierarchical irq domain instead of chained
+-> made use of IRQCHIP_* macros
+-> dropped locking
+-> Added support for IRQ0-7 interrupts
+-> Introduced 2 new patches for GPIOLIB
+-> Switched to using GPIOLIB for irqdomains in pinctrl
+
+RFC v2: https://patchwork.kernel.org/project/linux-renesas-soc/cover/
+20210921193028.13099-1-prabhakar.mahadev-lad.rj@xxxxxxxxxxxxxx/
+
+RFC v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/
+20210803175109.1729-1-prabhakar.mahadev-lad.rj@xxxxxxxxxxxxxx/
+
+Lad Prabhakar (5):
+  dt-bindings: interrupt-controller: Add Renesas RZ/G2L Interrupt
+    Controller
+  irqchip: Add RZ/G2L IA55 Interrupt Controller driver
+  gpio: gpiolib: Allow free() callback to be overridden
+  dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Document the properties
+    to handle GPIO IRQ
+  pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to handle GPIO
+    interrupt
+
+Marc Zyngier (1):
+  gpio: Remove dynamic allocation from populate_parent_alloc_arg()
+
+ .../renesas,rzg2l-irqc.yaml                   | 133 ++++++
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  15 +
+ drivers/gpio/gpio-msc313.c                    |  15 +-
+ drivers/gpio/gpio-tegra.c                     |  15 +-
+ drivers/gpio/gpio-tegra186.c                  |  15 +-
+ drivers/gpio/gpio-thunderx.c                  |  15 +-
+ drivers/gpio/gpio-visconti.c                  |  15 +-
+ drivers/gpio/gpiolib.c                        |  51 ++-
+ drivers/irqchip/Kconfig                       |   8 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-renesas-rzg2l.c           | 393 ++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      |  15 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 233 +++++++++++
+ include/linux/gpio/driver.h                   |  42 +-
+ 14 files changed, 862 insertions(+), 104 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+ create mode 100644 drivers/irqchip/irq-renesas-rzg2l.c
+
+-- 
+2.25.1
+
