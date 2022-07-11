@@ -2,76 +2,82 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11112C43334
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF989CCA481
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Jul 2022 13:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbiGKNrO (ORCPT
+        id S229543AbiGKNrP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Jul 2022 09:47:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45614 "EHLO
+        Mon, 11 Jul 2022 09:47:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbiGKNrO (ORCPT
+        with ESMTP id S229687AbiGKNrO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 11 Jul 2022 09:47:14 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F1852E5A
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CAF52E57
         for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Jul 2022 06:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=zPO8GIDLdiEtwC
-        bGRNxj10kCdXaj08dh/7hy81AWHNg=; b=dhCLVSC+5noL+TzJAF/Ef3rikdMU+I
-        ByA0L02fp++GKw0IodCnTvBp4F5p3DO7LkKMlwtU3hsdf9bZSvyA4E6to/Ni2HLt
-        rmhV745XAYZm2BX949gThWAcBA8Jz0RwBXyiG4IDbzHD41OuNa7bDJH9PtvTvTJB
-        oTa9OG7whmfGQ=
-Received: (qmail 3559153 invoked from network); 11 Jul 2022 15:47:09 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2022 15:47:09 +0200
-X-UD-Smtp-Session: l3s3148p1@aDzRyYfjfp8gAwDtxwdRAEXXn+yo/Rze
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=xb41jybwjBnJauRVq5I8OgLZLLq
+        buEDKD7OFgVDEmys=; b=beaVxZ0uw8ps1WkdtwzKn55dUjZvKCmw/KGul9z9WG4
+        Z4bN6fqGqqArdi8orfqeXJ9NoY5zK3PxqEjLYmXKkgFtAVEt0m6fV9qcoqibzv/v
+        k9LVF6ka+h1Xow2pfMXZDS7WoxzqNbZJkLQFpI/Hk6NNKwbOR1YV2AowK404yUyg
+        =
+Received: (qmail 3559110 invoked from network); 11 Jul 2022 15:47:08 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2022 15:47:08 +0200
+X-UD-Smtp-Session: l3s3148p1@9028yYfjep8gAwDtxwdRAEXXn+yo/Rze
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/3] arm64: dts: renesas: r8a779f0: Add SDHI0 support
-Date:   Mon, 11 Jul 2022 15:46:55 +0200
-Message-Id: <20220711134656.277730-3-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/3] r8a779f0: add SDHI support
+Date:   Mon, 11 Jul 2022 15:46:53 +0200
+Message-Id: <20220711134656.277730-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220711134656.277730-1-wsa+renesas@sang-engineering.com>
-References: <20220711134656.277730-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Extracted from a larger BSP patch made by Linh Phung.
+These are the remaining patches to enable basic eMMC support on the
+Renesas Spider board with a R-Car S4-8 SoC. The patches are based on
+mmc/next.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Some comments:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index df46fb87cffc..68e4d835c812 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -343,6 +343,19 @@ dmac1: dma-controller@e7351000 {
- 			dma-channels = <16>;
- 		};
- 
-+		mmc0: mmc@ee140000 {
-+			compatible = "renesas,sdhi-r8a779f0",
-+				     "renesas,rcar-gen4-sdhi";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 236 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 706>, <&cpg CPG_CORE R8A779F0_CLK_SD0H>;
-+			clock-names = "core", "clkh";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 706>;
-+			max-frequency = <200000000>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1000000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
+- For reasons, I have not understood yet, the performance is a bit lower
+  than our BSP when checksumming a 250MB file (BSP: 2.7s, this: 3.4s).
+  I was investigating clock handling differences between BSP and upstream
+  for a while because the values of the clock trees differed quite a
+  lot. The patch "clk: renesas: rcar-gen4: implement SDSRC properly" was
+  rejected which is fine with me. I meanwhile found out that the BSP had
+  PLL4 entries missing which made the values all bogus. The newest
+  version of the BSP fixed that. So, it doesn't seem to be the clocks.
+  Back to the drawing board, let's handle this incrementally.
+
+- I made prototypes to support the microSD slot despite it is hardly
+  accessible because the Ethernet subboard is blocking the way. After
+  further discussions with Shimoda-san, we agreed to not support it
+  upstream because the voltage switching in hardware or CPLD is only
+  for specific testing. I added a comment to describe that.
+
+Other than that, eMMC works fine so far.
+
+All the best,
+
+   Wolfram
+
+
+Wolfram Sang (3):
+  clk: renesas: r8a779f0: Add sdh0 clock
+  arm64: dts: renesas: r8a779f0: Add SDHI0 support
+  arm64: dts: renesas: spider-cpu: enable eMMC0
+
+ .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi | 45 +++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi     | 13 ++++++
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c       |  3 +-
+ 3 files changed, 60 insertions(+), 1 deletion(-)
+
 -- 
 2.35.1
 
