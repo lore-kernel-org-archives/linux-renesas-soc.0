@@ -2,133 +2,86 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7DFCCA479
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jul 2022 10:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A19C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jul 2022 10:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234677AbiGMKPD (ORCPT
+        id S234997AbiGMKc0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Jul 2022 06:15:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40802 "EHLO
+        Wed, 13 Jul 2022 06:32:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234630AbiGMKPC (ORCPT
+        with ESMTP id S231201AbiGMKcZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jul 2022 06:15:02 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 962AAE6309
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Jul 2022 03:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=46X6R/jkP+nvkO
-        38TFaRSw8Vy5EwqgrK7utRwel/tZE=; b=pbt1g1wXUptnByeNgecOOTwM8uxoAa
-        ggvSlDVHc8QObEkv46dC8WX46Pv0LtKB6cYq/DtIPCFE+d4o+f0pvb/ERY+HKEBd
-        xIRfZokizvGHG/Um1VLqUm1WW4hqSNVS/IOOqRFeZzV+lcQwhDed9GkKoTgqHwXz
-        j5cqEDnBYZGyA=
-Received: (qmail 126371 invoked from network); 13 Jul 2022 12:14:58 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jul 2022 12:14:58 +0200
-X-UD-Smtp-Session: l3s3148p1@TTmpDq3jJoMgAwDtxwdRAEXXn+yo/Rze
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/3] arm64: dts: renesas: r8a779f0: Add CMT support
-Date:   Wed, 13 Jul 2022 12:14:46 +0200
-Message-Id: <20220713101447.3804-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220713101447.3804-1-wsa+renesas@sang-engineering.com>
-References: <20220713101447.3804-1-wsa+renesas@sang-engineering.com>
+        Wed, 13 Jul 2022 06:32:25 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4E50FD220
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Jul 2022 03:32:24 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <pza@pengutronix.de>)
+        id 1oBZfF-0005kU-Pk; Wed, 13 Jul 2022 12:32:17 +0200
+Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <pza@pengutronix.de>)
+        id 1oBZfE-00037o-36; Wed, 13 Jul 2022 12:32:16 +0200
+Date:   Wed, 13 Jul 2022 12:32:16 +0200
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v11 2/5] media: renesas: vsp1: Add support to
+ deassert/assert reset line
+Message-ID: <20220713103216.GA10829@pengutronix.de>
+References: <20220531141958.575616-1-biju.das.jz@bp.renesas.com>
+ <20220531141958.575616-3-biju.das.jz@bp.renesas.com>
+ <20220713081856.GA14683@pengutronix.de>
+ <OS0PR01MB59225D5ACA3BC7BAB2F47D1D86899@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <CAMuHMdXe6P+qg07wFCryqQt7EhTpKw8ZgSN6UjqxYy16eghXdw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXe6P+qg07wFCryqQt7EhTpKw8ZgSN6UjqxYy16eghXdw@mail.gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: pza@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds CMT{0|1|2|3} device nodes for R-Car S4-8 (r8a779f0) SoC.
+Hi Biju, Geert,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 70 +++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+On Wed, Jul 13, 2022 at 11:27:56AM +0200, Geert Uytterhoeven wrote:
+[...]
+> Actually I suggested handling this in the VSP driver, as VSP seems
+> to be "special".
+> 
+> >
+> > [1]
+> > https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220504184406.93788-1-biju.das.jz@bp.renesas.com/
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index 68e4d835c812..af299a520a39 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -136,6 +136,76 @@ gpio3: gpio@e6051980 {
- 			#interrupt-cells = <2>;
- 		};
- 
-+		cmt0: timer@e60f0000 {
-+			compatible = "renesas,r8a779f0-cmt0",
-+				     "renesas,rcar-gen4-cmt0";
-+			reg = <0 0xe60f0000 0 0x1004>;
-+			interrupts = <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 910>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 910>;
-+			status = "disabled";
-+		};
-+
-+		cmt1: timer@e6130000 {
-+			compatible = "renesas,r8a779f0-cmt1",
-+				     "renesas,rcar-gen4-cmt1";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 911>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 911>;
-+			status = "disabled";
-+		};
-+
-+		cmt2: timer@e6140000 {
-+			compatible = "renesas,r8a779f0-cmt1",
-+				     "renesas,rcar-gen4-cmt1";
-+			reg = <0 0xe6140000 0 0x1004>;
-+			interrupts = <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 912>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 912>;
-+			status = "disabled";
-+		};
-+
-+		cmt3: timer@e6148000 {
-+			compatible = "renesas,r8a779f0-cmt1",
-+				     "renesas,rcar-gen4-cmt1";
-+			reg = <0 0xe6148000 0 0x1004>;
-+			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 913>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 913>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a779f0-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x4000>;
--- 
-2.35.1
+So reset_control_status never actually returns 1 and the polling loop is
+not necessary at all?
 
+If it's just the status register read that fixes things for VSP, could
+it be that the deasserting register write to the reset controller
+and the following register writes to VSP are not ordered somewhere at
+the interconnect and the read issued to the reset controller just
+guarantees that order?
+
+regards
+Philipp
