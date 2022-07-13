@@ -2,69 +2,81 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50FCC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jul 2022 10:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77665CCA482
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jul 2022 10:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbiGMKPC (ORCPT
+        id S230472AbiGMKPD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Jul 2022 06:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40780 "EHLO
+        Wed, 13 Jul 2022 06:15:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230472AbiGMKPB (ORCPT
+        with ESMTP id S234677AbiGMKPC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jul 2022 06:15:01 -0400
+        Wed, 13 Jul 2022 06:15:02 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2234EDE9EE
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Jul 2022 03:14:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F653E630C
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Jul 2022 03:15:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=g3ACe96PbRAq6IosEprjAR2XqH4
-        BQJGASncF5n5J74U=; b=hFDlK7LKHWN6IpEc1qHVZF6+4fNn34+G87R9o9kQKfI
-        9wxjdJEythZFMLK9dqsF/HnrzGXCPj+dFb+mHQPprucaevf0JoZ8AAnnngb1HLm3
-        iMNcoUtBsx5BGmRARfGwSTXZ3anvovOLivX/gmWTRImQfhRkHV0DVW4mfpN+uhYE
-        =
-Received: (qmail 126326 invoked from network); 13 Jul 2022 12:14:57 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jul 2022 12:14:57 +0200
-X-UD-Smtp-Session: l3s3148p1@SlKUDq3jEIMgAwDtxwdRAEXXn+yo/Rze
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=YsRMUTzO6nNaFa
+        rKeFmPt5ILeIr4kVEHiZg/G6IvetU=; b=j/r/j8euuZkXsQcn8nI32QHm3X0lcT
+        5BTAKgxVTFQR1ODdOb8n+aDVfAYvuXA7nDboB0JoikDdW3HuZOcCgpSpQ7DMYTuF
+        hVsOvXHff7nYlKOOw9lB6wLMtBLLbfGoSd5AMn08nOxCYWXDs2q5dPvftqVzmx0e
+        lcPHVbacPye7Q=
+Received: (qmail 126409 invoked from network); 13 Jul 2022 12:14:59 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jul 2022 12:14:59 +0200
+X-UD-Smtp-Session: l3s3148p1@y96zDq3jKoMgAwDtxwdRAEXXn+yo/Rze
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/3] r8a779f0: enable CMT timers
-Date:   Wed, 13 Jul 2022 12:14:44 +0200
-Message-Id: <20220713101447.3804-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/3] TEST: arm64: dts: renesas: spider: Enable CMT
+Date:   Wed, 13 Jul 2022 12:14:47 +0200
+Message-Id: <20220713101447.3804-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220713101447.3804-1-wsa+renesas@sang-engineering.com>
+References: <20220713101447.3804-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Here are the clk and DTS enablement patches for CMT on the r8a779f0.
-Patch 3 is only for testing.
+This patch enables CMT{0|1|2|3} on the Spider board.
 
-Note: Some testing I did is documented here by Niklas [1]. Once in a
-while, I get an error that CMCNT could not be cleared. I observe this
-behaviour only on Gen4 (V3U, S4) so far. My E3 did not show it.
+Only for testing, not for upstream!
 
-I suspect the missing WRFLG support in the CMT driver but this needs
-more research. I consider this orthogonal to these patches, though, and
-think they can go in already.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi    | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-All the best!
-
-[1] https://elinux.org/R-Car/Tests:timers
-
-
-Wolfram Sang (3):
-  clk: renesas: r8a779f0: Add CMT clocks
-  arm64: dts: renesas: r8a779f0: Add CMT support
-  TEST: arm64: dts: renesas: spider: Enable CMT
-
- .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi | 16 +++++
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi     | 70 +++++++++++++++++++
- drivers/clk/renesas/r8a779f0-cpg-mssr.c       |  4 ++
- 3 files changed, 90 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+index 7ef9f7cfe10f..51d31a62879f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+@@ -41,6 +41,22 @@ reg_3p3v: regulator-3p3v {
+ 	};
+ };
+ 
++&cmt0 {
++	status = "okay";
++};
++
++&cmt1 {
++	status = "okay";
++};
++
++&cmt2 {
++	status = "okay";
++};
++
++&cmt3 {
++	status = "okay";
++};
++
+ &extal_clk {
+ 	clock-frequency = <20000000>;
+ };
 -- 
 2.35.1
 
