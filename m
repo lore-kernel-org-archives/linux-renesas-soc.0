@@ -2,112 +2,155 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7824C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Jul 2022 07:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BADC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Jul 2022 17:45:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbiGQHaf (ORCPT
+        id S229629AbiGQRpJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Jul 2022 03:30:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55412 "EHLO
+        Sun, 17 Jul 2022 13:45:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbiGQHae (ORCPT
+        with ESMTP id S229536AbiGQRpI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Jul 2022 03:30:34 -0400
-Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20BF11902B;
-        Sun, 17 Jul 2022 00:30:30 -0700 (PDT)
-Received: from hillosipuli.retiisi.eu (dkwl20tj04snw15cjtflt-3.rev.dnainternet.fi [IPv6:2001:14ba:4493:6f40:fec3:d72a:e447:8113])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sailus)
-        by meesny.iki.fi (Postfix) with ESMTPSA id D78A9202B9;
-        Sun, 17 Jul 2022 10:30:25 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-        t=1658043026;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=k73vNUkXnGYNFTqzGk4yq4li/VMRqMmY+7V/Z/FCAaU=;
-        b=GnxP6m0tw/XU5TMJVxXQXYfEmLwmtKZIEPOSRqw0cXecliJMx+bLRKdpivwVxpP7CllDml
-        4L0S0tRf3YHopqBfzCnmw8NswjfOXbkrgIpPiG5zAI7OVsoYe0LRKTQGniqf/4qvf1eWLD
-        u+8VWbKF6wI5UaHwIOea4QyWl/fmR38=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 27975634CEA;
-        Sun, 17 Jul 2022 10:30:24 +0300 (EEST)
-Date:   Sun, 17 Jul 2022 10:30:24 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     dave.stevenson@raspberrypi.com, david.plowman@raspberrypi.com,
-        laurent.pinchart@ideasonboard.com,
-        Valentine Barshak <valentine.barshak@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 2/5] media: ov5647: Support HFLIP and VFLIP
-Message-ID: <YtO6kMoJ0GbDrJqU@valkosipuli.retiisi.eu>
-References: <20220615151457.415038-1-jacopo@jmondi.org>
- <20220615151457.415038-3-jacopo@jmondi.org>
+        Sun, 17 Jul 2022 13:45:08 -0400
+Received: from mailrelay4-1.pub.mailoutpod1-cph3.one.com (mailrelay4-1.pub.mailoutpod1-cph3.one.com [46.30.210.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8528DDF89
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 17 Jul 2022 10:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=rsa1;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+         from;
+        bh=2vLgyicetFZ8VksYnfIhJHbo2JtPKcWdixiwNKw+SGE=;
+        b=TwYWbTiUI9ca6WbppfWDbYpUHgEeRlvSoRO4L/8TJ6sjwZUHNaPhBA5wg1DG8pKit8gptQIt8BGGT
+         UQEt9UMGduWyReDA8MQzJH08hfwzY4MVy3clFON8D58EzjqNdVy6RKihmATeWy3ERl+csW/SVMcFlB
+         UkGnHaKhDo5v19t0b5Fna2aSebtLAYh0C2dPzTODeXigGmxIZ+T6CMc4v9cEDVsTV73xJ/Lbjq4sL6
+         romSc6y4AJ8AAaNcUNL4/cT5x7B7f4WcQ7ZGLLSa7THtFWpDJDL54u+Uw4zGBuVznGrLrcVmy1P/g8
+         6EJB1QnjdMltJS8summScIzVZpwDE/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=ed1;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+         from;
+        bh=2vLgyicetFZ8VksYnfIhJHbo2JtPKcWdixiwNKw+SGE=;
+        b=inFA86pcq7TWYlZW7Unv1A6XMtZ8tyI7aEwLihkz9RlipuETRMnWpDlNhyhEdp1MbRinHOqfGj9m+
+         CjeZxLwDg==
+X-HalOne-Cookie: c0c0f26bac3daaf8910f2641e6402cdea6b98545
+X-HalOne-ID: 2de56c81-05f8-11ed-823f-d0431ea8bb10
+Received: from mailproxy1.cst.dirpod4-cph3.one.com (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+        by mailrelay4.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
+        id 2de56c81-05f8-11ed-823f-d0431ea8bb10;
+        Sun, 17 Jul 2022 17:45:01 +0000 (UTC)
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     dri-devel@lists.freedesktop.org,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Benson Leung <bleung@chromium.org>,
+        Cai Huoqing <cai.huoqing@linux.dev>,
+        chrome-platform@lists.linux.dev,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Jitao Shi <jitao.shi@mediatek.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philip Chen <philipchen@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v1 0/12] drm bridge updates
+Date:   Sun, 17 Jul 2022 19:44:42 +0200
+Message-Id: <20220717174454.46616-1-sam@ravnborg.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220615151457.415038-3-jacopo@jmondi.org>
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-        s=meesny; t=1658043026;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=k73vNUkXnGYNFTqzGk4yq4li/VMRqMmY+7V/Z/FCAaU=;
-        b=OAjoszw26K+4M+hIUc9ptyU/xOB7CdugCE1VhZIumSdmZtO6itGeRfOtT4wlNBF5c1Febs
-        1F9qLDyE5mEUick9fjyJOqavNqRGRJN3peXfFCR3tflI7sLPJZOwWsEy+nwffR4BHPmVjy
-        oilkvvRHAJ0HmtEEUSaH6n9uCskYekA=
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1658043026; a=rsa-sha256; cv=none;
-        b=NbQKrUlQZHFQ5uTp2ud+4RciK7x0Z03gOJi+MRBnoXmgDk15JWYg0qmP8w6CnlTDpiKT0I
-        54IDPe4Yl9uzvkV5n3wSuAqhFZMej2DPIoPAMGgcdpQG7ShqvBoaWi1qgJo2+zYoZhFUiG
-        ccH5ZGliWdxjUcIrbBIKaWTpJn7NASg=
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+This is a collection of bridge patches that I had left unfinished
+more than a year ago. Now where I have some spare time I dusted them
+off for review and testing.
 
-Thanks for the set.
+The patches builds, but has seen no run-time testing.
 
-On Wed, Jun 15, 2022 at 05:14:54PM +0200, Jacopo Mondi wrote:
-> From: David Plowman <david.plowman@raspberrypi.com>
-> 
-> Add these missing V4L2 controls. Tested binned and full resolution
-> modes in all four orientations using Raspberry Pi running libcamera.
-> 
-> Signed-off-by: David Plowman <david.plowman@raspberrypi.com>
-> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> ---
->  drivers/media/i2c/ov5647.c | 72 ++++++++++++++++++++++++++++++++++----
->  1 file changed, 66 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index 98b72094ef68..c292e5d09eab 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -136,7 +140,7 @@ static struct regval_list ov5647_2592x1944_10bpp[] = {
->  	{0x3036, 0x69},
->  	{0x303c, 0x11},
->  	{0x3106, 0xf5},
-> -	{0x3821, 0x06},
-> +	{0x3821, 0x00},
->  	{0x3820, 0x00},
+The patches are grouped like this:
 
-As you're setting the values through the control handler, the registers
-should be removed from register lists.
+1+2:
+  - Updates parade-ps8640 for atomic operation thus allowing
+    the use of the atomic variants of drm_bridge_chain_pre_enable/
+    post_disable.
+    There is thus no users left of the non-atomic variants of
+    drm_bridge_chain* so drop them all.
+    If other drivers needs this functionality they are supposed
+    to use the atomic API.
+    This is a DSI to eDP converter, and I did not see a need for
+    format negotiation - but I may be wrong?
 
->  	{0x3827, 0xec},
->  	{0x370c, 0x03},
+3+4:
+  - Drop chain_mode_fixup in mediatek, and as there are no more
+    users, drop the implementation of drm_bridge_chain_mode_fixup.
+    The crucial part to review is the updated documentation for
+    drm_bridge_funcs.atomic_check().
 
--- 
-Regards,
+5-11:
+  - Convert all bridge drivers from mode_fixup to atomic_check.
+    To do so add the necessary hooks to have an atomic state.
+    I think the drivers will work using the atomic API,
+    but it has seen no testing!
+    I did not see any need for format negotiation, but if needed
+    let me know so we can fix it.
+    The last patch removes the mode_fixup support in drm_bridge.
 
-Sakari Ailus
+12:
+  - Add a few todo items, in the hope others will jump in and
+    convert some of the bridge drivers to the atomic API.
+
+The patch groups are more or less independent, and I may land them out
+of order if one group is reviewed before the rest.
+A few of the patches has already seen a review, but they need a
+bit more exposure as last review was more than a year ago.
+
+	Sam
+
+
+Sam Ravnborg (12):
+      drm/bridge: ps8640: Use atomic variants of drm_bridge_funcs
+      drm/bridge: Drop unused drm_bridge_chain functions
+      drm/mediatek: Drop chain_mode_fixup call in mode_valid()
+      drm/bridge: Drop drm_bridge_chain_mode_fixup
+      drm/bridge: sii8620: Use drm_bridge_funcs.atomic_check
+      drm/bridge: cros-ec-anx7688: Use drm_bridge_funcs.atomic_check
+      drm/bridge: tc358767: Use drm_bridge_funcs.atomic_check
+      drm/mediatek: Drop mtk_hdmi_bridge_mode_fixup
+      drm/rcar-du: lvds: Use drm_bridge_funcs.atomic_check
+      drm/omapdrm: Use drm_bridge_funcs.atomic_check
+      drm/bridge: Drop drm_bridge_funcs.mode_fixup
+      drm/todo: Add bridge related todo items
+
+ Documentation/gpu/todo.rst               |  20 ++++
+ drivers/gpu/drm/bridge/cros-ec-anx7688.c |  28 ++++--
+ drivers/gpu/drm/bridge/parade-ps8640.c   |  18 ++--
+ drivers/gpu/drm/bridge/sil-sii8620.c     |  17 ++--
+ drivers/gpu/drm/bridge/tc358767.c        |  21 ++---
+ drivers/gpu/drm/drm_bridge.c             | 154 +------------------------------
+ drivers/gpu/drm/mediatek/mtk_hdmi.c      |  19 ----
+ drivers/gpu/drm/omapdrm/dss/dpi.c        |  31 ++++---
+ drivers/gpu/drm/omapdrm/dss/sdi.c        |  31 ++++---
+ drivers/gpu/drm/omapdrm/dss/venc.c       |  28 ++++--
+ drivers/gpu/drm/rcar-du/rcar_lvds.c      |  12 ++-
+ include/drm/drm_bridge.h                 |  91 ++++--------------
+ 12 files changed, 147 insertions(+), 323 deletions(-)
+
+
