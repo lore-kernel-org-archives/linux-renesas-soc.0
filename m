@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47655CCA48D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jul 2022 19:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3D7C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jul 2022 19:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236081AbiGRT51 (ORCPT
+        id S235967AbiGRT50 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Jul 2022 15:57:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46256 "EHLO
+        Mon, 18 Jul 2022 15:57:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236338AbiGRT5Q (ORCPT
+        with ESMTP id S235692AbiGRT5C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Jul 2022 15:57:16 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 980982E9F0;
-        Mon, 18 Jul 2022 12:57:15 -0700 (PDT)
+        Mon, 18 Jul 2022 15:57:02 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3904A2E9D0;
+        Mon, 18 Jul 2022 12:57:01 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.92,281,1650898800"; 
-   d="scan'208";a="126532770"
+   d="scan'208";a="128258233"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Jul 2022 04:57:15 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2022 04:57:00 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0F03A40EE277;
-        Tue, 19 Jul 2022 04:57:11 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F3A1140EE277;
+        Tue, 19 Jul 2022 04:56:57 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -33,9 +33,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5/5] arm64: dts: renesas: rzg2l-smarc-som: Add PHY interrupt support for ETH{0/1}
-Date:   Mon, 18 Jul 2022 20:56:51 +0100
-Message-Id: <20220718195651.7711-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/5] arm64: dts: renesas: r9a07g044: Add IRQC node to SoC DTSI
+Date:   Mon, 18 Jul 2022 20:56:47 +0100
+Message-Id: <20220718195651.7711-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220718195651.7711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220718195651.7711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -43,56 +43,79 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The PHY interrupt (INT_N) pin is connected to IRQ2 and IRQ3 for ETH0
-and ETH1 respectively.
+Add IRQC node to R9A07G044 (RZ/G2L) SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-index 9410796c8ad6..f15d093fc6de 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-@@ -94,6 +94,8 @@ phy0: ethernet-phy@7 {
- 		compatible = "ethernet-phy-id0022.1640",
- 			     "ethernet-phy-ieee802.3-c22";
- 		reg = <7>;
-+		interrupt-parent = <&irqc>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
-@@ -120,6 +122,8 @@ phy1: ethernet-phy@7 {
- 		compatible = "ethernet-phy-id0022.1640",
- 			     "ethernet-phy-ieee802.3-c22";
- 		reg = <7>;
-+		interrupt-parent = <&irqc>;
-+		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
-@@ -171,7 +175,8 @@ eth0_pins: eth0 {
- 			 <RZG2L_PORT_PINMUX(25, 0, 1)>, /* ET0_RXD0 */
- 			 <RZG2L_PORT_PINMUX(25, 1, 1)>, /* ET0_RXD1 */
- 			 <RZG2L_PORT_PINMUX(26, 0, 1)>, /* ET0_RXD2 */
--			 <RZG2L_PORT_PINMUX(26, 1, 1)>; /* ET0_RXD3 */
-+			 <RZG2L_PORT_PINMUX(26, 1, 1)>, /* ET0_RXD3 */
-+			 <RZG2L_PORT_PINMUX(1, 0, 1)>;  /* IRQ2 */
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 3652e511160f..46fb3d83592a 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -646,6 +646,61 @@ pinctrl: pinctrl@11030000 {
+ 				 <&cpg R9A07G044_GPIO_SPARE_RESETN>;
+ 		};
  
- 	eth1_pins: eth1 {
-@@ -189,7 +194,8 @@ eth1_pins: eth1 {
- 			 <RZG2L_PORT_PINMUX(34, 1, 1)>, /* ET1_RXD0 */
- 			 <RZG2L_PORT_PINMUX(35, 0, 1)>, /* ET1_RXD1 */
- 			 <RZG2L_PORT_PINMUX(35, 1, 1)>, /* ET1_RXD2 */
--			 <RZG2L_PORT_PINMUX(36, 0, 1)>; /* ET1_RXD3 */
-+			 <RZG2L_PORT_PINMUX(36, 0, 1)>, /* ET1_RXD3 */
-+			 <RZG2L_PORT_PINMUX(1, 1, 1)>;  /* IRQ3 */
- 	};
- 
- 	gpio-sd0-pwr-en-hog {
++		irqc: interrupt-controller@110a0000 {
++			compatible = "renesas,r9a07g044-irqc",
++				     "renesas,rzg2l-irqc";
++			#interrupt-cells = <2>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0x110a0000 0 0x10000>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A07G044_IA55_CLK>,
++				 <&cpg CPG_MOD R9A07G044_IA55_PCLK>;
++			clock-names = "clk", "pclk";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A07G044_IA55_RESETN>;
++		};
++
+ 		dmac: dma-controller@11820000 {
+ 			compatible = "renesas,r9a07g044-dmac",
+ 				     "renesas,rz-dmac";
 -- 
 2.25.1
 
