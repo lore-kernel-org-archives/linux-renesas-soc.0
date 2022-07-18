@@ -2,120 +2,167 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3D7C43334
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jul 2022 19:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7FEC43334
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jul 2022 20:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235967AbiGRT50 (ORCPT
+        id S235869AbiGRUbH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Jul 2022 15:57:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
+        Mon, 18 Jul 2022 16:31:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235692AbiGRT5C (ORCPT
+        with ESMTP id S235224AbiGRUbE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Jul 2022 15:57:02 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3904A2E9D0;
-        Mon, 18 Jul 2022 12:57:01 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.92,281,1650898800"; 
-   d="scan'208";a="128258233"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2022 04:57:00 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F3A1140EE277;
-        Tue, 19 Jul 2022 04:56:57 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/5] arm64: dts: renesas: r9a07g044: Add IRQC node to SoC DTSI
-Date:   Mon, 18 Jul 2022 20:56:47 +0100
-Message-Id: <20220718195651.7711-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220718195651.7711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220718195651.7711-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 18 Jul 2022 16:31:04 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B692ED4A;
+        Mon, 18 Jul 2022 13:31:01 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id f14so9732250qkm.0;
+        Mon, 18 Jul 2022 13:31:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7ztWxP70SPPra9KJuFOmxCRhYGqoDBVpQMjJSseEb90=;
+        b=dsynwEpg46o6ulGUa1f07Vwu1vz7XJmjxzDRH/c2kTpXHyw8qDcnpswUhAWaMPEw4z
+         yiu98eDYTGgsQXVDhBBv+yXaJ9EhVsufEsxB7qt96vLdjMzqGCjHuRbU+iEXYnWRUFbE
+         AlK2ghp5XM7T/vLEM9ug9ItRZgowB4SwJY6vvTaX06uJaHV9WK5K8cTZmkJj8BOZuvI7
+         IGh6eeD0S1Z62UKcKrf8kcthMQGJOGR6uMAOLYxROPrjCaje7MsUL2ZjS263YGh+lzwt
+         6q7rAkO2vi+gPIC03YAZC54kNrV2RqZaJJ26omAkFxyrq2T5+KVRdI7wBbMS55leXxrt
+         MbFA==
+X-Gm-Message-State: AJIora+EPAt+2pUcCRazuxJQob1FqghinGdHg0FWrYr//GkU4YoYgge2
+        PnnYdsk/SBNB92eaKB7IXsjQbw9kKRqNaA==
+X-Google-Smtp-Source: AGRyM1tO8a84MIafTB7xVOvLZJNK4hzdP1maE7v6CznZY+luIlMRfIEqIcvRKuDrEIj7ARVJjDzOTg==
+X-Received: by 2002:a05:620a:1901:b0:6b5:e309:cc6a with SMTP id bj1-20020a05620a190100b006b5e309cc6amr5787730qkb.624.1658176259965;
+        Mon, 18 Jul 2022 13:30:59 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id ay17-20020a05620a179100b006b5d3a6f1e1sm8774322qkb.0.2022.07.18.13.30.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Jul 2022 13:30:59 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-31d85f82f0bso119816837b3.7;
+        Mon, 18 Jul 2022 13:30:59 -0700 (PDT)
+X-Received: by 2002:a0d:dd09:0:b0:31c:e3b9:7442 with SMTP id
+ g9-20020a0ddd09000000b0031ce3b97442mr32925297ywe.47.1658176259129; Mon, 18
+ Jul 2022 13:30:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220531141958.575616-1-biju.das.jz@bp.renesas.com>
+ <20220531141958.575616-3-biju.das.jz@bp.renesas.com> <20220713081856.GA14683@pengutronix.de>
+ <OS0PR01MB59225D5ACA3BC7BAB2F47D1D86899@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <CAMuHMdXe6P+qg07wFCryqQt7EhTpKw8ZgSN6UjqxYy16eghXdw@mail.gmail.com>
+ <20220713103216.GA10829@pengutronix.de> <CAMuHMdX9ULJVzxsBqkZvg2_XoxJPGqmduhjM9j_PCJDk-PdmqQ@mail.gmail.com>
+ <OS0PR01MB5922AEA08C8DD71390E51A97868C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <f3d19a38e59e73b91601b7a34aaf1c2ea41ff915.camel@pengutronix.de> <OS0PR01MB5922B692CA3784F4C481118F868C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB5922B692CA3784F4C481118F868C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 18 Jul 2022 22:30:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXJ0=J6ZG4BJEdG21ks3NVpm6nbBgz7UySeQ8xdLj159g@mail.gmail.com>
+Message-ID: <CAMuHMdXJ0=J6ZG4BJEdG21ks3NVpm6nbBgz7UySeQ8xdLj159g@mail.gmail.com>
+Subject: Re: [PATCH v11 2/5] media: renesas: vsp1: Add support to
+ deassert/assert reset line
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add IRQC node to R9A07G044 (RZ/G2L) SoC DTSI.
+Hi Biju,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+On Mon, Jul 18, 2022 at 12:12 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > Subject: Re: [PATCH v11 2/5] media: renesas: vsp1: Add support to
+> > deassert/assert reset line
+> >
+> > Hi,
+> >
+> > On Mo, 2022-07-18 at 09:46 +0000, Biju Das wrote:
+> > > Hi Philipp and Geert,
+> > >
+> > > > Subject: Re: [PATCH v11 2/5] media: renesas: vsp1: Add support to
+> > > > deassert/assert reset line
+> > > >
+> > > > Hi Philipp,
+> > > >
+> > > > On Wed, Jul 13, 2022 at 12:32 PM Philipp Zabel
+> > > > <p.zabel@pengutronix.de>
+> > > > wrote:
+> > > > > On Wed, Jul 13, 2022 at 11:27:56AM +0200, Geert Uytterhoeven wrote:
+> > > > > [...]
+> > > > > > Actually I suggested handling this in the VSP driver, as VSP
+> > > > > > seems to be "special".
+> > > > > >
+> > > > > > >
+> > > > > > > [1]
+> > > > >
+> > > > > So reset_control_status never actually returns 1 and the polling
+> > > > > loop is not necessary at all?
+> > > > >
+> > > > > If it's just the status register read that fixes things for VSP,
+> > > > > could it be that the deasserting register write to the reset
+> > > > > controller and the following register writes to VSP are not
+> > > > > ordered somewhere at the interconnect and the read issued to the
+> > > > > reset controller just guarantees that order?
+> > > >
+> > > > The udelay() also works.
+> > > >
+> > > > While the reset may be deasserted immediately (at the reset
+> > > > controller level), the VSP may need some additional time to
+> > > > settle/initialize (at the VSP level).
+> >
+> > ^ this feels to me like we are blindly applying a workaround for an
+> > unknown problem. Is there any way to find out what actually causes this
+> > delay (or status readback) to be necessary? Is there something
+> > documented, like a certain number of VSP clocks required to internally
+> > propagate the reset?
+>
+> OK.
+>
+> >
+> > > >
+> > > > Reset is known to work on other blocks on the same SoC, so that's
+> > > > why I suggested handling this in the VSP driver instead, like we
+> > > > already do for i2c.
+> > >
+> > > From the discussion, we agree that the current implementation is good.
+> > >
+> > > Please correct me if my understanding is wrong.
+> >
+> > From my understanding, not quite. At least the timeout poll is
+> > unnecessary and misleading. It suggests that reset_control_status() could
+> > return 0 at this point, which would be a bug in the reset driver.
+> >
+> > If reset_control_status() only ever returns 1 and the polling loop ends
+> > in the first iteration, you can drop the loop and just read status once.
+> > Or use udelay(), at this point I have not enough information to
+> > understand which would be more appropriate.
+>
+> For RZ/G1N SoC's like Geert mentioned in [1], calling reset_control_status() only once fixes the
+> issue. So strictly speaking polling is not required.
+>
+> @Geert Uytterhoeven, Please share your opinion on this.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 3652e511160f..46fb3d83592a 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -646,6 +646,61 @@ pinctrl: pinctrl@11030000 {
- 				 <&cpg R9A07G044_GPIO_SPARE_RESETN>;
- 		};
- 
-+		irqc: interrupt-controller@110a0000 {
-+			compatible = "renesas,r9a07g044-irqc",
-+				     "renesas,rzg2l-irqc";
-+			#interrupt-cells = <2>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0x110a0000 0 0x10000>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G044_IA55_CLK>,
-+				 <&cpg CPG_MOD R9A07G044_IA55_PCLK>;
-+			clock-names = "clk", "pclk";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G044_IA55_RESETN>;
-+		};
-+
- 		dmac: dma-controller@11820000 {
- 			compatible = "renesas,r9a07g044-dmac",
- 				     "renesas,rz-dmac";
--- 
-2.25.1
+According to that thread, it also works without reading the
+register, when adding a small delay() (to the vsp driver)?
 
+>
+> [1]
+> https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220504184406.93788-1-biju.das.jz@bp.renesas.com/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
