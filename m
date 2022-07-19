@@ -2,95 +2,137 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB62CCA483
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jul 2022 15:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFB9CCA47F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jul 2022 15:59:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234738AbiGSPAg (ORCPT
+        id S239704AbiGSP70 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Jul 2022 11:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59096 "EHLO
+        Tue, 19 Jul 2022 11:59:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237833AbiGSPAJ (ORCPT
+        with ESMTP id S233933AbiGSP7U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jul 2022 11:00:09 -0400
+        Tue, 19 Jul 2022 11:59:20 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E2A2C60E9;
-        Tue, 19 Jul 2022 08:00:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 40C9F5B79B;
+        Tue, 19 Jul 2022 08:59:18 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.92,284,1650898800"; 
-   d="scan'208";a="128390052"
+   d="scan'208";a="128394749"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Jul 2022 00:00:06 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Jul 2022 00:59:17 +0900
 Received: from localhost.localdomain (unknown [10.226.92.160])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D75A6400C737;
-        Wed, 20 Jul 2022 00:00:02 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 011CB4007F3A;
+        Wed, 20 Jul 2022 00:59:12 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Vinod Koul <vkoul@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Colin Ian King <colin.king@intel.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        dmaengine@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/2] dmaengine: sh: rz-dmac: Add device_synchronize callback
-Date:   Tue, 19 Jul 2022 15:59:59 +0100
-Message-Id: <20220719150000.383722-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 0/2] Add support for RZ/G2L GPT
+Date:   Tue, 19 Jul 2022 16:59:08 +0100
+Message-Id: <20220719155910.576265-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Some on-chip peripheral modules(for eg:- rspi) on RZ/G2L SoC
-use the same signal for both interrupt and DMA transfer requests.
-The signal works as a DMA transfer request signal by setting
-DMARS, and subsequent interrupt requests to the interrupt controller
-are masked.
+RZ/G2L General PWM Timer (GPT) composed of 8 channels with 32-bit timer
+(GPT32E). It supports the following functions
+ * 32 bits × 8 channels
+ * Up-counting or down-counting (saw waves) or up/down-counting
+   (triangle waves) for each counter.
+ * Clock sources independently selectable for each channel
+ * Two I/O pins per channel
+ * Two output compare/input capture registers per channel
+ * For the two output compare/input capture registers of each channel,
+   four registers are provided as buffer registers and are capable of
+   operating as comparison registers when buffering is not in use.
+ * In output compare operation, buffer switching can be at crests or
+   troughs, enabling the generation of laterally asymmetric PWM waveforms.
+ * Registers for setting up frame cycles in each channel (with capability
+   for generating interrupts at overflow or underflow)
+ * Generation of dead times in PWM operation
+ * Synchronous starting, stopping and clearing counters for arbitrary
+   channels
+ * Starting, stopping, clearing and up/down counters in response to input
+   level comparison
+ * Starting, clearing, stopping and up/down counters in response to a
+   maximum of four external triggers
+ * Output pin disable function by dead time error and detected
+   short-circuits between output pins
+ * A/D converter start triggers can be generated (GPT32E0 to GPT32E3)
+ * Enables the noise filter for input capture and external trigger
+   operation
 
-We can enable the interrupt by clearing the DMARS.
+This patch series aims to add basic pwm support for RZ/G2L GPT driver
+by creating separate logical channels for each IOs.
 
-This patch adds device_synchronize callback for clearing
-DMARS and thereby allowing DMA consumers to switch to
-DMA mode.
+v2->v3:
+ * Added Rb tag from Rob for the bindings.
+ * Updated limitation section
+ * Added prefix "RZG2L_" for all macros
+ * Modified prescale calculation
+ * Removed pwm_set_chip_data
+ * Updated comment related to modifying Mode and Prescaler
+ * Updated setting of prescale value in rzg2l_gpt_config()
+ * Removed else branch from rzg2l_gpt_get_state()
+ * removed the err label from rzg2l_gpt_apply()
+ * Added devm_clk_get_optional_enabled() to retain clk on status,
+   in case bootloader turns on the clk of pwm.
+ * Replaced devm_reset_control_get_exclusive->devm_reset_control_get_shared
+   as single reset shared between 8 channels.
+V1->v2:
+ * Added '|' after 'description:' to preserve formatting.
+ * Removed description for pwm_cells as it is common property.
+ * Changed the reg size in example from 0xa4->0x100
+ * Added Rb tag from Geert for bindings.
+ * Added Limitations section
+ * dropped "_MASK" from the define names.
+ * used named initializer for struct phase
+ * Added gpt_pwm_device into a flexible array member in rzg2l_gpt_chip
+ * Revised the logic for prescale
+ * Added .get_state callback
+ * Improved error handling in rzg2l_gpt_apply
+ * Removed .remove callback
+ * Tested the driver with PWM_DEBUG enabled.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * No change
----
- drivers/dma/sh/rz-dmac.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+RFC->v1:
+ * Added Description in binding patch
+ * Removed comments from reg and clock
+ * replaced rzg2l_gpt_write_mask()->rzg2l_gpt_modify()
+ * Added rzg2l_gpt_read() and updated macros
+ * Removed dtsi patches, will send it separately
 
-diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
-index ee2872e7d64c..675e6d5319d7 100644
---- a/drivers/dma/sh/rz-dmac.c
-+++ b/drivers/dma/sh/rz-dmac.c
-@@ -630,6 +630,14 @@ static void rz_dmac_virt_desc_free(struct virt_dma_desc *vd)
- 	 */
- }
- 
-+static void rz_dmac_device_synchronize(struct dma_chan *chan)
-+{
-+	struct rz_dmac_chan *channel = to_rz_dmac_chan(chan);
-+	struct rz_dmac *dmac = to_rz_dmac(chan->device);
-+
-+	rz_dmac_set_dmars_register(dmac, channel->index, 0);
-+}
-+
- /*
-  * -----------------------------------------------------------------------------
-  * IRQ handling
-@@ -909,6 +917,7 @@ static int rz_dmac_probe(struct platform_device *pdev)
- 	engine->device_config = rz_dmac_config;
- 	engine->device_terminate_all = rz_dmac_terminate_all;
- 	engine->device_issue_pending = rz_dmac_issue_pending;
-+	engine->device_synchronize = rz_dmac_device_synchronize;
- 
- 	engine->copy_align = DMAENGINE_ALIGN_1_BYTE;
- 	dma_set_max_seg_size(engine->dev, U32_MAX);
+RFC:
+ * https://lore.kernel.org/linux-renesas-soc/20220430075915.5036-1-biju.das.jz@bp.renesas.com/T/#t
+
+Biju Das (2):
+  dt-bindings: pwm: Add RZ/G2L GPT binding
+  pwm: Add support for RZ/G2L GPT
+
+ .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 129 ++++++
+ drivers/pwm/Kconfig                           |  11 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-rzg2l-gpt.c                   | 367 ++++++++++++++++++
+ 4 files changed, 508 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+ create mode 100644 drivers/pwm/pwm-rzg2l-gpt.c
+
+
+base-commit: 036ad6daa8f0fd357af7f50f9da58539eaa6f68c
 -- 
 2.25.1
 
