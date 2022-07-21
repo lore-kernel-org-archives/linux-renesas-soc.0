@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96D0CCA489
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jul 2022 16:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F87C43334
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jul 2022 16:57:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232792AbiGUQ5V (ORCPT
+        id S233023AbiGUQ5f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Jul 2022 12:57:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60378 "EHLO
+        Thu, 21 Jul 2022 12:57:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232716AbiGUQ5U (ORCPT
+        with ESMTP id S232862AbiGUQ5Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Jul 2022 12:57:20 -0400
+        Thu, 21 Jul 2022 12:57:25 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 056F289A6B;
-        Thu, 21 Jul 2022 09:57:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DCAA489EB4;
+        Thu, 21 Jul 2022 09:57:22 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.93,183,1654527600"; 
-   d="scan'208";a="126927668"
+   d="scan'208";a="126927675"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Jul 2022 01:57:14 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 22 Jul 2022 01:57:21 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B3FE24011419;
-        Fri, 22 Jul 2022 01:57:11 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E89414011419;
+        Fri, 22 Jul 2022 01:57:18 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -33,40 +33,69 @@ Cc:     linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/2] Add PHY interrupt support for ETH{0,1} on RZ/G2L and RZ/V2L SMARC EVK
-Date:   Thu, 21 Jul 2022 17:56:59 +0100
-Message-Id: <20220721165701.17888-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 2/2] arm64: dts: renesas: rzg2l-smarc-som: Add PHY interrupt support for ETH{0/1}
+Date:   Thu, 21 Jul 2022 17:57:01 +0100
+Message-Id: <20220721165701.17888-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220721165701.17888-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220721165701.17888-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+The PHY interrupt (INT_N) pin is connected to IRQ2 and IRQ3 for ETH0
+and ETH1 respectively.
 
-This patch series is a subset of [0] as patches 1-4 have been already
-picked up by Geert for v5.21. Patch 1 introduces macros for IRQ0-7 and
-second patch adds PHY interrupt support for ETH{0,1}.
-
-v1->v2:
-* Fixed review comments pointed by Geert
-
-v1: [0]
-
-[0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/
-20220718195651.7711-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (2):
-  dt-bindings: pinctrl: rzg2l-pinctrl: Add macros for IRQ0-7
-  arm64: dts: renesas: rzg2l-smarc-som: Add PHY interrupt support for
-    ETH{0/1}
-
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v1->v2
+* Used macros of IRQ numbers
+---
  arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi | 10 ++++++++--
- include/dt-bindings/pinctrl/rzg2l-pinctrl.h      | 10 ++++++++++
- 2 files changed, 18 insertions(+), 2 deletions(-)
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+index 9410796c8ad6..3ffda0d3fa01 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+@@ -94,6 +94,8 @@ phy0: ethernet-phy@7 {
+ 		compatible = "ethernet-phy-id0022.1640",
+ 			     "ethernet-phy-ieee802.3-c22";
+ 		reg = <7>;
++		interrupt-parent = <&irqc>;
++		interrupts = <RZG2L_IRQ2 IRQ_TYPE_LEVEL_LOW>;
+ 		rxc-skew-psec = <2400>;
+ 		txc-skew-psec = <2400>;
+ 		rxdv-skew-psec = <0>;
+@@ -120,6 +122,8 @@ phy1: ethernet-phy@7 {
+ 		compatible = "ethernet-phy-id0022.1640",
+ 			     "ethernet-phy-ieee802.3-c22";
+ 		reg = <7>;
++		interrupt-parent = <&irqc>;
++		interrupts = <RZG2L_IRQ3 IRQ_TYPE_LEVEL_LOW>;
+ 		rxc-skew-psec = <2400>;
+ 		txc-skew-psec = <2400>;
+ 		rxdv-skew-psec = <0>;
+@@ -171,7 +175,8 @@ eth0_pins: eth0 {
+ 			 <RZG2L_PORT_PINMUX(25, 0, 1)>, /* ET0_RXD0 */
+ 			 <RZG2L_PORT_PINMUX(25, 1, 1)>, /* ET0_RXD1 */
+ 			 <RZG2L_PORT_PINMUX(26, 0, 1)>, /* ET0_RXD2 */
+-			 <RZG2L_PORT_PINMUX(26, 1, 1)>; /* ET0_RXD3 */
++			 <RZG2L_PORT_PINMUX(26, 1, 1)>, /* ET0_RXD3 */
++			 <RZG2L_PORT_PINMUX(1, 0, 1)>;  /* IRQ2 */
+ 	};
+ 
+ 	eth1_pins: eth1 {
+@@ -189,7 +194,8 @@ eth1_pins: eth1 {
+ 			 <RZG2L_PORT_PINMUX(34, 1, 1)>, /* ET1_RXD0 */
+ 			 <RZG2L_PORT_PINMUX(35, 0, 1)>, /* ET1_RXD1 */
+ 			 <RZG2L_PORT_PINMUX(35, 1, 1)>, /* ET1_RXD2 */
+-			 <RZG2L_PORT_PINMUX(36, 0, 1)>; /* ET1_RXD3 */
++			 <RZG2L_PORT_PINMUX(36, 0, 1)>, /* ET1_RXD3 */
++			 <RZG2L_PORT_PINMUX(1, 1, 1)>;  /* IRQ3 */
+ 	};
+ 
+ 	gpio-sd0-pwr-en-hog {
 -- 
 2.25.1
 
