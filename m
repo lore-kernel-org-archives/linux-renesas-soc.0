@@ -2,85 +2,160 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB9CC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jul 2022 10:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3ABC43334
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jul 2022 11:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233858AbiGVKuR (ORCPT
+        id S231697AbiGVLH7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Jul 2022 06:50:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57570 "EHLO
+        Fri, 22 Jul 2022 07:07:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233716AbiGVKuQ (ORCPT
+        with ESMTP id S229671AbiGVLH6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Jul 2022 06:50:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C91B1F0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jul 2022 03:50:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D1B6F615B1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jul 2022 10:50:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2CABAC341C6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jul 2022 10:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658487014;
-        bh=rzSdLwsl68nAn5T0YgYTBelgw2CbkVyJAxfWkZuZNaw=;
-        h=Subject:From:Date:To:From;
-        b=TyzRwYhhazfgzt65rF2jVB1IN4SrWen3BKxrYTtQdwa89OgPDGHDKpE7Ok9k/R82z
-         sWihBS9b4o18c2S/tv/R/RM2wp/thsU94QStnFNyway6D5pXnwqk3KyZqVyil3PLUC
-         PbqkQ5U0ck1aEKDIIdI8D5pToo2Xcp5S4nzFfG/SxsF/V1XWGdpFWcvCjzF0S8D5DE
-         dfc4DOwON2r/KMKqRwWhlNSp9l257CE58fR5nTgb4n6NRMljDdFKfbJS7xohz0La2x
-         crKpLwl975vcC+xQ7wtvCOfjWGU/bFwUAf68Gt1FBL1c5PvVU3gROEru8qSN6a4Whx
-         gIcNSopqjFqfg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0D640D9DDDD
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jul 2022 10:50:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 22 Jul 2022 07:07:58 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 84DB49F063;
+        Fri, 22 Jul 2022 04:07:57 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.93,185,1654527600"; 
+   d="scan'208";a="127031979"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Jul 2022 20:07:56 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D9C9441FFA2D;
+        Fri, 22 Jul 2022 20:07:56 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
+        bhelgaas@google.com, krzk+dt@kernel.org, geert+renesas@glider.be,
+        magnus.damm@gmail.com
+Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 01/12] dt-bindings: PCI: renesas: Add R-Car Gen4 PCIe Host
+Date:   Fri, 22 Jul 2022 20:07:33 +0900
+Message-Id: <20220722110744.2274466-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220722110744.2274466-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20220722110744.2274466-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <165848701399.8565.15916373487980938338.git-patchwork-summary@kernel.org>
-Date:   Fri, 22 Jul 2022 10:50:13 +0000
-To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+Document bindings for Renesas R-Car Gen4 and R-Car S4-8 (R8A779F0)
+PCIe host module.
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/pci/rcar-gen4-pci-host.yaml      | 97 +++++++++++++++++++
+ 1 file changed, 97 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
 
-Series: Add IRQC support to Renesas RZ/G2L and RZ/V2L SoC
-  Submitter: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=660810
-  Lore link: https://lore.kernel.org/r/20220718195651.7711-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-    Patches: [1/5] arm64: dts: renesas: r9a07g044: Add IRQC node to SoC DTSI
-             [2/5] arm64: dts: renesas: r9a07g044: Update pinctrl node to handle GPIO interrupts
-             [3/5] arm64: dts: renesas: r9a07g054: Add IRQC node to SoC DTSI
-             [4/5] arm64: dts: renesas: r9a07g054: Update pinctrl node to handle GPIO interrupts
-
-Series: r8a779f0: enable CMT timers
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=659263
-  Lore link: https://lore.kernel.org/r/20220713101447.3804-1-wsa+renesas@sang-engineering.com
-    Patches: [1/3] clk: renesas: r8a779f0: Add CMT clocks
-             [2/3] arm64: dts: renesas: r8a779f0: Add CMT support
-
-Patch: soc: renesas: Kconfig: Enable IRQC driver for RZ/G2L SoC
-  Submitter: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=660801
-  Lore link: https://lore.kernel.org/r/20220718192824.7246-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-
-
-Total patches: 7
-
+diff --git a/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
+new file mode 100644
+index 000000000000..8ac4c2041a81
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
+@@ -0,0 +1,97 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) 2022 Renesas Electronics Corp.
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/rcar-gen4-pci-host.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas R-Car Gen4 PCIe Host
++
++maintainers:
++  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
++
++allOf:
++  - $ref: snps,dw-pcie.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: renesas,r8a779f0-pcie   # R-Car S4-8
++      - const: renesas,rcar-gen4-pcie  # R-Car Gen4
++
++  interrupts:
++    maxItems: 7
++
++  interrupt-names:
++    items:
++      - const: others
++      - const: dma
++      - const: correctable
++      - const: fatal
++      - const: nonfatal
++      - const: lp
++      - const: vndmsg
++
++  clocks:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - power-domains
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r8a779f0-cpg-mssr.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/power/r8a779f0-sysc.h>
++
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        pcie: pcie@e65d0000 {
++            compatible = "renesas,r8a779f0-pcie", "renesas,rcar-gen4-pcie";
++            reg = <0 0xe65d0000 0 0x3000>, <0 0xe65d3000 0 0x2000>,
++                  <0 0xe65d6200 0 0x0e00>, <0 0xfe000000 0 0x400000>;
++            reg-names = "dbi", "atu", "app", "config";
++            #address-cells = <3>;
++            #size-cells = <2>;
++            bus-range = <0x00 0xff>;
++            device_type = "pci";
++            ranges =  <0x81000000 0 0x00000000 0 0xfe000000 0 0x00010000
++                       0x82000000 0 0x30000000 0 0x30000000 0 0x10000000>;
++            dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
++            interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
++            interrupt-names = "others", "dma", "correctable", "fatal",
++                              "nonfatal", "lp", "vndmsg";
++            #interrupt-cells = <1>;
++            interrupt-map-mask = <0 0 0 7>;
++            interrupt-map = <0 0 0 1 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
++                             0 0 0 2 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
++                             0 0 0 3 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
++                             0 0 0 4 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>;
++            clocks = <&cpg CPG_MOD 624>;
++            power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++            resets = <&cpg 624>;
++            num-lanes = <2>;
++            snps,enable-cdm-check;
++            max-link-speed = <2>;
++        };
++    };
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
