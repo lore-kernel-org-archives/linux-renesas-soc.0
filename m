@@ -2,160 +2,134 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9402EC43334
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jul 2022 20:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CDBC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Jul 2022 00:41:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233440AbiGVUFG (ORCPT
+        id S229573AbiGWAlv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Jul 2022 16:05:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60094 "EHLO
+        Fri, 22 Jul 2022 20:41:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbiGVUFE (ORCPT
+        with ESMTP id S229572AbiGWAlu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Jul 2022 16:05:04 -0400
-Received: from mailrelay1-1.pub.mailoutpod1-cph3.one.com (mailrelay1-1.pub.mailoutpod1-cph3.one.com [46.30.210.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC283796BB
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jul 2022 13:05:02 -0700 (PDT)
+        Fri, 22 Jul 2022 20:41:50 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD6272710
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jul 2022 17:41:49 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id o12so5722522pfp.5
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jul 2022 17:41:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=rsa1;
-        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-         from:date:from;
-        bh=Tzxqv/Uzh1JY+W5mrWl4jc5taDT0DwDxhpbR/ngIxKE=;
-        b=ngrCl12iS9dbWrzbb+yEVsi8jv2WhoHn8h0y9wimb9qK6AQJueW3fERGcoV1yQw/zIu9/G9RbA5rn
-         Yeao89uDhxCdUU5TDF4dvTf1L8nKnVo4mzuoBwGD5Dadd7gh75WPUVCXUKWNXcGaxVQPXTOxZugSm9
-         VWZAr3/FVedqQpwGfjkIu8WXd5CjNSidAL1L98VCqUhv8d8F9wHWj0xnSGdAi0RQPytjlWGTuY27sC
-         l3b7xbTydwxittImeDVjIEGHOm30MmaaUXI3b5kgas7FKOtIlKX9c8sZwz019clzsw1JXTfXeFPw6d
-         TDnKeTLqrjdmFX7N8EmCZHlGRAUlamg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=ed1;
-        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-         from:date:from;
-        bh=Tzxqv/Uzh1JY+W5mrWl4jc5taDT0DwDxhpbR/ngIxKE=;
-        b=mUvzipy2Q9Z8BIwDUwrCH/RmGe9aq0BuTkWEuXGc/CvysRYAcStZnN/aLKjysmkL/TPnREZ33sp9u
-         08MztDcDg==
-X-HalOne-Cookie: 5935a94967758038358233096c6ddf6e78c687d9
-X-HalOne-ID: 90b086e4-09f9-11ed-a6c8-d0431ea8a283
-Received: from mailproxy1.cst.dirpod4-cph3.one.com (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-        by mailrelay1.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
-        id 90b086e4-09f9-11ed-a6c8-d0431ea8a283;
-        Fri, 22 Jul 2022 20:05:00 +0000 (UTC)
-Date:   Fri, 22 Jul 2022 22:04:58 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        dri-devel@lists.freedesktop.org,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: display: bridge: Document RZ/G2L
- MIPI DSI TX bindings
-Message-ID: <YtsC6p7yy86Dr95H@ravnborg.org>
-References: <20220722191924.544869-1-biju.das.jz@bp.renesas.com>
- <20220722191924.544869-2-biju.das.jz@bp.renesas.com>
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=odVpD3NKa+kg83P2IfNqjKphN3MX78eOSbfLabz6ivI=;
+        b=HQrJMb1/b4VvBvxkC8a7ydDWjrSmoHNhfDU9i4leePIKlUpehaJNLRFYRM4H1wo/2n
+         IQGLlID94nlSsFOQiuz68/djJ/a8I4oFkb+3Vvp2NWAAEsHctf5OfQHGNFo6y0O9g3nn
+         p9ZQ/+qUa1Tkr8+HyXgxejxXF6ukS5/iPx5sO6wcRAlY1G0W/mnwNcqRjDKs63fSpN6M
+         SZeic2GoL2fSqMGKtN+N6pKvwRxFicpek7tySqjsZzQaxwVZ2JvpKJ3Vy03gH64yTFzF
+         fJcVf9DT2Tekox9eq23ir1ArOce+G+699ZqCqchFQJKJuEtlILnCyZURs+AoaTeGJ14V
+         gq0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=odVpD3NKa+kg83P2IfNqjKphN3MX78eOSbfLabz6ivI=;
+        b=GzzXlK3VgBWXnVOgXSgUMmaRSHZ8s1b9sy68kY6KSHCncxh5CH/RNLVC3pCKHUH40V
+         zVB+WGPO4tY2rMHU4kFRPPh9dTcGUOGZxrc2csf6rKDvcZsV3p7behZkCcMr3mNEKDzb
+         uIw4NE/InP2P9i8MifAW6wo+ZtIFQv4wR+StyZ0TjWknHkLm4mEAxj7FVS2YJzMkZDlh
+         BRx9unMR2QH36GmNFjbSM5CpSfPX1SybdnkPh2GdSi4N4tKKeRBIgwmh2QeZUma/5aBu
+         QH4FsH5rDZsPKLCIiCcadzC9tcd++B8gXNK8oEnb9AHOh3E5ZzU+SkEGrCxykPHjcfdA
+         9PsA==
+X-Gm-Message-State: AJIora+XJCOl3kPLXAY2AZKnxzTg4/ruKX2kIvXppwrp1vOX0hsSM3cW
+        nECPH9oeZkxz2FIXe42mpnVz0dQmXVNU7NpD
+X-Google-Smtp-Source: AGRyM1t/uFEQwZpPX82q4Y5aTG72vO4DM5lcBykfyUB5RgrxHzkfL7k9SUbjuYWlu4N7e1S8GMUjjQ==
+X-Received: by 2002:a05:6a00:168e:b0:52b:b62e:ad73 with SMTP id k14-20020a056a00168e00b0052bb62ead73mr2497722pfc.56.1658536909271;
+        Fri, 22 Jul 2022 17:41:49 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id i6-20020a17090332c600b0016c0593876csm4429236plr.157.2022.07.22.17.41.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Jul 2022 17:41:49 -0700 (PDT)
+Message-ID: <62db43cd.1c69fb81.c7711.7581@mx.google.com>
+Date:   Fri, 22 Jul 2022 17:41:49 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220722191924.544869-2-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2022-07-22-v5.19-rc7
+Subject: renesas/master ltp-ipc: 18 runs,
+ 1 regressions (renesas-devel-2022-07-22-v5.19-rc7)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+renesas/master ltp-ipc: 18 runs, 1 regressions (renesas-devel-2022-07-22-v5=
+.19-rc7)
 
-On Fri, Jul 22, 2022 at 08:19:23PM +0100, Biju Das wrote:
-> The RZ/G2L MIPI DSI TX is embedded in the Renesas RZ/G2L family SoC's. It
-> can operate in DSI mode, with up to four data lanes.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3->v4:
->  * No change.
-> v2->v3:
->  * Added Rb tag from Geert and Laurent
->  * Fixed the typo "Receive" -> "transmit"
->  * Added accepible values for data-lanes
->  * Sorted Header file in the example
->  * Added SoC specific compaible along with generic one.
-> v1->v2:
->  * Added full path for dsi-controller.yaml
->  * Modeled DSI + D-PHY as single block and updated reg property
->  * Fixed typo D_PHY->D-PHY
->  * Updated description
->  * Added interrupts and interrupt-names and updated the example 
-> RFC->v1:
->  * Added a ref to dsi-controller.yaml.
-> RFC:-
->  * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-22-biju.das.jz@bp.renesas.com/
-> ---
->  .../bindings/display/bridge/renesas,dsi.yaml  | 182 ++++++++++++++++++
->  1 file changed, 182 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> new file mode 100644
-> index 000000000000..131d5b63ec4f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> @@ -0,0 +1,182 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/renesas,dsi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas RZ/G2L MIPI DSI Encoder
-> +
-> +maintainers:
-> +  - Biju Das <biju.das.jz@bp.renesas.com>
-> +
-> +description: |
-> +  This binding describes the MIPI DSI encoder embedded in the Renesas
-> +  RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
-> +  up to four data lanes.
-> +
-> +allOf:
-> +  - $ref: /schemas/display/dsi-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> +      - const: renesas,rzg2l-mipi-dsi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Sequence operation channel 0 interrupt
-> +      - description: Sequence operation channel 1 interrupt
-> +      - description: Video-Input operation channel 1 interrupt
-> +      - description: DSI Packet Receive interrupt
-> +      - description: DSI Fatal Error interrupt
-> +      - description: DSI D-PHY PPI interrupt
-> +      - description: Debug interrupt
-This is an awful lot of interrupts.
-Is this really individual interrupts or status bits in a single
-interrupt? If it is the latter then there should be only one interrupt
-defined.
+Regressions Summary
+-------------------
 
-Note: I looked at the driver, but it does not use interrupt so it did
-not answer my question.
+platform         | arch | lab     | compiler | defconfig              | reg=
+ressions
+-----------------+------+---------+----------+------------------------+----=
+--------
+beaglebone-black | arm  | lab-cip | gcc-10   | multi_v7_defconfig+ima | 1  =
+        =
 
-	Sam
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-07-22-v5.19-rc7/plan/ltp-ipc/
+
+  Test:     ltp-ipc
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-07-22-v5.19-rc7
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      3ddd67eca4592c2e96f8aa938195d645d1f8324b
+
+  Test suite revisions:
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  bda92ad659a52d38ac810099f69adff626b064c6 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform         | arch | lab     | compiler | defconfig              | reg=
+ressions
+-----------------+------+---------+----------+------------------------+----=
+--------
+beaglebone-black | arm  | lab-cip | gcc-10   | multi_v7_defconfig+ima | 1  =
+        =
+
+
+  Details:     https://kernelci.org/test/plan/id/62db3b6d9c0a61a539daf076
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+ima
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-07-22-v5.19-rc7/arm/multi_v7_defconfig+ima/gcc-10/lab-cip/ltp-ipc-beagl=
+ebone-black.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-07-22-v5.19-rc7/arm/multi_v7_defconfig+ima/gcc-10/lab-cip/ltp-ipc-beagl=
+ebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20220716.0/armhf/initrd.cpio.gz =
+
+
+
+  * ltp-ipc.login: https://kernelci.org/test/case/id/62db3b6d9c0a61a539daf0=
+77
+        new failure (last pass: renesas-devel-2022-07-19-v5.19-rc7) =
+
+ =20
