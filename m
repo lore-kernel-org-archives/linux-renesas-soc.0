@@ -2,126 +2,81 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8055C04A68
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jul 2022 21:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B18C00144
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jul 2022 21:14:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232529AbiGZVBU (ORCPT
+        id S232362AbiGZVOx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Jul 2022 17:01:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51884 "EHLO
+        Tue, 26 Jul 2022 17:14:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232083AbiGZVBT (ORCPT
+        with ESMTP id S229929AbiGZVOw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Jul 2022 17:01:19 -0400
+        Tue, 26 Jul 2022 17:14:52 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3DB2CE2D
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jul 2022 14:01:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D2282A957
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jul 2022 14:14:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=bFbaICsLuFoQMQ
-        UFAFQCQdE0ZmTahoCn/h7UBuutveA=; b=epNMzPUNIqriFOdwbNFaMWsVDvRvDq
-        TOug/svAaoCfv6J6GyF4Egtog+pQD258OTatEVenAsXMycdbxFfba8GjoLt5q7yh
-        Qyvuw/OUC7+LuSMFelQMZWmrEdsBsg5ytjpMkagasbs4813QhVfA4Ho2Lv6BUypn
-        BRTfbxbHvljXk=
-Received: (qmail 2810287 invoked from network); 26 Jul 2022 23:01:16 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jul 2022 23:01:16 +0200
-X-UD-Smtp-Session: l3s3148p1@i6DimbvkzQRZzIts
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=6M3GcDQJnJjT8wRbNVIe0s9/boPZ
+        /i8a4uUlWicMqr4=; b=u+yIzi0+MlikxGlA8T6kvS8BV0657UxpkgG3Yz/wv0+Q
+        DRi4QzvH7ly3J5mrOd9bccs4BRTTaIAX+k5/EQjawTenLx3LYcn0u6tEiK+AKPOr
+        QLfb541AM04JP8V8yTTW3I3AY6jSiNwA/PLoiLQDSbzeIe4X7Z8DTfIudTWB5OU=
+Received: (qmail 2813781 invoked from network); 26 Jul 2022 23:14:49 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jul 2022 23:14:49 +0200
+X-UD-Smtp-Session: l3s3148p1@FkVbyrvkpAhZzIts
+Date:   Tue, 26 Jul 2022 23:14:45 +0200
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/3] arm64: dts: renesas: r8a779f0: Add TMU nodes
-Date:   Tue, 26 Jul 2022 23:01:09 +0200
-Message-Id: <20220726210110.1444-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220726210110.1444-1-wsa+renesas@sang-engineering.com>
-References: <20220726210110.1444-1-wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: extend documentation about retvals of master_xfer
+ functions
+Message-ID: <YuBZRUSObpSeeTP/@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20220724184628.2752-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aMKHlSRqF2b1E2EK"
+Content-Disposition: inline
+In-Reply-To: <20220724184628.2752-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 65 +++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index 0c59a93cbaaa..61bd168f51c6 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -334,6 +334,71 @@ tsc: thermal@e6198000 {
- 			#thermal-sensor-cells = <1>;
- 		};
- 
-+		tmu0: timer@e61e0000 {
-+			compatible = "renesas,tmu-r8a779f0", "renesas,tmu";
-+			reg = <0 0xe61e0000 0 0x30>;
-+			interrupts = <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 713>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 713>;
-+			status = "disabled";
-+		};
-+
-+		tmu1: timer@e6fc0000 {
-+			compatible = "renesas,tmu-r8a779f0", "renesas,tmu";
-+			reg = <0 0xe6fc0000 0 0x30>;
-+			interrupts = <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 478 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 479 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 714>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 714>;
-+			status = "disabled";
-+		};
-+
-+		tmu2: timer@e6fd0000 {
-+			compatible = "renesas,tmu-r8a779f0", "renesas,tmu";
-+			reg = <0 0xe6fd0000 0 0x30>;
-+			interrupts = <GIC_SPI 481 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 482 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 483 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 715>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 715>;
-+			status = "disabled";
-+		};
-+
-+		tmu3: timer@e6fe0000 {
-+			compatible = "renesas,tmu-r8a779f0", "renesas,tmu";
-+			reg = <0 0xe6fe0000 0 0x30>;
-+			interrupts = <GIC_SPI 485 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 486 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 487 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+		};
-+
-+		tmu4: timer@ffc00000 {
-+			compatible = "renesas,tmu-r8a779f0", "renesas,tmu";
-+			reg = <0 0xffc00000 0 0x30>;
-+			interrupts = <GIC_SPI 489 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 490 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 491 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 717>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 717>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			compatible = "renesas,i2c-r8a779f0",
- 				     "renesas,rcar-gen4-i2c";
--- 
-2.35.1
+--aMKHlSRqF2b1E2EK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Jul 24, 2022 at 08:46:28PM +0200, Wolfram Sang wrote:
+> It was stated how the error codes should be. It was not stated what the
+> regular case should return. Add this.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-next, thanks!
+
+
+--aMKHlSRqF2b1E2EK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmLgWUUACgkQFA3kzBSg
+KbYz0A//WZIynw1YJ8YnIdfUsY4RttvwVeRWVcjL/NvHBwcJhHxjO5mYX875h9dK
+g0VJINjcPtXF56NHOFhMTBhKH/B+KFmw5G4OlbPekqfZ4RM2suArFyietYeNN3X/
+GjjqwN/2WY5bDiucZcXvYfwG1tfULq3FF8UOqZyWL1kexLwAeN3Skm5yHm/Ar4lE
+8sbe2o+YSwnm302oQAIg1v5CUG38A17xd7kep8i6FOMi1zWITODGBgamjRxeO0BJ
+m07/654BaxBfVlVPhEmVuYxs6aZj8CF4D0tndd8+8viLW87k3RM2dPOpTj+Vwlrz
+ODitGR1T1GGH0SxF/uXlHWZJ+6EcWVf5Pl0SrVF5apmHRV3EgK/Hj7HkChNf2nM0
+Tacw6dBQAXbS66srnVmnDaeNQUWLlqgYZgNz3l0NwPQcqnr05AVRziG8hzpgl3yY
+Q8y0xh8cu7w59AN2OrUQCeHtZzgRmIvNipwNmqmuezbgXYMvdWmxfAmralu5QDFW
+4FgiGvI76DW8brpajDF8vnGJc7v9DfW8/TfkiSSkKFEPdd83IRKgssOuApToiKfV
+4jLGcwkzQmRf9kQzY/Lb+WF7ngD6D2Y5LTAVUEw1rUhqPxeBSqR+42kOzZ29FmiM
++4ZakJSWR4WmJkdZjaa4uwMhL+hs0tgGwvY6yqs0NWWf8I10O/w=
+=YyGH
+-----END PGP SIGNATURE-----
+
+--aMKHlSRqF2b1E2EK--
