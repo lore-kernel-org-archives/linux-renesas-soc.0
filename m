@@ -2,36 +2,36 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E72A8C19F29
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jul 2022 21:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4472BC00144
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jul 2022 21:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229658AbiGZVBS (ORCPT
+        id S232083AbiGZVBU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Jul 2022 17:01:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51870 "EHLO
+        Tue, 26 Jul 2022 17:01:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232083AbiGZVBR (ORCPT
+        with ESMTP id S233244AbiGZVBU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Jul 2022 17:01:17 -0400
+        Tue, 26 Jul 2022 17:01:20 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 970192CE34
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jul 2022 14:01:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63C502CE34
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jul 2022 14:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=Oqk3qBo92f99c5
-        /6S/phTNbmZQCFAQNIxXe21iUNj6g=; b=Tqni9xmEwQE6ViQ4Mki8Y44uf/RE6b
-        i8gOgYh4Uh/tZ9SzQG/xLVRtFg3b7lckji74hTNrqMzyJM9tWaj0oY51NOIxdg4o
-        GfobEV3jaEh5FIsqT4DFdu6Go7DHpnwZim237wkEyG/eKHrarrUdnnBPAMQuzneh
-        a8EnKWt+r+Zrk=
-Received: (qmail 2810258 invoked from network); 26 Jul 2022 23:01:14 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jul 2022 23:01:14 +0200
-X-UD-Smtp-Session: l3s3148p1@kT3MmbvkTVRZzIts
+        :mime-version:content-transfer-encoding; s=k1; bh=5yIo1SijcNB7TZ
+        cZcJcSM3PuQVJshflQozJh3DjyZRw=; b=fQ7Xmzbe1yiPjSjs1Z/3/C9yt+XBcQ
+        BdHoLdzJtcPLgoGmZhgeoBLvxCoHyLIwMeE7qqHIJ+SLo8vTmXMLhQ/Iu5eRQ+O7
+        cNC+KfLqFjw7tF50p1vjySA6oTP+0His5rrVPO36yLe7Z7ZPsk4zoGPoFW4ugEeI
+        roJgmqYfM8HzM=
+Received: (qmail 2810316 invoked from network); 26 Jul 2022 23:01:17 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jul 2022 23:01:17 +0200
+X-UD-Smtp-Session: l3s3148p1@CXP4mbvkfCZZzIts
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/3] clk: renesas: r8a779f0: Add TMU and parent SASYNC clocks
-Date:   Tue, 26 Jul 2022 23:01:08 +0200
-Message-Id: <20220726210110.1444-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/3] TEST: arm64: dts: renesas: spider: Enable TMU
+Date:   Tue, 26 Jul 2022 23:01:10 +0200
+Message-Id: <20220726210110.1444-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220726210110.1444-1-wsa+renesas@sang-engineering.com>
 References: <20220726210110.1444-1-wsa+renesas@sang-engineering.com>
@@ -41,39 +41,43 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+This patch enables TMU{0|1|2|3|4} on the Spider board.
+
+Only for testing, not for upstream!
+
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 89cedd0f504c..6f8c967181f4 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -108,6 +108,11 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
- 	DEF_FIXED("cbfusa",	R8A779F0_CLK_CBFUSA,	CLK_EXTAL,	2, 1),
- 	DEF_FIXED("cpex",	R8A779F0_CLK_CPEX,	CLK_EXTAL,	2, 1),
- 
-+	DEF_FIXED("sasyncrt",	R8A779F0_CLK_SASYNCRT,	CLK_PLL5_DIV4,	48, 1),
-+	DEF_FIXED("sasyncperd1", R8A779F0_CLK_SASYNCPERD1, CLK_PLL5_DIV4, 3, 1),
-+	DEF_FIXED("sasyncperd2", R8A779F0_CLK_SASYNCPERD2, R8A779F0_CLK_SASYNCPERD1, 2, 1),
-+	DEF_FIXED("sasyncperd4", R8A779F0_CLK_SASYNCPERD4, R8A779F0_CLK_SASYNCPERD1, 4, 1),
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+index 4a876d47f59b..62887250fe39 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+@@ -140,3 +140,23 @@ &scif3 {
+ &scif_clk {
+ 	clock-frequency = <24000000>;
+ };
 +
- 	DEF_GEN4_SDH("sdh0",	R8A779F0_CLK_SD0H,	CLK_SDSRC,	   0x870),
- 	DEF_GEN4_SD("sd0",	R8A779F0_CLK_SD0,	R8A779F0_CLK_SD0H, 0x870),
- 
-@@ -140,6 +145,11 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("sdhi0",        706,    R8A779F0_CLK_SD0),
- 	DEF_MOD("sys-dmac0",	709,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("sys-dmac1",	710,	R8A779F0_CLK_S0D3_PER),
-+	DEF_MOD("tmu0",		713,	R8A779F0_CLK_SASYNCRT),
-+	DEF_MOD("tmu1",		714,	R8A779F0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu2",		715,	R8A779F0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu3",		716,	R8A779F0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu4",		717,	R8A779F0_CLK_SASYNCPERD2),
- 	DEF_MOD("wdt",		907,	R8A779F0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779F0_CLK_CL16M),
- 	DEF_MOD("tsc",		919,	R8A779F0_CLK_CL16M),
++&tmu0 {
++	status = "okay";
++};
++
++&tmu1 {
++	status = "okay";
++};
++
++&tmu2 {
++	status = "okay";
++};
++
++&tmu3 {
++	status = "okay";
++};
++
++&tmu4 {
++	status = "okay";
++};
 -- 
 2.35.1
 
