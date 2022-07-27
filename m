@@ -2,61 +2,61 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F57C04A68
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jul 2022 08:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440FAC19F21
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jul 2022 08:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbiG0Iy3 (ORCPT
+        id S231231AbiG0Izu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Jul 2022 04:54:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38908 "EHLO
+        Wed, 27 Jul 2022 04:55:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiG0Iy2 (ORCPT
+        with ESMTP id S230406AbiG0Izs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Jul 2022 04:54:28 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5552C45F7F
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jul 2022 01:54:27 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id bf9so26053503lfb.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jul 2022 01:54:27 -0700 (PDT)
+        Wed, 27 Jul 2022 04:55:48 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90381FCFF
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jul 2022 01:55:46 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id u17so8928481lji.5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jul 2022 01:55:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=wfvzPXMvgYMiUrKp+h3pAdWcM4mbvmMcUUFl5h9IQqY=;
-        b=qdAQFECb5vde05XPxQXR6CSFIyJRylut7jx8bcMsVR/UT2cFrh5p1DL5iaKRGKxKEn
-         iWmKC4eWCe2kTHSNk2idpONMN1Plt2Xcy6sbKw+4wxFRYmcMzU2SdfeeuMQL9Y6v0qde
-         Cp7YyOReDTwUeOu6Cri18GQ6ve0xOo7ZGVDHSfJLxIOcj+Yk81Lq2oASn/QF12HlTU97
-         OtjDCJOj7uUZIr1wPegm1SeS7E/frwmpNoBtrnZB0mY9an9LuxJWz61flrjSNn9LV0LT
-         xe6zjnvWTzt4k+kZXfINYP6ljKljyrQ805Tdh2ZLey72Rw0tArnnWcuEzZBIij+rj/FF
-         E7Tg==
+        bh=Vuv1p7jjxhoLf3pl6CxfEW9ySyiN1TFLLwtvwe+It3s=;
+        b=niNBmcan8R/3RdUV98uGLqwl8cQhwdYhfjDVALzrojVMoplHsWb16qG1S00+uIn+pf
+         dSElWqy9craRDZY9wOc/EdXgTsA8gO/vWLc2RxlSRfwmw93lmti0FRzxnkwVI4ylKUwn
+         ttgTRs8hGNe4Ns89VT8CpVajbSgwRdGkFSEO4CLZJR9PB5cYk7kmLY3lv0lsVT4DMUR6
+         mH7uxRx/N4+BlMPW4x32aDrjDassyGxG9yom4SwAvl1bwAha4RrD87jLSY1HqpYBs5i0
+         zh5bYHWoHhqwLFT/G62/x27nKtwMpH3P5pmAgdOjS6tkmLZ6RioI2tRMJHXFdynTNVhs
+         5+3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=wfvzPXMvgYMiUrKp+h3pAdWcM4mbvmMcUUFl5h9IQqY=;
-        b=ZXQQOi+HFCXdSDWyhZAgvBaHjYztqZVOse1KiQeuWX1fYz0f9GHVyeOr4oQbWq1jaE
-         gqM8nr0gF4vNiD14i+8jvXku4aiMv+iPtxKZwVb2tdi7g6MOPkf0GjU7MXFxnDEIqDpx
-         bUH9tjpo3kBnErB/9UMFVVQgxGPO/FBNCZZszc+z1j+PDHW0EH+9MslmsYd244C7kklz
-         iPacRlOvz4Y2I+w9ssPKmZw+8OLNXICd57Lhjhrs++tE1+jF6h4W8U2FP9100IaZ45sK
-         gO0wJ6WfmgFqnXaToRnyvI7TZHoCftEkWsZWOvHEZbtWJFPGMgwWLsEo8T8PkjnSRL33
-         WShA==
-X-Gm-Message-State: AJIora9uF57Lb9y3k1UGB8P50kcLg8oh78jVNSHNfOb6zttpNtprS5Vk
-        9obBIKm8rV4Qnv26h6nU+/+Qig==
-X-Google-Smtp-Source: AGRyM1uVHJHNhUGUESYxd+T31l7LrTcDRrOCtvPmwbN2drMeVa748oGkr4rno1r/8A3krk6uQDreyQ==
-X-Received: by 2002:a05:6512:32c2:b0:48a:982a:b2be with SMTP id f2-20020a05651232c200b0048a982ab2bemr3747717lfg.493.1658912065422;
-        Wed, 27 Jul 2022 01:54:25 -0700 (PDT)
+        bh=Vuv1p7jjxhoLf3pl6CxfEW9ySyiN1TFLLwtvwe+It3s=;
+        b=2ZMp2QEsFxOcXAbtVbblcGzXgv3mzdeoa5iU/lI48Dht9gi747AilQsXODkPHWigoQ
+         dTNvJwzAcrxLoZrIJfEJb13bn1f2IR1OPYkfnRCfBeLS61YOrvIcUEk0E2AcVxHuwk94
+         bnY0d5tsu59ppA07OPEH5PDoVfLaFFNvPTgcC2YmawHuLqGoWqFhCeiPWur2wPap9SjM
+         4IluxP1sDANLujlgnzWzINEASOYCYDdPM0ncpfReQyNs+Lb50cRpCCalGu6GVKQxkUUr
+         9htPDpFhSkoTd08mn43tMXC5bTV1weilb72GPNlgx327f3VmVK+s6Zl6XynhjpGYU1OM
+         vPsg==
+X-Gm-Message-State: AJIora9O8c6EtJFRS7DO723VwG9lZHqIY1q/N73WvA9+ikF4AzuhlViX
+        eVMPJCjd3cqxh53tcwFj4VA5DA==
+X-Google-Smtp-Source: AGRyM1vJCX1i6V7I89K+c9fYQSciskM0/PYxd1o/dkCWLnV5x+RZ4SBIluxK5iib8VSoabYYu9QhJg==
+X-Received: by 2002:a2e:bd13:0:b0:246:1ff8:6da1 with SMTP id n19-20020a2ebd13000000b002461ff86da1mr7256869ljq.219.1658912144950;
+        Wed, 27 Jul 2022 01:55:44 -0700 (PDT)
 Received: from [192.168.3.197] (78-26-46-173.network.trollfjord.no. [78.26.46.173])
-        by smtp.gmail.com with ESMTPSA id x12-20020a056512078c00b0048a9c1d13d0sm1083845lfr.5.2022.07.27.01.54.24
+        by smtp.gmail.com with ESMTPSA id k1-20020ac257c1000000b0048a8e831b38sm1610754lfo.245.2022.07.27.01.55.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jul 2022 01:54:24 -0700 (PDT)
-Message-ID: <636e9214-4b36-e9a6-3c6b-b6edb944335e@linaro.org>
-Date:   Wed, 27 Jul 2022 10:54:23 +0200
+        Wed, 27 Jul 2022 01:55:44 -0700 (PDT)
+Message-ID: <6a87ee9b-f944-ab8c-cc00-fd8bbb22cad8@linaro.org>
+Date:   Wed, 27 Jul 2022 10:55:42 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH 4/6] dt-bindings: riscv: Add DT binding documentation for
- Renesas RZ/Five SoC and SMARC EVK
+Subject: Re: [PATCH 6/6] riscv: dts: renesas: Add initial devicetree for
+ Renesas RZ/Five SoC
 Content-Language: en-US
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -72,9 +72,9 @@ Cc:     Anup Patel <anup@brainfault.org>,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>
 References: <20220726180623.1668-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220726180623.1668-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220726180623.1668-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220726180623.1668-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20220726180623.1668-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -82,76 +82,36 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On 26/07/2022 20:06, Lad Prabhakar wrote:
-> Document Renesas RZ/Five (R9A07G043) SoC and SMARC EVK based on this SoC.
+> Add initial device tree for Renesas RZ/Five RISC-V CPU Core (AX45MP
+> Single).
+> 
+> Below is the list of IP blocks added in the initial SoC DTSI which can be
+> used to boot via initramfs on RZ/Five SMARC EVK:
+> - AX45MP CPU
+> - CPG
+> - PINCTRL
+> - PLIC
+> - SCIF0
+> - SYSC
 > 
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->  .../devicetree/bindings/riscv/renesas.yaml    | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/riscv/renesas.yaml
+>  arch/riscv/boot/dts/Makefile               |   1 +
+>  arch/riscv/boot/dts/renesas/r9a07g043.dtsi | 121 +++++++++++++++++++++
+>  2 files changed, 122 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/renesas/r9a07g043.dtsi
 > 
-> diff --git a/Documentation/devicetree/bindings/riscv/renesas.yaml b/Documentation/devicetree/bindings/riscv/renesas.yaml
-> new file mode 100644
-> index 000000000000..f72f8aea6a82
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/riscv/renesas.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/riscv/renesas.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas RZ/Five Platform Device Tree Bindings
-> +
-> +maintainers:
-> +  - Geert Uytterhoeven <geert+renesas@glider.be>
-> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> +
-> +# We want to ignore this schema if the board is SMARC EVK based on ARM64 arch
-> +select:
-> +  not:
-> +    properties:
-> +      compatible:
-> +        contains:
-> +          items:
+> diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
+> index ff174996cdfd..b0ff5fbabb0c 100644
+> --- a/arch/riscv/boot/dts/Makefile
+> +++ b/arch/riscv/boot/dts/Makefile
+> @@ -3,5 +3,6 @@ subdir-y += sifive
+>  subdir-y += starfive
+>  subdir-$(CONFIG_SOC_CANAAN_K210_DTB_BUILTIN) += canaan
+>  subdir-y += microchip
+> +subdir-y += renesas
 
-I think you should rather ignore the RiscV SoCs, not specific board.
-
-> +            - const: renesas,smarc-evk
-> +            - enum:
-> +                - renesas,r9a07g043u11
-> +                - renesas,r9a07g043u12
-> +                - renesas,r9a07g044c1
-> +                - renesas,r9a07g044c2
-> +                - renesas,r9a07g044l1
-> +                - renesas,r9a07g044l2
-> +                - renesas,r9a07g054l1
-> +                - renesas,r9a07g054l2
-> +            - enum:
-> +                - renesas,r9a07g043
-> +                - renesas,r9a07g044
-> +                - renesas,r9a07g054
-
-Did you actually test that it works and properly matches?
-
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - description: RZ/Five (R9A07G043)
-> +        items:
-> +          - enum:
-> +              - renesas,smarc-evk # SMARC EVK
-> +          - const: renesas,r9a07g043f01
-> +          - const: renesas,r9a07g043
-> +
-> +additionalProperties: true
-> +
-> +...
-
+What are you building there? There is no DTS.
 
 Best regards,
 Krzysztof
