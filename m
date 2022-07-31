@@ -2,36 +2,36 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D90C19F2B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C43C19F29
 	for <linux-renesas-soc@archiver.kernel.org>; Sun, 31 Jul 2022 15:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233156AbiGaPUg (ORCPT
+        id S233631AbiGaPUg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Sun, 31 Jul 2022 11:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60086 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236805AbiGaPUe (ORCPT
+        with ESMTP id S232548AbiGaPUg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 31 Jul 2022 11:20:34 -0400
+        Sun, 31 Jul 2022 11:20:36 -0400
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1D3260D
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 31 Jul 2022 08:20:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B859260D
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 31 Jul 2022 08:20:35 -0700 (PDT)
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0BE6556D;
-        Sun, 31 Jul 2022 17:20:31 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EDDBC415;
+        Sun, 31 Jul 2022 17:20:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1659280832;
-        bh=nHMSxXUMO60p2RGhdvdsIsFyJwSAZsVSA7ctIlCt+lY=;
+        s=mail; t=1659280834;
+        bh=jxokSrdOuulaS/ekU2uv7jdZrY7VBp/1BBKg6BYvGE0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ezb/NOJx8D98pKknccl1Bb9Gzo8RvM1baT2dTE7B+NqhBXNATFfjw0w420BZ3ihgr
-         qxCfGmyjrVBlRwBxrr3mzjb45k4b1QEIwPj3ynxECpbeY218znZXoFAqEsTQwefkVz
-         asarRY6gfMAJxyzEJEDVMWk8BAH9+W4c3rhECRvQ=
+        b=DZQx6SoxJBaSXWeP/WuyI/oT+UixGlOibY/OlPoBWH0B25n95KNvIXAEKum05b8Zq
+         zn/7TslbUTSUUxTWg0qBUNairaes5F69pKo/dVAN5RZBLP6/1aG7j8p+Ua/XVbaumV
+         xMUZoAvwfVZzIDTkmfhjP2ttNpmkXI+blphduQjw=
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [kms-test] [PATCH 1/7] tests: brxalloc: Fix test start log message
-Date:   Sun, 31 Jul 2022 18:20:18 +0300
-Message-Id: <20220731152024.24090-2-laurent.pinchart@ideasonboard.com>
+Subject: [kms-test] [PATCH 2/7] tests: modes: Fix access to RuntimeError message text
+Date:   Sun, 31 Jul 2022 18:20:19 +0300
+Message-Id: <20220731152024.24090-3-laurent.pinchart@ideasonboard.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220731152024.24090-1-laurent.pinchart@ideasonboard.com>
 References: <20220731152024.24090-1-laurent.pinchart@ideasonboard.com>
@@ -41,27 +41,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The test start log message incorrectly prints the same connector twice
-instead of the source and destination connectors. Fix it.
+The RuntimeError class has no message member. Use args[0] instead.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- tests/kms-test-brxalloc.py | 2 +-
+ tests/kms-test-modes.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tests/kms-test-brxalloc.py b/tests/kms-test-brxalloc.py
-index 7170ee6c7708..c80d2e33c846 100755
---- a/tests/kms-test-brxalloc.py
-+++ b/tests/kms-test-brxalloc.py
-@@ -62,7 +62,7 @@ class BRxAllocTest(kmstest.KMSTest):
-             return
- 
-         self.start(f'Moving {len(planes)} planes from {outputs[0].connector.fullname} '
--                   f'to {outputs[0].connector.fullname}')
-+                   f'to {outputs[1].connector.fullname}')
- 
-         # Set the initial mode for both outputs and wait 5s for the monitors to
-         # wake up.
+diff --git a/tests/kms-test-modes.py b/tests/kms-test-modes.py
+index c47848904ec4..14463add7802 100755
+--- a/tests/kms-test-modes.py
++++ b/tests/kms-test-modes.py
+@@ -60,7 +60,7 @@ class ModesTest(kmstest.KMSTest):
+                     self.progress(i+1, len(modes))
+                     self.test_mode(connector, crtc, modes[i])
+                 except RuntimeError as e:
+-                    self.fail(e.message)
++                    self.fail(e.args[0])
+                     break
+             else:
+                 self.success()
 -- 
 Regards,
 
