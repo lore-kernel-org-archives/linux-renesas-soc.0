@@ -2,37 +2,37 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AACC25B07
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Aug 2022 01:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0D9C25B0C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Aug 2022 01:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242481AbiHHBgw (ORCPT
+        id S242861AbiHHBoG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 7 Aug 2022 21:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57750 "EHLO
+        Sun, 7 Aug 2022 21:44:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242273AbiHHBfq (ORCPT
+        with ESMTP id S242477AbiHHBmF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 Aug 2022 21:35:46 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC337CE1C;
-        Sun,  7 Aug 2022 18:33:19 -0700 (PDT)
+        Sun, 7 Aug 2022 21:42:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5974C13E8D;
+        Sun,  7 Aug 2022 18:35:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A0158B80DDF;
-        Mon,  8 Aug 2022 01:33:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD92C4347C;
-        Mon,  8 Aug 2022 01:33:16 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E3198B80E0D;
+        Mon,  8 Aug 2022 01:35:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1715C433C1;
+        Mon,  8 Aug 2022 01:35:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659922397;
-        bh=uoQNnByv+1FbqqjWQwrzqaf0ot43bfZtPaAvo624/cs=;
+        s=k20201202; t=1659922530;
+        bh=hwBSpc7erig/674qMUa5THYn7tKXm6QBe24djanajcU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kT4LUcV1z8sqcefZByoy/jUUthOXGGjBkaSKdO25g8nvZCilNTWt4QSk8+CNymbji
-         rz87au05i8++Lgld/UHPmY9h2vlNX2PBKCJ3AjmKb+mwT26RxuxUsL09pP7UW48F7l
-         0DT3Ezf6O/NtidoBeID1ZFH8DlWdSNhhtMuuadiQiXgYrhY9G2+Ddyqwq1tXjnCbMA
-         pLqx+pxx2xZOhqHUsPOTFuIL7IwJs6yjRs0k4eAgT/SwclvpcybNhiXGLW+dlRNyHR
-         tv8MEMDeJwxKZn+aYpvMUzXpPHldYt99KrjNThcjJjYFQSCeFN6eM6vXA0dMI9KpZp
-         JuJc31Ulii2GA==
+        b=vIyfDEhzQV37RzE5F/w+rRcs0GoU0pTKRmwlMfD+NZO7BMfvOB+PQsSns574HgRe/
+         dIR4iCYuLDvN0BHo4ZgXY+tVkCYHGhHfDLfqfzmu+Lm7y85ZEmuINrLpxTVKLMmrxJ
+         WFzGgZ7MiFB3ekjSCx6kIZlPi5I/QjGm5HK3sf0y4qmGdQ5gVCl8zQn/LlIWcLvQ+K
+         QXeYp4awyekswPis3pL/pFboEgQ4J2/hsGaa8TqOIbpChDzzoRu6kh/BULo3HLpn2z
+         Piv89wEnyko4QnkldEAAV6qfgUNbnaaGfRaOvvGs+pVoYIsc7igdaEoT+0gyICrGyj
+         GJIvtkYchKdsg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Liang He <windhl@126.com>,
@@ -40,12 +40,12 @@ Cc:     Liang He <windhl@126.com>,
         Sasha Levin <sashal@kernel.org>, magnus.damm@gmail.com,
         linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.19 46/58] ARM: shmobile: rcar-gen2: Increase refcount for new reference
-Date:   Sun,  7 Aug 2022 21:31:04 -0400
-Message-Id: <20220808013118.313965-46-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.18 44/53] ARM: shmobile: rcar-gen2: Increase refcount for new reference
+Date:   Sun,  7 Aug 2022 21:33:39 -0400
+Message-Id: <20220808013350.314757-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220808013118.313965-1-sashal@kernel.org>
-References: <20220808013118.313965-1-sashal@kernel.org>
+In-Reply-To: <20220808013350.314757-1-sashal@kernel.org>
+References: <20220808013350.314757-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -73,7 +73,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index abea41f7782e..117e7b07995b 100644
+index 09ef73b99dd8..ba44cec5e59a 100644
 --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
 +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
 @@ -125,6 +125,7 @@ static int regulator_quirk_notify(struct notifier_block *nb,
