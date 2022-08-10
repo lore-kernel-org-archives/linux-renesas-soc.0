@@ -2,158 +2,184 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4F5C28B2C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Aug 2022 22:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD45C25B07
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Aug 2022 06:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229973AbiHIWFt (ORCPT
+        id S231232AbiHJGBZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 9 Aug 2022 18:05:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
+        Wed, 10 Aug 2022 02:01:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbiHIWFK (ORCPT
+        with ESMTP id S230433AbiHJGAx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Aug 2022 18:05:10 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 014252616
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Aug 2022 15:05:08 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id z16so15691759wrh.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Aug 2022 15:05:08 -0700 (PDT)
+        Wed, 10 Aug 2022 02:00:53 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D99E50
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Aug 2022 23:00:48 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id i194-20020a253bcb000000b00676d86fc5d7so11278059yba.9
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Aug 2022 23:00:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=3LbT+i5JAOF13BKiDcy7sF/Ytx5HM8wW7yjSAT5yeTY=;
-        b=cxtT92hK+noUuGFyDZmEbq2zUm+A2mKihLtpkMj83w4NhXc4OF2gtY0RwzaqjOObaz
-         Wvjvab8q9fsrJ0Pa9HJ7wYon2fNcZDzBxfHAouIJspYTk3Z6nht5gcNidIvdWmUHItLt
-         VPWR1N573S0UluAfKvguNUYag5i2zN3KW811cD156aBCZ64h3b2z2x0bNc1VFlQBvVOd
-         jTvZqZLtI7fUKBbUZNcdo7qPho3lkM/KcsKsZI5zTQVD54ziIPxU/974TJBTQPB4lJqz
-         ATWnN/guGvk5KPi3IqgD+FH2L4B4TMZxHLOV9ZmPRKlhjKnoHlAghRbwYrv3HcgZLcnp
-         v/jQ==
+        d=google.com; s=20210112;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc;
+        bh=TCO2xyxVuPd3/tBUV+s0EeQJwLyZQsGvsrrIoFAUabA=;
+        b=BvFe715tdJHTFzLiuUTS/Q7VYOCApMDwcI0d8adcuT6VY23Mzv0LjVB/oCe1EYUH6I
+         GrUEBHGuCyX9om+3m+2zl2rmB8DHkIoDhCoJHkxwfbcimGGF2Au9Yt8rAFlE5vLE4zOT
+         FBke0i6x4PfWRbfl2D3iR0cCU4z0WmA3iKlcfcXB0BYjlIhk2JqckwGp1G7FtAQR48/7
+         pqJ0XtbeVUishXdC4XToLF9FWmAVWf/m/3RJfH4tl7k3Jd+oE21AZHO7Wt0qAh9vtQ8/
+         piA6XmFBChiJiUmunvUDrKZvlyy2Mu3J3SrWw8IQ6KPqPhlxUX1s7KWZK+OvnRu3v5v3
+         Y72Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=3LbT+i5JAOF13BKiDcy7sF/Ytx5HM8wW7yjSAT5yeTY=;
-        b=yo7hXDo0SjOWAfPI3sAUrTZuNwcfH/MnMvufQHJ1egSS9NUJlfvOdfLWpb2WQEA/Zv
-         +DzyafhZTiOT4yBIDnh0gGp0jqqTGSCduCMUJD9qeB3Jr9Or8JUF4pcOELYcuTtjt3hE
-         R9NFT+oG8xNIAfGNDakKzLINN7chELjtq7hrBqv0beuubJW3vVAQ5yRjfn38HzMAq6XM
-         XVG7awJVAcNCiE9634J1mx1JvqJ+WLYzvKDbSNYmj2V18M/S3RK6BBLCR64eJmPou9lJ
-         679XONamIRzK6UcVQmXPdA57AZzzb7g8z+ffYlK0kPrl1QV6aMLhFKhGRs/2Owh1IOOz
-         dNHw==
-X-Gm-Message-State: ACgBeo1EhK37ff8T3RSkvR915cAA1Z52ITyFgIBmrj1gZAoeXQ2ZoohN
-        40qbBeg8LUAoNFflyFc/nUBhGg==
-X-Google-Smtp-Source: AA6agR5Cu6cdrOlw/RnQZUYMoANWaz5D83/mavePTngUcaGqLSHsiHAtOW3HoK/8j8EFCQ1yJzOrRA==
-X-Received: by 2002:a5d:5a94:0:b0:221:6cec:2589 with SMTP id bp20-20020a5d5a94000000b002216cec2589mr13883414wrb.336.1660082707471;
-        Tue, 09 Aug 2022 15:05:07 -0700 (PDT)
-Received: from localhost.localdomain (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id m21-20020a05600c3b1500b003a317ee3036sm293583wms.2.2022.08.09.15.05.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Aug 2022 15:05:06 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Amit Kucheria <amitk@kernel.org>,
-        linux-renesas-soc@vger.kernel.org (open list:RENESAS R-CAR THERMAL
-        DRIVERS)
-Subject: [PATCH v2 08/26] thermal/drivers/rcar: Use generic thermal_zone_get_trip() function
-Date:   Wed, 10 Aug 2022 00:04:18 +0200
-Message-Id: <20220809220436.711020-9-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220809220436.711020-1-daniel.lezcano@linaro.org>
-References: <20220809220436.711020-1-daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc;
+        bh=TCO2xyxVuPd3/tBUV+s0EeQJwLyZQsGvsrrIoFAUabA=;
+        b=End4C491hdYrqu8VXK8XQUiL+owN7YJsSY3DIBldajdM9D0drjr4NTdHGHV2Q04/I2
+         uOFSORcLrWpXsEEtnrqez4E2BsHbENynyTU9V12eAFrF/+5ikz7g5vLVoz7j+oDdIRy4
+         4KcgxAWIJM/UInzaQnNrmuKlmvzCigIJQ8bDw3S8dOC6b+fGGP3ZRY1ok+mlOCBYZwPm
+         Lbk5DOf9N7bWLB/pIEqv7L3dBr6ohzMfGYBkrB9elLmclUZojUgN6hMvvOh4Vq1wWpta
+         mWDeeoZ7eh31K6ljGkJ1CfVxXUid/MYV5vJzsP8+UnYa6Aaq0F+0ie7CGNk4JMGtmTLW
+         +HbA==
+X-Gm-Message-State: ACgBeo3TxU8bAT/v+5uiX3zYWAnBBYEHf5CQVUH65IecHHmSkdhHHN2K
+        K90pmjLn+zVnefH3TYF07QdV4pqHZVP5UBg=
+X-Google-Smtp-Source: AA6agR4Luo9mfYOGUmow5n6t7VfAyPObtMuTRPi8OYX4fTwH65RIMuWKTPOsfnkREdcPNXAbTsM3U3vFPMT0E+A=
+X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:f21:76ca:766f:e0ab])
+ (user=saravanak job=sendgmr) by 2002:a25:7613:0:b0:67a:700a:f9e1 with SMTP id
+ r19-20020a257613000000b0067a700af9e1mr23778556ybc.53.1660111247299; Tue, 09
+ Aug 2022 23:00:47 -0700 (PDT)
+Date:   Tue,  9 Aug 2022 23:00:29 -0700
+Message-Id: <20220810060040.321697-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.1.559.g78731f0fdb-goog
+Subject: [PATCH v1 0/9] fw_devlink improvements
+From:   Saravana Kannan <saravanak@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        John Stultz <jstultz@google.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The thermal framework gives the possibility to register the trip
-points with the thermal zone. When that is done, no get_trip_* ops are
-needed and they can be removed.
+This patch series improves fw_devlink in the following ways:
 
-Convert ops content logic into generic trip points and register them with the
-thermal zone.
+1. It no longer cares about a fwnode having a "compatible" property. It
+   figures this our more dynamically. The only expectation is that
+   fwnode that are converted to devices actually get probed by a driver
+   for the dependencies to be enforced correctly.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/rcar_thermal.c | 49 +++++-----------------------------
- 1 file changed, 6 insertions(+), 43 deletions(-)
+2. Finer grained dependency tracking. fw_devlink will now create device
+   links from the consumer to the actual resource's device (if it has one,
+   Eg: gpio_device) instead of the parent supplier device. This improves
+   things like async suspend/resume ordering, potentially remove the need
+   for frameworks to create device links, more parallelized async probing,
+   and better sync_state() tracking.
 
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index 4df42d70d867..003457810072 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -278,52 +278,16 @@ static int rcar_thermal_get_temp(struct thermal_zone_device *zone, int *temp)
- 	return rcar_thermal_get_current_temp(priv, temp);
- }
- 
--static int rcar_thermal_get_trip_type(struct thermal_zone_device *zone,
--				      int trip, enum thermal_trip_type *type)
--{
--	struct rcar_thermal_priv *priv = rcar_zone_to_priv(zone);
--	struct device *dev = rcar_priv_to_dev(priv);
--
--	/* see rcar_thermal_get_temp() */
--	switch (trip) {
--	case 0: /* +90 <= temp */
--		*type = THERMAL_TRIP_CRITICAL;
--		break;
--	default:
--		dev_err(dev, "rcar driver trip error\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--static int rcar_thermal_get_trip_temp(struct thermal_zone_device *zone,
--				      int trip, int *temp)
--{
--	struct rcar_thermal_priv *priv = rcar_zone_to_priv(zone);
--	struct device *dev = rcar_priv_to_dev(priv);
--
--	/* see rcar_thermal_get_temp() */
--	switch (trip) {
--	case 0: /* +90 <= temp */
--		*temp = MCELSIUS(90);
--		break;
--	default:
--		dev_err(dev, "rcar driver trip error\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- static struct thermal_zone_device_ops rcar_thermal_zone_of_ops = {
- 	.get_temp	= rcar_thermal_get_temp,
- };
- 
- static struct thermal_zone_device_ops rcar_thermal_zone_ops = {
- 	.get_temp	= rcar_thermal_get_temp,
--	.get_trip_type	= rcar_thermal_get_trip_type,
--	.get_trip_temp	= rcar_thermal_get_trip_temp,
-+};
-+
-+static struct thermal_trip trips[] = {
-+	{ .type = THERMAL_TRIP_CRITICAL, .temperature = 90000 }
- };
- 
- /*
-@@ -531,9 +495,8 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 						dev, i, priv,
- 						&rcar_thermal_zone_of_ops);
- 		} else {
--			priv->zone = thermal_zone_device_register(
--						"rcar_thermal",
--						1, 0, priv,
-+			priv->zone = thermal_zone_device_register_with_trips(
-+				"rcar_thermal", trips, ARRAY_SIZE(trips), 0, priv,
- 						&rcar_thermal_zone_ops, NULL, 0,
- 						idle);
- 
+3. Handle hardware/software quirks where a child firmware node gets
+   populated as a device before its parent firmware node AND actually
+   supplies a non-optional resource to the parent firmware node's
+   device.
+
+4. Way more robust at cycle handling (see patch for the insane cases).
+
+5. Stops depending on OF_POPULATED to figure out some corner cases.
+
+6. Simplifies the work that needs to be done by the firmware specific
+   code.
+
+This took way too long to get done due to typo bugs I had in my rewrite or
+corner cases I had to find and handle. But it's fairly well tested at this
+point and I expect this to work properly.
+
+Abel & Doug,
+
+This should fix your cyclic dependency issues with your display. Can you
+give it a shot please?
+
+Alexander,
+
+This should fix your issue where the power domain device not having a
+compatible property. Can you give it a shot please?
+
+Tony,
+
+This should handle the odd case of the child being the supplier of the
+parent. Can you please give this a shot? I want to make sure the cycle
+detection code handles this properly and treats it like it's NOT a cycle.
+
+Geert,
+
+Can you test the renesas stuff I changed please? They should continue
+working like before. Any other sanity test on other hardware would be
+great too.
+
+Sudeep,
+
+I don't think there are any unfixed issues you had reported in my other
+patches that this series might fix, but it'll be nice if you could give
+this a sanity test.
+
+Guenter,
+
+I don't think this will fix the issue you reported in the amba patch, but
+it's worth a shot because it improves a bunch of corner case handling. So
+it might be better at handling whatever corner cases you might have in the
+qemu platforms.
+
+Thanks,
+Saravana
+
+Cc: Abel Vesa <abel.vesa@linaro.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: John Stultz <jstultz@google.com>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+
+Saravana Kannan (9):
+  driver core: fw_devlink: Don't purge child fwnode's consumer links
+  driver core: fw_devlink: Improve check for fwnode with no
+    device/driver
+  soc: renesas: Move away from using OF_POPULATED for fw_devlink
+  gpiolib: Clear the gpio_device's fwnode initialized flag before adding
+  driver core: fw_devlink: Add DL_FLAG_CYCLE support to device links
+  driver core: fw_devlink: Allow marking a fwnode link as being part of
+    a cycle
+  driver core: fw_devlink: Consolidate device link flag computation
+  driver core: fw_devlink: Make cycle detection more robust
+  of: property: Simplify of_link_to_phandle()
+
+ drivers/base/core.c             | 437 +++++++++++++++++++++-----------
+ drivers/gpio/gpiolib.c          |   6 +
+ drivers/of/property.c           |  84 +-----
+ drivers/soc/renesas/rcar-sysc.c |   2 +-
+ include/linux/device.h          |   1 +
+ include/linux/fwnode.h          |  12 +-
+ 6 files changed, 323 insertions(+), 219 deletions(-)
+
 -- 
-2.34.1
+2.37.1.559.g78731f0fdb-goog
 
