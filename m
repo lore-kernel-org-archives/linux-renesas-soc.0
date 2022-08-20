@@ -2,132 +2,77 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 000ADC32789
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 20 Aug 2022 02:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE3BC25B08
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 20 Aug 2022 08:18:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234109AbiHTCzH (ORCPT
+        id S1344285AbiHTISb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 19 Aug 2022 22:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40280 "EHLO
+        Sat, 20 Aug 2022 04:18:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiHTCzG (ORCPT
+        with ESMTP id S1344227AbiHTIS1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Aug 2022 22:55:06 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28827BB69B;
-        Fri, 19 Aug 2022 19:55:05 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id w28so4606053qtc.7;
-        Fri, 19 Aug 2022 19:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=ROMAN6FB6IuI/ClwiFrcCO2VFfyuMXSLSUjID3QPCqs=;
-        b=M23Fcyrpb8BHZmooq95a3Znd89PQatOl9XnCuwQovieOjm/qe1ZaT7tLR2NAPzV8pU
-         Y6AlKWCUwloAVTrx4eKP484dJAxBZqwa9WtOJm25UnXpEzTk/zyPoUtehuVGO3w41Bg5
-         yU4PWl+JUTB0j1/DfWdTAgwNra5vW8IpPUUB5VFa6aNmtmClYQILxkUerdhcF3ITxpQr
-         8AZ6iq6TTEqIiZRA0LCJ1Yao/5mkh/4TinNYcbD79f3RoYkL8eYHtS5CnPr6w5ccnu0p
-         LIgXCZPwbJAnTL+wUQchHDQcSq/0VGSlhPE9LS3f+rntP/AtwXUI2NnvRXSBXhHJ59dn
-         coWw==
+        Sat, 20 Aug 2022 04:18:27 -0400
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 462DB1A390
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Aug 2022 01:18:25 -0700 (PDT)
+Received: by mail-qv1-f53.google.com with SMTP id b2so4880295qvp.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Aug 2022 01:18:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=ROMAN6FB6IuI/ClwiFrcCO2VFfyuMXSLSUjID3QPCqs=;
-        b=Hp8DCnligUpOwzSeeRTSGbQnuQSTadhVgKEI4/EZ7CzyJF6bWvxv+7A1DmzjKtikwd
-         AmhXsDxBu7rY9lm255iZGE00S1gRpo2MBVexXebWOIh5lULHZ8yTmi+UzdVYmJ+ZhRET
-         zDMOkc4b/40Xq6mWvbOoR0VK+2t+D9dM7ZMoCJxvi0gwI0vDOC9+FB7GpPYsfyEk64R5
-         4mcrsc0reNRIDTTau8C2szY2Opj7w97NimuXrEzgzIzCWas4SaRA8moObUwI6gvIi0GW
-         gna6hcIpdYnm3JFupS1T8SXrfr/vN3Hn//ItlOiCIw92eS8t+IbQ7yYm7FDfq0Wbse0F
-         /uuw==
-X-Gm-Message-State: ACgBeo1Gh8VT2nTj7N13eNRFp5eZUPihHoU6+4NA6BBZgfDmrD2SBo5L
-        WZUAYScTdyRY5ajXxEGw9h8=
-X-Google-Smtp-Source: AA6agR48RsCYvSGmwwOcxfE4IkImyfF3f8hTpHJA7vWMHWwL/B9edQOz+XQVCb9YoUMd3W9e0ZxMmg==
-X-Received: by 2002:a05:622a:198c:b0:342:fd20:239c with SMTP id u12-20020a05622a198c00b00342fd20239cmr8668975qtc.358.1660964104204;
-        Fri, 19 Aug 2022 19:55:04 -0700 (PDT)
-Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
-        by smtp.gmail.com with ESMTPSA id x2-20020ae9e642000000b006b5e50057basm4923653qkl.95.2022.08.19.19.54.58
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=fBtE8fBRmRWfwzIW60/v0e2F65xiPxjvW85TEWbzYuo=;
+        b=Ebu0R8q0kIwAXUzz97rYcDERncv5nvYJ27yAV6OKu8Knb2dwliFQob1zkjWXaTWDu/
+         /vf9wKjRXD2ZVsbB3+knX1FXQOvaE8zm6iqYchKZGEMO9zTup8n8Enml/touLzrCIiUq
+         5nOwrWonsa8XMHTcX7X6SYD2TgfVn/k/hHVoHwjYAotQ36QlecsHa5hI8WUqcLnaNMcb
+         zUQpN5jAbetFmf+kx1biYD9LyJV49PMZnqswDRaxdv2vvzti0aZq1YSry8IqU32mXtJp
+         pvIWVrTJhHwGAJbOZl7gW88rSXIituKYxVKE1DfLoYOsGVkDQCIMeLSuycKjcn4BrUV5
+         gbQA==
+X-Gm-Message-State: ACgBeo2WnO+N0Z2m1D9Y4quX6vojb9d57JHvizWOLok09tG47O93do5I
+        I/p0jwPabNGigqM9LzF9s68/dJoEOA3zTQ==
+X-Google-Smtp-Source: AA6agR4JGAXHPHSOHFhwkSsggrHHwTh/tlccSqwYhPj/jYYaWtuEwiTAJAFz/0XvNhmtWFNf3+4mqw==
+X-Received: by 2002:a05:6214:d89:b0:479:6726:7f42 with SMTP id e9-20020a0562140d8900b0047967267f42mr9245684qve.20.1660983504179;
+        Sat, 20 Aug 2022 01:18:24 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id bk26-20020a05620a1a1a00b006bb29d932e1sm5409252qkb.105.2022.08.20.01.18.23
+        for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Aug 2022 19:55:03 -0700 (PDT)
-Message-ID: <b299c79b-196c-7b38-fafd-16e9443f6bd3@gmail.com>
-Date:   Fri, 19 Aug 2022 19:54:56 -0700
+        Sat, 20 Aug 2022 01:18:23 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-333a4a5d495so174894207b3.10
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Aug 2022 01:18:23 -0700 (PDT)
+X-Received: by 2002:a81:658:0:b0:334:a23e:6caa with SMTP id
+ 85-20020a810658000000b00334a23e6caamr10673189ywg.283.1660983503429; Sat, 20
+ Aug 2022 01:18:23 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH v4 net-next 03/10] dt-bindings: net: dsa: b53: add missing
- CPU port phy-mode to example
-Content-Language: en-US
-To:     Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org
-Cc:     devicetree@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Mans Rullgard <mans@mansr.com>,
-        Arun Ramadoss <arun.ramadoss@microchip.com>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        George McCollister <george.mccollister@gmail.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Aleksander Jan Bajkowski <olek2@wp.pl>,
-        =?UTF-8?Q?Alvin_=c5=a0ipraga?= <alsi@bang-olufsen.dk>,
-        Luiz Angelo Daros de Luca <luizluca@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Pawel Dembicki <paweldembicki@gmail.com>,
-        =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
-        Marcin Wojtas <mw@semihalf.com>, Marek Vasut <marex@denx.de>,
-        linux-renesas-soc@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Rob Herring <robh@kernel.org>
-References: <20220818115500.2592578-1-vladimir.oltean@nxp.com>
- <20220818115500.2592578-4-vladimir.oltean@nxp.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220818115500.2592578-4-vladimir.oltean@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220726210110.1444-1-wsa+renesas@sang-engineering.com> <20220726210110.1444-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20220726210110.1444-2-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 20 Aug 2022 10:18:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXgC1zurRE4ytEvNfHnjoHmYYFoFbWd-B+wJ0F7oCBOxg@mail.gmail.com>
+Message-ID: <CAMuHMdXgC1zurRE4ytEvNfHnjoHmYYFoFbWd-B+wJ0F7oCBOxg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a779f0: Add TMU and parent SASYNC clocks
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Tue, Jul 26, 2022 at 11:03 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.1.
 
-On 8/18/2022 4:54 AM, Vladimir Oltean wrote:
-> Looking at b53_srab_phylink_get_caps() I get no indication of what PHY
-> modes does port 8 support, since it is implemented circularly based on
-> the p->mode retrieved from the device tree (and in PHY_INTERFACE_MODE_NA
-> it reports nothing to supported_interfaces).
-> 
-> However if I look at the b53_switch_chips[] element for BCM58XX_DEVICE_ID,
-> I see that port 8 is the IMP port, and SRAB means the IMP port is
-> internal to the SoC. So use phy-mode = "internal" in the example.
-> 
-> Note that this will make b53_srab_phylink_get_caps() go through the
-> "default" case and report PHY_INTERFACE_MODE_INTERNAL to
-> supported_interfaces, which is probably a good thing.
-> 
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+Gr{oetje,eeting}s,
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
