@@ -2,108 +2,75 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF11C28D13
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Aug 2022 13:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99911C32789
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Aug 2022 13:05:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234915AbiHVNFb (ORCPT
+        id S234981AbiHVNFc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 22 Aug 2022 09:05:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44026 "EHLO
+        Mon, 22 Aug 2022 09:05:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234893AbiHVNFb (ORCPT
+        with ESMTP id S234891AbiHVNFb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 22 Aug 2022 09:05:31 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D451D1E3CE
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AE7A1CB38
         for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2022 06:05:30 -0700 (PDT)
 Received: from deskari.lan (91-158-154-79.elisa-laajakaista.fi [91.158.154.79])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 04C1D3F1;
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 822532B3;
         Mon, 22 Aug 2022 15:05:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1661173529;
-        bh=ggAkbBrc69fZBdc3E7G2PLBsQNNp8l7FlY0iX3fB/fA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jSfeCSQ+KEyXRwKMu1G6bjFJVOzSxT32IclGeQ/lR7Ea026fM9ccCHY4e6d88dvu9
-         PaNlw83UZyJsxlHAHIzhtOeJNVZRXld3tuNjMTGep9bFxPBm3a0GMG0vFDbHqpS2HH
-         ffJaRFGej6CLmOPKr7OlD+uzDCH7I2NKPKxGdFuA=
+        s=mail; t=1661173528;
+        bh=0PGv8MMlOIqJsZ2E9B/w0UujWVln7N57ylzBjQNYMQc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=L3XrLD8vP68bR8DUool1MyZAK05i1YL8SdlA4rtzB1sBsqeu20+62gThDgQsN/P91
+         rUiA8It0aXgwAh611bsxJKb6NnFMbViDQD/m2MI/G7Kwwad1hH0LNP495TFI+ucxC3
+         ideI9QWDX2N1VQzmMVmILk21DkAFfv77FQugAEJE=
 From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: [PATCH v2 1/4] drm: rcar-du: dsi: Properly stop video mode TX
-Date:   Mon, 22 Aug 2022 16:05:09 +0300
-Message-Id: <20220822130513.119029-2-tomi.valkeinen@ideasonboard.com>
+Cc:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v2 0/4] drm: rcar-du: DSI fixes
+Date:   Mon, 22 Aug 2022 16:05:08 +0300
+Message-Id: <20220822130513.119029-1-tomi.valkeinen@ideasonboard.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220822130513.119029-1-tomi.valkeinen@ideasonboard.com>
-References: <20220822130513.119029-1-tomi.valkeinen@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Hi,
 
-The driver does not explicitly stop the video mode transmission when
-disabling the output. While this doesn't seem to be causing any issues,
-lets follow the steps described in the documentation and add a
-rcar_mipi_dsi_stop_video() which stop the video mode transmission. This
-function will also be used in later patches to stop the video
-transmission even if the DSI IP is not shut down.
+This is v2 of the third patch in an earlier series ("drm: rcar-du: fix
+DSI enable & disable sequence"). The first two patches have already been
+accepted.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c | 29 +++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Changes in v2:
+- Split the patch into smaller pieces
+- Modify the pclk enable function names so that they match between LVDS
+  and DSI.
+- Cosmetic changes (comments).
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-index 62f7eb84ab01..7f2be490fcf8 100644
---- a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-@@ -542,6 +542,34 @@ static int rcar_mipi_dsi_start_video(struct rcar_mipi_dsi *dsi)
- 	return 0;
- }
- 
-+static void rcar_mipi_dsi_stop_video(struct rcar_mipi_dsi *dsi)
-+{
-+	u32 status;
-+	int ret;
-+
-+	/* Disable transmission in video mode. */
-+	rcar_mipi_dsi_clr(dsi, TXVMCR, TXVMCR_EN_VIDEO);
-+
-+	ret = read_poll_timeout(rcar_mipi_dsi_read, status,
-+				!(status & TXVMSR_ACT),
-+				2000, 100000, false, dsi, TXVMSR);
-+	if (ret < 0) {
-+		dev_err(dsi->dev, "Failed to disable video transmission\n");
-+		return;
-+	}
-+
-+	/* Assert video FIFO clear. */
-+	rcar_mipi_dsi_set(dsi, TXVMCR, TXVMCR_VFCLR);
-+
-+	ret = read_poll_timeout(rcar_mipi_dsi_read, status,
-+				!(status & TXVMSR_VFRDY),
-+				2000, 100000, false, dsi, TXVMSR);
-+	if (ret < 0) {
-+		dev_err(dsi->dev, "Failed to assert video FIFO clear\n");
-+		return;
-+	}
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Bridge
-  */
-@@ -601,6 +629,7 @@ static void rcar_mipi_dsi_atomic_disable(struct drm_bridge *bridge,
- {
- 	struct rcar_mipi_dsi *dsi = bridge_to_rcar_mipi_dsi(bridge);
- 
-+	rcar_mipi_dsi_stop_video(dsi);
- 	rcar_mipi_dsi_shutdown(dsi);
- 	rcar_mipi_dsi_clk_disable(dsi);
- }
+ Tomi
+
+Tomi Valkeinen (4):
+  drm: rcar-du: dsi: Properly stop video mode TX
+  drm: rcar-du: dsi: Improve DSI shutdown
+  drm: rcar-du: fix DSI enable & disable sequence
+  drm: rcar-du: lvds: Rename pclk enable/disable functions
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 30 ++++++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h     |  2 +
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  4 ++
+ drivers/gpu/drm/rcar-du/rcar_lvds.c       |  4 +-
+ drivers/gpu/drm/rcar-du/rcar_lvds.h       | 10 ++--
+ drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c   | 64 +++++++++++++++++++++--
+ drivers/gpu/drm/rcar-du/rcar_mipi_dsi.h   | 31 +++++++++++
+ 7 files changed, 131 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_mipi_dsi.h
+
 -- 
 2.34.1
 
