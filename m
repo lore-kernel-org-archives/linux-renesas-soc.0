@@ -2,144 +2,108 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AAFC28D13
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Aug 2022 12:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF11C28D13
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Aug 2022 13:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232600AbiHVMX5 (ORCPT
+        id S234915AbiHVNFb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 22 Aug 2022 08:23:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60760 "EHLO
+        Mon, 22 Aug 2022 09:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231331AbiHVMXz (ORCPT
+        with ESMTP id S234893AbiHVNFb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Aug 2022 08:23:55 -0400
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1024C11A08
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2022 05:23:53 -0700 (PDT)
-Received: by mail-qk1-f180.google.com with SMTP id f4so7646102qkl.7
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2022 05:23:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=PDuMySLkHO21XyJnVBGiYc90+BQWJAD0WNVsnTdhEm4=;
-        b=yQRfnqUdzpdwOmMoD0tzU6fOfhTd60pxrR1eTwOX/D2/HZSlkRVftX2JW66VQxoOHa
-         UtdZfD/g7jsP54xlgBtg7VfXdz5s1EXjH73zQ4qKCrC+JnvaQOs/Qtx8j4DDBkAhHPAX
-         A+BtHrKBDEOtkKmTRpED/7hZNTltUIJPbIWyTiqDeY2G7oYGK689UbrIWuJvukeq8JbW
-         rFSKhcQ82L1vu2WyRP/fKhAxQMN7WbcMVKRQW4fLwF2bshg9ZOEhz2J8pShoWPr2CO7w
-         X1u7ePJpevcdNE9MHXOXgLHXE9T23yHfTdTLYsO6a/WlU+P1HPtgHzVPqtRWYH8Jn12S
-         bbXw==
-X-Gm-Message-State: ACgBeo066/I9p21LoOuyfIs/VYcItSCbWsolY8Q1Gt4LcPxh/PPyIVXa
-        X+YNbE96QZkJ+tJ83yNGMoJeNpT+9jrMfQ==
-X-Google-Smtp-Source: AA6agR4aQmFQkUuHZkJ3dZD7asR5WkNteerH+X6eqBowihQaVOSZmZmlbKuombSwVq+uCEgs8E2RGg==
-X-Received: by 2002:a05:620a:4613:b0:6bb:61c1:819 with SMTP id br19-20020a05620a461300b006bb61c10819mr12430415qkb.736.1661171032019;
-        Mon, 22 Aug 2022 05:23:52 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id r1-20020a05620a298100b006bb53282393sm11317761qkp.81.2022.08.22.05.23.51
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Aug 2022 05:23:51 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-333b049f231so288146307b3.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2022 05:23:51 -0700 (PDT)
-X-Received: by 2002:a0d:eb87:0:b0:338:d06b:e605 with SMTP id
- u129-20020a0deb87000000b00338d06be605mr13107421ywe.316.1661171031199; Mon, 22
- Aug 2022 05:23:51 -0700 (PDT)
+        Mon, 22 Aug 2022 09:05:31 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D451D1E3CE
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2022 06:05:30 -0700 (PDT)
+Received: from deskari.lan (91-158-154-79.elisa-laajakaista.fi [91.158.154.79])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 04C1D3F1;
+        Mon, 22 Aug 2022 15:05:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1661173529;
+        bh=ggAkbBrc69fZBdc3E7G2PLBsQNNp8l7FlY0iX3fB/fA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jSfeCSQ+KEyXRwKMu1G6bjFJVOzSxT32IclGeQ/lR7Ea026fM9ccCHY4e6d88dvu9
+         PaNlw83UZyJsxlHAHIzhtOeJNVZRXld3tuNjMTGep9bFxPBm3a0GMG0vFDbHqpS2HH
+         ffJaRFGej6CLmOPKr7OlD+uzDCH7I2NKPKxGdFuA=
+From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH v2 1/4] drm: rcar-du: dsi: Properly stop video mode TX
+Date:   Mon, 22 Aug 2022 16:05:09 +0300
+Message-Id: <20220822130513.119029-2-tomi.valkeinen@ideasonboard.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220822130513.119029-1-tomi.valkeinen@ideasonboard.com>
+References: <20220822130513.119029-1-tomi.valkeinen@ideasonboard.com>
 MIME-Version: 1.0
-References: <87edx9gg6f.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87edx9gg6f.wl-kuninori.morimoto.gx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 22 Aug 2022 14:23:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWT045t7yOyASaq40JDuRCkMmFAY7GQXS5nb9P+70T7FA@mail.gmail.com>
-Message-ID: <CAMuHMdWT045t7yOyASaq40JDuRCkMmFAY7GQXS5nb9P+70T7FA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: Add V3H2 Condor-I boards
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Andrey Dolnikov <andrey.dolnikov@cogentembedded.com>,
-        Valentine Barshak <valentine.barshak@cogentembedded.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Morimoto-san,
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-On Mon, Aug 22, 2022 at 4:34 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> This patch adds r8a77980A V3H2 (= r8a77980 ES2) Condor-I board basic
-> support. It is using r8a77980 Condor board setting as-is for now,
-> but should care ES2.0 specific feature in the future.
->
-> Signed-off-by: Andrey Dolnikov <andrey.dolnikov@cogentembedded.com>
-> Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+The driver does not explicitly stop the video mode transmission when
+disabling the output. While this doesn't seem to be causing any issues,
+lets follow the steps described in the documentation and add a
+rcar_mipi_dsi_stop_video() which stop the video mode transmission. This
+function will also be used in later patches to stop the video
+transmission even if the DSI IP is not shut down.
 
-Thanks for your patch!
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c | 29 +++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r8a77980-es2-condor.dts
+diff --git a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
+index 62f7eb84ab01..7f2be490fcf8 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
++++ b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
+@@ -542,6 +542,34 @@ static int rcar_mipi_dsi_start_video(struct rcar_mipi_dsi *dsi)
+ 	return 0;
+ }
+ 
++static void rcar_mipi_dsi_stop_video(struct rcar_mipi_dsi *dsi)
++{
++	u32 status;
++	int ret;
++
++	/* Disable transmission in video mode. */
++	rcar_mipi_dsi_clr(dsi, TXVMCR, TXVMCR_EN_VIDEO);
++
++	ret = read_poll_timeout(rcar_mipi_dsi_read, status,
++				!(status & TXVMSR_ACT),
++				2000, 100000, false, dsi, TXVMSR);
++	if (ret < 0) {
++		dev_err(dsi->dev, "Failed to disable video transmission\n");
++		return;
++	}
++
++	/* Assert video FIFO clear. */
++	rcar_mipi_dsi_set(dsi, TXVMCR, TXVMCR_VFCLR);
++
++	ret = read_poll_timeout(rcar_mipi_dsi_read, status,
++				!(status & TXVMSR_VFRDY),
++				2000, 100000, false, dsi, TXVMSR);
++	if (ret < 0) {
++		dev_err(dsi->dev, "Failed to assert video FIFO clear\n");
++		return;
++	}
++}
++
+ /* -----------------------------------------------------------------------------
+  * Bridge
+  */
+@@ -601,6 +629,7 @@ static void rcar_mipi_dsi_atomic_disable(struct drm_bridge *bridge,
+ {
+ 	struct rcar_mipi_dsi *dsi = bridge_to_rcar_mipi_dsi(bridge);
+ 
++	rcar_mipi_dsi_stop_video(dsi);
+ 	rcar_mipi_dsi_shutdown(dsi);
+ 	rcar_mipi_dsi_clk_disable(dsi);
+ }
+-- 
+2.34.1
 
-I think this should be "r8a77980a-condor-i.dts"
-
-> @@ -0,0 +1,13 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for the Condor-I board on r8a77980A (ES2.0)
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Corp.
-> + * Copyright (C) 2018 Cogent Embedded, Inc.
-> + */
-> +
-> +#include "r8a77980-condor.dts"
-
-R-Car V3H2 is known to differ slightly from R-Car V3H.
-Hence I suggest adding "r8a77980a.dtsi", which includes
-"r8a77980.dtsi", and adds/removes/overrides what is different.
-
-I have no idea what are the differences between the Condor and Condor-I
-boards, but I suggest to move the base or common parts to "condor.dtsi"
-or "condor-common.dtsi", like we did before for the Draak/Ebisu and
-Salvator-X(S) boards.
-
-Then "r8a77980a-condor-i.dts" can include both "r8a77980a.dtsi" and
-"condor.dtsi"/"condor-common.dtsi", and add the pieces that are
-different.
-
-> +
-> +/ {
-> +       model = "Renesas Condor-I board based on r8a77980A (ES2.0)";
-
-I think this needs to override the compatible value, too:
-  1. Based on previous discussions about how to handle R-Car V3H2,
-     "renesas,r8a77980a" should be added to the top-level compatible
-     value, so we can distinguish between R-Car V3H and V3H2.
-     All other compatible values can probably stay the same
-    (cfr. R-Car Gen3e),
-  2. As the board is different, "renesas,condor-i" should be added,
-  3. Depending on the differences between Condor and Condor-I, the
-     "reneas,condor" value should be dropped (or not).
-
-So I expect the override to become:
-
-    compatible = "renesas,condor-i", "renesas,condor",
-"renesas,r8a77980a", "renesas,r8a77980".
-
-or
-
-    compatible = "renesas,condor-i", "renesas,r8a77980a", "renesas,r8a77980".
-
-Obviously, any new compatible values must be documented.
-
-> +};
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
