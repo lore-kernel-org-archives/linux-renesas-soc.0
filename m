@@ -2,146 +2,70 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C86BC3814E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Aug 2022 10:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 556E5C00140
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Aug 2022 10:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236358AbiHXKfi (ORCPT
+        id S234401AbiHXKk6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Aug 2022 06:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54864 "EHLO
+        Wed, 24 Aug 2022 06:40:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236234AbiHXKfZ (ORCPT
+        with ESMTP id S236242AbiHXKky (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Aug 2022 06:35:25 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E04193DF
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Aug 2022 03:35:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=nAcRe3KD+eqcxj
-        HeaiSUvUy1fn8aNRXp5mTGmjfsihw=; b=KHIeuVV3bWd3HGQi3VfLviQ35TASsJ
-        dKVzVCOWzHxxLjHyp7ovKDm6MD+kYKsrgT+aaneyxgJm6bA0PL0YN3S3epOIqa8P
-        gs9J5HCV/awcQVXsT+nOaG1MDH7ZJOG30W/+PVPA/AVMT1SEuVMW2nH3su8i6/Ch
-        uYzosEaMcey0c=
-Received: (qmail 2180853 invoked from network); 24 Aug 2022 12:35:22 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Aug 2022 12:35:22 +0200
-X-UD-Smtp-Session: l3s3148p1@mNzyPPrmfrMgAwDPXxw3AFlguiwjsjwa
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Wed, 24 Aug 2022 06:40:54 -0400
+X-Greylist: delayed 16880 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 24 Aug 2022 03:40:53 PDT
+Received: from server1.zero-servers.net (unknown [96.127.160.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B42981B18
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Aug 2022 03:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=zero-homepage.jp; s=default; h=Content-Type:MIME-Version:Message-ID:From:
+        Date:Subject:To:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=q80gt2/JjJShyU6iGERKmdOEPVeYWZAnjh6+5jlIxJw=; b=iFN5pejBZzxUTd73mAgIfrFHBL
+        Oi6smot5eqpL5q72tOinLnauxX2DVfCI7VhMJxPgyWJu5gMhbRYRRRBR4B+N5WmAh46aePCbmoWmO
+        etKCvZ4s6koRtJKInVK4WRBz1Cj6RFO3ZXsREhW9yIpPS9NRxIExZMAWjSkYuO28GQVEzNC35jyom
+        XWj+3z6sPVxjZDkYD+izG/JUgAOL9DqYH+omN3hBCp+nUzCWHmqvLO3csmHqOKQ3arppqx6plfIw+
+        TaD5PAiXc2aqqhTJk6JGtsQeO9w9i6WLH2Fc2qgvnDU1jIY1ELHVZvP0gCq+5G9sYUSh6pvdpXoPN
+        Ysndqrfg==;
+Received: from zero by server48.zero-servers.net with local (Exim 4.95)
+        (envelope-from <zero@server48.zero-servers.net>)
+        id 1oQjQI-0001sx-7m
+        for linux-renesas-soc@vger.kernel.org;
+        Wed, 24 Aug 2022 00:59:30 -0500
 To:     linux-renesas-soc@vger.kernel.org
-Cc:     Duc Nguyen <duc.nguyen.ub@renesas.com>,
-        Thanh Quan <thanh.quan.xn@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/4] arm64: dts: renesas: r8a779f0: Add MSIOF nodes
-Date:   Wed, 24 Aug 2022 12:35:13 +0200
-Message-Id: <20220824103515.54931-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220824103515.54931-1-wsa+renesas@sang-engineering.com>
-References: <20220824103515.54931-1-wsa+renesas@sang-engineering.com>
+Subject: =?us-ascii?Q?Zero&Co.,Ltd_"Daily_News:_Sie_mochten_bequem_wo?=  =?us-ascii?Q?hnen_und_ab_1500_Euro_pro_Tag_ein_passives_Eink?=  =?us-ascii?Q?ommen_erzielen=3F"?=
+X-PHP-Script: zero-homepage.jp/index.php for 191.101.31.39
+X-PHP-Originating-Script: 1029:PHPMailer.php
+Date:   Wed, 24 Aug 2022 05:59:30 +0000
+From:   "Zero&Co.,Ltd" <contact@zero-homepage.jp>
+Message-ID: <YsJP4QxNTfewkmLcRDi2Nn4012fkOgYDmgWJHRCUlE@zero-homepage.jp>
+X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server48.zero-servers.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [1029 994] / [47 12]
+X-AntiAbuse: Sender Address Domain - server48.zero-servers.net
+X-Get-Message-Sender-Via: server48.zero-servers.net: authenticated_id: zero/from_h
+X-Authenticated-Sender: server48.zero-servers.net: contact@zero-homepage.jp
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Duc Nguyen <duc.nguyen.ub@renesas.com>
+Hi, JosephSox
 
-Add MSIOF nodes for R-Car S4-8.
+Thanks you for your contact us.
+We`re going to reply within 24 hours.
 
-Signed-off-by: Duc Nguyen <duc.nguyen.ub@renesas.com>
-[thanh: added DMA and assigned-clock-rates]
-Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
-[wsa: removed mso clock from clocks-property]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Message Body:
+Nicht genug Geld fur irgendetwas? Es gibt einen Ausgang http://news-kansas.dorayazilim.com/news-bild-4904
 
-Do we want the "assigned-clocks" here?
-
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 72 +++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index 5aff5a23cf06..3a8e052be64b 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -654,6 +654,78 @@ scif4: serial@e6c40000 {
- 			status = "disabled";
- 		};
- 
-+		msiof0: spi@e6e90000 {
-+			compatible = "renesas,msiof-r8a779f0",
-+				     "renesas,rcar-gen4-msiof";
-+			reg = <0 0xe6e90000 0 0x0064>;
-+			interrupts = <GIC_SPI 230 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 618>;
-+			assigned-clocks = <&cpg CPG_CORE R8A779F0_CLK_MSO>;
-+			assigned-clock-rates = <20000000>;
-+			dmas = <&dmac0 0x41>, <&dmac0 0x40>,
-+			       <&dmac1 0x41>, <&dmac1 0x40>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 618>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6ea0000 {
-+			compatible = "renesas,msiof-r8a779f0",
-+				     "renesas,rcar-gen4-msiof";
-+			reg = <0 0xe6ea0000 0 0x0064>;
-+			interrupts = <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 619>;
-+			assigned-clocks = <&cpg CPG_CORE R8A779F0_CLK_MSO>;
-+			assigned-clock-rates = <20000000>;
-+			dmas = <&dmac0 0x43>, <&dmac0 0x42>,
-+			       <&dmac1 0x43>, <&dmac1 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 619>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@e6c00000 {
-+			compatible = "renesas,msiof-r8a779f0",
-+				     "renesas,rcar-gen4-msiof";
-+			reg = <0 0xe6c00000 0 0x0064>;
-+			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 620>;
-+			assigned-clocks = <&cpg CPG_CORE R8A779F0_CLK_MSO>;
-+			assigned-clock-rates = <20000000>;
-+			dmas = <&dmac0 0x45>, <&dmac0 0x44>,
-+			       <&dmac1 0x45>, <&dmac1 0x44>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 620>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof3: spi@e6c10000 {
-+			compatible = "renesas,msiof-r8a779f0",
-+				     "renesas,rcar-gen4-msiof";
-+			reg = <0 0xe6c10000 0 0x0064>;
-+			interrupts = <GIC_SPI 233 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 621>;
-+			assigned-clocks = <&cpg CPG_CORE R8A779F0_CLK_MSO>;
-+			assigned-clock-rates = <20000000>;
-+			dmas = <&dmac0 0x47>, <&dmac0 0x46>,
-+			       <&dmac1 0x47>, <&dmac1 0x46>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 621>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		dmac0: dma-controller@e7350000 {
- 			compatible = "renesas,dmac-r8a779f0",
- 				     "renesas,rcar-gen4-dmac";
 -- 
-2.35.1
+This email was sent from Zero&Co.,Ltd automatically.
 
