@@ -2,70 +2,69 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 556E5C00140
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Aug 2022 10:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA4BC32793
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Aug 2022 12:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234401AbiHXKk6 (ORCPT
+        id S236307AbiHXMrl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Aug 2022 06:40:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57892 "EHLO
+        Wed, 24 Aug 2022 08:47:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236242AbiHXKky (ORCPT
+        with ESMTP id S237044AbiHXMrk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Aug 2022 06:40:54 -0400
-X-Greylist: delayed 16880 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 24 Aug 2022 03:40:53 PDT
-Received: from server1.zero-servers.net (unknown [96.127.160.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B42981B18
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Aug 2022 03:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=zero-homepage.jp; s=default; h=Content-Type:MIME-Version:Message-ID:From:
-        Date:Subject:To:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=q80gt2/JjJShyU6iGERKmdOEPVeYWZAnjh6+5jlIxJw=; b=iFN5pejBZzxUTd73mAgIfrFHBL
-        Oi6smot5eqpL5q72tOinLnauxX2DVfCI7VhMJxPgyWJu5gMhbRYRRRBR4B+N5WmAh46aePCbmoWmO
-        etKCvZ4s6koRtJKInVK4WRBz1Cj6RFO3ZXsREhW9yIpPS9NRxIExZMAWjSkYuO28GQVEzNC35jyom
-        XWj+3z6sPVxjZDkYD+izG/JUgAOL9DqYH+omN3hBCp+nUzCWHmqvLO3csmHqOKQ3arppqx6plfIw+
-        TaD5PAiXc2aqqhTJk6JGtsQeO9w9i6WLH2Fc2qgvnDU1jIY1ELHVZvP0gCq+5G9sYUSh6pvdpXoPN
-        Ysndqrfg==;
-Received: from zero by server48.zero-servers.net with local (Exim 4.95)
-        (envelope-from <zero@server48.zero-servers.net>)
-        id 1oQjQI-0001sx-7m
-        for linux-renesas-soc@vger.kernel.org;
-        Wed, 24 Aug 2022 00:59:30 -0500
-To:     linux-renesas-soc@vger.kernel.org
-Subject: =?us-ascii?Q?Zero&Co.,Ltd_"Daily_News:_Sie_mochten_bequem_wo?=  =?us-ascii?Q?hnen_und_ab_1500_Euro_pro_Tag_ein_passives_Eink?=  =?us-ascii?Q?ommen_erzielen=3F"?=
-X-PHP-Script: zero-homepage.jp/index.php for 191.101.31.39
-X-PHP-Originating-Script: 1029:PHPMailer.php
-Date:   Wed, 24 Aug 2022 05:59:30 +0000
-From:   "Zero&Co.,Ltd" <contact@zero-homepage.jp>
-Message-ID: <YsJP4QxNTfewkmLcRDi2Nn4012fkOgYDmgWJHRCUlE@zero-homepage.jp>
-X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+        Wed, 24 Aug 2022 08:47:40 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A31F915CF
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Aug 2022 05:47:39 -0700 (PDT)
+Received: from deskari.lan (91-158-154-79.elisa-laajakaista.fi [91.158.154.79])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8FC5E2B3;
+        Wed, 24 Aug 2022 14:47:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1661345256;
+        bh=jmXMBiW2sAdBb7wHcyIWSm1ZxeHbRx5C7F49bqeOB2I=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dzNqVvfArpr05Ky8ed9MvCJ+Rxe6iyNwKomWeb3NM559Ot5pUlKvRM5NNfS9i0BZH
+         ikE7+Z8+WACR+ouU9EQBSC6kStk/eab/iP9OxO75FJKddmqe3jODRgBvZnxO/8k6SX
+         qrjW05EKcHlUVEfIh5gCnw2zC3avMu/iDCEPyzC0=
+From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v4 0/5] drm: rcar-du: DSI fixes
+Date:   Wed, 24 Aug 2022 15:47:21 +0300
+Message-Id: <20220824124726.187224-1-tomi.valkeinen@ideasonboard.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server48.zero-servers.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [1029 994] / [47 12]
-X-AntiAbuse: Sender Address Domain - server48.zero-servers.net
-X-Get-Message-Sender-Via: server48.zero-servers.net: authenticated_id: zero/from_h
-X-Authenticated-Sender: server48.zero-servers.net: contact@zero-homepage.jp
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi, JosephSox
+Changes to v3:
+- Fix LVDS function renames wrt. export symbol.
+- Fix missing static inline
+- Use rcar_mipi_dsi_write for VCLKSET writes
 
-Thanks you for your contact us.
-We`re going to reply within 24 hours.
+ Tomi
 
-Message Body:
-Nicht genug Geld fur irgendetwas? Es gibt einen Ausgang http://news-kansas.dorayazilim.com/news-bild-4904
+Tomi Valkeinen (5):
+  drm: rcar-du: lvds: Rename pclk enable/disable functions
+  drm: rcar-du: dsi: Properly stop video mode TX
+  drm: rcar-du: dsi: Improve DSI shutdown
+  drm: rcar-du: fix DSI enable & disable sequence
+  drm: rcar-du: dsi: Fix VCLKSET write
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 30 +++++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h     |  2 +
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  4 ++
+ drivers/gpu/drm/rcar-du/rcar_lvds.c       |  8 +--
+ drivers/gpu/drm/rcar-du/rcar_lvds.h       | 10 ++--
+ drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c   | 68 ++++++++++++++++++++---
+ drivers/gpu/drm/rcar-du/rcar_mipi_dsi.h   | 31 +++++++++++
+ 7 files changed, 135 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_mipi_dsi.h
 
 -- 
-This email was sent from Zero&Co.,Ltd automatically.
+2.34.1
 
