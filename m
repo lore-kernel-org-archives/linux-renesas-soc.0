@@ -2,36 +2,36 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F2FC32793
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Aug 2022 10:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42459C00140
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Aug 2022 10:35:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236998AbiHXKff (ORCPT
+        id S234401AbiHXKfh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Aug 2022 06:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54848 "EHLO
+        Wed, 24 Aug 2022 06:35:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235665AbiHXKfZ (ORCPT
+        with ESMTP id S236358AbiHXKf0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Aug 2022 06:35:25 -0400
+        Wed, 24 Aug 2022 06:35:26 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE0B7B2A5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Aug 2022 03:35:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D3C80520
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Aug 2022 03:35:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=Q0Afx8LZS8EjAY
-        X0y5C1Ps3FFxtSSCVNoa+2bVQRXss=; b=mnFtsnSuKFwZ5oZT0J6be9yiwDYtsf
-        HInPZNBBcPUJ//pV/zyyZBZ24CyzSZ3NaWiuntKoL+1NmTMGcyUvrOG8jTDfe77d
-        PkIadI+0wO63aBs66IXXZ+z7r8vNT10lE3x/EUGH9LlXGOr0dg6TyPfpREOENtgO
-        RkUjhcKA7IK3I=
-Received: (qmail 2180829 invoked from network); 24 Aug 2022 12:35:22 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Aug 2022 12:35:22 +0200
-X-UD-Smtp-Session: l3s3148p1@ljrqPPrmeLMgAwDPXxw3AFlguiwjsjwa
+        :mime-version:content-transfer-encoding; s=k1; bh=JXe0s5vb4r1tug
+        Q+zr6ZHri0IlW9LJDcXIYq/OG7LtM=; b=iwm5cBrqp4BXaXZCNxgoEZReEBhtvi
+        S9CHt5CryjvynsDp4l6k551NnQndKQkgKM9QFQBvhcruQuUgclpu0OsJQoji/tHc
+        VnWjMi9qpC5wDIawMJNwKODcknMFK3/qDTJ64uSE45W3SCQRiwT6SONLZP8JYA02
+        FCWxqNSrnh1fM=
+Received: (qmail 2180907 invoked from network); 24 Aug 2022 12:35:23 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Aug 2022 12:35:23 +0200
+X-UD-Smtp-Session: l3s3148p1@2fEDPfrmjLMgAwDPXxw3AFlguiwjsjwa
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/4] clk: renesas: r8a779f0: Add MSIOF clocks
-Date:   Wed, 24 Aug 2022 12:35:12 +0200
-Message-Id: <20220824103515.54931-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 4/4] TEST: arm64: dts: renesas: spider: Add MSIOF node
+Date:   Wed, 24 Aug 2022 12:35:15 +0200
+Message-Id: <20220824103515.54931-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220824103515.54931-1-wsa+renesas@sang-engineering.com>
 References: <20220824103515.54931-1-wsa+renesas@sang-engineering.com>
@@ -41,31 +41,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Activate spidev on the MSIOF0 connector on the breakout board.
+Not for upstream!
+
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+ arch/arm64/boot/dts/renesas/r8a779f0-spider.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-For V3U, we also used "msiX" as clock names, so I followed that. I
-wonder, though, if we shouldn't keep using "msiofX" and rename V3U as
-well?
-
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 0faf13060ce8..adaed73097d7 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -131,6 +131,10 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("i2c3",		521,	R8A779F0_CLK_S0D6_PER),
- 	DEF_MOD("i2c4",		522,	R8A779F0_CLK_S0D6_PER),
- 	DEF_MOD("i2c5",		523,	R8A779F0_CLK_S0D6_PER),
-+	DEF_MOD("msi0",		618,	R8A779F0_CLK_MSO),
-+	DEF_MOD("msi1",		619,	R8A779F0_CLK_MSO),
-+	DEF_MOD("msi2",		620,	R8A779F0_CLK_MSO),
-+	DEF_MOD("msi3",		621,	R8A779F0_CLK_MSO),
- 	DEF_MOD("pcie0",	624,	R8A779F0_CLK_S0D2),
- 	DEF_MOD("pcie1",	625,	R8A779F0_CLK_S0D2),
- 	DEF_MOD("scif0",	702,	R8A779F0_CLK_S0D12_PER),
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0-spider.dts b/arch/arm64/boot/dts/renesas/r8a779f0-spider.dts
+index 7a7c8ffba711..20803dcf73dc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0-spider.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider.dts
+@@ -31,3 +31,11 @@ eeprom@51 {
+ 		pagesize = <8>;
+ 	};
+ };
++
++&msiof0 {
++	spidev@0  {
++		compatible = "rohm,dh2228fv";
++		reg = <0>;
++		spi-max-frequency = <400000>;
++	};
++};
 -- 
 2.35.1
 
