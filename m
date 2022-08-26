@@ -2,77 +2,91 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E21BECAAD4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Aug 2022 14:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7666ECAAD5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Aug 2022 23:42:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237173AbiHZO5Z (ORCPT
+        id S238322AbiHZXmw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Aug 2022 10:57:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45228 "EHLO
+        Fri, 26 Aug 2022 19:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229754AbiHZO5X (ORCPT
+        with ESMTP id S237541AbiHZXmv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Aug 2022 10:57:23 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C9AFA5726
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Aug 2022 07:57:21 -0700 (PDT)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id CExG280024C55Sk01ExG9Y; Fri, 26 Aug 2022 16:57:18 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oRaln-002kip-Ov; Fri, 26 Aug 2022 16:57:15 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oRaeb-00615s-DB; Fri, 26 Aug 2022 16:49:49 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a774e1: Rename i2c_dvfs to iic_pmic
-Date:   Fri, 26 Aug 2022 16:49:48 +0200
-Message-Id: <7d60653d4d63904dc025a133297a53eb885fa064.1661525361.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Fri, 26 Aug 2022 19:42:51 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 952EAE42F8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Aug 2022 16:42:50 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5264120A;
+        Sat, 27 Aug 2022 01:42:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1661557367;
+        bh=4Dvzd8Qt8F/N2QEWmU3+l627VznMmWv23c/4F/253jo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eWHIOTk5WBrZ59pg4KvOcLWFYBJfDkJCOOLK5ODc3Sbozio0noaoM2Iz8QW32/+6E
+         BjmMOLiSOUwCFjKy+LUK+pG6CXeMZE6lu/27NvIzIUgBlbdJQ9MT7pH/hD3cjGPmOa
+         RXTJLCO7hNoPwyYsw40ZPpmdpE1JOPTlsHgAdDv4=
+Date:   Sat, 27 Aug 2022 02:42:40 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/2] drm: rcar-du: Drop unused encoder header files
+Message-ID: <YwlacAoQgITHrrpt@pendragon.ideasonboard.com>
+References: <20220825103905.2450049-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220825103905.2450049-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As RZ/G2 SoCs do not support DVFS, the "iic-dvfs" module was renamed to
-"iic-pmic" in the RZ/G Series, 2nd Generation User’s Manual: Hardware
-Rev. 1.00.
+Hi Biju,
 
-See also commit a636d8037ef6028a ("arm64: dts: renesas: rzg2: Rename
-i2c_dvfs to iic_pmic"), which apparently forgot to update RZ/G2H.
+Thank you for the patch.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is a prerequisite for "[PATCH v2 6/6] arm64: dts: renesas:
-r8a774a1: put I2C aliases to board files"
-https://lore.kernel.org/r/20220825071022.7864-7-wsa+renesas@sang-engineering.com
----
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Aug 25, 2022 at 11:39:04AM +0100, Biju Das wrote:
+> Drop unused header files from rcar_du_encoder.c
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index 8ec59094882b543d..3cb3b2e052c18c1d 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -769,7 +769,7 @@ i2c6: i2c@e66e8000 {
- 			status = "disabled";
- 		};
- 
--		i2c_dvfs: i2c@e60b0000 {
-+		iic_pmic: i2c@e60b0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			compatible = "renesas,iic-r8a774e1",
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> index 60d6be78323b..bfd5c087eb0a 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> @@ -9,18 +9,13 @@
+>  
+>  #include <linux/export.h>
+>  #include <linux/of.h>
+> -#include <linux/slab.h>
+>  
+>  #include <drm/drm_bridge.h>
+>  #include <drm/drm_bridge_connector.h>
+> -#include <drm/drm_crtc.h>
+> -#include <drm/drm_managed.h>
+> -#include <drm/drm_modeset_helper_vtables.h>
+>  #include <drm/drm_panel.h>
+>  
+>  #include "rcar_du_drv.h"
+>  #include "rcar_du_encoder.h"
+> -#include "rcar_du_kms.h"
+>  #include "rcar_lvds.h"
+>  
+>  /* -----------------------------------------------------------------------------
+
 -- 
-2.25.1
+Regards,
 
+Laurent Pinchart
