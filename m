@@ -2,143 +2,315 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9F1C0502C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Aug 2022 09:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7679ECAAD2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Aug 2022 10:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229598AbiH2Jv3 (ORCPT
+        id S229724AbiH2Kpq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Aug 2022 05:51:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36512 "EHLO
+        Mon, 29 Aug 2022 06:45:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbiH2Jv2 (ORCPT
+        with ESMTP id S229790AbiH2Kpp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2022 05:51:28 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD5805E544;
-        Mon, 29 Aug 2022 02:51:25 -0700 (PDT)
-Received: from mail-wr1-f53.google.com ([209.85.221.53]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MAfQk-1oZECh1Xdw-00B0If; Mon, 29 Aug 2022 11:51:23 +0200
-Received: by mail-wr1-f53.google.com with SMTP id az27so9456056wrb.6;
-        Mon, 29 Aug 2022 02:51:22 -0700 (PDT)
-X-Gm-Message-State: ACgBeo1cdW7Ud/KXAcDgKJg54KDGFmdQy7RgJV68olTI2Ez5P56n7hnN
-        HnEYMrHAmR0ki9RZgu7dvem1mbIma6k4U72r6g4=
-X-Google-Smtp-Source: AA6agR4dO9Qog99EOhFMYD2/TUvDUFPeLAFKpCKJySAtY2CWxJsmH8fvbDozC2seipJY5siIbg1N/2rhc6q5GDAswIQ=
-X-Received: by 2002:a17:907:d0b:b0:741:7ca6:a2b with SMTP id
- gn11-20020a1709070d0b00b007417ca60a2bmr3580848ejc.654.1661763177783; Mon, 29
- Aug 2022 01:52:57 -0700 (PDT)
+        Mon, 29 Aug 2022 06:45:45 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F223B2982E
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Aug 2022 03:45:43 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id 202so7333956pgc.8
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Aug 2022 03:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc;
+        bh=EBHVVtQB86+bAzg4reYvz60J8CTesDG0vAUkCPHNHR8=;
+        b=lsL/s2Y/gDXahdMxKm3GYvN590FI44mFfMPDC9CTLv/SkCxNpaxHgOH7rqE0j/slWV
+         6hUa/S4ogZ6c4Mao8Ct7EIO86srzs9XGrsacKjlGgeFqJnnlvAK0MbatBM+H/XJLivXT
+         MqfNZR1STs3zszMprKlDjbCzPKkxdMJtygiQjKzNZRP9uAKZ0rXk7MKAdPa9rKwZzfaV
+         iq2se77nu/09gJRCSQioz9DlgRRmGnpQ/6925i96SJQtEad3rs9rDhxlrnsHoVh33PTg
+         KvocDFiR0uyI9FpvYPPxhOL2iD5zEvN/cXcBmUr95l1OMO4AiutNaiiGz+2iwYl6HGNP
+         pw2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc;
+        bh=EBHVVtQB86+bAzg4reYvz60J8CTesDG0vAUkCPHNHR8=;
+        b=kellwbZmn8WDqWjk6c6fZVFRGCBh2ZFMnjnhfzJnKJkSI/nzL5wYp45I8ugTP3dDSQ
+         FhEx9vCQvpnaqvCZX2n4LpA0A9GN08Ndk0CD59ZlI60E575vAdDr6f5yADaIFW5mQezL
+         uZFlPFMDCnh+dGGYxExxprWIEk2MOvwPCSwmhTv5Ev/Dc9UIXdFcMEF8Upezl0v1S2jh
+         MgnCTnA+RiaOkZaj932C2lz7RezuPUCukteLqePjMzHkk2aQ2788AWzXMf/0LhUvfEGz
+         lppvGrR0LdygbTb6yRzMD/dWvxqX9b8m0Y4cJdPhmTwY2cyQ7WcB1mYROXWX2TWZPW9e
+         Jzpg==
+X-Gm-Message-State: ACgBeo1XRMw684TFQ42Li+JAfhkUx6SOslsPAOtf4sVzyml0QSPMAKCf
+        imAXmua7DXxRVcE17omlJAV1zvTiUMr32CC1psw=
+X-Google-Smtp-Source: AA6agR7/Rr51YcducekXGqF16wDeFFYDkT80wgn+qzfwxnD4Jxu7vh8fLri4tbl8TuZBQEjZCYM/iA==
+X-Received: by 2002:a05:6a00:2316:b0:538:6966:80e4 with SMTP id h22-20020a056a00231600b00538696680e4mr910390pfh.11.1661769943279;
+        Mon, 29 Aug 2022 03:45:43 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id y187-20020a6232c4000000b00537daf64e8esm5556073pfy.188.2022.08.29.03.45.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Aug 2022 03:45:42 -0700 (PDT)
+Message-ID: <630c98d6.620a0220.e7c70.93df@mx.google.com>
+Date:   Mon, 29 Aug 2022 03:45:42 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220818135522.3143514-1-arnd@kernel.org>
-In-Reply-To: <20220818135522.3143514-1-arnd@kernel.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 29 Aug 2022 10:52:41 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1tsby7+xfKTQaaBQZ4t-=uWG5Dtbcn_jPEsSMG_YVHgA@mail.gmail.com>
-Message-ID: <CAK8P3a1tsby7+xfKTQaaBQZ4t-=uWG5Dtbcn_jPEsSMG_YVHgA@mail.gmail.com>
-Subject: Re: [PATCH 00/11] ARM: defconfig cleanup
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Qin Jian <qinjian@cqplus1.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Shannon Nelson <snelson@pensando.io>,
-        Peter Chen <peter.chen@nxp.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:gf85k6zCm5cJECsQs0SxRf847/xq4I8ODO7U+Gj6k40fdTozveb
- ELMjAat5zmIE6s9q9Wptq93QYI1b5l8o38ZGAYjV5JZ8cmpULenjiyPXQVvHEQgV6mF130v
- VSJnO02CRXim3eSApkQCq8P2pGrhvU8o05XEwg/HVMbEnmhNu0h4E2mqxfz6cMReAEPRZDR
- 1SkGK7PVFUuDfdBuTn0fw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:voOQ47dxVno=:PWIiRwLvZoKwxn1je+6eqX
- zzuj+QAdkWrtqZZmv9hITubgCl/xx1huPOm3X7bQaL+aRwz2a81CEwnGHzlNET9Myc6rrI3Ts
- ldk1ewreYruxMeNpTwKoyI7cyFO18t3PGqs1UdV78+nqTjUJj6MtLjvCx7PC7k4rrq/Foet2N
- gCc2r8833dfAMINc1nLyMxrz+MgyQORVUbyjFzAz36PZwf0paK/QzZVd0Q+14C4uA6NoUe5Hy
- Dl9crudMA9Sst2ETlhefH4ncE5R4xgDUKteSJ85R6nkovqlQN84letbl16oLxHVVMEX3LofCP
- 09ElDRovbRApc0nT6hWJ9xTOv3ka5QRkoOceCvGICFYoiJv1yASbB+u1QI6pb6T3ysiUiQcdV
- uTpvI1lv0X6scUo9xyC1rRJKZbr5BKOGPGwUbswxrMAWJ3K4+XFNqPDAugeYsfZ/2r4ERerHz
- D8IqpwPdDAkZh8A3WNcicCZ6aLVVejh3D5lSEQlkrbUnApAY4KrGPTXkI+Q8zxNZ7ctGjqccn
- 6DLvIQvHii2UbO0zKXSOiznK3zXssly8jRGS42PyRUMASCd34sm+QWjAFK3CMzmfwlbY96aeZ
- 2Vnp1vM/GJpcy7CSG3GAJghov7BJzknwv9993qrShvb51nUJ2pGNzPCC6hTgyxAuCPs4Io4Yy
- ITZAMmcq9z/G25OZUO9j4i0bft9caKDl3DuFY+oYJBk71Dnmu5SSyRW6UlXc/yyj1LjIgARUj
- /nyE4DrbW2xx+sFdPdxUNkw4JIpmOde2ffmaJ50Kxsas/FmbIHpE4SuScXRLZf0XCLqnuisxA
- BifvE3qsJaviSfrX3teBxsIFa6YNvCESM6NJSTAQzPj2lenERzYcQF1xyolfz4ZlGeSVDYzEz
- Dc/hU1HNMA9yHJ5fWXQQ==
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: next
+X-Kernelci-Tree: renesas
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-next-2022-08-29-v6.0-rc1
+Subject: renesas/next cros-ec: 10 runs,
+ 7 regressions (renesas-next-2022-08-29-v6.0-rc1)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Aug 18, 2022 at 3:55 PM Arnd Bergmann <arnd@kernel.org> wrote:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> I have continued the cleanup of the multi_*_defconfig files, and
-> reordered the other files according to the 'make savedefconfig'
-> output as before.
->
-> I would like to queue these up for 6.1, though the last two
-> should probably be considered bugfixes and merged for 6.0.
->
-> Since a third of the defconfig files are for machines that
-> are now marked as unused, I skipped those files. There are still
-> a few things that get removed by 'make savedefconfig' as they
-> now get selected by some driver:
->
-> -CONFIG_SERIAL_BCM63XX=y
-> -CONFIG_SND_AUDIO_GRAPH_CARD=m
-> -CONFIG_NEW_LEDS=y
-> -CONFIG_LEDS_TRIGGERS=y
-> -CONFIG_TEGRA20_APB_DMA=y
->
-> I think for those we should follow up with patches to remove the
-> 'select' statements.
+renesas/next cros-ec: 10 runs, 7 regressions (renesas-next-2022-08-29-v6.0-=
+rc1)
 
-I dropped the last patch that Greg has already picked up, and merged the
-rest into the arm/defconfig branch of the soc tree.
+Regressions Summary
+-------------------
 
-Thanks for the Acks.
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
 
-        Arnd
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
+
+mt8173-elm-hana              | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 1          =
+
+rk3399-gru-kevin             | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 2          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2022-08-29-v6.0-rc1/plan/cros-ec/
+
+  Test:     cros-ec
+  Tree:     renesas
+  Branch:   next
+  Describe: renesas-next-2022-08-29-v6.0-rc1
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      43507165562bd8bcf2ce73ba7706033127363710
+
+  Test suite revisions:
+    cros-ec-tests
+      URL:  https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform=
+/cros-ec-tests.git
+      SHA:  86181a7fbd379fc42314c450740d2cea8cdf04c1 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/630c8366355bbafd18355645
+
+  Results:     5 PASS, 2 FAIL, 12 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-08-29-v6.0-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora=
+/cros-ec-hp-x360-12b-ca0010nr-n4020-octopus.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-08-29-v6.0-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora=
+/cros-ec-hp-x360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220812.0/amd64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.test_cros_ec_gyro_iio_abi: https://kernelci.org/test/case/id/63=
+0c8367355bbafd18355656
+        failing since 13 days (last pass: renesas-next-2022-07-07-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1) =
+
+
+  * cros-ec.test_cros_ec_accel_iio_abi: https://kernelci.org/test/case/id/6=
+30c8367355bbafd18355658
+        failing since 13 days (last pass: renesas-next-2022-07-07-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1)
+
+    2022-08-29T09:14:02.829134  / # =
+
+    2022-08-29T09:14:02.834078  =
+
+    2022-08-29T09:14:02.937383  / # #
+    2022-08-29T09:14:02.942794  #
+    2022-08-29T09:14:03.045009  / # export SHELL=3D/bin/sh
+    2022-08-29T09:14:03.051277  export SHELL=3D/bin/sh
+    2022-08-29T09:14:03.153148  / # . /lava-7123634/environment
+    2022-08-29T09:14:03.159279  . /lava-7123634/environment
+    2022-08-29T09:14:03.261218  / # /lava-7123634/bin/lava-test-runner /lav=
+a-7123634/0
+    2022-08-29T09:14:03.267308  /lava-7123634/bin/lava-test-runner /lava-71=
+23634/0 =
+
+    ... (7 line(s) more)  =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/630c83899df225c16635564a
+
+  Results:     5 PASS, 2 FAIL, 12 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-08-29-v6.0-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora=
+/cros-ec-hp-x360-14-G1-sona.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-08-29-v6.0-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora=
+/cros-ec-hp-x360-14-G1-sona.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220812.0/amd64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.test_cros_ec_gyro_iio_abi: https://kernelci.org/test/case/id/63=
+0c83899df225c16635565b
+        failing since 13 days (last pass: renesas-next-2022-07-07-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1) =
+
+
+  * cros-ec.test_cros_ec_accel_iio_abi: https://kernelci.org/test/case/id/6=
+30c83899df225c16635565d
+        failing since 13 days (last pass: renesas-next-2022-07-07-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1)
+
+    2022-08-29T09:14:36.682164  / # =
+
+    2022-08-29T09:14:36.686788  =
+
+    2022-08-29T09:14:36.788478  / # #
+    2022-08-29T09:14:36.793907  #
+    2022-08-29T09:14:36.894881  / # export SHELL=3D/bin/sh
+    2022-08-29T09:14:36.900151  export SHELL=3D/bin/sh
+    2022-08-29T09:14:37.000840  / # . /lava-7123674/environment
+    2022-08-29T09:14:37.006295  . /lava-7123674/environment
+    2022-08-29T09:14:37.107139  / # /lava-7123674/bin/lava-test-runner /lav=
+a-7123674/0
+    2022-08-29T09:14:37.112275  /lava-7123674/bin/lava-test-runner /lava-71=
+23674/0 =
+
+    ... (7 line(s) more)  =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+mt8173-elm-hana              | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/630c88b2f4607fe54835566d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-08-29-v6.0-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cros-=
+ec-mt8173-elm-hana.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-08-29-v6.0-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cros-=
+ec-mt8173-elm-hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220812.0/arm64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.login: https://kernelci.org/test/case/id/630c88b2f4607fe5483556=
+6e
+        failing since 13 days (last pass: renesas-next-2022-07-05-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+rk3399-gru-kevin             | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/630c88b0f4607fe548355656
+
+  Results:     5 PASS, 2 FAIL, 11 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-08-29-v6.0-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cros-=
+ec-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-08-29-v6.0-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cros-=
+ec-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220812.0/arm64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.test_cros_ec_gyro_iio_abi: https://kernelci.org/test/case/id/63=
+0c88b1f4607fe548355666
+        failing since 13 days (last pass: renesas-next-2022-07-05-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1) =
+
+
+  * cros-ec.test_cros_ec_accel_iio_abi: https://kernelci.org/test/case/id/6=
+30c88b1f4607fe548355668
+        failing since 13 days (last pass: renesas-next-2022-07-05-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1)
+
+    2022-08-29T09:36:38.260194  / # =
+
+    2022-08-29T09:36:38.263418  =
+
+    2022-08-29T09:36:38.372576  / # #
+    2022-08-29T09:36:38.377013  #
+    2022-08-29T09:36:38.480612  / # export SHELL=3D/bin/sh
+    2022-08-29T09:36:38.481544  export SHELL=3D/bin/sh<6>[   20.842149] mwi=
+fiex_pcie 0000:01:00.0: info: FW download over, size 638992 bytes
+    2022-08-29T09:36:38.484616  =
+
+    2022-08-29T09:36:38.587484  / # . /lava-7123916/environment
+    2022-08-29T09:36:38.591273  . /lava-7123916/environment
+    2022-08-29T09:36:38.694985  / # /lava-7123916/bin/lava-test-runner /lav=
+a-7123916/0 =
+
+    ... (14 line(s) more)  =
+
+ =20
