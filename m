@@ -2,81 +2,199 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52857ECAAD5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Aug 2022 13:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C49FDECAAD5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Aug 2022 14:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230142AbiH2Nht (ORCPT
+        id S229484AbiH2Opf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Aug 2022 09:37:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60628 "EHLO
+        Mon, 29 Aug 2022 10:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229958AbiH2Nhs (ORCPT
+        with ESMTP id S229895AbiH2Opf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2022 09:37:48 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDA626BCCE
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Aug 2022 06:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=anZJTyztXSW9fQ1prWZyfQT3yUKK
-        BBa5SRV5T4uDEQM=; b=ZkKwCdf5wWI+7HFl9OrBEy/2RUun/wCkMkSVhc7TmINs
-        PstrOZh8+K9Xi26Teo2C7z40GqkwaNlmN0fqC3DBlejMVNc1Y78UMflHwijQuk9d
-        8Dft7lOUbp8kLVJx7imqloSvd3aB4cWWTWgKe/oJoAqZDG1+uyvaOeX1L1AX5G8=
-Received: (qmail 100116 invoked from network); 29 Aug 2022 13:51:04 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Aug 2022 13:51:04 +0200
-X-UD-Smtp-Session: l3s3148p1@7Ufl4F/nSOwgAwDPXyz6AKlRFcsoQyrD
-Date:   Mon, 29 Aug 2022 13:51:04 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 3/4] arm64: dts: renesas: spider-cpu: Add MSIOF node
-Message-ID: <YwyoKPVs0dedZi9D@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20220824103515.54931-1-wsa+renesas@sang-engineering.com>
- <20220824103515.54931-4-wsa+renesas@sang-engineering.com>
- <CAMuHMdX4q+NNf1Q=eRE3Qb8QvidJ5u_LZT8he+Aw76T45cmYWQ@mail.gmail.com>
- <Ywyezf8tXUXjm8n9@shikoro>
- <CAMuHMdUDnTsr28mjmOPtd+SKE+cvCDT=mu2_GvjucoFZzWJhvg@mail.gmail.com>
+        Mon, 29 Aug 2022 10:45:35 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A076E2FE
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Aug 2022 07:45:33 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id bj12so16129545ejb.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Aug 2022 07:45:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=s0iyuPNI7/LMzM/1LbFoSsF66QYWRPhdYVPrV2uXI5w=;
+        b=qv6EPlo5PvL8WyfIyQIWqiF3Z5reqqPldwuC8tt4SNYy1qBQHtmeA6jE8EWl1pCh9W
+         /i0ZTnd3//qac/ZM5yxsqkdbHKpE2YM6XRMIeyGe36P0Q1VMReV7ytKMyd9qMcqPYXDM
+         Nh8rxZ3kKn5RhN/Un7mXO1rWvi/fz1oJhZ/zM6YBGraqijh9/iFyEeAzpEzo+/wkEnvy
+         NNb8MW8ZztzqE3JlW/RRsMMCIwILsnhLCQw9JjdEYNVsUXz7lrXHgOkiyFNWUfjt9kBI
+         TrCOKoiwZVauKE4x0iL0Va8/HXfOz7usCRFFtqLZCKpFZQep3z3Sf52AhPpT3hlLcJD4
+         I5BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=s0iyuPNI7/LMzM/1LbFoSsF66QYWRPhdYVPrV2uXI5w=;
+        b=lYmk49sem3x+9FAWMpYDrR2b12eg3MVsYIaZ00thNpxBcM9oQsGNZ8OThXsuWrenPj
+         rF6UuM79+kQnH2UI9B7VsycEY/Qjc9alwdVUorJXtq17rUu7tg4OsQx1uSNePeqjqMbB
+         8FuUni/JWKbGpdQfb0CtsDqeLPodcNeza9Q3f+qwo4wURADmYlAW3ErqiU6RMCyh0NvQ
+         6zcfcJPtippRS5ngXIzlY+ez7zMsueg5FelBoikh6hZWgiri3rRxSrxkEN5gkfrJbohe
+         6LeZvhXwzBi/rvp3forIlletqsebqYoO/TFhWykzXcS8xjdnxCwTDsEjqN9VmmXhTlQ2
+         jamA==
+X-Gm-Message-State: ACgBeo1Gc9bymA/wWz0nJG6CDqN5piQ3BRo7rhXDqMe0Ii/39x2phhlm
+        1oHNB7Ve+vGiaJDU3CEfFisyNYZfnzzyNITpVh2Ipg==
+X-Google-Smtp-Source: AA6agR6DKVxl7xbKKtZ9hcuxEKytF7lflxCPIwmH8lLJ2deCJOT+IHJqk1EkXTf66WsMZUZELf1yAq3IKwg5/LFgvpE=
+X-Received: by 2002:a17:907:743:b0:740:ef93:2ffc with SMTP id
+ xc3-20020a170907074300b00740ef932ffcmr9899976ejb.514.1661784331836; Mon, 29
+ Aug 2022 07:45:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qNDlLQbW87Ua6iGI"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUDnTsr28mjmOPtd+SKE+cvCDT=mu2_GvjucoFZzWJhvg@mail.gmail.com>
+References: <20220824130034.196041-1-tomi.valkeinen@ideasonboard.com>
+ <20220824130034.196041-5-tomi.valkeinen@ideasonboard.com> <YwlvEa7c6xnhvGyj@pendragon.ideasonboard.com>
+In-Reply-To: <YwlvEa7c6xnhvGyj@pendragon.ideasonboard.com>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Mon, 29 Aug 2022 16:45:20 +0200
+Message-ID: <CAG3jFyuLFLTfmmEAg-jJVh1Ov=F10QBLs+ssAbYyWmFM0RbbRA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] drm/bridge: ti-sn65dsi86: Implement bridge
+ connector operations
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Sat, 27 Aug 2022 at 03:10, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Tomi,
+>
+> On Wed, Aug 24, 2022 at 04:00:34PM +0300, Tomi Valkeinen wrote:
+> > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >
+> > Implement the bridge connector-related .get_edid() and .detect()
+> > operations, and report the related bridge capabilities and type.
+> >
+> > These ops are only added for DP mode. They should also be used for eDP
+> > mode, but the driver seems to be mostly used for eDP and, according to
+> > the comments, they've had issues with eDP panels and HPD. So better be
+> > safe and only enable them for DP for now.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>
+> This patch is missing a third-party review, so I won't apply the series
+> to my tree but will let you pushing it through drm-misc once we get the
+> necessary review.
+>
+> > ---
+> > Changes since v1:
+> >
+> > - The connector .get_modes() operation doesn't rely on EDID anymore,
+> >   __ti_sn_bridge_get_edid() and ti_sn_bridge_get_edid() got merged
+> >   together
+> >  - Fix on top of Sam Ravnborg's DRM_BRIDGE_STATE_OPS
+> >
+> > Changes since v2: [Kieran]
+> >  - Only support EDID on DRM_MODE_CONNECTOR_DisplayPort modes.
+> >
+> > Changes since v3: [Kieran]
+> >  - Remove PM calls in ti_sn_bridge_get_edid() and simplify
+> >
+> > Changes since v4:
+> >  - Add .detect()
+> > ---
+> >  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 28 +++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > index a6b15ea4e84d..dd20624adc70 100644
+> > --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > @@ -29,6 +29,7 @@
+> >  #include <drm/drm_atomic_helper.h>
+> >  #include <drm/drm_bridge.h>
+> >  #include <drm/drm_bridge_connector.h>
+> > +#include <drm/drm_edid.h>
+> >  #include <drm/drm_mipi_dsi.h>
+> >  #include <drm/drm_of.h>
+> >  #include <drm/drm_panel.h>
+> > @@ -68,6 +69,7 @@
+> >  #define  BPP_18_RGB                          BIT(0)
+> >  #define SN_HPD_DISABLE_REG                   0x5C
+> >  #define  HPD_DISABLE                         BIT(0)
+> > +#define  HPD_DEBOUNCED_STATE                 BIT(4)
+> >  #define SN_GPIO_IO_REG                               0x5E
+> >  #define  SN_GPIO_INPUT_SHIFT                 4
+> >  #define  SN_GPIO_OUTPUT_SHIFT                        0
+> > @@ -1163,10 +1165,33 @@ static void ti_sn_bridge_atomic_post_disable(struct drm_bridge *bridge,
+> >       pm_runtime_put_sync(pdata->dev);
+> >  }
+> >
+> > +static enum drm_connector_status ti_sn_bridge_detect(struct drm_bridge *bridge)
+> > +{
+> > +     struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
+> > +     int val = 0;
+> > +
+> > +     pm_runtime_get_sync(pdata->dev);
+>
+> Would this
+>
+>         int ret;
+>
+>         ret = pm_runtime_resume_and_get(pdata->dev);
+>         if (ret)
+>                 return connector_status_disconnected;
+>
+> (or possibly connector_status_unknown) help avoiding problems ?
+>
+> Apart from that, the patch looks good to me.
+>
+> > +     regmap_read(pdata->regmap, SN_HPD_DISABLE_REG, &val);
+> > +     pm_runtime_put_autosuspend(pdata->dev);
+> > +
+> > +     return val & HPD_DEBOUNCED_STATE ? connector_status_connected
+> > +                                      : connector_status_disconnected;
+> > +}
+> > +
+> > +static struct edid *ti_sn_bridge_get_edid(struct drm_bridge *bridge,
+> > +                                       struct drm_connector *connector)
+> > +{
+> > +     struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
+> > +
+> > +     return drm_get_edid(connector, &pdata->aux.ddc);
+> > +}
+> > +
+> >  static const struct drm_bridge_funcs ti_sn_bridge_funcs = {
+> >       .attach = ti_sn_bridge_attach,
+> >       .detach = ti_sn_bridge_detach,
+> >       .mode_valid = ti_sn_bridge_mode_valid,
+> > +     .get_edid = ti_sn_bridge_get_edid,
+> > +     .detect = ti_sn_bridge_detect,
+> >       .atomic_pre_enable = ti_sn_bridge_atomic_pre_enable,
+> >       .atomic_enable = ti_sn_bridge_atomic_enable,
+> >       .atomic_disable = ti_sn_bridge_atomic_disable,
+> > @@ -1262,6 +1287,9 @@ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
+> >       pdata->bridge.type = pdata->next_bridge->type == DRM_MODE_CONNECTOR_DisplayPort
+> >                          ? DRM_MODE_CONNECTOR_DisplayPort : DRM_MODE_CONNECTOR_eDP;
+> >
+> > +     if (pdata->bridge.type == DRM_MODE_CONNECTOR_DisplayPort)
+> > +             pdata->bridge.ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
+> > +
+> >       drm_bridge_add(&pdata->bridge);
+> >
+> >       ret = ti_sn_attach_host(pdata);
+> > --
+> > 2.34.1
 
---qNDlLQbW87Ua6iGI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I think this patch looks good, please add my r-b.
 
+@Laurent: I'll let you apply this, if you want the above suggestion to
+be included.
 
-> So my preference is to leave MSIOF0 alone.
-
-So, I just resend patch2 with assigned-clocks removed?
-
-
---qNDlLQbW87Ua6iGI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmMMqCQACgkQFA3kzBSg
-KbYPexAAkedjPhLss7VbmbLYcNjlXHXhj5FVz+jEvZ+pFnThopiapmhq4PiF+9pr
-F3aReD+s3w0qJb1MiYn2ss/g1QHaTpzULaCSZO11AhesMNBk3xm5U40IoOBw8yCp
-hBMxeWenbRlpLW+Fq476JBSPuoUcOCBewcPqgC/cJ66d7/cy+V3H+R6+6EkD/zQ2
-xo23BdxRaUzwp9ubrtYGg6bVbKoX5ubbtkEhdtiCS8TIaRwoaApx0ILNq/PNGhQZ
-xh5PTStVV8050/i2yceqGMDNA9ga/PaYSXnPZPHL9/WtvS0lgbsJnbHSVsEg7GqQ
-poaESdPpIop86v1KAjdxwrhMHFcZrBfW6tGdS4BwZSifSokUsrkkvebBzY47zHo+
-GWUqxbGT6vv+ZpIbuYB9NQ7ZqBFpNgxO4JSH4LjozDPpbg5EjKmVMhIlND79ub6+
-yomxl9iCW4l9blAA7yOZP0in/6CqZcp3F7YtfuxwiZORoAsc5k1z0rNgJJVAs3J7
-c3ipBcl3sUtDs3lGInwog8iXv8as2kjQxBP/vKWg7d3BLGxN0hxRpLtcpXdNL/MX
-tgp0ZOvPH6kJPEf57LcpZsp483BWTkxrTdWJv4k5gXqMQGVTZt993HS/olGyRwwm
-VGz9wmPXdEBM6YBbpxDJZYgSd5qZElwRyMcq1zaZLG6gs672dxI=
-=oFD+
------END PGP SIGNATURE-----
-
---qNDlLQbW87Ua6iGI--
+Reviewed-by: Robert Foss <robert.foss@linaro.org>
