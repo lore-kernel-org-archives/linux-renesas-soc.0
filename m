@@ -2,106 +2,94 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7704CECAAD4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Aug 2022 09:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94106ECAAA1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Aug 2022 09:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231598AbiH3JTt (ORCPT
+        id S231802AbiH3JUf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 30 Aug 2022 05:19:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
+        Tue, 30 Aug 2022 05:20:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231602AbiH3JTa (ORCPT
+        with ESMTP id S231322AbiH3JUO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2022 05:19:30 -0400
-Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35328D86EA;
-        Tue, 30 Aug 2022 02:19:24 -0700 (PDT)
-Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-3413ad0640dso102420537b3.13;
-        Tue, 30 Aug 2022 02:19:24 -0700 (PDT)
+        Tue, 30 Aug 2022 05:20:14 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DC451EC51
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Aug 2022 02:19:59 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id q7so14644572lfu.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Aug 2022 02:19:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=4LzcYMLA4n0/7gNYzbK/mkckLDWj4Hrt+zYpQebTjH4=;
-        b=SO3qgOdHgFHXeHQcJlqYfbrWrZD8Iw0sHlWqtM/SViI75ecfevio/ANBS8vklEio/D
-         OJ4WIL2E8RSLgQuJ4LWQ17wIV1ldFB8FGiKUFXjM/NfD3WO4c9SvLhbbWY0sxymF8e3X
-         hHRsta6pn4uc/Wkq/47lGiXBJSuCypE5X1jNm7+OJAzUlDxaVDva9eAuV85WMIG1+E5I
-         Qvo+EUEAcHdst3jlpPFPaDCOMRK5dvTe/rGnIqdEh1CEwylKa8ZMlGZOYQ+5BznRVlJj
-         MY08cMyF8KlyjXhDSozG9ne+PjUGBrjuffcPpe+Vg317U5QtU1zTDcPi2dmKO33MnHHF
-         OvmA==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=XrVac6qDsWgpMvtn1ZnbtlFbgOKdsqH/r3JZVyl+4NY=;
+        b=RbGE7WV/j3CrIZiHvc/Omisv8ViGrUYmgs+MS1wAch568zYdmRzslhJCm7+EURA8R/
+         heWsOU798FnM0oFPrMGUBHbnMl0c+Z8TqPO71WWL9201XcoPYS6YKeqX0Ywis0K3QSkJ
+         qOo8WJo5uzpbY4SAHBdKATNM5t6HDHQ7Urj2OfMXk2MWWmTdKzvQWa8BcT/NYRDt4kqp
+         Te3PMJ/p29gMsAab59p5sk24kgw5maJH3MiAP9wBU2aXtg4Eb+Knvu+X+8YYQpDpkK2v
+         jna5DAZsIz6CxY70IRG1I0JQSToYl+sXRBRol8oyRsh4OSx4MAfZqYAsqVLkPMaoAB4d
+         J+nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=4LzcYMLA4n0/7gNYzbK/mkckLDWj4Hrt+zYpQebTjH4=;
-        b=frs61rvGdvr+4kZaI2SbdSf/4oNwGkdJMQrFvilQgCTueETFSvHRO/bCsOu207AV6j
-         qCPoEkDFxq8TioHlqKcBkHtojDLO7wQxwIfEIcAnadU8+LNJoq+1JAvM7NeUVZIC5dOU
-         e4MLbtPoqGM4qGD9DrMIheFiG9svuB73upxXiqSgLayiq3YRTGyZ1YbfBgJM9WO/KR52
-         GPg3Rf2BwhPSzogzOHE/xif8zPQqkxJddKL1gVLhQ7oN2dZoxxM6ndDCTRw+1fxZv5KA
-         qULr7TA4u3z2wSUOCthfy/+4CgW5iHmtNQEUOxmLSMXnJ5O2oY3/zkU7aBSj/lQSZQdG
-         jf6w==
-X-Gm-Message-State: ACgBeo0aH/SMnqOpimlhjzhhFy/TP23aHgeZkVZGuwdZmWYLoIkz4chB
-        oHMmA+RuLcuUgQrlnrJ1AvAZ07P7+lFL36lb080=
-X-Google-Smtp-Source: AA6agR6wngvVcYUXvDSRVYgU7fd+FzO0hqISd0AH9TIazM2vBMpxMInlA0UjIOaSuYNpdfIIxOv7C9lgwFqkpoWh4hI=
-X-Received: by 2002:a25:2502:0:b0:695:9024:4cfd with SMTP id
- l2-20020a252502000000b0069590244cfdmr11949686ybl.299.1661851164044; Tue, 30
- Aug 2022 02:19:24 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=XrVac6qDsWgpMvtn1ZnbtlFbgOKdsqH/r3JZVyl+4NY=;
+        b=qQGe9pCyBqnM81U6kJYsuWqEWkj2de7i7nzRmr7VKbBXSHDTWG2rOmGZtrowMz0M8g
+         EhTOgdIhZV00K1mwAQy1acvdHL2mW8KRFazeYeTgbJ2ZhJOcCwcxSkba8GnDa1gDcoRf
+         2UpS3E0DcTG1LWS2Svh8uN0yP26NiY8VVC6cUm35l3HEjqHRneV1zrsbAP+M2dX76Qs/
+         6buyj+b0lK+ryk7DcaS7/IHyRKPHwpgAW+9+mXR1xzmr1IAITF1HuitgW5tRRkEp9tXZ
+         WeedMRlYpYCgNAEHjhz6G+DJukIvz3qI1nkS8nAExnVdMVB+tNKTvkR8DoIFNS1lNJVw
+         R6FA==
+X-Gm-Message-State: ACgBeo0KQrRAqkFvQ2R7xUDI64UemROLIz7qVIioBXxoMjcMRfGu9Pt1
+        MfQuPRE4uP0dGRErAnTnZ1znLQ==
+X-Google-Smtp-Source: AA6agR50zspYm+xIw1F0Qq3uF7KPz1mPCdDTLxZCYWULT17Lz01av8PLiSE1u/3wde1TG5PAKvCWgA==
+X-Received: by 2002:a05:6512:3f9b:b0:492:d6c7:24e8 with SMTP id x27-20020a0565123f9b00b00492d6c724e8mr7050299lfa.346.1661851197729;
+        Tue, 30 Aug 2022 02:19:57 -0700 (PDT)
+Received: from [192.168.28.124] (balticom-73-99-134.balticom.lv. [109.73.99.134])
+        by smtp.gmail.com with ESMTPSA id t7-20020a056512208700b0048b13d0b896sm702754lfr.141.2022.08.30.02.19.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Aug 2022 02:19:57 -0700 (PDT)
+Message-ID: <963693d9-6016-f279-a543-22e9be802d87@linaro.org>
+Date:   Tue, 30 Aug 2022 12:19:56 +0300
 MIME-Version: 1.0
-References: <20220829215816.6206-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <Yw1G69ny9tZrFWk4@pendragon.ideasonboard.com>
-In-Reply-To: <Yw1G69ny9tZrFWk4@pendragon.ideasonboard.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Tue, 30 Aug 2022 10:18:57 +0100
-Message-ID: <CA+V-a8sPRTBTFnH4W=qcKU3=WYU79oX3WxBONpCG2f4m9V2ncA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: bridge: renesas,dw-hdmi: Fix
- 'unevaluatedProperties' warnings
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH] arm64: dts: renesas: Drop clock-names property from RPC
+ node
+Content-Language: en-US
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20220829215128.5983-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220829215128.5983-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+On 30/08/2022 00:51, Lad Prabhakar wrote:
+> With 'unevaluatedProperties' support implemented, there's a number of
+> warnings when running dtbs_check:
+> 
+> arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2-ex-idk-1110wr.dtb: spi@ee200000: Unevaluated properties are not allowed ('clock-names' was unexpected)
+> 	From schema: Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+> 
+> The main problem is that SoC DTSI's are including clock-names, whereas the
+> renesas,rpc-if.yaml has 'unevaluatedProperties: false'. So just drop
+> clock-names property from the SoC DTSI's.
 
-On Tue, Aug 30, 2022 at 12:08 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Mon, Aug 29, 2022 at 10:58:16PM +0100, Lad Prabhakar wrote:
-> > With 'unevaluatedProperties' support implemented, there's a number of
-> > warnings when running dtbs_check:
-> >
-> > arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2-ex-idk-1110wr.dtb: hdmi@fead0000: Unevaluated properties are not allowed ('resets' was unexpected)
-> >       From schema: Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.yaml
-> >
-> > The main problem is that SoC DTSI's are including resets property, whereas
-> > the renesas,dw-hdmi.yaml has 'unevaluatedProperties: false'. So just add
-> > optional resets property to the binding.
->
-> Given that all the DT sources in the kernel specify the resets property,
-> how about making it mandatory ?
->
-Agreed, will do that and send a v2.
+This is not the main problem. The main problem is that bindings do not
+allow clock-names. Commit msg should reflect that.
 
-Cheers,
-Prabhakar
+Best regards,
+Krzysztof
