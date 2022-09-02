@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9496BECAAD5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Sep 2022 17:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7617DC38145
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Sep 2022 17:08:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237107AbiIBRIy (ORCPT
+        id S235893AbiIBRIz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Sep 2022 13:08:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38846 "EHLO
+        Fri, 2 Sep 2022 13:08:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236978AbiIBRIm (ORCPT
+        with ESMTP id S237075AbiIBRIu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2022 13:08:42 -0400
+        Fri, 2 Sep 2022 13:08:50 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C6282110DB8
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Sep 2022 10:08:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 22518110D97
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Sep 2022 10:08:49 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.93,283,1654527600"; 
-   d="scan'208";a="133510983"
+   d="scan'208";a="133510991"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Sep 2022 02:08:40 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 03 Sep 2022 02:08:48 +0900
 Received: from localhost.localdomain (unknown [10.226.92.67])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3ADC44005622;
-        Sat,  3 Sep 2022 02:08:36 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1E71D40078DC;
+        Sat,  3 Sep 2022 02:08:44 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -33,9 +33,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 02/10] drm: rcar-du: Add encoder lib support
-Date:   Fri,  2 Sep 2022 18:08:18 +0100
-Message-Id: <20220902170826.599262-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 04/10] drm: rcar-du: Add vsp lib support
+Date:   Fri,  2 Sep 2022 18:08:20 +0100
+Message-Id: <20220902170826.599262-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220902170826.599262-1-biju.das.jz@bp.renesas.com>
 References: <20220902170826.599262-1-biju.das.jz@bp.renesas.com>
@@ -45,409 +45,143 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add RCar DU encoder lib support by moving rcar_du_encoder_count_ports()
-and rcar_du_encoder_funcs to the lib file and added
-rcar_du_encoder_funcs() to share the common code between RCar and
-RZ/G2L DU encoder drivers.
+Add RCar DU vsp lib support by moving rcar_du_vsp_disable()
+to the lib file so that same function can be used by both
+RCar and RZ/G2L DU VSP drivers.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
  * Rebased on drm-misc-next and DU-next.
- * Fixed the warning reported by bot.
 ---
- drivers/gpu/drm/rcar-du/Kconfig               |   5 +
- drivers/gpu/drm/rcar-du/Makefile              |   2 +
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c     | 117 +--------------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h     |  14 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.c | 138 ++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.h |  30 ++++
- 6 files changed, 180 insertions(+), 126 deletions(-)
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.c
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.h
+ drivers/gpu/drm/rcar-du/Kconfig           |  5 +++++
+ drivers/gpu/drm/rcar-du/Makefile          |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c     |  5 -----
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.h     |  4 ++--
+ drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.c | 17 +++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.h | 19 +++++++++++++++++++
+ 6 files changed, 44 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.c
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.h
 
 diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-index 58ffb8c2443b..369af45b5ff9 100644
+index 369af45b5ff9..64d47d9f9131 100644
 --- a/drivers/gpu/drm/rcar-du/Kconfig
 +++ b/drivers/gpu/drm/rcar-du/Kconfig
-@@ -71,3 +71,8 @@ config DRM_RCAR_WRITEBACK
+@@ -76,3 +76,8 @@ config DRM_RCAR_LIB
  	bool
- 	default y if ARM64
+ 	default y
  	depends on DRM_RCAR_DU
 +
-+config DRM_RCAR_LIB
++config DRM_RCAR_VSP_LIB
 +	bool
 +	default y
-+	depends on DRM_RCAR_DU
++	depends on DRM_RCAR_VSP
 diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
-index b8f2c82651d9..479c8eebba5a 100644
+index 3ce410300334..8fc924cf37a7 100644
 --- a/drivers/gpu/drm/rcar-du/Makefile
 +++ b/drivers/gpu/drm/rcar-du/Makefile
-@@ -6,6 +6,8 @@ rcar-du-drm-y := rcar_du_crtc.o \
- 		 rcar_du_kms.o \
- 		 rcar_du_plane.o \
+@@ -10,6 +10,7 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LIB) += rcar_du_encoder_lib.o \
+ 				      rcar_du_kms_lib.o
  
-+rcar-du-drm-$(CONFIG_DRM_RCAR_LIB) += rcar_du_encoder_lib.o
-+
  rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
++rcar-du-drm-$(CONFIG_DRM_RCAR_VSP_LIB)	+= rcar_du_vsp_lib.o
  rcar-du-drm-$(CONFIG_DRM_RCAR_WRITEBACK) += rcar_du_writeback.o
  
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index b1787be31e92..444cc956f692 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -2,7 +2,7 @@
- /*
-  * R-Car Display Unit Encoder
-  *
-- * Copyright (C) 2013-2014 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2022 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  */
-@@ -10,128 +10,17 @@
- #include <linux/export.h>
- #include <linux/of.h>
+ obj-$(CONFIG_DRM_RCAR_CMM)		+= rcar_cmm.o
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index e465aef41585..bed3f2a3c4a5 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -88,11 +88,6 @@ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
+ 	vsp1_du_setup_lif(crtc->vsp->vsp, crtc->vsp_pipe, &cfg);
+ }
  
--#include <drm/drm_bridge.h>
--#include <drm/drm_bridge_connector.h>
--#include <drm/drm_panel.h>
--
- #include "rcar_du_drv.h"
- #include "rcar_du_encoder.h"
--#include "rcar_lvds.h"
- 
- /* -----------------------------------------------------------------------------
-  * Encoder
-  */
- 
--static unsigned int rcar_du_encoder_count_ports(struct device_node *node)
+-void rcar_du_vsp_disable(struct rcar_du_crtc *crtc)
 -{
--	struct device_node *ports;
--	struct device_node *port;
--	unsigned int num_ports = 0;
--
--	ports = of_get_child_by_name(node, "ports");
--	if (!ports)
--		ports = of_node_get(node);
--
--	for_each_child_of_node(ports, port) {
--		if (of_node_name_eq(port, "port"))
--			num_ports++;
--	}
--
--	of_node_put(ports);
--
--	return num_ports;
+-	vsp1_du_setup_lif(crtc->vsp->vsp, crtc->vsp_pipe, NULL);
 -}
 -
--static const struct drm_encoder_funcs rcar_du_encoder_funcs = {
--};
--
- int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 enum rcar_du_output output,
- 			 struct device_node *enc_node)
+ void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc)
  {
--	struct rcar_du_encoder *renc;
--	struct drm_connector *connector;
--	struct drm_bridge *bridge;
--	int ret;
--
--	/*
--	 * Locate the DRM bridge from the DT node. For the DPAD outputs, if the
--	 * DT node has a single port, assume that it describes a panel and
--	 * create a panel bridge.
--	 */
--	if ((output == RCAR_DU_OUTPUT_DPAD0 ||
--	     output == RCAR_DU_OUTPUT_DPAD1) &&
--	    rcar_du_encoder_count_ports(enc_node) == 1) {
--		struct drm_panel *panel = of_drm_find_panel(enc_node);
--
--		if (IS_ERR(panel))
--			return PTR_ERR(panel);
--
--		bridge = devm_drm_panel_bridge_add_typed(rcdu->dev, panel,
--							 DRM_MODE_CONNECTOR_DPI);
--		if (IS_ERR(bridge))
--			return PTR_ERR(bridge);
--	} else {
--		bridge = of_drm_find_bridge(enc_node);
--		if (!bridge)
--			return -EPROBE_DEFER;
--
--		if (output == RCAR_DU_OUTPUT_LVDS0 ||
--		    output == RCAR_DU_OUTPUT_LVDS1)
--			rcdu->lvds[output - RCAR_DU_OUTPUT_LVDS0] = bridge;
--
--		if (output == RCAR_DU_OUTPUT_DSI0 ||
--		    output == RCAR_DU_OUTPUT_DSI1)
--			rcdu->dsi[output - RCAR_DU_OUTPUT_DSI0] = bridge;
--	}
--
--	/*
--	 * Create and initialize the encoder. On Gen3, skip the LVDS1 output if
--	 * the LVDS1 encoder is used as a companion for LVDS0 in dual-link
--	 * mode, or any LVDS output if it isn't connected. The latter may happen
--	 * on D3 or E3 as the LVDS encoders are needed to provide the pixel
--	 * clock to the DU, even when the LVDS outputs are not used.
--	 */
--	if (rcdu->info->gen >= 3) {
--		if (output == RCAR_DU_OUTPUT_LVDS1 &&
--		    rcar_lvds_dual_link(bridge))
--			return -ENOLINK;
--
--		if ((output == RCAR_DU_OUTPUT_LVDS0 ||
--		     output == RCAR_DU_OUTPUT_LVDS1) &&
--		    !rcar_lvds_is_connected(bridge))
--			return -ENOLINK;
--	}
--
--	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %s\n",
--		enc_node, rcar_du_output_name(output));
--
--	renc = drmm_encoder_alloc(&rcdu->ddev, struct rcar_du_encoder, base,
--				  &rcar_du_encoder_funcs, DRM_MODE_ENCODER_NONE,
--				  NULL);
--	if (!renc)
--		return -ENOMEM;
--
--	renc->output = output;
--
--	/* Attach the bridge to the encoder. */
--	ret = drm_bridge_attach(&renc->base, bridge, NULL,
--				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
--	if (ret) {
--		dev_err(rcdu->dev,
--			"failed to attach bridge %pOF for output %s (%d)\n",
--			bridge->of_node, rcar_du_output_name(output), ret);
--		return ret;
--	}
--
--	/* Create the connector for the chain of bridges. */
--	connector = drm_bridge_connector_init(&rcdu->ddev, &renc->base);
--	if (IS_ERR(connector)) {
--		dev_err(rcdu->dev,
--			"failed to created connector for output %s (%ld)\n",
--			rcar_du_output_name(output), PTR_ERR(connector));
--		return PTR_ERR(connector);
--	}
--
--	return drm_connector_attach_encoder(connector, &renc->base);
-+	return rcar_du_lib_encoder_init(rcdu, output, enc_node,
-+					rcar_du_output_name(output));
+ 	vsp1_du_atomic_begin(crtc->vsp->vsp, crtc->vsp_pipe);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
+index 67630f0b6599..8fbfa86c93e0 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
+@@ -12,6 +12,8 @@
+ 
+ #include <drm/drm_plane.h>
+ 
++#include "rcar_du_vsp_lib.h"
++
+ struct drm_framebuffer;
+ struct rcar_du_format_info;
+ struct rcar_du_vsp;
+@@ -59,7 +61,6 @@ to_rcar_vsp_plane_state(struct drm_plane_state *state)
+ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+ 		     unsigned int crtcs);
+ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc);
+-void rcar_du_vsp_disable(struct rcar_du_crtc *crtc);
+ void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc);
+ void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc);
+ int rcar_du_vsp_map_fb(struct rcar_du_vsp *vsp, struct drm_framebuffer *fb,
+@@ -74,7 +75,6 @@ static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp,
+ 	return -ENXIO;
  }
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-index e5ec8fbb3979..d33b684fe93f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-@@ -2,7 +2,7 @@
- /*
-  * R-Car Display Unit Encoder
-  *
-- * Copyright (C) 2013-2014 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2022 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  */
-@@ -10,17 +10,7 @@
- #ifndef __RCAR_DU_ENCODER_H__
- #define __RCAR_DU_ENCODER_H__
- 
--#include <drm/drm_encoder.h>
--
--struct rcar_du_device;
--
--struct rcar_du_encoder {
--	struct drm_encoder base;
--	enum rcar_du_output output;
--};
--
--#define to_rcar_encoder(e) \
--	container_of(e, struct rcar_du_encoder, base)
-+#include "rcar_du_encoder_lib.h"
- 
- int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 enum rcar_du_output output,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.c
+ static inline void rcar_du_vsp_enable(struct rcar_du_crtc *crtc) { };
+-static inline void rcar_du_vsp_disable(struct rcar_du_crtc *crtc) { };
+ static inline void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc) { };
+ static inline void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc) { };
+ static inline int rcar_du_vsp_map_fb(struct rcar_du_vsp *vsp,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.c
 new file mode 100644
-index 000000000000..534d357cfbe2
+index 000000000000..e22d4e535268
 --- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.c
-@@ -0,0 +1,138 @@
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.c
+@@ -0,0 +1,17 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * R-Car Display Unit Encoder Lib
++ * R-Car Display Unit VSP-Based Compositor Lib
 + *
-+ * Copyright (C) 2013-2022 Renesas Electronics Corporation
++ * Copyright (C) 2015-2022 Renesas Electronics Corporation
 + *
 + * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
 + */
 +
-+#include <linux/export.h>
-+#include <linux/of.h>
-+
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_bridge_connector.h>
-+#include <drm/drm_panel.h>
++#include <media/vsp1.h>
 +
 +#include "rcar_du_drv.h"
-+#include "rcar_du_encoder.h"
-+#include "rcar_lvds.h"
 +
-+/* -----------------------------------------------------------------------------
-+ * Encoder
-+ */
-+
-+static unsigned int rcar_du_encoder_count_ports(struct device_node *node)
++void rcar_du_vsp_disable(struct rcar_du_crtc *crtc)
 +{
-+	struct device_node *ports;
-+	struct device_node *port;
-+	unsigned int num_ports = 0;
-+
-+	ports = of_get_child_by_name(node, "ports");
-+	if (!ports)
-+		ports = of_node_get(node);
-+
-+	for_each_child_of_node(ports, port) {
-+		if (of_node_name_eq(port, "port"))
-+			num_ports++;
-+	}
-+
-+	of_node_put(ports);
-+
-+	return num_ports;
++	vsp1_du_setup_lif(crtc->vsp->vsp, crtc->vsp_pipe, NULL);
 +}
-+
-+static const struct drm_encoder_funcs rcar_du_encoder_funcs = {
-+};
-+
-+int rcar_du_lib_encoder_init(struct rcar_du_device *rcdu,
-+			     enum rcar_du_output output,
-+			     struct device_node *enc_node,
-+			     const char *output_name)
-+{
-+	struct rcar_du_encoder *renc;
-+	struct drm_connector *connector;
-+	struct drm_bridge *bridge;
-+	int ret;
-+
-+	/*
-+	 * Locate the DRM bridge from the DT node. For the DPAD outputs, if the
-+	 * DT node has a single port, assume that it describes a panel and
-+	 * create a panel bridge.
-+	 */
-+	if ((output == RCAR_DU_OUTPUT_DPAD0 ||
-+	     output == RCAR_DU_OUTPUT_DPAD1) &&
-+	    rcar_du_encoder_count_ports(enc_node) == 1) {
-+		struct drm_panel *panel = of_drm_find_panel(enc_node);
-+
-+		if (IS_ERR(panel))
-+			return PTR_ERR(panel);
-+
-+		bridge = devm_drm_panel_bridge_add_typed(rcdu->dev, panel,
-+							 DRM_MODE_CONNECTOR_DPI);
-+		if (IS_ERR(bridge))
-+			return PTR_ERR(bridge);
-+	} else {
-+		bridge = of_drm_find_bridge(enc_node);
-+		if (!bridge)
-+			return -EPROBE_DEFER;
-+
-+		if (output == RCAR_DU_OUTPUT_LVDS0 ||
-+		    output == RCAR_DU_OUTPUT_LVDS1)
-+			rcdu->lvds[output - RCAR_DU_OUTPUT_LVDS0] = bridge;
-+
-+		if (output == RCAR_DU_OUTPUT_DSI0 ||
-+		    output == RCAR_DU_OUTPUT_DSI1)
-+			rcdu->dsi[output - RCAR_DU_OUTPUT_DSI0] = bridge;
-+	}
-+
-+	/*
-+	 * Create and initialize the encoder. On Gen3, skip the LVDS1 output if
-+	 * the LVDS1 encoder is used as a companion for LVDS0 in dual-link
-+	 * mode, or any LVDS output if it isn't connected. The latter may happen
-+	 * on D3 or E3 as the LVDS encoders are needed to provide the pixel
-+	 * clock to the DU, even when the LVDS outputs are not used.
-+	 */
-+	if (rcdu->info->gen >= 3) {
-+		if (output == RCAR_DU_OUTPUT_LVDS1 &&
-+		    rcar_lvds_dual_link(bridge))
-+			return -ENOLINK;
-+
-+		if ((output == RCAR_DU_OUTPUT_LVDS0 ||
-+		     output == RCAR_DU_OUTPUT_LVDS1) &&
-+		    !rcar_lvds_is_connected(bridge))
-+			return -ENOLINK;
-+	}
-+
-+	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %s\n",
-+		enc_node, rcar_du_output_name(output));
-+
-+	renc = drmm_encoder_alloc(&rcdu->ddev, struct rcar_du_encoder, base,
-+				  &rcar_du_encoder_funcs, DRM_MODE_ENCODER_NONE,
-+				  NULL);
-+	if (!renc)
-+		return -ENOMEM;
-+
-+	renc->output = output;
-+
-+	/* Attach the bridge to the encoder. */
-+	ret = drm_bridge_attach(&renc->base, bridge, NULL,
-+				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-+	if (ret) {
-+		dev_err(rcdu->dev,
-+			"failed to attach bridge %pOF for output %s (%d)\n",
-+			bridge->of_node, output_name, ret);
-+		return ret;
-+	}
-+
-+	/* Create the connector for the chain of bridges. */
-+	connector = drm_bridge_connector_init(&rcdu->ddev, &renc->base);
-+	if (IS_ERR(connector)) {
-+		dev_err(rcdu->dev,
-+			"failed to created connector for output %s (%ld)\n",
-+			output_name, PTR_ERR(connector));
-+		return PTR_ERR(connector);
-+	}
-+
-+	return drm_connector_attach_encoder(connector, &renc->base);
-+}
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.h
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.h b/drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.h
 new file mode 100644
-index 000000000000..29fcc7cc12db
+index 000000000000..d91c043bbced
 --- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder_lib.h
-@@ -0,0 +1,30 @@
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp_lib.h
+@@ -0,0 +1,19 @@
 +/* SPDX-License-Identifier: GPL-2.0+ */
 +/*
-+ * R-Car Display Unit Encoder Lib
++ * R-Car Display Unit VSP-Based Compositor Lib
 + *
-+ * Copyright (C) 2013-2022 Renesas Electronics Corporation
++ * Copyright (C) 2015-2022 Renesas Electronics Corporation
 + *
 + * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
 + */
 +
-+#ifndef __RCAR_DU_ENCODER_LIB_H__
-+#define __RCAR_DU_ENCODER_LIB_H__
++#ifndef __RCAR_DU_VSP_LIB_H__
++#define __RCAR_DU_VSP_LIB_H__
 +
-+#include <drm/drm_encoder.h>
++#ifdef CONFIG_DRM_RCAR_VSP
++void rcar_du_vsp_disable(struct rcar_du_crtc *crtc);
++#else
++static inline void rcar_du_vsp_disable(struct rcar_du_crtc *crtc) { };
++#endif
 +
-+struct rcar_du_device;
-+
-+struct rcar_du_encoder {
-+	struct drm_encoder base;
-+	enum rcar_du_output output;
-+};
-+
-+#define to_rcar_encoder(e) \
-+	container_of(e, struct rcar_du_encoder, base)
-+
-+int rcar_du_lib_encoder_init(struct rcar_du_device *rcdu,
-+			     enum rcar_du_output output,
-+			     struct device_node *enc_node,
-+			     const char *output_name);
-+
-+#endif /* __RCAR_DU_ENCODER_LIB_H__ */
++#endif /* __RCAR_DU_VSP_LIB_H__ */
 -- 
 2.25.1
 
