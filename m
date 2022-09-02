@@ -2,98 +2,80 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6759DECAAD5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Sep 2022 08:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B49C38145
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Sep 2022 09:37:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235979AbiIBIrI (ORCPT
+        id S231544AbiIBJhS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Sep 2022 04:47:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35030 "EHLO
+        Fri, 2 Sep 2022 05:37:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235971AbiIBIqe (ORCPT
+        with ESMTP id S235448AbiIBJhK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2022 04:46:34 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDAD1E0;
-        Fri,  2 Sep 2022 01:46:19 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id x5so946831qtv.9;
-        Fri, 02 Sep 2022 01:46:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=+efSmKPMaUF86xAxusmh16dSBB12tESjJF0BtlEmxmw=;
-        b=jPzqRRuor7SJ7HMvNwdj3I+k1mi2CwIxHu+GyMnLqU2SUopDKdMdeR3eZukJfkvlP/
-         ibwxGeX2ZuaQAGhxiFaMVW5sGllSbsmy+0fRz9DcdcCevizh/QNoqmZfvtzDfP6srvV+
-         6E2qNnWIzwPKs5TCfSzMmA1uh25AqsJu20IYO1+t05DcGuPFmATud0fWUOGbgVxccxzA
-         0ygeWfYjwzy1VjadbpB9nDTjC+a2SHXGP1GtelFzVFuwL1iQfGl06VZX5XDZf0vGgktA
-         8b6dU5htMtqgK7LIIeElE+3V5+5Ez7ksj1lRzMdJJ+EurFz/lPaTUozsXVBh3ZD270yw
-         AKow==
-X-Gm-Message-State: ACgBeo2k7FAWXwHusG3zJlOSNHtjtOTj8ruzRb6e2i+TDUPAnmhVUdFF
-        1L4ge6HQDiC6ALzusvIqpDOqG46JYM3x7g==
-X-Google-Smtp-Source: AA6agR7Qvn/DQB3kq2qlQU2CbMq3/chM20GUAOdh/1wLHBdLYyHsm0xTcDcbLWGdA8HRsVasKS3Z3Q==
-X-Received: by 2002:a05:622a:1ba9:b0:343:786c:3bb1 with SMTP id bp41-20020a05622a1ba900b00343786c3bb1mr26766823qtb.125.1662108378489;
-        Fri, 02 Sep 2022 01:46:18 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id u4-20020a05620a0c4400b006bc1512986esm994628qki.97.2022.09.02.01.46.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Sep 2022 01:46:18 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-33dc345ad78so10211467b3.3;
-        Fri, 02 Sep 2022 01:46:17 -0700 (PDT)
-X-Received: by 2002:a81:83c8:0:b0:341:4b7b:3d9e with SMTP id
- t191-20020a8183c8000000b003414b7b3d9emr18102137ywf.47.1662108377701; Fri, 02
- Sep 2022 01:46:17 -0700 (PDT)
+        Fri, 2 Sep 2022 05:37:10 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30FE3C8E2
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Sep 2022 02:37:07 -0700 (PDT)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by michel.telenet-ops.be with bizsmtp
+        id Exd32800r4C55Sk06xd3Wn; Fri, 02 Sep 2022 11:37:05 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1oU36l-003hap-Br; Fri, 02 Sep 2022 11:37:03 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1oU36k-007eRQ-Pk; Fri, 02 Sep 2022 11:37:02 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 4/4] Renesas DT binding updates for v6.1
+Date:   Fri,  2 Sep 2022 11:36:52 +0200
+Message-Id: <cover.1662111137.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1662111124.git.geert+renesas@glider.be>
+References: <cover.1662111124.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20220829215128.5983-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <963693d9-6016-f279-a543-22e9be802d87@linaro.org>
-In-Reply-To: <963693d9-6016-f279-a543-22e9be802d87@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 2 Sep 2022 10:46:06 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX2a3uR-Hq9S3DkfrTir_9nPmw56QovxLN1fMgJ+1yxEg@mail.gmail.com>
-Message-ID: <CAMuHMdX2a3uR-Hq9S3DkfrTir_9nPmw56QovxLN1fMgJ+1yxEg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: Drop clock-names property from RPC node
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Krzysztof,
+The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
-On Tue, Aug 30, 2022 at 11:19 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On 30/08/2022 00:51, Lad Prabhakar wrote:
-> > With 'unevaluatedProperties' support implemented, there's a number of
-> > warnings when running dtbs_check:
-> >
-> > arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2-ex-idk-1110wr.dtb: spi@ee200000: Unevaluated properties are not allowed ('clock-names' was unexpected)
-> >       From schema: Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
-> >
-> > The main problem is that SoC DTSI's are including clock-names, whereas the
-> > renesas,rpc-if.yaml has 'unevaluatedProperties: false'. So just drop
-> > clock-names property from the SoC DTSI's.
->
-> This is not the main problem. The main problem is that bindings do not
-> allow clock-names. Commit msg should reflect that.
+  Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
 
-Thank you, I'm amending the commit message.
+are available in the Git repository at:
 
-Gr{oetje,eeting}s,
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v6.1-tag1
 
-                        Geert
+for you to fetch changes up to fddccbcb4de7ae734977da1a4c6d4c04a36a8f62:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  dt-bindings: arm: renesas: Document Renesas R-Car V3H2 SoC and board (2022-08-30 09:52:32 +0200)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+----------------------------------------------------------------
+Renesas DT binding updates for v6.1
+
+  - Document support for the R-Car H3Ne-1.7G SoC on the Salvator-XS and
+    ULCB development boards,
+  - Document system controller support for the RZ/Five SoC,
+  - Document support for the R-Car V3H2 SoC and the Condor-I development
+    board.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      dt-bindings: arm: renesas: Document R-Car H3Ne-1.7G SoC and boards
+
+Kuninori Morimoto (1):
+      dt-bindings: arm: renesas: Document Renesas R-Car V3H2 SoC and board
+
+Lad Prabhakar (1):
+      dt-bindings: soc: renesas: renesas,rzg2l-sysc: Document RZ/Five SoC
+
+ Documentation/devicetree/bindings/arm/renesas.yaml       | 16 ++++++++++++++++
+ .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml         |  4 +---
+ 2 files changed, 17 insertions(+), 3 deletions(-)
