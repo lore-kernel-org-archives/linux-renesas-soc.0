@@ -2,400 +2,161 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D97BBC6FA83
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Sep 2022 11:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D243ECAAD5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Sep 2022 13:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237459AbiIELxH (ORCPT
+        id S237050AbiIENNs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 5 Sep 2022 07:53:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42474 "EHLO
+        Mon, 5 Sep 2022 09:13:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237349AbiIELxG (ORCPT
+        with ESMTP id S236751AbiIENNq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2022 07:53:06 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A9305C9E6
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Sep 2022 04:53:05 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id bh13so7936547pgb.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Sep 2022 04:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date;
-        bh=/P7QZ3CdOiRBojrAR+aBz0NJP1nw4XK9/p9DmxgYj5U=;
-        b=kKNDs+ZjsyicnCM6kuxgHzjI5ATYfeq1tWKBVpToooO8JuM3PbFOtwwqkIyKm2f4TZ
-         6cMAICfx+jP9EVAnCmUC+OhVNKndU8PDu2stQKtu7/kYlbxok+Np9WeYJDUA8cow5ePJ
-         CeePNnKAytFAeqDgxSfQgSsWZi1hGMmpIxXdosAZkvPrQskdR/ffVLyzYyNWLB+PEZ6Y
-         +zeUxFJvSKU83/i54JWFLD3xeVdeR+seqzghx8xK1a7FJukjEsw2K1o3Hf0nmKj/0zpS
-         6kXXnNCji0cInG3D4aGMjKMUzkCVYxzv4CNVldPy1I9CJBbgDi9D84KGR/8leiWi8Bbr
-         xKrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date;
-        bh=/P7QZ3CdOiRBojrAR+aBz0NJP1nw4XK9/p9DmxgYj5U=;
-        b=73yfXxS2LEIUncH3sTMvT6cDz781kOREG9rLvcLEiuHRWx+k45hyJMFMOkI1r/aTmM
-         VYM683M+Xs+HG/grLDI44UJlIg7yP6chVC1Wp4PMbBdsa54hUTNIYVurSc+LhQ96Sq6t
-         XdiCfyvvU2fm0ueSQ3k+miKTxHEAVCfbw79zGVpLgQ62K5TD2W+LJeefN3xvwzkq1ecg
-         9LvcCK+77kevRTstQubGCZ/PcsG07XkMv/V+sX7OOSNbSwncZIvSYpqPObod7E1WHcSl
-         Hf9vr4WyH+FMfDsyg9rpUcu0ZuejdKu5s22XyfsFIebG8LEwlQiEHWnsVwrnBzmE/mXg
-         fRyQ==
-X-Gm-Message-State: ACgBeo3hwgz1PyTHO6RnO1RQARm305Qq+Y68umtGIwy4TeH4FG+MTpEK
-        GXXAuuGqKeJ2n4eRexe1+UF6Uwp/aCOQRYv55Yw=
-X-Google-Smtp-Source: AA6agR45BG/9lZ+Jkin4qI4WnVXFrkkupAJBygBu0ynmKhR0e5XrHqN/C9HAStpFM7roHI4nMwCaHg==
-X-Received: by 2002:a65:68cf:0:b0:42b:44ad:7235 with SMTP id k15-20020a6568cf000000b0042b44ad7235mr41395927pgt.517.1662378784267;
-        Mon, 05 Sep 2022 04:53:04 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id s15-20020a17090302cf00b00176675adbe1sm7244531plk.208.2022.09.05.04.53.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Sep 2022 04:53:04 -0700 (PDT)
-Message-ID: <6315e320.170a0220.7bf34.b1f9@mx.google.com>
-Date:   Mon, 05 Sep 2022 04:53:04 -0700 (PDT)
+        Mon, 5 Sep 2022 09:13:46 -0400
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2099.outbound.protection.outlook.com [40.107.113.99])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45BA63C16A;
+        Mon,  5 Sep 2022 06:13:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gAHyz2/fgYFiD79+YY569hZ8CyKAYDnBDy8EVaPPmhNLvgryszo5OnsbFSmh9NmPo1jSnODKvk9nsothD1R8TmUagX4aYPdBReAxxwS4u7FdnG4yj8zITVmI10eArB1UkMaOt6RHcIxZijNVQm9ic3XCII0Cm0N7ZS54nlzyYAE15Fryf3F0wDoUpBAQs9YS+kKcpdW88kgBQZc1nwku8nhpKtNbdlKzMmzAOJiRG9r3WSwBhuLvFW/gZjMyxM9JjIO2JjO13HYVXlBJ0meR3Bt/d/t5IaoR4iUO8XndVY03wzidUg1HhABC3a7aP1LGUezi8zbRsexIcMqhCLengQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ILBuemEbWNTarQVUtx8FjjwLF4Yi1gskG0cFft1RJH4=;
+ b=LiZo9B5+0F4Nu52eu2/kCYvC+k7vwDUjD7SaDYjimmQmpxN4ZJrKJq15GlgGyyV85UN8xAwaC0k2cfmYbbUBJ0Xo52CFTk0sue+P17KQWmtfuhyQAcNYTBt9G52dPbIcZtOwo36Ap0qY5xF9jY4t6lBY+6Brvd4tmOtDbI7/fq+HC+dzx/r+xwjNIU3iQJTlku56hnJN6ol+ll8DFCCiCQSMARQhT7rmD66CVXJNPtXvpS53Jiw+MqAlGVdViN9mCffYKIVF8cZ+Azlu25JDrVpVAxx4MWjP+SwIFvnZ3DGjjVAEKQsxGT0W8+M7l4+5sx7BNNkP8hgv4tyWPWulFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ILBuemEbWNTarQVUtx8FjjwLF4Yi1gskG0cFft1RJH4=;
+ b=ACDDL0i7Utp5uIycplBLk1x7CPdRq7WGcSbh5xKtoIMOEDz1d520hZZfwoBtppk6eFm/RNrH6Ma5tfQnpbVO8BXFPQ1rJtU2psXP1J0rVxZ58384fCIVTa5C71H0O81m+Bphf6TMytKA8cDuPz/nJrLuRSDHN2rqQJsgadQ5PFs=
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ (2603:1096:404:8028::13) by OS3PR01MB5638.jpnprd01.prod.outlook.com
+ (2603:1096:604:c4::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10; Mon, 5 Sep
+ 2022 13:13:43 +0000
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::307d:7cc:2021:f45f]) by TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::307d:7cc:2021:f45f%8]) with mapi id 15.20.5588.018; Mon, 5 Sep 2022
+ 13:13:43 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>
+CC:     "marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "kw@linux.com" <kw@linux.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "magnus.damm@gmail.com" <magnus.damm@gmail.com>
+Subject: RE: [PATCH v5 07/12] PCI: dwc: Avoid reading a register to detect
+ whether eDMA exists
+Thread-Topic: [PATCH v5 07/12] PCI: dwc: Avoid reading a register to detect
+ whether eDMA exists
+Thread-Index: AQHYwPb3wW5eALtDvkizyp7ZfFF2+q3QhCUAgABMVJA=
+Date:   Mon, 5 Sep 2022 13:13:43 +0000
+Message-ID: <TYBPR01MB534189CCA490F4A2BF9395D9D87F9@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+References: <20220905071257.1059436-1-yoshihiro.shimoda.uh@renesas.com>
+ <20220905071257.1059436-8-yoshihiro.shimoda.uh@renesas.com>
+ <e615a35a-c052-aeff-8cfd-3efae677d48a@gmail.com>
+In-Reply-To: <e615a35a-c052-aeff-8cfd-3efae677d48a@gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 28bdd0d0-da81-4da1-9447-08da8f407529
+x-ms-traffictypediagnostic: OS3PR01MB5638:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: YAr96tPaw6RPBzudAZPn5Y60mwptHPQcR8qhBbLNTYl7OH+c+B1gAO5JvO45Vih2G8fvNHZNLdtonmzwgrostBJ36ZFr1HSGZMjG/uq+hElThHTkK8K/0phAUohU/ZsCuH/f1iSFDsiVp0EmxZPjRVFTiU09G5dN1p0t9dosEo8zgTPXjjMpswKbcP9uGxyFJKKA3B1LNE/3OSzwdbP9jOBI1fbdQ6fRXzl4bId47F93deiOVl1KkxbbjUTjSrU9A2K0A6yNBPVtthMkMZs2Y5BqgitBp4ePXOG97CmFgd5WgLdXCnqXSC0owqWqFMgw52BOdYgmpPKk70kuXoNQbyhjDrXvcO4YVQ0KM00d8/V7sQQUZtpdrkYe5Z301Z4qj5MJ8/jn8GP1rsz81qpIsXO10FYLjz7Jkdh6HIgoCCDPuNQ5E25xaAM+5CnyZBSajzKY/nPQtx7vQNY2ardp4pfbGwj7ReNipfFYth1u0Mby3LnhPanrhMMxz2HpDYq9R1S+cx73FPue+tb576uB0+b99GLy6jFdmFLZvkX2RHfOS5R0sYwdo97YhO4n3K6QqYmSMpdHDkn+V4izp9dHpmTra68Dx8jcIzOlKsMvKH5GsH0p2Hf3yIEbct+WueFiyZHUpA3tsoA1n7xZAWeCVaNj+vmHPq29fmyN4p8GgHEjOV41GQGtiq1cX3oIeVaRJg6HH2+AwEz81SPFUboXpBHIXRoCKso6sJKjvqk5J+7mWNb51V+pgufYOoDErls+Ypg4krcjhkSzdJ/xK9j7Eg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5341.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(396003)(376002)(346002)(39860400002)(366004)(55016003)(6916009)(54906003)(316002)(9686003)(86362001)(38070700005)(2906002)(122000001)(38100700002)(8936002)(5660300002)(7416002)(66446008)(64756008)(8676002)(33656002)(4326008)(83380400001)(66476007)(66946007)(76116006)(71200400001)(41300700001)(186003)(6506007)(478600001)(52536014)(66556008)(53546011)(7696005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eEFIQ01aOTRON1J5Wm9xTjZ0QUFYVE44cjZtVVF2Q1lJcExuOWwzc3Z3bTRS?=
+ =?utf-8?B?QmowcHdPcHgzTEJWR1FEaE1tUXlnQVFqTmwrOVRudVJjVlRwNU05SlkvNlBC?=
+ =?utf-8?B?bW5BQUtHWXJROWRNdEFiUVJKSU56bHRHTFY0eEFLWElYdTc2eHdWZlVudFJv?=
+ =?utf-8?B?dnYyOTY5QWtZR1hybXhobTVaZmpsNnFUSksrZjl6TXQrRGZHZWNrWHozZEJm?=
+ =?utf-8?B?SFhvNThPbTlsZUVteUhyd0orWERUVCt0VytlNGxybXNWaEhHQVJ1dm4zdGYr?=
+ =?utf-8?B?OHE5Vk5QcGxJNHdJaXJhNTR6QVNrMXVnT2hXSzNzNnhsSE1hbXd4d1BQdmQw?=
+ =?utf-8?B?dkxGZzI2U1RYUDNERHIrZTNMRDd4ZEpuL01oMW1TSjI2N2pqWFRqOTdMOVpN?=
+ =?utf-8?B?RHVjbXpYcXByYnJldEV0Z2lPRWM0RWZvczVKSzc3aTR0MmxmdFFGekpETVlQ?=
+ =?utf-8?B?TFhnbnZRQnFETmRFbkNQOGhPS3VWU011OTBEUVllUkYwbVRkQzQ5VmttTUtV?=
+ =?utf-8?B?L3ZSNGltUEw4R0NrL3Jacm9NcWx3bi9BVEJhQXVESFhQRkptOUNKMkMxNXow?=
+ =?utf-8?B?SjUrNVdJQXkrc3RtSU5SN0xCTVVDTVZwT2k1ZFhqeWRMcG1MTGwrSTcxTzZk?=
+ =?utf-8?B?bU9zMEpFNXJTUXdiTHVjeE13VlU3UlFqWUlYM3dwNmRuM3lPYk9zTWdVVkx1?=
+ =?utf-8?B?OHBNN2oyWlJxR21WOUpyT3JMNTRyOVVZVTJhanB4a3E3WG9XQ2sxSTZzcGd4?=
+ =?utf-8?B?d2ZEM3NDeEVGT0RNSEpBUzlTZ2xRbEpEUXV3SUQzTExISVJ3aEJFUVlaY1pk?=
+ =?utf-8?B?cjQ2UVRadXFjbEh6Y3FSRnhIbHhhZTR2TDdtZHFHS20vQmJyeE5GVEJ1cis0?=
+ =?utf-8?B?QlZvZVJTeEpXdVpPeW1XSzY2YllGWDVhY1ErSm5VNUU4c0pWY2RWVmtDcitK?=
+ =?utf-8?B?Uy82VkVSQXphcjA4QTk5K1A1VDBnWmpwalZLRnUrMnBqNTVYUjNNaThDNWpG?=
+ =?utf-8?B?Tm9hSWlyZVhVT0VvSDQzazdwdXRDNkFSL3RFeWZKU1pGdVdUazNYSW84MExU?=
+ =?utf-8?B?N2RlLzhLV0tIczNHVGtHWElySVBCY0lTbFJ3SjFLNHlrQjhYNFljM0V3NENI?=
+ =?utf-8?B?QXBZLzI0U2xZSlIzQVBEZ2h0Q0RNdVB2NXhFOVJuaU9iK1hzTDRuNm1RQWs2?=
+ =?utf-8?B?VTJPTFlDK2ZobTVIQk01endKaCtVbnNPcFh0aGlFdUFMWHc4MnlRdWpENERC?=
+ =?utf-8?B?dTk0ZXE2dUdRbkxFb2JpeTk2RTdkQThpaTU3T05tMkNIZ1p0aDZ3UkFEWW5K?=
+ =?utf-8?B?ZGd0djA0VjdiOTg4NVVRUDB5RjVtdGd2SFpoYlhDbkprOUI0R0cwL29lakRP?=
+ =?utf-8?B?cldXTkJOOHZEV3VBUGc5dDFrejJDM3pRTGhpa09odHFMYmhibEFIekwrMzUr?=
+ =?utf-8?B?eTE1bUlGVVkxNlBnaU5IT3FoakIwK2VENk5vSjFmZC9BMytrck5vazVOWG0y?=
+ =?utf-8?B?cjVTeDIwRlZPaWlMaXJiNk5vWXgrT1cySzVvK0FlRm0xNFRnWlZOMHFIUnZq?=
+ =?utf-8?B?RVhSaTZDRHRFTDl6ckZPdmJ4S2lNZ252cTdPZkJ0SjUycWd3cEVzWWpIUEp6?=
+ =?utf-8?B?VHpMVS8ySVFGcm5RSHh3OFZqbnZ0WVRiWWpGNEFuY1pWMmR2YTAvajhJeVN2?=
+ =?utf-8?B?RmpGd3RoTU9rL1I1Z3R2Zkp0V0tYMFBCenBLT0tRUXhGWHNMSmsrZ2hGK0R5?=
+ =?utf-8?B?ZUlxVUFHeDU2ckZYZFNTTjNpeGg1VGpBTGxTR1RKUkFLM0pyU1dtWHRDQjBx?=
+ =?utf-8?B?dUsrWDRFcGZKV3ZHUDZlbnlwc3lYeVRwWVBxR29BajFJWHZYdjh4MEFWNFFp?=
+ =?utf-8?B?VldXNThpVmpZeis5Z2h4Rkl1MjFyRnJFa09nSDJjRDhSK3Z2YjNoQ2RsU2Fj?=
+ =?utf-8?B?dUhObnNHejVCVEpMbWxSakV0Q05YUjJaaGVIeDdQZ1ZhSFNNeXJvQnEvdFRL?=
+ =?utf-8?B?L0Q5Zkp5S0hOaHgxSndZdVBFblRTQ0c2ZmtucFdZSVVKdjlySEJ2YWVoOHNo?=
+ =?utf-8?B?M2dSYTVqY2VQekIvWjVEamxCUkxuUjRiWlBudlY2eUNkbGkvL1FlR2JicGdy?=
+ =?utf-8?B?ZzVtOE9QcXJsVmtYbUsrVUVVT1YzRkk5V3J6SkM0bTRDQStxZ1hoSnlqS0di?=
+ =?utf-8?B?bWZjbXhEQnNacmhEY2QrY0g3ZXM2S0kwSnZDY215c0ZrSldGeENOazdkQ0pt?=
+ =?utf-8?B?Y3p1d0IwNzJVVVQySnVoYlN4ZFN3PT0=?=
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: renesas-devel-2022-09-05-v6.0-rc4
-Subject: renesas/master igt-kms-rockchip: 1 runs,
- 10 regressions (renesas-devel-2022-09-05-v6.0-rc4)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5341.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28bdd0d0-da81-4da1-9447-08da8f407529
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2022 13:13:43.2528
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OQayb7xAlFom2OI+djNeLYBxmaONGu0856ZRLIII7s7yQNbm3ngtw5OPmTvqwOvoonUKCOnnGZExkVf3YW+geyC9q6JhVWPA4m8tWDjLRDq9Av0dwuEUkb0sFMpU/WpM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB5638
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-kms-rockchip: 1 runs, 10 regressions (renesas-devel-2022=
--09-05-v6.0-rc4)
-
-Regressions Summary
--------------------
-
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 10         =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2022-09-05-v6.0-rc4/plan/igt-kms-rockchip/
-
-  Test:     igt-kms-rockchip
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2022-09-05-v6.0-rc4
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      ce5bd4a14031a91fb83af3882c226513c60d5bf1
-
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  d4bb19e2c49de32a01cef56ad739cc10e9afd237
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  1298b5f0e1b3e010657ffba41d2e775fab028e08 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 10         =
-
-
-  Details:     https://kernelci.org/test/plan/id/6315d1fa90e8b3cd6b355652
-
-  Results:     65 PASS, 24 FAIL, 148 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-09-05-v6.0-rc4/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/ig=
-t-kms-rockchip-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-09-05-v6.0-rc4/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/ig=
-t-kms-rockchip-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
-t/20220826.0/arm64/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-forked-busy: https://kernelci.o=
-rg/test/case/id/6315d1fb90e8b3cd6b3556e0
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:38:00.928062  Test requirement: !(pipe >=3D display->n_pi=
-pes || <8>[   58.144841] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Dpipe-A-wait-b=
-usy-hang RESULT=3Dskip>
-    2022-09-05T10:38:00.930885  !display->pipes[pipe].enabled)
-    2022-09-05T10:38:00.934814  Pipe D does not exist or not enabled
-    2022-09-05T10:38:00.942695  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2281:
-    2022-09-05T10:38:00.950505  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2022-09-05T10:38:00.959582  Pipe E does not exist <6>[   58.182675] Con=
-sole: switching to colour dummy device 80x25
-    2022-09-05T10:38:00.963896  <14>[   58.189916] [IGT] kms_vblank: execut=
-ing
-    2022-09-05T10:38:00.965531  or not enabled
-    2022-09-05T10:38:00.978077  Test requirement not met in function igt_re=
-quire<14>[   58.195859] [IGT] kms_vblank: starting subtest pipe-A-wait-fork=
-ed-busy
-    2022-09-05T10:38:00.981559  _pipe, file ../lib/igt_kms.c:2281: =
-
-    ... (103 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-busy: https://kernelci.org/test=
-/case/id/6315d1fb90e8b3cd6b3556e2
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:59.842776  Test requirement not met in funct<8>[   57.=
-061716] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Dpipe-A-wait-forked-hang RESULT=
-=3Dskip>
-    2022-09-05T10:37:59.847005  ion igt_require_pipe, file ../lib/igt_kms.c=
-:2281:
-    2022-09-05T10:37:59.855762  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2022-09-05T10:37:59.858903  Pipe F does not exist or not enabled
-    2022-09-05T10:37:59.865057  IGT-Version: 1.26-g1298b5f (aarch64) (Linux=
-: 6.0.0-rc4 aarch64)
-    2022-09-05T10:37:59.869040  Starting subtest: pipe-A-wait-forked-hang
-    2022-09-05T10:37:59.879915  Test requirement not met in function gem_co=
-<6>[   57.099873] Console: switching to colour dummy device 80x25
-    2022-09-05T10:37:59.886110  ntext_require_bannable, file ../lib/i915/ge=
-m_context.c:324:
-    2022-09-05T10:37:59.890594  Tes<14>[   57.110969] [IGT] kms_vblank: exe=
-cuting
-    2022-09-05T10:37:59.895554  t requirement: has_ban_period || has_bannab=
-le =
-
-    ... (101 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-forked: https://kernelci.org/te=
-st/case/id/6315d1fb90e8b3cd6b3556e4
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:58.766313  equirement: !(pipe >=3D display->n_pipes ||=
- !display->pipes[pipe].enabled)
-    2022-09-05T10:37:58.769902  Pipe D does not exist or not enabled
-    2022-09-05T10:37:58.778273  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2281:
-    2022-09-05T10:37:58.785989  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2022-09-05T10:37:58.789639  Pipe E does not exist or not enabled
-    2022-09-05T10:37:58.796555  Test r<6>[   56.015629] Console: switching =
-to colour dummy device 80x25
-    2022-09-05T10:37:58.807874  equirement not met in function igt_require_=
-pipe, file ../lib/igt<14>[   56.027512] [IGT] kms_vblank: executing
-    2022-09-05T10:37:58.809017  _kms.c:2281:
-    2022-09-05T10:37:58.820927  Test requirement: !(pipe >=3D display->n_pi=
-pes || !d<14>[   56.041427] [IGT] kms_vblank: starting subtest pipe-A-wait-=
-forked
-    2022-09-05T10:37:58.823925  isplay->pipes[pipe].enabled) =
-
-    ... (101 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-idle: https://kernelci.org/test=
-/case/id/6315d1fb90e8b3cd6b3556e6
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:57.701317  blank:615) igt_kms-DEBUG: display:     SetC=
-ursor pipe B, disabling
-    2022-09-05T10:37:57.708287  (kms_vblank:615) igt_kms-DEBUG: display:   =
-  MoveCursor pipe B, (0, 0)
-    2022-09-05T10:37:57.712688  (kms_vblank:615) igt_kms-DEBUG: display: }
-    2022-09-05T10:37:57.720162  (kms_vbl<6>[   54.943105] Console: switchin=
-g to colour dummy device 80x25
-    2022-09-05T10:37:57.731215  ank:615) igt_debugfs-DEBUG: Opening debugfs=
- directory '/sys/kern<14>[   54.950498] [IGT] kms_vblank: executing
-    2022-09-05T10:37:57.732989  el/debug/dri/1'
-    2022-09-05T10:37:57.744252  (kms_vblank:615) INFO: Beginning pipe-A-que=
-ry-f<14>[   54.962563] [IGT] kms_vblank: starting subtest pipe-A-wait-idle
-    2022-09-05T10:37:57.748283  orked-busy on pipe A, connector eDP-1
-    2022-09-05T10:37:57.752388  (kms_vblank:615) DEBUG: Spawning 6 threads
-    2022-09-05T10:37:57.754405  ****  END  **** =
-
-    ... (117 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-forked-busy: https://kernelci.=
-org/test/case/id/6315d1fb90e8b3cd6b3556e8
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:56.663245  (0.000s)[0m
-    2022-09-05T10:37:56.671204  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2281:
-    2022-09-05T10:37:56.679705  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2022-09-05T10:37:56.683190  Pipe C does not exist or not enabled
-    2022-09-05T10:37:56.690942  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2281:
-    2022-09-05T10:37:56.699630  Test requirement: !(<6>[   53.920035] Conso=
-le: switching to colour dummy device 80x25
-    2022-09-05T10:37:56.705500  pipe >=3D display->n_pipes || !display->pip=
-es[pipe].enabled)
-    2022-09-05T10:37:56.710661  Pipe<14>[   53.930180] [IGT] kms_vblank: ex=
-ecuting
-    2022-09-05T10:37:56.713752   D does not exist or not enabled
-    2022-09-05T10:37:56.724459  Test requirement not met in fu<14>[   53.94=
-2625] [IGT] kms_vblank: starting subtest pipe-A-query-forked-busy =
-
-    ... (109 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-busy: https://kernelci.org/tes=
-t/case/id/6315d1fb90e8b3cd6b3556ea
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:55.617828  :597) INFO: Beginning pipe-A-query-forked o=
-n pipe A, connector eDP-1
-    2022-09-05T10:37:55.622228  (kms_vblank:597) DEBUG: Spawning 6 threads
-    2022-09-05T10:37:55.623455  ****  END  ****
-    2022-09-05T10:37:55.628919  [1mSubtest pipe-A-query-forked: FAIL (0.765=
-s)[0m
-    2022-09-05T10:37:55.637319  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2281:
-    2022-09-05T10:37:55.648690  Test requirement: !(pipe >=3D display->n_pi=
-pes || !disp<6>[   52.868304] Console: switching to colour dummy device 80x=
-25
-    2022-09-05T10:37:55.651358  lay->pipes[pipe].enabled)
-    2022-09-05T10:37:55.659323  Pipe C does not exist or not enabled<14>[  =
- 52.879334] [IGT] kms_vblank: executing
-    2022-09-05T10:37:55.659585  =
-
-    2022-09-05T10:37:55.672738  Test requirement not met in function igt_re=
-quire_pipe, file ../<14>[   52.893301] [IGT] kms_vblank: starting subtest p=
-ipe-A-query-busy =
-
-    ... (104 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-forked: https://kernelci.org/t=
-est/case/id/6315d1fb90e8b3cd6b3556ec
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:54.498375  (0.000s)[0m
-    2022-09-05T10:37:54.506703  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2281:
-    2022-09-05T10:37:54.514593  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2022-09-05T10:37:54.517899  Pipe C does not exist or not enabled
-    2022-09-05T10:37:54.526906  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2281:
-    2022-09-05T10:37:54.534694  Test requirement: !(<6>[   51.755367] Conso=
-le: switching to colour dummy device 80x25
-    2022-09-05T10:37:54.540477  pipe >=3D display->n_pipes || !display->pip=
-es[pipe].enabled)
-    2022-09-05T10:37:54.545514  Pipe<14>[   51.765222] [IGT] kms_vblank: ex=
-ecuting
-    2022-09-05T10:37:54.549306   D does not exist or not enabled
-    2022-09-05T10:37:54.559233  Test requirement not met in fu<14>[   51.77=
-7812] [IGT] kms_vblank: starting subtest pipe-A-query-forked =
-
-    ... (107 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-idle: https://kernelci.org/tes=
-t/case/id/6315d1fb90e8b3cd6b3556ee
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:53.422111  <6>[   50.645501] Console: switching to col=
-our dummy device 80x25
-    2022-09-05T10:37:53.426471  <14>[   50.652110] [IGT] kms_vblank: execut=
-ing
-    2022-09-05T10:37:53.439680  IGT-Version: 1.26-g1298b5f (aarch64) (Linux=
-: 6.0.0-rc4 aarch64)<14>[   50.658030] [IGT] kms_vblank: starting subtest p=
-ipe-A-query-idle
-    2022-09-05T10:37:53.439963  =
-
-    2022-09-05T10:37:53.443808  Starting subtest: pipe-A-query-idle
-    2022-09-05T10:37:53.514487  Beginning pipe-A-query-idle on pipe A, conn=
-ector eDP-1
-    2022-09-05T10:37:53.870477  (kms_vblank:591) CRITICAL: Test assertion f=
-ailure function vblank_query, file ../tests/kms_vblank.c:290:
-    2022-09-05T10:37:53.877486  (kms_vblank:591) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
-    2022-09-05T10:37:53.883608  (kms_vblank:591) CRITICAL: Last errno: 22, =
-Invalid argument
-    2022-09-05T10:37:53.887233  (kms_vblank:591) CRITICAL: error: -22 !=3D =
-0 =
-
-    ... (69 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-accuracy-idle: https://kernelci.org/=
-test/case/id/6315d1fb90e8b3cd6b3556ef
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:52.308607  <8>[   49.531302] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dcrtc-id RESULT=3Dpass>
-    2022-09-05T10:37:52.341021  <6>[   49.565176] Console: switching to col=
-our dummy device 80x25
-    2022-09-05T10:37:52.346472  <14>[   49.571807] [IGT] kms_vblank: execut=
-ing
-    2022-09-05T10:37:52.360191  IGT-Version: 1.26-g1298b5f (aarch64) (Linux=
-: 6.0.0-rc4 aarch64)<14>[   49.577744] [IGT] kms_vblank: starting subtest p=
-ipe-A-accuracy-idle
-    2022-09-05T10:37:52.363741  Starting subtest: pipe-A-accuracy-idle
-    2022-09-05T10:37:52.431520  Beginning pipe-A-accuracy-idle on pipe A, c=
-onnector eDP-1
-    2022-09-05T10:37:52.820525  (kms_vblank:588) CRITICAL: Test assertion f=
-ailure function accuracy, file ../tests/kms_vblank.c:255:
-    2022-09-05T10:37:52.827618  (kms_vblank:588) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
-    2022-09-05T10:37:52.833584  (kms_vblank:588) CRITICAL: Last errno: 22, =
-Invalid argument
-    2022-09-05T10:37:52.838137  (kms_vblank:588) CRITICAL: error: -22 !=3D =
-0 =
-
-    ... (80 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_setmode.basic: https://kernelci.org/test/case/id/6=
-315d1fb90e8b3cd6b3556f8
-        failing since 79 days (last pass: renesas-devel-2022-06-06-v5.19-rc=
-1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2022-09-05T10:37:48.985595  <8>[   46.211014] <LAVA_SIGNAL_TESTSET STOP>
-    2022-09-05T10:37:49.021314  <8>[   46.245507] <LAVA_SIGNAL_TESTSET STAR=
-T kms_setmode>
-    2022-09-05T10:37:49.055585  <6>[   46.279166] Console: switching to col=
-our dummy device 80x25
-    2022-09-05T10:37:49.060550  <14>[   46.285864] [IGT] kms_setmode: execu=
-ting
-    2022-09-05T10:37:49.073804  IGT-Version: 1.26-g1298b5f (aarch64) (Linux=
-: 6.0.0-rc4 aarch64)<14>[   46.291486] [IGT] kms_setmode: starting subtest =
-basic
-    2022-09-05T10:37:49.076471  Starting subtest: basic
-    2022-09-05T10:37:49.079814  Testing: basic 1 connector combinations
-    2022-09-05T10:37:49.190460  <14>[   46.413028] [IGT] kms_setmode: start=
-ing dynamic subtest pipe-A-eDP-1
-    2022-09-05T10:37:49.194759  Starting dynamic subtest: pipe-A-eDP-1
-    2022-09-05T10:37:49.197577    Test id#1 CRTC count 1 =
-
-    ... (76 line(s) more)  =
-
- =20
+SGVsbG8gU2VyZ2VpLXNhbiwNCg0KPiBGcm9tOiBTZXJnZWkgU2h0eWx5b3YsIFNlbnQ6IE1vbmRh
+eSwgU2VwdGVtYmVyIDUsIDIwMjIgNTo0MCBQTQ0KPiANCj4gSGVsbG8hDQo+IA0KPiBPbiA5LzUv
+MjIgMTA6MTIgQU0sIFlvc2hpaGlybyBTaGltb2RhIHdyb3RlOg0KPiANCj4gPiBTaW5jZSByZWFk
+aW5nIHZhbHVlIG9mIFBDSUVfRE1BX1ZJRVdQT1JUX0JBU0UgKyBQQ0lFX0RNQV9DVFJMIHdhcw0K
+PiA+IDB4MDAwMDAwMDAgb24gb25lIG9mIFNvQ3MgKFItQ2FyIFM0LTgpLCBpdCBjYW5ub3QgZmlu
+ZCB0aGUgZURNQS4NCj4gPiBTbywgZGlyZWN0bHkgcmVhZCB0aGUgZURNQSByZWdpc3RlciBpZiBl
+ZG1hLnJlZF9iYXNlIGlzIG5vdCB6ZXJvLg0KPiANCj4gICAgcy9yZWQvcmVnLz8NCg0KVGhhbmsg
+eW91IGZvciB5b3VyIHJldmlldyEgSSdsbCBmaXggaXQuDQoNCkJlc3QgcmVnYXJkcywNCllvc2hp
+aGlybyBTaGltb2RhDQoNCj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9z
+aGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvcGNp
+L2NvbnRyb2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5jIHwgNCArKy0tDQo+ID4gIDEgZmlsZSBj
+aGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpZS1kZXNpZ253YXJlLmMgYi9kcml2
+ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLWRlc2lnbndhcmUuYw0KPiA+IGluZGV4IDcyZjk2
+MjBhMzc0ZC4uMDhmOTFhNmJiZTRiIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcGNpL2NvbnRy
+b2xsZXIvZHdjL3BjaWUtZGVzaWdud2FyZS5jDQo+ID4gKysrIGIvZHJpdmVycy9wY2kvY29udHJv
+bGxlci9kd2MvcGNpZS1kZXNpZ253YXJlLmMNCj4gPiBAQCAtODQ0LDggKzg0NCw3IEBAIHN0YXRp
+YyBpbnQgZHdfcGNpZV9lZG1hX2ZpbmRfY2hpcChzdHJ1Y3QgZHdfcGNpZSAqcGNpKQ0KPiA+ICB7
+DQo+ID4gIAl1MzIgdmFsOw0KPiA+DQo+ID4gLQl2YWwgPSBkd19wY2llX3JlYWRsX2RiaShwY2ks
+IFBDSUVfRE1BX1ZJRVdQT1JUX0JBU0UgKyBQQ0lFX0RNQV9DVFJMKTsNCj4gPiAtCWlmICh2YWwg
+PT0gMHhGRkZGRkZGRiAmJiBwY2ktPmVkbWEucmVnX2Jhc2UpIHsNCj4gPiArCWlmIChwY2ktPmVk
+bWEucmVnX2Jhc2UpIHsNCj4gPiAgCQlwY2ktPmVkbWEubWYgPSBFRE1BX01GX0VETUFfVU5ST0xM
+Ow0KPiA+DQo+ID4gIAkJdmFsID0gZHdfcGNpZV9yZWFkbF9kbWEocGNpLCBQQ0lFX0RNQV9DVFJM
+KTsNCj4gWy4uLl0NCj4gDQo+IE1CUiwgU2VyZ2V5DQo=
