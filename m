@@ -2,342 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6370BECAAA1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Sep 2022 11:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A403DECAAA1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Sep 2022 13:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbiIILAT (ORCPT
+        id S230164AbiIINK4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 07:00:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46080 "EHLO
+        Fri, 9 Sep 2022 09:10:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230070AbiIIK74 (ORCPT
+        with ESMTP id S229601AbiIINKz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Sep 2022 06:59:56 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 814A74DB13
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Sep 2022 03:59:52 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C13851F8F2;
-        Fri,  9 Sep 2022 10:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1662721190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HNeyBI8YGF0KggwLolcCdgeW5jSblOvOyZdnroiw2Ig=;
-        b=rV+n1IFOWyPiebvswC9Nxg988TTp/viaUpTGCMBEvIuxHk/B6um4h0/JDJ2l8ZABN5L4Wv
-        rOjLHw6bm7GMEBozJXn2/nsUUNNVmrgK+yeXMEA0885Ou2FOnjlL8gjtRaWZG81DsIUwi1
-        ABgYhudEhXFbhqqUQgd9D4dbTycN7Qc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1662721190;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HNeyBI8YGF0KggwLolcCdgeW5jSblOvOyZdnroiw2Ig=;
-        b=HjA8HPttYL0wQSOjjBRmSuPpyDQhpVcUaTnSxrlU41lW52/f8NelZqmUdhRTCuO2LNUYBR
-        e0JpC/VKVaB9+rBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7BE7E139D5;
-        Fri,  9 Sep 2022 10:59:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id SJNwHaYcG2M0BwAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Fri, 09 Sep 2022 10:59:50 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        airlied@linux.ie, daniel@ffwll.ch, bskeggs@redhat.com,
-        kherbst@redhat.com, lyude@redhat.com,
-        laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, jyri.sarha@iki.fi,
-        tomba@kernel.org, sam@ravnborg.org
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 2/4] drm/plane: Allocate planes with drm_universal_plane_alloc()
-Date:   Fri,  9 Sep 2022 12:59:45 +0200
-Message-Id: <20220909105947.6487-3-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220909105947.6487-1-tzimmermann@suse.de>
-References: <20220909105947.6487-1-tzimmermann@suse.de>
+        Fri, 9 Sep 2022 09:10:55 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2520483F24
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Sep 2022 06:10:49 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 29so2453097edv.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Sep 2022 06:10:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=bsMm0nu+g7i1NmtcNEyPla/T7DHXogikmWezyYUdeVI=;
+        b=FiGmnfg3S7AUDv0OIYfaTQy6w0Q7WCv9N8nh/rLbH5hgJbl7qBEJh5N6E/DVggPzAe
+         ioqFKl6gBXxg3+E5ZHJVVhyA6HGAL9k9Ga/PbE8SUFBWDk7fj+PWXEHPF07dwVaTlsJZ
+         RWM3PoSL+25CQO1duTdOXdi55dQeUrBuhBA+ed0gnz4frq/0A+iCtYgH8F9ohVggXWwe
+         KwEkfB83U23h5m3unO71YqZfHKmXY4rlX3LVvhsJrXz6cV+KSqeTazniGqJDtkDfY2Xv
+         mvxyonYHPbr4a/mw0bOTfv1ewbtl3EY4R/iGiM8yo4CjDtjVx3niAHCfsqQ8Ocrc1J1a
+         3dKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=bsMm0nu+g7i1NmtcNEyPla/T7DHXogikmWezyYUdeVI=;
+        b=rlbVK2YEdBkgQciC3wJc73SHrpsl7bfPDePN2QSknz1v3FAvij2oe07MYWNH4qinTJ
+         vzBQSFjzlqlUchLk7oGgaLX2pIsLA8EeJDvmAJvriBe5MiumrsdJbU43Rmp7wthBql4O
+         PFEnLnnnPHz5oK9Dr/KZ+ddlmZI9pYV7sVeHq/4yo3Fitp5sasSln1fEa2EVrMboQMyj
+         UZj+/KGEc04ggqA2U0G7ntDCnzHrefazxub81OsymLxjhibhsFV+XjBHI1OS7FJNNn3q
+         h+LyHb7GIxuJ7XfAQoMwC8ku2NIk+3ibAY6r978Qzag2NbuDVsQyESLnraLdNKb3qqVc
+         vxyw==
+X-Gm-Message-State: ACgBeo0gKe6rIXv4/d4aWhjU8AxgOczBfJ6KqrdWcFwiZGCkfdaURmb9
+        /DHttKdMyw2MWsyW9e3IhmGIhUeJk6XI8TgK+F5WWw==
+X-Google-Smtp-Source: AA6agR4rLLw+2Mto2FpA5ylVcQgfsw/VaaN2Qj6skwfPvRFieasT15e8jBuvji+aQt2J7BgeABU3RO/b1tEnhAymIVY=
+X-Received: by 2002:a05:6402:1d8c:b0:44e:dec5:512b with SMTP id
+ dk12-20020a0564021d8c00b0044edec5512bmr11273909edb.408.1662729047659; Fri, 09
+ Sep 2022 06:10:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <649e875962b486e0bf849aba8f386eb6290a433a.1662714555.git.geert+renesas@glider.be>
+In-Reply-To: <649e875962b486e0bf849aba8f386eb6290a433a.1662714555.git.geert+renesas@glider.be>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 9 Sep 2022 15:10:36 +0200
+Message-ID: <CAMRc=MdCLu3415xvr6vVmNCvD5_k49L3XS3K6ue-fPmiiW2n8w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: gpio: renesas,rcar-gpio: Add r8a779g0 support
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Provide drm_univeral_plane_alloc(), which allocated an initializes a
-plane. Code for non-atomic drivers uses this pattern. Convert it to
-the new function. The modeset helpers contain a quirk for handling their
-color formats differently. Set the flag outside plane allocation.
+On Fri, Sep 9, 2022 at 11:09 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Document support for the GPIO controller blocks in the Renesas R-Car
+> V4H (R8A779G0) SoC.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> index 75e5da6a7cc04bbd..aa424e2b95f87a51 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> @@ -52,6 +52,7 @@ properties:
+>            - enum:
+>                - renesas,gpio-r8a779a0     # R-Car V3U
+>                - renesas,gpio-r8a779f0     # R-Car S4-8
+> +              - renesas,gpio-r8a779g0     # R-Car V4H
+>            - const: renesas,rcar-gen4-gpio # R-Car Gen4
+>
+>    reg:
+> --
+> 2.25.1
+>
 
-The new function is already deprecated to some extend. Drivers should
-rather use drmm_univeral_plane_alloc() or drm_universal_plane_init().
+Applied, thanks!
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/drm_modeset_helper.c    | 61 +++++++++++--------------
- drivers/gpu/drm/drm_plane.c             | 38 +++++++++++++++
- drivers/gpu/drm/nouveau/dispnv04/crtc.c | 41 ++++++-----------
- include/drm/drm_plane.h                 | 44 ++++++++++++++++++
- 4 files changed, 121 insertions(+), 63 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_modeset_helper.c b/drivers/gpu/drm/drm_modeset_helper.c
-index 611dd01fb604..38040eebfa16 100644
---- a/drivers/gpu/drm/drm_modeset_helper.c
-+++ b/drivers/gpu/drm/drm_modeset_helper.c
-@@ -113,38 +113,6 @@ static const struct drm_plane_funcs primary_plane_funcs = {
- 	.destroy = drm_plane_helper_destroy,
- };
- 
--static struct drm_plane *create_primary_plane(struct drm_device *dev)
--{
--	struct drm_plane *primary;
--	int ret;
--
--	primary = kzalloc(sizeof(*primary), GFP_KERNEL);
--	if (primary == NULL) {
--		DRM_DEBUG_KMS("Failed to allocate primary plane\n");
--		return NULL;
--	}
--
--	/*
--	 * Remove the format_default field from drm_plane when dropping
--	 * this helper.
--	 */
--	primary->format_default = true;
--
--	/* possible_crtc's will be filled in later by crtc_init */
--	ret = drm_universal_plane_init(dev, primary, 0,
--				       &primary_plane_funcs,
--				       safe_modeset_formats,
--				       ARRAY_SIZE(safe_modeset_formats),
--				       NULL,
--				       DRM_PLANE_TYPE_PRIMARY, NULL);
--	if (ret) {
--		kfree(primary);
--		primary = NULL;
--	}
--
--	return primary;
--}
--
- /**
-  * drm_crtc_init - Legacy CRTC initialization function
-  * @dev: DRM device
-@@ -176,10 +144,33 @@ int drm_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
- 		  const struct drm_crtc_funcs *funcs)
- {
- 	struct drm_plane *primary;
-+	int ret;
-+
-+	/* possible_crtc's will be filled in later by crtc_init */
-+	primary = __drm_universal_plane_alloc(dev, sizeof(*primary), 0, 0,
-+					      &primary_plane_funcs,
-+					      safe_modeset_formats,
-+					      ARRAY_SIZE(safe_modeset_formats),
-+					      NULL, DRM_PLANE_TYPE_PRIMARY, NULL);
-+	if (IS_ERR(primary))
-+		return PTR_ERR(primary);
- 
--	primary = create_primary_plane(dev);
--	return drm_crtc_init_with_planes(dev, crtc, primary, NULL, funcs,
--					 NULL);
-+	/*
-+	 * Remove the format_default field from drm_plane when dropping
-+	 * this helper.
-+	 */
-+	primary->format_default = true;
-+
-+	ret = drm_crtc_init_with_planes(dev, crtc, primary, NULL, funcs, NULL);
-+	if (ret)
-+		goto err_drm_plane_cleanup;
-+
-+	return 0;
-+
-+err_drm_plane_cleanup:
-+	drm_plane_cleanup(primary);
-+	kfree(primary);
-+	return ret;
- }
- EXPORT_SYMBOL(drm_crtc_init);
- 
-diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
-index 0f14b4d3bb10..33357629a7f5 100644
---- a/drivers/gpu/drm/drm_plane.c
-+++ b/drivers/gpu/drm/drm_plane.c
-@@ -448,6 +448,44 @@ void *__drmm_universal_plane_alloc(struct drm_device *dev, size_t size,
- }
- EXPORT_SYMBOL(__drmm_universal_plane_alloc);
- 
-+void *__drm_universal_plane_alloc(struct drm_device *dev, size_t size,
-+				  size_t offset, uint32_t possible_crtcs,
-+				  const struct drm_plane_funcs *funcs,
-+				  const uint32_t *formats, unsigned int format_count,
-+				  const uint64_t *format_modifiers,
-+				  enum drm_plane_type type,
-+				  const char *name, ...)
-+{
-+	void *container;
-+	struct drm_plane *plane;
-+	va_list ap;
-+	int ret;
-+
-+	if (drm_WARN_ON(dev, !funcs))
-+		return ERR_PTR(-EINVAL);
-+
-+	container = kzalloc(size, GFP_KERNEL);
-+	if (!container)
-+		return ERR_PTR(-ENOMEM);
-+
-+	plane = container + offset;
-+
-+	va_start(ap, name);
-+	ret = __drm_universal_plane_init(dev, plane, possible_crtcs, funcs,
-+					 formats, format_count, format_modifiers,
-+					 type, name, ap);
-+	va_end(ap);
-+	if (ret)
-+		goto err_kfree;
-+
-+	return container;
-+
-+err_kfree:
-+	kfree(container);
-+	return ERR_PTR(ret);
-+}
-+EXPORT_SYMBOL(__drm_universal_plane_alloc);
-+
- int drm_plane_register_all(struct drm_device *dev)
- {
- 	unsigned int num_planes = 0;
-diff --git a/drivers/gpu/drm/nouveau/dispnv04/crtc.c b/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-index 660c4cbc0b3d..6b8a014b5e97 100644
---- a/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-@@ -1281,32 +1281,6 @@ static const struct drm_plane_funcs nv04_primary_plane_funcs = {
- 	.destroy = drm_plane_helper_destroy,
- };
- 
--static struct drm_plane *
--create_primary_plane(struct drm_device *dev)
--{
--        struct drm_plane *primary;
--        int ret;
--
--        primary = kzalloc(sizeof(*primary), GFP_KERNEL);
--        if (primary == NULL) {
--                DRM_DEBUG_KMS("Failed to allocate primary plane\n");
--                return NULL;
--        }
--
--        /* possible_crtc's will be filled in later by crtc_init */
--        ret = drm_universal_plane_init(dev, primary, 0,
--				       &nv04_primary_plane_funcs,
--                                       modeset_formats,
--                                       ARRAY_SIZE(modeset_formats), NULL,
--                                       DRM_PLANE_TYPE_PRIMARY, NULL);
--        if (ret) {
--                kfree(primary);
--                primary = NULL;
--        }
--
--        return primary;
--}
--
- static int nv04_crtc_vblank_handler(struct nvif_notify *notify)
- {
- 	struct nouveau_crtc *nv_crtc =
-@@ -1321,6 +1295,7 @@ nv04_crtc_create(struct drm_device *dev, int crtc_num)
- {
- 	struct nouveau_display *disp = nouveau_display(dev);
- 	struct nouveau_crtc *nv_crtc;
-+	struct drm_plane *primary;
- 	int ret;
- 
- 	nv_crtc = kzalloc(sizeof(*nv_crtc), GFP_KERNEL);
-@@ -1335,8 +1310,18 @@ nv04_crtc_create(struct drm_device *dev, int crtc_num)
- 	nv_crtc->save = nv_crtc_save;
- 	nv_crtc->restore = nv_crtc_restore;
- 
--	drm_crtc_init_with_planes(dev, &nv_crtc->base,
--                                  create_primary_plane(dev), NULL,
-+	primary = __drm_universal_plane_alloc(dev, sizeof(*primary), 0, 0,
-+					      &nv04_primary_plane_funcs,
-+					      modeset_formats,
-+					      ARRAY_SIZE(modeset_formats), NULL,
-+					      DRM_PLANE_TYPE_PRIMARY, NULL);
-+	if (IS_ERR(primary)) {
-+		ret = PTR_ERR(primary);
-+		kfree(nv_crtc);
-+		return ret;
-+	}
-+
-+	drm_crtc_init_with_planes(dev, &nv_crtc->base, primary, NULL,
-                                   &nv04_crtc_funcs, NULL);
- 	drm_crtc_helper_add(&nv_crtc->base, &nv04_crtc_helper_funcs);
- 	drm_mode_crtc_set_gamma_size(&nv_crtc->base, 256);
-diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-index 910cb941f3d5..21dfa7f97948 100644
---- a/include/drm/drm_plane.h
-+++ b/include/drm/drm_plane.h
-@@ -809,6 +809,50 @@ void *__drmm_universal_plane_alloc(struct drm_device *dev,
- 					      format_count, format_modifiers, \
- 					      plane_type, name, ##__VA_ARGS__))
- 
-+__printf(10, 11)
-+void *__drm_universal_plane_alloc(struct drm_device *dev,
-+				  size_t size, size_t offset,
-+				  uint32_t possible_crtcs,
-+				  const struct drm_plane_funcs *funcs,
-+				  const uint32_t *formats,
-+				  unsigned int format_count,
-+				  const uint64_t *format_modifiers,
-+				  enum drm_plane_type plane_type,
-+				  const char *name, ...);
-+
-+/**
-+ * drm_universal_plane_alloc - Allocate and initialize an universal plane object
-+ * @dev: DRM device
-+ * @type: the type of the struct which contains struct &drm_plane
-+ * @member: the name of the &drm_plane within @type
-+ * @possible_crtcs: bitmask of possible CRTCs
-+ * @funcs: callbacks for the new plane
-+ * @formats: array of supported formats (DRM_FORMAT\_\*)
-+ * @format_count: number of elements in @formats
-+ * @format_modifiers: array of struct drm_format modifiers terminated by
-+ *                    DRM_FORMAT_MOD_INVALID
-+ * @plane_type: type of plane (overlay, primary, cursor)
-+ * @name: printf style format string for the plane name, or NULL for default name
-+ *
-+ * Allocates and initializes a plane object of type @type. The caller
-+ * is responsible for releasing the allocated memory with kfree().
-+ *
-+ * Drivers are encouraged to use drmm_universal_plane_alloc() instead.
-+ *
-+ * Drivers that only support the DRM_FORMAT_MOD_LINEAR modifier support may set
-+ * @format_modifiers to NULL. The plane will advertise the linear modifier.
-+ *
-+ * Returns:
-+ * Pointer to new plane, or ERR_PTR on failure.
-+ */
-+#define drm_universal_plane_alloc(dev, type, member, possible_crtcs, funcs, formats, \
-+				   format_count, format_modifiers, plane_type, name, ...) \
-+	((type *)__drm_universal_plane_alloc(dev, sizeof(type), \
-+					     offsetof(type, member), \
-+					     possible_crtcs, funcs, formats, \
-+					     format_count, format_modifiers, \
-+					     plane_type, name, ##__VA_ARGS__))
-+
- /**
-  * drm_plane_index - find the index of a registered plane
-  * @plane: plane to find index for
--- 
-2.37.2
-
+Bart
