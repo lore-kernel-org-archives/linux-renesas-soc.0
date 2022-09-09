@@ -2,39 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FA7C6FA86
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CF6C6FA8B
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Sep 2022 09:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229658AbiIIJyS (ORCPT
+        id S229548AbiIIJyT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 05:54:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39636 "EHLO
+        Fri, 9 Sep 2022 05:54:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbiIIJyJ (ORCPT
+        with ESMTP id S229608AbiIIJyJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 9 Sep 2022 05:54:09 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C311A3D0D
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE976A61E9
         for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Sep 2022 02:54:07 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:91db:705e:cfbc:a001])
-        by michel.telenet-ops.be with bizsmtp
-        id Hlu52800b0sKggw06lu5LA; Fri, 09 Sep 2022 11:54:06 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id Hlu6280080sKggw06lu6fs; Fri, 09 Sep 2022 11:54:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1oWai5-004bsX-Es; Fri, 09 Sep 2022 11:54:05 +0200
+        id 1oWai5-004bsf-NH; Fri, 09 Sep 2022 11:54:05 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1oWai4-004i49-Ai; Fri, 09 Sep 2022 11:54:04 +0200
+        id 1oWai4-004i5N-I2; Fri, 09 Sep 2022 11:54:04 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/14] arm64: dts: renesas: r8a779g0: Add pinctrl device node
-Date:   Fri,  9 Sep 2022 11:53:50 +0200
-Message-Id: <ecddcadd2fad46b1cf4c9be3ec750f360b9730e4.1662715538.git.geert+renesas@glider.be>
+Subject: [PATCH 11/14] arm64: dts: renesas: white-hawk-cpu: Add push switches
+Date:   Fri,  9 Sep 2022 11:53:58 +0200
+Message-Id: <e18d0d5087a514db611295f5d1e13c950cf7dae7.1662715538.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1662715538.git.geert+renesas@glider.be>
 References: <cover.1662715538.git.geert+renesas@glider.be>
@@ -44,39 +44,75 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a device node for the Pin Function Controller on the Renesas R-Car
-V4H (R8A779G0) SoC.
-
-Based on a larger patch in the BSP by Takeshi Kihara.
+Describe the three Push Switches on the White Hawk CPU board, so
+they can be used for user input.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes compared to the BSP:
-  - Fix node name.
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../dts/renesas/r8a779g0-white-hawk-cpu.dtsi  | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 63319fee25d9b24c..71fce6c03af016f8 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -70,6 +70,15 @@ rwdt: watchdog@e6020000 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
+index 684c250d3c739924..f2ad18912f83296a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
+@@ -8,12 +8,44 @@
+ #include "r8a779g0.dtsi"
  
-+		pfc: pinctrl@e6050000 {
-+			compatible = "renesas,pfc-r8a779g0";
-+			reg = <0 0xe6050000 0 0x16c>, <0 0xe6050800 0 0x16c>,
-+			      <0 0xe6058000 0 0x16c>, <0 0xe6058800 0 0x16c>,
-+			      <0 0xe6060000 0 0x16c>, <0 0xe6060800 0 0x16c>,
-+			      <0 0xe6061000 0 0x16c>, <0 0xe6061800 0 0x16c>,
-+			      <0 0xe6068000 0 0x16c>;
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/leds/common.h>
+ 
+ / {
+ 	model = "Renesas White Hawk CPU board";
+ 	compatible = "renesas,white-hawk-cpu", "renesas,r8a779g0";
+ 
++	keys {
++		compatible = "gpio-keys";
++
++		pinctrl-0 = <&keys_pins>;
++		pinctrl-names = "default";
++
++		key-1 {
++			gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_1>;
++			label = "SW47";
++			wakeup-source;
++			debounce-interval = <20>;
 +		};
 +
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a779g0-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x4000>;
++		key-2 {
++			gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_2>;
++			label = "SW48";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++
++		key-3 {
++			gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_3>;
++			label = "SW49";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -97,6 +129,11 @@ i2c0_pins: i2c0 {
+ 		function = "i2c0";
+ 	};
+ 
++	keys_pins: keys {
++		pins = "GP_5_0", "GP_5_1", "GP_5_2";
++		bias-pull-up;
++	};
++
+ 	scif_clk_pins: scif_clk {
+ 		groups = "scif_clk";
+ 		function = "scif_clk";
 -- 
 2.25.1
 
