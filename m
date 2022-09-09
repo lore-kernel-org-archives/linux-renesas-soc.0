@@ -2,213 +2,112 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A39BECAAA1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Sep 2022 09:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD880ECAAD3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Sep 2022 09:58:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbiIIJyX (ORCPT
+        id S229494AbiIIJ63 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 05:54:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50890 "EHLO
+        Fri, 9 Sep 2022 05:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbiIIJyK (ORCPT
+        with ESMTP id S229561AbiIIJ6Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Sep 2022 05:54:10 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70883B6D48
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Sep 2022 02:54:08 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:91db:705e:cfbc:a001])
-        by albert.telenet-ops.be with bizsmtp
-        id Hlu62800l0sKggw06lu6gC; Fri, 09 Sep 2022 11:54:06 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oWai6-004bsg-7B; Fri, 09 Sep 2022 11:54:06 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oWai4-004i5a-In; Fri, 09 Sep 2022 11:54:04 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 12/14] arm64: dts: renesas: r8a779g0: Add RAVB nodes
-Date:   Fri,  9 Sep 2022 11:53:59 +0200
-Message-Id: <980e7a62d8dc3a1e2387a2d93a6296625b105506.1662715538.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1662715538.git.geert+renesas@glider.be>
-References: <cover.1662715538.git.geert+renesas@glider.be>
+        Fri, 9 Sep 2022 05:58:16 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD79312D1A8;
+        Fri,  9 Sep 2022 02:58:15 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id z18so849168qts.7;
+        Fri, 09 Sep 2022 02:58:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=hWCebKRgDhaHhUfpkk42XMQuZuZ9gpE4kq9orZDy92E=;
+        b=Q4BKoC4m4vBbtZwBDAjsxYTj/9n4dUPFJk3gsUo3d2bv+sb3Ff5s0ihRutTTh8W/MY
+         jSXXpbYfccx319z/bJc30LDZjtu85cKEVIN51Yqttk7KzfbMzHJ8/OZYwOTlkKuUDjoC
+         OfN/lF2lmvF+vfKyy2/7Uv9QZ8/V1FZYF2trhmm7271/23U5TTvqPYl6KqBGTlAi/rgt
+         JPKSR7KLjGoBeMwY68C5gAB8jCfZuaQzMNeg7CF6n313tubTTsRtJ4t8JEd0MvROWlJV
+         JxEmiTyf0QgQqYggU48/N73EoZDxZiZ9LCTHuSpIAJRUALCuaa6bXOyiYetYYW06wkMX
+         ieoA==
+X-Gm-Message-State: ACgBeo0z0zuONFAYLzklVRWJdFXEAtfXqjZU0S6sXGXbiyTVVb3rjGqf
+        UlHauU4DP6iNzDaARvi/6e3Oay02UTzLng==
+X-Google-Smtp-Source: AA6agR5hivwoGz4hivzSo3WanXgE8KkGNnmEKw59fsrl0JszPsDvN8KCAvql3HGAe2Hgq2Q9vmEDSQ==
+X-Received: by 2002:ac8:7f47:0:b0:344:8d2b:14a9 with SMTP id g7-20020ac87f47000000b003448d2b14a9mr11623752qtk.442.1662717494530;
+        Fri, 09 Sep 2022 02:58:14 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id m21-20020a05620a291500b006cbe10f2992sm34397qkp.135.2022.09.09.02.58.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Sep 2022 02:58:14 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 130so1888590ybw.8;
+        Fri, 09 Sep 2022 02:58:13 -0700 (PDT)
+X-Received: by 2002:a25:8247:0:b0:6a9:443a:cc0b with SMTP id
+ d7-20020a258247000000b006a9443acc0bmr11239427ybn.89.1662717493485; Fri, 09
+ Sep 2022 02:58:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1662714607.git.geert+renesas@glider.be> <5355709e0744680d792d1e57e43441cb0b7b7611.1662714607.git.geert+renesas@glider.be>
+ <d670b3b1-8347-7131-6bed-4c946645c883@linaro.org>
+In-Reply-To: <d670b3b1-8347-7131-6bed-4c946645c883@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 9 Sep 2022 11:58:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW63AVJ1eoAiVCAiemjH4MG3=mLakU4+MUvA_jepsjyvg@mail.gmail.com>
+Message-ID: <CAMuHMdW63AVJ1eoAiVCAiemjH4MG3=mLakU4+MUvA_jepsjyvg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: net: renesas,etheravb: R-Car V3U is
+ R-Car Gen4
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        netdev <netdev@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device nodes for the Renesas Ethernet AVB (EtherAVB-IF) blocks on
-the Renesas R-Car V4H (R8A779G0) SoC.
+Hi Krzysztof,
 
-Based on a larger patch in the BSP by Takeshi Kihara.
+On Fri, Sep 9, 2022 at 11:24 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 09/09/2022 11:13, Geert Uytterhoeven wrote:
+> > Despite the name, R-Car V3U is the first member of the R-Car Gen4
+> > family.  Hence move its compatible value to the R-Car Gen4 section.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Changes compared to the BSP:
-  - Add recommended clock-names properties.
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 141 ++++++++++++++++++++++
- 1 file changed, 141 insertions(+)
+> > --- a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+> > +++ b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+> > @@ -40,9 +40,13 @@ properties:
+> >                - renesas,etheravb-r8a77980     # R-Car V3H
+> >                - renesas,etheravb-r8a77990     # R-Car E3
+> >                - renesas,etheravb-r8a77995     # R-Car D3
+> > -              - renesas,etheravb-r8a779a0     # R-Car V3U
+> >            - const: renesas,etheravb-rcar-gen3 # R-Car Gen3 and RZ/G2
+> >
+> > +      - items:
+> > +          - enum:
+> > +              - renesas,etheravb-r8a779a0     # R-Car V3U
+> > +          - const: renesas,etheravb-rcar-gen4 # R-Car Gen4
+> > +
+>
+> Don't you need changes in allOf:if:then section?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index e5f3973b71f732a9..d70f0600ae5a9469 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -334,6 +334,147 @@ hscif0: serial@e6540000 {
- 			status = "disabled";
- 		};
- 
-+		avb0: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a779g0",
-+				     "renesas,etheravb-rcar-gen4";
-+			reg = <0 0xe6800000 0 0x800>;
-+			interrupts = <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3", "ch4",
-+					  "ch5", "ch6", "ch7", "ch8", "ch9",
-+					  "ch10", "ch11", "ch12", "ch13",
-+					  "ch14", "ch15", "ch16", "ch17",
-+					  "ch18", "ch19", "ch20", "ch21",
-+					  "ch22", "ch23", "ch24";
-+			clocks = <&cpg CPG_MOD 211>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 211>;
-+			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		avb1: ethernet@e6810000 {
-+			compatible = "renesas,etheravb-r8a779g0",
-+				     "renesas,etheravb-rcar-gen4";
-+			reg = <0 0xe6810000 0 0x800>;
-+			interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 362 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 363 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 364 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 365 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 366 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 367 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 369 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 380 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 381 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3", "ch4",
-+					  "ch5", "ch6", "ch7", "ch8", "ch9",
-+					  "ch10", "ch11", "ch12", "ch13",
-+					  "ch14", "ch15", "ch16", "ch17",
-+					  "ch18", "ch19", "ch20", "ch21",
-+					  "ch22", "ch23", "ch24";
-+			clocks = <&cpg CPG_MOD 212>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 212>;
-+			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		avb2: ethernet@e6820000 {
-+			compatible = "renesas,etheravb-r8a779g0",
-+				     "renesas,etheravb-rcar-gen4";
-+			reg = <0 0xe6820000 0 0x1000>;
-+			interrupts = <GIC_SPI 385 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 386 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 390 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 391 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 392 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 393 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3", "ch4",
-+					  "ch5", "ch6", "ch7", "ch8", "ch9",
-+					  "ch10", "ch11", "ch12", "ch13",
-+					  "ch14", "ch15", "ch16", "ch17",
-+					  "ch18", "ch19", "ch20", "ch21",
-+					  "ch22", "ch23", "ch24";
-+			clocks = <&cpg CPG_MOD 213>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 213>;
-+			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1000000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
--- 
-2.25.1
+No, as there is no logic involving renesas,etheravb-rcar-gen3.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
