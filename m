@@ -2,39 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79748C6FA8A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C23A3C6FA8D
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Sep 2022 09:54:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbiIIJyT (ORCPT
+        id S229576AbiIIJyU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 05:54:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
+        Fri, 9 Sep 2022 05:54:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbiIIJyJ (ORCPT
+        with ESMTP id S229586AbiIIJyK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Sep 2022 05:54:09 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4ECB08BF
+        Fri, 9 Sep 2022 05:54:10 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7062B98C8F
         for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Sep 2022 02:54:07 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:91db:705e:cfbc:a001])
-        by michel.telenet-ops.be with bizsmtp
-        id Hlu62800H0sKggw06lu6LF; Fri, 09 Sep 2022 11:54:06 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id Hlu62800e0sKggw06lu6g8; Fri, 09 Sep 2022 11:54:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1oWai5-004bsi-Ox; Fri, 09 Sep 2022 11:54:05 +0200
+        id 1oWai6-004bsb-1h; Fri, 09 Sep 2022 11:54:06 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1oWai4-004i68-Kk; Fri, 09 Sep 2022 11:54:04 +0200
+        id 1oWai4-004i4l-Dv; Fri, 09 Sep 2022 11:54:04 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 14/14] arm64: dts: renesas: white-hawk-cpu: Add Ethernet support
-Date:   Fri,  9 Sep 2022 11:54:01 +0200
-Message-Id: <50a31bc8267ab4c90bff27ef3aca1169f8ebc7ae.1662715538.git.geert+renesas@glider.be>
+Subject: [PATCH 07/14] arm64: dts: renesas: white-hawk: Add CSI/DSI sub-board
+Date:   Fri,  9 Sep 2022 11:53:54 +0200
+Message-Id: <265f7782743c539c57906e8207785f8b0d80d5d0.1662715538.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1662715538.git.geert+renesas@glider.be>
 References: <cover.1662715538.git.geert+renesas@glider.be>
@@ -44,81 +44,52 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Describe the wiring of the first Ethernet AVB instance to the Micrel
-KSZ9031RNXVB PHY.
+Add a DTS file for the R-Car V4H White Hawk CSI/DSI sub-board
+(RTP8A779G0ASKB0SC0SA000), and include it from the main
+r8a779g0-white-hawk.dts.
 
-Based on a larger patch in the BSP by Takeshi Kihara.
+For now its contents are limited to the Board ID EEPROM.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes compared to the BSP:
-  - Move to CPU board.
----
- .../dts/renesas/r8a779g0-white-hawk-cpu.dtsi  | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ .../dts/renesas/r8a779g0-white-hawk-csi-dsi.dtsi  | 15 +++++++++++++++
+ .../boot/dts/renesas/r8a779g0-white-hawk.dts      |  1 +
+ 2 files changed, 16 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-csi-dsi.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
-index e382b2d5c8d49fd3..77f0130a2f856ddb 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
-@@ -16,6 +16,7 @@ / {
- 	compatible = "renesas,white-hawk-cpu", "renesas,r8a779g0";
- 
- 	aliases {
-+		ethernet0 = &avb0;
- 		serial0 = &hscif0;
- 	};
- 
-@@ -96,6 +97,24 @@ memory@600000000 {
- 	};
- };
- 
-+&avb0 {
-+	pinctrl-0 = <&avb0_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy0>;
-+	tx-internal-delay-ps = <2000>;
-+	status = "okay";
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-csi-dsi.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-csi-dsi.dtsi
+new file mode 100644
+index 0000000000000000..ae7522b60e5dbad1
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-csi-dsi.dtsi
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the R-Car V4H White Hawk CSI/DSI sub-board
++ *
++ * Copyright (C) 2022 Glider bv
++ */
 +
-+	phy0: ethernet-phy@0 {
-+		compatible = "ethernet-phy-id0022.1622",
-+			     "ethernet-phy-ieee802.3-c22";
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio7>;
-+		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio7 10 GPIO_ACTIVE_LOW>;
++&i2c0 {
++	eeprom@52 {
++		compatible = "rohm,br24g01", "atmel,24c01";
++		label = "csi-dsi-sub-board-id";
++		reg = <0x52>;
++		pagesize = <8>;
 +	};
 +};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
-@@ -127,6 +146,24 @@ &pfc {
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+index afa807e4f7043455..07b0675ef6b87904 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+@@ -7,6 +7,7 @@
  
-+	avb0_pins: avb0 {
-+		mux {
-+			groups = "avb0_link", "avb0_mdio", "avb0_rgmii",
-+				 "avb0_txcrefclk";
-+			function = "avb0";
-+		};
-+
-+		pins_mdio {
-+			groups = "avb0_mdio";
-+			drive-strength = <21>;
-+		};
-+
-+		pins_mii {
-+			groups = "avb0_rgmii";
-+			drive-strength = <21>;
-+		};
-+
-+	};
- 	hscif0_pins: hscif0 {
- 		groups = "hscif0_data";
- 		function = "hscif0";
+ /dts-v1/;
+ #include "r8a779g0-white-hawk-cpu.dtsi"
++#include "r8a779g0-white-hawk-csi-dsi.dtsi"
+ 
+ / {
+ 	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
 -- 
 2.25.1
 
