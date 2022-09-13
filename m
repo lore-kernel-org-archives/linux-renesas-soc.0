@@ -2,133 +2,248 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B0CC54EE9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Sep 2022 09:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215F5C54EE9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Sep 2022 09:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231421AbiIMJlq (ORCPT
+        id S229749AbiIMJtn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 13 Sep 2022 05:41:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51952 "EHLO
+        Tue, 13 Sep 2022 05:49:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231296AbiIMJlp (ORCPT
+        with ESMTP id S230176AbiIMJtm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2022 05:41:45 -0400
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A139E5AC55;
-        Tue, 13 Sep 2022 02:41:44 -0700 (PDT)
-Received: by mail-qv1-f51.google.com with SMTP id ml1so8759465qvb.1;
-        Tue, 13 Sep 2022 02:41:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=bUqGzNam9P2JpJFCKoAI4XsxJG7TI3fcIwyUcf3LHTk=;
-        b=bazyWg+v47U7cYGeXFXphd+5XmhsCQYE4T2P5Mgq03FZ8s3U2WbTyPQ0XiURi/SZEE
-         DqBX8/Yo0wThzgjYP4hOaTsskX0zDxvc+7mBPVIID4sARY+qvhGfjWqk78+LpL7OiZ2r
-         9R+sRGFdKvYYnkE0E9n2SYIXXQZq4LLFJR797NJBBJDRP9w5OofwnSYN/yiHzymLvPie
-         bLZdKO6vrtYupMSspKznZyZ5u+8G0vbQQQ6m/W6WZDI1Maid5whXhLRDIPk1vUOzavde
-         XPLCyzHelYdrCYMJugK0fBztRiQy7SmUe8fuaXUCAgrgO+9UJzHY+Avw0x53kGMyv5mP
-         hWdg==
-X-Gm-Message-State: ACgBeo0a7gjBXkQ0BXWzsss3SFL2EWL1S54d/QiNgbClYsoDu/KQSRLr
-        Ux5IA3xaj8WRIxh7IoHFXLN0qJmaFe70HRx5
-X-Google-Smtp-Source: AA6agR6KL2fMAHRH9NkpCrVBSowu8rqTFWQHk9KgTcdGrwWU64fByPnNJTQRUS/8nZ2yQIRhENbEvQ==
-X-Received: by 2002:a0c:fe0f:0:b0:4a4:618:c6c2 with SMTP id x15-20020a0cfe0f000000b004a40618c6c2mr26681161qvr.75.1663062103384;
-        Tue, 13 Sep 2022 02:41:43 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id w4-20020ac87e84000000b0035ba7012724sm8057812qtj.70.2022.09.13.02.41.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Sep 2022 02:41:43 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-348b1838c2bso133137237b3.3;
-        Tue, 13 Sep 2022 02:41:42 -0700 (PDT)
-X-Received: by 2002:a81:4983:0:b0:345:20ee:589d with SMTP id
- w125-20020a814983000000b0034520ee589dmr25569048ywa.383.1663062102291; Tue, 13
- Sep 2022 02:41:42 -0700 (PDT)
+        Tue, 13 Sep 2022 05:49:42 -0400
+X-Greylist: delayed 2535 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 13 Sep 2022 02:49:40 PDT
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B96CA1A5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Sep 2022 02:49:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Subject:References:Cc:To:Message-ID:From:
+        Content-Transfer-Encoding:Content-Type:Date:MIME-Version:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=gBtxmYHP5Jj7f7rvEhp/JUGfwWkpfUScRndU2I8SJKo=; b=0ec/oNWAcu6fZuy69R295iV2bW
+        GKpD/c2Y6/4qNCd7l3xd2mUi5qemziJ8Qih/18M1AHdYfsavxFhWvwtWjlQR3TYz1vZsCfgAZ9lMA
+        08kFUyuPJF4D1ue988mez0SkX8jCUnhkSgIRfHDmAcjdCxoMyspjbdrha3Mc/Pwru2YzRUMQwRA2O
+        0HQlKKnucH7qdrXalqSYe85DDFY9LDDtG2Hp9HmrvC+HhD7DdUF1sUhgDwoxxfhYNwEhu0BMg24m2
+        TVL686NLtG1zK8CVvHAYxbns+jM3KSvO6KeMt+2ioiq/zwBFg2qVqM98Lb3hKG53uS9p6pw55fVQg
+        61XRPOWQ==;
+Received: from [2001:67c:1be8::200] (helo=rainloop.kapsi.fi)
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <jyri.sarha@iki.fi>)
+        id 1oY1sB-00DLg3-RF; Tue, 13 Sep 2022 12:06:28 +0300
 MIME-Version: 1.0
-References: <20220913084434.1191619-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdX9PCdTFsY_H6dqPVFs82HGqWzydhBaFNmL3_YR6vvWzQ@mail.gmail.com> <OS0PR01MB5922F5F3302A3AF05820229186479@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922F5F3302A3AF05820229186479@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 13 Sep 2022 10:41:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXdAt5kfgPbyY-ragOL=abS_GUg4U_E1ovA3Ps0sZqHhg@mail.gmail.com>
-Message-ID: <CAMuHMdXdAt5kfgPbyY-ragOL=abS_GUg4U_E1ovA3Ps0sZqHhg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a07g044: Fix 533MHz PLL2/3 clock
- multiplier and divider values
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Tue, 13 Sep 2022 09:06:26 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+From:   jyri.sarha@iki.fi
+Message-ID: <04399a9fe6a4b53a2cc012dad40b3c67c32b875f@iki.fi>
+To:     "Thomas Zimmermann" <tzimmermann@suse.de>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, bskeggs@redhat.com,
+        kherbst@redhat.com, lyude@redhat.com,
+        laurent.pinchart@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com, jyri.sarha@iki.fi,
+        tomba@kernel.org, sam@ravnborg.org
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+References: undefined <20220909105947.6487-1-tzimmermann@suse.de>
+X-SA-Exim-Connect-IP: 2001:67c:1be8::200
+X-SA-Exim-Mail-From: jyri.sarha@iki.fi
+Subject: Re: [PATCH 1/4] drm/plane: Remove drm_plane_init()
+X-SA-Exim-Version: 4.2.1 (built Sat, 13 Feb 2021 17:57:42 +0000)
+X-SA-Exim-Scanned: Yes (on mail.kapsi.fi)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+September 9, 2022 at 1:59 PM, "Thomas Zimmermann" <tzimmermann@suse.de ma=
+ilto:tzimmermann@suse.de?to=3D%22Thomas%20Zimmermann%22%20%3Ctzimmermann%=
+40suse.de%3E > wrote:
 
-CC Wolfram (SDHI)
+>=20
+>=20Open-code drm_plane_init() and remove the function from DRM. The
+> implementation of drm_plane_init() is a simple wrapper around a call
+> to drm_universal_plane_init(), so drivers can just use that instead.
+>=20
+>=20Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-On Tue, Sep 13, 2022 at 10:11 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Subject: Re: [PATCH] clk: renesas: r9a07g044: Fix 533MHz PLL2/3 clock
-> > multiplier and divider values
-> > On Tue, Sep 13, 2022 at 9:44 AM Biju Das <biju.das.jz@bp.renesas.com>
-> > wrote:
-> > > As per the HW manual (Rev.1.10 Apr, 2022) clock rate for 533MHz PLL2
-> > > and
-> > > PLL3 clocks should be 533 MHz, but with current multiplier and divider
-> > > values this resulted to 533.333333 MHz.
-> > >
-> > > This patch updates the multiplier and divider values for 533 MHz PLL2
-> > > and
-> > > PLL3 clocks so that we get the exact (533 MHz) values.
-> >
-> > Does this matter? Is there anything that doesn't work (well) because of
-> > this?
+Acked-by: Jyri Sarha <jyri.sarha@iki.fi>
+
+> ---
+> drivers/gpu/drm/drm_modeset_helper.c | 3 +-
+> drivers/gpu/drm/drm_plane.c | 32 ----------------------
+> drivers/gpu/drm/nouveau/dispnv04/overlay.c | 13 +++++----
+> drivers/gpu/drm/shmobile/shmob_drm_plane.c | 7 +++--
+> drivers/gpu/drm/tilcdc/tilcdc_plane.c | 9 +++---
+> include/drm/drm_plane.h | 8 +-----
+> 6 files changed, 17 insertions(+), 55 deletions(-)
+>=20
+>=20diff --git a/drivers/gpu/drm/drm_modeset_helper.c b/drivers/gpu/drm/d=
+rm_modeset_helper.c
+> index bd609a978848..611dd01fb604 100644
+> --- a/drivers/gpu/drm/drm_modeset_helper.c
+> +++ b/drivers/gpu/drm/drm_modeset_helper.c
+> @@ -100,8 +100,7 @@ EXPORT_SYMBOL(drm_helper_mode_fill_fb_struct);
+> * This is the minimal list of formats that seem to be safe for modeset =
+use
+> * with all current DRM drivers. Most hardware can actually support more
+> * formats than this and drivers may specify a more accurate list when
+> - * creating the primary plane. However drivers that still call
+> - * drm_plane_init() will use this minimal format list as the default.
+> + * creating the primary plane.
+> */
+> static const uint32_t safe_modeset_formats[] =3D {
+>  DRM_FORMAT_XRGB8888,
+> diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+> index 726f2f163c26..0f14b4d3bb10 100644
+> --- a/drivers/gpu/drm/drm_plane.c
+> +++ b/drivers/gpu/drm/drm_plane.c
+> @@ -482,38 +482,6 @@ void drm_plane_unregister_all(struct drm_device *d=
+ev)
+>  }
+> }
+>=20
+>=20-/**
+> - * drm_plane_init - Initialize a legacy plane
+> - * @dev: DRM device
+> - * @plane: plane object to init
+> - * @possible_crtcs: bitmask of possible CRTCs
+> - * @funcs: callbacks for the new plane
+> - * @formats: array of supported formats (DRM_FORMAT\_\*)
+> - * @format_count: number of elements in @formats
+> - * @is_primary: plane type (primary vs overlay)
+> - *
+> - * Legacy API to initialize a DRM plane.
+> - *
+> - * New drivers should call drm_universal_plane_init() instead.
+> - *
+> - * Returns:
+> - * Zero on success, error code on failure.
+> - */
+> -int drm_plane_init(struct drm_device *dev, struct drm_plane *plane,
+> - uint32_t possible_crtcs,
+> - const struct drm_plane_funcs *funcs,
+> - const uint32_t *formats, unsigned int format_count,
+> - bool is_primary)
+> -{
+> - enum drm_plane_type type;
+> -
+> - type =3D is_primary ? DRM_PLANE_TYPE_PRIMARY : DRM_PLANE_TYPE_OVERLAY=
+;
+> - return drm_universal_plane_init(dev, plane, possible_crtcs, funcs,
+> - formats, format_count,
+> - NULL, type, NULL);
+> -}
+> -EXPORT_SYMBOL(drm_plane_init);
+> -
+> /**
+> * drm_plane_cleanup - Clean up the core plane usage
+> * @plane: plane to cleanup
+> diff --git a/drivers/gpu/drm/nouveau/dispnv04/overlay.c b/drivers/gpu/d=
+rm/nouveau/dispnv04/overlay.c
+> index 37e63e98cd08..33f29736024a 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv04/overlay.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/overlay.c
+> @@ -296,9 +296,10 @@ nv10_overlay_init(struct drm_device *device)
+>  break;
+>  }
+>=20
+>=20- ret =3D drm_plane_init(device, &plane->base, 3 /* both crtc's */,
+> - &nv10_plane_funcs,
+> - formats, num_formats, false);
+> + ret =3D drm_universal_plane_init(device, &plane->base, 3 /* both crtc=
+'s */,
+> + &nv10_plane_funcs,
+> + formats, num_formats, NULL,
+> + DRM_PLANE_TYPE_OVERLAY, NULL);
+>  if (ret)
+>  goto err;
+>=20
+>=20@@ -475,9 +476,9 @@ nv04_overlay_init(struct drm_device *device)
+>  if (!plane)
+>  return;
+>=20
+>=20- ret =3D drm_plane_init(device, &plane->base, 1 /* single crtc */,
+> - &nv04_plane_funcs,
+> - formats, 2, false);
+> + ret =3D drm_universal_plane_init(device, &plane->base, 1 /* single cr=
+tc */,
+> + &nv04_plane_funcs, formats, 2, NULL,
+> + DRM_PLANE_TYPE_OVERLAY, NULL);
+>  if (ret)
+>  goto err;
+>=20
+>=20diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.c b/drivers/gpu=
+/drm/shmobile/shmob_drm_plane.c
+> index 54228424793a..6c5f0cbe7d95 100644
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_plane.c
+> +++ b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
+> @@ -252,9 +252,10 @@ int shmob_drm_plane_create(struct shmob_drm_device=
+ *sdev, unsigned int index)
+>  splane->index =3D index;
+>  splane->alpha =3D 255;
+>=20
+>=20- ret =3D drm_plane_init(sdev->ddev, &splane->plane, 1,
+> - &shmob_drm_plane_funcs, formats,
+> - ARRAY_SIZE(formats), false);
+> + ret =3D drm_universal_plane_init(sdev->ddev, &splane->plane, 1,
+> + &shmob_drm_plane_funcs,
+> + formats, ARRAY_SIZE(formats), NULL,
+> + DRM_PLANE_TYPE_OVERLAY, NULL);
+>=20
+>=20 return ret;
+> }
+> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_plane.c b/drivers/gpu/drm/ti=
+lcdc/tilcdc_plane.c
+> index 0ccf791301cb..cf77a8ce7398 100644
+> --- a/drivers/gpu/drm/tilcdc/tilcdc_plane.c
+> +++ b/drivers/gpu/drm/tilcdc/tilcdc_plane.c
+> @@ -105,11 +105,10 @@ int tilcdc_plane_init(struct drm_device *dev,
+>  struct tilcdc_drm_private *priv =3D dev->dev_private;
+>  int ret;
+>=20
+>=20- ret =3D drm_plane_init(dev, plane, 1,
+> - &tilcdc_plane_funcs,
+> - priv->pixelformats,
+> - priv->num_pixelformats,
+> - true);
+> + ret =3D drm_universal_plane_init(dev, plane, 1, &tilcdc_plane_funcs,
+> + priv->pixelformats,
+> + priv->num_pixelformats,
+> + NULL, DRM_PLANE_TYPE_PRIMARY, NULL);
+>  if (ret) {
+>  dev_err(dev->dev, "Failed to initialize plane: %d\n", ret);
+>  return ret;
+> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> index 89ea54652e87..910cb941f3d5 100644
+> --- a/include/drm/drm_plane.h
+> +++ b/include/drm/drm_plane.h
+> @@ -631,7 +631,7 @@ struct drm_plane {
+>  unsigned int format_count;
+>  /**
+>  * @format_default: driver hasn't supplied supported formats for the
+> - * plane. Used by the drm_plane_init compatibility wrapper only.
+> + * plane. Used by the non-atomic driver compatibility wrapper only.
+>  */
+>  bool format_default;
+>=20
+>=20@@ -762,12 +762,6 @@ int drm_universal_plane_init(struct drm_device *=
+dev,
+>  const uint64_t *format_modifiers,
+>  enum drm_plane_type type,
+>  const char *name, ...);
+> -int drm_plane_init(struct drm_device *dev,
+> - struct drm_plane *plane,
+> - uint32_t possible_crtcs,
+> - const struct drm_plane_funcs *funcs,
+> - const uint32_t *formats, unsigned int format_count,
+> - bool is_primary);
+> void drm_plane_cleanup(struct drm_plane *plane);
+>=20
+>=20__printf(10, 11)
+> --=20
+>=202.37.2
 >
-> Yes, SDHI performance gone bad as it selects 400Mhz clock instead of 533Mhz.
-> Similar case for RZ/G2UL, which I am testing it now.
->
-> Previously:-
-> 533333333->src clk0
-> 400000000->src clk1
-> 266666666->src clk2
->
-> Now:-
-> 533000000->src clk0
-> 400000000->src clk1
-> 266500000->src clk2
->
-> If I am correct, with wrong values, it ended
-> up in 533333332(parent rate= 133333333 *4) and requested rate 533333333
-> and it selected best rate as 400000000.
-
-IC, that is annoying.
-
-However, I don't think the right fix is to change the dividers to
-values that do not match the hardware.
-Due to the (in)accuracy of clock crystals, the least significant
-digits in the above clock rates are not significant anyway.
-
-Perhaps the "if (freq > (new_clock << i))" check in
-renesas_sdhi_clk_update() can be slightly relaxed, so it allows
-e.g. a 0.1% (or 1/1024th?) higher clock rate than requested?
-
-> > > -               DEF_FIXED(".pll2_533", CLK_PLL2_533, CLK_PLL2, 1, 3),
-> > > +               DEF_FIXED(".pll2_533", CLK_PLL2_533, CLK_PLL2, 533, 1600),
-> >
-> > I highly doubt the actual hardware is not using a by-3 divider....
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
