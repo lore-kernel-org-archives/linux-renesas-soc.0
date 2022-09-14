@@ -2,40 +2,53 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102A8C6FA8A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Sep 2022 14:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85344C6FA82
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Sep 2022 14:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbiINOdv (ORCPT
+        id S230121AbiINOd6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Sep 2022 10:33:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57118 "EHLO
+        Wed, 14 Sep 2022 10:33:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230102AbiINOds (ORCPT
+        with ESMTP id S230113AbiINOd4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2022 10:33:48 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3BC963F39
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2022 07:33:45 -0700 (PDT)
+        Wed, 14 Sep 2022 10:33:56 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6A787C301
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2022 07:33:55 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:e925:8cbe:2e99:b03b])
-        by baptiste.telenet-ops.be with bizsmtp
-        id KqZi2800y3vs4GX01qZiPX; Wed, 14 Sep 2022 16:33:43 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id KqZi280123vs4GX01qZiFR; Wed, 14 Sep 2022 16:33:53 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1oYTSQ-005B5L-9k; Wed, 14 Sep 2022 16:33:42 +0200
+        id 1oYTSQ-005B5L-24; Wed, 14 Sep 2022 16:33:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1oYTAa-000z4H-GB; Wed, 14 Sep 2022 16:15:16 +0200
+        id 1oYTS6-000zWz-Vs; Wed, 14 Sep 2022 16:33:22 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To:     Russell King <linux@armlinux.org.uk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a779a0: Update to R-Car Gen4 compatible values
-Date:   Wed, 14 Sep 2022 16:15:14 +0200
-Message-Id: <f14fde21270bf8269a61a75fc6e50af2765f2a42.1663164707.git.geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] dt-bindings: display: bridge: nxp,tda998x: Json-schema conversion and fixes
+Date:   Wed, 14 Sep 2022 16:33:19 +0200
+Message-Id: <cover.1663165552.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,69 +56,46 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Despite the name, R-Car V3U is the first member of the R-Car Gen4
-family.  Hence update the compatible properties in various device nodes
-to include family-specific compatible values for R-Car Gen4 instead of
-R-Car Gen3:
-  - CMT,
-  - SDHI.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Dependencies are in v6.0-rc1, to be queued in renesas-devel for v6.1.
----
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+This patch series converts the NXP TDA998x HDMI transmitter Device Tree
+binding documentation to json-schema, after a few customary fixes.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-index 8539013f5870c2f0..ed9400f903c9ecef 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-@@ -247,7 +247,7 @@ gpio9: gpio@e6069980 {
- 
- 		cmt0: timer@e60f0000 {
- 			compatible = "renesas,r8a779a0-cmt0",
--				     "renesas,rcar-gen3-cmt0";
-+				     "renesas,rcar-gen4-cmt0";
- 			reg = <0 0xe60f0000 0 0x1004>;
- 			interrupts = <GIC_SPI 500 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 501 IRQ_TYPE_LEVEL_HIGH>;
-@@ -260,7 +260,7 @@ cmt0: timer@e60f0000 {
- 
- 		cmt1: timer@e6130000 {
- 			compatible = "renesas,r8a779a0-cmt1",
--				     "renesas,rcar-gen3-cmt1";
-+				     "renesas,rcar-gen4-cmt1";
- 			reg = <0 0xe6130000 0 0x1004>;
- 			interrupts = <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-@@ -279,7 +279,7 @@ cmt1: timer@e6130000 {
- 
- 		cmt2: timer@e6140000 {
- 			compatible = "renesas,r8a779a0-cmt1",
--				     "renesas,rcar-gen3-cmt1";
-+				     "renesas,rcar-gen4-cmt1";
- 			reg = <0 0xe6140000 0 0x1004>;
- 			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
-@@ -298,7 +298,7 @@ cmt2: timer@e6140000 {
- 
- 		cmt3: timer@e6148000 {
- 			compatible = "renesas,r8a779a0-cmt1",
--				     "renesas,rcar-gen3-cmt1";
-+				     "renesas,rcar-gen4-cmt1";
- 			reg = <0 0xe6148000 0 0x1004>;
- 			interrupts = <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
-@@ -2065,7 +2065,7 @@ dmac2: dma-controller@e7351000 {
- 
- 		mmc0: mmc@ee140000 {
- 			compatible = "renesas,sdhi-r8a779a0",
--				     "renesas,rcar-gen3-sdhi";
-+				     "renesas,rcar-gen4-sdhi";
- 			reg = <0 0xee140000 0 0x2000>;
- 			interrupts = <GIC_SPI 236 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 706>, <&cpg CPG_CORE R8A779A0_CLK_SD0H>;
+Changes compared to v1:
+  - Add maximum to video-ports,
+  - Drop unneeded maxItems for audio-ports,
+  - Complete port descriptions.
+
+Thanks for your comments!
+
+[1] "[PATCH 0/3] dt-bindings: display: bridge: nxp,tda998x: Json-schema
+    conversion and fixes"
+    https://lore.kernel.org/r/cover.1634822085.git.geert+renesas@glider.be/
+
+Geert Uytterhoeven (3):
+  ARM: dts: am335x: Fix TDA998x ports addressing
+  [RFC] arm64: dts: renesas: cat874: Drop bogus clocks property
+  dt-bindings: display: bridge: nxp,tda998x: Convert to json-schema
+
+ .../bindings/display/bridge/nxp,tda998x.yaml  | 109 ++++++++++++++++++
+ .../bindings/display/bridge/tda998x.txt       |  54 ---------
+ arch/arm/boot/dts/am335x-boneblack-hdmi.dtsi  |   7 +-
+ arch/arm/boot/dts/am335x-myirtech-myd.dts     |   7 +-
+ .../boot/dts/renesas/r8a774c0-cat874.dts      |   1 -
+ 5 files changed, 121 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/nxp,tda998x.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/bridge/tda998x.txt
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
