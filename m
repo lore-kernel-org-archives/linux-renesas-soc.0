@@ -2,88 +2,67 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7910C6FA92
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Sep 2022 14:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B81DC6FA82
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Sep 2022 14:42:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230163AbiINOeD (ORCPT
+        id S229533AbiINOmu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Sep 2022 10:34:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57406 "EHLO
+        Wed, 14 Sep 2022 10:42:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230103AbiINOeA (ORCPT
+        with ESMTP id S229585AbiINOmt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2022 10:34:00 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F0C7F0BA
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2022 07:33:57 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:e925:8cbe:2e99:b03b])
-        by baptiste.telenet-ops.be with bizsmtp
-        id KqZi2800x3vs4GX01qZiPY; Wed, 14 Sep 2022 16:33:55 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oYTSP-005B5L-Tv; Wed, 14 Sep 2022 16:33:41 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oYTS7-000zXB-0s; Wed, 14 Sep 2022 16:33:23 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Russell King <linux@armlinux.org.uk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] [RFC] arm64: dts: renesas: cat874: Drop bogus clocks property
-Date:   Wed, 14 Sep 2022 16:33:21 +0200
-Message-Id: <97b949cddd7e30e9c05873800330dccd3483b12b.1663165552.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1663165552.git.geert+renesas@glider.be>
-References: <cover.1663165552.git.geert+renesas@glider.be>
+        Wed, 14 Sep 2022 10:42:49 -0400
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F41459270;
+        Wed, 14 Sep 2022 07:42:46 -0700 (PDT)
+Received: from booty (unknown [89.101.193.69])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 36ADBC0002;
+        Wed, 14 Sep 2022 14:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1663166565;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4WXxl/3il33m4nE7c2jycH90WwZ4uMZDzmWdAS3zWVk=;
+        b=mqu9SdN9WKBBEMttgySICNgnqnzkzYN4fzlbyZRE7Fj8rrMVqChCgPHD2aSSoJMqJ3ArsD
+        zH4sB3L96DydkXdedNdCfqVd4rECsO254wCzeqbtHw4ihpqfa+2dQuyKxjLoaUWYTcyIRj
+        TXWJVYC7GantTOtmpvBg8j1r1zkxHf7+Vs1L/n3zxp6oF/F0hsptH64PtyQZ4SzgG6MODP
+        EqHzTPzW8NuO2wawCrY06iL6rEWYY2fVvA+/6DnisHrJxZfPsdl1FSJILOGA65SMQSH9y/
+        iE5mmkHFTdKMZV0+fcadIcJbxo2C2vpJaOg3bJEGnhQT/qirvX8NwUoVFdJ4AA==
+Date:   Wed, 14 Sep 2022 16:42:42 +0200
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] Documentation: i2c: fix references to other documents
+Message-ID: <20220914164242.58b3b360@booty>
+In-Reply-To: <20220913100552.3080-1-wsa+renesas@sang-engineering.com>
+References: <20220913100552.3080-1-wsa+renesas@sang-engineering.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The NXP TDA998x HDMI transmitter Device Tree binding documentation does
-not mention a clocks property.
+Hi Wolfram,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Is this property just missing from the bindings?
-The driver doesn't seem to use it.
+On Tue, 13 Sep 2022 11:05:52 +0100
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-v2:
-  - No changes.
----
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 1 -
- 1 file changed, 1 deletion(-)
+> Similar to commit fe99b819487d ("docs: i2c: i2c-sysfs: fix hyperlinks"),
+> make other links in documentation consistent with the preferred way.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index 5a6ea08ffd2b2791..d42e24d9c09b9162 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -239,7 +239,6 @@ tda19988: tda19988@70 {
- 
- 		#sound-dai-cells = <0>;
- 		audio-ports = <TDA998x_I2S 0x03>;
--		clocks = <&rcar_sound 1>;
- 
- 		ports {
- 			#address-cells = <1>;
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 -- 
-2.25.1
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
