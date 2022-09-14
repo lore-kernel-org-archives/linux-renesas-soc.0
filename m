@@ -2,194 +2,141 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91741C6FA82
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Sep 2022 15:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E14FC6FA89
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Sep 2022 17:08:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230063AbiINPoh (ORCPT
+        id S229705AbiINRIR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Sep 2022 11:44:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36572 "EHLO
+        Wed, 14 Sep 2022 13:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbiINPog (ORCPT
+        with ESMTP id S229652AbiINRIQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2022 11:44:36 -0400
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F16B26E1;
-        Wed, 14 Sep 2022 08:44:32 -0700 (PDT)
-Received: by mail-qv1-f46.google.com with SMTP id o13so12033773qvw.12;
-        Wed, 14 Sep 2022 08:44:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=OSboxixIkC9ztGDQJ2boTjZZ2NsCfcyWK4O2HInU8lk=;
-        b=PC78C1PIIvouCQXY9bLtC26H2IBb1s9P38HAOUbDIt8CEtuzT0acdG7VnIic07S2hS
-         oVxuTgcIazq3np48hC7e0gX49FGQV/CTLy1dJBiYf6OI/mpBOzgn5qmZ9s+RQXEK8CLD
-         a1kbaWcOzLknl95tGxBQj4rMkhLXTu5OEdlu7+NOoFrmjj3bDLIV6rgjAzGUVOna3Hjt
-         OW/6Mikh63YXQiJ/KTL/rkOo2lVkx49WTLBrjXr0lGZ7s/Oxytbnz89OD4+zKrUwF6R/
-         dWfy7Dk+cxJKwPm2/Qn7KX8Ub61gFlBSRl6WtTk+x8g+L9yFkBLE02P6/ojI6IDBiKWp
-         LPhQ==
-X-Gm-Message-State: ACgBeo29fmylkapKxF29hYEPxpAbbQNqtm7b4aEBzzWJ6S1NAfT+YWzy
-        1+Nr3IwpXGtQwx+rgxh4SuDtiC0yVekI0F5P
-X-Google-Smtp-Source: AA6agR6xYo5+cp4mNFbwo5xGr0bUl6g/9hroc3Tpgd2+lUW0emF6aarM5UsTItD95AJM79/TScwwQA==
-X-Received: by 2002:ad4:5bac:0:b0:4ac:929b:3363 with SMTP id 12-20020ad45bac000000b004ac929b3363mr21317036qvq.32.1663170270960;
-        Wed, 14 Sep 2022 08:44:30 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id fv17-20020a05622a4a1100b003434d3b5938sm1754208qtb.2.2022.09.14.08.44.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Sep 2022 08:44:30 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-3450990b0aeso185171857b3.12;
-        Wed, 14 Sep 2022 08:44:30 -0700 (PDT)
-X-Received: by 2002:a81:758a:0:b0:345:450b:6668 with SMTP id
- q132-20020a81758a000000b00345450b6668mr30221255ywc.316.1663170269840; Wed, 14
- Sep 2022 08:44:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220913161506.1817432-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdWLRyW_6oTxK1eWXoJ0e=XS=p90yQPHB7kJANTj5Xk9vQ@mail.gmail.com>
- <OS0PR01MB59228767EFF2C9FA75D01B9486479@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <OS0PR01MB5922BA53872389BBDBA8A72E86469@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922BA53872389BBDBA8A72E86469@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 14 Sep 2022 16:44:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWJ+2VHe1--FrzaekSe=Wfn63GrGvpdjZ3uUUKacV=7Bw@mail.gmail.com>
-Message-ID: <CAMuHMdWJ+2VHe1--FrzaekSe=Wfn63GrGvpdjZ3uUUKacV=7Bw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: Add margins for main clock and hs clock
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
+        Wed, 14 Sep 2022 13:08:16 -0400
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C53B646A;
+        Wed, 14 Sep 2022 10:08:14 -0700 (PDT)
+Received: from [192.168.1.103] (31.173.80.79) by msexch01.omp.ru (10.188.4.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.14; Wed, 14 Sep
+ 2022 20:08:03 +0300
+Subject: Re: [PATCH net-next v3] ravb: Add RZ/G2L MII interface support
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+CC:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Biju Das <biju.das@bp.renesas.com>
+References: <20220914064730.1878211-1-biju.das.jz@bp.renesas.com>
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <631f13b7-9cab-68b7-a0b1-368bb591c4d2@omp.ru>
+Date:   Wed, 14 Sep 2022 20:08:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <20220914064730.1878211-1-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [31.173.80.79]
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 5.9.20, Database issued on: 09/14/2022 16:47:12
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 172723 [Sep 14 2022]
+X-KSE-AntiSpam-Info: Version: 5.9.20.0
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 498 498 840112829f78e8dd3e3ddbbff8b15d552f4973a3
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.80.79 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.80.79
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/14/2022 16:51:00
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/14/2022 2:00:00 PM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+On 9/14/22 9:47 AM, Biju Das wrote:
 
-On Wed, Sep 14, 2022 at 6:44 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Subject: RE: [PATCH] mmc: renesas_sdhi: Add margins for main clock and hs
-> > clock
-> > > Subject: Re: [PATCH] mmc: renesas_sdhi: Add margins for main clock and
-> > > hs clock
-> > > On Tue, Sep 13, 2022 at 5:15 PM Biju Das <biju.das.jz@bp.renesas.com>
-> > > wrote:
-> > > > The SDHI high speed clock is 4 times that of the main clock.
-> > > > Currently, there is no margin added for setting the rate associated
-> > > > with these clocks. On RZ/G2L platforms, the lack of these margins
-> > > > leads to the selection of a clock source with a lower clock rate
-> > > > compared to a higher one.
-> > > >
-> > > > RZ/G2L example case:
-> > > > SD0 hs clock is 533333333 Hz and SD0 main clock is 133333333 Hz.
-> > > > When we set the rate for the main clock 133333333, the request rate
-> > > > for the parent becomes 533333332 (133333333 * 4) and the SD0 hs
-> > > > clock is set as 400000000 Hz.
-> > > >
-> > > > This patch adds a margin of (1/1024) higher hs clock and main clock
-> > > rate.
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > >
-> > > Thanks for your patch!
-> > >
-> > > > --- a/drivers/mmc/host/renesas_sdhi_core.c
-> > > > +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> > > > @@ -147,6 +147,7 @@ static unsigned int
-> > > > renesas_sdhi_clk_update(struct
-> > > tmio_mmc_host *host,
-> > > >         }
-> > > >
-> > > >         new_clock = wanted_clock << clkh_shift;
-> > > > +       new_clock += new_clock >> 10;
-> > >
-> > > This changes the requested clock rate. Is that really a good idea?
-> > >
-> > > Isn't it sufficient to change the test "if (freq > (new_clock << i))"
-> > > slightly?
-> >
-> > We hardly enter this test, after it request for proper wanted_clk.
-> >
-> > freq is clk_round_rate(ref_clk, new_clock << i);  and it compares 400MHz
-> > vs 533.332 MHz.
-> >
-> > Basically wanted_clock= 133.33333 MHz and is scaled to power of 2 and
-> > then each iteration it scale down to power of 2 compare with round rate
-> > value.
-> >
-> > [    4.020781] ####rzg2l_cpg_sd_clk_mux_determine_rate####### req-
-> > >rate=4266666656
-> > [    4.028013] ####rzg2l_cpg_sd_clk_mux_determine_rate####### req-
-> > >rate=2133333328
-> > [    4.035330] ####rzg2l_cpg_sd_clk_mux_determine_rate####### req-
-> > >rate=1066666664
-> > [    4.042639] ####rzg2l_cpg_sd_clk_mux_determine_rate####### req-
-> > >rate=533333332
-> >
-> > >
-> > > >
-> > > >         /*
-> > > >          * We want the bus clock to be as close as possible to, but
-> > > > no @@ -172,6 +173,7 @@ static unsigned int
-> > > > renesas_sdhi_clk_update(struct tmio_mmc_host *host,
-> > > >
-> > > >         clk_set_rate(ref_clk, best_freq);
-> > > >
-> > > > +       best_freq += best_freq >> 10;
-> > >
-> > > Can you please elaborate why this is needed?
-> > > It looks counter-intuitive to me.
-> >
-> > When we try to set 133.333 MHz clk, the determine rate calculates req-
-> > >rate for sd clk as 533.332 and since available clock source for sd0 clks
-> > are 266.6666, 400 and
-> > 533.333 MHz, so it select the clock source as 400MHz.
->
-> Just to add here the main issue is coming from math calculation.
->
-> Consider any value A
->
-> B = A / 4
-> C = B * 4
->
-> Ideally, we expect A = C, But in the below example
-> It is not the case (it is A != C).
->
-> A = 533333333 (1600/3 MHz)
-> B = 533333333/4 = 133333333
-> C = 133333333 * 4 = 533333332
->
-> Since A != C we are ending up in this situation.
+> EMAC IP found on RZ/G2L Gb ethernet supports MII interface.
+> This patch adds support for selecting MII interface mode.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v2->v3:
+>  * Documented CXR35_HALFCYC_CLKSW1000 and CXR35_SEL_XMII_MII macros.
 
-I am fully aware of that ;-)
+   I definitely didn't mean it done this way...
 
-However, clk_round_rate() is supposed to return the closest
-matching rate.  Hence when passed 533333332, it should return 533333333.
-AFAIU, this is then rejected by "if (freq > (new_clock << i))", due to
-being slightly too large, causing 400000000 to be picked instead.
+[...]
+> diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+> index b980bce763d3..058aceac8c92 100644
+> --- a/drivers/net/ethernet/renesas/ravb.h
+> +++ b/drivers/net/ethernet/renesas/ravb.h
+[...]
+> @@ -965,6 +966,11 @@ enum CXR31_BIT {
+>  	CXR31_SEL_LINK1	= 0x00000008,
+>  };
+>  
+> +enum CXR35_BIT {
+> +	CXR35_HALFCYC_CLKSW1000	= 0x03E80000,	/* 1000 cycle of clk_chi */
 
-Am I missing something?
-I'm currently not in the position to test/verify what is actually happening.
+   No, please just declare:
 
-I do see clk_mux_determine_rate_flags() has a comment:
+	CXR35_HALFCYC_CLKSW	= 0xffff0000,
 
-        /* find the parent that can provide the fastest rate <= rate */
+> +	CXR35_SEL_XMII_MII	= 0x00000002,	/* MII interface is used */
 
-So perhaps the issue is that it does not return the closest rate, but a
-slower rate?
+   All the other register *enum*s are declared from LSB to MSB. The comment is pretty
+self-obvious here, please remove it. And declare the whole field too:
 
-Thanks!
+	CXR35_SEL_XMII		= 0x00000003,
+	CXR35_SEL_XMII_RGMII	= 0x00000000,
+	CXR35_SEL_XMII_MII	= 0x00000002,
 
-Gr{oetje,eeting}s,
+[...]
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index b357ac4c56c5..9a0d06dd5eb6 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -540,7 +540,14 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
+>  	/* E-MAC interrupt enable register */
+>  	ravb_write(ndev, ECSIPR_ICDIP, ECSIPR);
+>  
+> -	ravb_modify(ndev, CXR31, CXR31_SEL_LINK0 | CXR31_SEL_LINK1, CXR31_SEL_LINK0);
+> +	if (priv->phy_interface == PHY_INTERFACE_MODE_MII) {
+> +		ravb_modify(ndev, CXR31, CXR31_SEL_LINK0 | CXR31_SEL_LINK1, 0);
+> +		ravb_write(ndev, CXR35_HALFCYC_CLKSW1000 | CXR35_SEL_XMII_MII,
+> +			   CXR35);
 
-                        Geert
+		ravb_write(ndev, (1000 << 16) | CXR35_SEL_XMII_MII, CXR35);
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+[...]
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergey
