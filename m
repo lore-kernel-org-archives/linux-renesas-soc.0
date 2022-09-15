@@ -2,97 +2,140 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E870C6FA89
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Sep 2022 16:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B46ECAAA1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Sep 2022 16:53:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbiIOQPO (ORCPT
+        id S229731AbiIOQxq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Sep 2022 12:15:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38676 "EHLO
+        Thu, 15 Sep 2022 12:53:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbiIOQPN (ORCPT
+        with ESMTP id S230119AbiIOQxm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2022 12:15:13 -0400
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D2583F01;
-        Thu, 15 Sep 2022 09:15:08 -0700 (PDT)
-Received: from [192.168.1.103] (178.176.75.186) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.14; Thu, 15 Sep
- 2022 19:14:57 +0300
-Subject: Re: [PATCH net-next v5] ravb: Add RZ/G2L MII interface support
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-CC:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-References: <20220914192604.265859-1-biju.das.jz@bp.renesas.com>
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <c7ac471c-8b48-e910-9270-c8fc21a63a19@omp.ru>
-Date:   Thu, 15 Sep 2022 19:14:56 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Thu, 15 Sep 2022 12:53:42 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F56F2;
+        Thu, 15 Sep 2022 09:53:41 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id k9so31850761wri.0;
+        Thu, 15 Sep 2022 09:53:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=p4zPXFzEmWgLuo+i2mZoclcbSp19IgN0lgmH+INT3lc=;
+        b=RGscQldbrixtH4VM1aTTz2PSE2Mz4g/j9su1k4VwR+w8eezShNjMUBYHRNSMnDsQLZ
+         9z5dyAoOuFGYhGrZ7ukgctCygt2nUujjVWQQkzMHr6XYZ8HvZIWIVr+ornpDFgz5Y+Mr
+         HIx/VBe+696Cs56RCUVON/3CmiwusrVUQ8cu+XUw8U/62QtYZg3j2fmwsTjRJWVLXPWs
+         fGWvGO/bqkUhmR9jVMOmbKBNAJcWKK8UEuwt43LiZc4AeOXfxXsa2DEXf67epmYzkzjA
+         Ywi4gPZBB5d5s/9uxzvq1UD6T2bsWlqcIBQ+7ksFz2SJUgC1+H+msQ1SjUR7vZkBjaKY
+         7fiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=p4zPXFzEmWgLuo+i2mZoclcbSp19IgN0lgmH+INT3lc=;
+        b=uf+roq3TR7EFW6sk0hkUqwb6m/DUcYjp9Ta23p6TrliLB/DZiZLmCEB7zdMRpk1q/W
+         mXgvgb1Tt103kU3rvzSzsIMfOP02B7n1HjCMt1RKleXara/smaWFBBjHu3vRz2nfNRy1
+         IJePl5k8nsMTom8iklGhXXn1JFeFhngnjA8b30Im991z5j7nD4lmcFOADlvkr5J3vn9Z
+         FPuQ+ZyD3A8pAPz5+9RW5wiMZtM+rmmumtxeZVdqFhzoGWpN8PdbLmUROPQybZP2gGyX
+         el5wdoFBEjdke04DN60NKmlRLzzbJT2hdJcXUPHC5lOZW3bC6K9vimi7AQuAJ2n+b880
+         UzFg==
+X-Gm-Message-State: ACrzQf0PxL6DK5bSLcWnzONXB1m1tMs9YtN0R/tov7xC1rxG8+O9o+hs
+        kqwL6ioY6lEC1o+NRmm1Cy8=
+X-Google-Smtp-Source: AMsMyM5T0VA4b5gmZF/SHhNtsIKv5qgv6/KCmvNkiR6tgSp0RDeSL56OGc3lM2iBEPphMDcAlySq0A==
+X-Received: by 2002:adf:f804:0:b0:228:62fd:6e9a with SMTP id s4-20020adff804000000b0022862fd6e9amr372716wrp.697.1663260819608;
+        Thu, 15 Sep 2022 09:53:39 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:fc6e:cfa1:9281:3490])
+        by smtp.gmail.com with ESMTPSA id o15-20020a05600c4fcf00b003b332a7bf15sm3562129wmq.7.2022.09.15.09.53.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Sep 2022 09:53:38 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/2] arm64: dts: renesas: rzg2ul-smarc: Include SoM DTSI into board DTS
+Date:   Thu, 15 Sep 2022 17:52:55 +0100
+Message-Id: <20220915165256.352843-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220915165256.352843-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220915165256.352843-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20220914192604.265859-1-biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [178.176.75.186]
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 5.9.20, Database issued on: 09/15/2022 15:24:33
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 172743 [Sep 15 2022]
-X-KSE-AntiSpam-Info: Version: 5.9.20.0
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 499 499 6614d57ea7c6ac2e38ef0272e2cc77f73b9aae18
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.75.186 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.75.186 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info: omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.75.186
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/15/2022 15:27:00
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/15/2022 3:12:00 PM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 9/14/22 10:26 PM, Biju Das wrote:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> EMAC IP found on RZ/G2L Gb ethernet supports MII interface.
-> This patch adds support for selecting MII interface mode.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Move including the rzg2ul-smarc-som.dtsi from the carrier board
+rzg2ul-smarc.dtsi to the actual RZ/G2UL SMARC EVK board dts
+r9a07g043u11-smarc.dts. Also move the SW_SW0_DEV_SEL and
+SW_ET0_EN_N macros to board dts as they are used by SoM and carrier
+board DTS/I.
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+This is in preparation of re-using the SoM and carrier board DTSIs
+for RZ/Five SMARC EVK.
 
-[...]
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts | 12 ++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi      | 11 -----------
+ 2 files changed, 12 insertions(+), 11 deletions(-)
 
-MBR, Sergey
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+index 121e55282d18..059885a01ede 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+@@ -6,7 +6,19 @@
+  */
+ 
+ /dts-v1/;
++
++/*
++ * DIP-Switch SW1 setting
++ * 1 : High; 0: Low
++ * SW1-2 : SW_SD0_DEV_SEL	(0: uSD; 1: eMMC)
++ * SW1-3 : SW_ET0_EN_N		(0: ETHER0; 1: CAN0, CAN1, SSI1, RSPI1)
++ * Please change below macros according to SW1 setting on the SoM
++ */
++#define SW_SW0_DEV_SEL	1
++#define SW_ET0_EN_N	1
++
+ #include "r9a07g043.dtsi"
++#include "rzg2ul-smarc-som.dtsi"
+ #include "rzg2ul-smarc.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+index f9835c12023e..2a1331ed1a5c 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+@@ -5,17 +5,6 @@
+  * Copyright (C) 2022 Renesas Electronics Corp.
+  */
+ 
+-/*
+- * DIP-Switch SW1 setting
+- * 1 : High; 0: Low
+- * SW1-2 : SW_SD0_DEV_SEL	(0: uSD; 1: eMMC)
+- * SW1-3 : SW_ET0_EN_N		(0: ETHER0; 1: CAN0, CAN1, SSI1, RSPI1)
+- * Please change below macros according to SW1 setting
+- */
+-#define SW_SW0_DEV_SEL	1
+-#define SW_ET0_EN_N	1
+-
+-#include "rzg2ul-smarc-som.dtsi"
+ #include "rzg2ul-smarc-pinfunction.dtsi"
+ #include "rz-smarc-common.dtsi"
+ 
+-- 
+2.25.1
+
