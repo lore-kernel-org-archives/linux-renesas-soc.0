@@ -2,59 +2,59 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E358C32771
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Sep 2022 21:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED854C32771
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Sep 2022 22:18:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbiIOV5T (ORCPT
+        id S229695AbiIOWSd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Sep 2022 17:57:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53766 "EHLO
+        Thu, 15 Sep 2022 18:18:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbiIOV5P (ORCPT
+        with ESMTP id S229712AbiIOWSc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2022 17:57:15 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F96F8B9AD;
-        Thu, 15 Sep 2022 14:57:12 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id b136so29834642yba.2;
-        Thu, 15 Sep 2022 14:57:12 -0700 (PDT)
+        Thu, 15 Sep 2022 18:18:32 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 759DA8C47D;
+        Thu, 15 Sep 2022 15:18:31 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id c9so29827021ybf.5;
+        Thu, 15 Sep 2022 15:18:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=cPaq5546jvH8aSMw37Z0a/MsJlDcjDxx//GnCdJb6rc=;
-        b=owIFgWeXa2WIc57acLhZaC+Nruso8LkLfXri92gyDu0I5Okpy5HFyVBaU1sakAHAU1
-         tXZ842zF7oNOBoTH8LHv5GD89MTcRvtbNeuxw5LzpNPqoB5t07TgC6y1mo3EizgMKfoI
-         x2anyGPZOymMW6CnLibb0F24j+++2v/rIbSep5ip5v3gTYyIIMzFWskedc9D/THLD+U2
-         ptZ+GkkdQla6MJgRxt90V1uQ92yunnIwZPuwsDXZzbfVUbLH6ckedR5jKDIKf0Z8ql/O
-         8+ywDI7BgKrHZXYGOjj9TJwmVXhJSuOcOcvY0OpY5ncIXghOVAK7+cm5nYwedEJ+uHfp
-         q9vw==
+        bh=7rTBa+TZvkiKAMcEE1GZa2Hw9K4HVwTdbY/7JXJfnHE=;
+        b=UYAzpgH6jbwevP5kLebZHPqxMQ1b1nKnksij3MYheAodV0Ll6zXsWBtBgWiNvEYXsP
+         acVy2vgPBsUTOEkMi2hRfllKSU1jpy58kbDY+COAQUbKr5chRQW47i7cMa2Yg2UUDyCr
+         4aC1JVJNdYzjHsFb4xJ7eeKI8Z23zn1Uz1HhxJob6Ap3kElHjMDMJjkjsoABrq2P4pal
+         +pNxjeNyd9SU4zSwVvAG12C9bgM+HoOX+IaU/HOc8miy0mJASO52oTZVKtLnrItxhheO
+         +xrV86CXjwHwYCmCjSFojngsjRLdkc1hIsiyntmKftI5anSiFv4SoZLC9MQts+ae+Ii0
+         SIFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=cPaq5546jvH8aSMw37Z0a/MsJlDcjDxx//GnCdJb6rc=;
-        b=dg/Jy2Ob5N3RIyqcVKDNiK+zSe42csCX38iBam+qU4T9jq5+H74100ze0IqkN4EgB5
-         OJHV3YL2+eaYg6ANe514TvhB743GLTzQFP5A5KNItv+QiOvfo7FXWlxyW9m1fAwpwhUh
-         AWs9vo4PibuNUncQOaN8CCquOrKMEYCjyj4yz0INjnB7BKn1rPMwACtAdkvg5pJcINUI
-         9ueFe18DfoxEr0e6KRPvKSdoAj+O6lyvKz2ADqBfiroGl8pp50LSz7DJzQPGNf3qmVpt
-         zQAYp/OC1JmtGGncHe7gxANoOwiH/OCqQq9d0oZz7IeQUnyyOk0VtTqytqNlM1LxpHcQ
-         /2dQ==
-X-Gm-Message-State: ACrzQf3BOUc7tC2IjY4+a2gegeWg3BhkX/3J3JUv4BJZcSd+rKF/NWXE
-        hMamdvuXgEZdke0YHb7dEmu2ZSb1RymOA6EaynY=
-X-Google-Smtp-Source: AMsMyM4CJb/auFvW3u8hqAtr+nMrB3OgfxFI1GmkaXoEovGm0BaVYp/lJB8GvxqgOnaB2wVGQo/dLc68ih6DLvysGRU=
-X-Received: by 2002:a25:808d:0:b0:6a8:f9e8:eba0 with SMTP id
- n13-20020a25808d000000b006a8f9e8eba0mr1783881ybk.279.1663279031516; Thu, 15
- Sep 2022 14:57:11 -0700 (PDT)
+        bh=7rTBa+TZvkiKAMcEE1GZa2Hw9K4HVwTdbY/7JXJfnHE=;
+        b=UpF/KaI7kv5FQjsCoxVKQ4G22IdF3QoH7WsBBTOVhE4nSUJR7N3Ce4FC7UkMe87E4U
+         awnJwNoet//EFxhd4QQT/GDkd+HD2uRGiZyvaHtET8cHM2f3wG2AKebI2vUKib+DgUfA
+         gX/3rPU3p65l3+rALyuuDVnbcQ6mTkQO2tiFwJo7iQs9jMtKY0cv0jNLU1l1xGPSybtu
+         9ULcabaQzFw9AIgrHDfLQBCxP/QKRETaCT5gorQASaBmznPJ5D3J49Y5sbcZjOEUkzFG
+         eX8sKDsj54m6EdBs+BPUiAtnaWsDaZ7jmUblLPQKYje6eaPu03LE2AsPCG/z88T33kUK
+         m2/A==
+X-Gm-Message-State: ACrzQf0uFx8hrfRyaeTIsOkytaL9u1OA4tnJlGUdLb8Pc99kZUbnBfWD
+        4yanOG7BK6vUnLXj08Q7VzXHDXtGVMM8WXwUCKQ7q5dJGkR8Eg==
+X-Google-Smtp-Source: AMsMyM5qkhFr6mYLitJhEUs5llsOwuL8t3fDB1o5pzCFI52+HRBEiKw3M1v3foGS1UjlkCiHW+bL2UrNZJPYVkiP/M8=
+X-Received: by 2002:a05:6902:1007:b0:6ae:6cd5:4b0b with SMTP id
+ w7-20020a056902100700b006ae6cd54b0bmr1895083ybt.354.1663280310596; Thu, 15
+ Sep 2022 15:18:30 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220915181558.354737-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220915181558.354737-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <10896a74-5875-a083-846f-eed5f457ba1b@microchip.com>
-In-Reply-To: <10896a74-5875-a083-846f-eed5f457ba1b@microchip.com>
+ <20220915181558.354737-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <126c611d-b421-cff9-6384-bc468be7ec73@microchip.com>
+In-Reply-To: <126c611d-b421-cff9-6384-bc468be7ec73@microchip.com>
 From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 15 Sep 2022 22:56:43 +0100
-Message-ID: <CA+V-a8u8NdzaOmnQocAi_tthE=J_-LabG49StxH3gyV2QJwirQ@mail.gmail.com>
-Subject: Re: [PATCH v3 01/10] dt-bindings: soc: renesas: Move renesas.yaml
- from arm to soc
+Date:   Thu, 15 Sep 2022 23:18:02 +0100
+Message-ID: <CA+V-a8sv9sFwGktxqkWohQF2FfxyQm=Z5GVNjPW9i2hKxtNWpg@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] RISC-V: Kconfig.socs: Add Renesas RZ/Five SoC
+ kconfig option
 To:     Conor.Dooley@microchip.com
 Cc:     geert+renesas@glider.be, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, paul.walmsley@sifive.com,
@@ -72,40 +72,77 @@ Hi Conor,
 
 Thank you for the review.
 
-On Thu, Sep 15, 2022 at 10:13 PM <Conor.Dooley@microchip.com> wrote:
+On Thu, Sep 15, 2022 at 9:59 PM <Conor.Dooley@microchip.com> wrote:
 >
 > On 15/09/2022 19:15, Prabhakar wrote:
 > > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > >
 > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > renesas.yaml lists out all the Renesas SoC's and the platforms/EVK's which
-> > is either ARM32/ARM64. It would rather make sense if we move renesas.yaml
-> > to the soc/renesas folder instead. This is in preparation for adding a new
-> > SoC (RZ/Five) from Renesas which is based on RISC-V.
-> >
-> > While at it drop the old entry for renesas.yaml from MAINTAINERS file and
-> > there is no need to update the new file path of renesas.yaml as we already
-> > have an entry for Documentation/devicetree/bindings/soc/renesas/ folder.
+> > Introduce SOC_RENESAS_RZFIVE config option to enable Renesas RZ/Five
+> > (R9A07G043) SoC, along side also add ARCH_RENESAS config option as most
+> > of the Renesas drivers depend on this config option.
 > >
 > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > > ---
-> > v3:
-> > * New patch along with this series previously posted as a standalone
-> > patch [0].
+> > v2->v3
+> > * Included RB tag from Geert
 > >
-> > [0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220815111708.22302-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> > v1->v2
+> > * No Change
 > > ---
-> >  .../devicetree/bindings/{arm => soc/renesas}/renesas.yaml        | 0
-> >  MAINTAINERS                                                      | 1 -
-> >  2 files changed, 1 deletion(-)
-> >  rename Documentation/devicetree/bindings/{arm => soc/renesas}/renesas.yaml (100%)
+> >  arch/riscv/Kconfig.socs | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> > index 69774bb362d6..91b7f38b77a8 100644
+> > --- a/arch/riscv/Kconfig.socs
+> > +++ b/arch/riscv/Kconfig.socs
+> > @@ -80,4 +80,18 @@ config SOC_CANAAN_K210_DTB_SOURCE
+> >
+> >  endif # SOC_CANAAN
+> >
+> > +config ARCH_RENESAS
+> > +       bool
+> > +       select GPIOLIB
+> > +       select PINCTRL
+> > +       select SOC_BUS
 >
-> Got one error from the rename:
-> /stuff/linux/Documentation/devicetree/bindings/soc/renesas/renesas.yaml: $id: relative path/filename doesn't match actual path or filename
->         expected: http://devicetree.org/schemas/soc/renesas/renesas.yaml#
+> Do you really need to select SOC_BUS?
+> Noone else does on RISC-V, hence my curiosity.
 >
-Argh, how did I miss that!
+Yes we do need SOC_BUS due to soc_device_register() call in [0].
+Digging further I realized we can drop the above SOC_BUS as
+SOC_RENESAS is selecting SOC_BUS [1]
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/soc/renesas/renesas-soc.c?h=v6.0-rc5#n487
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/soc/renesas/Kconfig?h=v6.0-rc5#n5
+
+> > +
+> > +config SOC_RENESAS_RZFIVE
+> > +       bool "Renesas RZ/Five SoC"
+> > +       select ARCH_R9A07G043
+> > +       select ARCH_RENESAS
+> > +       select RESET_CONTROLLER
+> > +       help
+> > +         This enables support for Renesas RZ/Five SoC.
+>
+> :thinking: isn't this pretty much what we decided not to do?
+> And instead you would redefine ARCH_RENESAS in this file and
+> not use SOC_RENESAS* at all? Will save me having to purge the
+> the SOC symbol when I do the conversion.
+>
+I was under the impression we didn't come to a conclusion so kept the
+patch as is. I'll just make ARCH_RENESAS visible as Geert suggested
+something like below:
+
+        config ARCH_RENESAS
+            bool "Renesas RISC-V SoCs"
+            select GPIOLIB
+            select PINCTRL
+            select RESET_CONTROLLER
+
 
 Cheers,
 Prabhakar
