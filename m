@@ -2,98 +2,153 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1647ECAAA1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Sep 2022 23:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B0FC54EE9
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Sep 2022 08:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbiIOXjH (ORCPT
+        id S230451AbiIPIsW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Sep 2022 19:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
+        Fri, 16 Sep 2022 04:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiIOXjH (ORCPT
+        with ESMTP id S230443AbiIPIsU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2022 19:39:07 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEDC71180D;
-        Thu, 15 Sep 2022 16:39:05 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id z6so807161wrq.1;
-        Thu, 15 Sep 2022 16:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=hEjzd+p4D5uEZGkAUMlWi2auDcn9TWiOqvQ6ysuAhjs=;
-        b=ALeu6p6DNj/MUFpvV+HQSYbR90S8H14wR3zUb6yBM1eNuFfKy5VC56EnugiLHowe7B
-         GbvzPiMcNnUtWoqOReK0TxWFIeOz3JPAa6FnFkfamU658NMGUQ1B3dwnD7XdygVu1DrP
-         Qn4zhYhHvphhIjAUH8L/Zr2v/GKC6t6OusQ6551YXUuQVa9oUEOPD55BYucZ2ajW5oB7
-         P/smXpz6lEvxB8EhIAahOFGfK4il8CQ44hmJGqN/++D2WfJX/e064zvAuuQyJKc/gRxW
-         sxOlR28m7Y3DZnNcOhOn9VwfyR5EK3Hj6+hl3j+B+i/8sR58F+BPiM9JKxTCPJVrjkBX
-         RuoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=hEjzd+p4D5uEZGkAUMlWi2auDcn9TWiOqvQ6ysuAhjs=;
-        b=z/4AmoPXwKL4yqH7lHH4oxQ/QA38pe5RFF9E4Iz2I22TY7Ne+4GZ2qNdnZyWBJ9lo+
-         5qtcuFjEDUv7vPK4LqBCIhp5hG3p+VSwkOP/8VOY3nGg1CKqc1dXNBMSHcNnHcr8usrp
-         Z92tBLJ/eAuztEV1VWpi+F/A92hbOwrJ01XYBfx1fLHUefQfDzmyo8siDMhjW5vPbKjB
-         emkoNxlyuqcEOGgnXWBjnZOCXwd8HIxqNnvvtxKi1tQmuvKQMXDrx0QJ5gJwUDcaZDf4
-         Fql7s6chyTU56xS3up/PZXjyUEAxL8j8kTt6cvN8YKuGAgiGTFrL9qPocdkjJP/CrkP1
-         g1QQ==
-X-Gm-Message-State: ACrzQf2unpqTfvEKlqxSPgDjZS/WdPwEZ6RiqQ1oNYISsbwJLFoVipzA
-        RSVe+WYPXqlgXhkF1qPU11ji/q2EaU5LsQ==
-X-Google-Smtp-Source: AMsMyM63BHkNlUpPha+RlRnekZgMfRlSz8f//7rV3uvwk5CMYdoWLiN6FMEDd2RKNB5fIHPy2zFT9A==
-X-Received: by 2002:adf:fa88:0:b0:228:6237:d46c with SMTP id h8-20020adffa88000000b002286237d46cmr1197827wrr.571.1663285144252;
-        Thu, 15 Sep 2022 16:39:04 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:d411:a48b:4035:3d98])
-        by smtp.gmail.com with ESMTPSA id c18-20020adffb52000000b002252ec781f7sm3742720wrs.8.2022.09.15.16.39.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 16:39:03 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] ARM: shmobile: Kconfig: Drop selecting SOC_BUS
-Date:   Fri, 16 Sep 2022 00:38:52 +0100
-Message-Id: <20220915233852.415407-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Fri, 16 Sep 2022 04:48:20 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B2D66A832F
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Sep 2022 01:48:15 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.93,320,1654527600"; 
+   d="scan'208";a="133059332"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 16 Sep 2022 17:48:14 +0900
+Received: from localhost.localdomain (unknown [10.226.93.23])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7DC2E41A78B3;
+        Fri, 16 Sep 2022 17:48:10 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v7 0/2] Add RZ/G2L DSI driver
+Date:   Fri, 16 Sep 2022 09:48:05 +0100
+Message-Id: <20220916084807.640225-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This patch series aims to support the MIPI DSI encoder found in the RZ/G2L
+SoC. It currently supports DSI video mode only.
 
-Don't automatically select the SOC_BUS config option as we already have
-automatically selected it as part of the SOC_RENESAS config option [0]
-as renesas-soc.c [1] uses the APIs provided by SOC_BUS config option.
+This unit supports MIPI Alliance Specification for Display Serial Interface (DSI)
+Specification. This unit provides a solution for transmitting MIPI DSI compliant
+digital video and packets. Normative References are below.
+* MIPI Alliance Specification for Display Serial Interface Version 1.3.1
+* MIPI Alliance Specification for D-PHY Version 2.1
 
-[0] drivers/soc/renesas/Kconfig
-[1] drivers/soc/renesas/renesas-soc.c
+The following are key features of this unit.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm/mach-shmobile/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+* 1 channel
+* The number of Lane: 4-lane
+* Support up to Full HD (1920 × 1080), 60 fps (RGB888)
+* Maximum Bandwidth: 1.5 Gbps per lane
+* Support Output Data Format: RGB666 / RGB888
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 50909c4b95b2..37f862f13c8d 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -6,5 +6,4 @@ menuconfig ARCH_RENESAS
- 	select GPIOLIB
- 	select NO_IOPORT_MAP
- 	select PINCTRL
--	select SOC_BUS
- 	select ZONE_DMA if ARM_LPAE
+v6->v7:
+ * Added rzg2l_mipi_dsi_stop_video() counterpart of rzg2l_mipi_dsi_start_video().
+ * Error labels are named according to the cleanup operation they perform.
+ * Restored Max lane capability read after dphy timing initialization
+   as per the guide lines from SoC design team.
+ * Added recommended lut values for the Global Operation Timing
+   parameters for MIPI DPHY.
+v5->v6:
+ * Updated commit description
+ * Moved handling of arst and prst from rzg2l_mipi_dsi_startup->runtime
+   PM suspend/resume handlers.
+ * Max lane capability read at probe(), and enforced in
+   rzg2l_mipi_dsi_host_attach()
+ * Simplified vich1ppsetr setting.
+ * Renamed hsclk_running_mode,hsclk_mode->is_clk_cont.
+ * Fixed typo in probe error message(arst->rst).
+ * Reordered DRM bridge initaization in probe()
+ * Updated typo in e-mail address.
+v4->v5:
+ * Added Ack from Sam.
+ * Added a trivial change, replaced rzg2l_mipi_dsi_parse_dt()
+   with drm_of_get_data_lanes_count_ep() in probe.
+v3->v4:
+ * Updated error handling in rzg2l_mipi_dsi_startup() and rzg2l_mipi_dsi_atomic_enable().
+v2->v3:
+ * Added Rb tag from Geert and Laurent
+ * Fixed the typo "Receive" -> "transmit"
+ * Added accepible values for data-lanes
+ * Sorted Header file in the example
+ * Added SoC specific compaible along with generic one.
+ * pass rzg2l_mipi_dsi pointer to {Link,Phy} register rd/wr function instead
+   of the memory pointer
+ * Fixed the comment in rzg2l_mipi_dsi_startup()
+ * Removed unnecessary dbg message from rzg2l_mipi_dsi_start_video()
+ * DRM bridge parameter initialization moved to probe
+ * Replaced dev_dbg->dev_err in rzg2l_mipi_dsi_parse_dt()
+ * Inserted the missing blank lane after return in probe()
+ * Added missing MODULE_DEVICE_TABLE
+ * Added include linux/bits.h in header file
+ * Fixed various macros in header file.
+ * Reorder the make file for DSI, so that it is no more dependent
+   on RZ/G2L DU patch series.
+v1->v2:
+ * Added full path for dsi-controller.yaml
+ * Modeled DSI + D-PHY as single block and updated reg property
+ * Fixed typo D_PHY->D-PHY
+ * Updated description
+ * Added interrupts and interrupt-names and updated the example 
+ * Driver rework based on dt-binding changes (DSI + D-PHY) as single block
+ * Replaced link_mmio and phy_mmio with mmio in struct rzg2l_mipi_dsi
+ * Replaced rzg2l_mipi_phy_write with rzg2l_mipi_dsi_phy_write
+   and rzg2l_mipi_dsi_link_write
+ * Replaced rzg2l_mipi_phy_read->rzg2l_mipi_dsi_link_read
+RFC->v1:
+ * Added a ref to dsi-controller.yaml.
+ * Added "depends on ARCH_RENESAS || COMPILE_TEST" on KCONFIG
+   and dropped DRM as it is implied by DRM_BRIDGE
+ * Used devm_reset_control_get_exclusive() for reset handle
+ * Removed bool hsclkmode from struct rzg2l_mipi_dsi
+ * Added error check for pm, using pm_runtime_resume_and_get() instead of
+   pm_runtime_get_sync()
+ * Added check for unsupported formats in rzg2l_mipi_dsi_host_attach()
+ * Avoided read-modify-write stopping hsclock
+ * Used devm_platform_ioremap_resource for resource allocation
+ * Removed unnecessary assert call from probe and remove.
+ * wrap the line after the PTR_ERR() in probe()
+ * Updated reset failure messages in probe
+ * Fixed the typo arstc->prstc
+ * Made hex constants to lower case.
+RFC:
+ * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-22-biju.das.jz@bp.renesas.com/
+ * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-23-biju.das.jz@bp.renesas.com/
+
+Biju Das (2):
+  dt-bindings: display: bridge: Document RZ/G2L MIPI DSI TX bindings
+  drm: rcar-du: Add RZ/G2L DSI driver
+
+ .../bindings/display/bridge/renesas,dsi.yaml  | 182 ++++
+ drivers/gpu/drm/rcar-du/Kconfig               |   8 +
+ drivers/gpu/drm/rcar-du/Makefile              |   2 +
+ drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c      | 782 ++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h | 151 ++++
+ 5 files changed, 1125 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+ create mode 100644 drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
+ create mode 100644 drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h
+
 -- 
 2.25.1
 
