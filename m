@@ -2,143 +2,314 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C148C54EE9
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 18 Sep 2022 13:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE9DC32771
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 18 Sep 2022 15:22:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbiIRNa1 (ORCPT
+        id S229744AbiIRPWR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 18 Sep 2022 09:30:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46758 "EHLO
+        Sun, 18 Sep 2022 11:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbiIRNaZ (ORCPT
+        with ESMTP id S229813AbiIRPWR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Sep 2022 09:30:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98D5A1B78F
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Sep 2022 06:30:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BDB661509
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Sep 2022 13:30:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7C1D2C433D6
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Sep 2022 13:30:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663507820;
-        bh=zbroMBkxCsvnC2OaDUW/QhgGghG76ENRd+kcU7ZlpCg=;
-        h=Subject:From:Date:To:From;
-        b=qyIEwFMP/KOJpWvcqkORJJ5i+Bio9MqvlRqIHekBY62TGCaRI8Xa2XY3lyRXloPqH
-         OrMJhgal5d7DGLhcPB+rglJ2jnde2UWweWUsGAZFAm/P2MQ4MYaexwYWLdyMs0MwGw
-         dTKhnqmz6OybZ3qpJ9n+wPoemoA8y/ilM9D6+SXYwr1psvbV43kGnqYWEz1VK7oMJ6
-         o/QneGAdWTQ6l99BWsbVl87Gvioktt1pcKhXRPuod3E8bnNw70kv/IX0Afr5lCCU08
-         BWiLw6yontq4ckZB/C66I0MThrG8mfXHfhm7x+YWEQcvu9xo4+llrg5pQI6R/LrLkB
-         JI/y6ToenPBMA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 52C9DC73FFD
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Sep 2022 13:30:20 +0000 (UTC)
+        Sun, 18 Sep 2022 11:22:17 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F62654F
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Sep 2022 08:22:15 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id e68so25811558pfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Sep 2022 08:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date;
+        bh=W44pppLrDi0HVc78Flt5ZPqsQRSTiJPcvJvn2WH3Stg=;
+        b=fSblJ0iVfybFFilc6D2MENgpiifxxQALWqrAmp7Pp7Zytk3DddX+fPRZuYXtr8Mb5A
+         IBTFTpNfei6qjmFmk7cG3+TnudyWSpiUZmHfA4bZ/7Xc39NookT9448LGcpEpwtH/QI+
+         JTNJxlXZRG7/yrMUHH/dpgnV4/9Eaf0P66g4q2ALqDKd4sYnGPrnl0Wh/rkueVKUEnqu
+         w/EbGR675xIzZMe5hPTW4NwCxexH33LwTqIm6HCmJSGfUm6qtJtR9YzBY5TCgmTadle3
+         rPz8AHOE+ubWlETAfvgYMQeyN6ovgNXoskZoQQuL+283Gg7+tpBLA/ERfu+ksHy+Ynun
+         r9ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date;
+        bh=W44pppLrDi0HVc78Flt5ZPqsQRSTiJPcvJvn2WH3Stg=;
+        b=wJ2lUEBTO9U2gBtXjSWPsAbtOFNXmhDeHoFRSOxGXCJ3tIlRZZYZTXHX3RKwNnnwAu
+         GrT9jmgHAyRNXsnCXr6o9wPAypb/1btxkk7sXRlwFS0ntuNESvGf9IO4m1cNQoFaKAsv
+         MagpqTHc88u39o1Dtwj8nv4QVkSL4CrFxkNejbCTZYuPbZdZcvJTk4n9OOksjA6i60x+
+         vfa+IjZO5Q0xmzfedSxDLJCHg9ix2RIgzGurp1Px26kQURmKMaxjjr1DjfgAzkXywUCt
+         v9KLcmpZHAyKWdhg7KuO4ROYsTTLDohi7og+XMDC6aU+/0igPHdi+vB89+aLXgzM3ZN1
+         rEnQ==
+X-Gm-Message-State: ACrzQf2bD8jrI/8ErRJq9L5fHr3LbAetn4OOoONrbj3gJyaiCiibees6
+        dRkGGI0ksKscyUaMp5pi39tqgjsSxsFabe3D9Ps=
+X-Google-Smtp-Source: AMsMyM4bbVRLKjfYwrGrpIYvLOeDIrtVNPWwxSjCWyVY7KdYyGJin5AucKFmGC3uxsy0Aev75D5CZw==
+X-Received: by 2002:a05:6a00:230f:b0:53e:2c2c:5c03 with SMTP id h15-20020a056a00230f00b0053e2c2c5c03mr14088615pfh.11.1663514535172;
+        Sun, 18 Sep 2022 08:22:15 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id m3-20020a638c03000000b0042bd73400b6sm16880271pgd.87.2022.09.18.08.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Sep 2022 08:22:14 -0700 (PDT)
+Message-ID: <632737a6.630a0220.2d478.d075@mx.google.com>
+Date:   Sun, 18 Sep 2022 08:22:14 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <166350782020.16137.16668281262507670679.git-patchwork-summary@kernel.org>
-Date:   Sun, 18 Sep 2022 13:30:20 +0000
-To:     linux-renesas-soc@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: next
+X-Kernelci-Tree: renesas
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-next-2022-09-18-v6.0-rc1
+Subject: renesas/next cros-ec: 10 runs,
+ 7 regressions (renesas-next-2022-09-18-v6.0-rc1)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+renesas/next cros-ec: 10 runs, 7 regressions (renesas-next-2022-09-18-v6.0-=
+rc1)
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+Regressions Summary
+-------------------
 
-Series: arm64: dts: renesas: r8a779g0/white-hawk enhancements
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=675614
-  Lore link: https://lore.kernel.org/r/cover.1662715538.git.geert+renesas@glider.be
-    Patches: [01/14] arm64: dts: renesas: r8a779g0: Add RWDT node
-             [02/14] arm64: dts: renesas: white-hawk-cpu: Enable watchdog timer
-             [03/14] arm64: dts: renesas: r8a779g0: Add pinctrl device node
-             [04/14] arm64: dts: renesas: white-hawk-cpu: Add serial port pin control
-             [05/14] arm64: dts: renesas: r8a779g0: Add I2C nodes
-             [06/14] arm64: dts: renesas: white-hawk: Add I2C0 and EEPROMs
-             [07/14] arm64: dts: renesas: white-hawk: Add CSI/DSI sub-board
-             [08/14] arm64: dts: renesas: white-hawk: Add Ethernet sub-board
-             [09/14] arm64: dts: renesas: r8a779f0: Add GPIO nodes
-             [10/14] arm64: dts: renesas: white-hawk-cpu: Add GP LEDs
-             [11/14] arm64: dts: renesas: white-hawk-cpu: Add push switches
-             [12/14] arm64: dts: renesas: r8a779g0: Add RAVB nodes
-             [13/14] arm64: dts: renesas: white-hawk: Move aliases and chosen
-             [14/14] arm64: dts: renesas: white-hawk-cpu: Add Ethernet support
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
 
-Patch: arm64: dts: renesas: r8a779a0: Update to R-Car Gen4 compatible values
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=676992
-  Lore link: https://lore.kernel.org/r/f14fde21270bf8269a61a75fc6e50af2765f2a42.1663164707.git.geert+renesas@glider.be
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
 
-Patch: [RESEND] arm64: dts: renesas: spider: add missing bootargs
-  Submitter: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=676379
-  Lore link: https://lore.kernel.org/r/87leqo58ox.wl-kuninori.morimoto.gx@renesas.com
+mt8173-elm-hana              | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 1          =
 
-Patch: ARM: shmobile: Kconfig: Drop selecting SOC_BUS
-  Submitter: Prabhakar <prabhakar.csengg@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=677450
-  Lore link: https://lore.kernel.org/r/20220915233852.415407-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-
-Patch: arm64: Kconfig.platforms: renesas: Drop selecting SOC_BUS
-  Submitter: Prabhakar <prabhakar.csengg@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=677449
-  Lore link: https://lore.kernel.org/r/20220915233640.415305-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-
-Series: RZ/G2UL SMARC EVK trivial changes
-  Submitter: Prabhakar <prabhakar.csengg@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=677399
-  Lore link: https://lore.kernel.org/r/20220915165256.352843-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-    Patches: [1/2] arm64: dts: renesas: rzg2ul-smarc: Include SoM DTSI into board DTS
-
-Patch: arm64: dts: renesas: rzg2ul-smarc-som: Drop enabling wdt2
-  Submitter: Prabhakar <prabhakar.csengg@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=676968
-  Lore link: https://lore.kernel.org/r/20220914134211.199631-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-
-Patch: arm64: dts: renesas: spider: Move aliases and chosen
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=677006
-  Lore link: https://lore.kernel.org/r/c03500bb10eae10caeb3f4f97bc979eeee6cce75.1663167551.git.geert+renesas@glider.be
-
-Patch: ARM: dts: renesas: Fix USB PHY device and child node names
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=676991
-  Lore link: https://lore.kernel.org/r/6442b4042e26537abc8632c4772f8201685f1f1f.1663165098.git.geert+renesas@glider.be
-
-Patch: arm64: dts: renesas: Adjust whitespace around '{'
-  Submitter: Prabhakar <prabhakar.csengg@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=677596
-  Lore link: https://lore.kernel.org/r/20220916100251.20329-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-
-Patch: [RESEND] arm64: dts: renesas: white-hawk: add missing bootargs
-  Submitter: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=676380
-  Lore link: https://lore.kernel.org/r/87k06858oe.wl-kuninori.morimoto.gx@renesas.com
+rk3399-gru-kevin             | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 2          =
 
 
-Total patches: 24
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2022-09-18-v6.0-rc1/plan/cros-ec/
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+  Test:     cros-ec
+  Tree:     renesas
+  Branch:   next
+  Describe: renesas-next-2022-09-18-v6.0-rc1
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      2918d1d088b5c12f5449318fd4a0230455fa5752
+
+  Test suite revisions:
+    cros-ec-tests
+      URL:  https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform=
+/cros-ec-tests.git
+      SHA:  86181a7fbd379fc42314c450740d2cea8cdf04c1 =
 
 
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6327253e5075dafcb9355655
+
+  Results:     5 PASS, 2 FAIL, 12 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-09-18-v6.0-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora=
+/cros-ec-hp-x360-12b-ca0010nr-n4020-octopus.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-09-18-v6.0-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora=
+/cros-ec-hp-x360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220826.0/amd64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.test_cros_ec_gyro_iio_abi: https://kernelci.org/test/case/id/63=
+27253e5075dafcb9355666
+        failing since 34 days (last pass: renesas-next-2022-07-07-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1) =
+
+
+  * cros-ec.test_cros_ec_accel_iio_abi: https://kernelci.org/test/case/id/6=
+327253e5075dafcb9355668
+        failing since 34 days (last pass: renesas-next-2022-07-07-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1)
+
+    2022-09-18T14:03:22.579918  / # =
+
+    2022-09-18T14:03:22.584669  =
+
+    2022-09-18T14:03:22.686297  / # #
+    2022-09-18T14:03:22.691269  #
+    2022-09-18T14:03:22.792239  / # export SHELL=3D/bin/sh
+    2022-09-18T14:03:22.797171  export SHELL=3D/bin/sh
+    2022-09-18T14:03:22.898099  / # . /lava-7304818/environment
+    2022-09-18T14:03:22.903067  . /lava-7304818/environment
+    2022-09-18T14:03:23.004007  / # /lava-7304818/bin/lava-test-runner /lav=
+a-7304818/0
+    2022-09-18T14:03:23.008863  /lava-7304818/bin/lava-test-runner /lava-73=
+04818/0 =
+
+    ... (7 line(s) more)  =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6327243ba56b684f7635564b
+
+  Results:     5 PASS, 2 FAIL, 12 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-09-18-v6.0-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora=
+/cros-ec-hp-x360-14-G1-sona.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-09-18-v6.0-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora=
+/cros-ec-hp-x360-14-G1-sona.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220826.0/amd64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.test_cros_ec_gyro_iio_abi: https://kernelci.org/test/case/id/63=
+27243ba56b684f7635565c
+        failing since 34 days (last pass: renesas-next-2022-07-07-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1) =
+
+
+  * cros-ec.test_cros_ec_accel_iio_abi: https://kernelci.org/test/case/id/6=
+327243ba56b684f7635565e
+        failing since 34 days (last pass: renesas-next-2022-07-07-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1)
+
+    2022-09-18T13:58:58.761247  / # =
+
+    2022-09-18T13:58:58.767392  =
+
+    2022-09-18T13:58:58.873548  / # #
+    2022-09-18T13:58:58.880058  #
+    2022-09-18T13:58:58.982440  / # export SHELL=3D/bin/sh
+    2022-09-18T13:58:58.988907  export SHELL=3D/bin/sh
+    2022-09-18T13:58:59.090835  / # . /lava-7304817/environment
+    2022-09-18T13:58:59.096766  . /lava-7304817/environment
+    2022-09-18T13:58:59.199078  / # /lava-7304817/bin/lava-test-runner /lav=
+a-7304817/0
+    2022-09-18T13:58:59.205649  /lava-7304817/bin/lava-test-runner /lava-73=
+04817/0 =
+
+    ... (7 line(s) more)  =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+mt8173-elm-hana              | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6327287792f89a4989355644
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-09-18-v6.0-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cros-=
+ec-mt8173-elm-hana.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-09-18-v6.0-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cros-=
+ec-mt8173-elm-hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220826.0/arm64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.login: https://kernelci.org/test/case/id/6327287792f89a49893556=
+45
+        failing since 34 days (last pass: renesas-next-2022-07-05-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+rk3399-gru-kevin             | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6327284641c967215535567b
+
+  Results:     5 PASS, 2 FAIL, 12 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-09-18-v6.0-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cros-=
+ec-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-09-18-v6.0-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cros-=
+ec-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20220826.0/arm64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.test_cros_ec_gyro_iio_abi: https://kernelci.org/test/case/id/63=
+27284641c967215535568c
+        failing since 34 days (last pass: renesas-next-2022-07-05-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1) =
+
+
+  * cros-ec.test_cros_ec_accel_iio_abi: https://kernelci.org/test/case/id/6=
+327284641c967215535568e
+        failing since 34 days (last pass: renesas-next-2022-07-05-v5.19-rc1=
+, first fail: renesas-next-2022-08-15-v6.0-rc1)
+
+    2022-09-18T14:16:20.482349  / # =
+
+    2022-09-18T14:16:20.485546  =
+
+    2022-09-18T14:16:20.595941  / # #
+    2022-09-18T14:16:20.599268  #
+    2022-09-18T14:16:20.702809  / #export SHELL=3D/bin/sh
+    2022-09-18T14:16:20.705152   export SHELL=3D/bin/sh
+    2022-09-18T14:16:20.807649  / # . /lava-7305090/environment
+    2022-09-18T14:16:20.810627  . /lava-7305090/environment
+    2022-09-18T14:16:20.914313  / # /lava-7305090/bin/lava-test-runner /lav=
+a-7305090/0
+    2022-09-18T14:16:20.917657  /lava-7305090/bin/lava-test-runner /lava-73=
+05090/0 =
+
+    ... (8 line(s) more)  =
+
+ =20
