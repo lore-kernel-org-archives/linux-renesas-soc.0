@@ -2,62 +2,66 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABCAC6FA90
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Sep 2022 10:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF42C54EE9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Sep 2022 10:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbiISKGt (ORCPT
+        id S229714AbiISKKv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Sep 2022 06:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38454 "EHLO
+        Mon, 19 Sep 2022 06:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230247AbiISKGp (ORCPT
+        with ESMTP id S229540AbiISKKu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2022 06:06:45 -0400
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E914213D61;
-        Mon, 19 Sep 2022 03:06:41 -0700 (PDT)
-Received: by mail-qk1-f182.google.com with SMTP id 3so19718984qka.5;
-        Mon, 19 Sep 2022 03:06:41 -0700 (PDT)
+        Mon, 19 Sep 2022 06:10:50 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FBE2175B6;
+        Mon, 19 Sep 2022 03:10:45 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id 3so19723695qka.5;
+        Mon, 19 Sep 2022 03:10:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=1NtF7epU6M/sM/9TSpbDJEVXR5l82D2T5Zs5FGK4Z50=;
-        b=BgTwW7JMen0fDGy/gqKhf08TxAIClx+E2Pgdn5jKkZt3M2YZ1aEhcLW2NmkM3iA1Bg
-         oLClnhugzLz9p37XtQ6VuUM4BADudFRe55DIdWQrdEpq0z2WDRKxhWvdXx/pXKLUJWcl
-         kQpAJtZJvpbgshzMTPyuod//ztSmLhmbDXfwPkOlREEM0a1NxTIyo22vVm2RcXuBUc8S
-         veeUgsAzJspGbFn1X+2T+P8TrGqiDdpBPSz9OW13DNNxQNF5AkZLNsaGpTxRRwdzB0M6
-         OVOT1rW8/9VqfKps82pBuC4dgxmwOG/wbPmwR2UuyROYcI5qV/J5E1DFC/Jn+id2aCo3
-         fBCQ==
-X-Gm-Message-State: ACrzQf0xvEdBjvWKe80moxWoB4FJGHgYuMipVzbGR6NBu8ORm8xlCTHl
-        pgbl2uPMduw8cXIR4m2hqXz1RV+7kxv/vw==
-X-Google-Smtp-Source: AMsMyM7BQ1RDTZ6J5JtzH4pObZz4IIX7led5oRYY4nRDllRwEvzDCQmvVP2zNJmT45f6WIl2pz5jBg==
-X-Received: by 2002:a05:620a:4555:b0:6ce:1af9:83fa with SMTP id u21-20020a05620a455500b006ce1af983famr12451382qkp.24.1663582000663;
-        Mon, 19 Sep 2022 03:06:40 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id p8-20020a05622a00c800b0035bb8168daesm10680079qtw.57.2022.09.19.03.06.40
+        bh=rvouYMCfTHFXehJMfj1wqjvz02ze/sMD6F7RyGxCLAk=;
+        b=NqmQepT001G1vepUunGLC1Rt5wuf7ZYafI+ny9vxUvHTDveP9NClZ0JnNKBSs0RKE3
+         F4fopicUUOqcmTNx8stJ9Rf+Y+WCM+JyM5Hif3dPbbQZsg/xNqNcZOQ8RR6JXPwL98Ig
+         x7Q9ySxdYwFSKPm7NavbvB/M70KYZRgS+PxQ4GT9NSZopH/wNCsh+ArP/KR/Q3Ihx4Dx
+         ZGlNKZZgTqJbRsKYzjv5Mr1k4KL4bTQbLEWMuap6O0vyRojGLmEuT1/HbQigh2J5YNFR
+         pQVGSu/9jWbe829A8EC8zHYjlcHxA63UR9OMddwxM0B82lyqYh/tL3Zh2b7gTIwfCWMG
+         cnPw==
+X-Gm-Message-State: ACrzQf2jsEvb/pcCxyFlnq1TpyrsKVepl0V4fVnNdE9eHrTnBePE59bt
+        GDGyxgffrpPHoA0I3CSyvPd5R6Bxkmvs/w==
+X-Google-Smtp-Source: AMsMyM50jq9Yl4J5npGavYwZNDM4Lc3xivLFuQVIqv0uB21lxw/QfAGjYejOl22mr3aa5l9MvwJS3A==
+X-Received: by 2002:a05:620a:40d0:b0:6ce:bda8:e20a with SMTP id g16-20020a05620a40d000b006cebda8e20amr11623004qko.247.1663582244602;
+        Mon, 19 Sep 2022 03:10:44 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id q13-20020a37f70d000000b006b8e63dfffbsm12011792qkj.58.2022.09.19.03.10.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Sep 2022 03:06:40 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id c9so41729711ybf.5;
-        Mon, 19 Sep 2022 03:06:40 -0700 (PDT)
-X-Received: by 2002:a25:3746:0:b0:6b1:4a12:b2d5 with SMTP id
- e67-20020a253746000000b006b14a12b2d5mr10946218yba.89.1663581999762; Mon, 19
- Sep 2022 03:06:39 -0700 (PDT)
+        Mon, 19 Sep 2022 03:10:44 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id e187so35528708ybh.10;
+        Mon, 19 Sep 2022 03:10:44 -0700 (PDT)
+X-Received: by 2002:a25:8e84:0:b0:696:466c:baa with SMTP id
+ q4-20020a258e84000000b00696466c0baamr12820355ybl.604.1663582243840; Mon, 19
+ Sep 2022 03:10:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220919084838.3066429-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220919084838.3066429-1-biju.das.jz@bp.renesas.com>
+References: <20220914134211.199631-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVRmuQm5xRgpQurCJTu7goqNi5zj+Q9cLLz_s_p=znbbA@mail.gmail.com>
+ <CA+V-a8vDMFKJb0wDOR8LZifRDBa0hju-YgL_BDb0chVjpef98w@mail.gmail.com> <OS0PR01MB592272F7C6A9519E1CA99647864D9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB592272F7C6A9519E1CA99647864D9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 19 Sep 2022 12:06:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVF4WDA6e4bTXuqLCKCCCYYYGW6Cufi3kPFuTGt184RJA@mail.gmail.com>
-Message-ID: <CAMuHMdVF4WDA6e4bTXuqLCKCCCYYYGW6Cufi3kPFuTGt184RJA@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: renesas_sdhi: Add clk margin for sdhi hs clock
+Date:   Mon, 19 Sep 2022 12:10:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWzWQgL1eki_aL_MnfQfM_S1yTuabWQAP8GzuA_D_A_kw@mail.gmail.com>
+Message-ID: <CAMuHMdWzWQgL1eki_aL_MnfQfM_S1yTuabWQAP8GzuA_D_A_kw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: rzg2ul-smarc-som: Drop enabling wdt2
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+Cc:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
@@ -66,88 +70,28 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Biju,
 
-On Mon, Sep 19, 2022 at 10:48 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> The SDHI high speed clock is 4 times that of the main clock. Currently,
-> there is no margin added for setting the rate associated with this
-> clock. On RZ/G2L platforms, due to lack of this margin leads to the
-> selection of a clock source with a lower clock rate compared to a higher
-> one.
+On Mon, Sep 19, 2022 at 12:06 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > On Sun, Sep 18, 2022 at 10:04 AM Geert Uytterhoeven <geert@linux-
+> > m68k.org> wrote:
+> > > On Wed, Sep 14, 2022 at 3:43 PM Prabhakar
+> > <prabhakar.csengg@gmail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > WDT CH2 is specifically to check the operation of Cortex-M33 CPU
+> > so
+> > > > don't enable WDT2 by default.
+> > > >
+> > For consistency I'll drop enabling WDT2 from the RZ/G2L{C} too.
 >
-> This patch adds a margin of (1/1024) higher to hs clock rate and there
-> by avoid looking for a smaller clock option.
+> Does remove unused clocks turn off WDT2 clock during late init??
 >
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Add a comment explaining why margin is needed and set it to
->    that particular value.
+> If that is the case, we should remove entries from clock table as well?
 
-Thanks for the update!
+Or add it to *_crit_mod_clks[]?
 
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -128,6 +128,7 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
->         struct clk *ref_clk = priv->clk;
->         unsigned int freq, diff, best_freq = 0, diff_min = ~0;
->         unsigned int new_clock, clkh_shift = 0;
-> +       unsigned int new_clock_margin;
->         int i;
->
->         /*
-> @@ -156,7 +157,16 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
->          */
->         for (i = min(9, ilog2(UINT_MAX / new_clock)); i >= 0; i--) {
->                 freq = clk_round_rate(ref_clk, new_clock << i);
-> -               if (freq > (new_clock << i)) {
-> +               /*
-> +                * Add a margin of 1/1024 rate higher to the clock rate in order
-> +                * to avoid looking for a slower clock on boundary cases (eg:
-> +                * RZ/G2L has 3 clk sources 533.333333 MHz, 400 MHz and
-> +                * 266.666666 MHz. The request for 533.333332 MHz will look for
-> +                * slower option and it selects a slower 400 MHz source clock
-> +                * instead of 533.333333 MHz).
-> +                */
-> +               new_clock_margin = (new_clock << i) + ((new_clock << i) >> 10);
-
-Unlike in the case below, "new_clock_margin" is not the margin, but
-the actual value plus the margin.  So perhaps "new_upper_limit"?
-
-Also, this value is constant inside the loop, so its calculation can
-be moved outside, and its comment can be combined with the existing
-comment just before the loop.
-
-I would also say something about rounding errors, as that is what is
-really the problem (533333333 Hz / 4 * 4 = 533333332 Hz < 533333333 Hz).
-
-> +               if (freq > new_clock_margin) {
->                         /* Too fast; look for a slightly slower option */
->                         freq = clk_round_rate(ref_clk, (new_clock << i) / 4 * 3);
->                         if (freq > (new_clock << i))
-> @@ -181,6 +191,7 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
->  static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
->                                    unsigned int new_clock)
->  {
-> +       unsigned int clk_margin;
->         u32 clk = 0, clock;
->
->         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-> @@ -194,7 +205,13 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
->         host->mmc->actual_clock = renesas_sdhi_clk_update(host, new_clock);
->         clock = host->mmc->actual_clock / 512;
->
-> -       for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
-> +       /*
-> +        * Add a margin of 1/1024 rate higher to the clock rate in order
-> +        * to avoid clk variable setting a value of 0 due to the margin
-> +        * provided for actual_clock in renesas_sdhi_clk_update().
-> +        */
-> +       clk_margin = new_clock >> 10;
-> +       for (clk = 0x80000080; new_clock + clk_margin >= (clock << 1); clk >>= 1)
->                 clock <<= 1;
->
->         /* 1/1 clock is option */
-
-The rest LGTM.
+Note that drivers/clk/renesas/r9a07g043-cpg.c creates wdt2 clocks
+and resets, so that should probably be moved inside the #ifdef
+CONFIG_ARM64 section.
 
 Gr{oetje,eeting}s,
 
