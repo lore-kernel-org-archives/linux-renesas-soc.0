@@ -2,125 +2,141 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B10F7C54EE9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Sep 2022 18:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB47C6FA82
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Sep 2022 18:50:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbiITSPf (ORCPT
+        id S230356AbiITSuN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 20 Sep 2022 14:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49938 "EHLO
+        Tue, 20 Sep 2022 14:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbiITSPd (ORCPT
+        with ESMTP id S229954AbiITSuM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2022 14:15:33 -0400
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F444BD13;
-        Tue, 20 Sep 2022 11:15:32 -0700 (PDT)
-Received: by mail-qv1-f51.google.com with SMTP id y9so2631728qvo.4;
-        Tue, 20 Sep 2022 11:15:32 -0700 (PDT)
+        Tue, 20 Sep 2022 14:50:12 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2536F5EDEB;
+        Tue, 20 Sep 2022 11:50:11 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id b5so5952617wrr.5;
+        Tue, 20 Sep 2022 11:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=saqg8LuTfnsZJ3d3nMOzIGbEOHySgN+QOr+Fyh+oGvU=;
+        b=E3ktKEw2bONyUNtQQWmOeDI6X3m1DixFawO1GiepuTNO1sXDthzgQ4AfspuniNn9H1
+         LHTX9UQb6zogKWmaABU39Kpspu4ctnn0hXltY7kKL7cPiEY83A3kDuDGgkZqbn4jZvO/
+         44N0+1ubbByGRJ3Ej1Tipf9PaqXb2cVxt87fsVSOpnRGAyiKHDcMmSnj31l/1hlAPYQ6
+         nadc89sfcsm/iB0jgHlJR7V4pA/F2+2XgdQIjaGZdQibzb3+GwxCz17v5XSIRv4n5I0Q
+         GNXQdG56mDvGmi2DoJMrmzWccRPX7HY6s7OVR0qxGEnern3sM0erXCz7/Yygi018sGnL
+         8teg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=DXGgRFrzenuJCQ3cBD3T9BZ4V6UBP/IlbFITLbOc4wA=;
-        b=XdozD86JEDcN2edKTqxCGYhFBH6R9h+IL/8PwHX9G/hjEFr6bSFj7FV2XDSbLjGV4b
-         iS+6mVWYlUoamwIJWNL0AoRfmC1E6H4HZ0HYtzpk3K5OBSJNfmk6yj/uHNntsvC35CFL
-         3DK4TxpcS3NF4QVrNxEOEWIQXSMsi999+FaXthDXuOGv43YxUvt5bZeZ6ijhAAz65BK0
-         2wLbtqD2Q0UAqR00xGjjcfAzmsEvirk1DnmRaHhSH9YISj/gAgO8nzG5alQLqBS/vAyb
-         vV35gQWz7rjqBDZS+M5weUvhPJgfBC4uNaNu77YEIlffjrxVh9j9+sVDtYxCoObCUldB
-         cA8g==
-X-Gm-Message-State: ACrzQf3J61qjSsIr+v9gZh4GQ1onOrFg4/w0j9lEM+Ye0aKexsxpvkoD
-        EeH6vpYrXqHfGZ0DQBQxSFzIa1g6lwH5NA==
-X-Google-Smtp-Source: AMsMyM6+NVbuGAFP7iY/mBRyhepCkBT0huTttfO1iK/AqcuMOLDlG/HxSi+aTawBS7H1kQqUFSO77w==
-X-Received: by 2002:a0c:f307:0:b0:4aa:a431:c184 with SMTP id j7-20020a0cf307000000b004aaa431c184mr20783836qvl.76.1663697731003;
-        Tue, 20 Sep 2022 11:15:31 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id l5-20020a05620a28c500b006bc1512986esm317501qkp.97.2022.09.20.11.15.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Sep 2022 11:15:30 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id 63so4630067ybq.4;
-        Tue, 20 Sep 2022 11:15:30 -0700 (PDT)
-X-Received: by 2002:a05:6902:45:b0:6ae:ce15:a08d with SMTP id
- m5-20020a056902004500b006aece15a08dmr20152275ybh.380.1663697730098; Tue, 20
- Sep 2022 11:15:30 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=saqg8LuTfnsZJ3d3nMOzIGbEOHySgN+QOr+Fyh+oGvU=;
+        b=kbBp1OipMm1R6SjXE1/6DUhanCIlX8v5Z9c2NvWpx8yFzWgbXtJH9/ZNyne9FQGdxZ
+         P/Vin4eIrJjXLCUxN/D78TiWYO/qc9DBJLIlyxd4M2SwxWiF1xo5YNsYCIreeJLuZRIb
+         CrszwwBqbkqph8Z0rNfwbw5WoFhbFGs+4G7weS36KoM5K2qfJxNBchyD3vciVy/zLcJs
+         nPeCDuUGl2+HZjNxVwGEp778M8/DzKBysV1RQURYDBO3pFlLgUmMwFrGYh8YPunkheP5
+         1EFz09GSlH7gG1udqMuABo1M0RjIAuz4bR2tJBap4eQqaXwjl9nOlKz1/XQg/1qptzhc
+         4wIg==
+X-Gm-Message-State: ACrzQf3jUB/cjLgXYDfiQ2Ow2uTW808dkMFW7iP0E4G4+eq9bUDUw2hU
+        xfb4rIeLDNOYndL+2GoQ0WQ=
+X-Google-Smtp-Source: AMsMyM6YSYr7WZq5t409SBpqy6SEPOcUNamgNdIAG/hLQ1jI52bmu+/GKkSkUtkbhOGNxb4SJmqqrg==
+X-Received: by 2002:adf:e10f:0:b0:22a:43e8:969f with SMTP id t15-20020adfe10f000000b0022a43e8969fmr15964281wrz.292.1663699809541;
+        Tue, 20 Sep 2022 11:50:09 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:e9a4:d6c9:505d:20d0])
+        by smtp.gmail.com with ESMTPSA id cc4-20020a5d5c04000000b00228de351fc0sm582722wrb.38.2022.09.20.11.50.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Sep 2022 11:50:08 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Conor Dooley <conor.dooley@microchip.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+        Atish Patra <atishp@rivosinc.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 01/10] dt-bindings: soc: renesas: Move renesas.yaml from arm to soc
+Date:   Tue, 20 Sep 2022 19:48:55 +0100
+Message-Id: <20220920184904.90495-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220920184904.90495-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220920184904.90495-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 20 Sep 2022 20:15:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdURCeAVt_2L33P197qbj3UBXLWRZH0nZvm+UJbnzBCS2A@mail.gmail.com>
-Message-ID: <CAMuHMdURCeAVt_2L33P197qbj3UBXLWRZH0nZvm+UJbnzBCS2A@mail.gmail.com>
-Subject: E1000e PTP crash on R-Car Gen2
-To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        Miroslav Lichvar <mlichvar@redhat.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        intel-wired-lan@lists.osuosl.org, netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi all,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-While leaving a Renesas Koelsch development board (with R-Car M2-W SoC)
-and an otherwise unused Intel E1000e Ethernet card running unattended, I
-ran into a crash after 4 hours and 5 minutes of uptime:
+renesas.yaml lists out all the Renesas SoC's and the platforms/EVK's which
+is either ARM32/ARM64. It would rather make sense if we move renesas.yaml
+to the soc/renesas folder instead. This is in preparation for adding a new
+SoC (RZ/Five) from Renesas which is based on RISC-V.
 
-    Unhandled fault: asynchronous external abort (0x1211) at 0x00000000
-    [00000000] *pgd=80000040004003, *pmd=00000000
-    Internal error: : 1211 [#1] SMP ARM
-    Modules linked in:
-    CPU: 0 PID: 581 Comm: kworker/0:0 Tainted: G                 N
-6.0.0-rc6-koelsch-00864-g34666b5da80f #1661
-    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-    Workqueue: events e1000e_systim_overflow_work
-    PC is at e1000e_read_systim+0x3c/0x1c0
-    LR is at timecounter_read+0x14/0xa0
+While at it drop the old entry for renesas.yaml from MAINTAINERS file and
+there is no need to update the new file path of renesas.yaml as we already
+have an entry for Documentation/devicetree/bindings/soc/renesas/ folder.
 
-    [...]
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3 -> v4
+* Updated the path in the DT binding
+* Included RB tag from Geert
 
-     e1000e_read_systim from timecounter_read+0x14/0xa0
-     timecounter_read from e1000e_systim_overflow_work+0x24/0x7c
-     e1000e_systim_overflow_work from process_one_work+0x2f0/0x4c4
-     process_one_work from worker_thread+0x240/0x2d0
-     worker_thread from kthread+0xd0/0xe0
-     kthread from ret_from_fork+0x14/0x34
+v3:
+* New patch along with this series previously posted as a standalone
+patch [0].
 
-    [...]
+[0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220815111708.22302-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+---
+ .../devicetree/bindings/{arm => soc/renesas}/renesas.yaml       | 2 +-
+ MAINTAINERS                                                     | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+ rename Documentation/devicetree/bindings/{arm => soc/renesas}/renesas.yaml (99%)
 
-    BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 39s!
+diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+similarity index 99%
+rename from Documentation/devicetree/bindings/arm/renesas.yaml
+rename to Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index f51464a08aff..07c5e6ebd5a0 100644
+--- a/Documentation/devicetree/bindings/arm/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/arm/renesas.yaml#
++$id: http://devicetree.org/schemas/soc/renesas/renesas.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Renesas SH-Mobile, R-Mobile, and R-Car Platform
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d71b20527224..48c5a152f743 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2679,7 +2679,6 @@ S:	Supported
+ Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
+ C:	irc://irc.libera.chat/renesas-soc
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+-F:	Documentation/devicetree/bindings/arm/renesas.yaml
+ F:	Documentation/devicetree/bindings/hwinfo/renesas,prr.yaml
+ F:	Documentation/devicetree/bindings/soc/renesas/
+ F:	arch/arm/boot/dts/emev2*
+-- 
+2.25.1
 
-    [...]
-
-This happened when checking if the time counter overflowed, which is done
-from a workqueue periodically (E1000_SYSTIM_OVERFLOW_PERIOD = 4 hours).
-The asynchronous external abort is a typical symptom of accessing a
-device's hardware registers (in this case the PCIe controller) while the
-device's clock is disabled, so presumably the workqueue ran while the
-device was runtime-suspended.
-
-I don't know much about how and when Linux uses PTP, but I did notice
-drivers/net/ethernet/intel/e1000e/netdev.c makes several pm_runtime_*()
-calls (but not in e1000e_read_systim()), while
-drivers/net/ethernet/intel/e1000e/ptp.c makes none.
-
-Unfortunately I haven't managed to reproduce the problem (even with
-E1000_SYSTIM_OVERFLOW_PERIOD reduced), so probably there is a race
-condition somewhere.
-
-Thanks for your comments!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
