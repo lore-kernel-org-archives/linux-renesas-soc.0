@@ -2,55 +2,52 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 090D8C6FA82
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Sep 2022 01:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF33FC54EE9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Sep 2022 01:10:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbiITBKa (ORCPT
+        id S229892AbiITBK3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Sep 2022 21:10:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45312 "EHLO
+        Mon, 19 Sep 2022 21:10:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229869AbiITBK1 (ORCPT
+        with ESMTP id S229866AbiITBKZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2022 21:10:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1754CA28;
+        Mon, 19 Sep 2022 21:10:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C279E3DBCA;
         Mon, 19 Sep 2022 18:10:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 49CD3B822B6;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C7CB562029;
         Tue, 20 Sep 2022 01:10:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D8E1DC433D6;
-        Tue, 20 Sep 2022 01:10:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 21DB2C43149;
+        Tue, 20 Sep 2022 01:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663636220;
-        bh=5TMdfKIjL6zFSE6itbf87erfcQY7LCgNjFUrXTvqFKU=;
+        s=k20201202; t=1663636221;
+        bh=34HXl4T49GzuA6i6GvvwF9X9c520F2JQ11y22QqfihY=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Z7rH639ogXreEXumqOsuElRk7tF85OGObgqK6EiNf4bnrxeb3azv38Z9ShKs22xe7
-         +2qzsWJP/fA9g4bS4Tu9pb3/M8DNVM8rjTRtDeXpq29FqxaRrPdbObovVxmG4ULhXO
-         u9BdMKnoXpxG4OWaDeV3AoTZsy+OqhP4bgNSaA0Tma/oh9L+QRGZ+pnPkgOkXKM71L
-         sNvNIn0OhnheUIPMx1V8wI7CzB1FAYaIRVWAWScTNu73iSyag8l8ErZ5GR0hS9Tm4Z
-         O/m5POTRymAFch4IH19sRDAEJXoHxfhl9jds3BDBZv9mm7U7Nlj+ZaLv+oz20vmeIx
-         AHpRG936M6E2w==
+        b=a3F+u7zgQuFTzdU46JX2Q7YvTGI+bOTd/xx+BhggRpHR2GR5R14QCjwaDvER/YdFb
+         4WP2a717Z4nleF8E2i+6LQrgg6mpCo2zFh/poIyHZ18+IHlzOQkINz5FfNX/uA27gC
+         8cnmtStfVgt5BdJZakYA6j1lJXy8xe6BViOjg65CaPBvXSLQ0UonhGsM/HdCnxG5/P
+         avEU2x6D49w8hq/dqqBJ7h1i6Ga9HfhFnE8AM2e/vC2qX1l7ok8lLhau5YmjHvAXu5
+         RpB4MkSl+eEArMnZ+nnrERD6AxY0GF/bmX4C/trRjtZiOdb4BoOqQb+ShaFcIxgZ4l
+         A1p9lQaAd3Q6w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BDC09C43141;
-        Tue, 20 Sep 2022 01:10:20 +0000 (UTC)
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0EDBAE52538;
+        Tue, 20 Sep 2022 01:10:21 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2] dt-bindings: net: renesas,etheravb: R-Car Gen4 updates
+Subject: Re: [PATCH] net: ravb: Add R-Car Gen4 support
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166363622077.23429.9768017743524095335.git-patchwork-notify@kernel.org>
-Date:   Tue, 20 Sep 2022 01:10:20 +0000
-References: <cover.1662714607.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1662714607.git.geert+renesas@glider.be>
+Message-Id: <166363622105.23429.13997190928850161238.git-patchwork-notify@kernel.org>
+Date:   Tue, 20 Sep 2022 01:10:21 +0000
+References: <2ee968890feba777e627d781128b074b2c43cddb.1662718171.git.geert+renesas@glider.be>
+In-Reply-To: <2ee968890feba777e627d781128b074b2c43cddb.1662718171.git.geert+renesas@glider.be>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s.shtylyov@omp.ru,
-        sergei.shtylyov@gmail.com, wsa+renesas@sang-engineering.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+Cc:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -58,24 +55,23 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (master)
+This patch was applied to netdev/net-next.git (master)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  9 Sep 2022 11:13:21 +0200 you wrote:
-> Hi all,
+On Fri,  9 Sep 2022 12:10:11 +0200 you wrote:
+> Add support for the Renesas Ethernet AVB (EtherAVB-IF) blocks on R-Car
+> Gen4 SoCs (e.g. R-Car V4H) by matching on a family-specific compatible
+> value.
 > 
-> This patch series contains two updates for the Renesas Ethernet AVB
-> Device Tree bindings.
+> These are treated the same as EtherAVB on R-Car Gen3.
 > 
-> Thanks!
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
 > [...]
 
 Here is the summary with links:
-  - [1/2] dt-bindings: net: renesas,etheravb: R-Car V3U is R-Car Gen4
-    https://git.kernel.org/netdev/net-next/c/1bd81d785dfc
-  - [2/2] dt-bindings: net: renesas,etheravb: Add r8a779g0 support
-    https://git.kernel.org/netdev/net-next/c/231c4f0bcdb2
+  - net: ravb: Add R-Car Gen4 support
+    https://git.kernel.org/netdev/net-next/c/949f252a8594
 
 You are awesome, thank you!
 -- 
