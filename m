@@ -2,57 +2,57 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D0FC6FA90
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Sep 2022 10:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84297ECAAD8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Sep 2022 10:13:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbiIUKKr (ORCPT
+        id S230267AbiIUKNi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 21 Sep 2022 06:10:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
+        Wed, 21 Sep 2022 06:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230072AbiIUKKU (ORCPT
+        with ESMTP id S231410AbiIUKNc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Sep 2022 06:10:20 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F65B65826;
-        Wed, 21 Sep 2022 03:10:20 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id g23so3695779qtu.2;
-        Wed, 21 Sep 2022 03:10:20 -0700 (PDT)
+        Wed, 21 Sep 2022 06:13:32 -0400
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC357FF84;
+        Wed, 21 Sep 2022 03:13:31 -0700 (PDT)
+Received: by mail-qv1-f46.google.com with SMTP id c6so4060210qvn.6;
+        Wed, 21 Sep 2022 03:13:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=/SSEuwrmJLJj9UMZKTCar/0/cGO6w/t/L7XekBxJJtM=;
-        b=qifR23m+5qwnjumNkChgxvkSA4OnaJwIJGST3orenlU+RlPakWWnVK8DvEZmYXs1W1
-         xQSMjVakdg7VPUzuP2RDZvNRtcBGTMJ/vX0sdeC1L7xCFQW/ICSz4uZhgDbAmxoOloHE
-         Mdc+cMQFAuVcoO64uK9u4h6A/PtI9x298E5CGh0kraxju3pCxShuAiQQeBHAsH1drtc3
-         bmlyS8jgEmwfN9HoM6k6MIttuG6SPno8/zUl0DSI8A3vIkxiz2T3ttmmICeuSLmrtIJG
-         oKjGhDtjQFnq4/0inlhdjikmYF+oQCIdQGF/Acj6CsrOTFnWeK+8oLP7LywT5JtZk9UB
-         gapQ==
-X-Gm-Message-State: ACrzQf0CzWnPdwB27ORmnHuHeQng8xC+lzZ/zVlYbAZum+Ih7dO2JKBV
-        bxpcPpx1ZNr6RN52ysL5cLGsTIBixn/wTpDQ
-X-Google-Smtp-Source: AMsMyM4b2MpSD2szwGj4+wZUUhpxVjAzdBW0EUTrk5EtZ3kClIFjSuBPwenyWVYxly8uku2wudfDmQ==
-X-Received: by 2002:a05:622a:5d4:b0:344:98a8:8dae with SMTP id d20-20020a05622a05d400b0034498a88daemr23067150qtb.164.1663755018880;
-        Wed, 21 Sep 2022 03:10:18 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id w7-20020ac857c7000000b0035bbb6268e2sm1560858qta.67.2022.09.21.03.10.16
+        bh=9A/p6ZkdEYO1vNEWi1IhugiWPSS0Lp7RP7GaNC2clvU=;
+        b=K/x1XSIRZ5t+HB+JVsvkRjQDFnbL2VVu8BCx61zoQCo9Jr5r0FrejptJLoiR5WBfoq
+         UAhGcsVqb0v+Jh5P/SB5/Rcwc9TjDT8D2OW81HdPtr+GkycB7/mLMb1vZ/u6PArztIr3
+         vJdaCObs36dHh2IBZU9kJauWalpQApOQn1x8YF6/obprEXf3BfUKw2EzgA6RWHJulHPn
+         GPMcvTG6vOUBIW4pLC2s+twN/KwKCSogCpsbNR992AWAZ2/1IqhLC/VykOGtAcFI6dJe
+         qX1cfl6KzToI79U8rkW08Eam59EuSHcqtOwzoFMs4PxFCK7ZA/S3tiPSAI4bVjf+E6G9
+         H1IQ==
+X-Gm-Message-State: ACrzQf2y+CDhv7T+Hn1nP6WMLFg2LIHl2jwj5ClDhravPZ3A41npkLk0
+        VDSyylRinp81q/ThJFGGzroLz9/ISgEmvEP7
+X-Google-Smtp-Source: AMsMyM6ZWzpzfyKU2lzy4ycJrV9h3j4IcW2XogqOCaIjetJtBoxuYyM5td6cajWRJkj9KspQWyBnTg==
+X-Received: by 2002:a05:6214:5190:b0:4ad:41ed:80c7 with SMTP id kl16-20020a056214519000b004ad41ed80c7mr11741018qvb.53.1663755209954;
+        Wed, 21 Sep 2022 03:13:29 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id fc11-20020a05622a488b00b003435bb7fe9csm1391920qtb.78.2022.09.21.03.13.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Sep 2022 03:10:17 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id 130so7295812ybz.9;
-        Wed, 21 Sep 2022 03:10:16 -0700 (PDT)
-X-Received: by 2002:a05:6902:2c1:b0:6b2:8bb0:79a0 with SMTP id
- w1-20020a05690202c100b006b28bb079a0mr18992385ybh.202.1663755016378; Wed, 21
- Sep 2022 03:10:16 -0700 (PDT)
+        Wed, 21 Sep 2022 03:13:29 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id a67so7350733ybb.3;
+        Wed, 21 Sep 2022 03:13:28 -0700 (PDT)
+X-Received: by 2002:a25:3746:0:b0:6b1:4a12:b2d5 with SMTP id
+ e67-20020a253746000000b006b14a12b2d5mr20690282yba.89.1663755208456; Wed, 21
+ Sep 2022 03:13:28 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAMuHMdUPm36RsxHdVwspR3NCAR3C507AyB6R65W42N2gXWq0ag@mail.gmail.com>
- <b0f2e13a-ff5d-5bfc-6dda-ca39bb57803e@linaro.org>
-In-Reply-To: <b0f2e13a-ff5d-5bfc-6dda-ca39bb57803e@linaro.org>
+ <45d2e6c2-3b4b-5720-0431-002c74b1f9cc@arm.com>
+In-Reply-To: <45d2e6c2-3b4b-5720-0431-002c74b1f9cc@arm.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 21 Sep 2022 12:10:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVKcikM0b97G99UhVtSwrxc07asB0nBqB6OL9XNXFb-gw@mail.gmail.com>
-Message-ID: <CAMuHMdVKcikM0b97G99UhVtSwrxc07asB0nBqB6OL9XNXFb-gw@mail.gmail.com>
+Date:   Wed, 21 Sep 2022 12:13:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWd5cmxgG8jdpDw3nrfrdSX6ecb+XwuJTLkkRgP5LbcHQ@mail.gmail.com>
+Message-ID: <CAMuHMdWd5cmxgG8jdpDw3nrfrdSX6ecb+XwuJTLkkRgP5LbcHQ@mail.gmail.com>
 Subject: Re: Similar SoCs with different CPUs and interrupt bindings
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Robin Murphy <robin.murphy@arm.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Andre Przywara <andre.przywara@arm.com>,
@@ -74,18 +74,58 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi Robin,
 
-On Wed, Sep 21, 2022 at 10:49 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On 21/09/2022 09:46, Geert Uytterhoeven wrote:
+On Wed, Sep 21, 2022 at 11:20 AM Robin Murphy <robin.murphy@arm.com> wrote:
+> On 2022-09-21 08:46, Geert Uytterhoeven wrote:
 > > This is a topic that came up at the RISC-V BoF at Plumbers, and it was
 > > suggested to bring it up with you.
+> >
+> > The same SoC may be available with either RISC-V or other (e.g. ARM) CPU
+> > cores (an example of this are the Renesas RZ/Five and RZ/G2UL SoCs).
+> > To avoid duplication, we would like to have:
+> >    - <riscv-soc>.dtsi includes <base-soc>.dtsi,
+> >    - <arm-soc>.dtsi includes <base-soc>.dtsi.
+> >
+> > Unfortunately RISC-V and ARM typically use different types of interrupt
+> > controllers, using different bindings (e.g. 2-cell vs. 3-cell), and
+> > possibly using different interrupt numbers.  Hence the interrupt-parent
+> > and interrupts{-extended} properties should be different, too.
+> >
+> > Possible solutions[1]:
+> >    1. interrupt-map
+> >
+> >    2. Use a SOC_PERIPHERAL_IRQ() macro in interrupts properties in
+> >       <base-soc>.dtsi, with
+> >         - #define SOC_PERIPHERAL_IRQ(nr, na) nr          // RISC-V
+> >         - #define SOC_PERIPHERAL_IRQ(nr, na) GIC_SPI na  // ARM
+> >       Note that the cpp/dtc combo does not support arithmetic, so even
+> >       the simple case where nr = 32 + na cannot be simplified.
+> >
+> >    3. Wrap inside RISCV() and ARM() macros, e.g.:
+> >
+> >          RISCV(interrupts = <412 IRQ_TYPE_LEVEL_HIGH>;)
+> >          ARM(interrupts = <GIC_SPI 380 IRQ_TYPE_LEVEL_HIGH>;)
+> >
+> >       Cfr. ARM() and THUMB() in arch/arm/include/asm/unified.h, as used
+> >       to express the same operation using plain ARM or ARM Thumb
+> >       instructions.
 >
-> I guess you also need SoC maintainers as well (+Cc Arnd and Olof). :)
+> 4. Put all the "interrupts" properties in the SoC-specific DTSI at the
+> same level as the interrupt controller to which they correspond. Works
+> out of the box with no horrible mystery macros, and is really no more or
+> less error-prone than any other approach. Yes, it means replicating a
+> bit of structure and/or having labels for everything (many of which may
+> be wanted anyway), but that's not necessarily a bad thing for
+> readability anyway. Hierarchical definitions are standard FDT practice
+> and should be well understood, so this is arguably the simplest and
+> least surprising approach :)
 
-Indeed, I had intended to include them, but forgot in the end.
-Thanks for adding!
+Thanks for the suggestion!
+
+It does mean we have to update 3 .dtsi files when adding support
+for a new device. As long as all DT changes go through the same (soc)
+tree, we can easily manage the dependencies.
 
 Gr{oetje,eeting}s,
 
