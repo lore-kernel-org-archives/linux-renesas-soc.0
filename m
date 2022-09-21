@@ -2,145 +2,218 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C41B9ECAAD8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Sep 2022 14:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B4DECAAD8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Sep 2022 15:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbiIUOmR (ORCPT
+        id S230267AbiIUPAE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 21 Sep 2022 10:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55068 "EHLO
+        Wed, 21 Sep 2022 11:00:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbiIUOmN (ORCPT
+        with ESMTP id S230317AbiIUO7r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Sep 2022 10:42:13 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4B0DC97511;
-        Wed, 21 Sep 2022 07:42:07 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 927FE13D5;
-        Wed, 21 Sep 2022 07:42:13 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80E9D3F73B;
-        Wed, 21 Sep 2022 07:42:05 -0700 (PDT)
-Date:   Wed, 21 Sep 2022 15:42:03 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Nicolas Pitre <nico@fluxnic.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        "ben.dooks@codethink.co.uk" <ben.dooks@codethink.co.uk>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Dien Pham <dien.pham.ry@renesas.com>
-Subject: Re: Question: why call clk_prepare in pm_clk_acquire
-Message-ID: <20220921144203.asmpurbklwdcprix@bogus>
-References: <DU0PR04MB94173B45A2CFEE3BF1BD313A88409@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <CAPDyKFrzJikk6rJr9xwV6W-whvdLe5tTUE+xO_EoRtm+9DAbNA@mail.gmail.com>
- <20220908173840.rqy335cdeg5a2ww5@bogus>
- <CAPDyKFqYDNXxfKHd8PYy8T3di2s206nCiHY7cEf+_EHVrY1YbQ@mail.gmail.com>
- <20220909154254.xy4jvj6ybpuynghc@bogus>
- <CAMuHMdXvTWvZHjE-7CKOxCKjuPF++xQQRGedHeL2Zy-wsnHviw@mail.gmail.com>
- <CAMuHMdX2rJq0DJo9D_RSMoAj9GPc-Zts5+UNCFQGF3+EYVSXgQ@mail.gmail.com>
- <20220914153038.inbch35g7ldsyzhx@bogus>
- <81pr96n7-p42q-s3s-1541-n777or1p612@syhkavp.arg>
- <CAPDyKFoBvX7WmJu0E1p0RuVCEKFFk===ZVnYtbz9o=RZPzHSTA@mail.gmail.com>
+        Wed, 21 Sep 2022 10:59:47 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9110C4199B;
+        Wed, 21 Sep 2022 07:57:53 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.93,333,1654527600"; 
+   d="scan'208";a="135714705"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 21 Sep 2022 23:57:52 +0900
+Received: from localhost.localdomain (unknown [10.226.92.58])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 667D7425B09F;
+        Wed, 21 Sep 2022 23:57:48 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH v7 1/2] dt-bindings: pwm: Add RZ/G2L GPT binding
+Date:   Wed, 21 Sep 2022 15:57:40 +0100
+Message-Id: <20220921145741.901784-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220921145741.901784-1-biju.das.jz@bp.renesas.com>
+References: <20220921145741.901784-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoBvX7WmJu0E1p0RuVCEKFFk===ZVnYtbz9o=RZPzHSTA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 11:53:18AM +0200, Ulf Hansson wrote:
-> On Wed, 14 Sept 2022 at 19:05, Nicolas Pitre <nico@fluxnic.net> wrote:
-> >
-> > On Wed, 14 Sep 2022, Sudeep Holla wrote:
-> >
-> > > On Mon, Sep 12, 2022 at 06:58:49PM +0100, Geert Uytterhoeven wrote:
-> > > > Hi Sudeep,
-> > > >
-> > > > CC Dien Pham
-> > > >
-> > > > On Mon, Sep 12, 2022 at 6:49 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > On Fri, Sep 9, 2022 at 4:51 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > > > > > On Fri, Sep 09, 2022 at 01:12:03PM +0200, Ulf Hansson wrote:
-> > > > > > > On Thu, 8 Sept 2022 at 19:38, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > > > > > > > On Thu, Sep 08, 2022 at 04:37:13PM +0200, Ulf Hansson wrote:
-> > > > > > > > > On Thu, 8 Sept 2022 at 09:33, Peng Fan <peng.fan@nxp.com> wrote:
-> > > > > > > > > > We are facing an issue clk_set_rate fail with commit a3b884cef873 ("firmware:
-> > > > > > > > > > arm_scmi: Add clock management to the SCMI power domain") ,
-> > > > > > > > >
-> > > > > > > > > Hmm, I wonder about the main reason behind that commit. Can we revert
-> > > > > > > > > it or is there some platform/driver that is really relying on it?
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > IIUC, at the time of the commit, it was needed on some Renesas platform.
-> > > > > > > > Not sure if it is still used or not.
-> > > > > > >
-> > > > > > > Okay! Maybe Nico remembers more, as he authored the patch...
-> > > > > > >
-> > > > > >
-> > > > > > May be, or even check with Renesas team who tested his patch.
-> > > > >
-> > > > > I'm not aware of Renesas platforms using SCMI...
-> > > >
-> > > > Upon closer look, Diep Pham did report a build issue in the SCMI code, so
-> > > > perhaps Diep knows more...
-> > > >
-> > >
-> > > Yes indeed, Diep Pham tested the original patch IIRC and also has reported
-> > > few bugs in SCMI clock code which are fixed. Hence I know it is used by
-> > > Renesas.
-> > >
-> > > Hi Peng,
-> > >
-> > > Absence of DTS changes indicate nothing. I am aware of couple of vendors
-> > > who use SCMI on several platforms and do report issues regularly and help
-> > > in review of the code. So DTS is not a good indicator of SCMI usage
-> > > unfortunately. On reason could be that since it is a firmware, bootloaders
-> > > can detect and update DTS, just my thought and may differ from the reality.
-> >
-> > Sorry for the delay.
-> >
-> > This patch was indeed requested by Renesas for one of their platform
-> > that uses SCMI clocks. I didn't have access to the platform myself at
-> > the time but the patch was positively validated and tested by Renesas.
-> >
-> > This works in conjunction with commit 0bfa0820c274 that made generic
-> > clock pm code usable with the SCMI layer.
-> >
-> > I didn't touch any clock stuff since then and I forgot about the finer
-> > details unfortunately.
-> 
-> Thanks Nico for coming back with this information. To me, it looks
-> like the patch may be applicable to some Renesas' downstream kernel
-> then.
->
+Add device tree bindings for the General PWM Timer (GPT).
 
-Though I agree in most of the case, I am not sure in this particular
-case as they may not need any downstream kernel changes for SCMI. All
-they need is DT nodes.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+v6->v7:
+ * No change.
+v5->v6:
+ * No change.
+v4->v5:
+ * No change.
+v3->v4:
+ * No change.
+v2->v3:
+ * Added Rb tag from Rob.
+v1->v2:
+ * Added '|' after 'description:' to preserve formatting.
+ * Removed description for pwm_cells as it is common property.
+ * Changed the reg size in example from 0xa4->0x100
+ * Added Rb tag from Geert.
+RFC->v1:
+ * Added Description
+ * Removed comments from reg and clock
+---
+ .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 129 ++++++++++++++++++
+ 1 file changed, 129 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
 
-> In my opinion I think we should rather try to revert, to avoid any
-> further problems. So I am going to send that patch and see what people
-> think about it.
->
-
-Since I see absolute silence from Renesas, I am happy to revert if no
-one has any objections.
-
-> Another option, which Sudeep doesn't seem very happy about too, is to
-> make the GENPD_FLAG_PM_CLK conditional, based on a platform
-> compatible.
-
-Correct, I would rather make it generic based on clock flags like in this
-case it is CLK_SET_PARENT_GATE or CLK_SET_RATE_GATE or something right ?
-
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+new file mode 100644
+index 000000000000..e8f7b9947eaa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+@@ -0,0 +1,129 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pwm/renesas,rzg2l-gpt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G2L General PWM Timer (GPT)
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |
++  RZ/G2L General PWM Timer (GPT) composed of 8 channels with 32-bit timer
++  (GPT32E). It supports the following functions
++  * 32 bits × 8 channels.
++  * Up-counting or down-counting (saw waves) or up/down-counting
++    (triangle waves) for each counter.
++  * Clock sources independently selectable for each channel.
++  * Two I/O pins per channel.
++  * Two output compare/input capture registers per channel.
++  * For the two output compare/input capture registers of each channel,
++    four registers are provided as buffer registers and are capable of
++    operating as comparison registers when buffering is not in use.
++  * In output compare operation, buffer switching can be at crests or
++    troughs, enabling the generation of laterally asymmetric PWM waveforms.
++  * Registers for setting up frame cycles in each channel (with capability
++    for generating interrupts at overflow or underflow)
++  * Generation of dead times in PWM operation.
++  * Synchronous starting, stopping and clearing counters for arbitrary
++    channels.
++  * Starting, stopping, clearing and up/down counters in response to input
++    level comparison.
++  * Starting, clearing, stopping and up/down counters in response to a
++    maximum of four external triggers.
++  * Output pin disable function by dead time error and detected
++    short-circuits between output pins.
++  * A/D converter start triggers can be generated (GPT32E0 to GPT32E3)
++  * Enables the noise filter for input capture and external trigger
++    operation.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-gpt  # RZ/G2{L,LC}
++          - renesas,r9a07g054-gpt  # RZ/V2L
++      - const: renesas,rzg2l-gpt
++
++  reg:
++    maxItems: 1
++
++  '#pwm-cells':
++    const: 2
++
++  interrupts:
++    items:
++      - description: GTCCRA input capture/compare match
++      - description: GTCCRB input capture/compare
++      - description: GTCCRC compare match
++      - description: GTCCRD compare match
++      - description: GTCCRE compare match
++      - description: GTCCRF compare match
++      - description: GTADTRA compare match
++      - description: GTADTRB compare match
++      - description: GTCNT overflow/GTPR compare match
++      - description: GTCNT underflow
++
++  interrupt-names:
++    items:
++      - const: ccmpa
++      - const: ccmpb
++      - const: cmpc
++      - const: cmpd
++      - const: cmpe
++      - const: cmpf
++      - const: adtrga
++      - const: adtrgb
++      - const: ovf
++      - const: unf
++
++  clocks:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - power-domains
++  - resets
++
++allOf:
++  - $ref: pwm.yaml#
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    gpt4: pwm@10048400 {
++        compatible = "renesas,r9a07g044-gpt", "renesas,rzg2l-gpt";
++        reg = <0x10048400 0x100>;
++        interrupts = <GIC_SPI 270 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 271 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 272 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 273 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 274 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 275 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 276 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 277 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 278 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 279 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names = "ccmpa", "ccmpb", "cmpc", "cmpd",
++                          "cmpe", "cmpf", "adtrga", "adtrgb",
++                          "ovf", "unf";
++        clocks = <&cpg CPG_MOD R9A07G044_GPT_PCLK>;
++        power-domains = <&cpg>;
++        resets = <&cpg R9A07G044_GPT_RST_C>;
++        #pwm-cells = <2>;
++    };
 -- 
-Regards,
-Sudeep
+2.25.1
+
