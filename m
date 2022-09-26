@@ -2,71 +2,68 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C73C6FA92
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Sep 2022 16:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9EDC6FA82
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Sep 2022 16:15:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234471AbiIZQOG (ORCPT
+        id S235574AbiIZQPU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 26 Sep 2022 12:14:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36700 "EHLO
+        Mon, 26 Sep 2022 12:15:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233205AbiIZQNJ (ORCPT
+        with ESMTP id S236512AbiIZQOr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Sep 2022 12:13:09 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A74544D25D
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Sep 2022 08:01:53 -0700 (PDT)
+        Mon, 26 Sep 2022 12:14:47 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25174D58AA
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Sep 2022 08:03:32 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:d95b:5c9b:4085:7c0d])
-        by albert.telenet-ops.be with bizsmtp
-        id Qf1r280063Qogd106f1rzL; Mon, 26 Sep 2022 17:01:51 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id Qf3W280083Qogd101f3Wjh; Mon, 26 Sep 2022 17:03:30 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ocpcE-006Jcm-Pm; Mon, 26 Sep 2022 17:01:50 +0200
+        id 1ocpdp-006Jda-Rm; Mon, 26 Sep 2022 17:03:29 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ocpcE-00DO3E-4J; Mon, 26 Sep 2022 17:01:50 +0200
+        id 1ocpdp-00DO6A-Ct; Mon, 26 Sep 2022 17:03:29 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] clk: renesas: r8a779g0: Add SYS-DMAC clocks
-Date:   Mon, 26 Sep 2022 17:01:48 +0200
-Message-Id: <d9f8322d362c7cebb29bfa7e128b4974882c4a7d.1664204336.git.geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: renesas,rcar-dmac: Add r8a779g0 support
+Date:   Mon, 26 Sep 2022 17:03:24 +0200
+Message-Id: <0a4d40092a51345003742725aea512a815d27e89.1664204526.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1664204336.git.geert+renesas@glider.be>
-References: <cover.1664204336.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the module clocks used by the Direct Memory Access Controllers for
-System (SYS-DMAC) on the Renesas R-Car V4H (R8A779G0) SoC.
-
-Extracted from a larger patch in the BSP by Kazuya Mizuguchi.
+Document support for the Direct Memory Access Controllers (DMAC) in the
+Renesas R-Car V4H (R8A779G0) SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 4fd1932a4611f6a1..4265340a8fce5388 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -163,6 +163,8 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("i2c3",		521,	R8A779G0_CLK_S0D6_PER),
- 	DEF_MOD("i2c4",		522,	R8A779G0_CLK_S0D6_PER),
- 	DEF_MOD("i2c5",		523,	R8A779G0_CLK_S0D6_PER),
-+	DEF_MOD("sydm0",	709,	R8A779G0_CLK_S0D6_PER),
-+	DEF_MOD("sydm1",	710,	R8A779G0_CLK_S0D6_PER),
- 	DEF_MOD("wdt1:wdt0",	907,	R8A779G0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779G0_CLK_CL16M),
- 	DEF_MOD("pfc1",		916,	R8A779G0_CLK_CL16M),
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
+index 7202cd68e7597dc2..89b591a05bce5fe5 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
++++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
+@@ -45,6 +45,7 @@ properties:
+           - enum:
+               - renesas,dmac-r8a779a0     # R-Car V3U
+               - renesas,dmac-r8a779f0     # R-Car S4-8
++              - renesas,dmac-r8a779g0     # R-Car V4H
+           - const: renesas,rcar-gen4-dmac # R-Car Gen4
+ 
+   reg: true
 -- 
 2.25.1
 
