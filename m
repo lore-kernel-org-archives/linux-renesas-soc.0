@@ -2,40 +2,40 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F6EC6FA86
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Sep 2022 14:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686A3C32771
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Sep 2022 14:54:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235396AbiIZOyv (ORCPT
+        id S235402AbiIZOyx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 26 Sep 2022 10:54:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44130 "EHLO
+        Mon, 26 Sep 2022 10:54:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235211AbiIZOyb (ORCPT
+        with ESMTP id S234061AbiIZOyd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Sep 2022 10:54:31 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BCACA93790;
-        Mon, 26 Sep 2022 06:21:36 -0700 (PDT)
+        Mon, 26 Sep 2022 10:54:33 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0C20374B9B;
+        Mon, 26 Sep 2022 06:21:42 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.93,346,1654527600"; 
-   d="scan'208";a="136203501"
+   d="scan'208";a="133987317"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Sep 2022 22:21:35 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 26 Sep 2022 22:21:42 +0900
 Received: from localhost.localdomain (unknown [10.226.92.133])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C0A514005B43;
-        Mon, 26 Sep 2022 22:21:32 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 725C4400545B;
+        Mon, 26 Sep 2022 22:21:39 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, Lee Jones <lee@kernel.org>,
-        devicetree@vger.kernel.org,
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH RFC 4/8] dt-bindings: mfd: rzg2l-mtu3: Document RZ/G2UL MTU3 counter
-Date:   Mon, 26 Sep 2022 14:21:10 +0100
-Message-Id: <20220926132114.60396-5-biju.das.jz@bp.renesas.com>
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH RFC 6/8] arm64: dts: renesas: r9a07g044: Add MTU3a node
+Date:   Mon, 26 Sep 2022 14:21:12 +0100
+Message-Id: <20220926132114.60396-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220926132114.60396-1-biju.das.jz@bp.renesas.com>
 References: <20220926132114.60396-1-biju.das.jz@bp.renesas.com>
@@ -45,67 +45,107 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document 16-bit and 32-bit phase counting mode support on
-RZ/G2L MTU3 IP.
+Add MTU3a node to R9A07G044 (RZ/G2L) SoC DTSI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../bindings/mfd/renesas,rzg2l-mtu3.yaml      | 35 +++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 83 ++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/renesas,rzg2l-mtu3.yaml b/Documentation/devicetree/bindings/mfd/renesas,rzg2l-mtu3.yaml
-index c1fae8e8d9f9..c4bcf28623d6 100644
---- a/Documentation/devicetree/bindings/mfd/renesas,rzg2l-mtu3.yaml
-+++ b/Documentation/devicetree/bindings/mfd/renesas,rzg2l-mtu3.yaml
-@@ -192,6 +192,37 @@ properties:
-   "#size-cells":
-     const: 0
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 2283d4fb8736..a8c31a27314c 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -168,6 +168,89 @@ soc: soc {
+ 		#size-cells = <2>;
+ 		ranges;
  
-+patternProperties:
-+  "^counter@[1-2]+$":
-+    type: object
++		mtu3: timer@10001200 {
++			compatible = "renesas,r9a07g044-mtu3",
++				     "renesas,rzg2l-mtu3";
++			reg = <0 0x10001200 0 0xb00>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 171 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 173 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 176 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 180 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 181 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 184 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 185 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 186 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 187 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 190 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 191 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 192 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 194 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 195 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 196 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 198 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 200 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 201 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 202 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 203 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 204 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 205 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 206 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 207 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 209 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 210 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0",
++					  "tgiv0", "tgie0", "tgif0",
++					  "tgia1", "tgib1", "tgiv1", "tgiu1",
++					  "tgia2", "tgib2", "tgiv2", "tgiu2",
++					  "tgia3", "tgib3", "tgic3", "tgid3",
++					  "tgiv3",
++					  "tgia4", "tgib4", "tgic4", "tgid4",
++					  "tgiv4",
++					  "tgiu5", "tgiv5", "tgiw5",
++					  "tgia6", "tgib6", "tgic6", "tgid6",
++					  "tgiv6",
++					  "tgia7", "tgib7", "tgic7", "tgid7",
++					  "tgiv7",
++					  "tgia8", "tgib8", "tgic8", "tgid8",
++					  "tgiv8", "tgiu8";
++			clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
++			power-domains = <&cpg>;
++			resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
++			status = "disabled";
 +
-+    properties:
-+      compatible:
-+        const: renesas,rzg2l-mtu3-counter
++			counter@1 {
++				compatible = "renesas,rzg2l-mtu3-counter";
++				reg = <1>;
++				status = "disabled";
++			};
 +
-+      reg:
-+        description: Identify counter channels.
-+        items:
-+          enum: [ 1, 2 ]
++			counter@2 {
++				compatible = "renesas,rzg2l-mtu3-counter";
++				reg = <2>;
++				status = "disabled";
++			};
++		};
 +
-+      renesas,32bit-phase-counting:
-+        type: boolean
-+        description: Enable 32-bit phase counting mode.
-+
-+      renesas,ext-input-phase-clock-select:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [ 0, 1 ]
-+        default: 1
-+        description: |
-+          Selects the external clock pin for phase counting mode.
-+            <0> : MTCLKA and MTCLKB are selected for the external phase clock.
-+            <1> : MTCLKC and MTCLKD are selected for the external phase clock
-+                  (default)
-+
-+    required:
-+      - compatible
-+      - reg
-+
- required:
-   - compatible
-   - reg
-@@ -270,6 +301,10 @@ examples:
-       clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
-       power-domains = <&cpg>;
-       resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
-+      counter@1 {
-+        compatible = "renesas,rzg2l-mtu3-counter";
-+        reg = <1>;
-+      };
-     };
- 
- ...
+ 		ssi0: ssi@10049c00 {
+ 			compatible = "renesas,r9a07g044-ssi",
+ 				     "renesas,rz-ssi";
 -- 
 2.25.1
 
