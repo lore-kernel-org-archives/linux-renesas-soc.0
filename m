@@ -2,112 +2,141 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DCFC07E9D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Sep 2022 19:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF34C07E9D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Sep 2022 22:28:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbiIZTSL (ORCPT
+        id S231328AbiIZW2S (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 26 Sep 2022 15:18:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60584 "EHLO
+        Mon, 26 Sep 2022 18:28:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbiIZTSK (ORCPT
+        with ESMTP id S231332AbiIZW2Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Sep 2022 15:18:10 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5836D9C216;
-        Mon, 26 Sep 2022 12:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=hS7TFU/5h99HaCSSIks5N//b6fAZfGSpwFxmPBRrixI=; b=XHz1NCfYK3a/4gi9B7dQ/XFHss
-        Co4OCAcVisij3zK+7jMLP7dbnDL8xAZZ/NDCQl+rHpE4/jL98jr8bJ+oP2QzCnlPSbFk5vw9qksC+
-        AA/rYQp4nDmFaMajeQ5qG3yoV4HdtCimNbrKquzPYGw4g9V0r4Iq1j4UpLa5fDRKQJ+E=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1octc5-000Kq6-C5; Mon, 26 Sep 2022 21:17:57 +0200
-Date:   Mon, 26 Sep 2022 21:17:57 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] net: ethernet: renesas: Add Ethernet Switch driver
-Message-ID: <YzH65W3r1IV+rHFW@lunn.ch>
-References: <20220922052803.3442561-1-yoshihiro.shimoda.uh@renesas.com>
- <20220922052803.3442561-3-yoshihiro.shimoda.uh@renesas.com>
- <Yy2wivbzUA2zroqy@lunn.ch>
- <TYBPR01MB5341ACAD30E913D01C94FE08D8529@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+        Mon, 26 Sep 2022 18:28:16 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6549019F
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Sep 2022 15:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1664231294; x=1695767294;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TSHqBLwKeigBptXIhJ1uXSVCPjahxDXV/nAu5TGcX48=;
+  b=fbPtAmGD76RAvCKO1wgRlPSKX2VuMO+m6cyA3evzQFTfwZUDWviwxEkx
+   HeDlTKOOrYD1cv0R6z818i+V3beIgj1X8KirfCHmeZwTdgIGZes0bX/B1
+   6w1cxCLvKgnwQAe++CwN+ZRL13XErrN4sA2Sefn84SSI/ZkzZN4/0xCQc
+   knB7BN6IuEgYo5Poauk89KMRuZHb3xSgm+mzWxSm/uFlgNOLVIwOwY6oQ
+   69Cbii5NaPJJxpgb8QOFfAvnMoX09qXADtX/Z/mTDUVzgKTYMaHKhvNba
+   MLZ7L2sSuNMJxyiC8wmw6X0EqbjHpW1eBcvRGiNQcms6RS5XdaWWUetux
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10482"; a="365192332"
+X-IronPort-AV: E=Sophos;i="5.93,347,1654585200"; 
+   d="scan'208";a="365192332"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2022 15:28:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10482"; a="763629134"
+X-IronPort-AV: E=Sophos;i="5.93,347,1654585200"; 
+   d="scan'208";a="763629134"
+Received: from lkp-server02.sh.intel.com (HELO dfa2c9fcd321) ([10.239.97.151])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Sep 2022 15:28:13 -0700
+Received: from kbuild by dfa2c9fcd321 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1ocwaC-0000J3-1I;
+        Mon, 26 Sep 2022 22:28:12 +0000
+Date:   Tue, 27 Sep 2022 06:27:24 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:topic/renesas-defconfig] BUILD SUCCESS
+ 4c909b45b32fef2ef81bae88dd621c68232094ba
+Message-ID: <6332274c.Cvm1GqRGmLLbwsjQ%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYBPR01MB5341ACAD30E913D01C94FE08D8529@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Sep 26, 2022 at 08:12:14AM +0000, Yoshihiro Shimoda wrote:
-> Hi Andrew,
-> 
-> > From: Andrew Lunn, Sent: Friday, September 23, 2022 10:12 PM
-> > 
-> > > +/* Forwarding engine block (MFWD) */
-> > > +static void rswitch_fwd_init(struct rswitch_private *priv)
-> > > +{
-> > > +	int i;
-> > > +
-> > > +	for (i = 0; i < RSWITCH_NUM_HW; i++) {
-> > > +		iowrite32(FWPC0_DEFAULT, priv->addr + FWPC0(i));
-> > > +		iowrite32(0, priv->addr + FWPBFC(i));
-> > > +	}
-> > 
-> > What is RSWITCH_NUM_HW?
-> 
-> I think the name is unclear...
-> Anyway, this hardware has 3 ethernet ports and 2 CPU ports.
-> So that the RSWITCH_NUM_HW is 5. Perhaps, RSWITCH_NUM_ALL_PORTS
-> is better name.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git topic/renesas-defconfig
+branch HEAD: 4c909b45b32fef2ef81bae88dd621c68232094ba  arm64: renesas: defconfig: Enable AT24 I2C EEPROM support
 
-How do the CPU ports differ to the other ports? When you mention CPU
-ports, it makes me wonder if this should be a DSA driver?
+elapsed time: 722m
 
-Is there a public data sheet for this device?
+configs tested: 63
+configs skipped: 2
 
-> Perhaps, since the current driver supports 1 ethernet port and 1 CPU port only,
-> I should modify this driver for the current condition strictly.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-I would suggest you support all three user ports. For an initial
-driver you don't need to support any sort of acceleration. You don't
-need any hardware bridging etc. That can be added later. Just three
-separated ports.
+gcc tested configs:
+powerpc                           allnoconfig
+arc                                 defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+alpha                               defconfig
+s390                             allmodconfig
+s390                                defconfig
+sh                               allmodconfig
+powerpc                          allmodconfig
+mips                             allyesconfig
+x86_64                              defconfig
+s390                             allyesconfig
+arm                                 defconfig
+arc                  randconfig-r043-20220925
+x86_64                           rhel-8.3-syz
+x86_64                          rhel-8.3-func
+x86_64                         rhel-8.3-kunit
+x86_64                    rhel-8.3-kselftests
+i386                                defconfig
+x86_64                           rhel-8.3-kvm
+riscv                randconfig-r042-20220925
+x86_64                               rhel-8.3
+arc                  randconfig-r043-20220926
+s390                 randconfig-r044-20220925
+x86_64               randconfig-a002-20220926
+m68k                             allmodconfig
+i386                 randconfig-a001-20220926
+x86_64               randconfig-a001-20220926
+arc                              allyesconfig
+x86_64                           allyesconfig
+x86_64               randconfig-a003-20220926
+alpha                            allyesconfig
+arm                              allyesconfig
+x86_64               randconfig-a004-20220926
+i386                 randconfig-a004-20220926
+i386                 randconfig-a005-20220926
+arm64                            allyesconfig
+m68k                             allyesconfig
+x86_64               randconfig-a006-20220926
+i386                 randconfig-a006-20220926
+i386                 randconfig-a002-20220926
+x86_64               randconfig-a005-20220926
+i386                 randconfig-a003-20220926
+i386                             allyesconfig
+ia64                             allmodconfig
 
-> > > +
-> > > +	for (i = 0; i < RSWITCH_NUM_ETHA; i++) {
-> > 
-> > RSWITCH_NUM_ETHA appears to be the number of ports?
-> 
-> Yes, this is number of ethernet ports.
+clang tested configs:
+hexagon              randconfig-r045-20220925
+hexagon              randconfig-r041-20220926
+hexagon              randconfig-r045-20220926
+hexagon              randconfig-r041-20220925
+riscv                randconfig-r042-20220926
+s390                 randconfig-r044-20220926
+x86_64               randconfig-a012-20220926
+x86_64               randconfig-a014-20220926
+x86_64               randconfig-a016-20220926
+i386                 randconfig-a011-20220926
+x86_64               randconfig-a013-20220926
+x86_64               randconfig-a011-20220926
+i386                 randconfig-a013-20220926
+x86_64               randconfig-a015-20220926
+i386                 randconfig-a012-20220926
+i386                 randconfig-a014-20220926
+i386                 randconfig-a016-20220926
+i386                 randconfig-a015-20220926
 
-In the DSA world we call these user ports. 
-
-> > > +	kfree(c->skb);
-> > > +	c->skb = NULL;
-> > 
-> > When i see code like this, i wonder why an API call like
-> > dev_kfree_skb() is not being used. I would suggest reaming this to
-> > something other than skb, which has a very well understood meaning.
-> 
-> Perhaps, c->skbs is better name than just c->skb.
-
-Yes, that is O.K.
-
-     Andrew
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
