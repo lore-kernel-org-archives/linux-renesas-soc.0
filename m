@@ -2,159 +2,117 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81498C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Oct 2022 08:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81880C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Oct 2022 08:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231395AbiJCI3z (ORCPT
+        id S231579AbiJCIhp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 3 Oct 2022 04:29:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59592 "EHLO
+        Mon, 3 Oct 2022 04:37:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231388AbiJCI3e (ORCPT
+        with ESMTP id S231661AbiJCIhQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Oct 2022 04:29:34 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E99F666A49
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Oct 2022 01:02:39 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id b4so8496316wrs.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 03 Oct 2022 01:02:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=kQgWgh00accM3mS2vAOocxp33pCuYAQUA0ZMfEAxp/g=;
-        b=EP6IbO2wYVnN7PPG2eCRR4kE4H8BCZyTFBJsIRjEBTkqXnng+XoQPGoOB6tlnXA56N
-         tErBonG/Jd2HO4PMk0ea/kNWhF9Et4iy7zrW3U/SgPSJtlzg+fmxlc2bmeyFuT65pHKa
-         ZNdk/LhCRx4y7lcWLQn7ftP9phsywpKsbO5+1Lgx7pU4ztXyZdVYcyjZMrtzJDKgFDXR
-         H6+dpT7bMhqbmq6nrdfdCQ38cHnByJBaxd1LhzT2NPMbaGh6saeraR3y0Zk0dap596x1
-         MXGl/WvbegoDaWZ/7uXN1087hU/Cc2Ud3AbSFWWi6nOD3WOT5BKZf4smAjeGiCNoXKnP
-         VP+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=kQgWgh00accM3mS2vAOocxp33pCuYAQUA0ZMfEAxp/g=;
-        b=N3gPOyJHDuGluH2CqP27RTq69tFIDKzSumJzukEiwCG8IuzTiwoWic6Fdq5xSgPfbZ
-         43OqqMXfhEou1EMgj1ytQ7gnWpaGVKcCkoTWHddAwy18zBp5y80bsbMMZfux3aYyUtYB
-         7TuAH2N4VkzdUmROVQMqd4xysWmBbU2QyZ3cEBZ5HETiWdzbuE6RFPZrwobWlCuSAL06
-         /Jo6ZlMkb9JCbfDUJP0y4AOG5eNIlKwbbG5cScYa2AlOZFWgP8crDnc0WJp6Ivk5NjsD
-         xgu/Jsje1LVsiYGx1wpCukUF+uV4e48ifmqXwFt/X1HQViL8AmFeo/qZ5Tf5IhosvcFK
-         +/iw==
-X-Gm-Message-State: ACrzQf2JSpRgiYnLXLaXLm9IdVhUMo4OChx36Rn2hC7iJ7APJhU5eRpA
-        8dWZ9IE22+mJmJN3IWtawDqOrHxuQ8jTGA==
-X-Google-Smtp-Source: AMsMyM4zL3ViSL381IbyG5kQevPpemwG6p8u2HHe0S+30Z1XwlKw2jwVU3uDZO+Sb/H5qdUPdp8tuA==
-X-Received: by 2002:a2e:a785:0:b0:26c:4e8c:5e79 with SMTP id c5-20020a2ea785000000b0026c4e8c5e79mr6439758ljf.396.1664783615565;
-        Mon, 03 Oct 2022 00:53:35 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id n5-20020a0565120ac500b0048af3c090f8sm1357433lfu.13.2022.10.03.00.53.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Oct 2022 00:53:34 -0700 (PDT)
-Message-ID: <f8d68874-e3d9-887e-e9d4-0da72352c564@linaro.org>
-Date:   Mon, 3 Oct 2022 09:53:33 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH RFC 4/8] dt-bindings: mfd: rzg2l-mtu3: Document RZ/G2UL
- MTU3 counter
-Content-Language: en-US
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
+        Mon, 3 Oct 2022 04:37:16 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CBEF10061;
+        Mon,  3 Oct 2022 01:10:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id E4848CE0B19;
+        Mon,  3 Oct 2022 07:32:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F170C433C1;
+        Mon,  3 Oct 2022 07:32:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664782354;
+        bh=kndw7sVSotadKbIopJSfkVKeF16JHesTWp6Ta3tvvCk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=atdrJtnQAazUMSIEajmfjBhH39dKEwQuvzGBE1Gs6ZzU1wQyeD/AUHrg57nZSMOT5
+         NZGXJFlQkjo7uVP0wsuDI2PQHFQRZrqJlzMwLdx7qjDZV/fQD5A+X2AZ4qG3LLJz8U
+         GPxVjFGhwvhnLXe3zrWe3UZ1w46mhXw5uvG1ngN/M80hj/dZc9KtgsuJOhoNQTyvRe
+         MWCIv3yjVl03Dv/GJq/pveBEPoF4R3BRSgKW4HikLqHSf88WI2DFK2bCudTeOag1Gz
+         gcFTOxaLUHv3827Du0/zIPNyR9VPRPAubH/e7xGZF/vqD0TahMjzLk4p2HQMQ2x6M+
+         6gz0zjAbJi/DQ==
+Date:   Mon, 3 Oct 2022 08:32:27 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20220926132114.60396-1-biju.das.jz@bp.renesas.com>
- <20220926132114.60396-5-biju.das.jz@bp.renesas.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220926132114.60396-5-biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH RFC 3/7] dt-bindings: mfd: rz-mtu3: Document RZ/G2L MTU3
+ PWM
+Message-ID: <YzqQC3gEzGksqYzk@google.com>
+References: <20220929103043.1228235-1-biju.das.jz@bp.renesas.com>
+ <20220929103043.1228235-4-biju.das.jz@bp.renesas.com>
+ <YzXbU69imBM5aKwn@google.com>
+ <OS0PR01MB5922134DC72EE29D5404867B86579@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <YzbcyxY839GlR71V@google.com>
+ <OS0PR01MB592241115B5D0F17B8CAE9D086599@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <OS0PR01MB592241115B5D0F17B8CAE9D086599@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 26/09/2022 15:21, Biju Das wrote:
-> Document 16-bit and 32-bit phase counting mode support on
-> RZ/G2L MTU3 IP.
+On Sat, 01 Oct 2022, Biju Das wrote:
+
+> Hi Lee Jones,
 > 
-
-Squash with previous. New devices are added complete, not artificially
-split into multiple non-working components.
-
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  .../bindings/mfd/renesas,rzg2l-mtu3.yaml      | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
+> > Subject: Re: [PATCH RFC 3/7] dt-bindings: mfd: rz-mtu3: Document
+> > RZ/G2L MTU3 PWM
+> > 
+> > On Thu, 29 Sep 2022, Biju Das wrote:
+> > 
+> > > Hi Lee Jones,
+> > >
+> > > Thanks for the feedback.
+> > >
+> > > > Subject: Re: [PATCH RFC 3/7] dt-bindings: mfd: rz-mtu3: Document
+> > > > RZ/G2L MTU3 PWM
+> > > >
+> > > > On Thu, 29 Sep 2022, Biju Das wrote:
+> > > >
+> > > > > Document RZ/G2L MTU3 PWM support. It supports following pwm
+> > modes.
+> > > > > 	1) PWM mode 1
+> > > > > 	2) PWM mode 2
+> > > > > 	3) Reset-synchronized PWM mode
+> > > > > 	4) Complementary PWM mode 1 (transfer at crest)
+> > > > > 	5) Complementary PWM mode 2 (transfer at trough)
+> > > > > 	6) Complementary PWM mode 3 (transfer at crest and trough)
+> > > >
+> > > > Shouldn't all this go in the PWM driver binding?
+> > >
+> > > Looks like at top level MTU3 IP provides similar HW functionality
+> > like
+> > > below binding [1], where there is a core MFD driver and pwm, counter
+> > > and timer as child devices.
+> > 
+> > Previous mistakes are not good references for what should happen in
+> > the present and the future. =;)
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/renesas,rzg2l-mtu3.yaml b/Documentation/devicetree/bindings/mfd/renesas,rzg2l-mtu3.yaml
-> index c1fae8e8d9f9..c4bcf28623d6 100644
-> --- a/Documentation/devicetree/bindings/mfd/renesas,rzg2l-mtu3.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/renesas,rzg2l-mtu3.yaml
-> @@ -192,6 +192,37 @@ properties:
->    "#size-cells":
->      const: 0
->  
-> +patternProperties:
-> +  "^counter@[1-2]+$":
-> +    type: object
+> Why do you think that reference is not a good one? I believe there
+> should be some reason for it.
 
-    additionalProperties: false
+I didn't even look at it.
 
-> +
-> +    properties:
-> +      compatible:
-> +        const: renesas,rzg2l-mtu3-counter
-> +
-> +      reg:
-> +        description: Identify counter channels.
-> +        items:
-> +          enum: [ 1, 2 ]
-> +
-> +      renesas,32bit-phase-counting:
-> +        type: boolean
-> +        description: Enable 32-bit phase counting mode.
-> +
-> +      renesas,ext-input-phase-clock-select:
+What I "believe" is that documentation for each functionality
+belonging to a particular subsystem should live in subsystem's
+associated documentation directory and be reviewed/maintained by that
+subsystem's associated maintainer.
 
-I propose to drop "input". I understand you just select pins with clock?
-If it is external clock, then why not using generic clock bindings?
-
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [ 0, 1 ]
-> +        default: 1
-> +        description: |
-> +          Selects the external clock pin for phase counting mode.
-> +            <0> : MTCLKA and MTCLKB are selected for the external phase clock.
-> +            <1> : MTCLKC and MTCLKD are selected for the external phase clock
-> +                  (default)
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +
->  required:
->    - compatible
->    - reg
-> @@ -270,6 +301,10 @@ examples:
->        clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
->        power-domains = <&cpg>;
->        resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
-
-Blank line
-
-> +      counter@1 {
-> +        compatible = "renesas,rzg2l-mtu3-counter";
-> +        reg = <1>;
-> +      };
->      };
->  
->  ...
-
-Best regards,
-Krzysztof
-
+-- 
+Lee Jones [李琼斯]
