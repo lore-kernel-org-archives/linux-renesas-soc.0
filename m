@@ -2,129 +2,97 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AABC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Oct 2022 08:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AC0C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Oct 2022 09:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229569AbiJCIsT (ORCPT
+        id S230422AbiJCJC2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 3 Oct 2022 04:48:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54004 "EHLO
+        Mon, 3 Oct 2022 05:02:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbiJCIrx (ORCPT
+        with ESMTP id S229476AbiJCJCK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Oct 2022 04:47:53 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2065222520
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Oct 2022 01:27:55 -0700 (PDT)
-Received: from [192.168.1.15] (91-158-154-79.elisa-laajakaista.fi [91.158.154.79])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DEB64440;
-        Mon,  3 Oct 2022 09:31:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1664782288;
-        bh=am8RCcoHpWZ76txSUP6Kc47s1AxpVIWywCXSZy6DcRw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=fw5rGBky+7KymhgbXB4nrMDxskxfjdoG2njhKgt7JtZPFtq7XyA8sxrNqafrJcfNj
-         qHGCLuKyeIY5bN+O/xAh5zfFG72FN4dNPwef+6tN/r+euGYDd07K3VyT9k0fTapayf
-         OoRpTmwzJgph1hAh7bWEgsznGOUtGwPdE2aCcZvI=
-Message-ID: <37521172-d358-ff90-682b-ffe66effd063@ideasonboard.com>
-Date:   Mon, 3 Oct 2022 10:31:24 +0300
+        Mon, 3 Oct 2022 05:02:10 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3C363EF;
+        Mon,  3 Oct 2022 01:51:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 39853B80B06;
+        Mon,  3 Oct 2022 08:51:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E250C433D7;
+        Mon,  3 Oct 2022 08:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664787084;
+        bh=6D6zwE2KTWX7Fc8+lXpr+HP/ieLEYgISlxAUy/PW+8c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SVNS0JOtaF6BPUZYWYvaeXu7563sidQi5qf794FP0/CCcvJyJEAkYamGi3ZD54grW
+         E9oaWKIo1sANkhWhAdwdqKDpEE1otezBE6nZXUCNpfsNCIvj98L5K1rhkiHd/fH8k5
+         qv0nXlU/y3RCAhfj4QZU8I/a0IY2XNNq4klRtV5b/uAr2j1uCsqI9tVXMU5VWhWuMX
+         QhAAzWPkAh9w8cHUtYpjcSYcDgyCkw5PuevotuvYlmDlthWC/4NKNhsmWeawrc0pYI
+         sybunuuTMl//7d7YFdmF+JASU92tNBbezKlH4ZxKnw0Pt5vXE9GXqy8xwLwu9iwySw
+         73E/vXlsrPrQA==
+Date:   Mon, 3 Oct 2022 09:51:18 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH RFC 1/7] dt-bindings: mfd: Document RZ/G2L MTU3a bindings
+Message-ID: <YzqihszpUlF36yqn@google.com>
+References: <20220929103043.1228235-1-biju.das.jz@bp.renesas.com>
+ <20220929103043.1228235-2-biju.das.jz@bp.renesas.com>
+ <YzXbrZNI81f1ebBt@google.com>
+ <20220930174707.GA567190-robh@kernel.org>
+ <YzqQdUcsvu4AJPj2@google.com>
+ <CAMuHMdXMy0cZEhT4R+19NgrEtF8a_TqN1hXM8LZ_HvYD+oYaag@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] drm: rcar-du: Fix Kconfig dependency between RCAR_DU and
- RCAR_MIPI_DSI
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-References: <20221001220342.5828-1-laurent.pinchart+renesas@ideasonboard.com>
- <b1425f66-29cf-ce13-fe29-895cd2140c77@ideasonboard.com>
- <CAMuHMdUV7TY=mfTS6ShOqPbT8JAC-nQFmUWdsyGtP86Op+0SaQ@mail.gmail.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-In-Reply-To: <CAMuHMdUV7TY=mfTS6ShOqPbT8JAC-nQFmUWdsyGtP86Op+0SaQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXMy0cZEhT4R+19NgrEtF8a_TqN1hXM8LZ_HvYD+oYaag@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 03/10/2022 10:01, Geert Uytterhoeven wrote:
-> Hi Tomi,
+On Mon, 03 Oct 2022, Geert Uytterhoeven wrote:
+
+> Hi Lee,
 > 
-> On Mon, Oct 3, 2022 at 8:56 AM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->> On 02/10/2022 01:03, Laurent Pinchart wrote:
->>> When the R-Car MIPI DSI driver was added, it was a standalone encoder
->>> driver without any dependency to or from the R-Car DU driver. Commit
->>> 957fe62d7d15 ("drm: rcar-du: Fix DSI enable & disable sequence") then
->>> added a direct call from the DU driver to the MIPI DSI driver, without
->>> updating Kconfig to take the new dependency into account. Fix it the
->>> same way that the LVDS encoder is handled.
->>>
->>> Fixes: 957fe62d7d15 ("drm: rcar-du: Fix DSI enable & disable sequence")
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>> ---
->>>    drivers/gpu/drm/rcar-du/Kconfig | 13 +++++++++----
->>>    1 file changed, 9 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
->>> index c959e8c6be7d..fd2c2eaee26b 100644
->>> --- a/drivers/gpu/drm/rcar-du/Kconfig
->>> +++ b/drivers/gpu/drm/rcar-du/Kconfig
->>> @@ -44,12 +44,17 @@ config DRM_RCAR_LVDS
->>>        select OF_FLATTREE
->>>        select OF_OVERLAY
->>>
->>> +config DRM_RCAR_USE_MIPI_DSI
->>> +     bool "R-Car DU MIPI DSI Encoder Support"
->>> +     depends on DRM_BRIDGE && OF
->>> +     default DRM_RCAR_DU
->>> +     help
->>> +       Enable support for the R-Car Display Unit embedded MIPI DSI encoders.
->>> +
->>>    config DRM_RCAR_MIPI_DSI
->>> -     tristate "R-Car DU MIPI DSI Encoder Support"
->>> -     depends on DRM && DRM_BRIDGE && OF
->>> +     def_tristate DRM_RCAR_DU
->>> +     depends on DRM_RCAR_USE_MIPI_DSI
->>>        select DRM_MIPI_DSI
->>> -     help
->>> -       Enable support for the R-Car Display Unit embedded MIPI DSI encoders.
->>>
->>>    config DRM_RCAR_VSP
->>>        bool "R-Car DU VSP Compositor Support" if ARM
->>>
->>> base-commit: 7860d720a84c74b2761c6b7995392a798ab0a3cb
->>
->> Interesting dependency issue. Took me a while to understand it =).
->>
->> But is there a reason to not have "depends on DRM_RCAR_DU" for
->> DRM_RCAR_USE_MIPI_DSI and DRM_RCAR_USE_LVDS? Now the menu items are
->> available even if RCAR_DU is n. That's also the case for
->> DRM_RCAR_DW_HDMI, but I'm not sure if that's supposed to be usable even
->> without RCAR_DU.
+> On Mon, Oct 3, 2022 at 9:34 AM Lee Jones <lee@kernel.org> wrote:
+> > On Fri, 30 Sep 2022, Rob Herring wrote:
+> > > On Thu, Sep 29, 2022 at 06:53:49PM +0100, Lee Jones wrote:
+> > > > On Thu, 29 Sep 2022, Biju Das wrote:
+> > > >
+> > > > > The RZ/G2L multi-function timer pulse unit 3 (MTU3a) is embedded in
+> > > > > the Renesas RZ/G2L family SoC's. It consists of eight 16-bit timer
+> > > > > channels and one 32-bit timer channel. It supports the following
+> > > > > functions
+> > > > >  - Counter
+> > > > >  - Timer
+> > > > >  - PWM
+> > > > >
+> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > 
-> See
-> https://lore.kernel.org/linux-renesas-soc/cover.1639559338.git.geert+renesas@glider.be/
+> > > > Not sure you need to list all of the IRQs in the example.
+> > >
+> > > You do, because that's what the schema says is valid.
+> >
+> > You have to use the exhaustive list?
 > 
-> Didn't get to implement the suggested improvements yet...
+> Yes, else "make dt_binding_check" fails to validate the example,
+> as the schema says all interrupts must be present.
 
-Ok, looks good.
+Okay, so all of those IRQs are compulsory?
 
-But I started to wonder, for LVDS and DSI (maybe for HDMI too), what's 
-the point of modules here...
+Makes sense then, thanks for the clarification.
 
-If RCAR_DU, LVDS and DSI are compiled as modules, you can load either 
-LVDS or DSI module, but those won't do anything alone. So in practice 
-you always need to load RCAR_DU module too. But if LVDS or DSI are 
-enabled in the kconfig, you _have_ to load those before RCAR_DU.
-
-In other words, you can never, e.g. load RCAR_DU and LVDS, but not DSI, 
-if all three are enabled.
-
-So why not just compile LVDS and DSI into the RCAR_DU module, 
-simplifying the dependencies, removing this issue altogether?
-
-  Tomi
+-- 
+Lee Jones [李琼斯]
