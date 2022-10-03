@@ -2,54 +2,54 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09227C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Oct 2022 09:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABC4C352AA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Oct 2022 09:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230357AbiJCJc6 (ORCPT
+        id S231376AbiJCJee (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 3 Oct 2022 05:32:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
+        Mon, 3 Oct 2022 05:34:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230507AbiJCJbR (ORCPT
+        with ESMTP id S230078AbiJCJcb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Oct 2022 05:31:17 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB48476EA
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Oct 2022 02:27:57 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id bq9so15790930wrb.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 03 Oct 2022 02:27:57 -0700 (PDT)
+        Mon, 3 Oct 2022 05:32:31 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 015562C11E
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Oct 2022 02:28:12 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id b7so8174914wrq.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 03 Oct 2022 02:28:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=J+pEXgOt+cgMtZrCTotGHOpvWkavFX9TrPtsCSEPZdo=;
-        b=DoG130udwrokD2lCxDGaDzPB6lcQ7nevCUiIIu4I3y6/sp1WeqUCHUzgGedlWsHZq1
-         cKjUfSXZ0fuvvWy6yorcPYZrjCxfcGsvGGCSFF1v7+eURRY7IZ96UM6m3PAdFWoQRSlx
-         WTiqfUnTwRp4vpISYK9eLmtnC2b8JedB+3ECRzm7rR4wSWBKm6R7chmqwUiIhwx0ZSmQ
-         RR8GWnFUj74CmFBsWnsyYNQYDu6IToSTIXrmLN+Z+MYAij7Q3dLbr5mMyOseDgXiL77k
-         74aeLplTHPQo4Y9eNJdwd2Foqq6ly8FHEE98Nl4VACEa1KZWFcvrXS3twXPO6YD8OaGh
-         lFPg==
+        bh=Bvo7EJO01qiFSqaGbT4JiAGDEh8uk0vvz3ltgjeJ4xY=;
+        b=W8ReuKq7jMw2pEnUxARbGJlF66wfoQjg77hHrUh6nC3tjrBDcuDBiUJBkLHLHKhJer
+         mpIne0abBol1bAOH7i+luGK7um7d+qNm0/chXUcthIDDARkvmvzuIew1TTTxnTqFBE+r
+         ECQO2cLGey9/bgIKD1WRr4joW/DotdD2wSkmlnN+JpJv6vyt9oGmnARpJJMQ4D2wcYpY
+         ni7W/TXqbROKufTlSeo3OMrqkazbe34ydWVtz0TXbU9+X4WXvWf8ZWJdOgy80DbVmvlY
+         pDT6uXObL2BoQ4a4Ofqgq2n+lNH2XZtiCsdGDuN0ZPymWCD+o0GcMcSDnmMlwe9R6+fp
+         plIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=J+pEXgOt+cgMtZrCTotGHOpvWkavFX9TrPtsCSEPZdo=;
-        b=4L7NSG+28yAjGGda/vkwYsacNO2ESJWqCUfKt91sr/dOpgDUtfNiNiEahJj6Rg/uoP
-         vXVAj3xvTm+YmD/CvvYa0BtO5mrSPTPSpTXCd54CePanM7ycN8XN7ToYQeekn3BNht7F
-         d035lgU7mqFxESuL+SGq0x7wQKsodYT9L/beqRKnSE1CWuwwZan44AunExena2rehyIG
-         WODKEL5sBYVMDHLCZOucpLqA1tvpyDWmo/31PHLkb+ZHgDZB9R+6ce+OOYpde5E20HbI
-         tl62lLrLzcdEcV80ju8hvAVbD7ZjW1J/FWeGtFwzWiS89YWJyEjK/p757larMdFr8GxG
-         Xfmg==
-X-Gm-Message-State: ACrzQf0myI4OJUMK9SLPxHfyU7ugenAQrG3GflUADTjuc+lY9L/aA5dP
-        x2SEFeswUu5FkEcfC/Fj2BGDqw==
-X-Google-Smtp-Source: AMsMyM7ch6I8zC5h+XzGZ/sOSp1V5kj4YS6tWMda0uy2/eoim3dCs/nuHHExNvU5YPeSjkDoA4ca1w==
-X-Received: by 2002:a05:6000:1110:b0:22e:327d:c146 with SMTP id z16-20020a056000111000b0022e327dc146mr5306166wrw.453.1664789251314;
-        Mon, 03 Oct 2022 02:27:31 -0700 (PDT)
+        bh=Bvo7EJO01qiFSqaGbT4JiAGDEh8uk0vvz3ltgjeJ4xY=;
+        b=gQJzZCIpI8b5rpvx9laUTab+YiKJ9/Wo4ezgORCnfdYJJxcD1TipDS3h1/H+tsiUEr
+         wI4k4E484Qos6DN22C5TbQpmJaEEd1k2fORBAvVoQxQ28HSEeoAsHrEOuesTu4rL59Lt
+         l4WErsuoDL5P7qkBM1bHZwDEQ4C8fvOuszKxkhuncv2SaZzQIWLr+1oMMjuBe8rtEFie
+         Mrg0WmvHmtCecdYd2UbCZ0n3m6+9PkCdOhSRnIiLc/jxDe8qsv1GT/MKtXSFqMiWo4PA
+         TJyaJXa8s7QERbhGGsWSkDYgjflkBmlvPXu3PRUYAzFBj30CIBsSSkY0HNREVrs2P2A+
+         ce+g==
+X-Gm-Message-State: ACrzQf0Jmoomp2rbzMd14KbXRmXovPtUHi18AKyUCC7Fx2opXGQUFNlr
+        vAMplQjety8JOsLKbJfT8GwiRQ==
+X-Google-Smtp-Source: AMsMyM6ELzLHVK4/BCcPbpIkgCQlGCCs9OZGnaeVi3u5I4MTLMi0XYiBPGTqyEgDtCUZssOE4JC0UQ==
+X-Received: by 2002:a5d:6da1:0:b0:22b:774:52c3 with SMTP id u1-20020a5d6da1000000b0022b077452c3mr12601883wrs.172.1664789261097;
+        Mon, 03 Oct 2022 02:27:41 -0700 (PDT)
 Received: from mai.. ([2a05:6e02:1041:c10:f3a:9f5e:1605:a75a])
-        by smtp.gmail.com with ESMTPSA id ay3-20020a5d6f03000000b0022cc157bf26sm9707520wrb.85.2022.10.03.02.27.28
+        by smtp.gmail.com with ESMTPSA id ay3-20020a5d6f03000000b0022cc157bf26sm9707520wrb.85.2022.10.03.02.27.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 02:27:30 -0700 (PDT)
+        Mon, 03 Oct 2022 02:27:40 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     daniel.lezcano@linaro.org, rafael@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
@@ -97,13 +97,14 @@ Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-omap@vger.kernel.org
-Subject: [PATCH v8 23/29] thermal/drivers/broadcom: Use generic thermal_zone_get_trip() function
-Date:   Mon,  3 Oct 2022 11:25:56 +0200
-Message-Id: <20221003092602.1323944-24-daniel.lezcano@linaro.org>
+Subject: [PATCH v8 26/29] thermal/drivers/acerhdf: Use generic thermal_zone_get_trip() function
+Date:   Mon,  3 Oct 2022 11:25:59 +0200
+Message-Id: <20221003092602.1323944-27-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
 References: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -117,51 +118,141 @@ Convert ops content logic into generic trip points and register them with the
 thermal zone.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Peter Kästle <peter@piie.net>
 ---
- drivers/thermal/broadcom/bcm2835_thermal.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/platform/x86/acerhdf.c | 73 ++++++++++++----------------------
+ 1 file changed, 26 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index 2c67841a1115..5485e59d03a9 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -18,6 +18,7 @@
- #include <linux/platform_device.h>
- #include <linux/thermal.h>
+diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
+index 3463629f8764..a7407aa032ba 100644
+--- a/drivers/platform/x86/acerhdf.c
++++ b/drivers/platform/x86/acerhdf.c
+@@ -46,6 +46,8 @@
+  * measured by the on-die thermal monitor are within 0 <= Tj <= 90. So,
+  * assume 89°C is critical temperature.
+  */
++#define ACERHDF_DEFAULT_TEMP_FANON 60000
++#define ACERHDF_DEFAULT_TEMP_FANOFF 53000
+ #define ACERHDF_TEMP_CRIT 89000
+ #define ACERHDF_FAN_OFF 0
+ #define ACERHDF_FAN_AUTO 1
+@@ -70,8 +72,8 @@ static int kernelmode;
+ #endif
  
-+#include "../thermal_core.h"
- #include "../thermal_hwmon.h"
+ static unsigned int interval = 10;
+-static unsigned int fanon = 60000;
+-static unsigned int fanoff = 53000;
++static unsigned int fanon = ACERHDF_DEFAULT_TEMP_FANON;
++static unsigned int fanoff = ACERHDF_DEFAULT_TEMP_FANOFF;
+ static unsigned int verbose;
+ static unsigned int list_supported;
+ static unsigned int fanstate = ACERHDF_FAN_AUTO;
+@@ -137,6 +139,15 @@ struct ctrl_settings {
+ 	int mcmd_enable;
+ };
  
- #define BCM2835_TS_TSENSCTL			0x00
-@@ -224,7 +225,8 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 	 */
- 	val = readl(data->regs + BCM2835_TS_TSENSCTL);
- 	if (!(val & BCM2835_TS_TSENSCTL_RSTB)) {
--		int trip_temp, offset, slope;
-+		struct thermal_trip trip;
-+		int offset, slope;
++static struct thermal_trip trips[] = {
++	[0] = { .temperature = ACERHDF_DEFAULT_TEMP_FANON,
++		.hysteresis = ACERHDF_DEFAULT_TEMP_FANON - ACERHDF_DEFAULT_TEMP_FANOFF,
++		.type = THERMAL_TRIP_ACTIVE },
++
++	[1] = { .temperature = ACERHDF_TEMP_CRIT,
++		.type = THERMAL_TRIP_CRITICAL }
++};
++
+ static struct ctrl_settings ctrl_cfg __read_mostly;
  
- 		slope = thermal_zone_get_slope(tz);
- 		offset = thermal_zone_get_offset(tz);
-@@ -232,7 +234,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 		 * For now we deal only with critical, otherwise
- 		 * would need to iterate
- 		 */
--		err = tz->ops->get_trip_temp(tz, 0, &trip_temp);
-+		err = thermal_zone_get_trip(tz, 0, &trip);
- 		if (err < 0) {
- 			dev_err(&pdev->dev,
- 				"Not able to read trip_temp: %d\n",
-@@ -249,7 +251,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 		val |= (0xFE << BCM2835_TS_TSENSCTL_RSTDELAY_SHIFT);
+ /* Register addresses and values for different BIOS versions */
+@@ -326,6 +337,15 @@ static void acerhdf_check_param(struct thermal_zone_device *thermal)
+ 		fanon = ACERHDF_MAX_FANON;
+ 	}
  
- 		/*  trip_adc value from info */
--		val |= bcm2835_thermal_temp2adc(trip_temp,
-+		val |= bcm2835_thermal_temp2adc(trip.temperature,
- 						offset,
- 						slope)
- 			<< BCM2835_TS_TSENSCTL_THOLD_SHIFT;
++	if (fanon < fanoff) {
++		pr_err("fanoff temperature (%d) is above fanon temperature (%d), clamping to %d\n",
++		       fanoff, fanon, fanon);
++		fanoff = fanon;
++	};
++
++	trips[0].temperature = fanon;
++	trips[0].hysteresis  = fanon - fanoff;
++
+ 	if (kernelmode && prev_interval != interval) {
+ 		if (interval > ACERHDF_MAX_INTERVAL) {
+ 			pr_err("interval too high, set to %d\n",
+@@ -424,43 +444,6 @@ static int acerhdf_change_mode(struct thermal_zone_device *thermal,
+ 	return 0;
+ }
+ 
+-static int acerhdf_get_trip_type(struct thermal_zone_device *thermal, int trip,
+-				 enum thermal_trip_type *type)
+-{
+-	if (trip == 0)
+-		*type = THERMAL_TRIP_ACTIVE;
+-	else if (trip == 1)
+-		*type = THERMAL_TRIP_CRITICAL;
+-	else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static int acerhdf_get_trip_hyst(struct thermal_zone_device *thermal, int trip,
+-				 int *temp)
+-{
+-	if (trip != 0)
+-		return -EINVAL;
+-
+-	*temp = fanon - fanoff;
+-
+-	return 0;
+-}
+-
+-static int acerhdf_get_trip_temp(struct thermal_zone_device *thermal, int trip,
+-				 int *temp)
+-{
+-	if (trip == 0)
+-		*temp = fanon;
+-	else if (trip == 1)
+-		*temp = ACERHDF_TEMP_CRIT;
+-	else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ static int acerhdf_get_crit_temp(struct thermal_zone_device *thermal,
+ 				 int *temperature)
+ {
+@@ -474,13 +457,9 @@ static struct thermal_zone_device_ops acerhdf_dev_ops = {
+ 	.unbind = acerhdf_unbind,
+ 	.get_temp = acerhdf_get_ec_temp,
+ 	.change_mode = acerhdf_change_mode,
+-	.get_trip_type = acerhdf_get_trip_type,
+-	.get_trip_hyst = acerhdf_get_trip_hyst,
+-	.get_trip_temp = acerhdf_get_trip_temp,
+ 	.get_crit_temp = acerhdf_get_crit_temp,
+ };
+ 
+-
+ /*
+  * cooling device callback functions
+  * get maximal fan cooling state
+@@ -710,10 +689,10 @@ static int __init acerhdf_register_thermal(void)
+ 	if (IS_ERR(cl_dev))
+ 		return -EINVAL;
+ 
+-	thz_dev = thermal_zone_device_register("acerhdf", 2, 0, NULL,
+-					      &acerhdf_dev_ops,
+-					      &acerhdf_zone_params, 0,
+-					      (kernelmode) ? interval*1000 : 0);
++	thz_dev = thermal_zone_device_register_with_trips("acerhdf", trips, ARRAY_SIZE(trips),
++							  0, NULL, &acerhdf_dev_ops,
++							  &acerhdf_zone_params, 0,
++							  (kernelmode) ? interval*1000 : 0);
+ 	if (IS_ERR(thz_dev))
+ 		return -EINVAL;
+ 
 -- 
 2.34.1
 
