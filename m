@@ -2,200 +2,273 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED59AC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Oct 2022 19:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22958C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Oct 2022 23:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbiJDTwn (ORCPT
+        id S230061AbiJDXoC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 Oct 2022 15:52:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49602 "EHLO
+        Tue, 4 Oct 2022 19:44:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbiJDTwf (ORCPT
+        with ESMTP id S229531AbiJDXoB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Oct 2022 15:52:35 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31DA96B15F
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Oct 2022 12:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1664913154; x=1696449154;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=x0TcE5IW2cOuwynmcp3Vz/uxV2x2Pk9TVOfR+AKwTDU=;
-  b=LcES03Ou62LOnE4TieEPS5M4dcwwW4Kru5BrGDl3cKPkYWf37/3m0oDv
-   +snzmsv2CrKC9lvjEXNSuv8tBDUY9ZxlwgPE5vfNcMeIZ9IZ9cq9NCShu
-   hPEU2tCAZmOxVqr+3r9FyptwdnEi7wY/7/+NmR89MThzRRBfc1itoxK9p
-   bFWe3vyKmAkQ2uilg/muYkUfREaEuo1hnQOLlrPNfFA69zNZo36Tr0bSk
-   qiCz4iw4JHR4+9K5MYPZeA5Ywxh5ROTuR0E2d5pOxTNUh/bmyHheMD7p9
-   Kry/tGe6p45s1byFuR0rPiJOEbPbYmWygzBHk2N9YDJyeZb+/hBTLZTWL
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10490"; a="367130832"
-X-IronPort-AV: E=Sophos;i="5.95,158,1661842800"; 
-   d="scan'208";a="367130832"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2022 12:52:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10490"; a="624060786"
-X-IronPort-AV: E=Sophos;i="5.95,158,1661842800"; 
-   d="scan'208";a="624060786"
-Received: from lkp-server01.sh.intel.com (HELO d4f44333118a) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 04 Oct 2022 12:52:32 -0700
-Received: from kbuild by d4f44333118a with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1ofnxv-0000Ur-2L;
-        Tue, 04 Oct 2022 19:52:31 +0000
-Date:   Wed, 05 Oct 2022 03:52:14 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-clk-for-v6.2] BUILD SUCCESS
- ba4bf53c3f48e2634500864076a79edbce8289ae
-Message-ID: <633c8eee.bhhT2rwqlARbDWCX%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Tue, 4 Oct 2022 19:44:01 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E61D2FC1C;
+        Tue,  4 Oct 2022 16:43:51 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id fn7-20020a05600c688700b003b4fb113b86so174920wmb.0;
+        Tue, 04 Oct 2022 16:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=PF7E73KQ1n1awp93A4zRltZY54I7cVFO2GfXjBhFNkc=;
+        b=m6Yc1MsFCLGMHsjB44xY0/Gsns41ardIzKcPyprdX7GmqqFr6MDFw1Bx+xkJyl6kvw
+         jeKXdug9NhgvWPc+ZbDqsa+Tken3OVf7y7To3zFsYAJTfMUzeo1s4gdjGOwoEDS7xlRc
+         F0WwIGhBJQ6WpDe4xW7RZWOBWuUpdCvFmC799JXyVzTmMxE/112uvpg5bwcABBXezsu4
+         GQmjayAWQ9N7kg9y1LtCSqQW6ZLagd0ah3fZFMK8r1wqHUHmbGdg0zFDZMLK/wqYBR/H
+         xGt5FcEKsp+db2W0LM08CRfPEQyJnRNtL6KhERtxKPsFsUQdWXi4Qs3BK7gUZLF2Jh5r
+         XY8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=PF7E73KQ1n1awp93A4zRltZY54I7cVFO2GfXjBhFNkc=;
+        b=Dp+BlPwPu56BE2kpB2hODTC8HRZtUgtdlAWKkuT80qM2g1JXY16s9GkkToqnWTeVse
+         qmhHlLD0Wk4zl/ieUgVnDpDwqz6uA3rlbCfajT+gz1RRgRKzYoIwv8T/38l25xIdjVEy
+         s7Rz4v33RPzxZY6wa+imkqAH5796EBxkH0ybXVUc/McpvYldc9S2lPqrtrBfi6RI0+kt
+         Nvyic/ghdOBPhbhd5SVAk36j02p98eWuuxQzJCT2phuD2m82FpqowfKWadaZfz7no/SZ
+         yIKBENtM75H3tK3C0n28lF2Ig4G3ctsqEifXFVxJAz3NkElR7/iYBfN4Yh/5Wh2fBx5K
+         lL7w==
+X-Gm-Message-State: ACrzQf0I/AZhzBh4QyyisVCuw1JaI6D4dqPe0MkDFb7dOZ9LkGOhsAUQ
+        Y7czf2d6cDbWVhQhBmN48bA=
+X-Google-Smtp-Source: AMsMyM52JdH3g041V2hF90NquIfgzzDQoOk1+yK8kfpPtAoRLUm6NvofWj56nN8qypoSjWsg4uho1g==
+X-Received: by 2002:a05:600c:3b9e:b0:3b4:4cf1:9531 with SMTP id n30-20020a05600c3b9e00b003b44cf19531mr1398519wms.64.1664927030034;
+        Tue, 04 Oct 2022 16:43:50 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:a47e:e9a:dd40:f694])
+        by smtp.gmail.com with ESMTPSA id x5-20020a05600c2d0500b003b56be51313sm202461wmf.44.2022.10.04.16.43.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Oct 2022 16:43:49 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 1/4] media: dt-bindings: Document Renesas RZ/G2L CSI-2 block
+Date:   Wed,  5 Oct 2022 00:43:40 +0100
+Message-Id: <20221004234343.54777-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221004234343.54777-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20221004234343.54777-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v6.2
-branch HEAD: ba4bf53c3f48e2634500864076a79edbce8289ae  clk: renesas: r8a779g0: Add INTC-EX clock
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-elapsed time: 727m
+Document the CSI-2 block which is part of CRU found in Renesas
+RZ/G2L (and alike) SoCs.
 
-configs tested: 121
-configs skipped: 3
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+v2 -> v3
+* Updated clock names
+* Included presetn reset signal and added reset-names in CSI binding
+* Renamed csi20 -> csi for example node
+* Included RB tag from Krzysztof for patch#1
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+v1 -> v2
+* Dropped media prefix from subject
+* Renamed node name csi20 -> csi
+* Used 4 spaces for indentation in example node
+* Dropped reset-names and interrupt-names properties
+* Dropped oneOf from compatible
+* Included RB tag from Laurent
 
-gcc tested configs:
-arc                                 defconfig
-alpha                               defconfig
-s390                             allmodconfig
-x86_64                           rhel-8.3-syz
-s390                                defconfig
-x86_64                         rhel-8.3-kunit
-x86_64                           rhel-8.3-kvm
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-s390                             allyesconfig
-x86_64                           allyesconfig
-i386                 randconfig-a011-20221003
-i386                 randconfig-a012-20221003
-i386                                defconfig
-i386                 randconfig-a013-20221003
-i386                 randconfig-a015-20221003
-i386                 randconfig-a016-20221003
-i386                 randconfig-a014-20221003
-arm                                 defconfig
-riscv                randconfig-r042-20221003
-arc                  randconfig-r043-20221003
-x86_64                          rhel-8.3-func
-x86_64               randconfig-a011-20221003
-s390                 randconfig-r044-20221003
-x86_64               randconfig-a015-20221003
-x86_64               randconfig-a014-20221003
-x86_64                    rhel-8.3-kselftests
-x86_64               randconfig-a012-20221003
-x86_64               randconfig-a013-20221003
-x86_64               randconfig-a016-20221003
-i386                             allyesconfig
-powerpc                           allnoconfig
-m68k                             allmodconfig
-arm                              allyesconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-sh                               allmodconfig
-ia64                             allmodconfig
-arm64                            allyesconfig
-arc                  randconfig-r043-20221002
-arc                              allyesconfig
-alpha                            allyesconfig
-m68k                             allyesconfig
-csky                              allnoconfig
-alpha                             allnoconfig
-arc                               allnoconfig
-riscv                             allnoconfig
-powerpc                      mgcoge_defconfig
-arc                 nsimosci_hs_smp_defconfig
-powerpc                     mpc83xx_defconfig
-sh                      rts7751r2d1_defconfig
-arc                    vdk_hs38_smp_defconfig
-arm                             ezx_defconfig
-arm                        realview_defconfig
-xtensa                           alldefconfig
-sh                          kfr2r09_defconfig
-arm                          exynos_defconfig
-sh                           se7619_defconfig
-m68k                         apollo_defconfig
-m68k                          atari_defconfig
-sh                   sh7770_generic_defconfig
-sh                              ul2_defconfig
-m68k                        stmark2_defconfig
-i386                          randconfig-c001
-nios2                               defconfig
-m68k                          amiga_defconfig
-arc                            hsdk_defconfig
-loongarch                 loongson3_defconfig
-powerpc                      cm5200_defconfig
-xtensa                  cadence_csp_defconfig
-powerpc                 mpc8540_ads_defconfig
-arm                          simpad_defconfig
-xtensa                          iss_defconfig
-arm                            lart_defconfig
-sh                     magicpanelr2_defconfig
-sh                ecovec24-romimage_defconfig
-arm64                            alldefconfig
-powerpc                 mpc837x_mds_defconfig
-mips                         cobalt_defconfig
-arm                  randconfig-c002-20221002
-x86_64                        randconfig-c001
-mips                 randconfig-c004-20221002
-m68k                          sun3x_defconfig
-powerpc                     tqm8548_defconfig
-i386                          debian-10.3-kvm
-i386                        debian-10.3-kunit
-i386                         debian-10.3-func
-sh                   rts7751r2dplus_defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-riscv                    nommu_k210_defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-sparc64                             defconfig
-arc                          axs101_defconfig
-powerpc                 linkstation_defconfig
-arm                            pleb_defconfig
-s390                       zfcpdump_defconfig
-powerpc                      chrp32_defconfig
-sh                             espt_defconfig
-powerpc                       maple_defconfig
+RFC v2 -> v1
+* Fixed review comments pointed by Rob and Jacopo.
 
-clang tested configs:
-x86_64               randconfig-a003-20221003
-x86_64               randconfig-a005-20221003
-x86_64               randconfig-a002-20221003
-x86_64               randconfig-a001-20221003
-x86_64               randconfig-a004-20221003
-x86_64               randconfig-a006-20221003
-hexagon              randconfig-r041-20221003
-hexagon              randconfig-r045-20221003
-i386                 randconfig-a001-20221003
-i386                 randconfig-a006-20221003
-i386                 randconfig-a002-20221003
-i386                 randconfig-a003-20221003
-i386                 randconfig-a005-20221003
-i386                 randconfig-a004-20221003
-x86_64                        randconfig-k001
-powerpc                      walnut_defconfig
-arm                  colibri_pxa300_defconfig
-arm                       mainstone_defconfig
-riscv                             allnoconfig
+RFC v1 -> RFC v2
+* New patch
+---
+ .../bindings/media/renesas,rzg2l-csi2.yaml    | 149 ++++++++++++++++++
+ 1 file changed, 149 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
 
+diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+new file mode 100644
+index 000000000000..67eea2ac1d22
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+@@ -0,0 +1,149 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright (C) 2022 Renesas Electronics Corp.
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/renesas,rzg2l-csi2.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G2L (and alike SoC's) MIPI CSI-2 receiver
++
++maintainers:
++  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
++
++description:
++  The CSI-2 receiver device provides MIPI CSI-2 capabilities for the Renesas RZ/G2L
++  (and alike SoCs). MIPI CSI-2 is part of the CRU block which is used in conjunction
++  with the Image Processing module, which provides the video capture capabilities.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-csi2       # RZ/G2{L,LC}
++          - renesas,r9a07g054-csi2       # RZ/V2L
++      - const: renesas,rzg2l-csi2
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Internal clock for connecting CRU and MIPI
++      - description: CRU Main clock
++      - description: CRU Register access clock
++
++  clock-names:
++    items:
++      - const: system
++      - const: video
++      - const: apb
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    items:
++      - description: CRU_PRESETN reset terminal
++      - description: CRU_CMN_RSTB reset terminal
++
++  reset-names:
++    items:
++      - const: presetn
++      - const: cmn-rstb
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        unevaluatedProperties: false
++        description:
++          Input port node, single endpoint describing the CSI-2 transmitter.
++
++        properties:
++          endpoint:
++            $ref: video-interfaces.yaml#
++            unevaluatedProperties: false
++
++            properties:
++              data-lanes:
++                minItems: 1
++                maxItems: 4
++                items:
++                  maximum: 4
++
++            required:
++              - clock-lanes
++              - data-lanes
++
++      port@1:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          Output port node, Image Processing block connected to the CSI-2 receiver.
++
++    required:
++      - port@0
++      - port@1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++  - reset-names
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    csi: csi@10830400 {
++        compatible = "renesas,r9a07g044-csi2", "renesas,rzg2l-csi2";
++        reg = <0x10830400 0xfc00>;
++        interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&cpg CPG_MOD R9A07G044_CRU_SYSCLK>,
++                 <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
++                 <&cpg CPG_MOD R9A07G044_CRU_PCLK>;
++        clock-names = "system", "video", "apb";
++        power-domains = <&cpg>;
++        resets = <&cpg R9A07G044_CRU_PRESETN>,
++                 <&cpg R9A07G044_CRU_CMN_RSTB>;
++        reset-names = "presetn", "cmn-rstb";
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            port@0 {
++                reg = <0>;
++
++                csi2_in: endpoint {
++                    clock-lanes = <0>;
++                    data-lanes = <1 2>;
++                    remote-endpoint = <&ov5645_ep>;
++                };
++            };
++
++            port@1 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                reg = <1>;
++
++                csi2cru: endpoint@0 {
++                    reg = <0>;
++                    remote-endpoint = <&crucsi2>;
++                };
++            };
++        };
++    };
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.25.1
+
