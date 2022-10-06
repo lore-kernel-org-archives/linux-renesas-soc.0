@@ -2,131 +2,91 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63424C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Oct 2022 19:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3464C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Oct 2022 19:05:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232049AbiJFTFd (ORCPT
+        id S232052AbiJFTFe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 6 Oct 2022 15:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55878 "EHLO
+        Thu, 6 Oct 2022 15:05:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232093AbiJFTFM (ORCPT
+        with ESMTP id S232334AbiJFTFN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Oct 2022 15:05:12 -0400
+        Thu, 6 Oct 2022 15:05:13 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC40711C18
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  6 Oct 2022 12:05:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E50A1175AF
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  6 Oct 2022 12:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=eg3lq46r5Z1oVAOyVdCgPqNupNG
-        GqPqiJ2NAOmWzYE4=; b=CKiVp7nuR8eANSRLaQWiQL3xICM9Gjji+eu6NHUcbBn
-        pQNkVK8RVTdZH542a+hTT86vET3IVmCiGX8NbIg30NlV1c0yYfo/g0+2Mcq2MYn/
-        ACuC3flVWla1tOi3XQhef1uwTA6TTKp/dbg0eqJgznS5Qsd00yy7Y501aLfPSOPo
-        =
-Received: (qmail 1467487 invoked from network); 6 Oct 2022 21:05:01 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2022 21:05:01 +0200
-X-UD-Smtp-Session: l3s3148p1@ZTGNXmLqkO4ucrRL
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=NKjbC/eQaz8mvW
+        NQScEGqtT2FITFZRr5xYVMokTHG8k=; b=srhJjoCBCLnlwkjXJ/dCUKnr8YI2Lv
+        mxgcLo9kgksyfjYm+qATFmFdaSwipIbgGUjA/aKF398FxKyU4GbAqKWTiyjI6nBo
+        WCjcyZw/7j0hkAdlX3XqjitUbnlX1VkpYWtOSew/Nnv8NLdTgUOWEnt3JbYN87LM
+        6IMMXDZtQy8TA=
+Received: (qmail 1467624 invoked from network); 6 Oct 2022 21:05:05 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Oct 2022 21:05:05 +0200
+X-UD-Smtp-Session: l3s3148p1@4Qv8XmLq6coucrRL
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFC 0/6] mmc: renesas_sdhi: add support for DMA end irqs
-Date:   Thu,  6 Oct 2022 21:04:46 +0200
-Message-Id: <20221006190452.5316-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFC 4/6] mmc: renesas_sdhi: add quirk for broken register layout
+Date:   Thu,  6 Oct 2022 21:04:50 +0200
+Message-Id: <20221006190452.5316-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221006190452.5316-1-wsa+renesas@sang-engineering.com>
+References: <20221006190452.5316-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Motivation for this series from patch 5:
+Some early Gen3 SoCs have the DTRANEND1 bit at a different location than
+all later SoCs. Because we need the bit soon, add a quirk so we know
+which bit to use.
 
-===
-So far, we have been relying on access_end interrupts only to mark DMA
-transfers as done implying that DMA end interrupts have occurred by then
-anyhow. On some SoCs under some conditions, this turned out to be not
-enough. So, we enable DMA interrupts as well and make sure that both
-events, DMA irq and access_end irq, have happened before finishing the
-DMA transfer.
-===
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi.h               | 1 +
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-The first two patches are cleanups. For the rest, the basis were BSP
-patches, but they have been refactored heavily, so they look very
-different now:
-
-* self-contained
-  except for the new dma_irq callback which is for the TMIO core, all
-  other code is self-contained in renesas_sdhi_internal_dmac now.
-* concise
-  Less new members for the existing structs, also code duplication was
-  avoided by moving code to more suitable locations
-* replaced the spinlock with atomic bit operators
-* used quirk mechanism for the old INFO1 layout
-
-Tested on a Salvator-X board with M3-W (r8a77960) and a Salvator-XS
-board with M3-N (r8a77965). No regression encountered in functionality
-and performance. A branch can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/upport_dmaend
-
-
-Here are excerpts of a log when booting the M3-N with patch 6 applied to
-show that all combinations of incoming irqs are handled:
-
-=== DMA first, Access second ===
-
-          <idle>-0       [000] d.h..     0.505454: renesas_sdhi_internal_dmac_dma_irq: DMA end
-          <idle>-0       [000] d.h..     0.505496: renesas_sdhi_internal_dmac_dataend_dma: Access end: 0
-          <idle>-0       [000] ..s..     0.505498: renesas_sdhi_internal_dmac_complete_tasklet_fn: Tasklet
-
-=== Access first, DMA second ===
-
-     kworker/0:2-42      [000] d.h..     0.510603: renesas_sdhi_internal_dmac_dataend_dma: Access end: 0
-     kworker/0:2-42      [000] d.h..     0.510605: renesas_sdhi_internal_dmac_dma_irq: DMA end
-     kworker/0:2-42      [000] ..s..     0.510606: renesas_sdhi_internal_dmac_complete_tasklet_fn: Tasklet
-
-=== Access first, Simulated DMA second ===
-
-          <idle>-0       [000] d.H..     0.510635: renesas_sdhi_internal_dmac_dataend_dma: Access end: 0
-          <idle>-0       [000] ..s..     0.510637: renesas_sdhi_internal_dmac_issue_tasklet_fn: Simulated DMA end
-          <idle>-0       [000] ..s..     0.510638: renesas_sdhi_internal_dmac_complete_tasklet_fn: Tasklet
-
-(I have never seen Simulated DMA (= CMD error happened) first, but it
-should be handled like regular DMA end as well(tm).)
-
-=== Access first, no DMA end needed because of DATA error (EILSEQ) ===
-
-          <idle>-0       [000] d.H..     0.510894: renesas_sdhi_internal_dmac_dataend_dma: Access end: -84
-          <idle>-0       [000] ..s..     0.510896: renesas_sdhi_internal_dmac_complete_tasklet_fn: Tasklet
-
-===
-
-I think this is as far as I can reach alone. I'd love to get review
-comments and further testing. Shimoda-san, can you kindly ask the BSP
-team to do further testing?
-
-Thank you everyone and happy hacking,
-
-   Wolfram
-
-
-Wolfram Sang (6):
-  mmc: renesas_sdhi: remove accessor function for internal_dmac
-  mmc: renesas_sdhi: improve naming of DMA struct
-  mmc: tmio: add callback for dma irq
-  mmc: renesas_sdhi: add quirk for broken register layout
-  mmc: renesas_sdhi: take DMA end interrupts into account
-  DEBUG mmc: renesas_sdhi: debug end_flags for DMA
-
- drivers/mmc/host/renesas_sdhi.h               | 14 ++-
- drivers/mmc/host/renesas_sdhi_core.c          |  2 +-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 86 ++++++++++++-------
- drivers/mmc/host/tmio_mmc.h                   |  1 +
- drivers/mmc/host/tmio_mmc_core.c              |  3 +
- 5 files changed, 72 insertions(+), 34 deletions(-)
-
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index b661892847f6..fa88b721364c 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -44,6 +44,7 @@ struct renesas_sdhi_quirks {
+ 	bool fixed_addr_mode;
+ 	bool dma_one_rx_only;
+ 	bool manual_tap_correction;
++	bool old_info1_layout;
+ 	u32 hs400_bad_taps;
+ 	const u8 (*hs400_calib_table)[SDHI_CALIB_TABLE_MAX];
+ };
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 48bea0bd75e8..630ec1e785d6 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -49,7 +49,8 @@
+ /* DM_CM_INFO1 and DM_CM_INFO1_MASK */
+ #define INFO1_CLEAR		0
+ #define INFO1_MASK_CLEAR	GENMASK_ULL(31, 0)
+-#define INFO1_DTRANEND1		BIT(17)
++#define INFO1_DTRANEND1		BIT(20)
++#define INFO1_DTRANEND1_OLD	BIT(17)
+ #define INFO1_DTRANEND0		BIT(16)
+ 
+ /* DM_CM_INFO2 and DM_CM_INFO2_MASK */
+@@ -165,6 +166,7 @@ static const struct renesas_sdhi_quirks sdhi_quirks_4tap_nohs400_one_rx = {
+ 	.hs400_disabled = true,
+ 	.hs400_4taps = true,
+ 	.dma_one_rx_only = true,
++	.old_info1_layout = true,
+ };
+ 
+ static const struct renesas_sdhi_quirks sdhi_quirks_4tap = {
 -- 
 2.35.1
 
