@@ -2,91 +2,83 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7F0C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Oct 2022 13:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA062C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Oct 2022 15:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229825AbiJGNKW (ORCPT
+        id S229703AbiJGPUR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 7 Oct 2022 09:10:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50840 "EHLO
+        Fri, 7 Oct 2022 11:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229829AbiJGNKS (ORCPT
+        with ESMTP id S229542AbiJGPUR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2022 09:10:18 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D634B3FA0F
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Oct 2022 06:10:09 -0700 (PDT)
+        Fri, 7 Oct 2022 11:20:17 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14A91D663
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Oct 2022 08:20:14 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:a4a4:fd15:fba:df3b])
-        by albert.telenet-ops.be with bizsmtp
-        id V1A6280015Lh0ZK061A6ta; Fri, 07 Oct 2022 15:10:06 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id V3LA280025Lh0ZK013LASc; Fri, 07 Oct 2022 17:20:12 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ogn77-000uNd-Kt; Fri, 07 Oct 2022 15:10:05 +0200
+        id 1ogp8z-000ueh-MG; Fri, 07 Oct 2022 17:20:09 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ogn77-00CPMW-7H; Fri, 07 Oct 2022 15:10:05 +0200
+        id 1ogp8z-00CQ7b-9T; Fri, 07 Oct 2022 17:20:09 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] clk: renesas: r8a779g0: Add SASYNCPER clocks
-Date:   Fri,  7 Oct 2022 15:10:00 +0200
-Message-Id: <d0f35c35e1f96c5a649ab477e7ba5d8025957cd0.1665147497.git.geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: renesas: r8a779g0: Fix HSCIF0 "brg_int" clock
+Date:   Fri,  7 Oct 2022 17:20:03 +0200
+Message-Id: <a5bd4148f92806f7c8e577d383370f810315f586.1665155947.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1665147497.git.geert+renesas@glider.be>
-References: <cover.1665147497.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On R-Car V4H, all PLLs except PLL5 support Spread Spectrum and/or
-Fractional Multiplication to reduce electromagnetic interference.
+As serial communication requires a clock signal, the High Speed Serial
+Communication Interfaces with FIFO (HSCIF) are clocked by a clock that
+is not affected by Spread Spectrum or Fractional Multiplication.
 
-Add the SASYNCPER and SASYNCPERD[124] clocks, which are used as clock
-sources for modules that must not be affected by Spread Spectrum and/or
-Fractional Multiplication.
+Hence change the clock input for the HSCIF0 Baud Rate Generator internal
+clock from the S0D3_PER clock to the SASYNCPERD1 clock (which has the
+same clock rate), cfr. R-Car V4H Hardware User's Manual rev. 0.54.
 
+Fixes: 987da486d84a5643 ("arm64: dts: renesas: Add Renesas R8A779G0 SoC support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+For full proper operation, this depends on "[PATCH 1/5] clk: renesas:
+r8a779g0: Add SASYNCPER clocks"[1].
+However, as the "brg_int" clock is optional, the serial driver will keep
+on functioning without it, and just resort to a less optimal clock
+input/divider combination, which is still good enough for the serial
+console.
 
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index ad096719fd36b55b..51491b94a057b5a7 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -47,6 +47,7 @@ enum clk_ids {
- 	CLK_S0_VIO,
- 	CLK_S0_VC,
- 	CLK_S0_HSC,
-+	CLK_SASYNCPER,
- 	CLK_SV_VIP,
- 	CLK_SV_IR,
- 	CLK_SDSRC,
-@@ -84,6 +85,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED(".s0_vio",	CLK_S0_VIO,	CLK_PLL1_DIV2,	2, 1),
- 	DEF_FIXED(".s0_vc",	CLK_S0_VC,	CLK_PLL1_DIV2,	2, 1),
- 	DEF_FIXED(".s0_hsc",	CLK_S0_HSC,	CLK_PLL1_DIV2,	2, 1),
-+	DEF_FIXED(".sasyncper",	CLK_SASYNCPER,	CLK_PLL5_DIV4,	3, 1),
- 	DEF_FIXED(".sv_vip",	CLK_SV_VIP,	CLK_PLL1,	5, 1),
- 	DEF_FIXED(".sv_ir",	CLK_SV_IR,	CLK_PLL1,	5, 1),
- 	DEF_BASE(".sdsrc",	CLK_SDSRC,	CLK_TYPE_GEN4_SDSRC, CLK_PLL5),
-@@ -128,6 +130,9 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED("s0d4_hsc",	R8A779G0_CLK_S0D4_HSC,	CLK_S0_HSC,	4, 1),
- 	DEF_FIXED("cl16m_hsc",	R8A779G0_CLK_CL16M_HSC,	CLK_S0_HSC,	48, 1),
- 	DEF_FIXED("s0d2_cc",	R8A779G0_CLK_S0D2_CC,	CLK_S0,		2, 1),
-+	DEF_FIXED("sasyncperd1",R8A779G0_CLK_SASYNCPERD1, CLK_SASYNCPER,1, 1),
-+	DEF_FIXED("sasyncperd2",R8A779G0_CLK_SASYNCPERD2, CLK_SASYNCPER,2, 1),
-+	DEF_FIXED("sasyncperd4",R8A779G0_CLK_SASYNCPERD4, CLK_SASYNCPER,4, 1),
- 	DEF_FIXED("svd1_ir",	R8A779G0_CLK_SVD1_IR,	CLK_SV_IR,	1, 1),
- 	DEF_FIXED("svd2_ir",	R8A779G0_CLK_SVD2_IR,	CLK_SV_IR,	2, 1),
- 	DEF_FIXED("svd1_vip",	R8A779G0_CLK_SVD1_VIP,	CLK_SV_VIP,	1, 1),
+[1] https://lore.kernel.org/r/d0f35c35e1f96c5a649ab477e7ba5d8025957cd0.1665147497.git.geert+renesas@glider.be
+---
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+index edabd1519ccc979d..c941054f4980667b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+@@ -360,7 +360,7 @@ hscif0: serial@e6540000 {
+ 			reg = <0 0xe6540000 0 96>;
+ 			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 514>,
+-				 <&cpg CPG_CORE R8A779G0_CLK_S0D3_PER>,
++				 <&cpg CPG_CORE R8A779G0_CLK_SASYNCPERD1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x31>, <&dmac0 0x30>,
 -- 
 2.25.1
 
