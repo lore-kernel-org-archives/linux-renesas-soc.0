@@ -2,72 +2,68 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85239C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  9 Oct 2022 23:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999CDC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  9 Oct 2022 23:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232043AbiJIXjy (ORCPT
+        id S231676AbiJIXme (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 9 Oct 2022 19:39:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60080 "EHLO
+        Sun, 9 Oct 2022 19:42:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231543AbiJIXj3 (ORCPT
+        with ESMTP id S230463AbiJIXlr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Oct 2022 19:39:29 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85A754CBD;
-        Sun,  9 Oct 2022 16:12:05 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id k2so21647463ejr.2;
-        Sun, 09 Oct 2022 16:12:05 -0700 (PDT)
+        Sun, 9 Oct 2022 19:41:47 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C94F9C7E0;
+        Sun,  9 Oct 2022 16:14:20 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id p26-20020a7bcc9a000000b003c384e59047so3489390wma.4;
+        Sun, 09 Oct 2022 16:14:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XiPRh6wTw9/20yomz/2RX853C89gE1vPeMzvoVPx9eM=;
-        b=l0jc64i+SO+36YELO3JQ0LNGAyQz5T90Td8W5IlW/cw1fWNlUBhX6QQyBIsucvbsIT
-         gyenX0b5DM3XSqRI/SipyLR2MdSQZUwBEavgr5oTmB4HWmDWaGvZGiWwHmtLZuILb1dJ
-         wgouum0QvWQjpujSmyixMmxZzed1eOZaN5xGNGB5BlfjAROJcgTcGcR8zRUbCMQdoDtz
-         +pZub9991luvmGoxea8qHheyKnBy0K2K0mEc73wG96N82CVmCudDnf7cZ6cmyD2ALxZH
-         kcR338cwzcKUhxy8o6tP2qAQoCCyjMTsrAdiX6YcxRKQI862P/lIHX9c7FT8mgQBg2jW
-         1IGQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uR3JBsPeUWL8GJ7HMbmzxwJZVM4Y7GwWcCapqwWfp+E=;
+        b=HjbVEQkJ3X7FYvYtfn+UE0Z9pEjY1EZk+mUGjKnFlCkPjfL2Gijx8fUoOsnia99yjx
+         6OUDX8/ACs3TwWy3KRf5RnrbYYjOKqQIFTXdnZMODJVaRdEB3nuO5GnJG3Pfi4egZMXS
+         rOEMwLEAS7ctHkTxlQ/uUUqhvtAnSYne1ddiUrD89pI3Qlx/CZlrSs3URV5JLTZJToxf
+         T5uUdybbo4nU3i+hNd10d7uEWb/bHlyRs9cxPevO3udtlLNHdb0AU+V2r5EeTFE6UXos
+         aj34foGcnDRPP1e8zWHc1DR4ACiBOcT0FqvGIrDCLHqm/SNsEDPp7nxD4V3Jl1q84f34
+         LvfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XiPRh6wTw9/20yomz/2RX853C89gE1vPeMzvoVPx9eM=;
-        b=QNbyU2/uzdWk0+1FQQi66dCg+1IiNJdnO8IjUOURtgHQuYpFigZfOQ9WwMFj1UMPGW
-         kZoU+8fjdCLKa5HO85Ss2sYHhQCeBDXcTahNw6AP2FjCguVlxSfX85Xy8ckj03LHFQ6I
-         53/HClaoGTh6DiRmbcH9xSgzP/kLq9rZNyi27D/GMIpI4SX3gwBTZQ17wobMBT4J6c0C
-         lcBFE+EP9eFuddTLu4NNH0m0+7r4rJI6/5eqF7CQ/TM2FQXV/W1WTxsRKbLbM4WV0gcj
-         l78C6J4VsSlVCxllhYpKylPdk47GlVO9W+oUY/ECq1MLcSGm5z334tfqBkS8x5nicRDR
-         z7HQ==
-X-Gm-Message-State: ACrzQf24C6NgZjFvPV9x1pEwHuaJVdHcWdFdKr5ZK5luXKUIEDko9RVZ
-        in2jcsBzOmVZg+lzJDSb1DdQvkWovHm1Yg==
-X-Google-Smtp-Source: AMsMyM4hmqzqBSDgiaJTVrebGVZol0MldXvMwVBoV6c41bxUrWHvpCdF6rBmk9nyFns/pEHTaPa9Wg==
-X-Received: by 2002:adf:de8f:0:b0:22e:361b:6a05 with SMTP id w15-20020adfde8f000000b0022e361b6a05mr10029716wrl.311.1665356460803;
-        Sun, 09 Oct 2022 16:01:00 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uR3JBsPeUWL8GJ7HMbmzxwJZVM4Y7GwWcCapqwWfp+E=;
+        b=vEYM+h22KNLVVTluMhEZgtFWQGcYMjmQB0uuawGVVW3CNSPJG/K9WpcjzosXj0P34x
+         yTWer3wjzZv88edZ/pht5zGRsVTk4htAMsnLS0Zo34QsEglXtLTtyJ3Kxt7x8J4TnR8h
+         sKiVRYQlj217hsuS4hobJzomwbH+klbaAuIbKeZnwKuGqRB4OUB4oWkisCHZKUIga8QM
+         gRfvIXmTwyoXGGvhlEKDJ+R14L4XqCY1A+DVZheXIavsMWN4jvK3IzXq8ixd3tdlYtiS
+         gjpYOhzZVZd4KWR1GN0RMVfW8cydIvL/UH7fYeFEdsdmQZh6J/m+msoiYjiWe4odjBF5
+         ZHlw==
+X-Gm-Message-State: ACrzQf3y3vftVAZhabnrdC7VaH5TQhDA/5dMXet9Z3imgIUEuNP73H28
+        IyFAxccCmn5O8N3q9sWCgf46daqmM+swEQ==
+X-Google-Smtp-Source: AMsMyM4l9RyEElS54NCLBXPa//r1tmDKgKk+QnANVBVvjJXCGRjHx39IxOguhOHnZVcYj3W8CvciUA==
+X-Received: by 2002:a05:600c:ace:b0:3b4:621f:93f4 with SMTP id c14-20020a05600c0ace00b003b4621f93f4mr10464640wmr.8.1665357182423;
+        Sun, 09 Oct 2022 16:13:02 -0700 (PDT)
 Received: from prasmi.home ([2a00:23c8:2501:c701:e4:5cde:80ab:dfd4])
-        by smtp.gmail.com with ESMTPSA id r16-20020adff710000000b0022afbd02c69sm7239689wrp.56.2022.10.09.16.00.59
+        by smtp.gmail.com with ESMTPSA id v24-20020a1cf718000000b003a6125562e1sm8325155wmh.46.2022.10.09.16.13.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Oct 2022 16:01:00 -0700 (PDT)
+        Sun, 09 Oct 2022 16:13:01 -0700 (PDT)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/5] arm64: dts: renesas: rzg2lc-smarc-som: Drop enabling WDT2
-Date:   Mon, 10 Oct 2022 00:00:41 +0100
-Message-Id: <20221009230044.10961-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a07g043: Drop WDT2 clock and reset entry
+Date:   Mon, 10 Oct 2022 00:12:53 +0100
+Message-Id: <20221009231253.15592-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221009230044.10961-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20221009230044.10961-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -78,26 +74,36 @@ From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 WDT CH2 is specifically to check the operation of Cortex-M33 CPU and if
 used from CA55 CPU would result in an unexpected behaviour. Hence drop
-enabling WDT2.
+WDT2 clock and reset entries.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi | 5 -----
+ drivers/clk/renesas/r9a07g043-cpg.c | 5 -----
  1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-index 78e6e2376b01..8a0d56872de7 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-@@ -276,8 +276,3 @@ &wdt1 {
- 	status = "okay";
- 	timeout-sec = <60>;
- };
--
--&wdt2 {
--	status = "okay";
--	timeout-sec = <60>;
--};
+diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
+index 37475465100d..99f72bf590fa 100644
+--- a/drivers/clk/renesas/r9a07g043-cpg.c
++++ b/drivers/clk/renesas/r9a07g043-cpg.c
+@@ -158,10 +158,6 @@ static struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
+ 				0x548, 0),
+ 	DEF_MOD("wdt0_clk",	R9A07G043_WDT0_CLK, R9A07G043_OSCCLK,
+ 				0x548, 1),
+-	DEF_MOD("wdt2_pclk",	R9A07G043_WDT2_PCLK, R9A07G043_CLK_P0,
+-				0x548, 4),
+-	DEF_MOD("wdt2_clk",	R9A07G043_WDT2_CLK, R9A07G043_OSCCLK,
+-				0x548, 5),
+ 	DEF_MOD("spi_clk2",	R9A07G043_SPI_CLK2, R9A07G043_CLK_SPI1,
+ 				0x550, 0),
+ 	DEF_MOD("spi_clk",	R9A07G043_SPI_CLK, R9A07G043_CLK_SPI0,
+@@ -269,7 +265,6 @@ static struct rzg2l_reset r9a07g043_resets[] = {
+ 	DEF_RST(R9A07G043_OSTM1_PRESETZ, 0x834, 1),
+ 	DEF_RST(R9A07G043_OSTM2_PRESETZ, 0x834, 2),
+ 	DEF_RST(R9A07G043_WDT0_PRESETN, 0x848, 0),
+-	DEF_RST(R9A07G043_WDT2_PRESETN, 0x848, 2),
+ 	DEF_RST(R9A07G043_SPI_RST, 0x850, 0),
+ 	DEF_RST(R9A07G043_SDHI0_IXRST, 0x854, 0),
+ 	DEF_RST(R9A07G043_SDHI1_IXRST, 0x854, 1),
 -- 
 2.25.1
 
