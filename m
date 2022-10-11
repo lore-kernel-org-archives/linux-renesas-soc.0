@@ -2,413 +2,122 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F64C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Oct 2022 08:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE5FC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Oct 2022 08:19:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230091AbiJKIPs (ORCPT
+        id S229484AbiJKITt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Oct 2022 04:15:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39814 "EHLO
+        Tue, 11 Oct 2022 04:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230094AbiJKIPW (ORCPT
+        with ESMTP id S229511AbiJKITs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Oct 2022 04:15:22 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF4F5585;
-        Tue, 11 Oct 2022 01:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665476115; x=1697012115;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+2WobcbFUASZT1E7JylViFzBHW7r0RIR6Depo0td46o=;
-  b=Pi0lzSjYF0V/5gD1h3TLTrZW2LVxfsKqaw1p0OwDdzVbsxzr9MHh67Lh
-   wp/AfN6lIf/AuK/Rrqpayrt13I+4ikAgQQ9iKlJ9rAsxCtSIpT8nZWNhQ
-   WrjyBXCEjrCsc+gyddYQs7PWBvPV9DOZGSGHUtd2Z6fT+HCoAdp3Wu8lt
-   4izvsvj38kDmuIJ1NRt4NKkEUEWDKflzt9NGYGU2ul1bmHu25VnLrofB6
-   z7+waIg95PIROR4rRAF7K0U3g6TjmcM//xgwevI41H1iiIaAKzzKsIYeS
-   msZJGPpX4FnqevN2QA7QaKNxQSuwQ2P5QHNgZseVUkp/XGSLhqehJZqO1
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="284171031"
-X-IronPort-AV: E=Sophos;i="5.95,175,1661842800"; 
-   d="scan'208";a="284171031"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2022 01:14:09 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10496"; a="604050585"
-X-IronPort-AV: E=Sophos;i="5.95,175,1661842800"; 
-   d="scan'208";a="604050585"
-Received: from punajuuri.fi.intel.com (HELO paasikivi.fi.intel.com) ([10.237.72.43])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2022 01:13:52 -0700
-Received: from paasikivi.fi.intel.com (localhost [127.0.0.1])
-        by paasikivi.fi.intel.com (Postfix) with SMTP id 5997220387;
-        Tue, 11 Oct 2022 11:13:50 +0300 (EEST)
-Date:   Tue, 11 Oct 2022 08:13:50 +0000
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+        Tue, 11 Oct 2022 04:19:48 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D427C140A7;
+        Tue, 11 Oct 2022 01:19:46 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id a18so5142473qko.0;
+        Tue, 11 Oct 2022 01:19:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xlyNfj0a7dGLJLnND8iCa6F2UpgFM8hbpwL3tXCOrfM=;
+        b=4/CSVFK50Usfeye+WIIVnGkEZNJWHSgb9fSaPAfePYLrGW5z0ptpRX0W86Oa8Kj2aS
+         xjEv12wztYDqn5psmq7/8539mHcopqh7H3bbwwzKAO5aQmrdcYEYUWOFCW9zAa5ByX0v
+         aLJ9dSKXZ1TtjnxuyPTOz9+m4lD+VQlHrwyiD6kNDrBEUWOz4bpZ8gXxUHbLh8E6Vbmc
+         swrpFiCHQ1Zbn2LxrqopEs/RUe1AjEZcP8qA/jV1MCwjxa7DDILGvSVFfEPvETA4XPRJ
+         7LMTe8N6EFgvGVU0d3kQ5uhXaVdMJr3jJcg0ej9Qw7Fh/ww7h+Ya4z+hsRuZjZILlR3l
+         RBXA==
+X-Gm-Message-State: ACrzQf0NUrTFIFF53B+MKylXm3ZnZDzCnvpYrHZLh3SWgiiVSMh0UDd8
+        1ArwveJm8pxOqWzfyhH83KQIvTepOVZ2Lw==
+X-Google-Smtp-Source: AMsMyM7G8+AuUE8isWfrRIyPILtWIrX7KPzxSr9kJ6X2ilRvpjATG9wWlW6hWkvsgei96p2QGBeP6A==
+X-Received: by 2002:a05:620a:17a8:b0:6ce:99f0:7626 with SMTP id ay40-20020a05620a17a800b006ce99f07626mr15531857qkb.194.1665476385608;
+        Tue, 11 Oct 2022 01:19:45 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id c24-20020a05620a269800b006b5cc25535fsm12396804qkp.99.2022.10.11.01.19.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Oct 2022 01:19:45 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id k3so15588067ybk.9;
+        Tue, 11 Oct 2022 01:19:44 -0700 (PDT)
+X-Received: by 2002:a25:4fc2:0:b0:6be:afb4:d392 with SMTP id
+ d185-20020a254fc2000000b006beafb4d392mr20488877ybb.604.1665476384274; Tue, 11
+ Oct 2022 01:19:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <20221009230044.10961-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20221009230044.10961-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20221009230044.10961-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 11 Oct 2022 10:19:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWcvfWVid+bFFENFDXe9eG32J=OxzSp95+myk=ADdao=w@mail.gmail.com>
+Message-ID: <CAMuHMdWcvfWVid+bFFENFDXe9eG32J=OxzSp95+myk=ADdao=w@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: renesas: r9a07g054: Drop WDT2 node
 To:     Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Shawn Tu <shawnx.tu@intel.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] media: i2c: ov5645: Use runtime PM
-Message-ID: <Y0Ulvmyg8rBOPbRF@paasikivi.fi.intel.com>
-References: <20220927201634.750141-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220927201634.750141-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Prabhakar,
 
-Thanks for the patch. It's great to see drivers moving to runtime PM!
-
-On Tue, Sep 27, 2022 at 09:16:34PM +0100, Prabhakar wrote:
+On Mon, Oct 10, 2022 at 1:01 AM Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Switch to using runtime PM for power management.
-> 
+>
+> WDT CH2 is specifically to check the operation of Cortex-M33 CPU and if
+> used from CA55 CPU would result in an unexpected behaviour. Hence drop
+> WDT2 node from RZ/V2L SoC DTSI.
+>
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/media/i2c/Kconfig  |   2 +-
->  drivers/media/i2c/ov5645.c | 135 +++++++++++++++++++------------------
->  2 files changed, 69 insertions(+), 68 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index 7806d4b81716..c0edd1017fe8 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -459,7 +459,7 @@ config VIDEO_OV5640
->  config VIDEO_OV5645
->  	tristate "OmniVision OV5645 sensor support"
->  	depends on OF
-> -	depends on I2C && VIDEO_DEV
-> +	depends on I2C && PM && VIDEO_DEV
->  	select MEDIA_CONTROLLER
->  	select VIDEO_V4L2_SUBDEV_API
->  	select V4L2_FWNODE
-> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> index 81e4e87e1821..3c3b30338328 100644
-> --- a/drivers/media/i2c/ov5645.c
-> +++ b/drivers/media/i2c/ov5645.c
-> @@ -27,6 +27,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_graph.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
-> @@ -108,7 +109,6 @@ struct ov5645 {
->  	u8 timing_tc_reg21;
->  
->  	struct mutex power_lock; /* lock to protect power state */
-> -	int power_count;
->  
->  	struct gpio_desc *enable_gpio;
->  	struct gpio_desc *rst_gpio;
-> @@ -635,8 +635,24 @@ static int ov5645_set_register_array(struct ov5645 *ov5645,
->  	return 0;
->  }
->  
-> -static int ov5645_set_power_on(struct ov5645 *ov5645)
-> +static int ov5645_set_power_off(struct device *dev)
->  {
-> +	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-> +	struct ov5645 *ov5645 = to_ov5645(sd);
-> +
-> +	ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x58);
-> +	gpiod_set_value_cansleep(ov5645->rst_gpio, 1);
-> +	gpiod_set_value_cansleep(ov5645->enable_gpio, 0);
-> +	clk_disable_unprepare(ov5645->xclk);
-> +	regulator_bulk_disable(OV5645_NUM_SUPPLIES, ov5645->supplies);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ov5645_set_power_on(struct device *dev)
-> +{
-> +	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-> +	struct ov5645 *ov5645 = to_ov5645(sd);
->  	int ret;
->  
->  	ret = regulator_bulk_enable(OV5645_NUM_SUPPLIES, ov5645->supplies);
-> @@ -658,57 +674,19 @@ static int ov5645_set_power_on(struct ov5645 *ov5645)
->  
->  	msleep(20);
->  
-> -	return 0;
-> -}
+
+Thanks for your patch!
+
+> --- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+> @@ -1000,21 +1000,6 @@ wdt1: watchdog@12800c00 {
+>                         status = "disabled";
+>                 };
+>
+> -               wdt2: watchdog@12800400 {
+> -                       compatible = "renesas,r9a07g054-wdt",
+> -                                    "renesas,rzg2l-wdt";
+> -                       reg = <0 0x12800400 0 0x400>;
+> -                       clocks = <&cpg CPG_MOD R9A07G054_WDT2_PCLK>,
+> -                                <&cpg CPG_MOD R9A07G054_WDT2_CLK>;
+> -                       clock-names = "pclk", "oscclk";
+> -                       interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+> -                       interrupt-names = "wdt", "perrout";
+> -                       resets = <&cpg R9A07G054_WDT2_PRESETN>;
+> -                       power-domains = <&cpg>;
+> -                       status = "disabled";
+> -               };
 > -
-> -static void ov5645_set_power_off(struct ov5645 *ov5645)
-> -{
-> -	gpiod_set_value_cansleep(ov5645->rst_gpio, 1);
-> -	gpiod_set_value_cansleep(ov5645->enable_gpio, 0);
-> -	clk_disable_unprepare(ov5645->xclk);
-> -	regulator_bulk_disable(OV5645_NUM_SUPPLIES, ov5645->supplies);
-> -}
-> -
-> -static int ov5645_s_power(struct v4l2_subdev *sd, int on)
-> -{
-> -	struct ov5645 *ov5645 = to_ov5645(sd);
-> -	int ret = 0;
-> -
-> -	mutex_lock(&ov5645->power_lock);
-> -
-> -	/* If the power count is modified from 0 to != 0 or from != 0 to 0,
-> -	 * update the power state.
-> -	 */
-> -	if (ov5645->power_count == !on) {
-> -		if (on) {
-> -			ret = ov5645_set_power_on(ov5645);
-> -			if (ret < 0)
-> -				goto exit;
-> -
-> -			ret = ov5645_set_register_array(ov5645,
-> -					ov5645_global_init_setting,
-> +	ret = ov5645_set_register_array(ov5645, ov5645_global_init_setting,
->  					ARRAY_SIZE(ov5645_global_init_setting));
-> -			if (ret < 0) {
-> -				dev_err(ov5645->dev,
-> -					"could not set init registers\n");
-> -				ov5645_set_power_off(ov5645);
-> -				goto exit;
-> -			}
-> -
-> -			usleep_range(500, 1000);
-> -		} else {
-> -			ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x58);
-> -			ov5645_set_power_off(ov5645);
-> -		}
-> +	if (ret < 0) {
-> +		dev_err(ov5645->dev, "could not set init registers\n");
-> +		goto exit;
->  	}
->  
-> -	/* Update the power count. */
-> -	ov5645->power_count += on ? 1 : -1;
-> -	WARN_ON(ov5645->power_count < 0);
-> +	usleep_range(500, 1000);
->  
-> -exit:
-> -	mutex_unlock(&ov5645->power_lock);
-> +	return 0;
->  
-> +exit:
-> +	ov5645_set_power_off(dev);
->  	return ret;
->  }
->  
-> @@ -795,7 +773,7 @@ static int ov5645_s_ctrl(struct v4l2_ctrl *ctrl)
->  	int ret;
->  
->  	mutex_lock(&ov5645->power_lock);
-> -	if (!ov5645->power_count) {
-> +	if (!pm_runtime_get_if_in_use(ov5645->dev)) {
->  		mutex_unlock(&ov5645->power_lock);
->  		return 0;
->  	}
-> @@ -827,6 +805,7 @@ static int ov5645_s_ctrl(struct v4l2_ctrl *ctrl)
->  		break;
->  	}
->  
-> +	pm_runtime_put_autosuspend(ov5645->dev);
->  	mutex_unlock(&ov5645->power_lock);
->  
->  	return ret;
-> @@ -991,6 +970,10 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
->  	int ret;
->  
->  	if (enable) {
-> +		ret = pm_runtime_resume_and_get(ov5645->dev);
-> +		if (ret < 0)
-> +			return ret;
-> +
->  		ret = ov5645_set_register_array(ov5645,
->  					ov5645->current_mode->data,
->  					ov5645->current_mode->data_size);
-> @@ -998,22 +981,22 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
->  			dev_err(ov5645->dev, "could not set mode %dx%d\n",
->  				ov5645->current_mode->width,
->  				ov5645->current_mode->height);
-> -			return ret;
-> +			goto err_rpm_put;
->  		}
->  		ret = v4l2_ctrl_handler_setup(&ov5645->ctrls);
->  		if (ret < 0) {
->  			dev_err(ov5645->dev, "could not sync v4l2 controls\n");
-> -			return ret;
-> +			goto err_rpm_put;
->  		}
->  
->  		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x45);
->  		if (ret < 0)
-> -			return ret;
-> +			goto err_rpm_put;
->  
->  		ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
->  				       OV5645_SYSTEM_CTRL0_START);
->  		if (ret < 0)
-> -			return ret;
-> +			goto err_rpm_put;
->  	} else {
->  		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x40);
->  		if (ret < 0)
-> @@ -1023,14 +1006,15 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
->  				       OV5645_SYSTEM_CTRL0_STOP);
->  		if (ret < 0)
->  			return ret;
+>                 ostm0: timer@12801000 {
+>                         compatible = "renesas,r9a07g054-ostm",
+>                                      "renesas,ostm";
 
-Not a problem with this patch and should be addressed separately, but the
-caller will just call s_stream(0) and will ignore the return value. You
-could complain about the error but still should return 0 when disabling
-streaming.
+As this is hardware description, and the node is disabled by default,
+we could keep it.  However, as it is to be used by the CM33, its
+interrupts property should point to the CM33 NVIC instead of the
+CA55 GIC.  So let's drop it for now...
 
-> +		pm_runtime_put(ov5645->dev);
->  	}
->  
->  	return 0;
-> -}
->  
-> -static const struct v4l2_subdev_core_ops ov5645_core_ops = {
-> -	.s_power = ov5645_s_power,
-> -};
-> +err_rpm_put:
-> +	pm_runtime_put(ov5645->dev);
-> +	return ret;
-> +}
->  
->  static const struct v4l2_subdev_video_ops ov5645_video_ops = {
->  	.s_stream = ov5645_s_stream,
-> @@ -1046,7 +1030,6 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
->  };
->  
->  static const struct v4l2_subdev_ops ov5645_subdev_ops = {
-> -	.core = &ov5645_core_ops,
->  	.video = &ov5645_video_ops,
->  	.pad = &ov5645_subdev_pad_ops,
->  };
-> @@ -1188,11 +1171,9 @@ static int ov5645_probe(struct i2c_client *client)
->  		goto free_ctrl;
->  	}
->  
-> -	ret = ov5645_s_power(&ov5645->sd, true);
-> -	if (ret < 0) {
-> -		dev_err(dev, "could not power up OV5645\n");
-> +	ret = ov5645_set_power_on(dev);
-> +	if (ret)
->  		goto free_entity;
-> -	}
->  
->  	ret = ov5645_read_reg(ov5645, OV5645_CHIP_ID_HIGH, &chip_id_high);
->  	if (ret < 0 || chip_id_high != OV5645_CHIP_ID_HIGH_BYTE) {
-> @@ -1209,12 +1190,16 @@ static int ov5645_probe(struct i2c_client *client)
->  
->  	dev_info(dev, "OV5645 detected at address 0x%02x\n", client->addr);
->  
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_enable(dev);
-> +
->  	ret = ov5645_read_reg(ov5645, OV5645_AEC_PK_MANUAL,
->  			      &ov5645->aec_pk_manual);
->  	if (ret < 0) {
->  		dev_err(dev, "could not read AEC/AGC mode\n");
->  		ret = -ENODEV;
-> -		goto power_down;
-> +		goto err_pm_runtime;
->  	}
->  
->  	ret = ov5645_read_reg(ov5645, OV5645_TIMING_TC_REG20,
-> @@ -1222,7 +1207,7 @@ static int ov5645_probe(struct i2c_client *client)
->  	if (ret < 0) {
->  		dev_err(dev, "could not read vflip value\n");
->  		ret = -ENODEV;
-> -		goto power_down;
-> +		goto err_pm_runtime;
->  	}
->  
->  	ret = ov5645_read_reg(ov5645, OV5645_TIMING_TC_REG21,
-> @@ -1230,14 +1215,18 @@ static int ov5645_probe(struct i2c_client *client)
->  	if (ret < 0) {
->  		dev_err(dev, "could not read hflip value\n");
->  		ret = -ENODEV;
-> -		goto power_down;
-> +		goto err_pm_runtime;
->  	}
->  
-> -	ov5645_s_power(&ov5645->sd, false);
-> +	pm_runtime_set_autosuspend_delay(dev, 1000);
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_put_autosuspend(dev);
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.2.
 
-You can also do this after registering async subdev. That allows removing
-err_pm_runtime label and the two lines below it.
+Gr{oetje,eeting}s,
 
->  
->  	ret = v4l2_async_register_subdev(&ov5645->sd);
->  	if (ret < 0) {
->  		dev_err(dev, "could not register v4l2 device\n");
-> +		pm_runtime_disable(dev);
-> +		pm_runtime_set_suspended(dev);
->  		goto free_entity;
->  	}
->  
-> @@ -1245,8 +1234,11 @@ static int ov5645_probe(struct i2c_client *client)
+                        Geert
 
-Again not a problem in this patch, but ov5645_entity_init_cfg() call here
-needs to be done before registering the async subdev.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-This could be addressed in a separate patch. Up to you.
-
->  
->  	return 0;
->  
-> +err_pm_runtime:
-> +	pm_runtime_disable(dev);
-> +	pm_runtime_put_noidle(dev);
->  power_down:
-> -	ov5645_s_power(&ov5645->sd, false);
-> +	ov5645_set_power_off(dev);
->  free_entity:
->  	media_entity_cleanup(&ov5645->sd.entity);
->  free_ctrl:
-> @@ -1264,6 +1256,10 @@ static void ov5645_remove(struct i2c_client *client)
->  	v4l2_async_unregister_subdev(&ov5645->sd);
->  	media_entity_cleanup(&ov5645->sd.entity);
->  	v4l2_ctrl_handler_free(&ov5645->ctrls);
-> +	pm_runtime_disable(ov5645->dev);
-> +	if (!pm_runtime_status_suspended(ov5645->dev))
-> +		ov5645_set_power_off(ov5645->dev);
-> +	pm_runtime_set_suspended(ov5645->dev);
->  	mutex_destroy(&ov5645->power_lock);
->  }
->  
-> @@ -1279,10 +1275,15 @@ static const struct of_device_id ov5645_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, ov5645_of_match);
->  
-> +static const struct dev_pm_ops ov5645_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(ov5645_set_power_off, ov5645_set_power_on, NULL)
-> +};
-> +
->  static struct i2c_driver ov5645_i2c_driver = {
->  	.driver = {
->  		.of_match_table = ov5645_of_match,
->  		.name  = "ov5645",
-> +		.pm = &ov5645_pm_ops,
->  	},
->  	.probe_new = ov5645_probe,
->  	.remove = ov5645_remove,
-
--- 
-Kind regards,
-
-Sakari Ailus
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
