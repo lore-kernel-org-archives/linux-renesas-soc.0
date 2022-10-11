@@ -2,250 +2,219 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E337C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Oct 2022 15:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1851DC43219
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Oct 2022 15:28:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231478AbiJKPGl (ORCPT
+        id S231172AbiJKP2J (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Oct 2022 11:06:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50826 "EHLO
+        Tue, 11 Oct 2022 11:28:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231503AbiJKPGQ (ORCPT
+        with ESMTP id S231598AbiJKP1b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Oct 2022 11:06:16 -0400
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9518F9DFBC
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Oct 2022 07:59:17 -0700 (PDT)
-Received: by mail-oo1-f47.google.com with SMTP id h1-20020a4aa741000000b004756c611188so10212153oom.4
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Oct 2022 07:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1R2XHYhG7tLGMT55z9AHFkRYDYEPZkrqjvqR781+rik=;
-        b=OtNlsJQCwUO0pK3lonPFFBIxSq/C/dIxlKSqoxwz0erw6PnQWbbN1hAdDBrCgqZHj7
-         n12q7lirRIgIup45NkTApxHWetRL88yHJnGocM3ZUajr1kux40dEn8wcOZbUG19hixjk
-         TkCOit/h/isvmZzOAsBIHCYZ3ju+qazTHuxrmQHclZP3FgPFW9dLARHIOlNWkcaWg0W3
-         1n/jZzMSioNwdYTk1/ivnUyVoSSAzF+4dc2mqwhTa1esZOVs76ciA8NXb/8XoyfVYgrY
-         JDtYBgYFnyJ8+IbXAtyHyN4sswVPsD8GwpMgx8FRafRQUpRbfwhD0s6LQ/MACyY2UkNq
-         WcRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1R2XHYhG7tLGMT55z9AHFkRYDYEPZkrqjvqR781+rik=;
-        b=lGp3kFgqwh6GdqDad6xNiKkBHiMt/qRUZIr/rKaiAaOpa5OM0IUnlhndMvjmOMrpGA
-         OHOJoVRNMPJwfED7sWREMcg41rg3916cH3ZJEbaSfDrm5rWojuWg7RdNkToW9l6XdmAP
-         SirHIkGsDjL+7JYLLr/Mf1HDd6GU9obSynRnifAm7ws+rXCGQJiuKykYBvE0Z/mmVIh5
-         8XzL6qbEhtP0jE7m2hHK8t4GUvDmVzEMD/O3+FqDDWyWGh1+o/KHHwNBCQAvgTWzlHwI
-         A5kEDzrqLfKd87dAOY5OhtgD4+J/4jsluOGo7V/XQrQ0o8dq8HT4A/telDjZslDaSab0
-         Jt/g==
-X-Gm-Message-State: ACrzQf0t3N+U53asOTdvqhvi/m0weU7Mfqf+UDOZaGBahYd0hkQYwhYZ
-        7SPxRJsZOG44f9k7Sthwmv2qEg==
-X-Google-Smtp-Source: AMsMyM7+RHeDbnNXmnCIiVEVspKqSax/L7qWP2DIt63VnePEUfBbYOEJAnsYj5N+3cp5ETgSUSi1gA==
-X-Received: by 2002:a9d:4d07:0:b0:655:eab5:3c01 with SMTP id n7-20020a9d4d07000000b00655eab53c01mr10617844otf.253.1665499979446;
-        Tue, 11 Oct 2022 07:52:59 -0700 (PDT)
-Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id t20-20020a056870f21400b0013191b00f72sm6485882oao.17.2022.10.11.07.52.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Oct 2022 07:52:59 -0700 (PDT)
-Date:   Tue, 11 Oct 2022 09:15:05 -0400
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        Tue, 11 Oct 2022 11:27:31 -0400
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2112.outbound.protection.outlook.com [40.107.113.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB7D34B0D9;
+        Tue, 11 Oct 2022 08:18:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C868asH0kl9CuDEEWpq7QNx1+oKCx/GuKWLhIMw/Gr2dreTxSEhhJyei4BeekX1pLbRKIuM/e7YsSr0aMOJdXBexB+JpMJBHKZ7AbhJNdZsOgKiKDeZiwoZD4oLR8x75xJEFxhNT64ywOUKhxdYEbC3SiXKWIDhLa0keYu19RnXc3zCF1xy4PitrPIGUT5UFKcsjr/CCUR5xZIIQ+TrTDwlFK89sSt3bMbNyj1N1qVdU3iZ94HGz7Z/ojV+tAnktWJUWW3z/7Ccra+kD/31VuaA8rpZTwG9WH2E00sm6P3kO5v9K4d0M/i5citDK8AQQSypsQfuQ5hLuk0HYomA5ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K0D7eWo5A6Y3r0HhUQiv2ncBhfiP0SSRbPDxd2vVBDE=;
+ b=ny70xxXUIIdFKg8G5Peye7KJBzDEvRxm1T/zspLjtw6cMPaKfqyefkDeQJDaayHePRcRlLHbZMtaGDCCXtKPfrpX1/yPE5ooWvKWDM7nfBQASGZRwwhE3w5tVOSweG7RVRpiLSuFQh52Yu9ttGlm/XOo2KBfDkkf7dzKxCcK1k0Ec2xt549BZMwu0/0eN6HSfR0+TgFU0E6TsgfpGsuyTWycsehqYpFkBaX1r7NTuGk2naES8JD/XjQmAoThMcYcdq7SjumUPFjs70kfgBZNf3oh/O+5970EI/JZQCd8RbxoqJqe+PX0PLLtii38mPr8Z1/yycPuGQm/kDozCgQYOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K0D7eWo5A6Y3r0HhUQiv2ncBhfiP0SSRbPDxd2vVBDE=;
+ b=TQa+NW4iXlZ6+cdJGosWEXYGlwIQHxlFcrTFMAlpNh53EHmNDNy+qhS4edN8Sj0elDJpAZT1FYM4XVaf2+UykX2AZHmLjplKk/sT8LYNA6uD5jhNS4tvPO9khgMAFTZPurRZejeY2PAxJTqVuOCibC47auIQ478LoPgsHMyjdEg=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by OSZPR01MB8799.jpnprd01.prod.outlook.com (2603:1096:604:15b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.15; Tue, 11 Oct
+ 2022 14:55:31 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::73a6:588d:1198:7262]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::73a6:588d:1198:7262%9]) with mapi id 15.20.5709.019; Tue, 11 Oct 2022
+ 14:55:30 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        William Breathitt Gray <william.gray@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Lee Jones <lee@kernel.org>,
+        =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         "linux-renesas-soc@vger.kernel.org" 
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] counter: Add RZ/G2L MTU3 counter driver
-Message-ID: <Y0VsWdrpoAhM2jK3@fedora>
-References: <20221006135717.1748560-1-biju.das.jz@bp.renesas.com>
- <20221006135717.1748560-5-biju.das.jz@bp.renesas.com>
- <Y0DUQTMd2TpFTnZS@fedora>
- <OS0PR01MB5922B6980F38873D494B3937865E9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH v4 1/4] dt-bindings: mfd: Document RZ/G2L MTU3a bindings
+Thread-Topic: [PATCH v4 1/4] dt-bindings: mfd: Document RZ/G2L MTU3a bindings
+Thread-Index: AQHY3LfvgCpXQRSGOUCqUs4Dd5zxEq4JRt6AgAAA/2A=
+Date:   Tue, 11 Oct 2022 14:55:30 +0000
+Message-ID: <OS0PR01MB592232C831CCA84FC302212F86239@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20221010145222.1047748-1-biju.das.jz@bp.renesas.com>
+ <20221010145222.1047748-2-biju.das.jz@bp.renesas.com>
+ <8d6b8f0e-d9d7-0d77-aa99-379de768fd5d@linaro.org>
+In-Reply-To: <8d6b8f0e-d9d7-0d77-aa99-379de768fd5d@linaro.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|OSZPR01MB8799:EE_
+x-ms-office365-filtering-correlation-id: 29fc9943-80ef-4633-c257-08daab98a47a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 602sPYr3+JX2TaEr11dOc7F6xd5eD2oTMeQkNHgePHl9N7kR0UOehnZcyMpcK8GxFPrLEI+X9mFam9uAQUjeL+RjJ55i5nF/1yHdygclG6JaH8jPm/4EkP+KEUY2w9HUp0ph9vSUVUYfSw0YAXriDftv4VzGVcXkqWtxaucTViuTzeviFvJHcryQoJuic64irc78UahDoM34jXfn+R2WK7WA5X9zJY54rmyFlSWKb7BuM/cgVIos1uYo64y2dNZB+MPmlXBaPe5VIunu6SVUggJmgFDN6jr+d9aicPciwpXCI9HoKKgIufiFj345bPVG2hm3QVsiXSpFsNWd4M6uZhC7R/7aM1TjywiyE3sC0qCzn6mWNWimNVVdBduOV8ylQhPq1bP8AEzyJR5cgMWT4Pg+Rw+fiOAkLrHjRhNFw1F/Gc6CjcGfN5ml/JKigzhxKJi+dNECpK88EXcvorMr+LF1tFYHNaA2SFaNIJt2qJDTZ0o5HjNI/UHILBUh1uwNNvawM+mpCgpiOxE7wuplfqfrA1+1N136+qVEjN0hO8DHxAimDkIhOwpIOv/Zbb2zGtXcVW/gZ0fqF9kL9N5PDWbN61v+OBfVLj05lI+lKPXGc7dch8knCo7bcHQpGSIHnWO2/+XEeVyJxqo3N45NdYmvMLaDdKhRvDcjNWULtOROLpdOQ/c1omJLMKqtq+JME+oQTbjxtSaiFs+nh1sxdlNziz9mobjfrduvhuFBw66re7o87Vf4XZE30XbOgfdPZ/smAgSAi9crkNz3QKeIs/syk0zHauo70A1Sybdw7o4=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(366004)(346002)(39860400002)(376002)(451199015)(33656002)(5660300002)(52536014)(8676002)(7416002)(66446008)(4326008)(66946007)(76116006)(86362001)(41300700001)(478600001)(8936002)(6506007)(53546011)(26005)(9686003)(83380400001)(7696005)(122000001)(186003)(38100700002)(66476007)(38070700005)(55016003)(54906003)(316002)(64756008)(71200400001)(66556008)(110136005)(2906002)(32563001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?NgUJCajlPonEhK6D0Fs1p4GUs2lRg9QfO6AyJg2H0Y0c/+gW97g5YALXFv?=
+ =?iso-8859-1?Q?9SooltILzkplLW0jUOH3fqEMP16n6y9NVB4oTLiu8W1RsxG16Wysiig7r7?=
+ =?iso-8859-1?Q?O0x7nYdKrtyzHu4ye9kij0UjaJS5mKt4wm/hFsVOT/KxEfT6LuLhKte2ST?=
+ =?iso-8859-1?Q?ssBHtSOt5mTNuKnCUfVV32SLGZC6xmfFAj/pIkk3ph0XdYpwJqLrb3BCZM?=
+ =?iso-8859-1?Q?Z2FOhBNscmjmhEo0SdVSoMMeUgiwHc85cJRmKGzmr+6tBbQwlODr91zhiJ?=
+ =?iso-8859-1?Q?+P2DurOnt+IVw/fzmLfdDTb8FYuOQpTRGiNbf83Yxv0MxTAOtCBIdclQ8H?=
+ =?iso-8859-1?Q?NGSmcufdzDPkegUAhmPJb4YjMQjKewk/tqYXIzUjQxv9R9Y50rIcnwxXPL?=
+ =?iso-8859-1?Q?1tfsT+9fD9GNXHV4rutth/9VnM0Z6QqTdFkn7dY3zfx7oNkx5yFp6eMI0j?=
+ =?iso-8859-1?Q?HAb7jRXjCKAlpMqlPC0FIKXR8CIFn8N8iMZmK7omBa9iIATkSQ/uyvb+Kd?=
+ =?iso-8859-1?Q?KBIcNwgstkMjT2cX4gqjCzXCHdYFC9h7GvYfHLUjpoyH2d364qWIUGjU+b?=
+ =?iso-8859-1?Q?Uw0yRwl2vlbRARwsvPM7MLO3B4wMrjbWK2mG6Gax/CotY9HZYKqrDrxb2N?=
+ =?iso-8859-1?Q?QS9RSzga+IMwc8SVTIgx85miREbYw116wFs8GTRdtugV5OAaX5gPh74CpU?=
+ =?iso-8859-1?Q?OQDvOpjdXDb5fK/2GMcxPkpA/74JyNtBISuDzuUAJ33NE1vIXzPC+dK/jy?=
+ =?iso-8859-1?Q?/cn9+d40ZwsKW9iD2dNYo1CySsGErMMy2Bu6rYeJRWWiOLVeplLTQzp9P8?=
+ =?iso-8859-1?Q?IP2mbPUzJtXbNcrliw58x1jcA6cuIgx7m8rcSq3y9F+RIzT1BJFAPzZXdR?=
+ =?iso-8859-1?Q?/ViXuQ8ttI//fvNVr1oJvDrFzS8w9MMXFvOZnngFEJwyBtyhPcP+Q2XcaT?=
+ =?iso-8859-1?Q?8XUzp3P+5WZQyoMkt2q2fStkdaaCQHi7+xp5MkcnspW/7EjO6TYLNdcdNv?=
+ =?iso-8859-1?Q?v0PYDZpwNtpHVxYOCQyQsDMy0L5MV1uS7ftHZCNKqCmNx/jS6aC2ibykA9?=
+ =?iso-8859-1?Q?rmMbNv+BGeyoxsJpHqg+ETyc+r7nDXBvJI8WzscKkNeOXpK+97OWd12itn?=
+ =?iso-8859-1?Q?8rJzkbLbhWmgVpoEpe0sIO7vCX+KA6vChC/Oy9xYPNfipvRKA3ytmh3FRt?=
+ =?iso-8859-1?Q?OSYzlTuOvGbRdapyJ5BBo+3GI8Bi+6cIM8kTAVKYsYAsc1askKjxKZlRSU?=
+ =?iso-8859-1?Q?q+wjImoHyBPQIhvF/bBi2pp4pUGD7iWzPxyxij3u5Sp5u62I802+AUMCIm?=
+ =?iso-8859-1?Q?ff7+0n8Gm7fugB3/dba2wjlll665c/VXW2zzLuemc7Zk7GkvXcPHt1oMRw?=
+ =?iso-8859-1?Q?Bgw5pT1FF2WK8uDhxY9uHSnCVvNzYrNs6gis/3yGxHuMfYVA7HY7YD0wZN?=
+ =?iso-8859-1?Q?qs9Pbk6+NPphpcO4pcxnmrkPaMetv5x2sheMcPFE02cuUMOIBsDBCqwB35?=
+ =?iso-8859-1?Q?743mzlzjfLzs22CkTpzkK41LmZRMbhjiK/DgTqRjYzDMvyncnQhHTwOtKp?=
+ =?iso-8859-1?Q?N/jyAOOF0/DTmymK+/RrVSWLQC75Zn+aTh+4ckrpSJhggCLThZwTpH4WHm?=
+ =?iso-8859-1?Q?VjUJDxAdyPWZnpZdjwc3cRaIuNaobo4ZUOokQtI5YkfvIomZMXRJSJGA?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="e/hJ8wYBKKWjMEVp"
-Content-Disposition: inline
-In-Reply-To: <OS0PR01MB5922B6980F38873D494B3937865E9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29fc9943-80ef-4633-c257-08daab98a47a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2022 14:55:30.8608
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lymPTnqPrlRcEeiRNWsMdlHLbLZmD0oiEichMYxXgOWlUdNZuWSCvdxWlLOatt7Z2rXnfkP1xLRiT+SSg35dm2Tuo/Uf4ZPU1j/zOhxGSgE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8799
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---e/hJ8wYBKKWjMEVp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Krzysztof Kozlowski,
 
-On Sat, Oct 08, 2022 at 09:01:21AM +0000, Biju Das wrote:
-> Hi William Breathitt Gray,
+> Subject: Re: [PATCH v4 1/4] dt-bindings: mfd: Document RZ/G2L MTU3a
+> bindings
 >=20
-> Thanks for the feedback.
-
-Hello Biju,
-
-I see that you have already released a v4, so some of my comments may no
-longer apply, but I want to respond here to continue our discussions;
-I'll reiterate any relevant suggestions when I review v4 in the coming
-days.
-
-By the way, if you agree with a review comment there is no need to reply
-with "OK"; just delete the parts you agree with from your response and
-I'll know those are okay. Doing this will reduce the amount of text we
-have to scroll through and thus allow us to focus on just the questions
-we have remaining. ;-)
-
-> > > +/**
-> > > + * struct rz_mtu3_cnt - MTU3 counter private data
-> > > + *
-> > > + * @clk: MTU3 module clock
-> > > + * @lock: Lock to prevent concurrent access for ceiling and count
-> > > + * @rz_mtu3_channel: HW channels for the counters  */ struct
-> > > +rz_mtu3_cnt {
-> > > +	struct clk *clk;
-> > > +	struct mutex lock;
-> > > +	struct rz_mtu3_channel *ch[RZ_MTU3_MAX_HW_CNTR_CHANNELS];
-> >=20
-> > Does this need to be a pointer to an array of struct rz_mtu3_channel?
+> On 10/10/2022 10:52, Biju Das wrote:
+> > The RZ/G2L multi-function timer pulse unit 3 (MTU3a) is embedded in
+> > the Renesas RZ/G2L family SoC's. It consists of eight 16-bit timer
+> > channels and one 32-bit timer channel. It supports the following
+> > functions
+> >  - Counter
+> >  - Timer
+> >  - PWM
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > ---
+> > v3->v4:
+> >  * Dropped counter and pwm compatibeles as they don't have any
+> resources.
+> >  * Made rz-mtu3 as pwm provider.
+> >  * Updated the example and description.
+> > v2->v3:
+> >  * Dropped counter bindings and integrated with mfd as it has only
+> one property.
+> >  * Removed "#address-cells" and "#size-cells" as it do not have
+> children with
+> >    unit addresses.
+> >  * Removed quotes from counter and pwm.
+> >  * Provided full path for pwm bindings.
+> >  * Updated the example.
+> > v1->v2:
+> >  * Modelled counter and pwm as a single device that handles
+> >    multiple channels.
+> >  * Moved counter and pwm bindings to respective subsystems
+> >  * Dropped 'bindings' from MFD binding title.
+> >  * Updated the example
+> >  * Changed the compatible names.
+> > ---
+> >  .../bindings/mfd/renesas,rz-mtu3.yaml         | 305
+> ++++++++++++++++++
+> >  1 file changed, 305 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/mfd/renesas,rz-mtu3.yaml
 >=20
-> Yes, HW has MTU{0..8} channels and MTU{1,2} supports counters
-> At probe time this array is filled with *ch[0]=3D MTU1 and *ch[1]=3D MTU2
+> This should not be in MFD. Just because some device has few features,
+> does not mean it should go to MFD... Choose either timer or pwm.
 
-In the rz_mtu3_cnt_probe() function I see the rz_mtu3_cnt.ch elements
-manually set to the address of each rz_mtu3.channels element:
+MFD is for multifunction device. This IP supports multiple functions
+like timer, pwm, clock source/events. That is the reason I have added=20
+here. MFD is core which provides register access for client devices.
 
-    for (i =3D 0; i < RZ_MTU3_MAX_HW_CNTR_CHANNELS; i++) {
-        priv->ch[i] =3D &ddata->channels[RZ_MTU1 + i];
-	priv->ch[i]->dev =3D dev;
-    ...
+For me moving it to pwm or counter is not a big problem.
+Why do you think it cannot be MFD?
 
-The rz_mut3.channels member is a contiguous array of struct
-rz_mtu3_channel. If you change the rz_mtu3_channel to a pointer to
-struct rz_mtu3_channel, you can set it to the RZ_MTU1 offset address
-outside of the for loop and thus avoid the double dereference because
-these address are contiguous:
+Cheers,
+Biju
 
-    priv->ch =3D &ddata->channels[RZ_MTU1];
-    for (i =3D 0; i < RZ_MTU3_MAX_HW_CNTR_CHANNELS; i++) {
-	priv->ch[i].dev =3D dev;
-    ...
-
-> > > +	mutex_lock(&priv->lock);
-> > > +	if (ceiling =3D=3D 0) {
-> > > +		rz_mtu3_8bit_ch_write(priv->ch[id], RZ_MTU3_TCR,
-> > > +				      RZ_MTU3_TCR_CCLR_NONE);
-> >=20
-> > Looks like something different is done when ceiling is set to 0. Would
-> > you explain what's happening in this case and why it's different that
-> > then else case below; in other words, what's the difference between
-> > RZ_MTU3_TCR_CCLR_NONE and RZ_MTU3_TCR_CCLR_TGRA?
 >=20
-> RZ_MTU3_TCR_CCLR_TGRA --> for triggering counter count using Z-Phase sign=
-al.
-> RZ_MTU3_TCR_CCLR_NONE --> No clearing.
-
-Does the Z-Phase signal trigger a reset of the counter count back to the
-ceiling value? Does the count loop back to 0 when it passes the ceiling
-value, or does it remain at the ceiling until the direction changes?
-By "no clearing" do you mean that the ceiling is disabled in this case
-and the Counter count increases without limit?
-
-In the Counter subsystem, the "ceiling" Count extension puts an upper
-limit on the Count value. This means that setting "ceiling" to 0 would
-put the upper limit at 0, effectively restricting the Count value to 0
-until the value of "ceiling" is raised.
-
-If the device is unable to support a ceiling value of 0, you should
-return -ERANGE rather than disable the ceiling.
-
-> > > +static void rz_mtu3_16bit_cnt_setting(struct counter_device
-> > *counter,
-> > > +int id) {
-> > > +	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
-> > > +
-> > > +	priv->ch[id]->function =3D RZ_MTU3_16BIT_PHASE_COUNTING;
-> >=20
-> > If 16-bit phase counting is selected for one 16-bit counter, does the
-> > other 16-bit counter need to be configured as well?
 >=20
-> Not required I guess, as it is run time decision.
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/mfd/renesas,rz-mtu3.yaml
+> > b/Documentation/devicetree/bindings/mfd/renesas,rz-mtu3.yaml
+> > new file mode 100644
+> > index 000000000000..1b0be9f5cd18
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/renesas,rz-mtu3.yaml
+> > @@ -0,0 +1,305 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:
+> >
+> > +title: Renesas RZ/G2L Multi-Function Timer Pulse Unit 3 (MTU3a)
+> > +
+> > +maintainers:
+> > +  - Biju Das <biju.das.jz@bp.renesas.com>
+> > +
+> > +description: |
+> > +  This hardware block pconsisting of eight 16-bit timer channels
+> and
+> > +one
 >=20
-> After this, if user tries to enable 16-bit on other channel,
-> we will configure that channel. otherwise, we will return error,
-> if user tries to enable 32-bit channel.
->=20
-> Are you ok with this?=20
+> "This hardware block consists of..."
 
-Because the phase mode affects how the device interprets multiple
-channels rather than a specific one, maybe it's better to save this
-state as an enum rz_mtu3_function member of struct rz_mtu3_cnt. Or if
-this is affecting the entire device, move it to your struct rz_mut3 and
-share a pointer to that for your Counter and PWM drivers.
+OK, will fix this in next version.
 
-It makes me wonder if the rz_mut3_cnt structure is necessary for this
-Counter driver at all when you could pass a pointer your existing
-rz_mut3 structure instead in order to access the channels.
+Cheers,
+Biju
 
-> > > +	int ret =3D 0;
-> > > +
-> > > +	if (enable) {
-> > > +		pm_runtime_get_sync(ch->dev);
-> > > +		ret =3D rz_mtu3_initialize_counter(counter, count->id);
-> >=20
-> > Are you using the Count's "enable" extension to switch between 16-bit
-> > and 32-bit phase modes?
->=20
-> No. But will use that for switching on the next version.
-
-Sorry, I wasn't clear with my question. Please do not implement the
-"enable" Count extensions as a way to toggle between the 16-bit and
-32-bit phase modes. The purpose of "enable" is to provide a pause/resume
-mechanism for a Count: the existing count value should be preserved when
-a Count is disabled, and should continue where it left off when the
-Count is enabled.
-
-To support the phase mode selection, implement a Counter device
-extension for that specific purpose. You can use DEFINE_COUNTER_ENUM()
-and COUNTER_COMP_DEVICE_ENUM() to create a device extension that will
-allow users to toggle between "16-bit" and "32-bit" phase modes. If you
-need help with these macros, just let me know.
-
-> > > +		.name =3D "Channel3 Count(32-bit)",
-> >=20
-> > We probably don't need the "(32-bit)" in the name when it's obvious
-> > already from the channel id and ceiling value.
->=20
-> OK will remove it.
-> >=20
-> > I wonder how this counter is described in the RZ/G2L user
-> > documentation; is it named "Channel 3" or "Channel 1 and 2"?
->=20
-> It is mentioned as MTU1 and MTU2 channels.
->=20
-> These channels can be used for phase counting and PWM operations.
-
-We should avoid calling it "Channel 3" in that case to avoid confusion.
-Perhaps "Channel 1 and 2 (combined) Count" would be better; that's just
-something I came up with off the top of my head, but if you can think of
-a better way to phrase it then please do.
-
-William Breathitt Gray
-
---e/hJ8wYBKKWjMEVp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY0VsWQAKCRC1SFbKvhIj
-K3EpAQDdKFP5efpN2b1Pne7SW7Do5WOfP9CYPhS9SCeUqxWCmQD8C4b1baU3qrUa
-1eMvvhb5i34i/3XiA2bMcxBBHlpbbAc=
-=Bpq1
------END PGP SIGNATURE-----
-
---e/hJ8wYBKKWjMEVp--
