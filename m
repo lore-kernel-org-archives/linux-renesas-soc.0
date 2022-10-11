@@ -2,167 +2,250 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD311C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Oct 2022 14:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E337C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Oct 2022 15:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229882AbiJKOuD (ORCPT
+        id S231478AbiJKPGl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Oct 2022 10:50:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60234 "EHLO
+        Tue, 11 Oct 2022 11:06:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbiJKOuB (ORCPT
+        with ESMTP id S231503AbiJKPGQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Oct 2022 10:50:01 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0562B1D0FA;
-        Tue, 11 Oct 2022 07:49:57 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3DECE660235B;
-        Tue, 11 Oct 2022 15:49:51 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1665499795;
-        bh=WjWfvO7t5fdyGrI6m+hgGbT3QH4QBKj79I/hqKmON7Y=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=JOT+AnjvhQZ3vD+INlRyJUZGm23CWRspXdxuJNoFNT/2BU3BDi5IDkH2Yrh9cl34H
-         N8tYn0ib9h2NSJZ2wAIfZfryQVLEoNCgFUyUgtoeB3uep2/6DEsQ7yGEO0febOyHvI
-         hMQps4hKjRpiDfHJVubm1kSgDODcE0fxz35XL3pmTQUoBsYWlj52rSQaBN3or/Qysa
-         Nnl5TlEZJvEM/mGOVrA3G338yKAO4fX3D/W0mLbDZJMGmbluyKM/eYT4wVNA1RFmtD
-         w5vR7Uu6LnwTML9dH9/oGV1Cci4KZACKsyC/Ihfwo8y3IRLkhbhb0iRzW5ZY4Zwh1d
-         X736PHBsaUIKg==
-Message-ID: <74cdcd93-a528-ec8c-0808-0d698b86e47d@collabora.com>
-Date:   Tue, 11 Oct 2022 16:49:48 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2 14/36] pinctrl: mediatek: Add missed header(s)
-Content-Language: en-US
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Billy Tsai <billy_tsai@aspeedtech.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tue, 11 Oct 2022 11:06:16 -0400
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9518F9DFBC
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Oct 2022 07:59:17 -0700 (PDT)
+Received: by mail-oo1-f47.google.com with SMTP id h1-20020a4aa741000000b004756c611188so10212153oom.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Oct 2022 07:59:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1R2XHYhG7tLGMT55z9AHFkRYDYEPZkrqjvqR781+rik=;
+        b=OtNlsJQCwUO0pK3lonPFFBIxSq/C/dIxlKSqoxwz0erw6PnQWbbN1hAdDBrCgqZHj7
+         n12q7lirRIgIup45NkTApxHWetRL88yHJnGocM3ZUajr1kux40dEn8wcOZbUG19hixjk
+         TkCOit/h/isvmZzOAsBIHCYZ3ju+qazTHuxrmQHclZP3FgPFW9dLARHIOlNWkcaWg0W3
+         1n/jZzMSioNwdYTk1/ivnUyVoSSAzF+4dc2mqwhTa1esZOVs76ciA8NXb/8XoyfVYgrY
+         JDtYBgYFnyJ8+IbXAtyHyN4sswVPsD8GwpMgx8FRafRQUpRbfwhD0s6LQ/MACyY2UkNq
+         WcRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1R2XHYhG7tLGMT55z9AHFkRYDYEPZkrqjvqR781+rik=;
+        b=lGp3kFgqwh6GdqDad6xNiKkBHiMt/qRUZIr/rKaiAaOpa5OM0IUnlhndMvjmOMrpGA
+         OHOJoVRNMPJwfED7sWREMcg41rg3916cH3ZJEbaSfDrm5rWojuWg7RdNkToW9l6XdmAP
+         SirHIkGsDjL+7JYLLr/Mf1HDd6GU9obSynRnifAm7ws+rXCGQJiuKykYBvE0Z/mmVIh5
+         8XzL6qbEhtP0jE7m2hHK8t4GUvDmVzEMD/O3+FqDDWyWGh1+o/KHHwNBCQAvgTWzlHwI
+         A5kEDzrqLfKd87dAOY5OhtgD4+J/4jsluOGo7V/XQrQ0o8dq8HT4A/telDjZslDaSab0
+         Jt/g==
+X-Gm-Message-State: ACrzQf0t3N+U53asOTdvqhvi/m0weU7Mfqf+UDOZaGBahYd0hkQYwhYZ
+        7SPxRJsZOG44f9k7Sthwmv2qEg==
+X-Google-Smtp-Source: AMsMyM7+RHeDbnNXmnCIiVEVspKqSax/L7qWP2DIt63VnePEUfBbYOEJAnsYj5N+3cp5ETgSUSi1gA==
+X-Received: by 2002:a9d:4d07:0:b0:655:eab5:3c01 with SMTP id n7-20020a9d4d07000000b00655eab53c01mr10617844otf.253.1665499979446;
+        Tue, 11 Oct 2022 07:52:59 -0700 (PDT)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id t20-20020a056870f21400b0013191b00f72sm6485882oao.17.2022.10.11.07.52.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Oct 2022 07:52:59 -0700 (PDT)
+Date:   Tue, 11 Oct 2022 09:15:05 -0400
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
- <20221010201453.77401-15-andriy.shevchenko@linux.intel.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221010201453.77401-15-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 4/4] counter: Add RZ/G2L MTU3 counter driver
+Message-ID: <Y0VsWdrpoAhM2jK3@fedora>
+References: <20221006135717.1748560-1-biju.das.jz@bp.renesas.com>
+ <20221006135717.1748560-5-biju.das.jz@bp.renesas.com>
+ <Y0DUQTMd2TpFTnZS@fedora>
+ <OS0PR01MB5922B6980F38873D494B3937865E9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="e/hJ8wYBKKWjMEVp"
+Content-Disposition: inline
+In-Reply-To: <OS0PR01MB5922B6980F38873D494B3937865E9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Il 10/10/22 22:14, Andy Shevchenko ha scritto:
-> Do not imply that some of the generic headers may be always included.
-> Instead, include explicitly what we are direct user of.
-> 
-> While at it, sort headers alphabetically.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   drivers/pinctrl/mediatek/pinctrl-moore.c | 3 +++
->   drivers/pinctrl/mediatek/pinctrl-paris.c | 5 +++++
->   2 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-> index 526faaebaf77..9474ada5addb 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-> @@ -9,6 +9,9 @@
->    */
->   
->   #include <linux/gpio/driver.h>
-> +
 
-Apart from this blank line that I deem unnecessary....
+--e/hJ8wYBKKWjMEVp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+On Sat, Oct 08, 2022 at 09:01:21AM +0000, Biju Das wrote:
+> Hi William Breathitt Gray,
+>=20
+> Thanks for the feedback.
 
+Hello Biju,
 
+I see that you have already released a v4, so some of my comments may no
+longer apply, but I want to respond here to continue our discussions;
+I'll reiterate any relevant suggestions when I review v4 in the coming
+days.
+
+By the way, if you agree with a review comment there is no need to reply
+with "OK"; just delete the parts you agree with from your response and
+I'll know those are okay. Doing this will reduce the amount of text we
+have to scroll through and thus allow us to focus on just the questions
+we have remaining. ;-)
+
+> > > +/**
+> > > + * struct rz_mtu3_cnt - MTU3 counter private data
+> > > + *
+> > > + * @clk: MTU3 module clock
+> > > + * @lock: Lock to prevent concurrent access for ceiling and count
+> > > + * @rz_mtu3_channel: HW channels for the counters  */ struct
+> > > +rz_mtu3_cnt {
+> > > +	struct clk *clk;
+> > > +	struct mutex lock;
+> > > +	struct rz_mtu3_channel *ch[RZ_MTU3_MAX_HW_CNTR_CHANNELS];
+> >=20
+> > Does this need to be a pointer to an array of struct rz_mtu3_channel?
+>=20
+> Yes, HW has MTU{0..8} channels and MTU{1,2} supports counters
+> At probe time this array is filled with *ch[0]=3D MTU1 and *ch[1]=3D MTU2
+
+In the rz_mtu3_cnt_probe() function I see the rz_mtu3_cnt.ch elements
+manually set to the address of each rz_mtu3.channels element:
+
+    for (i =3D 0; i < RZ_MTU3_MAX_HW_CNTR_CHANNELS; i++) {
+        priv->ch[i] =3D &ddata->channels[RZ_MTU1 + i];
+	priv->ch[i]->dev =3D dev;
+    ...
+
+The rz_mut3.channels member is a contiguous array of struct
+rz_mtu3_channel. If you change the rz_mtu3_channel to a pointer to
+struct rz_mtu3_channel, you can set it to the RZ_MTU1 offset address
+outside of the for loop and thus avoid the double dereference because
+these address are contiguous:
+
+    priv->ch =3D &ddata->channels[RZ_MTU1];
+    for (i =3D 0; i < RZ_MTU3_MAX_HW_CNTR_CHANNELS; i++) {
+	priv->ch[i].dev =3D dev;
+    ...
+
+> > > +	mutex_lock(&priv->lock);
+> > > +	if (ceiling =3D=3D 0) {
+> > > +		rz_mtu3_8bit_ch_write(priv->ch[id], RZ_MTU3_TCR,
+> > > +				      RZ_MTU3_TCR_CCLR_NONE);
+> >=20
+> > Looks like something different is done when ceiling is set to 0. Would
+> > you explain what's happening in this case and why it's different that
+> > then else case below; in other words, what's the difference between
+> > RZ_MTU3_TCR_CCLR_NONE and RZ_MTU3_TCR_CCLR_TGRA?
+>=20
+> RZ_MTU3_TCR_CCLR_TGRA --> for triggering counter count using Z-Phase sign=
+al.
+> RZ_MTU3_TCR_CCLR_NONE --> No clearing.
+
+Does the Z-Phase signal trigger a reset of the counter count back to the
+ceiling value? Does the count loop back to 0 when it passes the ceiling
+value, or does it remain at the ceiling until the direction changes?
+By "no clearing" do you mean that the ceiling is disabled in this case
+and the Counter count increases without limit?
+
+In the Counter subsystem, the "ceiling" Count extension puts an upper
+limit on the Count value. This means that setting "ceiling" to 0 would
+put the upper limit at 0, effectively restricting the Count value to 0
+until the value of "ceiling" is raised.
+
+If the device is unable to support a ceiling value of 0, you should
+return -ERANGE rather than disable the ceiling.
+
+> > > +static void rz_mtu3_16bit_cnt_setting(struct counter_device
+> > *counter,
+> > > +int id) {
+> > > +	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> > > +
+> > > +	priv->ch[id]->function =3D RZ_MTU3_16BIT_PHASE_COUNTING;
+> >=20
+> > If 16-bit phase counting is selected for one 16-bit counter, does the
+> > other 16-bit counter need to be configured as well?
+>=20
+> Not required I guess, as it is run time decision.
+>=20
+> After this, if user tries to enable 16-bit on other channel,
+> we will configure that channel. otherwise, we will return error,
+> if user tries to enable 32-bit channel.
+>=20
+> Are you ok with this?=20
+
+Because the phase mode affects how the device interprets multiple
+channels rather than a specific one, maybe it's better to save this
+state as an enum rz_mtu3_function member of struct rz_mtu3_cnt. Or if
+this is affecting the entire device, move it to your struct rz_mut3 and
+share a pointer to that for your Counter and PWM drivers.
+
+It makes me wonder if the rz_mut3_cnt structure is necessary for this
+Counter driver at all when you could pass a pointer your existing
+rz_mut3 structure instead in order to access the channels.
+
+> > > +	int ret =3D 0;
+> > > +
+> > > +	if (enable) {
+> > > +		pm_runtime_get_sync(ch->dev);
+> > > +		ret =3D rz_mtu3_initialize_counter(counter, count->id);
+> >=20
+> > Are you using the Count's "enable" extension to switch between 16-bit
+> > and 32-bit phase modes?
+>=20
+> No. But will use that for switching on the next version.
+
+Sorry, I wasn't clear with my question. Please do not implement the
+"enable" Count extensions as a way to toggle between the 16-bit and
+32-bit phase modes. The purpose of "enable" is to provide a pause/resume
+mechanism for a Count: the existing count value should be preserved when
+a Count is disabled, and should continue where it left off when the
+Count is enabled.
+
+To support the phase mode selection, implement a Counter device
+extension for that specific purpose. You can use DEFINE_COUNTER_ENUM()
+and COUNTER_COMP_DEVICE_ENUM() to create a device extension that will
+allow users to toggle between "16-bit" and "32-bit" phase modes. If you
+need help with these macros, just let me know.
+
+> > > +		.name =3D "Channel3 Count(32-bit)",
+> >=20
+> > We probably don't need the "(32-bit)" in the name when it's obvious
+> > already from the channel id and ceiling value.
+>=20
+> OK will remove it.
+> >=20
+> > I wonder how this counter is described in the RZ/G2L user
+> > documentation; is it named "Channel 3" or "Channel 1 and 2"?
+>=20
+> It is mentioned as MTU1 and MTU2 channels.
+>=20
+> These channels can be used for phase counting and PWM operations.
+
+We should avoid calling it "Channel 3" in that case to avoid confusion.
+Perhaps "Channel 1 and 2 (combined) Count" would be better; that's just
+something I came up with off the top of my head, but if you can think of
+a better way to phrase it then please do.
+
+William Breathitt Gray
+
+--e/hJ8wYBKKWjMEVp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY0VsWQAKCRC1SFbKvhIj
+K3EpAQDdKFP5efpN2b1Pne7SW7Do5WOfP9CYPhS9SCeUqxWCmQD8C4b1baU3qrUa
+1eMvvhb5i34i/3XiA2bMcxBBHlpbbAc=
+=Bpq1
+-----END PGP SIGNATURE-----
+
+--e/hJ8wYBKKWjMEVp--
