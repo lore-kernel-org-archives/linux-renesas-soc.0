@@ -2,115 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709CEC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Oct 2022 12:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 045F9C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Oct 2022 12:22:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233034AbiJSMWb (ORCPT
+        id S231931AbiJSMW5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Oct 2022 08:22:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56680 "EHLO
+        Wed, 19 Oct 2022 08:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233054AbiJSMWR (ORCPT
+        with ESMTP id S232125AbiJSMWp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2022 08:22:17 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E8D431C3E5F;
-        Wed, 19 Oct 2022 04:56:39 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.95,195,1661785200"; 
-   d="scan'208";a="139552393"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Oct 2022 17:51:10 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9388A400BC17;
-        Wed, 19 Oct 2022 17:51:10 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     linux@armlinux.org.uk, kabel@kernel.org, andrew@lunn.ch,
-        hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH RFC 2/3] net: phy: marvell10g: Add host interface speed configuration
-Date:   Wed, 19 Oct 2022 17:50:51 +0900
-Message-Id: <20221019085052.933385-3-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221019085052.933385-1-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 19 Oct 2022 08:22:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6476E1C5A60;
+        Wed, 19 Oct 2022 04:57:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7550CB821CA;
+        Wed, 19 Oct 2022 10:55:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48663C433D6;
+        Wed, 19 Oct 2022 10:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666176905;
+        bh=idEVXSwxLwj6QnaxcDCI8JDt8n19iJKQG++3Lw7GrNo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rPhQdPp+mGfA8w2CpVUhb0Yfp91/gpA36uNrJBDKa8IlA7XwJuaCOnp2xNuinnkmh
+         2KuR8q8ACCHBYBApsVvHboUeWZGUmOa//3GYmVs9L5IfG65oF3bekcZ3g1jS5xAYCo
+         tJAMlFk1fVR3sIaQXBBRAqOu8dR7wWT1JEtCDTHIp4kEj/BakjkvtT83Ss+C57KGg0
+         w7JrBNwTEtNJSNgzriKaclqZ6e4rwyfPAIbEW0Cb0Pi5U50u26ch7x1R9MJy8sCHxX
+         KTBVU+HW2E2JDT124IXNhCdWzVFXlkpFBZzEGa1zrC3yBeVRPlkgswyehR6OxBk9RP
+         W5JjwWfnLY2ig==
+Date:   Wed, 19 Oct 2022 12:55:00 +0200
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH RFC 2/3] net: phy: marvell10g: Add host interface speed
+ configuration
+Message-ID: <20221019125500.271e4ba3@dellmb>
+In-Reply-To: <20221019124839.33ad3458@dellmb>
 References: <20221019085052.933385-1-yoshihiro.shimoda.uh@renesas.com>
+        <20221019085052.933385-3-yoshihiro.shimoda.uh@renesas.com>
+        <20221019124839.33ad3458@dellmb>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for selecting host speed mode. For now, only support
-1000M bps.
+On Wed, 19 Oct 2022 12:48:39 +0200
+Marek Beh=C3=BAn <kabel@kernel.org> wrote:
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/net/phy/marvell10g.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+> On Wed, 19 Oct 2022 17:50:51 +0900
+> Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> wrote:
+>=20
+> > Add support for selecting host speed mode. For now, only support
+> > 1000M bps.
+> >=20
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > ---
+> >  drivers/net/phy/marvell10g.c | 23 +++++++++++++++++++++++
+> >  1 file changed, 23 insertions(+)
+> >=20
+> > diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
+> > index 383a9c9f36e5..daf3242c6078 100644
+> > --- a/drivers/net/phy/marvell10g.c
+> > +++ b/drivers/net/phy/marvell10g.c
+> > @@ -101,6 +101,10 @@ enum {
+> >  	MV_AN_21X0_SERDES_CTRL2_AUTO_INIT_DIS	=3D BIT(13),
+> >  	MV_AN_21X0_SERDES_CTRL2_RUN_INIT	=3D BIT(15),
+> > =20
+> > +	MV_MOD_CONF		=3D 0xf000,
+> > +	MV_MOD_CONF_SPEED_MASK	=3D 0x00c0,
+> > +	MV_MOD_CONF_SPEED_1000	=3D BIT(7),
+> > + =20
+>=20
+> Where did you get these values from? My documentation says:
+>   Mode Configuration
+>   Device 31, Register 0xF000
+>   Bits
+>   7:6   Reserved  R/W  0x3  This must always be 11.
 
-diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
-index 383a9c9f36e5..daf3242c6078 100644
---- a/drivers/net/phy/marvell10g.c
-+++ b/drivers/net/phy/marvell10g.c
-@@ -101,6 +101,10 @@ enum {
- 	MV_AN_21X0_SERDES_CTRL2_AUTO_INIT_DIS	= BIT(13),
- 	MV_AN_21X0_SERDES_CTRL2_RUN_INIT	= BIT(15),
- 
-+	MV_MOD_CONF		= 0xf000,
-+	MV_MOD_CONF_SPEED_MASK	= 0x00c0,
-+	MV_MOD_CONF_SPEED_1000	= BIT(7),
-+
- 	/* These registers appear at 0x800X and 0xa00X - the 0xa00X control
- 	 * registers appear to set themselves to the 0x800X when AN is
- 	 * restarted, but status registers appear readable from either.
-@@ -147,6 +151,7 @@ struct mv3310_chip {
- 	int (*get_mactype)(struct phy_device *phydev);
- 	int (*set_mactype)(struct phy_device *phydev, int mactype);
- 	int (*select_mactype)(unsigned long *interfaces);
-+	int (*set_macspeed)(struct phy_device *phydev, int macspeed);
- 	int (*init_interface)(struct phy_device *phydev, int mactype);
- 
- #ifdef CONFIG_HWMON
-@@ -644,6 +649,16 @@ static int mv2110_select_mactype(unsigned long *interfaces)
- 		return -1;
- }
- 
-+static int mv2110_set_macspeed(struct phy_device *phydev, int macspeed)
-+{
-+	if (macspeed != SPEED_1000)
-+		return -EOPNOTSUPP;
-+
-+	return phy_modify_mmd(phydev, MDIO_MMD_VEND2, MV_MOD_CONF,
-+			      MV_MOD_CONF_SPEED_MASK,
-+			      MV_MOD_CONF_SPEED_1000);
-+}
-+
- static int mv3310_get_mactype(struct phy_device *phydev)
- {
- 	int mactype;
-@@ -778,6 +793,13 @@ static int mv3310_config_init(struct phy_device *phydev)
- 	if (err)
- 		return err;
- 
-+	/* If host provided host mac speed, try to set the mac speed */
-+	if (phydev->host_speed && chip->set_macspeed) {
-+		err = chip->set_macspeed(phydev, phydev->host_speed);
-+		if (err)
-+			return err;
-+	}
-+
- 	/* If host provided host supported interface modes, try to select the
- 	 * best one
- 	 */
-@@ -1181,6 +1203,7 @@ static const struct mv3310_chip mv2110_type = {
- 	.get_mactype = mv2110_get_mactype,
- 	.set_mactype = mv2110_set_mactype,
- 	.select_mactype = mv2110_select_mactype,
-+	.set_macspeed = mv2110_set_macspeed,
- 	.init_interface = mv2110_init_interface,
- 
- #ifdef CONFIG_HWMON
--- 
-2.25.1
+Ah, I see. Probably from the MTD API sources...
+But the bits should be set to 0x3 after HW reset, which means 10 Gbps,
+and this should not interfere with 1000 Mbps SGMII operation. Do you
+really need to set this? Isn't setting the MACTYPE to SGMII sufficient?
 
+Marek
