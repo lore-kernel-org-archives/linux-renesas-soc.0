@@ -2,99 +2,115 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0167CC43217
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Oct 2022 12:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 709CEC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Oct 2022 12:22:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231731AbiJSMEy (ORCPT
+        id S233034AbiJSMWb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Oct 2022 08:04:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37988 "EHLO
+        Wed, 19 Oct 2022 08:22:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232942AbiJSMEe (ORCPT
+        with ESMTP id S233054AbiJSMWR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2022 08:04:34 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05E6112FF83;
-        Wed, 19 Oct 2022 04:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PVpOsxEzdr5YmEf/ilBvlkD6m/QIlYqBmm4sBpABB3Q=; b=mHak/Q9wP3WjwMBvxTBkyAw5n9
-        yakEd2nsSzQKgZxFWn43jVawQy+1RaNtVXfSopk3dDLSPDQnCPC9KkKxtw4t9MNHTiT1mO1xXDUaJ
-        YZ9spKa8S/ceTDbIXPk09t+bgTf+wMjLOUPvj9cGOkKh1qcS/eM05/2tn89h6K8TnqE+5Wcmu9Z4D
-        I0xvNuTIBL3wIO1fnKJrIv/KAhXmrKE8ht+WwqPgF2aahFqBbzoGnzMrxHsRSTuAz2Lt7y6fhOMAs
-        7Yd1camvSTeMCaJehKJ/wMmffxw6hRjVxxPnhLBwHJ6z5zd5qzJl0cZhMUp6wdmefCni89kcIjnFN
-        UOKLY8UQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34792)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1ol7Q1-0005ZJ-NA; Wed, 19 Oct 2022 12:39:29 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1ol7Px-00027Z-N7; Wed, 19 Oct 2022 12:39:25 +0100
-Date:   Wed, 19 Oct 2022 12:39:25 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>, andrew@lunn.ch,
+        Wed, 19 Oct 2022 08:22:17 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E8D431C3E5F;
+        Wed, 19 Oct 2022 04:56:39 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.95,195,1661785200"; 
+   d="scan'208";a="139552393"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 19 Oct 2022 17:51:10 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9388A400BC17;
+        Wed, 19 Oct 2022 17:51:10 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     linux@armlinux.org.uk, kabel@kernel.org, andrew@lunn.ch,
         hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] net: phy: marvell10g: Add host speed setting by
- an ethernet driver
-Message-ID: <Y0/h7ecTLYkhOTCw@shell.armlinux.org.uk>
+        kuba@kernel.org, pabeni@redhat.com
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH RFC 2/3] net: phy: marvell10g: Add host interface speed configuration
+Date:   Wed, 19 Oct 2022 17:50:51 +0900
+Message-Id: <20221019085052.933385-3-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221019085052.933385-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20221019085052.933385-1-yoshihiro.shimoda.uh@renesas.com>
- <20221019124442.4ab488b2@dellmb>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221019124442.4ab488b2@dellmb>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Oct 19, 2022 at 12:44:42PM +0200, Marek Behún wrote:
-> On Wed, 19 Oct 2022 17:50:49 +0900
-> Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> wrote:
-> 
-> > R-Car S4-8 environment board requires to change the host interface
-> > as SGMII and the host speed as 1000 Mbps because the strap pin was
-> > other mode, but the SoC/board cannot work on that mode. Also, after
-> > the SoC initialized the SERDES once, we cannot re-initialized it
-> > because the initialized procedure seems all black magic...
-> 
-> Can you tell us which exact mode is configured by the strapping pins?
-> Isn't it sufficient to just set the MACTYPE to SGMII, without
-> configuring speed?
+Add support for selecting host speed mode. For now, only support
+1000M bps.
 
-(To Yoshihiro Shimoda)
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/net/phy/marvell10g.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Please note that I don't seem to have the patches to review - and as
-maintainer of the driver, I therefore NAK this series until I can
-review it.
-
-I'm guessing the reason I don't have them is:
-
-2022-10-19 09:51:17 H=relmlor1.renesas.com (relmlie5.idc.renesas.com) [210.160.252.171]:58218 I=[78.32.30.218]:25 F=<> rejected RCPT <linux@armlinux.org.uk>: Faked bounce
-2022-10-19 09:51:17 H=relmlor2.renesas.com (relmlie6.idc.renesas.com) [210.160.252.172]:24399 I=[78.32.30.218]:25 F=<> rejected RCPT <linux@armlinux.org.uk>: Faked bounce
-2022-10-19 09:51:18 H=relmlor1.renesas.com (relmlie5.idc.renesas.com) [210.160.252.171]:58218 I=[78.32.30.218]:25 F=<> rejected RCPT <linux@armlinux.org.uk>: Faked bounce
-2022-10-19 09:51:19 H=relmlor1.renesas.com (relmlie5.idc.renesas.com) [210.160.252.171]:58218 I=[78.32.30.218]:25 F=<> rejected RCPT <linux@armlinux.org.uk>: Faked bounce
-
-Why are you sending patches using the NULL envelope sender - this is a
-common trick used by spammers and scammers to get their messages
-through. Please don't.
-
-(In case anyone questions this - as all my email is sent from encoded
-envelope from addresses rather than my published addresses, bounces
-do still work.)
-
-Thanks.
-
+diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
+index 383a9c9f36e5..daf3242c6078 100644
+--- a/drivers/net/phy/marvell10g.c
++++ b/drivers/net/phy/marvell10g.c
+@@ -101,6 +101,10 @@ enum {
+ 	MV_AN_21X0_SERDES_CTRL2_AUTO_INIT_DIS	= BIT(13),
+ 	MV_AN_21X0_SERDES_CTRL2_RUN_INIT	= BIT(15),
+ 
++	MV_MOD_CONF		= 0xf000,
++	MV_MOD_CONF_SPEED_MASK	= 0x00c0,
++	MV_MOD_CONF_SPEED_1000	= BIT(7),
++
+ 	/* These registers appear at 0x800X and 0xa00X - the 0xa00X control
+ 	 * registers appear to set themselves to the 0x800X when AN is
+ 	 * restarted, but status registers appear readable from either.
+@@ -147,6 +151,7 @@ struct mv3310_chip {
+ 	int (*get_mactype)(struct phy_device *phydev);
+ 	int (*set_mactype)(struct phy_device *phydev, int mactype);
+ 	int (*select_mactype)(unsigned long *interfaces);
++	int (*set_macspeed)(struct phy_device *phydev, int macspeed);
+ 	int (*init_interface)(struct phy_device *phydev, int mactype);
+ 
+ #ifdef CONFIG_HWMON
+@@ -644,6 +649,16 @@ static int mv2110_select_mactype(unsigned long *interfaces)
+ 		return -1;
+ }
+ 
++static int mv2110_set_macspeed(struct phy_device *phydev, int macspeed)
++{
++	if (macspeed != SPEED_1000)
++		return -EOPNOTSUPP;
++
++	return phy_modify_mmd(phydev, MDIO_MMD_VEND2, MV_MOD_CONF,
++			      MV_MOD_CONF_SPEED_MASK,
++			      MV_MOD_CONF_SPEED_1000);
++}
++
+ static int mv3310_get_mactype(struct phy_device *phydev)
+ {
+ 	int mactype;
+@@ -778,6 +793,13 @@ static int mv3310_config_init(struct phy_device *phydev)
+ 	if (err)
+ 		return err;
+ 
++	/* If host provided host mac speed, try to set the mac speed */
++	if (phydev->host_speed && chip->set_macspeed) {
++		err = chip->set_macspeed(phydev, phydev->host_speed);
++		if (err)
++			return err;
++	}
++
+ 	/* If host provided host supported interface modes, try to select the
+ 	 * best one
+ 	 */
+@@ -1181,6 +1203,7 @@ static const struct mv3310_chip mv2110_type = {
+ 	.get_mactype = mv2110_get_mactype,
+ 	.set_mactype = mv2110_set_mactype,
+ 	.select_mactype = mv2110_select_mactype,
++	.set_macspeed = mv2110_set_macspeed,
+ 	.init_interface = mv2110_init_interface,
+ 
+ #ifdef CONFIG_HWMON
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+2.25.1
+
