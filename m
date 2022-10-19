@@ -2,109 +2,99 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57909C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Oct 2022 11:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0167CC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Oct 2022 12:04:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbiJSLkn (ORCPT
+        id S231731AbiJSMEy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Oct 2022 07:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34252 "EHLO
+        Wed, 19 Oct 2022 08:04:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231474AbiJSLj6 (ORCPT
+        with ESMTP id S232942AbiJSMEe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2022 07:39:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0923518DAA6;
-        Wed, 19 Oct 2022 04:18:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C97E6176B;
-        Wed, 19 Oct 2022 10:41:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14972C433D6;
-        Wed, 19 Oct 2022 10:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666176065;
-        bh=B6/i+zuHr8M8YUCl5dAojeyEr1/k0AiM1p2uxl25xx4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tEDEaoFbXcvOR15+0B3Ox/PnYnpuM8GvrZl68oUKFqopE+DMQNg+Z/JlwyA5sAyTv
-         71XLaUr2NDVAJDAUz1nJC8ZKHnMsE8O3hPU3gw+sGPFiKCs/i/B+qQIU+B6LZ8mgkt
-         in8tn3dT7bWQ8+QPyDSvxqLhy1RCNLbEXNn9lFkCeJ9oY1DEPW0N1lFEOlkQ1fioCu
-         ZR2D78gHSzME9geOD7LtTiIGhfHGTeoNql4MJfwKQ844WX2hQjL2gxFelQh0tf5Hp1
-         08phjIkMSYBvUoJQ3Rh447M/5mNyn5lPpp8OUAeJZOTPV7DONfBOCLiBdqW6LoXYBl
-         l5T+0+b7d1QIg==
-Date:   Wed, 19 Oct 2022 12:41:00 +0200
-From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+        Wed, 19 Oct 2022 08:04:34 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05E6112FF83;
+        Wed, 19 Oct 2022 04:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=PVpOsxEzdr5YmEf/ilBvlkD6m/QIlYqBmm4sBpABB3Q=; b=mHak/Q9wP3WjwMBvxTBkyAw5n9
+        yakEd2nsSzQKgZxFWn43jVawQy+1RaNtVXfSopk3dDLSPDQnCPC9KkKxtw4t9MNHTiT1mO1xXDUaJ
+        YZ9spKa8S/ceTDbIXPk09t+bgTf+wMjLOUPvj9cGOkKh1qcS/eM05/2tn89h6K8TnqE+5Wcmu9Z4D
+        I0xvNuTIBL3wIO1fnKJrIv/KAhXmrKE8ht+WwqPgF2aahFqBbzoGnzMrxHsRSTuAz2Lt7y6fhOMAs
+        7Yd1camvSTeMCaJehKJ/wMmffxw6hRjVxxPnhLBwHJ6z5zd5qzJl0cZhMUp6wdmefCni89kcIjnFN
+        UOKLY8UQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34792)
+        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1ol7Q1-0005ZJ-NA; Wed, 19 Oct 2022 12:39:29 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1ol7Px-00027Z-N7; Wed, 19 Oct 2022 12:39:25 +0100
+Date:   Wed, 19 Oct 2022 12:39:25 +0100
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
 To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
+Cc:     Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>, andrew@lunn.ch,
+        hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH RFC 3/3] net: renesas: rswitch: Pass host parameters to
- phydev
-Message-ID: <20221019124100.41c9bbaf@dellmb>
-In-Reply-To: <20221019085052.933385-4-yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH RFC 0/3] net: phy: marvell10g: Add host speed setting by
+ an ethernet driver
+Message-ID: <Y0/h7ecTLYkhOTCw@shell.armlinux.org.uk>
 References: <20221019085052.933385-1-yoshihiro.shimoda.uh@renesas.com>
-        <20221019085052.933385-4-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+ <20221019124442.4ab488b2@dellmb>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221019124442.4ab488b2@dellmb>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 19 Oct 2022 17:50:52 +0900
-Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> wrote:
-
-> Use of_phy_connect_with_host_params() to pass host parameters to
-> phydev. Otherwise, connected PHY cannot work correctly.
+On Wed, Oct 19, 2022 at 12:44:42PM +0200, Marek Behún wrote:
+> On Wed, 19 Oct 2022 17:50:49 +0900
+> Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> wrote:
 > 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  drivers/net/ethernet/renesas/rswitch.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+> > R-Car S4-8 environment board requires to change the host interface
+> > as SGMII and the host speed as 1000 Mbps because the strap pin was
+> > other mode, but the SoC/board cannot work on that mode. Also, after
+> > the SoC initialized the SERDES once, we cannot re-initialized it
+> > because the initialized procedure seems all black magic...
 > 
-> diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-> index c604331bfd88..bb2f1e667210 100644
-> --- a/drivers/net/ethernet/renesas/rswitch.c
-> +++ b/drivers/net/ethernet/renesas/rswitch.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of_irq.h>
->  #include <linux/of_mdio.h>
->  #include <linux/of_net.h>
-> +#include <linux/phy.h>
->  #include <linux/phy/phy.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/slab.h>
-> @@ -1234,11 +1235,19 @@ static void rswitch_phy_remove_link_mode(struct rswitch_device *rdev,
->  
->  static int rswitch_phy_init(struct rswitch_device *rdev, struct device_node *phy)
->  {
-> +	DECLARE_PHY_INTERFACE_MASK(host_interfaces);
->  	struct phy_device *phydev;
->  	int err = 0;
->  
-> -	phydev = of_phy_connect(rdev->ndev, phy, rswitch_adjust_link, 0,
-> -				rdev->etha->phy_interface);
-> +	phy_interface_zero(host_interfaces);
-> +	if (rdev->etha->phy_interface == PHY_INTERFACE_MODE_SGMII)
-> +		__set_bit(PHY_INTERFACE_MODE_SGMII, host_interfaces);
-> +
-> +	phydev = of_phy_connect_with_host_params(rdev->ndev, phy,
-> +						 rswitch_adjust_link, 0,
-> +						 rdev->etha->phy_interface,
-> +						 host_interfaces,
-> +						 rdev->etha->speed);
->  	if (!phydev) {
->  		err = -ENOENT;
->  		goto out;
+> Can you tell us which exact mode is configured by the strapping pins?
+> Isn't it sufficient to just set the MACTYPE to SGMII, without
+> configuring speed?
 
-NAK. There already is API for doing this: phylink. Adding new, and so
-much specific function for this is a waste. Just convert the rswitch
-driver to phylink.
+(To Yoshihiro Shimoda)
 
-Please look at the documentation at
-  Documentation/networking/sfp-phylink.rst
+Please note that I don't seem to have the patches to review - and as
+maintainer of the driver, I therefore NAK this series until I can
+review it.
 
-Marek
+I'm guessing the reason I don't have them is:
+
+2022-10-19 09:51:17 H=relmlor1.renesas.com (relmlie5.idc.renesas.com) [210.160.252.171]:58218 I=[78.32.30.218]:25 F=<> rejected RCPT <linux@armlinux.org.uk>: Faked bounce
+2022-10-19 09:51:17 H=relmlor2.renesas.com (relmlie6.idc.renesas.com) [210.160.252.172]:24399 I=[78.32.30.218]:25 F=<> rejected RCPT <linux@armlinux.org.uk>: Faked bounce
+2022-10-19 09:51:18 H=relmlor1.renesas.com (relmlie5.idc.renesas.com) [210.160.252.171]:58218 I=[78.32.30.218]:25 F=<> rejected RCPT <linux@armlinux.org.uk>: Faked bounce
+2022-10-19 09:51:19 H=relmlor1.renesas.com (relmlie5.idc.renesas.com) [210.160.252.171]:58218 I=[78.32.30.218]:25 F=<> rejected RCPT <linux@armlinux.org.uk>: Faked bounce
+
+Why are you sending patches using the NULL envelope sender - this is a
+common trick used by spammers and scammers to get their messages
+through. Please don't.
+
+(In case anyone questions this - as all my email is sent from encoded
+envelope from addresses rather than my published addresses, bounces
+do still work.)
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
