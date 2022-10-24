@@ -2,120 +2,225 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B93ECAAA1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Oct 2022 17:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D130ECAAA1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Oct 2022 17:05:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232941AbiJXRDe (ORCPT
+        id S232873AbiJXRF0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 13:03:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42846 "EHLO
+        Mon, 24 Oct 2022 13:05:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232501AbiJXRCs (ORCPT
+        with ESMTP id S235140AbiJXREN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 13:02:48 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34EC3C771
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Oct 2022 08:39:28 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1omzWE-0007KN-4k; Mon, 24 Oct 2022 17:37:38 +0200
-Received: from pengutronix.de (unknown [IPv6:2a03:f580:87bc:d400:1bbf:91f6:fcf3:6f78])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id DEF08108A71;
-        Mon, 24 Oct 2022 15:37:34 +0000 (UTC)
-Date:   Mon, 24 Oct 2022 17:37:26 +0200
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-        Stefan =?utf-8?B?TcOkdGpl?= <stefan.maetje@esd.eu>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Rob Herring <robh@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/3] can: rcar_canfd: Fix IRQ storm on global fifo receive
-Message-ID: <20221024153726.72avg6xbgzwyboms@pengutronix.de>
-References: <20221022081503.1051257-1-biju.das.jz@bp.renesas.com>
- <20221022081503.1051257-2-biju.das.jz@bp.renesas.com>
+        Mon, 24 Oct 2022 13:04:13 -0400
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC437E324;
+        Mon, 24 Oct 2022 08:40:03 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id z17so3630316qkj.8;
+        Mon, 24 Oct 2022 08:40:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zOUr8vKGqEWk39crx6gBwH6ieHL8arm1vSqANMxY3zA=;
+        b=LvyIIQTXIEg/BA3CAYzOWGXMJjNCorfEsMLOX7fUS3VispZDJx7AhYlai9sTP/MaFU
+         GIPYuh03VBGJ2K2atkA6yCOAhIc474EFMfyeuHFOBLp3Alsm1k66uDgYqRbkL4EYnOS+
+         gk1e/P/9Uy8J0P53QX3as0/uo0bO2YaR+d/7/NJzZmm68KMfHDcDDLw6bNxideu2tfid
+         rCbbKL1CKAlcFAd4P7CyzP1ShKcLNiS+N4vTnyUVhyey1RJ/W5/h+Iy9y5UQaivQvsnE
+         2gm36k5ucsmgkZye9YwwXvvUH2CB3CFkR72FCCY8++n/r5j8Bcaf05FgWbC0hqd2LSDl
+         F8yA==
+X-Gm-Message-State: ACrzQf2fnB6D5UT6b2pDsmGcLrwnhk0n6uZULGreDZ4xpA4cj/V2BuzD
+        OxDUCklL1GfHNBQ63KNRNslR7fJst1CeqQ==
+X-Google-Smtp-Source: AMsMyM6V9GpFdBVsAvJFJvDpUUuxm7k92sCv6iAHVCdeIA89KNpPcu9pNesifpvhdJsyV0vpnqiBwg==
+X-Received: by 2002:a05:620a:4310:b0:6ac:f9df:178d with SMTP id u16-20020a05620a431000b006acf9df178dmr23150286qko.773.1666619235241;
+        Mon, 24 Oct 2022 06:47:15 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id cf17-20020a05622a401100b0039c7b9522ecsm12926068qtb.35.2022.10.24.06.47.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Oct 2022 06:47:14 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-36a4b86a0abso69897237b3.7;
+        Mon, 24 Oct 2022 06:47:14 -0700 (PDT)
+X-Received: by 2002:a0d:de43:0:b0:349:31bd:e8d5 with SMTP id
+ h64-20020a0dde43000000b0034931bde8d5mr28384338ywe.283.1666619233755; Mon, 24
+ Oct 2022 06:47:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pp2dauigdnxmzpha"
-Content-Disposition: inline
-In-Reply-To: <20221022081503.1051257-2-biju.das.jz@bp.renesas.com>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+References: <20221019220242.4746-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20221019220242.4746-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20221019220242.4746-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 24 Oct 2022 15:47:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVVzUN1ScY4vh3d8=XvshOjc0C4G2duFRHSPms3S+2yeA@mail.gmail.com>
+Message-ID: <CAMuHMdVVzUN1ScY4vh3d8=XvshOjc0C4G2duFRHSPms3S+2yeA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 1/2] dt-bindings: cache: r9a07g043f-l2-cache: Add
+ DT binding documentation for L2 cache controller
+To:     Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.co>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Guo Ren <guoren@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Atish Patra <atishp@rivosinc.com>,
+        Anup Patel <anup@brainfault.org>,
+        Andrew Jones <ajones@ventanamicro.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Prabhakar,
 
---pp2dauigdnxmzpha
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 20, 2022 at 12:02 AM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add DT binding documentation for L2 cache controller found on RZ/Five SoC.
+>
+> The Renesas RZ/Five microprocessor includes a RISC-V CPU Core (AX45MP
+> Single) from Andes. The AX45MP core has an L2 cache controller, this patch
+> describes the L2 cache block.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 22.10.2022 09:15:01, Biju Das wrote:
-> We are seeing IRQ storm on global receive IRQ line under heavy CAN
-> bus load conditions with both CAN channels are enabled.
->=20
-> Conditions:
->   The global receive IRQ line is shared between can0 and can1, either
->   of the channels can trigger interrupt while the other channel irq
->   line is disabled(rfie).
->   When global receive IRQ interrupt occurs, we mask the interrupt in
->   irqhandler. Clearing and unmasking of the interrupt is happening in
->   rx_poll(). There is a race condition where rx_poll unmask the
->   interrupt, but the next irq handler does not mask the irq due to
->   NAPIF_STATE_MISSED flag.
+Thanks for your patch!
 
-Why does this happen? Is it a problem that you call
-rcar_canfd_handle_global_receive() for a channel that has the IRQs
-actually disabled in hardware?
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
+> @@ -0,0 +1,125 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright (C) 2022 Renesas Electronics Corp.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/cache/andestech,ax45mp-cache.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Andestech AX45MP L2 Cache Controller
+> +
+> +maintainers:
+> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> +
+> +description:
+> +  A level-2 cache (L2C) is used to improve the system performance by providing
+> +  a larger amount of cache line entries and reasonable access delays. The L2C
 
->   (for eg: can0 rx fifo interrupt enable is
->   disabled and can1 is triggering rx interrupt, the delay in rx_poll()
->   processing results in setting NAPIF_STATE_MISSED flag) leading to IRQ
->   storm.
->=20
-> This patch fixes the issue by checking irq is masked or not in
-> irq handler and it masks the interrupt if it is unmasked.
+large
 
-Marc
+> +  is shared between cores, and a non-inclusive non-exclusive policy is used.
+> +
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - andestech,ax45mp-cache
+> +
+> +  required:
+> +    - compatible
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: andestech,ax45mp-cache
+> +      - const: cache
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  cache-line-size:
+> +    const: 64
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+This is fixed here, but the driver accepts (and uses) whatever value specified?
 
---pp2dauigdnxmzpha
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +  cache-level:
+> +    const: 2
+> +
+> +  cache-sets:
+> +    const: 1024
+> +
+> +  cache-size:
+> +    enum: [131072, 262144, 524288, 1048576, 2097152]
+> +
+> +  cache-unified: true
+> +
+> +  next-level-cache: true
+> +
+> +  andestech,pma-regions:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +    minItems: 1
+> +    maxItems: 16
+> +    description: Optional array of memory regions to be set as non-cacheable
+> +                 bufferable regions which will be setup in the PMA.
+> +
+> +  andestech,inst-prefetch:
+> +    description: Instruction prefetch depth
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [ 0, 1, 2, 3 ]
+> +
+> +  andestech,data-prefetch:
+> +    description: Data prefetch depth
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [ 0, 1, 2, 3 ]
 
------BEGIN PGP SIGNATURE-----
+According to Section 8.1.2 ("L2-Cache Prefetch"), this should be
+[ 0, 2, 4, 8 ].
 
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmNWsTMACgkQrX5LkNig
-012EJgf/TJuBlGVYoPZqvkLueDAZ6s8nJzeI8sB5zxTsvDBoWpHaFk+gHd2PO9ai
-X4yfVczOEQfJBcT1yho2dWMoADFmAVWFTizWsblTTxYQd7cwhN/Y/itcXf6+rAqv
-1ej8FTyWI0gyguG1/IaN6LHpCzkHpxhzZaV1kkMpWPuutYsLPCYGSt1NH7j0d0ih
-GDcUVfprkzyNmUJb/SjYLsi23e5kLe+y7B+T6RZLc83+1tTZujjkn/tOkGjBGEQ2
-aZd6QviFmC7I/BmOVcVDWs7IIi/nDDSqsJx+57DgrjCVaPRHuJDoQZ23102H6izP
-HcXRZw9IKKbUqhIpqFNboYy8f32C7g==
-=3yl4
------END PGP SIGNATURE-----
+> +  andestech,tag-ram-ctl:
+> +    description: Tag RAM output cycle. First tuple indicates output cycle and the
+> +      second tuple indicates setup cycle.
 
---pp2dauigdnxmzpha--
+Nit: to me it sounds more logical to have the setup cycle first.
+See also the order in the comment in the driver code:
+
+     /* tag RAM and data RAM setup and output cycle */
+
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    items:
+> +      - minimum: 0
+> +        maximum: 2
+> +      - minimum: 0
+> +        maximum: 2
+> +
+> +  andestech,data-ram-ctl:
+> +    description: Data RAM output cycle. First tuple indicates output cycle and the
+> +      second tuple indicates setup cycle.
+
+Likewise.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    items:
+> +      - minimum: 0
+> +        maximum: 2
+> +      - minimum: 0
+> +        maximum: 2
+
+Do we really need these andestech-specific properties?
+If yes, how much (if any) of this do we want to be handled by the boot
+loader, and how much (if any) by Linux?
+If Linux is responsible, we might have to boot with L2 disabled, right?
+
+For ARM Cortex A15/A7, we also have arm,{data,tag}-latency properties
+defined, but no DTS specifies them (my patches to add them on R-Car
+Gen2 were rejected).  Note that this is different for e.g. older PL310.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
