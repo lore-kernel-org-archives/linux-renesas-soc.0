@@ -2,219 +2,100 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B39B6C38A2D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Oct 2022 12:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015A8FA3740
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Oct 2022 13:10:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234219AbiJXMsD (ORCPT
+        id S235298AbiJXNKg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 08:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59018 "EHLO
+        Mon, 24 Oct 2022 09:10:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234964AbiJXMqM (ORCPT
+        with ESMTP id S235615AbiJXNJK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 08:46:12 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A83857D4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Oct 2022 05:10:33 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id jo13so4661997plb.13
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Oct 2022 05:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=7W/Hh7zE7QWlpAYFZcAjW9MfJ3wpYv7P20Q38rYmnxQ=;
-        b=bhJX4rqwZeQbfeGhXm4HRXmTvMVYSOb3B+Kk3n/eRYvAjNDMxX1o1d2YaizU3BPfYz
-         tcDEDz4PhwZFEFLCnd7SucqObC16HJ/EHNzMZPj/JLnERHfX/5weyIRIOno2okxgRJHY
-         gojJCoG8GBqWSnfKVQ9yGywMnsaguQeaccou/CL85hZp1+KgjukK82yWHCPPJQrxz6Qa
-         VS6P+N7vVCVOIJCBHW8E6QQ5jbcf+Wp2TcoEecj6qAkS22rf1qOa7xQp9M10SuFFzLtk
-         7LJ5sKTkh46HhE4UOA6pwfdfDckFT3IQDymGGodFvvXOl7geJq0sAag1CHXE/3KbLIHa
-         58Bw==
+        Mon, 24 Oct 2022 09:09:10 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F0C2A0249;
+        Mon, 24 Oct 2022 05:22:31 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id a5so5915231qkl.6;
+        Mon, 24 Oct 2022 05:22:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7W/Hh7zE7QWlpAYFZcAjW9MfJ3wpYv7P20Q38rYmnxQ=;
-        b=5iMUVifWVz0ADqB52qIfDxd6WfbB4nxeDAK8JO6OE8AK8B+4/Te0oabNUoLczFIKVG
-         eEZXp8ej8uzI8X459X33tdSRNAY05a6jnFYWembliKfxboDwDL7gSx49dvGcsJNB0aWy
-         zP5zewZ0KPzKec7EOa63Wcd68Y6WYbxGItSinkJla6kszSXukvSkbdENmZnRGDtuKFQ9
-         t6WLhZS/z4zKPW9Px2RZ83/oTP9i0QtEsjuVqKfCY2QjFaxOmajB/fcJZVg7Sf8lgJxj
-         L2EkMBy/Dx1fCGUpu3rYe8Q8j9jZCRhJuuay8ORDFkkJhKpLyMZ0fv+FIfGuryZCLsIT
-         Pb5g==
-X-Gm-Message-State: ACrzQf3SbSslQsFmIXZ5AxZn5Q5qeid3VKAF7V0jmWoMB58oMcDrg0ft
-        xTZQPp+hZHDz+QGkTNwklx657WLoWsJXskGx
-X-Google-Smtp-Source: AMsMyM6FC3jqfHjtl1yoywXkZ6dSyipGH4oJGx13orlAZ2r92jBMONoMG/bexTpnv2jzsZ2hzJYIPw==
-X-Received: by 2002:a17:902:e804:b0:186:5736:2b70 with SMTP id u4-20020a170902e80400b0018657362b70mr27252421plg.127.1666613335892;
-        Mon, 24 Oct 2022 05:08:55 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id c1-20020a17090a4d0100b0020dda7efe61sm4051357pjg.5.2022.10.24.05.08.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 05:08:55 -0700 (PDT)
-Message-ID: <63568057.170a0220.5ee3a.6f09@mx.google.com>
-Date:   Mon, 24 Oct 2022 05:08:55 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        bh=PgmDg2ARLgo0WshQ+wzSuhO5OWLg+Wj7tJFGuvTdLnc=;
+        b=eiKGrkXAPibHikZYc8djUb7jtoM27ZGLyL324qyJ5kKfaBANVnUMfT8a+IvITYOuVq
+         JLFyK72+92etrW/cf+svlm4kKYG582IddZFBEj+kf89jdYMvA1/MPSApspgln9gVJcce
+         fS0g5LaHSDq1eNhM8itjBgI0FiNW20NG/S169oCvabHRbkmsB1YZ63npIFSnTFy0+2bp
+         nqmNubsht5sTSnEbpoRvL3gpi1+u7cdF4jb866UcK9UJ8bx2lYanrhN9c8cbYJHpJwPH
+         n5VcCcBtcOxMfrHE5o0o4Mf3XSiYK4yckoG71/znqgZ4AeOqHSf5rgc7XmA45Gc8m1j0
+         MctQ==
+X-Gm-Message-State: ACrzQf0Ep/X9p6NF0nKpYu437WcFwpPf8pkMgXj/243NBKTCJ821EFxE
+        zrejkmIIArcr+RSnilL4lgzMkiJPFn3aFw==
+X-Google-Smtp-Source: AMsMyM49b/uRzLSPPQVjsi6KXKRex7YytWf0U+TIvA/Yg2BUbdexUTb7+xWRNRm21Shq8Adg9mB4Iw==
+X-Received: by 2002:ae9:e315:0:b0:6ee:761d:4b8b with SMTP id v21-20020ae9e315000000b006ee761d4b8bmr22501454qkf.748.1666613977070;
+        Mon, 24 Oct 2022 05:19:37 -0700 (PDT)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id w18-20020a05620a425200b006eeb25369e9sm15078483qko.25.2022.10.24.05.19.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Oct 2022 05:19:35 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id o70so10789336yba.7;
+        Mon, 24 Oct 2022 05:19:35 -0700 (PDT)
+X-Received: by 2002:a25:2:0:b0:6c4:dc1:d37c with SMTP id 2-20020a250002000000b006c40dc1d37cmr27042715yba.380.1666613974849;
+ Mon, 24 Oct 2022 05:19:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: renesas-devel-2022-10-24-v6.1-rc2
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-Subject: renesas/master cros-ec: 8 runs,
- 4 regressions (renesas-devel-2022-10-24-v6.1-rc2)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+References: <20221023182437.15263-1-afd@ti.com> <20221023182437.15263-5-afd@ti.com>
+In-Reply-To: <20221023182437.15263-5-afd@ti.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 24 Oct 2022 14:19:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVLfmyWDRU0jhn-F4odWnBWkfkJrLrg_atMnXAwz3Pwpg@mail.gmail.com>
+Message-ID: <CAMuHMdVLfmyWDRU0jhn-F4odWnBWkfkJrLrg_atMnXAwz3Pwpg@mail.gmail.com>
+Subject: Re: [PATCH 4/6] arm64: dts: freescale: Rename DTB overlay source
+ files from .dts to .dtso
+To:     Andrew Davis <afd@ti.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master cros-ec: 8 runs, 4 regressions (renesas-devel-2022-10-24-v6.=
-1-rc2)
+Hi Andrew,
 
-Regressions Summary
--------------------
+Thanks for your patch!
 
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
-efcon...6-chromebook | 2          =
+On Sun, Oct 23, 2022 at 8:24 PM Andrew Davis <afd@ti.com> wrote:
+> DTB Overlays (.dtbo) can now be built from source files with the
+> extension (.dtso). This makes it clear the content of the file
 
-rk3399-gru-kevin             | arm64  | lab-collabora | gcc-10   | defconfi=
-g+arm64-chromebook   | 2          =
+... clear what is .. files?
 
+> and differentiates them from base DTB source files.
+>
+> Convert the DTB overlay source files in the arm64/freescale directory.
+>
+> Signed-off-by: Andrew Davis <afd@ti.com>
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2022-10-24-v6.1-rc2/plan/cros-ec/
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-  Test:     cros-ec
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2022-10-24-v6.1-rc2
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      547a476a7857aadfcaa264982527697926c55d6a
+Gr{oetje,eeting}s,
 
-  Test suite revisions:
-    cros-ec-tests
-      URL:  https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform=
-/cros-ec-tests.git
-      SHA:  86181a7fbd379fc42314c450740d2cea8cdf04c1 =
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-Test Regressions
----------------- =
-
-
-
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
-efcon...6-chromebook | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63566a79d88e444ac15e5b6d
-
-  Results:     5 PASS, 2 FAIL, 12 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-10-24-v6.1-rc2/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collab=
-ora/cros-ec-hp-x360-12b-ca0010nr-n4020-octopus.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-10-24-v6.1-rc2/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collab=
-ora/cros-ec-hp-x360-12b-ca0010nr-n4020-octopus.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
-os-ec/20221007.0/amd64/rootfs.cpio.gz =
-
-
-
-  * cros-ec.test_cros_ec_gyro_iio_abi: https://kernelci.org/test/case/id/63=
-566a79d88e444ac15e5b7e
-        failing since 69 days (last pass: renesas-devel-2022-08-11-v5.19, f=
-irst fail: renesas-devel-2022-08-16-v6.0-rc1) =
-
-
-  * cros-ec.test_cros_ec_accel_iio_abi: https://kernelci.org/test/case/id/6=
-3566a79d88e444ac15e5b80
-        failing since 69 days (last pass: renesas-devel-2022-08-11-v5.19, f=
-irst fail: renesas-devel-2022-08-16-v6.0-rc1)
-
-    2022-10-24T10:35:20.045425  / # =
-
-    2022-10-24T10:35:20.050245  =
-
-    2022-10-24T10:35:20.152048  / # #
-    2022-10-24T10:35:20.157429  #
-    2022-10-24T10:35:20.258500  / # export SHELL=3D/bin/sh
-    2022-10-24T10:35:20.263230  export SHELL=3D/bin/sh
-    2022-10-24T10:35:20.364254  / # . /lava-7695032/environment
-    2022-10-24T10:35:20.369435  . /lava-7695032/environment
-    2022-10-24T10:35:20.470447  / # /lava-7695032/bin/lava-test-runner /lav=
-a-7695032/0
-    2022-10-24T10:35:20.475369  /lava-7695032/bin/lava-test-runner /lava-76=
-95032/0 =
-
-    ... (7 line(s) more)  =
-
- =
-
-
-
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-rk3399-gru-kevin             | arm64  | lab-collabora | gcc-10   | defconfi=
-g+arm64-chromebook   | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63566bebdfbd7d561f5e5ba8
-
-  Results:     5 PASS, 2 FAIL, 12 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-10-24-v6.1-rc2/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cr=
-os-ec-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-022-10-24-v6.1-rc2/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cr=
-os-ec-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
-os-ec/20221007.0/arm64/rootfs.cpio.gz =
-
-
-
-  * cros-ec.test_cros_ec_gyro_iio_abi: https://kernelci.org/test/case/id/63=
-566bebdfbd7d561f5e5bb9
-        failing since 69 days (last pass: renesas-devel-2022-08-11-v5.19, f=
-irst fail: renesas-devel-2022-08-16-v6.0-rc1) =
-
-
-  * cros-ec.test_cros_ec_accel_iio_abi: https://kernelci.org/test/case/id/6=
-3566bebdfbd7d561f5e5bbb
-        failing since 69 days (last pass: renesas-devel-2022-08-11-v5.19, f=
-irst fail: renesas-devel-2022-08-16-v6.0-rc1)
-
-    2022-10-24T10:41:33.403987  / # =
-
-    2022-10-24T10:41:33.407030  =
-
-    2022-10-24T10:41:33.515602  / # #
-    2022-10-24T10:41:33.519185  #
-    2022-10-24T10:41:33.625122  / # export SHELL=3D/bin/sh
-    2022-10-24T10:41:33.628621  export SHELL=3D/bin/sh
-    2022-10-24T10:41:33.731683  / # . /lava-7695195/environment
-    2022-10-24T10:41:33.735205  . /lava-7695195/environment
-    2022-10-24T10:41:33.838768  / # /lava-7695195/bin/lava-test-runner /lav=
-a-7695195/0
-    2022-10-24T10:41:33.843038  /lava-7695195/bin/lava-test-runner /lava-76=
-95195/0 =
-
-    ... (8 line(s) more)  =
-
- =20
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
