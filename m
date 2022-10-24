@@ -2,176 +2,128 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54284C67871
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Oct 2022 22:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064B1FA3740
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Oct 2022 22:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230156AbiJXWYY (ORCPT
+        id S229917AbiJXWkE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 18:24:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55474 "EHLO
+        Mon, 24 Oct 2022 18:40:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiJXWXx (ORCPT
+        with ESMTP id S232051AbiJXWjH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 18:23:53 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 965E6B600D
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Oct 2022 13:44:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666644274; x=1698180274;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=HGKHVWYLVyX5GDWwu8zkJdxXgR2TyyvR5uxquxzTVA0=;
-  b=TNgq9Wi6gNg6SMbWwKl4luCMVyAWhRCYMZ5sbrebmiXvbJ5mVrU7+eZL
-   2ligoapOnWBAqzaLi8p+MKI0YEIeaqnPbANy7aSt0jTZO5AOOMMVeLTsU
-   s3n7IGUctI89UoFAyEwZPE5xq+owt3T9h21B01Sqfhg+e4FXmjL2uIIUI
-   AAGbzhI0rLoKJshXvIWGhVtveAOacAusP10TkjDd5VHJG12yLWYkrYQC6
-   RV2vHmtG8Nen3WvSdBAgGHBftYoQE0lHqhwT0cQ4T2bxl4uPjziw2FJpN
-   DPsQQE+56gsOnoqpzYQ8PCYbhWu1lpZCsgFbGF7aw5+Tt8z9gef9+AVB6
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="307508412"
-X-IronPort-AV: E=Sophos;i="5.95,210,1661842800"; 
-   d="scan'208";a="307508412"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2022 13:40:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="582535452"
-X-IronPort-AV: E=Sophos;i="5.95,210,1661842800"; 
-   d="scan'208";a="582535452"
-Received: from lkp-server02.sh.intel.com (HELO b6d29c1a0365) ([10.239.97.151])
-  by orsmga003.jf.intel.com with ESMTP; 24 Oct 2022 13:40:49 -0700
-Received: from kbuild by b6d29c1a0365 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1on4Fc-0005dW-37;
-        Mon, 24 Oct 2022 20:40:48 +0000
-Date:   Tue, 25 Oct 2022 04:40:30 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-arm-dt-for-v6.2] BUILD SUCCESS
- 39d9dfc6fbe1860e2ee7f72edd2582a071c90b20
-Message-ID: <6356f83e.ifXmvnGh/jXa1m8Q%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Mon, 24 Oct 2022 18:39:07 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE5752BC853;
+        Mon, 24 Oct 2022 14:02:42 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 29OHYbA5050121;
+        Mon, 24 Oct 2022 12:34:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1666632877;
+        bh=0Wv3kxu1zrI9I3zQ+/ntswY76RUlx98SfDnQU2HARwY=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=hXT8UWk0aIiJTHKS33cig5CCvhV3QV4PYwjWxDEnmd+IOSxTNQo46NtchRmE6eEu3
+         nUQ06Qxeng6BL21C3rF26Ho6nEl1BvfCYSdmZ1WG3KKBAmZYYRm6f1GH8zeqdRXy9s
+         ysP3dKBVjHR+Zx4ZzIjlZJ9hJ74sqXEGYZujQPgc=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 29OHYbbv122837
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Oct 2022 12:34:37 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Mon, 24
+ Oct 2022 12:34:36 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
+ Frontend Transport; Mon, 24 Oct 2022 12:34:36 -0500
+Received: from ula0226330.dal.design.ti.com (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 29OHYYJ0039154;
+        Mon, 24 Oct 2022 12:34:36 -0500
+From:   Andrew Davis <afd@ti.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Frank Rowand <frowand.list@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kbuild@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
+Subject: [PATCH v2 2/7] kbuild: Allow DTB overlays to built into .dtso.S files
+Date:   Mon, 24 Oct 2022 12:34:29 -0500
+Message-ID: <20221024173434.32518-3-afd@ti.com>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20221024173434.32518-1-afd@ti.com>
+References: <20221024173434.32518-1-afd@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v6.2
-branch HEAD: 39d9dfc6fbe1860e2ee7f72edd2582a071c90b20  arm64: dts: renesas: r8a779g0: Add remaining HSCIF nodes
+DTB files can be built into the kernel by converting them to assembly
+files then assembling them into object files. We extend this here
+for DTB overlays with the .dtso extensions.
 
-elapsed time: 727m
+We change the start and end delimiting tag prefix to make it clear that
+this data came from overlay files.
 
-configs tested: 98
-configs skipped: 118
+[Based on patch by Frank Rowand <frank.rowand@sony.com>]
+Signed-off-by: Andrew Davis <afd@ti.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ scripts/Makefile.lib | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm64                            allyesconfig
-powerpc                           allnoconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-sh                               allmodconfig
-ia64                             allmodconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-arm                                 defconfig
-arm                              allyesconfig
-x86_64                          rhel-8.3-func
-x86_64                    rhel-8.3-kselftests
-arc                  randconfig-r043-20221023
-arc                  randconfig-r043-20221024
-s390                 randconfig-r044-20221024
-riscv                randconfig-r042-20221024
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                               rhel-8.3
-x86_64                           rhel-8.3-kvm
-x86_64                           rhel-8.3-syz
-x86_64                         rhel-8.3-kunit
-i386                 randconfig-a011-20221024
-i386                 randconfig-a014-20221024
-i386                 randconfig-a015-20221024
-i386                 randconfig-a016-20221024
-i386                 randconfig-a012-20221024
-i386                 randconfig-a013-20221024
-i386                             allyesconfig
-i386                                defconfig
-x86_64               randconfig-k001-20221024
-mips                        bcm47xx_defconfig
-powerpc                       eiger_defconfig
-i386                             alldefconfig
-mips                           jazz_defconfig
-sh                           se7206_defconfig
-powerpc                   motionpro_defconfig
-sh                        sh7757lcr_defconfig
-powerpc                        cell_defconfig
-loongarch                        alldefconfig
-sh                          polaris_defconfig
-powerpc                 mpc8540_ads_defconfig
-arc                      axs103_smp_defconfig
-s390                                defconfig
-s390                             allmodconfig
-arc                                 defconfig
-alpha                               defconfig
-s390                             allyesconfig
-x86_64               randconfig-a014-20221024
-x86_64               randconfig-a015-20221024
-x86_64               randconfig-a016-20221024
-x86_64               randconfig-a013-20221024
-x86_64               randconfig-a012-20221024
-x86_64               randconfig-a011-20221024
-sparc64                             defconfig
-sh                          sdk7786_defconfig
-powerpc                      tqm8xx_defconfig
-csky                             alldefconfig
-powerpc                 mpc837x_rdb_defconfig
-openrisc                            defconfig
-arm                        mini2440_defconfig
-parisc                generic-64bit_defconfig
-sh                           se7712_defconfig
-i386                          randconfig-a012
-i386                          randconfig-a014
-i386                          randconfig-a016
-powerpc                     tqm8555_defconfig
-sh                          lboxre2_defconfig
-i386                 randconfig-c001-20221024
-
-clang tested configs:
-x86_64               randconfig-a005-20221024
-x86_64               randconfig-a002-20221024
-x86_64               randconfig-a006-20221024
-x86_64               randconfig-a001-20221024
-x86_64               randconfig-a004-20221024
-x86_64               randconfig-a003-20221024
-powerpc                  mpc885_ads_defconfig
-mips                           rs90_defconfig
-i386                 randconfig-a004-20221024
-i386                 randconfig-a006-20221024
-i386                 randconfig-a002-20221024
-i386                 randconfig-a003-20221024
-i386                 randconfig-a001-20221024
-i386                 randconfig-a005-20221024
-s390                 randconfig-r044-20221023
-hexagon              randconfig-r041-20221023
-riscv                randconfig-r042-20221023
-hexagon              randconfig-r045-20221023
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-arm                        mvebu_v5_defconfig
-powerpc                 mpc832x_mds_defconfig
-arm                        multi_v5_defconfig
-arm                       spear13xx_defconfig
-
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 0376a6f18bfb1..250b9fd73f6d2 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -358,7 +358,7 @@ DTC_FLAGS += $(DTC_FLAGS_$(basetarget))
+ DTC_FLAGS += $(if $(filter $(patsubst $(obj)/%,%,$@), $(base-dtb-y)), -@)
+ 
+ # Generate an assembly file to wrap the output of the device tree compiler
+-quiet_cmd_dt_S_dtb= DTB     $@
++quiet_cmd_dt_S_dtb= DTBS    $@
+ cmd_dt_S_dtb=						\
+ {							\
+ 	echo '\#include <asm-generic/vmlinux.lds.h>'; 	\
+@@ -375,6 +375,24 @@ cmd_dt_S_dtb=						\
+ $(obj)/%.dtb.S: $(obj)/%.dtb FORCE
+ 	$(call if_changed,dt_S_dtb)
+ 
++# Generate an assembly file to wrap the output of the device tree compiler
++quiet_cmd_dt_S_dtbo= DTBOS   $@
++cmd_dt_S_dtbo=						\
++{							\
++	echo '\#include <asm-generic/vmlinux.lds.h>';	\
++	echo '.section .dtb.init.rodata,"a"';		\
++	echo '.balign STRUCT_ALIGNMENT';		\
++	echo '.global __dtbo_$(subst -,_,$(*F))_begin';	\
++	echo '__dtbo_$(subst -,_,$(*F))_begin:';	\
++	echo '.incbin "$<" ';				\
++	echo '__dtbo_$(subst -,_,$(*F))_end:';		\
++	echo '.global __dtbo_$(subst -,_,$(*F))_end';	\
++	echo '.balign STRUCT_ALIGNMENT';		\
++} > $@
++
++$(obj)/%.dtbo.S: $(obj)/%.dtbo FORCE
++	$(call if_changed,dt_S_dtbo)
++
+ quiet_cmd_dtc = DTC     $@
+ cmd_dtc = $(HOSTCC) -E $(dtc_cpp_flags) -x assembler-with-cpp -o $(dtc-tmp) $< ; \
+ 	$(DTC) -o $@ -b 0 \
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.37.3
+
