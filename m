@@ -2,86 +2,132 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BA2C38A2D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Oct 2022 16:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84433ECAAA1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Oct 2022 16:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230232AbiJXQ07 (ORCPT
+        id S232231AbiJXQ1v (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 12:26:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58922 "EHLO
+        Mon, 24 Oct 2022 12:27:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233980AbiJXQ0a (ORCPT
+        with ESMTP id S233627AbiJXQ1Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Oct 2022 12:26:30 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 726041146A;
-        Mon, 24 Oct 2022 08:13:05 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id q9-20020a17090a178900b00212fe7c6bbeso3318031pja.4;
-        Mon, 24 Oct 2022 08:13:04 -0700 (PDT)
+        Mon, 24 Oct 2022 12:27:25 -0400
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC74328E32;
+        Mon, 24 Oct 2022 08:14:04 -0700 (PDT)
+Received: by mail-qk1-f169.google.com with SMTP id a5so6237092qkl.6;
+        Mon, 24 Oct 2022 08:14:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sgFso1FaRAWQJ83kT84q4SS+gpbh+wtZ0NmrEVRj1YY=;
-        b=JEeYA3H21scMHN91lpqzdCc2WEyA7QBLvMBPU54OSb8+D3/TrbzghnO+nf3DP4kSwk
-         top+O1KROKOqjOgfiiabZ1HMZdQw9hxvyc46rHdNfkMaydPQBDvyfLI2f2ox4HAR9Vo4
-         3qvkWGSmMq6hF0NM7t3PLsoMA57/V/KcbT5by7r5WTJWfkGkzvzRz60GFU/E1BXMKNeu
-         9yXLERg0b1k6LB91F7HBLY8ig8A8ZFWA9GWUjYBtxTwiZ4q+ge9WeL1qECOdjdjJkzhc
-         EmOtDtw9yGYLJNjNA9mzYvl2cylOGR0Gk8d0w70TURCTw5HcWdJ7JSXR5mehLP+X7UoS
-         seIw==
-X-Gm-Message-State: ACrzQf0HIPIVFQX0IeigGwiHD4BKdrSLNJTYThouyDgrmCt3eE+2IgtC
-        kBZcl0wWE0oYmratV3fq1s/6gbAzeWrb7A==
-X-Google-Smtp-Source: AMsMyM7kV5I1xzy3WptmBGmtY5SIvtzh+zDKIMpSuQGpTci8zxKxtKKmQFNzFDiSCDHAyut8AiTibg==
-X-Received: by 2002:a0c:8d4b:0:b0:4bb:798f:5251 with SMTP id s11-20020a0c8d4b000000b004bb798f5251mr1900924qvb.51.1666613360740;
-        Mon, 24 Oct 2022 05:09:20 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id z15-20020a05622a124f00b0039a08c0a594sm12631508qtx.82.2022.10.24.05.09.19
+        bh=m4viJHxfacreRm9wTZHfw/EqLzaLhJI57ZF7n+4sesI=;
+        b=lddOhnkSKqyV2/fbsZbKMLZdAwM9Y/gUuPCGVvtUPfVT/jTGajqv3g6uH7kAKNtS2T
+         tFa6RmIdpi/lUs9ONaT9r20sWi2CmpUJ91rusL8/c/hSzUK2hh2fDoKNltiyypMfpsYz
+         11EM+YAxQWKHidSXxqigA9UXaTlzmlT5vqXF9lKavWpXZPzQmy1iQxsKKCC/CN6+lDaI
+         in79LpkqyLJWruosf+GiwUhTNhjGHG5aD50uSY6j8tKdrXHpTh8m4V90KIXKC+0telWQ
+         LRUoS7FvixiekIDUQSQPGhhYFCreQHEA+6nfeGvmPhsvtWb7xzEB1vxsffzh9+AM9eCT
+         MNGQ==
+X-Gm-Message-State: ACrzQf16LyWeCKMPetNzTI2vEW3Zg3oPezbgo6UONIjDrOY5OgSUDkvA
+        We9rF5lYQHvtutoxAlObWTiiwUlX2JcA7w==
+X-Google-Smtp-Source: AMsMyM66KLH3yXhQf1WGFA8wXaMs+RlBpXmfGyKsiH1ejjEA5fUSplb+c2cRmWGIYbu9/1gNyDHzaA==
+X-Received: by 2002:ac8:4e4f:0:b0:39c:e080:3643 with SMTP id e15-20020ac84e4f000000b0039ce0803643mr27954535qtw.426.1666623570029;
+        Mon, 24 Oct 2022 07:59:30 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id cq13-20020a05622a424d00b003972790deb9sm32320qtb.84.2022.10.24.07.59.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Oct 2022 05:09:20 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 63so10776097ybq.4;
-        Mon, 24 Oct 2022 05:09:19 -0700 (PDT)
-X-Received: by 2002:a25:687:0:b0:6c2:2b0c:26e with SMTP id 129-20020a250687000000b006c22b0c026emr28296908ybg.202.1666613359730;
- Mon, 24 Oct 2022 05:09:19 -0700 (PDT)
+        Mon, 24 Oct 2022 07:59:29 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id y72so11261489yby.13;
+        Mon, 24 Oct 2022 07:59:29 -0700 (PDT)
+X-Received: by 2002:a25:26c1:0:b0:6c3:bdae:c6d6 with SMTP id
+ m184-20020a2526c1000000b006c3bdaec6d6mr30854658ybm.36.1666623568821; Mon, 24
+ Oct 2022 07:59:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221023182437.15263-1-afd@ti.com> <20221023182437.15263-4-afd@ti.com>
-In-Reply-To: <20221023182437.15263-4-afd@ti.com>
+References: <20221022104357.1276740-1-biju.das.jz@bp.renesas.com> <20221022104357.1276740-7-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20221022104357.1276740-7-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 Oct 2022 14:09:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW+31HbDvKORyiNFXOGh5dyYYTM2fcpEJEnuMD8ANA5Cw@mail.gmail.com>
-Message-ID: <CAMuHMdW+31HbDvKORyiNFXOGh5dyYYTM2fcpEJEnuMD8ANA5Cw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] of: overlay: rename overlay source files from .dts to .dtso
-To:     Andrew Davis <afd@ti.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Mon, 24 Oct 2022 16:59:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV8MmTMMPnCGgXbZZ-gb4CVduAUBBG3BdAecBrc3J7RLQ@mail.gmail.com>
+Message-ID: <CAMuHMdV8MmTMMPnCGgXbZZ-gb4CVduAUBBG3BdAecBrc3J7RLQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] can: rcar_canfd: Add has_gerfl_eef to struct rcar_canfd_hw_info
+To:     biju.das.jz@bp.renesas.com
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+        =?UTF-8?Q?Stefan_M=C3=A4tje?= <stefan.maetje@esd.eu>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Oct 23, 2022 at 8:25 PM Andrew Davis <afd@ti.com> wrote:
-> From: Frank Rowand <frank.rowand@sony.com>
->
-> In drivers/of/unittest-data/:
->    - Rename .dts overlay source files to use .dtso suffix.
->
-> Modify driver/of/unitest.c to use .dtbo.o based symbols instead of .dtb.o
->
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> Signed-off-by: Andrew Davis <afd@ti.com>
+Hi Biju,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Sat, Oct 22, 2022 at 1:03 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> R-Car has ECC error flags in global error interrupts whereas it is
+> not available on RZ/G2L.
+>
+> Add has_gerfl_eef to struct rcar_canfd_hw_info so that rcar_canfd_
+> global_error() will process ECC errors only for R-Car.
+>
+> whilst, this patch fixes the below checkpatch warnings
+>   CHECK: Unnecessary parentheses around 'ch == 0'
+>   CHECK: Unnecessary parentheses around 'ch == 1'
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -523,6 +523,7 @@ struct rcar_canfd_hw_info {
+>         unsigned multi_global_irqs:1;   /* Has multiple global irqs  */
+>         unsigned clk_postdiv:1;         /* Has CAN clk post divider  */
+>         unsigned multi_channel_irqs:1;  /* Has multiple channel irqs  */
+> +       unsigned has_gerfl_eef:1;       /* Has ECC Error Flag  */
+
+Do you really need this flag? According to the RZ/G2L docs, the
+corresponding register bits are always read as zero.
+
+>  };
+>
+>  /* Channel priv data */
+
+> @@ -947,17 +950,18 @@ static void rcar_canfd_global_error(struct net_device *ndev)
+>  {
+>         struct rcar_canfd_channel *priv = netdev_priv(ndev);
+>         struct rcar_canfd_global *gpriv = priv->gpriv;
+> +       const struct rcar_canfd_hw_info *info = gpriv->info;
+>         struct net_device_stats *stats = &ndev->stats;
+>         u32 ch = priv->channel;
+>         u32 gerfl, sts;
+>         u32 ridx = ch + RCANFD_RFFIFO_IDX;
+>
+>         gerfl = rcar_canfd_read(priv->base, RCANFD_GERFL);
+> -       if ((gerfl & RCANFD_GERFL_EEF0) && (ch == 0)) {
+> +       if (info->has_gerfl_eef && (gerfl & RCANFD_GERFL_EEF0) && ch == 0) {
+>                 netdev_dbg(ndev, "Ch0: ECC Error flag\n");
+>                 stats->tx_dropped++;
+>         }
+> -       if ((gerfl & RCANFD_GERFL_EEF1) && (ch == 1)) {
+> +       if (info->has_gerfl_eef && (gerfl & RCANFD_GERFL_EEF1) && ch == 1) {
+>                 netdev_dbg(ndev, "Ch1: ECC Error flag\n");
+>                 stats->tx_dropped++;
+>         }
+
+Just wrap both checks inside a single "if (gpriv->info->has_gerfl) { ... }"?
 
 Gr{oetje,eeting}s,
 
