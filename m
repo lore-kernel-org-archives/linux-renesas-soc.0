@@ -2,221 +2,136 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07ECECDFA1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Oct 2022 01:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68386FA373D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Oct 2022 07:29:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232504AbiJZBmm (ORCPT
+        id S232941AbiJZH3L (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Oct 2022 21:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
+        Wed, 26 Oct 2022 03:29:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231164AbiJZBml (ORCPT
+        with ESMTP id S231649AbiJZH3J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Oct 2022 21:42:41 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE8BDDA22;
-        Tue, 25 Oct 2022 18:42:40 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id l32so9255660wms.2;
-        Tue, 25 Oct 2022 18:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hgFR/jqDKTOAbF1Um/uB16BiixkxC3QBZn+DwYf+s1w=;
-        b=h9v5NrHj/e5yrH5asc4huaQY7Mx9s1dD/qbsO+GGK2mA7SdDEOvmOVGFxlPuwuR1Vu
-         EkZaoHuMfNj5W+rejBXzhk/PUa8JD+CHotZXn0fnA6hi5Z/8mBOCd1b/qFV+JM2XVy9l
-         yZT53JW8cFRlzOdN7d7awnMpTrDxLSycbSFTV5X2OwtI1tU9G6dadgRJYexLWlYGxisE
-         mWQujUObtVNNwY0sUeIoCQMwlVqTR0KCVD6zJa4gFdbhOxS46IsNZCAFlz8LliIvUJBp
-         XELzZPTBTNPlVifHlTqQpzYIQEngn3mKFkZhpGzZfymoSldOVNyX9CHDJN5+uBwy/Jyf
-         tAVQ==
+        Wed, 26 Oct 2022 03:29:09 -0400
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19CB7B8C37;
+        Wed, 26 Oct 2022 00:29:09 -0700 (PDT)
+Received: by mail-qk1-f169.google.com with SMTP id a5so9955784qkl.6;
+        Wed, 26 Oct 2022 00:29:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hgFR/jqDKTOAbF1Um/uB16BiixkxC3QBZn+DwYf+s1w=;
-        b=ByqXO3vvwyXYfPvz7CoYEsJcc+NIuq0FuAwWu054/EUYmm0/NrczEoeveHSnZ/trrZ
-         3MupIvy+G2QG8zbEFtO4nzjglXixRMFfJeu2KNfdiwvPw/eR2jwjes1Jqm3n9FbtB7U7
-         ZZuPyNJAm7wY/5eJvrbwFx5aOfm6nnwKIcY1pwUXLQ2VuEV9hInwvSNvWlauDQKl/rqB
-         9Qgc3dt+ZeFsjBriXnbHfaA0RLcTcCfhRHvi+5mhphs6KhLxkHSrfrZDtJi3qfg0yi5/
-         my2QGh/5HudVe8kqCvxaSQyMitBZq+UdYQdnPj9DHjplodTMR7qm39oPfIWdgX093yJI
-         NlBQ==
-X-Gm-Message-State: ACrzQf2e5l5eEIDPrRemGqDM/MotXpov5uW+lGtEDpJyK9jolqhh9Ezi
-        k4daiWk33A7mEgSQ/9+odW8=
-X-Google-Smtp-Source: AMsMyM6dCOuFp/fWzzJjN6zubI8HboDZ7isKFKYOBASJ/RCRjRUnkgrFbL3ixDvqbBPZkU7T+d9d3Q==
-X-Received: by 2002:a05:600c:4b2a:b0:3cf:148d:22cb with SMTP id i42-20020a05600c4b2a00b003cf148d22cbmr644677wmp.96.1666748559233;
-        Tue, 25 Oct 2022 18:42:39 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:1d2a:d2a2:361e:a475])
-        by smtp.gmail.com with ESMTPSA id x12-20020adff0cc000000b00236733f0f98sm3688956wro.107.2022.10.25.18.42.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Oct 2022 18:42:38 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e5m59W7ETiWbAx79mryLE4tSpYnn+RzXpvnV18OsjtU=;
+        b=bY0+o/EriSjklpvLfCtxL4UtkKnTdSZTrzhX35amBYtsjGRyRCRxNGLnmKzJDn5Dfe
+         nCuCDqlAWFv2QS7yFCP91rqwA871OH7fPuFL/WPBDyqR+3VUpgUBpKPRwCi85COpfHuF
+         In2WyYbV+5cEsyyaOfqK/FL9EnN74yAULGJIJzThF7j2EuiR3sS/NWcYMGqrbxls6tZf
+         yOOzoPluJZjcwnKg3H6glOckpB/Bs1co3HYqTk6lA0hWi1TvYZ0LkBAEi/+QqqgSlfWV
+         zfsC+XhOos61+ED7QtOY4KFlIQsPl02nkNhrLKiZ4Cr8EhRBS0m6qLDxuu+ds1TNBvmI
+         sONg==
+X-Gm-Message-State: ACrzQf0VFwL/lBNHIvop3fkPmButmvvfWstHW0cLrWTZ5hgPOH0ApvhX
+        8HRWbP6LSKQyLJ3e/gn0kE3xN6C81f8j+g==
+X-Google-Smtp-Source: AMsMyM5VIePux2m3QepPlT7MWBQbMbHlejiXM5fOjcH+PJoAiKfAGf4ufY51GAOBtMLVb3UZHgjfPQ==
+X-Received: by 2002:a37:8981:0:b0:6f1:1560:ac7d with SMTP id l123-20020a378981000000b006f11560ac7dmr16157125qkd.659.1666769347955;
+        Wed, 26 Oct 2022 00:29:07 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id f14-20020a05620a280e00b006eec09eed39sm3534288qkp.40.2022.10.26.00.29.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Oct 2022 00:29:07 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-369426664f9so138742927b3.12;
+        Wed, 26 Oct 2022 00:29:07 -0700 (PDT)
+X-Received: by 2002:a81:5a57:0:b0:353:6de6:3263 with SMTP id
+ o84-20020a815a57000000b003536de63263mr37779589ywb.358.1666769347215; Wed, 26
+ Oct 2022 00:29:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220915165256.352843-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220915165256.352843-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVJ4gp=kT2S+5bhjdZACSbEX=3pP7mmmi_GEbeAOxtHGw@mail.gmail.com> <CA+V-a8sidwGQVSb7UV56opqE9ViS_y7nVPWx8Krx7t6P1BExCg@mail.gmail.com>
+In-Reply-To: <CA+V-a8sidwGQVSb7UV56opqE9ViS_y7nVPWx8Krx7t6P1BExCg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 26 Oct 2022 09:28:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWkg-k2efZoy=U+j-xji0Agp38qRy-8cjb7K7QiJrL-ZQ@mail.gmail.com>
+Message-ID: <CAMuHMdWkg-k2efZoy=U+j-xji0Agp38qRy-8cjb7K7QiJrL-ZQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: rzg2ul-smarc: Add
+ /omit-if-no-ref/ to pinmux
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/2] clk: renesas: rzg2l: Don't assume all CPG_MOD clocks support PM
-Date:   Wed, 26 Oct 2022 02:42:26 +0100
-Message-Id: <20221026014227.162121-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221026014227.162121-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20221026014227.162121-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Prabhakar,
 
-There are cases where not all CPG_MOD clocks should be assumed to support
-PM. For example on the CRU block there is a particular sequence that needs
-to be followed to initialize the CSI-2 D-PHY in which individual clocks
-need to be turned ON/OFF, due to which Runtime PM support wasn't used by
-the CRU CSI-2 driver.
+On Wed, Oct 26, 2022 at 12:39 AM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Tue, Oct 25, 2022 at 9:13 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Thu, Sep 15, 2022 at 6:53 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > In preparation to re-use the RZ/G2UL SMARC SoM and carrier DTS/I with the
+> > > RZ/Five add /omit-if-no-ref/ keyword to pinmux entries as the support for
+> > > RZ/Five SMARC EVK will be gradually added.
+> > >
+> > > Once we have full blown support for RZ/Five SMARC EVK we can get rid of
+> > > the /omit-if-no-ref/ keyword.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> > I finally had a deeper look at this...
+> >
+> > Why do you want to disable these nodes? While they are indeed not
+> > used yet on RZ/Five, they are valid hardware descriptions for the
+> > RZ/Five SMARC EVK, and their presence doesn't harm anything.
+> >
+> > I do see a valid use case for marking pin control subnodes with
+> > /omit-if-no-ref/: you can provide all possible configurations as a
+> > convenience for the user, so the user no longer has to look up the
+> > numeric parameters of the RZG2L_PORT_PINMUX() macros.
+> > But IMHO those would belong in the SoC-specific .dtsi, not in a
+> > board .dtsi.  See e.g. the massive use of /omit-if-no-ref/ in sunxi
+> > and rockchip .dtsi files.
+> >
+> > Am I missing something?
+> >
+> My intention was to keep the DTB as minimal as possible so that it
+> includes just the required pinmuxes which were enabled on the RZ/Five.
+> For example [0], [1] we do delete the pinctrl for the nodes which are
+> marked as disabled. Do you think we should drop it?
 
-This patch adds support to allow indicating if PM is not supported by the
-CPG_MOD clocks. Two new members no_pm_mod_clks and num_no_pm_mod_clks are
-added to struct rzg2l_cpg_info so that MOD clocks which do not support PM
-can be passed by no_pm_mod_clks[] array and when the driver uses Runtime
-PM support the clk ID is matched against the no_pm_mod_clks[] array to see
-if the clk is needed to be included as part of Runtime PM.
+You mean
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2
-* Dropped DEF_NO_PM() macro
-* Added genpd member to struct rzg2l_cpg_priv
-* Added no_pm_mod_clks and num_no_pm_mod_clks members
-  to struct rzg2l_cpg_info
-* Updated commit message
+    /delete-property/ pinctrl-0;
+    /delete-property/ pinctrl-names;
 
-RFC->v1
-* Added no_pm_mod_clks and num_no_pm_mod_clks members as part of
-  struct rzg2l_cpg_priv
----
- drivers/clk/renesas/rzg2l-cpg.c | 37 ++++++++++++++++++++-------------
- drivers/clk/renesas/rzg2l-cpg.h |  4 ++++
- 2 files changed, 27 insertions(+), 14 deletions(-)
+?
+These do not delete pinctrl subnodes, but pinctrl properties in disabled
+device nodes pointing to pinctrl subnodes.  The actual pinctrl subnodes
+are still present.
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index dfd676310ce9..66b909f31c77 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -95,6 +95,7 @@ struct rzg2l_pll5_mux_dsi_div_param {
-  * @num_resets: Number of Module Resets in info->resets[]
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-  * @info: Pointer to platform data
-+ * @genpd: PM domain
-  * @mux_dsi_div_params: pll5 mux and dsi div parameters
-  */
- struct rzg2l_cpg_priv {
-@@ -111,6 +112,8 @@ struct rzg2l_cpg_priv {
- 
- 	const struct rzg2l_cpg_info *info;
- 
-+	struct generic_pm_domain genpd;
-+
- 	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
- };
- 
-@@ -1223,22 +1226,31 @@ static int rzg2l_cpg_reset_controller_register(struct rzg2l_cpg_priv *priv)
- 	return devm_reset_controller_register(priv->dev, &priv->rcdev);
- }
- 
--static bool rzg2l_cpg_is_pm_clk(const struct of_phandle_args *clkspec)
-+static bool rzg2l_cpg_is_pm_clk(struct rzg2l_cpg_priv *priv,
-+				const struct of_phandle_args *clkspec)
- {
-+	const struct rzg2l_cpg_info *info = priv->info;
-+	unsigned int id;
-+	unsigned int i;
-+
- 	if (clkspec->args_count != 2)
- 		return false;
- 
--	switch (clkspec->args[0]) {
--	case CPG_MOD:
--		return true;
--
--	default:
-+	if (clkspec->args[0] != CPG_MOD)
- 		return false;
-+
-+	id = clkspec->args[1] + info->num_total_core_clks;
-+	for (i = 0; i < info->num_no_pm_mod_clks; i++) {
-+		if (info->no_pm_mod_clks[i] == id)
-+			return false;
- 	}
-+
-+	return true;
- }
- 
- static int rzg2l_cpg_attach_dev(struct generic_pm_domain *unused, struct device *dev)
- {
-+	struct rzg2l_cpg_priv *priv = container_of(unused, struct rzg2l_cpg_priv, genpd);
- 	struct device_node *np = dev->of_node;
- 	struct of_phandle_args clkspec;
- 	bool once = true;
-@@ -1248,7 +1260,7 @@ static int rzg2l_cpg_attach_dev(struct generic_pm_domain *unused, struct device
- 
- 	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
- 					   &clkspec)) {
--		if (rzg2l_cpg_is_pm_clk(&clkspec)) {
-+		if (rzg2l_cpg_is_pm_clk(priv, &clkspec)) {
- 			if (once) {
- 				once = false;
- 				error = pm_clk_create(dev);
-@@ -1298,16 +1310,13 @@ static void rzg2l_cpg_genpd_remove(void *data)
- 	pm_genpd_remove(data);
- }
- 
--static int __init rzg2l_cpg_add_clk_domain(struct device *dev)
-+static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
- {
-+	struct device *dev = priv->dev;
- 	struct device_node *np = dev->of_node;
--	struct generic_pm_domain *genpd;
-+	struct generic_pm_domain *genpd = &priv->genpd;
- 	int ret;
- 
--	genpd = devm_kzalloc(dev, sizeof(*genpd), GFP_KERNEL);
--	if (!genpd)
--		return -ENOMEM;
--
- 	genpd->name = np->name;
- 	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
- 		       GENPD_FLAG_ACTIVE_WAKEUP;
-@@ -1377,7 +1386,7 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
--	error = rzg2l_cpg_add_clk_domain(dev);
-+	error = rzg2l_cpg_add_clk_domain(priv);
- 	if (error)
- 		return error;
- 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index cecbdf5e4f93..eee780276a9e 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -256,6 +256,10 @@ struct rzg2l_cpg_info {
- 	unsigned int num_mod_clks;
- 	unsigned int num_hw_mod_clks;
- 
-+	/* No PM Module Clocks */
-+	const unsigned int *no_pm_mod_clks;
-+	unsigned int num_no_pm_mod_clks;
-+
- 	/* Resets */
- 	const struct rzg2l_reset *resets;
- 	unsigned int num_resets;
--- 
-2.25.1
+> But now that things are falling in place for RZ/Five we can ignore this patch.
 
+Agreed.
+
+> [0] arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+> [1] arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
