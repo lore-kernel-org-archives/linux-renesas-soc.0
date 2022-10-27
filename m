@@ -2,142 +2,277 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E042EFA3742
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Oct 2022 09:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7E6C67871
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Oct 2022 10:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234886AbiJ0JtV (ORCPT
+        id S235470AbiJ0Kbn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Oct 2022 05:49:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53928 "EHLO
+        Thu, 27 Oct 2022 06:31:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234810AbiJ0JtU (ORCPT
+        with ESMTP id S234898AbiJ0KbZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2022 05:49:20 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A65A96396;
-        Thu, 27 Oct 2022 02:49:19 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id a67so1706336edf.12;
-        Thu, 27 Oct 2022 02:49:19 -0700 (PDT)
+        Thu, 27 Oct 2022 06:31:25 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414C423BDB;
+        Thu, 27 Oct 2022 03:31:19 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id l32so643800wms.2;
+        Thu, 27 Oct 2022 03:31:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IWPyJZW5AVoC+nrDVVz16Q/2YNSTwOB7weYuST5UkDM=;
-        b=jDWhFlSODS1EWcJZZeGu65cVUR9mHawB/5m7LVZcG1/shMrHhfwkLWzJ9qiJlehoR/
-         WoD2GU6tA1YkVAB5uX6meQVb2pkppteLdaU+N4F/LHK2ujAUkKLHtgNpqewbR8HdfeOR
-         NPDqf6vccVGlvfM77hnmobflfGQ1TFycN1HdfyWbBTczYXJ29RLojyk9JmfqSFUGaeay
-         KmzBRb1KzC2YS7pYl+JQRBwOKBqC3IteefHZy8KY0LdBh4E9cuBuUfIFikzbB/GqN1RZ
-         B3IE2uVwYM4EhHKDqUtHio8mqPTlc34G0or/HSsw2FHYSBrazekliDIwZk/AXpMgUWrc
-         ukZA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HV3C8/0FJbN1itNycflCKFAz8NGxL32z+8fSmpI9LLM=;
+        b=TJtMQtPQCR5RIvGqJljk9Mzceoh4yS+rrnxLAXwX+WP+joi6G9P8NHFpZyg2gBInTa
+         CSMjzlmJhNE4mwOfIombGta0uuhcQMFy2Rorn7hDg1r6ppF6IdIxCTFf4LkM4XDtLvcQ
+         r+e1+uQHoNGIa2iSZRNlVXo3edKEuMLtYHA/yMdcrYEpw/GQ59zRPBms/tKwaX5J7Y4N
+         QEakrufMgOV8isW9qvs147zKJj5cP5E6h5jKhrrM2GfB+A36XT9WBgDIVRzxG4ztGfXn
+         jFKpMtXcMvHZpgxL1cal0jXBYRl2zEsxQjwmXcU7yvKHlQr7JTLHHU7glr4kLJBIBZ2a
+         QGfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IWPyJZW5AVoC+nrDVVz16Q/2YNSTwOB7weYuST5UkDM=;
-        b=CorCta9FF3TdyiAzUIIEkg4G7RGqxTnImPRWaI89C1Zd0D824zfB/MD/mpb6edGMM0
-         hc8BIuAXmCv19Al9KiCwIWR27JMNKkkdHWCXdy6fmrBueWVa9Va8tq3weW25/rJVx9DF
-         24ZqyOaitmiOHGUIR55elXLgzTaqpFUwzx06t5VSNkejejzbQrzKmUXhjEO4X/u6zEo+
-         +3sfRNGpVArR9rff3exj4gJbwATkvffd6ZlJZafuvzIMUGhkJf58pQd9H2KwO9d708te
-         pGnfcMebx6wGyL0TIYy0oyAQmH5I9IhQO4pGssrZTA99i5Gyz6+AuOKk+iYsCeexE9TE
-         9L+Q==
-X-Gm-Message-State: ACrzQf3IZC4oe+QT/1n25m5qLh3S0oljWCQlNmQZRm9b6f5pMcqz/eoJ
-        w0N+JAofIF5mON3V3JODsmakE9EqtcxWC3HqCZY=
-X-Google-Smtp-Source: AMsMyM50d4ocHboYT2FXOEMzrCVMW05GrxeaNf3kP4FkUT2jOdfQ2qVD18OBeNLY7N3Ce30ysegqhAHqb2ijaiwzG3w=
-X-Received: by 2002:a05:6402:26cf:b0:45d:48d7:928e with SMTP id
- x15-20020a05640226cf00b0045d48d7928emr43252923edd.275.1666864158072; Thu, 27
- Oct 2022 02:49:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221026130658.45601-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20221026130658.45601-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <Y1pN0oksKeauTpBA@paasikivi.fi.intel.com>
-In-Reply-To: <Y1pN0oksKeauTpBA@paasikivi.fi.intel.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 27 Oct 2022 10:48:51 +0100
-Message-ID: <CA+V-a8uqPenMqbhixzefspsffLH=P7i7DJ53C7hfv0hMcgGutQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/9] media: i2c: ov5645: Use runtime PM
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HV3C8/0FJbN1itNycflCKFAz8NGxL32z+8fSmpI9LLM=;
+        b=z78fZOds8ElyPbpTkp2KLaqYxhIDneSo29MqwaSAzfgd981Gk1qlXZWVyMJyQ7S0ld
+         W/XyA8YH32fJQulqIt9V45z4x7INiOuHnGMezD/5CgsFlAiWxZAKmNfZBogS2bef0KBa
+         +NxGYwSaFc3WK1w3N2bVMyg7CCMnVEILqO/H27Dhg+QbodCf32FsAuYts4SJH4YyHiSL
+         P+yGa7E1bhHmMmRhOvgweaVioT6uG90IsS7aJdD3yunDwd3SVLUx+7Qyad/RCTRjksPX
+         Tm2t8EfP8efFyKIX885PKQ0aQSxSxq3TEXJUE7DTR2CCD+nLAkkU1VTnDtGFa7FgFODc
+         zm2g==
+X-Gm-Message-State: ACrzQf1BpfHiPmgWGp2F3NL9eq/cW7SbwKkEoEyReJYZRuTLdVxPD2bI
+        oCArlbPdplNprBVkcj+J96k=
+X-Google-Smtp-Source: AMsMyM4LYR4uXtWd40y80qarzayHKXachFsBaiuz+SilRrJv1ZA7ycEoZc1ztC1HQICWOnodvkkfUw==
+X-Received: by 2002:a05:600c:468a:b0:3c6:f1ae:3e95 with SMTP id p10-20020a05600c468a00b003c6f1ae3e95mr5402696wmo.152.1666866677641;
+        Thu, 27 Oct 2022 03:31:17 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:66:ff81:b0d3:60a0])
+        by smtp.gmail.com with ESMTPSA id k9-20020adff5c9000000b0022eafed36ebsm824235wrp.73.2022.10.27.03.31.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Oct 2022 03:31:16 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Shawn Tu <shawnx.tu@intel.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 1/4] media: dt-bindings: Document Renesas RZ/G2L CSI-2 block
+Date:   Thu, 27 Oct 2022 11:31:01 +0100
+Message-Id: <20221027103104.74576-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221027103104.74576-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20221027103104.74576-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sakari,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Thu, Oct 27, 2022 at 10:22 AM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Prabhakar,
->
-> Thanks for the update.
->
-> On Wed, Oct 26, 2022 at 02:06:55PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Switch to using runtime PM for power management.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> > v2->v3
-> > * Jumped to err_pm_runtime label in case of sd register failure
-> > * Now calling pm_runtime_mark_last_busy() before pm_runtime_put_autosuspend()
-> >   call
-> > * Now calling pm_runtime_put_sync() in case s_stream(1) fails
-> > * In s_stream(0) no calling pm_runtime_mark_last_busy() and
-> >   pm_runtime_put_autosuspend()
-> > * Included RB tag from Laurent.
-> >
-> > v1->v2
-> > * Moved pm_runtime_*_autosuspend() calls after registering the subdev.
-> > ---
-> >  drivers/media/i2c/Kconfig  |   2 +-
-> >  drivers/media/i2c/ov5645.c | 141 +++++++++++++++++++------------------
-> >  2 files changed, 73 insertions(+), 70 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> > index 7806d4b81716..c0edd1017fe8 100644
-> > --- a/drivers/media/i2c/Kconfig
-> > +++ b/drivers/media/i2c/Kconfig
-> > @@ -459,7 +459,7 @@ config VIDEO_OV5640
-> >  config VIDEO_OV5645
-> >       tristate "OmniVision OV5645 sensor support"
-> >       depends on OF
-> > -     depends on I2C && VIDEO_DEV
-> > +     depends on I2C && PM && VIDEO_DEV
->
-> I think you can drop the PM dependency --- the driver will work fine
-> without CONFIG_PM.
->
-Agreed, I'll send a new version dropping this and fixing the comments
-on patch #5 and patch #8.
+Document the CSI-2 block which is part of CRU found in Renesas
+RZ/G2L (and alike) SoCs.
 
-> Although one could question why do we have CONFIG_PM. Some systems won't
-> boot without it and who would want to consume more power than necessary?
->
-> Could this be removed altogether? Or perhaps we could add CONFIG_PM
-> dependency to V4L2 and DVB? :-)
->
-Or rather this option should be selected by the platform itself rather
-than subsystem?
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+v3 -> v4
+* No change
 
-Cheers,
-Prabhakar
+v2 -> v3
+* Updated clock names
+* Included presetn reset signal and added reset-names in CSI binding
+* Renamed csi20 -> csi for example node
+* Included RB tag from Krzysztof for patch#1
+
+v1 -> v2
+* Dropped media prefix from subject
+* Renamed node name csi20 -> csi
+* Used 4 spaces for indentation in example node
+* Dropped reset-names and interrupt-names properties
+* Dropped oneOf from compatible
+* Included RB tag from Laurent
+
+RFC v2 -> v1
+* Fixed review comments pointed by Rob and Jacopo.
+
+RFC v1 -> RFC v2
+* New patch
+---
+ .../bindings/media/renesas,rzg2l-csi2.yaml    | 149 ++++++++++++++++++
+ 1 file changed, 149 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+
+diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+new file mode 100644
+index 000000000000..67eea2ac1d22
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+@@ -0,0 +1,149 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright (C) 2022 Renesas Electronics Corp.
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/renesas,rzg2l-csi2.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G2L (and alike SoC's) MIPI CSI-2 receiver
++
++maintainers:
++  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
++
++description:
++  The CSI-2 receiver device provides MIPI CSI-2 capabilities for the Renesas RZ/G2L
++  (and alike SoCs). MIPI CSI-2 is part of the CRU block which is used in conjunction
++  with the Image Processing module, which provides the video capture capabilities.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-csi2       # RZ/G2{L,LC}
++          - renesas,r9a07g054-csi2       # RZ/V2L
++      - const: renesas,rzg2l-csi2
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Internal clock for connecting CRU and MIPI
++      - description: CRU Main clock
++      - description: CRU Register access clock
++
++  clock-names:
++    items:
++      - const: system
++      - const: video
++      - const: apb
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    items:
++      - description: CRU_PRESETN reset terminal
++      - description: CRU_CMN_RSTB reset terminal
++
++  reset-names:
++    items:
++      - const: presetn
++      - const: cmn-rstb
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        unevaluatedProperties: false
++        description:
++          Input port node, single endpoint describing the CSI-2 transmitter.
++
++        properties:
++          endpoint:
++            $ref: video-interfaces.yaml#
++            unevaluatedProperties: false
++
++            properties:
++              data-lanes:
++                minItems: 1
++                maxItems: 4
++                items:
++                  maximum: 4
++
++            required:
++              - clock-lanes
++              - data-lanes
++
++      port@1:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          Output port node, Image Processing block connected to the CSI-2 receiver.
++
++    required:
++      - port@0
++      - port@1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++  - reset-names
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    csi: csi@10830400 {
++        compatible = "renesas,r9a07g044-csi2", "renesas,rzg2l-csi2";
++        reg = <0x10830400 0xfc00>;
++        interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&cpg CPG_MOD R9A07G044_CRU_SYSCLK>,
++                 <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
++                 <&cpg CPG_MOD R9A07G044_CRU_PCLK>;
++        clock-names = "system", "video", "apb";
++        power-domains = <&cpg>;
++        resets = <&cpg R9A07G044_CRU_PRESETN>,
++                 <&cpg R9A07G044_CRU_CMN_RSTB>;
++        reset-names = "presetn", "cmn-rstb";
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            port@0 {
++                reg = <0>;
++
++                csi2_in: endpoint {
++                    clock-lanes = <0>;
++                    data-lanes = <1 2>;
++                    remote-endpoint = <&ov5645_ep>;
++                };
++            };
++
++            port@1 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                reg = <1>;
++
++                csi2cru: endpoint@0 {
++                    reg = <0>;
++                    remote-endpoint = <&crucsi2>;
++                };
++            };
++        };
++    };
+-- 
+2.25.1
+
