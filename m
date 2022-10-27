@@ -2,119 +2,222 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49050C67871
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Oct 2022 08:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F15FA3742
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Oct 2022 08:22:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234924AbiJ0IVQ (ORCPT
+        id S234804AbiJ0IWT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Oct 2022 04:21:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40512 "EHLO
+        Thu, 27 Oct 2022 04:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234991AbiJ0IVC (ORCPT
+        with ESMTP id S234682AbiJ0IWP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2022 04:21:02 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC9954C89;
-        Thu, 27 Oct 2022 01:20:54 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id b2so2383219eja.6;
-        Thu, 27 Oct 2022 01:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLZb0eCEmPbt6XCImQLnWXa0g/D2mdCPENmM5h+0jwE=;
-        b=BllIFPs/F79nlMLuFBJOgtM2ZQfMVvi6XS/8ah6Tjyu9Vq+Dm4PguQPqRyc/Cv67a3
-         2PgTJZgqqNZbMRSJNVYRyW802BW1hkPwPggbWsOjdfSKUw6cw92OJTKu0R4ifOnoO5DT
-         heWxsIXcTPSrE7IKJGumD+szEYrf0qE+hb6dfuzy4/pz8N2AWH3xyYavBOwZFKRXrIsu
-         9JNpo1l2rz3KCYxARfdsxCFdbVknGjrAN63uYEWW80RcC17keEhk4P8FEep0OVpORf2e
-         mLBbqLZRYY2LBzgfWisFsKHl5B4Tu6jufyHns8YurJrRwicDOOGDqbJv+6CVEt0iGSzJ
-         SE/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yLZb0eCEmPbt6XCImQLnWXa0g/D2mdCPENmM5h+0jwE=;
-        b=IAjUD3uCKXFHuLKpvM6fPfzndDm6XnXHxt2E8d88qHEiDYFs6uHFgyzRcO+5XWW0hq
-         VExICM+y/OYguP2oX+yC9T3Vi5xIzSxeNGVfcign/d6MkAKUXcz7G11IrTdxKv/XJ1VO
-         +WAiVIRKfQKFxWVM4/oVCuVWO4AEfsAzP9vQvGtPm+mbp3xZcRkMS6YIqus7i5jtA/PS
-         LZiryr0Q84nIV1i/8phKUA5VaQIZFWcwCtY2q8RFGs9EigWg1o86qoMoz4gZW+AgvIol
-         WXOHiiFPmDA/mkod4ElChgP62eM7Mid5WC1Ni4WQCuukwgUcxnafSvX5bZcuUp5cYTiS
-         o7hQ==
-X-Gm-Message-State: ACrzQf3XKeWCV5XFSc+Mj8S2t79pL7NabHm7KVTPzHe4EyjrCdkKXQyJ
-        xIOmljOaLZfhdlApo8agK5mt/PtMP3qnKBOakaI=
-X-Google-Smtp-Source: AMsMyM49+SK4g8rI8Gl/M2IN/uHmlHyw2onhRC25Y/4JSKYZfGwLi0DI3dmFQymh9tnjoOsDrWoUXSmVKKL0amALrhI=
-X-Received: by 2002:a17:907:b1c:b0:797:983a:7d97 with SMTP id
- h28-20020a1709070b1c00b00797983a7d97mr33693456ejl.267.1666858852484; Thu, 27
- Oct 2022 01:20:52 -0700 (PDT)
+        Thu, 27 Oct 2022 04:22:15 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC6E65AA1F;
+        Thu, 27 Oct 2022 01:22:13 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.95,217,1661785200"; 
+   d="scan'208";a="140573886"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 27 Oct 2022 17:22:13 +0900
+Received: from localhost.localdomain (unknown [10.226.93.45])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 36F69400B9FE;
+        Thu, 27 Oct 2022 17:22:07 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+        =?UTF-8?q?Stefan=20M=C3=A4tje?= <stefan.maetje@esd.eu>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 1/6] can: rcar_canfd: rcar_canfd_probe: Add struct rcar_canfd_hw_info to driver data
+Date:   Thu, 27 Oct 2022 09:21:53 +0100
+Message-Id: <20221027082158.95895-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221027082158.95895-1-biju.das.jz@bp.renesas.com>
+References: <20221027082158.95895-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-References: <20221017091201.199457-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20221017091201.199457-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdXuiCne2NvCzu8x9LeM_W8rxwLX-0w=kHnGa30bdzFaDQ@mail.gmail.com> <CA+V-a8tm18pckkbquK+HHxV2tHAUTwdKZjwWOAiGS-GKKtbQsg@mail.gmail.com>
-In-Reply-To: <CA+V-a8tm18pckkbquK+HHxV2tHAUTwdKZjwWOAiGS-GKKtbQsg@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 27 Oct 2022 09:20:24 +0100
-Message-ID: <CA+V-a8tK8qQHNnwgvUiMMHOuBfVmbLyMvT4RZjq055nrda8yPw@mail.gmail.com>
-Subject: Re: [RFC RESEND PATCH 2/2] arm64: dts: renesas: r9a07g043: Split out
- RZ/G2UL SoC specific parts
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, linux-arm-kernel@lists.infradead.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+The CAN FD IP found on RZ/G2L SoC has some HW features different to that
+of R-Car. For example, it has multiple resets and multiple IRQs for global
+and channel interrupts. Also, it does not have ECC error flag registers
+and clk post divider present on R-Car. Similarly, R-Car V3U has 8 channels
+whereas other SoCs has only 2 channels.
 
-On Tue, Oct 25, 2022 at 5:13 PM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
->
-> Hi Geert,
->
-> Thank you for the review.
->
-> On Tue, Oct 25, 2022 at 1:37 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> >
-> > Hi Prabhakar,
-> >
-> > On Mon, Oct 17, 2022 at 11:12 AM Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Move RZ/G2UL SoC specific parts to r9a07g043u.dtsi so that r9a07g043.dtsi
-> > > can be shared with RZ/Five (RISC-V SoC).
-> > >
-> > > Below are the changes due to which SoC specific parts are moved to
-> > > r9a07g043u.dtsi:
-> > > - RZ/G2UL has Cortex-A55 (ARM64) whereas the RZ/Five has AX45MP (RISC-V)
-> > > - RZ/G2UL has GICv3 as interrupt controller whereas the RZ/Five has PLIC
-> > > - RZ/G2UL has interrupts for SYSC block whereas interrupts are missing
-> > >   for SYSC block on RZ/Five
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> > This assumes the operating points tables are the same for both variants?
-> > I guess that's OK.
-> >
-> Ive asked the HW team to confirm this. For the v2 I'll keep it as is
-> and later move it if required.
->
-Ive confirmed with the HW team the OPP table is the same for both the variants.
+This patch adds the struct rcar_canfd_hw_info to take care of the
+HW feature differences and driver data present on both IPs. It also
+replaces the driver data chip type with struct rcar_canfd_hw_info by
+moving chip type to it.
 
-Cheers,
-Prabhakar
+Whilst started using driver data instead of chip_id for detecting
+R-Car V3U SoCs.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2->v3:
+ * No change
+v1->v2:
+ * Updated commit description for R-Car V3U SoC detection using
+   driver data.
+ * Added Rb tag from Geert.
+---
+ drivers/net/can/rcar/rcar_canfd.c | 43 +++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index a0dd6044830b..5660bf0cd755 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -523,6 +523,10 @@ enum rcar_canfd_fcanclk {
+ 
+ struct rcar_canfd_global;
+ 
++struct rcar_canfd_hw_info {
++	enum rcanfd_chip_id chip_id;
++};
++
+ /* Channel priv data */
+ struct rcar_canfd_channel {
+ 	struct can_priv can;			/* Must be the first member */
+@@ -548,7 +552,7 @@ struct rcar_canfd_global {
+ 	bool fdmode;			/* CAN FD or Classical CAN only mode */
+ 	struct reset_control *rstc1;
+ 	struct reset_control *rstc2;
+-	enum rcanfd_chip_id chip_id;
++	const struct rcar_canfd_hw_info *info;
+ 	u32 max_channels;
+ };
+ 
+@@ -591,10 +595,22 @@ static const struct can_bittiming_const rcar_canfd_bittiming_const = {
+ 	.brp_inc = 1,
+ };
+ 
++static const struct rcar_canfd_hw_info rcar_gen3_hw_info = {
++	.chip_id = RENESAS_RCAR_GEN3,
++};
++
++static const struct rcar_canfd_hw_info rzg2l_hw_info = {
++	.chip_id = RENESAS_RZG2L,
++};
++
++static const struct rcar_canfd_hw_info r8a779a0_hw_info = {
++	.chip_id = RENESAS_R8A779A0,
++};
++
+ /* Helper functions */
+ static inline bool is_v3u(struct rcar_canfd_global *gpriv)
+ {
+-	return gpriv->chip_id == RENESAS_R8A779A0;
++	return gpriv->info == &r8a779a0_hw_info;
+ }
+ 
+ static inline u32 reg_v3u(struct rcar_canfd_global *gpriv,
+@@ -1701,6 +1717,7 @@ static const struct ethtool_ops rcar_canfd_ethtool_ops = {
+ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+ 				    u32 fcan_freq)
+ {
++	const struct rcar_canfd_hw_info *info = gpriv->info;
+ 	struct platform_device *pdev = gpriv->pdev;
+ 	struct rcar_canfd_channel *priv;
+ 	struct net_device *ndev;
+@@ -1723,7 +1740,7 @@ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+ 	priv->can.clock.freq = fcan_freq;
+ 	dev_info(&pdev->dev, "can_clk rate is %u\n", priv->can.clock.freq);
+ 
+-	if (gpriv->chip_id == RENESAS_RZG2L) {
++	if (info->chip_id == RENESAS_RZG2L) {
+ 		char *irq_name;
+ 		int err_irq;
+ 		int tx_irq;
+@@ -1823,6 +1840,7 @@ static void rcar_canfd_channel_remove(struct rcar_canfd_global *gpriv, u32 ch)
+ 
+ static int rcar_canfd_probe(struct platform_device *pdev)
+ {
++	const struct rcar_canfd_hw_info *info;
+ 	void __iomem *addr;
+ 	u32 sts, ch, fcan_freq;
+ 	struct rcar_canfd_global *gpriv;
+@@ -1831,13 +1849,12 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	int err, ch_irq, g_irq;
+ 	int g_err_irq, g_recc_irq;
+ 	bool fdmode = true;			/* CAN FD only mode - default */
+-	enum rcanfd_chip_id chip_id;
+ 	int max_channels;
+ 	char name[9] = "channelX";
+ 	int i;
+ 
+-	chip_id = (uintptr_t)of_device_get_match_data(&pdev->dev);
+-	max_channels = chip_id == RENESAS_R8A779A0 ? 8 : 2;
++	info = of_device_get_match_data(&pdev->dev);
++	max_channels = info->chip_id == RENESAS_R8A779A0 ? 8 : 2;
+ 
+ 	if (of_property_read_bool(pdev->dev.of_node, "renesas,no-can-fd"))
+ 		fdmode = false;			/* Classical CAN only mode */
+@@ -1850,7 +1867,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 		of_node_put(of_child);
+ 	}
+ 
+-	if (chip_id != RENESAS_RZG2L) {
++	if (info->chip_id != RENESAS_RZG2L) {
+ 		ch_irq = platform_get_irq_byname_optional(pdev, "ch_int");
+ 		if (ch_irq < 0) {
+ 			/* For backward compatibility get irq by index */
+@@ -1884,7 +1901,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	gpriv->pdev = pdev;
+ 	gpriv->channels_mask = channels_mask;
+ 	gpriv->fdmode = fdmode;
+-	gpriv->chip_id = chip_id;
++	gpriv->info = info;
+ 	gpriv->max_channels = max_channels;
+ 
+ 	gpriv->rstc1 = devm_reset_control_get_optional_exclusive(&pdev->dev,
+@@ -1922,7 +1939,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	}
+ 	fcan_freq = clk_get_rate(gpriv->can_clk);
+ 
+-	if (gpriv->fcan == RCANFD_CANFDCLK && gpriv->chip_id != RENESAS_RZG2L)
++	if (gpriv->fcan == RCANFD_CANFDCLK && info->chip_id != RENESAS_RZG2L)
+ 		/* CANFD clock is further divided by (1/2) within the IP */
+ 		fcan_freq /= 2;
+ 
+@@ -1934,7 +1951,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	gpriv->base = addr;
+ 
+ 	/* Request IRQ that's common for both channels */
+-	if (gpriv->chip_id != RENESAS_RZG2L) {
++	if (info->chip_id != RENESAS_RZG2L) {
+ 		err = devm_request_irq(&pdev->dev, ch_irq,
+ 				       rcar_canfd_channel_interrupt, 0,
+ 				       "canfd.ch_int", gpriv);
+@@ -2087,9 +2104,9 @@ static SIMPLE_DEV_PM_OPS(rcar_canfd_pm_ops, rcar_canfd_suspend,
+ 			 rcar_canfd_resume);
+ 
+ static const __maybe_unused struct of_device_id rcar_canfd_of_table[] = {
+-	{ .compatible = "renesas,rcar-gen3-canfd", .data = (void *)RENESAS_RCAR_GEN3 },
+-	{ .compatible = "renesas,rzg2l-canfd", .data = (void *)RENESAS_RZG2L },
+-	{ .compatible = "renesas,r8a779a0-canfd", .data = (void *)RENESAS_R8A779A0 },
++	{ .compatible = "renesas,rcar-gen3-canfd", .data = &rcar_gen3_hw_info },
++	{ .compatible = "renesas,rzg2l-canfd", .data = &rzg2l_hw_info },
++	{ .compatible = "renesas,r8a779a0-canfd", .data = &r8a779a0_hw_info },
+ 	{ }
+ };
+ 
+-- 
+2.25.1
+
