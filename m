@@ -2,208 +2,144 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7E1C38A02
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Oct 2022 18:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE7DECAAA1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Oct 2022 21:05:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbiJ1Shp (ORCPT
+        id S229450AbiJ1VFg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Oct 2022 14:37:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52564 "EHLO
+        Fri, 28 Oct 2022 17:05:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbiJ1Shn (ORCPT
+        with ESMTP id S229458AbiJ1VFf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Oct 2022 14:37:43 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F8F22441BE
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Oct 2022 11:37:42 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id j7so1742930pjn.5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Oct 2022 11:37:42 -0700 (PDT)
+        Fri, 28 Oct 2022 17:05:35 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56A041CEC0C;
+        Fri, 28 Oct 2022 14:05:29 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id y14so15778004ejd.9;
+        Fri, 28 Oct 2022 14:05:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wkKZOiwblUS5U5+i5DubzePpicSnike/z1Qmp+EdDeQ=;
-        b=WBj6lOAWJouzHmtwJoXf6B5g/tutIfmf6fptFlq9R0JAlDC8ZSXYMCiB1fgKc/gi+3
-         PTSMwSbjYI1AfSBmNmAqrrXkdsE9tzEwMM0UTs9Glc3VU5YZzJTzrCSPeQfEr2Y/x4gg
-         Dcdy0OS+Z5fNceJzrh49worbwDBclxTNx/6iOOS1TTTanRTX/hCjYdPajE5faiT5CytD
-         wc36jBRJ2UuSz1E4m/pqLMB/J7h1fJ4Vhe9hb5a6fq9J6V6Bxn+d2hoamjZtiqwBWBdR
-         3o2UrSc0xExbLNcyRTM1yiE73ziXv8eD+jLETujTEJSRTE9wmMI3yyaEIUoAWn1sCW6i
-         Fqog==
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pmg59QEvCvB7YDZ5n3GJNoCUMN1VloPth+aIiSQIEsA=;
+        b=pawWAwhqMyDCLnAVREPTezgYxlot5ZLzUpBs82QzdJOwckdBUMPBSiWgoIgUWa6fOJ
+         bIkM+9IKt8z5zMWOfkqWC62e9jD9hPznmpZAiF3Z92MZeXjZ2EXdp79mQFBCVVKX5RHA
+         d2+zNLKJGhTS2ZdBMoMOC3imBv8nkKsrN3MK3CQ6+UkRqm3/aNDa95JS30+KbnxYRv0I
+         ZRpzqO4bUs5sp2EoczKmCzdTqoi0W8aA3bAe8P19r7+WOjoga/3Q1KJpuX2TrSLngx4P
+         3YOqmp/4U7VJu2FpNwNJ5OSnzfiqISZTaXfAdz3kbaDigz3pxNYlsXc5UJu5iSmCMXFf
+         TjAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wkKZOiwblUS5U5+i5DubzePpicSnike/z1Qmp+EdDeQ=;
-        b=ErTriBx3/0+q9T+slMsB6+euEnEjkgwCSsDcsB2a1kRMb4pJU5aONAjz1RGieesBhs
-         s0CHJqqWQhUW0jSxDjTM7nwH0K60e01wdRhBF8QLFSET8IRiUQsOAm3xFyyBog6//bSS
-         YMxhsvuCr+3rmN9rb47jnO1J3etXqA69QstiP4JrHm97UjUzpTnTzF1kHcS/T2ghpEiL
-         URdct8hI68n9nci+4pUnePAfqbul+kFg+xT8ZCecZ2ld6EKDShmixPf/0JGEd+wlMFRf
-         NTE/doBIIfyQnhZfyt+3iDHsmc4F+90I6oQiFq7lVYbZ9ear5gxqfL/gvpZtJxKExaxD
-         BSbA==
-X-Gm-Message-State: ACrzQf0Iglh3JD0oXpabLAapm4yFhIXVBRG53oeELtO7d+ChnUEjv5IV
-        gWKUShhFb9GWuUYD8EmC1+awm2O1I91w4AJD
-X-Google-Smtp-Source: AMsMyM6DV2hfit56uHUenypl1o3742hWofoScjENr3ZVMn5cCqS5kSgxw3A8bzrto6vDlHyWVOVssg==
-X-Received: by 2002:a17:902:8e84:b0:178:57e4:805b with SMTP id bg4-20020a1709028e8400b0017857e4805bmr344590plb.144.1666982261987;
-        Fri, 28 Oct 2022 11:37:41 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id d3-20020a170902b70300b00185507b5ef8sm3414860pls.50.2022.10.28.11.37.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Oct 2022 11:37:41 -0700 (PDT)
-Message-ID: <635c2175.170a0220.3cfce.713c@mx.google.com>
-Date:   Fri, 28 Oct 2022 11:37:41 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        bh=Pmg59QEvCvB7YDZ5n3GJNoCUMN1VloPth+aIiSQIEsA=;
+        b=SfXKwpz1NAfJPACS4cvPk66RBifzVMAK6MdiMt1UJJoZSaf3FRpS/FAcAnkymSre0F
+         Lyi87WHJdhnF0ADB8Gfkk8gAOGJ78xUJSQ/P62CI4lMc4yO0mla0r1yIdOLOrWx/E/6w
+         VXHrAOteHPs2Q2o8tIzQTP4ZIMWUZgTFz0yle4vz0Css63chFoeETxfNEp5LswAxEQdz
+         7UT5APXcvIAlatD84cMLq/6Pa0+itpxvbQ1ukFNGWIPy8U1016iE6fe4NA7Imjq2wDY7
+         mcl3hI3HUa9P24ruHkojV9ivCxWhzS7lGC4nXGsb7euZ8fFowu5ZSuCAf+Zi1aNZOTJO
+         Kafg==
+X-Gm-Message-State: ACrzQf1+MpkBw23tAVrDvLuzvMbSh3KAmYvcxb2ml9wdPD1u2hV1qRde
+        9Yh0MmjXggrUqmuHRzV+gvUiPSH5wJdB4BUwxhw=
+X-Google-Smtp-Source: AMsMyM75Y5FZ82YEH9D4k42+Gt58baqs7YVwanOze6jxdEHQSjcNXVZn9yXWnEE31Trw2DPx1IUYVmLsER+xQW6KzNU=
+X-Received: by 2002:a17:906:c14f:b0:793:30e1:96be with SMTP id
+ dp15-20020a170906c14f00b0079330e196bemr1129553ejc.447.1666991127780; Fri, 28
+ Oct 2022 14:05:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: renesas-next-2022-10-28-v6.1-rc1
-X-Kernelci-Branch: next
-X-Kernelci-Tree: renesas
-Subject: renesas/next baseline-nfs: 101 runs,
- 3 regressions (renesas-next-2022-10-28-v6.1-rc1)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+References: <20221014183459.181567-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20221014183459.181567-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <Y1pphVPw0J97AmW4@paasikivi.fi.intel.com> <CA+V-a8szaPjwumrBgOT9gzMKBjY7hk0zfP8RgzUUDfY+BAsogA@mail.gmail.com>
+ <Y1p91+XxPCB9NWwh@paasikivi.fi.intel.com> <CA+V-a8uhYymEVg7jdLVGNLsVD3=O1mk-_NVERu00W+gsv-7QXg@mail.gmail.com>
+ <Y1rQBmXj71C1RrwB@paasikivi.fi.intel.com>
+In-Reply-To: <Y1rQBmXj71C1RrwB@paasikivi.fi.intel.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Fri, 28 Oct 2022 22:05:01 +0100
+Message-ID: <CA+V-a8urGG-m-gn_sOhTJHhHws3X8zdgjq+YY8W7qy42VAdXgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] media: i2c: ov5645: Use runtime PM
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Shawn Tu <shawnx.tu@intel.com>,
+        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next baseline-nfs: 101 runs, 3 regressions (renesas-next-2022-10-28=
--v6.1-rc1)
+Hi Sakari,
 
-Regressions Summary
--------------------
+On Thu, Oct 27, 2022 at 7:45 PM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, Oct 27, 2022 at 05:32:07PM +0100, Lad, Prabhakar wrote:
+> > Hi Sakari,
+> >
+> > On Thu, Oct 27, 2022 at 1:47 PM Sakari Ailus
+> > <sakari.ailus@linux.intel.com> wrote:
+> > >
+> > > Hi Prabhakar,
+> > >
+> > > On Thu, Oct 27, 2022 at 01:01:52PM +0100, Lad, Prabhakar wrote:
+> > > > Hi Sakari,
+> > > >
+> > > > On Thu, Oct 27, 2022 at 12:20 PM Sakari Ailus
+> > > > <sakari.ailus@linux.intel.com> wrote:
+> > > > >
+> > > > > Hi Prabhakar,
+> > > > >
+> > > > > One more comment.
+> > > > >
+> > > > > On Fri, Oct 14, 2022 at 07:34:56PM +0100, Prabhakar wrote:
+> > > > > > @@ -1209,12 +1190,16 @@ static int ov5645_probe(struct i2c_client *client)
+> > > > > >
+> > > > > >       dev_info(dev, "OV5645 detected at address 0x%02x\n", client->addr);
+> > > > > >
+> > > > > > +     pm_runtime_set_active(dev);
+> > > > > > +     pm_runtime_get_noresume(dev);
+> > > > > > +     pm_runtime_enable(dev);
+> > > > >
+> > > > > You won't gain anything by eanbling runtime PM here. Just move it to the
+> > > > > end of the function before the rest of the calls. Error handling becomes
+> > > > > more simple.
+> > > > >
+> > > > If I move the above calls below I get the below warning:
+> > > >
+> > > > [    2.633386] ov5645 0-003c: Runtime PM usage count underflow!
+> > > >
+> > > > This is because of the last patch which moves ov5645_entity_init_cfg()
+> > > > before registering the subdev. ov5645_entity_init_cfg() calls s_ctrl
+> > > > due to which we are seeing the above message. Please let me know how
+> > > > to proceed on this.
+> > >
+> > > Ah. Yes, this is a problem with the usage pattern of
+> > > pm_runtime_get_if_in_use(). But please don't change that.
+> > >
+> > > You can still move enabling runtime PM later in the function.
+> > >
+> > Agreed, the final version looks like below:
+> >
+> >     pm_runtime_set_active(dev);
+> >     pm_runtime_get_noresume(dev);
+> >
+>
+> You'll have to enable runtime PM here, before pm_runtime_get_if_in_use()
+> gets called.
+>
+> I'll see if it could be made to work in a sensible way when runtime PM
+> isn't enabled yet.
+>
+Agreed, I'll send out v3 after fixing the comments.
 
-platform                     | arch  | lab           | compiler | defconfig=
-                  | regressions
------------------------------+-------+---------------+----------+----------=
-------------------+------------
-at91sam9g20ek                | arm   | lab-broonie   | gcc-10   | at91_dt_d=
-efconfig          | 1          =
-
-mt8183-kukui-...uniper-sku16 | arm64 | lab-collabora | gcc-10   | defconfig=
-+arm64-chromebook | 1          =
-
-rk3399-gru-kevin             | arm64 | lab-collabora | gcc-10   | defconfig=
-+arm64-chromebook | 1          =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
-s-next-2022-10-28-v6.1-rc1/plan/baseline-nfs/
-
-  Test:     baseline-nfs
-  Tree:     renesas
-  Branch:   next
-  Describe: renesas-next-2022-10-28-v6.1-rc1
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      4bff929bc882c742102dbb29613c4cf8c0c92fa5 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                     | arch  | lab           | compiler | defconfig=
-                  | regressions
------------------------------+-------+---------------+----------+----------=
-------------------+------------
-at91sam9g20ek                | arm   | lab-broonie   | gcc-10   | at91_dt_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/635bf2c762ee7caacde7db63
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: at91_dt_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
--10-28-v6.1-rc1/arm/at91_dt_defconfig/gcc-10/lab-broonie/baseline-nfs-at91s=
-am9g20ek.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
--10-28-v6.1-rc1/arm/at91_dt_defconfig/gcc-10/lab-broonie/baseline-nfs-at91s=
-am9g20ek.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-221024.1/armel/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/635bf2c762ee7caac=
-de7db64
-        new failure (last pass: renesas-next-2022-10-24-v6.1-rc1) =
-
- =
-
-
-
-platform                     | arch  | lab           | compiler | defconfig=
-                  | regressions
------------------------------+-------+---------------+----------+----------=
-------------------+------------
-mt8183-kukui-...uniper-sku16 | arm64 | lab-collabora | gcc-10   | defconfig=
-+arm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/635bed36f49677efaae7db65
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
--10-28-v6.1-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/basel=
-ine-nfs-mt8183-kukui-jacuzzi-juniper-sku16.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
--10-28-v6.1-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/basel=
-ine-nfs-mt8183-kukui-jacuzzi-juniper-sku16.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-221024.1/arm64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/635bed36f49677efa=
-ae7db66
-        failing since 74 days (last pass: renesas-next-2022-07-05-v5.19-rc1=
-, first fail: renesas-next-2022-08-15-v6.0-rc1) =
-
- =
-
-
-
-platform                     | arch  | lab           | compiler | defconfig=
-                  | regressions
------------------------------+-------+---------------+----------+----------=
-------------------+------------
-rk3399-gru-kevin             | arm64 | lab-collabora | gcc-10   | defconfig=
-+arm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/635bf26fb71211ac49e7db4e
-
-  Results:     82 PASS, 6 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
--10-28-v6.1-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/basel=
-ine-nfs-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
--10-28-v6.1-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/basel=
-ine-nfs-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-221024.1/arm64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.bootrr.rockchip-i2s1-probed: https://kernelci.org/test/cas=
-e/id/635bf26fb71211ac49e7db74
-        failing since 205 days (last pass: renesas-next-2022-02-25-v5.17-rc=
-1, first fail: renesas-next-2022-04-04-v5.18-rc1)
-
-    2022-10-28T15:16:54.000438  /lava-7761633/1/../bin/lava-test-case
-    2022-10-28T15:16:54.039895  <8>[   39.277047] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Drockchip-i2s1-probed RESULT=3Dfail>   =
-
- =20
+Cheers,
+Prabhakar
