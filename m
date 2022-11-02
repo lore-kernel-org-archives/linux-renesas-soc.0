@@ -2,141 +2,86 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D6EC4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Nov 2022 12:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB81CC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Nov 2022 13:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229493AbiKBMyl (ORCPT
+        id S231238AbiKBNAc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 2 Nov 2022 08:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36374 "EHLO
+        Wed, 2 Nov 2022 09:00:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230525AbiKBMyk (ORCPT
+        with ESMTP id S231307AbiKBNAU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2022 08:54:40 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FFCF27FC3
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Nov 2022 05:54:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=6Qz3PtSDg94klk
-        cWL6XHq2yQoPRPCPW8xo9RNfPzFjE=; b=0crpFcQplGNlTJMxVg9t/YBUsUYR74
-        xxwpbQkuHqnJWsIbryshN9cHBtuzDzIq2Icy4Ao30LaoaPezW8NJzQHhDLvu7aLl
-        XMS6C3iUrCDnRK8WRkgTbzZG4Bl0zIGgLnLgmOnjSkzLNbzoaZELvCWLpwhTwfvb
-        +brKXIG69AJ+s=
-Received: (qmail 2206667 invoked from network); 2 Nov 2022 13:54:37 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Nov 2022 13:54:37 +0100
-X-UD-Smtp-Session: l3s3148p1@FgrNV3zsx8wucrSg
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/2] mmc: tmio: remove tmio_mmc_k(un)map_atomic helpers
-Date:   Wed,  2 Nov 2022 13:54:29 +0100
-Message-Id: <20221102125430.28466-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221102125430.28466-1-wsa+renesas@sang-engineering.com>
-References: <20221102125430.28466-1-wsa+renesas@sang-engineering.com>
+        Wed, 2 Nov 2022 09:00:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B84329C9D;
+        Wed,  2 Nov 2022 06:00:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7719A61944;
+        Wed,  2 Nov 2022 13:00:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CAC0EC433B5;
+        Wed,  2 Nov 2022 13:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667394018;
+        bh=10Z6uXDE6nv9we1caDEijEa5FDJ4Ne5WNxQT8wsxKq0=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=bdVHI4Rc1FXA/QJuXfbM4fFxr7sbY8APi129r0O+8pnK1ATFKTzkn0K5KvjC/JLqA
+         TNvVb/Yq9MhD0BBL2it1zqDCH/KFO6zfDoeK8eojkVwtjMXu2HFnhGpl6GpO0TBPGQ
+         dAXsj2HiMPWu1ZZryImhk+JZT8hkDijfB35OXqZj7Vn/UgPI+sfwftL/ijGa+7EByc
+         VjJWi79wUvdPEOn/Cv2IKyS9NOnCy6pdaWt5SHrg+mmlHQPclvuK21rgN+dKg+fgp2
+         dYO7up3BMmGKk9oyTE1rAqyBMvVfSN6gr/ymzgG3gbteM3OTT0mBVNjDtmUkKaYKTj
+         Ms0BBvXO2PXEg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AE52FE270D2;
+        Wed,  2 Nov 2022 13:00:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v7 0/3] net: ethernet: renesas: Add support for "Ethernet
+ Switch"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166739401870.9062.8744215770877095925.git-patchwork-notify@kernel.org>
+Date:   Wed, 02 Nov 2022 13:00:18 +0000
+References: <20221031123242.2528208-1-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20221031123242.2528208-1-yoshihiro.shimoda.uh@renesas.com>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-After a8402aed8ca5 ("mmc: tmio_mmc_core: Remove
-local_irq_{save,restore}() around k[un]map_atomic()") and ac91578a6812
-("mmc: tmio_mmc_core: Replace kmap_atomic() with kmap_local_page()"),
-the helpers contain just a single call. Putting it directly in the code
-makes it actually more readable. More so, because we now avoid the
-'offset' calculation when mapping/unmapping and just use it when we need
-it in the copy routines.
+Hello:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_sys_dmac.c |  6 +++---
- drivers/mmc/host/tmio_mmc.h              | 11 -----------
- drivers/mmc/host/tmio_mmc_core.c         | 13 +++++++------
- 3 files changed, 10 insertions(+), 20 deletions(-)
+This series was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index e9cc6c15d229..c4545cb143dd 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -254,11 +254,11 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 
- 	/* The only sg element can be unaligned, use our bounce buffer then */
- 	if (!aligned) {
--		void *sg_vaddr = tmio_mmc_kmap_atomic(sg);
-+		void *sg_vaddr = kmap_local_page(sg_page(sg));
- 
- 		sg_init_one(&host->bounce_sg, host->bounce_buf, sg->length);
--		memcpy(host->bounce_buf, sg_vaddr, host->bounce_sg.length);
--		tmio_mmc_kunmap_atomic(sg, sg_vaddr);
-+		memcpy(host->bounce_buf, sg_vaddr + sg->offset, host->bounce_sg.length);
-+		kunmap_local(sg_vaddr);
- 		host->sg_ptr = &host->bounce_sg;
- 		sg = host->sg_ptr;
- 	}
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index e36ff80108e6..df6b3dccf96a 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -204,17 +204,6 @@ void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
- void tmio_mmc_disable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
- irqreturn_t tmio_mmc_irq(int irq, void *devid);
- 
--static inline char *tmio_mmc_kmap_atomic(struct scatterlist *sg)
--{
--	return kmap_local_page(sg_page(sg)) + sg->offset;
--}
--
--static inline void tmio_mmc_kunmap_atomic(struct scatterlist *sg,
--					  void *virt)
--{
--	kunmap_local(virt - sg->offset);
--}
--
- #ifdef CONFIG_PM
- int tmio_mmc_host_runtime_suspend(struct device *dev);
- int tmio_mmc_host_runtime_resume(struct device *dev);
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 6d50c0dd53fe..6d8597f1d22d 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -421,8 +421,8 @@ static void tmio_mmc_pio_irq(struct tmio_mmc_host *host)
- 		return;
- 	}
- 
--	sg_virt = tmio_mmc_kmap_atomic(host->sg_ptr);
--	buf = (unsigned short *)(sg_virt + host->sg_off);
-+	sg_virt = kmap_local_page(sg_page(host->sg_ptr));
-+	buf = (unsigned short *)(sg_virt + host->sg_ptr->offset + host->sg_off);
- 
- 	count = host->sg_ptr->length - host->sg_off;
- 	if (count > data->blksz)
-@@ -436,7 +436,7 @@ static void tmio_mmc_pio_irq(struct tmio_mmc_host *host)
- 
- 	host->sg_off += count;
- 
--	tmio_mmc_kunmap_atomic(host->sg_ptr, sg_virt);
-+	kunmap_local(sg_virt);
- 
- 	if (host->sg_off == host->sg_ptr->length)
- 		tmio_mmc_next_sg(host);
-@@ -445,10 +445,11 @@ static void tmio_mmc_pio_irq(struct tmio_mmc_host *host)
- static void tmio_mmc_check_bounce_buffer(struct tmio_mmc_host *host)
- {
- 	if (host->sg_ptr == &host->bounce_sg) {
--		void *sg_vaddr = tmio_mmc_kmap_atomic(host->sg_orig);
-+		void *sg_virt = kmap_local_page(sg_page(host->sg_orig));
- 
--		memcpy(sg_vaddr, host->bounce_buf, host->bounce_sg.length);
--		tmio_mmc_kunmap_atomic(host->sg_orig, sg_vaddr);
-+		memcpy(sg_virt + host->sg_orig->offset, host->bounce_buf,
-+		       host->bounce_sg.length);
-+		kunmap_local(sg_virt);
- 	}
- }
- 
+On Mon, 31 Oct 2022 21:32:39 +0900 you wrote:
+> This patch series is based on next-20221027.
+> 
+> Add initial support for Renesas "Ethernet Switch" device of R-Car S4-8.
+> The hardware has features about forwarding for an ethernet switch
+> device. But, for now, it acts as ethernet controllers so that any
+> forwarding offload features are not supported. So, any switchdev
+> header files and DSA framework are not used.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v7,1/3] dt-bindings: net: renesas: Document Renesas Ethernet Switch
+    https://git.kernel.org/netdev/net-next/c/f9edd82774c0
+  - [v7,2/3] net: ethernet: renesas: Add support for "Ethernet Switch"
+    https://git.kernel.org/netdev/net-next/c/3590918b5d07
+  - [v7,3/3] net: ethernet: renesas: rswitch: Add R-Car Gen4 gPTP support
+    https://git.kernel.org/netdev/net-next/c/6c6fa1a00ad3
+
+You are awesome, thank you!
 -- 
-2.35.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
