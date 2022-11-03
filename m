@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C995C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Nov 2022 23:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103EBC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Nov 2022 23:07:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230294AbiKCXHl (ORCPT
+        id S230336AbiKCXHo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 19:07:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41866 "EHLO
+        Thu, 3 Nov 2022 19:07:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229700AbiKCXHG (ORCPT
+        with ESMTP id S230089AbiKCXHL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2022 19:07:06 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2838B201A0;
-        Thu,  3 Nov 2022 16:07:00 -0700 (PDT)
+        Thu, 3 Nov 2022 19:07:11 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 914B51F603;
+        Thu,  3 Nov 2022 16:07:10 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.96,135,1665414000"; 
-   d="scan'208";a="138901807"
+   d="scan'208";a="141406971"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 04 Nov 2022 08:07:00 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 04 Nov 2022 08:07:09 +0900
 Received: from mulinux.home (unknown [10.226.92.174])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 16E274004CFE;
-        Fri,  4 Nov 2022 08:06:55 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id AD999400B9CF;
+        Fri,  4 Nov 2022 08:07:05 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -36,40 +36,51 @@ Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo@jmondi.org>
-Subject: [PATCH 0/3] Minor fixes for RZ/V2M
-Date:   Thu,  3 Nov 2022 23:06:45 +0000
-Message-Id: <20221103230648.53748-1-fabrizio.castro.jz@renesas.com>
+Subject: [PATCH 2/3] dt-bindings: i2c: renesas,rzv2m: Fix SoC specific string
+Date:   Thu,  3 Nov 2022 23:06:47 +0000
+Message-Id: <20221103230648.53748-3-fabrizio.castro.jz@renesas.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221103230648.53748-1-fabrizio.castro.jz@renesas.com>
+References: <20221103230648.53748-1-fabrizio.castro.jz@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dear All,
+s/renesas,i2c-r9a09g011/renesas,r9a09g011-i2c/g for consistency.
 
-this series aims at improving a couple of couple of things
-found in r9a09g011.dtsi:
-* unit address error for the gic node
-* SoC specific compatible string for I2C nodes
+renesas,i2c-r9a09g011 is not actually used by the driver, therefore
+changing this doesn't cause any harm.
 
-Since it's early days for r9a09g011.dtsi, and compatible
-renesas,i2c-r9a09g011 isn't being actively used at the moment,
-I think it's safe to change to make compatible strings less
-confusing.
-
-Thanks,
-Fab
-
-Fabrizio Castro (3):
-  arm64: dts: renesas: r9a09g011: Fix unit address format error
-  dt-bindings: i2c: renesas,rzv2m: Fix SoC specific string
-  arm64: dts: renesas: r9a09g011: Fix I2C SoC specific strings
-
+Fixes: ba7a4d15e2c4 ("dt-bindings: i2c: Document RZ/V2M I2C controller")
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+---
  Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml | 4 ++--
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi               | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
+index c46378efc123..92e899905ef8 100644
+--- a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
++++ b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
+@@ -16,7 +16,7 @@ properties:
+   compatible:
+     items:
+       - enum:
+-          - renesas,i2c-r9a09g011  # RZ/V2M
++          - renesas,r9a09g011-i2c  # RZ/V2M
+       - const: renesas,rzv2m-i2c
+ 
+   reg:
+@@ -66,7 +66,7 @@ examples:
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+     i2c0: i2c@a4030000 {
+-        compatible = "renesas,i2c-r9a09g011", "renesas,rzv2m-i2c";
++        compatible = "renesas,r9a09g011-i2c", "renesas,rzv2m-i2c";
+         reg = <0xa4030000 0x80>;
+         interrupts = <GIC_SPI 232 IRQ_TYPE_EDGE_RISING>,
+                      <GIC_SPI 236 IRQ_TYPE_EDGE_RISING>;
 -- 
 2.34.1
 
