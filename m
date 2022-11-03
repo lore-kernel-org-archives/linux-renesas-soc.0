@@ -2,37 +2,37 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2087CC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4063EC4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Nov 2022 14:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229600AbiKCOex (ORCPT
+        id S229935AbiKCOex (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 3 Nov 2022 10:34:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54640 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbiKCOew (ORCPT
+        with ESMTP id S229600AbiKCOew (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 3 Nov 2022 10:34:52 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5453B10F4
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Nov 2022 07:34:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 336EAE0E1
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Nov 2022 07:34:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=dgEAshEdGCOMCj
-        6DPEiPcajJnsXGXQXKpPYsEthcYTo=; b=Jhje4K4i4IMfHSCbYRrieGqoAfii9u
-        WUHaFOIP9HxCGAopOuCxnxV8LsTxBuqZIVtmBQZwVFuYYlUW1hTU02db3Zzii/lY
-        SRAfJNJpecBV8VSnTrApZCvvnNbBczzFus7bP0JuFU7wIEIAo0vxNxY+IztAkqrU
-        7PFLCrgFhdDHQ=
-Received: (qmail 2669729 invoked from network); 3 Nov 2022 15:34:48 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2022 15:34:48 +0100
-X-UD-Smtp-Session: l3s3148p1@tQLy25HsSrUujns0
+        :mime-version:content-transfer-encoding; s=k1; bh=f82GwmJB3R5DIv
+        44ipDu5wGr6AZlM2NxhIGCII4DEt0=; b=3T9jza9owHoam3vCv98kwbfH3kZQm+
+        ED5g/qwlF0lVIY5aEfIQhodv4ZKDRQsew0tlaReyLM0xkxMYCGPn8fHR0FwRz2+G
+        RpbAudQCOss2Q0rjoTTYDQwSlNi8Zcc1An09Qyb/4EvrFgjzLu/3ZWl98O9OQqbM
+        UkKXCdtQer3+k=
+Received: (qmail 2669780 invoked from network); 3 Nov 2022 15:34:49 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2022 15:34:49 +0100
+X-UD-Smtp-Session: l3s3148p1@db8E3JHsJOoujns0
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/4] clk: renesas: r8a779f0: Fix SCIF parent clocks
-Date:   Thu,  3 Nov 2022 15:34:38 +0100
-Message-Id: <20221103143440.46449-3-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 4/4] arm64: dts: renesas: r8a779f0: Fix SCIF "brg_int" clock
+Date:   Thu,  3 Nov 2022 15:34:40 +0100
+Message-Id: <20221103143440.46449-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221103143440.46449-1-wsa+renesas@sang-engineering.com>
 References: <20221103143440.46449-1-wsa+renesas@sang-engineering.com>
@@ -42,40 +42,62 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As serial communication requires a clean clock signal, the Serial
-Communication Interfaces with FIFO (SCIF) is clocked by a clock that is
-not affected by Spread Spectrum or Fractional Multiplication.
+As serial communication requires a clock signal, the Serial
+Communication Interfaces with FIFO (SCIF) are clocked by a clock that
+is not affected by Spread Spectrum or Fractional Multiplication.
 
-Hence change the parent clocks for the SCIF modules from the S0D12_PER
-clock to the SASYNCPERD4 clock (which has the same clock rate), cfr.
-R-Car S4-8 Hardware User's Manual rev. 0.81.
+Hence change the clock input for the SCIF Baud Rate Generator internal
+clock from the S0D3_PER clock to the SASYNCPERD1 clock (which has the
+same clock rate), cfr. R-Car S4-8 Hardware User's Manual rev. 0.81.
 
-Fixes: 24aaff6a6ce4 ("clk: renesas: cpg-mssr: Add support for R-Car S4-8")
+Fixes: c62331e8222f ("arm64: dts: renesas: Add Renesas R8A779F0 SoC support")
+Fixes: 40753144256b ("arm64: dts: renesas: r8a779f0: Add SCIF nodes")
 Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 8 ++++----
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index fd1462425316..800fdc104edd 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -144,10 +144,10 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("msiof3",	621,	R8A779F0_CLK_MSO),
- 	DEF_MOD("pcie0",	624,	R8A779F0_CLK_S0D2),
- 	DEF_MOD("pcie1",	625,	R8A779F0_CLK_S0D2),
--	DEF_MOD("scif0",	702,	R8A779F0_CLK_S0D12_PER),
--	DEF_MOD("scif1",	703,	R8A779F0_CLK_S0D12_PER),
--	DEF_MOD("scif3",	704,	R8A779F0_CLK_S0D12_PER),
--	DEF_MOD("scif4",	705,	R8A779F0_CLK_S0D12_PER),
-+	DEF_MOD("scif0",	702,	R8A779F0_CLK_SASYNCPERD4),
-+	DEF_MOD("scif1",	703,	R8A779F0_CLK_SASYNCPERD4),
-+	DEF_MOD("scif3",	704,	R8A779F0_CLK_SASYNCPERD4),
-+	DEF_MOD("scif4",	705,	R8A779F0_CLK_SASYNCPERD4),
- 	DEF_MOD("sdhi0",        706,    R8A779F0_CLK_SD0),
- 	DEF_MOD("sys-dmac0",	709,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("sys-dmac1",	710,	R8A779F0_CLK_S0D3_PER),
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+index 3be577dc9a93..4092c0016035 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+@@ -657,7 +657,7 @@ scif0: serial@e6e60000 {
+ 			reg = <0 0xe6e60000 0 64>;
+ 			interrupts = <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 702>,
+-				 <&cpg CPG_CORE R8A779F0_CLK_S0D3_PER>,
++				 <&cpg CPG_CORE R8A779F0_CLK_SASYNCPERD1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x51>, <&dmac0 0x50>,
+@@ -674,7 +674,7 @@ scif1: serial@e6e68000 {
+ 			reg = <0 0xe6e68000 0 64>;
+ 			interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 703>,
+-				 <&cpg CPG_CORE R8A779F0_CLK_S0D3_PER>,
++				 <&cpg CPG_CORE R8A779F0_CLK_SASYNCPERD1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x53>, <&dmac0 0x52>,
+@@ -691,7 +691,7 @@ scif3: serial@e6c50000 {
+ 			reg = <0 0xe6c50000 0 64>;
+ 			interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 704>,
+-				 <&cpg CPG_CORE R8A779F0_CLK_S0D3_PER>,
++				 <&cpg CPG_CORE R8A779F0_CLK_SASYNCPERD1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x57>, <&dmac0 0x56>,
+@@ -708,7 +708,7 @@ scif4: serial@e6c40000 {
+ 			reg = <0 0xe6c40000 0 64>;
+ 			interrupts = <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 705>,
+-				 <&cpg CPG_CORE R8A779F0_CLK_S0D3_PER>,
++				 <&cpg CPG_CORE R8A779F0_CLK_SASYNCPERD1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x59>, <&dmac0 0x58>,
 -- 
 2.35.1
 
