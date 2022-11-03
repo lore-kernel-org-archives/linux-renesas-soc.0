@@ -2,101 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1DCC43219
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Nov 2022 14:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DD1C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Nov 2022 15:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbiKCOey (ORCPT
+        id S231984AbiKCPHh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 10:34:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54642 "EHLO
+        Thu, 3 Nov 2022 11:07:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbiKCOew (ORCPT
+        with ESMTP id S231967AbiKCPHN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2022 10:34:52 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B572A2701
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Nov 2022 07:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=WgpyQzvr/iVtCc
-        QvH06d6ZLQFZzfM2/Vc6C5Mt41riw=; b=fxKNXBAX+oOWtRbztVdE8yhQVQtymA
-        oL04VFqSayE/+cRXSwwljt3z2Y1RIMhYha8FSzio3Fz0cFkqXlYPIPiIj/vswVdO
-        hO18GW942tZjYFhHfLfZRHzNDsRz4yA32bScU6O40VYNJuxeY0faiF3op7b+KGao
-        IvWNC7z83iOnU=
-Received: (qmail 2669755 invoked from network); 3 Nov 2022 15:34:49 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2022 15:34:49 +0100
-X-UD-Smtp-Session: l3s3148p1@RC7925HsWrUujns0
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 3/4] arm64: dts: renesas: r8a779f0: Fix HSCIF "brg_int" clock
-Date:   Thu,  3 Nov 2022 15:34:39 +0100
-Message-Id: <20221103143440.46449-4-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221103143440.46449-1-wsa+renesas@sang-engineering.com>
-References: <20221103143440.46449-1-wsa+renesas@sang-engineering.com>
+        Thu, 3 Nov 2022 11:07:13 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 351831ADAB
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Nov 2022 08:04:45 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id q9so1864924pfg.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2022 08:04:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5SX8S1GoqbnGutA7INzRoyQfzD7Efc9HM+BPmRWtUQ=;
+        b=jJiOqWM0NMptNv3BNBY/lAWtQ+JFPO0Uf71TRdXOIwP4IjjTYrClPkItlaG+o1Dpkc
+         oU7/Toemr8NflzwrL5RLcweQqEupjnzTvXnGV/Gre/Zb9Ku7QK8hOt4P9T2JxH5KymWo
+         O2ZdAmF6IoZc1ZaD5sIcaPHWn05dVAMXmsTLq+hrJwHSW161GEBn6utiy/DwBJY/g10P
+         ETHtG7Ls+eI7r4Ag/d7ugMwBI4eQZllss0CaXjOiUco+LF3itDZAi/u/eF9+AO+/5Av9
+         qXjuIXYpoaALQDBKXLD/z31PltwvsrcRv1YxIPK3PtRCi1jPcApLL4oDGALyFHGHkDuu
+         7UiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5SX8S1GoqbnGutA7INzRoyQfzD7Efc9HM+BPmRWtUQ=;
+        b=yxe1zlmrvqCYJqpxmDDuMu/QiYchLBXC2AdDuiSCGloaaUVjx/OvGVUGetN1fzIjgP
+         r1dkimjHLfs1WnfsSQveqCE4cT4dtktXnNnkBD6ry8wjhmBNgRSizqr6eWFMUYwIQ4tW
+         HGyTwtalZEP+C7M8v4JKGuL7bQhhq5jlBilPlGDbZ7qV5IvJRwsXIj5ZE5SOgtDjzoTe
+         W3c6qkcOfPQ5qjJCSzMI9ySFS4d36Px5Zy5yIW4S+kFbMdcapjyHeNFgsRQ+HRBGPqxG
+         ogT+FuC3NAvLkQSHVMgWECdnHJoGIp/7HdtecTxNdvlCar314LZ0Q8219qH+3vVXUPSW
+         049A==
+X-Gm-Message-State: ACrzQf1jBrDyDqC2aiLMPJiDWcUnejjvtkwak5jIq/ArKt84cOgXcLop
+        RCp59EemwLpXcLZZHxM9JbhKadaykgbqy9emDnCuP/wpyn8=
+X-Google-Smtp-Source: AMsMyM4cbJucyEqLbWDZpIyLnaLE+WJJU1EjZS+YPC+DzcUIWaiTUDs71Ng+lyG577vLJRbeIcvD+n9TMaqO/rQIAbE=
+X-Received: by 2002:a63:1345:0:b0:470:30c2:8b0b with SMTP id
+ 5-20020a631345000000b0047030c28b0bmr973457pgt.434.1667487884662; Thu, 03 Nov
+ 2022 08:04:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221006190452.5316-1-wsa+renesas@sang-engineering.com>
+ <CAPDyKFqA1RtcaGMCQgDsKKju4izHWJRAD12SqqirNm+TWLt_hA@mail.gmail.com> <Y2LBiOqomYJ2E/Gd@shikoro>
+In-Reply-To: <Y2LBiOqomYJ2E/Gd@shikoro>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 3 Nov 2022 16:04:08 +0100
+Message-ID: <CAPDyKFr1UR3QX4X45TmShADDpOEuxnadcvyTGaXLhcxKrAxbow@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/6] mmc: renesas_sdhi: add support for DMA end irqs
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As serial communication requires a clock signal, the High Speed Serial
-Communication Interfaces with FIFO (HSCIF) are clocked by a clock that
-is not affected by Spread Spectrum or Fractional Multiplication.
+On Wed, 2 Nov 2022 at 20:14, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Hi Ulf,
+>
+> > The tmio/sdhi core still relies on using tasklets. I think we should
+> > strive to move away from tasklets for all mmc host drivers and to use
+> > threaded irqs instead.
+>
+> Ooookay, noted. I'll put it on my todo-list. But frankly, I can't give
+> this priority for a while :/ SDHI is used on a lot of platforms, even on
+> different architectures. Regression testing will be a big one here.
+>
+> > That said, I am worried that it might be harder to move away from
+> > tasklets beyond $subject series, for tmio/sdhi, but I might be wrong?
+> > So, I am wondering if it perhaps would be better to make that
+> > modernization/conversion as the first step instead?
+>
+> As said above, I can't do this in the foreseeable future. However, this
+> series fixes an issue we see. So, my vote goes for applying this now.
+> Even if it costs some extra cycles on the tasklet-removal-work.
+>
+> D'accord?
 
-Hence change the clock input for the HSCIF Baud Rate Generator internal
-clock from the S0D3_PER clock to the SASYNCPERD1 clock (which has the
-same clock rate), cfr. R-Car S4-8 Hardware User's Manual rev. 0.81.
+Sure, I am fine with applying this. I just wanted to point out my long
+term thoughts around using the tasklets.
 
-Fixes: 01a787f78bfd ("arm64: dts: renesas: r8a779f0: Add HSCIF nodes")
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Do you intend to send a new version to drop the RFC? Or can I apply as is?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index c2f152bcf10e..3be577dc9a93 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -577,7 +577,7 @@ hscif0: serial@e6540000 {
- 			reg = <0 0xe6540000 0 0x60>;
- 			interrupts = <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 514>,
--				 <&cpg CPG_CORE R8A779F0_CLK_S0D3>,
-+				 <&cpg CPG_CORE R8A779F0_CLK_SASYNCPERD1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x31>, <&dmac0 0x30>,
-@@ -594,7 +594,7 @@ hscif1: serial@e6550000 {
- 			reg = <0 0xe6550000 0 0x60>;
- 			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 515>,
--				 <&cpg CPG_CORE R8A779F0_CLK_S0D3>,
-+				 <&cpg CPG_CORE R8A779F0_CLK_SASYNCPERD1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x33>, <&dmac0 0x32>,
-@@ -611,7 +611,7 @@ hscif2: serial@e6560000 {
- 			reg = <0 0xe6560000 0 0x60>;
- 			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 516>,
--				 <&cpg CPG_CORE R8A779F0_CLK_S0D3>,
-+				 <&cpg CPG_CORE R8A779F0_CLK_SASYNCPERD1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x35>, <&dmac0 0x34>,
-@@ -628,7 +628,7 @@ hscif3: serial@e66a0000 {
- 			reg = <0 0xe66a0000 0 0x60>;
- 			interrupts = <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 517>,
--				 <&cpg CPG_CORE R8A779F0_CLK_S0D3>,
-+				 <&cpg CPG_CORE R8A779F0_CLK_SASYNCPERD1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x37>, <&dmac0 0x36>,
--- 
-2.35.1
-
+Kind regards
+Uffe
