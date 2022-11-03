@@ -2,131 +2,88 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B45C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Nov 2022 20:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE8DC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Nov 2022 20:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230348AbiKCU4G (ORCPT
+        id S231185AbiKCU7h (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Nov 2022 16:56:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52586 "EHLO
+        Thu, 3 Nov 2022 16:59:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbiKCUz4 (ORCPT
+        with ESMTP id S230111AbiKCU7f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2022 16:55:56 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F58120BE7
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Nov 2022 13:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=myS9CkonMnXwhk
-        d/gaWzxpB4v/QisnjTI6pGGjF2ReE=; b=E2Kt0i2TwNJlt236QTLkBwb4ptqmx/
-        abFm+k0RYq5RjK2H7AaHKofl6EV0ez+fQ2znH2yklQ6ydieeOZru34dYsPq3UBFj
-        xsjukKU5HqMIq+GFqmVqZVbECfzz4hxj1LEKEJyChYH6lzWBWhr+BPLCkhSLz6aU
-        GAlie3pYjaSiM=
-Received: (qmail 2787739 invoked from network); 3 Nov 2022 21:55:52 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2022 21:55:52 +0100
-X-UD-Smtp-Session: l3s3148p1@YcHELpfsyuUujns0
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Thu, 3 Nov 2022 16:59:35 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7FAE63EB
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Nov 2022 13:59:34 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id h10so1984374qvq.7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2022 13:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tElYA2M/FixcQuYLyiZJm+paAARbaT+RdNA4PCKWIRU=;
+        b=XzyHlq6kFEDY+ETiGomS+Vv8HG85WUf87yX0o4pivBLWM2ggANiSrMYpxIkWdaMXlc
+         kHOmerpMy0iveGfmWAihqXrY+5ktr9V/WbwaOEQ/FXQCMIE+QvZ0lQ1pBc23VuW0dQ7T
+         7rqRpmYZEf38fw/bf+Jotl5lV50Dj73Tv2z9FEi2KNQvlfz9bzJUzGNyEvRDZcFdlMr4
+         +yiN/8nW0m1uphlZg+haWCD0m9zRXdWlXIZVHtCVV0HcOZmAoBnwMzkKx7aG4bHnRcBo
+         csRo84nwt7/YX4aV+lgOTPXcJ3X5TlV/k3c89Qf0Cu4qt3lPK9kiQ2uE5M5qNaidIQB7
+         OA7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tElYA2M/FixcQuYLyiZJm+paAARbaT+RdNA4PCKWIRU=;
+        b=URrTKBnHSZl5fvoaPmp+LVPIeaks3SVEZ13SbEEmSGoyjZ9Yr3k4+0SxxAdlcV4wc5
+         hWtY7l441HD3t+F7nvxl4y+J4vZaSJTmAVn8Br2J5GCHGIvX29+ssvdnawgBfkJDTc+u
+         u0csqmMhj8PGO7Zh6f8isgi5JY/92GysHGNXsamFX9gJqHeVTGBnElcSDA9z7qKU2fYD
+         SGr8wZ1/OAi0qsWbJKOV1rvtrWcQtPTsUZeMN6Fcq4Hxqcgyq5m1sftTkI0/g4IP7Db1
+         p5ytrMt+iJkmdQ8sx6yZgaDTff7f8mKD800hwD272Ce6uGzzYEFzppWZbc4QsxmUoGGP
+         uYuw==
+X-Gm-Message-State: ACrzQf1vC+QaDITAMJbPOY804KfN0ozyHlQ9FVCX2qTH7GffzGRaAtYZ
+        5aUYvIlCvaR3BPqEoZ9vwPlYkg==
+X-Google-Smtp-Source: AMsMyM48VLW/EaI7hvtYsqxGujP68e/eReXcWUHmohHgFaor7Xwr/mS7EhrDyA0sblqDroQ0vMq4+g==
+X-Received: by 2002:a05:6214:2a87:b0:4bb:e62e:4713 with SMTP id jr7-20020a0562142a8700b004bbe62e4713mr23942460qvb.2.1667509174019;
+        Thu, 03 Nov 2022 13:59:34 -0700 (PDT)
+Received: from ?IPV6:2601:586:5000:570:a35d:9f85:e3f7:d9fb? ([2601:586:5000:570:a35d:9f85:e3f7:d9fb])
+        by smtp.gmail.com with ESMTPSA id v20-20020a05622a189400b003a540320070sm1258979qtc.6.2022.11.03.13.59.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Nov 2022 13:59:33 -0700 (PDT)
+Message-ID: <440c0d34-0eca-7180-0c8b-e924ca9136f5@linaro.org>
+Date:   Thu, 3 Nov 2022 16:59:32 -0400
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH] dt-bindings: timer: renesas,tmu: Add r8a779g0 support
+Content-Language: en-US
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] arm64: dts: renesas: r8a779g0: Add TMU nodes
-Date:   Thu,  3 Nov 2022 21:55:43 +0100
-Message-Id: <20221103205546.24836-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221103205546.24836-1-wsa+renesas@sang-engineering.com>
-References: <20221103205546.24836-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20221103204859.24667-1-wsa+renesas@sang-engineering.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221103204859.24667-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 65 +++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+On 03/11/2022 16:48, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  Documentation/devicetree/bindings/timer/renesas,tmu.yaml | 1 +
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 8141ffc38a08..fbab9817cc8c 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -251,6 +251,71 @@ intc_ex: interrupt-controller@e61c0000 {
- 			resets = <&cpg 611>;
- 		};
- 
-+		tmu0: timer@e61e0000 {
-+			compatible = "renesas,tmu-r8a779g0", "renesas,tmu";
-+			reg = <0 0xe61e0000 0 0x30>;
-+			interrupts = <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 713>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 713>;
-+			status = "disabled";
-+		};
-+
-+		tmu1: timer@e6fc0000 {
-+			compatible = "renesas,tmu-r8a779g0", "renesas,tmu";
-+			reg = <0 0xe6fc0000 0 0x30>;
-+			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 714>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 714>;
-+			status = "disabled";
-+		};
-+
-+		tmu2: timer@e6fd0000 {
-+			compatible = "renesas,tmu-r8a779g0", "renesas,tmu";
-+			reg = <0 0xe6fd0000 0 0x30>;
-+			interrupts = <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 715>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 715>;
-+			status = "disabled";
-+		};
-+
-+		tmu3: timer@e6fe0000 {
-+			compatible = "renesas,tmu-r8a779g0", "renesas,tmu";
-+			reg = <0 0xe6fe0000 0 0x30>;
-+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+		};
-+
-+		tmu4: timer@ffc00000 {
-+			compatible = "renesas,tmu-r8a779g0", "renesas,tmu";
-+			reg = <0 0xffc00000 0 0x30>;
-+			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 717>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 717>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			compatible = "renesas,i2c-r8a779g0",
- 				     "renesas,rcar-gen4-i2c";
--- 
-2.35.1
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
