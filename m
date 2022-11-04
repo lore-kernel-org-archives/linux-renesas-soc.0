@@ -2,180 +2,158 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DC7C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Nov 2022 17:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B13C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Nov 2022 17:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231361AbiKDRBH (ORCPT
+        id S231182AbiKDRKp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Nov 2022 13:01:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50364 "EHLO
+        Fri, 4 Nov 2022 13:10:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231695AbiKDRBF (ORCPT
+        with ESMTP id S229779AbiKDRKo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2022 13:01:05 -0400
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58B831FB6;
-        Fri,  4 Nov 2022 10:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zI7RcZiPaTDKMltPgs4ZCXXOEkuyhKs5pu9RAgGaQCM=; b=WDBX+cAnoxNFA2qROraJWPqwl6
-        sawOBGcwqy0cJOAIrVpjLZZ+Gx2IKKPpzlq32XA8dIyrUdyxFM7DDARo5oPRviL3HJfndmG8Y/6DX
-        JszwjA1qIBE963R9b+AbWyWXzot3CnWQfj8Q3yBrd7GtzWZM+7HpOT38Y0pygwUoqjt9E5drTi3PA
-        iwRZOCwQqQ0SXdmD9XyBdaTbR1R3prwAqmXw5Hw/1of8Akd3I0gnrXsFcDHUGIRQzdA3pfYYEcbWP
-        RGvTglAlnqK66tcDfALPc+yDGWDJk2SuAVwnrNdyQUQOE9Eu+PrDksdtVsbsh6ynJyaP/aeQMp/TT
-        YGTHedGw==;
-Received: from ip98-183-112-30.ok.ok.cox.net ([98.183.112.30]:45370 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.95)
-        (envelope-from <david@lechnology.com>)
-        id 1oqzpN-00ChtK-Ip;
-        Fri, 04 Nov 2022 12:46:11 -0400
-Message-ID: <4a91a4cf-acac-387f-19a5-e2ce144f3496@lechnology.com>
-Date:   Fri, 4 Nov 2022 11:46:02 -0500
+        Fri, 4 Nov 2022 13:10:44 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9850B3F059
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Nov 2022 10:10:43 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id cg5so3380268qtb.12
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Nov 2022 10:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=id/m4PJka4ak4GkQ5lhsmXVKkGfCwtyssjK4t6uoVVs=;
+        b=YpYUlOVpQsjVYotS+k/BFPz+cRTPQ5vTloCHMLkCjHLIfGt1sRcorDcdKrTfPQEiqk
+         tC2r7PFLRgUCwyg1yxnLs8A+9AIKQOcEOYgfr9Y+fSccJ8E33COJ0Wjy9lAcAOJvCvMX
+         loB9GS6Ij+dwj4Cx2LQrL7d14cRjVhkpy278zCiILi3y39khCqrq3MjXNlHREjjYIYnp
+         a1a3fSrFoD0I8zrZ0aYVEMBlWH+OVySQK2urEgSOpF/+5CXZhLmJxTfew+OHQNpw19jr
+         poS+XzDuYc/wZ8HPTLLkOvGfAoJYfWk64T9HxQJxZVkRKsXejYO5WnBGpiKXbFLObkOv
+         ERoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=id/m4PJka4ak4GkQ5lhsmXVKkGfCwtyssjK4t6uoVVs=;
+        b=VSqvIJhTJq/ZbqgZKeMcQRt61nztDMjjt88xK8yy9stEbU8AU+8QGFW9kNwFo5XPQp
+         9KybnwdhfpfkX26R2cTxi7C/YXREtLCe1znoCMxZhwc74Ald3aXvb2g+M7H/JXorfUdq
+         /fEVaWo0CwdjFYzDC1P4xaZKkqqrMooywcK5SmDT8ymKMiUXeSDRoAOGFzhWp1l86IOE
+         rHTG4vILxCAwKeq9qcsNqtBq7fN5VrRzcXZ69L1KoceXxzZ45S8vbQJ7lCNtOpnKFMM9
+         /e1G+9GTfi2MkTCPitFfQ2AkIWOKCvv4rSjlUh4O39GkcrR/bJ2CkajGktGkoDBP57hV
+         j2Uw==
+X-Gm-Message-State: ACrzQf3zXy3Lq3Ef1nm1bVTR9I2Xpg2bc320Daolq+9rNob9slc3xg7V
+        /gqIE+tfmohqdh7pdeu+mvsiVA==
+X-Google-Smtp-Source: AMsMyM48TwKakdoi9XI56ZSm+s+EMx3vzp3w+5I2ovZFXE5AyQzdRvdUY24WMzPQKglZPH02FN/pCA==
+X-Received: by 2002:a05:622a:196:b0:3a5:40ab:592c with SMTP id s22-20020a05622a019600b003a540ab592cmr15386971qtw.103.1667581842757;
+        Fri, 04 Nov 2022 10:10:42 -0700 (PDT)
+Received: from ?IPV6:2601:586:5000:570:aad6:acd8:4ed9:299b? ([2601:586:5000:570:aad6:acd8:4ed9:299b])
+        by smtp.gmail.com with ESMTPSA id s9-20020a05620a29c900b006cec8001bf4sm3282124qkp.26.2022.11.04.10.10.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Nov 2022 10:10:42 -0700 (PDT)
+Message-ID: <c0a6a3a1-c12d-75b4-fe1d-026ab0740b58@linaro.org>
+Date:   Fri, 4 Nov 2022 13:10:40 -0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2 22/65] clk: davinci: da8xx-cfgchip: Add a
- determine_rate hook
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 2/3] dt-bindings: pwm: rzg2l-gpt: Document renesas,poegs
+ property
 Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-22-f6736dec138e@cerno.tech>
-From:   David Lechner <david@lechnology.com>
-In-Reply-To: <20221018-clk-range-checks-fixes-v2-22-f6736dec138e@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+References: <20221104145938.1782464-1-biju.das.jz@bp.renesas.com>
+ <20221104145938.1782464-3-biju.das.jz@bp.renesas.com>
+ <dea44f32-e10f-0164-0175-4fe2e5d053a2@linaro.org>
+ <OS0PR01MB5922D1D1143BB6F83A894D0E863B9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <OS0PR01MB5922D1D1143BB6F83A894D0E863B9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 11/4/22 8:17 AM, Maxime Ripard wrote:
-> The Davinci DA8xxx cfgchip "clk48" clock implements a mux with a
-> set_parent hook, but doesn't provide a determine_rate implementation.
+On 04/11/2022 12:52, Biju Das wrote:
+> Hi Krzysztof Kozlowski,
 > 
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Subject: Re: [PATCH 2/3] dt-bindings: pwm: rzg2l-gpt: Document
+>> renesas,poegs property
+>>
+>> On 04/11/2022 10:59, Biju Das wrote:
+>>> RZ/G2L GPT IP supports output pin disable function by dead time
+>> error
+>>> and detecting short-circuits between output pins.
+>>>
+>>> Add documentation for the optional property renesas,poegs to link a
+>>> pair of GPT IOs with POEG.
+>>>
+>>> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+>>> ---
+>>>  .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 19
+>> +++++++++++++++++++
+>>>  1 file changed, 19 insertions(+)
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+>>> b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+>>> index 620d5ae4ae30..32f9deae89e5 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+>>> +++ b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+>>> @@ -245,6 +245,24 @@ properties:
+>>>    resets:
+>>>      maxItems: 1
+>>>
+>>> +  renesas,poegs:
+>>> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+>>
+>> No need for quotes.
+>>
+>>> +    items:
+>>
+>> You miss here maxItems... but if you have just one item, then below
+>> "items" should be " - items"
+>>
+>>> +      items:
+>>> +        - description: phandle to POEG instance that serves the
+>> output disable
+>>> +        - description: An index identifying pair of GPT channels.
+>>> +                       <0> - GPT channels 0 and 1
+>>> +                       <1> - GPT channels 2 and 3
+>>> +                       <2> - GPT channels 4 and 5
+>>> +                       <3> - GPT channels 6 and 7
+>>> +                       <4> - GPT channels 8 and 9
+>>> +                       <5> - GPT channels 10 and 11
+>>> +                       <6> - GPT channels 12 and 13
+>>> +                       <7> - GPT channels 14 and 15
+>>
+>> then this could bave enum or minimum/maximum. Can you try if these
+>> work?
 > 
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
+> Yes, checks are passing with below changes.
+> Will send V2 later once I get feedback for driver changes/ from other reviewers.
 > 
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
-> 
-> The latter case would be equivalent to setting the flag
-> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
-> to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> implementation is provided, clk_round_rate() (through
-> clk_core_round_rate_nolock()) will call itself on the parent if
-> CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> otherwise. __clk_mux_determine_rate() has the exact same behavior when
-> CLK_SET_RATE_NO_REPARENT is set.
-> 
-> And if it was an oversight, then we are at least explicit about our
-> behavior now and it can be further refined down the line.
+> renesas,poegs:
+> -    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>      items:
+> +      maxItems: 8
 
-The parent is defined in the device tree and is not expected to change
-at runtime, so if I am understanding the patch correctly, setting the
-CLK_SET_RATE_NO_REPARENT flag seems correct.
+and it might also require minItems: 1
 
-> 
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->   drivers/clk/davinci/da8xx-cfgchip.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-> index c04276bc4051..4c1cc59bba53 100644
-> --- a/drivers/clk/davinci/da8xx-cfgchip.c
-> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
-> @@ -565,6 +565,7 @@ static u8 da8xx_usb1_clk48_get_parent(struct clk_hw *hw)
->   }
->   
->   static const struct clk_ops da8xx_usb1_clk48_ops = {
-> +	.determine_rate	= __clk_mux_determine_rate,
->   	.set_parent	= da8xx_usb1_clk48_set_parent,
->   	.get_parent	= da8xx_usb1_clk48_get_parent,
->   };
-> @@ -589,6 +590,7 @@ da8xx_cfgchip_register_usb1_clk48(struct device *dev,
->   
->   	init.name = "usb1_clk48";
->   	init.ops = &da8xx_usb1_clk48_ops;
-> +	init.flags = CLK_SET_RATE_NO_REPARENT;
->   	init.parent_names = parent_names;
->   	init.num_parents = 2;
->   
-> 
+Thank you for changes.
+
+Best regards,
+Krzysztof
 
