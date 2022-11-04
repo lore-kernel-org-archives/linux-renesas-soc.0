@@ -2,75 +2,92 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCF0C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC307C433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Nov 2022 10:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231714AbiKDKuL (ORCPT
+        id S229489AbiKDKuM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Nov 2022 06:50:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60606 "EHLO
+        Fri, 4 Nov 2022 06:50:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbiKDKuH (ORCPT
+        with ESMTP id S231634AbiKDKuG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2022 06:50:07 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3786D2B277
+        Fri, 4 Nov 2022 06:50:06 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F29B2B63C
         for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Nov 2022 03:50:05 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:c5ee:bf27:9df:5172])
-        by michel.telenet-ops.be with bizsmtp
-        id gAq32800U2kjr6L06Aq3Nz; Fri, 04 Nov 2022 11:50:03 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id gAq4280122kjr6L01Aq4ST; Fri, 04 Nov 2022 11:50:04 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1oquGx-002mVK-8Y; Fri, 04 Nov 2022 11:50:03 +0100
+        id 1oquGx-002mVI-9X; Fri, 04 Nov 2022 11:50:03 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1oquGw-00HWEu-O7; Fri, 04 Nov 2022 11:50:02 +0100
+        id 1oquGw-00HWEj-Mo; Fri, 04 Nov 2022 11:50:02 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 2/4] Renesas ARM SoC updates for v6.2
-Date:   Fri,  4 Nov 2022 11:49:55 +0100
-Message-Id: <cover.1667558746.git.geert+renesas@glider.be>
+Subject: [GIT PULL 1/4] Renesas ARM DT updates for v6.2
+Date:   Fri,  4 Nov 2022 11:49:53 +0100
+Message-Id: <cover.1667558738.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1667558738.git.geert+renesas@glider.be>
-References: <cover.1667558738.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+	Hi SoC folks,
 
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+This is my first pull request for the inclusion of Renesas SoC updates
+for v6.2.
 
-are available in the Git repository at:
+It consists of 4 parts:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-soc-for-v6.2-tag1
+  [GIT PULL 1/4] Renesas ARM DT updates for v6.2
 
-for you to fetch changes up to d84ea59e20158ca7a1b6c1dfc3c0e2e652eb4b00:
+    - DMA, SPI (MSIOF), external interrupt (INTC-EX), PWM (PWM and TPU),
+      SDHI, HyperFLASH/QSPI (RPC), and serial ((H)SCIF) support for the
+      R-Car V4H SoC,
+    - I/O expander, eMMC, and QSPI FLASH support for the White Hawk
+      development board,
+    - Preparatory work to share r9a07g043.dtsi between the ARM-based
+      RZ/G2UL (R9A07G043U) and the RISC-V-based RZ/Five (R9A07G043F) SoCs,
+    - Miscellaneous fixes and improvements.
 
-  arm64: renesas: Drop selecting GPIOLIB and PINCTRL (2022-10-28 14:31:24 +0200)
+  [GIT PULL 2/4] Renesas ARM SoC updates for v6.2
 
-----------------------------------------------------------------
-Renesas ARM SoC updates for v6.2
+    - Drop selecting GPIOLIB and PINCTRL, which are already automatically
+      selected as part of the SOC_RENESAS config option in
+      drivers/soc/renesas/Kconfig.
 
-  - Drop selecting GPIOLIB and PINCTRL, which are already automatically
-    selected as part of the SOC_RENESAS config option in
-    drivers/soc/renesas/Kconfig.
+  [GIT PULL 3/4] Renesas driver updates for v6.2
 
-----------------------------------------------------------------
-Lad Prabhakar (3):
-      soc: renesas: Kconfig: Explicitly select GPIOLIB and PINCTRL config under SOC_RENESAS
-      ARM: shmobile: Drop selecting GPIOLIB and PINCTRL
-      arm64: renesas: Drop selecting GPIOLIB and PINCTRL
+    - Let SOC_RENESAS select GPIOLIB and PINCTRL, so this does not have to
+      be handled in two (soon three: arm/arm64/riscv), places.
 
- arch/arm/mach-shmobile/Kconfig | 2 --
- arch/arm64/Kconfig.platforms   | 2 --
- drivers/soc/renesas/Kconfig    | 2 ++
- 3 files changed, 2 insertions(+), 4 deletions(-)
+  [GIT PULL 4/4] Renesas DT binding updates for v6.2
+
+    - Move renesas.yaml from arm to soc, and document RZ/Five support.
+
+Note that the second pull request depends on the third, and thus is
+based on it.
+
+Thanks for pulling!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
