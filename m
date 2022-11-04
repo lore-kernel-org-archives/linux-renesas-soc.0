@@ -2,44 +2,43 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E51F3C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Nov 2022 15:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A52C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Nov 2022 15:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231920AbiKDPHG (ORCPT
+        id S232332AbiKDPLt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Nov 2022 11:07:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51258 "EHLO
+        Fri, 4 Nov 2022 11:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232421AbiKDPHE (ORCPT
+        with ESMTP id S232417AbiKDPLr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2022 11:07:04 -0400
+        Fri, 4 Nov 2022 11:11:47 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4194DB49D
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Nov 2022 08:07:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219B21D651
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Nov 2022 08:11:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=R70gBy0m0MbozJ2K4Le71tLAXCw
-        UziIMAwHzbCELvIE=; b=f98Y7fsPCImPg8hIOHGA1jaFMLlSRPo9iSnblogVzjg
-        kwQeSq3ZrgMK9dbUUC0EWWhRpE8rQ0FIUMyAXAkDBvw8d0DlcJAqyaNGzg4Km2nX
-        xQQR0IcRLd5LWuVzkVfqaSPUCOf6u87G8oY4P8n5MWbWUrz519tolAcVDNx4ROUQ
-        =
-Received: (qmail 3146712 invoked from network); 4 Nov 2022 16:06:58 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Nov 2022 16:06:58 +0100
-X-UD-Smtp-Session: l3s3148p1@ISWibKbsk11ZD+8G
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=esUmRi0N+eMqKm
+        IhV1wcq1P9T65++DGCkr9c6bq5b2s=; b=TCX6jU8tXeb6AaRgaDV5TvA9GivnP9
+        ApVzRcGATVe+pB56KwlNdN/G+z7yRCeDRHftQDFdJGTW1PGsmfACCgiKYiHfRjp+
+        15Qkn4eQhHn/lDRuXJ8jc5Mx91sadncMFUKqtwjt3aDfQVWtNL8DRINDsvH89+JY
+        h0FQB5MhaxjE8=
+Received: (qmail 3148185 invoked from network); 4 Nov 2022 16:11:43 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Nov 2022 16:11:43 +0100
+X-UD-Smtp-Session: l3s3148p1@q6vVfabsbjhZD+8G
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: timer: renesas,cmt: Add r8a779g0 CMT support
-Date:   Fri,  4 Nov 2022 16:06:42 +0100
-Message-Id: <20221104150642.4587-1-wsa+renesas@sang-engineering.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] clk: renesas: r8a779g0: Add CMT clocks
+Date:   Fri,  4 Nov 2022 16:11:33 +0100
+Message-Id: <20221104151135.4706-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221104151135.4706-1-wsa+renesas@sang-engineering.com>
+References: <20221104151135.4706-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -48,28 +47,24 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- Documentation/devicetree/bindings/timer/renesas,cmt.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.yaml b/Documentation/devicetree/bindings/timer/renesas,cmt.yaml
-index bde6c9b66bf4..a0be1755ea28 100644
---- a/Documentation/devicetree/bindings/timer/renesas,cmt.yaml
-+++ b/Documentation/devicetree/bindings/timer/renesas,cmt.yaml
-@@ -102,12 +102,14 @@ properties:
-           - enum:
-               - renesas,r8a779a0-cmt0     # 32-bit CMT0 on R-Car V3U
-               - renesas,r8a779f0-cmt0     # 32-bit CMT0 on R-Car S4-8
-+              - renesas,r8a779g0-cmt0     # 32-bit CMT0 on R-Car V4H
-           - const: renesas,rcar-gen4-cmt0 # 32-bit CMT0 on R-Car Gen4
- 
-       - items:
-           - enum:
-               - renesas,r8a779a0-cmt1     # 48-bit CMT on R-Car V3U
-               - renesas,r8a779f0-cmt1     # 48-bit CMT on R-Car S4-8
-+              - renesas,r8a779g0-cmt1     # 48-bit CMT on R-Car V4H
-           - const: renesas,rcar-gen4-cmt1 # 48-bit CMT on R-Car Gen4
- 
-   reg:
+diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+index 7f0b4f75ff4d..1da48c81d3dd 100644
+--- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+@@ -193,6 +193,10 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
+ 	DEF_MOD("tmu4",		717,	R8A779G0_CLK_SASYNCPERD2),
+ 	DEF_MOD("tpu0",		718,	R8A779G0_CLK_SASYNCPERD4),
+ 	DEF_MOD("wdt1:wdt0",	907,	R8A779G0_CLK_R),
++	DEF_MOD("cmt0",		910,	R8A779G0_CLK_R),
++	DEF_MOD("cmt1",		911,	R8A779G0_CLK_R),
++	DEF_MOD("cmt2",		912,	R8A779G0_CLK_R),
++	DEF_MOD("cmt3",		913,	R8A779G0_CLK_R),
+ 	DEF_MOD("pfc0",		915,	R8A779G0_CLK_CL16M),
+ 	DEF_MOD("pfc1",		916,	R8A779G0_CLK_CL16M),
+ 	DEF_MOD("pfc2",		917,	R8A779G0_CLK_CL16M),
 -- 
 2.35.1
 
