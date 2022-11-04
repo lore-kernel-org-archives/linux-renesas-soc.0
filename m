@@ -2,109 +2,75 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759B0C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Nov 2022 10:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCF0C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Nov 2022 10:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231804AbiKDKjT (ORCPT
+        id S231714AbiKDKuL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Nov 2022 06:39:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54402 "EHLO
+        Fri, 4 Nov 2022 06:50:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231390AbiKDKjQ (ORCPT
+        with ESMTP id S229489AbiKDKuH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2022 06:39:16 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB8AD2B62E
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Nov 2022 03:38:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667558292;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=M88yz4GfmbUNq4mWECugnsnJkV6z34uCwDqL3DFZ74U=;
-        b=X9/6b8rldhRlkUpmgYmLgpgyKzTITKrxN79vp81phcOinSHMxBjZU8x5YVdpGoLQdWF+XW
-        BQ0s9DW5KFjRuZK/UlKybOu+B9UtgGHG1GI/NjGiEu23mabuRFISk0o5tu/IQ4//Se5CvC
-        RgrGtrfsH82k6hw+HqNnKNekqRjuhaQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-75-z1Mr0ioBPzOytZb0NaYBsg-1; Fri, 04 Nov 2022 06:38:10 -0400
-X-MC-Unique: z1Mr0ioBPzOytZb0NaYBsg-1
-Received: by mail-wm1-f72.google.com with SMTP id f62-20020a1c3841000000b003cf6d9aacbbso2130254wma.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Nov 2022 03:38:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M88yz4GfmbUNq4mWECugnsnJkV6z34uCwDqL3DFZ74U=;
-        b=pk8h9z+tHAzAyr2Ydyt38RWfN+fL8wvYP1TNRvqSAH8FahbdJRZskBAqIMpFQ3NyPE
-         xjxV/5xf4tW/8dS3DQpt2bzuy3Ow8HCBjGa4NLYUbQoxgOWOBhip82HtOp/okIOHhT4J
-         bqxRlztgf5q67T6ZP7jrvRZSokhE1s9sOYQ4DWwI27v2NmkXX8RJa4/oSdrqGOFGBxg4
-         769BE4SWEmkO9LGAHFsgEj/ok2Is2zZYMWIX8fXUgUdRLZ25cl4nultrnouq+Y7YFQu2
-         SG/jfXkwkD6fua5lc5zirCKOJGF2u61MDDhidGwGs49eaPCV8PzXqJCaEvXPkx5JyMro
-         ccSg==
-X-Gm-Message-State: ACrzQf0YIWYfpvEi86hUyt21HKNnYzY89DF0yVefPirt+cS8r3K3BmOp
-        BOcC2vjIAvcBj4NttHOdDojVF/HlUG5IEuyRmH4pnBx41bRamBfQy26myzQNn6G+i5iTJiSR9kA
-        jqCqDofXl29sxn+ChejdnzWe+ovVz7cE=
-X-Received: by 2002:adf:bc51:0:b0:236:8fa1:47ea with SMTP id a17-20020adfbc51000000b002368fa147eamr218071wrh.77.1667558289567;
-        Fri, 04 Nov 2022 03:38:09 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6s9MOXnwXonR8VOapq6d4n3ZU7IGA+EIjACuJbvHHOLIXD7EQUkeJV/V+5P7qnQBQKVLAVkQ==
-X-Received: by 2002:adf:bc51:0:b0:236:8fa1:47ea with SMTP id a17-20020adfbc51000000b002368fa147eamr218064wrh.77.1667558289372;
-        Fri, 04 Nov 2022 03:38:09 -0700 (PDT)
-Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id k4-20020a05600c1c8400b003b4cba4ef71sm2534442wms.41.2022.11.04.03.38.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Nov 2022 03:38:09 -0700 (PDT)
-Message-ID: <1f5e6de4-3fe2-7933-f8c0-5f13564595cc@redhat.com>
-Date:   Fri, 4 Nov 2022 11:38:07 +0100
+        Fri, 4 Nov 2022 06:50:07 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3786D2B277
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Nov 2022 03:50:05 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:c5ee:bf27:9df:5172])
+        by michel.telenet-ops.be with bizsmtp
+        id gAq32800U2kjr6L06Aq3Nz; Fri, 04 Nov 2022 11:50:03 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1oquGx-002mVK-8Y; Fri, 04 Nov 2022 11:50:03 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1oquGw-00HWEu-O7; Fri, 04 Nov 2022 11:50:02 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 2/4] Renesas ARM SoC updates for v6.2
+Date:   Fri,  4 Nov 2022 11:49:55 +0100
+Message-Id: <cover.1667558746.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1667558738.git.geert+renesas@glider.be>
+References: <cover.1667558738.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v3 23/23] drm/fb-helper: Clarify use of last_close and
- output_poll_changed
-Content-Language: en-US
-To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
-        airlied@gmail.com, sam@ravnborg.org, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com
-Cc:     linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-samsung-soc@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
-        linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        spice-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20221103151446.2638-1-tzimmermann@suse.de>
- <20221103151446.2638-24-tzimmermann@suse.de>
-From:   Javier Martinez Canillas <javierm@redhat.com>
-In-Reply-To: <20221103151446.2638-24-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 11/3/22 16:14, Thomas Zimmermann wrote:
-> Clarify documentation in the use of struct drm_driver.last_close and
-> struct drm_mode_config_funcs.output_poll_changed. Those callbacks should
-> not be said for fbdev implementations on top of struct drm_client_funcs.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
 
--- 
-Best regards,
+are available in the Git repository at:
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-soc-for-v6.2-tag1
 
+for you to fetch changes up to d84ea59e20158ca7a1b6c1dfc3c0e2e652eb4b00:
+
+  arm64: renesas: Drop selecting GPIOLIB and PINCTRL (2022-10-28 14:31:24 +0200)
+
+----------------------------------------------------------------
+Renesas ARM SoC updates for v6.2
+
+  - Drop selecting GPIOLIB and PINCTRL, which are already automatically
+    selected as part of the SOC_RENESAS config option in
+    drivers/soc/renesas/Kconfig.
+
+----------------------------------------------------------------
+Lad Prabhakar (3):
+      soc: renesas: Kconfig: Explicitly select GPIOLIB and PINCTRL config under SOC_RENESAS
+      ARM: shmobile: Drop selecting GPIOLIB and PINCTRL
+      arm64: renesas: Drop selecting GPIOLIB and PINCTRL
+
+ arch/arm/mach-shmobile/Kconfig | 2 --
+ arch/arm64/Kconfig.platforms   | 2 --
+ drivers/soc/renesas/Kconfig    | 2 ++
+ 3 files changed, 2 insertions(+), 4 deletions(-)
