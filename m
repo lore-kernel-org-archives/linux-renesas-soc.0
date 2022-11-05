@@ -2,237 +2,526 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 578C0C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Nov 2022 10:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E20EC43219
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Nov 2022 14:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229666AbiKEKeW (ORCPT
+        id S229689AbiKEObK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 5 Nov 2022 06:34:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42788 "EHLO
+        Sat, 5 Nov 2022 10:31:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiKEKeV (ORCPT
+        with ESMTP id S229493AbiKEObJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Nov 2022 06:34:21 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1642AE38;
-        Sat,  5 Nov 2022 03:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1667644455; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TDaskHbQLkzLxZhbc0A77T82ys2sKHjzGtgSbl/eTqE=;
-        b=3fY3IZ0hJPiRN8vNazn9bcQMqR2JrjTIi9AXqwxwIe42aFOkSxs8/LodJeR17HX6gwP6nU
-        mZNm0vTVRbGLApx4Wl/flL8cOh+VgCBw+PxQes5goKWi15jShjtTx3YJEDgMNwV2KlXCJe
-        TCPPbMNaz+6Yvnpx7NfiTwQwJoNtT18=
-Date:   Sat, 05 Nov 2022 10:33:54 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?iso-8859-1?q?F=E4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Message-Id: <IOEVKR.TWFKJND2FJ473@crapouillou.net>
-In-Reply-To: <20221104145946.orsyrhiqvypisl5j@houat>
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
-        <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
-        <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
-        <20221104145946.orsyrhiqvypisl5j@houat>
+        Sat, 5 Nov 2022 10:31:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0ACEDEAC;
+        Sat,  5 Nov 2022 07:31:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F7E060B2F;
+        Sat,  5 Nov 2022 14:31:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10682C433D6;
+        Sat,  5 Nov 2022 14:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667658663;
+        bh=cvVEeMb0Y/U08P7cvIaLbIdFDv3MKfSXXMTiu4iwmTE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jWt1J/oONvcdcasw4U7iTBjYCTvliQI1TjnPtOrOIY1HqQXxE4eoCX90avJJZ/Ze1
+         fkZl0FJg67Uw4I8EM/rkGX23damTdjcpEHwr4cmS5Lm9pAo8fnoQfGbTIPEIzCO2wC
+         aGbahMh5u9oeb351nnmFlCfoF0jkCTQDiLmzfDdZ4GU44tH9+vdsuR5QUOgeICSkqK
+         4lMDCDl6DkfMZdwZV3uMsmIg1b7nTuc5Gf6e35a1MteLebHgqpWbH894lNgYHy8GXG
+         f4cpLF6jxeUjTEhn1jtKeDRXbBquJVwiTk5jSESMUtdHBM6nKD6rtlLXYfw6pS2SrG
+         Anp8001/Yoa9A==
+Date:   Sat, 5 Nov 2022 20:00:59 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [RESEND PATCH v3 2/2] phy: renesas: Add Renesas Ethernet SERDES
+ driver for R-Car S4-8
+Message-ID: <Y2ZzowD2eAxBFcwR@matsya>
+References: <20221027134006.2343164-1-yoshihiro.shimoda.uh@renesas.com>
+ <20221027134006.2343164-3-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221027134006.2343164-3-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Maxime,
+On 27-10-22, 22:40, Yoshihiro Shimoda wrote:
+> Add Renesas Ethernet SERDES driver for R-Car S4-8 (r8a779f0).
+> The datasheet describes initialization procedure without any information
+> about registers' name/bits. So, this is all black magic to initialize
+> the hardware. Especially, all channels should be initialized at once.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/phy/renesas/Kconfig                 |   7 +
+>  drivers/phy/renesas/Makefile                |   1 +
+>  drivers/phy/renesas/r8a779f0-ether-serdes.c | 416 ++++++++++++++++++++
+>  3 files changed, 424 insertions(+)
+>  create mode 100644 drivers/phy/renesas/r8a779f0-ether-serdes.c
+> 
+> diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig
+> index 111bdcae775c..68f160b0e8ef 100644
+> --- a/drivers/phy/renesas/Kconfig
+> +++ b/drivers/phy/renesas/Kconfig
+> @@ -32,3 +32,10 @@ config PHY_RCAR_GEN3_USB3
+>  	select GENERIC_PHY
+>  	help
+>  	  Support for USB 3.0 PHY found on Renesas R-Car generation 3 SoCs.
+> +
+> +config PHY_R8A779F0_ETHERNET_SERDES
+> +	tristate "Renesas R-Car S4-8 Ethernet SERDES driver"
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	select GENERIC_PHY
+> +	help
+> +	  Support for Ethernet SERDES found on Renesas R-Car S4-8 SoCs.
 
-Le ven. 4 nov. 2022 =E0 15:59:46 +0100, Maxime Ripard=20
-<maxime@cerno.tech> a =E9crit :
-> Hi Paul,
->=20
-> On Fri, Nov 04, 2022 at 02:31:20PM +0000, Paul Cercueil wrote:
->>  Le ven. 4 nov. 2022 =E0 14:18:13 +0100, Maxime Ripard=20
->> <maxime@cerno.tech> a
->>  =E9crit :
->>  > The Ingenic CGU clocks implements a mux with a set_parent hook,=20
->> but
->>  > doesn't provide a determine_rate implementation.
->>  >
->>  > This is a bit odd, since set_parent() is there to, as its name=20
->> implies,
->>  > change the parent of a clock. However, the most likely candidate=20
->> to
->>  > trigger that parent change is a call to clk_set_rate(), with
->>  > determine_rate() figuring out which parent is the best suited for=20
->> a
->>  > given rate.
->>  >
->>  > The other trigger would be a call to clk_set_parent(), but it's=20
->> far less
->>  > used, and it doesn't look like there's any obvious user for that=20
->> clock.
->>  >
->>  > So, the set_parent hook is effectively unused, possibly because=20
->> of an
->>  > oversight. However, it could also be an explicit decision by the
->>  > original author to avoid any reparenting but through an explicit=20
->> call to
->>  > clk_set_parent().
->>  >
->>  > The driver does implement round_rate() though, which means that=20
->> we can
->>  > change the rate of the clock, but we will never get to change the
->>  > parent.
->>  >
->>  > However, It's hard to tell whether it's been done on purpose or=20
->> not.
->>  >
->>  > Since we'll start mandating a determine_rate() implementation,=20
->> let's
->>  > convert the round_rate() implementation to a determine_rate(),=20
->> which
->>  > will also make the current behavior explicit. And if it was an
->>  > oversight, the clock behaviour can be adjusted later on.
->>=20
->>  So it's partly on purpose, partly because I didn't know about
->>  .determine_rate.
->>=20
->>  There's nothing odd about having a lonely .set_parent callback; in=20
->> my case
->>  the clocks are parented from the device tree.
->>=20
->>  Having the clocks driver trigger a parent change when requesting a=20
->> rate
->>  change sounds very dangerous, IMHO. My MMC controller can be=20
->> parented to the
->>  external 48 MHz oscillator, and if the card requests 50 MHz, it=20
->> could switch
->>  to one of the PLLs. That works as long as the PLLs don't change=20
->> rate, but if
->>  one is configured as driving the CPU clock, it becomes messy.
->>  The thing is, the clocks driver has no way to know whether or not=20
->> it is
->>  "safe" to use a designated parent.
->>=20
->>  For that reason, in practice, I never actually want to have a clock
->>  re-parented - it's almost always a bad idea vs. sticking to the=20
->> parent clock
->>  configured in the DTS.
->=20
-> Yeah, and this is totally fine. But we need to be explicit about it.=20
-> The
-> determine_rate implementation I did in all the patches is an exact
-> equivalent to the round_rate one if there was one. We will never ask=20
-> to
-> change the parent.
->=20
-> Given what you just said, I would suggest to set the
-> CLK_SET_RATE_NO_REPARENT flag as well.
+Sorted alphabetically please and not at the end
 
-But that would introduce policy into the driver... The fact that I=20
-don't want the MMC parented to the PLLs, doesn't mean that it's an=20
-invalid configuration per se.
+> diff --git a/drivers/phy/renesas/Makefile b/drivers/phy/renesas/Makefile
+> index b599ff8a4349..8896d1919faa 100644
+> --- a/drivers/phy/renesas/Makefile
+> +++ b/drivers/phy/renesas/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +obj-$(CONFIG_PHY_R8A779F0_ETHERNET_SERDES)	+= r8a779f0-ether-serdes.o
+>  obj-$(CONFIG_PHY_RCAR_GEN2)		+= phy-rcar-gen2.o
+>  obj-$(CONFIG_PHY_RCAR_GEN3_PCIE)	+= phy-rcar-gen3-pcie.o
+>  obj-$(CONFIG_PHY_RCAR_GEN3_USB2)	+= phy-rcar-gen3-usb2.o
+> diff --git a/drivers/phy/renesas/r8a779f0-ether-serdes.c b/drivers/phy/renesas/r8a779f0-ether-serdes.c
+> new file mode 100644
+> index 000000000000..38cf6c408cae
+> --- /dev/null
+> +++ b/drivers/phy/renesas/r8a779f0-ether-serdes.c
+> @@ -0,0 +1,416 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Renesas Ethernet SERDES device driver
+> + *
+> + * Copyright (C) 2022 Renesas Electronics Corporation
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/kernel.h>
+> +#include <linux/phy.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +
+> +#define R8A779F0_ETH_SERDES_NUM			3
+> +#define R8A779F0_ETH_SERDES_OFFSET		0x0400
+> +#define R8A779F0_ETH_SERDES_BANK_SELECT		0x03fc
+> +#define R8A779F0_ETH_SERDES_TIMEOUT_US		100000
+> +#define R8A779F0_ETH_SERDES_NUM_RETRY_LINKUP	3
+> +#define R8A779F0_ETH_SERDES_NUM_RETRY_INIT	3
+> +
+> +struct r8a779f0_eth_serdes_drv_data;
+> +struct r8a779f0_eth_serdes_channel {
+> +	struct r8a779f0_eth_serdes_drv_data *dd;
+> +	struct phy *phy;
+> +	void __iomem *addr;
+> +	phy_interface_t phy_interface;
+> +	int speed;
+> +	int index;
+> +};
+> +
+> +struct r8a779f0_eth_serdes_drv_data {
+> +	void __iomem *addr;
+> +	struct platform_device *pdev;
+> +	struct reset_control *reset;
+> +	struct r8a779f0_eth_serdes_channel channel[R8A779F0_ETH_SERDES_NUM];
+> +	bool initialized;
+> +};
+> +
+> +/*
+> + * The datasheet describes initialization procedure without any information
+> + * about registers' name/bits. So, this is all black magic to initialize
+> + * the hardware.
+> + */
+> +static void r8a779f0_eth_serdes_write32(void __iomem *addr, u32 offs, u32 bank, u32 data)
+> +{
+> +	iowrite32(bank, addr + R8A779F0_ETH_SERDES_BANK_SELECT);
+> +	iowrite32(data, addr + offs);
+> +}
+> +
+> +static int
+> +r8a779f0_eth_serdes_reg_wait(struct r8a779f0_eth_serdes_channel *channel,
+> +			     u32 offs, u32 bank, u32 mask, u32 expected)
+> +{
+> +	int ret;
+> +	u32 val;
+> +
+> +	iowrite32(bank, channel->addr + R8A779F0_ETH_SERDES_BANK_SELECT);
+> +
+> +	ret = readl_poll_timeout_atomic(channel->addr + offs, val,
+> +					(val & mask) == expected,
+> +					1, R8A779F0_ETH_SERDES_TIMEOUT_US);
+> +	if (ret)
+> +		pr_debug("%s: index %d, offs %x, bank %x, mask %x, expected %x\n",
+> +			 __func__, channel->index, offs, bank, mask, expected);
 
-Cheers,
--Paul
+1) why not dev_ variant
+2) this should be error log
 
->>=20
->>  > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
->>  > ---
->>  >  drivers/clk/ingenic/cgu.c | 15 ++++++++-------
->>  >  1 file changed, 8 insertions(+), 7 deletions(-)
->>  >
->>  > diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
->>  > index 1f7ba30f5a1b..0c9c8344ad11 100644
->>  > --- a/drivers/clk/ingenic/cgu.c
->>  > +++ b/drivers/clk/ingenic/cgu.c
->>  > @@ -491,22 +491,23 @@ ingenic_clk_calc_div(struct clk_hw *hw,
->>  >  	return div;
->>  >  }
->>  >
->>  > -static long
->>  > -ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
->>  > -		       unsigned long *parent_rate)
->>  > +static int ingenic_clk_determine_rate(struct clk_hw *hw,
->>  > +				      struct clk_rate_request *req)
->>  >  {
->>  >  	struct ingenic_clk *ingenic_clk =3D to_ingenic_clk(hw);
->>  >  	const struct ingenic_cgu_clk_info *clk_info =3D
->>  > to_clk_info(ingenic_clk);
->>  >  	unsigned int div =3D 1;
->>  >
->>  >  	if (clk_info->type & CGU_CLK_DIV)
->>  > -		div =3D ingenic_clk_calc_div(hw, clk_info, *parent_rate,=20
->> req_rate);
->>  > +		div =3D ingenic_clk_calc_div(hw, clk_info, req->best_parent_rate,
->>  > +					   req->rate);
->>=20
->>  Sorry but I'm not sure that this works.
->>=20
->>  You replace the "parent_rate" with the "best_parent_rate", and that=20
->> means
->>  you only check the requested rate vs. the parent with the highest=20
->> frequency,
->>  and not vs. the actual parent that will be used.
->=20
-> best_parent_rate is initialized to the current parent rate, not the
-> parent with the highest frequency:
-> https://elixir.bootlin.com/linux/v6.1-rc3/source/drivers/clk/clk.c#L1471
->=20
-> Maxime
+> +
+> +	return ret;
+> +}
+> +
+> +static int
+> +r8a779f0_eth_serdes_common_init_ram(struct r8a779f0_eth_serdes_drv_data *dd)
+> +{
+> +	struct r8a779f0_eth_serdes_channel *channel;
+> +	int i, ret;
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++) {
+> +		channel = &dd->channel[i];
+> +		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x026c, 0x180, BIT(0), 0x01);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	r8a779f0_eth_serdes_write32(dd->addr, 0x026c, 0x180, 0x03);
+> +
+> +	return ret;
+> +}
+> +
+> +static int
+> +r8a779f0_eth_serdes_common_setting(struct r8a779f0_eth_serdes_channel *channel)
+> +{
+> +	struct r8a779f0_eth_serdes_drv_data *dd = channel->dd;
+> +
+> +	switch (channel->phy_interface) {
+> +	case PHY_INTERFACE_MODE_SGMII:
+> +		r8a779f0_eth_serdes_write32(dd->addr, 0x0244, 0x180, 0x0097);
+> +		r8a779f0_eth_serdes_write32(dd->addr, 0x01d0, 0x180, 0x0060);
+> +		r8a779f0_eth_serdes_write32(dd->addr, 0x01d8, 0x180, 0x2200);
+> +		r8a779f0_eth_serdes_write32(dd->addr, 0x01d4, 0x180, 0x0000);
+> +		r8a779f0_eth_serdes_write32(dd->addr, 0x01e0, 0x180, 0x003d);
+> +		return 0;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static int
+> +r8a779f0_eth_serdes_chan_setting(struct r8a779f0_eth_serdes_channel *channel)
+> +{
+> +	int ret;
+> +
+> +	switch (channel->phy_interface) {
+> +	case PHY_INTERFACE_MODE_SGMII:
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x380, 0x2000);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x01c0, 0x180, 0x0011);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0248, 0x180, 0x0540);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0258, 0x180, 0x0015);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, 0x0100);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x01a0, 0x180, 0x0000);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x00d0, 0x180, 0x0002);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0150, 0x180, 0x0003);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x00c8, 0x180, 0x0100);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0148, 0x180, 0x0100);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0174, 0x180, 0x0000);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0160, 0x180, 0x0007);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x01ac, 0x180, 0x0000);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x00c4, 0x180, 0x0310);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x00c8, 0x380, 0x0101);
+> +		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x00c8, 0x0180, BIT(0), 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0148, 0x180, 0x0101);
+> +		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0148, 0x0180, BIT(0), 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x00c4, 0x180, 0x1310);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x00d8, 0x180, 0x1800);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x00dc, 0x180, 0x0000);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x001c, 0x300, 0x0001);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x380, 0x2100);
+> +		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0000, 0x0380, BIT(8), 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (channel->speed == 1000)
+> +			r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x1f00, 0x0140);
+> +		else if (channel->speed == 100)
+> +			r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x1f00, 0x2100);
+> +
+> +		/* For AN_ON */
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0004, 0x1f80, 0x0005);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0028, 0x1f80, 0x07a1);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x1f80, 0x0208);
+> +		break;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +r8a779f0_eth_serdes_chan_speed(struct r8a779f0_eth_serdes_channel *channel)
+> +{
+> +	int ret;
+> +
+> +	switch (channel->phy_interface) {
+> +	case PHY_INTERFACE_MODE_SGMII:
+> +		/* For AN_ON */
+> +		if (channel->speed == 1000)
+> +			r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x1f00, 0x1140);
+> +		else if (channel->speed == 100)
+> +			r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x1f00, 0x3100);
+> +		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0008, 0x1f80, BIT(0), 1);
+> +		if (ret)
+> +			return ret;
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0008, 0x1f80, 0x0000);
+> +		break;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +
+> +static int r8a779f0_eth_serdes_monitor_linkup(struct r8a779f0_eth_serdes_channel *channel)
+> +{
+> +	int i, ret;
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM_RETRY_LINKUP; i++) {
+> +		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0004, 0x300,
+> +						   BIT(2), BIT(2));
+> +		if (!ret)
+> +			break;
+> +
+> +		/* restart */
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, 0x0100);
+> +		udelay(1);
+> +		r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, 0x0000);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int r8a779f0_eth_serdes_hw_init(struct r8a779f0_eth_serdes_channel *channel)
+> +{
+> +	struct r8a779f0_eth_serdes_drv_data *dd = channel->dd;
+> +	int i, ret;
+> +
+> +	if (dd->initialized)
+> +		return 0;
+> +
+> +	ret = r8a779f0_eth_serdes_common_init_ram(dd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++) {
+> +		ret = r8a779f0_eth_serdes_reg_wait(&dd->channel[i], 0x0000,
+> +						   0x300, BIT(15), 0);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++)
+> +		r8a779f0_eth_serdes_write32(dd->channel[i].addr, 0x03d4, 0x380, 0x0443);
+> +
+> +	ret = r8a779f0_eth_serdes_common_setting(channel);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++)
+> +		r8a779f0_eth_serdes_write32(dd->channel[i].addr, 0x03d0, 0x380, 0x0001);
+> +
+> +
+> +	r8a779f0_eth_serdes_write32(dd->addr, 0x0000, 0x380, 0x8000);
+> +
+> +	ret = r8a779f0_eth_serdes_common_init_ram(dd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = r8a779f0_eth_serdes_reg_wait(&dd->channel[0], 0x0000, 0x380, BIT(15), 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++) {
+> +		ret = r8a779f0_eth_serdes_chan_setting(&dd->channel[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++) {
+> +		ret = r8a779f0_eth_serdes_chan_speed(&dd->channel[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++)
+> +		r8a779f0_eth_serdes_write32(dd->channel[i].addr, 0x03c0, 0x380, 0x0000);
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++)
+> +		r8a779f0_eth_serdes_write32(dd->channel[i].addr, 0x03d0, 0x380, 0x0000);
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++) {
+> +		ret = r8a779f0_eth_serdes_monitor_linkup(&dd->channel[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int r8a779f0_eth_serdes_init(struct phy *p)
+> +{
+> +	struct r8a779f0_eth_serdes_channel *channel = phy_get_drvdata(p);
+> +	int i, ret;
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM_RETRY_INIT; i++) {
+> +		ret = r8a779f0_eth_serdes_hw_init(channel);
+> +		if (!ret) {
+> +			channel->dd->initialized = true;
+> +			break;
+> +		}
+> +		usleep_range(1000, 2000);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int r8a779f0_eth_serdes_set_mode(struct phy *p, enum phy_mode mode,
+> +					int submode)
+> +{
+> +	struct r8a779f0_eth_serdes_channel *channel = phy_get_drvdata(p);
+> +
+> +	if (mode != PHY_MODE_ETHERNET)
+> +		return -EOPNOTSUPP;
+> +
+> +	switch (submode) {
+> +	case PHY_INTERFACE_MODE_GMII:
+> +	case PHY_INTERFACE_MODE_SGMII:
+> +	case PHY_INTERFACE_MODE_USXGMII:
+> +		channel->phy_interface = submode;
+> +		return 0;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static int r8a779f0_eth_serdes_set_speed(struct phy *p, int speed)
+> +{
+> +	struct r8a779f0_eth_serdes_channel *channel = phy_get_drvdata(p);
+> +
+> +	channel->speed = speed;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct phy_ops r8a779f0_eth_serdes_ops = {
+> +	.init		= r8a779f0_eth_serdes_init,
+> +	.set_mode	= r8a779f0_eth_serdes_set_mode,
+> +	.set_speed	= r8a779f0_eth_serdes_set_speed,
+> +};
+> +
+> +static struct phy *r8a779f0_eth_serdes_xlate(struct device *dev,
+> +					     struct of_phandle_args *args)
+> +{
+> +	struct r8a779f0_eth_serdes_drv_data *dd = dev_get_drvdata(dev);
+> +
+> +	if (args->args[0] >= R8A779F0_ETH_SERDES_NUM)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	return dd->channel[args->args[0]].phy;
+> +}
+> +
+> +static const struct of_device_id r8a779f0_eth_serdes_of_table[] = {
+> +	{ .compatible = "renesas,r8a779f0-ether-serdes", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, r8a779f0_eth_serdes_of_table);
+> +
+> +static int r8a779f0_eth_serdes_probe(struct platform_device *pdev)
+> +{
+> +	struct r8a779f0_eth_serdes_drv_data *dd;
+> +	struct phy_provider *provider;
+> +	struct resource *res;
+> +	int i;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(&pdev->dev, "invalid resource\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dd = devm_kzalloc(&pdev->dev, sizeof(*dd), GFP_KERNEL);
+> +	if (!dd)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, dd);
+> +	dd->pdev = pdev;
+> +	dd->addr = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(dd->addr))
+> +		return PTR_ERR(dd->addr);
+> +
+> +	dd->reset = devm_reset_control_get(&pdev->dev, NULL);
+> +	if (IS_ERR(dd->reset))
+> +		return PTR_ERR(dd->reset);
+> +
+> +	reset_control_reset(dd->reset);
+> +
+> +	for (i = 0; i < R8A779F0_ETH_SERDES_NUM; i++) {
+> +		struct r8a779f0_eth_serdes_channel *channel = &dd->channel[i];
+> +
+> +		channel->phy = devm_phy_create(&pdev->dev, NULL,
+> +					       &r8a779f0_eth_serdes_ops);
+> +		if (IS_ERR(channel->phy))
+> +			return PTR_ERR(channel->phy);
+> +		channel->addr = dd->addr + R8A779F0_ETH_SERDES_OFFSET * i;
+> +		channel->dd = dd;
+> +		channel->index = i;
+> +		phy_set_drvdata(channel->phy, channel);
+> +	}
+> +
+> +	provider = devm_of_phy_provider_register(&pdev->dev,
+> +						 r8a779f0_eth_serdes_xlate);
+> +	if (IS_ERR(provider))
+> +		return PTR_ERR(provider);
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int r8a779f0_eth_serdes_remove(struct platform_device *pdev)
+> +{
+> +	pm_runtime_put(&pdev->dev);
+> +	pm_runtime_disable(&pdev->dev);
+> +
+> +	platform_set_drvdata(pdev, NULL);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver r8a779f0_eth_serdes_driver_platform = {
+> +	.probe = r8a779f0_eth_serdes_probe,
+> +	.remove = r8a779f0_eth_serdes_remove,
+> +	.driver = {
+> +		.name = "r8a779f0_eth_serdes",
+> +		.of_match_table = r8a779f0_eth_serdes_of_table,
+> +	}
+> +};
+> +module_platform_driver(r8a779f0_eth_serdes_driver_platform);
+> +MODULE_AUTHOR("Yoshihiro Shimoda");
+> +MODULE_DESCRIPTION("Renesas Ethernet SERDES device driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.25.1
 
-
+-- 
+~Vinod
