@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7ACC4167D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 14:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 672B1C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 14:00:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232137AbiKGOAG (ORCPT
+        id S232271AbiKGOAf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 09:00:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47844 "EHLO
+        Mon, 7 Nov 2022 09:00:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232099AbiKGOAE (ORCPT
+        with ESMTP id S232081AbiKGOAX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 09:00:04 -0500
+        Mon, 7 Nov 2022 09:00:23 -0500
 Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56183635E;
-        Mon,  7 Nov 2022 06:00:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD2151D317;
+        Mon,  7 Nov 2022 06:00:18 -0800 (PST)
 Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id EA3F24000D;
-        Mon,  7 Nov 2022 13:59:57 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 496E840002;
+        Mon,  7 Nov 2022 14:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1667829600;
+        t=1667829617;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Nr0MWFd6v89DxvG5hmkKma8o7WLm2qLInkEbwYJ1akc=;
-        b=fd1/3FMy9oIhCDEYAPt26LG7Aho5Yiu2RZ2E8Ah607tirDLJFySgvqDtzWNkfnBZn7YKxs
-        GVOo/407JcsjxNx9eIGvl2bQJ8GZScaHKWtM0c2GXVTuMdUo6CLs8D7UxP4uccKzAsd6Tz
-        Ed3qfyb24ALN3oPxrdXm/1Ho2t31fUBgC9b3rO7rZ23zDT1PlcUVclEcWrFfAS+MciKtMv
-        5xYXcSTvpZlGzIg5bD0eO1BQro+jmPiShJQ/IlQaqT1aG1Jd71UFSZcwJjrN1v1QyP8cso
-        pZX5/f0+Gi/0BwRoeH7KIk8N6wu1LgQxO2gRyRoF14AsW0SyT3Dm59j0CDGMOQ==
+        bh=0e5pg2TipAfIIuTZ8YtnZ+tbzQ49ClfCH4MrWgeoyls=;
+        b=X0dlr6ZrDPZnnD9x6NVROw0ps9qmfuylOcM8Za3ZCmzCatug4tcYNDRkT+oiPjaODfagyv
+        b64XJ8HTut1tEhMltXLtrPXZ3vqSeBwSoudvABdAm+RqE6JjTJPOwT77cn/RaMLBxxxeZX
+        HmovWm3gRDFKWTUM6QlXLPlztylOCmpxLGJr6OSEGm+Uf1BZt5HrbXsBjmFlEuPzMJwI9R
+        7BBxSQGAzyN7/Ft4q1mw422AsCO+DanbPE2xwLT00Zqc4EmGtzGUkABiEOeosFIETpjBfo
+        YYEX/nNeFu7bNncB7DHpeaxLg68ZvOqy5EpD1bZIG76Trq/YZnX13Nw01xcBEg==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -46,9 +46,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-usb@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4/7] dt-bindings: usb: add the Renesas USBF controller binding
-Date:   Mon,  7 Nov 2022 14:58:22 +0100
-Message-Id: <20221107135825.583877-5-herve.codina@bootlin.com>
+Subject: [PATCH 6/7] ARM: dts: r9a06g032: Add the USBF controller node
+Date:   Mon,  7 Nov 2022 14:58:24 +0100
+Message-Id: <20221107135825.583877-7-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221107135825.583877-1-herve.codina@bootlin.com>
 References: <20221107135825.583877-1-herve.codina@bootlin.com>
@@ -58,85 +58,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The Renesas USBF controller is an USB2.0 device controller
-(UDC) available in Renesas r9a06g032 SoC (RZ/N1 family).
+Add the USBF controller available in the r9a06g032 SoC.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- .../devicetree/bindings/usb/renesas,usbf.yaml | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/renesas,usbf.yaml
+ arch/arm/boot/dts/r9a06g032.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas,usbf.yaml b/Documentation/devicetree/bindings/usb/renesas,usbf.yaml
-new file mode 100644
-index 000000000000..f2b146d9d37b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/renesas,usbf.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/renesas,usbf.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 563024c9a4ae..9e8ae2fd106d 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -117,6 +117,17 @@ dmamux: dma-router@a0 {
+ 			};
+ 		};
+ 
++		udc: usb@4001e000 {
++			compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
++			reg = <0x4001e000 0x2000>;
++			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&sysctrl R9A06G032_HCLK_USBF>,
++				 <&sysctrl R9A06G032_HCLK_USBPM>;
++			clock-names = "hclkf", "hclkpm";
++			status = "disabled";
++		};
 +
-+title: Renesas USBF (USB Function) controller binding
-+
-+description: |
-+   The Renesas USBF controller is an USB2.0 device
-+   controller (UDC).
-+
-+maintainers:
-+  - Herve Codina <herve.codina@bootlin.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - renesas,r9a06g032-usbf
-+          - const: renesas,rzn1-usbf
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Internal bus clock (AHB) for Function
-+      - description: Internal bus clock (AHB) for Power Management
-+  clock-names:
-+    items:
-+      - const: hclkf
-+      - const: hclkpm
-+
-+  interrupts:
-+    items:
-+      - description: The USBF EPC interrupt
-+      - description: The USBF AHB-EPC interrupt
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+
-+    usb@4001e000 {
-+        compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
-+        reg = <0x4001e000 0x2000>;
-+        interrupts =
-+            <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+            <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&sysctrl R9A06G032_HCLK_USBF>,
-+                 <&sysctrl R9A06G032_HCLK_USBPM>;
-+        clock-names = "hclkf", "hclkpm";
-+    };
+ 		pci_usb: pci@40030000 {
+ 			compatible = "renesas,pci-r9a06g032", "renesas,pci-rzn1";
+ 			device_type = "pci";
 -- 
 2.37.3
 
