@@ -2,317 +2,91 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8247C4167B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FBCC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232531AbiKGQNL (ORCPT
+        id S232258AbiKGQNq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:13:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36752 "EHLO
+        Mon, 7 Nov 2022 11:13:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232441AbiKGQM7 (ORCPT
+        with ESMTP id S231682AbiKGQN3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:12:59 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5001820375;
-        Mon,  7 Nov 2022 08:12:56 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EFEE139F;
-        Mon,  7 Nov 2022 08:13:02 -0800 (PST)
-Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 328D33F534;
-        Mon,  7 Nov 2022 08:12:41 -0800 (PST)
-From:   Pierre Gondois <pierre.gondois@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Pierre Gondois <pierre.gondois@arm.com>,
-        William Zhang <william.zhang@broadcom.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>, Li Jun <jun.li@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>,
-        Liu Ying <victor.liu@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Wei Fang <wei.fang@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Andi Shyti <andi@etezian.org>, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 06/23] arm64: dts: Update cache properties for broadcom
-Date:   Mon,  7 Nov 2022 16:56:59 +0100
-Message-Id: <20221107155825.1644604-7-pierre.gondois@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
+        Mon, 7 Nov 2022 11:13:29 -0500
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDD346433
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Nov 2022 08:13:27 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id h24so7131686qta.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Nov 2022 08:13:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9GtmRAzjcP+reqRSVCyT5MoncSAz28sgsxTGskON2NI=;
+        b=LF8HcO4yBSYoqbXcgEx+TiFCPuPmvYSnB5+Ygl8i+61ILF4xnzIKj3hgQzLxLy3db3
+         1qISGc6zkFIlfzVXJPF7o9ywsDIGypj0cVguVdNzFY6hyOk97pu9CaVwUeXY+OQfl24h
+         kBSoqUcV/bjz6lzLqld+6yk0+oeLpotr+Y1xp9BCVyNTVxTuDImZrv+OD6kzeYFnF8SI
+         9w9qqa0feRxymvDT1yG/LqZOZIEpInEwh9LLnH8Z+eozJ5Fa1NQ6oiOW7wj1s0dH8q5b
+         IwBz1RFvDSjSy42Saf2D49ZddAJstKw7YXM57aH/hPcuU/eQfuaXxl8ec+NSxN7YyEOu
+         o7/Q==
+X-Gm-Message-State: ACrzQf1SSUUO5nob3d4IQd2jFj2k99QdWjgy86xBKFN9I28qLMZ5ObhA
+        wgDoXw6ubacWUEkHIEyc6xSDDlF/WJE5Bw==
+X-Google-Smtp-Source: AMsMyM4y3m3Y4+KaL6x+5pSx473PQSSI089VFSbXYhtka54VOjUBMcLSobIMzHiGjpxIBJ2THL7jBA==
+X-Received: by 2002:a05:622a:1e18:b0:3a5:5bc0:85be with SMTP id br24-20020a05622a1e1800b003a55bc085bemr16410293qtb.201.1667837606853;
+        Mon, 07 Nov 2022 08:13:26 -0800 (PST)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id m13-20020a05620a290d00b006fa43e139b5sm7279714qkp.59.2022.11.07.08.13.26
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Nov 2022 08:13:26 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-369426664f9so108672557b3.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Nov 2022 08:13:26 -0800 (PST)
+X-Received: by 2002:a0d:e301:0:b0:374:a8ba:99b0 with SMTP id
+ m1-20020a0de301000000b00374a8ba99b0mr2621211ywe.358.1667837606346; Mon, 07
+ Nov 2022 08:13:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221103143440.46449-1-wsa+renesas@sang-engineering.com> <20221103143440.46449-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20221103143440.46449-4-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Nov 2022 17:13:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWjGbP0zQ6ZzZZ4noNWrK7CrHR+W0GjcaApCAHbgELCvQ@mail.gmail.com>
+Message-ID: <CAMuHMdWjGbP0zQ6ZzZZ4noNWrK7CrHR+W0GjcaApCAHbgELCvQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: renesas: r8a779f0: Fix HSCIF "brg_int" clock
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The DeviceTree Specification v0.3 specifies that the cache node
-'compatible' and 'cache-level' properties are 'required'. Cf.
-s3.8 Multi-level and Shared Cache Nodes
-The 'cache-unified' property should be present if one of the
-properties for unified cache is present ('cache-size', ...).
+On Thu, Nov 3, 2022 at 3:34 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> As serial communication requires a clock signal, the High Speed Serial
 
-Update the Device Trees accordingly.
+I see the missing "clean" introduced by me is propagating ;-)
 
-Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-Acked-by: William Zhang <william.zhang@broadcom.com>
----
- arch/arm/boot/dts/bcm2711.dtsi                      | 1 +
- arch/arm/boot/dts/bcm2837.dtsi                      | 1 +
- arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi    | 1 +
- arch/arm64/boot/dts/broadcom/bcmbca/bcm4912.dtsi    | 1 +
- arch/arm64/boot/dts/broadcom/bcmbca/bcm63146.dtsi   | 1 +
- arch/arm64/boot/dts/broadcom/bcmbca/bcm63158.dtsi   | 1 +
- arch/arm64/boot/dts/broadcom/bcmbca/bcm6813.dtsi    | 1 +
- arch/arm64/boot/dts/broadcom/bcmbca/bcm6856.dtsi    | 1 +
- arch/arm64/boot/dts/broadcom/bcmbca/bcm6858.dtsi    | 1 +
- arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi    | 1 +
- arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi | 4 ++++
- 11 files changed, 14 insertions(+)
+> Communication Interfaces with FIFO (HSCIF) are clocked by a clock that
+> is not affected by Spread Spectrum or Fractional Multiplication.
+>
+> Hence change the clock input for the HSCIF Baud Rate Generator internal
+> clock from the S0D3_PER clock to the SASYNCPERD1 clock (which has the
+> same clock rate), cfr. R-Car S4-8 Hardware User's Manual rev. 0.81.
+>
+> Fixes: 01a787f78bfd ("arm64: dts: renesas: r8a779f0: Add HSCIF nodes")
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
-index 941c4d16791b..c6104149f959 100644
---- a/arch/arm/boot/dts/bcm2711.dtsi
-+++ b/arch/arm/boot/dts/bcm2711.dtsi
-@@ -536,6 +536,7 @@ cpu3: cpu@3 {
- 		 */
- 		l2: l2-cache0 {
- 			compatible = "cache";
-+			cache-unified;
- 			cache-size = <0x100000>;
- 			cache-line-size = <64>;
- 			cache-sets = <1024>; // 1MiB(size)/64(line-size)=16384ways/16-way set
-diff --git a/arch/arm/boot/dts/bcm2837.dtsi b/arch/arm/boot/dts/bcm2837.dtsi
-index 5dbdebc46259..b352ac784af6 100644
---- a/arch/arm/boot/dts/bcm2837.dtsi
-+++ b/arch/arm/boot/dts/bcm2837.dtsi
-@@ -115,6 +115,7 @@ cpu3: cpu@3 {
- 		 */
- 		l2: l2-cache0 {
- 			compatible = "cache";
-+			cache-unified;
- 			cache-size = <0x80000>;
- 			cache-line-size = <64>;
- 			cache-sets = <512>; // 512KiB(size)/64(line-size)=8192ways/16-way set
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi
-index dac9d3b4e91d..996412ed52a0 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908.dtsi
-@@ -63,6 +63,7 @@ cpu3: cpu@3 {
- 
- 		l2: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4912.dtsi b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4912.dtsi
-index 3d016c2ce675..d5bc31980f03 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4912.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4912.dtsi
-@@ -51,6 +51,7 @@ B53_3: cpu@3 {
- 
- 		L2_0: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm63146.dtsi b/arch/arm64/boot/dts/broadcom/bcmbca/bcm63146.dtsi
-index 04de96bd0a03..6f805266d3c9 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm63146.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm63146.dtsi
-@@ -35,6 +35,7 @@ B53_1: cpu@1 {
- 
- 		L2_0: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm63158.dtsi b/arch/arm64/boot/dts/broadcom/bcmbca/bcm63158.dtsi
-index 13629702f70b..b982249b80a2 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm63158.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm63158.dtsi
-@@ -51,6 +51,7 @@ B53_3: cpu@3 {
- 
- 		L2_0: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm6813.dtsi b/arch/arm64/boot/dts/broadcom/bcmbca/bcm6813.dtsi
-index c3e6197be808..a996d436e977 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm6813.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm6813.dtsi
-@@ -51,6 +51,7 @@ B53_3: cpu@3 {
- 
- 		L2_0: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm6856.dtsi b/arch/arm64/boot/dts/broadcom/bcmbca/bcm6856.dtsi
-index 0bce6497219f..62c530d4b103 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm6856.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm6856.dtsi
-@@ -35,6 +35,7 @@ B53_1: cpu@1 {
- 
- 		L2_0: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm6858.dtsi b/arch/arm64/boot/dts/broadcom/bcmbca/bcm6858.dtsi
-index 29a880c6c858..ba3d5a98ccbc 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm6858.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm6858.dtsi
-@@ -50,6 +50,7 @@ B53_3: cpu@3 {
- 		};
- 		L2_0: l2-cache0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-index fda97c47f4e9..18cdbc20f03f 100644
---- a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-@@ -79,6 +79,7 @@ A57_3: cpu@3 {
- 
- 		CLUSTER0_L2: l2-cache@0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 8f8c25e51194..e05901abe957 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -108,18 +108,22 @@ cpu@301 {
- 
- 		CLUSTER0_L2: l2-cache@0 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		CLUSTER1_L2: l2-cache@100 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		CLUSTER2_L2: l2-cache@200 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		CLUSTER3_L2: l2-cache@300 {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 	};
- 
--- 
-2.25.1
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.2, with the above fixed.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
