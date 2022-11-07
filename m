@@ -2,61 +2,41 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20971C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 18:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6A3C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 18:18:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231921AbiKGSI2 (ORCPT
+        id S233098AbiKGSSs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 13:08:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45364 "EHLO
+        Mon, 7 Nov 2022 13:18:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233020AbiKGSIC (ORCPT
+        with ESMTP id S233106AbiKGSSQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 13:08:02 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11BC52C139;
-        Mon,  7 Nov 2022 10:04:10 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id bj12so32222111ejb.13;
-        Mon, 07 Nov 2022 10:04:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sg0lwZYTU9JWcjNHK3+96CsLpgsQAQHMbXUOoXcTWAw=;
-        b=VgvQeRKGXjpN7rsFy94zWCr9OA0dpnIfL2CawpFJYijveycNO8+9xWYnPS7ZVKjqsJ
-         QU94MOffg+97/ZUT1HNpEf0h9rVGh7CXC3zjQbTVmpbY0SQC0tVZYJlGaGr5M3O8trva
-         iHeRGHHGEoBD9/8ZjrZtiIUElt7yj7rKO/WgaxbUi2XLbns2vr0dej9wz8FmY2oT2GHe
-         IibTpgRZF1ZIPO+acBn94a/vy7DZx0xmBwJ1tyiZr8g3X96PHURRJV7seC/Y7ZTnlYtC
-         7+dkOAoUHGL8DGNPkklXkPipQ5gv9b119vAovISr39kdgAIS+T8h7Q4xDbTQny5dRg/K
-         gQrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sg0lwZYTU9JWcjNHK3+96CsLpgsQAQHMbXUOoXcTWAw=;
-        b=7xZWUEV3OHeeOIFofkVtXhxjb5DcZuvskWRY9lhNN890CbHSUFQwRG07BjQKki7Gbn
-         0WWZ7VPe14qadP1H1EVOSPPSND47cMYVDOdzBEXXJixn+YoN9tz3tTiEej8nSAcVJrl1
-         XAL/XWF8SLwOFYHSFQxx+Jyl2HnC68k/4ZdUJh7lVdJhHLQBh6DepmHLUGHpGO5ZmnsQ
-         NjR9nVErrnVOfcKPn0Q3nnq9Q4WS0kCjjfjpUm0aCiKTosYVctQuDb6aQZ7YomQMei4I
-         G5g/u6QvjBHIVmZvtAvXzmOcpISjLxMwBztDrfyk182q4Kq4q/3GcdF+7LaQ2XrC4Zav
-         LLQg==
-X-Gm-Message-State: ACrzQf1X8tmyLjcrgevRweouxEGx8bGxlLzY7HVAFtjs1OvHvxKLMARb
-        17UcChX04X81Pv6GD/GQRezlxnIyTjG3QxNcOy0=
-X-Google-Smtp-Source: AMsMyM7n2WA+ZnLi0QcBe9sJOWeOu60VDFD0EZ1jJifo/fM9/FZPKUKady57RAJ7Z/vjacnBySXxjJd0TDPhpih5svc=
-X-Received: by 2002:a17:907:270b:b0:7ad:ae01:e0d9 with SMTP id
- w11-20020a170907270b00b007adae01e0d9mr46374041ejk.196.1667844248212; Mon, 07
- Nov 2022 10:04:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20221028165921.94487-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <Y17BWPuEcmY7Bba3@spud> <CA+V-a8uKQ8QvYi5qLC9O=QAQN5CxNB7cOTmw4vk+ndB2R8d3nQ@mail.gmail.com>
- <Y17+pHAg/SBJAEXq@spud> <CA+V-a8t-niCHSWo_CSRSkPS4ND12DAkiwxWxOM1vNn=oBKKd_w@mail.gmail.com>
-In-Reply-To: <CA+V-a8t-niCHSWo_CSRSkPS4ND12DAkiwxWxOM1vNn=oBKKd_w@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Mon, 7 Nov 2022 18:03:41 +0000
-Message-ID: <CA+V-a8utoDSKcZFdtJ0BKwvPfcvf0WVH2Va-Fv_-pKC1FOOVsQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] Add support for Renesas RZ/Five SoC
-To:     Conor Dooley <conor@kernel.org>
+        Mon, 7 Nov 2022 13:18:16 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD73252AD;
+        Mon,  7 Nov 2022 10:17:17 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0ECCBB815E8;
+        Mon,  7 Nov 2022 18:17:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B856CC4347C;
+        Mon,  7 Nov 2022 18:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667845034;
+        bh=xe7fMo4Kua9n3JiLpB5ttddzY6yu64WGLoSwGcPiCaQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vLd3QwnadAoxekjEhecUkcubKyn+7O5Rt7XZQia/an8wm6y9aAtiYEQj0UyUFWl2e
+         fApn5rCpI1+Ha7mg3o8TJIyngLDhzU5/H4qZ32MkidfILXPZviAskPnndZvb+jnLvu
+         haXFY+DBmHkUi4/Jx1QoW+GXiTOz6NnGuUE9c3W7/SpDiThcV4dYNtp8nFSEmyLhFC
+         5C08PbeMoe0R4rxoKr2f1hsPyU4K2W3fjTQaph8ZDKadq8VuQuXUYGTjq91g8qSPxI
+         gQ4f0ip6B4ELkYf0GhcfGBTvebMvTSfVL96ITPTfFM9EDTPU7Yj/5NSuKzJK1ebHTO
+         LlvI8pC8M+Tbw==
+Date:   Mon, 7 Nov 2022 18:17:08 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        geert+renesas@glider.be
 Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
@@ -73,72 +53,92 @@ Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v5 0/7] Add support for Renesas RZ/Five SoC
+Message-ID: <Y2lLpCRpTQL+0dsR@spud>
+References: <20221028165921.94487-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <Y17BWPuEcmY7Bba3@spud>
+ <CA+V-a8uKQ8QvYi5qLC9O=QAQN5CxNB7cOTmw4vk+ndB2R8d3nQ@mail.gmail.com>
+ <Y17+pHAg/SBJAEXq@spud>
+ <CA+V-a8t-niCHSWo_CSRSkPS4ND12DAkiwxWxOM1vNn=oBKKd_w@mail.gmail.com>
+ <CA+V-a8utoDSKcZFdtJ0BKwvPfcvf0WVH2Va-Fv_-pKC1FOOVsQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8utoDSKcZFdtJ0BKwvPfcvf0WVH2Va-Fv_-pKC1FOOVsQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Conor,
-
-On Sun, Oct 30, 2022 at 11:01 PM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
->
+On Mon, Nov 07, 2022 at 06:03:41PM +0000, Lad, Prabhakar wrote:
 > Hi Conor,
->
-> On Sun, Oct 30, 2022 at 10:46 PM Conor Dooley <conor@kernel.org> wrote:
+> 
+> On Sun, Oct 30, 2022 at 11:01 PM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
 > >
-> > On Sun, Oct 30, 2022 at 10:37:01PM +0000, Lad, Prabhakar wrote:
-> > > Hi Conor,
+> > Hi Conor,
+> >
+> > On Sun, Oct 30, 2022 at 10:46 PM Conor Dooley <conor@kernel.org> wrote:
 > > >
-> > > On Sun, Oct 30, 2022 at 6:24 PM Conor Dooley <conor@kernel.org> wrote:
+> > > On Sun, Oct 30, 2022 at 10:37:01PM +0000, Lad, Prabhakar wrote:
+> > > > Hi Conor,
 > > > >
-> > > > On Fri, Oct 28, 2022 at 05:59:14PM +0100, Prabhakar wrote:
-> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > On Sun, Oct 30, 2022 at 6:24 PM Conor Dooley <conor@kernel.org> wrote:
 > > > > >
-> > > > > Hi All,
+> > > > > On Fri, Oct 28, 2022 at 05:59:14PM +0100, Prabhakar wrote:
+> > > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > >
+> > > > > > Hi All,
+> > > > > >
+> > > > > > The RZ/Five microprocessor includes a RISC-V CPU Core (AX45MP Single)
+> > > > > > 1.0 GHz, 16-bit DDR3L/DDR4 interface. And it also has many interfaces such
+> > > > > > as Gbit-Ether, CAN, and USB 2.0, making it ideal for applications such as
+> > > > > > entry-class social infrastructure gateway control and industrial gateway
+> > > > > > control.
+> > > > > >
+> > > > > > This patch series adds initial SoC DTSi support for Renesas RZ/Five
+> > > > > > (R9A07G043) SoC. Below is the list of IP blocks enabled in the initial
+> > > > > > board DTS which can be used to boot via initramfs on RZ/Five SMARC EVK:
+> > > > > > - AX45MP CPU
+> > > > > > - CPG
+> > > > > > - PINCTRL
 > > > > >
-> > > > > The RZ/Five microprocessor includes a RISC-V CPU Core (AX45MP Single)
-> > > > > 1.0 GHz, 16-bit DDR3L/DDR4 interface. And it also has many interfaces such
-> > > > > as Gbit-Ether, CAN, and USB 2.0, making it ideal for applications such as
-> > > > > entry-class social infrastructure gateway control and industrial gateway
-> > > > > control.
+> > > > > Hey,
+> > > > > Looks like you've got a pair of warnings here from dtbs_check. I tested
+> > > > > this on top of 20221028's next, with the three branches below merged in,
+> > > > > hopefully my merges aren't the source of them:
 > > > > >
-> > > > > This patch series adds initial SoC DTSi support for Renesas RZ/Five
-> > > > > (R9A07G043) SoC. Below is the list of IP blocks enabled in the initial
-> > > > > board DTS which can be used to boot via initramfs on RZ/Five SMARC EVK:
-> > > > > - AX45MP CPU
-> > > > > - CPG
-> > > > > - PINCTRL
-> > > >
-> > > > Hey,
-> > > > Looks like you've got a pair of warnings here from dtbs_check. I tested
-> > > > this on top of 20221028's next, with the three branches below merged in,
-> > > > hopefully my merges aren't the source of them:
-> > > >
-> > > > linux/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: pinctrl@11030000: 'interrupt-controller' is a required property
-> > > >         From schema: Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> > > > linux/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: pinctrl@11030000: '#interrupt-cells' is a required property
-> > > >         From schema: linux/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> > > >
-> > > Thanks for the review and test. The warnings above are coming from [0]
-> > > as support for IRQC is missing, once that is added the warnings should
-> > > go away.
+> > > > > linux/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: pinctrl@11030000: 'interrupt-controller' is a required property
+> > > > >         From schema: Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+> > > > > linux/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: pinctrl@11030000: '#interrupt-cells' is a required property
+> > > > >         From schema: linux/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+> > > > >
+> > > > Thanks for the review and test. The warnings above are coming from [0]
+> > > > as support for IRQC is missing, once that is added the warnings should
+> > > > go away.
+> > >
+> > > Right. I merged in the stuff in Geert's trees & I don't think I saw any
+> > > pending patches in the cover that I missed. Is there something else that
+> > > adds the support that's not going to make v6.2? I got rid of all the
+> > > dtbs_check warnings for v6.1 and I'd really like to keep things that
+> > > way!
+> > >
+> > Sorry that pacth wasn't posted yet so I hadn't mentioned it in the
+> > cover letter. I'll make sure I get it posted asap and merged for v6.2.
 > >
-> > Right. I merged in the stuff in Geert's trees & I don't think I saw any
-> > pending patches in the cover that I missed. Is there something else that
-> > adds the support that's not going to make v6.2? I got rid of all the
-> > dtbs_check warnings for v6.1 and I'd really like to keep things that
-> > way!
-> >
-> Sorry that pacth wasn't posted yet so I hadn't mentioned it in the
-> cover letter. I'll make sure I get it posted asap and merged for v6.2.
->
-I have got the patches out [0] which will fix the warnings seen above.
+> I have got the patches out [0] which will fix the warnings seen above.
 
-BTW on the riscv patchwork I see status as fail "Patch does not apply
-to for-next" does that mean I need to resend re-basing on your tree?
+Cool, thanks :)
 
-[0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> 
+> BTW on the riscv patchwork I see status as fail "Patch does not apply
+> to for-next" does that mean I need to resend re-basing on your tree?
 
-Cheers,
-Prabhakar
+Nah, I though that Geert would be applying this patchset, no?
+If that's the case, it only needs to apply to his tree.
+
+Geert, are you waiting for an ack from Palmer?
+
+> [0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> 
+> Cheers,
+> Prabhakar
