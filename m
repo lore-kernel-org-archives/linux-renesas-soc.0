@@ -2,86 +2,197 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA531C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEC4C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232831AbiKGQb5 (ORCPT
+        id S232690AbiKGQcX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:31:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57086 "EHLO
+        Mon, 7 Nov 2022 11:32:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232699AbiKGQb3 (ORCPT
+        with ESMTP id S232348AbiKGQcL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:31:29 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 356A925C4F;
-        Mon,  7 Nov 2022 08:29:55 -0800 (PST)
-Received: by mail-qt1-f172.google.com with SMTP id h21so7177121qtu.2;
-        Mon, 07 Nov 2022 08:29:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=22NI28i4eJIAWoI0KP/jA56ElTKsufgBluLSOD3bIFI=;
-        b=7rYAy88iB+wyLgcxbqMHbXFaeVYWz3pplarcHM+DBq9V1CpQA8HkLFJ03lJtS4NLas
-         6MLfrS7Y+3seGe27AzoaMD8qKDnpqgYc/EnYx2rEW27h7LLF+OV0NjnXDR9QEGLJJid/
-         2EQywbuYoelCPKfRjrY5SzHDZ49mlBL3I1lxlwSWXK/5VJNwK8/m8v2u+2b1VDQkP7xN
-         +iz4V90Fsyb8S6Xk03RqisKOq+8wrGI8bl+Hijt4H331QigwjSSSN3sPcTQbCaA51O0Y
-         7mVdMXX6/MDRRnWmuVk/mHf2vieeDoRZ3uy1VTOkYCDmLFeYRiZlyYGVR1JeeMndo8c4
-         LTbw==
-X-Gm-Message-State: ACrzQf1QCNsaWys6JlDzZEuxzNSBm8w1bVp5Gpw3oXh5vxcF14c9QbV8
-        dyz8RkcPeB2Pl2EqQQCPafcrw3tbmhYChw==
-X-Google-Smtp-Source: AMsMyM7udqnDmC1YLE6yEF61A91uHF2dmxXp8nDbmTdTpW7kGg83DMyv1sw+K6iIObtAtRUkEa3Grg==
-X-Received: by 2002:ac8:7281:0:b0:3a5:3e54:694 with SMTP id v1-20020ac87281000000b003a53e540694mr25806432qto.647.1667838594114;
-        Mon, 07 Nov 2022 08:29:54 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id i5-20020ac871c5000000b003a494b61e67sm6325156qtp.46.2022.11.07.08.29.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 08:29:53 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id j2so14250516ybb.6;
-        Mon, 07 Nov 2022 08:29:53 -0800 (PST)
-X-Received: by 2002:a25:4fc2:0:b0:6be:afb4:d392 with SMTP id
- d185-20020a254fc2000000b006beafb4d392mr46548846ybb.604.1667838593097; Mon, 07
- Nov 2022 08:29:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20221104151135.4706-1-wsa+renesas@sang-engineering.com> <20221104151135.4706-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20221104151135.4706-3-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 7 Nov 2022 17:29:42 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW1jNGBJgdfgS=3=FbK3VTHe-ZZ08CSEwdDrqv5C2FSwA@mail.gmail.com>
-Message-ID: <CAMuHMdW1jNGBJgdfgS=3=FbK3VTHe-ZZ08CSEwdDrqv5C2FSwA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a779g0: Add CMT node
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Thanh Quan <thanh.quan.xn@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Mon, 7 Nov 2022 11:32:11 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0018C26121;
+        Mon,  7 Nov 2022 08:30:17 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3502ED1;
+        Mon,  7 Nov 2022 08:30:23 -0800 (PST)
+Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B80A53F534;
+        Mon,  7 Nov 2022 08:30:02 -0800 (PST)
+From:   Pierre Gondois <pierre.gondois@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Pierre Gondois <pierre.gondois@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Brijesh Singh <brijeshkumar.singh@amd.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        William Zhang <william.zhang@broadcom.com>,
+        Anand Gore <anand.gore@broadcom.com>,
+        Kursad Oney <kursad.oney@broadcom.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Chester Lin <clin@suse.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Matthias Brugger <mbrugger@suse.com>,
+        NXP S32 Linux Team <s32@nxp.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
+        Adam Ford <aford173@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, Li Jun <jun.li@nxp.com>,
+        Marek Vasut <marex@denx.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        Joy Zou <joy.zou@nxp.com>, David Heidelberg <david@ixit.cz>,
+        Liu Ying <victor.liu@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Shijie Qin <shijie.qin@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Wei Fang <wei.fang@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Vadym Kochan <vadym.kochan@plvision.eu>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Akhil R <akhilrajeev@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Ashish Mhetre <amhetre@nvidia.com>,
+        Johan Jonker <jbx6244@gmail.com>,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Aswani Reddy <aswani.reddy@samsung.com>,
+        Shashank Prashar <s.prashar@samsung.com>,
+        devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-realtek-soc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 18/23] arm64: dts: Update cache properties for renesas
+Date:   Mon,  7 Nov 2022 16:57:11 +0100
+Message-Id: <20221107155825.1644604-19-pierre.gondois@arm.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
+References: <20221107155825.1644604-1-pierre.gondois@arm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Nov 4, 2022 at 4:11 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> From: Thanh Quan <thanh.quan.xn@renesas.com>
->
-> Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
-> [wsa: merged the fixes into this one and rebased]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The DeviceTree Specification v0.3 specifies that the cache node
+'compatible' and 'cache-level' properties are 'required'. Cf.
+s3.8 Multi-level and Shared Cache Nodes
+The 'cache-unified' property should be present if one of the
+properties for unified cache is present ('cache-size', ...).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.2.
+Update the Device Trees accordingly.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+---
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 1 +
+ 3 files changed, 3 insertions(+)
 
-                        Geert
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+index 689aa4ba416b..18c69a187ecb 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+@@ -88,6 +88,7 @@ L3_CA55: cache-controller-0 {
+ 			compatible = "cache";
+ 			cache-unified;
+ 			cache-size = <0x40000>;
++			cache-level = <3>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 2283d4fb8736..86866d9dc7c4 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -109,6 +109,7 @@ L3_CA55: cache-controller-0 {
+ 			compatible = "cache";
+ 			cache-unified;
+ 			cache-size = <0x40000>;
++			cache-level = <3>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index 358d4c34465f..b36dd5291e5a 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+@@ -109,6 +109,7 @@ L3_CA55: cache-controller-0 {
+ 			compatible = "cache";
+ 			cache-unified;
+ 			cache-size = <0x40000>;
++			cache-level = <3>;
+ 		};
+ 	};
+ 
+-- 
+2.25.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
