@@ -2,258 +2,114 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1342AC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0EBC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232306AbiKGQiS (ORCPT
+        id S232505AbiKGQjR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:38:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35530 "EHLO
+        Mon, 7 Nov 2022 11:39:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231302AbiKGQiR (ORCPT
+        with ESMTP id S231426AbiKGQjR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:38:17 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 244B9CDA;
-        Mon,  7 Nov 2022 08:38:16 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F14141FB;
-        Mon,  7 Nov 2022 08:38:21 -0800 (PST)
-Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C69D73F534;
-        Mon,  7 Nov 2022 08:38:00 -0800 (PST)
-From:   Pierre Gondois <pierre.gondois@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Pierre Gondois <pierre.gondois@arm.com>,
+        Mon, 7 Nov 2022 11:39:17 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91ED2218;
+        Mon,  7 Nov 2022 08:39:15 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 285CF20002;
+        Mon,  7 Nov 2022 16:39:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1667839154;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1y0s8VQyRRPKoR290AvBHMmKC1XvfiLfyXZ/t0ndQtc=;
+        b=CNYxkGV/NcHfsVKZW9py4VEQNd5Q7qgOA2FmKb8BMkQWOmRaMSg0qOHZ5ET/Zuur+EIJP3
+        DR1YJK+Xffm5Ug1EcFMTE6VQJ9C01M2TP4GgUWyhfvwQJmbmAPk75YRfq0dV5CyUtV21LA
+        MYIerceEF3t2EX/SL+gwQpjc0jdxQeXCBygeZnnE9nByDEZyJvq4efG5+1+7SwjsjABKux
+        XP/TU9PvZxYp3w4E8AFlx0goElOaVbi9UK+2245slTIecZm+9DBZoWq0zhHjzPQUHPA9O5
+        +aQSjGEHgC65aF5qCUfLrzjoYACY0zhpqvmwdutYlCDKtdBS5vJqalDmXM67NA==
+Date:   Mon, 7 Nov 2022 17:39:09 +0100
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Zhou Peng <eagle.zhou@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Adam Ford <aford173@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>, Li Jun <jun.li@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        David Heidelberg <david@ixit.cz>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>, Wei Fang <wei.fang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Arjun K V <arjun.kv@samsung.com>, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 23/23] arm64: dts: Update cache properties for ti
-Date:   Mon,  7 Nov 2022 16:57:16 +0100
-Message-Id: <20221107155825.1644604-24-pierre.gondois@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH 7/7] MAINTAINERS: add the Renesas RZ/N1 USBF controller
+ entry
+Message-ID: <20221107173909.24ef160c@bootlin.com>
+In-Reply-To: <CAMuHMdVip_e7dZ2P7sv1OH+P48dQyjnmsJBoATHLAqzPEcwDdw@mail.gmail.com>
+References: <20221107135825.583877-1-herve.codina@bootlin.com>
+        <20221107135825.583877-8-herve.codina@bootlin.com>
+        <CAMuHMdVip_e7dZ2P7sv1OH+P48dQyjnmsJBoATHLAqzPEcwDdw@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The DeviceTree Specification v0.3 specifies that the cache node
-'compatible' and 'cache-level' properties are 'required'. Cf.
-s3.8 Multi-level and Shared Cache Nodes
-The 'cache-unified' property should be present if one of the
-properties for unified cache is present ('cache-size', ...).
+Hi Geert,
 
-Update the Device Trees accordingly.
+On Mon, 7 Nov 2022 15:42:49 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
----
- arch/arm64/boot/dts/ti/k3-am625.dtsi  | 1 +
- arch/arm64/boot/dts/ti/k3-am62a7.dtsi | 1 +
- arch/arm64/boot/dts/ti/k3-am642.dtsi  | 1 +
- arch/arm64/boot/dts/ti/k3-am654.dtsi  | 2 ++
- arch/arm64/boot/dts/ti/k3-j7200.dtsi  | 1 +
- arch/arm64/boot/dts/ti/k3-j721e.dtsi  | 1 +
- arch/arm64/boot/dts/ti/k3-j721s2.dtsi | 1 +
- 7 files changed, 8 insertions(+)
+> Hi Herv=C3=A9,
+>=20
+> On Mon, Nov 7, 2022 at 3:00 PM Herve Codina <herve.codina@bootlin.com> wr=
+ote:
+> > After contributing the driver, add myself as the maintainer
+> > for Renesas RZ/N1 USBF controller.
+> >
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com> =20
+>=20
+> Thanks for your patch!
+>=20
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -17627,6 +17627,14 @@ S:     Maintained
+> >  F:     Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+> >  F:     drivers/rtc/rtc-rzn1.c
+> >
+> > +RENESAS RZ/N1 USBF CONTROLLER DRIVER
+> > +M:     Herve Codina <herve.codina@bootlin.com> =20
+>=20
+> Herv=C3=A9?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am625.dtsi b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-index 887f31c23fef..7d7e5a1673a2 100644
---- a/arch/arm64/boot/dts/ti/k3-am625.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-@@ -95,6 +95,7 @@ cpu3: cpu@3 {
- 
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
-+		cache-unified;
- 		cache-level = <2>;
- 		cache-size = <0x40000>;
- 		cache-line-size = <64>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-index 331d89fda29d..9734549851c0 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-@@ -95,6 +95,7 @@ cpu3: cpu@3 {
- 
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
-+		cache-unified;
- 		cache-level = <2>;
- 		cache-size = <0x40000>;
- 		cache-line-size = <64>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am642.dtsi b/arch/arm64/boot/dts/ti/k3-am642.dtsi
-index 8a76f4821b11..7a6eedea3aae 100644
---- a/arch/arm64/boot/dts/ti/k3-am642.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am642.dtsi
-@@ -58,6 +58,7 @@ cpu1: cpu@1 {
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x40000>;
- 		cache-line-size = <64>;
- 		cache-sets = <256>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am654.dtsi b/arch/arm64/boot/dts/ti/k3-am654.dtsi
-index a89257900047..4cc329b271ac 100644
---- a/arch/arm64/boot/dts/ti/k3-am654.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am654.dtsi
-@@ -93,6 +93,7 @@ cpu3: cpu@101 {
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x80000>;
- 		cache-line-size = <64>;
- 		cache-sets = <512>;
-@@ -102,6 +103,7 @@ L2_0: l2-cache0 {
- 	L2_1: l2-cache1 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x80000>;
- 		cache-line-size = <64>;
- 		cache-sets = <512>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200.dtsi b/arch/arm64/boot/dts/ti/k3-j7200.dtsi
-index b6da0454cc5b..d74f86b0f622 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200.dtsi
-@@ -84,6 +84,7 @@ cpu1: cpu@1 {
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x100000>;
- 		cache-line-size = <64>;
- 		cache-sets = <1024>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e.dtsi b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-index 0e23886c9fd1..6975cae644d9 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-@@ -86,6 +86,7 @@ cpu1: cpu@1 {
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
- 		cache-level = <2>;
-+		cache-unified;
- 		cache-size = <0x100000>;
- 		cache-line-size = <64>;
- 		cache-sets = <1024>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2.dtsi
-index 7b930a85a29d..78295ee0fee5 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2.dtsi
-@@ -69,6 +69,7 @@ cpu1: cpu@1 {
- 
- 	L2_0: l2-cache0 {
- 		compatible = "cache";
-+		cache-unified;
- 		cache-level = <2>;
- 		cache-size = <0x100000>;
- 		cache-line-size = <64>;
--- 
-2.25.1
+Just to be consistent with other places, I keep "Herve" :)
 
+>=20
+> > +L:     linux-renesas-soc@vger.kernel.org
+> > +L:     linux-usb@vger.kernel.org
+> > +S:     Maintained
+> > +F:     Documentation/devicetree/bindings/usb/renesas,usbf.yaml
+> > +F:     drivers/usb/gadget/udc/renesas_usbf.c
+> > +
+> >  RENESAS R-CAR GEN3 & RZ/N1 NAND CONTROLLER DRIVER
+> >  M:     Miquel Raynal <miquel.raynal@bootlin.com>
+> >  L:     linux-mtd@lists.infradead.org =20
+>=20
+> Up to you, so
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+
+Thanks for the review,
+Herv=C3=A9
+
+--=20
+Herv=C3=A9 Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
