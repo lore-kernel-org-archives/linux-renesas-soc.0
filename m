@@ -2,177 +2,161 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68F8C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98055C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Nov 2022 16:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231667AbiKGQfD (ORCPT
+        id S232142AbiKGQgY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:35:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33044 "EHLO
+        Mon, 7 Nov 2022 11:36:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231302AbiKGQfC (ORCPT
+        with ESMTP id S231319AbiKGQgW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:35:02 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 956762F5;
-        Mon,  7 Nov 2022 08:35:01 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 795B223A;
-        Mon,  7 Nov 2022 08:35:07 -0800 (PST)
-Received: from pierre123.arm.com (pierre123.nice.arm.com [10.34.100.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C5A693F534;
-        Mon,  7 Nov 2022 08:34:45 -0800 (PST)
-From:   Pierre Gondois <pierre.gondois@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Pierre Gondois <pierre.gondois@arm.com>,
-        Jisheng Zhang <jszhang@kernel.org>,
+        Mon, 7 Nov 2022 11:36:22 -0500
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FCFFBBF;
+        Mon,  7 Nov 2022 08:36:20 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 05E97FF805;
+        Mon,  7 Nov 2022 16:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1667838978;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jAQbTqH/8jaUUZTUsIcTg0UMfuDAaFx9RDuuc7CD6OU=;
+        b=mRLAG34oGiKMZsOczQaNZAqu5C9aJHXgCfyyCd8LH9HZwBvSCy+L/c9P+JVoUf+p0broxK
+        xfgxk+9R8zv0qqRFZWZ7IHRXu4CKjo3sZD8oqW8+pdtOrT7Ov1VIVJwGTT3o6P7vU2N3jb
+        UINzMeYNXZo8hUKJTVP0IyZOnuCydNM2Vu2CTPJp9xpfk7F2rfxJCQgCWK7KNzZiRfuhjV
+        IWDHNxLHQ1kfjiSqDVfyYuAGQ1Ja0YeQyUBbyI+9kwnhpkYsCWyea4qp/b5KW3fe9fSpRo
+        TroQdjfXazJf2+x5p4W8NNr7TNrKjgJoTjfFcREsCyxPe5tASXxI5Xi7C71SIA==
+Date:   Mon, 7 Nov 2022 17:36:14 +0100
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        William Zhang <william.zhang@broadcom.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chester Lin <clin@suse.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        NXP S32 Linux Team <s32@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Chanho Min <chanho.min@lge.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Adam Ford <aford173@gmail.com>, Li Jun <jun.li@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        Joy Zou <joy.zou@nxp.com>, David Heidelberg <david@ixit.cz>,
-        Liu Ying <victor.liu@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Zhou Peng <eagle.zhou@nxp.com>,
-        Shijie Qin <shijie.qin@nxp.com>,
-        Haibo Chen <haibo.chen@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Wei Fang <wei.fang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Vadym Kochan <vadym.kochan@plvision.eu>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Johan Jonker <jbx6244@gmail.com>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Andi Shyti <andi@etezian.org>, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 21/23] arm64: dts: Update cache properties for synaptics
-Date:   Mon,  7 Nov 2022 16:57:14 +0100
-Message-Id: <20221107155825.1644604-22-pierre.gondois@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221107155825.1644604-1-pierre.gondois@arm.com>
-References: <20221107155825.1644604-1-pierre.gondois@arm.com>
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH 3/7] soc: renesas: r9a06g032-sysctrl: Handle h2mode
+ device-tree property
+Message-ID: <20221107173614.474707d7@bootlin.com>
+In-Reply-To: <CAMuHMdX17=GJgn3=gYUHo7=1r3amXnPYE4h-45pEH=neAV4oKQ@mail.gmail.com>
+References: <20221107135825.583877-1-herve.codina@bootlin.com>
+        <20221107135825.583877-4-herve.codina@bootlin.com>
+        <CAMuHMdX17=GJgn3=gYUHo7=1r3amXnPYE4h-45pEH=neAV4oKQ@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The DeviceTree Specification v0.3 specifies that the cache node
-'compatible' and 'cache-level' properties are 'required'. Cf.
-s3.8 Multi-level and Shared Cache Nodes
-The 'cache-unified' property should be present if one of the
-properties for unified cache is present ('cache-size', ...).
+Hi Geert,
 
-Update the Device Trees accordingly.
+On Mon, 7 Nov 2022 16:18:06 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-Reviewed-by: Jisheng Zhang <jszhang@kernel.org>
----
- arch/arm64/boot/dts/synaptics/berlin4ct.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> Hi Herv=C3=A9,
+>=20
+> On Mon, Nov 7, 2022 at 2:59 PM Herve Codina <herve.codina@bootlin.com> wr=
+ote:
+> > Handle the h2mode property and forces the CFG_USB[H2MODE] bit
+> > accordingly.
+> >
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com> =20
+>=20
+> Thanks for your patch!
+>=20
+> > --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> > +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> > @@ -946,6 +946,7 @@ static int __init r9a06g032_clocks_probe(struct pla=
+tform_device *pdev)
+> >         struct clk *mclk;
+> >         unsigned int i;
+> >         u16 uart_group_sel[2];
+> > +       u32 usb, h2mode;
+> >         int error;
+> >
+> >         clocks =3D devm_kzalloc(dev, sizeof(*clocks), GFP_KERNEL);
+> > @@ -966,6 +967,26 @@ static int __init r9a06g032_clocks_probe(struct pl=
+atform_device *pdev)
+> >         clocks->reg =3D of_iomap(np, 0);
+> >         if (WARN_ON(!clocks->reg))
+> >                 return -ENOMEM;
+> > +
+> > +       error =3D of_property_read_u32(np, "renesas,h2mode", &h2mode);
+> > +       if (!error) {
+> > +               usb =3D readl(clocks->reg + R9A06G032_SYSCTRL_USB);
+> > +               switch (h2mode) {
+> > +               case 0:
+> > +                       /* 1 host, 1 device */
+> > +                       usb &=3D ~R9A06G032_SYSCTRL_USB_H2MODE;
+> > +                       break;
+> > +               case 1:
+> > +                       /* 2 hosts */
+> > +                       usb |=3D R9A06G032_SYSCTRL_USB_H2MODE;
+> > +                       break;
+> > +               default:
+> > +                       dev_err(dev, "invalid h2mode %d\n", h2mode);
+> > +                       return -EINVAL;
+> > +               }
+> > +               writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB); =20
+>=20
+> Reading the big fat warnings in the documentation about changing
+> this at runtime (disconnect nodes, reset clocks, ...), I'm wondering if
+> the above is sufficient?
 
-diff --git a/arch/arm64/boot/dts/synaptics/berlin4ct.dtsi b/arch/arm64/boot/dts/synaptics/berlin4ct.dtsi
-index 0949acee4728..926da7e1a6ba 100644
---- a/arch/arm64/boot/dts/synaptics/berlin4ct.dtsi
-+++ b/arch/arm64/boot/dts/synaptics/berlin4ct.dtsi
-@@ -64,6 +64,7 @@ cpu3: cpu@3 {
- 
- 		l2: cache {
- 			compatible = "cache";
-+			cache-level = <2>;
- 		};
- 
- 		idle-states {
--- 
-2.25.1
+Well, indeed we should "disconnect all module operated by USBPLL clock=20
+from the NoC interconnect".
 
+I am a bit lost in the sysctrl driver and the clock/reset stuffs.
+In fact, I don't really know how to do that.
+
+I thought that setting the H2MODE value at the clock probe function would
+be sufficient, expecting that the connections would not be already done
+and I didn't see any issues on my system.
+
+Maybe I missed the bootloader that could have already done some connections.
+
+Can someone help ?
+
+>=20
+> > +       }
+> > +
+> >         for (i =3D 0; i < ARRAY_SIZE(r9a06g032_clocks); ++i) {
+> >                 const struct r9a06g032_clkdesc *d =3D &r9a06g032_clocks=
+[i];
+> >                 const char *parent_name =3D d->source ? =20
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>=20
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+
+Thanks,
+Herv=C3=A9
+
+--=20
+Herv=C3=A9 Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
