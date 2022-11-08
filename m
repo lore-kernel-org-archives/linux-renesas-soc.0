@@ -2,105 +2,99 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 598CAC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Nov 2022 13:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35B9C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Nov 2022 15:38:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234629AbiKHNuV (ORCPT
+        id S233825AbiKHPiF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Nov 2022 08:50:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50250 "EHLO
+        Tue, 8 Nov 2022 10:38:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234637AbiKHNuT (ORCPT
+        with ESMTP id S233737AbiKHPiE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Nov 2022 08:50:19 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A40BB843
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Nov 2022 05:50:17 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 65AA161567
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Nov 2022 13:50:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CF515C433C1
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Nov 2022 13:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667915416;
-        bh=7uLgHVUGWznPbcl3IXPDjTEVBIUtaPNRkCGu7WsqVjI=;
-        h=Subject:From:Date:To:From;
-        b=ItY51YKNzcVznJhhqcuTnAFlfe7kIu6mL8GpLR0BA4jdk1aP4TI93UKt3mQsgeW1y
-         5UCpPvQQs3FXykWgP1SvIpefgx4JmQY/9rUYtUEmqEKfnrPCLs3+CLi7RgQyxsd+w8
-         IKvOH/8WwrpROPcX/j8Q9+3zofhRxEuXf+LwGSIReNA11BJ6xY6nZbz9RbmNtRZnrM
-         HbHSE+R6zRiV6Lm7KId+IXypFeK8pFreYLkfs1wyCP77JeM//74tBSEUKEr203ZXXH
-         Mjxbqbwy7W5YWqP8luqHm5pzHz02QXrLiXCSp3iRP55uxNbe7aEgSx+th7pX1djSgt
-         /I7tpgXM4v1Yg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B818BC4166D
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Nov 2022 13:50:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 8 Nov 2022 10:38:04 -0500
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8644258038;
+        Tue,  8 Nov 2022 07:38:03 -0800 (PST)
+Received: by mail-qt1-f169.google.com with SMTP id z6so8855712qtv.5;
+        Tue, 08 Nov 2022 07:38:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e1z+a2J7Rl+GyLpkq46imOOD0yWvTx4mqso+OFzooPY=;
+        b=1mTqDMnmb96dDTpkIodXOu9X+Pk/grKsN+VzQGiVkhUZZOQPiwXhPK3S3KXq3Ic30U
+         LXE3RYSRFbVmIqTl1Lt40mlEyarZQlrsmAa65mrodaNyokg1ZixBLlzX0RTYq/yhzBY0
+         sqG5zuNlXhqtJibhxno0Plhn7tgpCr3iFLTQb7z/6CUbxers2WkcU3Sz7bm4KfGa9NFJ
+         Ah0XSVtE9TisTQJB0rpvhQUieAABfyfdM/QNm7FiIgLQg97te7+Da+aSX/yz9MgTmEbP
+         GdSGISp2TMCRrhwchQXRirupVs5ZP/h73N/YdwP3J6faz51eMH62AQikJgwn1R1ObxI4
+         z7Yg==
+X-Gm-Message-State: ACrzQf0zl7VJfFaHCsS98gC+b+dXNqkkRCChn75FOm266S0ZtxZ0IYSl
+        gBDgZxQsWrk65DDwMG9vmAMhr8clEkzz+9HS
+X-Google-Smtp-Source: AMsMyM4uyTbfjxwhaBma4SAODuQ7cjGmK32pMHXXk5PPI5AHfj9hLyZh1O0xdOfjkWfA777ojCh2zg==
+X-Received: by 2002:ac8:6a18:0:b0:3a5:49fb:2365 with SMTP id t24-20020ac86a18000000b003a549fb2365mr25772988qtr.587.1667921882522;
+        Tue, 08 Nov 2022 07:38:02 -0800 (PST)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id f1-20020a05620a408100b006fa4a81e895sm9498087qko.67.2022.11.08.07.38.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Nov 2022 07:38:01 -0800 (PST)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-36a4b86a0abso137141317b3.7;
+        Tue, 08 Nov 2022 07:38:01 -0800 (PST)
+X-Received: by 2002:a81:12c8:0:b0:36a:bd6b:92fb with SMTP id
+ 191-20020a8112c8000000b0036abd6b92fbmr51884942yws.316.1667921881301; Tue, 08
+ Nov 2022 07:38:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <166791541670.11791.14185890872193156181.git-patchwork-summary@kernel.org>
-Date:   Tue, 08 Nov 2022 13:50:16 +0000
-To:     linux-renesas-soc@vger.kernel.org
+References: <20221028165921.94487-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20221028165921.94487-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20221028165921.94487-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Nov 2022 16:37:49 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVFnCDz2FaH6hCxADBgrzkcCC8ASh2qDXbkcJq4=B1UUQ@mail.gmail.com>
+Message-ID: <CAMuHMdVFnCDz2FaH6hCxADBgrzkcCC8ASh2qDXbkcJq4=B1UUQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/7] riscv: Kconfig.socs: Add ARCH_RENESAS kconfig option
+To:     Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Guo Ren <guoren@kernel.org>, Anup Patel <anup@brainfault.org>,
+        Atish Patra <atishp@rivosinc.com>,
+        Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+On Fri, Oct 28, 2022 at 6:59 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add ARCH_RENESAS config option to allow selecting the Renesas RISC-V SoCs.
+> We currently have the newly added RZ/Five (R9A07G043) RISC-V based SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> v4 -> v5
+> * Sorted as per SoC name
+> * Included RB tag from Conor
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Series: Update cache properties for arm64 DTS
-  Submitter: Pierre Gondois <Pierre.Gondois@arm.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=692829
-  Lore link: https://lore.kernel.org/r/20221107155825.1644604-1-pierre.gondois@arm.com
-    Patches: [v2,01/23] arm64: dts: Update cache properties for amazon
-             [v2,18/23] arm64: dts: Update cache properties for renesas
+Gr{oetje,eeting}s,
 
-Series: r8a779f0: update SCIF parent clocks
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=691668
-  Lore link: https://lore.kernel.org/r/20221103143440.46449-1-wsa+renesas@sang-engineering.com
-    Patches: [1/4] clk: renesas: r8a779f0: Fix HSCIF parent clocks
-             [3/4] arm64: dts: renesas: r8a779f0: Fix HSCIF "brg_int" clock
-             [4/4] arm64: dts: renesas: r8a779f0: Fix SCIF "brg_int" clock
+                        Geert
 
-Series: r8a779g0: add TMU support
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=692150
-  Lore link: https://lore.kernel.org/r/20221104151135.4706-1-wsa+renesas@sang-engineering.com
-    Patches: [1/3] clk: renesas: r8a779g0: Add CMT clocks
-             [2/3] arm64: dts: renesas: r8a779g0: Add CMT node
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Patch: arm64: dts: renesas: r9a07g044: Drop #address-cells from pinctrl node
-  Submitter: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=692872
-  Lore link: https://lore.kernel.org/r/20221107172953.63218-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-
-Series: Minor fixes for RZ/V2M
-  Submitter: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=691860
-  Lore link: https://lore.kernel.org/r/20221103230648.53748-1-fabrizio.castro.jz@renesas.com
-    Patches: [1/3] arm64: dts: renesas: r9a09g011: Fix unit address format error
-             [3/3] arm64: dts: renesas: r9a09g011: Fix I2C SoC specific strings
-
-Series: Fix r9a09g011 specific I2C compatible string
-  Submitter: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=692856
-  Lore link: https://lore.kernel.org/r/20221107165027.54150-1-fabrizio.castro.jz@renesas.com
-    Patches: [v2,1/2] dt-bindings: i2c: renesas,rzv2m: Fix SoC specific string
-             [v2,2/2] arm64: dts: renesas: r9a09g011: Fix I2C SoC specific strings
-
-
-Total patches: 12
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
