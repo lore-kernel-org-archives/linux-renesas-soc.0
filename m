@@ -2,62 +2,60 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF61C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Nov 2022 16:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE90CC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Nov 2022 16:12:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233961AbiKHQKY (ORCPT
+        id S234017AbiKHQMp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Nov 2022 11:10:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49390 "EHLO
+        Tue, 8 Nov 2022 11:12:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233877AbiKHQKX (ORCPT
+        with ESMTP id S233736AbiKHQMo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Nov 2022 11:10:23 -0500
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46A3D64EA;
-        Tue,  8 Nov 2022 08:10:22 -0800 (PST)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-13bd19c3b68so16727915fac.7;
-        Tue, 08 Nov 2022 08:10:22 -0800 (PST)
+        Tue, 8 Nov 2022 11:12:44 -0500
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8472F1C42D;
+        Tue,  8 Nov 2022 08:12:43 -0800 (PST)
+Received: by mail-qt1-f180.google.com with SMTP id s4so8911219qtx.6;
+        Tue, 08 Nov 2022 08:12:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tgYwl0gmnsxFOUsgyWE/Sl4MS1UpSQ37yRLVhvYKL6w=;
-        b=yktN0pk7EvGJHTbI3HvqPHaxglC0owyhkI8v8QNN/BrBtxUHUzwGfWPLoglQU8kfjq
-         YAlljEdmIkv2CDYH8E0DUIhOgL2OkMXkDd6xzCh8ug/++2qjNzRucWzhaM70MpH8tlHf
-         IRnmzfmvOmHgK/MZuAY2kL5DTKyr7FSSCcpby2WN3fjPstp0keY7oidOSjvJtn/EyFqv
-         qM9mLSBlkHVvrp+sQgKxxzga6OMljpV/xxC7j+RneiMxp4KtcI01CRjDtfbGqXSPDvcX
-         15uBkfiDBWpBoBCbfUiVWQWkaVgmaw9+iXsaBo/J1Oz8uakh7A0cDEcf4zde2Pn+//vY
-         xYwQ==
-X-Gm-Message-State: ACrzQf1a6ZrNLkS2WznBE1eWybV8VjlHoRlJOb+dxnSEG8sI+uSVa8sb
-        PfdW/yntghlJPRPv9AQ/Gu/UDKzrdYXoV4lL
-X-Google-Smtp-Source: AMsMyM7XkTAVkimfUleHK0FDOWapWsrhTdaox2C6TD+xEsoLtkeAL1hncV71Gj5WQeTM/C5Xuk/j0w==
-X-Received: by 2002:a05:6870:aa94:b0:136:c9c1:6737 with SMTP id gr20-20020a056870aa9400b00136c9c16737mr714857oab.146.1667923821332;
-        Tue, 08 Nov 2022 08:10:21 -0800 (PST)
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
-        by smtp.gmail.com with ESMTPSA id s205-20020acadbd6000000b0034d9042758fsm3609549oig.24.2022.11.08.08.10.21
+        bh=rgqoDDJ4Y7w9ioCT4WNS5M7fA0vMFFdNn1b0OYSBfYA=;
+        b=GpmBaz0JRAPyED9Z08hosalyp7D2pqsYkfA4GqO4RWTekWGhADRQJaneEOMwEn1BPP
+         FFlrbo3YNCUGA9ADE2h1PNhtlZfIaB9PpV6GQnxV9rpb1jc4YCXsLpT63DpWmiZkqAGJ
+         iI7QueXpdBk7JDWX9OgSlLPxLWAnAykIeGjtfCp3roy7yr0DfqrEjTiuVXqN/quNjR5t
+         x83JOcf2i9c15HPe7P9GBh953OXDODqt1RDUo494gSEQsi2byO9SdYApU8nlU4gri4FX
+         Zm5I6GHC71C3NPrvzcHLqpqLhPXtusVuWgf2Nx0t7aREguYNjdSfC/uQGxJCafuCrleI
+         A76A==
+X-Gm-Message-State: ACrzQf2bCsw3jEVSawyjTAVifzYgyCUHbatsXjircS6gzWkyD8145Gfu
+        lY7lFpydcUEvxmace1TRRAY25JensvhSHpro
+X-Google-Smtp-Source: AMsMyM6leyTglIEwiKZRkfgyd4VRyLIQihgk8m+9roQQtu0NF15Hj/X/tvF3PfsbE06mhhrP5+RqpA==
+X-Received: by 2002:ac8:46d3:0:b0:3a5:5a4a:2d98 with SMTP id h19-20020ac846d3000000b003a55a4a2d98mr20504768qto.50.1667923962258;
+        Tue, 08 Nov 2022 08:12:42 -0800 (PST)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id v20-20020a05622a145400b0035cd6a4ba3csm8562242qtx.39.2022.11.08.08.12.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Nov 2022 08:10:21 -0800 (PST)
-Received: by mail-ot1-f50.google.com with SMTP id r13-20020a056830418d00b0065601df69c0so8618791otu.7;
-        Tue, 08 Nov 2022 08:10:21 -0800 (PST)
+        Tue, 08 Nov 2022 08:12:41 -0800 (PST)
+Received: by mail-yb1-f181.google.com with SMTP id n85so12311132yba.1;
+        Tue, 08 Nov 2022 08:12:40 -0800 (PST)
 X-Received: by 2002:a25:6b07:0:b0:6cd:3a43:bfe5 with SMTP id
- g7-20020a256b07000000b006cd3a43bfe5mr43158792ybc.89.1667923389628; Tue, 08
- Nov 2022 08:03:09 -0800 (PST)
+ g7-20020a256b07000000b006cd3a43bfe5mr43205650ybc.89.1667923960599; Tue, 08
+ Nov 2022 08:12:40 -0800 (PST)
 MIME-Version: 1.0
 References: <20221028165921.94487-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <Y17BWPuEcmY7Bba3@spud> <CA+V-a8uKQ8QvYi5qLC9O=QAQN5CxNB7cOTmw4vk+ndB2R8d3nQ@mail.gmail.com>
- <Y17+pHAg/SBJAEXq@spud> <CA+V-a8t-niCHSWo_CSRSkPS4ND12DAkiwxWxOM1vNn=oBKKd_w@mail.gmail.com>
- <CA+V-a8utoDSKcZFdtJ0BKwvPfcvf0WVH2Va-Fv_-pKC1FOOVsQ@mail.gmail.com> <Y2lLpCRpTQL+0dsR@spud>
-In-Reply-To: <Y2lLpCRpTQL+0dsR@spud>
+ <20221028165921.94487-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdUKVxO24Qgyx37tbs5+m0Us0VF3eTZCC2KV=AC8z2JneQ@mail.gmail.com> <CA+V-a8t5Qah3MNm2m__xnmgK-52=HC9QBPPudnB+1j4-FYJ_NA@mail.gmail.com>
+In-Reply-To: <CA+V-a8t5Qah3MNm2m__xnmgK-52=HC9QBPPudnB+1j4-FYJ_NA@mail.gmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Nov 2022 17:02:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXjZGTNM7pUqxwXd08bjuPEFUuUwKFGx01FVCqOGnc6hQ@mail.gmail.com>
-Message-ID: <CAMuHMdXjZGTNM7pUqxwXd08bjuPEFUuUwKFGx01FVCqOGnc6hQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] Add support for Renesas RZ/Five SoC
-To:     Conor Dooley <conor@kernel.org>
-Cc:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+Date:   Tue, 8 Nov 2022 17:12:29 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWTJf24XR+KR8yVJOnfpgs-PkUf9b8B=PX9Dd4mfawD5Q@mail.gmail.com>
+Message-ID: <CAMuHMdWTJf24XR+KR8yVJOnfpgs-PkUf9b8B=PX9Dd4mfawD5Q@mail.gmail.com>
+Subject: Re: [PATCH v5 7/7] riscv: configs: defconfig: Enable Renesas RZ/Five SoC
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -77,82 +75,88 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Conor,
+Hi Prabhakar,
 
-On Mon, Nov 7, 2022 at 7:17 PM Conor Dooley <conor@kernel.org> wrote:
-> On Mon, Nov 07, 2022 at 06:03:41PM +0000, Lad, Prabhakar wrote:
-> > On Sun, Oct 30, 2022 at 11:01 PM Lad, Prabhakar
-> > <prabhakar.csengg@gmail.com> wrote:
-> > > On Sun, Oct 30, 2022 at 10:46 PM Conor Dooley <conor@kernel.org> wrote:
-> > > > On Sun, Oct 30, 2022 at 10:37:01PM +0000, Lad, Prabhakar wrote:
-> > > > > On Sun, Oct 30, 2022 at 6:24 PM Conor Dooley <conor@kernel.org> wrote:
-> > > > > > On Fri, Oct 28, 2022 at 05:59:14PM +0100, Prabhakar wrote:
-> > > > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > > > The RZ/Five microprocessor includes a RISC-V CPU Core (AX45MP Single)
-> > > > > > > 1.0 GHz, 16-bit DDR3L/DDR4 interface. And it also has many interfaces such
-> > > > > > > as Gbit-Ether, CAN, and USB 2.0, making it ideal for applications such as
-> > > > > > > entry-class social infrastructure gateway control and industrial gateway
-> > > > > > > control.
-> > > > > > >
-> > > > > > > This patch series adds initial SoC DTSi support for Renesas RZ/Five
-> > > > > > > (R9A07G043) SoC. Below is the list of IP blocks enabled in the initial
-> > > > > > > board DTS which can be used to boot via initramfs on RZ/Five SMARC EVK:
-> > > > > > > - AX45MP CPU
-> > > > > > > - CPG
-> > > > > > > - PINCTRL
-> > > > > >
-> > > > > > Hey,
-> > > > > > Looks like you've got a pair of warnings here from dtbs_check. I tested
-> > > > > > this on top of 20221028's next, with the three branches below merged in,
-> > > > > > hopefully my merges aren't the source of them:
-> > > > > >
-> > > > > > linux/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: pinctrl@11030000: 'interrupt-controller' is a required property
-> > > > > >         From schema: Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> > > > > > linux/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb: pinctrl@11030000: '#interrupt-cells' is a required property
-> > > > > >         From schema: linux/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> > > > > >
-> > > > > Thanks for the review and test. The warnings above are coming from [0]
-> > > > > as support for IRQC is missing, once that is added the warnings should
-> > > > > go away.
-> > > >
-> > > > Right. I merged in the stuff in Geert's trees & I don't think I saw any
-> > > > pending patches in the cover that I missed. Is there something else that
-> > > > adds the support that's not going to make v6.2? I got rid of all the
-> > > > dtbs_check warnings for v6.1 and I'd really like to keep things that
-> > > > way!
-> > > >
-> > > Sorry that pacth wasn't posted yet so I hadn't mentioned it in the
-> > > cover letter. I'll make sure I get it posted asap and merged for v6.2.
+On Tue, Nov 8, 2022 at 5:07 PM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Tue, Nov 8, 2022 at 3:52 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Fri, Oct 28, 2022 at 6:59 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Enable Renesas RZ/Five SoC config in defconfig. It allows the default
+> > > upstream kernel to boot on RZ/Five SMARC EVK board.
+> > >
+> > > Alongside enable SERIAL_SH_SCI config so that the serial driver used by
+> > > RZ/Five SoC is built-in.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > v4 -> v5
+> > > * No change
+> > >
+> > > v3 -> v4
+> > > * Explicitly enabled ARCH_R9A07G043 config (note I have restored the RB
+> > >   tags with this change)
+> > > * Used riscv instead of RISC-V in subject line
+> >
+> > Thanks for the update!
+> >
+> > > --- a/arch/riscv/configs/defconfig
+> > > +++ b/arch/riscv/configs/defconfig
+> > > @@ -29,6 +29,8 @@ CONFIG_SOC_MICROCHIP_POLARFIRE=y
+> > >  CONFIG_SOC_SIFIVE=y
+> > >  CONFIG_SOC_STARFIVE=y
+> > >  CONFIG_SOC_VIRT=y
+> > > +CONFIG_ARCH_RENESAS=y
+> > > +CONFIG_ARCH_R9A07G043=y
+> >
+> > You forgot to refresh after moving ARCH_RENESAS in v5 of "riscv:
+> > Kconfig.socs: Add ARCH_RENESAS kconfig option", and after relying on
+> > ARCH_R9A07G043 in drivers/soc/renesas/Kconfig.
+> >
+> Sorry I missed your point here, could you please elaborate.
 
-> > BTW on the riscv patchwork I see status as fail "Patch does not apply
-> > to for-next" does that mean I need to resend re-basing on your tree?
->
-> Nah, I though that Geert would be applying this patchset, no?
-> If that's the case, it only needs to apply to his tree.
->
-> Geert, are you waiting for an ack from Palmer?
+I mean that the options have moved, so you should update
+your patch like this:
 
-I can take:
-  - [PATCH v5 4/7] riscv: dts: renesas: Add initial devicetree for
-Renesas RZ/Five SoC
-  - [PATCH v5 5/7] riscv: dts: renesas: Add minimal DTS for Renesas
-RZ/Five SMARC EVK
-  - [PATCH v5 6/7] MAINTAINERS: Add entry for Renesas RISC-V
-(4/7 and 5/7 depend on my renesas-arm-dt-for-v6.2 branch) and funnel
-them to the SoC-people.
+    --- a/arch/riscv/configs/defconfig
+    +++ b/arch/riscv/configs/defconfig
+    @@ -26,11 +26,10 @@ CONFIG_EXPERT=y
+     # CONFIG_SYSFS_SYSCALL is not set
+     CONFIG_PROFILING=y
+     CONFIG_SOC_MICROCHIP_POLARFIRE=y
+    +CONFIG_ARCH_RENESAS=y
+     CONFIG_SOC_SIFIVE=y
+     CONFIG_SOC_STARFIVE=y
+     CONFIG_SOC_VIRT=y
+    -CONFIG_ARCH_RENESAS=y
+    -CONFIG_ARCH_R9A07G043=y
+     CONFIG_SMP=y
+     CONFIG_HOTPLUG_CPU=y
+     CONFIG_PM=y
+    @@ -163,6 +159,7 @@ CONFIG_MAILBOX=y
+     CONFIG_RPMSG_CHAR=y
+     CONFIG_RPMSG_CTRL=y
+     CONFIG_RPMSG_VIRTIO=y
+    +CONFIG_ARCH_R9A07G043=y
+     CONFIG_EXT4_FS=y
+     CONFIG_EXT4_FS_POSIX_ACL=y
+     CONFIG_EXT4_FS_SECURITY=y
 
-I can take
-  - [PATCH v5 3/7] riscv: Kconfig.socs: Add ARCH_RENESAS kconfig option
-  - [PATCH v5 7/7] riscv: configs: defconfig: Enable Renesas RZ/Five SoC
-with an ack from Palmer.
+> > >  CONFIG_SMP=y
+> > >  CONFIG_HOTPLUG_CPU=y
+> > >  CONFIG_PM=y
+> >
+> > PM and GPIOLIB are auto-selected by ARCH_R9A07G043 (through ARCH_RZG2L)
+> > resp. SOC_RENESAS, so they can be dropped.  But it's better to do this
+> > after the release of v6.2-rc1, when all pieces have fallen together.
+> >
+> Are you suggesting dropping it from defconfig?
 
-The rest
-  - [PATCH v5 1/7] dt-bindings: riscv: Sort the CPU core list alphabetically
-  - [PATCH v5 2/7] dt-bindings: riscv: Add Andes AX45MP core to the list
-should probably go through the riscv tree, to avoid merge conflicts
-when support for other SoCs is added?
-
-Thanks!
+Yes, but not right now, as that would make it depend on my
+renesas-drivers-for-v6.2 branch to keep them enabled.
 
 Gr{oetje,eeting}s,
 
