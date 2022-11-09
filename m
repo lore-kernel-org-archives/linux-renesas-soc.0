@@ -2,85 +2,144 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EFAC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Nov 2022 02:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A27AC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Nov 2022 02:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229770AbiKICAU (ORCPT
+        id S229600AbiKICGO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Nov 2022 21:00:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44100 "EHLO
+        Tue, 8 Nov 2022 21:06:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbiKICAT (ORCPT
+        with ESMTP id S229549AbiKICGN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Nov 2022 21:00:19 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E2942B271;
-        Tue,  8 Nov 2022 18:00:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 12C7DB81CF2;
-        Wed,  9 Nov 2022 02:00:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9D821C43146;
-        Wed,  9 Nov 2022 02:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667959215;
-        bh=QJ6YypR2u2HdYjpAVqsKbMpBbfxRMBx3ONPbuHelp6g=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=OVT7HdcbxxxHLKdrqENamdZY9CuwyhJe1qXHGbAVGN8hgLxF2SgNEmE+zS3X5xPbL
-         CW94olnIxs6fWE+hUw/Yk/y3qMZNXh3NyZjso9g3mOALIYn9lgX9+SViYwWiD2GxtA
-         It6Ff7w+majBKw/nht3jxGbCFT9iYe0Hp9tF7j0Sa9ZtYsETZN3ld2ML/Pk3H5M6Jr
-         Shl2WAmxukgAUSrHBC6HtJvcO4SdS7q2GuMCy1HMYukojmYaNmS287Ahbn+SR/x6bT
-         Eo4J4olSJHaJbF4/41L4p9k6nEqqq42Xhpix2bS4v1BHQUXU4I2vXRKYjS41culVMV
-         HFPaEo/ButjtA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 874C9E270CD;
-        Wed,  9 Nov 2022 02:00:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 8 Nov 2022 21:06:13 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA43A67F40
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Nov 2022 18:06:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1667959572; x=1699495572;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1+bgl88bT4l84dWxe1Esxv0aN/tc0w23er9ayL4UHmo=;
+  b=DUyoZn+m8MKVRW4CXI5LQya1u+B8pF4c5RZGFBuuMOzNXFQo7ZsiKRo0
+   OHkogufCaOmgP0UcFEaBTsLZyJS2yS3uYYhm1k/dYydg5S2bpB+HnDsHl
+   xahY6du0nDFELhEY00HB8KFAHQI0Qdp1iFr7wmosyIba/JSWECyw0RSQX
+   iCWGZeCNmW1T08CrthO4Vnw2rBRcKILn+UDVo7B066DUD4yyFkjI1aX0S
+   X+xW+bMa7I1x/xWl+YN3EXSpVyl+L2/zpCCHjgXflS+eOFA7JbM2uQx3N
+   o4oECQoM6985yuX3wPQjKdcXZ1bMp1zyPR7Dy7zr/W+SjWc+stJIENQmw
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10525"; a="298382474"
+X-IronPort-AV: E=Sophos;i="5.96,149,1665471600"; 
+   d="scan'208";a="298382474"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2022 18:06:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10525"; a="811455704"
+X-IronPort-AV: E=Sophos;i="5.96,149,1665471600"; 
+   d="scan'208";a="811455704"
+Received: from lkp-server01.sh.intel.com (HELO e783503266e8) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2022 18:06:11 -0800
+Received: from kbuild by e783503266e8 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1osaTi-0000uc-2S;
+        Wed, 09 Nov 2022 02:06:10 +0000
+Date:   Wed, 09 Nov 2022 10:05:57 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ ed9fa6187434bcda5af0af31b20d30a839b0200a
+Message-ID: <636b0b05.cLY6JLAxLju2tE66%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ethernet: renesas: rswitch: Fix endless loop in error
- paths
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166795921555.12027.4687508688577621860.git-patchwork-notify@kernel.org>
-Date:   Wed, 09 Nov 2022 02:00:15 +0000
-References: <20221107081021.2955122-1-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <20221107081021.2955122-1-yoshihiro.shimoda.uh@renesas.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        keescook+coverity-bot@chromium.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: ed9fa6187434bcda5af0af31b20d30a839b0200a  Merge branch 'renesas-next' into renesas-devel
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+elapsed time: 727m
 
-On Mon,  7 Nov 2022 17:10:21 +0900 you wrote:
-> Coverity reported that the error path in rswitch_gwca_queue_alloc_skb()
-> has an issue to cause endless loop. So, fix the issue by changing
-> variables' types from u32 to int. After changed the types,
-> rswitch_tx_free() should use rswitch_get_num_cur_queues() to
-> calculate number of current queues.
-> 
-> Reported-by: coverity-bot <keescook+coverity-bot@chromium.org>
-> Addresses-Coverity-ID: 1527147 ("Control flow issues")
-> Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> 
-> [...]
+configs tested: 66
+configs skipped: 2
 
-Here is the summary with links:
-  - net: ethernet: renesas: rswitch: Fix endless loop in error paths
-    https://git.kernel.org/netdev/net-next/c/380f9acdf747
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-You are awesome, thank you!
+gcc tested configs:
+x86_64                          rhel-8.3-func
+x86_64                    rhel-8.3-kselftests
+arc                                 defconfig
+s390                             allmodconfig
+alpha                               defconfig
+s390                                defconfig
+powerpc                           allnoconfig
+mips                             allyesconfig
+um                           x86_64_defconfig
+powerpc                          allmodconfig
+um                             i386_defconfig
+arc                  randconfig-r043-20221108
+riscv                randconfig-r042-20221108
+alpha                            allyesconfig
+s390                             allyesconfig
+sh                               allmodconfig
+arc                              allyesconfig
+s390                 randconfig-r044-20221108
+i386                                defconfig
+i386                          randconfig-a001
+i386                          randconfig-a003
+i386                          randconfig-a005
+m68k                             allyesconfig
+x86_64               randconfig-a004-20221107
+x86_64               randconfig-a005-20221107
+m68k                             allmodconfig
+x86_64               randconfig-a001-20221107
+x86_64               randconfig-a003-20221107
+x86_64               randconfig-a006-20221107
+x86_64               randconfig-a002-20221107
+i386                          randconfig-a014
+i386                          randconfig-a012
+i386                          randconfig-a016
+x86_64                        randconfig-a015
+x86_64                        randconfig-a013
+ia64                             allmodconfig
+x86_64                           rhel-8.3-syz
+x86_64                         rhel-8.3-kunit
+x86_64                        randconfig-a011
+x86_64                              defconfig
+x86_64                           rhel-8.3-kvm
+i386                             allyesconfig
+x86_64                               rhel-8.3
+x86_64                           allyesconfig
+arm                                 defconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+x86_64                            allnoconfig
+
+clang tested configs:
+hexagon              randconfig-r045-20221108
+hexagon              randconfig-r041-20221108
+i386                          randconfig-a002
+i386                          randconfig-a004
+i386                          randconfig-a013
+i386                          randconfig-a015
+i386                          randconfig-a011
+i386                          randconfig-a006
+x86_64                        randconfig-a014
+x86_64                        randconfig-a016
+x86_64                        randconfig-a012
+riscv                randconfig-r042-20221107
+hexagon              randconfig-r041-20221107
+hexagon              randconfig-r045-20221107
+s390                 randconfig-r044-20221107
+x86_64                        randconfig-a005
+x86_64                        randconfig-a003
+x86_64                        randconfig-a001
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
