@@ -2,80 +2,93 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AFBC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Nov 2022 11:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B22C4708A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Nov 2022 11:18:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236607AbiKNLO6 (ORCPT
+        id S236411AbiKNLSX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Nov 2022 06:14:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43066 "EHLO
+        Mon, 14 Nov 2022 06:18:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236601AbiKNLO3 (ORCPT
+        with ESMTP id S236986AbiKNLRa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2022 06:14:29 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6489A2250F
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Nov 2022 03:10:06 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:9cda:b28b:1ded:8138])
-        by michel.telenet-ops.be with bizsmtp
-        id kBA3280033NlhLw06BA3uE; Mon, 14 Nov 2022 12:10:03 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ouXLm-000TjG-N0; Mon, 14 Nov 2022 12:10:02 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ouX4J-003Jpk-Ml; Mon, 14 Nov 2022 11:51:59 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        Mon, 14 Nov 2022 06:17:30 -0500
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A70E21264;
+        Mon, 14 Nov 2022 03:15:31 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id 65E936000D;
+        Mon, 14 Nov 2022 11:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1668424530;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rIVbSyIZp3imXtExKvo6Q6tMSTGJpwHSvojy2YkLNKY=;
+        b=oK5TgccplQbeUnRe5w0VER8tpOM+JeVb7gYR9spS/2E+xBFr96Bvr4+5xjqDTDe6LnN7l0
+        mkozKP6IFSmHc5JZV/8up090HkHIEZJedIryDPj+m/MX9/sXNkh3mlUuZjZKXbMkuUa7vv
+        P0XoE/j7O8i24EdplurCC9RlRsI22/z55z7Easx8g6+nB7YKNsfZRbFEys7Z5OA2jgvfvR
+        DdpVOoR+YZOtd9ZsdHYXPLHtelIiCeNVtqDQfpYR5qiOvOq/WsZVcu8dQz8mtN/s3DOTNJ
+        b4ciRmoCNBOwmp8YlVAhjGaW/MqEpaaR8bjVoYw5kKKk/7rQJwQ4lmnYONPxEw==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779g0: Add Z0 clock support
-Date:   Mon, 14 Nov 2022 11:51:58 +0100
-Message-Id: <75daa1fd8fa7eaef7b8945bb5906c787222c7ac4.1668423063.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 2/7] dt-bindings: clock: renesas,r9a06g032-sysctrl: Add h2mode property
+Date:   Mon, 14 Nov 2022 12:15:08 +0100
+Message-Id: <20221114111513.1436165-3-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221114111513.1436165-1-herve.codina@bootlin.com>
+References: <20221114111513.1436165-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the Z0 (Cortex-A76 Sub-System) clock on R-Car V4H, based
-on the existing support for Z clocks on R-Car Gen4.
+Add the h2mode property to force the USBs mode ie:
+ - 2 hosts
+or
+ - 1 host and 1 device
 
-Extracted from a patch in the BSP by LUU HOAI.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
-Tested on the White-Hawk development board by changing
+ .../bindings/clock/renesas,r9a06g032-sysctrl.yaml      | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-    -#undef CLOCK_ALLOW_WRITE_DEBUGFS
-    +#define CLOCK_ALLOW_WRITE_DEBUGFS
-
-in drivers/clk/clk.c, writing the desired clock rate to
-/sys/kernel/debug/clk/z0/clk_rate, and running the Dhrystones benchmark.
-The performance/clock rate looks fine over the full range from 53 MHz to
-1.7 GHz.
----
-To be queued in renesas-clk-for-v6.2.
----
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 1da48c81d3ddf3df..c6337a408e5e30da 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -96,6 +96,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED(".vc",	CLK_VC,		CLK_PLL5_DIV2,	3, 1),
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+index 95bf485c6cec..f9e0a58aa4fb 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+@@ -39,6 +39,16 @@ properties:
+   '#power-domain-cells':
+     const: 0
  
- 	/* Core Clock Outputs */
-+	DEF_GEN4_Z("z0",	R8A779G0_CLK_Z0,	CLK_TYPE_GEN4_Z,	CLK_PLL2,	2, 0),
- 	DEF_FIXED("s0d2",	R8A779G0_CLK_S0D2,	CLK_S0,		2, 1),
- 	DEF_FIXED("s0d3",	R8A779G0_CLK_S0D3,	CLK_S0,		3, 1),
- 	DEF_FIXED("s0d4",	R8A779G0_CLK_S0D4,	CLK_S0,		4, 1),
++  renesas,h2mode:
++    description: |
++      Configure the USBs mode.
++        - <0> : the USBs are in 1 host and 1 device mode.
++        - <1> : the USBs are in 2 host mode.
++      If the property is not present, the value used is the one already present
++      in the CFG_USB register (from reset or set by the bootloader).
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1]
++
+   '#address-cells':
+     const: 1
+ 
 -- 
-2.25.1
+2.38.1
 
