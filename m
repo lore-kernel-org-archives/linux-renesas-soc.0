@@ -2,93 +2,128 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520F1C4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Nov 2022 12:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0704CC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Nov 2022 13:32:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237345AbiKNMtO (ORCPT
+        id S236063AbiKNNcU convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Nov 2022 07:49:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41350 "EHLO
+        Mon, 14 Nov 2022 08:32:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237333AbiKNMtM (ORCPT
+        with ESMTP id S235560AbiKNNcS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2022 07:49:12 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3473AF49
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Nov 2022 04:49:11 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:9cda:b28b:1ded:8138])
-        by albert.telenet-ops.be with bizsmtp
-        id kCp62800E3NlhLw06Cp6XY; Mon, 14 Nov 2022 13:49:09 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ouYtd-000UUD-Ro; Mon, 14 Nov 2022 13:49:05 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ouYtd-003gzL-31; Mon, 14 Nov 2022 13:49:05 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] arm64: dts: renesas: r8a779g0: Add CPU core clocks
-Date:   Mon, 14 Nov 2022 13:49:03 +0100
-Message-Id: <aa6e9ae21e451ebd40d54d986bd0296571128d5b.1668429870.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1668429870.git.geert+renesas@glider.be>
-References: <cover.1668429870.git.geert+renesas@glider.be>
+        Mon, 14 Nov 2022 08:32:18 -0500
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 417491DF36;
+        Mon, 14 Nov 2022 05:32:17 -0800 (PST)
+Received: by mail-qv1-f50.google.com with SMTP id x15so7753866qvp.1;
+        Mon, 14 Nov 2022 05:32:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMhSV0Cl1EFcHm2JcZW7TSJN/o+qIpdcOTKCD0tUyyw=;
+        b=Z0sGqRNZfpC3637mrDyRBsKh3YdpcdVL9SA/FNR7afYaaGiuYjj1HUB7EnjDpu+4Ns
+         9b6lA43KBYLlrG1ZJ6HRoCfp3wAphnXMApKZauTrR1LvhgGXaFmi0Kb07nxkB+qjMQFf
+         jXbPX01aYc/oXcABL29jotVw+gLSbXTLA+L7BZKIt4rGfy9shaoIUi/Dob3HHM1yqkDc
+         0Bh8T6gYUxo52y9wcqmD3J6Te2pzz1Y07qrAihYJ7ZyTD/oApQHc5DPSoQF5SzLJamA4
+         fhk7MUVfL0dlLGKpeyHcs5ZSD8hGDBqDfZZU/csGhr8KN1jTRylGenMqdSd+CEkFv9Za
+         bcFA==
+X-Gm-Message-State: ANoB5plYgOISTMZG0uCmvz3XgsAMMbSIKbrQcKtV8TRDLiswmYdwNarh
+        /zEZahieipYTVWX9Rnjw8t4pzjrU9m0YFA==
+X-Google-Smtp-Source: AA0mqf6oFLmxXYoZKWmXAwRl78hgaAGu71UAhfAMwqP9V+/DIVGSmAMrFUUxqOLZPVZrPqF6ljQX2w==
+X-Received: by 2002:a0c:e949:0:b0:4af:b750:b569 with SMTP id n9-20020a0ce949000000b004afb750b569mr12479468qvo.83.1668432736100;
+        Mon, 14 Nov 2022 05:32:16 -0800 (PST)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id dm56-20020a05620a1d7800b006eeb51bb33dsm6443645qkb.78.2022.11.14.05.32.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Nov 2022 05:32:15 -0800 (PST)
+Received: by mail-yb1-f177.google.com with SMTP id j2so13406451ybb.6;
+        Mon, 14 Nov 2022 05:32:15 -0800 (PST)
+X-Received: by 2002:a25:18c5:0:b0:6de:6183:c5c3 with SMTP id
+ 188-20020a2518c5000000b006de6183c5c3mr12383197yby.89.1668432735124; Mon, 14
+ Nov 2022 05:32:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20221114111513.1436165-1-herve.codina@bootlin.com> <20221114111513.1436165-4-herve.codina@bootlin.com>
+In-Reply-To: <20221114111513.1436165-4-herve.codina@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 14 Nov 2022 14:32:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVrx3ug+RKuNXauCLKFYr5qZedrj7KmME0vzRysoqFzPQ@mail.gmail.com>
+Message-ID: <CAMuHMdVrx3ug+RKuNXauCLKFYr5qZedrj7KmME0vzRysoqFzPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] soc: renesas: r9a06g032-sysctrl: Handle h2mode
+ device-tree property
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Describe the clocks for the four Cortex-A76 CPU cores.
-CA76 Sub-Systems 0/1 (both clusters / all CPU cores) are clocked by Z0φ.
+Hi Hervé,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+On Mon, Nov 14, 2022 at 12:15 PM Herve Codina <herve.codina@bootlin.com> wrote:
+>
+> Handle the h2mode property and forces the CFG_USB[H2MODE] bit
+> accordingly.
+>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 21baa4936b4fba3e..9cbe337220ed4dfc 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -46,6 +46,7 @@ a76_0: cpu@0 {
- 			next-level-cache = <&L3_CA76_0>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpg CPG_CORE R8A779G0_CLK_Z0>;
- 		};
- 
- 		a76_1: cpu@100 {
-@@ -56,6 +57,7 @@ a76_1: cpu@100 {
- 			next-level-cache = <&L3_CA76_0>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpg CPG_CORE R8A779G0_CLK_Z0>;
- 		};
- 
- 		a76_2: cpu@10000 {
-@@ -66,6 +68,7 @@ a76_2: cpu@10000 {
- 			next-level-cache = <&L3_CA76_1>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpg CPG_CORE R8A779G0_CLK_Z0>;
- 		};
- 
- 		a76_3: cpu@10100 {
-@@ -76,6 +79,7 @@ a76_3: cpu@10100 {
- 			next-level-cache = <&L3_CA76_1>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpg CPG_CORE R8A779G0_CLK_Z0>;
- 		};
- 
- 		idle-states {
--- 
-2.25.1
+Thanks for the update!
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Minor nit below.
+
+> @@ -966,6 +967,26 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+>         clocks->reg = of_iomap(np, 0);
+>         if (WARN_ON(!clocks->reg))
+>                 return -ENOMEM;
+> +
+> +       error = of_property_read_u32(np, "renesas,h2mode", &h2mode);
+> +       if (!error) {
+> +               usb = readl(clocks->reg + R9A06G032_SYSCTRL_USB);
+> +               switch (h2mode) {
+> +               case 0:
+> +                       /* 1 host, 1 device */
+> +                       usb &= ~R9A06G032_SYSCTRL_USB_H2MODE;
+> +                       break;
+> +               case 1:
+> +                       /* 2 hosts */
+> +                       usb |= R9A06G032_SYSCTRL_USB_H2MODE;
+> +                       break;
+> +               default:
+> +                       dev_err(dev, "invalid h2mode %d\n", h2mode);
+
+%u
+
+> +                       return -EINVAL;
+> +               }
+> +               writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB);
+> +       }
+> +
+>         for (i = 0; i < ARRAY_SIZE(r9a06g032_clocks); ++i) {
+>                 const struct r9a06g032_clkdesc *d = &r9a06g032_clocks[i];
+>                 const char *parent_name = d->source ?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
