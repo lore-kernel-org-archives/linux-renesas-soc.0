@@ -2,69 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB5EC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 12:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA60C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 12:38:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230308AbiKOMbB (ORCPT
+        id S230433AbiKOMig (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:31:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50004 "EHLO
+        Tue, 15 Nov 2022 07:38:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbiKOMbA (ORCPT
+        with ESMTP id S230153AbiKOMif (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:31:00 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B741C932;
-        Tue, 15 Nov 2022 04:30:59 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id d9so19285766wrm.13;
-        Tue, 15 Nov 2022 04:30:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=heQF+yUf7OPPJ/81qSJZBOwzAZ7P4r5Gfhl736W/C8g=;
-        b=K1O66LkMWAD9+WNZ0lBTjZbkXcOR49TVN2NIpTWnEuiWfpdcEvMtJesFzpvhbdmzT9
-         cd483Meg7hspAAedgrkWvcBT2QkaMgGSToQE0ZhrbmcF8cBTNx6RhoE5OjW8023vaSva
-         hbWALv4lfXfLIXZohAmtC7py2VpAObOGcZ177fcy5DXv36MtgYKqgWxmQjJ7sedxm9ws
-         Ob5cC2sTGU0BmH1vibo4vrpIuGV9o/dkkW6/V2/vGMymnpn+idkHyouRubkum/efn0AK
-         U7hyZmpOovEmZ+CPZGU2W0SpaVmw7JPveFBTLEMs1VhMwXK8btAxFqeFT3bL06f1n57k
-         ugGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=heQF+yUf7OPPJ/81qSJZBOwzAZ7P4r5Gfhl736W/C8g=;
-        b=TsjxO7zP+1LCc2+aqC6GuXVgJwdEeRdzK7GjxhdPVSjH29g8l7Q2/dfY5YqzV05V6F
-         6CYcXG0GIpZVvX83/QGRTnPsKbdUrJVhngek4hxPn+Ba/f8DHeQ2JPU1m82pjY+cgIyo
-         99OJPkH8QhGMWIBOLcRABa7Vwivxg4Mt/OlVmCcasovYt1noXOcvGSCtddG5hXc5VZa+
-         g6lKLKjdPWaBjYZFTn79XnBkJcRdafgWvYrl//dT70eRIMtb7yK8Hzng3WxpN+UcYlUc
-         fxumlZas9x6R/QleqgPc1O+eCdn0Y5g7bRP9E92tvymUMKx3Tk5q6UXB5qJzIBxKI641
-         vNpQ==
-X-Gm-Message-State: ANoB5pn5SBvvn9Q+ieVR4x6Nw4iATWi3fz3i/TTfKlI60F/moBVE8/Pt
-        651tggodmuYxbBQgPSrfXMowJ06mesyW/w==
-X-Google-Smtp-Source: AA0mqf4GuF+RTCpaeuemRjo+R3Hc2FW5+FQYZe5dx99cUQGVlTE3w22izlM+xCGojqtD28L9TirMQA==
-X-Received: by 2002:a5d:6407:0:b0:238:238:cae3 with SMTP id z7-20020a5d6407000000b002380238cae3mr10730999wru.685.1668515458233;
-        Tue, 15 Nov 2022 04:30:58 -0800 (PST)
-Received: from prasmi.home ([2a00:23c8:2501:c701:d94a:6345:c378:e255])
-        by smtp.gmail.com with ESMTPSA id v11-20020a05600c444b00b003c70191f267sm22862614wmn.39.2022.11.15.04.30.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 04:30:57 -0800 (PST)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] dt-bindings: i2c: renesas,riic: Document RZ/Five SoC
-Date:   Tue, 15 Nov 2022 12:30:18 +0000
-Message-Id: <20221115123018.1182324-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Tue, 15 Nov 2022 07:38:35 -0500
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AE14F245;
+        Tue, 15 Nov 2022 04:38:33 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.96,165,1665414000"; 
+   d="scan'208";a="142721485"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 15 Nov 2022 21:38:33 +0900
+Received: from localhost.localdomain (unknown [10.226.92.242])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3B0054163884;
+        Tue, 15 Nov 2022 21:38:29 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH v3 0/3] Add SoC identification support for RZ/V2M
+Date:   Tue, 15 Nov 2022 12:38:24 +0000
+Message-Id: <20221115123827.736141-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,34 +42,53 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This patch series aims to add SoC identification support for RZ/V2M.
 
-The RIIC block on the RZ/Five SoC is identical to one found on the RZ/G2UL
-SoC. "renesas,riic-r9a07g043" compatible string will be used on the
-RZ/Five SoC so to make this clear, update the comment to include RZ/Five
-SoC.
+v2->v3:
+ * Renamed the binding file based on the compatible
+ * Dropped quotes from id and schema
+ * Updated binding description
+ * Renamed device node from system-configuration->system-controller
+ * Renamed label name from sysc->sys
+ * Fixed the indentation in example
+ * Updated commit header and description for SoC dtsi
+ * Updated label and node-names for SoC dtsi
+ * system-controller is enabled by default as it do not need external
+   resources from board.
+v1->v2:
+ * Moved the binding file from arm->soc/renesas
+ * Updated the binding example
+ * Removed config from patch#2 as it is already present
+ * Removed extra space before 'else if' statement
 
-No driver changes are required as generic compatible string
-"renesas,riic-rz" will be used as a fallback on RZ/Five SoC.
+Ref:
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220321154232.56315-3-phil.edworthy@renesas.com/
+[2] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220321154232.56315-8-phil.edworthy@renesas.com/
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+logs:
+root@rzv2m:~# dmesg | grep "Renesas RZ/V2M"
+[ 0.119196] Detected Renesas RZ/V2M r9a09g011 1.1
 
-diff --git a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-index d3c0d5c427ac..2291a7cd619b 100644
---- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-+++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-@@ -19,7 +19,7 @@ properties:
-       - enum:
-           - renesas,riic-r7s72100   # RZ/A1H
-           - renesas,riic-r7s9210    # RZ/A2M
--          - renesas,riic-r9a07g043  # RZ/G2UL
-+          - renesas,riic-r9a07g043  # RZ/G2UL and RZ/Five
-           - renesas,riic-r9a07g044  # RZ/G2{L,LC}
-           - renesas,riic-r9a07g054  # RZ/V2L
-       - const: renesas,riic-rz      # RZ/A or RZ/G2L
+root@rzv2m:~# for i in machine family soc_id revision; do echo -n "$i: ";cat /sys/devices/soc0/$i; done
+machine: RZ/V2M Evaluation Kit 2.0
+family: RZ/V2M
+soc_id: r9a09g011
+revision: 1.1
+
+Biju Das (1):
+  arm64: dts: renesas: r9a09g011: Add system controller node
+
+Phil Edworthy (2):
+  dt-bindings: arm: renesas: Document Renesas RZ/V2M System
+    Configuration
+  soc: renesas: Identify RZ/V2M SoC
+
+ .../soc/renesas/renesas,r9a09g011-sys.yaml    | 43 +++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a09g011.dtsi    |  5 +++
+ drivers/soc/renesas/renesas-soc.c             | 22 ++++++++++
+ 3 files changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,r9a09g011-sys.yaml
+
 -- 
 2.25.1
 
