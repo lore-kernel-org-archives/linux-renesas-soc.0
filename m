@@ -2,75 +2,69 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1905C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 12:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC56AC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 12:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230500AbiKOMjH (ORCPT
+        id S230358AbiKOMl7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:39:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52966 "EHLO
+        Tue, 15 Nov 2022 07:41:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbiKOMjH (ORCPT
+        with ESMTP id S229587AbiKOMl5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:39:07 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BA201FF97;
-        Tue, 15 Nov 2022 04:39:05 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id j15so24062818wrq.3;
-        Tue, 15 Nov 2022 04:39:05 -0800 (PST)
+        Tue, 15 Nov 2022 07:41:57 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6AB8233A9;
+        Tue, 15 Nov 2022 04:41:56 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id t25-20020a1c7719000000b003cfa34ea516so941852wmi.1;
+        Tue, 15 Nov 2022 04:41:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QKEXLyPGXjJRKPyvW3PaMhdvkr3/5SmF5s8yvu+zTKo=;
-        b=NmWecbfPc3BUXQz2DWCZAXcNm8nXoinDTs8mMqCsMqBQOS83ucUtmaru3L/0xEFY78
-         v5xjfaF1k5d639TGBRJfDsGlo4iqw1cTeIZWY9b2tDG669D9Bnm0USvWmCaW0HzSqyyR
-         JX4ZFafXCEVWEc4Np7IQRGttEgNeKUZx9mQZy+dB/ftO2lFfFlZB59QmUD9u3mx1ycZo
-         pnuToKBnOu/Bbe9XIBQdJZo0lhreWYN6SEdJVcUK1JGUP6Wz0O5doccRIicJu+1CSR2d
-         kgVR21EiXBHrCbsBwoc6bLbn0oTkgYxgyfKss94IhB89FJxOOuMAirjayTIgocruMt68
-         kBaQ==
+        bh=XqzQB8TU0zGfIa93TNnmYPi07sqP4CGBe1E2pmqvYX4=;
+        b=a/mUQ0gLGJuAG19stPjBzzH4Den3fShFdqMZ1U/H8yyC0N7I7zu431yZmkQb2coYpw
+         K0yu703YvxXPJZHFBbNBiTdEBVUgFglZCpi1LvveqHhs0l2vY5NJEFODK7FbE0hKp2EC
+         eWblFVm1BKkcOJGxAbnoTp4Rci1MOftkTsATy3Qbp1cwCeTtQ+4CjcTEestHMX2zwk9/
+         YrnAylrd8NdPm75ocRiQXm/xHxHRuoHCcARqnXxlBuZNHZv1NwSHMJahTIWLDNNE8b0T
+         UbI1nt7phtdDC7LsU35bJs7fVAAo9+P0iay2ageW7ltVb++r6UoDRUJ+iQyaYt8U5Abl
+         lJZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QKEXLyPGXjJRKPyvW3PaMhdvkr3/5SmF5s8yvu+zTKo=;
-        b=BWod6FeIRGIhaseV2vmGvSi96Y4I1YzJPZa5HRSKO/nRX+VOjumHwBb5WxTwKnjQ4E
-         APUpK0+aslRe/vMvF1B5jZPwG8TmF3IqG55QST8dav0fmzPCSZUmG7MwgB2ydEtia4AG
-         ZUnSGfA3wiXq9dNXbX0Q7Ub1BirYw/k5P8thnZehD6BcRzSrGnJzFE5lnBFZXRJlDrYN
-         AQ9kKedT2p4WRb1+KUMV9cQinMUn+b1+kflLp0MTfwquYxAJRlWrRY4yAOBqj0oEV5Nr
-         YDVwL1M5TD1mbke4BGhb3/DkCAhnwrT1kSS4917J1ZLJm5cd1VzEmjzQvfFnh78itwGm
-         yEdw==
-X-Gm-Message-State: ANoB5pkOI5j2/xZaOL/ILqMrzpi/9MB/uoo2jwPinh+spbTh9pGlOqv8
-        aYEYskGEfMLnQr3mbvsaQUU=
-X-Google-Smtp-Source: AA0mqf6tmoz1BJJ0n5zUU8CY0LabZNgtpI2+CtgwsY8wssR/lutYM+mj34Bhl0yB6iOJaiI9THy/Sg==
-X-Received: by 2002:a05:6000:1806:b0:241:7277:6aa4 with SMTP id m6-20020a056000180600b0024172776aa4mr10038121wrh.660.1668515944078;
-        Tue, 15 Nov 2022 04:39:04 -0800 (PST)
+        bh=XqzQB8TU0zGfIa93TNnmYPi07sqP4CGBe1E2pmqvYX4=;
+        b=pO0+dCpJ46zk5CbqtEOdmwaZ5hGVzRZAMTQevLexcr8an/ck6TY1ThpGvwIIMivK5Q
+         jRwm5Dr+HfK75x4j5ktxm+rL2ed50qfLyXvN4I9exF8ftiE0J38vMBCLBLWg4n8cVjWU
+         2ebI1oS/6Eyl/+HDc+jpfFPfVUzfAF15rqJ/RIL0oV0Qydpyx1oFoC7VZ8oMX7r3JMk6
+         FMGEY56kvZQRGbwssebbkX7N+RbfcP8fthgLoaUr9/ghn4ejbMfcsDDnK5jdFWbY/V8y
+         w2HwiUhYkrWFCneaFVT9s2n6qE/KCyczdFcF5ZlRXaDeCc7fEpLXnNd+WZppbb6qVA94
+         P1WA==
+X-Gm-Message-State: ANoB5pkl6vAamkttnietH73gr6AWM9kbdAdGD/kvVlpjWGM23s04Eg1h
+        uRlKbrLffg5TPst4DLVXe20=
+X-Google-Smtp-Source: AA0mqf5HicKiWNR7PXFSJbGRfQumgzIaobqjaQy66Kg6o7Mk25VyF/sYgMc3puIZ3JkWiB1kwQFTfg==
+X-Received: by 2002:a05:600c:6007:b0:3cf:681a:43e1 with SMTP id az7-20020a05600c600700b003cf681a43e1mr1312440wmb.126.1668516115105;
+        Tue, 15 Nov 2022 04:41:55 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:d94a:6345:c378:e255])
-        by smtp.gmail.com with ESMTPSA id r8-20020a05600c2f0800b003c701c12a17sm20735803wmn.12.2022.11.15.04.39.01
+        by smtp.gmail.com with ESMTPSA id iz7-20020a05600c554700b003cf894dbc4fsm15737842wmb.25.2022.11.15.04.41.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 04:39:02 -0800 (PST)
+        Tue, 15 Nov 2022 04:41:54 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] dt-bindings: can: renesas,rcar-canfd: Document RZ/Five SoC
-Date:   Tue, 15 Nov 2022 12:38:11 +0000
-Message-Id: <20221115123811.1182922-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] dt-bindings: iio: adc: renesas,rzg2l-adc: Document RZ/Five SoC
+Date:   Tue, 15 Nov 2022 12:41:28 +0000
+Message-Id: <20221115124128.1183144-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -80,32 +74,31 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The CANFD block on the RZ/Five SoC is identical to one found on the
-RZ/G2UL SoC. "renesas,r9a07g043-canfd" compatible string will be used
-on the RZ/Five SoC so to make this clear, update the comment to include
-RZ/Five SoC.
+The ADC block on the RZ/Five SoC is identical to one found on the RZ/G2UL
+SoC. "renesas,r9a07g043-adc" compatible string will be used on the RZ/Five
+SoC so to make this clear, update the comment to include RZ/Five SoC.
 
 No driver changes are required as generic compatible string
-"renesas,rzg2l-canfd" will be used as a fallback on RZ/Five SoC.
+"renesas,rzg2l-adc" will be used as a fallback on RZ/Five SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../devicetree/bindings/net/can/renesas,rcar-canfd.yaml         | 2 +-
+ .../devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml          | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-index 6f71fc96bc4e..8347053a96dc 100644
---- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-+++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-@@ -33,7 +33,7 @@ properties:
- 
-       - items:
-           - enum:
--              - renesas,r9a07g043-canfd    # RZ/G2UL
-+              - renesas,r9a07g043-canfd    # RZ/G2UL and RZ/Five
-               - renesas,r9a07g044-canfd    # RZ/G2{L,LC}
-               - renesas,r9a07g054-canfd    # RZ/V2L
-           - const: renesas,rzg2l-canfd     # RZ/G2L family
+diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+index 61c6157cf5a9..8b743742a5f9 100644
+--- a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+@@ -19,7 +19,7 @@ properties:
+   compatible:
+     items:
+       - enum:
+-          - renesas,r9a07g043-adc   # RZ/G2UL
++          - renesas,r9a07g043-adc   # RZ/G2UL and RZ/Five
+           - renesas,r9a07g044-adc   # RZ/G2L
+           - renesas,r9a07g054-adc   # RZ/V2L
+       - const: renesas,rzg2l-adc
 -- 
 2.25.1
 
