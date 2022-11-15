@@ -2,94 +2,104 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A064DC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 12:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB5EC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 12:31:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229905AbiKOM2B (ORCPT
+        id S230308AbiKOMbB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:28:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
+        Tue, 15 Nov 2022 07:31:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbiKOM16 (ORCPT
+        with ESMTP id S229629AbiKOMbA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:27:58 -0500
-X-Greylist: delayed 226 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Nov 2022 04:27:56 PST
-Received: from condef-07.nifty.com (condef-07.nifty.com [202.248.20.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C78A62B2;
-        Tue, 15 Nov 2022 04:27:56 -0800 (PST)
-Received: from conssluserg-04.nifty.com ([10.126.8.83])by condef-07.nifty.com with ESMTP id 2AFCC95C005878;
-        Tue, 15 Nov 2022 21:12:09 +0900
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 2AFCBsd6032518;
-        Tue, 15 Nov 2022 21:11:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 2AFCBsd6032518
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1668514314;
-        bh=SILR+3RX69mfNk2t722qTqGIc2KmPfUyWI4eu5WGZ+4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Knfk25rUglHqvKrLlgLNNkYYEnsQ1qOODx9fHFc9GX7mTAEX3gYXmaqDWyG5grH3D
-         pf1EuCkNmnLJjIb+vRhH26zPiijqflJejULiTPbk9+RRPTWIsxlVxUQtycFsIlpB4e
-         DrezOv/cECw2Y89OFj+zv159/MeFV/KJVrxauUxi0Qnb0JRv0gkCSmVnte/ckP9wK/
-         wpgc67wdLTMeZ550A1muZqgaKI2gbmoAN+H7LAZvEBj6gORNMQpbRsn2qwP4cM/T1I
-         KBSiTp31mYVukwSNkrA1uJfsCvcSILb7VeKwlioAlRueG1j/5DPJzH/u28hy3uUD+J
-         VO+ez1rduQ4Eg==
-X-Nifty-SrcIP: [209.85.167.173]
-Received: by mail-oi1-f173.google.com with SMTP id s206so14652828oie.3;
-        Tue, 15 Nov 2022 04:11:54 -0800 (PST)
-X-Gm-Message-State: ANoB5pn+2dy1ml0a3agrNegvQ0/+x6ZQUyyKPRvwOESN2p4+WmJ+HQBj
-        4iBnSQuCvWOMOULVf+AK/oN0/qXe5pij4xQOMzI=
-X-Google-Smtp-Source: AA0mqf6hSSCkhlyoX/XbOrOi9iVXeMLvUxTqq2OONNj3JX3htcEvVpprVrUJn8DLxADbyRiWma56cuFWop0k9aui/gg=
-X-Received: by 2002:aca:ded4:0:b0:354:28ae:23b3 with SMTP id
- v203-20020acaded4000000b0035428ae23b3mr675884oig.287.1668514313381; Tue, 15
- Nov 2022 04:11:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20221114205939.27994-1-afd@ti.com> <Y3N7bLuSTKJYPcIC@smile.fi.intel.com>
-In-Reply-To: <Y3N7bLuSTKJYPcIC@smile.fi.intel.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 15 Nov 2022 21:11:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARqFpQCEDmjmXciT2URcRNA9j-cqmXjuh_ifLEtQx=auw@mail.gmail.com>
-Message-ID: <CAK7LNARqFpQCEDmjmXciT2URcRNA9j-cqmXjuh_ifLEtQx=auw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Cleanup DT Overlay intermediate files as appropriate
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Andrew Davis <afd@ti.com>, Shawn Guo <shawnguo@kernel.org>,
-        Li Yang <leoyang.li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+        Tue, 15 Nov 2022 07:31:00 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B741C932;
+        Tue, 15 Nov 2022 04:30:59 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id d9so19285766wrm.13;
+        Tue, 15 Nov 2022 04:30:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=heQF+yUf7OPPJ/81qSJZBOwzAZ7P4r5Gfhl736W/C8g=;
+        b=K1O66LkMWAD9+WNZ0lBTjZbkXcOR49TVN2NIpTWnEuiWfpdcEvMtJesFzpvhbdmzT9
+         cd483Meg7hspAAedgrkWvcBT2QkaMgGSToQE0ZhrbmcF8cBTNx6RhoE5OjW8023vaSva
+         hbWALv4lfXfLIXZohAmtC7py2VpAObOGcZ177fcy5DXv36MtgYKqgWxmQjJ7sedxm9ws
+         Ob5cC2sTGU0BmH1vibo4vrpIuGV9o/dkkW6/V2/vGMymnpn+idkHyouRubkum/efn0AK
+         U7hyZmpOovEmZ+CPZGU2W0SpaVmw7JPveFBTLEMs1VhMwXK8btAxFqeFT3bL06f1n57k
+         ugGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=heQF+yUf7OPPJ/81qSJZBOwzAZ7P4r5Gfhl736W/C8g=;
+        b=TsjxO7zP+1LCc2+aqC6GuXVgJwdEeRdzK7GjxhdPVSjH29g8l7Q2/dfY5YqzV05V6F
+         6CYcXG0GIpZVvX83/QGRTnPsKbdUrJVhngek4hxPn+Ba/f8DHeQ2JPU1m82pjY+cgIyo
+         99OJPkH8QhGMWIBOLcRABa7Vwivxg4Mt/OlVmCcasovYt1noXOcvGSCtddG5hXc5VZa+
+         g6lKLKjdPWaBjYZFTn79XnBkJcRdafgWvYrl//dT70eRIMtb7yK8Hzng3WxpN+UcYlUc
+         fxumlZas9x6R/QleqgPc1O+eCdn0Y5g7bRP9E92tvymUMKx3Tk5q6UXB5qJzIBxKI641
+         vNpQ==
+X-Gm-Message-State: ANoB5pn5SBvvn9Q+ieVR4x6Nw4iATWi3fz3i/TTfKlI60F/moBVE8/Pt
+        651tggodmuYxbBQgPSrfXMowJ06mesyW/w==
+X-Google-Smtp-Source: AA0mqf4GuF+RTCpaeuemRjo+R3Hc2FW5+FQYZe5dx99cUQGVlTE3w22izlM+xCGojqtD28L9TirMQA==
+X-Received: by 2002:a5d:6407:0:b0:238:238:cae3 with SMTP id z7-20020a5d6407000000b002380238cae3mr10730999wru.685.1668515458233;
+        Tue, 15 Nov 2022 04:30:58 -0800 (PST)
+Received: from prasmi.home ([2a00:23c8:2501:c701:d94a:6345:c378:e255])
+        by smtp.gmail.com with ESMTPSA id v11-20020a05600c444b00b003c70191f267sm22862614wmn.39.2022.11.15.04.30.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 04:30:57 -0800 (PST)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Brandt <chris.brandt@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] dt-bindings: i2c: renesas,riic: Document RZ/Five SoC
+Date:   Tue, 15 Nov 2022 12:30:18 +0000
+Message-Id: <20221115123018.1182324-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 8:43 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Mon, Nov 14, 2022 at 02:59:39PM -0600, Andrew Davis wrote:
-> > %.dtbo.o and %.dtbo.S files are used to build-in DT Overlay. They should
-> > should not be removed by Make or the kernel will be needlessly rebuilt.
-> >
-> > These should be removed by "clean" and ignored by git like other
-> > intermediate files.
->
-> Fixes: 941214a512d8 ("kbuild: Allow DTB overlays to built into .dtbo.S files")
->
-> Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> > Reported-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> > Signed-off-by: Andrew Davis <afd@ti.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+The RIIC block on the RZ/Five SoC is identical to one found on the RZ/G2UL
+SoC. "renesas,riic-r9a07g043" compatible string will be used on the
+RZ/Five SoC so to make this clear, update the comment to include RZ/Five
+SoC.
 
+No driver changes are required as generic compatible string
+"renesas,riic-rz" will be used as a fallback on RZ/Five SoC.
 
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+index d3c0d5c427ac..2291a7cd619b 100644
+--- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
++++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+@@ -19,7 +19,7 @@ properties:
+       - enum:
+           - renesas,riic-r7s72100   # RZ/A1H
+           - renesas,riic-r7s9210    # RZ/A2M
+-          - renesas,riic-r9a07g043  # RZ/G2UL
++          - renesas,riic-r9a07g043  # RZ/G2UL and RZ/Five
+           - renesas,riic-r9a07g044  # RZ/G2{L,LC}
+           - renesas,riic-r9a07g054  # RZ/V2L
+       - const: renesas,riic-rz      # RZ/A or RZ/G2L
 -- 
-Best Regards
-Masahiro Yamada
+2.25.1
+
