@@ -2,79 +2,110 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E7AC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 12:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1905C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 12:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230479AbiKOMio (ORCPT
+        id S230500AbiKOMjH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:38:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52818 "EHLO
+        Tue, 15 Nov 2022 07:39:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230153AbiKOMio (ORCPT
+        with ESMTP id S229781AbiKOMjH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:38:44 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EB31BFDF;
-        Tue, 15 Nov 2022 04:38:42 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.96,165,1665414000"; 
-   d="scan'208";a="140115188"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 15 Nov 2022 21:38:42 +0900
-Received: from localhost.localdomain (unknown [10.226.92.242])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EBE1E421874F;
-        Tue, 15 Nov 2022 21:38:39 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>,
+        Tue, 15 Nov 2022 07:39:07 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BA201FF97;
+        Tue, 15 Nov 2022 04:39:05 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id j15so24062818wrq.3;
+        Tue, 15 Nov 2022 04:39:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QKEXLyPGXjJRKPyvW3PaMhdvkr3/5SmF5s8yvu+zTKo=;
+        b=NmWecbfPc3BUXQz2DWCZAXcNm8nXoinDTs8mMqCsMqBQOS83ucUtmaru3L/0xEFY78
+         v5xjfaF1k5d639TGBRJfDsGlo4iqw1cTeIZWY9b2tDG669D9Bnm0USvWmCaW0HzSqyyR
+         JX4ZFafXCEVWEc4Np7IQRGttEgNeKUZx9mQZy+dB/ftO2lFfFlZB59QmUD9u3mx1ycZo
+         pnuToKBnOu/Bbe9XIBQdJZo0lhreWYN6SEdJVcUK1JGUP6Wz0O5doccRIicJu+1CSR2d
+         kgVR21EiXBHrCbsBwoc6bLbn0oTkgYxgyfKss94IhB89FJxOOuMAirjayTIgocruMt68
+         kBaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QKEXLyPGXjJRKPyvW3PaMhdvkr3/5SmF5s8yvu+zTKo=;
+        b=BWod6FeIRGIhaseV2vmGvSi96Y4I1YzJPZa5HRSKO/nRX+VOjumHwBb5WxTwKnjQ4E
+         APUpK0+aslRe/vMvF1B5jZPwG8TmF3IqG55QST8dav0fmzPCSZUmG7MwgB2ydEtia4AG
+         ZUnSGfA3wiXq9dNXbX0Q7Ub1BirYw/k5P8thnZehD6BcRzSrGnJzFE5lnBFZXRJlDrYN
+         AQ9kKedT2p4WRb1+KUMV9cQinMUn+b1+kflLp0MTfwquYxAJRlWrRY4yAOBqj0oEV5Nr
+         YDVwL1M5TD1mbke4BGhb3/DkCAhnwrT1kSS4917J1ZLJm5cd1VzEmjzQvfFnh78itwGm
+         yEdw==
+X-Gm-Message-State: ANoB5pkOI5j2/xZaOL/ILqMrzpi/9MB/uoo2jwPinh+spbTh9pGlOqv8
+        aYEYskGEfMLnQr3mbvsaQUU=
+X-Google-Smtp-Source: AA0mqf6tmoz1BJJ0n5zUU8CY0LabZNgtpI2+CtgwsY8wssR/lutYM+mj34Bhl0yB6iOJaiI9THy/Sg==
+X-Received: by 2002:a05:6000:1806:b0:241:7277:6aa4 with SMTP id m6-20020a056000180600b0024172776aa4mr10038121wrh.660.1668515944078;
+        Tue, 15 Nov 2022 04:39:04 -0800 (PST)
+Received: from prasmi.home ([2a00:23c8:2501:c701:d94a:6345:c378:e255])
+        by smtp.gmail.com with ESMTPSA id r8-20020a05600c2f0800b003c701c12a17sm20735803wmn.12.2022.11.15.04.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 04:39:02 -0800 (PST)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH v3 3/3] arm64: dts: renesas: r9a09g011: Add system controller node
-Date:   Tue, 15 Nov 2022 12:38:27 +0000
-Message-Id: <20221115123827.736141-4-biju.das.jz@bp.renesas.com>
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] dt-bindings: can: renesas,rcar-canfd: Document RZ/Five SoC
+Date:   Tue, 15 Nov 2022 12:38:11 +0000
+Message-Id: <20221115123811.1182922-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221115123827.736141-1-biju.das.jz@bp.renesas.com>
-References: <20221115123827.736141-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add system controller node to RZ/V2M SoC dtsi.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3:
- * Updated commit header and description 
- * Updated label and node-names
- * system-controller node is enabled by default as it do not need external
-   resources from board.
-v2:
- * New patch
----
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+The CANFD block on the RZ/Five SoC is identical to one found on the
+RZ/G2UL SoC. "renesas,r9a07g043-canfd" compatible string will be used
+on the RZ/Five SoC so to make this clear, update the comment to include
+RZ/Five SoC.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-index ca9f022d6632..0373ec409d54 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-@@ -130,6 +130,11 @@ cpg: clock-controller@a3500000 {
- 			#power-domain-cells = <0>;
- 		};
+No driver changes are required as generic compatible string
+"renesas,rzg2l-canfd" will be used as a fallback on RZ/Five SoC.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ .../devicetree/bindings/net/can/renesas,rcar-canfd.yaml         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+index 6f71fc96bc4e..8347053a96dc 100644
+--- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
++++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+@@ -33,7 +33,7 @@ properties:
  
-+		sys: system-controller@a3f03000 {
-+			compatible = "renesas,r9a09g011-sys";
-+			reg = <0 0xa3f03000 0 0x400>;
-+		};
-+
- 		i2c0: i2c@a4030000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+       - items:
+           - enum:
+-              - renesas,r9a07g043-canfd    # RZ/G2UL
++              - renesas,r9a07g043-canfd    # RZ/G2UL and RZ/Five
+               - renesas,r9a07g044-canfd    # RZ/G2{L,LC}
+               - renesas,r9a07g054-canfd    # RZ/V2L
+           - const: renesas,rzg2l-canfd     # RZ/G2L family
 -- 
 2.25.1
 
