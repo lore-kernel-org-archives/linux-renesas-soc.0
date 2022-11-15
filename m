@@ -2,151 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A17C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 10:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E76A6C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 11:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232437AbiKOKy7 (ORCPT
+        id S238081AbiKOLBk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 05:54:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59680 "EHLO
+        Tue, 15 Nov 2022 06:01:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238453AbiKOKwm (ORCPT
+        with ESMTP id S238207AbiKOLAv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2022 05:52:42 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E33B2714B;
-        Tue, 15 Nov 2022 02:51:51 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id 5so9394790wmo.1;
-        Tue, 15 Nov 2022 02:51:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HyEqDf0zONZ5Fdec0EnXfdhTnIhb+Oxxv22zZ7JUl/c=;
-        b=GW+bkA4PaazkuF/iApqAZFGTaz+gM0M/BOXwidlQjDa+es1IMB+JYc1p8jHjDBN5gk
-         iDRAAOaAz6mVlZEZD6fC56HDJj0RxQy5tu2EVLY2sv/3BAbfC4uAuaoUURToyp410SWv
-         H1GM+LIhN1MHkR5YqeGxAlXGURgaRRuAtxZDwG0a0FM6sqos4LaUnVVw0AKVg9/VxSl7
-         xv+Vr1/3tlERzcmN9k66jaE2ktOrZF3dzEfjs12yJDnCt0oNuHxaSIipn3FXMmXF3Jfz
-         tK4scW0ER5OIjdxYtyuIpsMjQn8qycGsYnI+WMcqrSoPedkTh9CdO1KtuwF4ccKHmbcH
-         SWdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HyEqDf0zONZ5Fdec0EnXfdhTnIhb+Oxxv22zZ7JUl/c=;
-        b=B9oFuHKiX4XLH607A4WoUVevfk0BwKG2cumV9XTywqoJAmuxFwtuqztkRWVMOK0PIO
-         rGNYkiVab5k47BZxs+XHW0O3pj53SC7emDWEMUwlCT4m3MZ69xFOiZ1WdhPNtoc3febh
-         bWwI5ZfuUXa9mNXa/XOqhZKxn2JmhNs/KP90X/S8ArfMdPL91CRBpUgNMfzMCYBhk7gq
-         T2vnBwhcK6EqiPN7BsmGtsccklydtMo49eB11M+kfcaDLI9vyqwiNKrNEA8fTdu+qL5x
-         r/hcz6xsyUVLH2g2pSaKmFk1jnrObHhZozQbtAr1t847/7kaTMbd8o/n7LLA7msJ3B21
-         WLCw==
-X-Gm-Message-State: ANoB5pkm728yozK9hjqn2fPS+I1kFfHdHDbZBeIOO+H1xcSEe9KaSWUK
-        4dxwag3E9u0V83fpJFtDluw=
-X-Google-Smtp-Source: AA0mqf6P/jewkEk8TdUrUxghgtMbiJTA5+rAtKhSEGvnHmqYTotT7ySyX0rI+nkKCFcMbt/LsC4Imw==
-X-Received: by 2002:a05:600c:3586:b0:3cf:8e62:f907 with SMTP id p6-20020a05600c358600b003cf8e62f907mr1035263wmq.7.1668509509515;
-        Tue, 15 Nov 2022 02:51:49 -0800 (PST)
-Received: from prasmi.home ([2a00:23c8:2501:c701:d94a:6345:c378:e255])
-        by smtp.gmail.com with ESMTPSA id az9-20020adfe189000000b002367ad808a9sm12210528wrb.30.2022.11.15.02.51.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 02:51:48 -0800 (PST)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 15 Nov 2022 06:00:51 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 495641401B;
+        Tue, 15 Nov 2022 03:00:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1668510013; x=1700046013;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X614lCvRsx/z2rfXeRkDFM2miVmY6jybPGRgrOYbBHg=;
+  b=EGdTs/gHEvGBwZ4Grv7WCE4GSamBUOTXe1qLhM9Uw9FbRuui4kpr7nYO
+   IFJOIjtzXvIUNxvgs7T5MRN6fF7tPrzbcJfHGdnIeImhidNtvdv+eX9Lc
+   9+fD5aUB6xVFZpRUD3nO7QiYpKzjVxpvv4qeqAY1naPH/ElbwwTorGnyv
+   w3BH7h8vbiIP8Ff35mUyzUutLXPUQRMZj6lu3aAGAHN2DzQgDy8DzuDc4
+   Y/ywxadHe0IIrzR1DwQ1xQZ61P8xWv0PHmMOIJ9okSO60WM/N4VOc1bWg
+   RGhd9QaVZVWlyFTn985E2xzMKwFR676I2wOceWGAwDPBgKARDNDSpVtgm
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
+   d="scan'208";a="189029819"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Nov 2022 04:00:12 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Tue, 15 Nov 2022 04:00:10 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.12 via Frontend
+ Transport; Tue, 15 Nov 2022 04:00:08 -0700
+Date:   Tue, 15 Nov 2022 10:59:51 +0000
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Prabhakar <prabhakar.csengg@gmail.com>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/3] riscv: dts: renesas: r9a07g043f/rzfive-smarc-som: Enable ADC/OPP/Thermal Zones/TSU
-Date:   Tue, 15 Nov 2022 10:51:34 +0000
-Message-Id: <20221115105135.1180490-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221115105135.1180490-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/3] riscv: Kconfig: Enable cpufreq kconfig menu
+Message-ID: <Y3NxJ0FpDQMhP05+@wendy>
 References: <20221115105135.1180490-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20221115105135.1180490-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20221115105135.1180490-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Nov 15, 2022 at 10:51:33AM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Enable cpufreq kconfig menu for RISC-V.
 
-Enable support for below blocks found on RZ/Five SMARC EVK SoC/SoM:
-- ADC
-- OPP
-- Thermal Zones
-- TSU
+Yes, please. It was on my todo list to dig this one out and un-archive
+it on patchwork:
+https://lore.kernel.org/linux-riscv/20220718180713.451507-1-mail@conchuod.ie/
 
-Note, these blocks are enabled in RZ/G2UL SMARC SoM DTSI [0] hence
-deleting these disabled nodes from RZ/Five SMARC SoM DTSI enables them
-here too as we include [0] in RZ/Five SMARC SoM DTSI.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-[0] arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi       |  2 ++
- arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi | 11 -----------
- 2 files changed, 2 insertions(+), 11 deletions(-)
-
-diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-index 50134be548f5..6ec1c6f9a403 100644
---- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-+++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -20,6 +20,7 @@ cpus {
- 		cpu0: cpu@0 {
- 			compatible = "andestech,ax45mp", "riscv";
- 			device_type = "cpu";
-+			#cooling-cells = <2>;
- 			reg = <0x0>;
- 			status = "okay";
- 			riscv,isa = "rv64imafdc";
-@@ -29,6 +30,7 @@ cpu0: cpu@0 {
- 			d-cache-size = <0x8000>;
- 			d-cache-line-size = <0x40>;
- 			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
-+			operating-points-v2 = <&cluster0_opp>;
- 
- 			cpu0_intc: interrupt-controller {
- 				#interrupt-cells = <1>;
-diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
-index 45a182fa3b4b..2b7672bc4b52 100644
---- a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
-+++ b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
-@@ -16,13 +16,6 @@ aliases {
- 	chosen {
- 		bootargs = "ignore_loglevel";
- 	};
--
--	/delete-node/opp-table-0;
--	/delete-node/thermal-zones;
--};
--
--&adc {
--	status = "disabled";
- };
- 
- &dmac {
-@@ -49,10 +42,6 @@ &sdhi0 {
- 	status = "disabled";
- };
- 
--&tsu {
--	status = "disabled";
--};
--
- &wdt0 {
- 	status = "disabled";
- };
--- 
-2.25.1
-
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  arch/riscv/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index fa78595a6089..ce905454a3bf 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -691,6 +691,8 @@ menu "CPU Power Management"
+>  
+>  source "drivers/cpuidle/Kconfig"
+>  
+> +source "drivers/cpufreq/Kconfig"
+> +
+>  endmenu # "CPU Power Management"
+>  
+>  source "arch/riscv/kvm/Kconfig"
+> -- 
+> 2.25.1
+> 
