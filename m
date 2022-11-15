@@ -2,54 +2,55 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF63FC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 10:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE26CC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Nov 2022 10:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238376AbiKOKxE (ORCPT
+        id S229681AbiKOKy6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 05:53:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59186 "EHLO
+        Tue, 15 Nov 2022 05:54:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238434AbiKOKw2 (ORCPT
+        with ESMTP id S238454AbiKOKwo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2022 05:52:28 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A422714E;
-        Tue, 15 Nov 2022 02:51:48 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id t25-20020a1c7719000000b003cfa34ea516so776323wmi.1;
-        Tue, 15 Nov 2022 02:51:48 -0800 (PST)
+        Tue, 15 Nov 2022 05:52:44 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9628326AEF;
+        Tue, 15 Nov 2022 02:51:52 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id ay14-20020a05600c1e0e00b003cf6ab34b61so12819734wmb.2;
+        Tue, 15 Nov 2022 02:51:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/TDg3jButA61q6p3uGjmgDDrbdJSU8F6g2ZLke3odgw=;
-        b=X0R1NAZVLu4RBi5KgXypsvFBIg5QEFrylN7vFWF46f0VM1D7heC03jvVAYs8/RfUUE
-         ZZUOiudVLMASxhStB1tFkgdOZl6Q284Wcct13khDndPxOAAUSwxIFTXN0vatgn6eqm+x
-         wEa7a5ilhSjng5A5vAcvJdfdive6xOiVWg6DFMez3jEJkBdElUQ69+wFKoP6A9VsG0oR
-         8vmTcSyqjrbY9INzbMykMohisfBoPUAazRc8lD3lTRS4TUTdoxFEOKNBeVRZ+xdwS7qT
-         sa2EsEBZ1biakUh2yiaK5JgBXGlbPkyN4NK31EOohzsxU043oqLzjGXiDJwGPNp4SB4D
-         kD2A==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m6dU/Bx1osZzG21UnwcwV2rTzixGC6UyL/zax73qVqY=;
+        b=coeAHHTiZnzhSuWRrVEWJ5btrTlpR33RRLweMGg/vQN0g7FFzx5w4Ts2g+zVBNDC3l
+         YOXoy8WVAvgwZ7tq84pptBuGlqbVerWmHCBmkyHDJyRhAFw+16W/Ll6kLL/4ieikpxuO
+         uaJSzkG7owP/UzEXpK2BVzvrzdS1chGBtp84iA9oT0BRUPg9D6fqw7Lm6HMxSvuGITqp
+         lBQMCmiex4NpwOoQ9HvyOUIQnMw26qWFxvslmkJckg51KBkmGj+hGCXcBH0A/vA/lk4p
+         Xoux833W8LBTaIRevp9rgp67JQHkzl4XDnFhethMRdweJIOUDXCoze4iLyKtDmjxN504
+         9P1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/TDg3jButA61q6p3uGjmgDDrbdJSU8F6g2ZLke3odgw=;
-        b=491Z73HBUG6xmfBpNUwH47j4Qsqq0ayJyJZydvt/9TgY2j0nnyrwaYOMq0/ofYJr75
-         UcxSGP93jVY/eMS+EsTPf+OxIqgh7KXPLuMFEK3Zo48zjf3a7xQcU5J/3XOZdxwccCCJ
-         Pn1OrwDx738o0Lbw/Hf3YBx0Cg2q1Xm4Ev13XQJA0YNbd5fnINC26rbtcgXntS3LlKHN
-         Dc8ws+a/wO5e/EpsM5We1wq0Yfuwqeovj9PHg93vWTLq2bvXJlLJSavmTMx5FLZ5/HxC
-         Yj8npZEqO01Cyuh1OeR5RX4vHpiWZJEZ06tYzUwReNNOo4WxSepWJQ53bB5h0pazsM/N
-         gZVg==
-X-Gm-Message-State: ANoB5pkWcV8P73OELhBWcUNw1cPFaHtswp28pGGpnHOzL8zFSOHoRcg3
-        JozIwuTXt9z1g6SQbHLZlOg=
-X-Google-Smtp-Source: AA0mqf6oFZeyqPUzVDWOKkiLPZSs86RgzmZPi/RIsvMouJL+GjY/VRXUWn9klGYGOgk3BINvu5Uomg==
-X-Received: by 2002:a05:600c:5569:b0:3cf:63fd:cda8 with SMTP id ja9-20020a05600c556900b003cf63fdcda8mr1015353wmb.46.1668509506664;
-        Tue, 15 Nov 2022 02:51:46 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m6dU/Bx1osZzG21UnwcwV2rTzixGC6UyL/zax73qVqY=;
+        b=ui5vzh09fkeyrEh5xpCFHmbF8eTdlpBICUJqTy9dN+9bj1mvdml6WITRykACxEZYKZ
+         WDHTrjNQ4RBZf72gamiuxQPpHuRDzOCiapAijxT23UCRHv9BOCHWE+/0YyWuqan46piE
+         dq2A9PVRLzTnv5WZ+yWTzAyqbQPF2s8a+xD/QmS1D1NL7Dq0me9HlTfaiYBaICb3zp8a
+         vX6sQ65sboJof2op0K291iMSc4EKfsKuoWB/LiiRkW9BDeVqu/LZVuzvtKIo+JzOlCNK
+         wifzVaUPsmb9gZXZnERcC4TB2g1u7m4/XnL/NoH384Po/r52E2/zVdwQJVkK6BmmBQR+
+         5OHQ==
+X-Gm-Message-State: ANoB5plkIOd+8l8NYwAoWCRVpLMddDF4xw5FczN4YvYRNhd79zHFgDGs
+        4yF8CZnOac6DIOuw3EX6YhE=
+X-Google-Smtp-Source: AA0mqf5DbSzMeqirjdTo+p/jMZ6gN9pMRHlG+eDHmsb2GaCzMNehiZJUo7UX9/gkkl8dVBvo8+e32A==
+X-Received: by 2002:a05:600c:510b:b0:3cf:cfea:904c with SMTP id o11-20020a05600c510b00b003cfcfea904cmr267230wms.33.1668509511094;
+        Tue, 15 Nov 2022 02:51:51 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:d94a:6345:c378:e255])
-        by smtp.gmail.com with ESMTPSA id az9-20020adfe189000000b002367ad808a9sm12210528wrb.30.2022.11.15.02.51.45
+        by smtp.gmail.com with ESMTPSA id az9-20020adfe189000000b002367ad808a9sm12210528wrb.30.2022.11.15.02.51.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 02:51:45 -0800 (PST)
+        Tue, 15 Nov 2022 02:51:50 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -65,10 +66,12 @@ Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 0/3] RZ/Five: Enable ADC/CANFD/I2C/OPP/Thermal Zones/TSU
-Date:   Tue, 15 Nov 2022 10:51:32 +0000
-Message-Id: <20221115105135.1180490-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/3] riscv: dts: renesas: rzfive-smarc: Enable CANFD/I2C
+Date:   Tue, 15 Nov 2022 10:51:35 +0000
+Message-Id: <20221115105135.1180490-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221115105135.1180490-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20221115105135.1180490-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -77,36 +80,64 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+Enable CANFD and I2C on RZ/Five SMARC EVK.
 
-This patch series aims to enable support for below blocks
-on RZ/Five SoC/SMARC EVK:
-- ADC
-- CANFD
-- I2C
-- OPP
-- Thermal Zones
-- TSU
+Note, these blocks are enabled in RZ/G2UL SMARC EVK DTSI [0] hence
+deleting these disabled nodes from RZ/Five SMARC EVK DTSI enables them
+here too as we include [0] in RZ/Five SMARC EVK DTSI.
 
-Note, patches apply on top of [0].
+[0] arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git/log/?h=renesas-riscv-dt-for-v6.2
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (3):
-  riscv: Kconfig: Enable cpufreq kconfig menu
-  riscv: dts: renesas: r9a07g043f/rzfive-smarc-som: Enable
-    ADC/OPP/Thermal Zones/TSU
-  riscv: dts: renesas: rzfive-smarc: Enable CANFD/I2C
-
- arch/riscv/Kconfig                            |  2 ++
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi   |  2 ++
- .../boot/dts/renesas/rzfive-smarc-som.dtsi    | 11 --------
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
  arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi | 27 -------------------
- 4 files changed, 4 insertions(+), 38 deletions(-)
+ 1 file changed, 27 deletions(-)
 
+diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
+index e64f0e5f8e30..c07a487c4e5a 100644
+--- a/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
++++ b/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
+@@ -7,25 +7,6 @@
+ 
+ #include <arm64/renesas/rzg2ul-smarc.dtsi>
+ 
+-/ {
+-	aliases {
+-		/delete-property/ i2c0;
+-		/delete-property/ i2c1;
+-	};
+-};
+-
+-&canfd {
+-	status = "disabled";
+-
+-	channel0 {
+-		status = "disabled";
+-	};
+-
+-	channel1 {
+-		status = "disabled";
+-	};
+-};
+-
+ &ehci0 {
+ 	status = "disabled";
+ };
+@@ -38,14 +19,6 @@ &hsusb {
+ 	status = "disabled";
+ };
+ 
+-&i2c0 {
+-	status = "disabled";
+-};
+-
+-&i2c1 {
+-	status = "disabled";
+-};
+-
+ &ohci0 {
+ 	status = "disabled";
+ };
 -- 
 2.25.1
 
