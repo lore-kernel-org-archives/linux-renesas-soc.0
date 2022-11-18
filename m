@@ -2,179 +2,120 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A691C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Nov 2022 12:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D4DC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Nov 2022 12:31:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235387AbiKRMKA (ORCPT
+        id S241306AbiKRMba (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Nov 2022 07:10:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54276 "EHLO
+        Fri, 18 Nov 2022 07:31:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241173AbiKRMJ6 (ORCPT
+        with ESMTP id S241649AbiKRMbR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2022 07:09:58 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ECFDB8FF91
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Nov 2022 04:09:57 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.96,174,1665414000"; 
-   d="scan'208";a="143132465"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Nov 2022 21:09:55 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A222B40065A3;
-        Fri, 18 Nov 2022 21:09:55 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     geert+renesas@glider.be, magnus.damm@gmail.com
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v6 1/3] arm64: dts: renesas: r8a779f0: Add Ethernet Switch and SERDES nodes
-Date:   Fri, 18 Nov 2022 21:09:51 +0900
-Message-Id: <20221118120953.1186392-2-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221118120953.1186392-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20221118120953.1186392-1-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 18 Nov 2022 07:31:17 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66A845091;
+        Fri, 18 Nov 2022 04:30:11 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id n21so12631455ejb.9;
+        Fri, 18 Nov 2022 04:30:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DZylkDqipsSWVUpDnUzy17v+WnuvxbbaswTfv5O4dBs=;
+        b=eUjQ+DkdwrOamw24nWNeklKUIiMEQiQeEM567HSHskrMW8Us15k4Djy5Z9MOfHDEJA
+         leaJXxOQS+royEE5tCZ4iXf4sii3zaDalYpxMriW61uWRNQp1VKIY06yol3TqXKWDSlk
+         zIJn1Z/wnb2TCSSCAovxKTwpmmWhRdohBZv+73obigClXe2Psj9xUGAg0q5reejJYUou
+         LCB+02opStYWrwYLu0hAIGsCg/994/BBKrsjzad6976U9wbOr5dzGtrTJDIZTtWR41bX
+         1SINPUWPt9t6z1vVFFsq7YyD3HEYo75UCocoNsITgn+0BVYD9T9GA57iQyRN46MnD/0F
+         cq5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DZylkDqipsSWVUpDnUzy17v+WnuvxbbaswTfv5O4dBs=;
+        b=BxJhIZj6IOkRWTwMF3MWwsOGjI/g8ljUUpUoDKLOvdSYEdCojDNm84K2u/d9qfizFJ
+         awLkcDGseMfoaKH79HQaE6ppIwvqFgd9El8KuaiLwRTcOwd/XaVgCvfN9WrRFvMlQsZN
+         P9ApEA10o1DVb9/fzTkUUzKQNNYPRRmQKupny7BOc0gD9CGOf7nGvvS0OvM3FpjJQwnG
+         VPSRXl7/GH6a75paQwJaAjJiBLQRRuYEUA7CqQbPmOUWaWGxae9I2Uk7yuEQjk6S0RZ8
+         tcML2wJEtHZp48HSThFoar3CqgsIBSx0qunGimmiHNAAaDtgU5Y4VkSsvxIi1+xvvvv5
+         H8/Q==
+X-Gm-Message-State: ANoB5pmww3XhkvxahK26gATRBWp6dYWNefXVKSRpjnRpLcdP66dBOCeE
+        UWj6nzpNl78SpQgs2B9Bzfq378SulFjODE+la7Y=
+X-Google-Smtp-Source: AA0mqf62SAwlT3nJuz3Cdfa6K5MCGjq8wuc9X2LC0JRmw3MyXGf9MwEzDmidvSVaV+efJ1qjyE1NRSy+etHWrG6upqo=
+X-Received: by 2002:a17:906:3e41:b0:78d:bc9f:33da with SMTP id
+ t1-20020a1709063e4100b0078dbc9f33damr5761785eji.80.1668774610255; Fri, 18 Nov
+ 2022 04:30:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20221107175305.63975-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdV46aMfqu+kMW9E-RURugK-giOx0k-NPe5XX4nxKZJzkg@mail.gmail.com>
+In-Reply-To: <CAMuHMdV46aMfqu+kMW9E-RURugK-giOx0k-NPe5XX4nxKZJzkg@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Fri, 18 Nov 2022 12:29:43 +0000
+Message-ID: <CA+V-a8uqQ2fK1UjRT864jyHdt6Z47V=iARSJC6B2M6Gikms=Eg@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] dt-bindings: interrupt-controller:
+ renesas,rzg2l-irqc: Document RZ/G2UL SoC
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add Ethernet Switch and SERDES nodes into R-Car S4-8 (r8a779f0).
+Hi Geert,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 110 ++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+On Thu, Nov 17, 2022 at 10:54 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, Nov 7, 2022 at 6:53 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Document RZ/G2UL (R9A07G043) IRQC bindings. The RZ/G2UL IRQC block is
+> > identical to one found on the RZ/G2L SoC. No driver changes are
+> > required as generic compatible string "renesas,rzg2l-irqc" will be
+> > used as a fallback.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > ---
+> > Note, renesas,r9a07g043u-irqc is added we have slight difference's compared to RZ/Five
+> > - G2UL IRQCHIP (hierarchical IRQ domain) -> GIC where as on RZ/Five we have PLIC (chained interrupt
+> > domain) -> RISCV INTC
+>
+> I think this difference is purely a software difference, and abstracted
+> in DTS through the interrupt hierarchy.
+> Does it have any impact on the bindings?
+>
+> > - On the RZ/Five we have additional registers for IRQC block
+>
+> Indeed, the NMI/IRQ/TINT "Interruput" Mask Control Registers, thus
+> warranting separate compatible values.
+>
+> > - On the RZ/Five we have BUS_ERR_INT which needs to be handled by IRQC
+>
+> Can you please elaborate? I may have missed something, but to me it
+> looks like that is exactly the same on RZ/G2UL and on RZ/Five.
+>
+Now that we have to update the binding doc with the BUS_ERR_INT too,
+do you think it would make sense to add interrupt-names too?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index 4092c0016035..67a4f2d4480d 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -469,6 +469,16 @@ tmu4: timer@ffc00000 {
- 			status = "disabled";
- 		};
- 
-+		eth_serdes: phy@e6444000 {
-+			compatible = "renesas,r8a779f0-ether-serdes";
-+			reg = <0 0xe6444000 0 0x2800>;
-+			clocks = <&cpg CPG_MOD 1506>;
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1506>;
-+			#phy-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			compatible = "renesas,i2c-r8a779f0",
- 				     "renesas,rcar-gen4-i2c";
-@@ -651,6 +661,106 @@ ufs: ufs@e6860000 {
- 			status = "disabled";
- 		};
- 
-+		rswitch: ethernet@e6880000 {
-+			compatible = "renesas,r8a779f0-ether-switch";
-+			reg = <0 0xe6880000 0 0x20000>, <0 0xe68c0000 0 0x20000>;
-+			reg-names = "base", "secure_base";
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 295 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "mfwd_error", "race_error",
-+					  "coma_error", "gwca0_error",
-+					  "gwca1_error", "etha0_error",
-+					  "etha1_error", "etha2_error",
-+					  "gptp0_status", "gptp1_status",
-+					  "mfwd_status", "race_status",
-+					  "coma_status", "gwca0_status",
-+					  "gwca1_status", "etha0_status",
-+					  "etha1_status", "etha2_status",
-+					  "rmac0_status", "rmac1_status",
-+					  "rmac2_status",
-+					  "gwca0_rxtx0", "gwca0_rxtx1",
-+					  "gwca0_rxtx2", "gwca0_rxtx3",
-+					  "gwca0_rxtx4", "gwca0_rxtx5",
-+					  "gwca0_rxtx6", "gwca0_rxtx7",
-+					  "gwca1_rxtx0", "gwca1_rxtx1",
-+					  "gwca1_rxtx2", "gwca1_rxtx3",
-+					  "gwca1_rxtx4", "gwca1_rxtx5",
-+					  "gwca1_rxtx6", "gwca1_rxtx7",
-+					  "gwca0_rxts0", "gwca0_rxts1",
-+					  "gwca1_rxts0", "gwca1_rxts1",
-+					  "rmac0_mdio", "rmac1_mdio",
-+					  "rmac2_mdio",
-+					  "rmac0_phy", "rmac1_phy",
-+					  "rmac2_phy";
-+			clocks = <&cpg CPG_MOD 1505>;
-+			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1505>;
-+			status = "disabled";
-+
-+			ethernet-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					phys = <&eth_serdes 0>;
-+				};
-+				port@1 {
-+					reg = <1>;
-+					phys = <&eth_serdes 1>;
-+				};
-+				port@2 {
-+					reg = <2>;
-+					phys = <&eth_serdes 2>;
-+				};
-+			};
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a779f0",
- 				     "renesas,rcar-gen4-scif", "renesas,scif";
--- 
-2.25.1
+BUS_ERR_INT will have to be handled IRQC itself (i.e. IRQC will
+register a handler for it).
 
+Cheers,
+Prabhakar
