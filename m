@@ -2,40 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F6EC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Nov 2022 16:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF637C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Nov 2022 16:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242215AbiKRQpX (ORCPT
+        id S242287AbiKRQy1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Nov 2022 11:45:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60578 "EHLO
+        Fri, 18 Nov 2022 11:54:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242221AbiKRQpS (ORCPT
+        with ESMTP id S241871AbiKRQy0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2022 11:45:18 -0500
+        Fri, 18 Nov 2022 11:54:26 -0500
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2AC36A768
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Nov 2022 08:45:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE5A56A764
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Nov 2022 08:54:25 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:d0b:c833:41f6:da0e])
         by andre.telenet-ops.be with bizsmtp
-        id lslC2800Q29fmst01slCAh; Fri, 18 Nov 2022 17:45:14 +0100
+        id lsu82800A29fmst01su8nt; Fri, 18 Nov 2022 17:54:08 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ow4UK-000pA8-Cx; Fri, 18 Nov 2022 17:45:12 +0100
+        id 1ow4cy-000pG8-5F; Fri, 18 Nov 2022 17:54:08 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ow4UJ-00FrgE-SI; Fri, 18 Nov 2022 17:45:11 +0100
+        id 1ow4cx-00Fros-9U; Fri, 18 Nov 2022 17:54:07 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/7] Renesas SoC updates for v6.2 (take two)
-Date:   Fri, 18 Nov 2022 17:44:57 +0100
-Message-Id: <cover.1668788918.git.geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.2 (take two)
+Date:   Fri, 18 Nov 2022 17:54:05 +0100
+Message-Id: <cover.1668789961.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,59 +42,45 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi SoC folks,
+	Hi Mike, Stephen,
 
-This is my second pull request for the inclusion of Renesas SoC updates
-for v6.2, and the first one including support for an SoC with a RISC-V
-CPU core (and including no changes for SoCs with arm32 CPU cores).
+The following changes since commit 02693e11611e082e3c4d8653e8af028e43d31164:
 
-It consists of 7 parts:
+  clk: renesas: r9a06g032: Repair grave increment error (2022-11-01 10:15:28 +0100)
 
-  [GIT PULL 1/7] Renesas ARM defconfig updates for v6.2
+are available in the Git repository at:
 
-    - Enable support for Renesas R-Car S4-8 Spider Ethernet devices in the
-      arm64 defconfig.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.2-tag2
 
-  [GIT PULL 2/7] Renesas ARM DT updates for v6.2 (take two)
+for you to fetch changes up to 777bcc85e1fbadfea1927e828165102cf5050b53:
 
-    - Timer (TMU and CMT) and quad Cortex-A76 CPU topology support for
-      the R-Car V4H SoC,
-    - Watchdog, L2 cache, and system controller support for the RZ/V2M
-      SoC on the RZ/V2M Evaluation Kit 2.0,
-    - Ethernet Switch and SERDES supports for the R-Car S4-8 SoC and the
-      Spider development board,
-    - Miscellaneous fixes and improvements.
+  clk: renesas: r8a779f0: Fix Ethernet Switch clocks (2022-11-16 09:05:59 +0100)
 
-  [GIT PULL 3/7] Renesas driver updates for v6.2 (take two)
+----------------------------------------------------------------
+clk: renesas: Updates for v6.2 (take two)
 
-    - Add support for identifying the SoC revision on RZ/V2M.
-
-  [GIT PULL 4/7] Renesas DT binding updates for v6.2 (take two)
-
-    - Document support for the Andes Technology AX45MP RISC-V CPU Core, as
-      used on the Renesas RZ/Five SoC,
-    - Document support for the Renesas RZ/V2M System Configuration.
-
-  [GIT PULL 5/7] Renesas RISC-V defconfig updates for v6.2
-
-    - Enable support for the Renesas RZ/Five SoC and the RZ/Five SMARC EVK
-      board in the risc-v defconfig.
-
-  [GIT PULL 6/7] Renesas RISC-V DT updates for v6.2
-
-    - Add initial support for the Renesas RZ/Five SoC and the Renesas
-      RZ/Five SMARC EVK development board.
-
-  [GIT PULL 7/7] Renesas RISC-V SoC updates for v6.2
-
-    - Add Kconfig option for Renesas RISC-V SoCs.
+  - Correct the parent clocks for the (High Speed) Serial Communication
+    Interfaces with FIFO ((H)SCIF) modules and the mixed-up Ethernet
+    Switch clocks on R-Car S4-8,
+  - Add timer (TMU, CMT) and Cortex-A76 CPU core (Z0) clocks on R-Car
+    V4H.
 
 Thanks for pulling!
 
-P.S. I'm wondering if I should reduce the number of branches?
-     Probably it would make sense to (at least) use a single branch for
-     the DTS changes, as the RZ/Five DTS files share base SoC and board
-     DTS with RZ/G2UL through #include <arm64/renesas/...>.
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      clk: renesas: r8a779g0: Add Z0 clock support
+      clk: renesas: r8a779f0: Fix Ethernet Switch clocks
+
+Wolfram Sang (4):
+      clk: renesas: r8a779f0: Fix HSCIF parent clocks
+      clk: renesas: r8a779f0: Fix SCIF parent clocks
+      clk: renesas: r8a779g0: Add TMU and SASYNCRT clocks
+      clk: renesas: r8a779g0: Add CMT clocks
+
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c | 20 ++++++++++----------
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 11 +++++++++++
+ 2 files changed, 21 insertions(+), 10 deletions(-)
 
 Gr{oetje,eeting}s,
 
