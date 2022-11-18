@@ -2,118 +2,108 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DB8C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F6EC433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Nov 2022 16:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242212AbiKRQpW (ORCPT
+        id S242215AbiKRQpX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Nov 2022 11:45:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60580 "EHLO
+        Fri, 18 Nov 2022 11:45:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242215AbiKRQpS (ORCPT
+        with ESMTP id S242221AbiKRQpS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 18 Nov 2022 11:45:18 -0500
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A2269DF2
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2AC36A768
         for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Nov 2022 08:45:16 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:d0b:c833:41f6:da0e])
         by andre.telenet-ops.be with bizsmtp
-        id lslD2800129fmst01slDAw; Fri, 18 Nov 2022 17:45:14 +0100
+        id lslC2800Q29fmst01slCAh; Fri, 18 Nov 2022 17:45:14 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ow4UK-000pAA-Os; Fri, 18 Nov 2022 17:45:12 +0100
+        id 1ow4UK-000pA8-Cx; Fri, 18 Nov 2022 17:45:12 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ow4UJ-00FrgO-U1; Fri, 18 Nov 2022 17:45:11 +0100
+        id 1ow4UJ-00FrgE-SI; Fri, 18 Nov 2022 17:45:11 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 2/7] Renesas ARM DT updates for v6.2 (take two)
-Date:   Fri, 18 Nov 2022 17:44:59 +0100
-Message-Id: <cover.1668788921.git.geert+renesas@glider.be>
+Subject: [GIT PULL 0/7] Renesas SoC updates for v6.2 (take two)
+Date:   Fri, 18 Nov 2022 17:44:57 +0100
+Message-Id: <cover.1668788918.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1668788918.git.geert+renesas@glider.be>
-References: <cover.1668788918.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following changes since commit b9a0be2054964026aa58966ce9724b672f210835:
+	Hi SoC folks,
 
-  arm64: dts: renesas: r9a07g043: Split out RZ/G2UL SoC specific parts (2022-10-28 14:23:00 +0200)
+This is my second pull request for the inclusion of Renesas SoC updates
+for v6.2, and the first one including support for an SoC with a RISC-V
+CPU core (and including no changes for SoCs with arm32 CPU cores).
 
-are available in the Git repository at:
+It consists of 7 parts:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-dt-for-v6.2-tag2
+  [GIT PULL 1/7] Renesas ARM defconfig updates for v6.2
 
-for you to fetch changes up to 884af88b756ccb57ed7cb6241c1fbd1080732124:
+    - Enable support for Renesas R-Car S4-8 Spider Ethernet devices in the
+      arm64 defconfig.
 
-  arm64: dts: renesas: spider-ethernet: Enable Ethernet Switch and SERDES (2022-11-18 17:08:01 +0100)
+  [GIT PULL 2/7] Renesas ARM DT updates for v6.2 (take two)
 
-----------------------------------------------------------------
-Renesas ARM DT updates for v6.2 (take two)
+    - Timer (TMU and CMT) and quad Cortex-A76 CPU topology support for
+      the R-Car V4H SoC,
+    - Watchdog, L2 cache, and system controller support for the RZ/V2M
+      SoC on the RZ/V2M Evaluation Kit 2.0,
+    - Ethernet Switch and SERDES supports for the R-Car S4-8 SoC and the
+      Spider development board,
+    - Miscellaneous fixes and improvements.
 
-  - Timer (TMU and CMT) and quad Cortex-A76 CPU topology support for
-    the R-Car V4H SoC,
-  - Watchdog, L2 cache, and system controller support for the RZ/V2M
-    SoC on the RZ/V2M Evaluation Kit 2.0,
-  - Ethernet Switch and SERDES supports for the R-Car S4-8 SoC and the
-    Spider development board,
-  - Miscellaneous fixes and improvements.
+  [GIT PULL 3/7] Renesas driver updates for v6.2 (take two)
 
-----------------------------------------------------------------
-Biju Das (2):
-      arm64: dts: renesas: r9a09g011: Add L2 Cache node
-      arm64: dts: renesas: r9a09g011: Add system controller node
+    - Add support for identifying the SoC revision on RZ/V2M.
 
-Fabrizio Castro (4):
-      arm64: dts: renesas: r9a09g011: Fix unit address format error
-      arm64: dts: renesas: r9a09g011: Fix I2C SoC specific strings
-      arm64: dts: renesas: r9a09g011: Add watchdog node
-      arm64: dts: renesas: rzv2mevk2: Enable watchdog
+  [GIT PULL 4/7] Renesas DT binding updates for v6.2 (take two)
 
-Geert Uytterhoeven (5):
-      arm64: dts: renesas: r8a779g0: Add L3 cache controller
-      arm64: dts: renesas: r8a779g0: Add secondary CA76 CPU cores
-      arm64: dts: renesas: r8a779g0: Add CPUIdle support
-      arm64: dts: renesas: r8a779g0: Add CPU core clocks
-      arm64: dts: renesas: r8a779g0: Add CA76 operating points
+    - Document support for the Andes Technology AX45MP RISC-V CPU Core, as
+      used on the Renesas RZ/Five SoC,
+    - Document support for the Renesas RZ/V2M System Configuration.
 
-Lad Prabhakar (1):
-      arm64: dts: renesas: rzg2l: Drop #address-cells from pinctrl nodes
+  [GIT PULL 5/7] Renesas RISC-V defconfig updates for v6.2
 
-Pierre Gondois (1):
-      arm64: dts: renesas: rzg2l: Add missing cache-level properties
+    - Enable support for the Renesas RZ/Five SoC and the RZ/Five SMARC EVK
+      board in the risc-v defconfig.
 
-Thanh Quan (1):
-      arm64: dts: renesas: r8a779g0: Add CMT node
+  [GIT PULL 6/7] Renesas RISC-V DT updates for v6.2
 
-Wolfram Sang (5):
-      arm64: dts: renesas: r8a779f0: Fix HSCIF "brg_int" clock
-      arm64: dts: renesas: r8a779f0: Fix SCIF "brg_int" clock
-      arm64: dts: renesas: r8a779g0: Add TMU nodes
-      arm64: dts: renesas: white-hawk-cpu: Sort RWDT entry correctly
-      arm64: dts: renesas: spider-cpu: Switch from SCIF3 to HSCIF0
+    - Add initial support for the Renesas RZ/Five SoC and the Renesas
+      RZ/Five SMARC EVK development board.
 
-Yoshihiro Shimoda (2):
-      arm64: dts: renesas: r8a779f0: Add Ethernet Switch and SERDES nodes
-      arm64: dts: renesas: spider-ethernet: Enable Ethernet Switch and SERDES
+  [GIT PULL 7/7] Renesas RISC-V SoC updates for v6.2
 
- .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi      |  30 +--
- .../boot/dts/renesas/r8a779f0-spider-ethernet.dtsi |  90 +++++++
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi          | 126 +++++++++-
- .../boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi  |   8 +-
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi          | 265 ++++++++++++++++++++-
- arch/arm64/boot/dts/renesas/r9a07g043u.dtsi        |   1 +
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi         |   2 +-
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi         |   2 +-
- arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts  |   4 +
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi         |  31 ++-
- 10 files changed, 522 insertions(+), 37 deletions(-)
+    - Add Kconfig option for Renesas RISC-V SoCs.
+
+Thanks for pulling!
+
+P.S. I'm wondering if I should reduce the number of branches?
+     Probably it would make sense to (at least) use a single branch for
+     the DTS changes, as the RZ/Five DTS files share base SoC and board
+     DTS with RZ/G2UL through #include <arm64/renesas/...>.
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
