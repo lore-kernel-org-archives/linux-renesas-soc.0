@@ -2,38 +2,40 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BDCC4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Nov 2022 11:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB846C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Nov 2022 11:35:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229508AbiKTLfL (ORCPT
+        id S229530AbiKTLfM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Nov 2022 06:35:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52534 "EHLO
+        Sun, 20 Nov 2022 06:35:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbiKTLfJ (ORCPT
+        with ESMTP id S229526AbiKTLfJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Sun, 20 Nov 2022 06:35:09 -0500
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F6154F18D
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CFBF4E437
         for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Nov 2022 03:35:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=YBaMv9PzJJlFR5
-        yaiiSaihsEwD/WqoDuNZnCtw3ae90=; b=W+h92SSiNhFZ50Py6ex+K7fEuqPSDS
-        qemdWKr3sZpIaxE3XrvJCOOMGGcJ9L+4o60P7fzR4Y6Qz0/hG41wRIO7KvGAM6aX
-        oaAT2gpoHklD7Xl2QaLWSTQrDkKx+wpP7hXd2su6UWjNx0CnXOpsM8QFr6TpKua2
-        ctDj8dqetLXeY=
-Received: (qmail 2515265 invoked from network); 20 Nov 2022 12:35:03 +0100
+        :mime-version:content-transfer-encoding; s=k1; bh=DxxrXcFkEh3/ps
+        PBEodOzXZdpNuF5lGC5J0GieLFf/o=; b=ty0CqIkV8bDH8Jw6EEDxquvMmlX+8K
+        JgnKrej5tamnS7cNe4a8RLKxy8VUvVTnm5zRTi0E15f8ScOUqtMZpYetv7DGHuQ4
+        qDDatfN61ostgSa+QPi8LGu9Mrbe6k75a+H+/y3eWL+5xAw/aTl3arCu5H3CngS0
+        qlByoKmMYKr5M=
+Received: (qmail 2515227 invoked from network); 20 Nov 2022 12:35:03 +0100
 Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2022 12:35:03 +0100
-X-UD-Smtp-Session: l3s3148p1@yYhwVOXtNplehh99
+X-UD-Smtp-Session: l3s3148p1@wO9kVOXtMplehh99
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/4] mmc: renesas_sdhi: better reset from HS400 mode
-Date:   Sun, 20 Nov 2022 12:34:55 +0100
-Message-Id: <20221120113457.42010-3-wsa+renesas@sang-engineering.com>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Takeshi Saito <takeshi.saito.xv@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: [PATCH v2 1/4] mmc: renesas_sdhi: alway populate SCC pointer
+Date:   Sun, 20 Nov 2022 12:34:54 +0100
+Message-Id: <20221120113457.42010-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221120113457.42010-1-wsa+renesas@sang-engineering.com>
 References: <20221120113457.42010-1-wsa+renesas@sang-engineering.com>
@@ -43,29 +45,48 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Up to now, HS400 adjustment mode was only disabled on soft reset when a
-calibration table was in use. It is safer, though, to disable it as soon
-as the instance has an adjustment related quirk set, i.e. bad taps or a
-calibration table.
+We need the SCC pointer to reset the device, so populate it even when we
+don't need it for tuning.
 
+Fixes: 45bffc371fef ("mmc: renesas_sdhi: only reset SCC when its pointer is populated")
+Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/renesas_sdhi_core.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 4372197dc2a9..d2521cf1411d 100644
+index b93ab11f112a..4372197dc2a9 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -546,7 +546,7 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
- 			 SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL) &
- 			sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
+@@ -1067,11 +1067,14 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (ver >= SDHI_VER_GEN3_SD)
+ 		host->get_timeout_cycles = renesas_sdhi_gen3_get_cycles;
  
--	if (priv->adjust_hs400_calib_table)
-+	if (priv->quirks && (priv->quirks->hs400_calib_table || priv->quirks->hs400_bad_taps))
- 		renesas_sdhi_adjust_hs400_mode_disable(host);
++	/* Check for SCC so we can reset it if needed */
++	if (of_data && of_data->scc_offset && ver >= SDHI_VER_GEN2_SDR104)
++		priv->scc_ctl = host->ctl + of_data->scc_offset;
++
+ 	/* Enable tuning iff we have an SCC and a supported mode */
+-	if (of_data && of_data->scc_offset &&
+-	    (host->mmc->caps & MMC_CAP_UHS_SDR104 ||
+-	     host->mmc->caps2 & (MMC_CAP2_HS200_1_8V_SDR |
+-				 MMC_CAP2_HS400_1_8V))) {
++	if (priv->scc_ctl && (host->mmc->caps & MMC_CAP_UHS_SDR104 ||
++	    host->mmc->caps2 & (MMC_CAP2_HS200_1_8V_SDR |
++				MMC_CAP2_HS400_1_8V))) {
+ 		const struct renesas_sdhi_scc *taps = of_data->taps;
+ 		bool use_4tap = quirks && quirks->hs400_4taps;
+ 		bool hit = false;
+@@ -1091,7 +1094,6 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		if (!hit)
+ 			dev_warn(&host->pdev->dev, "Unknown clock rate for tuning\n");
  
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+-		priv->scc_ctl = host->ctl + of_data->scc_offset;
+ 		host->check_retune = renesas_sdhi_check_scc_error;
+ 		host->ops.execute_tuning = renesas_sdhi_execute_tuning;
+ 		host->ops.prepare_hs400_tuning = renesas_sdhi_prepare_hs400_tuning;
 -- 
 2.30.2
 
