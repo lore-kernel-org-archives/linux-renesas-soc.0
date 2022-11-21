@@ -2,183 +2,335 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E67C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Nov 2022 13:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CD8C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Nov 2022 13:18:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229721AbiKUNSq (ORCPT
+        id S229646AbiKUNSr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Nov 2022 08:18:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56690 "EHLO
+        Mon, 21 Nov 2022 08:18:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbiKUNSp (ORCPT
+        with ESMTP id S229453AbiKUNSq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Nov 2022 08:18:45 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48ABE73BB8
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Nov 2022 05:18:43 -0800 (PST)
+        Mon, 21 Nov 2022 08:18:46 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D3B74CEF
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Nov 2022 05:18:44 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:4821:1ba5:2638:5c3a])
-        by baptiste.telenet-ops.be with bizsmtp
-        id n1Jg2800i5WXlCv011JgX9; Mon, 21 Nov 2022 14:18:41 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id n1Jg2800Z5WXlCv011JhDZ; Mon, 21 Nov 2022 14:18:41 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ox6h6-001900-HS; Mon, 21 Nov 2022 14:18:40 +0100
+        id 1ox6h6-001902-Kr; Mon, 21 Nov 2022 14:18:40 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ox6h6-00BMkJ-4U; Mon, 21 Nov 2022 14:18:40 +0100
+        id 1ox6h6-00BMkX-6U; Mon, 21 Nov 2022 14:18:40 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] pinctrl: renesas: r8a779g0: Fix alignment in GPSR[678]_* macros
-Date:   Mon, 21 Nov 2022 14:18:36 +0100
-Message-Id: <9424a0e7f6d66a94d333df9fdc5cdf3b7defb8f5.1669036423.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 3/4] pinctrl: renesas: r8a779g0: Fix Group 6/7 pin functions
+Date:   Mon, 21 Nov 2022 14:18:38 +0100
+Message-Id: <06972cafd0efa4cfb395cfa76000a1bdae5e9e73.1669036423.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1669036423.git.geert+renesas@glider.be>
 References: <cover.1669036423.git.geert+renesas@glider.be>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The alignment of the second column in the definitions of the GPSR[678]_*
-macros does not match the alignment used in other definitions.
-Fix this to improve uniformity.
+According to R-Car V4H Series User’s Manual: Hardware Rev. 0.54, pin
+groups 6 and 7 do not use Module Select Registers to configure pin
+functions.
+
+Hence:
+  - Remove the non-existent Module Select Registers (MODSEL[67]),
+  - Correct the affected PINMUX definitions.
+
+Fixes: 36611d28f5130d8b ("pinctrl: renesas: r8a779g0: Add missing MODSELx for AVBx")
+Fixes: ad9bb2fec66262b0 ("pinctrl: renesas: Initial R8A779G0 (R-Car V4H) PFC support")
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a779g0.c | 112 ++++++++++++-------------
- 1 file changed, 56 insertions(+), 56 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a779g0.c | 171 +++++++------------------
+ 1 file changed, 49 insertions(+), 122 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pfc-r8a779g0.c b/drivers/pinctrl/renesas/pfc-r8a779g0.c
-index 5dd1c2c7708a802b..bf7fcce2d9c6b2a1 100644
+index bc1352d36d49fa2b..104482a847e94ea6 100644
 --- a/drivers/pinctrl/renesas/pfc-r8a779g0.c
 +++ b/drivers/pinctrl/renesas/pfc-r8a779g0.c
-@@ -206,66 +206,66 @@
- #define GPSR5_0		FM(AVB2_AVTP_PPS)
+@@ -649,30 +649,6 @@ FM(IP0SR8_23_20)	IP0SR8_23_20	FM(IP1SR8_23_20)	IP1SR8_23_20	\
+ FM(IP0SR8_27_24)	IP0SR8_27_24	\
+ FM(IP0SR8_31_28)	IP0SR8_31_28
  
- /* GPSR 6 */
--#define GPSR6_20	F_(AVB1_TXCREFCLK,		IP2SR6_19_16)
--#define GPSR6_19	F_(AVB1_RD3,			IP2SR6_15_12)
--#define GPSR6_18	F_(AVB1_TD3,			IP2SR6_11_8)
--#define GPSR6_17	F_(AVB1_RD2,			IP2SR6_7_4)
--#define GPSR6_16	F_(AVB1_TD2,			IP2SR6_3_0)
--#define GPSR6_15	F_(AVB1_RD0,			IP1SR6_31_28)
--#define GPSR6_14	F_(AVB1_RD1,			IP1SR6_27_24)
--#define GPSR6_13	F_(AVB1_TD0,			IP1SR6_23_20)
--#define GPSR6_12	F_(AVB1_TD1,			IP1SR6_19_16)
--#define GPSR6_11	F_(AVB1_AVTP_CAPTURE,		IP1SR6_15_12)
--#define GPSR6_10	F_(AVB1_AVTP_PPS,		IP1SR6_11_8)
--#define GPSR6_9		F_(AVB1_RX_CTL,			IP1SR6_7_4)
--#define GPSR6_8		F_(AVB1_RXC,			IP1SR6_3_0)
--#define GPSR6_7		F_(AVB1_TX_CTL,			IP0SR6_31_28)
--#define GPSR6_6		F_(AVB1_TXC,			IP0SR6_27_24)
--#define GPSR6_5		F_(AVB1_AVTP_MATCH,		IP0SR6_23_20)
--#define GPSR6_4		F_(AVB1_LINK,			IP0SR6_19_16)
--#define GPSR6_3		F_(AVB1_PHY_INT,		IP0SR6_15_12)
--#define GPSR6_2		F_(AVB1_MDC,			IP0SR6_11_8)
--#define GPSR6_1		F_(AVB1_MAGIC,			IP0SR6_7_4)
--#define GPSR6_0		F_(AVB1_MDIO,			IP0SR6_3_0)
-+#define GPSR6_20	F_(AVB1_TXCREFCLK,	IP2SR6_19_16)
-+#define GPSR6_19	F_(AVB1_RD3,		IP2SR6_15_12)
-+#define GPSR6_18	F_(AVB1_TD3,		IP2SR6_11_8)
-+#define GPSR6_17	F_(AVB1_RD2,		IP2SR6_7_4)
-+#define GPSR6_16	F_(AVB1_TD2,		IP2SR6_3_0)
-+#define GPSR6_15	F_(AVB1_RD0,		IP1SR6_31_28)
-+#define GPSR6_14	F_(AVB1_RD1,		IP1SR6_27_24)
-+#define GPSR6_13	F_(AVB1_TD0,		IP1SR6_23_20)
-+#define GPSR6_12	F_(AVB1_TD1,		IP1SR6_19_16)
-+#define GPSR6_11	F_(AVB1_AVTP_CAPTURE,	IP1SR6_15_12)
-+#define GPSR6_10	F_(AVB1_AVTP_PPS,	IP1SR6_11_8)
-+#define GPSR6_9		F_(AVB1_RX_CTL,		IP1SR6_7_4)
-+#define GPSR6_8		F_(AVB1_RXC,		IP1SR6_3_0)
-+#define GPSR6_7		F_(AVB1_TX_CTL,		IP0SR6_31_28)
-+#define GPSR6_6		F_(AVB1_TXC,		IP0SR6_27_24)
-+#define GPSR6_5		F_(AVB1_AVTP_MATCH,	IP0SR6_23_20)
-+#define GPSR6_4		F_(AVB1_LINK,		IP0SR6_19_16)
-+#define GPSR6_3		F_(AVB1_PHY_INT,	IP0SR6_15_12)
-+#define GPSR6_2		F_(AVB1_MDC,		IP0SR6_11_8)
-+#define GPSR6_1		F_(AVB1_MAGIC,		IP0SR6_7_4)
-+#define GPSR6_0		F_(AVB1_MDIO,		IP0SR6_3_0)
+-/* MOD_SEL6 */			/* 0 */				/* 1 */
+-#define MOD_SEL6_18		FM(SEL_AVB1_TD3_0)		FM(SEL_AVB1_TD3_1)
+-#define MOD_SEL6_16		FM(SEL_AVB1_TD2_0)		FM(SEL_AVB1_TD2_1)
+-#define MOD_SEL6_13		FM(SEL_AVB1_TD0_0)		FM(SEL_AVB1_TD0_1)
+-#define MOD_SEL6_12		FM(SEL_AVB1_TD1_0)		FM(SEL_AVB1_TD1_1)
+-#define MOD_SEL6_10		FM(SEL_AVB1_AVTP_PPS_0)		FM(SEL_AVB1_AVTP_PPS_1)
+-#define MOD_SEL6_7		FM(SEL_AVB1_TX_CTL_0)		FM(SEL_AVB1_TX_CTL_1)
+-#define MOD_SEL6_6		FM(SEL_AVB1_TXC_0)		FM(SEL_AVB1_TXC_1)
+-#define MOD_SEL6_5		FM(SEL_AVB1_AVTP_MATCH_0)	FM(SEL_AVB1_AVTP_MATCH_1)
+-#define MOD_SEL6_2		FM(SEL_AVB1_MDC_0)		FM(SEL_AVB1_MDC_1)
+-#define MOD_SEL6_1		FM(SEL_AVB1_MAGIC_0)		FM(SEL_AVB1_MAGIC_1)
+-
+-/* MOD_SEL7 */			/* 0 */				/* 1 */
+-#define MOD_SEL7_16		FM(SEL_AVB0_TX_CTL_0)		FM(SEL_AVB0_TX_CTL_1)
+-#define MOD_SEL7_15		FM(SEL_AVB0_TXC_0)		FM(SEL_AVB0_TXC_1)
+-#define MOD_SEL7_13		FM(SEL_AVB0_MDC_0)		FM(SEL_AVB0_MDC_1)
+-#define MOD_SEL7_11		FM(SEL_AVB0_TD0_0)		FM(SEL_AVB0_TD0_1)
+-#define MOD_SEL7_10		FM(SEL_AVB0_MAGIC_0)		FM(SEL_AVB0_MAGIC_1)
+-#define MOD_SEL7_7		FM(SEL_AVB0_TD1_0)		FM(SEL_AVB0_TD1_1)
+-#define MOD_SEL7_6		FM(SEL_AVB0_TD2_0)		FM(SEL_AVB0_TD2_1)
+-#define MOD_SEL7_3		FM(SEL_AVB0_TD3_0)		FM(SEL_AVB0_TD3_1)
+-#define MOD_SEL7_2		FM(SEL_AVB0_AVTP_MATCH_0)	FM(SEL_AVB0_AVTP_MATCH_1)
+-#define MOD_SEL7_0		FM(SEL_AVB0_AVTP_PPS_0)		FM(SEL_AVB0_AVTP_PPS_1)
+-
+ /* MOD_SEL8 */			/* 0 */				/* 1 */
+ #define MOD_SEL8_11		FM(SEL_SDA5_0)			FM(SEL_SDA5_1)
+ #define MOD_SEL8_10		FM(SEL_SCL5_0)			FM(SEL_SCL5_1)
+@@ -689,23 +665,18 @@ FM(IP0SR8_31_28)	IP0SR8_31_28
  
- /* GPSR7 */
--#define GPSR7_20	F_(AVB0_RX_CTL,			IP2SR7_19_16)
--#define GPSR7_19	F_(AVB0_RXC,			IP2SR7_15_12)
--#define GPSR7_18	F_(AVB0_RD0,			IP2SR7_11_8)
--#define GPSR7_17	F_(AVB0_RD1,			IP2SR7_7_4)
--#define GPSR7_16	F_(AVB0_TX_CTL,			IP2SR7_3_0)
--#define GPSR7_15	F_(AVB0_TXC,			IP1SR7_31_28)
--#define GPSR7_14	F_(AVB0_MDIO,			IP1SR7_27_24)
--#define GPSR7_13	F_(AVB0_MDC,			IP1SR7_23_20)
--#define GPSR7_12	F_(AVB0_RD2,			IP1SR7_19_16)
--#define GPSR7_11	F_(AVB0_TD0,			IP1SR7_15_12)
--#define GPSR7_10	F_(AVB0_MAGIC,			IP1SR7_11_8)
--#define GPSR7_9		F_(AVB0_TXCREFCLK,		IP1SR7_7_4)
--#define GPSR7_8		F_(AVB0_RD3,			IP1SR7_3_0)
--#define GPSR7_7		F_(AVB0_TD1,			IP0SR7_31_28)
--#define GPSR7_6		F_(AVB0_TD2,			IP0SR7_27_24)
--#define GPSR7_5		F_(AVB0_PHY_INT,		IP0SR7_23_20)
--#define GPSR7_4		F_(AVB0_LINK,			IP0SR7_19_16)
--#define GPSR7_3		F_(AVB0_TD3,			IP0SR7_15_12)
--#define GPSR7_2		F_(AVB0_AVTP_MATCH,		IP0SR7_11_8)
--#define GPSR7_1		F_(AVB0_AVTP_CAPTURE,		IP0SR7_7_4)
--#define GPSR7_0		F_(AVB0_AVTP_PPS,		IP0SR7_3_0)
-+#define GPSR7_20	F_(AVB0_RX_CTL,		IP2SR7_19_16)
-+#define GPSR7_19	F_(AVB0_RXC,		IP2SR7_15_12)
-+#define GPSR7_18	F_(AVB0_RD0,		IP2SR7_11_8)
-+#define GPSR7_17	F_(AVB0_RD1,		IP2SR7_7_4)
-+#define GPSR7_16	F_(AVB0_TX_CTL,		IP2SR7_3_0)
-+#define GPSR7_15	F_(AVB0_TXC,		IP1SR7_31_28)
-+#define GPSR7_14	F_(AVB0_MDIO,		IP1SR7_27_24)
-+#define GPSR7_13	F_(AVB0_MDC,		IP1SR7_23_20)
-+#define GPSR7_12	F_(AVB0_RD2,		IP1SR7_19_16)
-+#define GPSR7_11	F_(AVB0_TD0,		IP1SR7_15_12)
-+#define GPSR7_10	F_(AVB0_MAGIC,		IP1SR7_11_8)
-+#define GPSR7_9		F_(AVB0_TXCREFCLK,	IP1SR7_7_4)
-+#define GPSR7_8		F_(AVB0_RD3,		IP1SR7_3_0)
-+#define GPSR7_7		F_(AVB0_TD1,		IP0SR7_31_28)
-+#define GPSR7_6		F_(AVB0_TD2,		IP0SR7_27_24)
-+#define GPSR7_5		F_(AVB0_PHY_INT,	IP0SR7_23_20)
-+#define GPSR7_4		F_(AVB0_LINK,		IP0SR7_19_16)
-+#define GPSR7_3		F_(AVB0_TD3,		IP0SR7_15_12)
-+#define GPSR7_2		F_(AVB0_AVTP_MATCH,	IP0SR7_11_8)
-+#define GPSR7_1		F_(AVB0_AVTP_CAPTURE,	IP0SR7_7_4)
-+#define GPSR7_0		F_(AVB0_AVTP_PPS,	IP0SR7_3_0)
+ #define PINMUX_MOD_SELS \
+ \
+-MOD_SEL6_18							\
+-MOD_SEL6_16		MOD_SEL7_16				\
+-			MOD_SEL7_15				\
+-MOD_SEL6_13		MOD_SEL7_13				\
+-MOD_SEL6_12							\
+-			MOD_SEL7_11		MOD_SEL8_11	\
+-MOD_SEL6_10		MOD_SEL7_10		MOD_SEL8_10	\
+-						MOD_SEL8_9	\
+-						MOD_SEL8_8	\
+-MOD_SEL6_7		MOD_SEL7_7		MOD_SEL8_7	\
+-MOD_SEL6_6		MOD_SEL7_6		MOD_SEL8_6	\
+-MOD_SEL6_5					MOD_SEL8_5	\
+-						MOD_SEL8_4	\
+-			MOD_SEL7_3		MOD_SEL8_3	\
+-MOD_SEL6_2		MOD_SEL7_2		MOD_SEL8_2	\
+-MOD_SEL6_1					MOD_SEL8_1	\
+-			MOD_SEL7_0		MOD_SEL8_0
++MOD_SEL8_11	\
++MOD_SEL8_10	\
++MOD_SEL8_9	\
++MOD_SEL8_8	\
++MOD_SEL8_7	\
++MOD_SEL8_6	\
++MOD_SEL8_5	\
++MOD_SEL8_4	\
++MOD_SEL8_3	\
++MOD_SEL8_2	\
++MOD_SEL8_1	\
++MOD_SEL8_0
  
- /* GPSR8 */
--#define GPSR8_13	F_(GP8_13,			IP1SR8_23_20)
--#define GPSR8_12	F_(GP8_12,			IP1SR8_19_16)
--#define GPSR8_11	F_(SDA5,			IP1SR8_15_12)
--#define GPSR8_10	F_(SCL5,			IP1SR8_11_8)
--#define GPSR8_9		F_(SDA4,			IP1SR8_7_4)
--#define GPSR8_8		F_(SCL4,			IP1SR8_3_0)
--#define GPSR8_7		F_(SDA3,			IP0SR8_31_28)
--#define GPSR8_6		F_(SCL3,			IP0SR8_27_24)
--#define GPSR8_5		F_(SDA2,			IP0SR8_23_20)
--#define GPSR8_4		F_(SCL2,			IP0SR8_19_16)
--#define GPSR8_3		F_(SDA1,			IP0SR8_15_12)
--#define GPSR8_2		F_(SCL1,			IP0SR8_11_8)
--#define GPSR8_1		F_(SDA0,			IP0SR8_7_4)
--#define GPSR8_0		F_(SCL0,			IP0SR8_3_0)
-+#define GPSR8_13	F_(GP8_13,		IP1SR8_23_20)
-+#define GPSR8_12	F_(GP8_12,		IP1SR8_19_16)
-+#define GPSR8_11	F_(SDA5,		IP1SR8_15_12)
-+#define GPSR8_10	F_(SCL5,		IP1SR8_11_8)
-+#define GPSR8_9		F_(SDA4,		IP1SR8_7_4)
-+#define GPSR8_8		F_(SCL4,		IP1SR8_3_0)
-+#define GPSR8_7		F_(SDA3,		IP0SR8_31_28)
-+#define GPSR8_6		F_(SCL3,		IP0SR8_27_24)
-+#define GPSR8_5		F_(SDA2,		IP0SR8_23_20)
-+#define GPSR8_4		F_(SCL2,		IP0SR8_19_16)
-+#define GPSR8_3		F_(SDA1,		IP0SR8_15_12)
-+#define GPSR8_2		F_(SCL1,		IP0SR8_11_8)
-+#define GPSR8_1		F_(SDA0,		IP0SR8_7_4)
-+#define GPSR8_0		F_(SCL0,		IP0SR8_3_0)
+ enum {
+ 	PINMUX_RESERVED = 0,
+@@ -1092,23 +1063,23 @@ static const u16 pinmux_data[] = {
+ 	/* IP0SR6 */
+ 	PINMUX_IPSR_GPSR(IP0SR6_3_0,	AVB1_MDIO),
  
- /* SR0 */
- /* IP0SR0 */		/* 0 */			/* 1 */			/* 2 */		/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
+-	PINMUX_IPSR_MSEL(IP0SR6_7_4,	AVB1_MAGIC,		SEL_AVB1_MAGIC_1),
++	PINMUX_IPSR_GPSR(IP0SR6_7_4,	AVB1_MAGIC),
+ 
+-	PINMUX_IPSR_MSEL(IP0SR6_11_8,	AVB1_MDC,		SEL_AVB1_MDC_1),
++	PINMUX_IPSR_GPSR(IP0SR6_11_8,	AVB1_MDC),
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR6_15_12,	AVB1_PHY_INT),
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR6_19_16,	AVB1_LINK),
+ 	PINMUX_IPSR_GPSR(IP0SR6_19_16,	AVB1_MII_TX_ER),
+ 
+-	PINMUX_IPSR_MSEL(IP0SR6_23_20,	AVB1_AVTP_MATCH,	SEL_AVB1_AVTP_MATCH_1),
+-	PINMUX_IPSR_MSEL(IP0SR6_23_20,	AVB1_MII_RX_ER,		SEL_AVB1_AVTP_MATCH_0),
++	PINMUX_IPSR_GPSR(IP0SR6_23_20,	AVB1_AVTP_MATCH),
++	PINMUX_IPSR_GPSR(IP0SR6_23_20,	AVB1_MII_RX_ER),
+ 
+-	PINMUX_IPSR_MSEL(IP0SR6_27_24,	AVB1_TXC,		SEL_AVB1_TXC_1),
+-	PINMUX_IPSR_MSEL(IP0SR6_27_24,	AVB1_MII_TXC,		SEL_AVB1_TXC_0),
++	PINMUX_IPSR_GPSR(IP0SR6_27_24,	AVB1_TXC),
++	PINMUX_IPSR_GPSR(IP0SR6_27_24,	AVB1_MII_TXC),
+ 
+-	PINMUX_IPSR_MSEL(IP0SR6_31_28,	AVB1_TX_CTL,		SEL_AVB1_TX_CTL_1),
+-	PINMUX_IPSR_MSEL(IP0SR6_31_28,	AVB1_MII_TX_EN,		SEL_AVB1_TX_CTL_0),
++	PINMUX_IPSR_GPSR(IP0SR6_31_28,	AVB1_TX_CTL),
++	PINMUX_IPSR_GPSR(IP0SR6_31_28,	AVB1_MII_TX_EN),
+ 
+ 	/* IP1SR6 */
+ 	PINMUX_IPSR_GPSR(IP1SR6_3_0,	AVB1_RXC),
+@@ -1117,17 +1088,17 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP1SR6_7_4,	AVB1_RX_CTL),
+ 	PINMUX_IPSR_GPSR(IP1SR6_7_4,	AVB1_MII_RX_DV),
+ 
+-	PINMUX_IPSR_MSEL(IP1SR6_11_8,	AVB1_AVTP_PPS,		SEL_AVB1_AVTP_PPS_1),
+-	PINMUX_IPSR_MSEL(IP1SR6_11_8,	AVB1_MII_COL,		SEL_AVB1_AVTP_PPS_0),
++	PINMUX_IPSR_GPSR(IP1SR6_11_8,	AVB1_AVTP_PPS),
++	PINMUX_IPSR_GPSR(IP1SR6_11_8,	AVB1_MII_COL),
+ 
+ 	PINMUX_IPSR_GPSR(IP1SR6_15_12,	AVB1_AVTP_CAPTURE),
+ 	PINMUX_IPSR_GPSR(IP1SR6_15_12,	AVB1_MII_CRS),
+ 
+-	PINMUX_IPSR_MSEL(IP1SR6_19_16,	AVB1_TD1,		SEL_AVB1_TD1_1),
+-	PINMUX_IPSR_MSEL(IP1SR6_19_16,	AVB1_MII_TD1,		SEL_AVB1_TD1_0),
++	PINMUX_IPSR_GPSR(IP1SR6_19_16,	AVB1_TD1),
++	PINMUX_IPSR_GPSR(IP1SR6_19_16,	AVB1_MII_TD1),
+ 
+-	PINMUX_IPSR_MSEL(IP1SR6_23_20,	AVB1_TD0,		SEL_AVB1_TD0_1),
+-	PINMUX_IPSR_MSEL(IP1SR6_23_20,	AVB1_MII_TD0,		SEL_AVB1_TD0_0),
++	PINMUX_IPSR_GPSR(IP1SR6_23_20,	AVB1_TD0),
++	PINMUX_IPSR_GPSR(IP1SR6_23_20,	AVB1_MII_TD0),
+ 
+ 	PINMUX_IPSR_GPSR(IP1SR6_27_24,	AVB1_RD1),
+ 	PINMUX_IPSR_GPSR(IP1SR6_27_24,	AVB1_MII_RD1),
+@@ -1136,14 +1107,14 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP1SR6_31_28,	AVB1_MII_RD0),
+ 
+ 	/* IP2SR6 */
+-	PINMUX_IPSR_MSEL(IP2SR6_3_0,	AVB1_TD2,		SEL_AVB1_TD2_1),
+-	PINMUX_IPSR_MSEL(IP2SR6_3_0,	AVB1_MII_TD2,		SEL_AVB1_TD2_0),
++	PINMUX_IPSR_GPSR(IP2SR6_3_0,	AVB1_TD2),
++	PINMUX_IPSR_GPSR(IP2SR6_3_0,	AVB1_MII_TD2),
+ 
+ 	PINMUX_IPSR_GPSR(IP2SR6_7_4,	AVB1_RD2),
+ 	PINMUX_IPSR_GPSR(IP2SR6_7_4,	AVB1_MII_RD2),
+ 
+-	PINMUX_IPSR_MSEL(IP2SR6_11_8,	AVB1_TD3,		SEL_AVB1_TD3_1),
+-	PINMUX_IPSR_MSEL(IP2SR6_11_8,	AVB1_MII_TD3,		SEL_AVB1_TD3_0),
++	PINMUX_IPSR_GPSR(IP2SR6_11_8,	AVB1_TD3),
++	PINMUX_IPSR_GPSR(IP2SR6_11_8,	AVB1_MII_TD3),
+ 
+ 	PINMUX_IPSR_GPSR(IP2SR6_15_12,	AVB1_RD3),
+ 	PINMUX_IPSR_GPSR(IP2SR6_15_12,	AVB1_MII_RD3),
+@@ -1151,29 +1122,29 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP2SR6_19_16,	AVB1_TXCREFCLK),
+ 
+ 	/* IP0SR7 */
+-	PINMUX_IPSR_MSEL(IP0SR7_3_0,	AVB0_AVTP_PPS,		SEL_AVB0_AVTP_PPS_1),
+-	PINMUX_IPSR_MSEL(IP0SR7_3_0,	AVB0_MII_COL,		SEL_AVB0_AVTP_PPS_0),
++	PINMUX_IPSR_GPSR(IP0SR7_3_0,	AVB0_AVTP_PPS),
++	PINMUX_IPSR_GPSR(IP0SR7_3_0,	AVB0_MII_COL),
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR7_7_4,	AVB0_AVTP_CAPTURE),
+ 	PINMUX_IPSR_GPSR(IP0SR7_7_4,	AVB0_MII_CRS),
+ 
+-	PINMUX_IPSR_MSEL(IP0SR7_11_8,	AVB0_AVTP_MATCH,	SEL_AVB0_AVTP_MATCH_1),
+-	PINMUX_IPSR_MSEL(IP0SR7_11_8,	AVB0_MII_RX_ER,		SEL_AVB0_AVTP_MATCH_0),
+-	PINMUX_IPSR_MSEL(IP0SR7_11_8,	CC5_OSCOUT,		SEL_AVB0_AVTP_MATCH_0),
++	PINMUX_IPSR_GPSR(IP0SR7_11_8,	AVB0_AVTP_MATCH),
++	PINMUX_IPSR_GPSR(IP0SR7_11_8,	AVB0_MII_RX_ER),
++	PINMUX_IPSR_GPSR(IP0SR7_11_8,	CC5_OSCOUT),
+ 
+-	PINMUX_IPSR_MSEL(IP0SR7_15_12,	AVB0_TD3,		SEL_AVB0_TD3_1),
+-	PINMUX_IPSR_MSEL(IP0SR7_15_12,	AVB0_MII_TD3,		SEL_AVB0_TD3_0),
++	PINMUX_IPSR_GPSR(IP0SR7_15_12,	AVB0_TD3),
++	PINMUX_IPSR_GPSR(IP0SR7_15_12,	AVB0_MII_TD3),
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR7_19_16,	AVB0_LINK),
+ 	PINMUX_IPSR_GPSR(IP0SR7_19_16,	AVB0_MII_TX_ER),
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR7_23_20,	AVB0_PHY_INT),
+ 
+-	PINMUX_IPSR_MSEL(IP0SR7_27_24,	AVB0_TD2,		SEL_AVB0_TD2_1),
+-	PINMUX_IPSR_MSEL(IP0SR7_27_24,	AVB0_MII_TD2,		SEL_AVB0_TD2_0),
++	PINMUX_IPSR_GPSR(IP0SR7_27_24,	AVB0_TD2),
++	PINMUX_IPSR_GPSR(IP0SR7_27_24,	AVB0_MII_TD2),
+ 
+-	PINMUX_IPSR_MSEL(IP0SR7_31_28,	AVB0_TD1,		SEL_AVB0_TD1_1),
+-	PINMUX_IPSR_MSEL(IP0SR7_31_28,	AVB0_MII_TD1,		SEL_AVB0_TD1_0),
++	PINMUX_IPSR_GPSR(IP0SR7_31_28,	AVB0_TD1),
++	PINMUX_IPSR_GPSR(IP0SR7_31_28,	AVB0_MII_TD1),
+ 
+ 	/* IP1SR7 */
+ 	PINMUX_IPSR_GPSR(IP1SR7_3_0,	AVB0_RD3),
+@@ -1181,24 +1152,24 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP1SR7_7_4,	AVB0_TXCREFCLK),
+ 
+-	PINMUX_IPSR_MSEL(IP1SR7_11_8,	AVB0_MAGIC,		SEL_AVB0_MAGIC_1),
++	PINMUX_IPSR_GPSR(IP1SR7_11_8,	AVB0_MAGIC),
+ 
+-	PINMUX_IPSR_MSEL(IP1SR7_15_12,	AVB0_TD0,		SEL_AVB0_TD0_1),
+-	PINMUX_IPSR_MSEL(IP1SR7_15_12,	AVB0_MII_TD0,		SEL_AVB0_TD0_0),
++	PINMUX_IPSR_GPSR(IP1SR7_15_12,	AVB0_TD0),
++	PINMUX_IPSR_GPSR(IP1SR7_15_12,	AVB0_MII_TD0),
+ 
+ 	PINMUX_IPSR_GPSR(IP1SR7_19_16,	AVB0_RD2),
+ 	PINMUX_IPSR_GPSR(IP1SR7_19_16,	AVB0_MII_RD2),
+ 
+-	PINMUX_IPSR_MSEL(IP1SR7_23_20,	AVB0_MDC,		SEL_AVB0_MDC_1),
++	PINMUX_IPSR_GPSR(IP1SR7_23_20,	AVB0_MDC),
+ 
+ 	PINMUX_IPSR_GPSR(IP1SR7_27_24,	AVB0_MDIO),
+ 
+-	PINMUX_IPSR_MSEL(IP1SR7_31_28,	AVB0_TXC,		SEL_AVB0_TXC_1),
+-	PINMUX_IPSR_MSEL(IP1SR7_31_28,	AVB0_MII_TXC,		SEL_AVB0_TXC_0),
++	PINMUX_IPSR_GPSR(IP1SR7_31_28,	AVB0_TXC),
++	PINMUX_IPSR_GPSR(IP1SR7_31_28,	AVB0_MII_TXC),
+ 
+ 	/* IP2SR7 */
+-	PINMUX_IPSR_MSEL(IP2SR7_3_0,	AVB0_TX_CTL,		SEL_AVB0_TX_CTL_1),
+-	PINMUX_IPSR_MSEL(IP2SR7_3_0,	AVB0_MII_TX_EN,		SEL_AVB0_TX_CTL_0),
++	PINMUX_IPSR_GPSR(IP2SR7_3_0,	AVB0_TX_CTL),
++	PINMUX_IPSR_GPSR(IP2SR7_3_0,	AVB0_MII_TX_EN),
+ 
+ 	PINMUX_IPSR_GPSR(IP2SR7_7_4,	AVB0_RD1),
+ 	PINMUX_IPSR_GPSR(IP2SR7_7_4,	AVB0_MII_RD1),
+@@ -3641,50 +3612,6 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 
+ #define F_(x, y)	x,
+ #define FM(x)		FN_##x,
+-	{ PINMUX_CFG_REG_VAR("MOD_SEL6", 0xE6061100, 32,
+-			     GROUP(-13, 1, -1, 1, -2, 1, 1,
+-				   -1, 1, -2, 1, 1, 1, -2, 1, 1, -1),
+-			     GROUP(
+-		/* RESERVED 31-19 */
+-		MOD_SEL6_18
+-		/* RESERVED 17 */
+-		MOD_SEL6_16
+-		/* RESERVED 15-14 */
+-		MOD_SEL6_13
+-		MOD_SEL6_12
+-		/* RESERVED 11 */
+-		MOD_SEL6_10
+-		/* RESERVED 9-8 */
+-		MOD_SEL6_7
+-		MOD_SEL6_6
+-		MOD_SEL6_5
+-		/* RESERVED 4-3 */
+-		MOD_SEL6_2
+-		MOD_SEL6_1
+-		/* RESERVED 0 */
+-		))
+-	},
+-	{ PINMUX_CFG_REG_VAR("MOD_SEL7", 0xE6061900, 32,
+-			     GROUP(-15, 1, 1, -1, 1, -1, 1, 1, -2, 1, 1,
+-				   -2, 1, 1, -1, 1),
+-			     GROUP(
+-		/* RESERVED 31-17 */
+-		MOD_SEL7_16
+-		MOD_SEL7_15
+-		/* RESERVED 14 */
+-		MOD_SEL7_13
+-		/* RESERVED 12 */
+-		MOD_SEL7_11
+-		MOD_SEL7_10
+-		/* RESERVED 9-8 */
+-		MOD_SEL7_7
+-		MOD_SEL7_6
+-		/* RESERVED 5-4 */
+-		MOD_SEL7_3
+-		MOD_SEL7_2
+-		/* RESERVED 1 */
+-		MOD_SEL7_0))
+-	},
+ 	{ PINMUX_CFG_REG_VAR("MOD_SEL8", 0xE6068100, 32,
+ 			     GROUP(-20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+ 			     GROUP(
 -- 
 2.25.1
 
