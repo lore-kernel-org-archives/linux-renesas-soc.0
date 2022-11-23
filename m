@@ -2,91 +2,112 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78133C47089
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Nov 2022 11:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E685DC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Nov 2022 14:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237356AbiKWLYY (ORCPT
+        id S238465AbiKWOlk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Nov 2022 06:24:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60422 "EHLO
+        Wed, 23 Nov 2022 09:41:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237379AbiKWLYC (ORCPT
+        with ESMTP id S238526AbiKWOlg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2022 06:24:02 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A8910AD2E;
-        Wed, 23 Nov 2022 03:23:29 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id v8so13367741edi.3;
-        Wed, 23 Nov 2022 03:23:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FrAt4ByWk4XAwGofuv5blZvYxRxRqUOIcR/LfPMrukE=;
-        b=DKZKp6xlz9rWJ+UM6jAAsNLpfX2wosD+PrhfM0G8DFIFddDWKR4ky728VwpD+HPetK
-         6hHh+0kRT2mkXK/XnA7wVHUGnlkmSky/bUtoBMVApvH+6E4ZrnXiC5ydlBa7ApfK/doJ
-         pRpWt+1cDYxsvFn+blmW6PkV6IYdR1yn5oqmxhGYLfy1UUVretcj+XqcL4fZ/JZWAO5F
-         UQYZOD+Hx3QGCXWfwVqfiIuELEUMpEUx2GAZlNiA0/157zCgDkqJEWhsBukCVj+OvkrR
-         tZznso/GmMVhXRGN4YKB4Yg8NQR+tRMxOj7sCb6WjFWqhqkZtAMBqN/jfUhVd4QBlFBD
-         8a7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FrAt4ByWk4XAwGofuv5blZvYxRxRqUOIcR/LfPMrukE=;
-        b=eItCa9mlT3USkQmMW6MaDaf2Y0Y1OIldajVtF7GnyFWJkNT0mfsJrK9HtL8fn9VaGy
-         X5MH9orDiy8lvqEu8ieag6jkUhp9eeu/9xNd/i6/CoBDU2qSTKAkM9Ctx6NZMBG49Zox
-         Pr6A8aXhc0emCaLCfHmhfWwtxd4qcO2dVLkJGO7GXmCQkTzdc9Y//JGftcRrUjk/CSZY
-         Edn4kCuB6M+tzE2q4syhWjGHVbGLFivwvoVyKtNlWvFVupSdXZK2mPwShjad43bb7IiC
-         xQRgXrIttLns2idu55CKNNiv/TmHljFgUj00eqoCuuCd4Sj3J+ajlmfByKKAwdrc1zJ1
-         q9hQ==
-X-Gm-Message-State: ANoB5pl8M29kymNXd1r/wVqpDoyFZCNXO6cL99/K2EZeejTThiHqrVo7
-        OD8oo+mIoTQziyLrv1QWTKo=
-X-Google-Smtp-Source: AA0mqf6KznzDxEgmlgssmc2SbGZA3fYhuwpdfA/3s9yH2f9S55qeAEfEhefQdDBif0kSY2c6jAbIPw==
-X-Received: by 2002:a05:6402:1381:b0:468:5b78:6381 with SMTP id b1-20020a056402138100b004685b786381mr12501363edv.373.1669202607939;
-        Wed, 23 Nov 2022 03:23:27 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id la1-20020a170907780100b00787f91a6b16sm7057757ejc.26.2022.11.23.03.23.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 03:23:27 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org,
+        Wed, 23 Nov 2022 09:41:36 -0500
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5444B59858
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Nov 2022 06:41:33 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:881b:815b:474d:c3fd])
+        by laurent.telenet-ops.be with bizsmtp
+        id nqhS2800e49U0Rd01qhSaN; Wed, 23 Nov 2022 15:41:30 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1oxqwI-001Rqi-06; Wed, 23 Nov 2022 15:41:26 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1oxqwH-0012HT-3W; Wed, 23 Nov 2022 15:41:25 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: pwm: renesas,tpu: Add r8a779g0 support
-Date:   Wed, 23 Nov 2022 12:23:23 +0100
-Message-Id: <166920257256.1455112.10323739493176778611.b4-ty@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <ccdf2ccb5aeb9329d959599069d60177fe34e892.1669047191.git.geert+renesas@glider.be>
-References: <ccdf2ccb5aeb9329d959599069d60177fe34e892.1669047191.git.geert+renesas@glider.be>
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/6] memory: renesas-rpc-if: Always use dev in rpcif_probe()
+Date:   Wed, 23 Nov 2022 15:41:19 +0100
+Message-Id: <298009c43ad119703f564c0f1864743914b4beeb.1669213027.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1669213027.git.geert+renesas@glider.be>
+References: <cover.1669213027.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, 21 Nov 2022 17:13:42 +0100, Geert Uytterhoeven wrote:
-> Document support for the 16-Bit Timer Pulse Unit (TPU) in the Renesas
-> R-Car V4H (R8A779G0) SoC.
-> 
-> Based on a patch in the BSP by CongDang.
-> 
-> 
+rpcif_probe() already has a "dev" variable pointing to the right device
+structure, so there is no need to take a detour through the platform
+device.
 
-Applied, thanks!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Combination of the old "memory: renesas-rpc-if: Always use dev in
+    rpcif_sw_init()" and "memory: renesas-rpc-if: Add dev helper to
+    rpcif_probe()" after rebasing on top of the two fixes.
+---
+ drivers/memory/renesas-rpc-if.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-[1/1] dt-bindings: pwm: renesas,tpu: Add r8a779g0 support
-      commit: 50315945d178eebec4e8e2c50c265767ddb926eb
-
-Best regards,
+diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
+index 42c5f9f10135b86a..83171242f9514c22 100644
+--- a/drivers/memory/renesas-rpc-if.c
++++ b/drivers/memory/renesas-rpc-if.c
+@@ -688,9 +688,9 @@ static int rpcif_probe(struct platform_device *pdev)
+ 	const char *name;
+ 	int ret;
+ 
+-	flash = of_get_next_child(pdev->dev.of_node, NULL);
++	flash = of_get_next_child(dev->of_node, NULL);
+ 	if (!flash) {
+-		dev_warn(&pdev->dev, "no flash node found\n");
++		dev_warn(dev, "no flash node found\n");
+ 		return -ENODEV;
+ 	}
+ 
+@@ -700,12 +700,12 @@ static int rpcif_probe(struct platform_device *pdev)
+ 		name = "rpc-if-hyperflash";
+ 	} else	{
+ 		of_node_put(flash);
+-		dev_warn(&pdev->dev, "unknown flash type\n");
++		dev_warn(dev, "unknown flash type\n");
+ 		return -ENODEV;
+ 	}
+ 	of_node_put(flash);
+ 
+-	rpc = devm_kzalloc(&pdev->dev, sizeof(*rpc), GFP_KERNEL);
++	rpc = devm_kzalloc(dev, sizeof(*rpc), GFP_KERNEL);
+ 	if (!rpc)
+ 		return -ENOMEM;
+ 
+@@ -734,9 +734,9 @@ static int rpcif_probe(struct platform_device *pdev)
+ 	vdev = platform_device_alloc(name, pdev->id);
+ 	if (!vdev)
+ 		return -ENOMEM;
+-	vdev->dev.parent = &pdev->dev;
++	vdev->dev.parent = dev;
+ 
+-	rpc->dev = &pdev->dev;
++	rpc->dev = dev;
+ 	rpc->vdev = vdev;
+ 	platform_set_drvdata(pdev, rpc);
+ 
 -- 
-Thierry Reding <thierry.reding@gmail.com>
+2.25.1
+
