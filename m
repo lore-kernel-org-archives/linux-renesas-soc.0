@@ -2,159 +2,89 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25676C47088
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Nov 2022 14:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52874C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Nov 2022 14:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237497AbiKWOlr (ORCPT
+        id S236185AbiKWOoC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Nov 2022 09:41:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40548 "EHLO
+        Wed, 23 Nov 2022 09:44:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238180AbiKWOli (ORCPT
+        with ESMTP id S236316AbiKWOoA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2022 09:41:38 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FCE53ED2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Nov 2022 06:41:33 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:881b:815b:474d:c3fd])
-        by albert.telenet-ops.be with bizsmtp
-        id nqhS2800C49U0Rd06qhSTe; Wed, 23 Nov 2022 15:41:30 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oxqwH-001Rqh-NY; Wed, 23 Nov 2022 15:41:25 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1oxqwH-0012HN-2m; Wed, 23 Nov 2022 15:41:25 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Wed, 23 Nov 2022 09:44:00 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94BCAE2;
+        Wed, 23 Nov 2022 06:43:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 30BA661D2F;
+        Wed, 23 Nov 2022 14:43:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4054C433D6;
+        Wed, 23 Nov 2022 14:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669214636;
+        bh=Y//1b3rNjcukiNpZ5Pvh7pYLjJ73zqnquLe7wn350Y8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZG0A8BqvT2ORUrlb7I1sLgQbAJlUfWRx4X3QT05SHfMJHOiZi+oRORqmZj+4Ve1sr
+         yrWervl3veC7SaL/o17MVgz3Dhfcy0sfIdmXTsu4djT54VPEw3RJkWavMyc6YUx1SN
+         g9poRnTZVXeouBC0UZFuX6m9uQ4XqT9Rm2SZUstZY6NdbdpCNIZXXUg8rJ/rXGDFnm
+         xocVZ/NP1GyqV/SPtlOUK0KMz9pz+BK8ggFE9KJ+P7VJYkoo1Jc9GcfSQ0yDAa9SVX
+         zznkZz4xqfL53zsXyhV3+8pHvNOb+T4KROZfGYgEnEdEcDbd2YXbZBbjcYD5dpvcKV
+         yktlDGX0NXmHQ==
+Date:   Wed, 23 Nov 2022 14:43:50 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Richard Weinberger <richard@nod.at>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sergey Shtylyov <s.shtylyov@omp.ru>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/6] memory: renesas-rpc-if: Move resource acquisition to .probe()
-Date:   Wed, 23 Nov 2022 15:41:18 +0100
-Message-Id: <c1012ef1de799e08a70817ab7313794e2d8d7bfb.1669213027.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1669213027.git.geert+renesas@glider.be>
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] memory: renesas-rpc-if: Pass device instead of
+ rpcif to rpcif_*()
+Message-ID: <Y34xpkf4c55D4VRc@sirena.org.uk>
 References: <cover.1669213027.git.geert+renesas@glider.be>
+ <0460fe82ba348cedec7a9a75a8eff762c50e817b.1669213027.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BKAJETaVx6g41XLW"
+Content-Disposition: inline
+In-Reply-To: <0460fe82ba348cedec7a9a75a8eff762c50e817b.1669213027.git.geert+renesas@glider.be>
+X-Cookie: I'm rated PG-34!!
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-While the acquired resources are tied to the lifetime of the RPC-IF core
-device (through the use of managed resource functions), the actual
-resource acquisition is triggered from the HyperBus and SPI child
-drivers.  Due to this mismatch, unbinding and rebinding the child
-drivers manually fails with -EBUSY:
 
-    # echo rpc-if-hyperflash > /sys/bus/platform/drivers/rpc-if-hyperflash/unbind
-    # echo rpc-if-hyperflash > /sys/bus/platform/drivers/rpc-if-hyperflash/bind
-    rpc-if ee200000.spi: can't request region for resource [mem 0xee200000-0xee2001ff]
-    rpc-if-hyperflash: probe of rpc-if-hyperflash failed with error -16
+--BKAJETaVx6g41XLW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The same is true for rpc-if-spi.
+On Wed, Nov 23, 2022 at 03:41:21PM +0100, Geert Uytterhoeven wrote:
+> Most rpcif_*() API functions do not need access to any other fields in
+> the rpcif structure than the device pointer.  Simplify dependencies by
+> passing the device pointer instead.
 
-Fix this by moving all resource acquisition to the core driver's probe
-routine.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Fixes: ca7d8b980b67f133 ("memory: add Renesas RPC-IF driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Move forward in series,
-  - Add Fixes tag.
----
- drivers/memory/renesas-rpc-if.c | 49 ++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+--BKAJETaVx6g41XLW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 224973ac859f88fa..42c5f9f10135b86a 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -277,32 +277,7 @@ static const struct regmap_config rpcif_regmap_config = {
- 
- int rpcif_sw_init(struct rpcif *rpcif, struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
- 	struct rpcif_priv *rpc = dev_get_drvdata(dev);
--	struct resource *res;
--
--	rpc->base = devm_platform_ioremap_resource_byname(pdev, "regs");
--	if (IS_ERR(rpc->base))
--		return PTR_ERR(rpc->base);
--
--	rpc->regmap = devm_regmap_init(&pdev->dev, NULL, rpc, &rpcif_regmap_config);
--	if (IS_ERR(rpc->regmap)) {
--		dev_err(&pdev->dev,
--			"failed to init regmap for rpcif, error %ld\n",
--			PTR_ERR(rpc->regmap));
--		return	PTR_ERR(rpc->regmap);
--	}
--
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dirmap");
--	rpc->dirmap = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(rpc->dirmap))
--		return PTR_ERR(rpc->dirmap);
--	rpc->size = resource_size(res);
--
--	rpc->type = (uintptr_t)of_device_get_match_data(dev);
--	rpc->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
--	if (IS_ERR(rpc->rstc))
--		return PTR_ERR(rpc->rstc);
- 
- 	rpcif->dev = dev;
- 	rpcif->dirmap = rpc->dirmap;
-@@ -705,9 +680,11 @@ EXPORT_SYMBOL(rpcif_dirmap_read);
- 
- static int rpcif_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct platform_device *vdev;
- 	struct device_node *flash;
- 	struct rpcif_priv *rpc;
-+	struct resource *res;
- 	const char *name;
- 	int ret;
- 
-@@ -732,6 +709,28 @@ static int rpcif_probe(struct platform_device *pdev)
- 	if (!rpc)
- 		return -ENOMEM;
- 
-+	rpc->base = devm_platform_ioremap_resource_byname(pdev, "regs");
-+	if (IS_ERR(rpc->base))
-+		return PTR_ERR(rpc->base);
-+
-+	rpc->regmap = devm_regmap_init(dev, NULL, rpc, &rpcif_regmap_config);
-+	if (IS_ERR(rpc->regmap)) {
-+		dev_err(dev, "failed to init regmap for rpcif, error %ld\n",
-+			PTR_ERR(rpc->regmap));
-+		return	PTR_ERR(rpc->regmap);
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dirmap");
-+	rpc->dirmap = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(rpc->dirmap))
-+		return PTR_ERR(rpc->dirmap);
-+	rpc->size = resource_size(res);
-+
-+	rpc->type = (uintptr_t)of_device_get_match_data(dev);
-+	rpc->rstc = devm_reset_control_get_exclusive(dev, NULL);
-+	if (IS_ERR(rpc->rstc))
-+		return PTR_ERR(rpc->rstc);
-+
- 	vdev = platform_device_alloc(name, pdev->id);
- 	if (!vdev)
- 		return -ENOMEM;
--- 
-2.25.1
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmN+MaUACgkQJNaLcl1U
+h9Bcugf9Fq5kxq2SwxU/HdgpmKvb/nRaHNMV7D4mCFZNMxmkwUY4eMNTKzbpvly3
+D4lSGL4xRZWS1hQVR4EK5Xs5BCj2PqvvYhNTAM4BLDgLP/qK/+8B9Ezs8PuSYDRg
+CRyR3HF7GGKhP0NM8Vj9+M+OoldvWwfAFp5wx4kp5henzsB1zSuwIs90Z4FxsQTN
+IiCpmwcBJrmDQcBwYeZL+rGYiVWfs5xm/7WPt/E5ssbMGXms/cOnhjMZHgexSFEv
+ZPT3WyWEY7Ka01Ri1OxtooAIgdQ3BHnxEswLJbAhJj5Reb9kPfvl8UN+6h1iV1f6
+jLNoNQ5Gr5aHbQCbbs72ASpRcUqCqA==
+=evAV
+-----END PGP SIGNATURE-----
+
+--BKAJETaVx6g41XLW--
