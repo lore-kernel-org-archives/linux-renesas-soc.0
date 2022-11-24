@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3835C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Nov 2022 17:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EC1C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Nov 2022 17:23:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229825AbiKXRW4 (ORCPT
+        id S229589AbiKXRW5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Nov 2022 12:22:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48140 "EHLO
+        Thu, 24 Nov 2022 12:22:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229777AbiKXRWq (ORCPT
+        with ESMTP id S229811AbiKXRWu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Nov 2022 12:22:46 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540FB5C0CF;
-        Thu, 24 Nov 2022 09:22:40 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id t4so1743154wmj.5;
-        Thu, 24 Nov 2022 09:22:40 -0800 (PST)
+        Thu, 24 Nov 2022 12:22:50 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FC3861770;
+        Thu, 24 Nov 2022 09:22:46 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id v1so3336356wrt.11;
+        Thu, 24 Nov 2022 09:22:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vGTeIsZb6dwV09Jxzafi+tDu+2zt3FcJZOZJD63Nq5c=;
-        b=A8LwDLViXjTFC1n697iLKxetZVRA1pt1BHLBlG57fgEUyDIx3T36ft5hVIQ4PWKzmP
-         SEWBgibKQyMivuFK3DxZaAUP+1xQfM5MQm5PUNzOwwhy6pinBh7c1A0N00k+eca3HU40
-         doCckp/rLWs5W8eYAuB/1QNLKN/T2K5t5LgTEMO5dl+cSkBD6azgc26KjPazGrTu7tBe
-         UsuuPUnMpPH8o+flRy/pS+igcqSvnvLnemkQvzO0njGh16HP33hXmD6NolW8/jx5CwlA
-         9zZE/8pwDgITjGWh7k23C+uldZMkh2eXjUJ6lumuOfiz8TNIFPPedzTKOpaKWlvQq5nQ
-         +MHw==
+        bh=JvgWfL4HI/QgKyNL1kR3QOr26Xuun8VUqB/AbzIo99c=;
+        b=A+faFO7PyjtwbJVGQsiRq8Iod0sOFBjJO5hAzsbz8lwsfBMsPCTZOkzuj3p1JBEpnh
+         D0Oa+O1YwjUDIhm1AFvCZ02AvD+aOrLequEPSQTaBqZDS7tTDzHjg6RZ5B2IlOeKnxYF
+         7nt06jE9icHEZ/fRXeq/dNTOtCgP9YFagD852Nebh8Gi/ZXYmYopUrq9iBKFRH1a49aD
+         NKYAg51LVzMO2HcgErVoSXJ4D8x/qesbyJKY+WHbMxGL90qtUsonC8sw3ke04aqNQkmE
+         FqG6nHTQlNBoOnautNel3wWvcAlGF1etoIWs7rZHqaBOOLzMn3JDGcctzeApwm3AbvPy
+         mOEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vGTeIsZb6dwV09Jxzafi+tDu+2zt3FcJZOZJD63Nq5c=;
-        b=Sf6gnxly9SDTUEJDO4DKYvP8gkO+j+2f8IovApg9YuYOKc0xKyDiDMq1IghpGC+023
-         VRmN4jEWgtWyyVcUlrx6KGKDN4AU/5papyomvP9MrfcidXsW3FDD062t/EsWLKERLGpk
-         u8gl4DdNHxOIwQYagfc3D2HLRyylLwZJGcPGr2liI1fbvaDOU+8WrKusWEoU4BB02p0n
-         X5Bn4t+aMuVCVoEfw0JssB1vTPRHjnAeHcrNN6vgmaIK99bz4lkxDpThoO0otQb92rsg
-         xjrG4zR7zSTl7wuAySNlhuv4VTY6y3I3iRJc94+tUxSv7l9Qwi2zJRLTt5g/0waPYs2L
-         geag==
-X-Gm-Message-State: ANoB5pl/xeBQwaZ6L8arMcmuNI2A4G2wpimq9Wk38izb16K2ZEVtSkPF
-        QFMS6t5FtfUUCKAXdo1aMKU=
-X-Google-Smtp-Source: AA0mqf4/eGyD9maTGYn7KxarvFxZbqpMMQXISgDYXlp/nDaqQuuYHzBHEsZXJQoOOkcvNv2BBWShUw==
-X-Received: by 2002:a05:600c:3108:b0:3cf:8058:43b8 with SMTP id g8-20020a05600c310800b003cf805843b8mr12220757wmo.95.1669310559371;
-        Thu, 24 Nov 2022 09:22:39 -0800 (PST)
+        bh=JvgWfL4HI/QgKyNL1kR3QOr26Xuun8VUqB/AbzIo99c=;
+        b=oyoyzzlu1OlxpINPwKdF0G9vyhEnpf2NueZvG2rU+eGQo46PNJ8RlqMBALtZ2+OmRy
+         PlatrLUe6lBIZxmBKT3K+Tc62MLM5uxnNWmA9C0y7N20Hnp5YEVbzdZ5fwGDtcOwgxhR
+         0Ugt1y194SLCwPYzMO+oaT5F1dOVAjMn2oH703mAzqHv5Rl6r7nW1V4Wsg6fjxAAE0eB
+         jgr+QXcfAwMkxL3Lyus9vJZN9mAdrs7Wyb4oNOv+jl2SdwV0L4y5zzXYd/2pmz6oacaR
+         Ec2cxl0mm6QeAF4dM0DiBAb/7oxkicVhm/N2WaXIDxPYA2AXry/TlTkBdCNZnnGdDIER
+         2xug==
+X-Gm-Message-State: ANoB5pkmFBeDZNz5TYlMPt0sBWOth3dPQRyWdN6y208RAv9tMJwYDm3f
+        tDfl+eRoOvtF43Cb/lAGupo=
+X-Google-Smtp-Source: AA0mqf7G2aWca5qucK+oikgDePhg68/fqggGGElJZNwed81giUpGn+yWkND+InHRlX0jtNqHe4zr4g==
+X-Received: by 2002:a5d:5e87:0:b0:241:e7a6:db08 with SMTP id ck7-20020a5d5e87000000b00241e7a6db08mr7017188wrb.349.1669310565021;
+        Thu, 24 Nov 2022 09:22:45 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:89ee:3f5d:1c99:35d8])
-        by smtp.gmail.com with ESMTPSA id v17-20020a05600c445100b003c64c186206sm2698086wmn.16.2022.11.24.09.22.38
+        by smtp.gmail.com with ESMTPSA id v17-20020a05600c445100b003c64c186206sm2698086wmn.16.2022.11.24.09.22.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Nov 2022 09:22:38 -0800 (PST)
+        Thu, 24 Nov 2022 09:22:44 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Paul Walmsley <paul.walmsley@sifive.com>,
@@ -74,9 +74,9 @@ Cc:     Jisheng Zhang <jszhang@kernel.org>,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 1/7] riscv: asm: alternative-macros: Introduce ALTERNATIVE_3() macro
-Date:   Thu, 24 Nov 2022 17:22:01 +0000
-Message-Id: <20221124172207.153718-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 5/7] riscv: mm: dma-noncoherent: Pass direction and operation to ALT_CMO_OP()
+Date:   Thu, 24 Nov 2022 17:22:05 +0000
+Message-Id: <20221124172207.153718-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221124172207.153718-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20221124172207.153718-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -88,147 +88,105 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Introduce ALTERNATIVE_3() macro.
+Pass direction and operation to ALT_CMO_OP() macro.
+
+This is in preparation for adding errata for the Andes CPU core.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 RFC v3 -> v4
 * New patch
 ---
- arch/riscv/include/asm/alternative-macros.h | 94 +++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ arch/riscv/include/asm/cacheflush.h  |  4 ++++
+ arch/riscv/include/asm/errata_list.h |  8 ++++++--
+ arch/riscv/mm/dma-noncoherent.c      | 15 ++++++++++-----
+ 3 files changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/arch/riscv/include/asm/alternative-macros.h b/arch/riscv/include/asm/alternative-macros.h
-index ec2f3f1b836f..1caf4306b3d6 100644
---- a/arch/riscv/include/asm/alternative-macros.h
-+++ b/arch/riscv/include/asm/alternative-macros.h
-@@ -69,6 +69,34 @@
- 				   new_c_2, vendor_id_2, errata_id_2,	\
- 					IS_ENABLED(CONFIG_k_2)
+diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm/cacheflush.h
+index f6fbe7042f1c..4a04d1be7c67 100644
+--- a/arch/riscv/include/asm/cacheflush.h
++++ b/arch/riscv/include/asm/cacheflush.h
+@@ -8,6 +8,10 @@
  
-+.macro __ALTERNATIVE_CFG_3 old_c, new_c_1, vendor_id_1, errata_id_1, enable_1, \
-+				  new_c_2, vendor_id_2, errata_id_2, enable_2, \
-+				  new_c_3, vendor_id_3, errata_id_3, enable_3
-+886 :
-+	.option push
-+	.option norvc
-+	.option norelax
-+	\old_c
-+	.option pop
-+887 :
-+	ALT_NEW_CONTENT \vendor_id_1, \errata_id_1, \enable_1, \new_c_1
-+	ALT_NEW_CONTENT \vendor_id_2, \errata_id_2, \enable_2, \new_c_2
-+	ALT_NEW_CONTENT \vendor_id_3, \errata_id_3, \enable_3, \new_c_3
-+.endm
+ #include <linux/mm.h>
+ 
++#define NON_COHERENT_SYNC_DMA_FOR_DEVICE	0
++#define NON_COHERENT_SYNC_DMA_FOR_CPU		1
++#define NON_COHERENT_DMA_PREP			2
 +
-+#define _ALTERNATIVE_CFG_3(old_c, new_c_1, vendor_id_1, errata_id_1,	\
-+					CONFIG_k_1,			\
-+				  new_c_2, vendor_id_2, errata_id_2,	\
-+					CONFIG_k_2,			\
-+				  new_c_3, vendor_id_3, errata_id_3,	\
-+					CONFIG_k_3)			\
-+	__ALTERNATIVE_CFG_3 old_c, new_c_1, vendor_id_1, errata_id_1,	\
-+					IS_ENABLED(CONFIG_k_1),		\
-+				   new_c_2, vendor_id_2, errata_id_2,	\
-+					IS_ENABLED(CONFIG_k_2),		\
-+				   new_c_3, vendor_id_3, errata_id_3,	\
-+					IS_ENABLED(CONFIG_k_3)
-+
- #else /* !__ASSEMBLY__ */
+ static inline void local_flush_icache_all(void)
+ {
+ 	asm volatile ("fence.i" ::: "memory");
+diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
+index 2ba7e6e74540..48e899a8e7a9 100644
+--- a/arch/riscv/include/asm/errata_list.h
++++ b/arch/riscv/include/asm/errata_list.h
+@@ -124,7 +124,7 @@ asm volatile(ALTERNATIVE(						\
+ #define THEAD_flush_A0	".long 0x0275000b"
+ #define THEAD_SYNC_S	".long 0x0190000b"
  
- #include <asm/asm.h>
-@@ -135,6 +163,36 @@
- 				   new_c_2, vendor_id_2, errata_id_2,	\
- 					IS_ENABLED(CONFIG_k_2))
+-#define ALT_CMO_OP(_op, _start, _size, _cachesize)			\
++#define ALT_CMO_OP(_op, _start, _size, _cachesize, _dir, _ops)		\
+ asm volatile(ALTERNATIVE_2(						\
+ 	__nops(6),							\
+ 	"mv a0, %1\n\t"							\
+@@ -146,7 +146,11 @@ asm volatile(ALTERNATIVE_2(						\
+ 			ERRATA_THEAD_CMO, CONFIG_ERRATA_THEAD_CMO)	\
+ 	: : "r"(_cachesize),						\
+ 	    "r"((unsigned long)(_start) & ~((_cachesize) - 1UL)),	\
+-	    "r"((unsigned long)(_start) + (_size))			\
++	    "r"((unsigned long)(_start) + (_size)),			\
++	    "r"((unsigned long)(_start)),				\
++	    "r"((unsigned long)(_size)),				\
++	    "r"((unsigned long)(_dir)),					\
++	    "r"((unsigned long)(_ops))					\
+ 	: "a0")
  
-+#define __ALTERNATIVE_CFG_3(old_c, new_c_1, vendor_id_1, errata_id_1,	\
-+					enable_1,			\
-+				   new_c_2, vendor_id_2, errata_id_2,	\
-+					enable_2,			\
-+				   new_c_3, vendor_id_3, errata_id_3,	\
-+					enable_3)			\
-+	"886 :\n"							\
-+	".option push\n"						\
-+	".option norvc\n"						\
-+	".option norelax\n"						\
-+	old_c "\n"							\
-+	".option pop\n"							\
-+	"887 :\n"							\
-+	ALT_NEW_CONTENT(vendor_id_1, errata_id_1, enable_1, new_c_1)	\
-+	ALT_NEW_CONTENT(vendor_id_2, errata_id_2, enable_2, new_c_2)	\
-+	ALT_NEW_CONTENT(vendor_id_3, errata_id_3, enable_3, new_c_3)
-+
-+#define _ALTERNATIVE_CFG_3(old_c, new_c_1, vendor_id_1, errata_id_1,	\
-+					CONFIG_k_1,			\
-+				  new_c_2, vendor_id_2, errata_id_2,	\
-+					CONFIG_k_2,			\
-+				  new_c_3, vendor_id_3, errata_id_3,	\
-+					CONFIG_k_3)			\
-+	__ALTERNATIVE_CFG_3(old_c, new_c_1, vendor_id_1, errata_id_1,	\
-+					IS_ENABLED(CONFIG_k_1),		\
-+				   new_c_2, vendor_id_2, errata_id_2,	\
-+					IS_ENABLED(CONFIG_k_2),	\
-+				   new_c_3, vendor_id_3, errata_id_3,	\
-+					IS_ENABLED(CONFIG_k_3))
-+
- #endif /* __ASSEMBLY__ */
+ #define THEAD_C9XX_RV_IRQ_PMU			17
+diff --git a/arch/riscv/mm/dma-noncoherent.c b/arch/riscv/mm/dma-noncoherent.c
+index d919efab6eba..e2b82034f504 100644
+--- a/arch/riscv/mm/dma-noncoherent.c
++++ b/arch/riscv/mm/dma-noncoherent.c
+@@ -19,13 +19,16 @@ void arch_sync_dma_for_device(phys_addr_t paddr, size_t size,
  
- #else /* CONFIG_RISCV_ALTERNATIVE */
-@@ -153,6 +211,14 @@
- 					CONFIG_k_2)			\
-        __ALTERNATIVE_CFG old_c
+ 	switch (dir) {
+ 	case DMA_TO_DEVICE:
+-		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
++		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size,
++			   dir, NON_COHERENT_SYNC_DMA_FOR_DEVICE);
+ 		break;
+ 	case DMA_FROM_DEVICE:
+-		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
++		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size,
++			   dir, NON_COHERENT_SYNC_DMA_FOR_DEVICE);
+ 		break;
+ 	case DMA_BIDIRECTIONAL:
+-		ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size);
++		ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size,
++			   dir, NON_COHERENT_SYNC_DMA_FOR_DEVICE);
+ 		break;
+ 	default:
+ 		break;
+@@ -42,7 +45,8 @@ void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
+ 		break;
+ 	case DMA_FROM_DEVICE:
+ 	case DMA_BIDIRECTIONAL:
+-		ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size);
++		ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size,
++			   dir, NON_COHERENT_SYNC_DMA_FOR_CPU);
+ 		break;
+ 	default:
+ 		break;
+@@ -53,7 +57,8 @@ void arch_dma_prep_coherent(struct page *page, size_t size)
+ {
+ 	void *flush_addr = page_address(page);
  
-+#define _ALTERNATIVE_CFG_3(old_c, new_c_1, vendor_id_1, errata_id_1,	\
-+					CONFIG_k_1,			\
-+				  new_c_2, vendor_id_2, errata_id_2,	\
-+					CONFIG_k_2,			\
-+				  new_c_3, vendor_id_3, errata_id_3,	\
-+					CONFIG_k_3)			\
-+       __ALTERNATIVE_CFG old_c
-+
- #else /* !__ASSEMBLY__ */
+-	ALT_CMO_OP(flush, flush_addr, size, riscv_cbom_block_size);
++	ALT_CMO_OP(flush, flush_addr, size, riscv_cbom_block_size,
++		   0, NON_COHERENT_DMA_PREP);
+ }
  
- #define __ALTERNATIVE_CFG(old_c)  \
-@@ -167,6 +233,14 @@
- 					CONFIG_k_2) \
-        __ALTERNATIVE_CFG(old_c)
- 
-+#define _ALTERNATIVE_CFG_3(old_c, new_c_1, vendor_id_1, errata_id_1,	\
-+					CONFIG_k_1,			\
-+				  new_c_2, vendor_id_2, errata_id_2,	\
-+					CONFIG_k_2,			\
-+				  new_c_3, vendor_id_3, errata_id_3,	\
-+					CONFIG_k_3) \
-+       __ALTERNATIVE_CFG(old_c)
-+
- #endif /* __ASSEMBLY__ */
- #endif /* CONFIG_RISCV_ALTERNATIVE */
- 
-@@ -202,4 +276,24 @@
- 					new_content_2, vendor_id_2,	\
- 					    errata_id_2, CONFIG_k_2)
- 
-+/*
-+ * A vendor wants to replace an old_content, but another vendor has used
-+ * ALTERNATIVE_2() to patch its customized content at the same location. In
-+ * this case, this vendor can create a new macro ALTERNATIVE_3() based
-+ * on the following sample code and then replace ALTERNATIVE_2() with
-+ * ALTERNATIVE_3() to append its customized content.
-+ */
-+#define ALTERNATIVE_3(old_content, new_content_1, vendor_id_1,		\
-+					errata_id_1, CONFIG_k_1,	\
-+				   new_content_2, vendor_id_2,		\
-+					errata_id_2, CONFIG_k_2,	\
-+				   new_content_3, vendor_id_3,		\
-+					errata_id_3, CONFIG_k_3)	\
-+	_ALTERNATIVE_CFG_3(old_content, new_content_1, vendor_id_1,	\
-+					    errata_id_1, CONFIG_k_1,	\
-+					new_content_2, vendor_id_2,	\
-+					    errata_id_2, CONFIG_k_2,	\
-+					new_content_3, vendor_id_3,	\
-+					    errata_id_3, CONFIG_k_3)
-+
- #endif
+ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
 -- 
 2.25.1
 
