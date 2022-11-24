@@ -2,54 +2,55 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E150AC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Nov 2022 17:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5668C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Nov 2022 17:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229803AbiKXRWq (ORCPT
+        id S229808AbiKXRWu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Nov 2022 12:22:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48062 "EHLO
+        Thu, 24 Nov 2022 12:22:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbiKXRWo (ORCPT
+        with ESMTP id S229799AbiKXRWq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Nov 2022 12:22:44 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8DAF26560;
-        Thu, 24 Nov 2022 09:22:39 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id l39-20020a05600c1d2700b003cf93c8156dso1690684wms.4;
-        Thu, 24 Nov 2022 09:22:39 -0800 (PST)
+        Thu, 24 Nov 2022 12:22:46 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D6AC5F86B;
+        Thu, 24 Nov 2022 09:22:45 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id s5so3388092wru.1;
+        Thu, 24 Nov 2022 09:22:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KQqb78n0KQHdh6j5CzLXBS3iilkCOthEsqvfHBARtHU=;
-        b=dZE1hK4yYG3r2wjJffeNeKGMAzRkLww+0Qw7dDXwzrZg9tNUnsUb9o8MHmiKxmLnYq
-         mvWw1TZElTekNJ629YC9llcJRBl5zOVKvtLRhdz4rcXbjUfs+EaYUXIW48l3CgcmlG8u
-         dpulCqtQZ2YGNh8gnAnqUJRY336cJbkYrZUJy8NmvhZL59BXCR3AJYvMXfa7gjlQjtAr
-         ocT74/G+I/Sof5640+yg5LQktDoXLC16SV62BwuY3x8KrAUfihBoAl9BJOUImNyy5MVT
-         sR8ZIis2pkJ/qKsWuCiFS6XaF7vvKVngeN5lUyA6k8siKFkuesZu9IWf+axML+UwecqN
-         J3CA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kf4MkbDtYqPHkzp1NQggOVlfAtAYmGWu5F6jTUCxlB8=;
+        b=qYafnLysxGBAXMN4EjaffIZ65qJZh+y5w1H1fYwJARO8HEQdUwBlR1K0NUxbEqLcMq
+         VbJ/DpIJwHYlfO2p/BdkFL3/ulkBdcTj5mODYt0ZQKAvS6srKRc1A82jXkYC9g4M7epZ
+         0fbTKvJSfjSwFfWdbL5y1Cmw5HaQqg+ANmz7X8DlqXaRD/vfHruQLAIwWQE+d7vGSYWT
+         cH/x18lKJYMlsWozqfjUGaMv3UdipMKGJIozGN21DcGb1Hj8NMZ2+Q1N6KjdQwN0XHPE
+         U333xrUw7VTwFUkFK2pi/ftm6G12v9S0odXONtKjTRTtH5M9QOkjmpHG0Z1N1X8KsbWl
+         j6jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KQqb78n0KQHdh6j5CzLXBS3iilkCOthEsqvfHBARtHU=;
-        b=dTV1rdWj6YgkcJjtfcW2it4lrwPOxhHoLmKco3D/TH1HSjF0zUl+L4OW3GJv/slIcn
-         sl/p5ae0iSm2RXBQf4561ZiyZIua5qtKIzp6oC8c4jfduY6HfbgBna8ydzWKRA8bk2Sd
-         K6hfvSFnw/gxVFmSHX2jFh/KJ2wkRYki8Z255o1KSt6qj/2u6b4w66JIHR/++CSuYGzc
-         nOTB4Q/ZIlKZTcRt/vE12jArka/hp+VXv2EwqiNkQdV8Iw7hvN0hj5HgPVDQ+5MLiDW/
-         Y25PFyCjP6qAa5hXDrC3wkiKxmIGm0zHCdjAmQls7mlWo5wvYw3OdzSrQRrwpX7vZOvs
-         yYXQ==
-X-Gm-Message-State: ANoB5pkZCfumoFq+rZSLITGK5s2cW9+IajCj1hH7vBdyO57yFFAdIOxU
-        sJsnNCNuPj6f9NdloqfMWiA=
-X-Google-Smtp-Source: AA0mqf4JBpebIZfairvkOiGu/YW1aGgIcGkSW1lHcvmZK3KI/7zELwhKGfonW8TToVYJox5SedAoIg==
-X-Received: by 2002:a05:600c:6886:b0:3cf:ca45:3b19 with SMTP id fn6-20020a05600c688600b003cfca453b19mr14481564wmb.179.1669310558058;
-        Thu, 24 Nov 2022 09:22:38 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kf4MkbDtYqPHkzp1NQggOVlfAtAYmGWu5F6jTUCxlB8=;
+        b=swfHWPracJqXmFFG0M5UUB1WKfoPo6OXQeIl67UyCqBR/NNLnzSSQmFv/WufzateIP
+         e+HDDvpiZjKjOTNrFx1K7NtUHSC3hpOqowFQOA3oXsrjVlS4FwxzDOx4GJR2NhhBTluC
+         WBXW09OK5yfPho1irDJ+ig/TtzJvk8nac2T++0tcTA2LqiNoBgg91XWCWRjF5non3gok
+         qO8Owo8tRKOo9jW15akVNRmj/V/0U/lVXAFUcq8PJTJ7gK6IhSZOQo36JMQpgoB/9Ms9
+         6AClkQ6HJTlQ8huiSOLtctawdn1tAC8/2RTeuE3vB1Ws05k+Injy0Gn2UOmJzIGkvXDO
+         L1jQ==
+X-Gm-Message-State: ANoB5pkRutLUFnQ16YyfkbrSVqXdundVxzSkt25TwgbDu3nfyU3i06tk
+        LAZ+NbGjDV4avYcjDpRJrOk=
+X-Google-Smtp-Source: AA0mqf53uMvA9midyy+RxAuGlfEqI9h3gmkfBfuFydND+Sko1oOZNqSfyk3uBDaUm8F2FOuZHmJJGg==
+X-Received: by 2002:adf:fdc7:0:b0:241:d7ab:db8f with SMTP id i7-20020adffdc7000000b00241d7abdb8fmr12173981wrs.285.1669310563686;
+        Thu, 24 Nov 2022 09:22:43 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:89ee:3f5d:1c99:35d8])
-        by smtp.gmail.com with ESMTPSA id v17-20020a05600c445100b003c64c186206sm2698086wmn.16.2022.11.24.09.22.36
+        by smtp.gmail.com with ESMTPSA id v17-20020a05600c445100b003c64c186206sm2698086wmn.16.2022.11.24.09.22.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Nov 2022 09:22:37 -0800 (PST)
+        Thu, 24 Nov 2022 09:22:43 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Paul Walmsley <paul.walmsley@sifive.com>,
@@ -73,10 +74,12 @@ Cc:     Jisheng Zhang <jszhang@kernel.org>,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 0/7] AX45MP: Add support to non-coherent DMA
-Date:   Thu, 24 Nov 2022 17:22:00 +0000
-Message-Id: <20221124172207.153718-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH DO NOT REVIEW v4 4/7] riscv: errata: andes: Fix auipc-jalr addresses in patched alternatives
+Date:   Thu, 24 Nov 2022 17:22:04 +0000
+Message-Id: <20221124172207.153718-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221124172207.153718-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20221124172207.153718-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -85,157 +88,104 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+This patch is added just for building purpose, as patch [0] will export
+this in its next version.
 
-On the Andes AX45MP core, cache coherency is a specification option so it
-may not be supported. In this case DMA will fail. To get around with this
-issue this patch series does the below:
+https://patchwork.kernel.org/project/linux-riscv/patch/20221110164924.529386-6-heiko@sntech.de/
 
-1] Andes AX45MP core has a Programmable Physical Memory Attributes (PMA)
-block that allows dynamic adjustment of memory attributes in the runtime.
-It contains a configurable amount of PMA entries implemented as CSR
-registers to control the attributes of memory locations in interest. PMA
-regions are passed from the l2 node which are configured as
-non-cacheable + bufferable with the SBI call.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Note, as Heiko will be exporting riscv_alternative_fix_auipc_jalr() function
+so that it can be used other erratas Ive just included for compilation.
+---
+ arch/riscv/errata/andes/errata.c | 71 ++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
-        l2cache: cache-controller@13400000 {
-                ....
-                andestech,pma-regions = <0x58000000 0x08000000
-                                         (AX45MP_PMACFG_ETYP_NAPOT |
-                                          AX45MP_PMACFG_MTYP_MEM_NON_CACHE_BUF)>;
-                ....
-        };
-
-2] We provide callbacks to synchronize specific content between memory and
-cache.
-
-        - arch_sync_dma_for_device()
-        - arch_sync_dma_for_cpu()
-
-Below are the configs that are enabled:
-
-        - DMA_GLOBAL_POOL
-        - RISCV_DMA_NONCOHERENT
-
-3] We reserve the shared DMA pool, so the DMA memory requests go through
-   this pool:
-
-        reserved-memory {
-                #address-cells = <2>;
-                #size-cells = <2>;
-                ranges;
-
-                reserved: linux,cma@58000000 {
-                        compatible = "shared-dma-pool";
-                        no-map;
-                        linux,dma-default;
-                        reg = <0x0 0x58000000 0x0 0x08000000>;
-                };
-        };
-
-
-Below is the L2 cache DT node:
-
-        l2cache: cache-controller@13400000 {
-                compatible = "andestech,ax45mp-cache", "cache";
-                cache-size = <0x40000>;
-                cache-line-size = <64>;
-                cache-sets = <1024>;
-                cache-unified;
-                reg = <0x0 0x13400000 0x0 0x100000>;
-                andestech,pma-regions = <0x0 0x58000000 0x0 0x08000000 0x0
-                                         (AX45MP_PMACFG_ETYP_NAPOT |
-                                          AX45MP_PMACFG_MTYP_MEM_NON_CACHE_BUF)>;
-                interrupts = <SOC_PERIPHERAL_IRQ(476, IRQ_TYPE_LEVEL_HIGH)>;
-        };
-
-Due to the above approach custom SBI calls have been implemented. The
-above implementation is in preparation for adding support for Renesas
-RZ/Five SoC which uses the AX45MP core. As with the above approach the
-kernel image might not be generic so that it can be used on other
-platforms.
-
-OpenSBI implementation isn't upstreamed yet, public repo for access is
-available at [0].
-
-[0] https://github.com/renesas-rz/rz_opensbi/tree/work/OpenSBI-PMA
-
-Note,
-- This series requires testing on Cores with zibcom and T-Head SoCs
-- Ive used GCC 9.4.0 for compilation
-- Tested all the IP blocks on RZ/Five which use DMA
-
-RFC v3 -> v4
-* Implemented ALTERNATIVE_3() macro 
-* Now using runtime patching mechanism instead of compile time config
-* Added Andes CMO as and errata
-* Fixed comments pointed by Geert
-
-RFC v2-> RFC v3
-* Fixed review comments pointed by Conor
-* Move DT binding into cache folder
-* Fixed DT binding check issue
-* Added andestech,ax45mp-cache.h header file
-* Now passing the flags for the PMA setup as part of andestech,pma-regions
-  property.
-* Added andestech,inst/data-prefetch and andestech,tag/data-ram-ctl
-  properties to configure the L2 cache.
-* Registered the cache driver as platform driver
-
-RFC v1-> RFC v2
-* Moved out the code from arc/riscv to drivers/soc/renesas
-* Now handling the PMA setup as part of the L2 cache
-* Now making use of dma-noncoherent.c instead SoC specific implementation.
-* Dropped arch_dma_alloc() and arch_dma_free()
-* Switched to RISCV_DMA_NONCOHERENT
-* Included DT binding doc
-
-RFC v2: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20221003223222.448551-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-RFC v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20220906102154.32526-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (7):
-  riscv: asm: alternative-macros: Introduce ALTERNATIVE_3() macro
-  riscv: asm: vendorid_list: Add Andes Technology to the vendors list
-  riscv: errata: Add Andes alternative ports
-  riscv: errata: andes: Fix auipc-jalr addresses in patched alternatives
-  riscv: mm: dma-noncoherent: Pass direction and operation to
-    ALT_CMO_OP()
-  dt-bindings: cache: r9a07g043f-l2-cache: Add DT binding documentation
-    for L2 cache controller
-  soc: renesas: Add L2 cache management for RZ/Five SoC
-
- .../cache/andestech,ax45mp-cache.yaml         |  93 ++++
- arch/riscv/Kconfig.erratas                    |  22 +
- arch/riscv/errata/Makefile                    |   1 +
- arch/riscv/errata/andes/Makefile              |   1 +
- arch/riscv/errata/andes/errata.c              | 139 ++++++
- arch/riscv/include/asm/alternative-macros.h   |  94 ++++
- arch/riscv/include/asm/alternative.h          |   3 +
- arch/riscv/include/asm/cacheflush.h           |  12 +
- arch/riscv/include/asm/errata_list.h          |  45 +-
- arch/riscv/include/asm/vendorid_list.h        |   1 +
- arch/riscv/kernel/alternative.c               |   5 +
- arch/riscv/mm/dma-noncoherent.c               |  15 +-
- drivers/soc/renesas/Kconfig                   |   7 +
- drivers/soc/renesas/Makefile                  |   2 +
- drivers/soc/renesas/rzfive/Kconfig            |   6 +
- drivers/soc/renesas/rzfive/Makefile           |   3 +
- drivers/soc/renesas/rzfive/ax45mp_cache.c     | 415 ++++++++++++++++++
- drivers/soc/renesas/rzfive/ax45mp_sbi.h       |  29 ++
- .../cache/andestech,ax45mp-cache.h            |  38 ++
- 19 files changed, 918 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
- create mode 100644 arch/riscv/errata/andes/Makefile
- create mode 100644 arch/riscv/errata/andes/errata.c
- create mode 100644 drivers/soc/renesas/rzfive/Kconfig
- create mode 100644 drivers/soc/renesas/rzfive/Makefile
- create mode 100644 drivers/soc/renesas/rzfive/ax45mp_cache.c
- create mode 100644 drivers/soc/renesas/rzfive/ax45mp_sbi.h
- create mode 100644 include/dt-bindings/cache/andestech,ax45mp-cache.h
-
+diff --git a/arch/riscv/errata/andes/errata.c b/arch/riscv/errata/andes/errata.c
+index ec3e052ca8c7..4061ad4983bc 100644
+--- a/arch/riscv/errata/andes/errata.c
++++ b/arch/riscv/errata/andes/errata.c
+@@ -13,9 +13,80 @@
+ #include <asm/alternative.h>
+ #include <asm/cacheflush.h>
+ #include <asm/errata_list.h>
++#include <asm/parse_asm.h>
+ #include <asm/patch.h>
++#include <asm/sbi.h>
+ #include <asm/vendorid_list.h>
+ 
++/* Copy of Heiko's code from patch [0]
++ * [0] https://patchwork.kernel.org/project/linux-riscv/patch/20221110164924.529386-6-heiko@sntech.de/
++ */
++DECLARE_INSN(jalr, MATCH_JALR, MASK_JALR)
++DECLARE_INSN(auipc, MATCH_AUIPC, MASK_AUIPC)
++
++static inline bool is_auipc_jalr_pair(long insn1, long insn2)
++{
++	return is_auipc_insn(insn1) && is_jalr_insn(insn2);
++}
++
++#define JALR_SIGN_MASK		BIT(I_IMM_SIGN_OPOFF - I_IMM_11_0_OPOFF)
++#define JALR_OFFSET_MASK	I_IMM_11_0_MASK
++#define AUIPC_OFFSET_MASK	U_IMM_31_12_MASK
++#define AUIPC_PAD		(0x00001000)
++#define JALR_SHIFT		I_IMM_11_0_OPOFF
++
++#define to_jalr_imm(offset)						\
++	((offset & I_IMM_11_0_MASK) << I_IMM_11_0_OPOFF)
++
++#define to_auipc_imm(offset)						\
++	((offset & JALR_SIGN_MASK) ?					\
++	((offset & AUIPC_OFFSET_MASK) + AUIPC_PAD) :			\
++	(offset & AUIPC_OFFSET_MASK))
++
++static void riscv_alternative_fix_auipc_jalr(unsigned int *alt_ptr,
++					     unsigned int len, int patch_offset)
++{
++	int num_instr = len / sizeof(u32);
++	unsigned int call[2];
++	int i;
++	int imm1;
++	u32 rd1;
++
++	for (i = 0; i < num_instr; i++) {
++		/* is there a further instruction? */
++		if (i + 1 >= num_instr)
++			continue;
++
++		if (!is_auipc_jalr_pair(*(alt_ptr + i), *(alt_ptr + i + 1)))
++			continue;
++
++		/* call will use ra register */
++		rd1 = EXTRACT_RD_REG(*(alt_ptr + i));
++		if (rd1 != 1)
++			continue;
++
++		/* get and adjust new target address */
++		imm1 = EXTRACT_UTYPE_IMM(*(alt_ptr + i));
++		imm1 += EXTRACT_ITYPE_IMM(*(alt_ptr + i + 1));
++		imm1 -= patch_offset;
++
++		/* pick the original auipc + jalr */
++		call[0] = *(alt_ptr + i);
++		call[1] = *(alt_ptr + i + 1);
++
++		/* drop the old IMMs */
++		call[0] &= ~(U_IMM_31_12_MASK);
++		call[1] &= ~(I_IMM_11_0_MASK << I_IMM_11_0_OPOFF);
++
++		/* add the adapted IMMs */
++		call[0] |= to_auipc_imm(imm1);
++		call[1] |= to_jalr_imm(imm1);
++
++		/* patch the call place again */
++		patch_text_nosync(alt_ptr + i, call, 8);
++	}
++}
++
+ static bool errata_probe_iocp(unsigned int stage, unsigned long arch_id, unsigned long impid)
+ {
+ 	if (!IS_ENABLED(CONFIG_ERRATA_ANDES_CMO))
 -- 
 2.25.1
 
