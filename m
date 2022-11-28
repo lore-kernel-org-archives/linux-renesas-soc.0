@@ -2,106 +2,103 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7628BC4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Nov 2022 07:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B71C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Nov 2022 08:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbiK1Hhn (ORCPT
+        id S230149AbiK1IfI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Nov 2022 02:37:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41854 "EHLO
+        Mon, 28 Nov 2022 03:35:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbiK1Hhm (ORCPT
+        with ESMTP id S230203AbiK1IfG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Nov 2022 02:37:42 -0500
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139125584;
-        Sun, 27 Nov 2022 23:37:41 -0800 (PST)
-Received: by mail-qv1-f46.google.com with SMTP id u10so1237724qvp.4;
-        Sun, 27 Nov 2022 23:37:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mf6PpFgRdbUWXFIJ6gzSU4wMby+2q9WODUFq2erIU/Y=;
-        b=4YlAaINwMftkTS1LfYAoFRGLvCkf+QblDorkY/p3HwZewuoEQGbh6XlbB+cLlSIZOC
-         WoP0Oq4eJI+g3GDZJxYKlra1uQbd5oj1VWReroqbFnkQ+A2/mwu7OvexZfBWhTC19Kp+
-         L0ArrW54gbJ2zOH/3vGGJYzHDJLEn9+Mq4phZwJ+v1LHrKT5N0iB1ztjv+pZVayJjnkq
-         KLEWrltR1o32b6Y/l6kLpVL842/nxxinD9/cBQGWPLgZKlElnABh6ALGVJQxRs7GSSjK
-         DYMeFXyWervgfFnNexJuUZSVoxqFsxGfuQh4ncq2I+UqIkiacS+EzIvB/HmAE3+M+zv8
-         TUng==
-X-Gm-Message-State: ANoB5pl/qQQ1WbynZanvAhFygC6sGl8AIvtwldh2Pj8IqYfkHuc4ilYV
-        yOgFZtL8M0qx3/0po82N7/Wl5/xYbhaOXw==
-X-Google-Smtp-Source: AA0mqf5DO96y1c7ru3SNBuRiMKqbVVkVrnXzbHUZS6GXc0YbWY68NuwNK6ywaMbUtiEY3OZXjy/zAA==
-X-Received: by 2002:a0c:cb0c:0:b0:4c6:afdd:f1a2 with SMTP id o12-20020a0ccb0c000000b004c6afddf1a2mr27338201qvk.21.1669621059923;
-        Sun, 27 Nov 2022 23:37:39 -0800 (PST)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id bj15-20020a05620a190f00b006cbe3be300esm7924674qkb.12.2022.11.27.23.37.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Nov 2022 23:37:38 -0800 (PST)
-Received: by mail-yb1-f169.google.com with SMTP id 205so12236309ybf.6;
-        Sun, 27 Nov 2022 23:37:38 -0800 (PST)
-X-Received: by 2002:a5b:24b:0:b0:6ca:3b11:8d76 with SMTP id
- g11-20020a5b024b000000b006ca3b118d76mr28827047ybp.202.1669621058200; Sun, 27
- Nov 2022 23:37:38 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1669213027.git.geert+renesas@glider.be> <b500e42c-f782-79c6-70ce-650e4ea32c54@linaro.org>
- <a75b604c-a671-d2c5-7160-74dcb8a4fa2e@linaro.org>
-In-Reply-To: <a75b604c-a671-d2c5-7160-74dcb8a4fa2e@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 28 Nov 2022 08:37:26 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVgmxVxKbTxXO90XaaL5-qf6WnEwbTwU+ZmSEcuzOFEgA@mail.gmail.com>
-Message-ID: <CAMuHMdVgmxVxKbTxXO90XaaL5-qf6WnEwbTwU+ZmSEcuzOFEgA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] memory: renesas-rpc-if: Rebind fixes and misc cleanups
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Mark Brown <broonie@kernel.org>,
+        Mon, 28 Nov 2022 03:35:06 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC20217E08
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Nov 2022 00:35:05 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ozZbS-0006zr-L5; Mon, 28 Nov 2022 09:35:02 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ozZbP-000mPo-0P; Mon, 28 Nov 2022 09:34:59 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ozZbO-000sPB-Uc; Mon, 28 Nov 2022 09:34:58 +0100
+Date:   Mon, 28 Nov 2022 09:34:58 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 2/2] drivers: pinctrl: renesas: Add RZ/G2L POEG driver
+ support
+Message-ID: <20221128083458.dxj3vsxpxa2xyxap@pengutronix.de>
+References: <20221111194059.718154-1-biju.das.jz@bp.renesas.com>
+ <20221111194059.718154-3-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7ex4m54enwiwrlrh"
+Content-Disposition: inline
+In-Reply-To: <20221111194059.718154-3-biju.das.jz@bp.renesas.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Krzysztof,
 
-On Sun, Nov 27, 2022 at 10:34 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On 27/11/2022 22:31, Krzysztof Kozlowski wrote:
-> > On 23/11/2022 15:41, Geert Uytterhoeven wrote:
-> >> The Renesas RPC-IF provides either HyperFlash or SPI host access.
-> >> To handle this, three drivers are used:
-> >>   1. The RPC-IF core diver,
-> >>   2. An HyperFlash child driver,
-> >>   3. An SPI child driver.
-> >
-> > Thank you for the patch.
-> > It is too late in the cycle for me to pick it up. I will take it after
-> > the merge window.
->
-> Optionally, if you want to push it via Renesas SoC tree and there are no
-> conflicts with existing two patches, then these look good:
+--7ex4m54enwiwrlrh
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's too late for the Renesas tree, too.
+On Fri, Nov 11, 2022 at 07:40:59PM +0000, Biju Das wrote:
+> The output pins of the RZ/G2L general PWM timer (GPT) can be disabled
+> by using the port output enabling function for the GPT (POEG).
+>=20
+> This patch adds basic support using s/w control through sysfs=20
+> to enable/disable output from GPT.
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
-> Otherwise, I'll pick them up after the merge window.
+PSA: There is nothing in this patch that is relevant for PWMs, so I'm
+marking it as "handled-elsewhere" in the PWM patchwork. I guess the
+series was sent to the PWM list to give some context for the series "Add
+support for linking gpt with poeg"
+(https://patchwork.ozlabs.org/project/linux-pwm/list/?series=3D327828&state=
+=3D*)
 
-Thanks!
+Best regards
+Uwe
 
-Gr{oetje,eeting}s,
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-                        Geert
+--7ex4m54enwiwrlrh
+Content-Type: application/pgp-signature; name="signature.asc"
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmOEcq8ACgkQwfwUeK3K
+7AmdlAgAkfsScIb7tA0S4ihxTBvBI+fu8xIGm8CCLVHEO64YX9JPA8fjO/ltTLix
+LYEFPbJub89P+5oMWVOowwP1RzoxFmWL8+rE4iIc/FqvQWGvUDViEEiYO0cE6N4J
+KvFT2tO/6FE+2jbqnMYeJXw/yvVy2//hunpwDnN49cEhWMAJ35SFQK15aqiDYjns
+Pi321KgWFI63Vrz97Olz2caq5JCG3c4BkcbASB2c2GH/1gqDCiWSaDhHkdosvTWd
+QMOtwFy/mDqtLaXkXjzLGqj4CeYuz2NhJ/hoVplmyGuSYlrEJbe6y/rpR4z4YhMe
+YMIVpgxCc4pNe7BAOZ4Thp5Fs0qXAQ==
+=VL0y
+-----END PGP SIGNATURE-----
+
+--7ex4m54enwiwrlrh--
