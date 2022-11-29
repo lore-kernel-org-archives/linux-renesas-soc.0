@@ -2,81 +2,74 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC601C46467
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Nov 2022 17:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC80C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Nov 2022 17:05:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236576AbiK2RDJ (ORCPT
+        id S236596AbiK2RFU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Nov 2022 12:03:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34654 "EHLO
+        Tue, 29 Nov 2022 12:05:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236454AbiK2RCm (ORCPT
+        with ESMTP id S236605AbiK2RFD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2022 12:02:42 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D3376DCD9;
-        Tue, 29 Nov 2022 09:00:21 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CCB44B817B0;
-        Tue, 29 Nov 2022 17:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 69FBDC43149;
-        Tue, 29 Nov 2022 17:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669741218;
-        bh=Z/6MUHT6UVocmS5c/b5KTcD52w2K0v1WxpXiJsIrsQw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=DM5tz1JG5cuO9lCybHaNnpOAYfIO/DdlRlj6evMohFCJ6ZQTgvTP6mHv5hxvobpSc
-         LnYziJ5WHMVPPUqPyxksTzwTfy8Qe4PLpBRubA6S+9+VRkgXVi96JQyJBNUetpzPa1
-         PVLo9rTvf92axzIJ+o4K/NDVbU0FbfxD24JvhFGbg0RqJAVSAaJkIKRWf5Ycm6Zhun
-         1165u9OHKruzcWAJkbMuxLVx5sWFF07KQ1mYXZWPxXEcVVVuk7G3nqE12iVGBKnYqM
-         nRd2JN4DfJtN4WAnL/R42O9CsgTeVeYBISmemhB8HKU3kDKdiJgue9uTpv5F9bORyr
-         jrc1nmGjDKBWA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4BB35E50D67;
-        Tue, 29 Nov 2022 17:00:18 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 29 Nov 2022 12:05:03 -0500
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E7E6D4AA
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Nov 2022 09:03:10 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by baptiste.telenet-ops.be with bizsmtp
+        id qH37280094C55Sk01H37mv; Tue, 29 Nov 2022 18:03:07 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1p040g-0023VD-Iz; Tue, 29 Nov 2022 18:03:06 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1p040g-003MOf-3Q; Tue, 29 Nov 2022 18:03:06 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Tam Nguyen <tam.nguyen.xa@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] dt-bindings: power: r8a779g0: Add missing A3DUL power domain
+Date:   Tue, 29 Nov 2022 18:03:03 +0100
+Message-Id: <d61cf54b58629a76e007b9505dac7c2beb3b30db.1669740926.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1669740926.git.geert+renesas@glider.be>
+References: <cover.1669740926.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: ethernet: renesas: ravb: Fix promiscuous mode after
- system resumed
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166974121830.7750.2703244123651337985.git-patchwork-notify@kernel.org>
-Date:   Tue, 29 Nov 2022 17:00:18 +0000
-References: <20221128065604.1864391-1-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <20221128065604.1864391-1-yoshihiro.shimoda.uh@renesas.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tho.vu.wh@renesas.com
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+From: Tam Nguyen <tam.nguyen.xa@renesas.com>
 
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Add the power domain index for the A3DUL domain, as described in the
+R-Car V4H Series Hardware User's Manual Rev. 0.51 and later.
 
-On Mon, 28 Nov 2022 15:56:04 +0900 you wrote:
-> After system resumed on some environment board, the promiscuous mode
-> is disabled because the SoC turned off. So, call ravb_set_rx_mode() in
-> the ravb_resume() to fix the issue.
-> 
-> Reported-by: Tho Vu <tho.vu.wh@renesas.com>
-> Fixes: 0184165b2f42 ("ravb: add sleep PM suspend/resume support")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> 
-> [...]
+Signed-off-by: Tam Nguyen <tam.nguyen.xa@renesas.com>
+[geert: Manual reference]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/dt-bindings/power/r8a779g0-sysc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Here is the summary with links:
-  - [net] net: ethernet: renesas: ravb: Fix promiscuous mode after system resumed
-    https://git.kernel.org/netdev/net/c/d66233a312ec
-
-You are awesome, thank you!
+diff --git a/include/dt-bindings/power/r8a779g0-sysc.h b/include/dt-bindings/power/r8a779g0-sysc.h
+index 7daa70f1814e855a..c7b139fb075ffb74 100644
+--- a/include/dt-bindings/power/r8a779g0-sysc.h
++++ b/include/dt-bindings/power/r8a779g0-sysc.h
+@@ -38,6 +38,7 @@
+ #define R8A779G0_PD_A3VIP2		58
+ #define R8A779G0_PD_A3ISP0		60
+ #define R8A779G0_PD_A3ISP1		61
++#define R8A779G0_PD_A3DUL		62
+ 
+ /* Always-on power area */
+ #define R8A779G0_PD_ALWAYS_ON		64
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
