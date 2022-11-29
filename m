@@ -2,47 +2,47 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 998B9C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Nov 2022 19:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 170C0C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Nov 2022 19:47:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230346AbiK2Trf (ORCPT
+        id S234423AbiK2Trg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Nov 2022 14:47:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33456 "EHLO
+        Tue, 29 Nov 2022 14:47:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237229AbiK2TrL (ORCPT
+        with ESMTP id S237185AbiK2TrE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2022 14:47:11 -0500
+        Tue, 29 Nov 2022 14:47:04 -0500
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E35C41AF2D;
-        Tue, 29 Nov 2022 11:44:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D701B63A7;
+        Tue, 29 Nov 2022 11:44:09 -0800 (PST)
 Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6E5AE4E6;
-        Tue, 29 Nov 2022 20:44:35 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8C8364E6;
+        Tue, 29 Nov 2022 20:44:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1669751075;
-        bh=aHIt+6NDi7uH8L6lePtklr/vuY7T4z1pKPkbs4NNDs0=;
+        s=mail; t=1669751047;
+        bh=pUu+g5t3BnVNUh+Ojo6e6Lwl1K0PG+/VdnlmN/8ik+U=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E3Tb/H2SvQuscr1bRlR1L9qFPSdfBe6is3t6ZXMGKnnyH8t6xvhcNkbJapLC2dqeX
-         oy5vefn2eMtvS59RLg31hp2m8CDEX/xO938Z+NFfM01iYh7OPZP4anvxwUTJfJgPYu
-         +nj6V9ed1sbDmWOmduEbViEQnh9cOmZOXOfjV4lM=
-Date:   Tue, 29 Nov 2022 21:44:19 +0200
+        b=aeRIvdSC4NFh/T3Ubi8FCUtqi/tUYQH1c3ZwlAd7UTNpMRYKJdRORyDXTyroKaLE+
+         R2ERdl+K6v9BL8Z+W/Sw5XjwjvqDilv/RUrk86kIkXK0Vv45T1JoeUSMYSsEUgIO02
+         oRkymguTTUmcY8aePq66PydpxDYIEopsTdN2WrrM=
+Date:   Tue, 29 Nov 2022 21:43:51 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Paul Cercueil <paul@crapouillou.net>
 Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 19/26] drm: shmobile: Remove #ifdef guards for PM
+Subject: Re: [PATCH v2 17/26] drm: rcar-du: Remove #ifdef guards for PM
  related functions
-Message-ID: <Y4ZhE4vVJC5ewhnl@pendragon.ideasonboard.com>
+Message-ID: <Y4Zg9yg7KP0yCPIL@pendragon.ideasonboard.com>
 References: <20221129191733.137897-1-paul@crapouillou.net>
  <20221129191942.138244-1-paul@crapouillou.net>
- <20221129191942.138244-6-paul@crapouillou.net>
+ <20221129191942.138244-4-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20221129191942.138244-6-paul@crapouillou.net>
+In-Reply-To: <20221129191942.138244-4-paul@crapouillou.net>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -51,7 +51,7 @@ Hi Paul,
 
 Thank you for the patch.
 
-On Tue, Nov 29, 2022 at 07:19:35PM +0000, Paul Cercueil wrote:
+On Tue, Nov 29, 2022 at 07:19:33PM +0000, Paul Cercueil wrote:
 > Use the DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros to handle
 > the .suspend/.resume callbacks.
 > 
@@ -68,49 +68,53 @@ On Tue, Nov 29, 2022 at 07:19:35PM +0000, Paul Cercueil wrote:
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
+Will you get this whole series merged in one go in drm-misc, or do you
+expect me to take this patch in my tree ? I'd prefer the first option if
+possible (less work for me :-)).
+
 > ---
 > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > Cc: linux-renesas-soc@vger.kernel.org
 > ---
->  drivers/gpu/drm/shmobile/shmob_drm_drv.c | 9 +++------
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 9 +++------
 >  1 file changed, 3 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-> index 3d511fa38913..337040fa6438 100644
-> --- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-> +++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-> @@ -143,7 +143,6 @@ static const struct drm_driver shmob_drm_driver = {
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> index d003e8d9e7a2..eeec1e02446f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -599,7 +599,6 @@ static const struct drm_driver rcar_du_driver = {
 >   * Power management
 >   */
 >  
 > -#ifdef CONFIG_PM_SLEEP
->  static int shmob_drm_pm_suspend(struct device *dev)
+>  static int rcar_du_pm_suspend(struct device *dev)
 >  {
->  	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
-> @@ -165,11 +164,9 @@ static int shmob_drm_pm_resume(struct device *dev)
->  	drm_kms_helper_poll_enable(sdev->ddev);
->  	return 0;
+>  	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> @@ -613,11 +612,9 @@ static int rcar_du_pm_resume(struct device *dev)
+>  
+>  	return drm_mode_config_helper_resume(&rcdu->ddev);
 >  }
 > -#endif
 >  
-> -static const struct dev_pm_ops shmob_drm_pm_ops = {
-> -	SET_SYSTEM_SLEEP_PM_OPS(shmob_drm_pm_suspend, shmob_drm_pm_resume)
+> -static const struct dev_pm_ops rcar_du_pm_ops = {
+> -	SET_SYSTEM_SLEEP_PM_OPS(rcar_du_pm_suspend, rcar_du_pm_resume)
 > -};
-> +static DEFINE_SIMPLE_DEV_PM_OPS(shmob_drm_pm_ops,
-> +				shmob_drm_pm_suspend, shmob_drm_pm_resume);
+> +static DEFINE_SIMPLE_DEV_PM_OPS(rcar_du_pm_ops,
+> +				rcar_du_pm_suspend, rcar_du_pm_resume);
 >  
 >  /* -----------------------------------------------------------------------------
 >   * Platform driver
-> @@ -292,7 +289,7 @@ static struct platform_driver shmob_drm_platform_driver = {
->  	.remove		= shmob_drm_remove,
+> @@ -712,7 +709,7 @@ static struct platform_driver rcar_du_platform_driver = {
+>  	.shutdown	= rcar_du_shutdown,
 >  	.driver		= {
->  		.name	= "shmob-drm",
-> -		.pm	= &shmob_drm_pm_ops,
-> +		.pm	= pm_sleep_ptr(&shmob_drm_pm_ops),
+>  		.name	= "rcar-du",
+> -		.pm	= &rcar_du_pm_ops,
+> +		.pm	= pm_sleep_ptr(&rcar_du_pm_ops),
+>  		.of_match_table = rcar_du_of_table,
 >  	},
 >  };
->  
 
 -- 
 Regards,
