@@ -2,109 +2,135 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8991C46467
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 10:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F81C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 14:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbiK3K7r (ORCPT
+        id S229585AbiK3OOR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Nov 2022 05:59:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54642 "EHLO
+        Wed, 30 Nov 2022 09:14:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbiK3K7q (ORCPT
+        with ESMTP id S229599AbiK3OOC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2022 05:59:46 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B7C62529B
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2022 02:59:46 -0800 (PST)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1p0KoK-0005hp-EB; Wed, 30 Nov 2022 11:59:28 +0100
-Received: from pengutronix.de (unknown [IPv6:2a0a:edc0:0:701:38ad:958d:3def:4382])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 7F7A612DD71;
-        Wed, 30 Nov 2022 10:59:25 +0000 (UTC)
-Date:   Wed, 30 Nov 2022 11:59:24 +0100
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Wed, 30 Nov 2022 09:14:02 -0500
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18BCB303E4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2022 06:13:55 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1669817521; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=AnJlLep2xwdKaRzoYQiGsuhHN1kXNKIqJay45/8xGipAA4pU5DmftNsoCWpjfyn3hXiuVFy67s47F/Z0iurPci1OLujtpQdp6rqUIiITopwss7HVUCANJivLbnrUIwhQnY7rwbW3dec0AabIHy6Q3jlIzHL6XvluZqv2X6Z3Otw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1669817521; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=uPoI5XfZ23UUuypvg5x1t4pcYyKf1wgCFVtGI5ZTQ+s=; 
+        b=ces143QCWhbMpQJLxcEB+IMeYEZCH3LXMw8zZowY6aRLNUNcYEiRpsICXW7/WtM4mBXTjb+8RKLq7oy0hc/fpaUDl20pDwFyk7QHfUtywb6s5i+vc+6hVBG1/M+2aS+pfPjludfBxAQ8s+WO2FDw8NsLo7beqalGi1UEdMw47jA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=arinc9.com;
+        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
+        dmarc=pass header.from=<arinc.unal@arinc9.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1669817521;
+        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
+        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
+        bh=uPoI5XfZ23UUuypvg5x1t4pcYyKf1wgCFVtGI5ZTQ+s=;
+        b=QZe441J5Q9GQ/nLIdo/FKpZXwwCbv87jUC83xlWpMM+YnuZ8d55JFGTZdlC5ez82
+        OAuZXidLlhW5VzcaE49WfQ+FAO5JWpfd1J9AMN305UuYPEUBNS2ZlaKZ/5j6AHJahEP
+        Y4M0WSZnV0v8mRrVOvXqs7cca2Mi3VRI2XOdSi3U=
+Received: from arinc9-PC.lan (37.120.152.236 [37.120.152.236]) by mx.zohomail.com
+        with SMTPS id 16698175186813.6941551506523638; Wed, 30 Nov 2022 06:11:58 -0800 (PST)
+From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
+To:     Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        soc@kernel.org, "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] dt-bindings: can: renesas,rcar-canfd: Document RZ/Five
- SoC
-Message-ID: <20221130105924.auw7agizdiguxuod@pengutronix.de>
-References: <20221115123811.1182922-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Michael Riesch <michael.riesch@wolfvision.net>,
+        Oleksij Rempel <linux@rempel-privat.de>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-rockchip@lists.infradead.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 1/5] dt-bindings: net: qca,ar71xx: remove label = "cpu" from examples
+Date:   Wed, 30 Nov 2022 17:10:36 +0300
+Message-Id: <20221130141040.32447-2-arinc.unal@arinc9.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221130141040.32447-1-arinc.unal@arinc9.com>
+References: <20221130141040.32447-1-arinc.unal@arinc9.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="i7azc2naz74qg5oe"
-Content-Disposition: inline
-In-Reply-To: <20221115123811.1182922-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+This is not used by the DSA dt-binding, so remove it from the examples.
 
---i7azc2naz74qg5oe
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+---
+ Documentation/devicetree/bindings/net/qca,ar71xx.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
-On 15.11.2022 12:38:11, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> The CANFD block on the RZ/Five SoC is identical to one found on the
-> RZ/G2UL SoC. "renesas,r9a07g043-canfd" compatible string will be used
-> on the RZ/Five SoC so to make this clear, update the comment to include
-> RZ/Five SoC.
->=20
-> No driver changes are required as generic compatible string
-> "renesas,rzg2l-canfd" will be used as a fallback on RZ/Five SoC.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+diff --git a/Documentation/devicetree/bindings/net/qca,ar71xx.yaml b/Documentation/devicetree/bindings/net/qca,ar71xx.yaml
+index 1ebf9e8c8a1d..89f94b31b546 100644
+--- a/Documentation/devicetree/bindings/net/qca,ar71xx.yaml
++++ b/Documentation/devicetree/bindings/net/qca,ar71xx.yaml
+@@ -123,7 +123,6 @@ examples:
+ 
+                     switch_port0: port@0 {
+                         reg = <0x0>;
+-                        label = "cpu";
+                         ethernet = <&eth1>;
+ 
+                         phy-mode = "gmii";
+-- 
+2.34.1
 
-Added to linux-can-next.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
-
---i7azc2naz74qg5oe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmOHN4kACgkQrX5LkNig
-012NxAf+Ntvb2Ef9ysCZGZ5eY3r5vbnbeAcAS0jenynLu81pQYhU+jWXN+k3BE4H
-v0Y9+zhfJdu2jfwqcSaHwZ84WNlkz+aRpxgE3bg4L5KqPbyTB34tON3eYQbHzEfN
-ie/O/GkkGFsFx7X2GJ/xpfHqPATIjlifdbnkcp9FVz7dITH2mD3bFc2WM3XrKLnc
-J10glxlNli5aeEK2onSg7fFEGXTX3dt4etLRss+mbuX4HoXHQecvCRcVAQxTwpn+
-Ir6ULc7xvipPY4yLKJlmlGPGito8UksB4L3muQ2sW0arwJdcRW9sdhRCeJz1T8YE
-GTV8tQtODFAkVPXkG/rQAJutnKtolg==
-=Pm24
------END PGP SIGNATURE-----
-
---i7azc2naz74qg5oe--
