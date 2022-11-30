@@ -2,217 +2,152 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50E6C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 14:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C10C4708A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 14:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbiK3OQ0 (ORCPT
+        id S229846AbiK3OaS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Nov 2022 09:16:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50654 "EHLO
+        Wed, 30 Nov 2022 09:30:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbiK3OQZ (ORCPT
+        with ESMTP id S229559AbiK3OaP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2022 09:16:25 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D861140
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2022 06:16:22 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:3c4f:c29d:dee7:957c])
-        by michel.telenet-ops.be with bizsmtp
-        id qeGG2800H1wQlgf06eGG1T; Wed, 30 Nov 2022 15:16:18 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1p0Nsm-0028RH-5F; Wed, 30 Nov 2022 15:16:16 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1p0Nsl-003ruc-OB; Wed, 30 Nov 2022 15:16:15 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     Tho Vu <tho.vu.wh@renesas.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        Wed, 30 Nov 2022 09:30:15 -0500
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D0EC52888;
+        Wed, 30 Nov 2022 06:30:14 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1669817506; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=MBcgFbrxBMjCUsYG5JPRrKKOle/H+6CLvHLsKhUx7pGZLSo7InNJY1XoZh2orec8LiN/fuMmkzcItQOuWc/Oggq4K+ooy2GsQTgCZopz0ITgJ7F4AJjYcXkOgFtZGIDyF/Tn6FBiWEp7A4+dyD+Hdg3v0fIBLNLvbvcpb9fPBq8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1669817506; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=QF5pLbXUIUVP28HpDZnKqlToc38teR4R32c+jesH+QM=; 
+        b=TUNQ8cHrgqns0eHBc3DfXD+rwLkdzqPFztq0Ens1q4Zt1GNyinG8t3QVugkQj7nYzeGT5iZRg3ZGY9NBCMcqf6mfCOBhZ5qZhBxo3uw9/X9o3OXvbuXEXBncGS8d0munLxduoEP5BKia9DYBqh3wBR+nZ9st98uToRtnBgFSTSY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=arinc9.com;
+        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
+        dmarc=pass header.from=<arinc.unal@arinc9.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1669817506;
+        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
+        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
+        bh=QF5pLbXUIUVP28HpDZnKqlToc38teR4R32c+jesH+QM=;
+        b=HfKAf4+Fel3coxytPwxCdcvr10bO6It6KMz9XQGSx8zBhVPLMBNwvphkDbv4PRBH
+        46P1LoZCIUxZawUHkV429aO6CGMJEcZ9QLB02hIwx4g/Dp5bRfd5jX7+E5Rxcd0iWFW
+        XVs2bsC3ntk6QlmzoL111TFrzu1K8SiYvYhUQudo=
+Received: from arinc9-PC.lan (37.120.152.236 [37.120.152.236]) by mx.zohomail.com
+        with SMTPS id 1669817503309623.081549759161; Wed, 30 Nov 2022 06:11:43 -0800 (PST)
+From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
+To:     Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        soc@kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Michael Riesch <michael.riesch@wolfvision.net>,
+        Oleksij Rempel <linux@rempel-privat.de>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a779f0: Add CA55 operating points
-Date:   Wed, 30 Nov 2022 15:16:13 +0100
-Message-Id: <ae78351d702a53702a1d5fa26675fe982b99cdf5.1669817508.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-rockchip@lists.infradead.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 0/5] remove label = "cpu" from DSA dt-binding
+Date:   Wed, 30 Nov 2022 17:10:35 +0300
+Message-Id: <20221130141040.32447-1-arinc.unal@arinc9.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add operating points for running the Cortex-A55 CPU cores on R-Car S4-8
-at various speeds, up to the maximum supported frequency (1200 MHz).
+Hello folks,
 
-R-Car S4-8 has 8 Cortex-A55 cores, grouped in 4 clusters.
-CA55 Sub-System 0 (first 2 clusters / CPU cores 0-3) is clocked by Z0φ.
-CA55 Sub-System 1 (last 2 clusters / CPU cores 4-7) is clocked by Z1φ.
+With this patch series, we're completely getting rid of 'label = "cpu";'
+which is not used by the DSA dt-binding at all.
 
-As the two sets of clusters are driven by separate clocks, this requires
-specifying two separate tables (using the same operating performance
-point values), with "opp-shared" to indicate that the CPU cores in each
-set share state.
+Information for taking the patches for maintainers:
+Patch 1: netdev maintainers (based off netdev/net-next.git main)
+Patch 2-3: SoC maintainers (based off soc/soc.git soc/dt)
+Patch 4: MIPS maintainers (based off mips/linux.git mips-next)
+Patch 5: PowerPC maintainers (based off powerpc/linux.git next-test)
 
-Based on a patch in the BSP by Tho Vu.
+I've been meaning to submit this for a few months. Find the relevant
+conversation here:
+https://lore.kernel.org/netdev/20220913155408.GA3802998-robh@kernel.org/
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-devel for v6.3.
+Here's how I did it, for the interested (or suggestions):
 
-Changes compared to the BSP:
-  - Use two tables.
+Find the platforms which have got 'label = "cpu";' defined.
+grep -rnw . -e 'label = "cpu";'
 
-Tested on the Renesas Spider development board by using the CPUfreq
-userspace governor, writing the desired CPU clock rate to the CPUfreq
-policy's "scaling_setspeed" file in sysfs, verifying the clock rate of
-the Z0φ and Z1φ clocks in debugfs, and running the dhrystones benchmark
-on the various CPU cores.
+Remove the line where 'label = "cpu";' is included.
+sed -i /'label = "cpu";'/,+d arch/arm/boot/dts/*
+sed -i /'label = "cpu";'/,+d arch/arm64/boot/dts/freescale/*
+sed -i /'label = "cpu";'/,+d arch/arm64/boot/dts/marvell/*
+sed -i /'label = "cpu";'/,+d arch/arm64/boot/dts/mediatek/*
+sed -i /'label = "cpu";'/,+d arch/arm64/boot/dts/rockchip/*
+sed -i /'label = "cpu";'/,+d arch/mips/boot/dts/qca/*
+sed -i /'label = "cpu";'/,+d arch/mips/boot/dts/ralink/*
+sed -i /'label = "cpu";'/,+d arch/powerpc/boot/dts/turris1x.dts
+sed -i /'label = "cpu";'/,+d Documentation/devicetree/bindings/net/qca,ar71xx.yaml
 
-The Linux cpufreq driver creates two policies under
-/sys/devices/system/cpu/cpufreq/: "policy0" and "policy4".
+Restore the symlink files which typechange after running sed.
 
-With a single table and "opp-shared", only "policy0" would be created,
-and clock Z1φ would never be changed.
-With a single table and without "opp-shared", 8 policies would be
-created, and the rate of clocks Z0φ and Z1φ would reflect the value for
-the last touched CPU core from the corresponding set.
----
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 62 +++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+Arınç ÜNAL (5):
+  dt-bindings: net: qca,ar71xx: remove label = "cpu" from examples
+  arm: dts: remove label = "cpu" from DSA dt-binding
+  arm64: dts: remove label = "cpu" from DSA dt-binding
+  mips: dts: remove label = "cpu" from DSA dt-binding
+  powerpc: dts: remove label = "cpu" from DSA dt-binding
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-index 67a4f2d4480d8450..ac294168c86785db 100644
---- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
-@@ -14,6 +14,60 @@ / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	cluster01_opp: opp-table-0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <880000>;
-+			clock-latency-ns = <500000>;
-+		};
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <880000>;
-+			clock-latency-ns = <500000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <880000>;
-+			clock-latency-ns = <500000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <880000>;
-+			clock-latency-ns = <500000>;
-+			opp-suspend;
-+		};
-+	};
-+
-+	cluster23_opp: opp-table-1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <880000>;
-+			clock-latency-ns = <500000>;
-+		};
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <880000>;
-+			clock-latency-ns = <500000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <880000>;
-+			clock-latency-ns = <500000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <880000>;
-+			clock-latency-ns = <500000>;
-+			opp-suspend;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -65,6 +119,7 @@ a55_0: cpu@0 {
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A779F0_CLK_Z0>;
-+			operating-points-v2 = <&cluster01_opp>;
- 		};
- 
- 		a55_1: cpu@100 {
-@@ -76,6 +131,7 @@ a55_1: cpu@100 {
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A779F0_CLK_Z0>;
-+			operating-points-v2 = <&cluster01_opp>;
- 		};
- 
- 		a55_2: cpu@10000 {
-@@ -87,6 +143,7 @@ a55_2: cpu@10000 {
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A779F0_CLK_Z0>;
-+			operating-points-v2 = <&cluster01_opp>;
- 		};
- 
- 		a55_3: cpu@10100 {
-@@ -98,6 +155,7 @@ a55_3: cpu@10100 {
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A779F0_CLK_Z0>;
-+			operating-points-v2 = <&cluster01_opp>;
- 		};
- 
- 		a55_4: cpu@20000 {
-@@ -109,6 +167,7 @@ a55_4: cpu@20000 {
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A779F0_CLK_Z1>;
-+			operating-points-v2 = <&cluster23_opp>;
- 		};
- 
- 		a55_5: cpu@20100 {
-@@ -120,6 +179,7 @@ a55_5: cpu@20100 {
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A779F0_CLK_Z1>;
-+			operating-points-v2 = <&cluster23_opp>;
- 		};
- 
- 		a55_6: cpu@30000 {
-@@ -131,6 +191,7 @@ a55_6: cpu@30000 {
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A779F0_CLK_Z1>;
-+			operating-points-v2 = <&cluster23_opp>;
- 		};
- 
- 		a55_7: cpu@30100 {
-@@ -142,6 +203,7 @@ a55_7: cpu@30100 {
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A779F0_CLK_Z1>;
-+			operating-points-v2 = <&cluster23_opp>;
- 		};
- 
- 		L3_CA55_0: cache-controller-0 {
--- 
-2.25.1
 
