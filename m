@@ -2,157 +2,248 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A4DC4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 19:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5CBC4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 21:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229456AbiK3TS2 (ORCPT
+        id S229568AbiK3VGS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Nov 2022 14:18:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
+        Wed, 30 Nov 2022 16:06:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbiK3TS1 (ORCPT
+        with ESMTP id S229513AbiK3VGR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2022 14:18:27 -0500
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8642E8326B;
-        Wed, 30 Nov 2022 11:18:26 -0800 (PST)
-Received: by mail-qt1-f174.google.com with SMTP id y15so3199394qtv.5;
-        Wed, 30 Nov 2022 11:18:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=viurBIMrrjVhVQQ2xklycs4TlNU9Q00m6IkXE2RY5KA=;
-        b=VGNQH2vybvQQRmKlcl6OpXLUxY7ukQzlWh1FGZeBYY8uZAsEr2k/7c7T2U3jvbqR18
-         ALR6/IU5z6LwGmaAczzQU2wrLZTlWz9PnQpKgjQX1BVyPIkrKCNSwAu3cIkvkMJgG1m2
-         82f4xW394JGxQj9CY6wDks74D7KeKpIm8ElpZCoVWpVLIK4rLMbRvMqip5IJxXiRp1Rl
-         HdO/saSmcnH7HEv84mWbYT3PbQVjKf/cQfwxqv94+APn61eJBwquRGeP3V7lkvFHeiKE
-         aPHKy7cIMNTLMh1xPxwKSAi/wSgUvUMQJrNJLIubte9nFm/t86Z0rooEcQecGdA/S0ih
-         hLfw==
-X-Gm-Message-State: ANoB5pkLei6+bjloEarS9SQU4Nt4F02aTj5wA62+NTX/7lKAscd3p/v1
-        gDyL3SqIHztH/0kKzScDk2ENFTRRmR0Tsg==
-X-Google-Smtp-Source: AA0mqf6B7bNKsRDU0//K/zRDE4dKnG0sdM10D1DuUgN4izuhKD3B/I4aEHjxknrHYgBsfJTMbxFwig==
-X-Received: by 2002:ac8:5547:0:b0:3a5:36ab:b870 with SMTP id o7-20020ac85547000000b003a536abb870mr42713392qtr.650.1669835905468;
-        Wed, 30 Nov 2022 11:18:25 -0800 (PST)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id y14-20020a05620a44ce00b006fb7c42e73asm1867827qkp.21.2022.11.30.11.18.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Nov 2022 11:18:23 -0800 (PST)
-Received: by mail-yb1-f174.google.com with SMTP id 7so22840600ybp.13;
-        Wed, 30 Nov 2022 11:18:22 -0800 (PST)
-X-Received: by 2002:a25:bcc6:0:b0:6dd:1c5c:5602 with SMTP id
- l6-20020a25bcc6000000b006dd1c5c5602mr61739204ybm.36.1669835902496; Wed, 30
- Nov 2022 11:18:22 -0800 (PST)
+        Wed, 30 Nov 2022 16:06:17 -0500
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 596AE862D4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2022 13:06:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=fGeB69K7vNARYHE0In4LF63NiK5
+        kwstZrsX34GY+rdk=; b=kAdoHXP80t5vkovt2TGBxsygkqzEDU1YkLJaaum+lJc
+        oh99WCCdtWLlr8kWyNrFy8lMIKe0+tMKDI/xnmY+uYb1YdMygwdrYBFR0cCPwmwM
+        eaK+RlPgO7k6iXawtGHJ3ZVVJlTaA7d1yeNlplrpz9RkZoQUN9lLOdHsQ2PYsVXQ
+        =
+Received: (qmail 200442 invoked from network); 30 Nov 2022 22:06:11 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 30 Nov 2022 22:06:11 +0100
+X-UD-Smtp-Session: l3s3148p1@Ejdlebbu/OYgAQnoAHGJAMsVZOhAgWYe
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clocksource/drivers/sh_cmt: access registers according to spec
+Date:   Wed, 30 Nov 2022 22:06:09 +0100
+Message-Id: <20221130210609.7718-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-References: <20221123065946.40415-1-tomi.valkeinen+renesas@ideasonboard.com> <20221123065946.40415-4-tomi.valkeinen+renesas@ideasonboard.com>
-In-Reply-To: <20221123065946.40415-4-tomi.valkeinen+renesas@ideasonboard.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 30 Nov 2022 20:18:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUjCS6q44XmTanu=R68GyuVECLa0B-1AFg1CUD_oV4DuA@mail.gmail.com>
-Message-ID: <CAMuHMdUjCS6q44XmTanu=R68GyuVECLa0B-1AFg1CUD_oV4DuA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] clk: renesas: r8a779g0: Add display related clocks
-To:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Tomi,
+Documentation for most CMTs say that we need to wait two input clocks
+before changes propagate to the timer. This is especially relevant when
+we stop the timer to change further settings. Implement the delays
+according to the spec. To avoid unnecessary delays in atomic mode, we
+also check if the to-be-written value actually differs. CMCNT is a bit
+special because testing showed that we need to wait 3 cycles instead.
+AFAIU, this is also true for all CMTs. Also, the WRFLAG needs to be
+checked before writing. This fixes "cannot clear CMCNT" messages which
+occur often on R-Car Gen4 SoCs, but only very rarely on older SoCs for
+some reason.
 
-On Wed, Nov 23, 2022 at 8:00 AM Tomi Valkeinen
-<tomi.valkeinen+renesas@ideasonboard.com> wrote:
-> Add clocks related to display which are needed to get the DSI output
-> working.
->
-> Extracted from Renesas BSP tree.
->
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Fixes: 81b3b2711072 ("clocksource: sh_cmt: Add support for multiple channels per device")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Thanks for your patch!
+Changes since RFC v2:
+* use DIV_ROUND_UP also for caluclating cmcnt_delay
+* remove a FIXME comment
 
-> --- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-> @@ -145,6 +145,8 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
->         DEF_FIXED("viobusd2",   R8A779G0_CLK_VIOBUSD2,  CLK_VIO,        2, 1),
->         DEF_FIXED("vcbus",      R8A779G0_CLK_VCBUS,     CLK_VC,         1, 1),
->         DEF_FIXED("vcbusd2",    R8A779G0_CLK_VCBUSD2,   CLK_VC,         2, 1),
-> +       DEF_FIXED("dsiref",     R8A779G0_CLK_DSIREF,    CLK_PLL5_DIV4,  48, 1),
-> +       DEF_DIV6P1("dsiext",    R8A779G0_CLK_DSIEXT,    CLK_PLL5_DIV4,  0x884),
->
->         DEF_GEN4_SDH("sd0h",    R8A779G0_CLK_SD0H,      CLK_SDSRC,         0x870),
->         DEF_GEN4_SD("sd0",      R8A779G0_CLK_SD0,       R8A779G0_CLK_SD0H, 0x870),
-> @@ -161,6 +163,14 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
->         DEF_MOD("avb0",         211,    R8A779G0_CLK_S0D4_HSC),
->         DEF_MOD("avb1",         212,    R8A779G0_CLK_S0D4_HSC),
->         DEF_MOD("avb2",         213,    R8A779G0_CLK_S0D4_HSC),
-> +
+There were no further comments, so I dropped the RFC status and send
+this as a regular patch. Here again the introduction from RFC v1:
 
-Weird horizontal and vertical spacing below...
+With this patch, I can run the 'clocksource-switch' test (from the Linux
+selftests) without any warnings printed on the Spider S4 and the Ebisu
+E3 board. Both printed the warnings before, the Spider immediately, the
+Ebisu rarely but still. The price for this correctness is that the tests
+run much longer due to the udelays in atomic mode. However, I consider
+the massive switching a corner case. Usually, one switches rarely so the
+extra delay is worth the correctness IMHO.
 
-> +       DEF_MOD("dis0",                 411,    R8A779G0_CLK_S0D3),
+Happy hacking,
 
-I doubt this parent clock is correct.
-Based on Table 8.1.4e ("Lists of CPG clocks generated from PLL5"),
-this should be one of the VIOBUS clocks.
-VIOBUSD2 has the same rate as S0D3, so I'd use that one.
+   Wolfram
 
-> +       DEF_MOD("dsitxlink0",           415,    R8A779G0_CLK_DSIREF),
-> +       DEF_MOD("dsitxlink1",           416,    R8A779G0_CLK_DSIREF),
-> +
-> +       DEF_MOD("fcpvd0",               508,    R8A779G0_CLK_S0D3),
-> +       DEF_MOD("fcpvd1",               509,    R8A779G0_CLK_S0D3),
 
-Likewise.
+ drivers/clocksource/sh_cmt.c | 88 ++++++++++++++++++++++--------------
+ 1 file changed, 55 insertions(+), 33 deletions(-)
 
-> +
->         DEF_MOD("hscif0",       514,    R8A779G0_CLK_SASYNCPERD1),
->         DEF_MOD("hscif1",       515,    R8A779G0_CLK_SASYNCPERD1),
->         DEF_MOD("hscif2",       516,    R8A779G0_CLK_SASYNCPERD1),
-> @@ -193,6 +203,10 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
->         DEF_MOD("tmu3",         716,    R8A779G0_CLK_SASYNCPERD2),
->         DEF_MOD("tmu4",         717,    R8A779G0_CLK_SASYNCPERD2),
->         DEF_MOD("tpu0",         718,    R8A779G0_CLK_SASYNCPERD4),
-> +
-> +       DEF_MOD("vspd0",                830,    R8A779G0_CLK_S0D1_VIO),
-> +       DEF_MOD("vspd1",                831,    R8A779G0_CLK_S0D1_VIO),
+diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+index 64dcb082d4cf..7b952aa52c0b 100644
+--- a/drivers/clocksource/sh_cmt.c
++++ b/drivers/clocksource/sh_cmt.c
+@@ -13,6 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/ioport.h>
+ #include <linux/irq.h>
+ #include <linux/module.h>
+@@ -116,6 +117,7 @@ struct sh_cmt_device {
+ 	void __iomem *mapbase;
+ 	struct clk *clk;
+ 	unsigned long rate;
++	unsigned int reg_delay;
+ 
+ 	raw_spinlock_t lock; /* Protect the shared start/stop register */
+ 
+@@ -247,10 +249,17 @@ static inline u32 sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
+ 
+ static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch, u32 value)
+ {
+-	if (ch->iostart)
+-		ch->cmt->info->write_control(ch->iostart, 0, value);
+-	else
+-		ch->cmt->info->write_control(ch->cmt->mapbase, 0, value);
++	u32 old_value = sh_cmt_read_cmstr(ch);
++
++	if (value != old_value) {
++		if (ch->iostart) {
++			ch->cmt->info->write_control(ch->iostart, 0, value);
++			udelay(ch->cmt->reg_delay);
++		} else {
++			ch->cmt->info->write_control(ch->cmt->mapbase, 0, value);
++			udelay(ch->cmt->reg_delay);
++		}
++	}
+ }
+ 
+ static inline u32 sh_cmt_read_cmcsr(struct sh_cmt_channel *ch)
+@@ -260,7 +269,12 @@ static inline u32 sh_cmt_read_cmcsr(struct sh_cmt_channel *ch)
+ 
+ static inline void sh_cmt_write_cmcsr(struct sh_cmt_channel *ch, u32 value)
+ {
+-	ch->cmt->info->write_control(ch->ioctrl, CMCSR, value);
++	u32 old_value = sh_cmt_read_cmcsr(ch);
++
++	if (value != old_value) {
++		ch->cmt->info->write_control(ch->ioctrl, CMCSR, value);
++		udelay(ch->cmt->reg_delay);
++	}
+ }
+ 
+ static inline u32 sh_cmt_read_cmcnt(struct sh_cmt_channel *ch)
+@@ -268,14 +282,33 @@ static inline u32 sh_cmt_read_cmcnt(struct sh_cmt_channel *ch)
+ 	return ch->cmt->info->read_count(ch->ioctrl, CMCNT);
+ }
+ 
+-static inline void sh_cmt_write_cmcnt(struct sh_cmt_channel *ch, u32 value)
++static inline int sh_cmt_write_cmcnt(struct sh_cmt_channel *ch, u32 value)
+ {
++	/* Tests showed that we need to wait 3 clocks here */
++	unsigned int cmcnt_delay = DIV_ROUND_UP(3 * ch->cmt->reg_delay, 2);
++	u32 reg;
++
++	if (ch->cmt->info->model > SH_CMT_16BIT) {
++		int ret = read_poll_timeout_atomic(sh_cmt_read_cmcsr, reg,
++						   !(reg & SH_CMT32_CMCSR_WRFLG),
++						   1, cmcnt_delay, false, ch);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	ch->cmt->info->write_count(ch->ioctrl, CMCNT, value);
++	udelay(cmcnt_delay);
++	return 0;
+ }
+ 
+ static inline void sh_cmt_write_cmcor(struct sh_cmt_channel *ch, u32 value)
+ {
+-	ch->cmt->info->write_count(ch->ioctrl, CMCOR, value);
++	u32 old_value = ch->cmt->info->read_count(ch->ioctrl, CMCOR);
++
++	if (value != old_value) {
++		ch->cmt->info->write_count(ch->ioctrl, CMCOR, value);
++		udelay(ch->cmt->reg_delay);
++	}
+ }
+ 
+ static u32 sh_cmt_get_counter(struct sh_cmt_channel *ch, u32 *has_wrapped)
+@@ -319,7 +352,7 @@ static void sh_cmt_start_stop_ch(struct sh_cmt_channel *ch, int start)
+ 
+ static int sh_cmt_enable(struct sh_cmt_channel *ch)
+ {
+-	int k, ret;
++	int ret;
+ 
+ 	dev_pm_syscore_device(&ch->cmt->pdev->dev, true);
+ 
+@@ -347,26 +380,9 @@ static int sh_cmt_enable(struct sh_cmt_channel *ch)
+ 	}
+ 
+ 	sh_cmt_write_cmcor(ch, 0xffffffff);
+-	sh_cmt_write_cmcnt(ch, 0);
+-
+-	/*
+-	 * According to the sh73a0 user's manual, as CMCNT can be operated
+-	 * only by the RCLK (Pseudo 32 kHz), there's one restriction on
+-	 * modifying CMCNT register; two RCLK cycles are necessary before
+-	 * this register is either read or any modification of the value
+-	 * it holds is reflected in the LSI's actual operation.
+-	 *
+-	 * While at it, we're supposed to clear out the CMCNT as of this
+-	 * moment, so make sure it's processed properly here.  This will
+-	 * take RCLKx2 at maximum.
+-	 */
+-	for (k = 0; k < 100; k++) {
+-		if (!sh_cmt_read_cmcnt(ch))
+-			break;
+-		udelay(1);
+-	}
++	ret = sh_cmt_write_cmcnt(ch, 0);
+ 
+-	if (sh_cmt_read_cmcnt(ch)) {
++	if (ret || sh_cmt_read_cmcnt(ch)) {
+ 		dev_err(&ch->cmt->pdev->dev, "ch%u: cannot clear CMCNT\n",
+ 			ch->index);
+ 		ret = -ETIMEDOUT;
+@@ -995,8 +1011,8 @@ MODULE_DEVICE_TABLE(of, sh_cmt_of_table);
+ 
+ static int sh_cmt_setup(struct sh_cmt_device *cmt, struct platform_device *pdev)
+ {
+-	unsigned int mask;
+-	unsigned int i;
++	unsigned int mask, i;
++	unsigned long rate;
+ 	int ret;
+ 
+ 	cmt->pdev = pdev;
+@@ -1032,10 +1048,16 @@ static int sh_cmt_setup(struct sh_cmt_device *cmt, struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_clk_unprepare;
+ 
+-	if (cmt->info->width == 16)
+-		cmt->rate = clk_get_rate(cmt->clk) / 512;
+-	else
+-		cmt->rate = clk_get_rate(cmt->clk) / 8;
++	rate = clk_get_rate(cmt->clk);
++	if (!rate) {
++		ret = -EINVAL;
++		goto err_clk_disable;
++	}
++
++	/* We shall wait 2 input clks after register writes */
++	if (cmt->info->model >= SH_CMT_48BIT)
++		cmt->reg_delay = DIV_ROUND_UP(2UL * USEC_PER_SEC, rate);
++	cmt->rate = rate / (cmt->info->width == 16 ? 512 : 8);
+ 
+ 	/* Map the memory resource(s). */
+ 	ret = sh_cmt_map_memory(cmt);
+-- 
+2.35.1
 
-While S0D1_VIO is a VIO clock, it is clocked from PLL1, which supports
-spread-spectrum, unlike PLL5.
-Again, based on Table 8.1.4e ("Lists of CPG clocks generated from
-PLL5"), this should be one of the VIOBUS clocks.
-
-Not that all of this matters a lot: all of these parents are always-on,
-and I think "dis0" is the only clock where we care about the actual
-clock rate?
-
-> +
->         DEF_MOD("wdt1:wdt0",    907,    R8A779G0_CLK_R),
->         DEF_MOD("cmt0",         910,    R8A779G0_CLK_R),
->         DEF_MOD("cmt1",         911,    R8A779G0_CLK_R),
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
