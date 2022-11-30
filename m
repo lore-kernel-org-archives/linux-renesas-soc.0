@@ -2,40 +2,40 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C10C4708A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 14:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F10C636F8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 14:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229846AbiK3OaS (ORCPT
+        id S229946AbiK3Oaq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Nov 2022 09:30:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59438 "EHLO
+        Wed, 30 Nov 2022 09:30:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbiK3OaP (ORCPT
+        with ESMTP id S229902AbiK3Oa0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2022 09:30:15 -0500
+        Wed, 30 Nov 2022 09:30:26 -0500
 Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D0EC52888;
-        Wed, 30 Nov 2022 06:30:14 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1669817506; cv=none; 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED2BC54745;
+        Wed, 30 Nov 2022 06:30:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1669817583; cv=none; 
         d=zohomail.com; s=zohoarc; 
-        b=MBcgFbrxBMjCUsYG5JPRrKKOle/H+6CLvHLsKhUx7pGZLSo7InNJY1XoZh2orec8LiN/fuMmkzcItQOuWc/Oggq4K+ooy2GsQTgCZopz0ITgJ7F4AJjYcXkOgFtZGIDyF/Tn6FBiWEp7A4+dyD+Hdg3v0fIBLNLvbvcpb9fPBq8=
+        b=dXasd2esNNmpiHUfVcmRkxgzG65o721c/Rvd3FSmMvedmhALBVsV8qp0aRGUE2LZxkv2HoMmc+ekS3YM7y1rZd7ygvUwHPN/hIGHycdpwbRMl8AKrHO6BjS80kHs3dfXb+tTq6HObvTyo9BtHSLXZJfNhtI2NDQXKCD5ErIoBsg=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1669817506; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
-        bh=QF5pLbXUIUVP28HpDZnKqlToc38teR4R32c+jesH+QM=; 
-        b=TUNQ8cHrgqns0eHBc3DfXD+rwLkdzqPFztq0Ens1q4Zt1GNyinG8t3QVugkQj7nYzeGT5iZRg3ZGY9NBCMcqf6mfCOBhZ5qZhBxo3uw9/X9o3OXvbuXEXBncGS8d0munLxduoEP5BKia9DYBqh3wBR+nZ9st98uToRtnBgFSTSY=
+        t=1669817583; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=tcD2tFxEru39PLp3xQkd+dJ8fltdBcdkPCdXOUfgLMQ=; 
+        b=lO865isAuQRik7INPA7FZOiYw2VcoYkZzICanbPbLMs5UcOpVmYH2ojvAtyUkogX1bx6lflv9TwhKvXKySfLjzNEfJQth/+YrNbGbOryVSSzseZpaJvZ7R4fmc1NBsDCLo2lxD/q7DmFswtddApJGvyLOVRN0aOK3V+2uvxxs04=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
         dkim=pass  header.i=arinc9.com;
         spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
         dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1669817506;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1669817583;
         s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
-        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
-        bh=QF5pLbXUIUVP28HpDZnKqlToc38teR4R32c+jesH+QM=;
-        b=HfKAf4+Fel3coxytPwxCdcvr10bO6It6KMz9XQGSx8zBhVPLMBNwvphkDbv4PRBH
-        46P1LoZCIUxZawUHkV429aO6CGMJEcZ9QLB02hIwx4g/Dp5bRfd5jX7+E5Rxcd0iWFW
-        XVs2bsC3ntk6QlmzoL111TFrzu1K8SiYvYhUQudo=
+        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
+        bh=tcD2tFxEru39PLp3xQkd+dJ8fltdBcdkPCdXOUfgLMQ=;
+        b=h91l4+uumvdMWNksQsm+lLIQWjvfnAiRH0AY1lQ1rUMZHTcD9BpIXNqyyiRIIZNv
+        zTAeFsofzE/hNeBYRoRnP2XXfHJy36b852k4KrBCBZRISGmZRX3Kl8uojjKq4iNQH83
+        JVCdBqOiVaWHwI39rjwtkpbVw4RCX2IGXFzaUjAo=
 Received: from arinc9-PC.lan (37.120.152.236 [37.120.152.236]) by mx.zohomail.com
-        with SMTPS id 1669817503309623.081549759161; Wed, 30 Nov 2022 06:11:43 -0800 (PST)
+        with SMTPS id 1669817581238174.27626882243624; Wed, 30 Nov 2022 06:13:01 -0800 (PST)
 From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
 To:     Vladimir Oltean <vladimir.oltean@nxp.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -98,10 +98,12 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-rockchip@lists.infradead.org,
         linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 0/5] remove label = "cpu" from DSA dt-binding
-Date:   Wed, 30 Nov 2022 17:10:35 +0300
-Message-Id: <20221130141040.32447-1-arinc.unal@arinc9.com>
+Subject: [PATCH 5/5] powerpc: dts: remove label = "cpu" from DSA dt-binding
+Date:   Wed, 30 Nov 2022 17:10:40 +0300
+Message-Id: <20221130141040.32447-6-arinc.unal@arinc9.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221130141040.32447-1-arinc.unal@arinc9.com>
+References: <20221130141040.32447-1-arinc.unal@arinc9.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -110,44 +112,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello folks,
+This is not used by the DSA dt-binding, so remove it from all devicetrees.
 
-With this patch series, we're completely getting rid of 'label = "cpu";'
-which is not used by the DSA dt-binding at all.
+Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+---
+ arch/powerpc/boot/dts/turris1x.dts | 2 --
+ 1 file changed, 2 deletions(-)
 
-Information for taking the patches for maintainers:
-Patch 1: netdev maintainers (based off netdev/net-next.git main)
-Patch 2-3: SoC maintainers (based off soc/soc.git soc/dt)
-Patch 4: MIPS maintainers (based off mips/linux.git mips-next)
-Patch 5: PowerPC maintainers (based off powerpc/linux.git next-test)
-
-I've been meaning to submit this for a few months. Find the relevant
-conversation here:
-https://lore.kernel.org/netdev/20220913155408.GA3802998-robh@kernel.org/
-
-Here's how I did it, for the interested (or suggestions):
-
-Find the platforms which have got 'label = "cpu";' defined.
-grep -rnw . -e 'label = "cpu";'
-
-Remove the line where 'label = "cpu";' is included.
-sed -i /'label = "cpu";'/,+d arch/arm/boot/dts/*
-sed -i /'label = "cpu";'/,+d arch/arm64/boot/dts/freescale/*
-sed -i /'label = "cpu";'/,+d arch/arm64/boot/dts/marvell/*
-sed -i /'label = "cpu";'/,+d arch/arm64/boot/dts/mediatek/*
-sed -i /'label = "cpu";'/,+d arch/arm64/boot/dts/rockchip/*
-sed -i /'label = "cpu";'/,+d arch/mips/boot/dts/qca/*
-sed -i /'label = "cpu";'/,+d arch/mips/boot/dts/ralink/*
-sed -i /'label = "cpu";'/,+d arch/powerpc/boot/dts/turris1x.dts
-sed -i /'label = "cpu";'/,+d Documentation/devicetree/bindings/net/qca,ar71xx.yaml
-
-Restore the symlink files which typechange after running sed.
-
-Arınç ÜNAL (5):
-  dt-bindings: net: qca,ar71xx: remove label = "cpu" from examples
-  arm: dts: remove label = "cpu" from DSA dt-binding
-  arm64: dts: remove label = "cpu" from DSA dt-binding
-  mips: dts: remove label = "cpu" from DSA dt-binding
-  powerpc: dts: remove label = "cpu" from DSA dt-binding
-
+diff --git a/arch/powerpc/boot/dts/turris1x.dts b/arch/powerpc/boot/dts/turris1x.dts
+index 045af668e928..3841c8d96d00 100644
+--- a/arch/powerpc/boot/dts/turris1x.dts
++++ b/arch/powerpc/boot/dts/turris1x.dts
+@@ -147,7 +147,6 @@ ports {
+ 
+ 					port@0 {
+ 						reg = <0>;
+-						label = "cpu";
+ 						ethernet = <&enet1>;
+ 						phy-mode = "rgmii-id";
+ 
+@@ -184,7 +183,6 @@ port@5 {
+ 
+ 					port@6 {
+ 						reg = <6>;
+-						label = "cpu";
+ 						ethernet = <&enet0>;
+ 						phy-mode = "rgmii-id";
+ 
+-- 
+2.34.1
 
