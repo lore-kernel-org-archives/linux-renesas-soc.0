@@ -2,167 +2,115 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3B9C352A1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Nov 2022 22:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9F3C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 02:03:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229497AbiK3WLm (ORCPT
+        id S229535AbiLACDy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Nov 2022 17:11:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57884 "EHLO
+        Wed, 30 Nov 2022 21:03:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbiK3WLk (ORCPT
+        with ESMTP id S229520AbiLACDx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2022 17:11:40 -0500
-Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE7D083265
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2022 14:11:38 -0800 (PST)
-Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-141ca09c2fbso106844fac.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2022 14:11:38 -0800 (PST)
+        Wed, 30 Nov 2022 21:03:53 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C223256568
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2022 18:03:52 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id jl24so238324plb.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2022 18:03:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/pCusU2BJ3AKcUs3H3Y2D3hgYCxdx4f+iS/Ul4LVuyU=;
-        b=olgD+zuE0H+I4nks8M+HL18aR6YwnxVl/XgX1xdITkFmdalzZCLz/w40bEle8BJYyE
-         smuiwpALu4k30KMf+QUSyGk8AXGCOBdhkAYXDWljd+ML+2FFgUp2UvI3xST3XM74lbJ4
-         xIVHpORo10eZ4f6GYMmFnFEqKPfLWAF4C0R7juSjQHASET9lcVPC8Ni+xQYezTkXly05
-         WFOdvphGwz+/95JJRfPWHyljZAQtkY2ncpoo7JYDnLVm1w496tJ0dorpAFmdOissrVrk
-         mzIbSe1WvtHtqvzjpFfDx66TQ4qGZgc2SLZOEHXHkq/nUfCf2PRFDK4PU5XJUpo/5ysj
-         /8FQ==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0DEiQmeMgrdK6YJ0GgLB3Jv3Ci6xLHfEcOnl3XLLYY8=;
+        b=iP/HAJ/0GvHY5WECx7kbralJKyJMBFe69TYcPNdG+1+eKPAATALepikSeQHt+RiwZZ
+         Hj8q+gyF9lkYSCwap8AyqEz3y0DMo52ZW7VxILomoIAi7FeyUQJhMWzoAkKMvzNRgLc6
+         Ke7TbH+zYCbh5I9E8I3z5+/bS+r//iAGL4Ju3jT8LUGDiQPnBnADBCaSi8af6qKGm4gD
+         4B+xW/WhgwCfQbDqbs4e7HSNg/fUuRyZ2VldEQE7mvr9cZKWUvxnvC4PXXQHXGRZjDrJ
+         6sMneAtHjVQdJvsQFlqtXuXccwUMOn4RUkywQXrSndRIbdMYvCRBQ2hcJjoj4boSqYOa
+         ZHiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/pCusU2BJ3AKcUs3H3Y2D3hgYCxdx4f+iS/Ul4LVuyU=;
-        b=J2kqfmIZn27OV3Bi32FjIn2FZUmFslX0FD2JIfT0ZKR2wklhq6gn3HUcMBgx99dnu6
-         uj218LWMgrLnMduNa+jPIhIXsb4hYWRM2IVdXd4SPhTPUYlXZsJ6MFoFT1vWt4JmR170
-         p/jggm6JzD9qEQ2ZXBoeRB7bHKjSaX6uEMlxPzGjkGC7bIA00h7LAiVK71YpwPaKFKSU
-         AIGyoMDnlY2SBfsmyk3t3DC86Jp3Nng8Qb3IRjQ3xVzrjDg9eNG6LrecbXJC8eBU0RpL
-         xu0HRm/caH7C7lqyppuqR0hgCm29NjWPMNiC8LRwIykQgfa354+Sif/kdgeBVbRErCk/
-         GgiA==
-X-Gm-Message-State: ANoB5pkspWEsTXHzsELawQuTjW7cv+s3g57mPAilcq/jniATMm+bOfLY
-        FK1Mdl2IUrMrby314dSOfEwjvw==
-X-Google-Smtp-Source: AA0mqf5zf/1QpNqzGWYrGkedQ2NDVBMvpc2HmLZ9CMm4xVmsOqD1pcdFEngAa7tDxhMcrNIT6tePLQ==
-X-Received: by 2002:a05:6870:805:b0:13b:f163:2732 with SMTP id fw5-20020a056870080500b0013bf1632732mr24537280oab.192.1669846298072;
-        Wed, 30 Nov 2022 14:11:38 -0800 (PST)
-Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id y6-20020a544d86000000b00359af7ea8fdsm1094236oix.34.2022.11.30.14.11.36
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0DEiQmeMgrdK6YJ0GgLB3Jv3Ci6xLHfEcOnl3XLLYY8=;
+        b=45/b0ObcLeL5iC2c39bgqFuRqfZdhd/I2L48sd551AuoWr2AEPlsqAjW/8IhSSK6Ov
+         R5XoWY2SQk1/VXXlIIJShK+mDoaz514bNa2nKe5eWCnNDgFrW0qhERIPqNU4nGBHMnsB
+         39j9xsLByttF1nRk8LbyhkUdZJPn20oFum6hxZwzmcxclpyug9pKcsc5b4otbyOmYxkC
+         QHbKt93EMa6Qt3OMw8vBF1UUmka1LrbBGG+jMJLDpccJmRCgqnxKlZUpVY/+yIuNVvtN
+         U/nVxlcGQH0wzlyPfEhq4s2ptxCnyp00gsRSVGHkvKYKEadIoMPDeBpopqUlhjofs6tT
+         Kb/Q==
+X-Gm-Message-State: ANoB5pkt2uUTTc3gH2O4xYkL9SqgGgLCp4i9U1RlBrzJgZM11tbRaK+P
+        5Ff7ibwcH6nwa0t7qjv3397mSw==
+X-Google-Smtp-Source: AA0mqf7AaM8rZjDT0svKyWgdeqkBH7vI4+VbH4Ar7fn/HcMDFX69/stKQPzNv0xiH6xiAgEzdKsKtQ==
+X-Received: by 2002:a17:90a:5aa2:b0:218:e3ea:e6b3 with SMTP id n31-20020a17090a5aa200b00218e3eae6b3mr40319536pji.42.1669860232255;
+        Wed, 30 Nov 2022 18:03:52 -0800 (PST)
+Received: from localhost ([122.172.87.149])
+        by smtp.gmail.com with ESMTPSA id h5-20020aa79f45000000b00562a237179esm2018664pfr.131.2022.11.30.18.03.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 14:11:37 -0800 (PST)
-Date:   Tue, 22 Nov 2022 09:12:22 -0500
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     linux-iio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v7 3/5] Documentation: ABI: sysfs-bus-counter: add
- cascade_enable and external_input_phase_clock_select
-Message-ID: <Y3zYxtelBVrdbQ9g@fedora>
-References: <20221124170018.3150687-1-biju.das.jz@bp.renesas.com>
- <20221124170018.3150687-4-biju.das.jz@bp.renesas.com>
+        Wed, 30 Nov 2022 18:03:51 -0800 (PST)
+Date:   Thu, 1 Dec 2022 07:33:47 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Tho Vu <tho.vu.wh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a779f0: Add CA55 operating points
+Message-ID: <20221201020347.dpoaccvkzuss3jpk@vireshk-i7>
+References: <ae78351d702a53702a1d5fa26675fe982b99cdf5.1669817508.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0GvAFZQ6lniQ9bB2"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20221124170018.3150687-4-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ae78351d702a53702a1d5fa26675fe982b99cdf5.1669817508.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-
---0GvAFZQ6lniQ9bB2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 24, 2022 at 05:00:16PM +0000, Biju Das wrote:
-> This commit adds cascade_enable and external_input_phase_clock_
-> select items to counter ABI file.
-> (e.g. for Renesas MTU3 hardware used for phase counting).
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-I have a few comments below left for this patch. Assuming these are
-resolved, then I expect to ack this patch in the next submission.
-
+On 30-11-22, 15:16, Geert Uytterhoeven wrote:
+> Add operating points for running the Cortex-A55 CPU cores on R-Car S4-8
+> at various speeds, up to the maximum supported frequency (1200 MHz).
+> 
+> R-Car S4-8 has 8 Cortex-A55 cores, grouped in 4 clusters.
+> CA55 Sub-System 0 (first 2 clusters / CPU cores 0-3) is clocked by Z0φ.
+> CA55 Sub-System 1 (last 2 clusters / CPU cores 4-7) is clocked by Z1φ.
+> 
+> As the two sets of clusters are driven by separate clocks, this requires
+> specifying two separate tables (using the same operating performance
+> point values), with "opp-shared" to indicate that the CPU cores in each
+> set share state.
+> 
+> Based on a patch in the BSP by Tho Vu.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> v6->v7:
->  * Replaced long_word_access_ctrl_mode->cascade_enable
->  * Updated Kernel version
-> v5->v6:
->  * No change
-> v5:
->  * New patch
+> To be queued in renesas-devel for v6.3.
+> 
+> Changes compared to the BSP:
+>   - Use two tables.
+> 
+> Tested on the Renesas Spider development board by using the CPUfreq
+> userspace governor, writing the desired CPU clock rate to the CPUfreq
+> policy's "scaling_setspeed" file in sysfs, verifying the clock rate of
+> the Z0φ and Z1φ clocks in debugfs, and running the dhrystones benchmark
+> on the various CPU cores.
+> 
+> The Linux cpufreq driver creates two policies under
+> /sys/devices/system/cpu/cpufreq/: "policy0" and "policy4".
+> 
+> With a single table and "opp-shared", only "policy0" would be created,
+> and clock Z1φ would never be changed.
+> With a single table and without "opp-shared", 8 policies would be
+> created, and the rate of clocks Z0φ and Z1φ would reflect the value for
+> the last touched CPU core from the corresponding set.
 > ---
->  Documentation/ABI/testing/sysfs-bus-counter | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-bus-counter b/Documentation/=
-ABI/testing/sysfs-bus-counter
-> index ff83320b4255..abc691b13b0f 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-counter
-> +++ b/Documentation/ABI/testing/sysfs-bus-counter
-> @@ -215,6 +215,22 @@ Contact:	linux-iio@vger.kernel.org
->  Description:
->  		This attribute indicates the number of overflows of count Y.
-> =20
-> +What:		/sys/bus/counter/devices/counterX/cascade_enable
+>  arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 62 +++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
 
-It's possible that in the future we might cascading other things as
-well, so let's make this name more specific: "cascade_counts_enable".
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-> +KernelVersion:	6.3
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		This attribute indicates the cascading of counts on
-> +		counter X.
-
-Add a line stating this is a boolean attribute: "Valid attribute values
-are boolean."
-
-> +
-> +What:		/sys/bus/counter/devices/counterX/external_input_phase_clock_sele=
-ct
-> +KernelVersion:	6.3
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		This attribute selects the external clock pin for phase
-> +		counting mode of counter X.
-
-This is a driver-specific enum attribute so it needs a corresponding
-*_available entry. Take a look at the count_mode_available entry in this
-file and use that as a template to create a new entry block for
-external_input_phase_clock_select_available.
-
-> +
-> +What:		/sys/bus/counter/devices/counterX/cascade_enable
-> +What:		/sys/bus/counter/devices/counterX/external_input_phase_clock_sele=
-ct
-
-These two lines are missing the '_id' suffix: "cascade_enable_id" and
-"external_input_phase_clock_select_id".
-
-William Breathitt Gray
-
->  What:		/sys/bus/counter/devices/counterX/countY/capture_component_id
->  What:		/sys/bus/counter/devices/counterX/countY/ceiling_component_id
->  What:		/sys/bus/counter/devices/counterX/countY/floor_component_id
-> --=20
-> 2.25.1
->=20
-
---0GvAFZQ6lniQ9bB2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY3zYxgAKCRC1SFbKvhIj
-Kz9oAP9F+PSra8JOBHkj/x7nPzOH8BvL4duP8H2D0Mj2FWLipgEA36dRN5SqoW+G
-yI4n7OrXnodaMagkzEINkf0c26muSgM=
-=+Yh7
------END PGP SIGNATURE-----
-
---0GvAFZQ6lniQ9bB2--
+-- 
+viresh
