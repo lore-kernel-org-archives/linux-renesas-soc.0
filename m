@@ -2,30 +2,30 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3030DC4708D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 09:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60355C4708E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 09:57:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbiLAJ44 (ORCPT
+        id S230164AbiLAJ45 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 04:56:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58234 "EHLO
+        Thu, 1 Dec 2022 04:56:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230241AbiLAJ4w (ORCPT
+        with ESMTP id S230293AbiLAJ4z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2022 04:56:52 -0500
+        Thu, 1 Dec 2022 04:56:55 -0500
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 420CB89ADA;
-        Thu,  1 Dec 2022 01:56:51 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E56B89ADA;
+        Thu,  1 Dec 2022 01:56:53 -0800 (PST)
 Received: from desky.lan (91-154-32-225.elisa-laajakaista.fi [91.154.32.225])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 563D22D9;
-        Thu,  1 Dec 2022 10:56:48 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8AC9198C;
+        Thu,  1 Dec 2022 10:56:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1669888609;
-        bh=lU6WFQO+ANPHh+59bZX1mhx10a4JQsmhkgd4Z7i9JxY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=wFBq5XU4Uso7tqsIOn7UU1ogQtahSun3K7AO/aos19wrZ0271qTViOzDEKMEUhbY1
-         j5k2q5Sc4y+lWCytRFzFRs1X90Rvv1K+qU8vf5ga8TSCJfk7SgAhcsYiUOCXQwyWRI
-         PC6YqQyiNeVNKl7cXU5knXqbmfMnT3ZMPUXaC25s=
+        s=mail; t=1669888611;
+        bh=+Iw1lIC2DfiPDS7XgR9gAyUsUIEu1mzVmEjS0w/SQ9o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eGrHKJc42GziHTOu1BrdBgO6A8UzeRJrE6t4MlSBEwxk9sopGmb/DzBuKNJge4zMO
+         qdwqourkGeJapZvfNva23YEMPjuTZxXzkp70FYfPjZdQY7liTilYCSD9EhHneWq1V6
+         i/SSvxNyWTCAf5i63PlqRazfnYsKMjCGr0vd0BnA=
 From:   Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -40,55 +40,50 @@ Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Robert Foss <robert.foss@linaro.org>,
         Jonas Karlman <jonas@kwiboo.se>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: [PATCH v5 0/7] Renesas V4H DSI & DP output support
-Date:   Thu,  1 Dec 2022 11:56:24 +0200
-Message-Id: <20221201095631.89448-1-tomi.valkeinen+renesas@ideasonboard.com>
+        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 2/7] dt-bindings: display: bridge: renesas,dsi-csi2-tx: Add r8a779g0
+Date:   Thu,  1 Dec 2022 11:56:26 +0200
+Message-Id: <20221201095631.89448-3-tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221201095631.89448-1-tomi.valkeinen+renesas@ideasonboard.com>
+References: <20221201095631.89448-1-tomi.valkeinen+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Extend the Renesas DSI display bindings to support the r8a779g0 V4H.
 
-Hi,
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ .../bindings/display/bridge/renesas,dsi-csi2-tx.yaml           | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-These add support for DSI on V4H SoC (r8a779g0) and DP for Whitehawk
-board.
-
-I'm sending the full series for clarity.
-
-Changes to v4:
-
-- Changes in "clk: renesas: r8a779g0: Add display related clocks":
-	* Fix formatting
-	* Use R8A779G0_CLK_VIOBUSD2 as the source for all video related
-	  clocks.
-
- Tomi
-
-Tomi Valkeinen (7):
-  dt-bindings: display: renesas,du: Provide bindings for r8a779g0
-  dt-bindings: display: bridge: renesas,dsi-csi2-tx: Add r8a779g0
-  clk: renesas: r8a779g0: Add display related clocks
-  arm64: dts: renesas: r8a779g0: Add display related nodes
-  arm64: dts: renesas: white-hawk-cpu: Add DP output support
-  drm: rcar-du: Add r8a779g0 support
-  drm: rcar-du: dsi: Add r8A779g0 support
-
- .../display/bridge/renesas,dsi-csi2-tx.yaml   |   3 +-
- .../bindings/display/renesas,du.yaml          |   2 +
- .../dts/renesas/r8a779g0-white-hawk-cpu.dtsi  |  94 ++++
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi     | 130 +++++
- drivers/clk/renesas/r8a779g0-cpg-mssr.c       |   9 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.c         |  22 +
- drivers/gpu/drm/rcar-du/rcar_du_group.c       |   2 +-
- drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c       | 497 +++++++++++++-----
- drivers/gpu/drm/rcar-du/rcar_mipi_dsi_regs.h  |   6 +-
- 9 files changed, 635 insertions(+), 130 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
+index afeeb967393d..d33026f85e19 100644
+--- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
+@@ -11,13 +11,14 @@ maintainers:
+ 
+ description: |
+   This binding describes the MIPI DSI/CSI-2 encoder embedded in the Renesas
+-  R-Car V3U SoC. The encoder can operate in either DSI or CSI-2 mode, with up
++  R-Car Gen4 SoCs. The encoder can operate in either DSI or CSI-2 mode, with up
+   to four data lanes.
+ 
+ properties:
+   compatible:
+     enum:
+       - renesas,r8a779a0-dsi-csi2-tx    # for V3U
++      - renesas,r8a779g0-dsi-csi2-tx    # for V4H
+ 
+   reg:
+     maxItems: 1
 -- 
 2.34.1
 
