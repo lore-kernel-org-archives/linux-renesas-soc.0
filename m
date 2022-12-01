@@ -2,120 +2,207 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E52C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 09:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5818C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 10:03:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230339AbiLAJ5N (ORCPT
+        id S229660AbiLAKDU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 04:57:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58508 "EHLO
+        Thu, 1 Dec 2022 05:03:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbiLAJ5E (ORCPT
+        with ESMTP id S229520AbiLAKDT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2022 04:57:04 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB9D9790B;
-        Thu,  1 Dec 2022 01:57:02 -0800 (PST)
-Received: from desky.lan (91-154-32-225.elisa-laajakaista.fi [91.154.32.225])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E78EB2D9;
-        Thu,  1 Dec 2022 10:56:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1669888615;
-        bh=3fphJVPxicGLurGTXvkQUE9p+5BG3KUJATq5hRVNQpM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JjZveGnccVG0mRCUc2Krgf70dukhK233RlMWRCxAxF/Cy3ff2haCHmQ4nHQvyLyL5
-         0A5bnUV/DHjxRJLvRoJSeJuwJPl736Jki7zLHOYpa15unG6uLp3JaB+5HJnluFUVLT
-         CvE/kVoCD8Hm0Z2L+1dPiqYzZsWZvYEdc61/Qm2g=
-From:   Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thu, 1 Dec 2022 05:03:19 -0500
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891BC1C931;
+        Thu,  1 Dec 2022 02:03:18 -0800 (PST)
+Received: by mail-qk1-f174.google.com with SMTP id j26so771634qki.10;
+        Thu, 01 Dec 2022 02:03:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h7orI/+fp6P+9YeMZGsDnPDJ3YP/9fqlxMdclgUX5LM=;
+        b=vcSZENOxUa4EY7f8um8RDR68OCZwLXYm2ogXy9mg/2JSCe9smUZZHpY55XUo4tCEhc
+         ZJLE61Z8hc3c09aW7rY2NoSN+tYH2HoWS20XR5SW6Y8/cE1yKcpGkeWeOMTQdr7WwOBE
+         l/67FXKgjgE64/FSaOVr7WJVsj6atQc+Q0EmNPglfIhQzwwYetdkPgzIx7iemjC2+Dei
+         VJC0t+4mROROx/dnJpDI4K9uffwMH2Rx9FUKI7Di4fr7QoT36J1xESos2sLiAyX+thsD
+         GQMEu56gRmxh4ZHKTkujW+z/XAgzGADkzUEFpVxrdV2UzJ9wt5/14d3Qj+/n4ZPbwSrR
+         ED/A==
+X-Gm-Message-State: ANoB5plWtuc9qgCincPO1u1ds+dE3kohtb7Ll5MQmtv72Q/z0Qwuicgb
+        QK0OXoqckCHcu0Qa0BLIFTvuqUJEgDJfFA==
+X-Google-Smtp-Source: AA0mqf5DEZNSUfrmASADZq4Wp8R0zRDo0i26JifgvihuB1DhAm6Mg5A6flCCf3qyBBcyOxeE8An7NQ==
+X-Received: by 2002:a05:620a:31aa:b0:6fa:1745:46ee with SMTP id bi42-20020a05620a31aa00b006fa174546eemr40868963qkb.163.1669888997083;
+        Thu, 01 Dec 2022 02:03:17 -0800 (PST)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id o21-20020a05620a2a1500b006eeb3165554sm3218118qkp.19.2022.12.01.02.03.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Dec 2022 02:03:16 -0800 (PST)
+Received: by mail-yb1-f170.google.com with SMTP id v206so1364142ybv.7;
+        Thu, 01 Dec 2022 02:03:16 -0800 (PST)
+X-Received: by 2002:a25:d655:0:b0:6fc:1c96:c9fe with SMTP id
+ n82-20020a25d655000000b006fc1c96c9femr1249230ybg.36.1669888996192; Thu, 01
+ Dec 2022 02:03:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20221123065946.40415-1-tomi.valkeinen+renesas@ideasonboard.com> <20221123065946.40415-6-tomi.valkeinen+renesas@ideasonboard.com>
+In-Reply-To: <20221123065946.40415-6-tomi.valkeinen+renesas@ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 1 Dec 2022 11:03:04 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVy+cfDLsCWA0z-xF+Rr0g4hLSROry-m+=eZSBEsuLa_w@mail.gmail.com>
+Message-ID: <CAMuHMdVy+cfDLsCWA0z-xF+Rr0g4hLSROry-m+=eZSBEsuLa_w@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] arm64: dts: renesas: white-hawk-cpu: Add DP output support
+To:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
         Robert Foss <robert.foss@linaro.org>,
         Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: [PATCH v5 6/7] drm: rcar-du: Add r8a779g0 support
-Date:   Thu,  1 Dec 2022 11:56:30 +0200
-Message-Id: <20221201095631.89448-7-tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221201095631.89448-1-tomi.valkeinen+renesas@ideasonboard.com>
-References: <20221201095631.89448-1-tomi.valkeinen+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for DU on r8a779g0, which is identical to DU on r8a779a0.
+Hi Tomi,
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c   | 22 ++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_group.c |  2 +-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+On Wed, Nov 23, 2022 at 8:00 AM Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+> Add DT nodes needed for the mini DP connector. The DP is driven by
+> sn65dsi86, which in turn gets the pixel data from the SoC via DSI.
+>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index d003e8d9e7a2..46c60a2d710d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -524,6 +524,27 @@ static const struct rcar_du_device_info rcar_du_r8a779a0_info = {
- 	.dsi_clk_mask =  BIT(1) | BIT(0),
- };
- 
-+static const struct rcar_du_device_info rcar_du_r8a779g0_info = {
-+	.gen = 4,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_NO_BLENDING,
-+	.channels_mask = BIT(1) | BIT(0),
-+	.routes = {
-+		/* R8A779G0 has two MIPI DSI outputs. */
-+		[RCAR_DU_OUTPUT_DSI0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_DSI1] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
-+	},
-+	.num_rpf = 5,
-+	.dsi_clk_mask =  BIT(1) | BIT(0),
-+};
-+
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7742", .data = &rcar_du_r8a7790_info },
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-@@ -549,6 +570,7 @@ static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a77990", .data = &rcar_du_r8a7799x_info },
- 	{ .compatible = "renesas,du-r8a77995", .data = &rcar_du_r8a7799x_info },
- 	{ .compatible = "renesas,du-r8a779a0", .data = &rcar_du_r8a779a0_info },
-+	{ .compatible = "renesas,du-r8a779g0", .data = &rcar_du_r8a779g0_info },
- 	{ }
- };
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index 1fe8581577ed..6da01760ede5 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -107,7 +107,7 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
- 		 */
- 		rcrtc = rcdu->crtcs;
- 		num_crtcs = rcdu->num_crtcs;
--	} else if (rcdu->info->gen == 3 && rgrp->num_crtcs > 1) {
-+	} else if (rcdu->info->gen >= 3 && rgrp->num_crtcs > 1) {
- 		/*
- 		 * On Gen3 dot clocks are setup through per-group registers,
- 		 * only available when the group has two channels.
--- 
-2.34.1
+Thanks for your patch!
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.3, with the mini-dp-con node
+moved up.
+
+> --- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
+> @@ -97,6 +97,15 @@ memory@600000000 {
+>                 reg = <0x6 0x00000000 0x1 0x00000000>;
+>         };
+>
+> +       reg_1p2v: regulator-1p2v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "fixed-1.2V";
+> +               regulator-min-microvolt = <1200000>;
+> +               regulator-max-microvolt = <1200000>;
+> +               regulator-boot-on;
+> +               regulator-always-on;
+> +       };
+> +
+>         reg_1p8v: regulator-1p8v {
+>                 compatible = "regulator-fixed";
+>                 regulator-name = "fixed-1.8V";
+> @@ -114,6 +123,24 @@ reg_3p3v: regulator-3p3v {
+>                 regulator-boot-on;
+>                 regulator-always-on;
+>         };
+> +
+> +       mini-dp-con {
+> +               compatible = "dp-connector";
+> +               label = "CN5";
+> +               type = "mini";
+> +
+> +               port {
+> +                       mini_dp_con_in: endpoint {
+> +                               remote-endpoint = <&sn65dsi86_out>;
+> +                       };
+> +               };
+> +       };
+
+Moving up while applying to preserve sort order...
+
+> +
+> +       sn65dsi86_refclk: clk-x6 {
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <38400000>;
+> +       };
+>  };
+>
+>  &avb0 {
+
+> @@ -172,6 +216,51 @@ eeprom@50 {
+>         };
+>  };
+>
+> +&i2c1 {
+> +       pinctrl-0 = <&i2c1_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       status = "okay";
+> +       clock-frequency = <400000>;
+> +
+> +       bridge@2c {
+
+Ideally, this needs pinctrl for the intc_ex irq0 pin.
+Unfortunately[1] is still in limbo as the naming of the alternate pins
+is inconsistent.
+
+> +               compatible = "ti,sn65dsi86";
+> +               reg = <0x2c>;
+> +
+> +               clocks = <&sn65dsi86_refclk>;
+> +               clock-names = "refclk";
+> +
+> +               interrupt-parent = <&intc_ex>;
+> +               interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +               enable-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
+> +
+> +               vccio-supply = <&reg_1p8v>;
+> +               vpll-supply = <&reg_1p8v>;
+> +               vcca-supply = <&reg_1p2v>;
+> +               vcc-supply = <&reg_1p2v>;
+> +
+> +               ports {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +
+> +                       port@0 {
+> +                               reg = <0>;
+> +                               sn65dsi86_in: endpoint {
+> +                                       remote-endpoint = <&dsi0_out>;
+> +                               };
+> +                       };
+> +
+> +                       port@1 {
+> +                               reg = <1>;
+> +                               sn65dsi86_out: endpoint {
+> +                                       remote-endpoint = <&mini_dp_con_in>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+>  &mmc0 {
+>         pinctrl-0 = <&mmc_pins>;
+>         pinctrl-1 = <&mmc_pins>;
+
+[1] "[PATCH/RFC] pinctrl: renesas: r8a779g0: Add INTC-EX pins, groups,
+and function"
+    https://lore.kernel.org/all/28fe05d41bea5a03ea6c8434f5a4fb6c80b48867.1664368425.git.geert+renesas@glider.be
+
+Gr{oetje,eeting}s,
+
+                                                Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                                            -- Linus Torvalds
