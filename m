@@ -2,148 +2,91 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6421C4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 10:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1B2C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 10:55:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230430AbiLAKmV (ORCPT
+        id S229598AbiLAKzo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 05:42:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
+        Thu, 1 Dec 2022 05:55:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230175AbiLAKmR (ORCPT
+        with ESMTP id S229568AbiLAKzo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2022 05:42:17 -0500
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3222F9F4AC;
-        Thu,  1 Dec 2022 02:42:16 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4NNCLc4QCXz4xFy;
-        Thu,  1 Dec 2022 21:42:00 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-        s=201909; t=1669891334;
-        bh=4hif7EODqPU9RIQoNSM7f4kViT96m8PqRMy1FOSRqmw=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=XMDViV6CFDY+O8nTTE8IlEWWvY7H8YPqwD0Tn3KS84kUAblouGGNC2+Nia8sW2MYv
-         qiQITUGJnoNf2rF8FqcIgIFTtKJlyIpcKBWiNrEakO5NLQ+ickTPEjtr01+GlyanLx
-         mzZ9YX/t1jp5UON6rpZmvdKzHLeuceJXW2c99G//FjEB6EQyCPN8TlRw5ClPGntYn1
-         1lstUDxUIwXt5rogz0qwgKe9XH3/+5CPLNT6DZ3ksaq4/yXNeIe6xOWsdnc3/9h44G
-         yfuCxdwdv4chZHzuDDmEcJxiTEJT36pr3DPrHlRrFjnXSjff4fqmP4a9zPs8OfNA43
-         pIMyXosyZ93DA==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        soc@kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        =?utf-8?Q?Rafa?= =?utf-8?Q?=C5=82_Mi=C5=82ecki?= 
-        <zajec5@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Frank Wunderlich <frank-w@public-files.de>,
-        Michael Riesch <michael.riesch@wolfvision.net>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-rockchip@lists.infradead.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 0/5] remove label = "cpu" from DSA dt-binding
-In-Reply-To: <32638470-b074-3b14-bfb2-10b49307b9e3@arinc9.com>
-References: <20221130141040.32447-1-arinc.unal@arinc9.com>
- <Y4d9B7VSHvqJn0iS@lunn.ch>
- <32638470-b074-3b14-bfb2-10b49307b9e3@arinc9.com>
-Date:   Thu, 01 Dec 2022 21:42:00 +1100
-Message-ID: <877czbs8w7.fsf@mpe.ellerman.id.au>
+        Thu, 1 Dec 2022 05:55:44 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2892E1DDC2;
+        Thu,  1 Dec 2022 02:55:43 -0800 (PST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1669892141;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Td6NWg37tgKK/R89b3W+x5buNn+OHKbKyja18wB8IEw=;
+        b=CyhDIS73ej6zlgPH/gJ31NA05md2tb69sFvcCindU4QGN0yYsm4sHIQYGpIS26mQ6a+M1U
+        TE8D71NZ15F/T6BljSA+rEaIuWvHtJKIpZVy4RL4d5BfelhmesD7nlYduE4tX+j+3KtEvh
+        lTLkIzUyFV4ub69ITeJfIE//MonhrbADsAwVc9BaQwrxOpX+Cwh3at84oNIwpA6f9AeNCN
+        NxfSqK0uoiP5zJcwiK82sBuzak1DjUqUcZRXVCEfIYZqTYl6lGbLZP9lRiWEo/xPOU8EDL
+        4nURnwUmsXnCOMLQb2KINb0t1JEW1cXpLRaftBp6QMGGyrE9rWyFh0lmBZviZg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1669892141;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Td6NWg37tgKK/R89b3W+x5buNn+OHKbKyja18wB8IEw=;
+        b=k5JrKXi2jMVZQKJq9g5O8uCX1UslB1noSmC1Ls05iRD/1JTvZlnuDFxeyfsBTI9HltIQ9m
+        CGoUUjgjF4CMBRCg==
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clocksource/drivers/sh_cmt: access registers according
+ to spec
+In-Reply-To: <20221130210609.7718-1-wsa+renesas@sang-engineering.com>
+References: <20221130210609.7718-1-wsa+renesas@sang-engineering.com>
+Date:   Thu, 01 Dec 2022 11:55:40 +0100
+Message-ID: <87pmd3s89f.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Ar=C4=B1n=C3=A7 =C3=9CNAL <arinc.unal@arinc9.com> writes:
-> On 30.11.2022 18:55, Andrew Lunn wrote:
->> On Wed, Nov 30, 2022 at 05:10:35PM +0300, Ar=C4=B1n=C3=A7 =C3=9CNAL wrot=
-e:
->>> Hello folks,
->>>
->>> With this patch series, we're completely getting rid of 'label =3D "cpu=
-";'
->>> which is not used by the DSA dt-binding at all.
->>>
->>> Information for taking the patches for maintainers:
->>> Patch 1: netdev maintainers (based off netdev/net-next.git main)
->>> Patch 2-3: SoC maintainers (based off soc/soc.git soc/dt)
->>> Patch 4: MIPS maintainers (based off mips/linux.git mips-next)
->>> Patch 5: PowerPC maintainers (based off powerpc/linux.git next-test)
->>=20
->> Hi Ar=C4=B1n=C3=A7
->>=20
->> So your plan is that each architecture maintainer merges one patch?
->
-> Initially, I sent this series to soc@kernel.org to take it all but Rob=20
-> said it must be this way instead.
->
->>=20
->> That is fine, but it is good to be explicit, otherwise patches will
->> fall through the cracks because nobody picks them up. I generally use
->> To: to indicate who i expect to merge a patch, and everybody else in
->> the Cc:
->
-> Thanks for this, I'll follow suit if I don't see any activity for a few=20
-> weeks.
+Wolfram!
 
-IMHO the best solution if the patches are truly independent is to send
-them independantly to each maintainer. That way there's no confusion
-about whether someone else will take the series.
+On Wed, Nov 30 2022 at 22:06, Wolfram Sang wrote:
+> Documentation for most CMTs say that we need to wait two input clocks
+> before changes propagate to the timer. This is especially relevant when
+> we stop the timer to change further settings. Implement the delays
+> according to the spec. To avoid unnecessary delays in atomic mode, we
+> also check if the to-be-written value actually differs. CMCNT is a bit
+> special because testing showed that we need to wait 3 cycles instead.
+> AFAIU, this is also true for all CMTs. Also, the WRFLAG needs to be
+> checked before writing. This fixes "cannot clear CMCNT" messages which
+> occur often on R-Car Gen4 SoCs, but only very rarely on older SoCs for
+> some reason.
 
-It's also simpler for maintainers to apply a single standalone patch vs
-pick a single patch from a larger series.
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
 
-cheers
+I fixed it up for you this time...
+
+> Fixes: 81b3b2711072 ("clocksource: sh_cmt: Add support for multiple channels per device")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Changes since RFC v2:
+> * use DIV_ROUND_UP also for caluclating cmcnt_delay
+> * remove a FIXME comment
+>
+> There were no further comments, so I dropped the RFC status and send
+> this as a regular patch. Here again the introduction from RFC v1:
+
+Instead of quoting, it would have been helpful to have the lore links
+for RFC v1/v2....
+
+Thanks,
+
+        tglx
