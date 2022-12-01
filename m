@@ -2,30 +2,30 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3822BC47090
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 09:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8B4C4708D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Dec 2022 09:57:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230244AbiLAJ46 (ORCPT
+        id S230300AbiLAJ5B (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 04:56:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58254 "EHLO
+        Thu, 1 Dec 2022 04:57:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230297AbiLAJ4z (ORCPT
+        with ESMTP id S229612AbiLAJ47 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2022 04:56:55 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B7389AD6;
-        Thu,  1 Dec 2022 01:56:54 -0800 (PST)
+        Thu, 1 Dec 2022 04:56:59 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C266F8C681;
+        Thu,  1 Dec 2022 01:56:57 -0800 (PST)
 Received: from desky.lan (91-154-32-225.elisa-laajakaista.fi [91.154.32.225])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5450FA0;
-        Thu,  1 Dec 2022 10:56:51 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D10D7161B;
+        Thu,  1 Dec 2022 10:56:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1669888612;
-        bh=jZMMAkwHmA8cFqejXcAfGZM3yGnMV2WaN4/bqekHQPc=;
+        s=mail; t=1669888614;
+        bh=TFegyMOiBdBMIpxjS/hopQO/iK5LC2AFN1HdZyBBj94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OXtEiXs2bWb8TWu10ZYyA5GbIDL5t2t0ZpGLJCP/HnHZVM2gV6pA2UTAQKSHq7h5W
-         eWcdIU0U0KPbK2MFomWKm6QnqFHckCK22Axn0S1rrLI25g0U+3xbiP6R9Z0EXNY0QC
-         SfmnxPpVS1k4QWLzt+VmIU6wZoleKvXFu6YyDBP8=
+        b=jNlRoS4pzsJRKnKfTfYFmOzy8pwNIVe1eTbgDApLio5Z7izmd8EOeT6A/z5mElUD5
+         MhY2h8cRKm8vpH2/pFu+7Ay+45e+YcWNnc1Q1p5NljC8TiIdmEbiUXwPRrGfxdhaUC
+         y6qvk9ZoSUssyD5J3y8CAC74bOX4jBA31tp8tul4=
 From:   Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -41,9 +41,9 @@ Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Jonas Karlman <jonas@kwiboo.se>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: [PATCH v5 3/7] clk: renesas: r8a779g0: Add display related clocks
-Date:   Thu,  1 Dec 2022 11:56:27 +0200
-Message-Id: <20221201095631.89448-4-tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH v5 5/7] arm64: dts: renesas: white-hawk-cpu: Add DP output support
+Date:   Thu,  1 Dec 2022 11:56:29 +0200
+Message-Id: <20221201095631.89448-6-tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221201095631.89448-1-tomi.valkeinen+renesas@ideasonboard.com>
 References: <20221201095631.89448-1-tomi.valkeinen+renesas@ideasonboard.com>
@@ -53,52 +53,149 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add clocks related to display which are needed to get the DSI output
-working.
-
-Extracted from Renesas BSP tree.
+Add DT nodes needed for the mini DP connector. The DP is driven by
+sn65dsi86, which in turn gets the pixel data from the SoC via DSI.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../dts/renesas/r8a779g0-white-hawk-cpu.dtsi  | 94 +++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index c6337a408e5e..d898ca391e6f 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -145,6 +145,8 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED("viobusd2",	R8A779G0_CLK_VIOBUSD2,	CLK_VIO,	2, 1),
- 	DEF_FIXED("vcbus",	R8A779G0_CLK_VCBUS,	CLK_VC,		1, 1),
- 	DEF_FIXED("vcbusd2",	R8A779G0_CLK_VCBUSD2,	CLK_VC,		2, 1),
-+	DEF_FIXED("dsiref",	R8A779G0_CLK_DSIREF,	CLK_PLL5_DIV4,	48, 1),
-+	DEF_DIV6P1("dsiext",	R8A779G0_CLK_DSIEXT,	CLK_PLL5_DIV4,	0x884),
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
+index c10740aee9f6..8aab859aac7a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
+@@ -97,6 +97,15 @@ memory@600000000 {
+ 		reg = <0x6 0x00000000 0x1 0x00000000>;
+ 	};
  
- 	DEF_GEN4_SDH("sd0h",	R8A779G0_CLK_SD0H,	CLK_SDSRC,	   0x870),
- 	DEF_GEN4_SD("sd0",	R8A779G0_CLK_SD0,	R8A779G0_CLK_SD0H, 0x870),
-@@ -161,6 +163,11 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("avb0",		211,	R8A779G0_CLK_S0D4_HSC),
- 	DEF_MOD("avb1",		212,	R8A779G0_CLK_S0D4_HSC),
- 	DEF_MOD("avb2",		213,	R8A779G0_CLK_S0D4_HSC),
-+	DEF_MOD("dis0",		411,	R8A779G0_CLK_VIOBUSD2),
-+	DEF_MOD("dsitxlink0",	415,	R8A779G0_CLK_VIOBUSD2),
-+	DEF_MOD("dsitxlink1",	416,	R8A779G0_CLK_VIOBUSD2),
-+	DEF_MOD("fcpvd0",	508,	R8A779G0_CLK_VIOBUSD2),
-+	DEF_MOD("fcpvd1",	509,	R8A779G0_CLK_VIOBUSD2),
- 	DEF_MOD("hscif0",	514,	R8A779G0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif1",	515,	R8A779G0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif2",	516,	R8A779G0_CLK_SASYNCPERD1),
-@@ -193,6 +200,8 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("tmu3",		716,	R8A779G0_CLK_SASYNCPERD2),
- 	DEF_MOD("tmu4",		717,	R8A779G0_CLK_SASYNCPERD2),
- 	DEF_MOD("tpu0",		718,	R8A779G0_CLK_SASYNCPERD4),
-+	DEF_MOD("vspd0",	830,	R8A779G0_CLK_VIOBUSD2),
-+	DEF_MOD("vspd1",	831,	R8A779G0_CLK_VIOBUSD2),
- 	DEF_MOD("wdt1:wdt0",	907,	R8A779G0_CLK_R),
- 	DEF_MOD("cmt0",		910,	R8A779G0_CLK_R),
- 	DEF_MOD("cmt1",		911,	R8A779G0_CLK_R),
++	reg_1p2v: regulator-1p2v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.2V";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	reg_1p8v: regulator-1p8v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -114,6 +123,24 @@ reg_3p3v: regulator-3p3v {
+ 		regulator-boot-on;
+ 		regulator-always-on;
+ 	};
++
++	mini-dp-con {
++		compatible = "dp-connector";
++		label = "CN5";
++		type = "mini";
++
++		port {
++			mini_dp_con_in: endpoint {
++				remote-endpoint = <&sn65dsi86_out>;
++			};
++		};
++	};
++
++	sn65dsi86_refclk: clk-x6 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <38400000>;
++	};
+ };
+ 
+ &avb0 {
+@@ -134,6 +161,23 @@ phy0: ethernet-phy@0 {
+ 	};
+ };
+ 
++&dsi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			dsi0_out: endpoint {
++				remote-endpoint = <&sn65dsi86_in>;
++				data-lanes = <1 2 3 4>;
++			};
++		};
++	};
++};
++
++&du {
++	status = "okay";
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+@@ -172,6 +216,51 @@ eeprom@50 {
+ 	};
+ };
+ 
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	bridge@2c {
++		compatible = "ti,sn65dsi86";
++		reg = <0x2c>;
++
++		clocks = <&sn65dsi86_refclk>;
++		clock-names = "refclk";
++
++		interrupt-parent = <&intc_ex>;
++		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
++
++		enable-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
++
++		vccio-supply = <&reg_1p8v>;
++		vpll-supply = <&reg_1p8v>;
++		vcca-supply = <&reg_1p2v>;
++		vcc-supply = <&reg_1p2v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				sn65dsi86_in: endpoint {
++					remote-endpoint = <&dsi0_out>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				sn65dsi86_out: endpoint {
++					remote-endpoint = <&mini_dp_con_in>;
++				};
++			};
++		};
++	};
++};
++
+ &mmc0 {
+ 	pinctrl-0 = <&mmc_pins>;
+ 	pinctrl-1 = <&mmc_pins>;
+@@ -221,6 +310,11 @@ i2c0_pins: i2c0 {
+ 		function = "i2c0";
+ 	};
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1";
++		function = "i2c1";
++	};
++
+ 	keys_pins: keys {
+ 		pins = "GP_5_0", "GP_5_1", "GP_5_2";
+ 		bias-pull-up;
 -- 
 2.34.1
 
