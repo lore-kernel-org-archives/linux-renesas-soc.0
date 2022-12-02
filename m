@@ -2,1365 +2,222 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC573C63713
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Dec 2022 16:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E37C7C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Dec 2022 19:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234106AbiLBQuO (ORCPT
+        id S234630AbiLBTbk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 11:50:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46140 "EHLO
+        Fri, 2 Dec 2022 14:31:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234127AbiLBQuJ (ORCPT
+        with ESMTP id S233890AbiLBTbi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2022 11:50:09 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 680FED11EA
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Dec 2022 08:50:02 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:2d07:19c5:4d8b:89d9])
-        by laurent.telenet-ops.be with bizsmtp
-        id rUpW280020ys3B701UpWD9; Fri, 02 Dec 2022 17:49:59 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1p19E8-002K5v-QG; Fri, 02 Dec 2022 17:49:28 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1p19E8-006Wa8-9B; Fri, 02 Dec 2022 17:49:28 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>, Li Yang <leoyang.li@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 2 Dec 2022 14:31:38 -0500
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2105.outbound.protection.outlook.com [40.107.223.105])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D322EF37C9;
+        Fri,  2 Dec 2022 11:31:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aHAil+MvOUrpWpNp/PJES4EgboNXEurA/yzKKMld3IpsiqpNgXoObbZzn4yllzpZY6BjkHVD/i/XvBOFa2obuxQJPqHt1dJ743UG7hWpjSmMC87JUauj3N2WW9tk7XEC57syTgQyKyo9L6Vr02MptbEFo0J/lOB0d9xglXLUKuk9FTVMOUUzoTP+F9iN4zp/0wcsBHLxEU+30NHw44jqdAk0kZPTX78udzYSort8AtCbF4nvtB9TO+cNhznIaDmBIi47Qd53eFw8krzNAilqb1YdTW/+EtYkwuw4KEdnDrvUOv0wP9xyKWxZpKWzyURyBA+XjE2+iQfFfMtNS7JDoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xgYJ9LUb6UH6aUEiPKQkgfKqjylK309mu1ea+X1OH7g=;
+ b=B34ZJoXTTeMj0u/VPWDhNjWpegBqGRPJkhgriXpZRg/Sr/Z7es13prrq+0Abcm6Mguy1TCrbbIDMWVxMf44+o/CRhW7+2uTK8YbHVNjgPAmtOpg342dQhlArGls37R4w2+YVqSmavLChxZN/tJoZmrPVAxJ6kvkyYvxKWROyz4fjJxW8kVX7kKEcOdatcr1UlPV4nQK9BsK1ZZNXkva/dQqZ5ozzkUGV9KvMSOAnH0+BUgo8HX4iecdAWp3MwrYF53mIgPlE+2TsQPctB82CmEWKNxyu2+uw0M8mUbNYFhDREDcv8ANLA5tFLERepOLN/mZBb/V5WUKX9ZHMGHVSsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in-advantage.com; dmarc=pass action=none
+ header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xgYJ9LUb6UH6aUEiPKQkgfKqjylK309mu1ea+X1OH7g=;
+ b=RUgF88UPUgyNPnXG7KP0SVN48YiKF/rUaZHhwIDKVbAz30xpuxXOYOKHdtcK5v1OU/TKmcJ3phzhRQbWfmO1kSFW9NxiL6KTfrblFTB/fDwXPjO9Nc2aJ1YRiFH8sdSj5h2R5UeMFkhQsjqd28Bm2FQvNRXmRq5BtJyL9lljMSc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37) by SJ1PR10MB5905.namprd10.prod.outlook.com
+ (2603:10b6:a03:48c::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.21; Fri, 2 Dec
+ 2022 19:31:34 +0000
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::45b5:a860:9cea:a74c]) by MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::45b5:a860:9cea:a74c%4]) with mapi id 15.20.5857.023; Fri, 2 Dec 2022
+ 19:31:33 +0000
+Date:   Fri, 2 Dec 2022 11:31:28 -0800
+From:   Colin Foster <colin.foster@in-advantage.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        John Crispin <john@phrozen.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Marek Vasut <marex@denx.de>,
+        Sean Wang <sean.wang@mediatek.com>,
+        DENG Qingfang <dqfext@gmail.com>,
+        Landen Chao <Landen.Chao@mediatek.com>,
+        =?utf-8?B?bsOnIMOcTkFM?= <arinc.unal@arinc9.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+        Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+        Linus Walleij <linus.walleij@linaro.org>,
         UNGLinuxDriver@microchip.com,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-renesas-soc@vger.kernel.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org
-Subject: [PATCH 02/11] ARM: dts: aspeed: Fix pca954x i2c-mux node names
-Date:   Fri,  2 Dec 2022 17:49:17 +0100
-Message-Id: <8eae1e3aceba5ed15fe554c6805436c48d8a4f4e.1669999298.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1669999298.git.geert+renesas@glider.be>
-References: <cover.1669999298.git.geert+renesas@glider.be>
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        George McCollister <george.mccollister@gmail.com>
+Subject: Re: [PATCH v3 net-next 05/10] dt-bindings: net: dsa: qca8k: utilize
+ shared dsa.yaml
+Message-ID: <Y4pSkOFaGQKc7j/6@euler>
+References: <20221127224734.885526-1-colin.foster@in-advantage.com>
+ <20221127224734.885526-6-colin.foster@in-advantage.com>
+ <20221201224240.GA1565974-robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221201224240.GA1565974-robh@kernel.org>
+X-ClientProxiedBy: BYAPR08CA0021.namprd08.prod.outlook.com
+ (2603:10b6:a03:100::34) To MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWHPR1001MB2351:EE_|SJ1PR10MB5905:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5b40e68-b9fe-4bde-d812-08dad49bd1db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kagT2FcWxP2POLSUCqRQJQR8BpvvFY/1ILSGuNpBpV8/JYhbgDnJmyDQQrv4DbpIsnpaOEibBNtEomAMkDT97QKgcPWe+MbeYFoT1W9uvnDvzKRRS33Xg5FpMoS3bA/88KBytgvXFELq5VUZi/Y5gkXXWQQhL2U71D5ymARV4IkJsg8OjyXjL4GVWXzdGAV6b9eEOcDy4xd4v/hUvYiztGRDGureLrxkZ+RCpGu4hnR7YZzmRnISwhMsURh/BJYYDLngVLjNWvh2l5TOuxY1zoGsUyVPY/HJZMr7WKuolSTXQxAtqivHuP+7e5zx994UNbh10HAqHcpBkmrQJbalK2layimYiDdXBKJEKRYF3zo6Oi/vM4GNHedDdN0sUTgIUKe5hfM4ml+c9ELTJ+AhmynkB82NW4q2mzkpFQ6XWWQsxxXFLAf/xQ5jC7fHTFH+hQe2FS8cUseYIGb7eQd3GfSowTs+a+RCU7rgpSRRcMsCVS9gJs51WvDuCblQd5R6x6m0QsSIdcUO6bzY5M/3Zp84BYeESWAI73RzV9O/zPQXX8ucOULfGThy1VZlmkhiujuS4B3WXF6hSsekdV4yj1i3iuV650D2RAZGwMT2+xQHDpqglKyXkSDIf5eFY42ws0KLKs0lYyfZ72xAx9qdz2TYd02JswQmawxhUaZrtG5ngcWxZLN1Gc7jKTrEbgxC
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(376002)(39840400004)(396003)(136003)(366004)(346002)(451199015)(83380400001)(38100700002)(6666004)(6506007)(6486002)(6512007)(54906003)(86362001)(9686003)(26005)(478600001)(186003)(66946007)(5660300002)(2906002)(8936002)(6916009)(66476007)(8676002)(7406005)(7416002)(33716001)(316002)(66556008)(44832011)(4326008)(41300700001)(32563001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2Kd/z5rEr/ry1LVUu8IwMHuCR/kwx6pD2EOTkYXbzntU0tLkAkn4HUSpN0CT?=
+ =?us-ascii?Q?O0xKv+KDLEy3ojeHsNF2t+/VpQ2a2213s0NtlDxShhrkmb7RCzb1htZR18hu?=
+ =?us-ascii?Q?zB1ubZBrNyktUGRlQ9p1x2cWmMGAR6V2Ak6zHKpwYsmC7KMX5+xmrn6Wu9RB?=
+ =?us-ascii?Q?9ybmxhp0vXCsT9jJbwEJgz71cuCu6iZlc1Dzweg5aZbrgUkovLg4YFoUettd?=
+ =?us-ascii?Q?QStizf1bxTKD6k258QEL02KL4FxUsaBHEeKzWj8qEFzOzIYmY7AQAP4Zl3b9?=
+ =?us-ascii?Q?H4lCDbm4K4x1qV7Jul28waljBrv0rm8rmIZByI0Dg9x9qQfyEd4aikC91NVs?=
+ =?us-ascii?Q?AH8XL9XUNOOjOqAYqaQRE1/gD6sBl8FiPzohyPSr63HMcraiPHbRfNuBKHrU?=
+ =?us-ascii?Q?KmTxpwaw8K64O3l8EcEyxjFeqW91aerpd+IAxe1H2BjWsDfFxRDxlbv96yCT?=
+ =?us-ascii?Q?oqRF3g8EIrGI1pMU2Qo89WFWHpoBVlFzTbBArGd5a4QY4crUC2LHUqC03SRW?=
+ =?us-ascii?Q?ZxMge4EdN+vcFl4iti+X8mZ1+dauYpifKeKc5xpujPxpZILZqDgk+NDJtHfC?=
+ =?us-ascii?Q?VJdl7UPf4rLvTfCCgWEyF1lupVa2SzhpH+AtpCn6A6e7Nkl2DcT7vYAi8y/r?=
+ =?us-ascii?Q?zNoZfVlrPj2Z/vtSviDUf6lzfuhmPl6AEwQJyv+zIP9ceLfjM76/16yyOJW7?=
+ =?us-ascii?Q?jCaox1VTp70WC9oBCzg5Uxo0EDgONZwSwdyK7JiUdpUkgjXiOwV4qVkmPRyE?=
+ =?us-ascii?Q?UJ4x3LCFhB0UrCNbUVMbDXffoY2o9XmX8Rhomhpz7i3hVJQ9UgP7u0WN1+M5?=
+ =?us-ascii?Q?lDs2Aa/BsK5oloQWvYo9alkXwaf9PRdGUThQ9PycGOdgNEj34P5TSAdfsCre?=
+ =?us-ascii?Q?HcFDals3N0Jlrh6nQ/QAmVLhaOXrWbZkVVa1mXCvb8ayFIp4HwzsKAJ/oOoZ?=
+ =?us-ascii?Q?iE5LcNcq7QdIBcqGm4pAmpLe/ATcw75UxhfCEXVuDuv63umzC+Al65mrgCwA?=
+ =?us-ascii?Q?WUibV4/+lN5qNqhZGfwpNKICy1SqF1UNXHsu9Tq6Gj5rVcSVRLUGErtb9aRn?=
+ =?us-ascii?Q?Jx2QN5MXVHery18wijgKHtUIwpj4fJVawwyobCvqke23TVYvkMByW6HkfMAR?=
+ =?us-ascii?Q?OSI8c3pVB+kciziQ/W1Z0MB0fn32kVUqZm3qJFFjFrtJSN3pkZbDbWL80z96?=
+ =?us-ascii?Q?xUTvB2Fuudrc7/fvL8EBFBiAsQtj1F9r+GmRCU8oEpR/j0F7ZMggCaZjbN7N?=
+ =?us-ascii?Q?sDNWsvY+E5INRgd9RnpxrapbP90VPzgUf8lkDsRbIfeGEVxR/cSnbIyqkNJv?=
+ =?us-ascii?Q?aPYdipJTp9Cti2Ty9iOru8VxSXkasrbZlYCdtedL+g/BvR/c1ejxG9nM4WFA?=
+ =?us-ascii?Q?ZF/k/N0Tt7pXrryY4aXkCs0oH06M88tU7J+0WUvGTFR/SDzSvzGxgIbVBrXc?=
+ =?us-ascii?Q?chCscZ9rjD79FQae+bu5xB5W8hI3BoKVVZTDeS4AFQxEQHZScCwIT6EKPkD5?=
+ =?us-ascii?Q?DdNXQWra08Xm9r/ioKHfbdAO/XAZFlBz71LOqGUhUYJa838xzklRvcfnJS/P?=
+ =?us-ascii?Q?sK0jUBd2dxfplkGMr50YjSpmhFDwRaO/OLnmYaW14CgDs3f4atFoVnAH9jvw?=
+ =?us-ascii?Q?+Q=3D=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5b40e68-b9fe-4bde-d812-08dad49bd1db
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2022 19:31:33.4711
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: no/h5nyDE2pT5c5Xp3ccX1WkGNtTwiRQnEslSDwnAUp68/HKXZ+FbV1kerWDXz7SliX2F9RcOla0892cqVhQB5hzEomheMRxLufw+CD3C28=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR10MB5905
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-"make dtbs_check":
+Hi Rob,
 
-    arch/arm/boot/dts/aspeed-bmc-bytedance-g220a.dtb: i2c-switch@70: $nodename:0: 'i2c-switch@70' does not match '^(i2c-?)?mux'
-	    From schema: Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
-    arm/boot/dts/aspeed-bmc-bytedance-g220a.dtb: i2c-switch@70: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
-	    From schema: Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
-    ...
+On Thu, Dec 01, 2022 at 04:42:40PM -0600, Rob Herring wrote:
+> On Sun, Nov 27, 2022 at 02:47:29PM -0800, Colin Foster wrote:
+> > The dsa.yaml binding contains duplicated bindings for address and size
+> > cells, as well as the reference to dsa-port.yaml. Instead of duplicating
+> > this information, remove the reference to dsa-port.yaml and include the
+> > full reference to dsa.yaml.
+> > 
+> > Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+> > Suggested-by: Vladimir Oltean <olteanv@gmail.com>
+> > ---
+> > 
+> > v2 -> v3
+> >   * Remove #address-cells and #size-cells from v2. The examples were
+> >     incorrect and fixed elsewhere.
+> >   * Remove erroneous unevaluatedProperties: true under Ethernet Port.
+> >   * Add back ref: dsa-port.yaml#.
+> > 
+> > v1 -> v2
+> >   * Add #address-cells and #size-cells to the switch layer. They aren't
+> >     part of dsa.yaml.
+> >   * Add unevaluatedProperties: true to the ethernet-port layer so it can
+> >     correctly read properties from dsa.yaml.
+> > 
+> > ---
+> >  Documentation/devicetree/bindings/net/dsa/qca8k.yaml | 11 +++--------
+> >  1 file changed, 3 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
+> > index 6fc9bc985726..93a9ddebcac8 100644
+> > --- a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
+> > +++ b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
+> > @@ -66,20 +66,15 @@ properties:
+> >                   With the legacy mapping the reg corresponding to the internal
+> >                   mdio is the switch reg with an offset of -1.
+> >  
+> > +$ref: "dsa.yaml#"
+> > +
+> >  patternProperties:
+> >    "^(ethernet-)?ports$":
+> >      type: object
+> > -    properties:
+> > -      '#address-cells':
+> > -        const: 1
+> > -      '#size-cells':
+> > -        const: 0
+> > -
+> >      patternProperties:
+> >        "^(ethernet-)?port@[0-6]$":
+> >          type: object
+> >          description: Ethernet switch ports
+> > -
+> >          $ref: dsa-port.yaml#
+> 
+> So here you need 'unevaluatedProperties: false'.
+> 
+> unevaluatedProperties only applies to the properties defined in a single 
+> node level, and child nodes properties from 2 schemas can't 'see' each 
+> other. IOW, what dsa.yaml has in child nodes has no effect on this node. 
 
-Fix this by renaming PCA954x nodes to "i2c-mux", to match the I2C bus
-multiplexer/switch DT bindings and the Generic Names Recommendation in
-the Devicetree Specification.
+I'm buttoning up v4 right now and removing this line deletion.
+unevaluatedProperties: false exists under the etherent-port node, just
+at the end of the properties list.
 
-Note that a few nodes are moved, to preserve sort order.
+Since the etherent-ports node in net/dsa/dsa.yaml has
+unevaluatedProperties: false, I understand that isn't necessary here.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../boot/dts/aspeed-bmc-bytedance-g220a.dts   | 18 ++++----
- .../dts/aspeed-bmc-facebook-cloudripper.dts   | 10 ++--
- arch/arm/boot/dts/aspeed-bmc-facebook-cmm.dts | 46 +++++++++----------
- .../boot/dts/aspeed-bmc-facebook-elbert.dts   |  4 +-
- .../arm/boot/dts/aspeed-bmc-facebook-fuji.dts | 30 ++++++------
- .../boot/dts/aspeed-bmc-facebook-minipack.dts | 32 ++++++-------
- .../dts/aspeed-bmc-facebook-tiogapass.dts     |  8 ++--
- .../boot/dts/aspeed-bmc-facebook-wedge100.dts |  2 +-
- .../boot/dts/aspeed-bmc-facebook-wedge400.dts |  6 +--
- .../arm/boot/dts/aspeed-bmc-facebook-yamp.dts |  2 +-
- arch/arm/boot/dts/aspeed-bmc-ibm-everest.dts  | 18 ++++----
- arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts  |  8 ++--
- .../boot/dts/aspeed-bmc-inspur-fp5280g2.dts   |  4 +-
- .../boot/dts/aspeed-bmc-inspur-nf5280m6.dts   | 12 ++---
- .../dts/aspeed-bmc-inventec-transformers.dts  |  6 +--
- arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts |  4 +-
- .../boot/dts/aspeed-bmc-lenovo-hr855xg2.dts   |  4 +-
- arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts    |  4 +-
- arch/arm/boot/dts/aspeed-bmc-quanta-q71l.dts  |  6 +--
- arch/arm/boot/dts/aspeed-bmc-quanta-s6q.dts   | 10 ++--
- arch/arm/boot/dts/aspeed-bmc-vegman-n110.dts  | 14 +++---
- arch/arm/boot/dts/aspeed-bmc-vegman-rx20.dts  | 10 ++--
- arch/arm/boot/dts/aspeed-bmc-vegman-sx20.dts  | 14 +++---
- 23 files changed, 136 insertions(+), 136 deletions(-)
-
-diff --git a/arch/arm/boot/dts/aspeed-bmc-bytedance-g220a.dts b/arch/arm/boot/dts/aspeed-bmc-bytedance-g220a.dts
-index f75cad41ae6f644b..3f03a198a1a8fcd4 100644
---- a/arch/arm/boot/dts/aspeed-bmc-bytedance-g220a.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-bytedance-g220a.dts
-@@ -424,7 +424,7 @@ &i2c2 {
- 
- &i2c3 {
- 	status = "okay";
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -471,7 +471,7 @@ &i2c5 {
- 
- &i2c6 {
- 	status = "okay";
--	i2c-switch@72 {
-+	i2c-mux@72 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x72>;
- 		#address-cells = <1>;
-@@ -524,7 +524,7 @@ channel_6_7: i2c@7 {
- 		};
- 	};
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -533,7 +533,7 @@ channel_6_8: i2c@0 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <0>;
--			i2c-switch@71 {
-+			i2c-mux@71 {
- 				compatible = "nxp,pca9546";
- 				reg = <0x71>;
- 				#address-cells = <1>;
-@@ -569,7 +569,7 @@ channel_6_9: i2c@1 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <1>;
--			i2c-switch@71 {
-+			i2c-mux@71 {
- 				compatible = "nxp,pca9546";
- 				reg = <0x71>;
- 				#address-cells = <1>;
-@@ -605,7 +605,7 @@ channel_6_10: i2c@2 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <2>;
--			i2c-switch@71 {
-+			i2c-mux@71 {
- 				compatible = "nxp,pca9546";
- 				reg = <0x71>;
- 				#address-cells = <1>;
-@@ -640,7 +640,7 @@ channel_6_11: i2c@3 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <3>;
--			i2c-switch@71 {
-+			i2c-mux@71 {
- 				compatible = "nxp,pca9546";
- 				reg = <0x71>;
- 				#address-cells = <1>;
-@@ -808,7 +808,7 @@ &i2c9 {
- 
- &i2c10 {
- 	status = "okay";
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -838,7 +838,7 @@ channel_10_3: i2c@3 {
- 		};
- 	};
- 
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x71>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-cloudripper.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-cloudripper.dts
-index 5cd060029ea97914..d49328fa487a013e 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-cloudripper.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-cloudripper.dts
-@@ -132,7 +132,7 @@ &i2c1 {
- 	 * PCA9548 (1-0070) provides 8 channels connecting to SMB (Switch
- 	 * Main Board).
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -194,7 +194,7 @@ &i2c2 {
- 	 * PCA9548 (2-0070) provides 8 channels connecting to SCM (System
- 	 * Controller Module).
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -256,7 +256,7 @@ &i2c3 {
- 	 * PCA9548 (3-0070) provides 8 channels connecting to SMB (Switch
- 	 * Main Board).
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -423,7 +423,7 @@ &i2c8 {
- 	 * PCA9548 (8-0070) provides 8 channels connecting to PDB (Power
- 	 * Delivery Board).
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -486,7 +486,7 @@ &i2c15 {
- 	 * PCA9548 (15-0076) provides 8 channels connecting to FCM (Fan
- 	 * Controller Module).
- 	 */
--	i2c-switch@76 {
-+	i2c-mux@76 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-cmm.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-cmm.dts
-index 90a3f485c67a9895..24153868cc004023 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-cmm.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-cmm.dts
-@@ -328,7 +328,7 @@ &i2c0 {
- &i2c1 {
- 	status = "okay";
- 
--	i2c-switch@77 {
-+	i2c-mux@77 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -341,7 +341,7 @@ imux16: i2c@0 {
- 			#size-cells = <0>;
- 			reg = <0>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -390,7 +390,7 @@ imux111: i2c@7 {
- 				};
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -446,7 +446,7 @@ imux17: i2c@1 {
- 			#size-cells = <0>;
- 			reg = <1>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -495,7 +495,7 @@ imux127: i2c@7 {
- 				};
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -551,7 +551,7 @@ imux18: i2c@2 {
- 			#size-cells = <0>;
- 			reg = <2>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -600,7 +600,7 @@ imux47: i2c@7 {
- 				};
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -656,7 +656,7 @@ imux19: i2c@3 {
- 			#size-cells = <0>;
- 			reg = <3>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -705,7 +705,7 @@ imux63: i2c@7 {
- 				};
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -761,7 +761,7 @@ imux20: i2c@4 {
- 			#size-cells = <0>;
- 			reg = <4>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -810,7 +810,7 @@ imux79: i2c@7 {
- 				};
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -866,7 +866,7 @@ imux21: i2c@5 {
- 			#size-cells = <0>;
- 			reg = <5>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -915,7 +915,7 @@ imux95: i2c@7 {
- 				};
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -971,7 +971,7 @@ imux22: i2c@6 {
- 			#size-cells = <0>;
- 			reg = <6>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1020,7 +1020,7 @@ imux143: i2c@7 {
- 				};
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1076,7 +1076,7 @@ imux23: i2c@7 {
- 			#size-cells = <0>;
- 			reg = <7>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1125,7 +1125,7 @@ imux159: i2c@7 {
- 				};
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1183,7 +1183,7 @@ imux167: i2c@7 {
- &i2c2 {
- 	status = "okay";
- 
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1281,7 +1281,7 @@ &i2c7 {
- &i2c8 {
- 	status = "okay";
- 
--	i2c-switch@77 {
-+	i2c-mux@77 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1294,7 +1294,7 @@ imux32: i2c@0 {
- 			#size-cells = <0>;
- 			reg = <0>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1350,7 +1350,7 @@ imux33: i2c@1 {
- 			#size-cells = <0>;
- 			reg = <1>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1406,7 +1406,7 @@ imux34: i2c@2 {
- 			#size-cells = <0>;
- 			reg = <2>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1462,7 +1462,7 @@ imux35: i2c@3 {
- 			#size-cells = <0>;
- 			reg = <3>;
- 
--			i2c-switch@70 {
-+			i2c-mux@70 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-elbert.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-elbert.dts
-index b5cd4c7800b05928..74f3c67e0effae9d 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-elbert.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-elbert.dts
-@@ -65,7 +65,7 @@ &kcs3 {
- };
- 
- &i2c2 {
--	i2c-switch@75 {
-+	i2c-mux@75 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -123,7 +123,7 @@ imux23: i2c@7 {
- };
- 
- &i2c5 {
--	i2c-switch@75 {
-+	i2c-mux@75 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-fuji.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-fuji.dts
-index 6b319f34a9b98c7f..f23c26a3441d13ab 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-fuji.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-fuji.dts
-@@ -233,7 +233,7 @@ &i2c2 {
- 	 * PCA9548 (2-0070) provides 8 channels connecting to SCM (System
- 	 * Controller Module).
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -303,7 +303,7 @@ &i2c8 {
- 	 * PCA9548 (8-0070) provides 8 channels connecting to SMB (Switch
- 	 * Main Board).
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -315,7 +315,7 @@ imux24: i2c@0 {
- 			#size-cells = <0>;
- 			reg = <0>;
- 
--			i2c-switch@71 {
-+			i2c-mux@71 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -481,7 +481,7 @@ imux25: i2c@1 {
- 			#size-cells = <0>;
- 			reg = <1>;
- 
--			i2c-switch@72 {
-+			i2c-mux@72 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -544,7 +544,7 @@ imux26: i2c@2 {
- 			#size-cells = <0>;
- 			reg = <2>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -615,7 +615,7 @@ imux27: i2c@3 {
- 			#size-cells = <0>;
- 			reg = <3>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -715,7 +715,7 @@ &i2c11 {
- 	 * PCA9548 (11-0077) provides 8 channels connecting to SMB (Switch
- 	 * Main Board).
- 	 */
--	i2c-switch@77 {
-+	i2c-mux@77 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -727,7 +727,7 @@ imux40: i2c@0 {
- 			#size-cells = <0>;
- 			reg = <0>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -790,7 +790,7 @@ imux41: i2c@1 {
- 			#size-cells = <0>;
- 			reg = <1>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -853,7 +853,7 @@ imux42: i2c@2 {
- 			#size-cells = <0>;
- 			reg = <2>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -916,7 +916,7 @@ imux43: i2c@3 {
- 			#size-cells = <0>;
- 			reg = <3>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -979,7 +979,7 @@ imux44: i2c@4 {
- 			#size-cells = <0>;
- 			reg = <4>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1042,7 +1042,7 @@ imux45: i2c@5 {
- 			#size-cells = <0>;
- 			reg = <5>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1105,7 +1105,7 @@ imux46: i2c@6 {
- 			#size-cells = <0>;
- 			reg = <6>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1168,7 +1168,7 @@ imux47: i2c@7 {
- 			#size-cells = <0>;
- 			reg = <7>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-minipack.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-minipack.dts
-index 230d16cd99672796..aafd1042b6e53066 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-minipack.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-minipack.dts
-@@ -344,7 +344,7 @@ &i2c2 {
- 	 * I2C Switch 2-0070 is connecting to SCM (System Controller
- 	 * Module).
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -425,7 +425,7 @@ &i2c7 {
- &i2c8 {
- 	status = "okay";
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -441,7 +441,7 @@ imux24: i2c@0 {
- 			#size-cells = <0>;
- 			reg = <0>;
- 
--			i2c-switch@71 {
-+			i2c-mux@71 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -507,7 +507,7 @@ imux25: i2c@1 {
- 			#size-cells = <0>;
- 			reg = <1>;
- 
--			i2c-switch@72 {
-+			i2c-mux@72 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -573,7 +573,7 @@ imux26: i2c@2 {
- 			#size-cells = <0>;
- 			reg = <2>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -639,7 +639,7 @@ imux27: i2c@3 {
- 			#size-cells = <0>;
- 			reg = <3>;
- 
--			i2c-switch@76 {
-+			i2c-mux@76 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -729,7 +729,7 @@ &i2c9 {
- 	 * I2C Switch 9-0070 is connecting to MAC/PHY EEPROMs on SMB
- 	 * (Switch Main Board).
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -793,7 +793,7 @@ &i2c10 {
- &i2c11 {
- 	status = "okay";
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -809,7 +809,7 @@ imux40: i2c@0 {
- 			#size-cells = <0>;
- 			reg = <0>;
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -875,7 +875,7 @@ imux41: i2c@1 {
- 			#size-cells = <0>;
- 			reg = <1>;
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -941,7 +941,7 @@ imux42: i2c@2 {
- 			#size-cells = <0>;
- 			reg = <2>;
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1007,7 +1007,7 @@ imux43: i2c@3 {
- 			#size-cells = <0>;
- 			reg = <3>;
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1073,7 +1073,7 @@ imux44: i2c@4 {
- 			#size-cells = <0>;
- 			reg = <4>;
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1139,7 +1139,7 @@ imux45: i2c@5 {
- 			#size-cells = <0>;
- 			reg = <5>;
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1205,7 +1205,7 @@ imux46: i2c@6 {
- 			#size-cells = <0>;
- 			reg = <6>;
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -1271,7 +1271,7 @@ imux47: i2c@7 {
- 			#size-cells = <0>;
- 			reg = <7>;
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9548";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-index b6b16356f571a2e9..704ee684e0fb408b 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-@@ -211,7 +211,7 @@ &i2c0 {
- &i2c1 {
- 	status = "okay";
- 	//X24 Riser
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9544";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -243,7 +243,7 @@ eeprom@50 {
- 				pagesize = <32>;
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9546";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -303,7 +303,7 @@ eeprom@50 {
- 				pagesize = <32>;
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9546";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -363,7 +363,7 @@ eeprom@50 {
- 				pagesize = <32>;
- 			};
- 
--			i2c-switch@73 {
-+			i2c-mux@73 {
- 				compatible = "nxp,pca9546";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-wedge100.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-wedge100.dts
-index 584efa5284500763..97cd11c3d9a52458 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-wedge100.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-wedge100.dts
-@@ -44,7 +44,7 @@ flash1@0 {
- };
- 
- &i2c7 {
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-wedge400.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-wedge400.dts
-index ed305948386f220d..d1a1e8cf2028fd07 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-wedge400.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-wedge400.dts
-@@ -138,7 +138,7 @@ &i2c1 {
- &i2c2 {
- 	status = "okay";
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -218,7 +218,7 @@ &i2c7 {
- &i2c8 {
- 	status = "okay";
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -287,7 +287,7 @@ &i2c10 {
- &i2c11 {
- 	status = "okay";
- 
--	i2c-switch@76 {
-+	i2c-mux@76 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-yamp.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-yamp.dts
-index 5e6105874217100e..98fe0d6c8188cd6e 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-yamp.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-yamp.dts
-@@ -57,7 +57,7 @@ &i2c1 {
- &i2c2 {
- 	status = "okay";
- 
--	i2c-switch@75 {
-+	i2c-mux@75 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-ibm-everest.dts b/arch/arm/boot/dts/aspeed-bmc-ibm-everest.dts
-index 1448ea895be439fd..17e6424c7c8695e3 100644
---- a/arch/arm/boot/dts/aspeed-bmc-ibm-everest.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-ibm-everest.dts
-@@ -394,7 +394,7 @@ pca2: pca9552@65 {
- 			"expander-cable-card5";
- 	};
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -539,7 +539,7 @@ pca3: pca9552@66 {
- 			"expander-cable-card11";
- 	};
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -696,7 +696,7 @@ led@1 {
- &i2c6 {
- 	status = "okay";
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -1787,7 +1787,7 @@ eeprom@50 {
- 		reg = <0x50>;
- 	};
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -1923,7 +1923,7 @@ ibm-panel@62 {
- 		reg = <(0x62 | I2C_OWN_SLAVE_ADDRESS)>;
- 	};
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -2182,7 +2182,7 @@ pca0: pca9552@61 {
- 		};
- 	};
- 
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x71>;
- 		#address-cells = <1>;
-@@ -2235,7 +2235,7 @@ eeprom@50 {
- &i2c15 {
- 	status = "okay";
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -2287,7 +2287,7 @@ eeprom@53 {
- 		};
- 	};
- 
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x71>;
- 		#address-cells = <1>;
-@@ -2339,7 +2339,7 @@ eeprom@53 {
- 		};
- 	};
- 
--	i2c-switch@72 {
-+	i2c-mux@72 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x72>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts b/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
-index 20ef958698ec772a..c6ce573f4b26f1a1 100644
---- a/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
-@@ -1017,7 +1017,7 @@ tmp275@4a {
- 		reg = <0x4a>;
- 	};
- 
--	pca9546@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -1099,7 +1099,7 @@ tmp275@49 {
- 		reg = <0x49>;
- 	};
- 
--	pca9546@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -1201,7 +1201,7 @@ tmp275@4b {
- 		reg = <0x4b>;
- 	};
- 
--	pca9546@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -2031,7 +2031,7 @@ tmp275@49 {
- 		reg = <0x49>;
- 	};
- 
--	pca9546@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-inspur-fp5280g2.dts b/arch/arm/boot/dts/aspeed-bmc-inspur-fp5280g2.dts
-index 208b0f094ed95f4e..0dea014e4f30f3ac 100644
---- a/arch/arm/boot/dts/aspeed-bmc-inspur-fp5280g2.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-inspur-fp5280g2.dts
-@@ -348,7 +348,7 @@ tmp112@49 {
- 		label = "outlet";
- 	};
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -432,7 +432,7 @@ &i2c6 {
- &i2c7 {
- 	status = "okay";
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-inspur-nf5280m6.dts b/arch/arm/boot/dts/aspeed-bmc-inspur-nf5280m6.dts
-index b3c1e3ba583185e8..92b9b3987c92daa4 100644
---- a/arch/arm/boot/dts/aspeed-bmc-inspur-nf5280m6.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-inspur-nf5280m6.dts
-@@ -215,7 +215,7 @@ tmp112@49 {
- 		label = "outlet";
- 	};
- 
--	pca9548@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x70>;
- 	};
-@@ -224,17 +224,17 @@ pca9548@70 {
- &i2c3 {
- 	status = "okay";
- 
--	pca9548@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x70>;
- 	};
- 
--	pca9548@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x71>;
- 	};
- 
--	pca9548@72 {
-+	i2c-mux@72 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x72>;
- 	};
-@@ -248,7 +248,7 @@ &i2c4 {
- &i2c5 {
- 	status = "okay";
- 
--	pca9548@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x70>;
- 	};
-@@ -257,7 +257,7 @@ pca9548@70 {
- &i2c6 {
- 	status = "okay";
- 
--	pca9548@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x70>;
- 	};
-diff --git a/arch/arm/boot/dts/aspeed-bmc-inventec-transformers.dts b/arch/arm/boot/dts/aspeed-bmc-inventec-transformers.dts
-index caf66651e5b5db9f..c713cb7a6187012a 100644
---- a/arch/arm/boot/dts/aspeed-bmc-inventec-transformers.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-inventec-transformers.dts
-@@ -193,14 +193,14 @@ &i2c10 {
-        // I2C EXPANDER
-        status = "okay";
- 
--       i2c-switch@71 {
-+       i2c-mux@71 {
-                compatible = "nxp,pca9544";
-                #address-cells = <1>;
-                #size-cells = <0>;
-                reg = <0x71>;
-        };
- 
--       i2c-switch@73 {
-+       i2c-mux@73 {
-                compatible = "nxp,pca9544";
-                #address-cells = <1>;
-                #size-cells = <0>;
-@@ -212,7 +212,7 @@ &i2c11 {
-        // I2C EXPANDER
-        status = "okay";
- 
--       i2c-switch@70 {
-+       i2c-mux@70 {
-                compatible = "nxp,pca9544";
-                #address-cells = <1>;
-                #size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts b/arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts
-index 8f543cca7c21f154..ddbcbc64e2356bc8 100644
---- a/arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts
-@@ -208,7 +208,7 @@ &i2c6 {
- 	 *	Slot 3
- 	 */
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9545";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -249,7 +249,7 @@ &i2c7 {
- 	 *	Slot 2,
- 	 *	Slot 3
- 	 */
--	i2c-switch@76 {
-+	i2c-mux@76 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x76>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-lenovo-hr855xg2.dts b/arch/arm/boot/dts/aspeed-bmc-lenovo-hr855xg2.dts
-index bcc1820f5c073374..6045b60b80da8de7 100644
---- a/arch/arm/boot/dts/aspeed-bmc-lenovo-hr855xg2.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-lenovo-hr855xg2.dts
-@@ -175,7 +175,7 @@ &pinctrl_adc14_default
- &i2c0 {
- 	status = "okay";
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9545";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -227,7 +227,7 @@ &i2c2 {
- 
- &i2c3 {
- 	status = "okay";
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts b/arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts
-index 0cb7b20ff3ab88d7..3d2d8db73ca6601a 100644
---- a/arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts
-@@ -231,7 +231,7 @@ ucd90160@64 {
- &i2c1 {
- 	status = "okay";
- 
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x71>;
- 		#address-cells = <1>;
-@@ -282,7 +282,7 @@ &i2c3 {
- &i2c4 {
- 	status = "okay";
- 
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x71>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-quanta-q71l.dts b/arch/arm/boot/dts/aspeed-bmc-quanta-q71l.dts
-index 9605e53f5bbfc0c1..fed2791f59941841 100644
---- a/arch/arm/boot/dts/aspeed-bmc-quanta-q71l.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-quanta-q71l.dts
-@@ -197,7 +197,7 @@ &i2c2 {
- 	 *    Slot 6,
- 	 *    Slot 7
- 	 */
--	i2c-switch@74 {
-+	i2c-mux@74 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x74>;
- 		#address-cells = <1>;
-@@ -238,7 +238,7 @@ i2c_pcie7: i2c@3 {
- 	 *    SSD 1,
- 	 *    SSD 2
- 	 */
--	i2c-switch@77 {
-+	i2c-mux@77 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -325,7 +325,7 @@ &i2c7 {
- 	 *    PSU3
- 	 *    PSU2
- 	 */
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-quanta-s6q.dts b/arch/arm/boot/dts/aspeed-bmc-quanta-s6q.dts
-index 46cbba6305b8f324..983853eedaefe82c 100644
---- a/arch/arm/boot/dts/aspeed-bmc-quanta-s6q.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-quanta-s6q.dts
-@@ -285,7 +285,7 @@ U35_PWR_ADC@4b {
- 		reg = <0x4b>;
- 	};
- 
--	i2c-switch@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -321,7 +321,7 @@ SMB_HOST_DB800_C_SCL: i2c@3 {
- &i2c1 {
- 	status = "okay";
- 
--	i2c-switch@59 {
-+	i2c-mux@59 {
- 		compatible = "nxp,pca9848";
- 		reg = <0x59>;
- 		#address-cells = <1>;
-@@ -393,7 +393,7 @@ SMB_FB_SCL: i2c@7 {
- 			#size-cells = <0>;
- 			reg = <7>;
- 
--			i2c-switch@77 {
-+			i2c-mux@77 {
- 				compatible = "nxp,pca9546";
- 				reg = <0x77>;
- 				#address-cells = <1>;
-@@ -490,7 +490,7 @@ &i2c5 {
- &i2c6 {
- 	status = "okay";
- 
--	i2c-switch@77 {
-+	i2c-mux@77 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -556,7 +556,7 @@ U197_PCA9546_CH3: i2c@3 {
- &i2c7 {
- 	status = "okay";
- 
--	i2c-switch@75 {
-+	i2c-mux@75 {
- 		compatible = "nxp,pca9546";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-vegman-n110.dts b/arch/arm/boot/dts/aspeed-bmc-vegman-n110.dts
-index 24319267d5508e3e..44b9853f6e632403 100644
---- a/arch/arm/boot/dts/aspeed-bmc-vegman-n110.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-vegman-n110.dts
-@@ -88,16 +88,16 @@ gpio@27 {
- 
- &i2c13 {
- 	/* SMB_PCIE2_STBY_LVC3 */
--	mux-expa@73 {
--		compatible = "nxp,pca9545";
--		reg = <0x73>;
-+	i2c-mux@71 {
-+		compatible = "nxp,pca9543";
-+		reg = <0x71>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-mux-idle-disconnect;
- 	};
--	mux-sata@71 {
--		compatible = "nxp,pca9543";
--		reg = <0x71>;
-+	i2c-mux@73 {
-+		compatible = "nxp,pca9545";
-+		reg = <0x73>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-mux-idle-disconnect;
-@@ -106,7 +106,7 @@ mux-sata@71 {
- 
- &i2c2 {
- 	/* SMB_PCIE_STBY_LVC3 */
--	mux-expb@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9545";
- 		reg = <0x71>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-vegman-rx20.dts b/arch/arm/boot/dts/aspeed-bmc-vegman-rx20.dts
-index ebbb68b55559a704..b8f0b08018a3472c 100644
---- a/arch/arm/boot/dts/aspeed-bmc-vegman-rx20.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-vegman-rx20.dts
-@@ -133,7 +133,7 @@ gpio@39 {
- 
- &i2c13 {
- 	/* SMB_PCIE2_STBY_LVC3 */
--	mux-expa@70 {
-+	i2c-mux@70 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x70>;
- 		#address-cells = <1>;
-@@ -144,7 +144,7 @@ i2c@2 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <2>;
--			rsra-mux@72 {
-+			i2c-mux@72 {
- 				compatible = "nxp,pca9548";
- 				reg = <0x72>;
- 				#address-cells = <1>;
-@@ -165,7 +165,7 @@ at24@50 {
- 			};
- 		};
- 	};
--	mux-sata@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9543";
- 		reg = <0x71>;
- 		#address-cells = <1>;
-@@ -176,7 +176,7 @@ mux-sata@71 {
- 
- &i2c2 {
- 	/* SMB_PCIE_STBY_LVC3 */
--	mux-expb@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9548";
- 		reg = <0x71>;
- 		#address-cells = <1>;
-@@ -187,7 +187,7 @@ i2c@0 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <0>;
--			rsrb-mux@72 {
-+			i2c-mux@72 {
- 				compatible = "nxp,pca9548";
- 				reg = <0x72>;
- 				#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-bmc-vegman-sx20.dts b/arch/arm/boot/dts/aspeed-bmc-vegman-sx20.dts
-index e36ee4704994b1f7..933ca831d37529d8 100644
---- a/arch/arm/boot/dts/aspeed-bmc-vegman-sx20.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-vegman-sx20.dts
-@@ -88,16 +88,16 @@ gpio@27 {
- 
- &i2c13 {
- 	/* SMB_PCIE2_STBY_LVC3 */
--	mux-expa@73 {
--		compatible = "nxp,pca9545";
--		reg = <0x73>;
-+	i2c-mux@71 {
-+		compatible = "nxp,pca9543";
-+		reg = <0x71>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-mux-idle-disconnect;
- 	};
--	mux-sata@71 {
--		compatible = "nxp,pca9543";
--		reg = <0x71>;
-+	i2c-mux@73 {
-+		compatible = "nxp,pca9545";
-+		reg = <0x73>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-mux-idle-disconnect;
-@@ -106,7 +106,7 @@ mux-sata@71 {
- 
- &i2c2 {
- 	/* SMB_PCIE_STBY_LVC3 */
--	mux-expb@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9545";
- 		reg = <0x71>;
- 		#address-cells = <1>;
--- 
-2.25.1
-
+> 
+> >  
+> >          properties:
+> > @@ -116,7 +111,7 @@ required:
+> >    - compatible
+> >    - reg
+> >  
+> > -additionalProperties: true
+> > +unevaluatedProperties: false
+> 
+> So this has no effect on anything within "^(ethernet-)?port@[0-6]$" and 
+> below.
+> 
+> Rob
