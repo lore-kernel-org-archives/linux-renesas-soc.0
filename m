@@ -2,88 +2,120 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F13C4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Dec 2022 16:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6D0C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Dec 2022 16:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233663AbiLBQG2 (ORCPT
+        id S234069AbiLBQuE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 11:06:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43926 "EHLO
+        Fri, 2 Dec 2022 11:50:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233844AbiLBQGN (ORCPT
+        with ESMTP id S233411AbiLBQuE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2022 11:06:13 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B81EAA
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Dec 2022 08:06:05 -0800 (PST)
-Received: from [192.168.1.15] (91-154-32-225.elisa-laajakaista.fi [91.154.32.225])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0D8896E0;
-        Fri,  2 Dec 2022 17:06:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1669997164;
-        bh=ooFJEHGqARuufFw5oi8/LYFp9AlUo19OfTtzcDpQvd4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=KNh6uGbL/sM59SsJ4qJKxVYz1g0xu+HvAXle/Gc9onA9ThSFFOfbmCnVUIJF1LUWo
-         KMvLsS+ecqefGjn/7FeeOAeuyJvZojqncSPpuKbp+uqhEMJit2LTVoaI9FXjFN1ARF
-         7nQ9NoJ1t0IgTzNPHQXkbneH5D23YBgEvwmqHbXY=
-Message-ID: <3e925b7f-8c8c-db2d-296c-5ae41b500891@ideasonboard.com>
-Date:   Fri, 2 Dec 2022 18:06:01 +0200
+        Fri, 2 Dec 2022 11:50:04 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0C7AAB2CE
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Dec 2022 08:50:01 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:2d07:19c5:4d8b:89d9])
+        by albert.telenet-ops.be with bizsmtp
+        id rUpW2800F0ys3B706UpWC8; Fri, 02 Dec 2022 17:49:59 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1p19E9-002K64-Ax; Fri, 02 Dec 2022 17:49:29 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1p19E8-006Waw-Fe; Fri, 02 Dec 2022 17:49:28 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Stefan Agner <stefan@agner.ch>, Li Yang <leoyang.li@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        UNGLinuxDriver@microchip.com,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-renesas-soc@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org
+Subject: [PATCH 09/11] arm64: dts: renesas: ulcb-kf: Fix pca9548 i2c-mux node names
+Date:   Fri,  2 Dec 2022 17:49:24 +0100
+Message-Id: <3c32f500b99e598f458336dc4c05ffa60656324e.1669999298.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1669999298.git.geert+renesas@glider.be>
+References: <cover.1669999298.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH kms++ 0/4] Support Y210
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-References: <20221202131658.434114-1-tomi.valkeinen+renesas@ideasonboard.com>
- <8f147834-095b-caae-fec1-66b1740ff1c2@ideasonboard.com>
- <CAMuHMdXHzDh-F4Bm=7kERQYnodt3JncAGPNFQwfHg5PaJfcCyA@mail.gmail.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-In-Reply-To: <CAMuHMdXHzDh-F4Bm=7kERQYnodt3JncAGPNFQwfHg5PaJfcCyA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 02/12/2022 17:56, Geert Uytterhoeven wrote:
-> Hi Tomi,
-> 
-> On Fri, Dec 2, 2022 at 4:32 PM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->> On 02/12/2022 15:16, Tomi Valkeinen wrote:
->>> These kms++ patches add support for Y210 format.
->>>
->>> I didn't find a super clear description of the byte order for Y210
->>> anywhere.  If someone knows what it is supposed to be, I'd appreciate
->>> verifying the code =).
->>
->> Actually, this:
->>
->> https://learn.microsoft.com/en-us/windows/win32/medfound/10-bit-and-16-bit-yuv-video-formats#overview
->>
->> indicates that the 10-bit values should be shifted by 6. So the drawing
->> code in this series is probably not right.
-> 
-> https://elixir.bootlin.com/linux/latest/source/include/uapi/drm/drm_fourcc.h#L212
-> seems to confirm that?
+"make dtbs_check":
 
-Hmm, indeed. I've looked at that before but I couldn't decipher it, but 
-now the text makes sense. Although afaics, it doesn't say that each 
-component is a 16-bit little endian. And I don't get the "little endian 
-per 2 Y pixels".
+    arch/arm64/boot/dts/renesas/r8a77951-ulcb-kf.dtb: i2c-switch@71: $nodename:0: 'i2c-switch@71' does not match '^(i2c-?)?mux'
+	    From schema: Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
+    arch/arm64/boot/dts/renesas/r8a77951-ulcb-kf.dtb: i2c-switch@71: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'i2c@4', 'i2c@7' were unexpected)
+	    From schema: Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
+    ...
 
-So if I get this right...
+Fix this by renaming all PCA9548 nodes to "i2c-mux", to match the I2C
+bus multiplexer/switch DT bindings and the Generic Names Recommendation
+in the Devicetree Specification.
 
-The first byte in memory is the two lowest bits of Y0 in bits 6 and 7. 
-The rest of the first byte is zero padding.
+While at it, rename the labels too, for uniformity.
 
-The second byte is the 8 highest bits of Y0.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-devel for v6.3.
+---
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Then following the same method, Cb, Y1, Cr.
-
-  Tomi
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 8e46acbe3a203759..e95be89e6e9d25b8 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -126,7 +126,7 @@ &hsusb {
+ };
+ 
+ &i2c2 {
+-	i2cswitch2: i2c-switch@71 {
++	i2cmux2: i2c-mux@71 {
+ 		compatible = "nxp,pca9548";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -316,7 +316,7 @@ gpio_exp_75: gpio@75 {
+ };
+ 
+ &i2c4 {
+-	i2cswitch4: i2c-switch@71 {
++	i2cmux4: i2c-mux@71 {
+ 		compatible = "nxp,pca9548";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-- 
+2.25.1
 
