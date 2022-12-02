@@ -2,48 +2,49 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA8FC4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Dec 2022 20:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57818C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Dec 2022 21:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234372AbiLBUro (ORCPT
+        id S234688AbiLBVqj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 15:47:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49670 "EHLO
+        Fri, 2 Dec 2022 16:46:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234620AbiLBUrE (ORCPT
+        with ESMTP id S234678AbiLBVqi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2022 15:47:04 -0500
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2091.outbound.protection.outlook.com [40.107.243.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7BF7F4660;
-        Fri,  2 Dec 2022 12:46:27 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bsrzRb/Vu9FuDAAApE61SZxjUKbX3UqOEgdE/jWHTwYLekXC3G24bDSqtymWcm8tvZPrCC6+qrx22By8DtaDSgCxllkXliLiFncGZN3hHNWYLOT4Iaj5cTatpaqNlzQ9ItBAq1j1qRJiU33sQpsjpvtHozNU7wLxgxn7MvR6UiSZnC0HkwH6Oxi15Ouu/UT98gtKH9QVio6mOt6uZKI0/zHhANeiAlQ3/Ad9Wq5gF9yB2P7PeicpnDiAhg9zb/04pUdIw3ARzLY58d6pX3Tx4Sp8sFzn6KMtBWyYgcG5YNW02C52S5vDIEQDRbAE3hp2mn3c1l7RXE1F+FycdbzBnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=psN6fFa8QpKmg29sah/pAyvCcII6SzIWv+35ik34oF4=;
- b=n/eF+iObwasl7eC5ek3ouOD5321OdnFdB41Raz2ChLZmBHUCodvbDnydpgb154YhvISxwJVNIRfQ+cBubNecICht8h9Y6+DGa1bpTk3+4GWDkWi8jLsVozqsmY6d58yhobZFSZsFiUARaemJuLTbP17Eo4YNNx0gcCQjqrgdT/SNvPH5efreV8WBI8XBOsw8ueI9n4LGLYNHIqS+PEQU0h6qJJVWN2nz8J1r8xeYbhV00v7nGpWHuZNngvlSC97NdOrRmyaZdFxpbRYDPLjD2cH0JxiKv6Y8sjx9hJEELLqUrsGqsBRO2LueTKpstvRvLImmV9xnZjyId/QYWadC7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=in-advantage.com; dmarc=pass action=none
- header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=psN6fFa8QpKmg29sah/pAyvCcII6SzIWv+35ik34oF4=;
- b=i3fKAZxvAa41X2ZBv2zRraNJXfrNq2f3CFYWEpsEsFH3qv8SUAy2OdhgWVO7YBeB1vp96nZpp4NLa7mbXiwvtG7i5wSTDxwvfUecI7SwrbPU3VW3rb13ASp5CrCJ+JF5jKvIWfLiX9764iyCDpP6b+JQENmKPVzVohCswKVk9/w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=in-advantage.com;
-Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37) by DS7PR10MB4944.namprd10.prod.outlook.com
- (2603:10b6:5:38d::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.10; Fri, 2 Dec
- 2022 20:46:24 +0000
-Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- ([fe80::45b5:a860:9cea:a74c]) by MWHPR1001MB2351.namprd10.prod.outlook.com
- ([fe80::45b5:a860:9cea:a74c%4]) with mapi id 15.20.5857.023; Fri, 2 Dec 2022
- 20:46:24 +0000
-From:   Colin Foster <colin.foster@in-advantage.com>
-To:     linux-renesas-soc@vger.kernel.org,
+        Fri, 2 Dec 2022 16:46:38 -0500
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2FDFF1CF9;
+        Fri,  2 Dec 2022 13:46:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1670017546; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=DnXhT2OUlhlC5DwILJKEz4FKOfX14rJuU1Z5pzoNKTHRt0IUEa9cKCxGC4LhhHuaTHuIVkQLu9THL5C9MN53zX4Lw32mj3sFgx+Ie6bN410Bu32ZGi8nu3VMyzkgRbo05Xn8LajJ48A+CPQiVZ0T9zuAwYnAJANtBLQAwfNb/ZY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1670017546; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=JTgtnJqoI3mBOnlXVRuirNE3H0rwkt9IzKJ3dXVz2R0=; 
+        b=UQF4RXBepui+yim0KwIXhj7dIhvabk1ebfPx5aBM/OJRRVD6h9B8XSbiylbUJV+tZHQL36Y4iJfWYF+VdvHoF1PXZ7gMR8OXrmh3SCTSa4m6FYGWRfT2VZbwTMq6/KIDyBCGu6sJHv5q6FsnmmHLdUsfXpwsDfS1Q21BO4D0uhQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=arinc9.com;
+        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
+        dmarc=pass header.from=<arinc.unal@arinc9.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1670017546;
+        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
+        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=JTgtnJqoI3mBOnlXVRuirNE3H0rwkt9IzKJ3dXVz2R0=;
+        b=bFc/Twx+wSKbN8cptiRq7XpT5s0ryu0P35a+jvbqT8ZRJwgPIDEnK6Ps6plwEu81
+        w0cLAsN8BAPiqk64Tf8fnP6ZotcTzZJaT2y0LQeZqZ/qb55X7oq1a6rVSyUT44eQhXw
+        Igl7pFg4wtB7Ywjk7u/WCAm/0bsT69eVVbU85i2c=
+Received: from [10.10.10.3] (37.120.152.236 [37.120.152.236]) by mx.zohomail.com
+        with SMTPS id 1670017543642787.7203324647592; Fri, 2 Dec 2022 13:45:43 -0800 (PST)
+Message-ID: <bfc6810b-3c21-201b-3c4f-a0def3928597@arinc9.com>
+Date:   Sat, 3 Dec 2022 00:45:34 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v4 net-next 3/9] dt-bindings: net: dsa: utilize base
+ definitions for standard dsa switches
+To:     Colin Foster <colin.foster@in-advantage.com>,
+        linux-renesas-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, netdev@vger.kernel.org
@@ -54,10 +55,9 @@ Cc:     John Crispin <john@phrozen.org>,
         Sean Wang <sean.wang@mediatek.com>,
         DENG Qingfang <dqfext@gmail.com>,
         Landen Chao <Landen.Chao@mediatek.com>,
-        =?UTF-8?q?n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
         Vivien Didelot <vivien.didelot@gmail.com>,
-        =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-        =?UTF-8?q?Alvin=20=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+        =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+        =?UTF-8?Q?Alvin_=c5=a0ipraga?= <alsi@bang-olufsen.dk>,
         Linus Walleij <linus.walleij@linaro.org>,
         UNGLinuxDriver@microchip.com,
         Woojung Huh <woojung.huh@microchip.com>,
@@ -72,224 +72,181 @@ Cc:     John Crispin <john@phrozen.org>,
         Vladimir Oltean <olteanv@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Andrew Lunn <andrew@lunn.ch>,
-        George McCollister <george.mccollister@gmail.com>
-Subject: [PATCH v4 net-next 8/9] dt-bindings: net: add generic ethernet-switch-port binding
-Date:   Fri,  2 Dec 2022 12:45:58 -0800
-Message-Id: <20221202204559.162619-9-colin.foster@in-advantage.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221202204559.162619-1-colin.foster@in-advantage.com>
+        George McCollister <george.mccollister@gmail.com>,
+        Rob Herring <robh@kernel.org>
 References: <20221202204559.162619-1-colin.foster@in-advantage.com>
+ <20221202204559.162619-4-colin.foster@in-advantage.com>
+Content-Language: en-US
+From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <20221202204559.162619-4-colin.foster@in-advantage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR03CA0201.namprd03.prod.outlook.com
- (2603:10b6:303:b8::26) To MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWHPR1001MB2351:EE_|DS7PR10MB4944:EE_
-X-MS-Office365-Filtering-Correlation-Id: d6901ae6-10c5-4daa-2c44-08dad4a643a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VdPRFIe/4oxYxE5sCp+5DUFuyTSAWymiOJSb7s42Yok3skKmnvvIMiv2ngFL+DgyVw64sVmi8maoN17QvVoFV52ERbiq+zHfrl7QgyBmSublQZbjxk7nWbwOdLN2cyh162fW7AxT8xKumcP/Iae2knlJ8ShZ2d0S782saFserkQiorMdojBjX1fjjMXl8hvp5YN1xuSXOM742RouWgusO1oncrruPR5fdINiab91dBK1PoGbvQK9WmxIC+XTPmozQS8oY9EWS0JtFPjfwVJfSJ0gxTcMqxgD+bRhkP6gRmZWX2inbQZ5PXPJHSIgdLdanw6dDpHEvc44PsiIuSZyf6uvcm+HDN6yirA4pmMciudn02iFI5E5pbaw7JeJVdNGCsynhjpkjFdUX+EdGgNtGbVpEXprPB2YR4MJlaswRnbL/dui37cRjBiUrf159XgzNB0EwKVSpnOmPdkp0o515cRV3XMvCdezOXhg+iuMnGmIWBwP0JZJSoidk9e0R4JZOYQCnvYzdaBuMJfaMsFSdgRno3m2plfTxeoR29TH1vw2Ekh9zf1SMHKSi6snFarLvNcDRaLSq1GK0BupXHdOxMxa9XVaK+YVTNnrAX7QqhMkPv3b6v3Lr85MQQPB3RM2OcB/UE5HySZ5tCV33bkM6vgeeC6t5EAiWXIrQYbgh7rcGPis0FZ8ZIiiIywVRP3i4PemVtOISvB1oWEOfGWwSysckWX5SgbTwnILesXN98YeIm/CwnCWY/tfxOzN4dNJ
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(39840400004)(396003)(376002)(346002)(136003)(366004)(451199015)(38100700002)(38350700002)(8676002)(66476007)(66556008)(66946007)(186003)(26005)(6512007)(316002)(4326008)(54906003)(44832011)(5660300002)(7416002)(7406005)(83380400001)(2906002)(41300700001)(36756003)(2616005)(1076003)(8936002)(966005)(478600001)(6506007)(6666004)(6486002)(86362001)(52116002)(41533002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1Z4LPcbtpymuWVKb6YmIDwaSluJYoJs0AO8OpNbPAcTAYbU6xLIXKLuX3cPC?=
- =?us-ascii?Q?Cb6g2wv6Yx6DI84Bt+0LU2+NroSNIRgIabb00S70Y7Wiod1Rp7wG0L+q0Tny?=
- =?us-ascii?Q?AEBDT8/6YGgL0oBxyzF4AM6ap7YpMXIK+pLNfdcEwTSTYtrQ6C0SCSuutUgH?=
- =?us-ascii?Q?VPfkejvZS6ntEflzbF3pd9ubsZbW6gXypWwkiSGpw2QA2zmb8zjSBVTGF9TW?=
- =?us-ascii?Q?Hws0i+7WP69xwJLKqAEUgh7q/gh6XynWVlSdtQJyaAIg4gk9W6Ydb5wJlx/Q?=
- =?us-ascii?Q?OnA5wOzmZKGV2nSVbwuWe97WpyMmzFwuzU94L6EsCFiEUcyEULsaQNLGAjbC?=
- =?us-ascii?Q?2DuchxqrjXt5sgnBOQ9FlRe0uOZpEoiyZoEG0oN1hQmRbRNvo9lfrVm51W+r?=
- =?us-ascii?Q?jn+ySV560Hz+Ssl9YTc0HF6f5vbK5Zdzl4B9we/9Em6f2pUWbx3u8J9Al160?=
- =?us-ascii?Q?X8TRPvewncMAJI4uvyq+Q3mbpZ5mMQBvHDhbEw5AUuqBMzI4U9HFNSysyBcK?=
- =?us-ascii?Q?dEM4f/gGB/IaJG1hYZXmGJYqy+kEKqqEEn8Mu1Up8oghnw1bQ2AsPqDKkLpq?=
- =?us-ascii?Q?W73BIKe5Id4O+MAIw4lS4S/xcp7ysqekiURhsh6fmt2YbQhp/5bwcafUNE7k?=
- =?us-ascii?Q?+pxsGlnccXkEdlexbGzDcAxLHwJlEX8ZFjsIjEf+mSWnrEO8wMDwVP44kkF4?=
- =?us-ascii?Q?5tWlEP9a9A0g+ctfwhhfQq1XD7UBd0bR/PYUKObFxb8lMHIGYrnYbewNMqiz?=
- =?us-ascii?Q?+hNQpLBD821QwMPP+v8JJWy3PfdG0u1esLgzwHgequ9vU8hc4JwZv7ErZU9p?=
- =?us-ascii?Q?QtZ5+YkzCGcDH3jhRR7xGepZXSV8sroJlhSQ3fYciuUObi/zGgKC8H0wO+dF?=
- =?us-ascii?Q?3ozVjWNQJcdCrsw6gdMC5Ogu6JcEd7XokHfI7ZwykalGdMSqK76xdEVzqgEa?=
- =?us-ascii?Q?i69LS3S0tgFB8nnniecfyY4eGR5AM0bWX+I91xBK6J1f55TpCkHpwObr2MrP?=
- =?us-ascii?Q?xi8o3UYvjn6gnFLNFuCOc3mdt/0rA+m+Y9M24ilm8i8foSLidq7WAbqfiIah?=
- =?us-ascii?Q?AdZg+jDJ621ujQzNHk90SAr+SrF9Xvi6vHEm5IBW2etgfkgmCDacE1FqfjMz?=
- =?us-ascii?Q?HJ49QzQCFAaq+MY7zii37FTEZgbpz9MWFoozKXIA4J9Bv26O6QRRYC0C79xC?=
- =?us-ascii?Q?YRynyQQlaETFF4m0v5HFzGFmtL3nOC2SlOSx76/WIQOs16TUDcld7fbelDPD?=
- =?us-ascii?Q?izga80Tq5y8dSAFt3iC6Xc/WdjMCohP32p9PzB81b1Y2EZ5jos6A308VTmnn?=
- =?us-ascii?Q?G9QUamlo8OS7z4z2CTXKTzk2nKmtSDkf4X64KPOLm5Pv/wYrQgN23FmT8yyZ?=
- =?us-ascii?Q?M8WA7HGBWDrMVC1BHyrHF0zvv+g8c5l2w0M8Ih9gTqEIFrtz0dVnD7JDrQTV?=
- =?us-ascii?Q?xrquM9H7tjtWjgEdtkzA9B5lPmH8k9fdncuPIlXfHXWTf5yL0Urj/gjGTpMw?=
- =?us-ascii?Q?jf/FejXSB8ub9r5sA4rn0f/kCrzEod0dSVg2wdESU7nqmPHux7c2yL9REIx0?=
- =?us-ascii?Q?/5p2VgVDZk1OeFumkkJZHJsy5p0Hx7y007Bd73bmLdnr9PgDOFwB5owmvM7W?=
- =?us-ascii?Q?+ozxNg86CRlWi4GeCB7PZJ8=3D?=
-X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6901ae6-10c5-4daa-2c44-08dad4a643a8
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2022 20:46:19.3132
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k8ojPipjvJR2ShRBGotNJptnSaGTdBBnxD36JpDXUVCaJWGOThlpt6Dy4JyGzjOo6V9t4bAGxR5RO5G21XVfWV3XmJ3VrR7F2GA+/9Sv3Wo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB4944
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The dsa-port.yaml binding had several references that can be common to all
-ethernet ports, not just dsa-specific ones. Break out the generic bindings
-to ethernet-switch-port.yaml they can be used by non-dsa drivers.
+On 2.12.2022 23:45, Colin Foster wrote:
+> DSA switches can fall into one of two categories: switches where all ports
+> follow standard '(ethernet-)?port' properties, and switches that have
+> additional properties for the ports.
+> 
+> The scenario where DSA ports are all standardized can be handled by
+> swtiches with a reference to the new 'dsa.yaml#/$defs/ethernet-ports'.
+> 
+> The scenario where DSA ports require additional properties can reference
+> '$dsa.yaml#' directly. This will allow switches to reference these standard
+> defitions of the DSA switch, but add additional properties under the port
+> nodes.
+> 
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> Acked-by: Alvin Šipraga <alsi@bang-olufsen.dk> # realtek
+> ---
+> 
+> v3 -> v4
+>    * Rename "$defs/base" to "$defs/ethernet-ports" to avoid implication of a
+>      "base class" and fix commit message accordingly
+>    * Add the following to the common etherent-ports node:
+>        "additionalProperties: false"
+>        "#address-cells" property
+>        "#size-cells" property
+>    * Fix "etherenet-ports@[0-9]+" to correctly be "ethernet-port@[0-9]+"
+>    * Remove unnecessary newline
+>    * Apply changes to mediatek,mt7530.yaml that were previously in a separate patch
+>    * Add Reviewed and Acked tags
+> 
+> v3
+>    * New patch
+> 
+> ---
+>   .../bindings/net/dsa/arrow,xrs700x.yaml       |  2 +-
+>   .../devicetree/bindings/net/dsa/brcm,b53.yaml |  2 +-
+>   .../devicetree/bindings/net/dsa/dsa.yaml      | 25 ++++++++++++++++---
+>   .../net/dsa/hirschmann,hellcreek.yaml         |  2 +-
+>   .../bindings/net/dsa/mediatek,mt7530.yaml     | 16 +++---------
+>   .../bindings/net/dsa/microchip,ksz.yaml       |  2 +-
+>   .../bindings/net/dsa/microchip,lan937x.yaml   |  2 +-
+>   .../bindings/net/dsa/mscc,ocelot.yaml         |  2 +-
+>   .../bindings/net/dsa/nxp,sja1105.yaml         |  2 +-
+>   .../devicetree/bindings/net/dsa/realtek.yaml  |  2 +-
+>   .../bindings/net/dsa/renesas,rzn1-a5psw.yaml  |  2 +-
+>   11 files changed, 35 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/dsa/arrow,xrs700x.yaml b/Documentation/devicetree/bindings/net/dsa/arrow,xrs700x.yaml
+> index 259a0c6547f3..5888e3a0169a 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/arrow,xrs700x.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/arrow,xrs700x.yaml
+> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>   title: Arrow SpeedChips XRS7000 Series Switch Device Tree Bindings
+>   
+>   allOf:
+> -  - $ref: dsa.yaml#
+> +  - $ref: dsa.yaml#/$defs/ethernet-ports
+>   
+>   maintainers:
+>     - George McCollister <george.mccollister@gmail.com>
+> diff --git a/Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml b/Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml
+> index 1219b830b1a4..5bef4128d175 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml
+> @@ -66,7 +66,7 @@ required:
+>     - reg
+>   
+>   allOf:
+> -  - $ref: dsa.yaml#
+> +  - $ref: dsa.yaml#/$defs/ethernet-ports
+>     - if:
+>         properties:
+>           compatible:
+> diff --git a/Documentation/devicetree/bindings/net/dsa/dsa.yaml b/Documentation/devicetree/bindings/net/dsa/dsa.yaml
+> index b9d48e357e77..b9e366e46aed 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/dsa.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/dsa.yaml
+> @@ -19,9 +19,6 @@ description:
+>   select: false
+>   
+>   properties:
+> -  $nodename:
+> -    pattern: "^(ethernet-)?switch(@.*)?$"
+> -
+>     dsa,member:
+>       minItems: 2
+>       maxItems: 2
+> @@ -58,4 +55,26 @@ oneOf:
+>   
+>   additionalProperties: true
+>   
+> +$defs:
+> +  ethernet-ports:
+> +    description: A DSA switch without any extra port properties
+> +    $ref: '#/'
+> +
+> +    patternProperties:
+> +      "^(ethernet-)?ports$":
+> +        type: object
+> +        additionalProperties: false
+> +
+> +        properties:
+> +          '#address-cells':
+> +            const: 1
+> +          '#size-cells':
+> +            const: 0
+> +
+> +        patternProperties:
+> +          "^(ethernet-)?port@[0-9]+$":
+> +            description: Ethernet switch ports
+> +            $ref: dsa-port.yaml#
+> +            unevaluatedProperties: false
+> +
+>   ...
+> diff --git a/Documentation/devicetree/bindings/net/dsa/hirschmann,hellcreek.yaml b/Documentation/devicetree/bindings/net/dsa/hirschmann,hellcreek.yaml
+> index 73b774eadd0b..748ef9983ce2 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/hirschmann,hellcreek.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/hirschmann,hellcreek.yaml
+> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>   title: Hirschmann Hellcreek TSN Switch Device Tree Bindings
+>   
+>   allOf:
+> -  - $ref: dsa.yaml#
+> +  - $ref: dsa.yaml#/$defs/ethernet-ports
+>   
+>   maintainers:
+>     - Andrew Lunn <andrew@lunn.ch>
+> diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+> index f2e9ff3f580b..b815272531fa 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+> @@ -156,17 +156,6 @@ patternProperties:
+>   
+>       patternProperties:
+>         "^(ethernet-)?port@[0-9]+$":
+> -        type: object
+> -        description: Ethernet switch ports
+> -
+> -        unevaluatedProperties: false
+> -
+> -        properties:
+> -          reg:
+> -            description:
+> -              Port address described must be 5 or 6 for CPU port and from 0 to 5
+> -              for user ports.
 
-Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
-Suggested-by: Vladimir Oltean <olteanv@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
----
+This shouldn't be moved. Please reread our conversation on the previous 
+version.
 
-v3 -> v4
-  * Add Florian Reviewed tag
+> -
+>           allOf:
+>             - $ref: dsa-port.yaml#
+>             - if:
+> @@ -174,6 +163,9 @@ patternProperties:
+>               then:
+>                 properties:
+>                   reg:
+> +                  description:
+> +                    Port address described must be 5 or 6 for CPU port and from
+> +                    0 to 5 for user ports
 
-v2 -> v3
-  * Change dsa-port title from "DSA Switch port Device Tree Bindings"
-    to "Generic DSA Switch port"
-  * Add reference to ethernet-switch-port.yaml# in dsa-port.yaml
-  * Change title of ethernet-switch-port.yaml from "Ethernet Switch
-    port Device Tree Bindings" to "Generic Ethernet Switch port"
-  * Remove most properties from ethernet-switch-port.yaml. They're
-    all in ethernet-controller, and are all allowed.
-  * ethernet-switch.yaml now only references ethernet-switch-port.yaml#
-    under the port node.
-
-v1 -> v2
-  * Remove accidental addition of
-    "$ref: /schemas/net/ethernet-switch-port.yaml" which should be kept
-    out of dsa-port so that it doesn't get referenced multiple times
-    through both ethernet-switch and dsa-port.
-
----
- .../devicetree/bindings/net/dsa/dsa-port.yaml | 24 ++----------------
- .../bindings/net/ethernet-switch-port.yaml    | 25 +++++++++++++++++++
- .../bindings/net/ethernet-switch.yaml         |  6 +----
- MAINTAINERS                                   |  1 +
- 4 files changed, 29 insertions(+), 27 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/ethernet-switch-port.yaml
-
-diff --git a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
-index 9abb8eba5fad..5b457f41273a 100644
---- a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/net/dsa/dsa-port.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Ethernet Switch port Device Tree Bindings
-+title: Generic DSA Switch port
- 
- maintainers:
-   - Andrew Lunn <andrew@lunn.ch>
-@@ -14,8 +14,7 @@ maintainers:
- description:
-   Ethernet switch port Description
- 
--allOf:
--  - $ref: /schemas/net/ethernet-controller.yaml#
-+$ref: /schemas/net/ethernet-switch-port.yaml#
- 
- properties:
-   reg:
-@@ -58,25 +57,6 @@ properties:
-       - rtl8_4t
-       - seville
- 
--  phy-handle: true
--
--  phy-mode: true
--
--  fixed-link: true
--
--  mac-address: true
--
--  sfp: true
--
--  managed: true
--
--  rx-internal-delay-ps: true
--
--  tx-internal-delay-ps: true
--
--required:
--  - reg
--
- # CPU and DSA ports must have phylink-compatible link descriptions
- if:
-   oneOf:
-diff --git a/Documentation/devicetree/bindings/net/ethernet-switch-port.yaml b/Documentation/devicetree/bindings/net/ethernet-switch-port.yaml
-new file mode 100644
-index 000000000000..3d7da6916fb8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/ethernet-switch-port.yaml
-@@ -0,0 +1,25 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/ethernet-switch-port.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Generic Ethernet Switch port
-+
-+maintainers:
-+  - Andrew Lunn <andrew@lunn.ch>
-+  - Florian Fainelli <f.fainelli@gmail.com>
-+  - Vivien Didelot <vivien.didelot@gmail.com>
-+
-+description:
-+  Ethernet switch port Description
-+
-+$ref: ethernet-controller.yaml#
-+
-+properties:
-+  reg:
-+    description: Port number
-+
-+additionalProperties: true
-+
-+...
-diff --git a/Documentation/devicetree/bindings/net/ethernet-switch.yaml b/Documentation/devicetree/bindings/net/ethernet-switch.yaml
-index afeb9ffd84c8..1e8b7649a9b2 100644
---- a/Documentation/devicetree/bindings/net/ethernet-switch.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-switch.yaml
-@@ -40,10 +40,6 @@ patternProperties:
-         type: object
-         description: Ethernet switch ports
- 
--        $ref: ethernet-controller.yaml#
--
--        additionalProperties: true
--
- oneOf:
-   - required:
-       - ports
-@@ -60,7 +56,7 @@ $defs:
-     patternProperties:
-       "^(ethernet-)?port@[0-9]+$":
-         description: Ethernet switch ports
--        $ref: ethernet-controller.yaml#
-+        $ref: ethernet-switch-port.yaml#
-         unevaluatedProperties: false
- 
- ...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d574cae901b3..fe5f52c9864a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14337,6 +14337,7 @@ M:	Florian Fainelli <f.fainelli@gmail.com>
- M:	Vladimir Oltean <olteanv@gmail.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/dsa/
-+F:	Documentation/devicetree/bindings/net/ethernet-switch-port.yaml
- F:	Documentation/devicetree/bindings/net/ethernet-switch.yaml
- F:	drivers/net/dsa/
- F:	include/linux/dsa/
--- 
-2.25.1
-
+Arınç
