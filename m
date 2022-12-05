@@ -2,134 +2,110 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A982C4708C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Dec 2022 13:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1043C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Dec 2022 15:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbiLENez (ORCPT
+        id S231298AbiLEPAI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 5 Dec 2022 08:34:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57568 "EHLO
+        Mon, 5 Dec 2022 10:00:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbiLENey (ORCPT
+        with ESMTP id S229970AbiLEPAH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Dec 2022 08:34:54 -0500
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D192110FC9
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Dec 2022 05:34:53 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id h193so10488824pgc.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Dec 2022 05:34:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=b3cnLIhuo4x/b/CH/YNHAkYEOFnk2Yn0KdVXIVDbEf0=;
-        b=uSNJXdhumTsNpphE6tKDrSm7g6kkvBi18lIs7xmSVzIUQ27HX1QA/yK+7k2fS5hxvl
-         7I7Bby5QMwz/RXTkT9TyKE9q8YljAibEdeIwPsO58ce5NjbK/GoHKgrVnPfIVu5MC3LP
-         Gam+a18N08deE7VtHTpqacp7qvoc5rFVRBPtGI8GCXOjPjnpiQXi7/ynMCux/cBT/+/0
-         O8nTbmdVc2PoSocp7Dxkffzz3R1ZdSonOLOwNVG6QIwZyq5a7chrGcd9FzrN7eTlnhdK
-         RRr96gnZo6St+38fco8/1nCsXjJhtIhFsgBu3tBU9dhdCijVdCaeSkQ6SSnYRbOPkR/e
-         2NeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b3cnLIhuo4x/b/CH/YNHAkYEOFnk2Yn0KdVXIVDbEf0=;
-        b=qYNnDloBPLVKjKAsWLDxbD72oygw01Gwt6oYTVGnHoibvn6wQi3XnA/9e5Go2Y9JI0
-         RZ0oQ5hf8oe6Gp7j4Dgrwicv0/OsEXB03QMv3qXl//0FOQ73+QcJqLpMdIORKJn1FdOJ
-         r7NjhOg1u0liTIlbcqYzyJ9jk739wB6I75b0QKF8l3W57lGt8dndaM0Ah2N+es1M0UUX
-         4waGgv0+1CU5xWZnw5bmeNU7Zo//StwDtO81KyaBa7DsnwvQFsAUrS1ri0FAiQlKIwum
-         c/yJV6oeXzaGuH52Wz96aRrNiZa7i51bTPNaK65T4ZSJ2QZU4g8FaV/Bp5EaHlY5QCHP
-         T14w==
-X-Gm-Message-State: ANoB5pkaOsIAVNEAqiHS5l4t8a43W7p6oqQsx1ykUb9iKKe6O/cRWoua
-        AQ6wfiZBIXmNSzIDh5s8a6bBaWUZARqORTPIVJ11Qw==
-X-Google-Smtp-Source: AA0mqf4TTMSFXENjIY1bTXpDqO3XXjtZbI6RB5RPvZRBB+ztAipyewDjn2702pc7lkWO+IMxXCXQpQ==
-X-Received: by 2002:a62:150c:0:b0:576:e1dd:958f with SMTP id 12-20020a62150c000000b00576e1dd958fmr6023314pfv.53.1670247293043;
-        Mon, 05 Dec 2022 05:34:53 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id r13-20020aa79ecd000000b005768b4f2d0dsm4741859pfq.64.2022.12.05.05.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 05:34:52 -0800 (PST)
-Message-ID: <638df37c.a70a0220.8d24e.7488@mx.google.com>
-Date:   Mon, 05 Dec 2022 05:34:52 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 5 Dec 2022 10:00:07 -0500
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 74D05BE3A;
+        Mon,  5 Dec 2022 07:00:06 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.96,219,1665414000"; 
+   d="scan'208";a="145045877"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 06 Dec 2022 00:00:05 +0900
+Received: from localhost.localdomain (unknown [10.226.92.127])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1467C4009BCB;
+        Tue,  6 Dec 2022 00:00:02 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH 1/6] clk: renesas: r9a09g011: Add TIM clock and reset entries
+Date:   Mon,  5 Dec 2022 14:59:50 +0000
+Message-Id: <20221205145955.391526-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
+References: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: master
-X-Kernelci-Kernel: v6.1-rc8-929-g112502470f50
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: renesas
-Subject: renesas/master ltp-ipc: 26 runs,
- 1 regressions (v6.1-rc8-929-g112502470f50)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master ltp-ipc: 26 runs, 1 regressions (v6.1-rc8-929-g112502470f50)
+Add Compare-Match Timer (TIM) clock and reset entries to CPG
+driver.
 
-Regressions Summary
--------------------
+The TIM IP on the RZ/V2M comes with 32 channels, but the ISP has
+full control of channels 0 to 7, and channels 24 to 31. Therefore
+Linux is only allowed to use channels 8 to 23.
 
-platform                 | arch  | lab     | compiler | defconfig         |=
- regressions
--------------------------+-------+---------+----------+-------------------+=
-------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | renesas_defconfig |=
- 1          =
+The TIM has shared peripheral clock with other modules, so mark it
+as critical clock.
 
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a09g011-cpg.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/v6.1=
--rc8-929-g112502470f50/plan/ltp-ipc/
+diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
+index dd5e442ec4a9..b32f82860b2b 100644
+--- a/drivers/clk/renesas/r9a09g011-cpg.c
++++ b/drivers/clk/renesas/r9a09g011-cpg.c
+@@ -133,7 +133,25 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
+ 	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
+ 	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	 CLK_MAIN_24,  0x41c, 12),
+ 	DEF_MOD("iic_pclk0",	R9A09G011_IIC_PCLK0,	 CLK_SEL_E,    0x420, 12),
++	DEF_MOD("cperi_grpb",	R9A09G011_CPERI_GRPB_PCLK, CLK_SEL_E,  0x424, 0),
++	DEF_MOD("tim_clk_8",	R9A09G011_TIM8_CLK,	 CLK_MAIN_2,   0x424, 4),
++	DEF_MOD("tim_clk_9",	R9A09G011_TIM9_CLK,	 CLK_MAIN_2,   0x424, 5),
++	DEF_MOD("tim_clk_10",	R9A09G011_TIM10_CLK,	 CLK_MAIN_2,   0x424, 6),
++	DEF_MOD("tim_clk_11",	R9A09G011_TIM11_CLK,	 CLK_MAIN_2,   0x424, 7),
++	DEF_MOD("tim_clk_12",	R9A09G011_TIM12_CLK,	 CLK_MAIN_2,   0x424, 8),
++	DEF_MOD("tim_clk_13",	R9A09G011_TIM13_CLK,	 CLK_MAIN_2,   0x424, 9),
++	DEF_MOD("tim_clk_14",	R9A09G011_TIM14_CLK,	 CLK_MAIN_2,   0x424, 10),
++	DEF_MOD("tim_clk_15",	R9A09G011_TIM15_CLK,	 CLK_MAIN_2,   0x424, 11),
+ 	DEF_MOD("iic_pclk1",	R9A09G011_IIC_PCLK1,	 CLK_SEL_E,    0x424, 12),
++	DEF_MOD("cperi_grpc",	R9A09G011_CPERI_GRPC_PCLK, CLK_SEL_E,  0x428, 0),
++	DEF_MOD("tim_clk_16",	R9A09G011_TIM16_CLK,	 CLK_MAIN_2,   0x428, 4),
++	DEF_MOD("tim_clk_17",	R9A09G011_TIM17_CLK,	 CLK_MAIN_2,   0x428, 5),
++	DEF_MOD("tim_clk_18",	R9A09G011_TIM18_CLK,	 CLK_MAIN_2,   0x428, 6),
++	DEF_MOD("tim_clk_19",	R9A09G011_TIM19_CLK,	 CLK_MAIN_2,   0x428, 7),
++	DEF_MOD("tim_clk_20",	R9A09G011_TIM20_CLK,	 CLK_MAIN_2,   0x428, 8),
++	DEF_MOD("tim_clk_21",	R9A09G011_TIM21_CLK,	 CLK_MAIN_2,   0x428, 9),
++	DEF_MOD("tim_clk_22",	R9A09G011_TIM22_CLK,	 CLK_MAIN_2,   0x428, 10),
++	DEF_MOD("tim_clk_23",	R9A09G011_TIM23_CLK,	 CLK_MAIN_2,   0x428, 11),
+ 	DEF_MOD("wdt0_pclk",	R9A09G011_WDT0_PCLK,	 CLK_SEL_E,    0x428, 12),
+ 	DEF_MOD("wdt0_clk",	R9A09G011_WDT0_CLK,	 CLK_MAIN,     0x428, 13),
+ 	DEF_MOD("cperi_grpf",	R9A09G011_CPERI_GRPF_PCLK, CLK_SEL_E,  0x434, 0),
+@@ -153,6 +171,8 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
+ 	DEF_RST(R9A09G011_PFC_PRESETN,		0x600, 2),
+ 	DEF_RST_MON(R9A09G011_ETH0_RST_HW_N,	0x608, 11, 11),
+ 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
++	DEF_RST(R9A09G011_TIM_GPB_PRESETN,	0x614, 1),
++	DEF_RST(R9A09G011_TIM_GPC_PRESETN,	0x614, 2),
+ 	DEF_RST(R9A09G011_IIC_GPA_PRESETN,	0x614, 8),
+ 	DEF_RST(R9A09G011_IIC_GPB_PRESETN,	0x614, 9),
+ 	DEF_RST_MON(R9A09G011_PWM_GPF_PRESETN,	0x614, 5, 23),
+@@ -161,6 +181,8 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
+ 
+ static const unsigned int r9a09g011_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A09G011_CA53_CLK,
++	MOD_CLK_BASE + R9A09G011_CPERI_GRPB_PCLK,
++	MOD_CLK_BASE + R9A09G011_CPERI_GRPC_PCLK,
+ 	MOD_CLK_BASE + R9A09G011_CPERI_GRPF_PCLK,
+ 	MOD_CLK_BASE + R9A09G011_GIC_CLK,
+ 	MOD_CLK_BASE + R9A09G011_SYC_CNT_CLK,
+-- 
+2.25.1
 
-  Test:     ltp-ipc
-  Tree:     renesas
-  Branch:   master
-  Describe: v6.1-rc8-929-g112502470f50
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      112502470f50792e9df5df75de0090fbeb7b8500
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  498247917f40b0a82cb149e2ec1cb518acd7b632 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch  | lab     | compiler | defconfig         |=
- regressions
--------------------------+-------+---------+----------+-------------------+=
-------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | renesas_defconfig |=
- 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/638de368acb45588d12abd06
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: renesas_defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v6.1-rc8-929-g1=
-12502470f50/arm64/renesas_defconfig/gcc-10/lab-cip/ltp-ipc-r8a774a1-hihope-=
-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v6.1-rc8-929-g1=
-12502470f50/arm64/renesas_defconfig/gcc-10/lab-cip/ltp-ipc-r8a774a1-hihope-=
-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20221125.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-ipc.login: https://kernelci.org/test/case/id/638de368acb45588d12abd=
-07
-        new failure (last pass: renesas-devel-2022-11-21-v6.1-rc6) =
-
- =20
