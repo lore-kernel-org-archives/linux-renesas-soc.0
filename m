@@ -2,116 +2,147 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A92C636F9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Dec 2022 15:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686CBC47088
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Dec 2022 15:00:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbiLEPAJ (ORCPT
+        id S231770AbiLEPAL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 5 Dec 2022 10:00:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60886 "EHLO
+        Mon, 5 Dec 2022 10:00:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbiLEPAI (ORCPT
+        with ESMTP id S229970AbiLEPAK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Dec 2022 10:00:08 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 868C8BC85;
-        Mon,  5 Dec 2022 07:00:03 -0800 (PST)
+        Mon, 5 Dec 2022 10:00:10 -0500
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2EC43BC85;
+        Mon,  5 Dec 2022 07:00:09 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.96,219,1665414000"; 
-   d="scan'208";a="142271622"
+   d="scan'208";a="145045904"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2022 00:00:02 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Dec 2022 00:00:08 +0900
 Received: from localhost.localdomain (unknown [10.226.92.127])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8F8834007F3F;
-        Mon,  5 Dec 2022 23:59:57 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1BD2A4009BCB;
+        Tue,  6 Dec 2022 00:00:05 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-iio@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 0/6] Add RZ/V2M Compare-Match Timer (TIM) support
-Date:   Mon,  5 Dec 2022 14:59:49 +0000
-Message-Id: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/6] dt-bindings: timer: Add RZ/V2M TIM binding
+Date:   Mon,  5 Dec 2022 14:59:51 +0000
+Message-Id: <20221205145955.391526-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
+References: <20221205145955.391526-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series aims to add support for Compare-Match Timer (TIM)
-module found on RZ/V2M SoC.
+Add device tree bindings for the RZ/V2{M, MA} Compare Match Timer
+(TIM).
 
-it is composed of 32 channels and channels 0-7 and 24-32 are
-reserved for ISP usage.
-
-Channel 22 is modelled as clock source and Channel 23 is modelled as clock
-event driver and the rest of the channels are modelled as counter driver
-as it provides
-
-1) counter for counting
-2) configurable counter value for generating timer interrupt
-3) userspace event for each interrupt.
-
-logs:-
-Counter driver:
-Counter driver is tested by reading counts and interrupts tested by
-counter-example in tools/counter/counter_example.c
-
-Count snapshot value:
-3114
-Output from counter_example when it triggers interrupts:
-Timestamp 0: 24142152969        Count 0: 5
-Error Message 0: Success
-
-Clock source:
-Clock source driver is tested by clock-source-switch app.
-[ 1275.703567] clocksource: Switched to clocksource arch_sys_counter
-[ 1275.710189] clocksource: Switched to clocksource a4000b00.timer
-[OK]
-# Totals: pass[ 1275.718112] clocksource: Switched to clocksource arch_sys_counter
-:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-# Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Clock event:
-clock event driver is tested by changing the rating as 500.
-
-Biju Das (6):
-  clk: renesas: r9a09g011: Add TIM clock and reset entries
-  dt-bindings: timer: Add RZ/V2M TIM binding
-  clocksource/drivers/rzv2m-tim: Add Renesas RZ/V2M compare match
-    timer(TIM) driver
-  dt-bindings: counter: Add RZ/V2M TIM counter binding
-  counter: Add Renesas RZ/V2M TIM counter driver
-  arm64: dts: renesas: r9a09g011: Add tim nodes
-
- .../counter/renesas,rzv2m-tim-cnt.yaml        |  83 +++++
- .../bindings/timer/renesas,rzv2m-tim.yaml     |  83 +++++
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi    | 192 ++++++++++
- drivers/clk/renesas/r9a09g011-cpg.c           |  22 ++
- drivers/clocksource/Kconfig                   |   7 +
- drivers/clocksource/Makefile                  |   1 +
- drivers/clocksource/rzv2m-tim.c               | 330 ++++++++++++++++++
- drivers/counter/Kconfig                       |  10 +
- drivers/counter/Makefile                      |   1 +
- drivers/counter/rzv2m-tim-cnt.c               | 312 +++++++++++++++++
- 10 files changed, 1041 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/counter/renesas,rzv2m-tim-cnt.yaml
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../bindings/timer/renesas,rzv2m-tim.yaml     | 83 +++++++++++++++++++
+ 1 file changed, 83 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/timer/renesas,rzv2m-tim.yaml
- create mode 100644 drivers/clocksource/rzv2m-tim.c
- create mode 100644 drivers/counter/rzv2m-tim-cnt.c
 
+diff --git a/Documentation/devicetree/bindings/timer/renesas,rzv2m-tim.yaml b/Documentation/devicetree/bindings/timer/renesas,rzv2m-tim.yaml
+new file mode 100644
+index 000000000000..9d692725bcbb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/renesas,rzv2m-tim.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/renesas,rzv2m-tim.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/V2M Compare Match Timer (TIM)
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |
++  The Compare Match Timer(TIM) on RZ/V2M like SoCs has an internal 32-bit
++  counter that can be used as an interval timer. This LSI has a total of 32
++  channels of TIM from ch. 0 to ch. 31. It supports the following features
++  * Configured with a 32-bit counter operating at INCLOCK (2 MHz)
++  * The clock input from the count clock input pin can be divided by 2, 4,
++    8, 16, 32, 64, 128, or 256, and one of these divided clocks can be
++    used as the count clock.
++  * The counter period can be set in the range of 1 to 4294967296
++    (32-bit timer) using the selected divider clock as the count clock.
++  * Generates an interrupt request signal every cycle set in the TIM
++    counter.
++  * The counter operation and the bus interface are asynchronous and
++    can operate independently regardless of the size of the respective
++    clock cycles.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a09g011-tim  # RZ/V2M
++          - renesas,r9a09g055-tim  # RZ/V2MA
++      - const: renesas,rzv2m-tim
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: APB clock
++      - description: TIM clock
++
++  clock-names:
++    items:
++      - const: apb
++      - const: tim
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a09g011-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    tim22: tim@a4000b00 {
++        compatible = "renesas,r9a09g011-tim", "renesas,rzv2m-tim";
++        reg = <0xa4000b00 0x80>;
++        interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&cpg CPG_MOD R9A09G011_CPERI_GRPC_PCLK>,
++                 <&cpg CPG_MOD R9A09G011_TIM22_CLK>;
++        clock-names = "apb", "tim";
++        power-domains = <&cpg>;
++        resets = <&cpg R9A09G011_TIM_GPC_PRESETN>;
++    };
 -- 
 2.25.1
 
