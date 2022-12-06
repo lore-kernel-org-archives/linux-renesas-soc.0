@@ -2,81 +2,84 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9322CC352A1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Dec 2022 11:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31889C352A1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Dec 2022 13:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234857AbiLFLuW (ORCPT
+        id S231287AbiLFNkO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 6 Dec 2022 06:50:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46748 "EHLO
+        Tue, 6 Dec 2022 08:40:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234986AbiLFLuS (ORCPT
+        with ESMTP id S231133AbiLFNkN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Dec 2022 06:50:18 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6EF027DE9;
-        Tue,  6 Dec 2022 03:50:17 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CE8C0616D0;
-        Tue,  6 Dec 2022 11:50:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 37155C433D7;
-        Tue,  6 Dec 2022 11:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670327416;
-        bh=g0iiRpDFeldqd0FblsKlLaBWUTPZG9jnZwlisgPQLhw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=pvdNd2p2lMwZu+0DnVJS0u2fBcdzBySwlDnhp6IMDjKu8HQHRA0+301aST2hR2i6A
-         R5tPsvxXtICQwU5k0UmSbKKbuL79gkNlzOskR6RNoDhDvawISjf/sxU4YnugK8+Dhy
-         W7L/dhPha7bKJ8xp3g7QqNCDMpCS5U9y2ldMDvtxiDDqOnmfio5Aj4QRyM5wgp8wOW
-         nrLwFpfVrS/loDbMYog98+qUYr9d962GqU9Y5LhGA8c/gKPSRh+UKQXlyLt7GudZEc
-         5AP8YBELzjl4SMfcGAoct76WMe31abv5KdR3Hy0J9wPyXhdxWj9CU1hzVMJZ0IUL4D
-         uEMg3RJ6MyBug==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 14C24E56AA2;
-        Tue,  6 Dec 2022 11:50:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 6 Dec 2022 08:40:13 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01463BC01;
+        Tue,  6 Dec 2022 05:40:12 -0800 (PST)
+Received: from desky.lan (91-154-32-225.elisa-laajakaista.fi [91.154.32.225])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1AA08558;
+        Tue,  6 Dec 2022 14:40:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1670334010;
+        bh=DqLl29WjfXckFjMKMp7NHTAKI+kuqbLbXAMMkvVv3Q8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HVpasx2j9g2vg+eqQwoAszb8JP9O3NqW+s1V174IliGDVlL74Ovql8Z2cbsH8IfJW
+         h82vo8CcIcoMzMjtMA5BdxpIbQhWlbXqZ1wwim/J8rrW8lhUIx9cSj/z6lsraBxsoY
+         8xRZqyDXeI06wl1r7a4vLt+1O+fDVBTE4S/Iuq5A=
+From:   Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+To:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH 1/7] media: Add 2-10-10-10 RGB formats
+Date:   Tue,  6 Dec 2022 15:39:48 +0200
+Message-Id: <20221206133954.397098-2-tomi.valkeinen+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221206133954.397098-1-tomi.valkeinen+renesas@ideasonboard.com>
+References: <20221206133954.397098-1-tomi.valkeinen+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] ravb: Fix potential use-after-free in ravb_rx_gbeth()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167032741607.10641.2043445047483476004.git-patchwork-notify@kernel.org>
-Date:   Tue, 06 Dec 2022 11:50:16 +0000
-References: <20221203092941.10880-1-yuehaibing@huawei.com>
-In-Reply-To: <20221203092941.10880-1-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, phil.edworthy@renesas.com,
-        biju.das.jz@bp.renesas.com,
-        prabhakar.mahadev-lad.rj@bp.renesas.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+Add XBGR2101010, ABGR2101010 and BGRA1010102 formats.
 
-This patch was applied to netdev/net.git (master)
-by Paolo Abeni <pabeni@redhat.com>:
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+ drivers/media/v4l2-core/v4l2-ioctl.c | 3 +++
+ include/uapi/linux/videodev2.h       | 3 +++
+ 2 files changed, 6 insertions(+)
 
-On Sat, 3 Dec 2022 17:29:41 +0800 you wrote:
-> The skb is delivered to napi_gro_receive() which may free it, after calling this,
-> dereferencing skb may trigger use-after-free.
-> 
-> Fixes: 1c59eb678cbd ("ravb: Fillup ravb_rx_gbeth() stub")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [net] ravb: Fix potential use-after-free in ravb_rx_gbeth()
-    https://git.kernel.org/netdev/net/c/5a5a3e564de6
-
-You are awesome, thank you!
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index fddba75d9074..964300deaf62 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1304,6 +1304,9 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_PIX_FMT_BGRX32:	descr = "32-bit XBGR 8-8-8-8"; break;
+ 	case V4L2_PIX_FMT_RGBA32:	descr = "32-bit RGBA 8-8-8-8"; break;
+ 	case V4L2_PIX_FMT_RGBX32:	descr = "32-bit RGBX 8-8-8-8"; break;
++	case V4L2_PIX_FMT_XBGR2101010:	descr = "32-bit XBGR 2-10-10-10"; break;
++	case V4L2_PIX_FMT_ABGR2101010:	descr = "32-bit ABGR 2-10-10-10"; break;
++	case V4L2_PIX_FMT_BGRA1010102:	descr = "32-bit BGRA 10-10-10-2"; break;
+ 	case V4L2_PIX_FMT_GREY:		descr = "8-bit Greyscale"; break;
+ 	case V4L2_PIX_FMT_Y4:		descr = "4-bit Greyscale"; break;
+ 	case V4L2_PIX_FMT_Y6:		descr = "6-bit Greyscale"; break;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 29da1f4b4578..877fd61693b8 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -576,6 +576,9 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_RGBX32  v4l2_fourcc('X', 'B', '2', '4') /* 32  RGBX-8-8-8-8  */
+ #define V4L2_PIX_FMT_ARGB32  v4l2_fourcc('B', 'A', '2', '4') /* 32  ARGB-8-8-8-8  */
+ #define V4L2_PIX_FMT_XRGB32  v4l2_fourcc('B', 'X', '2', '4') /* 32  XRGB-8-8-8-8  */
++#define V4L2_PIX_FMT_XBGR2101010 v4l2_fourcc('R', 'X', '3', '0') /* 32  XBGR-2-10-10-10  */
++#define V4L2_PIX_FMT_ABGR2101010 v4l2_fourcc('R', 'A', '3', '0') /* 32  ABGR-2-10-10-10  */
++#define V4L2_PIX_FMT_BGRA1010102 v4l2_fourcc('A', 'R', '3', '0') /* 32  BGRA-10-10-10-2  */
+ 
+ /* Grey formats */
+ #define V4L2_PIX_FMT_GREY    v4l2_fourcc('G', 'R', 'E', 'Y') /*  8  Greyscale     */
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
