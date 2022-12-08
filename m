@@ -2,210 +2,266 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4A2C6370B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  8 Dec 2022 13:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6C5C3A5A7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  8 Dec 2022 14:01:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbiLHNH6 (ORCPT
+        id S229897AbiLHOBS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 8 Dec 2022 08:07:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33808 "EHLO
+        Thu, 8 Dec 2022 09:01:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbiLHNHx (ORCPT
+        with ESMTP id S229779AbiLHOBR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Dec 2022 08:07:53 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6608031353
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Dec 2022 05:07:49 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5574:4fdf:a801:888e])
-        by laurent.telenet-ops.be with bizsmtp
-        id tp7n280032deJRf01p7nsB; Thu, 08 Dec 2022 14:07:47 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1p3GIF-002tBF-JX; Thu, 08 Dec 2022 13:46:27 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1p3DeN-002fn0-4a; Thu, 08 Dec 2022 10:57:07 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Tho Vu <tho.vu.wh@renesas.com>, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] clk: renesas: rcar-gen4: Add support for fractional multiplication
-Date:   Thu,  8 Dec 2022 10:56:59 +0100
-Message-Id: <a174da512fb1cba0a001c9aed130a2adca14e60a.1670492384.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1670492384.git.geert+renesas@glider.be>
-References: <cover.1670492384.git.geert+renesas@glider.be>
+        Thu, 8 Dec 2022 09:01:17 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CD539E;
+        Thu,  8 Dec 2022 06:01:16 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id s8so2166993lfc.8;
+        Thu, 08 Dec 2022 06:01:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=royGBGeQe03mj6YzpytN9j6h7rr5KUHJiZDkbf1e+NI=;
+        b=O9F+0oZbPEu/1g4NGegNtl0Nyo/+SpwWR7RHxRZCnriug9e0tBeSlU/dEng8tDbQnr
+         9Dz5fes9pHILNrd5iQaWbWbERtpkfhCQ4iqAHev6dR5UHkRaSn+Duw9fc7oD+B9bEZNy
+         Y9wWYW94q8G/eUIX6CqsmZGRtQcV15h3iEROcJFKkgxIAWTiyEgLaBqpKHi5scFRo9ts
+         PfHZ1DhmHUScQZZoqh2bNjBmx2gQXFuJ0cSG91yb3OiCqhRbDOKjXu0ruK+ivBZPaNBS
+         39+D5DeilJh+3cELXSU2iPRQFyA7aeXPqkT2wbDHkudc3rJUU26drukYpreuH/RkuwBD
+         gdrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=royGBGeQe03mj6YzpytN9j6h7rr5KUHJiZDkbf1e+NI=;
+        b=d6ydvDa33LUJ5477WH1CQfox4rS7TSPdgKPJHQm5zs3Yepz7Jznrjj9KGjW6nEhQRj
+         Dmbs2FZlDpULV4VWAFRzsliMdfgCT8aTKvefhST9O6mrFEIgyM/htTFB4ffceMVWjy03
+         v/EnNuga471fexrTzScHFtDhaOXJ2dq275z+Ny+WnUnaEk8BFH/Hg5igmT5YMfbdX9v5
+         QHUvvQehz3pFZI9p3gsmGOqgpQOI7wUp/JAMZSDbo/No4zshYKvdzREV3uMwBN2G2Wd7
+         kl88dMkn0fSuNd1Luxv5nV2LCdkf4J711GJvZQeghABRq3HX1zx0idXHgZ0KM5o3OUZZ
+         UvIA==
+X-Gm-Message-State: ANoB5plla25rCnngzMk2TX5YT2NtHjq/A5J2B4m+55R2h1OLdEoBab3q
+        62WS6++T0K0EbKCxhJ+cDk8=
+X-Google-Smtp-Source: AA0mqf7ChOf5ktMT5YTqhw8zRkvR+EfOySECV3MkenBcEEoi+VLpr1qBIIv1gDiVElayN+ZXjfssUw==
+X-Received: by 2002:a05:6512:2f0:b0:4a9:d072:f5c1 with SMTP id m16-20020a05651202f000b004a9d072f5c1mr649233lfq.51.1670508074031;
+        Thu, 08 Dec 2022 06:01:14 -0800 (PST)
+Received: from mobilestation ([95.79.133.202])
+        by smtp.gmail.com with ESMTPSA id m18-20020a194352000000b004b55ca53543sm2278805lfj.233.2022.12.08.06.01.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Dec 2022 06:01:13 -0800 (PST)
+Date:   Thu, 8 Dec 2022 17:01:11 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Frank Li <Frank.Li@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "kw@linux.com" <kw@linux.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+        "marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "Sergey.Semin@baikalelectronics.ru" 
+        <Sergey.Semin@baikalelectronics.ru>
+Subject: Re: [PATCH v7 5/9] PCI: dwc: Avoid reading a register to detect
+ whether eDMA exists
+Message-ID: <20221208140111.7phlnsxktxzsc55f@mobilestation>
+References: <20221121124400.1282768-1-yoshihiro.shimoda.uh@renesas.com>
+ <20221121124400.1282768-6-yoshihiro.shimoda.uh@renesas.com>
+ <20221122135550.GD157542@thinkpad>
+ <20221127235532.u7q7oou36wymkpyf@mobilestation>
+ <TYBPR01MB5341932B42719E026AA16D40D8139@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+ <20221128115908.awhznkkrelk7h3nm@mobilestation>
+ <TYBPR01MB534107A3C2B521BA0D67B4A7D8139@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+ <20221128161114.deacldwbckfnn6ft@mobilestation>
+ <TYBPR01MB5341FA664D5F1FCA07294F96D8129@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+ <TYBPR01MB53413E1BE13CCA65307770FDD81D9@TYBPR01MB5341.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <TYBPR01MB53413E1BE13CCA65307770FDD81D9@TYBPR01MB5341.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-R-Car Gen4 PLLs support fractional multiplication, which can improve
-accuracy when configuring a specific frequency.
+Cc += Frank Li
 
-Add support for fractional multiplication to the custom clock driver
-for PLLs, which is currently used only for PLL2 on R-Car V4H.
+@Frank could you have a look at the thread and check the content of
+the CSRs dbi+0x8f8 and dbi+0x978 on available to you DW PCIe +EDMA
+devices?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-I am not so sure it is worth supporting this.
-On R-Car V4H, the following clock rates are seen for PLL2 and the
-Cortex-A76 CPU core clock, when using the Normal vs. the
-High-Performance mode:
+On Thu, Dec 08, 2022 at 12:26:18PM +0000, Yoshihiro Shimoda wrote:
+> Hi Serge, Manivannan,
+> 
+> > From: Yoshihiro Shimoda, Sent: Tuesday, November 29, 2022 9:22 AM
+> > 
+> > > From: Serge Semin, Sent: Tuesday, November 29, 2022 1:11 AM
+> > >
+> > > On Mon, Nov 28, 2022 at 12:41:11PM +0000, Yoshihiro Shimoda wrote:
+> > > > Hi Serge,
+> > > >
+> > > > > From: Serge Semin, Sent: Monday, November 28, 2022 8:59 PM
+> > > > >
+> > > > > On Mon, Nov 28, 2022 at 02:52:56AM +0000, Yoshihiro Shimoda wrote:
+> > > > > > Hi Serge,
+> > <snip>
+> > > > > No, this should have been the dw_pcie_readl_dbi() calls instead of
+> > > > > dw_pcie_readl_!dma!(). What I try to understand from these values is
+> > > > > the real version of your controller (dbi+0x8f8) and whether the legacy
+> > > > > eDMA viewport registers range follows the documented convention of
+> > > > > having FFs in the dbi+0x978 register. My current assumption that
+> > > > > either your IP-core is newer than v5.30a or has some vendor-specific
+> > > > > modification. But let's see the value first.
+> > > >
+> > >
+> > > > Oops! I'm sorry for my bad code. After fixed the code, the values are:
+> > > > ---
+> > > > [    1.108943] pcie-rcar-gen4 e65d0000.pcie: dw_pcie_edma_find_chip: +0x8f8 = 3532302a, +0x978 = 00000000
+> > > > ---
+> > >
+> > > @Yoshihiro. Got it. Thanks. Could you please confirm (double-check)
+> > > that what the content of the +0x978 CSR was really read by means of the
+> > > dw_pcie_readl_dbi() method?
+> > 
+> > Yes, I used dw_pcie_readl_dbi() like below.
+> > 
+> > --------------- (sorry, tabs replaced with spaces) ---------------
+> > --- a/drivers/pci/controller/dwc/pcie-designware.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> > @@ -843,6 +843,10 @@ static int dw_pcie_edma_find_chip(struct dw_pcie *pci)
+> >  {
+> >         u32 val;
+> > 
+> > +       dev_info(pci->dev, "%s: +0x8f8 = %08x, +0x978 = %08x\n", __func__,
+> > +               dw_pcie_readl_dbi(pci, 0x8f8),
+> > +               dw_pcie_readl_dbi(pci, 0x978));
+> > +
+> >         if (pci->edma.reg_base) {
+> >                 pci->edma.mf = EDMA_MF_EDMA_UNROLL;
+> > ------------------------------------------------------------------
+> > 
+> > > @Mani, could you please have a look at the content of the +0x8f8 and
+> > > +0x978 CSRs in the CDM space of the available to you controllers?
+> > >
+> > > I've reproduced the behavior what discovered by @Yoshihiro, but on
+> > > v5.40a IP-core only. It was expected for that controller version, but
+> > > v5.20a was supposed to have FFs in +0x978 for the unrolled iATU/eDMA
+> > > space. It's strange to see it didn't.
+> 
 
-					Multiplication Mode
-					Integer         Frational
-					----------	----------
-    Normal (1.7 GHz):            PLL2   3399999864      3399999997
-				 Z0     1699999932      1699999999
-    High-Performance (1.8 GHz):  PLL2   3599999856      3599999997
-				 Z0     1799999928      1799999999
+> So, should I add a quirk flag for my controller like below?
+> ---
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 69665a8a002e..384bd2c0ea75 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -844,7 +844,7 @@ static int dw_pcie_edma_find_chip(struct dw_pcie *pci)
+>         u32 val;
+> 
+>         val = dw_pcie_readl_dbi(pci, PCIE_DMA_VIEWPORT_BASE + PCIE_DMA_CTRL);
 
-The improvement is of a similar order of magnitude as the accuracy of
-the external crystal, hence insignificant...
+> -       if (val == 0xFFFFFFFF && pci->edma.reg_base) {
+> +       if ((pci->no_dma_ctrl_reg || val == 0xFFFFFFFF) && pci->edma.reg_base) {
+>                 pci->edma.mf = EDMA_MF_EDMA_UNROLL;
+> 
+>                 val = dw_pcie_readl_dma(pci, PCIE_DMA_CTRL);
 
-With the current implementation, fractional multiplication does not have
-any impact on lower performance points, as those rely on changing the Z0
-divider (which supports 32 steps only), instead of changing the PLL.
----
- drivers/clk/renesas/rcar-gen4-cpg.c | 69 ++++++++++++++++++++++-------
- 1 file changed, 54 insertions(+), 15 deletions(-)
+Very much no. I have just got rid from such boolean flags from the DW
+PCI private data.
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index c68d8b987054131b..54dc3aa82b499725 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -57,10 +57,13 @@ static u32 cpg_mode __initdata;
- #define SSMODE_DITHER		BIT(1)	/* Frequency Dithering */
- #define SSMODE_CENTER		BIT(0)	/* Center (vs. Down) Spread Dithering */
- 
-+#define CPG_PLLxCR1_NF		GENMASK(24, 0)	/* Fractional mult. factor */
-+
- /* PLL Clocks */
- struct cpg_pll_clk {
- 	struct clk_hw hw;
- 	void __iomem *pllcr0_reg;
-+	void __iomem *pllcr1_reg;
- 	void __iomem *pllecr_reg;
- 	u32 pllecr_pllst_mask;
- };
-@@ -71,17 +74,26 @@ static unsigned long cpg_pll_clk_recalc_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
- {
- 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
--	unsigned int mult;
--
--	mult = FIELD_GET(CPG_PLLxCR0_NI, readl(pll_clk->pllcr0_reg)) + 1;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
-+	unsigned int ni, nf;
-+	unsigned long rate;
-+
-+	ni = (FIELD_GET(CPG_PLLxCR0_NI, cr0) + 1) * 2;
-+	rate = parent_rate * ni;
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		nf = FIELD_GET(CPG_PLLxCR1_NF, readl(pll_clk->pllcr1_reg));
-+		rate += ((u64)parent_rate * nf) >> 24;
-+	}
- 
--	return parent_rate * mult * 2;
-+	return rate;
- }
- 
- static int cpg_pll_clk_determine_rate(struct clk_hw *hw,
- 				      struct clk_rate_request *req)
- {
--	unsigned int min_mult, max_mult, mult;
-+	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
-+	unsigned int min_mult, max_mult, ni, nf;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
- 	unsigned long prate;
- 
- 	prate = req->best_parent_rate * 2;
-@@ -90,10 +102,23 @@ static int cpg_pll_clk_determine_rate(struct clk_hw *hw,
- 	if (max_mult < min_mult)
- 		return -EINVAL;
- 
--	mult = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
--	mult = clamp(mult, min_mult, max_mult);
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		ni = div64_ul(req->rate, prate);
-+		if (ni < min_mult) {
-+			ni = min_mult;
-+			nf = 0;
-+		} else {
-+			ni = min(ni, max_mult);
-+			nf = ((u64)(req->rate - prate * ni) << 24) /
-+			     req->best_parent_rate;
-+		}
-+	} else {
-+		ni = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
-+		ni = clamp(ni, min_mult, max_mult);
-+		nf = 0;
-+	}
-+	req->rate = prate * ni + (((u64)req->best_parent_rate * nf) >> 24);
- 
--	req->rate = prate * mult;
- 	return 0;
- }
- 
-@@ -101,17 +126,31 @@ static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long parent_rate)
- {
- 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
--	unsigned int mult;
-+	unsigned long prate = parent_rate * 2;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
-+	unsigned int ni, nf;
-+	int error;
- 	u32 val;
- 
--	mult = DIV_ROUND_CLOSEST_ULL(rate, parent_rate * 2);
--	mult = clamp(mult, 1U, 256U);
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		ni = div64_ul(rate, prate);
-+		if (ni < 1) {
-+			ni = 1;
-+			nf = 0;
-+		} else {
-+			ni = min(ni, 256U);
-+			nf = ((u64)(rate - prate * ni) << 24) / parent_rate;
-+		}
-+	} else {
-+		ni = DIV_ROUND_CLOSEST_ULL(rate, prate);
-+		ni = clamp(ni, 1U, 256U);
-+	}
- 
- 	if (readl(pll_clk->pllcr0_reg) & CPG_PLLxCR0_KICK)
- 		return -EBUSY;
- 
- 	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_NI,
--		       FIELD_PREP(CPG_PLLxCR0_NI, mult - 1));
-+		       FIELD_PREP(CPG_PLLxCR0_NI, ni - 1));
- 
- 	/*
- 	 * Set KICK bit in PLLxCR0 to update hardware setting and wait for
-@@ -161,12 +200,12 @@ static struct clk * __init cpg_pll_clk_register(const char *name,
- 
- 	pll_clk->hw.init = &init;
- 	pll_clk->pllcr0_reg = base + cr0_offset;
-+	pll_clk->pllcr1_reg = base + cr1_offset;
- 	pll_clk->pllecr_reg = base + CPG_PLLECR;
- 	pll_clk->pllecr_pllst_mask = CPG_PLLECR_PLLST(index);
- 
--	/* Disable Fractional Multiplication and Frequency Dithering */
--	writel(0, base + cr1_offset);
--	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_SSMODE, 0);
-+	/* Enable Fractional Multiplication */
-+	cpg_reg_modify(pll_clk->pllcr0_reg, 0, CPG_PLLxCR0_SSMODE_FM);
- 
- 	clk = clk_register(NULL, &pll_clk->hw);
- 	if (IS_ERR(clk))
--- 
-2.25.1
+Please be patient. Maintainers not always respond as soon as we would
+want. Please note my patchset also stalls due to your discovery (DW
+eDMA patches still under review).
 
+What we have discovered here is the undocumented behavior. The
+HW-manuals from 4.80 up to 5.30 say that the register dbi+0x978 must
+have FFs if the register doesn't exist. A similar rule is defined for
+the iATU CSRs space and it's working well at least up to IP-core
+5.40a. The viewport-based eDMA CSRs space has been removed from the
+HW-manuals since IP-core 5.40a and I can assure that IP-core 5.40a has
+zeros in dbi+0x978 on the real HW. I do have another devices with eDMA
+but all of them have been synthesized with the legacy viewport-based
+eDMA access, so I can't check whether the FFs statement is correct for
+the devices older than 5.40. You detected the problem on the IP-core
+5.20a, but @Mani didn't see it on his devices. Neither does Frank
+AFAIU. That's why I asked him and @Frank to check what value the
+dbi+0x8f8 and dbi+0x978 registers have in their devices at hand. After
+that we'll either add the IP-core version based test here:
+< -       val = dw_pcie_readl_dbi(pci, PCIE_DMA_VIEWPORT_BASE + PCIE_DMA_CTRL);
+< +       if (dw_pcie_ver_is_ge(pci, 5?0A)) {
+< +               val = 0xFFFFFFFF;
+< +       else
+< +               val = dw_pcie_readl_dbi(pci, PCIE_DMA_VIEWPORT_BASE + PCIE_DMA_CTRL);
+or add a new capability flag if @Mani has IP-core 5.20a with FFs in
+the CSRs dbi+0x978. Like this:
+< -       val = dw_pcie_readl_dbi(pci, PCIE_DMA_VIEWPORT_BASE + PCIE_DMA_CTRL);
+< +       if (dw_pcie_cap_is(pci, EDMA_UNROLL)) {
+< +               val = 0xFFFFFFFF;
+< +       else
+< +               val = dw_pcie_readl_dbi(pci, PCIE_DMA_VIEWPORT_BASE + PCIE_DMA_CTRL);
+
+So the main goal of this activity is to check whether your discovery
+is a bug on your particular device or is a bug in the HW-manuals. If
+the later is correct then the eDMA CSRs space auto-detection procedure
+should be fixed to be executed up to the corresponding IP-core
+version. If the former is correct then we'll add a new capability
+flag. In anyway having the new boolean field in the device private
+data wouldn't be a good option since there is the capabilities API
+available in the driver.
+
+-Serge(y)
+
+> ---
+> 
+> Best regards,
+> Yoshihiro Shimoda
+> 
+> > > -Sergey
+> > >
+> > > >
+> > > > <snip>
+> > > > > > So, should I change the condition like below?
+> > > > > >
+> > > > > > ---
+> > > > > > -	if (val == 0xFFFFFFFF && pci->edma.reg_base) {
+> > > > > > +	if ((val == 0xFFFFFFFF || val == 0x00000000) && pci->edma.reg_base) {
+> > > > > > ...
+> > > > > > -	} else if (val != 0xFFFFFFFF) {
+> > > > > > -	} else if (!(val == 0xFFFFFFFF || val == 0x00000000)) {
+> > > > > > ---
+> > > > >
+> > > > > Definitely no. Even though it's impossible to have the eDMA controller
+> > > > > configured with zero number of read and write channels we shouldn't
+> > > > > assume that getting a zero value from the DMA_CTRL_VIEWPORT_OFF offset
+> > > > > means having the unrolled eDMA CSRs mapping. Let's have a look at the
+> > > > > content of the dbi+0x8f8 and dbi+0x978 offsets first. Based on these
+> > > > > values we'll come up with what to do next.
+> > > >
+> > > > I got it.
+> > > >
+> > > > Best regards,
+> > > > Yoshihiro Shimoda
+> > > >
+> > > > > -Serge(y)
+> > > > >
+> > > > > >
+> > > > > > Best regards,
+> > > > > > Yoshihiro Shimoda
+> > > > > >
+> > > > > > > -Sergey
+> > > > > > >
+> > > > > > > > >  	} else {
+> > > > > > > > >  		return -ENODEV;
+> > > > > > > > >  	}
+> > > > > > > > > --
+> > > > > > > > > 2.25.1
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > --
+> > > > > > > > மணிவண்ணன் சதாசிவம்
