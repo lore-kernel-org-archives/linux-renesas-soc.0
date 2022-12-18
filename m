@@ -2,37 +2,37 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CA4C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 18 Dec 2022 16:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F164C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 18 Dec 2022 16:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231745AbiLRQRz (ORCPT
+        id S232312AbiLRQel (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 18 Dec 2022 11:17:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52196 "EHLO
+        Sun, 18 Dec 2022 11:34:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231826AbiLRQRD (ORCPT
+        with ESMTP id S232252AbiLRQd3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Dec 2022 11:17:03 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62317BE10;
-        Sun, 18 Dec 2022 08:07:35 -0800 (PST)
+        Sun, 18 Dec 2022 11:33:29 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3193CB7DD;
+        Sun, 18 Dec 2022 08:12:25 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6681FB80BA5;
-        Sun, 18 Dec 2022 16:07:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3065BC433EF;
-        Sun, 18 Dec 2022 16:07:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C2C6D60DCA;
+        Sun, 18 Dec 2022 16:12:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D1AC433D2;
+        Sun, 18 Dec 2022 16:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671379639;
+        s=k20201202; t=1671379944;
         bh=Cor8swcP0qAWcg+ypKfV1BiE+5LdDXUHnzurt0BoCp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yz1ric5EQmlQlqspcNi6FyxbvN08DTzNJHEg2GJuVmV0ETn1bjUlcSOqbQd5hexxE
-         Mo6kCShS4fuyrxZTVGYcUQHeAvqAoysLJ0gQdKW2mt8qdxKk2FtwaRPA3Loq8k6SfV
-         qj4pLdE8mz+rfzHqAaJ6MZgRdxXYJP4sPlcPzIzKjkk96uCmyOr6Xa3xPxELxElFtv
-         rFXTlAjsDsQtoRpjZyo3islaD3XBN4nyi+uvgcrwzk6lYokc0U0JevQhCyk/I7NlUq
-         eilEBaP4mRRW4kwi4w+oYcsyhiYHZz3Pe+1UNBS5HbWzyflLyo7rRcRVqOOcloTkwI
-         QKbBM5RnS/vsg==
+        b=tkp7xrhl/87f2D57c7bZaXOk38H/w/27GcEgfZQdNMz9Rtt7iXsCYpaCeZSx1RvHl
+         D7AqVV6122eptJlltmBker2YuwOh9D8SCHojU60A57ZGNO8lvlW4F9iWa6JheQ4Tgt
+         IE5DwiuYfbe3BS+wvvVxx8BwU1r28BAZlowtRrEGRvomHMMd8oVF66P2jOb2SSsR+Z
+         f05zyxz38h2z4doV/NXDKCvUNCh/g/VpHTR/VNZlk3vzB9U1U0orxqRbozVCF5bMKo
+         N3rJGXdJoLwoe3Ys1bPP6tZSs8eIFOr8AMUXWyQ8V2fqzFwAChpFq+SkKzIKcAt0KE
+         TPZzGsvdg6bTg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -41,12 +41,12 @@ Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 76/85] mmc: renesas_sdhi: add quirk for broken register layout
-Date:   Sun, 18 Dec 2022 11:01:33 -0500
-Message-Id: <20221218160142.925394-76-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.0 66/73] mmc: renesas_sdhi: add quirk for broken register layout
+Date:   Sun, 18 Dec 2022 11:07:34 -0500
+Message-Id: <20221218160741.927862-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221218160142.925394-1-sashal@kernel.org>
-References: <20221218160142.925394-1-sashal@kernel.org>
+In-Reply-To: <20221218160741.927862-1-sashal@kernel.org>
+References: <20221218160741.927862-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
