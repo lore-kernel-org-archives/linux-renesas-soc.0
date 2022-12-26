@@ -2,53 +2,76 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C601C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3693C46467
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Dec 2022 07:13:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229638AbiLZHNf (ORCPT
+        id S229983AbiLZHNf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 26 Dec 2022 02:13:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiLZHNe (ORCPT
+        with ESMTP id S229450AbiLZHNe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 26 Dec 2022 02:13:34 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 79AB32BEE;
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BC7AA2BF2;
         Sun, 25 Dec 2022 23:13:33 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.96,274,1665414000"; 
-   d="scan'208";a="147425154"
+   d="scan'208";a="144515675"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Dec 2022 16:13:32 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 26 Dec 2022 16:13:33 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BA0D941BAEC3;
-        Mon, 26 Dec 2022 16:13:32 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0527D41BAEC7;
+        Mon, 26 Dec 2022 16:13:33 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
         pabeni@redhat.com
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net 0/2] net: ethernet: renesas: rswitch: Fix minor issues
-Date:   Mon, 26 Dec 2022 16:13:26 +0900
-Message-Id: <20221226071328.3895854-1-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net 2/2] net: ethernet: renesas: rswitch: Fix getting mac address from device tree
+Date:   Mon, 26 Dec 2022 16:13:28 +0900
+Message-Id: <20221226071328.3895854-3-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221226071328.3895854-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20221226071328.3895854-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series is based on v6.2-rc2.
+To get mac address from device tree which is from each ethernet-port,
+fix the first argument of of_get_ethdev_address().
 
-Yoshihiro Shimoda (2):
-  net: ethernet: renesas: rswitch: Fix error path in
-    renesas_eth_sw_probe()
-  net: ethernet: renesas: rswitch: Fix getting mac address from device
-    tree
+Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/net/ethernet/renesas/rswitch.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- drivers/net/ethernet/renesas/rswitch.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index 473d86bdf97d..6441892636db 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -1578,6 +1578,7 @@ static int rswitch_device_alloc(struct rswitch_private *priv, int index)
+ {
+ 	struct platform_device *pdev = priv->pdev;
+ 	struct rswitch_device *rdev;
++	struct device_node *port;
+ 	struct net_device *ndev;
+ 	int err;
+ 
+@@ -1606,7 +1607,9 @@ static int rswitch_device_alloc(struct rswitch_private *priv, int index)
+ 
+ 	netif_napi_add(ndev, &rdev->napi, rswitch_poll);
+ 
+-	err = of_get_ethdev_address(pdev->dev.of_node, ndev);
++	port = rswitch_get_port_node(rdev);
++	err = of_get_ethdev_address(port, ndev);
++	of_node_put(port);
+ 	if (err) {
+ 		if (is_valid_ether_addr(rdev->etha->mac_addr))
+ 			eth_hw_addr_set(ndev, rdev->etha->mac_addr);
 -- 
 2.25.1
 
