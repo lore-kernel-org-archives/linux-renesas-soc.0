@@ -2,323 +2,197 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2846FC54EBC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Dec 2022 23:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9C7C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Dec 2022 23:17:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232290AbiL0XIU (ORCPT
+        id S229744AbiL0XRn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 27 Dec 2022 18:08:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45244 "EHLO
+        Tue, 27 Dec 2022 18:17:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232276AbiL0XHs (ORCPT
+        with ESMTP id S230037AbiL0XRm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Dec 2022 18:07:48 -0500
-Received: from mail.3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F66B4B9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Dec 2022 15:07:34 -0800 (PST)
-Received: from mwalle01.sab.local (unknown [213.135.10.150])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id 29B3416EC;
-        Wed, 28 Dec 2022 00:07:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1672182450;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zvah4gb6JfTRtcNM4GdmgGrH5+DJzSKUpsj4la1NmEU=;
-        b=ezK3oi5PsWw9mo7Kayb5ARon1mvRK8YVrerHWdZdYutNd0UzVf7kBsxHzv7y3X/9azeFhk
-        fg1UMFh8s5lBnWUpNtIXozB2f5qriHnKa1etKEnY1H6Na5wA1I2eZiRINewxrIQMxZ238o
-        2xFnUTYEq09X4sbX+z497DmSJKg2uDbTQfiKeFOAY7rXoth3JyMeZ0sOYwjSUr20/b34W0
-        j5wEFNvdy2+UJAC3GL1+69cT1D1dKZ7TSpQUFUs0Ef3PaHc6gaea6EZr/QOgxWjy7kbp/C
-        Llg7dVNcgrycHoUrEZCVqBc8pKcar3HhoaxF3cRkf2xrRfmhDtGonux+5JQsiQ==
-From:   Michael Walle <michael@walle.cc>
-Date:   Wed, 28 Dec 2022 00:07:27 +0100
-Subject: [PATCH RFC net-next v2 11/12] net: dsa: Separate C22 and C45 MDIO bus
- transaction methods
+        Tue, 27 Dec 2022 18:17:42 -0500
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C3EDDE97;
+        Tue, 27 Dec 2022 15:17:35 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 2CB2D320092B;
+        Tue, 27 Dec 2022 18:17:32 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 27 Dec 2022 18:17:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1672183051; x=
+        1672269451; bh=F0QkIAB41jYkIimhGOo727aX99iPc7fnfFYfTCyrtmQ=; b=F
+        EHq+Z3SDZCwyUwik5ZqJiMj8VI6ZVsoMptvjIEq7gnI2sgvdJBHAIfFSxIlY4Cjo
+        VS4pXKz/1jK0iywBvo8389upTi/pT/vkHm15x+D/16ji7EOGxf5rCgbABz0xSuel
+        DiI0oEEw3K26LRvpQJ5xzXye7uP6PRDVNKXo/0ZTquMLmG7apirqOuwP5ZPKO0Pt
+        3EN5DykvH2sYLG4woBNbSG3CqrNxJAfyRnm4M6N6o07mpcso1MrGUTgjqqbntNYy
+        9fq2nv3xipEGYr7n8zOeRhtZZE9aLo6f1Gbwui51IyodnrQ2ZGzFlyrm+OaLEGQw
+        SAa6aIcB8JKWMN+YpwOWg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1672183051; x=
+        1672269451; bh=F0QkIAB41jYkIimhGOo727aX99iPc7fnfFYfTCyrtmQ=; b=J
+        vHsP8T+NeP72LDLuGIbnHrkmmpx0juGLiMirKf3bB3SAEoB0hgp7sl/COdrFI/bk
+        juy+I8zib07iQoiinUu5h2Sp3TGhE1Urgg3nyR2IktWwZ5F5fqf7kb9DuUgv5Lii
+        dxJGgqG168H9d/hew8fGm7Pm56rZZUkOrr4kXGQCmvVxSXZU7cDVnj63ZqZHZT3Q
+        QWa6+gh6GcknBCQuISNc8geedJSYFSz+EW88577IAgY68R3hPd/i7f3oQGyvgMzH
+        331Yb5KaDXdcIOeEzZvazd5l8vVu90nQTGBFRSpr1NUDLucfWFYrff4A7k6xjTv7
+        RFdyeM3vib95KKANvvfIg==
+X-ME-Sender: <xms:Cn2rY5KScurZ-Y83olgZbqhjcWYliStHDsBX3ipyDuepR1f_xDN8wA>
+    <xme:Cn2rY1KwBcVlosR1r2UDVCfpVMS2gKKrLlogcEU4hw1RQme3W7Gr1-1KjDN3LEmyO
+    qaU95lpqYChv3Gkhg>
+X-ME-Received: <xmr:Cn2rYxsXzp4cA1wOl4Slf9f37tYQ0FlXK8BiwG2J7MgShuoX3jS2mImBpZ1D5EHIbhr2QXkRB3LGDbqSGLVs8lt7gBkABASAocWC56R8bF7Dc6SbE5bGTpiaOw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedriedugddtlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfvvehfhffujggtgfesthejredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepjefgfffhudejfedtuedugeeutdetgfeiteffffehjeeugfeuvdeh
+    jeetfedtffdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:Cn2rY6aEScJsbKgmyYpnN6EDPjmFcNkm7TYhPESYL4U7WQUlu1IOdQ>
+    <xmx:Cn2rYwZjxj-k5GRiSQT4wTsYghJvjV2-q3te8pYoCyYBWBlOxCDRUQ>
+    <xmx:Cn2rY-Ap3mJGjMh-XGYt_iQ2LBtNwe_cYU3U5uFgwNPnKlEN9fALNg>
+    <xmx:C32rYwr28Jbu8ruDwkMGxtYfDTOybqHw0B5LEeBgGYnmsHy0qS_mAQ>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 27 Dec 2022 18:17:29 -0500 (EST)
+Message-ID: <a92eda53-90ed-718d-6925-0d9afbb029c5@sholland.org>
+Date:   Tue, 27 Dec 2022 17:17:28 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20221227-v6-2-rc1-c45-seperation-v2-11-ddb37710e5a7@walle.cc>
-References: <20221227-v6-2-rc1-c45-seperation-v2-0-ddb37710e5a7@walle.cc>
-In-Reply-To: <20221227-v6-2-rc1-c45-seperation-v2-0-ddb37710e5a7@walle.cc>
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Wei Fang <wei.fang@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
+User-Agent: Mozilla/5.0 (X11; Linux ppc64le; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Content-Language: en-US
+To:     Prabhakar <prabhakar.csengg@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Walle <michael@walle.cc>
-X-Mailer: b4 0.11.1
+        Conor Dooley <conor.dooley@microchip.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-riscv@lists.infradead.org, Anup Patel <anup@brainfault.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20221211215843.24024-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Samuel Holland <samuel@sholland.org>
+Subject: Re: [RFC PATCH] clocksource/drivers/riscv: Get rid of
+ clocksource_arch_init() callback
+In-Reply-To: <20221211215843.24024-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+On 12/11/22 15:58, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Having a clocksource_arch_init() callback always sets vdso_clock_mode to
+> VDSO_CLOCKMODE_ARCHTIMER if GENERIC_GETTIMEOFDAY is enabled, this is
+> required for the riscv-timer.
+> 
+> This works for platforms where just riscv-timer clocksource is present.
+> On platforms where other clock sources are available we want them to
+> register with vdso_clock_mode set to VDSO_CLOCKMODE_NONE.
+> 
+> On the Renesas RZ/Five SoC OSTM block can be used as clocksource [0], to
+> avoid multiple clock sources being registered as VDSO_CLOCKMODE_ARCHTIMER
+> move setting of vdso_clock_mode in the riscv-timer driver instead of doing
+> this in clocksource_arch_init() callback as done similarly for ARM/64
+> architecture.
 
-By adding _c45 function pointers to the dsa_switch_op structure, the
-dsa core can register an MDIO bus with C45 accessors.
+This is definitely a good change to make, but shouldn't we still prefer
+the architectural CSR-based clocksource over an MMIO-based clocksource?
+It has double the number of bits, and reading it should have less
+overhead. So I think we also want to increase the rating of
+riscv_clocksource.
 
-The dsa-loop driver could in theory provide such accessors, since it
-just passed requests to the MDIO bus it is on, but it seems unlikely
-to be useful at the moment. It can however be added later.
+D1 is in the same situation, as timer-sun4i.c registers a clocksource
+with a higher rating than riscv_clocksource. Without this patch,
+tools/testing/selftests/vDSO/vdso_test_correctness fails. With this
+patch, it passes, so:
 
-mt7530 does support C45, but its uses a mix of registering its MDIO
-bus and using the DSA core provided bus. This makes the change a bit
-more complex.
+Tested-by: Samuel Holland <samuel@sholland.org>
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Michael Walle <michael@walle.cc>
----
-v2:
- - [al] Remove conditional c45, since all switches support c45
- - [al] Remove dsa core changes, they are not needed
- - [al] Add comment that DSA provided MDIO bus is C22 only.
----
- drivers/net/dsa/mt7530.c | 87 ++++++++++++++++++++++++------------------------
- drivers/net/dsa/mt7530.h | 15 ++++++---
- include/net/dsa.h        |  2 +-
- 3 files changed, 56 insertions(+), 48 deletions(-)
+> [0] drivers/clocksource/renesas-ostm.c
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  arch/riscv/Kconfig                | 1 -
+>  arch/riscv/kernel/time.c          | 9 ---------
+>  drivers/clocksource/timer-riscv.c | 7 +++++++
+>  3 files changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 7ea12de636bd..b269e062c1b1 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -12,7 +12,6 @@ config 32BIT
+>  
+>  config RISCV
+>  	def_bool y
+> -	select ARCH_CLOCKSOURCE_INIT
+>  	select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
+>  	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+>  	select ARCH_HAS_BINFMT_FLAT
+> diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
+> index 8217b0f67c6c..42bee305e997 100644
+> --- a/arch/riscv/kernel/time.c
+> +++ b/arch/riscv/kernel/time.c
+> @@ -30,12 +30,3 @@ void __init time_init(void)
+>  	of_clk_init(NULL);
+>  	timer_probe();
+>  }
+> -
+> -void clocksource_arch_init(struct clocksource *cs)
+> -{
+> -#ifdef CONFIG_GENERIC_GETTIMEOFDAY
+> -	cs->vdso_clock_mode = VDSO_CLOCKMODE_ARCHTIMER;
+> -#else
+> -	cs->vdso_clock_mode = VDSO_CLOCKMODE_NONE;
+> -#endif
+> -}
+> diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+> index 969a552da8d2..7ec9668cd36d 100644
+> --- a/drivers/clocksource/timer-riscv.c
+> +++ b/drivers/clocksource/timer-riscv.c
+> @@ -29,6 +29,12 @@
+>  
+>  static DEFINE_STATIC_KEY_FALSE(riscv_sstc_available);
+>  
+> +#ifdef CONFIG_GENERIC_GETTIMEOFDAY
+> +static enum vdso_clock_mode vdso_default = VDSO_CLOCKMODE_ARCHTIMER;
+> +#else
+> +static enum vdso_clock_mode vdso_default = VDSO_CLOCKMODE_NONE;
+> +#endif /* CONFIG_GENERIC_GETTIMEOFDAY */
 
-diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
-index 908fa89444c9..616b21c90d05 100644
---- a/drivers/net/dsa/mt7530.c
-+++ b/drivers/net/dsa/mt7530.c
-@@ -608,17 +608,29 @@ mt7530_mib_reset(struct dsa_switch *ds)
- 	mt7530_write(priv, MT7530_MIB_CCR, CCR_MIB_ACTIVATE);
- }
- 
--static int mt7530_phy_read(struct mt7530_priv *priv, int port, int regnum)
-+static int mt7530_phy_read_c22(struct mt7530_priv *priv, int port, int regnum)
- {
- 	return mdiobus_read_nested(priv->bus, port, regnum);
- }
- 
--static int mt7530_phy_write(struct mt7530_priv *priv, int port, int regnum,
--			    u16 val)
-+static int mt7530_phy_write_c22(struct mt7530_priv *priv, int port, int regnum,
-+				u16 val)
- {
- 	return mdiobus_write_nested(priv->bus, port, regnum, val);
- }
- 
-+static int mt7530_phy_read_c45(struct mt7530_priv *priv, int port,
-+			       int devad, int regnum)
-+{
-+	return mdiobus_c45_read_nested(priv->bus, port, devad, regnum);
-+}
-+
-+static int mt7530_phy_write_c45(struct mt7530_priv *priv, int port, int devad,
-+				int regnum, u16 val)
-+{
-+	return mdiobus_c45_write_nested(priv->bus, port, devad, regnum, val);
-+}
-+
- static int
- mt7531_ind_c45_phy_read(struct mt7530_priv *priv, int port, int devad,
- 			int regnum)
-@@ -670,7 +682,7 @@ mt7531_ind_c45_phy_read(struct mt7530_priv *priv, int port, int devad,
- 
- static int
- mt7531_ind_c45_phy_write(struct mt7530_priv *priv, int port, int devad,
--			 int regnum, u32 data)
-+			 int regnum, u16 data)
- {
- 	struct mii_bus *bus = priv->bus;
- 	struct mt7530_dummy_poll p;
-@@ -793,55 +805,36 @@ mt7531_ind_c22_phy_write(struct mt7530_priv *priv, int port, int regnum,
- }
- 
- static int
--mt7531_ind_phy_read(struct mt7530_priv *priv, int port, int regnum)
-+mt753x_phy_read_c22(struct mii_bus *bus, int port, int regnum)
- {
--	int devad;
--	int ret;
--
--	if (regnum & MII_ADDR_C45) {
--		devad = (regnum >> MII_DEVADDR_C45_SHIFT) & 0x1f;
--		ret = mt7531_ind_c45_phy_read(priv, port, devad,
--					      regnum & MII_REGADDR_C45_MASK);
--	} else {
--		ret = mt7531_ind_c22_phy_read(priv, port, regnum);
--	}
-+	struct mt7530_priv *priv = bus->priv;
- 
--	return ret;
-+	return priv->info->phy_read_c22(priv, port, regnum);
- }
- 
- static int
--mt7531_ind_phy_write(struct mt7530_priv *priv, int port, int regnum,
--		     u16 data)
-+mt753x_phy_read_c45(struct mii_bus *bus, int port, int devad, int regnum)
- {
--	int devad;
--	int ret;
--
--	if (regnum & MII_ADDR_C45) {
--		devad = (regnum >> MII_DEVADDR_C45_SHIFT) & 0x1f;
--		ret = mt7531_ind_c45_phy_write(priv, port, devad,
--					       regnum & MII_REGADDR_C45_MASK,
--					       data);
--	} else {
--		ret = mt7531_ind_c22_phy_write(priv, port, regnum, data);
--	}
-+	struct mt7530_priv *priv = bus->priv;
- 
--	return ret;
-+	return priv->info->phy_read_c45(priv, port, devad, regnum);
- }
- 
- static int
--mt753x_phy_read(struct mii_bus *bus, int port, int regnum)
-+mt753x_phy_write_c22(struct mii_bus *bus, int port, int regnum, u16 val)
- {
- 	struct mt7530_priv *priv = bus->priv;
- 
--	return priv->info->phy_read(priv, port, regnum);
-+	return priv->info->phy_write_c22(priv, port, regnum, val);
- }
- 
- static int
--mt753x_phy_write(struct mii_bus *bus, int port, int regnum, u16 val)
-+mt753x_phy_write_c45(struct mii_bus *bus, int port, int devad, int regnum,
-+		     u16 val)
- {
- 	struct mt7530_priv *priv = bus->priv;
- 
--	return priv->info->phy_write(priv, port, regnum, val);
-+	return priv->info->phy_write_c45(priv, port, devad, regnum, val);
- }
- 
- static void
-@@ -2086,8 +2079,10 @@ mt7530_setup_mdio(struct mt7530_priv *priv)
- 	bus->priv = priv;
- 	bus->name = KBUILD_MODNAME "-mii";
- 	snprintf(bus->id, MII_BUS_ID_SIZE, KBUILD_MODNAME "-%d", idx++);
--	bus->read = mt753x_phy_read;
--	bus->write = mt753x_phy_write;
-+	bus->read = mt753x_phy_read_c22;
-+	bus->write = mt753x_phy_write_c22;
-+	bus->read_c45 = mt753x_phy_read_c45;
-+	bus->write_c45 = mt753x_phy_write_c45;
- 	bus->parent = dev;
- 	bus->phy_mask = ~ds->phys_mii_mask;
- 
-@@ -3182,8 +3177,10 @@ static const struct mt753x_info mt753x_table[] = {
- 		.id = ID_MT7621,
- 		.pcs_ops = &mt7530_pcs_ops,
- 		.sw_setup = mt7530_setup,
--		.phy_read = mt7530_phy_read,
--		.phy_write = mt7530_phy_write,
-+		.phy_read_c22 = mt7530_phy_read_c22,
-+		.phy_write_c22 = mt7530_phy_write_c22,
-+		.phy_read_c45 = mt7530_phy_read_c45,
-+		.phy_write_c45 = mt7530_phy_write_c45,
- 		.pad_setup = mt7530_pad_clk_setup,
- 		.mac_port_get_caps = mt7530_mac_port_get_caps,
- 		.mac_port_config = mt7530_mac_config,
-@@ -3192,8 +3189,10 @@ static const struct mt753x_info mt753x_table[] = {
- 		.id = ID_MT7530,
- 		.pcs_ops = &mt7530_pcs_ops,
- 		.sw_setup = mt7530_setup,
--		.phy_read = mt7530_phy_read,
--		.phy_write = mt7530_phy_write,
-+		.phy_read_c22 = mt7530_phy_read_c22,
-+		.phy_write_c22 = mt7530_phy_write_c22,
-+		.phy_read_c45 = mt7530_phy_read_c45,
-+		.phy_write_c45 = mt7530_phy_write_c45,
- 		.pad_setup = mt7530_pad_clk_setup,
- 		.mac_port_get_caps = mt7530_mac_port_get_caps,
- 		.mac_port_config = mt7530_mac_config,
-@@ -3202,8 +3201,10 @@ static const struct mt753x_info mt753x_table[] = {
- 		.id = ID_MT7531,
- 		.pcs_ops = &mt7531_pcs_ops,
- 		.sw_setup = mt7531_setup,
--		.phy_read = mt7531_ind_phy_read,
--		.phy_write = mt7531_ind_phy_write,
-+		.phy_read_c22 = mt7531_ind_c22_phy_read,
-+		.phy_write_c22 = mt7531_ind_c22_phy_write,
-+		.phy_read_c45 = mt7531_ind_c45_phy_read,
-+		.phy_write_c45 = mt7531_ind_c45_phy_write,
- 		.pad_setup = mt7531_pad_setup,
- 		.cpu_port_config = mt7531_cpu_port_config,
- 		.mac_port_get_caps = mt7531_mac_port_get_caps,
-@@ -3263,7 +3264,7 @@ mt7530_probe(struct mdio_device *mdiodev)
- 	 * properly.
- 	 */
- 	if (!priv->info->sw_setup || !priv->info->pad_setup ||
--	    !priv->info->phy_read || !priv->info->phy_write ||
-+	    !priv->info->phy_read_c22 || !priv->info->phy_write_c22 ||
- 	    !priv->info->mac_port_get_caps ||
- 	    !priv->info->mac_port_config)
- 		return -EINVAL;
-diff --git a/drivers/net/dsa/mt7530.h b/drivers/net/dsa/mt7530.h
-index e8d966435350..6b2fc6290ea8 100644
---- a/drivers/net/dsa/mt7530.h
-+++ b/drivers/net/dsa/mt7530.h
-@@ -750,8 +750,10 @@ struct mt753x_pcs {
- /* struct mt753x_info -	This is the main data structure for holding the specific
-  *			part for each supported device
-  * @sw_setup:		Holding the handler to a device initialization
-- * @phy_read:		Holding the way reading PHY port
-- * @phy_write:		Holding the way writing PHY port
-+ * @phy_read_c22:	Holding the way reading PHY port using C22
-+ * @phy_write_c22:	Holding the way writing PHY port using C22
-+ * @phy_read_c45:	Holding the way reading PHY port using C45
-+ * @phy_write_c45:	Holding the way writing PHY port using C45
-  * @pad_setup:		Holding the way setting up the bus pad for a certain
-  *			MAC port
-  * @phy_mode_supported:	Check if the PHY type is being supported on a certain
-@@ -767,8 +769,13 @@ struct mt753x_info {
- 	const struct phylink_pcs_ops *pcs_ops;
- 
- 	int (*sw_setup)(struct dsa_switch *ds);
--	int (*phy_read)(struct mt7530_priv *priv, int port, int regnum);
--	int (*phy_write)(struct mt7530_priv *priv, int port, int regnum, u16 val);
-+	int (*phy_read_c22)(struct mt7530_priv *priv, int port, int regnum);
-+	int (*phy_write_c22)(struct mt7530_priv *priv, int port, int regnum,
-+			     u16 val);
-+	int (*phy_read_c45)(struct mt7530_priv *priv, int port, int devad,
-+			    int regnum);
-+	int (*phy_write_c45)(struct mt7530_priv *priv, int port, int devad,
-+			     int regnum, u16 val);
- 	int (*pad_setup)(struct dsa_switch *ds, phy_interface_t interface);
- 	int (*cpu_port_config)(struct dsa_switch *ds, int port);
- 	void (*mac_port_get_caps)(struct dsa_switch *ds, int port,
-diff --git a/include/net/dsa.h b/include/net/dsa.h
-index 96086289aa9b..732c7bc261a9 100644
---- a/include/net/dsa.h
-+++ b/include/net/dsa.h
-@@ -858,7 +858,7 @@ struct dsa_switch_ops {
- 	u32	(*get_phy_flags)(struct dsa_switch *ds, int port);
- 
- 	/*
--	 * Access to the switch's PHY registers.
-+	 * Access to the switch's PHY registers. C22 only.
- 	 */
- 	int	(*phy_read)(struct dsa_switch *ds, int port, int regnum);
- 	int	(*phy_write)(struct dsa_switch *ds, int port,
+We don't have any workarounds like arm_arch_timer, so we do not need
+this indirection through vdso_default. You can set .vdso_clock_mode
+directly in the declaration of riscv_clocksource.
 
--- 
-2.30.2
+Regards,
+Samuel
+
+> +
+>  static int riscv_clock_next_event(unsigned long delta,
+>  		struct clock_event_device *ce)
+>  {
+> @@ -158,6 +164,7 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+>  		return -ENODEV;
+>  	}
+>  
+> +	riscv_clocksource.vdso_clock_mode = vdso_default;
+>  	pr_info("%s: Registering clocksource cpuid [%d] hartid [%lu]\n",
+>  	       __func__, cpuid, hartid);
+>  	error = clocksource_register_hz(&riscv_clocksource, riscv_timebase);
+
