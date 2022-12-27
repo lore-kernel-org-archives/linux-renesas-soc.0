@@ -2,45 +2,46 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BF6C5479D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8527CC4708D
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Dec 2022 23:08:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232417AbiL0XIL (ORCPT
+        id S232430AbiL0XIL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 27 Dec 2022 18:08:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45192 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232225AbiL0XHq (ORCPT
+        with ESMTP id S231835AbiL0XHq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 27 Dec 2022 18:07:46 -0500
 Received: from mail.3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3067B4A3;
-        Tue, 27 Dec 2022 15:07:30 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23833B4A4;
+        Tue, 27 Dec 2022 15:07:31 -0800 (PST)
 Received: from mwalle01.sab.local (unknown [213.135.10.150])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id A15E416E4;
-        Wed, 28 Dec 2022 00:07:28 +0100 (CET)
+        by mail.3ffe.de (Postfix) with ESMTPSA id 72ABA16E8;
+        Wed, 28 Dec 2022 00:07:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1672182448;
+        t=1672182449;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Lgn0fUyj9IFSMk8AaMRWHgs4+wjSuyxk0Wk78bhVnA0=;
-        b=IG0HA2I8gt7HTMttS+b2tDKuI+ZaK9lzIPDjQBgMcPDv+Sb+AQ04m0EIUHjw0vVjK3qAfP
-        Jjc1a6hxYB7nXWgWzd4Mp/YFFEZj4pdgYbpDeRlP4y4pCCOkaHptZjaR5GoQfgoBvkPhen
-        uKC7DNiXTYMiJAJcMqpyIR2wpNjzJUvp6j7XXnTcleUDN+1nE6gepIOPcco06qgQU102HZ
-        3HyGptcDoFFK6PgavhIw+fZma1kC85QGmPShdRozl5NtLesMgWQCUwM/pMZ5NZiKwu1OHy
-        Hz2taTVz9lmvUkfLkI3tCAViCdGPkzBqusQnp0EOv8Y6i/BbkVIboWqtISCwMw==
+        bh=EtKt42zATBVdhhVN4u6oBH/TSlZiEUvG2BWKEVPzk14=;
+        b=M1YZBVs+yYhVfmD6UjKZ3McECNIVJ3SEJVo6ydAZ32tQCQ0kDa+hGXdGCA4dAfWqcARxEp
+        iX8bcz+n5JLsKvT+2Q8nVcDNThws6ry+orAe+sxuI+FPO74hEqxB9jADPdUTU0zllGtX2P
+        S2Ye89/BMwzc8RRfohTn1QI8i9cjlCYIkTfmXRpYiey4CNEdJFEJlYBF40CC7D/eHFsxK/
+        6dsGWInxYFW08fOjEEv1OjLhJGIV2c1uGCeFwaIlh3jnzyKiel9O6EjNdM+r/2/JGer+K0
+        jOJF1FQREQC8C3edQNM3CeViZD/HOWDjGkDrUdXXP2cXux1i7vebt91+lrCH3g==
 From:   Michael Walle <michael@walle.cc>
-Date:   Wed, 28 Dec 2022 00:07:23 +0100
-Subject: [PATCH RFC net-next v2 07/12] net: mdio: mvmdio: Convert XSMI bus to new API
+Date:   Wed, 28 Dec 2022 00:07:25 +0100
+Subject: [PATCH RFC net-next v2 09/12] net: ethernet: freescale: fec: Separate
+ C22 and C45 transactions for xgmac
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20221227-v6-2-rc1-c45-seperation-v2-7-ddb37710e5a7@walle.cc>
+Message-Id: <20221227-v6-2-rc1-c45-seperation-v2-9-ddb37710e5a7@walle.cc>
 References: <20221227-v6-2-rc1-c45-seperation-v2-0-ddb37710e5a7@walle.cc>
 In-Reply-To: <20221227-v6-2-rc1-c45-seperation-v2-0-ddb37710e5a7@walle.cc>
 To:     Heiner Kallweit <hkallweit1@gmail.com>,
@@ -74,81 +75,229 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Andrew Lunn <andrew@lunn.ch>
 
-The marvell MDIO driver supports two different hardware blocks. The
-XSMI block is C45 only. Convert this block to the new API, and only
-populate the c45 calls in the bus structure.
+The fec MDIO bus driver can perform both C22 and C45 transfers.
+Create separate functions for each and register the C45 versions using
+the new API calls where appropriate.
 
 Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- drivers/net/ethernet/marvell/mvmdio.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+v2:
+ - [al] Fixup some indentation
+---
+ drivers/net/ethernet/freescale/fec_main.c | 153 ++++++++++++++++++++----------
+ 1 file changed, 103 insertions(+), 50 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvmdio.c b/drivers/net/ethernet/marvell/mvmdio.c
-index ef878973b859..2d654a40af13 100644
---- a/drivers/net/ethernet/marvell/mvmdio.c
-+++ b/drivers/net/ethernet/marvell/mvmdio.c
-@@ -204,21 +204,17 @@ static const struct orion_mdio_ops orion_mdio_xsmi_ops = {
- 	.poll_interval_max = MVMDIO_XSMI_POLL_INTERVAL_MAX,
- };
- 
--static int orion_mdio_xsmi_read(struct mii_bus *bus, int mii_id,
--				int regnum)
-+static int orion_mdio_xsmi_read_c45(struct mii_bus *bus, int mii_id,
-+				    int dev_addr, int regnum)
- {
- 	struct orion_mdio_dev *dev = bus->priv;
--	u16 dev_addr = (regnum >> 16) & GENMASK(4, 0);
- 	int ret;
- 
--	if (!(regnum & MII_ADDR_C45))
--		return -EOPNOTSUPP;
--
- 	ret = orion_mdio_wait_ready(&orion_mdio_xsmi_ops, bus);
- 	if (ret < 0)
- 		return ret;
- 
--	writel(regnum & GENMASK(15, 0), dev->regs + MVMDIO_XSMI_ADDR_REG);
-+	writel(regnum, dev->regs + MVMDIO_XSMI_ADDR_REG);
- 	writel((mii_id << MVMDIO_XSMI_PHYADDR_SHIFT) |
- 	       (dev_addr << MVMDIO_XSMI_DEVADDR_SHIFT) |
- 	       MVMDIO_XSMI_READ_OPERATION,
-@@ -237,21 +233,17 @@ static int orion_mdio_xsmi_read(struct mii_bus *bus, int mii_id,
- 	return readl(dev->regs + MVMDIO_XSMI_MGNT_REG) & GENMASK(15, 0);
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 644f3c963730..e6238e53940d 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -1987,47 +1987,74 @@ static int fec_enet_mdio_wait(struct fec_enet_private *fep)
+ 	return ret;
  }
  
--static int orion_mdio_xsmi_write(struct mii_bus *bus, int mii_id,
--				int regnum, u16 value)
-+static int orion_mdio_xsmi_write_c45(struct mii_bus *bus, int mii_id,
-+				     int dev_addr, int regnum, u16 value)
+-static int fec_enet_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
++static int fec_enet_mdio_read_c22(struct mii_bus *bus, int mii_id, int regnum)
  {
- 	struct orion_mdio_dev *dev = bus->priv;
--	u16 dev_addr = (regnum >> 16) & GENMASK(4, 0);
- 	int ret;
+ 	struct fec_enet_private *fep = bus->priv;
+ 	struct device *dev = &fep->pdev->dev;
+ 	int ret = 0, frame_start, frame_addr, frame_op;
+-	bool is_c45 = !!(regnum & MII_ADDR_C45);
  
--	if (!(regnum & MII_ADDR_C45))
--		return -EOPNOTSUPP;
--
- 	ret = orion_mdio_wait_ready(&orion_mdio_xsmi_ops, bus);
+ 	ret = pm_runtime_resume_and_get(dev);
  	if (ret < 0)
  		return ret;
  
--	writel(regnum & GENMASK(15, 0), dev->regs + MVMDIO_XSMI_ADDR_REG);
-+	writel(regnum, dev->regs + MVMDIO_XSMI_ADDR_REG);
- 	writel((mii_id << MVMDIO_XSMI_PHYADDR_SHIFT) |
- 	       (dev_addr << MVMDIO_XSMI_DEVADDR_SHIFT) |
- 	       MVMDIO_XSMI_WRITE_OPERATION | value,
-@@ -302,8 +294,8 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 		bus->write = orion_mdio_smi_write;
- 		break;
- 	case BUS_TYPE_XSMI:
--		bus->read = orion_mdio_xsmi_read;
--		bus->write = orion_mdio_xsmi_write;
-+		bus->read_c45 = orion_mdio_xsmi_read_c45;
-+		bus->write_c45 = orion_mdio_xsmi_write_c45;
- 		break;
+-	if (is_c45) {
+-		frame_start = FEC_MMFR_ST_C45;
++	/* C22 read */
++	frame_op = FEC_MMFR_OP_READ;
++	frame_start = FEC_MMFR_ST;
++	frame_addr = regnum;
+ 
+-		/* write address */
+-		frame_addr = (regnum >> 16);
+-		writel(frame_start | FEC_MMFR_OP_ADDR_WRITE |
+-		       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(frame_addr) |
+-		       FEC_MMFR_TA | (regnum & 0xFFFF),
+-		       fep->hwp + FEC_MII_DATA);
++	/* start a read op */
++	writel(frame_start | frame_op |
++	       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(frame_addr) |
++	       FEC_MMFR_TA, fep->hwp + FEC_MII_DATA);
+ 
+-		/* wait for end of transfer */
+-		ret = fec_enet_mdio_wait(fep);
+-		if (ret) {
+-			netdev_err(fep->netdev, "MDIO address write timeout\n");
+-			goto out;
+-		}
++	/* wait for end of transfer */
++	ret = fec_enet_mdio_wait(fep);
++	if (ret) {
++		netdev_err(fep->netdev, "MDIO read timeout\n");
++		goto out;
++	}
+ 
+-		frame_op = FEC_MMFR_OP_READ_C45;
++	ret = FEC_MMFR_DATA(readl(fep->hwp + FEC_MII_DATA));
+ 
+-	} else {
+-		/* C22 read */
+-		frame_op = FEC_MMFR_OP_READ;
+-		frame_start = FEC_MMFR_ST;
+-		frame_addr = regnum;
++out:
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
++
++	return ret;
++}
++
++static int fec_enet_mdio_read_c45(struct mii_bus *bus, int mii_id,
++				  int devad, int regnum)
++{
++	struct fec_enet_private *fep = bus->priv;
++	struct device *dev = &fep->pdev->dev;
++	int ret = 0, frame_start, frame_op;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret < 0)
++		return ret;
++
++	frame_start = FEC_MMFR_ST_C45;
++
++	/* write address */
++	writel(frame_start | FEC_MMFR_OP_ADDR_WRITE |
++	       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(devad) |
++	       FEC_MMFR_TA | (regnum & 0xFFFF),
++	       fep->hwp + FEC_MII_DATA);
++
++	/* wait for end of transfer */
++	ret = fec_enet_mdio_wait(fep);
++	if (ret) {
++		netdev_err(fep->netdev, "MDIO address write timeout\n");
++		goto out;
  	}
  
++	frame_op = FEC_MMFR_OP_READ_C45;
++
+ 	/* start a read op */
+ 	writel(frame_start | frame_op |
+-		FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(frame_addr) |
+-		FEC_MMFR_TA, fep->hwp + FEC_MII_DATA);
++	       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(devad) |
++	       FEC_MMFR_TA, fep->hwp + FEC_MII_DATA);
+ 
+ 	/* wait for end of transfer */
+ 	ret = fec_enet_mdio_wait(fep);
+@@ -2045,45 +2072,69 @@ static int fec_enet_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
+ 	return ret;
+ }
+ 
+-static int fec_enet_mdio_write(struct mii_bus *bus, int mii_id, int regnum,
+-			   u16 value)
++static int fec_enet_mdio_write_c22(struct mii_bus *bus, int mii_id, int regnum,
++				   u16 value)
+ {
+ 	struct fec_enet_private *fep = bus->priv;
+ 	struct device *dev = &fep->pdev->dev;
+ 	int ret, frame_start, frame_addr;
+-	bool is_c45 = !!(regnum & MII_ADDR_C45);
+ 
+ 	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (is_c45) {
+-		frame_start = FEC_MMFR_ST_C45;
++	/* C22 write */
++	frame_start = FEC_MMFR_ST;
++	frame_addr = regnum;
+ 
+-		/* write address */
+-		frame_addr = (regnum >> 16);
+-		writel(frame_start | FEC_MMFR_OP_ADDR_WRITE |
+-		       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(frame_addr) |
+-		       FEC_MMFR_TA | (regnum & 0xFFFF),
+-		       fep->hwp + FEC_MII_DATA);
++	/* start a write op */
++	writel(frame_start | FEC_MMFR_OP_WRITE |
++	       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(frame_addr) |
++	       FEC_MMFR_TA | FEC_MMFR_DATA(value),
++	       fep->hwp + FEC_MII_DATA);
+ 
+-		/* wait for end of transfer */
+-		ret = fec_enet_mdio_wait(fep);
+-		if (ret) {
+-			netdev_err(fep->netdev, "MDIO address write timeout\n");
+-			goto out;
+-		}
+-	} else {
+-		/* C22 write */
+-		frame_start = FEC_MMFR_ST;
+-		frame_addr = regnum;
++	/* wait for end of transfer */
++	ret = fec_enet_mdio_wait(fep);
++	if (ret)
++		netdev_err(fep->netdev, "MDIO write timeout\n");
++
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
++
++	return ret;
++}
++
++static int fec_enet_mdio_write_c45(struct mii_bus *bus, int mii_id,
++				   int devad, int regnum, u16 value)
++{
++	struct fec_enet_private *fep = bus->priv;
++	struct device *dev = &fep->pdev->dev;
++	int ret, frame_start;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret < 0)
++		return ret;
++
++	frame_start = FEC_MMFR_ST_C45;
++
++	/* write address */
++	writel(frame_start | FEC_MMFR_OP_ADDR_WRITE |
++	       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(devad) |
++	       FEC_MMFR_TA | (regnum & 0xFFFF),
++	       fep->hwp + FEC_MII_DATA);
++
++	/* wait for end of transfer */
++	ret = fec_enet_mdio_wait(fep);
++	if (ret) {
++		netdev_err(fep->netdev, "MDIO address write timeout\n");
++		goto out;
+ 	}
+ 
+ 	/* start a write op */
+ 	writel(frame_start | FEC_MMFR_OP_WRITE |
+-		FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(frame_addr) |
+-		FEC_MMFR_TA | FEC_MMFR_DATA(value),
+-		fep->hwp + FEC_MII_DATA);
++	       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(devad) |
++	       FEC_MMFR_TA | FEC_MMFR_DATA(value),
++	       fep->hwp + FEC_MII_DATA);
+ 
+ 	/* wait for end of transfer */
+ 	ret = fec_enet_mdio_wait(fep);
+@@ -2381,8 +2432,10 @@ static int fec_enet_mii_init(struct platform_device *pdev)
+ 	}
+ 
+ 	fep->mii_bus->name = "fec_enet_mii_bus";
+-	fep->mii_bus->read = fec_enet_mdio_read;
+-	fep->mii_bus->write = fec_enet_mdio_write;
++	fep->mii_bus->read = fec_enet_mdio_read_c22;
++	fep->mii_bus->write = fec_enet_mdio_write_c22;
++	fep->mii_bus->read_c45 = fec_enet_mdio_read_c45;
++	fep->mii_bus->write_c45 = fec_enet_mdio_write_c45;
+ 	snprintf(fep->mii_bus->id, MII_BUS_ID_SIZE, "%s-%x",
+ 		pdev->name, fep->dev_id + 1);
+ 	fep->mii_bus->priv = fep;
 
 -- 
 2.30.2
