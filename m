@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3488AC54EBE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Jan 2023 22:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BA3C61DB3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Jan 2023 22:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232084AbjABWSc (ORCPT
+        id S232313AbjABWSe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 2 Jan 2023 17:18:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35768 "EHLO
+        Mon, 2 Jan 2023 17:18:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230255AbjABWSa (ORCPT
+        with ESMTP id S231671AbjABWSc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jan 2023 17:18:30 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62BCA9597;
-        Mon,  2 Jan 2023 14:18:29 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id y8so27536360wrl.13;
-        Mon, 02 Jan 2023 14:18:29 -0800 (PST)
+        Mon, 2 Jan 2023 17:18:32 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1398959A;
+        Mon,  2 Jan 2023 14:18:30 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id z10so27545114wrh.10;
+        Mon, 02 Jan 2023 14:18:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H15gyDSpUXGDZrye0xN/l+xb3zKX71oopvUZ32rfgtQ=;
-        b=mFYQJWtLQZKDfkCEytqAMWEieSB655zyyJkPCBlTtjlniCU4e4/PhLrnnlSro+etMT
-         b+0GTh5QF3ZNKKiZcWvweAGoYkJRp9oNwWYoBnPV5upOFrJjoS61dj6jiw7V5dgUIxaL
-         6ZbLSsWR+EjiX3j+R7PEhqZmY1ao2Tv5UQTP86Zcq7iHTaCX4/YlmCkutBce4uQcl0k+
-         J7FcOg1/uCPSeuUXjtbbAudIUxLighpAcfNhJdpJhT0cSwvzKAidvHeXV9Pp31lieA53
-         RFmpPh4r3dFnvYpRBoNg+55npG1oC3ta0z/80A7IWyGQqfnchm43L113+xqhl2vgBjce
-         Ul7w==
+        bh=hMZRtaPPVHL/2Wi999fCNjn9JIZeuxKV8e4ZpxQ+jaQ=;
+        b=lEaOVXQlaJ0dgRcDjRuoTjvWMCBFwUAvZCKyGSqsN+VGU96pxwzGF0OFf0IGN25CTR
+         eE99pnng1vbhs4S+JG1hkhFw/3zIoSCD08cf+25EIMi9ye5Dyol43OiP+c90Ty5bR8oI
+         RYakFLaPJ/9snsHBvgcRgi6w/v7ibiaflvulb5QA/kYBs0zcW2kNnM3MXpsok7duzYnW
+         iCDOiKbpb85XIywKGL2+vJ8oKWRgI+0dy7yiggihqQLKcbUfaFfCaGjBCH7eREP3wFKT
+         wCkdVKYE94k/jLBOsZcpOGsTdwv9nnftKJfi3OE161LqCuYL4WxtbM7O3xTpU5Xd5e16
+         FCAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H15gyDSpUXGDZrye0xN/l+xb3zKX71oopvUZ32rfgtQ=;
-        b=Tz0JVfcyHORCNNteACTn2Z+FhjN03dq6OT9PYQRBbwdHygP+vI6+Z056XSk2lTteqa
-         j0wmbTPc4MICByrb14LPKK36gl1+MUsaHXqV/LcK8fa+0efQjWwjLhhEdtr4FqkcD1pG
-         OQNZzpgpM9JlGRe2yPDR24sQ95Vjnzp+RnMR4e8IlxlCY05H6VNHolWnrp/PhsujKZ+Z
-         eo7RZWL6mSfpC3TRj4MrNzpBDk21YkDBiipz2g3EDOwYAXSOvG2xHmxBGgOvITCU3YHp
-         RGdND/1YEJ/fsHRjbYcHop/YnmKEfSVho771COsPc+Hpc0nfR9a1A/fLmRk4uzozNZmK
-         eOTg==
-X-Gm-Message-State: AFqh2kp0xalqVBAkWchy5/VcnX21Oi4iCrHSQT6OztP+k/sPOTWn2VKm
-        8UdQEm313BR4slIRXcQwy58=
-X-Google-Smtp-Source: AMrXdXstyOj31GZuLxe3FVT4gShMarTI16z2Heq/dCjoJUmYH1CqdhQ5bxsj0IuOEVb189u02VTPnw==
-X-Received: by 2002:adf:e284:0:b0:29d:f817:42c1 with SMTP id v4-20020adfe284000000b0029df81742c1mr973584wri.54.1672697907832;
-        Mon, 02 Jan 2023 14:18:27 -0800 (PST)
+        bh=hMZRtaPPVHL/2Wi999fCNjn9JIZeuxKV8e4ZpxQ+jaQ=;
+        b=kfF0qcxEMaiUUWnffZZy/KL8FHfgrqzMujoy9iXadfV6w2oEwVF+yRoANtfPgIMe7w
+         32lQp35vHFD5z/CgCRpnp44RWfsEmSQxgYjKexJRVQRiy4euLAnG6vQ4cmN+WZnSEtpf
+         gEPj4Wz94+duleEt5GnZIe36G7gZikTagvZpDEO8X4IlmEBebVkHGkXa+FCJAm5H8qdC
+         ucVdi/c9Q9XusbupAX66WgQw5O8Q+cwDf8kXnSUi0aPoLnySaR4zGs42vMmBGB5q5Z8X
+         E14NOihcDzZV/hUX1zoKewvWEWVJUKXN2fj85ZzarKG4/4Mhn7RbQVnbToK0yqq7yPmL
+         06Ow==
+X-Gm-Message-State: AFqh2koRrYUtLOGjRYD/CANFg1ZXBkCVp/HIqjHJUpInuxvFcW1RVKC/
+        hsoLEkPISLjuF4Sq0sAucrM=
+X-Google-Smtp-Source: AMrXdXt4JMjUquv/ZkowNsXGtvGlCQKbc005FtJRzW9ovlUSQf+WoR2IUq8yOJb10IAtBP6XQo2KtA==
+X-Received: by 2002:adf:e19e:0:b0:297:811e:9a72 with SMTP id az30-20020adfe19e000000b00297811e9a72mr4172181wrb.54.1672697909975;
+        Mon, 02 Jan 2023 14:18:29 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:8a7:e535:b020:566a])
-        by smtp.gmail.com with ESMTPSA id n14-20020adfe34e000000b002366dd0e030sm29872463wrj.68.2023.01.02.14.18.26
+        by smtp.gmail.com with ESMTPSA id n14-20020adfe34e000000b002366dd0e030sm29872463wrj.68.2023.01.02.14.18.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jan 2023 14:18:27 -0800 (PST)
+        Mon, 02 Jan 2023 14:18:29 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
@@ -65,9 +65,9 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 2/6] pinctrl: renesas: rzg2l: Fix configuring the GPIO pins as interrupts
-Date:   Mon,  2 Jan 2023 22:18:11 +0000
-Message-Id: <20230102221815.273719-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 4/6] arm64: dts: renesas: r9a07g043u: Add IRQC node
+Date:   Mon,  2 Jan 2023 22:18:13 +0000
+Message-Id: <20230102221815.273719-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230102221815.273719-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20230102221815.273719-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -79,100 +79,99 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On the RZ/G2UL SoC we have less number of pins compared to RZ/G2L and also
-the pin configs are completely different. This patch makes sure we use the
-appropriate pin configs for each SoC (which is passed as part of the OF
-data) while configuring the GPIO pin as interrupts instead of using
-rzg2l_gpio_configs[] for all the SoCs.
+Add IRQC node to R9A07G043 (RZ/G2UL) SoC DTSI.
 
-Fixes: bfc69bdbaad1 ("pinctrl: renesas: rzg2l: Add RZ/G2UL support")
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2 -> v3
-* No change
+* Used "renesas,rzg2l-irqc" instead of "renesas,rzg2ul-irqc"
 
 v1 -> v2
-* Fixed comments pointed by Geert for variable naming
-* Added RB tag
+* Moved irqc node completely to rzg2ul SoC DTSI
+* Added interrupt-names
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi | 68 +++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 5aa3836dbc22..6f762097557a 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -130,6 +130,7 @@ struct rzg2l_dedicated_configs {
- struct rzg2l_pinctrl_data {
- 	const char * const *port_pins;
- 	const u32 *port_pin_configs;
-+	unsigned int n_ports;
- 	struct rzg2l_dedicated_configs *dedicated_pins;
- 	unsigned int n_port_pins;
- 	unsigned int n_dedicated_pins;
-@@ -1124,7 +1125,7 @@ static struct {
- 	}
- };
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+index 6af5f3bca2d1..4ebf7335cdb9 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+@@ -52,6 +52,74 @@ timer {
+ &soc {
+ 	interrupt-parent = <&gic>;
  
--static int rzg2l_gpio_get_gpioint(unsigned int virq)
-+static int rzg2l_gpio_get_gpioint(unsigned int virq, const struct rzg2l_pinctrl_data *data)
- {
- 	unsigned int gpioint;
- 	unsigned int i;
-@@ -1133,13 +1134,13 @@ static int rzg2l_gpio_get_gpioint(unsigned int virq)
- 	port = virq / 8;
- 	bit = virq % 8;
- 
--	if (port >= ARRAY_SIZE(rzg2l_gpio_configs) ||
--	    bit >= RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[port]))
-+	if (port >= data->n_ports ||
-+	    bit >= RZG2L_GPIO_PORT_GET_PINCNT(data->port_pin_configs[port]))
- 		return -EINVAL;
- 
- 	gpioint = bit;
- 	for (i = 0; i < port; i++)
--		gpioint += RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[i]);
-+		gpioint += RZG2L_GPIO_PORT_GET_PINCNT(data->port_pin_configs[i]);
- 
- 	return gpioint;
- }
-@@ -1239,7 +1240,7 @@ static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
- 	unsigned long flags;
- 	int gpioint, irq;
- 
--	gpioint = rzg2l_gpio_get_gpioint(child);
-+	gpioint = rzg2l_gpio_get_gpioint(child, pctrl->data);
- 	if (gpioint < 0)
- 		return gpioint;
- 
-@@ -1313,8 +1314,8 @@ static void rzg2l_init_irq_valid_mask(struct gpio_chip *gc,
- 		port = offset / 8;
- 		bit = offset % 8;
- 
--		if (port >= ARRAY_SIZE(rzg2l_gpio_configs) ||
--		    bit >= RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[port]))
-+		if (port >= pctrl->data->n_ports ||
-+		    bit >= RZG2L_GPIO_PORT_GET_PINCNT(pctrl->data->port_pin_configs[port]))
- 			clear_bit(offset, valid_mask);
- 	}
- }
-@@ -1519,6 +1520,7 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- static struct rzg2l_pinctrl_data r9a07g043_data = {
- 	.port_pins = rzg2l_gpio_names,
- 	.port_pin_configs = r9a07g043_gpio_configs,
-+	.n_ports = ARRAY_SIZE(r9a07g043_gpio_configs),
- 	.dedicated_pins = rzg2l_dedicated_pins.common,
- 	.n_port_pins = ARRAY_SIZE(r9a07g043_gpio_configs) * RZG2L_PINS_PER_PORT,
- 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common),
-@@ -1527,6 +1529,7 @@ static struct rzg2l_pinctrl_data r9a07g043_data = {
- static struct rzg2l_pinctrl_data r9a07g044_data = {
- 	.port_pins = rzg2l_gpio_names,
- 	.port_pin_configs = rzg2l_gpio_configs,
-+	.n_ports = ARRAY_SIZE(rzg2l_gpio_configs),
- 	.dedicated_pins = rzg2l_dedicated_pins.common,
- 	.n_port_pins = ARRAY_SIZE(rzg2l_gpio_names),
- 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common) +
++	irqc: interrupt-controller@110a0000 {
++		compatible = "renesas,r9a07g043u-irqc",
++			     "renesas,rzg2l-irqc";
++		reg = <0 0x110a0000 0 0x10000>;
++		#interrupt-cells = <2>;
++		#address-cells = <0>;
++		interrupt-controller;
++		interrupts = <SOC_PERIPHERAL_IRQ(0) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(1) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(2) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(3) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(4) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(5) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(6) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(7) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(8) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(444) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(445) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(446) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(447) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(448) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(449) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(450) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(451) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(452) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(453) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(454) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(455) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(456) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(457) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(458) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(459) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(460) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(461) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(462) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(463) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(464) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(465) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(466) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(467) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(468) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(469) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(470) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(471) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(472) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(473) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(474) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(475) IRQ_TYPE_LEVEL_HIGH>,
++			     <SOC_PERIPHERAL_IRQ(25) IRQ_TYPE_EDGE_RISING>;
++		interrupt-names = "nmi",
++				  "irq0", "irq1", "irq2", "irq3",
++				  "irq4", "irq5", "irq6", "irq7",
++				  "tint0", "tint1", "tint2", "tint3",
++				  "tint4", "tint5", "tint6", "tint7",
++				  "tint8", "tint9", "tint10", "tint11",
++				  "tint12", "tint13", "tint14", "tint15",
++				  "tint16", "tint17", "tint18", "tint19",
++				  "tint20", "tint21", "tint22", "tint23",
++				  "tint24", "tint25", "tint26", "tint27",
++				  "tint28", "tint29", "tint30", "tint31",
++				  "bus-err";
++		clocks = <&cpg CPG_MOD R9A07G043_IA55_CLK>,
++			<&cpg CPG_MOD R9A07G043_IA55_PCLK>;
++		clock-names = "clk", "pclk";
++		power-domains = <&cpg>;
++		resets = <&cpg R9A07G043_IA55_RESETN>;
++	};
++
+ 	gic: interrupt-controller@11900000 {
+ 		compatible = "arm,gic-v3";
+ 		#interrupt-cells = <3>;
 -- 
 2.25.1
 
