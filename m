@@ -2,71 +2,155 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86ACCC3DA7D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Jan 2023 12:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF82C3DA7D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Jan 2023 12:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233293AbjACMLX (ORCPT
+        id S233282AbjACMcE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 Jan 2023 07:11:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55142 "EHLO
+        Tue, 3 Jan 2023 07:32:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237540AbjACMLR (ORCPT
+        with ESMTP id S230337AbjACMcD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2023 07:11:17 -0500
-X-Greylist: delayed 377 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 03 Jan 2023 04:11:07 PST
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9683CA446
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Jan 2023 04:11:07 -0800 (PST)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by gauss.telenet-ops.be (Postfix) with ESMTPS id 4NmWcv0K5xz4x4d3
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Jan 2023 13:04:47 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:f1ca:ff0d:9dea:806e])
-        by andre.telenet-ops.be with bizsmtp
-        id 4C4m2900g2YHDVW01C4m4d; Tue, 03 Jan 2023 13:04:46 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pCg2A-001yqK-JY; Tue, 03 Jan 2023 13:04:46 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pCg2A-001OHg-6E; Tue, 03 Jan 2023 13:04:46 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [LOCAL] arm64: renesas: defconfig: Enable ARMv8.1 atomic instructions
-Date:   Tue,  3 Jan 2023 13:04:45 +0100
-Message-Id: <3a4cb7d3ab06b87a22750dc006eff0a21f3872a0.1672747463.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Tue, 3 Jan 2023 07:32:03 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8FBBFCE5;
+        Tue,  3 Jan 2023 04:32:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672749121; x=1704285121;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nLxPG5ZflyIbDiAPayFzeCH+sTmiUJr2lS1ffkhrM50=;
+  b=E95jT1xHUkfaqVrIVODE0lY1hzBvQxU7cWBtiyhXfxGIj+GCEepjTCEj
+   hHeJOCl43nmuWf1rskp5z8jNUfs6phz/2fuzDVKZ5RYqFvX6ZL5ZTfl8y
+   Jq4BSYq+PmvwhJ+08w61qxCX4p3F6zftRLUtJb/sXzksv+mUks1H+7dH0
+   GApCui5x4cHYp8HNMIcA0FqPvQoWIKFuegbS4tyTjD3RuTsnctcA/RHaf
+   p36sIO4ja8yWSg0rpUwnwY/s36iJkdf7ZSedv/KYgrZVH7hn05FoT9wEK
+   sH7WqXGAvvcZAK1CFy9lkPjNXgZRP3BAwdBqE3eWqIK9B7BXk5FnTmZUx
+   w==;
+X-IronPort-AV: E=Sophos;i="5.96,296,1665439200"; 
+   d="scan'208";a="28221129"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 03 Jan 2023 13:31:59 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Tue, 03 Jan 2023 13:31:59 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Tue, 03 Jan 2023 13:31:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672749119; x=1704285119;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nLxPG5ZflyIbDiAPayFzeCH+sTmiUJr2lS1ffkhrM50=;
+  b=QOslpDj1pxs5ofnzt6D6sf7CcgUJO+icJBRzzJzcGD+i4ZjEAti2qs0G
+   s+Olt6vphiv96ZCpOmsNi5QJRs3MrCj+HTZDiENevCzW1zTgNe61JQxE6
+   sGxAy/O8NoRw/6opweBLvFDh3EKTd63tfoWFVsvuXmNoA3PYrNYZabaMU
+   JzytFZNP+7eeoGBee9vzOsHReVFPZOujWmFtym2L79M1NUB+JPpBVjssc
+   9iCxPmzyh96Xd9yXPTZKVsuKrZ2nhjtzVtTIQqSZQpoAkslDsTRfiRKKO
+   fPomBZWwgDg1LwbNj8N/N0npk95imS3ArmrmyPBdiy0LVFyk3UGCVFY5h
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,296,1665439200"; 
+   d="scan'208";a="28221128"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 03 Jan 2023 13:31:59 +0100
+Received: from steina-w.tq-net.de (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id D694B280056;
+        Tue,  3 Jan 2023 13:31:58 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marek Vasut <marex@denx.de>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/4] clk: rs9: Check for vendor/device ID
+Date:   Tue,  3 Jan 2023 13:31:51 +0100
+Message-Id: <20230103123154.3424817-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Cortex-A55 and Cortex-A76 support ARMv8.1 atomic instructions.
+This is in preparation to support additional devices which have different
+IDs as well as a slightly different register layout.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
-Not intended for upstream merge.
-To be applied to the topic/renesas-defconfig branch.
----
- arch/arm64/configs/renesas_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/clk-renesas-pcie.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 5698d17b9ff9c265..23d649fdb6e1ac48 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -55,7 +55,6 @@ CONFIG_KEXEC=y
- CONFIG_CRASH_DUMP=y
- CONFIG_XEN=y
- CONFIG_COMPAT=y
--# CONFIG_ARM64_USE_LSE_ATOMICS is not set
- # CONFIG_ARM64_PTR_AUTH is not set
- # CONFIG_ARM64_AMU_EXTN is not set
- # CONFIG_ARM64_TLB_RANGE is not set
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index e6247141d0c0..0076ed8f11b0 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -45,6 +45,13 @@
+ #define RS9_REG_DID				0x6
+ #define RS9_REG_BCP				0x7
+ 
++#define RS9_REG_VID_IDT				0x01
++
++#define RS9_REG_DID_TYPE_FGV			(0x0 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_DBV			(0x1 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_DMV			(0x2 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_SHIFT			0x6
++
+ /* Supported Renesas 9-series models. */
+ enum rs9_model {
+ 	RENESAS_9FGV0241,
+@@ -54,6 +61,7 @@ enum rs9_model {
+ struct rs9_chip_info {
+ 	const enum rs9_model	model;
+ 	unsigned int		num_clks;
++	u8			did;
+ };
+ 
+ struct rs9_driver_data {
+@@ -270,6 +278,7 @@ static int rs9_probe(struct i2c_client *client)
+ {
+ 	unsigned char name[5] = "DIF0";
+ 	struct rs9_driver_data *rs9;
++	unsigned int vid, did;
+ 	struct clk_hw *hw;
+ 	int i, ret;
+ 
+@@ -306,6 +315,20 @@ static int rs9_probe(struct i2c_client *client)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = regmap_read(rs9->regmap, RS9_REG_VID, &vid);
++	if (ret < 0)
++		return ret;
++	ret = regmap_read(rs9->regmap, RS9_REG_DID, &did);
++	if (ret < 0)
++		return ret;
++
++	if ((vid != RS9_REG_VID_IDT) || (did != rs9->chip_info->did)) {
++		dev_err(&client->dev,
++			"Incorrect VID/DID: %#02x, %#02x. Expected %#02x, %#02x\n",
++			vid, did, RS9_REG_VID_IDT, rs9->chip_info->did);
++		return -ENODEV;
++	}
++
+ 	/* Register clock */
+ 	for (i = 0; i < rs9->chip_info->num_clks; i++) {
+ 		snprintf(name, 5, "DIF%d", i);
+@@ -349,6 +372,7 @@ static int __maybe_unused rs9_resume(struct device *dev)
+ static const struct rs9_chip_info renesas_9fgv0241_info = {
+ 	.model		= RENESAS_9FGV0241,
+ 	.num_clks	= 2,
++	.did		= RS9_REG_DID_TYPE_FGV | 0x02,
+ };
+ 
+ static const struct i2c_device_id rs9_id[] = {
 -- 
-2.25.1
+2.34.1
 
