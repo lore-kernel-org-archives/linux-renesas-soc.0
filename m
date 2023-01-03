@@ -2,135 +2,71 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21EDC3DA7D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Jan 2023 12:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86ACCC3DA7D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Jan 2023 12:11:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbjACMKm (ORCPT
+        id S233293AbjACMLX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 Jan 2023 07:10:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54638 "EHLO
+        Tue, 3 Jan 2023 07:11:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237127AbjACMKl (ORCPT
+        with ESMTP id S237540AbjACMLR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2023 07:10:41 -0500
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA51E022;
-        Tue,  3 Jan 2023 04:10:40 -0800 (PST)
-Received: by mail-vk1-f173.google.com with SMTP id i84so8298964vke.7;
-        Tue, 03 Jan 2023 04:10:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RfaW83NGJ0rvdUnRHgSi4+IHmvqlUCSBL7ZpSjvyOw0=;
-        b=TZ3l9LHllzPPbmgla+AAsrhXvrAE9cZJnsqF7CK1KEWM9yU3nu48CWpudivVfMax9N
-         NbYNR9IqimHMkKpUezHH+Jx2z19328h0rkXl2UuTlKJQ16ZY5PdnIhBm/mWAYiEt5iW9
-         CkguWQrnSSx0YPguAKYA2ubWFPCFvCInEVbbCIR9hv5Or1kLsZlMG9UrlzxvYqBjY+E6
-         srM9+6uJKsXvbO7w7HQSwtnwotaOuM52c7uho7KPyS3KihIQLIivDjajxMqBshVjBB+1
-         P0L33aoGFGdqj9TXwUrlTr1Tp1zYn5aBpOz4RA+Ud9Yvox1TcQl87OXCLaezaDsBIuyg
-         5ACw==
-X-Gm-Message-State: AFqh2kqKrxvAgi8+nNFYWQspl6b2T7wWSYLuqL0oKTEtZeH9QRjsH3rL
-        CT1QVbGTgFrMAVlwwq8/PnW5d0/5+Rzb6g==
-X-Google-Smtp-Source: AMrXdXuWjyK2YkuczdB40iHdoO3izZreJyAW4zE3GZ+HJ4WwPPYwf39VJXhGLDLscsYOD1hS623X8Q==
-X-Received: by 2002:a1f:18cc:0:b0:3d5:6f50:3fc7 with SMTP id 195-20020a1f18cc000000b003d56f503fc7mr11859066vky.2.1672747839020;
-        Tue, 03 Jan 2023 04:10:39 -0800 (PST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id y1-20020a37f601000000b006fa2b1c3c1esm21753222qkj.58.2023.01.03.04.10.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jan 2023 04:10:38 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-4a0d6cb12c5so104363427b3.7;
-        Tue, 03 Jan 2023 04:10:37 -0800 (PST)
-X-Received: by 2002:a05:690c:c02:b0:48d:1334:6e38 with SMTP id
- cl2-20020a05690c0c0200b0048d13346e38mr2403543ywb.316.1672747837138; Tue, 03
- Jan 2023 04:10:37 -0800 (PST)
+        Tue, 3 Jan 2023 07:11:17 -0500
+X-Greylist: delayed 377 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 03 Jan 2023 04:11:07 PST
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9683CA446
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Jan 2023 04:11:07 -0800 (PST)
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by gauss.telenet-ops.be (Postfix) with ESMTPS id 4NmWcv0K5xz4x4d3
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Jan 2023 13:04:47 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:f1ca:ff0d:9dea:806e])
+        by andre.telenet-ops.be with bizsmtp
+        id 4C4m2900g2YHDVW01C4m4d; Tue, 03 Jan 2023 13:04:46 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pCg2A-001yqK-JY; Tue, 03 Jan 2023 13:04:46 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pCg2A-001OHg-6E; Tue, 03 Jan 2023 13:04:46 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] [LOCAL] arm64: renesas: defconfig: Enable ARMv8.1 atomic instructions
+Date:   Tue,  3 Jan 2023 13:04:45 +0100
+Message-Id: <3a4cb7d3ab06b87a22750dc006eff0a21f3872a0.1672747463.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20221221210917.458537-1-fabrizio.castro.jz@renesas.com>
- <20221221210917.458537-3-fabrizio.castro.jz@renesas.com> <CAMuHMdXDwEUzBpG+w_G6=CzKo=n92cdVw6v8JwOwf9o86HnOZQ@mail.gmail.com>
- <TYWPR01MB87758FB15ED12D396AE738DDC2F49@TYWPR01MB8775.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYWPR01MB87758FB15ED12D396AE738DDC2F49@TYWPR01MB8775.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Jan 2023 13:10:25 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU=Kwi80akxRUFUYz4QKQBkSog2xb4tw=DjJApAr-n5Lw@mail.gmail.com>
-Message-ID: <CAMuHMdU=Kwi80akxRUFUYz4QKQBkSog2xb4tw=DjJApAr-n5Lw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] mfd: Add RZ/V2M PWC core driver
-To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee@kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Fabrizio,
+Cortex-A55 and Cortex-A76 support ARMv8.1 atomic instructions.
 
-On Tue, Jan 3, 2023 at 1:05 PM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Wed, Dec 21, 2022 at 10:09 PM Fabrizio Castro
-> > <fabrizio.castro.jz@renesas.com> wrote:
-> > > The External Power Sequence Controller (PWC) IP (found in the
-> > > RZ/V2M SoC) is a controller for external power supplies (regulators
-> > > and power switches), and it supports the following features: it
-> > > generates a power on/off sequence for external power supplies,
-> > > it generates an on/off sequence for the LPDDR4 core power supply
-> > > (LPVDD), it comes with General-Purpose Outputs, and it processes
-> > > key input signals.
-> >
-> > Thanks for your patch!
-> >
-> > > The PWC is basically a Multi-Function Device (MFD), its software
-> > > support comes with a core driver, and specialized drivers for
-> > > its specific features.
-> >
-> > I have to admit I'm not such a big fan of MFD.  In this driver,
-> > you are not even sharing resources in the MFD cells, just the mapped
-> > register base.  So I think you can easily save +100 LoC and reduce
-> > maintenance synchronization overhead across subsystems by just having
-> > a single non-MFD driver instead.
-> >
-> > Did you pick MFD because the PWC poweroff feature depends on board
-> > wiring, and thus is optional?
->
-> I am not a big fan of MFD, either.
-> I picked MFD because we were not 100% sure of what the IP could do
-> when we started working on it.
-> I have received more information regarding the IP now (which I don't
-> have the liberty to discuss), I am still not 100% sure that's all
-> of it, but basically its support may require expansion later on.
->
-> I liked the solution based on syscon and simple-mfd for several reasons,
-> but having dropped syscon and simple-mfd due to issues with the dt-bindings
-> I have moved on with a core driver to instantiate the required SW support.
-> We could of course move to a unified driver if that makes more sense?
-> If we were to move to unified driver, under which directory would you
-> suggest we put it?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
+To be applied to the topic/renesas-defconfig branch.
+---
+ arch/arm64/configs/renesas_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-As the GPIO part is larger than the poweroff part, I would put it under
-drivers/gpio/.  Although drivers/soc/renesas/ could be an option, too.
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 5698d17b9ff9c265..23d649fdb6e1ac48 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -55,7 +55,6 @@ CONFIG_KEXEC=y
+ CONFIG_CRASH_DUMP=y
+ CONFIG_XEN=y
+ CONFIG_COMPAT=y
+-# CONFIG_ARM64_USE_LSE_ATOMICS is not set
+ # CONFIG_ARM64_PTR_AUTH is not set
+ # CONFIG_ARM64_AMU_EXTN is not set
+ # CONFIG_ARM64_TLB_RANGE is not set
+-- 
+2.25.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
