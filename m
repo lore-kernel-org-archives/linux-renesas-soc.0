@@ -2,54 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196E7C54EBE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBA0C63705
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Jan 2023 14:14:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239540AbjADON3 (ORCPT
+        id S239557AbjADONa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Jan 2023 09:13:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39056 "EHLO
+        Wed, 4 Jan 2023 09:13:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239678AbjADOMv (ORCPT
+        with ESMTP id S239589AbjADOM4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2023 09:12:51 -0500
+        Wed, 4 Jan 2023 09:12:56 -0500
 Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE9B5B1E;
-        Wed,  4 Jan 2023 06:12:49 -0800 (PST)
-Received: by mail-il1-x12c.google.com with SMTP id a9so7177743ilk.6;
-        Wed, 04 Jan 2023 06:12:49 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2B3317436;
+        Wed,  4 Jan 2023 06:12:54 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id h26so5252848ila.11;
+        Wed, 04 Jan 2023 06:12:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/UGqMaPLn0RLZcUOfGRM9RvG3oDMMZB7aFPu1G+vN0=;
-        b=dPvuEHDFGE+DgSimMZg76EeydzCN0DS7QJzALtiaoOtgqaP9ZCwW2NrjwDn6Dw85JS
-         adhFdGP4hbufKFHp9QwzxGBiDDdRwOLastqdXNvzQpYvM992GVFM4eb8HVbruHELlImI
-         TVHpCs86NGZcZSutHdtsj+UenvnjVQj1pSEVtvVWQvp8E+A639t6MU01+jfUCcy6IdCd
-         d9C8n+SHAEbRt3rPajHupQ1vg2cMLSG1h2+0zqC5hyy33fH+tsCQ5psssa7m3X8VB0Mv
-         0qguy7pb3fgU/AUQfvUgQ8tygNyfWO11YZVbXB5XNzldz2Uvn4SWtALufmPw2cI36G1V
-         pu6g==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3eN7znNKYTa9krobv4+Aewqusj4mCG05iDkS6u0BXH8=;
+        b=ik02FyR7tS+1Zy/4J4YB9vqWUgilcA3aI9U833ci06Uc55/E6HX51KW0SAjm11TmMO
+         VXo1dgAdQprfmkg2+I6tpPrhHH02EgroKgm3EQJb/QMDAO/X1xxToAFoOd/JSZoGMN49
+         UfxEK6AIGGm3Ac8wK0iYSQPFkTLkL8jq2fy16Rp6zTXDxen2wU1BNdzUvNNWbZ+Sg/Ir
+         Q2QHBDfbAW5CyrBAie6Ro6ZGVmkZf6rtfP6EBMq6wq/V58ksrsjvoHTLj3Uu0xRdM+NQ
+         lBfvXCLjW2maqZkBAp+wF/t1teSU3No9Wd2Cjz9vVQAKUdXh7xgSfaEONMf3dSoHJzd3
+         zPnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/UGqMaPLn0RLZcUOfGRM9RvG3oDMMZB7aFPu1G+vN0=;
-        b=XKo6/lEyrdPW2DNgznd6JduXMlA+QOF2EHCb0TAFR4Vgy0fKW76jtkySq67IC+VB/B
-         JAOEDNWLiQN982/mAjdSdpiVcID8Wc6e2Wp//zy4E2wUvLBbD3sr2Nf3Molb+i/FS6Of
-         ASGD8mI8tRlQV7DNriSxbvG/MrzQsue7RFlvQM8Nrp2vfBEkI5hPHJ5fKZCcNcq3d7Pv
-         U2x0CPmY0CtTR2kMm7xQm5c03lNYGug17O1nYa5zglLwljaZIbpslfjlL11m3rgGBHrz
-         ay2GlTziDu+X6rGutTAaTsKoGtZzx5fOqCflqgrsBz4FVAZPVS5qI70PxdxhY7Xs+hvq
-         ZJTg==
-X-Gm-Message-State: AFqh2kpTSKfGTeICLGnq1aIZLkeiFk3anrgYr6CxQP0drwl/6T/6Em8x
-        418BgNygNf19YJ2c/rdNp8QZuak1YJs=
-X-Google-Smtp-Source: AMrXdXsrFS8OCAf4RSp1vImyUy3fr2Zbv2/gEXdpSY2BFjeWRwoXXXl4ROVpsv6xSVTwMZbPG+lG+Q==
-X-Received: by 2002:a92:d586:0:b0:30c:5316:d94 with SMTP id a6-20020a92d586000000b0030c53160d94mr5580126iln.31.1672841568701;
-        Wed, 04 Jan 2023 06:12:48 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3eN7znNKYTa9krobv4+Aewqusj4mCG05iDkS6u0BXH8=;
+        b=CRn/BgPTvkf1d+uEd9WDtxxl/i1r4Rm4xyDubAGR80IR6m+cwNlrZxq2rZw4yVivRF
+         d6uBojLWjDo9tAkvd/2OZX634fdtWQxyJdpYISGo8SwpuXWslgLNKTod8gOM1+a9DCoj
+         qz2u6QCYDj5lCg+fEkbe86xfwACY4ouyIWxsXcFmfiUU4XFgccaRfJkZ42KpJEeWgoq8
+         vE43yG7WzYAXTmsqO5HcpP+6vpeo2Fbhw+T8Yo3emXv1VDkgAlhXPjV1ye0rr4yh390c
+         Ml19fxFc+7Kb485Nrse0dddzRElx21esCVQmC6/aXC67jOHuoH8x5kZk2IDVHGhyVo/Z
+         zsDQ==
+X-Gm-Message-State: AFqh2kqykdXJ3LTfoE3wUNRlPpAst3Or0x4sg59+iU3/2mja4QzDp+0w
+        cqF4Vlu/oILCsa0uud6MIJnzPCFTjQM=
+X-Google-Smtp-Source: AMrXdXt/XiFtN0B6SiimEvJ4lTiEStP+6fCT3wWuFyKdHnj8cXvRc/Nnn0g20KK2at3ylkUvpntR8Q==
+X-Received: by 2002:a92:7f0f:0:b0:30c:6105:75d4 with SMTP id a15-20020a927f0f000000b0030c610575d4mr3863095ild.21.1672841573622;
+        Wed, 04 Jan 2023 06:12:53 -0800 (PST)
 Received: from aford-IdeaCentre-A730.lan ([2601:447:d001:9aea:58ca:a321:54c8:c288])
-        by smtp.gmail.com with ESMTPSA id ay28-20020a056638411c00b0038a5af5e831sm11353451jab.100.2023.01.04.06.12.47
+        by smtp.gmail.com with ESMTPSA id ay28-20020a056638411c00b0038a5af5e831sm11353451jab.100.2023.01.04.06.12.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jan 2023 06:12:47 -0800 (PST)
+        Wed, 04 Jan 2023 06:12:53 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
@@ -58,79 +59,147 @@ Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] arm64: dts: beacon-renesom: Fix gpio expander reference
-Date:   Wed,  4 Jan 2023 08:12:42 -0600
-Message-Id: <20230104141245.8407-1-aford173@gmail.com>
+Subject: [PATCH 4/4] arm64: boot: dts: r8a774[a/b/e]1-beacon: Consolidate sound clocks
+Date:   Wed,  4 Jan 2023 08:12:45 -0600
+Message-Id: <20230104141245.8407-4-aford173@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230104141245.8407-1-aford173@gmail.com>
+References: <20230104141245.8407-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The board used to originally introduce the Beacon Embedded
-RZ/G2[M/N/H] boards had a GPIO expander with address 20, but
-this was change when the final board went to production.
+Each kit-level file represents a SOM + baseboard for a specific
+SoC type and uses specific clocks unique to each SoC.  With the
+exception of one clock, the rest of the clock info was duplicated.
 
-The production boards changed both the part itself and
-the address.  With the incorrect address, the LCD cannot
-come up.  If the LCD fails, the rcar-du driver fails to come up,
-and that also breaks HDMI.
+There is a generic clock called CPG_AUDIO_CLK_I defined in each of
+the SoC DTSI files which points to this unique clock. By using that,
+the clock information for the rcar_sound can be consolidated into
+the baseboard file and have it reference this generic clock thus
+removing the duplication from the three variants.
 
-Pre-release board were not shipped to the general public, so it
-should be safe to push this as a fix.  Anyone with a production
-board would have video fail due to this GPIO expander change.
-
-Fixes: a1d8a344f1ca ("arm64: dts: renesas: Introduce r8a774a1-beacon-rzg2m-kit")
 Signed-off-by: Adam Ford <aford173@gmail.com>
 
 diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index 8166e3c1ff4e..8b6fe235a8f0 100644
+index b7741c10e778..b31634c13d21 100644
 --- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
 +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -437,20 +437,6 @@ wm8962_endpoint: endpoint {
- 		};
- 	};
+@@ -639,6 +639,25 @@ &rcar_sound {
+ 	#clock-cells = <1>;
+ 	clock-frequency = <11289600>;
  
--	/* 0 - lcd_reset */
--	/* 1 - lcd_pwr */
--	/* 2 - lcd_select */
--	/* 3 - backlight-enable */
--	/* 4 - Touch_shdwn */
--	/* 5 - LCD_H_pol */
--	/* 6 - lcd_V_pol */
--	gpio_exp1: gpio@20 {
--		compatible = "onnn,pca9654";
--		reg = <0x20>;
--		gpio-controller;
--		#gpio-cells = <2>;
--	};
--
- 	touchscreen@26 {
- 		compatible = "ilitek,ili2117";
- 		reg = <0x26>;
-@@ -482,6 +468,21 @@ hd3ss3220_out_ep: endpoint {
- 			};
- 		};
- 	};
++	/* Reference versaclock instead of audio_clk_a */
++	clocks = <&cpg CPG_MOD 1005>,
++		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
++		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
++		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
++		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
++		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
++		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
++		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
++		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
++		 <&versaclock6_bb 4>, <&audio_clk_b>,
++		 <&audio_clk_c>,
++		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
 +
-+	gpio_exp1: gpio@70 {
-+		compatible = "onnn,pca9654";
-+		reg = <0x70>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names =
-+			"lcd_reset",
-+			"lcd_pwr",
-+			"lcd_select",
-+			"backlight-enable",
-+			"Touch_shdwn",
-+			"LCD_H_pol",
-+			"lcd_V_pol";
-+	};
- };
+ 	status = "okay";
  
- &lvds0 {
+ 	ports {
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
+index 7c0e3252ce65..e077079099c4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
+@@ -58,24 +58,3 @@ &du {
+ 	clock-names = "du.0", "du.1", "du.2",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2";
+ };
+-
+-/* Reference versaclock instead of audio_clk_a */
+-&rcar_sound {
+-	clocks = <&cpg CPG_MOD 1005>,
+-		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+-		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+-		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+-		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
+-		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
+-		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
+-		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
+-		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
+-		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+-		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+-		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+-		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+-		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+-		 <&versaclock6_bb 4>, <&audio_clk_b>,
+-		 <&audio_clk_c>,
+-		 <&cpg CPG_CORE R8A774A1_CLK_S0D4>;
+-};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+index f1fbd687d0f4..df51c4c46c9a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+@@ -46,24 +46,3 @@ &du {
+ 	clock-names = "du.0", "du.1", "du.3",
+ 		"dclkin.0", "dclkin.1", "dclkin.3";
+ };
+-
+-/* Reference versaclock instead of audio_clk_a */
+-&rcar_sound {
+-	clocks = <&cpg CPG_MOD 1005>,
+-		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+-		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+-		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+-		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
+-		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
+-		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
+-		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
+-		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
+-		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+-		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+-		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+-		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+-		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+-		 <&versaclock6_bb 4>, <&audio_clk_b>,
+-		 <&audio_clk_c>,
+-		 <&cpg CPG_CORE R8A774B1_CLK_S0D4>;
+-};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
+index 7ee1a1bed212..943671177991 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
+@@ -51,24 +51,3 @@ &du {
+ 	clock-names = "du.0", "du.1", "du.3",
+ 		"dclkin.0", "dclkin.1", "dclkin.3";
+ };
+-
+-/* Reference versaclock instead of audio_clk_a */
+-&rcar_sound {
+-	clocks = <&cpg CPG_MOD 1005>,
+-		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+-		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+-		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+-		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
+-		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
+-		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
+-		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
+-		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
+-		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+-		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+-		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+-		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+-		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+-		 <&versaclock6_bb 4>, <&audio_clk_b>,
+-		 <&audio_clk_c>,
+-		 <&cpg CPG_CORE R8A774E1_CLK_S0D4>;
+-};
 -- 
 2.34.1
 
