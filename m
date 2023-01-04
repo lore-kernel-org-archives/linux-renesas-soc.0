@@ -2,158 +2,100 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412DAC46467
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Jan 2023 12:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C530CC54EBC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Jan 2023 14:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239330AbjADMVD (ORCPT
+        id S237684AbjADON2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Jan 2023 07:21:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47198 "EHLO
+        Wed, 4 Jan 2023 09:13:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239197AbjADMU0 (ORCPT
+        with ESMTP id S239547AbjADOMw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2023 07:20:26 -0500
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B74EA3B928;
-        Wed,  4 Jan 2023 04:19:11 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1AFD75C016C;
-        Wed,  4 Jan 2023 07:19:08 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Wed, 04 Jan 2023 07:19:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1672834748; x=1672921148; bh=PKp//PUcPl
-        ATzvWVd6Xv2r7lr60JNRd0OJM9+iZsPUo=; b=TzdKUjktPVF29RGzt79d4JMhWU
-        RLeXQbUAmaZIfjooDAmWrX/xV3HlmYGb6w99qWzC1jsXWPlkbXJGbGjbmbispKAL
-        jkWOi+zyoK9Go03dJ7ZZXn6P9HaJxW/lL6ViMABml566QZe/I5WyVJgZHBDKLoDP
-        8BbWhji+6KtVJ+qX53VyK0kEB4I9GyovHPo+j8AXSa9/xw17g2QrVM5brKqJPNQH
-        0cISFbbFtyL6lw8BNnJMw74JAiHU6VHMl4WWyaJEdzFEpdmv12t25X+zucpvpY7m
-        b4gclV3TpHtk/niVI+jQHX9JHxwSuKqlh8/5Qx6LdKA/MqqHKM/BTfBxQD2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1672834748; x=1672921148; bh=PKp//PUcPlATzvWVd6Xv2r7lr60J
-        NRd0OJM9+iZsPUo=; b=RxKXxfp863lPw897yGPAfp3FxiKDhweFKNrdC1umzkio
-        wiSZvG2aggiTGe97fVKZORNaDSKYfyQ+MBaVk++UGQlJ4Q1oTdewas0y//oz0Djb
-        pQ1YOofViasq/pIbiXh4YZU9Wtwl8mPaQf+LmbAFFUmwFXELY0vl00yXWi63Y0GQ
-        lCt4T6Pzn8ZXSC0aJ62d8kPMqvfstftfXQlSaDiNo1YHZm8Jewc7joE4heocmfni
-        WYAI3PXCwGtWfqnuqkQTdBV1sToW73kiUB4f7OkJaziJ78hlEMk9ERbEJ6Ze0Mlr
-        +9IMM3ou2tPMuU88lldIEShNe8/HTFdWZS8Ve978Tw==
-X-ME-Sender: <xms:um61Y508ghAtjmy6Hhz68qG1SmugkRepMcCLDP3X_bX2-VnJtF5cNQ>
-    <xme:um61YwH5mlh-FwnxnLhiLK2JSOb50HcqBcHLLaRD8_gemvQrF46wMa3HHqN5NCuqP
-    WsDVUIISyJRqP5USpM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrjeeigdeflecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:um61Y55D_1dKvjVnaRGEa-pdQMDXFxz4zM0lSL6JvhVyEq_e0KGyYA>
-    <xmx:um61Y20q-2wOMSaool21cqweprgJJ-HfED1Q8Jrppb7O1m5zWTFjtQ>
-    <xmx:um61Y8HCzu1udqIAWkUeIdN82vnG8DNilXdC2rZoxy2pbULU6fRSGg>
-    <xmx:vG61Y9tqKQEJX0G3uqfBDZRWaRB69NNwS_vNl1AvROTT3EidLaCgvA>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 20FCCB60086; Wed,  4 Jan 2023 07:19:06 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
-Mime-Version: 1.0
-Message-Id: <1b7d4caa-2c9c-4aef-81ac-47288d3a652c@app.fastmail.com>
-In-Reply-To: <Y7VpeK48nslxklkF@spud>
-References: <Y62nOqzyuUKqYDpq@spud>
- <20230103210400.3500626-10-conor@kernel.org>
- <b5712732-40a2-4e29-b29f-e0ab5516d518@app.fastmail.com>
- <Y7TBh+CJdZPJ6Xzl@spud>
- <ed198390-1bde-44ec-9f3f-b0e016b4b24c@app.fastmail.com>
- <CFB874A3-3E6F-4C5B-B47D-381EB1E07C02@kernel.org>
- <43aee000-5b89-4d94-98d2-b37b1a18a83e@app.fastmail.com>
- <Y7VpeK48nslxklkF@spud>
-Date:   Wed, 04 Jan 2023 13:18:45 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Conor Dooley" <conor@kernel.org>
-Cc:     "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        "Conor.Dooley" <conor.dooley@microchip.com>,
-        "Andrew Jones" <ajones@ventanamicro.com>,
-        "Albert Ou" <aou@eecs.berkeley.edu>,
-        "Anup Patel" <apatel@ventanamicro.com>,
-        "Atish Patra" <atishp@rivosinc.com>,
-        "Biju Das" <biju.das.jz@bp.renesas.com>,
-        devicetree@vger.kernel.org,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        guoren <guoren@kernel.org>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "Jisheng Zhang" <jszhang@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        "Magnus Damm" <magnus.damm@gmail.com>,
-        "Nathan Chancellor" <nathan@kernel.org>,
-        "Paul Walmsley" <paul.walmsley@sifive.com>,
-        "Philipp Tomsich" <philipp.tomsich@vrull.eu>,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Samuel Holland" <samuel@sholland.org>, soc@kernel.org,
-        "Daire McNamara" <daire.mcnamara@microchip.com>
-Subject: Re: [RFC v5.1 9/9] [DON'T APPLY] cache: sifive-ccache: add cache flushing
- capability
-Content-Type: text/plain
+        Wed, 4 Jan 2023 09:12:52 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F1F624A;
+        Wed,  4 Jan 2023 06:12:51 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id q190so18054420iod.10;
+        Wed, 04 Jan 2023 06:12:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nGDfPcMh2o9V23BmewOoC5pZ8xD/PzamwtTk3JNsF7k=;
+        b=oTS8GOu+0AE3ZzWfBR6dXlTD/jm461Ob8GNmglyv2+Q2VLKA3DvOKEOQGNTGaHmh5S
+         1+eNFbGzRfz+M3VIlq9/11s13JD8FoBiY3CY9vs8vrZ5iqdpz61yJQhit91vxM0tvqeS
+         uaTrcszYCIRAxSBlW8oM18oVSY9XHQf8KR1YhWMl83fYB7kq8VO5M4lZGn7pIJYlGjxh
+         OPKBbh2u/0gtr56PRYBCZbdElVklwCXZhDhsC/XghjoWbtN81FKmaqim/A21HxDJy271
+         qdK7QjpXj9YUetD9eZRXWkoE9SY2wlxB9zTh41UJWtmruu8GzLaTyQ1lJwrtNkCAvGQh
+         B/Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nGDfPcMh2o9V23BmewOoC5pZ8xD/PzamwtTk3JNsF7k=;
+        b=Vo1dIIMM0XgaX0VrAJqBndslWfwsk8I80l7/2fSBSmWIZwjiunC9pyQgmR2RjokusT
+         2mmQpOOgN2EZsv1lDvPiSui4pCZ4BTK4M5bnTtRNQOkN7pBeP6sVPfeQFfEjlVQJ8gq6
+         V8FIk2kpn9F0sCARBtTcnlmZfWFbrjaZCbHM+B9WX7h5U5G2/j4dPKpG8K1ss/XUchaR
+         hN/M5norFXrj8NLDBZ+REW+sSRSshKW3RBoomC8zy5PXnGpPet+KMbWGl4hiZhCa5ig9
+         iKm9lMM3MeqmLmy/K+VQk63SycZrPOJdXypq54GNp4cP114YFIchnj6Mn4CXPoQzmvxx
+         D0PQ==
+X-Gm-Message-State: AFqh2kqJtWaFXrUH8exRGE+G8V4aErg5WaYQUqR6/yVdAdLJSPMVnXb5
+        yO5oD5UrJUx09JB0jApNA+dTAhtJaeI=
+X-Google-Smtp-Source: AMrXdXul3k0/RgRmpytrVMFtZ+mQRiNXaufDBlXhmVI3E58Mg5yCfGK3Jn1P7HeD6rCOg1wKnmDWXg==
+X-Received: by 2002:a5d:8b4b:0:b0:6ee:f9e1:423a with SMTP id c11-20020a5d8b4b000000b006eef9e1423amr31354433iot.11.1672841570492;
+        Wed, 04 Jan 2023 06:12:50 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:447:d001:9aea:58ca:a321:54c8:c288])
+        by smtp.gmail.com with ESMTPSA id ay28-20020a056638411c00b0038a5af5e831sm11353451jab.100.2023.01.04.06.12.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jan 2023 06:12:50 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/4] Revert "arm64: dts: renesas: Add compatible properties to AR8031 Ethernet PHYs"
+Date:   Wed,  4 Jan 2023 08:12:43 -0600
+Message-Id: <20230104141245.8407-2-aford173@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230104141245.8407-1-aford173@gmail.com>
+References: <20230104141245.8407-1-aford173@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 4, 2023, at 12:56, Conor Dooley wrote:
-> On Wed, Jan 04, 2023 at 11:19:44AM +0100, Arnd Bergmann wrote:
->> On Wed, Jan 4, 2023, at 10:23, Conor Dooley wrote:
->> I would try to replace both of these indirections and instead
->> handle it all from C code in arch_sync_dma_for_device() directly,
->> for the purpose of readability and maintainability.
->> static inline void dma_cache_clean(void *vaddr, size_t size)
->> {
->>         if (!cache_maint_ops.clean)
->>                zicbom_cache_clean(vaddr, size, riscv_cbom_block_size);
->
-> And I figure that this function is effectively a wrapper around ALT_CMO_OP()?
->
->>         else
->>                cache_maint_ops.clean(vaddr, size, riscv_cbom_block_size);
->
-> And this one gets registered by the driver using an interface like the
-> one I already proposed, just with the cache_maint_ops struct expanded?
+This reverts commit 18a2427146bf8a3da8fc7825051d6aadb9c2d8fb.
 
-Yes, exactly.
+Due to the part shortage, the AR8031 PHY was replaced with a
+Micrel KSZ9131.  Hard-coding the ID of the PHY makes this new
+PHY non-operational.  Since previous hardware had shipped,
+it's not as simple as just replacing the ID number as it would
+break the older hardware.  Since the generic mode can correctly
+identify both versions of hardware, it seems safer to revert
+this patch.
 
-> Extrapolating, with these changes having an errata would not even be
-> needed in order to do cache maintenance.
-> Since the ALT_CMO_OP() version would only be used inside
-> zicbom_cache_clean(), assuming I understood correctly, a driver could
-> just register cache_maint_ops for a given platform without having to
-> muck around with errata.
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-That is the idea, and ALT_CMO_OP() itself can just go away
-as by just putting the inline asm without the alternative into
-the zicbom_cache_clean() version, making the THEAD branch yet
-another cache_maint_ops instance.
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index d3fc8ffd5b4c..1eb713530878 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -59,8 +59,6 @@ &avb {
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+-		compatible = "ethernet-phy-id004d.d074",
+-			     "ethernet-phy-ieee802.3-c22";
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+-- 
+2.34.1
 
->> which then makes it very clear what the actual code path
->> is, while leaving the zicbom case free of indirect function
->> calls. You can still use a static_branch() to optimize the
->> conditional, but I would try to avoid any extra indirection
->> levels or errata checks.
->
-> The other thing that I like about this is we can then remove the various
-> calls to ALT_CMO_OP() that are scattered around arch/riscv now & replace
-> them with functions that have more understandable names.
-
-I only see them in arch/riscv/mm/dma-noncoherent.c and arch/riscv/mm/pmem.c,
-but yes, both of these should just call the new functions, whatever the
-calling conventions end up being.
-
-    Arnd
