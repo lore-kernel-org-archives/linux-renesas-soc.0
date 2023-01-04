@@ -2,142 +2,179 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35FEC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Jan 2023 08:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2050BC4708E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Jan 2023 09:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233616AbjADISQ (ORCPT
+        id S229658AbjADJv2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Jan 2023 03:18:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55270 "EHLO
+        Wed, 4 Jan 2023 04:51:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233481AbjADISP (ORCPT
+        with ESMTP id S234274AbjADJvO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2023 03:18:15 -0500
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C8BF18E32;
-        Wed,  4 Jan 2023 00:18:14 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id BD04D5C01B5;
-        Wed,  4 Jan 2023 03:18:10 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Wed, 04 Jan 2023 03:18:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1672820290; x=1672906690; bh=sMeTVClvIY
-        fuPYuMRUbp+49sG5zkB1a9qX5hlrXd14U=; b=m0KSjLZB/tFB/hVcAvmwjid+4L
-        O8mqu0I9xmhgNX0IIcj7txjwMjC/hKKIkV3Q/HU1fYJ8s6gdDw89oNhgxWy8CLcl
-        SpjLj4TQxJ2FZ0DlvLTGvJoqOlvJNSSg19+R6JvnrXBFMdInU/2CmVDADxYZ0cdf
-        u11bPDmdpqfjIzfhgKObw76PyUIhUKa/W4gpvLLV+NsQsXHezH+74CaPLSq8vyAW
-        aqn78wB9x9xkhUSm7Wp5B1ht2f4BDrE0Zd4ZSb7w79BXK6eSlCKnGOPMWzSsuwv6
-        6QdWgARa7NAFbweGzQtrBz44fyx5FUdSrF6TwLlIdc0IPOfrFEwVnawVwqew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1672820290; x=1672906690; bh=sMeTVClvIYfuPYuMRUbp+49sG5zk
-        B1a9qX5hlrXd14U=; b=ZAtrIOGplKB6sTP3Mya9p4i9BUddEnVf8m9cm7KbG54t
-        Zsq1MVA8Zer87zOsphfiWKA09PMo+iNd+JI4XVSjlkwxnLBrutV1R+hsYiJ0BUoA
-        jpQXpN25Eix3sBKECqkiSFjc3G5v/qENmZmG/tWG7MlONUGD7zG8EgZD1NLyKMej
-        bFVo7pQvbkuqOo3mczDwKwhOba7E9sX8KBtaO/N6RD+rdVa/qfdOZ/pWKJx4jgPC
-        54vvTQ6DrJpLisBfJHvrvERyJSuxbEyt70/9HLdcr1cdBNvuN03EnrU9riQG03dj
-        u/rii4hUEw6ceQEI2YIj7afbdcLCMfdlxIA7s6IDRA==
-X-ME-Sender: <xms:QTa1YwYdte0aQZViO8nBtAzwnjqsg0bssKUJQoC1PhDbJkbvfBiHYw>
-    <xme:QTa1Y7bbriuc-Uf1IUfkKGbA_kq8Y8CAhat0_wp6RrTcBDUYugyT8PCl2kYUN6G3G
-    cUW8Q4_-0zOb77sfaQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrjeehgdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:QTa1Y69oAQqvgmo_0WadEAZCbjCOfiL41cXDP85H5ELKiiQA3wHKqg>
-    <xmx:QTa1Y6o43g4sC1oC9dcf43ToR4Lj2JNsFIYEmWlYoCyIivQSL3a7OQ>
-    <xmx:QTa1Y7qgguAE5D-MNdTzzpxyqHwi3iITTJVTWnnU7QV1Z7yJeCfB9w>
-    <xmx:Qja1Y5hbKaL9mFyosQHTTu3WmQFUj6oWRoPlpduSWZnxdkqzJrHB2w>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 32F83B60086; Wed,  4 Jan 2023 03:18:09 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
-Mime-Version: 1.0
-Message-Id: <ed198390-1bde-44ec-9f3f-b0e016b4b24c@app.fastmail.com>
-In-Reply-To: <Y7TBh+CJdZPJ6Xzl@spud>
+        Wed, 4 Jan 2023 04:51:14 -0500
+X-Greylist: delayed 322 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 04 Jan 2023 01:51:12 PST
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30DF1140D6;
+        Wed,  4 Jan 2023 01:51:12 -0800 (PST)
+Received: from cpc152649-stkp13-2-0-cust121.10-2.cable.virginm.net ([86.15.83.122] helo=[192.168.0.17])
+        by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+        id 1pD0QG-00G85N-8X; Wed, 04 Jan 2023 09:51:00 +0000
+Message-ID: <49bd7b4a-b0e1-3213-8aed-9f39604f3935@codethink.co.uk>
+Date:   Wed, 4 Jan 2023 09:50:58 +0000
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [RFC v5.1 6/9] cache,soc: Move SiFive CCache driver & create
+ drivers/cache
+Content-Language: en-GB
+To:     Conor Dooley <conor@kernel.org>, arnd@arndb.de, palmer@dabbelt.com,
+        prabhakar.csengg@gmail.com
+Cc:     Conor Dooley <conor.dooley@microchip.com>, ajones@ventanamicro.com,
+        aou@eecs.berkeley.edu, apatel@ventanamicro.com,
+        atishp@rivosinc.com, biju.das.jz@bp.renesas.com,
+        devicetree@vger.kernel.org, geert@linux-m68k.org,
+        guoren@kernel.org, hch@infradead.org, heiko@sntech.de,
+        jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-riscv@lists.infradead.org, magnus.damm@gmail.com,
+        nathan@kernel.org, paul.walmsley@sifive.com,
+        philipp.tomsich@vrull.eu, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        robh+dt@kernel.org, samuel@sholland.org, soc@kernel.org
 References: <Y62nOqzyuUKqYDpq@spud>
- <20230103210400.3500626-10-conor@kernel.org>
- <b5712732-40a2-4e29-b29f-e0ab5516d518@app.fastmail.com>
- <Y7TBh+CJdZPJ6Xzl@spud>
-Date:   Wed, 04 Jan 2023 09:17:41 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Conor Dooley" <conor@kernel.org>
-Cc:     "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        "Conor.Dooley" <conor.dooley@microchip.com>,
-        "Andrew Jones" <ajones@ventanamicro.com>,
-        "Albert Ou" <aou@eecs.berkeley.edu>,
-        "Anup Patel" <apatel@ventanamicro.com>,
-        "Atish Patra" <atishp@rivosinc.com>,
-        "Biju Das" <biju.das.jz@bp.renesas.com>,
-        devicetree@vger.kernel.org,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        guoren <guoren@kernel.org>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "Jisheng Zhang" <jszhang@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        "Magnus Damm" <magnus.damm@gmail.com>,
-        "Nathan Chancellor" <nathan@kernel.org>,
-        "Paul Walmsley" <paul.walmsley@sifive.com>,
-        "Philipp Tomsich" <philipp.tomsich@vrull.eu>,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Samuel Holland" <samuel@sholland.org>, soc@kernel.org,
-        "Daire McNamara" <daire.mcnamara@microchip.com>
-Subject: Re: [RFC v5.1 9/9] [DON'T APPLY] cache: sifive-ccache: add cache flushing
- capability
-Content-Type: text/plain
+ <20230103210400.3500626-7-conor@kernel.org>
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <20230103210400.3500626-7-conor@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 4, 2023, at 01:00, Conor Dooley wrote:
-> On Tue, Jan 03, 2023 at 10:28:19PM +0100, Arnd Bergmann wrote:
->> On Tue, Jan 3, 2023, at 22:04, Conor Dooley wrote:
->> > From: Daire McNamara <daire.mcnamara@microchip.com>
->> >
->> > SiFive L2 cache controller can flush L2 cache. Expose this capability via
->> > driver.
->> >
->> > Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
->> > [Conor: rebase on top of move to cache subsystem]
->> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->> > ---
->> > This commit needs more work, and a way to enable it from errata. I've
->> > not gone and done this as PolarFire SoC has archid etc all set to zero.
->> > So we need to go figure out a workaround for this, before adding in
->> > errata enabling code for this. I've included it here as a second user of
->> > the cache management stuff, since what's currently upstream for the
->> > ccache driver does not do any cache management.
->> > ---
->> >  drivers/cache/sifive_ccache.c | 45 +++++++++++++++++++++++++++++++++++
->> >  1 file changed, 45 insertions(+)
->> 
->> My feeling here is that the cacheflush code is unrelated to the
->> EDAC code and it should just be a separate file. From what I can
->> tell, all of the existing contents of this file can simply
->> get merged into drivers/edac/sifive_edac.c, with the newly
->> added code becoming a standalone driver.
->
-> Sure? I'd like to do that independently of whatever is done for the
-> ax45mp CMOs though, don't think it's worth holding up that platform's
-> support on me splitting this out.
+On 03/01/2023 21:03, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> The Zicbo* set of extensions for cache maintenance arrived too late &
+> several SoCs exist without them that require non-coherent DMA.
+> As things stand, the StarFive JH7100, Microchip PolarFire SoC & Renesas
+> RZ/Five all require cache maintenance and lack instructions for this
+> purpose.
+> Create a subsystem for cache drivers so that vendor specific behaviour
+> can be isolated from arch code, but keep the interfaces etc consistent.
+> Move the existing SiFive CCache driver to create drivers/cache.
+> 
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>   MAINTAINERS                                   | 15 ++++++++-------
+>   drivers/Kconfig                               |  2 ++
+>   drivers/Makefile                              |  2 ++
+>   drivers/{soc/sifive => cache}/Kconfig         |  8 +++++++-
+>   drivers/{soc/sifive => cache}/Makefile        |  0
+>   drivers/{soc/sifive => cache}/sifive_ccache.c |  2 +-
+>   drivers/edac/sifive_edac.c                    |  2 +-
+>   drivers/soc/Kconfig                           |  1 -
+>   drivers/soc/Makefile                          |  1 -
+>   include/{soc/sifive => cache}/sifive_ccache.h |  0
+>   10 files changed, 21 insertions(+), 12 deletions(-)
+>   rename drivers/{soc/sifive => cache}/Kconfig (56%)
+>   rename drivers/{soc/sifive => cache}/Makefile (100%)
+>   rename drivers/{soc/sifive => cache}/sifive_ccache.c (99%)
+>   rename include/{soc/sifive => cache}/sifive_ccache.h (100%)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f61eb221415b..4437e96a657b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19054,13 +19054,6 @@ S:	Maintained
+>   F:	Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
+>   F:	drivers/dma/sf-pdma/
+>   
+> -SIFIVE SOC DRIVERS
+> -M:	Conor Dooley <conor@kernel.org>
+> -L:	linux-riscv@lists.infradead.org
+> -S:	Maintained
+> -T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
+> -F:	drivers/soc/sifive/
+> -
+>   SILEAD TOUCHSCREEN DRIVER
+>   M:	Hans de Goede <hdegoede@redhat.com>
+>   L:	linux-input@vger.kernel.org
+> @@ -19873,6 +19866,14 @@ S:	Supported
+>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+>   F:	drivers/staging/
+>   
+> +STANDALONE CACHE CONTROLLER DRIVERS
+> +M:	Conor Dooley <conor@kernel.org>
+> +L:	linux-riscv@lists.infradead.org
+> +S:	Maintained
+> +T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
+> +F:	drivers/cache
+> +F:	include/cache
+I thought the riscv list was subscribers only?
 
-Right, no need to touch the existing file as part of this series,
-it probably just gets in the way of defining a good interface here.
+Maybe if we do the suggestion of other cache drivers here we should
+either use the main kernel one or find some arch non-specific list.
 
-    Arnd
+> +
+>   STARFIRE/DURALAN NETWORK DRIVER
+>   M:	Ion Badulescu <ionut@badula.org>
+>   S:	Odd Fixes
+> diff --git a/drivers/Kconfig b/drivers/Kconfig
+> index 968bd0a6fd78..e592ba5276ae 100644
+> --- a/drivers/Kconfig
+> +++ b/drivers/Kconfig
+> @@ -241,4 +241,6 @@ source "drivers/peci/Kconfig"
+>   
+>   source "drivers/hte/Kconfig"
+>   
+> +source "drivers/cache/Kconfig"
+> +
+>   endmenu
+> diff --git a/drivers/Makefile b/drivers/Makefile
+> index bdf1c66141c9..6ff60cf21823 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -38,6 +38,8 @@ obj-y				+= clk/
+>   # really early.
+>   obj-$(CONFIG_DMADEVICES)	+= dma/
+>   
+> +obj-y				+= cache/
+> +
+>   # SOC specific infrastructure drivers.
+>   obj-y				+= soc/
+>   
+> diff --git a/drivers/soc/sifive/Kconfig b/drivers/cache/Kconfig
+> similarity index 56%
+> rename from drivers/soc/sifive/Kconfig
+> rename to drivers/cache/Kconfig
+> index ed4c571f8771..bc852f005c10 100644
+> --- a/drivers/soc/sifive/Kconfig
+> +++ b/drivers/cache/Kconfig
+> @@ -1,9 +1,15 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   
+> -if SOC_SIFIVE
+> +menuconfig CACHE_CONTROLLER
+> +	bool "Cache controller driver support"
+> +	default y if RISCV
+> +
+> +if CACHE_CONTROLLER
+>   
+>   config SIFIVE_CCACHE
+>   	bool "Sifive Composable Cache controller"
+> +	depends on RISCV
+> +	default y
+>   	help
+>   	  Support for the composable cache controller on SiFive platforms.
+>   
+
+Maybe we should find and move the ARM PL cache controllers and
+have them here too?
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
+
