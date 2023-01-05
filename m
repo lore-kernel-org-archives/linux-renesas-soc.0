@@ -2,109 +2,148 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E88C53210
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Jan 2023 15:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F582C3DA7D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Jan 2023 15:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232166AbjAEPOg (ORCPT
+        id S232244AbjAEPXY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Jan 2023 10:14:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39614 "EHLO
+        Thu, 5 Jan 2023 10:23:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231583AbjAEPOf (ORCPT
+        with ESMTP id S234533AbjAEPXO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jan 2023 10:14:35 -0500
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE03F5007B
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Jan 2023 07:14:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=tZjV9jpuEK4Y2XqKI/OT0o3B7gcC
-        cq0sQKnRF7DSmjw=; b=dS5JSKGc5w2j51S+cCn85pOOS6H5K4+HfhFA+rpX+YLs
-        ASmLCWG2lAUoVk/lr4YAW7+7mHm+6klsJvuUSBDXSuStZPer5j49CmcxoMdDqFRE
-        K2u9KUTyNoaPsqWHsB0Netoyg64tEKHfVggboQp7Z+tE/tbIMtXZn91JiCO3+yA=
-Received: (qmail 1656785 invoked from network); 5 Jan 2023 16:14:29 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Jan 2023 16:14:29 +0100
-X-UD-Smtp-Session: l3s3148p1@3djgwYXxHKxehh9g
-Date:   Thu, 5 Jan 2023 16:14:28 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Ian Molton <spyro@f2s.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 21/27] mmc: remove tmio_mmc driver
-Message-ID: <Y7bpVFG41DVU6hXS@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Ian Molton <spyro@f2s.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <20230105134622.254560-1-arnd@kernel.org>
- <20230105134622.254560-22-arnd@kernel.org>
+        Thu, 5 Jan 2023 10:23:14 -0500
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E08D4D4AA;
+        Thu,  5 Jan 2023 07:23:11 -0800 (PST)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id B689FE0014;
+        Thu,  5 Jan 2023 15:23:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1672932190;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VbuWktSH/oiWkw6lxCmsvnZa6RNGYO9ihwbl6HeDM5M=;
+        b=eyMTXkiRRqP5gVTFCMWX+ITD3s0aE5kZVIgAwZfUnjEeld0/JvqiYpqdtQSsTVDSU8rLd7
+        nOPl9OieC9DbKBWjCY4X/Y8twuyY2WsfmyCyT0o83aOaUXfShOeIa9dJEwt5x1v3Jr69o8
+        LiMy0+xg3Vu4oZO9iavcpre+Msk5W7rOJNKUb6sZvwc7PDMxHsGaho4q+xjzhQ+9o4mZCU
+        3Uik6Fh5ub+CERZoCl9hfFysAF7NRq5jaChyaE+e5o2hWLF0CUMa1OQtcA4fySiugRJRUe
+        KJKisl1Mc0QsiSnJvhp92t+53KJdrCQ5V4hA89EWwLV1itjuJAo4nuS803TP3g==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 1/5] dt-bindings: usb: add the Renesas RZ/N1 USBF controller
+Date:   Thu,  5 Jan 2023 16:22:53 +0100
+Message-Id: <20230105152257.310642-2-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230105152257.310642-1-herve.codina@bootlin.com>
+References: <20230105152257.310642-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+plC2ZH96e31NEJu"
-Content-Disposition: inline
-In-Reply-To: <20230105134622.254560-22-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The Renesas RZ/N1 USBF controller is an USB2.0 device controller
+(UDC) available in the Renesas r9a06g032 SoC (RZ/N1 family).
 
---+plC2ZH96e31NEJu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../bindings/usb/renesas,rzn1-usbf.yaml       | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
 
-On Thu, Jan 05, 2023 at 02:46:16PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> With the TMIO MFD support gone, the corresponding MMC host driver can
-> be removed as well. The remaining tmio_mmc_core module however is still
-> used by both the Renesas and Socionext host drivers.
->=20
-> Cc: Ian Molton <spyro@f2s.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-mmc@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+diff --git a/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml b/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+new file mode 100644
+index 000000000000..b6e84a2a6925
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/renesas,rzn1-usbf.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 SoCs USBF (USB Function) controller
++
++description: |
++   The Renesas USBF controller is an USB2.0 device
++   controller (UDC).
++
++maintainers:
++  - Herve Codina <herve.codina@bootlin.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a06g032-usbf
++      - const: renesas,rzn1-usbf
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Internal bus clock (AHB) for Function
++      - description: Internal bus clock (AHB) for Power Management
++
++  clock-names:
++    items:
++      - const: hclkf
++      - const: hclkpm
++
++  power-domains:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: The USBF EPC interrupt
++      - description: The USBF AHB-EPC interrupt
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
++
++    usb@4001e000 {
++        compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
++        reg = <0x4001e000 0x2000>;
++        interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&sysctrl R9A06G032_HCLK_USBF>,
++                 <&sysctrl R9A06G032_HCLK_USBPM>;
++        clock-names = "hclkf", "hclkpm";
++        power-domains = <&sysctrl>;
++    };
+-- 
+2.38.1
 
-I trust Arnd's research that the driver becomes unused after the PXA
-removal. I can add to it that the plain TMIO driver hasn't seen any
-functional update in 10 years maybe. Most modifications were tree-wide
-cleanups or adjustments because the TMIO core changed. It will be
-interesting to see what cleanups can be done once this driver is gone.
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
-
---+plC2ZH96e31NEJu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmO26VQACgkQFA3kzBSg
-KbZryRAAsP2ilw61YHDXp7tFw+jW83ObuNAFRybR9fjDVe+mWZSwrtb17iABxFsd
-f8eP4ELMzbI8dmX2rZ6kl/5WFRbsJbSOZHaePwk7pNX/nCaQLsaZCsEF3wf76BLY
-CQ1znFYgyKGkJg4s/ofW2XqvbegrKkhancbFYXQdh2f1MV/POW0zGSmkC3uWqZSD
-fmw8qQIPylrxFwum4PEpxK9L3hh1gwVNh37jTvfviVkFrrDz1Wd+QT9YEIikmAyT
-iRmbXbqeOoc+0k6TKQapZSCysgedAamR9ZHG72s6GqrFx1QBRlSnDxySvmMWwkUr
-XK4gHeiIs/kLaNFu2bZSeIOhhRk84ykHO2Yhxj3NHRX0BwWrSDCbjcFwFozGMMNW
-N91CRN2enh8MneYgcH+WoISB3byrFaxwjvgpH3NjUDWiExyBNSdXrALbc9lHLA4q
-5ND+ysxn2KtyOP1l2iFHUY75Oym+pGmG4755QWPLqQHsm1hYHaQN/EnGAh3EyApo
-e67TFAwVbQqjdNu0oRBk2BylfNbVrRf/1+c7X9bvGrJFBMhvj9iKPTktE3G5FOvo
-YeNo2P9Z9sjuJQBKBKtvhfCUnPscMmcZoJzrUKo8fKhLbsw5qb0NWVoNpc0qZGeL
-TGsbyddaUvOagAFLXS+HHsr5iDnc0rE8lgeLB3uq5yvFqzMrjBU=
-=IQN3
------END PGP SIGNATURE-----
-
---+plC2ZH96e31NEJu--
