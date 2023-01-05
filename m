@@ -2,34 +2,35 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF31C54E76
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF033C54EBD
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Jan 2023 15:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231843AbjAEPXX (ORCPT
+        id S230261AbjAEPXW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Jan 2023 10:23:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41964 "EHLO
+        Thu, 5 Jan 2023 10:23:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234509AbjAEPXJ (ORCPT
+        with ESMTP id S234537AbjAEPXU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jan 2023 10:23:09 -0500
+        Thu, 5 Jan 2023 10:23:20 -0500
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4B7D288;
-        Thu,  5 Jan 2023 07:23:07 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109BF2E7;
+        Thu,  5 Jan 2023 07:23:18 -0800 (PST)
 Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 89348E0015;
-        Thu,  5 Jan 2023 15:23:02 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id CEF50E0015;
+        Thu,  5 Jan 2023 15:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1672932186;
+        t=1672932197;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Y7hEx4jCdi5gZ1clrt4nc1ulwGgfHk1FihM6F9ggSy4=;
-        b=G/qSdJ0ydV8Xr7/XCkRJgxtAvxWYqZr8MKEt1Hi93EBzvUUdqVbu28IIZlQDeEJ1MBQ2u5
-        Dzd0gKB9pavVblmFt7cuEyE3SDi4JsSKTddd5RwcP03y0W2HkgpFO1PwJiOi7WoEHDw6WS
-        /7tspGqfhXQq9BevoClufVtGuXi+119mZg9IoMjI+KYIlF8kWC0Hq/tO4Ei4cBon4Axq7+
-        kPB+QGdviuDD3z0sQsmjdJQRg/IpwvzwZA1pQZayhOuz6WcZ4ELSeFDiclrXBkhdg9KnPW
-        nbygepLIVF5ENUoKQRbVR+mnJrjtD76zwYOu5eiyNfD4ytNH75OEFimyL+qveQ==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=McV3uIenS5q7u7crOrOuZTYiXAWqOAqhN9rm0z+GfiE=;
+        b=WrX6vih6koY/iu0t/gTvJV2HeVfoNwGHfC97ipBO0+fg5Qf1IzjLUsQwzHEiE23Oj7GFsj
+        /PCQeZtMWfkp53xKLAqa07QNwhat87fne8W5CMWLHHSQQBVvRV58IES3sYiWJLxQPdypHl
+        O5PsxF4V8RMn5ay7umTysoBw9sv8wN2miXEQQ97iM1RnMOv4jfQgLtf2YyfErL16UcRaKu
+        NmdRvtqAv8GuJPaX9TUD9MMvtKbn9n8JJ504Zppuej/IhyagY4TfG6xOgGedtJRAHzBBQZ
+        9OgD9DkQYV7Us8st9PxRf4DT1WxpCMGQufvaX1zuHSQe44CATHDhpJKc3E+3UA==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -45,130 +46,86 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-usb@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v5 0/5] Add the Renesas USBF controller support
-Date:   Thu,  5 Jan 2023 16:22:52 +0100
-Message-Id: <20230105152257.310642-1-herve.codina@bootlin.com>
+Subject: [PATCH v5 2/5] soc: renesas: r9a06g032-sysctrl: Handle h2mode setting based on USBF presence
+Date:   Thu,  5 Jan 2023 16:22:54 +0100
+Message-Id: <20230105152257.310642-3-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230105152257.310642-1-herve.codina@bootlin.com>
+References: <20230105152257.310642-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+The CFG_USB[H2MODE] allows to switch the USB configuration. The
+configuration supported are:
+  - One host and one device
+or
+  - Two hosts
 
-This series add support for the Renesas USBF controller (USB Device
-Controller) available in the Renesas RZ/N1 SoC.
+Set CFG_USB[H2MODE] based on the USBF controller (USB device)
+availability.
 
-Based on previous iteration:
-  https://lore.kernel.org/lkml/20221213133302.218955-1-herve.codina@bootlin.com/
-Custom debug macros present in the controller driver source code
-have been replaced by dev_dbg() calls.
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 28 ++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Best regards,
-Herve Codina
-
-Changes v4 -> v5:
-  - patch 1
-    Add 'Reviewed-by: Rob Herring <robh@kernel.org>'
-    Add 'Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>'
-
-  - patch 3
-    Remove custom TRACE() and TRACEEP() debug macros and
-    use directly dev_dbg() instead.
-
-  - patch 2, 4 and 5
-    No changes
-
-Changes v3 -> v4:
-  - v3 patches 1, 2, 3 and 4 removed
-
-  - Patch 1 (v3 patch 5)
-    Remove 'depends-on' property
-
-  - Patch 2 (v3 patch 6)
-    Add 'Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>'
-
-  - Patch 3 (v3 patch 7)
-    Fix warning raised by the kernel test robot
-
-  - Patch 4 (v3 patch 8)
-    Remove 'depends-on' property
-    add 'Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>'
-
-  - Patch 5 (v3 patch 9)
-    No changes
-
-Changes v2 -> v3:
-  - v2 Patches 1, 2 and 3 removed.
-
-  - Patches 1, 2, 3 and 4 (new patches)
-
-  - Patch 5 (v2 patch 4):
-    Add 'depends-on' property
-    Removed redundant 'binding' word
-
-  - Patch 6 (new patch)
-
-  - Patch 7 (v2 patch 5)
-    Removed h2mode checking. This check is no more needed and the API no more
-    available.
-
-  - Patch 8 (v2 patch 6)
-    Add 'depends-on' property
-
-  - Patch 9 (v2 patch 7)
-    Fix file name
-
-Changes v1 -> v2:
-  - Patch 1:
-    Rename r9a06g032_sysctrl_get_usb_h2mode to r9a06g032_sysctrl_get_usb_role
-    and return USB_ROLE_{HOST,DEVICE} or an error code.
-    Reword commit log
-
-  - Patches 2 and 3:
-    No changes. Some previous feedbacks still need to be taken into account
-      https://lore.kernel.org/all/20221107182642.05a09f2f@bootlin.com/
-      https://lore.kernel.org/all/20221107173614.474707d7@bootlin.com/
-
-  - Patch 4:
-    Rename file from renesas,usbf.yaml to renesas,rzn1-usbf.yaml.
-    Remove 'oneOf'.
-    Add blank line and line break.
-    Add 'power-domains'.
-    Reword commit log
-
-  - Patch 5:
-    Remove clocks handling (handled by runtime PM through the clock domain
-    pointed by power-domains).
-    Fix compilation warning raised by the 'kernel test robot'.
-
-  - Patch 6:
-    Add 'power-domains'
-
-  - Patch 7:
-    Add 'Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>'
-
-
-Herve Codina (5):
-  dt-bindings: usb: add the Renesas RZ/N1 USBF controller
-  soc: renesas: r9a06g032-sysctrl: Handle h2mode setting based on USBF
-    presence
-  usb: gadget: udc: add Renesas RZ/N1 USBF controller support
-  ARM: dts: r9a06g032: Add the USBF controller node
-  MAINTAINERS: add the Renesas RZ/N1 USBF controller entry
-
- .../bindings/usb/renesas,rzn1-usbf.yaml       |   68 +
- MAINTAINERS                                   |    8 +
- arch/arm/boot/dts/r9a06g032.dtsi              |   12 +
- drivers/clk/renesas/r9a06g032-clocks.c        |   28 +
- drivers/usb/gadget/udc/Kconfig                |   11 +
- drivers/usb/gadget/udc/Makefile               |    1 +
- drivers/usb/gadget/udc/renesas_usbf.c         | 3406 +++++++++++++++++
- 7 files changed, 3534 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
- create mode 100644 drivers/usb/gadget/udc/renesas_usbf.c
-
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 983faa5707b9..087146f2ee06 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -25,6 +25,8 @@
+ #include <linux/spinlock.h>
+ #include <dt-bindings/clock/r9a06g032-sysctrl.h>
+ 
++#define R9A06G032_SYSCTRL_USB    0x00
++#define R9A06G032_SYSCTRL_USB_H2MODE  (1<<1)
+ #define R9A06G032_SYSCTRL_DMAMUX 0xA0
+ 
+ struct r9a06g032_gate {
+@@ -918,6 +920,29 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
+ 	of_clk_del_provider(data);
+ }
+ 
++static void __init r9a06g032_init_h2mode(struct r9a06g032_priv *clocks)
++{
++	struct device_node *usbf_np = NULL;
++	u32 usb;
++
++	while ((usbf_np = of_find_compatible_node(usbf_np, NULL,
++						  "renesas,rzn1-usbf"))) {
++		if (of_device_is_available(usbf_np))
++			break;
++	}
++
++	usb = readl(clocks->reg + R9A06G032_SYSCTRL_USB);
++	if (usbf_np) {
++		/* 1 host and 1 device mode */
++		usb &= ~R9A06G032_SYSCTRL_USB_H2MODE;
++		of_node_put(usbf_np);
++	} else {
++		/* 2 hosts mode */
++		usb |= R9A06G032_SYSCTRL_USB_H2MODE;
++	}
++	writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB);
++}
++
+ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -947,6 +972,9 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	clocks->reg = of_iomap(np, 0);
+ 	if (WARN_ON(!clocks->reg))
+ 		return -ENOMEM;
++
++	r9a06g032_init_h2mode(clocks);
++
+ 	for (i = 0; i < ARRAY_SIZE(r9a06g032_clocks); ++i) {
+ 		const struct r9a06g032_clkdesc *d = &r9a06g032_clocks[i];
+ 		const char *parent_name = d->source ?
 -- 
 2.38.1
 
