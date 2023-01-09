@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA5FC5479D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Jan 2023 16:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70734C54EBD
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Jan 2023 16:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233296AbjAIQb6 (ORCPT
+        id S232953AbjAIQdy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Jan 2023 11:31:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58854 "EHLO
+        Mon, 9 Jan 2023 11:33:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235277AbjAIQbo (ORCPT
+        with ESMTP id S234413AbjAIQdx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2023 11:31:44 -0500
+        Mon, 9 Jan 2023 11:33:53 -0500
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B258B1EAF4;
-        Mon,  9 Jan 2023 08:31:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4A36CB86;
+        Mon,  9 Jan 2023 08:33:47 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.96,311,1665414000"; 
-   d="scan'208";a="148740184"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Jan 2023 01:31:26 +0900
+   d="scan'208";a="148740406"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 10 Jan 2023 01:33:47 +0900
 Received: from localhost.localdomain (unknown [10.226.92.188])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 13A7D401F427;
-        Tue, 10 Jan 2023 01:31:20 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 52900400754A;
+        Tue, 10 Jan 2023 01:33:42 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         gregkh@linuxfoundation.org, Jakub Kicinski <kuba@kernel.org>,
@@ -40,8 +40,8 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Leon Romanovsky <leonro@nvidia.com>,
         Paolo Abeni <pabeni@redhat.com>
 Subject: [PATCH] ravb: Fix "failed to switch device to config mode" message during unbind
-Date:   Mon,  9 Jan 2023 16:31:18 +0000
-Message-Id: <20230109163118.666992-1-biju.das.jz@bp.renesas.com>
+Date:   Mon,  9 Jan 2023 16:33:39 +0000
+Message-Id: <20230109163339.667234-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -79,7 +79,7 @@ pm_runtime_put_sync()
  2) ravb_close
 
 Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-Cc: stable@vger.kernel.org # 4.19.y
+Cc: stable@vger.kernel.org # 4.14.y
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
 Link: https://lore.kernel.org/r/20221214105118.2495313-1-biju.das.jz@bp.renesas.com
@@ -87,17 +87,17 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 [biju: cherry-picked from 6.0 stable]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-Resending to 4.19 with confilcts[1] fixed
-[1] https://lore.kernel.org/stable/1672841811246154@kroah.com/
+Resending to 4.14 with confilcts[1] fixed
+[1] https://lore.kernel.org/stable/16728418126244@kroah.com/
 ---
  drivers/net/ethernet/renesas/ravb_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 9077014f6f40..ff374d0d80a7 100644
+index 5513475e2a82..4c8a4e6efb9f 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2199,11 +2199,11 @@ static int ravb_remove(struct platform_device *pdev)
+@@ -2195,11 +2195,11 @@ static int ravb_remove(struct platform_device *pdev)
  			  priv->desc_bat_dma);
  	/* Set reset mode */
  	ravb_write(ndev, CCC_OPC_RESET, CCC);
