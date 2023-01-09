@@ -2,154 +2,257 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3634EC61DB3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Jan 2023 15:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B13C5479D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Jan 2023 16:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237085AbjAIPc4 (ORCPT
+        id S230005AbjAIQOh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Jan 2023 10:32:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45530 "EHLO
+        Mon, 9 Jan 2023 11:14:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237256AbjAIPbu (ORCPT
+        with ESMTP id S229808AbjAIQOh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2023 10:31:50 -0500
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ACAA1D0EC;
-        Mon,  9 Jan 2023 07:31:07 -0800 (PST)
-Received: from mwalle01.sab.local (unknown [213.135.10.150])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id A15021872;
-        Mon,  9 Jan 2023 16:30:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1673278256;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Lgn0fUyj9IFSMk8AaMRWHgs4+wjSuyxk0Wk78bhVnA0=;
-        b=paHoMYp5QyTdFJmmJGlkyXxyx1kT7mnZo4KsGjYw673zA4PozBqwyJfHLfMUDMeyv98ELr
-        xmptzo+6SEGjSibLaBQj4m+FO+HdVMUhJiS19ZDemTrPStFuuEo3TKrf9iCCypPs+zIn6x
-        aPA3K6eGXZajQEi1AZWWZM7oj4qeoc786ugIgP2xji+EKZ2w7DVNirDKl0NJ+npLxKv6qR
-        3byRLnvcqXoxg2/tawbXmbt+oBwczg81pRjk4sz/5jOe/16WZv4Qfl4oljyNCHhFlCxme1
-        +YXfZQYmFv9eoVubcaixqiWW1+X2D9Y+83Dtp7qmXhatDjOfdIRIukTHqw6n+g==
-From:   Michael Walle <michael@walle.cc>
-Date:   Mon, 09 Jan 2023 16:30:47 +0100
-Subject: [PATCH net-next v3 07/11] net: mdio: mvmdio: Convert XSMI bus to new API
-MIME-Version: 1.0
+        Mon, 9 Jan 2023 11:14:37 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3551A10B8
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Jan 2023 08:14:36 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id n12so9252766pjp.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Jan 2023 08:14:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AB7slnWuflc2rdS3D14rOyPG/pVL6IPFV7+iPKnjXgg=;
+        b=2jboRAlrjWMAxVSBpgn9yenYoTeusUV7QFAdLoog1AMDSX0bZt6WqVbyU0khv9hEHJ
+         6ZMHMQOlTxj23QebSGaX9m1925A0yW2POvrqxj4vbb5/mgDISuJq+u9l7XLAgS5aTnub
+         muPEPEpF8VZXDbcrzlc0z8/YgWAuWx9BjeAiit7GUpb6HDkSQreFBvwKrQoTwb3srKfi
+         bbCjBIh/JRnQw0Yd31hKmTyatHbsUQ6qBbMlY50NHXATEsTTKEshfvxCZ1At9cnuk+9F
+         TPn3B3KJGZV54DML3nldcfg5XtPmgdVs8WJZTYweP6lNLM5uTEi+Yo5ip9qpaQQIATaB
+         Nksw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AB7slnWuflc2rdS3D14rOyPG/pVL6IPFV7+iPKnjXgg=;
+        b=zQUysFVQmZDTNzlYvQZEcytSmIBTIDnxqVzOEv/M3tLlRabJk2/03/Oz3Wl8omlymQ
+         97cJqdUY8FWWBto/PQwGBugQLt2lx7644eHj/nR1bMLj6Y13uF4ntYydSyO8GnKKC/Qk
+         RvvtTaZaaiopBemnqP+WnczYjwpHfuAHys1aOHa+2liRaXNOijG82FMQ7vExiCsRo5Ye
+         vFlKNNkdKcdYk/kby+w1BqoW5X23XSLS7WVYLVcAY8AjhWaCQO2shP8NDpQ3QTBhBPsy
+         AI8fqxlPNyU9nUB5enjxVdCzrj8kZJxRsKz+4P9EKz1WutDloWfszT3zcQbpfyoLykWk
+         EMaA==
+X-Gm-Message-State: AFqh2kqIh6tg9m0SLrWWQMXyrYdufu078jIRHvGjxpyGbcOWkDWxm96Z
+        bjGP3P79sryDCijnV+wfkNjvmUcZpgLKcD0Jh2+Bpw==
+X-Google-Smtp-Source: AMrXdXt+oisZAWXGQWU/TlsnBG8vctglek9a/inrPx6QH0WikqG6L1RqRjIdHnYTh/Ko//HTDD045Q==
+X-Received: by 2002:a17:902:e30c:b0:193:30bc:ed86 with SMTP id q12-20020a170902e30c00b0019330bced86mr3959693plc.48.1673280875420;
+        Mon, 09 Jan 2023 08:14:35 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id c11-20020a170903234b00b0019277df45a6sm6391231plh.53.2023.01.09.08.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jan 2023 08:14:35 -0800 (PST)
+Message-ID: <63bc3d6b.170a0220.188cb.981f@mx.google.com>
+Date:   Mon, 09 Jan 2023 08:14:35 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20221227-v6-2-rc1-c45-seperation-v3-7-ade1deb438da@walle.cc>
-References: <20221227-v6-2-rc1-c45-seperation-v3-0-ade1deb438da@walle.cc>
-In-Reply-To: <20221227-v6-2-rc1-c45-seperation-v3-0-ade1deb438da@walle.cc>
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Wei Fang <wei.fang@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Walle <michael@walle.cc>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>
-X-Mailer: b4 0.11.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-devel-2023-01-09-v6.2-rc3
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Report-Type: test
+Subject: renesas/master baseline-nfs: 115 runs,
+ 4 regressions (renesas-devel-2023-01-09-v6.2-rc3)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+renesas/master baseline-nfs: 115 runs, 4 regressions (renesas-devel-2023-01=
+-09-v6.2-rc3)
 
-The marvell MDIO driver supports two different hardware blocks. The
-XSMI block is C45 only. Convert this block to the new API, and only
-populate the c45 calls in the bus structure.
+Regressions Summary
+-------------------
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- drivers/net/ethernet/marvell/mvmdio.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+platform                     | arch  | lab         | compiler | defconfig  =
+       | regressions
+-----------------------------+-------+-------------+----------+------------=
+-------+------------
+juno-uboot                   | arm64 | lab-broonie | gcc-10   | defconfig+c=
+rypto  | 1          =
 
-diff --git a/drivers/net/ethernet/marvell/mvmdio.c b/drivers/net/ethernet/marvell/mvmdio.c
-index ef878973b859..2d654a40af13 100644
---- a/drivers/net/ethernet/marvell/mvmdio.c
-+++ b/drivers/net/ethernet/marvell/mvmdio.c
-@@ -204,21 +204,17 @@ static const struct orion_mdio_ops orion_mdio_xsmi_ops = {
- 	.poll_interval_max = MVMDIO_XSMI_POLL_INTERVAL_MAX,
- };
- 
--static int orion_mdio_xsmi_read(struct mii_bus *bus, int mii_id,
--				int regnum)
-+static int orion_mdio_xsmi_read_c45(struct mii_bus *bus, int mii_id,
-+				    int dev_addr, int regnum)
- {
- 	struct orion_mdio_dev *dev = bus->priv;
--	u16 dev_addr = (regnum >> 16) & GENMASK(4, 0);
- 	int ret;
- 
--	if (!(regnum & MII_ADDR_C45))
--		return -EOPNOTSUPP;
--
- 	ret = orion_mdio_wait_ready(&orion_mdio_xsmi_ops, bus);
- 	if (ret < 0)
- 		return ret;
- 
--	writel(regnum & GENMASK(15, 0), dev->regs + MVMDIO_XSMI_ADDR_REG);
-+	writel(regnum, dev->regs + MVMDIO_XSMI_ADDR_REG);
- 	writel((mii_id << MVMDIO_XSMI_PHYADDR_SHIFT) |
- 	       (dev_addr << MVMDIO_XSMI_DEVADDR_SHIFT) |
- 	       MVMDIO_XSMI_READ_OPERATION,
-@@ -237,21 +233,17 @@ static int orion_mdio_xsmi_read(struct mii_bus *bus, int mii_id,
- 	return readl(dev->regs + MVMDIO_XSMI_MGNT_REG) & GENMASK(15, 0);
- }
- 
--static int orion_mdio_xsmi_write(struct mii_bus *bus, int mii_id,
--				int regnum, u16 value)
-+static int orion_mdio_xsmi_write_c45(struct mii_bus *bus, int mii_id,
-+				     int dev_addr, int regnum, u16 value)
- {
- 	struct orion_mdio_dev *dev = bus->priv;
--	u16 dev_addr = (regnum >> 16) & GENMASK(4, 0);
- 	int ret;
- 
--	if (!(regnum & MII_ADDR_C45))
--		return -EOPNOTSUPP;
--
- 	ret = orion_mdio_wait_ready(&orion_mdio_xsmi_ops, bus);
- 	if (ret < 0)
- 		return ret;
- 
--	writel(regnum & GENMASK(15, 0), dev->regs + MVMDIO_XSMI_ADDR_REG);
-+	writel(regnum, dev->regs + MVMDIO_XSMI_ADDR_REG);
- 	writel((mii_id << MVMDIO_XSMI_PHYADDR_SHIFT) |
- 	       (dev_addr << MVMDIO_XSMI_DEVADDR_SHIFT) |
- 	       MVMDIO_XSMI_WRITE_OPERATION | value,
-@@ -302,8 +294,8 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 		bus->write = orion_mdio_smi_write;
- 		break;
- 	case BUS_TYPE_XSMI:
--		bus->read = orion_mdio_xsmi_read;
--		bus->write = orion_mdio_xsmi_write;
-+		bus->read_c45 = orion_mdio_xsmi_read_c45;
-+		bus->write_c45 = orion_mdio_xsmi_write_c45;
- 		break;
- 	}
- 
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | renesas_def=
+config | 1          =
 
--- 
-2.30.2
+sun50i-a64-pine64-plus       | arm64 | lab-broonie | gcc-10   | defconfig+d=
+ebug   | 1          =
+
+sun50i-h5-lib...ch-all-h3-cc | arm64 | lab-broonie | gcc-10   | defconfig+d=
+ebug   | 1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-01-09-v6.2-rc3/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-01-09-v6.2-rc3
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      84545c94403b4b5a90561c9c97c2c2c00091cff1 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch  | lab         | compiler | defconfig  =
+       | regressions
+-----------------------------+-------+-------------+----------+------------=
+-------+------------
+juno-uboot                   | arm64 | lab-broonie | gcc-10   | defconfig+c=
+rypto  | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63bc0692cbf911e2534eee32
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: defconfig+crypto
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-09-v6.2-rc3/arm64/defconfig+crypto/gcc-10/lab-broonie/baseline-nfs-j=
+uno-uboot.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-09-v6.2-rc3/arm64/defconfig+crypto/gcc-10/lab-broonie/baseline-nfs-j=
+uno-uboot.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+221230.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/63bc0692cbf911e2534eee37
+        new failure (last pass: renesas-devel-2022-12-12-v6.1)
+
+    2023-01-09T12:20:13.214107  / # #
+    2023-01-09T12:20:13.317081  export SHELL=3D/bin/sh
+    2023-01-09T12:20:13.317922  #
+    2023-01-09T12:20:13.419856  / # export SHELL=3D/bin/sh. /lava-75699/env=
+ironment
+    2023-01-09T12:20:13.420649  =
+
+    2023-01-09T12:20:13.522616  / # . /lava-75699/environment/lava-75699/bi=
+n/lava-test-runner /lava-75699/1
+    2023-01-09T12:20:13.523958  =
+
+    2023-01-09T12:20:13.543449  / # /lava-75699/bin/lava-test-runner /lava-=
+75699/1
+    2023-01-09T12:20:13.655378  + export TESTRUN_ID=3D1_bootrr
+    2023-01-09T12:20:13.701285  + cd /lava-75699/1/tests/1_bootrr =
+
+    ... (39 line(s) more)  =
+
+ =
+
+
+
+platform                     | arch  | lab         | compiler | defconfig  =
+       | regressions
+-----------------------------+-------+-------------+----------+------------=
+-------+------------
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | renesas_def=
+config | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63bc0fc31ea638aa394eee4f
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: renesas_defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-09-v6.2-rc3/arm64/renesas_defconfig/gcc-10/lab-cip/baseline-nfs-r8a7=
+74a1-hihope-rzg2m-ex.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-09-v6.2-rc3/arm64/renesas_defconfig/gcc-10/lab-cip/baseline-nfs-r8a7=
+74a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+221230.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/63bc0fc31ea638aa3=
+94eee50
+        new failure (last pass: renesas-devel-2023-01-02-v6.2-rc2) =
+
+ =
+
+
+
+platform                     | arch  | lab         | compiler | defconfig  =
+       | regressions
+-----------------------------+-------+-------------+----------+------------=
+-------+------------
+sun50i-a64-pine64-plus       | arm64 | lab-broonie | gcc-10   | defconfig+d=
+ebug   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63bc0bc1df2fd252414eee37
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+debug
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-09-v6.2-rc3/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-nfs-su=
+n50i-a64-pine64-plus.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-09-v6.2-rc3/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-nfs-su=
+n50i-a64-pine64-plus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+221230.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/63bc0bc1df2fd2524=
+14eee38
+        new failure (last pass: renesas-devel-2023-01-02-v6.2-rc2) =
+
+ =
+
+
+
+platform                     | arch  | lab         | compiler | defconfig  =
+       | regressions
+-----------------------------+-------+-------------+----------+------------=
+-------+------------
+sun50i-h5-lib...ch-all-h3-cc | arm64 | lab-broonie | gcc-10   | defconfig+d=
+ebug   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63bc09a5c0576614e14eee19
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+debug
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-09-v6.2-rc3/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-nfs-su=
+n50i-h5-libretech-all-h3-cc.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-09-v6.2-rc3/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-nfs-su=
+n50i-h5-libretech-all-h3-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+221230.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/63bc09a5c0576614e=
+14eee1a
+        failing since 14 days (last pass: v6.1-rc8-929-g112502470f50, first=
+ fail: renesas-devel-2022-12-26-v6.2-rc1) =
+
+ =20
