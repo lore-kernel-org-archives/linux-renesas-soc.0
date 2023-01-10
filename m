@@ -2,95 +2,120 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4395C54EBC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Jan 2023 10:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7FDC54EBC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Jan 2023 11:17:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231654AbjAJKho (ORCPT
+        id S232970AbjAJLRv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Jan 2023 05:37:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60110 "EHLO
+        Tue, 10 Jan 2023 06:17:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231409AbjAJKhm (ORCPT
+        with ESMTP id S232682AbjAJLRq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jan 2023 05:37:42 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3062A40C28
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Jan 2023 02:37:41 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id w1so11241049wrt.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Jan 2023 02:37:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EqWZTPYWg74UddpBq2hX8CrCoS0DmnhoM9+iCMX4jjw=;
-        b=cryKYzziNzmtuyT8a6QGoPduvqzMN4xOc8Ov/If8qMU4p8l9CyPQp2+1Xa38xQkM9Q
-         A9MCBlqqd9A3LhLeUCNyDwGn6Px0y+TEGNdOGA+dHfvpnAQG6qJe4zPKTdwlvcxEqOmt
-         vcLoGyYFeVfMZFvdHa+HRTTa4keVyhQJaqmlrbV6aUNrZ+R1yEZnCnhZUsw+2V9I0vSX
-         EkI43vBJTUvZEESbhl2qSxOBXeGSo6v+jJ9TM7pYSFDYW+iyUUZFlewNNtp1FRQOB1TF
-         lnMptCHQi579/5MxywxjfSgnLZWmpd4EYBU6nzb4eliecNHjGe4DjTPDxaqTkFWIPq+y
-         wkWQ==
+        Tue, 10 Jan 2023 06:17:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E80F8235
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Jan 2023 03:17:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673349421;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7R6k4XeSSfrouTet4Pl7FYt1MDO+biHA3LgQPUZKzOM=;
+        b=PkdKWIR7QPEzuFMnMppcCEVq3ibLSxh0HQLEwGs1nIqdUTWk5+l53vb65OugsT1Sj7BjQp
+        d4U+y+bqLJNkcsTb62HK4m4JUVWZzP3q4lKGndNVtZ65nJdGgTdU23aJTAOxEYdzvouW2O
+        1giirtF38N5mhTq5laph7clukkLRoiQ=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-102-2LT9oIO-Maujmv2QGehxmQ-1; Tue, 10 Jan 2023 06:17:00 -0500
+X-MC-Unique: 2LT9oIO-Maujmv2QGehxmQ-1
+Received: by mail-qk1-f199.google.com with SMTP id i4-20020a05620a248400b006febc1651bbso8488272qkn.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Jan 2023 03:17:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EqWZTPYWg74UddpBq2hX8CrCoS0DmnhoM9+iCMX4jjw=;
-        b=lrIvlOe67fWk3w4YV/jMSqtfr/sVfBOHvF0QMmw8RuXpgpIkfUAZuYrHwd9Itsx2+D
-         1+uyQO4vGXWVEz2BVYH1gAcfgIjCxglyRV7ocVoWRtd+10M+6okU2CyExCYd3Pv+vBSU
-         D0SGe47Jn9UO8Ipd4c1wvyFwy2DuCtknMlvDx3opg+T/Z+ZlpqWcQmyCN14rawWjLLzb
-         72uxr6A6sSsdC+XvIm+1+/Qxu6ZzwYp7KZTYrX6I6APeL2kaH63lBhFIKFDfhM4x4KEX
-         9N0BHqVLkGoCecde7450AwDb/ZI+x9Y0B4Kj5FVXFU1Qd1MuFwoUljfFU0Zl6MDjiUuf
-         prqg==
-X-Gm-Message-State: AFqh2koe9XAGsqbGuhh+SXrS1pdnJMw1CoNQTXBJ1KXlRHOg+7zec4d/
-        vAuyOSMI9TGZAStEFkFbPb9ZEg==
-X-Google-Smtp-Source: AMrXdXsiXz9lNzBtJRzZYoZO7knyMkGJuAKU2HVoj8SdqnkC3rF5X2Vg2ZsPumYSglpVhO+gGWBzxw==
-X-Received: by 2002:a05:6000:1e04:b0:273:e385:1a89 with SMTP id bj4-20020a0560001e0400b00273e3851a89mr41057650wrb.67.1673347059743;
-        Tue, 10 Jan 2023 02:37:39 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id n6-20020adfe786000000b002bdbde1d3absm462943wrm.78.2023.01.10.02.37.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jan 2023 02:37:39 -0800 (PST)
-Message-ID: <4aaa960a-abe4-7f9b-88a5-a4bdf0da9ee8@linaro.org>
-Date:   Tue, 10 Jan 2023 11:37:37 +0100
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7R6k4XeSSfrouTet4Pl7FYt1MDO+biHA3LgQPUZKzOM=;
+        b=dcohuvBM7dOzixU55G7swcPjLheSbBtl3Li+RZOLpMR+7ZxewHT7xbltC746SekJAJ
+         YIDE1YMzkCtdHu3gRM1p4m+O+vO/VwpbVzYjlFRG/dzq1kqZXHtBLU6PHpDhsvJhnPgF
+         1xpZOejQo+IWheAyVeYIMWXrsna/Co0j0u2nuZ1ujJnGgLsb26cdzuPaori+XNqFrO58
+         y1EErQIC/agW0SFlzno4KrH5aeBN/GJwiNHnqahW69xo0n9VgDyg5sOB9pTt/wJx1Y0H
+         8usTNo843p3mB8MUCrDkD3FgYjAHRxyHgEopTdZAeIRLQAVvAU0x/olGHTQKmhHnk/X5
+         il1A==
+X-Gm-Message-State: AFqh2kqSWQXq6nHjyDBulnmHeLdf8cjiGllyl5BdFXU31Pyljw5OwKOc
+        mIbPVKgw+fHbV78gGD/8ULpmPBYVvoRo6RGUoaZIMTF17nmNLsMzPmIt6b60Wdh00Ly3A5WTQ1E
+        SZGzSotlUfyBaRITatFsfZsJ0AuiKj7E=
+X-Received: by 2002:ac8:520c:0:b0:3a8:1079:b844 with SMTP id r12-20020ac8520c000000b003a81079b844mr89443418qtn.46.1673349419765;
+        Tue, 10 Jan 2023 03:16:59 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXt7LAw0VjeSUK8wkVXMaLsnRFvPYmNquEuKr7XZHAByB6NkEWLdJSItXvzP6gLV6c7Tmr1r8Q==
+X-Received: by 2002:ac8:520c:0:b0:3a8:1079:b844 with SMTP id r12-20020ac8520c000000b003a81079b844mr89443387qtn.46.1673349419493;
+        Tue, 10 Jan 2023 03:16:59 -0800 (PST)
+Received: from gerbillo.redhat.com (146-241-120-128.dyn.eolo.it. [146.241.120.128])
+        by smtp.gmail.com with ESMTPSA id k8-20020ac80748000000b0038b684a1642sm5839964qth.32.2023.01.10.03.16.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jan 2023 03:16:58 -0800 (PST)
+Message-ID: <5bd7ee34ead313785951defbf3069b64d4338a45.camel@redhat.com>
+Subject: Re: [PATCH net-next v3 01/11] net: mdio: Add dedicated C45 API to
+ MDIO bus drivers
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Michael Walle <michael@walle.cc>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Wei Fang <wei.fang@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Landen Chao <Landen.Chao@mediatek.com>,
+        DENG Qingfang <dqfext@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>
+Date:   Tue, 10 Jan 2023 12:16:53 +0100
+In-Reply-To: <20221227-v6-2-rc1-c45-seperation-v3-1-ade1deb438da@walle.cc>
+References: <20221227-v6-2-rc1-c45-seperation-v3-0-ade1deb438da@walle.cc>
+         <20221227-v6-2-rc1-c45-seperation-v3-1-ade1deb438da@walle.cc>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH] dt-bindings: mmc: renesas,sdhi: Fix RZ/V2M clock
- description
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <054c9f4dbb0bb1525f780d1e85c724436465c20c.1673270716.git.geert+renesas@glider.be>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <054c9f4dbb0bb1525f780d1e85c724436465c20c.1673270716.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 09/01/2023 14:26, Geert Uytterhoeven wrote:
-> The SD Card/MMC interface on the Renesas RZ/V2M SoC uses 4 clocks, like
-> on RZ/G2L SoCs.
-> 
-> The current description specifies 3 clocks, like on R-Car Gen3, which
-> will lead to "make dtbs_check" failures:
-> 
->     arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dtb: mmc@85000000: clocks: [[3, 1, 18], [3, 1, 20], [3, 1, 19], [3, 1, 17]] is too long
-> 	    From schema: Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> 
-> Fixes: c8dbdf2a1044951b ("dt-bindings: mmc: renesas,sdhi: Document RZ/V2M support")
+On Mon, 2023-01-09 at 16:30 +0100, Michael Walle wrote:
+> diff --git a/include/linux/phy.h b/include/linux/phy.h
+> index 6378c997ded5..65844f0a7fb3 100644
+> --- a/include/linux/phy.h
+> +++ b/include/linux/phy.h
+> @@ -364,6 +364,11 @@ struct mii_bus {
+>  	int (*read)(struct mii_bus *bus, int addr, int regnum);
+>  	/** @write: Perform a write transfer on the bus */
+>  	int (*write)(struct mii_bus *bus, int addr, int regnum, u16 val);
+> +	/** @read: Perform a C45 read transfer on the bus */
 
+Minor nit: s/@read/@read_c45/ 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +	int (*read_c45)(struct mii_bus *bus, int addr, int devnum, int regnum);
+> +	/** @write: Perform a C45 write transfer on the bus */
 
-Best regards,
-Krzysztof
+Mutatis mutandis, same thing here.
+
+Thanks!
+
+Paolo
 
