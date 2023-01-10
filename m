@@ -2,26 +2,26 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2D6C46467
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Jan 2023 05:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA07EC54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Jan 2023 05:02:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229677AbjAJFCU (ORCPT
+        id S229707AbjAJFCV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Jan 2023 00:02:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42810 "EHLO
+        Tue, 10 Jan 2023 00:02:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbjAJFCT (ORCPT
+        with ESMTP id S229635AbjAJFCU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jan 2023 00:02:19 -0500
+        Tue, 10 Jan 2023 00:02:20 -0500
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 44A6C1EC62;
-        Mon,  9 Jan 2023 21:02:18 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8E0DA4084C;
+        Mon,  9 Jan 2023 21:02:19 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.96,314,1665414000"; 
-   d="scan'208";a="148802734"
+   d="scan'208";a="148802738"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie6.idc.renesas.com with ESMTP; 10 Jan 2023 14:02:17 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3E17C400721C;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 76ADB4007543;
         Tue, 10 Jan 2023 14:02:17 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
@@ -29,42 +29,125 @@ To:     linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
         pabeni@redhat.com
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v2 0/4] net: ethernet: renesas: rswitch: Modify initialization for SERDES and PHY
-Date:   Tue, 10 Jan 2023 14:02:02 +0900
-Message-Id: <20230110050206.116110-1-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next v2 2/4] net: ethernet: renesas: rswitch: Simplify struct phy * handling
+Date:   Tue, 10 Jan 2023 14:02:04 +0900
+Message-Id: <20230110050206.116110-3-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230110050206.116110-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20230110050206.116110-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The patch [1/4] sets phydev->host_interfaces by phylink for Marvell PHY
-driver (marvell10g) to initialize the MACTYPE.
+Simplify struct phy *serdes handling by keeping the valiable in
+the struct rswitch_device.
 
-The patch [2/4] siplifies the rswitch driver, the patch [3/4] enables
-the ovr_host_interfaces flag, and the patch [4/4] phy_power_on() calling
-to initialize the Ethernet SERDES PHY driver (r8a779f0-eth-serdes)
-for each channel.
-
-Changes from v1:
-https://lore.kernel.org/all/20221226071425.3895915-1-yoshihiro.shimoda.uh@renesas.com/
- - Add a new flag (ovr_host_interfaces) into phylink_config in the patch [1/4].
- - Add a new patch [3/4] for the new flag.
- - Add a error message to the patch [4/4/] for MLO_AN_INBAND mode.
-
-Yoshihiro Shimoda (4):
-  net: phylink: Set host_interfaces for a non-sfp PHY
-  net: ethernet: renesas: rswitch: Simplify struct phy * handling
-  net: ethernet: renesas: rswitch: Enable ovr_host_interfaces
-  net: ethernet: renesas: rswitch: Add phy_power_{on,off}() calling
-
- drivers/net/ethernet/renesas/rswitch.c | 53 +++++++++++++++-----------
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/net/ethernet/renesas/rswitch.c | 40 ++++++++++++--------------
  drivers/net/ethernet/renesas/rswitch.h |  1 +
- drivers/net/phy/phylink.c              |  9 +++++
- include/linux/phylink.h                |  3 ++
- 4 files changed, 44 insertions(+), 22 deletions(-)
+ 2 files changed, 19 insertions(+), 22 deletions(-)
 
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index 6441892636db..ca79ee168206 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -1235,49 +1235,40 @@ static void rswitch_phylink_deinit(struct rswitch_device *rdev)
+ 	phylink_destroy(rdev->phylink);
+ }
+ 
+-static int rswitch_serdes_set_params(struct rswitch_device *rdev)
++static int rswitch_serdes_phy_get(struct rswitch_device *rdev)
+ {
+ 	struct device_node *port = rswitch_get_port_node(rdev);
+ 	struct phy *serdes;
+-	int err;
+ 
+ 	serdes = devm_of_phy_get(&rdev->priv->pdev->dev, port, NULL);
+ 	of_node_put(port);
+ 	if (IS_ERR(serdes))
+ 		return PTR_ERR(serdes);
++	rdev->serdes = serdes;
++
++	return 0;
++}
++
++static int rswitch_serdes_set_params(struct rswitch_device *rdev)
++{
++	int err;
+ 
+-	err = phy_set_mode_ext(serdes, PHY_MODE_ETHERNET,
++	err = phy_set_mode_ext(rdev->serdes, PHY_MODE_ETHERNET,
+ 			       rdev->etha->phy_interface);
+ 	if (err < 0)
+ 		return err;
+ 
+-	return phy_set_speed(serdes, rdev->etha->speed);
++	return phy_set_speed(rdev->serdes, rdev->etha->speed);
+ }
+ 
+ static int rswitch_serdes_init(struct rswitch_device *rdev)
+ {
+-	struct device_node *port = rswitch_get_port_node(rdev);
+-	struct phy *serdes;
+-
+-	serdes = devm_of_phy_get(&rdev->priv->pdev->dev, port, NULL);
+-	of_node_put(port);
+-	if (IS_ERR(serdes))
+-		return PTR_ERR(serdes);
+-
+-	return phy_init(serdes);
++	return phy_init(rdev->serdes);
+ }
+ 
+ static int rswitch_serdes_deinit(struct rswitch_device *rdev)
+ {
+-	struct device_node *port = rswitch_get_port_node(rdev);
+-	struct phy *serdes;
+-
+-	serdes = devm_of_phy_get(&rdev->priv->pdev->dev, port, NULL);
+-	of_node_put(port);
+-	if (IS_ERR(serdes))
+-		return PTR_ERR(serdes);
+-
+-	return phy_exit(serdes);
++	return phy_exit(rdev->serdes);
+ }
+ 
+ static int rswitch_ether_port_init_one(struct rswitch_device *rdev)
+@@ -1299,6 +1290,10 @@ static int rswitch_ether_port_init_one(struct rswitch_device *rdev)
+ 	if (err < 0)
+ 		goto err_phylink_init;
+ 
++	err = rswitch_serdes_phy_get(rdev);
++	if (err < 0)
++		goto err_serdes_phy_get;
++
+ 	err = rswitch_serdes_set_params(rdev);
+ 	if (err < 0)
+ 		goto err_serdes_set_params;
+@@ -1306,6 +1301,7 @@ static int rswitch_ether_port_init_one(struct rswitch_device *rdev)
+ 	return 0;
+ 
+ err_serdes_set_params:
++err_serdes_phy_get:
+ 	rswitch_phylink_deinit(rdev);
+ 
+ err_phylink_init:
+diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
+index edbdd1b98d3d..d9a0be6666f5 100644
+--- a/drivers/net/ethernet/renesas/rswitch.h
++++ b/drivers/net/ethernet/renesas/rswitch.h
+@@ -941,6 +941,7 @@ struct rswitch_device {
+ 
+ 	int port;
+ 	struct rswitch_etha *etha;
++	struct phy *serdes;
+ };
+ 
+ struct rswitch_mfwd_mac_table_entry {
 -- 
 2.25.1
 
