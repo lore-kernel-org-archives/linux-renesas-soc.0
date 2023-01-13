@@ -2,92 +2,163 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E16C678D6
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Jan 2023 09:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D10C54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Jan 2023 09:15:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241016AbjAMJKj (ORCPT
+        id S240739AbjAMJPp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Jan 2023 04:10:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36616 "EHLO
+        Fri, 13 Jan 2023 04:15:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241102AbjAMJI2 (ORCPT
+        with ESMTP id S241467AbjAMJOR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2023 04:08:28 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 698B895B2;
-        Fri, 13 Jan 2023 01:06:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 92488B820D0;
-        Fri, 13 Jan 2023 09:06:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E4C4C433D2;
-        Fri, 13 Jan 2023 09:05:55 +0000 (UTC)
-Message-ID: <649a45a5-1680-dd71-ed74-df16d4353638@xs4all.nl>
-Date:   Fri, 13 Jan 2023 10:05:54 +0100
+        Fri, 13 Jan 2023 04:14:17 -0500
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E53D9140C2;
+        Fri, 13 Jan 2023 01:12:15 -0800 (PST)
+Received: by mail-qt1-f173.google.com with SMTP id g9so3965290qtu.2;
+        Fri, 13 Jan 2023 01:12:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iqMrCvqCQ4045lh8vjHp/Z6q3B3wdMLy3QiBa0za+Eg=;
+        b=wfok/kU1KiQLBK8061ohHfgoSKK1pMm/flqK2jjTzdw+u2XIo1+GVNx4LtcEUcYTzj
+         uimvAONiu8BCVj/4184NdIPNXzaj2MYzkrbZ8+/IyBbWf2y0Joup80kAlQ9paOuirBPG
+         Oz4h69INfFs0L8DL0ODjdLTnXnUyQZFkTGpL/HCKbufvN7vUpuIbPpyJ/5DyJpbHRUv4
+         8stsUNFb+DPVa1kPvJAbW1M1UYw5Ti6xh3wzhYWajPAzCDx6O7SahXC8rMOrn+ztzcVw
+         LW+RDYim7bKC0pp1wxwyhr/dqAczJDf6VOWGkjuXMbBTRENeCvtzRCv3CEtrAI0Tfra2
+         InkA==
+X-Gm-Message-State: AFqh2koc5y1OVznbxD1PDoBnnUqYWqmG+ijpmmAi3/nmHMR6saZ3sPGw
+        9WAXrJhCMDlTkOsbSYiAZKlLSVIL6UZqVQ==
+X-Google-Smtp-Source: AMrXdXuSt1yXH+2aX6Q+FuvAzlEqUm9hdczPYtKv/jQ6Da81MMMK83zA/9FW5EeDmK9V9t9K5MHYaQ==
+X-Received: by 2002:ac8:7766:0:b0:3a5:f9cb:886f with SMTP id h6-20020ac87766000000b003a5f9cb886fmr106122783qtu.29.1673601134708;
+        Fri, 13 Jan 2023 01:12:14 -0800 (PST)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id x14-20020a05620a258e00b006e07228ed53sm12270052qko.18.2023.01.13.01.12.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jan 2023 01:12:14 -0800 (PST)
+Received: by mail-yb1-f180.google.com with SMTP id c124so21625147ybb.13;
+        Fri, 13 Jan 2023 01:12:14 -0800 (PST)
+X-Received: by 2002:a25:b944:0:b0:7b2:4421:82be with SMTP id
+ s4-20020a25b944000000b007b2442182bemr2669630ybm.380.1673601133864; Fri, 13
+ Jan 2023 01:12:13 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 20/22] media: remove sh_vou
-Content-Language: en-US
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-        dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-sh@vger.kernel.org
-References: <20230113062339.1909087-1-hch@lst.de>
- <20230113062339.1909087-21-hch@lst.de>
- <Y8EPvllOwhODRUiP@pendragon.ideasonboard.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <Y8EPvllOwhODRUiP@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230113080550.1736-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20230113080550.1736-1-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 13 Jan 2023 10:12:02 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVw+fCqEewmY7BA4q0a=WAaDguaTChGKwUXFtWMCV8SaQ@mail.gmail.com>
+Message-ID: <CAMuHMdVw+fCqEewmY7BA4q0a=WAaDguaTChGKwUXFtWMCV8SaQ@mail.gmail.com>
+Subject: Re: [PATCH] memory: renesas-rpc-if: Fix PHYCNT.STRTIM setting
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 13/01/2023 09:01, Laurent Pinchart wrote:
-> Hi Christoph,
-> 
-> Thank you for the patch.
-> 
-> On Fri, Jan 13, 2023 at 07:23:37AM +0100, Christoph Hellwig wrote:
->> Now that arch/sh is removed this driver is dead code.
->>
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
->> ---
->>  drivers/media/platform/renesas/Kconfig  |    9 -
->>  drivers/media/platform/renesas/Makefile |    1 -
->>  drivers/media/platform/renesas/sh_vou.c | 1375 -----------------------
-> 
-> You can also emove include/media/drv-intf/sh_vou.sh. With that, and the
-> corresponding MAINTAINERS entry dropped,
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Hi Wolfram,
 
-And with that you can also add my Ack:
+On Fri, Jan 13, 2023 at 9:10 AM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Cong Dang <cong.dang.xn@renesas.com>
+>
+> According to the datasheets, the Strobe Timing Adjustment bit (STRTIM)
+> setting is different on R-Car SoCs, i.e.
+>
+> R-Car H3 ES1.*  : STRTIM[2:0] is set to 0x0
+> R-Car M3 ES1.*  : STRTIM[2:0] is set to 0x6
+> other R-Car Gen3: STRTIM[2:0] is set to 0x7
+> other R-Car Gen4: STRTIM[3:0] is set to 0xf
+>
+> To fix this issue, a DT match data was added to specify the setting
+> for special use cases.
+>
+> Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
+> Signed-off-by: Hai Pham  <hai.pham.ud@renesas.com>
+> [wsa: rebased, restructured a little, added Gen4 support]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Thanks for your patch!
 
-Regards,
+> --- a/drivers/memory/renesas-rpc-if.c
+> +++ b/drivers/memory/renesas-rpc-if.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/regmap.h>
+>  #include <linux/reset.h>
+> +#include <linux/sys_soc.h>
+>
+>  #include <memory/renesas-rpc-if.h>
+>
+> @@ -163,6 +164,36 @@ static const struct regmap_access_table rpcif_volatile_table = {
+>         .n_yes_ranges   = ARRAY_SIZE(rpcif_volatile_ranges),
+>  };
+>
+> +static const struct rpcif_info rpcif_info_r8a7795_es1 = {
+> +       .type = RPCIF_RCAR_GEN3,
+> +       .strtim = 0,
+> +};
+> +
+> +static const struct rpcif_info rpcif_info_r8a7796_es1 = {
+> +       .type = RPCIF_RCAR_GEN3,
+> +       .strtim = 6,
+> +};
+> +
+> +static const struct rpcif_info rpcif_info_gen3 = {
+> +       .type = RPCIF_RCAR_GEN3,
+> +       .strtim = 7,
+> +};
+> +
+> +static const struct rpcif_info rpcif_info_rz_g2l = {
+> +       .type = RPCIF_RZ_G2L,
+> +       .strtim = 7,
+> +};
+> +
+> +static const struct rpcif_info rpcif_info_gen4 = {
+> +       .type = RPCIF_RCAR_GEN4,
+> +       .strtim = 15,
+> +};
+> +
+> +static const struct soc_device_attribute rpcif_info_match[]  = {
+> +       { .soc_id = "r8a7795", .revision = "ES1.*", .data = &rpcif_info_r8a7795_es1 },
+> +       { .soc_id = "r8a7796", .revision = "ES1.*", .data = &rpcif_info_r8a7796_es1 },
+> +       { /* Sentinel. */ }
+> +};
+>
+>  /*
+>   * Custom accessor functions to ensure SM[RW]DR[01] are always accessed with
 
-	Hans
+> @@ -321,12 +359,9 @@ int rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
+>         /* DMA Transfer is not supported */
+>         regmap_update_bits(rpc->regmap, RPCIF_PHYCNT, RPCIF_PHYCNT_HS, 0);
+>
+> -       if (rpc->type == RPCIF_RCAR_GEN3)
+> -               regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
+> -                                  RPCIF_PHYCNT_STRTIM(7), RPCIF_PHYCNT_STRTIM(7));
+> -       else if (rpc->type == RPCIF_RCAR_GEN4)
+> -               regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
+> -                                  RPCIF_PHYCNT_STRTIM(15), RPCIF_PHYCNT_STRTIM(15));
+> +       regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
+> +                          RPCIF_PHYCNT_STRTIM(rpc->info->strtim),
+> +                          RPCIF_PHYCNT_STRTIM(rpc->info->strtim));
 
-> 
->>  3 files changed, 1385 deletions(-)
->>  delete mode 100644 drivers/media/platform/renesas/sh_vou.c
-> 
+I'm not sure this is guaranteed to work, as using rpc->info->strtim as
+the mask may not clear all bits (e.g. on R-Car M3-W it is 6, not 7), and
+the initial values of the bits are documented to be undefined.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
