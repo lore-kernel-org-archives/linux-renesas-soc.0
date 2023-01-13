@@ -2,1323 +2,1144 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0AAC678DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Jan 2023 16:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C60DC71133
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Jan 2023 16:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230440AbjAMQZE (ORCPT
+        id S229694AbjAMQZJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Jan 2023 11:25:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39646 "EHLO
+        Fri, 13 Jan 2023 11:25:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbjAMQYY (ORCPT
+        with ESMTP id S229796AbjAMQY3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2023 11:24:24 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9B108CBFE;
-        Fri, 13 Jan 2023 08:18:10 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D7FAA205E9;
-        Fri, 13 Jan 2023 16:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1673626687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a/nz9PZsEaBw6Xbmoaigr0ESYOUM4RXAWJqCR7TosNA=;
-        b=PZa7MN6B0TX1t2MV5bO3TQUnO1W/RMuD6TzA4bmww20D4ZC+Zqu8qAFXbkNYw/g3uGUGfk
-        3F3W68dXVORZM19SNNJYQN2GTuzCXthgRGJL/EcPsPuFIIy8tWoGUk41quZVkkDLVwRILt
-        xnipFG37mhmzUW8eReh49yojGPEUta0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1673626687;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a/nz9PZsEaBw6Xbmoaigr0ESYOUM4RXAWJqCR7TosNA=;
-        b=BUqkDlLEy0AlMFsez1mlH98ym1R8AaNXFsDn+cm8Nxzq4yt8F+qekncNhaZlkp2wI9epxl
-        jROS08SoPU4BRJDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5389A1358A;
-        Fri, 13 Jan 2023 16:18:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id xDesEz+EwWMxUQAAMHmgww
-        (envelope-from <tiwai@suse.de>); Fri, 13 Jan 2023 16:18:07 +0000
-Date:   Fri, 13 Jan 2023 17:18:06 +0100
-Message-ID: <87zgam1k8x.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fbdev@vger.kernel.org,
+        Fri, 13 Jan 2023 11:24:29 -0500
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7637D8D3BA;
+        Fri, 13 Jan 2023 08:18:14 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.97,214,1669042800"; 
+   d="scan'208";a="146246484"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 14 Jan 2023 01:18:13 +0900
+Received: from localhost.localdomain (unknown [10.226.92.190])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 688B440189C8;
+        Sat, 14 Jan 2023 01:18:11 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     William Breathitt Gray <william.gray@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-iio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-sh@vger.kernel.org, alsa-devel@alsa-project.org,
-        dri-devel@lists.freedesktop.org, linux-mtd@lists.infradead.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-arch@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-i2c@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 04/22] sound: remove sound/sh
-In-Reply-To: <20230113062339.1909087-5-hch@lst.de>
-References: <20230113062339.1909087-1-hch@lst.de>
-        <20230113062339.1909087-5-hch@lst.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v11 4/6] counter: Add Renesas RZ/G2L MTU3a counter driver
+Date:   Fri, 13 Jan 2023 16:17:51 +0000
+Message-Id: <20230113161753.1073706-5-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230113161753.1073706-1-biju.das.jz@bp.renesas.com>
+References: <20230113161753.1073706-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, 13 Jan 2023 07:23:21 +0100,
-Christoph Hellwig wrote:
-> 
-> Now that arch/sh is removed these drivers are dead code.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Add RZ/G2L MTU3a counter driver. This IP supports the following
+phase counting modes on MTU1 and MTU2 channels
 
-Supposed you take in your tree:
+1) 16-bit phase counting modes on MTU1 and MTU2 channels.
+2) 32-bit phase counting mode by cascading MTU1 and MTU2 channels.
 
-Acked-by: Takashi Iwai <tiwai@suse.de>
+This patch adds 3 counter value channels.
+	count0: 16-bit phase counter value channel on MTU1
+	count1: 16-bit phase counter value channel on MTU2
+	count2: 32-bit phase counter value channel by cascading
+                MTU1 and MTU2 channels.
 
+The external input phase clock pin for the counter value channels
+are as follows:
+	count0: "MTCLKA-MTCLKB"
+	count1: "MTCLKA-MTCLKB" or "MTCLKC-MTCLKD"
+	count2: "MTCLKA-MTCLKB" or "MTCLKC-MTCLKD"
 
-thanks,
+Use the sysfs variable "external_input_phase_clock_select" to select the
+external input phase clock pin and "cascade_counts_enable" to enable/
+disable cascading of channels.
 
-Takashi
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: William Breathitt Gray <william.gray@linaro.org>
+---
+v10->v11:
+ * Added Rb tag from William Breathitt Gray
+ * Replaced count2 channel name from "combined"->"cascaded", as channels
+   are cascaded
+ * Simplified the locking by adding the helper functions
+   rz_mtu3_lock_if_counter_is_valid, rz_mtu3_lock_if_count_is_enabled,
+   and rz_mtu3_lock_if_ch0_is_enabled.
+v9->v10:
+ * Added helper function for rz_mtu3_count_{action,function}_read
+ * Added priv->lock in rz_mtu3_count_function_read and rz_mtu3_count_
+   direction_read.
+ * Added ch->is_busy check for rz_mtu3_action_read()
+ * Added rz_mtu3_is_ch0_enabled() for device specific sysfs variables.
+ * Added ch->is_busy check for device specific sysfs variables.
+v8->v9:
+ * Added count_is_enabled variable to struct rz_mtu3_cnt
+ * Added check for ch->is_busy and count_is_enabled before every Counter
+   callback to ensure we do not try to access a busy channel used by other
+   subsystem(eg: pwm).
+ * Removed id parameter from rz_mtu3_32bit_cnt_setting()
+ * Made definition of rz_mtu3_get_ch() in single line.
+ * Replaced break->return in rz_mtu3_32bit_cnt_setting(),
+   rz_mtu3_count_function_read() and rz_mtu3_initialize_counter()
+   and removed redundant return 0.
+ * Simplified synapse signal check for rz_mtu3_action_read().
+v7->v8:
+ * Simplified rz_mtu3_initialize_counter by calling rz_mtu3_request_
+   channel() and release the acquired sibling channel in case of error.
+ * Simplified rz_mtu3_terminate_counter by calling rz_mtu3_release_
+   channel().
+ * Removed unused ceiling and ch_id from rz_mtu3_count_write()
+ * Replaced the error -EINVAL->-EBUSY for rz_mtu3_is_counter_invalid()
+ * Avoided race between rz_mtu3_count_{read, write} with rz_mtu3_
+   cascade_counts_enable_set() by adding locks and moved the lock
+   before rz_mtu3_is_counter_invalid()
+ * Protected the rz_mtu3_count_ceiling_read() function with a lock
+   to make sure the cascade operation mode doesn't not change and
+   that the priv data structure accesses don't race when they are
+   changed in the ceiling_write() callback.
+ * Added lock in rz_mtu3_cascade_enable_set() to make sure the other
+   callbacks don't try to read the LWA state while updating LWA.
+ * Added lock in rz_mtu3_ext_input_phase_clock_select_set() to ensure
+   the other callbacks don't try to read the PHCKSEL state while updating
+   PHCKSEL.
+ * Added lock to avoid race between rz_mtu3_count_function_write() and
+   rz_mtu3_action_read()
+ * Updated rz_mtu3_action_read to return 0, if Synapse is in COUNTER_SYNAPSE
+   _ACTION_NONE state.
+ * Replaced sysfs variable cascade_enable->cascade_counts_enable
+ * Renamed rz_mtu3_cascade_enable_get->rz_mtu3_cascade_counts_enable_get
+ * Renamed rz_mtu3_cascade_enable_set->rz_mtu3_cascade_counts_enable_set
+ * Removed redundent ceiling assignment from rz_mtu3_count_ceiling_read()
+ * Removed unused ceiling and ch_id from rz_mtu3_count_write().
+v6->v7:
+ * Updated commit description
+ * Added Register descriptions
+ * Opimized size of cache variable by using union
+ * Used test_bit() in rz_mtu3_is_counter_invalid()
+ * Replaced val->timer_mode in rz_mtu3_count_function_{read,write}
+ * Added TODO comment phase3 and phase5 modes.
+ * replaced if-else with ternary expression in rz_mtu3_count_direction_read()
+ * Used switch statement in rz_mtu3_count_ceiling_read to consistent with write
+ * Provided default case for all switch statement.
+ * Add mutex lock for avoiding races with other devices
+ * Updated comments in rz_mtu3_action_read
+ * Replaced COUNTER_COMP_DEVICE_BOOL->COUNTER_COMP_DEVICE_BOOL for 
+   cascade_enable
+ * Replaced RZ_MTU3_GET_HW_CH->rz_mtu3_get_hw_ch
+ * Added rz_mtu3_get_ch() to get channels
+ * used rz_mtu3_shared_reg_update_bit for cascade_enable and
+   selecting phase input clock.
+ * Added rz_mtu3_is_counter_invalid() check in rz_mtu3_count_ceiling_read()
+v5->v6:
+ * Updated KConfig and commit description
+ * Sorted header
+ * Fixed RZ_MTU3_GET_HW_CH Macro for argument reuse 'id' - 
+   possible side-effects?
+ * Replaced SET_RUNTIME_PM_OPS->DEFINE_RUNTIME_DEV_PM_OPS and removed
+   __maybe_unused from suspend/resume()
+v4->v5:
+ * Updated the Kconfig with SoC vendor name
+ * Introduced rz_mtu3_is_counter_invalid()
+ * replaced pointer to an array of struct rz_mtu3_channel with
+   a simple pointer to struct rz_mtu3_channel.
+ * Added long_word_access_ctrl_mode sysfs entry for 16-bit and
+   32-bit access
+ * Added external_input_phase_clock_select sysfs entry for
+   selecting input clocks.
+ * used preprocessor defines represent SIGNAL_{A,B,C,D}_ID instead of
+   signal ids.
+v3->v4:
+ * There is no resource associated with "rz-mtu3-counter" compatible
+   and moved the code to mfd subsystem as it binds against "rz-mtu".
+ * Removed struct platform_driver rz_mtu3_cnt_driver.
+ * Updated commit description
+ * Updated Kconfig description
+ * Added macros RZ_MTU3_16_BIT_MTU{1,2}_CH for MTU1 and MTU2 channels
+ * Added RZ_MTU3_GET_HW_CH macro for getting channel ID.
+ * replaced priv->ch[id]->priv->ch[0] in rz_mtu3_count_read()
+ * Cached counter max values
+ * replaced cnt->tsr in rz_mtu3_count_direction_read()
+ * Added comments for RZ_MTU3_TCR_CCLR_NONE
+ * Replaced if with switch in rz_mtu3_initialize_counter() and
+   rz_mtu3_count_ceiling_write()
+ * Added locks in initialize, terminate and enable_read to prevent races.
+ * Updated rz_mtu3_action_read to take care of MTU2 signals.
+ * Added separate distinct array for each group of Synapse.
+ * Moved pm handling to parent.
 
-> ---
->  sound/Kconfig           |   2 -
->  sound/Makefile          |   2 +-
->  sound/sh/Kconfig        |  32 --
->  sound/sh/Makefile       |  11 -
->  sound/sh/aica.c         | 628 ----------------------------------------
->  sound/sh/aica.h         |  68 -----
->  sound/sh/sh_dac_audio.c | 412 --------------------------
->  7 files changed, 1 insertion(+), 1154 deletions(-)
->  delete mode 100644 sound/sh/Kconfig
->  delete mode 100644 sound/sh/Makefile
->  delete mode 100644 sound/sh/aica.c
->  delete mode 100644 sound/sh/aica.h
->  delete mode 100644 sound/sh/sh_dac_audio.c
-> 
-> diff --git a/sound/Kconfig b/sound/Kconfig
-> index e56d96d2b11cae..14361bb428baa1 100644
-> --- a/sound/Kconfig
-> +++ b/sound/Kconfig
-> @@ -75,8 +75,6 @@ source "sound/spi/Kconfig"
->  
->  source "sound/mips/Kconfig"
->  
-> -source "sound/sh/Kconfig"
-> -
->  # the following will depend on the order of config.
->  # here assuming USB is defined before ALSA
->  source "sound/usb/Kconfig"
-> diff --git a/sound/Makefile b/sound/Makefile
-> index 04ef04b1168f39..bb4b8806321c67 100644
-> --- a/sound/Makefile
-> +++ b/sound/Makefile
-> @@ -4,7 +4,7 @@
->  
->  obj-$(CONFIG_SOUND) += soundcore.o
->  obj-$(CONFIG_DMASOUND) += oss/dmasound/
-> -obj-$(CONFIG_SND) += core/ i2c/ drivers/ isa/ pci/ ppc/ arm/ sh/ synth/ usb/ \
-> +obj-$(CONFIG_SND) += core/ i2c/ drivers/ isa/ pci/ ppc/ arm/ synth/ usb/ \
->  	firewire/ sparc/ spi/ parisc/ pcmcia/ mips/ soc/ atmel/ hda/ x86/ xen/ \
->  	virtio/
->  obj-$(CONFIG_SND_AOA) += aoa/
-> diff --git a/sound/sh/Kconfig b/sound/sh/Kconfig
-> deleted file mode 100644
-> index b75fbb3236a7b9..00000000000000
-> --- a/sound/sh/Kconfig
-> +++ /dev/null
-> @@ -1,32 +0,0 @@
-> -# SPDX-License-Identifier: GPL-2.0-only
-> -# ALSA SH drivers
-> -
-> -menuconfig SND_SUPERH
-> -	bool "SUPERH sound devices"
-> -	depends on SUPERH
-> -	default y
-> -	help
-> -	  Support for sound devices specific to SUPERH architectures.
-> -	  Drivers that are implemented on ASoC can be found in
-> -	  "ALSA for SoC audio support" section.
-> -
-> -if SND_SUPERH
-> -
-> -config SND_AICA
-> -	tristate "Dreamcast Yamaha AICA sound"
-> -	depends on SH_DREAMCAST
-> -	select SND_PCM
-> -	select G2_DMA
-> -	help
-> -	  ALSA Sound driver for the SEGA Dreamcast console.
-> -
-> -config SND_SH_DAC_AUDIO
-> -	tristate "SuperH DAC audio support"
-> -	depends on SND
-> -	depends on CPU_SH3 && HIGH_RES_TIMERS
-> -	select SND_PCM
-> -	help
-> -	  Say Y here to include support for the on-chip DAC.
-> -
-> -endif	# SND_SUPERH
-> -
-> diff --git a/sound/sh/Makefile b/sound/sh/Makefile
-> deleted file mode 100644
-> index c0bbc500c17c73..00000000000000
-> --- a/sound/sh/Makefile
-> +++ /dev/null
-> @@ -1,11 +0,0 @@
-> -# SPDX-License-Identifier: GPL-2.0-only
-> -#
-> -# Makefile for ALSA
-> -#
-> -
-> -snd-aica-objs := aica.o
-> -snd-sh_dac_audio-objs := sh_dac_audio.o
-> -
-> -# Toplevel Module Dependency
-> -obj-$(CONFIG_SND_AICA) += snd-aica.o
-> -obj-$(CONFIG_SND_SH_DAC_AUDIO) += snd-sh_dac_audio.o
-> diff --git a/sound/sh/aica.c b/sound/sh/aica.c
-> deleted file mode 100644
-> index 6e9d6bd67369af..00000000000000
-> --- a/sound/sh/aica.c
-> +++ /dev/null
-> @@ -1,628 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
-> -/*
-> -*
-> -* Copyright Adrian McMenamin 2005, 2006, 2007
-> -* <adrian@mcmen.demon.co.uk>
-> -* Requires firmware (BSD licenced) available from:
-> -* http://linuxdc.cvs.sourceforge.net/linuxdc/linux-sh-dc/sound/oss/aica/firmware/
-> -* or the maintainer
-> -*/
-> -
-> -#include <linux/init.h>
-> -#include <linux/jiffies.h>
-> -#include <linux/slab.h>
-> -#include <linux/time.h>
-> -#include <linux/wait.h>
-> -#include <linux/module.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/firmware.h>
-> -#include <linux/timer.h>
-> -#include <linux/delay.h>
-> -#include <linux/workqueue.h>
-> -#include <linux/io.h>
-> -#include <sound/core.h>
-> -#include <sound/control.h>
-> -#include <sound/pcm.h>
-> -#include <sound/initval.h>
-> -#include <sound/info.h>
-> -#include <asm/dma.h>
-> -#include <mach/sysasic.h>
-> -#include "aica.h"
-> -
-> -MODULE_AUTHOR("Adrian McMenamin <adrian@mcmen.demon.co.uk>");
-> -MODULE_DESCRIPTION("Dreamcast AICA sound (pcm) driver");
-> -MODULE_LICENSE("GPL");
-> -MODULE_FIRMWARE("aica_firmware.bin");
-> -
-> -/* module parameters */
-> -#define CARD_NAME "AICA"
-> -static int index = -1;
-> -static char *id;
-> -static bool enable = 1;
-> -module_param(index, int, 0444);
-> -MODULE_PARM_DESC(index, "Index value for " CARD_NAME " soundcard.");
-> -module_param(id, charp, 0444);
-> -MODULE_PARM_DESC(id, "ID string for " CARD_NAME " soundcard.");
-> -module_param(enable, bool, 0644);
-> -MODULE_PARM_DESC(enable, "Enable " CARD_NAME " soundcard.");
-> -
-> -/* Simple platform device */
-> -static struct platform_device *pd;
-> -static struct resource aica_memory_space[2] = {
-> -	{
-> -	 .name = "AICA ARM CONTROL",
-> -	 .start = ARM_RESET_REGISTER,
-> -	 .flags = IORESOURCE_MEM,
-> -	 .end = ARM_RESET_REGISTER + 3,
-> -	 },
-> -	{
-> -	 .name = "AICA Sound RAM",
-> -	 .start = SPU_MEMORY_BASE,
-> -	 .flags = IORESOURCE_MEM,
-> -	 .end = SPU_MEMORY_BASE + 0x200000 - 1,
-> -	 },
-> -};
-> -
-> -/* SPU specific functions */
-> -/* spu_write_wait - wait for G2-SH FIFO to clear */
-> -static void spu_write_wait(void)
-> -{
-> -	int time_count;
-> -	time_count = 0;
-> -	while (1) {
-> -		if (!(readl(G2_FIFO) & 0x11))
-> -			break;
-> -		/* To ensure hardware failure doesn't wedge kernel */
-> -		time_count++;
-> -		if (time_count > 0x10000) {
-> -			snd_printk
-> -			    ("WARNING: G2 FIFO appears to be blocked.\n");
-> -			break;
-> -		}
-> -	}
-> -}
-> -
-> -/* spu_memset - write to memory in SPU address space */
-> -static void spu_memset(u32 toi, u32 what, int length)
-> -{
-> -	int i;
-> -	unsigned long flags;
-> -	if (snd_BUG_ON(length % 4))
-> -		return;
-> -	for (i = 0; i < length; i++) {
-> -		if (!(i % 8))
-> -			spu_write_wait();
-> -		local_irq_save(flags);
-> -		writel(what, toi + SPU_MEMORY_BASE);
-> -		local_irq_restore(flags);
-> -		toi++;
-> -	}
-> -}
-> -
-> -/* spu_memload - write to SPU address space */
-> -static void spu_memload(u32 toi, const void *from, int length)
-> -{
-> -	unsigned long flags;
-> -	const u32 *froml = from;
-> -	u32 __iomem *to = (u32 __iomem *) (SPU_MEMORY_BASE + toi);
-> -	int i;
-> -	u32 val;
-> -	length = DIV_ROUND_UP(length, 4);
-> -	spu_write_wait();
-> -	for (i = 0; i < length; i++) {
-> -		if (!(i % 8))
-> -			spu_write_wait();
-> -		val = *froml;
-> -		local_irq_save(flags);
-> -		writel(val, to);
-> -		local_irq_restore(flags);
-> -		froml++;
-> -		to++;
-> -	}
-> -}
-> -
-> -/* spu_disable - set spu registers to stop sound output */
-> -static void spu_disable(void)
-> -{
-> -	int i;
-> -	unsigned long flags;
-> -	u32 regval;
-> -	spu_write_wait();
-> -	regval = readl(ARM_RESET_REGISTER);
-> -	regval |= 1;
-> -	spu_write_wait();
-> -	local_irq_save(flags);
-> -	writel(regval, ARM_RESET_REGISTER);
-> -	local_irq_restore(flags);
-> -	for (i = 0; i < 64; i++) {
-> -		spu_write_wait();
-> -		regval = readl(SPU_REGISTER_BASE + (i * 0x80));
-> -		regval = (regval & ~0x4000) | 0x8000;
-> -		spu_write_wait();
-> -		local_irq_save(flags);
-> -		writel(regval, SPU_REGISTER_BASE + (i * 0x80));
-> -		local_irq_restore(flags);
-> -	}
-> -}
-> -
-> -/* spu_enable - set spu registers to enable sound output */
-> -static void spu_enable(void)
-> -{
-> -	unsigned long flags;
-> -	u32 regval = readl(ARM_RESET_REGISTER);
-> -	regval &= ~1;
-> -	spu_write_wait();
-> -	local_irq_save(flags);
-> -	writel(regval, ARM_RESET_REGISTER);
-> -	local_irq_restore(flags);
-> -}
-> -
-> -/* 
-> - * Halt the sound processor, clear the memory,
-> - * load some default ARM7 code, and then restart ARM7
-> -*/
-> -static void spu_reset(void)
-> -{
-> -	unsigned long flags;
-> -	spu_disable();
-> -	spu_memset(0, 0, 0x200000 / 4);
-> -	/* Put ARM7 in endless loop */
-> -	local_irq_save(flags);
-> -	__raw_writel(0xea000002, SPU_MEMORY_BASE);
-> -	local_irq_restore(flags);
-> -	spu_enable();
-> -}
-> -
-> -/* aica_chn_start - write to spu to start playback */
-> -static void aica_chn_start(void)
-> -{
-> -	unsigned long flags;
-> -	spu_write_wait();
-> -	local_irq_save(flags);
-> -	writel(AICA_CMD_KICK | AICA_CMD_START, (u32 *) AICA_CONTROL_POINT);
-> -	local_irq_restore(flags);
-> -}
-> -
-> -/* aica_chn_halt - write to spu to halt playback */
-> -static void aica_chn_halt(void)
-> -{
-> -	unsigned long flags;
-> -	spu_write_wait();
-> -	local_irq_save(flags);
-> -	writel(AICA_CMD_KICK | AICA_CMD_STOP, (u32 *) AICA_CONTROL_POINT);
-> -	local_irq_restore(flags);
-> -}
-> -
-> -/* ALSA code below */
-> -static const struct snd_pcm_hardware snd_pcm_aica_playback_hw = {
-> -	.info = (SNDRV_PCM_INFO_NONINTERLEAVED),
-> -	.formats =
-> -	    (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE |
-> -	     SNDRV_PCM_FMTBIT_IMA_ADPCM),
-> -	.rates = SNDRV_PCM_RATE_8000_48000,
-> -	.rate_min = 8000,
-> -	.rate_max = 48000,
-> -	.channels_min = 1,
-> -	.channels_max = 2,
-> -	.buffer_bytes_max = AICA_BUFFER_SIZE,
-> -	.period_bytes_min = AICA_PERIOD_SIZE,
-> -	.period_bytes_max = AICA_PERIOD_SIZE,
-> -	.periods_min = AICA_PERIOD_NUMBER,
-> -	.periods_max = AICA_PERIOD_NUMBER,
-> -};
-> -
-> -static int aica_dma_transfer(int channels, int buffer_size,
-> -			     struct snd_pcm_substream *substream)
-> -{
-> -	int q, err, period_offset;
-> -	struct snd_card_aica *dreamcastcard;
-> -	struct snd_pcm_runtime *runtime;
-> -	unsigned long flags;
-> -	err = 0;
-> -	dreamcastcard = substream->pcm->private_data;
-> -	period_offset = dreamcastcard->clicks;
-> -	period_offset %= (AICA_PERIOD_NUMBER / channels);
-> -	runtime = substream->runtime;
-> -	for (q = 0; q < channels; q++) {
-> -		local_irq_save(flags);
-> -		err = dma_xfer(AICA_DMA_CHANNEL,
-> -			       (unsigned long) (runtime->dma_area +
-> -						(AICA_BUFFER_SIZE * q) /
-> -						channels +
-> -						AICA_PERIOD_SIZE *
-> -						period_offset),
-> -			       AICA_CHANNEL0_OFFSET + q * CHANNEL_OFFSET +
-> -			       AICA_PERIOD_SIZE * period_offset,
-> -			       buffer_size / channels, AICA_DMA_MODE);
-> -		if (unlikely(err < 0)) {
-> -			local_irq_restore(flags);
-> -			break;
-> -		}
-> -		dma_wait_for_completion(AICA_DMA_CHANNEL);
-> -		local_irq_restore(flags);
-> -	}
-> -	return err;
-> -}
-> -
-> -static void startup_aica(struct snd_card_aica *dreamcastcard)
-> -{
-> -	spu_memload(AICA_CHANNEL0_CONTROL_OFFSET,
-> -		    dreamcastcard->channel, sizeof(struct aica_channel));
-> -	aica_chn_start();
-> -}
-> -
-> -static void run_spu_dma(struct work_struct *work)
-> -{
-> -	int buffer_size;
-> -	struct snd_pcm_runtime *runtime;
-> -	struct snd_card_aica *dreamcastcard;
-> -	dreamcastcard =
-> -	    container_of(work, struct snd_card_aica, spu_dma_work);
-> -	runtime = dreamcastcard->substream->runtime;
-> -	if (unlikely(dreamcastcard->dma_check == 0)) {
-> -		buffer_size =
-> -		    frames_to_bytes(runtime, runtime->buffer_size);
-> -		if (runtime->channels > 1)
-> -			dreamcastcard->channel->flags |= 0x01;
-> -		aica_dma_transfer(runtime->channels, buffer_size,
-> -				  dreamcastcard->substream);
-> -		startup_aica(dreamcastcard);
-> -		dreamcastcard->clicks =
-> -		    buffer_size / (AICA_PERIOD_SIZE * runtime->channels);
-> -		return;
-> -	} else {
-> -		aica_dma_transfer(runtime->channels,
-> -				  AICA_PERIOD_SIZE * runtime->channels,
-> -				  dreamcastcard->substream);
-> -		snd_pcm_period_elapsed(dreamcastcard->substream);
-> -		dreamcastcard->clicks++;
-> -		if (unlikely(dreamcastcard->clicks >= AICA_PERIOD_NUMBER))
-> -			dreamcastcard->clicks %= AICA_PERIOD_NUMBER;
-> -		mod_timer(&dreamcastcard->timer, jiffies + 1);
-> -	}
-> -}
-> -
-> -static void aica_period_elapsed(struct timer_list *t)
-> -{
-> -	struct snd_card_aica *dreamcastcard = from_timer(dreamcastcard,
-> -							      t, timer);
-> -	struct snd_pcm_substream *substream = dreamcastcard->substream;
-> -	/*timer function - so cannot sleep */
-> -	int play_period;
-> -	struct snd_pcm_runtime *runtime;
-> -	runtime = substream->runtime;
-> -	dreamcastcard = substream->pcm->private_data;
-> -	/* Have we played out an additional period? */
-> -	play_period =
-> -	    frames_to_bytes(runtime,
-> -			    readl
-> -			    (AICA_CONTROL_CHANNEL_SAMPLE_NUMBER)) /
-> -	    AICA_PERIOD_SIZE;
-> -	if (play_period == dreamcastcard->current_period) {
-> -		/* reschedule the timer */
-> -		mod_timer(&(dreamcastcard->timer), jiffies + 1);
-> -		return;
-> -	}
-> -	if (runtime->channels > 1)
-> -		dreamcastcard->current_period = play_period;
-> -	if (unlikely(dreamcastcard->dma_check == 0))
-> -		dreamcastcard->dma_check = 1;
-> -	schedule_work(&(dreamcastcard->spu_dma_work));
-> -}
-> -
-> -static void spu_begin_dma(struct snd_pcm_substream *substream)
-> -{
-> -	struct snd_card_aica *dreamcastcard;
-> -	struct snd_pcm_runtime *runtime;
-> -	runtime = substream->runtime;
-> -	dreamcastcard = substream->pcm->private_data;
-> -	/*get the queue to do the work */
-> -	schedule_work(&(dreamcastcard->spu_dma_work));
-> -	mod_timer(&dreamcastcard->timer, jiffies + 4);
-> -}
-> -
-> -static int snd_aicapcm_pcm_open(struct snd_pcm_substream
-> -				*substream)
-> -{
-> -	struct snd_pcm_runtime *runtime;
-> -	struct aica_channel *channel;
-> -	struct snd_card_aica *dreamcastcard;
-> -	if (!enable)
-> -		return -ENOENT;
-> -	dreamcastcard = substream->pcm->private_data;
-> -	channel = kmalloc(sizeof(struct aica_channel), GFP_KERNEL);
-> -	if (!channel)
-> -		return -ENOMEM;
-> -	/* set defaults for channel */
-> -	channel->sfmt = SM_8BIT;
-> -	channel->cmd = AICA_CMD_START;
-> -	channel->vol = dreamcastcard->master_volume;
-> -	channel->pan = 0x80;
-> -	channel->pos = 0;
-> -	channel->flags = 0;	/* default to mono */
-> -	dreamcastcard->channel = channel;
-> -	runtime = substream->runtime;
-> -	runtime->hw = snd_pcm_aica_playback_hw;
-> -	spu_enable();
-> -	dreamcastcard->clicks = 0;
-> -	dreamcastcard->current_period = 0;
-> -	dreamcastcard->dma_check = 0;
-> -	return 0;
-> -}
-> -
-> -static int snd_aicapcm_pcm_close(struct snd_pcm_substream
-> -				 *substream)
-> -{
-> -	struct snd_card_aica *dreamcastcard = substream->pcm->private_data;
-> -	flush_work(&(dreamcastcard->spu_dma_work));
-> -	del_timer(&dreamcastcard->timer);
-> -	dreamcastcard->substream = NULL;
-> -	kfree(dreamcastcard->channel);
-> -	spu_disable();
-> -	return 0;
-> -}
-> -
-> -static int snd_aicapcm_pcm_prepare(struct snd_pcm_substream
-> -				   *substream)
-> -{
-> -	struct snd_card_aica *dreamcastcard = substream->pcm->private_data;
-> -	if ((substream->runtime)->format == SNDRV_PCM_FORMAT_S16_LE)
-> -		dreamcastcard->channel->sfmt = SM_16BIT;
-> -	dreamcastcard->channel->freq = substream->runtime->rate;
-> -	dreamcastcard->substream = substream;
-> -	return 0;
-> -}
-> -
-> -static int snd_aicapcm_pcm_trigger(struct snd_pcm_substream
-> -				   *substream, int cmd)
-> -{
-> -	switch (cmd) {
-> -	case SNDRV_PCM_TRIGGER_START:
-> -		spu_begin_dma(substream);
-> -		break;
-> -	case SNDRV_PCM_TRIGGER_STOP:
-> -		aica_chn_halt();
-> -		break;
-> -	default:
-> -		return -EINVAL;
-> -	}
-> -	return 0;
-> -}
-> -
-> -static unsigned long snd_aicapcm_pcm_pointer(struct snd_pcm_substream
-> -					     *substream)
-> -{
-> -	return readl(AICA_CONTROL_CHANNEL_SAMPLE_NUMBER);
-> -}
-> -
-> -static const struct snd_pcm_ops snd_aicapcm_playback_ops = {
-> -	.open = snd_aicapcm_pcm_open,
-> -	.close = snd_aicapcm_pcm_close,
-> -	.prepare = snd_aicapcm_pcm_prepare,
-> -	.trigger = snd_aicapcm_pcm_trigger,
-> -	.pointer = snd_aicapcm_pcm_pointer,
-> -};
-> -
-> -/* TO DO: set up to handle more than one pcm instance */
-> -static int __init snd_aicapcmchip(struct snd_card_aica
-> -				  *dreamcastcard, int pcm_index)
-> -{
-> -	struct snd_pcm *pcm;
-> -	int err;
-> -	/* AICA has no capture ability */
-> -	err =
-> -	    snd_pcm_new(dreamcastcard->card, "AICA PCM", pcm_index, 1, 0,
-> -			&pcm);
-> -	if (unlikely(err < 0))
-> -		return err;
-> -	pcm->private_data = dreamcastcard;
-> -	strcpy(pcm->name, "AICA PCM");
-> -	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
-> -			&snd_aicapcm_playback_ops);
-> -	/* Allocate the DMA buffers */
-> -	snd_pcm_set_managed_buffer_all(pcm,
-> -				       SNDRV_DMA_TYPE_CONTINUOUS,
-> -				       NULL,
-> -				       AICA_BUFFER_SIZE,
-> -				       AICA_BUFFER_SIZE);
-> -	return 0;
-> -}
-> -
-> -/* Mixer controls */
-> -#define aica_pcmswitch_info		snd_ctl_boolean_mono_info
-> -
-> -static int aica_pcmswitch_get(struct snd_kcontrol *kcontrol,
-> -			      struct snd_ctl_elem_value *ucontrol)
-> -{
-> -	ucontrol->value.integer.value[0] = 1;	/* TO DO: Fix me */
-> -	return 0;
-> -}
-> -
-> -static int aica_pcmswitch_put(struct snd_kcontrol *kcontrol,
-> -			      struct snd_ctl_elem_value *ucontrol)
-> -{
-> -	if (ucontrol->value.integer.value[0] == 1)
-> -		return 0;	/* TO DO: Fix me */
-> -	else
-> -		aica_chn_halt();
-> -	return 0;
-> -}
-> -
-> -static int aica_pcmvolume_info(struct snd_kcontrol *kcontrol,
-> -			       struct snd_ctl_elem_info *uinfo)
-> -{
-> -	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-> -	uinfo->count = 1;
-> -	uinfo->value.integer.min = 0;
-> -	uinfo->value.integer.max = 0xFF;
-> -	return 0;
-> -}
-> -
-> -static int aica_pcmvolume_get(struct snd_kcontrol *kcontrol,
-> -			      struct snd_ctl_elem_value *ucontrol)
-> -{
-> -	struct snd_card_aica *dreamcastcard;
-> -	dreamcastcard = kcontrol->private_data;
-> -	if (unlikely(!dreamcastcard->channel))
-> -		return -ETXTBSY;	/* we've not yet been set up */
-> -	ucontrol->value.integer.value[0] = dreamcastcard->channel->vol;
-> -	return 0;
-> -}
-> -
-> -static int aica_pcmvolume_put(struct snd_kcontrol *kcontrol,
-> -			      struct snd_ctl_elem_value *ucontrol)
-> -{
-> -	struct snd_card_aica *dreamcastcard;
-> -	unsigned int vol;
-> -	dreamcastcard = kcontrol->private_data;
-> -	if (unlikely(!dreamcastcard->channel))
-> -		return -ETXTBSY;
-> -	vol = ucontrol->value.integer.value[0];
-> -	if (vol > 0xff)
-> -		return -EINVAL;
-> -	if (unlikely(dreamcastcard->channel->vol == vol))
-> -		return 0;
-> -	dreamcastcard->channel->vol = ucontrol->value.integer.value[0];
-> -	dreamcastcard->master_volume = ucontrol->value.integer.value[0];
-> -	spu_memload(AICA_CHANNEL0_CONTROL_OFFSET,
-> -		    dreamcastcard->channel, sizeof(struct aica_channel));
-> -	return 1;
-> -}
-> -
-> -static const struct snd_kcontrol_new snd_aica_pcmswitch_control = {
-> -	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-> -	.name = "PCM Playback Switch",
-> -	.index = 0,
-> -	.info = aica_pcmswitch_info,
-> -	.get = aica_pcmswitch_get,
-> -	.put = aica_pcmswitch_put
-> -};
-> -
-> -static const struct snd_kcontrol_new snd_aica_pcmvolume_control = {
-> -	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-> -	.name = "PCM Playback Volume",
-> -	.index = 0,
-> -	.info = aica_pcmvolume_info,
-> -	.get = aica_pcmvolume_get,
-> -	.put = aica_pcmvolume_put
-> -};
-> -
-> -static int load_aica_firmware(void)
-> -{
-> -	int err;
-> -	const struct firmware *fw_entry;
-> -	spu_reset();
-> -	err = request_firmware(&fw_entry, "aica_firmware.bin", &pd->dev);
-> -	if (unlikely(err))
-> -		return err;
-> -	/* write firmware into memory */
-> -	spu_disable();
-> -	spu_memload(0, fw_entry->data, fw_entry->size);
-> -	spu_enable();
-> -	release_firmware(fw_entry);
-> -	return err;
-> -}
-> -
-> -static int add_aicamixer_controls(struct snd_card_aica *dreamcastcard)
-> -{
-> -	int err;
-> -	err = snd_ctl_add
-> -	    (dreamcastcard->card,
-> -	     snd_ctl_new1(&snd_aica_pcmvolume_control, dreamcastcard));
-> -	if (unlikely(err < 0))
-> -		return err;
-> -	err = snd_ctl_add
-> -	    (dreamcastcard->card,
-> -	     snd_ctl_new1(&snd_aica_pcmswitch_control, dreamcastcard));
-> -	if (unlikely(err < 0))
-> -		return err;
-> -	return 0;
-> -}
-> -
-> -static int snd_aica_remove(struct platform_device *devptr)
-> -{
-> -	struct snd_card_aica *dreamcastcard;
-> -	dreamcastcard = platform_get_drvdata(devptr);
-> -	if (unlikely(!dreamcastcard))
-> -		return -ENODEV;
-> -	snd_card_free(dreamcastcard->card);
-> -	kfree(dreamcastcard);
-> -	return 0;
-> -}
-> -
-> -static int snd_aica_probe(struct platform_device *devptr)
-> -{
-> -	int err;
-> -	struct snd_card_aica *dreamcastcard;
-> -	dreamcastcard = kzalloc(sizeof(struct snd_card_aica), GFP_KERNEL);
-> -	if (unlikely(!dreamcastcard))
-> -		return -ENOMEM;
-> -	err = snd_card_new(&devptr->dev, index, SND_AICA_DRIVER,
-> -			   THIS_MODULE, 0, &dreamcastcard->card);
-> -	if (unlikely(err < 0)) {
-> -		kfree(dreamcastcard);
-> -		return err;
-> -	}
-> -	strcpy(dreamcastcard->card->driver, "snd_aica");
-> -	strcpy(dreamcastcard->card->shortname, SND_AICA_DRIVER);
-> -	strcpy(dreamcastcard->card->longname,
-> -	       "Yamaha AICA Super Intelligent Sound Processor for SEGA Dreamcast");
-> -	/* Prepare to use the queue */
-> -	INIT_WORK(&(dreamcastcard->spu_dma_work), run_spu_dma);
-> -	timer_setup(&dreamcastcard->timer, aica_period_elapsed, 0);
-> -	/* Load the PCM 'chip' */
-> -	err = snd_aicapcmchip(dreamcastcard, 0);
-> -	if (unlikely(err < 0))
-> -		goto freedreamcast;
-> -	/* Add basic controls */
-> -	err = add_aicamixer_controls(dreamcastcard);
-> -	if (unlikely(err < 0))
-> -		goto freedreamcast;
-> -	/* Register the card with ALSA subsystem */
-> -	err = snd_card_register(dreamcastcard->card);
-> -	if (unlikely(err < 0))
-> -		goto freedreamcast;
-> -	platform_set_drvdata(devptr, dreamcastcard);
-> -	snd_printk
-> -	    ("ALSA Driver for Yamaha AICA Super Intelligent Sound Processor\n");
-> -	return 0;
-> -      freedreamcast:
-> -	snd_card_free(dreamcastcard->card);
-> -	kfree(dreamcastcard);
-> -	return err;
-> -}
-> -
-> -static struct platform_driver snd_aica_driver = {
-> -	.probe = snd_aica_probe,
-> -	.remove = snd_aica_remove,
-> -	.driver = {
-> -		.name = SND_AICA_DRIVER,
-> -	},
-> -};
-> -
-> -static int __init aica_init(void)
-> -{
-> -	int err;
-> -	err = platform_driver_register(&snd_aica_driver);
-> -	if (unlikely(err < 0))
-> -		return err;
-> -	pd = platform_device_register_simple(SND_AICA_DRIVER, -1,
-> -					     aica_memory_space, 2);
-> -	if (IS_ERR(pd)) {
-> -		platform_driver_unregister(&snd_aica_driver);
-> -		return PTR_ERR(pd);
-> -	}
-> -	/* Load the firmware */
-> -	return load_aica_firmware();
-> -}
-> -
-> -static void __exit aica_exit(void)
-> -{
-> -	platform_device_unregister(pd);
-> -	platform_driver_unregister(&snd_aica_driver);
-> -	/* Kill any sound still playing and reset ARM7 to safe state */
-> -	spu_reset();
-> -}
-> -
-> -module_init(aica_init);
-> -module_exit(aica_exit);
-> diff --git a/sound/sh/aica.h b/sound/sh/aica.h
-> deleted file mode 100644
-> index 021b132e088e82..00000000000000
-> --- a/sound/sh/aica.h
-> +++ /dev/null
-> @@ -1,68 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-only */
-> -/* aica.h
-> - * Header file for ALSA driver for
-> - * Sega Dreamcast Yamaha AICA sound
-> - * Copyright Adrian McMenamin
-> - * <adrian@mcmen.demon.co.uk>
-> - * 2006
-> - */
-> -
-> -/* SPU memory and register constants etc */
-> -#define G2_FIFO 0xa05f688c
-> -#define SPU_MEMORY_BASE 0xA0800000
-> -#define ARM_RESET_REGISTER 0xA0702C00
-> -#define SPU_REGISTER_BASE 0xA0700000
-> -
-> -/* AICA channels stuff */
-> -#define AICA_CONTROL_POINT 0xA0810000
-> -#define AICA_CONTROL_CHANNEL_SAMPLE_NUMBER 0xA0810008
-> -#define AICA_CHANNEL0_CONTROL_OFFSET 0x10004
-> -
-> -/* Command values */
-> -#define AICA_CMD_KICK 0x80000000
-> -#define AICA_CMD_NONE 0
-> -#define AICA_CMD_START 1
-> -#define AICA_CMD_STOP 2
-> -#define AICA_CMD_VOL 3
-> -
-> -/* Sound modes */
-> -#define SM_8BIT		1
-> -#define SM_16BIT	0
-> -#define SM_ADPCM	2
-> -
-> -/* Buffer and period size */
-> -#define AICA_BUFFER_SIZE 0x8000
-> -#define AICA_PERIOD_SIZE 0x800
-> -#define AICA_PERIOD_NUMBER 16
-> -
-> -#define AICA_CHANNEL0_OFFSET 0x11000
-> -#define AICA_CHANNEL1_OFFSET 0x21000
-> -#define CHANNEL_OFFSET 0x10000
-> -
-> -#define AICA_DMA_CHANNEL 5
-> -#define AICA_DMA_MODE 5
-> -
-> -#define SND_AICA_DRIVER "AICA"
-> -
-> -struct aica_channel {
-> -	uint32_t cmd;		/* Command ID           */
-> -	uint32_t pos;		/* Sample position      */
-> -	uint32_t length;	/* Sample length        */
-> -	uint32_t freq;		/* Frequency            */
-> -	uint32_t vol;		/* Volume 0-255         */
-> -	uint32_t pan;		/* Pan 0-255            */
-> -	uint32_t sfmt;		/* Sound format         */
-> -	uint32_t flags;		/* Bit flags            */
-> -};
-> -
-> -struct snd_card_aica {
-> -	struct work_struct spu_dma_work;
-> -	struct snd_card *card;
-> -	struct aica_channel *channel;
-> -	struct snd_pcm_substream *substream;
-> -	int clicks;
-> -	int current_period;
-> -	struct timer_list timer;
-> -	int master_volume;
-> -	int dma_check;
-> -};
-> diff --git a/sound/sh/sh_dac_audio.c b/sound/sh/sh_dac_audio.c
-> deleted file mode 100644
-> index 8ebd972846acb5..00000000000000
-> --- a/sound/sh/sh_dac_audio.c
-> +++ /dev/null
-> @@ -1,412 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-or-later
-> -/*
-> - * sh_dac_audio.c - SuperH DAC audio driver for ALSA
-> - *
-> - * Copyright (c) 2009 by Rafael Ignacio Zurita <rizurita@yahoo.com>
-> - *
-> - * Based on sh_dac_audio.c (Copyright (C) 2004, 2005 by Andriy Skulysh)
-> - */
-> -
-> -#include <linux/hrtimer.h>
-> -#include <linux/interrupt.h>
-> -#include <linux/io.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/slab.h>
-> -#include <linux/module.h>
-> -#include <sound/core.h>
-> -#include <sound/initval.h>
-> -#include <sound/pcm.h>
-> -#include <sound/sh_dac_audio.h>
-> -#include <asm/clock.h>
-> -#include <asm/hd64461.h>
-> -#include <mach/hp6xx.h>
-> -#include <cpu/dac.h>
-> -
-> -MODULE_AUTHOR("Rafael Ignacio Zurita <rizurita@yahoo.com>");
-> -MODULE_DESCRIPTION("SuperH DAC audio driver");
-> -MODULE_LICENSE("GPL");
-> -
-> -/* Module Parameters */
-> -static int index = SNDRV_DEFAULT_IDX1;
-> -static char *id = SNDRV_DEFAULT_STR1;
-> -module_param(index, int, 0444);
-> -MODULE_PARM_DESC(index, "Index value for SuperH DAC audio.");
-> -module_param(id, charp, 0444);
-> -MODULE_PARM_DESC(id, "ID string for SuperH DAC audio.");
-> -
-> -/* main struct */
-> -struct snd_sh_dac {
-> -	struct snd_card *card;
-> -	struct snd_pcm_substream *substream;
-> -	struct hrtimer hrtimer;
-> -	ktime_t wakeups_per_second;
-> -
-> -	int rate;
-> -	int empty;
-> -	char *data_buffer, *buffer_begin, *buffer_end;
-> -	int processed; /* bytes proccesed, to compare with period_size */
-> -	int buffer_size;
-> -	struct dac_audio_pdata *pdata;
-> -};
-> -
-> -
-> -static void dac_audio_start_timer(struct snd_sh_dac *chip)
-> -{
-> -	hrtimer_start(&chip->hrtimer, chip->wakeups_per_second,
-> -		      HRTIMER_MODE_REL);
-> -}
-> -
-> -static void dac_audio_stop_timer(struct snd_sh_dac *chip)
-> -{
-> -	hrtimer_cancel(&chip->hrtimer);
-> -}
-> -
-> -static void dac_audio_reset(struct snd_sh_dac *chip)
-> -{
-> -	dac_audio_stop_timer(chip);
-> -	chip->buffer_begin = chip->buffer_end = chip->data_buffer;
-> -	chip->processed = 0;
-> -	chip->empty = 1;
-> -}
-> -
-> -static void dac_audio_set_rate(struct snd_sh_dac *chip)
-> -{
-> -	chip->wakeups_per_second = 1000000000 / chip->rate;
-> -}
-> -
-> -
-> -/* PCM INTERFACE */
-> -
-> -static const struct snd_pcm_hardware snd_sh_dac_pcm_hw = {
-> -	.info			= (SNDRV_PCM_INFO_MMAP |
-> -					SNDRV_PCM_INFO_MMAP_VALID |
-> -					SNDRV_PCM_INFO_INTERLEAVED |
-> -					SNDRV_PCM_INFO_HALF_DUPLEX),
-> -	.formats		= SNDRV_PCM_FMTBIT_U8,
-> -	.rates			= SNDRV_PCM_RATE_8000,
-> -	.rate_min		= 8000,
-> -	.rate_max		= 8000,
-> -	.channels_min		= 1,
-> -	.channels_max		= 1,
-> -	.buffer_bytes_max	= (48*1024),
-> -	.period_bytes_min	= 1,
-> -	.period_bytes_max	= (48*1024),
-> -	.periods_min		= 1,
-> -	.periods_max		= 1024,
-> -};
-> -
-> -static int snd_sh_dac_pcm_open(struct snd_pcm_substream *substream)
-> -{
-> -	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
-> -	struct snd_pcm_runtime *runtime = substream->runtime;
-> -
-> -	runtime->hw = snd_sh_dac_pcm_hw;
-> -
-> -	chip->substream = substream;
-> -	chip->buffer_begin = chip->buffer_end = chip->data_buffer;
-> -	chip->processed = 0;
-> -	chip->empty = 1;
-> -
-> -	chip->pdata->start(chip->pdata);
-> -
-> -	return 0;
-> -}
-> -
-> -static int snd_sh_dac_pcm_close(struct snd_pcm_substream *substream)
-> -{
-> -	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
-> -
-> -	chip->substream = NULL;
-> -
-> -	dac_audio_stop_timer(chip);
-> -	chip->pdata->stop(chip->pdata);
-> -
-> -	return 0;
-> -}
-> -
-> -static int snd_sh_dac_pcm_prepare(struct snd_pcm_substream *substream)
-> -{
-> -	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
-> -	struct snd_pcm_runtime *runtime = chip->substream->runtime;
-> -
-> -	chip->buffer_size = runtime->buffer_size;
-> -	memset(chip->data_buffer, 0, chip->pdata->buffer_size);
-> -
-> -	return 0;
-> -}
-> -
-> -static int snd_sh_dac_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
-> -{
-> -	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
-> -
-> -	switch (cmd) {
-> -	case SNDRV_PCM_TRIGGER_START:
-> -		dac_audio_start_timer(chip);
-> -		break;
-> -	case SNDRV_PCM_TRIGGER_STOP:
-> -		chip->buffer_begin = chip->buffer_end = chip->data_buffer;
-> -		chip->processed = 0;
-> -		chip->empty = 1;
-> -		dac_audio_stop_timer(chip);
-> -		break;
-> -	default:
-> -		 return -EINVAL;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int snd_sh_dac_pcm_copy(struct snd_pcm_substream *substream,
-> -			       int channel, unsigned long pos,
-> -			       void __user *src, unsigned long count)
-> -{
-> -	/* channel is not used (interleaved data) */
-> -	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
-> -
-> -	if (copy_from_user_toio(chip->data_buffer + pos, src, count))
-> -		return -EFAULT;
-> -	chip->buffer_end = chip->data_buffer + pos + count;
-> -
-> -	if (chip->empty) {
-> -		chip->empty = 0;
-> -		dac_audio_start_timer(chip);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int snd_sh_dac_pcm_copy_kernel(struct snd_pcm_substream *substream,
-> -				      int channel, unsigned long pos,
-> -				      void *src, unsigned long count)
-> -{
-> -	/* channel is not used (interleaved data) */
-> -	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
-> -
-> -	memcpy_toio(chip->data_buffer + pos, src, count);
-> -	chip->buffer_end = chip->data_buffer + pos + count;
-> -
-> -	if (chip->empty) {
-> -		chip->empty = 0;
-> -		dac_audio_start_timer(chip);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int snd_sh_dac_pcm_silence(struct snd_pcm_substream *substream,
-> -				  int channel, unsigned long pos,
-> -				  unsigned long count)
-> -{
-> -	/* channel is not used (interleaved data) */
-> -	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
-> -
-> -	memset_io(chip->data_buffer + pos, 0, count);
-> -	chip->buffer_end = chip->data_buffer + pos + count;
-> -
-> -	if (chip->empty) {
-> -		chip->empty = 0;
-> -		dac_audio_start_timer(chip);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static
-> -snd_pcm_uframes_t snd_sh_dac_pcm_pointer(struct snd_pcm_substream *substream)
-> -{
-> -	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
-> -	int pointer = chip->buffer_begin - chip->data_buffer;
-> -
-> -	return pointer;
-> -}
-> -
-> -/* pcm ops */
-> -static const struct snd_pcm_ops snd_sh_dac_pcm_ops = {
-> -	.open		= snd_sh_dac_pcm_open,
-> -	.close		= snd_sh_dac_pcm_close,
-> -	.prepare	= snd_sh_dac_pcm_prepare,
-> -	.trigger	= snd_sh_dac_pcm_trigger,
-> -	.pointer	= snd_sh_dac_pcm_pointer,
-> -	.copy_user	= snd_sh_dac_pcm_copy,
-> -	.copy_kernel	= snd_sh_dac_pcm_copy_kernel,
-> -	.fill_silence	= snd_sh_dac_pcm_silence,
-> -	.mmap		= snd_pcm_lib_mmap_iomem,
-> -};
-> -
-> -static int snd_sh_dac_pcm(struct snd_sh_dac *chip, int device)
-> -{
-> -	int err;
-> -	struct snd_pcm *pcm;
-> -
-> -	/* device should be always 0 for us */
-> -	err = snd_pcm_new(chip->card, "SH_DAC PCM", device, 1, 0, &pcm);
-> -	if (err < 0)
-> -		return err;
-> -
-> -	pcm->private_data = chip;
-> -	strcpy(pcm->name, "SH_DAC PCM");
-> -	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &snd_sh_dac_pcm_ops);
-> -
-> -	/* buffer size=48K */
-> -	snd_pcm_set_managed_buffer_all(pcm, SNDRV_DMA_TYPE_CONTINUOUS,
-> -				       NULL, 48 * 1024, 48 * 1024);
-> -
-> -	return 0;
-> -}
-> -/* END OF PCM INTERFACE */
-> -
-> -
-> -/* driver .remove  --  destructor */
-> -static int snd_sh_dac_remove(struct platform_device *devptr)
-> -{
-> -	snd_card_free(platform_get_drvdata(devptr));
-> -	return 0;
-> -}
-> -
-> -/* free -- it has been defined by create */
-> -static int snd_sh_dac_free(struct snd_sh_dac *chip)
-> -{
-> -	/* release the data */
-> -	kfree(chip->data_buffer);
-> -	kfree(chip);
-> -
-> -	return 0;
-> -}
-> -
-> -static int snd_sh_dac_dev_free(struct snd_device *device)
-> -{
-> -	struct snd_sh_dac *chip = device->device_data;
-> -
-> -	return snd_sh_dac_free(chip);
-> -}
-> -
-> -static enum hrtimer_restart sh_dac_audio_timer(struct hrtimer *handle)
-> -{
-> -	struct snd_sh_dac *chip = container_of(handle, struct snd_sh_dac,
-> -					       hrtimer);
-> -	struct snd_pcm_runtime *runtime = chip->substream->runtime;
-> -	ssize_t b_ps = frames_to_bytes(runtime, runtime->period_size);
-> -
-> -	if (!chip->empty) {
-> -		sh_dac_output(*chip->buffer_begin, chip->pdata->channel);
-> -		chip->buffer_begin++;
-> -
-> -		chip->processed++;
-> -		if (chip->processed >= b_ps) {
-> -			chip->processed -= b_ps;
-> -			snd_pcm_period_elapsed(chip->substream);
-> -		}
-> -
-> -		if (chip->buffer_begin == (chip->data_buffer +
-> -					   chip->buffer_size - 1))
-> -			chip->buffer_begin = chip->data_buffer;
-> -
-> -		if (chip->buffer_begin == chip->buffer_end)
-> -			chip->empty = 1;
-> -
-> -	}
-> -
-> -	if (!chip->empty)
-> -		hrtimer_start(&chip->hrtimer, chip->wakeups_per_second,
-> -			      HRTIMER_MODE_REL);
-> -
-> -	return HRTIMER_NORESTART;
-> -}
-> -
-> -/* create  --  chip-specific constructor for the cards components */
-> -static int snd_sh_dac_create(struct snd_card *card,
-> -			     struct platform_device *devptr,
-> -			     struct snd_sh_dac **rchip)
-> -{
-> -	struct snd_sh_dac *chip;
-> -	int err;
-> -
-> -	static const struct snd_device_ops ops = {
-> -		   .dev_free = snd_sh_dac_dev_free,
-> -	};
-> -
-> -	*rchip = NULL;
-> -
-> -	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
-> -	if (chip == NULL)
-> -		return -ENOMEM;
-> -
-> -	chip->card = card;
-> -
-> -	hrtimer_init(&chip->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> -	chip->hrtimer.function = sh_dac_audio_timer;
-> -
-> -	dac_audio_reset(chip);
-> -	chip->rate = 8000;
-> -	dac_audio_set_rate(chip);
-> -
-> -	chip->pdata = devptr->dev.platform_data;
-> -
-> -	chip->data_buffer = kmalloc(chip->pdata->buffer_size, GFP_KERNEL);
-> -	if (chip->data_buffer == NULL) {
-> -		kfree(chip);
-> -		return -ENOMEM;
-> -	}
-> -
-> -	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
-> -	if (err < 0) {
-> -		snd_sh_dac_free(chip);
-> -		return err;
-> -	}
-> -
-> -	*rchip = chip;
-> -
-> -	return 0;
-> -}
-> -
-> -/* driver .probe  --  constructor */
-> -static int snd_sh_dac_probe(struct platform_device *devptr)
-> -{
-> -	struct snd_sh_dac *chip;
-> -	struct snd_card *card;
-> -	int err;
-> -
-> -	err = snd_card_new(&devptr->dev, index, id, THIS_MODULE, 0, &card);
-> -	if (err < 0) {
-> -			snd_printk(KERN_ERR "cannot allocate the card\n");
-> -			return err;
-> -	}
-> -
-> -	err = snd_sh_dac_create(card, devptr, &chip);
-> -	if (err < 0)
-> -		goto probe_error;
-> -
-> -	err = snd_sh_dac_pcm(chip, 0);
-> -	if (err < 0)
-> -		goto probe_error;
-> -
-> -	strcpy(card->driver, "snd_sh_dac");
-> -	strcpy(card->shortname, "SuperH DAC audio driver");
-> -	printk(KERN_INFO "%s %s", card->longname, card->shortname);
-> -
-> -	err = snd_card_register(card);
-> -	if (err < 0)
-> -		goto probe_error;
-> -
-> -	snd_printk(KERN_INFO "ALSA driver for SuperH DAC audio");
-> -
-> -	platform_set_drvdata(devptr, card);
-> -	return 0;
-> -
-> -probe_error:
-> -	snd_card_free(card);
-> -	return err;
-> -}
-> -
-> -/*
-> - * "driver" definition
-> - */
-> -static struct platform_driver sh_dac_driver = {
-> -	.probe	= snd_sh_dac_probe,
-> -	.remove = snd_sh_dac_remove,
-> -	.driver = {
-> -		.name = "dac_audio",
-> -	},
-> -};
-> -
-> -module_platform_driver(sh_dac_driver);
-> -- 
-> 2.39.0
-> 
+v1->v3:
+ * Modelled as a counter device supporting 3 counters(2 16-bit and 
+   32-bit)
+ * Add kernel-doc comments to document struct rz_mtu3_cnt
+ * Removed mmio variable from struct rz_mtu3_cnt
+ * Removed cnt local variable from rz_mtu3_count_read()
+ * Replaced -EINVAL->-ERANGE for out of range error conditions.
+ * Removed explicit cast from write functions.
+ * Removed local variable val from rz_mtu3_count_ceiling_read()
+ * Added lock for RMW for counter/ceiling updates.
+ * Added different synapses for counter0 and counter{1,2}
+ * Used ARRAY for assigning num_counts.
+ * Added PM runtime for managing clocks.
+ * Add MODULE_IMPORT_NS(COUNTER) to import the COUNTER namespace.
+---
+ drivers/counter/Kconfig       |  11 +
+ drivers/counter/Makefile      |   1 +
+ drivers/counter/rz-mtu3-cnt.c | 903 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 915 insertions(+)
+ create mode 100644 drivers/counter/rz-mtu3-cnt.c
+
+diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+index d388bf26f4dc..daa352c7392d 100644
+--- a/drivers/counter/Kconfig
++++ b/drivers/counter/Kconfig
+@@ -39,6 +39,17 @@ config INTERRUPT_CNT
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called interrupt-cnt.
+ 
++config RZ_MTU3_CNT
++	tristate "Renesas RZ/G2L MTU3a counter driver"
++	depends on RZ_MTU3 || COMPILE_TEST
++	help
++	  Enable support for MTU3a counter driver found on Renesas RZ/G2L alike
++	  SoCs. This IP supports both 16-bit and 32-bit phase counting mode
++	  support.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called rz-mtu3-cnt.
++
+ config STM32_TIMER_CNT
+ 	tristate "STM32 Timer encoder counter driver"
+ 	depends on MFD_STM32_TIMERS || COMPILE_TEST
+diff --git a/drivers/counter/Makefile b/drivers/counter/Makefile
+index b9a369e0d4fc..933fdd50b3e4 100644
+--- a/drivers/counter/Makefile
++++ b/drivers/counter/Makefile
+@@ -8,6 +8,7 @@ counter-y := counter-core.o counter-sysfs.o counter-chrdev.o
+ 
+ obj-$(CONFIG_104_QUAD_8)	+= 104-quad-8.o
+ obj-$(CONFIG_INTERRUPT_CNT)		+= interrupt-cnt.o
++obj-$(CONFIG_RZ_MTU3_CNT)	+= rz-mtu3-cnt.o
+ obj-$(CONFIG_STM32_TIMER_CNT)	+= stm32-timer-cnt.o
+ obj-$(CONFIG_STM32_LPTIMER_CNT)	+= stm32-lptimer-cnt.o
+ obj-$(CONFIG_TI_EQEP)		+= ti-eqep.o
+diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
+new file mode 100644
+index 000000000000..9266cab64709
+--- /dev/null
++++ b/drivers/counter/rz-mtu3-cnt.c
+@@ -0,0 +1,903 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas RZ/G2L MTU3a Counter driver
++ *
++ * Copyright (C) 2022 Renesas Electronics Corporation
++ */
++
++#include <linux/clk.h>
++#include <linux/counter.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/types.h>
++
++#include <clocksource/rz-mtu3.h>
++
++/*
++ * Register descriptions
++ *   TSR: Timer Status Register
++ *   TMDR1: Timer Mode Register 1
++ *   TMDR3: Timer Mode Register 3
++ *   TIOR: Timer I/O Control Register
++ *   TCR: Timer Control Register
++ *   TCNT: Timer Counter
++ *   TGRA: Timer general register A
++ *   TCNTLW: Timer Longword Counter
++ *   TGRALW: Timer longword general register A
++ */
++
++#define RZ_MTU3_TSR_TCFD	BIT(7) /* Count Direction Flag */
++
++#define RZ_MTU3_TMDR1_PH_CNT_MODE_1	(4) /* Phase counting mode 1 */
++#define RZ_MTU3_TMDR1_PH_CNT_MODE_2	(5) /* Phase counting mode 2 */
++#define RZ_MTU3_TMDR1_PH_CNT_MODE_3	(6) /* Phase counting mode 3 */
++#define RZ_MTU3_TMDR1_PH_CNT_MODE_4	(7) /* Phase counting mode 4 */
++#define RZ_MTU3_TMDR1_PH_CNT_MODE_5	(9) /* Phase counting mode 5 */
++#define RZ_MTU3_TMDR1_PH_CNT_MODE_MASK	(0xf)
++
++/*
++ * LWA: MTU1/MTU2 Combination Longword Access Control
++ * 0: 16-bit, 1: 32-bit
++ */
++#define RZ_MTU3_TMDR3_LWA	(0)
++
++/*
++ * PHCKSEL: External Input Phase Clock Select
++ * 0: MTCLKA and MTCLKB, 1: MTCLKC and MTCLKD
++ */
++#define RZ_MTU3_TMDR3_PHCKSEL	(1)
++
++#define RZ_MTU3_16_BIT_MTU1_CH	(0)
++#define RZ_MTU3_16_BIT_MTU2_CH	(1)
++#define RZ_MTU3_32_BIT_CH	(2)
++
++#define RZ_MTU3_TIOR_NO_OUTPUT	(0) /* Output prohibited */
++#define RZ_MTU3_TIOR_IC_BOTH	(10) /* Input capture at both edges */
++
++#define SIGNAL_A_ID	(0)
++#define SIGNAL_B_ID	(1)
++#define SIGNAL_C_ID	(2)
++#define SIGNAL_D_ID	(3)
++
++#define RZ_MTU3_MAX_HW_CNTR_CHANNELS	(2)
++#define RZ_MTU3_MAX_LOGICAL_CNTR_CHANNELS	(3)
++
++/**
++ * struct rz_mtu3_cnt - MTU3 counter private data
++ *
++ * @clk: MTU3 module clock
++ * @lock: Lock to prevent concurrent access for ceiling and count
++ * @ch: HW channels for the counters
++ * @count_is_enabled: Enabled state of Counter value channel
++ * @mtu_16bit_max: Cache for 16-bit counters
++ * @mtu_32bit_max: Cache for 32-bit counters
++ */
++struct rz_mtu3_cnt {
++	struct clk *clk;
++	struct mutex lock;
++	struct rz_mtu3_channel *ch;
++	bool count_is_enabled[RZ_MTU3_MAX_LOGICAL_CNTR_CHANNELS];
++	union {
++		u16 mtu_16bit_max[RZ_MTU3_MAX_HW_CNTR_CHANNELS];
++		u32 mtu_32bit_max;
++	};
++};
++
++static const enum counter_function rz_mtu3_count_functions[] = {
++	COUNTER_FUNCTION_QUADRATURE_X4,
++	COUNTER_FUNCTION_PULSE_DIRECTION,
++	COUNTER_FUNCTION_QUADRATURE_X2_B,
++};
++
++static inline size_t rz_mtu3_get_hw_ch(const size_t id)
++{
++	return (id == RZ_MTU3_32_BIT_CH) ? 0 : id;
++}
++
++static inline struct rz_mtu3_channel *rz_mtu3_get_ch(struct counter_device *counter, int id)
++{
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	const size_t ch_id = rz_mtu3_get_hw_ch(id);
++
++	return &priv->ch[ch_id];
++}
++
++static bool rz_mtu3_is_counter_invalid(struct counter_device *counter, int id)
++{
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	unsigned long tmdr;
++
++	pm_runtime_get_sync(priv->ch->dev);
++	tmdr = rz_mtu3_shared_reg_read(priv->ch, RZ_MTU3_TMDR3);
++	pm_runtime_put(priv->ch->dev);
++
++	if (id == RZ_MTU3_32_BIT_CH && test_bit(RZ_MTU3_TMDR3_LWA, &tmdr))
++		return false;
++
++	if (id != RZ_MTU3_32_BIT_CH && !test_bit(RZ_MTU3_TMDR3_LWA, &tmdr))
++		return false;
++
++	return true;
++}
++
++static int rz_mtu3_lock_if_counter_is_valid(struct counter_device *counter,
++					    struct rz_mtu3_channel *const ch,
++					    struct rz_mtu3_cnt *const priv,
++					    int id)
++{
++	mutex_lock(&priv->lock);
++
++	if (ch->is_busy && !priv->count_is_enabled[id]) {
++		mutex_unlock(&priv->lock);
++		return -EINVAL;
++	}
++
++	if (rz_mtu3_is_counter_invalid(counter, id)) {
++		mutex_unlock(&priv->lock);
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
++static int rz_mtu3_lock_if_count_is_enabled(struct rz_mtu3_channel *const ch,
++					    struct rz_mtu3_cnt *const priv,
++					    int id)
++{
++	mutex_lock(&priv->lock);
++
++	if (ch->is_busy && !priv->count_is_enabled[id]) {
++		mutex_unlock(&priv->lock);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int rz_mtu3_count_read(struct counter_device *counter,
++			      struct counter_count *count, u64 *val)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	int ret;
++
++	ret = rz_mtu3_lock_if_counter_is_valid(counter, ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	pm_runtime_get_sync(ch->dev);
++	if (count->id == RZ_MTU3_32_BIT_CH)
++		*val = rz_mtu3_32bit_ch_read(ch, RZ_MTU3_TCNTLW);
++	else
++		*val = rz_mtu3_16bit_ch_read(ch, RZ_MTU3_TCNT);
++	pm_runtime_put(ch->dev);
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int rz_mtu3_count_write(struct counter_device *counter,
++			       struct counter_count *count, const u64 val)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	int ret;
++
++	ret = rz_mtu3_lock_if_counter_is_valid(counter, ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	pm_runtime_get_sync(ch->dev);
++	if (count->id == RZ_MTU3_32_BIT_CH)
++		rz_mtu3_32bit_ch_write(ch, RZ_MTU3_TCNTLW, val);
++	else
++		rz_mtu3_16bit_ch_write(ch, RZ_MTU3_TCNT, val);
++	pm_runtime_put(ch->dev);
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int rz_mtu3_count_function_read_helper(struct rz_mtu3_channel *const ch,
++					      struct rz_mtu3_cnt *const priv,
++					      enum counter_function *function)
++{
++	u8 timer_mode;
++
++	pm_runtime_get_sync(ch->dev);
++	timer_mode = rz_mtu3_8bit_ch_read(ch, RZ_MTU3_TMDR1);
++	pm_runtime_put(ch->dev);
++
++	switch (timer_mode & RZ_MTU3_TMDR1_PH_CNT_MODE_MASK) {
++	case RZ_MTU3_TMDR1_PH_CNT_MODE_1:
++		*function = COUNTER_FUNCTION_QUADRATURE_X4;
++		return 0;
++	case RZ_MTU3_TMDR1_PH_CNT_MODE_2:
++		*function = COUNTER_FUNCTION_PULSE_DIRECTION;
++		return 0;
++	case RZ_MTU3_TMDR1_PH_CNT_MODE_4:
++		*function = COUNTER_FUNCTION_QUADRATURE_X2_B;
++		return 0;
++	default:
++		/*
++		 * TODO:
++		 *  - need to add RZ_MTU3_TMDR1_PH_CNT_MODE_3
++		 *  - need to add RZ_MTU3_TMDR1_PH_CNT_MODE_5
++		 */
++		return -EINVAL;
++	}
++}
++
++static int rz_mtu3_count_function_read(struct counter_device *counter,
++				       struct counter_count *count,
++				       enum counter_function *function)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	int ret;
++
++	ret = rz_mtu3_lock_if_count_is_enabled(ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	ret = rz_mtu3_count_function_read_helper(ch, priv, function);
++	mutex_unlock(&priv->lock);
++
++	return ret;
++}
++
++static int rz_mtu3_count_function_write(struct counter_device *counter,
++					struct counter_count *count,
++					enum counter_function function)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	u8 timer_mode;
++	int ret;
++
++	ret = rz_mtu3_lock_if_count_is_enabled(ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	switch (function) {
++	case COUNTER_FUNCTION_QUADRATURE_X4:
++		timer_mode = RZ_MTU3_TMDR1_PH_CNT_MODE_1;
++		break;
++	case COUNTER_FUNCTION_PULSE_DIRECTION:
++		timer_mode = RZ_MTU3_TMDR1_PH_CNT_MODE_2;
++		break;
++	case COUNTER_FUNCTION_QUADRATURE_X2_B:
++		timer_mode = RZ_MTU3_TMDR1_PH_CNT_MODE_4;
++		break;
++	default:
++		/*
++		 * TODO:
++		 *  - need to add RZ_MTU3_TMDR1_PH_CNT_MODE_3
++		 *  - need to add RZ_MTU3_TMDR1_PH_CNT_MODE_5
++		 */
++		mutex_unlock(&priv->lock);
++		return -EINVAL;
++	}
++
++	pm_runtime_get_sync(ch->dev);
++	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TMDR1, timer_mode);
++	pm_runtime_put(ch->dev);
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int rz_mtu3_count_direction_read(struct counter_device *counter,
++					struct counter_count *count,
++					enum counter_count_direction *direction)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	int ret;
++	u8 tsr;
++
++	ret = rz_mtu3_lock_if_count_is_enabled(ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	pm_runtime_get_sync(ch->dev);
++	tsr = rz_mtu3_8bit_ch_read(ch, RZ_MTU3_TSR);
++	pm_runtime_put(ch->dev);
++
++	*direction = (tsr & RZ_MTU3_TSR_TCFD) ?
++		COUNTER_COUNT_DIRECTION_FORWARD : COUNTER_COUNT_DIRECTION_BACKWARD;
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int rz_mtu3_count_ceiling_read(struct counter_device *counter,
++				      struct counter_count *count,
++				      u64 *ceiling)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	const size_t ch_id = rz_mtu3_get_hw_ch(count->id);
++	int ret;
++
++	ret = rz_mtu3_lock_if_counter_is_valid(counter, ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	switch (count->id) {
++	case RZ_MTU3_16_BIT_MTU1_CH:
++	case RZ_MTU3_16_BIT_MTU2_CH:
++		*ceiling = priv->mtu_16bit_max[ch_id];
++		break;
++	case RZ_MTU3_32_BIT_CH:
++		*ceiling = priv->mtu_32bit_max;
++		break;
++	default:
++		/* should never reach this path */
++		mutex_unlock(&priv->lock);
++		return -EINVAL;
++	}
++
++	mutex_unlock(&priv->lock);
++	return 0;
++}
++
++static int rz_mtu3_count_ceiling_write(struct counter_device *counter,
++				       struct counter_count *count,
++				       u64 ceiling)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	const size_t ch_id = rz_mtu3_get_hw_ch(count->id);
++	int ret;
++
++	ret = rz_mtu3_lock_if_counter_is_valid(counter, ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	switch (count->id) {
++	case RZ_MTU3_16_BIT_MTU1_CH:
++	case RZ_MTU3_16_BIT_MTU2_CH:
++		if (ceiling > U16_MAX)
++			return -ERANGE;
++		priv->mtu_16bit_max[ch_id] = ceiling;
++		break;
++	case RZ_MTU3_32_BIT_CH:
++		if (ceiling > U32_MAX)
++			return -ERANGE;
++		priv->mtu_32bit_max = ceiling;
++		break;
++	default:
++		/* should never reach this path */
++		mutex_unlock(&priv->lock);
++		return -EINVAL;
++	}
++
++	pm_runtime_get_sync(ch->dev);
++	if (count->id == RZ_MTU3_32_BIT_CH)
++		rz_mtu3_32bit_ch_write(ch, RZ_MTU3_TGRALW, ceiling);
++	else
++		rz_mtu3_16bit_ch_write(ch, RZ_MTU3_TGRA, ceiling);
++
++	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TCR, RZ_MTU3_TCR_CCLR_TGRA);
++	pm_runtime_put(ch->dev);
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static void rz_mtu3_32bit_cnt_setting(struct counter_device *counter)
++{
++	struct rz_mtu3_channel *const ch1 = rz_mtu3_get_ch(counter, 0);
++	struct rz_mtu3_channel *const ch2 = rz_mtu3_get_ch(counter, 1);
++
++	/* Phase counting mode 1 is used as default in initialization. */
++	rz_mtu3_8bit_ch_write(ch1, RZ_MTU3_TMDR1, RZ_MTU3_TMDR1_PH_CNT_MODE_1);
++
++	rz_mtu3_8bit_ch_write(ch1, RZ_MTU3_TCR, RZ_MTU3_TCR_CCLR_TGRA);
++	rz_mtu3_8bit_ch_write(ch1, RZ_MTU3_TIOR, RZ_MTU3_TIOR_IC_BOTH);
++
++	rz_mtu3_enable(ch1);
++	rz_mtu3_enable(ch2);
++}
++
++static void rz_mtu3_16bit_cnt_setting(struct counter_device *counter, int id)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, id);
++
++	/* Phase counting mode 1 is used as default in initialization. */
++	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TMDR1, RZ_MTU3_TMDR1_PH_CNT_MODE_1);
++
++	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TCR, RZ_MTU3_TCR_CCLR_TGRA);
++	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TIOR, RZ_MTU3_TIOR_NO_OUTPUT);
++	rz_mtu3_enable(ch);
++}
++
++static int rz_mtu3_initialize_counter(struct counter_device *counter, int id)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, id);
++	struct rz_mtu3_channel *const ch1 = rz_mtu3_get_ch(counter, 0);
++	struct rz_mtu3_channel *const ch2 = rz_mtu3_get_ch(counter, 1);
++
++	switch (id) {
++	case RZ_MTU3_16_BIT_MTU1_CH:
++	case RZ_MTU3_16_BIT_MTU2_CH:
++		if (!rz_mtu3_request_channel(ch))
++			return -EBUSY;
++
++		rz_mtu3_16bit_cnt_setting(counter, id);
++		return 0;
++	case RZ_MTU3_32_BIT_CH:
++		/*
++		 * 32-bit phase counting need MTU1 and MTU2 to create 32-bit
++		 * cascade counter.
++		 */
++		if (!rz_mtu3_request_channel(ch1))
++			return -EBUSY;
++
++		if (!rz_mtu3_request_channel(ch2)) {
++			rz_mtu3_release_channel(ch1);
++			return -EBUSY;
++		}
++
++		rz_mtu3_32bit_cnt_setting(counter);
++		return 0;
++	default:
++		/* should never reach this path */
++		return -EINVAL;
++	}
++}
++
++static void rz_mtu3_terminate_counter(struct counter_device *counter, int id)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, id);
++	struct rz_mtu3_channel *const ch1 = rz_mtu3_get_ch(counter, 0);
++	struct rz_mtu3_channel *const ch2 = rz_mtu3_get_ch(counter, 1);
++
++	if (id == RZ_MTU3_32_BIT_CH) {
++		rz_mtu3_release_channel(ch2);
++		rz_mtu3_release_channel(ch1);
++		rz_mtu3_disable(ch2);
++		rz_mtu3_disable(ch1);
++	} else {
++		rz_mtu3_release_channel(ch);
++		rz_mtu3_disable(ch);
++	}
++}
++
++static int rz_mtu3_count_enable_read(struct counter_device *counter,
++				     struct counter_count *count, u8 *enable)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_channel *const ch1 = rz_mtu3_get_ch(counter, 0);
++	struct rz_mtu3_channel *const ch2 = rz_mtu3_get_ch(counter, 1);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	int ret;
++
++	ret = rz_mtu3_lock_if_count_is_enabled(ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	if (count->id == RZ_MTU3_32_BIT_CH)
++		*enable = rz_mtu3_is_enabled(ch1) && rz_mtu3_is_enabled(ch2);
++	else
++		*enable = rz_mtu3_is_enabled(ch);
++
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int rz_mtu3_count_enable_write(struct counter_device *counter,
++				      struct counter_count *count, u8 enable)
++{
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	int ret = 0;
++
++	if (enable) {
++		pm_runtime_get_sync(ch->dev);
++		mutex_lock(&priv->lock);
++		ret = rz_mtu3_initialize_counter(counter, count->id);
++		if (ret == 0)
++			priv->count_is_enabled[count->id] = true;
++		mutex_unlock(&priv->lock);
++	} else {
++		mutex_lock(&priv->lock);
++		rz_mtu3_terminate_counter(counter, count->id);
++		priv->count_is_enabled[count->id] = false;
++		mutex_unlock(&priv->lock);
++		pm_runtime_put(ch->dev);
++	}
++
++	return ret;
++}
++
++static int rz_mtu3_lock_if_ch0_is_enabled(struct rz_mtu3_cnt *const priv)
++{
++	mutex_lock(&priv->lock);
++	if (priv->ch->is_busy && !(priv->count_is_enabled[RZ_MTU3_16_BIT_MTU1_CH] ||
++				   priv->count_is_enabled[RZ_MTU3_32_BIT_CH])) {
++		mutex_unlock(&priv->lock);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int rz_mtu3_cascade_counts_enable_get(struct counter_device *counter,
++					     u8 *cascade_enable)
++{
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	unsigned long tmdr;
++	int ret;
++
++	ret = rz_mtu3_lock_if_ch0_is_enabled(priv);
++	if (ret)
++		return ret;
++
++	pm_runtime_get_sync(priv->ch->dev);
++	tmdr = rz_mtu3_shared_reg_read(priv->ch, RZ_MTU3_TMDR3);
++	pm_runtime_put(priv->ch->dev);
++	*cascade_enable = test_bit(RZ_MTU3_TMDR3_LWA, &tmdr);
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int rz_mtu3_cascade_counts_enable_set(struct counter_device *counter,
++					     u8 cascade_enable)
++{
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	int ret;
++
++	ret = rz_mtu3_lock_if_ch0_is_enabled(priv);
++	if (ret)
++		return ret;
++
++	pm_runtime_get_sync(priv->ch->dev);
++	rz_mtu3_shared_reg_update_bit(priv->ch, RZ_MTU3_TMDR3,
++				      RZ_MTU3_TMDR3_LWA, cascade_enable);
++	pm_runtime_put(priv->ch->dev);
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int rz_mtu3_ext_input_phase_clock_select_get(struct counter_device *counter,
++						    u32 *ext_input_phase_clock_select)
++{
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	unsigned long tmdr;
++	int ret;
++
++	ret = rz_mtu3_lock_if_ch0_is_enabled(priv);
++	if (ret)
++		return ret;
++
++	pm_runtime_get_sync(priv->ch->dev);
++	tmdr = rz_mtu3_shared_reg_read(priv->ch, RZ_MTU3_TMDR3);
++	pm_runtime_put(priv->ch->dev);
++	*ext_input_phase_clock_select = test_bit(RZ_MTU3_TMDR3_PHCKSEL, &tmdr);
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int rz_mtu3_ext_input_phase_clock_select_set(struct counter_device *counter,
++						    u32 ext_input_phase_clock_select)
++{
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	int ret;
++
++	ret = rz_mtu3_lock_if_ch0_is_enabled(priv);
++	if (ret)
++		return ret;
++
++	pm_runtime_get_sync(priv->ch->dev);
++	rz_mtu3_shared_reg_update_bit(priv->ch, RZ_MTU3_TMDR3,
++				      RZ_MTU3_TMDR3_PHCKSEL,
++				      ext_input_phase_clock_select);
++	pm_runtime_put(priv->ch->dev);
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static struct counter_comp rz_mtu3_count_ext[] = {
++	COUNTER_COMP_DIRECTION(rz_mtu3_count_direction_read),
++	COUNTER_COMP_ENABLE(rz_mtu3_count_enable_read,
++			    rz_mtu3_count_enable_write),
++	COUNTER_COMP_CEILING(rz_mtu3_count_ceiling_read,
++			     rz_mtu3_count_ceiling_write),
++};
++
++static const enum counter_synapse_action rz_mtu3_synapse_actions[] = {
++	COUNTER_SYNAPSE_ACTION_BOTH_EDGES,
++	COUNTER_SYNAPSE_ACTION_RISING_EDGE,
++	COUNTER_SYNAPSE_ACTION_NONE,
++};
++
++static int rz_mtu3_action_read(struct counter_device *counter,
++			       struct counter_count *count,
++			       struct counter_synapse *synapse,
++			       enum counter_synapse_action *action)
++{
++	const bool is_signal_ab = (synapse->signal->id == SIGNAL_A_ID) ||
++				  (synapse->signal->id == SIGNAL_B_ID);
++	struct rz_mtu3_channel *const ch = rz_mtu3_get_ch(counter, count->id);
++	struct rz_mtu3_cnt *const priv = counter_priv(counter);
++	enum counter_function function;
++	bool mtclkc_mtclkd;
++	unsigned long tmdr;
++	int ret;
++
++	ret = rz_mtu3_lock_if_count_is_enabled(ch, priv, count->id);
++	if (ret)
++		return ret;
++
++	ret = rz_mtu3_count_function_read_helper(ch, priv, &function);
++	if (ret) {
++		mutex_unlock(&priv->lock);
++		return ret;
++	}
++
++	/* Default action mode */
++	*action = COUNTER_SYNAPSE_ACTION_NONE;
++
++	if (count->id != RZ_MTU3_16_BIT_MTU1_CH) {
++		tmdr = rz_mtu3_shared_reg_read(priv->ch, RZ_MTU3_TMDR3);
++		mtclkc_mtclkd = test_bit(RZ_MTU3_TMDR3_PHCKSEL, &tmdr);
++		if ((mtclkc_mtclkd && is_signal_ab) ||
++		    (!mtclkc_mtclkd && !is_signal_ab)) {
++			mutex_unlock(&priv->lock);
++			return 0;
++		}
++	}
++
++	switch (function) {
++	case COUNTER_FUNCTION_PULSE_DIRECTION:
++		/*
++		 * Rising edges on signal A (signal C) updates the respective
++		 * count. The input level of signal B (signal D) determines
++		 * direction.
++		 */
++		if (synapse->signal->id == SIGNAL_A_ID ||
++		    synapse->signal->id == SIGNAL_C_ID)
++			*action = COUNTER_SYNAPSE_ACTION_RISING_EDGE;
++		break;
++	case COUNTER_FUNCTION_QUADRATURE_X2_B:
++		/*
++		 * Any state transition on quadrature pair signal B (signal D)
++		 * updates the respective count.
++		 */
++		if (synapse->signal->id == SIGNAL_B_ID ||
++		    synapse->signal->id == SIGNAL_D_ID)
++			*action = COUNTER_SYNAPSE_ACTION_BOTH_EDGES;
++		break;
++	case COUNTER_FUNCTION_QUADRATURE_X4:
++		/* counts up/down on both edges of A (C)  and B (D) signal */
++		*action = COUNTER_SYNAPSE_ACTION_BOTH_EDGES;
++		break;
++	default:
++		/* should never reach this path */
++		mutex_unlock(&priv->lock);
++		return -EINVAL;
++	}
++
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static const struct counter_ops rz_mtu3_cnt_ops = {
++	.count_read = rz_mtu3_count_read,
++	.count_write = rz_mtu3_count_write,
++	.function_read = rz_mtu3_count_function_read,
++	.function_write = rz_mtu3_count_function_write,
++	.action_read = rz_mtu3_action_read,
++};
++
++#define RZ_MTU3_PHASE_SIGNAL(_id, _name) {		\
++	.id = (_id),				\
++	.name = (_name),			\
++}
++
++static struct counter_signal rz_mtu3_signals[] = {
++	RZ_MTU3_PHASE_SIGNAL(SIGNAL_A_ID, "MTU1 MTCLKA"),
++	RZ_MTU3_PHASE_SIGNAL(SIGNAL_B_ID, "MTU1 MTCLKB"),
++	RZ_MTU3_PHASE_SIGNAL(SIGNAL_C_ID, "MTU2 MTCLKC"),
++	RZ_MTU3_PHASE_SIGNAL(SIGNAL_D_ID, "MTU2 MTCLKD"),
++};
++
++static struct counter_synapse rz_mtu3_mtu1_count_synapses[] = {
++	{
++		.actions_list = rz_mtu3_synapse_actions,
++		.num_actions = ARRAY_SIZE(rz_mtu3_synapse_actions),
++		.signal = rz_mtu3_signals,
++	},
++	{
++		.actions_list = rz_mtu3_synapse_actions,
++		.num_actions = ARRAY_SIZE(rz_mtu3_synapse_actions),
++		.signal = rz_mtu3_signals + 1,
++	}
++};
++
++static struct counter_synapse rz_mtu3_mtu2_count_synapses[] = {
++	{
++		.actions_list = rz_mtu3_synapse_actions,
++		.num_actions = ARRAY_SIZE(rz_mtu3_synapse_actions),
++		.signal = rz_mtu3_signals,
++	},
++	{
++		.actions_list = rz_mtu3_synapse_actions,
++		.num_actions = ARRAY_SIZE(rz_mtu3_synapse_actions),
++		.signal = rz_mtu3_signals + 1,
++	},
++	{
++		.actions_list = rz_mtu3_synapse_actions,
++		.num_actions = ARRAY_SIZE(rz_mtu3_synapse_actions),
++		.signal = rz_mtu3_signals + 2,
++	},
++	{
++		.actions_list = rz_mtu3_synapse_actions,
++		.num_actions = ARRAY_SIZE(rz_mtu3_synapse_actions),
++		.signal = rz_mtu3_signals + 3,
++	}
++};
++
++static struct counter_count rz_mtu3_counts[] = {
++	{
++		.id = RZ_MTU3_16_BIT_MTU1_CH,
++		.name = "Channel 1 Count",
++		.functions_list = rz_mtu3_count_functions,
++		.num_functions = ARRAY_SIZE(rz_mtu3_count_functions),
++		.synapses = rz_mtu3_mtu1_count_synapses,
++		.num_synapses = ARRAY_SIZE(rz_mtu3_mtu1_count_synapses),
++		.ext = rz_mtu3_count_ext,
++		.num_ext = ARRAY_SIZE(rz_mtu3_count_ext),
++	},
++	{
++		.id = RZ_MTU3_16_BIT_MTU2_CH,
++		.name = "Channel 2 Count",
++		.functions_list = rz_mtu3_count_functions,
++		.num_functions = ARRAY_SIZE(rz_mtu3_count_functions),
++		.synapses = rz_mtu3_mtu2_count_synapses,
++		.num_synapses = ARRAY_SIZE(rz_mtu3_mtu2_count_synapses),
++		.ext = rz_mtu3_count_ext,
++		.num_ext = ARRAY_SIZE(rz_mtu3_count_ext),
++	},
++	{
++		.id = RZ_MTU3_32_BIT_CH,
++		.name = "Channel 1 and 2 (cascaded) Count",
++		.functions_list = rz_mtu3_count_functions,
++		.num_functions = ARRAY_SIZE(rz_mtu3_count_functions),
++		.synapses = rz_mtu3_mtu2_count_synapses,
++		.num_synapses = ARRAY_SIZE(rz_mtu3_mtu2_count_synapses),
++		.ext = rz_mtu3_count_ext,
++		.num_ext = ARRAY_SIZE(rz_mtu3_count_ext),
++	}
++};
++
++static const char *const rz_mtu3_ext_input_phase_clock_select[] = {
++	"MTCLKA-MTCLKB",
++	"MTCLKC-MTCLKD",
++};
++
++static DEFINE_COUNTER_ENUM(rz_mtu3_ext_input_phase_clock_select_enum,
++			   rz_mtu3_ext_input_phase_clock_select);
++
++static struct counter_comp rz_mtu3_device_ext[] = {
++	COUNTER_COMP_DEVICE_BOOL("cascade_counts_enable",
++				 rz_mtu3_cascade_counts_enable_get,
++				 rz_mtu3_cascade_counts_enable_set),
++	COUNTER_COMP_DEVICE_ENUM("external_input_phase_clock_select",
++				 rz_mtu3_ext_input_phase_clock_select_get,
++				 rz_mtu3_ext_input_phase_clock_select_set,
++				 rz_mtu3_ext_input_phase_clock_select_enum),
++};
++
++static int rz_mtu3_cnt_pm_runtime_suspend(struct device *dev)
++{
++	struct clk *const clk = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(clk);
++
++	return 0;
++}
++
++static int rz_mtu3_cnt_pm_runtime_resume(struct device *dev)
++{
++	struct clk *const clk = dev_get_drvdata(dev);
++
++	clk_prepare_enable(clk);
++
++	return 0;
++}
++
++static DEFINE_RUNTIME_DEV_PM_OPS(rz_mtu3_cnt_pm_ops,
++				 rz_mtu3_cnt_pm_runtime_suspend,
++				 rz_mtu3_cnt_pm_runtime_resume, NULL);
++
++static void rz_mtu3_cnt_pm_disable(void *data)
++{
++	struct device *dev = data;
++
++	pm_runtime_disable(dev);
++	pm_runtime_set_suspended(dev);
++}
++
++static int rz_mtu3_cnt_probe(struct platform_device *pdev)
++{
++	struct rz_mtu3 *ddata = dev_get_drvdata(pdev->dev.parent);
++	struct device *dev = &pdev->dev;
++	struct counter_device *counter;
++	struct rz_mtu3_channel *ch;
++	struct rz_mtu3_cnt *priv;
++	unsigned int i;
++	int ret;
++
++	counter = devm_counter_alloc(dev, sizeof(*priv));
++	if (!counter)
++		return -ENOMEM;
++
++	priv = counter_priv(counter);
++	priv->clk = ddata->clk;
++	priv->mtu_32bit_max = U32_MAX;
++	priv->ch = &ddata->channels[RZ_MTU1];
++	ch = &priv->ch[0];
++	for (i = 0; i < RZ_MTU3_MAX_HW_CNTR_CHANNELS; i++) {
++		ch->dev = dev;
++		priv->mtu_16bit_max[i] = U16_MAX;
++		ch++;
++	}
++
++	mutex_init(&priv->lock);
++	platform_set_drvdata(pdev, priv->clk);
++	clk_prepare_enable(priv->clk);
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++	ret = devm_add_action_or_reset(&pdev->dev, rz_mtu3_cnt_pm_disable, dev);
++	if (ret < 0)
++		goto disable_clock;
++
++	counter->name = dev_name(dev);
++	counter->parent = dev;
++	counter->ops = &rz_mtu3_cnt_ops;
++	counter->counts = rz_mtu3_counts;
++	counter->num_counts = ARRAY_SIZE(rz_mtu3_counts);
++	counter->signals = rz_mtu3_signals;
++	counter->num_signals = ARRAY_SIZE(rz_mtu3_signals);
++	counter->ext = rz_mtu3_device_ext;
++	counter->num_ext = ARRAY_SIZE(rz_mtu3_device_ext);
++
++	/* Register Counter device */
++	ret = devm_counter_add(dev, counter);
++	if (ret < 0) {
++		dev_err_probe(dev, ret, "Failed to add counter\n");
++		goto disable_clock;
++	}
++
++	return 0;
++
++disable_clock:
++	clk_disable_unprepare(priv->clk);
++
++	return ret;
++}
++
++static struct platform_driver rz_mtu3_cnt_driver = {
++	.probe = rz_mtu3_cnt_probe,
++	.driver = {
++		.name = "rz-mtu3-counter",
++		.pm = pm_ptr(&rz_mtu3_cnt_pm_ops),
++	},
++};
++module_platform_driver(rz_mtu3_cnt_driver);
++
++MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
++MODULE_ALIAS("platform:rz-mtu3-counter");
++MODULE_DESCRIPTION("Renesas RZ/G2L MTU3a counter driver");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS(COUNTER);
+-- 
+2.25.1
+
