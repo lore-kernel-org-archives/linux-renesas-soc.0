@@ -2,294 +2,200 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3912C54EBE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Jan 2023 00:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63832C54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Jan 2023 02:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232708AbjAMAeC (ORCPT
+        id S231169AbjAMCDn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Jan 2023 19:34:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41446 "EHLO
+        Thu, 12 Jan 2023 21:03:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233217AbjAMAdq (ORCPT
+        with ESMTP id S230224AbjAMCDm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2023 19:33:46 -0500
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECB86144B
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Jan 2023 16:33:45 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id s3so12522282pfd.12
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Jan 2023 16:33:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AFtwV69bMIsSzAfqfnEyRcHaD27M68+NitSG2WOcyBI=;
-        b=tiK9Gnmrglo/BWl0Epn9FzVVnAAFvXoxx3U451P8VH4QpZK9a1N1/iNYPEPjDCnI0a
-         4ieUl2e7jb84MhEl5SQH/Y0pa7++pOgx8kD4hqDl4pn8o70+auprL7RRb5d/hLyabGsz
-         EEq/9BHVytKV5HTKzmH4PuR7+eBmyYGgBh0j4CzFlzf7MsJWbfh97R2kabKfxJvXk10Q
-         EnsdAstuVBmA2EyisWncU743v1Mo2oLdA5zvmd6x0t2KeufBSlBGtzm2ZowGpceUBepy
-         p9YPKS0pqlvASuKey1Pt422HEBdPMvKzc0rz4a+pNckyVw1WYddYG3o7wQNfdzKSNUIy
-         383w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AFtwV69bMIsSzAfqfnEyRcHaD27M68+NitSG2WOcyBI=;
-        b=3iIwJmZEpHfDoyJL99ca1jAG9HK6OjVctrMcCLaijHr1RXHVz8hfCerculaB6AjQzc
-         2LUNN9Bo8zJhlVvYVd+76UQjDHqFv2s51F6II+C5KOn78dxcrDiEQLF+ANbIL9pdeSlE
-         tkeBpTngNUo63T3ME5JL1AfAsGTdfW7nC/3natVABv+1EcI0Cffp5jp4pRg45eZt+7W0
-         cLkITOG1FF4MovLyRnWg/KWQ81YMFAwhiYq70zvKpVzKNUv6u3ud5Pu6dCO8wOsLR2+n
-         T7boG0IuLg+1HRMlF9TGhbeiid3V9UYg5k26AKkaC4v/MFVzA0RLqKjU4TEszxl+pQZK
-         p1gA==
-X-Gm-Message-State: AFqh2koyJ04CvSbK5noBYqfl0dcuw9reb+XDe3R3vjLcCiymSkW5D7io
-        A4OTxM8sBVOgqIkaj2QCAd/I+PNS65u4nSkE9D5qiA==
-X-Google-Smtp-Source: AMrXdXtVb4XDcNEkJ8zbZXlCbDJHsPBSMEz1kQZsEovQzCvteoR1IUCO1oqioTLQfWg1fCGkm1NBmA==
-X-Received: by 2002:a05:6a00:1485:b0:575:b783:b6b3 with SMTP id v5-20020a056a00148500b00575b783b6b3mr98505440pfu.28.1673570024393;
-        Thu, 12 Jan 2023 16:33:44 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id s64-20020a625e43000000b0056da63c8515sm12552588pfb.91.2023.01.12.16.33.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 16:33:44 -0800 (PST)
-Message-ID: <63c0a6e8.620a0220.addf0.4804@mx.google.com>
-Date:   Thu, 12 Jan 2023 16:33:44 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 12 Jan 2023 21:03:42 -0500
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2133.outbound.protection.outlook.com [40.107.114.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4C0621B1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Jan 2023 18:03:40 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iDNUrxzkfgRN8QLroLUi6eH9fqGeWoQU5enR5wexVZG89KilxgROGYE0c3OC+/LfUozk5Fh2BgbRah6QDCOnavs+3gxacQz5Ett0MtnB4d18sBqg5R6EI6HwZu/O+3YvvUAgrPvPgEZ8ZIyHdCPCuhzehds+e0pCal3SaCx3URTTlR60KbDI3awM62/VUrVTeoX2C4ppRrpxayRPgY6y6ztGF1NrfeDoT9sMxKCz3+CQmrYr61F6th3m/I5TOKJ2sqkBCKshP1BD35Z3zg5t8l6erqoWu/CZp5kUs9GyZO/OxHlJM08mauAgU53GaC6jKiwMlD4MZrZFH8tpe0Fl9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xUeUnZjdakFNoUg+u+tW0EVgOXHfuZib9Z4HLvWuY3w=;
+ b=oanTKowJ8Flme08il5dnQdje0w6he5xucaOACqTLzLD5NjmdG3WZxrK0YHVSFsXx+BnnAyUhnmfEJ4ZWSe1Ar3VWXP2CvNQY02RQVoxPCKedlc/PrhL3jZ4usXcYlTLGfxVsR3a6dlFIwbYhUwXsFPU9OuTVwhEW12Bspg5etzyYeQGq3e5RJ9q3NaMV346IG80prYL5kDJht1SGZzmM9d2ycD5TKb5AkeUsSGc7iiauR2NZ5jlwRQk0QsJOudwvCCFSZL09tiljxVNGUFDN30+mgPAiUx9sl79hUUL+MZzmhRxdc1pHvUp0r5CASmz9iOeI+UoZG13q9gG+OlNFeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xUeUnZjdakFNoUg+u+tW0EVgOXHfuZib9Z4HLvWuY3w=;
+ b=VCanje8D2fgcpdCh3MI45M0+MpkyW1GJP0UvpZ9S0LsnVQyYnrTVH+cTHEMWyNl0eatBkU82FX6+zlPdrSeeXikYKWlqKUqmOUdqmk6VpmKprUJ287H4Iy9e5W/8Ol2UDewb9qf2vvqo/U75ETmEOGb84TlQlUYdoneSesLWVEI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from OS3PR01MB8426.jpnprd01.prod.outlook.com (2603:1096:604:194::10)
+ by TYCPR01MB10859.jpnprd01.prod.outlook.com (2603:1096:400:26f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.19; Fri, 13 Jan
+ 2023 02:03:38 +0000
+Received: from OS3PR01MB8426.jpnprd01.prod.outlook.com
+ ([fe80::3cd7:a7b5:ea86:9ae]) by OS3PR01MB8426.jpnprd01.prod.outlook.com
+ ([fe80::3cd7:a7b5:ea86:9ae%4]) with mapi id 15.20.6002.012; Fri, 13 Jan 2023
+ 02:03:38 +0000
+Date:   Fri, 13 Jan 2023 11:03:31 +0900
+Message-ID: <87fscfi424.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH v2 0/8] arm64: dts: renesas: Simple-Card / Audio-Graph-Card/Card2 dts for ULCB/KF
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+X-ClientProxiedBy: TYAPR01CA0219.jpnprd01.prod.outlook.com
+ (2603:1096:404:11e::15) To OS3PR01MB8426.jpnprd01.prod.outlook.com
+ (2603:1096:604:194::10)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: renesas-devel-2023-01-12-v6.2-rc3
-X-Kernelci-Tree: renesas
-X-Kernelci-Branch: master
-X-Kernelci-Report-Type: test
-Subject: renesas/master baseline-nfs: 94 runs,
- 5 regressions (renesas-devel-2023-01-12-v6.2-rc3)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS3PR01MB8426:EE_|TYCPR01MB10859:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ab4eda2-88fe-4402-7ddc-08daf50a62ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 3PrMYDA/sIOr2cYcRFlJdxvepVx5PobuvclGKLpQyjl/jYdxNeqb8dfYikwcFdm6JZyD9vYGnuEATdC0XaaZQIDP//ArJJf/Ysvo0NEhiJ3X21pJ2TUArxN2BzLMC8rKOfSUUKv5jU0bbyWCJo/okP9Esxsf4hOpSIkEJKUyuyT5YpXlwOfL4sMwUEKzFHMn9JmFY/ChlDuO39xitPvO5OKF7mNX9xWYM9ivnwaLAI83FDFnonVd76NZDXTnrOvUW1dRxMTUAyWBdIzK8RfDOXQY0RG+/RQN1zUs7MCrzGkhfAy/wjSVQuUG1Gm2dLBYk9MaXAgZqWMM35gWAWZ+b0HiRWk+1WhG69YwJtOm2IF7jb9SVH7NqT1e/jQIz24H1ouFpESWBGGBLdHioe+8aOzyR4C5QrifVbN5BvxmkwS2AerpDTV19z0oQaYwCsXxi3Y9PsbKJRq4Jnmmyz6n4SvlPGjef5iXu4zx/ztq19O5mfNLTqDO/ptkIFSbz8/OmGzOP2t6FD4aqBSxkIflVM1i0V/TnKNqUl07l2GVg+9mK8NamqdOBCLrB4OQdSu0MAkXSNMn1swE4zxbSiHavET/zopgYU/vchb5YZxK3TV6QW1uHC4zNgucY1gu5c3k8hlgVcT6eAz2lj0TAGqeqcnuNHDqzaR4utnLIXfzeUf89o0gIwCkedLkVZq9R5QpTcSezSqo+8CT9wohiBoE/Q==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8426.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(366004)(39860400002)(136003)(396003)(346002)(451199015)(6512007)(478600001)(26005)(186003)(86362001)(6486002)(52116002)(6666004)(6506007)(6916009)(4326008)(66556008)(8676002)(66476007)(2616005)(66946007)(316002)(38350700002)(38100700002)(41300700001)(8936002)(36756003)(83380400001)(5660300002)(2906002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?P6MgTurTKmQIJrSIN8B7OHGspy8qc3UXMFZ5DX2sjGW+vL1xlpuYINlw9haq?=
+ =?us-ascii?Q?EVz6YW8ZjlARTSMx6trfrNVFyVGbexIwi2+2TwMt5q6mfRgNIWrhh3hbg2vL?=
+ =?us-ascii?Q?6wGf6db2G0nss6eonduh67sxyO0vmTnQVwf5xL6QLlOs7qoT8M85hnfaIDqJ?=
+ =?us-ascii?Q?xUmquWqgUlN9lVJFS7dr+D9Y119zlvwLF8T1eQ6Py9DLDzOdazFr1wzbAcgr?=
+ =?us-ascii?Q?jzR/2x2qI2vS3m7dV3A/oGGB4BKnXHAppSWPDPT1vU2MShOxKoUS92VN5nbs?=
+ =?us-ascii?Q?ZJAoeJnalxmloi/CnKQBK6hzhT4Q1oh+/VP+vL838K4WNAoGOC2I7sdKUzVF?=
+ =?us-ascii?Q?OqkiaKvLdGCduT58SjXvvd4WLyNWfiOvo9OJaZwap6QP3IxEmJyMhnIKnqjO?=
+ =?us-ascii?Q?nrQxcL/a6sABZpDA7nL1qFmwINUaFDDNRD4UJb3lRfd00A4swcjPk8tkzJ55?=
+ =?us-ascii?Q?+raNuClWrpzftFWKNKwAby48aCfw/YhTh+rj8dXZKGY5PDMpYv9wpDllip8m?=
+ =?us-ascii?Q?ZGPvLrpfdAtKJYCFdq5HUZQM2j+iVl7kwrS8T7loJHtQelOW3QrqvJOJauo1?=
+ =?us-ascii?Q?Ki826Ag2lpgVVw1Xet8aQbEX3LkRFkud77vu8h/Gq6o1euFqTSjRQSKPY+QF?=
+ =?us-ascii?Q?Jedwm6KNWlxujNRM1pegheHYhme5Ivh2JXb846dDdC5B43+KJBYaXWuA4kG1?=
+ =?us-ascii?Q?nb8XPte2q3IRrIlrARmX+73eFezHyadSMLa6VF2toi7i543YZukS0KKGVPRf?=
+ =?us-ascii?Q?TI2nMVTigjaErKWQ5zdMLWQYZ0ANfqSBN7+taFd00iC9ggEwnG/1Gj4hNMCS?=
+ =?us-ascii?Q?bHxlNXTawHOsT5LIEoAvwuKuu5BrOrVB2nWRKdu52/nf1xSZLYqdw56thzFH?=
+ =?us-ascii?Q?6WE9uEELGrgBPVe+Y5U12NAO+JnXf7oK+2PwAQ8P5n+qVsCspAt5if/1kgF7?=
+ =?us-ascii?Q?be4YVvbl15l+gQBuqxYGmzvuz2lD7xJxYOgVpcMIK6whMhTN1mvw3Nh3U7rF?=
+ =?us-ascii?Q?4+WmvT3ecLwiHYuL9nEOjr0KaB6ai/Hf8tvCsIUE3j0nIoHcvTNTtgnkCIZI?=
+ =?us-ascii?Q?MNlMunAMQxuBqJi/qng1hRND1A9rzJttpdBGWeL2MGrSO5LnzUNUNYvHukBO?=
+ =?us-ascii?Q?T+/Ohsalew/g2Cd9mp100Q3W4F6ANKjSJUTqFy8Fz7wgWIlHF6V61lGeSBEI?=
+ =?us-ascii?Q?DDKvcMlgO7AzRL3yvMEuMW3dXon7X8QbWn3Y9nCDbNHPtPQOa9sq3mymzdZf?=
+ =?us-ascii?Q?12nsCx5VdbjsaFK1RA1swYRU96zfsgdBz+JJxV8tXYNK3dz8b3wAYT+pG1AN?=
+ =?us-ascii?Q?P/p20Vogf3E6A9D+Z745p9RsU8rCrsGnq3LfYz6KjRl0SeKKwWDMlXBJ2wJY?=
+ =?us-ascii?Q?H/VvUjE8YasSR4Jc1FVFldDuMz7vfABw8KSEOBU13AAAOnUmNyn1F/lNf/xO?=
+ =?us-ascii?Q?UjSQoH71DwjcuaapYooNfZ4yo3vn0JwwxsiuCfiZdJ/hQeSnlaMkPxcsptrW?=
+ =?us-ascii?Q?4XZttZ8BCF/LEi2gtl2gGMJmyf53mInGNkWNgPfkLqtPLmaylHzslIg0ms8i?=
+ =?us-ascii?Q?RWgD7mvGbtICHkH9HZT5o5cxyOvRcYbwgZj7HsvnEjg2G5n94xU9mBrKjHXz?=
+ =?us-ascii?Q?nPpzWQoeBy70AtvUiUxubCU=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ab4eda2-88fe-4402-7ddc-08daf50a62ca
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8426.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2023 02:03:38.4918
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Y6vM2PRrBfPsK67nJlqVv47L3dSNC+SmGkvkL0K9I3uG3DFhm7pNSP7eosQuuQqfFowBJfr7/G6UOnNo26P5JtnT7Cfs0wo3tZfbaI5I4eyndvacPOY10rgvK1HlplmC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10859
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master baseline-nfs: 94 runs, 5 regressions (renesas-devel-2023-01-=
-12-v6.2-rc3)
 
-Regressions Summary
--------------------
+Hi Geert
+
+ALSA SoC is now supporting generic Sound Card driver such as
+Simple-Card / Audio-Graph-Card/Card2, and it supports
+"normal connection" and "special connections".
+I'm its maintainer, thus I need/want to test these.
+
+I have been tested these by using my local patches to switching card,
+but maintenance it locally is not useful for me, and users who want to
+know the sample DT settings.
+
+And I have noticed that some local patch had bug, but no one noticed
+about it (of course :)
+
+ULCB/KF is very good board to test these.
+So, I want to upstream these.
+
+These are v2 patch-set for it.
+
+One note here is that this patch *should not* have effect to
+existing normal users, but useful for test user.
+So, this patch-set adds "3 card" x "2 use case" dtsi file,
+and ulcb/ulcb-kf "include" one of them which doesn't change anything.
+test user can switch to other card or other use case by changing
+"include" dtsi.
+
+v1 -> v2
+	- tidyup tab alignment
+	- tidyup comments
+	- remove no longer needed comment from ulcb/ulcb-kf.dtsi
+
+Kuninori Morimoto (8):
+  ARM: dts: renesas: #sound-dai-cells is used when simple-card
+  arm64: dts: renesas: #sound-dai-cells is used when simple-card
+  arm64: dts: renesas: add ulcb{-kf} Audio Graph Card dtsi
+  arm64: dts: renesas: add ulcb{-kf} Audio Graph Card2 dtsi
+  arm64: dts: renesas: add ulcb{-kf} Simple Audio Card dtsi
+  arm64: dts: renesas: add ulcb{-kf} Audio Graph Card2 dtsi MIX + TDM Split dtsi
+  arm64: dts: renesas: add ulcb{-kf} Audio Graph Card dtsi MIX + TDM Split dtsi
+  arm64: dts: renesas: add ulcb{-kf} Simple Audio Card MIX + TDM Split dtsi
+
+ arch/arm/boot/dts/r8a7742.dtsi                |   2 +-
+ arch/arm/boot/dts/r8a7743.dtsi                |   2 +-
+ arch/arm/boot/dts/r8a7744.dtsi                |   2 +-
+ arch/arm/boot/dts/r8a7745.dtsi                |   2 +-
+ arch/arm/boot/dts/r8a7778.dtsi                |   2 +-
+ arch/arm/boot/dts/r8a7790.dtsi                |   2 +-
+ arch/arm/boot/dts/r8a7791.dtsi                |   2 +-
+ arch/arm/boot/dts/r8a7793.dtsi                |   2 +-
+ arch/arm/boot/dts/r8a7794.dtsi                |   2 +-
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a77951.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a77960.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a77961.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi     |   2 +-
+ .../boot/dts/renesas/salvator-common.dtsi     |   3 -
+ .../ulcb-audio-graph-card-mix+split.dtsi      |  91 +++++++++
+ .../dts/renesas/ulcb-audio-graph-card.dtsi    |  85 +++++++++
+ .../ulcb-audio-graph-card2-mix+split.dtsi     | 111 +++++++++++
+ .../dts/renesas/ulcb-audio-graph-card2.dtsi   |  26 +++
+ .../ulcb-kf-audio-graph-card-mix+split.dtsi   | 170 +++++++++++++++++
+ .../dts/renesas/ulcb-kf-audio-graph-card.dtsi |  88 +++++++++
+ .../ulcb-kf-audio-graph-card2-mix+split.dtsi  | 177 ++++++++++++++++++
+ .../renesas/ulcb-kf-audio-graph-card2.dtsi    |  30 +++
+ .../ulcb-kf-simple-audio-card-mix+split.dtsi  | 152 +++++++++++++++
+ .../renesas/ulcb-kf-simple-audio-card.dtsi    |  85 +++++++++
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi      |  72 ++-----
+ .../ulcb-simple-audio-card-mix+split.dtsi     |  89 +++++++++
+ .../dts/renesas/ulcb-simple-audio-card.dtsi   |  89 +++++++++
+ arch/arm64/boot/dts/renesas/ulcb.dtsi         |  68 ++-----
+ 34 files changed, 1240 insertions(+), 134 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-audio-graph-card-mix+split.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-audio-graph-card.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-audio-graph-card2-mix+split.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-audio-graph-card2.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf-audio-graph-card-mix+split.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf-audio-graph-card.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf-audio-graph-card2-mix+split.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf-audio-graph-card2.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf-simple-audio-card-mix+split.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf-simple-audio-card.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-simple-audio-card-mix+split.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-simple-audio-card.dtsi
+
+-- 
+2.25.1
 
-platform                     | arch  | lab             | compiler | defconf=
-ig                    | regressions
------------------------------+-------+-----------------+----------+--------=
-----------------------+------------
-at91sam9g20ek                | arm   | lab-broonie     | gcc-10   | at91_dt=
-_defconfig            | 1          =
-
-imx6dl-riotboard             | arm   | lab-pengutronix | gcc-10   | multi_v=
-7_defc...CONFIG_SMP=3Dn | 1          =
-
-imx6dl-udoo                  | arm   | lab-broonie     | gcc-10   | imx_v6_=
-v7_defconfig          | 1          =
-
-imx6q-udoo                   | arm   | lab-broonie     | gcc-10   | imx_v6_=
-v7_defconfig          | 1          =
-
-sun50i-h5-lib...ch-all-h3-cc | arm64 | lab-broonie     | gcc-10   | defconf=
-ig+debug              | 1          =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2023-01-12-v6.2-rc3/plan/baseline-nfs/
-
-  Test:     baseline-nfs
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2023-01-12-v6.2-rc3
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      5268d311d704e178f1b4c5afcf0ca9073238412b =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig                    | regressions
------------------------------+-------+-----------------+----------+--------=
-----------------------+------------
-at91sam9g20ek                | arm   | lab-broonie     | gcc-10   | at91_dt=
-_defconfig            | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63c06fb42e442f4f961d3a3c
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: at91_dt_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm/at91_dt_defconfig/gcc-10/lab-broonie/baseline-nfs-at=
-91sam9g20ek.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm/at91_dt_defconfig/gcc-10/lab-broonie/baseline-nfs-at=
-91sam9g20ek.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230109.0/armel/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/63c06fb42e442f4f9=
-61d3a3d
-        new failure (last pass: renesas-devel-2023-01-09-v6.2-rc3) =
-
- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig                    | regressions
------------------------------+-------+-----------------+----------+--------=
-----------------------+------------
-imx6dl-riotboard             | arm   | lab-pengutronix | gcc-10   | multi_v=
-7_defc...CONFIG_SMP=3Dn | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63c06fe782fd31b4201d39d1
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-10/lab-pengutr=
-onix/baseline-nfs-imx6dl-riotboard.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-10/lab-pengutr=
-onix/baseline-nfs-imx6dl-riotboard.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230109.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
-e/id/63c06fe782fd31b4201d39d6
-        new failure (last pass: renesas-devel-2023-01-09-v6.2-rc3)
-
-    2023-01-12T20:38:50.792650  + set[   26.642971] <LAVA_SIGNAL_ENDRUN 0_d=
-mesg 878327_1.6.2.3.1>
-    2023-01-12T20:38:50.792918   +x
-    2023-01-12T20:38:50.903397  / # #
-    2023-01-12T20:38:51.005090  export SHELL=3D/bin/sh
-    2023-01-12T20:38:51.005568  #
-    2023-01-12T20:38:51.106865  / # export SHELL=3D/bin/sh. /lava-878327/en=
-vironment
-    2023-01-12T20:38:51.107344  =
-
-    2023-01-12T20:38:51.208614  / # . /lava-878327/environment/lava-878327/=
-bin/lava-test-runner /lava-878327/1
-    2023-01-12T20:38:51.209253  =
-
-    2023-01-12T20:38:51.212422  / # /lava-878327/bin/lava-test-runner /lava=
--878327/1 =
-
-    ... (12 line(s) more)  =
-
- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig                    | regressions
------------------------------+-------+-----------------+----------+--------=
-----------------------+------------
-imx6dl-udoo                  | arm   | lab-broonie     | gcc-10   | imx_v6_=
-v7_defconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63c074f03352254d011d39d9
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm/imx_v6_v7_defconfig/gcc-10/lab-broonie/baseline-nfs-=
-imx6dl-udoo.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm/imx_v6_v7_defconfig/gcc-10/lab-broonie/baseline-nfs-=
-imx6dl-udoo.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230109.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/63c074f03352254d0=
-11d39da
-        new failure (last pass: renesas-devel-2023-01-09-v6.2-rc3) =
-
- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig                    | regressions
------------------------------+-------+-----------------+----------+--------=
-----------------------+------------
-imx6q-udoo                   | arm   | lab-broonie     | gcc-10   | imx_v6_=
-v7_defconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63c0760ba9cedef8371d39c2
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm/imx_v6_v7_defconfig/gcc-10/lab-broonie/baseline-nfs-=
-imx6q-udoo.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm/imx_v6_v7_defconfig/gcc-10/lab-broonie/baseline-nfs-=
-imx6q-udoo.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230109.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/63c0760ba9cedef83=
-71d39c3
-        new failure (last pass: renesas-devel-2023-01-09-v6.2-rc3) =
-
- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig                    | regressions
------------------------------+-------+-----------------+----------+--------=
-----------------------+------------
-sun50i-h5-lib...ch-all-h3-cc | arm64 | lab-broonie     | gcc-10   | defconf=
-ig+debug              | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63c07288ed2594eeb91d39e4
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+debug
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-nfs-su=
-n50i-h5-libretech-all-h3-cc.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-01-12-v6.2-rc3/arm64/defconfig+debug/gcc-10/lab-broonie/baseline-nfs-su=
-n50i-h5-libretech-all-h3-cc.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230109.0/arm64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/63c07288ed2594eeb=
-91d39e5
-        failing since 17 days (last pass: v6.1-rc8-929-g112502470f50, first=
- fail: renesas-devel-2022-12-26-v6.2-rc1) =
-
- =20
