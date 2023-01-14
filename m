@@ -2,160 +2,92 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF97C3DA78
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 14 Jan 2023 18:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B61C3DA78
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 14 Jan 2023 22:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbjANS7U (ORCPT
+        id S229676AbjANW4z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 14 Jan 2023 13:59:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58108 "EHLO
+        Sat, 14 Jan 2023 17:56:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbjANS7T (ORCPT
+        with ESMTP id S230257AbjANW4x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Jan 2023 13:59:19 -0500
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC009B76D;
-        Sat, 14 Jan 2023 10:59:18 -0800 (PST)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-4a2f8ad29d5so328511467b3.8;
-        Sat, 14 Jan 2023 10:59:18 -0800 (PST)
+        Sat, 14 Jan 2023 17:56:53 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ECB69ECF
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 14 Jan 2023 14:56:52 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id i70so2835496ioa.12
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 14 Jan 2023 14:56:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rvSA+Lx4428ZeCqIe+MLNPk8FnuAPH7irnwCNjVyepg=;
-        b=E/Z7vgZuk7gjVRqsylXqM2hjmpmB+3D6Z+7L/t7h1F575IWk064ySp7dFiRB765EpZ
-         GNK5NAC0kDvAVx1CKmD8SpgrBnhHoeWTVJW0ZD149chpcmHhQ5y4lIv8eD0QHSFQNoNX
-         oCA7jwWvBRh2EMqgsFS6SR70T2xvpunuS54kAw/ZuxdkoXHZ7P/JNMn2VuI96YAbS8HY
-         Ayx8Yem9zjfCn7txUB9DK9MECtvMiXYtdRY4uKJ9JIeJooLdUk+kEjVnIYGPF/oBfBML
-         YeR25uyJhpLoadDfVdykzooeh4HrkJU+A+/6MNUNd3/Z9W+lWdF5bIR7jMqtklIPmyJ6
-         +ihA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gh4/Cvauln6ubM4PdywsyUq3SXw7FEjozwVveTYHbQg=;
+        b=CdyrpP2GCoxymehGInK7r+oagXZ79i3T9vRUrI0Tiq3xGOSqXlqhWb1Mi2L6Op3Pau
+         Y4Z6hmpNLNSLUiDYmPhd4xTff5FvtJMwIknOQXqvEeN3nPOqO0Kc5e4iNT0euZE29XjB
+         jtHXaWB2nJBmlPKzGPlu3AsXKeJ2c0W4khHQegm48EU4ikTHfEPIiL0uPaWYk6tOtreb
+         SWHqy3yJdmBj3Skbfqft9nDK8mpEFiT+NPUQN/wcRqzga4RPLpJZukcD9BoeDH/0TGwM
+         zhbX+IQtc1KscM3iJGsVeigQvOGjDGzPTsJ1TTb8Jg3tqnC7wsgmfsnRPv17p/qme3wc
+         YAvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rvSA+Lx4428ZeCqIe+MLNPk8FnuAPH7irnwCNjVyepg=;
-        b=ExFjXecnwqzr7LUDBVl0ZLPdq+SkKL8aUVTWDRBeLO9rIjQQcCJkhOV2M1m7299TJC
-         exmt9nKsX40iciyJlGpimevBuaFBQD+80M9h4WaCtiiwUBLM6fGXr3sSEoR/XmQk3A4i
-         JicXbpcR/Nes8NSlv4qRpRiJG2TzW7P3uO1shf4t00Zki+Fsub9CSXHgzOCYe7s48yEg
-         FRVxv+9pui+dnAVCt6uM7CvdLbePoCQhw+lEN0O5UA8SsjzTbgR05E3ZDiBr6Cl07Rsa
-         jal6a24xh/MnmdM8frBXy3sZmowIxS1GVKvqeFqqtPvDC5qkLIE91xXChgtV/X39WYf2
-         UCOA==
-X-Gm-Message-State: AFqh2krBqJd1Qr0W+IJcMoLYzF99vGfZbuNj0LlviiGCX2txroEGK1Xu
-        nprjPBsT283/uKY9JbWMt1manPCQol1g7Zbta7I=
-X-Google-Smtp-Source: AMrXdXv+37ZTyFOBsHwWwFuVHUiogjw4yQ6vwuYJv3R41Nb8EHC+LjAe/xhxW2jrxj4BgjxRIgUKiXI8cvts3nEGPrw=
-X-Received: by 2002:a81:a112:0:b0:4cf:84af:7e95 with SMTP id
- y18-20020a81a112000000b004cf84af7e95mr1817829ywg.309.1673722758140; Sat, 14
- Jan 2023 10:59:18 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gh4/Cvauln6ubM4PdywsyUq3SXw7FEjozwVveTYHbQg=;
+        b=rJ4LssCh/MsyC5pz7jCwWh+HkqUJU9TSGGTigmc2a2tqM7ZTr/e3InwA4EaOm6SFq+
+         XPS8rgoYhIQvkg2c18pIpg+NO6yZjjanp648ZkSneY8ORwGs61zToA1Li9n62TpgGrKp
+         S5d+7TnsOO4DGCbvS/NdLAlt94houfxOAE4G8BHSuZe2tt7PosVReoNAQ3PYgPZc/Lii
+         zzQiI9NI+pRkpeSlYo1sr6Ps+yX/iAqqY3Kyop3FhdkTGWA0NKYMxySmPaQDSpwQTiPC
+         i/wGR5mEQFJ69zrl+07Udb94EEhIjrSjMap4swBZREDJaYUq6aigltLOp/wmuUyThIro
+         FFVA==
+X-Gm-Message-State: AFqh2krWP8PJCo9B1DE8ap42MS791k1Akqg5ZIWMJn4XncAqsXWyyvAc
+        w+d6gg0otf2//5TFZZE7OhKvLuHJgvk=
+X-Google-Smtp-Source: AMrXdXsVVLhSlWusBw18G3Ch56lQinJSHI1HKWnx0O4Hy5voX9gLNIH6zRTPCJkSFGtWGYrIR1Kw6A==
+X-Received: by 2002:a05:6602:2bc4:b0:704:939a:dc3f with SMTP id s4-20020a0566022bc400b00704939adc3fmr4235884iov.13.1673737011304;
+        Sat, 14 Jan 2023 14:56:51 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan (c-75-72-166-104.hsd1.mn.comcast.net. [75.72.166.104])
+        by smtp.gmail.com with ESMTPSA id c8-20020a6bfd08000000b006bbfb3856d6sm8374519ioi.5.2023.01.14.14.56.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Jan 2023 14:56:50 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     geert+renesas@glider.be, aford@beaconembedded.com,
+        Adam Ford <aford173@gmail.com>
+Subject: [PATCH 2/3] arm64: dts: beacon-renesom: Update Ethernet PHY ID
+Date:   Sat, 14 Jan 2023 16:56:46 -0600
+Message-Id: <20230114225647.227972-2-aford173@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230114225647.227972-1-aford173@gmail.com>
+References: <20230114225647.227972-1-aford173@gmail.com>
 MIME-Version: 1.0
-References: <20221229224601.103851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20221229224601.103851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Sat, 14 Jan 2023 18:58:52 +0000
-Message-ID: <CA+V-a8t38vHuBd+GJs5_643Jp5L6u6ci7NWVjRn53iwA445ODA@mail.gmail.com>
-Subject: Re: [PATCH v2] clocksource/drivers/riscv: Get rid of
- clocksource_arch_init() callback
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-riscv@lists.infradead.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Samuel Holland <samuel@sholland.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 29, 2022 at 10:50 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Having a clocksource_arch_init() callback always sets vdso_clock_mode to
-> VDSO_CLOCKMODE_ARCHTIMER if GENERIC_GETTIMEOFDAY is enabled, this is
-> required for the riscv-timer.
->
-> This works for platforms where just riscv-timer clocksource is present.
-> On platforms where other clock sources are available we want them to
-> register with vdso_clock_mode set to VDSO_CLOCKMODE_NONE.
->
-> On the Renesas RZ/Five SoC OSTM block can be used as clocksource [0], to
-> avoid multiple clock sources being registered as VDSO_CLOCKMODE_ARCHTIMER
-> move setting of vdso_clock_mode in the riscv-timer driver instead of doing
-> this in clocksource_arch_init() callback as done similarly for ARM/64
-> architecture.
->
-> [0] drivers/clocksource/renesas-ostm.c
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Tested-by: Samuel Holland <samuel@sholland.org>
-> ---
-> RFC -> v2
-> * Dropped vdso_default static global variable
-> * Used IS_ENABLED() macro
-> * Included Tested-by from Samuel
->
-> RFC:
-> https://patchwork.kernel.org/project/linux-renesas-soc/patch/20221211215843.24024-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-> ---
->  arch/riscv/Kconfig                | 1 -
->  arch/riscv/kernel/time.c          | 9 ---------
->  drivers/clocksource/timer-riscv.c | 5 +++++
->  3 files changed, 5 insertions(+), 10 deletions(-)
->
-Gentle ping.
+Due to the part shortage, the AR8031 PHY was replaced with a
+Micrel KSZ9131.  Hard-coding the ID of the PHY makes this new
+PHY non-operational on newer hardware.  Since previous hardware
+had only shipped to a limited number of people, and they have
+not gone to production, it should be safe to update the PHY ID.
 
-Cheers,
-Prabhakar
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index e2b656043abf..9c687da7756d 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -12,7 +12,6 @@ config 32BIT
->
->  config RISCV
->         def_bool y
-> -       select ARCH_CLOCKSOURCE_INIT
->         select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
->         select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
->         select ARCH_HAS_BINFMT_FLAT
-> diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
-> index 8217b0f67c6c..42bee305e997 100644
-> --- a/arch/riscv/kernel/time.c
-> +++ b/arch/riscv/kernel/time.c
-> @@ -30,12 +30,3 @@ void __init time_init(void)
->         of_clk_init(NULL);
->         timer_probe();
->  }
-> -
-> -void clocksource_arch_init(struct clocksource *cs)
-> -{
-> -#ifdef CONFIG_GENERIC_GETTIMEOFDAY
-> -       cs->vdso_clock_mode = VDSO_CLOCKMODE_ARCHTIMER;
-> -#else
-> -       cs->vdso_clock_mode = VDSO_CLOCKMODE_NONE;
-> -#endif
-> -}
-> diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
-> index 55dad7965f43..c416e5e934bf 100644
-> --- a/drivers/clocksource/timer-riscv.c
-> +++ b/drivers/clocksource/timer-riscv.c
-> @@ -77,6 +77,11 @@ static struct clocksource riscv_clocksource = {
->         .mask           = CLOCKSOURCE_MASK(64),
->         .flags          = CLOCK_SOURCE_IS_CONTINUOUS,
->         .read           = riscv_clocksource_rdtime,
-> +#if IS_ENABLED(CONFIG_GENERIC_GETTIMEOFDAY)
-> +       .vdso_clock_mode = VDSO_CLOCKMODE_ARCHTIMER,
-> +#else
-> +       .vdso_clock_mode = VDSO_CLOCKMODE_NONE,
-> +#endif
->  };
->
->  static int riscv_timer_starting_cpu(unsigned int cpu)
-> --
-> 2.25.1
->
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index d3fc8ffd5b4c..a302f0ea8a48 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -59,7 +59,7 @@ &avb {
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+-		compatible = "ethernet-phy-id004d.d074",
++		compatible = "ethernet-phy-i0022.1640",
+ 			     "ethernet-phy-ieee802.3-c22";
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+-- 
+2.34.1
+
