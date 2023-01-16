@@ -2,124 +2,117 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5911C54EBE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 20:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A293C46467
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 21:41:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232684AbjAPUxN (ORCPT
+        id S232314AbjAPVlU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 15:53:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47936 "EHLO
+        Mon, 16 Jan 2023 16:41:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233765AbjAPUw7 (ORCPT
+        with ESMTP id S232782AbjAPVlT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2023 15:52:59 -0500
-X-Greylist: delayed 396 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 16 Jan 2023 12:51:34 PST
-Received: from m-r1.th.seeweb.it (m-r1.th.seeweb.it [IPv6:2001:4b7a:2000:18::170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778392D179
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 12:51:34 -0800 (PST)
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Mon, 16 Jan 2023 16:41:19 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23BA524497;
+        Mon, 16 Jan 2023 13:41:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 7A08D1FAA6;
-        Mon, 16 Jan 2023 21:44:53 +0100 (CET)
-Date:   Mon, 16 Jan 2023 21:44:52 +0100
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-        openbmc@lists.ozlabs.org, linux-imx@nxp.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-iio@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        chrome-platform@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-arm-msm@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Saravanan Sekar <sravanhome@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Patrick Venture <venture@google.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Nancy Yuen <yuenn@google.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Christophe Branchereau <cbranchereau@gmail.com>,
-        Cai Huoqing <cai.huoqing@linux.dev>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Andy Gross <agross@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Jishnu Prakash <quic_jprakash@quicinc.com>
-Subject: Re: [PATCH v3 12/15] iio: adc: qcom-spmi-adc5: convert to device
- properties
-Message-ID: <20230116204452.il4gase2szipeexz@SoMainline.org>
-References: <20220715122903.332535-1-nuno.sa@analog.com>
- <20220715122903.332535-13-nuno.sa@analog.com>
- <20220806192048.0ca41cc5@jic23-huawei>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AF6516112E;
+        Mon, 16 Jan 2023 21:41:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81ED8C433D2;
+        Mon, 16 Jan 2023 21:41:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673905277;
+        bh=V0SSjeXS5t8fvel1GS4ucmaQsKSqFY0cRpIqj5T6N/k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AoYala+rV44moJwyd9aQlvh7nWBvPXGAo85sr/XXMMXS6FwiPVR+to1hVe4hUHhby
+         G4RuyJAk0BUhvQUDA17MQiJP71keOAodzdQXFFKfoJWES3HtbbqoNb1Vud8USfFTby
+         uFHRec702aAzsdh0GVXWapB6Yg6gA09XmNCh9RN6COf5XDIittdoNEV4pl7lvYENtQ
+         V2CbCXgnRiFHUE3GiFV1pjUxa5XrHpuh5/3WmNy28A/wn6vMK2IHhpEZsygowJVKxi
+         LYqLUxrdSHTsB9uPhl1zHtYLrJNL7JB6em1Rd95vytTnLevM8RBrM0rRmTgBYj6zlK
+         jsyw8VjM6mpng==
+Date:   Mon, 16 Jan 2023 22:41:11 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: renesas,rzv2m: Fix SoC specific
+ string
+Message-ID: <Y8XEd6v++lTSeCYn@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20221107165027.54150-1-fabrizio.castro.jz@renesas.com>
+ <20221107165027.54150-2-fabrizio.castro.jz@renesas.com>
+ <b5f881b7-1f59-623a-a126-d7827dec85fe@linaro.org>
+ <TYWPR01MB8775AA3197A830F8769C01F4C2C19@TYWPR01MB8775.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5SuD6OMKmV3r4gcT"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220806192048.0ca41cc5@jic23-huawei>
+In-Reply-To: <TYWPR01MB8775AA3197A830F8769C01F4C2C19@TYWPR01MB8775.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2022-08-06 19:20:48, Jonathan Cameron wrote:
-> On Fri, 15 Jul 2022 14:29:00 +0200
-> Nuno Sá <nuno.sa@analog.com> wrote:
-> 
-> > Make the conversion to firmware agnostic device properties. As part of
-> > the conversion the IIO inkern interface 'of_xlate()' is also converted to
-> > 'fwnode_xlate()'. The goal is to completely drop 'of_xlate' and hence OF
-> > dependencies from IIO.
-> > 
-> > Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> +CC Marijin who happend to post a patch for this driver that I just accepted
-> and hence probably has hardware access.  Any chance of a test for this series?
-> 
-> If not, no problem as this is fairly mechanical and we have testing on some of
-> the other drivers using the new code.
-> 
-> I'll probably queue this up in the meantime but it won't end up upstream
-> for a few weeks yet.
 
-Jonathan,
+--5SuD6OMKmV3r4gcT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This CC just surfaced in my inbox while searching for our current
-discussion around missing labels in qcom-spmi-vadc - and on the side a
-userspace @xx label name ABI break (in qcom-spmi-adc5) caused by this
-patch's fwnode_get_name change - we could've caught it if I had not
-accidentally marked it as read and/or forgot about it.  My apologies.
 
-- Marijn
+> This patch has been reviewed by both Geert Uytterhoeven and Krzysztof
+> Kozlowski. The corresponding device tree patch has already been
+> taken, I was hoping this patch could be applied to v6.3?
+
+linux-i2c was not on CC, so the patch was not in I2C patchwork. Thus, it
+was not on my list.
+
+
+--5SuD6OMKmV3r4gcT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmPFxHMACgkQFA3kzBSg
+KbbL6xAAj4aHP9rKpTmnkVLR1+aqUSllwbfS4l4m7AKARq1TcMo/BXdi05KfpZxL
+HgmiqRD412+zx+WBccouzKvhxkpi6UkgQWoy5EGD/ialjK834YkQQeQx1A9shxrA
+Gww1JMlyOndXrnYUdqEpUQgjn11TQNI+7XdmrQuaDMYj/FEZlNIDDEn2Jnk4G/O6
+CoysEyybeVwFKxanpnC4/LATxJ6YDHPF9YdKhLmHiBXcwutoX8zxXGXv8KqESamh
+LX9VegIq6ze+X52QyhFW/lszJcDAvnfzFFCISQCC17MYTpIZcvjtcd++ogmLwjCJ
+HaJoihQ+byx35EjV+nLtOBcwFKMct8+04bqB223nWuipJUPwpQAEaeCvNcaaHh56
+dXhJiJJtPGzGrGcAu99Mhfrk0wC9MZg8bA8c31YMqWjEirH6zG0wChYTQuoYsH6z
+fiadupbZNkAGnkK8mj2vlHbRlMSL8jWZ7KGeA0yPLlYBpnDKSh43/D+znyLdwovK
+vJ3jfQQHbRclfiiA3IMROzyQfP/xjkcXjJVlSIV3e3/cXVkRKv3buLPF54E7CPp+
+BVfdZ+mDW8s5xoIK+IWvh8Li/QxQGeIRSdqGaGKN+MB70137HcyGRfJXVj8q1ohj
+BB0dka6uhP3nsprAYRgJ3CJ9olrb9DevgIC28mtW2a6IRyB4saA=
+=baro
+-----END PGP SIGNATURE-----
+
+--5SuD6OMKmV3r4gcT--
