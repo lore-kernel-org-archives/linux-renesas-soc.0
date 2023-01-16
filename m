@@ -2,77 +2,177 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E97FC46467
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 10:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1449AC54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 10:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230391AbjAPKj5 (ORCPT
+        id S230033AbjAPKpT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 05:39:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48382 "EHLO
+        Mon, 16 Jan 2023 05:45:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230405AbjAPKjH (ORCPT
+        with ESMTP id S230525AbjAPKo4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2023 05:39:07 -0500
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571641F5F8
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:38:13 -0800 (PST)
-Received: by mail-qt1-f177.google.com with SMTP id x5so645841qti.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:38:13 -0800 (PST)
+        Mon, 16 Jan 2023 05:44:56 -0500
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F86F1DBBB;
+        Mon, 16 Jan 2023 02:44:27 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id x7so14164233qtv.13;
+        Mon, 16 Jan 2023 02:44:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=W3LqnrhrTbcVn513dLbsWfFBzDyqI7TxY9VuwmjnV80=;
-        b=VRbu7Azgb8XdyndK1kqdVHh4faETWABNigHRwnk9S7ksEhM5wk2oAgR+OgyrB+y/7b
-         czx5UhTWsb0urWreVra0KeYRjuSyIdQa9rl/bAiY/PAZN70aWQmTsA+HDScOwCHgx1JP
-         54i6/dtl6goyMqThVmULkVwqEKpNH/R451cNvP0uBkmt3vqt0H72wZdko00zDoT9q7yv
-         xapW3wn/0G+uw8BuLEZVtfC/4mlj8zPkVYNZ4XHceRt2RQmMlgSI4484w+LuXYcLu6LW
-         oyD/TSiKcB2jVSoGViPqnQht46Q/9Iq7iWUZtcg0zIS5WZtwweCVRFqLrsnvn8jlichn
-         OsBw==
-X-Gm-Message-State: AFqh2krAmM+JNZ3Yblpr4WGtcOG7zC00c1J4KHgh0Qc3wB4mZF9VH4tJ
-        e8WNTm47NyYsupF+cg8nRKGBWWPmuvibuQ==
-X-Google-Smtp-Source: AMrXdXtxJTmDwi8WPyewwoND5yAamofp2piXQqspzed5O53UzxWu1rifmugbRsDMydeHw46Bb796sA==
-X-Received: by 2002:ac8:51d8:0:b0:3b6:3356:1950 with SMTP id d24-20020ac851d8000000b003b633561950mr2872767qtn.58.1673865492324;
-        Mon, 16 Jan 2023 02:38:12 -0800 (PST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id h18-20020a05620a401200b007064fa2c616sm3376147qko.66.2023.01.16.02.38.11
-        for <linux-renesas-soc@vger.kernel.org>
+        bh=oMEZtvQFEJvynFRYn/XTZlOzrmSM7ZI6rZSGm2BSCxc=;
+        b=L9KZawnImWbIUNnHg+Rm2CmydlH0sonPCxq2s8U0QHF2yLntsghOT/2xiYKnozSJf+
+         MKlK+WbUVxG7UTxI/JLVfmhkQMBLZ0lGl+vk1gH6g/3CzBLLpaEyiiZ6qLIWyeY94DIn
+         WgVvVmEtK/+FHxuwsMczSRHWHN3mAob5IMMuJSViO3MkIV4qTuzF7IJUIEZKWb6/iOpa
+         2m+8oI2Ky1yR80umrsI+s3koRLiDFFA1nuwjLDkZMLuX3iX5AWRc0MeprpvuGhim1fxr
+         vhXV6v2PocnjSC/twDsa2e4SR9azRVwvNZgoGv0FsGAYFzbZYF8NgXGy8RMGBu/w4UGl
+         Eq6Q==
+X-Gm-Message-State: AFqh2kr28BNeLcvmuoQ8iOB8kZTrMrdTBvVZP0Y/Oku91Wri5SNChWoP
+        CqWqRKCQOrbtcbIWB65na4xYyss8HTR+cg==
+X-Google-Smtp-Source: AMrXdXvNO31u6+uetfHTnMDr90GrgWrweci6oMBESmyS7ivhwiyWX+LBPMGIGRuJ5UjCoCTmBLPvjQ==
+X-Received: by 2002:ac8:7c8f:0:b0:3ab:67d3:8f59 with SMTP id y15-20020ac87c8f000000b003ab67d38f59mr109384731qtv.59.1673865865961;
+        Mon, 16 Jan 2023 02:44:25 -0800 (PST)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id jr49-20020a05622a803100b003ad373d04b6sm11528563qtb.59.2023.01.16.02.44.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jan 2023 02:38:12 -0800 (PST)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-4d4303c9de6so224161747b3.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:38:11 -0800 (PST)
-X-Received: by 2002:a81:578e:0:b0:4d9:3858:392 with SMTP id
- l136-20020a81578e000000b004d938580392mr1308411ywb.502.1673865491778; Mon, 16
- Jan 2023 02:38:11 -0800 (PST)
+        Mon, 16 Jan 2023 02:44:25 -0800 (PST)
+Received: by mail-yb1-f174.google.com with SMTP id e130so261009yba.7;
+        Mon, 16 Jan 2023 02:44:25 -0800 (PST)
+X-Received: by 2002:a25:46c6:0:b0:7b8:a0b8:f7ec with SMTP id
+ t189-20020a2546c6000000b007b8a0b8f7ecmr4722674yba.36.1673865864824; Mon, 16
+ Jan 2023 02:44:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20230114225647.227972-1-aford173@gmail.com> <20230114225647.227972-3-aford173@gmail.com>
-In-Reply-To: <20230114225647.227972-3-aford173@gmail.com>
+References: <20220615221410.27459-1-laurent.pinchart@ideasonboard.com>
+ <20220615221410.27459-6-laurent.pinchart@ideasonboard.com>
+ <Y8LJkPLghb/8Y+iQ@pendragon.ideasonboard.com> <CAMuHMdXnssq_tGbg+vL7BuLK5sa4Lg1xx0106uMFthRfUoq7=Q@mail.gmail.com>
+ <Y8UpDsTixfacduXl@pendragon.ideasonboard.com>
+In-Reply-To: <Y8UpDsTixfacduXl@pendragon.ideasonboard.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 16 Jan 2023 11:38:00 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWpFGktH-f=cG9jN6vNEYNLC0TjvWTt7=A+hoDpWpZyhg@mail.gmail.com>
-Message-ID: <CAMuHMdWpFGktH-f=cG9jN6vNEYNLC0TjvWTt7=A+hoDpWpZyhg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: beacon-renesom: Fix some audio messages
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org, aford@beaconembedded.com
+Date:   Mon, 16 Jan 2023 11:44:13 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVHnJ2Q1CCDUiTUPcESp2cExu6BynoscTGOiD6UA1u7_w@mail.gmail.com>
+Message-ID: <CAMuHMdVHnJ2Q1CCDUiTUPcESp2cExu6BynoscTGOiD6UA1u7_w@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] ARM: dts: renesas: Use new media bus type macros
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Jan 14, 2023 at 11:56 PM Adam Ford <aford173@gmail.com> wrote:
-> The WM8962 is configured so the SoC is driving the clock, and it's
-> currently set to 24 MHz.  However, when playing audio it shows the
-> following message:
->     wm8962 5-001a: Unsupported sysclk ratio 500
->
-> While not harmful, a better clock ratio is 512.  It makes the
-> message disappear, and it still plays sound.
->
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+Hi Laurent,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.3.
+On Mon, Jan 16, 2023 at 11:38 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Jan 16, 2023 at 11:24:10AM +0100, Geert Uytterhoeven wrote:
+> > On Sat, Jan 14, 2023 at 4:26 PM Laurent Pinchart wrote:
+> > > Geert, could you please take this in your tree for v6.3 ? The two
+> > > patches that the DT changes depend on have been merged in v6.2.
+> >
+> > Thank you, I had missed these.
+> >
+> > > On Thu, Jun 16, 2022 at 01:14:09AM +0300, Laurent Pinchart wrote:
+> > > > Now that a header exists with macros for the media interface bus-type
+> > > > values, replace hardcoding numerical constants with the corresponding
+> > > > macros in the DT sources.
+> > > >
+> > > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > > > ---
+> > > >  arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts       | 11 +++++++----
+> > > >  .../dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi     |  4 +++-
+> > > >  .../dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi     |  4 +++-
+> > > >  3 files changed, 13 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+> > > > index 4e58c54cde17..33ac4bd1e63b 100644
+> > > > --- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+> > > > +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+> > > > @@ -7,6 +7,9 @@
+> > > >   */
+> > > >
+> > > >  /dts-v1/;
+> > > > +
+> > > > +#include <dt-bindings/media/video-interfaces.h>
+> > > > +
+> > > >  #include "r8a7742-iwg21d-q7.dts"
+> > > >
+> > > >  / {
+> > > > @@ -242,7 +245,7 @@ port {
+> > > >               vin0ep: endpoint {
+> > > >                       remote-endpoint = <&cam0ep>;
+> > > >                       bus-width = <8>;
+> > > > -                     bus-type = <6>;
+> > > > +                     bus-type = <MEDIA_BUS_TYPE_BT656>;
+> > > >               };
+> > > >       };
+> > > >  };
+> > > > @@ -273,7 +276,7 @@ port {
+> > > >               vin1ep: endpoint {
+> > > >                       remote-endpoint = <&cam1ep>;
+> > > >                       bus-width = <8>;
+> > > > -                     bus-type = <6>;
+> > > > +                     bus-type = <MEDIA_BUS_TYPE_BT656>;
+> > > >               };
+> > > >       };
+> > > >  };
+> > > > @@ -305,7 +308,7 @@ vin2ep: endpoint {
+> > > >                       remote-endpoint = <&cam2ep>;
+> > > >                       bus-width = <8>;
+> > > >                       data-shift = <8>;
+> > > > -                     bus-type = <6>;
+> > > > +                     bus-type = <MEDIA_BUS_TYPE_BT656>;
+> > > >               };
+> > > >       };
+> > > >  };
+> > > > @@ -335,7 +338,7 @@ port {
+> > > >               vin3ep: endpoint {
+> > > >                       remote-endpoint = <&cam3ep>;
+> > > >                       bus-width = <8>;
+> > > > -                     bus-type = <6>;
+> > > > +                     bus-type = <MEDIA_BUS_TYPE_BT656>;
+> > > >               };
+> > > >       };
+> > > >  };
+> > > > diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
+> > > > index 40cef0b1d1e6..c73160df619d 100644
+> > > > --- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
+> > > > +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
+> > > > @@ -7,6 +7,8 @@
+> > > >   * Copyright (C) 2020 Renesas Electronics Corp.
+> > > >   */
+> > > >
+> > > > +#include <dt-bindings/media/video-interfaces.h>
+> >
+> > This .dtsi file is only intended to be included by
+> > arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts, which already has
+> > the include.  Hence if you don't mind, I would like to drop this part
+> > while applying  and queuing in renesas-devel for v6.3.
+>
+> Isn't it better to include headers as needed to avoid depending on
+> indirect includes ?
+
+In general, I agree.
+In this particular case, (the multiple inclusions of) the
+r8a7742-iwg21d-q7-dbcm-ov*-single.dtsi files are tied very intimately
+to r8a7742-iwg21d-q7-dbcm-ca.dts.
 
 Gr{oetje,eeting}s,
 
