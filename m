@@ -2,54 +2,54 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40254C63797
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FDAC678DA
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 13:16:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231671AbjAPNQK (ORCPT
+        id S231229AbjAPNQJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 08:16:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35852 "EHLO
+        Mon, 16 Jan 2023 08:16:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231258AbjAPNPg (ORCPT
+        with ESMTP id S231235AbjAPNPg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 16 Jan 2023 08:15:36 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 952051D93B;
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B9B51D93A;
         Mon, 16 Jan 2023 05:12:44 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 5087437519;
-        Mon, 16 Jan 2023 13:12:43 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id BCF8A67842;
+        Mon, 16 Jan 2023 13:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1673874763; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1673874762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=c5NMOHULn2JrUd8r3QeP+VZJnEWyurXQ0or7P4hsXMs=;
-        b=mjV5f5I31A7SYw05FRd96i9dsdd4NLWEdnEgxHW4zrQG5wQO7vCBoGt1pK1C1/9MwIJFXG
-        hl3eBCxcaqrJHbA4QZb68pYNm+MFRvFxK8XGCgeEAGwlTKhLwz9TOLIcI1zqlvDn+kEV8l
-        +Ta4jTCGtLC3eG7AU+elICNf0Ky0cbw=
+        bh=iMWrrVURFOdZlPDrSQjPvTy4WvSl6jIkUYePEf/jIB0=;
+        b=UxVaOrSFyjouFhmAZS5h/SHqg6/IBoomW+s8b5fEhWFAWA1efS1iNCNo9MTfiOdWSRlfH4
+        IuwBsCDFgJiJ3QDWRnvZ4uqKadiBVb9NSDFX89/jMiBC7vXyL0fVdOsB1TOWOp7He7ew7Z
+        o243vwFfHr16dc7/p++LjWOTeZ/30Mg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1673874763;
+        s=susede2_ed25519; t=1673874762;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=c5NMOHULn2JrUd8r3QeP+VZJnEWyurXQ0or7P4hsXMs=;
-        b=XkhQ20prHuOF9WpHyQ/F9tG++Mu5R3CwIUwmd1O4dXc9qzw8OcQBZX5FnU6cvU1VNvaMuI
-        4Z06+lmS4pXeEzCw==
+        bh=iMWrrVURFOdZlPDrSQjPvTy4WvSl6jIkUYePEf/jIB0=;
+        b=Vv7gBxVnrO8Kq1tEjCJb2E8h180KuG7452sbf68LEcxGEP4e0TzBeSUTEQiPViQc+qF6gF
+        CIhea/utyyyqTxBw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1170D138FA;
-        Mon, 16 Jan 2023 13:12:43 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7F227138FA;
+        Mon, 16 Jan 2023 13:12:42 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id wIB6A0tNxWNrNQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 16 Jan 2023 13:12:43 +0000
+        id aNMZHkpNxWNrNQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 16 Jan 2023 13:12:42 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     sam@ravnborg.org, daniel@ffwll.ch, airlied@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
@@ -58,9 +58,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 20/22] drm/udl: Remove unnecessary include statements for drm_crtc_helper.h
-Date:   Mon, 16 Jan 2023 14:12:33 +0100
-Message-Id: <20230116131235.18917-21-tzimmermann@suse.de>
+Subject: [PATCH 18/22] drm/sun4i: Remove unnecessary include statements for drm_crtc_helper.h
+Date:   Mon, 16 Jan 2023 14:12:31 +0100
+Message-Id: <20230116131235.18917-19-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230116131235.18917-1-tzimmermann@suse.de>
 References: <20230116131235.18917-1-tzimmermann@suse.de>
@@ -79,40 +79,23 @@ possible.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/udl/udl_drv.c     | 2 +-
- drivers/gpu/drm/udl/udl_modeset.c | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
-index e81352126a0f..1506094a8009 100644
---- a/drivers/gpu/drm/udl/udl_drv.c
-+++ b/drivers/gpu/drm/udl/udl_drv.c
-@@ -5,12 +5,12 @@
- 
- #include <linux/module.h>
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 477cb6985b4d..37dc66332bbd 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -8,8 +8,8 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
  
 -#include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fbdev_generic.h>
- #include <drm/drm_file.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_managed.h>
-+#include <drm/drm_modeset_helper.h>
- #include <drm/drm_ioctl.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_print.h>
-diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
-index 4b79d44752c9..aa02fd2789c3 100644
---- a/drivers/gpu/drm/udl/udl_modeset.c
-+++ b/drivers/gpu/drm/udl/udl_modeset.c
-@@ -12,7 +12,6 @@
+ #include <drm/drm_of.h>
++#include <drm/drm_modeset_helper_vtables.h>
+ #include <drm/drm_simple_kms_helper.h>
  
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
+ #include "sun8i_dw_hdmi.h"
 -- 
 2.39.0
 
