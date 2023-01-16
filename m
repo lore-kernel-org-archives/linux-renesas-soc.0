@@ -2,94 +2,105 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CDDC46467
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 10:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB377C54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 10:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbjAPKh1 (ORCPT
+        id S229768AbjAPKh3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 05:37:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47600 "EHLO
+        Mon, 16 Jan 2023 05:37:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229768AbjAPKh1 (ORCPT
+        with ESMTP id S229694AbjAPKh1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 16 Jan 2023 05:37:27 -0500
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE3917CF9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:37:25 -0800 (PST)
-Received: by mail-qt1-f179.google.com with SMTP id r15so1046666qtx.6
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:37:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g/shpG2ip1H3IgJyO/89q4XJU28bYEWOGcTj+I9rsi4=;
-        b=t83qB/JJOsAj5nZqssDF2zj2MVDblGHjyjApROB7DFj7F9AybTtQK7FHF5wQ7F9EuW
-         gjQowEN9GboGN2/OUIf5LCIZ88XOcjq2HCJdbB0QGlLRAiIRpFzCGu6mShLsYXmiv6hM
-         GVlKrz88g/6Yi4j2VloXLkTUk6zgJZBBKWO0ZGEacpek1LauSWjtmdnU+Xe6biEgcScC
-         EUIww0A/6oHPjYj3zgHUD5gzHrM/gtEjMyLVDOfDcJbEzvSFcKmlewnxRqBsveY7gR1F
-         TzWpXS+9xeoKwy/RQ7ZTZciiwjBnD3Jqifa9eKXw/+jQkRoH11eHDI5GYw2i7pdZxrxT
-         O+QQ==
-X-Gm-Message-State: AFqh2koiIlHZOjpCaBW7dLq932IgErPZPGarXH4/MWAWf/xNG/RIURup
-        KuJSyXBTWT7UNXSEu1iBnmxnoIrVGpcH4A==
-X-Google-Smtp-Source: AMrXdXup1Ddh1cZZ7XpgruZnUZdRHXmBMxvfM4N8WxYwp9FYzyn5KZ+ii1N6ObJmcsMxbI5dzWOD1A==
-X-Received: by 2002:ac8:4747:0:b0:3b3:560b:353 with SMTP id k7-20020ac84747000000b003b3560b0353mr13186635qtp.63.1673865444567;
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D6E74EEB;
         Mon, 16 Jan 2023 02:37:24 -0800 (PST)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id d8-20020ac84e28000000b0039c7b9522ecsm14452068qtw.35.2023.01.16.02.37.24
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jan 2023 02:37:24 -0800 (PST)
-Received: by mail-yb1-f175.google.com with SMTP id e202so6376226ybh.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:37:24 -0800 (PST)
-X-Received: by 2002:a25:244f:0:b0:7d5:b884:3617 with SMTP id
- k76-20020a25244f000000b007d5b8843617mr577561ybk.380.1673865443943; Mon, 16
- Jan 2023 02:37:23 -0800 (PST)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id D331A1BF20C;
+        Mon, 16 Jan 2023 10:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1673865443;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=iuogAIwpArvmHJjJhEa0zf0j5PCkZDBGtycwVIelMX8=;
+        b=CEhOE2qh+5jjLZr3yM8AnWuKjQL21XfBx2BU/akJuNd5H5Qld2ukY9uV2vsZYedWeZF2Pk
+        ZkBScwq/jK/2rnV+ioVHfb70cF9a0TBkD5d6UeTy5aiv7iZ7iL7aXsdomFhUXGcgFP4BPh
+        uPRGALpCDZnm6f+8GD9nDQAVSRnMeULNN0K99nnVq4yPZ+qw6w6aoeHgC04jxqhi5DOQg/
+        KrABaPJmOblW7Vaif6Dx3Tbg23fpguN0heuzjx32dVhL3Z5H31c/QD0BHx2njYuvD6KxxW
+        zeU6IGyGL9+WhfeWlplRXaZiiGpy9iKBnuUu0jyXlm9ymsssh86wYYQbbqJnUA==
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Sergey Shtylyov <s.shtylyov@omp.ru>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Wong Vee Khee <veekhee@apple.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Revanth Kumar Uppala <ruppala@nvidia.com>,
+        Tan Tee Min <tee.min.tan@linux.intel.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Mohammad Athari Bin Ismail <mohammad.athari.ismail@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH net-next 0/6] net: stmmac: add renesas,rzn1-gmac support
+Date:   Mon, 16 Jan 2023 11:39:20 +0100
+Message-Id: <20230116103926.276869-1-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-References: <20230114225647.227972-1-aford173@gmail.com>
-In-Reply-To: <20230114225647.227972-1-aford173@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 16 Jan 2023 11:37:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVkTz7_7_LkddK86d7r+EL3R3E+iOmq0zfsDxG1pCXGGg@mail.gmail.com>
-Message-ID: <CAMuHMdVkTz7_7_LkddK86d7r+EL3R3E+iOmq0zfsDxG1pCXGGg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: beacon-renesom: Fix gpio expander reference
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        aford@beaconembedded.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Jan 14, 2023 at 11:56 PM Adam Ford <aford173@gmail.com> wrote:
-> The board used to originally introduce the Beacon Embedded
-> RZ/G2[M/N/H] boards had a GPIO expander with address 20, but
-> this was change when the final board went to production.
->
-> The production boards changed both the part itself and
-> the address.  With the incorrect address, the LCD cannot
-> come up.  If the LCD fails, the rcar-du driver fails to come up,
-> and that also breaks HDMI.
->
-> Pre-release board were not shipped to the general public, so it
-> should be safe to push this as a fix.  Anyone with a production
-> board would have video fail due to this GPIO expander change.
->
-> Fixes: a1d8a344f1ca ("arm64: dts: renesas: Introduce r8a774a1-beacon-rzg2m-kit")
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
-> V2:  Update compatible to reflect the part change.
+The rzn1-gmac instance is connected to a PCS (MIIC). In order to use
+this pcs, add support in the sttmac driver to set a generic phylink pcs
+device instead of the xpcs only. Moreover, it adds support to provide
+a phylink pcs device from the stmmac platform data and use it with the
+driver. It also adds the bindings and the new rzn1-gmac driver that
+retrieve this pcs from the device-tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.3.
+Clément Léger (6):
+  net: stmmac: add support to use a generic phylink_pcs as PCS
+  net: stmmac: add support to provide pcs from platform data
+  net: stmmac: start phylink before setting up hardware
+  dt-bindings: net: renesas,rzn1-gmac: Document RZ/N1 GMAC support
+  net: stmmac: add support for RZ/N1 GMAC
+  ARM: dts: r9a06g032: describe GMAC1
 
-Gr{oetje,eeting}s,
+ .../bindings/net/renesas,rzn1-gmac.yaml       |  71 +++++++++++
+ arch/arm/boot/dts/r9a06g032.dtsi              |  18 +++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ drivers/net/ethernet/stmicro/stmmac/common.h  |   2 +
+ .../net/ethernet/stmicro/stmmac/dwmac-rzn1.c  | 113 ++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |  15 ++-
+ .../net/ethernet/stmicro/stmmac/stmmac_mdio.c |   1 +
+ include/linux/stmmac.h                        |   1 +
+ 9 files changed, 228 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c
 
-                        Geert
+-- 
+2.39.0
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
