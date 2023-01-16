@@ -2,54 +2,54 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DA9C678DC
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 13:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7A3C54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 13:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231683AbjAPNQM (ORCPT
+        id S229556AbjAPNQN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 08:16:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35880 "EHLO
+        Mon, 16 Jan 2023 08:16:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231270AbjAPNPg (ORCPT
+        with ESMTP id S229494AbjAPNPg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 16 Jan 2023 08:15:36 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5313415551;
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D27FA1D93C;
         Mon, 16 Jan 2023 05:12:44 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 108BF37517;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 9111867844;
         Mon, 16 Jan 2023 13:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
         t=1673874763; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CHJduNjTlBdtfxl8JrayP6NLHP0T+8ZzSLanopuII3s=;
-        b=cTP0/Amq7eept+EgzV+NHtfmjOf92B9XzudnFU/YSuugqMCvmwMkXsRbr6qp7KLnqxXQNB
-        MvopcVNU5LyUbuBdiVC6KCzhmkXbL4yLAvQKFNQLzlEIdNZx+NrcMbsyFMdPEMuUdIRIxb
-        +QCZwiZ89nMyuIe+MQrmacQu0N7DFOs=
+        bh=6JTsaS5Itv2WUrYDEfFY8Xq4YS7/xxUHFbe/7NeE6mk=;
+        b=oQw2rOAh/cNeRb0/IveUeZAqwaW9Ain49q1eKnxxaDSxfd4+/c0YMuaR9TExZtL4UcVRuG
+        14HwSLIt8i14xjTae4vPLMf6kfhMm0M583wGS85M7JWfwIdoXK4f0XsJShTUTpEtl3hELa
+        b7A8oxL9sQQoLdpSzjy1BRbzb/CFod4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
         s=susede2_ed25519; t=1673874763;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CHJduNjTlBdtfxl8JrayP6NLHP0T+8ZzSLanopuII3s=;
-        b=HKTNeajy+YLfmf8rC2RHhY13CZrsNsl8trSX5oZ5oiq8I2qrnlASkppmuZJecr4oNc8QCU
-        IE7z7+mqVPua4BCg==
+        bh=6JTsaS5Itv2WUrYDEfFY8Xq4YS7/xxUHFbe/7NeE6mk=;
+        b=f+TuoKDAQuHVU0wJ76nF7XwmpGW8ZoID/fo/Mj2NQqqsxpiUQpBu7o/o0kyFB1aLNfFYDw
+        bvhM4QEx4WMb26AQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C0A05139C3;
-        Mon, 16 Jan 2023 13:12:42 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 53DFE139C3;
+        Mon, 16 Jan 2023 13:12:43 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id yOcwLkpNxWNrNQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 16 Jan 2023 13:12:42 +0000
+        id yKieE0tNxWNrNQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 16 Jan 2023 13:12:43 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     sam@ravnborg.org, daniel@ffwll.ch, airlied@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
@@ -58,9 +58,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 19/22] drm/tidss: Remove unnecessary include statements for drm_crtc_helper.h
-Date:   Mon, 16 Jan 2023 14:12:32 +0100
-Message-Id: <20230116131235.18917-20-tzimmermann@suse.de>
+Subject: [PATCH 21/22] drm/vboxvideo: Remove unnecessary include statements for drm_crtc_helper.h
+Date:   Mon, 16 Jan 2023 14:12:34 +0100
+Message-Id: <20230116131235.18917-22-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230116131235.18917-1-tzimmermann@suse.de>
 References: <20230116131235.18917-1-tzimmermann@suse.de>
@@ -79,74 +79,40 @@ possible.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/tidss/tidss_crtc.c    | 1 -
- drivers/gpu/drm/tidss/tidss_drv.c     | 1 -
- drivers/gpu/drm/tidss/tidss_encoder.c | 2 +-
- drivers/gpu/drm/tidss/tidss_kms.c     | 1 -
- drivers/gpu/drm/tidss/tidss_plane.c   | 1 -
- 5 files changed, 1 insertion(+), 5 deletions(-)
+ drivers/gpu/drm/vboxvideo/vbox_drv.c  | 2 +-
+ drivers/gpu/drm/vboxvideo/vbox_main.c | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
-index cd3c43a6c806..5e5e466f35d1 100644
---- a/drivers/gpu/drm/tidss/tidss_crtc.c
-+++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-@@ -7,7 +7,6 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_vblank.h>
+diff --git a/drivers/gpu/drm/vboxvideo/vbox_drv.c b/drivers/gpu/drm/vboxvideo/vbox_drv.c
+index 12fee99dbfe8..4fee15c97c34 100644
+--- a/drivers/gpu/drm/vboxvideo/vbox_drv.c
++++ b/drivers/gpu/drm/vboxvideo/vbox_drv.c
+@@ -12,12 +12,12 @@
+ #include <linux/vt_kern.h>
  
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
-index 07d94b1e8089..2dac8727d2f4 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.c
-+++ b/drivers/gpu/drm/tidss/tidss_drv.c
-@@ -12,7 +12,6 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
+ #include <drm/drm_aperture.h>
 -#include <drm/drm_crtc_helper.h>
  #include <drm/drm_drv.h>
  #include <drm/drm_fbdev_generic.h>
- #include <drm/drm_gem_dma_helper.h>
-diff --git a/drivers/gpu/drm/tidss/tidss_encoder.c b/drivers/gpu/drm/tidss/tidss_encoder.c
-index e278a9c89476..0d4865e9c03d 100644
---- a/drivers/gpu/drm/tidss/tidss_encoder.c
-+++ b/drivers/gpu/drm/tidss/tidss_encoder.c
-@@ -7,7 +7,7 @@
- #include <linux/export.h>
+ #include <drm/drm_file.h>
+ #include <drm/drm_ioctl.h>
+ #include <drm/drm_managed.h>
++#include <drm/drm_modeset_helper.h>
+ #include <drm/drm_module.h>
  
- #include <drm/drm_crtc.h>
--#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_modeset_helper_vtables.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_of.h>
+ #include "vbox_drv.h"
+diff --git a/drivers/gpu/drm/vboxvideo/vbox_main.c b/drivers/gpu/drm/vboxvideo/vbox_main.c
+index 3b83e550f4df..42c2d8a99509 100644
+--- a/drivers/gpu/drm/vboxvideo/vbox_main.c
++++ b/drivers/gpu/drm/vboxvideo/vbox_main.c
+@@ -11,7 +11,6 @@
+ #include <linux/pci.h>
+ #include <linux/vbox_err.h>
  
-diff --git a/drivers/gpu/drm/tidss/tidss_kms.c b/drivers/gpu/drm/tidss/tidss_kms.c
-index 345bcc3011e4..ad2fa3c3d4a7 100644
---- a/drivers/gpu/drm/tidss/tidss_kms.c
-+++ b/drivers/gpu/drm/tidss/tidss_kms.c
-@@ -9,7 +9,6 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
 -#include <drm/drm_crtc_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
-diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
-index 42d50ec5526d..fe2c41f0cd4f 100644
---- a/drivers/gpu/drm/tidss/tidss_plane.c
-+++ b/drivers/gpu/drm/tidss/tidss_plane.c
-@@ -8,7 +8,6 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_blend.h>
- #include <drm/drm_crtc.h>
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_atomic_helper.h>
+ #include <drm/drm_damage_helper.h>
+ 
+ #include "vbox_drv.h"
 -- 
 2.39.0
 
