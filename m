@@ -2,83 +2,244 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA4CC677F1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 10:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0B7C54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 10:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbjAPKi6 (ORCPT
+        id S230354AbjAPKi7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 05:38:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48346 "EHLO
+        Mon, 16 Jan 2023 05:38:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230443AbjAPKiK (ORCPT
+        with ESMTP id S230432AbjAPKiI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2023 05:38:10 -0500
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 908681DBB4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:37:46 -0800 (PST)
-Received: by mail-qt1-f180.google.com with SMTP id z9so1613979qtv.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:37:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nLZ1YlG6yHJFQjh7N/pyxn/Ph81a5c1KqTdsapWF7Zo=;
-        b=c52YGORd0kHGQGY+3cCNTECh8SAqUoiF9BSoGgPbbPxsjOjfEa38GJJKqI5HssPYHJ
-         YXoXxJm1UqimCc/l46ixBJCIWDRKATctJ+OrKTFL3EfYrFB5RC3gfhpILGzHW2f6VR0M
-         vU+jccjr84o9MK4Er89U2CWIlLT/IL+0+smglWna2w9b1aFkQdAj/R8/hFobQzfx3v59
-         x+KCOAWTID+5g9rNX53qdHDdSHBavK0GY7A3tl5UJZyHjp/UU7KFCxr6FHl01bu9R0G1
-         vbtDH4g85Q3CF24c6l282/GJb3XUXMXLmj+FWu8IhYMMkvWY4Y0hmH371nULuKnH+Y+b
-         abUg==
-X-Gm-Message-State: AFqh2koZnc7ewHfRBKJBes/ylmOakpnZx57DrAQ3n5FwXynRRur5NxLW
-        lOVpD7b8ILU6fltT5x2NXOoR8nxhWTtvxA==
-X-Google-Smtp-Source: AMrXdXu9OyemP1e/X32ntVV5fc2Ra+vnD1qhuIwHHta6b8SG2yu1mdqIY4pKvI/15A5cAURGdmEE6A==
-X-Received: by 2002:ac8:6890:0:b0:3b3:ff67:b95c with SMTP id m16-20020ac86890000000b003b3ff67b95cmr11925199qtq.24.1673865465348;
-        Mon, 16 Jan 2023 02:37:45 -0800 (PST)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id l6-20020ac81486000000b003a981f7315bsm14504885qtj.44.2023.01.16.02.37.45
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jan 2023 02:37:45 -0800 (PST)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-4d13cb4bbffso254465797b3.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 02:37:45 -0800 (PST)
-X-Received: by 2002:a81:1a16:0:b0:46f:bd6:957d with SMTP id
- a22-20020a811a16000000b0046f0bd6957dmr3039050ywa.383.1673865464776; Mon, 16
- Jan 2023 02:37:44 -0800 (PST)
+        Mon, 16 Jan 2023 05:38:08 -0500
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B12B1DB94;
+        Mon, 16 Jan 2023 02:37:43 -0800 (PST)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id BC2171BF209;
+        Mon, 16 Jan 2023 10:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1673865462;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I+Us5lv8xld8eqsPb/evOZggsVSLf7Sgj5llfAKoG5I=;
+        b=mJkUiTptTSRGfXw8P9mTDzGI4JN8V6hcgFu3CWUDL66aX8ghlnzjY02So9m5hgI2m6fb2F
+        ZUWQotvyL2G8gQKD3/fswyIBNng9N8FyvqbaXh/MMgZSvTkOE2+1kdBviKYzrStWTcHReK
+        eW5098JUCH5EUTKrh6Mdu/q0Jx0ZTieiOy/4g2fo3dkXrFAKVjqtwmBhI/ZIJKUzJ0uiUW
+        pYZE+RLT6fM1NDzaowpa8gpNFRwbYYKAxGCrtCcxtjtImGICahf/ylXheVt6OUPPv72Zz5
+        mQ4OCOo3xLgiFzc1cXVuRjZmGxxIqvbzPc8O/CL3h4nIZR38aIJH1/qz2C0OxQ==
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Sergey Shtylyov <s.shtylyov@omp.ru>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Wong Vee Khee <veekhee@apple.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Revanth Kumar Uppala <ruppala@nvidia.com>,
+        Tan Tee Min <tee.min.tan@linux.intel.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Mohammad Athari Bin Ismail <mohammad.athari.ismail@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH net-next 5/6] net: stmmac: add support for RZ/N1 GMAC
+Date:   Mon, 16 Jan 2023 11:39:25 +0100
+Message-Id: <20230116103926.276869-6-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230116103926.276869-1-clement.leger@bootlin.com>
+References: <20230116103926.276869-1-clement.leger@bootlin.com>
 MIME-Version: 1.0
-References: <20230114225647.227972-1-aford173@gmail.com> <20230114225647.227972-2-aford173@gmail.com>
-In-Reply-To: <20230114225647.227972-2-aford173@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 16 Jan 2023 11:37:33 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV_e_1raAzxL9AveyMoMasBVsRrVrfmhdqvsNHG3WVTDg@mail.gmail.com>
-Message-ID: <CAMuHMdV_e_1raAzxL9AveyMoMasBVsRrVrfmhdqvsNHG3WVTDg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: beacon-renesom: Update Ethernet PHY ID
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org, aford@beaconembedded.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Jan 14, 2023 at 11:56 PM Adam Ford <aford173@gmail.com> wrote:
-> Due to the part shortage, the AR8031 PHY was replaced with a
-> Micrel KSZ9131.  Hard-coding the ID of the PHY makes this new
-> PHY non-operational on newer hardware.  Since previous hardware
-> had only shipped to a limited number of people, and they have
-> not gone to production, it should be safe to update the PHY ID.
->
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+Add support for Renesas RZ/N1 GMAC. This support uses a custom PCS (MIIC)
+which is handle by parsing the pcs-handle device tree property.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.3.
+Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-rzn1.c  | 113 ++++++++++++++++++
+ 3 files changed, 125 insertions(+)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+index f77511fe4e87..be5429b7e192 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+@@ -153,6 +153,17 @@ config DWMAC_ROCKCHIP
+ 	  This selects the Rockchip RK3288 SoC glue layer support for
+ 	  the stmmac device driver.
+ 
++config DWMAC_RZN1
++	tristate "Renesas RZ/N1 dwmac support"
++	default ARCH_RZN1
++	depends on OF && (ARCH_RZN1 || COMPILE_TEST)
++	select PCS_RZN1_MIIC
++	help
++	  Support for Ethernet controller on Renesas RZ/N1 SoC family.
++
++	  This selects the Renesas RZ/N1 SoC glue layer support for
++	  the stmmac device driver.
++
+ config DWMAC_SOCFPGA
+ 	tristate "SOCFPGA dwmac support"
+ 	default ARCH_INTEL_SOCFPGA
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+index 057e4bab5c08..53a0f74c1cb5 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Makefile
++++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_DWMAC_MESON)	+= dwmac-meson.o dwmac-meson8b.o
+ obj-$(CONFIG_DWMAC_OXNAS)	+= dwmac-oxnas.o
+ obj-$(CONFIG_DWMAC_QCOM_ETHQOS)	+= dwmac-qcom-ethqos.o
+ obj-$(CONFIG_DWMAC_ROCKCHIP)	+= dwmac-rk.o
++obj-$(CONFIG_DWMAC_RZN1)	+= dwmac-rzn1.o
+ obj-$(CONFIG_DWMAC_SOCFPGA)	+= dwmac-altr-socfpga.o
+ obj-$(CONFIG_DWMAC_STI)		+= dwmac-sti.o
+ obj-$(CONFIG_DWMAC_STM32)	+= dwmac-stm32.o
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c
+new file mode 100644
+index 000000000000..427b239e9772
+--- /dev/null
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (C) 2022 Schneider-Electric
++ *
++ * Clément Léger <clement.leger@bootlin.com>
++ */
++
++#include <linux/of.h>
++#include <linux/pcs-rzn1-miic.h>
++#include <linux/phylink.h>
++#include <linux/platform_device.h>
++
++#include "stmmac_platform.h"
++#include "stmmac.h"
++
++struct rzn1_dwmac {
++	struct phylink_pcs *pcs;
++};
++
++static int rzn1_dt_parse(struct device *dev, struct rzn1_dwmac *dwmac)
++{
++	struct device_node *np = dev->of_node;
++	struct device_node *pcs_node;
++	struct phylink_pcs *pcs;
++
++	pcs_node = of_parse_phandle(np, "pcs-handle", 0);
++	if (!pcs_node)
++		return 0;
++
++	pcs = miic_create(dev, pcs_node);
++	if (IS_ERR(pcs))
++		return PTR_ERR(pcs);
++
++	dwmac->pcs = pcs;
++
++	return 0;
++}
++
++static int rzn1_dwmac_probe(struct platform_device *pdev)
++{
++	struct plat_stmmacenet_data *plat_dat;
++	struct stmmac_resources stmmac_res;
++	struct device *dev = &pdev->dev;
++	struct rzn1_dwmac *dwmac;
++	int ret;
++
++	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
++	if (ret)
++		return ret;
++
++	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
++	if (IS_ERR(plat_dat))
++		return PTR_ERR(plat_dat);
++
++	dwmac = devm_kzalloc(dev, sizeof(*dwmac), GFP_KERNEL);
++	if (!dwmac) {
++		ret = -ENOMEM;
++		goto err_remove_config_dt;
++	}
++
++	ret = rzn1_dt_parse(dev, dwmac);
++	if (ret)
++		goto err_remove_config_dt;
++
++	plat_dat->bsp_priv = dwmac;
++	plat_dat->pcs = dwmac->pcs;
++
++	ret = stmmac_dvr_probe(dev, plat_dat, &stmmac_res);
++	if (ret)
++		goto err_free_pcs;
++
++	return 0;
++
++err_free_pcs:
++	if (dwmac->pcs)
++		miic_destroy(dwmac->pcs);
++
++err_remove_config_dt:
++	stmmac_remove_config_dt(pdev, plat_dat);
++
++	return ret;
++}
++
++static int rzn1_dwmac_remove(struct platform_device *pdev)
++{
++	struct rzn1_dwmac *dwmac = get_stmmac_bsp_priv(&pdev->dev);
++	int ret = stmmac_dvr_remove(&pdev->dev);
++
++	if (dwmac->pcs)
++		miic_destroy(dwmac->pcs);
++
++	return ret;
++}
++
++static const struct of_device_id rzn1_dwmac_match[] = {
++	{ .compatible = "renesas,rzn1-gmac" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rzn1_dwmac_match);
++
++static struct platform_driver rzn1_dwmac_driver = {
++	.probe  = rzn1_dwmac_probe,
++	.remove = rzn1_dwmac_remove,
++	.driver = {
++		.name           = "rzn1-dwmac",
++		.of_match_table = rzn1_dwmac_match,
++	},
++};
++module_platform_driver(rzn1_dwmac_driver);
++
++MODULE_AUTHOR("Clément Léger <clement.leger@bootlin.com>");
++MODULE_DESCRIPTION("Renesas RZN1 DWMAC specific glue layer");
++MODULE_LICENSE("GPL");
+-- 
+2.39.0
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
