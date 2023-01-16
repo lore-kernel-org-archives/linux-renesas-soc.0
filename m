@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A83C46467
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 10:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E86E0C54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 10:38:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230466AbjAPKi2 (ORCPT
+        id S229448AbjAPKi5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 05:38:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48646 "EHLO
+        Mon, 16 Jan 2023 05:38:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230355AbjAPKiE (ORCPT
+        with ESMTP id S230451AbjAPKi0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2023 05:38:04 -0500
+        Mon, 16 Jan 2023 05:38:26 -0500
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C2B21C333;
-        Mon, 16 Jan 2023 02:37:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E68F11BAC8;
+        Mon, 16 Jan 2023 02:37:47 -0800 (PST)
 Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id B73DD1BF205;
-        Mon, 16 Jan 2023 10:37:34 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 4B56B1BF20A;
+        Mon, 16 Jan 2023 10:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1673865458;
+        t=1673865466;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8IX0izh2qofZ81a22loEnqRs/JS0gZcUvR46cRLlzA4=;
-        b=Ul2TaPHJ72dnl9AUb/svtGLqKtHwaC9hu+8cfbE58IJMFk7P8p2Q9ki/B2PYcCI//1fC8h
-        YDr6I12YRfabH7sEZ1OR2zVo53NdyddkAJ7KNl4ayzug5fkZhmGyfwX/SrfU88U7OpvbsI
-        0hR2D4PO0H451Edzvtl3jkoSGAddyX4dGf8sAKdE8S9041RvxxSHgaENf1hr2i1K5I9nIo
-        a7o232pHJVjebRULTZ2+/ugoExFg1wDHnWH57wNBvBe9FWGx2bEf7SRRfiQ4P7JgE6Xym9
-        PfP34jYmx+zlNodo9OcpcjO4XPDoQp7k76+ik2h8i7nBQbvRdMmPLvOZ/SH2xg==
+        bh=F2K1Mbt7RBxJUSeZsp99AVJE/j6M83BKYvRqSEdsUyg=;
+        b=ni7gaZF5HJZx+zkg5hiab2MC4kcDWihpD1NqI/ROpWizbGwpqSuutcJbaIdPkKju4uRGTc
+        QtdMCtRZ8dQwLXymoATD6m7+pNnp/rh4nK0rQ0fTQ+h2a1GRwuV6Ei1lGIcx7NtXbLrpEk
+        C9BWYltQoN7cldemrj8von0/dWmEdLaBIMIUuMmh5Cy1T8/2fRXf7Lqdsl2poLePkRQpOL
+        M8bRTJsIfAle8Pl4pWCEsvdYTp0uW1FtYLvIlcBYeq1eYQ3NcXrp8DQUyLFzK6SZZ2K3gA
+        WFPBFse00b0UW+40eRLCS7YC3hWrybqNXT+4xYzrjKX93TqEDIBajvG6vOs4nQ==
 From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
 To:     Sergey Shtylyov <s.shtylyov@omp.ru>,
         "David S. Miller" <davem@davemloft.net>,
@@ -63,9 +63,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH net-next 4/6] dt-bindings: net: renesas,rzn1-gmac: Document RZ/N1 GMAC support
-Date:   Mon, 16 Jan 2023 11:39:24 +0100
-Message-Id: <20230116103926.276869-5-clement.leger@bootlin.com>
+Subject: [PATCH net-next 6/6] ARM: dts: r9a06g032: describe GMAC1
+Date:   Mon, 16 Jan 2023 11:39:26 +0100
+Message-Id: <20230116103926.276869-7-clement.leger@bootlin.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230116103926.276869-1-clement.leger@bootlin.com>
 References: <20230116103926.276869-1-clement.leger@bootlin.com>
@@ -76,93 +76,45 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add "renesas,rzn1-gmac" binding documention which is compatible which
-"snps,dwmac" compatible driver but uses a custom PCS to communicate
-with the phy.
+RZ/N1 SoC includes two MAC named GMACx that are compatible with the
+"snps,dwmac" driver. GMAC1 is connected directly to the MII converter
+port 1. Since this MII converter is represented using a PCS driver, it
+uses the renesas specific compatible driver which uses this PCS.
 
 Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 ---
- .../bindings/net/renesas,rzn1-gmac.yaml       | 71 +++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
+ arch/arm/boot/dts/r9a06g032.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml b/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
-new file mode 100644
-index 000000000000..effb9a312832
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/renesas,rzn1-gmac.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 41e19c0986ce..ba32e4429b01 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -304,6 +304,24 @@ dma1: dma-controller@40105000 {
+ 			data-width = <8>;
+ 		};
+ 
++		gmac1: ethernet@44000000 {
++			compatible = "renesas,r9a06g032-gmac", "renesas,rzn1-gmac", "snps,dwmac";
++			reg = <0x44000000 0x2000>;
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi";
++			clock-names = "stmmaceth";
++			clocks = <&sysctrl R9A06G032_HCLK_GMAC0>;
++			snps,multicast-filter-bins = <256>;
++			snps,perfect-filter-entries = <128>;
++			tx-fifo-depth = <2048>;
++			rx-fifo-depth = <4096>;
++			pcs-handle = <&mii_conv1>;
++			status = "disabled";
++		};
 +
-+title: Renesas GMAC1 Device Tree Bindings
-+
-+maintainers:
-+  - Clément Léger <clement.leger@bootlin.com>
-+
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - renesas,r9a06g032-gmac
-+          - renesas,rzn1-gmac
-+  required:
-+    - compatible
-+
-+allOf:
-+  - $ref: "snps,dwmac.yaml#"
-+
-+properties:
-+  compatible:
-+    additionalItems: true
-+    maxItems: 3
-+    items:
-+      - enum:
-+          - renesas,r9a06g032-gmac
-+          - renesas,rzn1-gmac
-+    contains:
-+      enum:
-+        - snps,dwmac
-+
-+  pcs-handle:
-+    description:
-+      phandle pointing to a PCS sub-node compatible with
-+      renesas,rzn1-miic.yaml#
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+required:
-+  - compatible
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    ethernet@44000000 {
-+      compatible = "renesas,rzn1-gmac";
-+      reg = <0x44000000 0x2000>;
-+      interrupt-parent = <&gic>;
-+      interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+      interrupt-names = "macirq", "eth_wake_irq", "eth_lpi";
-+      clock-names = "stmmaceth";
-+      clocks = <&sysctrl R9A06G032_HCLK_GMAC0>;
-+      snps,multicast-filter-bins = <256>;
-+      snps,perfect-filter-entries = <128>;
-+      tx-fifo-depth = <2048>;
-+      rx-fifo-depth = <4096>;
-+      pcs-handle = <&mii_conv1>;
-+      phy-mode = "mii";
-+    };
-+
-+...
+ 		gmac2: ethernet@44002000 {
+ 			compatible = "renesas,r9a06g032-gmac", "renesas,rzn1-gmac", "snps,dwmac";
+ 			reg = <0x44002000 0x2000>;
 -- 
 2.39.0
 
