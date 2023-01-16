@@ -2,114 +2,242 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F26C54EBE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 19:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4764C54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 20:19:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233619AbjAPT3E (ORCPT
+        id S232033AbjAPUT2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 14:29:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45008 "EHLO
+        Mon, 16 Jan 2023 15:19:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233830AbjAPT2y (ORCPT
+        with ESMTP id S233233AbjAPUT1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2023 14:28:54 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F72A2BF1F;
-        Mon, 16 Jan 2023 11:28:53 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id az20so51228637ejc.1;
-        Mon, 16 Jan 2023 11:28:53 -0800 (PST)
+        Mon, 16 Jan 2023 15:19:27 -0500
+X-Greylist: delayed 145 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 16 Jan 2023 12:19:25 PST
+Received: from mailrelay3-1.pub.mailoutpod2-cph3.one.com (mailrelay3-1.pub.mailoutpod2-cph3.one.com [46.30.211.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCA5315575
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2023 12:19:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CEXSnU92F25+pQZ7j/ugqhVpdFpJuO21X3P5/Cl5PKQ=;
-        b=Em5DoiYpYrIyZy2p3QJASxwL5PBvpr5AlBw7El6F3zr/+EEOD7iuRHUTJRYtzzVfRt
-         A05Lqb4r5SV/e4bPIqK3cCgn3uMEO4L8Io2gsZgnn1fXhM3nzc2mnt6kRJt5cEWN119R
-         NvUSwI4zMUtmaVKzaQWn5IRh2TnG8/IZ5RrwE/qQMihxQkNlMaK6yC2GjK16XJEjXa/q
-         X6dVvb4nZq2sQTFjAKM+bAmsdvYNhJpPZNuk0bLY74X5w0bugQ5kNivcnB+j5FSMlBQ5
-         OWvi6v7xzSbtwIpgPvMx8OGT/ihVDlsx1QLvu38cyk74ITIBRE9qRkneZNH0leKJiaD/
-         mZ5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CEXSnU92F25+pQZ7j/ugqhVpdFpJuO21X3P5/Cl5PKQ=;
-        b=DFKL+DHEyyoRw3s4YPGQk2tTHkCn7MJf2NXuv5XICgVMicFcpTVRc232j3QRWd4WKL
-         PIS4kyxDJXQ5FT1eu99f/9Oz55b0dtRjQYhKVilNNoPx+i+vzJiyhmvtgofktg1QCpCx
-         RD9UmP7/8MWO9c+jkuedsJW7845gS60jKxpHYK55II0TmWikgtnhMGcph1y8QUx/a4uS
-         ecrM3hyxL8VY8OPXn6uFgJ9jML4IQJK92fBEEDi3ZbkD898Is4ABLqeZQTs0O+HYsLDg
-         5KKNAoW78RjjT/LoaHLARpjoR4xTGz7Fy8Iix2bYxDgglD+42DhjAMQCyzcdChQiWFKf
-         UTEQ==
-X-Gm-Message-State: AFqh2kpLc8/d09dP1dlCjDhmGqUOz+c8cpFSKf1c+0IrjgQmuPKGlbnT
-        /cOJJTNFDrExBuOKSR/r3Ek=
-X-Google-Smtp-Source: AMrXdXsvdrtS57ZbbOQdVeoHVOfWaJG213U9hdwNzzZXDq7P7HeiNHiHnyKY7Z9C7+GuvgKw9jPSGQ==
-X-Received: by 2002:a17:906:2288:b0:872:23b8:d6ed with SMTP id p8-20020a170906228800b0087223b8d6edmr155759eja.20.1673897332179;
-        Mon, 16 Jan 2023 11:28:52 -0800 (PST)
-Received: from skbuf ([188.27.185.68])
-        by smtp.gmail.com with ESMTPSA id w15-20020a17090633cf00b008711cab8875sm1151237eja.216.2023.01.16.11.28.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 11:28:51 -0800 (PST)
-Date:   Mon, 16 Jan 2023 21:28:48 +0200
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Michael Walle <michael@walle.cc>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Wei Fang <wei.fang@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Subject: Re: [PATCH RFC net-next v2 11/12] net: dsa: Separate C22 and C45
- MDIO bus transaction methods
-Message-ID: <20230116192848.bi7bs5e55pdlxffm@skbuf>
-References: <20221227-v6-2-rc1-c45-seperation-v2-0-ddb37710e5a7@walle.cc>
- <20221227-v6-2-rc1-c45-seperation-v2-0-ddb37710e5a7@walle.cc>
- <20221227-v6-2-rc1-c45-seperation-v2-11-ddb37710e5a7@walle.cc>
- <20221227-v6-2-rc1-c45-seperation-v2-11-ddb37710e5a7@walle.cc>
- <20230103153134.utalc6kw3l34dp4s@skbuf>
- <Y7ROa8ql9R5SHPsK@lunn.ch>
- <20230103155633.tfdxncl75s4tb2ln@skbuf>
- <6208c429b0b5541a4f6d2a8556ae1fcb@walle.cc>
+        d=ravnborg.org; s=rsa2;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=bytMIduQNheRqZe6kytm7ykaGcqK/vKRwfXEFkmSQ90=;
+        b=QyWyNEP/8+tGmIwWiEt9T7RyGf/vIOdDrLK40zukj0pdscxv8+C/qAH+sgoBlHmgjVIefXoSUF4jH
+         Xt9O1NouPoVELk7nTE/xW6hIZBEW1ZJ6Qr2QTro/02sZYiWpOed3SFv1PerB5de3A/aXdMVkw82Cz0
+         wZjKtq+ux5P3qYOysPwrHB5utIaKFtMxIf3ybwGNSOQunHtchICX6AFPhIUSSPHjbe7VjamdWH/T4A
+         am9/LBvAr5TLWp3D5Dtrz2asFE6c2vHwR/p25qvtnYe1GeIrrCCygm9z5knlSWirunI6DZHRTMEKVm
+         vTANNZ/ycTbCK28vo9dFA/JId2NgLyw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=ed2;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=bytMIduQNheRqZe6kytm7ykaGcqK/vKRwfXEFkmSQ90=;
+        b=vtzSjnBZqhZ4qvoCa9tGfq1uiYGVTigg/jlRxjalISRNzouXb9Cok8iKjyjF61/lGG6D46KLzGBKy
+         7zf9MIgCA==
+X-HalOne-ID: eb382d74-95da-11ed-b179-ede074c87fad
+Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+        by mailrelay3 (Halon) with ESMTPSA
+        id eb382d74-95da-11ed-b179-ede074c87fad;
+        Mon, 16 Jan 2023 20:18:21 +0000 (UTC)
+Date:   Mon, 16 Jan 2023 21:18:20 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     daniel@ffwll.ch, airlied@gmail.com,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 03/22] drm/amdgpu: Remove unnecessary include statements
+ for drm_crtc_helper.h
+Message-ID: <Y8WxDCtn8HriRhyG@ravnborg.org>
+References: <20230116131235.18917-1-tzimmermann@suse.de>
+ <20230116131235.18917-4-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6208c429b0b5541a4f6d2a8556ae1fcb@walle.cc>
+In-Reply-To: <20230116131235.18917-4-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 08:51:55AM +0100, Michael Walle wrote:
-> Hi,
+On Mon, Jan 16, 2023 at 02:12:16PM +0100, Thomas Zimmermann wrote:
+> Several source files include drm_crtc_helper.h without needing it or
+> only to get its transitive include statements; leading to unnecessary
+> compile-time dependencies.
 > 
-> Am 2023-01-03 16:56, schrieb Vladimir Oltean:
-> > > So Luiz patches may allow a C45 bus, but are there any drivers today
-> > > actually using it?
-> > 
-> > I sent a private email to Luiz a few minutes ago asking him to confirm.
+> Directly include required headers and drop drm_crtc_helper.h where
+> possible.
 > 
-> Any news here? Do we need the c45 methods?
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c | 2 ++
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c     | 1 +
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c    | 1 +
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_encoders.c   | 1 -
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c        | 1 -
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h       | 1 -
+>  drivers/gpu/drm/amd/amdgpu/atombios_crtc.c     | 1 -
+>  drivers/gpu/drm/amd/amdgpu/atombios_encoders.c | 1 -
+>  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c         | 2 ++
+>  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c         | 2 ++
+>  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c          | 2 ++
+>  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c          | 2 ++
+>  12 files changed, 12 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+> index 2ebbc6382a06..3c962d0214cc 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+> @@ -25,7 +25,9 @@
+>   */
+>  
+>  #include <drm/display/drm_dp_helper.h>
+> +#include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_edid.h>
+> +#include <drm/drm_modeset_helper_vtables.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/amdgpu_drm.h>
+>  #include "amdgpu.h"
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> index 0993ee91fe18..63122482208d 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> @@ -39,6 +39,7 @@
+>  #include <drm/drm_aperture.h>
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_fb_helper.h>
+> +#include <drm/drm_crtc_helper.h>
+Move it one line up to keep the sorting.
 
-No news it seems. I am going to default to assuming that no, a ds->slave_mii_bus
-created by dsa_switch_setup() does not need C45 accessors.
-
-This patch should be modified to only touch the mt7530 driver, and
-adjust the commit message accordingly. I see no connection to what the
-DSA core does.
+With this fixed:
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/amdgpu_drm.h>
+>  #include <linux/vgaarb.h>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> index b22471b3bd63..c5b98e9a69e9 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> @@ -42,6 +42,7 @@
+>  #include <drm/drm_fb_helper.h>
+>  #include <drm/drm_gem_framebuffer_helper.h>
+>  #include <drm/drm_fourcc.h>
+> +#include <drm/drm_modeset_helper.h>
+>  #include <drm/drm_vblank.h>
+>  
+>  /**
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_encoders.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_encoders.c
+> index c96e458ed088..27a782a9dc72 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_encoders.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_encoders.c
+> @@ -24,7 +24,6 @@
+>   *          Alex Deucher
+>   */
+>  
+> -#include <drm/drm_crtc_helper.h>
+>  #include <drm/amdgpu_drm.h>
+>  #include "amdgpu.h"
+>  #include "amdgpu_connectors.h"
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c
+> index a6aef488a822..d0a1cc88832c 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c
+> @@ -45,7 +45,6 @@
+>  #include <linux/irq.h>
+>  #include <linux/pci.h>
+>  
+> -#include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_vblank.h>
+>  #include <drm/amdgpu_drm.h>
+>  #include <drm/drm_drv.h>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+> index 8a39300b1a84..cf4b6e8d7d1e 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+> @@ -35,7 +35,6 @@
+>  #include <drm/drm_edid.h>
+>  #include <drm/drm_encoder.h>
+>  #include <drm/drm_fixed.h>
+> -#include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_framebuffer.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <linux/i2c.h>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_crtc.c b/drivers/gpu/drm/amd/amdgpu/atombios_crtc.c
+> index afad094f84c2..10098fdd33fc 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/atombios_crtc.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/atombios_crtc.c
+> @@ -24,7 +24,6 @@
+>   *          Alex Deucher
+>   */
+>  
+> -#include <drm/drm_crtc_helper.h>
+>  #include <drm/amdgpu_drm.h>
+>  #include <drm/drm_fixed.h>
+>  #include "amdgpu.h"
+> diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> index 18ae9433e463..d95b2dc78063 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> @@ -28,7 +28,6 @@
+>  
+>  #include <acpi/video.h>
+>  
+> -#include <drm/drm_crtc_helper.h>
+>  #include <drm/amdgpu_drm.h>
+>  #include "amdgpu.h"
+>  #include "amdgpu_connectors.h"
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+> index a2452fc304c5..01d1e2a631be 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+> @@ -22,6 +22,8 @@
+>   */
+>  
+>  #include <drm/drm_fourcc.h>
+> +#include <drm/drm_modeset_helper.h>
+> +#include <drm/drm_modeset_helper_vtables.h>
+>  #include <drm/drm_vblank.h>
+>  
+>  #include "amdgpu.h"
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+> index 6ac680c4c6e2..973abe989ebe 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+> @@ -22,6 +22,8 @@
+>   */
+>  
+>  #include <drm/drm_fourcc.h>
+> +#include <drm/drm_modeset_helper.h>
+> +#include <drm/drm_modeset_helper_vtables.h>
+>  #include <drm/drm_vblank.h>
+>  
+>  #include "amdgpu.h"
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> index 354ae09cc9a2..86e95b1c9d0e 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> @@ -24,6 +24,8 @@
+>  #include <linux/pci.h>
+>  
+>  #include <drm/drm_fourcc.h>
+> +#include <drm/drm_modeset_helper.h>
+> +#include <drm/drm_modeset_helper_vtables.h>
+>  #include <drm/drm_vblank.h>
+>  
+>  #include "amdgpu.h"
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+> index 33977b0ba19d..f81f1d5d3e8a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+> @@ -22,6 +22,8 @@
+>   */
+>  
+>  #include <drm/drm_fourcc.h>
+> +#include <drm/drm_modeset_helper.h>
+> +#include <drm/drm_modeset_helper_vtables.h>
+>  #include <drm/drm_vblank.h>
+>  
+>  #include "amdgpu.h"
+> -- 
+> 2.39.0
