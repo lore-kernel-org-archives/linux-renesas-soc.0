@@ -2,54 +2,54 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E46EC46467
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 13:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8C2C54EBE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Jan 2023 13:16:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231338AbjAPNQE (ORCPT
+        id S231631AbjAPNQI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 08:16:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35822 "EHLO
+        Mon, 16 Jan 2023 08:16:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbjAPNPf (ORCPT
+        with ESMTP id S231232AbjAPNPf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 16 Jan 2023 08:15:35 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D3C1D929;
-        Mon, 16 Jan 2023 05:12:42 -0800 (PST)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA5C71D939;
+        Mon, 16 Jan 2023 05:12:43 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A9B2437513;
-        Mon, 16 Jan 2023 13:12:41 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 7B84B67832;
+        Mon, 16 Jan 2023 13:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1673874761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1673874762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VXZEifJ8Oh1Xl6hlqWbbe7wHIwTG00QRLyPtDsIhTMI=;
-        b=r0lvixtSmUPcm5BGFh3EhX/NQWrNwNby4v9aaczgCG8nZ4bBs3VFyniDNF79mZlYOfxVsN
-        dlNG7RPjLcw0jtbOs3jIw48o67X1/N8zqzZS2xOS1oHkV6xDiLlCWFxNPjreQXHoCfd70H
-        KKX/xkakqJNGaVVv2Xncjq1OfkqtMaM=
+        bh=sQCXLFTLt+wfi6KI5cdFPgyAVMHQnxpXhwmOeB7S9RQ=;
+        b=tEiTlOEy9ddvHnRqwXavA6g9R/aGsxvKPlR95AYyaWbYGJ+2h5J7iPDh10ZBWs+kDE7Tk4
+        3z+DUhLt07j6NsxOqnI6lBYDOhkfLa19MfExIdTl4Cfni2BHkHFhVPDKRjV7XCmmybm9Du
+        mGfkcz6u1Hf/1EbiaeS6J8jjMY6FGS0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1673874761;
+        s=susede2_ed25519; t=1673874762;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VXZEifJ8Oh1Xl6hlqWbbe7wHIwTG00QRLyPtDsIhTMI=;
-        b=uzeNyMnq6i9UKlZnpjFEnUCZ9e/nP7oGmIWjWS0t41EXrSx/o71pDK1JWubiP+8caSPzig
-        C1vVspCpYcXq/8Dw==
+        bh=sQCXLFTLt+wfi6KI5cdFPgyAVMHQnxpXhwmOeB7S9RQ=;
+        b=6GXx3nY5Dtfl/pDbH9nDpJyzouzH0m/gxZLKRlIe+cz987job/+7gl4ul8a7uMQmfEvUKd
+        CHZnIWDxpuSuT7DQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 54344138FA;
-        Mon, 16 Jan 2023 13:12:41 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3CE08139C3;
+        Mon, 16 Jan 2023 13:12:42 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id mICmE0lNxWNrNQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 16 Jan 2023 13:12:41 +0000
+        id IMEBDkpNxWNrNQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 16 Jan 2023 13:12:42 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     sam@ravnborg.org, daniel@ffwll.ch, airlied@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
@@ -58,9 +58,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 14/22] drm/radeon: Remove unnecessary include statements for drm_crtc_helper.h
-Date:   Mon, 16 Jan 2023 14:12:27 +0100
-Message-Id: <20230116131235.18917-15-tzimmermann@suse.de>
+Subject: [PATCH 17/22] drm/sprd: Remove unnecessary include statements for drm_crtc_helper.h
+Date:   Mon, 16 Jan 2023 14:12:30 +0100
+Message-Id: <20230116131235.18917-18-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230116131235.18917-1-tzimmermann@suse.de>
 References: <20230116131235.18917-1-tzimmermann@suse.de>
@@ -79,187 +79,46 @@ possible.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/radeon/atombios_crtc.c          | 2 +-
- drivers/gpu/drm/radeon/atombios_encoders.c      | 1 +
- drivers/gpu/drm/radeon/r300.c                   | 1 -
- drivers/gpu/drm/radeon/radeon_asic.c            | 1 -
- drivers/gpu/drm/radeon/radeon_connectors.c      | 1 +
- drivers/gpu/drm/radeon/radeon_display.c         | 1 +
- drivers/gpu/drm/radeon/radeon_drv.c             | 1 -
- drivers/gpu/drm/radeon/radeon_encoders.c        | 1 -
- drivers/gpu/drm/radeon/radeon_irq_kms.c         | 1 -
- drivers/gpu/drm/radeon/radeon_legacy_crtc.c     | 2 +-
- drivers/gpu/drm/radeon/radeon_legacy_encoders.c | 2 +-
- drivers/gpu/drm/radeon/radeon_legacy_tv.c       | 1 -
- drivers/gpu/drm/radeon/radeon_mode.h            | 2 +-
- 13 files changed, 7 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/sprd/sprd_dpu.c | 1 -
+ drivers/gpu/drm/sprd/sprd_drm.c | 1 -
+ drivers/gpu/drm/sprd/sprd_dsi.c | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/atombios_crtc.c b/drivers/gpu/drm/radeon/atombios_crtc.c
-index 6844e080e3be..ade13173921b 100644
---- a/drivers/gpu/drm/radeon/atombios_crtc.c
-+++ b/drivers/gpu/drm/radeon/atombios_crtc.c
-@@ -24,10 +24,10 @@
-  *          Alex Deucher
-  */
+diff --git a/drivers/gpu/drm/sprd/sprd_dpu.c b/drivers/gpu/drm/sprd/sprd_dpu.c
+index db0bcea1d9f4..b96fc6837b0d 100644
+--- a/drivers/gpu/drm/sprd/sprd_dpu.c
++++ b/drivers/gpu/drm/sprd/sprd_dpu.c
+@@ -18,7 +18,6 @@
  
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_blend.h>
 -#include <drm/drm_crtc_helper.h>
- #include <drm/drm_fixed.h>
- #include <drm/drm_fourcc.h>
+ #include <drm/drm_fb_dma_helper.h>
  #include <drm/drm_framebuffer.h>
-+#include <drm/drm_modeset_helper_vtables.h>
- #include <drm/drm_vblank.h>
- #include <drm/radeon_drm.h>
+ #include <drm/drm_gem_dma_helper.h>
+diff --git a/drivers/gpu/drm/sprd/sprd_drm.c b/drivers/gpu/drm/sprd/sprd_drm.c
+index 9d42f17a5734..be60c0d546a3 100644
+--- a/drivers/gpu/drm/sprd/sprd_drm.c
++++ b/drivers/gpu/drm/sprd/sprd_drm.c
+@@ -11,7 +11,6 @@
+ #include <linux/of_platform.h>
  
-diff --git a/drivers/gpu/drm/radeon/atombios_encoders.c b/drivers/gpu/drm/radeon/atombios_encoders.c
-index c841c273222e..1471c3a96602 100644
---- a/drivers/gpu/drm/radeon/atombios_encoders.c
-+++ b/drivers/gpu/drm/radeon/atombios_encoders.c
-@@ -30,6 +30,7 @@
- 
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_file.h>
-+#include <drm/drm_modeset_helper_vtables.h>
- #include <drm/radeon_drm.h>
- 
- #include <acpi/video.h>
-diff --git a/drivers/gpu/drm/radeon/r300.c b/drivers/gpu/drm/radeon/r300.c
-index 621ff174dff3..7b0cfeaddcec 100644
---- a/drivers/gpu/drm/radeon/r300.c
-+++ b/drivers/gpu/drm/radeon/r300.c
-@@ -31,7 +31,6 @@
- #include <linux/slab.h>
- 
- #include <drm/drm.h>
+ #include <drm/drm_atomic_helper.h>
 -#include <drm/drm_crtc_helper.h>
- #include <drm/drm_device.h>
- #include <drm/drm_file.h>
- #include <drm/radeon_drm.h>
-diff --git a/drivers/gpu/drm/radeon/radeon_asic.c b/drivers/gpu/drm/radeon/radeon_asic.c
-index bfacf8fe5cc1..802b5af19261 100644
---- a/drivers/gpu/drm/radeon/radeon_asic.c
-+++ b/drivers/gpu/drm/radeon/radeon_asic.c
-@@ -30,7 +30,6 @@
- #include <linux/pci.h>
- #include <linux/vgaarb.h>
- 
--#include <drm/drm_crtc_helper.h>
- #include <drm/radeon_drm.h>
- 
- #include "atom.h"
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index f44d5a2b5baa..07193cd0c417 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -27,6 +27,7 @@
- #include <drm/display/drm_dp_mst_helper.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_modeset_helper_vtables.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/radeon_drm.h>
- #include "radeon.h"
-diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-index 9bed1a6cb163..f34a7f63261d 100644
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -38,6 +38,7 @@
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_gem_dma_helper.h>
  #include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_modeset_helper.h>
+diff --git a/drivers/gpu/drm/sprd/sprd_dsi.c b/drivers/gpu/drm/sprd/sprd_dsi.c
+index 12b67a5d5923..ab0e5cce7adb 100644
+--- a/drivers/gpu/drm/sprd/sprd_dsi.c
++++ b/drivers/gpu/drm/sprd/sprd_dsi.c
+@@ -13,7 +13,6 @@
+ 
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+-#include <drm/drm_crtc_helper.h>
+ #include <drm/drm_of.h>
  #include <drm/drm_probe_helper.h>
- #include <drm/drm_vblank.h>
- #include <drm/radeon_drm.h>
-diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-index 0e8148fca8b7..716ab85a376b 100644
---- a/drivers/gpu/drm/radeon/radeon_drv.c
-+++ b/drivers/gpu/drm/radeon/radeon_drv.c
-@@ -38,7 +38,6 @@
- #include <linux/pci.h>
- 
- #include <drm/drm_aperture.h>
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_file.h>
- #include <drm/drm_gem.h>
-diff --git a/drivers/gpu/drm/radeon/radeon_encoders.c b/drivers/gpu/drm/radeon/radeon_encoders.c
-index fbc0a2182318..b3518a8f95a0 100644
---- a/drivers/gpu/drm/radeon/radeon_encoders.c
-+++ b/drivers/gpu/drm/radeon/radeon_encoders.c
-@@ -26,7 +26,6 @@
- 
- #include <linux/pci.h>
- 
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_device.h>
- #include <drm/radeon_drm.h>
- 
-diff --git a/drivers/gpu/drm/radeon/radeon_irq_kms.c b/drivers/gpu/drm/radeon/radeon_irq_kms.c
-index da2173435edd..3377fbc71f65 100644
---- a/drivers/gpu/drm/radeon/radeon_irq_kms.c
-+++ b/drivers/gpu/drm/radeon/radeon_irq_kms.c
-@@ -29,7 +29,6 @@
- #include <linux/pci.h>
- #include <linux/pm_runtime.h>
- 
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_device.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_probe_helper.h>
-diff --git a/drivers/gpu/drm/radeon/radeon_legacy_crtc.c b/drivers/gpu/drm/radeon/radeon_legacy_crtc.c
-index eef35872a72e..825b351ff53c 100644
---- a/drivers/gpu/drm/radeon/radeon_legacy_crtc.c
-+++ b/drivers/gpu/drm/radeon/radeon_legacy_crtc.c
-@@ -24,10 +24,10 @@
-  *          Alex Deucher
-  */
- 
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_fixed.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
-+#include <drm/drm_modeset_helper_vtables.h>
- #include <drm/drm_vblank.h>
- #include <drm/radeon_drm.h>
- 
-diff --git a/drivers/gpu/drm/radeon/radeon_legacy_encoders.c b/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
-index 0cd32c65456c..601d35d34eab 100644
---- a/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
-+++ b/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
-@@ -27,9 +27,9 @@
- #include <linux/backlight.h>
- #include <linux/pci.h>
- 
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_device.h>
- #include <drm/drm_file.h>
-+#include <drm/drm_modeset_helper_vtables.h>
- #include <drm/drm_util.h>
- #include <drm/radeon_drm.h>
- 
-diff --git a/drivers/gpu/drm/radeon/radeon_legacy_tv.c b/drivers/gpu/drm/radeon/radeon_legacy_tv.c
-index d9df7f311e76..12e180b119ac 100644
---- a/drivers/gpu/drm/radeon/radeon_legacy_tv.c
-+++ b/drivers/gpu/drm/radeon/radeon_legacy_tv.c
-@@ -1,6 +1,5 @@
- // SPDX-License-Identifier: MIT
- 
--#include <drm/drm_crtc_helper.h>
- #include <drm/drm_device.h>
- 
- #include "radeon.h"
-diff --git a/drivers/gpu/drm/radeon/radeon_mode.h b/drivers/gpu/drm/radeon/radeon_mode.h
-index 9f5be416454f..3a59d016e8cd 100644
---- a/drivers/gpu/drm/radeon/radeon_mode.h
-+++ b/drivers/gpu/drm/radeon/radeon_mode.h
-@@ -35,7 +35,7 @@
- #include <drm/drm_edid.h>
- #include <drm/drm_encoder.h>
- #include <drm/drm_fixed.h>
--#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_modeset_helper_vtables.h>
- #include <linux/i2c.h>
- #include <linux/i2c-algo-bit.h>
  
 -- 
 2.39.0
