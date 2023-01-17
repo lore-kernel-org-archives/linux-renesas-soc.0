@@ -2,98 +2,139 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42FEC54E76
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Jan 2023 18:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C11AC54E76
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Jan 2023 20:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232105AbjAQSK4 (ORCPT
+        id S231834AbjAQUKm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Jan 2023 13:10:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44656 "EHLO
+        Tue, 17 Jan 2023 15:10:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232578AbjAQSIk (ORCPT
+        with ESMTP id S234508AbjAQUHS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2023 13:08:40 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 84F1B4B19D;
-        Tue, 17 Jan 2023 09:50:45 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.97,224,1669042800"; 
-   d="scan'208";a="146635877"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Jan 2023 02:50:44 +0900
-Received: from mulinux.example.org (unknown [10.226.92.158])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D7917407177B;
-        Wed, 18 Jan 2023 02:50:39 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RESEND PATCH v2 1/2] dt-bindings: i2c: renesas,rzv2m: Fix SoC specific string
-Date:   Tue, 17 Jan 2023 17:50:17 +0000
-Message-Id: <20230117175017.21239-1-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 17 Jan 2023 15:07:18 -0500
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA263FF26
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2023 11:01:24 -0800 (PST)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-15bb8ec196aso21231556fac.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2023 11:01:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OgaymgAXi9Z6g6pYwBOzM02/P477EqWitgDVTE3LFbU=;
+        b=7UFMvbpKkJyjWVLlq6ctk0nXiLL3RrLgvGqk+/g8pD0wAzMEFNodkoMNXxSPAzvJye
+         T4nqVDpRCF5Pkw4fe0ROrd1BjE8DZbycDcUSRlgnihtqJaZkkqELJ7TzEZYyPHojRNxM
+         MBh6YZCgcmJgLXwboxe3bvrjmez4qHhfCRIxGuc2G0+QOOJ/eKT38XBZ7MfSSmNLVm7z
+         gDt6C3Ymsnj+eKLcMZ0dj5q2KFKnZutgcY/1C6+IgeLmT5DwAU4QsUhG6TCQdnlD6nEb
+         fYtWfawIuB6wYahQA/cq89ISwAR2GZXbrrCFpCVxRJqHc9Mn337ID3jg/QgfKjbyHIu6
+         BObQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OgaymgAXi9Z6g6pYwBOzM02/P477EqWitgDVTE3LFbU=;
+        b=apDKdFlmejn/Uxc/HLDJig5DqT00eWkcrjJFxNowN615z4xBwTPjVq+T6AqN2dn3K+
+         hZdE+R0k80rfRJ1Owc5Xb3REr2wRMNX7MgHT1ujJzYb+xA7YlYg56uP1E6f2YLZzDPQ9
+         fBxwNEe+gLSyZWmk2iVe0XcZXBIqJbdQpmgFQVFeRryRMhiEix0dat8utLuHsbHuFyYa
+         5t50XgS5gkYaO0s/pyNxdffKJYQBScFfkKPtJEwNgUQELgoBDgrFI87/bodiAQnP546B
+         XlaHLNMhT5DuIcceiDjIaYkU8uKg0nzY3e02/QpNEYk/Z+IaKzFR/FqmhRAT9p5I6sY8
+         8/Pw==
+X-Gm-Message-State: AFqh2kqB1MxWh5DHCA8b6qd7heyl4o7iEJgxsH86mT/uLfFeeDu40PWo
+        PK/IoKfINpNvZ3Z9g0g5QKg8nQ==
+X-Google-Smtp-Source: AMrXdXsgzCxMhqm+bb3il7EsJjEv0NbGPCzT1qf9VREFYRxVllxrk/YEzaFAyrBdtefAaDgGfnk/UQ==
+X-Received: by 2002:a05:6870:c190:b0:15e:cfca:b312 with SMTP id h16-20020a056870c19000b0015ecfcab312mr2807015oad.52.1673982083592;
+        Tue, 17 Jan 2023 11:01:23 -0800 (PST)
+Received: from [192.168.86.224] ([136.62.38.22])
+        by smtp.gmail.com with ESMTPSA id r18-20020a05687080d200b0012763819bcasm16664335oab.50.2023.01.17.11.01.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jan 2023 11:01:22 -0800 (PST)
+Message-ID: <9325a949-8d19-435a-50bd-9ebe0a432012@landley.net>
+Date:   Tue, 17 Jan 2023 13:13:38 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: remove arch/sh
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+        dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-sh@vger.kernel.org
+References: <20230113062339.1909087-1-hch@lst.de>
+ <11e2e0a8-eabe-2d8c-d612-9cdd4bcc3648@physik.fu-berlin.de>
+ <20230116071306.GA15848@lst.de>
+From:   Rob Landley <rob@landley.net>
+In-Reply-To: <20230116071306.GA15848@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The preferred form for Renesas' compatible strings is:
-"<vendor>,<family>-<module>"
+On 1/16/23 01:13, Christoph Hellwig wrote:
+> On Fri, Jan 13, 2023 at 09:09:52AM +0100, John Paul Adrian Glaubitz wrote:
+>> I'm still maintaining and using this port in Debian.
+>>
+>> It's a bit disappointing that people keep hammering on it. It works fine for me.
+> 
+> What platforms do you (or your users) use it on?
 
-Somehow the compatible string for the r9a09g011 I2C IP was upstreamed
-as renesas,i2c-r9a09g011 instead of renesas,r9a09g011-i2c, which
-is really confusing, especially considering the generic fallback
-is renesas,rzv2m-i2c.
+3 j-core boards, two sh4 boards (the sh7760 one I patched the kernel of), and an
+sh4 emulator.
 
-The first user of renesas,i2c-r9a09g011 in the kernel is not yet in
-a kernel release, it will be in v6.1, therefore it can still be
-fixed in v6.1.
-Even if we don't fix it before v6.2, I don't think there is any
-harm in making such a change.
+I have multiple j-core systems (sh2 compatible with extensions, nommu, 3
+different kinds of boards running it here). There's an existing mmu version of
+j-core that's sh3 flavored but they want to redo it so it hasn't been publicly
+released yet, I have yet to get that to run Linux because the mmu code would
+need adapting, but the most recent customer projects were on the existing nommu
+SOC, as was last year's ASIC work via sky130.
 
-s/renesas,i2c-r9a09g011/renesas,r9a09g011-i2c/g for consistency.
+My physical sh4 boards are a Johnson Controls N40 (sh7760 chipset) and the
+little blue one is... sh4a I think? (It can run the same userspace, I haven't
+replaced that board's kernel since I got it, I think it's the type Glaubitz is
+using? It's mostly in case he had an issue I couldn't reproduce on different
+hardware, or if I spill something on my N40.)
 
-Fixes: ba7a4d15e2c4 ("dt-bindings: i2c: Document RZ/V2M I2C controller")
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I also have a physical sh2 board on the shelf which I haven't touched in years
+(used to comparison test during j2 development, and then the j2 boards replaced it).
 
-diff --git a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
-index c46378efc123..92e899905ef8 100644
---- a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
-+++ b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
-@@ -16,7 +16,7 @@ properties:
-   compatible:
-     items:
-       - enum:
--          - renesas,i2c-r9a09g011  # RZ/V2M
-+          - renesas,r9a09g011-i2c  # RZ/V2M
-       - const: renesas,rzv2m-i2c
- 
-   reg:
-@@ -66,7 +66,7 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     i2c0: i2c@a4030000 {
--        compatible = "renesas,i2c-r9a09g011", "renesas,rzv2m-i2c";
-+        compatible = "renesas,r9a09g011-i2c", "renesas,rzv2m-i2c";
-         reg = <0xa4030000 0x80>;
-         interrupts = <GIC_SPI 232 IRQ_TYPE_EDGE_RISING>,
-                      <GIC_SPI 236 IRQ_TYPE_EDGE_RISING>;
--- 
-2.34.1
+I'm lazy and mostly test each new sh4 build under qemu -M r2d because it's
+really convenient: neither of my physical boards boot from SD card so replacing
+the kernel requires reflashing soldered in flash. (They'll net mount userspace
+but I haven't gotten either bootloader to net-boot a kernel.)
 
+I include sh4 in the my mkroot builds each toybox release, I have a ~300 line
+bash script that builds bootable toybox systems for a dozen-ish architectures,
+including building a kernel configured to run under qemu:
+
+  https://github.com/landley/toybox/blob/master/scripts/mkroot.sh
+
+And I ship the resulting bootable system images, most recent release is at:
+
+  https://landley.net/toybox/downloads/binaries/mkroot/0.8.9/
+
+As described at:
+
+  http://landley.net/toybox/faq.html#mkroot
+
+Various people in Japan have more hardware, but I haven't made it physically
+back there since 2020. (My residency card expired during the pandemic.)
+
+Rob
