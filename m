@@ -2,153 +2,114 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E40CC63797
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Jan 2023 13:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD83CC3DA78
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Jan 2023 16:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbjAQNxx (ORCPT
+        id S231709AbjAQQEr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Jan 2023 08:53:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47024 "EHLO
+        Tue, 17 Jan 2023 11:04:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231200AbjAQNxH (ORCPT
+        with ESMTP id S231511AbjAQQEo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2023 08:53:07 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 596F9367D0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2023 05:52:19 -0800 (PST)
-Received: from desky.lan (91-154-32-225.elisa-laajakaista.fi [91.154.32.225])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6323410C;
-        Tue, 17 Jan 2023 14:52:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1673963535;
-        bh=9zJMA+T0kpeqlThAXlVjsVpNsaP+x+3i5UuNerWj0QE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fra4FbYR8Z+i/rXDTefhCcOYvEUfLfOiIWvx8SYJwsOtgVoQTc8hLGGMl3ZE0IMlM
-         l9r9dba8UjK92pMy6WZzt8gwgP6a3StgrSruu1r/hk4OAYdaM3IodPhvrUV7bR9os8
-         G7n5zq4tW1jbnsKBMoBTPRuGKUtuYqYSpxttmuWg=
-From:   Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: [PATCH 5/6] drm: rcar-du: Fix setting a reserved bit in DPLLCR
-Date:   Tue, 17 Jan 2023 15:51:53 +0200
-Message-Id: <20230117135154.387208-6-tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230117135154.387208-1-tomi.valkeinen+renesas@ideasonboard.com>
-References: <20230117135154.387208-1-tomi.valkeinen+renesas@ideasonboard.com>
+        Tue, 17 Jan 2023 11:04:44 -0500
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C5143A861
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2023 08:04:43 -0800 (PST)
+Received: by mail-oi1-f173.google.com with SMTP id s66so25618769oib.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2023 08:04:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mrhkpCVAn3MrYp+d13kVpSMEw4mJviAxLngnFSOJHso=;
+        b=WE6/J1haNxAxFGEa0zBsDVKokUKWdRIlN2PVjJZRPSYKHnh221Sf7++YDhNQB1UHjw
+         J0t7epEPWwI6jtwVyjGLFdfyAg6bMD2KF9TOeC1ISL0dNLlO+yHLctuLPUF+JmBqNA4G
+         1XDYQAMmJ+AJuaPjC8Nj8Bn6113T+hKF6Rl+hr1n1W2gRST2rvuXOtjcCax+pwooQLOJ
+         ZduWy4gOsmVeXSP8rLw+dfXnJXAVaJXOhcK/o38Pperyy9MbLAdjxuv7EbZ3Y7Lmsvo4
+         UdfEHyorxYfiXkG3hFxWQKxXmFAulkNipksoiyYOLTVdEHv/Di7YItmzwCixuliOiazy
+         womQ==
+X-Gm-Message-State: AFqh2krF/ClJ9QAr9eE+K6wz5iYf1l7sQQ4G6e+OUG6lElrV0y6nFB0J
+        mo2HXc3g7he97kS992hwDI+sTssO9/WP3A==
+X-Google-Smtp-Source: AMrXdXuqF1/dDx6yI4QUWh3PUvI4JQ4DuJqQHgzzFi1ATOAhmlryWXA2LScxoapLdeiHkX4FArQ6Rg==
+X-Received: by 2002:a54:408e:0:b0:364:6556:e579 with SMTP id i14-20020a54408e000000b003646556e579mr1504850oii.46.1673971481751;
+        Tue, 17 Jan 2023 08:04:41 -0800 (PST)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id d15-20020a05620a140f00b006fc92cf4703sm20065598qkj.132.2023.01.17.08.04.41
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jan 2023 08:04:41 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id t15so34609993ybq.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2023 08:04:41 -0800 (PST)
+X-Received: by 2002:a25:9ac1:0:b0:7b4:6a33:d89f with SMTP id
+ t1-20020a259ac1000000b007b46a33d89fmr324695ybo.543.1673971480927; Tue, 17 Jan
+ 2023 08:04:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230117135154.387208-1-tomi.valkeinen+renesas@ideasonboard.com> <20230117135154.387208-3-tomi.valkeinen+renesas@ideasonboard.com>
+In-Reply-To: <20230117135154.387208-3-tomi.valkeinen+renesas@ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 17 Jan 2023 17:04:30 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUuUV38tVsZ5qoJEq5OF-0RZ6gnCAFvyt=FHTXUy_PybQ@mail.gmail.com>
+Message-ID: <CAMuHMdUuUV38tVsZ5qoJEq5OF-0RZ6gnCAFvyt=FHTXUy_PybQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] drm: rcar-du: lvds: Add reset control
+To:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        LUU HOAI <hoai.luu.ub@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On H3 ES1 two bits in DPLLCR are used to select the DU input dot clock
-source. These are bits 20 and 21 for DU2, and bits 22 and 23 for DU1. On
-non-ES1, only the higher bits are used (bits 21 and 23), and the lower
-bits are reserved and should be set to 0 (or not set at all).
+Hi Tomi,
 
-The current code always sets the lower bits, even on non-ES1.
+On Tue, Jan 17, 2023 at 2:54 PM Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>
+> Reset LVDS using the reset control as CPG reset/release is required in
+> H/W manual sequence.
+>
+> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> Signed-off-by: LUU HOAI <hoai.luu.ub@renesas.com>
+> [tomi.valkeinen: Rewrite the patch description]
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-For both DU1 and DU2, on all SoC versions, when writing zeroes to those
-bits the input clock is DCLKIN, and thus there's no difference between
-ES1 and non-ES1.
+Thanks for your patch!
 
-For DU1, writing 0b10 to the bits (or only writing the higher bit)
-results in using PLL0 as the input clock, so in this case there's also
-no difference between ES1 and non-ES1.
+> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
 
-However, for DU2, writing 0b10 to the bits results in using PLL0 as the
-input clock on ES1, whereas on non-ES1 it results in using PLL1. On ES1
-you need to write 0b11 to select PLL1.
+> @@ -844,6 +853,12 @@ static int rcar_lvds_probe(struct platform_device *pdev)
+>         if (ret < 0)
+>                 return ret;
+>
+> +       lvds->rstc = devm_reset_control_get(&pdev->dev, NULL);
 
-The current code always writes 0b11 to PLCS0 field to select PLL1 on all
-SoC versions, which works but causes an illegal (in the sense of not
-allowed by the documentation) write to a reserved bit field.
+devm_reset_control_get_exclusive()
 
-To remove the illegal bit write on PLSC0 we need to handle the input dot
-clock selection differently for ES1 and non-ES1.
+> +       if (IS_ERR(lvds->rstc)) {
+> +               dev_err(&pdev->dev, "failed to get cpg reset\n");
+> +               return PTR_ERR(lvds->rstc);
 
-Add a new quirk, RCAR_DU_QUIRK_H3_ES1_PLL, for this, and a new
-rcar_du_device_info entry for the ES1 SoC. Using these, we can always
-set the bit 21 on PLSC0 when choosing the PLL as the source clock, and
-additionally set the bit 20 when on ES1.
+return dev_err_probe(...);
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++++++--
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  |  3 ++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
- drivers/gpu/drm/rcar-du/rcar_du_regs.h |  3 ++-
- 4 files changed, 15 insertions(+), 4 deletions(-)
+> +       }
+> +
+>         drm_bridge_add(&lvds->bridge);
+>
+>         return 0;
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index f2d3266509cc..8d660a6141bf 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -245,12 +245,20 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		       | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
- 		       | DPLLCR_STBY;
- 
--		if (rcrtc->index == 1)
-+		if (rcrtc->index == 1) {
- 			dpllcr |= DPLLCR_PLCS1
- 			       |  DPLLCR_INCS_DOTCLKIN1;
--		else
-+		} else {
- 			dpllcr |= DPLLCR_PLCS0
- 			       |  DPLLCR_INCS_DOTCLKIN0;
-+			/*
-+			 * On H3 ES1.x, in addition to setting bit 21 (PLCS0),
-+			 * also bit 20 has to be set to select PLL1 as the
-+			 * clock source.
-+			 */
-+			if (rcdu->info->quirks & RCAR_DU_QUIRK_H3_ES1_PLL)
-+				dpllcr |= DPLLCR_PLCS0_H3ES1X_PLL1_SEL;
-+		}
- 
- 		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index ba2e069fc0f7..d689f2510081 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -394,7 +394,8 @@ static const struct rcar_du_device_info rcar_du_r8a7795_es1_info = {
- 		  | RCAR_DU_FEATURE_VSP1_SOURCE
- 		  | RCAR_DU_FEATURE_INTERLACED
- 		  | RCAR_DU_FEATURE_TVM_SYNC,
--	.quirks = RCAR_DU_QUIRK_H3_ES1_PCLK_STABILITY,
-+	.quirks = RCAR_DU_QUIRK_H3_ES1_PCLK_STABILITY
-+		| RCAR_DU_QUIRK_H3_ES1_PLL,
- 	.channels_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index df87ccab146f..acc3673fefe1 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -35,6 +35,7 @@ struct rcar_du_device;
- 
- #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
- #define RCAR_DU_QUIRK_H3_ES1_PCLK_STABILITY BIT(1)	/* H3 ES1 has pclk stability issue */
-+#define RCAR_DU_QUIRK_H3_ES1_PLL	BIT(2)	/* H3 ES1 PLL setup differs from non-ES1 */
- 
- enum rcar_du_output {
- 	RCAR_DU_OUTPUT_DPAD0,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-index c1bcb0e8b5b4..94d913f66c8f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-@@ -288,7 +288,8 @@
-  * isn't implemented by other SoC in the Gen3 family it can safely be set
-  * unconditionally.
-  */
--#define DPLLCR_PLCS0		(3 << 20)
-+#define DPLLCR_PLCS0		(1 << 21)
-+#define DPLLCR_PLCS0_H3ES1X_PLL1_SEL	(1 << 20)
- #define DPLLCR_CLKE		(1 << 18)
- #define DPLLCR_FDPLL(n)		((n) << 12)
- #define DPLLCR_N(n)		((n) << 5)
--- 
-2.34.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
