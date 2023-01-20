@@ -2,30 +2,30 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8462C25B50
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Jan 2023 08:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969E2C05027
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Jan 2023 08:51:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbjATIvD (ORCPT
+        id S229656AbjATIvF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 03:51:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33864 "EHLO
+        Fri, 20 Jan 2023 03:51:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjATIux (ORCPT
+        with ESMTP id S229672AbjATIvD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2023 03:50:53 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E57D872AD
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Jan 2023 00:50:51 -0800 (PST)
+        Fri, 20 Jan 2023 03:51:03 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FD28A736
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Jan 2023 00:50:54 -0800 (PST)
 Received: from desky.lan (91-154-32-225.elisa-laajakaista.fi [91.154.32.225])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0834A12F3;
-        Fri, 20 Jan 2023 09:50:32 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3581816B7;
+        Fri, 20 Jan 2023 09:50:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1674204633;
-        bh=DD7XgWguTXZMrSNAZ1nm/QimDxGlfYb4iKfh7B5DEhY=;
+        s=mail; t=1674204634;
+        bh=ofvy/y5Y18urmRnuI0WlXK5tDAWN/B/HLd2yUaZFuqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EdWNEjBnoqjvIENV156n/UuQDl0D99HIDMRzLtvgHPBkb6/tI6EeVxGC6lYs7RAy5
-         GszJGr0xubKweJmSnLDSk429h2HslWw/ezAydczIrzkRAYotcOvImwwGqIgv1uORgf
-         t0XArraqRvMogUIABm5AKxy3BOf7YvRIyMwl+aBM=
+        b=LxAfG/avZkoaSQYyhuKlPvk65ETl+AIP+cjjObIiv5fOIx+M7wxyTYQa74mOCWnFc
+         qGqAkk0eyoNk89YD9EgUAL2/k7EDoX5S+8xS2hIkNnN8faSIQmDozmRbktYp/5+DLu
+         QHGcmdXfOPNHtLFvXnLdonV5XvpSQL/hm1KP1uJk=
 From:   Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -33,9 +33,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v2 5/7] drm: rcar-du: Add quirk for H3 ES1.x pclk workaround
-Date:   Fri, 20 Jan 2023 10:50:07 +0200
-Message-Id: <20230120085009.604797-6-tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH v2 7/7] drm: rcar-du: Stop accessing non-existant registers on gen4
+Date:   Fri, 20 Jan 2023 10:50:09 +0200
+Message-Id: <20230120085009.604797-8-tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230120085009.604797-1-tomi.valkeinen+renesas@ideasonboard.com>
 References: <20230120085009.604797-1-tomi.valkeinen+renesas@ideasonboard.com>
@@ -45,157 +45,75 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-rcar_du_crtc.c does a soc_device_match() in
-rcar_du_crtc_set_display_timing() to find out if the SoC is H3 ES1.x, and
-if so, apply a workaround.
-
-We will need another H3 ES1.x check in the following patch, so rather than
-adding more soc_device_match() calls, let's add a rcar_du_device_info
-entry for the ES1, and a quirk flag,
-RCAR_DU_QUIRK_H3_ES1_PCLK_STABILITY, for the workaround.
+The following registers do not exist on gen4, so we should not write
+them: DEF6Rm, DEF7Rm, DEF8Rm, ESCRn, OTARn.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c |  8 +----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 48 ++++++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
- 3 files changed, 50 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  8 +++++---
+ drivers/gpu/drm/rcar-du/rcar_du_group.c | 11 ++++++++---
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 3619e1ddeb62..f2d3266509cc 100644
+index b7dd59fe119e..008e172ed43b 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -10,7 +10,6 @@
- #include <linux/clk.h>
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
--#include <linux/sys_soc.h>
- 
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-@@ -204,11 +203,6 @@ static void rcar_du_escr_divider(struct clk *clk, unsigned long target,
+@@ -298,10 +298,12 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 		escr = params.escr;
  	}
- }
  
--static const struct soc_device_attribute rcar_du_r8a7795_es1[] = {
--	{ .soc_id = "r8a7795", .revision = "ES1.*" },
--	{ /* sentinel */ }
--};
--
- static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+-	dev_dbg(rcrtc->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
++	if (rcdu->info->gen < 4) {
++		dev_dbg(rcrtc->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
+ 
+-	rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? ESCR13 : ESCR02, escr);
+-	rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? OTAR13 : OTAR02, 0);
++		rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? ESCR13 : ESCR02, escr);
++		rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? OTAR13 : OTAR02, 0);
++	}
+ 
+ 	/* Signal polarities */
+ 	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+index 6da01760ede5..c2209d427bb7 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+@@ -148,7 +148,8 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+ 	}
+ 	rcar_du_group_write(rgrp, DEFR5, DEFR5_CODE | DEFR5_DEFE5);
+ 
+-	rcar_du_group_setup_pins(rgrp);
++	if (rcdu->info->gen < 4)
++		rcar_du_group_setup_pins(rgrp);
+ 
+ 	/*
+ 	 * TODO: Handle routing of the DU output to CMM dynamically, as we
+@@ -160,7 +161,8 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+ 	rcar_du_group_write(rgrp, DEFR7, defr7);
+ 
+ 	if (rcdu->info->gen >= 2) {
+-		rcar_du_group_setup_defr8(rgrp);
++		if (rcdu->info->gen < 4)
++			rcar_du_group_setup_defr8(rgrp);
+ 		rcar_du_group_setup_didsr(rgrp);
+ 	}
+ 
+@@ -192,10 +194,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+  */
+ int rcar_du_group_get(struct rcar_du_group *rgrp)
  {
- 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
-@@ -238,7 +232,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		 * no post-divider when a display PLL is present (as shown by
- 		 * the workaround breaking HDMI output on M3-W during testing).
- 		 */
--		if (soc_device_match(rcar_du_r8a7795_es1)) {
-+		if (rcdu->info->quirks & RCAR_DU_QUIRK_H3_ES1_PCLK_STABILITY) {
- 			target *= 2;
- 			div = 1;
- 		}
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index c7c5217cfc1a..ea3a8cff74b7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -16,6 +16,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- #include <linux/wait.h>
- 
- #include <drm/drm_atomic_helper.h>
-@@ -386,6 +387,42 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 	.dpll_mask =  BIT(2) | BIT(1),
- };
- 
-+static const struct rcar_du_device_info rcar_du_r8a7795_es1_info = {
-+	.gen = 3,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ
-+		  | RCAR_DU_FEATURE_CRTC_CLOCK
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED
-+		  | RCAR_DU_FEATURE_TVM_SYNC,
-+	.quirks = RCAR_DU_QUIRK_H3_ES1_PCLK_STABILITY,
-+	.channels_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
-+	.routes = {
-+		/*
-+		 * R8A7795 has one RGB output, two HDMI outputs and one
-+		 * LVDS output.
-+		 */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(3),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_HDMI0] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
-+		[RCAR_DU_OUTPUT_HDMI1] = {
-+			.possible_crtcs = BIT(2),
-+			.port = 2,
-+		},
-+		[RCAR_DU_OUTPUT_LVDS0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 3,
-+		},
-+	},
-+	.num_lvds = 1,
-+	.num_rpf = 5,
-+	.dpll_mask =  BIT(2) | BIT(1),
-+};
++	struct rcar_du_device *rcdu = rgrp->dev;
 +
- static const struct rcar_du_device_info rcar_du_r8a7796_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ
-@@ -576,6 +613,11 @@ static const struct of_device_id rcar_du_of_table[] = {
+ 	if (rgrp->use_count)
+ 		goto done;
  
- MODULE_DEVICE_TABLE(of, rcar_du_of_table);
+-	rcar_du_group_setup(rgrp);
++	if (rcdu->info->gen < 4)
++		rcar_du_group_setup(rgrp);
  
-+static const struct soc_device_attribute rcar_du_soc_table[] = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &rcar_du_r8a7795_es1_info },
-+	{ /* sentinel */ }
-+};
-+
- const char *rcar_du_output_name(enum rcar_du_output output)
- {
- 	static const char * const names[] = {
-@@ -667,6 +709,7 @@ static void rcar_du_shutdown(struct platform_device *pdev)
- 
- static int rcar_du_probe(struct platform_device *pdev)
- {
-+	const struct soc_device_attribute *soc_attr;
- 	struct rcar_du_device *rcdu;
- 	unsigned int mask;
- 	int ret;
-@@ -681,8 +724,13 @@ static int rcar_du_probe(struct platform_device *pdev)
- 		return PTR_ERR(rcdu);
- 
- 	rcdu->dev = &pdev->dev;
-+
- 	rcdu->info = of_device_get_match_data(rcdu->dev);
- 
-+	soc_attr = soc_device_match(rcar_du_soc_table);
-+	if (soc_attr)
-+		rcdu->info = soc_attr->data;
-+
- 	platform_set_drvdata(pdev, rcdu);
- 
- 	/* I/O resources */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 5cfa2bb7ad93..df87ccab146f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -34,6 +34,7 @@ struct rcar_du_device;
- #define RCAR_DU_FEATURE_NO_BLENDING	BIT(5)	/* PnMR.SPIM does not have ALP nor EOR bits */
- 
- #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
-+#define RCAR_DU_QUIRK_H3_ES1_PCLK_STABILITY BIT(1)	/* H3 ES1 has pclk stability issue */
- 
- enum rcar_du_output {
- 	RCAR_DU_OUTPUT_DPAD0,
+ done:
+ 	rgrp->use_count++;
 -- 
 2.34.1
 
