@@ -2,103 +2,111 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DF9C54EAA
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Jan 2023 07:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C58C27C76
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Jan 2023 10:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbjAVH2G (ORCPT
+        id S229917AbjAVKs5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 22 Jan 2023 02:28:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45526 "EHLO
+        Sun, 22 Jan 2023 05:48:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbjAVH2F (ORCPT
+        with ESMTP id S229622AbjAVKs4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Jan 2023 02:28:05 -0500
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6508313530;
-        Sat, 21 Jan 2023 23:28:04 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 845BC68AA6; Sun, 22 Jan 2023 08:27:59 +0100 (CET)
-Date:   Sun, 22 Jan 2023 08:27:59 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        "Conor.Dooley" <conor.dooley@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        guoren <guoren@kernel.org>,
-        Andrew Jones <ajones@ventanamicro.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Philipp Tomsich <philipp.tomsich@vrull.eu>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Atish Patra <atishp@rivosinc.com>,
-        Anup Patel <apatel@ventanamicro.com>,
-        Tsukasa OI <research_trasio@irq.a4lg.com>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        Mayuresh Chitale <mchitale@ventanamicro.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [RFC PATCH v6 1/6] riscv: mm: dma-noncoherent: Switch using
- function pointers for cache management
-Message-ID: <20230122072759.GA3703@lst.de>
-References: <CA+V-a8uF1s+dwKC_+apL+CBiHN8w_J0n_G2dqsgiAUZVEibfqg@mail.gmail.com> <9017adf0-acd4-4c43-8aea-3579b214b477@app.fastmail.com> <CA+V-a8u6jvR=EDeE3mAbDr6-06NoBJ7mwmi_Y9qVyHT+aC-9rg@mail.gmail.com> <45d6eb0c-cbe3-4a83-aa12-3483638473ae@app.fastmail.com> <20230110070144.GG10289@lst.de> <02988e70-b099-46fd-b260-2d537c50543a@app.fastmail.com> <20230113054807.GA23179@lst.de> <ea4cb121-97e9-4365-861a-b3635fd34721@app.fastmail.com> <20230121143733.GA7415@lst.de> <6a64b0b5-0ebc-43a5-a3d8-483a845a0b5e@app.fastmail.com>
+        Sun, 22 Jan 2023 05:48:56 -0500
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2E816322;
+        Sun, 22 Jan 2023 02:48:55 -0800 (PST)
+Received: by mail-qv1-f43.google.com with SMTP id u20so7120209qvq.4;
+        Sun, 22 Jan 2023 02:48:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HqaHL17YkcYl2MpnxdcgTIjHQUTlapqDHuhLmiWa9Bc=;
+        b=gbQ2AH+JTuzhlLJAPjP2mekCYPgVIRNrWmxdzQPhP25Y4qTb3Lv898WmjsPkISnLBl
+         eofxsUiQRSc+JreF6NJQ2IRdd4kLvOUKWL+8uTpWk89gzoDonondGM/fdcth30pwYftW
+         BD4UssSWmgVUWvVhjSN1IOwA0jfV7grVyqFNfXC48uCj5iUI03+6gTxdUMNq00JSg659
+         gOQfLu+zrMajODdVJwxz6zbkdNh97RSZcAviH8ZZRy5uO7B+z32dayYG28o9krEXvQmI
+         FZxlu8CGaqwq0PHzA2gQHMritt5uRwVGHtYZDQ4xuJfQHGF0mv7fpp23eyx3cmA+LFHK
+         93EQ==
+X-Gm-Message-State: AFqh2kqSiKJf0PSogaNJQo/uq/zn0TfJ7PGSJLVmPyToBhwTX9P0Nca/
+        PACU/SU4OfU5XTPQfZpfQE87Hyr1Z5wEqg==
+X-Google-Smtp-Source: AMrXdXuuvaaqou2sGpOfGtEv0RFLZPCbmXNtdTakI6WViQeCUsxUptelsSAsM6RFvLsYqOoXcsf0+w==
+X-Received: by 2002:a05:6214:88e:b0:537:4d4a:6da9 with SMTP id cz14-20020a056214088e00b005374d4a6da9mr10267940qvb.12.1674384534444;
+        Sun, 22 Jan 2023 02:48:54 -0800 (PST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id d8-20020ae9ef08000000b0070905e2674dsm5631770qkg.76.2023.01.22.02.48.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Jan 2023 02:48:54 -0800 (PST)
+Received: by mail-yb1-f175.google.com with SMTP id t16so7021184ybk.2;
+        Sun, 22 Jan 2023 02:48:53 -0800 (PST)
+X-Received: by 2002:a25:9012:0:b0:7b8:a0b8:f7ec with SMTP id
+ s18-20020a259012000000b007b8a0b8f7ecmr2856562ybl.36.1674384533646; Sun, 22
+ Jan 2023 02:48:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a64b0b5-0ebc-43a5-a3d8-483a845a0b5e@app.fastmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <a85c256af01f64389a078c2b37c3b72a27d97536.1668005062.git.geert+renesas@glider.be>
+ <0bb76233-062c-a1c5-da88-4f04feccd5b2@linaro.org> <CABBYNZJX+9SxW48qSSmyyMa7_bvqzwHafa0BNOz4Kz_Jc+gu9Q@mail.gmail.com>
+In-Reply-To: <CABBYNZJX+9SxW48qSSmyyMa7_bvqzwHafa0BNOz4Kz_Jc+gu9Q@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 22 Jan 2023 11:48:40 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUHo6zEPMF_VR=0Xn2PNHrQRGwzrOP2GXvDN9S19jMaGQ@mail.gmail.com>
+Message-ID: <CAMuHMdUHo6zEPMF_VR=0Xn2PNHrQRGwzrOP2GXvDN9S19jMaGQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: leds: Document Bluetooth and WLAN triggers
+To:     Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Jan 21, 2023 at 08:30:23PM +0100, Arnd Bergmann wrote:
-> > That feels really odd, and might be worth a bug report to the
-> > PPC maintainers.
-> 
-> Right, my first step would be to change all of the current
-> outliers to use the same set of operations where possible.
+On Fri, Jan 20, 2023 at 10:42 PM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+> On Fri, Jan 20, 2023 at 8:42 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+> >
+> > On 09/11/2022 15:46, Geert Uytterhoeven wrote:
+> > > Add the missing trigger patterns for Bluetooth and WLAN activity, which
+> > > are already in active use.
+> > >
+> > > While at it, move the mmc pattern comment where it belongs, and restore
+> > > alphabetical sort order.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-rev2.dtb: leds: bt_active_led:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
+> > >       'hci0-power' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'ide-disk', 'timer', 'pattern']
+> > >       'hci0-power' does not match '^mmc[0-9]+$'
+> > >       From schema: Documentation/devicetree/bindings/leds/leds-gpio.yaml
+> > > arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-rev2.dtb: leds: wlan_active_led:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
+> > >       'phy0tx' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'ide-disk', 'timer', 'pattern']
+> > >       'phy0tx' does not match '^mmc[0-9]+$'
+> > >       From schema: Documentation/devicetree/bindings/leds/leds-gpio.yaml
+> >
+> > This patch got lost... Rob, Lee or Pavel, can you pick it up?
+> >
+> > It's with Rob's approval:
+> > https://lore.kernel.org/all/166861772609.231295.14812410099261417331.robh@kernel.org/
+>
+> If it is going to be applied via bluetooth-next make sure to resend it
+> since last time our CI was not able to apply it thus why we didn't
+> apply it in the first place.
 
-Sounds good.
+Resent as v2, https://lore.kernel.org/r/0d0de1bc949d24e08174205c13c0b59bd73c1ea8.1674384302.git.geert+renesas@glider.be
 
-> > I'd rather avoid multiple callbacks if we can.  But maybe solve
-> > the simple problem first and just pass the paddr and then
-> > iterate from there.
-> 
-> Ok, fair enough. This means we can't easily put the kmap_atomic()
-> into common code for highmem, though the per-page loop would
-> still work.
+Gr{oetje,eeting}s,
 
-Yes.  Given how messy many of the ops are I think one step at a time
-is always good.
+                        Geert
 
-> I was thinking of using STATIC_CALL() as an optimization here, which
-> I find easier to read and understand than alternatives. One advantage
-> here is that this allows the actual cache operations to be declared
-> locally in the architecture without letting drivers call them,
-> but still update the common code to work without indirect branches.
-> 
-> The main downside is that this is currently only optimized on
-> powerpc and x86, both of which don't actually need CPU specific
-> callbacks. ARC, ARM, and MIPS on the other hand already
-> have indirect function pointers, RISC-V would likely benefit the
-> most from either alternatives or static_call, as it already
-> uses alternatives and has one implementation that is clearly
-> preferred over the others.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-For now I'd just keep doing direct calls into the arch code, just
-for the lower level invalidate, writeback, invalidate+writeback
-calls as that helps cementinc the logic of which of those to use
-in well documented core code.
-
-And I'm not really sure I'd like to go beyond that - making it too
-easy pluggable will make people feel more comfortable doing stupid
-things here.  And yes, maybe that's personal because I've warned
-the RISC-V people years ago that they'll need architectural
-cache management instructions yesterday and the answer was that
-no one is going to use them on modern CPUs.  *sigh*
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
