@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828D7C54EED
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Jan 2023 18:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B841C61DA2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Jan 2023 18:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232417AbjAWS47 (ORCPT
+        id S231709AbjAWS5A (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 13:56:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36400 "EHLO
+        Mon, 23 Jan 2023 13:57:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232448AbjAWS4e (ORCPT
+        with ESMTP id S232280AbjAWS4e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 23 Jan 2023 13:56:34 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23A1F31E1E
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FB53251E
         for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jan 2023 10:56:23 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:6083:1fd7:ba05:ea8d])
-        by albert.telenet-ops.be with bizsmtp
-        id CJwJ2900d4604Ck06JwJtr; Mon, 23 Jan 2023 19:56:21 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id CJwJ2900D4604Ck01JwJ2z; Mon, 23 Jan 2023 19:56:21 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pK1zG-0076Kj-MP;
+        id 1pK1zG-0076KP-JF;
         Mon, 23 Jan 2023 19:56:18 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pK1zO-00Ekhi-Jf;
+        id 1pK1zO-00EkhJ-GV;
         Mon, 23 Jan 2023 19:56:18 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Wolfgang Grandegger <wg@grandegger.com>,
@@ -39,9 +39,9 @@ Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
         netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/12] can: rcar_canfd: Sort included header files
-Date:   Mon, 23 Jan 2023 19:56:12 +0100
-Message-Id: <f7fa8090487c6e05b2c7f89542e0a1bd045356f1.1674499048.git.geert+renesas@glider.be>
+Subject: [PATCH 05/12] can: rcar_canfd: Fix R-Car V3U GAFLCFG field accesses
+Date:   Mon, 23 Jan 2023 19:56:07 +0100
+Message-Id: <36bcf0ffb96d6aaed970751f9546b901af638bcf.1674499048.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1674499048.git.geert+renesas@glider.be>
 References: <cover.1674499048.git.geert+renesas@glider.be>
@@ -51,52 +51,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This may avoid conflicts when adding or removing files in the future.
+Each Global Acceptance Filter List Configuration Register (GAFLCFG)
+contains two fields, and stores the number of channel rules for one
+channel pair.
 
+As R-Car V3U and later can have more than 2 channels, the field
+selection should be based on the LSB (even or odd) of the channel
+number, instead of on the full channel number.
+
+Fixes: 45721c406dcf50d4 ("can: rcar_canfd: Add support for r8a779a0 SoC")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 376a5d606acc66c2..cfcf1a93fb58c36f 100644
+index 88de17d0bd79d627..77b21c82faf38ee1 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -21,23 +21,23 @@
-  * wherever it is modified to a readable name.
-  */
+@@ -92,10 +92,10 @@
+ /* RSCFDnCFDGAFLCFG0 / RSCFDnGAFLCFG0 */
+ #define RCANFD_GAFLCFG_SETRNC(gpriv, n, x) \
+ 	(((x) & reg_v3u(gpriv, 0x1ff, 0xff)) << \
+-	 (reg_v3u(gpriv, 16, 24) - (n) * reg_v3u(gpriv, 16, 8)))
++	 (reg_v3u(gpriv, 16, 24) - ((n) & 1) * reg_v3u(gpriv, 16, 8)))
  
--#include <linux/module.h>
--#include <linux/moduleparam.h>
--#include <linux/kernel.h>
--#include <linux/types.h>
--#include <linux/interrupt.h>
-+#include <linux/bitmap.h>
-+#include <linux/bitops.h>
-+#include <linux/can/dev.h>
-+#include <linux/clk.h>
- #include <linux/errno.h>
- #include <linux/ethtool.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
- #include <linux/netdevice.h>
--#include <linux/platform_device.h>
--#include <linux/can/dev.h>
--#include <linux/clk.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/bitmap.h>
--#include <linux/bitops.h>
--#include <linux/iopoll.h>
-+#include <linux/platform_device.h>
- #include <linux/reset.h>
-+#include <linux/types.h>
+ #define RCANFD_GAFLCFG_GETRNC(gpriv, n, x) \
+-	(((x) >> (reg_v3u(gpriv, 16, 24) - (n) * reg_v3u(gpriv, 16, 8))) & \
++	(((x) >> (reg_v3u(gpriv, 16, 24) - ((n) & 1) * reg_v3u(gpriv, 16, 8))) & \
+ 	 reg_v3u(gpriv, 0x1ff, 0xff))
  
- #define RCANFD_DRV_NAME			"rcar_canfd"
- 
+ /* RSCFDnCFDGAFLECTR / RSCFDnGAFLECTR */
 -- 
 2.34.1
 
