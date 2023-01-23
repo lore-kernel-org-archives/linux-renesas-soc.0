@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CD8C61DB3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Jan 2023 18:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27AA7C636D3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Jan 2023 18:57:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232582AbjAWS5B (ORCPT
+        id S232648AbjAWS5D (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 13:57:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36360 "EHLO
+        Mon, 23 Jan 2023 13:57:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231558AbjAWS4e (ORCPT
+        with ESMTP id S232563AbjAWS4f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2023 13:56:34 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26ACC32E42
+        Mon, 23 Jan 2023 13:56:35 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246D732502
         for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jan 2023 10:56:23 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:6083:1fd7:ba05:ea8d])
-        by albert.telenet-ops.be with bizsmtp
-        id CJwJ2900a4604Ck06JwJtp; Mon, 23 Jan 2023 19:56:21 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id CJwJ2900D4604Ck01JwJmt; Mon, 23 Jan 2023 19:56:21 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pK1zG-0076KS-Jr;
+        id 1pK1zG-0076KK-IZ;
         Mon, 23 Jan 2023 19:56:18 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pK1zO-00EkhP-H8;
+        id 1pK1zO-00EkhF-Fa;
         Mon, 23 Jan 2023 19:56:18 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Wolfgang Grandegger <wg@grandegger.com>,
@@ -39,9 +39,9 @@ Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
         netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/12] can: rcar_canfd: Abstract out DCFG address differences
-Date:   Mon, 23 Jan 2023 19:56:08 +0100
-Message-Id: <13e02d710dac3ddef73aa4be2b995766db9b6b4d.1674499048.git.geert+renesas@glider.be>
+Subject: [PATCH 04/12] can: rcar_canfd: Fix R-Car V3U CAN mode selection
+Date:   Mon, 23 Jan 2023 19:56:06 +0100
+Message-Id: <388ddf312917eb9f6cc460a481f68402a876f9b5.1674499048.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1674499048.git.geert+renesas@glider.be>
 References: <cover.1674499048.git.geert+renesas@glider.be>
@@ -51,49 +51,72 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Abstract the different addresses for the Channel n Data Bitrate
-Configuration Register (DCFG) in the definition of the register macro,
-like is already done for other register definitions, to simplify code
-accessing this register.
+When adding support for R-Car V3U, the Global FD Configuration register
+(CFDGFDCFG) and the Channel-specific CAN-FD Configuration Registers
+(CFDCmFDCFG) were mixed up.  Use the correct register, and apply the
+selected CAN mode to all available channels.
 
+Annotate the corresponding register bits, to make it clear they do
+not exist on older variants.
+
+Fixes: 45721c406dcf50d4 ("can: rcar_canfd: Add support for r8a779a0 SoC")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Currently the selected CAN mode is a global setting (controlled through
+the "renesas,no-can-fd" DT property), but the variant on R-Car V3U and
+later seems to support configuring this per-channel.  Whether
+"renesas,no-can-fd" can be made channel-specific is still to be seen, as
+the driver performs some global configuration based on the selected CAN
+mode.
+---
+ drivers/net/can/rcar/rcar_canfd.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 77b21c82faf38ee1..6bf80cefc307893b 100644
+index f6fa7157b99b07da..88de17d0bd79d627 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -429,7 +429,6 @@
+@@ -197,8 +197,8 @@
+ #define RCANFD_DCFG_DBRP(x)		(((x) & 0xff) << 0)
+ 
+ /* RSCFDnCFDCmFDCFG */
+-#define RCANFD_FDCFG_CLOE		BIT(30)
+-#define RCANFD_FDCFG_FDOE		BIT(28)
++#define RCANFD_V3U_FDCFG_CLOE		BIT(30)
++#define RCANFD_V3U_FDCFG_FDOE		BIT(28)
+ #define RCANFD_FDCFG_TDCE		BIT(9)
+ #define RCANFD_FDCFG_TDCOC		BIT(8)
+ #define RCANFD_FDCFG_TDCO(x)		(((x) & 0x7f) >> 16)
+@@ -429,8 +429,8 @@
  #define RCANFD_C_RPGACC(r)		(0x1900 + (0x04 * (r)))
  
  /* R-Car V3U Classical and CAN FD mode specific register map */
--#define RCANFD_V3U_DCFG(m)		(0x1400 + (0x20 * (m)))
- #define RCANFD_V3U_FDCFG(m)		(0x1404 + (0x20 * (m)))
+-#define RCANFD_V3U_CFDCFG		(0x1314)
+ #define RCANFD_V3U_DCFG(m)		(0x1400 + (0x20 * (m)))
++#define RCANFD_V3U_FDCFG(m)		(0x1404 + (0x20 * (m)))
  
  #define RCANFD_V3U_GAFL_OFFSET		(0x1800)
-@@ -437,7 +436,7 @@
- /* CAN FD mode specific register map */
  
- /* RSCFDnCFDCmXXX -> RCANFD_F_XXX(m) */
--#define RCANFD_F_DCFG(m)		(0x0500 + (0x20 * (m)))
-+#define RCANFD_F_DCFG(gpriv, m)		(reg_v3u(gpriv, 0x1400, 0x0500) + (0x20 * (m)))
- #define RCANFD_F_CFDCFG(m)		(0x0504 + (0x20 * (m)))
- #define RCANFD_F_CFDCTR(m)		(0x0508 + (0x20 * (m)))
- #define RCANFD_F_CFDSTS(m)		(0x050c + (0x20 * (m)))
-@@ -1346,10 +1345,7 @@ static void rcar_canfd_set_bittiming(struct net_device *dev)
- 		cfg = (RCANFD_DCFG_DTSEG1(gpriv, tseg1) | RCANFD_DCFG_DBRP(brp) |
- 		       RCANFD_DCFG_DSJW(sjw) | RCANFD_DCFG_DTSEG2(gpriv, tseg2));
- 
--		if (is_v3u(gpriv))
--			rcar_canfd_write(priv->base, RCANFD_V3U_DCFG(ch), cfg);
+@@ -689,12 +689,13 @@ static void rcar_canfd_tx_failure_cleanup(struct net_device *ndev)
+ static void rcar_canfd_set_mode(struct rcar_canfd_global *gpriv)
+ {
+ 	if (is_v3u(gpriv)) {
+-		if (gpriv->fdmode)
+-			rcar_canfd_set_bit(gpriv->base, RCANFD_V3U_CFDCFG,
+-					   RCANFD_FDCFG_FDOE);
 -		else
--			rcar_canfd_write(priv->base, RCANFD_F_DCFG(ch), cfg);
-+		rcar_canfd_write(priv->base, RCANFD_F_DCFG(gpriv, ch), cfg);
- 		netdev_dbg(priv->ndev, "drate: brp %u, sjw %u, tseg1 %u, tseg2 %u\n",
- 			   brp, sjw, tseg1, tseg2);
+-			rcar_canfd_set_bit(gpriv->base, RCANFD_V3U_CFDCFG,
+-					   RCANFD_FDCFG_CLOE);
++		u32 ch, val = gpriv->fdmode ? RCANFD_V3U_FDCFG_FDOE
++					    : RCANFD_V3U_FDCFG_CLOE;
++
++		for_each_set_bit(ch, &gpriv->channels_mask,
++				 gpriv->info->max_channels)
++			rcar_canfd_set_bit(gpriv->base, RCANFD_V3U_FDCFG(ch),
++					   val);
  	} else {
+ 		if (gpriv->fdmode)
+ 			rcar_canfd_set_bit(gpriv->base, RCANFD_GRMCFG,
 -- 
 2.34.1
 
