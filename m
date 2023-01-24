@@ -2,96 +2,109 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D72AEC54EB4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Jan 2023 18:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11B9C54EED
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Jan 2023 22:15:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233822AbjAXSm5 (ORCPT
+        id S229926AbjAXWP2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 24 Jan 2023 13:42:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47920 "EHLO
+        Tue, 24 Jan 2023 17:15:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233900AbjAXSmw (ORCPT
+        with ESMTP id S229932AbjAXWP1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2023 13:42:52 -0500
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE7D145BCD;
-        Tue, 24 Jan 2023 10:42:16 -0800 (PST)
-Received: by mail-qt1-x833.google.com with SMTP id v19so1318148qtq.13;
-        Tue, 24 Jan 2023 10:42:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iVcjuX1DrPzpms/qqm55UTZi+ADxFT6DDuGfNYewlYI=;
-        b=2ei6fTcIr9X2ixQHZ+EPC5V6182JQumzNihDMIy/75cdok5VCufdVppWkbV2cOKbum
-         tQUQQcf6dsT3oTGntcYphPDjpvez7fvKdHXcbHhtOHQ0/SWzPUd9ukVR7LTJZEuYix0x
-         P2xjoNcrVulWScTqD+uZ2IyHi5SG0pteiI7q4WDE63zV/otmUwGtYbwE6kvjjylqLPlj
-         ayPG91xOnYTsF8kEBOLWxRHAzAMoUrFFF8Kwg7PjWj30qfHhZlED8SyjFzjbHvBMR2HN
-         7w35XDzm7cBN5HKqAM4aCMHe4Tc4wtQD6Byj0eM2T2KWcpkFpgHAOBb2yTeCn88fOMyY
-         qTng==
-X-Gm-Message-State: AFqh2krBnSQrUR4ncDKxd6xTipHHyJZK9GetrXShZ9TcY698CdCH97b3
-        pe8bKeWDB4HwgUeNSEtUNm9OjtGstnsAIA==
-X-Google-Smtp-Source: AMrXdXtMjycl63rqLtCwxpqXzLnyoJpcGZdndPK/mZ5/XadjpLZLQHbavo2VN7ZRW0m7s00iLnvggg==
-X-Received: by 2002:ac8:524c:0:b0:3b6:378c:5cd7 with SMTP id y12-20020ac8524c000000b003b6378c5cd7mr41300962qtn.61.1674585675773;
-        Tue, 24 Jan 2023 10:41:15 -0800 (PST)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id l4-20020a37f504000000b00705be892191sm1877987qkk.56.2023.01.24.10.41.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jan 2023 10:41:15 -0800 (PST)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-4ff07dae50dso186269157b3.2;
-        Tue, 24 Jan 2023 10:41:14 -0800 (PST)
-X-Received: by 2002:a05:690c:c89:b0:4dd:7a8e:1cf3 with SMTP id
- cm9-20020a05690c0c8900b004dd7a8e1cf3mr3096734ywb.384.1674585674575; Tue, 24
- Jan 2023 10:41:14 -0800 (PST)
+        Tue, 24 Jan 2023 17:15:27 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F84322787
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Jan 2023 14:15:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674598526; x=1706134526;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=IDu3CuWWG/KIsSEaZxRZcyn2nMX7KKpHC7cC6wwLIOQ=;
+  b=LMOywJ5qRVef/kS0d0R6SOb2jcVgzeCDdXetXrttyiovTfQURgJ8Kzse
+   NCLrWi2/u6jzjWAJZ9Apthmai1Zplv3W86JmWVXMlf6FfpvCmh1q402m3
+   a6fPn/fUlQgqE0+toJLcZ7Cx/KFW8lPjeqp+mP5xx86A+kpV0HpsQqTcf
+   ubRdE/bAa/dj6xCNB/WLbfXMZWyxbR3HQ3HA8bw4Mp8wHlrFBeLAyUDlk
+   mPqS10LPmRlZ5vShYo2MIQj6qkORHkXsqnhsRlLqRV40X8QGJZCae268R
+   sLQzjiXoO8T4ruY9i/jREfMZQvgC0lm814tg3TuF3+60N/PhRq+O2Yl59
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="328506705"
+X-IronPort-AV: E=Sophos;i="5.97,243,1669104000"; 
+   d="scan'208";a="328506705"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2023 14:15:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="664260481"
+X-IronPort-AV: E=Sophos;i="5.97,243,1669104000"; 
+   d="scan'208";a="664260481"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 24 Jan 2023 14:15:23 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pKRZb-0006p6-0z;
+        Tue, 24 Jan 2023 22:15:23 +0000
+Date:   Wed, 25 Jan 2023 06:14:56 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:renesas-dts-for-v6.3] BUILD SUCCESS
+ 5d824fe1174e21db4569b8f74d343722f3d0ffb7
+Message-ID: <63d05860.VD3zuuIkRiICc4HM%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <cover.1674499048.git.geert+renesas@glider.be> <e825b50a843ffe40e33f34e4d858c07c1b2ff259.1674499048.git.geert+renesas@glider.be>
-In-Reply-To: <e825b50a843ffe40e33f34e4d858c07c1b2ff259.1674499048.git.geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 24 Jan 2023 19:41:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXtiC-Oo01Y-vCbokjF=L+YXMN=TucgqCS4Vtcg5gt==g@mail.gmail.com>
-Message-ID: <CAMuHMdXtiC-Oo01Y-vCbokjF=L+YXMN=TucgqCS4Vtcg5gt==g@mail.gmail.com>
-Subject: Re: [PATCH 12/12] can: rcar_canfd: Add transceiver support
-To:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ulrich Hecht <uli+renesas@fpond.eu>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jan 23, 2023 at 7:56 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Add support for CAN transceivers described as PHYs.
->
-> While simple CAN transceivers can do without, this is needed for CAN
-> transceivers like NXP TJR1443 that need a configuration step (like
-> pulling standby or enable lines), and/or impose a bitrate limit.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This depends on "[PATCH 1/7] phy: Add devm_of_phy_optional_get() helper".
-> https://lore.kernel.org/all/f53a1bcca637ceeafb04ce3540a605532d3bc34a.1674036164.git.geert+renesas@glider.be
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v6.3
+branch HEAD: 5d824fe1174e21db4569b8f74d343722f3d0ffb7  arm64: dts: renesas: r8a779g0: Add Cortex-A76 1.8 GHz opp
 
-v2: "[PATCH v2 3/9] phy: Add devm_of_phy_optional_get() helper"
-    https://lore.kernel.org/all/4cd0069bcff424ffc5c3a102397c02370b91985b.1674584626.git.geert+renesas@glider.be
+elapsed time: 729m
 
-I'll keep you updated when/if this ends up on an immutable branch.
+configs tested: 31
+configs skipped: 77
 
-Gr{oetje,eeting}s,
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-                        Geert
+gcc tested configs:
+arm                  randconfig-r046-20230123
+arm                                 defconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+x86_64                            allnoconfig
+ia64                             allmodconfig
+i386                             allyesconfig
+i386                                defconfig
+x86_64                           rhel-8.3-kvm
+x86_64                           rhel-8.3-syz
+x86_64                           rhel-8.3-bpf
+x86_64                         rhel-8.3-kunit
+i386                 randconfig-a004-20230123
+i386                 randconfig-a006-20230123
+i386                 randconfig-a005-20230123
+i386                 randconfig-a002-20230123
+i386                 randconfig-a003-20230123
+i386                 randconfig-a001-20230123
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                    nommu_k210_defconfig
+riscv                             allnoconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+x86_64                              defconfig
+x86_64                           allyesconfig
+x86_64                               rhel-8.3
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+clang tested configs:
+riscv                randconfig-r042-20230123
+hexagon              randconfig-r041-20230123
+hexagon              randconfig-r045-20230123
+s390                 randconfig-r044-20230123
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
