@@ -2,160 +2,129 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14063C54EAA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Jan 2023 20:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A49DC54EAA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Jan 2023 22:35:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232059AbjAZUrM (ORCPT
+        id S232324AbjAZWfp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 15:47:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53084 "EHLO
+        Thu, 26 Jan 2023 17:35:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230371AbjAZUrK (ORCPT
+        with ESMTP id S230338AbjAZWfp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 15:47:10 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F9E24C95;
-        Thu, 26 Jan 2023 12:46:34 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id j15so2377945ljg.8;
-        Thu, 26 Jan 2023 12:46:34 -0800 (PST)
+        Thu, 26 Jan 2023 17:35:45 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207CA62240
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2023 14:35:06 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id 5so3228428plo.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2023 14:35:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e8JRQs423qpWUog+nHFrhwfEo9FGIHhJlHpgtXHnAI8=;
-        b=CsuY8hOc0S6TR3cGDg1ExGVIPOKn+OqJ1OwxwuO0c8Gdz2WpuxTlcEP+ZPFz3Khu5F
-         475ELIhic+XXrq8MLA7tnMYq0CUF/u/GlT7ksJOKJ+9SF8OzL7cikSLpwu+vlDbPo/+v
-         o4EuGtkgRM1pipK8GTVOHiRBBm8I26P6qj66tdVgOb5Py5a7Xnz+q/qIjkt11N2zpMRk
-         xN/7D0VapK/jGTPA1fxq0lNuyZoliqV296SJh01eyNJvVjfwE6kjR69QdrmEEWNtAHP6
-         FV6cMMcQe0mHT0U22M/B9oceNBLNeLuwNd9o64spofEtq2H02/uA+JpZQT+o0gpoNMbs
-         6CCw==
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1yY8xFMviaybBZbR6LUXwM7erkIP07dc7kLH/Cf89gI=;
+        b=kZwSLpKLV6Xl0H9B8H4V63RERLtlKifQlpRwEzh04USMS5V9n2/P0QB1zVcYNgl3O2
+         kc9G/Dy9FBIn/Qge3gugq86dP2w47nwrLsiMi7Oni0px/+fqc+HzRUZ/ws3mWS32z4/U
+         auL3VtagAp9xjL1nSeBHzDnyvGgzhu9d5PaZPIpi0lEz1IUQIgb+iYpAYJd4xrhQ+xcq
+         etZtQP25Bg5YCxLLHV9EHQxgL8R3JAgFLHuFWGmOfMq346Ol/3BrwTj6H67ShF1n6Xf/
+         AclI7buVeeZSt//pMopTFBgNc7LZI86I0i1Tk2/2nOnOVhGZxRocU4J9TfgNukfGChfK
+         tCMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e8JRQs423qpWUog+nHFrhwfEo9FGIHhJlHpgtXHnAI8=;
-        b=UIHs2FlG/AwJbe8bCVB1CKtACCL0AIA1YzjhTC6I8qb+WKPeoAWcBpiqFcNynVmjiM
-         7bD/LeObK29mjgpy3KX3jv7zK5c82l8VNUYY8bbvD6wNUo6vV0dKLaL3z9Y1XXWDmNQB
-         rJG/598q9JIc7++zX9ziuTAXGnBLBWdbRFyeTLEGYt1A+MYxTIL5VWVowpNr5i0Mepuu
-         aKxua3UQ8mIoTj+wxHwHCUnZ9uzWvokFBXATTKEGXMSts4Bf+1dg9U3sjj6ajExayMsG
-         caOnpxzkXhZ7gUkzDgbNj6EZHvUm4SPLrWvZ5uiQ09OFZ1IsY6KJ5Ir9q96tQ7FiN57D
-         ExkQ==
-X-Gm-Message-State: AFqh2kriAy5jud22BVB3t/ASu4f1BhZeABoXI6pQJYgZdWCjiQEZF2Dr
-        5P88w6q4VkqhQMV1D14twaNX+FxhK2l5BfZ6KmKfWCpVOrk=
-X-Google-Smtp-Source: AMrXdXu5PjFxdJB5hjmPujykCvCLIaf5NB7r9JeAmJ8eyeje/IITqH8iAEreW99bV6+d700rH1R32SF16e+bCJKaYpY=
-X-Received: by 2002:a2e:8e84:0:b0:289:ae03:644b with SMTP id
- z4-20020a2e8e84000000b00289ae03644bmr2348689ljk.66.1674765981705; Thu, 26 Jan
- 2023 12:46:21 -0800 (PST)
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1yY8xFMviaybBZbR6LUXwM7erkIP07dc7kLH/Cf89gI=;
+        b=nS2HxKICSau+A+NWbNtOmOjqZo8US59zGQl9scTlDGm++YBfTZu3dLu4mu6RJbH0V2
+         3aAYAdxTPDdtCAyv4SVE9pxKIBr/KJz8aN7hhKtqc0/k+J+6EiXm6det06RQC7vEx/l/
+         8hf2mIJPEyJLfwdvO6O+CCFPqDgOnrpBZd5AFXN0ZOQNe10rABQ02PrBvlVo1gxc78do
+         w++Yf14KYe8pYqg5/K/++wMat8SNxQU1YBIsUsHop7rU9eZL4w4hG/o7tkSMYfPy/hPZ
+         FUUSkBmbpMl1Goge+Of7mlZxgpo7WIa5dXWYpRsvz91tOWj3yV8uoLRq5vCsDR/dszwL
+         TuVA==
+X-Gm-Message-State: AO0yUKXkvOqjs3mMBqqGbUXJNR3APixV/A2GnL/q04BTM6xJnFYS00/n
+        l9I93I2CwKqrOXOMhgMAbZoLfUEoJiKOIe0JkzGXIA==
+X-Google-Smtp-Source: AK7set/j7IFQt3wEHTLP8meUTdvUlETEGAA9tFhodvd+3fRjApoBiVntR2KndkCGARf+XO/1M6NftQ==
+X-Received: by 2002:a17:902:ec85:b0:196:cf1:c958 with SMTP id x5-20020a170902ec8500b001960cf1c958mr15458258plg.30.1674772485175;
+        Thu, 26 Jan 2023 14:34:45 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id u17-20020a170902e5d100b001754fa42065sm1459674plf.143.2023.01.26.14.34.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jan 2023 14:34:44 -0800 (PST)
+Message-ID: <63d30004.170a0220.8ca99.28ea@mx.google.com>
+Date:   Thu, 26 Jan 2023 14:34:44 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <0d0de1bc949d24e08174205c13c0b59bd73c1ea8.1674384302.git.geert+renesas@glider.be>
- <167460363944.4058.4676712965831302643.git-patchwork-notify@kernel.org>
- <Y9FG5Wg0PmP4zfV6@google.com> <CABBYNZJEU-GD5J6K8_Ur4PWLvP10VNJGP7e_43H0=W3DOS=PNw@mail.gmail.com>
- <Y9IzMWnOq+r2/4V2@google.com>
-In-Reply-To: <Y9IzMWnOq+r2/4V2@google.com>
-From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date:   Thu, 26 Jan 2023 12:46:09 -0800
-Message-ID: <CABBYNZ+Na7os7D_C_iV22UhyhobxiETjKkngPWVr14QAph6DfQ@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: leds: Document Bluetooth and WLAN triggers
-To:     Lee Jones <lee@kernel.org>
-Cc:     patchwork-bot+bluetooth@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>, pavel@ucw.cz,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        robh@kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: renesas-devel-2023-01-26-v6.2-rc5
+X-Kernelci-Report-Type: test
+Subject: renesas/master usb: 4 runs,
+ 1 regressions (renesas-devel-2023-01-26-v6.2-rc5)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Lee,
+renesas/master usb: 4 runs, 1 regressions (renesas-devel-2023-01-26-v6.2-rc=
+5)
 
-On Thu, Jan 26, 2023 at 12:00 AM Lee Jones <lee@kernel.org> wrote:
->
-> On Wed, 25 Jan 2023, Luiz Augusto von Dentz wrote:
->
-> > Hi Lee,
-> >
-> > On Wed, Jan 25, 2023 at 7:16 AM Lee Jones <lee@kernel.org> wrote:
-> > >
-> > > On Tue, 24 Jan 2023, patchwork-bot+bluetooth@kernel.org wrote:
-> > >
-> > > > Hello:
-> > > >
-> > > > This patch was applied to bluetooth/bluetooth-next.git (master)
-> > > > by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-> > > >
-> > > > On Sun, 22 Jan 2023 11:47:27 +0100 you wrote:
-> > > > > Add the missing trigger patterns for Bluetooth and WLAN activity,=
- which
-> > > > > are already in active use.
-> > > > >
-> > > > > While at it, move the mmc pattern comment where it belongs, and r=
-estore
-> > > > > alphabetical sort order.
-> > > > >
-> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > >
-> > > > > [...]
-> > > >
-> > > > Here is the summary with links:
-> > > >   - [v2] dt-bindings: leds: Document Bluetooth and WLAN triggers
-> > > >     https://git.kernel.org/bluetooth/bluetooth-next/c/ef017002b93b
-> > >
-> > > Why are you taking LED patches through the Bluetooth tree?
-> >
-> > I assume there isn't a tree dedicated to dt-bindings/leds
->
-> % ./scripts/get_maintainer.pl -f Documentation/devicetree/bindings/leds/c=
-ommon.yaml
->  Pavel Machek <pavel@ucw.cz> (maintainer:LED SUBSYSTEM,in file)
->  Lee Jones <lee@kernel.org> (maintainer:LED SUBSYSTEM)
->  Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED=
- DEVICE TREE BINDINGS)
->  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org> (maintainer:OPEN=
- FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
->  Jacek Anaszewski <jacek.anaszewski@gmail.com> (in file)
->  linux-leds@vger.kernel.org (open list:LED SUBSYSTEM)
->  devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE=
- TREE BINDINGS)
->  linux-kernel@vger.kernel.org (open list)
+Regressions Summary
+-------------------
 
-Well this doesn't tell us what parts of the dt_bindings have a
-dedicated tree and which doesn't, anyway this doesn't show
-linux-bluetooth so I wonder why people are CCing it.
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+sc7180-trogdo...zor-limozeen | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
 
-> > not to mention this was submitted to linux-bluetooth and nobody else
-> > other than Rob reviewed it,
->
-> To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
->     Rob Herring <robh+dt@kernel.org>,
->     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
->     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
->     linux-wireless@vger.kernel.org, linux-bluetooth@vger.kernel.org,
->     linux-renesas-soc@vger.kernel.org,
->     Geert Uytterhoeven <geert+renesas@glider.be>,
->     Rob Herring <robh@kernel.org>
->
-> > anyway I'd be happy if the dt-bindings patches
-> > would be handled elsewhere.
->
-> Yep, we got this. :)
 
-So if it starts with dt-binding: prefix shall we ignore? Or is just
-for dt-bindings: leds? Or perhaps we can just ignore patches received
-as CC: rather than directly To: field.
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-01-26-v6.2-rc5/plan/usb/
 
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+  Test:     usb
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-01-26-v6.2-rc5
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      635b2020aa8744f7174ce492c342357cb34c9e86 =
 
 
 
---=20
-Luiz Augusto von Dentz
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+sc7180-trogdo...zor-limozeen | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63d2ed2965d422ea7c915edf
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-26-v6.2-rc5/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/us=
+b-sc7180-trogdor-lazor-limozeen.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-01-26-v6.2-rc5/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/us=
+b-sc7180-trogdor-lazor-limozeen.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230120.0/arm64/rootfs.cpio.gz =
+
+
+
+  * usb.login: https://kernelci.org/test/case/id/63d2ed2965d422ea7c915ee0
+        new failure (last pass: renesas-devel-2023-01-24-v6.2-rc5) =
+
+ =20
