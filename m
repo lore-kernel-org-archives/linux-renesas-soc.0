@@ -2,109 +2,93 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7003C54E94
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Jan 2023 13:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9B1C54E94
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Jan 2023 13:40:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236782AbjAZN1f (ORCPT
+        id S236936AbjAZNk6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Jan 2023 08:27:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36202 "EHLO
+        Thu, 26 Jan 2023 08:40:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236210AbjAZN1e (ORCPT
+        with ESMTP id S237030AbjAZNk5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2023 08:27:34 -0500
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 093896B991;
-        Thu, 26 Jan 2023 05:27:12 -0800 (PST)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-50660e2d2ffso22817977b3.1;
-        Thu, 26 Jan 2023 05:27:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4qbG6eVB5xuDn3dtmvIgLy/zetvuTGbID3mzZEtD58=;
-        b=DbKlCXK9xeHqYSCz4mS0W9lwiZGx22FO3kIPMku2DRhW+F5+qWwuFyUqw7oysb0vp1
-         h/60OS6dTjUYnX5Yj/+lm1f4vt8YO+4eCEAKUcAjG+udU/h+Yc8b7eYGTpQ8ZyJPGxkX
-         j9SLn5KwdS6HR44ZMiCtFufcuYyCOsv17qPfmStUbdHu1HXS6UUF9wEQUzWbb8m9/c8N
-         LX5zyFIdlELEairpgpLune79Jsx/cARzgYUoM8Y9CgcOjevU1/elo17Ml1S4VDzgw/uI
-         Yp4S2oPaTr+nPY+5kYfkDkGqMT2iTyNqk3+KnGmQID3WJ5U9qcX4qJ8FcRnwBDUvm03l
-         rROw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j4qbG6eVB5xuDn3dtmvIgLy/zetvuTGbID3mzZEtD58=;
-        b=Q5O1yhHbbCA3HjKsZtuH7fpuxwZRWBUF52NiPwXBAoMg//PZp9g5zac+wNEwUVJOZi
-         Xo665pMX/inCG/QWDwwks3eYwyuCod3d+W0SYh1ab5uZrw6vHDlXiCsjdJXSkctUa43m
-         zta54Ei44WBYZeO1Ij02UX5VfL+KjmgpwHj7mt/OOh4tww+oA1OIcnb/BoTHjx3YULm8
-         3Pk1pY+YVrbn9ZYVJgJxLPAovpWX2a9en7+tJDwhrBePZo6Mjz7z/cUHJLZF69V0RFje
-         YtBTaA28LAyNFp+SYgD7d/TrHkSDu1avX14g/H/8qzigs5OLdOEvtcB7pyTnX7sEXMNq
-         ossA==
-X-Gm-Message-State: AO0yUKXi4/bdH/ICkqEB0zfVw6LFzxazTEtJhTWzi3QQNpuWG5rm5aNK
-        GZVr63U2mO0Jo332SEgn+YX3vlBvvaC9aI+wLxc=
-X-Google-Smtp-Source: AK7set+Zx9yy/BVXoOqFh45ED3u90etOiIl+eS4ys5iYxouATNh8yE1SOaojHW3o/0YIlMrw6dCi3vFpG5ePZXKDkhs=
-X-Received: by 2002:a81:b246:0:b0:506:55d9:3a78 with SMTP id
- q67-20020a81b246000000b0050655d93a78mr824104ywh.339.1674739631151; Thu, 26
- Jan 2023 05:27:11 -0800 (PST)
+        Thu, 26 Jan 2023 08:40:57 -0500
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3C9D6B981
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2023 05:40:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=JIYRwYSZAIT2QW3oy/CCsbEmybCi
+        6tEGlcMWrRXa4Cs=; b=kzUypsVCCToymre1U9rZuvhoygvq0/Sc/2aAcqlLzP+m
+        iWb6tUn+MtVmO49v5WpOf8LS/BkE/vbsF5A1rd0TS0Jkh1EW2rdskjAKFxWhxs9n
+        4cRUaM2JT56rUs6tKyn9VJylpEn7d4/h/Sao7iE3kSs24iL/SfhhmVbPYD3NBOw=
+Received: (qmail 3798059 invoked from network); 26 Jan 2023 14:40:49 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jan 2023 14:40:49 +0100
+X-UD-Smtp-Session: l3s3148p1@eKCL5SrzhL0ujnvo
+Date:   Thu, 26 Jan 2023 14:40:48 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] spi: sh-msiof: Enforce fixed DTDL for R-Car H3
+Message-ID: <Y9KC4Pu/AnnXOLhI@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20230124074706.13383-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUnUf+ZTRTBSmjz1_61CpWvaO=fyDv7ExT+FnQi=ujFXw@mail.gmail.com>
+ <Y9J6+uoXxUIs4Bkk@ninjato>
+ <CAMuHMdXRBYhR+_+r+akZ5nKYPgpVKMNEHB5KCP_pnPJYtHvU=A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230118104656.67706-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20230118104656.67706-1-wsa+renesas@sang-engineering.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 26 Jan 2023 13:26:44 +0000
-Message-ID: <CA+V-a8vp-oxaQyzPg2YonshdO-j0z+8vXpqgD=P8w94eDNJDOA@mail.gmail.com>
-Subject: Re: [PATCH v2] memory: renesas-rpc-if: Fix PHYCNT.STRTIM setting
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5y+AKo3ML6ty8233"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXRBYhR+_+r+akZ5nKYPgpVKMNEHB5KCP_pnPJYtHvU=A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
 
-Thank you for the patch.
+--5y+AKo3ML6ty8233
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am yet to test this patch on g2l (I'll test v3 as you plan to send it today).
 
-On Wed, Jan 18, 2023 at 10:46 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> From: Cong Dang <cong.dang.xn@renesas.com>
->
-> According to the datasheets, the Strobe Timing Adjustment bit (STRTIM)
-> setting is different on R-Car SoCs, i.e.
->
-> R-Car H3 ES1.*  : STRTIM[2:0] is set to 0x0
-> R-Car M3 ES1.*  : STRTIM[2:0] is set to 0x6
-> other R-Car Gen3: STRTIM[2:0] is set to 0x7
-> other R-Car Gen4: STRTIM[3:0] is set to 0xf
->
-> To fix this issue, a DT match data was added to specify the setting
-> for special use cases.
->
-> Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-> Signed-off-by: Hai Pham  <hai.pham.ud@renesas.com>
-> [wsa: rebased, restructured a little, added Gen4 support]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-<snip>
-> +struct rpcif_info {
-> +       enum rpcif_type type;
-> +       u8 strtim;
-> +};
-> +
->  struct rpcif {
->         struct device *dev;
->         void __iomem *base;
-> @@ -71,6 +76,7 @@ struct rpcif {
->         struct reset_control *rstc;
->         size_t size;
->         enum rpcif_type type;
-I think now you can get rid of this member?
+> > I have to disagree here. The docs say that other values are prohibited.
+> > IMO the driver should take care of valid values then. We should not rely
+> > on user provided input.
+>=20
+> Then we should make sure the user cannot override to an invalid value
+> through "renesas,dtdl" either?
 
-Cheers,
-Prabhakar
+We do. The new flag is checked after sh_msiof_spi_parse_dt(), so any
+user input will be overwritten with the only value allowed.
+
+> To be clarified with Renesas?
+
+Frankly, I don't think it is worth the hazzle and just stick to the
+latest docs. Yes, they may be inaccurate for ES2.0 but what is the
+downside? Will it break things or is this just a little overhead?
+
+
+--5y+AKo3ML6ty8233
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmPSgt0ACgkQFA3kzBSg
+KbZaGxAAsyjz5BZ7SAaBzUuYStZr7w9CJDTffu0WCQjEip3XZLNeGVpaJ5xIJLzn
+8eVAVHLhtdB6ORLqMKrlr5kT+Fio3F2OKPPFjJ9yWHJkiSpLu46ZVNIGAw2qcN8y
+l299ImKEKHASrNWP8las7nL5CN5Evh/Jx2b8xn6XpKqYTIhw5tRiu87YsEsakGAM
+K/KWb89FwxMmUuPghrBVUhLin9IH5urdxhiCHuW8k+JcsW4uzgkA0aKB0waXfLfM
+EtqnwMOksiQhoWiaawTpDll3aHkt+W6wwTkNMR1Bm9fjgDAp5JYjLFs3vwVHBr0M
+XvkIL3PMeciVruxmcUnPGwL4PyOcpB0ZmPrnaujC+TnQCm0hep8gUAD+H5Hq0rjf
+mFvCi4T/8TmSLjRH1KCW7F4bsq4BSs0EZ11wqVY+nSGng/Uyz/4O/Ko6vZpgVDsN
+vTQtZ4vJi1Tzd2r9NvZnagoW5nbO3R+mcAnhKimaNu9TUsz8DKkPaqLuL3RQmsKr
+vnb8RlIqQHLrnX+RzMRPZLfUmepFLDFrVfaTGFN4IjTGAG5QnN76B26UhXzdqKwz
+KsJq5gK/BJTUQaur49zenIFpNPO0C/tRe9kiyeEkWe/uADCnj2tSqRTXPYLqNB3U
+whjmeM+kMeby4tIeh8Jg50Efpbkr9Mb5oET9K/Z4W10wmOGal74=
+=vSNp
+-----END PGP SIGNATURE-----
+
+--5y+AKo3ML6ty8233--
