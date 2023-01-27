@@ -2,26 +2,26 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 548D6C54EAA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Jan 2023 14:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E02C61DB3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Jan 2023 14:26:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232280AbjA0O0e (ORCPT
+        id S229830AbjA0O0h (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 27 Jan 2023 09:26:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39100 "EHLO
+        Fri, 27 Jan 2023 09:26:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232398AbjA0O0c (ORCPT
+        with ESMTP id S232659AbjA0O0f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2023 09:26:32 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9AE8B13D58;
-        Fri, 27 Jan 2023 06:26:26 -0800 (PST)
+        Fri, 27 Jan 2023 09:26:35 -0500
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 450C330B34;
+        Fri, 27 Jan 2023 06:26:32 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.97,251,1669042800"; 
-   d="scan'208";a="150776280"
+   d="scan'208";a="147645294"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Jan 2023 23:26:25 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 27 Jan 2023 23:26:26 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 969BF433ACC3;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EBA0F433ACC3;
         Fri, 27 Jan 2023 23:26:25 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
@@ -29,51 +29,38 @@ To:     linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
         pabeni@redhat.com
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v4 0/4] net: ethernet: renesas: rswitch: Modify initialization for SERDES and PHY
-Date:   Fri, 27 Jan 2023 23:26:17 +0900
-Message-Id: <20230127142621.1761278-1-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next v4 3/4] net: ethernet: renesas: rswitch: Enable ovr_host_interfaces
+Date:   Fri, 27 Jan 2023 23:26:20 +0900
+Message-Id: <20230127142621.1761278-4-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230127142621.1761278-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20230127142621.1761278-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-So, I would like to change the MACTYPE as SGMII by software for the platform.
+Enable ovr_host_interfaces to set the host_interfaces of phy_dev
+for a non-sfp PHY.
 
-The patch [1/4] sets phydev->host_interfaces by phylink for Marvell PHY
-driver (marvell10g) to initialize the MACTYPE.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/net/ethernet/renesas/rswitch.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The patch [2/4] siplifies the rswitch driver, the patch [3/4] enables
-the ovr_host_interfaces flag, and the patch [4/4] phy_power_on() calling
-to initialize the Ethernet SERDES PHY driver (r8a779f0-eth-serdes)
-for each channel.
-
-Changes from v3:
-https://lore.kernel.org/all/20230127014812.1656340-1-yoshihiro.shimoda.uh@renesas.com/
- - Keep a pointer of "port" and more simplify the code.
-
-Changes from v2:
- - Add some blank lines for readability.
-
-Changes from v1:
- - Add a new flag (ovr_host_interfaces) into phylink_config in the patch [1/4].
- - Add a new patch [3/4] for the new flag.
- - Add a error message to the patch [4/4/] for MLO_AN_INBAND mode.
-
-
-Yoshihiro Shimoda (4):
-  net: phylink: Set host_interfaces for a non-sfp PHY
-  net: ethernet: renesas: rswitch: Simplify struct phy * handling
-  net: ethernet: renesas: rswitch: Enable ovr_host_interfaces
-  net: ethernet: renesas: rswitch: Add phy_power_{on,off}() calling
-
- drivers/net/ethernet/renesas/rswitch.c | 116 ++++++++-----------------
- drivers/net/ethernet/renesas/rswitch.h |   2 +
- drivers/net/phy/phylink.c              |  11 +++
- include/linux/phylink.h                |   3 +
- 4 files changed, 54 insertions(+), 78 deletions(-)
-
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index 1c154018d795..b9addbc29ef9 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -1174,6 +1174,7 @@ static int rswitch_phylink_init(struct rswitch_device *rdev)
+ 
+ 	rdev->phylink_config.dev = &rdev->ndev->dev;
+ 	rdev->phylink_config.type = PHYLINK_NETDEV;
++	rdev->phylink_config.ovr_host_interfaces = true;
+ 	__set_bit(PHY_INTERFACE_MODE_SGMII, rdev->phylink_config.supported_interfaces);
+ 	__set_bit(PHY_INTERFACE_MODE_USXGMII, rdev->phylink_config.supported_interfaces);
+ 	rdev->phylink_config.mac_capabilities = MAC_100FD | MAC_1000FD | MAC_2500FD;
 -- 
 2.25.1
 
