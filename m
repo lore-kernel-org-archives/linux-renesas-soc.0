@@ -2,84 +2,103 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 084A3C54EAA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Jan 2023 14:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B41FEC38142
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Jan 2023 14:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232599AbjA0OFr (ORCPT
+        id S232257AbjA0O0e (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 27 Jan 2023 09:05:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47182 "EHLO
+        Fri, 27 Jan 2023 09:26:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235230AbjA0OF2 (ORCPT
+        with ESMTP id S232280AbjA0O0c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2023 09:05:28 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BD44E7E6AD;
-        Fri, 27 Jan 2023 06:04:50 -0800 (PST)
+        Fri, 27 Jan 2023 09:26:32 -0500
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 80F9BA5F7;
+        Fri, 27 Jan 2023 06:26:26 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.97,251,1669042800"; 
-   d="scan'208";a="150775484"
+   d="scan'208";a="147645291"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Jan 2023 23:04:50 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 27 Jan 2023 23:26:25 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 124B4432BC63;
-        Fri, 27 Jan 2023 23:04:50 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B8FAF433ACC5;
+        Fri, 27 Jan 2023 23:26:25 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     iommu@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] dt-bindings: iommu: renesas,ipmmu-vmsa: Update for R-Car Gen4
-Date:   Fri, 27 Jan 2023 23:04:46 +0900
-Message-Id: <20230127140446.1728102-1-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next v4 1/4] net: phylink: Set host_interfaces for a non-sfp PHY
+Date:   Fri, 27 Jan 2023 23:26:18 +0900
+Message-Id: <20230127142621.1761278-2-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230127142621.1761278-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20230127142621.1761278-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since R-Car Gen4 doens't have the main IPMMU IMSSTR register, update
-the renesas,ipmmu-main property which allows to only set the first
-argument for R-Car Gen4.
+If a new flag (ovr_host_interfaces) in the phylink_config is set,
+overwrite the host_interfaces in the phy_device by link_interface.
+
+Note that an ethernet PHY driver like marvell10g will check
+PHY_INTERFACE_MODE_SGMII in the host_interfaces whther the host
+controller supports a rate matching interface mode or not. So, set
+PHY_INTERFACE_MODE_SGMII to the host_interfaces if it is set in
+the supported_interfaces.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-Changes from v1:
-https://lore.kernel.org/all/20230123012940.1250879-1-yoshihiro.shimoda.uh@renesas.com/
- - Change number of argument for R-Car Gen4 instead of "module id".
-   On the discussion, using 'minItems' is a solution. But, it causes
-   "too short" errors on dtbs_check. So, using "oneOf" instead.
+ drivers/net/phy/phylink.c | 11 +++++++++++
+ include/linux/phylink.h   |  3 +++
+ 2 files changed, 14 insertions(+)
 
- .../bindings/iommu/renesas,ipmmu-vmsa.yaml         | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-index 72308a4c14e7..8e8f79f612e5 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-@@ -73,12 +73,16 @@ properties:
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 319790221d7f..dee64b4a1175 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -1814,6 +1814,17 @@ int phylink_fwnode_phy_connect(struct phylink *pl,
+ 		pl->link_config.interface = pl->link_interface;
+ 	}
  
-   renesas,ipmmu-main:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
--    items:
-+    oneOf:
-+      - items:
-+          - items:
-+              - description: phandle to main IPMMU
-+              - description: the interrupt bit number associated with the particular
-+                  cache IPMMU device. The interrupt bit number needs to match the main
-+                  IPMMU IMSSTR register. Only used by cache IPMMU instances.
-       - items:
--          - description: phandle to main IPMMU
--          - description: the interrupt bit number associated with the particular
--              cache IPMMU device. The interrupt bit number needs to match the main
--              IPMMU IMSSTR register. Only used by cache IPMMU instances.
-+          - items:
-+              - description: phandle to main IPMMU
-     description:
-       Reference to the main IPMMU phandle plus 1 cell. The cell is
-       the interrupt bit number associated with the particular cache IPMMU
++	if (pl->config->ovr_host_interfaces) {
++		__set_bit(pl->link_interface, phy_dev->host_interfaces);
++
++		/* An ethernet PHY driver will check PHY_INTERFACE_MODE_SGMII
++		 * in the host_interfaces whether the host controller supports
++		 * a rate matching interface mode or not.
++		 */
++		if (test_bit(PHY_INTERFACE_MODE_SGMII, pl->config->supported_interfaces))
++			__set_bit(PHY_INTERFACE_MODE_SGMII, phy_dev->host_interfaces);
++	}
++
+ 	ret = phy_attach_direct(pl->netdev, phy_dev, flags,
+ 				pl->link_interface);
+ 	if (ret) {
+diff --git a/include/linux/phylink.h b/include/linux/phylink.h
+index c492c26202b5..c8dd53b1e857 100644
+--- a/include/linux/phylink.h
++++ b/include/linux/phylink.h
+@@ -124,6 +124,8 @@ enum phylink_op_type {
+  *		      if MAC link is at %MLO_AN_FIXED mode.
+  * @mac_managed_pm: if true, indicate the MAC driver is responsible for PHY PM.
+  * @ovr_an_inband: if true, override PCS to MLO_AN_INBAND
++ * @ovr_host_interfaces: if true, override host_interfaces of phy_device from
++ *			 link_interface.
+  * @get_fixed_state: callback to execute to determine the fixed link state,
+  *		     if MAC link is at %MLO_AN_FIXED mode.
+  * @supported_interfaces: bitmap describing which PHY_INTERFACE_MODE_xxx
+@@ -137,6 +139,7 @@ struct phylink_config {
+ 	bool poll_fixed_state;
+ 	bool mac_managed_pm;
+ 	bool ovr_an_inband;
++	bool ovr_host_interfaces;
+ 	void (*get_fixed_state)(struct phylink_config *config,
+ 				struct phylink_link_state *state);
+ 	DECLARE_PHY_INTERFACE_MASK(supported_interfaces);
 -- 
 2.25.1
 
