@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF9CC636CB
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Jan 2023 14:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0560EC636BD
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Jan 2023 14:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234764AbjA1OWi (ORCPT
+        id S233096AbjA1OYi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 28 Jan 2023 09:22:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56504 "EHLO
+        Sat, 28 Jan 2023 09:24:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234518AbjA1OWi (ORCPT
+        with ESMTP id S233982AbjA1OYi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 28 Jan 2023 09:22:38 -0500
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A18426592
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Jan 2023 06:22:36 -0800 (PST)
+        Sat, 28 Jan 2023 09:24:38 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EEA427D57
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Jan 2023 06:24:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674915756; x=1706451756;
+  t=1674915877; x=1706451877;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=0WFlN7S/3uJqNu3hMVHgeItUmFoZru5vW7y4aNIVLp0=;
-  b=A4JgwSUK79vhterBuwYGJJjkpMDa48f7bNGnFZ/Z1/Wdu7hk+knj9HTT
-   GEKeuanq9TuQHEO5tKpy7OrAHWqQx9BNBAEkEenfSQ+MZyEUJy9/7XyoJ
-   1KBEjrXHKlBOcYslQ/td7OEXVmQNBh4DJhKZFxqZ/LNqHmXY9zTaE/5V7
-   QPs6Cdd1sst1C9RhMzRHjMIUvz0tRQiBHRPTxGCT37jk6JyVFe2eP9ZAD
-   Hd+cLhGm9lMq9UEZV6IV78iI+ScwFRp2whhSIRDOLs4IWwtQQT67L3tbL
-   DbNlLYk553y1n+9HZ0DZIPcFbckSwa5vvlRFNUFFT92yrWabOXfqHDVph
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="389672815"
+  bh=MAEuCCv+6YQR61DnWh1ZGMfj/XD9C7MAQiBC7tU+P/o=;
+  b=Snshj/+1Xg2xyJUXHdyPC1Oqt0q5sqluobk0ZLUWF0OXCpvhXcowqoif
+   8S1MyBQ1UVOfPFqOMfBIovC/UmCMddQN5HuqCMoMZhcUo8kqGkeeu0O9u
+   oVNvSRU6usreg7bAoBIHho08iK3SliBul1qa/jX4Ur2B3YEIB+ttGkmAq
+   xE+T+ohMBzHkhP49kFCZ9j2Um/IMwNAYGGu9nXM7PfLY5N3sa8PK2Bwp7
+   hrJjCmtlw7DlgGgoGy0BOFOdnEwro2aR8tIXEtiXa+Z4BXGTSwnbELAme
+   XSB2YgM+fW7ivONW8usHgJUXtHPPD1mgcv0dpr62Uyblamf/guD3tDwy+
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="324987219"
 X-IronPort-AV: E=Sophos;i="5.97,254,1669104000"; 
-   d="scan'208";a="389672815"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2023 06:22:34 -0800
+   d="scan'208";a="324987219"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2023 06:24:36 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="641037427"
+X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="656941425"
 X-IronPort-AV: E=Sophos;i="5.97,254,1669104000"; 
-   d="scan'208";a="641037427"
+   d="scan'208";a="656941425"
 Received: from lkp-server01.sh.intel.com (HELO ffa7f14d1d0f) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 28 Jan 2023 06:22:33 -0800
+  by orsmga007.jf.intel.com with ESMTP; 28 Jan 2023 06:24:34 -0800
 Received: from kbuild by ffa7f14d1d0f with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pLm6C-0000kC-1t;
-        Sat, 28 Jan 2023 14:22:32 +0000
-Date:   Sat, 28 Jan 2023 22:21:37 +0800
+        id 1pLm89-0000mI-1X;
+        Sat, 28 Jan 2023 14:24:33 +0000
+Date:   Sat, 28 Jan 2023 22:23:51 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-clk-for-v6.3] BUILD SUCCESS
- bd176e46e9c23f669b28630cc8f3fb1b89fd610e
-Message-ID: <63d52f71.K3KyfZ3MEXAubEP2%lkp@intel.com>
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ 5f4935f3f05dc7d4b4995c32164702f43b8cbf0a
+Message-ID: <63d52ff7.jTbNwETCEg0zlIyC%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -59,12 +59,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v6.3
-branch HEAD: bd176e46e9c23f669b28630cc8f3fb1b89fd610e  clk: renesas: r8a779g0: Add CAN-FD clocks
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: 5f4935f3f05dc7d4b4995c32164702f43b8cbf0a  Merge branches 'renesas-arm-defconfig-for-v6.3', 'renesas-drivers-for-v6.3', 'renesas-dt-bindings-for-v6.3' and 'renesas-dts-for-v6.3' into renesas-next
 
-elapsed time: 735m
+elapsed time: 736m
 
-configs tested: 96
+configs tested: 97
 configs skipped: 2
 
 The following configs have been built successfully.
@@ -102,12 +102,12 @@ powerpc                           allnoconfig
 mips                             allyesconfig
 powerpc                          allmodconfig
 sh                               allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
 x86_64                           rhel-8.3-kvm
 x86_64                           rhel-8.3-syz
 x86_64                           rhel-8.3-bpf
 x86_64                         rhel-8.3-kunit
-um                           x86_64_defconfig
-um                             i386_defconfig
 s390                                defconfig
 s390                             allmodconfig
 arc                                 defconfig
@@ -169,6 +169,7 @@ arm                  randconfig-r046-20230124
 mips                        maltaup_defconfig
 arm                         palmz72_defconfig
 powerpc                    gamecube_defconfig
+x86_64               randconfig-k001-20230123
 
 -- 
 0-DAY CI Kernel Test Service
