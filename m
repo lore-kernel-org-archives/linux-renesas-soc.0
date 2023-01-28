@@ -2,128 +2,173 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B963C61DB3
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Jan 2023 07:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D208C27C76
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Jan 2023 14:22:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234025AbjA1Hfr (ORCPT
+        id S233989AbjA1OWh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 28 Jan 2023 02:35:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37736 "EHLO
+        Sat, 28 Jan 2023 09:22:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233775AbjA1Hfk (ORCPT
+        with ESMTP id S230336AbjA1OWg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 28 Jan 2023 02:35:40 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1A7E8D09E
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jan 2023 23:35:17 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id r8so221312pls.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jan 2023 23:35:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+RFpRJs0xuB4gmuObROuwz4dxLhUH7cqrzlkSnFIcc=;
-        b=E5f3tYSRcGCHD0f05IVlrEg2aBkkQF0+d8+GwNVMRweXITwGxTNJvl5GTzT/ZHynfs
-         tS33LB+QIqb6arl4mkDu5QIIcWq5vLgpXy8dfHP3V/owwfOnmTzyMOVP0yNrKwmgGMTM
-         tG1bKn3TkpfZydcJaT59XgRaIixC6tces40+ymhlwJ1PXxTT4wvEjPW7qoMy1Ye0oXYz
-         oCJ7l5IbZD3va8n08BzIwLdTZQpf60Obi65+jSPECZ4UGLN3XalZN27XFaLXBv51sDrI
-         X/kC6qLfllMA7pk8Jbm/NdDdvLdnCZch7bX6oAHOjIuA2BwN+rjWZ4QxCawWq1g9Ce0Z
-         cBSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b+RFpRJs0xuB4gmuObROuwz4dxLhUH7cqrzlkSnFIcc=;
-        b=C6zZN89ta328iJeLjj64wbGs1kdjFrCv927MoVzf33ykNT/B7I6c1o3NyX+lMg9jOD
-         bJ3JHtjEWfLoYdq+8h/eyQCGB/quA/e6jPrPH41hCPlEw69MGrK5pH9RfSqu0j23cYYc
-         zRuyc2kW2nuRxq9A2zFedSyF6x+Xn4/QuX4J2r/cr4pm37hLUv8NNzViugQ784gcPkIk
-         q91dtBC9BsZY1i4Q5hiuDQOQE6RLFvhGi8O5w8c3QVieYE+Ksjh4CRVdqlBrSl1224fV
-         T4IXe79pem9sPF6QPhEnx5ShcShhtvP1lVTCIrsNPjhsYyQ7Mu7kdOZn2QtXfwX3RdUO
-         VGVA==
-X-Gm-Message-State: AFqh2kq1a9SxIygbUwHrQtQshoBjsobzZ3npR5gui2nX5Ou+fsn6tk47
-        UfIH18rW2hbo4GKGu3vPmLp70HfU21R2fJAN7wp9KQ==
-X-Google-Smtp-Source: AMrXdXtcy6GzDmIsWx+JJhiM4nf5ZJkxCfBvmjzprfDg2/sXA1zxWHzVMufXd/eGbAB3EbQBo759okdBtzEgtTTy6y4=
-X-Received: by 2002:a17:90a:7e8d:b0:225:d307:95ce with SMTP id
- j13-20020a17090a7e8d00b00225d30795cemr5435623pjl.136.1674891317143; Fri, 27
- Jan 2023 23:35:17 -0800 (PST)
+        Sat, 28 Jan 2023 09:22:36 -0500
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2EAD26592
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Jan 2023 06:22:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674915754; x=1706451754;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hqdI85EjrDJPesFFzc1T04RovIY0nFeLSV7tsxk/YX4=;
+  b=Mi/ijsN20Ovqrh6WGrDyeyjLqaQyzggB/aka7uwHWuhEH4fTFgJAtndw
+   lJEuxGNUK8Fif/8o4IHWhl+eqLEwlWK88Ty9uiV6PgMtQBn2O3H8FbiQe
+   pjQhENVcNYWcqKw82Ezt+hb4TyU9rNtEx+pu3GEveJh8lNFr+0ZxP1Zk5
+   1clehgRSxOouOWd3hpKGjg6pVgKDJ7zEQ7o4nkWdsHfD3H54R2TGit5oH
+   0uyTvejPa99aglgXyMl3DTYbnfwSUm9uSAv09AUJ74UhuikcSvzI5gepT
+   tmU8sCa225PSkNwXiGUfrO908o5I8+DiFVvacORRnvhWqRR2twi4tbMD5
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="354603802"
+X-IronPort-AV: E=Sophos;i="5.97,254,1669104000"; 
+   d="scan'208";a="354603802"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2023 06:22:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="726996944"
+X-IronPort-AV: E=Sophos;i="5.97,254,1669104000"; 
+   d="scan'208";a="726996944"
+Received: from lkp-server01.sh.intel.com (HELO ffa7f14d1d0f) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 28 Jan 2023 06:22:33 -0800
+Received: from kbuild by ffa7f14d1d0f with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pLm6C-0000jf-10;
+        Sat, 28 Jan 2023 14:22:32 +0000
+Date:   Sat, 28 Jan 2023 22:22:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:renesas-dts-for-v6.3] BUILD SUCCESS
+ 5f68b57a957af2f80ec03329e2fec97882574297
+Message-ID: <63d52f93.mti98bXYplpDn7zh%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <20230127001141.407071-1-saravanak@google.com> <20230127001141.407071-11-saravanak@google.com>
- <Y9OemQgO9qoSdT1r@smile.fi.intel.com>
-In-Reply-To: <Y9OemQgO9qoSdT1r@smile.fi.intel.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 27 Jan 2023 23:34:40 -0800
-Message-ID: <CAGETcx9rSNgBhthkyj5zPbTPzp_SW+UUUJqPCSPFix0KG9NiOw@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] irqchip/irq-imx-gpcv2: Mark fwnode device as not initialized
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Len Brown <lenb@kernel.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux Kernel Functional Testing <lkft@linaro.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        John Stultz <jstultz@google.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Maxim Kiselev <bigunclemax@gmail.com>,
-        Maxim Kochetkov <fido_max@inbox.ru>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Colin Foster <colin.foster@in-advantage.com>,
-        Martin Kepplinger <martin.kepplinger@puri.sm>,
-        Jean-Philippe Brucker <jpb@kernel.org>,
-        kernel-team@android.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jan 27, 2023 at 1:51 AM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Jan 26, 2023 at 04:11:37PM -0800, Saravana Kannan wrote:
-> > Since this device is only partially initialized by the irqchip driver,
-> > we need to mark the fwnode device as not initialized. This is to let
-> > fw_devlink know that the device will be completely initialized at a
-> > later point. That way, fw_devlink will continue to defer the probe of
-> > the power domain consumers till the power domain driver successfully
-> > binds to the struct device and completes the initialization of the
-> > device.
->
-> ...
->
-> >               pd_pdev->dev.of_node = np;
-> > +             pd_pdev->dev.fwnode = of_fwnode_handle(np);
->
-> Instead,
->
->                 device_set_node(&pd_dev->dev, of_fwnode_handle(np));
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v6.3
+branch HEAD: 5f68b57a957af2f80ec03329e2fec97882574297  arm64: dts: renesas: r8a779f0: Add iommus to MMC node
 
-Ack
+elapsed time: 734m
 
+configs tested: 95
+configs skipped: 73
 
--Saravana
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+x86_64                            allnoconfig
+x86_64                          rhel-8.3-func
+x86_64                    rhel-8.3-kselftests
+i386                             allyesconfig
+i386                                defconfig
+arm64                            allyesconfig
+arm                                 defconfig
+arm                              allyesconfig
+x86_64               randconfig-a002-20230123
+x86_64               randconfig-a005-20230123
+x86_64               randconfig-a001-20230123
+x86_64               randconfig-a006-20230123
+x86_64               randconfig-a003-20230123
+x86_64               randconfig-a004-20230123
+x86_64                              defconfig
+x86_64                           allyesconfig
+x86_64                               rhel-8.3
+i386                 randconfig-a004-20230123
+i386                 randconfig-a006-20230123
+i386                 randconfig-a005-20230123
+i386                 randconfig-a002-20230123
+i386                 randconfig-a003-20230123
+i386                 randconfig-a001-20230123
+m68k                             allyesconfig
+m68k                             allmodconfig
+arc                              allyesconfig
+alpha                            allyesconfig
+powerpc                           allnoconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+sh                               allmodconfig
+x86_64                           rhel-8.3-kvm
+x86_64                           rhel-8.3-syz
+x86_64                           rhel-8.3-bpf
+x86_64                         rhel-8.3-kunit
+um                           x86_64_defconfig
+um                             i386_defconfig
+s390                                defconfig
+s390                             allmodconfig
+arc                                 defconfig
+alpha                               defconfig
+s390                             allyesconfig
+ia64                             allmodconfig
+i386                          randconfig-a012
+i386                          randconfig-a014
+i386                          randconfig-a016
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                    nommu_k210_defconfig
+riscv                             allnoconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+i386                          randconfig-c001
+m68k                         amcore_defconfig
+powerpc                      makalu_defconfig
+m68k                        mvme147_defconfig
+m68k                          amiga_defconfig
+mips                          rb532_defconfig
+arc                        nsim_700_defconfig
+sh                           se7724_defconfig
+sh                            shmin_defconfig
+sh                        sh7763rdp_defconfig
+sh                          rsk7264_defconfig
+arm                          exynos_defconfig
+xtensa                  nommu_kc705_defconfig
+arc                      axs103_smp_defconfig
+xtensa                    smp_lx200_defconfig
+s390                          debug_defconfig
+
+clang tested configs:
+x86_64               randconfig-a013-20230123
+x86_64               randconfig-a011-20230123
+x86_64               randconfig-a016-20230123
+x86_64               randconfig-a012-20230123
+x86_64               randconfig-a015-20230123
+x86_64               randconfig-a014-20230123
+riscv                randconfig-r042-20230123
+hexagon              randconfig-r041-20230123
+hexagon              randconfig-r045-20230123
+s390                 randconfig-r044-20230123
+i386                 randconfig-a013-20230123
+i386                 randconfig-a016-20230123
+i386                 randconfig-a012-20230123
+i386                 randconfig-a015-20230123
+i386                 randconfig-a011-20230123
+i386                 randconfig-a014-20230123
+powerpc                      walnut_defconfig
+arm                        mvebu_v5_defconfig
+arm                           sama7_defconfig
+x86_64                          rhel-8.3-rust
+powerpc                 mpc832x_mds_defconfig
+hexagon              randconfig-r041-20230124
+hexagon              randconfig-r045-20230124
+arm                  randconfig-r046-20230124
+mips                        maltaup_defconfig
+arm                         palmz72_defconfig
+powerpc                    gamecube_defconfig
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
