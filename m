@@ -2,93 +2,112 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082CDC54EAA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Jan 2023 16:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A06DDC54EAA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Jan 2023 17:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236488AbjA3Q7R (ORCPT
+        id S237655AbjA3Rg6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 30 Jan 2023 11:59:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55952 "EHLO
+        Mon, 30 Jan 2023 12:36:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233899AbjA3Q7Q (ORCPT
+        with ESMTP id S236479AbjA3Rg0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jan 2023 11:59:16 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4DDE3F2B2;
-        Mon, 30 Jan 2023 08:59:15 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8F76FB81240;
-        Mon, 30 Jan 2023 16:59:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E40EC433EF;
-        Mon, 30 Jan 2023 16:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675097953;
-        bh=TEmP3Vf+1ys1XnL6zZZPlJEDD1EREssa1UfjKey0QKs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Vrw8qQFUCh+fcTCikMKNUdd5mFjLT16oJV8HLvj5lJgArQEwc0P7/tnjmOZoqEztE
-         303uyv7poK0HTdWamkyN12Qn4l5/1JWrzUxl8vzjmo+vs+P2abutwREX6tjsnZLSop
-         VDB3ondM+bEzei7zzN4oeq3iwF0ciesk6O3MOhLjkCPTuZrXAEgCmv6UHo1pLNoxiU
-         A7U0u9+F0nJ2H9yW4uJfwmET3XgA8Pfuu0VBDY5ic00m0DlPry/vQ46+seOyCfjIUY
-         NsgOXwpmgvdspFwChpjqMjgvolvFczQiT9K4fmKn1tMLmd053B8vrlMqoraajRLh02
-         NdYqzNZq99hrQ==
-Date:   Mon, 30 Jan 2023 17:59:05 +0100
-From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH net-next v4 4/4] net: ethernet: renesas: rswitch: Add
- phy_power_{on,off}() calling
-Message-ID: <20230130175905.7d77781d@thinkpad>
-In-Reply-To: <Y9f0wm1sV6B1/ymC@shell.armlinux.org.uk>
-References: <20230127142621.1761278-1-yoshihiro.shimoda.uh@renesas.com>
-        <20230127142621.1761278-5-yoshihiro.shimoda.uh@renesas.com>
-        <Y9PrDPPbtIClVtB4@shell.armlinux.org.uk>
-        <TYBPR01MB534129FDE16A6DB654486671D8D39@TYBPR01MB5341.jpnprd01.prod.outlook.com>
-        <Y9e05RJWrzFO7z4T@shell.armlinux.org.uk>
-        <20230130173048.520f3f3e@thinkpad>
-        <Y9f0wm1sV6B1/ymC@shell.armlinux.org.uk>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.35; x86_64-pc-linux-gnu)
+        Mon, 30 Jan 2023 12:36:26 -0500
+Received: from mailout-taastrup.gigahost.dk (mailout-taastrup.gigahost.dk [46.183.139.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A668B39CCB;
+        Mon, 30 Jan 2023 09:36:24 -0800 (PST)
+Received: from mailout.gigahost.dk (mailout.gigahost.dk [89.186.169.112])
+        by mailout-taastrup.gigahost.dk (Postfix) with ESMTP id 286F11883875;
+        Mon, 30 Jan 2023 17:36:23 +0000 (UTC)
+Received: from smtp.gigahost.dk (smtp.gigahost.dk [89.186.169.109])
+        by mailout.gigahost.dk (Postfix) with ESMTP id 1C58E250007B;
+        Mon, 30 Jan 2023 17:36:23 +0000 (UTC)
+Received: by smtp.gigahost.dk (Postfix, from userid 1000)
+        id 0E6B29B403E6; Mon, 30 Jan 2023 17:36:22 +0000 (UTC)
+X-Screener-Id: 413d8c6ce5bf6eab4824d0abaab02863e8e3f662
+Received: from fujitsu.vestervang (2-104-116-184-cable.dk.customer.tdc.net [2.104.116.184])
+        by smtp.gigahost.dk (Postfix) with ESMTPSA id 27C7991201E4;
+        Mon, 30 Jan 2023 17:36:22 +0000 (UTC)
+From:   "Hans J. Schultz" <netdev@kapio-technology.com>
+To:     davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org,
+        "Hans J. Schultz" <netdev@kapio-technology.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        UNGLinuxDriver@microchip.com (maintainer:MICROCHIP KSZ SERIES ETHERNET
+        SWITCH DRIVER), Sean Wang <sean.wang@mediatek.com>,
+        Landen Chao <Landen.Chao@mediatek.com>,
+        DENG Qingfang <dqfext@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Ivan Vecera <ivecera@redhat.com>,
+        Roopa Prabhu <roopa@nvidia.com>,
+        Nikolay Aleksandrov <razor@blackwall.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-renesas-soc@vger.kernel.org (open list:RENESAS RZ/N1 A5PSW SWITCH
+        DRIVER),
+        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
+Subject: [PATCH net-next 4/5] net: bridge: ensure FDB offloaded flag is handled as needed
+Date:   Mon, 30 Jan 2023 18:34:28 +0100
+Message-Id: <20230130173429.3577450-5-netdev@kapio-technology.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230130173429.3577450-1-netdev@kapio-technology.com>
+References: <20230130173429.3577450-1-netdev@kapio-technology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Organization: Westermo Network Technologies AB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, 30 Jan 2023 16:48:02 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+Since user added entries in the bridge FDB will get the BR_FDB_OFFLOADED
+flag set, we do not want the bridge to age those entries and we want the
+entries to be deleted in the bridge upon an SWITCHDEV_FDB_DEL_TO_BRIDGE
+event.
 
-> On Mon, Jan 30, 2023 at 05:30:48PM +0100, Marek Beh=C3=BAn wrote:
-> > But rswitch already uses phylink, so should Yoshihiro convert it whole
-> > back to phylib? (I am not sure how much phylink API is used, maybe it
-> > can stay that way and the new phylib function as proposed in Yoshihiro's
-> > previous proposal can just be added.) =20
->=20
-> In terms of "how much phylink API is used"... well, all the phylink
-> ops functions are currently entirely empty. So, phylink in this case
-> is just being nothing more than a shim between the driver and the
-> corresponding phylib functions.
->=20
+Signed-off-by: Hans J. Schultz <netdev@kapio-technology.com>
+---
+ net/bridge/br_fdb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Yoshihiro, sorry for this. If not for my complaints, your proposal could
-already be merged (maybe). Anyway, I think the best solution would be
-to implement phylink properly, even for cases that are not relevant for
-your board*, but this would take a non-trivial amount of time, so
-I will understand if you want to stick with phylib.
+diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+index e69a872bfc1d..b0c23a72bc76 100644
+--- a/net/bridge/br_fdb.c
++++ b/net/bridge/br_fdb.c
+@@ -537,6 +537,7 @@ void br_fdb_cleanup(struct work_struct *work)
+ 		unsigned long this_timer = f->updated + delay;
+ 
+ 		if (test_bit(BR_FDB_STATIC, &f->flags) ||
++		    test_bit(BR_FDB_OFFLOADED, &f->flags) ||
+ 		    test_bit(BR_FDB_ADDED_BY_EXT_LEARN, &f->flags)) {
+ 			if (test_bit(BR_FDB_NOTIFY, &f->flags)) {
+ 				if (time_after(this_timer, now))
+@@ -1465,7 +1466,9 @@ int br_fdb_external_learn_del(struct net_bridge *br, struct net_bridge_port *p,
+ 	spin_lock_bh(&br->hash_lock);
+ 
+ 	fdb = br_fdb_find(br, addr, vid);
+-	if (fdb && test_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags))
++	if (fdb &&
++	    (test_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags) ||
++	     test_bit(BR_FDB_OFFLOADED, &fdb->flags)))
+ 		fdb_delete(br, fdb, swdev_notify);
+ 	else
+ 		err = -ENOENT;
+-- 
+2.34.1
 
-* Altough you don't use fixed-link or SFP on your board, I think it
-  should be possible to test it somehow if you implemented it...
-  For example, I have tested fixed-link between SOC and switch SerDes
-  by configuring it in device-tree on both sides.
-
-Marek
