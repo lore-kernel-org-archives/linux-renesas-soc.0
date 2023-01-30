@@ -2,81 +2,104 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 503B2C636D3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Jan 2023 22:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 907E3C61DA4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Jan 2023 23:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231357AbjA3WM4 (ORCPT
+        id S230398AbjA3XF1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 30 Jan 2023 17:12:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57756 "EHLO
+        Mon, 30 Jan 2023 18:05:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231221AbjA3WMx (ORCPT
+        with ESMTP id S231837AbjA3XFG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jan 2023 17:12:53 -0500
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255D11BE0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jan 2023 14:12:51 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id p141so15873940ybg.12
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jan 2023 14:12:51 -0800 (PST)
+        Mon, 30 Jan 2023 18:05:06 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96C60126CD
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jan 2023 15:04:39 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id ay1so8868592pfb.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jan 2023 15:04:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g8ToLV5S8qBdRAaCaZeGFZ5JargHaeiW4RNoQ1QXfrU=;
-        b=KCPJX2mMDMYaXV/IJUrapp41At4QgRN+p7YV7DJ2dhwgsMm1J8zKBrjbraWz7AE7DF
-         x5zR5iJoAdXVyjMHTGlkJiPeU6i9s378kgTyzqIa4Fmt6fmn7TdtEYdGbE/LfBHh4LN8
-         LJiAdQuq6NLvFQ1QcH8GUQn0LePtU/cKpQTKp0feOxgMtW1Ia8qzLQ+EDkKcBb58YDSr
-         g25fTzryrjbDjFcRaQZaTnSHqwxasX3syrrP9A6BFcSY8PtQXsXMmUFHQZ+rRM3g49i2
-         NzudWQPo+toa80lOdpvBvMhL9pRW5A/j7viCvFpqFxk/hLfqvOG1VZX+wxL2vkeCd7Rd
-         dG9A==
+        bh=XdRC0OQkVR/ozB2hiuV32F6DVYjFM4/FcPLtjobz0Ao=;
+        b=KOIq9/jg3JX30yP8DPF9fmoHorPXLFxGtJPT1u5/kXCZ5Wt5bPI2asmD8niO9Kzx+M
+         xD/Gkd6Ql+W1ToFWl1AuhlyUhj1fMctfmUim7NRt+qXh55vestjQDdPLLcSGEPJx9aky
+         Q+jvP4IwoUr4OHtvt4ktlLD1cyo68+qD6H4pAKGW0w5OP+zvDrbdEQnKhUjkm/S22wc4
+         akUuTDIFYfeQ2UrLpFV4v7imYvCH2IP1HOrolUZ2yeLXBvcaC1R46c7+F7T0cBHs06qs
+         xvuwskMX+c+nWA7TqLVpnNKGR758TXg/Bh5hX5Ymehm0ObyejY5rxX4TLNZYqIQIfSem
+         Epsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g8ToLV5S8qBdRAaCaZeGFZ5JargHaeiW4RNoQ1QXfrU=;
-        b=rJWRHS8LBk5PXCQc6axVdmCcfbD0tSTYCzMOOPycwM7e2G3A/fB5GMC9L13Hx3m8nB
-         LAcIiF8p24m2/Ip0GSSCRCrHD2ohxZjAfhKrCYrPhbGjo8j2KWcFHu5Oi9ZvGl7If4jm
-         4SINnuSsrttFumOzRYKG8dcbJ/5bCf7etzr93JivEmKloNxrorlQx6M23K26uUv/C2ew
-         wjK7ZELZsisNHcpfGKPDK2l811G3OgFnbooj1KTKjRDTaLez5oxdSY7NOIf7HB94eN9T
-         zbXtEH3f4AJQE7tz0soPkMphWlgKJmRe1JKN6cALsMX0SXz8A3zw7PacZy/nf5CPrlmI
-         KclA==
-X-Gm-Message-State: AFqh2kqFmL6QaDVcr9bt0PAgAz5QoeaQmBz2tCLeBMTGZVUzoGqUYP+a
-        0CPdsv6rSRvBJsmdcS2jynxAuaSh1lIByYj019N3Dg==
-X-Google-Smtp-Source: AMrXdXtEc/TkxyTQ3XFYhzirefrABfjNNGIuXnBx/xdgA/nCgenSGOrjvZe/J7oPZLVJCvT4TWZa4USiw02Xl7X0mOg=
-X-Received: by 2002:a25:9d88:0:b0:7c0:acd2:6300 with SMTP id
- v8-20020a259d88000000b007c0acd26300mr4732143ybp.520.1675116770237; Mon, 30
- Jan 2023 14:12:50 -0800 (PST)
+        bh=XdRC0OQkVR/ozB2hiuV32F6DVYjFM4/FcPLtjobz0Ao=;
+        b=LW10RHoW4ZH+P+0y3PML/yQu3dTQ6sCcrDd4nYZxTSVdWmloeIaIl7iJUaPTT7nzvf
+         HVfCmXuXDi97ydaDt1cBgpdx72b7PQivyFXkrM6DCVJhtReFWX/DmBKcAhgGhni9HI8+
+         BQRSFKdkbMCE6zLYJR2LckZY/XNm/ZdIQWEGzae7in851SL3fc5PRoWi1AlSsxjiFp83
+         dqt0H1U341rHFE2tT2wma7SjiEGCYv4r2u8g3Yxhn7hFgFsIZ/U2CcXIWjlBosH3NLTk
+         Wi7PcBtt1QWImAuwvvQPTSxtyWF9kvoP3Ck8jKMUIof1uno/p2aj+l87DFdrdk7Z92ir
+         7X/g==
+X-Gm-Message-State: AFqh2koirqmrPcnFEb355suqu02ZTmZLJA7csjujYvNGvz0c4Z49VrcD
+        Smc6QwRuKBjFDShxS6oyR8Zl5tWcVgjBlhNb7OvdVg==
+X-Google-Smtp-Source: AMrXdXu78ZNBFwh1Hdz7MGXxBugR+lKveWyplrZS/KbJUqwTgyFF8mtvAlEh8NiqWf32qu8rg8xqReGWQy5C+y8rEGM=
+X-Received: by 2002:aa7:820f:0:b0:58d:a713:d1dd with SMTP id
+ k15-20020aa7820f000000b0058da713d1ddmr6673321pfi.59.1675119815929; Mon, 30
+ Jan 2023 15:03:35 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1674815692.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1674815692.git.geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 30 Jan 2023 23:12:39 +0100
-Message-ID: <CACRpkdYoqJGwv1y1A__kJXc=1C_oFH9oS1h10QfM_K1WkhfHgg@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: renesas: Updates for v6.3
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20230127001141.407071-1-saravanak@google.com> <20230130085542.38546-1-naresh.kamboju@linaro.org>
+In-Reply-To: <20230130085542.38546-1-naresh.kamboju@linaro.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 30 Jan 2023 15:03:01 -0800
+Message-ID: <CAGETcx_411fVxsM-ZMK7j2Bvkmi2TKPbzSuD+03M3cb7WKHfJw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] fw_devlink improvements
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     abel.vesa@linaro.org, alexander.stein@ew.tq-group.com,
+        andriy.shevchenko@linux.intel.com, bigunclemax@gmail.com,
+        brgl@bgdev.pl, colin.foster@in-advantage.com,
+        cristian.marussi@arm.com, devicetree@vger.kernel.org,
+        dianders@chromium.org, djrscally@gmail.com,
+        dmitry.baryshkov@linaro.org, festevam@gmail.com, fido_max@inbox.ru,
+        frowand.list@gmail.com, geert+renesas@glider.be,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org,
+        heikki.krogerus@linux.intel.com, jpb@kernel.org,
+        jstultz@google.com, kernel-team@android.com, kernel@pengutronix.de,
+        lenb@kernel.org, linus.walleij@linaro.org,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux@roeck-us.net, lkft@linaro.org, luca.weiss@fairphone.com,
+        magnus.damm@gmail.com, martin.kepplinger@puri.sm, maz@kernel.org,
+        miquel.raynal@bootlin.com, rafael@kernel.org, robh+dt@kernel.org,
+        s.hauer@pengutronix.de, sakari.ailus@linux.intel.com,
+        shawnguo@kernel.org, sudeep.holla@arm.com, tglx@linutronix.de,
+        tony@atomide.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jan 27, 2023 at 5:28 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, Jan 30, 2023 at 12:56 AM Naresh Kamboju
+<naresh.kamboju@linaro.org> wrote:
+>
+> Build test pass on arm, arm64, i386, mips, parisc, powerpc, riscv, s390, sh,
+> sparc and x86_64.
+>
+> Boot and LTP smoke pass on qemu-arm64, qemu-armv7, qemu-i386 and qemu-x86_64.
+> Boot failed on FVP.
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> Please refer following link for details of testing.
+> FVP boot log failed.
+> https://qa-reports.linaro.org/~anders.roxell/linux-mainline-patches/build/lore_kernel_org_linux-devicetree_20230127001141_407071-1-saravanak_google_com/testrun/14389034/suite/boot/test/gcc-12-lkftconfig-64k_page_size/details/
 
-> The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
->
->   Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v6.3-tag1
->
-> for you to fetch changes up to 698485cd875be1109b2130e0ff6c927010a6b56b:
->
->   pinctrl: renesas: r8a77950: Add VIN[45] pins, groups, and functions (2023-01-26 16:45:49 +0100)
+Sudeep pointed me to what the issue might be. But it's strange that
+you are hitting an issue now. I'm pretty sure I haven't changed this
+part since v1. I'd also expect the limited assumptions I made to have
+not been affected between v1 and v2.
 
-Pulled in, thanks!
+Anyway, I'll look at this and fix it in v3.
 
-Yours,
-Linus Walleij
+-Saravana
