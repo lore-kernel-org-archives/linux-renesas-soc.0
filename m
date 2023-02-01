@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E6FC6379F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Feb 2023 13:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D24C64EC5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Feb 2023 13:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232152AbjBANPe (ORCPT
+        id S230479AbjBANPf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 1 Feb 2023 08:15:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43602 "EHLO
+        Wed, 1 Feb 2023 08:15:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232141AbjBANPd (ORCPT
+        with ESMTP id S232146AbjBANPd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 1 Feb 2023 08:15:33 -0500
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D824E3400A;
-        Wed,  1 Feb 2023 05:15:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 44FB722A0E;
+        Wed,  1 Feb 2023 05:15:32 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.97,263,1669042800"; 
-   d="scan'208";a="151302374"
+   d="scan'208";a="151302377"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie6.idc.renesas.com with ESMTP; 01 Feb 2023 22:15:29 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0E7224005B57;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3E60A4005B57;
         Wed,  1 Feb 2023 22:15:29 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
         pabeni@redhat.com
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v5 3/5] net: renesas: rswitch: Add host_interfaces setting
-Date:   Wed,  1 Feb 2023 22:14:52 +0900
-Message-Id: <20230201131454.1928136-4-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next v5 5/5] net: renesas: rswitch: Add "max-speed" handling
+Date:   Wed,  1 Feb 2023 22:14:54 +0900
+Message-Id: <20230201131454.1928136-6-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230201131454.1928136-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230201131454.1928136-1-yoshihiro.shimoda.uh@renesas.com>
@@ -40,60 +40,58 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Set phydev->host_interfaces before calling of_phy_connect() to
-configure the PHY with the information of host_interfaces.
+The previous code set the speed by the interface mode of PHY.
+Also this hardware has a restriction which cannot change the speed
+at runtime. To use other speed, add "max-speed" handling to set
+each port's speed if needed.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/renesas/rswitch.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index 479499f9fcb5..f8b3a81c0447 100644
+index f1a0dd1098f9..50b61a0a7f53 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -1178,6 +1178,7 @@ static int rswitch_phy_device_init(struct rswitch_device *rdev)
+@@ -1072,13 +1072,23 @@ static struct device_node *rswitch_get_port_node(struct rswitch_device *rdev)
+ 
+ static int rswitch_etha_get_params(struct rswitch_device *rdev)
  {
- 	struct phy_device *phydev;
- 	struct device_node *phy;
-+	int err = -ENOENT;
++	u32 max_speed;
+ 	int err;
  
  	if (!rdev->np_port)
- 		return -ENODEV;
-@@ -1186,11 +1187,18 @@ static int rswitch_phy_device_init(struct rswitch_device *rdev)
- 	if (!phy)
- 		return -ENODEV;
+ 		return 0;	/* ignored */
  
-+	/* Set phydev->host_interfaces before calling of_phy_connect() to
-+	 * configure the PHY with the information of host_interfaces.
-+	 */
-+	phydev = of_phy_find_device(phy);
-+	if (!phydev)
-+		goto out;
-+	__set_bit(rdev->etha->phy_interface, phydev->host_interfaces);
+ 	err = of_get_phy_mode(rdev->np_port, &rdev->etha->phy_interface);
++	if (err)
++		return err;
 +
- 	phydev = of_phy_connect(rdev->ndev, phy, rswitch_adjust_link, 0,
- 				rdev->etha->phy_interface);
--	of_node_put(phy);
- 	if (!phydev)
--		return -ENOENT;
-+		goto out;
++	err = of_property_read_u32(rdev->np_port, "max-speed", &max_speed);
++	if (!err) {
++		rdev->etha->speed = max_speed;
++		return 0;
++	}
  
- 	phy_set_max_speed(phydev, SPEED_2500);
- 	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_10baseT_Half_BIT);
-@@ -1201,7 +1209,11 @@ static int rswitch_phy_device_init(struct rswitch_device *rdev)
++	/* if no "max-speed" property, let's use default speed */
+ 	switch (rdev->etha->phy_interface) {
+ 	case PHY_INTERFACE_MODE_MII:
+ 		rdev->etha->speed = SPEED_100;
+@@ -1090,11 +1100,10 @@ static int rswitch_etha_get_params(struct rswitch_device *rdev)
+ 		rdev->etha->speed = SPEED_2500;
+ 		break;
+ 	default:
+-		err = -EINVAL;
+-		break;
++		return -EINVAL;
+ 	}
  
- 	phy_attached_info(phydev);
- 
--	return 0;
-+	err = 0;
-+out:
-+	of_node_put(phy);
-+
-+	return err;
+-	return err;
++	return 0;
  }
  
- static void rswitch_phy_device_deinit(struct rswitch_device *rdev)
+ static int rswitch_mii_register(struct rswitch_device *rdev)
 -- 
 2.25.1
 
