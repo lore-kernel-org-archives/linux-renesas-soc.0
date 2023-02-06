@@ -2,337 +2,145 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83826C05027
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Feb 2023 15:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7D9C636D3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Feb 2023 15:42:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231324AbjBFPhU (ORCPT
+        id S229919AbjBFPmI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 6 Feb 2023 10:37:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39138 "EHLO
+        Mon, 6 Feb 2023 10:42:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231328AbjBFPhC (ORCPT
+        with ESMTP id S229965AbjBFPlv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Feb 2023 10:37:02 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D4D29E28
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Feb 2023 07:35:51 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id bk16so10741216wrb.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Feb 2023 07:35:51 -0800 (PST)
+        Mon, 6 Feb 2023 10:41:51 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 427EF2BF03
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Feb 2023 07:40:58 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id j1so6108750pjd.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Feb 2023 07:40:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j7HjN4TzQBq2ZZA76IO3M8MJUDcxOHaJ2gZPxRuGZEM=;
-        b=lBPxmxlGU8fXgZEHTO0EE4dPwW1BhWuWnRA1kq0u1rwRukE654nexeKjDe8i554Nb5
-         /FqT7ZDXOA9tpzoFofMgM1evs8OaLAh9gOqtxXNDvjkflbB7L9t9ycnkEceeas6BY/4T
-         xPBarlNgk0miyUUsa7afXR8FsMDAAvsfZfkZ5/bX71oYYx7QYE6TxT92vb84nlHoTpiy
-         EhSsE5c7Mzk0THZ8+CaIQoH+w+RAK2i9kLYtygveAs4CNWPaHlq5codHe2FkuxZVTst2
-         4FFA0Odfv/klllyfbBxj6OYya8S5erlP9Td1/h4blF9Y2FCVAew913DqNGNgJQIN5SNb
-         Rjbw==
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=bW7aSJLSZ8tycs8Pq8RHHM81WU8PEnYW8JDN3iEmClk=;
+        b=Xt7q0Mo4f9ZZpyldSsjYmfb7/VTOeYT+LWE5Ltb3sLHt6lVE+DN8D0A7nfe43gWw41
+         3pgG4zoJYGlGMceqNPSIsJpsPSwfj/x6u/odwNhNFlME1CJE6kNDiyDseaFxt5hU8avS
+         OuQ3nTcGuhfwyAzwoGz2wGCYIfjLycrI5LpJf5YDXigBIc9ZqGHpsCcChfarXnU4e6yj
+         0RslkVRB+lxUMg5w/vqic3IR6njheCH3r+hhh6/hkZYoHpx9mMxkN5w89aN75b0bhFf5
+         /BckZWYkchYSyc8e499WczwQhNL837Y20qkHD1xyj4nCxcJDNdMB4oEM0gRh5rUjpiuL
+         ESFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=j7HjN4TzQBq2ZZA76IO3M8MJUDcxOHaJ2gZPxRuGZEM=;
-        b=IBE0hVsSnC/i/sFkiDJj4KNTFGLUfk+o3PI41yb4muDN9Ay7zFlic1K50odHbFa7ab
-         a38Y73tmpVkH2Ul6QYIOla+W3n5Y/IZ7+UDTYXC+YXbQplETsWrcUoxCf15RdKfWZ10G
-         TdZeErtPEXNOek+dVR1C0PktIoqIqyNXhnRQqPEzvzKijWXkSQ4RPdj7LFpX6LWLwEEh
-         Vmu70kVLkHRZrT98nbQ2T4/el/QMQMKM5BlDsyDWynkOUGiMad8BYvwW1rMLzTK0Olj0
-         pjF+UFeWYrdtT4IfFK1wvBMSA94ZzcKGMai61pj03HqNPMXKPXhePk+M8W7JfZ8flWcd
-         XTrw==
-X-Gm-Message-State: AO0yUKXiWSNPBkJm3NY+I0hy1naccVT1Q15Z2uB0N//dDngoL7DSxfG1
-        w16UECHkUoc2b8NY90m775YdoQ==
-X-Google-Smtp-Source: AK7set9mPQd0MhkTQkAz8wEqWB2fDfP1ODpQprC+1QK0YualSEn/XjJWrwROk16wMPdL1WpD4j4sHw==
-X-Received: by 2002:adf:cc84:0:b0:2c3:e5d5:5d77 with SMTP id p4-20020adfcc84000000b002c3e5d55d77mr5118903wrj.68.1675697688552;
-        Mon, 06 Feb 2023 07:34:48 -0800 (PST)
-Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id a4-20020a5d5084000000b002c3db0eec5fsm7386805wrt.62.2023.02.06.07.34.45
+        bh=bW7aSJLSZ8tycs8Pq8RHHM81WU8PEnYW8JDN3iEmClk=;
+        b=C3NMyNHdeXSLXGlLnrauFRLNXWkJZSuBUeeGFlgrrU61mRp1Aq0mQiPBetGj7zRn51
+         bGBDpdc1C+Tn93AaCI5P59a+4YRnjFlI6kR6v0O6BWj09CLwqyokJK+Akvb0vlx+MvKg
+         1Lvv/48JMOPLuyyTgoGz26whAkDg/bXmAEEKjWFwyuUVAUeC8WWzyfAAIO6RKS/h2H9Z
+         0HhGe+y/0YyqwMXAfGQypvKKJ7e8SIOxyEvB/5n9aZOfwOh+3+I/wqHGXrBsdLnTNIq1
+         9WB30DmzE4Inqw53xv2A6ybJOsas7aXPMw4CEIXoCss5quOlfMmBt28bb4vJDdJwUgS5
+         Js9w==
+X-Gm-Message-State: AO0yUKW1Zi40OZddh+8eYRLgpzwWGYPP969y8NbRpuynRiBi1aarEAhS
+        8Keg5osGMBVh4qFyXMgrCxRST+3uKzamLVrjgSQ=
+X-Google-Smtp-Source: AK7set9YfWfvzCWiCD4pKXU39HthFDpGW8VVHxa6TO++zqIow07xcjOvz0Q75f2uk4OazRqhgajYow==
+X-Received: by 2002:a17:903:1390:b0:199:240:74ec with SMTP id jx16-20020a170903139000b00199024074ecmr6536159plb.18.1675698000566;
+        Mon, 06 Feb 2023 07:40:00 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id q4-20020a170902f78400b00189f2fdc178sm7055549pln.177.2023.02.06.07.40.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Feb 2023 07:34:48 -0800 (PST)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org, rafael.j.wysocki@intel.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        linux-amlogic@lists.infradead.org (open list:THERMAL DRIVER FOR AMLOGIC
-        SOCS),
-        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
-        BCM2711/BCM2835 ARM ARCHITECTURE),
-        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM
-        BCM2711/BCM2835 ARM ARCHITECTURE),
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        linux-renesas-soc@vger.kernel.org (open list:RENESAS R-CAR THERMAL
-        DRIVERS),
-        linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-        linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32
-        ARCHITECTURE),
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH] thermal: Remove core header inclusion from drivers
-Date:   Mon,  6 Feb 2023 16:34:29 +0100
-Message-Id: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 06 Feb 2023 07:40:00 -0800 (PST)
+Message-ID: <63e11f50.170a0220.14e7c.b0f8@mx.google.com>
+Date:   Mon, 06 Feb 2023 07:40:00 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: renesas-devel-2023-02-06-v6.2-rc7
+X-Kernelci-Report-Type: test
+Subject: renesas/master v4l2-compliance on uvcvideo: 2 runs,
+ 1 regressions (renesas-devel-2023-02-06-v6.2-rc7)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As the name states "thermal_core.h" is the header file for the core
-components of the thermal framework.
+renesas/master v4l2-compliance on uvcvideo: 2 runs, 1 regressions (renesas-=
+devel-2023-02-06-v6.2-rc7)
 
-Too many drivers are including it. Hopefully the recent cleanups
-helped to self encapsulate the code a bit more and prevented the
-drivers to need this header.
+Regressions Summary
+-------------------
 
-Remove this inclusion in every place where it is possible.
+platform        | arch  | lab           | compiler | defconfig             =
+     | regressions
+----------------+-------+---------------+----------+-----------------------=
+-----+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrome=
+book | 1          =
 
-Some other drivers did a confusion with the core header and the one
-exported in linux/thermal.h. They include the former instead of the
-latter. The changes also fix this.
 
-The tegra/soctherm driver still remains as it uses an internal
-function which need to be replaced.
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-02-06-v6.2-rc7/plan/v4l2-compliance-uvc/
 
-The Intel HFI driver uses the netlink internal framework core and
-should be changed to prevent to deal with the internals.
+V4L2 Compliance on the uvcvideo driver.
 
-No functional changes
+This test ran "v4l2-compliance -s" from v4l-utils:
 
-[ Applies to thermal/linux-next or linux-pm/linux-next ]
+    https://www.linuxtv.org/wiki/index.php/V4l2-utils
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/amlogic_thermal.c           | 1 -
- drivers/thermal/armada_thermal.c            | 2 --
- drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
- drivers/thermal/hisi_thermal.c              | 3 +--
- drivers/thermal/imx8mm_thermal.c            | 1 -
- drivers/thermal/imx_sc_thermal.c            | 1 -
- drivers/thermal/intel/intel_hfi.c           | 3 ++-
- drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
- drivers/thermal/qoriq_thermal.c             | 1 -
- drivers/thermal/rcar_gen3_thermal.c         | 1 -
- drivers/thermal/samsung/exynos_tmu.c        | 3 +--
- drivers/thermal/st/stm_thermal.c            | 1 -
- drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
- drivers/thermal/uniphier_thermal.c          | 2 --
- 14 files changed, 4 insertions(+), 18 deletions(-)
+See each detailed section in the report below to find out the git URL and
+particular revision that was used to build the test binaries.
 
-diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
-index d30cb791e63c..9235fda4ec1e 100644
---- a/drivers/thermal/amlogic_thermal.c
-+++ b/drivers/thermal/amlogic_thermal.c
-@@ -28,7 +28,6 @@
- #include <linux/regmap.h>
- #include <linux/thermal.h>
- 
--#include "thermal_core.h"
- #include "thermal_hwmon.h"
- 
- #define TSENSOR_CFG_REG1			0x4
-diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
-index 83a4080bffc7..36653f692c80 100644
---- a/drivers/thermal/armada_thermal.c
-+++ b/drivers/thermal/armada_thermal.c
-@@ -19,8 +19,6 @@
- #include <linux/regmap.h>
- #include <linux/interrupt.h>
- 
--#include "thermal_core.h"
--
- /* Thermal Manager Control and Status Register */
- #define PMU_TDC0_SW_RST_MASK		(0x1 << 1)
- #define PMU_TM_DISABLE_OFFS		0
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index 3d0710c6e004..23918bb76ae6 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -18,7 +18,6 @@
- #include <linux/platform_device.h>
- #include <linux/thermal.h>
- 
--#include "../thermal_core.h"
- #include "../thermal_hwmon.h"
- 
- #define BCM2835_TS_TSENSCTL			0x00
-diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-index 45226cab466e..62c67942293e 100644
---- a/drivers/thermal/hisi_thermal.c
-+++ b/drivers/thermal/hisi_thermal.c
-@@ -16,8 +16,7 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/of_device.h>
--
--#include "thermal_core.h"
-+#include <linux/thermal.h>
- 
- #define HI6220_TEMP0_LAG			(0x0)
- #define HI6220_TEMP0_TH				(0x4)
-diff --git a/drivers/thermal/imx8mm_thermal.c b/drivers/thermal/imx8mm_thermal.c
-index d247b48696cb..72b5d6f319c1 100644
---- a/drivers/thermal/imx8mm_thermal.c
-+++ b/drivers/thermal/imx8mm_thermal.c
-@@ -17,7 +17,6 @@
- #include <linux/slab.h>
- #include <linux/thermal.h>
- 
--#include "thermal_core.h"
- #include "thermal_hwmon.h"
- 
- #define TER			0x0	/* TMU enable */
-diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_thermal.c
-index 378f574607f7..f32e59e74623 100644
---- a/drivers/thermal/imx_sc_thermal.c
-+++ b/drivers/thermal/imx_sc_thermal.c
-@@ -13,7 +13,6 @@
- #include <linux/slab.h>
- #include <linux/thermal.h>
- 
--#include "thermal_core.h"
- #include "thermal_hwmon.h"
- 
- #define IMX_SC_MISC_FUNC_GET_TEMP	13
-diff --git a/drivers/thermal/intel/intel_hfi.c b/drivers/thermal/intel/intel_hfi.c
-index 6e604bda2b93..c69db6c90869 100644
---- a/drivers/thermal/intel/intel_hfi.c
-+++ b/drivers/thermal/intel/intel_hfi.c
-@@ -40,10 +40,11 @@
- 
- #include <asm/msr.h>
- 
--#include "../thermal_core.h"
- #include "intel_hfi.h"
- #include "thermal_interrupt.h"
- 
-+#include "../thermal_netlink.h"
-+
- /* Hardware Feedback Interface MSR configuration bits */
- #define HW_FEEDBACK_PTR_VALID_BIT		BIT(0)
- #define HW_FEEDBACK_CONFIG_HFI_ENABLE_BIT	BIT(0)
-diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-index e2429676d0d2..101c75d0e13f 100644
---- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-+++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-@@ -15,7 +15,6 @@
- #include <linux/regmap.h>
- #include <linux/thermal.h>
- 
--#include "../thermal_core.h"
- #include "../thermal_hwmon.h"
- 
- #define QPNP_TM_REG_DIG_MAJOR		0x01
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index d111e218f362..431c29c0898a 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -13,7 +13,6 @@
- #include <linux/thermal.h>
- #include <linux/units.h>
- 
--#include "thermal_core.h"
- #include "thermal_hwmon.h"
- 
- #define SITES_MAX		16
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 4ef927437842..0fd2fd077638 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -17,7 +17,6 @@
- #include <linux/sys_soc.h>
- #include <linux/thermal.h>
- 
--#include "thermal_core.h"
- #include "thermal_hwmon.h"
- 
- /* Register offsets */
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 37465af59262..527d1eb0663a 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -20,11 +20,10 @@
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/thermal.h>
- 
- #include <dt-bindings/thermal/thermal_exynos.h>
- 
--#include "../thermal_core.h"
--
- /* Exynos generic registers */
- #define EXYNOS_TMU_REG_TRIMINFO		0x0
- #define EXYNOS_TMU_REG_CONTROL		0x20
-diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
-index e7834ccc7976..735401958f01 100644
---- a/drivers/thermal/st/stm_thermal.c
-+++ b/drivers/thermal/st/stm_thermal.c
-@@ -19,7 +19,6 @@
- #include <linux/platform_device.h>
- #include <linux/thermal.h>
- 
--#include "../thermal_core.h"
- #include "../thermal_hwmon.h"
- 
- /* DTS register offsets */
-diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
-index 0ffe37ce7df7..b3218b71b6d9 100644
---- a/drivers/thermal/tegra/tegra30-tsensor.c
-+++ b/drivers/thermal/tegra/tegra30-tsensor.c
-@@ -28,7 +28,6 @@
- 
- #include <soc/tegra/fuse.h>
- 
--#include "../thermal_core.h"
- #include "../thermal_hwmon.h"
- 
- #define TSENSOR_SENSOR0_CONFIG0				0x0
-diff --git a/drivers/thermal/uniphier_thermal.c b/drivers/thermal/uniphier_thermal.c
-index f8ab2ca76184..47801841b3f5 100644
---- a/drivers/thermal/uniphier_thermal.c
-+++ b/drivers/thermal/uniphier_thermal.c
-@@ -17,8 +17,6 @@
- #include <linux/regmap.h>
- #include <linux/thermal.h>
- 
--#include "thermal_core.h"
--
- /*
-  * block registers
-  * addresses are the offset from .block_base
--- 
-2.34.1
 
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-02-06-v6.2-rc7
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      3254c086a1ff58a54773d12eb58e0210601e352f
+
+  Test suite revisions:
+    v4l2-compliance
+      URL:  git://linuxtv.org/v4l-utils.git
+      SHA:  9124a71fb8e79cafc16af32c9a9d1f2a7e59dce7 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform        | arch  | lab           | compiler | defconfig             =
+     | regressions
+----------------+-------+---------------+----------+-----------------------=
+-----+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrome=
+book | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63e10c782d3b8880ea915ecd
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-02-06-v6.2-rc7/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/v4=
+l2-compliance-uvc-mt8173-elm-hana.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-02-06-v6.2-rc7/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/v4=
+l2-compliance-uvc-mt8173-elm-hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-v4=
+l2/20230127.0/arm64/rootfs.cpio.gz =
+
+
+
+  * v4l2-compliance-uvc.login: https://kernelci.org/test/case/id/63e10c782d=
+3b8880ea915ece
+        failing since 13 days (last pass: renesas-devel-2023-01-02-v6.2-rc2=
+, first fail: renesas-devel-2023-01-24-v6.2-rc5) =
+
+ =20
