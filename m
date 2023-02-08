@@ -2,180 +2,145 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D97C05027
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Feb 2023 07:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C59AC05027
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Feb 2023 07:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230003AbjBHHfC (ORCPT
+        id S230075AbjBHHux (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Feb 2023 02:35:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56830 "EHLO
+        Wed, 8 Feb 2023 02:50:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230318AbjBHHe6 (ORCPT
+        with ESMTP id S229500AbjBHHuw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Feb 2023 02:34:58 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F105931E11;
-        Tue,  7 Feb 2023 23:34:56 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.97,280,1669042800"; 
-   d="scan'208";a="152068347"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 08 Feb 2023 16:34:54 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7851E41C8837;
-        Wed,  8 Feb 2023 16:34:54 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next 2/4] net: renesas: rswitch: Move linkfix variables to rswitch_gwca
-Date:   Wed,  8 Feb 2023 16:34:43 +0900
-Message-Id: <20230208073445.2317192-3-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230208073445.2317192-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230208073445.2317192-1-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 8 Feb 2023 02:50:52 -0500
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4458CC1B;
+        Tue,  7 Feb 2023 23:50:46 -0800 (PST)
+Received: by mail-qt1-f180.google.com with SMTP id g8so19815216qtq.13;
+        Tue, 07 Feb 2023 23:50:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1mVnPAd0AxN2Xeetse6ostcKuisaMZaCTAVRb6pMiOQ=;
+        b=0IMQcfxjEelv9/oYQAYNEmhYsa2xbScwkoHXd9MTtuyt93TxIKslh5WMjz9MqtjfRR
+         15hO69GngPI72iI8xrjh6iUGrSdBc0P6OsGwIPg+aZ9pCV9xDGumcgLSG+k5qPJQHMBS
+         DuaS7Iu4loaT6rMFeeM8z1st0z1INaFTg1LCmiKicJZ8gyFo6EmLWh/lNQieIyJqZgR8
+         NsK+WNGRqcebX12dZ+l9A8g2PGePYSKLj1H78AgvnKgxIg7SVlNKS8Yl5bzuxw9TqHSB
+         sEG65alZYdO0o27G02iVkvWrk4BYf36sMOcF3FMu5ZxfqTJa0l6W3OhcDjTFqqEKlW+1
+         RAzg==
+X-Gm-Message-State: AO0yUKVpW/yR8oa1kqLJr7N48VY11kU7XVDAGMI9siPFGTqh9mWC19R1
+        CeaN6zZvZ3WTVQ8eVr1v3uBEc/SXHci9cg==
+X-Google-Smtp-Source: AK7set/9wGYNzbPDX5cKq1ydLJP4Rz1yBbJIRYIj5QNzr6xS5H+0PS8utHDmzY5hLD0/5rHI3wgoWA==
+X-Received: by 2002:a05:622a:309:b0:3ba:1641:5a49 with SMTP id q9-20020a05622a030900b003ba16415a49mr11396369qtw.8.1675842645808;
+        Tue, 07 Feb 2023 23:50:45 -0800 (PST)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id h13-20020ac8714d000000b003b9dca4cdf4sm11016860qtp.83.2023.02.07.23.50.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Feb 2023 23:50:45 -0800 (PST)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-52bf225460cso1446357b3.4;
+        Tue, 07 Feb 2023 23:50:45 -0800 (PST)
+X-Received: by 2002:a5b:24c:0:b0:87a:68fd:181a with SMTP id
+ g12-20020a5b024c000000b0087a68fd181amr839537ybp.36.1675842634268; Tue, 07 Feb
+ 2023 23:50:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230207014207.1678715-1-saravanak@google.com>
+ <20230207014207.1678715-10-saravanak@google.com> <CAMuHMdXEnSD4rRJ-o90x4OprUacN_rJgyo8x6=9F9rZ+-KzjOg@mail.gmail.com>
+ <Y+NQUVR9P3hmqFcL@kroah.com>
+In-Reply-To: <Y+NQUVR9P3hmqFcL@kroah.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 8 Feb 2023 08:50:22 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXyeU=HP6XVYuXrkjQ8JF53kEW-6mvthCwfL+u3Efuk1A@mail.gmail.com>
+Message-ID: <CAMuHMdXyeU=HP6XVYuXrkjQ8JF53kEW-6mvthCwfL+u3Efuk1A@mail.gmail.com>
+Subject: Re: [PATCH v3 09/12] of: property: Simplify of_link_to_phandle()
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Tony Lindgren <tony@atomide.com>,
+        John Stultz <jstultz@google.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Maxim Kiselev <bigunclemax@gmail.com>,
+        Maxim Kochetkov <fido_max@inbox.ru>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Colin Foster <colin.foster@in-advantage.com>,
+        Martin Kepplinger <martin.kepplinger@puri.sm>,
+        Jean-Philippe Brucker <jpb@kernel.org>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        kernel-team@android.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To improve readability, move linkfix related variables to
-struct rswitch_gwca. Also, rename function names "desc" with "linkfix".
+Hi Greg,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/net/ethernet/renesas/rswitch.c | 39 ++++++++++++++------------
- drivers/net/ethernet/renesas/rswitch.h |  6 ++--
- 2 files changed, 24 insertions(+), 21 deletions(-)
+On Wed, Feb 8, 2023 at 8:33 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Feb 07, 2023 at 09:57:14PM +0100, Geert Uytterhoeven wrote:
+> > On Tue, Feb 7, 2023 at 2:42 AM Saravana Kannan <saravanak@google.com> wrote:
+> > > The driver core now:
+> > > - Has the parent device of a supplier pick up the consumers if the
+> > >   supplier never has a device created for it.
+> > > - Ignores a supplier if the supplier has no parent device and will never
+> > >   be probed by a driver
+> > >
+> > > And already prevents creating a device link with the consumer as a
+> > > supplier of a parent.
+> > >
+> > > So, we no longer need to find the "compatible" node of the supplier or
+> > > do any other checks in of_link_to_phandle(). We simply need to make sure
+> > > that the supplier is available in DT.
+> > >
+> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> >
+> > Thanks for your patch!
+> >
+> > This patch introduces a regression when dynamically loading DT overlays.
+> > Unfortunately this happens when using the out-of-tree OF configfs,
+> > which is not supported upstream.  Still, there may be (obscure)
+> > in-tree users.
+>
+> As we can't do anything about out-of-tree code, why does this matter?
 
-diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index 6207692f9c56..b256dadada1d 100644
---- a/drivers/net/ethernet/renesas/rswitch.c
-+++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -386,7 +386,7 @@ static int rswitch_gwca_queue_format(struct net_device *ndev,
- 	rswitch_desc_set_dptr(&desc->desc, gq->ring_dma);
- 	desc->desc.die_dt = DT_LINKFIX;
- 
--	linkfix = &priv->linkfix_table[gq->index];
-+	linkfix = &priv->gwca.linkfix_table[gq->index];
- 	linkfix->die_dt = DT_LINKFIX;
- 	rswitch_desc_set_dptr(linkfix, gq->ring_dma);
- 
-@@ -470,7 +470,7 @@ static int rswitch_gwca_queue_ext_ts_format(struct net_device *ndev,
- 	rswitch_desc_set_dptr(&desc->desc, gq->ring_dma);
- 	desc->desc.die_dt = DT_LINKFIX;
- 
--	linkfix = &priv->linkfix_table[gq->index];
-+	linkfix = &priv->gwca.linkfix_table[gq->index];
- 	linkfix->die_dt = DT_LINKFIX;
- 	rswitch_desc_set_dptr(linkfix, gq->ring_dma);
- 
-@@ -480,28 +480,31 @@ static int rswitch_gwca_queue_ext_ts_format(struct net_device *ndev,
- 	return 0;
- }
- 
--static int rswitch_gwca_desc_alloc(struct rswitch_private *priv)
-+static int rswitch_gwca_linkfix_alloc(struct rswitch_private *priv)
- {
- 	int i, num_queues = priv->gwca.num_queues;
-+	struct rswitch_gwca *gwca = &priv->gwca;
- 	struct device *dev = &priv->pdev->dev;
- 
--	priv->linkfix_table_size = sizeof(struct rswitch_desc) * num_queues;
--	priv->linkfix_table = dma_alloc_coherent(dev, priv->linkfix_table_size,
--						 &priv->linkfix_table_dma, GFP_KERNEL);
--	if (!priv->linkfix_table)
-+	gwca->linkfix_table_size = sizeof(struct rswitch_desc) * num_queues;
-+	gwca->linkfix_table = dma_alloc_coherent(dev, gwca->linkfix_table_size,
-+						 &gwca->linkfix_table_dma, GFP_KERNEL);
-+	if (!gwca->linkfix_table)
- 		return -ENOMEM;
- 	for (i = 0; i < num_queues; i++)
--		priv->linkfix_table[i].die_dt = DT_EOS;
-+		gwca->linkfix_table[i].die_dt = DT_EOS;
- 
- 	return 0;
- }
- 
--static void rswitch_gwca_desc_free(struct rswitch_private *priv)
-+static void rswitch_gwca_linkfix_free(struct rswitch_private *priv)
- {
--	if (priv->linkfix_table)
--		dma_free_coherent(&priv->pdev->dev, priv->linkfix_table_size,
--				  priv->linkfix_table, priv->linkfix_table_dma);
--	priv->linkfix_table = NULL;
-+	struct rswitch_gwca *gwca = &priv->gwca;
-+
-+	if (gwca->linkfix_table)
-+		dma_free_coherent(&priv->pdev->dev, gwca->linkfix_table_size,
-+				  gwca->linkfix_table, gwca->linkfix_table_dma);
-+	gwca->linkfix_table = NULL;
- }
- 
- static struct rswitch_gwca_queue *rswitch_gwca_get(struct rswitch_private *priv)
-@@ -617,8 +620,8 @@ static int rswitch_gwca_hw_init(struct rswitch_private *priv)
- 
- 	iowrite32(GWVCC_VEM_SC_TAG, priv->addr + GWVCC);
- 	iowrite32(0, priv->addr + GWTTFC);
--	iowrite32(lower_32_bits(priv->linkfix_table_dma), priv->addr + GWDCBAC1);
--	iowrite32(upper_32_bits(priv->linkfix_table_dma), priv->addr + GWDCBAC0);
-+	iowrite32(lower_32_bits(priv->gwca.linkfix_table_dma), priv->addr + GWDCBAC1);
-+	iowrite32(upper_32_bits(priv->gwca.linkfix_table_dma), priv->addr + GWDCBAC0);
- 	rswitch_gwca_set_rate_limit(priv, priv->gwca.speed);
- 
- 	for (i = 0; i < RSWITCH_NUM_PORTS; i++) {
-@@ -1650,7 +1653,7 @@ static int rswitch_init(struct rswitch_private *priv)
- 	if (err < 0)
- 		return err;
- 
--	err = rswitch_gwca_desc_alloc(priv);
-+	err = rswitch_gwca_linkfix_alloc(priv);
- 	if (err < 0)
- 		return -ENOMEM;
- 
-@@ -1712,7 +1715,7 @@ static int rswitch_init(struct rswitch_private *priv)
- 		rswitch_device_free(priv, i);
- 
- err_device_alloc:
--	rswitch_gwca_desc_free(priv);
-+	rswitch_gwca_linkfix_free(priv);
- 
- 	return err;
- }
-@@ -1791,7 +1794,7 @@ static void rswitch_deinit(struct rswitch_private *priv)
- 		rswitch_device_free(priv, i);
- 	}
- 
--	rswitch_gwca_desc_free(priv);
-+	rswitch_gwca_linkfix_free(priv);
- 
- 	rswitch_clock_disable(priv);
- }
-diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 390ec242ed69..79c8ff01021c 100644
---- a/drivers/net/ethernet/renesas/rswitch.h
-+++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -930,6 +930,9 @@ struct rswitch_gwca_queue {
- #define RSWITCH_NUM_IRQ_REGS	(RSWITCH_MAX_NUM_QUEUES / BITS_PER_TYPE(u32))
- struct rswitch_gwca {
- 	int index;
-+	struct rswitch_desc *linkfix_table;
-+	dma_addr_t linkfix_table_dma;
-+	u32 linkfix_table_size;
- 	struct rswitch_gwca_queue *queues;
- 	int num_queues;
- 	DECLARE_BITMAP(used, RSWITCH_MAX_NUM_QUEUES);
-@@ -969,9 +972,6 @@ struct rswitch_private {
- 	struct platform_device *pdev;
- 	void __iomem *addr;
- 	struct rcar_gen4_ptp_private *ptp_priv;
--	struct rswitch_desc *linkfix_table;
--	dma_addr_t linkfix_table_dma;
--	u32 linkfix_table_size;
- 
- 	struct rswitch_device *rdev[RSWITCH_NUM_PORTS];
- 
--- 
-2.25.1
+Because the actual DT overlay mechanism is upstream.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
