@@ -2,155 +2,140 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64210C64EC5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Feb 2023 07:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199F4C64ED8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Feb 2023 07:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230297AbjBHHfC (ORCPT
+        id S231166AbjBHHfD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Feb 2023 02:35:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56842 "EHLO
+        Wed, 8 Feb 2023 02:35:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbjBHHe6 (ORCPT
+        with ESMTP id S231173AbjBHHfB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Feb 2023 02:34:58 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 49C903253C;
-        Tue,  7 Feb 2023 23:34:57 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.97,280,1669042800"; 
-   d="scan'208";a="152068350"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 08 Feb 2023 16:34:54 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8C05B41C8690;
-        Wed,  8 Feb 2023 16:34:54 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next 3/4] net: renesas: rswitch: Remove gptp flag from rswitch_gwca_queue
-Date:   Wed,  8 Feb 2023 16:34:44 +0900
-Message-Id: <20230208073445.2317192-4-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230208073445.2317192-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230208073445.2317192-1-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 8 Feb 2023 02:35:01 -0500
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9973C3346B
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Feb 2023 23:34:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1675841697; x=1707377697;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dkjX7FlQTXowv92RvPwTXln47srfAVp0CUY+vIRGBNs=;
+  b=Udxkkc1RmA6TFzl8g+3nURzn88Ha9+7dxhcVBbl4ZO41kapMJTbYMI3n
+   cBWCs0u58R9mcdrnAYBZ9X6FhJF1YADUncpowxf8bGBAE63BCLXsqVgSz
+   wvkYgGBo1AaWGegEQLc1AM2TiNrDBdF14jYWlRjY3rkBG94n7saCyfGEC
+   vJTe3XbahScZpl+0GUghhmh5/CsnU+nTDqwDmXZ9IfAep4KfgZ6Ss7bu7
+   GfUJ/4jlqUwC8+TYC4EIrMByKT5rQri7RpMJVXGYRfNyP0+O8fWOunDpQ
+   k8I+ZkEr2cYUthsX885esuEy9npP1ABPwMelNB0m8BiNf4IOaFoyWBGei
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10614"; a="392129778"
+X-IronPort-AV: E=Sophos;i="5.97,280,1669104000"; 
+   d="scan'208";a="392129778"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2023 23:34:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10614"; a="912641445"
+X-IronPort-AV: E=Sophos;i="5.97,280,1669104000"; 
+   d="scan'208";a="912641445"
+Received: from lkp-server01.sh.intel.com (HELO 4455601a8d94) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Feb 2023 23:34:55 -0800
+Received: from kbuild by 4455601a8d94 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pPeyl-0004HD-0W;
+        Wed, 08 Feb 2023 07:34:55 +0000
+Date:   Wed, 08 Feb 2023 15:34:15 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:master] BUILD SUCCESS
+ 2026dc209b160f390f3c9d2abc3020561fe63204
+Message-ID: <63e35077.Y6Gp+La3hSE3pkMd%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The gptp flag is completely related to the !dir_tx in struct
-rswitch_gwca_queue. In the future, a new queue handling for
-timestamp will be implemented and this gptp flag is confusable.
-So, remove the gptp flag.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: 2026dc209b160f390f3c9d2abc3020561fe63204  [LOCAL] arm64: renesas: defconfig: Update renesas_defconfig
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/net/ethernet/renesas/rswitch.c | 26 +++++++++++---------------
- drivers/net/ethernet/renesas/rswitch.h |  1 -
- 2 files changed, 11 insertions(+), 16 deletions(-)
+elapsed time: 724m
 
-diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index b256dadada1d..e408d10184e8 100644
---- a/drivers/net/ethernet/renesas/rswitch.c
-+++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -280,11 +280,14 @@ static void rswitch_gwca_queue_free(struct net_device *ndev,
- {
- 	int i;
- 
--	if (gq->gptp) {
-+	if (!gq->dir_tx) {
- 		dma_free_coherent(ndev->dev.parent,
- 				  sizeof(struct rswitch_ext_ts_desc) *
- 				  (gq->ring_size + 1), gq->rx_ring, gq->ring_dma);
- 		gq->rx_ring = NULL;
-+
-+		for (i = 0; i < gq->ring_size; i++)
-+			dev_kfree_skb(gq->skbs[i]);
- 	} else {
- 		dma_free_coherent(ndev->dev.parent,
- 				  sizeof(struct rswitch_ext_desc) *
-@@ -292,11 +295,6 @@ static void rswitch_gwca_queue_free(struct net_device *ndev,
- 		gq->tx_ring = NULL;
- 	}
- 
--	if (!gq->dir_tx) {
--		for (i = 0; i < gq->ring_size; i++)
--			dev_kfree_skb(gq->skbs[i]);
--	}
--
- 	kfree(gq->skbs);
- 	gq->skbs = NULL;
- }
-@@ -304,12 +302,11 @@ static void rswitch_gwca_queue_free(struct net_device *ndev,
- static int rswitch_gwca_queue_alloc(struct net_device *ndev,
- 				    struct rswitch_private *priv,
- 				    struct rswitch_gwca_queue *gq,
--				    bool dir_tx, bool gptp, int ring_size)
-+				    bool dir_tx, int ring_size)
- {
- 	int i, bit;
- 
- 	gq->dir_tx = dir_tx;
--	gq->gptp = gptp;
- 	gq->ring_size = ring_size;
- 	gq->ndev = ndev;
- 
-@@ -317,17 +314,18 @@ static int rswitch_gwca_queue_alloc(struct net_device *ndev,
- 	if (!gq->skbs)
- 		return -ENOMEM;
- 
--	if (!dir_tx)
-+	if (!dir_tx) {
- 		rswitch_gwca_queue_alloc_skb(gq, 0, gq->ring_size);
- 
--	if (gptp)
- 		gq->rx_ring = dma_alloc_coherent(ndev->dev.parent,
- 						 sizeof(struct rswitch_ext_ts_desc) *
- 						 (gq->ring_size + 1), &gq->ring_dma, GFP_KERNEL);
--	else
-+	} else {
- 		gq->tx_ring = dma_alloc_coherent(ndev->dev.parent,
- 						 sizeof(struct rswitch_ext_desc) *
- 						 (gq->ring_size + 1), &gq->ring_dma, GFP_KERNEL);
-+	}
-+
- 	if (!gq->rx_ring && !gq->tx_ring)
- 		goto out;
- 
-@@ -539,8 +537,7 @@ static int rswitch_txdmac_alloc(struct net_device *ndev)
- 	if (!rdev->tx_queue)
- 		return -EBUSY;
- 
--	err = rswitch_gwca_queue_alloc(ndev, priv, rdev->tx_queue, true, false,
--				       TX_RING_SIZE);
-+	err = rswitch_gwca_queue_alloc(ndev, priv, rdev->tx_queue, true, TX_RING_SIZE);
- 	if (err < 0) {
- 		rswitch_gwca_put(priv, rdev->tx_queue);
- 		return err;
-@@ -574,8 +571,7 @@ static int rswitch_rxdmac_alloc(struct net_device *ndev)
- 	if (!rdev->rx_queue)
- 		return -EBUSY;
- 
--	err = rswitch_gwca_queue_alloc(ndev, priv, rdev->rx_queue, false, true,
--				       RX_RING_SIZE);
-+	err = rswitch_gwca_queue_alloc(ndev, priv, rdev->rx_queue, false, RX_RING_SIZE);
- 	if (err < 0) {
- 		rswitch_gwca_put(priv, rdev->rx_queue);
- 		return err;
-diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 79c8ff01021c..ee36e8e896d2 100644
---- a/drivers/net/ethernet/renesas/rswitch.h
-+++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -913,7 +913,6 @@ struct rswitch_etha {
- struct rswitch_gwca_queue {
- 	int index;
- 	bool dir_tx;
--	bool gptp;
- 	union {
- 		struct rswitch_ext_desc *tx_ring;
- 		struct rswitch_ext_ts_desc *rx_ring;
+configs tested: 62
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+x86_64                            allnoconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+arc                                 defconfig
+alpha                               defconfig
+s390                             allmodconfig
+x86_64                           rhel-8.3-bpf
+s390                                defconfig
+s390                             allyesconfig
+ia64                             allmodconfig
+alpha                            allyesconfig
+powerpc                           allnoconfig
+x86_64                           rhel-8.3-syz
+m68k                             allyesconfig
+m68k                             allmodconfig
+x86_64                         rhel-8.3-kunit
+arc                              allyesconfig
+x86_64                           rhel-8.3-kvm
+sh                               allmodconfig
+arm                                 defconfig
+x86_64                              defconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+x86_64                               rhel-8.3
+i386                 randconfig-a013-20230206
+i386                 randconfig-a011-20230206
+i386                 randconfig-a014-20230206
+i386                 randconfig-a012-20230206
+i386                 randconfig-a015-20230206
+i386                 randconfig-a016-20230206
+arm64                            allyesconfig
+x86_64                           allyesconfig
+arm                              allyesconfig
+x86_64               randconfig-a013-20230206
+s390                 randconfig-r044-20230206
+x86_64               randconfig-a011-20230206
+arc                  randconfig-r043-20230205
+x86_64               randconfig-a012-20230206
+arm                  randconfig-r046-20230205
+x86_64               randconfig-a014-20230206
+x86_64                    rhel-8.3-kselftests
+x86_64               randconfig-a015-20230206
+x86_64                          rhel-8.3-func
+x86_64               randconfig-a016-20230206
+arc                  randconfig-r043-20230206
+i386                                defconfig
+riscv                randconfig-r042-20230206
+i386                             allyesconfig
+
+clang tested configs:
+hexagon              randconfig-r041-20230205
+riscv                randconfig-r042-20230205
+hexagon              randconfig-r045-20230206
+hexagon              randconfig-r041-20230206
+x86_64                          rhel-8.3-rust
+arm                  randconfig-r046-20230206
+s390                 randconfig-r044-20230205
+hexagon              randconfig-r045-20230205
+i386                 randconfig-a002-20230206
+i386                 randconfig-a004-20230206
+i386                 randconfig-a003-20230206
+i386                 randconfig-a001-20230206
+i386                 randconfig-a005-20230206
+i386                 randconfig-a006-20230206
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
