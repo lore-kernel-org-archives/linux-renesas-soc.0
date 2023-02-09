@@ -2,114 +2,186 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328B3C64EC6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Feb 2023 13:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940F4C05027
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Feb 2023 13:34:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbjBIN04 (ORCPT
+        id S230167AbjBINej (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 08:26:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53474 "EHLO
+        Thu, 9 Feb 2023 08:34:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbjBIN0x (ORCPT
+        with ESMTP id S230218AbjBINee (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 08:26:53 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 79035212A;
-        Thu,  9 Feb 2023 05:26:45 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.97,283,1669042800"; 
-   d="scan'208";a="152255803"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Feb 2023 22:26:44 +0900
-Received: from localhost.localdomain (unknown [10.226.92.132])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D93D5433495E;
-        Thu,  9 Feb 2023 22:26:40 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "Maciej W. Rozycki" <macro@orcam.me.uk>,
-        Eric Tremblay <etremblay@distech-controls.com>,
-        Wander Lairson Costa <wander@redhat.com>,
-        linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] serial: 8250: Identify Renesas RZ/V2M 16750 UART
-Date:   Thu,  9 Feb 2023 13:26:28 +0000
-Message-Id: <20230209132630.194947-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230209132630.194947-1-biju.das.jz@bp.renesas.com>
-References: <20230209132630.194947-1-biju.das.jz@bp.renesas.com>
+        Thu, 9 Feb 2023 08:34:34 -0500
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C353AA7;
+        Thu,  9 Feb 2023 05:34:12 -0800 (PST)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 64CC8FF80B;
+        Thu,  9 Feb 2023 13:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1675949577;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7ZjOPNQQKb7DxpHUdxqyVK5aYueuKDdegERx8SUXTnE=;
+        b=IwC0cz7U7RR4yBM0F/PGlCB3WrjoddUt9+Ap9ANmhR48Y3kbpag/GwG/JT3qbnqjFFj0zc
+        tu33Dl8zfjTM6DJXKu3XQlyjbEHLnEnLlcrJ4uX7qUc1IpYPnqTS0lxC+URnlzDmciHIfe
+        SL27TeNQvYbXH29pzWvlEwB8Lwy5cjp9oa0SqRWKjfU4u9RiH/61R2ssuf9/vQ01hvW0rp
+        qNzlhCZs87BKB55InIhmXB9ilmyfYcm7wlvbAn4IKQ/Kjadc6A/jwKV9V6rim0IlDzdUi7
+        rEZ/ObiLwKVDcBNOZ8lvCsjumuHttGvi+MO7rAOCSETa00cuWc5khqOHjyIdWQ==
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board device-tree
+Date:   Thu,  9 Feb 2023 14:35:07 +0100
+Message-Id: <20230209133507.150571-3-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230209133507.150571-1-clement.leger@bootlin.com>
+References: <20230209133507.150571-1-clement.leger@bootlin.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add identification support for RZ/V2M 16750 UART.
+The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. Since this
+configuration targets only the RZ/N1D, it is named r9a06g032-rzn1d400-eb.
+It adds support for the 2 additional switch ports (port C and D) that are
+available on that board.
 
-Currently, RZ/V2M UART is detected as 16550A instead of 16750.
-"a4040000.serial: ttyS0 at MMIO 0xa4040000 (irq = 14, base_baud = 3000000)
-is a 16550A"
-
-After adding identification support, it is detected as
-"a4040000.serial: ttyS0 at MMIO 0xa4040000 (irq = 24, base_baud = 3000000)
-is a Renesas RZ/V2M 16750".
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 ---
- drivers/tty/serial/8250/8250_port.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts | 94 +++++++++++++++++++++
+ 2 files changed, 95 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index e61753c295d5..e4b205e3756b 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -111,6 +111,15 @@ static const struct serial8250_config uart_config[] = {
- 		.rxtrig_bytes	= {1, 16, 32, 56},
- 		.flags		= UART_CAP_FIFO | UART_CAP_SLEEP | UART_CAP_AFE,
- 	},
-+	[PORT_16750] = {
-+		.name		= "Renesas RZ/V2M 16750",
-+		.fifo_size	= 64,
-+		.tx_loadsz	= 64,
-+		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10 |
-+				  UART_FCR7_64BYTE,
-+		.rxtrig_bytes	= {1, 16, 32, 56},
-+		.flags		= UART_CAP_FIFO | UART_CAP_AFE,
-+	},
- 	[PORT_STARTECH] = {
- 		.name		= "Startech",
- 		.fifo_size	= 1,
-@@ -1142,6 +1151,24 @@ static void autoconfig_16550a(struct uart_8250_port *up)
- 		return;
- 	}
- 
-+	/*
-+	 * No EFR.  Try to detect a Renesas RZ/V2M 16750, which only sets bit 5
-+	 * of the IIR when 64 byte FIFO mode is enabled.
-+	 * Try setting/clear bit5 of FCR.
-+	 */
-+	serial_out(up, UART_FCR, UART_FCR_ENABLE_FIFO);
-+	status1 = serial_in(up, UART_IIR) & (UART_IIR_64BYTE_FIFO | UART_IIR_FIFO_ENABLED);
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index d08a3c450ce7..8938db01e939 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1123,6 +1123,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
+ 	r9a06g032-rzn1d400-db.dtb \
++	r9a06g032-rzn1d400-eb.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-elgin-r1.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
+new file mode 100644
+index 000000000000..c9de18d49fde
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZN1D-EB Board
++ *
++ * Copyright (C) 2023 Schneider-Electric
++ *
++ */
 +
-+	serial_out(up, UART_FCR, UART_FCR_ENABLE_FIFO | UART_FCR7_64BYTE);
-+	status2 = serial_in(up, UART_IIR) & (UART_IIR_64BYTE_FIFO | UART_IIR_FIFO_ENABLED);
++#include "r9a06g032-rzn1d400-db.dts"
 +
-+	if (status1 == UART_IIR_FIFO_ENABLED_16550A &&
-+	    status2 == (UART_IIR_64BYTE_FIFO | UART_IIR_FIFO_ENABLED_16550A)) {
-+		up->port.type = PORT_16750;
-+		up->capabilities |= UART_CAP_AFE;
-+		return;
-+	}
++/ {
++	model = "RZN1D-EB Board";
++	compatible = "renesas,rzn1d400-eb", "renesas,rzn1d400-db",
++		     "renesas,r9a06g032";
++};
 +
- 	/*
- 	 * Try writing and reading the UART_IER_UUE bit (b6).
- 	 * If it works, this is probably one of the Xscale platform's
++&mii_conv2 {
++	renesas,miic-input = <MIIC_SWITCH_PORTD>;
++	status = "okay";
++};
++
++&mii_conv3 {
++	renesas,miic-input = <MIIC_SWITCH_PORTC>;
++	status = "okay";
++};
++
++&pinctrl{
++	pins_eth1: pins-eth1 {
++		pinmux = <RZN1_PINMUX(12, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(13, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(14, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(15, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(16, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(17, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(18, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(19, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(20, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(21, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(22, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(23, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>;
++		drive-strength = <6>;
++		bias-disable;
++	};
++
++	pins_eth2: pins-eth2 {
++		pinmux = <RZN1_PINMUX(24, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(25, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(26, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(27, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(28, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(29, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(30, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(31, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(32, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(33, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(34, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
++			 <RZN1_PINMUX(35, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>;
++		drive-strength = <6>;
++		bias-disable;
++	};
++};
++
++&switch {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, <&pins_eth4>,
++		    <&pins_mdio1>;
++
++	mdio {
++		/* CN15 and CN16 switches must be configured in MDIO2 mode */
++		switch0phy1: ethernet-phy@1 {
++			reg = <1>;
++			marvell,reg-init = <3 16 0 0x1010>;
++		};
++
++		switch0phy10: ethernet-phy@10 {
++			reg = <10>;
++			marvell,reg-init = <3 16 0 0x1010>;
++		};
++	};
++};
++
++&switch_port2 {
++	label = "lan2";
++	phy-mode = "rgmii-id";
++	phy-handle = <&switch0phy10>;
++	status = "okay";
++};
++
++&switch_port3 {
++	label = "lan3";
++	phy-mode = "rgmii-id";
++	phy-handle = <&switch0phy1>;
++	status = "okay";
++};
 -- 
-2.25.1
+2.39.0
 
