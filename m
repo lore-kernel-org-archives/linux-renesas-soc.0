@@ -2,73 +2,96 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD873C636D6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Feb 2023 16:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB944C61DA4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Feb 2023 16:12:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231419AbjBIQDI (ORCPT
+        id S230249AbjBIQMG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 11:03:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47420 "EHLO
+        Thu, 9 Feb 2023 11:12:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231132AbjBIQDH (ORCPT
+        with ESMTP id S230045AbjBIQMC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 11:03:07 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2189060B9A
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Feb 2023 08:03:04 -0800 (PST)
+        Thu, 9 Feb 2023 11:12:02 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DABB923679
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Feb 2023 08:12:00 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:eeed:e695:5a2f:fc6d])
-        by baptiste.telenet-ops.be with bizsmtp
-        id K432290034vi5L701432B0; Thu, 09 Feb 2023 17:03:02 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id K4Bw2900b4vi5L7014Bwy9; Thu, 09 Feb 2023 17:11:59 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pQ9Nj-008RCu-R1;
-        Thu, 09 Feb 2023 17:03:02 +0100
+        id 1pQ9WM-008RDl-FL;
+        Thu, 09 Feb 2023 17:11:56 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pQ9O1-007aMO-Tk;
-        Thu, 09 Feb 2023 17:03:01 +0100
+        id 1pQ9We-007aVA-J4;
+        Thu, 09 Feb 2023 17:11:56 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779g0: Add thermal clock
-Date:   Thu,  9 Feb 2023 17:03:00 +0100
-Message-Id: <59461effd0d9f7a39e0c91352c87f2b7071b1891.1675958536.git.geert+renesas@glider.be>
+Subject: [PATCH 1/2] dt-bindings: thermal: rcar-gen3-thermal: Add r8a779g0 support
+Date:   Thu,  9 Feb 2023 17:11:53 +0100
+Message-Id: <11f740522ec479011cc8eef6bb450603be394def.1675958665.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1675958665.git.geert+renesas@glider.be>
+References: <cover.1675958665.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the module clock used by the Thermal Sensor/Chip Internal Voltage
+Document support for the Thermal Sensor/Chip Internal Voltage
 Monitor/Core Voltage Monitor (THS/CIVM/CVM) on the Renesas R-Car V4H
 (R8A779G0) SoC.
-make the new value fit.
 
-Based on a large patch in the BSP by Kazuya Mizuguchi.
+Unlike most other R-Car Gen3 and Gen4 SoCs, it has 4 instead of 3
+sensors, so increase the maximum number of reg tuples.
+Just like other R-Car Gen4 SoCs, interrupts are not routed to the
+INTC-AP but to the ECM.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To be queued in renesas-clk-for-v6.4.
+ .../devicetree/bindings/thermal/rcar-gen3-thermal.yaml         | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 7fca11204f74a50f..0daa7bbbb51cdc16 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -213,6 +213,7 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("pfc1",		916,	R8A779G0_CLK_CL16M),
- 	DEF_MOD("pfc2",		917,	R8A779G0_CLK_CL16M),
- 	DEF_MOD("pfc3",		918,	R8A779G0_CLK_CL16M),
-+	DEF_MOD("tsc",		919,	R8A779G0_CLK_CL16M),
- };
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
+index 0f05f5c886c5fe1d..ecf276fd155cfb27 100644
+--- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
+@@ -28,6 +28,7 @@ properties:
+       - renesas,r8a77980-thermal # R-Car V3H
+       - renesas,r8a779a0-thermal # R-Car V3U
+       - renesas,r8a779f0-thermal # R-Car S4-8
++      - renesas,r8a779g0-thermal # R-Car V4H
  
- /*
+   reg: true
+ 
+@@ -80,6 +81,7 @@ else:
+         - description: TSC1 registers
+         - description: TSC2 registers
+         - description: TSC3 registers
++        - description: TSC4 registers
+   if:
+     not:
+       properties:
+@@ -87,6 +89,7 @@ else:
+           contains:
+             enum:
+               - renesas,r8a779f0-thermal
++              - renesas,r8a779g0-thermal
+   then:
+     required:
+       - interrupts
 -- 
 2.34.1
 
