@@ -2,98 +2,126 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65408C61DA4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Feb 2023 13:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A73FC05027
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Feb 2023 13:47:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230405AbjBINff (ORCPT
+        id S229968AbjBINru (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 08:35:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36056 "EHLO
+        Thu, 9 Feb 2023 08:47:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230355AbjBINfS (ORCPT
+        with ESMTP id S229942AbjBINrt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 08:35:18 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CD28E60D63;
-        Thu,  9 Feb 2023 05:34:59 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.97,283,1669042800"; 
-   d="scan'208";a="152256220"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Feb 2023 22:34:46 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8D19743638B8;
-        Thu,  9 Feb 2023 22:34:46 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     iommu@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3] dt-bindings: iommu: renesas,ipmmu-vmsa: Update for R-Car Gen4
-Date:   Thu,  9 Feb 2023 22:34:40 +0900
-Message-Id: <20230209133440.2643228-1-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 9 Feb 2023 08:47:49 -0500
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4823B59545;
+        Thu,  9 Feb 2023 05:47:47 -0800 (PST)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 0994B100003;
+        Thu,  9 Feb 2023 13:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1675950465;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=A8RHB96FOxhxQqrq2UsYHiREFidPbx/nPkr7Cq/prjw=;
+        b=RbIOZ9nIKUqyRy+Qc7sDbwwL3bAW72xgJ2vH0r17QUvDw6aZL/TDd0unyET75cQTakwXxb
+        S/NxTVCX6fWYa65I31xbBDG4ZqdvRi/l5MHo/Ydf6RGELpQzkKGKy2F9tkI30fexBqDpHB
+        NbAxgNsXSN986IscYWoN4TLz2mpstmVZX4nceFVhlty9VWBMEgy5zxjt/gPgXkJlhzuOCA
+        dK5ZYY9UfUMB8mXi/lr9VSUEvvx1SAMq8FIWI6DwcB1fOvvithmMsj1+/DYh8nb7/ZyJQ9
+        hsEimK3ub2ex3ILd/997xx9TN2iRdt8fnFo6or/S7fgJeVQxeNYCh6NXvdstRQ==
+Date:   Thu, 9 Feb 2023 14:50:06 +0100
+From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?B?TWlxdcOobA==?= Raynal <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Arun Ramadoss <Arun.Ramadoss@microchip.com>,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 3/3] net: dsa: rzn1-a5psw: add vlan support
+Message-ID: <20230209145006.2b42f5a3@fixe.home>
+In-Reply-To: <317ec9fc-87de-2683-dfd4-30fe94e2efd7@gmail.com>
+References: <20230208161749.331965-1-clement.leger@bootlin.com>
+        <20230208161749.331965-4-clement.leger@bootlin.com>
+        <317ec9fc-87de-2683-dfd4-30fe94e2efd7@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.36; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since R-Car Gen4 doens't have the main IPMMU IMSSTR register, update
-the renesas,ipmmu-main property which sets maxItems as 1.
+Le Wed, 8 Feb 2023 09:38:04 -0800,
+Florian Fainelli <f.fainelli@gmail.com> a =C3=A9crit :
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-Changes from v2:
-https://lore.kernel.org/all/20230127140446.1728102-1-yoshihiro.shimoda.uh@renesas.com/
- - Set maxItems to renesas,ipmmu-main if R-Car Gen4.
+> > +static void a5psw_vlan_setup(struct a5psw *a5psw, int port)
+> > +{
+> > +	u32 reg;
+> > +
+> > +	/* Enable TAG always mode for the port, this is actually controlled
+> > +	 * by VLAN_IN_MODE_ENA field which will be used for PVID insertion
+> > +	 */
+> > +	reg =3D A5PSW_VLAN_IN_MODE_TAG_ALWAYS;
+> > +	reg <<=3D A5PSW_VLAN_IN_MODE_PORT_SHIFT(port);
+> > +	a5psw_reg_rmw(a5psw, A5PSW_VLAN_IN_MODE, A5PSW_VLAN_IN_MODE_PORT(port=
+),
+> > +		      reg); =20
+>=20
+> If we always enable VLAN mode, which VLAN ID do switch ports not part of=
+=20
+> a VLAN aware bridge get classified into?
 
-Changes from v1:
-https://lore.kernel.org/all/20230123012940.1250879-1-yoshihiro.shimoda.uh@renesas.com/
- - Change number of argument for R-Car Gen4 instead of "module id".
-   On the discussion, using 'minItems' is a solution. But, it causes
-   "too short" errors on dtbs_check. So, using "oneOf" instead.
+As answered on Vladimir question, it is VLAN_IN_MODE_ENAnot always VLAN ena=
+bled as
+stated by the comment above but only if VLAN_IN_MODE_ENA is set (which
+is done when setting a PVID only).
 
- .../bindings/iommu/renesas,ipmmu-vmsa.yaml    | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+>=20
+> > +
+> > +	/* Set transparent mode for output frame manipulation, this will depe=
+nd
+> > +	 * on the VLAN_RES configuration mode
+> > +	 */
+> > +	reg =3D A5PSW_VLAN_OUT_MODE_TRANSPARENT;
+> > +	reg <<=3D A5PSW_VLAN_OUT_MODE_PORT_SHIFT(port);
+> > +	a5psw_reg_rmw(a5psw, A5PSW_VLAN_OUT_MODE,
+> > +		      A5PSW_VLAN_OUT_MODE_PORT(port), reg); =20
+>=20
+> Sort of a follow-on to the previous question, what does transparent=20
+> mean? Does that mean the frames ingressing with a certain VLAN tag will=20
+> egress with the same VLAN tag in the absence of a VLAN configuration=20
+> rewriting the tag?
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-index 72308a4c14e7..cc81bce44f3f 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-@@ -74,11 +74,10 @@ properties:
-   renesas,ipmmu-main:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
-     items:
--      - items:
--          - description: phandle to main IPMMU
--          - description: the interrupt bit number associated with the particular
--              cache IPMMU device. The interrupt bit number needs to match the main
--              IPMMU IMSSTR register. Only used by cache IPMMU instances.
-+      - description: phandle to main IPMMU
-+      - description: the interrupt bit number associated with the particular
-+          cache IPMMU device. The interrupt bit number needs to match the main
-+          IPMMU IMSSTR register. Only used by cache IPMMU instances.
-     description:
-       Reference to the main IPMMU phandle plus 1 cell. The cell is
-       the interrupt bit number associated with the particular cache IPMMU
-@@ -109,6 +108,16 @@ allOf:
-       required:
-         - power-domains
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,rcar-gen4-ipmmu-vmsa
-+    then:
-+      properties:
-+        renesas,ipmmu-main:
-+          maxItems: 1
-+
- examples:
-   - |
-     #include <dt-bindings/clock/r8a7791-cpg-mssr.h>
--- 
-2.25.1
+Yes, here is an excerpt of the documentation which should clarified your
+question (VLAN Table is actually stored in VLAN_RES registers):
 
+- If frame=E2=80=99s VLAN id is found in the VLAN table (see Section
+4.5.3.9(3)(b), VLAN Domain Resolution / VLAN Table) and the port is
+defined as tagged for the VLAN, the frame is not modified.
+
+- If frame=E2=80=99s VLAN id is found in the VLAN table and the port is def=
+ined
+as untagged for the VLAN, the first VLAN tag is removed from the frame.
+
+- If frame=E2=80=99s VLAN id is not found in the VLAN table, the frame is n=
+ot
+modified.
+
+Thanks,
+
+--=20
+Cl=C3=A9ment L=C3=A9ger,
+Embedded Linux and Kernel engineer at Bootlin
+https://bootlin.com
