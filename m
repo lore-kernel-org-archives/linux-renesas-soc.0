@@ -2,172 +2,133 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D511BC05027
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Feb 2023 12:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 556C5C636D6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Feb 2023 13:13:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbjBIM5U (ORCPT
+        id S229978AbjBINNw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 07:57:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59580 "EHLO
+        Thu, 9 Feb 2023 08:13:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229869AbjBIM5S (ORCPT
+        with ESMTP id S229942AbjBINNv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Feb 2023 07:57:18 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 33D935EA16;
-        Thu,  9 Feb 2023 04:57:14 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.97,283,1669042800"; 
-   d="scan'208";a="149037957"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Feb 2023 21:57:13 +0900
-Received: from localhost.localdomain (unknown [10.226.92.132])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4330643191AC;
-        Thu,  9 Feb 2023 21:57:10 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Thu, 9 Feb 2023 08:13:51 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A0EF42DEA;
+        Thu,  9 Feb 2023 05:13:49 -0800 (PST)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 9C97C20011;
+        Thu,  9 Feb 2023 13:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1675948427;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=C/um9DAF/yUoTwrJOpk9LfwRlNxfzCt4/642EDtLaqo=;
+        b=m5VHCGUTSEtIsz5XE7R0YfuVyzLpi4Hy3GdkgSlRmAoMOsu0iRE8cQJATs/H/QgoEY2/m6
+        2vRdgfZFXNls9s4DQ3BYNGxtSBSDuPpUxBRrPejodH/yeFROO5p/cNBsaHZw0ijOpfoL/+
+        bKYZ33w9Z+q3hyL6jcit0M8QZEXRcaEIzv3uX6eah+g6ochsm2jd8Mff/dEly1L/aUB29g
+        9p9NRABdyzYDWSj1iBgaP7ktVM4JxAwhP73HhP7pj9qLmRCttvSNnSakjLPR0I64YAGL9m
+        3EKbn0RdsBe+jh0TwDZDbDvY8OqgNab1p1mPt6m3QwWYuIkvbTDVSUuYmu+8DQ==
+Date:   Thu, 9 Feb 2023 14:16:10 +0100
+From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?B?TWlxdcOobA==?= Raynal <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH v4 3/4] arm64: dts: renesas: r9a09g011: Add pwm nodes
-Date:   Thu,  9 Feb 2023 12:56:55 +0000
-Message-Id: <20230209125656.191905-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230209125656.191905-1-biju.das.jz@bp.renesas.com>
-References: <20230209125656.191905-1-biju.das.jz@bp.renesas.com>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: soc: renesas: renesas.yaml: add
+ renesas,rzn1d400-eb compatible
+Message-ID: <20230209141610.31146ea9@fixe.home>
+In-Reply-To: <CAMuHMdVL1YGnX4X2R_O1tMhRt07R8XUD2eWeFFgTcm7ShZrdcg@mail.gmail.com>
+References: <20230207145444.166950-1-clement.leger@bootlin.com>
+        <20230207145444.166950-2-clement.leger@bootlin.com>
+        <CAMuHMdVL1YGnX4X2R_O1tMhRt07R8XUD2eWeFFgTcm7ShZrdcg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.36; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device nodes for the pwm timer channels that are not assigned
-to the ISP.
+Le Thu, 9 Feb 2023 09:48:09 +0100,
+Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit :
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3->v4:
- * No change
-v2->v3:
- * Added Rb tag from Geert
-v1->v2:
- * Added resets property
----
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi | 98 ++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+> Hi Cl=C3=A9ment,
+>=20
+> On Tue, Feb 7, 2023 at 3:52 PM Cl=C3=A9ment L=C3=A9ger <clement.leger@boo=
+tlin.com> wrote:
+> > Add "renesas,rzn1d400-eb" which target the RZ/N1 EB board when a RZ/N1D=
+-DB
+> > daughter board is plugged on it.
+> >
+> > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> =20
+>=20
+> Thanks for your patch!
+>=20
+> > --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> > +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> > @@ -431,6 +431,12 @@ properties:
+> >                - renesas,rzn1d400-db # RZN1D-DB (RZ/N1D Demo Board for =
+the RZ/N1D 400 pins package)
+> >            - const: renesas,r9a06g032
+> >
+> > +      - description: RZ/N1{D,S} EB
+> > +        items:
+> > +          - enum:
+> > +              - renesas,rzn1d400-eb # RZN1D-EB (Expansion Board when u=
+sing a RZN1D-DB)
+> > +          - const: renesas,r9a06g032 =20
+>=20
+> Don't you want to have "renesas,rzn1d400-db", too, in between the two
+> other values?
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-index 46d67b200a66..b0af7404269b 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-@@ -236,6 +236,104 @@ sys: system-controller@a3f03000 {
- 			reg = <0 0xa3f03000 0 0x400>;
- 		};
- 
-+		pwm8: pwm@a4010400 {
-+			compatible = "renesas,r9a09g011-pwm",
-+				     "renesas,rzv2m-pwm";
-+			reg = <0 0xa4010400 0 0x80>;
-+			interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A09G011_CPERI_GRPF_PCLK>,
-+				 <&cpg CPG_MOD R9A09G011_PWM8_CLK>;
-+			clock-names = "apb", "pwm";
-+			resets = <&cpg R9A09G011_PWM_GPF_PRESETN>;
-+			power-domains = <&cpg>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm9: pwm@a4010480 {
-+			compatible = "renesas,r9a09g011-pwm",
-+				     "renesas,rzv2m-pwm";
-+			reg = <0 0xa4010480 0 0x80>;
-+			interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A09G011_CPERI_GRPF_PCLK>,
-+				 <&cpg CPG_MOD R9A09G011_PWM9_CLK>;
-+			clock-names = "apb", "pwm";
-+			resets = <&cpg R9A09G011_PWM_GPF_PRESETN>;
-+			power-domains = <&cpg>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm10: pwm@a4010500 {
-+			compatible = "renesas,r9a09g011-pwm",
-+				     "renesas,rzv2m-pwm";
-+			reg = <0 0xa4010500 0 0x80>;
-+			interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A09G011_CPERI_GRPF_PCLK>,
-+				 <&cpg CPG_MOD R9A09G011_PWM10_CLK>;
-+			clock-names = "apb", "pwm";
-+			resets = <&cpg R9A09G011_PWM_GPF_PRESETN>;
-+			power-domains = <&cpg>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm11: pwm@a4010580 {
-+			compatible = "renesas,r9a09g011-pwm",
-+				     "renesas,rzv2m-pwm";
-+			reg = <0 0xa4010580 0 0x80>;
-+			interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A09G011_CPERI_GRPF_PCLK>,
-+				 <&cpg CPG_MOD R9A09G011_PWM11_CLK>;
-+			clock-names = "apb", "pwm";
-+			resets = <&cpg R9A09G011_PWM_GPF_PRESETN>;
-+			power-domains = <&cpg>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm12: pwm@a4010600 {
-+			compatible = "renesas,r9a09g011-pwm",
-+				     "renesas,rzv2m-pwm";
-+			reg = <0 0xa4010600 0 0x80>;
-+			interrupts = <GIC_SPI 380 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A09G011_CPERI_GRPF_PCLK>,
-+				 <&cpg CPG_MOD R9A09G011_PWM12_CLK>;
-+			clock-names = "apb", "pwm";
-+			resets = <&cpg R9A09G011_PWM_GPF_PRESETN>;
-+			power-domains = <&cpg>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm13: pwm@a4010680 {
-+			compatible = "renesas,r9a09g011-pwm",
-+				     "renesas,rzv2m-pwm";
-+			reg = <0 0xa4010680 0 0x80>;
-+			interrupts = <GIC_SPI 381 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A09G011_CPERI_GRPF_PCLK>,
-+				 <&cpg CPG_MOD R9A09G011_PWM13_CLK>;
-+			clock-names = "apb", "pwm";
-+			resets = <&cpg R9A09G011_PWM_GPF_PRESETN>;
-+			power-domains = <&cpg>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm14: pwm@a4010700 {
-+			compatible = "renesas,r9a09g011-pwm",
-+				     "renesas,rzv2m-pwm";
-+			reg = <0 0xa4010700 0 0x80>;
-+			interrupts = <GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A09G011_CPERI_GRPF_PCLK>,
-+				 <&cpg CPG_MOD R9A09G011_PWM14_CLK>;
-+			clock-names = "apb", "pwm";
-+			resets = <&cpg R9A09G011_PWM_GPF_PRESETN>;
-+			power-domains = <&cpg>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@a4030000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.25.1
+Do you mean like that ?
 
+ - enum:
+    - renesas,rzn1d400-eb # RZN1D-EB (Expansion Board when using a
+   RZN1D-DB)
+ - const: renesas,rzn1d400-db
+ - const: renesas,r9a06g032
+
+And thus using compatible =3D "renesas,rzn1d400-eb",
+"renesas,rzn1d400-db", "renesas,r9a06g032" in the EB dt I guess.
+
+Thanks,
+
+>=20
+> > +
+> >        - description: RZ/Five and RZ/G2UL (R9A07G043)
+> >          items:
+> >            - enum: =20
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>=20
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+
+
+
+--=20
+Cl=C3=A9ment L=C3=A9ger,
+Embedded Linux and Kernel engineer at Bootlin
+https://bootlin.com
