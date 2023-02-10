@@ -2,165 +2,166 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21137C05027
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Feb 2023 19:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C047DC636D4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Feb 2023 20:34:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232057AbjBJT1u (ORCPT
+        id S233731AbjBJUe4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Feb 2023 14:27:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33868 "EHLO
+        Fri, 10 Feb 2023 15:34:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232801AbjBJT1u (ORCPT
+        with ESMTP id S233894AbjBJUey (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Feb 2023 14:27:50 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C335570CCE
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Feb 2023 11:27:48 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id v23so7526249plo.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Feb 2023 11:27:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZwrUc84I/sw9tW3rFINcSrPClBVAQXnQCQkcXqCJwLw=;
-        b=hQAxFU0UWDL+c15mTPMopFsa+DtSgaC7lA9lDiZRF+/FBqEeZ1Sy6LFHOtrrmF7Sd2
-         v3IQ4IcAubIN0sr/1IcMzervGsBGnx/9uVGBupdYwT7CYjSfUyh2ey92RUSzoBbbgpYn
-         0yrTbvmX6Y5z5uGK5Fr3w7qB8YcpBQwxPf068+nJTDp3fMtnUOry570Pkrgu+Z0vJX0T
-         /oD0wDMz7A461CTNkbVBFXvkA3x1tdf1xcy/8c23ZzOgsoyCkwyAxKek0E8ib8LB8umD
-         JbVUcVsa0e4608OvA+Dgszfc0dcvb4K/Bn/gnpXg2T2gMtByW8tFjWx/0j/YrIp98Bph
-         Jh+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZwrUc84I/sw9tW3rFINcSrPClBVAQXnQCQkcXqCJwLw=;
-        b=GW19pwtWpZeOrjkZw2TstyePRKQrMZIclABZjlOXk/T2oBPggahOC3pdpEI8IfYsBa
-         +HRHm1225hflUplBxkEeC/ZYgverJly1toMoyVRP8CRPmbJ2d+Cnrim2CK6m6+6ptv0K
-         UgrcQl7q39vTC1+ONZSowx0/XD/11CB13GXDj5jGlsxfe3Rrhnx/cYxsCwd8UA1T026U
-         ooc08q8iok0lH3WpKctj/nYJc3A/710IiKrVZGjiCjLfKa5D9ZPir1mDds9CzxzgSRuQ
-         AcAvKOnWEkb9TyKl29ScV1FmZzRkgu0b5hq40sJLZoi/YIRALmyBkzXZvQTxw6kInpdg
-         vkeg==
-X-Gm-Message-State: AO0yUKVMpuf0hSYEtL/han6MOpIkUF5pfhwXI5PR59B8LABNtu0rqz9v
-        39GKbx3HUHJakN5jTEpOktpJBXHeUaQYUjjDc0tvnA==
-X-Google-Smtp-Source: AK7set8YqUGIKC41zQQA+imGuckADHerNWZeukO+5tCxdqLGYKK3iW3D9WDbQqKroQBsftoX1HY4I+fjcAkwH4jn0w0=
-X-Received: by 2002:a17:90a:f018:b0:230:9e2a:ebd8 with SMTP id
- bt24-20020a17090af01800b002309e2aebd8mr2796418pjb.48.1676057267896; Fri, 10
- Feb 2023 11:27:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20230207014207.1678715-1-saravanak@google.com> <20230210101333.h2e7hcl3ylsoh6fy@skbuf>
-In-Reply-To: <20230210101333.h2e7hcl3ylsoh6fy@skbuf>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 10 Feb 2023 11:27:11 -0800
-Message-ID: <CAGETcx_SQJ1q_f8r+zKATF-EEb0P-T_ot15AQ1x1Vc_3h=XfCw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] fw_devlink improvements
-To:     Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
+        Fri, 10 Feb 2023 15:34:54 -0500
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8144972DFA;
+        Fri, 10 Feb 2023 12:34:50 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.97,287,1669042800"; 
+   d="scan'208";a="152433830"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 11 Feb 2023 05:34:49 +0900
+Received: from localhost.localdomain (unknown [10.226.93.19])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B0F6040029AE;
+        Sat, 11 Feb 2023 05:34:46 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        John Stultz <jstultz@google.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Maxim Kiselev <bigunclemax@gmail.com>,
-        Maxim Kochetkov <fido_max@inbox.ru>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Colin Foster <colin.foster@in-advantage.com>,
-        Martin Kepplinger <martin.kepplinger@puri.sm>,
-        Jean-Philippe Brucker <jpb@kernel.org>,
-        kernel-team@android.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 1/3] serial: 8250_em: Use dev_err_probe()
+Date:   Fri, 10 Feb 2023 20:34:37 +0000
+Message-Id: <20230210203439.174913-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230210203439.174913-1-biju.das.jz@bp.renesas.com>
+References: <20230210203439.174913-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Feb 10, 2023 at 2:13 AM Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
->
-> Hi Saravana,
->
-> On Mon, Feb 06, 2023 at 05:41:52PM -0800, Saravana Kannan wrote:
-> > Vladimir,
-> >
-> > Ccing you because DSA's and fw_devlink have known/existing problems
-> > (still in my TODOs to fix). But I want to make sure this series doesn't
-> > cause additional problems for DSA.
-> >
-> > All,
-> >
-> > This patch series improves fw_devlink in the following ways:
-> >
-> > 1. It no longer cares about a fwnode having a "compatible" property. It
-> >    figures this out more dynamically. The only expectation is that
-> >    fwnodes that are converted to devices actually get probed by a driver
-> >    for the dependencies to be enforced correctly.
-> >
-> > 2. Finer grained dependency tracking. fw_devlink will now create device
-> >    links from the consumer to the actual resource's device (if it has one,
-> >    Eg: gpio_device) instead of the parent supplier device. This improves
-> >    things like async suspend/resume ordering, potentially remove the need
-> >    for frameworks to create device links, more parallelized async probing,
-> >    and better sync_state() tracking.
-> >
-> > 3. Handle hardware/software quirks where a child firmware node gets
-> >    populated as a device before its parent firmware node AND actually
-> >    supplies a non-optional resource to the parent firmware node's
-> >    device.
-> >
-> > 4. Way more robust at cycle handling (see patch for the insane cases).
-> >
-> > 5. Stops depending on OF_POPULATED to figure out some corner cases.
-> >
-> > 6. Simplifies the work that needs to be done by the firmware specific
-> >    code.
-> >
-> > The v3 series has gone through my usual testing on my end and looks good
-> > to me.
->
-> Booted on an NXP LS1028A (arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts)
-> and a Turris MOX (arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts)
-> with no observed regressions.
+This patch simplifies probe() function by using dev_err_probe()
+instead of dev_err in probe().
 
-Thanks for testing Vladimir!
+While at it, remove the unused header file slab.h and added a
+local variable 'dev' to replace '&pdev->dev' in probe().
 
-> Is there something specific you would like
-> me to test?
+Also replace devm_clk_get->devm_clk_get_enabled and updated the
+clk handling in probe() and remove().
 
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2->v3:
+ * Dropped sclk from priv.
+ * Dropped unneeded clk_disable_unprepare from remove().
+ * Retained Rb tags from Geert and Andy as the changes are trivial.
+v1->v2:
+ * replaced devm_clk_get->devm_clk_get_enabled() and updated clk
+   handling in probe().
+ * Added Rb tag from Geert.
+---
+ drivers/tty/serial/8250/8250_em.c | 33 +++++++++++--------------------
+ 1 file changed, 12 insertions(+), 21 deletions(-)
 
-Not really, I just want to make sure the common DSA architectures
-don't hit any regression. In the hardware you tested, are there cases
-of PHYs where the supplier is the parent MDIO? I remember that being
-the only case where I needed special casing
-(FWNODE_FLAG_NEEDS_CHILD_BOUND_ON_ADD) in fw_devlink -- so it'll be
-good to make sure I didn't accidentally break anything there.
+diff --git a/drivers/tty/serial/8250/8250_em.c b/drivers/tty/serial/8250/8250_em.c
+index f8e99995eee9..9781bf73ed0c 100644
+--- a/drivers/tty/serial/8250/8250_em.c
++++ b/drivers/tty/serial/8250/8250_em.c
+@@ -13,7 +13,6 @@
+ #include <linux/serial_reg.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+-#include <linux/slab.h>
+ 
+ #include "8250.h"
+ 
+@@ -21,7 +20,6 @@
+ #define UART_DLM_EM 10
+ 
+ struct serial8250_em_priv {
+-	struct clk *sclk;
+ 	int line;
+ };
+ 
+@@ -79,8 +77,10 @@ static void serial8250_em_serial_dl_write(struct uart_8250_port *up, int value)
+ static int serial8250_em_probe(struct platform_device *pdev)
+ {
+ 	struct serial8250_em_priv *priv;
++	struct device *dev = &pdev->dev;
+ 	struct uart_8250_port up;
+ 	struct resource *regs;
++	struct clk *sclk;
+ 	int irq, ret;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+@@ -88,31 +88,26 @@ static int serial8250_em_probe(struct platform_device *pdev)
+ 		return irq;
+ 
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!regs) {
+-		dev_err(&pdev->dev, "missing registers\n");
+-		return -EINVAL;
+-	}
++	if (!regs)
++		return dev_err_probe(dev, -EINVAL, "missing registers\n");
+ 
+-	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	priv->sclk = devm_clk_get(&pdev->dev, "sclk");
+-	if (IS_ERR(priv->sclk)) {
+-		dev_err(&pdev->dev, "unable to get clock\n");
+-		return PTR_ERR(priv->sclk);
+-	}
++	sclk = devm_clk_get_enabled(dev, "sclk");
++	if (IS_ERR(sclk))
++		return dev_err_probe(dev, PTR_ERR(sclk), "unable to get clock\n");
+ 
+ 	memset(&up, 0, sizeof(up));
+ 	up.port.mapbase = regs->start;
+ 	up.port.irq = irq;
+ 	up.port.type = PORT_UNKNOWN;
+ 	up.port.flags = UPF_BOOT_AUTOCONF | UPF_FIXED_PORT | UPF_IOREMAP;
+-	up.port.dev = &pdev->dev;
++	up.port.dev = dev;
+ 	up.port.private_data = priv;
+ 
+-	clk_prepare_enable(priv->sclk);
+-	up.port.uartclk = clk_get_rate(priv->sclk);
++	up.port.uartclk = clk_get_rate(sclk);
+ 
+ 	up.port.iotype = UPIO_MEM32;
+ 	up.port.serial_in = serial8250_em_serial_in;
+@@ -121,11 +116,8 @@ static int serial8250_em_probe(struct platform_device *pdev)
+ 	up.dl_write = serial8250_em_serial_dl_write;
+ 
+ 	ret = serial8250_register_8250_port(&up);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "unable to register 8250 port\n");
+-		clk_disable_unprepare(priv->sclk);
+-		return ret;
+-	}
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "unable to register 8250 port\n");
+ 
+ 	priv->line = ret;
+ 	platform_set_drvdata(pdev, priv);
+@@ -137,7 +129,6 @@ static int serial8250_em_remove(struct platform_device *pdev)
+ 	struct serial8250_em_priv *priv = platform_get_drvdata(pdev);
+ 
+ 	serial8250_unregister_port(priv->line);
+-	clk_disable_unprepare(priv->sclk);
+ 	return 0;
+ }
+ 
+-- 
+2.25.1
 
-
--Saravana
