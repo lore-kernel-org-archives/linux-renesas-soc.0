@@ -2,153 +2,157 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E387FC636CC
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Feb 2023 16:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C75E3C61DA4
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Feb 2023 19:52:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbjBKQ6z (ORCPT
+        id S229496AbjBKTwC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 11 Feb 2023 11:58:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53252 "EHLO
+        Sat, 11 Feb 2023 14:52:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjBKQ6y (ORCPT
+        with ESMTP id S229472AbjBKTwB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 11 Feb 2023 11:58:54 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9542E26BD
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 11 Feb 2023 08:58:52 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id a2so8157039wrd.6
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 11 Feb 2023 08:58:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gKHa2WXs3N1837KLyPrWv8Z3wmI3snRyJspZOs7w6zo=;
-        b=X11T3XAsvpVim8jfkl7QVbyPlbYU1robyzaiuk2tR1QNQr0e9VB0gN/YLzemY9CHpn
-         jdC1VMEC6xBezfXczDMYJARlZFsHWfXYIgQBD7zeQfx0+Ih/JuKenLAv13zJ0nT+FqtO
-         6WVyAnuplj9NsLdx8u91HOhASJrF4x9S2/I0aRfTe4J0Ps7pLBQ6CB+j0PE8Lj2H9TAW
-         FZEfjhuhhJKf1wUKss9dPnZyAK+7Gq6wT3kq/EYxgm/+7JdWdFLcdQcFFvt7ggjpbGQA
-         j8Gw76deBmSs1sZgiEqhZm9ljE3Ps8tb6/VKKZ6xc0B21V99lLXtOMyi5GXlI+UvAFqM
-         62ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gKHa2WXs3N1837KLyPrWv8Z3wmI3snRyJspZOs7w6zo=;
-        b=QMILtjMv5G0RFJAqA98zD4ovpTdvH8HT7t7G779hNpsAxEq5yZNZiI80NCA3uq7iO3
-         gjThapp4b54l+fxz2J6nNG8YxwqzSHGdXF6o8ufKJ5boyp9c3hvkmRa/50NwtMvWgw7L
-         nVmmwEYN0itNjb9Qsl40t5sOL095u4pGnWDf9+Hi0s8yAvN7AnAIoYETHz6KbddLDbkl
-         MUHFnjeSC3pHTIrZo41GaU/+LajTQc8uRULFiAix3fourRuRZmG0pF7nRwR+yEWskH6G
-         q9IeZmogYFQ1r26N7PQd4e6u2l8hzOBOdOOx7ntPmJ2oljpJTXAtrJEBqiY13h10MKuJ
-         ky2A==
-X-Gm-Message-State: AO0yUKVhtc9L0I5uJ90Z7BHomTTN9TOg707cwMDjvzaolh/tzo8Q3cvp
-        exdlW6AEZjYf4BEopQMm5tmtYw==
-X-Google-Smtp-Source: AK7set/X/r/WgS5SA9zfJCgLU0EBExTO0k6yjqVuwnp0Ihc3WbhsouErp+2PAboLKux3bSKIi3ik0g==
-X-Received: by 2002:a05:6000:1144:b0:242:1809:7e17 with SMTP id d4-20020a056000114400b0024218097e17mr16188284wrx.6.1676134731196;
-        Sat, 11 Feb 2023 08:58:51 -0800 (PST)
-Received: from sleipner.berto.se (p54ac5802.dip0.t-ipconnect.de. [84.172.88.2])
-        by smtp.googlemail.com with ESMTPSA id y13-20020a5d614d000000b002c5526234d2sm887064wrt.8.2023.02.11.08.58.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Feb 2023 08:58:50 -0800 (PST)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        devicetree@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] arm64: dts: renesas: draak: Make HDMI the default video input
-Date:   Sat, 11 Feb 2023 17:57:14 +0100
-Message-Id: <20230211165715.4024992-2-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230211165715.4024992-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20230211165715.4024992-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 11 Feb 2023 14:52:01 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F62216327;
+        Sat, 11 Feb 2023 11:51:59 -0800 (PST)
+Received: from localhost (node-1w7jr9st5p2etziuntaazujnj.ipv6.telus.net [IPv6:2001:569:beb1:1500:c96f:992f:7c34:9ff])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dbrouwer)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B53A1660211A;
+        Sat, 11 Feb 2023 19:51:56 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1676145117;
+        bh=Dds6dBFqJOASeFzEjW9BSrdneYSHbK+I+VSvvl3QM4c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cb7dTDmFWMnGeEHL2Natpvar52pjhcZfPI4x2JckWA+y7AlE1Ff1xVcHoaUDLYy4O
+         Bi2tEDF39IDye96DP8jUnI9e/uhFuCQz8hT/V2McWorDPZu0X5w8fIVPgA8seMMQf3
+         zYND3tPLUaPTqteKYjDSZufz1jD8twQJbUF61V7B2Hj7kLNEOq0fR6RNc7cgQr3Doa
+         lGDwTpUwNK8VcyIvld9iVGnHGIZdSZmgP3Qro4T9DxhTQnSsi2JAtxLgZeWkX1eGVW
+         kaSWNBUqSHMQIyzskfh/2Tjf44rb1saAe5sQsdh97niM/POKQ3d+vlRie+yZkp6cdv
+         uj9bDRiUVkmqA==
+Date:   Sat, 11 Feb 2023 11:53:31 -0800
+From:   Deborah Brouwer <deborah.brouwer@collabora.com>
+To:     Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] configure.ac: Add option to disable compilation of
+ v4l2-tracer
+Message-ID: <Y+fx6OYqCVEgK9ii@xps>
+References: <20230211101231.3060841-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230211101231.3060841-1-niklas.soderlund@ragnatech.se>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Most Gen3 R-Car devices have HDMI as the default video input source,
-align Draak with them and make HDMI the default. While at it move the
-bus properties to the VIN node where they can be consumed correctly by
-the driver.
+On Sat, Feb 11, 2023 at 11:12:31AM +0100, Niklas Söderlund wrote:
+> Add a configuration time option to disable compilation of the
+> v4l2-tracer utility.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+> ---
+> 
+> Hi Hans,
+> 
+> The v4l2-tracer fails to build on arm32. While I'm sure that can be
+> fixed, this is an utility I don't use and building on target any thing I
+> can disable in the build saves me time.
+> 
+> From completes, the classes of errors I see are around v4l2_fourcc(),
+> _IOR() and _IOWR().
+> 
+> ../../include/linux/videodev2.h:81:66: error: narrowing conversion of '3039908417' from '__u32' {aka 'unsigned int'} to 'long int' [-Wnarrowing]
+>    81 | #define v4l2_fourcc_be(a, b, c, d)      (v4l2_fourcc(a, b, c, d) | (1U << 31))
+> 
+> ../../include/linux/videodev2.h:2528:34: error: narrowing conversion of '2154321408' from 'unsigned int' to 'long int' [-Wnarrowing]
+>  2528 | #define VIDIOC_QUERYCAP          _IOR('V',  0, struct v4l2_capability)
+> 
+> ../../include/linux/videodev2.h:2529:33: error: narrowing conversion of '3225441794' from 'unsigned int' to 'long int' [-Wnarrowing]
+>  2529 | #define VIDIOC_ENUM_FMT         _IOWR('V',  2, struct v4l2_fmtdesc)
+> 
+> I'm building on target with gcc 12.1.0, nothing fancy,
+> 
+>     $ ./bootstrap.sh && ./configure && make
+> 
+> Kind Regards
+> Niklas
 
-Signed-off-by: Niklas SÃ¶derlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/draak.dtsi | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Hi Niklas,
+Thanks for this patch it is good and probably how I should have done it
+originally :) It does make the "HAVE_JSONC" conditional redundant, so once
+this is applied, I will send a follow-up patch to replace "HAVE_JSONC" with
+"WITH_V4L2_TRACER" in the v4l2-tracer Makefile.am.
 
-diff --git a/arch/arm64/boot/dts/renesas/draak.dtsi b/arch/arm64/boot/dts/renesas/draak.dtsi
-index ef3bb835d5c0..e248866c7871 100644
---- a/arch/arm64/boot/dts/renesas/draak.dtsi
-+++ b/arch/arm64/boot/dts/renesas/draak.dtsi
-@@ -356,11 +356,10 @@ port@3 {
- 				 * CVBS and HDMI inputs through SW[49-53]
- 				 * switches.
- 				 *
--				 * CVBS is the default selection, link it to
--				 * VIN4 here.
-+				 * HDMI is the default selection, leave CVBS
-+				 * not connected here.
- 				 */
- 				adv7180_out: endpoint {
--					remote-endpoint = <&vin4_in>;
- 				};
- 			};
- 		};
-@@ -423,13 +422,11 @@ port@2 {
- 				 * CVBS and HDMI inputs through SW[49-53]
- 				 * switches.
- 				 *
--				 * CVBS is the default selection, leave HDMI
--				 * not connected here.
-+				 * HDMI is the default selection, link it to
-+				 * VIN4 here.
- 				 */
- 				adv7612_out: endpoint {
--					pclk-sample = <0>;
--					hsync-active = <0>;
--					vsync-active = <0>;
-+					remote-endpoint = <&vin4_in>;
- 				};
- 			};
- 		};
-@@ -580,8 +577,8 @@ usb0_pins: usb0 {
- 		function = "usb0";
- 	};
- 
--	vin4_pins_cvbs: vin4 {
--		groups = "vin4_data8", "vin4_sync", "vin4_clk";
-+	vin4_pins: vin4 {
-+		groups = "vin4_data24", "vin4_sync", "vin4_clk";
- 		function = "vin4";
- 	};
- };
-@@ -729,7 +726,7 @@ &usb2_phy0 {
- };
- 
- &vin4 {
--	pinctrl-0 = <&vin4_pins_cvbs>;
-+	pinctrl-0 = <&vin4_pins>;
- 	pinctrl-names = "default";
- 
- 	status = "okay";
-@@ -737,7 +734,10 @@ &vin4 {
- 	ports {
- 		port {
- 			vin4_in: endpoint {
--				remote-endpoint = <&adv7180_out>;
-+				pclk-sample = <0>;
-+				hsync-active = <0>;
-+				vsync-active = <0>;
-+				remote-endpoint = <&adv7612_out>;
- 			};
- 		};
- 	};
--- 
-2.39.1
+Best,
+Deb
 
+> ---
+>  configure.ac      | 11 +++++++++++
+>  utils/Makefile.am |  2 +-
+>  2 files changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/configure.ac b/configure.ac
+> index dc9c4af71c45..46ddc7a8b404 100644
+> --- a/configure.ac
+> +++ b/configure.ac
+> @@ -497,6 +497,14 @@ AC_ARG_ENABLE(v4l2-compliance-32,
+>     esac]
+>  )
+>  
+> +AC_ARG_ENABLE(v4l2-tracer,
+> +  AS_HELP_STRING([--disable-v4l2-tracer], [disable v4l2-tracer compilation]),
+> +  [case "${enableval}" in
+> +     yes | no ) ;;
+> +     *) AC_MSG_ERROR(bad value ${enableval} for --disable-v4l2-tracer) ;;
+> +   esac]
+> +)
+> +
+>  AC_ARG_ENABLE(v4l2-ctl-libv4l,
+>    AS_HELP_STRING([--disable-v4l2-ctl-libv4l], [disable use of libv4l in v4l2-ctl]),
+>    [case "${enableval}" in
+> @@ -578,6 +586,7 @@ AM_CONDITIONAL([WITH_V4L2_CTL_32], [test x${enable_v4l2_ctl_32} = xyes])
+>  AM_CONDITIONAL([WITH_V4L2_COMPLIANCE], [test x$ac_cv_func_fork = xyes])
+>  AM_CONDITIONAL([WITH_V4L2_COMPLIANCE_LIBV4L], [test x$ac_cv_func_fork = xyes -a x${enable_v4l2_compliance_libv4l} != xno])
+>  AM_CONDITIONAL([WITH_V4L2_COMPLIANCE_32], [test x$ac_cv_func_fork = xyes -a x${enable_v4l2_compliance_32} = xyes])
+> +AM_CONDITIONAL([WITH_V4L2_TRACER], [test x$jsonc_pkgconfig = xyes -a x$enable_v4l2_tracer != xno])
+>  PKG_CHECK_MODULES([LIBBPF], [libbpf >= 0.7], [bpf_pc=yes], [bpf_pc=no])
+>  AM_CONDITIONAL([WITH_BPF],          [test x$enable_bpf != xno -a x$libelf_pkgconfig = xyes -a x$CLANG = xclang -a x$bpf_pc = xyes])
+>  
+> @@ -628,6 +637,7 @@ AM_COND_IF([WITH_V4L2_CTL_32], [USE_V4L2_CTL_32="yes"], [USE_V4L2_CTL_32="no"])
+>  AM_COND_IF([WITH_V4L2_COMPLIANCE], [USE_V4L2_COMPLIANCE="yes"], [USE_V4L2_COMPLIANCE="no"])
+>  AM_COND_IF([WITH_V4L2_COMPLIANCE_LIBV4L], [USE_V4L2_COMPLIANCE_LIBV4L="yes"], [USE_V4L2_COMPLIANCE_LIBV4L="no"])
+>  AM_COND_IF([WITH_V4L2_COMPLIANCE_32], [USE_V4L2_COMPLIANCE_32="yes"], [USE_V4L2_COMPLIANCE_32="no"])
+> +AM_COND_IF([WITH_V4L2_TRACER], [USE_V4L2_TRACER="yes"], [USE_V4L2_TRACER="no"])
+>  AM_COND_IF([WITH_BPF],         [USE_BPF="yes"
+>                                  AC_DEFINE([HAVE_BPF], [1], [BPF IR decoder support enabled])],
+>  				[USE_BPF="no"])
+> @@ -679,5 +689,6 @@ compile time options summary
+>      v4l2-compliance            : $USE_V4L2_COMPLIANCE
+>      v4l2-compliance uses libv4l: $USE_V4L2_COMPLIANCE_LIBV4L
+>      v4l2-compliance-32         : $USE_V4L2_COMPLIANCE_32
+> +    v4l2-tracer                : $USE_V4L2_TRACER
+>      BPF IR Decoders:           : $USE_BPF
+>  EOF
+> diff --git a/utils/Makefile.am b/utils/Makefile.am
+> index 6f59515ef29d..b2a6ac211473 100644
+> --- a/utils/Makefile.am
+> +++ b/utils/Makefile.am
+> @@ -15,7 +15,7 @@ SUBDIRS = \
+>  	cec-follower \
+>  	rds-ctl
+>  
+> -if HAVE_JSONC
+> +if WITH_V4L2_TRACER
+>  SUBDIRS += \
+>  	v4l2-tracer
+>  endif
+> -- 
+> 2.39.1
+> 
