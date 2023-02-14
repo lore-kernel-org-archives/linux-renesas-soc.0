@@ -2,90 +2,81 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CF5C64ED6
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Feb 2023 16:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806E2C05027
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Feb 2023 16:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjBNQAI convert rfc822-to-8bit (ORCPT
+        id S229685AbjBNQ0C convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 11:00:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44164 "EHLO
+        Tue, 14 Feb 2023 11:26:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233325AbjBNP7x (ORCPT
+        with ESMTP id S229578AbjBNQ0C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 10:59:53 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4689213A
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Feb 2023 07:59:33 -0800 (PST)
-Received: by mail-qt1-f172.google.com with SMTP id g18so17959390qtb.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Feb 2023 07:59:33 -0800 (PST)
+        Tue, 14 Feb 2023 11:26:02 -0500
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 250AD2C669;
+        Tue, 14 Feb 2023 08:25:40 -0800 (PST)
+Received: by mail-qt1-f174.google.com with SMTP id ch10so16965306qtb.11;
+        Tue, 14 Feb 2023 08:25:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T17JKqdhVqtAg8TAg4LrRQbjDIgJQfHMsURmnXUTLK4=;
-        b=UuxFTgBoyJ3YTJSnyw6TR0DgGUsvfZzMlkv6Bn+xoRgukmjBDAY7W+d6lhmbFxFd40
-         74R62u4Gu8OieZyhhvzOmS+9EDQu5ZBEKMpE/MmofgR8knAwOz0lEWE7OWdZpTTLafzh
-         lQgQ4S+hfrKdlDf91AW+9mWaraeY3PSDyZTNZbgMSnhJutWrZBf/yF3H2LGiB7N2iHDO
-         Z87cKJi9KvlCweS2Wse7VZOVbsnsHxr82b7Yda/uQ6rhipz518stsojs80t7MdoIM5n6
-         GBpmSwxMvxWbAY1CRY7AkNEYNMQCeYEWSeHAyPRe9VWHZhP8PLf11WBjgUpRM50kaQtx
-         Bb9Q==
-X-Gm-Message-State: AO0yUKU/lY1TCn1WaNY89mV9r3OVXptC8Hw3ZaD7MnYHI3XjopERB6AG
-        rcs/prEGx5OqLcloqrCv4YNZkeS+bMIol6TE
-X-Google-Smtp-Source: AK7set/AFEJF4tG5wKCKiHB7sp0YsJpeV5bHJWtUGSS3bz9nZs086rddCa8EYPtrUd6iYg3D1ytLZA==
-X-Received: by 2002:ac8:5b15:0:b0:3b8:1743:89dc with SMTP id m21-20020ac85b15000000b003b8174389dcmr3957527qtw.2.1676390372792;
-        Tue, 14 Feb 2023 07:59:32 -0800 (PST)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id a20-20020ac81094000000b003b9ba2cf068sm11424120qtj.56.2023.02.14.07.59.32
-        for <linux-renesas-soc@vger.kernel.org>
+        bh=XujjaNJzottOxlelqCCl+jhNTWReue3n2BPGfmetq2w=;
+        b=WhGgZ6oHuRekJymi5yZ7z98G22L2lVPz+7cgOPqHGvhYE2HF0LPwQmizdiHGXJp8Ee
+         sIcFQUk7CmFb4OZDpQ2mHw1yQg+bPWKVBpf2utHkpiR9yQzMHnqBn2YQqTiRXSqZwYyp
+         TJmBp0MEWOStIckH9XCrCv8PmsOTkJQ4CvXvuQIiCzlVMb/6PfAchNv4gy8+xngj+J6r
+         sBTeIDyIYelKohb4THL7v1B28Kc0Oc35RWnJYDczgKdkJPrE8z6x0tZF0MZ9rIcbWQxH
+         +zOyfMTyop7Qwpyl5R3BNgN36uwhf4gKODU1CzJO3n2TbTp9PJ5sSxvZsLmq1Lk72UAC
+         ZVKg==
+X-Gm-Message-State: AO0yUKUuHd8jHOM/GhqJoHqtORRzRwOkjx7b9eJRj4owY5CwkL5+0alC
+        IThi9ggnFNsbh2OdIfDU6uKg+gMQELq41SE2
+X-Google-Smtp-Source: AK7set98/yGDmwGxwJ7myczyPkqosAoYdjRZjZ42a9oxRf8OyUQf0fLOl6Och4ondYozHFIs33+ZbA==
+X-Received: by 2002:a05:622a:307:b0:3b8:118d:83d9 with SMTP id q7-20020a05622a030700b003b8118d83d9mr4658014qtw.4.1676391915917;
+        Tue, 14 Feb 2023 08:25:15 -0800 (PST)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id g4-20020ac80704000000b003b63b8df24asm11326845qth.36.2023.02.14.08.25.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 07:59:32 -0800 (PST)
-Received: by mail-yb1-f177.google.com with SMTP id x4so18742538ybp.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Feb 2023 07:59:32 -0800 (PST)
-X-Received: by 2002:a25:f30f:0:b0:8c2:240e:bd05 with SMTP id
- c15-20020a25f30f000000b008c2240ebd05mr361866ybs.359.1676390372208; Tue, 14
- Feb 2023 07:59:32 -0800 (PST)
+        Tue, 14 Feb 2023 08:25:14 -0800 (PST)
+Received: by mail-yb1-f180.google.com with SMTP id b1so7718496ybn.2;
+        Tue, 14 Feb 2023 08:25:14 -0800 (PST)
+X-Received: by 2002:a05:6902:4ec:b0:939:2fb5:36b4 with SMTP id
+ w12-20020a05690204ec00b009392fb536b4mr363934ybs.270.1676391914633; Tue, 14
+ Feb 2023 08:25:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20230211150012.3824154-1-niklas.soderlund+renesas@ragnatech.se> <20230211150012.3824154-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20230211150012.3824154-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20230209133507.150571-1-clement.leger@bootlin.com> <20230209133507.150571-2-clement.leger@bootlin.com>
+In-Reply-To: <20230209133507.150571-2-clement.leger@bootlin.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 14 Feb 2023 16:59:20 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXqC-i1abuiZ2Z3oRVom59PWhdiKS-x3s+Bsu32TF-DEQ@mail.gmail.com>
-Message-ID: <CAMuHMdXqC-i1abuiZ2Z3oRVom59PWhdiKS-x3s+Bsu32TF-DEQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a779g0: Add and connect all
- CSI-2, ISP and VIN nodes
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-renesas-soc@vger.kernel.org
+Date:   Tue, 14 Feb 2023 17:25:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVFi9FhsNw6KGWW+5+qQ_NUx035yXAXS-juyqAux6jPnA@mail.gmail.com>
+Message-ID: <CAMuHMdVFi9FhsNw6KGWW+5+qQ_NUx035yXAXS-juyqAux6jPnA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: renesas: renesas.yaml: add
+ renesas,rzn1d400-eb compatible
+To:     =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
-
-On Sat, Feb 11, 2023 at 4:00 PM Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> The V4H have 16 VIN, 2 CSI-2 and 2 ISP nodes that interact with each
-> other for video capture. Add all nodes and record how they are
-> interconnected.
+On Thu, Feb 9, 2023 at 2:32 PM Clément Léger <clement.leger@bootlin.com> wrote:
+> Add "renesas,rzn1d400-eb" which target the RZ/N1 EB board when a RZ/N1D-DB
+> daughter board is plugged on it.
 >
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-
-> @@ -1304,6 +1752,58 @@ vspd1: vsp@fea28000 {
->                         renesas,fcp = <&fcpvd1>;
->                 };
->
-> +               csi40: csi2@fe500000 {
-
-I'll move these up while applying, to preserve sort order (by unit
-address).
+> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-devel for v6.4.
