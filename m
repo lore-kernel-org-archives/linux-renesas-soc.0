@@ -2,176 +2,74 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E80DC61DA4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Feb 2023 22:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1680FC05027
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Feb 2023 00:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230263AbjBNWPn (ORCPT
+        id S230009AbjBOAAn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 17:15:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34606 "EHLO
+        Tue, 14 Feb 2023 19:00:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232458AbjBNWPn (ORCPT
+        with ESMTP id S232312AbjBOAA2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Feb 2023 17:15:43 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0F3311EB;
-        Tue, 14 Feb 2023 14:15:06 -0800 (PST)
-Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2B1F63D7;
-        Tue, 14 Feb 2023 23:15:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1676412904;
-        bh=J1heIFgOfnBY9Ez2Tc0IIwkTkEEqRtgyWxmHRaB+i2M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Mv6TvQ9rSZZk1SP1kZjeCETgtu2j8bTQr0KwJ//bDCfqcX3dG+3AfLsXyFaABK8Ba
-         S9fct5l+FZilUTNNJXK1ahLz62NZwePbd7ehEbp9kwPhvuetP67Keb8AewdnNEhERN
-         Yh9OanliD/Eu8crq2BR+RAWMEeLTNl4v0CS3TBMc=
-Date:   Wed, 15 Feb 2023 00:15:03 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3] media: renesas: vsp1: Add underrun debug print
-Message-ID: <Y+wH59GVBf1J5u8X@pendragon.ideasonboard.com>
-References: <20230214164223.184920-1-tomi.valkeinen+renesas@ideasonboard.com>
+        Tue, 14 Feb 2023 19:00:28 -0500
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47E8F28855;
+        Tue, 14 Feb 2023 16:00:26 -0800 (PST)
+Received: by mail-il1-f179.google.com with SMTP id 18so899217ilg.3;
+        Tue, 14 Feb 2023 16:00:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+gIix5fWh0gUQTk0kA6P0Al18ffyqafbtgxdAHNsCk8=;
+        b=gfnpGjT2n8KI9DRc6mIrYtb6jWdDl5BzRPljjBzWDE7hZYYyf06HiDP9whuatJLskf
+         Ut3pbvmcFnPJGieGrrtzC1cWtfRTN9qi682JCHfcjT8jJ+ULXQFgThIit4xgMx6PFqMv
+         mngp3tYbPXQrIj7guAQ2E7JV1qRgepQUmd6M18oB3s0E46d1zG6XcSeDOsKC2nJBheKy
+         jKZBVA9SrXqIePGKkQ0p23hoRJMTnaK1/Fro/Nklr/eXmYP2RLHGxeq9SO5WC26xsN74
+         UveKM/UQM/k3ddfS9yDXa9hZLyfmo14DskBlagLkqp41iK0frnB1inQ+EzuIIHI6EBnu
+         FUdg==
+X-Gm-Message-State: AO0yUKVQS4Yw3Gl2Ac3P6PKd4/7zset98hAXxlCFHu+qtGmt2qmMMAOR
+        AoPQeNRVfJSw3P82TbpuEA==
+X-Google-Smtp-Source: AK7set/ve/j8PAkGEqoNqxrUj+2RF/57Fc34iDUVHoClOSrG/1JxSPDmqDzIC9OV05PiiFO8d0K3iQ==
+X-Received: by 2002:a05:6e02:1c29:b0:315:7004:3e69 with SMTP id m9-20020a056e021c2900b0031570043e69mr61414ilh.13.1676419225460;
+        Tue, 14 Feb 2023 16:00:25 -0800 (PST)
+Received: from robh_at_kernel.org ([65.158.198.3])
+        by smtp.gmail.com with ESMTPSA id b4-20020a02a584000000b003c4e8efcd09sm320726jam.32.2023.02.14.16.00.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Feb 2023 16:00:25 -0800 (PST)
+Received: (nullmailer pid 60177 invoked by uid 1000);
+        Wed, 15 Feb 2023 00:00:19 -0000
+Date:   Tue, 14 Feb 2023 18:00:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 2/3] media: dt-bindings: media: renesas,csi2: Add binding
+ for V4H
+Message-ID: <167641921840.60125.15481359888099103849.robh@kernel.org>
+References: <20230211144147.3812388-1-niklas.soderlund+renesas@ragnatech.se>
+ <20230211144147.3812388-3-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20230214164223.184920-1-tomi.valkeinen+renesas@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230211144147.3812388-3-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Tomi,
 
-Thank you for the patch.
-
-On Tue, Feb 14, 2023 at 06:42:23PM +0200, Tomi Valkeinen wrote:
-> Print underrun interrupts with ratelimited print.
+On Sat, 11 Feb 2023 15:41:46 +0100, Niklas Söderlund wrote:
+> Document support for the CSI-2 module in the Renesas V4H (r8a779g0) SoC.
 > 
-> Note that we don't enable the underrun interrupt. If we have underruns,
-> we don't want to get flooded with interrupts about them. It's enough to
-> see that an underrun happened at the end of a frame.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > ---
+>  Documentation/devicetree/bindings/media/renesas,csi2.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Changes in v3:
-> - Reset underrun counter when enabling VSP
-> 
-> I have to say I'm not familiar enough with the VSP driver to say if
-> these are the correct places where to reset the counters.
 
-It's fine. We could factor it out to a clear function, but it's not
-worth it if there's nothing else to factor out. It could be done later.
+Acked-by: Rob Herring <robh@kernel.org>
 
-> There's also a
-> possibility of a race, but my assumption is that we cannot get underrun
-> interrupts for the WPF we are currently enabling.
-
-It should be fine.
-
-> Also, I realized the underrun counter could be moved to struct
-> vsp1_rwpf, but as that's used also for RPF, I didn't do that change.
-
-Another option would be to store it in the pipeline structure, as a
-pipeline has one and only one WPF. What do you think ?
-
->  drivers/media/platform/renesas/vsp1/vsp1.h       |  2 ++
->  drivers/media/platform/renesas/vsp1/vsp1_drm.c   |  3 +++
->  drivers/media/platform/renesas/vsp1/vsp1_drv.c   | 11 ++++++++++-
->  drivers/media/platform/renesas/vsp1/vsp1_regs.h  |  2 ++
->  drivers/media/platform/renesas/vsp1/vsp1_video.c |  3 +++
->  5 files changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1.h b/drivers/media/platform/renesas/vsp1/vsp1.h
-> index 2f6f0c6ae555..9eb023f4fee8 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1.h
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1.h
-> @@ -107,6 +107,8 @@ struct vsp1_device {
->  	struct media_entity_operations media_ops;
->  
->  	struct vsp1_drm *drm;
-> +
-> +	u32 underrun_count[VSP1_MAX_WPF];
->  };
->  
->  int vsp1_device_get(struct vsp1_device *vsp1);
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drm.c b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-> index c6f25200982c..e3b4e993787c 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-> @@ -710,6 +710,9 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
->  		return 0;
->  	}
->  
-> +	/* Reset the underrun counter */
-> +	vsp1->underrun_count[pipe->output->entity.index] = 0;
-> +
->  	drm_pipe->width = cfg->width;
->  	drm_pipe->height = cfg->height;
->  	pipe->interlaced = cfg->interlaced;
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> index 5710152d6511..f9be0fda1659 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> @@ -45,7 +45,8 @@
->  
->  static irqreturn_t vsp1_irq_handler(int irq, void *data)
->  {
-> -	u32 mask = VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE;
-> +	u32 mask = VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE |
-> +		   VI6_WPF_IRQ_STA_UND;
->  	struct vsp1_device *vsp1 = data;
->  	irqreturn_t ret = IRQ_NONE;
->  	unsigned int i;
-> @@ -60,6 +61,14 @@ static irqreturn_t vsp1_irq_handler(int irq, void *data)
->  		status = vsp1_read(vsp1, VI6_WPF_IRQ_STA(i));
->  		vsp1_write(vsp1, VI6_WPF_IRQ_STA(i), ~status & mask);
->  
-> +		if (status & VI6_WPF_IRQ_STA_UND) {
-> +			vsp1->underrun_count[i]++;
-> +
-> +			dev_warn_ratelimited(vsp1->dev,
-> +				"Underrun occurred at WPF%u (total underruns %u)\n",
-> +				i, vsp1->underrun_count[i]);
-> +		}
-> +
->  		if (status & VI6_WPF_IRQ_STA_DFE) {
->  			vsp1_pipeline_frame_end(wpf->entity.pipe);
->  			ret = IRQ_HANDLED;
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> index d94343ae57a1..7eca82e0ba7e 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> @@ -32,10 +32,12 @@
->  #define VI6_STATUS_SYS_ACT(n)		BIT((n) + 8)
->  
->  #define VI6_WPF_IRQ_ENB(n)		(0x0048 + (n) * 12)
-> +#define VI6_WPF_IRQ_ENB_UNDE		BIT(16)
->  #define VI6_WPF_IRQ_ENB_DFEE		BIT(1)
->  #define VI6_WPF_IRQ_ENB_FREE		BIT(0)
->  
->  #define VI6_WPF_IRQ_STA(n)		(0x004c + (n) * 12)
-> +#define VI6_WPF_IRQ_STA_UND		BIT(16)
->  #define VI6_WPF_IRQ_STA_DFE		BIT(1)
->  #define VI6_WPF_IRQ_STA_FRE		BIT(0)
->  
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_video.c b/drivers/media/platform/renesas/vsp1/vsp1_video.c
-> index 544012fd1fe9..6eca2b9c8dee 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_video.c
-> @@ -1062,6 +1062,9 @@ vsp1_video_streamon(struct file *file, void *fh, enum v4l2_buf_type type)
->  	if (ret < 0)
->  		goto err_stop;
->  
-> +	/* Reset the underrun counter */
-> +	video->vsp1->underrun_count[pipe->output->entity.index] = 0;
-> +
->  	/* Start the queue. */
->  	ret = vb2_streamon(&video->queue, type);
->  	if (ret < 0)
-
--- 
-Regards,
-
-Laurent Pinchart
