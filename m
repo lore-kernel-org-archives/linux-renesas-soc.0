@@ -2,43 +2,47 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A592C61DA4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Feb 2023 15:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF4CC636CC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Feb 2023 15:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229587AbjBPPUc (ORCPT
+        id S230074AbjBPPam (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Feb 2023 10:20:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
+        Thu, 16 Feb 2023 10:30:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbjBPPUb (ORCPT
+        with ESMTP id S230137AbjBPPal (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2023 10:20:31 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DC755FE0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Feb 2023 07:20:28 -0800 (PST)
+        Thu, 16 Feb 2023 10:30:41 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED67B1EBDE
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Feb 2023 07:30:39 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:4605:3635:9491:c6bc])
-        by albert.telenet-ops.be with bizsmtp
-        id MrLR290043wKl5506rLRJi; Thu, 16 Feb 2023 16:20:25 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id MrWd2901C3wKl5501rWdMU; Thu, 16 Feb 2023 16:30:38 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pSg3F-009BUq-T8;
-        Thu, 16 Feb 2023 16:20:24 +0100
+        id 1pSgD8-009BmO-N7;
+        Thu, 16 Feb 2023 16:30:37 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pSg3c-005tX9-L1;
-        Thu, 16 Feb 2023 16:20:24 +0100
+        id 1pSgDV-005ttT-FE;
+        Thu, 16 Feb 2023 16:30:37 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc:     Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] clk: renesas: r8a77970: Add Z2 clock
-Date:   Thu, 16 Feb 2023 16:20:18 +0100
-Message-Id: <6a9169e5bc92c2b9549292769a0814e04b9147cf.1676560357.git.geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a774c0: Remove bogus voltages from OPP table
+Date:   Thu, 16 Feb 2023 16:30:32 +0100
+Message-Id: <8348e18a011ded94e35919cd8e17c0be1f9acf2f.1676560856.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1676560357.git.geert+renesas@glider.be>
-References: <cover.1676560357.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1676560856.git.geert+renesas@glider.be>
+References: <cover.1676560856.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,38 +50,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the Z2 (Cortex-A53 System CPU) clock on R-Car V3M, which
-uses a fixed SYS-CPU divider.
+According to the RZ/G Series, 2nd Generation Hardware User’s Manual
+Rev. 1.11, the System CPU cores on RZ/G2E do not have their own power
+supply, but use the common internal power supply (typical 1.03V).
 
+Hence remove the "opp-microvolt" properties from the Operating
+Performance Points table.  They are optional, and unused, when none of
+the CPU nodes is tied to a regulator using the "cpu-supply" property.
+
+Fixes: 231d8908a66fa98f ("arm64: dts: renesas: r8a774c0: Add OPPs table for cpu devices")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Note that the BSP went to great lengths to describe this clock as a
-programmable Z clock, like on most other R-Car Gen3 SoCs, but add a
-quirk to the Z clock driver to use a fixed divider when running on
-R-Car V3M.
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 3 ---
+ 1 file changed, 3 deletions(-)
 
-According to R-Car Series, 3rd Generation Hardware User’s Manual Rev.
-2.30 and earlier, the SYS-CPU divider on R-Car V3M is a fixed divider.
-Furthermore, the Frequency control register C, which is used on other
-SoCs to control the SYS-CPU divider, is documented not to exist (but
-empirical evidence shows that it does exist, and that the Z2FC field
-works as expected).
----
- drivers/clk/renesas/r8a77970-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a77970-cpg-mssr.c b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-index 0f59c84229a8b8ce..7e90e94c4b68821b 100644
---- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-@@ -76,6 +76,7 @@ static const struct cpg_core_clk r8a77970_core_clks[] __initconst = {
- 	DEF_FIXED(".pll1_div4",	CLK_PLL1_DIV4,	CLK_PLL1_DIV2,	2, 1),
- 
- 	/* Core Clock Outputs */
-+	DEF_FIXED("z2",		R8A77970_CLK_Z2,    CLK_PLL1_DIV4,  1, 1),
- 	DEF_FIXED("ztr",	R8A77970_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",	R8A77970_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",		R8A77970_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+index e21653d862282736..10abfde329d00b41 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+@@ -49,17 +49,14 @@ cluster1_opp: opp-table-1 {
+ 		opp-shared;
+ 		opp-800000000 {
+ 			opp-hz = /bits/ 64 <800000000>;
+-			opp-microvolt = <820000>;
+ 			clock-latency-ns = <300000>;
+ 		};
+ 		opp-1000000000 {
+ 			opp-hz = /bits/ 64 <1000000000>;
+-			opp-microvolt = <820000>;
+ 			clock-latency-ns = <300000>;
+ 		};
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+-			opp-microvolt = <820000>;
+ 			clock-latency-ns = <300000>;
+ 			opp-suspend;
+ 		};
 -- 
 2.34.1
 
