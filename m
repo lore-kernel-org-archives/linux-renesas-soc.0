@@ -2,37 +2,37 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3000C7EE23
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Feb 2023 02:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7DCC6FA8E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Feb 2023 02:07:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229852AbjB0CDR (ORCPT
+        id S230201AbjB0CH5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 26 Feb 2023 21:03:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55248 "EHLO
+        Sun, 26 Feb 2023 21:07:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229874AbjB0CDG (ORCPT
+        with ESMTP id S230142AbjB0CH1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 26 Feb 2023 21:03:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFA0A1A487;
-        Sun, 26 Feb 2023 18:02:39 -0800 (PST)
+        Sun, 26 Feb 2023 21:07:27 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD721A972;
+        Sun, 26 Feb 2023 18:06:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2631960D27;
-        Mon, 27 Feb 2023 02:02:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7294DC4339B;
-        Mon, 27 Feb 2023 02:02:31 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ADEF5B80CB6;
+        Mon, 27 Feb 2023 02:06:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AB62C4339E;
+        Mon, 27 Feb 2023 02:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677463352;
-        bh=LpXzCM5yte2TW4eMOYttPL7OAEITFa1C5o+bkmkB6sQ=;
+        s=k20201202; t=1677463602;
+        bh=iuqEReOKWHZjPmYdH+UVeJYRUQQI+ztggRaWYWyWN34=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dLFujfB5pohasG8M6nnTAE1VIsn8gOV391nunB3gI4BY5t9KhlN2cMUGMC3sHB7Mv
-         bOjzVvC/HPqTUzOVVeepCSwzY+o1wHmKIQS+Gq89xBNyGY5SRinMFHeW+uVsEeu27u
-         vFgil4f3pUWZ807GZZVuhiciWUPJ6Lt9FLE1vJe+rEehkkwEk5rkWbvEfhgLVzZIHL
-         pGSQL6nicdwW282NE0jIyT+ZlIvw0/IszuKLrqNe1AVsDnlCVUgZ2p+PXisDLOS1tu
-         4T1rvB4tJqME7Ggs+dFxQSe+2OKlQxGqfopHShsCtl66OmfS2WPbaBLciKQk84VqsG
-         ZEsQ6ulrHDpUA==
+        b=b3n0icz4dg5M55Ig5RAs6pAbdXuobL35eIYBUkj3qmsmYyPM6OSCf5VuYk/ykE0GK
+         WKtVhUpkixHAqujmg/fiwZqoY+hU/pYwrNRm3FGNVEgwgQlN3UcIBRq3bZ0c/eHAaw
+         ZzhxuTKhzvj9yVDAU14ariPMfRn4X6gQ5V20o/m40vhufKn6jQM+wkxq+qomV0ZcXx
+         PMNYft6+qCSjUnQ6P8b6olS980zCQA+kyxjaZtaPI+i2aSWSbaW6mLfsSyO4xCcqrq
+         esB95EYEYAs/PBAd7JPu5qGrnGaqjAKbVgEhro3tVb0eotkKC8wbiE4MMQJh3hwebp
+         B75ePfDfp04NA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
@@ -42,12 +42,12 @@ Cc:     Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
         kieran.bingham+renesas@ideasonboard.com, airlied@gmail.com,
         daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.2 25/60] drm: rcar-du: Add quirk for H3 ES1.x pclk workaround
-Date:   Sun, 26 Feb 2023 21:00:10 -0500
-Message-Id: <20230227020045.1045105-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 25/58] drm: rcar-du: Add quirk for H3 ES1.x pclk workaround
+Date:   Sun, 26 Feb 2023 21:04:23 -0500
+Message-Id: <20230227020457.1048737-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230227020045.1045105-1-sashal@kernel.org>
-References: <20230227020045.1045105-1-sashal@kernel.org>
+In-Reply-To: <20230227020457.1048737-1-sashal@kernel.org>
+References: <20230227020457.1048737-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -113,7 +113,7 @@ index 3619e1ddeb620..f2d3266509cc1 100644
  			div = 1;
  		}
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index d003e8d9e7a26..c479996f8e91e 100644
+index a2776f1d6f2c2..0dada0646b2eb 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
 @@ -16,6 +16,7 @@
