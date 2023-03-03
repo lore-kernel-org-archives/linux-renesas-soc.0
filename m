@@ -2,64 +2,30 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E650C7EE30
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Mar 2023 11:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E0DC7EE2D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Mar 2023 15:48:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229451AbjCCLzr (ORCPT
+        id S231377AbjCCPsS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Mar 2023 06:55:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44296 "EHLO
+        Fri, 3 Mar 2023 10:48:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231234AbjCCLzq (ORCPT
+        with ESMTP id S230436AbjCCPsR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2023 06:55:46 -0500
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8560B5D77A
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Mar 2023 03:55:43 -0800 (PST)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-536bbef1c5eso38289617b3.9
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Mar 2023 03:55:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9bnT5dHrb3iP7rA2GmhVzWGZn0Tzpt5CCED7hunNFB0=;
-        b=DRqakUUKFXRGm69WVxx9NWOsatykkvfkKUlzMq2OnyDSxa+HuTapR3hpbLFjBMU1Ch
-         oO+smsduZUXVdTLTmfAPXLG2PV+/pD5wkOJUFXRjP45c2nKCPPFURmJHPArjevLQnbC7
-         M2wu8VkpS73v/BuFvHXgJn7hEmaRYyzBsn00BfR/OWNvHOan3OsiAfd48cUjUsxcYDjD
-         pQwV+rgMw6+vW4Vbmg5eD3vUBOWTIqXIitDhHzhusgo/C6u4I2yVSfpD/6kzCaw7wfwy
-         qxYDi91GmTBUwD/olzh+a1uc2W+b+dBH77AYn4ERUY8Wi+MF2WaMmWLuGS8qMBw2JGDm
-         zbJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9bnT5dHrb3iP7rA2GmhVzWGZn0Tzpt5CCED7hunNFB0=;
-        b=BojI6ZxObBx+p8JZXrf1pSN4oMtaRmv9VCDNT4kli4E6I/PTyl7rGDxXR18eR0pMYv
-         twXgjUauxLg2HOiAtZA5VOYNnu4gdnVcSij4Vb44YTuzBHSKSkk3D/DyiM/2kDkLF2ZK
-         hfWHTl2obOE4DX5tAm0fvrIS19sg32z5oEiSxFAh/iOcmhbbGmkULIuVs1sJwLiE2iTU
-         OesbS56Pv/bdjwVI+VgGkiXV7hPklUcltfwn9tAnM8jLg9uRZPfPbBchJcRE11b/TTeZ
-         XjSDZPr2E0Diw25jnFnY0+8NV6erqQSVxc6v/teuy7wE6F51Q6ugA+mUPtSxCvLVNg3S
-         tltQ==
-X-Gm-Message-State: AO0yUKX110wJ8Nbo5eT9PN8OdDLpdTry8UFlp/aqrJgNzWQJawOtvx3D
-        jUVHrRrbCMBuJAL0i6Jw+Qc6aWjlbvRNs7u18HPHqA==
-X-Google-Smtp-Source: AK7set9+g7CaZKhwb6dcWYW6BTUUJXUyZuISsu0waCwptFPvO2UJ6I2OocVeB/84RPaT8roh5mWcunV6iyn3UJDp/FU=
-X-Received: by 2002:a81:a783:0:b0:533:9b80:a30e with SMTP id
- e125-20020a81a783000000b005339b80a30emr736607ywh.10.1677844542703; Fri, 03
- Mar 2023 03:55:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20230301201446.3713334-1-daniel.lezcano@linaro.org> <20230301201446.3713334-3-daniel.lezcano@linaro.org>
-In-Reply-To: <20230301201446.3713334-3-daniel.lezcano@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 3 Mar 2023 12:55:31 +0100
-Message-ID: <CACRpkdYG59p5o0Te6LWmo3KBf7=v8ARRpb4kKgtm8Khv8Yfw1Q@mail.gmail.com>
-Subject: Re: [PATCH v5 02/18] thermal/core: Use the thermal zone 'devdata'
- accessor in thermal located drivers
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        Fri, 3 Mar 2023 10:48:17 -0500
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D83ACA0C;
+        Fri,  3 Mar 2023 07:48:14 -0800 (PST)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1pY7cn-0005si-GH; Fri, 03 Mar 2023 16:47:13 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     rafael@kernel.org, daniel.lezcano@linaro.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>,
         Mark Brown <broonie@kernel.org>,
         AngeloGioacchino Del Regno 
@@ -90,8 +56,8 @@ Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
         Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -152,33 +118,37 @@ Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
         <linux-omap@vger.kernel.org>,
         "moderated list:ARM/Mediatek SoC support" 
         <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 02/18] thermal/core: Use the thermal zone 'devdata' accessor in
+ thermal located drivers
+Date:   Fri, 03 Mar 2023 16:47:15 +0100
+Message-ID: <3152081.5fSG56mABF@diego>
+In-Reply-To: <20230301201446.3713334-3-daniel.lezcano@linaro.org>
+References: <20230301201446.3713334-1-daniel.lezcano@linaro.org>
+ <20230301201446.3713334-3-daniel.lezcano@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 1, 2023 at 9:15 PM Daniel Lezcano <daniel.lezcano@linaro.org> w=
-rote:
-
+Am Mittwoch, 1. März 2023, 21:14:30 CET schrieb Daniel Lezcano:
 > The thermal zone device structure is exposed to the different drivers
 > and obviously they access the internals while that should be
 > restricted to the core thermal code.
->
+> 
 > In order to self-encapsulate the thermal core code, we need to prevent
 > the drivers accessing directly the thermal zone structure and provide
 > accessor functions to deal with.
->
+> 
 > Use the devdata accessor introduced in the previous patch.
->
+> 
 > No functional changes intended.
->
+> 
 > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se=
-> #R-Car
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se> #R-Car
 > Acked-by: Mark Brown <broonie@kernel.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com> #MediaTek auxadc and lvts
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> #MediaTek auxadc and lvts
 > Reviewed-by: Balsam CHIHI <bchihi@baylibre.com> #Mediatek lvts
 > Reviewed-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com> #da9062
 > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>  #spread
@@ -187,7 +157,6 @@ ora.com> #MediaTek auxadc and lvts
 > Acked-by: Florian Fainelli <f.fainelli@gmail.com> #Broadcom
 > Reviewed-by: Dhruva Gole <d-gole@ti.com> # K3 bandgap
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Heiko Stuebner <heiko@sntech.de> #rockchip
 
-Yours,
-Linus Walleij
+
