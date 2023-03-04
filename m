@@ -2,131 +2,100 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C306C64EC4
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  4 Mar 2023 10:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAABFC678DB
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  4 Mar 2023 13:32:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbjCDKes (ORCPT
+        id S229818AbjCDNcc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 4 Mar 2023 05:34:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36830 "EHLO
+        Sat, 4 Mar 2023 08:32:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbjCDKer (ORCPT
+        with ESMTP id S229704AbjCDNca (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Mar 2023 05:34:47 -0500
-Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 101D910AB8;
-        Sat,  4 Mar 2023 02:34:45 -0800 (PST)
-Received: from pro2.mail.ovh.net (unknown [10.108.20.84])
-        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id BF00C20CD4;
-        Sat,  4 Mar 2023 10:34:40 +0000 (UTC)
-Received: from [192.168.1.41] (88.161.25.233) by DAG1EX1.emp2.local
- (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Sat, 4 Mar
- 2023 11:34:39 +0100
-Message-ID: <7fa7f07f-d1e1-1e43-992c-4981c5810284@traphandler.com>
-Date:   Sat, 4 Mar 2023 11:34:39 +0100
+        Sat, 4 Mar 2023 08:32:30 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09C0F11E94
+        for <linux-renesas-soc@vger.kernel.org>; Sat,  4 Mar 2023 05:32:06 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pYRyK-0000pl-Sw; Sat, 04 Mar 2023 14:30:48 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pYRyJ-001nbH-R7; Sat, 04 Mar 2023 14:30:47 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pYRyI-0027Hz-DQ; Sat, 04 Mar 2023 14:30:46 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 28/41] rtc: rzn1: Convert to platform remove callback returning void
+Date:   Sat,  4 Mar 2023 14:30:15 +0100
+Message-Id: <20230304133028.2135435-29-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230304133028.2135435-1-u.kleine-koenig@pengutronix.de>
+References: <20230304133028.2135435-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 2/3] of: irq: make callers of of_irq_parse_one() release
- the device node
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     <saravanak@google.com>, <clement.leger@bootlin.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        <zajec5@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Marc Zyngier <maz@kernel.org>, <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Nishanth Menon <nm@ti.com>, <ssantosh@kernel.org>,
-        <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-wireless@vger.kernel.org>,
-        <linux-actions@lists.infradead.org>,
-        <linux-riscv@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <20230301185209.274134-1-jjhiblot@traphandler.com>
- <20230301185209.274134-3-jjhiblot@traphandler.com>
- <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
-From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-In-Reply-To: <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1528; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=KVLbG5ufa8Ntt0rl8VovfNEJKYzq4Ahe0QYLf7iyQwo=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkA0fAmk7AjQK9/kO2oo9bodAP0c7nlKJWe2mZo y0QCkitHJqJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZANHwAAKCRDB/BR4rcrs CYYuCACW/cHRUlehChHFq+oBLP7rFVAcK8FnRKaCeMQ8ACP25txlDckrcT0tXlDs1x73bPMJAZV WH/MbW5oxH5AMYcE/a62Q6dT4+cXoF5V4n5SysI5ihNZQY7g/daoGuZz2WyH78TWjITr+1rzL1W Q5OC3C5mDwK51En0OqLnV8WprvQakZ1JQiDp73E/jYZqeBbkPBZFUrsY7211CPFhp5fPayeRf4x no8P3993VJSqRBoIfwRP4oLs7w+1BnFBPMH50eTFqiXXFgifxneHSD3vwFaLnlNL6/zh8akWEoi UaZL1Jb7PGmh4J9oNGh4/Lslp7/IVmXyV4qb6KhCTb8CFoWc
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [88.161.25.233]
-X-ClientProxiedBy: CAS2.emp2.local (172.16.1.2) To DAG1EX1.emp2.local
- (172.16.2.1)
-X-Ovh-Tracer-Id: 2216615445481994549
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvddtuddgudegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgihesthekredttdefjeenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepvdefkedugeekueeuvdeuueevjefftddvtefhleekhfefffdtteetffeigfdvtdeinecukfhppeduvdejrddtrddtrddupdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdpsghhvghlghgrrghssehgohhoghhlvgdrtghomhdpnhhmsehtihdrtghomhdpshhsrghnthhoshhhsehkvghrnhgvlhdrohhrghdpmhgrthhhihgrshdrnhihmhgrnhesihhnthgvlhdrtghomhdpghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdpjhhonhgrthhhrg
- hnhhesnhhvihguihgrrdgtohhmpdhlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigphhptgdquggvvheslhhishhtshdrohiilhgrsghsrdhorhhgpdhlihhnuhigqdifihhrvghlvghsshesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidqrggtthhiohhnsheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdplhhinhhugidqshhunhigiheslhhishhtshdrlhhinhhugidruggvvhdpuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhptghisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhfrhhofigrnhgurdhlihhsthesghhmrghilhdrtghomhdplhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhhosghhodgutheskhgvrhhnvghlrdhorhhgpdhjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdpshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdgtlhgvmhgvnhhtrdhlvghgvghrsegsohhothhlihhnrdgtohhmpdhmrghgnhhushdruggrmhhmsehgmhgrihhlrdgtohhmpdhlihhnuhigsegrrhhmlhhinhhugid
- rohhrghdruhhkpdhmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdpnhhpihhgghhinhesghhmrghilhdrtghomhdptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdpiigrjhgvtgehsehgmhgrihhlrdgtohhmpdgurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhtghhlgieslhhinhhuthhrohhnihigrdguvgdptghlrghuughiuhdrsggviihnvggrsehmihgtrhhotghhihhprdgtohhmpdhmrgiisehkvghrnhgvlhdrohhrghdprghfrggvrhgsvghrsehsuhhsvgdruggvpdhmrghniheskhgvrhhnvghlrdhorhhgpdhprghlmhgvrhesuggrsggsvghlthdrtghomhdpphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdifvghnshestghsihgvrdhorhhgpdhsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgpdhlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehvdekpdhmohguvgepshhmthhpohhuth
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-On 02/03/2023 08:49, Geert Uytterhoeven wrote:
-> Hi Jean-Jacques,
-> 
-> Thanks for your patch!
-> 
-> On Wed, Mar 1, 2023 at 7:53 PM Jean-Jacques Hiblot
-> <jjhiblot@traphandler.com> wrote:
->> of_irq_parse_one() does a get() on the device node returned in out_irq->np.
->> Callers of of_irq_parse_one() must do a put() when they are done with it.
-> 
-> What does "be done with it" really mean here?
-> 
->> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-> 
->> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
->> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
->> @@ -184,6 +184,7 @@ static int __init rcar_gen2_regulator_quirk(void)
->>                          kfree(quirk);
->>                          continue;
->>                  }
->> +               of_node_put(argsa->np);
-> 
-> The quirk object, which is a container of argsa, is still used below,
-> and stored in a linked list.  I agree argsa->np is not dereferenced,
-> but the pointer itself is still compared to other pointers.
-Hi Geert,
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/rtc/rtc-rzn1.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-I fail to see when the pointers are compared. It looks to me that only 
-the args are compared. Am I missing something ?
-In any case, looking more closely at the code, I guess that indeed the
-of_node_put() shouldn't be added here because this code expects that the
-nodes never go away. That is probably a good assertion in case of PMICs
+diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
+index 0d36bc50197c..dca736caba85 100644
+--- a/drivers/rtc/rtc-rzn1.c
++++ b/drivers/rtc/rtc-rzn1.c
+@@ -391,11 +391,9 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int rzn1_rtc_remove(struct platform_device *pdev)
++static void rzn1_rtc_remove(struct platform_device *pdev)
+ {
+ 	pm_runtime_put(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id rzn1_rtc_of_match[] = {
+@@ -406,7 +404,7 @@ MODULE_DEVICE_TABLE(of, rzn1_rtc_of_match);
+ 
+ static struct platform_driver rzn1_rtc_driver = {
+ 	.probe = rzn1_rtc_probe,
+-	.remove = rzn1_rtc_remove,
++	.remove_new = rzn1_rtc_remove,
+ 	.driver = {
+ 		.name	= "rzn1-rtc",
+ 		.of_match_table = rzn1_rtc_of_match,
+-- 
+2.39.1
 
-JJ
-> IIUIC, calling of_node_put() might cause the reference count to drop to
-> zero, and the underlying struct node object to be deallocated.
-> So when a future reference to the same DT node will be taken, a new
-> struct node object will be allocated, and the pointer comparison below
-> will fail?
-> 
-> Or am I missing something?
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
