@@ -2,506 +2,212 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CDAC678D5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Mar 2023 22:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B2FC6FA99
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Mar 2023 23:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230224AbjCGWT6 (ORCPT
+        id S229922AbjCGXCG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 17:19:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45036 "EHLO
+        Tue, 7 Mar 2023 18:02:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231453AbjCGWTs (ORCPT
+        with ESMTP id S229963AbjCGXBt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2023 17:19:48 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB74F955
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2023 14:19:11 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id h8so15699033plf.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Mar 2023 14:19:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112; t=1678227550;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrYoi85owe0YV7nq0hK+Lg7oLC4mn7w6OMgkQGywT9A=;
-        b=a4cSXX02glvKIgpQ1sMwB+BGz/QCRRF9AkdRTkeduLBR2vWPVe7uZEy5SEHdH/NUq1
-         uGTVAF/r8tHsQI/UH4YQfOPsZX7aBT6h8fp1oGXXHTFcJ6xZdy6AKXFsKGz4hcpEXiJs
-         jnHkKpg1noArBU+y0UnLEORXREuXBlDxFzBG8Z0RZDezq2EtlUYXmv10q50amHj7xe2U
-         kJx2Rldl+w5Agy4b7Us+zUdlvdYC9YbhS3bCmMgLE6diQKdUivwKuQyCKkzaN5R/2X9a
-         bsegls/2NH2PNm7F1dU8zAqKI/JiF0Cjl0d+g11MmfKC7zw9H/JwIpxgOfg8stYlR1Jn
-         L+/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678227550;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qrYoi85owe0YV7nq0hK+Lg7oLC4mn7w6OMgkQGywT9A=;
-        b=Ux6xaYzQy+H8opiJF9YxCakcrrS0mhyBYpIZD8eBcpiBV0Ij1HQaRm8QzalPVxsV9G
-         pKklRfaW8Ad08lSHWeXIGRpXAcDYSSnV1bVcZhxKjCFBBnnKYU5p4kvWr4s8Vt8YgMSC
-         OxvlmICRyNsziyq9ZHFUS4QwXBf4VntdpsQb7aIYL/2mZxGXm61rt8B5s7K/otAxyyhy
-         STOTbkBstXEE6kuGac42WGR2sElE8mrRfqm3m1S5QLuzO81xWtl66Qh+Q6meCAAI9ElF
-         lJrDqO45lZQaswtc8dPegqfDQEQGZCSbpY7d1lKnSb52QmM6wX4F4Gq8yzoe3/MnytKw
-         mjrw==
-X-Gm-Message-State: AO0yUKVVrmbavBTHURwNFpraX87aTlL7uZmFgUQB+bzy4hAlLNaBje7/
-        cB9cDHkNC/PHpGXgZz6vq1VkUGZ/j47upKxyu7lMMQGu
-X-Google-Smtp-Source: AK7set+Pz+39d6AasspiBFQhSslwAzd84jVHn9WYqh5v5uNcUfkJU2Q/TP8jgfcquzEVb+cMqeIhyg==
-X-Received: by 2002:a05:6a20:49aa:b0:cd:53b0:960d with SMTP id fs42-20020a056a2049aa00b000cd53b0960dmr12834402pzb.10.1678227550277;
-        Tue, 07 Mar 2023 14:19:10 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id x20-20020a62fb14000000b005d6fcd8f9desm8555844pfm.94.2023.03.07.14.19.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 14:19:09 -0800 (PST)
-Message-ID: <6407b85d.620a0220.fb08c.f7e0@mx.google.com>
-Date:   Tue, 07 Mar 2023 14:19:09 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 7 Mar 2023 18:01:49 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3816B3E21
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2023 14:59:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678229967; x=1709765967;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mKn1ohMC5q/vT2aRdvE/FgfKKcyL4mecUOzpuSzk7PQ=;
+  b=ndjSUv9HKnKD/9FOU25vWfKCdZgS8GoI7n7nxyblwqV/8zEBroK7Shtp
+   Gskokvausi5sDMH+wxyckU8+kXIJyCe6eidzGZ6Igl2pMNXRyIl2QRRda
+   CrTpKe8ibeC4+ANXF04lXHQd++E3+MBzJWx6kHDhQ0b4YS5xnxrjy+tOb
+   BojVcNSFA+Obv4qBvVYskgDFa4G0LSMyTr6Q4dVLRqyCc3elaXsWflap/
+   iKhz17loU75na8nOIbYoM/3cx3OL+7x6Kz9tfh/4sgwMtMPd7e3ZXDPlU
+   k+vU8B8biF41Dw+YWo8KxxnXpFnq1zhab2kzELriuVFjRrFItjK2HqEs8
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="316396497"
+X-IronPort-AV: E=Sophos;i="5.98,242,1673942400"; 
+   d="scan'208";a="316396497"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2023 14:59:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="922550794"
+X-IronPort-AV: E=Sophos;i="5.98,242,1673942400"; 
+   d="scan'208";a="922550794"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Mar 2023 14:59:26 -0800
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pZgHF-0001fl-1U;
+        Tue, 07 Mar 2023 22:59:25 +0000
+Date:   Wed, 08 Mar 2023 06:59:06 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 525eb92e46b94fe4a641aa2f6cc0481874cff436
+Message-ID: <6407c1ba.kmFlRJJrrwvM9RKE%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-devel-2023-03-07-v6.3-rc1
-X-Kernelci-Report-Type: test
-Subject: renesas/master igt-kms-rockchip: 1 runs,
- 10 regressions (renesas-devel-2023-03-07-v6.3-rc1)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-kms-rockchip: 1 runs, 10 regressions (renesas-devel-2023=
--03-07-v6.3-rc1)
-
-Regressions Summary
--------------------
-
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 10         =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2023-03-07-v6.3-rc1/plan/igt-kms-rockchip/
-
-  Test:     igt-kms-rockchip
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2023-03-07-v6.3-rc1
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      525eb92e46b94fe4a641aa2f6cc0481874cff436
-
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  332809f3ee19f07abc03b62d5892fae51b9d9902
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  b6b1ceb4fc4d8f83a9540e4628a6c2648514bb19 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 10         =
-
-
-  Details:     https://kernelci.org/test/plan/id/6407a643133879509c8c863b
-
-  Results:     66 PASS, 23 FAIL, 148 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-03-07-v6.3-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/ig=
-t-kms-rockchip-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-023-03-07-v6.3-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/ig=
-t-kms-rockchip-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
-t/20230303.0/arm64/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-forked-busy: https://kernelci.o=
-rg/test/case/id/6407a643133879509c8c86c8
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:41.209246  <6>[   68.525162] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:41.214561  <14>[   68.532274] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:41.228886  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   68.539045] [IGT] kms_vblank: starting subtest =
-pipe-A-wait-forked-busy
-
-    2023-03-07T20:59:41.229633  )
-
-    2023-03-07T20:59:41.233465  Starting subtest: pipe-A-wait-forked-busy
-
-    2023-03-07T20:59:41.314416  Beginning pipe-A-wait-forked-busy on pipe A=
-, connector eDP-1
-
-    2023-03-07T20:59:41.571045  (kms_vblank:610) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
-
-    2023-03-07T20:59:41.581590  (kms_vblank:608) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
-
-    2023-03-07T20:59:41.591298  (kms_vblank:607) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
-
-    2023-03-07T20:59:41.601968  (kms_vblank:611) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
- =
-
-    ... (112 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-busy: https://kernelci.org/test=
-/case/id/6407a643133879509c8c86ca
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:39.875891  <8>[   67.189203] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dpipe-A-wait-forked-hang RESULT=3Dskip>
-
-    2023-03-07T20:59:39.911387  <6>[   67.227431] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:39.916701  <14>[   67.234128] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:39.930288  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   67.240658] [IGT] kms_vblank: starting subtest =
-pipe-A-wait-busy
-
-    2023-03-07T20:59:39.930881  )
-
-    2023-03-07T20:59:39.934161  Starting subtest: pipe-A-wait-busy
-
-    2023-03-07T20:59:40.014463  Beginning pipe-A-wait-busy on pipe A, conne=
-ctor eDP-1
-
-    2023-03-07T20:59:40.270655  (kms_vblank:599) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
-
-    2023-03-07T20:59:40.278481  (kms_vblank:599) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
-
-    2023-03-07T20:59:40.284262  (kms_vblank:599) CRITICAL: Last errno: 22, =
-Invalid argument
- =
-
-    ... (79 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-forked: https://kernelci.org/te=
-st/case/id/6407a643133879509c8c86cc
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:38.572120  <8>[   65.882701] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dpipe-A-wait-idle-hang RESULT=3Dskip>
-
-    2023-03-07T20:59:38.605763  <6>[   65.921550] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:38.611238  <14>[   65.928224] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:38.624041  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   65.934655] [IGT] kms_vblank: starting subtest =
-pipe-A-wait-forked
-
-    2023-03-07T20:59:38.624338  )
-
-    2023-03-07T20:59:38.628436  Starting subtest: pipe-A-wait-forked
-
-    2023-03-07T20:59:38.715226  Beginning pipe-A-wait-forked on pipe A, con=
-nector eDP-1
-
-    2023-03-07T20:59:38.971306  (kms_vblank:592) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
-
-    2023-03-07T20:59:38.980840  (kms_vblank:591) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
-
-    2023-03-07T20:59:38.991518  (kms_vblank:593) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
- =
-
-    ... (117 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-wait-idle: https://kernelci.org/test=
-/case/id/6407a643133879509c8c86ce
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:37.235916  Pipe<8>[   64.541872] <LAVA_SIGNAL_TESTCASE=
- TEST_CASE_ID=3Dpipe-A-query-forked-busy-hang RESULT=3Dskip>
-
-    2023-03-07T20:59:37.238248   F does not exist or not enabled
-
-    2023-03-07T20:59:37.278410  <6>[   64.594212] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:37.283278  <14>[   64.600877] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:37.296700  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   64.607307] [IGT] kms_vblank: starting subtest =
-pipe-A-wait-idle
-
-    2023-03-07T20:59:37.296994  )
-
-    2023-03-07T20:59:37.300462  Starting subtest: pipe-A-wait-idle
-
-    2023-03-07T20:59:37.381395  Beginning pipe-A-wait-idle on pipe A, conne=
-ctor eDP-1
-
-    2023-03-07T20:59:37.654703  (kms_vblank:581) CRITICAL: Test assertion f=
-ailure function vblank_wait, file ../tests/kms_vblank.c:318:
-
-    2023-03-07T20:59:37.661994  (kms_vblank:581) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
- =
-
-    ... (80 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-forked-busy: https://kernelci.=
-org/test/case/id/6407a643133879509c8c86d0
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:35.922405  Pipe F does not exist or not e<8>[   63.232=
-967] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Dpipe-A-query-busy-hang RESULT=3Ds=
-kip>
-
-    2023-03-07T20:59:35.923059  nabled
-
-    2023-03-07T20:59:35.958041  <6>[   63.273726] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:35.963280  <14>[   63.280373] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:35.976806  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   63.286927] [IGT] kms_vblank: starting subtest =
-pipe-A-query-forked-busy
-
-    2023-03-07T20:59:35.977091  )
-
-    2023-03-07T20:59:35.981706  Starting subtest: pipe-A-query-forked-busy
-
-    2023-03-07T20:59:36.065949  Beginning pipe-A-query-forked-busy on pipe =
-A, connector eDP-1
-
-    2023-03-07T20:59:36.386824  (kms_vblank:572) CRITICAL: Test assertion f=
-ailure function vblank_query, file ../tests/kms_vblank.c:289:
-
-    2023-03-07T20:59:36.395076  (kms_vblank:572) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
- =
-
-    ... (113 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-busy: https://kernelci.org/tes=
-t/case/id/6407a643133879509c8c86d2
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:34.713167  <6>[   62.028986] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:34.718354  <14>[   62.036093] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:34.731995  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   62.042648] [IGT] kms_vblank: starting subtest =
-pipe-A-query-busy
-
-    2023-03-07T20:59:34.732288  )
-
-    2023-03-07T20:59:34.735962  Starting subtest: pipe-A-query-busy
-
-    2023-03-07T20:59:34.815518  Beginning pipe-A-query-busy on pipe A, conn=
-ector eDP-1
-
-    2023-03-07T20:59:35.171522  (kms_vblank:563) CRITICAL: Test assertion f=
-ailure function vblank_query, file ../tests/kms_vblank.c:289:
-
-    2023-03-07T20:59:35.178220  (kms_vblank:563) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
-
-    2023-03-07T20:59:35.184076  (kms_vblank:563) CRITICAL: Last errno: 22, =
-Invalid argument
-
-    2023-03-07T20:59:35.188627  (kms_vblank:563) CRITICAL: error: -22 !=3D 0
- =
-
-    ... (78 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-forked: https://kernelci.org/t=
-est/case/id/6407a643133879509c8c86d4
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:33.315992   not exist or not enabled
-
-    2023-03-07T20:59:33.355163  <6>[   60.670077] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:33.359669  <14>[   60.676765] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:33.374028  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   60.683530] [IGT] kms_vblank: starting subtest =
-pipe-A-query-forked
-
-    2023-03-07T20:59:33.374487  )
-
-    2023-03-07T20:59:33.378304  Starting subtest: pipe-A-query-forked
-
-    2023-03-07T20:59:33.449749  Beginning pipe-A-query-forked on pipe A, co=
-nnector eDP-1
-
-    2023-03-07T20:59:33.822393  (kms_vblank:556) CRITICAL: Test assertion f=
-ailure function vblank_query, file ../tests/kms_vblank.c:289:
-
-    2023-03-07T20:59:33.832671  (kms_vblank:554) CRITICAL: Test assertion f=
-ailure function vblank_query, file ../tests/kms_vblank.c:289:
-
-    2023-03-07T20:59:33.842813  (kms_vblank:555) CRITICAL: Test assertion f=
-ailure function vblank_query, file ../tests/kms_vblank.c:289:
- =
-
-    ... (112 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-query-idle: https://kernelci.org/tes=
-t/case/id/6407a643133879509c8c86d6
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:32.040361  <8>[   59.353136] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dpipe-A-accuracy-idle RESULT=3Dfail>
-
-    2023-03-07T20:59:32.072286  <6>[   59.388044] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:32.077200  <14>[   59.394689] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:32.090725  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   59.400608] [IGT] kms_vblank: starting subtest =
-pipe-A-query-idle
-
-    2023-03-07T20:59:32.091010  )
-
-    2023-03-07T20:59:32.094848  Starting subtest: pipe-A-query-idle
-
-    2023-03-07T20:59:32.166871  Beginning pipe-A-query-idle on pipe A, conn=
-ector eDP-1
-
-    2023-03-07T20:59:32.571595  (kms_vblank:545) CRITICAL: Test assertion f=
-ailure function vblank_query, file ../tests/kms_vblank.c:289:
-
-    2023-03-07T20:59:32.578124  (kms_vblank:545) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
-
-    2023-03-07T20:59:32.585037  (kms_vblank:545) CRITICAL: Last errno: 22, =
-Invalid argument
- =
-
-    ... (80 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-accuracy-idle: https://kernelci.org/=
-test/case/id/6407a643133879509c8c86d7
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:30.773643  <6>[   58.088909] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:30.778478  <14>[   58.095532] [IGT] kms_vblank: execut=
-ing
-
-    2023-03-07T20:59:30.791793  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   58.101441] [IGT] kms_vblank: starting subtest =
-pipe-A-accuracy-idle
-
-    2023-03-07T20:59:30.792951  )
-
-    2023-03-07T20:59:30.796395  Starting subtest: pipe-A-accuracy-idle
-
-    2023-03-07T20:59:30.867537  Beginning pipe-A-accuracy-idle on pipe A, c=
-onnector eDP-1
-
-    2023-03-07T20:59:31.354667  (kms_vblank:541) CRITICAL: Test assertion f=
-ailure function accuracy, file ../tests/kms_vblank.c:254:
-
-    2023-03-07T20:59:31.361584  (kms_vblank:541) CRITICAL: Failed assertion=
-: wait_vblank(fd, &vbl) =3D=3D 0
-
-    2023-03-07T20:59:31.368103  (kms_vblank:541) CRITICAL: Last errno: 22, =
-Invalid argument
-
-    2023-03-07T20:59:31.373224  (kms_vblank:541) CRITICAL: error: -22 !=3D 0
- =
-
-    ... (78 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_setmode.basic: https://kernelci.org/test/case/id/6=
-407a643133879509c8c86e0
-        failing since 263 days (last pass: renesas-devel-2022-06-06-v5.19-r=
-c1, first fail: renesas-devel-2022-06-17-v5.19-rc2)
-
-    2023-03-07T20:59:26.751485  <8>[   54.069141] <LAVA_SIGNAL_TESTSET STOP>
-
-    2023-03-07T20:59:26.789251  <8>[   54.105328] <LAVA_SIGNAL_TESTSET STAR=
-T kms_setmode>
-
-    2023-03-07T20:59:26.827187  <6>[   54.142789] Console: switching to col=
-our dummy device 80x25
-
-    2023-03-07T20:59:26.832625  <14>[   54.149547] [IGT] kms_setmode: execu=
-ting
-
-    2023-03-07T20:59:26.845267  IGT-Version: 1.27.1-gb6b1ceb (aarch64) (Lin=
-ux: 6.3.0-rc1 aarch64<14>[   54.155125] [IGT] kms_setmode: starting subtest=
- basic
-
-    2023-03-07T20:59:26.845807  )
-
-    2023-03-07T20:59:26.847748  Starting subtest: basic
-
-    2023-03-07T20:59:26.851900  Testing: basic 1 connector combinations
-
-    2023-03-07T20:59:26.968103  <14>[   54.281878] [IGT] kms_setmode: start=
-ing dynamic subtest pipe-A-eDP-1
-
-    2023-03-07T20:59:26.972487  Starting dynamic subtest: pipe-A-eDP-1
- =
-
-    ... (77 line(s) more)  =
-
- =20
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 525eb92e46b94fe4a641aa2f6cc0481874cff436  Merge commit '8ca09d5fa3549d142c2080a72a4c70ce389163cd' into renesas-devel
+
+elapsed time: 836m
+
+configs tested: 136
+configs skipped: 15
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r011-20230306   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r043-20230305   gcc  
+arc                  randconfig-r043-20230306   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                       aspeed_g5_defconfig   gcc  
+arm                                 defconfig   gcc  
+arm                          exynos_defconfig   gcc  
+arm                          moxart_defconfig   clang
+arm                        neponset_defconfig   clang
+arm                  randconfig-r006-20230305   gcc  
+arm                  randconfig-r013-20230306   gcc  
+arm                  randconfig-r021-20230306   gcc  
+arm                  randconfig-r036-20230306   clang
+arm                  randconfig-r046-20230305   clang
+arm                  randconfig-r046-20230306   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r014-20230305   gcc  
+arm64                randconfig-r015-20230306   clang
+arm64                randconfig-r024-20230305   gcc  
+csky                                defconfig   gcc  
+hexagon                             defconfig   clang
+hexagon              randconfig-r022-20230306   clang
+hexagon              randconfig-r023-20230306   clang
+hexagon              randconfig-r041-20230305   clang
+hexagon              randconfig-r041-20230306   clang
+hexagon              randconfig-r045-20230305   clang
+hexagon              randconfig-r045-20230306   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230306   gcc  
+i386                 randconfig-a002-20230306   gcc  
+i386                 randconfig-a003-20230306   gcc  
+i386                 randconfig-a004-20230306   gcc  
+i386                 randconfig-a005-20230306   gcc  
+i386                 randconfig-a006-20230306   gcc  
+i386                 randconfig-a011-20230306   clang
+i386                 randconfig-a012-20230306   clang
+i386                 randconfig-a013-20230306   clang
+i386                 randconfig-a014-20230306   clang
+i386                 randconfig-a015-20230306   clang
+i386                 randconfig-a016-20230306   clang
+i386                 randconfig-r032-20230306   gcc  
+ia64                             allmodconfig   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r015-20230305   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r011-20230305   gcc  
+loongarch            randconfig-r016-20230305   gcc  
+loongarch            randconfig-r021-20230305   gcc  
+loongarch            randconfig-r032-20230305   gcc  
+m68k                             allmodconfig   gcc  
+m68k         buildonly-randconfig-r003-20230305   gcc  
+m68k         buildonly-randconfig-r005-20230305   gcc  
+m68k         buildonly-randconfig-r006-20230305   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r001-20230306   gcc  
+m68k                 randconfig-r004-20230306   gcc  
+m68k                 randconfig-r034-20230305   gcc  
+microblaze   buildonly-randconfig-r005-20230306   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r004-20230305   gcc  
+nios2                randconfig-r033-20230305   gcc  
+openrisc             randconfig-r005-20230305   gcc  
+parisc       buildonly-randconfig-r003-20230306   gcc  
+parisc       buildonly-randconfig-r004-20230305   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                mpc7448_hpc2_defconfig   gcc  
+powerpc                 mpc8540_ads_defconfig   gcc  
+powerpc              randconfig-r003-20230305   clang
+powerpc              randconfig-r023-20230305   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r014-20230306   clang
+riscv                randconfig-r024-20230306   clang
+riscv                randconfig-r025-20230306   clang
+riscv                randconfig-r042-20230305   gcc  
+riscv                randconfig-r042-20230306   clang
+riscv                          rv32_defconfig   gcc  
+s390                             alldefconfig   clang
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r033-20230306   gcc  
+s390                 randconfig-r036-20230305   clang
+s390                 randconfig-r044-20230305   gcc  
+s390                 randconfig-r044-20230306   clang
+sh                               allmodconfig   gcc  
+sh                   randconfig-r026-20230305   gcc  
+sh                   randconfig-r031-20230306   gcc  
+sh                           se7712_defconfig   gcc  
+sparc        buildonly-randconfig-r001-20230306   gcc  
+sparc        buildonly-randconfig-r004-20230306   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r016-20230306   gcc  
+sparc64      buildonly-randconfig-r001-20230305   gcc  
+sparc64              randconfig-r022-20230305   gcc  
+sparc64              randconfig-r035-20230306   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64       buildonly-randconfig-r002-20230306   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230306   gcc  
+x86_64               randconfig-a002-20230306   gcc  
+x86_64               randconfig-a003-20230306   gcc  
+x86_64               randconfig-a004-20230306   gcc  
+x86_64               randconfig-a005-20230306   gcc  
+x86_64               randconfig-a006-20230306   gcc  
+x86_64               randconfig-a011-20230306   clang
+x86_64               randconfig-a012-20230306   clang
+x86_64               randconfig-a013-20230306   clang
+x86_64               randconfig-a014-20230306   clang
+x86_64               randconfig-a015-20230306   clang
+x86_64               randconfig-a016-20230306   clang
+x86_64                               rhel-8.3   gcc  
+xtensa       buildonly-randconfig-r006-20230306   gcc  
+xtensa               randconfig-r002-20230306   gcc  
+xtensa               randconfig-r006-20230306   gcc  
+xtensa               randconfig-r012-20230305   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
