@@ -2,42 +2,42 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B71C678D5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F21F3C742A7
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Mar 2023 10:58:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229549AbjCGK5k (ORCPT
+        id S230000AbjCGK5m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 05:57:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42868 "EHLO
+        Tue, 7 Mar 2023 05:57:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230000AbjCGK51 (ORCPT
+        with ESMTP id S231195AbjCGK5X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2023 05:57:27 -0500
+        Tue, 7 Mar 2023 05:57:23 -0500
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE9D5D469
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2023 02:57:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DC55BCA1
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2023 02:57:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=EgRYxIWHZ7WvvS
-        /wukMqhYX6E2H5FLC+31Yzk20AgfI=; b=wjy2rUXe8hyVkU+d3o1cECrY4sCl58
-        ydyLd6Tf9l/e4BglMoSu2s5K81W5D9ug8GHUpCe2MX+G9FZ4ZEUy45WvKdovNTrv
-        TYEyI0662EDoPSjhlIy/oHQ+rfmailIC6a3DZoeqR+aLkHJx765aAYDuLxR5El4u
-        MO922NFjMmYaA=
-Received: (qmail 651044 invoked from network); 7 Mar 2023 11:57:09 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Mar 2023 11:57:09 +0100
-X-UD-Smtp-Session: l3s3148p1@Q7njRU32ho4gAQnoAFQ+AGEn9EY5VOxJ
+        :mime-version:content-transfer-encoding; s=k1; bh=Lkm0PfRMGNfNPc
+        4inj3fdY2lQ/g94jqXF7RXgyG+CJU=; b=ehZIxuEuxTbiQHKg0EOJk2RbSe+mKR
+        SKzfwGKMzUGLLrlPEF1fOUURsBNAPgAX2sHZMFzDrF1PvawX3jrcyS/zDyG+cJan
+        hcqozGndJPXQCDdD1jS61BuSAYNVc0ElejiLYRfcIsC/bLVD8ef8+WY4WGb1lwqa
+        LujQ3Ag3fRBLY=
+Received: (qmail 650960 invoked from network); 7 Mar 2023 11:57:07 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Mar 2023 11:57:07 +0100
+X-UD-Smtp-Session: l3s3148p1@unrKRU32NoggAQnoAFQ+AGEn9EY5VOxJ
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] soc: renesas: remove r8a77950 arch
-Date:   Tue,  7 Mar 2023 11:56:41 +0100
-Message-Id: <20230307105645.5285-6-wsa+renesas@sang-engineering.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/5] dt-bindings: soc: renesas: remove R-Car H3 ES1.*
+Date:   Tue,  7 Mar 2023 11:56:39 +0100
+Message-Id: <20230307105645.5285-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20230307105645.5285-1-wsa+renesas@sang-engineering.com>
 References: <20230307105645.5285-1-wsa+renesas@sang-engineering.com>
@@ -52,60 +52,34 @@ needed a lot of quirks and workarounds. These become a maintenance
 burden now, so our development group decided to remove upstream support
 and disable booting for this SoC. Public users only have ES2 onwards.
 
-Remove the architecture which describes H3 ES1.*.
-
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/configs/defconfig      | 1 -
- drivers/soc/renesas/Kconfig       | 7 -------
- drivers/soc/renesas/renesas-soc.c | 2 +-
- 3 files changed, 1 insertion(+), 9 deletions(-)
+ .../devicetree/bindings/soc/renesas/renesas.yaml          | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7790ee42c68a..ef88f86fbfda 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1217,7 +1217,6 @@ CONFIG_QCOM_APR=m
- CONFIG_QCOM_ICC_BWMON=m
- CONFIG_ARCH_R8A77995=y
- CONFIG_ARCH_R8A77990=y
--CONFIG_ARCH_R8A77950=y
- CONFIG_ARCH_R8A77951=y
- CONFIG_ARCH_R8A77965=y
- CONFIG_ARCH_R8A77960=y
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 4e8b51ba2266..de31589ed054 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -206,13 +206,6 @@ config ARCH_R8A77990
- 	  This enables support for the Renesas R-Car E3 SoC.
- 	  This includes different gradings like R-Car E3e.
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 2789022b52eb..c3389de20c72 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -212,12 +212,12 @@ properties:
+               - renesas,silk # SILK (RTP0RC7794LCB00011S)
+           - const: renesas,r8a7794
  
--config ARCH_R8A77950
--	bool "ARM64 Platform support for R-Car H3 ES1.x"
--	select ARCH_RCAR_GEN3
--	select SYSC_R8A7795
--	help
--	  This enables support for the Renesas R-Car H3 SoC (revision 1.x).
--
- config ARCH_R8A77951
- 	bool "ARM64 Platform support for R-Car H3 ES2.0+"
- 	select ARCH_RCAR_GEN3
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 468ebce1ea88..66ff1c25f85f 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -330,7 +330,7 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A7794
- 	{ .compatible = "renesas,r8a7794",	.data = &soc_rcar_e2 },
- #endif
--#if defined(CONFIG_ARCH_R8A77950) || defined(CONFIG_ARCH_R8A77951)
-+#if defined(CONFIG_ARCH_R8A77951)
- 	{ .compatible = "renesas,r8a7795",	.data = &soc_rcar_h3 },
- #endif
- #ifdef CONFIG_ARCH_R8A77951
+-      - description: R-Car H3 (R8A77950)
++      # Note: R-Car H3 ES1.* (R8A77950) is not supported upstream anymore!
++
++      - description: R-Car H3 ES2.0 and later (R8A77951)
+         items:
+           - enum:
+-                # H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
+-                # H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
+-              - renesas,h3ulcb
++              - renesas,h3ulcb # H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
+               - renesas,salvator-x # Salvator-X (RTP0RC7795SIPB0010S)
+               - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
+           - const: renesas,r8a7795
 -- 
 2.35.1
 
