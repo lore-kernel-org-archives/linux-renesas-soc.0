@@ -2,229 +2,118 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881B5C678D5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Mar 2023 12:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065ACC6FA99
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Mar 2023 12:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230472AbjCGMAK (ORCPT
+        id S229917AbjCGMaz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 07:00:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42678 "EHLO
+        Tue, 7 Mar 2023 07:30:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbjCGMAJ (ORCPT
+        with ESMTP id S229843AbjCGMax (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2023 07:00:09 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6474230B3F
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2023 04:00:08 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZVyN-0006T7-KM; Tue, 07 Mar 2023 12:59:15 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZVyF-002TEW-9a; Tue, 07 Mar 2023 12:59:07 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZVyE-002yig-5U; Tue, 07 Mar 2023 12:59:06 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Icenowy Zheng <uwu@icenowy.me>,
-        Justin Chen <justinpopo6@gmail.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Pratyush Yadav <p.yadav@ti.com>,
-        Rahul T R <r-ravikumar@ti.com>,
-        Swapnil Jakhade <sjakhade@cadence.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Liu Ying <victor.liu@nxp.com>, Yuan Can <yuancan@huawei.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Amelie Delaunay <amelie.delaunay@foss.st.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        JC Kuo <jckuo@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Matt Ranostay <mranostay@ti.com>,
-        Sinthu Raja <sinthu.raja@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tanmay Patil <t-patil@ti.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Lv Ruyi <lv.ruyi@zte.com.cn>
-Cc:     linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        kernel@pengutronix.de,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 00/31] phy: Convert to platform remove callback returning void
-Date:   Tue,  7 Mar 2023 12:58:29 +0100
-Message-Id: <20230307115900.2293120-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.1
+        Tue, 7 Mar 2023 07:30:53 -0500
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1CDD574C1;
+        Tue,  7 Mar 2023 04:30:48 -0800 (PST)
+Received: by mail-qt1-x830.google.com with SMTP id d7so13967305qtr.12;
+        Tue, 07 Mar 2023 04:30:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678192248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EPIwXn5HU+7qQ+4crqE/1YbIbAYyi4pDL0FksvJzOPM=;
+        b=H5r1l0V5HKcI+Dp14YU+RMT6wtaR+fxQ+ol+ZZ5eDPozUu9UjnikSJ+obviyAqpq3o
+         LxSs8fCOxsGwzoVbkSSx5HNsWwtzB+vpQw7ygpFpcwYszyVd43J6M+5QsQnIbQ2n9nks
+         YA/BAGJIbHcGZMbcdlLUS0aZyBmrmJPRK3armPeuMhOf5k8Yu+a7LBepyBXf8Gt8oUDw
+         LGI0cZ4Dcn8/I+IuWkLEd7K/zaIl1b2jpikalhnGV0BPTenRgm2Vg4R7TktBot70tveB
+         LrEpG/gVSnmqnI4CM8+WTrKVRJQTBoBHhaR0TDbSohSkAtoawMey40rUhexfQUheKN+2
+         xYSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678192248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EPIwXn5HU+7qQ+4crqE/1YbIbAYyi4pDL0FksvJzOPM=;
+        b=UeFtHLIlgOXX3W+3V1073tcViKTbuqKV9tebzC5DkanBc+P0Mxjj6RMrcrtyLXoIJL
+         mvgH50aQF8RiQiXFM+JA67XI6erKrl98plo9PZ+eEy9udVxV631+PQbwRQJOeCMuFlIc
+         FBKEufK3GOsLM3LyLvAAeubAKJ+euY9sf0rkBfULNLLf/b8Tf4UTrdBgi349oRDNj7RI
+         A1W3ibRRpbw9bAFThYXA6OZz2YsBoF0vjUdC8YdJnR8gMtMM5SQ8sJIZiuQhek5Op5GI
+         gLXatK6JI9Kmc8qXp24sT0P4rsB25H5cwPipFYFos5HRSWEUsj4MgH0ga6BIL2SG+l1c
+         O/2A==
+X-Gm-Message-State: AO0yUKWUySKXk1VkNP96dxNo/sCG8uESaPC7oEV59qL1GFv5S9xpqQ+9
+        ZzFHZQteH6A7LJ5/PbMOElWSqdM/tu//q7gJKHM=
+X-Google-Smtp-Source: AK7set9DUfQkAnhGRIDBxtS+yx3RcPCDooAEBcPw1L4dWXrzDvQ1mWZSmPG3EKKw/sh5tWVF5JTQlOEcCE3DNpk6Xl0=
+X-Received: by 2002:ac8:40cb:0:b0:3bf:c33e:93a9 with SMTP id
+ f11-20020ac840cb000000b003bfc33e93a9mr4111797qtm.1.1678192247935; Tue, 07 Mar
+ 2023 04:30:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5818; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=MYs5JN8sdLbdhFqX1o8FkbSoO7sfiFpKaRQbsKFPJqQ=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkByZ3qXmeqAA+C0xt3Tbnmc2ihyUokkXi7q3YR NmSTiOqsGOJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZAcmdwAKCRDB/BR4rcrs CQWGB/411PW1y2WnaZUJlgvVPVtj4QZujEz8AqlBRHTptyhx5CaQGlPe5Xdx6F1Q5b+kPwyAdD9 /HAdHufSEHfPbZGDUn4HLokWRJ8EGqimHminkBYxmUvdoH5XYFmaQwZ6a88+sD124laNpghG7TD rX6oqjXAt4PTE/fQrGyqD/tWwDxLRZpczwfFESmWk28IPcjCEOQQP+2oSas8Mef2Oc8JJQWBCvl YDEq69SPXLHguNB1ZudTCSbi4KAzJ9LHrwEWqumQjr2K3Du5Gg91o9+6EaSl2YQGu5XnPFgmqQ3 cWA/IVc9vOXlx2ruwlHvEB1wcclx//PSUSpKGg2356dPcYJG
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+References: <20230306090014.128732-1-biju.das.jz@bp.renesas.com>
+ <20230306090014.128732-7-biju.das.jz@bp.renesas.com> <ZAZ43tylTNxPIun8@surfacebook>
+ <OS0PR01MB59223AF6B7850592F34CABF086B79@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <CAHp75Vcdyq-XKRFKzEjHFQ_0Qv61HkMEVu0Dg-ffsnVc9R3-ww@mail.gmail.com> <OS0PR01MB59229CD801939459BB2F8E8686B79@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB59229CD801939459BB2F8E8686B79@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 7 Mar 2023 14:30:11 +0200
+Message-ID: <CAHp75VdJQ0OpVdhJ=9F1tJNXuuYmN2H51tSub+zDkzS3HLUXAg@mail.gmail.com>
+Subject: Re: [PATCH v6 06/13] drivers: pinctrl: renesas: Add RZ/G2L POEG
+ driver support
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+On Tue, Mar 7, 2023 at 12:10 PM Biju Das <biju.das.jz@bp.renesas.com> wrote=
+:
+> > On Tue, Mar 7, 2023 at 10:53=E2=80=AFAM Biju Das <biju.das.jz@bp.renesa=
+s.com> wrote:
+> > > > From: andy.shevchenko@gmail.com <andy.shevchenko@gmail.com>
+> > > > Sent: Monday, March 6, 2023 11:36 PM Mon, Mar 06, 2023 at 09:00:07A=
+M
+> > > > +0000, Biju Das kirjoitti:
 
-this patch series adapts the platform drivers below drivers/phy to use the
-.remove_new() callback. Compared to the traditional .remove() callback
-.remove_new() returns no value. This is a good thing because the driver core
-doesn't (and cannot) cope for errors during remove. The only effect of a
-non-zero return value in .remove() is that the driver core emits a warning. The
-device is removed anyhow and an early return from .remove() usually yields a
-resource leak.
+...
 
-By changing the remove callback to return void driver authors cannot
-reasonably assume any more that there is some kind of cleanup later.
+> > > > > +static void rzg2l_poeg_write(struct rzg2l_poeg_chip *chip, u32
+> > > > > +data) {
+> > > > > +   iowrite32(data, chip->mmio);
+> > > > > +}
+> > > > > +
+> > > > > +static u32 rzg2l_poeg_read(struct rzg2l_poeg_chip *chip) {
+> > > > > +   return ioread32(chip->mmio);
+> > > > > +}
+> > > >
+> > > > Why not regmap MMIO?
+> > >
+> > > Some drivers used iowrite32, some uses writel, some uses regmap.
+> > >
+> > > will use regmap for read/write,If the preference is regmap MMIO as it
+> > > comes with spinlock for MMIO access.
+> >
+> > Lock can be disabled. It's up to the user of regmap.
+>
+> Ok, Just want to double check,
+> POEG has a single 32 bit register. So it worth to use regmap?
+> A simple readl/write is sufficient no??
 
-All drivers in drivers/spmi returned zero unconditionally in their remove
-callback, so they could all be converted trivially to .remove_new().
+It can be. But can you explain why you used iowriteXX() / ioreadXX()
+instead of writeX()/readX()?
 
-Note that this series depends on commit 5c5a7680e67b ("platform: Provide
-a remove callback that returns no value") which is included in v6.3-rc1.
-
-Best regards
-Uwe
-
-Uwe Kleine-König (31):
-  phy: allwinner: phy-sun4i-usb: Convert to platform remove callback
-    returning void
-  phy: broadcom: phy-brcm-usb: Convert to platform remove callback
-    returning void
-  phy: cadence: cdns-dphy: Convert to platform remove callback returning
-    void
-  phy: cadence: phy-cadence-sierra: Convert to platform remove callback
-    returning void
-  phy: cadence: phy-cadence-torrent: Convert to platform remove callback
-    returning void
-  phy: freescale: phy-fsl-imx8qm-lvds-phy: Convert to platform remove
-    callback returning void
-  phy: intel: phy-intel-lgm-combo: Convert to platform remove callback
-    returning void
-  phy: mediatek: phy-mtk-mipi-dsi: Convert to platform remove callback
-    returning void
-  phy: motorola: phy-cpcap-usb: Convert to platform remove callback
-    returning void
-  phy: motorola: phy-mapphone-mdm6600: Convert to platform remove
-    callback returning void
-  phy: phy-lgm-usb: Convert to platform remove callback returning void
-  phy: qualcomm: phy-qcom-apq8064-sata: Convert to platform remove
-    callback returning void
-  phy: qualcomm: phy-qcom-eusb2-repeater: Convert to platform remove
-    callback returning void
-  phy: qualcomm: phy-qcom-ipq806x-sata: Convert to platform remove
-    callback returning void
-  phy: renesas: phy-rcar-gen3-pcie: Convert to platform remove callback
-    returning void
-  phy: renesas: phy-rcar-gen3-usb2: Convert to platform remove callback
-    returning void
-  phy: renesas: phy-rcar-gen3-usb3: Convert to platform remove callback
-    returning void
-  phy: renesas: r8a779f0-ether-serdes: Convert to platform remove
-    callback returning void
-  phy: rockchip: phy-rockchip-inno-csidphy: Convert to platform remove
-    callback returning void
-  phy: rockchip: phy-rockchip-inno-dsidphy: Convert to platform remove
-    callback returning void
-  phy: rockchip: phy-rockchip-inno-hdmi: Convert to platform remove
-    callback returning void
-  phy: rockchip: phy-rockchip-typec: Convert to platform remove callback
-    returning void
-  phy: st: phy-stm32-usbphyc: Convert to platform remove callback
-    returning void
-  phy: tegra: xusb: Convert to platform remove callback returning void
-  phy: ti: phy-am654-serdes: Convert to platform remove callback
-    returning void
-  phy: ti: phy-da8xx-usb: Convert to platform remove callback returning
-    void
-  phy: ti: phy-dm816x-usb: Convert to platform remove callback returning
-    void
-  phy: ti: phy-j721e-wiz: Convert to platform remove callback returning
-    void
-  phy: ti: phy-omap-usb2: Convert to platform remove callback returning
-    void
-  phy: ti: phy-ti-pipe3: Convert to platform remove callback returning
-    void
-  phy: ti: phy-twl4030-usb: Convert to platform remove callback
-    returning void
-
- drivers/phy/allwinner/phy-sun4i-usb.c            | 6 ++----
- drivers/phy/broadcom/phy-brcm-usb.c              | 6 ++----
- drivers/phy/cadence/cdns-dphy.c                  | 6 ++----
- drivers/phy/cadence/phy-cadence-sierra.c         | 6 ++----
- drivers/phy/cadence/phy-cadence-torrent.c        | 6 ++----
- drivers/phy/freescale/phy-fsl-imx8qm-lvds-phy.c  | 6 ++----
- drivers/phy/intel/phy-intel-lgm-combo.c          | 5 ++---
- drivers/phy/mediatek/phy-mtk-mipi-dsi.c          | 5 ++---
- drivers/phy/motorola/phy-cpcap-usb.c             | 6 ++----
- drivers/phy/motorola/phy-mapphone-mdm6600.c      | 6 ++----
- drivers/phy/phy-lgm-usb.c                        | 6 ++----
- drivers/phy/qualcomm/phy-qcom-apq8064-sata.c     | 6 ++----
- drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c   | 8 +++-----
- drivers/phy/qualcomm/phy-qcom-ipq806x-sata.c     | 6 ++----
- drivers/phy/renesas/phy-rcar-gen3-pcie.c         | 6 ++----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c         | 6 ++----
- drivers/phy/renesas/phy-rcar-gen3-usb3.c         | 6 ++----
- drivers/phy/renesas/r8a779f0-ether-serdes.c      | 6 ++----
- drivers/phy/rockchip/phy-rockchip-inno-csidphy.c | 6 ++----
- drivers/phy/rockchip/phy-rockchip-inno-dsidphy.c | 6 ++----
- drivers/phy/rockchip/phy-rockchip-inno-hdmi.c    | 6 ++----
- drivers/phy/rockchip/phy-rockchip-typec.c        | 6 ++----
- drivers/phy/st/phy-stm32-usbphyc.c               | 6 ++----
- drivers/phy/tegra/xusb.c                         | 6 ++----
- drivers/phy/ti/phy-am654-serdes.c                | 6 ++----
- drivers/phy/ti/phy-da8xx-usb.c                   | 6 ++----
- drivers/phy/ti/phy-dm816x-usb.c                  | 6 ++----
- drivers/phy/ti/phy-j721e-wiz.c                   | 6 ++----
- drivers/phy/ti/phy-omap-usb2.c                   | 6 ++----
- drivers/phy/ti/phy-ti-pipe3.c                    | 6 ++----
- drivers/phy/ti/phy-twl4030-usb.c                 | 6 ++----
- 31 files changed, 63 insertions(+), 123 deletions(-)
-
-base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
--- 
-2.39.1
-
+--=20
+With Best Regards,
+Andy Shevchenko
