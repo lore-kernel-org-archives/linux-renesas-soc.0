@@ -2,122 +2,176 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3B8C678D5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Mar 2023 13:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5642BC64EC4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Mar 2023 13:19:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231168AbjCHNT2 (ORCPT
+        id S230052AbjCHNT3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Mar 2023 08:19:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42188 "EHLO
+        Wed, 8 Mar 2023 08:19:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231618AbjCHNSl (ORCPT
+        with ESMTP id S231629AbjCHNSl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 8 Mar 2023 08:18:41 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08AE0D08E3
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Mar 2023 05:15:26 -0800 (PST)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD69D90B7A
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Mar 2023 05:15:23 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:614d:21b0:703:d0f9])
-        by andre.telenet-ops.be with bizsmtp
-        id VpFM290043mNwr401pFMRV; Wed, 08 Mar 2023 14:15:21 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id VpFL2900c3mNwr406pFLLg; Wed, 08 Mar 2023 14:15:21 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pZtd0-00BF1P-Sl;
-        Wed, 08 Mar 2023 14:15:21 +0100
+        id 1pZtd0-00BF10-8C;
+        Wed, 08 Mar 2023 14:15:20 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pZrFu-00FUfI-6W;
-        Wed, 08 Mar 2023 11:42:46 +0100
+        id 1pZtbK-00FVsd-1l;
+        Wed, 08 Mar 2023 14:13:02 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/8] pinctrl: renesas: r8a77980: Add support for AVB/GE power-sources
-Date:   Wed,  8 Mar 2023 11:42:41 +0100
-Message-Id: <3c26c4f3735a6d071685c507c065172e63af5d70.1678271030.git.geert+renesas@glider.be>
+To:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <simon.horman@corigine.com>
+Subject: [PATCH v2] can: rcar_canfd: Add transceiver support
+Date:   Wed,  8 Mar 2023 14:13:00 +0100
+Message-Id: <e825b50a843ffe40e33f34e4d858c07c1b2ff259.1678280913.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1678271030.git.geert+renesas@glider.be>
-References: <cover.1678271030.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for configuring the I/O voltage levels of the Ethernet AVB
-and Gigabit Ethernet pins on the R-Car V3H SoC.  "PIN_VDDQ_AVB" and
-"PIN_VDDQ_GE" can be configured for 2.5V or 3.3V operation.
+Add support for CAN transceivers described as PHYs.
+
+While simple CAN transceivers can do without, this is needed for CAN
+transceivers like NXP TJR1443 that need a configuration step (like
+pulling standby or enable lines), and/or impose a bitrate limit.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
 ---
- drivers/pinctrl/renesas/pfc-r8a77980.c | 39 ++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 11 deletions(-)
+v2:
+  - Add Reviewed-by.
+---
+ drivers/net/can/rcar/rcar_canfd.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77980.c b/drivers/pinctrl/renesas/pfc-r8a77980.c
-index b632ea1b29c73e3a..8effbcec0b227ee3 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77980.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77980.c
-@@ -35,7 +35,9 @@
- 	PIN_NOGP_CFG(EXTALR, "EXTALR", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN),	\
- 	PIN_NOGP_CFG(FSCLKST, "FSCLKST", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN),	\
- 	PIN_NOGP_CFG(FSCLKST_N, "FSCLKST#", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN),	\
--	PIN_NOGP_CFG(PRESETOUT_N, "PRESETOUT#", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN)
-+	PIN_NOGP_CFG(PRESETOUT_N, "PRESETOUT#", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN), \
-+	PIN_NOGP_CFG(VDDQ_AVB, "VDDQ_AVB", fn, SH_PFC_PIN_CFG_IO_VOLTAGE_25_33), \
-+	PIN_NOGP_CFG(VDDQ_GE, "VDDQ_GE", fn, SH_PFC_PIN_CFG_IO_VOLTAGE_25_33)
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index ef4e1b9a9e1ee280..6df9a259e5e4f92c 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -35,6 +35,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
+ #include <linux/types.h>
+@@ -530,6 +531,7 @@ struct rcar_canfd_channel {
+ 	struct net_device *ndev;
+ 	struct rcar_canfd_global *gpriv;	/* Controller reference */
+ 	void __iomem *base;			/* Register base address */
++	struct phy *transceiver;		/* Optional transceiver */
+ 	struct napi_struct napi;
+ 	u32 tx_head;				/* Incremented on xmit */
+ 	u32 tx_tail;				/* Incremented on xmit done */
+@@ -1413,11 +1415,17 @@ static int rcar_canfd_open(struct net_device *ndev)
+ 	struct rcar_canfd_global *gpriv = priv->gpriv;
+ 	int err;
  
- /*
-  * F_() : just information
-@@ -2837,24 +2839,39 @@ static int r8a77980_pin_to_pocctrl(unsigned int pin, u32 *pocctrl)
- {
- 	int bit = pin & 0x1f;
- 
--	*pocctrl = pinmux_ioctrl_regs[POCCTRL0].reg;
--	if (pin >= RCAR_GP_PIN(0, 0) && pin <= RCAR_GP_PIN(0, 21))
-+	switch (pin) {
-+	case RCAR_GP_PIN(0, 0) ... RCAR_GP_PIN(0, 21):
-+		*pocctrl = pinmux_ioctrl_regs[POCCTRL0].reg;
- 		return bit;
--	else if (pin >= RCAR_GP_PIN(2, 0) && pin <= RCAR_GP_PIN(2, 9))
-+
-+	case RCAR_GP_PIN(2, 0) ... RCAR_GP_PIN(2, 9):
-+		*pocctrl = pinmux_ioctrl_regs[POCCTRL0].reg;
- 		return bit + 22;
- 
--	*pocctrl = pinmux_ioctrl_regs[POCCTRL1].reg;
--	if (pin >= RCAR_GP_PIN(2, 10) && pin <= RCAR_GP_PIN(2, 16))
-+	case RCAR_GP_PIN(2, 10) ... RCAR_GP_PIN(2, 16):
-+		*pocctrl = pinmux_ioctrl_regs[POCCTRL1].reg;
- 		return bit - 10;
--	if ((pin >= RCAR_GP_PIN(2, 17) && pin <= RCAR_GP_PIN(2, 24)) ||
--	    (pin >= RCAR_GP_PIN(3,  0) && pin <= RCAR_GP_PIN(3, 16)))
-+
-+	case RCAR_GP_PIN(2, 17) ... RCAR_GP_PIN(2, 24):
-+	case RCAR_GP_PIN(3,  0) ... RCAR_GP_PIN(3, 16):
-+		*pocctrl = pinmux_ioctrl_regs[POCCTRL1].reg;
- 		return bit + 7;
- 
--	*pocctrl = pinmux_ioctrl_regs[POCCTRL2].reg;
--	if (pin >= RCAR_GP_PIN(2, 25) && pin <= RCAR_GP_PIN(2, 29))
-+	case RCAR_GP_PIN(2, 25) ... RCAR_GP_PIN(2, 29):
-+		*pocctrl = pinmux_ioctrl_regs[POCCTRL2].reg;
- 		return pin - 25;
- 
--	return -EINVAL;
-+	case PIN_VDDQ_AVB:
-+		*pocctrl = pinmux_ioctrl_regs[POCCTRL3].reg;
-+		return 0;
-+
-+	case PIN_VDDQ_GE:
-+		*pocctrl = pinmux_ioctrl_regs[POCCTRL3].reg;
-+		return 1;
-+
-+	default:
-+		return -EINVAL;
++	err = phy_power_on(priv->transceiver);
++	if (err) {
++		netdev_err(ndev, "failed to power on PHY, error %d\n", err);
++		return err;
 +	}
++
+ 	/* Peripheral clock is already enabled in probe */
+ 	err = clk_prepare_enable(gpriv->can_clk);
+ 	if (err) {
+ 		netdev_err(ndev, "failed to enable CAN clock, error %d\n", err);
+-		goto out_clock;
++		goto out_phy;
+ 	}
+ 
+ 	err = open_candev(ndev);
+@@ -1437,7 +1445,8 @@ static int rcar_canfd_open(struct net_device *ndev)
+ 	close_candev(ndev);
+ out_can_clock:
+ 	clk_disable_unprepare(gpriv->can_clk);
+-out_clock:
++out_phy:
++	phy_power_off(priv->transceiver);
+ 	return err;
  }
  
- static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+@@ -1480,6 +1489,7 @@ static int rcar_canfd_close(struct net_device *ndev)
+ 	napi_disable(&priv->napi);
+ 	clk_disable_unprepare(gpriv->can_clk);
+ 	close_candev(ndev);
++	phy_power_off(priv->transceiver);
+ 	return 0;
+ }
+ 
+@@ -1711,7 +1721,7 @@ static const struct ethtool_ops rcar_canfd_ethtool_ops = {
+ };
+ 
+ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+-				    u32 fcan_freq)
++				    u32 fcan_freq, struct phy *transceiver)
+ {
+ 	const struct rcar_canfd_hw_info *info = gpriv->info;
+ 	struct platform_device *pdev = gpriv->pdev;
+@@ -1732,8 +1742,11 @@ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+ 	ndev->flags |= IFF_ECHO;
+ 	priv->ndev = ndev;
+ 	priv->base = gpriv->base;
++	priv->transceiver = transceiver;
+ 	priv->channel = ch;
+ 	priv->gpriv = gpriv;
++	if (transceiver)
++		priv->can.bitrate_max = transceiver->attrs.max_link_rate;
+ 	priv->can.clock.freq = fcan_freq;
+ 	dev_info(dev, "can_clk rate is %u\n", priv->can.clock.freq);
+ 
+@@ -1836,6 +1849,7 @@ static void rcar_canfd_channel_remove(struct rcar_canfd_global *gpriv, u32 ch)
+ 
+ static int rcar_canfd_probe(struct platform_device *pdev)
+ {
++	struct phy *transceivers[RCANFD_NUM_CHANNELS] = { 0, };
+ 	const struct rcar_canfd_hw_info *info;
+ 	struct device *dev = &pdev->dev;
+ 	void __iomem *addr;
+@@ -1857,9 +1871,14 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	for (i = 0; i < info->max_channels; ++i) {
+ 		name[7] = '0' + i;
+ 		of_child = of_get_child_by_name(dev->of_node, name);
+-		if (of_child && of_device_is_available(of_child))
++		if (of_child && of_device_is_available(of_child)) {
+ 			channels_mask |= BIT(i);
++			transceivers[i] = devm_of_phy_optional_get(dev,
++							of_child, NULL);
++		}
+ 		of_node_put(of_child);
++		if (IS_ERR(transceivers[i]))
++			return PTR_ERR(transceivers[i]);
+ 	}
+ 
+ 	if (info->shared_global_irqs) {
+@@ -2035,7 +2054,8 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	for_each_set_bit(ch, &gpriv->channels_mask, info->max_channels) {
+-		err = rcar_canfd_channel_probe(gpriv, ch, fcan_freq);
++		err = rcar_canfd_channel_probe(gpriv, ch, fcan_freq,
++					       transceivers[ch]);
+ 		if (err)
+ 			goto fail_channel;
+ 	}
 -- 
 2.34.1
 
