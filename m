@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAAFC6FD1E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Mar 2023 12:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F6BC64EC4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Mar 2023 12:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbjCJMfV (ORCPT
+        id S230426AbjCJMfY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Mar 2023 07:35:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45654 "EHLO
+        Fri, 10 Mar 2023 07:35:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbjCJMfS (ORCPT
+        with ESMTP id S230391AbjCJMfT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2023 07:35:18 -0500
+        Fri, 10 Mar 2023 07:35:19 -0500
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B22810DE51;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ABB5B10E275;
         Fri, 10 Mar 2023 04:35:16 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.98,249,1673881200"; 
-   d="scan'208";a="152181162"
+   d="scan'208";a="152181166"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Mar 2023 21:35:13 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 10 Mar 2023 21:35:14 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CD149423B06E;
-        Fri, 10 Mar 2023 21:35:13 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3F29C423B070;
+        Fri, 10 Mar 2023 21:35:14 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
         bhelgaas@google.com, jingoohan1@gmail.com,
@@ -31,9 +31,9 @@ Cc:     Sergey.Semin@baikalelectronics.ru, marek.vasut+renesas@gmail.com,
         linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v11 05/13] PCI: dwc: Refactor PCIE_PORT_LINK_CONTROL handling
-Date:   Fri, 10 Mar 2023 21:35:02 +0900
-Message-Id: <20230310123510.675685-6-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v11 08/13] PCI: dwc: Add dw_pcie_num_lanes_setup()
+Date:   Fri, 10 Mar 2023 21:35:05 +0900
+Message-Id: <20230310123510.675685-9-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230310123510.675685-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230310123510.675685-1-yoshihiro.shimoda.uh@renesas.com>
@@ -43,57 +43,66 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The previous code wrote this PCIE_PORT_LINK_CONTROL register twice
-with redudant mask (PORT_LINK_FAST_LINK_MODE). So, refactor this.
+Add dw_pcie_num_lanes_setup() to setup PCI_EXP_LNKCAP_MLW.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/pci/controller/dwc/pcie-designware.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware.c | 12 ++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.h |  1 +
+ drivers/pci/controller/dwc/pcie-tegra194.c   |  5 +----
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 8e33e6e59e68..89b8ec29da7f 100644
+index 89b8ec29da7f..47860da5738e 100644
 --- a/drivers/pci/controller/dwc/pcie-designware.c
 +++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -1008,19 +1008,13 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
- 	}
+@@ -696,6 +696,18 @@ void dw_pcie_upconfig_setup(struct dw_pcie *pci)
+ }
+ EXPORT_SYMBOL_GPL(dw_pcie_upconfig_setup);
  
-+	/* Set the number of lanes */
- 	val = dw_pcie_readl_dbi(pci, PCIE_PORT_LINK_CONTROL);
- 	val &= ~PORT_LINK_FAST_LINK_MODE;
- 	val |= PORT_LINK_DLL_LINK_EN;
--	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
--
--	if (!pci->num_lanes) {
--		dev_dbg(pci->dev, "Using h/w default number of lanes\n");
--		return;
--	}
--
--	/* Set the number of lanes */
--	val &= ~PORT_LINK_FAST_LINK_MODE;
--	val &= ~PORT_LINK_MODE_MASK;
-+	/* Mask LINK_MODE if num_lanes is not zero */
-+	if (pci->num_lanes)
-+		val &= ~PORT_LINK_MODE_MASK;
- 	switch (pci->num_lanes) {
- 	case 1:
- 		val |= PORT_LINK_MODE_1_LANES;
-@@ -1035,10 +1029,12 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		val |= PORT_LINK_MODE_8_LANES;
- 		break;
- 	default:
--		dev_err(pci->dev, "num-lanes %u: invalid value\n", pci->num_lanes);
--		return;
-+		dev_dbg(pci->dev, "Using h/w default number of lanes\n");
-+		break;
- 	}
- 	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
-+	if (!pci->num_lanes)
-+		return;
++void dw_pcie_num_lanes_setup(struct dw_pcie *pci, int num_lanes)
++{
++	u8 cap = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	u32 val;
++
++	val = dw_pcie_readl_dbi(pci, cap + PCI_EXP_LNKCAP);
++	val &= ~PCI_EXP_LNKCAP_MLW;
++	val |= num_lanes << PCI_EXP_LNKSTA_NLW_SHIFT;
++	dw_pcie_writel_dbi(pci, cap + PCI_EXP_LNKCAP, val);
++}
++EXPORT_SYMBOL_GPL(dw_pcie_num_lanes_setup);
++
+ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 link_gen)
+ {
+ 	u32 cap, ctrl2, link_speed;
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 79713ce075cc..36f3e2c818fe 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -415,6 +415,7 @@ void dw_pcie_write_dbi(struct dw_pcie *pci, u32 reg, size_t size, u32 val);
+ void dw_pcie_write_dbi2(struct dw_pcie *pci, u32 reg, size_t size, u32 val);
+ int dw_pcie_link_up(struct dw_pcie *pci);
+ void dw_pcie_upconfig_setup(struct dw_pcie *pci);
++void dw_pcie_num_lanes_setup(struct dw_pcie *pci, int num_lanes);
+ int dw_pcie_wait_for_link(struct dw_pcie *pci);
+ int dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
+ 			      u64 cpu_addr, u64 pci_addr, u64 size);
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 09825b4a075e..befe17d57e2a 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -902,10 +902,7 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+ 	dw_pcie_writel_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT, val);
  
- 	/* Set link width speed control register */
- 	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+ 	/* Configure Max lane width from DT */
+-	val = dw_pcie_readl_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP);
+-	val &= ~PCI_EXP_LNKCAP_MLW;
+-	val |= (pcie->num_lanes << PCI_EXP_LNKSTA_NLW_SHIFT);
+-	dw_pcie_writel_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP, val);
++	dw_pcie_num_lanes_setup(pci, pcie->num_lanes);
+ 
+ 	/* Clear Slot Clock Configuration bit if SRNS configuration */
+ 	if (pcie->enable_srns) {
 -- 
 2.25.1
 
