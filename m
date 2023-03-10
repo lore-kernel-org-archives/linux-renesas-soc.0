@@ -2,42 +2,47 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE9DC6FD1F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Mar 2023 17:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF64C64EC4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Mar 2023 17:09:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231981AbjCJRI7 (ORCPT
+        id S231167AbjCJRJD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Mar 2023 12:08:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46932 "EHLO
+        Fri, 10 Mar 2023 12:09:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232328AbjCJRIa (ORCPT
+        with ESMTP id S231878AbjCJRH4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2023 12:08:30 -0500
+        Fri, 10 Mar 2023 12:07:56 -0500
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BBEF713847D;
-        Fri, 10 Mar 2023 09:07:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C8BEDF82BA;
+        Fri, 10 Mar 2023 09:07:07 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.98,250,1673881200"; 
-   d="scan'208";a="152194104"
+   d="scan'208";a="152194084"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2023 02:07:28 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2023 02:07:07 +0900
 Received: from localhost.localdomain (unknown [10.226.93.84])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 295DE4033780;
-        Sat, 11 Mar 2023 02:07:24 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B49574033419;
+        Sat, 11 Mar 2023 02:07:02 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Lee Jones <lee@kernel.org>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
         "William Breathitt Gray" <william.gray@linaro.org>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v14 6/6] pwm: Add Renesas RZ/G2L MTU3a PWM driver
-Date:   Fri, 10 Mar 2023 17:06:54 +0000
-Message-Id: <20230310170654.268047-7-biju.das.jz@bp.renesas.com>
+        linux-renesas-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v14 1/6] dt-bindings: timer: Document RZ/G2L MTU3a bindings
+Date:   Fri, 10 Mar 2023 17:06:49 +0000
+Message-Id: <20230310170654.268047-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230310170654.268047-1-biju.das.jz@bp.renesas.com>
 References: <20230310170654.268047-1-biju.das.jz@bp.renesas.com>
@@ -47,608 +52,372 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZ/G2L Multi-Function Timer Pulse Unit 3 (a.k.a MTU3a) uses
-one counter and two match components to configure duty_cycle
-and period to generate PWM output waveform.
-
-Add basic support for RZ/G2L MTU3a PWM driver by creating separate
-PWM channels for each IOs.
+The RZ/G2L multi-function timer pulse unit 3 (MTU3a) is embedded in
+the Renesas RZ/G2L family SoC's. It consists of eight 16-bit timer
+channels and one 32-bit timer channel. It supports the following
+functions
+ - Counter
+ - Timer
+ - PWM
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
+Ref:
+ https://patchwork.kernel.org/project/linux-renesas-soc/patch/20221010145222.1047748-2-biju.das.jz@bp.renesas.com/
 v13->v14:
- * Updated commit description
- * Updated Limitations section.
- * Replaced the macros RZ_MTU*->RZ_MTU3_CHAN_* in probe()
- * Fixed a kernel crash in error path by moving rz_mtu3_pwm->chip.dev before
-   devm_add_action_or_reset()
- * Added pm_runtime_idle() and simplified error paths for devm_add_action_or_reset()
-   and devm_pwmchip_add().
-
-v12->v13:
- * Updated commit description
- * Moved RZ_MTU3_TMDR1_MD_* macros to rz_mtu3.h
- * Updated Limitations section.
- * Removed PWM mode1 references from the driver.
- * Dropped prescale and duty_cycle from struct rz_mtu3_pwm_chip.
- * Replaced rz_mtu3_pwm_mode1_num_ios->rz_mtu3_hw_channel_ios.
- * Avoided race condition in rz_mtu3_pwm_request()/rz_mtu3_pwm_free().
- * Updated get_state() by adding dc > pv check and added a comment about
-   overflow condition.
- * Moved overflow condition check from config->probe()
- * Replaced pm_runtime_resume_and_get with unconditional pm_runtime_get_sync()
-   in config()
- * Added error check for clk_prepare_enable() in probe() and propagating error
-   to the caller for pm_runtime_resume()
- * clk_get_rate() is called after enabling the clock and clk_rate_exclusive_put()
-v11->v12:
- * Updated header file to <linux/mfd/rz-mtu3.h> as core driver is in MFD.
- * Reordered get_state()
+ * No change.
+v12->V13:
+ * No change.
+v11->V12:
+ * No change.
 v10->v11:
- * No change.
+ * No change
 v9->v10:
- * No change.
+ * No change
 v8->v9:
- * Added prescale/duty_cycle variables to struct rz_mtu3_pwm_chip and
-   cached this values in rz_mtu3_pwm_config and used this cached values
-   in get_state(), if PWM is disabled.
- * Added return code for get_state()
+ * No change
 v7->v8:
- * Simplified rz_mtu3_pwm_request by calling rz_mtu3_request_channel()
- * Simplified rz_mtu3_pwm_free by calling rz_mtu3_release_channel()
+ * No change
 v6->v7:
- * Added channel specific mutex lock to avoid race between counter
-   device and rz_mtu3_pwm_{request,free}
- * Added pm_runtime_resume_and_get in rz_mtu3_pwm_enable()
- * Added pm_runtime_put_sync in rz_mtu3_pwm_disable()
- * Updated rz_mtu3_pwm_config()
- * Updated rz_mtu3_pwm_apply()
+ * No change
 v5->v6:
- * Updated commit and Kconfig description
- * Sorted the header
- * Replaced dev_get_drvdata from rz_mtu3_pwm_pm_disable()
- * Replaced SET_RUNTIME_PM_OPS->DEFINE_RUNTIME_DEV_PM_OPS and removed
-   __maybe_unused from suspend/resume()
+ * Added Rb tag from Rob and Krzysztof.
 v4->v5:
- * pwm device is instantiated by mtu3a core driver.
+ * Modelled as timer bindings.
+ * Fixed the typo.
 v3->v4:
- * There is no resource associated with "rz-mtu3-pwm" compatible
-   and moved the code to mfd subsystem as it binds against "rz-mtu".
- * Removed struct platform_driver rz_mtu3_pwm_driver.
+ * Dropped counter and pwm compatibeles as they don't have any resources.
+ * Made rz-mtu3 as pwm provider.
+ * Updated the example and description.
 v2->v3:
- * No change.
+ * Dropped counter bindings and integrated with mfd as it has only one property.
+ * Removed "#address-cells" and "#size-cells" as it do not have children with
+   unit addresses.
+ * Removed quotes from counter and pwm.
+ * Provided full path for pwm bindings.
+ * Updated the example.
 v1->v2:
- * Modelled as a single PWM device handling multiple channles.
- * Used PM framework to manage the clocks.
+ * Modelled counter and pwm as a single device that handles
+   multiple channels.
+ * Moved counter and pwm bindings to respective subsystems
+ * Dropped 'bindings' from MFD binding title.
+ * Updated the example
+ * Changed the compatible names.
 ---
- drivers/pwm/Kconfig       |  11 +
- drivers/pwm/Makefile      |   1 +
- drivers/pwm/pwm-rz-mtu3.c | 482 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 494 insertions(+)
- create mode 100644 drivers/pwm/pwm-rz-mtu3.c
+ .../bindings/timer/renesas,rz-mtu3.yaml       | 302 ++++++++++++++++++
+ 1 file changed, 302 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index dae023d783a2..ccc0299fd0dd 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -481,6 +481,17 @@ config PWM_ROCKCHIP
- 	  Generic PWM framework driver for the PWM controller found on
- 	  Rockchip SoCs.
- 
-+config PWM_RZ_MTU3
-+	tristate "Renesas RZ/G2L MTU3a PWM Timer support"
-+	depends on RZ_MTU3 || COMPILE_TEST
-+	depends on HAS_IOMEM
-+	help
-+	  This driver exposes the MTU3a PWM Timer controller found in Renesas
-+	  RZ/G2L like chips through the PWM API.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called pwm-rz-mtu3.
-+
- config PWM_SAMSUNG
- 	tristate "Samsung PWM support"
- 	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index 7bf1a29f02b8..b85fc9fba326 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_PWM_RASPBERRYPI_POE)	+= pwm-raspberrypi-poe.o
- obj-$(CONFIG_PWM_RCAR)		+= pwm-rcar.o
- obj-$(CONFIG_PWM_RENESAS_TPU)	+= pwm-renesas-tpu.o
- obj-$(CONFIG_PWM_ROCKCHIP)	+= pwm-rockchip.o
-+obj-$(CONFIG_PWM_RZ_MTU3)	+= pwm-rz-mtu3.o
- obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
- obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
- obj-$(CONFIG_PWM_SL28CPLD)	+= pwm-sl28cpld.o
-diff --git a/drivers/pwm/pwm-rz-mtu3.c b/drivers/pwm/pwm-rz-mtu3.c
+diff --git a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
 new file mode 100644
-index 000000000000..146948656755
+index 000000000000..bffdab0b0185
 --- /dev/null
-+++ b/drivers/pwm/pwm-rz-mtu3.c
-@@ -0,0 +1,482 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/G2L MTU3a PWM Timer driver
-+ *
-+ * Copyright (C) 2022 Renesas Electronics Corporation
-+ *
-+ * Hardware manual for this IP can be found here
-+ * https://www.renesas.com/eu/en/document/mah/rzg2l-group-rzg2lc-group-users-manual-hardware-0?language=en
-+ *
-+ * Limitations:
-+ * - When PWM is disabled, the output is driven to Hi-Z.
-+ * - While the hardware supports both polarities, the driver (for now)
-+ *   only handles normal polarity.
-+ * - HW uses one counter and two match components to configure duty_cycle
-+ *   and period.
-+ * - Multi-Function Timer Pulse Unit(a.k.a MTU) has 7 HW channels for PWM
-+ *   operations(The channels are MTU{0..4, 6, 7}).
-+ * - MTU{1, 2} channels have a single IO, whereas all other HW channels have
-+ *   2 IOs.
-+ * - Each IO is modelled as an independent PWM channel.
-+ * - rz_mtu3_hw_channel_ios table is used to map the PWM channel to the
-+ *   corresponding HW channel as there are difference in number of IOs
-+ *   between HW channels.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/limits.h>
-+#include <linux/mfd/rz-mtu3.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/pwm.h>
-+#include <linux/time.h>
-+
-+#define RZ_MTU3_TIOR_OC_RETAIN		(0)
-+#define RZ_MTU3_TIOR_OC_0_H_COMP_MATCH	(2)
-+#define RZ_MTU3_TIOR_OC_1_TOGGLE	(7)
-+#define RZ_MTU3_TIOR_OC_IOA		GENMASK(3, 0)
-+
-+#define RZ_MTU3_TCR_CCLR_TGRC		(5 << 5)
-+#define RZ_MTU3_TCR_CKEG_RISING		(0 << 3)
-+
-+#define RZ_MTU3_TCR_TPCS		GENMASK(2, 0)
-+
-+#define RZ_MTU3_MAX_PWM_CHANNELS	(12)
-+
-+#define RZ_MTU3_MAX_HW_CHANNELS	(7)
-+
-+/* The table represents the number of IOs on each MTU HW channel. */
-+static const u8 rz_mtu3_hw_channel_ios[] = { 2, 1, 1, 2, 2, 2, 2 };
-+
-+/**
-+ * struct rz_mtu3_pwm_chip - MTU3 pwm private data
-+ *
-+ * @chip: MTU3 pwm chip data
-+ * @clk: MTU3 module clock
-+ * @lock: Lock to prevent concurrent access for usage count
-+ * @rate: MTU3 clock rate
-+ * @user_count: MTU3 usage count
-+ * @rz_mtu3_channel: HW channels for the PWM
-+ */
-+
-+struct rz_mtu3_pwm_chip {
-+	struct pwm_chip chip;
-+	struct clk *clk;
-+	struct mutex lock;
-+	unsigned long rate;
-+	u32 user_count[RZ_MTU3_MAX_HW_CHANNELS];
-+	struct rz_mtu3_channel *ch[RZ_MTU3_MAX_HW_CHANNELS];
-+};
-+
-+static inline struct rz_mtu3_pwm_chip *to_rz_mtu3_pwm_chip(struct pwm_chip *chip)
-+{
-+	return container_of(chip, struct rz_mtu3_pwm_chip, chip);
-+}
-+
-+static u8 rz_mtu3_pwm_calculate_prescale(struct rz_mtu3_pwm_chip *rz_mtu3,
-+					 u64 period_cycles)
-+{
-+	u32 prescaled_period_cycles;
-+	u8 prescale;
-+
-+	prescaled_period_cycles = period_cycles >> 16;
-+	if (prescaled_period_cycles >= 16)
-+		prescale = 3;
-+	else
-+		prescale = (fls(prescaled_period_cycles) + 1) / 2;
-+
-+	return prescale;
-+}
-+
-+static struct rz_mtu3_channel *
-+rz_mtu3_get_hw_channel(struct rz_mtu3_pwm_chip *rz_mtu3_pwm, u32 channel)
-+{
-+	unsigned int i, ch_index = 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(rz_mtu3_hw_channel_ios); i++) {
-+		ch_index += rz_mtu3_hw_channel_ios[i];
-+
-+		if (ch_index > channel)
-+			break;
-+	}
-+
-+	return rz_mtu3_pwm->ch[i];
-+}
-+
-+static u32 rz_mtu3_get_hw_channel_index(struct rz_mtu3_pwm_chip *rz_mtu3_pwm,
-+					struct rz_mtu3_channel *ch)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < ARRAY_SIZE(rz_mtu3_hw_channel_ios); i++) {
-+		if (ch == rz_mtu3_pwm->ch[i])
-+			break;
-+	}
-+
-+	return i;
-+}
-+
-+static bool rz_mtu3_pwm_is_second_channel(u32 ch_index, u32 hwpwm)
-+{
-+	u32 i, pwm_ch_index = 0;
-+
-+	for (i = 0; i < ch_index; i++)
-+		pwm_ch_index += rz_mtu3_hw_channel_ios[i];
-+
-+	return pwm_ch_index != hwpwm;
-+}
-+
-+static bool rz_mtu3_pwm_is_ch_enabled(struct rz_mtu3_pwm_chip *rz_mtu3_pwm,
-+				      u32 hwpwm)
-+{
-+	struct rz_mtu3_channel *ch;
-+	bool is_channel_en;
-+	u32 ch_index;
-+	u8 val;
-+
-+	ch = rz_mtu3_get_hw_channel(rz_mtu3_pwm, hwpwm);
-+	ch_index = rz_mtu3_get_hw_channel_index(rz_mtu3_pwm, ch);
-+	is_channel_en = rz_mtu3_is_enabled(ch);
-+
-+	if (rz_mtu3_pwm_is_second_channel(ch_index, hwpwm))
-+		val = rz_mtu3_8bit_ch_read(ch, RZ_MTU3_TIORL);
-+	else
-+		val = rz_mtu3_8bit_ch_read(ch, RZ_MTU3_TIORH);
-+
-+	return (is_channel_en && (val & RZ_MTU3_TIOR_OC_IOA));
-+}
-+
-+static int rz_mtu3_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
-+{
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm = to_rz_mtu3_pwm_chip(chip);
-+	struct rz_mtu3_channel *ch;
-+	u32 ch_index;
-+
-+	mutex_lock(&rz_mtu3_pwm->lock);
-+	ch = rz_mtu3_get_hw_channel(rz_mtu3_pwm, pwm->hwpwm);
-+	ch_index = rz_mtu3_get_hw_channel_index(rz_mtu3_pwm, ch);
-+	if (!rz_mtu3_pwm->user_count[ch_index] && !rz_mtu3_request_channel(ch)) {
-+		mutex_unlock(&rz_mtu3_pwm->lock);
-+		return -EBUSY;
-+	}
-+
-+	rz_mtu3_pwm->user_count[ch_index]++;
-+	mutex_unlock(&rz_mtu3_pwm->lock);
-+
-+	return 0;
-+}
-+
-+static void rz_mtu3_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
-+{
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm = to_rz_mtu3_pwm_chip(chip);
-+	struct rz_mtu3_channel *ch;
-+	u32 ch_index;
-+
-+	mutex_lock(&rz_mtu3_pwm->lock);
-+	ch = rz_mtu3_get_hw_channel(rz_mtu3_pwm, pwm->hwpwm);
-+	ch_index = rz_mtu3_get_hw_channel_index(rz_mtu3_pwm, ch);
-+
-+	rz_mtu3_pwm->user_count[ch_index]--;
-+	if (!rz_mtu3_pwm->user_count[ch_index])
-+		rz_mtu3_release_channel(ch);
-+
-+	mutex_unlock(&rz_mtu3_pwm->lock);
-+}
-+
-+static int rz_mtu3_pwm_enable(struct rz_mtu3_pwm_chip *rz_mtu3_pwm,
-+			      struct pwm_device *pwm)
-+{
-+	struct rz_mtu3_channel *ch;
-+	u32 ch_index;
-+	u8 val;
-+	int rc;
-+
-+	rc = pm_runtime_resume_and_get(rz_mtu3_pwm->chip.dev);
-+	if (rc)
-+		return rc;
-+
-+	ch = rz_mtu3_get_hw_channel(rz_mtu3_pwm, pwm->hwpwm);
-+	ch_index = rz_mtu3_get_hw_channel_index(rz_mtu3_pwm, ch);
-+	val = (RZ_MTU3_TIOR_OC_1_TOGGLE << 4) | RZ_MTU3_TIOR_OC_0_H_COMP_MATCH;
-+
-+	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TMDR1, RZ_MTU3_TMDR1_MD_PWMMODE1);
-+	if (rz_mtu3_pwm_is_second_channel(ch_index, pwm->hwpwm))
-+		rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TIORL, val);
-+	else
-+		rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TIORH, val);
-+
-+	if (rz_mtu3_pwm->user_count[ch_index] <= 1)
-+		rz_mtu3_enable(ch);
-+
-+	return 0;
-+}
-+
-+static void rz_mtu3_pwm_disable(struct rz_mtu3_pwm_chip *rz_mtu3_pwm,
-+				struct pwm_device *pwm)
-+{
-+	struct rz_mtu3_channel *ch;
-+	u32 ch_index;
-+
-+	ch = rz_mtu3_get_hw_channel(rz_mtu3_pwm, pwm->hwpwm);
-+	ch_index = rz_mtu3_get_hw_channel_index(rz_mtu3_pwm, ch);
-+
-+	/* Return to normal mode and disable output pins of MTU3 channel */
-+	if (rz_mtu3_pwm->user_count[ch_index] <= 1)
-+		rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TMDR1, RZ_MTU3_TMDR1_MD_NORMAL);
-+
-+	if (rz_mtu3_pwm_is_second_channel(ch_index, pwm->hwpwm))
-+		rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TIORL, RZ_MTU3_TIOR_OC_RETAIN);
-+	else
-+		rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TIORH, RZ_MTU3_TIOR_OC_RETAIN);
-+
-+	if (rz_mtu3_pwm->user_count[ch_index] <= 1)
-+		rz_mtu3_disable(ch);
-+
-+	pm_runtime_put_sync(rz_mtu3_pwm->chip.dev);
-+}
-+
-+static int rz_mtu3_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
-+				 struct pwm_state *state)
-+{
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm = to_rz_mtu3_pwm_chip(chip);
-+	struct rz_mtu3_channel *ch;
-+	u8 prescale, val;
-+	u32 ch_index;
-+	u16 dc, pv;
-+	u64 tmp;
-+
-+	ch = rz_mtu3_get_hw_channel(rz_mtu3_pwm, pwm->hwpwm);
-+	ch_index = rz_mtu3_get_hw_channel_index(rz_mtu3_pwm, ch);
-+	pm_runtime_get_sync(chip->dev);
-+	state->enabled = rz_mtu3_pwm_is_ch_enabled(rz_mtu3_pwm, pwm->hwpwm);
-+	if (state->enabled) {
-+		val = rz_mtu3_8bit_ch_read(ch, RZ_MTU3_TCR);
-+		prescale = FIELD_GET(RZ_MTU3_TCR_TPCS, val);
-+
-+		if (rz_mtu3_pwm_is_second_channel(ch_index, pwm->hwpwm)) {
-+			dc = rz_mtu3_16bit_ch_read(ch, RZ_MTU3_TGRD);
-+			pv = rz_mtu3_16bit_ch_read(ch, RZ_MTU3_TGRC);
-+		} else {
-+			dc = rz_mtu3_16bit_ch_read(ch, RZ_MTU3_TGRB);
-+			pv = rz_mtu3_16bit_ch_read(ch, RZ_MTU3_TGRA);
-+		}
-+
-+		/* With prescale <= 7 and pv <= 0xffff this doesn't overflow. */
-+		tmp = NSEC_PER_SEC * (u64)pv << (2 * prescale);
-+		state->period = DIV_ROUND_UP_ULL(tmp, rz_mtu3_pwm->rate);
-+		tmp = NSEC_PER_SEC * (u64)dc << (2 * prescale);
-+		state->duty_cycle = DIV_ROUND_UP_ULL(tmp, rz_mtu3_pwm->rate);
-+	}
-+
-+	if (state->duty_cycle > state->period)
-+		state->duty_cycle = state->period;
-+
-+	state->polarity = PWM_POLARITY_NORMAL;
-+	pm_runtime_put(chip->dev);
-+
-+	return 0;
-+}
-+
-+static int rz_mtu3_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
-+			      const struct pwm_state *state)
-+{
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm = to_rz_mtu3_pwm_chip(chip);
-+	struct rz_mtu3_channel *ch;
-+	unsigned long pv, dc;
-+	u64 period_cycles;
-+	u64 duty_cycles;
-+	u32 ch_index;
-+	u8 prescale;
-+	u8 val;
-+
-+	ch = rz_mtu3_get_hw_channel(rz_mtu3_pwm, pwm->hwpwm);
-+	ch_index = rz_mtu3_get_hw_channel_index(rz_mtu3_pwm, ch);
-+	period_cycles = mul_u64_u32_div(state->period, rz_mtu3_pwm->rate,
-+					NSEC_PER_SEC);
-+	prescale = rz_mtu3_pwm_calculate_prescale(rz_mtu3_pwm, period_cycles);
-+
-+	if (period_cycles >> (2 * prescale) <= U16_MAX)
-+		pv = period_cycles >> (2 * prescale);
-+	else
-+		pv = U16_MAX;
-+
-+	duty_cycles = mul_u64_u32_div(state->duty_cycle, rz_mtu3_pwm->rate,
-+				      NSEC_PER_SEC);
-+	if (duty_cycles >> (2 * prescale) <= U16_MAX)
-+		dc = duty_cycles >> (2 * prescale);
-+	else
-+		dc = U16_MAX;
-+
-+	/*
-+	 * If the PWM channel is disabled, make sure to turn on the clock
-+	 * before writing the register.
-+	 */
-+	if (!pwm->state.enabled)
-+		pm_runtime_get_sync(chip->dev);
-+
-+	val = RZ_MTU3_TCR_CKEG_RISING | prescale;
-+	if (rz_mtu3_pwm_is_second_channel(ch_index, pwm->hwpwm)) {
-+		rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TCR,
-+				      RZ_MTU3_TCR_CCLR_TGRC | val);
-+		rz_mtu3_16bit_ch_write(ch, RZ_MTU3_TGRD, dc);
-+		rz_mtu3_16bit_ch_write(ch, RZ_MTU3_TGRC, pv);
-+	} else {
-+		rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TCR,
-+				      RZ_MTU3_TCR_CCLR_TGRA | val);
-+		rz_mtu3_16bit_ch_write(ch, RZ_MTU3_TGRB, dc);
-+		rz_mtu3_16bit_ch_write(ch, RZ_MTU3_TGRA, pv);
-+	}
-+
-+	/* If the PWM is not enabled, turn the clock off again to save power. */
-+	if (!pwm->state.enabled)
-+		pm_runtime_put(chip->dev);
-+
-+	return 0;
-+}
-+
-+static int rz_mtu3_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+			     const struct pwm_state *state)
-+{
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm = to_rz_mtu3_pwm_chip(chip);
-+	bool enabled = pwm->state.enabled;
-+	int ret;
-+
-+	if (state->polarity != PWM_POLARITY_NORMAL)
-+		return -EINVAL;
-+
-+	if (!state->enabled) {
-+		if (enabled)
-+			rz_mtu3_pwm_disable(rz_mtu3_pwm, pwm);
-+
-+		return 0;
-+	}
-+
-+	ret = rz_mtu3_pwm_config(chip, pwm, state);
-+	if (ret)
-+		return ret;
-+
-+	if (!enabled)
-+		ret = rz_mtu3_pwm_enable(rz_mtu3_pwm, pwm);
-+
-+	return ret;
-+}
-+
-+static const struct pwm_ops rz_mtu3_pwm_ops = {
-+	.request = rz_mtu3_pwm_request,
-+	.free = rz_mtu3_pwm_free,
-+	.get_state = rz_mtu3_pwm_get_state,
-+	.apply = rz_mtu3_pwm_apply,
-+	.owner = THIS_MODULE,
-+};
-+
-+static int rz_mtu3_pwm_pm_runtime_suspend(struct device *dev)
-+{
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm = dev_get_drvdata(dev);
-+
-+	clk_disable_unprepare(rz_mtu3_pwm->clk);
-+
-+	return 0;
-+}
-+
-+static int rz_mtu3_pwm_pm_runtime_resume(struct device *dev)
-+{
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm = dev_get_drvdata(dev);
-+
-+	return clk_prepare_enable(rz_mtu3_pwm->clk);
-+}
-+
-+static DEFINE_RUNTIME_DEV_PM_OPS(rz_mtu3_pwm_pm_ops,
-+				 rz_mtu3_pwm_pm_runtime_suspend,
-+				 rz_mtu3_pwm_pm_runtime_resume, NULL);
-+
-+static void rz_mtu3_pwm_pm_disable(void *data)
-+{
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm = data;
-+
-+	clk_rate_exclusive_put(rz_mtu3_pwm->clk);
-+	pm_runtime_disable(rz_mtu3_pwm->chip.dev);
-+	pm_runtime_set_suspended(rz_mtu3_pwm->chip.dev);
-+}
-+
-+static int rz_mtu3_pwm_probe(struct platform_device *pdev)
-+{
-+	struct rz_mtu3 *ddata = dev_get_drvdata(pdev->dev.parent);
-+	struct rz_mtu3_pwm_chip *rz_mtu3_pwm;
-+	struct device *dev = &pdev->dev;
-+	int num_pwm_hw_ch = 0;
-+	unsigned int i;
-+	int ret;
-+
-+	rz_mtu3_pwm = devm_kzalloc(&pdev->dev, sizeof(*rz_mtu3_pwm), GFP_KERNEL);
-+	if (!rz_mtu3_pwm)
-+		return -ENOMEM;
-+
-+	rz_mtu3_pwm->clk = ddata->clk;
-+
-+	for (i = 0; i < RZ_MTU_NUM_CHANNELS; i++) {
-+		if (i == RZ_MTU3_CHAN_5 || i == RZ_MTU3_CHAN_8)
-+			continue;
-+
-+		rz_mtu3_pwm->ch[num_pwm_hw_ch] = &ddata->channels[i];
-+		rz_mtu3_pwm->ch[num_pwm_hw_ch]->dev = dev;
-+		num_pwm_hw_ch++;
-+	}
-+
-+	mutex_init(&rz_mtu3_pwm->lock);
-+	platform_set_drvdata(pdev, rz_mtu3_pwm);
-+	ret = clk_prepare_enable(rz_mtu3_pwm->clk);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Clock enable failed\n");
-+
-+	clk_rate_exclusive_get(rz_mtu3_pwm->clk);
-+
-+	rz_mtu3_pwm->rate = clk_get_rate(rz_mtu3_pwm->clk);
-+	/*
-+	 * Refuse clk rates > 1 GHz to prevent overflow later for computing
-+	 * period and duty cycle.
-+	 */
-+	if (rz_mtu3_pwm->rate > NSEC_PER_SEC) {
-+		ret = -EINVAL;
-+		clk_rate_exclusive_put(rz_mtu3_pwm->clk);
-+		goto disable_clock;
-+	}
-+
-+	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+	rz_mtu3_pwm->chip.dev = &pdev->dev;
-+	ret = devm_add_action_or_reset(&pdev->dev,
-+				       rz_mtu3_pwm_pm_disable,
-+				       rz_mtu3_pwm);
-+	if (ret < 0)
-+		return ret;
-+
-+	rz_mtu3_pwm->chip.ops = &rz_mtu3_pwm_ops;
-+	rz_mtu3_pwm->chip.npwm = RZ_MTU3_MAX_PWM_CHANNELS;
-+	ret = devm_pwmchip_add(&pdev->dev, &rz_mtu3_pwm->chip);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
-+
-+	pm_runtime_idle(&pdev->dev);
-+
-+	return 0;
-+
-+disable_clock:
-+	clk_disable_unprepare(rz_mtu3_pwm->clk);
-+	return ret;
-+}
-+
-+static struct platform_driver rz_mtu3_pwm_driver = {
-+	.driver = {
-+		.name = "pwm-rz-mtu3",
-+		.pm = pm_ptr(&rz_mtu3_pwm_pm_ops),
-+	},
-+	.probe = rz_mtu3_pwm_probe,
-+};
-+module_platform_driver(rz_mtu3_pwm_driver);
-+
-+MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
-+MODULE_ALIAS("platform:pwm-rz-mtu3");
-+MODULE_DESCRIPTION("Renesas RZ/G2L MTU3a PWM Timer Driver");
-+MODULE_LICENSE("GPL");
++++ b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
+@@ -0,0 +1,302 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/renesas,rz-mtu3.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G2L Multi-Function Timer Pulse Unit 3 (MTU3a)
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |
++  This hardware block consists of eight 16-bit timer channels and one
++  32- bit timer channel. It supports the following specifications:
++    - Pulse input/output: 28 lines max.
++    - Pulse input 3 lines
++    - Count clock 11 clocks for each channel (14 clocks for MTU0, 12 clocks
++      for MTU2, and 10 clocks for MTU5, four clocks for MTU1-MTU2 combination
++      (when LWA = 1))
++    - Operating frequency Up to 100 MHz
++    - Available operations [MTU0 to MTU4, MTU6, MTU7, and MTU8]
++        - Waveform output on compare match
++        - Input capture function (noise filter setting available)
++        - Counter-clearing operation
++        - Simultaneous writing to multiple timer counters (TCNT)
++          (excluding MTU8).
++        - Simultaneous clearing on compare match or input capture
++          (excluding MTU8).
++        - Simultaneous input and output to registers in synchronization with
++          counter operations           (excluding MTU8).
++        - Up to 12-phase PWM output in combination with synchronous operation
++          (excluding MTU8)
++    - [MTU0 MTU3, MTU4, MTU6, MTU7, and MTU8]
++        - Buffer operation specifiable
++    - [MTU1, MTU2]
++        - Phase counting mode can be specified independently
++        - 32-bit phase counting mode can be specified for interlocked operation
++          of MTU1 and MTU2 (when TMDR3.LWA = 1)
++        - Cascade connection operation available
++    - [MTU3, MTU4, MTU6, and MTU7]
++        - Through interlocked operation of MTU3/4 and MTU6/7, the positive and
++          negative signals in six phases (12 phases in total) can be output in
++          complementary PWM and reset-synchronized PWM operation.
++        - In complementary PWM mode, values can be transferred from buffer
++          registers to temporary registers at crests and troughs of the timer-
++          counter values or when the buffer registers (TGRD registers in MTU4
++          and MTU7) are written to.
++        - Double-buffering selectable in complementary PWM mode.
++    - [MTU3 and MTU4]
++        - Through interlocking with MTU0, a mode for driving AC synchronous
++          motors (brushless DC motors) by using complementary PWM output and
++          reset-synchronized PWM output is settable and allows the selection
++          of two types of waveform output (chopping or level).
++    - [MTU5]
++        - Capable of operation as a dead-time compensation counter.
++    - [MTU0/MTU5, MTU1, MTU2, and MTU8]
++        - 32-bit phase counting mode specifiable by combining MTU1 and MTU2 and
++          through interlocked operation with MTU0/MTU5 and MTU8.
++    - Interrupt-skipping function
++        - In complementary PWM mode, interrupts on crests and troughs of counter
++          values and triggers to start conversion by the A/D converter can be
++          skipped.
++    - Interrupt sources: 43 sources.
++    - Buffer operation:
++        - Automatic transfer of register data (transfer from the buffer
++          register to the timer register).
++    - Trigger generation
++        - A/D converter start triggers can be generated
++        - A/D converter start request delaying function enables A/D converter
++          to be started with any desired timing and to be synchronized with
++          PWM output.
++    - Low power consumption function
++        - The MTU3a can be placed in the module-stop state.
++
++    There are two phase counting modes. 16-bit phase counting mode in which
++    MTU1 and MTU2 operate independently, and cascade connection 32-bit phase
++    counting mode in which MTU1 and MTU2 are cascaded.
++
++    In phase counting mode, the phase difference between two external input
++    clocks is detected and the corresponding TCNT is incremented or
++    decremented.
++    The below counters are supported
++      count0 - MTU1 16-bit phase counting
++      count1 - MTU2 16-bit phase counting
++      count2 - MTU1+ MTU2 32-bit phase counting
++
++    The module supports PWM mode{1,2}, Reset-synchronized PWM mode and
++    complementary PWM mode{1,2,3}.
++
++    In complementary PWM mode, six positive-phase and six negative-phase PWM
++    waveforms (12 phases in total) with dead time can be output by
++    combining MTU{3,4} and MTU{6,7}.
++
++    The below pwm channels are supported in pwm mode 1.
++      pwm0  - MTU0.MTIOC0A PWM mode 1
++      pwm1  - MTU0.MTIOC0C PWM mode 1
++      pwm2  - MTU1.MTIOC1A PWM mode 1
++      pwm3  - MTU2.MTIOC2A PWM mode 1
++      pwm4  - MTU3.MTIOC3A PWM mode 1
++      pwm5  - MTU3.MTIOC3C PWM mode 1
++      pwm6  - MTU4.MTIOC4A PWM mode 1
++      pwm7  - MTU4.MTIOC4C PWM mode 1
++      pwm8  - MTU6.MTIOC6A PWM mode 1
++      pwm9  - MTU6.MTIOC6C PWM mode 1
++      pwm10 - MTU7.MTIOC7A PWM mode 1
++      pwm11 - MTU7.MTIOC7C PWM mode 1
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-mtu3  # RZ/G2{L,LC}
++          - renesas,r9a07g054-mtu3  # RZ/V2L
++      - const: renesas,rz-mtu3
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: MTU0.TGRA input capture/compare match
++      - description: MTU0.TGRB input capture/compare match
++      - description: MTU0.TGRC input capture/compare match
++      - description: MTU0.TGRD input capture/compare match
++      - description: MTU0.TCNT overflow
++      - description: MTU0.TGRE compare match
++      - description: MTU0.TGRF compare match
++      - description: MTU1.TGRA input capture/compare match
++      - description: MTU1.TGRB input capture/compare match
++      - description: MTU1.TCNT overflow
++      - description: MTU1.TCNT underflow
++      - description: MTU2.TGRA input capture/compare match
++      - description: MTU2.TGRB input capture/compare match
++      - description: MTU2.TCNT overflow
++      - description: MTU2.TCNT underflow
++      - description: MTU3.TGRA input capture/compare match
++      - description: MTU3.TGRB input capture/compare match
++      - description: MTU3.TGRC input capture/compare match
++      - description: MTU3.TGRD input capture/compare match
++      - description: MTU3.TCNT overflow
++      - description: MTU4.TGRA input capture/compare match
++      - description: MTU4.TGRB input capture/compare match
++      - description: MTU4.TGRC input capture/compare match
++      - description: MTU4.TGRD input capture/compare match
++      - description: MTU4.TCNT overflow/underflow
++      - description: MTU5.TGRU input capture/compare match
++      - description: MTU5.TGRV input capture/compare match
++      - description: MTU5.TGRW input capture/compare match
++      - description: MTU6.TGRA input capture/compare match
++      - description: MTU6.TGRB input capture/compare match
++      - description: MTU6.TGRC input capture/compare match
++      - description: MTU6.TGRD input capture/compare match
++      - description: MTU6.TCNT overflow
++      - description: MTU7.TGRA input capture/compare match
++      - description: MTU7.TGRB input capture/compare match
++      - description: MTU7.TGRC input capture/compare match
++      - description: MTU7.TGRD input capture/compare match
++      - description: MTU7.TCNT overflow/underflow
++      - description: MTU8.TGRA input capture/compare match
++      - description: MTU8.TGRB input capture/compare match
++      - description: MTU8.TGRC input capture/compare match
++      - description: MTU8.TGRD input capture/compare match
++      - description: MTU8.TCNT overflow
++      - description: MTU8.TCNT underflow
++
++  interrupt-names:
++    items:
++      - const: tgia0
++      - const: tgib0
++      - const: tgic0
++      - const: tgid0
++      - const: tgiv0
++      - const: tgie0
++      - const: tgif0
++      - const: tgia1
++      - const: tgib1
++      - const: tgiv1
++      - const: tgiu1
++      - const: tgia2
++      - const: tgib2
++      - const: tgiv2
++      - const: tgiu2
++      - const: tgia3
++      - const: tgib3
++      - const: tgic3
++      - const: tgid3
++      - const: tgiv3
++      - const: tgia4
++      - const: tgib4
++      - const: tgic4
++      - const: tgid4
++      - const: tgiv4
++      - const: tgiu5
++      - const: tgiv5
++      - const: tgiw5
++      - const: tgia6
++      - const: tgib6
++      - const: tgic6
++      - const: tgid6
++      - const: tgiv6
++      - const: tgia7
++      - const: tgib7
++      - const: tgic7
++      - const: tgid7
++      - const: tgiv7
++      - const: tgia8
++      - const: tgib8
++      - const: tgic8
++      - const: tgid8
++      - const: tgiv8
++      - const: tgiu8
++
++  clocks:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  "#pwm-cells":
++    const: 2
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - power-domains
++  - resets
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    mtu3: timer@10001200 {
++      compatible = "renesas,r9a07g044-mtu3", "renesas,rz-mtu3";
++      reg = <0x10001200 0xb00>;
++      interrupts = <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 171 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 173 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 176 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 180 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 181 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 184 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 185 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 186 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 187 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 190 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 191 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 192 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 194 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 195 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 196 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 198 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 200 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 201 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 202 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 203 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 204 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 205 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 206 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 207 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 209 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 210 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
++      interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0", "tgiv0", "tgie0",
++                        "tgif0",
++                        "tgia1", "tgib1", "tgiv1", "tgiu1",
++                        "tgia2", "tgib2", "tgiv2", "tgiu2",
++                        "tgia3", "tgib3", "tgic3", "tgid3", "tgiv3",
++                        "tgia4", "tgib4", "tgic4", "tgid4", "tgiv4",
++                        "tgiu5", "tgiv5", "tgiw5",
++                        "tgia6", "tgib6", "tgic6", "tgid6", "tgiv6",
++                        "tgia7", "tgib7", "tgic7", "tgid7", "tgiv7",
++                        "tgia8", "tgib8", "tgic8", "tgid8", "tgiv8", "tgiu8";
++      clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
++      power-domains = <&cpg>;
++      resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
++      #pwm-cells = <2>;
++    };
 -- 
 2.25.1
 
