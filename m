@@ -2,98 +2,104 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F13C6FD1F
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 12 Mar 2023 13:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7918C7618A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230390AbjCLN1Z (ORCPT
+        id S229534AbjCLQPb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 12 Mar 2023 09:27:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44554 "EHLO
+        Sun, 12 Mar 2023 12:15:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230453AbjCLN1Q (ORCPT
+        with ESMTP id S230110AbjCLQP3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Mar 2023 09:27:16 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C56139CCC
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Mar 2023 06:26:56 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id x3so38512659edb.10
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Mar 2023 06:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678627615;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LGTUZkkfCkNxamopwrKu7mj2z6yaQ9NtQM+S0XNMv+Q=;
-        b=Pd4GYJuoIpKMXFk2TWkkcUxKUSddOD6pPz0xn0z/64rFpDDy6bpCS3uisE4kcLXjzD
-         K1z9OyVeJWDXualnrlw9aBaI0x2oPbk0DUqjfDzPE+ebySoPwDvyPrFbW2lRaOcqTsmI
-         Ekx/PwTpjUSSUyXAudfRdX95QEywhl6T5VHuBmbOF0+eqlFoV4I9LntAGiOPSjO87wF9
-         R1PmNcJpcCjJlzvT/Ci4CeD7D8TGu/iwB9t04MjJqrylcBw7w7UjJdDntVKfTd0SJm3Q
-         eFfeOdtoB2GmmbkgCn+pdxX4kUy6OK8jkmAeB+uZ460ekL2GkEmEFTXQWrdK9wtp9ZJl
-         xysA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678627615;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LGTUZkkfCkNxamopwrKu7mj2z6yaQ9NtQM+S0XNMv+Q=;
-        b=epTgkNGh1ZNw1e1IMiNX64NotUZ0xTOotLYSL9/rG33Y1dgJGgIfFcFqZkXV8rB0bv
-         zrmS9jmynW28XBA83pPZrzT4dhWOiYMDCBINbVNQlS+8AxGtdTr9TFc/c/Is7Aa9OctG
-         DcQJ6D9vxtsJ6P4NZ1aLG0STp3iGxn0iZOVmpJNRvk8Zt0egVfvEwMvPYKn/GVJfEURA
-         eoug2Y/y2RMLmjqlcSVCWgxzUZURhehDv+64Ya16j1xsF7rUArr/55uMqo6JkRi89uSq
-         b7Ve8AGc9x6Mzu8dmJq2iAsIJosM123S6HWIQt6HW9nKaJoixZTTqyb4zynq9Z3z/18t
-         m8Ew==
-X-Gm-Message-State: AO0yUKW851IBBvBdlxoRTnyh4uJ/JnJngRUPeYrxoNePXtxnO8WMWi4d
-        tZeYTp2vIh2l2ibdbx1z1hE4vg==
-X-Google-Smtp-Source: AK7set/hQZFH63oA7isHWbOCxn+vRqfDmoIje4sNMZQlhJlZ/rLcdMw7EGdg6+XEJ/da73x+5iKoxg==
-X-Received: by 2002:a17:906:9613:b0:924:d90a:6f97 with SMTP id s19-20020a170906961300b00924d90a6f97mr2461178ejx.13.1678627614817;
-        Sun, 12 Mar 2023 06:26:54 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:d9f6:3e61:beeb:295a])
-        by smtp.gmail.com with ESMTPSA id u21-20020a17090657d500b008b69aa62efcsm2244715ejr.62.2023.03.12.06.26.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Mar 2023 06:26:54 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Sun, 12 Mar 2023 12:15:29 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E41836FC6
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Mar 2023 09:15:27 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbOM0-0007rd-Ux; Sun, 12 Mar 2023 17:15:24 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbOM0-003f3E-8A; Sun, 12 Mar 2023 17:15:24 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbOLz-004K9T-8F; Sun, 12 Mar 2023 17:15:23 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] soc: renesas: pwc-rzv2m: drop of_match_ptr for ID table
-Date:   Sun, 12 Mar 2023 14:26:50 +0100
-Message-Id: <20230312132650.352796-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230312132650.352796-1-krzysztof.kozlowski@linaro.org>
-References: <20230312132650.352796-1-krzysztof.kozlowski@linaro.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 23/30] clk: renesas: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:15:05 +0100
+Message-Id: <20230312161512.2715500-24-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
+References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1779; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=tzqGylDHbl27wcUMOwx5LcyyO3qR6CT6GQOUrE4n8uI=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfpzhc9DGdlNQXDJPhSJsCsYs2TOV5jF1d5hw yu2lPbJe4aJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36cwAKCRDB/BR4rcrs CQ9cB/9knQE1XSI+voDSdAHXVAQAjkGufgnbJqy5Tl+3jY8fUIfJXz8TfLnQIuVUcTJxmNvAwOp gAmsnUWgkCCQotILcUr9AlqNtMZ0YWcVzFNlbisomip0eYlVVWvBfritzehTm8KVSk+knsI9/oh SBdar3Tp/pdV/5lvtEMAgDW/ypB97a6EmynYkyZU9XfXfXyWi+nJxgXhXMOY/dMADyK8An1AePT sHP/xpNQfK81hJcbTkFfTOTGyCBdH7ZAovgFYFdw62KeLasb/HpAyfQ4RpzuvwIlsVXHWiZjfte IpyatPMvkyjLphcuuD/THA+q+Dp2B4HvjcMXKNTZn2jb4L1u
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The driver can match only via the DT table so the table should be always
-used and the of_match_ptr does not have any sense (this also allows ACPI
-matching via PRP0001, even though it might not be relevant here).  This
-also fixes !CONFIG_OF error:
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-  drivers/soc/renesas/pwc-rzv2m.c:124:34: error: ‘rzv2m_pwc_of_match’ defined but not used [-Werror=unused-const-variable=]
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/soc/renesas/pwc-rzv2m.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/rcar-usb2-clock-sel.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/renesas/pwc-rzv2m.c b/drivers/soc/renesas/pwc-rzv2m.c
-index c83bdbdabb64..452cee8d68be 100644
---- a/drivers/soc/renesas/pwc-rzv2m.c
-+++ b/drivers/soc/renesas/pwc-rzv2m.c
-@@ -131,7 +131,7 @@ static struct platform_driver rzv2m_pwc_driver = {
- 	.probe = rzv2m_pwc_probe,
- 	.driver = {
- 		.name = "rzv2m_pwc",
--		.of_match_table = of_match_ptr(rzv2m_pwc_of_match),
-+		.of_match_table = rzv2m_pwc_of_match,
+diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+index 684d8937965e..17c110978e33 100644
+--- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
++++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+@@ -125,15 +125,13 @@ static int rcar_usb2_clock_sel_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int rcar_usb2_clock_sel_remove(struct platform_device *pdev)
++static void rcar_usb2_clock_sel_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 
+ 	of_clk_del_provider(dev->of_node);
+ 	pm_runtime_put(dev);
+ 	pm_runtime_disable(dev);
+-
+-	return 0;
+ }
+ 
+ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+@@ -215,7 +213,7 @@ static struct platform_driver rcar_usb2_clock_sel_driver = {
+ 		.pm	= &rcar_usb2_clock_sel_pm_ops,
  	},
+ 	.probe		= rcar_usb2_clock_sel_probe,
+-	.remove		= rcar_usb2_clock_sel_remove,
++	.remove_new	= rcar_usb2_clock_sel_remove,
  };
- module_platform_driver(rzv2m_pwc_driver);
+ builtin_platform_driver(rcar_usb2_clock_sel_driver);
+ 
 -- 
-2.34.1
+2.39.1
 
