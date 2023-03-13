@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52A6C74A4B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Mar 2023 10:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E3EC74A5B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Mar 2023 10:58:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229862AbjCMK6w (ORCPT
+        id S229999AbjCMK6x (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Mar 2023 06:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56788 "EHLO
+        Mon, 13 Mar 2023 06:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230026AbjCMK6t (ORCPT
+        with ESMTP id S229792AbjCMK6u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2023 06:58:49 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E76D925966
+        Mon, 13 Mar 2023 06:58:50 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FB425BA3
         for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Mar 2023 03:58:42 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:7ed1:e2c6:b94:264a])
-        by baptiste.telenet-ops.be with bizsmtp
-        id Xmyg2900401Vtj801mygze; Mon, 13 Mar 2023 11:58:40 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id Xmyg2900501Vtj801mygDA; Mon, 13 Mar 2023 11:58:40 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pbfsQ-00C3Hz-Ew;
-        Mon, 13 Mar 2023 11:58:39 +0100
+        id 1pbfsQ-00C3I9-HE;
+        Mon, 13 Mar 2023 11:58:40 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pbft1-008cWa-RO;
+        id 1pbft1-008cWt-Uy;
         Mon, 13 Mar 2023 11:58:39 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Mark Brown <broonie@kernel.org>, Min Li <min.li.xe@renesas.com>,
@@ -37,52 +37,49 @@ To:     Mark Brown <broonie@kernel.org>, Min Li <min.li.xe@renesas.com>,
 Cc:     linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/6] spi: struct spi_device constification
-Date:   Mon, 13 Mar 2023 11:58:32 +0100
-Message-Id: <cover.1678704562.git.geert+renesas@glider.be>
+Subject: [PATCH 5/6] spi: Constify spi parameters of chip select APIs
+Date:   Mon, 13 Mar 2023 11:58:37 +0100
+Message-Id: <b112de79e7a1e9095a3b6ff22b639f39e39d7748.1678704562.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1678704562.git.geert+renesas@glider.be>
+References: <cover.1678704562.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+The "spi" parameters of spi_get_chipselect() and spi_get_csgpiod() can
+be const.
 
-After noticing new cases of casting away constness, I went over all
-spi_get_*() functions and their callers, and made the following changes:
-  1. Make all pointer parameters const where possible,
-  2. Remove unneeded casts, some not even related to constness.
+Fixes: 303feb3cc06ac066 ("spi: Add APIs in spi core to set/get spi->chip_select and spi->cs_gpiod")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/spi/spi.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patches 1-5 do not have any dependencies.
-Patch 6 depends on patch 5 (and current spi/for-next).
-
-Thanks for your comments!
-
-Geert Uytterhoeven (6):
-  mfd: rsmu_spi: Remove unneeded casts of void *
-  spi: fsl-dspi: Remove unneeded cast to same type
-  spi: Constify spi_get_ctldata()'s spi parameter
-  spi: Constify spi_get_drvdata()'s spi parameter
-  spi: Constify spi parameters of chip select APIs
-  spi: sh-msiof: Remove casts to drop constness
-
- drivers/mfd/rsmu_spi.c     | 4 ++--
- drivers/spi/spi-fsl-dspi.c | 2 +-
- drivers/spi/spi-sh-msiof.c | 4 ++--
- include/linux/spi/spi.h    | 8 ++++----
- 4 files changed, 9 insertions(+), 9 deletions(-)
-
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index e09a61dd34594330..74bff5a2f53d36cc 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -266,7 +266,7 @@ static inline void *spi_get_drvdata(const struct spi_device *spi)
+ 	return dev_get_drvdata(&spi->dev);
+ }
+ 
+-static inline u8 spi_get_chipselect(struct spi_device *spi, u8 idx)
++static inline u8 spi_get_chipselect(const struct spi_device *spi, u8 idx)
+ {
+ 	return spi->chip_select;
+ }
+@@ -276,7 +276,7 @@ static inline void spi_set_chipselect(struct spi_device *spi, u8 idx, u8 chipsel
+ 	spi->chip_select = chipselect;
+ }
+ 
+-static inline struct gpio_desc *spi_get_csgpiod(struct spi_device *spi, u8 idx)
++static inline struct gpio_desc *spi_get_csgpiod(const struct spi_device *spi, u8 idx)
+ {
+ 	return spi->cs_gpiod;
+ }
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
