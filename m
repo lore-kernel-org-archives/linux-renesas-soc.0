@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8343C74A5B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Mar 2023 10:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE65AC7618B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Mar 2023 10:58:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229700AbjCMK6t (ORCPT
+        id S230203AbjCMK6u (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Mar 2023 06:58:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56668 "EHLO
+        Mon, 13 Mar 2023 06:58:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229792AbjCMK6r (ORCPT
+        with ESMTP id S229633AbjCMK6r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 13 Mar 2023 06:58:47 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6E902595B
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E845C25BAE
         for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Mar 2023 03:58:42 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:7ed1:e2c6:b94:264a])
-        by baptiste.telenet-ops.be with bizsmtp
-        id Xmyg2900B01Vtj801mygzf; Mon, 13 Mar 2023 11:58:40 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id Xmyg2900401Vtj806mygte; Mon, 13 Mar 2023 11:58:40 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pbfsQ-00C3II-I2;
+        id 1pbfsQ-00C3I3-Ft;
         Mon, 13 Mar 2023 11:58:40 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pbft1-008cWx-Ve;
+        id 1pbft1-008cWl-Tj;
         Mon, 13 Mar 2023 11:58:39 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Mark Brown <broonie@kernel.org>, Min Li <min.li.xe@renesas.com>,
@@ -37,9 +37,9 @@ To:     Mark Brown <broonie@kernel.org>, Min Li <min.li.xe@renesas.com>,
 Cc:     linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 6/6] spi: sh-msiof: Remove casts to drop constness
-Date:   Mon, 13 Mar 2023 11:58:38 +0100
-Message-Id: <bc14c7c75f8d63c5c11f61f80daaa53b12bb15fb.1678704562.git.geert+renesas@glider.be>
+Subject: [PATCH 3/6] spi: Constify spi_get_ctldata()'s spi parameter
+Date:   Mon, 13 Mar 2023 11:58:35 +0100
+Message-Id: <8960e07adaad8d92d2c3aa045af9ee3c5d2130a8.1678704562.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1678704562.git.geert+renesas@glider.be>
 References: <cover.1678704562.git.geert+renesas@glider.be>
@@ -49,33 +49,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Now the chip select APIs take const pointers, there is no longer a need
-to cast away constness.
+The "spi" parameter of spi_get_ctldata() can be const.
 
-Fixes: 9e264f3f85a56cc1 ("spi: Replace all spi->chip_select and spi->cs_gpiod references with function call")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/spi-sh-msiof.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/spi/spi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 50498c4eb661d09f..55dfe2fd89c8ba4c 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -587,11 +587,11 @@ static int sh_msiof_prepare_message(struct spi_controller *ctlr,
- 	u32 ss, cs_high;
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index bdb35a91b4bf0141..6097d2f5126624eb 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -244,7 +244,7 @@ static inline void spi_dev_put(struct spi_device *spi)
+ }
  
- 	/* Configure pins before asserting CS */
--	if (spi_get_csgpiod((struct spi_device *)spi, 0)) {
-+	if (spi_get_csgpiod(spi, 0)) {
- 		ss = ctlr->unused_native_cs;
- 		cs_high = p->native_cs_high;
- 	} else {
--		ss = spi_get_chipselect((struct spi_device *)spi, 0);
-+		ss = spi_get_chipselect(spi, 0);
- 		cs_high = !!(spi->mode & SPI_CS_HIGH);
- 	}
- 	sh_msiof_spi_set_pin_regs(p, ss, !!(spi->mode & SPI_CPOL),
+ /* ctldata is for the bus_controller driver's runtime state */
+-static inline void *spi_get_ctldata(struct spi_device *spi)
++static inline void *spi_get_ctldata(const struct spi_device *spi)
+ {
+ 	return spi->controller_state;
+ }
 -- 
 2.34.1
 
