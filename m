@@ -2,138 +2,73 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3617BC74A5B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Mar 2023 10:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A71EC74A4B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Mar 2023 10:58:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbjCMKtQ (ORCPT
+        id S229674AbjCMK6s (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Mar 2023 06:49:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38906 "EHLO
+        Mon, 13 Mar 2023 06:58:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230247AbjCMKtM (ORCPT
+        with ESMTP id S229711AbjCMK6r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2023 06:49:12 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E4708684
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Mar 2023 03:49:10 -0700 (PDT)
+        Mon, 13 Mar 2023 06:58:47 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2A225289
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Mar 2023 03:58:42 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:7ed1:e2c6:b94:264a])
-        by albert.telenet-ops.be with bizsmtp
-        id Xmp62900901Vtj806mp69p; Mon, 13 Mar 2023 11:49:07 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id Xmyg2900301Vtj801mygD8; Mon, 13 Mar 2023 11:58:40 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pbfjA-00C3Fp-Mv;
-        Mon, 13 Mar 2023 11:49:06 +0100
+        id 1pbfsQ-00C3I2-FR;
+        Mon, 13 Mar 2023 11:58:39 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pbfjm-008cMY-3L;
-        Mon, 13 Mar 2023 11:49:06 +0100
+        id 1pbft1-008cWg-T7;
+        Mon, 13 Mar 2023 11:58:39 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
+To:     Mark Brown <broonie@kernel.org>, Min Li <min.li.xe@renesas.com>,
+        Lee Jones <lee@kernel.org>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
+        Michal Simek <michal.simek@amd.com>
+Cc:     linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: renesas: Drop support for Renesas-specific properties
-Date:   Mon, 13 Mar 2023 11:49:04 +0100
-Message-Id: <ff9c14781110bbf19b56b45dd1f01e6da90319ad.1678704441.git.geert+renesas@glider.be>
+Subject: [PATCH 2/6] spi: fsl-dspi: Remove unneeded cast to same type
+Date:   Mon, 13 Mar 2023 11:58:34 +0100
+Message-Id: <a417735ca3ff629ee897327b163b23414673f0a3.1678704562.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1678704562.git.geert+renesas@glider.be>
+References: <cover.1678704562.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The last user of the Renesas-specific properties was converted to the
-standard properties in commit af897250ea54c6f2 ("ARM: dts: gose: use
-generic pinctrl properties in SDHI nodes") in v4.10.
+There is never a need to cast a pointer to the same pointer type.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To be queued in renesas-pinctrl-for-v6.4.
+ drivers/spi/spi-fsl-dspi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/pinctrl/renesas/pinctrl.c | 31 +++++--------------------------
- 1 file changed, 5 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
-index f6ef658fb2276bb0..4d9d58fc1356ff53 100644
---- a/drivers/pinctrl/renesas/pinctrl.c
-+++ b/drivers/pinctrl/renesas/pinctrl.c
-@@ -40,10 +40,6 @@ struct sh_pfc_pinctrl {
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index ee42285b5c5243a5..4339485d202c05c7 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -1068,7 +1068,7 @@ static int dspi_setup(struct spi_device *spi)
  
- 	struct pinctrl_pin_desc *pins;
- 	struct sh_pfc_pin_config *configs;
--
--	const char *func_prop_name;
--	const char *groups_prop_name;
--	const char *pins_prop_name;
- };
+ static void dspi_cleanup(struct spi_device *spi)
+ {
+-	struct chip_data *chip = spi_get_ctldata((struct spi_device *)spi);
++	struct chip_data *chip = spi_get_ctldata(spi);
  
- static int sh_pfc_get_groups_count(struct pinctrl_dev *pctldev)
-@@ -120,27 +116,10 @@ static int sh_pfc_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	const char *pin;
- 	int ret;
- 
--	/* Support both the old Renesas-specific properties and the new standard
--	 * properties. Mixing old and new properties isn't allowed, neither
--	 * inside a subnode nor across subnodes.
--	 */
--	if (!pmx->func_prop_name) {
--		if (of_find_property(np, "groups", NULL) ||
--		    of_find_property(np, "pins", NULL)) {
--			pmx->func_prop_name = "function";
--			pmx->groups_prop_name = "groups";
--			pmx->pins_prop_name = "pins";
--		} else {
--			pmx->func_prop_name = "renesas,function";
--			pmx->groups_prop_name = "renesas,groups";
--			pmx->pins_prop_name = "renesas,pins";
--		}
--	}
--
- 	/* Parse the function and configuration properties. At least a function
- 	 * or one configuration must be specified.
- 	 */
--	ret = of_property_read_string(np, pmx->func_prop_name, &function);
-+	ret = of_property_read_string(np, "function", &function);
- 	if (ret < 0 && ret != -EINVAL) {
- 		dev_err(dev, "Invalid function in DT\n");
- 		return ret;
-@@ -158,7 +137,7 @@ static int sh_pfc_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	}
- 
- 	/* Count the number of pins and groups and reallocate mappings. */
--	ret = of_property_count_strings(np, pmx->pins_prop_name);
-+	ret = of_property_count_strings(np, "pins");
- 	if (ret == -EINVAL) {
- 		num_pins = 0;
- 	} else if (ret < 0) {
-@@ -168,7 +147,7 @@ static int sh_pfc_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		num_pins = ret;
- 	}
- 
--	ret = of_property_count_strings(np, pmx->groups_prop_name);
-+	ret = of_property_count_strings(np, "groups");
- 	if (ret == -EINVAL) {
- 		num_groups = 0;
- 	} else if (ret < 0) {
-@@ -199,7 +178,7 @@ static int sh_pfc_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	*num_maps = nmaps;
- 
- 	/* Iterate over pins and groups and create the mappings. */
--	of_property_for_each_string(np, pmx->groups_prop_name, prop, group) {
-+	of_property_for_each_string(np, "groups", prop, group) {
- 		if (function) {
- 			maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
- 			maps[idx].data.mux.group = group;
-@@ -223,7 +202,7 @@ static int sh_pfc_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		goto done;
- 	}
- 
--	of_property_for_each_string(np, pmx->pins_prop_name, prop, pin) {
-+	of_property_for_each_string(np, "pins", prop, pin) {
- 		ret = sh_pfc_map_add_config(&maps[idx], pin,
- 					    PIN_MAP_TYPE_CONFIGS_PIN,
- 					    configs, num_configs);
+ 	dev_dbg(&spi->dev, "spi_device %u.%u cleanup\n",
+ 		spi->controller->bus_num, spi_get_chipselect(spi, 0));
 -- 
 2.34.1
 
