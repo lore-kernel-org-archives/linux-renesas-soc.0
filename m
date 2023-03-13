@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E3EC74A5B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A95C7618B
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Mar 2023 10:58:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbjCMK6x (ORCPT
+        id S229802AbjCMK6y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Mar 2023 06:58:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
+        Mon, 13 Mar 2023 06:58:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229792AbjCMK6u (ORCPT
+        with ESMTP id S230114AbjCMK6u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 13 Mar 2023 06:58:50 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FB425BA3
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8C4D25BBF
         for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Mar 2023 03:58:42 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:7ed1:e2c6:b94:264a])
-        by andre.telenet-ops.be with bizsmtp
-        id Xmyg2900501Vtj801mygDA; Mon, 13 Mar 2023 11:58:40 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id Xmyg2900301Vtj801mygXU; Mon, 13 Mar 2023 11:58:40 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pbfsQ-00C3I9-HE;
-        Mon, 13 Mar 2023 11:58:40 +0100
+        id 1pbfsQ-00C3I0-Ew;
+        Mon, 13 Mar 2023 11:58:39 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pbft1-008cWt-Uy;
+        id 1pbft1-008cWd-SS;
         Mon, 13 Mar 2023 11:58:39 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Mark Brown <broonie@kernel.org>, Min Li <min.li.xe@renesas.com>,
@@ -37,9 +37,9 @@ To:     Mark Brown <broonie@kernel.org>, Min Li <min.li.xe@renesas.com>,
 Cc:     linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/6] spi: Constify spi parameters of chip select APIs
-Date:   Mon, 13 Mar 2023 11:58:37 +0100
-Message-Id: <b112de79e7a1e9095a3b6ff22b639f39e39d7748.1678704562.git.geert+renesas@glider.be>
+Subject: [PATCH 1/6] mfd: rsmu_spi: Remove unneeded casts of void *
+Date:   Mon, 13 Mar 2023 11:58:33 +0100
+Message-Id: <ae84c1751e79cb49ab584557f4ecd835a8493d7c.1678704562.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1678704562.git.geert+renesas@glider.be>
 References: <cover.1678704562.git.geert+renesas@glider.be>
@@ -49,37 +49,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The "spi" parameters of spi_get_chipselect() and spi_get_csgpiod() can
-be const.
+There is no need to cast a "void *" to a different type of pointer.
 
-Fixes: 303feb3cc06ac066 ("spi: Add APIs in spi core to set/get spi->chip_select and spi->cs_gpiod")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/linux/spi/spi.h | 4 ++--
+ drivers/mfd/rsmu_spi.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index e09a61dd34594330..74bff5a2f53d36cc 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -266,7 +266,7 @@ static inline void *spi_get_drvdata(const struct spi_device *spi)
- 	return dev_get_drvdata(&spi->dev);
- }
+diff --git a/drivers/mfd/rsmu_spi.c b/drivers/mfd/rsmu_spi.c
+index d2f3d8f1e05af054..2428aaa9aaed9e43 100644
+--- a/drivers/mfd/rsmu_spi.c
++++ b/drivers/mfd/rsmu_spi.c
+@@ -129,7 +129,7 @@ static int rsmu_write_page_register(struct rsmu_ddata *rsmu, u16 reg)
  
--static inline u8 spi_get_chipselect(struct spi_device *spi, u8 idx)
-+static inline u8 spi_get_chipselect(const struct spi_device *spi, u8 idx)
+ static int rsmu_reg_read(void *context, unsigned int reg, unsigned int *val)
  {
- 	return spi->chip_select;
- }
-@@ -276,7 +276,7 @@ static inline void spi_set_chipselect(struct spi_device *spi, u8 idx, u8 chipsel
- 	spi->chip_select = chipselect;
- }
+-	struct rsmu_ddata *rsmu = spi_get_drvdata((struct spi_device *)context);
++	struct rsmu_ddata *rsmu = spi_get_drvdata(context);
+ 	u8 addr = (u8)(reg & RSMU_LOWER_ADDR_MASK);
+ 	int err;
  
--static inline struct gpio_desc *spi_get_csgpiod(struct spi_device *spi, u8 idx)
-+static inline struct gpio_desc *spi_get_csgpiod(const struct spi_device *spi, u8 idx)
+@@ -146,7 +146,7 @@ static int rsmu_reg_read(void *context, unsigned int reg, unsigned int *val)
+ 
+ static int rsmu_reg_write(void *context, unsigned int reg, unsigned int val)
  {
- 	return spi->cs_gpiod;
- }
+-	struct rsmu_ddata *rsmu = spi_get_drvdata((struct spi_device *)context);
++	struct rsmu_ddata *rsmu = spi_get_drvdata(context);
+ 	u8 addr = (u8)(reg & RSMU_LOWER_ADDR_MASK);
+ 	u8 data = (u8)val;
+ 	int err;
 -- 
 2.34.1
 
