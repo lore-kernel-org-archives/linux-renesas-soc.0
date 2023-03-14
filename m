@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D78F2C7618D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Mar 2023 16:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE66C76195
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Mar 2023 16:35:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbjCNQfL (ORCPT
+        id S229633AbjCNQfK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 12:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57226 "EHLO
+        Tue, 14 Mar 2023 12:35:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbjCNQet (ORCPT
+        with ESMTP id S229958AbjCNQer (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2023 12:34:49 -0400
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8377AF6AF;
-        Tue, 14 Mar 2023 09:34:43 -0700 (PDT)
+        Tue, 14 Mar 2023 12:34:47 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B4065B414;
+        Tue, 14 Mar 2023 09:34:31 -0700 (PDT)
 Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id B9282100003;
-        Tue, 14 Mar 2023 16:34:35 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 31ED3100013;
+        Tue, 14 Mar 2023 16:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678811682;
+        t=1678811669;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=j90yhV+x+elKOsWBRA3Lnw3dkuBFcUHDxfTXDFjhB3k=;
-        b=gzBWdXyfwWshT6m3XQChRWKEDnHk45n2q30fnAjYcUqG7KgrJbzBQAymdqIBY0aqeMKspn
-        DokGk7XBLZjHkYJrZCXm1F7NSj+9r+a5xljjAtg+jE21nEFAnkkzCfOQxC1cg8TylU3jIS
-        ripgmM/1uZUTLwD1Qjf0jDHbtBeARvihO+6vY9xbtYmNkWAKwMqfqb8SoVFwZOKc+8bCW3
-        NFJVfKok6FFI57H4ibFTStKWZr13Jw95tvvtntgiyUiOhi/jJDhStUxaO5mN2IuTn5+HsS
-        AdwKXPf6B1kxLrKZ8NuKSWx27etue9ly6JqL2ImpX94d5MZVLj28IiQrxHzOjQ==
+        bh=eGYKzuFmpRY1YTOUdj3DCQXT7u9J0lqvKoXvHWMd1So=;
+        b=BF/ORxZT5tDRVa1ahD8A4qRcYnLwhr6J+CcX2RHFnEYYHyBFUV+EbVELphVni05XqadlCT
+        yMzD8Wem7NcrHJ3PghDfQC0pQdUeRatKfBZXVrkqzkOBNDPxCUUn5C7zGnxHgqGsRm15h3
+        97g7JVN+I8Z1iL8dNlKxvtnuTe6VsihMSx+WXgBgUd3vnNEv7Bhsy8Uglh2lL0unXUYS7C
+        4LdA9jhLEF0FsDVddG5BDO1JV/TFpXpt5HsaPnd0MKG54uzEDsq0vg/3hTGGdvFPjF/Chj
+        IW+j65sHB1ZyiemqaD1V8QXbaFJvuXEU1QUdYTfigSS4rNPIy01zye1u624jWA==
 From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -49,9 +49,9 @@ Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
         Arun Ramadoss <Arun.Ramadoss@microchip.com>,
         linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND net-next v4 3/3] net: dsa: rzn1-a5psw: add vlan support
-Date:   Tue, 14 Mar 2023 17:36:51 +0100
-Message-Id: <20230314163651.242259-4-clement.leger@bootlin.com>
+Subject: [PATCH RESEND net-next v4 1/3] net: dsa: rzn1-a5psw: use a5psw_reg_rmw() to modify flooding resolution
+Date:   Tue, 14 Mar 2023 17:36:49 +0100
+Message-Id: <20230314163651.242259-2-clement.leger@bootlin.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230314163651.242259-1-clement.leger@bootlin.com>
 References: <20230314163651.242259-1-clement.leger@bootlin.com>
@@ -62,245 +62,65 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for vlan operation (add, del, filtering) on the RZN1
-driver. The a5psw switch supports up to 32 VLAN IDs with filtering,
-tagged/untagged VLANs and PVID for each ports.
+.port_bridge_flags will be added and allows to modify the flood mask
+independently for each port. Keeping the existing bridged_ports write
+in a5psw_flooding_set_resolution() would potentially messed up this.
+Use a read-modify-write to set that value and move bridged_ports
+handling in bridge_port_join/leave.
 
 Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/dsa/rzn1_a5psw.c | 164 +++++++++++++++++++++++++++++++++++
- drivers/net/dsa/rzn1_a5psw.h |   8 +-
- 2 files changed, 169 insertions(+), 3 deletions(-)
+ drivers/net/dsa/rzn1_a5psw.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
-index 5059b2814cdd..a9a42a8bc7e3 100644
+index 919027cf2012..7dcca15e0b11 100644
 --- a/drivers/net/dsa/rzn1_a5psw.c
 +++ b/drivers/net/dsa/rzn1_a5psw.c
-@@ -583,6 +583,144 @@ static int a5psw_port_fdb_dump(struct dsa_switch *ds, int port,
- 	return ret;
+@@ -299,13 +299,9 @@ static void a5psw_flooding_set_resolution(struct a5psw *a5psw, int port,
+ 			A5PSW_MCAST_DEF_MASK};
+ 	int i;
+ 
+-	if (set)
+-		a5psw->bridged_ports |= BIT(port);
+-	else
+-		a5psw->bridged_ports &= ~BIT(port);
+-
+ 	for (i = 0; i < ARRAY_SIZE(offsets); i++)
+-		a5psw_reg_writel(a5psw, offsets[i], a5psw->bridged_ports);
++		a5psw_reg_rmw(a5psw, offsets[i], BIT(port),
++			      set ? BIT(port) : 0);
  }
  
-+static int a5psw_port_vlan_filtering(struct dsa_switch *ds, int port,
-+				     bool vlan_filtering,
-+				     struct netlink_ext_ack *extack)
-+{
-+	u32 mask = BIT(port + A5PSW_VLAN_VERI_SHIFT) |
-+		   BIT(port + A5PSW_VLAN_DISC_SHIFT);
-+	u32 val = vlan_filtering ? mask : 0;
-+	struct a5psw *a5psw = ds->priv;
+ static int a5psw_port_bridge_join(struct dsa_switch *ds, int port,
+@@ -326,6 +322,8 @@ static int a5psw_port_bridge_join(struct dsa_switch *ds, int port,
+ 	a5psw_flooding_set_resolution(a5psw, port, true);
+ 	a5psw_port_mgmtfwd_set(a5psw, port, false);
+ 
++	a5psw->bridged_ports |= BIT(port);
 +
-+	a5psw_reg_rmw(a5psw, A5PSW_VLAN_VERIFY, mask, val);
-+
-+	return 0;
-+}
-+
-+static int a5psw_find_vlan_entry(struct a5psw *a5psw, u16 vid)
-+{
-+	u32 vlan_res;
-+	int i;
-+
-+	/* Find vlan for this port */
-+	for (i = 0; i < A5PSW_VLAN_COUNT; i++) {
-+		vlan_res = a5psw_reg_readl(a5psw, A5PSW_VLAN_RES(i));
-+		if (FIELD_GET(A5PSW_VLAN_RES_VLANID, vlan_res) == vid)
-+			return i;
-+	}
-+
-+	return -1;
-+}
-+
-+static int a5psw_new_vlan_res_entry(struct a5psw *a5psw, u16 newvid)
-+{
-+	u32 vlan_res;
-+	int i;
-+
-+	/* Find a free VLAN entry */
-+	for (i = 0; i < A5PSW_VLAN_COUNT; i++) {
-+		vlan_res = a5psw_reg_readl(a5psw, A5PSW_VLAN_RES(i));
-+		if (!(FIELD_GET(A5PSW_VLAN_RES_PORTMASK, vlan_res))) {
-+			vlan_res = FIELD_PREP(A5PSW_VLAN_RES_VLANID, newvid);
-+			a5psw_reg_writel(a5psw, A5PSW_VLAN_RES(i), vlan_res);
-+			return i;
-+		}
-+	}
-+
-+	return -1;
-+}
-+
-+static void a5psw_port_vlan_tagged_cfg(struct a5psw *a5psw,
-+				       unsigned int vlan_res_id, int port,
-+				       bool set)
-+{
-+	u32 mask = A5PSW_VLAN_RES_WR_PORTMASK | A5PSW_VLAN_RES_RD_TAGMASK |
-+		   BIT(port);
-+	u32 vlan_res_off = A5PSW_VLAN_RES(vlan_res_id);
-+	u32 val = A5PSW_VLAN_RES_WR_TAGMASK, reg;
-+
-+	if (set)
-+		val |= BIT(port);
-+
-+	/* Toggle tag mask read */
-+	a5psw_reg_writel(a5psw, vlan_res_off, A5PSW_VLAN_RES_RD_TAGMASK);
-+	reg = a5psw_reg_readl(a5psw, vlan_res_off);
-+	a5psw_reg_writel(a5psw, vlan_res_off, A5PSW_VLAN_RES_RD_TAGMASK);
-+
-+	reg &= ~mask;
-+	reg |= val;
-+	a5psw_reg_writel(a5psw, vlan_res_off, reg);
-+}
-+
-+static void a5psw_port_vlan_cfg(struct a5psw *a5psw, unsigned int vlan_res_id,
-+				int port, bool set)
-+{
-+	u32 mask = A5PSW_VLAN_RES_WR_TAGMASK | BIT(port);
-+	u32 reg = A5PSW_VLAN_RES_WR_PORTMASK;
-+
-+	if (set)
-+		reg |= BIT(port);
-+
-+	a5psw_reg_rmw(a5psw, A5PSW_VLAN_RES(vlan_res_id), mask, reg);
-+}
-+
-+static int a5psw_port_vlan_add(struct dsa_switch *ds, int port,
-+			       const struct switchdev_obj_port_vlan *vlan,
-+			       struct netlink_ext_ack *extack)
-+{
-+	bool tagged = !(vlan->flags & BRIDGE_VLAN_INFO_UNTAGGED);
-+	bool pvid = vlan->flags & BRIDGE_VLAN_INFO_PVID;
-+	struct a5psw *a5psw = ds->priv;
-+	u16 vid = vlan->vid;
-+	int vlan_res_id;
-+
-+	dev_dbg(a5psw->dev, "Add VLAN %d on port %d, %s, %s\n",
-+		vid, port, tagged ? "tagged" : "untagged",
-+		pvid ? "PVID" : "no PVID");
-+
-+	vlan_res_id = a5psw_find_vlan_entry(a5psw, vid);
-+	if (vlan_res_id < 0) {
-+		vlan_res_id = a5psw_new_vlan_res_entry(a5psw, vid);
-+		if (vlan_res_id < 0)
-+			return -ENOSPC;
-+	}
-+
-+	a5psw_port_vlan_cfg(a5psw, vlan_res_id, port, true);
-+	if (tagged)
-+		a5psw_port_vlan_tagged_cfg(a5psw, vlan_res_id, port, true);
-+
-+	if (pvid) {
-+		a5psw_reg_rmw(a5psw, A5PSW_VLAN_IN_MODE_ENA, BIT(port),
-+			      BIT(port));
-+		a5psw_reg_writel(a5psw, A5PSW_SYSTEM_TAGINFO(port), vid);
-+	}
-+
-+	return 0;
-+}
-+
-+static int a5psw_port_vlan_del(struct dsa_switch *ds, int port,
-+			       const struct switchdev_obj_port_vlan *vlan)
-+{
-+	struct a5psw *a5psw = ds->priv;
-+	u16 vid = vlan->vid;
-+	int vlan_res_id;
-+
-+	dev_dbg(a5psw->dev, "Removing VLAN %d on port %d\n", vid, port);
-+
-+	vlan_res_id = a5psw_find_vlan_entry(a5psw, vid);
-+	if (vlan_res_id < 0)
-+		return -EINVAL;
-+
-+	a5psw_port_vlan_cfg(a5psw, vlan_res_id, port, false);
-+	a5psw_port_vlan_tagged_cfg(a5psw, vlan_res_id, port, false);
-+
-+	/* Disable PVID if the vid is matching the port one */
-+	if (vid == a5psw_reg_readl(a5psw, A5PSW_SYSTEM_TAGINFO(port)))
-+		a5psw_reg_rmw(a5psw, A5PSW_VLAN_IN_MODE_ENA, BIT(port), 0);
-+
-+	return 0;
-+}
-+
- static u64 a5psw_read_stat(struct a5psw *a5psw, u32 offset, int port)
- {
- 	u32 reg_lo, reg_hi;
-@@ -700,6 +838,27 @@ static void a5psw_get_eth_ctrl_stats(struct dsa_switch *ds, int port,
- 	ctrl_stats->MACControlFramesReceived = stat;
+ 	return 0;
  }
  
-+static void a5psw_vlan_setup(struct a5psw *a5psw, int port)
-+{
-+	u32 reg;
-+
-+	/* Enable TAG always mode for the port, this is actually controlled
-+	 * by VLAN_IN_MODE_ENA field which will be used for PVID insertion
-+	 */
-+	reg = A5PSW_VLAN_IN_MODE_TAG_ALWAYS;
-+	reg <<= A5PSW_VLAN_IN_MODE_PORT_SHIFT(port);
-+	a5psw_reg_rmw(a5psw, A5PSW_VLAN_IN_MODE, A5PSW_VLAN_IN_MODE_PORT(port),
-+		      reg);
-+
-+	/* Set transparent mode for output frame manipulation, this will depend
-+	 * on the VLAN_RES configuration mode
-+	 */
-+	reg = A5PSW_VLAN_OUT_MODE_TRANSPARENT;
-+	reg <<= A5PSW_VLAN_OUT_MODE_PORT_SHIFT(port);
-+	a5psw_reg_rmw(a5psw, A5PSW_VLAN_OUT_MODE,
-+		      A5PSW_VLAN_OUT_MODE_PORT(port), reg);
-+}
-+
- static int a5psw_setup(struct dsa_switch *ds)
+@@ -334,6 +332,8 @@ static void a5psw_port_bridge_leave(struct dsa_switch *ds, int port,
  {
  	struct a5psw *a5psw = ds->priv;
-@@ -772,6 +931,8 @@ static int a5psw_setup(struct dsa_switch *ds)
- 		/* Enable management forward only for user ports */
- 		if (dsa_port_is_user(dp))
- 			a5psw_port_mgmtfwd_set(a5psw, port, true);
+ 
++	a5psw->bridged_ports &= ~BIT(port);
 +
-+		a5psw_vlan_setup(a5psw, port);
- 	}
+ 	a5psw_flooding_set_resolution(a5psw, port, false);
+ 	a5psw_port_mgmtfwd_set(a5psw, port, true);
  
- 	return 0;
-@@ -801,6 +962,9 @@ static const struct dsa_switch_ops a5psw_switch_ops = {
- 	.port_bridge_flags = a5psw_port_bridge_flags,
- 	.port_stp_state_set = a5psw_port_stp_state_set,
- 	.port_fast_age = a5psw_port_fast_age,
-+	.port_vlan_filtering = a5psw_port_vlan_filtering,
-+	.port_vlan_add = a5psw_port_vlan_add,
-+	.port_vlan_del = a5psw_port_vlan_del,
- 	.port_fdb_add = a5psw_port_fdb_add,
- 	.port_fdb_del = a5psw_port_fdb_del,
- 	.port_fdb_dump = a5psw_port_fdb_dump,
-diff --git a/drivers/net/dsa/rzn1_a5psw.h b/drivers/net/dsa/rzn1_a5psw.h
-index c67abd49c013..2bad2e3edc2a 100644
---- a/drivers/net/dsa/rzn1_a5psw.h
-+++ b/drivers/net/dsa/rzn1_a5psw.h
-@@ -50,7 +50,9 @@
- #define A5PSW_VLAN_IN_MODE_TAG_ALWAYS		0x2
+@@ -945,6 +945,8 @@ static int a5psw_probe(struct platform_device *pdev)
+ 	if (IS_ERR(a5psw->base))
+ 		return PTR_ERR(a5psw->base);
  
- #define A5PSW_VLAN_OUT_MODE		0x2C
--#define A5PSW_VLAN_OUT_MODE_PORT(port)	(GENMASK(1, 0) << ((port) * 2))
-+#define A5PSW_VLAN_OUT_MODE_PORT_SHIFT(port)	((port) * 2)
-+#define A5PSW_VLAN_OUT_MODE_PORT(port)	(GENMASK(1, 0) << \
-+					A5PSW_VLAN_OUT_MODE_PORT_SHIFT(port))
- #define A5PSW_VLAN_OUT_MODE_DIS		0x0
- #define A5PSW_VLAN_OUT_MODE_STRIP	0x1
- #define A5PSW_VLAN_OUT_MODE_TAG_THROUGH	0x2
-@@ -59,7 +61,7 @@
- #define A5PSW_VLAN_IN_MODE_ENA		0x30
- #define A5PSW_VLAN_TAG_ID		0x34
- 
--#define A5PSW_SYSTEM_TAGINFO(port)	(0x200 + A5PSW_PORT_OFFSET(port))
-+#define A5PSW_SYSTEM_TAGINFO(port)	(0x200 + 4 * (port))
- 
- #define A5PSW_AUTH_PORT(port)		(0x240 + 4 * (port))
- #define A5PSW_AUTH_PORT_AUTHORIZED	BIT(0)
-@@ -68,7 +70,7 @@
- #define A5PSW_VLAN_RES_WR_PORTMASK	BIT(30)
- #define A5PSW_VLAN_RES_WR_TAGMASK	BIT(29)
- #define A5PSW_VLAN_RES_RD_TAGMASK	BIT(28)
--#define A5PSW_VLAN_RES_ID		GENMASK(16, 5)
-+#define A5PSW_VLAN_RES_VLANID		GENMASK(16, 5)
- #define A5PSW_VLAN_RES_PORTMASK		GENMASK(4, 0)
- 
- #define A5PSW_RXMATCH_CONFIG(port)	(0x3e80 + 4 * (port))
++	a5psw->bridged_ports = BIT(A5PSW_CPU_PORT);
++
+ 	ret = a5psw_pcs_get(a5psw);
+ 	if (ret)
+ 		return ret;
 -- 
 2.39.0
 
