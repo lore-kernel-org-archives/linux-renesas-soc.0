@@ -2,45 +2,38 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA49C6FD1D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Mar 2023 12:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3E7C6FD1D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Mar 2023 13:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbjCNM4w (ORCPT
+        id S232112AbjCNNTW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 08:56:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59262 "EHLO
+        Tue, 14 Mar 2023 09:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232852AbjCNMzg (ORCPT
+        with ESMTP id S231675AbjCNNSp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2023 08:55:36 -0400
+        Tue, 14 Mar 2023 09:18:45 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35E12A6BEA
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Mar 2023 05:51:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91E3462850
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Mar 2023 06:15:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=YSDGQgo64K7kPQPijTqgAMUKCwj
-        Eu9vA4OsmPLBJ/pU=; b=B9HQI9o5SsFCfo06nrkKU/np4zw7Jw8Vb2MdaLMP+hH
-        cMUnirTlQ8AIEKbdsMKhLQFnqNlSv1TnRxMonfGlCSMpPOSgdyZUvH38KsQFZ/tt
-        qvLVFqkOF3gwDYP2UGN5B6bhF/uuG7HjcVnz+ktICCcNKvC7SrW3NHWos4S8gPUg
+        :content-transfer-encoding; s=k1; bh=Tsk4wHMeWOvTFQfbreaoPUX9miB
+        BnSXXC9+icfM7WVE=; b=XJEpL3JliV7UzxDue4nodoey51u7PoDDDKrZD0gbx3V
+        AizTC+OfdupQt7y5GvIs3V1OtttbzOWFC6MF51u4MHkO0bQ4dX02ea92gnQIxpG7
+        RlUoV62RXRwbgwAaWSXnVGOx0XqgZwXMWP1uOvyE9Gl21YcBQIUY7pX52GgfRUpk
         =
-Received: (qmail 3103901 invoked from network); 14 Mar 2023 13:49:30 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Mar 2023 13:49:30 +0100
-X-UD-Smtp-Session: l3s3148p1@nHeUqNv2OsQujnvb
+Received: (qmail 3111535 invoked from network); 14 Mar 2023 14:14:55 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Mar 2023 14:14:55 +0100
+X-UD-Smtp-Session: l3s3148p1@PKN/A9z2is0ujnvb
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     netdev@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
+Cc:     linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [RESEND net-next] net: phy: micrel: drop superfluous use of temp variable
-Date:   Tue, 14 Mar 2023 13:49:27 +0100
-Message-Id: <20230314124928.44948-1-wsa+renesas@sang-engineering.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net 0/4] net: set 'mac_managed_pm' at probe time
+Date:   Tue, 14 Mar 2023 14:14:38 +0100
+Message-Id: <20230314131443.46342-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -48,38 +41,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-'temp' was used before commit c0c99d0cd107 ("net: phy: micrel: remove
-the use of .ack_interrupt()") refactored the code. Now, we can simplify
-it a little.
+When suspending/resuming an interface which was not up, we saw mdiobus
+related PM handling despite 'mac_managed_pm' being set for RAVB/SH_ETH.
+Heiner kindly suggested the fix to set this flag at probe time, not at
+init/open time. I implemented his suggestion and it works fine on these
+two Renesas drivers. These are patches 1+2.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+I then looked which other drivers could be affected by the same problem.
+I could only identify two where I am quite sure. Because I don't have
+any HW, I opted to at least add a FIXME and send this out as patches
+3+4. Ideally, they will never need to go upstream because the relevant
+people will see their patch and do something like I did for patches 1+2.
 
-Only tags added since last time.
+Looking forward to comments. Thanks and happy hacking!
 
- drivers/net/phy/micrel.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 2c84fccef4f6..6c7845137c23 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -435,11 +435,9 @@ static int kszphy_config_intr(struct phy_device *phydev)
- 		if (err)
- 			return err;
- 
--		temp = KSZPHY_INTCS_ALL;
--		err = phy_write(phydev, MII_KSZPHY_INTCS, temp);
-+		err = phy_write(phydev, MII_KSZPHY_INTCS, KSZPHY_INTCS_ALL);
- 	} else {
--		temp = 0;
--		err = phy_write(phydev, MII_KSZPHY_INTCS, temp);
-+		err = phy_write(phydev, MII_KSZPHY_INTCS, 0);
- 		if (err)
- 			return err;
- 
+Wolfram Sang (4):
+  ravb: avoid PHY being resumed when interface is not up
+  sh_eth: avoid PHY being resumed when interface is not up
+  fec: add FIXME to move 'mac_managed_pm' to probe
+  smsc911x: add FIXME to move 'mac_managed_pm' to probe
+
+ drivers/net/ethernet/freescale/fec_main.c |  1 +
+ drivers/net/ethernet/renesas/ravb_main.c  | 12 ++++++++++--
+ drivers/net/ethernet/renesas/sh_eth.c     | 12 ++++++++++--
+ drivers/net/ethernet/smsc/smsc911x.c      |  1 +
+ 4 files changed, 22 insertions(+), 4 deletions(-)
+
 -- 
 2.30.2
 
