@@ -2,53 +2,88 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DCDC761AF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Mar 2023 07:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B81C6FD1D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Mar 2023 07:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231578AbjCOHE4 (ORCPT
+        id S231404AbjCOH0n (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Mar 2023 03:04:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34322 "EHLO
+        Wed, 15 Mar 2023 03:26:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjCOHEl (ORCPT
+        with ESMTP id S231340AbjCOH0l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Mar 2023 03:04:41 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 08206213F;
-        Wed, 15 Mar 2023 00:04:39 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.98,262,1673881200"; 
-   d="scan'208";a="156005157"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Mar 2023 16:04:39 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 61790418A02B;
-        Wed, 15 Mar 2023 16:04:39 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
+        Wed, 15 Mar 2023 03:26:41 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EE975B5FA
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Mar 2023 00:26:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=3Xdv1SPbFc/MN2Ud+h68Jqnms20u
+        TaYbcPiPwRPC3OM=; b=YhPRDN7zgscr4r86aBuDgHCDy7jB6/NxmsCzY0ZXtGAq
+        9ANttIHepX+qDY0HO9EJa8NXzN+ci/JEAYRGeHPXT2GHYBDLDk9hxt+srFoIv0Ch
+        AeRjjNSiMYq7c908uOqERGiSflbY1y6QrVwsnqBfogUG3qkB73YzFNaezHlMgrg=
+Received: (qmail 3356775 invoked from network); 15 Mar 2023 08:26:33 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Mar 2023 08:26:33 +0100
+X-UD-Smtp-Session: l3s3148p1@2Rx8Q+v2/K0ujnvb
+Date:   Wed, 15 Mar 2023 08:26:33 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Simon Horman <simon.horman@corigine.com>
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net 0/2] net: renesas: rswitch: Fix rx and timestamp
-Date:   Wed, 15 Mar 2023 16:04:22 +0900
-Message-Id: <20230315070424.1088877-1-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 0/4] net: set 'mac_managed_pm' at probe time
+Message-ID: <ZBFzKatnFs7MraVn@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@corigine.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org
+References: <20230314131443.46342-1-wsa+renesas@sang-engineering.com>
+ <ZBCjj6btYod38O7g@corigine.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0ST3wKXCq3p6447a"
+Content-Disposition: inline
+In-Reply-To: <ZBCjj6btYod38O7g@corigine.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I got reports locally about issues on the rswitch driver.
-So, fix the issues.
 
-Yoshihiro Shimoda (2):
-  net: renesas: rswitch: Fix the output value of quote from rswitch_rx()
-  net: renesas: rswitch: Fix GWTSDIE register handling
+--0ST3wKXCq3p6447a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- drivers/net/ethernet/renesas/rswitch.c | 19 ++++++++++++++-----
- drivers/net/ethernet/renesas/rswitch.h |  1 +
- 2 files changed, 15 insertions(+), 5 deletions(-)
+Hi Simon!
 
--- 
-2.25.1
+> an initial comment is, and I know this is a bit of a pain,
+> that 'net' and 'net-next' patches need to be split into separate serries.
 
+Thanks for the heads up. I will refactor the series. First a part which
+shall go into "net" and I will make the second part RFC with more
+explanations how to reproduce the issue.
+
+All the best,
+
+   Wolfram
+
+
+--0ST3wKXCq3p6447a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmQRcyUACgkQFA3kzBSg
+Kbb8MhAAoD66iQdGbZKz5RIMU4gpMkjw5rI7U0pE4DQJZncI/sPciVWOT495o20F
+Z0+g9lrHUU93dyne3M3bvWMJ6eKZxh92L02qIaBvE0F+2+gSh50zgGiaGrxCa6mP
+fq/n2g2+0uDk1b0PsaCN9F1ED+5EKpfvN5sNuHdK6Qn4qX7jPy/dVkj2CpyUCDRF
+YCEBIp8w7My3xMxupdQvsEpf2JMEVOE2rFtZmQiaj1IMhNlS/de+vWLQVfhrCx5Y
+886Zl0qEc3hwUR2rrp8tMsXD8TBvSpD9JfvHjQJivGhxlpWKyj/bYcgFo+4tVr/Y
+uW6nzKT06bYcarHsPVHahXAzz+Pp4K2ec4w64fzn9nIl9tershKZTViuG0exNesL
+Ct4TsLIHjDYen8PfdcVv+f0DErlT+1V2egaFa57Q3VhnJiZQmkFyf8skUp8G+RbM
+/0qPYna9Leq4IjyAygBKZ/lRHuQ1hT1PkDLfqpSqD2CG3eoRuNGawetAEC0ZoBaX
+2hYnrc7oCuVQo8PHAOGQmwLEEHxI5nQS8T81Izk0uyFBJgN9bn/eC7mHWYBKfMW5
+lBRj+antcVgJvXC1t23GPeucPdreybqlNYTY6NPTp+qnk1ggR4t4qcAFV48RBMWa
+MWSGy5sUbIw7vIPcObkcs1qy7iI4s5vKXh5gasUabiF6AYP/wLI=
+=8+zk
+-----END PGP SIGNATURE-----
+
+--0ST3wKXCq3p6447a--
