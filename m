@@ -2,46 +2,48 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9887C61DA4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Mar 2023 14:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DC8C7618B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Mar 2023 14:31:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232701AbjCOOaC (ORCPT
+        id S233174AbjCOObG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Mar 2023 10:30:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55438 "EHLO
+        Wed, 15 Mar 2023 10:31:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233204AbjCOOaA (ORCPT
+        with ESMTP id S231899AbjCOObC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Mar 2023 10:30:00 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7AA31F5E4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Mar 2023 07:29:57 -0700 (PDT)
+        Wed, 15 Mar 2023 10:31:02 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 222D12B291
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Mar 2023 07:30:34 -0700 (PDT)
 Received: from ramsan.of.borg ([84.195.187.55])
-        by albert.telenet-ops.be with bizsmtp
-        id YeVt2900b1C8whw06eVtLg; Wed, 15 Mar 2023 15:29:54 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id YeWY2900R1C8whw01eWYSs; Wed, 15 Mar 2023 15:30:33 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pcS3h-00CI8b-Fn;
-        Wed, 15 Mar 2023 15:25:31 +0100
+        id 1pcS6R-00CI9L-4A;
+        Wed, 15 Mar 2023 15:28:21 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pcS4J-00D13s-Rp;
-        Wed, 15 Mar 2023 15:25:31 +0100
+        id 1pcS73-00D174-Gj;
+        Wed, 15 Mar 2023 15:28:21 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Tobias Klausmann <klausman@schwarzvogel.de>
 Subject: [PATCH] lib: dhry: Fix unstable smp_processor_id(_) usage
-Date:   Wed, 15 Mar 2023 15:25:22 +0100
-Message-Id: <b0d29932bb24ad82cea7f821e295c898e9657be0.1678890070.git.geert+renesas@glider.be>
+Date:   Wed, 15 Mar 2023 15:28:17 +0100
+Message-ID: <b0d29932bb24ad82cea7f821e295c898e9657be0.1678890070.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
+Message-ID: <20230315142817.KygTzqIIRdkvRUrH9E66DLrpXcbIxX-n0AoGRftGyww@z>
 
 When running the in-kernel Dhrystone benchmark with
 CONFIG_DEBUG_PREEMPT=y:
