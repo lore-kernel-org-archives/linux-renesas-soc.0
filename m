@@ -2,58 +2,117 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622DAC7618A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Mar 2023 07:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41426C76195
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Mar 2023 07:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbjCPHqT (ORCPT
+        id S230110AbjCPHqU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Mar 2023 03:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38950 "EHLO
+        Thu, 16 Mar 2023 03:46:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbjCPHqQ (ORCPT
+        with ESMTP id S229961AbjCPHqQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 16 Mar 2023 03:46:16 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAF8FA4B14
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA113A42CD
         for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Mar 2023 00:46:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=wwU+UVxfUIoPiP7KJnLzD0UYhME
-        SYZhQ8/8Tp4QXAlE=; b=MpWqH7w3YVOBsCg3LwXkWFX+X3inlOu24sGg/7DSmcp
-        hIrQQIKB/o89+WGb4ffhCI/Yuf/5jGLpdH813kuV1MU4z2BiAMLia/UgTcA4QQTv
-        tDWVWOQEREowwH6DthU7PrvbUezCR3c0nMVlvatoQIh5tjrbRR6P9Fy/8hdDaZsQ
-        =
-Received: (qmail 3694188 invoked from network); 16 Mar 2023 08:46:09 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Mar 2023 08:46:09 +0100
-X-UD-Smtp-Session: l3s3148p1@F0Q0p//2apIujnvb
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=zl2jnjzDWpy3C4
+        fB7TuVFiW4MYKclvO6XP0vE27XA8A=; b=MP4aeJnDTqGMF504Tj7vAH+ymvPq6/
+        iwQaNrbgixzVmfBPrGf06njGKslRidfB0Ls7eDVDnht1EP0baYD/SsYBFbfQ4f7m
+        9qPkg9sFl0V39b3683Ri8LrF1JH0FqMNj0600pQwSGzarUnBD3DR0Afjc0EPQjZn
+        jcb5oiiNBsm0g=
+Received: (qmail 3694275 invoked from network); 16 Mar 2023 08:46:10 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Mar 2023 08:46:10 +0100
+X-UD-Smtp-Session: l3s3148p1@Kbx3p//2XJwujnvb
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     netdev@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net 0/2] smsc: fix bugs when interface is not up
-Date:   Thu, 16 Mar 2023 08:45:56 +0100
-Message-Id: <20230316074558.15268-1-wsa+renesas@sang-engineering.com>
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] smsc911x: avoid PHY being resumed when interface is not up
+Date:   Thu, 16 Mar 2023 08:45:58 +0100
+Message-Id: <20230316074558.15268-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230316074558.15268-1-wsa+renesas@sang-engineering.com>
+References: <20230316074558.15268-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I found two issues dealing with the SMSC911x on the Renesas APE6-EVM
-when the interface is not up yet. Each patch here deals with one of
-them. Please read the patch description for details.
+SMSC911x doesn't need mdiobus suspend/resume, that's why it sets
+'mac_managed_pm'. However, setting it needs to be moved from init to
+probe, so mdiobus PM functions will really never be called (e.g. when
+the interface is not up yet during suspend/resume). The errno is changed
+because ENODEV has a special meaning when returned in probe().
 
-Wolfram Sang (2):
-  Revert "net: smsc911x: Make Runtime PM handling more fine-grained"
-  smsc911x: avoid PHY being resumed when interface is not up
+Fixes: 3ce9f2bef755 ("net: smsc911x: Stop and start PHY during suspend and resume")
+Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/net/ethernet/smsc/smsc911x.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
- drivers/net/ethernet/smsc/smsc911x.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
-
+diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
+index 9d12fd54281a..4cc5b9833e8f 100644
+--- a/drivers/net/ethernet/smsc/smsc911x.c
++++ b/drivers/net/ethernet/smsc/smsc911x.c
+@@ -1015,12 +1015,7 @@ static int smsc911x_mii_probe(struct net_device *dev)
+ 	struct phy_device *phydev = NULL;
+ 	int ret;
+ 
+-	/* find the first phy */
+ 	phydev = phy_find_first(pdata->mii_bus);
+-	if (!phydev) {
+-		netdev_err(dev, "no PHY found\n");
+-		return -ENODEV;
+-	}
+ 
+ 	SMSC_TRACE(pdata, probe, "PHY: addr %d, phy_id 0x%08X",
+ 		   phydev->mdio.addr, phydev->phy_id);
+@@ -1033,8 +1028,6 @@ static int smsc911x_mii_probe(struct net_device *dev)
+ 		return ret;
+ 	}
+ 
+-	/* Indicate that the MAC is responsible for managing PHY PM */
+-	phydev->mac_managed_pm = true;
+ 	phy_attached_info(phydev);
+ 
+ 	phy_set_max_speed(phydev, SPEED_100);
+@@ -1062,6 +1055,7 @@ static int smsc911x_mii_init(struct platform_device *pdev,
+ 			     struct net_device *dev)
+ {
+ 	struct smsc911x_data *pdata = netdev_priv(dev);
++	struct phy_device *phydev;
+ 	int err = -ENXIO;
+ 
+ 	pdata->mii_bus = mdiobus_alloc();
+@@ -1104,6 +1098,15 @@ static int smsc911x_mii_init(struct platform_device *pdev,
+ 		goto err_out_free_bus_2;
+ 	}
+ 
++	phydev = phy_find_first(pdata->mii_bus);
++	if (!phydev) {
++		netdev_err(dev, "no PHY found\n");
++		err = -ENOENT;
++		goto err_out_free_bus_2;
++	}
++
++	phydev->mac_managed_pm = true;
++
+ 	return 0;
+ 
+ err_out_free_bus_2:
 -- 
 2.30.2
 
