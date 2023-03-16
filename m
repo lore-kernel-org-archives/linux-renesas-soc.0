@@ -2,81 +2,145 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FFFC74A5B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Mar 2023 04:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23827C6FD1F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Mar 2023 07:46:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229832AbjCPElL (ORCPT
+        id S230081AbjCPHqR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Mar 2023 00:41:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41158 "EHLO
+        Thu, 16 Mar 2023 03:46:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbjCPElF (ORCPT
+        with ESMTP id S229873AbjCPHqQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Mar 2023 00:41:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0565113;
-        Wed, 15 Mar 2023 21:40:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 90BC461F27;
-        Thu, 16 Mar 2023 04:40:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D6FE7C433A4;
-        Thu, 16 Mar 2023 04:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678941620;
-        bh=g73Zq5LApoZcbWOvhAbnPD5PurRehBcx2vXfSYdTF5M=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=glaBHW3/NNHyXHf4hm0m1hhbAF+f0KUtv3iJ9ik4GbneHVfxexkm71l6ZvIsL5S+A
-         sBaa2V5O+5DrqtRAO/JLgOpytwWLboyp8fETx17SHFP4cXWgCT1fvVh3Zxpu4xAsib
-         dHLjLfQdtXQl3KEcHZkE6x/rlgSfarHgs6Iasp6Uf6WWNIe/3tZ0Sw59MrHmYJFMCD
-         RIFRZbk86vRgITpsQdqVkDD7IsB0jV9+Wp0BRdkO8gGiTeYxU6wVcGj2/OkTO92m6t
-         nzEAcDRAdXBwnAS3vk4E6yNUy3YQ+ve0Qi/2mPTHzndijjwoV0GMf35hk3mbpdFRN/
-         I/azFZiaktEYA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B6604E524FB;
-        Thu, 16 Mar 2023 04:40:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 16 Mar 2023 03:46:16 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA372A42E7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Mar 2023 00:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=+IR8pE4hi1ZLE+
+        2LyqKA5kfPq/hBxxEmeX0MnGUKI4c=; b=DnI16kGJNgx0M25sW+BCIGFKwh401d
+        5QyHNd7ALoXBfFpWQEsmiJWv7f2BwI7oQqgTVwYA5GmSS3wVbZYbGtcIa9QtXdh/
+        TmDQJL8MhOjnh2gCF6s/k+htUsVVeVzDW6TwrrzVQkmAwxrJuFXH52voGidWYp4S
+        3TxDslnkw9Qf0=
+Received: (qmail 3694226 invoked from network); 16 Mar 2023 08:46:09 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Mar 2023 08:46:09 +0100
+X-UD-Smtp-Session: l3s3148p1@ybFtp//2WJwujnvb
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] Revert "net: smsc911x: Make Runtime PM handling more fine-grained"
+Date:   Thu, 16 Mar 2023 08:45:57 +0100
+Message-Id: <20230316074558.15268-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230316074558.15268-1-wsa+renesas@sang-engineering.com>
+References: <20230316074558.15268-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [RESEND net-next] net: phy: update obsolete comment about
- PHY_STARTING
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167894162074.2389.7102398678903231099.git-patchwork-notify@kernel.org>
-Date:   Thu, 16 Mar 2023 04:40:20 +0000
-References: <20230314124856.44878-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20230314124856.44878-1-wsa+renesas@sang-engineering.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        hkallweit1@gmail.com, andrew@lunn.ch, linux@armlinux.org.uk,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+This reverts commit 1e30b8d755b81b0d1585cb22bc753e9f2124fe87. Running
+'ifconfig' with the interface down BUGs. This is the culprit:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+	smsc911x_get_stats from dev_get_stats+0xe4/0xf4
 
-On Tue, 14 Mar 2023 13:48:56 +0100 you wrote:
-> Commit 899a3cbbf77a ("net: phy: remove states PHY_STARTING and
-> PHY_PENDING") missed to update a comment in phy_probe. Remove
-> superfluous "Description:" prefix while we are here.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Heiner Kallweit <hkallweit1@gmail.com>
-> 
-> [...]
+The above function is called with the clocks off, so register read
+fails. Enabling clocks in the above functions does not work, because it
+is called in atomic context. So, let's return to the simple and working
+PM we had before.
 
-Here is the summary with links:
-  - [RESEND,net-next] net: phy: update obsolete comment about PHY_STARTING
-    https://git.kernel.org/netdev/net-next/c/83456576a420
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/net/ethernet/smsc/smsc911x.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
+index a2e511912e6a..9d12fd54281a 100644
+--- a/drivers/net/ethernet/smsc/smsc911x.c
++++ b/drivers/net/ethernet/smsc/smsc911x.c
+@@ -557,7 +557,6 @@ static int smsc911x_mii_read(struct mii_bus *bus, int phyaddr, int regidx)
+ 	unsigned int addr;
+ 	int i, reg;
+ 
+-	pm_runtime_get_sync(bus->parent);
+ 	spin_lock_irqsave(&pdata->mac_lock, flags);
+ 
+ 	/* Confirm MII not busy */
+@@ -583,7 +582,6 @@ static int smsc911x_mii_read(struct mii_bus *bus, int phyaddr, int regidx)
+ 
+ out:
+ 	spin_unlock_irqrestore(&pdata->mac_lock, flags);
+-	pm_runtime_put(bus->parent);
+ 	return reg;
+ }
+ 
+@@ -596,7 +594,6 @@ static int smsc911x_mii_write(struct mii_bus *bus, int phyaddr, int regidx,
+ 	unsigned int addr;
+ 	int i, reg;
+ 
+-	pm_runtime_get_sync(bus->parent);
+ 	spin_lock_irqsave(&pdata->mac_lock, flags);
+ 
+ 	/* Confirm MII not busy */
+@@ -626,7 +623,6 @@ static int smsc911x_mii_write(struct mii_bus *bus, int phyaddr, int regidx,
+ 
+ out:
+ 	spin_unlock_irqrestore(&pdata->mac_lock, flags);
+-	pm_runtime_put(bus->parent);
+ 	return reg;
+ }
+ 
+@@ -1595,8 +1591,6 @@ static int smsc911x_open(struct net_device *dev)
+ 	int retval;
+ 	int irq_flags;
+ 
+-	pm_runtime_get_sync(dev->dev.parent);
+-
+ 	/* find and start the given phy */
+ 	if (!dev->phydev) {
+ 		retval = smsc911x_mii_probe(dev);
+@@ -1743,7 +1737,6 @@ static int smsc911x_open(struct net_device *dev)
+ 	phy_disconnect(dev->phydev);
+ 	dev->phydev = NULL;
+ out:
+-	pm_runtime_put(dev->dev.parent);
+ 	return retval;
+ }
+ 
+@@ -1775,7 +1768,6 @@ static int smsc911x_stop(struct net_device *dev)
+ 		dev->phydev = NULL;
+ 	}
+ 	netif_carrier_off(dev);
+-	pm_runtime_put(dev->dev.parent);
+ 
+ 	SMSC_TRACE(pdata, ifdown, "Interface stopped");
+ 	return 0;
+@@ -2347,6 +2339,7 @@ static int smsc911x_drv_remove(struct platform_device *pdev)
+ 
+ 	free_netdev(dev);
+ 
++	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	return 0;
+@@ -2552,7 +2545,6 @@ static int smsc911x_drv_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	spin_unlock_irq(&pdata->mac_lock);
+-	pm_runtime_put(&pdev->dev);
+ 
+ 	netdev_info(dev, "MAC Address: %pM\n", dev->dev_addr);
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.30.2
 
