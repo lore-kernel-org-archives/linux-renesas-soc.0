@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14258C6FD1D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Mar 2023 05:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74326C6FD1D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Mar 2023 05:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229680AbjCQFaJ (ORCPT
+        id S229599AbjCQFbK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Mar 2023 01:30:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55098 "EHLO
+        Fri, 17 Mar 2023 01:31:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229923AbjCQFaH (ORCPT
+        with ESMTP id S229621AbjCQFbJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Mar 2023 01:30:07 -0400
+        Fri, 17 Mar 2023 01:31:09 -0400
 Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10291B53C0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Mar 2023 22:30:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210CBB53D9
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Mar 2023 22:31:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679031005; x=1710567005;
+  t=1679031065; x=1710567065;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=erevtoQOMEcHvUPiiowU9leqDwJ0ZKrb9ZPODturlYk=;
-  b=FVzOz9dTwgzQ6aYuBDR1bNc3C0Lo2OzUnrkxCcAF8PwOTleIcYXGvrbO
-   xvcx7B3yp34lytevhXC327lE9h5Wfwoq+ojQEEG+I7TWfB08BwBzf4y4A
-   uL7TEVOddEW7PpEuOBuJtMzy0oEhlPdsUu6oKfmXwSydRqv5wmQBsqrec
-   hYdI2DszZEkCxd3WtFUjLcgiV5auNScp0g/k0TdLiBuYf1OgvuimYteYv
-   +pZBvSI14gFzluWMMc+L6X5tEL1gPvFqhUWwEOVeuqcIFQ5OVKEW5EeJP
-   55N46Zjom9Iz7p/IMkmghIaW6QnA5juwr0uOLUwFFfbXYATqy7fp0bPaI
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10651"; a="339725995"
+  bh=qojngPK6iOwiJ4QeyZ8SDEGAVPgZ0TD1Xyg/tlpsYk4=;
+  b=cH8SYLSnOO+mGTZlVFY2PXGEEc0YzKveSQcxhW2te7R2LJWbFM2S98BZ
+   ceOH3jeUPe1muWcs9NYWbvsfPI60JYztKn1S09TmN0RBiPg5bJjk8vBud
+   XYZ0V7JUeExoe3qfSpBDeFumPq0VnUQxlhwigX77hsdtHQaZ6Kw1KUdnJ
+   STJEOesGWWWbhfNgrGqVIlRXeD/9PNR1QOpNZfJHaKAHwq8XaNtaZLDww
+   wAOBb/8e1zzlOvsBsgbxOQf7lFdGh9A5JntG22IS+aDj2jn3ybuJetQZ3
+   t3/r4DCnq9YvQPja2yYhXQLOfmNLXxUUhMrx6clZIMubWg5XEsW2urTXZ
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10651"; a="339726161"
 X-IronPort-AV: E=Sophos;i="5.98,268,1673942400"; 
-   d="scan'208";a="339725995"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2023 22:30:04 -0700
+   d="scan'208";a="339726161"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2023 22:31:04 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10651"; a="749132113"
+X-IronPort-AV: E=McAfee;i="6600,9927,10651"; a="854325553"
 X-IronPort-AV: E=Sophos;i="5.98,268,1673942400"; 
-   d="scan'208";a="749132113"
+   d="scan'208";a="854325553"
 Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Mar 2023 22:30:03 -0700
+  by orsmga005.jf.intel.com with ESMTP; 16 Mar 2023 22:31:03 -0700
 Received: from kbuild by b613635ddfff with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pd2f7-00097a-1s;
-        Fri, 17 Mar 2023 05:29:57 +0000
-Date:   Fri, 17 Mar 2023 13:29:38 +0800
+        id 1pd2g5-000981-2W;
+        Fri, 17 Mar 2023 05:30:57 +0000
+Date:   Fri, 17 Mar 2023 13:30:16 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-drivers-for-v6.4] BUILD SUCCESS
- 2653d5bf1c9d123c0d8b8c1634cf54dacfcfdb52
-Message-ID: <6413fac2.BknWcOInQCnMZS4U%lkp@intel.com>
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ 8184e7e383be876199a3be519c067b40143d8ab8
+Message-ID: <6413fae8.FQ9+vQPtpQx2gIBg%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -59,12 +59,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v6.4
-branch HEAD: 2653d5bf1c9d123c0d8b8c1634cf54dacfcfdb52  soc: renesas: Use "#ifdef" for single-symbol definition checks
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: 8184e7e383be876199a3be519c067b40143d8ab8  Merge branches 'renesas-drivers-for-v6.4' and 'renesas-dts-for-v6.4' into renesas-next
 
-elapsed time: 729m
+elapsed time: 731m
 
-configs tested: 112
+configs tested: 109
 configs skipped: 7
 
 The following configs have been built successfully.
@@ -79,7 +79,6 @@ arc                  randconfig-r026-20230315   gcc
 arm                              allmodconfig   gcc  
 arm                              allyesconfig   gcc  
 arm                                 defconfig   gcc  
-arm                       netwinder_defconfig   clang
 arm                  randconfig-r021-20230315   gcc  
 arm                  randconfig-r036-20230312   gcc  
 arm                  randconfig-r046-20230312   clang
@@ -141,8 +140,6 @@ powerpc                          allmodconfig   gcc
 powerpc                           allnoconfig   gcc  
 powerpc                     ep8248e_defconfig   gcc  
 powerpc                       maple_defconfig   gcc  
-powerpc                 mpc832x_mds_defconfig   clang
-powerpc                     ppa8548_defconfig   clang
 riscv                            allmodconfig   gcc  
 riscv                             allnoconfig   gcc  
 riscv        buildonly-randconfig-r002-20230313   clang
