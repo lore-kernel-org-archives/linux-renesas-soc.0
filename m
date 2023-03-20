@@ -2,39 +2,38 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5444FC6FD1D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Mar 2023 10:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9007C7618A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Mar 2023 10:59:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230501AbjCTK7d (ORCPT
+        id S230024AbjCTK7f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Mar 2023 06:59:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60748 "EHLO
+        Mon, 20 Mar 2023 06:59:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbjCTK6i (ORCPT
+        with ESMTP id S229851AbjCTK6k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2023 06:58:38 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AD4B22916A;
+        Mon, 20 Mar 2023 06:58:40 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1BA8A29402;
         Mon, 20 Mar 2023 03:55:07 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.98,274,1673881200"; 
-   d="scan'208";a="153188045"
+   d="scan'208";a="156562994"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Mar 2023 19:53:55 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Mar 2023 19:54:02 +0900
 Received: from localhost.localdomain (unknown [10.226.92.205])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CE9474004BCF;
-        Mon, 20 Mar 2023 19:53:52 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E7FA14004937;
+        Mon, 20 Mar 2023 19:53:59 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-serial@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH v3 3/5] tty: serial: sh-sci: Fix Tx on SCI IP
-Date:   Mon, 20 Mar 2023 10:53:37 +0000
-Message-Id: <20230320105339.236279-4-biju.das.jz@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 5/5] arm64: dts: renesas: r9a07g044: Enable sci0 nodes using dt overlay
+Date:   Mon, 20 Mar 2023 10:53:39 +0000
+Message-Id: <20230320105339.236279-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230320105339.236279-1-biju.das.jz@bp.renesas.com>
 References: <20230320105339.236279-1-biju.das.jz@bp.renesas.com>
@@ -44,71 +43,82 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-For SCI, the TE (transmit enable) must be set after setting TIE (transmit
-interrupt enable) or in the same instruction to start the transmission.
-Set TE bit in sci_start_tx() instead of set_termios() for SCI and clear
-TE bit, if circular buffer is empty in sci_transmit_chars().
+Enable sci0 node using dt overlay and disable can{0,1}-stb-hog
+nodes in dt overlay as its pins are shared with sci0 pins.
 
-Fixes: f9a2adcc9e90 ("arm64: dts: renesas: r9a07g044: Add SCI[0-1] nodes")
-Cc: stable@vger.kernel.org
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v3:
  * New patch
 ---
- drivers/tty/serial/sh-sci.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile          |  1 +
+ .../boot/dts/renesas/r9a07g043-smarc.dtso     | 45 +++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g043-smarc.dtso
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index b9cd27451f90..9079a8ea9132 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -597,6 +597,15 @@ static void sci_start_tx(struct uart_port *port)
- 	if (!s->chan_tx || port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
- 		/* Set TIE (Transmit Interrupt Enable) bit in SCSCR */
- 		ctrl = serial_port_in(port, SCSCR);
-+
-+		/*
-+		 * For SCI, TE (transmit enable) must be set after setting TIE
-+		 * (transmit interrupt enable) or in the same instruction to start
-+		 * the transmit process.
-+		 */
-+		if (port->type == PORT_SCI)
-+			ctrl |= SCSCR_TE;
-+
- 		serial_port_out(port, SCSCR, ctrl | SCSCR_TIE);
- 	}
- }
-@@ -835,6 +844,12 @@ static void sci_transmit_chars(struct uart_port *port)
- 			c = xmit->buf[xmit->tail];
- 			xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
- 		} else {
-+			if (port->type == PORT_SCI) {
-+				ctrl = serial_port_in(port, SCSCR);
-+				ctrl &= ~SCSCR_TE;
-+				serial_port_out(port, SCSCR, ctrl);
-+				return;
-+			}
- 			break;
- 		}
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 23b10c03091c..be938f360264 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -76,6 +76,7 @@ dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a779m5-salvator-xs.dtb
  
-@@ -2581,8 +2596,14 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
- 		sci_set_mctrl(port, port->mctrl);
- 	}
+ dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043u11-smarc.dtb
++dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043-smarc.dtbo
  
--	scr_val |= SCSCR_RE | SCSCR_TE |
--		   (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
-+	/*
-+	 * For SCI, TE (transmit enable) must be set after setting TIE
-+	 * (transmit interrupt enable) or in the same instruction to
-+	 * start the transmitting process. So skip setting TE here for SCI.
-+	 */
-+	if (port->type != PORT_SCI)
-+		scr_val |= SCSCR_TE;
-+	scr_val |= SCSCR_RE | (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
- 	serial_port_out(port, SCSCR, scr_val | s->hscif_tot);
- 	if ((srr + 1 == 5) &&
- 	    (port->type == PORT_SCIFA || port->type == PORT_SCIFB)) {
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043-smarc.dtso b/arch/arm64/boot/dts/renesas/r9a07g043-smarc.dtso
+new file mode 100644
+index 000000000000..515f9fb82938
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a07g043-smarc.dtso
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZ/{G2UL, Five} SMARC EVK PMOD parts
++ *
++ * Copyright (C) 2023 Renesas Electronics Corp.
++ *
++ *
++ * [Connection]
++ *
++ * SMARC EVK				PMOD USBUART
++ * +----------------------------+
++ * |CN7 (PMOD1 PIN HEADER)	|
++ * |	SCI0_TXD	  pin7  |<----->| pin2  Tx	|
++ * |	SCI1_RXD	  pin8  |<----->| pin3  Rx	|
++ * |	Gnd	  	  pin11 |<----->| pin5  Gnd	|
++ * |	Vcc	  	  pin12 |<----->| pin6  Vcc	|
++ * +----------------------------+	+---------------+
++ *
++ */
++
++/dts-v1/;
++/plugin/;
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
++
++&pinctrl {
++	can0-stb-hog {
++		status = "disabled";
++	};
++
++	can1-stb-hog {
++		status = "disabled";
++	};
++
++	sci0_pins: sci0-pins {
++		pinmux = <RZG2L_PORT_PINMUX(2, 2, 5)>, /* TxD */
++			 <RZG2L_PORT_PINMUX(2, 3, 5)>; /* RxD */
++	};
++};
++
++&sci0 {
++	pinctrl-0 = <&sci0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
 -- 
 2.25.1
 
