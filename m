@@ -2,53 +2,56 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 025ACC74A5B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Mar 2023 16:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DDAC74A5B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Mar 2023 18:39:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232402AbjCWQn0 (ORCPT
+        id S231478AbjCWSjt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Mar 2023 12:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39540 "EHLO
+        Thu, 23 Mar 2023 14:39:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231636AbjCWQnC (ORCPT
+        with ESMTP id S231443AbjCWSjs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Mar 2023 12:43:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3977EE1;
-        Thu, 23 Mar 2023 09:40:40 -0700 (PDT)
+        Thu, 23 Mar 2023 14:39:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51FD465A0;
+        Thu, 23 Mar 2023 11:39:47 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E4580B821C8;
-        Thu, 23 Mar 2023 16:40:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A4FFC433EF;
-        Thu, 23 Mar 2023 16:40:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E0C5E626DD;
+        Thu, 23 Mar 2023 18:39:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED723C433EF;
+        Thu, 23 Mar 2023 18:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679589635;
-        bh=C6zbcam0xUhqGIfoAQN43u6ixgPQPCK5MXt51f5tQ+g=;
+        s=k20201202; t=1679596786;
+        bh=J1tuQBO7/NjxMfKdV01NRxEWxZt9Yl5LPJ9WZFCA3f8=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pRfB86HvPG+N1+COI+X5YsHdDxWA2NjhUDXInRcRJDCMba2LlCyhLjVaF0jVk/zkD
-         yjbWGIIxAM/Lv1tdKJFynZe8SHo5Q4x9uaQPvgAoSaag4h+CDmOmlf2cs9NYIovc9v
-         j+12A01A1Aeg/bIx2UfQF7K6Rygyl2FVqWaI/xLnut4vsO1ZPEi6940r0Ndb9H1Ulp
-         g0uHfKKw06LEgY66EB3oERVvEPjRKk6MVV7XWPTOvJoEpePJfzAHOOvMPC/dkpSuln
-         6D7vLgrquuoqrbwMBXzD7KO+hMl2XTRJILL1DimurM04P+5LWyzTO5NYHoz/S278hs
-         AMUzVxrBl6lsg==
-Date:   Thu, 23 Mar 2023 09:40:34 -0700
+        b=i5a/Tksrk2VCYncC8YQR/q/Ma+j17gKS1GEz/NcKydCEPTHeMxkTO3wCBV5JDYKyv
+         Skf9XwdkthCVfI5pWEZ2tKszF0BCN1UgMxWwJejw03Mt5I3E/gaE3iC5s/O3XofxVs
+         mcBe6CZETTLgpbsRJ6yYBuubkYnL1hsQcUKJoTkFokXpmhMOyrIj7a3/w/+qJHLSQw
+         2nSu7JtDPk1f+09pOaf/i88NtZbxoN9kPBGWxiw8K80DLmGKSzhFtPxiaBzIRTxgoo
+         DGo2wBHFrKDCdZQ8efET+4JtgVvAAaTVXZZGdNY/fpWUcK2CzkUrXFixDg9xAnqABG
+         pE4lcUqSDodGg==
+Date:   Thu, 23 Mar 2023 11:39:45 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Simon Horman <simon.horman@corigine.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Steve Glendinning <steve.glendinning@shawell.net>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] sh_eth: remove open coded netif_running()
-Message-ID: <20230323094034.5b021c65@kernel.org>
-In-Reply-To: <CAMuHMdUt_kTH3tnrdF=oKBLyjrstei8PLsyr+dFXVoPEyxTLAA@mail.gmail.com>
-References: <20230321065826.2044-1-wsa+renesas@sang-engineering.com>
-        <79d945a4-e105-4bc4-3e73-64971731660e@omp.ru>
-        <CAMuHMdUt_kTH3tnrdF=oKBLyjrstei8PLsyr+dFXVoPEyxTLAA@mail.gmail.com>
+        Paolo Abeni <pabeni@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Oltean <olteanv@gmail.com>
+Subject: Re: [PATCH net v3 1/2] smsc911x: only update stats when interface
+ is up
+Message-ID: <20230323113945.0915029d@kernel.org>
+In-Reply-To: <20230322071959.9101-2-wsa+renesas@sang-engineering.com>
+References: <20230322071959.9101-1-wsa+renesas@sang-engineering.com>
+        <20230322071959.9101-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -56,10 +59,18 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 23 Mar 2023 09:32:27 +0100 Geert Uytterhoeven wrote:
-> Is there some protection against parallel execution of ndo_open()
-> and get_stats()?
+On Wed, 22 Mar 2023 08:19:58 +0100 Wolfram Sang wrote:
+> -	smsc911x_tx_update_txcounters(dev);
+> -	dev->stats.rx_dropped += smsc911x_reg_read(pdata, RX_DROP);
+> +
+> +	if (netif_running(dev)) {
+> +		smsc911x_tx_update_txcounters(dev);
+> +		dev->stats.rx_dropped += smsc911x_reg_read(pdata, RX_DROP);
+> +	}
 
-Nope - one is under rtnl_lock, the other under just RCU, IIRC.
-So this patch just makes the race worse, but it was already
-racy before.
+Same problem as on the renesas patch, netif_running() can return true
+before ndo->open() is called. And stats can be read with just the RCU
+lock (via procfs).
+
+Maybe we should add a false-negative version of netif_running() ?
+__LINK_STATE_START*ED* ?
