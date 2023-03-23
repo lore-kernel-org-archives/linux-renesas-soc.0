@@ -2,249 +2,109 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE20C761AF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Mar 2023 18:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9540CC76196
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Mar 2023 18:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231443AbjCWSkZ (ORCPT
+        id S231490AbjCWSva (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Mar 2023 14:40:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36598 "EHLO
+        Thu, 23 Mar 2023 14:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231473AbjCWSkY (ORCPT
+        with ESMTP id S231277AbjCWSv3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Mar 2023 14:40:24 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55CA1689B
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Mar 2023 11:40:19 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id d13so22318732pjh.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Mar 2023 11:40:19 -0700 (PDT)
+        Thu, 23 Mar 2023 14:51:29 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38322D178;
+        Thu, 23 Mar 2023 11:51:27 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id v4-20020a05600c470400b003ee4f06428fso1730643wmo.4;
+        Thu, 23 Mar 2023 11:51:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1679596819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dc8t5la/S7SGwbqv/1OxMvtkFBHHlif98Df3jcSZzQk=;
-        b=OB2JolwMzeoHAbSUZXKopfoWmwARaGq4piT0qielQgnlD99zuyJuuartOvZ1bQy6bk
-         26wiVoB0tComv/4PXE3fRSXpRYvSAK8LOXXwrDpOOiNt+upjl0ZlMJdkljKdtJdMo8p8
-         Ooj+ZrUfhbh/4O/PnAZOdqW6pvM2sg4ZBquFJ9aLpYOoysNGCi0pc2kX82iDUy383VNV
-         ePXzDSYzgTzAAebznckJHy6HdzF8F7sn2VztbCnqwvm/p+r9jLKH36IiYJwHgn9dOX7J
-         PNUqfhDg6c7egkJ2YtFwimU71WiEgVUvXfvOxbpbo86Qh+uUO/E1bGQt6utCxnw+uL02
-         hDew==
+        d=gmail.com; s=20210112; t=1679597486;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=64169Vvyo0ZZgIoZU5qnXvhyXyFpGQgMQ4mYoA5/rdo=;
+        b=MKFxTpTDbyIGV0lMr2M3rwEnb94MOqyxqpRVFxI2yBYnA4kjOcrkc9EjDt16ZRBRWy
+         w5rSFgxczBz8qdrzN96STvHlDGVopIivS3LeEiZyg5DMAXizfrS1UIKc6qmJ4fDXrjHf
+         AmdbAwv01aP9xSLohMK1BgqJu8jfpfjNztej4hUsOa8vY7m6Rg85LIjFATndeup4LuIV
+         k88Dzo7+MtuBG8/0DT+aEoBoZe6Gd9boRLgSaZOHWpP6iPkX3UouDtTIJ+DBZk/TPrHk
+         7hxXF5/EwdOZL63ZdZ6P7rTjoz/z4QN/9SHbaREcZS5iE+1GZy1wxUd//NOsYdWGQC+P
+         impw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679596819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dc8t5la/S7SGwbqv/1OxMvtkFBHHlif98Df3jcSZzQk=;
-        b=GnC50jAFiK840JmvGhjt+CaPUrXX6PNU4RxW7Ny9jdtRL3NeoQABnlhXuJgzjth2iA
-         ngt1+asjfyNM8X0s7EXyYFbhwDLcPHoy8s49EDkTDFe73nXtXX+pZG4ua1jtFq55iEw0
-         2oXnFLX2RuG/slaeDgsW5SnqB4aPtu49kNPji7aP3r4ybPDr8NPeIHNoXg6G0zN0At3H
-         GOSZpl6QBG+icV1YgkdRwTnjzKQvfDgTIC9/NynsORAf8/Y+e6Cfc2RVsrb8feaUefVV
-         d4/+b6JNsGMdm1LZPoOOLPpELX5je23XoNBX2JpQ3ftzon0v1Mw+e7PmNJEf2dCDGk1X
-         hGHA==
-X-Gm-Message-State: AO0yUKUprfbTduYYINbwwsGOV8xsEnNtolBR/yJPXoarS+AU5BxjTpsJ
-        UFkDloulRhhZ6Hc+0DwOJT3kgKjGKMQgaHlBmNymZw==
-X-Google-Smtp-Source: AK7set8GTpjYj8eDq8ynIFChjo3qsZvvDfnt1sgQBbe8GDAGmFUzkI3oJLZHCiNHHCqkTN3OP5x4od1Wm1tFnHeRTf4=
-X-Received: by 2002:a17:902:a607:b0:1a0:763d:6c2a with SMTP id
- u7-20020a170902a60700b001a0763d6c2amr2826208plq.10.1679596819029; Thu, 23 Mar
- 2023 11:40:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <328e557aaee9d3f5f1bcaf2b8ac2de0e04c4fbb8.1679049188.git.geert+renesas@glider.be>
- <CAGETcx_oYrhjo0C3zJ57gt7HGuiY_=9xEq+TvQU8R5zW6OiQCw@mail.gmail.com>
-In-Reply-To: <CAGETcx_oYrhjo0C3zJ57gt7HGuiY_=9xEq+TvQU8R5zW6OiQCw@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 23 Mar 2023 11:39:42 -0700
-Message-ID: <CAGETcx9=LENzJUVorEKpoeMChFZHO-=M2jHBQmOo+x1ez9=b5A@mail.gmail.com>
-Subject: Re: [PATCH/RFC] treewide: Fix instantiation of devices in DT overlay
-To:     geert+renesas@glider.be
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Wolfram Sang <wsa@kernel.org>,
+        d=1e100.net; s=20210112; t=1679597486;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=64169Vvyo0ZZgIoZU5qnXvhyXyFpGQgMQ4mYoA5/rdo=;
+        b=gSRW/a5qZns7HqRnp50LI5jklMP2lah34hj7F8Z/SQmK5KsNeTazEXedj2tQ1ggy5z
+         krWfJJ6W/kYTc7zuOVxX19Zk/EgATQtmLs+45RK+iNbAzRYmOOTlYtaYUQd8ehQAThDC
+         YzWnm7mQPwB8FfNmKvnLyNLkOhh+h9wyCyiI51xOqJaXMU9Vp20qr2NXQEAChGq8iLDE
+         PMBu60GJ1UehUiv5e27NIP8zP0TwjUevRBQPap57cklh4uNSn+OJtqb/vI2FHiwz3jCG
+         iPKRrBEUcy9obfQVjKQBiWUt3dY1fjx2JLz4vPV2nEhEp6A4hEoSdQnFz+MW38NJjmJ2
+         X+eQ==
+X-Gm-Message-State: AO0yUKVWQWXdO60aRTx+pX7noKFyHyLdUl44FgjtkGexoP6/hMYkgnnU
+        8LQIBVFnsHMac/6GUX1GbDc=
+X-Google-Smtp-Source: AK7set8uRrPGJYJokclypVKb4nC0fwJfb6HDu06Bl+KrlXV0hSQ1uQBNDiwna2u1y3tUW3Bmkkxl1A==
+X-Received: by 2002:a7b:c40b:0:b0:3ee:4ee:bf73 with SMTP id k11-20020a7bc40b000000b003ee04eebf73mr454458wmi.24.1679597485860;
+        Thu, 23 Mar 2023 11:51:25 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:7448:a207:93a2:a1ed])
+        by smtp.gmail.com with ESMTPSA id k11-20020a05600c0b4b00b003edef091b17sm2649323wmr.37.2023.03.23.11.51.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Mar 2023 11:51:24 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] dt-bindings: timer: renesas: ostm: Document RZ/Five SoC
+Date:   Thu, 23 Mar 2023 18:51:12 +0000
+Message-Id: <20230323185112.13855-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 17, 2023 at 5:36=E2=80=AFPM Saravana Kannan <saravanak@google.c=
-om> wrote:
->
-> On Fri, Mar 17, 2023 at 3:33=E2=80=AFAM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> >
-> > When loading a DT overlay that creates a device, the device is not
-> > instantiated, unless the DT overlay is unloaded and reloaded again.
-> >
-> > Saravana explains:
-> >   Basically for all overlays (I hope the function is only used for
-> >   overlays) we assume all nodes are NOT devices until they actually
-> >   get added as a device. Don't review the code, it's not meant to be :)
-> >
-> > Based on a hacky patch by Saravana Kannan, which covered only platform
-> > and spi devices.
-> >
-> > Fixes: 4a032827daa89350 ("of: property: Simplify of_link_to_phandle()")
-> > Link: https://lore.kernel.org/all/CAGETcx_+rhHvaC_HJXGrr5_WAd2+k5f=3DrW=
-YnkCZ6z5bGX-wj4w@mail.gmail.com
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Marked RFC as Saravana said this is an ugly hack.
-> > Still, this is a regression in v6.3-rc1 that should be fixed.
->
-> Thanks for making sure this isn't forgotten.
->
-> I thought about this a bit more and I've decided what I gave earlier
-> isn't really too much of a hack. The other option is to handle the
-> clearing of the flag at the driver core level, but we incur these
-> additional instructions for all devices instead of just the overlay
-> case. But the benefit is that if more busses add overlay support in
-> the future, they won't need to remember to clear the flag in those
-> instances too. But they'll probably start off by looking at the
-> existing platform bus case, so they'll get it right.
->
-> I'll continue the pondering next week and maybe test it on my device
-> to make sure it's not doing anything weird for non-overlay cases.
->
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Geert,
+The OSTM block on the RZ/Five SoC is identical to one found on the RZ/G2UL
+SoC. "renesas,r9a07g043-ostm" compatible string will be used on the
+RZ/Five SoC so to make this clear, update the comment to include RZ/Five
+SoC.
 
-I think we should stick with the original style of fix I suggested.
-So, basically your patch set. Are you planning on sending a non-RFC or
-do you want me to do it?
+No driver changes are required as generic compatible string
+"renesas,ostm" will be used as a fallback on RZ/Five SoC.
 
--Saravana
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/timer/renesas,ostm.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -3611,6 +3611,15 @@ int device_add(struct device *dev)
->          */
->         if (dev->fwnode && !dev->fwnode->dev) {
->                 dev->fwnode->dev =3D dev;
-> +               /*
-> +                * If a fwnode was initially marked as not a device, but =
-we
-> +                * clearly have a device added for it that can probe, the=
-n clear
-> +                * the flag so fw_devlink will continue linking consumers=
- to
-> +                * this device. This code path is really expected to run =
-only
-> +                * for DT overlays.
-> +                */
-> +               if (dev->bus)
-> +                       dev->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE
->                 fw_devlink_link_device(dev);
->         }
->
-> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> index 07d93753b12f..f715b59d9bf3 100644
-> --- a/drivers/of/dynamic.c
-> +++ b/drivers/of/dynamic.c
-> @@ -226,6 +226,11 @@ static void __of_attach_node(struct device_node *np)
->         np->sibling =3D np->parent->child;
->         np->parent->child =3D np;
->         of_node_clear_flag(np, OF_DETACHED);
-> +       /*
-> +        * Ask fw_devlink to assume any new node is not a device. Driver =
-core
-> +        * will clear this flag if the assumption turns out to be wrong.
-> +        */
-> +       np->fwnode.flags |=3D FWNODE_FLAG_NOT_DEVICE;
->  }
->
->
->
->
-> > ---
-> >  drivers/bus/imx-weim.c    | 1 +
-> >  drivers/i2c/i2c-core-of.c | 1 +
-> >  drivers/of/dynamic.c      | 1 +
-> >  drivers/of/platform.c     | 1 +
-> >  drivers/spi/spi.c         | 1 +
-> >  5 files changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-> > index 2a6b4f676458612e..71d8807170fa9f29 100644
-> > --- a/drivers/bus/imx-weim.c
-> > +++ b/drivers/bus/imx-weim.c
-> > @@ -329,6 +329,7 @@ static int of_weim_notify(struct notifier_block *nb=
-, unsigned long action,
-> >                                  "Failed to setup timing for '%pOF'\n",=
- rd->dn);
-> >
-> >                 if (!of_node_check_flag(rd->dn, OF_POPULATED)) {
-> > +                       rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVI=
-CE;
-> >                         if (!of_platform_device_create(rd->dn, NULL, &p=
-dev->dev)) {
-> >                                 dev_err(&pdev->dev,
-> >                                         "Failed to create child device =
-'%pOF'\n",
-> > diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
-> > index bce6b796e04c2ca0..79a0d47010ba0b20 100644
-> > --- a/drivers/i2c/i2c-core-of.c
-> > +++ b/drivers/i2c/i2c-core-of.c
-> > @@ -178,6 +178,7 @@ static int of_i2c_notify(struct notifier_block *nb,=
- unsigned long action,
-> >                         return NOTIFY_OK;
-> >                 }
-> >
-> > +               rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE;
-> >                 client =3D of_i2c_register_device(adap, rd->dn);
-> >                 if (IS_ERR(client)) {
-> >                         dev_err(&adap->dev, "failed to create client fo=
-r '%pOF'\n",
-> > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> > index 07d93753b12f5f4d..e311d406b1705306 100644
-> > --- a/drivers/of/dynamic.c
-> > +++ b/drivers/of/dynamic.c
-> > @@ -226,6 +226,7 @@ static void __of_attach_node(struct device_node *np=
-)
-> >         np->sibling =3D np->parent->child;
-> >         np->parent->child =3D np;
-> >         of_node_clear_flag(np, OF_DETACHED);
-> > +       np->fwnode.flags |=3D FWNODE_FLAG_NOT_DEVICE;
-> >  }
-> >
-> >  /**
-> > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-> > index b2bd2e783445dd78..17c92cbfb62ee3ef 100644
-> > --- a/drivers/of/platform.c
-> > +++ b/drivers/of/platform.c
-> > @@ -737,6 +737,7 @@ static int of_platform_notify(struct notifier_block=
- *nb,
-> >                 if (of_node_check_flag(rd->dn, OF_POPULATED))
-> >                         return NOTIFY_OK;
-> >
-> > +               rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE;
-> >                 /* pdev_parent may be NULL when no bus platform device =
-*/
-> >                 pdev_parent =3D of_find_device_by_node(rd->dn->parent);
-> >                 pdev =3D of_platform_device_create(rd->dn, NULL,
-> > diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> > index 1a65f96fe2aff591..7bd053a32fad1a3c 100644
-> > --- a/drivers/spi/spi.c
-> > +++ b/drivers/spi/spi.c
-> > @@ -4480,6 +4480,7 @@ static int of_spi_notify(struct notifier_block *n=
-b, unsigned long action,
-> >                         return NOTIFY_OK;
-> >                 }
-> >
-> > +               rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE;
-> >                 spi =3D of_register_spi_device(ctlr, rd->dn);
-> >                 put_device(&ctlr->dev);
-> >
-> > --
-> > 2.34.1
-> >
+diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml b/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
+index 7207929e5cd6..8b06a681764e 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
+@@ -23,7 +23,7 @@ properties:
+       - enum:
+           - renesas,r7s72100-ostm  # RZ/A1H
+           - renesas,r7s9210-ostm   # RZ/A2M
+-          - renesas,r9a07g043-ostm # RZ/G2UL
++          - renesas,r9a07g043-ostm # RZ/G2UL and RZ/Five
+           - renesas,r9a07g044-ostm # RZ/G2{L,LC}
+           - renesas,r9a07g054-ostm # RZ/V2L
+       - const: renesas,ostm        # Generic
+-- 
+2.25.1
+
