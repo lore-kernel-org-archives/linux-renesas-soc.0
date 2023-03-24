@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0C0C77B60
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A41C77B62
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Mar 2023 10:02:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbjCXKCg (ORCPT
+        id S229997AbjCXKCh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 24 Mar 2023 06:02:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57642 "EHLO
+        Fri, 24 Mar 2023 06:02:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231196AbjCXKCe (ORCPT
+        with ESMTP id S231127AbjCXKCe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 24 Mar 2023 06:02:34 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F36DC199DB;
-        Fri, 24 Mar 2023 03:02:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A28B424121;
+        Fri, 24 Mar 2023 03:02:32 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.98,287,1673881200"; 
-   d="scan'208";a="153660279"
+   d="scan'208";a="153660274"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Mar 2023 19:02:33 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 Mar 2023 19:02:31 +0900
 Received: from localhost.localdomain (unknown [10.226.93.228])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 738BA401BBFB;
-        Fri, 24 Mar 2023 19:02:31 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 66A14401BBF6;
+        Fri, 24 Mar 2023 19:02:28 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -31,9 +31,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/3] tty: serial: sh-sci: Add RZ/G2L SCIF DMA tx support
-Date:   Fri, 24 Mar 2023 10:02:21 +0000
-Message-Id: <20230324100222.116666-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 1/3] tty: serial: sh-sci: Remove setting {src,dst}_{addr,addr_width} based on DMA direction
+Date:   Fri, 24 Mar 2023 10:02:20 +0000
+Message-Id: <20230324100222.116666-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230324100222.116666-1-biju.das.jz@bp.renesas.com>
 References: <20230324100222.116666-1-biju.das.jz@bp.renesas.com>
@@ -43,76 +43,48 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add SCIF DMA tx support for RZ/G2L alike SoCs.
+The direction field in the DMA config is deprecated. The sh-sci driver
+sets {src,dst}_{addr,addr_width} based on the DMA direction and
+it results in dmaengine_slave_config() failure as RZ DMAC driver
+validates {src,dst}_addr_width values independent of DMA direction.
 
-RZ/G2L alike SoC use the same signal for both interrupt and DMA
-transfer requests, so we must disable line interrupts(tx and tx end)
-while transferring DMA and enable the TIE source interrupt.
-
-Based on a patch in the BSP by Long Luu
-<long.luu.ur@renesas.com>
+Fix this issue by passing both {src,dst}_{addr,addr_width}
+values independent of DMA direction.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
  * No change
 ---
- drivers/tty/serial/sh-sci.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ drivers/tty/serial/sh-sci.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 4278aef59f6d..81797eb722cb 100644
+index da7eb7a3ca6f..4278aef59f6d 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -172,6 +172,13 @@ to_sci_port(struct uart_port *uart)
- 	return container_of(uart, struct sci_port, port);
- }
+@@ -1553,15 +1553,12 @@ static struct dma_chan *sci_request_dma_chan(struct uart_port *port,
  
-+static inline bool is_rz_scif_port(struct uart_port *port, struct sci_port *s)
-+{
-+	const struct plat_sci_port *p = s->cfg;
-+
-+	return port->type == PORT_SCIF && p->regtype == SCIx_RZ_SCIFA_REGTYPE;
-+}
-+
- static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 	/*
- 	 * Common SCI definitions, dependent on the port's regshift
-@@ -588,6 +595,16 @@ static void sci_start_tx(struct uart_port *port)
+ 	memset(&cfg, 0, sizeof(cfg));
+ 	cfg.direction = dir;
+-	if (dir == DMA_MEM_TO_DEV) {
+-		cfg.dst_addr = port->mapbase +
+-			(sci_getreg(port, SCxTDR)->offset << port->regshift);
+-		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
+-	} else {
+-		cfg.src_addr = port->mapbase +
+-			(sci_getreg(port, SCxRDR)->offset << port->regshift);
+-		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
+-	}
++	cfg.dst_addr = port->mapbase +
++		(sci_getreg(port, SCxTDR)->offset << port->regshift);
++	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
++	cfg.src_addr = port->mapbase +
++		(sci_getreg(port, SCxRDR)->offset << port->regshift);
++	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
  
- 	if (s->chan_tx && !uart_circ_empty(&s->port.state->xmit) &&
- 	    dma_submit_error(s->cookie_tx)) {
-+		if (is_rz_scif_port(port, s)) {
-+			/* Switch irq from SCIF to DMA */
-+			disable_irq(s->irqs[SCIx_TXI_IRQ]);
-+			disable_irq(s->irqs[SCIx_TEI_IRQ]);
-+
-+			/* DMA need TIE enable */
-+			ctrl = serial_port_in(port, SCSCR);
-+			serial_port_out(port, SCSCR, ctrl | SCSCR_TIE);
-+		}
-+
- 		s->cookie_tx = 0;
- 		schedule_work(&s->work_tx);
- 	}
-@@ -1214,9 +1231,16 @@ static void sci_dma_tx_complete(void *arg)
- 		schedule_work(&s->work_tx);
- 	} else {
- 		s->cookie_tx = -EINVAL;
--		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
-+		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB ||
-+		    is_rz_scif_port(port, s)) {
- 			u16 ctrl = serial_port_in(port, SCSCR);
- 			serial_port_out(port, SCSCR, ctrl & ~SCSCR_TIE);
-+			if (port->type == PORT_SCIF) {
-+				/* Switch irq from DMA to SCIF */
-+				dmaengine_pause(s->chan_tx_saved);
-+				enable_irq(s->irqs[SCIx_TXI_IRQ]);
-+				enable_irq(s->irqs[SCIx_TEI_IRQ]);
-+			}
- 		}
- 	}
- 
+ 	ret = dmaengine_slave_config(chan, &cfg);
+ 	if (ret) {
 -- 
 2.25.1
 
