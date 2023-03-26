@@ -2,47 +2,47 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C26C6FD1C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3197C77B6C
 	for <linux-renesas-soc@archiver.kernel.org>; Sun, 26 Mar 2023 14:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232458AbjCZOcu (ORCPT
+        id S232453AbjCZOcv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 26 Mar 2023 10:32:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60400 "EHLO
+        Sun, 26 Mar 2023 10:32:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232447AbjCZOcs (ORCPT
+        with ESMTP id S232449AbjCZOcs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Sun, 26 Mar 2023 10:32:48 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE077DAA
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EFC57DAD
         for <linux-renesas-soc@vger.kernel.org>; Sun, 26 Mar 2023 07:32:46 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQF-0008Hp-SW; Sun, 26 Mar 2023 16:32:39 +0200
+        id 1pgRQF-0008HV-O5; Sun, 26 Mar 2023 16:32:39 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQD-006rcb-F0; Sun, 26 Mar 2023 16:32:37 +0200
+        id 1pgRQD-006rcW-Cb; Sun, 26 Mar 2023 16:32:37 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pgRQB-0088Wn-PH; Sun, 26 Mar 2023 16:32:35 +0200
+        id 1pgRQC-0088Wu-5A; Sun, 26 Mar 2023 16:32:36 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To:     =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         kernel@pengutronix.de
-Subject: [PATCH 047/117] media: rcar-fcp: Convert to platform remove callback returning void
-Date:   Sun, 26 Mar 2023 16:31:14 +0200
-Message-Id: <20230326143224.572654-50-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 049/117] media: rcar-core: Convert to platform remove callback returning void
+Date:   Sun, 26 Mar 2023 16:31:16 +0200
+Message-Id: <20230326143224.572654-52-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
 References: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1809; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=HOnp3fnDdiAtu7mHXeRwe9TTiGOr9s+ukY2fTy4ZTHQ=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkIFa/vEI9nBE95QuR5cH6f2HZre7YZAMERty65 1pd7vHi6LuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZCBWvwAKCRCPgPtYfRL+ TiguB/4yBR0TtvQip2NJtIemL1cL+qLnjmfJqNI4o19veEIdOkNqVIWw1qlJ4KzZwUN5SQC3CBX 681lfq3cr2F1/dl1Q9/J5d1A/uGPEohkjSfGKIwkpNkCQeTjIGBhD5FwgDoqe6YbdR4pMJJyRnB WJD1hPakjGmgB00oIKYz8vnFBmdE77lak1/Nhmc1B3J8k+pz/WavsYZJXtImnNlKIzVs8xxdPbd 18Ita8YSdtxFU39yJlKnwn0a0hn+ZhlWvBNufy+RFW2tq+K40lF5J6o25GIengM/eu1fL6B4Axq FaN9iAodcVck+LrCNf64YIz1Xp1RrSFjWxYU2D9pcGJ1rYSk
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1821; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=95eFlYcFS5rE4SExkOimIwf5tFvBzgFzhyqxLBhy9Is=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkIFbBootwkPzYp0dHDwnmM9s0TK9ambTS6fbVT hrfQtVEAdqJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZCBWwQAKCRCPgPtYfRL+ TgkLCACYFPdUV7Ap/CvPFrD8z760nwgR3D2L+LvXZNMGzegLv32zNlO9WyFvfWhKBQG2afZ0JO9 Tz+J57MkWsmBTkE6wca4F7C0/QD42QOgxgas5x2kEmqHEJN3w7SXh36MqhpmjBPMLX7gMJBI0sw eat1X53sN3E/ij0SB1Tqc29QGFNXC8Dup9lxDxQxAM2BxlxjsxAVfOls2+GUZRxDjZBM1i1QptU w7/yZBARxmEHX/ElLEdlkOuJnsHVuyUHNeTr8g4g47Wlk7mxeG3sbCRNeAJ9o+0NKO+uLQqD2w9 JnnOSp1sqoKhF8Pqk8KW4fGPh4ae7QX/Y78K/9+JxZBppvGd
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -66,40 +66,40 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/media/platform/renesas/rcar-fcp.c | 6 ++----
+ drivers/media/platform/renesas/rcar-vin/rcar-core.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/renesas/rcar-fcp.c b/drivers/media/platform/renesas/rcar-fcp.c
-index eb59a3ba6d0f..bcef7b87da7c 100644
---- a/drivers/media/platform/renesas/rcar-fcp.c
-+++ b/drivers/media/platform/renesas/rcar-fcp.c
-@@ -144,7 +144,7 @@ static int rcar_fcp_probe(struct platform_device *pdev)
+diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-core.c b/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+index 5e53d6b7036c..1398f147e5c2 100644
+--- a/drivers/media/platform/renesas/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+@@ -1442,7 +1442,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static int rcar_fcp_remove(struct platform_device *pdev)
-+static void rcar_fcp_remove(struct platform_device *pdev)
+-static int rcar_vin_remove(struct platform_device *pdev)
++static void rcar_vin_remove(struct platform_device *pdev)
  {
- 	struct rcar_fcp_device *fcp = platform_get_drvdata(pdev);
+ 	struct rvin_dev *vin = platform_get_drvdata(pdev);
  
-@@ -153,8 +153,6 @@ static int rcar_fcp_remove(struct platform_device *pdev)
- 	mutex_unlock(&fcp_lock);
+@@ -1458,8 +1458,6 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 		rvin_parallel_cleanup(vin);
  
- 	pm_runtime_disable(&pdev->dev);
+ 	rvin_dma_unregister(vin);
 -
 -	return 0;
  }
  
- static const struct of_device_id rcar_fcp_of_match[] = {
-@@ -166,7 +164,7 @@ MODULE_DEVICE_TABLE(of, rcar_fcp_of_match);
+ static SIMPLE_DEV_PM_OPS(rvin_pm_ops, rvin_suspend, rvin_resume);
+@@ -1472,7 +1470,7 @@ static struct platform_driver rcar_vin_driver = {
+ 		.of_match_table = rvin_of_id_table,
+ 	},
+ 	.probe = rcar_vin_probe,
+-	.remove = rcar_vin_remove,
++	.remove_new = rcar_vin_remove,
+ };
  
- static struct platform_driver rcar_fcp_platform_driver = {
- 	.probe		= rcar_fcp_probe,
--	.remove		= rcar_fcp_remove,
-+	.remove_new	= rcar_fcp_remove,
- 	.driver		= {
- 		.name	= "rcar-fcp",
- 		.of_match_table = rcar_fcp_of_match,
+ module_platform_driver(rcar_vin_driver);
 -- 
 2.39.2
 
