@@ -2,169 +2,117 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F54BC7619A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Mar 2023 09:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCC5C76195
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Mar 2023 09:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232450AbjC0Jxn (ORCPT
+        id S232954AbjC0J6V (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 Mar 2023 05:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
+        Mon, 27 Mar 2023 05:58:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbjC0Jxm (ORCPT
+        with ESMTP id S233253AbjC0J6U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Mar 2023 05:53:42 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2093.outbound.protection.outlook.com [40.107.114.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111AD49DD;
-        Mon, 27 Mar 2023 02:53:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YtdT5VoQoUrML/yDNCCe6EfLiFB4djzuv5vYUlMla40hmfqsPSFhg7Tnn2hzqjjAAowhF2D6j1z5Ldag/EVMylEPneKMwIw27yDEnUfS2O2MRb3eqgek9VEgzDnxutmNTARc55ZdJLL6ByHlKPleRRlPDBDwFYOBKG+GvsusZWcaJEqjGBZUacMAYxwClfwM+2x/P5Nle5l/Z4hJeciE+4NC9wN0ncAxQhOaYDf53jCLbIoKPWGR2+JdQN9ZyZcPSVUW2rlKy0Omq23Z11Ze4dOwMIpRD3Ox86sWWxMBeHl6y4wCTXHweqIMNt8Q8yecYZdLijPFTE1ngK8ikdhNuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kBqF9KftHU/I8UqeP0jfS/JRtu7gIw8v8NbedwhDdtw=;
- b=TA2RA+Uwdpn0+M/eH5Ys82n9Uq/6UthXrCm25crTg1s7Y71ykBLo1OFym0ZpYM5pG0f6USZ8WlhKgxAAZ0p49vbaGdlOVFL/4ycVTtQD1NrmyM9LSRoZ7/Jz4Kyy8pXA++k6qmj8HSnI5vf48oi1emGY0GmMhzfeK/5jHCeUZSOxR8cGuFECF53YqdIgcK4um8rjg9rlc/PgpZQBJ88sdOMklYh/NX/Fs7RP4wDBehL0Pni7pGhFP+0z60cmf5psQQlm8Lh2MQJi6GEO9DQQaw5MoB5uFeB7IUO+i+vjWa6W+1gxBqdsmxHrsErHORRhuhEU9UU3N5hF4tFDqxtUng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kBqF9KftHU/I8UqeP0jfS/JRtu7gIw8v8NbedwhDdtw=;
- b=GskJYfjKO0Y7qJIlDMsVGxTuXg8fupSKCL/be70EnfU597xR2wPQqTGw3ltvMDXg/lvamZQM9j4XWKRWg5GAfB27UrYZDKAGce7c4VY3KnEfMjZ7f/cMnB9zyOaqhGng6WIT1/iCSdAocWhPquWR87pvIEoMt/Rret8WSnMsqlc=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TY3PR01MB11948.jpnprd01.prod.outlook.com (2603:1096:400:405::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.28; Mon, 27 Mar
- 2023 09:53:38 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::e521:994c:bb0e:9bf6]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::e521:994c:bb0e:9bf6%5]) with mapi id 15.20.6222.028; Mon, 27 Mar 2023
- 09:53:38 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>
-CC:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] dmaengine: sh: rz-dmac: Remove unused
- rz_dmac_chan.*_word_size
-Thread-Topic: [PATCH] dmaengine: sh: rz-dmac: Remove unused
- rz_dmac_chan.*_word_size
-Thread-Index: AQHZYJFQz2hl/iqjdkSNZCFVO+fevq8OYqIA
-Date:   Mon, 27 Mar 2023 09:53:38 +0000
-Message-ID: <OS0PR01MB592254BE57FF71C184442A05868B9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <021bdf56f1716276a55bcfb1ea81bba5f1d42b3d.1679910274.git.geert+renesas@glider.be>
-In-Reply-To: <021bdf56f1716276a55bcfb1ea81bba5f1d42b3d.1679910274.git.geert+renesas@glider.be>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TY3PR01MB11948:EE_
-x-ms-office365-filtering-correlation-id: aeac2d99-6d2f-4c81-66ac-08db2ea92375
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: YD/vzv2N3tC7/ifDyNZd5YdtGB5BslXVr1jMzZpny7TT3WQ8JqkVG4ijR97I2yGhPiJmwjkJlw85zgJQePso199WJKYIB+6AuTziOM5jHJDCKP+SKTUL23H7+NjVXPPqj4rexaZQaUWEgZEzICMh20C473S1jVLx3ABEB5Eeujo1F8VrUf0XLfij+OLbi/9coh4k939eSsvfXv7SeTWR26r2ZIVRLBl/n3Ve633vmfm9ObcmuxCYAQOC5x60p/bEvuH8/TwG3xFF65gIf2nM5XQIE5ISkG7AxdBJv8a4FhhJKhm4lm1Lj5OZAriU3kqXEcKDm8C8PEd8049HxCA+PdFU9wOUnXH5AWB9snrG89+btXoTMQoJNl4NT+1az3x7zHBDx+M2OxVo1s5GmMuiK7V5YvqZcycJ0Vgpz5GXrFLaGv9IrUIIVtl03Uuem+UYp6rYn92UVARVuJh5FrvgL9M6p2SYNNfdNGTELd/pL5/BI+pCuyjIXeOz5gPXXsgIfk0R2Jqj7ImUKwlksDy4SwRQq7KDzpAyHuWHoAwYG8dPSDGQhyZZu7zLqouc6Yg0BjqPiyBSIEY44dDoQaSUFCZGd86U0vWCX1Ln5wH2uBnH5oFyysz0iN/U/4vaeRcF
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(136003)(396003)(39860400002)(346002)(366004)(451199021)(83380400001)(64756008)(76116006)(66476007)(66446008)(2906002)(4326008)(8676002)(66946007)(66556008)(54906003)(71200400001)(478600001)(7696005)(53546011)(9686003)(186003)(6506007)(26005)(110136005)(316002)(38070700005)(55016003)(33656002)(86362001)(52536014)(41300700001)(38100700002)(8936002)(5660300002)(122000001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?AOZp42Ww74/hG81uCKNccTnlpgPmgQ1t0KkUO8lQ78sElPWKZ1LfI5FVmI8i?=
- =?us-ascii?Q?dPTCSF/sHALoodhJ6xily6DUAvcMqwEvXfKPZV11KQXMOlpu1c4OO9Z2XVmf?=
- =?us-ascii?Q?5Pom5ZnunGQ+XJ6axTFUYeepJPsCXBIQIQHFbyQkiVUEF7JVCUN4feq5d3OY?=
- =?us-ascii?Q?IrxRg4eR8G+DBd8inc/yIvPoIFrLhSKB0K9MuqMlb44eaaL6s4xHqXvRCslJ?=
- =?us-ascii?Q?qPTGEv5nef/t8H5wYWcNGUigQemFxKATQrbSCXchpszn/bNxvzP+0RJpfIcl?=
- =?us-ascii?Q?Ns+ONlN7r37VotSGWP9qdYGGJtTJg7Wy1BHAWoWa/A51gUpI46kzCgNptFVU?=
- =?us-ascii?Q?zcWPd7Tcy9vkLkXDrekIzGFOthTiNs2/XC6iHh6nNT+BZKq+zVgs6YQWonoY?=
- =?us-ascii?Q?zPmdZnyxOYS3naH7eRHVCmsMJG7V3cpHiRePd/l59tTRDWhWg8w4ecg/5yrd?=
- =?us-ascii?Q?jQoE4dHmO1Z869f87hvx4WxzcuGQVEyF9rYs8ohxhS1GgKhESxl+8Gnc+imh?=
- =?us-ascii?Q?2bAc7E9wlS4iQmitWNiFDGcMWvgkQ4CyOuF7YzsQBbSXzXfSsUFpi7w2Pa9A?=
- =?us-ascii?Q?xVCHucgIB6+/c3/Kqoml1I+spdkF3XqJihsIuL9tSFdBFJyMXHWQmWA5HLNH?=
- =?us-ascii?Q?p3XJbO5e7JzGCNbqAtmuUCd+FuiIu/4HnMGc7Ti7eRlPaf1vCgUCQaMxFobQ?=
- =?us-ascii?Q?YwTc9SxA9uFqe2xizhec1vFzfH4DLsi0QRJ+5OUEM5sMyiVZs3RvoL32a+hv?=
- =?us-ascii?Q?6FPycqP9AXwiD5uoCuGTzdjCCKOtMxFE7lWmQB1SPavhNZxwlIgktbpwNTRm?=
- =?us-ascii?Q?uvWZwgqH+XTaASW1hnlR7mPB49WB/cKz4zFDjXT3VIEKuhIBJKKb26RXMPKK?=
- =?us-ascii?Q?spFL88jxkU96fHT0q23A6woPTtuJBF9u1kQ/eNNeTx6C1HZp2xSofCk+jTub?=
- =?us-ascii?Q?y4yRp9SzbH+9JVaWPVYpsT3pPc7GGTJAHSup2sIH0urFOg/Lg+2Uyt3K86sQ?=
- =?us-ascii?Q?CrlrFcdM8FMGPQ3CDdJ9tnpAACY2qQFaZ1QdIzAJfS1WoXYIUT+uK+9ENh5H?=
- =?us-ascii?Q?OhOEwLv2eSqR41mgZ9dcOsScCgTwgOmktLhxY1CmYtUW8ZhgagndLJKehkY1?=
- =?us-ascii?Q?eh8n3bcVDX9WwRZvaW4xkvIEdXnQdM1PKumwGdXbI7TUg2vFTa90hxxVqghY?=
- =?us-ascii?Q?qNBrERxLkMNtc8pmukTjM58tFcPwRsKpvvAR69D6iXiyDgNFQn1VCFiBUTAm?=
- =?us-ascii?Q?R490Nq/wHiIeT+OSPzFCqL8tfg2gUto4ud/GPii0BZ7lp+zDwH/NTfiX4ZC9?=
- =?us-ascii?Q?wOnEOBc69O31430N6FEsJBpxLIZlJx2SyarsB3FxKtydCPwOxT1Nx93WVan3?=
- =?us-ascii?Q?hnsoDuFqyiFizCwUkS5/cxwaVCRZXZ3REd+VI6TYpU5+VmIgfWdqbsNmbTI1?=
- =?us-ascii?Q?3UdzN/kk3nqkGfLvE48NCpwcvOdIUjfonveysjzuKYlVSHLddHZ8ZQaZvvOY?=
- =?us-ascii?Q?V56QWi9MXrWWuzIosQtPq86Yg6tY9xdJNJUYIqUvyPXY5O+kw9+MEYkjJcnS?=
- =?us-ascii?Q?x5vNkAFkPIN+RjG07UDE8jQ/m+u1LJMrW4dO09T8?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 27 Mar 2023 05:58:20 -0400
+X-Greylist: delayed 1807 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 27 Mar 2023 02:58:17 PDT
+Received: from mail.pr-group.ru (mail.pr-group.ru [178.18.215.3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11FBB4EE6;
+        Mon, 27 Mar 2023 02:58:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+        d=metrotek.ru; s=mail;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:
+         references;
+        bh=HcWg8teO8lRj5+fkRN/aU7d/uNN4yhTheMQkiD4xApM=;
+        b=KQ+S8jrBgKzWq5ysztQlVTE5vhmb8TDKsiJ4AO73EnQOimsNUYphLd5V2nwURWxND6CVI5o5OJ9i4
+         f5sPMyiqKaCSqOcaAlGJrttb8tGs3UU2qMTHoyTcRxw5c6aXIsf2Wyyn9buSofhf0WU1+uIKXSaO4V
+         PeHpQBWTSNaxq3G+jjpvXhw9rq5aV5521JIOi4v7FZhMcgT40Z9kjWtsWstNIL1jMO7vD6Lfm6fFFS
+         Nb9kiqeFKsoXPWBWOzx8mVoDn5qU4be6cb0TLPkmE7656dxzQe/oqJjPYiCCnOtZGpUtsoN5ItMSx3
+         7XgmsZelFzdYD08AsLEA9CtHvQfb1Xg==
+X-Kerio-Anti-Spam:  Build: [Engines: 2.17.2.1477, Stamp: 3], Multi: [Enabled, t: (0.000008,0.010549)], BW: [Enabled, t: (0.000023,0.000001)], RTDA: [Enabled, t: (0.088525), Hit: No, Details: v2.49.0; Id: 15.zxpjd.1gsh4j5iu.3nlts; mclb], total: 0(700)
+X-Footer: bWV0cm90ZWsucnU=
+Received: from h-e2.ddg ([85.143.252.66])
+        (authenticated user i.bornyakov@metrotek.ru)
+        by mail.pr-group.ru with ESMTPSA
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits));
+        Mon, 27 Mar 2023 11:57:39 +0300
+Date:   Mon, 27 Mar 2023 11:54:01 +0300
+From:   Ivan Bornyakov <i.bornyakov@metrotek.ru>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] treewide: Fix instantiation of devices in DT overlays
+Message-ID: <20230327085401.pgnira5btzbgehb3@h-e2.ddg>
+References: <240155f20aae47e9f7461e2b7416120ba6238886.1679650087.git.geert+renesas@glider.be>
+ <20230327030213.GJ3364759@dragon>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aeac2d99-6d2f-4c81-66ac-08db2ea92375
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2023 09:53:38.1695
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4ERDA6JN5CCXjTsGOBw6P/4CIIQxpipV62/OYXeI9ESboIG/MI5VyvlplDAv+8ZrK6IzXlQ1+mLn87NSzPYoE6IRA3LYd+RiqzDyIM440rk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11948
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230327030213.GJ3364759@dragon>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi, Shawn!
 
-Thanks for the patch.
+On Mon, Mar 27, 2023 at 11:02:13AM +0800, Shawn Guo wrote:
+> + Ivan
+> 
+> On Fri, Mar 24, 2023 at 10:30:39AM +0100, Geert Uytterhoeven wrote:
+> > When loading a DT overlay that creates a device, the device is not
+> > instantiated, unless the DT overlay is unloaded and reloaded again.
+> > 
+> > Saravana explains:
+> >   Basically for all overlays (I hope the function is only used for
+> >   overlays) we assume all nodes are NOT devices until they actually
+> >   get added as a device.
+> > 
+> > Based on a patch by Saravana Kannan, which covered only platform and spi
+> > devices.
+> > 
+> > Fixes: 4a032827daa89350 ("of: property: Simplify of_link_to_phandle()")
+> > Link: https://lore.kernel.org/r/CAGETcx_+rhHvaC_HJXGrr5_WAd2+k5f=rWYnkCZ6z5bGX-wj4w@mail.gmail.com
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Acked-by: Mark Brown <broonie@kernel.org>
+> > ---
+> > v2:
+> >   - Add Acked-by,
+> >   - Drop RFC.
+> > ---
+> >  drivers/bus/imx-weim.c    | 1 +
+> >  drivers/i2c/i2c-core-of.c | 1 +
+> >  drivers/of/dynamic.c      | 1 +
+> >  drivers/of/platform.c     | 1 +
+> >  drivers/spi/spi.c         | 1 +
+> >  5 files changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
+> > index 36d42484142aede2..898e23a4231400fa 100644
+> > --- a/drivers/bus/imx-weim.c
+> > +++ b/drivers/bus/imx-weim.c
+> > @@ -329,6 +329,7 @@ static int of_weim_notify(struct notifier_block *nb, unsigned long action,
+> >  				 "Failed to setup timing for '%pOF'\n", rd->dn);
+> >  
+> >  		if (!of_node_check_flag(rd->dn, OF_POPULATED)) {
+> > +			rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
+> >  			if (!of_platform_device_create(rd->dn, NULL, &pdev->dev)) {
+> >  				dev_err(&pdev->dev,
+> >  					"Failed to create child device '%pOF'\n",
+> 
+> Ivan, so you were aware of that the device is not instantiated before
+> this change?
+> 
 
-> -----Original Message-----
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
-> Sent: Monday, March 27, 2023 10:49 AM
-> To: Vinod Koul <vkoul@kernel.org>; Biju Das <biju.das.jz@bp.renesas.com>
-> Cc: dmaengine@vger.kernel.org; linux-renesas-soc@vger.kernel.org; Geert
-> Uytterhoeven <geert+renesas@glider.be>
-> Subject: [PATCH] dmaengine: sh: rz-dmac: Remove unused
-> rz_dmac_chan.*_word_size
->=20
-> The src_word_size and dst_word_size members of the rz_dmac_chan structure
-> were never used, so they can be removed.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Cheers,
-Biju
-> ---
->  drivers/dma/sh/rz-dmac.c | 4 ----
->  1 file changed, 4 deletions(-)
->=20
-> diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c index
-> 6b62e01ba658ac13..9479f29692d3e3d7 100644
-> --- a/drivers/dma/sh/rz-dmac.c
-> +++ b/drivers/dma/sh/rz-dmac.c
-> @@ -67,8 +67,6 @@ struct rz_dmac_chan {
->  	struct rz_dmac_desc *desc;
->  	int descs_allocated;
->=20
-> -	enum dma_slave_buswidth src_word_size;
-> -	enum dma_slave_buswidth dst_word_size;
->  	dma_addr_t src_per_address;
->  	dma_addr_t dst_per_address;
->=20
-> @@ -603,9 +601,7 @@ static int rz_dmac_config(struct dma_chan *chan,
->  	u32 val;
->=20
->  	channel->src_per_address =3D config->src_addr;
-> -	channel->src_word_size =3D config->src_addr_width;
->  	channel->dst_per_address =3D config->dst_addr;
-> -	channel->dst_word_size =3D config->dst_addr_width;
->=20
->  	val =3D rz_dmac_ds_to_val_mapping(config->dst_addr_width);
->  	if (val =3D=3D CHCFG_DS_INVALID)
-> --
-> 2.34.1
+I was not aware of that, thanks for warning me.
+Will test in the near future.
 
