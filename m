@@ -2,126 +2,85 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A106C7619A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Mar 2023 08:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4BEC7619A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Mar 2023 08:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233475AbjC0Ixk (ORCPT
+        id S232766AbjC0I7m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 Mar 2023 04:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58988 "EHLO
+        Mon, 27 Mar 2023 04:59:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232432AbjC0IxK (ORCPT
+        with ESMTP id S233460AbjC0I7N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Mar 2023 04:53:10 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0258883DB
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Mar 2023 01:49:02 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id h25so10323974lfv.6
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Mar 2023 01:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112; t=1679906941;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0OZ9R2vraHOOEFqJ3sf/g9tKIkB3HpI+YtgXcUzlZto=;
-        b=AmLxEE3WjRyAsk14UpCcPXQz79LFmXZ3zXDrP4E82oa5lYwtVx2p3YdSYNRD3FhgxP
-         Dr3LFMFc2Kna1kJkOtqojxVCr4JAJHZvFhvqd/0hgB9+1tWcnNW0qUeDh2IIeyGA/VOp
-         BUSflpb2uEveAYH+g1xH+Klf4PgBlVJ33rpoF5IQPWhCuIVF6x/8C/uq5sB9QIJ8QkAQ
-         MiISKy4HP5tJg4x20+PYFX/YV5rxA1XL7hSefr0xXk8iijKPMI9gLna0paJ+POfhsItU
-         QltRqne4QZ2/CjTZXSihkHJytvsTdEJDWS9KIjTh6pYHAt6io3sSr2age3e3y04+KVLR
-         0Eew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679906941;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0OZ9R2vraHOOEFqJ3sf/g9tKIkB3HpI+YtgXcUzlZto=;
-        b=fOoFNnvui/YjmqQNofccJhFM3GaSU4mcCRxcp59XsAUnKV2myi7INUxUGxby937HuI
-         ZmHRFdAtwh0l+rcqNaZSon5wUbCkAfPwUWUMW7hedZVeu/12g0jGJ+QaqOmTHrNep72Y
-         zMaWiYqEhcdpEHFkM99ccQftCvfp35I5l/spNxDA6rCifMl/g5SnTD+sBf7A0eh8DGjp
-         nvcW/2GdAkMhcNtBGtu05yE7BR9a+UgRdeNmz/BoCpytauM6NSvOnG/UrleQ4y+lptsI
-         rB98/WAzRjid/a+X7OYDFtKpSqddKKlN5K7FBjMuC5ZVUnlcQoE5DQI+Bl8uC77DpSTi
-         i4Sg==
-X-Gm-Message-State: AAQBX9fZS3X+vLlyirhRn5ByHe/E6UNr1wrYIlfW1/17hlAU/ZG+O2fj
-        EZv4xN5E5JBa011egG1h3TauHrsSK7GzUZbcZKI=
-X-Google-Smtp-Source: AKy350b55GpfF768xBnrj3D4dEEHzIuArdMcrHHWJXHeCGeoPhkANvrm0NiDA/bSHE/FteTVyojdAQ==
-X-Received: by 2002:a05:6512:38a9:b0:4b5:7a91:70f5 with SMTP id o9-20020a05651238a900b004b57a9170f5mr3543963lft.63.1679906941368;
-        Mon, 27 Mar 2023 01:49:01 -0700 (PDT)
-Received: from localhost (h-46-59-89-207.A463.priv.bahnhof.se. [46.59.89.207])
-        by smtp.gmail.com with ESMTPSA id u4-20020ac251c4000000b004db1a7e6decsm4581248lfm.205.2023.03.27.01.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 01:49:01 -0700 (PDT)
-Date:   Mon, 27 Mar 2023 10:49:00 +0200
-From:   Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH 050/117] media: rcar-csi2: Convert to platform remove
- callback returning void
-Message-ID: <ZCFYfD5MUHCPCchu@oden.dyn.berto.se>
-References: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
- <20230326143224.572654-53-u.kleine-koenig@pengutronix.de>
+        Mon, 27 Mar 2023 04:59:13 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44815526F
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Mar 2023 01:57:10 -0700 (PDT)
+Received: from ramsan.of.borg ([84.195.187.55])
+        by michel.telenet-ops.be with bizsmtp
+        id dLx82900H1C8whw06Lx8FR; Mon, 27 Mar 2023 10:57:08 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pgieO-00ExYz-SK;
+        Mon, 27 Mar 2023 10:57:08 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pgif6-002atk-DO;
+        Mon, 27 Mar 2023 10:57:08 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 2/4] Renesas driver updates for v6.4
+Date:   Mon, 27 Mar 2023 10:57:02 +0200
+Message-Id: <cover.1679907059.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1679907055.git.geert+renesas@glider.be>
+References: <cover.1679907055.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230326143224.572654-53-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2023-03-26 16:31:17 +0200, Uwe Kleine-König wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is (mostly) ignored
-> and this typically results in resource leaks. To improve here there is a
-> quest to make the remove callback return void. In the first step of this
-> quest all drivers are converted to .remove_new() which already returns
-> void.
-> 
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
 
-> ---
->  drivers/media/platform/renesas/rcar-vin/rcar-csi2.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-csi2.c b/drivers/media/platform/renesas/rcar-vin/rcar-csi2.c
-> index 174aa6176f54..1632c9a53ac4 100644
-> --- a/drivers/media/platform/renesas/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-csi2.c
-> @@ -1574,7 +1574,7 @@ static int rcsi2_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> -static int rcsi2_remove(struct platform_device *pdev)
-> +static void rcsi2_remove(struct platform_device *pdev)
->  {
->  	struct rcar_csi2 *priv = platform_get_drvdata(pdev);
->  
-> @@ -1585,12 +1585,10 @@ static int rcsi2_remove(struct platform_device *pdev)
->  	pm_runtime_disable(&pdev->dev);
->  
->  	mutex_destroy(&priv->lock);
-> -
-> -	return 0;
->  }
->  
->  static struct platform_driver rcar_csi2_pdrv = {
-> -	.remove	= rcsi2_remove,
-> +	.remove_new = rcsi2_remove,
->  	.probe	= rcsi2_probe,
->  	.driver	= {
->  		.name	= "rcar-csi2",
-> -- 
-> 2.39.2
-> 
+are available in the Git repository at:
 
--- 
-Kind Regards,
-Niklas Söderlund
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v6.4-tag1
+
+for you to fetch changes up to 2653d5bf1c9d123c0d8b8c1634cf54dacfcfdb52:
+
+  soc: renesas: Use "#ifdef" for single-symbol definition checks (2023-03-16 16:58:42 +0100)
+
+----------------------------------------------------------------
+Renesas driver updates for v6.4
+
+  - Drop support for the obsolete R-Car H3 ES1.* (R8A77950) SoC,
+  - Miscellaneous fixes and improvements.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      soc: renesas: rmobile-sysc: Use of_fwnode_handle() helper
+      soc: renesas: Use "#ifdef" for single-symbol definition checks
+
+Krzysztof Kozlowski (2):
+      soc: renesas: mark OF related data as maybe unused
+      soc: renesas: pwc-rzv2m: drop of_match_ptr for ID table
+
+Wolfram Sang (2):
+      soc: renesas: rcar-sysc: Remove R-Car H3 ES1.* handling
+      soc: renesas: Remove r8a77950 arch
+
+ drivers/soc/renesas/Kconfig              |  7 -------
+ drivers/soc/renesas/pwc-rzv2m.c          |  2 +-
+ drivers/soc/renesas/r8a7795-sysc.c       | 10 ----------
+ drivers/soc/renesas/renesas-soc.c        | 14 ++++++--------
+ drivers/soc/renesas/rmobile-sysc.c       |  2 +-
+ include/dt-bindings/power/r8a7795-sysc.h |  1 -
+ 6 files changed, 8 insertions(+), 28 deletions(-)
