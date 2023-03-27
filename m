@@ -2,69 +2,101 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73591C77B60
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Mar 2023 17:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37219C76195
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Mar 2023 18:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232479AbjC0R5L (ORCPT
+        id S232105AbjC0SFb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 Mar 2023 13:57:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
+        Mon, 27 Mar 2023 14:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232645AbjC0R4z (ORCPT
+        with ESMTP id S229733AbjC0SFa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Mar 2023 13:56:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E08A30EE;
-        Mon, 27 Mar 2023 10:56:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 52941B818A6;
-        Mon, 27 Mar 2023 17:56:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17B7C433D2;
-        Mon, 27 Mar 2023 17:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679939775;
-        bh=ZNR5VTvFrLH8ao7gO0y2nPvauBf/yf8/FCIc9MIqURM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UTgtXYM3JymKVOscd3RDK4KbKoVWlySi/QLxvaU6vAkYVvzEtTVYD5P1Wu6Pcu8Lu
-         LETBHG+/uPv4qaGbG/Y6ePWoeMtuA4MeGeDPdBnwg1fgMzERseXdHxpwbaIQn4gZKQ
-         yTxUywVyIm+UFkewaJqkI7NcbcNQa6mrJuCXgu/OLEmp52ss9HY5RJl0Q1b+EHoe1c
-         z+FogQqdlNBTF8h+zpgHY1Hj4QTX6604j2Y6e/bTr9c0ygvwIT98yJCOgf1W2vgp1z
-         FmnqJZ6fKUdt26TDeiGgWXxioc9C6GB7i/iDNW6u4TVuthOvZ3tNciO5sHAmG1EUff
-         UB+bmTy+tMtSA==
-Message-ID: <16dcfd98a72c8c4b6bac6e758bd10beb.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 27 Mar 2023 14:05:30 -0400
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0866730E7;
+        Mon, 27 Mar 2023 11:05:28 -0700 (PDT)
+Received: from [192.168.1.103] (31.173.81.236) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.14; Mon, 27 Mar
+ 2023 21:05:25 +0300
+Subject: Re: [PATCH] dt-bindings: ata: Drop unneeded quotes
+To:     Rob Herring <robh@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC:     <linux-ide@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+References: <20230327170053.4100949-1-robh@kernel.org>
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <24c8055b-8a1c-4556-e830-3b51b8d23f49@omp.ru>
+Date:   Mon, 27 Mar 2023 21:05:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230310075535.3476580-3-alexander.stein@ew.tq-group.com>
-References: <20230310075535.3476580-1-alexander.stein@ew.tq-group.com> <20230310075535.3476580-3-alexander.stein@ew.tq-group.com>
-Subject: Re: [PATCH v3 3/4] clk: rs9: Support device specific dif bit calculation
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 27 Mar 2023 10:56:12 -0700
-User-Agent: alot/0.10
+In-Reply-To: <20230327170053.4100949-1-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [31.173.81.236]
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 5.9.59, Database issued on: 03/27/2023 17:45:10
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 176318 [Mar 27 2023]
+X-KSE-AntiSpam-Info: Version: 5.9.59.0
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 507 507 08d345461d9bcca7095738422a5279ab257bb65a
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;devicetree.org:7.1.1
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.81.236
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 03/27/2023 17:47:00
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 3/27/2023 4:08:00 PM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Alexander Stein (2023-03-09 23:55:34)
-> The calculation DIFx is BIT(n) +1 is only true for 9FGV0241. With
-> additional devices this is getting more complicated.
-> Support a base bit for the DIF calculation, currently only devices
-> with consecutive bits are supported, e.g. the 6-channel device needs
-> additional logic.
->=20
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Reviewed-by: Marek Vasut <marex@denx.de>
-> ---
+On 3/27/23 8:00 PM, Rob Herring wrote:
 
-Applied to clk-next
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+[...]
+
+> diff --git a/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml b/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
+> index c4e4a9eab658..fe0909554790 100644
+> --- a/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
+> +++ b/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/ata/renesas,rcar-sata.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/ata/renesas,rcar-sata.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Renesas R-Car Serial-ATA Interface
+>  
+
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+
+MBR, Sergey
