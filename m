@@ -2,103 +2,77 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 350BBC6FD18
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Mar 2023 14:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD810C76196
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Mar 2023 14:42:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232700AbjC1OIx (ORCPT
+        id S232965AbjC1OmI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 28 Mar 2023 10:08:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50358 "EHLO
+        Tue, 28 Mar 2023 10:42:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232318AbjC1OIw (ORCPT
+        with ESMTP id S230197AbjC1OmH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2023 10:08:52 -0400
+        Tue, 28 Mar 2023 10:42:07 -0400
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFB4DC16B
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2023 07:07:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAD2286A5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2023 07:42:00 -0700 (PDT)
 Received: from ramsan.of.borg ([84.195.187.55])
         by albert.telenet-ops.be with bizsmtp
-        id dq6u2900G1C8whw06q6uGC; Tue, 28 Mar 2023 16:06:55 +0200
+        id dqhy2900X1C8whw06qhyg2; Tue, 28 Mar 2023 16:41:59 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ph9tW-00F8ye-CL;
-        Tue, 28 Mar 2023 16:02:33 +0200
+        id 1phAVf-00F96K-5F;
+        Tue, 28 Mar 2023 16:41:58 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ph9uD-006Ft4-SG;
-        Tue, 28 Mar 2023 16:02:33 +0200
+        id 1phAWM-006GAq-Mw;
+        Tue, 28 Mar 2023 16:41:58 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] PCI: rcar-host: Remove unused static pcie_base and pcie_dev
-Date:   Tue, 28 Mar 2023 16:02:32 +0200
-Message-Id: <94b369447c38c478c52aef10e493b658a4f755ac.1680011974.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 2/2] ARM: dts: marzen: Add PCIe support
+Date:   Tue, 28 Mar 2023 16:41:57 +0200
+Message-Id: <31ebd1e07dd28e1bf36dee5ec4a918b0edf5cbb2.1680012171.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1680012171.git.geert+renesas@glider.be>
+References: <cover.1680012171.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-After the L1 link state transition exception handler rework, the static
-copies of the remapped PCIe controller address and the PCIe device
-pointer became unused.  Remove them.
+Describe the PCIe bus clock, and enable the PCIe controller on the
+Marzen development board.
 
-Fixes: 6e36203bc14ce147 ("PCI: rcar: Use PCI_SET_ERROR_RESPONSE after read which triggered an exception")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Probably this was not noticed before due to two function parameters with
-the same name, thus shadowing the static globals.
----
- drivers/pci/controller/pcie-rcar-host.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ arch/arm/boot/dts/r8a7779-marzen.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index e4faf90feaf5cf17..825e572b1e02b76f 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -41,21 +41,6 @@ struct rcar_msi {
- 	int irq2;
+diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
+index 632519edba6b5a47..a001e4285fd76366 100644
+--- a/arch/arm/boot/dts/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/r8a7779-marzen.dts
+@@ -260,6 +260,14 @@ &tmu0 {
+ 	status = "okay";
  };
  
--#ifdef CONFIG_ARM
--/*
-- * Here we keep a static copy of the remapped PCIe controller address.
-- * This is only used on aarch32 systems, all of which have one single
-- * PCIe controller, to provide quick access to the PCIe controller in
-- * the L1 link state fixup function, called from the ARM fault handler.
-- */
--static void __iomem *pcie_base;
--/*
-- * Static copy of PCIe device pointer, so we can check whether the
-- * device is runtime suspended or not.
-- */
--static struct device *pcie_dev;
--#endif
--
- /* Structure representing the PCIe interface */
- struct rcar_pcie_host {
- 	struct rcar_pcie	pcie;
-@@ -879,12 +864,6 @@ static int rcar_pcie_get_resources(struct rcar_pcie_host *host)
- 	}
- 	host->msi.irq2 = i;
- 
--#ifdef CONFIG_ARM
--	/* Cache static copy for L1 link state fixup hook on aarch32 */
--	pcie_base = pcie->base;
--	pcie_dev = pcie->dev;
--#endif
--
- 	return 0;
- 
- err_irq2:
++&pcie_bus_clk {
++	clock-frequency = <100000000>;
++};
++
++&pciec {
++	status = "okay";
++};
++
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.34.1
 
