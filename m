@@ -2,114 +2,100 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8889C6FD1D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Mar 2023 14:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0465EC6FD1D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Mar 2023 14:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232431AbjC3Otk (ORCPT
+        id S232670AbjC3O5F (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 30 Mar 2023 10:49:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58192 "EHLO
+        Thu, 30 Mar 2023 10:57:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231474AbjC3Otj (ORCPT
+        with ESMTP id S232530AbjC3O45 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2023 10:49:39 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33ACDA24B
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2023 07:49:36 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id g17so24870834lfv.4
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2023 07:49:35 -0700 (PDT)
+        Thu, 30 Mar 2023 10:56:57 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE517BB9C;
+        Thu, 30 Mar 2023 07:56:38 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id om3-20020a17090b3a8300b0023efab0e3bfso22209884pjb.3;
+        Thu, 30 Mar 2023 07:56:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112; t=1680187774;
+        d=gmail.com; s=20210112; t=1680188198;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=VU/9sR2Gn6BU0Gika4QeRGZssdzpgS/xpjDgT6yVGt8=;
-        b=luOdiIo4Hx8rQKdQNf+nnvmIW9CweZ8RDJ5Jb++wUXig7hQudRu89S9OUo8FbwySda
-         VBl+PZx4OiHHlLkQ0xBTfPJrGdqjznpx/U71d4EqI+QemMXlzX+hpDm70gMXIutJemBR
-         NOJcFa8oE89KYB+oFrkuvf/oAObHivm6EJJSRvgeXVRY0lFJjzLo3j1QHW60QAnja08T
-         jC6GKtX8NClEoulTUtcmEORMlgZWy4m0QUxOxr3sMbhx9FpAvEic1VlNU6Ojg35LW7W8
-         KuHtaz2fWUpWXov0uAy2tA270HEoASEbwpGUE604JU8kPEy8ZpoF69VbFKsz0XezrPN+
-         z6nw==
+        bh=yU8Am5XS4bF62pVIqk8T6WsY9phiYr9ElUgv6Ugf+V4=;
+        b=XNyGjhS0HyE/19hdtnkz4Ep2rUVTq/MvwpH9+sV9RrYuAOe34ArZ34J1LjrpbQDQoT
+         j9AorV55iC8yKbebmSG1/CEEmd3RbdrqxzCQgdMKSxKdQbUrt+xH4UWMPS8IyaCN3Jr0
+         os1/scO7YSDkUes7sscnsTFqYQss0sfya34emJv8JPXDN5UPcmNrk7ismVAfK2KscYPU
+         lsdloEQ2pV36SXEFQySk8wftm1EmE3BnJytvc4gekp6vB6/8FvjU3SM5+IHPS0ZffVu5
+         4wsviBgxT3H0OqaVqHVtEBKK5I9zsfDDfiVLWKDkLsKTcZ4NGFmzNsp+Vn2NtL995iIy
+         M+SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680187774;
+        d=1e100.net; s=20210112; t=1680188198;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VU/9sR2Gn6BU0Gika4QeRGZssdzpgS/xpjDgT6yVGt8=;
-        b=YrU4gy9UIwsCIeHgzfSjOV/Sc6r5M9q8utf88L+lUV4r5rBeJN9vggkPwIyC0Wj8TH
-         G9gPqumuieEyckJXnsOyEqg8vqnxX52sAny+zt/lF19zLAlHbJDWsEbYB3AKl5JeCEsH
-         kou4iRzFYOlqkK9BTIj+y4wilxlPiYbvkb+e4qfHmNzeCzOHGbrvRJAp/gixOiZbMkRb
-         Ib3VSb7lDNM1GaZat2XCdHIgzUZmQAhpm/uUtZvlKNVJ/t/Q4V/88ccmdtmnYf+yMiZU
-         8R+5lptcS4Qur4mrcSAFwVm5Dv1pc+Bd41oVOI3btew8leOeU+ttyeJar1pm9l+R3DRg
-         HGag==
-X-Gm-Message-State: AAQBX9fftB3ZcjBada2KzgpvXdSaFgpR9fdxmZ0yWYtquewY9PVQGJEv
-        gDPQSCxr2v9t34OoNHok7HJQj585RdFGXPgjbI0WvA==
-X-Google-Smtp-Source: AKy350YfuNaarH6edh1TVcm+uvVLdWvJ8mJR+9Ed3cqC+YFNN8IGmFsat1TRuB1TEHeVt0QaXZK0Rg==
-X-Received: by 2002:a05:6512:486:b0:4d8:71dd:5c5e with SMTP id v6-20020a056512048600b004d871dd5c5emr6852197lfq.37.1680187774095;
-        Thu, 30 Mar 2023 07:49:34 -0700 (PDT)
-Received: from localhost (h-46-59-89-207.A463.priv.bahnhof.se. [46.59.89.207])
-        by smtp.gmail.com with ESMTPSA id r28-20020ac252bc000000b004e9cad1cd7csm4835115lfm.229.2023.03.30.07.49.33
+        bh=yU8Am5XS4bF62pVIqk8T6WsY9phiYr9ElUgv6Ugf+V4=;
+        b=l4Ih1f09tUVjXerrBvNHIYIVhtkU11ikQvn3nDaWTXdjWL9LQGLLv/4aRUHC8ubMwJ
+         4Z1Y5HBEBwY6gcxdASA5gg0H2qij8KcuHJZKS+LQTZUb/NoPYIzREIOV/4ZApiTi8Ikd
+         BmvI37s8dfdTWRhob2vamh8rvYERIWf24pf72XbwIVXdgkihR/bI/LdI7XZ3KwDnu+Lm
+         oVvFUfktrRGH/52sc8F6Yr/H0BltG7fnrrLAf7srwXLv8Yc5b9z1YrohMRBLtT85awI6
+         jjUwYn7D5ak7coG+3osC5NxgaYZeOyeZPB72FeDabp3Mh6bR5Ir1MOmgp57z23BUtpOt
+         P9IQ==
+X-Gm-Message-State: AAQBX9fziFVUxwE0wWdr6qafqAnbqAnk6tFcMJ9Rcz/6BPGnkIjH8+1v
+        NhGLqnasldeK3a0pxj4OY9g=
+X-Google-Smtp-Source: AKy350YoGDgn2poQnnaCqiFv0hhws5xv1ZehFOBFTiz0scDtfRKenDXvcfbcsvYzDmbQEWyFfWyS8A==
+X-Received: by 2002:a17:902:ce86:b0:1a1:cef9:cc5c with SMTP id f6-20020a170902ce8600b001a1cef9cc5cmr29508944plg.15.1680188198040;
+        Thu, 30 Mar 2023 07:56:38 -0700 (PDT)
+Received: from skbuf ([188.27.184.189])
+        by smtp.gmail.com with ESMTPSA id b10-20020a170902a9ca00b001a04a372fa0sm10562439plr.251.2023.03.30.07.56.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 07:49:33 -0700 (PDT)
-Date:   Thu, 30 Mar 2023 16:49:33 +0200
-From:   Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] media: rcar-vin: Select correct interrupt mode for
- V4L2_FIELD_ALTERNATE
-Message-ID: <ZCWhfYCUz2ISG+Ac@oden.dyn.berto.se>
-References: <20230211205534.493789-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 30 Mar 2023 07:56:37 -0700 (PDT)
+Date:   Thu, 30 Mar 2023 17:56:23 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH net-next 1/2] net: dsa: rzn1-a5psw: enable DPBU for CPU
+ port and fix STP states
+Message-ID: <20230330145623.z5q44euny3zj3uat@skbuf>
+References: <20230330083408.63136-1-clement.leger@bootlin.com>
+ <20230330083408.63136-2-clement.leger@bootlin.com>
+ <20230330104828.6badaaad@fixe.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230211205534.493789-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20230330104828.6badaaad@fixe.home>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hans,
+On Thu, Mar 30, 2023 at 10:48:28AM +0200, Clément Léger wrote:
+> Actually, after leaving a bridge, it seems like the DSA core put the
+> port in STP DISABLED state. Which means it will potentially leave that
+> port with TX disable... Since this TX enable is applying not only on
+> bridge port but also on standalone port, it seems like this also needs
+> to be reenabled in bridge_leave().
 
-Gentle ping on this patch.
+That's... not true? dsa_port_switchdev_unsync_attrs() has:
 
-On 2023-02-11 21:55:34 +0100, Niklas SÃ¶derlund wrote:
-> When adding proper support for V4L2_FIELD_ALTERNATE it was missed that
-> this field format should trigger an interrupt for each field, not just
-> for the whole frame. Fix this by marking it as progressive in the
-> capture setup, which will then select the correct interrupt mode.
-> 
-> Tested on both Gen2 and Gen3 with the result of a doubling of the frame
-> rate for V4L2_FIELD_ALTERNATE. From a PAL video source the frame rate is
-> now 50, which is expected for alternate field capture.
-> 
-> Signed-off-by: Niklas SÃ¶derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/renesas/rcar-vin/rcar-dma.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-> index 23598e22adc7..2a77353f10b5 100644
-> --- a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
-> @@ -728,12 +728,10 @@ static int rvin_setup(struct rvin_dev *vin)
->  	case V4L2_FIELD_SEQ_TB:
->  	case V4L2_FIELD_SEQ_BT:
->  	case V4L2_FIELD_NONE:
-> +	case V4L2_FIELD_ALTERNATE:
->  		vnmc = VNMC_IM_ODD_EVEN;
->  		progressive = true;
->  		break;
-> -	case V4L2_FIELD_ALTERNATE:
-> -		vnmc = VNMC_IM_ODD_EVEN;
-> -		break;
->  	default:
->  		vnmc = VNMC_IM_ODD;
->  		break;
-> -- 
-> 2.39.1
-> 
+	/* Port left the bridge, put in BR_STATE_DISABLED by the bridge layer,
+	 * so allow it to be in BR_STATE_FORWARDING to be kept functional
+	 */
+	dsa_port_set_state_now(dp, BR_STATE_FORWARDING, true);
 
--- 
-Kind Regards,
-Niklas SÃ¶derlund
+a dump_stack() could help explain what's going on in your system?
