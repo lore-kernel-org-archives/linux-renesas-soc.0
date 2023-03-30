@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDBBC77B6F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Mar 2023 20:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527FDC77B62
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Mar 2023 20:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbjC3UnB (ORCPT
+        id S229938AbjC3UnC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 30 Mar 2023 16:43:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44084 "EHLO
+        Thu, 30 Mar 2023 16:43:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229871AbjC3Ums (ORCPT
+        with ESMTP id S229853AbjC3Um6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2023 16:42:48 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D7710ABB;
-        Thu, 30 Mar 2023 13:42:46 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l15-20020a05600c4f0f00b003ef6d684102so8811465wmq.3;
-        Thu, 30 Mar 2023 13:42:46 -0700 (PDT)
+        Thu, 30 Mar 2023 16:42:58 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BFDA113DB;
+        Thu, 30 Mar 2023 13:42:47 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id r29so20327296wra.13;
+        Thu, 30 Mar 2023 13:42:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680208964; x=1682800964;
+        d=gmail.com; s=20210112; t=1680208967; x=1682800967;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x7uCU6lf+09VHIoD9fbjjKmUZ8AO643QGh96ltPUUVM=;
-        b=KgLs/AOcHwBkcb0V70o429wtpPZUloH+TajIJZog5aPGkpoyHiN4OWNfG8zhF+Oibq
-         a98dntpog8JaKywIbdjH2YyAweAOBKoctExgtIMJhlG2WA9nZTRX3CNYAKOe2qTrMqbI
-         fdm+G95JNyiwFUNKWQl5xl0om9quujFzvoQNRascn9OgAangMwAW4oiA2vgw7Zg8pb9j
-         QYzE3xJNXLD4Zi1GfvkqOzyg2/iRoB5rnC+h53QIpKSHH7EyZScucct4UYWcadAVI3Wo
-         IcOZi6/UMx7Eb5lC8hy0+pWU0wOPXixAJmjsnTpp9i8reApBHES9PX31QTHvj9u1fxAC
-         xSew==
+        bh=LVLJ+jvYtKAHw9uWehWmKzg7iwxnJbw0QCzpAvbBm74=;
+        b=W7fVzssA8QDCapvKTkoy/XagVfFnxYrLEzjjz8EEr9aqhofp2hVnw8T+E3Jr+nEdNa
+         97dIWkEbf3FORLwLZE/5HArDgiFztVrOgFjz5hxh1jmA6tjNbhheZt3RWJcyaDjN9d5C
+         LGWKU1Ceue5VI2if/h8CyKWHHUO2bN6I3O50fpCnM+VtfM8ZFsQPPztuALBtlfENa6ft
+         YtwUfM/3ASZcD5pylRfLVPvV/BOl1WCNFBmTdMwJqPu5XQp12OIeZD8Oce9m1qZDFFDa
+         RC5c3OwCzvRrbwjIshLD20LU0IonkECsfK766VhHOvAG9yQIskRzqu0j8ZWStESC3bUl
+         hRZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680208964; x=1682800964;
+        d=1e100.net; s=20210112; t=1680208967; x=1682800967;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x7uCU6lf+09VHIoD9fbjjKmUZ8AO643QGh96ltPUUVM=;
-        b=nTuPUwl+lwS+86phyHhUmUBKdY7rg2NUEcJ+Uw87TAVEUgqF9n2ZNbuVQDHc5fLOaW
-         rUC9UmDdcO1m+EXrjbk/O7zwjXexoeYJOC71QSAS/YKwRK3g0aMNIfeV5g80DqGAnMWr
-         TpxJN4YWbtAAw1Vli6j2Wf5arcpszzM+Nys8xOMjG/Z5SCbl5fr23SGsa5hWhV32B/o4
-         2zecKyC1+AmbEwPyBzf1Z0duEjwfDwZ7qgKq2K0QDAM++QFswoYVLIbJtsuKyABPlRhy
-         tNBx86fo+uGWOuSkaJvVIy/2yHS6VLl68XgMKZ/BOQh9SN+1jHd9T8PpTzn1QFt+nTAT
-         GrTQ==
-X-Gm-Message-State: AAQBX9cFftSVGYm+fbZ2Rq4ejRVFZrtmzQJb6/xpHCetx6EZSqr1F1td
-        cnQ0qEi7LxeGn17M4JyhvPk=
-X-Google-Smtp-Source: AKy350apQoJSwiW6jYJkrYX2B56tV0H5KyGXJmDXjEu+DANAbRr1LRfENpUrde5LByVQ3CMkV8kejw==
-X-Received: by 2002:a05:600c:cc:b0:3f0:3049:b216 with SMTP id u12-20020a05600c00cc00b003f03049b216mr5108217wmm.28.1680208964373;
-        Thu, 30 Mar 2023 13:42:44 -0700 (PDT)
+        bh=LVLJ+jvYtKAHw9uWehWmKzg7iwxnJbw0QCzpAvbBm74=;
+        b=z4CGPZB2HaWm0/8ajzm40PwBjFLHQt1HCpE1hTUCKR+MfzHMgpJz5mbhBEfsRzb0Y+
+         Zx+QgNBaTN7msY2suMGtWEiZ6Gt8WYq9dMyBSWU0RSeyg89+PLpq6ihOXY9qrFQC+WRE
+         5y1/DpvBFWW04P5TpMbTLNIqKf5lfShKnK9AxjUEc2fp0qSvzEB3+H5n5i2bkqSeJqPs
+         y0PHKm/4+Q3q3dcVykoz9qoygfIXWG9fhHSnxjDaHlcgKSCW+/xGlfHnPoOuFFVz5W8j
+         oz8x8g3fXt4HYLNMMf97JFgNnEEdRoxV/wP25JqzEHh/Je+Ynq93re0PKtSuKTF6+bhA
+         a2jw==
+X-Gm-Message-State: AAQBX9cvIeGrCcWFREBCeo3HXzcnMD4UDN40QqbtnjmlRT6DihjnoVZ1
+        nRTBEQpUSv6wr72whIhU1uE=
+X-Google-Smtp-Source: AKy350aAvzzQW67L9QzCg0QWZlDe/xWID6JRpmXb9cTLENUc1XfQLzXnwUJG9YMad8I19gvPKRQjlQ==
+X-Received: by 2002:adf:fac5:0:b0:2cf:f2f9:df7a with SMTP id a5-20020adffac5000000b002cff2f9df7amr18208641wrs.38.1680208967130;
+        Thu, 30 Mar 2023 13:42:47 -0700 (PDT)
 Received: from prasmi.home ([2a00:23c8:2501:c701:30f2:5b7:ab32:c3f])
-        by smtp.gmail.com with ESMTPSA id v12-20020a5d4b0c000000b002cfed482e9asm297981wrq.61.2023.03.30.13.42.43
+        by smtp.gmail.com with ESMTPSA id v12-20020a5d4b0c000000b002cfed482e9asm297981wrq.61.2023.03.30.13.42.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 13:42:43 -0700 (PDT)
+        Thu, 30 Mar 2023 13:42:46 -0700 (PDT)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Arnd Bergmann <arnd@arndb.de>,
@@ -69,11 +69,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v7 4/6] dt-bindings: cache: r9a07g043f-l2-cache: Add DT binding documentation for L2 cache controller
-Date:   Thu, 30 Mar 2023 21:42:15 +0100
-Message-Id: <20230330204217.47666-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v7 6/6] soc: renesas: Kconfig: Select the required configs for RZ/Five SoC
+Date:   Thu, 30 Mar 2023 21:42:17 +0100
+Message-Id: <20230330204217.47666-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230330204217.47666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20230330204217.47666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -85,123 +84,36 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add DT binding documentation for L2 cache controller found on RZ/Five SoC.
-
-The Renesas RZ/Five microprocessor includes a RISC-V CPU Core (AX45MP
-Single) from Andes. The AX45MP core has an L2 cache controller, this patch
-describes the L2 cache block.
+Explicitly select the required Cache management and Errata configs
+required for the RZ/Five SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 ---
-v6 -> v7
-* No Change
+v6->v7
+* Included RB tag from Conor
 
-v5 -> v6
-* Included RB tag from Rob
-
-v4 -> v5
-* Dropped L2 cache configuration properties
-* Dropped PMA configuration properties
-* Ordered the required list to match the properties list
-
-RFC v3 -> v4
-* Dropped l2 cache configuration parameters
-* s/larger/large
-* Added minItems/maxItems for andestech,pma-regions
+v5->v6
+* New patch
 ---
- .../cache/andestech,ax45mp-cache.yaml         | 81 +++++++++++++++++++
- 1 file changed, 81 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
+ drivers/soc/renesas/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-new file mode 100644
-index 000000000000..9ab5f0c435d4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-@@ -0,0 +1,81 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright (C) 2023 Renesas Electronics Corp.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/cache/andestech,ax45mp-cache.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Andestech AX45MP L2 Cache Controller
-+
-+maintainers:
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+
-+description:
-+  A level-2 cache (L2C) is used to improve the system performance by providing
-+  a large amount of cache line entries and reasonable access delays. The L2C
-+  is shared between cores, and a non-inclusive non-exclusive policy is used.
-+
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - andestech,ax45mp-cache
-+
-+  required:
-+    - compatible
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: andestech,ax45mp-cache
-+      - const: cache
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  cache-line-size:
-+    const: 64
-+
-+  cache-level:
-+    const: 2
-+
-+  cache-sets:
-+    const: 1024
-+
-+  cache-size:
-+    enum: [131072, 262144, 524288, 1048576, 2097152]
-+
-+  cache-unified: true
-+
-+  next-level-cache: true
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - cache-line-size
-+  - cache-level
-+  - cache-sets
-+  - cache-size
-+  - cache-unified
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    cache-controller@2010000 {
-+        compatible = "andestech,ax45mp-cache", "cache";
-+        reg = <0x13400000 0x100000>;
-+        interrupts = <508 IRQ_TYPE_LEVEL_HIGH>;
-+        cache-line-size = <64>;
-+        cache-level = <2>;
-+        cache-sets = <1024>;
-+        cache-size = <262144>;
-+        cache-unified;
-+    };
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index de31589ed054..67604f24973e 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -334,6 +334,10 @@ if RISCV
+ config ARCH_R9A07G043
+ 	bool "RISC-V Platform support for RZ/Five"
+ 	select ARCH_RZG2L
++	select AX45MP_L2_CACHE
++	select DMA_GLOBAL_POOL
++	select ERRATA_ANDES
++	select ERRATA_ANDES_CMO
+ 	help
+ 	  This enables support for the Renesas RZ/Five SoC.
+ 
 -- 
 2.25.1
 
