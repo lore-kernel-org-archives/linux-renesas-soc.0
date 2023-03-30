@@ -2,475 +2,176 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB83C6FD1D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Mar 2023 20:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577ECC6FD1D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Mar 2023 21:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbjC3UnD (ORCPT
+        id S229540AbjC3Ve3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 30 Mar 2023 16:43:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44832 "EHLO
+        Thu, 30 Mar 2023 17:34:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229887AbjC3Um7 (ORCPT
+        with ESMTP id S229508AbjC3Ve2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2023 16:42:59 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBB9113CB;
-        Thu, 30 Mar 2023 13:42:47 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id bg16-20020a05600c3c9000b003eb34e21bdfso14146272wmb.0;
-        Thu, 30 Mar 2023 13:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680208966; x=1682800966;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QehaLiQpEBUYbGar4AMt5h2UaS7T6TLYAHGemBGfcA4=;
-        b=cHKgkBKvm94eZRCrF4Ci8BUn2T2JOmsF4tM2L93nd+LK6evTUrxtmiHYBvlr3Pbthu
-         awy0yW4XZBKkFhcdyqatUM3cgkU2AffOK8OUxO9PKu2oABuVUfxxoOPgH4vzlNhTVCSh
-         975LaptVRWY1G3PpiAsjHPV6KblhoWldyQ1xtCoJS+pVyiW6OeX6URVfI5ixGYvAMO+v
-         TlQ8kR/wQu+m4t17COg3Xt7byDjFldhyFntLgAyJAt/IGs+0gT072hq0MY6lKF74+IKI
-         H3ZfiJNGAvstO1mTUA3n1RD97OF6EmqC8nfS6CUWZyfhOJRVi+0X7cPO+yi/A+h5RaoY
-         XiYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680208966; x=1682800966;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QehaLiQpEBUYbGar4AMt5h2UaS7T6TLYAHGemBGfcA4=;
-        b=jKXGklTTz0/3zAxBhZA8knzjBauWa6e26k/XfLPWZkDllOU0ZouYYgNjoXK96PBSln
-         V54b2lQWAP0ADnqoNXm1SfTj7jMC8EIwLfTXCMRM5cWRewKMPaiG/GFJoB+rX1GTZlJT
-         gwSXVxOw3aRNhG4h6qww/T0Ut8Gsx2nzTF6NH/o1tw1elK5GzZ1XPbJNJkza+1BPCtld
-         rqNuyNCz9qo5NcPwPIV7v9+K+Dt70EaeCV50+yH2VaE84yYuJPWkU405V+j1EzRSSDGK
-         YUbeFsMRFMT9DpBDU+bzwqrfb7lhyq6aoOZHjoy45TnnyiL9aTGZTc7+w8nGAN9OJRTp
-         yj0g==
-X-Gm-Message-State: AAQBX9czM4Ucbdr/OFps9rn3TVoK9KlEX+JpIS75EDTs9luPlLE74mZ1
-        4iTN2ajwjPEBi0fRyII74wY=
-X-Google-Smtp-Source: AKy350aBMPyXNAhO5Nl8FX9Bi1ycWaMuZ7J3CXvZnt0geBpx5vVMDFwEs1H0NF9kJxsQmqnXn5uM4A==
-X-Received: by 2002:a1c:720f:0:b0:3ed:eab9:976a with SMTP id n15-20020a1c720f000000b003edeab9976amr5448020wmc.5.1680208965794;
-        Thu, 30 Mar 2023 13:42:45 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:30f2:5b7:ab32:c3f])
-        by smtp.gmail.com with ESMTPSA id v12-20020a5d4b0c000000b002cfed482e9asm297981wrq.61.2023.03.30.13.42.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 13:42:45 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>, Guo Ren <guoren@kernel.org>,
-        Andrew Jones <ajones@ventanamicro.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-riscv@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v7 5/6] cache: Add L2 cache management for Andes AX45MP RISC-V core
-Date:   Thu, 30 Mar 2023 21:42:16 +0100
-Message-Id: <20230330204217.47666-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230330204217.47666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Thu, 30 Mar 2023 17:34:28 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D790335B5;
+        Thu, 30 Mar 2023 14:34:27 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id 5B925320094E;
+        Thu, 30 Mar 2023 17:34:24 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Thu, 30 Mar 2023 17:34:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1680212063; x=1680298463; bh=hp
+        uSAgqfUaqD/ysKyJQwTcBXNZjA8xYFCgAGQ8d1bL8=; b=vPTfmWAyebme5BY4p6
+        J4ucGHGxrN86sr2fRjD+KS3geiZl6TYAyvsUFTPJV9vgZm+YpnhnUAfkJuQyjcZ0
+        HsUAp7qWX2x1XpqS/6Avrs5R6vNIeD2d9e0BclI7l4+Xa85yS7RJ7d4zBfAPteQY
+        IqSl4R+T8FOxkEJWL3lxLJOTpvEslf10gn2QFIk8BUptkGAC1qgV7vk6wPe9Et7X
+        9jJquc17UpAUSDRMARTnPuIVSBD/q6atWEbNYS/Tde0YqW4Rrc97T0IXg06IROeW
+        rxADsu62hJFwbM1wo85cXh3YgY7X/taN2HPLNJWSvyzj1m98x8wrioQ3DIfdaF4V
+        2+0Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1680212063; x=1680298463; bh=hpuSAgqfUaqD/
+        ysKyJQwTcBXNZjA8xYFCgAGQ8d1bL8=; b=ZRndJORL0aLLZMdezjvfovMzjPjgD
+        /SKaR2niKqMry7R8FNFZGjh6xUJlJtOb6rhudt5wAj1K9u1sYHvrZpeqlEDxoKFj
+        CTdphfMnjq0IF2XCIbcOBtcqdVkl5LClq/oTtAv9Q5Ek04a3t4xNLzeteriILCbR
+        wFgeLl4JeUAV7iqsnUT3fP1OZ96KKTukwHGEcPp2mXXWnfg6M875wmv6yXpM9OSy
+        0Yx6bCmmskVhOyGFO/I5Pf+60RdcF2NNRAmXxzKR1nCNajILfNoGjY5Flxnbcdz0
+        NKA2Ph3MOwJlhjfrjqwQjxoLGItm1DUYfekI3VnjvQGVBMEAu6735U2nQ==
+X-ME-Sender: <xms:XwAmZHnJYWMFJmQOZtTITumy-EB4NgW6rRQXnIGt1NOfbyYHegs37w>
+    <xme:XwAmZK2aJx29Qpw-cq6bhpawMaG2yq2NHtOziL7jTMDJDb85mCeqym62zH29mwsxN
+    rKC1pGPxWAiawX49cA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehledgjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:XwAmZNqhsJPQicXWZvvxtikvnPQm5OVNl49IFAyrhhZRaiF1V9y9SA>
+    <xmx:XwAmZPkxehnn8E_iSkk91ZnWcfXm8zZDhRls891efa4l0d1EpjMgMA>
+    <xmx:XwAmZF3BvN2SH4R7BPA2b39JA-WzPFTCtSkq0rWw-BoDi1Rm7vRXsw>
+    <xmx:XwAmZE3yMMFvvLb-B40Fm_jatYudGBfd4G6AXs6SphEee8iJQan4tQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 01C80B60086; Thu, 30 Mar 2023 17:34:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-238-g746678b8b6-fm-20230329.001-g746678b8
+Mime-Version: 1.0
+Message-Id: <6ca5941a-8803-477d-8b40-17292decc5af@app.fastmail.com>
+In-Reply-To: <20230330204217.47666-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20230330204217.47666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20230330204217.47666-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date:   Thu, 30 Mar 2023 23:34:02 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     Prabhakar <prabhakar.csengg@gmail.com>,
+        "Conor.Dooley" <conor.dooley@microchip.com>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        guoren <guoren@kernel.org>,
+        "Andrew Jones" <ajones@ventanamicro.com>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        "Albert Ou" <aou@eecs.berkeley.edu>,
+        "Samuel Holland" <samuel@sholland.org>,
+        linux-riscv@lists.infradead.org
+Cc:     "Rob Herring" <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "Biju Das" <biju.das.jz@bp.renesas.com>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v7 1/6] riscv: mm: dma-noncoherent: Switch using function pointers
+ for cache management
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Mar 30, 2023, at 22:42, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Currently, selecting which CMOs to use on a given platform is done using
+> and ALTERNATIVE_X() macro. This was manageable when there were just two
+> CMO implementations, but now that there are more and more platforms coming
+> needing custom CMOs, the use of the ALTERNATIVE_X() macro is unmanageable.
+>
+> To avoid such issues this patch switches to use of function pointers
+> instead of ALTERNATIVE_X() macro for cache management (the only drawback
+> being performance over the previous approach).
+>
+> void (*clean_range)(unsigned long addr, unsigned long size);
+> void (*inv_range)(unsigned long addr, unsigned long size);
+> void (*flush_range)(unsigned long addr, unsigned long size);
+>
+> The above function pointers are provided to be overridden for platforms
+> needing CMO.
+>
+> Convert ZICBOM and T-HEAD CMO to use function pointers.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I/O Coherence Port (IOCP) provides an AXI interface for connecting
-external non-caching masters, such as DMA controllers. The accesses
-from IOCP are coherent with D-Caches and L2 Cache.
+This is looking pretty good. There are a few things that I
+still see sticking out, and I think I've mentioned some of 
+them before, but don't remember if there was a reason for
+doing it like this:
 
-IOCP is a specification option and is disabled on the Renesas RZ/Five
-SoC due to this reason IP blocks using DMA will fail.
+> +#ifdef CONFIG_ERRATA_THEAD_CMO
 
-The Andes AX45MP core has a Programmable Physical Memory Attributes (PMA)
-block that allows dynamic adjustment of memory attributes in the runtime.
-It contains a configurable amount of PMA entries implemented as CSR
-registers to control the attributes of memory locations in interest.
-Below are the memory attributes supported:
-* Device, Non-bufferable
-* Device, bufferable
-* Memory, Non-cacheable, Non-bufferable
-* Memory, Non-cacheable, Bufferable
-* Memory, Write-back, No-allocate
-* Memory, Write-back, Read-allocate
-* Memory, Write-back, Write-allocate
-* Memory, Write-back, Read and Write-allocate
+I would rename this to not call this an 'ERRATA' but
+just make it a driver. Not important though, and there
+was probably a reason you did it like this.
 
-More info about PMA (section 10.3):
-Link: http://www.andestech.com/wp-content/uploads/AX45MP-1C-Rev.-5.0.0-Datasheet.pdf
+> +extern struct riscv_cache_ops noncoherent_cache_ops;
+> +
+> +void riscv_noncoherent_register_cache_ops(const struct riscv_cache_ops 
+> *ops);
+> +
+> +static inline void riscv_dma_noncoherent_clean(void *vaddr, size_t 
+> size)
+> +{
+> +	if (noncoherent_cache_ops.clean_range) {
+> +		unsigned long addr = (unsigned long)vaddr;
+> +
+> +		noncoherent_cache_ops.clean_range(addr, size);
+> +	}
+> +}
 
-As a workaround for SoCs with IOCP disabled CMO needs to be handled by
-software. Firstly OpenSBI configures the memory region as
-"Memory, Non-cacheable, Bufferable" and passes this region as a global
-shared dma pool as a DT node. With DMA_GLOBAL_POOL enabled all DMA
-allocations happen from this region and synchronization callbacks are
-implemented to synchronize when doing DMA transactions.
+The type case should not be necessary here. Instead I would 
+make the callbacks use 'void *' as well, not 'unsigned long'.
 
-Example PMA region passes as a DT node from OpenSBI:
-    reserved-memory {
-        #address-cells = <2>;
-        #size-cells = <2>;
-        ranges;
+It's possible that some future cache controller driver requires
+passing physical addresses, as is common for last level cache,
+but as long as all drivers pass virtual addresses, it's easier
+to do the phys_to_virt() in common code.
 
-        pma_resv0@58000000 {
-            compatible = "shared-dma-pool";
-            reg = <0x0 0x58000000 0x0 0x08000000>;
-            no-map;
-            linux,dma-default;
-        };
-    };
+It also seems wrong to have the fallback be to do nothing
+when the pointer is NULL, since that cannot actually work
+when a device is not cache coherent.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v6 -> v7
-* Implemented flush callback
-* Dropped using riscv_dma_noncoherent_cmo_ops
+I would either initialize the function pointer to the
+zicbom version and remove the NULL check, or keep the
+pointer NULL and have an explicit
+'else zicbom_clean_range()' fallback.
 
-v5 -> v6
-* Moved driver to cache folder
-* Switched to new API for CMO
+> +static void zicbom_register_cmo_ops(void)
+> +{
+> +	riscv_noncoherent_register_cache_ops(&zicbom_cmo_ops);
+> +}
+> +#else
+> +static void zicbom_register_cmo_ops(void) {}
+> +#endif
 
-v4 -> v5
-* Dropped code for configuring L2 cache
-* Dropped code for configuring PMA
-* Updated commit message
-* Added comments
-* Changed static branch enable/disable order
+As far as I recall, the #else path here was needed previously
+to work around a binutils dependency, but with the current
+code, it should be possible to just always enable
+CONFIG_RISCV_ISA_ZICBOM when RISCV_DMA_NONCOHERENT is used.
 
-RFC v3 -> v4
-* Made use of runtime patching instead of compile time
-* Now just exposing single function ax45mp_no_iocp_cmo() for CMO handling
-* Added a check to make sure cache line size is always 64 bytes
-* Renamed folder rzf -> rzfive
-* Improved Kconfig description
-* Dropped L2 cache configuration
-* Dropped unnecessary casts
-* Fixed comments pointed by Geert.
----
- MAINTAINERS                  |   8 ++
- drivers/Kconfig              |   2 +
- drivers/Makefile             |   1 +
- drivers/cache/Kconfig        |  10 ++
- drivers/cache/Makefile       |   3 +
- drivers/cache/ax45mp_cache.c | 229 +++++++++++++++++++++++++++++++++++
- 6 files changed, 253 insertions(+)
- create mode 100644 drivers/cache/Kconfig
- create mode 100644 drivers/cache/Makefile
- create mode 100644 drivers/cache/ax45mp_cache.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 258fa89de965..921a96859530 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19897,6 +19897,14 @@ S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
- F:	drivers/staging/
- 
-+STANDALONE CACHE CONTROLLER DRIVERS
-+M:	Conor Dooley <conor@kernel.org>
-+L:	linux-riscv@lists.infradead.org
-+S:	Maintained
-+T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
-+F:	drivers/cache
-+F:	include/cache
-+
- STARFIRE/DURALAN NETWORK DRIVER
- M:	Ion Badulescu <ionut@badula.org>
- S:	Odd Fixes
-diff --git a/drivers/Kconfig b/drivers/Kconfig
-index 968bd0a6fd78..44abd2cba3a3 100644
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@ -15,6 +15,8 @@ source "drivers/base/Kconfig"
- 
- source "drivers/bus/Kconfig"
- 
-+source "drivers/cache/Kconfig"
-+
- source "drivers/connector/Kconfig"
- 
- source "drivers/firmware/Kconfig"
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 20b118dca999..db5a8115093f 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -11,6 +11,7 @@ ifdef building_out_of_srctree
- MAKEFLAGS += --include-dir=$(srctree)
- endif
- 
-+obj-y				+= cache/
- obj-y				+= irqchip/
- obj-y				+= bus/
- 
-diff --git a/drivers/cache/Kconfig b/drivers/cache/Kconfig
-new file mode 100644
-index 000000000000..5478adff3d88
---- /dev/null
-+++ b/drivers/cache/Kconfig
-@@ -0,0 +1,10 @@
-+# SPDX-License-Identifier: GPL-2.0
-+menu "Cache Drivers"
-+
-+config AX45MP_L2_CACHE
-+	bool "Andes Technology AX45MP L2 Cache controller"
-+	depends on RISCV && RISCV_DMA_NONCOHERENT
-+	help
-+	  Support for the L2 cache controller on Andes Technology AX45MP platforms.
-+
-+endmenu
-diff --git a/drivers/cache/Makefile b/drivers/cache/Makefile
-new file mode 100644
-index 000000000000..2012e7fb978d
---- /dev/null
-+++ b/drivers/cache/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-$(CONFIG_AX45MP_L2_CACHE) += ax45mp_cache.o
-diff --git a/drivers/cache/ax45mp_cache.c b/drivers/cache/ax45mp_cache.c
-new file mode 100644
-index 000000000000..cb230b544be8
---- /dev/null
-+++ b/drivers/cache/ax45mp_cache.c
-@@ -0,0 +1,229 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * non-coherent cache functions for Andes AX45MP
-+ *
-+ * Copyright (C) 2023 Renesas Electronics Corp.
-+ */
-+
-+#include <asm/dma-noncoherent.h>
-+#include <linux/cacheflush.h>
-+#include <linux/cacheinfo.h>
-+#include <linux/dma-direction.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+
-+/* L2 cache registers */
-+#define AX45MP_L2C_REG_CTL_OFFSET		0x8
-+
-+#define AX45MP_L2C_REG_C0_CMD_OFFSET		0x40
-+#define AX45MP_L2C_REG_C0_ACC_OFFSET		0x48
-+#define AX45MP_L2C_REG_STATUS_OFFSET		0x80
-+
-+/* D-cache operation */
-+#define AX45MP_CCTL_L1D_VA_INVAL		0 /* Invalidate an L1 cache entry */
-+#define AX45MP_CCTL_L1D_VA_WB			1 /* Write-back an L1 cache entry */
-+
-+/* L2 CCTL status */
-+#define AX45MP_CCTL_L2_STATUS_IDLE		0
-+
-+/* L2 CCTL status cores mask */
-+#define AX45MP_CCTL_L2_STATUS_C0_MASK		0xf
-+
-+/* L2 cache operation */
-+#define AX45MP_CCTL_L2_PA_INVAL			0x8 /* Invalidate an L2 cache entry */
-+#define AX45MP_CCTL_L2_PA_WB			0x9 /* Write-back an L2 cache entry */
-+
-+#define AX45MP_L2C_REG_PER_CORE_OFFSET		0x10
-+#define AX45MP_CCTL_L2_STATUS_PER_CORE_OFFSET	4
-+
-+#define AX45MP_L2C_REG_CN_CMD_OFFSET(n)	\
-+	(AX45MP_L2C_REG_C0_CMD_OFFSET + ((n) * AX45MP_L2C_REG_PER_CORE_OFFSET))
-+#define AX45MP_L2C_REG_CN_ACC_OFFSET(n)	\
-+	(AX45MP_L2C_REG_C0_ACC_OFFSET + ((n) * AX45MP_L2C_REG_PER_CORE_OFFSET))
-+#define AX45MP_CCTL_L2_STATUS_CN_MASK(n)	\
-+	(AX45MP_CCTL_L2_STATUS_C0_MASK << ((n) * AX45MP_CCTL_L2_STATUS_PER_CORE_OFFSET))
-+
-+#define AX45MP_CCTL_REG_UCCTLBEGINADDR_NUM	0x80b
-+#define AX45MP_CCTL_REG_UCCTLCOMMAND_NUM	0x80c
-+
-+#define AX45MP_CACHE_LINE_SIZE			64
-+
-+struct ax45mp_priv {
-+	void __iomem *l2c_base;
-+	u32 ax45mp_cache_line_size;
-+};
-+
-+static struct ax45mp_priv *ax45mp_priv;
-+
-+/* L2 Cache operations */
-+static inline uint32_t ax45mp_cpu_l2c_get_cctl_status(void)
-+{
-+	return readl(ax45mp_priv->l2c_base + AX45MP_L2C_REG_STATUS_OFFSET);
-+}
-+
-+static void ax45mp_cpu_cache_operation(unsigned long start, unsigned long end,
-+				       unsigned long line_size, unsigned int l1_op,
-+				       unsigned int l2_op)
-+{
-+	void __iomem *base = ax45mp_priv->l2c_base;
-+	int mhartid = smp_processor_id();
-+	unsigned long pa;
-+
-+	while (end > start) {
-+		csr_write(AX45MP_CCTL_REG_UCCTLBEGINADDR_NUM, start);
-+		csr_write(AX45MP_CCTL_REG_UCCTLCOMMAND_NUM, l1_op);
-+
-+		pa = virt_to_phys((void *)start);
-+		writel(pa, base + AX45MP_L2C_REG_CN_ACC_OFFSET(mhartid));
-+		writel(l2_op, base + AX45MP_L2C_REG_CN_CMD_OFFSET(mhartid));
-+		while ((ax45mp_cpu_l2c_get_cctl_status() &
-+			AX45MP_CCTL_L2_STATUS_CN_MASK(mhartid)) !=
-+			AX45MP_CCTL_L2_STATUS_IDLE)
-+			;
-+
-+		start += line_size;
-+	}
-+}
-+
-+/* Write-back L1 and L2 cache entry */
-+static inline void ax45mp_cpu_dcache_wb_range(unsigned long start, unsigned long end,
-+					      unsigned long line_size)
-+{
-+	ax45mp_cpu_cache_operation(start, end, line_size,
-+				   AX45MP_CCTL_L1D_VA_WB,
-+				   AX45MP_CCTL_L2_PA_WB);
-+}
-+
-+/* Invalidate the L1 and L2 cache entry */
-+static inline void ax45mp_cpu_dcache_inval_range(unsigned long start, unsigned long end,
-+						 unsigned long line_size)
-+{
-+	ax45mp_cpu_cache_operation(start, end, line_size,
-+				   AX45MP_CCTL_L1D_VA_INVAL,
-+				   AX45MP_CCTL_L2_PA_INVAL);
-+}
-+
-+static void ax45mp_cpu_dma_inval_range(unsigned long vaddr, unsigned long size)
-+{
-+	char cache_buf[2][AX45MP_CACHE_LINE_SIZE];
-+	unsigned long start = vaddr;
-+	unsigned long end = start + size;
-+	unsigned long old_start = start;
-+	unsigned long old_end = end;
-+	unsigned long line_size;
-+	unsigned long flags;
-+
-+	if (unlikely(start == end))
-+		return;
-+
-+	line_size = ax45mp_priv->ax45mp_cache_line_size;
-+
-+	memset(&cache_buf, 0x0, sizeof(cache_buf));
-+	start = start & (~(line_size - 1));
-+	end = ((end + line_size - 1) & (~(line_size - 1)));
-+
-+	local_irq_save(flags);
-+	if (unlikely(start != old_start))
-+		memcpy(&cache_buf[0][0], (void *)start, line_size);
-+
-+	if (unlikely(end != old_end))
-+		memcpy(&cache_buf[1][0], (void *)(old_end & (~(line_size - 1))), line_size);
-+
-+	ax45mp_cpu_dcache_inval_range(start, end, line_size);
-+
-+	if (unlikely(start != old_start))
-+		memcpy((void *)start, &cache_buf[0][0], (old_start & (line_size - 1)));
-+
-+	local_irq_restore(flags);
-+}
-+
-+static void ax45mp_cpu_dma_wb_range(unsigned long vaddr, unsigned long size)
-+{
-+	unsigned long start = vaddr;
-+	unsigned long end = start + size;
-+	unsigned long line_size;
-+	unsigned long flags;
-+
-+	line_size = ax45mp_priv->ax45mp_cache_line_size;
-+	local_irq_save(flags);
-+	start = start & (~(line_size - 1));
-+	ax45mp_cpu_dcache_wb_range(start, end, line_size);
-+	local_irq_restore(flags);
-+}
-+
-+static void ax45mp_cpu_dma_flush_range(unsigned long vaddr, unsigned long size)
-+{
-+	ax45mp_cpu_dma_wb_range(vaddr, size);
-+	ax45mp_cpu_dma_inval_range(vaddr, size);
-+}
-+
-+static void ax45mp_get_l2_line_size(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	ret = of_property_read_u32(np, "cache-line-size", &ax45mp_priv->ax45mp_cache_line_size);
-+	if (ret) {
-+		dev_err(dev, "Failed to get cache-line-size, defaulting to 64 bytes\n");
-+		ax45mp_priv->ax45mp_cache_line_size = AX45MP_CACHE_LINE_SIZE;
-+	}
-+
-+	if (ax45mp_priv->ax45mp_cache_line_size != AX45MP_CACHE_LINE_SIZE) {
-+		dev_err(dev, "Expected cache-line-size to be 64 bytes (found:%u). Defaulting to 64 bytes\n",
-+			ax45mp_priv->ax45mp_cache_line_size);
-+		ax45mp_priv->ax45mp_cache_line_size = AX45MP_CACHE_LINE_SIZE;
-+	}
-+}
-+
-+static const struct riscv_cache_ops ax45mp_cmo_ops = {
-+	.clean_range = &ax45mp_cpu_dma_wb_range,
-+	.inv_range = &ax45mp_cpu_dma_inval_range,
-+	.flush_range = &ax45mp_cpu_dma_flush_range,
-+};
-+
-+static int ax45mp_l2c_probe(struct platform_device *pdev)
-+{
-+	/*
-+	 * If IOCP is present on the Andes AX45MP core riscv_cbom_block_size
-+	 * will be 0 for sure, so we can definitely rely on it. If
-+	 * riscv_cbom_block_size = 0 we don't need to handle CMO using SW any
-+	 * more so we just return success here and only if its being set we
-+	 * continue further in the probe path.
-+	 */
-+	if (!riscv_cbom_block_size)
-+		return 0;
-+
-+	ax45mp_priv = devm_kzalloc(&pdev->dev, sizeof(*ax45mp_priv), GFP_KERNEL);
-+	if (!ax45mp_priv)
-+		return -ENOMEM;
-+
-+	ax45mp_priv->l2c_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(ax45mp_priv->l2c_base))
-+		return PTR_ERR(ax45mp_priv->l2c_base);
-+
-+	ax45mp_get_l2_line_size(pdev);
-+
-+	riscv_noncoherent_register_cache_ops(&ax45mp_cmo_ops);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ax45mp_cache_ids[] = {
-+	{ .compatible = "andestech,ax45mp-cache" },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver ax45mp_l2c_driver = {
-+	.driver = {
-+		.name = "ax45mp-l2c",
-+		.of_match_table = ax45mp_cache_ids,
-+	},
-+	.probe = ax45mp_l2c_probe,
-+};
-+
-+static int __init ax45mp_cache_init(void)
-+{
-+	return platform_driver_register(&ax45mp_l2c_driver);
-+}
-+arch_initcall(ax45mp_cache_init);
--- 
-2.25.1
-
+     Arnd
