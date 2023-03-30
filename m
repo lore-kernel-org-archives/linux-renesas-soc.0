@@ -2,116 +2,101 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F94EC6FD1D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Mar 2023 12:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A717C761A6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Mar 2023 12:59:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231384AbjC3Mnd (ORCPT
+        id S231367AbjC3M7v convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 30 Mar 2023 08:43:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39086 "EHLO
+        Thu, 30 Mar 2023 08:59:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231151AbjC3Mnc (ORCPT
+        with ESMTP id S231731AbjC3M7s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2023 08:43:32 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D55191;
-        Thu, 30 Mar 2023 05:43:31 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id h8so75934664ede.8;
-        Thu, 30 Mar 2023 05:43:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680180209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n/8td5sRl3oLpjvJWr+SauyjMW5J+/af8DNO0aQQsj4=;
-        b=R6I/30BG5UPA5FkYjKVUOSk8ON+L56EIBLONKVcUcG66As/OewLwhMJOEZ7pH/CLIF
-         lw5Ldo93TyCnbouWW7sn6r3X1q4G9eBsDkqM7EGHS++EvGHXZ1BPDKRnhCkRnHpH3k7W
-         toyOaQ8AdiCXYmHXxTqfMSFBKgw1bzxE4IuGtB3xQgGZ5fyVGYpbDHx/jTc/43Plix+k
-         TfXLtwH042/qHJ2RMlQ5OwK2exvA5LqhC/2Bcjao6WLpg3vfRYD38I+FcWic3HWgUBY4
-         0OuxkiVp/bNVDNwReIudGNhx0j7PVxoWzHj4bgO+e68KZRf4WBgjXUwtpjuoIHRN3Bwa
-         nxMg==
+        Thu, 30 Mar 2023 08:59:48 -0400
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220259EE7;
+        Thu, 30 Mar 2023 05:59:43 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id h9so19514916ljq.2;
+        Thu, 30 Mar 2023 05:59:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680180209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n/8td5sRl3oLpjvJWr+SauyjMW5J+/af8DNO0aQQsj4=;
-        b=HsAYBc8E7hOiKEWqL0JQAimJWb5p0rSsnvOZESP7nFcnFLu4lgd60lTErPp9XGT/ni
-         Tmmip6TMJ/gPtlbLoPWbksUIZ4BWYy5094mk3NoUmH5+FI7fQw+x+KrCTXDj/uJIm5Ei
-         I0eAMstzM0c7H5ZUp3UBjuCKhwaIJ9TaBEsT2UM8+5dUXeN85BSrOcyDGyu0HTqczY4/
-         x6WpA4CrGsLkgVQ7U5qFvS5YDW5KV3LrBLtrLDq56smC8Yde60dIH05UrC8ifbPP7RmD
-         nR5E1+NobuG4R2kcN7Tcf+c7e/3TCrcX98eogNiEnbc4XRaiXmPf6Ug2PVjFV8ySa5uZ
-         JnjA==
-X-Gm-Message-State: AAQBX9dXktRk2c2zrTasGjTmaDh3f5uPa8kxTbrC/lj2HoMLgpBK4orY
-        Q+UDhbNGu+BcLIFxKunUbqo=
-X-Google-Smtp-Source: AKy350YI2msvuHetohhT7eQ5t1xlC1RudA+4E9BCOndXuD6L8J5sWGjktS0WAdrtvGBAhM/oS9ONAg==
-X-Received: by 2002:aa7:cf19:0:b0:501:dc02:1956 with SMTP id a25-20020aa7cf19000000b00501dc021956mr24516457edy.29.1680180209442;
-        Thu, 30 Mar 2023 05:43:29 -0700 (PDT)
-Received: from skbuf ([188.27.184.189])
-        by smtp.gmail.com with ESMTPSA id q30-20020a50aa9e000000b004fadc041e13sm18202433edc.42.2023.03.30.05.43.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 05:43:29 -0700 (PDT)
-Date:   Thu, 30 Mar 2023 15:43:26 +0300
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Hans Schultz <netdev@kapio-technology.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        "maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER" 
-        <UNGLinuxDriver@microchip.com>, Sean Wang <sean.wang@mediatek.com>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Roopa Prabhu <roopa@nvidia.com>,
-        Nikolay Aleksandrov <razor@blackwall.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Ido Schimmel <idosch@nvidia.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v2 net-next 2/6] net: dsa: propagate flags down towards
- drivers
-Message-ID: <20230330124326.v5mqg7do25tz6izk@skbuf>
-References: <20230318141010.513424-1-netdev@kapio-technology.com>
- <20230318141010.513424-3-netdev@kapio-technology.com>
- <20230327115206.jk5q5l753aoelwus@skbuf>
- <87355qb48h.fsf@kapio-technology.com>
- <20230327160009.bdswnalizdv2u77z@skbuf>
- <87pm8tooe1.fsf@kapio-technology.com>
- <20230327225933.plm5raegywbe7g2a@skbuf>
- <87ileljfwo.fsf@kapio-technology.com>
- <20230328114943.4mibmn2icutcio4m@skbuf>
- <87cz4slkx5.fsf@kapio-technology.com>
+        d=1e100.net; s=20210112; t=1680181180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZGoTpAkzvPXZTogVoj8kdq2GxGxpgvtqWQ8RuMpPxVo=;
+        b=KKyOlNAEflmYpHiQc6XuVmm/RTk0kRUjRqufi+EDudYI2OAYYPZ88FLphjs2cU7zm3
+         t0+PkGc5Z+2bwkZn7hNb2H7K5P0gpHcImyrOGoSOWNBeWcIUpFCRSONOE5tXfZxiEK1G
+         4XSl7GN4AJIVbXzjJw/hsSfe/ogGgoWo2S3MauXsNma+NAOKdeZfKV6PvIStQPyb7Etp
+         p9Ow3OUtFLt8gwjrXncf2UD2+mz0I8LcJ54VReTe84HTxMPUOi2ZIxkyooFO1lePWC+f
+         Gk3ZYPVGAGJIH/4apc4m2yaVVa+Kg1HWLumuYkuytebrffFwEnBhvVZHOBByI91Yvuts
+         rCGg==
+X-Gm-Message-State: AAQBX9fkv+3c98e8+yYEbqk5XEqQZzQKVLv4JoZT57UDwcjHbfPO0Ska
+        JyOymwbX02MZbU2HQ6zTuJYH4fFVbI8UcUxY
+X-Google-Smtp-Source: AKy350b5FEvUkeqbiPIF8q//VsLTZrSk/T6ulAPE9F8UaeGFJXwsUgS3FscdDnrnH/qsurtrosxsRQ==
+X-Received: by 2002:a2e:9e98:0:b0:29c:d0ef:481c with SMTP id f24-20020a2e9e98000000b0029cd0ef481cmr7029567ljk.28.1680181180446;
+        Thu, 30 Mar 2023 05:59:40 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id c1-20020a2e6801000000b002a421ac8629sm2514124lja.49.2023.03.30.05.59.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Mar 2023 05:59:38 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id q14so19488939ljm.11;
+        Thu, 30 Mar 2023 05:59:38 -0700 (PDT)
+X-Received: by 2002:a2e:b60d:0:b0:299:ac4e:a8a6 with SMTP id
+ r13-20020a2eb60d000000b00299ac4ea8a6mr7200190ljn.9.1680181178291; Thu, 30 Mar
+ 2023 05:59:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87cz4slkx5.fsf@kapio-technology.com>
+References: <20230327205228.573456-1-robh@kernel.org>
+In-Reply-To: <20230327205228.573456-1-robh@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 30 Mar 2023 14:59:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX742MrnXhYJUSRqXnG_ctzcH0ee=og_6-7K=62yFLaDQ@mail.gmail.com>
+Message-ID: <CAMuHMdX742MrnXhYJUSRqXnG_ctzcH0ee=og_6-7K=62yFLaDQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: sh-mobile: Use of_cpu_node_to_id() to read CPU
+ node 'reg'
+To:     Rob Herring <robh@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 09:45:26PM +0200, Hans Schultz wrote:
-> So the solution would be to not let the DSA layer send the
-> SWITCHDEV_FDB_OFFLOADED event in the case when the new dynamic flag is
-> set?
+Hi Rob,
 
-I have never said that.
+On Mon, Mar 27, 2023 at 10:52 PM Rob Herring <robh@kernel.org> wrote:
+> Replace open coded CPU nodes reading of "reg" and translation to logical
+> ID with of_cpu_node_to_id().
+>
+> The original code called of_parse_phandle() CONFIG_NR_CPUS times
+> regardless of the length of 'cpus'. Optimize the loop to bail out once
+> of_parse_phandle() fails as the end of 'cpus' property has been reached.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> v2:
+>  - Optimize the number of loop iterations
+
+Thanks for the update!
+
+I have tested this on:
+  - R-Car H2: 4xCA15 + 4xCA7, booted from either CA15 or CA7,
+  - R-Car M2-W: 2xCA15,
+  - R-Car E2: 2xCA7.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.4.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
