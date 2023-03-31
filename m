@@ -2,43 +2,40 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE338C761A6
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 14:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72049C76196
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 14:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232929AbjCaOxT (ORCPT
+        id S232944AbjCaOyf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 10:53:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34946 "EHLO
+        Fri, 31 Mar 2023 10:54:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232999AbjCaOxG (ORCPT
+        with ESMTP id S232971AbjCaOy1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2023 10:53:06 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDD1620620
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Mar 2023 07:52:41 -0700 (PDT)
+        Fri, 31 Mar 2023 10:54:27 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B06C20C0B
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Mar 2023 07:53:59 -0700 (PDT)
 Received: from ramsan.of.borg ([84.195.187.55])
-        by albert.telenet-ops.be with bizsmtp
-        id f2se2900P1C8whw062sej4; Fri, 31 Mar 2023 16:52:39 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id f2tq2900A1C8whw012tqhi; Fri, 31 Mar 2023 16:53:50 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1piG2N-00FUga-4H;
-        Fri, 31 Mar 2023 16:48:16 +0200
+        id 1piG3X-00FUhG-LH;
+        Fri, 31 Mar 2023 16:49:29 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1piG36-008fIP-Gz;
-        Fri, 31 Mar 2023 16:48:16 +0200
+        id 1piG4H-008fKN-2A;
+        Fri, 31 Mar 2023 16:49:29 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] drm: shmobile: Fixes and enhancements
-Date:   Fri, 31 Mar 2023 16:48:06 +0200
-Message-Id: <cover.1680273039.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC] staging: board: armadillo800eva: Add DRM support
+Date:   Fri, 31 Mar 2023 16:49:25 +0200
+Message-Id: <c03d4edbd650836bf6a96504df82338ec6d800ff.1680272980.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,51 +43,104 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Add support for using the SH-Mobile DRM driver instead of the SH-Mobile
+LCDC framebuffer driver.
 
-Currently, there are two drivers for the LCD controller on Renesas
-SuperH-based and ARM-based SH-Mobile and R-Mobile SoCs:
-  1. sh_mobile_lcdcfb, using the fbdev framework,
-  2. shmob_drm, using the DRM framework.
-However, only the former driver can be used, as all platform support
-integrates the former.  None of these drivers support DT-based systems.
+Based on old kzm9g conversion prototype code by Laurent Pinchart.
 
-This patch series is a first step to enable the SH-Mobile DRM driver for
-Renesas ARM-based SH-Mobile and R-Mobile SoCs.  The next step planned is
-to add DT support.
+Note that the new timings are slightly different, as they are based on
+the AMPIRE AM-800480L1TMQW-T00H-L datasheet.
 
-This has been tested on the R-Mobile A1-based Atmark Techno
-Armadillo-800-EVA development board, using a temporary
-platform-enablement patch[1].
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
+The final solution should be DT-based, and include removal of this file.
 
-Thanks for your comments!
+proper operation, this depends on "[PATCH 0/5] drm: shmobile: Fixes and
+enhancements"
+https://lore.kernel.org/r/cover.1680273039.git.geert+renesas@glider.be
+---
+ drivers/staging/board/armadillo800eva.c | 37 +++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-[1] https://lore.kernel.org/r/c03d4edbd650836bf6a96504df82338ec6d800ff.1680272980.git.geert+renesas@glider.be
-
-Geert Uytterhoeven (5):
-  drm: shmobile: Use %p4cc to print fourcc codes
-  drm: shmobile: Add support for DRM_FORMAT_XRGB8888
-  drm: shmobile: Switch to drm_crtc_init_with_planes()
-  drm: shmobile: Add missing call to drm_fbdev_generic_setup()
-  drm: shmobile: Make DRM_SHMOBILE visible on Renesas SoC platforms
-
- drivers/gpu/drm/shmobile/Kconfig           |  2 +-
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c  | 35 +++++++++++++++++++---
- drivers/gpu/drm/shmobile/shmob_drm_drv.c   |  3 ++
- drivers/gpu/drm/shmobile/shmob_drm_kms.c   |  9 ++++--
- drivers/gpu/drm/shmobile/shmob_drm_plane.c |  5 ++++
- 5 files changed, 47 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/staging/board/armadillo800eva.c b/drivers/staging/board/armadillo800eva.c
+index 0225234dd7aa6b1c..e5ce61b54b1ca3fb 100644
+--- a/drivers/staging/board/armadillo800eva.c
++++ b/drivers/staging/board/armadillo800eva.c
+@@ -12,6 +12,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/fb.h>
+ #include <linux/kernel.h>
++#include <linux/platform_data/shmob_drm.h>
+ #include <linux/platform_device.h>
+ #include <linux/videodev2.h>
+ 
+@@ -19,6 +20,33 @@
+ 
+ #include "board.h"
+ 
++#ifdef CONFIG_DRM_SHMOBILE
++static struct shmob_drm_platform_data lcdc0_info = {
++	.clk_source = SHMOB_DRM_CLK_BUS,
++	.iface = {
++		.interface = SHMOB_DRM_IFACE_RGB24,
++		.clk_div = 5,
++	},
++	.panel = {
++		.width_mm = 111,
++		.height_mm = 68,
++		.mode = {
++			// Timings based on AMPIRE AM-800480L1TMQW-T00H-L
++			// datasheet
++			.name		= "AMPIRE/AM-800480",
++			.clock		= 33264,
++			.hdisplay	= 800,
++			.hsync_start	= 840,
++			.hsync_end	= 968,
++			.htotal		= 1056,
++			.vdisplay	= 480,
++			.vsync_start	= 515,
++			.vsync_end	= 517,
++			.vtotal		= 525,
++		},
++	},
++};
++#else
+ static struct fb_videomode lcdc0_mode = {
+ 	.name		= "AMPIER/AM-800480",
+ 	.xres		= 800,
+@@ -48,6 +76,7 @@ static struct sh_mobile_lcdc_info lcdc0_info = {
+ 		},
+ 	},
+ };
++#endif
+ 
+ static struct resource lcdc0_resources[] = {
+ 	DEFINE_RES_MEM_NAMED(0xfe940000, 0x4000, "LCD0"),
+@@ -55,7 +84,11 @@ static struct resource lcdc0_resources[] = {
+ };
+ 
+ static struct platform_device lcdc0_device = {
++#ifdef CONFIG_DRM_SHMOBILE
++	.name		= "shmob-drm",
++#else
+ 	.name		= "sh_mobile_lcdc_fb",
++#endif
+ 	.num_resources	= ARRAY_SIZE(lcdc0_resources),
+ 	.resource	= lcdc0_resources,
+ 	.id		= 0,
+@@ -66,7 +99,11 @@ static struct platform_device lcdc0_device = {
+ };
+ 
+ static const struct board_staging_clk lcdc0_clocks[] __initconst = {
++#ifdef CONFIG_DRM_SHMOBILE
++	{ "lcdc0", NULL, "shmob-drm.0" },
++#else
+ 	{ "lcdc0", NULL, "sh_mobile_lcdc_fb.0" },
++#endif
+ };
+ 
+ static const struct board_staging_dev armadillo800eva_devices[] __initconst = {
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
