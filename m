@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 488F8C76196
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 04:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FE8C6FD18
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 04:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229660AbjCaENb (ORCPT
+        id S229891AbjCaENd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 00:13:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57596 "EHLO
+        Fri, 31 Mar 2023 00:13:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjCaENb (ORCPT
+        with ESMTP id S229448AbjCaENc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2023 00:13:31 -0400
+        Fri, 31 Mar 2023 00:13:32 -0400
 Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E374CD323
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2023 21:13:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 077A411EBA
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2023 21:13:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680236009; x=1711772009;
+  t=1680236010; x=1711772010;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=MowNiH8l7M4tHpfaw64wcqPEGshL28tHE9afUZRu9uo=;
-  b=ZH0FUUfAdauPccTyj0GtTPEzvAkJIzbBOx28men0YW67xXG7UYuqFrew
-   EXWr5PVDkTAj42LxJMNGSTcLiVn/21EyGDbAW6qbyCS/EYOU7mibQ6YDy
-   dHI+ZZh2ITLfuhR1nyxubfX2rYDSZmK2nVsvXJLQTQfDWZt+bb+Y92OxD
-   JK3A1oF3QiBKm87C47b3aJWIpmiT0k3+hEAFwAungdsNxmt/4A8D/JnxN
-   8yoZtlx0JIGrbTJnbVZsb4pvSkIyJUJOEpiHYf24dywDCARFib1UkbxHx
-   4WyVNNW2ZZ54YvTCy+jhhbqIKae/b59e5fgfD47bcBLkVO95utO222sY5
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10665"; a="341361445"
+  bh=8NDXmDJx1NMpgq/7s588fGYoHQsnI9wMT+RKwbhwAok=;
+  b=d5sTOuQgOF96yiq2NgcbfUsuTNf0UgAZ3I/BkCxUsxWUxzZcM14OuBKz
+   M2a+xlhdAHdMOQZxWeEGftYg4jC9QfTRhxqqPHQKDYEBdmFshjzZHqdZD
+   CfCFwp8n2dBBr/D49+g0AJD4zialJIGu0zyiNAIXEJ5tyD3dMZH19PUNj
+   eQbnumArKAjl21MBmtQewr5L7KvSwToporbxQYBrNeVqx5AdnFHPwL0Ch
+   kSusnkXahedkKGFiF/EkAzTZc1ct6Lu0nPWK1nWG/mWkxbgp7A1qZMnTQ
+   4v+7rPwgXisrnC36t8rlCzYuC6uNb34Ud9pOX68WQ6KY1FyXVPAreSrwO
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10665"; a="341361448"
 X-IronPort-AV: E=Sophos;i="5.98,306,1673942400"; 
-   d="scan'208";a="341361445"
+   d="scan'208";a="341361448"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2023 21:13:29 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10665"; a="859144366"
+X-IronPort-AV: E=McAfee;i="6600,9927,10665"; a="859144368"
 X-IronPort-AV: E=Sophos;i="5.98,306,1673942400"; 
-   d="scan'208";a="859144366"
+   d="scan'208";a="859144368"
 Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
   by orsmga005.jf.intel.com with ESMTP; 30 Mar 2023 21:13:27 -0700
 Received: from kbuild by b613635ddfff with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pi68f-000LTy-37;
-        Fri, 31 Mar 2023 04:13:21 +0000
-Date:   Fri, 31 Mar 2023 12:12:53 +0800
+        id 1pi68g-000LU4-0H;
+        Fri, 31 Mar 2023 04:13:22 +0000
+Date:   Fri, 31 Mar 2023 12:12:23 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-dts-for-v6.4] BUILD SUCCESS
- 3d52973db7457362e54b5b62242671eee80b2c14
-Message-ID: <64265dc5.xrCRqL29hl2HhHrw%lkp@intel.com>
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ 2fd5359030e85226294411286259035a9a915ae8
+Message-ID: <64265da7.cBPkfP8uWfku4MdA%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -59,13 +59,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v6.4
-branch HEAD: 3d52973db7457362e54b5b62242671eee80b2c14  arm64: dts: renesas: rzg2l-smarc: Enable CRU, CSI support
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: 2fd5359030e85226294411286259035a9a915ae8  Merge branches 'renesas-arm-soc-for-v6.4', 'renesas-drivers-for-v6.4' and 'renesas-dts-for-v6.4' into renesas-next
 
-elapsed time: 731m
+elapsed time: 732m
 
-configs tested: 219
-configs skipped: 17
+configs tested: 218
+configs skipped: 18
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -94,13 +94,11 @@ arm                              allyesconfig   gcc
 arm                                 defconfig   gcc  
 arm                         lpc18xx_defconfig   gcc  
 arm                         orion5x_defconfig   clang
-arm                  randconfig-r034-20230329   clang
 arm64                            allyesconfig   gcc  
 arm64        buildonly-randconfig-r001-20230329   gcc  
 arm64        buildonly-randconfig-r002-20230329   gcc  
 arm64        buildonly-randconfig-r005-20230329   gcc  
 arm64                               defconfig   gcc  
-arm64                randconfig-r011-20230329   clang
 arm64                randconfig-r025-20230329   clang
 arm64                randconfig-r026-20230329   clang
 arm64                randconfig-r032-20230329   gcc  
@@ -187,7 +185,6 @@ mips                 randconfig-r001-20230329   clang
 mips                 randconfig-r013-20230329   gcc  
 mips                 randconfig-r021-20230329   gcc  
 mips                 randconfig-r026-20230329   gcc  
-mips                 randconfig-r036-20230329   clang
 nios2        buildonly-randconfig-r001-20230329   gcc  
 nios2        buildonly-randconfig-r003-20230329   gcc  
 nios2        buildonly-randconfig-r004-20230329   gcc  
@@ -232,7 +229,6 @@ riscv                               defconfig   gcc
 riscv                randconfig-r002-20230329   gcc  
 riscv                randconfig-r005-20230329   gcc  
 riscv                randconfig-r013-20230329   clang
-riscv                randconfig-r014-20230329   clang
 riscv                randconfig-r016-20230329   clang
 riscv                randconfig-r022-20230329   clang
 riscv                randconfig-r032-20230329   gcc  
@@ -276,8 +272,11 @@ x86_64                           allyesconfig   gcc
 x86_64                              defconfig   gcc  
 x86_64                                  kexec   gcc  
 x86_64                        randconfig-a001   clang
+x86_64                        randconfig-a002   gcc  
 x86_64                        randconfig-a003   clang
+x86_64                        randconfig-a004   gcc  
 x86_64                        randconfig-a005   clang
+x86_64                        randconfig-a006   gcc  
 x86_64                        randconfig-a011   gcc  
 x86_64                        randconfig-a012   clang
 x86_64                        randconfig-a013   gcc  
