@@ -2,136 +2,118 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07803C6FD18
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 11:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4181C76196
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 11:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231953AbjCaLem (ORCPT
+        id S230096AbjCaLgf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 07:34:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46462 "EHLO
+        Fri, 31 Mar 2023 07:36:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231959AbjCaLek (ORCPT
+        with ESMTP id S229437AbjCaLge (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2023 07:34:40 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6A5862139;
-        Fri, 31 Mar 2023 04:34:22 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.98,307,1673881200"; 
-   d="scan'208";a="157862815"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 31 Mar 2023 20:34:03 +0900
-Received: from localhost.localdomain (unknown [10.226.93.148])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id DE687436D615;
-        Fri, 31 Mar 2023 20:34:00 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-serial@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 4/5] tty: serial: sh-sci: Add support for tx end interrupt handling
-Date:   Fri, 31 Mar 2023 12:33:45 +0100
-Message-Id: <20230331113346.170602-5-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230331113346.170602-1-biju.das.jz@bp.renesas.com>
-References: <20230331113346.170602-1-biju.das.jz@bp.renesas.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 31 Mar 2023 07:36:34 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C74E7;
+        Fri, 31 Mar 2023 04:36:33 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id E6DF75C0101;
+        Fri, 31 Mar 2023 07:36:32 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 31 Mar 2023 07:36:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1680262592; x=1680348992; bh=lA
+        TVIt48Hpo+q3JJzTeR8jiPkek4/jt/yPq+C0ofGOc=; b=qwOPUeI5fevhA8XQSD
+        cyLK+sTtkxX23M69wn8jJd1j5bycqOJ3N68bTC1+LUzAb9nPYwglJFWJs3CRp/B4
+        wG3zDOMBp0yYsmnNz3z1aAXWTzMqvMteifmzgNpSaj8cbYgKoeLkOdIay6carwKM
+        1hTE7Ai0L7938hAZGaGKHKimFUTQQ7M1Ci6bmSiF99A+SrUgkKO8zhyDI1BKBWDA
+        j1plG8fdUB33NdxDeSRaYM8+ntmYOFzX0Aie+06a6MmQFTn7Xl0bNUGbs+IV+t6v
+        kHbreO/5AmGeAPaqA/D/wSQIIEsgUBnJ/hPR7BLQBZxW1CA6/9lTXONsFlkXKkJu
+        ZfjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1680262592; x=1680348992; bh=lATVIt48Hpo+q
+        3JJzTeR8jiPkek4/jt/yPq+C0ofGOc=; b=lC0u06xIA9SXGzlgtSXgNq9N7A9R6
+        ZLflqDYtON3uJPnuT/DmXFmjCniwajtkC+CIL0pscI1A0D2aaxh1UgJzQ+P5E0pg
+        s+jEiDJyKp3lP1ea21OTCmkGboZr+JHsX6UF6JDayIDy4aeORr0ju+q7xeEbF0OH
+        KIBho75TyesT3bEzI608oyD4ksM5DfuUH17++cMGq/OcdibNWyAMEpzGPZlItVtA
+        7RAt5rdaUi21P5aCCN6aeWSQLXPef89hcZg5QxV5l7kSfybHDd1lz7EgrGeDKAAZ
+        ponC0W30tfTnao/RlPzqBpwpB2mYO35Sl1+igfOrN/QPqqQE7+I5NsgzA==
+X-ME-Sender: <xms:wMUmZBKUM4fKUDD_dmcV3zgf7O9E4E30Ev_X4ZeMeiBNdvxHzJnpQg>
+    <xme:wMUmZNJTjEzXziGaE-gBPfXV4Fq9L-ZsNdcO4GCMw-fcoHJqT31xwCjMX4yqQpVBW
+    VBZYOddg-OJsBAHlEI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeiuddgfeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:wMUmZJu0BgRw0CZ1EHzbcbVOnDqx-qnJseYrsmlJWDUliKtq-MrGdA>
+    <xmx:wMUmZCaU5eoDjCvY8WCDnKczM1pSv7MhE-B6UkPIQ_pRqjhZhpZVzg>
+    <xmx:wMUmZIb8JQrgHuQzT1pdfMJ8Kii1TCdUwg9s1XlSepSTyHS8wM-avQ>
+    <xmx:wMUmZFKGL_2aPddCKBucqadFd2dWjWfCGVpw71HFrTW33TtxtZyThg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 4667FB6008D; Fri, 31 Mar 2023 07:36:32 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-238-g746678b8b6-fm-20230329.001-g746678b8
+Mime-Version: 1.0
+Message-Id: <08eace10-3eee-481a-b1b4-de58e94cd828@app.fastmail.com>
+In-Reply-To: <50e932df-cb20-4679-b911-fd9d7f0f2c1d@spud>
+References: <20230330204217.47666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20230330204217.47666-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <6ca5941a-8803-477d-8b40-17292decc5af@app.fastmail.com>
+ <CA+V-a8tkiDXG37YjFKPxrGoXVQMVBemMdBcfb+uUDzBofOWH_A@mail.gmail.com>
+ <50e932df-cb20-4679-b911-fd9d7f0f2c1d@spud>
+Date:   Fri, 31 Mar 2023 13:36:11 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Conor.Dooley" <conor.dooley@microchip.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        guoren <guoren@kernel.org>,
+        "Andrew Jones" <ajones@ventanamicro.com>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        "Albert Ou" <aou@eecs.berkeley.edu>,
+        "Samuel Holland" <samuel@sholland.org>,
+        linux-riscv@lists.infradead.org,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "Biju Das" <biju.das.jz@bp.renesas.com>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v7 1/6] riscv: mm: dma-noncoherent: Switch using function pointers
+ for cache management
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As per the RZ/G2L users hardware manual (Rev.1.20 Sep, 2022), section
-23.3.7 Serial Data Transmission (Asynchronous Mode), it is mentioned
-that, set the SCR.TIE bit to 0 and SCR.TEIE bit to 1, after the last
-data to be transmitted are written to the TDR.
+On Fri, Mar 31, 2023, at 12:55, Conor Dooley wrote:
+> On Fri, Mar 31, 2023 at 11:37:30AM +0100, Lad, Prabhakar wrote:
+>>
+>
+> Does that actually work? I don't think it does.
+> If you try to enable RISCV_ISA_ZICBOM then you won't get
+> RISC_DMA_NONCOHERENT turned on. Run menuconfig and disable support for
+> Renesas, SiFive and T-Head SoCs & you can replicate.
 
-This will generate tx end interrupt and in the handler set SCR.TE and
-SCR.TEIE to 0.
+Right, the circular dependency has to be broken in some form.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v3:
- * New patch. moved from Renesas SCI fixes patch series.
----
- drivers/tty/serial/sh-sci.c | 31 ++++++++++++++++++++++++++++---
- drivers/tty/serial/sh-sci.h |  3 +++
- 2 files changed, 31 insertions(+), 3 deletions(-)
+> I think one of RISCV_ISA_ZICBOM and RISCV_DMA_NONCOHERENT should just be
+> dropped, although I don't know which one to pick!
+> Making RISCV_DMA_NONCOHERENT user selectable probably makes the most
+> sense.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 32f5c1f7d697..5c9ae69c0555 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -860,9 +860,16 @@ static void sci_transmit_chars(struct uart_port *port)
- 
- 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
- 		uart_write_wakeup(port);
--	if (uart_circ_empty(xmit))
--		sci_stop_tx(port);
-+	if (uart_circ_empty(xmit)) {
-+		if (port->type == PORT_SCI) {
-+			ctrl = serial_port_in(port, SCSCR);
-+			ctrl &= ~SCSCR_TIE;
-+			ctrl |= SCSCR_TEIE;
-+			serial_port_out(port, SCSCR, ctrl);
-+		}
- 
-+		sci_stop_tx(port);
-+	}
- }
- 
- static void sci_receive_chars(struct uart_port *port)
-@@ -1766,6 +1773,24 @@ static irqreturn_t sci_tx_interrupt(int irq, void *ptr)
- 	return IRQ_HANDLED;
- }
- 
-+static irqreturn_t sci_tx_end_interrupt(int irq, void *ptr)
-+{
-+	struct uart_port *port = ptr;
-+	unsigned long flags;
-+	unsigned short ctrl;
-+
-+	if (port->type != PORT_SCI)
-+		return sci_tx_interrupt(irq, ptr);
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	ctrl = serial_port_in(port, SCSCR);
-+	ctrl &= ~(SCSCR_TE | SCSCR_TEIE);
-+	serial_port_out(port, SCSCR, ctrl);
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static irqreturn_t sci_br_interrupt(int irq, void *ptr)
- {
- 	struct uart_port *port = ptr;
-@@ -1902,7 +1927,7 @@ static const struct sci_irq_desc {
- 
- 	[SCIx_TEI_IRQ] = {
- 		.desc = "tx end",
--		.handler = sci_tx_interrupt,
-+		.handler = sci_tx_end_interrupt,
- 	},
- 
- 	/*
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index c0ae78632dda..0b65563c4e9e 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -59,6 +59,9 @@ enum {
- #define SCSMR_SRC_19	0x0600	/* Sampling rate 1/19 */
- #define SCSMR_SRC_27	0x0700	/* Sampling rate 1/27 */
- 
-+/* Serial Control Register, SCI only bits */
-+#define SCSCR_TEIE	BIT(2)  /* Transmit End Interrupt Enable */
-+
- /* Serial Control Register, SCIFA/SCIFB only bits */
- #define SCSCR_TDRQE	BIT(15)	/* Tx Data Transfer Request Enable */
- #define SCSCR_RDRQE	BIT(14)	/* Rx Data Transfer Request Enable */
--- 
-2.25.1
+That sounds good to me.
 
+    Arnd
