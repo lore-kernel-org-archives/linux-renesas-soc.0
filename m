@@ -2,137 +2,109 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0553C6FD18
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 10:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A185C6FD18
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 11:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbjCaKzh (ORCPT
+        id S230096AbjCaLe0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 06:55:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58080 "EHLO
+        Fri, 31 Mar 2023 07:34:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjCaKzg (ORCPT
+        with ESMTP id S231881AbjCaLeW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2023 06:55:36 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410171D2EB;
-        Fri, 31 Mar 2023 03:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1680260133; x=1711796133;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fmFXNjlDNk/NwlvKemf9I4yf1T0EbLEfb7ypDG0gvOg=;
-  b=uQKKseIUQkDZ04FpXyOA/S3+SFUvc0Rlayxz61CACuNAtH3wWWyT5cEN
-   Fvlkw7Kol6kWxXPxKSbT/h7hllwyohcAyczjAVJbgSHxgXoIhPsngLrYz
-   7U1ps+ve7w0IJGpsL945k3TsvzGIcUcd7D4PEA9Op3x93yUE7sQquz3T6
-   UsT6d6a1o/YDYbIrmHJu1CfRs+Na7Yft8wtB4o5T5Xh7BaqSpeQ4ZY7+u
-   GPn/hhqh7Espa/scTduds12+iZONMU7CH+dY4LC0tNR1bNx37UOihUHBK
-   7ggDLZJ4bI4JQRnlC99fO5pFQf6dpbf78dKmA5lutm0+6M79/EA3uJUgo
-   A==;
-X-IronPort-AV: E=Sophos;i="5.98,307,1673938800"; 
-   d="asc'?scan'208";a="207170249"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 Mar 2023 03:55:32 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 31 Mar 2023 03:55:31 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Fri, 31 Mar 2023 03:55:29 -0700
-Date:   Fri, 31 Mar 2023 11:55:15 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-CC:     Arnd Bergmann <arnd@arndb.de>,
+        Fri, 31 Mar 2023 07:34:22 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 853A31D91B;
+        Fri, 31 Mar 2023 04:33:57 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.98,307,1673881200"; 
+   d="scan'208";a="157862784"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 31 Mar 2023 20:33:54 +0900
+Received: from localhost.localdomain (unknown [10.226.93.148])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CF910436D614;
+        Fri, 31 Mar 2023 20:33:51 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        guoren <guoren@kernel.org>,
-        Andrew Jones <ajones@ventanamicro.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Samuel Holland <samuel@sholland.org>,
-        <linux-riscv@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v7 1/6] riscv: mm: dma-noncoherent: Switch using function
- pointers for cache management
-Message-ID: <50e932df-cb20-4679-b911-fd9d7f0f2c1d@spud>
-References: <20230330204217.47666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20230330204217.47666-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <6ca5941a-8803-477d-8b40-17292decc5af@app.fastmail.com>
- <CA+V-a8tkiDXG37YjFKPxrGoXVQMVBemMdBcfb+uUDzBofOWH_A@mail.gmail.com>
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 1/5] tty: serial: sh-sci: Add RZ/G2L SCIF DMA tx support
+Date:   Fri, 31 Mar 2023 12:33:42 +0100
+Message-Id: <20230331113346.170602-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230331113346.170602-1-biju.das.jz@bp.renesas.com>
+References: <20230331113346.170602-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CSbvtOdTMuQLjL4r"
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8tkiDXG37YjFKPxrGoXVQMVBemMdBcfb+uUDzBofOWH_A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
---CSbvtOdTMuQLjL4r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add SCIF DMA tx support for RZ/G2L alike SoCs.
 
-On Fri, Mar 31, 2023 at 11:37:30AM +0100, Lad, Prabhakar wrote:
+RZ/G2L alike SoC use the same signal for both interrupt and DMA
+transfer requests, so we must disable line interrupts(tx and tx end)
+while transferring DMA and enable the TIE source interrupt.
 
-> > As far as I recall, the #else path here was needed previously
-> > to work around a binutils dependency, but with the current
-> > code, it should be possible to just always enable
-> > CONFIG_RISCV_ISA_ZICBOM when RISCV_DMA_NONCOHERENT is used.
-> >
-> Are you suggesting something like below?
->=20
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 4dadf35ac721..a55dee98ccf8 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -242,6 +242,7 @@ config RISCV_DMA_NONCOHERENT
->         select ARCH_HAS_SYNC_DMA_FOR_CPU
->         select ARCH_HAS_SYNC_DMA_FOR_DEVICE
->         select DMA_DIRECT_REMAP
-> +       select RISCV_ISA_ZICBOM
->=20
->  config AS_HAS_INSN
->         def_bool $(as-instr,.insn r 51$(comma) 0$(comma) 0$(comma)
-> t0$(comma) t0$(comma) zero)
-> @@ -465,7 +466,6 @@ config RISCV_ISA_ZICBOM
->         depends on MMU
->         depends on RISCV_ALTERNATIVE
->         default y
-> -       select RISCV_DMA_NONCOHERENT
->         help
->            Adds support to dynamically detect the presence of the ZICBOM
->            extension (Cache Block Management Operations) and enable its
->
+Based on a patch in the BSP by Long Luu
+<long.luu.ur@renesas.com>
 
-Does that actually work? I don't think it does.
-If you try to enable RISCV_ISA_ZICBOM then you won't get
-RISC_DMA_NONCOHERENT turned on. Run menuconfig and disable support for
-Renesas, SiFive and T-Head SoCs & you can replicate.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2->v3:
+ * Dropped inline function is_rz_scif_port() and instead using
+   s->cfg->regtype == SCIx_RZ_SCIFA_REGTYPE for finding RZ SCIF port.
+ * Dropped SCIx_TEI_IRQ as DMAC activation not possible with TEI interrupt.
+ * Updated the code flow similar to SCIFA/SCIFB DMAC tx handling.
+v1->v2:
+ * No change
+---
+ drivers/tty/serial/sh-sci.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-I think one of RISCV_ISA_ZICBOM and RISCV_DMA_NONCOHERENT should just be
-dropped, although I don't know which one to pick!
-Making RISCV_DMA_NONCOHERENT user selectable probably makes the most
-sense.
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index ca31e34afd83..f70d06a03864 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -588,12 +588,17 @@ static void sci_start_tx(struct uart_port *port)
+ 
+ 	if (s->chan_tx && !uart_circ_empty(&s->port.state->xmit) &&
+ 	    dma_submit_error(s->cookie_tx)) {
++		if (s->cfg->regtype == SCIx_RZ_SCIFA_REGTYPE)
++			/* Switch irq from SCIF to DMA */
++			disable_irq(s->irqs[SCIx_TXI_IRQ]);
++
+ 		s->cookie_tx = 0;
+ 		schedule_work(&s->work_tx);
+ 	}
+ #endif
+ 
+-	if (!s->chan_tx || port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++	if (!s->chan_tx || s->cfg->regtype == SCIx_RZ_SCIFA_REGTYPE ||
++	    port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+ 		/* Set TIE (Transmit Interrupt Enable) bit in SCSCR */
+ 		ctrl = serial_port_in(port, SCSCR);
+ 		serial_port_out(port, SCSCR, ctrl | SCSCR_TIE);
+@@ -1192,9 +1197,15 @@ static void sci_dma_tx_complete(void *arg)
+ 		schedule_work(&s->work_tx);
+ 	} else {
+ 		s->cookie_tx = -EINVAL;
+-		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB ||
++		    s->cfg->regtype == SCIx_RZ_SCIFA_REGTYPE) {
+ 			u16 ctrl = serial_port_in(port, SCSCR);
+ 			serial_port_out(port, SCSCR, ctrl & ~SCSCR_TIE);
++			if (s->cfg->regtype == SCIx_RZ_SCIFA_REGTYPE) {
++				/* Switch irq from DMA to SCIF */
++				dmaengine_pause(s->chan_tx_saved);
++				enable_irq(s->irqs[SCIx_TXI_IRQ]);
++			}
+ 		}
+ 	}
+ 
+-- 
+2.25.1
 
-
---CSbvtOdTMuQLjL4r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZCa8EwAKCRB4tDGHoIJi
-0gv8AQDmXopbmBtrwgpdT70H1KpMBgB8DRztldVostbpyT7KpAEA2JJggZT9ayUa
-tSrS0FeAl7Q+HC4ExyMuP+/iqLDQLAQ=
-=rDeY
------END PGP SIGNATURE-----
-
---CSbvtOdTMuQLjL4r--
