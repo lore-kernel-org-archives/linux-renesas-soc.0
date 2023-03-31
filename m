@@ -2,113 +2,115 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6D0C76196
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 12:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9914BC76196
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 13:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232282AbjCaMqP (ORCPT
+        id S231320AbjCaNYK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 08:46:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42840 "EHLO
+        Fri, 31 Mar 2023 09:24:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232580AbjCaMqL (ORCPT
+        with ESMTP id S229792AbjCaNYJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2023 08:46:11 -0400
-Received: from mailout-taastrup.gigahost.dk (mailout-taastrup.gigahost.dk [46.183.139.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F8401FD00;
-        Fri, 31 Mar 2023 05:45:55 -0700 (PDT)
-Received: from mailout.gigahost.dk (mailout.gigahost.dk [89.186.169.112])
-        by mailout-taastrup.gigahost.dk (Postfix) with ESMTP id 920C21883AFB;
-        Fri, 31 Mar 2023 12:45:52 +0000 (UTC)
-Received: from smtp.gigahost.dk (smtp.gigahost.dk [89.186.169.109])
-        by mailout.gigahost.dk (Postfix) with ESMTP id 83E4D25004E1;
-        Fri, 31 Mar 2023 12:45:52 +0000 (UTC)
-Received: by smtp.gigahost.dk (Postfix, from userid 1000)
-        id 757369B403F7; Fri, 31 Mar 2023 12:45:52 +0000 (UTC)
-X-Screener-Id: e32ae469fa6e394734d05373d3a705875723cf1e
-Received: from fujitsu (2-104-116-184-cable.dk.customer.tdc.net [2.104.116.184])
-        by smtp.gigahost.dk (Postfix) with ESMTPSA id C93F09B403E4;
-        Fri, 31 Mar 2023 12:45:51 +0000 (UTC)
-From:   Hans Schultz <netdev@kapio-technology.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Ido Schimmel <idosch@nvidia.com>, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        "maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER" 
-        <UNGLinuxDriver@microchip.com>, Sean Wang <sean.wang@mediatek.com>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?utf-8?Q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Roopa Prabhu <roopa@nvidia.com>,
-        Nikolay Aleksandrov <razor@blackwall.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v2 net-next 6/6] selftests: forwarding: add dynamic FDB
- test
-In-Reply-To: <20230331093732.s6loozkdhehewlm4@skbuf>
-References: <20230318141010.513424-1-netdev@kapio-technology.com>
- <20230318141010.513424-7-netdev@kapio-technology.com>
- <ZBgdAo8mxwnl+pEE@shredder> <87a5zzh65p.fsf@kapio-technology.com>
- <ZCMYbRqd+qZaiHfu@shredder> <874jq22h2u.fsf@kapio-technology.com>
- <20230330192714.oqosvifrftirshej@skbuf>
- <871ql5mjjp.fsf@kapio-technology.com>
- <20230331093732.s6loozkdhehewlm4@skbuf>
-Date:   Fri, 31 Mar 2023 14:43:11 +0200
-Message-ID: <87tty1nlb4.fsf@kapio-technology.com>
+        Fri, 31 Mar 2023 09:24:09 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD1C31D845
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Mar 2023 06:24:07 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id y20so28888238lfj.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Mar 2023 06:24:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20210112.gappssmtp.com; s=20210112; t=1680269046;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VjpLOI3kSsLp1gVZchxWXjr+GzjeRq4bQKOT/rGECHc=;
+        b=k6VpTCz8m7yY9UO+Z8Kq37FoucGH9SmTn+GG5Ty/VFU7GPo6RZjgea5kxGA/4Q8J5G
+         TaQMUYiuHX/H5Y8eL2z8E0xAjMfhuGWFoFstMPctnys9jeJbymbYF5Fp/NL5KFQBVPsF
+         UmMs90pAJekpX0iWuTXatUFs8v42Q5R8AxfEqJY+lpy7S3TSpKj6/7nDO6ArxnpNDxEg
+         nzrIKoCsRuunhSH9eYZ1yPkE/Evv4Jw2GP95Q3pkoYHpvDahSIQ8hdj/n8+Ua7NTydRx
+         gUMaJywRILFGmeFCnEbsx4lwmA3mWn0De4JCZx7XaSgpsZZdXf9KBfkuL8SKNAeVf2l5
+         xT+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680269046;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VjpLOI3kSsLp1gVZchxWXjr+GzjeRq4bQKOT/rGECHc=;
+        b=yndjXqgka7vIZbmSCjKPwY4qoLi4gBQt6NRFcsNFbgQ2nxlqNBqQhwI57+jlMLI1ib
+         k5fuTsFae0dkiNQ5U0oW9ZnGPVb8GKFvlwFKQmz4rzEJwaWYdzS6ovZdCBJ24g3vJCX1
+         +edUD8ZD+k9U7XRvLWpC+k35wr4bTNQxN1ohlZre/wWbNWZ5nkGx2BDyaVpFCxZIqGIy
+         ROoLMUOQwZJdwvqGRvYYQKG7sqbH5uS/8MiKjK9LiRQWItrLQvdTotPJwMvcBEx+HbjW
+         +MyFFkFIpCy/vGsUPWO/Jr59HENrpz/qI3t2brdvMrQSBZW4q5NyhEyTtBvmelPybSb/
+         SpgA==
+X-Gm-Message-State: AAQBX9cyqRVnFzK/NOWhPYhpUE2a+rvkRZaonp4xRCIMXcAPaLVqGofn
+        DFVBv+qP0/H9bI0eM1OhszCRxg==
+X-Google-Smtp-Source: AKy350Z6c33duEF6XeCh63NhZZ25Lzx4R6jqMducoYlMxRAYohiTLSDqQXavR/EpUfiN/KVTf+qCKQ==
+X-Received: by 2002:a05:6512:49c:b0:4dc:84c2:96f1 with SMTP id v28-20020a056512049c00b004dc84c296f1mr6691209lfq.22.1680269046047;
+        Fri, 31 Mar 2023 06:24:06 -0700 (PDT)
+Received: from localhost (h-46-59-89-207.A463.priv.bahnhof.se. [46.59.89.207])
+        by smtp.gmail.com with ESMTPSA id t24-20020ac24c18000000b004db3e03e201sm379574lfq.6.2023.03.31.06.24.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Mar 2023 06:24:05 -0700 (PDT)
+Date:   Fri, 31 Mar 2023 15:24:04 +0200
+From:   Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: staging: max96712: Add support for 3-lane C-PHY
+Message-ID: <ZCbe9D+LxbWveekE@oden.dyn.berto.se>
+References: <20230211144614.3816247-1-niklas.soderlund+renesas@ragnatech.se>
+ <ZCbQTjL+Gy+Poeu/@valkosipuli.retiisi.eu>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZCbQTjL+Gy+Poeu/@valkosipuli.retiisi.eu>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 31, 2023 at 12:37, Vladimir Oltean <olteanv@gmail.com> wrote:
->
-> So, by running the command I posted in the earlier email, you actually
-> run it on the physical DSA user port interfaces, and it should pass
-> there too.
+Hej Sakari,
 
-Okay, that sounds like a good idea which I have not done before. I am
-seeing how I can install Debian in an Qemu or VMWare setup to be able to
-test that way.
+Tack för din feedback.
 
-> This is based on the equivalency principle between the
-> software and the hardware data paths that I was talking about.
->
-> If you're actively and repeatedly making an effort to work with your eyes
-> closed, and then build strawmen around the fact that you don't see, then
-> you're not going to get very friendly reactions from people, me included,
-> who explain things to you that pertain to your due diligence. This is
-> because these people know the things that they're explaining to you out
-> of their own due diligence, and, as a result, are not easily fooled by
-> your childish excuses.
+On 2023-03-31 15:21:34 +0300, Sakari Ailus wrote:
 
-I am not coming with excuses here, and certainly not childish ones at
-that either. I am just pointing out that on my device the tests don't
-run well because of memory shortage and my reasoning why I think it is
-so.
-I will as long as the system is as it is with these selftests, just run
-single subtests at a time on target, but if I have new phy problems like
-the one you have seen I have had before, then testing on target becomes
-off limits.
+...
+
+> > @@ -332,8 +341,9 @@ static int max96712_parse_dt(struct 
+> > max96712_priv *priv)
+> >  {
+> >  	struct fwnode_handle *ep;
+> >  	struct v4l2_fwnode_endpoint v4l2_ep = {
+> > -		.bus_type = V4L2_MBUS_CSI2_DPHY
+> > +		.bus_type = V4L2_MBUS_UNKNOWN,
+> 
+> The bindings don't require setting bus-type. Please change the bindings as
+> well. And assume D-PHY in the driver if bus-type isn't set.
+
+Thanks for spotting this, I will send out an update to update the 
+binding to require setting bus-type.
+
+About updating the driver to assume D-PHY if bus-type is not set. I 
+wonder if we can avoid that and keep the driver change as is? The only 
+in-tree user of this binding is in r8a779a0-falcon-csi-dsi.dtsi, and I 
+intend to send out a patch to set the bus-type for that together with 
+the updated bindings.
+
+I have tested this driver change on the Falcon board and if bus-type is 
+not explicitly set in the DTS it is reported as D-PHY and everything 
+works as expected. So if I
+
+- Send out a patch to update the bindings to require bus-type being set.
+- Send out patch to update the only in-tree use of the driver to set 
+  bus-type.
+
+Can't we avoid issues in the future by not assuming no bus-type is D-PHY 
+in the driver while still being backward compatible with the old DTS?
+
+-- 
+Kind Regards,
+Niklas Söderlund
