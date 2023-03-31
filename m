@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1162EC77B62
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCAAC77B6C
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Mar 2023 14:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233059AbjCaOxR (ORCPT
+        id S233066AbjCaOxR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 31 Mar 2023 10:53:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33690 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232996AbjCaOxG (ORCPT
+        with ESMTP id S233000AbjCaOxG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 31 Mar 2023 10:53:06 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5B42061A
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF58E20C1B
         for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Mar 2023 07:52:41 -0700 (PDT)
 Received: from ramsan.of.borg ([84.195.187.55])
-        by albert.telenet-ops.be with bizsmtp
-        id f2se2900R1C8whw062sej5; Fri, 31 Mar 2023 16:52:39 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id f2se2900l1C8whw062seLb; Fri, 31 Mar 2023 16:52:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1piG2N-00FUgh-5E;
+        id 1piG2N-00FUgb-4H;
         Fri, 31 Mar 2023 16:48:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1piG36-008fIa-J5;
+        id 1piG36-008fIS-Hl;
         Fri, 31 Mar 2023 16:48:16 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -36,9 +36,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/5] drm: shmobile: Switch to drm_crtc_init_with_planes()
-Date:   Fri, 31 Mar 2023 16:48:09 +0200
-Message-Id: <df4099d79c985c73bdc890eb0e026494b7fa5c96.1680273039.git.geert+renesas@glider.be>
+Subject: [PATCH 1/5] drm: shmobile: Use %p4cc to print fourcc codes
+Date:   Fri, 31 Mar 2023 16:48:07 +0200
+Message-Id: <1912536b0972568efc3d4f96c89de96b2abd7510.1680273039.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1680273039.git.geert+renesas@glider.be>
 References: <cover.1680273039.git.geert+renesas@glider.be>
@@ -48,73 +48,44 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The SH-Mobile DRM driver uses the legacy drm_crtc_init(), which
-advertizes only the formats in safe_modeset_formats[] (XR24 and AR24) as
-being supported.
-
-Switch to drm_crtc_init_with_planes(), and advertize all supported
-(A)RGB modes, so we can use RGB565 as the default mode for the console.
+Replace the printing of hexadecimal fourcc format codes by
+pretty-printed format names, using the "%p4cc" format specifier.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 30 +++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 4 ++--
+ drivers/gpu/drm/shmobile/shmob_drm_kms.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index 08dc1428aa16caf0..11dd2bc803e7cb62 100644
+index d354ab3077cecf94..713a7612244c647a 100644
 --- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -18,6 +18,7 @@
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_modeset_helper_vtables.h>
-+#include <drm/drm_plane_helper.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_simple_kms_helper.h>
- #include <drm/drm_vblank.h>
-@@ -478,16 +479,41 @@ static const struct drm_crtc_funcs crtc_funcs = {
- 	.disable_vblank = shmob_drm_disable_vblank,
- };
+@@ -355,8 +355,8 @@ static int shmob_drm_crtc_mode_set(struct drm_crtc *crtc,
  
-+static const uint32_t modeset_formats[] = {
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_RGB888,
-+	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_XRGB8888,
-+};
-+
-+static const struct drm_plane_funcs primary_plane_funcs = {
-+	DRM_PLANE_NON_ATOMIC_FUNCS,
-+};
-+
- int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- {
- 	struct drm_crtc *crtc = &sdev->crtc.crtc;
-+	struct drm_plane *primary;
- 	int ret;
+ 	format = shmob_drm_format_info(crtc->primary->fb->format->format);
+ 	if (format == NULL) {
+-		dev_dbg(sdev->dev, "mode_set: unsupported format %08x\n",
+-			crtc->primary->fb->format->format);
++		dev_dbg(sdev->dev, "mode_set: unsupported format %p4cc\n",
++			&crtc->primary->fb->format->format);
+ 		return -EINVAL;
+ 	}
  
- 	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
+index 60a2c8d8a0d947d2..3c5fe3bc183c7c13 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_kms.c
++++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
+@@ -96,8 +96,8 @@ shmob_drm_fb_create(struct drm_device *dev, struct drm_file *file_priv,
  
--	ret = drm_crtc_init(sdev->ddev, crtc, &crtc_funcs);
--	if (ret < 0)
-+	primary = __drm_universal_plane_alloc(sdev->ddev, sizeof(*primary), 0,
-+					      0, &primary_plane_funcs,
-+					      modeset_formats,
-+					      ARRAY_SIZE(modeset_formats),
-+					      NULL, DRM_PLANE_TYPE_PRIMARY,
-+					      NULL);
-+	if (IS_ERR(primary))
-+		return PTR_ERR(primary);
-+
-+	ret = drm_crtc_init_with_planes(sdev->ddev, crtc, primary, NULL,
-+					&crtc_funcs, NULL);
-+	if (ret < 0) {
-+		drm_plane_cleanup(primary);
-+		kfree(primary);
- 		return ret;
-+	}
- 
- 	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
+ 	format = shmob_drm_format_info(mode_cmd->pixel_format);
+ 	if (format == NULL) {
+-		dev_dbg(dev->dev, "unsupported pixel format %08x\n",
+-			mode_cmd->pixel_format);
++		dev_dbg(dev->dev, "unsupported pixel format %p4cc\n",
++			&mode_cmd->pixel_format);
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
 -- 
 2.34.1
