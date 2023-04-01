@@ -2,109 +2,103 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA6CC76196
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  1 Apr 2023 01:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1ECC6FD1D
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  1 Apr 2023 16:20:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234032AbjDAB6H (ORCPT
+        id S229573AbjDAQUE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 21:58:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45510 "EHLO
+        Sat, 1 Apr 2023 12:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233545AbjDAB5x (ORCPT
+        with ESMTP id S229379AbjDAQUD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2023 21:57:53 -0400
-X-Greylist: delayed 167 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 31 Mar 2023 18:55:56 PDT
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14D161BF5D;
-        Fri, 31 Mar 2023 18:55:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1680313641; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=e872dxYKwpEmkU7ojBV5oxWY5yPEVsfRppSkHWLXyxK2QRHALoTZ9ES6HSu0fkI63hh9IOHCYdBwTS+ZbV3+Zls/3GA3nO3hcXl2iwSghOjUxIyJB7J0KVAyoSIes/wZwCZms0/cpoarR9COjb43mAeXnzLWeCHMbajgc4zEIsY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1680313641; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=S+zGGBqMP5BV/39K5ihbzESIqXi6/hEN1mEtg1ES/40=; 
-        b=btAeaJbnSX/otV9mzt0oRQCU3prXUl72yptb7/sh1Rrl+y5PyRWVjtijnSRkb0rbpdnfco6kN+279LU0EcEzyRo5BGMA2nO840LEOWEg21t6GbsNdQjSf/bjTBAOYBdTfyUNPAVSNfb3ULDG3e3CuyskO3jjDA0PU6jWsoJES5A=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=icenowy.me;
-        spf=pass  smtp.mailfrom=uwu@icenowy.me;
-        dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1680313641;
-        s=zmail; d=icenowy.me; i=uwu@icenowy.me;
-        h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-        bh=S+zGGBqMP5BV/39K5ihbzESIqXi6/hEN1mEtg1ES/40=;
-        b=UEXpHn7Z+mCjHatAbJ0EA4GpqEOoPHeQOAUlyvlwbEosnOLM6kNtXZ5N2bV2ZanW
-        isQtmIrTPnWFFUtF/Y9pg4r5PEyaECLlf5/XHGVjA+QObak+fM3wcVGtNDAVk2cgnOb
-        B8pu/N9Ybs16FU1NHih8uOiB3KMgSfSEtNDRa2so=
-Received: from edelgard.fodlan.icenowy.me (120.85.97.183 [120.85.97.183]) by mx.zohomail.com
-        with SMTPS id 1680313639213673.7042963583667; Fri, 31 Mar 2023 18:47:19 -0700 (PDT)
-Message-ID: <40cdea465fef49a8a337b48e2a748138c66a08eb.camel@icenowy.me>
-Subject: Re: [PATCH v7 0/6] RISC-V non-coherent function pointer based CMO +
- non-coherent DMA support for AX45MP
-From:   Icenowy Zheng <uwu@icenowy.me>
-To:     Conor Dooley <conor@kernel.org>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>, Guo Ren <guoren@kernel.org>,
-        Andrew Jones <ajones@ventanamicro.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Date:   Sat, 01 Apr 2023 09:47:05 +0800
-In-Reply-To: <0d5590e4-e78b-4197-bf17-9de54466470d@spud>
-References: <20230330204217.47666-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-         <b2dcda17-5850-47c1-94bc-4ca87f900581@spud>
-         <CA+V-a8s+=OY6CX4XTUwyAE9b=rdJZZfgAaY2nU+6aqnu=X9nxQ@mail.gmail.com>
-         <0d5590e4-e78b-4197-bf17-9de54466470d@spud>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+        Sat, 1 Apr 2023 12:20:03 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B3762D5E
+        for <linux-renesas-soc@vger.kernel.org>; Sat,  1 Apr 2023 09:20:02 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pidxN-00009j-2u; Sat, 01 Apr 2023 18:19:57 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pidxL-008GSm-JT; Sat, 01 Apr 2023 18:19:55 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pidxK-009khY-Dj; Sat, 01 Apr 2023 18:19:54 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH 39/49] mtd: rawnand: renesas: Convert to platform remove callback returning void
+Date:   Sat,  1 Apr 2023 18:19:28 +0200
+Message-Id: <20230401161938.2503204-40-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230401161938.2503204-1-u.kleine-koenig@pengutronix.de>
+References: <20230401161938.2503204-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1696; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=gCkd0kQYH0yqAD5z8JJPYsdxxLL+nMTSfiU1Ye2kvJc=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkKFlKGrs3kW0HWbv+BREGmgko7MmQtzQoVAwq7 zzJ9BT3s1yJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZChZSgAKCRCPgPtYfRL+ TkRICACMByzQD3H+9q4YrpmHGekHt0ruPg7GY+C+TJtCYkyukcmEXeTnZBkeODX7YvXVzBxmWp0 CaMbHGN7ZLksa/nCsz7cbI+67PmuRbXx3Zbeilu0mag7qk2QW0TXkGISSLIRGKWK3kpfiQuMIsg KkuIZj2DhvloKHcpKcO2nQ/e0GfU0BCF0KicViStmPeRwnoqOvbjwJpsMJDmms0D88OohjKMVy+ HHtrC1ApF5TYf3iAftr8YhDfqZtqrP1YYQFTTYNzzliLq8+zxca6aXtqmwSu0LSIjnfYSomKI3+ nV+VNY2T+DqAzMP1KCSyFHyCpGQvD30+dM1BB1WIJbukPdOZ
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-=E5=9C=A8 2023-03-31=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 21:15 +0100=EF=BC=
-=8CConor Dooley=E5=86=99=E9=81=93=EF=BC=9A
-> On Fri, Mar 31, 2023 at 08:09:16PM +0000, Lad, Prabhakar wrote:
-> > Hi Conor,
-> >=20
-> > On Fri, Mar 31, 2023 at 7:05=E2=80=AFPM Conor Dooley <conor@kernel.org>
-> > wrote:
-> > >=20
-> > > On Thu, Mar 30, 2023 at 09:42:11PM +0100, Prabhakar wrote:
-> > >=20
-> > > > - This series requires testing on Cores with zicbom and T-Head
-> > > > SoCs
-> > >=20
-> > > I don't actually know if there are Zicbom parts, may need to test
-> > > that
-> > > on QEMU.
-> > > I had to revert unrelated content to boot, but my D1 NFS setup
-> > > seems to
-> > > work fine with these changes, so where it is relevant:
-> > > Tested-by: Conor Dooley <conor.dooley@microchip.com> # tyre-
-> > > kicking on D1
-> > >=20
-> > Thank you for testing this. By any chance did you compare the
-> > performance?
->=20
-> No, just tyre kicking. Icenowy had some benchmark for it IIRC, I
-> think
-> mining some coin or w/e. +CC them.
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-I previously tested the function pointer based CMO, it do not affect
-the performance beyond the measurement error. Maybe it's because CMO
-operations are only done at the start and end of DMA operations.
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-My previous test system is LiteX + OpenC906.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/mtd/nand/raw/renesas-nand-controller.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/renesas-nand-controller.c b/drivers/mtd/nand/raw/renesas-nand-controller.c
+index 1620e25a1147..589021ea9eb2 100644
+--- a/drivers/mtd/nand/raw/renesas-nand-controller.c
++++ b/drivers/mtd/nand/raw/renesas-nand-controller.c
+@@ -1386,15 +1386,13 @@ static int rnandc_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int rnandc_remove(struct platform_device *pdev)
++static void rnandc_remove(struct platform_device *pdev)
+ {
+ 	struct rnandc *rnandc = platform_get_drvdata(pdev);
+ 
+ 	rnandc_chips_cleanup(rnandc);
+ 
+ 	pm_runtime_put(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id rnandc_id_table[] = {
+@@ -1410,7 +1408,7 @@ static struct platform_driver rnandc_driver = {
+ 		.of_match_table = rnandc_id_table,
+ 	},
+ 	.probe = rnandc_probe,
+-	.remove = rnandc_remove,
++	.remove_new = rnandc_remove,
+ };
+ module_platform_driver(rnandc_driver);
+ 
+-- 
+2.39.2
+
