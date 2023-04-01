@@ -2,95 +2,125 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2F7C7619A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  2 Apr 2023 11:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B83C761A6
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Apr 2023 04:30:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230272AbjDBL3N (ORCPT
+        id S231411AbjDCEaK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 2 Apr 2023 07:29:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40116 "EHLO
+        Mon, 3 Apr 2023 00:30:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjDBL3M (ORCPT
+        with ESMTP id S230447AbjDCE3x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 2 Apr 2023 07:29:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3C781EFD3;
-        Sun,  2 Apr 2023 04:29:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5A432611C0;
-        Sun,  2 Apr 2023 11:29:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB48C433EF;
-        Sun,  2 Apr 2023 11:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680434950;
-        bh=O7FvGnaQoAlD46duLUMHPDdQnP0Mle8dOr2IFMWfzLE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=KL+N3+UL88woFkI24eWRtK6AMLcd0MJ9b5DGulMTGFzLRGCyC3/yw1q4qzdq1W8Hj
-         2+8qglRRKJlXIwTpoM79NplLOomgc+gaCPEOLHow5DMYmWFnMwuN3LnzcMwdD5FtGJ
-         ywP0kZ7lFV9OIOEh+dkPYuruyJJ4vrIJSo4lY7THQXTUbF9odJdaw8umU6hw7YOs14
-         h1on6wMg50DN00J2k/Am+fgqIPN8lKv2sDAZk1mAIEvsWflrAasJpLSj7j68TnK1D/
-         /n65eKa0Nv7SgfLq3vGDxnK3RkJrjIrVi/DpN0n/WLYyriQYG7rAFDW0Kb5p5PNCde
-         79B6ZnoozFt8w==
-Message-ID: <e200be05-4066-b6d8-badd-c7726741356d@kernel.org>
-Date:   Sun, 2 Apr 2023 13:29:06 +0200
+        Mon, 3 Apr 2023 00:29:53 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91DFB44E;
+        Sun,  2 Apr 2023 21:29:46 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id cn12so112118328edb.4;
+        Sun, 02 Apr 2023 21:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680496184;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qFNuFMeHCuZuwK8vNRfkVYseskXxs9aV8QWzQeRLILI=;
+        b=O3PnMJaeiVRjgZmFqpPQiFSaBFXr92sqyk3ah1yc+0fl57GLlf5rQwqcihCjbESRK5
+         ucqz/wDiaDtYGuTc5vr9Rqti/ajA6ZIT6J4IjQ55dcbtINB15cNU38ONGMYqFFH7o/Ac
+         MG3r1sNtmx0brEljIT1UmGbERDmYV4At39yezlMxfuXuJRiMvlbFy94oF91r61C5+CEz
+         xvOT0T7CZmpyNjztyG+cIpuafVFDsHadAwhSl5LBU9kLdNvGu0c340tJj1N9WgrQIny1
+         QwQ1O939ji+KBa2PP1bMvjgJARNEydve0N0idWO9st/ywDj8KfcGGqB42LGt3KkpDOFz
+         xLGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680496184;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qFNuFMeHCuZuwK8vNRfkVYseskXxs9aV8QWzQeRLILI=;
+        b=2gyMvo74MDd2la7f87gLj/6T4B5HO/QYD6PYNDcS6gSW0jDTbSe8NSUYa/ZeGBflzb
+         kLwnd+ntA9st2Es0leHkqfJHVISqJ9IyGIwJ0UfW1Mwkq/ZaysvQqs3umI1C88v25wxL
+         yuKxOEvecOMSFIF73W82D+dVGPXMIp6sphMeeQMETAdRH0GV7QsdAn8gTxKAfqi53rXe
+         Q9gw1fOg81QswzA8An/4NVtx39rtgrt7V+bLHqvCt0BF0/70SjVOVbgLc0ZDPVSQKcNG
+         efWDDZReLK+eCZbANpD842An127H10LHnGSThsCLBT6QveWyurhmV3hshgvKhYewwiuX
+         269A==
+X-Gm-Message-State: AAQBX9fJwptR0+EKMwMaxkkSlAc5BQ/ZnLFNIC+rwy+h+pSeYgt/tMf/
+        7ZnbAzWu4QiBQImfjQDzCfCzMKFSQNK+EA==
+X-Google-Smtp-Source: AKy350ZjZPbag5cF4XJQDqkW5bqMlJoau4o3/q62fncdXEzK8jryyCYRpb3EBvtNhLUi0AzMg1eYXg==
+X-Received: by 2002:aa7:c6c8:0:b0:4f9:deb4:b986 with SMTP id b8-20020aa7c6c8000000b004f9deb4b986mr28281834eds.7.1680496184531;
+        Sun, 02 Apr 2023 21:29:44 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id e27-20020a50d4db000000b004fadc041e13sm3996858edj.42.2023.04.02.21.29.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Apr 2023 21:29:44 -0700 (PDT)
+Date:   Sat, 1 Apr 2023 11:22:52 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Li Yang <lidaxian@hust.edu.cn>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc: renesas: renesas-soc: release 'chipid' from
+ ioremap()
+Message-ID: <d2688eb2-d7b6-4e80-a13e-55ed541ac9b8@kili.mountain>
+References: <20230331095545.31823-1-lidaxian@hust.edu.cn>
+ <CAMuHMdV5guFbo76nq27aZjWsYqneOfGNf0Ozyh0C53+VgnXgXw@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] dt-bindings: i2c: maxim,max96712: Require setting
- bus-type property
-To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-References: <20230331141032.3817866-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20230331141032.3817866-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdV5guFbo76nq27aZjWsYqneOfGNf0Ozyh0C53+VgnXgXw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 31/03/2023 16:10, Niklas Söderlund wrote:
-> The MAX96712 can support both CSI-2 C-PHY and D-PHY bus. Document the
-> supported bus-types and make the property mandatory.
-
-Why making it mandatory? Commit msg should focus on "why" because "what"
-is easy to see.
-
+On Fri, Mar 31, 2023 at 02:13:10PM +0200, Geert Uytterhoeven wrote:
+> Hi Li,
 > 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
-> Hi,
+> On Fri, Mar 31, 2023 at 12:14 PM Li Yang <lidaxian@hust.edu.cn> wrote:
+> > Smatch reports:
+> >
+> > drivers/soc/renesas/renesas-soc.c:536 renesas_soc_init() warn:
+> > 'chipid' from ioremap() not released on lines: 475.
+> >
+> > If soc_dev_atrr allocation is failed, function renesas_soc_init()
+> > will return without releasing 'chipid' from ioremap().
+> >
+> > Fix this by adding function iounmap().
+> >
+> > Fixes: cb5508e47e60 ("soc: renesas: Add support for reading product revision for RZ/G2L family")
+> > Signed-off-by: Li Yang <lidaxian@hust.edu.cn>
+> > Reviewed-by: Dan Carpenter <error27@gmail.com>
 > 
-> This is done in conjunction with adding C-PHY support to the driver,
-> patches on list. The current driver only supports D-PHY so this was
-> assumed in the driver.
+> Thanks for your patch!
 > 
-> There is a single user of this binding, r8a779a0-falcon-csi-dsi.dtsi. A
-> separate patch to update that binding with a bus-type property is be
-> submitted.
+> > --- a/drivers/soc/renesas/renesas-soc.c
+> > +++ b/drivers/soc/renesas/renesas-soc.c
+> > @@ -471,8 +471,11 @@ static int __init renesas_soc_init(void)
+> >         }
+> >
+> >         soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+> > -       if (!soc_dev_attr)
+> > +       if (!soc_dev_attr) {
+> > +               if (chipid)
+> > +                       iounmap(chipid);
 > 
-> Without the property present the driver fall-back to D-PHY (even with
-> the C-PHY work applied). So this change is backward compatible with old
-> versions of the only effected DTS file.
-> ---
+> We don't really care, as the system is dead at this point anyway.
+> 
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC.  It might happen, that command when run on an older
-kernel, gives you outdated entries.  Therefore please be sure you base
-your patches on recent Linux kernel.
+Why even have the check for NULL then?  The kzalloc() is small enough
+to the point where it litterally cannot fail.
 
->  .../devicetree/bindings/media/i2c/maxim,max96712.yaml      | 7 +++++++
->  1 file changed, 7 insertions(+)
+This patch is already written, it's way less effort for us to apply it
+than it is to debate its worth.  I kind of feel like it's better to just
+fix the bugs even when they don't affect real life.  Otherwise it's a
+constant debate with bugs if they're worth fixing.
 
+This is a university group and they're looking for bugs to fix.  I'm
+like, "I'm drowning in resource leak warnings and I don't even look at
+them any more because they're basically all trash that no one cares
+about."  So I was hoping to maybe clean up the trash a bit to the point
+where we can start caring about the leaks.
 
-Best regards,
-Krzysztof
+regards,
+dan carpenter
 
