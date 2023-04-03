@@ -2,88 +2,177 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18E9C76196
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Apr 2023 08:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D186DC761A6
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Apr 2023 10:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231804AbjDCIaf (ORCPT
+        id S232190AbjDCKdY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 3 Apr 2023 04:30:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49384 "EHLO
+        Mon, 3 Apr 2023 06:33:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231796AbjDCIae (ORCPT
+        with ESMTP id S231744AbjDCKdJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2023 04:30:34 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5076759D4
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Apr 2023 01:30:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EBE76B815A2
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Apr 2023 08:30:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B27C4C43443
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Apr 2023 08:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680510629;
-        bh=Iy4toXe9xJGNsSmeEFHIEVSJc3jvdkWrxN0fXUUnz4w=;
-        h=Subject:From:Date:To:From;
-        b=iC866J2SkynZUq5nOJVFkdWp5rMPOn5oDRio8hE2WgdUCpAxfzlyCOJLTPROQc2px
-         v0zRhZ7BNvTguxYxPfwuKW8Z+qjuD7CzYL759aRidNSrS+6nfrP7ae5jkThwCc2rJH
-         i3f6L02+RLgiIPHoMh4NU212hkzzwzk4P19PIba4O8OdDflqJHo7UIL1SbPjmaUm6y
-         UYoYM9f+8bBVgBQlLEtxeDmcKlq3Ao6UNeWPIfencIdXhffEyKH05Im6bFJUoRm4E4
-         e5cMpqMDT3FsyLob1lZ+DVX1AD4/Yq7Cbi6dWs6KC2TwX65fVQ0TKxMPupYf/ipdIn
-         Ot+iYl4MARSCA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9661EE5EA83
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Apr 2023 08:30:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 3 Apr 2023 06:33:09 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6E06C524A;
+        Mon,  3 Apr 2023 03:33:07 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.98,314,1673881200"; 
+   d="scan'208";a="154702133"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 03 Apr 2023 19:33:06 +0900
+Received: from localhost.localdomain (unknown [10.226.92.243])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 920ED42050D2;
+        Mon,  3 Apr 2023 19:33:03 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 1/3] dt-bindings: clock: Add Renesas versa3 clock generator bindings
+Date:   Mon,  3 Apr 2023 11:32:55 +0100
+Message-Id: <20230403103257.328954-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230403103257.328954-1-biju.das.jz@bp.renesas.com>
+References: <20230403103257.328954-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <168051062955.5647.12654957498524820842.git-patchwork-summary@kernel.org>
-Date:   Mon, 03 Apr 2023 08:30:29 +0000
-To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+Document Renesas versa3 clock generator(5P35023) bindings.
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+The 5P35023 is a VersaClock programmable clock generator and
+is designed for low-power, consumer, and high-performance PCI
+Express applications. The 5P35023 device is a three PLL
+architecture design, and each PLL is individually programmable
+and allowing for up to 6 unique frequency outputs.
 
-Series: smsc911x: fix issues when interface is not up yet
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=732608
-  Lore link: https://lore.kernel.org/r/20230322071959.9101-1-wsa+renesas@sang-engineering.com
-    Patches: [net,v3,1/2] smsc911x: only update stats when interface is up
-             [net,v3,2/2] smsc911x: avoid PHY being resumed when interface is not up
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+v2->v3:
+ * Added Rb tag from Krzysztof Kozlowski
+ * Removed | from Link to data sheet.
+ * Dropped stray blank line from example.
+ * Updated example section for assigned-clocks to mach same alignment
+   with assigned-clock-rates. This is trivial change so retained the
+   Rb tag.
+RFC->v2:
+ * Renamed the filename to match with compatible
+ * Added maintainers entry after title
+ * Removed the wrapping for the link to data sheet.
+ * Removed reg description
+ * Removed clock names
+ * Replaced minItems->maxItems in renesas,settings property
+ * Dropped assigned-clocks, assigned-clock-rates
+ * Dropped renesas,clock-divider-read-only and renesas,clock-flags
+ * Drooped clock handle part from example
+ * Dropped reg from example.
+ * Dropped consumer example
+---
+ .../bindings/clock/renesas,5p35023.yaml       | 86 +++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
 
-Patch: [net,v4] smsc911x: avoid PHY being resumed when interface is not up
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Committer: Paolo Abeni <pabeni@redhat.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=734057
-  Lore link: https://lore.kernel.org/r/20230327083138.6044-1-wsa+renesas@sang-engineering.com
-
-Patch: dt-bindings: mtd: jedec,spi-nor: Document CPOL/CPHA support
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Committer: Miquel Raynal <miquel.raynal@bootlin.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=721723
-  Lore link: https://lore.kernel.org/r/afe470603028db9374930b0c57464b1f6d52bdd3.1676384304.git.geert+renesas@glider.be
-
-Series: PCI: rcar-gen4: Add R-Car Gen4 PCIe support
-  Submitter: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-  Committer: Bjorn Helgaas <bhelgaas@google.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=728598
-  Lore link: https://lore.kernel.org/r/20230310123510.675685-1-yoshihiro.shimoda.uh@renesas.com
-    Patches: [v11,01/13] PCI: dwc: Fix writing wrong value if snps,enable-cdm-check
-
-
-Total patches: 5
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+new file mode 100644
+index 000000000000..839648e753d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+@@ -0,0 +1,86 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/renesas,5p35023.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas 5p35023 VersaClock 3 programmable I2C clock generator
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |
++  The 5P35023 is a VersaClock programmable clock generator and
++  is designed for low-power, consumer, and high-performance PCI
++  express applications. The 5P35023 device is a three PLL
++  architecture design, and each PLL is individually programmable
++  and allowing for up to 6 unique frequency outputs.
++
++  An internal OTP memory allows the user to store the configuration
++  in the device. After power up, the user can change the device register
++  settings through the I2C interface when I2C mode is selected.
++
++  The driver can read a full register map from the DT, and will use that
++  register map to initialize the attached part (via I2C) when the system
++  boots. Any configuration not supported by the common clock framework
++  must be done via the full register map, including optimized settings.
++
++  Link to datasheet:
++  https://www.renesas.com/us/en/products/clocks-timing/clock-generation/programmable-clocks/5p35023-versaclock-3s-programmable-clock-generator
++
++properties:
++  compatible:
++    enum:
++      - renesas,5p35023
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  renesas,settings:
++    description: Optional, complete register map of the device.
++      Optimized settings for the device must be provided in full
++      and are written during initialization.
++    $ref: /schemas/types.yaml#/definitions/uint8-array
++    maxItems: 37
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        versa3: clock-generator@68 {
++            compatible = "renesas,5p35023";
++            reg = <0x68>;
++            #clock-cells = <1>;
++
++            clocks = <&x1_x2>;
++
++            renesas,settings = [
++                80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++                00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++                80 b0 45 c4 95
++            ];
++
++            assigned-clocks = <&versa3 0>, <&versa3 1>,
++                              <&versa3 2>, <&versa3 3>,
++                              <&versa3 4>, <&versa3 5>;
++            assigned-clock-rates = <12288000>, <25000000>,
++                                   <12000000>, <11289600>,
++                                   <11289600>, <24000000>;
++        };
++    };
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
