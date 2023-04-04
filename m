@@ -2,217 +2,126 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C0DC761A6
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Apr 2023 14:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4BEC77B62
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Apr 2023 14:05:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235741AbjDDOBb (ORCPT
+        id S235256AbjDDOFW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 Apr 2023 10:01:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41400 "EHLO
+        Tue, 4 Apr 2023 10:05:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235539AbjDDOBJ (ORCPT
+        with ESMTP id S235753AbjDDOEw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Apr 2023 10:01:09 -0400
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE9A49F2;
-        Tue,  4 Apr 2023 07:00:33 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id E6B0A5821A3;
-        Tue,  4 Apr 2023 09:57:29 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 04 Apr 2023 09:57:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1680616649; x=1680623849; bh=6sLEHhpe6e4ztElMjcID/0X5XZa9ISiEqsa
-        KFJ6eVV8=; b=t5wlWGxVoCbIdmzx0235D3JSXtApugbMR88FiMPPAq+Pw6TC3G9
-        CwhT9TBa3fP+dVIa6ZVulR5B+ylYb82tc1aG6JocLRG/7uOQ+gjyj3Bka3wTQDhH
-        A1oGJbe/iZM0/KFTR4ST6i9kHHXlF99tzoDXOizK+jESNKSR5JUJjFZJJtpxuzTo
-        81yzSmZSEzFnjFwr+/I++N1jYfXysOR2eiIxdTtIeqlHTxwTjh46qGpOvuLIUeIi
-        kr6WmTiU4L3mjFdqsJnu0SWs29H9VWhk+ZeOuHdUyO35KWVk+AedzU0my7cYLk09
-        r0N0sRUsWwefkjEQG5SxT/G7cXk7ZEXVx0w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1680616649; x=1680623849; bh=6sLEHhpe6e4ztElMjcID/0X5XZa9ISiEqsa
-        KFJ6eVV8=; b=BL6wuEKdUiLJWOxbOYWAHCX+lY0kA4hGWZjQf2hjk+GrG7hpwyg
-        agcfKiDauI67HW1cXStS64LDjvK1sw9I7Kj0l4GBhpygcP14i5Fo5DEiPXhJSnfy
-        MJpey2LZK1jrTyO0LwuOXI/5auRitSFsXoU9aMBZ9vV0t/IPO2JEdDcd6iieJcxo
-        y2VTfgqwa1XlxCTNch3EtWi/JAgO+MsdfmeecUclyGzl7wfOsaR5CZ83a5hqYLXm
-        8Om0oUhusTcznLCzn1gR36XPYOnU38LUmoBffsZA20TKOeAFMMaUVp2Jadd4KwlC
-        +gH62wKUFXSO3cDeYndqpO8x+xcRTxhOqKg==
-X-ME-Sender: <xms:ySwsZBSBjlL4-u0CpClcThqbq6J_sqOFzcYD5pJCc4Ivv4ygPf7rVg>
-    <xme:ySwsZKwJC81JyipPSFvQJY3IeAnbR2-xH3xZ3gijv1_NqhmHCRAYj2248Df3nexrZ
-    -Or85EIXAiWAgKa25U>
-X-ME-Received: <xmr:ySwsZG3-U0IR-FELhs-9Pd7xmYSoTsUSGnXZLNhn8B1vz4ngX2m3WwB1yxrPQ4Jh2cj7Q7XPG6QcLlTpZco4_eioC_hMsxU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeiledgjedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepvedvleeijeegvdekffehkeehieelhfeggfffheetkeeuledvtdeuffeh
-    teeltdffnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:ySwsZJCuuAuwmpWNMnMchW4IccgxIU50CzVmCVMan-nh--yi2jj3bA>
-    <xmx:ySwsZKh3e_M-XFzkEpRsrAWZn9Htyz_kqnZ16NXMmAzBP6r-0MCdHw>
-    <xmx:ySwsZNp-2RjllcY9FB9Y534krQzZFTOdOeOide2lSG1iPc3t9paQHA>
-    <xmx:ySwsZAuj2WEt4JHaSkjcN2b2aXnEcDwDTkdszO_u7y12A97SQblnJg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Apr 2023 09:57:28 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Tue, 04 Apr 2023 12:11:48 +0200
-Subject: [PATCH v3 58/65] clk: sprd: composite: Switch to determine_rate
+        Tue, 4 Apr 2023 10:04:52 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786304C2D
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Apr 2023 07:04:35 -0700 (PDT)
+Received: from ramsan.of.borg ([84.195.187.55])
+        by michel.telenet-ops.be with bizsmtp
+        id ge4X2900A1C8whw06e4XXA; Tue, 04 Apr 2023 16:04:31 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pjhBx-00G0mB-3C
+        for linux-renesas-soc@vger.kernel.org;
+        Tue, 04 Apr 2023 16:00:09 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pjhCi-003AHc-Uu
+        for linux-renesas-soc@vger.kernel.org;
+        Tue, 04 Apr 2023 16:00:08 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2023-04-04-v6.3-rc5
+Date:   Tue,  4 Apr 2023 16:00:08 +0200
+Message-Id: <20230404140008.754505-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20221018-clk-range-checks-fixes-v3-58-9a1358472d52@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>
-X-Mailer: b4 0.12.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2669; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=S/6RwdDznUTjbdmamyEhwoVXAAs0ePM7xj3izMxu8ks=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCna37ebF7fXqnRwzN86+V+LWiD/6oKNGYV1RnOP1DYnxeQt
- TkvvKGVhEONikBVTZIkRNl8Sd2rW6042vnkwc1iZQIYwcHEKwETWb2dkeOcf9qK38/e+RyfnNwcv2+
- wWnuU6O08vl3nF5J3NxT/lHRn+CvbXXggWO80hPO//jd97G0r/yfj/eFbFoldwT+zA4g+TeQE=
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The Spreadtrum composite clocks implements a mux with a set_parent
-hook, but doesn't provide a determine_rate implementation.
+I have pushed renesas-drivers-2023-04-04-v6.3-rc5 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-This is a bit odd, since set_parent() is there to, as its name implies,
-change the parent of a clock. However, the most likely candidate to
-trigger that parent change is a call to clk_set_rate(), with
-determine_rate() figuring out which parent is the best suited for a
-given rate.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
+for-next branches of various subsystem trees and (b) branches with
+driver code submitted or planned for submission to maintainers into the
+master branch of my renesas-devel.git tree.
 
-The other trigger would be a call to clk_set_parent(), but it's far less
-used, and it doesn't look like there's any obvious user for that clock.
+Today's version is based on renesas-devel-2023-04-04-v6.3-rc5.
 
-So, the set_parent hook is effectively unused, possibly because of an
-oversight. However, it could also be an explicit decision by the
-original author to avoid any reparenting but through an explicit call to
-clk_set_parent().
+Included branches with driver code:
+  - renesas-clk-for-v6.4
+  - renesas-pinctrl-for-v6.4
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/gpio-logic-analyzer-v8~1
 
-The driver does implement round_rate() though, which means that we can
-change the rate of the clock, but we will never get to change the
-parent.
+Included fixes:
+  - virtio_mmio: fix up for "ACPI: Replace irqdomain.h include with struct declarations"
+  - [LOCAL] soc: renesas: rcar-rst: Allow WDT reset on R-Car V3U
+  - ARM: shmobile: defconfig: Update shmobile_defconfig
+  - [LOCAL] arm64: renesas: defconfig: Enable CAN transceiver PHY support
+  - [LOCAL] arm64: renesas: defconfig: Update renesas_defconfig
 
-However, It's hard to tell whether it's been done on purpose or not.
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git#irq/irqchip-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git#driver-core-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
+  - https://git.pengutronix.de/git/pza/linux#reset/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
 
-Since we'll start mandating a determine_rate() implementation, let's
-convert the round_rate() implementation to a determine_rate(), which
-will also make the current behavior explicit. And if it was an
-oversight, the clock behaviour can be adjusted later on.
+Gr{oetje,eeting}s,
 
-Acked-by: Chunyan Zhang <zhang.lyra@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/sprd/composite.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+						Geert
 
-diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
-index ebb644820b1e..d3a852720c07 100644
---- a/drivers/clk/sprd/composite.c
-+++ b/drivers/clk/sprd/composite.c
-@@ -9,13 +9,19 @@
- 
- #include "composite.h"
- 
--static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long *parent_rate)
-+static int sprd_comp_determine_rate(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
- {
- 	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+	unsigned long rate;
- 
--	return sprd_div_helper_round_rate(&cc->common, &cc->div,
--					 rate, parent_rate);
-+	rate = sprd_div_helper_round_rate(&cc->common, &cc->div,
-+					  req->rate, &req->best_parent_rate);
-+	if (rate < 0)
-+		return rate;
-+
-+	req->rate = rate;
-+	return 0;
- }
- 
- static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
-@@ -53,7 +59,7 @@ const struct clk_ops sprd_comp_ops = {
- 	.get_parent	= sprd_comp_get_parent,
- 	.set_parent	= sprd_comp_set_parent,
- 
--	.round_rate	= sprd_comp_round_rate,
-+	.determine_rate	= sprd_comp_determine_rate,
- 	.recalc_rate	= sprd_comp_recalc_rate,
- 	.set_rate	= sprd_comp_set_rate,
- };
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-2.39.2
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
