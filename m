@@ -2,133 +2,128 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EB0C761AF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Apr 2023 17:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D519EC7619A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Apr 2023 20:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233806AbjDER6P (ORCPT
+        id S233370AbjDEUnp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Apr 2023 13:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49344 "EHLO
+        Wed, 5 Apr 2023 16:43:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233317AbjDER6O (ORCPT
+        with ESMTP id S233117AbjDEUnd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Apr 2023 13:58:14 -0400
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49FAE3C3E;
-        Wed,  5 Apr 2023 10:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9w+mHpl3Feo9gU6TGM0RoWAtGMwIO5vz3Gl4AH/wd0s=; b=ZvxTGezmCbRayrfaajPz6xpEHS
-        9xqTZcht8r4gHITGoiwsva82Nok6b15BGWuZKWSrLl+I3zBJjcFwf+UVlJquHBRv6wFvYI9XwrFAK
-        AgzAnA6iLxp8/KslBLav3VPrwP7yzajCOoDMluwwA0p5IDJNk2ky2i4WBjsguubUmD9qlk9wIZdLh
-        Rs9LU80gk8BAFm6YxVWrvCkmN0PF+4w7b3AUJGiu8cG62CLZzIb1Vo9yu+vnZpxcqYUXpp9KjjPdh
-        et6d+RYaSjzfpPU1FvXvLAARE6lEgkgpZ0BcGTPgYxK70fO1YQVl313vPOEpltdyn9itg7zaF7T+j
-        NqJK3XzQ==;
-Received: from ip98-183-112-29.ok.ok.cox.net ([98.183.112.29]:57812 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.96)
-        (envelope-from <david@lechnology.com>)
-        id 1pk4gc-0004aP-2T;
-        Wed, 05 Apr 2023 11:04:35 -0400
-Message-ID: <2c8c6e3e-835e-f545-2a57-8e037d32fe9b@lechnology.com>
-Date:   Wed, 5 Apr 2023 10:04:28 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v3 21/65] clk: davinci: da8xx-cfgchip: Add a
- determine_rate hook
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+        Wed, 5 Apr 2023 16:43:33 -0400
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF8707EDC;
+        Wed,  5 Apr 2023 13:43:14 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-17683b570b8so39945290fac.13;
+        Wed, 05 Apr 2023 13:43:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680727374;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fo4KOndYHjMmbpfxHkmhUzVyW73zzbklAEkQD0vmqLg=;
+        b=qjrl45j14NUyHUdQMEp+Q7CuzKUhRpTPaBLBEf5dyxg24AkwrgTs97Sw8xTV00byrf
+         NBg1TEhd4vIhXojhxeOSQOso+oiRx7xUOfxjIYw6TyU7Vo1DR5zD/AJ3KjISSRzaRKTq
+         dAHmcK81LuKjiIjtEcFjkjWFAGjT/bfxRbOUC8yzc1B8AyRkh2tyY1ZJ5QrAFRfGUXtu
+         Qxh9HTksn/LZ69Aw5qQE8g84l6wUZvGZNK6MAp0aK+mBkKlPI+zuuMv/S8epi10wV3dl
+         /QiOnAZFoUw7wvVU8OiQtTGDxEbyYdogIvrIqpJxcFaXSAan4eD26G1t8MzY89wvxb2f
+         Un1Q==
+X-Gm-Message-State: AAQBX9fQBhtP6IwAIaG7GLfvFJJn1n9KkFE8mY+EPFp9VPUxXXyPvpAX
+        0fhBDQPRPJHTA8n0js6twQ==
+X-Google-Smtp-Source: AKy350YB2Ilkp1Aoa2VvCKvBjmWi9tDKQH08fmFxNM2UVw2G8NAZ3PpJIJOjMXSbsNNwBzdVZHrk4g==
+X-Received: by 2002:a05:6870:6023:b0:177:81bb:1b28 with SMTP id t35-20020a056870602300b0017781bb1b28mr4091960oaa.9.1680727373749;
+        Wed, 05 Apr 2023 13:42:53 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id zj27-20020a0568716c9b00b001723a2e84b6sm6361842oab.6.2023.04.05.13.42.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Apr 2023 13:42:53 -0700 (PDT)
+Received: (nullmailer pid 449449 invoked by uid 1000);
+        Wed, 05 Apr 2023 20:42:52 -0000
+Date:   Wed, 5 Apr 2023 15:42:52 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Ivan Bornyakov <i.bornyakov@metrotek.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fabio Estevam <festevam@gmail.com>, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
- <20221018-clk-range-checks-fixes-v3-21-9a1358472d52@cerno.tech>
-From:   David Lechner <david@lechnology.com>
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-21-9a1358472d52@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Frank Rowand <frowand.list@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Wolfram Sang <wsa@kernel.org>
+Subject: Re: [PATCH v3] treewide: Fix probing of devices in DT overlays
+Message-ID: <168072737082.449372.6122824582508382689.robh@kernel.org>
+References: <e1fa546682ea4c8474ff997ab6244c5e11b6f8bc.1680182615.git.geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1fa546682ea4c8474ff997ab6244c5e11b6f8bc.1680182615.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 4/4/23 5:11 AM, Maxime Ripard wrote:
-> The Davinci DA8xxx cfgchip mux clock implements a mux with a set_parent
-> hook, but doesn't provide a determine_rate implementation.
+
+On Thu, 30 Mar 2023 15:26:13 +0200, Geert Uytterhoeven wrote:
+> When loading a DT overlay that creates a device, the device is not
+> probed, unless the DT overlay is unloaded and reloaded again.
 > 
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
+> After the recent refactoring to improve fw_devlink, it no longer depends
+> on the "compatible" property to identify which device tree nodes will
+> become struct devices.   fw_devlink now picks up dangling consumers
+> (consumers pointing to descendent device tree nodes of a device that
+> aren't converted to child devices) when a device is successfully bound
+> to a driver.  See __fw_devlink_pickup_dangling_consumers().
+> 
+> However, during DT overlay, a device's device tree node can have
+> sub-nodes added/removed without unbinding/rebinding the driver.  This
+> difference in behavior between the normal device instantiation and
+> probing flow vs. the DT overlay flow has a bunch of implications that
+> are pointed out elsewhere[1].  One of them is that the fw_devlink logic
+> to pick up dangling consumers is never exercised.
+> 
+> This patch solves the fw_devlink issue by marking all DT nodes added by
+> DT overlays with FWNODE_FLAG_NOT_DEVICE (fwnode that won't become
+> device), and by clearing the flag when a struct device is actually
+> created for the DT node.  This way, fw_devlink knows not to have
+> consumers waiting on these newly added DT nodes, and to propagate the
+> dependency to an ancestor DT node that has the corresponding struct
+> device.
+> 
+> Based on a patch by Saravana Kannan, which covered only platform and spi
+> devices.
+> 
+> [1] https://lore.kernel.org/r/CAGETcx_bkuFaLCiPrAWCPQz+w79ccDp6=9e881qmK=vx3hBMyg@mail.gmail.com
+> 
+> Fixes: 4a032827daa89350 ("of: property: Simplify of_link_to_phandle()")
+> Link: https://lore.kernel.org/r/CAGETcx_+rhHvaC_HJXGrr5_WAd2+k5f=rWYnkCZ6z5bGX-wj4w@mail.gmail.com
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
+> ---
+> v3:
+>   - Add Acked-by,
+>   - s/instantiate/probe/,
+>   - Improve commit description,
+>   - Add comment before clearing FWNODE_FLAG_NOT_DEVICE,
+> 
+> v2:
+>   - Add Acked-by,
+>   - Drop RFC.
+> ---
+>  drivers/bus/imx-weim.c    | 6 ++++++
+>  drivers/i2c/i2c-core-of.c | 5 +++++
+>  drivers/of/dynamic.c      | 1 +
+>  drivers/of/platform.c     | 5 +++++
+>  drivers/spi/spi.c         | 5 +++++
+>  5 files changed, 22 insertions(+)
 > 
 
-As mentioned in my previous review, parent is selected by device
-tree and should never be changed after init.
-
+Applied, thanks!
 
