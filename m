@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 781D6C77B7D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CC6C77B7E
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Apr 2023 10:05:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbjDKKEd (ORCPT
+        id S229602AbjDKKEe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Apr 2023 06:04:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52298 "EHLO
+        Tue, 11 Apr 2023 06:04:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbjDKKEJ (ORCPT
+        with ESMTP id S229707AbjDKKEU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Apr 2023 06:04:09 -0400
+        Tue, 11 Apr 2023 06:04:20 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 55F0430FA;
-        Tue, 11 Apr 2023 03:04:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BBDBC1BE7;
+        Tue, 11 Apr 2023 03:04:19 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.98,336,1673881200"; 
-   d="scan'208";a="159035205"
+   d="scan'208";a="159035239"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2023 19:04:06 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2023 19:04:19 +0900
 Received: from localhost.localdomain (unknown [10.226.93.123])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1768B400F2DF;
-        Tue, 11 Apr 2023 19:04:02 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8A7234009F88;
+        Tue, 11 Apr 2023 19:04:15 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -34,9 +34,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 3/8] arm64: dts: renesas: r9a07g044: Add vspd node
-Date:   Tue, 11 Apr 2023 11:03:41 +0100
-Message-Id: <20230411100346.299768-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 6/8] arm64: dts: renesas: r9a07g054: Add DSI node
+Date:   Tue, 11 Apr 2023 11:03:44 +0100
+Message-Id: <20230411100346.299768-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230411100346.299768-1-biju.das.jz@bp.renesas.com>
 References: <20230411100346.299768-1-biju.das.jz@bp.renesas.com>
@@ -46,7 +46,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add vspd node to RZ/G2L SoC DTSI.
+Add DSI node to RZ/V2L SoC DTSI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -56,33 +56,48 @@ v1->v2:
  * Reorder the patch based on the module fcpvd, vspd and then DSI
    for both RZ/G2L and RZ/V2L.
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index e90c517077ab..7698752742df 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -618,6 +618,19 @@ sbc: spi@10060000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index cc085be7a0d8..244934ce5991 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+@@ -623,6 +623,34 @@ sbc: spi@10060000 {
  			status = "disabled";
  		};
  
-+		vspd: vsp@10870000 {
-+			compatible = "renesas,r9a07g044-vsp2";
-+			reg = <0 0x10870000 0 0x10000>;
-+			interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G044_LCDC_CLK_A>,
-+				 <&cpg CPG_MOD R9A07G044_LCDC_CLK_P>,
-+				 <&cpg CPG_MOD R9A07G044_LCDC_CLK_D>;
-+			clock-names = "aclk", "pclk", "vclk";
++		dsi: dsi@10850000 {
++			compatible = "renesas,r9a07g054-mipi-dsi",
++				     "renesas,rzg2l-mipi-dsi";
++			reg = <0 0x10850000 0 0x20000>;
++			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "seq0", "seq1", "vin1", "rcv",
++					  "ferr", "ppi", "debug";
++			clocks = <&cpg CPG_MOD R9A07G054_MIPI_DSI_PLLCLK>,
++				 <&cpg CPG_MOD R9A07G054_MIPI_DSI_SYSCLK>,
++				 <&cpg CPG_MOD R9A07G054_MIPI_DSI_ACLK>,
++				 <&cpg CPG_MOD R9A07G054_MIPI_DSI_PCLK>,
++				 <&cpg CPG_MOD R9A07G054_MIPI_DSI_VCLK>,
++				 <&cpg CPG_MOD R9A07G054_MIPI_DSI_LPCLK>;
++			clock-names = "pllclk", "sysclk", "aclk", "pclk", "vclk", "lpclk";
++			resets = <&cpg R9A07G054_MIPI_DSI_CMN_RSTB>,
++				 <&cpg R9A07G054_MIPI_DSI_ARESET_N>,
++				 <&cpg R9A07G054_MIPI_DSI_PRESET_N>;
++			reset-names = "rst", "arst", "prst";
 +			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G044_LCDC_RESET_N>;
-+			renesas,fcp = <&fcpvd>;
++			status = "disabled";
 +		};
 +
- 		fcpvd: fcp@10880000 {
- 			compatible = "renesas,r9a07g044-fcpvd",
- 				     "renesas,fcpv";
+ 		vspd: vsp@10870000 {
+ 			compatible = "renesas,r9a07g054-vsp2",
+ 				     "renesas,r9a07g044-vsp2";
 -- 
 2.25.1
 
