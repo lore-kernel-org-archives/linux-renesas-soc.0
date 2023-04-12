@@ -2,77 +2,114 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E63C77B73
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Apr 2023 14:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4E5C77B72
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Apr 2023 15:25:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231686AbjDLOvQ (ORCPT
+        id S230404AbjDLPZA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Apr 2023 10:51:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48680 "EHLO
+        Wed, 12 Apr 2023 11:25:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231233AbjDLOvO (ORCPT
+        with ESMTP id S231365AbjDLPYy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Apr 2023 10:51:14 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 30D1461AB;
-        Wed, 12 Apr 2023 07:51:13 -0700 (PDT)
+        Wed, 12 Apr 2023 11:24:54 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B7C7E8;
+        Wed, 12 Apr 2023 08:24:52 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.98,339,1673881200"; 
-   d="scan'208";a="159190259"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Apr 2023 23:51:12 +0900
+   d="scan'208";a="155741520"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 13 Apr 2023 00:24:51 +0900
 Received: from localhost.localdomain (unknown [10.226.93.18])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5E7AB400A646;
-        Wed, 12 Apr 2023 23:51:10 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BF3144006C6E;
+        Thu, 13 Apr 2023 00:24:49 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-serial@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 5/5] tty: serial: sh-sci: Fix end of transmission on SCI
-Date:   Wed, 12 Apr 2023 15:50:53 +0100
-Message-Id: <20230412145053.114847-6-biju.das.jz@bp.renesas.com>
+        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 1/5] dmaengine: sh: rz-dmac: Add rz_dmac_invalidate_lmdesc()
+Date:   Wed, 12 Apr 2023 16:24:41 +0100
+Message-Id: <20230412152445.117439-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230412145053.114847-1-biju.das.jz@bp.renesas.com>
-References: <20230412145053.114847-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230412152445.117439-1-biju.das.jz@bp.renesas.com>
+References: <20230412152445.117439-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-We need to set TE to "0" (i.e., disable serial transmission) to
-get the expected behavior of the end of serial transmission.
+rz_dmac_terminate_all() must invalidate lmdescriptor in order to
+reuse the hardware descriptors in rz_dmac_lmdesc_recycle().
+
+Add rz_dmac_invalidate_lmdesc() so that the same code can be shared
+between rz_dmac_terminate_all() and rz_dmac_free_chan_resources().
+
+Based on a patch in the BSP by Long Luu
+<long.luu.ur@renesas.com>
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v3->v4:
- * Updated commit description.
-v3:
- New patch. split from patch#3.
+v2->v3:
+ * No change.
+v1->v2:
+ * Introduced rz_dmac_invalidate_lmdesc(), so that same code is shared
+   between rz_dmac_free_chan_resources() and rz_dmac_terminate_all()
+   for invalidating hardware descriptors.
+ * updated commit description.
 ---
- drivers/tty/serial/sh-sci.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/dma/sh/rz-dmac.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 5c9ae69c0555..7c9457962a3d 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -847,6 +847,11 @@ static void sci_transmit_chars(struct uart_port *port)
- 		} else if (!uart_circ_empty(xmit) && !stopped) {
- 			c = xmit->buf[xmit->tail];
- 			xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
-+		} else if (port->type == PORT_SCI && uart_circ_empty(xmit)) {
-+			ctrl = serial_port_in(port, SCSCR);
-+			ctrl &= ~SCSCR_TE;
-+			serial_port_out(port, SCSCR, ctrl);
-+			return;
- 		} else {
- 			break;
- 		}
+diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+index 9479f29692d3..81e72529f7d3 100644
+--- a/drivers/dma/sh/rz-dmac.c
++++ b/drivers/dma/sh/rz-dmac.c
+@@ -236,6 +236,16 @@ static void rz_lmdesc_setup(struct rz_dmac_chan *channel,
+  * Descriptors preparation
+  */
+ 
++static void rz_dmac_invalidate_lmdesc(struct rz_dmac_chan *channel)
++{
++	struct rz_lmdesc *lmdesc = channel->lmdesc.base;
++
++	for (; lmdesc < channel->lmdesc.base + DMAC_NR_LMDESC; lmdesc++) {
++		if (lmdesc->header)
++			lmdesc->header = 0;
++	}
++}
++
+ static void rz_dmac_lmdesc_recycle(struct rz_dmac_chan *channel)
+ {
+ 	struct rz_lmdesc *lmdesc = channel->lmdesc.head;
+@@ -437,16 +447,11 @@ static void rz_dmac_free_chan_resources(struct dma_chan *chan)
+ {
+ 	struct rz_dmac_chan *channel = to_rz_dmac_chan(chan);
+ 	struct rz_dmac *dmac = to_rz_dmac(chan->device);
+-	struct rz_lmdesc *lmdesc = channel->lmdesc.base;
+ 	struct rz_dmac_desc *desc, *_desc;
+ 	unsigned long flags;
+-	unsigned int i;
+ 
+ 	spin_lock_irqsave(&channel->vc.lock, flags);
+-
+-	for (i = 0; i < DMAC_NR_LMDESC; i++)
+-		lmdesc[i].header = 0;
+-
++	rz_dmac_invalidate_lmdesc(channel);
+ 	rz_dmac_disable_hw(channel);
+ 	list_splice_tail_init(&channel->ld_active, &channel->ld_free);
+ 	list_splice_tail_init(&channel->ld_queue, &channel->ld_free);
+@@ -537,6 +542,7 @@ static int rz_dmac_terminate_all(struct dma_chan *chan)
+ 
+ 	rz_dmac_disable_hw(channel);
+ 	spin_lock_irqsave(&channel->vc.lock, flags);
++	rz_dmac_invalidate_lmdesc(channel);
+ 	list_splice_tail_init(&channel->ld_active, &channel->ld_free);
+ 	list_splice_tail_init(&channel->ld_queue, &channel->ld_free);
+ 	spin_unlock_irqrestore(&channel->vc.lock, flags);
 -- 
 2.25.1
 
