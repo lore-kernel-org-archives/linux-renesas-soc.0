@@ -2,62 +2,63 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A56C77B6E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Apr 2023 07:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A87EC77B6E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Apr 2023 07:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229915AbjDLH35 (ORCPT
+        id S229609AbjDLHiz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Apr 2023 03:29:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54134 "EHLO
+        Wed, 12 Apr 2023 03:38:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbjDLH3u (ORCPT
+        with ESMTP id S229805AbjDLHiu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Apr 2023 03:29:50 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2109.outbound.protection.outlook.com [40.107.114.109])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 353A0F9;
-        Wed, 12 Apr 2023 00:29:48 -0700 (PDT)
+        Wed, 12 Apr 2023 03:38:50 -0400
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2128.outbound.protection.outlook.com [40.107.114.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC72F5FDE;
+        Wed, 12 Apr 2023 00:38:28 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VnZH6zAnOGHt5uvC7oX295RS25d81wOM/8bwN9wYPUMycfw1xEPjQRj4oALUTV7jI+uBfX30at1fyvwwViOqI5othLyMcHiXZbSgngb04d7/Ywb1O4ovK1ZtD4CqcDny2l0tFq2wch+/Oz38InCUfIZVxhxa8puJ3hrwWKClZ3cZ7nA90hJHOy1Suonig5H5+SSKX5egShY86W2iTbOqNE6FopVXpkzfibUaW95LBlpMqw3PH8hjiIfRxIFRdcuZwqpKx123ehn6dwPh8Q9yN7vv8HGHQVeYA9Efb+AjIz52zxHo8t4XPxzCPAGegLmxl0vRUwLP+gvYOfHinttjqw==
+ b=W9W+pczFdaAcQl3lx4f+U/bmx1EulrGQ0zgPJVGaq2kqWju8SvFhjUiEOlk7zirHyHIhLKVaYp039Z0qCRUunUgOneXqf0yeSVIHg5cziJXK0sCeKQGeJSPnXJBlp38YxLqoJ8MYelQ3rwDNtO4WpchByF5DbvV1kmAk0AnntPqiInraZ8yAx6hmganWMBBBE9QpULLXoDmmKbaHneASXQ0iOIoQuOoKQvNopKaGKdmwMEb6MdirLhpUVHq6jQUBOKvf8rwLHSPQoZLbXv24eGM3WemF/2VMc4oP7BqcoFA+vy+pBsPkDuBhKxUwOxYjpjSIm3BIoLG10UB4TdwhjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OJnbZg/nLeuEBk+WHcallJdA1dimy7vDjeAoX0+DV20=;
- b=KJ0Dog9xtVPCQLEvnL1J1GsOKf0Z5EKLQ+8s94KOPL3SVEMcpwminH+sC4dlxaiTAi5bW/EVtDsd1D7oitG6TydFdHCsRl3e0yG8lRAHVaj8QjGQfEyrMiQ2MRYtYu+QDxaAeJMvi3p92JAJD0nvlfb1yp5DxZPy5dO3vm2qlD7aukqGyk9+0WGxV4vWWoNjXZxcY0rnmd2pyHS7PwEoaWVpxNf0KMJGA+tTGgXZLqCuony4evrly1by/RSwmPR/rhfbOMfrrsL1GQwwLuuI7Wz5AOk0n1WQpu0I+4T6i8mlngyoCjnVBeU0dyRV/I9xHDr+642gUm25KYBBbH0OBA==
+ bh=wwYt8/1aS/ud3/9oR0T+iTjzvKczjl9jGXvy8ZRjdL4=;
+ b=c8ubMjlOmJ53Z9XgIO54pPtPXSOHXSc1Xu54klnHgcsVYNAHuQPBc7P5RDdlxe1P0oaUgga/9WMalCokthEEjX5/vokZGYussy3zpGJyqkZjn51fpJYnC9UjzUJRzZSLdVX9/pifqCnXBMRqC2p6OpRRkjtRPSzfCquWzM764gmHj4s18bi9KpqVQWS3xsMgtFTdu+GLW+rAg+6hO76Oyrf2kxGS5b5cBFeg/c55gXsfLcDltP83chKjU8MBgdBnnVuYlbvddztkVKi5TUx68+SP8kKlYOknxQ7Yp8J3SO6G+8wEm1h+oNhZzyQqgg3hBC4JGmWq+gtPxuig++BbTQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OJnbZg/nLeuEBk+WHcallJdA1dimy7vDjeAoX0+DV20=;
- b=dkq/s3zl6isHz6AiGb4P+rCszGuqN5tgeMBQP8XBM9KostxsPU50PfdeNWeop6LMJqoIkFMe814cQfxbqZ2I98vPO/tDsxtc8vyjzzJDQMoQa2kD+LmQPz0rpn1AoMIhnGzJXwpd/LjtjSP6rySlJG9dvfHFl/0URq7cy7bVCVU=
+ bh=wwYt8/1aS/ud3/9oR0T+iTjzvKczjl9jGXvy8ZRjdL4=;
+ b=kWxDoVgoyjs+EmOswfeUSS9lDhIXZNYqCI2GF/JbqPi30O4lXUopYr04Wao0ULn6XXLnIRsR8WFSWP1znM1LB0Wb/P/dpCXyFGgDUd2wJaaO5I367TO4LIYHUBfUX4Flf6MwUAc4GGkQnWSxIId+jfvU1KnxjeXG825NY1wxcAo=
 Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYWPR01MB10601.jpnprd01.prod.outlook.com (2603:1096:400:2fc::7) with
+ by TY3PR01MB10471.jpnprd01.prod.outlook.com (2603:1096:400:313::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.38; Wed, 12 Apr
- 2023 07:29:45 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.28; Wed, 12 Apr
+ 2023 07:38:26 +0000
 Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
  ([fe80::e521:994c:bb0e:9bf6]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
  ([fe80::e521:994c:bb0e:9bf6%8]) with mapi id 15.20.6298.029; Wed, 12 Apr 2023
- 07:29:45 +0000
+ 07:38:25 +0000
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Vinod Koul <vkoul@kernel.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     Jiri Slaby <jirislaby@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 5/5] dmaengine: sh: rz-dmac:
- rz_dmac_prepare_descs_for_slave_sg() improvements
-Thread-Topic: [PATCH v2 5/5] dmaengine: sh: rz-dmac:
- rz_dmac_prepare_descs_for_slave_sg() improvements
-Thread-Index: AQHZZ8gvJKxBqbC9BUqVBqWUIKPH8K8nUPFw
-Date:   Wed, 12 Apr 2023 07:29:45 +0000
-Message-ID: <OS0PR01MB592281D9D6D12978D04EC10C869B9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20230405140842.201883-1-biju.das.jz@bp.renesas.com>
- <20230405140842.201883-6-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230405140842.201883-6-biju.das.jz@bp.renesas.com>
+        <linux-renesas-soc@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v3 3/5] tty: serial: sh-sci: Fix TE setting on SCI IP
+Thread-Topic: [PATCH v3 3/5] tty: serial: sh-sci: Fix TE setting on SCI IP
+Thread-Index: AQHZY8SxDZT8DMgEvkiUPAFWgGwr1a8nWr0w
+Date:   Wed, 12 Apr 2023 07:38:25 +0000
+Message-ID: <OS0PR01MB592262FFD02CB9E095A057DB869B9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20230331113346.170602-1-biju.das.jz@bp.renesas.com>
+ <20230331113346.170602-4-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230331113346.170602-4-biju.das.jz@bp.renesas.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -65,154 +66,142 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYWPR01MB10601:EE_
-x-ms-office365-filtering-correlation-id: c71e2f31-698c-4eb9-5f83-08db3b27b06a
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TY3PR01MB10471:EE_
+x-ms-office365-filtering-correlation-id: 9d7dde41-d6e2-49dc-b445-08db3b28e6bd
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: skF9jn3sbMhuFen6NuFx2BVPSR2Q3GW7xt5bfPnF2tsvfDoCIAwv9oifcbbDZekXHgjK7rJ2biaKNYqRq33z+rJTUSDtuiaLtRESqM7m0YVzgUqESyeOGlpGZ8APBfH1mn5jk9I5QSpikI+wLlt0yaRrjVp0qwKUZqIevvoaLrQVqpE33IGIfLoD9Qdy+lg+ueFTOsFSyNaQbRmtOVkP62yiJScpOMsGmjDnXAHbZVuYvxjpdZ0Ra2Jbf7gVSvje3q0fTyXArqFvPiLTj/vkRo1Usn8KN51J7WHsZajQHnKja/SHq/HRm0vjOIk5U3irh5qb/BvHLxQ4LjE1o1revwtlhUiN/cg4jKZbRiVIh8F8C6EaTmxBStzVnLMczkRjxlAVnpSk7qWPajzc2f/yTw3VJNUOcKUlJH+XHem0suzY+xQmlrxiZE0uVmKiDIXBJ8bEtEdlrKYuUl7d0pa4QXlfnNO9vCrIxE5dGORw301+FhIYWyLWxyHsasjbUglq8ZT19jC0wkUBsQ4tiZrlsl911KsfZo/NdrLXvI8RZLL5n5911VmBh3/IX2mtSu+Ba4PYH3rP0/c1Oceo3u8a0yOD4CXuG9MGBXGv2Dk4fAYiqa6PRh6WmIfKpeM5Pl3y
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(396003)(346002)(376002)(136003)(39860400002)(451199021)(54906003)(41300700001)(76116006)(478600001)(86362001)(316002)(71200400001)(64756008)(8676002)(4326008)(66946007)(66556008)(7696005)(66476007)(110136005)(66446008)(52536014)(8936002)(5660300002)(38070700005)(33656002)(186003)(122000001)(38100700002)(6506007)(9686003)(53546011)(83380400001)(2906002)(55016003)(26005);DIR:OUT;SFP:1102;
+x-microsoft-antispam-message-info: 5dGF0t35xmHzBahi0LdjZGiN68i8M2PkbTu5PTEV90CcgI94W+VRA6CPAb2REjsZr5py5/NBWyv+RaLF0cn+M/5K6RRa7jTRnq7xYE9N1MmI6q6899UhcHgg/56eJd3jNymG39znyMcJy4ITTS5rRo/RaWUcbpQCZ5ryuC6eZTMqpu4r+7JRnI5gZ36y7ATJj7T95Ch/jQ9GqvUglpTlmsosiViKToKKMDnrAJ1/wsOFzBewLgR3MyL9GeGc7fLGgvduDfekhShFq3nqfDbJQcanpcNnq9YGL52LtiGw3p9kleUTzyNOv3lWUv15hzrcwAtqZo+6L2t6FLiQoynj2zqkQMoQ/NDMptJ/d6Udp2KX5qkdfd0SWjVeUDi499dISGkjwiTTLUJXA8NvVjXfYJQhz33hzIrxZRAK5V2FlQKpw9Z5m2CHAilPJIuvcbfgqNp+P5VNXunzncsbqiDZnd7JHii7VOMTmPnEQWM1ACIU99k/dK4Tdp+wKVxFMlifat8zOsfNGElMiP25DmJ2AvJ5Tnbqddshdda/OkokZZONWpCRqB2A1mWouIjbIKBBF3IPksX+eywMYJTviAp1buDxGcyO9AnKATyORF5FbIkHa94kCMgD4Skk+cpoVDJ9
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(376002)(136003)(396003)(346002)(366004)(451199021)(4326008)(66446008)(64756008)(76116006)(66476007)(66556008)(478600001)(54906003)(66946007)(33656002)(110136005)(316002)(2906002)(55016003)(8936002)(8676002)(41300700001)(52536014)(5660300002)(86362001)(83380400001)(38100700002)(122000001)(38070700005)(71200400001)(7696005)(9686003)(53546011)(6506007)(186003)(26005);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?fY3ogzM4YPkAP/rxZz8yOFLNXDuTGm8U/7n4Z0Bji/EYEFAAuURtlUfrRLh2?=
- =?us-ascii?Q?S7at/s+Uec94H3YoO1GzOGrEE5JDOoT2xeZHoB+f3buLXwS04typLdHxiZXT?=
- =?us-ascii?Q?PvnsXrAY9GVBGGjJhuUeWmXGWYpca7VJ3fXHs3CAVACVjLKRe+D0qjyj/9s/?=
- =?us-ascii?Q?LGjcrgq4QavUkJeP+6/AxKlG0tqZx8ZGdftSXixqNQXd7J6qhOz5Dhc/Yoi2?=
- =?us-ascii?Q?T9vPi1iakqkoo0fzKjh8MyvCWq3w2RyfjduakGsObw2VR+2P0hj9E6smBToR?=
- =?us-ascii?Q?pk+cTrMhDDPeOLfUk/6jqjgmNVJdPmQRMuMvu2+K9kR9+7/jM9gIx3Pw6CX1?=
- =?us-ascii?Q?lKWYAc/svD5ykmiKz5gS50xE4xGlR4C4HHCQe/ZOBxcQS6cXMxtAuRjxw5SU?=
- =?us-ascii?Q?A6YaUEKEwQU8KvL/MwI9SAlVp3BFTQgeXCenDadE7ZEvL6lDR8fvFDNOn6Zg?=
- =?us-ascii?Q?bcFrlNh9w/DKjkjXqLf5pEN5iLwNTI/48jCg44ukyraYQlFWZb3fGmwxQakf?=
- =?us-ascii?Q?jx0r63S+rIR9B/4o45mF+XvQ3IBRcj8rX8EJOHYyYOHiQNO7fAn79N2wN2Ck?=
- =?us-ascii?Q?PpXvOfD1vzDXCQFrvy/lq0nv3P2Cqsqj/lnlmxl0GiniI8Ce6di3vtKlNSyb?=
- =?us-ascii?Q?hG7VAGHis3+iHvBn+Tjky7eswSsXdBKa07X0sjsPjlt9VhObzJc97vli2TgJ?=
- =?us-ascii?Q?s3cKRMzvJmrisKKNb/ZUFRh535zYgFBzpJr7Q4gt4pbTeTdJO+AjNeUC0NHX?=
- =?us-ascii?Q?K5XXiIsxforOnYAU51978/oE3xfLOF7MjeQe/LsyGadpm+qBPLi1oxxoJgBB?=
- =?us-ascii?Q?75in+FBjMawhwM5ekOobP1P76mpmXyF187G2TR6SwYetKxYEdYmD/oOHB5vP?=
- =?us-ascii?Q?hsrUI9JRwFkbOjRs03eY2P1DQBZ+vYz9duTL0AW4N+cFRhXfgCsOK+MbVMet?=
- =?us-ascii?Q?h8aVfzXcf/o0ZPFTzTAuWuGfLGdmJGtt19xaxZjZpC1D6Z1KgxkFU/we4sCs?=
- =?us-ascii?Q?iHunWMob+CLEsoauk5UmBZApmcno5uunuE/X/qeBvB+0HFTfgdfwJJ1RKRO0?=
- =?us-ascii?Q?RItA0TLLrKH1BeOc8hrIN3IrUdgpOst3Og+aouRyrPRCVFGIQGE7aXOieJNl?=
- =?us-ascii?Q?CKTwi1J/fZ859qSiGVcU80Eto1/g8PMjAEd147YRSkNg6QePeyZx2K48BAiL?=
- =?us-ascii?Q?ZsczMsjy/6x1oec0syTcj3dHdFjAr77vakwqVjMMClWTM2i3Q4z9Z8cQKP/D?=
- =?us-ascii?Q?Qo8VAzexN5VxPfvRzuOzCmeVEBLiJQR3or0YW600uU+tDGrUL767NhLnitJV?=
- =?us-ascii?Q?ho5w6fxJSZUrp/wCOETNEdUYfOmECZ9ylppNMS647zXnRHuRBPHrAfCv+0Db?=
- =?us-ascii?Q?pBHB053+MmZcA758V9Q2nIMYK4XlRYdQz27+o6llOPU2kLJ89izdZ0YfVcOI?=
- =?us-ascii?Q?A+cy0Rwp6SG4TmS6m/v8Tw7LNTdxBnfcaQFy8ge8ZOe16+ZctikpXBBoxfEY?=
- =?us-ascii?Q?QFLwa0IW5LztzyF5rzge8VdQHuFpGHnb8+vrW9e4pa/f/QSTJKZX3yzOkvgL?=
- =?us-ascii?Q?I9WwJcvt3jaCZqoh707Z3e94hYvm5sdlQeA4X3ah?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?UyG3zad5tYj1Vgj7gt8MWscB85icLs5jJcfCHtt30nbZjMeWUenohi+/5d5t?=
+ =?us-ascii?Q?IQWPqV9J2IOVhNpWk9FQmdxjuLNqskUn98CA/1oRai+xxEgMq8yzP0omTUMY?=
+ =?us-ascii?Q?cDr+24TDhSheYpK6Uza0J0lr85py1FmCUQHW7t/ZpI2Yt6FmsMzmtSFblkcg?=
+ =?us-ascii?Q?8nEQcag3VZjPlkAzTt86M514IepiO/2OJZD/qwM1ctdlm/vY+8VSMkvRHKFt?=
+ =?us-ascii?Q?wo8LR7F/LH+iFhnhpK6wgpLyxFhn46gsRZM6PF3LD8eEF+QUP7m6EHTdfYfB?=
+ =?us-ascii?Q?EbOiXraKXSnDx0+qexMzXmolKsVG4siSs43wWKe3ocse0EliBVYDvLknwXsy?=
+ =?us-ascii?Q?ydiNqH0ggfzMli9LC4qxjmJwW4UG2yJTq4x6QNjqVMfl6008QGha3F1wxnZl?=
+ =?us-ascii?Q?1as4Ue0fyUsgJyxFU1GbQB/FNkkx/358ZxNcLyBsk9BdCMAS4ycYbFYBDEA0?=
+ =?us-ascii?Q?d00O7KaZJ7T03T/3pCZ8VmnJa+tI0PdphNvh5OmR5YRdfgjjiDLfMQ1qMpSx?=
+ =?us-ascii?Q?KFPlcqU+Cj8/8kVa+oI5otp5GGBKkGdc5fGqlX1WL/8EPcHc7sYiAhErzoV9?=
+ =?us-ascii?Q?Qv8EtHNBAuz9p42SmYrIAHAH2tE3aIyvtxx1ro/umGMamfpRRGtvfY+4GYnl?=
+ =?us-ascii?Q?4QZQG1x0VTFgTmdE5QRfYB4iOw6e4xX4wb9EQThSLpp7QTwuTmwD7DVOkqnT?=
+ =?us-ascii?Q?wsU+J2o3oupr/GYg2zhbPm8nUN7ijl1MG9KhNr8X1/uPzrr087ja6OqX1BuI?=
+ =?us-ascii?Q?LvhNGZsmqP64Is7PW8fYiu2uY/8btXm1MN3bQVsH9zxXGEmuQRDYx2b1sPHd?=
+ =?us-ascii?Q?hajtslznaqv9AzAkcxSTWa0CUuTEluwjXFwl9OpVf9TM60IrRegKErvZWkmz?=
+ =?us-ascii?Q?+U57iVOrWpjQc+y6Vj1WP0UAJsepJTWEU2ZAsf3mA9JPA2EvCxjrP7rPeHDN?=
+ =?us-ascii?Q?pPVMhW4y0tdT0d4RG5D4ApBCe5z1nlS/IBvYjY43hU8j0+QS6Kr0n/IKuTSD?=
+ =?us-ascii?Q?Rcz8GuQCwWkAIJ/KfwadKk4HFC2EmUcoLRYypvEGpAnCyfABNirGYKi4HG0Y?=
+ =?us-ascii?Q?swHdIzxy1mt8r6d2clWIYdvY18BOzf/TYX01xuorYj6v5BN2hBHWBz4YbXKY?=
+ =?us-ascii?Q?Cn2H03mTYiNpQ2YGaXR6/HcJA1KMroSKv01tyN8dud4/cUhsq/xgGA2DQp0S?=
+ =?us-ascii?Q?Z8jXKzcHISZQAbJ2FAjzDDtQcpxHWCS5rFdYPgbhrAIutlX1uorcJOtHggfM?=
+ =?us-ascii?Q?mzQ70Sea3xLZTOHEwmamt3B6Ed9KJLfQN3e1XdrbFTuCYr156gnSPHKT2rrA?=
+ =?us-ascii?Q?Ojm95xSMpnuLX07/vEsZ1cMZzMQLx8CkORn96x8HJL4byoFmCu8QEHUTdesG?=
+ =?us-ascii?Q?fwWknC6VxTfvfmPJBNXRfHNqJL2Ks2jVQ71oG1LtmU1MDff0o08NqkyFntZ7?=
+ =?us-ascii?Q?KqzA7Lz/cWyy9eJ+TlSpdmcEReL4RQrIWjinu0NcXdseRMaeF/cMcb3BCtaZ?=
+ =?us-ascii?Q?Q36XU3Dq9UD6Z9kjeTRBe6m2EHNZzun/7HzgivfqUDWyhasdqMp0V8AlEHE7?=
+ =?us-ascii?Q?ef591w0FRsz5dU2fRAHHuhQKLHCvNI3qF2eBAVB1?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c71e2f31-698c-4eb9-5f83-08db3b27b06a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Apr 2023 07:29:45.2458
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d7dde41-d6e2-49dc-b445-08db3b28e6bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Apr 2023 07:38:25.8581
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JRhuQRyGLZLLMUI3iwonC800VINTQW2a0NCw07t9Xr+oO4DmiQ+AioCDH0hyBn7F3a7hW2dH5yooTJEhGL+ZH76PyfFWyXcjSJ6rbiqsWcM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10601
+X-MS-Exchange-CrossTenant-userprincipalname: r1r7YC3zajtVIrerVNaKIu86ZrWbfpSxV9KsmuJO2AmUWrbYLk1eT9yRvufKwPYE6mo/MZ40KBUf1LeGvR/muNKU8srKruet/eFL7lL9gkg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10471
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-
+Hi All,
 
 > -----Original Message-----
 > From: Biju Das <biju.das.jz@bp.renesas.com>
-> Sent: Wednesday, April 5, 2023 3:09 PM
-> To: Vinod Koul <vkoul@kernel.org>
-> Cc: Biju Das <biju.das.jz@bp.renesas.com>; Geert Uytterhoeven
-> <geert+renesas@glider.be>; Prabhakar Mahadev Lad <prabhakar.mahadev-
-> lad.rj@bp.renesas.com>; dmaengine@vger.kernel.org; linux-renesas-
-> soc@vger.kernel.org
-> Subject: [PATCH v2 5/5] dmaengine: sh: rz-dmac:
-> rz_dmac_prepare_descs_for_slave_sg() improvements
->=20
-> Some code improvements for rz_dmac_prepare_descs_for_slave_sg().
->=20
-> Replace the loop for->for_each_sg and drop the variables sgl and sg_len.
-> Also improve the logic for assigning lmdesc->chcfg and lmdesc->header and
-> lastly, add lmdesc assignment along with the declaration.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v2:
->  * New patch.
-> ---
->  drivers/dma/sh/rz-dmac.c | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c index
-> 153893045932..c6150d7ae8a7 100644
-> --- a/drivers/dma/sh/rz-dmac.c
-> +++ b/drivers/dma/sh/rz-dmac.c
-> @@ -342,12 +342,12 @@ static void rz_dmac_prepare_desc_for_memcpy(struct
-> rz_dmac_chan *channel)
->=20
->  static void rz_dmac_prepare_descs_for_slave_sg(struct rz_dmac_chan
-> *channel)  {
-> +	struct rz_lmdesc *lmdesc =3D channel->lmdesc.tail;
->  	struct dma_chan *chan =3D &channel->vc.chan;
->  	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
->  	struct rz_dmac_desc *d =3D channel->desc;
-> -	struct scatterlist *sg, *sgl =3D d->sg;
-> -	struct rz_lmdesc *lmdesc;
-> -	unsigned int i, sg_len =3D d->sgcount;
-> +	struct scatterlist *sg;
-> +	unsigned int i;
->=20
->  	channel->chcfg |=3D CHCFG_SEL(channel->index) | CHCFG_DEM | CHCFG_DMS;
->=20
-> @@ -358,9 +358,7 @@ static void rz_dmac_prepare_descs_for_slave_sg(struct
-> rz_dmac_chan *channel)
->  		channel->chcfg |=3D CHCFG_DAD | CHCFG_REQD;
->  	}
->=20
-> -	lmdesc =3D channel->lmdesc.tail;
-> -
-> -	for (i =3D 0, sg =3D sgl; i < sg_len; i++, sg =3D sg_next(sg)) {
-> +	for_each_sg(d->sg, sg, d->sgcount, i) {
->  		if (d->direction =3D=3D DMA_DEV_TO_MEM) {
->  			lmdesc->sa =3D channel->src_per_address;
->  			lmdesc->da =3D sg_dma_address(sg);
-> @@ -372,13 +370,11 @@ static void rz_dmac_prepare_descs_for_slave_sg(stru=
-ct
-> rz_dmac_chan *channel)
->  		lmdesc->tb =3D sg_dma_len(sg);
->  		lmdesc->chitvl =3D 0;
->  		lmdesc->chext =3D 0;
-> -		if (i =3D=3D (sg_len - 1)) {
-> -			lmdesc->chcfg =3D (channel->chcfg & ~CHCFG_DEM);
-> -			lmdesc->header =3D HEADER_LV;
-> -		} else {
-> -			lmdesc->chcfg =3D channel->chcfg;
-> -			lmdesc->header =3D HEADER_LV;
-> -		}
-> +		lmdesc->chcfg =3D channel->chcfg;
-> +		lmdesc->header =3D HEADER_LV;
-> +		if (i =3D=3D (d->sgcount - 1))
-> +			lmdesc->chcfg &=3D ~CHCFG_DEM;
-
-To match with previous code flow,
-
-lmdesc->header =3D HEADER_LV; should be after lmdesc->chcfg &=3D ~CHCFG_DEM=
+> Sent: Friday, March 31, 2023 12:34 PM
+> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Biju Das <biju.das.jz@bp.renesas.com>; Jiri Slaby
+> <jirislaby@kernel.org>; Geert Uytterhoeven <geert+renesas@glider.be>;
+> Yoshinori Sato <ysato@users.sourceforge.jp>; linux-serial@vger.kernel.org=
 ;
+> Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>; linux-
+> renesas-soc@vger.kernel.org; stable@vger.kernel.org
+> Subject: [PATCH v3 3/5] tty: serial: sh-sci: Fix TE setting on SCI IP
+>=20
+> As per the RZ/G2L users hardware manual (Rev.1.20 Sep, 2022), section
+> 23.3.7 Serial Data Transmission (Asynchronous Mode) it is mentioned that =
+the
+> TE (transmit enable) must be set after setting TIE (transmit interrupt
+> enable) or these 2 bits are set to 1 simultaneously by a single instructi=
+on.
+> So set these 2 bits in single instruction.
+>=20
+> Fixes: 93bcefd4c6ba ("serial: sh-sci: Fix setting SCSCR_TIE while
+> transferring data")
+> Cc: stable@vger.kernel.org
 
-I will change this in next version.
+I rechecked and the fixes tag is wrong. So, I would like to remove fixes
+tag for this patch in next version.
 
 Cheers,
 Biju
 
-
-
-
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v3:
+>  * New patch moved here from Renesas SCI fixes patch series
+>  * Updated commit description
+>  * Moved handling of clearing TE bit as separate patch#5.
+> ---
+>  drivers/tty/serial/sh-sci.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c in=
+dex
+> 15743c2f3d3d..32f5c1f7d697 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -601,6 +601,15 @@ static void sci_start_tx(struct uart_port *port)
+>  	    port->type =3D=3D PORT_SCIFA || port->type =3D=3D PORT_SCIFB) {
+>  		/* Set TIE (Transmit Interrupt Enable) bit in SCSCR */
+>  		ctrl =3D serial_port_in(port, SCSCR);
 > +
->  		if (++lmdesc >=3D (channel->lmdesc.base + DMAC_NR_LMDESC))
->  			lmdesc =3D channel->lmdesc.base;
+> +		/*
+> +		 * For SCI, TE (transmit enable) must be set after setting TIE
+> +		 * (transmit interrupt enable) or in the same instruction to
+> start
+> +		 * the transmit process.
+> +		 */
+> +		if (port->type =3D=3D PORT_SCI)
+> +			ctrl |=3D SCSCR_TE;
+> +
+>  		serial_port_out(port, SCSCR, ctrl | SCSCR_TIE);
 >  	}
+>  }
+> @@ -2600,8 +2609,14 @@ static void sci_set_termios(struct uart_port *port=
+,
+> struct ktermios *termios,
+>  		sci_set_mctrl(port, port->mctrl);
+>  	}
+>=20
+> -	scr_val |=3D SCSCR_RE | SCSCR_TE |
+> -		   (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
+> +	/*
+> +	 * For SCI, TE (transmit enable) must be set after setting TIE
+> +	 * (transmit interrupt enable) or in the same instruction to
+> +	 * start the transmitting process. So skip setting TE here for SCI.
+> +	 */
+> +	if (port->type !=3D PORT_SCI)
+> +		scr_val |=3D SCSCR_TE;
+> +	scr_val |=3D SCSCR_RE | (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
+>  	serial_port_out(port, SCSCR, scr_val | s->hscif_tot);
+>  	if ((srr + 1 =3D=3D 5) &&
+>  	    (port->type =3D=3D PORT_SCIFA || port->type =3D=3D PORT_SCIFB)) {
 > --
 > 2.25.1
 
