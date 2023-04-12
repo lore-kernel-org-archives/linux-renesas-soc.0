@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B8CC77B6E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Apr 2023 11:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6FBC77B6E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Apr 2023 11:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229948AbjDLLJi (ORCPT
+        id S229906AbjDLLJx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Apr 2023 07:09:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33472 "EHLO
+        Wed, 12 Apr 2023 07:09:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229917AbjDLLJb (ORCPT
+        with ESMTP id S229477AbjDLLJi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Apr 2023 07:09:31 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05B8759F3;
-        Wed, 12 Apr 2023 04:09:29 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id e22so10391649wra.6;
-        Wed, 12 Apr 2023 04:09:28 -0700 (PDT)
+        Wed, 12 Apr 2023 07:09:38 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50A940F2;
+        Wed, 12 Apr 2023 04:09:31 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id j11so14123852wrd.2;
+        Wed, 12 Apr 2023 04:09:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681297767; x=1683889767;
+        d=gmail.com; s=20221208; t=1681297770; x=1683889770;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v7nHC1ZoyGnBMkj9VoSQB3G3dDc74yMKyzp+x8lL8uQ=;
-        b=YbqshfwsKjNyErx/MS3m0/eEGOfQUxhVFBfHqvf2NAUHqxyH9lx0G6hYDJaO2jmzWn
-         +ha9/F71KHtdK1e23eCBBYfJp54/9DD9MLEpCsxedkqOADDFp/Z8rKyiAH/hj49CAB1G
-         r/qFsgiM0hR1mdUharwka2IImp54uPgni9YmC767fwk6SSvxzYmuNBKN36ZX/zey+UhK
-         GXxeYS8sUt1B42trqIjDatzDxbmqOfMCk8Mv2hXTaKoDfb/zA2PvMZjF2qSjUZcMcQhL
-         w5bbR3kgb18fgvHmnfsZDNS7yVipf+IVD/WtyYP2wblUvWLzIODcube+JOOHwAITiJ/x
-         ecvw==
+        bh=qNB/LQ+2e9RHIyw+KYF13k6Gi/pRgp/ViMk5z3IzBHc=;
+        b=WQ69rz8q6X+JyFAUjanXhwu/mRXMiyt7GZGBGt7XH1QHkiERrN8f3ABhNmldinKAlq
+         dg9iT14yNwIkFbiXbbPX0w16xP9yP4R6vVRefM3bYBusGVhqLx9f7NgSZXEt6hJHJtEI
+         EakYmLp3foSOHOZplcghljf2jdy582o0eF5G5bitDM9Mg9zt7P0f0CBuFhytkEnfZcVX
+         mRvQH0qFPuJtx9wxWZjiM1C4NDIlbcI3AU1F6l88Me6xrycml/YlqplzGD+MgmwND5gU
+         k2dnDI7a/H4Dy9GNjOd3SmsXbov89Rvfe4wpni5YERHQeuydytgauVV/kBpAT4cfgoQB
+         kx4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681297767; x=1683889767;
+        d=1e100.net; s=20210112; t=1681297770; x=1683889770;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v7nHC1ZoyGnBMkj9VoSQB3G3dDc74yMKyzp+x8lL8uQ=;
-        b=zaMzr2khwTwWUKoUr155oYqgQHkJWj3WwlL8g49pqsqvQUYLZKEvfUZDOviRUCaGHY
-         RfoZQwSE56T3sa/coz14LHN27swK8CDQPcQNkvd4ZIAOVae2pDrizWOvGKWPH7GtMys8
-         e/yLXmNLk76ou+97I8bgmXZ6DNJ4cpQ7dnL4s4t79r49BUZ1QfjDHWwK2t10Ab8CewH2
-         xVUNbuJiYYM4TcRbxoCEu3KzMJLd6NslZ7AiutM7iz8my7/RaaGruYxPqoqH5hT0UO5t
-         ghmkXU/MncLxDai2Wjo6ihTL2vAwtqIfBBSmfIMkJmjUNkPTQnXM50hlUFh1AHyGytPo
-         hCOw==
-X-Gm-Message-State: AAQBX9cMboUpS4Ae/nFQUMjMLiEVKcu6ZDEczY+ZDOYEOZoMVlukw3T0
-        VC3tzVtljbhhCX59LBAiNBA=
-X-Google-Smtp-Source: AKy350aoGXknWeyuPSXbyZQdthar+ZVQIT0TUZxcsTGaG9Btecmwvc5yAyNXr6WU5czPvUKoGQ4Zzw==
-X-Received: by 2002:adf:de05:0:b0:2f0:595:679b with SMTP id b5-20020adfde05000000b002f00595679bmr1798349wrm.66.1681297767343;
-        Wed, 12 Apr 2023 04:09:27 -0700 (PDT)
+        bh=qNB/LQ+2e9RHIyw+KYF13k6Gi/pRgp/ViMk5z3IzBHc=;
+        b=PE4pjIelmQpiQmkR/+L0uGZqjxi7r65AG1tL2JMk4HtZrMEZwu+xWQ7Go52YPDl8TI
+         B5srf2ADhKLupZHUIWkVzTYZfphMtFtPcpt4NdFtnXXfjWd88wVbaeHpiY7dKYI6oUAo
+         HEnhkt7Plt43MubPLR/Oq8muXJ3lF+jjoIk9T/dfrQzQWt2hdTF8CjlRyPhEvisAYrFu
+         ABHemi4D0rpyyl7sLuf8ThBc6ipbyaXRC4wy3kkD36Z2Rb4QztsSbi7EUh3vMSkKeVVS
+         I5FW8AcIbO3aR7WtPkA38vBU3nBlJYMqzrDRMZeWpsjsvFhUBFSHZObuwxNsChc4gbF5
+         AuMg==
+X-Gm-Message-State: AAQBX9f8y+z6Y7hkTdkeLoFaNMXOGVPm4PERYklxhGbx/0dCewRkUGSr
+        5Bu2X/KzQB4Ji9opz+iIY4E=
+X-Google-Smtp-Source: AKy350bjr5oy+T5nmH45qUBnTg6YXw4JZRXUIf1+/TsA7aLMoGRkhF2d67bEO8MCIXMR4NUkolJRdQ==
+X-Received: by 2002:a5d:6e03:0:b0:2f2:7e53:db65 with SMTP id h3-20020a5d6e03000000b002f27e53db65mr1779957wrz.7.1681297770072;
+        Wed, 12 Apr 2023 04:09:30 -0700 (PDT)
 Received: from prasmi.home ([2a00:23c8:2501:c701:783d:9280:20c4:db22])
-        by smtp.gmail.com with ESMTPSA id l13-20020a5d668d000000b002e61e002943sm16863582wru.116.2023.04.12.04.09.26
+        by smtp.gmail.com with ESMTPSA id l13-20020a5d668d000000b002e61e002943sm16863582wru.116.2023.04.12.04.09.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Apr 2023 04:09:26 -0700 (PDT)
+        Wed, 12 Apr 2023 04:09:29 -0700 (PDT)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Arnd Bergmann <arnd@arndb.de>,
@@ -70,9 +70,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v8 3/7] riscv: errata: Add Andes alternative ports
-Date:   Wed, 12 Apr 2023 12:08:56 +0100
-Message-Id: <20230412110900.69738-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v8 5/7] cache: Add L2 cache management for Andes AX45MP RISC-V core
+Date:   Wed, 12 Apr 2023 12:08:58 +0100
+Message-Id: <20230412110900.69738-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230412110900.69738-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20230412110900.69738-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -84,249 +84,394 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add required ports of the Alternative scheme for Andes CPU cores.
+I/O Coherence Port (IOCP) provides an AXI interface for connecting
+external non-caching masters, such as DMA controllers. The accesses
+from IOCP are coherent with D-Caches and L2 Cache.
 
-I/O Coherence Port (IOCP) provides an AXI interface for connecting external
-non-caching masters, such as DMA controllers. IOCP is a specification
-option and is disabled on the Renesas RZ/Five SoC due to this reason cache
-management needs a software workaround.
+IOCP is a specification option and is disabled on the Renesas RZ/Five
+SoC due to this reason IP blocks using DMA will fail.
+
+The Andes AX45MP core has a Programmable Physical Memory Attributes (PMA)
+block that allows dynamic adjustment of memory attributes in the runtime.
+It contains a configurable amount of PMA entries implemented as CSR
+registers to control the attributes of memory locations in interest.
+Below are the memory attributes supported:
+* Device, Non-bufferable
+* Device, bufferable
+* Memory, Non-cacheable, Non-bufferable
+* Memory, Non-cacheable, Bufferable
+* Memory, Write-back, No-allocate
+* Memory, Write-back, Read-allocate
+* Memory, Write-back, Write-allocate
+* Memory, Write-back, Read and Write-allocate
+
+More info about PMA (section 10.3):
+Link: http://www.andestech.com/wp-content/uploads/AX45MP-1C-Rev.-5.0.0-Datasheet.pdf
+
+As a workaround for SoCs with IOCP disabled CMO needs to be handled by
+software. Firstly OpenSBI configures the memory region as
+"Memory, Non-cacheable, Bufferable" and passes this region as a global
+shared dma pool as a DT node. With DMA_GLOBAL_POOL enabled all DMA
+allocations happen from this region and synchronization callbacks are
+implemented to synchronize when doing DMA transactions.
+
+Example PMA region passes as a DT node from OpenSBI:
+    reserved-memory {
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges;
+
+        pma_resv0@58000000 {
+            compatible = "shared-dma-pool";
+            reg = <0x0 0x58000000 0x0 0x08000000>;
+            no-map;
+            linux,dma-default;
+        };
+    };
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 ---
 v7 -> v8
-* Now patching the code using patch_text_nosync() and riscv_alternative_fix_offsets()
+* Dropped function pointer usage
+* Now exporting the functions for clean/inval/flush
+* Switched to using early_initcall instead of arch_initcall
+* Dropped entry for "include/cache" from MAINTAINERS
+* Dropped dependency of RISCV on AX45MP_L2_CACHE
+* Returning error in case of cache line mismatch
+* Renamed clean/inval/flush functions
 
 v6 -> v7
-* Renamed RZFIVE_SBI_EXT_IOCP_SW_WORKAROUND -> ANDES_SBI_EXT_IOCP_SW_WORKAROUND
-* Dropped "depends on !XIP_KERNEL" for ERRATA_ANDES config
+* Implemented flush callback
+* Dropped using riscv_dma_noncoherent_cmo_ops
 
 v5 -> v6
-* Dropped patching alternative and now just probing IOCP
+* Moved driver to cache folder
+* Switched to new API for CMO
 
 v4 -> v5
-* Sorted the Kconfig/Makefile/Switch based on Core name
-* Added a comments
-* Introduced RZFIVE_SBI_EXT_IOCP_SW_WORKAROUND SBI EXT ID to check if
-  CMO needs to be applied. Is there a way we can access the DTB while patching
-  as we can drop this SBI EXT ID and add a DT property instead for cmo?
+* Dropped code for configuring L2 cache
+* Dropped code for configuring PMA
+* Updated commit message
+* Added comments
+* Changed static branch enable/disable order
 
 RFC v3 -> v4
-* New patch
+* Made use of runtime patching instead of compile time
+* Now just exposing single function ax45mp_no_iocp_cmo() for CMO handling
+* Added a check to make sure cache line size is always 64 bytes
+* Renamed folder rzf -> rzfive
+* Improved Kconfig description
+* Dropped L2 cache configuration
+* Dropped unnecessary casts
+* Fixed comments pointed by Geert.
 ---
- arch/riscv/Kconfig.errata            |  21 ++++++
- arch/riscv/errata/Makefile           |   1 +
- arch/riscv/errata/andes/Makefile     |   1 +
- arch/riscv/errata/andes/errata.c     | 104 +++++++++++++++++++++++++++
- arch/riscv/include/asm/alternative.h |   3 +
- arch/riscv/include/asm/errata_list.h |   5 ++
- arch/riscv/kernel/alternative.c      |   5 ++
- 7 files changed, 140 insertions(+)
- create mode 100644 arch/riscv/errata/andes/Makefile
- create mode 100644 arch/riscv/errata/andes/errata.c
+ MAINTAINERS                  |   7 ++
+ drivers/Kconfig              |   2 +
+ drivers/Makefile             |   1 +
+ drivers/cache/Kconfig        |  10 ++
+ drivers/cache/Makefile       |   3 +
+ drivers/cache/ax45mp_cache.c | 222 +++++++++++++++++++++++++++++++++++
+ 6 files changed, 245 insertions(+)
+ create mode 100644 drivers/cache/Kconfig
+ create mode 100644 drivers/cache/Makefile
+ create mode 100644 drivers/cache/ax45mp_cache.c
 
-diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-index 0c8f4652cd82..92c779764b27 100644
---- a/arch/riscv/Kconfig.errata
-+++ b/arch/riscv/Kconfig.errata
-@@ -1,5 +1,26 @@
- menu "CPU errata selection"
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3afd45f71043..9afd39a23524 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19898,6 +19898,13 @@ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+ F:	drivers/staging/
  
-+config ERRATA_ANDES
-+	bool "Andes AX45MP errata"
-+	depends on RISCV_ALTERNATIVE
-+	help
-+	  All Andes errata Kconfig depend on this Kconfig. Disabling
-+	  this Kconfig will disable all Andes errata. Please say "Y"
-+	  here if your platform uses Andes CPU cores.
++STANDALONE CACHE CONTROLLER DRIVERS
++M:	Conor Dooley <conor@kernel.org>
++L:	linux-riscv@lists.infradead.org
++S:	Maintained
++T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
++F:	drivers/cache
 +
-+	  Otherwise, please say "N" here to avoid unnecessary overhead.
+ STARFIRE/DURALAN NETWORK DRIVER
+ M:	Ion Badulescu <ionut@badula.org>
+ S:	Odd Fixes
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index 968bd0a6fd78..44abd2cba3a3 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -15,6 +15,8 @@ source "drivers/base/Kconfig"
+ 
+ source "drivers/bus/Kconfig"
+ 
++source "drivers/cache/Kconfig"
 +
-+config ERRATA_ANDES_CMO
-+	bool "Apply Andes cache management errata"
-+	depends on ERRATA_ANDES && MMU && ARCH_R9A07G043
-+	select RISCV_DMA_NONCOHERENT
-+	default y
-+	help
-+	  This will apply the cache management errata to handle the
-+	  non-standard handling on non-coherent operations on Andes cores.
-+
-+	  If you don't know what to do here, say "Y".
-+
- config ERRATA_SIFIVE
- 	bool "SiFive errata"
- 	depends on RISCV_ALTERNATIVE
-diff --git a/arch/riscv/errata/Makefile b/arch/riscv/errata/Makefile
-index a1055965fbee..6f1c693af92d 100644
---- a/arch/riscv/errata/Makefile
-+++ b/arch/riscv/errata/Makefile
-@@ -1,2 +1,3 @@
-+obj-$(CONFIG_ERRATA_ANDES) += andes/
- obj-$(CONFIG_ERRATA_SIFIVE) += sifive/
- obj-$(CONFIG_ERRATA_THEAD) += thead/
-diff --git a/arch/riscv/errata/andes/Makefile b/arch/riscv/errata/andes/Makefile
+ source "drivers/connector/Kconfig"
+ 
+ source "drivers/firmware/Kconfig"
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 20b118dca999..db5a8115093f 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -11,6 +11,7 @@ ifdef building_out_of_srctree
+ MAKEFLAGS += --include-dir=$(srctree)
+ endif
+ 
++obj-y				+= cache/
+ obj-y				+= irqchip/
+ obj-y				+= bus/
+ 
+diff --git a/drivers/cache/Kconfig b/drivers/cache/Kconfig
 new file mode 100644
-index 000000000000..2d644e19caef
+index 000000000000..b97269cbd149
 --- /dev/null
-+++ b/arch/riscv/errata/andes/Makefile
-@@ -0,0 +1 @@
-+obj-y += errata.o
-diff --git a/arch/riscv/errata/andes/errata.c b/arch/riscv/errata/andes/errata.c
++++ b/drivers/cache/Kconfig
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0
++menu "Cache Drivers"
++
++config AX45MP_L2_CACHE
++	bool "Andes Technology AX45MP L2 Cache controller"
++	depends on RISCV_DMA_NONCOHERENT
++	help
++	  Support for the L2 cache controller on Andes Technology AX45MP platforms.
++
++endmenu
+diff --git a/drivers/cache/Makefile b/drivers/cache/Makefile
 new file mode 100644
-index 000000000000..49315f36022e
+index 000000000000..2012e7fb978d
 --- /dev/null
-+++ b/arch/riscv/errata/andes/errata.c
-@@ -0,0 +1,104 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/drivers/cache/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_AX45MP_L2_CACHE) += ax45mp_cache.o
+diff --git a/drivers/cache/ax45mp_cache.c b/drivers/cache/ax45mp_cache.c
+new file mode 100644
+index 000000000000..cfc40b967c55
+--- /dev/null
++++ b/drivers/cache/ax45mp_cache.c
+@@ -0,0 +1,222 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Erratas to be applied for Andes CPU cores
++ * non-coherent cache functions for Andes AX45MP
 + *
-+ *  Copyright (C) 2023 Renesas Electronics Corporation.
-+ *
-+ * Author: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
++ * Copyright (C) 2023 Renesas Electronics Corp.
 + */
 +
-+#include <linux/memory.h>
-+#include <linux/module.h>
++#include <linux/cacheflush.h>
++#include <linux/cacheinfo.h>
++#include <linux/dma-direction.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
 +
-+#include <asm/alternative.h>
-+#include <asm/cacheflush.h>
-+#include <asm/errata_list.h>
-+#include <asm/patch.h>
-+#include <asm/processor.h>
-+#include <asm/sbi.h>
-+#include <asm/vendorid_list.h>
++/* L2 cache registers */
++#define AX45MP_L2C_REG_CTL_OFFSET		0x8
 +
-+#define ANDESTECH_AX45MP_MARCHID	0x8000000000008a45UL
-+#define ANDESTECH_AX45MP_MIMPID		0x500UL
-+#define ANDESTECH_SBI_EXT_ANDES		0x0900031E
++#define AX45MP_L2C_REG_C0_CMD_OFFSET		0x40
++#define AX45MP_L2C_REG_C0_ACC_OFFSET		0x48
++#define AX45MP_L2C_REG_STATUS_OFFSET		0x80
 +
-+#define ANDES_SBI_EXT_IOCP_SW_WORKAROUND	1
++/* D-cache operation */
++#define AX45MP_CCTL_L1D_VA_INVAL		0 /* Invalidate an L1 cache entry */
++#define AX45MP_CCTL_L1D_VA_WB			1 /* Write-back an L1 cache entry */
 +
-+static long ax45mp_iocp_sw_workaround(void)
++/* L2 CCTL status */
++#define AX45MP_CCTL_L2_STATUS_IDLE		0
++
++/* L2 CCTL status cores mask */
++#define AX45MP_CCTL_L2_STATUS_C0_MASK		0xf
++
++/* L2 cache operation */
++#define AX45MP_CCTL_L2_PA_INVAL			0x8 /* Invalidate an L2 cache entry */
++#define AX45MP_CCTL_L2_PA_WB			0x9 /* Write-back an L2 cache entry */
++
++#define AX45MP_L2C_REG_PER_CORE_OFFSET		0x10
++#define AX45MP_CCTL_L2_STATUS_PER_CORE_OFFSET	4
++
++#define AX45MP_L2C_REG_CN_CMD_OFFSET(n)	\
++	(AX45MP_L2C_REG_C0_CMD_OFFSET + ((n) * AX45MP_L2C_REG_PER_CORE_OFFSET))
++#define AX45MP_L2C_REG_CN_ACC_OFFSET(n)	\
++	(AX45MP_L2C_REG_C0_ACC_OFFSET + ((n) * AX45MP_L2C_REG_PER_CORE_OFFSET))
++#define AX45MP_CCTL_L2_STATUS_CN_MASK(n)	\
++	(AX45MP_CCTL_L2_STATUS_C0_MASK << ((n) * AX45MP_CCTL_L2_STATUS_PER_CORE_OFFSET))
++
++#define AX45MP_CCTL_REG_UCCTLBEGINADDR_NUM	0x80b
++#define AX45MP_CCTL_REG_UCCTLCOMMAND_NUM	0x80c
++
++#define AX45MP_CACHE_LINE_SIZE			64
++
++struct ax45mp_priv {
++	void __iomem *l2c_base;
++	u32 ax45mp_cache_line_size;
++};
++
++static struct ax45mp_priv ax45mp_priv;
++
++/* L2 Cache operations */
++static inline uint32_t ax45mp_cpu_l2c_get_cctl_status(void)
 +{
-+	struct sbiret ret;
-+
-+	/*
-+	 * ANDES_SBI_EXT_IOCP_SW_WORKAROUND SBI EXT checks if the IOCP is missing and
-+	 * cache is controllable only then CMO will be applied to the platform.
-+	 */
-+	ret = sbi_ecall(ANDESTECH_SBI_EXT_ANDES, ANDES_SBI_EXT_IOCP_SW_WORKAROUND,
-+			0, 0, 0, 0, 0, 0);
-+
-+	return ret.error ? 0 : ret.value;
++	return readl(ax45mp_priv.l2c_base + AX45MP_L2C_REG_STATUS_OFFSET);
 +}
 +
-+static bool errata_probe_iocp(unsigned int stage, unsigned long arch_id, unsigned long impid)
++static void ax45mp_cpu_cache_operation(unsigned long start, unsigned long end,
++				       unsigned long line_size, unsigned int l1_op,
++				       unsigned int l2_op)
 +{
-+	if (!IS_ENABLED(CONFIG_ERRATA_ANDES_CMO))
-+		return false;
++	void __iomem *base = ax45mp_priv.l2c_base;
++	int mhartid = smp_processor_id();
++	unsigned long pa;
 +
-+	if (arch_id != ANDESTECH_AX45MP_MARCHID || impid != ANDESTECH_AX45MP_MIMPID)
-+		return false;
++	while (end > start) {
++		csr_write(AX45MP_CCTL_REG_UCCTLBEGINADDR_NUM, start);
++		csr_write(AX45MP_CCTL_REG_UCCTLCOMMAND_NUM, l1_op);
 +
-+	if (!ax45mp_iocp_sw_workaround())
-+		return false;
++		pa = virt_to_phys((void *)start);
++		writel(pa, base + AX45MP_L2C_REG_CN_ACC_OFFSET(mhartid));
++		writel(l2_op, base + AX45MP_L2C_REG_CN_CMD_OFFSET(mhartid));
++		while ((ax45mp_cpu_l2c_get_cctl_status() &
++			AX45MP_CCTL_L2_STATUS_CN_MASK(mhartid)) !=
++			AX45MP_CCTL_L2_STATUS_IDLE)
++			;
 +
-+	/* Set this just to make core cbo code happy */
-+	riscv_cbom_block_size = 1;
-+	riscv_noncoherent_supported();
-+
-+	return true;
-+}
-+
-+static u32 andes_errata_probe(unsigned int stage, unsigned long archid, unsigned long impid)
-+{
-+	u32 cpu_req_errata = 0;
-+
-+	/*
-+	 * In the absence of the I/O Coherency Port, access to certain peripherals
-+	 * requires vendor specific DMA handling.
-+	 */
-+	if (errata_probe_iocp(stage, archid, impid))
-+		cpu_req_errata |= BIT(ERRATA_ANDESTECH_NO_IOCP);
-+
-+	return cpu_req_errata;
-+}
-+
-+void __init_or_module andes_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
-+					      unsigned long archid, unsigned long impid,
-+					      unsigned int stage)
-+{
-+	u32 cpu_req_errata = andes_errata_probe(stage, archid, impid);
-+	void *oldptr, *altptr;
-+	struct alt_entry *alt;
-+	u32 tmp;
-+
-+	if (stage == RISCV_ALTERNATIVES_EARLY_BOOT)
-+		return;
-+
-+	for (alt = begin; alt < end; alt++) {
-+		if (alt->vendor_id != ANDESTECH_VENDOR_ID)
-+			continue;
-+		if (alt->patch_id >= ERRATA_ANDESTECH_NUMBER)
-+			continue;
-+
-+		tmp = BIT(alt->patch_id);
-+		if (cpu_req_errata & tmp) {
-+			oldptr = ALT_OLD_PTR(alt);
-+			altptr = ALT_ALT_PTR(alt);
-+
-+			mutex_lock(&text_mutex);
-+			patch_text_nosync(oldptr, altptr, alt->alt_len);
-+
-+			riscv_alternative_fix_offsets(oldptr, alt->alt_len,
-+						      oldptr - altptr);
-+			mutex_unlock(&text_mutex);
-+		}
++		start += line_size;
 +	}
 +}
-diff --git a/arch/riscv/include/asm/alternative.h b/arch/riscv/include/asm/alternative.h
-index 58ccd2f8cab7..3c2b59b25017 100644
---- a/arch/riscv/include/asm/alternative.h
-+++ b/arch/riscv/include/asm/alternative.h
-@@ -45,6 +45,9 @@ struct alt_entry {
- 	u32 patch_id;		/* The patch ID (erratum ID or cpufeature ID) */
- };
- 
-+void andes_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
-+			     unsigned long archid, unsigned long impid,
-+			     unsigned int stage);
- void sifive_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
- 			      unsigned long archid, unsigned long impid,
- 			      unsigned int stage);
-diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
-index fb1a810f3d8c..e2ecd01bfac7 100644
---- a/arch/riscv/include/asm/errata_list.h
-+++ b/arch/riscv/include/asm/errata_list.h
-@@ -11,6 +11,11 @@
- #include <asm/hwcap.h>
- #include <asm/vendorid_list.h>
- 
-+#ifdef CONFIG_ERRATA_ANDES
-+#define ERRATA_ANDESTECH_NO_IOCP	0
-+#define ERRATA_ANDESTECH_NUMBER		1
-+#endif
 +
- #ifdef CONFIG_ERRATA_SIFIVE
- #define	ERRATA_SIFIVE_CIP_453 0
- #define	ERRATA_SIFIVE_CIP_1200 1
-diff --git a/arch/riscv/kernel/alternative.c b/arch/riscv/kernel/alternative.c
-index 2354c69dc7d1..8a34e72c2b5e 100644
---- a/arch/riscv/kernel/alternative.c
-+++ b/arch/riscv/kernel/alternative.c
-@@ -42,6 +42,11 @@ static void __init_or_module riscv_fill_cpu_mfr_info(struct cpu_manufacturer_inf
- #endif
- 
- 	switch (cpu_mfr_info->vendor_id) {
-+#ifdef CONFIG_ERRATA_ANDES
-+	case ANDESTECH_VENDOR_ID:
-+		cpu_mfr_info->patch_func = andes_errata_patch_func;
-+		break;
-+#endif
- #ifdef CONFIG_ERRATA_SIFIVE
- 	case SIFIVE_VENDOR_ID:
- 		cpu_mfr_info->patch_func = sifive_errata_patch_func;
++/* Write-back L1 and L2 cache entry */
++static inline void ax45mp_cpu_dcache_wb_range(unsigned long start, unsigned long end,
++					      unsigned long line_size)
++{
++	ax45mp_cpu_cache_operation(start, end, line_size,
++				   AX45MP_CCTL_L1D_VA_WB,
++				   AX45MP_CCTL_L2_PA_WB);
++}
++
++/* Invalidate the L1 and L2 cache entry */
++static inline void ax45mp_cpu_dcache_inval_range(unsigned long start, unsigned long end,
++						 unsigned long line_size)
++{
++	ax45mp_cpu_cache_operation(start, end, line_size,
++				   AX45MP_CCTL_L1D_VA_INVAL,
++				   AX45MP_CCTL_L2_PA_INVAL);
++}
++
++void ax45mp_dma_cache_inv(void *vaddr, unsigned long size)
++{
++	unsigned long start = (unsigned long)vaddr;
++	char cache_buf[2][AX45MP_CACHE_LINE_SIZE];
++	unsigned long end = start + size;
++	unsigned long old_start = start;
++	unsigned long old_end = end;
++	unsigned long line_size;
++	unsigned long flags;
++
++	if (unlikely(start == end))
++		return;
++
++	line_size = ax45mp_priv.ax45mp_cache_line_size;
++
++	memset(&cache_buf, 0x0, sizeof(cache_buf));
++	start = start & (~(line_size - 1));
++	end = ((end + line_size - 1) & (~(line_size - 1)));
++
++	local_irq_save(flags);
++	if (unlikely(start != old_start))
++		memcpy(&cache_buf[0][0], (void *)start, line_size);
++
++	if (unlikely(end != old_end))
++		memcpy(&cache_buf[1][0], (void *)(old_end & (~(line_size - 1))), line_size);
++
++	ax45mp_cpu_dcache_inval_range(start, end, line_size);
++
++	if (unlikely(start != old_start))
++		memcpy((void *)start, &cache_buf[0][0], (old_start & (line_size - 1)));
++
++	local_irq_restore(flags);
++}
++EXPORT_SYMBOL_GPL(ax45mp_dma_cache_inv);
++
++void ax45mp_dma_cache_wback(void *vaddr, unsigned long size)
++{
++	unsigned long start = (unsigned long)vaddr;
++	unsigned long end = start + size;
++	unsigned long line_size;
++	unsigned long flags;
++
++	line_size = ax45mp_priv.ax45mp_cache_line_size;
++	start = start & (~(line_size - 1));
++	local_irq_save(flags);
++	ax45mp_cpu_dcache_wb_range(start, end, line_size);
++	local_irq_restore(flags);
++}
++EXPORT_SYMBOL_GPL(ax45mp_dma_cache_wback);
++
++void ax45mp_dma_cache_wback_inv(void *vaddr, unsigned long size)
++{
++	ax45mp_dma_cache_wback(vaddr, size);
++	ax45mp_dma_cache_inv(vaddr, size);
++}
++EXPORT_SYMBOL_GPL(ax45mp_dma_cache_wback_inv);
++
++static int ax45mp_get_l2_line_size(struct device_node *np)
++{
++	int ret;
++
++	ret = of_property_read_u32(np, "cache-line-size", &ax45mp_priv.ax45mp_cache_line_size);
++	if (ret) {
++		pr_err("Failed to get cache-line-size, defaulting to 64 bytes\n");
++		return ret;
++	}
++
++	if (ax45mp_priv.ax45mp_cache_line_size != AX45MP_CACHE_LINE_SIZE) {
++		pr_err("Expected cache-line-size to be 64 bytes (found:%u)\n",
++		       ax45mp_priv.ax45mp_cache_line_size);
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id ax45mp_cache_ids[] = {
++	{ .compatible = "andestech,ax45mp-cache" },
++	{ /* sentinel */ }
++};
++
++static int __init ax45mp_cache_init(void)
++{
++	struct device_node *np;
++	struct resource res;
++	int ret;
++
++	np = of_find_matching_node(NULL, ax45mp_cache_ids);
++	if (!of_device_is_available(np))
++		return -ENODEV;
++
++	ret = of_address_to_resource(np, 0, &res);
++	if (ret)
++		return ret;
++
++	/*
++	 * If IOCP is present on the Andes AX45MP core riscv_cbom_block_size
++	 * will be 0 for sure, so we can definitely rely on it. If
++	 * riscv_cbom_block_size = 0 we don't need to handle CMO using SW any
++	 * more so we just return success here and only if its being set we
++	 * continue further in the probe path.
++	 */
++	if (!riscv_cbom_block_size)
++		return 0;
++
++	ax45mp_priv.l2c_base = ioremap(res.start, resource_size(&res));
++	if (!ax45mp_priv.l2c_base)
++		return -ENOMEM;
++
++	ret = ax45mp_get_l2_line_size(np);
++	if (ret) {
++		iounmap(ax45mp_priv.l2c_base);
++		return ret;
++	}
++
++	return 0;
++}
++early_initcall(ax45mp_cache_init);
 -- 
 2.25.1
 
