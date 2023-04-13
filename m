@@ -2,41 +2,38 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B94D5C77B73
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Apr 2023 15:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050EDC77B71
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Apr 2023 15:27:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230130AbjDMP1Z (ORCPT
+        id S230176AbjDMP1c (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Apr 2023 11:27:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46690 "EHLO
+        Thu, 13 Apr 2023 11:27:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbjDMP1Z (ORCPT
+        with ESMTP id S230214AbjDMP13 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Apr 2023 11:27:25 -0400
+        Thu, 13 Apr 2023 11:27:29 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3A8EBB463;
-        Thu, 13 Apr 2023 08:27:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 02FC3AF1E;
+        Thu, 13 Apr 2023 08:27:07 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.99,194,1677510000"; 
-   d="scan'208";a="159329566"
+   d="scan'208";a="159329576"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Apr 2023 00:27:01 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Apr 2023 00:27:07 +0900
 Received: from localhost.localdomain (unknown [10.226.93.85])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EEFC04005E22;
-        Fri, 14 Apr 2023 00:26:57 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E8BA64005E22;
+        Fri, 14 Apr 2023 00:27:04 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v5 1/3] dt-bindings: clock: Add Renesas versa3 clock generator bindings
-Date:   Thu, 13 Apr 2023 16:26:46 +0100
-Message-Id: <20230413152648.89089-2-biju.das.jz@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v5 3/3] arm64: dts: renesas: rzg2l-smarc: Use versa3 clk for audio mclk
+Date:   Thu, 13 Apr 2023 16:26:48 +0100
+Message-Id: <20230413152648.89089-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230413152648.89089-1-biju.das.jz@bp.renesas.com>
 References: <20230413152648.89089-1-biju.das.jz@bp.renesas.com>
@@ -46,137 +43,190 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document Renesas versa3 clock generator(5P35023) bindings.
-
-The 5P35023 is a VersaClock programmable clock generator and
-is designed for low-power, consumer, and high-performance PCI
-Express applications. The 5P35023 device is a three PLL
-architecture design, and each PLL is individually programmable
-and allowing for up to 6 unique frequency outputs.
+Currently audio mclk uses a fixed clk 11.2896MHz(multiple of 44.1KHz).
+Replace this fixed clk to programmable versa3 clk that can provide
+2 rates 11.2896MHz and 12.2880(multiple of 48KHz) based on audio
+sampling rate for the playback/record.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
 v4->v5:
- * No change
+ * No change.
 v3->v4:
- * No change
+ * No change.
 v2->v3:
- * Added Rb tag from Krzysztof Kozlowski
- * Removed | from Link to data sheet.
- * Dropped stray blank line from example.
- * Updated example section for assigned-clocks to mach same alignment
-   with assigned-clock-rates. This is trivial change so retained the
-   Rb tag.
+ * Updated the changes for RZ/G2LC and RZ/G2{UL, Five}.
 RFC->v2:
- * Renamed the filename to match with compatible
- * Added maintainers entry after title
- * Removed the wrapping for the link to data sheet.
- * Removed reg description
- * Removed clock names
- * Replaced minItems->maxItems in renesas,settings property
- * Dropped assigned-clocks, assigned-clock-rates
- * Dropped renesas,clock-divider-read-only and renesas,clock-flags
- * Drooped clock handle part from example
- * Dropped reg from example.
- * Dropped consumer example
+ * No change
+RFC:
+ * New patch
 ---
- .../bindings/clock/renesas,5p35023.yaml       | 86 +++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+ .../boot/dts/renesas/rz-smarc-common.dtsi     | 13 +++++-----
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 23 +++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 23 +++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 25 +++++++++++++++++++
+ 4 files changed, 77 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-new file mode 100644
-index 000000000000..839648e753d4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-@@ -0,0 +1,86 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/renesas,5p35023.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+index 3962d47b3e59..ca868af2db38 100644
+--- a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+@@ -32,12 +32,6 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	audio_mclock: audio_mclock {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <11289600>;
+-	};
+-
+ 	snd_rzg2l: sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,format = "i2s";
+@@ -55,7 +49,6 @@ cpu_dai: simple-audio-card,cpu {
+ 		};
+ 
+ 		codec_dai: simple-audio-card,codec {
+-			clocks = <&audio_mclock>;
+ 			sound-dai = <&wm8978>;
+ 		};
+ 	};
+@@ -76,6 +69,12 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		gpios-states = <1>;
+ 		states = <3300000 1>, <1800000 0>;
+ 	};
 +
-+title: Renesas 5p35023 VersaClock 3 programmable I2C clock generator
++	x1_x2: xtal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++	};
+ };
+ 
+ &audio_clk1{
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+index e180a955b6ac..9fb3cd07faa3 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+@@ -18,6 +18,10 @@ aliases {
+ 	};
+ };
+ 
++&codec_dai {
++	clocks = <&versa3 3>;
++};
 +
-+maintainers:
-+  - Biju Das <biju.das.jz@bp.renesas.com>
+ &cpu_dai {
+ 	sound-dai = <&ssi0>;
+ };
+@@ -29,6 +33,25 @@ &i2c3 {
+ 
+ 	status = "okay";
+ 
++	versa3: versa3@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1_x2>;
 +
-+description: |
-+  The 5P35023 is a VersaClock programmable clock generator and
-+  is designed for low-power, consumer, and high-performance PCI
-+  express applications. The 5P35023 device is a three PLL
-+  architecture design, and each PLL is individually programmable
-+  and allowing for up to 6 unique frequency outputs.
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <12288000>, <25000000>,
++				       <12000000>, <11289600>,
++				       <11289600>, <24000000>;
++	};
 +
-+  An internal OTP memory allows the user to store the configuration
-+  in the device. After power up, the user can change the device register
-+  settings through the I2C interface when I2C mode is selected.
+ 	wm8978: codec@1a {
+ 		compatible = "wlf,wm8978";
+ 		#sound-dai-cells = <0>;
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+index b6bd27196d88..ba91b2e653bc 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+@@ -32,6 +32,10 @@ &canfd {
+ };
+ #endif
+ 
++&codec_dai {
++	clocks = <&versa3 3>;
++};
 +
-+  The driver can read a full register map from the DT, and will use that
-+  register map to initialize the attached part (via I2C) when the system
-+  boots. Any configuration not supported by the common clock framework
-+  must be done via the full register map, including optimized settings.
+ &cpu_dai {
+ 	sound-dai = <&ssi0>;
+ };
+@@ -43,6 +47,25 @@ &i2c2 {
+ 
+ 	status = "okay";
+ 
++	versa3: versa3@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1_x2>;
 +
-+  Link to datasheet:
-+  https://www.renesas.com/us/en/products/clocks-timing/clock-generation/programmable-clocks/5p35023-versaclock-3s-programmable-clock-generator
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <12288000>, <25000000>,
++				       <12000000>, <11289600>,
++				       <11289600>, <24000000>;
++	};
 +
-+properties:
-+  compatible:
-+    enum:
-+      - renesas,5p35023
+ 	wm8978: codec@1a {
+ 		compatible = "wlf,wm8978";
+ 		#sound-dai-cells = <0>;
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+index 2a1331ed1a5c..85383f86cf2e 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+@@ -16,10 +16,35 @@ &canfd {
+ };
+ #endif
+ 
++&codec_dai {
++	clocks = <&versa3 3>;
++};
 +
-+  reg:
-+    maxItems: 1
+ &cpu_dai {
+ 	sound-dai = <&ssi1>;
+ };
+ 
++&i2c0 {
++	versa3: versa3@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1_x2>;
 +
-+  '#clock-cells':
-+    const: 1
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <12288000>, <25000000>,
++				       <12000000>, <11289600>,
++				       <11289600>, <24000000>;
++	};
++};
 +
-+  clocks:
-+    maxItems: 1
-+
-+  renesas,settings:
-+    description: Optional, complete register map of the device.
-+      Optimized settings for the device must be provided in full
-+      and are written during initialization.
-+    $ref: /schemas/types.yaml#/definitions/uint8-array
-+    maxItems: 37
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        versa3: clock-generator@68 {
-+            compatible = "renesas,5p35023";
-+            reg = <0x68>;
-+            #clock-cells = <1>;
-+
-+            clocks = <&x1_x2>;
-+
-+            renesas,settings = [
-+                80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
-+                00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
-+                80 b0 45 c4 95
-+            ];
-+
-+            assigned-clocks = <&versa3 0>, <&versa3 1>,
-+                              <&versa3 2>, <&versa3 3>,
-+                              <&versa3 4>, <&versa3 5>;
-+            assigned-clock-rates = <12288000>, <25000000>,
-+                                   <12000000>, <11289600>,
-+                                   <11289600>, <24000000>;
-+        };
-+    };
+ &i2c1 {
+ 	wm8978: codec@1a {
+ 		compatible = "wlf,wm8978";
 -- 
 2.25.1
 
