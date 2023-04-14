@@ -2,106 +2,118 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EA0C77B76
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Apr 2023 12:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C69C77B71
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Apr 2023 16:56:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230247AbjDNMhZ (ORCPT
+        id S230261AbjDNQ4C (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Apr 2023 08:37:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55146 "EHLO
+        Fri, 14 Apr 2023 12:56:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjDNMhW (ORCPT
+        with ESMTP id S230243AbjDNQ4B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Apr 2023 08:37:22 -0400
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A698698;
-        Fri, 14 Apr 2023 05:37:17 -0700 (PDT)
-Received: by mail-ot1-f53.google.com with SMTP id k22-20020a9d7016000000b006a43382e5b9so2091238otj.3;
-        Fri, 14 Apr 2023 05:37:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681475837; x=1684067837;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1DPXz5CbaLVgCyGeKN3QbapCxaByokh8FAkRZI2YR74=;
-        b=Z7laje9C7jw6lKAHxVmhmRpEQeY/kFof0e/v+j34bui53LCEIVkASQg/12piaohJ91
-         Hnhz9Zo/yGGyqQioaYM2HA5vG1rqXcwFqtrCu5g4DCiuMOpHGPL8qVtaYHFzGyQi3U8T
-         6ui19vetAZorWr7TGj1V88QtcQ/d6CFKxa7D0bvg5lpTzcMaGtTs0Vu5nx3m0tFq57DM
-         Qpp0rRFfV0E3kssySdBpLVeWXqJutPtXX4k8bsZIxCWHKYvG2okogukK7uGBWsqfA46P
-         WkmyUAlWEcp3AsH39TX7JVWOI4Bu4xKAy+u3MdBjx7Bk3so4bzDzM3XTzK04oNLdVzzm
-         Bfmw==
-X-Gm-Message-State: AAQBX9dn8THtFHOP5boNqazHPkbRmBt8XkiAD9qtvcZsReRN8wmcHUV2
-        7g6/uqNkpGpk1U0BBdzViQ==
-X-Google-Smtp-Source: AKy350ZCzjPwV61KpMXMuMTcplpQUOTVEy0zA7LcKQKlFcGavyJBgHw6OjJO9sFV7pNg3RHx4Nwj/g==
-X-Received: by 2002:a9d:67d0:0:b0:69b:c852:4ab8 with SMTP id c16-20020a9d67d0000000b0069bc8524ab8mr2553545otn.7.1681475836835;
-        Fri, 14 Apr 2023 05:37:16 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id m18-20020a9d7ad2000000b00690e21a46e1sm1610219otn.56.2023.04.14.05.37.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 05:37:13 -0700 (PDT)
-Received: (nullmailer pid 3600814 invoked by uid 1000);
-        Fri, 14 Apr 2023 12:37:05 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 14 Apr 2023 12:56:01 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69D7C4C30
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Apr 2023 09:55:54 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pnMi7-0001Cw-E4; Fri, 14 Apr 2023 18:55:43 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pnMi5-00BEyN-7z; Fri, 14 Apr 2023 18:55:41 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pnMi4-00DDJC-Ex; Fri, 14 Apr 2023 18:55:40 +0200
+Date:   Fri, 14 Apr 2023 18:55:40 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Lee Jones <lee@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        William Breathitt Gray <william.gray@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v15 6/6] pwm: Add Renesas RZ/G2L MTU3a PWM driver
+Message-ID: <20230414165540.bfquriyo6crnxj5q@pengutronix.de>
+References: <20230330111632.169434-1-biju.das.jz@bp.renesas.com>
+ <20230330111632.169434-7-biju.das.jz@bp.renesas.com>
+ <20230414062641.76no7jz7uluixwdg@pengutronix.de>
+ <OS0PR01MB5922824F09E1BC9FB9CECC9586999@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     gustavo.pimentel@synopsys.com, robh+dt@kernel.org, mani@kernel.org,
-        bhelgaas@google.com, lpieralisi@kernel.org,
-        fancer.lancer@gmail.com, kw@linux.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        jingoohan1@gmail.com, marek.vasut+renesas@gmail.com,
-        kishon@kernel.org
-In-Reply-To: <20230414061622.2930995-16-yoshihiro.shimoda.uh@renesas.com>
-References: <20230414061622.2930995-1-yoshihiro.shimoda.uh@renesas.com>
- <20230414061622.2930995-16-yoshihiro.shimoda.uh@renesas.com>
-Message-Id: <168147485020.3576451.4333163339018554395.robh@kernel.org>
-Subject: Re: [PATCH v12 15/19] dt-bindings: PCI: renesas: Add R-Car Gen4
- PCIe Endpoint
-Date:   Fri, 14 Apr 2023 07:37:05 -0500
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bwyqhkojzq4skp7g"
+Content-Disposition: inline
+In-Reply-To: <OS0PR01MB5922824F09E1BC9FB9CECC9586999@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
-On Fri, 14 Apr 2023 15:16:18 +0900, Yoshihiro Shimoda wrote:
-> Document bindings for Renesas R-Car Gen4 and R-Car S4-8 (R8A779F0)
-> PCIe endpoint module.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-> ---
->  .../bindings/pci/rcar-gen4-pci-ep.yaml        | 98 +++++++++++++++++++
->  1 file changed, 98 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
-> 
+--bwyqhkojzq4skp7g
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Hello,
 
-yamllint warnings/errors:
+On Fri, Apr 14, 2023 at 09:53:09AM +0000, Biju Das wrote:
+> > On Thu, Mar 30, 2023 at 12:16:32PM +0100, Biju Das wrote:
+> > > +	val =3D RZ_MTU3_TCR_CKEG_RISING | prescale;
+> > > +	if (priv->map->channel =3D=3D pwm->hwpwm) {
+> > > +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TCR,
+> > > +				      RZ_MTU3_TCR_CCLR_TGRA | val);
+> >=20
+> > If the sibling PWM on the same channel is on, you're overwriting its
+> > prescale value here, are you not?
+>=20
+> Yes, you are correct. Will cache prescale and add the below code
+> in rz_mtu3_pwm_config(). Is it ok?
+>=20
+> +        * Prescalar is shared by multiple channels, so prescale can
+> +        * NOT be modified when there are multiple channels in use with
+> +        * different settings.
+> +        */
+> +       if (prescale !=3D rz_mtu3_pwm->prescale[ch] && rz_mtu3_pwm->user_=
+count[ch] > 1)
+> +               return -EBUSY;
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.example.dtb: pcie-ep@e65d0000: reg: [[0, 3864854528, 0, 8192], [0, 3864864768, 0, 2048], [0, 3864866816, 0, 8192], [0, 3864875008, 0, 4608], [0, 3864879616, 0, 3584], [0, 4261412864, 0, 4194304]] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.example.dtb: pcie-ep@e65d0000: reg-names: ['dbi', 'dbi2', 'atu', 'dma', 'app', 'addr_space'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
+If the other PWM is off, you can (and should) change the prescale value.
+Also if the current prescale value is less than the one you want to set,
+you can handle that.
 
-doc reference errors (make refcheckdocs):
+Best regards
+Uwe
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230414061622.2930995-16-yoshihiro.shimoda.uh@renesas.com
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+--bwyqhkojzq4skp7g
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+-----BEGIN PGP SIGNATURE-----
 
-pip3 install dtschema --upgrade
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ5hYsACgkQj4D7WH0S
+/k63lwgAnMkRgs4KfBktS8lhuRwD6okp5dy+PNAPNfYzcYU6u5CXM5zrFEmeDLTn
+wRBAUiiP+fryGo7N3THwiTyw39Ati5jLHJJ/7zi3LJkoVI8GRNMoUZCcbIrwPdL2
+R10Ifh/UlaBPpcCfKiR31ZhWuyG/GdiCKKHLm1zYqkXh1x3E2xDwztEYRT/Go9f7
+puKCgyGyxwQUjBor1DyuWdeKkqjReAmZgQknXcGGtlkOkf2DfBhA13DAnhyrDLgu
+vgFE/QgrmfBL9fYTi2D078bj7eck77Bd/T2HA4JnxmrH80AwXeFTKa8j+PkFsadC
+LcCY8VCX8npPYG0BXYa0j0432qwVmw==
+=yKDO
+-----END PGP SIGNATURE-----
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--bwyqhkojzq4skp7g--
