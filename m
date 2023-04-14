@@ -2,481 +2,300 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0059C7EE3A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Apr 2023 06:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04997C77B6E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Apr 2023 06:27:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbjDNGQt (ORCPT
+        id S229542AbjDNG1g (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Apr 2023 02:16:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48980 "EHLO
+        Fri, 14 Apr 2023 02:27:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230156AbjDNGQk (ORCPT
+        with ESMTP id S229599AbjDNG1g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Apr 2023 02:16:40 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1473E59ED;
-        Thu, 13 Apr 2023 23:16:37 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.99,195,1677510000"; 
-   d="scan'208";a="155958252"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Apr 2023 15:16:33 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8BC044195F5A;
-        Fri, 14 Apr 2023 15:16:33 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     jingoohan1@gmail.com, mani@kernel.org,
-        gustavo.pimentel@synopsys.com, fancer.lancer@gmail.com,
-        lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
-        bhelgaas@google.com, kishon@kernel.org
-Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v12 16/19] PCI: rcar-gen4: Add R-Car Gen4 PCIe Host support
-Date:   Fri, 14 Apr 2023 15:16:19 +0900
-Message-Id: <20230414061622.2930995-17-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230414061622.2930995-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230414061622.2930995-1-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 14 Apr 2023 02:27:36 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B55856A5B
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Apr 2023 23:27:08 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pnCtQ-0004uj-98; Fri, 14 Apr 2023 08:26:44 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pnCtO-00B8Vk-Cq; Fri, 14 Apr 2023 08:26:42 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pnCtN-00D4nG-Oa; Fri, 14 Apr 2023 08:26:41 +0200
+Date:   Fri, 14 Apr 2023 08:26:41 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, Lee Jones <lee@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        William Breathitt Gray <william.gray@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH v15 6/6] pwm: Add Renesas RZ/G2L MTU3a PWM driver
+Message-ID: <20230414062641.76no7jz7uluixwdg@pengutronix.de>
+References: <20230330111632.169434-1-biju.das.jz@bp.renesas.com>
+ <20230330111632.169434-7-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="l7awkgl2o3zkxwkd"
+Content-Disposition: inline
+In-Reply-To: <20230330111632.169434-7-biju.das.jz@bp.renesas.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add R-Car Gen4 PCIe Host support. This controller is based on
-Synopsys DesignWare PCIe.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pci/controller/dwc/Kconfig            |   9 +
- drivers/pci/controller/dwc/Makefile           |   2 +
- .../pci/controller/dwc/pcie-rcar-gen4-host.c  | 134 +++++++++++++
- drivers/pci/controller/dwc/pcie-rcar-gen4.c   | 187 ++++++++++++++++++
- drivers/pci/controller/dwc/pcie-rcar-gen4.h   |  49 +++++
- 5 files changed, 381 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-rcar-gen4-host.c
- create mode 100644 drivers/pci/controller/dwc/pcie-rcar-gen4.c
- create mode 100644 drivers/pci/controller/dwc/pcie-rcar-gen4.h
+--l7awkgl2o3zkxwkd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index d29551261e80..eb90e2116e59 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -415,4 +415,13 @@ config PCIE_FU740
- 	  Say Y here if you want PCIe controller support for the SiFive
- 	  FU740.
- 
-+config PCIE_RCAR_GEN4
-+	tristate "Renesas R-Car Gen4 PCIe Host controller"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on PCI_MSI
-+	select PCIE_DW_HOST
-+	help
-+	  Say Y here if you want PCIe host controller support on R-Car Gen4 SoCs.
-+	  This uses the DesignWare core.
-+
- endmenu
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index bf5c311875a1..486cf706b53d 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -26,6 +26,8 @@ obj-$(CONFIG_PCIE_TEGRA194) += pcie-tegra194.o
- obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
- obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
- obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
-+pcie-rcar-gen4-host-drv-objs := pcie-rcar-gen4.o pcie-rcar-gen4-host.o
-+obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4-host-drv.o
- 
- # The following drivers are for devices that use the generic ACPI
- # pci_root.c driver but don't support standard ECAM config access.
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4-host.c b/drivers/pci/controller/dwc/pcie-rcar-gen4-host.c
-new file mode 100644
-index 000000000000..067fbd2a8d50
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4-host.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * PCIe host controller driver for Renesas R-Car Gen4 Series SoCs
-+ * Copyright (C) 2022-2023 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/pci.h>
-+#include <linux/platform_device.h>
-+
-+#include "pcie-rcar-gen4.h"
-+#include "pcie-designware.h"
-+
-+static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_pp(pp);
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+	int ret;
-+	u32 val;
-+
-+	ret = rcar_gen4_pcie_set_device_type(rcar, true, dw->num_lanes);
-+	if (ret < 0)
-+		return ret;
-+
-+	dw_pcie_dbi_ro_wr_en(dw);
-+
-+	/*
-+	 * According to the databook, we should disable two BARs to avoid
-+	 * unnecessary memory assignment during device enumeration.
-+	 */
-+	rcar_gen4_pcie_disable_bar(dw, PCI_BASE_ADDRESS_0);
-+	rcar_gen4_pcie_disable_bar(dw, PCI_BASE_ADDRESS_1);
-+
-+	dw_pcie_dbi_ro_wr_dis(dw);
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+		/* Enable MSI interrupt signal */
-+		val = readl(rcar->base + PCIEINTSTS0EN);
-+		val |= MSI_CTRL_INT;
-+		writel(val, rcar->base + PCIEINTSTS0EN);
-+	}
-+
-+	gpiod_set_value_cansleep(dw->pe_rst, 0);
-+
-+	return 0;
-+}
-+
-+static const struct dw_pcie_host_ops rcar_gen4_pcie_host_ops = {
-+	.host_init = rcar_gen4_pcie_host_init,
-+};
-+
-+static int rcar_gen4_add_dw_pcie_rp(struct rcar_gen4_pcie *rcar,
-+				   struct platform_device *pdev)
-+{
-+	struct dw_pcie *dw = &rcar->dw;
-+	struct dw_pcie_rp *pp = &dw->pp;
-+
-+	pp->num_vectors = MAX_MSI_IRQS;
-+	pp->ops = &rcar_gen4_pcie_host_ops;
-+	dw_pcie_cap_set(dw, REQ_RES);
-+
-+	return dw_pcie_host_init(pp);
-+}
-+
-+static void rcar_gen4_remove_dw_pcie_rp(struct rcar_gen4_pcie *rcar)
-+{
-+	dw_pcie_host_deinit(&rcar->dw.pp);
-+	gpiod_set_value_cansleep(rcar->dw.pe_rst, 1);
-+}
-+
-+static int rcar_gen4_pcie_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rcar_gen4_pcie *rcar;
-+	int err;
-+
-+	rcar = rcar_gen4_pcie_devm_alloc(dev);
-+	if (!rcar)
-+		return -ENOMEM;
-+
-+	err = rcar_gen4_pcie_get_resources(rcar, pdev);
-+	if (err < 0) {
-+		dev_err(dev, "Failed to request resource: %d\n", err);
-+		return err;
-+	}
-+
-+	platform_set_drvdata(pdev, rcar);
-+
-+	err = rcar_gen4_pcie_prepare(rcar);
-+	if (err < 0)
-+		return err;
-+
-+	rcar->needs_retrain = true;
-+	err = rcar_gen4_add_dw_pcie_rp(rcar, pdev);
-+	if (err < 0)
-+		goto err_add;
-+
-+	return 0;
-+
-+err_add:
-+	rcar_gen4_pcie_unprepare(rcar);
-+
-+	return err;
-+}
-+
-+static int rcar_gen4_pcie_remove(struct platform_device *pdev)
-+{
-+	struct rcar_gen4_pcie *rcar = platform_get_drvdata(pdev);
-+
-+	rcar_gen4_remove_dw_pcie_rp(rcar);
-+	rcar_gen4_pcie_unprepare(rcar);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rcar_gen4_pcie_of_match[] = {
-+	{ .compatible = "renesas,rcar-gen4-pcie", },
-+	{},
-+};
-+
-+static struct platform_driver rcar_gen4_pcie_driver = {
-+	.driver = {
-+		.name = "pcie-rcar-gen4",
-+		.of_match_table = rcar_gen4_pcie_of_match,
-+	},
-+	.probe = rcar_gen4_pcie_probe,
-+	.remove = rcar_gen4_pcie_remove,
-+};
-+module_platform_driver(rcar_gen4_pcie_driver);
-+
-+MODULE_DESCRIPTION("Renesas R-Car Gen4 PCIe host controller driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-new file mode 100644
-index 000000000000..89cec76a41ab
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -0,0 +1,187 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * PCIe host/endpoint controller driver for Renesas R-Car Gen4 Series SoCs
-+ * Copyright (C) 2022-2023 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of_device.h>
-+#include <linux/pci.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+
-+#include "pcie-rcar-gen4.h"
-+#include "pcie-designware.h"
-+
-+/* Renesas-specific */
-+#define PCIERSTCTRL1		0x0014
-+#define  APP_HOLD_PHY_RST	BIT(16)
-+#define  APP_LTSSM_ENABLE	BIT(0)
-+
-+#define RETRAIN_MAX_RETRY	10
-+
-+static void rcar_gen4_pcie_ltssm_enable(struct rcar_gen4_pcie *rcar,
-+					bool enable)
-+{
-+	u32 val;
-+
-+	val = readl(rcar->base + PCIERSTCTRL1);
-+	if (enable) {
-+		val |= APP_LTSSM_ENABLE;
-+		val &= ~APP_HOLD_PHY_RST;
-+	} else {
-+		val &= ~APP_LTSSM_ENABLE;
-+		val |= APP_HOLD_PHY_RST;
-+	}
-+	writel(val, rcar->base + PCIERSTCTRL1);
-+}
-+
-+static bool rcar_gen4_pcie_check_retrain_link(struct dw_pcie *dw)
-+{
-+	u8 offset = dw_pcie_find_capability(dw, PCI_CAP_ID_EXP);
-+	u32 lnkcap = dw_pcie_readl_dbi(dw, offset + PCI_EXP_LNKCAP);
-+	u32 lnkctl = dw_pcie_readl_dbi(dw, offset + PCI_EXP_LNKCTL);
-+	u16 lnksta = dw_pcie_readw_dbi(dw, offset + PCI_EXP_LNKSTA);
-+	int i;
-+
-+	if ((lnksta & PCI_EXP_LNKSTA_CLS) == (lnkcap & PCI_EXP_LNKCAP_SLS))
-+		return true;
-+
-+	lnkctl |= PCI_EXP_LNKCTL_RL;
-+	dw_pcie_writel_dbi(dw, offset + PCI_EXP_LNKCTL, lnkctl);
-+
-+	for (i = 0; i < RETRAIN_MAX_RETRY; i++) {
-+		lnksta = dw_pcie_readw_dbi(dw, offset + PCI_EXP_LNKSTA);
-+		if (lnksta & PCI_EXP_LNKSTA_LT)
-+			return true;
-+		usleep_range(1000, 1100);
-+	}
-+
-+	return false;
-+}
-+
-+static int rcar_gen4_pcie_link_up(struct dw_pcie *dw)
-+{
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+	u32 val, mask;
-+
-+	/* Require retraining here. Otherwise RDLH_LINK_UP may not be set */
-+	if (rcar->needs_retrain && !rcar_gen4_pcie_check_retrain_link(dw))
-+		return 0;
-+
-+	val = readl(rcar->base + PCIEINTSTS0);
-+	mask = RDLH_LINK_UP | SMLH_LINK_UP;
-+
-+	return (val & mask) == mask;
-+}
-+
-+static int rcar_gen4_pcie_start_link(struct dw_pcie *dw)
-+{
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+
-+	rcar_gen4_pcie_ltssm_enable(rcar, true);
-+
-+	return 0;
-+}
-+
-+static void rcar_gen4_pcie_stop_link(struct dw_pcie *dw)
-+{
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+
-+	rcar_gen4_pcie_ltssm_enable(rcar, false);
-+}
-+
-+int rcar_gen4_pcie_set_device_type(struct rcar_gen4_pcie *rcar, bool rc,
-+				   int num_lanes)
-+{
-+	u32 val;
-+
-+	/* Note: Assume the reset is asserted here */
-+	val = readl(rcar->base + PCIEMSR0);
-+	if (rc)
-+		val |= DEVICE_TYPE_RC;
-+	else
-+		val |= DEVICE_TYPE_EP;
-+	if (num_lanes < 4)
-+		val |= BIFUR_MOD_SET_ON;
-+	writel(val, rcar->base + PCIEMSR0);
-+
-+	return reset_control_deassert(rcar->rst);
-+}
-+
-+void rcar_gen4_pcie_disable_bar(struct dw_pcie *dw, u32 bar_mask_reg)
-+{
-+	dw_pcie_writel_dbi2(dw, bar_mask_reg, 0x0);
-+}
-+
-+int rcar_gen4_pcie_prepare(struct rcar_gen4_pcie *rcar)
-+{
-+	struct device *dev = rcar->dw.dev;
-+	int err;
-+
-+	pm_runtime_enable(dev);
-+	err = pm_runtime_resume_and_get(dev);
-+	if (err < 0) {
-+		dev_err(dev, "Failed to resume/get Runtime PM\n");
-+		pm_runtime_disable(dev);
-+	}
-+
-+	return err;
-+}
-+
-+void rcar_gen4_pcie_unprepare(struct rcar_gen4_pcie *rcar)
-+{
-+	struct device *dev = rcar->dw.dev;
-+
-+	if (!reset_control_status(rcar->rst))
-+		reset_control_assert(rcar->rst);
-+	pm_runtime_put(dev);
-+	pm_runtime_disable(dev);
-+}
-+
-+static int rcar_gen4_pcie_devm_reset_get(struct rcar_gen4_pcie *rcar,
-+				  struct device *dev)
-+{
-+	rcar->rst = devm_reset_control_get(dev, NULL);
-+	if (IS_ERR(rcar->rst)) {
-+		dev_err(dev, "Failed to get Cold-reset\n");
-+		return PTR_ERR(rcar->rst);
-+	}
-+
-+	return 0;
-+}
-+
-+int rcar_gen4_pcie_get_resources(struct rcar_gen4_pcie *rcar,
-+				 struct platform_device *pdev)
-+{
-+	struct dw_pcie *dw = &rcar->dw;
-+
-+	/* Renesas-specific registers */
-+	rcar->base = devm_platform_ioremap_resource_byname(pdev, "app");
-+	if (IS_ERR(rcar->base))
-+		return PTR_ERR(rcar->base);
-+
-+	return rcar_gen4_pcie_devm_reset_get(rcar, dw->dev);
-+}
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = rcar_gen4_pcie_start_link,
-+	.stop_link = rcar_gen4_pcie_stop_link,
-+	.link_up = rcar_gen4_pcie_link_up,
-+};
-+
-+struct rcar_gen4_pcie *rcar_gen4_pcie_devm_alloc(struct device *dev)
-+{
-+	struct rcar_gen4_pcie *rcar;
-+
-+	rcar = devm_kzalloc(dev, sizeof(*rcar), GFP_KERNEL);
-+	if (!rcar)
-+		return NULL;
-+
-+	rcar->dw.dev = dev;
-+	rcar->dw.ops = &dw_pcie_ops;
-+	dw_pcie_cap_set(&rcar->dw, EDMA_UNROLL);
-+
-+	return rcar;
-+}
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.h b/drivers/pci/controller/dwc/pcie-rcar-gen4.h
-new file mode 100644
-index 000000000000..d9cb9c783f16
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * PCIe host/endpoint controller driver for Renesas R-Car Gen4 Series SoCs
-+ * Copyright (C) 2022-2023 Renesas Electronics Corporation
-+ */
-+
-+#ifndef _PCIE_RCAR_GEN4_H_
-+#define _PCIE_RCAR_GEN4_H_
-+
-+#include <linux/io.h>
-+#include <linux/pci.h>
-+#include <linux/reset.h>
-+
-+#include "pcie-designware.h"
-+
-+/* Renesas-specific */
-+#define PCIEMSR0		0x0000
-+#define  BIFUR_MOD_SET_ON	BIT(0)
-+#define  DEVICE_TYPE_EP		0
-+#define  DEVICE_TYPE_RC		BIT(4)
-+
-+#define PCIEINTSTS0		0x0084
-+#define PCIEINTSTS0EN		0x0310
-+#define  MSI_CTRL_INT		BIT(26)
-+#define  SMLH_LINK_UP		BIT(7)
-+#define  RDLH_LINK_UP		BIT(6)
-+#define PCIEDMAINTSTSEN		0x0314
-+#define  PCIEDMAINTSTSEN_INIT	GENMASK(15, 0)
-+
-+struct rcar_gen4_pcie {
-+	struct dw_pcie		dw;
-+	void __iomem		*base;
-+	struct reset_control	*rst;
-+	bool			needs_retrain;
-+};
-+#define to_rcar_gen4_pcie(x)	dev_get_drvdata((x)->dev)
-+
-+u32 rcar_gen4_pcie_readl(struct rcar_gen4_pcie *pcie, u32 reg);
-+void rcar_gen4_pcie_writel(struct rcar_gen4_pcie *pcie, u32 reg, u32 val);
-+int rcar_gen4_pcie_set_device_type(struct rcar_gen4_pcie *rcar, bool rc,
-+				   int num_lanes);
-+void rcar_gen4_pcie_disable_bar(struct dw_pcie *dw, u32 bar_mask_reg);
-+int rcar_gen4_pcie_prepare(struct rcar_gen4_pcie *pcie);
-+void rcar_gen4_pcie_unprepare(struct rcar_gen4_pcie *pcie);
-+int rcar_gen4_pcie_get_resources(struct rcar_gen4_pcie *rcar,
-+				 struct platform_device *pdev);
-+struct rcar_gen4_pcie *rcar_gen4_pcie_devm_alloc(struct device *dev);
-+
-+#endif /* _PCIE_RCAR_GEN4_H_ */
--- 
-2.25.1
+Hello,
 
+On Thu, Mar 30, 2023 at 12:16:32PM +0100, Biju Das wrote:
+> +static struct rz_mtu3_pwm_channel *
+> +rz_mtu3_get_channel(struct rz_mtu3_pwm_chip *rz_mtu3_pwm, u32 hwpwm)
+> +{
+> +	struct rz_mtu3_pwm_channel *priv =3D rz_mtu3_pwm->channel_data;
+> +	unsigned int ch;
+> +
+> +	for (ch =3D 0; ch < RZ_MTU3_MAX_HW_CHANNELS; ch++, priv++) {
+> +		if (priv->map->channel + priv->map->num_channel_ios >  hwpwm)
+
+s/  / /
+
+> +			break;
+> +	}
+> +
+> +	return priv;
+> +}
+> +
+> +static bool rz_mtu3_pwm_is_ch_enabled(struct rz_mtu3_pwm_chip *rz_mtu3_p=
+wm,
+> +				      u32 hwpwm)
+> +{
+> +	struct rz_mtu3_pwm_channel *priv;
+> +	bool is_channel_en;
+> +	u8 val;
+> +
+> +	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, hwpwm);
+> +	is_channel_en =3D rz_mtu3_is_enabled(priv->mtu);
+> +	if (!is_channel_en)
+> +		return false;
+> +
+> +	if (priv->map->channel =3D=3D hwpwm)
+> +		val =3D rz_mtu3_8bit_ch_read(priv->mtu, RZ_MTU3_TIORH);
+> +	else
+> +		val =3D rz_mtu3_8bit_ch_read(priv->mtu, RZ_MTU3_TIORL);
+> +
+> +	return (is_channel_en && (val & RZ_MTU3_TIOR_IOA));
+
+Here you already know that is_channel_en =3D=3D true, so it can be dropped
+here.
+
+> +}
+> +
+> [...]
+> +static int rz_mtu3_pwm_enable(struct rz_mtu3_pwm_chip *rz_mtu3_pwm,
+> +			      struct pwm_device *pwm)
+> +{
+> +	struct rz_mtu3_pwm_channel *priv;
+> +	u32 ch;
+> +	u8 val;
+> +	int rc;
+> +
+> +	rc =3D pm_runtime_resume_and_get(rz_mtu3_pwm->chip.dev);
+> +	if (rc)
+> +		return rc;
+> +
+> +	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, pwm->hwpwm);
+> +	ch =3D priv - rz_mtu3_pwm->channel_data;
+> +	val =3D RZ_MTU3_TIOR_OC_IOB_TOGGLE | RZ_MTU3_TIOR_OC_IOA_H_COMP_MATCH;
+> +
+> +	rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TMDR1, RZ_MTU3_TMDR1_MD_PWMMOD=
+E1);
+> +	if (priv->map->channel =3D=3D pwm->hwpwm)
+
+This condition identifies the first PWM of a channel. I was surprised
+here that the channel numbering has a hole after each channel that
+manages two IOs. OTOH, in the comment at the top of the driver there is:
+
+	(The channels are MTU{0..4, 6, 7}.)
+
+which I would have expected to see in channel_map. I think the first
+member of this struct is really the base pwm number and so is misnamed?
+
+> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TIORH, val);
+> +	else
+> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TIORL, val);
+> +
+> +	mutex_lock(&rz_mtu3_pwm->lock);
+> +	if (!rz_mtu3_pwm->enable_count[ch])
+> +		rz_mtu3_enable(priv->mtu);
+> +
+> +	rz_mtu3_pwm->enable_count[ch]++;
+> +	mutex_unlock(&rz_mtu3_pwm->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static void rz_mtu3_pwm_disable(struct rz_mtu3_pwm_chip *rz_mtu3_pwm,
+> +				struct pwm_device *pwm)
+> +{
+> +	struct rz_mtu3_pwm_channel *priv;
+> +	u32 ch;
+> +
+> +	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, pwm->hwpwm);
+> +	ch =3D priv - rz_mtu3_pwm->channel_data;
+> +
+> +	/* Return to normal mode and disable output pins of MTU3 channel */
+> +	if (rz_mtu3_pwm->user_count[ch] <=3D 1)
+> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TMDR1, RZ_MTU3_TMDR1_MD_NORMA=
+L);
+
+This never triggers if both PWMs of a channel are requested, even if
+both are disabled. Is this intended?
+
+> +	if (priv->map->channel =3D=3D pwm->hwpwm)
+> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TIORH, RZ_MTU3_TIOR_OC_RETAIN=
+);
+> +	else
+> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TIORL, RZ_MTU3_TIOR_OC_RETAIN=
+);
+> +
+> +	mutex_lock(&rz_mtu3_pwm->lock);
+> +	rz_mtu3_pwm->enable_count[ch]--;
+> +	if (!rz_mtu3_pwm->enable_count[ch])
+> +		rz_mtu3_disable(priv->mtu);
+> +
+> +	mutex_unlock(&rz_mtu3_pwm->lock);
+> +
+> +	pm_runtime_put_sync(rz_mtu3_pwm->chip.dev);
+> +}
+> +
+> [...]
+> +static int rz_mtu3_pwm_config(struct pwm_chip *chip, struct pwm_device *=
+pwm,
+> +			      const struct pwm_state *state)
+> +{
+> +	struct rz_mtu3_pwm_chip *rz_mtu3_pwm =3D to_rz_mtu3_pwm_chip(chip);
+> +	struct rz_mtu3_pwm_channel *priv;
+> +	unsigned long pv, dc;
+> +	u64 period_cycles;
+> +	u64 duty_cycles;
+> +	u8 prescale;
+> +	u8 val;
+> +
+> +	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, pwm->hwpwm);
+> +	period_cycles =3D mul_u64_u32_div(state->period, rz_mtu3_pwm->rate,
+> +					NSEC_PER_SEC);
+> +	prescale =3D rz_mtu3_pwm_calculate_prescale(rz_mtu3_pwm, period_cycles);
+> +
+> +	if (period_cycles >> (2 * prescale) <=3D U16_MAX)
+> +		pv =3D period_cycles >> (2 * prescale);
+> +	else
+> +		pv =3D U16_MAX;
+> +
+> +	duty_cycles =3D mul_u64_u32_div(state->duty_cycle, rz_mtu3_pwm->rate,
+> +				      NSEC_PER_SEC);
+> +	if (duty_cycles >> (2 * prescale) <=3D U16_MAX)
+> +		dc =3D duty_cycles >> (2 * prescale);
+> +	else
+> +		dc =3D U16_MAX;
+> +
+> +	/*
+> +	 * If the PWM channel is disabled, make sure to turn on the clock
+> +	 * before writing the register.
+> +	 */
+> +	if (!pwm->state.enabled)
+> +		pm_runtime_get_sync(chip->dev);
+> +
+> +	val =3D RZ_MTU3_TCR_CKEG_RISING | prescale;
+> +	if (priv->map->channel =3D=3D pwm->hwpwm) {
+> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TCR,
+> +				      RZ_MTU3_TCR_CCLR_TGRA | val);
+
+If the sibling PWM on the same channel is on, you're overwriting its
+prescale value here, are you not?
+
+> +		rz_mtu3_16bit_ch_write(priv->mtu, RZ_MTU3_TGRB, dc);
+> +		rz_mtu3_16bit_ch_write(priv->mtu, RZ_MTU3_TGRA, pv);
+> +	} else {
+> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TCR,
+> +				      RZ_MTU3_TCR_CCLR_TGRC | val);
+> +		rz_mtu3_16bit_ch_write(priv->mtu, RZ_MTU3_TGRD, dc);
+> +		rz_mtu3_16bit_ch_write(priv->mtu, RZ_MTU3_TGRC, pv);
+> +	}
+> +
+> +	/* If the PWM is not enabled, turn the clock off again to save power. */
+> +	if (!pwm->state.enabled)
+> +		pm_runtime_put(chip->dev);
+> +
+> +	return 0;
+> +}
+> +
+> [...]
+> +static int rz_mtu3_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct rz_mtu3 *ddata =3D dev_get_drvdata(pdev->dev.parent);
+
+Nitpick: I would have called that parent_ddata.
+
+> +	struct rz_mtu3_pwm_chip *rz_mtu3_pwm;
+> +	struct device *dev =3D &pdev->dev;
+> +	unsigned int i, j =3D 0;
+> +	int ret;
+> +
+> +	rz_mtu3_pwm =3D devm_kzalloc(&pdev->dev, sizeof(*rz_mtu3_pwm), GFP_KERN=
+EL);
+> +	if (!rz_mtu3_pwm)
+> +		return -ENOMEM;
+> +
+> +	rz_mtu3_pwm->clk =3D ddata->clk;
+> +
+> +	for (i =3D 0; i < RZ_MTU_NUM_CHANNELS; i++) {
+> +		if (i =3D=3D RZ_MTU3_CHAN_5 || i =3D=3D RZ_MTU3_CHAN_8)
+> +			continue;
+> +
+> +		rz_mtu3_pwm->channel_data[j].mtu =3D &ddata->channels[i];
+> +		rz_mtu3_pwm->channel_data[j].mtu->dev =3D dev;
+> +		rz_mtu3_pwm->channel_data[j].map =3D &channel_map[j];
+> +		j++;
+> +	}
+> +
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--l7awkgl2o3zkxwkd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ48iAACgkQj4D7WH0S
+/k6JGgf+Nd1UnIEzopIR516y/NNr9Zq+ZFDOdr4Out3p/QTal4dQuSSg+9CZvPka
+t7YY3mciU2InwbkZlYTOVbuoDxYpyZ59axKyUlzRFMNW8hCsZufxjkIrzickGbr3
+qMxWqWhl1jV6jDNGVNAJXUgIx9inziSNgcECZJS2do5JOO7cBSic1l+WWYPnqFpr
+NvoV6Nvc4/QasYP8lEzR/DyMgraDgCRmILutiWCcuaAzVN1PzUX7sXyygw10JED6
+liHIUYH8YZOKcScxmc7OXISoFCQippqQP0OGvEiow8C6QKuMCcX6j2RuDPN8a7Wi
+Ib3lXw34IH3Tikq4OmKq3V5lRAg6tw==
+=b/uM
+-----END PGP SIGNATURE-----
+
+--l7awkgl2o3zkxwkd--
