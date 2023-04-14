@@ -2,300 +2,165 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04997C77B6E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Apr 2023 06:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A534DC77B6E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Apr 2023 07:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229542AbjDNG1g (ORCPT
+        id S229689AbjDNH10 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Apr 2023 02:27:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55988 "EHLO
+        Fri, 14 Apr 2023 03:27:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbjDNG1g (ORCPT
+        with ESMTP id S229625AbjDNH1Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Apr 2023 02:27:36 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B55856A5B
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Apr 2023 23:27:08 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pnCtQ-0004uj-98; Fri, 14 Apr 2023 08:26:44 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pnCtO-00B8Vk-Cq; Fri, 14 Apr 2023 08:26:42 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pnCtN-00D4nG-Oa; Fri, 14 Apr 2023 08:26:41 +0200
-Date:   Fri, 14 Apr 2023 08:26:41 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, Lee Jones <lee@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH v15 6/6] pwm: Add Renesas RZ/G2L MTU3a PWM driver
-Message-ID: <20230414062641.76no7jz7uluixwdg@pengutronix.de>
-References: <20230330111632.169434-1-biju.das.jz@bp.renesas.com>
- <20230330111632.169434-7-biju.das.jz@bp.renesas.com>
+        Fri, 14 Apr 2023 03:27:25 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5AABD26BA
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Apr 2023 00:27:24 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.99,195,1677510000"; 
+   d="scan'208";a="159419996"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Apr 2023 16:27:23 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id C18CE41AF0C1;
+        Fri, 14 Apr 2023 16:27:23 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     geert+renesas@glider.be, magnus.damm@gmail.com
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] arm64: dts: renesas: r8a779f0: Add PCIe Host and Endpoint nodes
+Date:   Fri, 14 Apr 2023 16:27:16 +0900
+Message-Id: <20230414072717.2931212-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230414072717.2931212-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20230414072717.2931212-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="l7awkgl2o3zkxwkd"
-Content-Disposition: inline
-In-Reply-To: <20230330111632.169434-7-biju.das.jz@bp.renesas.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Add PCIe Host and Endpoint nodes for R-Car S4-8 (R8A779F0).
 
---l7awkgl2o3zkxwkd
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 104 ++++++++++++++++++++++
+ 1 file changed, 104 insertions(+)
 
-Hello,
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+index 1d5426e6293c..b3fe7e0599c3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+@@ -711,6 +711,110 @@ hscif3: serial@e66a0000 {
+ 			status = "disabled";
+ 		};
+ 
++		pciec0: pcie@e65d0000 {
++			compatible = "renesas,r8a779f0-pcie",
++				     "renesas,rcar-gen4-pcie";
++			reg = <0 0xe65d0000 0 0x1000>, <0 0xe65d2000 0 0x0800>,
++			      <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
++			      <0 0xe65d6200 0 0x1100>, <0 0xfe000000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "config";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x82000000 0 0x30000000 0 0x30000000 0 0x10000000>;
++			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
++			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi", "dma", "sft_ce", "app";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 624>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 624>;
++			num-lanes = <2>;
++			snps,enable-cdm-check;
++			max-link-speed = <4>;
++			status = "disabled";
++		};
++
++		pciec1: pcie@e65d8000 {
++			compatible = "renesas,r8a779f0-pcie",
++				     "renesas,rcar-gen4-pcie";
++			reg = <0 0xe65d8000 0 0x1000>, <0 0xe65d8200 0 0x0800>,
++			      <0 0xe65db000 0 0x2000>, <0 0xe65dd000 0 0x1200>,
++			      <0 0xe65de200 0 0x1100>, <0 0xee900000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "config";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x82000000 0 0xc0000000 0 0xc0000000 0 0x10000000>;
++			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
++			interrupts = <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi", "dma", "sft_ce", "app";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &gic GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &gic GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &gic GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &gic GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 625>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 625>;
++			num-lanes = <2>;
++			snps,enable-cdm-check;
++			max-link-speed = <4>;
++			status = "disabled";
++		};
++
++		pciec0_ep: pcie-ep@e65d0000 {
++			compatible = "renesas,r8a779f0-pcie-ep",
++				     "renesas,rcar-gen4-pcie-ep";
++			reg = <0 0xe65d0000 0 0x2000>, <0 0xe65d2800 0 0x800>,
++			      <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
++			      <0 0xe65d6200 0 0x0e00>, <0 0xfe000000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "addr_space";
++			interrupts = <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "dma", "sft_ce", "app";
++			clocks = <&cpg CPG_MOD 624>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 624>;
++			num-lanes = <2>;
++			max-link-speed = <4>;
++			status = "disabled";
++		};
++
++		pciec1_ep: pcie-ep@e65d8000 {
++			compatible = "renesas,r8a779f0-pcie-ep",
++				     "renesas,rcar-gen4-pcie-ep";
++			reg = <0 0xe65d8000 0 0x2000>, <0 0xe65da800 0 0x0800>,
++			      <0 0xe65dd000 0 0x1200>, <0 0xe65de200 0 0x0e00>,
++			      <0 0xee900000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "addr_space";
++			interrupts = <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "dma", "sft_ce", "app";
++			clocks = <&cpg CPG_MOD 625>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 625>;
++			num-lanes = <2>;
++			max-link-speed = <4>;
++			status = "disabled";
++		};
++
+ 		ufs: ufs@e6860000 {
+ 			compatible = "renesas,r8a779f0-ufs";
+ 			reg = <0 0xe6860000 0 0x100>;
+-- 
+2.25.1
 
-On Thu, Mar 30, 2023 at 12:16:32PM +0100, Biju Das wrote:
-> +static struct rz_mtu3_pwm_channel *
-> +rz_mtu3_get_channel(struct rz_mtu3_pwm_chip *rz_mtu3_pwm, u32 hwpwm)
-> +{
-> +	struct rz_mtu3_pwm_channel *priv =3D rz_mtu3_pwm->channel_data;
-> +	unsigned int ch;
-> +
-> +	for (ch =3D 0; ch < RZ_MTU3_MAX_HW_CHANNELS; ch++, priv++) {
-> +		if (priv->map->channel + priv->map->num_channel_ios >  hwpwm)
-
-s/  / /
-
-> +			break;
-> +	}
-> +
-> +	return priv;
-> +}
-> +
-> +static bool rz_mtu3_pwm_is_ch_enabled(struct rz_mtu3_pwm_chip *rz_mtu3_p=
-wm,
-> +				      u32 hwpwm)
-> +{
-> +	struct rz_mtu3_pwm_channel *priv;
-> +	bool is_channel_en;
-> +	u8 val;
-> +
-> +	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, hwpwm);
-> +	is_channel_en =3D rz_mtu3_is_enabled(priv->mtu);
-> +	if (!is_channel_en)
-> +		return false;
-> +
-> +	if (priv->map->channel =3D=3D hwpwm)
-> +		val =3D rz_mtu3_8bit_ch_read(priv->mtu, RZ_MTU3_TIORH);
-> +	else
-> +		val =3D rz_mtu3_8bit_ch_read(priv->mtu, RZ_MTU3_TIORL);
-> +
-> +	return (is_channel_en && (val & RZ_MTU3_TIOR_IOA));
-
-Here you already know that is_channel_en =3D=3D true, so it can be dropped
-here.
-
-> +}
-> +
-> [...]
-> +static int rz_mtu3_pwm_enable(struct rz_mtu3_pwm_chip *rz_mtu3_pwm,
-> +			      struct pwm_device *pwm)
-> +{
-> +	struct rz_mtu3_pwm_channel *priv;
-> +	u32 ch;
-> +	u8 val;
-> +	int rc;
-> +
-> +	rc =3D pm_runtime_resume_and_get(rz_mtu3_pwm->chip.dev);
-> +	if (rc)
-> +		return rc;
-> +
-> +	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, pwm->hwpwm);
-> +	ch =3D priv - rz_mtu3_pwm->channel_data;
-> +	val =3D RZ_MTU3_TIOR_OC_IOB_TOGGLE | RZ_MTU3_TIOR_OC_IOA_H_COMP_MATCH;
-> +
-> +	rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TMDR1, RZ_MTU3_TMDR1_MD_PWMMOD=
-E1);
-> +	if (priv->map->channel =3D=3D pwm->hwpwm)
-
-This condition identifies the first PWM of a channel. I was surprised
-here that the channel numbering has a hole after each channel that
-manages two IOs. OTOH, in the comment at the top of the driver there is:
-
-	(The channels are MTU{0..4, 6, 7}.)
-
-which I would have expected to see in channel_map. I think the first
-member of this struct is really the base pwm number and so is misnamed?
-
-> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TIORH, val);
-> +	else
-> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TIORL, val);
-> +
-> +	mutex_lock(&rz_mtu3_pwm->lock);
-> +	if (!rz_mtu3_pwm->enable_count[ch])
-> +		rz_mtu3_enable(priv->mtu);
-> +
-> +	rz_mtu3_pwm->enable_count[ch]++;
-> +	mutex_unlock(&rz_mtu3_pwm->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static void rz_mtu3_pwm_disable(struct rz_mtu3_pwm_chip *rz_mtu3_pwm,
-> +				struct pwm_device *pwm)
-> +{
-> +	struct rz_mtu3_pwm_channel *priv;
-> +	u32 ch;
-> +
-> +	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, pwm->hwpwm);
-> +	ch =3D priv - rz_mtu3_pwm->channel_data;
-> +
-> +	/* Return to normal mode and disable output pins of MTU3 channel */
-> +	if (rz_mtu3_pwm->user_count[ch] <=3D 1)
-> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TMDR1, RZ_MTU3_TMDR1_MD_NORMA=
-L);
-
-This never triggers if both PWMs of a channel are requested, even if
-both are disabled. Is this intended?
-
-> +	if (priv->map->channel =3D=3D pwm->hwpwm)
-> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TIORH, RZ_MTU3_TIOR_OC_RETAIN=
-);
-> +	else
-> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TIORL, RZ_MTU3_TIOR_OC_RETAIN=
-);
-> +
-> +	mutex_lock(&rz_mtu3_pwm->lock);
-> +	rz_mtu3_pwm->enable_count[ch]--;
-> +	if (!rz_mtu3_pwm->enable_count[ch])
-> +		rz_mtu3_disable(priv->mtu);
-> +
-> +	mutex_unlock(&rz_mtu3_pwm->lock);
-> +
-> +	pm_runtime_put_sync(rz_mtu3_pwm->chip.dev);
-> +}
-> +
-> [...]
-> +static int rz_mtu3_pwm_config(struct pwm_chip *chip, struct pwm_device *=
-pwm,
-> +			      const struct pwm_state *state)
-> +{
-> +	struct rz_mtu3_pwm_chip *rz_mtu3_pwm =3D to_rz_mtu3_pwm_chip(chip);
-> +	struct rz_mtu3_pwm_channel *priv;
-> +	unsigned long pv, dc;
-> +	u64 period_cycles;
-> +	u64 duty_cycles;
-> +	u8 prescale;
-> +	u8 val;
-> +
-> +	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, pwm->hwpwm);
-> +	period_cycles =3D mul_u64_u32_div(state->period, rz_mtu3_pwm->rate,
-> +					NSEC_PER_SEC);
-> +	prescale =3D rz_mtu3_pwm_calculate_prescale(rz_mtu3_pwm, period_cycles);
-> +
-> +	if (period_cycles >> (2 * prescale) <=3D U16_MAX)
-> +		pv =3D period_cycles >> (2 * prescale);
-> +	else
-> +		pv =3D U16_MAX;
-> +
-> +	duty_cycles =3D mul_u64_u32_div(state->duty_cycle, rz_mtu3_pwm->rate,
-> +				      NSEC_PER_SEC);
-> +	if (duty_cycles >> (2 * prescale) <=3D U16_MAX)
-> +		dc =3D duty_cycles >> (2 * prescale);
-> +	else
-> +		dc =3D U16_MAX;
-> +
-> +	/*
-> +	 * If the PWM channel is disabled, make sure to turn on the clock
-> +	 * before writing the register.
-> +	 */
-> +	if (!pwm->state.enabled)
-> +		pm_runtime_get_sync(chip->dev);
-> +
-> +	val =3D RZ_MTU3_TCR_CKEG_RISING | prescale;
-> +	if (priv->map->channel =3D=3D pwm->hwpwm) {
-> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TCR,
-> +				      RZ_MTU3_TCR_CCLR_TGRA | val);
-
-If the sibling PWM on the same channel is on, you're overwriting its
-prescale value here, are you not?
-
-> +		rz_mtu3_16bit_ch_write(priv->mtu, RZ_MTU3_TGRB, dc);
-> +		rz_mtu3_16bit_ch_write(priv->mtu, RZ_MTU3_TGRA, pv);
-> +	} else {
-> +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TCR,
-> +				      RZ_MTU3_TCR_CCLR_TGRC | val);
-> +		rz_mtu3_16bit_ch_write(priv->mtu, RZ_MTU3_TGRD, dc);
-> +		rz_mtu3_16bit_ch_write(priv->mtu, RZ_MTU3_TGRC, pv);
-> +	}
-> +
-> +	/* If the PWM is not enabled, turn the clock off again to save power. */
-> +	if (!pwm->state.enabled)
-> +		pm_runtime_put(chip->dev);
-> +
-> +	return 0;
-> +}
-> +
-> [...]
-> +static int rz_mtu3_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct rz_mtu3 *ddata =3D dev_get_drvdata(pdev->dev.parent);
-
-Nitpick: I would have called that parent_ddata.
-
-> +	struct rz_mtu3_pwm_chip *rz_mtu3_pwm;
-> +	struct device *dev =3D &pdev->dev;
-> +	unsigned int i, j =3D 0;
-> +	int ret;
-> +
-> +	rz_mtu3_pwm =3D devm_kzalloc(&pdev->dev, sizeof(*rz_mtu3_pwm), GFP_KERN=
-EL);
-> +	if (!rz_mtu3_pwm)
-> +		return -ENOMEM;
-> +
-> +	rz_mtu3_pwm->clk =3D ddata->clk;
-> +
-> +	for (i =3D 0; i < RZ_MTU_NUM_CHANNELS; i++) {
-> +		if (i =3D=3D RZ_MTU3_CHAN_5 || i =3D=3D RZ_MTU3_CHAN_8)
-> +			continue;
-> +
-> +		rz_mtu3_pwm->channel_data[j].mtu =3D &ddata->channels[i];
-> +		rz_mtu3_pwm->channel_data[j].mtu->dev =3D dev;
-> +		rz_mtu3_pwm->channel_data[j].map =3D &channel_map[j];
-> +		j++;
-> +	}
-> +
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---l7awkgl2o3zkxwkd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ48iAACgkQj4D7WH0S
-/k6JGgf+Nd1UnIEzopIR516y/NNr9Zq+ZFDOdr4Out3p/QTal4dQuSSg+9CZvPka
-t7YY3mciU2InwbkZlYTOVbuoDxYpyZ59axKyUlzRFMNW8hCsZufxjkIrzickGbr3
-qMxWqWhl1jV6jDNGVNAJXUgIx9inziSNgcECZJS2do5JOO7cBSic1l+WWYPnqFpr
-NvoV6Nvc4/QasYP8lEzR/DyMgraDgCRmILutiWCcuaAzVN1PzUX7sXyygw10JED6
-liHIUYH8YZOKcScxmc7OXISoFCQippqQP0OGvEiow8C6QKuMCcX6j2RuDPN8a7Wi
-Ib3lXw34IH3Tikq4OmKq3V5lRAg6tw==
-=b/uM
------END PGP SIGNATURE-----
-
---l7awkgl2o3zkxwkd--
