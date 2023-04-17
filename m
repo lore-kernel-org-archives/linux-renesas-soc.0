@@ -2,235 +2,122 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C516C77B70
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Apr 2023 09:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB52C77B72
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Apr 2023 09:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230364AbjDQJCT (ORCPT
+        id S230429AbjDQJC3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Apr 2023 05:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34104 "EHLO
+        Mon, 17 Apr 2023 05:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230305AbjDQJCL (ORCPT
+        with ESMTP id S230350AbjDQJCQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Apr 2023 05:02:11 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDF9E4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Apr 2023 02:02:09 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKd9-0004W9-9f; Mon, 17 Apr 2023 10:54:35 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKce-00Bpk9-B4; Mon, 17 Apr 2023 10:54:04 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKcd-00DrOr-K2; Mon, 17 Apr 2023 10:54:03 +0200
-Date:   Mon, 17 Apr 2023 10:54:03 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Eddie James <eajames@linux.ibm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Robert Foss <rfoss@kernel.org>, Sean Young <sean@mess.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Antti Palosaari <crope@iki.fi>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-        Eugen Hristev <eugen.hristev@collabora.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Benoit Parrot <bparrot@ti.com>,
-        Moudy Ho <moudy.ho@mediatek.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        "chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Rory Liu <hellojacky0226@hotmail.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Zhou Peng <eagle.zhou@nxp.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Dafna Hirschfeld <dafna@fastmail.com>,
-        Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Bin Liu <bin.liu@mediatek.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        Qiheng Lin <linqiheng@huawei.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Ajye Huang <ajye_huang@compal.corp-partner.google.com>,
-        Scott Chao <scott_chao@wistron.corp-partner.google.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        Andy Gross <agross@kernel.org>,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH 000/117] media: Convert to platform remove callback
- returning void
-Message-ID: <20230417085403.sbk3k4qlpljbfqld@pengutronix.de>
-References: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
- <20230417060203.le3izz56wt73si6k@pengutronix.de>
- <20230417061928.GD28551@pendragon.ideasonboard.com>
- <20230417073049.2b5b35hpjrjcrlge@pengutronix.de>
- <OS0PR01MB59221153A63F64BBAD3ED20D869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        Mon, 17 Apr 2023 05:02:16 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C12911FFC;
+        Mon, 17 Apr 2023 02:02:10 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.99,203,1677510000"; 
+   d="scan'208";a="159710161"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Apr 2023 18:02:10 +0900
+Received: from localhost.localdomain (unknown [10.226.92.249])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EE596400CEF2;
+        Mon, 17 Apr 2023 18:02:07 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/3] arm64: dts: renesas: rzg2l-smarc: Enable MTU3a counter using DT overlay
+Date:   Mon, 17 Apr 2023 10:01:59 +0100
+Message-Id: <20230417090159.191346-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230417090159.191346-1-biju.das.jz@bp.renesas.com>
+References: <20230417090159.191346-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fbine4cndaaohubi"
-Content-Disposition: inline
-In-Reply-To: <OS0PR01MB59221153A63F64BBAD3ED20D869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Enable mtu3 node using dt overlay and disable scif2 node and delete
+{sd1_mux,sd1_mux_uhs} nodes as the pins are shared with mtu3 external
+clock input pins and Z phase signal(MTIOC1A).
 
---fbine4cndaaohubi
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/Makefile          |  2 +
+ .../boot/dts/renesas/rzg2l-smarc-pmod.dtso    | 43 +++++++++++++++++++
+ 2 files changed, 45 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2l-smarc-pmod.dtso
 
-On Mon, Apr 17, 2023 at 07:57:57AM +0000, Biju Das wrote:
-> Hi Uwe,
-> > > I think the series got applied to the master branch of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git.
-> > > It should thus appear in v6.4.
-> >=20
-> > I guess that linux-stable.git is a copy&paste failure (and it's not the=
-re).
-> > I don't see the series in the master branch of
-> > git://linuxtv.org/media_tree.git either.
-> >=20
-> > .. a bit later ...
-> >=20
-> > ah, it's in git://linuxtv.org/mchehab/media-next.git
-> >=20
-> > I guess I was just to quick and probably the series will be included in
-> > today's next.
->=20
-> I believe patchwork <patchwork@linuxtv.org> will send notification to
-> author and along with people who applied tags for that patch.
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index f130165577a8..57727bcd1334 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -81,8 +81,10 @@ dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043-smarc-pmod.dtbo
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc-cru-csi-ov5645.dtbo
++dtb-$(CONFIG_ARCH_R9A07G044) += rzg2l-smarc-pmod.dtbo
+ 
+ dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc.dtb
++dtb-$(CONFIG_ARCH_R9A07G054) += rzg2l-smarc-pmod.dtbo
+ 
+ dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
+ 
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pmod.dtso b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pmod.dtso
+new file mode 100644
+index 000000000000..a502faf6e1ad
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pmod.dtso
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZ/{G2L,V2L} SMARC EVK PMOD parts
++ *
++ * Copyright (C) 2023 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
++
++&mtu3 {
++	pinctrl-0 = <&mtu3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&pinctrl {
++	mtu3_pins: mtu3 {
++		mtu3-zphase-clk {
++			pinmux = <RZG2L_PORT_PINMUX(19, 0, 3)>; /* MTIOC1A */
++		};
++
++		mtu3-ext-clk-input-pin {
++			pinmux = <RZG2L_PORT_PINMUX(48, 0, 4)>, /* MTCLKA */
++				 <RZG2L_PORT_PINMUX(48, 1, 4)>; /* MTCLKB */
++		};
++	};
++};
++
++&scif2 {
++	status = "disabled";
++};
++
++&sdhi1_pins {
++	/delete-node/ sd1_mux;
++};
++
++&sdhi1_pins_uhs {
++	/delete-node/ sd1_mux_uhs;
++};
+-- 
+2.25.1
 
-Indeed, I got such a notification on Apr 11. But even if I had that on
-my radar when asking and considered such notifications reliable in
-general, I would have asked, as the patches didn't apprear in next up to
-now.
-
-Thanks
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---fbine4cndaaohubi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ9CSoACgkQj4D7WH0S
-/k6ShQgAkiGsAbqnu5CIYl6vVltmySdbzFphOT5lae+k2iaPjP4KBQyey9E309bA
-T8cWAHGmSzTAr3+xiHj0Vl3KS3KltR2ike2TLIupFKTW6gJIpAyseCA8SLtj625z
-DYRY5/9pDFLtNe4MD6tpVn7ZPAzEb/DdC/F12elKbSP+3RLwwRhyo/EtmAbFc6f9
-e/G2EuuAPaBs+wywWC9piaSjYWk57nSelhyJqSoWAJbpZM2hOiGsIeaiI2OI6l9X
-sye5ayrw1sdGUVa70KExUaG9L0d1hFmhkfZz3m7I2ZosIc5Q3k5RCBDj41MxyvTC
-7hFi24KnDnjHVL2gEWrM+oBRJZju9Q==
-=h+pR
------END PGP SIGNATURE-----
-
---fbine4cndaaohubi--
