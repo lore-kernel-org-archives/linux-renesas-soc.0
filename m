@@ -2,71 +2,62 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FCDC77B72
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Apr 2023 08:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D78C77B72
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Apr 2023 08:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbjDQIxM convert rfc822-to-8bit (ORCPT
+        id S230112AbjDQI5P convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Apr 2023 04:53:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57532 "EHLO
+        Mon, 17 Apr 2023 04:57:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230003AbjDQIxL (ORCPT
+        with ESMTP id S230102AbjDQI5O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Apr 2023 04:53:11 -0400
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED394210;
-        Mon, 17 Apr 2023 01:53:10 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id a11so2573187ybm.3;
-        Mon, 17 Apr 2023 01:53:10 -0700 (PDT)
+        Mon, 17 Apr 2023 04:57:14 -0400
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6424EDF;
+        Mon, 17 Apr 2023 01:57:07 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id o11so6006552ybk.11;
+        Mon, 17 Apr 2023 01:57:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681721589; x=1684313589;
+        d=1e100.net; s=20221208; t=1681721826; x=1684313826;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Mu7Hch1DiBF07SUCPix+0KBbOFjQRP+x98Um6bdp30s=;
-        b=PnFNdTtZt0Y1VO7EK9swxDnISYllCaoLyf9HKRMYdIzyUItfOxNBGrkUJn17s6WKBv
-         WalPQxSm0ZoK7kT2HLqPJhXnuMxUDr3/HZ2TOxupnWaWMgIJXPlUMOry5iKoW3+xPzYz
-         SQQjKwqt6mVMPLlVk9Vo68ZWRgK6pVhNquwWLyQSA2JNawL/cWLyeoAR3VlW9ayLrSCd
-         tXVR63aaFW4hv4vN4uNXm7Xirjx9+UTVpc6hqSalQqVnQnJ14WAHX+0U3X8uEjuiGRqO
-         L0+HrjEXk1eDKOz0wHRuR6nsTv2VrVgeG6E7as21nPsVpJyrUUB7F+f0zTkJihYVZtWq
-         Uklg==
-X-Gm-Message-State: AAQBX9fpUbVkVBOxjsJKV7TkmtbBkEizlM2GvDlyUDxKRspUCCPbxNEU
-        BzCajKZhUbixjyrX+ZIa49HWGaHHQij6XA==
-X-Google-Smtp-Source: AKy350ZG8hkUHJnT1YXwItDS1L2vqsB6KJizSd15YMzCphb/9lRvLHT4liN876LbbdcWGCZmqe1Cpg==
-X-Received: by 2002:a25:1b04:0:b0:b8f:4bff:d54d with SMTP id b4-20020a251b04000000b00b8f4bffd54dmr14174999ybb.63.1681721589316;
-        Mon, 17 Apr 2023 01:53:09 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id g8-20020a81ae48000000b005463e45458bsm3000559ywk.123.2023.04.17.01.53.06
+        bh=rtUWIJu6Ns0zOdXgId6MZyD/lN9k8BpY4Fb8foShQOs=;
+        b=Sodx6yV/BnJxGw7H8+G0BTk7whqvpAHu2KkZpYA0LuKYVoI/drhJQt+Du0Q/pwzdH4
+         cSbvoNumG/9zDh460GXWwurZx3JipbtxwaB7+benH/cxlUmqZufTN7SHlH6NUCaeqw05
+         rc18pQkAyC+YDQN0Irp9RRDY+WCunuUcd6tHdVRqld+tmmo3EAgaISdaD8WDuCWK+1kk
+         uXf9KYGm0W/7LPiddFC4uvneExSUK4WPd+nGH7PZZwNRTBiUiJRTNdF6Lc0GuZKMRRiI
+         boAQ0R4zr+eUUP/YFidmC7J88lmcafCIFvGXUi463eyKYGvv+vecsSKQmu01vkXa1oXJ
+         g6VQ==
+X-Gm-Message-State: AAQBX9cUHrWbE04gBTMFmSHyERrlvv1JBtDYix4zVB7LsCAUsiXTtYBk
+        WSjE3ESApQM2rIATdIKY9QDpTnj1MX9ttQ==
+X-Google-Smtp-Source: AKy350Y9IpHajHkecLsIIwjWmHZUGw72waksAEkDIrAwwcshEIkqTWuFlo9GgH1d+Gl+3WNIkcNKBQ==
+X-Received: by 2002:a25:c714:0:b0:b8e:e029:7961 with SMTP id w20-20020a25c714000000b00b8ee0297961mr18025449ybe.34.1681721826173;
+        Mon, 17 Apr 2023 01:57:06 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id b1-20020a25cb01000000b00b92579d3d7csm399450ybg.52.2023.04.17.01.57.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Apr 2023 01:53:08 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id m14so7515743ybk.4;
-        Mon, 17 Apr 2023 01:53:06 -0700 (PDT)
-X-Received: by 2002:a25:68cc:0:b0:a27:3ecc:ffe7 with SMTP id
- d195-20020a2568cc000000b00a273eccffe7mr11775312ybc.3.1681721586452; Mon, 17
- Apr 2023 01:53:06 -0700 (PDT)
+        Mon, 17 Apr 2023 01:57:05 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-54fe82d8bf5so96008127b3.3;
+        Mon, 17 Apr 2023 01:57:05 -0700 (PDT)
+X-Received: by 2002:a81:4407:0:b0:54f:bb6f:3deb with SMTP id
+ r7-20020a814407000000b0054fbb6f3debmr8857925ywa.4.1681721824852; Mon, 17 Apr
+ 2023 01:57:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230412110900.69738-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20230412110900.69738-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20230412110900.69738-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20230412185608.64628-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20230412185608.64628-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20230412185608.64628-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Apr 2023 10:52:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVe6DXpM5zQk-zitNTk17QiStusOTQcjTMVy6HnhXyq1w@mail.gmail.com>
-Message-ID: <CAMuHMdVe6DXpM5zQk-zitNTk17QiStusOTQcjTMVy6HnhXyq1w@mail.gmail.com>
-Subject: Re: [PATCH v8 2/7] riscv: asm: vendorid_list: Add Andes Technology to
- the vendors list
+Date:   Mon, 17 Apr 2023 10:56:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU9qrSaJqNL_PsrvbyrBAEB17yVMmLPon8AbvE3kjbTUQ@mail.gmail.com>
+Message-ID: <CAMuHMdU9qrSaJqNL_PsrvbyrBAEB17yVMmLPon8AbvE3kjbTUQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: rzv2l-smarc: Enable CRU, CSI support
 To:     Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>, Guo Ren <guoren@kernel.org>,
-        Andrew Jones <ajones@ventanamicro.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -75,16 +66,21 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Apr 12, 2023 at 1:09 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+Hi Prabhakar,
+
+Thanks for your patch!
+
+On Wed, Apr 12, 2023 at 8:56 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Add Andes Technology to the vendors list.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Enable CRU, CSI on RZ/V2L SMARC EVK and tie the CSI to the OV5645 sensor
+> using Device Tree overlay. RZ/G2L SMARC EVK and RZ/V2L SMARC EVK have the
+> same connections for connecting the CSI to OV5645 sensor so just reuse
+> the existing r9a07g044l2-smarc-cru-csi-ov5645.dtso and create a symbolic
+> link to this file for RZ/V2L SMARC EVK.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Perhaps it makes more sense to rename r9a07g044l2-smarc-cru-csi-ov5645.dtso
+to rzg2l-smarc-cru-csi-ov5645.dtso instead?
 
 Gr{oetje,eeting}s,
 
