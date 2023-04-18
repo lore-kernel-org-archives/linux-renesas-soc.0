@@ -2,167 +2,204 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1351CC77B76
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Apr 2023 22:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C78FBC77B78
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Apr 2023 00:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229479AbjDQWlx (ORCPT
+        id S230094AbjDRAWQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Apr 2023 18:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34368 "EHLO
+        Mon, 17 Apr 2023 20:22:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbjDQWlw (ORCPT
+        with ESMTP id S230105AbjDRAWN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Apr 2023 18:41:52 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139C04492
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Apr 2023 15:41:51 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poXXX-0002Ej-Um; Tue, 18 Apr 2023 00:41:39 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poXXT-00ByRY-SC; Tue, 18 Apr 2023 00:41:35 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poXXT-00E2bJ-0n; Tue, 18 Apr 2023 00:41:35 +0200
-Date:   Tue, 18 Apr 2023 00:41:34 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Lee Jones <lee@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v15 6/6] pwm: Add Renesas RZ/G2L MTU3a PWM driver
-Message-ID: <20230417224134.splsu7ipupttuila@pengutronix.de>
-References: <20230330111632.169434-1-biju.das.jz@bp.renesas.com>
- <20230330111632.169434-7-biju.das.jz@bp.renesas.com>
- <20230414062641.76no7jz7uluixwdg@pengutronix.de>
- <OS0PR01MB5922824F09E1BC9FB9CECC9586999@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <20230414165540.bfquriyo6crnxj5q@pengutronix.de>
- <OS0PR01MB592260E8E4F583704C2844B0869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        Mon, 17 Apr 2023 20:22:13 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771A32114
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Apr 2023 17:22:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681777330; x=1713313330;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nIxB6ouY5PLjoWq4J9OnbcGOT5nK28jpQ4QDxoNYHmk=;
+  b=ijU7JqvWAPoAs2zH9i9bh0FmO8HeLzrRcGRCGGtfaSUAxcin1RmlWtnd
+   dL8c5iSYEu+DfkrHiwI2A4cOnMqeZ6cr9qYro/PtDOVb78/v3gMrgSJcd
+   1QVEsKgi+hfXW3BS2gvvZNYCZlbXL0mBrJyMknehdMVXEgTNU9lsmCf/i
+   FkkiLUW7e8sPvRm7wee55M2KWLnMzUAM+53IjUph6eh4W8hkVP3C8yM8b
+   6mqK+foBZwJbQY09g9RzIPiVlMs42KswKbIwoRbAqZ6HCFiiI6G9Id6n8
+   mBa3Z9nGVLaoKDQESLSQ0xVTTDrotkMmZ3Da3nfIs/zTryL8wtF7FvmJU
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10683"; a="345035673"
+X-IronPort-AV: E=Sophos;i="5.99,205,1677571200"; 
+   d="scan'208";a="345035673"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2023 17:22:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10683"; a="723435224"
+X-IronPort-AV: E=Sophos;i="5.99,205,1677571200"; 
+   d="scan'208";a="723435224"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 17 Apr 2023 17:22:08 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1poZ6l-000cla-2h;
+        Tue, 18 Apr 2023 00:22:07 +0000
+Date:   Tue, 18 Apr 2023 08:21:46 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 53ed7cc3a28d0a629a2167e35a25cccbdc64ed42
+Message-ID: <643de29a.I9M0rfGezdB68EFL%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="j4wbqnt37pvj2xry"
-Content-Disposition: inline
-In-Reply-To: <OS0PR01MB592260E8E4F583704C2844B0869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 53ed7cc3a28d0a629a2167e35a25cccbdc64ed42  Merge tag 'v6.3-rc7' into renesas-devel
 
---j4wbqnt37pvj2xry
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+elapsed time: 875m
 
-Hello Biju,
+configs tested: 128
+configs skipped: 8
 
-On Mon, Apr 17, 2023 at 11:06:59AM +0000, Biju Das wrote:
-> Thanks for the feedback.
->=20
-> > Subject: Re: [PATCH v15 6/6] pwm: Add Renesas RZ/G2L MTU3a PWM driver
-> >=20
-> > Hello,
-> >=20
-> > On Fri, Apr 14, 2023 at 09:53:09AM +0000, Biju Das wrote:
-> > > > On Thu, Mar 30, 2023 at 12:16:32PM +0100, Biju Das wrote:
-> > > > > +	val =3D RZ_MTU3_TCR_CKEG_RISING | prescale;
-> > > > > +	if (priv->map->channel =3D=3D pwm->hwpwm) {
-> > > > > +		rz_mtu3_8bit_ch_write(priv->mtu, RZ_MTU3_TCR,
-> > > > > +				      RZ_MTU3_TCR_CCLR_TGRA | val);
-> > > >
-> > > > If the sibling PWM on the same channel is on, you're overwriting its
-> > > > prescale value here, are you not?
-> > >
-> > > Yes, you are correct. Will cache prescale and add the below code in
-> > > rz_mtu3_pwm_config(). Is it ok?
-> > >
-> > > +        * Prescalar is shared by multiple channels, so prescale can
-> > > +        * NOT be modified when there are multiple channels in use wi=
-th
-> > > +        * different settings.
-> > > +        */
-> > > +       if (prescale !=3D rz_mtu3_pwm->prescale[ch] && rz_mtu3_pwm-
-> > >user_count[ch] > 1)
-> > > +               return -EBUSY;
-> >=20
-> > If the other PWM is off, you can (and should) change the prescale value.
-> > Also if the current prescale value is less than the one you want to set=
-, you
-> > can handle that.
-> >=20
->=20
-> You mean like below??
->=20
-> static int rz_mtu3_pwm_config(struct pwm_chip *chip, struct pwm_device *p=
-wm,
-> 			      const struct pwm_state *state)
-> {
-> 	struct rz_mtu3_pwm_chip *rz_mtu3_pwm =3D to_rz_mtu3_pwm_chip(chip);
-> 	struct rz_mtu3_pwm_channel *priv;
-> 	u64 period_cycles;
-> 	u64 duty_cycles;
-> 	u8 prescale;
-> 	u16 pv, dc;
-> 	u8 val;
-> 	u32 ch;
->=20
-> 	priv =3D rz_mtu3_get_channel(rz_mtu3_pwm, pwm->hwpwm);
-> 	ch =3D priv - rz_mtu3_pwm->channel_data;
->=20
-> 	period_cycles =3D mul_u64_u32_div(state->period, rz_mtu3_pwm->rate,
-> 					NSEC_PER_SEC);
-> 	prescale =3D rz_mtu3_pwm_calculate_prescale(rz_mtu3_pwm, period_cycles);
->=20
-> 	/*
-> 	 * Prescalar is shared by multiple channels, so prescale can
-> 	 * NOT be modified when there are multiple channels in use with
-> 	 * different settings. Modify prescalar if other PWM is off or current
-> 	 * prescale value is less than the one we want to set.
-> 	 */
-> 	if (rz_mtu3_pwm->enable_count[ch] > 1 &&
-> 	    rz_mtu3_pwm->prescale[ch] > prescale)
-> 		return -EBUSY;
->=20
-> 	pv =3D rz_mtu3_pwm_calculate_pv_or_dc(period_cycles, prescale);
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Here it starts to get wrong. If rz_mtu3_pwm->enable_count[ch] > 1 you
-have to use rz_mtu3_pwm->prescale[ch] instead of prescale.
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r021-20230409   gcc  
+alpha                randconfig-r021-20230417   gcc  
+alpha                randconfig-r025-20230410   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r011-20230416   gcc  
+arc                  randconfig-r024-20230409   gcc  
+arc                  randconfig-r025-20230417   gcc  
+arc                  randconfig-r043-20230416   gcc  
+arc                  randconfig-r043-20230417   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm          buildonly-randconfig-r005-20230416   clang
+arm                                 defconfig   gcc  
+arm                  randconfig-r012-20230416   clang
+arm                  randconfig-r026-20230409   clang
+arm                  randconfig-r026-20230415   gcc  
+arm                  randconfig-r046-20230416   clang
+arm                  randconfig-r046-20230417   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r016-20230416   gcc  
+arm64                randconfig-r024-20230415   clang
+arm64                randconfig-r036-20230416   clang
+csky                                defconfig   gcc  
+csky                 randconfig-r024-20230410   gcc  
+hexagon              randconfig-r015-20230416   clang
+hexagon              randconfig-r023-20230415   clang
+hexagon              randconfig-r035-20230416   clang
+hexagon              randconfig-r041-20230416   clang
+hexagon              randconfig-r041-20230417   clang
+hexagon              randconfig-r045-20230416   clang
+hexagon              randconfig-r045-20230417   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230417   gcc  
+i386                 randconfig-a002-20230417   gcc  
+i386                 randconfig-a003-20230417   gcc  
+i386                 randconfig-a004-20230417   gcc  
+i386                 randconfig-a005-20230417   gcc  
+i386                 randconfig-a006-20230417   gcc  
+i386                 randconfig-a011-20230417   clang
+i386                 randconfig-a012-20230417   clang
+i386                 randconfig-a013-20230417   clang
+i386                 randconfig-a014-20230417   clang
+i386                 randconfig-a015-20230417   clang
+i386                 randconfig-a016-20230417   clang
+i386                 randconfig-r026-20230417   clang
+ia64                             allmodconfig   gcc  
+ia64         buildonly-randconfig-r001-20230417   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r013-20230417   gcc  
+ia64                 randconfig-r023-20230409   gcc  
+ia64                 randconfig-r023-20230410   gcc  
+ia64                 randconfig-r034-20230416   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+m68k                             allmodconfig   gcc  
+m68k         buildonly-randconfig-r006-20230416   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r021-20230410   gcc  
+m68k                 randconfig-r022-20230409   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                 randconfig-r025-20230409   clang
+mips                 randconfig-r026-20230410   clang
+nios2        buildonly-randconfig-r001-20230416   gcc  
+nios2                               defconfig   gcc  
+openrisc             randconfig-r015-20230417   gcc  
+parisc       buildonly-randconfig-r003-20230416   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc      buildonly-randconfig-r003-20230417   clang
+powerpc      buildonly-randconfig-r004-20230417   clang
+powerpc              randconfig-r022-20230410   gcc  
+powerpc              randconfig-r023-20230417   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r014-20230416   gcc  
+riscv                randconfig-r024-20230417   clang
+riscv                randconfig-r032-20230416   clang
+riscv                randconfig-r042-20230416   gcc  
+riscv                randconfig-r042-20230417   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390         buildonly-randconfig-r004-20230416   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r022-20230415   clang
+s390                 randconfig-r044-20230416   gcc  
+s390                 randconfig-r044-20230417   clang
+sh                               allmodconfig   gcc  
+sh           buildonly-randconfig-r002-20230416   gcc  
+sh           buildonly-randconfig-r005-20230417   gcc  
+sh                   randconfig-r012-20230417   gcc  
+sh                   randconfig-r013-20230416   gcc  
+sh                   randconfig-r014-20230417   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r011-20230417   gcc  
+sparc                randconfig-r016-20230417   gcc  
+sparc                randconfig-r021-20230415   gcc  
+sparc64      buildonly-randconfig-r002-20230417   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230417   gcc  
+x86_64               randconfig-a002-20230417   gcc  
+x86_64               randconfig-a003-20230417   gcc  
+x86_64               randconfig-a004-20230417   gcc  
+x86_64               randconfig-a005-20230417   gcc  
+x86_64               randconfig-a006-20230417   gcc  
+x86_64               randconfig-a011-20230417   clang
+x86_64               randconfig-a012-20230417   clang
+x86_64               randconfig-a013-20230417   clang
+x86_64               randconfig-a014-20230417   clang
+x86_64               randconfig-a015-20230417   clang
+x86_64               randconfig-a016-20230417   clang
+x86_64                               rhel-8.3   gcc  
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---j4wbqnt37pvj2xry
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ9yx4ACgkQj4D7WH0S
-/k4XDwf/S715S5brYmhTzHIMGg7x8lxKADJCboq4ecRmTf4I6Up7A/Zd9311UafS
-EZ0+FUMJuHSP1VeGpyS2vzy9vLDypMOrdBlkm0gBZtn+DmDFKWxcUu6Hmd0uXWqC
-Ll1RnczZOtpkJfasVI2l84hv7ZwMfboKKY+WCRkqTkY05cJnaX0mrNRz3U6SoMdX
-HDjzv0b0LaVBJVCrTWv4Ry6125gtGNWB3DENwap0jc9OqQC4z95ZX7riOVcXIhdU
-/JvBUGPaUkT9bBTjkb/CXqOIPlXa/QNLHdv95rsN2DtlU/VH5JCGggSi++yQQgbo
-Yr7fTaq+BziRDEGoaZMirwtTKtjBMA==
-=wSEI
------END PGP SIGNATURE-----
-
---j4wbqnt37pvj2xry--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
