@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52937C77B76
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Apr 2023 07:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4804AC77B75
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Apr 2023 07:51:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230244AbjDRHp7 (ORCPT
+        id S230526AbjDRHvx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Apr 2023 03:45:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53454 "EHLO
+        Tue, 18 Apr 2023 03:51:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230325AbjDRHp7 (ORCPT
+        with ESMTP id S230244AbjDRHvu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Apr 2023 03:45:59 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388364C1C
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Apr 2023 00:45:56 -0700 (PDT)
+        Tue, 18 Apr 2023 03:51:50 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA11B525E
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Apr 2023 00:51:07 -0700 (PDT)
 Received: from pendragon.ideasonboard.com (133-32-181-51.west.xps.vectant.ne.jp [133.32.181.51])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC6D7802;
-        Tue, 18 Apr 2023 09:45:47 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 098A1802;
+        Tue, 18 Apr 2023 09:49:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1681803948;
-        bh=WXMqNLcsMzBdrCjOVU5w+1j2mj02wBkgJYuHzWk/1D4=;
+        s=mail; t=1681804184;
+        bh=v2u4LNXCU7lB0ofRNe6LSiK35oTUg0RsosfcxK/5lZA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fzNEKPtbSmPORakCx1oG+/uQWTelnSYg29fmE1KU+0dGA+AXDDnieD3kn+f3xLFJf
-         MSoilFG1a3qC6p9dvTB2bvYoCmSh1Bx1g+4FlC0ArX7nvJyUfb4yPy62IYl4q7of7L
-         rMljMSO+dEJBgDY6Joa3aPlOiY9/6rQyoAqRqUzM=
-Date:   Tue, 18 Apr 2023 10:46:05 +0300
+        b=s27+3FyVt6okWcHG/xM/OMWJe8oT32gul+Z3jl7/1ehLniHbdXQ2b+BM8spJK5HtQ
+         Aa2ezaJTkGIZQSsu/uLaw/WalqmYW3l74uuZrZOgfsxsNvbFKVHdB5Aidg/AB14AiI
+         abVSr4DmpBzArXjQ3nl3u/6QmyraRyu9dI95h21I=
+Date:   Tue, 18 Apr 2023 10:50:00 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -36,69 +36,61 @@ Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Daniel Vetter <daniel@ffwll.ch>,
         linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 1/5] drm: shmobile: Use %p4cc to print fourcc codes
-Message-ID: <20230418074605.GE4703@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v2 0/5] drm: shmobile: Fixes and enhancements
+Message-ID: <20230418075000.GF4703@pendragon.ideasonboard.com>
 References: <cover.1681734821.git.geert+renesas@glider.be>
- <71cbb983e0d6b153f5c4e0664b795421b34b10fb.1681734821.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <71cbb983e0d6b153f5c4e0664b795421b34b10fb.1681734821.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1681734821.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Geert,
 
-Thank you for the patch.
-
-On Mon, Apr 17, 2023 at 03:40:21PM +0200, Geert Uytterhoeven wrote:
-> Replace the printing of hexadecimal fourcc format codes by
-> pretty-printed format names, using the "%p4cc" format specifier.
+On Mon, Apr 17, 2023 at 03:40:20PM +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> ---
-> v2:
->   - Add Reviewed-by.
-> ---
->  drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 4 ++--
->  drivers/gpu/drm/shmobile/shmob_drm_kms.c  | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
+> Currently, there are two drivers for the LCD controller on Renesas
+> SuperH-based and ARM-based SH-Mobile and R-Mobile SoCs:
+>   1. sh_mobile_lcdcfb, using the fbdev framework,
+>   2. shmob_drm, using the DRM framework.
+> However, only the former driver can be used, as all platform support
+> integrates the former.  None of these drivers support DT-based systems.
 > 
-> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-> index d354ab3077cecf94..713a7612244c647a 100644
-> --- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-> +++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-> @@ -355,8 +355,8 @@ static int shmob_drm_crtc_mode_set(struct drm_crtc *crtc,
->  
->  	format = shmob_drm_format_info(crtc->primary->fb->format->format);
->  	if (format == NULL) {
-> -		dev_dbg(sdev->dev, "mode_set: unsupported format %08x\n",
-> -			crtc->primary->fb->format->format);
-> +		dev_dbg(sdev->dev, "mode_set: unsupported format %p4cc\n",
-> +			&crtc->primary->fb->format->format);
->  		return -EINVAL;
->  	}
->  
-> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-> index 60a2c8d8a0d947d2..3c5fe3bc183c7c13 100644
-> --- a/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-> +++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-> @@ -96,8 +96,8 @@ shmob_drm_fb_create(struct drm_device *dev, struct drm_file *file_priv,
->  
->  	format = shmob_drm_format_info(mode_cmd->pixel_format);
->  	if (format == NULL) {
-> -		dev_dbg(dev->dev, "unsupported pixel format %08x\n",
-> -			mode_cmd->pixel_format);
-> +		dev_dbg(dev->dev, "unsupported pixel format %p4cc\n",
-> +			&mode_cmd->pixel_format);
->  		return ERR_PTR(-EINVAL);
->  	}
->  
+> This patch series is a first step to enable the SH-Mobile DRM driver for
+> Renesas ARM-based SH-Mobile and R-Mobile SoCs.  The next step planned is
+> to add DT support.
+> 
+> Changes compared to v1:
+>   - Add Reviewed-by,
+>   - Drop dependency on ARM.
+> 
+> This has been tested on the R-Mobile A1-based Atmark Techno
+> Armadillo-800-EVA development board, using a temporary
+> platform-enablement patch[1].
+> 
+> Thanks for applying to drm-misc!
+
+Would you like to request drm-misc committer rights ? :-)
+
+> [1] https://lore.kernel.org/r/c03d4edbd650836bf6a96504df82338ec6d800ff.1680272980.git.geert+renesas@glider.be
+> 
+> 
+> Geert Uytterhoeven (5):
+>   drm: shmobile: Use %p4cc to print fourcc codes
+>   drm: shmobile: Add support for DRM_FORMAT_XRGB8888
+>   drm: shmobile: Switch to drm_crtc_init_with_planes()
+>   drm: shmobile: Add missing call to drm_fbdev_generic_setup()
+>   drm: shmobile: Make DRM_SHMOBILE visible on Renesas SoC platforms
+> 
+>  drivers/gpu/drm/shmobile/Kconfig           |  4 +--
+>  drivers/gpu/drm/shmobile/shmob_drm_crtc.c  | 35 +++++++++++++++++++---
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c   |  3 ++
+>  drivers/gpu/drm/shmobile/shmob_drm_kms.c   |  9 ++++--
+>  drivers/gpu/drm/shmobile/shmob_drm_plane.c |  5 ++++
+>  5 files changed, 48 insertions(+), 8 deletions(-)
 
 -- 
 Regards,
