@@ -2,49 +2,50 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFEEC7EE24
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  7 May 2023 13:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38213C77B75
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  7 May 2023 13:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231261AbjEGNjX (ORCPT
+        id S229877AbjEGNmG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 7 May 2023 09:39:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60634 "EHLO
+        Sun, 7 May 2023 09:42:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbjEGNjW (ORCPT
+        with ESMTP id S229628AbjEGNmF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 May 2023 09:39:22 -0400
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050:0:465::201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B2C1635F;
-        Sun,  7 May 2023 06:39:18 -0700 (PDT)
+        Sun, 7 May 2023 09:42:05 -0400
+X-Greylist: delayed 2427 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 07 May 2023 06:42:03 PDT
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050:0:465::202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6287B30DB
+        for <linux-renesas-soc@vger.kernel.org>; Sun,  7 May 2023 06:42:03 -0700 (PDT)
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4QDlrh43Zkz9shP;
-        Sun,  7 May 2023 15:39:16 +0200 (CEST)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4QDlvs0ZMmz9scl;
+        Sun,  7 May 2023 15:42:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1683466756;
+        t=1683466921;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
-        bh=4fgQ2AA/ZP9Q31JC0thF0rs1ha1creCyXIytqfAePqI=;
-        b=I6CRR4WJAV4eLopU79RVgaciorlZZBFTitS7Gq96uHlp6WtKeX5e1uIHhkVH+f4IBL+r9Y
-        L5xfxGPCEMy/XezGJ7xj1vFLSm0mvLrJrmfuCg4ZUIWjKxflfgjGbmiCbAeeP6QHGtAgw+
-        STpYnEaTUkD0RyyXQvNsDuq43Q26gpry17oVSUP5rjgPLYIsFnNS35/oYitplaOeCZcOZr
-        D86dR0g0HjAUzf0ouLRH4sVozyjZjVmUg4rdGEqDJd5MjjZNdqP7mYVRx1TDAt84FqiHAC
-        /I84Gaig1maGZULrcGdDpzX51E6js4kjGM7LqI3HMI9goy9PFCxfPbIZa0Bepw==
+        bh=D3uLEmivijwYVzqw/8zlTNspBajMlCggcmC9qlJ+tl8=;
+        b=gVkeuIw5Srgx/KuyF+nt1AWI3/iC2M0gSZ+lkOU9/hC+SRWhFhJZBprYtRFeL/RUGtGdUj
+        fFWHs7PMwo4t3pmmOu5ctNx0RA84DVM4RwOHgLGzFHaeYAjwrfPFKHJu5StuPEt297jCo1
+        cPbUcGVk05GqmABGyJJAtUMSsZGmZDDDrgfnAVTrCseK1aiz4Sv/7soegWaNOYOZV0006c
+        F+S3kvN51CylfetPQcRGJJBvp1+sKH2eyGJoCXfBqVGJBIHlc2mI+J5ScUq56BDAJFdfw2
+        aArG9wJ2qNi+pKuSZGYVoWFQ9jEenHmXawJyr5uzPQudHXYPNwenfzH9LhVJhw==
 From:   Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1683466754;
+        t=1683466919;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
-        bh=4fgQ2AA/ZP9Q31JC0thF0rs1ha1creCyXIytqfAePqI=;
-        b=OjKWptYTBwxm9l71hoPz77JGVVOFOOS2aLwGh0OR2mRPeIEenK0qmSxHi4DMB8OzlXgTfX
-        FLU8C67jfS86eLLzGTaHNDrkyorJmYTROVU7ZZvIVRpnq+wdkQ9fAsdBaHbUrkA0xhMP/N
-        ayS5ujffUUe58Vfq6il5O9rSS7bG1ue4Mv5El5pg3OPoTMInVVDYD3e4+kG6ai9uHvVvb8
-        iKPTy3XNT6aiGKEwIX6r0lomm/xRI25mR0CAEam2SBSHv8CK1HmfQnIMzTCmCP+nGlhD7r
-        tjSgAaDC4sorSTr0CGQeVjHxnjB2z+6K2lArm6NkqzD+cfVLSwnHS6v9LpDI4Q==
+        bh=D3uLEmivijwYVzqw/8zlTNspBajMlCggcmC9qlJ+tl8=;
+        b=pn+q6Y45brWzGo2WbCpF602cqNGp8DjmRyy5tUvB4RERb7XRJo/QIA5r91YQo9rTsYyuBa
+        OJQ0I3uKjOCS2iov3djB6BTImdohZBb16cR/6guu+ZQrmqrZY3q0r8mo6KX+nDfCbEgLc3
+        pX5/pUOBW4HPQlCVXKzf0nIWPurHjqCgFxgmLjTyq9dHEW3PbsPoycwGqC9ImgXgfa7wPf
+        0k5rzuA6+g7AbbvT2ecq5JfIrSC1YSKLSab7snRFS4cGusXZdg6q7Qn77HG0JlpHQBOTUk
+        9ydsYm19MsrPPy+vCZVo5q6vdzSmIAcvWY+WfdzRJslMbAz2RRj3BQQwXJafyw==
 To:     linux-clk@vger.kernel.org
 Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
         Alex Helms <alexander.helms.jy@renesas.com>,
@@ -56,27 +57,21 @@ Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Stephen Boyd <sboyd@kernel.org>, Tom Rix <trix@redhat.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] clk: vc5: Fix .driver_data content in i2c_device_id
-Date:   Sun,  7 May 2023 15:39:04 +0200
-Message-Id: <20230507133906.15061-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 1/2] clk: vc5: Use device_get_match_data() instead of of_device_get_match_data()
+Date:   Sun,  7 May 2023 15:41:47 +0200
+Message-Id: <20230507134148.16530-1-marek.vasut+renesas@mailbox.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 8ad0a7f78ccef191bd9
-X-MBO-RS-META: emtkqf589wnhogos4d39cky6th4ssjrj
-X-Rspamd-Queue-Id: 4QDlrh43Zkz9shP
+X-MBO-RS-ID: 6f01736487f43392e19
+X-MBO-RS-META: pjxby95jjgg8o8q334dyi5ikd41akd68
+X-Rspamd-Queue-Id: 4QDlvs0ZMmz9scl
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The .driver_data content in i2c_device_id table must match the
-.data content in of_device_id table, else device_get_match_data()
-would return bogus value on i2c_device_id match. Align the two
-tables.
+Use device_get_match_data() which, unlike of_device_get_match_data(),
+is compatible with other firmware interfaces than just OF.
 
-The i2c_device_id table is now converted from of_device_id using
-'s@.compatible = "idt,\([^"]\+"\), .data = \(.*\)@"\1, .driver_data = (kernel_ulong_t)\2@'
-
-Fixes: 9adddb01ce5f ("clk: vc5: Add structure to describe particular chip features")
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
 Cc: Alex Helms <alexander.helms.jy@renesas.com>
@@ -91,36 +86,22 @@ Cc: Tom Rix <trix@redhat.com>
 Cc: linux-clk@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/clk/clk-versaclock5.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index fa71a57875ce..5452471b7ba5 100644
+index 5452471b7ba5..7d91d5e862a3 100644
 --- a/drivers/clk/clk-versaclock5.c
 +++ b/drivers/clk/clk-versaclock5.c
-@@ -1271,14 +1271,14 @@ static const struct vc5_chip_info idt_5p49v6975_info = {
- };
+@@ -953,7 +953,7 @@ static int vc5_probe(struct i2c_client *client)
  
- static const struct i2c_device_id vc5_id[] = {
--	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
--	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
--	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
--	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
--	{ "5p49v60", .driver_data = IDT_VC6_5P49V60 },
--	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
--	{ "5p49v6965", .driver_data = IDT_VC6_5P49V6965 },
--	{ "5p49v6975", .driver_data = IDT_VC6_5P49V6975 },
-+	{ "5p49v5923", .driver_data = (kernel_ulong_t)&idt_5p49v5923_info },
-+	{ "5p49v5925", .driver_data = (kernel_ulong_t)&idt_5p49v5925_info },
-+	{ "5p49v5933", .driver_data = (kernel_ulong_t)&idt_5p49v5933_info },
-+	{ "5p49v5935", .driver_data = (kernel_ulong_t)&idt_5p49v5935_info },
-+	{ "5p49v60", .driver_data = (kernel_ulong_t)&idt_5p49v60_info },
-+	{ "5p49v6901", .driver_data = (kernel_ulong_t)&idt_5p49v6901_info },
-+	{ "5p49v6965", .driver_data = (kernel_ulong_t)&idt_5p49v6965_info },
-+	{ "5p49v6975", .driver_data = (kernel_ulong_t)&idt_5p49v6975_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, vc5_id);
+ 	i2c_set_clientdata(client, vc5);
+ 	vc5->client = client;
+-	vc5->chip_info = of_device_get_match_data(&client->dev);
++	vc5->chip_info = device_get_match_data(&client->dev);
+ 
+ 	vc5->pin_xin = devm_clk_get(&client->dev, "xin");
+ 	if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
 -- 
 2.39.2
 
