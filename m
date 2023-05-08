@@ -2,149 +2,112 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E010C77B7D
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  7 May 2023 17:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D8DC77B75
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 May 2023 02:40:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbjEGRlu (ORCPT
+        id S230433AbjEHCkr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 7 May 2023 13:41:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33398 "EHLO
+        Sun, 7 May 2023 22:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjEGRlt (ORCPT
+        with ESMTP id S229577AbjEHCkq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 May 2023 13:41:49 -0400
-X-Greylist: delayed 621 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 07 May 2023 10:41:48 PDT
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 635A0469D;
-        Sun,  7 May 2023 10:41:48 -0700 (PDT)
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-        id 5B3D6409FE; Sun,  7 May 2023 17:36:26 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 5B3D6409FE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-        s=odk20180602; t=1683473786;
-        bh=gTrugC1Tfe8NntAJ4r/hKWa/vAR/hMTXBXmU9T05C4w=;
+        Sun, 7 May 2023 22:40:46 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 160783A87
+        for <linux-renesas-soc@vger.kernel.org>; Sun,  7 May 2023 19:40:44 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (softbank126090219015.bbtec.net [126.90.219.15])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 811DB814;
+        Mon,  8 May 2023 04:40:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1683513636;
+        bh=8cljPFuI1JkrTqDhhztblXvmvJz+dW8VJylJZ3dVGVI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m9+uu4TZA/xeEtZnFi4lOBhXVwirUPgR4DGnMJ+ylLqYepWDgPBdK/oCd81gT2fWN
-         DZJCAUrssHPHktGYgMpxoqYQLVJtPyClvtTxkeKp3A+z3gjWtRybDh3rs0DMH7Dsqx
-         quPX4aQAiM3dAClAEnZ5jahnRYRhpuWKGeF2+Lko=
-Date:   Sun, 7 May 2023 17:36:25 +0200
-From:   Wim Van Sebroeck <wim@linux-watchdog.org>
-To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH 1/3] watchdog: rzg2l_wdt: Fix reboot for RZ/V2M
-Message-ID: <20230507153625.GA3135@www.linux-watchdog.org>
-References: <20221103223956.50575-1-fabrizio.castro.jz@renesas.com>
- <20221103223956.50575-2-fabrizio.castro.jz@renesas.com>
- <20221115132811.GA4189373@roeck-us.net>
- <TYWPR01MB87753203F46FA9C744FEF7E6C2069@TYWPR01MB8775.jpnprd01.prod.outlook.com>
+        b=FEIWyKC91QEdrKH5i9nLRuNZK8bOtyhtSwEqTjIcAv7BHAWSev98BapA7ZMztsQz5
+         8oyUFjVYGdnRQ0COLH9SW+WejO/tJ+xVRkMGwwB/ua3EdE46NsGSdVUPdIazMOjT2q
+         lzDNzoZ61P/6K3McrWm/w5JtxpdnLDg0vIoiK1uM=
+Date:   Mon, 8 May 2023 05:40:54 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 39/53] drm/shmobile: Convert to platform remove callback
+ returning void
+Message-ID: <20230508024054.GF23514@pendragon.ideasonboard.com>
+References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
+ <20230507162616.1368908-40-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <TYWPR01MB87753203F46FA9C744FEF7E6C2069@TYWPR01MB8775.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230507162616.1368908-40-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Fabrizio,
+Hi Uwe,
 
-Based on below e-mail I excluded this patch from the merge window.
-I saw that Guenter still has it in his branch.
-So can we have an update on this please?
+Thank you for the patch.
 
-Thanks in advance,
-Wim.
+On Sun, May 07, 2023 at 06:26:02PM +0200, Uwe Kleine-König wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is (mostly) ignored
+> and this typically results in resource leaks. To improve here there is a
+> quest to make the remove callback return void. In the first step of this
+> quest all drivers are converted to .remove_new() which already returns
+> void.
+> 
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-> Hi Geert and Guenter,
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> Thank you for your reviews!
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> index faacfee24763..fa32115320ca 100644
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> +++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> @@ -171,7 +171,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(shmob_drm_pm_ops,
+>   * Platform driver
+>   */
+>  
+> -static int shmob_drm_remove(struct platform_device *pdev)
+> +static void shmob_drm_remove(struct platform_device *pdev)
+>  {
+>  	struct shmob_drm_device *sdev = platform_get_drvdata(pdev);
+>  	struct drm_device *ddev = sdev->ddev;
+> @@ -180,8 +180,6 @@ static int shmob_drm_remove(struct platform_device *pdev)
+>  	drm_kms_helper_poll_fini(ddev);
+>  	free_irq(sdev->irq, ddev);
+>  	drm_dev_put(ddev);
+> -
+> -	return 0;
+>  }
+>  
+>  static int shmob_drm_probe(struct platform_device *pdev)
+> @@ -285,7 +283,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
+>  
+>  static struct platform_driver shmob_drm_platform_driver = {
+>  	.probe		= shmob_drm_probe,
+> -	.remove		= shmob_drm_remove,
+> +	.remove_new	= shmob_drm_remove,
+>  	.driver		= {
+>  		.name	= "shmob-drm",
+>  		.pm	= pm_sleep_ptr(&shmob_drm_pm_ops),
+> -- 
+> 2.39.2
 > 
-> As it turns out, the rzg2l_wdt driver has some reset related issues
-> (currently not addressed by the driver) for the RZ/V2M and RZ/Five
-> SoCs. More specifically to this patch, there is a better way to fix
-> the restart callback by addressing the way the reset is handled
-> for the watchdog IP.
-> 
-> I am dropping this patch, and I'll send out a series to address
-> the above concerns (which will tackle the issues with the restart
-> callback in a better way).
-> 
-> 
-> Thanks,
-> Fab
-> 
-> 
-> > From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
-> > Sent: 15 November 2022 13:28
-> > Subject: Re: [PATCH 1/3] watchdog: rzg2l_wdt: Fix reboot for RZ/V2M
-> > 
-> > On Thu, Nov 03, 2022 at 10:39:54PM +0000, Fabrizio Castro wrote:
-> > > The setting for the RZ/V2M watchdog cannot be changed once
-> > > the watchdog has been enabled, unless the IP gets reset.
-> > > The current implementation of the restart callback assumes
-> > > that the watchdog is not enabled, but that's not always the
-> > > case, and it leads to longer than necessary reboot times if
-> > > the watchdog is already running.
-> > >
-> > > Always reset the RZ/V2M watchdog first, so that we can always
-> > > restart quickly.
-> > >
-> > > Fixes: ec122fd94eeb ("watchdog: rzg2l_wdt: Add rzv2m support")
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > 
-> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> > 
-> > > ---
-> > >  drivers/watchdog/rzg2l_wdt.c | 11 ++++++++---
-> > >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-> > > index 974a4194a8fd..00438ceed17a 100644
-> > > --- a/drivers/watchdog/rzg2l_wdt.c
-> > > +++ b/drivers/watchdog/rzg2l_wdt.c
-> > > @@ -145,10 +145,10 @@ static int rzg2l_wdt_restart(struct
-> > watchdog_device *wdev,
-> > >  {
-> > >  	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
-> > >
-> > > -	clk_prepare_enable(priv->pclk);
-> > > -	clk_prepare_enable(priv->osc_clk);
-> > > -
-> > >  	if (priv->devtype == WDT_RZG2L) {
-> > > +		clk_prepare_enable(priv->pclk);
-> > > +		clk_prepare_enable(priv->osc_clk);
-> > > +
-> > >  		/* Generate Reset (WDTRSTB) Signal on parity error */
-> > >  		rzg2l_wdt_write(priv, 0, PECR);
-> > >
-> > > @@ -157,6 +157,11 @@ static int rzg2l_wdt_restart(struct watchdog_device
-> > *wdev,
-> > >  	} else {
-> > >  		/* RZ/V2M doesn't have parity error registers */
-> > >
-> > > +		reset_control_reset(priv->rstc);
-> > > +
-> > > +		clk_prepare_enable(priv->pclk);
-> > > +		clk_prepare_enable(priv->osc_clk);
-> > > +
-> > >  		wdev->timeout = 0;
-> > >
-> > >  		/* Initialize time out */
-> > > --
-> > > 2.34.1
-> > >
+
+-- 
+Regards,
+
+Laurent Pinchart
