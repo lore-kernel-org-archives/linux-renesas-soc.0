@@ -2,93 +2,86 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C031C77B75
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 May 2023 10:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A78C77B75
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 May 2023 10:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234440AbjEHKTm (ORCPT
+        id S235131AbjEHKqp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 May 2023 06:19:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49390 "EHLO
+        Mon, 8 May 2023 06:46:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234452AbjEHKTd (ORCPT
+        with ESMTP id S235052AbjEHKq2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 May 2023 06:19:33 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE8031BCB
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  8 May 2023 03:19:29 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-966287b0f72so319417666b.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 May 2023 03:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683541168; x=1686133168;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XXVIo20j+lxbEAUbF/aqLYCf9/CCUXNL6LmsVI4oGXA=;
-        b=CUEf6mjzYiXbAY+no9+O7pfj5BoXLB5/XoIOlzdac4sTZOto2CcOa+Juuk1qkXbcfr
-         XvS1Z9MPte6IsWz0bRxiVAynTQw2YOHfg00z4KH/cKTCSACBGQQ5vitjiv5ol0XC2eVm
-         AZ6Al3L6GySJFVToHYsOvdNsPSPpMldneAIuk1oDrZjqKNh3e0Mc7dPLU0q1LAz16rHx
-         ODA4L2atYSV8D2hRHnkLMe4XK2Ex+zoWG0TaPwxrx6PAsad5bA4h14/26wTCQ8j0MINo
-         tCshd5W3zGisqXLcC0I0GKbe4MDzZBJhbhWAFYsnJiWNwHx+PGvN/QfTbEupS1z0q6KT
-         hFgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683541168; x=1686133168;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XXVIo20j+lxbEAUbF/aqLYCf9/CCUXNL6LmsVI4oGXA=;
-        b=g2BRpM+0HMm5mnNK+EFPrIUkY/PLA5LsoN+TCdREow1oxVPL6Tnf015NwusuOmzlbE
-         Vp56Keef6kwEBeXL1Lh1DfL8lrohUTzK+J2YkXbwfFX9qZG9jHy0m4CUNE+QK7tfz/j3
-         1Mjvdtpu4FQ9slf19fYpQVS84sAIHNwntogxm7Ve/PivhF67FoO9f5RGFBn3MJcCEhvR
-         BVq8S7j8fIreRPU2FkZY1AGzSgYSZL1yFdK+a/CVM9DLMI5ENnYQDIYl9N+dDgwf1nAd
-         nytO+Sh/5Ao5wOKcSguk47VgCnTS2KyOIAbDXKadHG+QN83RybxnLFPNxEZKWLUPXrDW
-         CpmQ==
-X-Gm-Message-State: AC+VfDwF1BdUmmLJzLs6GgZrSSbV8i6ql6HtxYnfJ9qN185lN4x5o1C7
-        Lcj+LqNtb2cFlfMVEiX3iMQ3dTPl4QSb1Bg/R5SuIQ==
-X-Google-Smtp-Source: ACHHUZ7fVZLV672PG4TDFHFLrEjXgnqezh3F0cxSp0H/nDO8hrLLuB6tQP4oSYlcx/XoTVOPLI1D8A==
-X-Received: by 2002:a17:906:eeca:b0:965:d17b:292 with SMTP id wu10-20020a170906eeca00b00965d17b0292mr7471998ejb.60.1683541167994;
-        Mon, 08 May 2023 03:19:27 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:50e0:ebdf:b755:b300])
-        by smtp.gmail.com with ESMTPSA id tl23-20020a170907c31700b0094e597f0e4dsm4732513ejc.121.2023.05.08.03.19.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 May 2023 03:19:27 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Cong Dang <cong.dang.xn@renesas.com>,
-        Hai Pham <hai.pham.ud@renesas.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] memory: renesas-rpc-if: Fix PHYCNT.STRTIM setting
-Date:   Mon,  8 May 2023 12:19:25 +0200
-Message-Id: <168354115955.104151.7636759306578579883.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230419130234.44321-1-wsa+renesas@sang-engineering.com>
-References: <20230419130234.44321-1-wsa+renesas@sang-engineering.com>
+        Mon, 8 May 2023 06:46:28 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03382C3EC
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  8 May 2023 03:46:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=/52t7v/z2bjuNS
+        cAobOGif1HPE5n1Q25yFrY/RjA0b0=; b=t06NfYZW23apf2nJJZd1BWICzCM3Qt
+        DEHZxnFQB2q0GJe5q3y9reAgnUjm1pChQRAiTiAYE51UIl5QrCKIlls2c8CWf60t
+        jEa1nVtk1umCHGjcimZKNN191UuUkoGb/pHhcZF7nqSvHe67GFMssKSl7i2uZ+Qt
+        plOPKEqtwQwrY=
+Received: (qmail 1693272 invoked from network); 8 May 2023 12:46:09 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 May 2023 12:46:09 +0200
+X-UD-Smtp-Session: l3s3148p1@x6G4WCz7noEujnsI
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 1/3] dt-bindings: PCI: rcar-pci-host: add optional regulators
+Date:   Mon,  8 May 2023 12:45:55 +0200
+Message-Id: <20230508104557.47889-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230508104557.47889-1-wsa+renesas@sang-engineering.com>
+References: <20230508104557.47889-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Support regulators found on the e.g. KingFisher board.
 
-On Wed, 19 Apr 2023 15:02:34 +0200, Wolfram Sang wrote:
-> According to the datasheets, the Strobe Timing Adjustment bit (STRTIM)
-> setting is different on R-Car SoCs, i.e.
-> 
-> R-Car M3 ES1.*  : STRTIM[2:0] is set to 0x6
-> other R-Car Gen3: STRTIM[2:0] is set to 0x7
-> other R-Car Gen4: STRTIM[3:0] is set to 0xf
-> 
-> [...]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ Documentation/devicetree/bindings/pci/rcar-pci-host.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Applied, thanks!
-
-[1/1] memory: renesas-rpc-if: Fix PHYCNT.STRTIM setting
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/3d56c7364389fce14547803fef56d6f2cab5d366
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
+index 8fdfbc763d70..23e44f78e62e 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
++++ b/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
+@@ -68,6 +68,12 @@ properties:
+   phy-names:
+     const: pcie
+ 
++  vpcie1v5-supply:
++    description: The 1.5v regulator to use for PCIe.
++
++  vpcie3v3-supply:
++    description: The 3.3v regulator to use for PCIe.
++
+ required:
+   - compatible
+   - reg
+@@ -121,5 +127,7 @@ examples:
+              clock-names = "pcie", "pcie_bus";
+              power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+              resets = <&cpg 319>;
++             vpcie1v5-supply = <&pcie_1v5>;
++             vpcie3v3-supply = <&pcie_3v3>;
+          };
+     };
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.30.2
+
