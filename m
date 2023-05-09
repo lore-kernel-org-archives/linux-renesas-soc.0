@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0368C7EE24
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 May 2023 12:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E841FC7EE2F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 May 2023 12:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbjEIMmE (ORCPT
+        id S235412AbjEIMmE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 9 May 2023 08:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49480 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235215AbjEIMmD (ORCPT
+        with ESMTP id S235327AbjEIMmD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 9 May 2023 08:42:03 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 76CEAFD;
-        Tue,  9 May 2023 05:42:01 -0700 (PDT)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 40CA8212F;
+        Tue,  9 May 2023 05:42:02 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.99,262,1677510000"; 
-   d="scan'208";a="158709368"
+   d="scan'208";a="162218209"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 May 2023 21:42:00 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 09 May 2023 21:42:01 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0A78640359CB;
-        Tue,  9 May 2023 21:42:00 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 48B49409ECF1;
+        Tue,  9 May 2023 21:42:01 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     jingoohan1@gmail.com, mani@kernel.org,
         gustavo.pimentel@synopsys.com, fancer.lancer@gmail.com,
@@ -31,9 +31,9 @@ To:     jingoohan1@gmail.com, mani@kernel.org,
 Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v15 02/22] PCI: Add PCI_HEADER_TYPE_MULTI_FUNC
-Date:   Tue,  9 May 2023 21:41:36 +0900
-Message-Id: <20230509124156.150200-3-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v15 10/22] PCI: dwc: Modify PCIE_PORT_LINK_CONTROL handling
+Date:   Tue,  9 May 2023 21:41:44 +0900
+Message-Id: <20230509124156.150200-11-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230509124156.150200-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230509124156.150200-1-yoshihiro.shimoda.uh@renesas.com>
@@ -43,63 +43,91 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add PCI_HEADER_TYPE_MULTI_FUNC macro which is "Multi-Function Device"
-of Header Type Register.
+To improve code readability, modify PCIE_PORT_LINK_CONTROL handling.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/pci/probe.c           | 2 +-
- drivers/pci/quirks.c          | 4 ++--
- include/uapi/linux/pci_regs.h | 1 +
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware.c | 40 +++++++-------------
+ 1 file changed, 13 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 0b2826c4a832..56f01b48fb81 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1836,7 +1836,7 @@ int pci_setup_device(struct pci_dev *dev)
- 	dev->dev.parent = dev->bus->bridge;
- 	dev->dev.bus = &pci_bus_type;
- 	dev->hdr_type = hdr_type & 0x7f;
--	dev->multifunction = !!(hdr_type & 0x80);
-+	dev->multifunction = !!(hdr_type & PCI_HEADER_TYPE_MULTI_FUNC);
- 	dev->error_state = pci_channel_io_normal;
- 	set_pcie_port_type(dev);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 68aefbbcd68c..5dc423dd2f21 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -721,28 +721,40 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 link_gen)
  
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index f4e2a88729fd..8ceb970ccf1f 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -1750,7 +1750,7 @@ static void quirk_jmicron_ata(struct pci_dev *pdev)
- 	/* Update pdev accordingly */
- 	pci_read_config_byte(pdev, PCI_HEADER_TYPE, &hdr);
- 	pdev->hdr_type = hdr & 0x7f;
--	pdev->multifunction = !!(hdr & 0x80);
-+	pdev->multifunction = !!(hdr & PCI_HEADER_TYPE_MULTI_FUNC);
+ static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
+ {
+-	u32 lwsc;
++	u32 lwsc, plc;
  
- 	pci_read_config_dword(pdev, PCI_CLASS_REVISION, &class);
- 	pdev->class = class >> 8;
-@@ -5567,7 +5567,7 @@ static void quirk_nvidia_hda(struct pci_dev *gpu)
+ 	if (!num_lanes)
+ 		return;
  
- 	/* The GPU becomes a multi-function device when the HDA is enabled */
- 	pci_read_config_byte(gpu, PCI_HEADER_TYPE, &hdr_type);
--	gpu->multifunction = !!(hdr_type & 0x80);
-+	gpu->multifunction = !!(hdr_type & PCI_HEADER_TYPE_MULTI_FUNC);
++	/* Set the number of lanes */
++	plc = dw_pcie_readl_dbi(pci, PCIE_PORT_LINK_CONTROL);
++	plc &= ~PORT_LINK_MODE_MASK;
++
+ 	/* Set link width speed control register */
+ 	lwsc = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+ 	lwsc &= ~PORT_LOGIC_LINK_WIDTH_MASK;
+ 	switch (num_lanes) {
+ 	case 1:
++		plc |= PORT_LINK_MODE_1_LANES;
+ 		lwsc |= PORT_LOGIC_LINK_WIDTH_1_LANES;
+ 		break;
+ 	case 2:
++		plc |= PORT_LINK_MODE_2_LANES;
+ 		lwsc |= PORT_LOGIC_LINK_WIDTH_2_LANES;
+ 		break;
+ 	case 4:
++		plc |= PORT_LINK_MODE_4_LANES;
+ 		lwsc |= PORT_LOGIC_LINK_WIDTH_4_LANES;
+ 		break;
+ 	case 8:
++		plc |= PORT_LINK_MODE_8_LANES;
+ 		lwsc |= PORT_LOGIC_LINK_WIDTH_8_LANES;
+ 		break;
++	default:
++		dev_err(pci->dev, "num-lanes %u: invalid value\n", num_lanes);
++		return;
+ 	}
++	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, plc);
+ 	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, lwsc);
  }
- DECLARE_PCI_FIXUP_CLASS_HEADER(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
- 			       PCI_BASE_CLASS_DISPLAY, 16, quirk_nvidia_hda);
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 5d48413ac28f..a302b67d2834 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -80,6 +80,7 @@
- #define  PCI_HEADER_TYPE_NORMAL		0
- #define  PCI_HEADER_TYPE_BRIDGE		1
- #define  PCI_HEADER_TYPE_CARDBUS	2
-+#define  PCI_HEADER_TYPE_MULTI_FUNC	0x80
  
- #define PCI_BIST		0x0f	/* 8 bits */
- #define  PCI_BIST_CODE_MASK	0x0f	/* Return result */
+@@ -1027,31 +1039,5 @@ void dw_pcie_setup(struct dw_pcie *pci)
+ 	val |= PORT_LINK_DLL_LINK_EN;
+ 	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
+ 
+-	if (!pci->num_lanes) {
+-		dev_dbg(pci->dev, "Using h/w default number of lanes\n");
+-		return;
+-	}
+-
+-	/* Set the number of lanes */
+-	val &= ~PORT_LINK_MODE_MASK;
+-	switch (pci->num_lanes) {
+-	case 1:
+-		val |= PORT_LINK_MODE_1_LANES;
+-		break;
+-	case 2:
+-		val |= PORT_LINK_MODE_2_LANES;
+-		break;
+-	case 4:
+-		val |= PORT_LINK_MODE_4_LANES;
+-		break;
+-	case 8:
+-		val |= PORT_LINK_MODE_8_LANES;
+-		break;
+-	default:
+-		dev_err(pci->dev, "num-lanes %u: invalid value\n", pci->num_lanes);
+-		return;
+-	}
+-	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
+-
+ 	dw_pcie_link_set_max_link_width(pci, pci->num_lanes);
+ }
 -- 
 2.25.1
 
