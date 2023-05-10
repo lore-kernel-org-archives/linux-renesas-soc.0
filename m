@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0B4C77B7C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 May 2023 13:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7242AC7EE26
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 May 2023 13:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236808AbjEJNXk (ORCPT
+        id S236982AbjEJNXm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 May 2023 09:23:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58782 "EHLO
+        Wed, 10 May 2023 09:23:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236019AbjEJNXj (ORCPT
+        with ESMTP id S232419AbjEJNXl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2023 09:23:39 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE9F5B96
+        Wed, 10 May 2023 09:23:41 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16F461B2
         for <linux-renesas-soc@vger.kernel.org>; Wed, 10 May 2023 06:23:35 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:cc75:d8ef:4074:8af9])
-        by michel.telenet-ops.be with bizsmtp
-        id v1PG290093l7qvk061PGka; Wed, 10 May 2023 15:23:33 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id v1PG2900T3l7qvk011PGsd; Wed, 10 May 2023 15:23:32 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pwjme-001nDj-DC;
+        id 1pwjme-001nDl-DW;
         Wed, 10 May 2023 15:23:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pwjmm-00F6qH-2e;
+        id 1pwjmm-00F6qN-4j;
         Wed, 10 May 2023 15:23:16 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Stephen Boyd <sboyd@kernel.org>,
@@ -52,80 +52,102 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] iopoll: Busy loop and timeout improvements
-Date:   Wed, 10 May 2023 15:23:12 +0200
-Message-Id: <cover.1683722688.git.geert+renesas@glider.be>
+Subject: [PATCH v2 2/2] iopoll: Do not use timekeeping in read_poll_timeout_atomic()
+Date:   Wed, 10 May 2023 15:23:14 +0200
+Message-Id: <8db63020d18fc22e137e4a8f0aa15e6b9949a6f6.1683722688.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1683722688.git.geert+renesas@glider.be>
+References: <cover.1683722688.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+read_poll_timeout_atomic() uses ktime_get() to implement the timeout
+feature, just like its non-atomic counterpart.  However, there are
+several issues with this, due to its use in atomic contexts:
 
-When implementing a polling loop, a common review comment is to use one
-of the read*_poll_timeout*() helpers.  Unfortunately this is not always
-possible, or might introduce subtle bugs.  This patch series aims to
-improve these helpers, so they can gain wider use.
+  1. When called in the s2ram path (as typically done by clock or PM
+     domain drivers), timekeeping may be suspended, triggering the
+     WARN_ON(timekeeping_suspended) in ktime_get():
 
-  1. The first patch improves busy-looping behavior of both the atomic
-     and non-atomic read*_poll_timeout*() helpers.
-     The issue addressed by this patch was discussed before[1-2], but I
-     am not aware of any patches moving forward.
+	WARNING: CPU: 0 PID: 654 at kernel/time/timekeeping.c:843 ktime_get+0x28/0x78
 
-  2. The second patch fixes timeout handling of the atomic variants.
-     Some of the issues addressed by this patch were mitigated in
-     various places[3-5], and some of these findings may of interest to
-     the authors of [6-8].
+     Calling ktime_get_mono_fast_ns() instead of ktime_get() would get
+     rid of that warning.  However, that would break timeout handling,
+     as (at least on systems with an ARM architectured timer), the time
+     returned by ktime_get_mono_fast_ns() does not advance while
+     timekeeping is suspended.
+     Interestingly, (on the same ARM systems) the time returned by
+     ktime_get() does advance while timekeeping is suspended, despite
+     the warning.
 
-The first patch was sent before, and already received some acks, but I
-hadn't queued it yet as a depedency for more read*_poll_timeout*() use,
-because I ran into the issue fixed by the second patch.
+  2. Depending on the actual clock source, and especially before a
+     high-resolution clocksource (e.g. the ARM architectured timer)
+     becomes available, time may not advance in atomic contexts, thus
+     breaking timeout handling.
 
-Changes compared to v1[9]:
-  - Add Acked-by,
-  - Add compiler barrier and inlining explanation (thanks, Peter!),
-  - Add patch [2/2].
+Fix this by abandoning the idea that one can rely on timekeeping to
+implement timeout handling in all atomic contexts, and switch from a
+global time-based to a locally-estimated timeout handling.  In most
+(all?) cases the timeout condition is exceptional and an error
+condition, hence any additional delays due to underestimating wall clock
+time are irrelevant.
 
-Thanks for your comments!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Alternatively, one could use a mixed approach (use both
+ktime_get_mono_fast_ns() and a local (under)estimate, and timeout on the
+earliest occasion), but I think that would complicate things without
+much gain.
 
-[1] "Re: [PATCH 6/7] clk: renesas: rcar-gen3: Add custom clock for PLLs"
-    https://lore.kernel.org/all/CAMuHMdWUEhs=nwP+a0vO2jOzkq-7FEOqcJ+SsxAGNXX1PQ2KMA@mail.gmail.com
-[2] "Re: [PATCH v2] clk: samsung: Prevent potential endless loop in the
-    PLL set_rate ops"
-    https://lore.kernel.org/all/20200811164628.GA7958@kozik-lap
-[3] b3e9431854e8f305 ("bus: ti-sysc: Fix timekeeping_suspended warning
-		       on resume")
-[4] 44a9e78f9242872c ("clk: samsung: Prevent potential endless loop in
-		       the PLL ops")
-[5] 3d8598fb9c5a7783 ("clk: ti: clkctrl: use fallback udelay approach if
-		      timekeeping is suspended")
-[6] bd40cbb0e3b37a4d ("PM: domains: Move genpd's time-accounting to
-		       ktime_get_mono_fast_ns()")
-[7] c155f6499f9797f2 ("PM-runtime: Switch accounting over to
-		       ktime_get_mono_fast_ns()")
-[8] 15efb47dc560849d ("PM-runtime: Fix deadlock with ktime_get()")
+v2:
+  - New.
+---
+ include/linux/iopoll.h | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-[9] https://lore.kernel.org/r/8d492ee4a391bd089a01c218b0b4e05cf8ea593c.1674729407.git.geert+renesas@glider.be/
-
-Geert Uytterhoeven (2):
-  iopoll: Call cpu_relax() in busy loops
-  iopoll: Do not use timekeeping in read_poll_timeout_atomic()
-
- include/linux/iopoll.h | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
+diff --git a/include/linux/iopoll.h b/include/linux/iopoll.h
+index 0417360a6db9b0d6..bb2e1d9117e96679 100644
+--- a/include/linux/iopoll.h
++++ b/include/linux/iopoll.h
+@@ -81,22 +81,30 @@
+ 					delay_before_read, args...) \
+ ({ \
+ 	u64 __timeout_us = (timeout_us); \
++	s64 __left_ns = __timeout_us * NSEC_PER_USEC; \
+ 	unsigned long __delay_us = (delay_us); \
+-	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
+-	if (delay_before_read && __delay_us) \
++	u64 __delay_ns = __delay_us * NSEC_PER_USEC; \
++	if (delay_before_read && __delay_us) { \
+ 		udelay(__delay_us); \
++		if (__timeout_us) \
++			__left_ns -= __delay_ns; \
++	} \
+ 	for (;;) { \
+ 		(val) = op(args); \
+ 		if (cond) \
+ 			break; \
+-		if (__timeout_us && \
+-		    ktime_compare(ktime_get(), __timeout) > 0) { \
++		if (__timeout_us && __left_ns < 0) { \
+ 			(val) = op(args); \
+ 			break; \
+ 		} \
+-		if (__delay_us) \
++		if (__delay_us) { \
+ 			udelay(__delay_us); \
++			if (__timeout_us) \
++				__left_ns -= __delay_ns; \
++		} \
+ 		cpu_relax(); \
++		if (__timeout_us) \
++			__left_ns--; \
+ 	} \
+ 	(cond) ? 0 : -ETIMEDOUT; \
+ })
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
