@@ -2,37 +2,41 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B25BC77B7A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 May 2023 11:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D7FC7EE22
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 May 2023 11:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231558AbjERLjK (ORCPT
+        id S231589AbjERLjM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 18 May 2023 07:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32800 "EHLO
+        Thu, 18 May 2023 07:39:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231561AbjERLi6 (ORCPT
+        with ESMTP id S231279AbjERLi7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2023 07:38:58 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 08ABE271F;
-        Thu, 18 May 2023 04:37:58 -0700 (PDT)
+        Thu, 18 May 2023 07:38:59 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 430EC3C30;
+        Thu, 18 May 2023 04:38:01 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.99,285,1677510000"; 
-   d="scan'208";a="159842781"
+   d="scan'208";a="163369266"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 18 May 2023 20:37:16 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 May 2023 20:37:25 +0900
 Received: from localhost.localdomain (unknown [10.226.92.79])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 33C1640037F6;
-        Thu, 18 May 2023 20:37:13 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8AEF24005B2A;
+        Thu, 18 May 2023 20:37:22 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-rtc@vger.kernel.org,
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 06/11] rtc: isl1208: Drop enum isl1208_id and split isl1208_configs[]
-Date:   Thu, 18 May 2023 12:36:38 +0100
-Message-Id: <20230518113643.420806-7-biju.das.jz@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH v4 09/11] regulator: dt-bindings: Add Renesas RAA215300 PMIC bindings
+Date:   Thu, 18 May 2023 12:36:41 +0100
+Message-Id: <20230518113643.420806-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230518113643.420806-1-biju.das.jz@bp.renesas.com>
 References: <20230518113643.420806-1-biju.das.jz@bp.renesas.com>
@@ -42,97 +46,132 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Drop enum isl1208_id and split the array isl1208_configs[] as individual
-variables, and make lines shorter by referring to e.g. &config_isl1219
-instead of &isl1208_configs[TYPE_ISL1219].
+Document Renesas RAA215300 PMIC bindings.
+
+The RAA215300 is a high Performance 9-Channel PMIC supporting DDR
+Memory, with Built-In Charger and RTC.
+
+It supports DDR3, DDR3L, DDR4, and LPDDR4 memory power requirements.
+The internally compensated regulators, built-in Real-Time Clock (RTC),
+32kHz crystal oscillator, and coin cell battery charger provide a
+highly integrated, small footprint power solution ideal for
+System-On-Module (SOM) applications. A spread spectrum feature
+provides an ease-of-use solution for noise-sensitive audio or RF
+applications.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v4:
- * New patch
+v3->v4:
+ * Moved bindings from mfd->regulator.
+ * Dropped minItems from reg.
+ * Dropped renesas,rtc-enabled property and instead used clock-names property
+   to find RTC is enabled or not.
+ * Added reg-names in required property.
+ * Updated the example.
+v2->v3:
+ * Added more detailed description for renesas,rtc-enabled property.
+RFC->v2:
+ * Updated reg property
+ * Added optional reg-names, interrupts and renesas,rtc-enabled
+   properties.
+ * Fixed the node name in the example
+ * Dropped the cross link property renesas,raa215300-rtc.
+ * Updated the example
 ---
- drivers/rtc/rtc-isl1208.c | 56 +++++++++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 23 deletions(-)
+ .../bindings/regulator/renesas,raa215300.yaml | 84 +++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml
 
-diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
-index a6a133f719df..916e7d44c96f 100644
---- a/drivers/rtc/rtc-isl1208.c
-+++ b/drivers/rtc/rtc-isl1208.c
-@@ -68,41 +68,51 @@
- 
- static struct i2c_driver isl1208_driver;
- 
--/* ISL1208 various variants */
--enum isl1208_id {
--	TYPE_ISL1208 = 0,
--	TYPE_ISL1209,
--	TYPE_ISL1218,
--	TYPE_ISL1219,
--	ISL_LAST_ID
--};
--
- /* Chip capabilities table */
--static const struct isl1208_config {
-+struct isl1208_config {
- 	unsigned int	nvmem_length;
- 	unsigned	has_tamper:1;
- 	unsigned	has_timestamp:1;
--} isl1208_configs[] = {
--	[TYPE_ISL1208] = { 2, false, false },
--	[TYPE_ISL1209] = { 2, true,  false },
--	[TYPE_ISL1218] = { 8, false, false },
--	[TYPE_ISL1219] = { 2, true,  true },
-+};
+diff --git a/Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml b/Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml
+new file mode 100644
+index 000000000000..17b16f66f695
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml
+@@ -0,0 +1,84 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/renesas,raa215300.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+static const struct isl1208_config config_isl1208 = {
-+	.nvmem_length = 2,
-+	.has_tamper = false,
-+	.has_timestamp = false
-+};
++title: Renesas RAA215300 Power Management Integrated Circuit (PMIC)
 +
-+static const struct isl1208_config config_isl1209 = {
-+	.nvmem_length = 2,
-+	.has_tamper = true,
-+	.has_timestamp = false
-+};
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
 +
-+static const struct isl1208_config config_isl1218 = {
-+	.nvmem_length = 8,
-+	.has_tamper = false,
-+	.has_timestamp = false
-+};
++description: |
++  The RAA215300 is a high-performance, low-cost 9-channel PMIC designed for
++  32-bit and 64-bit MCU and MPU applications. It supports DDR3, DDR3L, DDR4,
++  and LPDDR4 memory power requirements. The internally compensated regulators,
++  built-in Real-Time Clock (RTC), 32kHz crystal oscillator, and coin cell
++  battery charger provide a highly integrated, small footprint power solution
++  ideal for System-On-Module (SOM) applications. A spread spectrum feature
++  provides an ease-of-use solution for noise-sensitive audio or RF applications.
 +
-+static const struct isl1208_config config_isl1219 = {
-+	.nvmem_length = 2,
-+	.has_tamper = true,
-+	.has_timestamp = true
- };
- 
- static const struct i2c_device_id isl1208_id[] = {
--	{ "isl1208", .driver_data = (unsigned long)&isl1208_configs[TYPE_ISL1208] },
--	{ "isl1209", .driver_data = (unsigned long)&isl1208_configs[TYPE_ISL1209] },
--	{ "isl1218", .driver_data = (unsigned long)&isl1208_configs[TYPE_ISL1218] },
--	{ "isl1219", .driver_data = (unsigned long)&isl1208_configs[TYPE_ISL1219] },
-+	{ "isl1208", .driver_data = (unsigned long)&config_isl1208 },
-+	{ "isl1209", .driver_data = (unsigned long)&config_isl1209 },
-+	{ "isl1218", .driver_data = (unsigned long)&config_isl1218 },
-+	{ "isl1219", .driver_data = (unsigned long)&config_isl1219 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, isl1208_id);
- 
- static const __maybe_unused struct of_device_id isl1208_of_match[] = {
--	{ .compatible = "isil,isl1208", .data = &isl1208_configs[TYPE_ISL1208] },
--	{ .compatible = "isil,isl1209", .data = &isl1208_configs[TYPE_ISL1209] },
--	{ .compatible = "isil,isl1218", .data = &isl1208_configs[TYPE_ISL1218] },
--	{ .compatible = "isil,isl1219", .data = &isl1208_configs[TYPE_ISL1219] },
-+	{ .compatible = "isil,isl1208", .data = &config_isl1208 },
-+	{ .compatible = "isil,isl1209", .data = &config_isl1209 },
-+	{ .compatible = "isil,isl1218", .data = &config_isl1218 },
-+	{ .compatible = "isil,isl1219", .data = &config_isl1219 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, isl1208_of_match);
++  This device exposes two devices via I2C. One for the integrated RTC IP, and
++  one for everything else.
++
++  Link to datasheet:
++  https://www.renesas.com/in/en/products/power-power-management/multi-channel-power-management-ics-pmics/ssdsoc-power-management-ics-pmic-and-pmus/raa215300-high-performance-9-channel-pmic-supporting-ddr-memory-built-charger-and-rtc
++
++properties:
++  compatible:
++    enum:
++      - renesas,raa215300
++
++  reg:
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: main
++      - const: rtc
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    description: |
++      Use xin, if connected to an external crystal.
++      Use clkin, if connected to an external clock signal.
++    oneOf:
++      - items:
++          - const: xin
++      - items:
++          - const: clkin
++
++required:
++  - compatible
++  - reg
++  - reg-names
++
++additionalProperties: false
++
++examples:
++  - |
++    /* 32.768kHz crystal */
++    x2: clock-xtal {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <32768>;
++    };
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        raa215300: pmic@12 {
++            compatible = "renesas,raa215300";
++            reg = <0x12>, <0x6f>;
++            reg-names = "main", "rtc";
++
++            clocks = <&x2>;
++            clock-names = "xin";
++        };
++    };
 -- 
 2.25.1
 
