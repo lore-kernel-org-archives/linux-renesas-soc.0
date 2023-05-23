@@ -2,37 +2,37 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44137C7EE2D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93846C7EE2E
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 06:43:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235095AbjEWGn3 (ORCPT
+        id S232386AbjEWGna (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 May 2023 02:43:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40878 "EHLO
+        Tue, 23 May 2023 02:43:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235197AbjEWGn0 (ORCPT
+        with ESMTP id S235217AbjEWGn0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 23 May 2023 02:43:26 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C8E9129
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 May 2023 23:43:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0554E133
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 May 2023 23:43:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=pnZxntDIL58qq5
-        lLbg927fG2rOg+UQvQEoeeePBGWTw=; b=NlFQrF1SA5fOWp6H1M0fdnK32Rvv6z
-        QOH3i+nXd8KqNcEp9jljz9WCJt8/npG4FWy+E8eTzvOuIonZ6wp4gTFVjzpEQgDu
-        MZtEubob4BtqpMq2Z4JmjBAJCzN0UzxLWuaBF74CRoD5Yvhx/srNMhq75MnVKc0w
-        n0OwL491ECVUY=
-Received: (qmail 2628252 invoked from network); 23 May 2023 08:43:22 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2023 08:43:22 +0200
-X-UD-Smtp-Session: l3s3148p1@i0URtFb8/MgujnsI
+        :mime-version:content-transfer-encoding; s=k1; bh=WgJBO0a3r+m+5K
+        tE0tD9/pNvayuhXV3mB7/3fne0NLw=; b=xTa4KBJ4yCn+Et/74u/NAT31G1pAkp
+        C5YckhHdLNdWKUeNfGeFZmnO7r45T/ddjHVuRWKPnIhtRe0AdkwIGjLU+uSKa6aC
+        So1NJAQ40sxMaBTIlXQs5K5KWtEDhMjdwEPK291H3nkbHzV2xbOnANXTzJXYYq1H
+        JHYf6e2Wh0D24=
+Received: (qmail 2628313 invoked from network); 23 May 2023 08:43:23 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2023 08:43:23 +0200
+X-UD-Smtp-Session: l3s3148p1@vt8gtFb8DskujnsI
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 3/5] gnss: ubx: 'vcc' can be optional
-Date:   Tue, 23 May 2023 08:43:08 +0200
-Message-Id: <20230523064310.3005-4-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 5/5] arm64: dts: renesas: ulcb-kf: add node for GPS
+Date:   Tue, 23 May 2023 08:43:10 +0200
+Message-Id: <20230523064310.3005-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20230523064310.3005-1-wsa+renesas@sang-engineering.com>
 References: <20230523064310.3005-1-wsa+renesas@sang-engineering.com>
@@ -42,64 +42,44 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There are devices where 'vcc' is always on. The reset pin is used for
-silencing the chip. Make the 'vcc' regulator optional.
+Add the node for the GPS receiver and remove flow control for SCIF1
+which is not present. The schematics are a bit misleading. The pins are
+sometimes named SCIF1 but they are for HSCIF1.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gnss/ubx.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
-index c8d027973b85..d5281bfae9cb 100644
---- a/drivers/gnss/ubx.c
-+++ b/drivers/gnss/ubx.c
-@@ -25,9 +25,11 @@ static int ubx_set_active(struct gnss_serial *gserial)
- 	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
- 	int ret;
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index efc80960380f..f6705cad78e4 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -367,7 +367,7 @@ hscif0_pins: hscif0 {
+ 	};
  
--	ret = regulator_enable(data->vcc);
--	if (ret)
--		return ret;
-+	if (data->vcc) {
-+		ret = regulator_enable(data->vcc);
-+		if (ret)
-+			return ret;
-+	}
+ 	scif1_pins: scif1 {
+-		groups = "scif1_data_b", "scif1_ctrl";
++		groups = "scif1_data_b";
+ 		function = "scif1";
+ 	};
  
- 	return 0;
- }
-@@ -37,9 +39,11 @@ static int ubx_set_standby(struct gnss_serial *gserial)
- 	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
- 	int ret;
+@@ -397,9 +397,14 @@ &sound_clk_pins
+ &scif1 {
+ 	pinctrl-0 = <&scif1_pins>;
+ 	pinctrl-names = "default";
+-	uart-has-rtscts;
  
--	ret = regulator_disable(data->vcc);
--	if (ret)
--		return ret;
-+	if (data->vcc) {
-+		ret = regulator_disable(data->vcc);
-+		if (ret)
-+			return ret;
-+	}
+ 	status = "okay";
++
++	gnss {
++		compatible = "u-blox,neo-m8";
++		reset-gpios = <&gpio_exp_75 6 GPIO_ACTIVE_LOW>;
++		current-speed = <9600>;
++	};
+ };
  
- 	return 0;
- }
-@@ -99,10 +103,13 @@ static int ubx_probe(struct serdev_device *serdev)
- 
- 	data = gnss_serial_get_drvdata(gserial);
- 
--	data->vcc = devm_regulator_get(&serdev->dev, "vcc");
-+	data->vcc = devm_regulator_get_optional(&serdev->dev, "vcc");
- 	if (IS_ERR(data->vcc)) {
- 		ret = PTR_ERR(data->vcc);
--		goto err_free_gserial;
-+		if (ret == -ENODEV)
-+			data->vcc = NULL;
-+		else
-+			goto err_free_gserial;
- 	}
- 
- 	ret = devm_regulator_get_enable_optional(&serdev->dev, info->v_bckp_name);
+ &sdhi3 {
 -- 
 2.35.1
 
