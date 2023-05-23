@@ -2,97 +2,100 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82F1C7EE26
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 15:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C3FC7EE26
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 15:42:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237607AbjEWPkE (ORCPT
+        id S237530AbjEWPmG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 May 2023 11:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45114 "EHLO
+        Tue, 23 May 2023 11:42:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237617AbjEWPjz (ORCPT
+        with ESMTP id S237105AbjEWPmG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2023 11:39:55 -0400
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 355DC121
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 08:39:54 -0700 (PDT)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by gauss.telenet-ops.be (Postfix) with ESMTPS id 4QQdmT01VHz4x2B7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 17:39:53 +0200 (CEST)
+        Tue, 23 May 2023 11:42:06 -0400
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B2B4DB
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 08:42:04 -0700 (PDT)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4QQdc901bWz4x1lQ
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 17:32:41 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:b0ac:7afd:272:4cff])
-        by andre.telenet-ops.be with bizsmtp
-        id 0Fen2A00H0Jkz7G01FenNV; Tue, 23 May 2023 17:38:52 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id 0FXf2A0030Jkz7G06FXfv6; Tue, 23 May 2023 17:31:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q1U5o-002t4X-Th;
-        Tue, 23 May 2023 17:38:47 +0200
+        id 1q1Tyu-002t3m-Lw;
+        Tue, 23 May 2023 17:31:39 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q1U63-00CkgO-BR;
-        Tue, 23 May 2023 17:38:47 +0200
+        id 1q1Tz9-00Ckb5-3w;
+        Tue, 23 May 2023 17:31:39 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Lee Jones <lee@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: backlight: pwm: Make power-supply not required
-Date:   Tue, 23 May 2023 17:38:37 +0200
-Message-Id: <29943059c80c8db0db437f9548f084a67326647b.1684856131.git.geert+renesas@glider.be>
+Subject: [PATCH v3 5/5] drm: shmobile: Make DRM_SHMOBILE visible on Renesas SoC platforms
+Date:   Tue, 23 May 2023 17:31:37 +0200
+Message-Id: <40ac67e0887d833ab4a3f1ec24828dedf0d8e108.1684854992.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1684854992.git.geert+renesas@glider.be>
+References: <cover.1684854992.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-make dtbs_check:
+The LCD Controller supported by the drm-shmob driver is present
+on SuperH SH-Mobile SoCs, and on Renesas ARM SH/R-Mobile SoCs.
+Unfortunately its config option is not visible on either, so the user
+can never enable the support.
 
-    arch/arm/boot/dts/renesas/r8a7742-iwg21d-q7.dtb: backlight: 'power-supply' is a required property
-	    From schema: Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
+Fix this by dropping the dependency on ARM (for SuperH), and by widening
+the dependency range to ARCH_RENESAS (for ARM).
 
-As that backlight device node already has an "enable-gpios" property to
-control the power supplied to the backlight, it sounds a bit silly to
-have to add a "power-supply" property just to silence this warning.  In
-addition, as of commit deaeeda2051fa280 ("backlight: pwm_bl: Don't rely
-on a disabled PWM emiting inactive state"), the Linux driver considers
-the power supply optional.
-
-Fix this by synchronizing the bindings with actual driver behavior by
-making the "power-supply" optional.
-
-Fixes: deaeeda2051fa280 ("backlight: pwm_bl: Don't rely on a disabled PWM emiting inactive state")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-As commit deaeeda2051fa280 was only upstreamed in v6.3, I'm wondering if
-the backlight on the iWave Systems RainboW-G20D/G21D Qseven and
-RainboW-G22D-SODIMM boards worked before?  I don't have the hardware.
+v3:
+  - No changes,
 
-Thanks!
+v2:
+  - Add Reviewed-by,
+  - Drop dependency on ARM, reword.
+
+The driver was disabled on SuperH in commit c66de8cc2ea62941
+("drm/shmobile: Add run-time dependencies") in v3.16 because of build
+issues.  I couldn't find further details, but currently it builds fine
+on (at least) arm, arm64, sh, riscv, and m68k.
 ---
- .../devicetree/bindings/leds/backlight/pwm-backlight.yaml        | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/shmobile/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
-index 5ec47a8c6568b60e..53569028899020d6 100644
---- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
-+++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
-@@ -68,7 +68,6 @@ dependencies:
- required:
-   - compatible
-   - pwms
--  - power-supply
- 
- additionalProperties: false
- 
+diff --git a/drivers/gpu/drm/shmobile/Kconfig b/drivers/gpu/drm/shmobile/Kconfig
+index 4ec5dc74a6b0b880..ad14112999ad8aba 100644
+--- a/drivers/gpu/drm/shmobile/Kconfig
++++ b/drivers/gpu/drm/shmobile/Kconfig
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ config DRM_SHMOBILE
+ 	tristate "DRM Support for SH Mobile"
+-	depends on DRM && ARM
+-	depends on ARCH_SHMOBILE || COMPILE_TEST
++	depends on DRM
++	depends on ARCH_RENESAS || ARCH_SHMOBILE || COMPILE_TEST
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	select DRM_KMS_HELPER
+ 	select DRM_GEM_DMA_HELPER
 -- 
 2.34.1
 
