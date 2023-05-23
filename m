@@ -2,107 +2,106 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59DBC7EE2D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 15:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDD4C7EE26
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 15:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237607AbjEWPmI (ORCPT
+        id S237105AbjEWPm2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 May 2023 11:42:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46244 "EHLO
+        Tue, 23 May 2023 11:42:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237105AbjEWPmH (ORCPT
+        with ESMTP id S237610AbjEWPm1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2023 11:42:07 -0400
-X-Greylist: delayed 562 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 May 2023 08:42:04 PDT
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [IPv6:2a02:1800:110:4::f00:11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B452DD
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 08:42:04 -0700 (PDT)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4QQdcB06CWz4x1ll
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 17:32:42 +0200 (CEST)
+        Tue, 23 May 2023 11:42:27 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23BF0126
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 08:42:25 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:b0ac:7afd:272:4cff])
-        by albert.telenet-ops.be with bizsmtp
-        id 0FXf2A0030Jkz7G06FXfJW; Tue, 23 May 2023 17:31:41 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id 0FiN2A00R0Jkz7G01FiNDk; Tue, 23 May 2023 17:42:24 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q1Tyu-002t3V-Hy;
-        Tue, 23 May 2023 17:31:39 +0200
+        id 1q1U9I-002t5J-7V;
+        Tue, 23 May 2023 17:42:22 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q1Tz9-00Ckap-00;
-        Tue, 23 May 2023 17:31:39 +0200
+        id 1q1U9W-00Ckk7-KA;
+        Tue, 23 May 2023 17:42:22 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v3 1/5] drm: shmobile: Use %p4cc to print fourcc codes
-Date:   Tue, 23 May 2023 17:31:33 +0200
-Message-Id: <1a63e5afc8a85f7ae10f7f4395c2d065ba1aeb59.1684854992.git.geert+renesas@glider.be>
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v3] media: renesas: fdp1: Identify R-Car Gen2 versions
+Date:   Tue, 23 May 2023 17:42:21 +0200
+Message-Id: <3d6cbf2cd4398f29379d8d7287b93e8b8ec6c147.1684856457.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1684854992.git.geert+renesas@glider.be>
-References: <cover.1684854992.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the printing of hexadecimal fourcc format codes by
-pretty-printed format names, using the "%p4cc" format specifier.
+On R-Car M2-W:
 
+    rcar_fdp1 fe940000.fdp1: FDP1 Unidentifiable (0x02010101)
+    rcar_fdp1 fe944000.fdp1: FDP1 Unidentifiable (0x02010101)
+
+Although the IP Internal Data Register on R-Car Gen2 is documented to
+contain all zeros, the actual register contents seem to match the FDP1
+version ID of R-Car H3 ES1.*, which has just been removed.
+Fortunately this version is not used for any other purposes yet.
+
+Fix this by re-adding the ID, now using an R-Car Gen2-specific name.
+
+Fixes: af4273b43f2bd9ee ("media: renesas: fdp1: remove R-Car H3 ES1.* handling")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
+Version register contents verified on R-Car H2 ES1.0, R-Car M2-W ES1.0 &
+ES3.0, and R-Car E2 ES1.0.  I couldn't get hold of an R-Car M2-N.
+
 v3:
   - Add Reviewed-by,
 
 v2:
-  - Add Reviewed-by.
+  - Add Reviewed-by,
+  - Add comment.
 ---
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 4 ++--
- drivers/gpu/drm/shmobile/shmob_drm_kms.c  | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/platform/renesas/rcar_fdp1.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index d354ab3077cecf94..713a7612244c647a 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -355,8 +355,8 @@ static int shmob_drm_crtc_mode_set(struct drm_crtc *crtc,
+diff --git a/drivers/media/platform/renesas/rcar_fdp1.c b/drivers/media/platform/renesas/rcar_fdp1.c
+index f43e458590b8cada..ab39cd2201c85d84 100644
+--- a/drivers/media/platform/renesas/rcar_fdp1.c
++++ b/drivers/media/platform/renesas/rcar_fdp1.c
+@@ -254,6 +254,8 @@ MODULE_PARM_DESC(debug, "activate debug info");
  
- 	format = shmob_drm_format_info(crtc->primary->fb->format->format);
- 	if (format == NULL) {
--		dev_dbg(sdev->dev, "mode_set: unsupported format %08x\n",
--			crtc->primary->fb->format->format);
-+		dev_dbg(sdev->dev, "mode_set: unsupported format %p4cc\n",
-+			&crtc->primary->fb->format->format);
- 		return -EINVAL;
- 	}
+ /* Internal Data (HW Version) */
+ #define FD1_IP_INTDATA			0x0800
++/* R-Car Gen2 HW manual says zero, but actual value matches R-Car H3 ES1.x */
++#define FD1_IP_GEN2			0x02010101
+ #define FD1_IP_M3W			0x02010202
+ #define FD1_IP_H3			0x02010203
+ #define FD1_IP_M3N			0x02010204
+@@ -2360,6 +2362,9 @@ static int fdp1_probe(struct platform_device *pdev)
  
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-index 60a2c8d8a0d947d2..3c5fe3bc183c7c13 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-@@ -96,8 +96,8 @@ shmob_drm_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 
- 	format = shmob_drm_format_info(mode_cmd->pixel_format);
- 	if (format == NULL) {
--		dev_dbg(dev->dev, "unsupported pixel format %08x\n",
--			mode_cmd->pixel_format);
-+		dev_dbg(dev->dev, "unsupported pixel format %p4cc\n",
-+			&mode_cmd->pixel_format);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
+ 	hw_version = fdp1_read(fdp1, FD1_IP_INTDATA);
+ 	switch (hw_version) {
++	case FD1_IP_GEN2:
++		dprintk(fdp1, "FDP1 Version R-Car Gen2\n");
++		break;
+ 	case FD1_IP_M3W:
+ 		dprintk(fdp1, "FDP1 Version R-Car M3-W\n");
+ 		break;
 -- 
 2.34.1
 
