@@ -2,128 +2,120 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7BEC77B7A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 06:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED60C77B75
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 07:37:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233674AbjEWGn2 (ORCPT
+        id S235577AbjEWHhM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 May 2023 02:43:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40880 "EHLO
+        Tue, 23 May 2023 03:37:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235095AbjEWGn0 (ORCPT
+        with ESMTP id S235583AbjEWHgn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2023 02:43:26 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DB1D109
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 May 2023 23:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=Z3IKHiDESnxgpp
-        XaZi+dnogQqI5j7cdY2RUORWxIqRg=; b=mINKYsG+7CbwIeHubxfu3hxenfyL9T
-        1F3jEIlLAwCT0yaHAPAhR2KHZ/iJsm+tlA+SYiQIXnCWHhTmTOHpTRt2tikYLH+w
-        HiZOltuJBpER9CL0Bh7GIwXKs7w+YaqLkA/x3fQvUg2pPQhri/gO6WTt1hGjdxfj
-        9gxjnN1/D2oR0=
-Received: (qmail 2628194 invoked from network); 23 May 2023 08:43:20 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2023 08:43:20 +0200
-X-UD-Smtp-Session: l3s3148p1@VbX5s1b86MgujnsI
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/5] WIP: gnss: merge MTK driver into UBX driver
-Date:   Tue, 23 May 2023 08:43:06 +0200
-Message-Id: <20230523064310.3005-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20230523064310.3005-1-wsa+renesas@sang-engineering.com>
-References: <20230523064310.3005-1-wsa+renesas@sang-engineering.com>
+        Tue, 23 May 2023 03:36:43 -0400
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C6051BB;
+        Tue, 23 May 2023 00:35:36 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-ba82956d3e0so6567097276.0;
+        Tue, 23 May 2023 00:35:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684827335; x=1687419335;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5+dC08pX0/tIIqa2IQ59EpZ+jAMVvJj02nvq1d4VL18=;
+        b=X9ZHL/bniT61HdavOItx+T1WIquKJrexE+DFjGxu/p6nlPWX3NuBK3onVOvHX8sNW1
+         hs+KmnluB2DuJBlZg5BGRYPDKalmMA+k7GRhj8nKYXdbj3AG5KcDxEmL5oboc7XW5tHB
+         X1wpDylGO6k7A69xLe7gg6w9UZEUw6E6L5+DoO3pIdifvXNaalj2FeR+GbegYS8M8m2E
+         a6HA2lQoplGz0uXwfaxIYmHBJYWZpWYD6SYZ87wKjDOc0cG8b1sbiGiRBP0TdpnXQy5X
+         8U41Yw+bltCQlEoQ7WZuopOU5PWnzZQSsCLvEL9KSUkdMK2jC+UmLomb9RQyH8R0U8/S
+         dUxA==
+X-Gm-Message-State: AC+VfDxjRd0JEXdsnnguebfWS6VZwDc02Jt3GIcfezn9s4wyFbEmWzYW
+        S7zOfVGW/Pa1E+iRubBi0sJSyQj0R/U/dg==
+X-Google-Smtp-Source: ACHHUZ63dGDl+mcVAAI9TRP8BVbsNuq+ha2aSaR+g1PrhopXLYfg/alKwcZYYasC6CmbR787jepwcA==
+X-Received: by 2002:a25:328e:0:b0:b9d:88a7:dbf with SMTP id y136-20020a25328e000000b00b9d88a70dbfmr14953535yby.4.1684827335335;
+        Tue, 23 May 2023 00:35:35 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id c12-20020a25880c000000b00ba7da8f72ebsm1946195ybl.0.2023.05.23.00.35.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 May 2023 00:35:34 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-ba8cf3cb34fso6554631276.1;
+        Tue, 23 May 2023 00:35:34 -0700 (PDT)
+X-Received: by 2002:a25:211:0:b0:b25:a1e1:5b65 with SMTP id
+ 17-20020a250211000000b00b25a1e15b65mr13676838ybc.5.1684827004960; Tue, 23 May
+ 2023 00:30:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1683722688.git.geert+renesas@glider.be> <fe235a1f65bb6c86d2afcdf52d85f80ae728dcc5.1683722688.git.geert+renesas@glider.be>
+ <20230511064839.GG14287@atomide.com> <494a000774b546e4aae00ae0a7dfeae4@AcuMS.aculab.com>
+In-Reply-To: <494a000774b546e4aae00ae0a7dfeae4@AcuMS.aculab.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 23 May 2023 09:29:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXttS3mkA+BNC69e6MYniRyGtR2vde35BYgBZ_+SuYs_Q@mail.gmail.com>
+Message-ID: <CAMuHMdXttS3mkA+BNC69e6MYniRyGtR2vde35BYgBZ_+SuYs_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] iopoll: Call cpu_relax() in busy loops
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Tony Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Dejin Zheng <zhengdejin5@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Russell King <linux@armlinux.org.uk>,
+        John Stultz <jstultz@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tero Kristo <tero.kristo@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This is a proof-of-concept how easy it is to merge those two drivers as
-they are extremly similar. The differences can be abstracted away
-easily. Further work (renaming from 'ubx' to something more generic,
-removing the MTK driver, ...) is postponed until there is agrement that
-merging these drivers is actually wanted. I vote for it, though. I have
-updates to the UBX driver which do make sense for the MTK driver as
-well. Code saving is also a plus. We can always fork into a specific
-driver again if we'd ever need that.
+Hi David,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/gnss/ubx.c | 30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
+On Thu, May 11, 2023 at 12:49 PM David Laight <David.Laight@aculab.com> wrote:
+> > * Geert Uytterhoeven <geert+renesas@glider.be> [230510 13:23]:
+> > > It is considered good practice to call cpu_relax() in busy loops, see
+> > > Documentation/process/volatile-considered-harmful.rst.  This can not
+> > > only lower CPU power consumption or yield to a hyperthreaded twin
+> > > processor, but also allows an architecture to mitigate hardware issues
+> > > (e.g. ARM Erratum 754327 for Cortex-A9 prior to r2p0) in the
+> > > architecture-specific cpu_relax() implementation.
+>
+> Don't you also need to call cond_resched() (at least some times).
+> Otherwise the process can't be pre-empted and a RT process
+> that last ran on that cpu will never be scheduled.
 
-diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
-index c951be202ca2..c01e1e875727 100644
---- a/drivers/gnss/ubx.c
-+++ b/drivers/gnss/ubx.c
-@@ -63,12 +63,31 @@ static const struct gnss_serial_ops ubx_gserial_ops = {
- 	.set_power = ubx_set_power,
- };
- 
-+struct ubx_info {
-+	enum gnss_type type;
-+	char *v_bckp_name;
-+};
-+
-+const struct ubx_info ubx_info_ubx = {
-+	.type = GNSS_TYPE_UBX,
-+	.v_bckp_name = "v-bckp",
-+};
-+
-+const struct ubx_info ubx_info_mtk = {
-+	.type = GNSS_TYPE_MTK,
-+	.v_bckp_name = "vbackup",
-+};
-+
- static int ubx_probe(struct serdev_device *serdev)
- {
-+	const struct ubx_info *info = of_device_get_match_data(&serdev->dev);
- 	struct gnss_serial *gserial;
- 	struct ubx_data *data;
- 	int ret;
- 
-+	if (!info)
-+		return -ENOENT;
-+
- 	gserial = gnss_serial_allocate(serdev, sizeof(*data));
- 	if (IS_ERR(gserial)) {
- 		ret = PTR_ERR(gserial);
-@@ -77,7 +96,7 @@ static int ubx_probe(struct serdev_device *serdev)
- 
- 	gserial->ops = &ubx_gserial_ops;
- 
--	gserial->gdev->type = GNSS_TYPE_UBX;
-+	gserial->gdev->type = info->type;
- 
- 	data = gnss_serial_get_drvdata(gserial);
- 
-@@ -87,7 +106,7 @@ static int ubx_probe(struct serdev_device *serdev)
- 		goto err_free_gserial;
- 	}
- 
--	data->v_bckp = devm_regulator_get_optional(&serdev->dev, "v-bckp");
-+	data->v_bckp = devm_regulator_get_optional(&serdev->dev, info->v_bckp_name);
- 	if (IS_ERR(data->v_bckp)) {
- 		ret = PTR_ERR(data->v_bckp);
- 		if (ret == -ENODEV)
-@@ -130,9 +149,10 @@ static void ubx_remove(struct serdev_device *serdev)
- 
- #ifdef CONFIG_OF
- static const struct of_device_id ubx_of_match[] = {
--	{ .compatible = "u-blox,neo-6m" },
--	{ .compatible = "u-blox,neo-8" },
--	{ .compatible = "u-blox,neo-m8" },
-+	{ .compatible = "u-blox,neo-6m", .data = &ubx_info_ubx, },
-+	{ .compatible = "u-blox,neo-8", .data = &ubx_info_ubx, },
-+	{ .compatible = "u-blox,neo-m8", .data = &ubx_info_ubx, },
-+	{ .compatible = "globaltop,pa6h", .data = &ubx_info_mtk },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, ubx_of_match);
+According to [1], cond_resched() must be called at least once per few
+tens of milliseconds.
+
+read_poll_timeout() uses usleep_range(), which calls schedule_hrtimeout_range().
+read_poll_timeout_atomic() should not be used with multi-ms timeouts anyway.
+
+So I guess we're OK?
+
+[1] https://elixir.bootlin.com/linux/latest/source/Documentation/RCU/Design/Requirements/Requirements.rst#L2348
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.35.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
