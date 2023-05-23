@@ -2,63 +2,113 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78461C77B75
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9085C7EE26
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 06:43:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235237AbjEWGn1 (ORCPT
+        id S232755AbjEWGn1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 23 May 2023 02:43:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40858 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232755AbjEWGnZ (ORCPT
+        with ESMTP id S233674AbjEWGn0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2023 02:43:25 -0400
+        Tue, 23 May 2023 02:43:26 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE53118
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 May 2023 23:43:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E0EC11A
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 May 2023 23:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=bsEJMT7PL8ygwWwOZmmg6TMP6cr
-        VqspcIVpnTgNVp6A=; b=N7zX9oTD1UeCAPKtFwPDQYZLj9i1c0MAXpz8f9xS70/
-        1FSCxKwpNG6mwftOHeD0MFPBAYejIStgsWHlw2eGzAqbrlg6Zfgujd8BowSsbX80
-        VRzPeC8ShIdOqCOctYnWOUgnry6/7AdzmFewqYdBlujtHoGS3OA2TZXnBIe91gzI
-        =
-Received: (qmail 2628164 invoked from network); 23 May 2023 08:43:20 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2023 08:43:20 +0200
-X-UD-Smtp-Session: l3s3148p1@rcy7s1b82MgujnsI
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=A1klkeCR8HO6g0
+        u3qn7k1G06CKjvQIO3Yn5CDkz5w74=; b=z8DAdx0uOXztMDc9I5hjMfpyNQeQuT
+        dxhwxSPhNwYdYNwF5GU0blz85nWa7yWBvG9ZPUri+1NeCbjAFwpu99YEpXxlQDxm
+        2P5q5wmmeoEmrRUa7CZzFaI/b0EOapVtOZ8MwzdnxDeCOTOf2cD19zyLVOMYURry
+        1f7HDspif94hU=
+Received: (qmail 2628223 invoked from network); 23 May 2023 08:43:21 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2023 08:43:21 +0200
+X-UD-Smtp-Session: l3s3148p1@t1MGtFb89sgujnsI
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 0/5] gnss: updates to support the Renesas KingFisher board
-Date:   Tue, 23 May 2023 08:43:05 +0200
-Message-Id: <20230523064310.3005-1-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 2/5] gnss: ubx: use new helper to remove open coded regulator handling
+Date:   Tue, 23 May 2023 08:43:07 +0200
+Message-Id: <20230523064310.3005-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20230523064310.3005-1-wsa+renesas@sang-engineering.com>
+References: <20230523064310.3005-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi, here are some patches with which I can use the GPS receiver on the
-Renesas KingFisher board. They are RFC because of my proposal to merge
-UBX and MTK drivers in patch 1. Patches 2-5 should be good to go from my
-point of view. Looking forward to comments!
+v_bckp shall always be enabled as long as the device exists. We now have
+a regulator helper for that, use it.
 
-   Wolfram
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/gnss/ubx.c | 26 ++++----------------------
+ 1 file changed, 4 insertions(+), 22 deletions(-)
 
-
-Wolfram Sang (5):
-  WIP: gnss: merge MTK driver into UBX driver
-  gnss: ubx: use new helper to remove open coded regulator handling
-  gnss: ubx: 'vcc' can be optional
-  gnss: ubx: add support for the reset gpio
-  arm64: dts: renesas: ulcb-kf: add node for GPS
-
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi |  9 ++-
- drivers/gnss/ubx.c                       | 82 +++++++++++++++---------
- 2 files changed, 58 insertions(+), 33 deletions(-)
-
+diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
+index c01e1e875727..c8d027973b85 100644
+--- a/drivers/gnss/ubx.c
++++ b/drivers/gnss/ubx.c
+@@ -17,7 +17,6 @@
+ #include "serial.h"
+ 
+ struct ubx_data {
+-	struct regulator *v_bckp;
+ 	struct regulator *vcc;
+ };
+ 
+@@ -106,30 +105,16 @@ static int ubx_probe(struct serdev_device *serdev)
+ 		goto err_free_gserial;
+ 	}
+ 
+-	data->v_bckp = devm_regulator_get_optional(&serdev->dev, info->v_bckp_name);
+-	if (IS_ERR(data->v_bckp)) {
+-		ret = PTR_ERR(data->v_bckp);
+-		if (ret == -ENODEV)
+-			data->v_bckp = NULL;
+-		else
+-			goto err_free_gserial;
+-	}
+-
+-	if (data->v_bckp) {
+-		ret = regulator_enable(data->v_bckp);
+-		if (ret)
+-			goto err_free_gserial;
+-	}
++	ret = devm_regulator_get_enable_optional(&serdev->dev, info->v_bckp_name);
++	if (ret < 0 && ret != -ENODEV)
++		goto err_free_gserial;
+ 
+ 	ret = gnss_serial_register(gserial);
+ 	if (ret)
+-		goto err_disable_v_bckp;
++		goto err_free_gserial;
+ 
+ 	return 0;
+ 
+-err_disable_v_bckp:
+-	if (data->v_bckp)
+-		regulator_disable(data->v_bckp);
+ err_free_gserial:
+ 	gnss_serial_free(gserial);
+ 
+@@ -139,11 +124,8 @@ static int ubx_probe(struct serdev_device *serdev)
+ static void ubx_remove(struct serdev_device *serdev)
+ {
+ 	struct gnss_serial *gserial = serdev_device_get_drvdata(serdev);
+-	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
+ 
+ 	gnss_serial_deregister(gserial);
+-	if (data->v_bckp)
+-		regulator_disable(data->v_bckp);
+ 	gnss_serial_free(gserial);
+ }
+ 
 -- 
 2.35.1
 
