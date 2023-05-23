@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AAAC7EE2D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 15:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C6AC77B75
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 15:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237539AbjEWPbt (ORCPT
+        id S237449AbjEWPbv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 May 2023 11:31:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38150 "EHLO
+        Tue, 23 May 2023 11:31:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237341AbjEWPbo (ORCPT
+        with ESMTP id S237369AbjEWPbq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2023 11:31:44 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64196139
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 08:31:42 -0700 (PDT)
+        Tue, 23 May 2023 11:31:46 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E721FA
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 08:31:43 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:b0ac:7afd:272:4cff])
-        by albert.telenet-ops.be with bizsmtp
-        id 0FXf2A0050Jkz7G06FXfJX; Tue, 23 May 2023 17:31:40 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id 0FXf2A00d0Jkz7G01FXfar; Tue, 23 May 2023 17:31:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q1Tyu-002t3Z-Ii;
+        id 1q1Tyu-002t3U-Hz;
         Tue, 23 May 2023 17:31:39 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q1Tz9-00Ckas-0y;
-        Tue, 23 May 2023 17:31:39 +0200
+        id 1q1Tz8-00Ckam-UT;
+        Tue, 23 May 2023 17:31:38 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
@@ -39,97 +39,71 @@ To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/5] drm: shmobile: Add support for DRM_FORMAT_XRGB8888
-Date:   Tue, 23 May 2023 17:31:34 +0200
-Message-Id: <888cde6d1f70f1610931c4a89801060bb6765ff2.1684854992.git.geert+renesas@glider.be>
+Subject: [PATCH v3 0/5] drm: shmobile: Fixes and enhancements
+Date:   Tue, 23 May 2023 17:31:32 +0200
+Message-Id: <cover.1684854992.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1684854992.git.geert+renesas@glider.be>
-References: <cover.1684854992.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-DRM_FORMAT_XRGB8888 aka XR24 is the modus francus of DRM, and should be
-supported by all drivers.
+	Hi all,
 
-The handling for DRM_FORMAT_XRGB8888 is similar to DRM_FORMAT_ARGB8888,
-just ignore the alpha channel.
+Currently, there are two drivers for the LCD controller on Renesas
+SuperH-based and ARM-based SH-Mobile and R-Mobile SoCs:
+  1. sh_mobile_lcdcfb, using the fbdev framework,
+  2. shmob_drm, using the DRM framework.
+However, only the former driver can be used, as all platform support
+integrates the former.  None of these drivers support DT-based systems.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v3:
-  - No changes,
+This patch series is a first step to enable the SH-Mobile DRM driver for
+Renesas ARM-based SH-Mobile and R-Mobile SoCs.  The next steps planned are
+to (1) add DT support (works, but needs a hack due to lack of (2)), and (2)
+convert the driver to atomic modesetting.
 
-v2:
+Changes compared to v2[1]:
   - Add Reviewed-by.
----
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c  | 1 +
- drivers/gpu/drm/shmobile/shmob_drm_kms.c   | 5 +++++
- drivers/gpu/drm/shmobile/shmob_drm_plane.c | 5 +++++
- 3 files changed, 11 insertions(+)
 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index 713a7612244c647a..08dc1428aa16caf0 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -232,6 +232,7 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
- 		value = LDDDSR_LS | LDDDSR_WS | LDDDSR_BS;
- 		break;
- 	case DRM_FORMAT_ARGB8888:
-+	case DRM_FORMAT_XRGB8888:
- 	default:
- 		value = LDDDSR_LS;
- 		break;
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-index 3c5fe3bc183c7c13..99381cc0abf3ae1f 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-@@ -39,6 +39,11 @@ static const struct shmob_drm_format_info shmob_drm_format_infos[] = {
- 		.bpp = 32,
- 		.yuv = false,
- 		.lddfr = LDDFR_PKF_ARGB32,
-+	}, {
-+		.fourcc = DRM_FORMAT_XRGB8888,
-+		.bpp = 32,
-+		.yuv = false,
-+		.lddfr = LDDFR_PKF_ARGB32,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV12,
- 		.bpp = 12,
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-index 604ae23825daaafd..850986cee848226a 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-@@ -80,6 +80,7 @@ static void __shmob_drm_plane_setup(struct shmob_drm_plane *splane,
- 		format |= LDBBSIFR_SWPL | LDBBSIFR_SWPW | LDBBSIFR_SWPB;
- 		break;
- 	case DRM_FORMAT_ARGB8888:
-+	case DRM_FORMAT_XRGB8888:
- 	default:
- 		format |= LDBBSIFR_SWPL;
- 		break;
-@@ -95,6 +96,9 @@ static void __shmob_drm_plane_setup(struct shmob_drm_plane *splane,
- 	case DRM_FORMAT_ARGB8888:
- 		format |= LDBBSIFR_AL_PK | LDBBSIFR_RY | LDDFR_PKF_ARGB32;
- 		break;
-+	case DRM_FORMAT_XRGB8888:
-+		format |= LDBBSIFR_AL_1 | LDBBSIFR_RY | LDDFR_PKF_ARGB32;
-+		break;
- 	case DRM_FORMAT_NV12:
- 	case DRM_FORMAT_NV21:
- 		format |= LDBBSIFR_AL_1 | LDBBSIFR_CHRR_420;
-@@ -231,6 +235,7 @@ static const uint32_t formats[] = {
- 	DRM_FORMAT_RGB565,
- 	DRM_FORMAT_RGB888,
- 	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_XRGB8888,
- 	DRM_FORMAT_NV12,
- 	DRM_FORMAT_NV21,
- 	DRM_FORMAT_NV16,
+Changes compared to v1[2]:
+  - Add Reviewed-by,
+  - Drop dependency on ARM.
+
+This has been tested on the R-Mobile A1-based Atmark Techno
+Armadillo-800-EVA development board, using a temporary
+platform-enablement patch[3].
+
+Thanks for applying to drm-misc!
+
+[1] https://lore.kernel.org/r/cover.1680273039.git.geert+renesas@glider.be/
+[2] https://lore.kernel.org/r/cover.1681734821.git.geert+renesas@glider.be/
+[3] https://lore.kernel.org/r/c03d4edbd650836bf6a96504df82338ec6d800ff.1680272980.git.geert+renesas@glider.be
+
+Geert Uytterhoeven (5):
+  drm: shmobile: Use %p4cc to print fourcc codes
+  drm: shmobile: Add support for DRM_FORMAT_XRGB8888
+  drm: shmobile: Switch to drm_crtc_init_with_planes()
+  drm: shmobile: Add missing call to drm_fbdev_generic_setup()
+  drm: shmobile: Make DRM_SHMOBILE visible on Renesas SoC platforms
+
+ drivers/gpu/drm/shmobile/Kconfig           |  4 +--
+ drivers/gpu/drm/shmobile/shmob_drm_crtc.c  | 35 +++++++++++++++++++---
+ drivers/gpu/drm/shmobile/shmob_drm_drv.c   |  3 ++
+ drivers/gpu/drm/shmobile/shmob_drm_kms.c   |  9 ++++--
+ drivers/gpu/drm/shmobile/shmob_drm_plane.c |  5 ++++
+ 5 files changed, 48 insertions(+), 8 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
