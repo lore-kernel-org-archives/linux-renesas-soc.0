@@ -2,135 +2,92 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F25C7EE26
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 15:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2345C7EE2E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 May 2023 15:36:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236205AbjEWPdN (ORCPT
+        id S237530AbjEWPgz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 May 2023 11:33:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39862 "EHLO
+        Tue, 23 May 2023 11:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234128AbjEWPdM (ORCPT
+        with ESMTP id S237424AbjEWPgy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2023 11:33:12 -0400
-X-Greylist: delayed 913 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 May 2023 08:32:45 PDT
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE9891BC
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 08:32:45 -0700 (PDT)
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by cantor.telenet-ops.be (Postfix) with ESMTPS id 4QQdc901Ktz4x1kh
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 17:32:41 +0200 (CEST)
+        Tue, 23 May 2023 11:36:54 -0400
+X-Greylist: delayed 212 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 May 2023 08:36:19 PDT
+Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8176EE64
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 08:36:19 -0700 (PDT)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by riemann.telenet-ops.be (Postfix) with ESMTPS id 4QQdhL01KYz4x7wg
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 May 2023 17:36:18 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:b0ac:7afd:272:4cff])
-        by xavier.telenet-ops.be with bizsmtp
-        id 0FXf2A00f0Jkz7G01FXfas; Tue, 23 May 2023 17:31:40 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id 0FbH2A0090Jkz7G01FbHRU; Tue, 23 May 2023 17:35:17 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q1Tyu-002t3e-Jd;
-        Tue, 23 May 2023 17:31:39 +0200
+        id 1q1U2Q-002t4H-QO;
+        Tue, 23 May 2023 17:35:17 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q1Tz9-00Ckax-1x;
-        Tue, 23 May 2023 17:31:39 +0200
+        id 1q1U2f-00Ckdj-7W;
+        Tue, 23 May 2023 17:35:17 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/5] drm: shmobile: Switch to drm_crtc_init_with_planes()
-Date:   Tue, 23 May 2023 17:31:35 +0200
-Message-Id: <2098de3d33bc479a8569da7dcbafdb685ff0a13a.1684854992.git.geert+renesas@glider.be>
+Subject: [PATCH] ARM: dts: iwg20d-q7-common: Fix backlight pwm specifier
+Date:   Tue, 23 May 2023 17:35:16 +0200
+Message-Id: <6e5c3167424a43faf8c1fa68d9667b3d87dc86d8.1684855911.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1684854992.git.geert+renesas@glider.be>
-References: <cover.1684854992.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The SH-Mobile DRM driver uses the legacy drm_crtc_init(), which
-advertizes only the formats in safe_modeset_formats[] (XR24 and AR24) as
-being supported.
+make dtbs_check:
 
-Switch to drm_crtc_init_with_planes(), and advertize all supported
-(A)RGB modes, so we can use RGB565 as the default mode for the console.
+    arch/arm/boot/dts/renesas/r8a7743-iwg20d-q7.dtb: backlight: pwms: [[58, 0, 5000000], [0]] is too long
+	    From schema: Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
+    arch/arm/boot/dts/renesas/r8a7743-iwg20d-q7-dbcm-ca.dtb: backlight: pwms: [[67, 0, 5000000], [0]] is too long
+	    From schema: Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
+    arch/arm/boot/dts/renesas/r8a7744-iwg20d-q7-dbcm-ca.dtb: backlight: pwms: [[67, 0, 5000000], [0]] is too long
+	    From schema: Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
+    arch/arm/boot/dts/renesas/r8a7744-iwg20d-q7.dtb: backlight: pwms: [[58, 0, 5000000], [0]] is too long
+	    From schema: Documentation/devicetree/bindings/leds/backlight/pwm-backlight.yaml
 
+PWM specifiers referring to R-Car PWM Timer Controllers should contain
+only two cells.
+
+Fix this by dropping the bogus third cell.
+
+Fixes: 6f89dd9e9325d05b ("ARM: dts: iwg20d-q7-common: Add LCD support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v3:
-  - No changes,
+Presumably copied from a board using the TPU, which uses 3 cells.
 
-v2:
-  - Add Reviewed-by.
+To be queued in renesas-devel-for-v6.5.
 ---
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 30 +++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index 08dc1428aa16caf0..11dd2bc803e7cb62 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -18,6 +18,7 @@
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_modeset_helper_vtables.h>
-+#include <drm/drm_plane_helper.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_simple_kms_helper.h>
- #include <drm/drm_vblank.h>
-@@ -478,16 +479,41 @@ static const struct drm_crtc_funcs crtc_funcs = {
- 	.disable_vblank = shmob_drm_disable_vblank,
- };
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 03caea6fc6ffa4cf..4351c5a02fa596de 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -49,7 +49,7 @@ audio_clock: audio_clock {
+ 	lcd_backlight: backlight {
+ 		compatible = "pwm-backlight";
  
-+static const uint32_t modeset_formats[] = {
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_RGB888,
-+	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_XRGB8888,
-+};
-+
-+static const struct drm_plane_funcs primary_plane_funcs = {
-+	DRM_PLANE_NON_ATOMIC_FUNCS,
-+};
-+
- int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- {
- 	struct drm_crtc *crtc = &sdev->crtc.crtc;
-+	struct drm_plane *primary;
- 	int ret;
- 
- 	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
- 
--	ret = drm_crtc_init(sdev->ddev, crtc, &crtc_funcs);
--	if (ret < 0)
-+	primary = __drm_universal_plane_alloc(sdev->ddev, sizeof(*primary), 0,
-+					      0, &primary_plane_funcs,
-+					      modeset_formats,
-+					      ARRAY_SIZE(modeset_formats),
-+					      NULL, DRM_PLANE_TYPE_PRIMARY,
-+					      NULL);
-+	if (IS_ERR(primary))
-+		return PTR_ERR(primary);
-+
-+	ret = drm_crtc_init_with_planes(sdev->ddev, crtc, primary, NULL,
-+					&crtc_funcs, NULL);
-+	if (ret < 0) {
-+		drm_plane_cleanup(primary);
-+		kfree(primary);
- 		return ret;
-+	}
- 
- 	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
- 
+-		pwms = <&pwm3 0 5000000 0>;
++		pwms = <&pwm3 0 5000000>;
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <7>;
+ 		enable-gpios = <&gpio5 14 GPIO_ACTIVE_HIGH>;
 -- 
 2.34.1
 
