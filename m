@@ -2,151 +2,116 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026D4C77B73
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 May 2023 12:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4902C7EE23
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 May 2023 12:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbjEXMDD (ORCPT
+        id S229972AbjEXMcW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 May 2023 08:03:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39920 "EHLO
+        Wed, 24 May 2023 08:32:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbjEXMDC (ORCPT
+        with ESMTP id S229510AbjEXMcV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 May 2023 08:03:02 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40207130;
-        Wed, 24 May 2023 05:03:01 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id DDE172214D;
-        Wed, 24 May 2023 12:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1684929779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a5xYZJ0VdlqE3V6heUq7XBrAWSEtAc4ezP/9YYY5cYs=;
-        b=1QK0bFGIceIfQpuPdKPKuSsPxT9Rny41ebYp5RpcmAx1JMHsOniEOLNDBasQESs/UQTYHA
-        YWl9h6yIpNKTjOo4Yw7kOlaVv9hxtBAID2odf2XvmStpakGDu99eWY+lyIeDTBxyqCS+qP
-        75WnDvcF18Hr8dWc+milZsSnk80OKkE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1684929779;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a5xYZJ0VdlqE3V6heUq7XBrAWSEtAc4ezP/9YYY5cYs=;
-        b=5/87DbykeY08SalUEIlDgeTsq15ohzj0Zvuh2kUddnAb0qKrnIG9cji8yCf0r4noaezyDy
-        /do2Ekj6SXErbDAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BA56113425;
-        Wed, 24 May 2023 12:02:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id SNC2LPP8bWQkWQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 24 May 2023 12:02:59 +0000
-Message-ID: <35df2c16-6e5b-bc8a-e65c-9244a815dcbd@suse.de>
-Date:   Wed, 24 May 2023 14:02:59 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3 0/5] drm: shmobile: Fixes and enhancements
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Wed, 24 May 2023 08:32:21 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2A05135
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 May 2023 05:32:19 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:59b9:3473:f0ae:e2b7])
+        by laurent.telenet-ops.be with bizsmtp
+        id 0cYD2A00W5NiV2701cYDeu; Wed, 24 May 2023 14:32:18 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1q1neo-002xwz-FV;
+        Wed, 24 May 2023 14:32:13 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1q1nf3-00DPLB-G5;
+        Wed, 24 May 2023 14:32:13 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <cover.1684854992.git.geert+renesas@glider.be>
- <d800a238-83e0-0ec2-cf3a-67d07d749b5b@suse.de>
- <CAMuHMdXPJ02UWuH1v_ZaoWmbHALu0Qe2K27nhuvwKBmjno+YMw@mail.gmail.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <CAMuHMdXPJ02UWuH1v_ZaoWmbHALu0Qe2K27nhuvwKBmjno+YMw@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------lXvjdDXFSdYAgrnKqVpjeokC"
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] drm/panel: simple: Add Ampire AM-800480L1TMQW-T00H
+Date:   Wed, 24 May 2023 14:32:11 +0200
+Message-Id: <244d9471e0ed248ff2dea8ded3a5384a1c51904b.1684931026.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1684931026.git.geert+renesas@glider.be>
+References: <cover.1684931026.git.geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------lXvjdDXFSdYAgrnKqVpjeokC
-Content-Type: multipart/mixed; boundary="------------rYFRJinNdx4AkL6RbYDYq5yv";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Message-ID: <35df2c16-6e5b-bc8a-e65c-9244a815dcbd@suse.de>
-Subject: Re: [PATCH v3 0/5] drm: shmobile: Fixes and enhancements
-References: <cover.1684854992.git.geert+renesas@glider.be>
- <d800a238-83e0-0ec2-cf3a-67d07d749b5b@suse.de>
- <CAMuHMdXPJ02UWuH1v_ZaoWmbHALu0Qe2K27nhuvwKBmjno+YMw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXPJ02UWuH1v_ZaoWmbHALu0Qe2K27nhuvwKBmjno+YMw@mail.gmail.com>
+Add support for the Ampire AM-800480L1TMQW-T00H 5" WVGA TFT LCD panel.
 
---------------rYFRJinNdx4AkL6RbYDYq5yv
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpu/drm/panel/panel-simple.c | 33 ++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-DQoNCkFtIDI0LjA1LjIzIHVtIDEzOjU0IHNjaHJpZWIgR2VlcnQgVXl0dGVyaG9ldmVuOg0K
-PiBIaSBUaG9tYXMsDQo+IA0KPiBPbiBXZWQsIE1heSAyNCwgMjAyMyBhdCAxOjQy4oCvUE0g
-VGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+IHdyb3RlOg0KPj4gQW0g
-MjMuMDUuMjMgdW0gMTc6MzEgc2NocmllYiBHZWVydCBVeXR0ZXJob2V2ZW46DQo+Pj4gQ3Vy
-cmVudGx5LCB0aGVyZSBhcmUgdHdvIGRyaXZlcnMgZm9yIHRoZSBMQ0QgY29udHJvbGxlciBv
-biBSZW5lc2FzDQo+Pj4gU3VwZXJILWJhc2VkIGFuZCBBUk0tYmFzZWQgU0gtTW9iaWxlIGFu
-ZCBSLU1vYmlsZSBTb0NzOg0KPj4+ICAgICAxLiBzaF9tb2JpbGVfbGNkY2ZiLCB1c2luZyB0
-aGUgZmJkZXYgZnJhbWV3b3JrLA0KPj4+ICAgICAyLiBzaG1vYl9kcm0sIHVzaW5nIHRoZSBE
-Uk0gZnJhbWV3b3JrLg0KPj4+IEhvd2V2ZXIsIG9ubHkgdGhlIGZvcm1lciBkcml2ZXIgY2Fu
-IGJlIHVzZWQsIGFzIGFsbCBwbGF0Zm9ybSBzdXBwb3J0DQo+Pj4gaW50ZWdyYXRlcyB0aGUg
-Zm9ybWVyLiAgTm9uZSBvZiB0aGVzZSBkcml2ZXJzIHN1cHBvcnQgRFQtYmFzZWQgc3lzdGVt
-cy4NCj4+Pg0KPj4+IFRoaXMgcGF0Y2ggc2VyaWVzIGlzIGEgZmlyc3Qgc3RlcCB0byBlbmFi
-bGUgdGhlIFNILU1vYmlsZSBEUk0gZHJpdmVyIGZvcg0KPj4+IFJlbmVzYXMgQVJNLWJhc2Vk
-IFNILU1vYmlsZSBhbmQgUi1Nb2JpbGUgU29Dcy4gIFRoZSBuZXh0IHN0ZXBzIHBsYW5uZWQg
-YXJlDQo+Pj4gdG8gKDEpIGFkZCBEVCBzdXBwb3J0ICh3b3JrcywgYnV0IG5lZWRzIGEgaGFj
-ayBkdWUgdG8gbGFjayBvZiAoMikpLCBhbmQgKDIpDQo+Pj4gY29udmVydCB0aGUgZHJpdmVy
-IHRvIGF0b21pYyBtb2Rlc2V0dGluZy4NCj4+Pg0KPj4+IENoYW5nZXMgY29tcGFyZWQgdG8g
-djJbMV06DQo+Pj4gICAgIC0gQWRkIFJldmlld2VkLWJ5Lg0KPj4+DQo+Pj4gQ2hhbmdlcyBj
-b21wYXJlZCB0byB2MVsyXToNCj4+PiAgICAgLSBBZGQgUmV2aWV3ZWQtYnksDQo+Pj4gICAg
-IC0gRHJvcCBkZXBlbmRlbmN5IG9uIEFSTS4NCj4+Pg0KPj4+IFRoaXMgaGFzIGJlZW4gdGVz
-dGVkIG9uIHRoZSBSLU1vYmlsZSBBMS1iYXNlZCBBdG1hcmsgVGVjaG5vDQo+Pj4gQXJtYWRp
-bGxvLTgwMC1FVkEgZGV2ZWxvcG1lbnQgYm9hcmQsIHVzaW5nIGEgdGVtcG9yYXJ5DQo+Pj4g
-cGxhdGZvcm0tZW5hYmxlbWVudCBwYXRjaFszXS4NCj4+Pg0KPj4+IFRoYW5rcyBmb3IgYXBw
-bHlpbmcgdG8gZHJtLW1pc2MhDQo+Pg0KPj4gSXQncyBhbGwgYmVlbiByZXZpZXdlZC4gRG8g
-eW91IHdhbnQgbWUgdG8gbWVyZ2UgdGhlIHBhdGNoc2V0Pw0KPiANCj4gVGhhdCB3b3VsZCBi
-ZSBncmVhdCEgVGhhbmtzIQ0KDQpEb25lLiBUaGFua3MgZm9yIHRoZSBwYXRjaGVzLg0KDQo+
-IA0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICBHZWVydA0KPiANCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVy
-IERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpGcmFu
-a2Vuc3RyYXNzZSAxNDYsIDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KR0Y6IEl2byBUb3Rl
-diwgQW5kcmV3IE15ZXJzLCBBbmRyZXcgTWNEb25hbGQsIEJvdWRpZW4gTW9lcm1hbg0KSFJC
-IDM2ODA5IChBRyBOdWVybmJlcmcpDQo=
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 5778824dffd47a31..467117c0b2c9d463 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -778,6 +778,36 @@ static const struct drm_display_mode ampire_am800480r3tmqwa1h_mode = {
+ 	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
+ };
+ 
++static const struct display_timing ampire_am_800480l1tmqw_t00h_timing = {
++	.pixelclock = { 29930000, 33260000, 36590000 },
++	.hactive = { 800, 800, 800 },
++	.hfront_porch = { 1, 40, 168 },
++	.hback_porch = { 88, 88, 88 },
++	.hsync_len = { 1, 128, 128 },
++	.vactive = { 480, 480, 480 },
++	.vfront_porch = { 1, 35, 37 },
++	.vback_porch = { 8, 8, 8 },
++	.vsync_len = { 1, 2, 2 },
++	.flags = DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW |
++		 DISPLAY_FLAGS_DE_HIGH | DISPLAY_FLAGS_PIXDATA_POSEDGE |
++		 DISPLAY_FLAGS_SYNC_POSEDGE,
++};
++
++static const struct panel_desc ampire_am_800480l1tmqw_t00h = {
++	.timings = &ampire_am_800480l1tmqw_t00h_timing,
++	.num_timings = 1,
++	.bpc = 8,
++	.size = {
++		.width = 111,
++		.height = 67,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
++	.bus_flags = DRM_BUS_FLAG_DE_HIGH |
++		     DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE |
++		     DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE,
++	.connector_type = DRM_MODE_CONNECTOR_DPI,
++};
++
+ static const struct panel_desc ampire_am800480r3tmqwa1h = {
+ 	.modes = &ampire_am800480r3tmqwa1h_mode,
+ 	.num_modes = 1,
+@@ -3993,6 +4023,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "ampire,am-480272h3tmqw-t01h",
+ 		.data = &ampire_am_480272h3tmqw_t01h,
++	}, {
++		.compatible = "ampire,am-800480l1tmqw-t00h",
++		.data = &ampire_am_800480l1tmqw_t00h,
+ 	}, {
+ 		.compatible = "ampire,am800480r3tmqwa1h",
+ 		.data = &ampire_am800480r3tmqwa1h,
+-- 
+2.34.1
 
---------------rYFRJinNdx4AkL6RbYDYq5yv--
-
---------------lXvjdDXFSdYAgrnKqVpjeokC
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmRt/PMFAwAAAAAACgkQlh/E3EQov+AV
-+xAAvgVs+mqCTd9xD8v9SpRrPCRJVbevcqghZYd1/s6HOcnNGtyU6kMB2t663z4adoVPSFLqN+cP
-oEKoVJ9J6IR573tm2PBKqZIP6Y+0pV03XGGFG09V54NhGO+8qW8UsQqz4jqfHWKc7dJG2ISh9YTL
-2c+v3iWj4QTB5k87ytg1sDOapzmrnBqCDaVhKeNy73ep25FZEkqKhpA69xpZSqGoa0IXpBQulSBI
-6nt+CkuFZDH+/AkRAsXYJp7DdjJYFdKP7GgYNj4xH1B7Q6TfYFBCyfiJkUEVgAG1k0i6RJGcFpXs
-qJ6g0v6eAGTiNMYblzFTCaRBD2Aa7yONL1kVNpDPo9RRVoIC/p2tkvLH1/0txNl9kKOPlOky8cnE
-UoLQZW42EjWUac6B7xv/aixp4Cgd9Iz69L3kKAOyTydJgzwMPcXLVGWuvTgSwz8v5Oc1xsFXy4DJ
-LO7e/kwGGmrmtZLzadPh6ZdVrYnXceN0DeoxbvKRhOxy/5Nl1YR31gSHzOlFT4yOvV0WT0LDMvoE
-a1q+VwNSQzpsFAJ5nZDpIw6fQsKy+Cv8WhFCfRTrtiOVWYdjY5miRlwtKUG/B/9bBRGMd6mAFfxE
-fKlPhy9/o4X3Joucz3N365EZ9tL8IgE5AVH6TtzMMzW7ImLo8TBOX7NrLXqJNEP8x/iyiIlPzUJo
-4FA=
-=gfft
------END PGP SIGNATURE-----
-
---------------lXvjdDXFSdYAgrnKqVpjeokC--
