@@ -2,81 +2,54 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969D5C77B7E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 May 2023 08:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 283EBC77B7E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 May 2023 08:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240301AbjEYImk (ORCPT
+        id S240425AbjEYIs3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 May 2023 04:42:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35588 "EHLO
+        Thu, 25 May 2023 04:48:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240200AbjEYImg (ORCPT
+        with ESMTP id S230396AbjEYIs2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 May 2023 04:42:36 -0400
+        Thu, 25 May 2023 04:48:28 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDE9197
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 May 2023 01:42:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39AC19E
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 May 2023 01:48:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=cG5er/weu42JtVw8STDHCo0F2BWd
-        u/nWHAivKagzVr4=; b=xUaTyWuWaQQ1q6lSGtH4N0y34LNdWrQrb+I6hxxWi0gP
-        Hhj3jZyTVOBjUfvrVvEHvhuLfp5Olmnz6o4os8d5hXfguli/hPqPgC1oy+35nnPJ
-        O975j+8Kxxvla94IHM6zvZNO4N535jAJcMdM8PNBOJmpgDZhPmdDoa2o7An5IZY=
-Received: (qmail 3449087 invoked from network); 25 May 2023 10:35:51 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 May 2023 10:35:51 +0200
-X-UD-Smtp-Session: l3s3148p1@gMcHgoD8Fu4ujnsI
-Date:   Thu, 25 May 2023 10:35:50 +0200
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=96ak6vdBrvXkxNL/0l5VlKNTwmB
+        h4lVq2W3TR2qJDm4=; b=B3NRGAJp9nB5NzzC1Fz/+SYU0pgIVzGgq72FyfHMWBY
+        AYezpdTXo55gH9U1oF+n3ucZoaCzkRHTFKK7tGQ8+DP5eOUR2X0SvLG8b8JzBJHe
+        hznEV1c3i+MqyYpmYNN2zpAYoQKM8MXzNT+ais3zjXKGTxkbp86g0nJZy3Pc7BLk
+        =
+Received: (qmail 3453207 invoked from network); 25 May 2023 10:48:25 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 May 2023 10:48:25 +0200
+X-UD-Smtp-Session: l3s3148p1@ZhL8roD82LsujnsI
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: ulcb-kf: add HSCIF1 node
-Message-ID: <ZG8d5p/qIDlnbBC0@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org
-References: <20230524203520.1354-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdX0x0UuNedk6N6DsXKEuwFJenNiofRQQkwLi8rwz_SXgw@mail.gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/2] KingFisher: fix SCIF1, add HSCIF1
+Date:   Thu, 25 May 2023 10:48:21 +0200
+Message-Id: <20230525084823.4195-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="o2//FwZw7sllZHdL"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX0x0UuNedk6N6DsXKEuwFJenNiofRQQkwLi8rwz_SXgw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Changes since v1:
+* split into two patches
+* added Geert's tags (thanks!)
 
---o2//FwZw7sllZHdL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Wolfram Sang (2):
+  arm64: dts: renesas: ulcb-kf: remove flow control for SCIF1
+  arm64: dts: renesas: ulcb-kf: add HSCIF1 node
 
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-> However, as the only serial port that can be muxed to the GPS pins
-> is SCIF1, we have no choice but to use SCIF1 for the GPS, and HSCIF1
-> for CN4, like your patch does.
+-- 
+2.30.2
 
-Ack. IMHO we should have the intended configuration upstream. Users can
-pinmux from there as they want.
-
-
---o2//FwZw7sllZHdL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmRvHd8ACgkQFA3kzBSg
-KbaKBxAAsXUAtX4ia42pcosnAjDdZkfc6xFkfF2yn3IvFOSAEpEst1X/e8AKLTB3
-OZhl9w7SRgs7oYSMG6ShgIUddCR1j4wxACf5LswHMiniOW8T4nfSfWYQNudh3tT1
-A/uf4KI5C5+1sH1mX+fQ8ZoPHc0L0rZ2snBIKTdfk3LQsGyT9P/RfW1PNp/MrflB
-sTqf0IQBGOJNkw6URunlSuRr60PI8Ryga640WmKFR+T9cSayHYPmo0vH+dGTjGk9
-8GT72xE4iBFiL/54yCU8yW6NfHzU9ku8hV9ZrTEs7aVf137/GJFKm9J9dWgtC8cP
-blR6cT+6qAud85ATPbCmrOyfgUnFTSdnFhWyaeeVLDjSxC3vPfOn2zUZTbhxGSUw
-92pv5bQIOAPpSlEzVje3a8rdy3/R9XwwZBAqKffF8m2UrKf2kZg2LL59plEkNZW/
-tYghxmxHnVlsdy1XGtT3bSOBgS2Aj+g697vUnmemSevC/hY0LBW4K5CIFdHyv4Yb
-Q5MoYF953M921/Sa038Gek6nCogCxz3DwX1Rkj53cJeC78Oa2oMXbeUW6xS68om4
-4ffQWNnl+VcAaxOTCrRJJJkgqoeCMOLcB5cQQNVTrdidfIvTeW5KBqKcAUCNohAb
-pg5O1hT8r8DIxdlGlZW8F8SxQpFb8H15sqKJFboe9rE5mcvDRYw=
-=9Cjx
------END PGP SIGNATURE-----
-
---o2//FwZw7sllZHdL--
