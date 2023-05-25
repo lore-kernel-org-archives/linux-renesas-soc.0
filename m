@@ -2,161 +2,145 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE29C77B7E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 May 2023 08:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75BCC77B7A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 May 2023 08:37:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233900AbjEYIYh convert rfc822-to-8bit (ORCPT
+        id S240235AbjEYIhr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 May 2023 04:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52040 "EHLO
+        Thu, 25 May 2023 04:37:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230474AbjEYIYg (ORCPT
+        with ESMTP id S240063AbjEYIho (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 May 2023 04:24:36 -0400
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDD62122
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 May 2023 01:24:35 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-561c5b5e534so3996547b3.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 May 2023 01:24:35 -0700 (PDT)
+        Thu, 25 May 2023 04:37:44 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11DBDE71
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 May 2023 01:37:10 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-30aa1eb95a0so1754138f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 May 2023 01:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685003787; x=1687595787;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3dgMxXDod8W5xFRkfrc3GHYIe7IJtWHOb1qHkVrSyw=;
+        b=rAJr00uhitvg08RQiF4/r2qsuN54ed2qIy+jhMamu7WC+7DYjaVW38dSSK1ISlVYuv
+         6A/z3EOKu/EPeDsga1H+cbaD08hWHaMazOLKcPDRmpRLY0IaVV+qAT2UjceMthQJ8huZ
+         aaPBjtPUkpL6vAmnm2CICrShG7kQRnwmzn4zJvRgzlWPsMMA/KXre+5BSSCagb4f7m3z
+         P9wvqV3my11UDuiug3DQg+sxf9PNuirNezxB4co6FLAgAsPpeZqcA/Bv/iHQdB7/40bu
+         9kz9SoUv/oRNLmJvuuwV/BWANlSSV35QI/rlc1A/y6fIU3ILm0sNkvBivC26ukuQvqdh
+         oPUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685003075; x=1687595075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JBqbZ/pPWwLjJj++iFs7Z/A2yu3afm50QrnC+5d8h/A=;
-        b=Ts/bn3AomDwwWvUgDKdzd9hfbtqQMguYGS2PixGNN3fY7l8rHPQqkqOKkGH+r9K2QA
-         eQF+nxpH85faGtlv8Muuh6flUxEgMOAWv4BlsfkdZV2yWTfAI7SmfomewdZNJNhA0QUF
-         kOIuy2+2p2LiPaoCJCDWlnM+g5V1phQu/chSoynM2qd1LLg8dXy2IXrSfzBWjttyrfv7
-         lRDV2+EmGs4tI9tbqb8JnRvkYng/F46j7w1Kx5la+Ed6Eg/6bOmvLQMgNgpZUBpvZ8se
-         O4X2ggZiAytHE+EEBIRc7vQp2YOsjaNx4TEuwgltGdKfiJvWqJ6ydN6e+ZRaWY7oi5nW
-         0Mvg==
-X-Gm-Message-State: AC+VfDxPBAchzxOz64P0XPt/NKpgVLrK3vI56uWtXAkOcPF2CludKKkQ
-        yCODakb1K8UVo5IyUFhoukI/QHM1n4hR/Q==
-X-Google-Smtp-Source: ACHHUZ7aPzlWDB8m69nRE6aqhox7a244mbI1WWCOSaSW7Qui8KjK3KfkwA7GVm+CN+jWqYEAU11qzA==
-X-Received: by 2002:a81:bf4f:0:b0:555:d983:f4f0 with SMTP id s15-20020a81bf4f000000b00555d983f4f0mr21765178ywk.24.1685003074790;
-        Thu, 25 May 2023 01:24:34 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id d123-20020a814f81000000b0054605c23114sm206095ywb.66.2023.05.25.01.24.34
-        for <linux-renesas-soc@vger.kernel.org>
+        d=1e100.net; s=20221208; t=1685003787; x=1687595787;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n3dgMxXDod8W5xFRkfrc3GHYIe7IJtWHOb1qHkVrSyw=;
+        b=R0pBO/GAUM+DMsuEOiYTt2wqjcq8l4bd0XzEPkg7BRV0Nl7qVDqGKeGxN1bK6roUeK
+         V327seFwmNSxxMDH/tnTcxMt87G9NzTbBm/vOhS2kGfg6iZR7ScY0u2KDuHAY6IKNZOB
+         bT+C34Y5gnzAgzoqf9kifgRXhg/9/3iBnFMTqtgiwytBDVZXqg5t90yOIA8hQgrVLauh
+         gJJ9iAW/R7WbRIKXhbLi8ch+A5OqhcUOdFhQFn3zcUh36x/RDJxPVtHjo0hcdnwExY26
+         CfdijYOLBjIBwQU5AfQtjlvzZnTfmJfbpRhSSceAw7yTCvcxN5loSx1ENZDO/sEZXprj
+         ErkA==
+X-Gm-Message-State: AC+VfDzLavWTjSPrreDqe/BsCGSmtruFSQgsm+Vzl/wEdv+FAGvWVmpj
+        gc0ItpY6LSHONNVqwnm83F5H4w==
+X-Google-Smtp-Source: ACHHUZ5nkq7EAYlDZowugr1Hfy9OT67waP2J4z6G+ddNE5NGUnlczveGmFzKp2JfbMx57X46VnG+Cw==
+X-Received: by 2002:a5d:4b03:0:b0:30a:8c0b:3209 with SMTP id v3-20020a5d4b03000000b0030a8c0b3209mr1682351wrq.9.1685003787201;
+        Thu, 25 May 2023 01:36:27 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:5cdb:105b:7481:b0e6? ([2a01:e0a:982:cbb0:5cdb:105b:7481:b0e6])
+        by smtp.gmail.com with ESMTPSA id y8-20020a7bcd88000000b003f6038faa19sm4812494wmj.19.2023.05.25.01.36.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 May 2023 01:24:34 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-561c5b5e534so3996267b3.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 May 2023 01:24:34 -0700 (PDT)
-X-Received: by 2002:a0d:dd0b:0:b0:561:985c:1ecc with SMTP id
- g11-20020a0ddd0b000000b00561985c1eccmr24378772ywe.19.1685003073756; Thu, 25
- May 2023 01:24:33 -0700 (PDT)
+        Thu, 25 May 2023 01:36:26 -0700 (PDT)
+Message-ID: <5c5910e0-8a55-416f-e1fe-2a1b223558f5@linaro.org>
+Date:   Thu, 25 May 2023 10:36:25 +0200
 MIME-Version: 1.0
-References: <20230524203520.1354-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20230524203520.1354-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 25 May 2023 10:24:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX0x0UuNedk6N6DsXKEuwFJenNiofRQQkwLi8rwz_SXgw@mail.gmail.com>
-Message-ID: <CAMuHMdX0x0UuNedk6N6DsXKEuwFJenNiofRQQkwLi8rwz_SXgw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: ulcb-kf: add HSCIF1 node
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/2] drm/panel: simple: Add Ampire AM-800480L1TMQW-T00H
+Content-Language: en-US
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <cover.1684931026.git.geert+renesas@glider.be>
+ <244d9471e0ed248ff2dea8ded3a5384a1c51904b.1684931026.git.geert+renesas@glider.be>
+Organization: Linaro Developer Services
+In-Reply-To: <244d9471e0ed248ff2dea8ded3a5384a1c51904b.1684931026.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
-
-On Wed, May 24, 2023 at 10:37 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Exposed on CN4. Tested by connecting it to a Renesas Ebisu board. Also,
-> remove flow control for SCIF1. The schematics are misleading, the flow
-> control is for HSCIF1. SCIF1 (for GPS) does not use flow control.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Thanks for your patch!
-
-It's actually a bit more complicated ;-)
-CN4 can be served by either SCIF1 or HSCIF1, including flow control
-for both.  But the current pin control setting for SCIF1 is wrong for
-that case, as it should use scif1_data_a instead of scif1_data_b.
-
-However, as the only serial port that can be muxed to the GPS pins
-is SCIF1, we have no choice but to use SCIF1 for the GPS, and HSCIF1
-for CN4, like your patch does.
-
+On 24/05/2023 14:32, Geert Uytterhoeven wrote:
+> Add support for the Ampire AM-800480L1TMQW-T00H 5" WVGA TFT LCD panel.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->
-> I extracted the removal of SCIF1 flow control from the GPS patches
-> because I think that actually belongs here.
-
-Yes it does, thanks!
-
-> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> @@ -10,6 +10,7 @@ / {
->         aliases {
->                 serial1 = &hscif0;
->                 serial2 = &scif1;
-> +               serial3 = &hscif1;
->                 mmc2 = &sdhi3;
->         };
->
-> @@ -132,6 +133,14 @@ &hscif0 {
->         status = "okay";
->  };
->
-> +&hscif1 {
-> +       pinctrl-0 = <&hscif1_pins>;
-> +       pinctrl-names = "default";
-> +       uart-has-rtscts;
-> +
-> +       status = "okay";
+>   drivers/gpu/drm/panel/panel-simple.c | 33 ++++++++++++++++++++++++++++
+>   1 file changed, 33 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index 5778824dffd47a31..467117c0b2c9d463 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -778,6 +778,36 @@ static const struct drm_display_mode ampire_am800480r3tmqwa1h_mode = {
+>   	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
+>   };
+>   
+> +static const struct display_timing ampire_am_800480l1tmqw_t00h_timing = {
+> +	.pixelclock = { 29930000, 33260000, 36590000 },
+> +	.hactive = { 800, 800, 800 },
+> +	.hfront_porch = { 1, 40, 168 },
+> +	.hback_porch = { 88, 88, 88 },
+> +	.hsync_len = { 1, 128, 128 },
+> +	.vactive = { 480, 480, 480 },
+> +	.vfront_porch = { 1, 35, 37 },
+> +	.vback_porch = { 8, 8, 8 },
+> +	.vsync_len = { 1, 2, 2 },
+> +	.flags = DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW |
+> +		 DISPLAY_FLAGS_DE_HIGH | DISPLAY_FLAGS_PIXDATA_POSEDGE |
+> +		 DISPLAY_FLAGS_SYNC_POSEDGE,
 > +};
 > +
->  &hsusb {
->         dr_mode = "otg";
->         status = "okay";
-> @@ -387,8 +396,13 @@ hscif0_pins: hscif0 {
->                 function = "hscif0";
->         };
->
-> +       hscif1_pins: hscif1 {
-> +               groups = "hscif1_data_a", "hscif1_ctrl_a";
-> +               function = "hscif1";
-> +       };
+> +static const struct panel_desc ampire_am_800480l1tmqw_t00h = {
+> +	.timings = &ampire_am_800480l1tmqw_t00h_timing,
+> +	.num_timings = 1,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width = 111,
+> +		.height = 67,
+> +	},
+> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
+> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH |
+> +		     DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE |
+> +		     DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE,
+> +	.connector_type = DRM_MODE_CONNECTOR_DPI,
+> +};
 > +
+>   static const struct panel_desc ampire_am800480r3tmqwa1h = {
+>   	.modes = &ampire_am800480r3tmqwa1h_mode,
+>   	.num_modes = 1,
+> @@ -3993,6 +4023,9 @@ static const struct of_device_id platform_of_match[] = {
+>   	}, {
+>   		.compatible = "ampire,am-480272h3tmqw-t01h",
+>   		.data = &ampire_am_480272h3tmqw_t01h,
+> +	}, {
+> +		.compatible = "ampire,am-800480l1tmqw-t00h",
+> +		.data = &ampire_am_800480l1tmqw_t00h,
+>   	}, {
+>   		.compatible = "ampire,am800480r3tmqwa1h",
+>   		.data = &ampire_am800480r3tmqwa1h,
 
-The above LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
->         scif1_pins: scif1 {
-> -               groups = "scif1_data_b", "scif1_ctrl";
-> +               groups = "scif1_data_b";
->                 function = "scif1";
->         };
->
-> @@ -418,7 +432,6 @@ &sound_clk_pins
->  &scif1 {
->         pinctrl-0 = <&scif1_pins>;
->         pinctrl-names = "default";
-> -       uart-has-rtscts;
->
->         status = "okay";
->  };
-
-This part also LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-However, I think the scif1 changes should be a separate patch, with
-Fixes: c6c816e22bc89ea4 ("arm64: dts: ulcb-kf: enable SCIF1")
-so please split it off.
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
