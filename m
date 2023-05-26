@@ -2,49 +2,48 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F19EFC7EE2F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 May 2023 09:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8F3C77B7A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 May 2023 09:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjEZJs7 (ORCPT
+        id S242870AbjEZJx0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 May 2023 05:48:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49130 "EHLO
+        Fri, 26 May 2023 05:53:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235332AbjEZJsw (ORCPT
+        with ESMTP id S236264AbjEZJxY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 May 2023 05:48:52 -0400
+        Fri, 26 May 2023 05:53:24 -0400
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA5EF1B3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 May 2023 02:48:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC09D9
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 May 2023 02:53:23 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:ae30:9d2b:3228:d21])
         by michel.telenet-ops.be with bizsmtp
-        id 1Mof2A00A4eYoVn06MofwQ; Fri, 26 May 2023 11:48:39 +0200
+        id 1MtM2A00E4eYoVn06MtMno; Fri, 26 May 2023 11:53:22 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q2U3X-0038jt-K3;
-        Fri, 26 May 2023 11:48:36 +0200
+        id 1q2U89-0038kI-9X;
+        Fri, 26 May 2023 11:53:21 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q2U3o-00EFZX-4V;
-        Fri, 26 May 2023 11:48:36 +0200
+        id 1q2U8P-00EFcz-OQ;
+        Fri, 26 May 2023 11:53:21 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 2/3] Renesas driver updates for v6.5
-Date:   Fri, 26 May 2023 11:48:30 +0200
-Message-Id: <cover.1685094242.git.geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.5
+Date:   Fri, 26 May 2023 11:53:19 +0200
+Message-Id: <cover.1685094576.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1685094238.git.geert+renesas@glider.be>
-References: <cover.1685094238.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
+
+	Hi Mike, Stephen,
 
 The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
 
@@ -52,20 +51,39 @@ The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v6.5-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.5-tag1
 
-for you to fetch changes up to cb9a39aacd3d6387b6f1f178a96eadceba90454e:
+for you to fetch changes up to d1c20885d3b01e6a62e920af4b227abd294d22f3:
 
-  soc: renesas: rcar-rst: Allow WDT reset on R-Car V3U (2023-05-15 10:32:12 +0200)
-
-----------------------------------------------------------------
-Renesas driver updates for v6.5
-
-  - Enable watchdog reset support on R-Car V3U.
+  clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write (2023-05-23 09:06:50 +0200)
 
 ----------------------------------------------------------------
+clk: renesas: Updates for v6.5
+
+  - Add PWM clock on R-Car V3U,
+  - Fix PLL5 on RZ/G2L and RZ/V2L.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (1):
+      clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write
+
 Wolfram Sang (1):
-      soc: renesas: rcar-rst: Allow WDT reset on R-Car V3U
+      clk: renesas: r8a779a0: Add PWM clock
 
- drivers/soc/renesas/rcar-rst.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 1 +
+ drivers/clk/renesas/rzg2l-cpg.c         | 6 ++----
+ drivers/clk/renesas/rzg2l-cpg.h         | 3 ---
+ 3 files changed, 3 insertions(+), 7 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
