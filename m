@@ -2,26 +2,26 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D934C77B7E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 May 2023 08:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AAEC7EE32
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 May 2023 08:08:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231668AbjE2IIx (ORCPT
+        id S231680AbjE2IIy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 May 2023 04:08:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37422 "EHLO
+        Mon, 29 May 2023 04:08:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230168AbjE2IIw (ORCPT
+        with ESMTP id S231673AbjE2IIx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 May 2023 04:08:52 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3B5ADBB;
-        Mon, 29 May 2023 01:08:50 -0700 (PDT)
+        Mon, 29 May 2023 04:08:53 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DC29AB5;
+        Mon, 29 May 2023 01:08:51 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.00,200,1681138800"; 
-   d="scan'208";a="161242008"
+   d="scan'208";a="164772895"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 29 May 2023 17:08:49 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 29 May 2023 17:08:49 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8E52C400C741;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D6D67400C742;
         Mon, 29 May 2023 17:08:49 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
@@ -31,9 +31,9 @@ To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
 Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next 1/5] dt-bindings: net: r8a779f0-ether-switch: Add ACLK
-Date:   Mon, 29 May 2023 17:08:36 +0900
-Message-Id: <20230529080840.1156458-2-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next 3/5] net: renesas: rswitch: Alloc all 128 queues
+Date:   Mon, 29 May 2023 17:08:38 +0900
+Message-Id: <20230529080840.1156458-4-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230529080840.1156458-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230529080840.1156458-1-yoshihiro.shimoda.uh@renesas.com>
@@ -43,42 +43,88 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add ACLK of GWCA which needs to calculate registers' values for
-rate limiter feature.
+To use per-queue rate limiter feature in the future, alloc all 128
+queues (GWCA_AXI_CHAIN_N) of GWCA so that drop num_queues from
+struct rswitch_gwca. Notes that add a condition of gwca.used flag
+in rswitch_data_irq() because the previous code always set the flag
+of all queues.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- .../bindings/net/renesas,r8a779f0-ether-switch.yaml    | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/renesas/rswitch.c | 19 ++++++++++---------
+ drivers/net/ethernet/renesas/rswitch.h |  1 -
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,r8a779f0-ether-switch.yaml b/Documentation/devicetree/bindings/net/renesas,r8a779f0-ether-switch.yaml
-index e933a1e48d67..cbe05fdcadaf 100644
---- a/Documentation/devicetree/bindings/net/renesas,r8a779f0-ether-switch.yaml
-+++ b/Documentation/devicetree/bindings/net/renesas,r8a779f0-ether-switch.yaml
-@@ -75,7 +75,12 @@ properties:
-       - const: rmac2_phy
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index 51df96de6fd5..4aab5d8aad2f 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -508,16 +508,16 @@ static int rswitch_gwca_queue_ext_ts_format(struct net_device *ndev,
  
-   clocks:
--    maxItems: 1
-+    maxItems: 2
+ static int rswitch_gwca_linkfix_alloc(struct rswitch_private *priv)
+ {
+-	int i, num_queues = priv->gwca.num_queues;
+ 	struct rswitch_gwca *gwca = &priv->gwca;
+ 	struct device *dev = &priv->pdev->dev;
++	int i;
+ 
+-	gwca->linkfix_table_size = sizeof(struct rswitch_desc) * num_queues;
++	gwca->linkfix_table_size = sizeof(struct rswitch_desc) * GWCA_AXI_CHAIN_N;
+ 	gwca->linkfix_table = dma_alloc_coherent(dev, gwca->linkfix_table_size,
+ 						 &gwca->linkfix_table_dma, GFP_KERNEL);
+ 	if (!gwca->linkfix_table)
+ 		return -ENOMEM;
+-	for (i = 0; i < num_queues; i++)
++	for (i = 0; i < GWCA_AXI_CHAIN_N; i++)
+ 		gwca->linkfix_table[i].die_dt = DT_EOS;
+ 
+ 	return 0;
+@@ -538,8 +538,8 @@ static struct rswitch_gwca_queue *rswitch_gwca_get(struct rswitch_private *priv)
+ 	struct rswitch_gwca_queue *gq;
+ 	int index;
+ 
+-	index = find_first_zero_bit(priv->gwca.used, priv->gwca.num_queues);
+-	if (index >= priv->gwca.num_queues)
++	index = find_first_zero_bit(priv->gwca.used, GWCA_AXI_CHAIN_N);
++	if (index >= GWCA_AXI_CHAIN_N)
+ 		return NULL;
+ 	set_bit(index, priv->gwca.used);
+ 	gq = &priv->gwca.queues[index];
+@@ -846,7 +846,10 @@ static irqreturn_t rswitch_data_irq(struct rswitch_private *priv, u32 *dis)
+ 	struct rswitch_gwca_queue *gq;
+ 	int i, index, bit;
+ 
+-	for (i = 0; i < priv->gwca.num_queues; i++) {
++	for (i = 0; i < GWCA_AXI_CHAIN_N; i++) {
++		if (!test_bit(i, priv->gwca.used))
++			continue;
 +
-+  clock-names:
-+    items:
-+      - const: fck
-+      - const: aclk
+ 		gq = &priv->gwca.queues[i];
+ 		index = gq->index / 32;
+ 		bit = BIT(gq->index % 32);
+@@ -1890,9 +1893,7 @@ static int renesas_eth_sw_probe(struct platform_device *pdev)
+ 	}
  
-   resets:
-     maxItems: 1
-@@ -221,7 +226,8 @@ examples:
-                           "rmac2_mdio",
-                           "rmac0_phy", "rmac1_phy",
-                           "rmac2_phy";
--        clocks = <&cpg CPG_MOD 1505>;
-+        clocks = <&cpg CPG_MOD 1505>, <&cpg CPG_CORE R8A779F0_CLK_S0D2_HSC>;
-+        clock-names = "fck", "aclk";
-         power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-         resets = <&cpg 1505>;
- 
+ 	priv->gwca.index = AGENT_INDEX_GWCA;
+-	priv->gwca.num_queues = min(RSWITCH_NUM_PORTS * NUM_QUEUES_PER_NDEV,
+-				    GWCA_AXI_CHAIN_N);
+-	priv->gwca.queues = devm_kcalloc(&pdev->dev, priv->gwca.num_queues,
++	priv->gwca.queues = devm_kcalloc(&pdev->dev, GWCA_AXI_CHAIN_N,
+ 					 sizeof(*priv->gwca.queues), GFP_KERNEL);
+ 	if (!priv->gwca.queues)
+ 		return -ENOMEM;
+diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
+index 550a6bff9078..c3c2c92c2a1e 100644
+--- a/drivers/net/ethernet/renesas/rswitch.h
++++ b/drivers/net/ethernet/renesas/rswitch.h
+@@ -956,7 +956,6 @@ struct rswitch_gwca {
+ 	dma_addr_t linkfix_table_dma;
+ 	u32 linkfix_table_size;
+ 	struct rswitch_gwca_queue *queues;
+-	int num_queues;
+ 	struct rswitch_gwca_queue ts_queue;
+ 	struct list_head ts_info_list;
+ 	DECLARE_BITMAP(used, GWCA_AXI_CHAIN_N);
 -- 
 2.25.1
 
