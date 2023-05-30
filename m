@@ -2,104 +2,173 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D23C7EE37
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 May 2023 11:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA19C7EE23
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 May 2023 11:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231783AbjE3LVK (ORCPT
+        id S229639AbjE3Lbm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 30 May 2023 07:21:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59826 "EHLO
+        Tue, 30 May 2023 07:31:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231620AbjE3LVJ (ORCPT
+        with ESMTP id S230228AbjE3Lbl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 May 2023 07:21:09 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EA3EA0;
-        Tue, 30 May 2023 04:21:04 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id ca18e2360f4ac-7770b7c2fa5so261087539f.0;
-        Tue, 30 May 2023 04:21:04 -0700 (PDT)
+        Tue, 30 May 2023 07:31:41 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8434BFE
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 May 2023 04:31:34 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-64d44b198baso2958706b3a.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 May 2023 04:31:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685445663; x=1688037663;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jzNEbgTraqKA7CFpkPxkOPN8rp70PxDOo72leKajhjw=;
-        b=Ba5mRddbGfVE2a84DB1WnQtDqvRKgx1icAnzmN0SKau/ndbCJKv6PdfkX5/ZfV+lcV
-         dBhtRy4j4BrX7vc55Di1Q8ldXqYemuUUDfR+J8AefUR+x3K+lyGGIDaEH6A65HAODh2Q
-         rQ0psu/1SV+MsHopjK0M9d0KkYqSlqcxMll9ENyMgtJHbJXeuY12doRxFo4RIntHJLLi
-         qwZdPYVAcfBiQfA37bxyoJNltECC+YGKiMGdcKhLA2O9Z7eIDL1KgK6ICcAkHCQos/cR
-         B4YjYXSSUKp7efI4SYI4O+P5MsKWU37hzqyM3XqQ6pUFq7L7FcXdSTJs1YeFGF3/dASw
-         z5HQ==
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1685446293; x=1688038293;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1tKbs254h6xLpRsVD/FS2WO7noQxpndCrrtC1RDto3A=;
+        b=o1Dpe4c83em1xsJlm9r/WxdDp7ZFO0ZTvYqzpX1TlnRVNnSY7NXIBm6NHz/f3++Zi4
+         cb12kwWZF5jRtkSiuAbTRnmfX9YTlEJqk/daKIzFFdEpkF9O1N17p4sKNA0evlxp9oKm
+         JwnNKWQSTkpvFleO7RgowWfTt0EwEmOpriTjAmOSxIbEKJuZlyd5xTchY1o5c6qCcDvd
+         EPhoXLnWQE9x+70ZFiOHZtWCi9hl38WQKz0mG2tNJwTLij6u+g3FXWnGoNa7HKGpZbxo
+         1cj2YmCCTa9Z3uhylBPsjzTr0WGrPxtfm08v6YRosbaisyOhTRRJMRsq15bs6Fpd/EP0
+         kBsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685445663; x=1688037663;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jzNEbgTraqKA7CFpkPxkOPN8rp70PxDOo72leKajhjw=;
-        b=MamJTfCJ0ZDr8WxrKHkOeWdRP7n4FSMqzszqVuEXRqaUpvN78XrihhXi+sx/2pUVHo
-         qpwGAUhcxkY85386X0wPtCqPIQ5aKuZXFP3HjMRIElzXkBIrI3WEuI/DqYXHTBsv5Khn
-         Se8CZWWNIeIO/VxPlthCW+Iqf3JSiv1M6c23/XPRNz+1MCtTnmGhRFQz5wPaCkccQyAP
-         c7eSopm80bAhOv+GlmYlcUzDcdNiwwbjI1fcGZLWJdf7Jw5Zpinuk9jFDjpXVtLNqd2I
-         IOwxttX8+WsnMoBqcyk3AjsHIdEOAzBVddS1dn4jrasqyUXyZzJD3N39apaqBerSGS9D
-         4JaA==
-X-Gm-Message-State: AC+VfDyQ2iX7IZHqWUuIxa6SFI3Qg+CHLV52zuJyCB5V9nS8afwc8yTI
-        bP5fxfs+/uhYu1YvRja4S2OC+Pl3Xic=
-X-Google-Smtp-Source: ACHHUZ47NCmq0gmYRMh0JisBCfwXygYS2+J1oSi/qMi2LJA7nSRi8lG7PZBV2zh0DBk+lkHEGZ6mGw==
-X-Received: by 2002:a5e:de46:0:b0:774:8aee:7e5c with SMTP id e6-20020a5ede46000000b007748aee7e5cmr1343664ioq.16.1685445663210;
-        Tue, 30 May 2023 04:21:03 -0700 (PDT)
-Received: from aford-B741.lan ([2601:447:d001:897f:a5e7:c9e9:bb20:39c1])
-        by smtp.gmail.com with ESMTPSA id co17-20020a0566383e1100b003c4e02148e5sm634363jab.53.2023.05.30.04.21.01
+        d=1e100.net; s=20221208; t=1685446293; x=1688038293;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1tKbs254h6xLpRsVD/FS2WO7noQxpndCrrtC1RDto3A=;
+        b=JAboQThxna90RfpF3MRaSpxEWaInD8DzYn3OwOFJS88QOqYwahJUgEZUO7ACQpWH3d
+         qzygzUn/jVuXyNBDFVrpmKxmAhR07MVc/Qfj1DFl/y8XKc2gX//ZZi8cUT+T7WmXNXlK
+         Xx+DDxJRqsGRmSTkZYM3jRnvmxjlPYWDXAK4suM1l6Mi5UmWY/cupEkGstQoZ+kZpD7q
+         kDBZsKttrzGOWCeTEFN3XWZFp4pMHtcAHhaIAfjI04mdICxJvogv5E9Rtmn1J/x0IFlH
+         VFRtcy4iZK1DqaGVWND2jFVFVLCW1p4OEIhax6LiMBkfj+j0mvdKv7gWiEIYMQLK+oIh
+         VGfw==
+X-Gm-Message-State: AC+VfDyxHQSafIPegNIF1+rTCZoASa3b+T8pC4KNPh83CLNSIttCCp0Y
+        PRyGioDiBcEsHo2Ts5UKJDi/suHDV5xXxlHx52D9Og==
+X-Google-Smtp-Source: ACHHUZ73L9h+u2TRh3v+81EzKG7yfpvuh7QQ2VW97R003Sl+v/RzRXca90wvFiAK4n+YywzBGEPr0w==
+X-Received: by 2002:a05:6a20:3d28:b0:10b:60c1:2999 with SMTP id y40-20020a056a203d2800b0010b60c12999mr2433565pzi.22.1685446293487;
+        Tue, 30 May 2023 04:31:33 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id l25-20020a62be19000000b0064858e255d1sm1455666pff.65.2023.05.30.04.31.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 May 2023 04:21:02 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     biju.das.jz@bp.renesas.com, marek.vasut+renesas@gmail.com,
-        cstevens@beaconembedded.com, aford@beaconembedded.com,
-        Adam Ford <aford173@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [RFC 2/3] clk: renesas: r8a7741a: Add 3dge and ZG support
-Date:   Tue, 30 May 2023 06:20:48 -0500
-Message-Id: <20230530112050.5635-2-aford173@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230530112050.5635-1-aford173@gmail.com>
-References: <20230530112050.5635-1-aford173@gmail.com>
+        Tue, 30 May 2023 04:31:32 -0700 (PDT)
+Message-ID: <6475de94.620a0220.f974.27db@mx.google.com>
+Date:   Tue, 30 May 2023 04:31:32 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+X-Kernelci-Kernel: renesas-devel-2023-05-30-v6.4-rc4
+X-Kernelci-Report-Type: test
+Subject: renesas/master cros-ec: 9 runs,
+ 2 regressions (renesas-devel-2023-05-30-v6.4-rc4)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The 3dge and ZG clocks are necessary to support the 3D graphics.
+renesas/master cros-ec: 9 runs, 2 regressions (renesas-devel-2023-05-30-v6.=
+4-rc4)
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+Regressions Summary
+-------------------
 
-diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-index ad03c09ebc1f..7e70c9a9affa 100644
---- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-@@ -76,6 +76,7 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
- 	/* Core Clock Outputs */
- 	DEF_GEN3_Z("z",		R8A774A1_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
- 	DEF_GEN3_Z("z2",	R8A774A1_CLK_Z2,    CLK_TYPE_GEN3_Z,  CLK_PLL2, 2, 0),
-+	DEF_GEN3_Z("zg",	R8A774A1_CLK_ZG,    CLK_TYPE_GEN3_ZG, CLK_PLL4, 4, 24),
- 	DEF_FIXED("ztr",        R8A774A1_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A774A1_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A774A1_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
-@@ -123,6 +124,7 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
- };
- 
- static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
-+	DEF_MOD("3dge",			 112,	R8A774A1_CLK_ZG),
- 	DEF_MOD("tmu4",			 121,	R8A774A1_CLK_S0D6),
- 	DEF_MOD("tmu3",			 122,	R8A774A1_CLK_S3D2),
- 	DEF_MOD("tmu2",			 123,	R8A774A1_CLK_S3D2),
--- 
-2.39.2
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+mt8183-kukui-...uniper-sku16 | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
 
+mt8192-asurada-spherion-r0   | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-05-30-v6.4-rc4/plan/cros-ec/
+
+  Test:     cros-ec
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-05-30-v6.4-rc4
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      520bf28625c74fdd976c6c37fb519ccad1cef65b
+
+  Test suite revisions:
+    cros-ec-tests
+      URL:  https://github.com/kernelci/cros-ec-tests.git
+      SHA:  fad9423ae3c64bfd48c207de34a1177000d45fa8 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+mt8183-kukui-...uniper-sku16 | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6475d01f3809d068952e85fa
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-05-30-v6.4-rc4/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cr=
+os-ec-mt8183-kukui-jacuzzi-juniper-sku16.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-05-30-v6.4-rc4/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cr=
+os-ec-mt8183-kukui-jacuzzi-juniper-sku16.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20230527.0/arm64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.login: https://kernelci.org/test/case/id/6475d01f3809d068952e85=
+fb
+        failing since 20 days (last pass: renesas-devel-2023-04-24-v6.3, fi=
+rst fail: renesas-devel-2023-05-09-v6.4-rc1) =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+mt8192-asurada-spherion-r0   | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6475ccd63978a6bfb12e8726
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-05-30-v6.4-rc4/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cr=
+os-ec-mt8192-asurada-spherion-r0.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-05-30-v6.4-rc4/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/cr=
+os-ec-mt8192-asurada-spherion-r0.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-cr=
+os-ec/20230527.0/arm64/rootfs.cpio.gz =
+
+
+
+  * cros-ec.login: https://kernelci.org/test/case/id/6475ccd63978a6bfb12e87=
+27
+        failing since 20 days (last pass: renesas-devel-2023-04-24-v6.3, fi=
+rst fail: renesas-devel-2023-05-09-v6.4-rc1) =
+
+ =20
