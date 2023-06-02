@@ -2,112 +2,128 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F187EC7EE2A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jun 2023 08:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05C3C7EE2A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jun 2023 08:52:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234478AbjFBI1s (ORCPT
+        id S234956AbjFBIwS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Jun 2023 04:27:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
+        Fri, 2 Jun 2023 04:52:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234470AbjFBI1P (ORCPT
+        with ESMTP id S234873AbjFBIvv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2023 04:27:15 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A586C170D
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 01:26:31 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q5076-0007g1-OA; Fri, 02 Jun 2023 10:26:24 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q5075-004Xlj-60; Fri, 02 Jun 2023 10:26:23 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q5074-00APUw-AD; Fri, 02 Jun 2023 10:26:22 +0200
-Date:   Fri, 2 Jun 2023 10:26:22 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v17] pwm: Add Renesas RZ/G2L MTU3a PWM driver
-Message-ID: <20230602082622.vs3boxqgek4jmb7b@pengutronix.de>
-References: <20230522171449.688814-1-biju.das.jz@bp.renesas.com>
+        Fri, 2 Jun 2023 04:51:51 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3596172E
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 01:51:15 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:158c:2ccf:1f70:e136])
+        by michel.telenet-ops.be with bizsmtp
+        id 48qo2A00B1tRZS8068qoZc; Fri, 02 Jun 2023 10:51:13 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1q50UO-00BhYO-Uv;
+        Fri, 02 Jun 2023 10:50:48 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1q50Ui-00APxh-20;
+        Fri, 02 Jun 2023 10:50:48 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Dejin Zheng <zhengdejin5@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Russell King <linux@armlinux.org.uk>,
+        John Stultz <jstultz@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tero Kristo <tero.kristo@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 5/7] clk: renesas: rzg2l: Convert to readl_poll_timeout_atomic()
+Date:   Fri,  2 Jun 2023 10:50:40 +0200
+Message-Id: <900543d4b9abc1004e6aecdb676f23e5508ae96f.1685692810.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1685692810.git.geert+renesas@glider.be>
+References: <cover.1685692810.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nf4fj3vubftysrlc"
-Content-Disposition: inline
-In-Reply-To: <20230522171449.688814-1-biju.das.jz@bp.renesas.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Use readl_poll_timeout_atomic() instead of open-coding the same
+operation.
 
---nf4fj3vubftysrlc
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As typically no retries are needed, 10 µs is a suitable timeout value.
 
-Hello,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Polling measurements done on RZ/Five.
 
-On Mon, May 22, 2023 at 06:14:49PM +0100, Biju Das wrote:
-> base-commit: 9f258af06b6268be8e960f63c3f66e88bdbbbdb0
-> prerequisite-patch-id: 7d5c55db908971d16a58eb46b25d42dfb0f680ec
-> prerequisite-patch-id: 6c15d33bb612750523d14af87a5cf9e6ff142540
-> prerequisite-patch-id: e5e4d86a0a012a59f585b84ce7ae0d3f047787dc
-> prerequisite-patch-id: d62b4e1326f1518fd30eb98a37bfb4998573979a
-> prerequisite-patch-id: 15bf63b610cab275387a2bbee7ab2a0a48414f75
+v3:
+  - New.
+---
+ drivers/clk/renesas/rzg2l-cpg.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-My working copy doesn't contain
-9f258af06b6268be8e960f63c3f66e88bdbbbdb0, so I wonder what is the base
-you used here. Also the other prerequisite patches are unclear to me and
-I didn't find them[1]. I assume it's stuff around
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index ca8b921c77625317..bc623515ad843cf5 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -903,9 +903,9 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ 	unsigned int reg = clock->off;
+ 	struct device *dev = priv->dev;
+ 	unsigned long flags;
+-	unsigned int i;
+ 	u32 bitmask = BIT(clock->bit);
+ 	u32 value;
++	int error;
+ 
+ 	if (!clock->off) {
+ 		dev_dbg(dev, "%pC does not support ON/OFF\n",  hw->clk);
+@@ -930,19 +930,13 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ 	if (!priv->info->has_clk_mon_regs)
+ 		return 0;
+ 
+-	for (i = 1000; i > 0; --i) {
+-		if (((readl(priv->base + CLK_MON_R(reg))) & bitmask))
+-			break;
+-		cpu_relax();
+-	}
+-
+-	if (!i) {
++	error = readl_poll_timeout_atomic(priv->base + CLK_MON_R(reg), value,
++					  value & bitmask, 0, 10);
++	if (error)
+ 		dev_err(dev, "Failed to enable CLK_ON %p\n",
+ 			priv->base + CLK_ON_R(reg));
+-		return -ETIMEDOUT;
+-	}
+ 
+-	return 0;
++	return error;
+ }
+ 
+ static int rzg2l_mod_clock_enable(struct clk_hw *hw)
+-- 
+2.34.1
 
-	654c293e1687 mfd: Add Renesas RZ/G2L MTU3a core driver
-
-(which is in v6.4-rc1)? I recommend duplicating this information in
-human readable form in the cover letter (or below the --- if it's only a
-single patch).
-
-So this patch was probably not tested by the build bots.
-
-Otherwise I think this is good enough to go in now, so:
-
-Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-
-Thanks
-Uwe
-
-[1] git log -p v6.2..next/master | git patch-id | grep 6c15d33bb612750523d1=
-4af87a5cf9e6ff142540
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---nf4fj3vubftysrlc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmR5p60ACgkQj4D7WH0S
-/k4fewgArLtkF/a7qmldtJ3eVJUdAH04DG9lgeDDZWeyXgIJj577f94aYfeXn5Ls
-6i4cOubitXFiGlLm7w6pujol60azn6B7qibm24clYqWOgTSlNaq8i30Uq3zjEkD2
-GdNRunTgtHjNTs3qKjAg+VUdw9YnhXAHVBJJM8DocRvXnGPgcO9J0ZmMKibg501a
-ndTADGgBnO0sCEGBDNolpYTmG0upRErooPv6e0xRCzp7tbR5O6ChnCMwuQQtLuVI
-giTDu+5QY1P1EZNNQ2k2ewjQ1V+39NKR1uTbXT7zHOeM/stKZtgL+FjtCFpsofXn
-i66MD2rXoUljqzFkB7f0+NqfCi8QbQ==
-=pbdN
------END PGP SIGNATURE-----
-
---nf4fj3vubftysrlc--
