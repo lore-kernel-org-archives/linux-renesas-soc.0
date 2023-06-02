@@ -2,87 +2,88 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2D2C7EE2C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jun 2023 09:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47324C77B7A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jun 2023 09:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235156AbjFBJNX (ORCPT
+        id S234540AbjFBJuY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Jun 2023 05:13:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38468 "EHLO
+        Fri, 2 Jun 2023 05:50:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235113AbjFBJMt (ORCPT
+        with ESMTP id S234530AbjFBJuX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2023 05:12:49 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEDC21711
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 02:11:48 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:158c:2ccf:1f70:e136])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 49Bg2A00J1tRZS8019BgSX; Fri, 02 Jun 2023 11:11:46 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1q50ob-00BvaJ-2R;
-        Fri, 02 Jun 2023 11:11:40 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1q50ou-00ASIG-5F;
-        Fri, 02 Jun 2023 11:11:40 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] drm: Atomic modesetting doc and comment improvements
-Date:   Fri,  2 Jun 2023 11:11:33 +0200
-Message-Id: <cover.1685696114.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        Fri, 2 Jun 2023 05:50:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C056718C
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 02:50:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 536E2614C6
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 09:50:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B4A50C433D2
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 09:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685699420;
+        bh=tuxWKLi6BcWC/ezivysyd3Ff+0kR1u7zJU1UZSipiRQ=;
+        h=Subject:From:Date:To:From;
+        b=OByhd2GUbqgCQsujaDP/H5qGkA1vZlXdseGdHajSmszzkVQuLwCZW4S3G2IqqlNoZ
+         E4y/r2ed8wk0o9a8keVLSHyejcEPNwuEgXT9VMHu/v8sZ5KTXt7gdxm5eludkkHiji
+         IlcIHq3cqOcAjIvlqCDx8YUlxEfLEX5LJogNM5HJR9XGaUeilW6KOaFAXDRvOr+LoO
+         WNXpQQJryEwyqemq4NytPB0WcbmKEmz6WD9LFKgRovA5w4iCMjK7fnT3b5Fs3hq/hK
+         JXw2q4VpySe4ebKMTxT8NhESqkMcBz9JJRvKN56+kzBj9BaBhKhus6BCARiA1a93w3
+         O47aJIRH0/Hrg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9A2BEC395E0
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 09:50:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <168569942056.12617.10162214478703409215.git-patchwork-summary@kernel.org>
+Date:   Fri, 02 Jun 2023 09:50:20 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Hello:
 
-This patch series contains various improvements to the documentation and
-comments related to atomic modesetting.  Hopefully, it will ease the job
-of DRM novice who want to tackle the daunting task of converting a
-legacy DRM driver to atomic modesetting.
+The following patches were marked "mainlined", because they were applied to
+geert/renesas-devel.git (master):
 
-Thanks for your comments!
+Series: KingFisher: fix SCIF1, add HSCIF1
+  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=750905
+  Lore link: https://lore.kernel.org/r/20230525084823.4195-1-wsa+renesas@sang-engineering.com
+    Patches: [v2,1/2] arm64: dts: renesas: ulcb-kf: remove flow control for SCIF1
+             [v2,2/2] arm64: dts: renesas: ulcb-kf: add HSCIF1 node
 
-Geert Uytterhoeven (3):
-  drm/todo: Add atomic modesetting references
-  drm: Remove references to removed transitional helpers
-  drm: Fix references to drm_plane_helper_check_state()
+Patch: [v3] arm64: dts: renesas: Add IOMMU related properties into PCIe host nodes
+  Submitter: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=746360
+  Lore link: https://lore.kernel.org/r/20230510090358.261266-1-yoshihiro.shimoda.uh@renesas.com
 
- Documentation/gpu/todo.rst               |  9 ++++-
- drivers/gpu/drm/drm_plane_helper.c       |  8 ----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c  |  3 +-
- drivers/gpu/drm/tidss/tidss_plane.c      |  3 +-
- include/drm/drm_crtc.h                   |  5 ---
- include/drm/drm_modeset_helper_vtables.h | 48 +++++++++++-------------
- 6 files changed, 32 insertions(+), 44 deletions(-)
+Patch: arm64: defconfig: Enable Renesas MTU3a counter config
+  Submitter: Biju Das <biju.das.jz@bp.renesas.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=740430
+  Lore link: https://lore.kernel.org/r/20230417100607.309068-1-biju.das.jz@bp.renesas.com
+
+Patch: ARM: dts: iwg20d-q7-common: Fix backlight pwm specifier
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=750300
+  Lore link: https://lore.kernel.org/r/6e5c3167424a43faf8c1fa68d9667b3d87dc86d8.1684855911.git.geert+renesas@glider.be
+
+
+Total patches: 5
 
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Gr{oetje,eeting}s,
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
