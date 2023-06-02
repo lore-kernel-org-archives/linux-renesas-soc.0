@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F4BC7EE24
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2D2C7EE2C
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jun 2023 09:13:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235152AbjFBJNX (ORCPT
+        id S235156AbjFBJNX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 2 Jun 2023 05:13:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35844 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235109AbjFBJMs (ORCPT
+        with ESMTP id S235113AbjFBJMt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2023 05:12:48 -0400
+        Fri, 2 Jun 2023 05:12:49 -0400
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1520170A
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEDC21711
         for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 02:11:48 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:158c:2ccf:1f70:e136])
         by baptiste.telenet-ops.be with bizsmtp
-        id 49Bg2A00L1tRZS8019BgSY; Fri, 02 Jun 2023 11:11:46 +0200
+        id 49Bg2A00J1tRZS8019BgSX; Fri, 02 Jun 2023 11:11:46 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q50ob-00BvaU-4t;
+        id 1q50ob-00BvaJ-2R;
         Fri, 02 Jun 2023 11:11:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q50ou-00ASIR-8C;
+        id 1q50ou-00ASIG-5F;
         Fri, 02 Jun 2023 11:11:40 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
@@ -41,65 +41,48 @@ To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
 Cc:     dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] drm: Fix references to drm_plane_helper_check_state()
-Date:   Fri,  2 Jun 2023 11:11:36 +0200
-Message-Id: <2408d7841c91e98e9a2b24b1b4df9b2b865519a6.1685696114.git.geert+renesas@glider.be>
+Subject: [PATCH 0/3] drm: Atomic modesetting doc and comment improvements
+Date:   Fri,  2 Jun 2023 11:11:33 +0200
+Message-Id: <cover.1685696114.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1685696114.git.geert+renesas@glider.be>
-References: <cover.1685696114.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As of commit a01cb8ba3f628293 ("drm: Move drm_plane_helper_check_state()
-into drm_atomic_helper.c"), drm_plane_helper_check_state() no longer
-exists, but is part of drm_atomic_helper_check_plane_state().
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Interestingly, all these comments appeared only after the commit that
-removed the function...
+This patch series contains various improvements to the documentation and
+comments related to atomic modesetting.  Hopefully, it will ease the job
+of DRM novice who want to tackle the daunting task of converting a
+legacy DRM driver to atomic modesetting.
 
-This is against next-20230602, which does not have the
-drivers/gpu/drm/{ => renesas}/rcar-du move yet.
+Thanks for your comments!
 
-Biju: you're adding a new copy in
-drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 3 ++-
- drivers/gpu/drm/tidss/tidss_plane.c     | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Geert Uytterhoeven (3):
+  drm/todo: Add atomic modesetting references
+  drm: Remove references to removed transitional helpers
+  drm: Fix references to drm_plane_helper_check_state()
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index d759e019218181ce..e445fac8e0b46c21 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -600,7 +600,8 @@ int __rcar_du_plane_atomic_check(struct drm_plane *plane,
- 	if (!state->crtc) {
- 		/*
- 		 * The visible field is not reset by the DRM core but only
--		 * updated by drm_plane_helper_check_state(), set it manually.
-+		 * updated by drm_atomic_helper_check_plane_state(), set it
-+		 * manually.
- 		 */
- 		state->visible = false;
- 		*format = NULL;
-diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
-index 6bdd6e4a955ab3cc..e1c0ef0c3894c855 100644
---- a/drivers/gpu/drm/tidss/tidss_plane.c
-+++ b/drivers/gpu/drm/tidss/tidss_plane.c
-@@ -38,7 +38,8 @@ static int tidss_plane_atomic_check(struct drm_plane *plane,
- 	if (!new_plane_state->crtc) {
- 		/*
- 		 * The visible field is not reset by the DRM core but only
--		 * updated by drm_plane_helper_check_state(), set it manually.
-+		 * updated by drm_atomic_helper_check_plane_state(), set it
-+		 * manually.
- 		 */
- 		new_plane_state->visible = false;
- 		return 0;
+ Documentation/gpu/todo.rst               |  9 ++++-
+ drivers/gpu/drm/drm_plane_helper.c       |  8 ----
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c  |  3 +-
+ drivers/gpu/drm/tidss/tidss_plane.c      |  3 +-
+ include/drm/drm_crtc.h                   |  5 ---
+ include/drm/drm_modeset_helper_vtables.h | 48 +++++++++++-------------
+ 6 files changed, 32 insertions(+), 44 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
