@@ -2,58 +2,38 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846A7C7EE2D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jun 2023 14:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF64C7EE33
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jun 2023 14:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235485AbjFBOY7 (ORCPT
+        id S235797AbjFBOZA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Jun 2023 10:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33908 "EHLO
+        Fri, 2 Jun 2023 10:25:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235734AbjFBOYp (ORCPT
+        with ESMTP id S234678AbjFBOYv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2023 10:24:45 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 38EA31A4;
-        Fri,  2 Jun 2023 07:24:43 -0700 (PDT)
+        Fri, 2 Jun 2023 10:24:51 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BBB279F
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 07:24:49 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.00,213,1681138800"; 
-   d="scan'208";a="165498975"
+   d="scan'208";a="161964799"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Jun 2023 23:24:42 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Jun 2023 23:24:49 +0900
 Received: from localhost.localdomain (unknown [10.226.93.55])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6F2CC40065BD;
-        Fri,  2 Jun 2023 23:24:34 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5763140065BD;
+        Fri,  2 Jun 2023 23:24:47 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Wolfram Sang <wsa@kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Corey Minyard <cminyard@mvista.com>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
-        Antonio Borneo <antonio.borneo@foss.st.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
-        linux-media@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 01/11] i2c: Enhance i2c_new_ancillary_device API
-Date:   Fri,  2 Jun 2023 15:24:16 +0100
-Message-Id: <20230602142426.438375-2-biju.das.jz@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH v6 03/11] regulator: Add Renesas PMIC RAA215300 driver
+Date:   Fri,  2 Jun 2023 15:24:18 +0100
+Message-Id: <20230602142426.438375-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230602142426.438375-1-biju.das.jz@bp.renesas.com>
 References: <20230602142426.438375-1-biju.das.jz@bp.renesas.com>
@@ -63,284 +43,181 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Renesas PMIC RAA215300 exposes two separate i2c devices, one for the main
-device and another for rtc device.
+The RAA215300 is a 9-channel PMIC that consists of
+ * Internally compensated regulators
+ * built-in Real Time Clock (RTC)
+ * 32kHz crystal oscillator
+ * coin cell battery charger
 
-Enhance i2c_new_ancillary_device() to instantiate an I2C client device
-apart from the already supported I2C dummy client device.
+The RTC on RAA215300 is similar to the IP found in the ISL1208.
+The existing driver for the ISL1208 works for this PMIC too,
+however the RAA215300 exposes two devices via I2C, one for the RTC
+IP, and one for everything else. The RTC IP has to be enabled
+by the other I2C device, therefore this driver is necessary to get
+the RTC to work.
 
-Added helper function __i2c_new_dummy_device to share the code
-between i2c_new_dummy_device and i2c_new_ancillary_device().
+The external oscillator bit is inverted on PMIC version 0x11.
 
-Also added helper function __i2c_new_client_device() to pass parent dev
-parameter, so that the ancillary device can assign its parent during
-creation.
+Add PMIC RAA215300 driver for enabling RTC block and instantiating
+RTC device based on PMIC version.
 
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v5->v6:
- * Added Rb tag from Hans Verkuil and Geert.
- * Updated commit description and comment related to i2c_new_ancillary_device()
- * Fixed the issue related to assigning wrong parent device by adding check
-   for aux_device_name.
- * Retained Rb tags as changes are trivial.
+ * Updated the driver header comment block in C++ style
+ * Dropped cache for registers.
+ * Dropped check for I2C functionality
 v4->v5:
- * Replaced parameter dev->parent in __i2c_new_client_device() and
-   __i2c_new_dummy_device().
- * Improved error message in __i2c_new_dummy_device() by printing device name.
- * Updated comment for ancillary's device parent
- * Dropped aux_device_name check in i2c_new_ancillary_device().
+ * Dropped clk.h and started using of_property_present to check the
+   clocks.
 v3->v4:
- * Dropped Rb tag from Geert as there are new changes.
- * Introduced __i2c_new_dummy_device() to share the code between
-   i2c_new_dummy_device and i2c_new_ancillary_device().
- * Introduced __i2c_new_client_device() to pass parent dev
-   parameter, so that the ancillary device can assign its parent during
-   creation.
-v3:
- * New patch
-
-Ref:
- https://patchwork.kernel.org/project/linux-renesas-soc/patch/20230505172530.357455-5-biju.das.jz@bp.renesas.com/
+ * Moved from mfd->regulator as it doesn't use MFD APIs
+ * Dropped handling "renesas,rtc-enabled" property and instead used
+   clock-names to determine RTC is enabled or not and then instantiating
+   RTC device.
+v2->v3:
+ * Updated commit description
+ * Added support for handling "renesas,rtc-enabled" property.
+ * Based on PMIC version, it instantiates rtc device by calling i2c_new_
+   ancillary_device().
+RFC->V2:
+ * Dropped MODULE_SOFTDEP from the driver as it is added in RTC platform
+   driver.
 ---
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c |  6 +-
- drivers/i2c/i2c-core-base.c                  | 91 +++++++++++++-------
- drivers/media/i2c/adv748x/adv748x-core.c     |  2 +-
- drivers/media/i2c/adv7604.c                  |  3 +-
- include/linux/i2c.h                          |  3 +-
- 5 files changed, 68 insertions(+), 37 deletions(-)
+ drivers/regulator/Kconfig     |  7 +++
+ drivers/regulator/Makefile    |  1 +
+ drivers/regulator/raa215300.c | 92 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 100 insertions(+)
+ create mode 100644 drivers/regulator/raa215300.c
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 2254457ab5d0..3f9164afb31f 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -1072,7 +1072,7 @@ static int adv7511_init_cec_regmap(struct adv7511 *adv)
- 	int ret;
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 7bbaf5991268..99fd45ae2625 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -1033,6 +1033,13 @@ config REGULATOR_QCOM_USB_VBUS
+ 	  Say M here if you want to include support for enabling the VBUS output
+ 	  as a module. The module will be named "qcom_usb_vbus_regulator".
  
- 	adv->i2c_cec = i2c_new_ancillary_device(adv->i2c_main, "cec",
--						ADV7511_CEC_I2C_ADDR_DEFAULT);
-+				    ADV7511_CEC_I2C_ADDR_DEFAULT, NULL);
- 	if (IS_ERR(adv->i2c_cec))
- 		return PTR_ERR(adv->i2c_cec);
- 
-@@ -1261,7 +1261,7 @@ static int adv7511_probe(struct i2c_client *i2c)
- 	adv7511_packet_disable(adv7511, 0xffff);
- 
- 	adv7511->i2c_edid = i2c_new_ancillary_device(i2c, "edid",
--					ADV7511_EDID_I2C_ADDR_DEFAULT);
-+					ADV7511_EDID_I2C_ADDR_DEFAULT, NULL);
- 	if (IS_ERR(adv7511->i2c_edid)) {
- 		ret = PTR_ERR(adv7511->i2c_edid);
- 		goto uninit_regulators;
-@@ -1271,7 +1271,7 @@ static int adv7511_probe(struct i2c_client *i2c)
- 		     adv7511->i2c_edid->addr << 1);
- 
- 	adv7511->i2c_packet = i2c_new_ancillary_device(i2c, "packet",
--					ADV7511_PACKET_I2C_ADDR_DEFAULT);
-+					ADV7511_PACKET_I2C_ADDR_DEFAULT, NULL);
- 	if (IS_ERR(adv7511->i2c_packet)) {
- 		ret = PTR_ERR(adv7511->i2c_packet);
- 		goto err_i2c_unregister_edid;
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index ae3af738b03f..5d55e5f93275 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -893,24 +893,10 @@ int i2c_dev_irq_from_resources(const struct resource *resources,
- 	return 0;
- }
- 
--/**
-- * i2c_new_client_device - instantiate an i2c device
-- * @adap: the adapter managing the device
-- * @info: describes one I2C device; bus_num is ignored
-- * Context: can sleep
-- *
-- * Create an i2c device. Binding is handled through driver model
-- * probe()/remove() methods.  A driver may be bound to this device when we
-- * return from this function, or any later moment (e.g. maybe hotplugging will
-- * load the driver module).  This call is not appropriate for use by mainboard
-- * initialization logic, which usually runs during an arch_initcall() long
-- * before any i2c_adapter could exist.
-- *
-- * This returns the new i2c client, which may be saved for later use with
-- * i2c_unregister_device(); or an ERR_PTR to describe the error.
-- */
--struct i2c_client *
--i2c_new_client_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
-+static struct i2c_client *
-+__i2c_new_client_device(struct i2c_adapter *adap,
-+			struct i2c_board_info const *info,
-+			struct device *parent)
- {
- 	struct i2c_client	*client;
- 	int			status;
-@@ -944,7 +930,7 @@ i2c_new_client_device(struct i2c_adapter *adap, struct i2c_board_info const *inf
- 	if (status)
- 		goto out_err;
- 
--	client->dev.parent = &client->adapter->dev;
-+	client->dev.parent = parent ? parent : &client->adapter->dev;
- 	client->dev.bus = &i2c_bus_type;
- 	client->dev.type = &i2c_client_type;
- 	client->dev.of_node = of_node_get(info->of_node);
-@@ -984,6 +970,28 @@ i2c_new_client_device(struct i2c_adapter *adap, struct i2c_board_info const *inf
- 	kfree(client);
- 	return ERR_PTR(status);
- }
++config REGULATOR_RAA215300
++	tristate "Renesas RAA215300 driver"
++	select REGMAP_I2C
++	depends on I2C
++	help
++	  Support for the Renesas RAA215300 PMIC.
 +
-+/**
-+ * i2c_new_client_device - instantiate an i2c device
-+ * @adap: the adapter managing the device
-+ * @info: describes one I2C device; bus_num is ignored
-+ * Context: can sleep
-+ *
-+ * Create an i2c device. Binding is handled through driver model
-+ * probe()/remove() methods.  A driver may be bound to this device when we
-+ * return from this function, or any later moment (e.g. maybe hotplugging will
-+ * load the driver module).  This call is not appropriate for use by mainboard
-+ * initialization logic, which usually runs during an arch_initcall() long
-+ * before any i2c_adapter could exist.
-+ *
-+ * This returns the new i2c client, which may be saved for later use with
-+ * i2c_unregister_device(); or an ERR_PTR to describe the error.
-+ */
-+struct i2c_client *
-+i2c_new_client_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
+ config REGULATOR_RASPBERRYPI_TOUCHSCREEN_ATTINY
+ 	tristate "Raspberry Pi 7-inch touchscreen panel ATTINY regulator"
+ 	depends on BACKLIGHT_CLASS_DEVICE
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 0b3ad1b0a999..320a08a596b7 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -124,6 +124,7 @@ obj-$(CONFIG_REGULATOR_TPS51632) += tps51632-regulator.o
+ obj-$(CONFIG_REGULATOR_PBIAS) += pbias-regulator.o
+ obj-$(CONFIG_REGULATOR_PCAP) += pcap-regulator.o
+ obj-$(CONFIG_REGULATOR_PCF50633) += pcf50633-regulator.o
++obj-$(CONFIG_REGULATOR_RAA215300) += raa215300.o
+ obj-$(CONFIG_REGULATOR_RASPBERRYPI_TOUCHSCREEN_ATTINY)  += rpi-panel-attiny-regulator.o
+ obj-$(CONFIG_REGULATOR_RC5T583)  += rc5t583-regulator.o
+ obj-$(CONFIG_REGULATOR_RK808)   += rk808-regulator.o
+diff --git a/drivers/regulator/raa215300.c b/drivers/regulator/raa215300.c
+new file mode 100644
+index 000000000000..78a239154c7b
+--- /dev/null
++++ b/drivers/regulator/raa215300.c
+@@ -0,0 +1,92 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Renesas RAA215300 PMIC driver
++//
++// Copyright (C) 2023 Renesas Electronics Corporation
++//
++
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++
++#define RAA215300_REG_BLOCK_EN	0x6c
++#define RAA215300_HW_REV	0xf8
++
++#define RAA215300_RTC_DEFAULT_ADDR 0x6f
++#define RAA215300_REG_BLOCK_EN_RTC_EN	BIT(6)
++
++static const struct regmap_config raa215300_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 0xff,
++};
++
++static void raa215300_rtc_unregister_device(void *data)
 +{
-+	return __i2c_new_client_device(adap, info, NULL);
++	i2c_unregister_device(data);
 +}
- EXPORT_SYMBOL_GPL(i2c_new_client_device);
- 
- /**
-@@ -1054,6 +1062,26 @@ static struct i2c_driver dummy_driver = {
- 	.id_table	= dummy_id,
- };
- 
-+static struct i2c_client *__i2c_new_dummy_device(struct i2c_adapter *adapter,
-+						 u16 address, const char *name,
-+						 struct device *parent)
++
++static int raa215300_i2c_probe(struct i2c_client *client)
 +{
-+	struct i2c_board_info info = {
-+		I2C_BOARD_INFO("dummy", address),
-+	};
++	struct device *dev = &client->dev;
++	unsigned int pmic_version;
++	struct regmap *regmap;
++	int ret;
 +
-+	if (name) {
-+		ssize_t ret = strscpy(info.type, name, sizeof(info.type));
++	regmap = devm_regmap_init_i2c(client, &raa215300_regmap_config);
++	if (IS_ERR(regmap))
++		return dev_err_probe(dev, PTR_ERR(regmap),
++				     "regmap i2c init failed\n");
 +
++	ret = regmap_read(regmap, RAA215300_HW_REV, &pmic_version);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "HW rev read failed\n");
++
++	dev_dbg(dev, "RAA215300 PMIC version 0x%04x\n", pmic_version);
++
++	if (of_property_present(client->dev.of_node, "clocks")) {
++		struct i2c_client *rtc_client;
++
++		/* Enable RTC block */
++		regmap_update_bits(regmap, RAA215300_REG_BLOCK_EN,
++				   RAA215300_REG_BLOCK_EN_RTC_EN,
++				   RAA215300_REG_BLOCK_EN_RTC_EN);
++
++		rtc_client = i2c_new_ancillary_device(client, "rtc",
++						      RAA215300_RTC_DEFAULT_ADDR,
++						      pmic_version >= 0x12 ?
++						      "isl1208" : "raa215300_a0");
++		if (IS_ERR(rtc_client))
++			return PTR_ERR(rtc_client);
++
++		ret = devm_add_action_or_reset(dev,
++					       raa215300_rtc_unregister_device,
++					       rtc_client);
 +		if (ret < 0)
-+			return ERR_PTR(dev_err_probe(&adapter->dev, ret,
-+						     "Invalid device name: %s\n",
-+						     name));
++			return ret;
 +	}
 +
-+	return __i2c_new_client_device(adapter, &info, parent);
++	return 0;
 +}
 +
- /**
-  * i2c_new_dummy_device - return a new i2c device bound to a dummy driver
-  * @adapter: the adapter managing the device
-@@ -1074,11 +1102,7 @@ static struct i2c_driver dummy_driver = {
-  */
- struct i2c_client *i2c_new_dummy_device(struct i2c_adapter *adapter, u16 address)
- {
--	struct i2c_board_info info = {
--		I2C_BOARD_INFO("dummy", address),
--	};
--
--	return i2c_new_client_device(adapter, &info);
-+	return __i2c_new_dummy_device(adapter, address, NULL, NULL);
- }
- EXPORT_SYMBOL_GPL(i2c_new_dummy_device);
- 
-@@ -1122,15 +1146,18 @@ EXPORT_SYMBOL_GPL(devm_i2c_new_dummy_device);
-  * @client: Handle to the primary client
-  * @name: Handle to specify which secondary address to get
-  * @default_addr: Used as a fallback if no secondary address was specified
-+ * @aux_device_name: Ancillary device name
-  * Context: can sleep
-  *
-  * I2C clients can be composed of multiple I2C slaves bound together in a single
-  * component. The I2C client driver then binds to the master I2C slave and needs
-- * to create I2C dummy clients to communicate with all the other slaves.
-+ * to create I2C ancillary clients to communicate with all the other slaves.
-  *
-- * This function creates and returns an I2C dummy client whose I2C address is
-- * retrieved from the platform firmware based on the given slave name. If no
-- * address is specified by the firmware default_addr is used.
-+ * This function creates and returns an I2C ancillary client whose I2C address
-+ * is retrieved from the platform firmware based on the given slave name. If no
-+ * address is specified by the firmware default_addr is used. If aux_device_name
-+ * is not NULL, the ancillary's device parent will be set to the primary device
-+ * otherwise it will be set to I2C adapter.
-  *
-  * On DT-based platforms the address is retrieved from the "reg" property entry
-  * cell whose "reg-names" value matches the slave name.
-@@ -1139,8 +1166,9 @@ EXPORT_SYMBOL_GPL(devm_i2c_new_dummy_device);
-  * i2c_unregister_device(); or an ERR_PTR to describe the error.
-  */
- struct i2c_client *i2c_new_ancillary_device(struct i2c_client *client,
--						const char *name,
--						u16 default_addr)
-+					    const char *name,
-+					    u16 default_addr,
-+					    const char *aux_device_name)
- {
- 	struct device_node *np = client->dev.of_node;
- 	u32 addr = default_addr;
-@@ -1153,7 +1181,8 @@ struct i2c_client *i2c_new_ancillary_device(struct i2c_client *client,
- 	}
- 
- 	dev_dbg(&client->adapter->dev, "Address for %s : 0x%x\n", name, addr);
--	return i2c_new_dummy_device(client->adapter, addr);
-+	return __i2c_new_dummy_device(client->adapter, addr, aux_device_name,
-+				      aux_device_name ? &client->dev : NULL);
- }
- EXPORT_SYMBOL_GPL(i2c_new_ancillary_device);
- 
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 3eb6d5e8f082..3000c533a5ff 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -186,7 +186,7 @@ static int adv748x_initialise_clients(struct adv748x_state *state)
- 		state->i2c_clients[i] = i2c_new_ancillary_device(
- 				state->client,
- 				adv748x_default_addresses[i].name,
--				adv748x_default_addresses[i].default_addr);
-+				adv748x_default_addresses[i].default_addr, NULL);
- 
- 		if (IS_ERR(state->i2c_clients[i])) {
- 			adv_err(state, "failed to create i2c client %u\n", i);
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index b202a85fbeaa..a89e80006445 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -2935,7 +2935,8 @@ static struct i2c_client *adv76xx_dummy_client(struct v4l2_subdev *sd,
- 	else
- 		new_client = i2c_new_ancillary_device(client,
- 				adv76xx_default_addresses[page].name,
--				adv76xx_default_addresses[page].default_addr);
-+				adv76xx_default_addresses[page].default_addr,
-+				NULL);
- 
- 	if (!IS_ERR(new_client))
- 		io_write(sd, io_reg, new_client->addr << 1);
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 13a1ce38cb0c..0ce344724209 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -489,7 +489,8 @@ devm_i2c_new_dummy_device(struct device *dev, struct i2c_adapter *adap, u16 addr
- struct i2c_client *
- i2c_new_ancillary_device(struct i2c_client *client,
- 			 const char *name,
--			 u16 default_addr);
-+			 u16 default_addr,
-+			 const char *aux_device_name);
- 
- void i2c_unregister_device(struct i2c_client *client);
- 
++static const struct of_device_id raa215300_dt_match[] = {
++	{ .compatible = "renesas,raa215300" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, raa215300_dt_match);
++
++static struct i2c_driver raa215300_i2c_driver = {
++	.driver = {
++		.name = "raa215300",
++		.of_match_table = raa215300_dt_match,
++	},
++	.probe_new = raa215300_i2c_probe,
++};
++module_i2c_driver(raa215300_i2c_driver);
++
++MODULE_DESCRIPTION("Renesas RAA215300 PMIC driver");
++MODULE_AUTHOR("Fabrizio Castro <fabrizio.castro.jz@renesas.com>");
++MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
++MODULE_LICENSE("GPL");
 -- 
 2.25.1
 
