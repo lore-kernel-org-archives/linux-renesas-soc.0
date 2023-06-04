@@ -2,65 +2,121 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 628D9C7EE33
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  3 Jun 2023 10:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C36C7EE29
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  4 Jun 2023 10:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbjFCKaA (ORCPT
+        id S229799AbjFDKsq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 3 Jun 2023 06:30:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47800 "EHLO
+        Sun, 4 Jun 2023 06:48:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230048AbjFCK36 (ORCPT
+        with ESMTP id S229578AbjFDKsp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 3 Jun 2023 06:29:58 -0400
-X-Greylist: delayed 4202 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 03 Jun 2023 03:29:56 PDT
-Received: from mail.webtopbits.pl (mail.webtopbits.pl [195.231.64.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7473D1B1
-        for <linux-renesas-soc@vger.kernel.org>; Sat,  3 Jun 2023 03:29:56 -0700 (PDT)
-Received: by mail.webtopbits.pl (Postfix, from userid 1001)
-        id 474EFA38C8; Fri,  2 Jun 2023 09:40:58 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=webtopbits.pl;
-        s=mail; t=1685695263;
-        bh=Eh8ECMiYd4baGAwPAzhz8mhJACXX7NSRkYjh+plaY18=;
-        h=Date:From:To:Subject:From;
-        b=Ycl9ymnUhg+2eP9U3yOTdgK3Uo8XwZ4u+JTkslwiaXdMO1aglKa87Yb0zmJyaJxAi
-         GsJ9cJqyZRKaDrSf8BlTZsxPq9Cn9XVjqGuyWN3xFlTbn3arGcaZPS8j3P0hb3xnQn
-         nyzMvgFm+7tir8Fys1O4R/MVgi5Eu2F9uB8VZXwNRo+Pzw3nxvXTIVuWw0/1OSTLMn
-         es2BRxOlS+A2nC/BJqbqoK6W8MmY3vUEmPFSkFrWBFZUKzPaKLRdBKXBrv6LIbGJuP
-         g92Vqb3k92HkaqSWUqYskgCuW6vQXjhHaMAsciul1WuFaxyyx9h4ToHnMobYlkhNpo
-         GD6oxRf8X4Diw==
-Received: by mail.webtopbits.pl for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Jun 2023 08:40:50 GMT
-Message-ID: <20230602085530-0.1.8w.5kg8.0.8nkepmbv58@webtopbits.pl>
-Date:   Fri,  2 Jun 2023 08:40:50 GMT
-From:   "Kamil Durjasz" <kamil.durjasz@webtopbits.pl>
-To:     <linux-renesas-soc@vger.kernel.org>
-Subject: =?UTF-8?Q?Wy=C5=BCsza_konwersja_w_e-sklepie_?=
-X-Mailer: mail.webtopbits.pl
+        Sun, 4 Jun 2023 06:48:45 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E01E9B6
+        for <linux-renesas-soc@vger.kernel.org>; Sun,  4 Jun 2023 03:48:43 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (om126166129043.28.openmobile.ne.jp [126.166.129.43])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CE7222B6;
+        Sun,  4 Jun 2023 12:48:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1685875696;
+        bh=GUhS5etQfJ1SAzcCZ5kOJUay2NSAPg4B87X9Y6Ea1AY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AsQn5oyisCzA6hrOgCLGt7J2gpTNs0zjYrUwZzEoDkEf5+uSbcOajyyw/qefuXicU
+         av2ixoVkI+4lPI6A9iy1wYDcvGj0WYktPEr7tQ1I1uI7BTvxjPvfna+uTbYx4k317s
+         VeP0vUxmmUSgYTRsigjUqacKXg/4Oyk3rwYkAQqQ=
+Date:   Sun, 4 Jun 2023 13:48:39 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] drm: rcar-du: Use dev_err_probe() to record cause of
+ KMS init errors
+Message-ID: <20230604104839.GB2483@pendragon.ideasonboard.com>
+References: <20230530153251.22302-1-laurent.pinchart+renesas@ideasonboard.com>
+ <OS0PR01MB592200F03BE4C64092321EB3864EA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <OS0PR01MB592200F03BE4C64092321EB3864EA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Hi Biju,
 
-w jaki spos=C3=B3b docieraj=C4=85 Pa=C5=84stwo do odbiorc=C3=B3w?
+On Fri, Jun 02, 2023 at 07:29:45PM +0000, Biju Das wrote:
+> > Subject: [PATCH v2] drm: rcar-du: Use dev_err_probe() to record cause of
+> > KMS init errors
+> > 
+> > The (large) rcar_du_modeset_init() function can fail for many reasons,
+> > two of two involving probe deferral. Use dev_err_probe() in those code
+> > paths to record the cause of the probe deferral, in order to help
+> > debugging probe issues.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c | 4 ++++
+> > drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c | 8 ++++++--
+> >  2 files changed, 10 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+> > index 12a8839fe3be..5b752adb1b02 100644
+> > --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+> > +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+> > @@ -701,6 +701,10 @@ static int rcar_du_probe(struct platform_device *pdev)
+> >  	/* DRM/KMS objects */
+> >  	ret = rcar_du_modeset_init(rcdu);
+> >  	if (ret < 0) {
+> > +		/*
+> > +		 * Don't use dev_err_probe(), as it would overwrite the probe
+> > +		 * deferral reason recorded in rcar_du_modeset_init().
+> > +		 */
+> >  		if (ret != -EPROBE_DEFER)
+> >  			dev_err(&pdev->dev,
+> >  				"failed to initialize DRM/KMS (%d)\n", ret);
+> > diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
+> > index adfb36b0e815..a9b01027bf03 100644
+> > --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
+> > +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
+> > @@ -932,8 +932,10 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+> > 
+> >  	/* Initialize the Color Management Modules. */
+> >  	ret = rcar_du_cmm_init(rcdu);
+> > -	if (ret)
+> > +	if (ret) {
+> > +		dev_err_probe(rcdu->dev, "failed to initialize CMM\n", ret);
+> 		
+> 	dev_err_probe(rcdu->dev, ret, "failed to initialize CMM\n");
+> 
+> 	similarly for below one.
 
-Tworzymy pot=C4=99=C5=BCne narz=C4=99dzia sprzeda=C5=BCy, kt=C3=B3re pozw=
-alaj=C4=85 kompleksowo rozwi=C4=85za=C4=87 problemy potencjalnych klient=C3=
-=B3w i skutecznie wp=C5=82yn=C4=85=C4=87 na ich decyzje zakupowe.=20
+Oops. I wonder how I missed that, is it fails to even compile. Sorry :-(
+I'll post a v2.
 
-Skupiamy si=C4=99 na Pa=C5=84stwa potrzebach zwi=C4=85zanych z obs=C5=82u=
-g=C4=85 sklepu, oczekiwaniach i planach sprzeda=C5=BCowych. Szczeg=C3=B3=C5=
-=82owo dopasowujemy grafik=C4=99, funkcjonalno=C5=9Bci, struktur=C4=99 i =
-mikrointerakcje do Pa=C5=84stwa grupy docelowej, co przek=C5=82ada si=C4=99=
- na oczekiwane rezultaty.
+> >  		return ret;
+> > +	}
+> > 
+> >  	/* Create the CRTCs. */
+> >  	for (swindex = 0, hwindex = 0; swindex < rcdu->num_crtcs; ++hwindex) {
+> > @@ -952,8 +954,10 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+> > 
+> >  	/* Initialize the encoders. */
+> >  	ret = rcar_du_encoders_init(rcdu);
+> > -	if (ret < 0)
+> > +	if (ret < 0) {
+> > +		dev_err_probe(rcdu->dev, "failed to initialize encoders\n", ret);
+> >  		return ret;
+> > +	}
+> > 
+> >  	if (ret == 0) {
+> >  		dev_err(rcdu->dev, "error: no encoder could be initialized\n");
 
-Ch=C4=99tnie przedstawi=C4=99 dotychczasowe realizacje, aby mogli Pa=C5=84=
-stwo przekona=C4=87 si=C4=99 o naszych mo=C5=BCliwo=C5=9Bciach. Mog=C4=99=
- si=C4=99 skontaktowa=C4=87?
+-- 
+Regards,
 
-
-Pozdrawiam
-Kamil Durjasz
+Laurent Pinchart
