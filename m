@@ -2,129 +2,171 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF85C77B73
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Jun 2023 10:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B48C77B7A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Jun 2023 10:57:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236858AbjFFKfb (ORCPT
+        id S236809AbjFFK5U (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 6 Jun 2023 06:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56064 "EHLO
+        Tue, 6 Jun 2023 06:57:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237319AbjFFKfT (ORCPT
+        with ESMTP id S237392AbjFFK4v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2023 06:35:19 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 403A7E8;
-        Tue,  6 Jun 2023 03:35:05 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id A4ADA5C0195;
-        Tue,  6 Jun 2023 06:35:04 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Tue, 06 Jun 2023 06:35:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1686047704; x=1686134104; bh=IJQmq65vo/TbxYcHIKSUTBkPubJ2sYVBmz1
-        OpSutP+s=; b=tCzQEzAjGZmWxxg0Ys+hL5Ofm4CPVdUeLjDckZFymKghC6s96mw
-        gMZl3xgVf8H37np+jaeqlCqbYevDJiRbGY2Y/QQ3IWuFNAlXeGCZdi08Vcfcc0Ig
-        diYEzw+rSM+Dzk3BSpaMiv5GE0Fdz8jHigsmr2UdmhCzl01x59DJi5TjtiytNiF3
-        UmOcaqRaB/zgz8hccLy+dYgfs9m6tLz0fEqLkFzvZBkzQhcG0X2aUR4HFOcN7nKA
-        zoPHmevhyLm+ezVo8xuA7PC1C+GcKT3KKVImStNZyAK6BwbbCg9o0lkHOmE54UP5
-        wHIx6YkhU6aW08qloWot58nqZUIXbHvKWpg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1686047704; x=1686134104; bh=IJQmq65vo/TbxYcHIKSUTBkPubJ2sYVBmz1
-        OpSutP+s=; b=E+EsLFO/5IILXucgn/rmLn2SynkIfpG6UlhSY0K+d6ngVmYtFVs
-        Z93C/0xl1wEd9cJuq/V7RM1yR871b8XT72xa8VF5BfojzjVwVY9SI3T6z56OzxcX
-        UmlQD5SeAHvx+UVVQtlDHz9DSferigh6Cd3G8ySCrXy/vq/+MHIlBcOXrgplqddG
-        T8v5++J4OnGDCHmBw9BALl2hV0SAJ89NvPz84hYO5OhJIFHy3AfNkeCIc04HqDTL
-        FeCp5OAAqigWhxJ15dRDmgGU7/ABUqyW+WRY4MG5+0HcnE+W6ib6GXrjkuRc+W7e
-        GKi0U8F0krbMsqOy99KcTeyEHnTYONae/dw==
-X-ME-Sender: <xms:2At_ZFQXGlpaLXRb-FKKTAqrc0pulFP8udxzt88XqjyQ8K0UFsM3jQ>
-    <xme:2At_ZOyCd28aXyALQC3PVPO6o0PaGmP23JkWndPkNur32dASExOlo_ffc07G7id5B
-    hmtzMPp-va_RxleymQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedtuddgfedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:2At_ZK0ecybGQW_MNqaqlU7GoWujfE7ptyRpbrOeIJ0DHP3iTunStA>
-    <xmx:2At_ZNDp8l6mOdR2eQLeedsNGAnqjJSZUE06SxrIINLmHvtQiG-hsw>
-    <xmx:2At_ZOgxgtPbSIXKXmeDmjXO9ttv-P5WyjQ83itGHa1fyUDSDJl8Vw>
-    <xmx:2At_ZJWZ6PzikjwmYUrIDoA3aSGEwuKMI9vaMequyXHCoawrETVi-Q>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 675B9B60086; Tue,  6 Jun 2023 06:35:04 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-447-ge2460e13b3-fm-20230525.001-ge2460e13
-Mime-Version: 1.0
-Message-Id: <34b7bbab-a301-42ad-a2cc-3b68ee1475b7@app.fastmail.com>
-In-Reply-To: <CAMuHMdWKL3UHzkEq3qOChMsgOsr+9uj215x55xLzbOUJWwQVzg@mail.gmail.com>
-References: <CA+G9fYv0a-XxXfG6bNuPZGT=fzjtEfRGEYwk3n6M1WhEHUPo9g@mail.gmail.com>
- <CA+G9fYueN0xti1SDtYVZstPt104sUj06GfOzyqDNrd3s3xXBkA@mail.gmail.com>
- <CAMuHMdX7hqipiMCF9uxpU+_RbLmzyHeo-D0tCE_Hx8eTqQ7Pig@mail.gmail.com>
- <11bd37e9-c62e-46ba-9456-8e3b353df28f@app.fastmail.com>
- <CAMuHMdUH2Grrv6842YWXHDmd+O3iHdwqTVjYf8f1nbVRzGA+6w@mail.gmail.com>
- <8db9886f-e24f-44ee-8f8a-880dc3e4bf75@app.fastmail.com>
- <CAMuHMdWKL3UHzkEq3qOChMsgOsr+9uj215x55xLzbOUJWwQVzg@mail.gmail.com>
-Date:   Tue, 06 Jun 2023 12:34:43 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Geert Uytterhoeven" <geert@linux-m68k.org>
-Cc:     "Naresh Kamboju" <naresh.kamboju@linaro.org>,
-        "open list" <linux-kernel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        clang-built-linux <llvm@lists.linux.dev>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "Nathan Chancellor" <nathan@kernel.org>,
-        "Nick Desaulniers" <ndesaulniers@google.com>,
-        "Anders Roxell" <anders.roxell@linaro.org>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Jakub Kicinski" <kuba@kernel.org>,
-        "Paolo Abeni" <pabeni@redhat.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
-        maxime.chevallier@bootlin.com,
-        "Simon Horman" <simon.horman@corigine.com>
-Subject: Re: arm: shmobile_defconfig: ld.lld: error: undefined symbol: lynx_pcs_destroy
-Content-Type: text/plain;charset=utf-8
+        Tue, 6 Jun 2023 06:56:51 -0400
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A207E10DB
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Jun 2023 03:54:08 -0700 (PDT)
+Received: by mail-ot1-x32e.google.com with SMTP id 46e09a7af769-6b1576c2f6eso2520193a34.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Jun 2023 03:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1686048847; x=1688640847;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=cTfBSANIvpGYXpM4Wdiln7Jtp4JUaF0rxo8c+YhI5ho=;
+        b=23wPRkxCHkBe9VgwyRLgzdXghfEjdBPbHwJs0+ZfkaIxTxNwAagcAwKpeZ0LFh46BI
+         lW1uchbFRmjh4BCTQXorcKxQndm73uzb/qZb+um3AjjeNvvegFWYNJABmwfbQnkddktV
+         /DGoIluv4jH56yZELNBLUr0vpIJsSY8qJZC0Z3jPx6eSO6HS0hjgOer92b+yIAY9kOd3
+         GmRDhuy1tyP4U3Vhrdi/0Ce3Ox7+rbSQtDAVGN6uHe8j9C7DGYF8x9mopUQxpMJiKnzO
+         c18EIEqacwXFd1wf+atNZG+/fEzKfcde9zCNvkUidB0hAR2i4TNOPWi10OUdHs5cVmP5
+         WUQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686048847; x=1688640847;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cTfBSANIvpGYXpM4Wdiln7Jtp4JUaF0rxo8c+YhI5ho=;
+        b=gdVhFmmlnks1LwYzF+ly3HJ5Uo3kBC43NDu4EZy+0keb52owI2nOaHzQz8qej9JZat
+         o93/1QgoH9VORDYF1OY0fi9+wz1oLzoYYSD9GMAXU61izUgftBPwNsO198kVRm4moPM6
+         DS1lFdxeztoCkKaR7WVj67CjCHg5jyO/8ZS3zzgxDkV/w9eDOYmioXNz2z4kP5nfi4+U
+         MZl2CVV6/zBlR7ZhmPkLIqf4YxbtGR2zAljR/ZaGCk6+ifnkhOvkfhPyFEZRLvwyPiga
+         vq4flaEq93jq1qquunD8wjdOSEVMD/Pbd/LPFacEzkwlZ0Tm+XEBuUFMOcpx6cPybeRm
+         7JpQ==
+X-Gm-Message-State: AC+VfDyRldihRTRaO/TDXflaMXMpVi+dEC9PBuVs6h68gALUJnrIShn+
+        n7Xj9Ls/or4DyrsFDfpEPD/cD49rbJ1TbiUw0WvRrg==
+X-Google-Smtp-Source: ACHHUZ7Kr5pXn4KRc35gDeaJ+e0MfhW3wDwmFJeau8xK259F5nsDgUhVQFsseIA4XPBmn2gUECSVqg==
+X-Received: by 2002:a05:6359:383:b0:129:c905:27ec with SMTP id eg3-20020a056359038300b00129c90527ecmr2648882rwb.13.1686048847457;
+        Tue, 06 Jun 2023 03:54:07 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id o23-20020a17090ac09700b0025900a4b86esm6007020pjs.34.2023.06.06.03.54.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 03:54:06 -0700 (PDT)
+Message-ID: <647f104e.170a0220.66938.acd7@mx.google.com>
+Date:   Tue, 06 Jun 2023 03:54:06 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-devel-2023-06-06-v6.4-rc5
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master ltp-ipc: 25 runs,
+ 2 regressions (renesas-devel-2023-06-06-v6.4-rc5)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Jun 6, 2023, at 12:31, Geert Uytterhoeven wrote:
-> On Tue, Jun 6, 2023 at 12:21=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
-wrote:
->> On Tue, Jun 6, 2023, at 11:28, Geert Uytterhoeven wrote:
->> > On Tue, Jun 6, 2023 at 11:16=E2=80=AFAM Arnd Bergmann <arnd@arndb.d=
-e> wrote:
->> >> On Tue, Jun 6, 2023, at 11:01, Geert Uytterhoeven wrote:
->> >>
->> >> This won't work when PCS_LYNX is a loadable module and
->> >> STMMAC is built-in. I think we should just select PCS_LYNX
->> >
->> > Oops, you're right, forgot about that case.
->> > What about using IS_REACHABLE() instead?
->> > No, that won't work either, as DWMAC_SOCFPGA can be modular,
->> > with STMMAC builtin.
->>
->> It would work because of the 'select PCS_LYNX' below DWMAC_SOCFPGA,
->
-> That was my first thought, but it won't work, as DWMAC_SOCFPGA=3Dm
-> causes PCS_LYNX=3Dm, while main STMMAC can still be builtin.
+renesas/master ltp-ipc: 25 runs, 2 regressions (renesas-devel-2023-06-06-v6=
+.4-rc5)
 
-Right, got it now.
+Regressions Summary
+-------------------
 
-     Arnd
+platform         | arch | lab         | compiler | defconfig               =
+     | regressions
+-----------------+------+-------------+----------+-------------------------=
+-----+------------
+beaglebone-black | arm  | lab-broonie | gcc-10   | multi_v7_defconfig+crypt=
+o    | 1          =
+
+beaglebone-black | arm  | lab-cip     | gcc-10   | multi_v7_defc...MB2_KERN=
+EL=3Dy | 1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-06-06-v6.4-rc5/plan/ltp-ipc/
+
+  Test:     ltp-ipc
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-06-06-v6.4-rc5
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      06b45cc7ec76298d4d2f6d4da1550f05fa1beefd
+
+  Test suite revisions:
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  604701dc19c5499403ae5afe48103b8e2872952b =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform         | arch | lab         | compiler | defconfig               =
+     | regressions
+-----------------+------+-------------+----------+-------------------------=
+-----+------------
+beaglebone-black | arm  | lab-broonie | gcc-10   | multi_v7_defconfig+crypt=
+o    | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/647f0da6521e3ad915f5de34
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+crypto
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-06-06-v6.4-rc5/arm/multi_v7_defconfig+crypto/gcc-10/lab-broonie/ltp-ipc=
+-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-06-06-v6.4-rc5/arm/multi_v7_defconfig+crypto/gcc-10/lab-broonie/ltp-ipc=
+-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20230527.0/armhf/initrd.cpio.gz =
+
+
+
+  * ltp-ipc.login: https://kernelci.org/test/case/id/647f0da6521e3ad915f5de=
+35
+        new failure (last pass: renesas-devel-2023-06-05-v6.4-rc5) =
+
+ =
+
+
+
+platform         | arch | lab         | compiler | defconfig               =
+     | regressions
+-----------------+------+-------------+----------+-------------------------=
+-----+------------
+beaglebone-black | arm  | lab-cip     | gcc-10   | multi_v7_defc...MB2_KERN=
+EL=3Dy | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/647f0324b1729963c3f5de27
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_THUMB2_KERNEL=3Dy
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-06-06-v6.4-rc5/arm/multi_v7_defconfig+CONFIG_THUMB2_KERNEL=3Dy/gcc-10/l=
+ab-cip/ltp-ipc-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-06-06-v6.4-rc5/arm/multi_v7_defconfig+CONFIG_THUMB2_KERNEL=3Dy/gcc-10/l=
+ab-cip/ltp-ipc-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20230527.0/armhf/initrd.cpio.gz =
+
+
+
+  * ltp-ipc.login: https://kernelci.org/test/case/id/647f0324b1729963c3f5de=
+28
+        new failure (last pass: renesas-devel-2023-06-05-v6.4-rc5) =
+
+ =20
