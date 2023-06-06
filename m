@@ -2,119 +2,176 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02261C7EE2F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Jun 2023 10:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0A4C77B73
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Jun 2023 10:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236182AbjFFKcn convert rfc822-to-8bit (ORCPT
+        id S233068AbjFFKf1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 6 Jun 2023 06:32:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53610 "EHLO
+        Tue, 6 Jun 2023 06:35:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236727AbjFFKcT (ORCPT
+        with ESMTP id S236956AbjFFKew (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2023 06:32:19 -0400
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8368B10C6;
-        Tue,  6 Jun 2023 03:32:15 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-565e6beb7aaso75470907b3.2;
-        Tue, 06 Jun 2023 03:32:15 -0700 (PDT)
+        Tue, 6 Jun 2023 06:34:52 -0400
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7E5110D2
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Jun 2023 03:34:43 -0700 (PDT)
+Received: by mail-oi1-x22c.google.com with SMTP id 5614622812f47-39a523e8209so3243048b6e.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Jun 2023 03:34:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1686047682; x=1688639682;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=J+hFaWI3/J/fQSP3P70DmGflh3e0kaoVOXYKLYnW+Ys=;
+        b=jAjcEytsO0yquzN+DX2fDRYlkXA7GAICYYj9xFzZvvb02eN4ErhXidzMsNbpwU+89N
+         AXkf1t1RqmE4SUKLKYEFd4xK9Tt6Gb1BzJcbddyjK1M6AZb3OHBX2CVG/WOz9Piz6zt6
+         rcbFsL18ivsxMYoBdekAIU3Kt19KBgoW644qhNjzDdxo3vSgdSzBWziqvNtyZZ4Iq14r
+         J1g0ZqAJPKGaEHVDAOQAAqQ+xHPoveVGfmhUM2SNDkUTFFaG1wWlebvM3mblX53Dus9T
+         ZKrNqwWzuQBHteB6/wdmpNW9LmrwaBIa6wppsJFxZ1bQrReEJzfPPve+/xaOLyawmvcC
+         tSSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686047534; x=1688639534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fJBagGQruk41RMozweoSMnqFuyRsRNH9Kz3lbWgCrDg=;
-        b=ZS4n6g8Xn9pk4nj/555htUTZOSc3WAhyKl7lZxoWnNUCmiV5fgcCNC/PhotXbPf7gl
-         7iGyMFv0NimGObo93vTrWfDJg4BNoGG+wE4Rm1UXTlRcH8sAHQxv2FrF8aVZoUgB2Vpi
-         MvyZOtu04sl2xHpwjpKLmYiFwt4m6A8w5oTvInlNow73LPrHN9jnjelFVyTjZam0kogB
-         5C5kzjKpoEUzhc+DS20k/VpFI+JG6WGtMAf7e1t6Ez6ca4Hbb1K32w9aoucDCCtx1Bjd
-         HivJvd3mhkb07hftmu5NXp8MwdksBcxykdE07iuwlEBAZeh5si/zBLXvh+roetEohXzZ
-         pWNQ==
-X-Gm-Message-State: AC+VfDw8uO7qVNwTCLMg+fWwp27Aambqkq4WBEsVImKPQqx15B/sK/iw
-        KfyS5LE5frSELhMhr90g596dAY8AFNbVvw==
-X-Google-Smtp-Source: ACHHUZ4q5szX1RObq5yPUhreT12sVZhtZW/dFFxSSS4CPkePjU0Br+flDkjfHEu5G/vYpBo3/iyuXA==
-X-Received: by 2002:a0d:e6d4:0:b0:565:e87f:a78f with SMTP id p203-20020a0de6d4000000b00565e87fa78fmr1872057ywe.25.1686047534573;
-        Tue, 06 Jun 2023 03:32:14 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id h66-20020a0dde45000000b0055d7f00d4f7sm3927127ywe.22.2023.06.06.03.32.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jun 2023 03:32:12 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-568ba7abc11so75529947b3.3;
-        Tue, 06 Jun 2023 03:32:11 -0700 (PDT)
-X-Received: by 2002:a0d:df91:0:b0:55a:3560:8ee0 with SMTP id
- i139-20020a0ddf91000000b0055a35608ee0mr1959649ywe.20.1686047531077; Tue, 06
- Jun 2023 03:32:11 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686047682; x=1688639682;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J+hFaWI3/J/fQSP3P70DmGflh3e0kaoVOXYKLYnW+Ys=;
+        b=BkwRho/jLWr1seKnslluyCmrtE5FJ3PuWlc1iCJXVc0CTsYejbeiFkAnJyXhKDrK3I
+         vQFxyaTywSKJ5vFwrXPcvZ94f2dT6laif7KBL/vpkQ+bj2kcTxZSJ3uhC3A+D2pc7k6X
+         jlGMXozuyvO+R2zIKTrHNNdYU1GQdmNLIo37VBBGGHQpp4340bA9is+HD/RQlt2vxMz2
+         ZuWYaRxNd1mCuGtoy3aHHovVmbw3WNS7v/xBvMir76nRfHunOV4PmmVNJYnik8OCjwBL
+         2qdj4nOSb5DsN0Vci8Hn3CJu0U3LzFZ8vgje6+N0saBAvMdw/uKwmFQE858oKByiyBIQ
+         JMkg==
+X-Gm-Message-State: AC+VfDyrikFteIZ+OMNDbhhgOsVRJbTTFOJosj7/0Mit98wy6FTwTu/5
+        1lsuOAWxI9w/dTyeoBN3i8K5W1XHULCRIegAif21Pg==
+X-Google-Smtp-Source: ACHHUZ67nL2TIHTqpWEWlvSUhCaqpA6K8EhNodaglj3GNcljBPUFTgTwZiucrdP/+FsF/zsEhUpZuA==
+X-Received: by 2002:aca:910:0:b0:39a:bbd5:c0b7 with SMTP id 16-20020aca0910000000b0039abbd5c0b7mr1006736oij.53.1686047682558;
+        Tue, 06 Jun 2023 03:34:42 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id b8-20020aa78708000000b00640ddad2e0dsm6566408pfo.47.2023.06.06.03.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 03:34:42 -0700 (PDT)
+Message-ID: <647f0bc2.a70a0220.d55d8.bdbc@mx.google.com>
+Date:   Tue, 06 Jun 2023 03:34:42 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CA+G9fYv0a-XxXfG6bNuPZGT=fzjtEfRGEYwk3n6M1WhEHUPo9g@mail.gmail.com>
- <CA+G9fYueN0xti1SDtYVZstPt104sUj06GfOzyqDNrd3s3xXBkA@mail.gmail.com>
- <CAMuHMdX7hqipiMCF9uxpU+_RbLmzyHeo-D0tCE_Hx8eTqQ7Pig@mail.gmail.com>
- <11bd37e9-c62e-46ba-9456-8e3b353df28f@app.fastmail.com> <CAMuHMdUH2Grrv6842YWXHDmd+O3iHdwqTVjYf8f1nbVRzGA+6w@mail.gmail.com>
- <8db9886f-e24f-44ee-8f8a-880dc3e4bf75@app.fastmail.com>
-In-Reply-To: <8db9886f-e24f-44ee-8f8a-880dc3e4bf75@app.fastmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 6 Jun 2023 12:31:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWKL3UHzkEq3qOChMsgOsr+9uj215x55xLzbOUJWwQVzg@mail.gmail.com>
-Message-ID: <CAMuHMdWKL3UHzkEq3qOChMsgOsr+9uj215x55xLzbOUJWwQVzg@mail.gmail.com>
-Subject: Re: arm: shmobile_defconfig: ld.lld: error: undefined symbol: lynx_pcs_destroy
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        clang-built-linux <llvm@lists.linux.dev>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        maxime.chevallier@bootlin.com,
-        Simon Horman <simon.horman@corigine.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-next-2023-06-06-v6.4-rc1
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: next
+X-Kernelci-Tree: renesas
+Subject: renesas/next igt-gpu-panfrost: 3 runs,
+ 2 regressions (renesas-next-2023-06-06-v6.4-rc1)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Arnd,
+renesas/next igt-gpu-panfrost: 3 runs, 2 regressions (renesas-next-2023-06-=
+06-v6.4-rc1)
 
-On Tue, Jun 6, 2023 at 12:21 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tue, Jun 6, 2023, at 11:28, Geert Uytterhoeven wrote:
-> > On Tue, Jun 6, 2023 at 11:16 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >> On Tue, Jun 6, 2023, at 11:01, Geert Uytterhoeven wrote:
-> >>
-> >> This won't work when PCS_LYNX is a loadable module and
-> >> STMMAC is built-in. I think we should just select PCS_LYNX
-> >
-> > Oops, you're right, forgot about that case.
-> > What about using IS_REACHABLE() instead?
-> > No, that won't work either, as DWMAC_SOCFPGA can be modular,
-> > with STMMAC builtin.
->
-> It would work because of the 'select PCS_LYNX' below DWMAC_SOCFPGA,
+Regressions Summary
+-------------------
 
-That was my first thought, but it won't work, as DWMAC_SOCFPGA=m
-causes PCS_LYNX=m, while main STMMAC can still be builtin.
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+mt8183-kukui-...uniper-sku16 | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
 
-> but I think that's too fragile and would easily break when another
-> dwmac front-end starts using PCS_LYNX without have the same select
-> statement. I think we should always avoid IS_REACHABLE().
+mt8192-asurada-spherion-r0   | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
 
-;-)
 
-Gr{oetje,eeting}s,
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2023-06-06-v6.4-rc1/plan/igt-gpu-panfrost/
 
-                        Geert
+  Test:     igt-gpu-panfrost
+  Tree:     renesas
+  Branch:   next
+  Describe: renesas-next-2023-06-06-v6.4-rc1
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      7762defcdaf029da668d5af3304d3d940d43199e
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  Test suite revisions:
+    drm
+      URL:  git://anongit.freedesktop.org/mesa/drm
+      SHA:  98e1db501173303e58ef6a1def94ab7a2d84afc1
+    igt-gpu-tools
+      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
+      SHA:  766edf96979bf13a10c9985c007f2baca5c9e308 =
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+mt8183-kukui-...uniper-sku16 | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/647ef7333bf51659c8f5df5d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2023=
+-06-06-v6.4-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/igt-g=
+pu-panfrost-mt8183-kukui-jacuzzi-juniper-sku16.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2023=
+-06-06-v6.4-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/igt-g=
+pu-panfrost-mt8183-kukui-jacuzzi-juniper-sku16.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
+t/20230527.0/arm64/rootfs.cpio.gz =
+
+
+
+  * igt-gpu-panfrost.login: https://kernelci.org/test/case/id/647ef7333bf51=
+659c8f5df5e
+        failing since 3 days (last pass: renesas-next-2023-03-30-v6.3-rc1, =
+first fail: renesas-next-2023-06-02-v6.4-rc1) =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+mt8192-asurada-spherion-r0   | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/647ef72c3352824409f5de98
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2023=
+-06-06-v6.4-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/igt-g=
+pu-panfrost-mt8192-asurada-spherion-r0.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2023=
+-06-06-v6.4-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/igt-g=
+pu-panfrost-mt8192-asurada-spherion-r0.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
+t/20230527.0/arm64/rootfs.cpio.gz =
+
+
+
+  * igt-gpu-panfrost.login: https://kernelci.org/test/case/id/647ef72c33528=
+24409f5de99
+        failing since 3 days (last pass: renesas-next-2023-03-30-v6.3-rc1, =
+first fail: renesas-next-2023-06-02-v6.4-rc1) =
+
+ =20
