@@ -2,68 +2,191 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECE9C7EE37
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  7 Jun 2023 01:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838E1C7EE2F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  7 Jun 2023 02:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240423AbjFGB45 (ORCPT
+        id S240396AbjFGCjd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 6 Jun 2023 21:56:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42290 "EHLO
+        Tue, 6 Jun 2023 22:39:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236368AbjFGB44 (ORCPT
+        with ESMTP id S234044AbjFGCjd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2023 21:56:56 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 801EE10EA;
-        Tue,  6 Jun 2023 18:56:55 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.00,222,1681138800"; 
-   d="scan'208";a="166015945"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Jun 2023 10:56:51 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3296C411C504;
-        Wed,  7 Jun 2023 10:56:51 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com
-Cc:     maciej.fijalkowski@intel.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v3 1/2] net: renesas: rswitch: Use napi_gro_receive() in RX
-Date:   Wed,  7 Jun 2023 10:56:40 +0900
-Message-Id: <20230607015641.1724057-2-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230607015641.1724057-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230607015641.1724057-1-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 6 Jun 2023 22:39:33 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2313CE78
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Jun 2023 19:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686105572; x=1717641572;
+  h=date:from:to:cc:subject:message-id;
+  bh=bQlHHk5YIhH3FUbleveEryqAeYec2GQcSEXEzpVn6mE=;
+  b=BmHyjXm9kFPhVzx8+XWs0zzuEEJXSUzrRdAFd3mJWIx90dBJd1wWfHSc
+   nKy2cr1h6DYLOA2980NeAJkeIrxQi0flIK7pD06GSdvkdomo6B7REsmFL
+   zQ6r77IiLImh6VZua7uPwV7/wDh0Eb8YRNx6xO1jBAOZPLnqtc0IDkmzH
+   +LJ+IqbyA2Ha87XvI9yfYCCO0mCiRhHoexZ2E9XY0SPBzSFczCo3olemd
+   JAIyPRseyNNlMWUn/ziZh1Ly4kzehpUsc4CsUz/3wHtoASgbF/KdKgWHP
+   ZzRp/qEe0yBsCPms6TgH747cCE0MDZg827ryGlXpCu5GBYluNhJ4aU74a
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="337219907"
+X-IronPort-AV: E=Sophos;i="6.00,222,1681196400"; 
+   d="scan'208";a="337219907"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 19:39:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="712418963"
+X-IronPort-AV: E=Sophos;i="6.00,222,1681196400"; 
+   d="scan'208";a="712418963"
+Received: from lkp-server01.sh.intel.com (HELO 15ab08e44a81) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 06 Jun 2023 19:39:30 -0700
+Received: from kbuild by 15ab08e44a81 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1q6j57-00061L-2M;
+        Wed, 07 Jun 2023 02:39:29 +0000
+Date:   Wed, 07 Jun 2023 10:38:58 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:master] BUILD SUCCESS
+ a4b790f7e5ea4c595b8d6270ef450835db73186b
+Message-ID: <20230607023858.03gR5%lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This hardware can receive multiple frames so that using
-napi_gro_receive() instead of netif_receive_skb() gets good
-performance of RX.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: a4b790f7e5ea4c595b8d6270ef450835db73186b  [LOCAL] arm64: renesas: defconfig: Update renesas_defconfig
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
----
- drivers/net/ethernet/renesas/rswitch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+elapsed time: 725m
 
-diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index aace87139cea..7bb0a6d594a0 100644
---- a/drivers/net/ethernet/renesas/rswitch.c
-+++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -729,7 +729,7 @@ static bool rswitch_rx(struct net_device *ndev, int *quota)
- 		}
- 		skb_put(skb, pkt_len);
- 		skb->protocol = eth_type_trans(skb, ndev);
--		netif_receive_skb(skb);
-+		napi_gro_receive(&rdev->napi, skb);
- 		rdev->ndev->stats.rx_packets++;
- 		rdev->ndev->stats.rx_bytes += pkt_len;
- 
+configs tested: 119
+configs skipped: 9
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r005-20230606   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r015-20230606   gcc  
+alpha                randconfig-r031-20230606   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r043-20230606   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                  randconfig-r046-20230606   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r003-20230606   gcc  
+arm64                randconfig-r016-20230606   clang
+csky                                defconfig   gcc  
+csky                 randconfig-r014-20230606   gcc  
+hexagon              randconfig-r041-20230606   clang
+hexagon              randconfig-r045-20230606   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-i001-20230606   gcc  
+i386                 randconfig-i002-20230606   gcc  
+i386                 randconfig-i003-20230606   gcc  
+i386                 randconfig-i004-20230606   gcc  
+i386                 randconfig-i005-20230606   gcc  
+i386                 randconfig-i006-20230606   gcc  
+i386                 randconfig-i011-20230606   clang
+i386                 randconfig-i012-20230606   clang
+i386                 randconfig-i013-20230606   clang
+i386                 randconfig-i014-20230606   clang
+i386                 randconfig-i015-20230606   clang
+i386                 randconfig-i016-20230606   clang
+i386                 randconfig-i051-20230606   gcc  
+i386                 randconfig-i052-20230606   gcc  
+i386                 randconfig-i053-20230606   gcc  
+i386                 randconfig-i054-20230606   gcc  
+i386                 randconfig-i055-20230606   gcc  
+i386                 randconfig-i056-20230606   gcc  
+i386                 randconfig-i061-20230606   gcc  
+i386                 randconfig-i062-20230606   gcc  
+i386                 randconfig-i063-20230606   gcc  
+i386                 randconfig-i064-20230606   gcc  
+i386                 randconfig-i065-20230606   gcc  
+i386                 randconfig-i066-20230606   gcc  
+i386                 randconfig-r033-20230606   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch    buildonly-randconfig-r004-20230606   gcc  
+loongarch                           defconfig   gcc  
+m68k                             allmodconfig   gcc  
+m68k         buildonly-randconfig-r003-20230606   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r022-20230606   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                 randconfig-r021-20230606   gcc  
+nios2        buildonly-randconfig-r001-20230606   gcc  
+nios2                               defconfig   gcc  
+openrisc             randconfig-r024-20230606   gcc  
+openrisc             randconfig-r026-20230606   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r013-20230606   gcc  
+parisc64                            defconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r006-20230606   gcc  
+powerpc              randconfig-r032-20230606   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r042-20230606   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r002-20230606   gcc  
+s390                 randconfig-r035-20230606   gcc  
+s390                 randconfig-r044-20230606   clang
+sh                               allmodconfig   gcc  
+sh           buildonly-randconfig-r002-20230606   gcc  
+sh                   randconfig-r034-20230606   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r005-20230606   gcc  
+sparc                randconfig-r012-20230606   gcc  
+sparc64      buildonly-randconfig-r006-20230606   gcc  
+sparc64              randconfig-r001-20230606   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230606   gcc  
+x86_64               randconfig-a002-20230606   gcc  
+x86_64               randconfig-a003-20230606   gcc  
+x86_64               randconfig-a004-20230606   gcc  
+x86_64               randconfig-a005-20230606   gcc  
+x86_64               randconfig-a006-20230606   gcc  
+x86_64               randconfig-a011-20230606   clang
+x86_64               randconfig-a012-20230606   clang
+x86_64               randconfig-a013-20230606   clang
+x86_64               randconfig-a014-20230606   clang
+x86_64               randconfig-a015-20230606   clang
+x86_64               randconfig-a016-20230606   clang
+x86_64               randconfig-r004-20230606   gcc  
+x86_64               randconfig-x051-20230606   clang
+x86_64               randconfig-x052-20230606   clang
+x86_64               randconfig-x053-20230606   clang
+x86_64               randconfig-x054-20230606   clang
+x86_64               randconfig-x055-20230606   clang
+x86_64               randconfig-x056-20230606   clang
+x86_64               randconfig-x061-20230606   clang
+x86_64               randconfig-x062-20230606   clang
+x86_64               randconfig-x063-20230606   clang
+x86_64               randconfig-x064-20230606   clang
+x86_64               randconfig-x065-20230606   clang
+x86_64               randconfig-x066-20230606   clang
+x86_64                               rhel-8.3   gcc  
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
