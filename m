@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D06EC83005
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Jun 2023 13:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E69C7EE2E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Jun 2023 13:44:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237720AbjFINoo (ORCPT
+        id S240170AbjFINoq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Jun 2023 09:44:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54726 "EHLO
+        Fri, 9 Jun 2023 09:44:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbjFINon (ORCPT
+        with ESMTP id S235523AbjFINoo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2023 09:44:43 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B1830F4
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Jun 2023 06:44:41 -0700 (PDT)
+        Fri, 9 Jun 2023 09:44:44 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4776330FD
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Jun 2023 06:44:42 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:a1e2:1b31:cba3:390d])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 71kZ2A00512zQ4r011kZdr; Fri, 09 Jun 2023 15:44:39 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id 71kZ2A00E12zQ4r011kZNt; Fri, 09 Jun 2023 15:44:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q7cPS-008La7-38;
+        id 1q7cPS-008LaF-4Y;
         Fri, 09 Jun 2023 15:44:33 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q7cPp-00GCTT-43;
+        id 1q7cPp-00GCTc-5T;
         Fri, 09 Jun 2023 15:44:33 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -42,9 +42,9 @@ To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/4] drm/todo: Convert list of fbconv links to footnotes
-Date:   Fri,  9 Jun 2023 15:44:28 +0200
-Message-Id: <be8d2886f50485c86f74a3c1a117abb1b8718a07.1686318012.git.geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] drm: Fix references to drm_plane_helper_check_state()
+Date:   Fri,  9 Jun 2023 15:44:30 +0200
+Message-Id: <adebd34277ccadc5719abc8f136776001732383b.1686318012.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1686318012.git.geert+renesas@glider.be>
 References: <cover.1686318012.git.geert+renesas@glider.be>
@@ -54,43 +54,48 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the references to fbconv links to footnotes, so they can be
-navigated.
+As of commit a01cb8ba3f628293 ("drm: Move drm_plane_helper_check_state()
+into drm_atomic_helper.c"), drm_plane_helper_check_state() no longer
+exists, but is part of drm_atomic_helper_check_plane_state().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
 v2:
-  - New.
+  - Add Reviewed-by.
 ---
- Documentation/gpu/todo.rst | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c | 3 ++-
+ drivers/gpu/drm/tidss/tidss_plane.c     | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-index 6c328613c049fc1d..ce1d4e22c327063b 100644
---- a/Documentation/gpu/todo.rst
-+++ b/Documentation/gpu/todo.rst
-@@ -753,16 +753,16 @@ existing hardware. The new driver's call-back functions are filled from
- existing fbdev code.
- 
- More complex fbdev drivers can be refactored step-by-step into a DRM
--driver with the help of the DRM fbconv helpers. [1] These helpers provide
-+driver with the help of the DRM fbconv helpers [4]_. These helpers provide
- the transition layer between the DRM core infrastructure and the fbdev
- driver interface. Create a new DRM driver on top of the fbconv helpers,
- copy over the fbdev driver, and hook it up to the DRM code. Examples for
--several fbdev drivers are available at [1] and a tutorial of this process
--available at [2]. The result is a primitive DRM driver that can run X11
-+several fbdev drivers are available at [4]_ and a tutorial of this process
-+available at [5]_. The result is a primitive DRM driver that can run X11
- and Weston.
- 
-- - [1] https://gitlab.freedesktop.org/tzimmermann/linux/tree/fbconv
-- - [2] https://gitlab.freedesktop.org/tzimmermann/linux/blob/fbconv/drivers/gpu/drm/drm_fbconv_helper.c
-+ .. [4] https://gitlab.freedesktop.org/tzimmermann/linux/tree/fbconv
-+ .. [5] https://gitlab.freedesktop.org/tzimmermann/linux/blob/fbconv/drivers/gpu/drm/drm_fbconv_helper.c
- 
- Contact: Thomas Zimmermann <tzimmermann@suse.de>
- 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+index d759e019218181ce..e445fac8e0b46c21 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+@@ -600,7 +600,8 @@ int __rcar_du_plane_atomic_check(struct drm_plane *plane,
+ 	if (!state->crtc) {
+ 		/*
+ 		 * The visible field is not reset by the DRM core but only
+-		 * updated by drm_plane_helper_check_state(), set it manually.
++		 * updated by drm_atomic_helper_check_plane_state(), set it
++		 * manually.
+ 		 */
+ 		state->visible = false;
+ 		*format = NULL;
+diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
+index 6bdd6e4a955ab3cc..e1c0ef0c3894c855 100644
+--- a/drivers/gpu/drm/tidss/tidss_plane.c
++++ b/drivers/gpu/drm/tidss/tidss_plane.c
+@@ -38,7 +38,8 @@ static int tidss_plane_atomic_check(struct drm_plane *plane,
+ 	if (!new_plane_state->crtc) {
+ 		/*
+ 		 * The visible field is not reset by the DRM core but only
+-		 * updated by drm_plane_helper_check_state(), set it manually.
++		 * updated by drm_atomic_helper_check_plane_state(), set it
++		 * manually.
+ 		 */
+ 		new_plane_state->visible = false;
+ 		return 0;
 -- 
 2.34.1
 
