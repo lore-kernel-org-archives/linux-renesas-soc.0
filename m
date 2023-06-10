@@ -2,68 +2,83 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB797C7EE25
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 10 Jun 2023 00:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8714EC7EE2E
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 10 Jun 2023 18:53:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbjFJAae convert rfc822-to-8bit (ORCPT
+        id S231226AbjFJSxs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Jun 2023 20:30:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49640 "EHLO
+        Sat, 10 Jun 2023 14:53:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbjFJAad (ORCPT
+        with ESMTP id S230432AbjFJSxs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2023 20:30:33 -0400
-X-Greylist: delayed 906 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 09 Jun 2023 17:30:32 PDT
-Received: from es.pcb.gov.my (es.pcb.gov.my [202.75.7.35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1756EBF
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Jun 2023 17:30:31 -0700 (PDT)
-X-ASG-Debug-ID: 1686355820-1488a971bf06bd0006-W7S1xt
-Received: from mail.pcb.gov.my (mail.pcb.gov.my [10.28.173.47]) by es.pcb.gov.my with ESMTP id pKIC11IeOLxswuEz for <linux-renesas-soc@vger.kernel.org>; Sat, 10 Jun 2023 08:14:23 +0800 (+08)
-X-Barracuda-Envelope-From: herdayu@pcb.gov.my
-Received: from [193.169.254.61] (193.169.254.61) by EXCHANGE01.BPA.pcb.gov.my
- (10.28.173.47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.721.2; Fri, 9 Jun 2023
- 01:19:00 +0800
-Reply-To: <alicewalt63@gmail.com>
-X-Barracuda-Effective-Source-IP: UNKNOWN[193.169.254.61]
-X-Barracuda-Apparent-Source-IP: 193.169.254.61
-From:   Alice Walton <herdayu@pcb.gov.my>
-To:     <linux-renesas-soc@vger.kernel.org>
-Subject: =?UTF-8?B?xI1lc3RpdGFt?=
-Date:   Thu, 8 Jun 2023 10:18:50 -0700
-X-ASG-Orig-Subj: =?UTF-8?B?xI1lc3RpdGFt?=
-Message-ID: <20230608101849.9DFC274FE18D3B2C@pcb.gov.my>
-MIME-Version: 1.0
+        Sat, 10 Jun 2023 14:53:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799D0173A
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 10 Jun 2023 11:53:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DF6F60B4C
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 10 Jun 2023 18:53:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5A225C4339B;
+        Sat, 10 Jun 2023 18:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686423226;
+        bh=0kXLR6N19QJarrOM9L2An/IXYJpG+uaknAMpiddQX0k=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=u3rEUtAW9Oz5d3L9s7DJzvMxazzAZJ0gKbBElMO1pnkjOHQ4b0+Rfl3VA5TMEy4sG
+         CuFrSjZHWj8M5Alpp+J4akWEnNizgH5tGiUp7XoeYc5fT2dsf/fAuh1TCKfngNL5I9
+         N2cve5CpVQYBdAg/dCBJYO1Ijxx5KxDX/27qsejRs3cf5KYspq5beqToKQvwOlymqg
+         rfaAFTdhaBYWZo9CAtUaSAUSDkT9xoXU6zRSFjljDva6Z2Eh9S+Ih0MvqcTUlppHm8
+         zFhYGbQ2pW9jhw9xktygzgKoklE1jQVtP1IIIWP6ug7jIEUwhN3VmwmtdSLUG2ao/7
+         Fp7R7GoiyKJhQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 373C8E87232;
+        Sat, 10 Jun 2023 18:53:46 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-ClientProxiedBy: EXCHANGE01.BPA.pcb.gov.my (10.28.173.47) To
- EXCHANGE01.BPA.pcb.gov.my (10.28.173.47)
-X-Barracuda-Connect: mail.pcb.gov.my[10.28.173.47]
-X-Barracuda-Start-Time: 1686356037
-X-Barracuda-URL: https://10.28.173.25:443/cgi-mod/mark.cgi
-X-Barracuda-License: Expired
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at pcb.gov.my
-X-Barracuda-Scan-Msg-Size: 570
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v4 0/2] net: renesas: rswitch: Improve perfromance of
+ TX/RX
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168642322622.21298.7526575301146103242.git-patchwork-notify@kernel.org>
+Date:   Sat, 10 Jun 2023 18:53:46 +0000
+References: <20230608022007.1866372-1-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20230608022007.1866372-1-yoshihiro.shimoda.uh@renesas.com>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, maciej.fijalkowski@intel.com,
+        simon.horman@corigine.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-čestitam,
+Hello:
 
-      Vaša e-pošta osvojila je 5.000.000,00 USD od strane Alice 
-Walton 2023 humanitarnog programa podrške donacijama. 
-Kontaktirajte nas za više pojedinosti o tome kako možete 
-zatražiti svoj donacijski fond.
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Hvala i Bog blagoslovio
-Zaklada Alice Walton
-=========================================
-Congratulation,
+On Thu,  8 Jun 2023 11:20:05 +0900 you wrote:
+> This patch series is based on net-next.git / main branch [1]. This patch
+> series can improve perfromance of TX in a specific condition. The previous code
+> used "global rate limiter" feature so that this is possible to cause
+> performance down if we use multiple ports at the same time. To resolve this
+> issue, use "hardware pause" features of GWCA and COMA. Note that this is not
+> related to the ethernet PAUSE frames.
+> 
+> [...]
 
-     Your email has won $5,000,000.00 USD by Alice Walton 2023 
-humanitarian donation support program. Contact us for more 
-details on how you can claim your donation fund.
+Here is the summary with links:
+  - [net-next,v4,1/2] net: renesas: rswitch: Use napi_gro_receive() in RX
+    https://git.kernel.org/netdev/net-next/c/dc510c6d2ecf
+  - [net-next,v4,2/2] net: renesas: rswitch: Use hardware pause features
+    https://git.kernel.org/netdev/net-next/c/c87bd91e34e1
 
-Thanks And God Bless
-Alice Walton Foundation
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
