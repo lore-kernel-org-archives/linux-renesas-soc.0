@@ -2,97 +2,155 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E02FC7EE23
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Jun 2023 13:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D27AC7EE25
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Jun 2023 13:07:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232965AbjFLNGA (ORCPT
+        id S229781AbjFLNHq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 12 Jun 2023 09:06:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
+        Mon, 12 Jun 2023 09:07:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236365AbjFLNFr (ORCPT
+        with ESMTP id S229555AbjFLNHp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2023 09:05:47 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F2F1708
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Jun 2023 06:05:36 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-653bed78635so2914585b3a.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Jun 2023 06:05:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686575136; x=1689167136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=16wuC5E5n9j7uBffwe63ixe0QHFCaM/pIPnMy2Ld/VM=;
-        b=kr/vjsI3CGieUIBJNSn2kgyrViE2sFHxX+rRLsnYZJ/tNKmvb8POR70m6ji0x4Khy3
-         o7t6EiM3bY1GrNveTNwMnRgWzqbE3YLfNdrFMv4ccQSaRotYumYaMv+o3m4w9jaDSxYS
-         qX5LbYkGoURkfDAMGyKY2i5h17pbN20bDKFyhd53HSgOHeX6+ia1VtSX9FeB2iox3s6c
-         HPcGhxt0MLedN5CgbLBnSeoZ2b3Qc1+8xHXbb2tkUl5KN6hRIy9XfTMtf1KEZOtth9W/
-         dP2dy9M51pRHSEZezdRFDFtfSqykW5xu5nUtf2wrNDFTMTVGdTEUYSiMyfmEKZcmd0AM
-         0H+g==
+        Mon, 12 Jun 2023 09:07:45 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CEBA0;
+        Mon, 12 Jun 2023 06:07:44 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-3f9cf20da1dso40450741cf.3;
+        Mon, 12 Jun 2023 06:07:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686575136; x=1689167136;
+        d=1e100.net; s=20221208; t=1686575263; x=1689167263;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=16wuC5E5n9j7uBffwe63ixe0QHFCaM/pIPnMy2Ld/VM=;
-        b=Sa8a/Kx1fRb7RrmxYKRncXVN/j4Q6RMSaDQd/HSWn5hq01BKTa/PgWk0EYgk5jPvJG
-         14ZtDCgLkKYaGjfTS0rML4TXsnnQOTHeDY2p6bydelhZb7ZbkJydyxWvB4UWIDGFYwzk
-         AhNCr/54+6Lz5n40XGA8flKveQRWZKaouxaapGLwkgk4hV+xBLXaG1V0NlH8Z8k8bzJ3
-         BkHIg6tonYvefM8G4XZ6520+giRAhlEG2FWSBSqiwqdI9Cjek3pd3UFsCrErJQfiHnTe
-         4wF7XJwt907PLwdVKayll606axETlloHP17nIKBNEgmmmzQoWNWJjNo0hCRTESmHrbZT
-         7hrg==
-X-Gm-Message-State: AC+VfDyvKHqk4yr/VqiKycPTmW3oJW93s6J+zYh0Unr9DFg1ix767r+S
-        vjzhsPcCkFFvwazobp/vnhcRMiD0Sbd4tqMRj0M94c8l
-X-Google-Smtp-Source: ACHHUZ41yKHcVE53caf1HM/f36D4XF5L3WUBu5VERzMNWf7qsMKeYo7+0A5TZtBONIfukVyH07wFfd6N3uwGqfDesp4=
-X-Received: by 2002:a17:90a:357:b0:252:7372:460c with SMTP id
- 23-20020a17090a035700b002527372460cmr10725152pjf.4.1686575135988; Mon, 12 Jun
- 2023 06:05:35 -0700 (PDT)
+        bh=OOSPC68jRmmKm/N4lilGrY5D58VwuhvYh8IBlby8n7U=;
+        b=bx5uQNrvOGQ9zGPv54Rq+C9z9AApMjvYPPuIzdrbu2npNXrWd/hYB0KmkTqexEzirt
+         sFrE1omp083DtjBW2Jd8ohGEMiAQvs7KcOEZBfk4onaOU6MahGTXevH6bAV5rhI/ORWZ
+         73MiE4vmIDOf9g0bHLHTiLJy+uTUQDBUXf/r+WLOV7ff0bi3gaYkQzdCb561mNkXWOa5
+         cApX8oNCAiemmql1E+5Q7Zryz3cacXRIszCAYsE3ADqKLcRxytxv9dSb/L9EcEorQouq
+         +0jOgwIbGgCNSpmu4wX8AsvhMJh3MTq7QyJfZffgx9Srkpv7UK9sbrjKFSKtYjHMNOZt
+         oz7A==
+X-Gm-Message-State: AC+VfDwb4b863ooux2mR/emXip5SaXv7DhFARx7js3SzI8BUC+0taIfl
+        CMvcpzplN8p7sdVzwPLepaxp8sK286+qQg==
+X-Google-Smtp-Source: ACHHUZ75vLbBH4+KV+zPfV/EodLflsttpEOFZh151HYYHjvN0G8G0FcoirzScX0zNC4p+cLFxkHFlg==
+X-Received: by 2002:a05:622a:1cf:b0:3f9:ae23:5763 with SMTP id t15-20020a05622a01cf00b003f9ae235763mr11553051qtw.61.1686575263455;
+        Mon, 12 Jun 2023 06:07:43 -0700 (PDT)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com. [209.85.219.49])
+        by smtp.gmail.com with ESMTPSA id w4-20020ac843c4000000b003f9af049c55sm3362216qtn.18.2023.06.12.06.07.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 06:07:43 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-62de8bce252so11959946d6.0;
+        Mon, 12 Jun 2023 06:07:43 -0700 (PDT)
+X-Received: by 2002:a25:7642:0:b0:bc5:da39:e84 with SMTP id
+ r63-20020a257642000000b00bc5da390e84mr6203110ybc.13.1686574813357; Mon, 12
+ Jun 2023 06:00:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHCN7xJbuvDCecsQfvw4X3a=w-F95j6dQYAj+0irkVhTAQ0abw@mail.gmail.com>
- <afe41e88-4de5-cce9-b280-0ec955b52409@mailbox.org>
-In-Reply-To: <afe41e88-4de5-cce9-b280-0ec955b52409@mailbox.org>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 12 Jun 2023 08:05:24 -0500
-Message-ID: <CAHCN7x+e4Nk8qioX_djm=jxm=fmJ9G391JnkxnQAhfVnfmfEqQ@mail.gmail.com>
-Subject: Re: RZ/G2 / RCAR3 32-bit Kernel
-To:     Marek Vasut <marek.vasut@mailbox.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <ZIBFc3y9jD59lZ3A@shikoro> <OS0PR01MB5922A3A97439EA2F976940B28653A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <OS0PR01MB5922AA27B212F610A5E816138650A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <20230608103929.GO5058@pendragon.ideasonboard.com> <OS0PR01MB592259E6A7ACED4A0548DD228650A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <20230608125019.GD26742@pendragon.ideasonboard.com> <OS0PR01MB5922ECEABE4D6FC385D184008650A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <OS0PR01MB592265BFDF18F860E1EB4CFE8654A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <ZIcRKl3PDy0+yZS9@ninjato> <CAMuHMdV_iwdP+K1us86OB4VtDDqA=P_vNeCP15kqRuXqcYr3hg@mail.gmail.com>
+ <ZIcUEdctlgRsGxJ3@ninjato>
+In-Reply-To: <ZIcUEdctlgRsGxJ3@ninjato>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 12 Jun 2023 15:00:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVOkBeKOEW9PkWB3Tqwa6-rC3BQj=W9VAEgeZfgqvQmWQ@mail.gmail.com>
+Message-ID: <CAMuHMdVOkBeKOEW9PkWB3Tqwa6-rC3BQj=W9VAEgeZfgqvQmWQ@mail.gmail.com>
+Subject: Re: [PATCH v5 01/11] i2c: Enhance i2c_new_ancillary_device API
+To:     Wolfram Sang <wsa@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Corey Minyard <cminyard@mvista.com>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>,
+        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
+        Antonio Borneo <antonio.borneo@foss.st.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Jun 11, 2023 at 9:34=E2=80=AFAM Marek Vasut <marek.vasut@mailbox.or=
-g> wrote:
->
-> On 6/9/23 15:48, Adam Ford wrote:
-> > I was wondering if anyone has ever attempted to build a 32-bit kernel
-> > to run on an RZ/G2 or RCAR3 SoC.
->
-> Not me
->
-> > I have a variant with than 2GB of RAM, and I want to run some
-> > experiments to measure RAM utilization and performance to see if it's
-> > worth trying to run in 32-bit mode to save a little RAM.
->
-> It might be worth looking at arm64 ilp32 too, that retains you the
-> armv8a instructions, i.e. you get the 32bit pointers without the armv7a
-> opcodes downsides.
->
-> > It looks like U-Boot supports AARCH32, but most of the stuff I can
-> > find when searching has people building applications in 32-bit space
-> > running on a 64-bit kernel, but I am hoping to try everything in
-> > 32-bit mode.  I have build the multi_v7 kernel with an ARMv7 compiler,
-> > but attempts to boot that kernel cause a crash.  I am guessing I need
-> > to enable some additional flag somewhere, or somehow tell U-Boot it's
-> > a 32-bit kernel.
->
-> Maybe look at what RPi does, I think they run 32bit OR 64bit kernel on
-> RPi3 built from the same source and using the same DT .
+Hi Wolfram,
 
-Thanks for the tip!  I'll check that out.
+On Mon, Jun 12, 2023 at 2:48 PM Wolfram Sang <wsa@kernel.org> wrote:
+> > > Would this binding allow to not use the RTC if the second reg is
+> > > missing? What are the advantages of not enabling RTC? Saving power?
+> >
+> > It doesn't work if there is no clock?
+>
+> Maybe I am confusing something now, but if the RTC _needs_ to be
+> enabled, then why we don't do it unconditionally?
 
-adam
+1. DT describes the hardware, which listens to two addresses, so the
+   device node should have two entries in the reg property.
+2. The RTC is enabled by instantiating an i2c ancillary device, and lets the
+   isl1208 driver bind against it.
+
+> > > Thinking more about this: DT is hardware description, so the RTC should
+> > > always be described in DT. If the RTC is actually activated is more a
+> > > configuration thing, or? Brainstorming: maybe the PMIC driver could try
+> > > to find the node with reg == 0x6f and see if firmware has enabled it or
+> > > not?
+> >
+> > I guess the RTC part would acknowledge anyway?
+> > It is always present, it is just part of the RAA215300.
+>
+> I mean the driver should scan for the DT node. Not on the bus. But a
+> phandle is probably safer.
+>
+> > Sure, you can put that in DT.  But it's a pity you have to do that,
+> > as the device (the PMIC part) does know the revision...
+> > That's why I suggested to let the PMIC part instantiate an i2c ancillary
+> > device...
+>
+> I see. I'll let it sink in some more.
+
+Perhaps we should first think through what an ancillary device really
+is.  My understanding is that it is used to talk to secondary addresses
+of a multi-address I2C slave device.
+
+What's different here compared to e.g. adv748x?
+  - RAA215300 has a PMIC and an RTC, and there exists a separate
+    RTC driver for a similar part (which is thus Linux-specific,
+    not DT-specific!),
+  - I don't know much about adv748x, but I understand there is a
+    single driver talking to all subcomponents.
+    What if in the future we e.g. would want to spin off part of it
+    in a subdriver, as a subcomponent appeared in an unrelated device?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
