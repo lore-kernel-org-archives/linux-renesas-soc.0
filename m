@@ -2,102 +2,94 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E168DEB64D9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jun 2023 20:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1BAEB64D7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jun 2023 06:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbjFSUch (ORCPT
+        id S230131AbjFTGux (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Jun 2023 16:32:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37808 "EHLO
+        Tue, 20 Jun 2023 02:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjFSUcg (ORCPT
+        with ESMTP id S229651AbjFTGux (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2023 16:32:36 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 829C6FE
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jun 2023 13:32:35 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 56EAD8D;
-        Mon, 19 Jun 2023 22:31:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1687206719;
-        bh=GOqXUslFthZZ2S6DqkBYphyHABzWo2n3cYjSXAA+WHQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YtpeYCiaiBxNpKtbwziJIuPlW3tqviv/SflGrBgTE1GHLE2PI+EcM9oWafv3YnU79
-         0G1Czr41GTDq6IMUJMPtwmZHbmak7nJcum4tTEkT3NfUrSyLkrSfiaOxkKbU7iU/Ww
-         eI4p5IjIEVQkIlatv7a/U7LTyXlrObj+k0CBOTuI=
-Date:   Mon, 19 Jun 2023 23:32:33 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Tue, 20 Jun 2023 02:50:53 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837CDB1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jun 2023 23:50:50 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:b30c:87ec:6d02:5999])
+        by michel.telenet-ops.be with bizsmtp
+        id BJql2A00K4R9QC306JqlNP; Tue, 20 Jun 2023 08:50:47 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qBVBv-00992H-Cs;
+        Tue, 20 Jun 2023 08:50:45 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qBVCP-0018vI-7X;
+        Tue, 20 Jun 2023 08:50:45 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge_connector: Handle
- drm_connector_init_with_ddc() failures
-Message-ID: <20230619203233.GK10462@pendragon.ideasonboard.com>
-References: <d2cf54b8bc216a2008a537f2a2696b6f77ba9296.1687177318.git.geert+renesas@glider.be>
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] drm/bridge_connector: Handle drm_connector_init_with_ddc() failures
+Date:   Tue, 20 Jun 2023 08:50:44 +0200
+Message-Id: <53b00f9812deddf90297e42aa45a4a9988c70076.1687243706.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d2cf54b8bc216a2008a537f2a2696b6f77ba9296.1687177318.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+drm_connector_init_with_ddc() can fail, but the call in
+drm_bridge_connector_init() does not check that.  Fix this by adding
+the missing error handling.
 
-Thank you for the patch.
-
-On Mon, Jun 19, 2023 at 02:24:21PM +0200, Geert Uytterhoeven wrote:
-> drm_connector_init_with_ddc() can fail, but the call in
-> drm_bridge_connector_init() does not check that.  Fix this by adding
-> the missing error handling.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/gpu/drm/drm_bridge_connector.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_bridge_connector.c b/drivers/gpu/drm/drm_bridge_connector.c
-> index 19ae4a177ac386b2..d2f5602ad4eb5953 100644
-> --- a/drivers/gpu/drm/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/drm_bridge_connector.c
-> @@ -317,7 +317,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->  	struct drm_connector *connector;
->  	struct i2c_adapter *ddc = NULL;
->  	struct drm_bridge *bridge, *panel_bridge = NULL;
-> -	int connector_type;
-> +	int connector_type, ret;
-
-With 'ret' declared on a separate line,
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v2:
+  - Move declaration of ret to its own line,
+  - Add Reviewed-by.
+---
+ drivers/gpu/drm/drm_bridge_connector.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
->  
->  	bridge_connector = kzalloc(sizeof(*bridge_connector), GFP_KERNEL);
->  	if (!bridge_connector)
-> @@ -368,8 +368,14 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> -	drm_connector_init_with_ddc(drm, connector, &drm_bridge_connector_funcs,
-> -				    connector_type, ddc);
-> +	ret = drm_connector_init_with_ddc(drm, connector,
-> +					  &drm_bridge_connector_funcs,
-> +					  connector_type, ddc);
-> +	if (ret) {
-> +		kfree(bridge_connector);
-> +		return ERR_PTR(ret);
-> +	}
-> +
->  	drm_connector_helper_add(connector, &drm_bridge_connector_helper_funcs);
->  
->  	if (bridge_connector->bridge_hpd)
-
+diff --git a/drivers/gpu/drm/drm_bridge_connector.c b/drivers/gpu/drm/drm_bridge_connector.c
+index 19ae4a177ac386b2..1f6fc9b0ae649f54 100644
+--- a/drivers/gpu/drm/drm_bridge_connector.c
++++ b/drivers/gpu/drm/drm_bridge_connector.c
+@@ -318,6 +318,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 	struct i2c_adapter *ddc = NULL;
+ 	struct drm_bridge *bridge, *panel_bridge = NULL;
+ 	int connector_type;
++	int ret;
+ 
+ 	bridge_connector = kzalloc(sizeof(*bridge_connector), GFP_KERNEL);
+ 	if (!bridge_connector)
+@@ -368,8 +369,14 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	drm_connector_init_with_ddc(drm, connector, &drm_bridge_connector_funcs,
+-				    connector_type, ddc);
++	ret = drm_connector_init_with_ddc(drm, connector,
++					  &drm_bridge_connector_funcs,
++					  connector_type, ddc);
++	if (ret) {
++		kfree(bridge_connector);
++		return ERR_PTR(ret);
++	}
++
+ 	drm_connector_helper_add(connector, &drm_bridge_connector_helper_funcs);
+ 
+ 	if (bridge_connector->bridge_hpd)
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
