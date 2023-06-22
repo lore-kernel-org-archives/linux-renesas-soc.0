@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6705CEB64DA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4259EEB64D8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:30:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231678AbjFVJa0 (ORCPT
+        id S231777AbjFVJab (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jun 2023 05:30:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36304 "EHLO
+        Thu, 22 Jun 2023 05:30:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232229AbjFVJ3o (ORCPT
+        with ESMTP id S232307AbjFVJ3q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jun 2023 05:29:44 -0400
+        Thu, 22 Jun 2023 05:29:46 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C0644230
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6171B422E
         for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:22:45 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:991a:a831:ea4b:6058])
         by xavier.telenet-ops.be with bizsmtp
-        id C9Nj2A0091yfRTD019NjEL; Thu, 22 Jun 2023 11:22:43 +0200
+        id C9Nj2A0021yfRTD019NjEH; Thu, 22 Jun 2023 11:22:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWX-000BwK-Ob;
+        id 1qCGWX-000Bvf-F2;
         Thu, 22 Jun 2023 11:22:43 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWZ-003Vwt-Bd;
+        id 1qCGWZ-003Vw5-27;
         Thu, 22 Jun 2023 11:22:43 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 17/39] drm: renesas: shmobile: Use drmm_universal_plane_alloc()
-Date:   Thu, 22 Jun 2023 11:21:29 +0200
-Message-Id: <9af0b0e18c6f3ce3348cc728f177bf466e30e66a.1687423204.git.geert+renesas@glider.be>
+Subject: [PATCH 07/39] drm: renesas: shmobile: Restore indentation of shmob_drm_setup_clocks()
+Date:   Thu, 22 Jun 2023 11:21:19 +0200
+Message-Id: <3739c76fca025e6b5d901ff29676146a45a545c2.1687423204.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1687423204.git.geert+renesas@glider.be>
 References: <cover.1687423204.git.geert+renesas@glider.be>
@@ -50,67 +50,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-According to the comments for drm_universal_plane_init(), the plane
-structure should not be allocated with devm_kzalloc().
-
-Fix lifetime issues by using drmm_universal_plane_alloc() instead.
+Commit 56550d94cbaeaa19 ("Drivers: gpu: remove __dev* attributes.")
+forgot to realign the continuation of the parameter section of
+shmob_drm_setup_clocks().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Plane (and connector) structures are still allocated with devm_kzalloc()
-in several other drivers...
----
- .../drm/renesas/shmobile/shmob_drm_plane.c    | 24 ++++++-------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-index 0b2ab153e9ae76df..1fb68b5fe915b8dc 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-@@ -176,16 +176,9 @@ static int shmob_drm_plane_disable(struct drm_plane *plane,
- 	return 0;
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+index 4f01caa119637032..d272e6273c782178 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+@@ -67,7 +67,7 @@ static int shmob_drm_init_interface(struct shmob_drm_device *sdev)
  }
  
--static void shmob_drm_plane_destroy(struct drm_plane *plane)
--{
--	drm_plane_force_disable(plane);
--	drm_plane_cleanup(plane);
--}
--
- static const struct drm_plane_funcs shmob_drm_plane_funcs = {
- 	.update_plane = shmob_drm_plane_update,
- 	.disable_plane = shmob_drm_plane_disable,
--	.destroy = shmob_drm_plane_destroy,
- };
- 
- static const uint32_t formats[] = {
-@@ -204,19 +197,16 @@ static const uint32_t formats[] = {
- int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index)
+ static int shmob_drm_setup_clocks(struct shmob_drm_device *sdev,
+-					    enum shmob_drm_clk_source clksrc)
++				  enum shmob_drm_clk_source clksrc)
  {
- 	struct shmob_drm_plane *splane;
--	int ret;
- 
--	splane = devm_kzalloc(sdev->dev, sizeof(*splane), GFP_KERNEL);
--	if (splane == NULL)
--		return -ENOMEM;
-+	splane = drmm_universal_plane_alloc(sdev->ddev, struct shmob_drm_plane,
-+					    plane, 1, &shmob_drm_plane_funcs,
-+					    formats, ARRAY_SIZE(formats), NULL,
-+					    DRM_PLANE_TYPE_OVERLAY, NULL);
-+	if (IS_ERR(splane))
-+		return PTR_ERR(splane);
- 
- 	splane->index = index;
- 	splane->alpha = 255;
- 
--	ret = drm_universal_plane_init(sdev->ddev, &splane->plane, 1,
--				       &shmob_drm_plane_funcs,
--				       formats, ARRAY_SIZE(formats), NULL,
--				       DRM_PLANE_TYPE_OVERLAY, NULL);
--
--	return ret;
-+	return 0;
- }
+ 	struct clk *clk;
+ 	char *clkname;
 -- 
 2.34.1
 
