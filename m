@@ -2,35 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5299EB64DA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF89EB64D8
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:32:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232048AbjFVJct (ORCPT
+        id S232298AbjFVJcx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jun 2023 05:32:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36446 "EHLO
+        Thu, 22 Jun 2023 05:32:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231991AbjFVJav (ORCPT
+        with ESMTP id S232331AbjFVJbB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jun 2023 05:30:51 -0400
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [IPv6:2a02:1800:120:4::f00:10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E55E4499
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:23:03 -0700 (PDT)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by cantor.telenet-ops.be (Postfix) with ESMTPS id 4QmvzT0fJwz4x2wC
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 11:22:45 +0200 (CEST)
+        Thu, 22 Jun 2023 05:31:01 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF744EE8
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:23:04 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:991a:a831:ea4b:6058])
-        by baptiste.telenet-ops.be with bizsmtp
-        id C9Nj2A0091yfRTD019NjqG; Thu, 22 Jun 2023 11:22:44 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id C9Nk2A00G1yfRTD019NkPZ; Thu, 22 Jun 2023 11:22:48 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWX-000Bwb-SW;
-        Thu, 22 Jun 2023 11:22:43 +0200
+        id 1qCGWY-000By1-EQ;
+        Thu, 22 Jun 2023 11:22:44 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWZ-003VxD-Ew;
-        Thu, 22 Jun 2023 11:22:43 +0200
+        id 1qCGWa-003Vyg-10;
+        Thu, 22 Jun 2023 11:22:44 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -40,11 +37,13 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 21/39] drm: renesas: shmobile: Use struct videomode in platform data
-Date:   Thu, 22 Jun 2023 11:21:33 +0200
-Message-Id: <d8d4d80699e8a7da1cb7f31b29d64a6f2c05dee5.1687423204.git.geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH 39/39] drm: renesas: shmobile: Add DT support
+Date:   Thu, 22 Jun 2023 11:21:51 +0200
+Message-Id: <2759075c94c011b0f15cb610f39f8fa9b3736600.1687423204.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1687423204.git.geert+renesas@glider.be>
 References: <cover.1687423204.git.geert+renesas@glider.be>
@@ -54,165 +53,344 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Add DT support, by:
+  1. Creating a panel bridge from DT, and attaching it to the encoder,
+  2. Replacing the custom connector with a bridge connector,
+  3. Obtaining clock configuration based on the compatible value.
 
-Replace the drm_mode_modeinfo field with videomode that includes more
-signal polarity flags.  This simplifies driver handling of panel modes
-and prepares for DT support.
+Note that for now the driver uses a fixed clock configuration selecting
+the bus clock, as the current code to select other clock inputs needs
+changes to support any other SoCs than SH7724.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-[geert: Simplify]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
 ---
-Changes compared to Laurent's original:
-  - Rebase,
-  - Fix build,
-  - Remove unneeded {width,height}_mm intermediaries from
-    shmob_drm_connector,
-  - Replace embedded videomode by a const pointer to pdata.
+SH-Mobile AG5 (SH73A0) support is untested.
+
+Unbind crashes when drm_encoder_cleanup() calls drm_bridge_detach(), as
+the bridge (allocated by devm_drm_panel_bridge_add()) has already been
+freed by that time.
+Should I allocate my encoder with devm_kzalloc(), instead of embedding
+it inside struct shmob_drm_device?
 ---
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 35 ++++++++-----------
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.h |  3 ++
- include/linux/platform_data/shmob_drm.h       | 11 ++----
- 3 files changed, 19 insertions(+), 30 deletions(-)
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 101 +++++++++++++++---
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.h |   1 +
+ .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  |  27 ++++-
+ .../gpu/drm/renesas/shmobile/shmob_drm_drv.h  |   6 ++
+ 4 files changed, 118 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 291b3a5014c24f08..5328910ebe09c832 100644
+index 17456dde57637ab8..1ec87841658de4f0 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -23,6 +23,8 @@
+@@ -9,12 +9,16 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/media-bus-format.h>
++#include <linux/of.h>
++#include <linux/of_graph.h>
+ #include <linux/pm_runtime.h>
+ 
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_atomic_state_helper.h>
+ #include <drm/drm_atomic_uapi.h>
++#include <drm/drm_bridge.h>
++#include <drm/drm_bridge_connector.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_dma_helper.h>
+@@ -23,6 +27,7 @@
+ #include <drm/drm_gem_dma_helper.h>
+ #include <drm/drm_modeset_helper.h>
+ #include <drm/drm_modeset_helper_vtables.h>
++#include <drm/drm_panel.h>
+ #include <drm/drm_probe_helper.h>
  #include <drm/drm_simple_kms_helper.h>
  #include <drm/drm_vblank.h>
+@@ -35,10 +40,6 @@
+ #include "shmob_drm_plane.h"
+ #include "shmob_drm_regs.h"
  
-+#include <video/videomode.h>
-+
- #include "shmob_drm_crtc.h"
- #include "shmob_drm_drv.h"
- #include "shmob_drm_kms.h"
-@@ -64,18 +66,16 @@ static void shmob_drm_crtc_setup_geometry(struct shmob_drm_crtc *scrtc)
- {
- 	struct drm_crtc *crtc = &scrtc->crtc;
- 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
--	const struct shmob_drm_interface_data *idata = &sdev->pdata->iface;
-+	enum display_flags dpy_flags = sdev->connector.mode->flags;
- 	const struct drm_display_mode *mode = &crtc->mode;
- 	u32 value;
- 
- 	value = sdev->ldmt1r
- 	      | ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? 0 : LDMT1R_VPOL)
- 	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? 0 : LDMT1R_HPOL)
--	      | ((idata->flags & SHMOB_DRM_IFACE_FL_DWPOL) ? LDMT1R_DWPOL : 0)
--	      | ((idata->flags & SHMOB_DRM_IFACE_FL_DIPOL) ? LDMT1R_DIPOL : 0)
--	      | ((idata->flags & SHMOB_DRM_IFACE_FL_DAPOL) ? LDMT1R_DAPOL : 0)
--	      | ((idata->flags & SHMOB_DRM_IFACE_FL_HSCNT) ? LDMT1R_HSCNT : 0)
--	      | ((idata->flags & SHMOB_DRM_IFACE_FL_DWCNT) ? LDMT1R_DWCNT : 0);
-+	      | ((dpy_flags & DISPLAY_FLAGS_PIXDATA_POSEDGE) ? LDMT1R_DWPOL : 0)
-+	      | ((dpy_flags & DISPLAY_FLAGS_DE_LOW) ? LDMT1R_DIPOL : 0);
-+
+-/*
+- * TODO: panel support
+- */
+-
+ /* -----------------------------------------------------------------------------
+  * Clock management
+  */
+@@ -129,7 +130,6 @@ static void shmob_drm_crtc_setup_geometry(struct shmob_drm_crtc *scrtc)
+ 		value |= LDMT1R_VPOL;
+ 	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+ 		value |= LDMT1R_HPOL;
+-
  	lcdc_write(sdev, LDMT1R, value);
  
  	value = ((mode->hdisplay / 8) << 16)			/* HDCN */
-@@ -581,7 +581,7 @@ static inline struct shmob_drm_connector *to_shmob_connector(struct drm_connecto
- 
- static int shmob_drm_connector_get_modes(struct drm_connector *connector)
+@@ -191,7 +191,7 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
  {
--	struct shmob_drm_device *sdev = to_shmob_device(connector->dev);
-+	struct shmob_drm_connector *scon = to_shmob_connector(connector);
- 	struct drm_display_mode *mode;
+ 	struct drm_crtc *crtc = &scrtc->base;
+ 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
+-	const struct shmob_drm_interface_data *idata = &sdev->pdata->iface;
++	unsigned int clk_div = sdev->config.clk_div;
+ 	struct device *dev = sdev->dev;
+ 	u32 value;
+ 	int ret;
+@@ -220,17 +220,17 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
+ 	lcdc_write(sdev, LDPMR, 0);
  
- 	mode = drm_mode_create(connector->dev);
-@@ -589,18 +589,9 @@ static int shmob_drm_connector_get_modes(struct drm_connector *connector)
- 		return 0;
+ 	value = sdev->lddckr;
+-	if (idata->clk_div) {
++	if (clk_div) {
+ 		/* FIXME: sh7724 can only use 42, 48, 54 and 60 for the divider
+ 		 * denominator.
+ 		 */
+ 		lcdc_write(sdev, LDDCKPAT1R, 0);
+-		lcdc_write(sdev, LDDCKPAT2R, (1 << (idata->clk_div / 2)) - 1);
++		lcdc_write(sdev, LDDCKPAT2R, (1 << (clk_div / 2)) - 1);
  
- 	mode->type = DRM_MODE_TYPE_PREFERRED | DRM_MODE_TYPE_DRIVER;
--	mode->clock = sdev->pdata->panel.mode.clock;
--	mode->hdisplay = sdev->pdata->panel.mode.hdisplay;
--	mode->hsync_start = sdev->pdata->panel.mode.hsync_start;
--	mode->hsync_end = sdev->pdata->panel.mode.hsync_end;
--	mode->htotal = sdev->pdata->panel.mode.htotal;
--	mode->vdisplay = sdev->pdata->panel.mode.vdisplay;
--	mode->vsync_start = sdev->pdata->panel.mode.vsync_start;
--	mode->vsync_end = sdev->pdata->panel.mode.vsync_end;
--	mode->vtotal = sdev->pdata->panel.mode.vtotal;
--	mode->flags = sdev->pdata->panel.mode.flags;
--
--	drm_mode_set_name(mode);
+-		if (idata->clk_div == 1)
++		if (clk_div == 1)
+ 			value |= LDDCKR_MOSEL;
+ 		else
+-			value |= idata->clk_div;
++			value |= clk_div;
+ 	}
+ 
+ 	lcdc_write(sdev, LDDCKR, value);
+@@ -479,7 +479,7 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
+ }
+ 
+ /* -----------------------------------------------------------------------------
+- * Encoder
++ * Legacy Encoder
+  */
+ 
+ static bool shmob_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+@@ -508,9 +508,43 @@ static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
+ 	.mode_fixup = shmob_drm_encoder_mode_fixup,
+ };
+ 
++/* -----------------------------------------------------------------------------
++ * Encoder
++ */
 +
-+	drm_display_mode_from_videomode(scon->mode, mode);
++static int shmob_drm_encoder_init(struct shmob_drm_device *sdev,
++				  struct device_node *enc_node)
++{
++	struct drm_bridge *bridge;
++	struct drm_panel *panel;
++	int ret;
 +
- 	drm_mode_probed_add(connector, mode);
++	/* Create a panel bridge */
++	panel = of_drm_find_panel(enc_node);
++	if (IS_ERR(panel))
++		return PTR_ERR(panel);
++
++	bridge = devm_drm_panel_bridge_add(sdev->dev, panel);
++	if (IS_ERR(bridge))
++		return PTR_ERR(bridge);
++
++	/* Attach the bridge to the encoder */
++	ret = drm_bridge_attach(&sdev->encoder, bridge, NULL,
++				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
++	if (ret) {
++		dev_err(sdev->dev, "failed to attach bridge %pOF: %pe\n",
++			bridge->of_node, ERR_PTR(ret));
++		return ret;
++	}
++
++	return 0;
++}
++
+ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
+ {
+ 	struct drm_encoder *encoder = &sdev->encoder;
++	struct device_node *np = sdev->dev->of_node;
++	struct device_node *ep_node, *entity;
+ 	int ret;
  
- 	return 1;
-@@ -634,10 +625,12 @@ static const struct drm_connector_funcs connector_funcs = {
+ 	encoder->possible_crtcs = 1;
+@@ -520,13 +554,45 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	drm_encoder_helper_add(encoder, &encoder_helper_funcs);
++	if (sdev->pdata) {
++		drm_encoder_helper_add(encoder, &encoder_helper_funcs);
++		return 0;
++	}
++
++	for_each_endpoint_of_node(np, ep_node) {
++		struct of_endpoint ep;
++
++		ret = of_graph_parse_endpoint(ep_node, &ep);
++		if (ret < 0) {
++			of_node_put(ep_node);
++			return ret;
++		}
++		/* Ignore all but the LCD port */
++		if (ep.port || ep.id)
++			continue;
++
++		entity = of_graph_get_remote_port_parent(ep.local_node);
++		if (!entity)
++			continue;
++
++		if (!of_device_is_available(entity)) {
++			of_node_put(entity);
++			continue;
++		}
++
++		ret = shmob_drm_encoder_init(sdev, entity);
++		if (ret < 0) {
++			of_node_put(entity);
++			of_node_put(ep_node);
++			return ret;
++		}
++	}
+ 
+ 	return 0;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+- * Connector
++ * Legacy Connector
+  */
+ 
+ static inline struct shmob_drm_connector *to_shmob_connector(struct drm_connector *connector)
+@@ -626,13 +692,20 @@ shmob_drm_connector_init(struct shmob_drm_device *sdev,
+ 	return connector;
+ }
+ 
++/* -----------------------------------------------------------------------------
++ * Connector
++ */
++
  int shmob_drm_connector_create(struct shmob_drm_device *sdev,
  			       struct drm_encoder *encoder)
  {
--	struct drm_connector *connector = &sdev->connector.connector;
-+	struct shmob_drm_connector *scon = &sdev->connector;
-+	struct drm_connector *connector = &scon->connector;
+ 	struct drm_connector *connector;
  	int ret;
  
--	sdev->connector.encoder = encoder;
-+	scon->encoder = encoder;
-+	scon->mode = &sdev->pdata->panel.mode;
- 
- 	connector->display_info.width_mm = sdev->pdata->panel.width_mm;
- 	connector->display_info.height_mm = sdev->pdata->panel.height_mm;
+-	connector = shmob_drm_connector_init(sdev, encoder);
++	if (sdev->pdata)
++		connector = shmob_drm_connector_init(sdev, encoder);
++	else
++		connector = drm_bridge_connector_init(&sdev->ddev, encoder);
+ 	if (IS_ERR(connector)) {
+ 		dev_err(sdev->dev, "failed to created connector: %pe\n",
+ 			connector);
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-index bce6926269453b77..f507eaf912e16a22 100644
+index 89a0746f9a35807d..16e1712dd04e0f2b 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-@@ -14,6 +14,8 @@
- #include <drm/drm_connector.h>
- #include <drm/drm_encoder.h>
+@@ -29,6 +29,7 @@ struct shmob_drm_crtc {
+ 	wait_queue_head_t flip_wait;
+ };
  
-+#include <video/videomode.h>
-+
- struct drm_pending_vblank_event;
- struct shmob_drm_device;
- struct shmob_drm_format_info;
-@@ -33,6 +35,7 @@ struct shmob_drm_crtc {
++/* Legacy connector */
  struct shmob_drm_connector {
- 	struct drm_connector connector;
+ 	struct drm_connector base;
  	struct drm_encoder *encoder;
-+	const struct videomode *mode;
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+index 576869164479ec6b..db72ca1c8b2f44c9 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+@@ -11,6 +11,7 @@
+ #include <linux/io.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/pm_runtime.h>
+@@ -147,11 +148,13 @@ static int shmob_drm_remove(struct platform_device *pdev)
+ static int shmob_drm_probe(struct platform_device *pdev)
+ {
+ 	struct shmob_drm_platform_data *pdata = pdev->dev.platform_data;
++	const struct shmob_drm_config *config;
+ 	struct shmob_drm_device *sdev;
+ 	struct drm_device *ddev;
+ 	int ret;
+ 
+-	if (pdata == NULL) {
++	config = of_device_get_match_data(&pdev->dev);
++	if (!config && !pdata) {
+ 		dev_err(&pdev->dev, "no platform data\n");
+ 		return -EINVAL;
+ 	}
+@@ -167,7 +170,13 @@ static int shmob_drm_probe(struct platform_device *pdev)
+ 
+ 	ddev = &sdev->ddev;
+ 	sdev->dev = &pdev->dev;
+-	sdev->pdata = pdata;
++	if (config) {
++		sdev->config = *config;
++	} else {
++		sdev->pdata = pdata;
++		sdev->config.clk_source = pdata->clk_source;
++		sdev->config.clk_div = pdata->iface.clk_div;
++	}
+ 	spin_lock_init(&sdev->irq_lock);
+ 
+ 	platform_set_drvdata(pdev, sdev);
+@@ -180,7 +189,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = shmob_drm_setup_clocks(sdev, pdata->clk_source);
++	ret = shmob_drm_setup_clocks(sdev, sdev->config.clk_source);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -224,11 +233,23 @@ static int shmob_drm_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static const struct shmob_drm_config shmob_arm_config = {
++	.clk_source = SHMOB_DRM_CLK_BUS,
++	.clk_div = 5,
++};
++
++static const struct of_device_id shmob_drm_of_table[] __maybe_unused = {
++	{ .compatible = "renesas,r8a7740-lcdc",	.data = &shmob_arm_config, },
++	{ .compatible = "renesas,sh73a0-lcdc",	.data = &shmob_arm_config, },
++	{ /* sentinel */ }
++};
++
+ static struct platform_driver shmob_drm_platform_driver = {
+ 	.probe		= shmob_drm_probe,
+ 	.remove		= shmob_drm_remove,
+ 	.driver		= {
+ 		.name	= "shmob-drm",
++		.of_match_table = of_match_ptr(shmob_drm_of_table),
+ 		.pm	= pm_sleep_ptr(&shmob_drm_pm_ops),
+ 	},
  };
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
+index 18907e5ace51c681..088ac5381e91e61a 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
+@@ -20,9 +20,15 @@ struct clk;
+ struct device;
+ struct drm_device;
  
- int shmob_drm_crtc_create(struct shmob_drm_device *sdev);
-diff --git a/include/linux/platform_data/shmob_drm.h b/include/linux/platform_data/shmob_drm.h
-index b728e24222d99158..f3cb19ff9f818aca 100644
---- a/include/linux/platform_data/shmob_drm.h
-+++ b/include/linux/platform_data/shmob_drm.h
-@@ -10,7 +10,7 @@
- #ifndef __SHMOB_DRM_H__
- #define __SHMOB_DRM_H__
++struct shmob_drm_config {
++	enum shmob_drm_clk_source clk_source;
++	unsigned int clk_div;
++};
++
+ struct shmob_drm_device {
+ 	struct device *dev;
+ 	const struct shmob_drm_platform_data *pdata;
++	struct shmob_drm_config config;
  
--#include <drm/drm_mode.h>
-+#include <video/videomode.h>
- 
- enum shmob_drm_clk_source {
- 	SHMOB_DRM_CLK_BUS,
-@@ -32,19 +32,12 @@ enum shmob_drm_interface {
- struct shmob_drm_panel_data {
- 	unsigned int width_mm;		/* Panel width in mm */
- 	unsigned int height_mm;		/* Panel height in mm */
--	struct drm_mode_modeinfo mode;
-+	struct videomode mode;
- };
- 
--#define SHMOB_DRM_IFACE_FL_DWPOL (1 << 0) /* Rising edge dot clock data latch */
--#define SHMOB_DRM_IFACE_FL_DIPOL (1 << 1) /* Active low display enable */
--#define SHMOB_DRM_IFACE_FL_DAPOL (1 << 2) /* Active low display data */
--#define SHMOB_DRM_IFACE_FL_HSCNT (1 << 3) /* Disable HSYNC during VBLANK */
--#define SHMOB_DRM_IFACE_FL_DWCNT (1 << 4) /* Disable dotclock during blanking */
--
- struct shmob_drm_interface_data {
- 	enum shmob_drm_interface interface;
- 	unsigned int clk_div;
--	unsigned int flags;
- };
- 
- struct shmob_drm_platform_data {
+ 	void __iomem *mmio;
+ 	struct clk *clock;
 -- 
 2.34.1
 
