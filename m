@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F9CEB64D8
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F985EB64DB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbjFVJcB (ORCPT
+        id S231514AbjFVJcC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jun 2023 05:32:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34904 "EHLO
+        Thu, 22 Jun 2023 05:32:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbjFVJaA (ORCPT
+        with ESMTP id S229930AbjFVJaA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 22 Jun 2023 05:30:00 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1094ED7
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:22:48 -0700 (PDT)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45CA4C3F
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:22:47 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:991a:a831:ea4b:6058])
-        by xavier.telenet-ops.be with bizsmtp
-        id C9Nk2A0021yfRTD019NkEr; Thu, 22 Jun 2023 11:22:44 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id C9Nj2A00j1yfRTD069NjDZ; Thu, 22 Jun 2023 11:22:44 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWY-000Bxi-A0;
+        id 1qCGWY-000Bx8-2s;
         Thu, 22 Jun 2023 11:22:43 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWZ-003VyL-SY;
+        id 1qCGWZ-003Vxr-MA;
         Thu, 22 Jun 2023 11:22:43 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 35/39] drm: renesas: shmobile: Atomic conversion part 2
-Date:   Thu, 22 Jun 2023 11:21:47 +0200
-Message-Id: <9e78fa9a5da1ba163cf3a6c71f73a77ef8abed40.1687423204.git.geert+renesas@glider.be>
+Subject: [PATCH 29/39] drm: renesas: shmobile: Move shmob_drm_crtc_finish_page_flip()
+Date:   Thu, 22 Jun 2023 11:21:41 +0200
+Message-Id: <e51f11814e6db911123f938c5bb1d73814fc6731.1687423204.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1687423204.git.geert+renesas@glider.be>
 References: <cover.1687423204.git.geert+renesas@glider.be>
@@ -50,99 +50,72 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Implement atomic mode setting for the CRTC, using the existing dpms
-callback.
+Move the shmob_drm_crtc_finish_page_flip() function up, to avoid having
+to move it during the modification in the next change.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This works, but I had expected that crtc_helper_funcs.atomic_check
-should point to drm_crtc_helper_atomic_check() instead, as the primary
-plane cannot be disabled.  However in doing so, when
-drm_atomic_helper_check_crtc_primary_plane() fails:
-
-    [drm:drm_atomic_helper_check_crtc_primary_plane] [CRTC:41:crtc-0] primary plane missing
-
-the display fails to restore after running "modetest -s", until I run
-modetest without -s.
-
-Letting shmob_drm_plane_atomic_check() return -EINVAL if
-!new_plane_state->crtc && is_primary would fix that, but causes an ugly
-warning:
-
-    WARNING: CPU: 0 PID: 21 at drivers/gpu/drm/drm_framebuffer.c:1130 drm_framebuffer_remove+0x374/0x4b0
-    atomic remove_fb failed with -22
----
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 41 +++++++------------
- 1 file changed, 15 insertions(+), 26 deletions(-)
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 40 +++++++++++--------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index ea19e802792e24a4..cf7152d64424e720 100644
+index 2c0ca802d36026f4..1d7fcf64bf2aab80 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -11,6 +11,7 @@
- #include <linux/media-bus-format.h>
- #include <linux/pm_runtime.h>
- 
-+#include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_atomic_state_helper.h>
- #include <drm/drm_atomic_uapi.h>
-@@ -371,27 +372,6 @@ static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- 	scrtc->dpms = mode;
+@@ -270,6 +270,30 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
+ 	scrtc->started = true;
  }
  
--static void shmob_drm_crtc_mode_prepare(struct drm_crtc *crtc)
--{
--	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
--}
--
--static void shmob_drm_crtc_mode_commit(struct drm_crtc *crtc)
--{
--	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
--}
--
--static int shmob_drm_crtc_atomic_check(struct drm_crtc *crtc,
--				       struct drm_atomic_state *state)
--{
--	return 0;
--}
--
--static void shmob_drm_crtc_atomic_begin(struct drm_crtc *crtc,
--					struct drm_atomic_state *state)
--{
--}
--
- static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
- 					struct drm_atomic_state *state)
++/* -----------------------------------------------------------------------------
++ * Page Flip
++ */
++
++void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
++{
++	struct drm_pending_vblank_event *event;
++	struct drm_device *dev = scrtc->base.dev;
++	unsigned long flags;
++
++	spin_lock_irqsave(&dev->event_lock, flags);
++	event = scrtc->event;
++	scrtc->event = NULL;
++	if (event) {
++		drm_crtc_send_vblank_event(&scrtc->base, event);
++		drm_crtc_vblank_put(&scrtc->base);
++	}
++	spin_unlock_irqrestore(&dev->event_lock, flags);
++}
++
++/* -----------------------------------------------------------------------------
++ * CRTC Functions
++ */
++
+ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
  {
-@@ -408,13 +388,22 @@ static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
- 	}
- }
- 
-+static void shmob_drm_crtc_atomic_enable(struct drm_crtc *crtc,
-+					 struct drm_atomic_state *state)
-+{
-+	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
-+}
-+
-+static void shmob_drm_crtc_atomic_disable(struct drm_crtc *crtc,
-+					  struct drm_atomic_state *state)
-+{
-+	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
-+}
-+
- static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
--	.dpms = shmob_drm_crtc_dpms,
--	.prepare = shmob_drm_crtc_mode_prepare,
--	.commit = shmob_drm_crtc_mode_commit,
--	.atomic_check = shmob_drm_crtc_atomic_check,
--	.atomic_begin = shmob_drm_crtc_atomic_begin,
- 	.atomic_flush = shmob_drm_crtc_atomic_flush,
-+	.atomic_enable = shmob_drm_crtc_atomic_enable,
-+	.atomic_disable = shmob_drm_crtc_atomic_disable,
+ 	struct drm_crtc *crtc = &scrtc->base;
+@@ -412,22 +436,6 @@ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+ 	.mode_set_base = shmob_drm_crtc_mode_set_base,
  };
  
+-void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
+-{
+-	struct drm_pending_vblank_event *event;
+-	struct drm_device *dev = scrtc->base.dev;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&dev->event_lock, flags);
+-	event = scrtc->event;
+-	scrtc->event = NULL;
+-	if (event) {
+-		drm_crtc_send_vblank_event(&scrtc->base, event);
+-		drm_crtc_vblank_put(&scrtc->base);
+-	}
+-	spin_unlock_irqrestore(&dev->event_lock, flags);
+-}
+-
  static int shmob_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 				    struct drm_framebuffer *fb,
+ 				    struct drm_pending_vblank_event *event,
 -- 
 2.34.1
 
