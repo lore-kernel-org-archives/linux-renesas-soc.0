@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4259EEB64D8
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34548EB64DB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231777AbjFVJab (ORCPT
+        id S231897AbjFVJac (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jun 2023 05:30:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
+        Thu, 22 Jun 2023 05:30:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232307AbjFVJ3q (ORCPT
+        with ESMTP id S232311AbjFVJ3q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 22 Jun 2023 05:29:46 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6171B422E
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:22:45 -0700 (PDT)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94722423A
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:22:46 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:991a:a831:ea4b:6058])
-        by xavier.telenet-ops.be with bizsmtp
-        id C9Nj2A0021yfRTD019NjEH; Thu, 22 Jun 2023 11:22:43 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id C9Nj2A00E1yfRTD069Njk1; Thu, 22 Jun 2023 11:22:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWX-000Bvf-F2;
+        id 1qCGWX-000BwT-QE;
         Thu, 22 Jun 2023 11:22:43 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWZ-003Vw5-27;
+        id 1qCGWZ-003Vx3-DQ;
         Thu, 22 Jun 2023 11:22:43 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 07/39] drm: renesas: shmobile: Restore indentation of shmob_drm_setup_clocks()
-Date:   Thu, 22 Jun 2023 11:21:19 +0200
-Message-Id: <3739c76fca025e6b5d901ff29676146a45a545c2.1687423204.git.geert+renesas@glider.be>
+Subject: [PATCH 19/39] drm: renesas: shmobile: Convert container helpers to static inline functions
+Date:   Thu, 22 Jun 2023 11:21:31 +0200
+Message-Id: <63f1bef1f316175615a54490f752d64b7ddd29ab.1687423204.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1687423204.git.geert+renesas@glider.be>
 References: <cover.1687423204.git.geert+renesas@glider.be>
@@ -50,28 +50,60 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Commit 56550d94cbaeaa19 ("Drivers: gpu: remove __dev* attributes.")
-forgot to realign the continuation of the parameter section of
-shmob_drm_setup_clocks().
+Replace to conversion helper macros using container_of() by static
+inline functions, to improve type-safety.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c  | 11 ++++++++---
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c |  5 ++++-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index 4f01caa119637032..d272e6273c782178 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -67,7 +67,7 @@ static int shmob_drm_init_interface(struct shmob_drm_device *sdev)
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+index 26611440f7a12715..40948b56017ff2df 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+@@ -291,7 +291,10 @@ static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
+ 	lcdc_write(sdev, LDRCNTR, lcdc_read(sdev, LDRCNTR) ^ LDRCNTR_MRS);
  }
  
- static int shmob_drm_setup_clocks(struct shmob_drm_device *sdev,
--					    enum shmob_drm_clk_source clksrc)
-+				  enum shmob_drm_clk_source clksrc)
+-#define to_shmob_crtc(c)	container_of(c, struct shmob_drm_crtc, crtc)
++static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
++{
++	return container_of(crtc, struct shmob_drm_crtc, crtc);
++}
+ 
+ static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
  {
- 	struct clk *clk;
- 	char *clkname;
+@@ -571,8 +574,10 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
+  * Connector
+  */
+ 
+-#define to_shmob_connector(c) \
+-	container_of(c, struct shmob_drm_connector, connector)
++static inline struct shmob_drm_connector *to_shmob_connector(struct drm_connector *connector)
++{
++	return container_of(connector, struct shmob_drm_connector, connector);
++}
+ 
+ static int shmob_drm_connector_get_modes(struct drm_connector *connector)
+ {
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+index 17e66a018689f648..258288c80756bf16 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+@@ -34,7 +34,10 @@ struct shmob_drm_plane {
+ 	unsigned int crtc_h;
+ };
+ 
+-#define to_shmob_plane(p)	container_of(p, struct shmob_drm_plane, plane)
++static inline struct shmob_drm_plane *to_shmob_plane(struct drm_plane *plane)
++{
++	return container_of(plane, struct shmob_drm_plane, plane);
++}
+ 
+ static void shmob_drm_plane_compute_base(struct shmob_drm_plane *splane,
+ 					 struct drm_framebuffer *fb,
 -- 
 2.34.1
 
