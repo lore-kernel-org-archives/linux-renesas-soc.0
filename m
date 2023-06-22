@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B34EB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA685EB64D8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231266AbjFVJcC (ORCPT
+        id S230100AbjFVJcE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jun 2023 05:32:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34910 "EHLO
+        Thu, 22 Jun 2023 05:32:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230100AbjFVJaB (ORCPT
+        with ESMTP id S230166AbjFVJaC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jun 2023 05:30:01 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB1724EDD
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:22:48 -0700 (PDT)
+        Thu, 22 Jun 2023 05:30:02 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E01CF4EC2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:22:47 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:991a:a831:ea4b:6058])
-        by michel.telenet-ops.be with bizsmtp
-        id C9Nk2A00Q1yfRTD069NkE2; Thu, 22 Jun 2023 11:22:44 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id C9Nj2A00R1yfRTD069NjkD; Thu, 22 Jun 2023 11:22:44 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWY-000Bxr-C9;
-        Thu, 22 Jun 2023 11:22:44 +0200
+        id 1qCGWY-000BxE-4W;
+        Thu, 22 Jun 2023 11:22:43 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWZ-003VyW-Uu;
+        id 1qCGWZ-003Vxw-Mx;
         Thu, 22 Jun 2023 11:22:43 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 37/39] drm: renesas: shmobile: Remove internal CRTC state tracking
-Date:   Thu, 22 Jun 2023 11:21:49 +0200
-Message-Id: <7a758de388d2f904ac94eb256d815bb6b7bc6663.1687423204.git.geert+renesas@glider.be>
+Subject: [PATCH 30/39] drm: renesas: shmobile: Wait for page flip when turning CRTC off
+Date:   Thu, 22 Jun 2023 11:21:42 +0200
+Message-Id: <0b0cc2971b2abc8fe0fc55a9ae652a7b8a7235cd.1687423204.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1687423204.git.geert+renesas@glider.be>
 References: <cover.1687423204.git.geert+renesas@glider.be>
@@ -50,123 +50,104 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Now the suspend/resume methods no longer need to look at internal driver
-state, the dpms and started fields in the shmob_drm_crtc structure can
-be removed, as well as the shmob_drm_crtc_dpms() wrapper.
+Turning a CRTC off will prevent a queued page flip from ever completing,
+potentially confusing userspace.  Wait for queued page flips to complete
+before turning the CRTC off to avoid this.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 35 ++++---------------
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.h |  3 --
- 2 files changed, 6 insertions(+), 32 deletions(-)
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 37 +++++++++++++++++++
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.h |  3 ++
+ 2 files changed, 40 insertions(+)
 
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index b11bb666de3bac46..f2332bb0fbbd51a1 100644
+index 1d7fcf64bf2aab80..d2a0ac5f9368c11c 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -196,9 +196,6 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
- 	u32 value;
+@@ -285,11 +285,40 @@ void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
+ 	scrtc->event = NULL;
+ 	if (event) {
+ 		drm_crtc_send_vblank_event(&scrtc->base, event);
++		wake_up(&scrtc->flip_wait);
+ 		drm_crtc_vblank_put(&scrtc->base);
+ 	}
+ 	spin_unlock_irqrestore(&dev->event_lock, flags);
+ }
+ 
++static bool shmob_drm_crtc_page_flip_pending(struct shmob_drm_crtc *scrtc)
++{
++	struct drm_device *dev = scrtc->base.dev;
++	unsigned long flags;
++	bool pending;
++
++	spin_lock_irqsave(&dev->event_lock, flags);
++	pending = scrtc->event != NULL;
++	spin_unlock_irqrestore(&dev->event_lock, flags);
++
++	return pending;
++}
++
++static void shmob_drm_crtc_wait_page_flip(struct shmob_drm_crtc *scrtc)
++{
++	struct drm_crtc *crtc = &scrtc->base;
++	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
++
++	if (wait_event_timeout(scrtc->flip_wait,
++			       !shmob_drm_crtc_page_flip_pending(scrtc),
++			       msecs_to_jiffies(50)))
++		return;
++
++	dev_warn(sdev->dev, "page flip timeout\n");
++
++	shmob_drm_crtc_finish_page_flip(scrtc);
++}
++
+ /* -----------------------------------------------------------------------------
+  * CRTC Functions
+  */
+@@ -302,6 +331,12 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
+ 	if (!scrtc->started)
+ 		return;
+ 
++	/*
++	 * Wait for page flip completion before stopping the CRTC as userspace
++	 * expects page flips to eventually complete.
++	 */
++	shmob_drm_crtc_wait_page_flip(scrtc);
++
+ 	/* Stop the LCDC. */
+ 	shmob_drm_crtc_start_stop(scrtc, false);
+ 
+@@ -515,6 +550,8 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
+ 	unsigned int i;
  	int ret;
  
--	if (scrtc->started)
--		return;
--
- 	ret = pm_runtime_resume_and_get(dev);
- 	if (ret)
- 		return;
-@@ -252,8 +249,6 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
- 
- 	/* Turn vertical blank interrupt reporting back on. */
- 	drm_crtc_vblank_on(crtc);
--
--	scrtc->started = true;
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -314,9 +309,6 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- 	struct drm_crtc *crtc = &scrtc->base;
- 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
- 
--	if (!scrtc->started)
--		return;
--
- 	/*
- 	 * Disable vertical blank interrupt reporting.  We first need to wait
- 	 * for page flip completion before stopping the CRTC as userspace
-@@ -335,8 +327,6 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- 	shmob_drm_clk_off(sdev);
- 
- 	pm_runtime_put(sdev->dev);
--
--	scrtc->started = false;
- }
- 
- static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
-@@ -344,21 +334,6 @@ static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
- 	return container_of(crtc, struct shmob_drm_crtc, base);
- }
- 
--static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
--{
--	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
--
--	if (scrtc->dpms == mode)
--		return;
--
--	if (mode == DRM_MODE_DPMS_ON)
--		shmob_drm_crtc_start(scrtc);
--	else
--		shmob_drm_crtc_stop(scrtc);
--
--	scrtc->dpms = mode;
--}
--
- static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
- 					struct drm_atomic_state *state)
- {
-@@ -378,13 +353,17 @@ static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
- static void shmob_drm_crtc_atomic_enable(struct drm_crtc *crtc,
- 					 struct drm_atomic_state *state)
- {
--	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
-+	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
++	init_waitqueue_head(&sdev->crtc.flip_wait);
 +
-+	shmob_drm_crtc_start(scrtc);
- }
+ 	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
  
- static void shmob_drm_crtc_atomic_disable(struct drm_crtc *crtc,
- 					  struct drm_atomic_state *state)
- {
--	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
-+	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
-+
-+	shmob_drm_crtc_stop(scrtc);
- }
- 
- static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
-@@ -476,8 +455,6 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- 
- 	init_waitqueue_head(&sdev->crtc.flip_wait);
- 
--	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
--
  	primary = shmob_drm_plane_create(sdev, 0);
- 	if (IS_ERR(primary))
- 		return PTR_ERR(primary);
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-index 37380c815f1f5a08..89a0746f9a35807d 100644
+index 2c6d7541427581a6..b9863e026e8a9b83 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-@@ -27,9 +27,6 @@ struct shmob_drm_crtc {
+@@ -14,6 +14,8 @@
+ #include <drm/drm_connector.h>
+ #include <drm/drm_encoder.h>
+ 
++#include <linux/wait.h>
++
+ #include <video/videomode.h>
+ 
+ struct drm_pending_vblank_event;
+@@ -24,6 +26,7 @@ struct shmob_drm_crtc {
+ 	struct drm_crtc base;
  
  	struct drm_pending_vblank_event *event;
- 	wait_queue_head_t flip_wait;
--	int dpms;
--
--	bool started;
- };
++	wait_queue_head_t flip_wait;
+ 	int dpms;
  
- struct shmob_drm_connector {
+ 	const struct shmob_drm_format_info *format;
 -- 
 2.34.1
 
