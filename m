@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4779EB64DC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE26EB64DA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jun 2023 09:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232333AbjFVJbL (ORCPT
+        id S230397AbjFVJbX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jun 2023 05:31:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36400 "EHLO
+        Thu, 22 Jun 2023 05:31:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232366AbjFVJ3y (ORCPT
+        with ESMTP id S232372AbjFVJ3z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jun 2023 05:29:54 -0400
+        Thu, 22 Jun 2023 05:29:55 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0741D4EC5
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ED414ED2
         for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Jun 2023 02:22:47 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:991a:a831:ea4b:6058])
         by xavier.telenet-ops.be with bizsmtp
-        id C9Nj2A0121yfRTD019NjEk; Thu, 22 Jun 2023 11:22:44 +0200
+        id C9Nj2A0131yfRTD019NjEq; Thu, 22 Jun 2023 11:22:44 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWY-000BxI-5P;
+        id 1qCGWY-000BxS-7R;
         Thu, 22 Jun 2023 11:22:43 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qCGWZ-003Vy1-Nu;
+        id 1qCGWZ-003VyC-QU;
         Thu, 22 Jun 2023 11:22:43 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 31/39] drm: renesas: shmobile: Turn vblank on/off when enabling/disabling CRTC
-Date:   Thu, 22 Jun 2023 11:21:43 +0200
-Message-Id: <c299dd21b17c43b56d4bc8bc0b2cad8d3edda397.1687423204.git.geert+renesas@glider.be>
+Subject: [PATCH 33/39] drm: renesas: shmobile: Cleanup encoder
+Date:   Thu, 22 Jun 2023 11:21:45 +0200
+Message-Id: <736a0b26a9393f82769b185e2daa30eb128ff240.1687423204.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1687423204.git.geert+renesas@glider.be>
 References: <cover.1687423204.git.geert+renesas@glider.be>
@@ -50,88 +50,60 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The DRM core vblank handling mechanism requires drivers to forcefully
-turn vblank reporting off when disabling the CRTC, and to restore the
-vblank reporting status when enabling the CRTC.
-Implement this using the drm_crtc_vblank_{on,off}() helpers.
-
-Note that drm_crtc_vblank_off() must be called at startup to synchronize
-the state of the vblank core code with the hardware, which is initially
-disabled.  This is performed at CRTC creation time, requiring vertical
-blank initialization to be moved before creating CRTCs.
+Most unused callbacks can be NULL pointers these days.
+Drop a bunch of empty encoder callbacks.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 10 +++++++++-
- drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c  | 12 ++++++------
- 2 files changed, 15 insertions(+), 7 deletions(-)
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 26 -------------------
+ 1 file changed, 26 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index d2a0ac5f9368c11c..b184019d8b1ed89c 100644
+index b184019d8b1ed89c..ef327da39bca415a 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -267,6 +267,9 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
+@@ -586,11 +586,6 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
+  * Encoder
+  */
  
- 	shmob_drm_crtc_start_stop(scrtc, true);
- 
-+	/* Turn vertical blank interrupt reporting back on. */
-+	drm_crtc_vblank_on(crtc);
-+
- 	scrtc->started = true;
- }
- 
-@@ -332,10 +335,12 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- 		return;
- 
- 	/*
--	 * Wait for page flip completion before stopping the CRTC as userspace
-+	 * Disable vertical blank interrupt reporting.  We first need to wait
-+	 * for page flip completion before stopping the CRTC as userspace
- 	 * expects page flips to eventually complete.
- 	 */
- 	shmob_drm_crtc_wait_page_flip(scrtc);
-+	drm_crtc_vblank_off(crtc);
- 
- 	/* Stop the LCDC. */
- 	shmob_drm_crtc_start_stop(scrtc, false);
-@@ -571,6 +576,9 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- 
- 	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
- 
-+	/* Start with vertical blank interrupt reporting disabled. */
-+	drm_crtc_vblank_off(crtc);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index 6eaf2c5a104f451a..a29c0c1093725b6e 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -189,17 +189,17 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = shmob_drm_modeset_init(sdev);
--	if (ret < 0)
--		return dev_err_probe(&pdev->dev, ret,
--				     "failed to initialize mode setting\n");
+-static void shmob_drm_encoder_dpms(struct drm_encoder *encoder, int mode)
+-{
+-	/* No-op, everything is handled in the CRTC code. */
+-}
 -
- 	ret = drm_vblank_init(ddev, 1);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to initialize vblank\n");
--		goto err_modeset_cleanup;
-+		return ret;
- 	}
+ static bool shmob_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+ 					 const struct drm_display_mode *mode,
+ 					 struct drm_display_mode *adjusted_mode)
+@@ -613,29 +608,8 @@ static bool shmob_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+ 	return true;
+ }
  
-+	ret = shmob_drm_modeset_init(sdev);
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to initialize mode setting\n");
-+
- 	ret = platform_get_irq(pdev, 0);
- 	if (ret < 0)
- 		goto err_modeset_cleanup;
+-static void shmob_drm_encoder_mode_prepare(struct drm_encoder *encoder)
+-{
+-	/* No-op, everything is handled in the CRTC code. */
+-}
+-
+-static void shmob_drm_encoder_mode_set(struct drm_encoder *encoder,
+-				       struct drm_display_mode *mode,
+-				       struct drm_display_mode *adjusted_mode)
+-{
+-	/* No-op, everything is handled in the CRTC code. */
+-}
+-
+-static void shmob_drm_encoder_mode_commit(struct drm_encoder *encoder)
+-{
+-	/* No-op, everything is handled in the CRTC code. */
+-}
+-
+ static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
+-	.dpms = shmob_drm_encoder_dpms,
+ 	.mode_fixup = shmob_drm_encoder_mode_fixup,
+-	.prepare = shmob_drm_encoder_mode_prepare,
+-	.commit = shmob_drm_encoder_mode_commit,
+-	.mode_set = shmob_drm_encoder_mode_set,
+ };
+ 
+ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
 -- 
 2.34.1
 
