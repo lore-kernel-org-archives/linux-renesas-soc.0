@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBC7EB64D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7C7C001DE
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 23 Jun 2023 14:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231523AbjFWOKs (ORCPT
+        id S231544AbjFWOKs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 23 Jun 2023 10:10:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44092 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231969AbjFWOKn (ORCPT
+        with ESMTP id S231880AbjFWOKn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 23 Jun 2023 10:10:43 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2CB282695;
-        Fri, 23 Jun 2023 07:10:41 -0700 (PDT)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 99C31270A;
+        Fri, 23 Jun 2023 07:10:34 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,152,1684767600"; 
-   d="scan'208";a="165108893"
+   d="scan'208";a="168706047"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Jun 2023 23:10:40 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 23 Jun 2023 23:10:32 +0900
 Received: from localhost.localdomain (unknown [10.226.93.107])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 560C34270489;
-        Fri, 23 Jun 2023 23:10:37 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 479D7427049D;
+        Fri, 23 Jun 2023 23:10:28 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
@@ -32,9 +32,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-rtc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v7 10/10] rtc: isl1208: Add support for the built-in RTC on the PMIC RAA215300
-Date:   Fri, 23 Jun 2023 15:09:48 +0100
-Message-Id: <20230623140948.384762-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v7 08/10] rtc: isl1208: Drop enum isl1208_id and split isl1208_configs[]
+Date:   Fri, 23 Jun 2023 15:09:46 +0100
+Message-Id: <20230623140948.384762-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230623140948.384762-1-biju.das.jz@bp.renesas.com>
 References: <20230623140948.384762-1-biju.das.jz@bp.renesas.com>
@@ -44,85 +44,105 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The built-in RTC found on PMIC RAA215300 is the same as ISL1208.
-However, the external oscillator bit is inverted on PMIC version
-0x11. The PMIC driver detects PMIC version and instantiates the
-RTC device based on i2c_device_id.
+Drop enum isl1208_id and split the array isl1208_configs[] as individual
+variables, and make lines shorter by referring to e.g. &config_isl1219
+instead of &isl1208_configs[TYPE_ISL1219].
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v6->v7:
- * Dropped Rb tag from Geert as there is new changes.
- * Dropped parsing the parent node for retrieving clk details as
-   clk_dev is registered in sibling PMIC driver. So same info available
-   here.
+ * No change.
 v5->v6:
- * Added Rb tag from Geert.
- * Parsing of parent node is moved from probe->isl1208_clk_present()
- * Added comment for parsing parent node for getting clock resource.
- * Replaced XOR->NOT to make the operation more clear for the inverted case.
+ * No change.
 v4->v5:
- * Updated commit description.
+ * Added Rb tag from Geert.
  * Replaced "unsigned long"->"kernel_ulong_t" in isl1208_id[].
- * -ENOENT means clock not present, so any other errors are propagated.
- * Dropped bool inverted parameter from isl1208_set_xtoscb() instead
-   using xor to compute the value of xtoscb.
-v3->v4:
- * Added support for internal oscillator enable/disable.
-v2->v3:
- * RTC device is instantiated by PMIC driver and dropped isl1208_probe_helper().
- * Added "TYPE_RAA215300_RTC_A0" to handle inverted oscillator bit case.
-RFC->v2:
- * Dropped compatible "renesas,raa215300-isl1208" and "renesas,raa215300-pmic" property.
- * Updated the comment polarity->bit for External Oscillator.
- * Added raa215300_rtc_probe_helper() for registering raa215300_rtc device and
-   added the helper function isl1208_probe_helper() to share the code.
+v4:
+ * New patch
 ---
- drivers/rtc/rtc-isl1208.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/rtc/rtc-isl1208.c | 56 +++++++++++++++++++++++----------------
+ 1 file changed, 33 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
-index e9ec5675e27c..b0712b4e3648 100644
+index cefff1d863ac..42d2116d244d 100644
 --- a/drivers/rtc/rtc-isl1208.c
 +++ b/drivers/rtc/rtc-isl1208.c
-@@ -74,6 +74,7 @@ struct isl1208_config {
+@@ -68,41 +68,51 @@
+ 
+ static struct i2c_driver isl1208_driver;
+ 
+-/* ISL1208 various variants */
+-enum isl1208_id {
+-	TYPE_ISL1208 = 0,
+-	TYPE_ISL1209,
+-	TYPE_ISL1218,
+-	TYPE_ISL1219,
+-	ISL_LAST_ID
+-};
+-
+ /* Chip capabilities table */
+-static const struct isl1208_config {
++struct isl1208_config {
  	unsigned int	nvmem_length;
  	unsigned	has_tamper:1;
  	unsigned	has_timestamp:1;
-+	unsigned	has_inverted_osc_bit:1;
- };
- 
- static const struct isl1208_config config_isl1208 = {
-@@ -100,11 +101,19 @@ static const struct isl1208_config config_isl1219 = {
- 	.has_timestamp = true
- };
- 
-+static const struct isl1208_config config_raa215300_a0 = {
-+	.nvmem_length = 2,
-+	.has_tamper = false,
-+	.has_timestamp = false,
-+	.has_inverted_osc_bit = true
+-} isl1208_configs[] = {
+-	[TYPE_ISL1208] = { 2, false, false },
+-	[TYPE_ISL1209] = { 2, true,  false },
+-	[TYPE_ISL1218] = { 8, false, false },
+-	[TYPE_ISL1219] = { 2, true,  true },
 +};
 +
++static const struct isl1208_config config_isl1208 = {
++	.nvmem_length = 2,
++	.has_tamper = false,
++	.has_timestamp = false
++};
++
++static const struct isl1208_config config_isl1209 = {
++	.nvmem_length = 2,
++	.has_tamper = true,
++	.has_timestamp = false
++};
++
++static const struct isl1208_config config_isl1218 = {
++	.nvmem_length = 8,
++	.has_tamper = false,
++	.has_timestamp = false
++};
++
++static const struct isl1208_config config_isl1219 = {
++	.nvmem_length = 2,
++	.has_tamper = true,
++	.has_timestamp = true
+ };
+ 
  static const struct i2c_device_id isl1208_id[] = {
- 	{ "isl1208", .driver_data = (kernel_ulong_t)&config_isl1208 },
- 	{ "isl1209", .driver_data = (kernel_ulong_t)&config_isl1209 },
- 	{ "isl1218", .driver_data = (kernel_ulong_t)&config_isl1218 },
- 	{ "isl1219", .driver_data = (kernel_ulong_t)&config_isl1219 },
-+	{ "raa215300_a0", .driver_data = (kernel_ulong_t)&config_raa215300_a0 },
+-	{ "isl1208", .driver_data = (kernel_ulong_t)&isl1208_configs[TYPE_ISL1208] },
+-	{ "isl1209", .driver_data = (kernel_ulong_t)&isl1208_configs[TYPE_ISL1209] },
+-	{ "isl1218", .driver_data = (kernel_ulong_t)&isl1208_configs[TYPE_ISL1218] },
+-	{ "isl1219", .driver_data = (kernel_ulong_t)&isl1208_configs[TYPE_ISL1219] },
++	{ "isl1208", .driver_data = (kernel_ulong_t)&config_isl1208 },
++	{ "isl1209", .driver_data = (kernel_ulong_t)&config_isl1209 },
++	{ "isl1218", .driver_data = (kernel_ulong_t)&config_isl1218 },
++	{ "isl1219", .driver_data = (kernel_ulong_t)&config_isl1219 },
  	{ }
  };
  MODULE_DEVICE_TABLE(i2c, isl1208_id);
-@@ -895,6 +904,9 @@ isl1208_probe(struct i2c_client *client)
- 		return sr;
- 	}
  
-+	if (isl1208->config->has_inverted_osc_bit)
-+		xtosb_val = !xtosb_val;
-+
- 	rc = isl1208_set_xtoscb(client, sr, xtosb_val);
- 	if (rc)
- 		return rc;
+ static const __maybe_unused struct of_device_id isl1208_of_match[] = {
+-	{ .compatible = "isil,isl1208", .data = &isl1208_configs[TYPE_ISL1208] },
+-	{ .compatible = "isil,isl1209", .data = &isl1208_configs[TYPE_ISL1209] },
+-	{ .compatible = "isil,isl1218", .data = &isl1208_configs[TYPE_ISL1218] },
+-	{ .compatible = "isil,isl1219", .data = &isl1208_configs[TYPE_ISL1219] },
++	{ .compatible = "isil,isl1208", .data = &config_isl1208 },
++	{ .compatible = "isil,isl1209", .data = &config_isl1209 },
++	{ .compatible = "isil,isl1218", .data = &config_isl1218 },
++	{ .compatible = "isil,isl1219", .data = &config_isl1219 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, isl1208_of_match);
 -- 
 2.25.1
 
