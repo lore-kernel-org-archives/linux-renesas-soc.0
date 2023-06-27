@@ -2,125 +2,124 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 530D2EB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jun 2023 12:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B22EB64D9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jun 2023 14:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbjF0MzV (ORCPT
+        id S231520AbjF0Ola (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 27 Jun 2023 08:55:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50652 "EHLO
+        Tue, 27 Jun 2023 10:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229841AbjF0MzU (ORCPT
+        with ESMTP id S229488AbjF0Ola (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jun 2023 08:55:20 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77BE4294E
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Jun 2023 05:55:11 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:7296:f70f:e945:6df2])
-        by baptiste.telenet-ops.be with bizsmtp
-        id ECv82A00G1BJXyt01Cv8ML; Tue, 27 Jun 2023 14:55:08 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qE8Ds-0002K5-Gb
-        for linux-renesas-soc@vger.kernel.org;
-        Tue, 27 Jun 2023 14:55:08 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qE8Ds-000z9o-E1
-        for linux-renesas-soc@vger.kernel.org;
-        Tue, 27 Jun 2023 14:55:08 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2023-06-27-v6.4
-Date:   Tue, 27 Jun 2023 14:55:08 +0200
-Message-Id: <20230627125508.235081-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        Tue, 27 Jun 2023 10:41:30 -0400
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 529A010B;
+        Tue, 27 Jun 2023 07:41:07 -0700 (PDT)
+Received: from loongson.cn (unknown [10.20.42.43])
+        by gateway (Coremail) with SMTP id _____8AxR8XK9Jpk8ScDAA--.5042S3;
+        Tue, 27 Jun 2023 22:40:10 +0800 (CST)
+Received: from [10.20.42.43] (unknown [10.20.42.43])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8AxzyPJ9Jpk92EMAA--.9129S3;
+        Tue, 27 Jun 2023 22:40:09 +0800 (CST)
+Message-ID: <131c6b50-5f14-9bb7-b5bd-5103f7ccc6eb@loongson.cn>
+Date:   Tue, 27 Jun 2023 22:40:09 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [26/39] drm: renesas: shmobile: Rename
+ shmob_drm_connector.connector
+Content-Language: en-US
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <34065943fb616180779936aa5b1d20c3c5e06886.1687423204.git.geert+renesas@glider.be>
+From:   Sui Jingfeng <suijingfeng@loongson.cn>
+Organization: Loongson
+In-Reply-To: <34065943fb616180779936aa5b1d20c3c5e06886.1687423204.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf8AxzyPJ9Jpk92EMAA--.9129S3
+X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tryUKw1UKr4fJr4xAF4rXrc_yoW8tF4fpF
+        48A3yFyFW0qFZ8KrW7AFs7uFn8A3W5KFySkFyUWw45Cryvq347Aa15XFnxJFyDZry7KF42
+        qanIgr4fAF109rXCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+        sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+        0xBIdaVrnRJUUUPGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+        IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+        e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+        0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+        wI0_Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+        AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+        tVWrXwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64
+        vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0E
+        wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F4
+        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxV
+        AFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8
+        Jr0_Cr1UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvj
+        xUcb18DUUUU
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I have pushed renesas-drivers-2023-06-27-v6.4 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
-for-next branches of various subsystem trees and (b) branches with
-driver code submitted or planned for submission to maintainers into the
-master branch of my renesas-devel.git tree.
+On 2023/6/22 17:21, Geert Uytterhoeven wrote:
+> Rename the "connector" member of the shmob_drm_connector subclass
+> structure to "base", to improve readability.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Today's version is based on renesas-devel-2023-06-26-v6.4.
+Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
 
-Included branches with driver code:
-  - renesas-clk-for-v6.6
-  - topic/shmob-drm-dt-v1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/gpio-logic-analyzer-v8~1
+> ---
+>   drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 4 ++--
+>   drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h | 2 +-
+>   2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+> index 3f0b71253ed929c9..2c0ca802d36026f4 100644
+> --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+> +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+> @@ -608,7 +608,7 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
+>   
+>   static inline struct shmob_drm_connector *to_shmob_connector(struct drm_connector *connector)
+>   {
+> -	return container_of(connector, struct shmob_drm_connector, connector);
+> +	return container_of(connector, struct shmob_drm_connector, base);
+>   }
+>   
+>   static int shmob_drm_connector_get_modes(struct drm_connector *connector)
+> @@ -669,7 +669,7 @@ shmob_drm_connector_init(struct shmob_drm_device *sdev,
+>   	if (!scon)
+>   		return ERR_PTR(-ENOMEM);
+>   
+> -	connector = &scon->connector;
+> +	connector = &scon->base;
+>   	info = &connector->display_info;
+>   	info->width_mm = sdev->pdata->panel.width_mm;
+>   	info->height_mm = sdev->pdata->panel.height_mm;
+> diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
+> index 79cce0a0ada4cfce..2c6d7541427581a6 100644
+> --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
+> +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
+> @@ -33,7 +33,7 @@ struct shmob_drm_crtc {
+>   };
+>   
+>   struct shmob_drm_connector {
+> -	struct drm_connector connector;
+> +	struct drm_connector base;
+>   	struct drm_encoder *encoder;
+>   	const struct videomode *mode;
+>   };
 
-Included fixes:
-  - ARM: shmobile: defconfig: Update shmobile_defconfig
-  - [LOCAL] arm64: renesas: defconfig: Update renesas_defconfig
+-- 
+Jingfeng
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
-  - git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git#irq/irqchip-fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git#irq/irqchip-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git#driver-core-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
-  - https://git.pengutronix.de/git/pza/linux#reset/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
-
-Note that I temporarily dropped the crypto tree due to a complex merge
-conflict.
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
