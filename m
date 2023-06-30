@@ -2,306 +2,107 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF730C04A6A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Jun 2023 12:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F73AEB64DD
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Jun 2023 13:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbjF3MGb (ORCPT
+        id S232661AbjF3NfS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 30 Jun 2023 08:06:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50352 "EHLO
+        Fri, 30 Jun 2023 09:35:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233089AbjF3MGG (ORCPT
+        with ESMTP id S232762AbjF3Ne7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Jun 2023 08:06:06 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0575B3C3F;
-        Fri, 30 Jun 2023 05:05:27 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbc59de009so9243905e9.3;
-        Fri, 30 Jun 2023 05:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688126719; x=1690718719;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PAapxjBD/rwbhfxji86yGKwLK1ac+lCSTHoejUz0sCA=;
-        b=G2hm/3wbHT0wdTRF7Ea5NM+45CGLivRnJb/bhiN7YvbTVDF6UKc1ItVDMFUINx75gj
-         /4/FFdJ8sMckmZ3wphiO+3xKSY8GI6DQ0OBoJPGssSpp6uyKdES9t8GxQOfK3slypcic
-         FaHedPYgaQhhq6u2gqDBTdOhs0ttIBxACyB/ycGLjM9V2P7AlUPzUo/iCHiOD8JcP478
-         7TDRQ3UBbkZ5BR3m764DM09VzhG84IPlactzdrqz2HlhmLNR+szB3mLasJLZLnyPKFqj
-         TwDwSNSvLW1XQrxiOGIc9iUppvbsphFiShxlKpvtH08Rw0nf3uitJnn2/7bWGv71QAd/
-         XxTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688126719; x=1690718719;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PAapxjBD/rwbhfxji86yGKwLK1ac+lCSTHoejUz0sCA=;
-        b=hdrOumT2+IiMZcxVKe3/Q0HZ7s+LjuBktmr44ddkPBDmc2C+lkKzc1G4nADdW7CM2R
-         MBriTq1WK1tIUEi+8MiPm+0ufmhnilRS6QCknx5HyLoRjb39EHRrk6SDExZqo6lxqDQH
-         PUo+Z40UAhix0SoevLUKgkAzZV8tAU4CdD+5rfmuYUh0AxH9Kgl80VH0vAZXkOZ27oiJ
-         lJBgvfDixvSIpD0HwmCxcwiXuX0RhHnkP9I+g2vn+nPcml3M5QTMbGnxDfrNjq110qeZ
-         mpKqJU0uN0oNkUpVvhcOegnuyWUPe7+vZIEO0pmwfzV8tRQm268okX0EaxiEJed06GFk
-         GJHw==
-X-Gm-Message-State: AC+VfDx7SqBLaFkw4vDBG8jT3fHBxmqWUD2RADOy74Lf/88id/FaZ7uJ
-        hIPpleuViDpWjzywXIB270Cp7TGXTeIlyQ==
-X-Google-Smtp-Source: ACHHUZ4FBzWCO79mHqc3NNlVCRxRufqe6utoDxt/Tyry73lyfuOkoJAyW7uH5d2LVhuuPH9K2VERcQ==
-X-Received: by 2002:a05:600c:2902:b0:3fb:739d:27b2 with SMTP id i2-20020a05600c290200b003fb739d27b2mr1807622wmd.8.1688126719204;
-        Fri, 30 Jun 2023 05:05:19 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:dbbb:7082:18ec:f407])
-        by smtp.gmail.com with ESMTPSA id k22-20020a05600c0b5600b003fb40f5f553sm11766912wmr.31.2023.06.30.05.05.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 05:05:18 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC PATCH 3/4] pinctrl: renesas: pinctrl-rzg2l: Add the missing port pins P19 to P28
-Date:   Fri, 30 Jun 2023 13:04:32 +0100
-Message-Id: <20230630120433.49529-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230630120433.49529-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20230630120433.49529-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Fri, 30 Jun 2023 09:34:59 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9DD3C35
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Jun 2023 06:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=date:from:to:cc:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=k1; bh=PcXx
+        NOWHcmxCDQGZ2++gyrvWOg/Jh/8imTf8rTAbNTE=; b=DsIVyAe8mFx28qd+QeJD
+        uVFoOFwyRgGUdSRK3s95176ucP4mtVNJvkbpuSQHjtil/AcjknGDu2M2tLlkdnni
+        IvqHZtwebQA6xCFLPBEzHVT88UADuJB7QBap9y0cgKtXPdRBJyQf+61y623k8k+K
+        kXtCG7axscYjCCGscPZ8Ki1Umy7ohF7AviVcmoBOp/TleNIoqy36//zS3x6oAiWD
+        E4SRXiVKMseKF3mC3OOCMU01hzc+3kVL00Ez9PWKjjegElWxVbWQWsXo6+HvAFes
+        /sr4cmkS8DRC9sLbT8MERJkUjETrTCZa9M9jb0NwKJVa6ZpvQGhKh9wHnto7DsJR
+        LA==
+Received: (qmail 4184676 invoked from network); 30 Jun 2023 15:34:39 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 30 Jun 2023 15:34:39 +0200
+X-UD-Smtp-Session: l3s3148p1@/4TB4Fj/db7BVfKA
+Date:   Fri, 30 Jun 2023 15:34:36 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2] mmc: inline the first mmc_scan() on mmc_start_host()
+Message-ID: <ZJ7Z7HL684hrSkdx@sai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20230329202148.71107-1-dennis@kernel.org>
+ <ZCTOMVjW+pnZVGsQ@snowbird>
+ <CAMuHMdVK2zPnyB9s0uYwoKj0xspa0CRzqPjhrj-YFqVNdXxEkg@mail.gmail.com>
+ <CAPDyKFqtgCK5Wb_fZ9+VVK1F-LWYL+htMvQ9JPpp0zPjzBZ9gw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ardNddU0yOlyz+Nq"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqtgCK5Wb_fZ9+VVK1F-LWYL+htMvQ9JPpp0zPjzBZ9gw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add the missing port pins P19 to P28 for RZ/Five SoC. These additional pins
-provide expanded capabilities and are exclusive to the RZ/Five SoC.
-Furthermore, a new variant called r9a07g043_data has been introduced
-specifically for the RZ/Five SoC. When CONFIG_RISCV is enabled, this
-variant replaces the previous data configuration. Additionally, a new macro
-named PIN_CFG_NOGPIO has been implemented. This macro serves as an
-indicator to determine whether the port pins can be utilized as GPIO pins.
+--ardNddU0yOlyz+Nq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-Please note that I have only included the necessary changes for PFC
-settings in this paragraph. However, further work is required to set
-the attributes of the pin. While we already have generic properties in
-place for most of the attributes, setting the ISEL attribute for those
-pins may require a specific property unique to Renesas. Alternatively,
-is there a possibility of addressing this requirement in a different manner?
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 94 +++++++++++++++++++++----
- 1 file changed, 82 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 2fc1b880db0c..61004733c2eb 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -15,6 +15,7 @@
- #include <linux/of_irq.h>
- #include <linux/seq_file.h>
- #include <linux/spinlock.h>
-+#include <linux/sys_soc.h>
- 
- #include <linux/pinctrl/consumer.h>
- #include <linux/pinctrl/pinconf-generic.h>
-@@ -53,6 +54,7 @@
- #define PIN_CFG_FILONOFF		BIT(10)
- #define PIN_CFG_FILNUM			BIT(11)
- #define PIN_CFG_FILCLKSEL		BIT(12)
-+#define PIN_CFG_NOGPIO			BIT(13)
- 
- #define RZG2L_MPXED_PIN_FUNCS		(PIN_CFG_IOLH_A | \
- 					 PIN_CFG_SR | \
-@@ -101,6 +103,12 @@
- #define SD_CH(n)		(0x3000 + (n) * 4)
- #define QSPI			(0x3008)
- 
-+#define RZFIVE_P_EX(n)		(0x0000 + 0x06 + ((n) - 19))
-+#define RZFIVE_PM_EX(n)		(0x0100 + 0x0c + ((n) - 19) * 2)
-+#define RZFIVE_PMC_EX(n)	(0x0200 + 0x06 + ((n) - 19))
-+#define RZFIVE_PFC_EX(n)	(0x0400 + 0x18 + ((n) - 19) * 4)
-+#define RZFIVE_PIN_EX(n)	(0x0800 + 0x06 + ((n) - 19))
-+
- #define PVDD_1800		1	/* I/O domain voltage <= 1.8V */
- #define PVDD_3300		0	/* I/O domain voltage >= 3.3V */
- 
-@@ -160,39 +168,53 @@ struct rzg2l_pinctrl {
- static const unsigned int iolh_groupa_mA[] = { 2, 4, 8, 12 };
- static const unsigned int iolh_groupb_oi[] = { 100, 66, 50, 33 };
- 
-+static const struct soc_device_attribute rzfive_match[] = {
-+	{ .family = "RZ/Five" },
-+	{ /* sentinel */}
-+};
-+
- static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
- 				       u8 port, u8 pin, u8 func)
- {
-+	u32 pm_offset = PM(port);
-+	u32 pmc_offset = PMC(port);
-+	u32 pfc_offset = PFC(port);
- 	unsigned long flags;
- 	u32 reg;
- 
-+	if (soc_device_match(rzfive_match) && port > 18) {
-+		pm_offset = RZFIVE_PM_EX(port);
-+		pmc_offset = RZFIVE_PMC_EX(port);
-+		pfc_offset = RZFIVE_PFC_EX(port);
-+	}
-+
- 	spin_lock_irqsave(&pctrl->lock, flags);
- 
- 	/* Set pin to 'Non-use (Hi-Z input protection)'  */
--	reg = readw(pctrl->base + PM(port));
-+	reg = readw(pctrl->base + pm_offset);
- 	reg &= ~(PM_MASK << (pin * 2));
--	writew(reg, pctrl->base + PM(port));
-+	writew(reg, pctrl->base + pm_offset);
- 
- 	/* Temporarily switch to GPIO mode with PMC register */
--	reg = readb(pctrl->base + PMC(port));
--	writeb(reg & ~BIT(pin), pctrl->base + PMC(port));
-+	reg = readb(pctrl->base + pmc_offset);
-+	writeb(reg & ~BIT(pin), pctrl->base + pmc_offset);
- 
- 	/* Set the PWPR register to allow PFC register to write */
- 	writel(0x0, pctrl->base + PWPR);        /* B0WI=0, PFCWE=0 */
- 	writel(PWPR_PFCWE, pctrl->base + PWPR);  /* B0WI=0, PFCWE=1 */
- 
- 	/* Select Pin function mode with PFC register */
--	reg = readl(pctrl->base + PFC(port));
-+	reg = readl(pctrl->base + pfc_offset);
- 	reg &= ~(PFC_MASK << (pin * 4));
--	writel(reg | (func << (pin * 4)), pctrl->base + PFC(port));
-+	writel(reg | (func << (pin * 4)), pctrl->base + pfc_offset);
- 
- 	/* Set the PWPR register to be write-protected */
- 	writel(0x0, pctrl->base + PWPR);        /* B0WI=0, PFCWE=0 */
- 	writel(PWPR_B0WI, pctrl->base + PWPR);  /* B0WI=1, PFCWE=0 */
- 
- 	/* Switch to Peripheral pin function with PMC register */
--	reg = readb(pctrl->base + PMC(port));
--	writeb(reg | BIT(pin), pctrl->base + PMC(port));
-+	reg = readb(pctrl->base + pmc_offset);
-+	writeb(reg | BIT(pin), pctrl->base + pmc_offset);
- 
- 	spin_unlock_irqrestore(&pctrl->lock, flags);
- };
-@@ -447,12 +469,15 @@ static int rzg2l_dt_node_to_map(struct pinctrl_dev *pctldev,
- }
- 
- static int rzg2l_validate_gpio_pin(struct rzg2l_pinctrl *pctrl,
--				   u64 cfg, u32 port, u8 bit)
-+				   u64 cfg, u32 port, u8 bit, bool pfc)
- {
- 	u32 port_index = RZG2L_GPIO_PORT_GET_INDEX(cfg);
- 	u8 pinmap = RZG2L_GPIO_PORT_GET_PINMAP(cfg);
- 	u64 data;
- 
-+	if (!pfc && (cfg & PIN_CFG_NOGPIO))
-+		return -EINVAL;
-+
- 	if (port >= pctrl->data->n_port_pins)
- 		return -EINVAL;
- 
-@@ -526,7 +551,8 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
- 		port_offset = RZG2L_PIN_ID_TO_PORT_OFFSET(_pin);
- 		bit = RZG2L_PIN_ID_TO_PIN(_pin);
- 
--		if (rzg2l_validate_gpio_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
-+		if (rzg2l_validate_gpio_pin(pctrl, *pin_data,
-+					    RZG2L_PIN_ID_TO_PORT(_pin), bit, true))
- 			return -EINVAL;
- 	}
- 
-@@ -617,7 +643,8 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 		port_offset = RZG2L_PIN_ID_TO_PORT_OFFSET(_pin);
- 		bit = RZG2L_PIN_ID_TO_PIN(_pin);
- 
--		if (rzg2l_validate_gpio_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
-+		if (rzg2l_validate_gpio_pin(pctrl, *pin_data,
-+					    RZG2L_PIN_ID_TO_PORT(_pin), bit, true))
- 			return -EINVAL;
- 	}
- 
-@@ -788,7 +815,7 @@ static int rzg2l_gpio_request(struct gpio_chip *chip, unsigned int offset)
- 	u8 reg8;
- 	int ret;
- 
--	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit);
-+	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit, false);
- 	if (ret)
- 		return ret;
- 
-@@ -1050,6 +1077,38 @@ static const u64 r9a07g043_gpio_configs[] = {
- 	RZG2L_GPIO_PORT_PACK(0x3f, 6, 0x22, RZG2L_MPXED_PIN_FUNCS),
- };
- 
-+static const u64 r9a07g043f_gpio_configs[] = {
-+	RZG2L_GPIO_PORT_PACK(0x0f, 4, 0x10, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x1f, 5, 0x11, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
-+	RZG2L_GPIO_PORT_PACK(0x0f, 4, 0x12, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
-+	RZG2L_GPIO_PORT_PACK(0x0f, 4, 0x13, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
-+	RZG2L_GPIO_PORT_PACK(0x3f, 6, 0x14, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
-+	RZG2L_GPIO_PORT_PACK(0x1f, 5, 0x15, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x1f, 5, 0x16, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x1f, 5, 0x17, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
-+	RZG2L_GPIO_PORT_PACK(0x1f, 5, 0x18, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
-+	RZG2L_GPIO_PORT_PACK(0x0f, 4, 0x19, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
-+	RZG2L_GPIO_PORT_PACK(0x1f, 5, 0x1a, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
-+	RZG2L_GPIO_PORT_PACK(0x0f, 4, 0x1b, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x03, 2, 0x1c, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x1f, 5, 0x1d, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x07, 3, 0x1e, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x0f, 4, 0x1f, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x03, 2, 0x20, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x0f, 4, 0x21, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x3f, 6, 0x22, RZG2L_MPXED_PIN_FUNCS),
-+	RZG2L_GPIO_PORT_PACK(0x02, 1, 0x06, RZG2L_MPXED_PIN_FUNCS | PIN_CFG_NOGPIO),
-+	RZG2L_GPIO_PORT_PACK(0xff, 8, 0x07, RZG2L_MPXED_PIN_FUNCS | PIN_CFG_NOGPIO),
-+	RZG2L_GPIO_PORT_PACK(0x02, 1, 0x08, (PIN_CFG_IOLH_A | PIN_CFG_SR | PIN_CFG_PUPD | PIN_CFG_NOGPIO)),
-+	RZG2L_GPIO_PORT_PACK(0x0f, 4, 0x09, (PIN_CFG_IOLH_A | PIN_CFG_SR | PIN_CFG_PUPD | PIN_CFG_NOGPIO)),
-+	RZG2L_GPIO_PORT_PACK(0x3e, 5, 0x0a, (PIN_CFG_IOLH_A | PIN_CFG_SR | PIN_CFG_PUPD | PIN_CFG_NOGPIO)),
-+	RZG2L_GPIO_PORT_PACK(0x3f, 6, 0x0b, RZG2L_MPXED_PIN_FUNCS | PIN_CFG_NOGPIO),
-+	RZG2L_GPIO_PORT_PACK(0x02, 1, 0x0c, RZG2L_MPXED_PIN_FUNCS | PIN_CFG_NOGPIO),
-+	RZG2L_GPIO_PORT_PACK(0x00, 0, 0x0d, 0x0),
-+	RZG2L_GPIO_PORT_PACK(0x00, 0, 0x0e, 0x0),
-+	RZG2L_GPIO_PORT_PACK(0x3f, 6, 0x0f, RZG2L_MPXED_PIN_FUNCS | PIN_CFG_NOGPIO),
-+};
-+
- static struct {
- 	struct rzg2l_dedicated_configs common[35];
- 	struct rzg2l_dedicated_configs rzg2l_pins[7];
-@@ -1534,6 +1593,16 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_RISCV
-+static struct rzg2l_pinctrl_data r9a07g043_data = {
-+	.port_pins = rzg2l_gpio_names,
-+	.port_pin_configs = r9a07g043f_gpio_configs,
-+	.n_ports = ARRAY_SIZE(r9a07g043f_gpio_configs),
-+	.dedicated_pins = rzg2l_dedicated_pins.common,
-+	.n_port_pins = ARRAY_SIZE(r9a07g043f_gpio_configs) * RZG2L_PINS_PER_PORT,
-+	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common),
-+};
-+#else
- static struct rzg2l_pinctrl_data r9a07g043_data = {
- 	.port_pins = rzg2l_gpio_names,
- 	.port_pin_configs = r9a07g043_gpio_configs,
-@@ -1542,6 +1611,7 @@ static struct rzg2l_pinctrl_data r9a07g043_data = {
- 	.n_port_pins = ARRAY_SIZE(r9a07g043_gpio_configs) * RZG2L_PINS_PER_PORT,
- 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common),
- };
-+#endif
- 
- static struct rzg2l_pinctrl_data r9a07g044_data = {
- 	.port_pins = rzg2l_gpio_names,
--- 
-2.34.1
+> Note that, even if the offending commit below triggers this problem
+> 100% of the cases (as the probe path has now becomes synchronous),
+> there was a potential risk even before. Previously, mmc_add_host()
+> ended up punting a work - and if that work ended up sending a request
+> to the host driver, *before* the irq-handler would be ready, we would
+> hit the similar problem. I bet adding an msleep(1000) immediately
+> after mmc_add_host() in tmio_mmc_host_probe(), would then trigger this
+> problem too. :-)
+>=20
+> That said, I am going to revert the offending commit to fix these
+> problems, for now. Then I will try to help out and fixup the relevant
+> host drivers  - and when that is done, we can give this whole thing a
+> new try.
 
+I'll work on the TMIO/SDHI driver next week. Thanks for the input!
+
+
+--ardNddU0yOlyz+Nq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmSe2egACgkQFA3kzBSg
+KbYL0w//Uf2zwM8QA+MvS/28kErGL3iHJwmv3aOLVBcTQcZobGoGYTX7ylZridqi
+k2bsQszEYrOqQHg5Nrgze3x1CmSW4zbKZhz67yhBWobwTY8wkYg/lVraQuXJPJQG
+13J/Cfugtx+QcCfWwvdAyEd/FarBjMMUlBjjft8zz8OT5S4j3MWLKNg+k08Ytkou
+C6TX2YYaSuzkUXo/6j8Zak+OUlIWVAthAnmExWwL8a2azufZoFizG+kWZIXyyjB3
+MGFkNo39lM72eNCKhV8yScEm+DwRIVwnlMxGpy8bk5/Xh9YwJaYDAJgZHB3ZwcyE
+LF/iI8h/EM6GTodNB97UQCFSkrHCyp9En+tqViXKaHrzZvG4Uudju8JZsNl1e/nX
+TOmaSS4usgQfYX7nyO9niohJiw40KXC2xM+ZSLIQkxYwfPF0icqcOXm8mBTiJYO0
+2W+Gs7iIK1+jroPGZtgu6uFplX8A5RgXSnBGyq0lE00GoEmVuV31kPuZPKGIXpdD
+Q3INCdeaFEeR+0l+h9D3T5IkrVRv0VkxIPrgc2wZ13ZdgQx3/UzM57kybPZAz6Zk
+x4FTMSxVOAQP57dOykCLOJMN0UhIB5RUJCJgKBPjbGt06fLEiuAzimd8+1O0jotl
+BA9qn0A08k17fGaSL7bjmeNZkHQUoNiYiXgqJSMk5RREMDnavD8=
+=suR+
+-----END PGP SIGNATURE-----
+
+--ardNddU0yOlyz+Nq--
