@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A130EC001B0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Jun 2023 12:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348DAC001E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Jun 2023 12:06:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233095AbjF3MG2 (ORCPT
+        id S232924AbjF3MGa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 30 Jun 2023 08:06:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50346 "EHLO
+        Fri, 30 Jun 2023 08:06:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233016AbjF3MGE (ORCPT
+        with ESMTP id S232596AbjF3MGF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Jun 2023 08:06:04 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 687B13C3C;
-        Fri, 30 Jun 2023 05:05:26 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fbc656873eso7648435e9.1;
-        Fri, 30 Jun 2023 05:05:26 -0700 (PDT)
+        Fri, 30 Jun 2023 08:06:05 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA40F4203;
+        Fri, 30 Jun 2023 05:05:27 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fba545d743so20409965e9.0;
+        Fri, 30 Jun 2023 05:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688126718; x=1690718718;
+        d=gmail.com; s=20221208; t=1688126720; x=1690718720;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/M+822NMBcWFhtW8psDduBe6caBnlnfKm7WRYzHuukU=;
-        b=rLdjIQN7yit+HWPAMW+jhFcyGvyUsmyIP0VGmjcfLwXF299DfXuhRlt0bNU1yZvjxD
-         c2nZHhKKd32WLaRmNsZfKS6uk+x7WU6HSe2HYj4bmVXbu9+AiEn/C7HhH67IfM6+lJZ2
-         VCQySiUismfPmy4aq4xIspeNTZ8wm+8lQbCW7Gkz0gn1ygDqUau0L70GiWyqJzyb5lXl
-         1Ov1CGGt0OinBmPyg6efhLDnkz4Y0YnaRPTi0lIsYhV+0bAOy+5w/D3dTelpWwKQUIO7
-         Z/0ySqXY943JLZB77FLpcv7kTXRd3Dw0bW5iuF5F1QkYdM+ULE9UOqg1CgzTMyYXyk2x
-         nDbA==
+        bh=wW4HxCYnatcP/vztbzCLoFkbFaiPGRf9h2XT9nzoMiE=;
+        b=VMutcdnOHcriAlE+V2oVuSLEZkP283yTDLN5t6c/yEHifGOtsPHZ0SiWEWs3WvFCMo
+         AXDE2kzOIFrcBIfHkiU3sXEUVXK3bxCuUtBm64a+pX8OCRf69cQ5Dj+tkXD/hQMdaaNZ
+         xB1SpI4kcKPKUx1aGyAOk5fWDXJbbW5qt+dXBpc9xNGNs/Q26UjSkAsyKuB0lYqPZn/4
+         eRQlDAN6b2a5kp8wjrwmyxzNIWfzyQT9R5Z7Cu80k2BVzjhcKBaEG2ZTJSjXhrEJxG4l
+         njAtczOuJeQ6GiH0qAlj1hT5jAmhza91Pk/gx9m/si961e34XynbZT9Ms7Ryp4SqGmjc
+         Q7yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688126718; x=1690718718;
+        d=1e100.net; s=20221208; t=1688126720; x=1690718720;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/M+822NMBcWFhtW8psDduBe6caBnlnfKm7WRYzHuukU=;
-        b=KIEZYhWu1jqdWEWoxEMIJuCWz8C6NM3/IQlskqBRsOhSRA0V88OvHq/PbkLqLo8pRj
-         HxlRcQrGtalaVqM/5je5qLc8euuPbMR2Oxvq48e3ANJSH4zpylrSzXExRjZYrwNFGiwe
-         fmcPlZKddm2o+zY+0J3BKQdp+t64xvgVXxSrj/GlfXeJtDS1Qp/e3jawLnZcctaq+GZ/
-         19nHaPIo3tgjFxsI5vCclQlr5VRt5co/eZcmEhe1/zTyD3kMpEoKfMZr6Vz5u/YC7f07
-         /d2OC8k+HQ9JqGsTPOlt1ro9WpEqZVFsrrg+49UJcGaFffwRgt8voZ+0CoUZtQkOr56K
-         uCng==
-X-Gm-Message-State: AC+VfDy7D/ECGSoTchV74WebjnZLWYki4wJiyPHaMIcIv1GlWBSsarUT
-        Q90qaB+uflzrPDjkA7437R4=
-X-Google-Smtp-Source: ACHHUZ7YSKrbGPipvwwchGHahSK0z8Szh2TyxflljlqD9nBbK/YxHxmt/PROw/yeSvHxBK61RFwlMQ==
-X-Received: by 2002:a7b:cd8e:0:b0:3fa:8aed:d57f with SMTP id y14-20020a7bcd8e000000b003fa8aedd57fmr2239809wmj.24.1688126718052;
-        Fri, 30 Jun 2023 05:05:18 -0700 (PDT)
+        bh=wW4HxCYnatcP/vztbzCLoFkbFaiPGRf9h2XT9nzoMiE=;
+        b=RyQrQYaAC3kRNNEhYJDQxHL8U/snBcainMpdQCaCDGO4ZMiJI4W85w1nMK+hT+gk9t
+         s8/0Yuj0FXvAvDoJru7HWOTcGsEWBMk2YGA0Pvjcar5Oa+abopIPOSCQTICQwJx0KtK9
+         DLs+i5qjdn5MjgpC6y7XDk1gh17Ng2x6jKUSFtf7PCAS6Oxl/NUfokpUscLI/mkBnH4q
+         IBwz3osuECoAzjfMqvwan3YqLeulTauV4f+kF5RJCyhVa/taUOBUXvnvgWnrbjtMUYOn
+         AqG5MI0XTQdPZp5uVsRXR1eR38PLCCMgfVp2d3TS30P6fY4WIr3dO7g6uEzlvWavtAks
+         UryA==
+X-Gm-Message-State: AC+VfDxtsVr8fKcS1cR8AuzG3P0z5iYIxVBUCeVMpgaeSRIA7+W7Q/+Q
+        zWUn6TRMr9zzWq4dzX6G7H4=
+X-Google-Smtp-Source: ACHHUZ6EeL6gq5EtG9xZeYtWyzA5dejfnqdUzMMQGBUc9q9SgKVmMs87uSMG5uyXDkN0xF6o5D4hEg==
+X-Received: by 2002:a05:600c:b54:b0:3f9:846:d892 with SMTP id k20-20020a05600c0b5400b003f90846d892mr1874404wmr.9.1688126720584;
+        Fri, 30 Jun 2023 05:05:20 -0700 (PDT)
 Received: from prasmi.home ([2a00:23c8:2501:c701:dbbb:7082:18ec:f407])
-        by smtp.gmail.com with ESMTPSA id k22-20020a05600c0b5600b003fb40f5f553sm11766912wmr.31.2023.06.30.05.05.17
+        by smtp.gmail.com with ESMTPSA id k22-20020a05600c0b5600b003fb40f5f553sm11766912wmr.31.2023.06.30.05.05.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 05:05:17 -0700 (PDT)
+        Fri, 30 Jun 2023 05:05:19 -0700 (PDT)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -63,9 +63,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-gpio@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC PATCH 2/4] pinctrl: renesas: pinctrl-rzg2l: Add validation of GPIO pin in rzg2l_gpio_request()
-Date:   Fri, 30 Jun 2023 13:04:31 +0100
-Message-Id: <20230630120433.49529-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 4/4] riscv: dts: renesas: r9a07g043f: Update gpio-ranges property
+Date:   Fri, 30 Jun 2023 13:04:33 +0100
+Message-Id: <20230630120433.49529-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230630120433.49529-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20230630120433.49529-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -77,37 +77,29 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Validate the GPIO pin request in rzg2l_gpio_request() callback using
-rzg2l_validate_gpio_pin() function.
+On RZ/Five we have additional pins compared to the RZ/G2UL SoC so update
+the gpio-ranges property in RZ/Five SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index a0c2e585e765..2fc1b880db0c 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -780,12 +780,18 @@ static const struct pinconf_ops rzg2l_pinctrl_confops = {
- static int rzg2l_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct rzg2l_pinctrl *pctrl = gpiochip_get_data(chip);
-+	const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[offset];
-+	u64 *pin_data = pin->drv_data;
- 	u32 port = RZG2L_PIN_ID_TO_PORT(offset);
- 	u8 bit = RZG2L_PIN_ID_TO_PIN(offset);
- 	unsigned long flags;
- 	u8 reg8;
- 	int ret;
+diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+index b0796015e36b..e68a91c9fe77 100644
+--- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
++++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+@@ -42,6 +42,10 @@ cpu0_intc: interrupt-controller {
+ 	};
+ };
  
-+	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit);
-+	if (ret)
-+		return ret;
++&pinctrl {
++	gpio-ranges = <&pinctrl 0 0 232>;
++};
 +
- 	ret = pinctrl_gpio_request(chip->base + offset);
- 	if (ret)
- 		return ret;
+ &soc {
+ 	dma-noncoherent;
+ 	interrupt-parent = <&plic>;
 -- 
 2.34.1
 
