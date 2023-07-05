@@ -2,70 +2,88 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9AAEB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Jul 2023 15:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62176C001B3
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jul 2023 07:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231452AbjGDPs3 (ORCPT
+        id S231315AbjGEHTx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 Jul 2023 11:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52424 "EHLO
+        Wed, 5 Jul 2023 03:19:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230374AbjGDPs1 (ORCPT
+        with ESMTP id S229697AbjGEHTw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2023 11:48:27 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E65A0E76;
-        Tue,  4 Jul 2023 08:48:25 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.01,181,1684767600"; 
-   d="scan'208";a="166818457"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Jul 2023 00:48:25 +0900
-Received: from localhost.localdomain (unknown [10.226.93.53])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6D2674001DD4;
-        Wed,  5 Jul 2023 00:48:22 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Wed, 5 Jul 2023 03:19:52 -0400
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64210197;
+        Wed,  5 Jul 2023 00:19:49 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-bd61dd9a346so7076406276.2;
+        Wed, 05 Jul 2023 00:19:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688541588; x=1691133588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wgy3bfYoDh3OFcAtaur8cdXDGvZi9pap36arqcEt75Q=;
+        b=O/4mMI8SvCsSJ9SJkraMGnM34VEHSPJTeuayFjSIyecmoBs37+670VBT5RIgHJl/1X
+         y+K9goUf5O/kwT+P2XLHIJlYXm+jBNaNjhGLGgMnkUDNo8a6UZmUexhTyP3nY/lquEj/
+         uhNQu+2sgp69yreYOWImZWINR74P6VYPMZZ04Xkr0SNn0gcS+TVXa03CiWdMjmJZ2PSQ
+         vYX41PcqDdVkQvdoqd1ar9DxJ+LnmI+bz8GwrD4nx5nUDcgM80WlHHlumVht8Vk4/Exv
+         xWzKXp8mRmfS/sXPClNRSqiE/f0tMGC8z+cmB95K1tQFEmcxdnOrRZzKy90jHforCCvG
+         67fw==
+X-Gm-Message-State: ABy/qLbBtOgmhzcbhfpRiA/AIcXwT/2z4R1OaOgxPMySEyyD+QjZU3Rr
+        nh58lnmENqdt9OU05DZeIp6ENSFgrWhE7w==
+X-Google-Smtp-Source: APBJJlEI8WyC0TQej8eT6atEWpjJs8eD8ETnclKJvqwlvwtAg1gpydUeHuNqdQ3eHNDWDfbJWU7E8g==
+X-Received: by 2002:a81:a187:0:b0:577:3cd0:384 with SMTP id y129-20020a81a187000000b005773cd00384mr14211779ywg.15.1688541588317;
+        Wed, 05 Jul 2023 00:19:48 -0700 (PDT)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id l189-20020a0dfbc6000000b0055a931afe48sm6014793ywf.8.2023.07.05.00.19.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jul 2023 00:19:47 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-bb3a77abd7bso7103680276.0;
+        Wed, 05 Jul 2023 00:19:47 -0700 (PDT)
+X-Received: by 2002:a25:14d7:0:b0:bd6:8725:2258 with SMTP id
+ 206-20020a2514d7000000b00bd687252258mr12591806ybu.60.1688541587389; Wed, 05
+ Jul 2023 00:19:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230704154818.406913-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230704154818.406913-1-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 5 Jul 2023 09:19:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWpiTo_eWFqnqeHzR4hM+qLngqhEb94CQgLmttxw2G6Qg@mail.gmail.com>
+Message-ID: <CAMuHMdWpiTo_eWFqnqeHzR4hM+qLngqhEb94CQgLmttxw2G6Qg@mail.gmail.com>
+Subject: Re: [PATCH] tty: serial: sh-sci: Fix sleeping in atomic context
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jirislaby@kernel.org>,
         Dan Carpenter <dan.carpenter@linaro.org>,
         linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, stable@kernel.org
-Subject: [PATCH] tty: serial: sh-sci: Fix sleeping in atomic context
-Date:   Tue,  4 Jul 2023 16:48:18 +0100
-Message-Id: <20230704154818.406913-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix sleeping in atomic context warning as reported by the Smatch static
-checker tool by replacing disable_irq->disable_irq_nosync.
+On Tue, Jul 4, 2023 at 5:48 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Fix sleeping in atomic context warning as reported by the Smatch static
+> checker tool by replacing disable_irq->disable_irq_nosync.
+>
+> Reported by: Dan Carpenter <dan.carpenter@linaro.org>
+> Fixes: 8749061be196 ("tty: serial: sh-sci: Add RZ/G2L SCIFA DMA tx support")
+> Cc: stable@kernel.org
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Reported by: Dan Carpenter <dan.carpenter@linaro.org>
-Fixes: 8749061be196 ("tty: serial: sh-sci: Add RZ/G2L SCIFA DMA tx support")
-Cc: stable@kernel.org
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/tty/serial/sh-sci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 7c9457962a3d..8b7a42e05d6d 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -590,7 +590,7 @@ static void sci_start_tx(struct uart_port *port)
- 	    dma_submit_error(s->cookie_tx)) {
- 		if (s->cfg->regtype == SCIx_RZ_SCIFA_REGTYPE)
- 			/* Switch irq from SCIF to DMA */
--			disable_irq(s->irqs[SCIx_TXI_IRQ]);
-+			disable_irq_nosync(s->irqs[SCIx_TXI_IRQ]);
- 
- 		s->cookie_tx = 0;
- 		schedule_work(&s->work_tx);
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
