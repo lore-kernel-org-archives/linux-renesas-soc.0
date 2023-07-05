@@ -2,101 +2,80 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C48EB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jul 2023 11:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7049EB64DA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jul 2023 11:44:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231313AbjGELhS convert rfc822-to-8bit (ORCPT
+        id S229772AbjGELoC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 07:37:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
+        Wed, 5 Jul 2023 07:44:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231334AbjGELhR (ORCPT
+        with ESMTP id S229775AbjGELoB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 07:37:17 -0400
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1686A198E;
-        Wed,  5 Jul 2023 04:37:08 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-bdd069e96b5so7281508276.2;
-        Wed, 05 Jul 2023 04:37:08 -0700 (PDT)
+        Wed, 5 Jul 2023 07:44:01 -0400
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A22E3
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Jul 2023 04:44:00 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-579e212668fso9253627b3.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Jul 2023 04:44:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688557027; x=1691149027;
+        d=1e100.net; s=20221208; t=1688557439; x=1691149439;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kIVoG4v17dHAi8V71wyhSONdUpfRCtIrSHRM3VwF7JI=;
-        b=DmbdWb9ON38EkXpnF02SCfdiTySYvhgXR74dRlFl42rJtVhs+NAoEhq+0MxtybKmbc
-         0r7AAqb7CGIiHtu68mZk8TC839xHab8LhQ37tCiYrY1T4LIVEqutgaYO3lvkaKoce2JP
-         E25jNM9w+AMQVGUNgrCO8FDXX4Y5QRDHlSgLEy65dhLOF58HSB8M0w/cCD4sYNWCBD5f
-         rBw9YH/0SdLR0y5EU6CJFV3PviiL4T+YUp9ED94rClr/qc1EJOG+04wlbl7QoH3D5bnI
-         Ao46GdQj8zIIzHEiZbA+SZIMKs+fnZgHjbhc9mUYyNAA5BY6q79dNJczbx1znRzM6BNe
-         CE5A==
-X-Gm-Message-State: ABy/qLZofFwwNyVypWV0x2wvvOYNz0wLAakEMtQcxBlcCyylXqe/z5mj
-        PSi7zzkBlF5oW6fOiyhtfRXRmWiCY3Milg==
-X-Google-Smtp-Source: APBJJlGf6Oo6X2P+loC9JZgJVpAlVChmIdYgc1NWcGb3KGPvcsVgLtnrvfEm3JXFmYThz3B91w6K3Q==
-X-Received: by 2002:a05:6902:28c:b0:c37:f855:cff4 with SMTP id v12-20020a056902028c00b00c37f855cff4mr13407380ybh.63.1688557026831;
-        Wed, 05 Jul 2023 04:37:06 -0700 (PDT)
+        bh=3EJaBFspVw/Gmx4xCPGEJd+b95sH8ceYrLggUSXiVHE=;
+        b=iQKs13TDUpb3/x4tPZ4fqnI9uOF59Gesr6BCQDgsd4dvVWmbx02tWFkyidVQ/NQY29
+         aCpT0Yubwa3KO8+dxtCZPeg4zXacK5oVH5z7VKJZJdaZNW4f66WuEXwt8bJe1GCbNmGo
+         zmYhmJr564gsLgYdYIbrCq4FN2JSbdn6CyFq4ctY7q4HUAZAqh8d8wcHv6li9YzUvE93
+         myatCyb1+2h8X3xZwqWwf4MQSX1QhKSKGKtydBPrffqf4EqDxKA6q45gIHbyYnItfDjB
+         bYL4xM7gy58O68r1zCqJHszDh8fAMQHzn67zBITljj1c6B0ov4nJq90t8mX3Ebax1hRJ
+         gb9A==
+X-Gm-Message-State: ABy/qLabE9yXp5yw84HN6mLX81BmIyrPKY9zUnhjhCzR9FKUT0oZFqrA
+        zx4IIJIcqlsM0j81+e98KTngn1sXKGHmkQ==
+X-Google-Smtp-Source: APBJJlFkygL9w/yifhS5D+8YjaLvMt2MqAm3XfwQNLpxsru/LmAhNAAQTqnejL0gJFSCaAXuGJSH/Q==
+X-Received: by 2002:a0d:d855:0:b0:56c:f547:e058 with SMTP id a82-20020a0dd855000000b0056cf547e058mr1387352ywe.18.1688557438785;
+        Wed, 05 Jul 2023 04:43:58 -0700 (PDT)
 Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id d13-20020a25e60d000000b00c4eec81ac9esm1743975ybh.11.2023.07.05.04.37.06
+        by smtp.gmail.com with ESMTPSA id r206-20020a0de8d7000000b0057060bb2874sm6182776ywe.37.2023.07.05.04.43.58
+        for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 04:37:06 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-c50c797c31bso3951432276.0;
-        Wed, 05 Jul 2023 04:37:06 -0700 (PDT)
-X-Received: by 2002:a25:6fc6:0:b0:c16:859a:9633 with SMTP id
- k189-20020a256fc6000000b00c16859a9633mr14065137ybc.39.1688557025822; Wed, 05
- Jul 2023 04:37:05 -0700 (PDT)
+        Wed, 05 Jul 2023 04:43:58 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-bad0c4f6f50so924976276.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Jul 2023 04:43:58 -0700 (PDT)
+X-Received: by 2002:a25:b30d:0:b0:c47:3430:bcb0 with SMTP id
+ l13-20020a25b30d000000b00c473430bcb0mr1458299ybj.26.1688557437971; Wed, 05
+ Jul 2023 04:43:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230622113341.657842-1-fabrizio.castro.jz@renesas.com>
- <20230622113341.657842-4-fabrizio.castro.jz@renesas.com> <CAMuHMdVsYohH5FVv6r4ha0AaHRoHjNF1ErjW1FNF7ZAQR9ntxg@mail.gmail.com>
- <ZKVE-AVDhvZyrJmj@surfacebook>
-In-Reply-To: <ZKVE-AVDhvZyrJmj@surfacebook>
+References: <20230703132343.353878-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230703132343.353878-1-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Jul 2023 13:36:54 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUzcc0HSyOwbN4mJPRfEKcLXBU3Op=T1CGR=pFbN619Pw@mail.gmail.com>
-Message-ID: <CAMuHMdUzcc0HSyOwbN4mJPRfEKcLXBU3Op=T1CGR=pFbN619Pw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] spi: Add support for Renesas CSI
-To:     andy.shevchenko@gmail.com
-Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
+Date:   Wed, 5 Jul 2023 13:43:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWj1PTx3Fp=Wn0h+0hHRFRaTKCre=VMvCFCq=BE+HBE5Q@mail.gmail.com>
+Message-ID: <CAMuHMdWj1PTx3Fp=Wn0h+0hHRFRaTKCre=VMvCFCq=BE+HBE5Q@mail.gmail.com>
+Subject: Re: [PATCH] mfd: Add module build support for RZ/G2L MTU3a
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Lee Jones <lee@kernel.org>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Andy,
-
-On Wed, Jul 5, 2023 at 12:24 PM <andy.shevchenko@gmail.com> wrote:
-> Mon, Jul 03, 2023 at 12:19:26PM +0200, Geert Uytterhoeven kirjoitti:
-> > On Thu, Jun 22, 2023 at 1:34 PM Fabrizio Castro
-> > <fabrizio.castro.jz@renesas.com> wrote:
-> > > +       if (csi->txbuf)
-> > > +               /*
-> > > +                * Leaving a little bit of headroom in the FIFOs makes it very
-> > > +                * hard to raise an overflow error (which is only possible
-> > > +                * when IP transmits and receives at the same time).
-> > > +                */
-> > > +               to_transfer = min_t(int, CSI_FIFO_HALF_SIZE, bytes_remaining);
-> > > +       else
-> > > +               to_transfer = min_t(int, CSI_FIFO_SIZE_BYTES, bytes_remaining);
-> >
-> > Why min_t(int, ...)? Both values are int.
+On Mon, Jul 3, 2023 at 3:23 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Modified Kconfig to enable module build support for RZ/G2L MTU3a driver.
 >
-> min_t() should be used with a great care.
->
-> > It would be better to make both unsigned, though.
->
-> I believe you are assuming 3 (three) values and not 2 (two) under "both"
-> (one variable and two definitions).
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-:-)
+As drivers/mfd/rz-mtu3.c already has the needed MODULE_*() lines:
 
-I meant "both numerical parametric values of each minimum operation".
+drivers/mfd/rz-mtu3.c:MODULE_DEVICE_TABLE(of, rz_mtu3_of_match);
+drivers/mfd/rz-mtu3.c:MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
+drivers/mfd/rz-mtu3.c:MODULE_DESCRIPTION("Renesas RZ/G2L MTU3a Core Driver");
+drivers/mfd/rz-mtu3.c:MODULE_LICENSE("GPL");
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
