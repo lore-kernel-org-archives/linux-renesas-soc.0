@@ -2,67 +2,101 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25092C001DE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jul 2023 15:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D82C001B0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jul 2023 15:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232757AbjGEP0d (ORCPT
+        id S232800AbjGEPyB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 11:26:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52126 "EHLO
+        Wed, 5 Jul 2023 11:54:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232805AbjGEP0c (ORCPT
+        with ESMTP id S232113AbjGEPyA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 11:26:32 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDD50172B
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Jul 2023 08:26:27 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5979:7b6f:39a:b9cb])
-        by laurent.telenet-ops.be with bizsmtp
-        id HTSR2A00945Xpxs01TSRp7; Wed, 05 Jul 2023 17:26:25 +0200
-Received: from rox.of.borg ([192.168.97.57] helo=rox)
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qH4Ob-000ck3-Ma;
-        Wed, 05 Jul 2023 17:26:25 +0200
-Received: from geert by rox with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qH4Of-00AwXT-8R;
-        Wed, 05 Jul 2023 17:26:25 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wed, 5 Jul 2023 11:54:00 -0400
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30BAE12A;
+        Wed,  5 Jul 2023 08:53:59 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7836164a08aso333897239f.1;
+        Wed, 05 Jul 2023 08:53:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688572438; x=1691164438;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3RLbkYBSMtZSZWsdqOipQPRF1AXaIm7IXw5H9F31xDg=;
+        b=YOqBHMuBehhI/6uka/fZOxhJyax+4qIFzKd0buYsQuhqnnScQyhVdSkC7Ns2BzAsAX
+         2fmBfR9utC9mjai0aTY3EkUE37XQriezfYOPQMpzYk1wn63E7oS0ICNvHGkT8cA9d57G
+         AFpc1RKl+FSvTHDZnnK3ePskWfK0y/sac06IfVczJjk5Tm4DbC9MfjBCp1j2+t6uu9p3
+         S8a5i6J+TlxwDXF5i2CohEOBhzseFE9847xH569wijaIninvh9VkapHsXLHD6gwQEKWS
+         ZEc55j1BAEYyxJ9FdSVc1BXUVNTMMj2UepKO4KfIx9YO8sLtwQE6wn2UWs/gRmeB2Vpn
+         vRkQ==
+X-Gm-Message-State: AC+VfDx0wiFQ35lCD5kTnt/OdJ9vRUKVoS93ym466XbHpyA+iBbRj2zA
+        21SOrvPeiRShKnXXatsB+w==
+X-Google-Smtp-Source: ACHHUZ73QtYKyynoI9ylI1XEWC2lq+A/sJ6q02lzFpAinNpUOyDvzNhBset5FBiQu0bFE/MLWXDyOg==
+X-Received: by 2002:a5e:8811:0:b0:785:ca70:46a2 with SMTP id l17-20020a5e8811000000b00785ca7046a2mr18137083ioj.4.1688572438444;
+        Wed, 05 Jul 2023 08:53:58 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id q15-20020a02c8cf000000b0042ad6abe0bbsm6425382jao.20.2023.07.05.08.53.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jul 2023 08:53:57 -0700 (PDT)
+Received: (nullmailer pid 691642 invoked by uid 1000);
+        Wed, 05 Jul 2023 15:53:55 -0000
+Date:   Wed, 5 Jul 2023 09:53:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Leo Yan <leo.yan@linaro.org>, linux-arm-kernel@lists.infradead.org,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-mtd@lists.infradead.org,
+        freedreno@lists.freedesktop.org, linux-usb@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        coresight@lists.linaro.org, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH libdrm 0/3] Add support for DRM_FORMAT_NV{24,42}
-Date:   Wed,  5 Jul 2023 17:26:14 +0200
-Message-Id: <cover.1688570702.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: cleanup DTS example whitespaces
+Message-ID: <168857243311.691536.13322875472425620659.robh@kernel.org>
+References: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
 
-This patch series adds support for semi-planar YUV formats with
-non-subsampled chroma planes.
+On Sun, 02 Jul 2023 20:23:08 +0200, Krzysztof Kozlowski wrote:
+> The DTS code coding style expects spaces around '=' sign.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Rob,
+> 
+> Maybe this could go via your tree? Rebased on your for-next:
+> v6.4-rc2-45-gf0ac35049606
+> ---
+>  .../bindings/arm/arm,coresight-cti.yaml        | 18 +++++++++---------
+>  .../bindings/arm/keystone/ti,sci.yaml          |  8 ++++----
+>  .../devicetree/bindings/display/msm/gmu.yaml   |  2 +-
+>  .../display/panel/samsung,s6e8aa0.yaml         |  2 +-
+>  .../display/rockchip/rockchip-vop.yaml         |  4 ++--
+>  .../bindings/iio/adc/ti,adc108s102.yaml        |  2 +-
+>  .../bindings/media/renesas,rzg2l-cru.yaml      |  4 ++--
+>  .../devicetree/bindings/media/renesas,vin.yaml |  4 ++--
+>  .../devicetree/bindings/mtd/mtd-physmap.yaml   |  2 +-
+>  .../bindings/net/mediatek-dwmac.yaml           |  2 +-
+>  .../bindings/perf/amlogic,g12-ddr-pmu.yaml     |  4 ++--
+>  .../bindings/phy/mediatek,dsi-phy.yaml         |  2 +-
+>  .../remoteproc/amlogic,meson-mx-ao-arc.yaml    |  2 +-
+>  .../devicetree/bindings/usb/mediatek,mtu3.yaml |  2 +-
+>  .../devicetree/bindings/usb/ti,am62-usb.yaml   |  2 +-
+>  15 files changed, 30 insertions(+), 30 deletions(-)
+> 
 
-It has been tested with the shmob_drm driver on the R-Mobile A1-based
-Atmark Techno Armadillo-800-EVA development board.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  util: Add NV24 and NV42 frame buffer formats
-  util: Add pattern support for DRM_FORMAT_NV{24,42}
-  modetest: Add support for DRM_FORMAT_NV{24,42}
-
- tests/modetest/buffers.c | 20 ++++++++++++++++++++
- tests/util/format.c      |  2 ++
- tests/util/pattern.c     |  4 ++++
- 3 files changed, 26 insertions(+)
-
--- 
-2.34.1
+Applied, thanks!
 
