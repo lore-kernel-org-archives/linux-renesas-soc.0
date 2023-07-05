@@ -2,85 +2,79 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51293EB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jul 2023 15:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D876EB64DA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jul 2023 15:26:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232940AbjGEPFr convert rfc822-to-8bit (ORCPT
+        id S232624AbjGEP0b (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 11:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41916 "EHLO
+        Wed, 5 Jul 2023 11:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232994AbjGEPFq (ORCPT
+        with ESMTP id S233114AbjGEP0a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2023 11:05:46 -0400
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99562198B;
-        Wed,  5 Jul 2023 08:05:35 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5728df0a7d9so85073617b3.1;
-        Wed, 05 Jul 2023 08:05:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688569534; x=1691161534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qJkpWmxC/JKgZ5aaFx50qi+mR1B+BzCJdGti+xFndAI=;
-        b=dI7weMKh7K2OSLtvKyn1HgE12VS8EXNScLhfrGdpOBaq9NFQz7TPYavQpGqWxBTKVf
-         IoRrkIRNtT/1uxqolpbZhRGedWfzcaYVA6zkSTBITJq8tEYWpL3/0CBww+O0YjFAwvEr
-         jFXr1gvzP4OA33OwVkwQur6EmIJ6LcU8wyLhXn6015Bf8gvp/J1G0cRdziM+D6697t0x
-         Hir1k0UpVr5d+c/t8mUwVNr9hBmR0z94C1yqFZXScC8dcFBDKGtUGTlG/dvZH5KaIFGd
-         fWBoJgjHLXESUb+Ep43IkQNHsNZeYqDFfXekaynhGji3VGzLDdsohxH867QDNPeb7xqV
-         IhxA==
-X-Gm-Message-State: ABy/qLaqhlG0208+jS6efI79WX8AAunoUfq+QN9+qeSgbIvybDDRlWBU
-        qyVccNkPr7a9uPkPJJmjtigxCxbIBvNmPA==
-X-Google-Smtp-Source: APBJJlEjgMhEfX8b3XZrZUELtw2emHPkRGZywkptt5Lpg+qnFHzWY20uyELZUCxj/Pb9Q7UIcQNALw==
-X-Received: by 2002:a0d:d849:0:b0:576:916d:96b with SMTP id a70-20020a0dd849000000b00576916d096bmr16584093ywe.36.1688569534388;
-        Wed, 05 Jul 2023 08:05:34 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id r190-20020a8181c7000000b00577409a2958sm3202546ywf.138.2023.07.05.08.05.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 08:05:33 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-570114e1feaso84999377b3.3;
-        Wed, 05 Jul 2023 08:05:33 -0700 (PDT)
-X-Received: by 2002:a25:a205:0:b0:bac:7aba:ae4d with SMTP id
- b5-20020a25a205000000b00bac7abaae4dmr14417102ybi.28.1688569533674; Wed, 05
- Jul 2023 08:05:33 -0700 (PDT)
+        Wed, 5 Jul 2023 11:26:30 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C67D171D
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Jul 2023 08:26:26 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5979:7b6f:39a:b9cb])
+        by baptiste.telenet-ops.be with bizsmtp
+        id HTSR2A00G45Xpxs01TSRMZ; Wed, 05 Jul 2023 17:26:25 +0200
+Received: from rox.of.borg ([192.168.97.57] helo=rox)
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qH4Ob-000ck6-Mx;
+        Wed, 05 Jul 2023 17:26:25 +0200
+Received: from geert by rox with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qH4Of-00AwXZ-9g;
+        Wed, 05 Jul 2023 17:26:25 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH libdrm 2/3] util: Add pattern support for DRM_FORMAT_NV{24,42}
+Date:   Wed,  5 Jul 2023 17:26:16 +0200
+Message-Id: <eab4e871d026e39f98591840daaa8d82b9ccc637.1688570702.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1688570702.git.geert+renesas@glider.be>
+References: <cover.1688570702.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20230705145912.293315-1-krzysztof.kozlowski@linaro.org> <20230705145912.293315-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230705145912.293315-2-krzysztof.kozlowski@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Jul 2023 17:05:22 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVHBoiRsVppe+eHPmnnkAcHN8HJGhuXFN27r=ONzkJsWA@mail.gmail.com>
-Message-ID: <CAMuHMdVHBoiRsVppe+eHPmnnkAcHN8HJGhuXFN27r=ONzkJsWA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: add missing space before {
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jul 5, 2023 at 4:59 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> Add missing whitespace between node name/label and opening {.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Add support for drawing the SMPTE and tiles patterns in buffers using
+semi-planar YUV formats with non-subsampled chroma planes.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.6.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ tests/util/pattern.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/tests/util/pattern.c b/tests/util/pattern.c
+index 158c0b160a2ee870..f45a26ccec38f202 100644
+--- a/tests/util/pattern.c
++++ b/tests/util/pattern.c
+@@ -698,6 +698,8 @@ static void fill_smpte(const struct util_format_info *info, void *planes[3],
+ 	case DRM_FORMAT_NV21:
+ 	case DRM_FORMAT_NV16:
+ 	case DRM_FORMAT_NV61:
++	case DRM_FORMAT_NV24:
++	case DRM_FORMAT_NV42:
+ 		u = info->yuv.order & YUV_YCbCr ? planes[1] : planes[1] + 1;
+ 		v = info->yuv.order & YUV_YCrCb ? planes[1] : planes[1] + 1;
+ 		return fill_smpte_yuv_planar(&info->yuv, planes[0], u, v,
+@@ -1023,6 +1025,8 @@ static void fill_tiles(const struct util_format_info *info, void *planes[3],
+ 	case DRM_FORMAT_NV21:
+ 	case DRM_FORMAT_NV16:
+ 	case DRM_FORMAT_NV61:
++	case DRM_FORMAT_NV24:
++	case DRM_FORMAT_NV42:
+ 		u = info->yuv.order & YUV_YCbCr ? planes[1] : planes[1] + 1;
+ 		v = info->yuv.order & YUV_YCrCb ? planes[1] : planes[1] + 1;
+ 		return fill_tiles_yuv_planar(info, planes[0], u, v,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
