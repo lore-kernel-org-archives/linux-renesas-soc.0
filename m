@@ -2,110 +2,130 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16AAEB64DA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jul 2023 19:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D28EB64DA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jul 2023 21:35:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjGJToW convert rfc822-to-8bit (ORCPT
+        id S231836AbjGJVfc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Jul 2023 15:44:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48916 "EHLO
+        Mon, 10 Jul 2023 17:35:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjGJToV (ORCPT
+        with ESMTP id S229814AbjGJVfb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2023 15:44:21 -0400
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D4CF187
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2023 12:44:20 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-576a9507a9bso88019597b3.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2023 12:44:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689018259; x=1691610259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1uZ5W02ueWG+IUYzmbFoBLu4snW950fkRHW1ma7wlOE=;
-        b=JxIcb9N7l3RTO5nZCFyS9Z3DKvYuZXaGLOGmMTHpJVp4yBDXxHCIZjNd9dHnvvJAUU
-         g/cYY10uG8m9P47ojX9S3UupA/Lqq54aNH9A2XhsKKC1UUrSK+88NnDGuHPEkP8PX2IR
-         KdCSl+c3VT2JnW82BkCqf43lpC4589d3b+VylWODzo2K897E+kZH7+NMlaDYGCvv0BIy
-         honhCbqiIelq+8/38vDos1yljRVowyA4jVs0Metp0zZbtbP1w0R1m3nQSXduS+RhAJOF
-         ECEJLK/uf8tE7uzXj3wzhgLKRGErbWSPFD+9H1mDZ2lN4raj3qPl8YR45iyg+OdwtcXj
-         4rzw==
-X-Gm-Message-State: ABy/qLYnyJECVUp4B+zNLb4xpMEgqbbURCDJOF5RNuvmERdFuXRtXQYY
-        UXOgV61hImcjwhWIKX7h2xVgWi9EL/YAlw==
-X-Google-Smtp-Source: APBJJlFkjzA2rEQkh5rO7KchfnzAkN8ny5synZg1YpJzq8Urd6jL0wE4byy2x9+XL/t2O4hEAhh9NA==
-X-Received: by 2002:a81:9182:0:b0:569:e92f:72a with SMTP id i124-20020a819182000000b00569e92f072amr12879325ywg.16.1689018259183;
-        Mon, 10 Jul 2023 12:44:19 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id e1-20020a0df501000000b0057085b18cddsm146509ywf.54.2023.07.10.12.44.18
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jul 2023 12:44:19 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-c6e4d4c59bcso4959895276.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2023 12:44:18 -0700 (PDT)
-X-Received: by 2002:a25:2387:0:b0:c12:29ac:1d35 with SMTP id
- j129-20020a252387000000b00c1229ac1d35mr12631904ybj.13.1689018258797; Mon, 10
- Jul 2023 12:44:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230703132343.353878-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdWj1PTx3Fp=Wn0h+0hHRFRaTKCre=VMvCFCq=BE+HBE5Q@mail.gmail.com> <OS0PR01MB5922850408798D653B1ABE938630A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922850408798D653B1ABE938630A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 10 Jul 2023 21:44:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUZ_R1G4L-Sd-KnsPsHCWJ5b+nFpV8ygPjD432281jVBw@mail.gmail.com>
-Message-ID: <CAMuHMdUZ_R1G4L-Sd-KnsPsHCWJ5b+nFpV8ygPjD432281jVBw@mail.gmail.com>
-Subject: Re: [PATCH] mfd: Add module build support for RZ/G2L MTU3a
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Lee Jones <lee@kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Mon, 10 Jul 2023 17:35:31 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A42DF
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2023 14:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689024931; x=1720560931;
+  h=date:from:to:cc:subject:message-id;
+  bh=9jrVwKR9EfzgJaA4x5yK3STBCdsfve60X4Ajeyqg4yE=;
+  b=L2Tod8GWIUKDifkRPGWZaS+rBEivj01TKt56iImugeRKnwARdX77UI2y
+   Y4VTdSosA+IaaAwgeC83Bq70geHE3SMtWqlunN3QG9EygEDdWth8uZzcZ
+   Kftw24bx+D5WTzvYttPHb+mosDvLG/hj1jdP6C7K4VRBdlXm+vMA+FLfl
+   0Q10IQsoHjEoQcp6VFZYSgoQ0yM1hyR3mRrW3Phv8VX1WonyjZw8DJQer
+   WGv7zeBu8GY+NK3exeStPfqW4QDZWs5WV8GIcRk4QtyTf9/BXmZSCPDMj
+   oKZmlTg+kIpPG6s1348PuyduPwxboEI5MeKjX4WXm1MuZadffOK5gVz87
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10767"; a="354323494"
+X-IronPort-AV: E=Sophos;i="6.01,195,1684825200"; 
+   d="scan'208";a="354323494"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2023 14:35:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10767"; a="967557889"
+X-IronPort-AV: E=Sophos;i="6.01,195,1684825200"; 
+   d="scan'208";a="967557889"
+Received: from lkp-server01.sh.intel.com (HELO c544d7fc5005) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Jul 2023 14:35:29 -0700
+Received: from kbuild by c544d7fc5005 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qIyXY-00041l-2H;
+        Mon, 10 Jul 2023 21:35:28 +0000
+Date:   Tue, 11 Jul 2023 05:35:09 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:renesas-arm-defconfig-for-v6.6] BUILD
+ SUCCESS 0bfe5475f6b9fc766aa1fabb0a90c88b882c2f70
+Message-ID: <202307110508.77gisfzE-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-defconfig-for-v6.6
+branch HEAD: 0bfe5475f6b9fc766aa1fabb0a90c88b882c2f70  arm64: defconfig: Enable PMIC RAA215300 and RTC ISL 1208 configs
 
-On Mon, Jul 10, 2023 at 7:04 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > -----Original Message-----
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Sent: Wednesday, July 5, 2023 12:44 PM
-> > To: Biju Das <biju.das.jz@bp.renesas.com>
-> > Cc: Lee Jones <lee@kernel.org>; Prabhakar Mahadev Lad
-> > <prabhakar.mahadev-lad.rj@bp.renesas.com>; linux-renesas-
-> > soc@vger.kernel.org
-> > Subject: Re: [PATCH] mfd: Add module build support for RZ/G2L MTU3a
-> >
-> > On Mon, Jul 3, 2023 at 3:23 PM Biju Das <biju.das.jz@bp.renesas.com>
-> > wrote:
-> > > Modified Kconfig to enable module build support for RZ/G2L MTU3a
-> > driver.
-> > >
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > As drivers/mfd/rz-mtu3.c already has the needed MODULE_*() lines:
-> >
-> > drivers/mfd/rz-mtu3.c:MODULE_DEVICE_TABLE(of, rz_mtu3_of_match);
-> > drivers/mfd/rz-mtu3.c:MODULE_AUTHOR("Biju Das
-> > <biju.das.jz@bp.renesas.com>"); drivers/mfd/rz-
-> > mtu3.c:MODULE_DESCRIPTION("Renesas RZ/G2L MTU3a Core Driver");
-> > drivers/mfd/rz-mtu3.c:MODULE_LICENSE("GPL");
->
-> You mean, I missed adding linux/module.h as I got compilation error
-> While backporting to 5.10 cip kernel?
+elapsed time: 724m
 
-No, I didn't mean that.  I just clarified that the MODULE_*() machinery
-was already there, so it's fine to make the driver modular.
-I hadn't noticed the include was forgotten. Doh...
+configs tested: 58
+configs skipped: 126
 
-Gr{oetje,eeting}s,
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-                        Geert
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allyesconfig   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                       aspeed_g5_defconfig   gcc  
+arm                          collie_defconfig   clang
+arm                                 defconfig   gcc  
+arm                          ep93xx_defconfig   clang
+arm                      integrator_defconfig   gcc  
+arm                       multi_v4t_defconfig   gcc  
+arm                           tegra_defconfig   gcc  
+arm                         wpcm450_defconfig   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+csky                                defconfig   gcc  
+hexagon              randconfig-r041-20230710   clang
+hexagon              randconfig-r045-20230710   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+m68k                             alldefconfig   gcc  
+m68k                             allmodconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                         cobalt_defconfig   gcc  
+parisc                generic-64bit_defconfig   gcc  
+powerpc                    adder875_defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                 mpc832x_rdb_defconfig   clang
+powerpc                     tqm8555_defconfig   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r042-20230710   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                 randconfig-r044-20230710   clang
+sh                        sh7757lcr_defconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64                           rhel-8.3-bpf   gcc  
+x86_64                          rhel-8.3-func   gcc  
+x86_64                    rhel-8.3-kselftests   gcc  
+x86_64                         rhel-8.3-kunit   gcc  
+x86_64                           rhel-8.3-kvm   gcc  
+x86_64                           rhel-8.3-ltp   gcc  
+xtensa                  cadence_csp_defconfig   gcc  
+xtensa                    xip_kc705_defconfig   gcc  
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
