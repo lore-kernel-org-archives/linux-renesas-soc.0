@@ -2,66 +2,66 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D28EB64DA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jul 2023 21:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D45EB64D9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jul 2023 21:35:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231836AbjGJVfc (ORCPT
+        id S231846AbjGJVfd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Jul 2023 17:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
+        Mon, 10 Jul 2023 17:35:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbjGJVfb (ORCPT
+        with ESMTP id S231847AbjGJVfc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2023 17:35:31 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A42DF
+        Mon, 10 Jul 2023 17:35:32 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61EDDE8
         for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2023 14:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1689024931; x=1720560931;
   h=date:from:to:cc:subject:message-id;
-  bh=9jrVwKR9EfzgJaA4x5yK3STBCdsfve60X4Ajeyqg4yE=;
-  b=L2Tod8GWIUKDifkRPGWZaS+rBEivj01TKt56iImugeRKnwARdX77UI2y
-   Y4VTdSosA+IaaAwgeC83Bq70geHE3SMtWqlunN3QG9EygEDdWth8uZzcZ
-   Kftw24bx+D5WTzvYttPHb+mosDvLG/hj1jdP6C7K4VRBdlXm+vMA+FLfl
-   0Q10IQsoHjEoQcp6VFZYSgoQ0yM1hyR3mRrW3Phv8VX1WonyjZw8DJQer
-   WGv7zeBu8GY+NK3exeStPfqW4QDZWs5WV8GIcRk4QtyTf9/BXmZSCPDMj
-   oKZmlTg+kIpPG6s1348PuyduPwxboEI5MeKjX4WXm1MuZadffOK5gVz87
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10767"; a="354323494"
+  bh=662cKaWmR+q85mJ9TqUX2XhFPLNMOnTolBrp0ZnzZV8=;
+  b=TJS4yNCgJ6yVnMlXFfExhhz94BJeZTuM0cCB3nvDhruh6RcAMd27lc6l
+   UCGtsU1PdYWGZOU2/hFZTA/KYm2Ux+NzW3/2ggX/fFb4VXTVyShFOVgw0
+   KzMLxljwO3/JETb4F08yz8CgAPenuAsapPLJxhhkwGizmfDHDZaGzSOuC
+   CTbvKOZVegmMbYKHVNTB9hKkVG6RcIWwoxChSbAgsdWdPR4HjxyM6nlUp
+   AHYrvWWXYVgO+eXs65QcikR1YvGQI6LKtqqMwWo7+tH9hCyHHS83016Fo
+   QeeyVWWCTL5bDpIWBUpibJ+TcKtzepEWvc/FwmHCJxAhp+8HChDHclVie
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10767"; a="361924629"
 X-IronPort-AV: E=Sophos;i="6.01,195,1684825200"; 
-   d="scan'208";a="354323494"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2023 14:35:30 -0700
+   d="scan'208";a="361924629"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2023 14:35:31 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10767"; a="967557889"
+X-IronPort-AV: E=McAfee;i="6600,9927,10767"; a="865523525"
 X-IronPort-AV: E=Sophos;i="6.01,195,1684825200"; 
-   d="scan'208";a="967557889"
+   d="scan'208";a="865523525"
 Received: from lkp-server01.sh.intel.com (HELO c544d7fc5005) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Jul 2023 14:35:29 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 10 Jul 2023 14:35:29 -0700
 Received: from kbuild by c544d7fc5005 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qIyXY-00041l-2H;
+        id 1qIyXY-00041j-2D;
         Mon, 10 Jul 2023 21:35:28 +0000
-Date:   Tue, 11 Jul 2023 05:35:09 +0800
+Date:   Tue, 11 Jul 2023 05:34:58 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-arm-defconfig-for-v6.6] BUILD
- SUCCESS 0bfe5475f6b9fc766aa1fabb0a90c88b882c2f70
-Message-ID: <202307110508.77gisfzE-lkp@intel.com>
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ b74c024d8fc777c36dfb2aa02aed3f7dc4e4bd81
+Message-ID: <202307110557.Bapk34BY-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-defconfig-for-v6.6
-branch HEAD: 0bfe5475f6b9fc766aa1fabb0a90c88b882c2f70  arm64: defconfig: Enable PMIC RAA215300 and RTC ISL 1208 configs
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: b74c024d8fc777c36dfb2aa02aed3f7dc4e4bd81  Merge branches 'renesas-arm-defconfig-for-v6.6' and 'renesas-dts-for-v6.6' into renesas-next
 
 elapsed time: 724m
 
-configs tested: 58
-configs skipped: 126
+configs tested: 59
+configs skipped: 114
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -78,6 +78,7 @@ arm                                 defconfig   gcc
 arm                          ep93xx_defconfig   clang
 arm                      integrator_defconfig   gcc  
 arm                       multi_v4t_defconfig   gcc  
+arm                  randconfig-r046-20230710   gcc  
 arm                           tegra_defconfig   gcc  
 arm                         wpcm450_defconfig   gcc  
 arm64                            allyesconfig   gcc  
