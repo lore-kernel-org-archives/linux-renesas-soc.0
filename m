@@ -2,108 +2,181 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11706C001DE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jul 2023 00:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F4BEB64DC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jul 2023 01:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230289AbjGLAaH (ORCPT
+        id S229672AbjGLBvd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Jul 2023 20:30:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60388 "EHLO
+        Tue, 11 Jul 2023 21:51:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbjGLAaF (ORCPT
+        with ESMTP id S229655AbjGLBvc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2023 20:30:05 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0108FDC;
-        Tue, 11 Jul 2023 17:30:04 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-3a425ef874dso44082b6e.0;
-        Tue, 11 Jul 2023 17:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689121804; x=1691713804;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AywlaY7x3Z/gX6am2crBJ9gOzJzowq37abxtBtmocQo=;
-        b=ghdEvDcr1IFDaQljt1dRUmu0HvE8cBRXow9dvmJIaaoVnpliy0H6io9/6jVjgOiCvp
-         W8ARD6eHNeqfJ+cDPA0NJgPJBqbJKcZVgnHyOUyjNKE8bjkztkk4ySHLSiUBAuECvNvG
-         mb/2DywJzkaoQruchWfaALw0QTZyIhkyMl6GdGEbXU96lEG1IIKslGtkOxNFHbPJlukV
-         cU3AAipN+IhHQaj7foFoecZ/dEzkn+h7hzibqavkPSnM3iQjwT1oNRd+xdvy8XXbjmLV
-         /C6WF+gR5Z+E29WVX3/x1rDq3OotadtwPkAl2sIQPRWVXcg0mMjVQCSxr6vu04KG1I6/
-         7Mcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689121804; x=1691713804;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AywlaY7x3Z/gX6am2crBJ9gOzJzowq37abxtBtmocQo=;
-        b=bUKZe5EHmmMkMZQH/LEM14fmxXoevruRIHWM9SWwGZfoGW2awpqz8dq/NYVPX88Zcc
-         AONvZ+G7txxkEwamT8jvKUUhHnUrRIKRYC29KXCvQaC4UIs/kf0Tx0kz46J8RqbtMnTB
-         uv6hY2EsAS6sNPGZ7jamO8t5itytV0P+7yu4Sq6GDPvGAuivpxk1QtsisnDF/oDYLHld
-         hfGJ8WNlfEgBoS9ZbR5KKvtwI1yiRclBkseOV5s15pwphBLo9cEy5NzYuSGC0p6nLlEH
-         ve2y/35zk43I5r0GbrnpH58yBUFa93Nr4vlJoiow6AaAoMKI5fjr1JFo8OM8q7j4NPPv
-         Z/Sw==
-X-Gm-Message-State: ABy/qLYV8V/OOKnqnT0dEjpmCMSThclIX5eJ0HrbE2GxRert584F4GKD
-        Yh9QKPN7L9VnbvdrYyB6aBs=
-X-Google-Smtp-Source: APBJJlERzXloivjI5bk3/nTAyrXULoGFQYQ9HeldnM+GEDq5PgIauvtfIOYiM1H16bglc4CH0JAn3w==
-X-Received: by 2002:a05:6808:1aa6:b0:3a3:78dc:8c4c with SMTP id bm38-20020a0568081aa600b003a378dc8c4cmr15877789oib.46.1689121804077;
-        Tue, 11 Jul 2023 17:30:04 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:9374])
-        by smtp.gmail.com with ESMTPSA id s10-20020a62e70a000000b006687b41c4dasm2285401pfh.110.2023.07.11.17.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jul 2023 17:30:03 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 11 Jul 2023 14:30:01 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-team@meta.com, Linux PM list <linux-pm@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        linux-rtc@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: Consider switching to WQ_UNBOUND messages (was: Re: [PATCH v2
- 6/7] workqueue: Report work funcs that trigger automatic CPU_INTENSIVE
- mechanism)
-Message-ID: <ZK30CR196rs-OWLq@slm.duckdns.org>
-References: <20230511181931.869812-1-tj@kernel.org>
- <20230511181931.869812-7-tj@kernel.org>
- <ZF6WsSVGX3O1d0pL@slm.duckdns.org>
- <CAMuHMdVCQmh6V182q4g---jvsWiTOP2hBPZKvma6oUN6535LEg@mail.gmail.com>
- <CAMuHMdW1kxZ1RHKTRVRqDNAbj1Df2=v0fPn5KYK3kfX_kiXR6A@mail.gmail.com>
- <ZK3MBfPS-3-tJgjO@slm.duckdns.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZK3MBfPS-3-tJgjO@slm.duckdns.org>
+        Tue, 11 Jul 2023 21:51:32 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED0D0171C
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Jul 2023 18:51:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689126691; x=1720662691;
+  h=date:from:to:cc:subject:message-id;
+  bh=4S/SHLO1kN2ErID1M33nNJNr5bgSob91IYbA1KFIR98=;
+  b=lfKuJcTsA9xzyyUV8zvHkVt1Hn7o+LsvKP7MotxCNG/+hH5Ue64OjP8g
+   VkQpDN3YN+pxZcjS2yxNrWaiHM/xxNd3n4Y4FnPgYnl3GGwvVmbSBOi85
+   KToh7nfAdreCVwXvicGKhBNEGOJXW1JTAKfhazzBxLSUHRRhU65Qk4fHB
+   m9galVFdR840kGTQHnhhsT6lhrIIfehEurno2k6+gi/Sg38PVCJl7zrq3
+   WA1vGw0i+AYYvq1lYejYOGthrRNx284/0x5MtAiC2aK/NSMGo7PaZFkjr
+   8iJ12NrKWxnv6kDtEaNP3PLiew4ddxWe+PzWstnWCuwpyZuvgyxu35Y6x
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10768"; a="368314772"
+X-IronPort-AV: E=Sophos;i="6.01,198,1684825200"; 
+   d="scan'208";a="368314772"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2023 18:51:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10768"; a="895412614"
+X-IronPort-AV: E=Sophos;i="6.01,198,1684825200"; 
+   d="scan'208";a="895412614"
+Received: from lkp-server01.sh.intel.com (HELO c544d7fc5005) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 11 Jul 2023 18:51:30 -0700
+Received: from kbuild by c544d7fc5005 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qJP0r-0005Gn-1l;
+        Wed, 12 Jul 2023 01:51:29 +0000
+Date:   Wed, 12 Jul 2023 09:50:41 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:master] BUILD SUCCESS
+ 6cf8eb521e6cd6d3dc1f494a4b39ab42cc939444
+Message-ID: <202307120939.TIMpMqhA-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Jul 11, 2023 at 11:39:17AM -1000, Tejun Heo wrote:
-> On Tue, Jul 11, 2023 at 04:06:22PM +0200, Geert Uytterhoeven wrote:
-> > On Tue, Jul 11, 2023 at 3:55 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-...
-> > workqueue: neigh_managed_work hogged CPU for >10000us 4 times,
-> > consider switching to WQ_UNBOUND
-> 
-> I wonder whether the right thing to do here is somehow scaling the threshold
-> according to the relative processing power. It's difficult to come up with a
-> threshold which works well across the latest & fastest and really tiny CPUs.
-> I'll think about it some more but if you have some ideas, please feel free
-> to suggest.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: 6cf8eb521e6cd6d3dc1f494a4b39ab42cc939444  [LOCAL] arm64: renesas: defconfig: Update renesas_defconfig
 
-Geert, do you mind posting the full kernel logs for the affected machines?
+elapsed time: 722m
 
-Thanks.
+configs tested: 109
+configs skipped: 7
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r025-20230710   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                     haps_hs_smp_defconfig   gcc  
+arc                  randconfig-r012-20230711   gcc  
+arc                  randconfig-r043-20230710   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                     am200epdkit_defconfig   clang
+arm                     davinci_all_defconfig   clang
+arm                                 defconfig   gcc  
+arm                  randconfig-r046-20230710   gcc  
+arm                       spear13xx_defconfig   clang
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+csky                                defconfig   gcc  
+csky                 randconfig-r024-20230710   gcc  
+hexagon              randconfig-r041-20230710   clang
+hexagon              randconfig-r045-20230710   clang
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-r004-20230711   clang
+i386         buildonly-randconfig-r005-20230711   clang
+i386         buildonly-randconfig-r006-20230711   clang
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-i001-20230710   gcc  
+i386                 randconfig-i002-20230710   gcc  
+i386                 randconfig-i003-20230710   gcc  
+i386                 randconfig-i004-20230710   gcc  
+i386                 randconfig-i005-20230710   gcc  
+i386                 randconfig-i006-20230710   gcc  
+i386                 randconfig-i011-20230711   gcc  
+i386                 randconfig-i012-20230711   gcc  
+i386                 randconfig-i013-20230711   gcc  
+i386                 randconfig-i014-20230711   gcc  
+i386                 randconfig-i015-20230711   gcc  
+i386                 randconfig-i016-20230711   gcc  
+i386                 randconfig-r003-20230710   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r034-20230710   gcc  
+m68k                             allmodconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r001-20230710   gcc  
+m68k                 randconfig-r011-20230711   gcc  
+m68k                 randconfig-r013-20230711   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                 randconfig-r004-20230710   clang
+mips                 randconfig-r026-20230710   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r032-20230710   gcc  
+openrisc             randconfig-r022-20230710   gcc  
+openrisc             randconfig-r033-20230710   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r016-20230711   gcc  
+powerpc              randconfig-r021-20230710   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r023-20230710   clang
+riscv                randconfig-r042-20230710   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r044-20230710   clang
+sh                               allmodconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r005-20230710   gcc  
+sparc64              randconfig-r006-20230710   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   clang
+um                                  defconfig   gcc  
+um                             i386_defconfig   gcc  
+um                   randconfig-r031-20230710   clang
+um                           x86_64_defconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64       buildonly-randconfig-r001-20230711   clang
+x86_64       buildonly-randconfig-r002-20230711   clang
+x86_64       buildonly-randconfig-r003-20230711   clang
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-x001-20230710   clang
+x86_64               randconfig-x002-20230710   clang
+x86_64               randconfig-x003-20230710   clang
+x86_64               randconfig-x004-20230710   clang
+x86_64               randconfig-x005-20230710   clang
+x86_64               randconfig-x006-20230710   clang
+x86_64               randconfig-x011-20230710   gcc  
+x86_64               randconfig-x012-20230710   gcc  
+x86_64               randconfig-x013-20230710   gcc  
+x86_64               randconfig-x014-20230710   gcc  
+x86_64               randconfig-x015-20230710   gcc  
+x86_64               randconfig-x016-20230710   gcc  
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+xtensa               randconfig-r035-20230710   gcc  
 
 -- 
-tejun
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
