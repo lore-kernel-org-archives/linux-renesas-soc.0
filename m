@@ -2,114 +2,62 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9740AEB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jul 2023 10:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2600EEB64DA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jul 2023 10:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232145AbjGLKjv (ORCPT
+        id S232103AbjGLKjx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Jul 2023 06:39:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54874 "EHLO
+        Wed, 12 Jul 2023 06:39:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232103AbjGLKjs (ORCPT
+        with ESMTP id S232014AbjGLKjs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 12 Jul 2023 06:39:48 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C392C1BD5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Jul 2023 03:39:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36B619BC
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Jul 2023 03:39:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :in-reply-to:references:mime-version:content-transfer-encoding;
-         s=k1; bh=XIx8o6dRr6LSlPdxlhiBn/U0xttPWFCrtxJ+KD+bLBA=; b=DWPepZ
-        D1PebXMUixy75nKh75/dIczIR29Jr8te7ShCACx+RoY6AyYNrhGPgMON0X/yaAQM
-        HivISiyLbkehlswy05B3/cXLBS6iWTkUSrvCXANg9hLlmOOqHQkhM2MWT4lYWqXd
-        LQEpWPO7aV/M3mOnEVeKs80+cQmDxEV+pX+mPIXNhHRu0k2mGvbA4REuccIY7ClG
-        KFD+fEQuNHyFoy0tzmd1jinORJE9ORr45K4ghKn8wqMvbt3PfqE/CP0skGiGYUIE
-        Y05IMZ3gIZY2JbFDR6QzrPYmooeUn9ncwIBikbWY3ZLtAuEf7F55VQBIbbOs5nua
-        oHmyLFgIMNj9uOdg==
-Received: (qmail 1580134 invoked from network); 12 Jul 2023 12:39:40 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2023 12:39:40 +0200
-X-UD-Smtp-Session: l3s3148p1@8KQ51UcAir8ujnvL
+        :mime-version:content-transfer-encoding; s=k1; bh=hAryLDGRrsOSmX
+        ERGiB+C1mBG99Cn/6s0lKFEG1FTPQ=; b=YXoWev0KyTGtvp+bj7nkmCNVCELEw+
+        7TTy1JM9WhcgH+DQN9VUFr2SPCn9phdr6tmdNK1tmWbnG4q34QnM5uBw2vXV/vw3
+        C+a7gZCtEkSpZwPBCR8aroMGQ8Q2Gb0Eh6ZPVKC9xkNxg3ujXY8e6RJPcT2nNk+c
+        brtM9aBbEly14fgbVJB8Cj0ZlZJXePS59UYVMBZm2WPr6jTNqaM+GuhHc6Odgl8I
+        nfhxFxhW1CQULqJd1xViLFVU+jT8OZpvYi6NYR09q3Kv4Hpt6o923FMLSmu1Xu5i
+        NffGMwECvpLzLwyS0XNrmgcneI1DUcwwwHg6s+OpL7DhtT0W8f619ckg==
+Received: (qmail 1580036 invoked from network); 12 Jul 2023 12:39:38 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2023 12:39:38 +0200
+X-UD-Smtp-Session: l3s3148p1@WKjb1EcA/L0ujnvL
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 RESEND 2/2] PCI: rcar-host: add support for optional regulators
-Date:   Wed, 12 Jul 2023 12:39:16 +0200
-Message-Id: <20230712103916.1631-3-wsa+renesas@sang-engineering.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 RESEND 0/2] KingFisher: support regulators for PCIe
+Date:   Wed, 12 Jul 2023 12:39:14 +0200
+Message-Id: <20230712103916.1631-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230712103916.1631-1-wsa+renesas@sang-engineering.com>
-References: <20230712103916.1631-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The KingFisher board has regulators. They just need to be en-/disabled,
-so we can leave the handling to devm. Order variables in reverse-xmas
-while we are here.
+Here are the patches to make PCIe cards work in the slot CN15 on a
+KingFisher board. No code changes since v3, only rebased to 6.5-rc1 and
+Geert's tag on patch 2 added. I think all the acks are now in place.
+Please apply.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pci/controller/pcie-rcar-host.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Wolfram Sang (2):
+  dt-bindings: PCI: rcar-pci-host: add optional regulators
+  PCI: rcar-host: add support for optional regulators
 
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index 88975e40ee2f..7aecc114af4f 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -29,6 +29,7 @@
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
- 
- #include "pcie-rcar.h"
- 
-@@ -953,14 +954,20 @@ static const struct of_device_id rcar_pcie_of_match[] = {
- 	{},
- };
- 
-+/* Design note 346 from Linear Technology says order is not important */
-+static const char * const rcar_pcie_supplies[] = {
-+	"vpcie12v", "vpcie3v3", "vpcie1v5"
-+};
-+
- static int rcar_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	struct pci_host_bridge *bridge;
- 	struct rcar_pcie_host *host;
- 	struct rcar_pcie *pcie;
-+	unsigned int i;
- 	u32 data;
- 	int err;
--	struct pci_host_bridge *bridge;
- 
- 	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
- 	if (!bridge)
-@@ -971,6 +978,13 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	pcie->dev = dev;
- 	platform_set_drvdata(pdev, host);
- 
-+	for (i = 0; i < ARRAY_SIZE(rcar_pcie_supplies); i++) {
-+		err = devm_regulator_get_enable_optional(dev, rcar_pcie_supplies[i]);
-+		if (err < 0 && err != -ENODEV)
-+			return dev_err_probe(dev, err, "can't enable regulator %s\n",
-+					     rcar_pcie_supplies[i]);
-+	}
-+
- 	pm_runtime_enable(pcie->dev);
- 	err = pm_runtime_get_sync(pcie->dev);
- 	if (err < 0) {
+ .../devicetree/bindings/pci/rcar-pci-host.yaml   | 11 +++++++++++
+ drivers/pci/controller/pcie-rcar-host.c          | 16 +++++++++++++++-
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+
 -- 
 2.30.2
 
