@@ -2,94 +2,97 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3627EB64D9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jul 2023 10:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15228EB64DA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jul 2023 10:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232198AbjGLKgn (ORCPT
+        id S232168AbjGLKju (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Jul 2023 06:36:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50800 "EHLO
+        Wed, 12 Jul 2023 06:39:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232364AbjGLKgY (ORCPT
+        with ESMTP id S231696AbjGLKjs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2023 06:36:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3002213C
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Jul 2023 03:36:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5F7FF61727
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Jul 2023 10:35:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B0CC433C9;
-        Wed, 12 Jul 2023 10:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689158151;
-        bh=INdFQfgIyhiR16pfnEfxc5l33JhDxIjOcb4/GfrG67o=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Wk4W+NmhMNlQFyqga/owzrGNGl80fdqoJhfhaMaCpmusBMRoJGOTmlzR7L/ByOkGw
-         qtJs7ygl1psnml4vwLH1KKwkwEtMPG/dw9pJBw53xjCwivcDek1pPUCWpO9z5YouVc
-         P86ZCqFqe+/bvHlITFwW/yqLoyvywGMzww06Pf1l1Q4nNTFyflTs6hV8c2yW0LXbBz
-         ftnxMeCIZGdD3VuGQhRyKcedzymZ5IFGW8Z9GBpAo3SExp8LxhvbAR2/JlM+Dhg8gH
-         m44Afp/hF5mVF2ErCneaGUb5wa6yripZlGYRoGeSxjdsBlWzQUuHI7rRkRfVsuyQE7
-         2fsYThsmNjlCg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-In-Reply-To: <20230629104200.102663-1-biju.das.jz@bp.renesas.com>
-References: <20230629104200.102663-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v2] regulator: raa215300: Change the scope of the
- variables {clkin_name, xin_name}
-Message-Id: <168915814931.10612.166602938872042440.b4-ty@kernel.org>
-Date:   Wed, 12 Jul 2023 11:35:49 +0100
+        Wed, 12 Jul 2023 06:39:48 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8887A1BCD
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Jul 2023 03:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=from:to:cc:subject:date:message-id
+        :in-reply-to:references:mime-version:content-transfer-encoding;
+         s=k1; bh=RMPpbL5pi3zks0WVQZWgFf7tY7RqsEyq+Epl3RqNfZ8=; b=PFs+wz
+        LgOAfFQC9PHfwITrPZSfdO8mD4CcJQwwjGficl6pZH3ODtWUjB/oPzcpoYcN2SE3
+        mby3n2pb02LXpJmVdaUcVGiWn35T0eZU69BFm+GY+AcCxEXhY4KTOiDyM5jbnvzL
+        MOc8hYaedjlNTLg1AVnmumjnoUezuctOkYYEDDMOccrWa/O8NMQP+Ny8SFv68n5L
+        paZqP+EzVvzAK0FV0ApkB4autNaEfS/PGhASeAb+OnQlH8GHCnGZf7chsQWSE2RY
+        L+UmkO88uEPIQkmkh1NyhP9XHkHd7CsXCF8O6LEtMYLA6rDejRhZyGTvJ+/8epIr
+        bcner/LtEuElJ8pA==
+Received: (qmail 1580077 invoked from network); 12 Jul 2023 12:39:39 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2023 12:39:39 +0200
+X-UD-Smtp-Session: l3s3148p1@YuIu1UcAgL8ujnvL
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 RESEND 1/2] dt-bindings: PCI: rcar-pci-host: add optional regulators
+Date:   Wed, 12 Jul 2023 12:39:15 +0200
+Message-Id: <20230712103916.1631-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230712103916.1631-1-wsa+renesas@sang-engineering.com>
+References: <20230712103916.1631-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 29 Jun 2023 11:42:00 +0100, Biju Das wrote:
-> Change the scope of the variables {clkin_name, xin_name} from global->local
-> to fix the below warning.
-> 
-> drivers/regulator/raa215300.c:42:12: sparse: sparse: symbol 'xin_name' was
-> not declared. Should it be static?
-> 
-> 
-> [...]
+Support regulators found on the e.g. KingFisher board for miniPCIe and
+add a 12v regulator while we are here.
 
-Applied to
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/pci/rcar-pci-host.yaml        | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: raa215300: Change the scope of the variables {clkin_name, xin_name}
-      commit: 42a95739c5bc4d7a6e93a43117e9283598ba2287
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
+index 8fdfbc763d70..b6a7cb32f61e 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
++++ b/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
+@@ -68,6 +68,15 @@ properties:
+   phy-names:
+     const: pcie
+ 
++  vpcie1v5-supply:
++    description: The 1.5v regulator to use for PCIe.
++
++  vpcie3v3-supply:
++    description: The 3.3v regulator to use for PCIe.
++
++  vpcie12v-supply:
++    description: The 12v regulator to use for PCIe.
++
+ required:
+   - compatible
+   - reg
+@@ -121,5 +130,7 @@ examples:
+              clock-names = "pcie", "pcie_bus";
+              power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+              resets = <&cpg 319>;
++             vpcie3v3-supply = <&pcie_3v3>;
++             vpcie12v-supply = <&pcie_12v>;
+          };
+     };
+-- 
+2.30.2
 
