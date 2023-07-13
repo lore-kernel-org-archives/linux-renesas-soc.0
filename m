@@ -2,73 +2,57 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D90B7C001DE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jul 2023 15:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4B0C0015E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jul 2023 15:15:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233422AbjGMPN7 (ORCPT
+        id S232701AbjGMPPu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jul 2023 11:13:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48260 "EHLO
+        Thu, 13 Jul 2023 11:15:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232637AbjGMPN5 (ORCPT
+        with ESMTP id S229916AbjGMPPt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2023 11:13:57 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 294B41995
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2023 08:13:54 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id 46e09a7af769-6b9b52724ccso211006a34.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2023 08:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1689261233; x=1691853233;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vKItIj72hAMISxrHuiptAazhKs3+4zy1JRueUjGy5Ew=;
-        b=NvoVqy+i+mnEFizC6cyI4tKkjRUzdIMxHI6T47qeAHyF4Q6/L3U+tTGDjasHRni1AU
-         fktyvF65XgoIU7RlFMvgicibCb893Cldfl1T7tVVAxOr5lh70tLRsyZRkymRi6RCnuMS
-         xkkpwNY5dfX6xcM6vWx18rc757dPg8PtXWpXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689261233; x=1691853233;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vKItIj72hAMISxrHuiptAazhKs3+4zy1JRueUjGy5Ew=;
-        b=DqAZd21gFqwlVtzFw72z8A+I8bKyl6ZP67wEoa2T2BuyVCNWkiPpktihKYjFZLMe/y
-         31ByGjrRvcMIJhUqB4AfzH36zNITDiUFYB/0BOutXYV5hOPDgLfC2rzmax/p3bXTtx+Z
-         6uOmoqBc/Igk//K4JMUAxi9R1Wm5DyoomQHyUOEW89uqIfeAcHNtP4k36S7VPnvhT+Ub
-         JuI8rtO2lXSTGkJkvTgqMtEW4qHTqT3lFpTCrCMS+Ws24nSPwouFXKxJnOVaK6dmzUEc
-         pI7P642f7QnBCHm4WALox2FF8NfjqP57/MFKBRHb5n3E/fHN9Zzbyh02Ynbb2qLf+YJd
-         cpaQ==
-X-Gm-Message-State: ABy/qLaRWn08INdxm0JiFo6vrLn6OVvN3wH117CwG9R0m8fsr5PsrA7f
-        KimvsxfS3I0xaNb+UOIltxwoo0/AsFpm8gcJwT/ZoQ==
-X-Google-Smtp-Source: APBJJlHtE5c8wHOjK2XlzTrKRRRWPhRVgFoS1nYDhbG1B7GIj4O2xkmQSwhe9ChNs2Bf9GKElXop9w==
-X-Received: by 2002:a9d:694c:0:b0:6b7:54cd:2115 with SMTP id p12-20020a9d694c000000b006b754cd2115mr1952873oto.3.1689261233041;
-        Thu, 13 Jul 2023 08:13:53 -0700 (PDT)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com. [209.85.210.53])
-        by smtp.gmail.com with ESMTPSA id d3-20020a0568301b6300b006b991ac6408sm2434279ote.40.2023.07.13.08.13.52
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jul 2023 08:13:52 -0700 (PDT)
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6b9b52724ccso210971a34.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2023 08:13:52 -0700 (PDT)
-X-Received: by 2002:a05:6902:211:b0:c8b:3:e399 with SMTP id
- j17-20020a056902021100b00c8b0003e399mr1398441ybs.44.1689259342555; Thu, 13
- Jul 2023 07:42:22 -0700 (PDT)
+        Thu, 13 Jul 2023 11:15:49 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB2EA2;
+        Thu, 13 Jul 2023 08:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689261347; x=1720797347;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FdV+ihBB75TX4OJUKwPysdCuraDJ8JqOsAXrG1NV6Qw=;
+  b=XdGzFJhISwDiDbnWBAYeUC4zJhZMbuZfQYsgCs3V8XtGKbcbkDzg+upH
+   txq/U57jv5mpjolZu18qryVqA916tu/0TXOCShnci127EuC4+BRL70Fp7
+   d0Acc92wVR9HsFcQ5YHhzYoK3W3EooSCdF56SKXOlL6Bjh9vWgZsuYmog
+   YaNwg8iU7PQGml94JycoI+kr74eyStfrO1xJnHdZ1yiVU9M31ZkNOsv4E
+   ezj2G69i6yChQSzMru2O9eSvUmv2FSadzvlYJjNB71dremcK92v8P+SUD
+   gJ9FT02JXZx2yFsR4MNlOtWaUB9/xERDqf/t7dlte8lrIN/8nCMYE0Zhv
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="350089204"
+X-IronPort-AV: E=Sophos;i="6.01,203,1684825200"; 
+   d="scan'208";a="350089204"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 08:15:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="968656199"
+X-IronPort-AV: E=Sophos;i="6.01,203,1684825200"; 
+   d="scan'208";a="968656199"
+Received: from apaulaux-mobl.ger.corp.intel.com (HELO [10.213.206.56]) ([10.213.206.56])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 08:14:58 -0700
+Message-ID: <d6160aeb-6344-b272-775a-cb665dca46ac@linux.intel.com>
+Date:   Thu, 13 Jul 2023 16:14:55 +0100
 MIME-Version: 1.0
-References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
- <87fs5tgpvv.fsf@intel.com> <CAOw6vbLO_UaXDbTCtAQJgthXOUMPqEV+c2MQhP-1DuK44OhGxw@mail.gmail.com>
- <20230713130337.fd2l67r23g2irifx@pengutronix.de>
-In-Reply-To: <20230713130337.fd2l67r23g2irifx@pengutronix.de>
-From:   Sean Paul <seanpaul@chromium.org>
-Date:   Thu, 13 Jul 2023 10:41:45 -0400
-X-Gmail-Original-Message-ID: <CAOw6vbKtjyUm+OqO7LSV1hDOMQATwkEWP4GzBbbXib0i5EviUQ@mail.gmail.com>
-Message-ID: <CAOw6vbKtjyUm+OqO7LSV1hDOMQATwkEWP4GzBbbXib0i5EviUQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
 Subject: Re: [Freedreno] [PATCH RFC v1 00/52] drm/crtc: Rename struct
  drm_crtc::dev to drm_dev
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Sean Paul <seanpaul@chromium.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
 Cc:     Jani Nikula <jani.nikula@intel.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Xinliang Liu <xinliang.liu@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -96,7 +80,7 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         linux-sunxi@lists.linux.dev, Stylon Wang <stylon.wang@amd.com>,
         Tim Huang <Tim.Huang@amd.com>,
         Suraj Kandpal <suraj.kandpal@intel.com>,
-        =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@igalia.com>,
         Andi Shyti <andi.shyti@linux.intel.com>,
         Yifan Zhang <yifan1.zhang@amd.com>,
         Leo Li <sunpeng.li@amd.com>,
@@ -107,11 +91,11 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         Jessica Zhang <quic_jesszhan@quicinc.com>,
         Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
         Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        =?UTF-8?Q?=C5=81ukasz_Bartosik?= <lb@semihalf.com>,
+        =?UTF-8?Q?=c5=81ukasz_Bartosik?= <lb@semihalf.com>,
         Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
         Andrew Jeffery <andrew@aj.id.au>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
         kernel@pengutronix.de, Alex Deucher <alexander.deucher@amd.com>,
         freedreno@lists.freedesktop.org,
         Claudiu Beznea <claudiu.beznea@microchip.com>,
@@ -120,7 +104,7 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
         Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>,
-        =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
+        =?UTF-8?Q?Jos=c3=a9_Roberto_de_Souza?= <jose.souza@intel.com>,
         virtualization@lists.linux-foundation.org,
         Thierry Reding <thierry.reding@gmail.com>,
         Yongqin Liu <yongqin.liu@linaro.org>,
@@ -140,7 +124,7 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         VMware Graphics Reviewers 
         <linux-graphics-maintainer@vmware.com>,
         Ben Skeggs <bskeggs@redhat.com>,
-        =?UTF-8?Q?Jouni_H=C3=B6gander?= <jouni.hogander@intel.com>,
+        =?UTF-8?Q?Jouni_H=c3=b6gander?= <jouni.hogander@intel.com>,
         Dave Airlie <airlied@redhat.com>, linux-mips@vger.kernel.org,
         Gurchetan Singh <gurchetansingh@chromium.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -173,7 +157,7 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         linux-hyperv@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
         Melissa Wen <melissa.srw@gmail.com>,
-        =?UTF-8?B?TWHDrXJhIENhbmFs?= <mairacanal@riseup.net>,
+        =?UTF-8?Q?Ma=c3=adra_Canal?= <mairacanal@riseup.net>,
         Luca Coelho <luciano.coelho@intel.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -196,7 +180,6 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
         Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
         Tomi Valkeinen <tomba@kernel.org>,
         Deepak R Varma <drv@mailo.com>,
@@ -207,7 +190,7 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Tian Tao <tiantao6@hisilicon.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Khaled Almahallawy <khaled.almahallawy@intel.com>,
         linux-stm32@st-md-mailman.stormreply.com,
         Emma Anholt <emma@anholt.net>,
@@ -231,12 +214,11 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Jiasheng Jiang <jiasheng@iscas.ac.cn>,
         Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
         Vinod Govindapillai <vinod.govindapillai@intel.com>,
         linux-tegra@vger.kernel.org,
         =?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <marek.olsak@amd.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= 
+        =?UTF-8?Q?Joaqu=c3=adn_Ignacio_Aramend=c3=ada?= 
         <samsagax@gmail.com>, Melissa Wen <mwen@igalia.com>,
         Hans de Goede <hdegoede@redhat.com>,
         linux-mediatek@lists.infradead.org,
@@ -256,63 +238,87 @@ Cc:     Jani Nikula <jani.nikula@intel.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Nirmoy Das <nirmoy.das@intel.com>, Lang Yu <Lang.Yu@amd.com>,
         Lucas Stach <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
+ <87fs5tgpvv.fsf@intel.com>
+ <CAOw6vbLO_UaXDbTCtAQJgthXOUMPqEV+c2MQhP-1DuK44OhGxw@mail.gmail.com>
+ <20230713130337.fd2l67r23g2irifx@pengutronix.de>
+ <CAOw6vbKtjyUm+OqO7LSV1hDOMQATwkEWP4GzBbbXib0i5EviUQ@mail.gmail.com>
+ <78be52b8-5ffb-601a-84b2-ead2894973a6@suse.de>
+From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Organization: Intel Corporation UK Plc
+In-Reply-To: <78be52b8-5ffb-601a-84b2-ead2894973a6@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jul 13, 2023 at 9:04=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> hello Sean,
->
-> On Wed, Jul 12, 2023 at 02:31:02PM -0400, Sean Paul wrote:
-> > I'd really prefer this patch (series or single) is not accepted. This
-> > will cause problems for everyone cherry-picking patches to a
-> > downstream kernel (LTS or distro tree). I usually wouldn't expect
-> > sympathy here, but the questionable benefit does not outweigh the cost
-> > IM[biased]O.
->
-> I agree that for backports this isn't so nice. However with the split
-> approach (that was argumented against here) it's not soo bad. Patch #1
-> (and similar changes for the other affected structures) could be
-> trivially backported and with that it doesn't matter if you write dev or
-> drm (or whatever name is chosen in the end); both work in the same way.
 
-Patch #1 avoids the need to backport the entire set, however every
-change occuring after the rename patches will cause conflicts on
-future cherry-picks. Downstream kernels will have to backport the
-whole set. Backporting the entire set will create an epoch in
-downstream kernels where cherry-picking patches preceding this set
-will need to undergo conflict resolution as well. As mentioned in my
-previous email, I don't expect sympathy here, it's part of maintaining
-a downstream kernel, but there is a real cost to kernel consumers.
+On 13/07/2023 16:09, Thomas Zimmermann wrote:
+> Hi
+> 
+> Am 13.07.23 um 16:41 schrieb Sean Paul:
+>> On Thu, Jul 13, 2023 at 9:04 AM Uwe Kleine-König
+>> <u.kleine-koenig@pengutronix.de> wrote:
+>>>
+>>> hello Sean,
+>>>
+>>> On Wed, Jul 12, 2023 at 02:31:02PM -0400, Sean Paul wrote:
+>>>> I'd really prefer this patch (series or single) is not accepted. This
+>>>> will cause problems for everyone cherry-picking patches to a
+>>>> downstream kernel (LTS or distro tree). I usually wouldn't expect
+>>>> sympathy here, but the questionable benefit does not outweigh the cost
+>>>> IM[biased]O.
+>>>
+>>> I agree that for backports this isn't so nice. However with the split
+>>> approach (that was argumented against here) it's not soo bad. Patch #1
+>>> (and similar changes for the other affected structures) could be
+>>> trivially backported and with that it doesn't matter if you write dev or
+>>> drm (or whatever name is chosen in the end); both work in the same way.
+>>
+>> Patch #1 avoids the need to backport the entire set, however every
+>> change occuring after the rename patches will cause conflicts on
+>> future cherry-picks. Downstream kernels will have to backport the
+>> whole set. Backporting the entire set will create an epoch in
+>> downstream kernels where cherry-picking patches preceding this set
+>> will need to undergo conflict resolution as well. As mentioned in my
+>> previous email, I don't expect sympathy here, it's part of maintaining
+>> a downstream kernel, but there is a real cost to kernel consumers.
+>>
+>>>
+>>> But even with the one-patch-per-rename approach I'd consider the
+>>> renaming a net win, because ease of understanding code has a big value.
+>>> It's value is not so easy measurable as "conflicts when backporting",
+>>> but it also matters in say two years from now, while backporting
+>>> shouldn't be an issue then any more.
+>>
+>> You've rightly identified the conjecture in your statement. I've been
+>> on both sides of the argument, having written/maintained drm code
+>> upstream and cherry-picked changes to a downstream kernel. Perhaps
+>> it's because drm's definition of dev is ingrained in my muscle memory,
+>> or maybe it's because I don't do a lot of upstream development these
+>> days, but I just have a hard time seeing the benefit here.
+> 
+> I can only second what Sean writes. I've done quite a bit of backporting 
+> of DRM code. It's hard already. And this kind of change is going to to 
+> affect almost every backported DRM patch in the coming years. Not just 
+> for distribution kernels, but also for upstream's stable series. It's 
+> really only possible to do this change over many releases while keeping 
+> compatible with the old name. So the more I think about it, the less I 
+> like this change.
 
->
-> But even with the one-patch-per-rename approach I'd consider the
-> renaming a net win, because ease of understanding code has a big value.
-> It's value is not so easy measurable as "conflicts when backporting",
-> but it also matters in say two years from now, while backporting
-> shouldn't be an issue then any more.
+I've done my share of backporting, and still am doing it, so I can say I 
+dislike it as much as anyone, however.. Is this an argument which the 
+kernel as a wider entity typically accepts? If not could it be a 
+slippery slope to start a precedent?
 
-You've rightly identified the conjecture in your statement. I've been
-on both sides of the argument, having written/maintained drm code
-upstream and cherry-picked changes to a downstream kernel. Perhaps
-it's because drm's definition of dev is ingrained in my muscle memory,
-or maybe it's because I don't do a lot of upstream development these
-days, but I just have a hard time seeing the benefit here.
+It is a honest question - I am not familiar if there were or were not 
+any similar discussions in the past.
 
-I appreciate your engagement on the topic, thank you!
+My gut feeling is that *if* there is a consensus that something 
+_improves_ the code base significantly, backporting pains should 
+probably not be weighted very heavily as a contra argument.
 
-Sean
+Regards,
 
->
-> Thanks for your input, best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
-|
+Tvrtko
