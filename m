@@ -2,106 +2,74 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8490EC0015E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jul 2023 13:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5851FC0015E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jul 2023 14:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbjGMNwI (ORCPT
+        id S231994AbjGMO45 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jul 2023 09:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
+        Thu, 13 Jul 2023 10:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229763AbjGMNwI (ORCPT
+        with ESMTP id S231671AbjGMO44 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2023 09:52:08 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B1E11992
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2023 06:52:05 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6264:77e5:42e2:477d])
-        by baptiste.telenet-ops.be with bizsmtp
-        id Lds32A00n3wy6xv01ds4WR; Thu, 13 Jul 2023 15:52:04 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qJwjc-001Gu5-4G;
-        Thu, 13 Jul 2023 15:52:03 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qJwjj-00GYb5-PY;
-        Thu, 13 Jul 2023 15:52:03 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v6.5-rc1
-Date:   Thu, 13 Jul 2023 15:52:00 +0200
-Message-Id: <0bc4270375c10231a202c971465f7f992b8ddff3.1689256294.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        Thu, 13 Jul 2023 10:56:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2572106
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2023 07:56:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5FC9561849
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2023 14:56:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0DCAC433C8;
+        Thu, 13 Jul 2023 14:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689260214;
+        bh=TLrNv/65R1yYjwwxIAAJ9m/BnNgiu6kbJYskLPyGqL4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Bfng/N0xvWkuRfaPkxNenAwzirZHA1D685tNTKX8/92DnO8oY5u8eWsJOh0kzabJk
+         bso2NFofLX7KEXI+WqNWHQQpBT/PP3iXpaEQjOyIbnuWHr45oXPMxyYLBSBQDv+XpO
+         7gF6xkMw//GIdBV2FVJ+zfxBRt2LnqzL3q8VfCqQb5Jybmdoh1QMQD3CJrLbDL2KYc
+         9Zv+YIQ8rVSKWShJzuJeotm5/RIqLAb8rWA6SvkV/okDN5lZcTALL8yzUnWHga+fQI
+         rGMi/PXKOc/D+c+KDhjAcdRfTwNHB36kzgGYZtd/NF8x/oPeGQVajEpixlNao3rtZz
+         CYGus1h1Ud59w==
+Date:   Thu, 13 Jul 2023 15:56:50 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: Add module build support for RZ/G2L MTU3a
+Message-ID: <20230713145650.GG10768@google.com>
+References: <20230711092841.119161-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230711092841.119161-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Refresh the defconfig for Renesas ARM64 systems:
-  - Disable CONFIG_AMPERE_ERRATUM_AC03_CPU_38 (not applicable),
-  - Enable Renesas RZ/V2M Clocked Serial Interface (CSI) SPI support
-    (RZ/V2M Evaluation Kit),
-  - Enable Renesas RAA215300 PMIC with integrated ISL1208 RTC, and
-    Renesas RZ/G2L Multi-Function Timer Pulse Unit 3 PWM support (RZ/G2L
-    SMARC EVK).
+On Tue, 11 Jul 2023, Biju Das wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not intended for upstream merge.
-To be applied to the topic/renesas-defconfig branch.
----
- arch/arm64/configs/renesas_defconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+> Modified Kconfig to enable module build support for RZ/G2L MTU3a driver.
+> While at it, added module.h header file.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v1->v2:
+>  * Added Rb tag from Geert.
+>  * Added module.h header file and updated commit description
+>  * Retained Rb tag as the change is trivail.
+> ---
+>  drivers/mfd/Kconfig   | 2 +-
+>  drivers/mfd/rz-mtu3.c | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 231139e2b8646062..cb145a0cbe2212cb 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -26,6 +26,7 @@ CONFIG_SCHED_AUTOGROUP=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_PROFILING=y
- CONFIG_ARCH_RENESAS=y
-+# CONFIG_AMPERE_ERRATUM_AC03_CPU_38 is not set
- # CONFIG_ARM64_ERRATUM_1542419 is not set
- # CONFIG_ARM64_ERRATUM_1508412 is not set
- # CONFIG_ARM64_ERRATUM_2051678 is not set
-@@ -177,6 +178,7 @@ CONFIG_I2C_RCAR=y
- CONFIG_SPI=y
- CONFIG_SPI_RPCIF=y
- CONFIG_SPI_RSPI=y
-+CONFIG_SPI_RZV2M_CSI=y
- CONFIG_SPI_SH_MSIOF=y
- CONFIG_SPI_SPIDEV=y
- CONFIG_PINCTRL_SINGLE=y
-@@ -199,6 +201,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_BD9571MWV=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_PWM=y
-+CONFIG_REGULATOR_RAA215300=y
- CONFIG_MEDIA_SUPPORT=y
- # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
- CONFIG_MEDIA_CAMERA_SUPPORT=y
-@@ -332,6 +335,7 @@ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
- CONFIG_LEDS_TRIGGER_CPU=y
- CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
- CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_ISL1208=y
- CONFIG_RTC_DRV_RX8581=y
- CONFIG_DMADEVICES=y
- CONFIG_RCAR_DMAC=y
-@@ -386,6 +390,7 @@ CONFIG_RZG2L_ADC=y
- CONFIG_PWM=y
- CONFIG_PWM_RCAR=y
- CONFIG_PWM_RENESAS_TPU=y
-+CONFIG_PWM_RZ_MTU3=y
- CONFIG_RESET_RZG2L_USBPHY_CTRL=y
- CONFIG_PHY_CAN_TRANSCEIVER=y
- CONFIG_PHY_R8A779F0_ETHERNET_SERDES=y
+Applied, thanks
+
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
