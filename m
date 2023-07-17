@@ -2,46 +2,46 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8C2C04A94
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jul 2023 17:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4664DEB64DC
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jul 2023 17:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbjGQR3z (ORCPT
+        id S231514AbjGQR36 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 13:29:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
+        Mon, 17 Jul 2023 13:29:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231297AbjGQR3v (ORCPT
+        with ESMTP id S231303AbjGQR3x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 13:29:51 -0400
+        Mon, 17 Jul 2023 13:29:53 -0400
 Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E5BD171A;
-        Mon, 17 Jul 2023 10:29:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 572C41720;
+        Mon, 17 Jul 2023 10:29:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689614965; x=1721150965;
+  t=1689614970; x=1721150970;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=igrPqVNDiG+d18EW9HPDbcv/hLv1Vv/Njn91XssjJ2c=;
-  b=H15w2/DWOiuPX++WaDRYPn47gSeX2+2rjKc55ej15uLxZJAc7fLtZmfr
-   ak/UppvwYRl3LOr/epx5EH0nzDVXEU7AZYdUUdFfiQppvyj4pChe9m4XI
-   sh1R7K+a6HLL0l08+Aga9EkDgnSDhdRtSRbgzSp4gc6tA542tG3By2CTE
-   7WQXGoxDkz1/kl34f8MGqB25Jg/bUySHYh7VM3KFA31wqgQ65cWBzFxvk
-   P4X+AmdCqOpzvpsmPhv5XDTAFwyPT5NpUImw6l59JaoR/5CRi9kq58SJ/
-   qWChHZ7eXeoGcXNX4IJgPFw13AWIL1Bow3PM3bMSSIMsZI+PvPTie8wEM
+  bh=B7c/2IAOq+QysQrRwOIUK5uC4eESX4PCd4P3LMdk97c=;
+  b=WuRzze1Y+/L64c2n/xwY175f+SEXpd4tlEJNKcYs3U99ggHUtsQMhNfC
+   Cr26z/NJLVw/LC8402ErDLEy/AKaF+mM/IULQ/amcK2OfVK4FgaG/oqz+
+   n4+wli124n9/35DOH8MymHBhSTVMaXlxFLq1xmaz9JXBhWPgFAA63BkY7
+   CIBbSR+iLM0YyQ1xac3D/LTEzDjvmq6SjX3zIY3N06o8U5pAF9d3YzA46
+   qOMA3Vt3KtlQUDaRuqkWI8GgI3uxPt7cpKPUn5H7kDc0t297BHpz21hVO
+   KORRGhm+kCMVDKuvU/Lywsd7ZHb0JjmLVLU+CNehGc2jI4WJASj5IGM0s
    A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="355926981"
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="355927005"
 X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="355926981"
+   d="scan'208";a="355927005"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 10:28:49 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="673604211"
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="673604218"
 X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="673604211"
+   d="scan'208";a="673604218"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga003.jf.intel.com with ESMTP; 17 Jul 2023 10:28:40 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 2D1F469F; Mon, 17 Jul 2023 20:28:40 +0300 (EEST)
+        id 51B8F748; Mon, 17 Jul 2023 20:28:40 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
@@ -71,9 +71,9 @@ Cc:     Andy Shevchenko <andy@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v2 07/10] pinctrl: mediatek: Switch to use DEFINE_NOIRQ_DEV_PM_OPS() helper
-Date:   Mon, 17 Jul 2023 20:28:18 +0300
-Message-Id: <20230717172821.62827-8-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 10/10] pinctrl: tegra: Switch to use DEFINE_NOIRQ_DEV_PM_OPS() helper
+Date:   Mon, 17 Jul 2023 20:28:21 +0300
+Message-Id: <20230717172821.62827-11-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 In-Reply-To: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
 References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
@@ -88,58 +88,25 @@ switch the driver to use it instead of open coded variant.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 5 +----
- drivers/pinctrl/mediatek/pinctrl-paris.c      | 9 +++------
- 2 files changed, 4 insertions(+), 10 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 665dec419e7c..2bf5082d3aa9 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -922,10 +922,7 @@ static int mtk_eint_resume(struct device *device)
- 	return mtk_eint_do_resume(pctl->eint);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 4547cf66d03b..734c71ef005b 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -747,10 +747,7 @@ static int tegra_pinctrl_resume(struct device *dev)
+ 	return 0;
  }
  
--const struct dev_pm_ops mtk_eint_pm_ops = {
--	.suspend_noirq = mtk_eint_suspend,
--	.resume_noirq = mtk_eint_resume,
+-const struct dev_pm_ops tegra_pinctrl_pm = {
+-	.suspend_noirq = &tegra_pinctrl_suspend,
+-	.resume_noirq = &tegra_pinctrl_resume
 -};
-+DEFINE_NOIRQ_DEV_PM_OPS(mtk_eint_pm_ops, mtk_eint_suspend, mtk_eint_resume);
++DEFINE_NOIRQ_DEV_PM_OPS(tegra_pinctrl_pm, tegra_pinctrl_suspend, tegra_pinctrl_resume);
  
- static int mtk_pctrl_build_state(struct platform_device *pdev)
+ static bool tegra_pinctrl_gpio_node_has_range(struct tegra_pmx *pmx)
  {
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 33d6c3fb7908..b1cbd5bafa2e 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -1119,24 +1119,21 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(mtk_paris_pinctrl_probe);
- 
--static int mtk_paris_pinctrl_suspend(struct device *device)
-+static int mtk_paris_suspend(struct device *device)
- {
- 	struct mtk_pinctrl *pctl = dev_get_drvdata(device);
- 
- 	return mtk_eint_do_suspend(pctl->eint);
- }
- 
--static int mtk_paris_pinctrl_resume(struct device *device)
-+static int mtk_paris_resume(struct device *device)
- {
- 	struct mtk_pinctrl *pctl = dev_get_drvdata(device);
- 
- 	return mtk_eint_do_resume(pctl->eint);
- }
- 
--const struct dev_pm_ops mtk_paris_pinctrl_pm_ops = {
--	.suspend_noirq = mtk_paris_pinctrl_suspend,
--	.resume_noirq = mtk_paris_pinctrl_resume,
--};
-+DEFINE_NOIRQ_DEV_PM_OPS(mtk_paris_pinctrl_pm_ops, mtk_paris_suspend, mtk_paris_resume);
- 
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("MediaTek Pinctrl Common Driver V2 Paris");
 -- 
 2.40.0.1.gaa8946217a0b
 
