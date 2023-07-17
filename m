@@ -2,72 +2,93 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E84EB64DC
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jul 2023 15:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E5EEB64DC
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jul 2023 15:58:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbjGQPk5 (ORCPT
+        id S231313AbjGQP63 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 11:40:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42666 "EHLO
+        Mon, 17 Jul 2023 11:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229934AbjGQPk4 (ORCPT
+        with ESMTP id S229731AbjGQP63 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 11:40:56 -0400
-X-Greylist: delayed 975 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 17 Jul 2023 08:40:54 PDT
-Received: from mailrelay4-1.pub.mailoutpod2-cph3.one.com (mailrelay4-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:403::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D950F136
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jul 2023 08:40:54 -0700 (PDT)
+        Mon, 17 Jul 2023 11:58:29 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6991AD8;
+        Mon, 17 Jul 2023 08:58:28 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1bb119be881so30510765ad.3;
+        Mon, 17 Jul 2023 08:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=rsa1;
-        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-         from:date:from;
-        bh=IJcqcl6YEATV0uM7dxR1yHiimSywkAB+NQBBC5aE6+U=;
-        b=InhAakGoJC6TOowEjtt+No6UauAzL4N3ZPqmJQe8HlxHNJBGJc3T+Z9IF8GCFjgWZ9AF7M8j2CVqW
-         noKX6PAdSZrl5oCtQztP7hn0ti0TvO9+4j7j4GzhsZGfRhg4tATuESUV7Icdj5UNdSA+2Lr15V6HMo
-         yjKkpKvB6+HCFsbSyRRKOatZyODe8Y8ajMemLzDoE6g/BVt7wKPdPn931q0mWlQCaL4HAZ9DmWE7i8
-         QFIPB8MrIQKTCc/d56ISpEAnEB5R1EuHn16gUJ0wWcOcky8aZVkKKksd7+Vt/HqRICnaYSU3Q63/SG
-         i2dGNSFziaQWEm3CaQI3mdb0Zsx5zrA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=ed1;
-        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-         from:date:from;
-        bh=IJcqcl6YEATV0uM7dxR1yHiimSywkAB+NQBBC5aE6+U=;
-        b=QUQREvwKt81IQjYRveEITn5JFi+JnH9YZ5vjRSweTgZl1GiUe37MMw22NG6k8mjxuTgW7n2YLqn31
-         bGYSuQhCA==
-X-HalOne-ID: 0480e098-24b6-11ee-94b9-592bb1efe9dc
-Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-        by mailrelay4 (Halon) with ESMTPSA
-        id 0480e098-24b6-11ee-94b9-592bb1efe9dc;
-        Mon, 17 Jul 2023 15:24:28 +0000 (UTC)
-Date:   Mon, 17 Jul 2023 17:24:27 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH resend] drm/panel: simple: Simplify matching using
- of_device_get_match_data()
-Message-ID: <20230717152427.GA559179@ravnborg.org>
-References: <bca1d6f6a0582988accbb48d709aa9de7ad49ed7.1689600771.git.geert+renesas@glider.be>
+        d=gmail.com; s=20221208; t=1689609508; x=1692201508;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+bOfqSwedf3Zn21Be8Z3oCoR/wNU1/sBKf0jcoXXRO8=;
+        b=npF7FHYGUavYivdyLxELB5DvoBm34UpJxi7V7EPkkKrLHuxMnpR3Ky9ouyZIIKoNwb
+         N/42Tmbh4A0n50DvCIPYptfsBkBgqtn147YYZfqdZTEJ7aoAKlpSK9GNcKGzGZh5Z+oL
+         C/Ek8AiFMAWPulaCNDXAOR4xPpyPUv+hf141zQppuhDqDLtQ5QMnVr/sf5dnrOtk0KM1
+         i0dO+oleTvFmDCo4yH/Tkf0ZHuCsI1nCztJ6Aki0LCVOATkqW+R9n9u9tYFHoc6ky5/A
+         dR0gykuSQ5kuWie4/87nKnRoQQ5vZcANQkGzxtSa4yc9sIxNPbM/jPHe/PtpJwJmK0ff
+         +Rbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689609508; x=1692201508;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+bOfqSwedf3Zn21Be8Z3oCoR/wNU1/sBKf0jcoXXRO8=;
+        b=QU7PfcVLuROGIt3JDh3RLSqaIXw2dbYrCiXT3UGRAkjV9B+jw5L26QqwdxJfgEAmai
+         HP2pD4xSKIQglkSB6tnLhiKGabUfqPHb3EUPKxZ5jKwPXIkxROsquRvRb691ArdhHtif
+         UMxbJZTCweRMP/aRYxRJl/magBfw8/Nk7NS7nH7sWgW3oDB28228cRl866D9hBE8sxNm
+         qUBDnt9OyQsdg60E3bDM5/SVT43jbgRBfdg0WtK5YafxB9NKHEIBdbDtdx5LMBW2NhnY
+         n+dAcX7b5kzfZjgMf5Wq41XP8XJBd9KbfRJPajy7qboHEhH6s8Pf/WvYdMKUxsImhw3d
+         /STQ==
+X-Gm-Message-State: ABy/qLYiCHP10ZwYX/TFJP3gWfBo/yJ11kNuk/3lppFEyos1ZRdNgAGZ
+        Wje/BYxCJcPQ3+AjKm6EAOtOTE3uQYM=
+X-Google-Smtp-Source: APBJJlHZ3Gbjkve88NhR9/q2qTAMAAOVov6PqsLxqyP2icKlqu4fu5MWS3NmCHRlEMhSjCM6bDkfoA==
+X-Received: by 2002:a17:902:dac3:b0:1b8:a56b:989d with SMTP id q3-20020a170902dac300b001b8a56b989dmr14909641plx.6.1689609507652;
+        Mon, 17 Jul 2023 08:58:27 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1e30:2510:1b57:a9cd])
+        by smtp.gmail.com with ESMTPSA id i5-20020a1709026ac500b0019ee045a2b3sm35195plt.308.2023.07.17.08.58.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jul 2023 08:58:27 -0700 (PDT)
+Date:   Mon, 17 Jul 2023 08:58:24 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Mike Looijmans <mike.looijmans@topic.nl>,
+        Andreas Helbech Kleist <andreaskleist@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-input@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] Input: exc3000 - Simplify probe()
+Message-ID: <ZLVlIPHdmEGdG5D1@google.com>
+References: <20230717131756.240645-1-biju.das.jz@bp.renesas.com>
+ <20230717131756.240645-2-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bca1d6f6a0582988accbb48d709aa9de7ad49ed7.1689600771.git.geert+renesas@glider.be>
+In-Reply-To: <20230717131756.240645-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jul 17, 2023 at 03:34:13PM +0200, Geert Uytterhoeven wrote:
-> Both the patform_driver and mipi_dsi_driver structures contain pointers
-> to the match table used, so the custom code to obtain match and match
-> data can be replaced by calls to of_device_get_match_data().
+Hi Biju,
+
+On Mon, Jul 17, 2023 at 02:17:55PM +0100, Biju Das wrote:
+> The exc3000_id.driver_data could store a pointer to the info,
+> like for ACPI/DT-based matching, making I2C, ACPI and DT-based
+> matching more similar.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> After that, we can simplify the probe() by replacing device_get_
+> match_data() and i2c_match_id() by i2c_get_match_data() as we have
+> similar I2C, ACPI and DT-based matching table.
 
-Simpler - nice.
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Have you considered enhancing device_get_match_data() to allow for
+bus-specific "get_match_data" implementations? This way the drivers
+would simply call device_get_match_data() and not care if they are I2C,
+SPI, or something else...
 
-I expect someone else to pick it up.
+Thanks.
 
-	Sam
+-- 
+Dmitry
