@@ -2,114 +2,122 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E631C001DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jul 2023 12:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06071C001B0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jul 2023 12:57:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbjGQMlS (ORCPT
+        id S231248AbjGQM5L (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 08:41:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55680 "EHLO
+        Mon, 17 Jul 2023 08:57:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231305AbjGQMlI (ORCPT
+        with ESMTP id S231193AbjGQM5F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 08:41:08 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 65E29E4C;
-        Mon, 17 Jul 2023 05:41:07 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.01,211,1684767600"; 
-   d="scan'208";a="173145683"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Jul 2023 21:41:06 +0900
-Received: from localhost.localdomain (unknown [10.226.92.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9CADD4000C79;
-        Mon, 17 Jul 2023 21:41:04 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-rtc@vger.kernel.org,
+        Mon, 17 Jul 2023 08:57:05 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F38D1985;
+        Mon, 17 Jul 2023 05:56:31 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7819024000C;
+        Mon, 17 Jul 2023 12:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1689598586;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PnbG2kna/5QHT9EZoNLKAsarfs/yBYCw+wIH6z79yFg=;
+        b=L3ynjZzdDrKioO7hJOL+RAxumAMQrd9Qkr6ob1LF2HeIoCuFwpRb7O1zlHkHb5n8/3TLRh
+        br4PQlx/DdcCn7fS8gdNR7NPsD4zbBdebrMkuskiiyIJS58fbDJQfaDUl7tcnDidCHeym7
+        2za91K0g8bAC0sJ4xb6mL41/uTPEYvm+RfVVj2mQAXrNFiE2GTrc8Zwwpya7z/F8UNff7B
+        Ulkvv+2ogRhACcaXBfLKWTd5AbeDIAjGgirFkTGOF3PorGnz0tyvq/fQ2wlDzk0960doBG
+        jnlf6utD8cNLFCGYyLfq7M2vyyG+UUSQeWl7SW0rSD918cKMmesEkH5vElAVHw==
+Date:   Mon, 17 Jul 2023 14:56:23 +0200
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marex@denx.de>,
+        Alexander Helms <alexander.helms.jy@renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/2] rtc: pcf85063: Simplify probe()
-Date:   Mon, 17 Jul 2023 13:40:58 +0100
-Message-Id: <20230717124059.196244-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230717124059.196244-1-biju.das.jz@bp.renesas.com>
-References: <20230717124059.196244-1-biju.das.jz@bp.renesas.com>
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: vc5: Use i2c_get_match_data() instead of
+ device_get_match_data()
+Message-ID: <20230717145623.473cffca@booty>
+In-Reply-To: <TYCPR01MB5933389C26B1C2FD6F35D97C863BA@TYCPR01MB5933.jpnprd01.prod.outlook.com>
+References: <20230716154442.93908-1-biju.das.jz@bp.renesas.com>
+        <20230716154442.93908-2-biju.das.jz@bp.renesas.com>
+        <CAMuHMdUjF-_pX53xaEXJVP1Yvz-o=0bdHLx7ekqbqrGX7ygCLA@mail.gmail.com>
+        <TYCPR01MB5933389C26B1C2FD6F35D97C863BA@TYCPR01MB5933.jpnprd01.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: luca.ceresoli@bootlin.com
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The pcf85063_ids[].driver_data could store a pointer to the config,
-like for DT-based matching, making I2C and DT-based matching
-more similar.
+Hello Biju,
 
-After that, we can simplify the probe() by replacing of_device_get_
-match_data() and i2c_match_id() by i2c_get_match_data() as we have
-similar I2C and DT-based matching table.
+On Mon, 17 Jul 2023 07:46:34 +0000
+Biju Das <biju.das.jz@bp.renesas.com> wrote:
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2:
- * Added Rb tag from Geert.
----
- drivers/rtc/rtc-pcf85063.c | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+> Hi Geert,
+>=20
+> Thanks for the review.
+>=20
+> > Subject: Re: [PATCH 1/2] clk: vc5: Use i2c_get_match_data() instead of
+> > device_get_match_data()
+> >=20
+> > Hi Biju,
+> >=20
+> > On Sun, Jul 16, 2023 at 5:44=E2=80=AFPM Biju Das <biju.das.jz@bp.renesa=
+s.com>
+> > wrote: =20
+> > > The device_get_match_data(), is to get match data for firmware
+> > > interfaces such as just OF/ACPI. This driver has I2C matching table as
+> > > well. Use
+> > > i2c_get_match_data() to get match data for I2C, ACPI and DT-based
+> > > matching.
 
-diff --git a/drivers/rtc/rtc-pcf85063.c b/drivers/rtc/rtc-pcf85063.c
-index e517abfaee2a..a3b75c96ff9a 100644
---- a/drivers/rtc/rtc-pcf85063.c
-+++ b/drivers/rtc/rtc-pcf85063.c
-@@ -556,8 +556,6 @@ static struct pcf85063_config pcf85063_cfg[] = {
- 	},
- };
- 
--static const struct i2c_device_id pcf85063_ids[];
--
- static int pcf85063_probe(struct i2c_client *client)
- {
- 	struct pcf85063 *pcf85063;
-@@ -579,17 +577,9 @@ static int pcf85063_probe(struct i2c_client *client)
- 	if (!pcf85063)
- 		return -ENOMEM;
- 
--	if (client->dev.of_node) {
--		config = of_device_get_match_data(&client->dev);
--		if (!config)
--			return -ENODEV;
--	} else {
--		enum pcf85063_type type =
--			i2c_match_id(pcf85063_ids, client)->driver_data;
--		if (type >= PCF85063_LAST_ID)
--			return -ENODEV;
--		config = &pcf85063_cfg[type];
--	}
-+	config = i2c_get_match_data(client);
-+	if (!config)
-+		return -ENODEV;
- 
- 	pcf85063->regmap = devm_regmap_init_i2c(client, &config->regmap);
- 	if (IS_ERR(pcf85063->regmap))
-@@ -655,11 +645,11 @@ static int pcf85063_probe(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id pcf85063_ids[] = {
--	{ "pca85073a", PCF85063A },
--	{ "pcf85063", PCF85063 },
--	{ "pcf85063tp", PCF85063TP },
--	{ "pcf85063a", PCF85063A },
--	{ "rv8263", RV8263 },
-+	{ "pca85073a", .driver_data = (kernel_ulong_t)&pcf85063_cfg[PCF85063A] },
-+	{ "pcf85063", .driver_data = (kernel_ulong_t)&pcf85063_cfg[PCF85063] },
-+	{ "pcf85063tp", .driver_data = (kernel_ulong_t)&pcf85063_cfg[PCF85063TP] },
-+	{ "pcf85063a", .driver_data = (kernel_ulong_t)&pcf85063_cfg[PCF85063A] },
-+	{ "rv8263", .driver_data = (kernel_ulong_t)&pcf85063_cfg[RV8263] },
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, pcf85063_ids);
--- 
-2.25.1
+Good point, thanks!
 
+> > > --- a/drivers/clk/clk-versaclock5.c
+> > > +++ b/drivers/clk/clk-versaclock5.c
+> > > @@ -956,7 +956,9 @@ static int vc5_probe(struct i2c_client *client)
+> > >
+> > >         i2c_set_clientdata(client, vc5);
+> > >         vc5->client =3D client;
+> > > -       vc5->chip_info =3D device_get_match_data(&client->dev);
+> > > +       vc5->chip_info =3D i2c_get_match_data(client);
+> > > +       if (!vc5->chip_info)
+> > > +               return -ENODEV; =20
+> >=20
+> > Can this actually happen? All tables have data pointers. =20
+>=20
+> It is not needed. I just want to avoid people sending
+> patches as this function can return NULL, so add a check.
+>=20
+> Please let me know, whether I should remove this?
+> I am happy to send V2 taking out this check.
+
+I cannot foresee any sensible future use case for adding an entry
+without a data pointer as the whole driver is now heavily based on this
+data to handle so many variants. Also, the error checking did not exist
+before and the i2c match table is not introducing anything new in terms
+of .driver_data values.
+
+Thus I vote for not adding any error checking here.
+
+Otherwise looks good.
+
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
