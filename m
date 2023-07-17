@@ -2,99 +2,209 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC09EB64DC
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jul 2023 19:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E501CEB64DC
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jul 2023 21:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231686AbjGQT6I (ORCPT
+        id S230464AbjGQVQO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 15:58:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48412 "EHLO
+        Mon, 17 Jul 2023 17:16:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231881AbjGQT6D (ORCPT
+        with ESMTP id S229669AbjGQVQN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2023 15:58:03 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F0111FD8;
-        Mon, 17 Jul 2023 12:57:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1689623855;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bJG8CKg5RsX9ZJHlhcpEkkjn9nE0Nq+cmtnZoKDZkDU=;
-        b=FBGREnIdCWQho1a6phhQNfoJXlzN7h2e4HUCIz3VoIJ5kf25agL+cnSxm0BC3JI07TuUyu
-        kTCb0WDz6ha1JrdvqbU5OV6cx0Qesx9W78p8Jmyu+tQNwZESkqF327E+C2zTAlmbbI6nvX
-        TwzMQtIgrr/nWUa1lGlu9+FhjJykyQ4=
-Message-ID: <5e24b9afd2677454b21a93de872582788a327935.camel@crapouillou.net>
-Subject: Re: [PATCH v2 09/10] pinctrl: renesas: Switch to use
- DEFINE_NOIRQ_DEV_PM_OPS() helper
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Date:   Mon, 17 Jul 2023 21:57:32 +0200
-In-Reply-To: <CAHp75VetZ-+AFGzEQzx42cmTrHxyr7pGBy8kSxHUM9cJzp2o=A@mail.gmail.com>
-References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
-         <20230717172821.62827-10-andriy.shevchenko@linux.intel.com>
-         <03592cf5d6854dd5e534e0416de946fd38e4380c.camel@crapouillou.net>
-         <CAHp75VetZ-+AFGzEQzx42cmTrHxyr7pGBy8kSxHUM9cJzp2o=A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Mon, 17 Jul 2023 17:16:13 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAB5F130
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jul 2023 14:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689628570; x=1721164570;
+  h=date:from:to:cc:subject:message-id;
+  bh=HRMBV7Kjky3ysYL8uHWR5x018aCrpKoQnibXafFX8nY=;
+  b=LYADRDW7USe/1i+HXUOfFYC4d53fh4ov4UW25MGuRZeXJ2NXLCefcHqs
+   I9RXywIuhxCWqjEStwN2cplhwGZiyqVI25Bb10qXrwkVkC9ZOkqrhsXde
+   yZ5YuymWfrGx5mN1XyItoSBri5jjPEKEKWAeowSFsDsrXDKIYw2P83RcZ
+   HbjMJ++y7TfSiPt0L//oGS9SLbsdgvYaWP85yrH1ZT4BwSrQg8MXtJaND
+   3CTZ+DSuIr5Qzu9mrFSmBuxSZBLP07kC8Ibts3lDXFb3dhGp2dB2i3tvc
+   3mCH6MtGpDXN/nxEsujWt972ipu382pUIAao8VejK9idf1vAWTxNZJ3i9
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="346341808"
+X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
+   d="scan'208";a="346341808"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 14:16:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="813496638"
+X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
+   d="scan'208";a="813496638"
+Received: from lkp-server01.sh.intel.com (HELO c544d7fc5005) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Jul 2023 14:16:09 -0700
+Received: from kbuild by c544d7fc5005 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qLVZg-0009uf-26;
+        Mon, 17 Jul 2023 21:16:08 +0000
+Date:   Tue, 18 Jul 2023 05:15:44 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 3ab47fb8f0efac6bb296438ebb8917a4706505e3
+Message-ID: <202307180542.TRdBuFUy-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Le lundi 17 juillet 2023 =C3=A0 22:38 +0300, Andy Shevchenko a =C3=A9crit=
-=C2=A0:
-> On Mon, Jul 17, 2023 at 10:12=E2=80=AFPM Paul Cercueil <paul@crapouillou.=
-net>
-> wrote:
-> > Le lundi 17 juillet 2023 =C3=A0 20:28 +0300, Andy Shevchenko a =C3=A9cr=
-it :
->=20
-> ...
->=20
-> > I think you could do:
-> >=20
-> > .pm =3D IF_PTR(IS_ENABLED(CONFIG_ARM_PSCI_FW),
-> > pm_sleep_ptr(&sh_pfc_pm)),
-> >=20
-> > Then you wouldn't need the #if defined(CONFIG_ARM_PSCI_FW) guard
-> > either
-> > (as long as the code still compiles fine when that config option is
-> > disabled), and you wouldn't need those dummy callbacks.
->=20
-> Thanks for the hint, but it's ugly looking code.
-> If we go this direction, we would need local arm_psci_fw_ptr() macro
-> or so.
->=20
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 3ab47fb8f0efac6bb296438ebb8917a4706505e3  Merge branches 'renesas-next' and 'topic/renesas-defconfig', tag 'v6.5-rc2' into renesas-devel
 
-Sure, a small macro works too.
+elapsed time: 723m
 
--Paul
+configs tested: 137
+configs skipped: 6
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r002-20230717   gcc  
+alpha                randconfig-r024-20230717   gcc  
+alpha                randconfig-r026-20230717   gcc  
+arc                              allyesconfig   gcc  
+arc                          axs103_defconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r043-20230717   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                          exynos_defconfig   gcc  
+arm                         mv78xx0_defconfig   clang
+arm                          pxa168_defconfig   clang
+arm                          pxa910_defconfig   gcc  
+arm                  randconfig-r046-20230717   clang
+arm                          sp7021_defconfig   clang
+arm                        spear6xx_defconfig   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r035-20230717   clang
+csky                                defconfig   gcc  
+hexagon              randconfig-r041-20230717   clang
+hexagon              randconfig-r045-20230717   clang
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-r004-20230717   clang
+i386         buildonly-randconfig-r005-20230717   clang
+i386         buildonly-randconfig-r006-20230717   clang
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-i001-20230717   clang
+i386                 randconfig-i002-20230717   clang
+i386                 randconfig-i003-20230717   clang
+i386                 randconfig-i004-20230717   clang
+i386                 randconfig-i005-20230717   clang
+i386                 randconfig-i006-20230717   clang
+i386                 randconfig-i011-20230717   gcc  
+i386                 randconfig-i012-20230717   gcc  
+i386                 randconfig-i013-20230717   gcc  
+i386                 randconfig-i014-20230717   gcc  
+i386                 randconfig-i015-20230717   gcc  
+i386                 randconfig-i016-20230717   gcc  
+i386                 randconfig-r005-20230717   clang
+i386                 randconfig-r022-20230717   gcc  
+i386                 randconfig-r023-20230717   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r032-20230717   gcc  
+m68k                             allmodconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                        m5272c3_defconfig   gcc  
+m68k                 randconfig-r003-20230717   gcc  
+m68k                 randconfig-r004-20230717   gcc  
+m68k                 randconfig-r011-20230717   gcc  
+m68k                        stmark2_defconfig   gcc  
+m68k                           sun3_defconfig   gcc  
+microblaze                      mmu_defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                         bigsur_defconfig   gcc  
+mips                          malta_defconfig   clang
+mips                malta_qemu_32r6_defconfig   clang
+mips                      maltaaprp_defconfig   clang
+mips                        qi_lb60_defconfig   clang
+mips                 randconfig-r013-20230717   clang
+mips                 randconfig-r034-20230717   gcc  
+mips                 randconfig-r036-20230717   gcc  
+nios2                               defconfig   gcc  
+openrisc             randconfig-r025-20230717   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                generic-32bit_defconfig   gcc  
+parisc                generic-64bit_defconfig   gcc  
+parisc               randconfig-r015-20230717   gcc  
+parisc64                            defconfig   gcc  
+powerpc                      acadia_defconfig   clang
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                     asp8347_defconfig   gcc  
+powerpc                       eiger_defconfig   gcc  
+powerpc                     ep8248e_defconfig   gcc  
+powerpc                      katmai_defconfig   clang
+powerpc                     kmeter1_defconfig   clang
+powerpc                     ksi8560_defconfig   clang
+powerpc                     powernv_defconfig   clang
+powerpc                         ps3_defconfig   gcc  
+powerpc                     tqm8540_defconfig   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r006-20230717   clang
+riscv                randconfig-r042-20230717   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r033-20230717   clang
+s390                 randconfig-r044-20230717   gcc  
+sh                               allmodconfig   gcc  
+sh                          lboxre2_defconfig   gcc  
+sh                   rts7751r2dplus_defconfig   gcc  
+sh                   sh7724_generic_defconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r001-20230717   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   clang
+um                                  defconfig   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64       buildonly-randconfig-r001-20230717   clang
+x86_64       buildonly-randconfig-r002-20230717   clang
+x86_64       buildonly-randconfig-r003-20230717   clang
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-r031-20230717   clang
+x86_64               randconfig-x001-20230717   gcc  
+x86_64               randconfig-x002-20230717   gcc  
+x86_64               randconfig-x003-20230717   gcc  
+x86_64               randconfig-x004-20230717   gcc  
+x86_64               randconfig-x005-20230717   gcc  
+x86_64               randconfig-x006-20230717   gcc  
+x86_64               randconfig-x011-20230717   clang
+x86_64               randconfig-x012-20230717   clang
+x86_64               randconfig-x013-20230717   clang
+x86_64               randconfig-x014-20230717   clang
+x86_64               randconfig-x015-20230717   clang
+x86_64               randconfig-x016-20230717   clang
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+xtensa                    smp_lx200_defconfig   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
