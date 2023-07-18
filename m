@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFE5EB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22847C001DC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:55:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232562AbjGRQzL (ORCPT
+        id S232608AbjGRQzM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 12:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58070 "EHLO
+        Tue, 18 Jul 2023 12:55:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232608AbjGRQzA (ORCPT
+        with ESMTP id S232633AbjGRQzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 18 Jul 2023 12:55:00 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BC51996
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 09:54:54 -0700 (PDT)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147CD1BFE
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 09:54:57 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5803:2d6d:5bbc:e252])
-        by laurent.telenet-ops.be with bizsmtp
-        id Ngur2A0070ucMBo01gurj7; Tue, 18 Jul 2023 18:54:53 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id Ngur2A0090ucMBo01gur1N; Tue, 18 Jul 2023 18:54:55 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyD-001nYU-Aw;
+        id 1qLnyD-001nXa-2R;
         Tue, 18 Jul 2023 18:54:51 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyN-000gcO-C2;
+        id 1qLnyN-000gbL-3Y;
         Tue, 18 Jul 2023 18:54:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,10 +38,12 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v2 16/41] drm: renesas: shmobile: Improve error handling
-Date:   Tue, 18 Jul 2023 18:54:21 +0200
-Message-Id: <d64239a9c58422319ff2822c25a3027507815c4a.1689698048.git.geert+renesas@glider.be>
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Subject: [PATCH v2 03/41] media: uapi: Add MEDIA_BUS_FMT_RGB666_2X9_BE format
+Date:   Tue, 18 Jul 2023 18:54:08 +0200
+Message-Id: <6ac78cfa4aa38bc946c88c19090e40c9f5d4b36c.1689698048.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1689698048.git.geert+renesas@glider.be>
 References: <cover.1689698048.git.geert+renesas@glider.be>
@@ -51,61 +53,128 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Prepare for DT conversion, where panel probe can be deferred, by
-streamlining error propagation and handling:
-  - Use dev_err_probe() to avoid printing error messages in case of
-    probe deferral,
-  - Propagate errors where needed.
+Add the RGB666 9:9 format MEDIA_BUS_FMT_RGB666_2X9_BE, which is
+supported by the SH-Mobile LCD Controller.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-v2:
-  - Add Reviewed-by.
----
- drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c |  3 ++-
- drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c | 14 +++++++++++---
- 2 files changed, 13 insertions(+), 4 deletions(-)
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index 782767fc66d00c4f..91daab80b0ede058 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -255,7 +255,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 
- 	ret = shmob_drm_modeset_init(sdev);
- 	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to initialize mode setting\n");
-+		dev_err_probe(&pdev->dev, ret,
-+			      "failed to initialize mode setting\n");
- 		goto err_free_drm_dev;
- 	}
- 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-index 3051318ddc7999bc..1a62e7f8a8a9e6df 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-@@ -157,9 +157,17 @@ int shmob_drm_modeset_init(struct shmob_drm_device *sdev)
- 	if (ret)
- 		return ret;
- 
--	shmob_drm_crtc_create(sdev);
--	shmob_drm_encoder_create(sdev);
--	shmob_drm_connector_create(sdev, &sdev->encoder);
-+	ret = shmob_drm_crtc_create(sdev);
-+	if (ret < 0)
-+		return ret;
+v2:
+  - Add Reviewed-by,
+  - Drop unused MEDIA_BUS_FMT_RGB666_2X9_LE, as requested by Laurent.
+---
+ .../media/v4l/subdev-formats.rst              | 72 +++++++++++++++++++
+ include/uapi/linux/media-bus-format.h         |  3 +-
+ 2 files changed, 74 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/userspace-api/media/v4l/subdev-formats.rst b/Documentation/userspace-api/media/v4l/subdev-formats.rst
+index a3a35eeed70846ba..eb3cd20b0cf2e3d6 100644
+--- a/Documentation/userspace-api/media/v4l/subdev-formats.rst
++++ b/Documentation/userspace-api/media/v4l/subdev-formats.rst
+@@ -949,6 +949,78 @@ The following tables list existing packed RGB formats.
+       - b\ :sub:`2`
+       - b\ :sub:`1`
+       - b\ :sub:`0`
++    * .. _MEDIA-BUS-FMT-RGB666-2X9-BE:
 +
-+	ret = shmob_drm_encoder_create(sdev);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = shmob_drm_connector_create(sdev, &sdev->encoder);
-+	if (ret < 0)
-+		return ret;
++      - MEDIA_BUS_FMT_RGB666_2X9_BE
++      - 0x1025
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      - r\ :sub:`5`
++      - r\ :sub:`4`
++      - r\ :sub:`3`
++      - r\ :sub:`2`
++      - r\ :sub:`1`
++      - r\ :sub:`0`
++      - g\ :sub:`5`
++      - g\ :sub:`4`
++      - g\ :sub:`3`
++    * -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      -
++      - g\ :sub:`2`
++      - g\ :sub:`1`
++      - g\ :sub:`0`
++      - b\ :sub:`5`
++      - b\ :sub:`4`
++      - b\ :sub:`3`
++      - b\ :sub:`2`
++      - b\ :sub:`1`
++      - b\ :sub:`0`
+     * .. _MEDIA-BUS-FMT-BGR666-1X18:
  
- 	drm_kms_helper_poll_init(sdev->ddev);
+       - MEDIA_BUS_FMT_BGR666_1X18
+diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
+index a03c543cb072de30..f05f747e444d6686 100644
+--- a/include/uapi/linux/media-bus-format.h
++++ b/include/uapi/linux/media-bus-format.h
+@@ -34,7 +34,7 @@
  
+ #define MEDIA_BUS_FMT_FIXED			0x0001
+ 
+-/* RGB - next is	0x1025 */
++/* RGB - next is	0x1026 */
+ #define MEDIA_BUS_FMT_RGB444_1X12		0x1016
+ #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE	0x1001
+ #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE	0x1002
+@@ -46,6 +46,7 @@
+ #define MEDIA_BUS_FMT_RGB565_2X8_BE		0x1007
+ #define MEDIA_BUS_FMT_RGB565_2X8_LE		0x1008
+ #define MEDIA_BUS_FMT_RGB666_1X18		0x1009
++#define MEDIA_BUS_FMT_RGB666_2X9_BE		0x1025
+ #define MEDIA_BUS_FMT_BGR666_1X18		0x1023
+ #define MEDIA_BUS_FMT_RBG888_1X24		0x100e
+ #define MEDIA_BUS_FMT_RGB666_1X24_CPADHI	0x1015
 -- 
 2.34.1
 
