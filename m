@@ -2,149 +2,88 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2C6C001DC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 14:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFE5EB64DC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbjGROtC (ORCPT
+        id S232064AbjGRQy6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 10:49:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34690 "EHLO
+        Tue, 18 Jul 2023 12:54:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233409AbjGROsu (ORCPT
+        with ESMTP id S229707AbjGRQy4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2023 10:48:50 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F56A199C
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 07:48:33 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fc03aa6e04so53977475e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 07:48:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1689691711; x=1692283711;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z3PeHDGShv0/Y1SaTBcwWlp0DgIC2lqoORc+f/lyUag=;
-        b=a8ZhbREt0uH7gJ9cBW17TnUuIeY9lua9HO/AozN0hssszX/Phmw738FVOnzPEoqKPM
-         9g4ej6yAf/cuK4nEWyxjfBYtwq2t48q5q+nSJ+5OQlOzhsONtMZQnc+j6RCyZcUN1oz/
-         WJHBxQoDbrIWi0QyPl72CzT34+UDqSNvbRnQbvEHLyPBKdnn5nr3RT3iXFXMDi5NLpyh
-         FK1WZibGA4JoIsa4IL/UxG9P0jvEctbL10XGpyZRaKz+cEvrufbngxfwDfXOD15lMLC7
-         etDDOD4GaZZtjqltQf05sbbfL2Pe45hszeZCcAgOKSgMQQVmIrrOfYsXhwu4Vt/0vXQy
-         ekaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689691711; x=1692283711;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z3PeHDGShv0/Y1SaTBcwWlp0DgIC2lqoORc+f/lyUag=;
-        b=kzJE5hrPOLRU7eO1RBo/2urvD7LrUJa+brLesStFpcZBK4foN7F5n20VEXzK0WtkfZ
-         BbXnKF2Sx/qxPByQDykEkBxhYnMyY48qQRlcNrWzinLtKYnmNMhvHxuNLE97eLlfaZRB
-         29E/xkOQzrk4/ATUaNyZpGxV8a5a1s0jvitYCHP0XeT4I05mIrlnCElrHgL2IwJ7uVOY
-         KBi3El9WHz9qHS8wVDhI7JfZv5t7/GFDEe1hybIdxZ12/NaL+HuURS1/84jC7jhoRrMa
-         q9GnJXcbk52btvsZC9hl5KHhQ3x1BZBYb7dvm5bdguIkjTAgFEKxHp7Vfv5jw4Gi604h
-         qTnQ==
-X-Gm-Message-State: ABy/qLbohbRSihES/0Ed/G05ncJ00fGamiGZ2rmF+FvzIqo17Mydsbga
-        eXn3IlAdboXPh2rZ2jEtGteaQA==
-X-Google-Smtp-Source: APBJJlH8FgksFnhHrYa/bYaQB7Lf3bViTB+cyeDz8GdO0wx0X43DqCQgnSsDAnuYgKuzpQVErJxIqg==
-X-Received: by 2002:a05:600c:d5:b0:3fc:5606:c246 with SMTP id u21-20020a05600c00d500b003fc5606c246mr2052029wmm.22.1689691711290;
-        Tue, 18 Jul 2023 07:48:31 -0700 (PDT)
-Received: from [10.0.2.15] ([82.78.167.79])
-        by smtp.gmail.com with ESMTPSA id f22-20020a7bc8d6000000b003fbb5142c4bsm10659329wml.18.2023.07.18.07.48.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jul 2023 07:48:30 -0700 (PDT)
-Message-ID: <b0bdccb7-e10e-8d8a-fb64-0d41248adf8a@tuxon.dev>
-Date:   Tue, 18 Jul 2023 17:48:25 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 06/10] pinctrl: at91: Switch to use
- DEFINE_NOIRQ_DEV_PM_OPS() helper
-Content-Language: en-US
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Balsam CHIHI <bchihi@baylibre.com>,
+        Tue, 18 Jul 2023 12:54:56 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F979199
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 09:54:54 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5803:2d6d:5bbc:e252])
+        by albert.telenet-ops.be with bizsmtp
+        id Ngur2A0080ucMBo06gurSX; Tue, 18 Jul 2023 18:54:52 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qLnyD-001nXe-30;
+        Tue, 18 Jul 2023 18:54:51 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qLnyN-000gbQ-4A;
+        Tue, 18 Jul 2023 18:54:51 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
- <20230717172821.62827-7-andriy.shevchenko@linux.intel.com>
-From:   claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20230717172821.62827-7-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 04/41] drm: renesas: shmobile: Fix overlay plane disable
+Date:   Tue, 18 Jul 2023 18:54:09 +0200
+Message-Id: <ec54bb73d54c73a238d306b7fffb7a4c7fb039ac.1689698048.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1689698048.git.geert+renesas@glider.be>
+References: <cover.1689698048.git.geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 17.07.2023 20:28, Andy Shevchenko wrote:
-> Since pm.h provides a helper for system no-IRQ PM callbacks,
-> switch the driver to use it instead of open coded variant.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Merely writing zero to the CHn Source Image Format Register is not
+sufficient to disable a plane, as the programmed register value is not
+propagated immediately to the current side.  This can be seen when using
+the -P option of modetest: the extra plane is displayed correctly, but
+does not disappear after exit.
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Fix this by doing the full update dance using the Blend Control
+Register, like is done when enabling the plane.
 
-> ---
->   drivers/pinctrl/pinctrl-at91.c | 10 ++++------
->   1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-> index 39956d821ad7..608f55c5ba5f 100644
-> --- a/drivers/pinctrl/pinctrl-at91.c
-> +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -1657,7 +1657,7 @@ static int gpio_irq_set_wake(struct irq_data *d, unsigned state)
->   	return 0;
->   }
->   
-> -static int __maybe_unused at91_gpio_suspend(struct device *dev)
-> +static int at91_gpio_suspend(struct device *dev)
->   {
->   	struct at91_gpio_chip *at91_chip = dev_get_drvdata(dev);
->   	void __iomem *pio = at91_chip->regbase;
-> @@ -1675,7 +1675,7 @@ static int __maybe_unused at91_gpio_suspend(struct device *dev)
->   	return 0;
->   }
->   
-> -static int __maybe_unused at91_gpio_resume(struct device *dev)
-> +static int at91_gpio_resume(struct device *dev)
->   {
->   	struct at91_gpio_chip *at91_chip = dev_get_drvdata(dev);
->   	void __iomem *pio = at91_chip->regbase;
-> @@ -1903,15 +1903,13 @@ static int at91_gpio_probe(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> -static const struct dev_pm_ops at91_gpio_pm_ops = {
-> -	NOIRQ_SYSTEM_SLEEP_PM_OPS(at91_gpio_suspend, at91_gpio_resume)
-> -};
-> +static DEFINE_NOIRQ_DEV_PM_OPS(at91_gpio_pm_ops, at91_gpio_suspend, at91_gpio_resume);
->   
->   static struct platform_driver at91_gpio_driver = {
->   	.driver = {
->   		.name = "gpio-at91",
->   		.of_match_table = at91_gpio_of_match,
-> -		.pm = pm_ptr(&at91_gpio_pm_ops),
-> +		.pm = pm_sleep_ptr(&at91_gpio_pm_ops),
->   	},
->   	.probe = at91_gpio_probe,
->   };
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+v2:
+  - Add Reviewed-by.
+---
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+index 850986cee848226a..0e34573c3cb3d032 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+@@ -215,7 +215,10 @@ static int shmob_drm_plane_disable(struct drm_plane *plane,
+ 
+ 	splane->format = NULL;
+ 
++	lcdc_write(sdev, LDBCR, LDBCR_UPC(splane->index));
+ 	lcdc_write(sdev, LDBnBSIFR(splane->index), 0);
++	lcdc_write(sdev, LDBCR,
++		   LDBCR_UPF(splane->index) | LDBCR_UPD(splane->index));
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
+
