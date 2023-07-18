@@ -2,113 +2,129 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C5BC04E69
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6BFCEB64DC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 18:36:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233538AbjGRQzh (ORCPT
+        id S230254AbjGRSgm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 12:55:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58284 "EHLO
+        Tue, 18 Jul 2023 14:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233252AbjGRQzP (ORCPT
+        with ESMTP id S230249AbjGRSgl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2023 12:55:15 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 308B919A9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 09:54:54 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5803:2d6d:5bbc:e252])
-        by michel.telenet-ops.be with bizsmtp
-        id Ngur2A00G0ucMBo06gurXK; Tue, 18 Jul 2023 18:54:53 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyD-001nYm-Dy;
-        Tue, 18 Jul 2023 18:54:51 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyN-000gcm-F7;
-        Tue, 18 Jul 2023 18:54:51 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
+        Tue, 18 Jul 2023 14:36:41 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168FFE8;
+        Tue, 18 Jul 2023 11:36:39 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1bb119be881so41282465ad.3;
+        Tue, 18 Jul 2023 11:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689705398; x=1692297398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ngs6NxqbbvKL5FGt10bZTML0qOvGXRNhOAXTfCZSuew=;
+        b=q9m1OtZKhN3VSqPbAApc76mgUM5Y/Bu3h9znBFqRO+gH9FL3aSv9ukyCf8SRaLoVPe
+         Nj3NcP3IAFCHYZz31ruYkH6UPrt7pO03cNHppaa3aOuZZOkaN6KqKQ1w2TNC4AfFks0b
+         nGD+0MpkWrbps0UNGbyHpwtvKqrOvBIlLJ1K++MJdk+//8X5RsxKO/3v4LNfdYSUMjgF
+         sbHEieXZOldT9tmTg7Zsb7VXS7GoR0VLknnE2YTnPXobF+Le3tqW+ufwoj0JzkKjF0+j
+         Kh79kHyqIHfQvZ/aAByD9wwqMOywgcPcMamQZHkMUx4dAyjV8CqUBbJw86CcxNnq9mKc
+         pJ2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689705398; x=1692297398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ngs6NxqbbvKL5FGt10bZTML0qOvGXRNhOAXTfCZSuew=;
+        b=IgRjJyQ36KkfFvhyEmgxfbvQhrR+Wh0fAQaTGtNxU0fYDkN37GiE58ruip5CdqECJN
+         XuZECZ6ON7jVRGZsB34g3yL3RxEFNFDlklfK2C25Hp59IFK3npmiDy+3YA3M4rvOeyWM
+         3ykqjRE2ks6h11gGxnfV1tNFvYJ8xBB1iND8YUAVnwoIKHosDowCINGM1dyPyij563Gx
+         Hc7faxODGCYOTiFEl78Uzkle3IPXyRpsuUWV1xxdKoUFxPt7ulGCI5El2vXrX2hQ+l5a
+         Z9epcTNdPwVcN+tbrw+bPHxGGn8pcNC9wCmDQCwBG2zy4TXZwOpFXUiaOvKGVMOuaUjd
+         sIow==
+X-Gm-Message-State: ABy/qLZstU3UMVIFT1mvCgPH5tkrBpiq9WjkoD4vcynJIxbJ2pHCErih
+        0SUEv1p6t5Gio9tCY3lDN9c=
+X-Google-Smtp-Source: APBJJlHjzkwqorRZXPAnihurwm3BMbvKE5lTP2uD0GkPBdxUx1Ujb6AY6SEEWQ9pbWtVvOyNWXcD1Q==
+X-Received: by 2002:a17:903:230e:b0:1b9:e97f:3846 with SMTP id d14-20020a170903230e00b001b9e97f3846mr20970670plh.15.1689705398201;
+        Tue, 18 Jul 2023 11:36:38 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:798:b6f:a67a:7ac1])
+        by smtp.gmail.com with ESMTPSA id 4-20020a170902c14400b001b9bebb7a9dsm2210659plj.90.2023.07.18.11.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 11:36:37 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 11:36:34 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Andreas Helbech Kleist <andreaskleist@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v2 21/41] drm: renesas: shmobile: Convert container helpers to static inline functions
-Date:   Tue, 18 Jul 2023 18:54:26 +0200
-Message-Id: <bb3ba827f6f9ba7ade437d4586afac17c3d17193.1689698048.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1689698048.git.geert+renesas@glider.be>
-References: <cover.1689698048.git.geert+renesas@glider.be>
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 1/2] Input: exc3000 - Simplify probe()
+Message-ID: <ZLbbslBiIQXFWpmN@google.com>
+References: <20230717131756.240645-1-biju.das.jz@bp.renesas.com>
+ <20230717131756.240645-2-biju.das.jz@bp.renesas.com>
+ <ZLVlIPHdmEGdG5D1@google.com>
+ <OS0PR01MB592264ADC86061AB003048DD863BA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <66228ad3-c087-418c-925f-b9fd4a60fb16@sirena.org.uk>
+ <ZLWIPPAfeR1+KbeH@google.com>
+ <OS0PR01MB59225D8CF3E96808DD776A8E863BA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OS0PR01MB59225D8CF3E96808DD776A8E863BA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace to conversion helper macros using container_of() by static
-inline functions, to improve type-safety.
+On Mon, Jul 17, 2023 at 06:45:27PM +0000, Biju Das wrote:
+> Hi Dmitry,
+> 
+> > Subject: Re: [PATCH v2 1/2] Input: exc3000 - Simplify probe()
+> > 
+> > On Mon, Jul 17, 2023 at 07:15:50PM +0100, Mark Brown wrote:
+> > > On Mon, Jul 17, 2023 at 04:35:02PM +0000, Biju Das wrote:
+> > >
+> > > > The .device_get_match_data callbacks are missing for I2C and SPI bus
+> > subsystems.
+> > > > Can you please throw some lights on this?
+> > >
+> > > It's the first time I've ever heard of that callback, I don't know why
+> > > whoever added it wouldn't have done those buses in particular or if it
+> > > just didn't happen.  Try adding it and if it works send the patches?
+> > 
+> > I think there is a disconnect. Right now device_get_match_data callbacks
+> > are part of fwnode_operations. I was proposing to add another optional
+> > device_get_match_data callback to 'struct bus_type' to allow individual
+> > buses control how match data is handled, before (or after) jumping into
+> > the fwnode-backed device_get_match_data callbacks.
+> 
+> That is what implemented here [1] and [2] right?
+> 
+> [1] https://elixir.bootlin.com/linux/v6.5-rc2/source/drivers/i2c/i2c-core-base.c#L117
+> [2] https://elixir.bootlin.com/linux/v6.5-rc2/source/drivers/spi/spi.c#L364
+> 
+> First it check for fwnode-backed device_get_match_data callbacks and
+> Fallback is bus-type based match.
+> 
+> Looks like you are proposing to unify [1] and [2] and you want the
+> logic to be other way around. ie, first bus-type match, then
+> fwnode-backed callbacks?
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c  | 11 ++++++++---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c |  5 ++++-
- 2 files changed, 12 insertions(+), 4 deletions(-)
+I do not have a strong preference for the ordering, i.e. I think it is
+perfectly fine to do the generic fwnode-based lookup and if there is no
+match have bus method called as a fallback, but I do not want driver
+writers to learn about multiple <bus-prefix>_get_match_data()
+implementations, I would prefer if they could call
+device_get_match_data() and the right thing happened in all cases.
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 9c66e00ed70ea582..207fa98fe76d6f88 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -258,7 +258,10 @@ static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
- 	lcdc_write(sdev, LDRCNTR, lcdc_read(sdev, LDRCNTR) ^ LDRCNTR_MRS);
- }
- 
--#define to_shmob_crtc(c)	container_of(c, struct shmob_drm_crtc, crtc)
-+static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
-+{
-+	return container_of(crtc, struct shmob_drm_crtc, crtc);
-+}
- 
- static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- {
-@@ -538,8 +541,10 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
-  * Connector
-  */
- 
--#define to_shmob_connector(c) \
--	container_of(c, struct shmob_drm_connector, connector)
-+static inline struct shmob_drm_connector *to_shmob_connector(struct drm_connector *connector)
-+{
-+	return container_of(connector, struct shmob_drm_connector, connector);
-+}
- 
- static int shmob_drm_connector_get_modes(struct drm_connector *connector)
- {
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-index 17e66a018689f648..258288c80756bf16 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-@@ -34,7 +34,10 @@ struct shmob_drm_plane {
- 	unsigned int crtc_h;
- };
- 
--#define to_shmob_plane(p)	container_of(p, struct shmob_drm_plane, plane)
-+static inline struct shmob_drm_plane *to_shmob_plane(struct drm_plane *plane)
-+{
-+	return container_of(plane, struct shmob_drm_plane, plane);
-+}
- 
- static void shmob_drm_plane_compute_base(struct shmob_drm_plane *splane,
- 					 struct drm_framebuffer *fb,
+Thanks.
+
 -- 
-2.34.1
-
+Dmitry
