@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3779C00528
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1EAC001DC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231927AbjGRQzY (ORCPT
+        id S233434AbjGRQzZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 12:55:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58118 "EHLO
+        Tue, 18 Jul 2023 12:55:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232111AbjGRQzG (ORCPT
+        with ESMTP id S232968AbjGRQzG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 18 Jul 2023 12:55:06 -0400
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7923D1BE7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 09:54:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCBF91BD6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 09:54:55 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5803:2d6d:5bbc:e252])
         by albert.telenet-ops.be with bizsmtp
-        id Ngur2A00v0ucMBo06gurSq; Tue, 18 Jul 2023 18:54:53 +0200
+        id Ngur2A00Q0ucMBo06gurSc; Tue, 18 Jul 2023 18:54:53 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyD-001nZE-Ie;
+        id 1qLnyD-001nYL-9c;
         Tue, 18 Jul 2023 18:54:51 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyN-000gdM-Jh;
+        id 1qLnyN-000gcD-Ag;
         Tue, 18 Jul 2023 18:54:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -37,12 +37,12 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sui Jingfeng <suijingfeng@loongson.cn>
-Subject: [PATCH v2 28/41] drm: renesas: shmobile: Rename shmob_drm_connector.connector
-Date:   Tue, 18 Jul 2023 18:54:33 +0200
-Message-Id: <6b292b4ef399cd6ec3932ec9eab7db9c49707d68.1689698048.git.geert+renesas@glider.be>
+Subject: [PATCH v2 14/41] drm: renesas: shmobile: Rename input clocks
+Date:   Tue, 18 Jul 2023 18:54:19 +0200
+Message-Id: <a55c2df072c91f053db65c998c675946ff4dbcc2.1689698048.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1689698048.git.geert+renesas@glider.be>
 References: <cover.1689698048.git.geert+renesas@glider.be>
@@ -52,55 +52,49 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Rename the "connector" member of the shmob_drm_connector subclass
-structure to "base", to improve readability.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
+Prepare for DT bindings by using more appropriate names for the input
+clocks.
+
+Note that all LDDCKR_ICKSEL_* definitions but the one for the bus clock
+are valid only for SH7724, so the clock selection code needs to be
+updated when extending clock support to other SoCs.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+[geert: Add note]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
 ---
 v2:
   - Add Reviewed-by.
 ---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 4 ++--
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 84a773a5363035e0..f55b5263e611c782 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -560,7 +560,7 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+index 64fc3fb02e6c6dc8..1157b4894ff319cd 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+@@ -74,15 +74,15 @@ static int shmob_drm_setup_clocks(struct shmob_drm_device *sdev,
  
- static inline struct shmob_drm_connector *to_shmob_connector(struct drm_connector *connector)
- {
--	return container_of(connector, struct shmob_drm_connector, connector);
-+	return container_of(connector, struct shmob_drm_connector, base);
- }
- 
- static int shmob_drm_connector_get_modes(struct drm_connector *connector)
-@@ -632,7 +632,7 @@ shmob_drm_connector_init(struct shmob_drm_device *sdev,
- 	if (!scon)
- 		return ERR_PTR(-ENOMEM);
- 
--	connector = &scon->connector;
-+	connector = &scon->base;
- 	scon->encoder = encoder;
- 	scon->mode = &sdev->pdata->panel.mode;
- 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-index 79cce0a0ada4cfce..2c6d7541427581a6 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-@@ -33,7 +33,7 @@ struct shmob_drm_crtc {
- };
- 
- struct shmob_drm_connector {
--	struct drm_connector connector;
-+	struct drm_connector base;
- 	struct drm_encoder *encoder;
- 	const struct videomode *mode;
- };
+ 	switch (clksrc) {
+ 	case SHMOB_DRM_CLK_BUS:
+-		clkname = "bus_clk";
++		clkname = "fck";
+ 		sdev->lddckr = LDDCKR_ICKSEL_BUS;
+ 		break;
+ 	case SHMOB_DRM_CLK_PERIPHERAL:
+-		clkname = "peripheral_clk";
++		clkname = "media";
+ 		sdev->lddckr = LDDCKR_ICKSEL_MIPI;
+ 		break;
+ 	case SHMOB_DRM_CLK_EXTERNAL:
+-		clkname = NULL;
++		clkname = "lclk";
+ 		sdev->lddckr = LDDCKR_ICKSEL_HDMI;
+ 		break;
+ 	default:
 -- 
 2.34.1
 
