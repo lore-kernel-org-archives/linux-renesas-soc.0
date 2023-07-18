@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 111D6EB64DD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1188C04E69
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232950AbjGRQzF (ORCPT
+        id S233015AbjGRQzG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 12:55:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58054 "EHLO
+        Tue, 18 Jul 2023 12:55:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232111AbjGRQy6 (ORCPT
+        with ESMTP id S232452AbjGRQzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2023 12:54:58 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02A00171B
+        Tue, 18 Jul 2023 12:55:00 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034C6198C
         for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 09:54:54 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5803:2d6d:5bbc:e252])
-        by albert.telenet-ops.be with bizsmtp
-        id Ngur2A00R0ucMBo06gurSd; Tue, 18 Jul 2023 18:54:52 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id Ngur2A00G0ucMBo01gurDG; Tue, 18 Jul 2023 18:54:52 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyD-001nYX-BX;
+        id 1qLnyD-001nY1-6K;
         Tue, 18 Jul 2023 18:54:51 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyN-000gcT-Ch;
+        id 1qLnyN-000gbn-7S;
         Tue, 18 Jul 2023 18:54:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -39,9 +39,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v2 17/41] drm: renesas: shmobile: Convert to use devm_request_irq()
-Date:   Tue, 18 Jul 2023 18:54:22 +0200
-Message-Id: <e0ffc4f5a39586d07f202abd4b458d40f7eb2b15.1689698048.git.geert+renesas@glider.be>
+Subject: [PATCH v2 09/41] drm: renesas: shmobile: Use %p4cc to print fourcc code
+Date:   Tue, 18 Jul 2023 18:54:14 +0200
+Message-Id: <90aaa3ebdb2bdce1d1f259cb8dc6c28890dc652a.1689698048.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1689698048.git.geert+renesas@glider.be>
 References: <cover.1689698048.git.geert+renesas@glider.be>
@@ -51,7 +51,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert to managed IRQ handling, to simplify cleanup.
+Replace the last printing of an hexadecimal fourcc format code by a
+pretty-printed format name, using the "%p4cc" format specifier.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
@@ -59,48 +60,24 @@ Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 v2:
   - Add Reviewed-by.
 ---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index 91daab80b0ede058..381e184abf552c4c 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -196,7 +196,6 @@ static int shmob_drm_remove(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+index 7e49e2873da1bb6f..36fedb2b74c8b7a2 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+@@ -184,8 +184,8 @@ shmob_drm_plane_update(struct drm_plane *plane, struct drm_crtc *crtc,
  
- 	drm_dev_unregister(ddev);
- 	drm_kms_helper_poll_fini(ddev);
--	free_irq(sdev->irq, ddev);
- 	drm_dev_put(ddev);
+ 	format = shmob_drm_format_info(fb->format->format);
+ 	if (format == NULL) {
+-		dev_dbg(sdev->dev, "update_plane: unsupported format %08x\n",
+-			fb->format->format);
++		dev_dbg(sdev->dev, "update_plane: unsupported format %p4cc\n",
++			&fb->format->format);
+ 		return -EINVAL;
+ 	}
  
- 	return 0;
-@@ -279,8 +278,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 		goto err_modeset_cleanup;
- 	sdev->irq = ret;
- 
--	ret = request_irq(sdev->irq, shmob_drm_irq, 0, ddev->driver->name,
--			  ddev);
-+	ret = devm_request_irq(&pdev->dev, sdev->irq, shmob_drm_irq, 0,
-+			       ddev->driver->name, ddev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to install IRQ handler\n");
- 		goto err_modeset_cleanup;
-@@ -292,14 +291,12 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	 */
- 	ret = drm_dev_register(ddev, 0);
- 	if (ret < 0)
--		goto err_irq_uninstall;
-+		goto err_modeset_cleanup;
- 
- 	drm_fbdev_generic_setup(ddev, 16);
- 
- 	return 0;
- 
--err_irq_uninstall:
--	free_irq(sdev->irq, ddev);
- err_modeset_cleanup:
- 	drm_kms_helper_poll_fini(ddev);
- err_free_drm_dev:
 -- 
 2.34.1
 
