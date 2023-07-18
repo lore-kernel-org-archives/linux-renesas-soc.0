@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972B1EB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66D6C001DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jul 2023 16:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231937AbjGRQzJ (ORCPT
+        id S231896AbjGRQzK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 12:55:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58056 "EHLO
+        Tue, 18 Jul 2023 12:55:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231896AbjGRQzA (ORCPT
+        with ESMTP id S232562AbjGRQzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 18 Jul 2023 12:55:00 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0361C198D
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 030191723
         for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jul 2023 09:54:54 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5803:2d6d:5bbc:e252])
-        by michel.telenet-ops.be with bizsmtp
-        id Ngur2A00J0ucMBo06gurXM; Tue, 18 Jul 2023 18:54:52 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id Ngur2A00F0ucMBo01gurGZ; Tue, 18 Jul 2023 18:54:51 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyD-001nYz-Fq;
+        id 1qLnyD-001nYb-CD;
         Tue, 18 Jul 2023 18:54:51 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qLnyN-000gd1-H1;
+        id 1qLnyN-000gcX-DI;
         Tue, 18 Jul 2023 18:54:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 24/41] drm: renesas: shmobile: Use media bus formats in platform data
-Date:   Tue, 18 Jul 2023 18:54:29 +0200
-Message-Id: <a3272a3e0953d7a9fd59dad737595efccabea5a0.1689698048.git.geert+renesas@glider.be>
+Subject: [PATCH v2 18/41] drm: renesas: shmobile: Remove custom plane destroy callback
+Date:   Tue, 18 Jul 2023 18:54:23 +0200
+Message-Id: <3413108e3110b8b9ca3954769de27326882d0077.1689698048.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1689698048.git.geert+renesas@glider.be>
 References: <cover.1689698048.git.geert+renesas@glider.be>
@@ -50,110 +50,45 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the custom shmob_drm_interface enumeration values with standard
-media bus formats.  This simplifies driver handling of bus formats and
-prepares for DT support.
+There is no need to call drm_plane_force_disable() from the plane's
+.destroy() callback, as the plane should have been disabled already
+before.  See also commit 3c858a33858baa8c ("drm/plane_helper: don't
+disable plane in destroy function") for the generic plane helper case.
+
+After removing this call, shmob_drm_plane_destroy() becomes a simple
+wrapper around shmob_drm_plane_destroy(), hence replace it by the
+latter.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
-  - Keep table instead of replacing it by a switch() statement,
-  - Fix shmob_drm_interface_data.bus_fmt comment.
+  - New.
 ---
- .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  | 37 +++++++++++--------
- include/linux/platform_data/shmob_drm.h       | 13 +------
- 2 files changed, 23 insertions(+), 27 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index c9ac8a86a7c39097..08b254f0f2874786 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/clk.h>
- #include <linux/io.h>
-+#include <linux/media-bus-format.h>
- #include <linux/mm.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -34,25 +35,31 @@
- 
- static int shmob_drm_init_interface(struct shmob_drm_device *sdev)
- {
--	static const u32 ldmt1r[] = {
--		[SHMOB_DRM_IFACE_RGB8] = LDMT1R_MIFTYP_RGB8,
--		[SHMOB_DRM_IFACE_RGB9] = LDMT1R_MIFTYP_RGB9,
--		[SHMOB_DRM_IFACE_RGB12A] = LDMT1R_MIFTYP_RGB12A,
--		[SHMOB_DRM_IFACE_RGB12B] = LDMT1R_MIFTYP_RGB12B,
--		[SHMOB_DRM_IFACE_RGB16] = LDMT1R_MIFTYP_RGB16,
--		[SHMOB_DRM_IFACE_RGB18] = LDMT1R_MIFTYP_RGB18,
--		[SHMOB_DRM_IFACE_RGB24] = LDMT1R_MIFTYP_RGB24,
--		[SHMOB_DRM_IFACE_YUV422] = LDMT1R_MIFTYP_YCBCR,
-+	static const struct {
-+		u32 fmt;
-+		u32 ldmt1r;
-+	} bus_fmts[] = {
-+		{ MEDIA_BUS_FMT_RGB888_3X8,	 LDMT1R_MIFTYP_RGB8 },
-+		{ MEDIA_BUS_FMT_RGB666_2X9_BE,	 LDMT1R_MIFTYP_RGB9 },
-+		{ MEDIA_BUS_FMT_RGB888_2X12_BE,	 LDMT1R_MIFTYP_RGB12A },
-+		{ MEDIA_BUS_FMT_RGB444_1X12,	 LDMT1R_MIFTYP_RGB12B },
-+		{ MEDIA_BUS_FMT_RGB565_1X16,	 LDMT1R_MIFTYP_RGB16 },
-+		{ MEDIA_BUS_FMT_RGB666_1X18,	 LDMT1R_MIFTYP_RGB18 },
-+		{ MEDIA_BUS_FMT_RGB888_1X24,	 LDMT1R_MIFTYP_RGB24 },
-+		{ MEDIA_BUS_FMT_UYVY8_1X16,	 LDMT1R_MIFTYP_YCBCR },
- 	};
-+	unsigned int i;
- 
--	if (sdev->pdata->iface.interface >= ARRAY_SIZE(ldmt1r)) {
--		dev_err(sdev->dev, "invalid interface type %u\n",
--			sdev->pdata->iface.interface);
--		return -EINVAL;
-+	for (i = 0; i < ARRAY_SIZE(bus_fmts); i++) {
-+		if (bus_fmts[i].fmt == sdev->pdata->iface.bus_fmt) {
-+			sdev->ldmt1r = bus_fmts[i].ldmt1r;
-+			return 0;
-+		}
- 	}
- 
--	sdev->ldmt1r = ldmt1r[sdev->pdata->iface.interface];
--	return 0;
-+	dev_err(sdev->dev, "unsupported bus format 0x%x\n",
-+		sdev->pdata->iface.bus_fmt);
-+	return -EINVAL;
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+index 0b2ab153e9ae76df..3a5db319bad14218 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+@@ -176,16 +176,10 @@ static int shmob_drm_plane_disable(struct drm_plane *plane,
+ 	return 0;
  }
  
- static int shmob_drm_setup_clocks(struct shmob_drm_device *sdev,
-diff --git a/include/linux/platform_data/shmob_drm.h b/include/linux/platform_data/shmob_drm.h
-index f3cb19ff9f818aca..6c19d4fbbe39586b 100644
---- a/include/linux/platform_data/shmob_drm.h
-+++ b/include/linux/platform_data/shmob_drm.h
-@@ -18,17 +18,6 @@ enum shmob_drm_clk_source {
- 	SHMOB_DRM_CLK_EXTERNAL,
- };
- 
--enum shmob_drm_interface {
--	SHMOB_DRM_IFACE_RGB8,		/* 24bpp, 8:8:8 */
--	SHMOB_DRM_IFACE_RGB9,		/* 18bpp, 9:9 */
--	SHMOB_DRM_IFACE_RGB12A,		/* 24bpp, 12:12 */
--	SHMOB_DRM_IFACE_RGB12B,		/* 12bpp */
--	SHMOB_DRM_IFACE_RGB16,		/* 16bpp */
--	SHMOB_DRM_IFACE_RGB18,		/* 18bpp */
--	SHMOB_DRM_IFACE_RGB24,		/* 24bpp */
--	SHMOB_DRM_IFACE_YUV422,		/* 16bpp */
--};
+-static void shmob_drm_plane_destroy(struct drm_plane *plane)
+-{
+-	drm_plane_force_disable(plane);
+-	drm_plane_cleanup(plane);
+-}
 -
- struct shmob_drm_panel_data {
- 	unsigned int width_mm;		/* Panel width in mm */
- 	unsigned int height_mm;		/* Panel height in mm */
-@@ -36,7 +25,7 @@ struct shmob_drm_panel_data {
+ static const struct drm_plane_funcs shmob_drm_plane_funcs = {
+ 	.update_plane = shmob_drm_plane_update,
+ 	.disable_plane = shmob_drm_plane_disable,
+-	.destroy = shmob_drm_plane_destroy,
++	.destroy = drm_plane_cleanup,
  };
  
- struct shmob_drm_interface_data {
--	enum shmob_drm_interface interface;
-+	unsigned int bus_fmt;		/* MEDIA_BUS_FMT_* */
- 	unsigned int clk_div;
- };
- 
+ static const uint32_t formats[] = {
 -- 
 2.34.1
 
