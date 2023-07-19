@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C732C10F00
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9898FC10F19
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jul 2023 15:00:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbjGSPAc (ORCPT
+        id S231503AbjGSPAc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 19 Jul 2023 11:00:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48320 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231503AbjGSPA1 (ORCPT
+        with ESMTP id S231518AbjGSPA1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 19 Jul 2023 11:00:27 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2481723
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB6D41711
         for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Jul 2023 08:00:20 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:51f7:4083:c317:cdf])
-        by albert.telenet-ops.be with bizsmtp
-        id P30G2A00E2xuRWb0630Grg; Wed, 19 Jul 2023 17:00:16 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id P30G2A00H2xuRWb0130GGQ; Wed, 19 Jul 2023 17:00:16 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qM8es-001tPF-8Z;
+        id 1qM8es-001tPQ-AJ;
         Wed, 19 Jul 2023 17:00:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qM8f2-001Ass-97;
+        id 1qM8f2-001At8-BS;
         Wed, 19 Jul 2023 17:00:16 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -34,9 +34,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/13] of: dynamic: Do not use "%pOF" while holding devtree_lock
-Date:   Wed, 19 Jul 2023 17:00:01 +0200
-Message-Id: <416d1ea056bb2d7ec6f21d8919b96a3d48099344.1689776064.git.geert+renesas@glider.be>
+Subject: [PATCH 05/13] of: unittest: Improve messages and comments in apply/revert checks
+Date:   Wed, 19 Jul 2023 17:00:05 +0200
+Message-Id: <2ef32b3aab6db0943d59f45793caceee9e4ac234.1689776064.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1689776064.git.geert+renesas@glider.be>
 References: <cover.1689776064.git.geert+renesas@glider.be>
@@ -46,86 +46,68 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Formatting strings using "%pOF" while holding devtree_lock causes a
-deadlock.  Lockdep reports:
+Miscellaneous improvements for the apply and apply/revert checks,
+making them more similar:
+  - Fix inverted comment for before state check,
+  - Add more comments to improve symmetry,
+  - Fix grammar s/must be to set to/must be in/,
+  - Avoid saying "create" in messages, as the actual operation depends
+    on the value of the before/after parameters.
 
-    of_get_parent from of_fwnode_get_parent+0x18/0x24
-    ^^^^^^^^^^^^^
-    of_fwnode_get_parent from fwnode_count_parents+0xc/0x28
-    fwnode_count_parents from fwnode_full_name_string+0x18/0xac
-    fwnode_full_name_string from device_node_string+0x1a0/0x404
-    device_node_string from pointer+0x3c0/0x534
-    pointer from vsnprintf+0x248/0x36c
-    vsnprintf from vprintk_store+0x130/0x3b4
-
-Fix this by making the locking cover only the parts that really need it.
-
-Fixes: 0d638a07d3a1e98a ("of: Convert to using %pOF instead of full_name")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/of/dynamic.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/of/unittest.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index e311d406b1705306..eae45a1c673ee05f 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -601,13 +601,16 @@ static int __of_changeset_entry_apply(struct of_changeset_entry *ce)
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index bb7e2ec05da59070..42abfcd0cdffa4af 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -2108,7 +2108,7 @@ static int __init of_unittest_apply_overlay_check(int overlay_nr,
+ {
+ 	int ret, ovcs_id;
  
- 	__of_changeset_entry_dump(ce);
- 
--	raw_spin_lock_irqsave(&devtree_lock, flags);
- 	switch (ce->action) {
- 	case OF_RECONFIG_ATTACH_NODE:
-+		raw_spin_lock_irqsave(&devtree_lock, flags);
- 		__of_attach_node(ce->np);
-+		raw_spin_unlock_irqrestore(&devtree_lock, flags);
- 		break;
- 	case OF_RECONFIG_DETACH_NODE:
-+		raw_spin_lock_irqsave(&devtree_lock, flags);
- 		__of_detach_node(ce->np);
-+		raw_spin_unlock_irqrestore(&devtree_lock, flags);
- 		break;
- 	case OF_RECONFIG_ADD_PROPERTY:
- 		/* If the property is in deadprops then it must be removed */
-@@ -619,7 +622,9 @@ static int __of_changeset_entry_apply(struct of_changeset_entry *ce)
- 			}
- 		}
- 
-+		raw_spin_lock_irqsave(&devtree_lock, flags);
- 		ret = __of_add_property(ce->np, ce->prop);
-+		raw_spin_unlock_irqrestore(&devtree_lock, flags);
- 		if (ret) {
- 			pr_err("changeset: add_property failed @%pOF/%s\n",
- 				ce->np,
-@@ -628,7 +633,9 @@ static int __of_changeset_entry_apply(struct of_changeset_entry *ce)
- 		}
- 		break;
- 	case OF_RECONFIG_REMOVE_PROPERTY:
-+		raw_spin_lock_irqsave(&devtree_lock, flags);
- 		ret = __of_remove_property(ce->np, ce->prop);
-+		raw_spin_unlock_irqrestore(&devtree_lock, flags);
- 		if (ret) {
- 			pr_err("changeset: remove_property failed @%pOF/%s\n",
- 				ce->np,
-@@ -647,7 +654,9 @@ static int __of_changeset_entry_apply(struct of_changeset_entry *ce)
- 			}
- 		}
- 
-+		raw_spin_lock_irqsave(&devtree_lock, flags);
- 		ret = __of_update_property(ce->np, ce->prop, &old_prop);
-+		raw_spin_unlock_irqrestore(&devtree_lock, flags);
- 		if (ret) {
- 			pr_err("changeset: update_property failed @%pOF/%s\n",
- 				ce->np,
-@@ -658,7 +667,6 @@ static int __of_changeset_entry_apply(struct of_changeset_entry *ce)
- 	default:
- 		ret = -EINVAL;
+-	/* unittest device must not be in before state */
++	/* unittest device must be in before state */
+ 	if (of_unittest_device_exists(unittest_nr, ovtype) != before) {
+ 		unittest(0, "%s with device @\"%s\" %s\n",
+ 				overlay_name_from_nr(overlay_nr),
+@@ -2117,6 +2117,7 @@ static int __init of_unittest_apply_overlay_check(int overlay_nr,
+ 		return -EINVAL;
  	}
--	raw_spin_unlock_irqrestore(&devtree_lock, flags);
  
- 	if (ret)
++	/* apply the overlay */
+ 	ovcs_id = 0;
+ 	ret = of_unittest_apply_overlay(overlay_nr, &ovcs_id);
+ 	if (ret != 0) {
+@@ -2124,9 +2125,9 @@ static int __init of_unittest_apply_overlay_check(int overlay_nr,
  		return ret;
+ 	}
+ 
+-	/* unittest device must be to set to after state */
++	/* unittest device must be in after state */
+ 	if (of_unittest_device_exists(unittest_nr, ovtype) != after) {
+-		unittest(0, "%s failed to create @\"%s\" %s\n",
++		unittest(0, "%s with device @\"%s\" %s\n",
+ 				overlay_name_from_nr(overlay_nr),
+ 				unittest_path(unittest_nr, ovtype),
+ 				!after ? "enabled" : "disabled");
+@@ -2162,13 +2163,14 @@ static int __init of_unittest_apply_revert_overlay_check(int overlay_nr,
+ 
+ 	/* unittest device must be in after state */
+ 	if (of_unittest_device_exists(unittest_nr, ovtype) != after) {
+-		unittest(0, "%s failed to create @\"%s\" %s\n",
++		unittest(0, "%s with device @\"%s\" %s\n",
+ 				overlay_name_from_nr(overlay_nr),
+ 				unittest_path(unittest_nr, ovtype),
+ 				!after ? "enabled" : "disabled");
+ 		return -EINVAL;
+ 	}
+ 
++	/* remove the overlay */
+ 	save_ovcs_id = ovcs_id;
+ 	ret = of_overlay_remove(&ovcs_id);
+ 	if (ret != 0) {
 -- 
 2.34.1
 
