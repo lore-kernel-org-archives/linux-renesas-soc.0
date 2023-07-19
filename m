@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10ADDC001E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jul 2023 15:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF5EC001B0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jul 2023 15:23:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231723AbjGSPXx (ORCPT
+        id S231747AbjGSPXw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Jul 2023 11:23:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60776 "EHLO
+        Wed, 19 Jul 2023 11:23:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231712AbjGSPXv (ORCPT
+        with ESMTP id S231723AbjGSPXv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 19 Jul 2023 11:23:51 -0400
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07D5DE52
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075741B5
         for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Jul 2023 08:23:48 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:51f7:4083:c317:cdf])
         by albert.telenet-ops.be with bizsmtp
-        id P3Pg2A00E2xuRWb063Pg27; Wed, 19 Jul 2023 17:23:47 +0200
+        id P3Pg2A00D2xuRWb063Pg26; Wed, 19 Jul 2023 17:23:47 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qM91W-001tY0-5d;
+        id 1qM91W-001tXx-4b;
         Wed, 19 Jul 2023 17:23:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qM91g-001Bjl-60;
+        id 1qM91g-001Bjf-3x;
         Wed, 19 Jul 2023 17:23:40 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
@@ -43,59 +43,64 @@ To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
 Cc:     dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/4] drm/todo: Convert list of fbconv links to footnotes
-Date:   Wed, 19 Jul 2023 17:23:35 +0200
-Message-Id: <0761f98d3b6f8df9eea977eae063e35b450fda9e.1689779916.git.geert+renesas@glider.be>
+Subject: [PATCH v3 0/4] drm: Atomic modesetting doc and comment improvements
+Date:   Wed, 19 Jul 2023 17:23:33 +0200
+Message-Id: <cover.1689779916.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1689779916.git.geert+renesas@glider.be>
-References: <cover.1689779916.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the references to fbconv links to footnotes, so they can be
-navigated.
+        Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
+This patch series contains various improvements to the documentation and
+comments related to atomic modesetting.  Hopefully, it will ease the job
+of DRM novice who want to tackle the daunting task of converting a
+legacy DRM driver to atomic modesetting.
+
+Changes compared to v2[1]:
   - Make main text read correctly when ignoring the footnotes,
+  - Add Reviewed-by.
 
-v2:
-  - New.
----
- Documentation/gpu/todo.rst | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Changes compared to v1[2]:
+  - Add Reviewed-by,
+  - Drop double space after full stop,
+  - Use footnotes for references,
+  - Remore reference to unconverted virtual HW drivers,
+  - New patch [2/4],
+  - Drop "first part" in drivers/gpu/drm/drm_plane_helper.c.
 
-diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-index b93059e384128904..f2a4f6f90c54eefe 100644
---- a/Documentation/gpu/todo.rst
-+++ b/Documentation/gpu/todo.rst
-@@ -756,16 +756,16 @@ existing hardware. The new driver's call-back functions are filled from
- existing fbdev code.
- 
- More complex fbdev drivers can be refactored step-by-step into a DRM
--driver with the help of the DRM fbconv helpers. [1] These helpers provide
-+driver with the help of the DRM fbconv helpers [4]_. These helpers provide
- the transition layer between the DRM core infrastructure and the fbdev
- driver interface. Create a new DRM driver on top of the fbconv helpers,
- copy over the fbdev driver, and hook it up to the DRM code. Examples for
--several fbdev drivers are available at [1] and a tutorial of this process
--available at [2]. The result is a primitive DRM driver that can run X11
--and Weston.
-+several fbdev drivers are available in Thomas Zimmermann's fbconv tree
-+[4]_, as well as a tutorial of this process [5]_. The result is a primitive
-+DRM driver that can run X11 and Weston.
- 
-- - [1] https://gitlab.freedesktop.org/tzimmermann/linux/tree/fbconv
-- - [2] https://gitlab.freedesktop.org/tzimmermann/linux/blob/fbconv/drivers/gpu/drm/drm_fbconv_helper.c
-+ .. [4] https://gitlab.freedesktop.org/tzimmermann/linux/tree/fbconv
-+ .. [5] https://gitlab.freedesktop.org/tzimmermann/linux/blob/fbconv/drivers/gpu/drm/drm_fbconv_helper.c
- 
- Contact: Thomas Zimmermann <tzimmermann@suse.de>
- 
+Thanks for applying!
+
+[1] https://lore.kernel.org/r/cover.1686318012.git.geert+renesas@glider.be
+[2] https://lore.kernel.org/r/cover.1685696114.git.geert+renesas@glider.be
+
+Geert Uytterhoeven (4):
+  drm/todo: Add atomic modesetting references
+  drm/todo: Convert list of fbconv links to footnotes
+  drm: Remove references to removed transitional helpers
+  drm: Fix references to drm_plane_helper_check_state()
+
+ Documentation/gpu/todo.rst                    | 22 +++++----
+ drivers/gpu/drm/drm_plane_helper.c            | 12 +----
+ .../gpu/drm/renesas/rcar-du/rcar_du_plane.c   |  3 +-
+ drivers/gpu/drm/tidss/tidss_plane.c           |  3 +-
+ include/drm/drm_crtc.h                        |  5 --
+ include/drm/drm_modeset_helper_vtables.h      | 48 ++++++++-----------
+ 6 files changed, 40 insertions(+), 53 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
