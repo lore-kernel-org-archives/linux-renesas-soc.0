@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D9AC04FE2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jul 2023 15:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22360C05052
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jul 2023 15:00:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbjGSPA3 (ORCPT
+        id S231472AbjGSPAa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Jul 2023 11:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48262 "EHLO
+        Wed, 19 Jul 2023 11:00:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231472AbjGSPA0 (ORCPT
+        with ESMTP id S231463AbjGSPA0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 19 Jul 2023 11:00:26 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB8401719
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC1321722
         for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Jul 2023 08:00:20 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:51f7:4083:c317:cdf])
-        by albert.telenet-ops.be with bizsmtp
-        id P30G2A00D2xuRWb0630Grf; Wed, 19 Jul 2023 17:00:16 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id P30G2A00J2xuRWb0130G4L; Wed, 19 Jul 2023 17:00:16 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qM8es-001tPH-8d;
+        id 1qM8es-001tPh-CQ;
         Wed, 19 Jul 2023 17:00:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qM8f2-001Asv-9k;
+        id 1qM8f2-001AtO-DY;
         Wed, 19 Jul 2023 17:00:16 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -34,9 +34,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/13] of: overlay: Call of_changeset_init() early
-Date:   Wed, 19 Jul 2023 17:00:02 +0200
-Message-Id: <c5a96d6b6c95aca366b19e7a995682adcd6c55e5.1689776064.git.geert+renesas@glider.be>
+Subject: [PATCH 08/13] of: unittest: Add separators to of_unittest_overlay_high_level()
+Date:   Wed, 19 Jul 2023 17:00:08 +0200
+Message-Id: <8587a39c7b8a6aad59d1d38f767f57a0bc0a29e0.1689776064.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1689776064.git.geert+renesas@glider.be>
 References: <cover.1689776064.git.geert+renesas@glider.be>
@@ -46,47 +46,60 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When of_overlay_fdt_apply() fails, the changeset may be partially
-applied, and the caller is still expected to call of_overlay_remove() to
-clean up this partial state.
+It is hard to see the start and end of each individual test in
+of_unittest_overlay_high_level().  Add visual cues in the form of
+separator comments, like was done in of_unittest_overlay_notify().
 
-However, of_overlay_apply() calls of_resolve_phandles() before
-init_overlay_changeset().  Hence if the overlay fails to apply due to an
-unresolved symbol, the overlay_changeset.cset.entries list is still
-uninitialized, and cleanup will crash with a NULL-pointer dereference in
-overlay_removal_is_ok().
-
-Fix this by moving the call to of_changeset_init() from
-init_overlay_changeset() to of_overlay_fdt_apply(), where all other
-early initialization is done.
-
-Fixes: f948d6d8b792bb90 ("of: overlay: avoid race condition between applying multiple overlays")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/of/overlay.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/of/unittest.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 7feb643f13707d34..28b479afd506fdb3 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -752,8 +752,6 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs)
- 	if (!of_node_is_root(ovcs->overlay_root))
- 		pr_debug("%s() ovcs->overlay_root is not root\n", __func__);
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 86e109cc5a5385ba..4e3d8f72f979918f 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -3608,6 +3608,8 @@ static __init void of_unittest_overlay_high_level(void)
  
--	of_changeset_init(&ovcs->cset);
--
- 	cnt = 0;
+ 	/* now do the normal overlay usage test */
  
- 	/* fragment nodes */
-@@ -1013,6 +1011,7 @@ int of_overlay_fdt_apply(const void *overlay_fdt, u32 overlay_fdt_size,
++	/* ---  overlay  --- */
++
+ 	EXPECT_BEGIN(KERN_ERR,
+ 		     "OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/status");
+ 	EXPECT_BEGIN(KERN_ERR,
+@@ -3658,6 +3660,8 @@ static __init void of_unittest_overlay_high_level(void)
  
- 	INIT_LIST_HEAD(&ovcs->ovcs_list);
- 	list_add_tail(&ovcs->ovcs_list, &ovcs_list);
-+	of_changeset_init(&ovcs->cset);
+ 	unittest(ret, "Adding overlay 'overlay' failed\n");
  
- 	/*
- 	 * Must create permanent copy of FDT because of_fdt_unflatten_tree()
++	/* ---  overlay_bad_add_dup_node  --- */
++
+ 	EXPECT_BEGIN(KERN_ERR,
+ 		     "OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/controller");
+ 	EXPECT_BEGIN(KERN_ERR,
+@@ -3679,6 +3683,8 @@ static __init void of_unittest_overlay_high_level(void)
+ 	EXPECT_END(KERN_ERR,
+ 		   "OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/controller");
+ 
++	/* ---  overlay_bad_add_dup_prop  --- */
++
+ 	EXPECT_BEGIN(KERN_ERR,
+ 		     "OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/electric");
+ 	EXPECT_BEGIN(KERN_ERR,
+@@ -3704,9 +3710,13 @@ static __init void of_unittest_overlay_high_level(void)
+ 	EXPECT_END(KERN_ERR,
+ 		   "OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/electric");
+ 
++	/* ---  overlay_bad_phandle  --- */
++
+ 	unittest(overlay_data_apply("overlay_bad_phandle", NULL),
+ 		 "Adding overlay 'overlay_bad_phandle' failed\n");
+ 
++	/* ---  overlay_bad_symbol  --- */
++
+ 	EXPECT_BEGIN(KERN_ERR,
+ 		     "OF: changeset: remove_property failed @/testcase-data-2/substation@100/hvac-medium-2/name");
+ 	EXPECT_BEGIN(KERN_ERR,
 -- 
 2.34.1
 
