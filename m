@@ -2,286 +2,216 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9398CEB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jul 2023 07:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B47DFEB64DC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jul 2023 08:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231330AbjGUHpW (ORCPT
+        id S230518AbjGUICF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jul 2023 03:45:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37540 "EHLO
+        Fri, 21 Jul 2023 04:02:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231266AbjGUHpT (ORCPT
+        with ESMTP id S230475AbjGUICB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jul 2023 03:45:19 -0400
+        Fri, 21 Jul 2023 04:02:01 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3B73230CF;
-        Fri, 21 Jul 2023 00:45:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 90320270A;
+        Fri, 21 Jul 2023 01:01:58 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,220,1684767600"; 
-   d="scan'208";a="170346740"
+   d="scan'208";a="170349238"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Jul 2023 16:45:04 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9FF0F418FA64;
-        Fri, 21 Jul 2023 16:45:04 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
-        manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
-        kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org
-Cc:     marek.vasut+renesas@gmail.com, fancer.lancer@gmail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v18 18/20] PCI: rcar-gen4-ep: Add R-Car Gen4 PCIe Endpoint support
-Date:   Fri, 21 Jul 2023 16:44:50 +0900
-Message-Id: <20230721074452.65545-19-yoshihiro.shimoda.uh@renesas.com>
+  by relmlie5.idc.renesas.com with ESMTP; 21 Jul 2023 17:01:58 +0900
+Received: from localhost.localdomain (unknown [10.226.92.55])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id C5CF64196E50;
+        Fri, 21 Jul 2023 17:01:55 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Peter Rosin <peda@axentia.se>, Jonathan Cameron <jic23@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] iio: potentiometer: mcp4531: Use i2c_get_match_data()
+Date:   Fri, 21 Jul 2023 09:01:53 +0100
+Message-Id: <20230721080153.179274-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230721074452.65545-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230721074452.65545-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add R-Car Gen4 PCIe Endpoint support. This controller is based on
-Synopsys DesignWare PCIe.
+Replace device_get_match_data() and i2c_match_id() by i2c_get_match
+_data() by making similar I2C and DT-based matching table.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pci/controller/dwc/Kconfig            |   9 +
- drivers/pci/controller/dwc/Makefile           |   2 +
- .../pci/controller/dwc/pcie-rcar-gen4-ep.c    | 189 ++++++++++++++++++
- 3 files changed, 200 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-rcar-gen4-ep.c
+v1->v2:
+ * Added similar similar I2C and DT-based matching table.
+ * Dropped error check as all tables have data pointers.
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 64d4d37bc891..4d877cd18374 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -424,4 +424,13 @@ config PCIE_RCAR_GEN4
- 	  Say Y here if you want PCIe host controller support on R-Car Gen4 SoCs.
- 	  This uses the DesignWare core.
+Note:
+ This patch is only compile tested.
+---
+ drivers/iio/potentiometer/mcp4531.c | 138 ++++++++++++++--------------
+ 1 file changed, 70 insertions(+), 68 deletions(-)
+
+diff --git a/drivers/iio/potentiometer/mcp4531.c b/drivers/iio/potentiometer/mcp4531.c
+index c513c00c8243..6b251b7acb60 100644
+--- a/drivers/iio/potentiometer/mcp4531.c
++++ b/drivers/iio/potentiometer/mcp4531.c
+@@ -206,72 +206,76 @@ static const struct iio_info mcp4531_info = {
+ 	.write_raw = mcp4531_write_raw,
+ };
  
-+config PCIE_RCAR_GEN4_EP
-+	tristate "Renesas R-Car Gen4 PCIe Endpoint controller"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	help
-+	  Say Y here if you want PCIe endpoint controller support on R-Car Gen4
-+	  SoCs. This uses the DesignWare core.
++#define MCP4531_ID_TABLE(name, cfg) {				\
++	name, .driver_data = (kernel_ulong_t)&mcp4531_cfg[cfg],	\
++}
 +
- endmenu
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index 486cf706b53d..0fb0bde26ac4 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -28,6 +28,8 @@ obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
- obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
- pcie-rcar-gen4-host-drv-objs := pcie-rcar-gen4.o pcie-rcar-gen4-host.o
- obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4-host-drv.o
-+pcie-rcar-gen4-ep-drv-objs := pcie-rcar-gen4.o pcie-rcar-gen4-ep.o
-+obj-$(CONFIG_PCIE_RCAR_GEN4_EP) += pcie-rcar-gen4-ep-drv.o
+ static const struct i2c_device_id mcp4531_id[] = {
+-	{ "mcp4531-502", MCP453x_502 },
+-	{ "mcp4531-103", MCP453x_103 },
+-	{ "mcp4531-503", MCP453x_503 },
+-	{ "mcp4531-104", MCP453x_104 },
+-	{ "mcp4532-502", MCP453x_502 },
+-	{ "mcp4532-103", MCP453x_103 },
+-	{ "mcp4532-503", MCP453x_503 },
+-	{ "mcp4532-104", MCP453x_104 },
+-	{ "mcp4541-502", MCP454x_502 },
+-	{ "mcp4541-103", MCP454x_103 },
+-	{ "mcp4541-503", MCP454x_503 },
+-	{ "mcp4541-104", MCP454x_104 },
+-	{ "mcp4542-502", MCP454x_502 },
+-	{ "mcp4542-103", MCP454x_103 },
+-	{ "mcp4542-503", MCP454x_503 },
+-	{ "mcp4542-104", MCP454x_104 },
+-	{ "mcp4551-502", MCP455x_502 },
+-	{ "mcp4551-103", MCP455x_103 },
+-	{ "mcp4551-503", MCP455x_503 },
+-	{ "mcp4551-104", MCP455x_104 },
+-	{ "mcp4552-502", MCP455x_502 },
+-	{ "mcp4552-103", MCP455x_103 },
+-	{ "mcp4552-503", MCP455x_503 },
+-	{ "mcp4552-104", MCP455x_104 },
+-	{ "mcp4561-502", MCP456x_502 },
+-	{ "mcp4561-103", MCP456x_103 },
+-	{ "mcp4561-503", MCP456x_503 },
+-	{ "mcp4561-104", MCP456x_104 },
+-	{ "mcp4562-502", MCP456x_502 },
+-	{ "mcp4562-103", MCP456x_103 },
+-	{ "mcp4562-503", MCP456x_503 },
+-	{ "mcp4562-104", MCP456x_104 },
+-	{ "mcp4631-502", MCP463x_502 },
+-	{ "mcp4631-103", MCP463x_103 },
+-	{ "mcp4631-503", MCP463x_503 },
+-	{ "mcp4631-104", MCP463x_104 },
+-	{ "mcp4632-502", MCP463x_502 },
+-	{ "mcp4632-103", MCP463x_103 },
+-	{ "mcp4632-503", MCP463x_503 },
+-	{ "mcp4632-104", MCP463x_104 },
+-	{ "mcp4641-502", MCP464x_502 },
+-	{ "mcp4641-103", MCP464x_103 },
+-	{ "mcp4641-503", MCP464x_503 },
+-	{ "mcp4641-104", MCP464x_104 },
+-	{ "mcp4642-502", MCP464x_502 },
+-	{ "mcp4642-103", MCP464x_103 },
+-	{ "mcp4642-503", MCP464x_503 },
+-	{ "mcp4642-104", MCP464x_104 },
+-	{ "mcp4651-502", MCP465x_502 },
+-	{ "mcp4651-103", MCP465x_103 },
+-	{ "mcp4651-503", MCP465x_503 },
+-	{ "mcp4651-104", MCP465x_104 },
+-	{ "mcp4652-502", MCP465x_502 },
+-	{ "mcp4652-103", MCP465x_103 },
+-	{ "mcp4652-503", MCP465x_503 },
+-	{ "mcp4652-104", MCP465x_104 },
+-	{ "mcp4661-502", MCP466x_502 },
+-	{ "mcp4661-103", MCP466x_103 },
+-	{ "mcp4661-503", MCP466x_503 },
+-	{ "mcp4661-104", MCP466x_104 },
+-	{ "mcp4662-502", MCP466x_502 },
+-	{ "mcp4662-103", MCP466x_103 },
+-	{ "mcp4662-503", MCP466x_503 },
+-	{ "mcp4662-104", MCP466x_104 },
+-	{}
++	MCP4531_ID_TABLE("mcp4531-502", MCP453x_502),
++	MCP4531_ID_TABLE("mcp4531-103", MCP453x_103),
++	MCP4531_ID_TABLE("mcp4531-503", MCP453x_503),
++	MCP4531_ID_TABLE("mcp4531-104", MCP453x_104),
++	MCP4531_ID_TABLE("mcp4532-502", MCP453x_502),
++	MCP4531_ID_TABLE("mcp4532-103", MCP453x_103),
++	MCP4531_ID_TABLE("mcp4532-503", MCP453x_503),
++	MCP4531_ID_TABLE("mcp4532-104", MCP453x_104),
++	MCP4531_ID_TABLE("mcp4541-502", MCP454x_502),
++	MCP4531_ID_TABLE("mcp4541-103", MCP454x_103),
++	MCP4531_ID_TABLE("mcp4541-503", MCP454x_503),
++	MCP4531_ID_TABLE("mcp4541-104", MCP454x_104),
++	MCP4531_ID_TABLE("mcp4542-502", MCP454x_502),
++	MCP4531_ID_TABLE("mcp4542-103", MCP454x_103),
++	MCP4531_ID_TABLE("mcp4542-503", MCP454x_503),
++	MCP4531_ID_TABLE("mcp4542-104", MCP454x_104),
++	MCP4531_ID_TABLE("mcp4551-502", MCP455x_502),
++	MCP4531_ID_TABLE("mcp4551-103", MCP455x_103),
++	MCP4531_ID_TABLE("mcp4551-503", MCP455x_503),
++	MCP4531_ID_TABLE("mcp4551-104", MCP455x_104),
++	MCP4531_ID_TABLE("mcp4552-502", MCP455x_502),
++	MCP4531_ID_TABLE("mcp4552-103", MCP455x_103),
++	MCP4531_ID_TABLE("mcp4552-503", MCP455x_503),
++	MCP4531_ID_TABLE("mcp4552-104", MCP455x_104),
++	MCP4531_ID_TABLE("mcp4561-502", MCP456x_502),
++	MCP4531_ID_TABLE("mcp4561-103", MCP456x_103),
++	MCP4531_ID_TABLE("mcp4561-503", MCP456x_503),
++	MCP4531_ID_TABLE("mcp4561-104", MCP456x_104),
++	MCP4531_ID_TABLE("mcp4562-502", MCP456x_502),
++	MCP4531_ID_TABLE("mcp4562-103", MCP456x_103),
++	MCP4531_ID_TABLE("mcp4562-503", MCP456x_503),
++	MCP4531_ID_TABLE("mcp4562-104", MCP456x_104),
++	MCP4531_ID_TABLE("mcp4631-502", MCP463x_502),
++	MCP4531_ID_TABLE("mcp4631-103", MCP463x_103),
++	MCP4531_ID_TABLE("mcp4631-503", MCP463x_503),
++	MCP4531_ID_TABLE("mcp4631-104", MCP463x_104),
++	MCP4531_ID_TABLE("mcp4632-502", MCP463x_502),
++	MCP4531_ID_TABLE("mcp4632-103", MCP463x_103),
++	MCP4531_ID_TABLE("mcp4632-503", MCP463x_503),
++	MCP4531_ID_TABLE("mcp4632-104", MCP463x_104),
++	MCP4531_ID_TABLE("mcp4641-502", MCP464x_502),
++	MCP4531_ID_TABLE("mcp4641-103", MCP464x_103),
++	MCP4531_ID_TABLE("mcp4641-503", MCP464x_503),
++	MCP4531_ID_TABLE("mcp4641-104", MCP464x_104),
++	MCP4531_ID_TABLE("mcp4642-502", MCP464x_502),
++	MCP4531_ID_TABLE("mcp4642-103", MCP464x_103),
++	MCP4531_ID_TABLE("mcp4642-503", MCP464x_503),
++	MCP4531_ID_TABLE("mcp4642-104", MCP464x_104),
++	MCP4531_ID_TABLE("mcp4651-502", MCP465x_502),
++	MCP4531_ID_TABLE("mcp4651-103", MCP465x_103),
++	MCP4531_ID_TABLE("mcp4651-503", MCP465x_503),
++	MCP4531_ID_TABLE("mcp4651-104", MCP465x_104),
++	MCP4531_ID_TABLE("mcp4652-502", MCP465x_502),
++	MCP4531_ID_TABLE("mcp4652-103", MCP465x_103),
++	MCP4531_ID_TABLE("mcp4652-503", MCP465x_503),
++	MCP4531_ID_TABLE("mcp4652-104", MCP465x_104),
++	MCP4531_ID_TABLE("mcp4661-502", MCP466x_502),
++	MCP4531_ID_TABLE("mcp4661-103", MCP466x_103),
++	MCP4531_ID_TABLE("mcp4661-503", MCP466x_503),
++	MCP4531_ID_TABLE("mcp4661-104", MCP466x_104),
++	MCP4531_ID_TABLE("mcp4662-502", MCP466x_502),
++	MCP4531_ID_TABLE("mcp4662-103", MCP466x_103),
++	MCP4531_ID_TABLE("mcp4662-503", MCP466x_503),
++	MCP4531_ID_TABLE("mcp4662-104", MCP466x_104),
++	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, mcp4531_id);
  
- # The following drivers are for devices that use the generic ACPI
- # pci_root.c driver but don't support standard ECAM config access.
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4-ep.c b/drivers/pci/controller/dwc/pcie-rcar-gen4-ep.c
-new file mode 100644
-index 000000000000..3970a920f3fe
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4-ep.c
-@@ -0,0 +1,189 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * PCIe Endpoint driver for Renesas R-Car Gen4 Series SoCs
-+ * Copyright (C) 2022-2023 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/pci.h>
-+#include <linux/platform_device.h>
-+
-+#include "pcie-rcar-gen4.h"
-+#include "pcie-designware.h"
-+
-+#define RCAR_GEN4_PCIE_EP_FUNC_DBI_OFFSET	0x1000
-+#define RCAR_GEN4_PCIE_EP_FUNC_DBI2_OFFSET	0x800
-+
-+static void rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+	int ret;
-+
-+	ret = clk_bulk_prepare_enable(DW_PCIE_NUM_CORE_CLKS, dw->core_clks);
-+	if (ret) {
-+		dev_err(dw->dev, "Failed to enable ref clocks\n");
-+		return;
-+	}
-+
-+	rcar_gen4_pcie_basic_init(rcar);
-+
-+	writel(PCIEDMAINTSTSEN_INIT, rcar->base + PCIEDMAINTSTSEN);
-+}
-+
-+static void rcar_gen4_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	enum pci_barno bar;
-+
-+	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+}
-+
-+static void rcar_gen4_pcie_ep_deinit(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+
-+	writel(0, rcar->base + PCIEDMAINTSTSEN);
-+	rcar_gen4_pcie_basic_deinit(rcar);
-+	clk_bulk_disable_unprepare(DW_PCIE_NUM_CORE_CLKS, dw->core_clks);
-+}
-+
-+static int rcar_gen4_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				       enum pci_epc_irq_type type,
-+				       u16 interrupt_num)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_EPC_IRQ_INTX:
-+		return dw_pcie_ep_raise_intx_irq(ep, func_no);
-+	case PCI_EPC_IRQ_MSI:
-+		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	default:
-+		dev_err(dw->dev, "Unknown IRQ type\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pci_epc_features rcar_gen4_pcie_epc_features = {
-+	.linkup_notifier = false,
-+	.msi_capable = true,
-+	.msix_capable = false,
-+	.reserved_bar = 1 << BAR_1 | 1 << BAR_3 | 1 << BAR_5,
-+	.align = SZ_1M,
-+};
-+
-+static const struct pci_epc_features*
-+rcar_gen4_pcie_ep_get_features(struct dw_pcie_ep *ep)
-+{
-+	return &rcar_gen4_pcie_epc_features;
-+}
-+
-+static unsigned int rcar_gen4_pcie_ep_func_conf_select(struct dw_pcie_ep *ep,
-+						       u8 func_no)
-+{
-+	return func_no * RCAR_GEN4_PCIE_EP_FUNC_DBI_OFFSET;
-+}
-+
-+static unsigned int rcar_gen4_pcie_ep_func_conf_select2(struct dw_pcie_ep *ep,
-+							u8 func_no)
-+{
-+	return func_no * RCAR_GEN4_PCIE_EP_FUNC_DBI2_OFFSET;
-+}
-+
-+static const struct dw_pcie_ep_ops pcie_ep_ops = {
-+	.ep_pre_init = rcar_gen4_pcie_ep_pre_init,
-+	.ep_init = rcar_gen4_pcie_ep_init,
-+	.ep_deinit = rcar_gen4_pcie_ep_deinit,
-+	.raise_irq = rcar_gen4_pcie_ep_raise_irq,
-+	.get_features = rcar_gen4_pcie_ep_get_features,
-+	.func_conf_select = rcar_gen4_pcie_ep_func_conf_select,
-+	.func_conf_select2 = rcar_gen4_pcie_ep_func_conf_select2,
-+};
-+
-+static int rcar_gen4_add_pcie_ep(struct rcar_gen4_pcie *rcar,
-+				 struct platform_device *pdev)
-+{
-+	struct dw_pcie_ep *ep = &rcar->dw.ep;
-+	int ret;
-+
-+	rcar->mode = DW_PCIE_EP_TYPE;
-+	ep->ops = &pcie_ep_ops;
-+
-+	ret = dw_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to initialize endpoint\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void rcar_gen4_remove_pcie_ep(struct rcar_gen4_pcie *rcar)
-+{
-+	dw_pcie_ep_exit(&rcar->dw.ep);
-+}
-+
-+static int rcar_gen4_pcie_ep_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rcar_gen4_pcie *rcar;
-+	int err;
-+
-+	rcar = rcar_gen4_pcie_devm_alloc(pdev);
-+	if (!rcar)
-+		return -ENOMEM;
-+
-+	err = rcar_gen4_pcie_get_resources(rcar);
-+	if (err < 0) {
-+		dev_err(dev, "Failed to request resource: %d\n", err);
-+		return err;
-+	}
-+
-+	err = rcar_gen4_pcie_prepare(rcar);
-+	if (err < 0)
-+		return err;
-+
-+	err = rcar_gen4_add_pcie_ep(rcar, pdev);
-+	if (err < 0)
-+		goto err_add;
-+
-+	return 0;
-+
-+err_add:
-+	rcar_gen4_pcie_unprepare(rcar);
-+
-+	return err;
-+}
-+
-+static void rcar_gen4_pcie_ep_remove(struct platform_device *pdev)
-+{
-+	struct rcar_gen4_pcie *rcar = platform_get_drvdata(pdev);
-+
-+	rcar_gen4_remove_pcie_ep(rcar);
-+	rcar_gen4_pcie_unprepare(rcar);
-+}
-+
-+static const struct of_device_id rcar_gen4_pcie_of_match[] = {
-+	{ .compatible = "renesas,rcar-gen4-pcie-ep", },
-+	{},
-+};
-+
-+static struct platform_driver rcar_gen4_pcie_ep_driver = {
-+	.driver = {
-+		.name = "pcie-rcar-gen4-ep",
-+		.of_match_table = rcar_gen4_pcie_of_match,
-+	},
-+	.probe = rcar_gen4_pcie_ep_probe,
-+	.remove_new = rcar_gen4_pcie_ep_remove,
-+};
-+module_platform_driver(rcar_gen4_pcie_ep_driver);
-+
-+MODULE_DESCRIPTION("Renesas R-Car Gen4 PCIe endpoint controller driver");
-+MODULE_LICENSE("GPL");
+@@ -368,9 +372,7 @@ static int mcp4531_probe(struct i2c_client *client)
+ 	i2c_set_clientdata(client, indio_dev);
+ 	data->client = client;
+ 
+-	data->cfg = device_get_match_data(dev);
+-	if (!data->cfg)
+-		data->cfg = &mcp4531_cfg[i2c_match_id(mcp4531_id, client)->driver_data];
++	data->cfg = i2c_get_match_data(client);
+ 
+ 	indio_dev->info = &mcp4531_info;
+ 	indio_dev->channels = mcp4531_channels;
 -- 
 2.25.1
 
