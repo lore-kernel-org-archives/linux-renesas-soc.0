@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8F9C05051
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jul 2023 08:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 682EAC07E8C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jul 2023 08:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233580AbjG1Ix1 (ORCPT
+        id S234971AbjG1Ix1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 28 Jul 2023 04:53:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49114 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235181AbjG1Iwh (ORCPT
+        with ESMTP id S235179AbjG1Iwg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2023 04:52:37 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF465269
+        Fri, 28 Jul 2023 04:52:36 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0F24EC8
         for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 01:50:44 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:12b0:7b7e:d1ff:7873])
-        by michel.telenet-ops.be with bizsmtp
-        id SYqi2A00H0d1nm806YqiDK; Fri, 28 Jul 2023 10:50:43 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id SYqi2A00g0d1nm801YqiJs; Fri, 28 Jul 2023 10:50:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qPJB7-002lRz-CF;
+        id 1qPJB7-002lSZ-Hw;
         Fri, 28 Jul 2023 10:50:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qPJBK-00AjsW-Eu;
+        id 1qPJBK-00AjtL-M6;
         Fri, 28 Jul 2023 10:50:42 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -34,96 +34,287 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/13] of: overlay/unittest: Miscellaneous fixes and improvements
-Date:   Fri, 28 Jul 2023 10:50:26 +0200
-Message-Id: <cover.1690533838.git.geert+renesas@glider.be>
+Subject: [PATCH v2 11/13] of: unittest-data: Fix whitespace - blank lines
+Date:   Fri, 28 Jul 2023 10:50:37 +0200
+Message-Id: <c8a512947b22ac95f2ba40e843ecf6015814312e.1690533838.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1690533838.git.geert+renesas@glider.be>
+References: <cover.1690533838.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Blank line between properties and subnodes.
+Blank line between subsequent subnodes.
+No blank line after subnode opening curly brace.
+No blank line after subnode closing curly brace.
+No blank line at end of file.
 
-This patch series contains miscellaneous fixes and improvements for
-dynamic DT overlays and the related unit tests.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ drivers/of/unittest-data/overlay.dtso                  | 2 --
+ drivers/of/unittest-data/overlay_11.dtso               | 1 -
+ drivers/of/unittest-data/overlay_15.dtso               | 1 +
+ drivers/of/unittest-data/overlay_4.dtso                | 1 -
+ drivers/of/unittest-data/overlay_bad_add_dup_node.dtso | 1 -
+ drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso | 1 -
+ drivers/of/unittest-data/overlay_bad_phandle.dtso      | 1 -
+ drivers/of/unittest-data/overlay_bad_symbol.dtso       | 1 -
+ drivers/of/unittest-data/overlay_common.dtsi           | 2 --
+ drivers/of/unittest-data/overlay_gpio_01.dtso          | 1 +
+ drivers/of/unittest-data/overlay_gpio_02a.dtso         | 1 +
+ drivers/of/unittest-data/overlay_gpio_02b.dtso         | 1 +
+ drivers/of/unittest-data/overlay_gpio_03.dtso          | 1 +
+ drivers/of/unittest-data/overlay_gpio_04a.dtso         | 1 +
+ drivers/of/unittest-data/overlay_gpio_04b.dtso         | 1 +
+ drivers/of/unittest-data/testcases_common.dtsi         | 1 +
+ drivers/of/unittest-data/tests-interrupts.dtsi         | 1 +
+ drivers/of/unittest-data/tests-overlay.dtsi            | 1 -
+ drivers/of/unittest-data/tests-phandle.dtsi            | 2 ++
+ 19 files changed, 11 insertions(+), 11 deletions(-)
 
-The first two patches are fixes for a lock-up and a crash.
-The remaining patches are smaller fixes, enhancements and cleanups for
-the overlay tests, including one new test.
-
-I ran into the crash when accidentally loading the wrong overlay (using
-the out-of-tree DT overlay configfs[1]), and removing it afterwards.
-As this case was not yet covered by the unittests, I added a test.
-I enhanced the tests to clean up partial state after a failed
-overlay apply attempt, which triggered the lock-up.
-
-Changes compared to v1[2]:
-  - Correct fixes tag and update description.
-  - Merge differently, as requested by Rob.
-
-Thanks for your comments!
-
-[1] https://elinux.org/R-Car/DT-Overlays
-[2] https://lore.kernel.org/r/cover.1689776064.git.geert+renesas@glider.be
-
-Geert Uytterhoeven (13):
-  of: dynamic: Do not use "%pOF" while holding devtree_lock
-  of: overlay: Call of_changeset_init() early
-  of: unittest: Fix overlay type in apply/revert check
-  of: unittest: Restore indentation in overlay_bad_add_dup_prop test
-  of: unittest: Improve messages and comments in apply/revert checks
-  of: unittest: Merge of_unittest_apply{,_revert}_overlay_check()
-  of: unittest: Cleanup partially-applied overlays
-  of: unittest: Add separators to of_unittest_overlay_high_level()
-  of: overlay: unittest: Add test for unresolved symbol
-  of: unittest-data: Convert remaining overlay DTS files to sugar syntax
-  of: unittest-data: Fix whitespace - blank lines
-  of: unittest-data: Fix whitespace - indentation
-  of: unittest-data: Fix whitespace - angular brackets
-
- drivers/of/dynamic.c                          |  12 +-
- drivers/of/overlay.c                          |   3 +-
- drivers/of/unittest-data/Makefile             |   3 +-
- drivers/of/unittest-data/overlay.dtso         |  32 ++-
- drivers/of/unittest-data/overlay_0.dtso       |  11 +-
- drivers/of/unittest-data/overlay_1.dtso       |  11 +-
- drivers/of/unittest-data/overlay_11.dtso      |   1 -
- drivers/of/unittest-data/overlay_12.dtso      |  11 +-
- drivers/of/unittest-data/overlay_13.dtso      |  11 +-
- drivers/of/unittest-data/overlay_15.dtso      |   1 +
- drivers/of/unittest-data/overlay_4.dtso       |   1 -
- .../overlay_bad_add_dup_node.dtso             |   9 +-
- .../overlay_bad_add_dup_prop.dtso             |   9 +-
- .../of/unittest-data/overlay_bad_phandle.dtso |   5 +-
- .../of/unittest-data/overlay_bad_symbol.dtso  |   5 +-
- .../unittest-data/overlay_bad_unresolved.dtso |   7 +
- drivers/of/unittest-data/overlay_common.dtsi  |  36 ++-
- drivers/of/unittest-data/overlay_gpio_01.dtso |   1 +
- .../of/unittest-data/overlay_gpio_02a.dtso    |   1 +
- .../of/unittest-data/overlay_gpio_02b.dtso    |   1 +
- drivers/of/unittest-data/overlay_gpio_03.dtso |   1 +
- .../of/unittest-data/overlay_gpio_04a.dtso    |   1 +
- .../of/unittest-data/overlay_gpio_04b.dtso    |   1 +
- .../of/unittest-data/testcases_common.dtsi    |   1 +
- .../of/unittest-data/tests-interrupts.dtsi    |   1 +
- drivers/of/unittest-data/tests-overlay.dtsi   |   1 -
- drivers/of/unittest-data/tests-phandle.dtsi   |   2 +
- drivers/of/unittest.c                         | 218 +++++++++++-------
- 28 files changed, 224 insertions(+), 173 deletions(-)
- create mode 100644 drivers/of/unittest-data/overlay_bad_unresolved.dtso
-
+diff --git a/drivers/of/unittest-data/overlay.dtso b/drivers/of/unittest-data/overlay.dtso
+index 3bbc59e922fe71c3..0c078b08ef083561 100644
+--- a/drivers/of/unittest-data/overlay.dtso
++++ b/drivers/of/unittest-data/overlay.dtso
+@@ -3,7 +3,6 @@
+ /plugin/;
+ 
+ &electric_1 {
+-
+ 	status = "okay";
+ 
+ 	hvac_2: hvac-large-1 {
+@@ -57,7 +56,6 @@ ride_200_right: track@20 {
+ };
+ 
+ &lights_2 {
+-
+ 	status = "okay";
+ 	color = "purple", "white", "red", "green";
+ 	rate = < 3 256 >;
+diff --git a/drivers/of/unittest-data/overlay_11.dtso b/drivers/of/unittest-data/overlay_11.dtso
+index 9a79b253a8098833..7d04ff503a18ffba 100644
+--- a/drivers/of/unittest-data/overlay_11.dtso
++++ b/drivers/of/unittest-data/overlay_11.dtso
+@@ -23,6 +23,5 @@ test-unittest111 {
+ 			status = "okay";
+ 			reg = <1>;
+ 		};
+-
+ 	};
+ };
+diff --git a/drivers/of/unittest-data/overlay_15.dtso b/drivers/of/unittest-data/overlay_15.dtso
+index 5728490474f6bd2d..ba02ae1fed38b64a 100644
+--- a/drivers/of/unittest-data/overlay_15.dtso
++++ b/drivers/of/unittest-data/overlay_15.dtso
+@@ -7,6 +7,7 @@
+ &unittest_i2c_test_bus {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++
+ 	test-unittest15 {
+ 		reg = <11>;
+ 		compatible = "unittest-i2c-mux";
+diff --git a/drivers/of/unittest-data/overlay_4.dtso b/drivers/of/unittest-data/overlay_4.dtso
+index a8a77ddf9abe829c..9b9eadddb4a09af3 100644
+--- a/drivers/of/unittest-data/overlay_4.dtso
++++ b/drivers/of/unittest-data/overlay_4.dtso
+@@ -5,7 +5,6 @@
+ /* overlay_4 - test insertion of a full node */
+ 
+ &unittest_test_bus {
+-
+ 	/* suppress DTC warning */
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+diff --git a/drivers/of/unittest-data/overlay_bad_add_dup_node.dtso b/drivers/of/unittest-data/overlay_bad_add_dup_node.dtso
+index 145dfc3b1024191a..a8d8534f725c10ea 100644
+--- a/drivers/of/unittest-data/overlay_bad_add_dup_node.dtso
++++ b/drivers/of/unittest-data/overlay_bad_add_dup_node.dtso
+@@ -13,7 +13,6 @@
+  */
+ 
+ &electric_1 {
+-
+ 	motor-1 {
+ 		controller {
+ 			power_bus = < 0x1 0x2 >;
+diff --git a/drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso b/drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso
+index 6327d1ffb9636589..3f0ee9cbefb815be 100644
+--- a/drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso
++++ b/drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso
+@@ -24,7 +24,6 @@
+  */
+ 
+ &electric_1 {
+-
+ 	motor-1 {
+ 		electric {
+ 			rpm_avail = < 100 >;
+diff --git a/drivers/of/unittest-data/overlay_bad_phandle.dtso b/drivers/of/unittest-data/overlay_bad_phandle.dtso
+index 83b79736031878fc..ab2c7df1019674f1 100644
+--- a/drivers/of/unittest-data/overlay_bad_phandle.dtso
++++ b/drivers/of/unittest-data/overlay_bad_phandle.dtso
+@@ -3,7 +3,6 @@
+ /plugin/;
+ 
+ &electric_1 {
+-
+ 	// This label should cause an error when the overlay
+ 	// is applied.  There is already a phandle value
+ 	// in the base tree for motor-1.
+diff --git a/drivers/of/unittest-data/overlay_bad_symbol.dtso b/drivers/of/unittest-data/overlay_bad_symbol.dtso
+index 98c6d1de144a21ab..5d4e34baf1d8e3ed 100644
+--- a/drivers/of/unittest-data/overlay_bad_symbol.dtso
++++ b/drivers/of/unittest-data/overlay_bad_symbol.dtso
+@@ -3,7 +3,6 @@
+ /plugin/;
+ 
+ &electric_1 {
+-
+ 	// This label should cause an error when the overlay
+ 	// is applied.  There is already a symbol hvac_1
+ 	// in the base tree
+diff --git a/drivers/of/unittest-data/overlay_common.dtsi b/drivers/of/unittest-data/overlay_common.dtsi
+index 08874a72556e050f..491b89c43cf38321 100644
+--- a/drivers/of/unittest-data/overlay_common.dtsi
++++ b/drivers/of/unittest-data/overlay_common.dtsi
+@@ -85,7 +85,5 @@ retail_1: vending@50000 {
+ 			compatible = "ot,tickets";
+ 			status = "disabled";
+ 		};
+-
+ 	};
+ };
+-
+diff --git a/drivers/of/unittest-data/overlay_gpio_01.dtso b/drivers/of/unittest-data/overlay_gpio_01.dtso
+index 699ff104ae1062f9..bb3a31a2137aea17 100644
+--- a/drivers/of/unittest-data/overlay_gpio_01.dtso
++++ b/drivers/of/unittest-data/overlay_gpio_01.dtso
+@@ -5,6 +5,7 @@
+ &unittest_test_bus {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++
+ 	gpio@0 {
+ 		compatible = "unittest-gpio";
+ 		reg = <0>;
+diff --git a/drivers/of/unittest-data/overlay_gpio_02a.dtso b/drivers/of/unittest-data/overlay_gpio_02a.dtso
+index ec59aff6ed47ed50..da955537df74be90 100644
+--- a/drivers/of/unittest-data/overlay_gpio_02a.dtso
++++ b/drivers/of/unittest-data/overlay_gpio_02a.dtso
+@@ -5,6 +5,7 @@
+ &unittest_test_bus {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++
+ 	gpio@2 {
+ 		compatible = "unittest-gpio";
+ 		reg = <2>;
+diff --git a/drivers/of/unittest-data/overlay_gpio_02b.dtso b/drivers/of/unittest-data/overlay_gpio_02b.dtso
+index 43ce111d41ceb8d5..79503965d3d7d090 100644
+--- a/drivers/of/unittest-data/overlay_gpio_02b.dtso
++++ b/drivers/of/unittest-data/overlay_gpio_02b.dtso
+@@ -5,6 +5,7 @@
+ &unittest_test_bus {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++
+ 	gpio@2 {
+ 		line-a {
+ 			gpio-hog;
+diff --git a/drivers/of/unittest-data/overlay_gpio_03.dtso b/drivers/of/unittest-data/overlay_gpio_03.dtso
+index 6e0312340a1ba758..d8c709616029b8ba 100644
+--- a/drivers/of/unittest-data/overlay_gpio_03.dtso
++++ b/drivers/of/unittest-data/overlay_gpio_03.dtso
+@@ -5,6 +5,7 @@
+ &unittest_test_bus {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++
+ 	gpio@3 {
+ 		compatible = "unittest-gpio";
+ 		reg = <3>;
+diff --git a/drivers/of/unittest-data/overlay_gpio_04a.dtso b/drivers/of/unittest-data/overlay_gpio_04a.dtso
+index 7b1e04ebfa7a0410..de86511972c202a0 100644
+--- a/drivers/of/unittest-data/overlay_gpio_04a.dtso
++++ b/drivers/of/unittest-data/overlay_gpio_04a.dtso
+@@ -5,6 +5,7 @@
+ &unittest_test_bus {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++
+ 	gpio@4 {
+ 		compatible = "unittest-gpio";
+ 		reg = <4>;
+diff --git a/drivers/of/unittest-data/overlay_gpio_04b.dtso b/drivers/of/unittest-data/overlay_gpio_04b.dtso
+index a14e95c6699aeb06..dc6eff22f927218b 100644
+--- a/drivers/of/unittest-data/overlay_gpio_04b.dtso
++++ b/drivers/of/unittest-data/overlay_gpio_04b.dtso
+@@ -5,6 +5,7 @@
+ &unittest_test_bus {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++
+ 	gpio@4 {
+ 		line-c {
+ 			gpio-hog;
+diff --git a/drivers/of/unittest-data/testcases_common.dtsi b/drivers/of/unittest-data/testcases_common.dtsi
+index e7887f2301c102e6..1c2cdf353ae36b50 100644
+--- a/drivers/of/unittest-data/testcases_common.dtsi
++++ b/drivers/of/unittest-data/testcases_common.dtsi
+@@ -5,6 +5,7 @@ testcase-data {
+ 		changeset {
+ 			prop-update = "hello";
+ 			prop-remove = "world";
++
+ 			node-remove {
+ 			};
+ 		};
+diff --git a/drivers/of/unittest-data/tests-interrupts.dtsi b/drivers/of/unittest-data/tests-interrupts.dtsi
+index ecc74dbcc373f655..7c9f31cc131bae79 100644
+--- a/drivers/of/unittest-data/tests-interrupts.dtsi
++++ b/drivers/of/unittest-data/tests-interrupts.dtsi
+@@ -5,6 +5,7 @@ testcase-data {
+ 		interrupts {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
++
+ 			test_intc0: intc0 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <1>;
+diff --git a/drivers/of/unittest-data/tests-overlay.dtsi b/drivers/of/unittest-data/tests-overlay.dtsi
+index 4ea024d908ee22d6..eb35e8aa5d5ace95 100644
+--- a/drivers/of/unittest-data/tests-overlay.dtsi
++++ b/drivers/of/unittest-data/tests-overlay.dtsi
+@@ -3,7 +3,6 @@
+ / {
+ 	testcase-data {
+ 		overlay-node {
+-
+ 			/* test bus */
+ 			unittest_test_bus: test-bus {
+ 				compatible = "simple-bus";
+diff --git a/drivers/of/unittest-data/tests-phandle.dtsi b/drivers/of/unittest-data/tests-phandle.dtsi
+index 6b33be4c4416ce7b..d01f92f0f0db7f57 100644
+--- a/drivers/of/unittest-data/tests-phandle.dtsi
++++ b/drivers/of/unittest-data/tests-phandle.dtsi
+@@ -8,7 +8,9 @@ aliases {
+ 	testcase: testcase-data {
+ 		security-password = "password";
+ 		duplicate-name = "duplicate";
++
+ 		duplicate-name { };
++
+ 		phandle-tests {
+ 			provider0: provider0 {
+ 				#phandle-cells = <0>;
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
