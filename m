@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F7EC04A94
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jul 2023 08:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCF5C04FE1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jul 2023 08:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235114AbjG1Ixb (ORCPT
+        id S235149AbjG1Ixc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Jul 2023 04:53:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48946 "EHLO
+        Fri, 28 Jul 2023 04:53:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235170AbjG1Iwf (ORCPT
+        with ESMTP id S235026AbjG1Iwh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2023 04:52:35 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C2FC5261
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 01:50:44 -0700 (PDT)
+        Fri, 28 Jul 2023 04:52:37 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B95F5277
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 01:50:45 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:12b0:7b7e:d1ff:7873])
-        by baptiste.telenet-ops.be with bizsmtp
-        id SYqi2A00f0d1nm801YqiJt; Fri, 28 Jul 2023 10:50:43 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id SYqi2A00T0d1nm806Yqi8F; Fri, 28 Jul 2023 10:50:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qPJB7-002lSg-IX;
+        id 1qPJB7-002lS9-Dd;
         Fri, 28 Jul 2023 10:50:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qPJBK-00AjtQ-Me;
+        id 1qPJBK-00Ajsm-Hg;
         Fri, 28 Jul 2023 10:50:42 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -34,9 +34,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 12/13] of: unittest-data: Fix whitespace - indentation
-Date:   Fri, 28 Jul 2023 10:50:38 +0200
-Message-Id: <4df783995a7d34364cb06002bdfeb9eaf2ad4e80.1690533838.git.geert+renesas@glider.be>
+Subject: [PATCH v2 04/13] of: unittest: Restore indentation in overlay_bad_add_dup_prop test
+Date:   Fri, 28 Jul 2023 10:50:30 +0200
+Message-Id: <c9bd81b74b0a1ab394ac7ff8819e6fb032fe8ded.1690533838.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1690533838.git.geert+renesas@glider.be>
 References: <cover.1690533838.git.geert+renesas@glider.be>
@@ -46,47 +46,38 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Single space for each indentation level.
+When updating the expected error messages for the
+overlay_bad_add_dup_prop test, indentation of the EXPECT_END()
+statements was accidentally changed.
 
+Fixes: 29acfb65598f9167 ("of: unittest: kmemleak in duplicate property update")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - No changes.
 ---
- drivers/of/unittest-data/overlay_bad_add_dup_node.dtso | 6 +++---
- drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/of/unittest.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/of/unittest-data/overlay_bad_add_dup_node.dtso b/drivers/of/unittest-data/overlay_bad_add_dup_node.dtso
-index a8d8534f725c10ea..11aa1401244d9685 100644
---- a/drivers/of/unittest-data/overlay_bad_add_dup_node.dtso
-+++ b/drivers/of/unittest-data/overlay_bad_add_dup_node.dtso
-@@ -21,7 +21,7 @@ controller {
- };
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 840f26477f77f622..bb7e2ec05da59070 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -3687,11 +3687,11 @@ static __init void of_unittest_overlay_high_level(void)
+ 		 "Adding overlay 'overlay_bad_add_dup_prop' failed\n");
  
- &spin_ctrl_1 {
--		controller {
--			power_bus_emergency = < 0x101 0x102 >;
--		};
-+	controller {
-+		power_bus_emergency = < 0x101 0x102 >;
-+	};
- };
-diff --git a/drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso b/drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso
-index 3f0ee9cbefb815be..5af099cc2174e273 100644
---- a/drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso
-+++ b/drivers/of/unittest-data/overlay_bad_add_dup_prop.dtso
-@@ -32,7 +32,7 @@ electric {
- };
+ 	EXPECT_END(KERN_ERR,
+-		     "OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/electric/name");
++		   "OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/electric/name");
+ 	EXPECT_END(KERN_ERR,
+-		     "OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/electric/rpm_avail");
++		   "OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/electric/rpm_avail");
+ 	EXPECT_END(KERN_ERR,
+-		     "OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/electric");
++		   "OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/electric");
  
- &spin_ctrl_1 {
--		electric {
--			rpm_avail = < 100 200 >;
--		};
-+	electric {
-+		rpm_avail = < 100 200 >;
-+	};
- };
+ 	unittest(overlay_data_apply("overlay_bad_phandle", NULL),
+ 		 "Adding overlay 'overlay_bad_phandle' failed\n");
 -- 
 2.34.1
 
