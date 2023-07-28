@@ -2,108 +2,80 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3FFEB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jul 2023 07:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF05C00528
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jul 2023 08:53:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233546AbjG1HeI convert rfc822-to-8bit (ORCPT
+        id S233870AbjG1IxY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Jul 2023 03:34:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60092 "EHLO
+        Fri, 28 Jul 2023 04:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231910AbjG1HeH (ORCPT
+        with ESMTP id S233584AbjG1Iwi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2023 03:34:07 -0400
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E7EB6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 00:34:06 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-583f837054eso19307587b3.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 00:34:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690529645; x=1691134445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LjZ+2lMyWd1yujiMboXAmmUAYWYVQiLkKfCWB6zgCK8=;
-        b=WFFdAoazJX2VTnoZSQyDdNQLsg7nNFK9GXLrpfk7jmxz1UOeiEowlzmZiWF3jYxepk
-         Ov6cB1vMlqPXoPZkC7fl184Fbp8HB3xRRihk3pyFeK5yIFT6L+x41fkRTFJ+Lx5DRadC
-         1ojNdGbJjHLXV87BM/UPfjVqYDNucrZLJ04P/tG3oos4ATUOtDdnmDY8sbSWIkZyfDbh
-         1eQ/wlgk6ZRibQKw30SNjwZvkCeYAMHIVHNBDX6OtzUtlf7J7+fbFP5KKSkoeOrTHnfu
-         CyCjpx8GIrSC8e69ap91NbPpxhPMKVUqcxQ9zPAJhsGnKo9uhkqvSHVMRGmv81aCLfQO
-         xnWw==
-X-Gm-Message-State: ABy/qLYX7j6v+DnqTxi0JbvOw40eK9q5rOTKE7HGqsnhD2J1zRYDH8Jb
-        q1a6/mcSBZMoX4QcieL8qrU3ZIxHYES/lQ==
-X-Google-Smtp-Source: APBJJlFY/HPSxBcU9W9LUJa0EVWFjV8b1ye18j963H9x1a8jPQFth9Ic+zv6A2bhLYtNrAKaJQyc8w==
-X-Received: by 2002:a0d:d443:0:b0:57a:8ecb:11ad with SMTP id w64-20020a0dd443000000b0057a8ecb11admr1161580ywd.43.1690529644896;
-        Fri, 28 Jul 2023 00:34:04 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id v186-20020a0dd3c3000000b0055a373a7e5asm908725ywd.131.2023.07.28.00.34.04
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 00:34:04 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-cfd4ea89978so1627716276.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 00:34:04 -0700 (PDT)
-X-Received: by 2002:a25:514:0:b0:d06:f0ab:e17b with SMTP id
- 20-20020a250514000000b00d06f0abe17bmr984545ybf.55.1690529644412; Fri, 28 Jul
- 2023 00:34:04 -0700 (PDT)
+        Fri, 28 Jul 2023 04:52:38 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB51A5278
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 01:50:45 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:12b0:7b7e:d1ff:7873])
+        by albert.telenet-ops.be with bizsmtp
+        id SYqi2A00U0d1nm806Yqi8E; Fri, 28 Jul 2023 10:50:43 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qPJB7-002lS4-D4;
+        Fri, 28 Jul 2023 10:50:42 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qPJBK-00Ajsi-H7;
+        Fri, 28 Jul 2023 10:50:42 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 03/13] of: unittest: Fix overlay type in apply/revert check
+Date:   Fri, 28 Jul 2023 10:50:29 +0200
+Message-Id: <ba0234c41ba808f10112094f88792beeb6dbaedf.1690533838.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1690533838.git.geert+renesas@glider.be>
+References: <cover.1690533838.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20230728014659.411751-1-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <20230728014659.411751-1-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 28 Jul 2023 09:33:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXzWE7NrtPi0hW_APo+Dg-skDMeyAEjVxmUXy9M0jKn_Q@mail.gmail.com>
-Message-ID: <CAMuHMdXzWE7NrtPi0hW_APo+Dg-skDMeyAEjVxmUXy9M0jKn_Q@mail.gmail.com>
-Subject: Re: [PATCH v4] iommu/ipmmu-vmsa: Allow PCIe devices
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-        iommu@lists.linux.dev, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jul 28, 2023 at 4:40 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> IPMMU hardware on R-Car Gen3 and RZ/G2 is simple. Each bus-master
-> device like eMMC host and PCIe controllers has a micro-TLB of
-> The IPMMU, and after enabled it, all transactions of the device are
-> under the IPMMU.
->
->  eMMC host ---(micro-TLB of eMMC)--- IPMMU cache --- IPMMU main
->  PCIe --------(micro-TLB of PCIe)--- IPMMU cache --- IPMMU main
->
-> Now this IPMMU driver allows eMMC host, and it is safe to use
-> the IPMMU. So, we can assume that it is safe to use the IPMMU
-> from PCIe devices too, because all PCIe devices transactions will
-> go to the micro-TLB of PCIe. So, add a new condition whether
-> the device is a PCIe device or not in the ipmmu_device_is_allowed()
-> which will be called if the PCIe host controller has iommu-map
-> property.
->
-> This can improve CPU load because the PCIe controllers only have
-> a capability for lower 32-bit memory area so that this can avoid
-> using swiotlb.
->
-> Note that IPMMU on R-Car Gen4 is different than R-Car Gen3 and
-> RZ/G2's one, especially OS-ID. But, for now, the IPMMU driver
-> takes care of OS-ID 0 only. In other words, all PCIe devices will
-> go to the micro-TLB of PCIe.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
-> Changes from v3:
-> https://lore.kernel.org/all/20230529063928.1030014-1-yoshihiro.shimoda.uh@renesas.com/
->  - Rebase the latest iommu/next branch.
+The removal check in of_unittest_apply_revert_overlay_check()
+always uses the platform device overlay type, while it should use the
+actual overlay type, as passed as a parameter to the function.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This has no impact on any current test, as all tests calling
+of_unittest_apply_revert_overlay_check() use the platform device overlay
+type.
 
-Gr{oetje,eeting}s,
+Fixes: d5e75500ca401d31 ("of: unitest: Add I2C overlay unit tests.")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ drivers/of/unittest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
-
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index a406a12eb20804d6..840f26477f77f622 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -2180,7 +2180,7 @@ static int __init of_unittest_apply_revert_overlay_check(int overlay_nr,
+ 	of_unittest_untrack_overlay(save_ovcs_id);
+ 
+ 	/* unittest device must be again in before state */
+-	if (of_unittest_device_exists(unittest_nr, PDEV_OVERLAY) != before) {
++	if (of_unittest_device_exists(unittest_nr, ovtype) != before) {
+ 		unittest(0, "%s with device @\"%s\" %s\n",
+ 				overlay_name_from_nr(overlay_nr),
+ 				unittest_path(unittest_nr, ovtype),
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
