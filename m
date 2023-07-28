@@ -2,41 +2,40 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39536C04A94
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jul 2023 11:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF57C001DE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jul 2023 12:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234529AbjG1L5M (ORCPT
+        id S236366AbjG1MAm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Jul 2023 07:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50350 "EHLO
+        Fri, 28 Jul 2023 08:00:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233794AbjG1L5L (ORCPT
+        with ESMTP id S235815AbjG1MAg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2023 07:57:11 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66960FA
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 04:57:09 -0700 (PDT)
+        Fri, 28 Jul 2023 08:00:36 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FDA5A0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jul 2023 04:59:51 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:12b0:7b7e:d1ff:7873])
-        by laurent.telenet-ops.be with bizsmtp
-        id Sbx62A0020d1nm801bx66X; Fri, 28 Jul 2023 13:57:07 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id Sbzp2A00f0d1nm801bzpmK; Fri, 28 Jul 2023 13:59:49 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qPM5U-002mIg-Mr;
-        Fri, 28 Jul 2023 13:57:05 +0200
+        id 1qPM88-002mJ0-AH;
+        Fri, 28 Jul 2023 13:59:49 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qPM5h-00AqNg-QH;
-        Fri, 28 Jul 2023 13:57:05 +0200
+        id 1qPM8L-00AqPi-DR;
+        Fri, 28 Jul 2023 13:59:49 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/3] Renesas SoC updates for v6.6
-Date:   Fri, 28 Jul 2023 13:56:59 +0200
-Message-Id: <cover.1690545139.git.geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.6
+Date:   Fri, 28 Jul 2023 13:59:48 +0200
+Message-Id: <cover.1690545478.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,34 +43,66 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi SoC folks,
+	Hi Mike, Stephen,
 
-This is my first pull request for the inclusion of Renesas SoC updates
-for v6.5.
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
-It consists of 3 parts:
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
-  [GIT PULL 1/3] Renesas ARM defconfig updates for v6.6
+are available in the Git repository at:
 
-    - Enable CSI driver support for Renesas RZ/V2M based platforms,
-    - Enable MTU3a PWM and RAA215300 PMIC/RTC driver support, as used on
-      Renesas RZ/{G2L,G2LC,G2UL,V2L} SMARC EVKs.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.6-tag1
 
-  [GIT PULL 2/3] Renesas ARM SoC updates for v6.6
+for you to fetch changes up to dec57795efc4585d5bbca913af6683c5cce2a647:
 
-    -   Drop unused OF includes.
+  clk: renesas: r8a77965: Add 3DGE and ZG support (2023-07-27 14:32:46 +0200)
 
-  [GIT PULL 3/3] Renesas DTS updates for v6.6
+----------------------------------------------------------------
+clk: renesas: Updates for v6.6
 
-    - Add Clocked Serial Interface (CSI) support for the RZ/V2M SoC,
-    - Add PMIC, RTC, and PWM support for the RZ/G2L, RZ/G2LC, and RZ/V2L
-      SMARC EVK development boards,
-    - Add PWM (MTU3a) support for the RZ/G2UL and RZ/Five SoCs,
-    - Add External interrupt (INTC-EX) support for the R-Car S4-8 SoC,
-    - Add LED support for the Spider development board,
-    - Miscellaneous fixes and improvements.
+  - Add graphics clock support on RZ/G2M, RZ/G2N, RZ/G2E, and R-Car H3,
+    M3-W, and M3-N SoCs,
+  - Add Clocked Serial Interface (CSI) clocks on RZ/V2M,
+  - Add PWM (MTU3) clock and reset on RZ/G2UL and RZ/Five,
+  - Miscellaneous fixes and improvements.
 
 Thanks for pulling!
+
+----------------------------------------------------------------
+Adam Ford (4):
+      clk: renesas: rcar-gen3: Add support for ZG clock
+      clk: renesas: r8a774a1: Add 3DGE and ZG support
+      clk: renesas: r8a774e1: Add 3DGE and ZG support
+      clk: renesas: r8a774b1: Add 3DGE and ZG support
+
+Biju Das (1):
+      clk: renesas: r9a07g043: Add MTU3a clock and reset entry
+
+Christophe JAILLET (1):
+      clk: renesas: rzg2l: Simplify .determine_rate()
+
+Fabrizio Castro (1):
+      clk: renesas: r9a09g011: Add CSI related clocks
+
+Geert Uytterhoeven (4):
+      clk: renesas: emev2: Remove obsolete clkdev registration
+      clk: renesas: r8a7795: Add 3DGE and ZG support
+      clk: renesas: r8a7796: Add 3DGE and ZG support
+      clk: renesas: r8a77965: Add 3DGE and ZG support
+
+ drivers/clk/renesas/clk-emev2.c         |  3 ---
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r8a774e1-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  |  2 ++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  |  2 ++
+ drivers/clk/renesas/r8a77965-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r9a07g043-cpg.c     |  3 +++
+ drivers/clk/renesas/r9a09g011-cpg.c     | 15 ++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.c     | 35 +++++++++++++++++++++++++++++----
+ drivers/clk/renesas/rcar-gen3-cpg.h     |  1 +
+ drivers/clk/renesas/rzg2l-cpg.c         |  8 +-------
+ 12 files changed, 63 insertions(+), 14 deletions(-)
 
 Gr{oetje,eeting}s,
 
