@@ -2,62 +2,115 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C46EEB64DD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  1 Aug 2023 07:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F86EC001DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  1 Aug 2023 11:09:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbjHAH66 (ORCPT
+        id S231936AbjHALJM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 1 Aug 2023 03:58:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56050 "EHLO
+        Tue, 1 Aug 2023 07:09:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbjHAH64 (ORCPT
+        with ESMTP id S231777AbjHALIr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Aug 2023 03:58:56 -0400
-Received: from mail.durme.pl (mail.durme.pl [217.182.69.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62181729
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  1 Aug 2023 00:58:53 -0700 (PDT)
-Received: by mail.durme.pl (Postfix, from userid 1002)
-        id EA1494AF53; Tue,  1 Aug 2023 07:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=durme.pl; s=mail;
-        t=1690876577; bh=hFxZwVw4rIL+JwfEOGI47p+fdoVOAeqVswP6NWoHSHQ=;
-        h=Date:From:To:Subject:From;
-        b=k/m/e7fR5lTJFdkzE4rLWVYnIpWCj1PDwEb+8YO/XRZhZcP3BiCnB4D+QCMO5gVUP
-         Rf+E+97CKyjxE1OzosYEtK+LCNHY4LUhPhPEnjSdAuhYwqsvn9/+yU4MkfCsL6bKeb
-         Rd6EzwDIyzPf/nb5FJao4UCmjImWFbOLDNCkm2FMczAbG9aWJUoW1YvuUSdh8Q2Vev
-         NULavV2rtIbGYUGmHqy9r1Dn3C/XZYX+qmPhEx9I1cm4omLjMzQBGN59sF+Bn7LtHg
-         wPxsW6dNfQ9XUXVt17Kwt/KjZt9FuaDR9B9LxD2v9ef2riic5pBHiR4S1u9QBkdAi9
-         8zXXDPKdxAlzQ==
-Received: by mail.durme.pl for <linux-renesas-soc@vger.kernel.org>; Tue,  1 Aug 2023 07:55:32 GMT
-Message-ID: <20230801064501-0.1.3f.clud.0.bne21lwa4p@durme.pl>
-Date:   Tue,  1 Aug 2023 07:55:32 GMT
-From:   "Krystian Wieczorek" <krystian.wieczorek@durme.pl>
-To:     <linux-renesas-soc@vger.kernel.org>
-Subject: W sprawie samochodu
-X-Mailer: mail.durme.pl
+        Tue, 1 Aug 2023 07:08:47 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9DC349C8
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  1 Aug 2023 04:02:55 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qQn9K-0006gH-TO; Tue, 01 Aug 2023 13:02:46 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qQn9J-000MZM-0H; Tue, 01 Aug 2023 13:02:45 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qQn9I-009bbd-42; Tue, 01 Aug 2023 13:02:44 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Danilo Krummrich <dakr@redhat.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        kernel@pengutronix.de, Jyri Sarha <jyri.sarha@iki.fi>
+Subject: [PATCH v2 10/12] drm/shmobile: Convert to platform remove callback returning void
+Date:   Tue,  1 Aug 2023 13:02:37 +0200
+Message-Id: <20230801110239.831099-11-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230801110239.831099-1-u.kleine-koenig@pengutronix.de>
+References: <20230801110239.831099-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2157; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=38wK71pHzyUNLZJVrlPbNiBFUQJSsh1YxlN1rkEvk50=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkyOW//Jyhlw9aGFg+lkzVtZBl9kFEwEcFwP1ZF CbuLNQyisiJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZMjlvwAKCRCPgPtYfRL+ TiwJB/9AFbP54FU5mc10d2jhvc3gLoIbmkStGzYQ5B11jwDeDDS/riDTsCYa4wxpttmC+5tZxqx R9MYpIAr82QV0m7eDiusfGRpjD1SCfj9D593EiRQd/mLvK/9fxq00qF9bVqXtAb9MbacCiyjf+H +Hxu33eUumUFJcwEXgaF3XN3SUqrkGTzjmDmgFXKIqWlj2a/Fvgml+lRyxLNsiV7WWfIbgVsk42 ra8IT9qfJ2MsCXiZ/OQfhvUx1f4NaJb0HIxh4wGHIDuIHhhScjoi0TGLLz587JhP44qar9v9n4q JQrn9tXl2cWc709FR1PbGgPwpZT+kzDXHKpifDnUw9yMCZAn
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
-, je=C5=9Bli chodzi o system monitoringu GPS.
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
-e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
-a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Jyri Sarha <jyri.sarha@iki.fi>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
-dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
-szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
-mne znaczenie.
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+index 30493ce87419..e5db4e0095ba 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+@@ -172,7 +172,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(shmob_drm_pm_ops,
+  * Platform driver
+  */
+ 
+-static int shmob_drm_remove(struct platform_device *pdev)
++static void shmob_drm_remove(struct platform_device *pdev)
+ {
+ 	struct shmob_drm_device *sdev = platform_get_drvdata(pdev);
+ 	struct drm_device *ddev = sdev->ddev;
+@@ -181,8 +181,6 @@ static int shmob_drm_remove(struct platform_device *pdev)
+ 	drm_kms_helper_poll_fini(ddev);
+ 	free_irq(sdev->irq, ddev);
+ 	drm_dev_put(ddev);
+-
+-	return 0;
+ }
+ 
+ static int shmob_drm_probe(struct platform_device *pdev)
+@@ -288,7 +286,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
+ 
+ static struct platform_driver shmob_drm_platform_driver = {
+ 	.probe		= shmob_drm_probe,
+-	.remove		= shmob_drm_remove,
++	.remove_new	= shmob_drm_remove,
+ 	.driver		= {
+ 		.name	= "shmob-drm",
+ 		.pm	= pm_sleep_ptr(&shmob_drm_pm_ops),
+-- 
+2.39.2
 
-Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
-b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
-
-
-Pozdrawiam
-Krystian Wieczorek
