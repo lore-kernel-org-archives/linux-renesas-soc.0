@@ -2,63 +2,74 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB1AC001E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  1 Aug 2023 11:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFE3C001E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  1 Aug 2023 13:56:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232469AbjHALzf (ORCPT
+        id S233957AbjHAN4A (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 1 Aug 2023 07:55:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47542 "EHLO
+        Tue, 1 Aug 2023 09:56:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230049AbjHALz2 (ORCPT
+        with ESMTP id S233120AbjHANz7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Aug 2023 07:55:28 -0400
-Received: from mail.cothiafon.pl (mail.cothiafon.pl [217.61.106.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0411722
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  1 Aug 2023 04:55:27 -0700 (PDT)
-Received: by mail.cothiafon.pl (Postfix, from userid 1002)
-        id 7262783098; Mon, 31 Jul 2023 10:36:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cothiafon.pl; s=mail;
-        t=1690792572; bh=dwoca0X6C9VXklO/zRgFQCPapTk5LFz4tKaENdvy6Po=;
-        h=Date:From:To:Subject:From;
-        b=O98sA4gUdxpT/56qV5pYNOHZ1Ep69CSdjAloB5MTEOokayDO/kXpNQpXisZEKs0eC
-         2wXb271Gj7gCvrnvvhligqIiet36WYYJw3Zay2Yxr1iInoDrLQ5017w/zwoJKR5hJ1
-         yMVlJ/NyGZyoetZxWtlLrKY8nAt53HoLlYWx5H2obOozDtjbI8KWBr5kBgZ/A3qqug
-         GGRCCzdB1omAuNJGuhFsipsBngAxkwir7SdYPeFpY8DKSWn9F5jc7W1qskZhbJd9C3
-         YiO97gSsKC3KmRipA9YpHmMsxPmA4iMGXYts2VvuLYkr41nccs92pnL5mY8Ib9jaT5
-         6qDv+ZNyMB70A==
-Received: by mail.cothiafon.pl for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Jul 2023 08:35:48 GMT
-Message-ID: <20230731095940-0.1.28.omr0.0.bpi3a6rcmh@cothiafon.pl>
-Date:   Mon, 31 Jul 2023 08:35:48 GMT
-From:   =?UTF-8?Q? "Rados=C5=82aw_Grabowski" ?= 
-        <radoslaw.grabowski@cothiafon.pl>
-To:     <linux-renesas-soc@vger.kernel.org>
-Subject: W sprawie samochodu
-X-Mailer: mail.cothiafon.pl
+        Tue, 1 Aug 2023 09:55:59 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 66DBDC3;
+        Tue,  1 Aug 2023 06:55:58 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,247,1684767600"; 
+   d="scan'208";a="175237211"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Aug 2023 22:55:57 +0900
+Received: from localhost.localdomain (unknown [10.226.93.70])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2876C422CE99;
+        Tue,  1 Aug 2023 22:55:54 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Julia Lawall <julia.lawall@inria.fr>
+Subject: [PATCH] clk: vc3: Fix 64 by 64 division
+Date:   Tue,  1 Aug 2023 14:55:52 +0100
+Message-Id: <20230801135552.386796-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Fix the below cocci warnings by replacing do_div()->div64_ul() and
+bound the result with a max value of U16_MAX.
 
-chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
-, je=C5=9Bli chodzi o system monitoringu GPS.
+cocci warnings:
+	drivers/clk/clk-versaclock3.c:404:2-8: WARNING: do_div() does a
+	64-by-32 division, please consider using div64_ul instead.
 
-Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
-e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
-a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
+Reported-by: Julia Lawall <julia.lawall@inria.fr>
+Closes: https://lore.kernel.org/r/202307270841.yr5HxYIl-lkp@intel.com/
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/clk-versaclock3.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
-dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
-szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
-mne znaczenie.
+diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
+index 4ceb7fcf7fcb..7ca413a5b1fb 100644
+--- a/drivers/clk/clk-versaclock3.c
++++ b/drivers/clk/clk-versaclock3.c
+@@ -401,9 +401,8 @@ static long vc3_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		/* Determine best fractional part, which is 16 bit wide */
+ 		div_frc = rate % *parent_rate;
+ 		div_frc *= BIT(16) - 1;
+-		do_div(div_frc, *parent_rate);
+ 
+-		vc3->div_frc = (u32)div_frc;
++		vc3->div_frc = min_t(u64, div64_ul(div_frc, *parent_rate), U16_MAX);
+ 		rate = (*parent_rate *
+ 			(vc3->div_int * VC3_2_POW_16 + div_frc) / VC3_2_POW_16);
+ 	} else {
+-- 
+2.25.1
 
-Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
-b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
-
-
-Pozdrawiam
-Rados=C5=82aw Grabowski
