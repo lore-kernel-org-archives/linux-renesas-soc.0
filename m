@@ -2,87 +2,136 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AF8C001DB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 02:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C7EC04FDF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 16:07:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231223AbjHHCo6 (ORCPT
+        id S231814AbjHHQH5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Aug 2023 22:44:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60412 "EHLO
+        Tue, 8 Aug 2023 12:07:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231285AbjHHCoy (ORCPT
+        with ESMTP id S231658AbjHHQGa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Aug 2023 22:44:54 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A0E61BC5;
-        Mon,  7 Aug 2023 19:44:42 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3781iJ5M022421;
-        Tue, 8 Aug 2023 02:43:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2023-03-30;
- bh=chjmSLkGKsr7AS8UI/OE3uRsupMa4cpKaiHSR5qXeSc=;
- b=YzwuVwDm2kgI9mK4U2B/CnhKViQl8SeUTKkGBU5wlNEURfHMeFwrGrN+jUhLo9YhP/Hr
- Zl0MdtByF5QatC+6QYrh3HB1wkHhTMDZXFrB1t89bkBZu4/tEPjs9riIOwFKyUj/vzDZ
- MyyzSoTh1BazO4f2cLHTpOAHVDfZCLxDSax7GUNZeQ4xgEEejNUypTIJI9ySupuFNxs5
- bILn4+9DP1sBPdl2mI6QPJgniLWpYIfWEBXDckH4UuAJtQTbWs6jvdRiHkxln8isTe42
- DcsxvgM24l4pH3Xu6FaBlZeKTYTAtQlj2RduEIzhdhGROhiAUnY4lAk5OosaoosDo+FT aw== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3s9eaam3yn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Aug 2023 02:43:38 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3782Apfn027958;
-        Tue, 8 Aug 2023 02:43:37 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3s9cv55wgp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Aug 2023 02:43:37 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3782hYGv038171;
-        Tue, 8 Aug 2023 02:43:36 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3s9cv55wfu-7;
-        Tue, 08 Aug 2023 02:43:36 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     jejb@linux.ibm.com,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ufs: host: renesas: Fix private allocation
-Date:   Mon,  7 Aug 2023 22:43:28 -0400
-Message-Id: <169146257047.4040705.18148430080065409999.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230803081812.1446282-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230803081812.1446282-1-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 8 Aug 2023 12:06:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5AB30C0;
+        Tue,  8 Aug 2023 08:45:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E9A5625B1;
+        Tue,  8 Aug 2023 15:08:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A60C433C7;
+        Tue,  8 Aug 2023 15:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691507337;
+        bh=9Gw7YkUPnAg7btMMMieMmpWn6NAWZtq2U7FvhrT+Ou4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=DkRx7ur7t63MQWui1LUaRscobadwh67mmRwqorgioTPiGMkktPMx2DyHiNmCEXc/P
+         nDtjAYSiq5ZhYJODACJrzBu0s0Qn4ItNx+eZmherR/eqsd5xCh+Pe4nSRcwjqLvDaz
+         fBzo+dQhY2X8HOhT5uwGvhuZx/CotDHr1HG7Pnc1TAqlAC4i68FeziRHWirNQQFXiO
+         YzoeHCCzmkkM3H3jnI2yTQDOGnGcrTqsuPXEstnnGhoDQUD0IU/VAPDPoU6kemcFhc
+         rWGdXxERVpvkeGXTCev9Y8GGlsbOSb03PGN9UNrgLIudtyrbodQ9gcyx/5Brq6Uief
+         hAZkFgmCJU52w==
+Date:   Tue, 8 Aug 2023 10:08:54 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "kw@linux.com" <kw@linux.com>,
+        "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+        "kishon@kernel.org" <kishon@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Subject: Re: [PATCH v18 08/20] PCI: dwc: Add dw_pcie_link_set_max_link_width()
+Message-ID: <20230808150854.GA304435@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-07_28,2023-08-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
- adultscore=0 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308080022
-X-Proofpoint-ORIG-GUID: UW7-8m5uC5qXi8tmZX97eVFejYXA4O5y
-X-Proofpoint-GUID: UW7-8m5uC5qXi8tmZX97eVFejYXA4O5y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <rt2vwgmdsxvkb2jh4v6mpnjpfvql44o72nxf663wbnkcvkmift@o2dl5oa435k3>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 03 Aug 2023 17:18:12 +0900, Yoshihiro Shimoda wrote:
-
-> Should use devm_kzalloc() for struct ufs_renesas_priv because
-> the .initialized should be false as default.
+On Tue, Aug 08, 2023 at 03:15:33AM +0300, Serge Semin wrote:
+> On Mon, Aug 07, 2023 at 06:40:34PM -0500, Bjorn Helgaas wrote:
+> > On Tue, Aug 08, 2023 at 01:53:11AM +0300, Serge Semin wrote:
+> > > On Tue, Aug 01, 2023 at 01:50:59AM +0000, Yoshihiro Shimoda wrote:
+> > > > > From: Serge Semin, Sent: Tuesday, August 1, 2023 8:54 AM
+> > > > > On Fri, Jul 21, 2023 at 04:44:40PM +0900, Yoshihiro Shimoda wrote:
+> > > > > > To improve code readability, add dw_pcie_link_set_max_link_width().
+> > > > > > ...
+> > 
+> > > > > > @@ -1009,49 +1049,5 @@ void dw_pcie_setup(struct dw_pcie *pci)
+> > > > > >  	val |= PORT_LINK_DLL_LINK_EN;
+> > > > > >  	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
+> > > > > >
+> > > > > > -	if (!pci->num_lanes) {
+> > > > > > -		dev_dbg(pci->dev, "Using h/w default number of lanes\n");
+> > > > > > -		return;
+> > > > > > -	}
+> > > > > > -
+> > > > > > -	/* Set the number of lanes */
+> > > > > 
+> > > > > > -	val &= ~PORT_LINK_FAST_LINK_MODE;
+> > > > > 
+> > > > > My series contains the patch which drops this line:
+> > > > <snip URL>
+> > > > > So either pick my patch up and add it to your series or still pick it up
+> > > > > but with changing the authorship and adding me under the Suggested-by
+> > > > > tag with the email-address I am using to review your series. Bjorn,
+> > > > > what approach would you prefer? Perhaps alternative?
 > 
+> > I don't really see the argument here.  AFAICT, Yoshihiro's patch
+> > (https://lore.kernel.org/r/20230721074452.65545-9-yoshihiro.shimoda.uh@renesas.com)
+> > is a trivial refactoring to make dw_pcie_link_set_max_link_width(),
+> > which might be reused elsewhere later, which seems perfectly fine.
+> > 
+> > It'd be fine with me to add a little detail in the commit log to
+> > reference the Synopsys manual, which I don't have.  But doesn't seem
+> > like a big deal to me.
 > 
+> More details are in one of my earlier comments to this patch which
+> Yoshihiro promised to add to the patch log on the next patchset
+> revision. You can read it here:
+> https://lore.kernel.org/linux-pci/20230721074452.65545-1-yoshihiro.shimoda.uh@renesas.com/T/#m8ac364249f40c726da88316b67f11a6d55068ef0
+> 
+> > Dropping the PORT_LINK_FAST_LINK_MODE mask seems like a separate
+> > question that should be in a separate patch.
+> > https://lore.kernel.org/linux-pci/20230611192005.25636-6-Sergey.Semin@baikalelectronics.ru/
+> > says it's redundant, so it sounds more like a cleanup than a fix.
+> 
+> That's the point of my comment. There is no need in copying that mask
+> to the dw_pcie_link_set_max_link_width() method because first it's
+> unrelated to the link-width setting, second it's redundant. There is
+> my patch dropping the mask with the proper justification:
+> https://lore.kernel.org/linux-pci/20230611192005.25636-6-Sergey.Semin@baikalelectronics.ru/
+> It would be good to either merge it in before the Yoshihiro' series or
+> add my patch to the Yoshihiro' patchset. But it's in the patchwork
+> limbo now, neither you nor Lorenzo or Krzysztof were willing to merge
+> it in. That's why I suggested to move the patch here with the denoted
+> alterations. Could you give your resolution whether the suggested
+> movement is ok or perhaps you or Lorenzo or Krzysztof consider merge
+> it in as is?
 
-Applied to 6.5/scsi-fixes, thanks!
+If I understand Yoshihiro's patch, it pulls code out into
+dw_pcie_link_set_max_link_width() without changing that code.  That
+seems like the best approach to me because it's very easy to review.
 
-[1/1] ufs: host: renesas: Fix private allocation
-      https://git.kernel.org/mkp/scsi/c/b6d128f89a85
+If we want to remove a little redundant code later in a separate
+patch, that's fine too but doesn't seem urgent.  I don't think they
+need to be tied together.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Bjorn
