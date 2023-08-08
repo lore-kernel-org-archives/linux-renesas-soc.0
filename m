@@ -2,136 +2,84 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C7EC04FDF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 16:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82402C04FE1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 16:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231814AbjHHQH5 (ORCPT
+        id S232013AbjHHQNW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:07:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46752 "EHLO
+        Tue, 8 Aug 2023 12:13:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231658AbjHHQGa (ORCPT
+        with ESMTP id S232192AbjHHQMJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 12:06:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5AB30C0;
-        Tue,  8 Aug 2023 08:45:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E9A5625B1;
-        Tue,  8 Aug 2023 15:08:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A60C433C7;
-        Tue,  8 Aug 2023 15:08:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691507337;
-        bh=9Gw7YkUPnAg7btMMMieMmpWn6NAWZtq2U7FvhrT+Ou4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=DkRx7ur7t63MQWui1LUaRscobadwh67mmRwqorgioTPiGMkktPMx2DyHiNmCEXc/P
-         nDtjAYSiq5ZhYJODACJrzBu0s0Qn4ItNx+eZmherR/eqsd5xCh+Pe4nSRcwjqLvDaz
-         fBzo+dQhY2X8HOhT5uwGvhuZx/CotDHr1HG7Pnc1TAqlAC4i68FeziRHWirNQQFXiO
-         YzoeHCCzmkkM3H3jnI2yTQDOGnGcrTqsuPXEstnnGhoDQUD0IU/VAPDPoU6kemcFhc
-         rWGdXxERVpvkeGXTCev9Y8GGlsbOSb03PGN9UNrgLIudtyrbodQ9gcyx/5Brq6Uief
-         hAZkFgmCJU52w==
-Date:   Tue, 8 Aug 2023 10:08:54 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "kw@linux.com" <kw@linux.com>,
-        "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-        "kishon@kernel.org" <kishon@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Subject: Re: [PATCH v18 08/20] PCI: dwc: Add dw_pcie_link_set_max_link_width()
-Message-ID: <20230808150854.GA304435@bhelgaas>
+        Tue, 8 Aug 2023 12:12:09 -0400
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A14C67DB2;
+        Tue,  8 Aug 2023 08:46:57 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4RKs9h38Tpz4f3tNb;
+        Tue,  8 Aug 2023 19:56:56 +0800 (CST)
+Received: from [10.67.110.72] (unknown [10.67.110.72])
+        by APP4 (Coremail) with SMTP id gCh0CgCXc6aGLdJkOOXmAA--.27824S2;
+        Tue, 08 Aug 2023 19:56:55 +0800 (CST)
+Message-ID: <9d309cd3-7c73-65fd-7e0b-d0491f1c2d67@huaweicloud.com>
+Date:   Tue, 8 Aug 2023 19:56:53 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <rt2vwgmdsxvkb2jh4v6mpnjpfvql44o72nxf663wbnkcvkmift@o2dl5oa435k3>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH -next] net: pcs: Add missing put_device call in
+ miic_create
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     clement.leger@bootlin.com, hkallweit1@gmail.com,
+        linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, f.fainelli@gmail.com,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+        xiangyang3@huawei.com
+References: <20230807134714.2048214-1-xiangyang@huaweicloud.com>
+ <20230808105456.3vbw3ijqube2yetn@skbuf>
+From:   Xiang Yang <xiangyang@huaweicloud.com>
+In-Reply-To: <20230808105456.3vbw3ijqube2yetn@skbuf>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: gCh0CgCXc6aGLdJkOOXmAA--.27824S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKr1UCr1DXFykGF1kXryfCrg_yoWxtFcE9r
+        W0vrs3ArWrJF18GFyrAFy3Zr4Y9a4DtFWj9r47JF4rJFnaqFZ7GFs3G3yFy343Aa1kKF9r
+        KrW5Ar4q9w1UWjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_JrC_JFWl1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+        07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+        7IU1zuWJUUUUU==
+X-CM-SenderInfo: x0ld0wp1dqwq5kxd4v5lfo033gof0z/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 03:15:33AM +0300, Serge Semin wrote:
-> On Mon, Aug 07, 2023 at 06:40:34PM -0500, Bjorn Helgaas wrote:
-> > On Tue, Aug 08, 2023 at 01:53:11AM +0300, Serge Semin wrote:
-> > > On Tue, Aug 01, 2023 at 01:50:59AM +0000, Yoshihiro Shimoda wrote:
-> > > > > From: Serge Semin, Sent: Tuesday, August 1, 2023 8:54 AM
-> > > > > On Fri, Jul 21, 2023 at 04:44:40PM +0900, Yoshihiro Shimoda wrote:
-> > > > > > To improve code readability, add dw_pcie_link_set_max_link_width().
-> > > > > > ...
-> > 
-> > > > > > @@ -1009,49 +1049,5 @@ void dw_pcie_setup(struct dw_pcie *pci)
-> > > > > >  	val |= PORT_LINK_DLL_LINK_EN;
-> > > > > >  	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
-> > > > > >
-> > > > > > -	if (!pci->num_lanes) {
-> > > > > > -		dev_dbg(pci->dev, "Using h/w default number of lanes\n");
-> > > > > > -		return;
-> > > > > > -	}
-> > > > > > -
-> > > > > > -	/* Set the number of lanes */
-> > > > > 
-> > > > > > -	val &= ~PORT_LINK_FAST_LINK_MODE;
-> > > > > 
-> > > > > My series contains the patch which drops this line:
-> > > > <snip URL>
-> > > > > So either pick my patch up and add it to your series or still pick it up
-> > > > > but with changing the authorship and adding me under the Suggested-by
-> > > > > tag with the email-address I am using to review your series. Bjorn,
-> > > > > what approach would you prefer? Perhaps alternative?
-> 
-> > I don't really see the argument here.  AFAICT, Yoshihiro's patch
-> > (https://lore.kernel.org/r/20230721074452.65545-9-yoshihiro.shimoda.uh@renesas.com)
-> > is a trivial refactoring to make dw_pcie_link_set_max_link_width(),
-> > which might be reused elsewhere later, which seems perfectly fine.
-> > 
-> > It'd be fine with me to add a little detail in the commit log to
-> > reference the Synopsys manual, which I don't have.  But doesn't seem
-> > like a big deal to me.
-> 
-> More details are in one of my earlier comments to this patch which
-> Yoshihiro promised to add to the patch log on the next patchset
-> revision. You can read it here:
-> https://lore.kernel.org/linux-pci/20230721074452.65545-1-yoshihiro.shimoda.uh@renesas.com/T/#m8ac364249f40c726da88316b67f11a6d55068ef0
-> 
-> > Dropping the PORT_LINK_FAST_LINK_MODE mask seems like a separate
-> > question that should be in a separate patch.
-> > https://lore.kernel.org/linux-pci/20230611192005.25636-6-Sergey.Semin@baikalelectronics.ru/
-> > says it's redundant, so it sounds more like a cleanup than a fix.
-> 
-> That's the point of my comment. There is no need in copying that mask
-> to the dw_pcie_link_set_max_link_width() method because first it's
-> unrelated to the link-width setting, second it's redundant. There is
-> my patch dropping the mask with the proper justification:
-> https://lore.kernel.org/linux-pci/20230611192005.25636-6-Sergey.Semin@baikalelectronics.ru/
-> It would be good to either merge it in before the Yoshihiro' series or
-> add my patch to the Yoshihiro' patchset. But it's in the patchwork
-> limbo now, neither you nor Lorenzo or Krzysztof were willing to merge
-> it in. That's why I suggested to move the patch here with the denoted
-> alterations. Could you give your resolution whether the suggested
-> movement is ok or perhaps you or Lorenzo or Krzysztof consider merge
-> it in as is?
 
-If I understand Yoshihiro's patch, it pulls code out into
-dw_pcie_link_set_max_link_width() without changing that code.  That
-seems like the best approach to me because it's very easy to review.
 
-If we want to remove a little redundant code later in a separate
-patch, that's fine too but doesn't seem urgent.  I don't think they
-need to be tied together.
+在 2023/8/8 18:54, Vladimir Oltean 写道:
+> On Mon, Aug 07, 2023 at 01:47:14PM +0000, Xiang Yang wrote:
+>> From: Xiang Yang <xiangyang3@huawei.com>
+>>
+>> The reference of pdev->dev is taken by of_find_device_by_node, so
+>> it should be released when error out.
+>>
+>> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
+>> Signed-off-by: Xiang Yang <xiangyang3@huawei.com>
+>> ---
+> 
+> Also, the patch subject prefix needs to be "[PATCH net]" (indicative of
+> the fact that you want it to go to https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git)
+> and not "[PATCH -next]".
+Thanks, I will change the patch subject prefix and resend the patch of
+v2 with your advice.
 
-Bjorn
