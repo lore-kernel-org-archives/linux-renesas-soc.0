@@ -2,84 +2,85 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82402C04FE1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 16:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC9DC001DB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 16:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232013AbjHHQNW (ORCPT
+        id S233451AbjHHQqU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:13:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
+        Tue, 8 Aug 2023 12:46:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232192AbjHHQMJ (ORCPT
+        with ESMTP id S232322AbjHHQpY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 12:12:09 -0400
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A14C67DB2;
-        Tue,  8 Aug 2023 08:46:57 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4RKs9h38Tpz4f3tNb;
-        Tue,  8 Aug 2023 19:56:56 +0800 (CST)
-Received: from [10.67.110.72] (unknown [10.67.110.72])
-        by APP4 (Coremail) with SMTP id gCh0CgCXc6aGLdJkOOXmAA--.27824S2;
-        Tue, 08 Aug 2023 19:56:55 +0800 (CST)
-Message-ID: <9d309cd3-7c73-65fd-7e0b-d0491f1c2d67@huaweicloud.com>
-Date:   Tue, 8 Aug 2023 19:56:53 +0800
+        Tue, 8 Aug 2023 12:45:24 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A39B44454;
+        Tue,  8 Aug 2023 08:56:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1691510182; x=1723046182;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=n3aj6xVdycgio2ipgHBrYjt9IawzFOYxekYmT8ZR1lo=;
+  b=JoknEg9FMgnmIKQD2SrDTnuwR3VV0MdQ9rb3mev6MkSyJtwdPVujzsZL
+   DRRNcha6SJRv6I2hCUqE4gqoZPZgTC5UspUBl/8uQnGiovFAmeO5syAAs
+   P1k58z2HMaXzo41Qh1LLvJscGhQXdMgENRnFXiVgLOV2lLdPVCavN9Vlk
+   63BVQsoqb3jNw4OEas0Qq++aOmpwKYLEL9DKjiosfn08LYqz/5D9ZbnyI
+   GWm0EoWlwTHnZHiUj+pMfSIQBCUDDW36STlHD7QI845COuxkfD5NwdggY
+   T/jnzupFL3pC5SdR+lZxllizxulBqM7XZXayXoPEq9xBjV6y4nRVU4LZN
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="437146979"
+X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
+   d="scan'208";a="437146979"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2023 06:04:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="708243673"
+X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
+   d="scan'208";a="708243673"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006.jf.intel.com with ESMTP; 08 Aug 2023 06:04:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qTMNv-008whr-24;
+        Tue, 08 Aug 2023 16:04:27 +0300
+Date:   Tue, 8 Aug 2023 16:04:27 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>, Peter Rosin <peda@axentia.se>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Jakob Hauser <jahau@rocketmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: magnetometer: yamaha-yas530: Use
+ i2c_get_match_data()
+Message-ID: <ZNI9WyNM7CZlw/ik@smile.fi.intel.com>
+References: <20230807172548.258247-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH -next] net: pcs: Add missing put_device call in
- miic_create
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     clement.leger@bootlin.com, hkallweit1@gmail.com,
-        linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, f.fainelli@gmail.com,
-        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-        xiangyang3@huawei.com
-References: <20230807134714.2048214-1-xiangyang@huaweicloud.com>
- <20230808105456.3vbw3ijqube2yetn@skbuf>
-From:   Xiang Yang <xiangyang@huaweicloud.com>
-In-Reply-To: <20230808105456.3vbw3ijqube2yetn@skbuf>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: gCh0CgCXc6aGLdJkOOXmAA--.27824S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKr1UCr1DXFykGF1kXryfCrg_yoWxtFcE9r
-        W0vrs3ArWrJF18GFyrAFy3Zr4Y9a4DtFWj9r47JF4rJFnaqFZ7GFs3G3yFy343Aa1kKF9r
-        KrW5Ar4q9w1UWjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_JrC_JFWl1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-        07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-        7IU1zuWJUUUUU==
-X-CM-SenderInfo: x0ld0wp1dqwq5kxd4v5lfo033gof0z/
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230807172548.258247-1-biju.das.jz@bp.renesas.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Mon, Aug 07, 2023 at 06:25:47PM +0100, Biju Das wrote:
+> Simplify the probe() by replacing device_get_match_data() with
+> i2c_get_match_data().
 
+> While at it, drop unnecessary enum chip_ids by splitting the array
+> yas5xx_chip_info_tbl[] as individual variables.
 
-在 2023/8/8 18:54, Vladimir Oltean 写道:
-> On Mon, Aug 07, 2023 at 01:47:14PM +0000, Xiang Yang wrote:
->> From: Xiang Yang <xiangyang3@huawei.com>
->>
->> The reference of pdev->dev is taken by of_find_device_by_node, so
->> it should be released when error out.
->>
->> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
->> Signed-off-by: Xiang Yang <xiangyang3@huawei.com>
->> ---
-> 
-> Also, the patch subject prefix needs to be "[PATCH net]" (indicative of
-> the fact that you want it to go to https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git)
-> and not "[PATCH -next]".
-Thanks, I will change the patch subject prefix and resend the patch of
-v2 with your advice.
+This should be in a separate change.
+Personally I see no point in doing this.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
