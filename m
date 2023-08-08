@@ -2,135 +2,84 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC813C001B0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 16:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B636C001B0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 17:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233563AbjHHQuZ (ORCPT
+        id S234281AbjHHRUf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39152 "EHLO
+        Tue, 8 Aug 2023 13:20:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232684AbjHHQtT (ORCPT
+        with ESMTP id S234031AbjHHRUM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 12:49:19 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 879F04AAAB;
-        Tue,  8 Aug 2023 08:57:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691510246; x=1723046246;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=E5LRHteZkEMYNsco/1BxeEDeFFbk8r50PGxxwtuDxOc=;
-  b=exjbdw8fTLjQDA6qhjQkEDgpF35MkCeP6sEAvfXpqFaiodiPmUTj/sd5
-   jXs95AJAldGx/YdIiBibFOphj/xVkYLUtkAL5mfBS59Eq1UhPMj8czuKv
-   DqEEm8lcFOKttVfWdM+WnJ4ykXqcDXZkDy4x0tP6p0c/KG5rZ75foLEYM
-   5/LYxDr5F6V2piuG7CDNe8KW32o2ykFILkUIYfWNCl0IRegNAdx6Itc2i
-   tkfIz9Cj2t15mCdD/lYYBcC1OlCSvzuUJqVcAw6mxJeJB90+eONUJ631P
-   EvZ+DArYhdMriAFY3Ds7ecAXLBAf33E1h95mo9tya+QLQlBBwj1lUmdLv
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="369704780"
-X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
-   d="scan'208";a="369704780"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2023 05:14:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="821344916"
-X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
-   d="scan'208";a="821344916"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Aug 2023 05:14:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qTLbj-007EVK-1V;
-        Tue, 08 Aug 2023 15:14:39 +0300
-Date:   Tue, 8 Aug 2023 15:14:39 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v7 0/4] Extend device_get_match_data() to struct bus_type
-Message-ID: <ZNIxr7yNcpSU4f3k@smile.fi.intel.com>
-References: <20230804161728.394920-1-biju.das.jz@bp.renesas.com>
- <20230805174036.129ffbc2@jic23-huawei>
- <OS0PR01MB59220491C7C8AA40BEFAAD82860EA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <20230806142950.6c409600@jic23-huawei>
- <ZNEFjyAloqlkMWn7@smile.fi.intel.com>
- <20230807204505.5f3f245e@jic23-huawei>
+        Tue, 8 Aug 2023 13:20:12 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F961DD3B;
+        Tue,  8 Aug 2023 09:08:07 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fe1b00fce2so9191442e87.3;
+        Tue, 08 Aug 2023 09:08:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691510874; x=1692115674;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYpXHERbytP8f76n5u1gZDzz4r3bl6ejOhKXKpWtnKY=;
+        b=YvZzgLNYmXceCs7wjkM4vm1j58GQPDEMnud74TQ0YkYBWG0mzqwdDjkVYT+7X2tCx1
+         IAy5acNTsBQUtqP30qD6Rk+gtq1Z0d7TkAwXHm+rEDkAD49UwnQXMLPVj99NWbvTSZBr
+         meei5WaHahczC9Fru97yEjHyck/00h1iT2xTNWOznrMIE1dHGiVrVgaKHfaqZNqDSgwt
+         8kol6vz4JrfyT5/a7zmeMWCnaYeXLZIFWLqixYKGA1jdh6GvBaLmSz8Mv3X2P67UkeC3
+         Lj5n2e75c4gFt0+Xn9U7B+ARbzf45Q/Gk1eHRiRIWgDGOEbhc57PmqYly0wUTcUCBJ4m
+         V2YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691510874; x=1692115674;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PYpXHERbytP8f76n5u1gZDzz4r3bl6ejOhKXKpWtnKY=;
+        b=DMaLROAhOt4BTodEVbd5MU0vSernfeErWUptWAr2BXh/nvusCJDstzoi+IuSdYMEEe
+         CYzlW2Uw3gGYai/b20eyLmUH+Tk+oGSVTTtFByXkkCR8POw2ITohDaCg8rq1XuVwFY0d
+         sHJeF99e2k1sJwtZnPg7OI7bRmHhQoV/NYGeTL4oh1mhYfGkh+ztXs5FODRTFuTrTyW3
+         Ts9t2J9SCWBFaSt9jT6UCvfaBm8KOv8xslACXCQzapN7ZWOGPiVVTzfkz5M4SvufzHj+
+         W43pjS0Ra4fQf5qgoWV1ahLK2kNNlXtHXlg1oAXbQb8Q3fCT5CM3iUabDY4f/CP9jwNz
+         AvcQ==
+X-Gm-Message-State: AOJu0YxW4PBUXoWbV0aygcftlIjnXNTZyoN+0LMIeBhQxw6cVQmyy2Br
+        uwtsGVOZZqjCQ3cKgt4DKVBBdLJ5vJWOFLX2
+X-Google-Smtp-Source: AGHT+IHqZX5+i2tEw07zhkT2FhkqK/GmHYgxbB9OmZLX/xARTqjJQuHqNPFP3PyDgOT3RoEkND+lDA==
+X-Received: by 2002:a17:906:8a53:b0:991:cd1f:e67a with SMTP id gx19-20020a1709068a5300b00991cd1fe67amr9967570ejc.29.1691492098592;
+        Tue, 08 Aug 2023 03:54:58 -0700 (PDT)
+Received: from skbuf ([188.27.184.201])
+        by smtp.gmail.com with ESMTPSA id v19-20020a170906489300b0099bd1a78ef5sm6470175ejq.74.2023.08.08.03.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 03:54:58 -0700 (PDT)
+Date:   Tue, 8 Aug 2023 13:54:56 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Xiang Yang <xiangyang@huaweicloud.com>
+Cc:     clement.leger@bootlin.com, hkallweit1@gmail.com,
+        linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, f.fainelli@gmail.com,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+        xiangyang3@huawei.com
+Subject: Re: [PATCH -next] net: pcs: Add missing put_device call in
+ miic_create
+Message-ID: <20230808105456.3vbw3ijqube2yetn@skbuf>
+References: <20230807134714.2048214-1-xiangyang@huaweicloud.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230807204505.5f3f245e@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20230807134714.2048214-1-xiangyang@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Aug 07, 2023 at 08:45:05PM +0100, Jonathan Cameron wrote:
-> On Mon, 7 Aug 2023 17:54:07 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Sun, Aug 06, 2023 at 02:29:50PM +0100, Jonathan Cameron wrote:
-> > > On Sat, 5 Aug 2023 17:42:21 +0000
-> > > Biju Das <biju.das.jz@bp.renesas.com> wrote:  
-> > > > > On Fri,  4 Aug 2023 17:17:24 +0100
-> > > > > Biju Das <biju.das.jz@bp.renesas.com> wrote:  
-
-...
-
-> > > > + * Besides the fact that some drivers abuse the device ID driver_data type
-> > > > + * and claim it to be integer, for the bus specific ID tables the driver_data
-> > > > + * may be defined as kernel_ulong_t. For these tables 0 is a valid response,
-> > > > + * but not for this function. It's recommended to convert those either to avoid
-> > > > + * 0 or use a real pointer to the predefined driver data.  
-> > 
-> > > We still need to maintain consistency across the two tables, which
-> > > is a stronger requirement than avoiding 0.  
-> > 
-> > True. Any suggestion how to amend the above comment? Because the documentation
-> > makes sense on its own (may be split from the series?).
+On Mon, Aug 07, 2023 at 01:47:14PM +0000, Xiang Yang wrote:
+> From: Xiang Yang <xiangyang3@huawei.com>
 > 
-> For bus ID tables it is fine right now as long as no one checks for NULL.
-> I guess adding this to the i2c_get_match_data and spi equivalent wrapper
-> functions might avoid someone shooting themselves in the foot (I've done it
-> for starters more than once).
-
-Ah, okay.
-
-...
-
-> > > Some drivers already do that by forcing the enum used to start at 1 which
-> > > doesn't solver the different data types issue.  
-> > 
-> > And some maintainers do not want to see non-enum values in i2c ID table.
-> > *Shrug*.
+> The reference of pdev->dev is taken by of_find_device_by_node, so
+> it should be released when error out.
 > 
-> That leaves us stuck unless we move to a form where the i2c ID table isn't
-> used if there is an of_device_id table (or maybe we invent yet another table
-> and if that is present it is used for dt and were i2c_device_id is used and
-> hence becomes an opt in?  That will also be tricky however.
+> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
+> Signed-off-by: Xiang Yang <xiangyang3@huawei.com>
+> ---
 
-This won't ever happen as it will break an ABI (as far as I understand
-the current state of affairs). Seems the easiest path is to try to sell
-the point that having pointers in I2C ID tables is okay to the maintainers
-who don't see it that way.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Also, the patch subject prefix needs to be "[PATCH net]" (indicative of
+the fact that you want it to go to https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git)
+and not "[PATCH -next]".
