@@ -2,115 +2,125 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF0EC04A6A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Aug 2023 19:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB9DC41513
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Aug 2023 15:10:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230410AbjHHTuZ (ORCPT
+        id S234929AbjHJPKT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 15:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46458 "EHLO
+        Thu, 10 Aug 2023 11:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232596AbjHHTuK (ORCPT
+        with ESMTP id S232967AbjHJPKS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2023 15:50:10 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 354CD53508
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Aug 2023 09:56:09 -0700 (PDT)
-Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4RKxV56xgxz6GD56
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Aug 2023 23:11:25 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 8 Aug
- 2023 16:16:20 +0100
-Date:   Tue, 8 Aug 2023 16:16:19 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org\" <linux-renesas-soc@vger.kernel.org>"@domain.invalid
-Subject: Re: [PATCH v7 0/4] Extend device_get_match_data() to struct
- bus_type
-Message-ID: <20230808161619.00000b92@Huawei.com>
-In-Reply-To: <ZNFV+C1HCIRJpbdC@google.com>
+        Thu, 10 Aug 2023 11:10:18 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DCB826B7;
+        Thu, 10 Aug 2023 08:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1691680218; x=1723216218;
+  h=resent-from:resent-date:resent-message-id:resent-to:date:
+   from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=E3ZMke54mtosCQbG55UwhQh1q58r9W+COrYMi8FksLs=;
+  b=UUi6OmvgurLe6GQUvazqKkcz+DoptSvufz9wAAtoIzlhhdOoULsbq8uz
+   WRkSKSFUzQUXcfnmoCf8rJcElgNicr6fFQkWgYwGzTu0HtNqadmz90o5i
+   VnSWDqwZHgak8bPAqAPXsYIO5o/GeZNo2uvr/MAXk33N0lznUmN1PrTy3
+   6vZj5zX1zoKeFsGxu+5+xmM7enEzYYuhgOSk0ksFjiEb29bbNnRVq314z
+   GGhgn1UNNz9tJFoFONToXifF7rbQjkH6pznpQQs9Grn/Fh8yMFuUrrApI
+   ZOJWO+reoowe8CZ6GvGfQ10F2WmgCIMq3HXgkuaSoAuwWTXcDjJsvuLCV
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10798"; a="351033520"
+X-IronPort-AV: E=Sophos;i="6.01,162,1684825200"; 
+   d="scan'208";a="351033520"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2023 08:09:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10798"; a="855968836"
+X-IronPort-AV: E=Sophos;i="6.01,162,1684825200"; 
+   d="scan'208";a="855968836"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga004.jf.intel.com with ESMTP; 10 Aug 2023 08:09:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1qU7Hi-006DXR-1o;
+        Thu, 10 Aug 2023 18:09:10 +0300
+Date:   Thu, 10 Aug 2023 18:04:58 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v7 0/4] Extend device_get_match_data() to struct bus_type
+Message-ID: <ZNT8mrh6seDQL3kz@smile.fi.intel.com>
 References: <20230804161728.394920-1-biju.das.jz@bp.renesas.com>
-        <20230805174036.129ffbc2@jic23-huawei>
-        <OS0PR01MB59220491C7C8AA40BEFAAD82860EA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-        <20230806142950.6c409600@jic23-huawei>
-        <ZNEFjyAloqlkMWn7@smile.fi.intel.com>
-        <ZNFV+C1HCIRJpbdC@google.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+ <20230805174036.129ffbc2@jic23-huawei>
+ <OS0PR01MB59220491C7C8AA40BEFAAD82860EA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <20230806142950.6c409600@jic23-huawei>
+ <ZNEFjyAloqlkMWn7@smile.fi.intel.com>
+ <ZNFV+C1HCIRJpbdC@google.com>
+ <ZNIyrG/2h/PeS9Oz@smile.fi.intel.com>
+ <20230809182551.7eca502e@jic23-huawei>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.76]
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230809182551.7eca502e@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, 7 Aug 2023 13:37:12 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-
-> On Mon, Aug 07, 2023 at 05:54:07PM +0300, Andy Shevchenko wrote:
-> > On Sun, Aug 06, 2023 at 02:29:50PM +0100, Jonathan Cameron wrote:  
-> > > On Sat, 5 Aug 2023 17:42:21 +0000
-> > > Biju Das <biju.das.jz@bp.renesas.com> wrote:  
-> > > > > On Fri,  4 Aug 2023 17:17:24 +0100
+On Wed, Aug 09, 2023 at 06:25:51PM +0100, Jonathan Cameron wrote:
+> On Tue, 8 Aug 2023 15:18:52 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Aug 07, 2023 at 01:37:12PM -0700, Dmitry Torokhov wrote:
+> > > On Mon, Aug 07, 2023 at 05:54:07PM +0300, Andy Shevchenko wrote:  
+> > > > On Sun, Aug 06, 2023 at 02:29:50PM +0100, Jonathan Cameron wrote:  
+> > > > > On Sat, 5 Aug 2023 17:42:21 +0000
 > > > > > Biju Das <biju.das.jz@bp.renesas.com> wrote:  
+> > > > > > > On Fri,  4 Aug 2023 17:17:24 +0100
+> > > > > > > Biju Das <biju.das.jz@bp.renesas.com> wrote:  
+
+...
+
+> > > > > > + * Besides the fact that some drivers abuse the device ID driver_data type
+> > > > > > + * and claim it to be integer, for the bus specific ID tables the driver_data
+> > > > > > + * may be defined as kernel_ulong_t. For these tables 0 is a valid response,
+> > > > > > + * but not for this function. It's recommended to convert those either to avoid
+> > > > > > + * 0 or use a real pointer to the predefined driver data.  
+> > > >   
+> > > > > We still need to maintain consistency across the two tables, which
+> > > > > is a stronger requirement than avoiding 0.  
+> > > > 
+> > > > True. Any suggestion how to amend the above comment? Because the documentation
+> > > > makes sense on its own (may be split from the series?).
+> > > >   
+> > > > > Some drivers already do that by forcing the enum used to start at 1 which
+> > > > > doesn't solver the different data types issue.  
+> > > > 
+> > > > And some maintainers do not want to see non-enum values in i2c ID table.
+> > > > *Shrug*.  
+> > > 
+> > > So in legacy ID lookup path we can safely assume that values below 4096
+> > > are scalars and return NULL from the new device_get_match_data(). This
+> > > way current drivers using the values as indices or doing direct
+> > > comparisons against them can continue doing manual look up and using
+> > > them as they see fit. And we can convert the drivers at our leisure.  
 > > 
-> > ...
-> >   
-> > > > + * Besides the fact that some drivers abuse the device ID driver_data type
-> > > > + * and claim it to be integer, for the bus specific ID tables the driver_data
-> > > > + * may be defined as kernel_ulong_t. For these tables 0 is a valid response,
-> > > > + * but not for this function. It's recommended to convert those either to avoid
-> > > > + * 0 or use a real pointer to the predefined driver data.  
-> >   
-> > > We still need to maintain consistency across the two tables, which
-> > > is a stronger requirement than avoiding 0.  
+> > It's a good idea, but I believe will be received as hack.
+> > But why not to try? We indeed have an error pointers for the last page
+> > and NULL (which is only up to 16 IIRC) and reserved space in the first
+> > page. To be more robust I would check all enums that are being used
+> > in I2C ID tables for maximum value and if that is less than 16, use
+> > ZERO_OR_NULL_PTR() instead of custom stuff.
 > > 
-> > True. Any suggestion how to amend the above comment? Because the documentation
-> > makes sense on its own (may be split from the series?).
-> >   
-> > > Some drivers already do that by forcing the enum used to start at 1 which
-> > > doesn't solver the different data types issue.  
-> > 
-> > And some maintainers do not want to see non-enum values in i2c ID table.
-> > *Shrug*.  
+> See iio/adc/max1363 example that has 37ish.
 > 
-> So in legacy ID lookup path we can safely assume that values below 4096
-> are scalars and return NULL from the new device_get_match_data(). This
-> way current drivers using the values as indices or doing direct
-> comparisons against them can continue doing manual look up and using
-> them as they see fit. And we can convert the drivers at our leisure.
+> Could tidy that one up first and hopefully not find any others that
+> are in subsystems not keen on the move away from enums.
 
-Good idea.  Though I suspect there may still be nasty cases. People have
-been known to put chip ID values in these fields so that they can then
-match them against a who am I register as a 'detect it's the right part' check.
+Oh, yep, this needs a treewide audit and fixes around before going further.
+As you said.
 
-No idea if we have any drivers doing that but if there are hopefully not too many!
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Jonathan
-
-> 
-> Thanks.
-> 
 
