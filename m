@@ -2,89 +2,147 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E5CC04FDF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Aug 2023 02:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C098BC001DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Aug 2023 07:25:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232658AbjHNC4U (ORCPT
+        id S232569AbjHNHY6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 13 Aug 2023 22:56:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55448 "EHLO
+        Mon, 14 Aug 2023 03:24:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232650AbjHNC4G (ORCPT
+        with ESMTP id S233826AbjHNHYr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 Aug 2023 22:56:06 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F143E65;
-        Sun, 13 Aug 2023 19:56:05 -0700 (PDT)
-Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RPJph0893ztRmv;
-        Mon, 14 Aug 2023 10:52:27 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
- (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Mon, 14 Aug
- 2023 10:56:01 +0800
-From:   Ruan Jinjie <ruanjinjie@huawei.com>
-To:     <linus.walleij@linaro.org>, <alsi@bang-olufsen.dk>,
-        <andrew@lunn.ch>, <f.fainelli@gmail.com>, <olteanv@gmail.com>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <clement.leger@bootlin.com>,
-        <ulli.kroll@googlemail.com>, <kvalo@kernel.org>,
-        <bhupesh.sharma@linaro.org>, <robh@kernel.org>, <elder@linaro.org>,
-        <wei.fang@nxp.com>, <nicolas.ferre@microchip.com>,
-        <simon.horman@corigine.com>, <romieu@fr.zoreil.com>,
-        <dmitry.torokhov@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>
-CC:     <ruanjinjie@huawei.com>
-Subject: [PATCH net-next v3 3/5] net: gemini: Remove redundant of_match_ptr()
-Date:   Mon, 14 Aug 2023 10:55:17 +0800
-Message-ID: <20230814025520.2708714-4-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230814025520.2708714-2-ruanjinjie@huawei.com>
-References: <20230814025520.2708714-2-ruanjinjie@huawei.com>
+        Mon, 14 Aug 2023 03:24:47 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2D58FE71;
+        Mon, 14 Aug 2023 00:24:46 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,171,1684767600"; 
+   d="scan'208";a="176575845"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Aug 2023 16:24:45 +0900
+Received: from localhost.localdomain (unknown [10.226.92.104])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 29B47419AC62;
+        Mon, 14 Aug 2023 16:24:42 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        stable@kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: [PATCH 1/3] pinctrl: renesas: rzg2l: Fix NULL pointer dereference in rzg2l_dt_subnode_to_map()
+Date:   Mon, 14 Aug 2023 08:24:34 +0100
+Message-Id: <20230814072436.3757-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230814072436.3757-1-biju.das.jz@bp.renesas.com>
+References: <20230814072436.3757-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.90.53.73]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemi500008.china.huawei.com (7.221.188.139)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The driver depends on CONFIG_OF, it is not necessary to use
-of_match_ptr() here.
+Fix the below random NULL pointer crash during boot by serializing
+pinctrl group and function creation/remove calls in
+rzg2l_dt_subnode_to_map() with mutex lock.
 
-Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Crash logs:
+[   15.310036] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   15.354291] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   15.870714] [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
+[   15.939989] Internal error: Oops: 0000000096000004 2 PREEMPT SMP
+[   15.946285] Modules linked in: drm_shmem_helper rzg2l_mipi_dsi videobuf2_common display_connector gpu_sched mc drm_kms_helper rcar_fcp drm rcar_canfd snd_soc_wm8978 rtc_isl1208 can_dev rzg2l_adc snd_soc_rz_ssi renesas_rpc_if spi_rspi backlight ipv6
+[   15.969077] CPU: 1 PID: 117 Comm: systemd-udevd Tainted: G      D            6.5.0-rc4-next-20230801-00013-gd1819ab30a54 #986
+[   15.980351] Hardware name: Renesas SMARC EVK based on r9a07g054l2 (DT)
+[   15.986857] pstate: 40400005 (nZcv daif +PAN UAO -TCO -DIT -SSBS BTYPE=-)
+[   15.993797] pc : __pi_strcmp+0x20/0x140
+[   15.997647] lr : pinmux_func_name_to_selector+0x68/0xa4
+[   16.002876] sp : ffff800082d9b5a0
+[   16.006210] x29: ffff800082d9b5a0 x28: 0000000000000002 x27: ffff00000cda7080
+[   16.013338] x26: 0000000000000002 x25: ffff00000a1f26c0 x24: ffff00000cda7080
+[   16.020456] x23: ffff800081224960 x22: ffff00007fc2e598 x21: 000000000000000c
+[   16.027571] x20: ffff00000b6c8840 x19: 000000000000000b x18: 0000000000000002
+[   16.034686] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+[   16.041799] x14: 0000000000000001 x13: 0000000000068a68 x12: 0000000000000040
+[   16.048913] x11: ffff00000b092ff8 x10: 0000ffff803d1a68 x9 : ffff00000b6c8888
+[   16.056028] x8 : 0101010101010101 x7 : 0000000000000000 x6 : 0000000000000000
+[   16.063142] x5 : ffff00000b092ff8 x4 : ffff00000b093078 x3 : 0000000000000000
+[   16.070256] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff00007fc2e598
+[   16.077370] Call trace:
+[   16.079807]  __pi_strcmp+0x20/0x140
+[   16.083296]  pinmux_generic_add_function+0x34/0xcc
+[   16.088077]  rzg2l_dt_subnode_to_map+0x314/0x44c
+[   16.092682]  rzg2l_dt_node_to_map+0x164/0x194
+[   16.097025]  pinctrl_dt_to_map+0x218/0x37c
+[   16.101107]  create_pinctrl+0x70/0x3d8
+
+Fixes: c4c4637eb57f ("pinctrl: renesas: Add RZ/G2L pin and gpio controller driver")
+Cc: stable@kernel.org
+Tested-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/ethernet/cortina/gemini.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/ethernet/cortina/gemini.c b/drivers/net/ethernet/cortina/gemini.c
-index 692cb2d04c1c..a8b9d1a3e4d5 100644
---- a/drivers/net/ethernet/cortina/gemini.c
-+++ b/drivers/net/ethernet/cortina/gemini.c
-@@ -2538,7 +2538,7 @@ MODULE_DEVICE_TABLE(of, gemini_ethernet_port_of_match);
- static struct platform_driver gemini_ethernet_port_driver = {
- 	.driver = {
- 		.name = "gemini-ethernet-port",
--		.of_match_table = of_match_ptr(gemini_ethernet_port_of_match),
-+		.of_match_table = gemini_ethernet_port_of_match,
- 	},
- 	.probe = gemini_ethernet_port_probe,
- 	.remove = gemini_ethernet_port_remove,
-@@ -2604,7 +2604,7 @@ MODULE_DEVICE_TABLE(of, gemini_ethernet_of_match);
- static struct platform_driver gemini_ethernet_driver = {
- 	.driver = {
- 		.name = DRV_NAME,
--		.of_match_table = of_match_ptr(gemini_ethernet_of_match),
-+		.of_match_table = gemini_ethernet_of_match,
- 	},
- 	.probe = gemini_ethernet_probe,
- 	.remove = gemini_ethernet_remove,
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 4f34f8f24bde..8a14cbb56449 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -11,6 +11,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+@@ -153,6 +154,7 @@ struct rzg2l_pinctrl {
+ 	unsigned int			hwirq[RZG2L_TINT_MAX_INTERRUPT];
+ 
+ 	spinlock_t			lock;
++	struct mutex			mutex; /* serialize adding groups and functions */
+ };
+ 
+ static const unsigned int iolh_groupa_mA[] = { 2, 4, 8, 12 };
+@@ -362,10 +364,12 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		name = np->name;
+ 	}
+ 
++	mutex_lock(&pctrl->mutex);
+ 	/* Register a single pin group listing all the pins we read from DT */
+ 	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
+ 	if (gsel < 0) {
+ 		ret = gsel;
++		mutex_unlock(&pctrl->mutex);
+ 		goto done;
+ 	}
+ 
+@@ -380,6 +384,8 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		goto remove_group;
+ 	}
+ 
++	mutex_unlock(&pctrl->mutex);
++
+ 	maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
+ 	maps[idx].data.mux.group = name;
+ 	maps[idx].data.mux.function = name;
+@@ -391,6 +397,7 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 
+ remove_group:
+ 	pinctrl_generic_remove_group(pctldev, gsel);
++	mutex_unlock(&pctrl->mutex);
+ done:
+ 	*index = idx;
+ 	kfree(configs);
+@@ -1503,6 +1510,7 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&pctrl->lock);
+ 	spin_lock_init(&pctrl->bitmap_lock);
++	mutex_init(&pctrl->mutex);
+ 
+ 	platform_set_drvdata(pdev, pctrl);
+ 
 -- 
-2.34.1
+2.25.1
 
