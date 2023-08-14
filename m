@@ -2,87 +2,137 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD26C001DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Aug 2023 20:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF984EB64DD
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Aug 2023 20:59:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229511AbjHNUuX (ORCPT
+        id S232524AbjHNU7C (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Aug 2023 16:50:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43258 "EHLO
+        Mon, 14 Aug 2023 16:59:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232299AbjHNUuX (ORCPT
+        with ESMTP id S232444AbjHNU6l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2023 16:50:23 -0400
-X-Greylist: delayed 62 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Aug 2023 13:50:22 PDT
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47173C3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2023 13:50:22 -0700 (PDT)
-Received: from localhost (88-113-24-87.elisa-laajakaista.fi [88.113.24.87])
-        by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-        id 04fd1c4f-3ae4-11ee-b972-005056bdfda7;
-        Mon, 14 Aug 2023 23:49:11 +0300 (EEST)
-From:   andy.shevchenko@gmail.com
-Date:   Mon, 14 Aug 2023 23:49:10 +0300
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mon, 14 Aug 2023 16:58:41 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 828CCDD;
+        Mon, 14 Aug 2023 13:58:40 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-317f1c480eeso4205339f8f.2;
+        Mon, 14 Aug 2023 13:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692046719; x=1692651519;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c5L1+5yGpSJI+g1yL7XlfKIJOzrf/CQQnYIldi3eBMU=;
+        b=Qo49m5X1YEOdSr9l4PyPwEgCC7X2A8WO9sZYNEyf78SlhLbu9rgFI0IQ6GRfnn5zeN
+         ONYKyDvu6OGRWjdN6punKlDdiEBYH0FRbXO9dSOJl76lsH7PFUqrTJWfnN/nVxE+J335
+         af91eo4ZkMm0S+8Cs21pojVw3yeH9c+0zmxZCvoqUzVeQHf43TkGWXEz+bpHy6YrNtmW
+         XswHMzi4fqFrZyz4tghmtR3/lq9kc1KRykF+FGcPZJ+TG53UAZIwLZjO71H6GbC96lSg
+         8nCQ0bgizdCI1Rvx9A9EzQB2pC4EVOQUhU2FEoynKmpZC9ceD+aBNHE6eBt7vkhlmRh3
+         aKcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692046719; x=1692651519;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c5L1+5yGpSJI+g1yL7XlfKIJOzrf/CQQnYIldi3eBMU=;
+        b=XNILIM8jHvHh15jbtxoPzaoFPs9JRKpmfaJvZAi0Ru9MBh3TDaH8tdylV9RVJrOGub
+         ggMd+URZPaVuyWsg3uoaFFRGGcLIY6ba0xwo8LN/NmblvhXRTOuSVyTBmBh+Qa/tZDw5
+         U1ANjj9HV67VtaFYk6pR/MpLDM3FfEIWIjkstNoGM/oNstEn9oO6WMmo3VGz+dQ4MxYx
+         j9BfNypWCIgEZG/u5QBMgvL7t2OiPJEtKdVkycuqXGYcC1i/auixy4eQLhQudn9HAOuA
+         SQg8aroR/EZBpoREIzgk5qzUXu6Gst0j0xt+bHIHZjCEMuHzqgSgrxkJr2DpEMUzTF22
+         HIRg==
+X-Gm-Message-State: AOJu0YzsLCgbnZ9PZ5i5k7yJSPH4BA9Aun9bpqIn9ouKTufFDm7Dm6oR
+        yY6zyW94vZNStmlEGMevnKA=
+X-Google-Smtp-Source: AGHT+IEGUEKllE6snxZ0ydVaACU86gYvyO801qw/abUe/oKyFe/KQsWgHCpE56aN1XWFayfNJZOUoQ==
+X-Received: by 2002:adf:e784:0:b0:319:6d91:28c2 with SMTP id n4-20020adfe784000000b003196d9128c2mr4963676wrm.61.1692046718732;
+        Mon, 14 Aug 2023 13:58:38 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:20e9:baea:a4f7:d880])
+        by smtp.gmail.com with ESMTPSA id h5-20020adffa85000000b003197efd1e7bsm2161806wrr.114.2023.08.14.13.58.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Aug 2023 13:58:38 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Conor Dooley <conor.dooley@microchip.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guo Ren <guoren@kernel.org>,
+        Andrew Jones <ajones@ventanamicro.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Samuel Holland <samuel@sholland.org>,
+        linux-riscv@lists.infradead.org,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        stable@kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: Re: [PATCH 1/3] pinctrl: renesas: rzg2l: Fix NULL pointer
- dereference in rzg2l_dt_subnode_to_map()
-Message-ID: <ZNqTRrf2iC6xLvR7@surfacebook.localdomain>
-References: <20230814072436.3757-1-biju.das.jz@bp.renesas.com>
- <20230814072436.3757-2-biju.das.jz@bp.renesas.com>
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v11 1/6] riscv: asm: vendorid_list: Add Andes Technology to the vendors list
+Date:   Mon, 14 Aug 2023 21:57:14 +0100
+Message-Id: <20230814205719.79647-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230814205719.79647-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20230814205719.79647-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230814072436.3757-2-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Mon, Aug 14, 2023 at 08:24:34AM +0100, Biju Das kirjoitti:
-> Fix the below random NULL pointer crash during boot by serializing
-> pinctrl group and function creation/remove calls in
-> rzg2l_dt_subnode_to_map() with mutex lock.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> Crash logs:
-> [   15.310036] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> [   15.354291] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> [   15.870714] [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
-> [   15.939989] Internal error: Oops: 0000000096000004 2 PREEMPT SMP
-> [   15.946285] Modules linked in: drm_shmem_helper rzg2l_mipi_dsi videobuf2_common display_connector gpu_sched mc drm_kms_helper rcar_fcp drm rcar_canfd snd_soc_wm8978 rtc_isl1208 can_dev rzg2l_adc snd_soc_rz_ssi renesas_rpc_if spi_rspi backlight ipv6
-> [   15.969077] CPU: 1 PID: 117 Comm: systemd-udevd Tainted: G      D            6.5.0-rc4-next-20230801-00013-gd1819ab30a54 #986
-> [   15.980351] Hardware name: Renesas SMARC EVK based on r9a07g054l2 (DT)
-> [   15.986857] pstate: 40400005 (nZcv daif +PAN UAO -TCO -DIT -SSBS BTYPE=-)
-> [   15.993797] pc : __pi_strcmp+0x20/0x140
-> [   15.997647] lr : pinmux_func_name_to_selector+0x68/0xa4
-> [   16.002876] sp : ffff800082d9b5a0
-> [   16.006210] x29: ffff800082d9b5a0 x28: 0000000000000002 x27: ffff00000cda7080
-> [   16.013338] x26: 0000000000000002 x25: ffff00000a1f26c0 x24: ffff00000cda7080
-> [   16.020456] x23: ffff800081224960 x22: ffff00007fc2e598 x21: 000000000000000c
-> [   16.027571] x20: ffff00000b6c8840 x19: 000000000000000b x18: 0000000000000002
-> [   16.034686] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> [   16.041799] x14: 0000000000000001 x13: 0000000000068a68 x12: 0000000000000040
-> [   16.048913] x11: ffff00000b092ff8 x10: 0000ffff803d1a68 x9 : ffff00000b6c8888
-> [   16.056028] x8 : 0101010101010101 x7 : 0000000000000000 x6 : 0000000000000000
-> [   16.063142] x5 : ffff00000b092ff8 x4 : ffff00000b093078 x3 : 0000000000000000
-> [   16.070256] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff00007fc2e598
-> [   16.077370] Call trace:
-> [   16.079807]  __pi_strcmp+0x20/0x140
-> [   16.083296]  pinmux_generic_add_function+0x34/0xcc
-> [   16.088077]  rzg2l_dt_subnode_to_map+0x314/0x44c
-> [   16.092682]  rzg2l_dt_node_to_map+0x164/0x194
-> [   16.097025]  pinctrl_dt_to_map+0x218/0x37c
-> [   16.101107]  create_pinctrl+0x70/0x3d8
+Add Andes Technology to the vendors list.
 
-Submitting Patches says why the above is too noisy for the commit message.
-Please, amend accordingly.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Conor Dooley <conor.dooley@microchip.com> # tyre-kicking on a d1
+---
+v10 -> v11
+* No change
 
+v9 -> v10
+* Included TB tag from Conor
+
+v8 -> v9
+* Included RB tag from Geert
+
+v7 -> v8
+* No change
+
+v6 -> v7
+* No change
+
+v5 -> v6
+* No change
+
+v4 -> v5
+* Included RB tags
+
+RFC v3 -> v4
+* New patch
+---
+ arch/riscv/include/asm/vendorid_list.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/riscv/include/asm/vendorid_list.h b/arch/riscv/include/asm/vendorid_list.h
+index cb89af3f0704..e55407ace0c3 100644
+--- a/arch/riscv/include/asm/vendorid_list.h
++++ b/arch/riscv/include/asm/vendorid_list.h
+@@ -5,6 +5,7 @@
+ #ifndef ASM_VENDOR_LIST_H
+ #define ASM_VENDOR_LIST_H
+ 
++#define ANDESTECH_VENDOR_ID	0x31e
+ #define SIFIVE_VENDOR_ID	0x489
+ #define THEAD_VENDOR_ID		0x5b7
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
