@@ -2,198 +2,84 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D035DC04FE1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Aug 2023 13:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0335CC001DB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Aug 2023 14:48:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237411AbjHONQ1 (ORCPT
+        id S237771AbjHOOsD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Aug 2023 09:16:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59330 "EHLO
+        Tue, 15 Aug 2023 10:48:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237412AbjHONQJ (ORCPT
+        with ESMTP id S237762AbjHOOrj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Aug 2023 09:16:09 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 796001987;
-        Tue, 15 Aug 2023 06:16:08 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.01,174,1684767600"; 
-   d="scan'208";a="173003478"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 15 Aug 2023 22:16:07 +0900
-Received: from localhost.localdomain (unknown [10.226.92.136])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2BAD740029AC;
-        Tue, 15 Aug 2023 22:16:04 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Tue, 15 Aug 2023 10:47:39 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 186C393;
+        Tue, 15 Aug 2023 07:47:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692110859; x=1723646859;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=f2YLNE377Fbd2/MGrL2lmyYkOz1OrMdtTQPS/IgUwbA=;
+  b=Fjr00D1tpq9YSVK3vYna5OeEmblVC2FPqcJeduzCtotF2Xx0pCr++8VV
+   NOZWlU+lZmob2oNTWARiOqOkNBsG9GJ4k8Khjd6ohqmrhwJwrz7ftinA+
+   ETui2ASo9rm5YNHPMWCmivRSe7F4OeZgMJ3l5coTAvO5xcbcvZcVyv3if
+   FklDqU3sFO5hEyx1tAM0p8JHzJs60r9AOzX+c2w0GPxK7mYR/A8jw33be
+   snd4FYyUqHNdgpuel/FCopr6E2BeMgYe2ECU3m291cHOZ7645mSQxCqmh
+   WVuDMDpHuCTa9n5U2m0J8rIGamY5TbHEH40q6JN/XlqxzqrvDGdammcq2
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="357259293"
+X-IronPort-AV: E=Sophos;i="6.01,174,1684825200"; 
+   d="scan'208";a="357259293"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2023 07:47:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="848084106"
+X-IronPort-AV: E=Sophos;i="6.01,174,1684825200"; 
+   d="scan'208";a="848084106"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP; 15 Aug 2023 07:47:35 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qVvKY-005s5Z-09;
+        Tue, 15 Aug 2023 17:47:34 +0300
+Date:   Tue, 15 Aug 2023 17:47:33 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        stable@kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH v3 1/3] pinctrl: renesas: rzg2l: Fix NULL pointer dereference in rzg2l_dt_subnode_to_map()
-Date:   Tue, 15 Aug 2023 14:15:56 +0100
-Message-Id: <20230815131558.33787-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230815131558.33787-1-biju.das.jz@bp.renesas.com>
-References: <20230815131558.33787-1-biju.das.jz@bp.renesas.com>
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] iio: chemical: atlas-ezo-sensor: Simplify probe()
+Message-ID: <ZNuQBXtiuiRIsI8T@smile.fi.intel.com>
+References: <20230812163425.206044-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230812163425.206044-1-biju.das.jz@bp.renesas.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix the below random NULL pointer crash during boot by serializing
-pinctrl group and function creation/remove calls in
-rzg2l_dt_subnode_to_map() with mutex lock.
+On Sat, Aug 12, 2023 at 05:34:25PM +0100, Biju Das wrote:
+> Simplify the probe() by replacing device_get_match_data() and ID lookup
+> match by i2c_get_match_data() as we have similar I2C and DT-based matching
+> table.
 
-Crash logs:
- pc : __pi_strcmp+0x20/0x140
- lr : pinmux_func_name_to_selector+0x68/0xa4
- Call trace:
- __pi_strcmp+0x20/0x140
- pinmux_generic_add_function+0x34/0xcc
- rzg2l_dt_subnode_to_map+0x314/0x44c
- rzg2l_dt_node_to_map+0x164/0x194
- pinctrl_dt_to_map+0x218/0x37c
- create_pinctrl+0x70/0x3d8
+> While at it, drop id variable from probe() as it is unused.
 
-While at it, add comments for bitmap_lock and lock.
+As somebody noticed, this "while at it" part is misleading.
+It's integral part of the change.
 
-Fixes: c4c4637eb57f ("pinctrl: renesas: Add RZ/G2L pin and gpio controller driver")
-Cc: stable@kernel.org
-Tested-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3:
- * Added comment for bitmap_lock and lock.
- * Moved map allocation down to reduce lock section.
- * Added locks for maps and pinctrl group and function creation/remove
-   calls
- * Added unlock_and_done label for lock error path.
-v1->v2:
- * Updated crash logs as per submitting patches doc.
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 58 ++++++++++++++-----------
- 1 file changed, 33 insertions(+), 25 deletions(-)
+With that fixed,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 4f34f8f24bde..571a32d2f697 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -11,6 +11,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
-@@ -149,10 +150,11 @@ struct rzg2l_pinctrl {
- 	struct gpio_chip		gpio_chip;
- 	struct pinctrl_gpio_range	gpio_range;
- 	DECLARE_BITMAP(tint_slot, RZG2L_TINT_MAX_INTERRUPT);
--	spinlock_t			bitmap_lock;
-+	spinlock_t			bitmap_lock; /* protect tint_slot bitmap */
- 	unsigned int			hwirq[RZG2L_TINT_MAX_INTERRUPT];
- 
--	spinlock_t			lock;
-+	spinlock_t			lock; /* lock read/write registers */
-+	struct mutex			mutex; /* serialize adding groups and functions */
- };
- 
- static const unsigned int iolh_groupa_mA[] = { 2, 4, 8, 12 };
-@@ -309,28 +311,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	if (num_pins)
- 		nmaps += num_pins;
- 
--	maps = krealloc_array(maps, nmaps, sizeof(*maps), GFP_KERNEL);
--	if (!maps) {
--		ret = -ENOMEM;
--		goto done;
--	}
--
--	*map = maps;
--	*num_maps = nmaps;
--	if (num_pins) {
--		of_property_for_each_string(np, "pins", prop, pin) {
--			ret = rzg2l_map_add_config(&maps[idx], pin,
--						   PIN_MAP_TYPE_CONFIGS_PIN,
--						   configs, num_configs);
--			if (ret < 0)
--				goto done;
--
--			idx++;
--		}
--		ret = 0;
--		goto done;
--	}
--
- 	pins = devm_kcalloc(pctrl->dev, num_pinmux, sizeof(*pins), GFP_KERNEL);
- 	psel_val = devm_kcalloc(pctrl->dev, num_pinmux, sizeof(*psel_val),
- 				GFP_KERNEL);
-@@ -362,11 +342,34 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		name = np->name;
- 	}
- 
-+	mutex_lock(&pctrl->mutex);
-+	maps = krealloc_array(maps, nmaps, sizeof(*maps), GFP_KERNEL);
-+	if (!maps) {
-+		ret = -ENOMEM;
-+		goto unlock_and_done;
-+	}
-+
-+	*map = maps;
-+	*num_maps = nmaps;
-+	if (num_pins) {
-+		of_property_for_each_string(np, "pins", prop, pin) {
-+			ret = rzg2l_map_add_config(&maps[idx], pin,
-+						   PIN_MAP_TYPE_CONFIGS_PIN,
-+						   configs, num_configs);
-+			if (ret < 0)
-+				goto unlock_and_done;
-+
-+			idx++;
-+		}
-+		ret = 0;
-+		goto unlock_and_done;
-+	}
-+
- 	/* Register a single pin group listing all the pins we read from DT */
- 	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
- 	if (gsel < 0) {
- 		ret = gsel;
--		goto done;
-+		goto unlock_and_done;
- 	}
- 
- 	/*
-@@ -380,6 +383,8 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		goto remove_group;
- 	}
- 
-+	mutex_unlock(&pctrl->mutex);
-+
- 	maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
- 	maps[idx].data.mux.group = name;
- 	maps[idx].data.mux.function = name;
-@@ -391,6 +396,8 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 
- remove_group:
- 	pinctrl_generic_remove_group(pctldev, gsel);
-+unlock_and_done:
-+	mutex_unlock(&pctrl->mutex);
- done:
- 	*index = idx;
- 	kfree(configs);
-@@ -1503,6 +1510,7 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- 
- 	spin_lock_init(&pctrl->lock);
- 	spin_lock_init(&pctrl->bitmap_lock);
-+	mutex_init(&pctrl->mutex);
- 
- 	platform_set_drvdata(pdev, pctrl);
- 
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
