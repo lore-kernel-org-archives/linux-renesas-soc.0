@@ -2,56 +2,56 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F5BC41513
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Aug 2023 07:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED894C04E69
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Aug 2023 07:43:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233562AbjHOHly convert rfc822-to-8bit (ORCPT
+        id S232625AbjHOHm3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Aug 2023 03:41:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53144 "EHLO
+        Tue, 15 Aug 2023 03:42:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232625AbjHOHlj (ORCPT
+        with ESMTP id S235361AbjHOHmV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Aug 2023 03:41:39 -0400
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B422710F9;
-        Tue, 15 Aug 2023 00:41:36 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-589c7801d1cso39286157b3.0;
-        Tue, 15 Aug 2023 00:41:36 -0700 (PDT)
+        Tue, 15 Aug 2023 03:42:21 -0400
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E9BF10F9;
+        Tue, 15 Aug 2023 00:42:20 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-58c55d408daso6125287b3.2;
+        Tue, 15 Aug 2023 00:42:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692085296; x=1692690096;
+        d=1e100.net; s=20221208; t=1692085339; x=1692690139;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nvzrsyQ0VeP4Buf8o1bS+U3ITedOgmzxQDcHmxq+9HE=;
-        b=gMlz6S4gUNxQbOcVrnbaYOpYESGO7BY8wJU3K0aqEddIZDXhMCnhjNrKgLpVUWnW1k
-         dN0L9Wfx087Tk+7w/U499pu0kqwl0PVHCPjxQVrjowSZE/xpcJ72vBy4ia2qgfsx9giX
-         eDuaZdvoLnwZLrSLVfg8rMBCKBBs5lC6OpAf8w7LZO/pNJ2ICX0cxy5A+UglciQZxmXF
-         vYEjFtTq5BO8KXLQIB5orxbnSmngKrFWQrw97Gq+uNKYqUK095bV1u712gJcLBGd61Qg
-         6deBmImXLFXKzWL8BGPRZMYVAIV0/JcW4ICQI6YbJ2ZwUegN8Uq77LAjHHktWCXMlm2A
-         OaBA==
-X-Gm-Message-State: AOJu0YwtcwgPm29oEf4a4+asJfgMU3YkU7yFaBJaTfzfkxiBqwru5MST
-        sEiOE4Kbx2dy0sKRqt3Sjx8psRBU0kDgjg==
-X-Google-Smtp-Source: AGHT+IEXCpECbF5jFEvNmGONAeH+GJn7LA9sEzCK/+ivfYTkUVDGmTn7A/5uzrru0bC9ujZBdFI/9w==
-X-Received: by 2002:a81:6cc3:0:b0:583:b72c:883b with SMTP id h186-20020a816cc3000000b00583b72c883bmr11759199ywc.11.1692085295801;
-        Tue, 15 Aug 2023 00:41:35 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id k185-20020a0dc8c2000000b005773ca61111sm3275636ywd.42.2023.08.15.00.41.35
+        bh=iDUCXTTf70J3NMV/tHtAnev4ckRSiWyy/jzJPZI0jrI=;
+        b=Lp4+1KV/XprL2I1HP14lY9SADZiDmHC02hnGF0Ca2Zmyy9TSlHGrgCN+LhY1BgyfAL
+         f4gh4eS9ZmINozhcf7O1BRH5UtFfXezY1LaBJPOPjZTS7nt0pNk269vqeOS/XvDmQkdX
+         a//NapGmHxSrtJOs4y8OZA1eMdQGocu3QRd+UGRlpzzc9fC3U2npUu9U+e0+B1czYpOH
+         0fseuwGzWj6APtgX+XpCTRQxOEImtaETsB+FE1Lq9MwqiJ0vrEN4ZHHHNCLdxc4ESHEC
+         DlT/ErS4w1o1hM9AFr0LBwIs5Jj+Wbr+Sat2Q1CqU9BlH2jCGFEJJJFvECjpD+pwHvxs
+         NPmw==
+X-Gm-Message-State: AOJu0Ywo3uPNnjZZKo8kPLjN9J8YjcFGvVYDezszm0hLbVUOPW9epaFN
+        egpESCpMdvDWITjLgo+gmetU8EDu2r2ONA==
+X-Google-Smtp-Source: AGHT+IGfXKffbKh6VRKMmz4skRD7tRj4AZf4ji8/aBx8Z26Q88GGvwK40Fqwpt+7UMWvym1dsN30jQ==
+X-Received: by 2002:a81:89c6:0:b0:57a:3dd8:1038 with SMTP id z189-20020a8189c6000000b0057a3dd81038mr15625259ywf.12.1692085339290;
+        Tue, 15 Aug 2023 00:42:19 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id w84-20020a817b57000000b0054bfc94a10dsm3269839ywc.47.2023.08.15.00.42.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Aug 2023 00:41:35 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-cfcebc33d04so4983695276.2;
-        Tue, 15 Aug 2023 00:41:35 -0700 (PDT)
-X-Received: by 2002:a25:340a:0:b0:d58:104b:d7a3 with SMTP id
- b10-20020a25340a000000b00d58104bd7a3mr11580500yba.36.1692085295412; Tue, 15
- Aug 2023 00:41:35 -0700 (PDT)
+        Tue, 15 Aug 2023 00:42:19 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-d62b8e2860dso5107832276.3;
+        Tue, 15 Aug 2023 00:42:19 -0700 (PDT)
+X-Received: by 2002:a25:cbcd:0:b0:d62:619d:19b2 with SMTP id
+ b196-20020a25cbcd000000b00d62619d19b2mr16007756ybg.6.1692085338580; Tue, 15
+ Aug 2023 00:42:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <87r0onprph.wl-kuninori.morimoto.gx@renesas.com> <87mszbpron.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87mszbpron.wl-kuninori.morimoto.gx@renesas.com>
+References: <87r0onprph.wl-kuninori.morimoto.gx@renesas.com> <87jzufprod.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87jzufprod.wl-kuninori.morimoto.gx@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 15 Aug 2023 09:41:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW+ULVdOu8ngg+BizjHUiEOV+RUQZ6bzxfNCrZMcvLRBw@mail.gmail.com>
-Message-ID: <CAMuHMdW+ULVdOu8ngg+BizjHUiEOV+RUQZ6bzxfNCrZMcvLRBw@mail.gmail.com>
-Subject: Re: [PATCH 3/9] clk: renesas: r8a774a1: add 922 ADG
+Date:   Tue, 15 Aug 2023 09:42:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXqy9hdCkPCgEGwj_XvhQ8Rnv_1dzj9HuwBiw_1_t9g0A@mail.gmail.com>
+Message-ID: <CAMuHMdXqy9hdCkPCgEGwj_XvhQ8Rnv_1dzj9HuwBiw_1_t9g0A@mail.gmail.com>
+Subject: Re: [PATCH 5/9] clk: renesas: r8a774c0: add 922 ADG
 To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk@vger.kernel.org
@@ -64,7 +64,7 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 On Tue, Aug 1, 2023 at 1:49 AM Kuninori Morimoto
 <kuninori.morimoto.gx@renesas.com> wrote:
 > R-Car Sound needs to enable "ADG" on RMSTPCR9/SMSTPCR9 22bit to use
-> clk_i which came from internal S0D4. This patch adds it.
+> clk_i which came from internal ZA2. This patch adds it.
 >
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
