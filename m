@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092A9C04FDF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40E5C05052
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:46:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244249AbjHPKpf (ORCPT
+        id S235915AbjHPKpf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 16 Aug 2023 06:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51860 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243857AbjHPKpD (ORCPT
+        with ESMTP id S243963AbjHPKpF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:45:03 -0400
+        Wed, 16 Aug 2023 06:45:05 -0400
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E652D74
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB012D76
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:44 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d0c:f209:12a7:4ce5])
         by andre.telenet-ops.be with bizsmtp
-        id aAkg2A00H45ualL01AkgCF; Wed, 16 Aug 2023 12:44:41 +0200
+        id aAkh2A00745ualL01AkhCf; Wed, 16 Aug 2023 12:44:42 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWE0v-000orc-TE;
-        Wed, 16 Aug 2023 12:44:40 +0200
+        id 1qWE0w-000os9-Kg;
+        Wed, 16 Aug 2023 12:44:41 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWDAx-00676a-02;
-        Wed, 16 Aug 2023 11:50:51 +0200
+        id 1qWDAw-00675m-PZ;
+        Wed, 16 Aug 2023 11:50:50 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -39,9 +39,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v3 31/41] drm: renesas: shmobile: Move shmob_drm_crtc_finish_page_flip()
-Date:   Wed, 16 Aug 2023 11:50:38 +0200
-Message-Id: <88bcd675b03a109874e1dff24ff0aa4d45ab96ce.1692178020.git.geert+renesas@glider.be>
+Subject: [PATCH v3 21/41] drm: renesas: shmobile: Convert container helpers to static inline functions
+Date:   Wed, 16 Aug 2023 11:50:28 +0200
+Message-Id: <0d74fdda78f548f68c57739844a8fb0412368e15.1692178020.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1692178020.git.geert+renesas@glider.be>
 References: <cover.1692178020.git.geert+renesas@glider.be>
@@ -51,8 +51,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Move the shmob_drm_crtc_finish_page_flip() function up, to avoid having
-to move it during the modification in the next change.
+Replace to conversion helper macros using container_of() by static
+inline functions, to improve type-safety.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
@@ -61,66 +61,57 @@ v3:
   - No changes,
 
 v2:
-  - Add Reviewed-by,
-  - Move further up.
+  - Add Reviewed-by.
 ---
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 36 ++++++++++---------
- 1 file changed, 20 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c  | 11 ++++++++---
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c |  5 ++++-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index f55b5263e611c782..0adf5d33ba31695e 100644
+index 9c66e00ed70ea582..207fa98fe76d6f88 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -35,6 +35,26 @@
-  * TODO: panel support
+@@ -258,7 +258,10 @@ static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
+ 	lcdc_write(sdev, LDRCNTR, lcdc_read(sdev, LDRCNTR) ^ LDRCNTR_MRS);
+ }
+ 
+-#define to_shmob_crtc(c)	container_of(c, struct shmob_drm_crtc, crtc)
++static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
++{
++	return container_of(crtc, struct shmob_drm_crtc, crtc);
++}
+ 
+ static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ {
+@@ -538,8 +541,10 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
+  * Connector
   */
  
-+/* -----------------------------------------------------------------------------
-+ * Page Flip
-+ */
-+
-+void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
+-#define to_shmob_connector(c) \
+-	container_of(c, struct shmob_drm_connector, connector)
++static inline struct shmob_drm_connector *to_shmob_connector(struct drm_connector *connector)
 +{
-+	struct drm_pending_vblank_event *event;
-+	struct drm_device *dev = scrtc->base.dev;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&dev->event_lock, flags);
-+	event = scrtc->event;
-+	scrtc->event = NULL;
-+	if (event) {
-+		drm_crtc_send_vblank_event(&scrtc->base, event);
-+		drm_crtc_vblank_put(&scrtc->base);
-+	}
-+	spin_unlock_irqrestore(&dev->event_lock, flags);
++	return container_of(connector, struct shmob_drm_connector, connector);
 +}
-+
- /* -----------------------------------------------------------------------------
-  * CRTC
-  */
-@@ -364,22 +384,6 @@ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
- 	.mode_set_base = shmob_drm_crtc_mode_set_base,
+ 
+ static int shmob_drm_connector_get_modes(struct drm_connector *connector)
+ {
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+index 17e66a018689f648..258288c80756bf16 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+@@ -34,7 +34,10 @@ struct shmob_drm_plane {
+ 	unsigned int crtc_h;
  };
  
--void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
--{
--	struct drm_pending_vblank_event *event;
--	struct drm_device *dev = scrtc->base.dev;
--	unsigned long flags;
--
--	spin_lock_irqsave(&dev->event_lock, flags);
--	event = scrtc->event;
--	scrtc->event = NULL;
--	if (event) {
--		drm_crtc_send_vblank_event(&scrtc->base, event);
--		drm_crtc_vblank_put(&scrtc->base);
--	}
--	spin_unlock_irqrestore(&dev->event_lock, flags);
--}
--
- static int shmob_drm_crtc_page_flip(struct drm_crtc *crtc,
- 				    struct drm_framebuffer *fb,
- 				    struct drm_pending_vblank_event *event,
+-#define to_shmob_plane(p)	container_of(p, struct shmob_drm_plane, plane)
++static inline struct shmob_drm_plane *to_shmob_plane(struct drm_plane *plane)
++{
++	return container_of(plane, struct shmob_drm_plane, plane);
++}
+ 
+ static void shmob_drm_plane_compute_base(struct shmob_drm_plane *splane,
+ 					 struct drm_framebuffer *fb,
 -- 
 2.34.1
 
