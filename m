@@ -2,108 +2,94 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C61C001E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 13:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8753DC001DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 17:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235528AbjHPN43 (ORCPT
+        id S1345141AbjHPRPE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 09:56:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36912 "EHLO
+        Wed, 16 Aug 2023 13:15:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244037AbjHPN4A (ORCPT
+        with ESMTP id S1345137AbjHPROd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 09:56:00 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0DAEA1FCE
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 06:55:58 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.01,177,1684767600"; 
-   d="scan'208";a="176786537"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Aug 2023 22:55:58 +0900
-Received: from localhost.localdomain (unknown [10.226.92.162])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3470F420C318;
-        Wed, 16 Aug 2023 22:55:55 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
+        Wed, 16 Aug 2023 13:14:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF2A10F0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 10:14:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E590062232
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 17:14:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 423A1C433C8;
+        Wed, 16 Aug 2023 17:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692206071;
+        bh=F4cUJzysrXK5YoMFqnu2TIAQEvB0qEY6QIpk+2dm0ag=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=iJ3i8Na1fhrHrajaT78qwMBInrX0BBRxRNKxNOIfkg46HcJaKeOSWhxfXo+isr1rA
+         a6yV+dHuLWUsX1JRp1b0vP3K0fAzN4cAuB+8DjgZ7TjVWlfWLUZdDMzsVshraUGw4x
+         BNeKqIeN4gB8/1u9yl/W7+RSaq0SPSVeK2GSn9ufeCZVdnFzaiTRgOjnqSzlEcdbXT
+         qnRdPJ6zix1rEqa3E8SecI8VmOf1nvZV3dLrgdMTs01LsOqE7MzZmX2pU13APMbaoD
+         RyJaxKKEudzmYyctzNgxnh4hn7ll5AjgQ/shaAEfwgMqyKnq3QBDxpbSl9ebI0AxeG
+         4mm2l40kqlpTQ==
+From:   Mark Brown <broonie@kernel.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, stable@kernel.org
-Subject: [PATCH 1/2] regulator: raa215300: Fix resource leak in case of error
-Date:   Wed, 16 Aug 2023 14:55:49 +0100
-Message-Id: <20230816135550.146657-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
+        linux-renesas-soc@vger.kernel.org
 In-Reply-To: <20230816135550.146657-1-biju.das.jz@bp.renesas.com>
 References: <20230816135550.146657-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 0/2] RAA215300 regulator driver improvements
+Message-Id: <169220606998.909854.15877882074805656913.b4-ty@kernel.org>
+Date:   Wed, 16 Aug 2023 18:14:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-034f2
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The clk_register_clkdev() allocates memory by calling vclkdev_alloc() and
-this memory is not freed in the error path. Similarly, resources allocated
-by clk_register_fixed_rate() are not freed in the error path.
+On Wed, 16 Aug 2023 14:55:48 +0100, Biju Das wrote:
+> This patch series aims to fix a resource leak in probe() and adding
+> const definition to local variable 'name'.
+> 
+> Biju Das (2):
+>   regulator: raa215300: Fix resource leak in case of error
+>   regulator: raa215300: Add const definition
+> 
+> [...]
 
-Fix these issues by using devm_clk_hw_register_fixed_rate() and
-devm_clk_hw_register_clkdev().
+Applied to
 
-After this, the static variable clk is not needed. Replace it with 
-local variable hw in probe() and drop calling clk_unregister_fixed_rate()
-from raa215300_rtc_unregister_device().
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Fixes: 7bce16630837 ("regulator: Add Renesas PMIC RAA215300 driver")
-Cc: stable@kernel.org
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/regulator/raa215300.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Thanks!
 
-diff --git a/drivers/regulator/raa215300.c b/drivers/regulator/raa215300.c
-index 848a03a2fbd4..898f53cac02c 100644
---- a/drivers/regulator/raa215300.c
-+++ b/drivers/regulator/raa215300.c
-@@ -38,8 +38,6 @@
- #define RAA215300_REG_BLOCK_EN_RTC_EN	BIT(6)
- #define RAA215300_RTC_DEFAULT_ADDR	0x6f
- 
--static struct clk *clk;
--
- static const struct regmap_config raa215300_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -49,10 +47,6 @@ static const struct regmap_config raa215300_regmap_config = {
- static void raa215300_rtc_unregister_device(void *data)
- {
- 	i2c_unregister_device(data);
--	if (!clk) {
--		clk_unregister_fixed_rate(clk);
--		clk = NULL;
--	}
- }
- 
- static int raa215300_clk_present(struct i2c_client *client, const char *name)
-@@ -130,10 +124,16 @@ static int raa215300_i2c_probe(struct i2c_client *client)
- 		u32 addr = RAA215300_RTC_DEFAULT_ADDR;
- 		struct i2c_board_info info = {};
- 		struct i2c_client *rtc_client;
-+		struct clk_hw *hw;
- 		ssize_t size;
- 
--		clk = clk_register_fixed_rate(NULL, clk_name, NULL, 0, 32000);
--		clk_register_clkdev(clk, clk_name, NULL);
-+		hw = devm_clk_hw_register_fixed_rate(dev, clk_name, NULL, 0, 32000);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		ret = devm_clk_hw_register_clkdev(dev, hw, clk_name, NULL);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Failed to initialize clkdev\n");
- 
- 		if (np) {
- 			int i;
--- 
-2.25.1
+[1/2] regulator: raa215300: Fix resource leak in case of error
+      commit: e21ac64e669e960688e79bf5babeed63132dac8a
+[2/2] regulator: raa215300: Add const definition
+      commit: 727d7c1c3695657873d62030b968ba97c8698c54
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
