@@ -2,115 +2,153 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B44C04A94
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6839C001B0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234811AbjHPKn7 (ORCPT
+        id S229456AbjHPKpD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 06:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42742 "EHLO
+        Wed, 16 Aug 2023 06:45:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243942AbjHPKnb (ORCPT
+        with ESMTP id S244033AbjHPKo6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:43:31 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22FC92737
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:43:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :in-reply-to:references:mime-version:content-transfer-encoding;
-         s=k1; bh=JT/ceu3tRi/TtP6bujmqfafQ7JcoYnXeX4PGLaTdLSE=; b=ZE4bWY
-        xzImjPSE/fGTZArxDGKK/We1LyxUywLQ0RHkLRfA8V86IN11mT6uCdr9OBdHqnrn
-        iP6l8i9nSizrUfV4Rqud/S+uZLEi9+Gyd1mz3oJFKN2iA7/RmNiFE0YXZp63UrVm
-        bxCAiSU/fjtTT1y7NjJbB8JitoC5i0Hy0WFWaYJgAuI2inCrwqm2j2Qz5p+o2Res
-        8j1QazF/rq1tMtSBEScX6vpdnzFGHcbTRgj+5zN1QPsuMONR/znfd8jLpAVapMDh
-        y4cS9ZImugHHyeRAbbMY6I1hVDWhh1twGur3KNIi6gJMIlnBsmRgUhRRZFPpm8PX
-        PmHGQOCFoHioaf3A==
-Received: (qmail 102039 invoked from network); 16 Aug 2023 12:43:10 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Aug 2023 12:43:10 +0200
-X-UD-Smtp-Session: l3s3148p1@PlM19gcDUr0gAwDPXy5qAJ1huuy56R1W
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] PCI: rcar-host: add support for optional regulators
-Date:   Wed, 16 Aug 2023 12:42:50 +0200
-Message-Id: <20230816104251.19744-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20230816104251.19744-1-wsa+renesas@sang-engineering.com>
-References: <20230816104251.19744-1-wsa+renesas@sang-engineering.com>
+        Wed, 16 Aug 2023 06:44:58 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE232D51
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:42 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d0c:f209:12a7:4ce5])
+        by xavier.telenet-ops.be with bizsmtp
+        id aAkf2A00f45ualL01AkfwM; Wed, 16 Aug 2023 12:44:40 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qWE0v-000or8-88;
+        Wed, 16 Aug 2023 12:44:39 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qWDAx-006774-4L;
+        Wed, 16 Aug 2023 11:50:51 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 37/41] drm: renesas: shmobile: Atomic conversion part 2
+Date:   Wed, 16 Aug 2023 11:50:44 +0200
+Message-Id: <6386b4805a880f907e963b9045dc3ba34936c97e.1692178020.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1692178020.git.geert+renesas@glider.be>
+References: <cover.1692178020.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The KingFisher board has regulators for miniPCIe, so enable these
-optional regulators using devm. devm will automatically disable them
-when the driver releases the device. Order variables in reverse-xmas
-while we are here.
+Implement atomic mode setting for the CRTC, using the existing dpms
+callback.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pci/controller/pcie-rcar-host.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+This works, but I had expected that crtc_helper_funcs.atomic_check
+should point to drm_crtc_helper_atomic_check() instead, as the primary
+plane cannot be disabled.  However in doing so, when
+drm_atomic_helper_check_crtc_primary_plane() fails:
 
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index 88975e40ee2f..7aecc114af4f 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -29,6 +29,7 @@
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
+    [drm:drm_atomic_helper_check_crtc_primary_plane] [CRTC:41:crtc-0] primary plane missing
+
+the display fails to restore after running "modetest -s", until I run
+modetest without -s.
+
+Letting shmob_drm_plane_atomic_check() return -EINVAL if
+!new_plane_state->crtc && is_primary would fix that, but causes an ugly
+warning:
+
+    WARNING: CPU: 0 PID: 21 at drivers/gpu/drm/drm_framebuffer.c:1130 drm_framebuffer_remove+0x374/0x4b0
+    atomic remove_fb failed with -22
+
+v3:
+  - No changes,
+
+v2:
+  - No changes.
+---
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 41 +++++++------------
+ 1 file changed, 15 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+index c277f93668825e1c..5c0575eed3ab6833 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+@@ -11,6 +11,7 @@
+ #include <linux/media-bus-format.h>
  #include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
  
- #include "pcie-rcar.h"
++#include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_atomic_state_helper.h>
+ #include <drm/drm_atomic_uapi.h>
+@@ -319,27 +320,6 @@ static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 	scrtc->dpms = mode;
+ }
  
-@@ -953,14 +954,20 @@ static const struct of_device_id rcar_pcie_of_match[] = {
- 	{},
+-static void shmob_drm_crtc_mode_prepare(struct drm_crtc *crtc)
+-{
+-	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
+-}
+-
+-static void shmob_drm_crtc_mode_commit(struct drm_crtc *crtc)
+-{
+-	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
+-}
+-
+-static int shmob_drm_crtc_atomic_check(struct drm_crtc *crtc,
+-				       struct drm_atomic_state *state)
+-{
+-	return 0;
+-}
+-
+-static void shmob_drm_crtc_atomic_begin(struct drm_crtc *crtc,
+-					struct drm_atomic_state *state)
+-{
+-}
+-
+ static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
+ 					struct drm_atomic_state *state)
+ {
+@@ -356,13 +336,22 @@ static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
+ 	}
+ }
+ 
++static void shmob_drm_crtc_atomic_enable(struct drm_crtc *crtc,
++					 struct drm_atomic_state *state)
++{
++	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
++}
++
++static void shmob_drm_crtc_atomic_disable(struct drm_crtc *crtc,
++					  struct drm_atomic_state *state)
++{
++	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
++}
++
+ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+-	.dpms = shmob_drm_crtc_dpms,
+-	.prepare = shmob_drm_crtc_mode_prepare,
+-	.commit = shmob_drm_crtc_mode_commit,
+-	.atomic_check = shmob_drm_crtc_atomic_check,
+-	.atomic_begin = shmob_drm_crtc_atomic_begin,
+ 	.atomic_flush = shmob_drm_crtc_atomic_flush,
++	.atomic_enable = shmob_drm_crtc_atomic_enable,
++	.atomic_disable = shmob_drm_crtc_atomic_disable,
  };
  
-+/* Design note 346 from Linear Technology says order is not important */
-+static const char * const rcar_pcie_supplies[] = {
-+	"vpcie12v", "vpcie3v3", "vpcie1v5"
-+};
-+
- static int rcar_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	struct pci_host_bridge *bridge;
- 	struct rcar_pcie_host *host;
- 	struct rcar_pcie *pcie;
-+	unsigned int i;
- 	u32 data;
- 	int err;
--	struct pci_host_bridge *bridge;
- 
- 	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
- 	if (!bridge)
-@@ -971,6 +978,13 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	pcie->dev = dev;
- 	platform_set_drvdata(pdev, host);
- 
-+	for (i = 0; i < ARRAY_SIZE(rcar_pcie_supplies); i++) {
-+		err = devm_regulator_get_enable_optional(dev, rcar_pcie_supplies[i]);
-+		if (err < 0 && err != -ENODEV)
-+			return dev_err_probe(dev, err, "can't enable regulator %s\n",
-+					     rcar_pcie_supplies[i]);
-+	}
-+
- 	pm_runtime_enable(pcie->dev);
- 	err = pm_runtime_get_sync(pcie->dev);
- 	if (err < 0) {
+ static int shmob_drm_crtc_page_flip(struct drm_crtc *crtc,
 -- 
-2.35.1
+2.34.1
 
