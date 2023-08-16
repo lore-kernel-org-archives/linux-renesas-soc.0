@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF09C2FC02
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6856BC27C7A
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 23:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347158AbjHPXYJ (ORCPT
+        id S1347154AbjHPXYI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 19:24:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37096 "EHLO
+        Wed, 16 Aug 2023 19:24:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347151AbjHPXXw (ORCPT
+        with ESMTP id S1347147AbjHPXXs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 19:23:52 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D083271F;
-        Wed, 16 Aug 2023 16:23:50 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fe8a1591c8so55757815e9.3;
-        Wed, 16 Aug 2023 16:23:50 -0700 (PDT)
+        Wed, 16 Aug 2023 19:23:48 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA11271E;
+        Wed, 16 Aug 2023 16:23:47 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fe4cdb727cso72292945e9.0;
+        Wed, 16 Aug 2023 16:23:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692228229; x=1692833029;
+        d=gmail.com; s=20221208; t=1692228226; x=1692833026;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qa3AibLZ/flcMM8pjMbhTffSCLpDoNcTFNENKYYaFNY=;
-        b=HVyU7R+7NAHiP1FHnuES28Woqar0atRkeoYGbaaacWeuA4/koMeyt7sWGUK2Ynjwk6
-         47O7kvMM9nK3nI36bqh4DSCXGzVwhx0oTCphBopPWKKMVjyz/xjtF/WK2UmC7BukPkFc
-         j/TiiIgSJqnuheF9Rsdz6rOCZIT7SGCP9aaFepCP6Sgr1qBAXitiX1NBq2QfoY7lZYN+
-         V2g9luT63NSlPJCzbfSbqJZdutg+mM+QoCfCJ0cwJgwA2FiVj3rGoSvL0G3lfgqxZ9dT
-         kQQuCXiima/MAqL5WWi71hRzx2jA9zZfbP5gvYXrqBH7aTwz5NxMSAf94rAhe8HsqTI1
-         ODUw==
+        bh=Z3QZb2R3EdSRGjNldFEi1fV9QVZELOWJSDHH54gUih4=;
+        b=lxO1UAr4NneU+P6Ihb8bkx/VGrROmaqowPU14iRlhaBcEsBBUdJxksJxlCRA9CwkWj
+         0K7pbCpiUVKHSucjlDfysFP9QM7lhCmB3z93KBLq0ivmXhN5CHHoCpwFQ1TXGaRbZeaW
+         HAm3YcHxdA3UWYYSAeCVwP5sBve3HbXdjGQIcXUiD5My1JU0+nEdoGu3gzv5WH95S4dl
+         n+qxFbotzHG4sAsD8mfY7mQwTSAunSbjRE2Y3HT+JvZcZ7qSLV2UVa05X82kLCtEGv/S
+         OwdbKJ6X9Zj6/LKSLYRBCKveneRYhLxhLY6mAy5UfKaY0iqZGd5eIWRmcAjQARJWqQLd
+         U0hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692228229; x=1692833029;
+        d=1e100.net; s=20221208; t=1692228226; x=1692833026;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qa3AibLZ/flcMM8pjMbhTffSCLpDoNcTFNENKYYaFNY=;
-        b=af5m2iEcgIezMH37o+Y6F8E0s9GKqWriXgR2+96zThJnBk8ZA5PJtw40XF3m+XMaL3
-         ye1IfoZjWeUXKKJUcsqTaYLg1zli35fwB9eTmqUA4CZuXFbWklqeuERzlpHHJYVFs3DF
-         H0gJbkyg/Vy4vfF5svnPl1dvAzAaTon15j3vUnjR/m6N80GhcuaSRF7Z0u71sYBHezUF
-         MQgRxyas/fW6D3Wztj/rHeEU2AvtAS91wWh82nUXjqop6k1xnJmgWMI3dOMskHyEzzk4
-         q/AoEw9cd62Ja9ZZPSxWA1Zj0veu6FZGApnCvOaJBJl3d5jw9h8XG069PLEPt1wWUZ/G
-         ts4A==
-X-Gm-Message-State: AOJu0YxiJgm0KSaFHOifD4EUVPSjwIsbZFLevIS5NtnwzdcaTyyFNmX3
-        1vQPPK6GQoXTsLqxHWHpKI4uhSVtFTWvlw==
-X-Google-Smtp-Source: AGHT+IFnz3zO5DhsTq/r4acaRKYRoJxmqtk6kyVWxCNSs6D3aHnm7Cqcu25/wzXO/Vs8/Q9UZVonkA==
-X-Received: by 2002:a7b:c8ca:0:b0:3f6:1474:905 with SMTP id f10-20020a7bc8ca000000b003f614740905mr2692739wml.29.1692228228455;
-        Wed, 16 Aug 2023 16:23:48 -0700 (PDT)
+        bh=Z3QZb2R3EdSRGjNldFEi1fV9QVZELOWJSDHH54gUih4=;
+        b=ed2YoDoYqWIT3yxYnGDfFHkSRFIW9aKVhwrHZcx/1In/g4IxAnDe+pZ9OE653ZU6je
+         XfTKYLOnrQR6dtzPVsVQq+FEGWkl9ns76z2FrH7c5bLycORuW+44CBFsc05veEUGbI3D
+         SEsRCpSY113TpkvipzVl/LVePo9L6rbdmuyUEkcNW9fygoQSo9iK7IzxskC9OSBZwxYw
+         VOvjMo7Sj5WbGp/U7O4Z1eEJQl6cNFsE8kaWbJQbds4EXd1tFMX4n91WdrCyPf6fJi3X
+         XtEGh0fGhopqVATkBD7bf6x3Z97xq7r+DZRwS1LGYfCHXVpo3YgOSMQxnsWSFL2Jqd9A
+         DCnw==
+X-Gm-Message-State: AOJu0YyoZydtJnClX9736Lv8W/S0+X4raCEAlhaYx5Nms4Gvnwc0Gjhf
+        RMHZ6ei4pg2Etbry8oBUVwmFALzkp7f2+w==
+X-Google-Smtp-Source: AGHT+IEJnRIZ1RA+2A8XOGo4qJdGXnm7sLvGhrm0Oh2ZgRs2v30ncOfTStpL4pgYtbcwGDoCsAU2Qg==
+X-Received: by 2002:adf:f7c9:0:b0:315:a32d:311f with SMTP id a9-20020adff7c9000000b00315a32d311fmr277540wrq.14.1692228225599;
+        Wed, 16 Aug 2023 16:23:45 -0700 (PDT)
 Received: from prasmi.home ([2a00:23c8:2501:c701:aeb8:832b:ebc0:1bbf])
-        by smtp.gmail.com with ESMTPSA id q4-20020adff944000000b003143c9beeaesm22752617wrr.44.2023.08.16.16.23.47
+        by smtp.gmail.com with ESMTPSA id q4-20020adff944000000b003143c9beeaesm22752617wrr.44.2023.08.16.16.23.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Aug 2023 16:23:47 -0700 (PDT)
+        Wed, 16 Aug 2023 16:23:44 -0700 (PDT)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
@@ -66,10 +66,11 @@ Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Samuel Holland <samuel@sholland.org>,
         linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 3/3] riscv: dma-mapping: switch over to generic implementation
-Date:   Thu, 17 Aug 2023 00:23:36 +0100
-Message-Id: <20230816232336.164413-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Palmer Dabbelt <palmer@rivosinc.com>
+Subject: [PATCH v3 1/3] riscv: dma-mapping: only invalidate after DMA, not flush
+Date:   Thu, 17 Aug 2023 00:23:34 +0100
+Message-Id: <20230816232336.164413-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230816232336.164413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20230816232336.164413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -79,127 +80,43 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Add helper functions for cache wback/inval/clean and use them
-arch_sync_dma_for_device()/arch_sync_dma_for_cpu() functions. The proposed
-changes are in preparation for switching over to generic implementation.
+No other architecture intentionally writes back dirty cache lines into
+a buffer that a device has just finished writing into. If the cache is
+clean, this has no effect at all, but if a cacheline in the buffer has
+actually been written by the CPU,  there is a driver bug that is likely
+made worse by overwriting that buffer.
 
-Reorganization of the code is based on the patch (Link[0]) from Arnd.
-For now I have dropped CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU check as this
-will be enabled by default upon selection of RISCV_DMA_NONCOHERENT
-and also dropped arch_dma_mark_dcache_clean().
-
-Link[0]: https://lore.kernel.org/all/20230327121317.4081816-22-arnd@kernel.org/
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-Hi Arnd,
-I have kept the changes minimal here as compared to your original patch and
-dropped arch_dma_mark_dcache_clean() function and config checks for now as we
-are currently implementing for riscv only.
+v2->v3
+* No change
 
-Cheers, Prabhakar
-
-v3:
-* New patch
+v1->v2
+* Fixed typo drive->driver in commit message
+* Included RB and ACKs
 ---
- arch/riscv/mm/dma-noncoherent.c | 60 ++++++++++++++++++++++++++++-----
- 1 file changed, 51 insertions(+), 9 deletions(-)
+ arch/riscv/mm/dma-noncoherent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/riscv/mm/dma-noncoherent.c b/arch/riscv/mm/dma-noncoherent.c
-index fc6377a64c8d..06b8fea58e20 100644
+index d51a75864e53..94614cf61cdd 100644
 --- a/arch/riscv/mm/dma-noncoherent.c
 +++ b/arch/riscv/mm/dma-noncoherent.c
-@@ -12,21 +12,61 @@
- 
- static bool noncoherent_supported __ro_after_init;
- 
--void arch_sync_dma_for_device(phys_addr_t paddr, size_t size,
--			      enum dma_data_direction dir)
-+static inline void arch_dma_cache_wback(phys_addr_t paddr, size_t size)
-+{
-+	void *vaddr = phys_to_virt(paddr);
-+
-+	ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
-+}
-+
-+static inline void arch_dma_cache_inv(phys_addr_t paddr, size_t size)
-+{
-+	void *vaddr = phys_to_virt(paddr);
-+
-+	ALT_CMO_OP(inval, vaddr, size, riscv_cbom_block_size);
-+}
-+
-+static inline void arch_dma_cache_wback_inv(phys_addr_t paddr, size_t size)
- {
- 	void *vaddr = phys_to_virt(paddr);
- 
-+	ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size);
-+}
-+
-+static inline bool arch_sync_dma_clean_before_fromdevice(void)
-+{
-+	return true;
-+}
-+
-+static inline bool arch_sync_dma_cpu_needs_post_dma_flush(void)
-+{
-+	return true;
-+}
-+
-+void arch_sync_dma_for_device(phys_addr_t paddr, size_t size,
-+			      enum dma_data_direction dir)
-+{
- 	switch (dir) {
- 	case DMA_TO_DEVICE:
--		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
-+		arch_dma_cache_wback(paddr, size);
+@@ -42,7 +42,7 @@ void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
  		break;
-+
- 	case DMA_FROM_DEVICE:
--		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
--		break;
-+		if (!arch_sync_dma_clean_before_fromdevice()) {
-+			arch_dma_cache_inv(paddr, size);
-+			break;
-+		}
-+		fallthrough;
-+
- 	case DMA_BIDIRECTIONAL:
--		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
-+		/* Skip the invalidate here if it's done later */
-+		if (IS_ENABLED(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) &&
-+		    arch_sync_dma_cpu_needs_post_dma_flush())
-+			arch_dma_cache_wback(paddr, size);
-+		else
-+			arch_dma_cache_wback_inv(paddr, size);
- 		break;
-+
- 	default:
- 		break;
- 	}
-@@ -35,15 +75,17 @@ void arch_sync_dma_for_device(phys_addr_t paddr, size_t size,
- void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
- 			   enum dma_data_direction dir)
- {
--	void *vaddr = phys_to_virt(paddr);
--
- 	switch (dir) {
- 	case DMA_TO_DEVICE:
- 		break;
-+
  	case DMA_FROM_DEVICE:
  	case DMA_BIDIRECTIONAL:
--		ALT_CMO_OP(inval, vaddr, size, riscv_cbom_block_size);
-+		/* FROM_DEVICE invalidate needed if speculative CPU prefetch only */
-+		if (arch_sync_dma_cpu_needs_post_dma_flush())
-+			arch_dma_cache_inv(paddr, size);
+-		ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size);
++		ALT_CMO_OP(inval, vaddr, size, riscv_cbom_block_size);
  		break;
-+
  	default:
  		break;
- 	}
 -- 
 2.34.1
 
