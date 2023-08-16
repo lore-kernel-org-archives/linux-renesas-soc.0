@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA09C07E8B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E214C07E8A
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243972AbjHPKpF (ORCPT
+        id S243969AbjHPKpF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 16 Aug 2023 06:45:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51752 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244045AbjHPKpA (ORCPT
+        with ESMTP id S244047AbjHPKpB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:45:00 -0400
+        Wed, 16 Aug 2023 06:45:01 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0872D62
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A02B2D61
         for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:42 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d0c:f209:12a7:4ce5])
         by xavier.telenet-ops.be with bizsmtp
-        id aAkg2A00245ualL01AkgwN; Wed, 16 Aug 2023 12:44:41 +0200
+        id aAkg2A00A45ualL01AkgwS; Wed, 16 Aug 2023 12:44:41 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWE0v-000orK-GG;
-        Wed, 16 Aug 2023 12:44:39 +0200
+        id 1qWE0v-000orT-Mb;
+        Wed, 16 Aug 2023 12:44:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWDAx-006779-4z;
+        id 1qWDAx-00676p-2H;
         Wed, 16 Aug 2023 11:50:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -39,9 +39,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v3 38/41] drm: renesas: shmobile: Use suspend/resume helpers
-Date:   Wed, 16 Aug 2023 11:50:45 +0200
-Message-Id: <3b606c3d20cc16413afd8f2ee32695003a58a16d.1692178020.git.geert+renesas@glider.be>
+Subject: [PATCH v3 34/41] drm: renesas: shmobile: Shutdown the display on remove
+Date:   Wed, 16 Aug 2023 11:50:41 +0200
+Message-Id: <602c3a125788982a3b926cdf0ac592dceed3e743.1692178020.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1692178020.git.geert+renesas@glider.be>
 References: <cover.1692178020.git.geert+renesas@glider.be>
@@ -51,8 +51,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the custom suspend/resume handling by calls into
-drm_mode_config_helper_{suspend,resume}().
+When the device is unbound from the driver, the display may be active.
+Make sure it gets shut down.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
@@ -63,85 +63,29 @@ v3:
 v2:
   - Add Reviewed-by.
 ---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 13 -------------
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h |  2 --
- drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c  | 13 +++----------
- 3 files changed, 3 insertions(+), 25 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 5c0575eed3ab6833..a176cd3e494ed2fd 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -287,19 +287,6 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- 	scrtc->started = false;
- }
- 
--void shmob_drm_crtc_suspend(struct shmob_drm_crtc *scrtc)
--{
--	shmob_drm_crtc_stop(scrtc);
--}
--
--void shmob_drm_crtc_resume(struct shmob_drm_crtc *scrtc)
--{
--	if (scrtc->dpms != DRM_MODE_DPMS_ON)
--		return;
--
--	shmob_drm_crtc_start(scrtc);
--}
--
- static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
- {
- 	return container_of(crtc, struct shmob_drm_crtc, base);
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-index fe41e42d6cc55275..37380c815f1f5a08 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-@@ -40,8 +40,6 @@ struct shmob_drm_connector {
- 
- int shmob_drm_crtc_create(struct shmob_drm_device *sdev);
- void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc);
--void shmob_drm_crtc_suspend(struct shmob_drm_crtc *scrtc);
--void shmob_drm_crtc_resume(struct shmob_drm_crtc *scrtc);
- 
- int shmob_drm_encoder_create(struct shmob_drm_device *sdev);
- int shmob_drm_connector_create(struct shmob_drm_device *sdev,
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index e4e88e66de5c3d3b..b7643884b49f0bc8 100644
+index 78f9650e3a61365f..51a9a6955d1fb0fb 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -20,6 +20,7 @@
+@@ -16,6 +16,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ 
++#include <drm/drm_crtc_helper.h>
  #include <drm/drm_drv.h>
  #include <drm/drm_fbdev_generic.h>
  #include <drm/drm_gem_dma_helper.h>
-+#include <drm/drm_modeset_helper.h>
- #include <drm/drm_module.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_vblank.h>
-@@ -115,22 +116,14 @@ static int shmob_drm_pm_suspend(struct device *dev)
- {
- 	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
+@@ -172,6 +173,7 @@ static int shmob_drm_remove(struct platform_device *pdev)
+ 	struct drm_device *ddev = &sdev->ddev;
  
--	drm_kms_helper_poll_disable(&sdev->ddev);
--	shmob_drm_crtc_suspend(&sdev->crtc);
--
--	return 0;
-+	return drm_mode_config_helper_suspend(&sdev->ddev);
+ 	drm_dev_unregister(ddev);
++	drm_helper_force_disable_all(ddev);
+ 	drm_kms_helper_poll_fini(ddev);
+ 	return 0;
  }
- 
- static int shmob_drm_pm_resume(struct device *dev)
- {
- 	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
- 
--	drm_modeset_lock_all(&sdev->ddev);
--	shmob_drm_crtc_resume(&sdev->crtc);
--	drm_modeset_unlock_all(&sdev->ddev);
--
--	drm_kms_helper_poll_enable(&sdev->ddev);
--	return 0;
-+	return drm_mode_config_helper_resume(&sdev->ddev);
- }
- 
- static int shmob_drm_pm_runtime_suspend(struct device *dev)
 -- 
 2.34.1
 
