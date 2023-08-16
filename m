@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3387C25B74
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1B9C25B73
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:46:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244155AbjHPKpt (ORCPT
+        id S244150AbjHPKps (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 06:45:49 -0400
+        Wed, 16 Aug 2023 06:45:48 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244183AbjHPKpW (ORCPT
+        with ESMTP id S244162AbjHPKpU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:45:22 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AC9E2D57
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:45:11 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d0c:f209:12a7:4ce5])
-        by laurent.telenet-ops.be with bizsmtp
-        id aAkg2A00Q45ualL01AkgUz; Wed, 16 Aug 2023 12:44:43 +0200
+        Wed, 16 Aug 2023 06:45:20 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 310242736
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:45:08 -0700 (PDT)
+Received: from ramsan.of.borg ([84.195.187.55])
+        by baptiste.telenet-ops.be with bizsmtp
+        id aAki2A0031C8whw01Akike; Wed, 16 Aug 2023 12:44:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWE0w-000orr-7b;
-        Wed, 16 Aug 2023 12:44:40 +0200
+        id 1qWE0x-000osz-IB;
+        Wed, 16 Aug 2023 12:44:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWDAw-00676G-TT;
+        id 1qWDAw-00674j-GW;
         Wed, 16 Aug 2023 11:50:50 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,11 +38,10 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sui Jingfeng <suijingfeng@loongson.cn>
-Subject: [PATCH v3 27/41] drm: renesas: shmobile: Rename shmob_drm_crtc.crtc
-Date:   Wed, 16 Aug 2023 11:50:34 +0200
-Message-Id: <fda36d120e483d37fdb7cdd51d9ed788d6c84b99.1692178020.git.geert+renesas@glider.be>
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v3 08/41] drm: renesas: shmobile: Restore indentation of shmob_drm_setup_clocks()
+Date:   Wed, 16 Aug 2023 11:50:15 +0200
+Message-Id: <8aae9654bc927ea1d9c9d7b9d072f9c7e91fc1e1.1692178020.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1692178020.git.geert+renesas@glider.be>
 References: <cover.1692178020.git.geert+renesas@glider.be>
@@ -52,12 +51,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Rename the "crtc" member of the shmob_drm_crtc subclass structure to
-"base", to improve readability.
+Commit 56550d94cbaeaa19 ("Drivers: gpu: remove __dev* attributes.")
+forgot to realign the continuation of the parameter section of
+shmob_drm_setup_clocks().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
 ---
 v3:
   - No changes,
@@ -65,136 +64,22 @@ v3:
 v2:
   - Add Reviewed-by.
 ---
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 26 +++++++++----------
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.h |  2 +-
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 564051b505ed4ac5..84a773a5363035e0 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -55,7 +55,7 @@ static const struct {
- 
- static void shmob_drm_crtc_setup_geometry(struct shmob_drm_crtc *scrtc)
- {
--	struct drm_crtc *crtc = &scrtc->crtc;
-+	struct drm_crtc *crtc = &scrtc->base;
- 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
- 	const struct drm_display_info *info = &sdev->connector->display_info;
- 	const struct drm_display_mode *mode = &crtc->mode;
-@@ -114,7 +114,7 @@ static void shmob_drm_crtc_setup_geometry(struct shmob_drm_crtc *scrtc)
- 
- static void shmob_drm_crtc_start_stop(struct shmob_drm_crtc *scrtc, bool start)
- {
--	struct shmob_drm_device *sdev = to_shmob_device(scrtc->crtc.dev);
-+	struct shmob_drm_device *sdev = to_shmob_device(scrtc->base.dev);
- 	u32 value;
- 
- 	value = lcdc_read(sdev, LDCNT2R);
-@@ -147,7 +147,7 @@ static void shmob_drm_crtc_start_stop(struct shmob_drm_crtc *scrtc, bool start)
-  */
- static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
- {
--	struct drm_crtc *crtc = &scrtc->crtc;
-+	struct drm_crtc *crtc = &scrtc->base;
- 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
- 	const struct shmob_drm_interface_data *idata = &sdev->pdata->iface;
- 	const struct shmob_drm_format_info *format;
-@@ -227,7 +227,7 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
- 
- static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- {
--	struct drm_crtc *crtc = &scrtc->crtc;
-+	struct drm_crtc *crtc = &scrtc->base;
- 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
- 
- 	if (!scrtc->started)
-@@ -260,7 +260,7 @@ void shmob_drm_crtc_resume(struct shmob_drm_crtc *scrtc)
- static void shmob_drm_crtc_compute_base(struct shmob_drm_crtc *scrtc,
- 					int x, int y)
- {
--	struct drm_crtc *crtc = &scrtc->crtc;
-+	struct drm_crtc *crtc = &scrtc->base;
- 	struct drm_framebuffer *fb = crtc->primary->fb;
- 	struct drm_gem_dma_object *gem;
- 	unsigned int bpp;
-@@ -281,7 +281,7 @@ static void shmob_drm_crtc_compute_base(struct shmob_drm_crtc *scrtc,
- 
- static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
- {
--	struct drm_crtc *crtc = &scrtc->crtc;
-+	struct drm_crtc *crtc = &scrtc->base;
- 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
- 
- 	shmob_drm_crtc_compute_base(scrtc, crtc->x, crtc->y);
-@@ -295,7 +295,7 @@ static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
- 
- static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
- {
--	return container_of(crtc, struct shmob_drm_crtc, crtc);
-+	return container_of(crtc, struct shmob_drm_crtc, base);
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+index 3fc7d820abdc61d4..64fc3fb02e6c6dc8 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+@@ -67,7 +67,7 @@ static int shmob_drm_init_interface(struct shmob_drm_device *sdev)
  }
  
- static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
-@@ -367,15 +367,15 @@ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
- void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
+ static int shmob_drm_setup_clocks(struct shmob_drm_device *sdev,
+-					    enum shmob_drm_clk_source clksrc)
++				  enum shmob_drm_clk_source clksrc)
  {
- 	struct drm_pending_vblank_event *event;
--	struct drm_device *dev = scrtc->crtc.dev;
-+	struct drm_device *dev = scrtc->base.dev;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&dev->event_lock, flags);
- 	event = scrtc->event;
- 	scrtc->event = NULL;
- 	if (event) {
--		drm_crtc_send_vblank_event(&scrtc->crtc, event);
--		drm_crtc_vblank_put(&scrtc->crtc);
-+		drm_crtc_send_vblank_event(&scrtc->base, event);
-+		drm_crtc_vblank_put(&scrtc->base);
- 	}
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
- }
-@@ -387,7 +387,7 @@ static int shmob_drm_crtc_page_flip(struct drm_crtc *crtc,
- 				    struct drm_modeset_acquire_ctx *ctx)
- {
- 	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
--	struct drm_device *dev = scrtc->crtc.dev;
-+	struct drm_device *dev = scrtc->base.dev;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&dev->event_lock, flags);
-@@ -402,7 +402,7 @@ static int shmob_drm_crtc_page_flip(struct drm_crtc *crtc,
- 
- 	if (event) {
- 		event->pipe = 0;
--		drm_crtc_vblank_get(&scrtc->crtc);
-+		drm_crtc_vblank_get(&scrtc->base);
- 		spin_lock_irqsave(&dev->event_lock, flags);
- 		scrtc->event = event;
- 		spin_unlock_irqrestore(&dev->event_lock, flags);
-@@ -454,7 +454,7 @@ static const struct drm_crtc_funcs crtc_funcs = {
- 
- int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- {
--	struct drm_crtc *crtc = &sdev->crtc.crtc;
-+	struct drm_crtc *crtc = &sdev->crtc.base;
- 	struct drm_plane *primary, *plane;
- 	unsigned int i;
- 	int ret;
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-index f507eaf912e16a22..79cce0a0ada4cfce 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-@@ -21,7 +21,7 @@ struct shmob_drm_device;
- struct shmob_drm_format_info;
- 
- struct shmob_drm_crtc {
--	struct drm_crtc crtc;
-+	struct drm_crtc base;
- 
- 	struct drm_pending_vblank_event *event;
- 	int dpms;
+ 	struct clk *clk;
+ 	char *clkname;
 -- 
 2.34.1
 
