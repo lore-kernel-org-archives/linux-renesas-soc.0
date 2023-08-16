@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861A9C07E8D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6111C10F1A
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244004AbjHPKpl (ORCPT
+        id S244026AbjHPKpm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 06:45:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34388 "EHLO
+        Wed, 16 Aug 2023 06:45:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244025AbjHPKpL (ORCPT
+        with ESMTP id S244073AbjHPKpO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:45:11 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C01E212B
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:49 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d0c:f209:12a7:4ce5])
-        by michel.telenet-ops.be with bizsmtp
-        id aAkh2A00845ualL06Akh1Z; Wed, 16 Aug 2023 12:44:42 +0200
+        Wed, 16 Aug 2023 06:45:14 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B1CD2110
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:53 -0700 (PDT)
+Received: from ramsan.of.borg ([84.195.187.55])
+        by baptiste.telenet-ops.be with bizsmtp
+        id aAki2A00Q1C8whw01Akiki; Wed, 16 Aug 2023 12:44:42 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWE0w-000osC-Nf;
-        Wed, 16 Aug 2023 12:44:41 +0200
+        id 1qWE0y-000otO-2C;
+        Wed, 16 Aug 2023 12:44:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWDAw-00675h-Ov;
+        id 1qWDAw-00674A-BT;
         Wed, 16 Aug 2023 11:50:50 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -37,11 +37,10 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v3 20/41] drm: renesas: shmobile: Embed drm_device in shmob_drm_device
-Date:   Wed, 16 Aug 2023 11:50:27 +0200
-Message-Id: <ce006937e44f537211066ff6ddb9c4ce04b247be.1692178020.git.geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 01/41] MAINTAINER: Create entry for Renesas SH-Mobile DRM drivers
+Date:   Wed, 16 Aug 2023 11:50:08 +0200
+Message-Id: <52e8883c340e354e2a928998146709420bdb3d52.1692178020.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1692178020.git.geert+renesas@glider.be>
 References: <cover.1692178020.git.geert+renesas@glider.be>
@@ -51,270 +50,52 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Embedding drm_device in shmob_drm_device allows us to use the DRM
-managed API to allocate both structures in one go, simplifying error
-handling.
+Split off DRM drivers for Renesas SH-Mobile into its own entry, and add
+Geert Uytterhoeven as a maintainer.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
+Kieran: do you want to join the club, too? ;-)
+
 v3:
   - No changes,
 
 v2:
-  - Add Reviewed-by.
+  - New.
 ---
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 12 +++---
- .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  | 41 +++++++------------
- .../gpu/drm/renesas/shmobile/shmob_drm_drv.h  |  2 +-
- .../gpu/drm/renesas/shmobile/shmob_drm_kms.c  | 16 ++++----
- .../drm/renesas/shmobile/shmob_drm_plane.c    |  8 ++--
- 5 files changed, 34 insertions(+), 45 deletions(-)
+ MAINTAINERS | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 015263ac2100c11e..9c66e00ed70ea582 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -116,7 +116,7 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
- 	struct shmob_drm_device *sdev = crtc->dev->dev_private;
- 	const struct shmob_drm_interface_data *idata = &sdev->pdata->iface;
- 	const struct shmob_drm_format_info *format;
--	struct drm_device *dev = sdev->ddev;
-+	struct drm_device *dev = &sdev->ddev;
- 	struct drm_plane *plane;
- 	u32 value;
- 	int ret;
-@@ -439,7 +439,7 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c9cf561aca347709..c454b0186fd669dd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7007,7 +7007,7 @@ F:	drivers/gpu/host1x/
+ F:	include/linux/host1x.h
+ F:	include/uapi/drm/tegra_drm.h
  
- 	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
+-DRM DRIVERS FOR RENESAS
++DRM DRIVERS FOR RENESAS R-CAR
+ M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+ M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+ L:	dri-devel@lists.freedesktop.org
+@@ -7018,7 +7018,15 @@ F:	Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
+ F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.yaml
+ F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
+ F:	Documentation/devicetree/bindings/display/renesas,du.yaml
+-F:	drivers/gpu/drm/renesas/
++F:	drivers/gpu/drm/renesas/rcar-du/
++
++DRM DRIVERS FOR RENESAS SHMOBILE
++M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++M:	Geert Uytterhoeven <geert+renesas@glider.be>
++L:	dri-devel@lists.freedesktop.org
++L:	linux-renesas-soc@vger.kernel.org
++S:	Supported
++F:	drivers/gpu/drm/renesas/shmobile/
+ F:	include/linux/platform_data/shmob_drm.h
  
--	primary = __drm_universal_plane_alloc(sdev->ddev, sizeof(*primary), 0,
-+	primary = __drm_universal_plane_alloc(&sdev->ddev, sizeof(*primary), 0,
- 					      0, &primary_plane_funcs,
- 					      modeset_formats,
- 					      ARRAY_SIZE(modeset_formats),
-@@ -448,7 +448,7 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- 	if (IS_ERR(primary))
- 		return PTR_ERR(primary);
- 
--	ret = drm_crtc_init_with_planes(sdev->ddev, crtc, primary, NULL,
-+	ret = drm_crtc_init_with_planes(&sdev->ddev, crtc, primary, NULL,
- 					&crtc_funcs, NULL);
- 	if (ret < 0) {
- 		drm_plane_cleanup(primary);
-@@ -524,7 +524,7 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
- 
- 	encoder->possible_crtcs = 1;
- 
--	ret = drm_simple_encoder_init(sdev->ddev, encoder,
-+	ret = drm_simple_encoder_init(&sdev->ddev, encoder,
- 				      DRM_MODE_ENCODER_DPI);
- 	if (ret < 0)
- 		return ret;
-@@ -604,7 +604,7 @@ int shmob_drm_connector_create(struct shmob_drm_device *sdev,
- 	connector->display_info.width_mm = sdev->pdata->panel.width_mm;
- 	connector->display_info.height_mm = sdev->pdata->panel.height_mm;
- 
--	ret = drm_connector_init(sdev->ddev, connector, &connector_funcs,
-+	ret = drm_connector_init(&sdev->ddev, connector, &connector_funcs,
- 				 DRM_MODE_CONNECTOR_DPI);
- 	if (ret < 0)
- 		return ret;
-@@ -617,7 +617,7 @@ int shmob_drm_connector_create(struct shmob_drm_device *sdev,
- 
- 	drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
- 	drm_object_property_set_value(&connector->base,
--		sdev->ddev->mode_config.dpms_property, DRM_MODE_DPMS_OFF);
-+		sdev->ddev.mode_config.dpms_property, DRM_MODE_DPMS_OFF);
- 
- 	return 0;
- 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index 381e184abf552c4c..3f40ebb96747d1e7 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -137,7 +137,7 @@ static int shmob_drm_pm_suspend(struct device *dev)
- {
- 	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
- 
--	drm_kms_helper_poll_disable(sdev->ddev);
-+	drm_kms_helper_poll_disable(&sdev->ddev);
- 	shmob_drm_crtc_suspend(&sdev->crtc);
- 
- 	return 0;
-@@ -147,11 +147,11 @@ static int shmob_drm_pm_resume(struct device *dev)
- {
- 	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
- 
--	drm_modeset_lock_all(sdev->ddev);
-+	drm_modeset_lock_all(&sdev->ddev);
- 	shmob_drm_crtc_resume(&sdev->crtc);
--	drm_modeset_unlock_all(sdev->ddev);
-+	drm_modeset_unlock_all(&sdev->ddev);
- 
--	drm_kms_helper_poll_enable(sdev->ddev);
-+	drm_kms_helper_poll_enable(&sdev->ddev);
- 	return 0;
- }
- 
-@@ -192,12 +192,10 @@ static const struct dev_pm_ops shmob_drm_pm_ops = {
- static int shmob_drm_remove(struct platform_device *pdev)
- {
- 	struct shmob_drm_device *sdev = platform_get_drvdata(pdev);
--	struct drm_device *ddev = sdev->ddev;
-+	struct drm_device *ddev = &sdev->ddev;
- 
- 	drm_dev_unregister(ddev);
- 	drm_kms_helper_poll_fini(ddev);
--	drm_dev_put(ddev);
--
- 	return 0;
- }
- 
-@@ -215,13 +213,15 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	}
- 
- 	/*
--	 * Allocate and initialize the driver private data, I/O resources and
--	 * clocks.
-+	 * Allocate and initialize the DRM device, driver private data, I/O
-+	 * resources and clocks.
- 	 */
--	sdev = devm_kzalloc(&pdev->dev, sizeof(*sdev), GFP_KERNEL);
--	if (sdev == NULL)
--		return -ENOMEM;
-+	sdev = devm_drm_dev_alloc(&pdev->dev, &shmob_drm_driver,
-+				  struct shmob_drm_device, ddev);
-+	if (IS_ERR(sdev))
-+		return PTR_ERR(sdev);
- 
-+	ddev = &sdev->ddev;
- 	sdev->dev = &pdev->dev;
- 	sdev->pdata = pdata;
- 	spin_lock_init(&sdev->irq_lock);
-@@ -244,20 +244,12 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	/* Allocate and initialize the DRM device. */
--	ddev = drm_dev_alloc(&shmob_drm_driver, &pdev->dev);
--	if (IS_ERR(ddev))
--		return PTR_ERR(ddev);
--
--	sdev->ddev = ddev;
- 	ddev->dev_private = sdev;
- 
- 	ret = shmob_drm_modeset_init(sdev);
--	if (ret < 0) {
--		dev_err_probe(&pdev->dev, ret,
--			      "failed to initialize mode setting\n");
--		goto err_free_drm_dev;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to initialize mode setting\n");
- 
- 	for (i = 0; i < 4; ++i) {
- 		ret = shmob_drm_plane_create(sdev, i);
-@@ -299,9 +291,6 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 
- err_modeset_cleanup:
- 	drm_kms_helper_poll_fini(ddev);
--err_free_drm_dev:
--	drm_dev_put(ddev);
--
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
-index 16d830168b2ada21..77bb0da48f37ace8 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
-@@ -32,7 +32,7 @@ struct shmob_drm_device {
- 	unsigned int irq;
- 	spinlock_t irq_lock;		/* Protects hardware LDINTR register */
- 
--	struct drm_device *ddev;
-+	struct drm_device ddev;
- 
- 	struct shmob_drm_crtc crtc;
- 	struct drm_encoder encoder;
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-index 1a62e7f8a8a9e6df..20316907030b2789 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-@@ -153,7 +153,7 @@ int shmob_drm_modeset_init(struct shmob_drm_device *sdev)
- {
- 	int ret;
- 
--	ret = drmm_mode_config_init(sdev->ddev);
-+	ret = drmm_mode_config_init(&sdev->ddev);
- 	if (ret)
- 		return ret;
- 
-@@ -169,15 +169,15 @@ int shmob_drm_modeset_init(struct shmob_drm_device *sdev)
- 	if (ret < 0)
- 		return ret;
- 
--	drm_kms_helper_poll_init(sdev->ddev);
-+	drm_kms_helper_poll_init(&sdev->ddev);
- 
--	sdev->ddev->mode_config.min_width = 0;
--	sdev->ddev->mode_config.min_height = 0;
--	sdev->ddev->mode_config.max_width = 4095;
--	sdev->ddev->mode_config.max_height = 4095;
--	sdev->ddev->mode_config.funcs = &shmob_drm_mode_config_funcs;
-+	sdev->ddev.mode_config.min_width = 0;
-+	sdev->ddev.mode_config.min_height = 0;
-+	sdev->ddev.mode_config.max_width = 4095;
-+	sdev->ddev.mode_config.max_height = 4095;
-+	sdev->ddev.mode_config.funcs = &shmob_drm_mode_config_funcs;
- 
--	drm_helper_disable_unused_functions(sdev->ddev);
-+	drm_helper_disable_unused_functions(&sdev->ddev);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-index 1fb68b5fe915b8dc..17e66a018689f648 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-@@ -68,7 +68,7 @@ static void __shmob_drm_plane_setup(struct shmob_drm_plane *splane,
- 		 splane->format->ldbbsifr;
- 
- #define plane_reg_dump(sdev, splane, reg) \
--	dev_dbg(sdev->ddev->dev, "%s(%u): %s 0x%08x 0x%08x\n", __func__, \
-+	dev_dbg(sdev->ddev.dev, "%s(%u): %s 0x%08x 0x%08x\n", __func__, \
- 		splane->index, #reg, \
- 		lcdc_read(sdev, reg(splane->index)), \
- 		lcdc_read(sdev, reg(splane->index) + LCDC_SIDE_B_OFFSET))
-@@ -81,7 +81,7 @@ static void __shmob_drm_plane_setup(struct shmob_drm_plane *splane,
- 	plane_reg_dump(sdev, splane, LDBnBSACR);
- 
- 	lcdc_write(sdev, LDBCR, LDBCR_UPC(splane->index));
--	dev_dbg(sdev->ddev->dev, "%s(%u): %s 0x%08x\n", __func__, splane->index,
-+	dev_dbg(sdev->ddev.dev, "%s(%u): %s 0x%08x\n", __func__, splane->index,
- 		"LDBCR", lcdc_read(sdev, LDBCR));
- 
- 	lcdc_write(sdev, LDBnBSIFR(splane->index), format);
-@@ -103,7 +103,7 @@ static void __shmob_drm_plane_setup(struct shmob_drm_plane *splane,
- 
- 	lcdc_write(sdev, LDBCR,
- 		   LDBCR_UPF(splane->index) | LDBCR_UPD(splane->index));
--	dev_dbg(sdev->ddev->dev, "%s(%u): %s 0x%08x\n", __func__, splane->index,
-+	dev_dbg(sdev->ddev.dev, "%s(%u): %s 0x%08x\n", __func__, splane->index,
- 		"LDBCR", lcdc_read(sdev, LDBCR));
- 
- 	plane_reg_dump(sdev, splane, LDBnBSIFR);
-@@ -198,7 +198,7 @@ int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index)
- {
- 	struct shmob_drm_plane *splane;
- 
--	splane = drmm_universal_plane_alloc(sdev->ddev, struct shmob_drm_plane,
-+	splane = drmm_universal_plane_alloc(&sdev->ddev, struct shmob_drm_plane,
- 					    plane, 1, &shmob_drm_plane_funcs,
- 					    formats, ARRAY_SIZE(formats), NULL,
- 					    DRM_PLANE_TYPE_OVERLAY, NULL);
+ DRM DRIVERS FOR ROCKCHIP
 -- 
 2.34.1
 
