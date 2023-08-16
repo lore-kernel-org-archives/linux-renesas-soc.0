@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED772C04FE2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0928CC04FE1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243953AbjHPKpE (ORCPT
+        id S243976AbjHPKpG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 06:45:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48886 "EHLO
+        Wed, 16 Aug 2023 06:45:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244034AbjHPKo6 (ORCPT
+        with ESMTP id S244058AbjHPKpC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:44:58 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D2E2D58
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:42 -0700 (PDT)
+        Wed, 16 Aug 2023 06:45:02 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5CF2D70
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:43 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d0c:f209:12a7:4ce5])
-        by albert.telenet-ops.be with bizsmtp
-        id aAkg2A00h45ualL06AkgQX; Wed, 16 Aug 2023 12:44:41 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id aAkg2A00P45ualL01AkgwX; Wed, 16 Aug 2023 12:44:41 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWE0w-000oru-9j;
+        id 1qWE0v-000orZ-RN;
         Wed, 16 Aug 2023 12:44:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWDAw-00676B-Sp;
-        Wed, 16 Aug 2023 11:50:50 +0200
+        id 1qWDAx-00676f-0p;
+        Wed, 16 Aug 2023 11:50:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -37,10 +37,11 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 26/41] drm: renesas: shmobile: Unify plane allocation
-Date:   Wed, 16 Aug 2023 11:50:33 +0200
-Message-Id: <d0176fcf03d08a1f0b89b320612c4cc35ef6191c.1692178020.git.geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v3 32/41] drm: renesas: shmobile: Wait for page flip when turning CRTC off
+Date:   Wed, 16 Aug 2023 11:50:39 +0200
+Message-Id: <3777d3233e08ffbe3fbcd1d84ac947942160e8d8.1692178020.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1692178020.git.geert+renesas@glider.be>
 References: <cover.1692178020.git.geert+renesas@glider.be>
@@ -50,202 +51,111 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Unify primary and overlay plane allocation:
-  - Enhance shmob_drm_plane_create() so it can be used to create the
-    primary plane, too,
-  - Move overlay plane creation next to primary plane creation.
+Turning a CRTC off will prevent a queued page flip from ever completing,
+potentially confusing userspace.  Wait for queued page flips to complete
+before turning the CRTC off to avoid this.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
 v3:
   - No changes,
 
 v2:
-  - Pass plane type to shmob_drm_plane_create() to avoid having to shift
-    all overlay plane indices by one,
-  - Rename primary_plane_funcs to shmob_drm_primary_plane_funcs,
-  - Rename shmob_drm_plane_funcs to shmob_drm_overlay_plane_funcs.
+  - Add Reviewed-by.
 ---
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 39 +++++--------------
- .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  |  9 -----
- .../drm/renesas/shmobile/shmob_drm_plane.c    | 31 +++++++++++----
- .../drm/renesas/shmobile/shmob_drm_plane.h    |  4 +-
- 4 files changed, 36 insertions(+), 47 deletions(-)
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 37 +++++++++++++++++++
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.h |  3 ++
+ 2 files changed, 40 insertions(+)
 
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index caafd04acd3d46d0..564051b505ed4ac5 100644
+index 0adf5d33ba31695e..20adb9d2fa178250 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -19,7 +19,6 @@
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_modeset_helper_vtables.h>
--#include <drm/drm_plane_helper.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_simple_kms_helper.h>
- #include <drm/drm_vblank.h>
-@@ -453,47 +452,29 @@ static const struct drm_crtc_funcs crtc_funcs = {
- 	.disable_vblank = shmob_drm_disable_vblank,
- };
+@@ -50,11 +50,40 @@ void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
+ 	scrtc->event = NULL;
+ 	if (event) {
+ 		drm_crtc_send_vblank_event(&scrtc->base, event);
++		wake_up(&scrtc->flip_wait);
+ 		drm_crtc_vblank_put(&scrtc->base);
+ 	}
+ 	spin_unlock_irqrestore(&dev->event_lock, flags);
+ }
  
--static const uint32_t modeset_formats[] = {
--	DRM_FORMAT_RGB565,
--	DRM_FORMAT_RGB888,
--	DRM_FORMAT_ARGB8888,
--	DRM_FORMAT_XRGB8888,
--	DRM_FORMAT_NV12,
--	DRM_FORMAT_NV21,
--	DRM_FORMAT_NV16,
--	DRM_FORMAT_NV61,
--	DRM_FORMAT_NV24,
--	DRM_FORMAT_NV42,
--};
--
--static const struct drm_plane_funcs primary_plane_funcs = {
--	DRM_PLANE_NON_ATOMIC_FUNCS,
--};
--
- int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- {
- 	struct drm_crtc *crtc = &sdev->crtc.crtc;
--	struct drm_plane *primary;
-+	struct drm_plane *primary, *plane;
-+	unsigned int i;
++static bool shmob_drm_crtc_page_flip_pending(struct shmob_drm_crtc *scrtc)
++{
++	struct drm_device *dev = scrtc->base.dev;
++	unsigned long flags;
++	bool pending;
++
++	spin_lock_irqsave(&dev->event_lock, flags);
++	pending = scrtc->event != NULL;
++	spin_unlock_irqrestore(&dev->event_lock, flags);
++
++	return pending;
++}
++
++static void shmob_drm_crtc_wait_page_flip(struct shmob_drm_crtc *scrtc)
++{
++	struct drm_crtc *crtc = &scrtc->base;
++	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
++
++	if (wait_event_timeout(scrtc->flip_wait,
++			       !shmob_drm_crtc_page_flip_pending(scrtc),
++			       msecs_to_jiffies(50)))
++		return;
++
++	dev_warn(sdev->dev, "page flip timeout\n");
++
++	shmob_drm_crtc_finish_page_flip(scrtc);
++}
++
+ /* -----------------------------------------------------------------------------
+  * CRTC
+  */
+@@ -253,6 +282,12 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
+ 	if (!scrtc->started)
+ 		return;
+ 
++	/*
++	 * Wait for page flip completion before stopping the CRTC as userspace
++	 * expects page flips to eventually complete.
++	 */
++	shmob_drm_crtc_wait_page_flip(scrtc);
++
+ 	/* Stop the LCDC. */
+ 	shmob_drm_crtc_start_stop(scrtc, false);
+ 
+@@ -463,6 +498,8 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
+ 	unsigned int i;
  	int ret;
  
++	init_waitqueue_head(&sdev->crtc.flip_wait);
++
  	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
  
--	primary = __drm_universal_plane_alloc(&sdev->ddev, sizeof(*primary), 0,
--					      0, &primary_plane_funcs,
--					      modeset_formats,
--					      ARRAY_SIZE(modeset_formats),
--					      NULL, DRM_PLANE_TYPE_PRIMARY,
--					      NULL);
-+	primary = shmob_drm_plane_create(sdev, DRM_PLANE_TYPE_PRIMARY, 0);
- 	if (IS_ERR(primary))
- 		return PTR_ERR(primary);
+ 	primary = shmob_drm_plane_create(sdev, DRM_PLANE_TYPE_PRIMARY, 0);
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
+index 2c6d7541427581a6..b9863e026e8a9b83 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
+@@ -14,6 +14,8 @@
+ #include <drm/drm_connector.h>
+ #include <drm/drm_encoder.h>
  
-+	for (i = 1; i < 5; ++i) {
-+		plane = shmob_drm_plane_create(sdev, DRM_PLANE_TYPE_OVERLAY, i);
-+		if (IS_ERR(plane))
-+			return PTR_ERR(plane);
-+	}
++#include <linux/wait.h>
 +
- 	ret = drm_crtc_init_with_planes(&sdev->ddev, crtc, primary, NULL,
- 					&crtc_funcs, NULL);
--	if (ret < 0) {
--		drm_plane_cleanup(primary);
--		kfree(primary);
-+	if (ret < 0)
- 		return ret;
--	}
+ #include <video/videomode.h>
  
- 	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
+ struct drm_pending_vblank_event;
+@@ -24,6 +26,7 @@ struct shmob_drm_crtc {
+ 	struct drm_crtc base;
  
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index 8da3054f26b2d235..6bc05a9e9661915e 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -181,7 +181,6 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	struct shmob_drm_platform_data *pdata = pdev->dev.platform_data;
- 	struct shmob_drm_device *sdev;
- 	struct drm_device *ddev;
--	unsigned int i;
- 	int ret;
+ 	struct drm_pending_vblank_event *event;
++	wait_queue_head_t flip_wait;
+ 	int dpms;
  
- 	if (pdata == NULL) {
-@@ -222,14 +221,6 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, ret,
- 				     "failed to initialize mode setting\n");
- 
--	for (i = 0; i < 4; ++i) {
--		ret = shmob_drm_plane_create(sdev, i);
--		if (ret < 0) {
--			dev_err(&pdev->dev, "failed to create plane %u\n", i);
--			goto err_modeset_cleanup;
--		}
--	}
--
- 	ret = drm_vblank_init(ddev, 1);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to initialize vblank\n");
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-index c58b9dca34736342..3518f8900c0d1f9e 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-@@ -12,6 +12,7 @@
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_dma_helper.h>
-+#include <drm/drm_plane_helper.h>
- 
- #include "shmob_drm_drv.h"
- #include "shmob_drm_kms.h"
-@@ -179,7 +180,12 @@ static int shmob_drm_plane_disable(struct drm_plane *plane,
- 	return 0;
- }
- 
--static const struct drm_plane_funcs shmob_drm_plane_funcs = {
-+static const struct drm_plane_funcs shmob_drm_primary_plane_funcs = {
-+	.update_plane = drm_plane_helper_update_primary,
-+	.disable_plane = drm_plane_helper_disable_primary,
-+};
-+
-+static const struct drm_plane_funcs shmob_drm_overlay_plane_funcs = {
- 	.update_plane = shmob_drm_plane_update,
- 	.disable_plane = shmob_drm_plane_disable,
- };
-@@ -197,19 +203,28 @@ static const uint32_t formats[] = {
- 	DRM_FORMAT_NV42,
- };
- 
--int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index)
-+struct drm_plane *shmob_drm_plane_create(struct shmob_drm_device *sdev,
-+					 enum drm_plane_type type,
-+					 unsigned int index)
- {
-+	const struct drm_plane_funcs *funcs;
- 	struct shmob_drm_plane *splane;
- 
--	splane = drmm_universal_plane_alloc(&sdev->ddev, struct shmob_drm_plane,
--					    plane, 1, &shmob_drm_plane_funcs,
--					    formats, ARRAY_SIZE(formats), NULL,
--					    DRM_PLANE_TYPE_OVERLAY, NULL);
-+	if (type == DRM_PLANE_TYPE_PRIMARY)
-+		funcs = &shmob_drm_primary_plane_funcs;
-+	else
-+		funcs = &shmob_drm_overlay_plane_funcs;
-+
-+	splane = drmm_universal_plane_alloc(&sdev->ddev,
-+					    struct shmob_drm_plane, plane, 1,
-+					    funcs, formats,
-+					    ARRAY_SIZE(formats),  NULL, type,
-+					    NULL);
- 	if (IS_ERR(splane))
--		return PTR_ERR(splane);
-+		return ERR_CAST(splane);
- 
- 	splane->index = index;
- 	splane->alpha = 255;
- 
--	return 0;
-+	return &splane->plane;
- }
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h
-index e72b21a4288fc23f..8ad12129014016fa 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h
-@@ -13,7 +13,9 @@
- struct drm_plane;
- struct shmob_drm_device;
- 
--int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index);
-+struct drm_plane *shmob_drm_plane_create(struct shmob_drm_device *sdev,
-+					 enum drm_plane_type type,
-+					 unsigned int index);
- void shmob_drm_plane_setup(struct drm_plane *plane);
- 
- #endif /* __SHMOB_DRM_PLANE_H__ */
+ 	const struct shmob_drm_format_info *format;
 -- 
 2.34.1
 
