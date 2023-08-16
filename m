@@ -2,88 +2,70 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B61C04E69
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB015C001E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244053AbjHPK5m (ORCPT
+        id S234480AbjHPK6O (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 06:57:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34636 "EHLO
+        Wed, 16 Aug 2023 06:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244111AbjHPKpR (ORCPT
+        with ESMTP id S244348AbjHPK6E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:45:17 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BD62D49
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:44:56 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d0c:f209:12a7:4ce5])
-        by michel.telenet-ops.be with bizsmtp
-        id aAkh2A00y45ualL06Akh1v; Wed, 16 Aug 2023 12:44:43 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qWE0x-000ost-Dq;
-        Wed, 16 Aug 2023 12:44:41 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qWDAw-00674t-Hu;
-        Wed, 16 Aug 2023 11:50:50 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wed, 16 Aug 2023 06:58:04 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F5E230DB
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=from:to:cc:subject:date:message-id
+        :mime-version:content-transfer-encoding; s=k1; bh=T9M8vKB9PQPcVK
+        0oK3oL7ZmlZvtgEDH5nB+BV2yk7aM=; b=gK2mmvRhpJueZpW4/HIdabDbv+incR
+        22T9O33URbzJYqK1NZGyRa/chwOeGj7AFSBLID0JaFpBJW9zTGjOWW70teEDGr2v
+        AW3KY8S/0jd9DlTSyfDJvMPiReckTI3His4sFNQjVEzXliCYPQfO+9f9lKmF/9xC
+        aGJDmfOI6eehgL4vqnSnSa5AtpWtjE8PnnDb1iW4QMvvqb1zEVaOoZ+ttwvASrzM
+        ygWbb69jFAE1ReEBnXDO+ChjULHdyB3L3DR2KeBd/felPGITF2tZDS7M4B7fJBdV
+        MkbI+YLq5Qb0y7kXHLkTDrCzhP6kZh02qTv8rUMfQqVGmNMQ7uAH0ndQ==
+Received: (qmail 106903 invoked from network); 16 Aug 2023 12:56:59 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Aug 2023 12:56:59 +0200
+X-UD-Smtp-Session: l3s3148p1@5OiOJwgDBMEgAwDPXy5qAJ1huuy56R1W
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v3 10/41] drm: renesas: shmobile: Add missing YCbCr formats
-Date:   Wed, 16 Aug 2023 11:50:17 +0200
-Message-Id: <ebf5d89e4e523436b972202ca8c02f733a11ef7a.1692178020.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1692178020.git.geert+renesas@glider.be>
-References: <cover.1692178020.git.geert+renesas@glider.be>
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: renesas: rcar-du: use proper naming for R-Car
+Date:   Wed, 16 Aug 2023 12:56:41 +0200
+Message-Id: <20230816105642.20419-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The primary plane supports various YCbCr formats, and the CRTC code
-already knows how to handle them.  Enable support for the missing
-formats by adding them to the table of supported modes.
+Not RCAR, but R-Car.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v3:
-  - No changes,
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-  - Add Reviewed-by.
----
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 2d9ae0c6ab7b18a8..a0e1a49c84d5691a 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -460,6 +460,12 @@ static const uint32_t modeset_formats[] = {
- 	DRM_FORMAT_RGB888,
- 	DRM_FORMAT_ARGB8888,
- 	DRM_FORMAT_XRGB8888,
-+	DRM_FORMAT_NV12,
-+	DRM_FORMAT_NV21,
-+	DRM_FORMAT_NV16,
-+	DRM_FORMAT_NV61,
-+	DRM_FORMAT_NV24,
-+	DRM_FORMAT_NV42,
- };
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h
+index f9893d7d6dfc..e9e59c5e70d5 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h
+@@ -16,7 +16,7 @@ struct rcar_du_format_info;
+ struct rcar_du_group;
  
- static const struct drm_plane_funcs primary_plane_funcs = {
+ /*
+- * The RCAR DU has 8 hardware planes, shared between primary and overlay planes.
++ * The R-Car DU has 8 hardware planes, shared between primary and overlay planes.
+  * As using overlay planes requires at least one of the CRTCs being enabled, no
+  * more than 7 overlay planes can be available. We thus create 1 primary plane
+  * per CRTC and 7 overlay planes, for a total of up to 9 KMS planes.
 -- 
-2.34.1
+2.35.1
 
