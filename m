@@ -2,94 +2,116 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8753DC001DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 17:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13BAC001B0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 17:32:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345141AbjHPRPE (ORCPT
+        id S1345211AbjHPRby (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 13:15:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49660 "EHLO
+        Wed, 16 Aug 2023 13:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345137AbjHPROd (ORCPT
+        with ESMTP id S1345223AbjHPRbc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 13:14:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF2A10F0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 10:14:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E590062232
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 17:14:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 423A1C433C8;
-        Wed, 16 Aug 2023 17:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692206071;
-        bh=F4cUJzysrXK5YoMFqnu2TIAQEvB0qEY6QIpk+2dm0ag=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=iJ3i8Na1fhrHrajaT78qwMBInrX0BBRxRNKxNOIfkg46HcJaKeOSWhxfXo+isr1rA
-         a6yV+dHuLWUsX1JRp1b0vP3K0fAzN4cAuB+8DjgZ7TjVWlfWLUZdDMzsVshraUGw4x
-         BNeKqIeN4gB8/1u9yl/W7+RSaq0SPSVeK2GSn9ufeCZVdnFzaiTRgOjnqSzlEcdbXT
-         qnRdPJ6zix1rEqa3E8SecI8VmOf1nvZV3dLrgdMTs01LsOqE7MzZmX2pU13APMbaoD
-         RyJaxKKEudzmYyctzNgxnh4hn7ll5AjgQ/shaAEfwgMqyKnq3QBDxpbSl9ebI0AxeG
-         4mm2l40kqlpTQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20230816135550.146657-1-biju.das.jz@bp.renesas.com>
-References: <20230816135550.146657-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH 0/2] RAA215300 regulator driver improvements
-Message-Id: <169220606998.909854.15877882074805656913.b4-ty@kernel.org>
-Date:   Wed, 16 Aug 2023 18:14:29 +0100
+        Wed, 16 Aug 2023 13:31:32 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAAB8270C
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 10:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=from:to:cc:subject:date:message-id
+        :in-reply-to:references:mime-version:content-transfer-encoding;
+         s=k1; bh=VcKHUn11Q66zpSkuewbK9fayGKVu5QJaVzvUdZ9guSU=; b=ZrlguP
+        /8DrWZlezE+YMjYFXF4gt+eksVVX7yXlgU99aqvuQTVbbC/LCIKzr83EZfdTFpuR
+        R47dvvAvWz1QB5ai6+I5sitcLFtxk05GYwwVEoONwuE1omsaJiTZNCpMJLi9VTC0
+        hUicQSrDbQ3xvqhWX7qR3p4hdQ/aKd/W8Y2Uwpu/VPfWUL/k6wZivY7ZyshqkVWw
+        mNjmITXNzSWcAsHp34ODFPt0iWV5fcKXazG2UdD9gQU8mVA8mkIqLQrxL4s7bcWh
+        bD0whVvC/YlcV1zWdj22li5qmKg0moOWkK87xFGXdylDYUSFjKYzt+FEF0LEr772
+        cv8oWUG2rdUQ8uWQ==
+Received: (qmail 219520 invoked from network); 16 Aug 2023 19:31:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Aug 2023 19:31:27 +0200
+X-UD-Smtp-Session: l3s3148p1@DSNNqg0Dzs5ehhtV
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/3] gnss: ubx: add support for the reset gpio
+Date:   Wed, 16 Aug 2023 19:31:15 +0200
+Message-Id: <20230816173116.1176-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20230816173116.1176-1-wsa+renesas@sang-engineering.com>
+References: <20230816173116.1176-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-034f2
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 16 Aug 2023 14:55:48 +0100, Biju Das wrote:
-> This patch series aims to fix a resource leak in probe() and adding
-> const definition to local variable 'name'.
-> 
-> Biju Das (2):
->   regulator: raa215300: Fix resource leak in case of error
->   regulator: raa215300: Add const definition
-> 
-> [...]
+Tested with a Renesas KingFisher board. Because my GNSS device is hooked
+up via UART and I2C simultaneously, I could verify functionality by
+opening/closing the GNSS device using UART and see if the corresponding
+I2C device was visible on the bus.
 
-Applied to
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Changes since v1:
+* proper reverse order in ubx_set_standby (Thanks, Geert!)
+* simplified the comment when initiall asserting the GPIO (Thanks, Geert!)
 
-Thanks!
+ drivers/gnss/ubx.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-[1/2] regulator: raa215300: Fix resource leak in case of error
-      commit: e21ac64e669e960688e79bf5babeed63132dac8a
-[2/2] regulator: raa215300: Add const definition
-      commit: 727d7c1c3695657873d62030b968ba97c8698c54
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
+index 9b76b101ba5e..e7d151cbc8c3 100644
+--- a/drivers/gnss/ubx.c
++++ b/drivers/gnss/ubx.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/errno.h>
+ #include <linux/gnss.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -18,6 +19,7 @@
+ 
+ struct ubx_data {
+ 	struct regulator *vcc;
++	struct gpio_desc *reset_gpio;
+ };
+ 
+ static int ubx_set_active(struct gnss_serial *gserial)
+@@ -29,6 +31,8 @@ static int ubx_set_active(struct gnss_serial *gserial)
+ 	if (ret)
+ 		return ret;
+ 
++	gpiod_set_value_cansleep(data->reset_gpio, 0);
++
+ 	return 0;
+ }
+ 
+@@ -37,6 +41,8 @@ static int ubx_set_standby(struct gnss_serial *gserial)
+ 	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
+ 	int ret;
+ 
++	gpiod_set_value_cansleep(data->reset_gpio, 1);
++
+ 	ret = regulator_disable(data->vcc);
+ 	if (ret)
+ 		return ret;
+@@ -90,6 +96,13 @@ static int ubx_probe(struct serdev_device *serdev)
+ 	if (ret < 0 && ret != -ENODEV)
+ 		goto err_free_gserial;
+ 
++	/* Start with reset asserted */
++	data->reset_gpio = devm_gpiod_get_optional(&serdev->dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(data->reset_gpio)) {
++		ret = PTR_ERR(data->reset_gpio);
++		goto err_free_gserial;
++	}
++
+ 	ret = gnss_serial_register(gserial);
+ 	if (ret)
+ 		goto err_free_gserial;
+-- 
+2.35.1
 
