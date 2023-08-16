@@ -2,113 +2,97 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D31BC001DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 09:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31187C001B0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243597AbjHPJv7 (ORCPT
+        id S243925AbjHPKeu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 05:51:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51002 "EHLO
+        Wed, 16 Aug 2023 06:34:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243654AbjHPJvv (ORCPT
+        with ESMTP id S243970AbjHPKeR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 05:51:51 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 973E82726
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 02:51:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=k1; bh=pjnA
-        d2IvOCH765Y6OcYlBsPrnBHU+4w4cKdan2DbybU=; b=Xhhdf8ZjHtgq+MdOxieJ
-        WaCHz4HSOhFXUaU/1owOoy3az1S9NZ8SDkSYFIImzZZCBwy/E5BAQLveLdOUq60Y
-        whd6UTJtBbfaTIjk+NYXcEP8YzCS6a2JeVvh2xViHN1/sSChflB46iuWIcDh6Acu
-        JfALuaHYsLUIx9rQrcnlvkqs8oezWdU/p48gsHtWpP86zRgDq+j+hDEoTPl8bULE
-        iPtlT30Qr21PqTsvtgH2QIdX/WyWlLEXp5F7czy/PTSdGYOoxkQx19FkxK2PQDvQ
-        FFwFKdAmH7n2qc6OaQTBaYjR3LkVnozlXbAKFIIouMaHWoxaK/u7y9oUakQzOYU0
-        Qw==
-Received: (qmail 87517 invoked from network); 16 Aug 2023 11:51:17 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Aug 2023 11:51:17 +0200
-X-UD-Smtp-Session: l3s3148p1@nPd0PAcDELwgAwDPXy5qAJ1huuy56R1W
-Date:   Wed, 16 Aug 2023 11:51:13 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 RESEND 2/2] PCI: rcar-host: add support for optional
- regulators
-Message-ID: <ZNycEWhT7a7llUSZ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230712103916.1631-3-wsa+renesas@sang-engineering.com>
- <20230713153401.GA317502@bhelgaas>
+        Wed, 16 Aug 2023 06:34:17 -0400
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E4BB2117;
+        Wed, 16 Aug 2023 03:34:15 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6bd04558784so5474117a34.3;
+        Wed, 16 Aug 2023 03:34:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692182054; x=1692786854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4y4qkdot/vHgUsb1GVrCkyqsy0MKvIDYNr9DRrUqgjs=;
+        b=eEmcureKQwih2b9FP2XC8h7FZf0U/c764o5P0Ez2eoxdR2rxbCIB50eyC7jHi+JfDM
+         j7pO4a1tsxiE1dCAVu8ObQD1ul0aDjRAJ71lrGgqL9cELoeTwo3rnOmSzMz66JNfp8nn
+         VSOaQs+7wp9MxnHeD+5qr5YT0Xvz3IR6+6GRBP9ijyuq3NXOe/5lmnxbgiPIHSSQoalV
+         05SredGkOHbFB/xTQ35KOXsFWFNg/swguSjMe2fU6EvjfRvJqWeMjhefjItHwUZQaNGK
+         bMZbYLnOOHTkmZSgIwhGKdEh6DQBT/3JWQBiwXej+IGCX+cA98fvApVpdRV110FjkNne
+         RsZA==
+X-Gm-Message-State: AOJu0Yxxkyoi4taeJpzNvW5pHH7XPl3QoMGoMtndV8CqwHef/+hqmJJ0
+        VokoxfbXVsQoIrBtW3ISTkbBiq3dLQKblQ==
+X-Google-Smtp-Source: AGHT+IHYBFkmK/5jHHreVKRcRKHn6EMLlBxLIx7joADIU8U/NLZ1vyhBx//PnWN5/VzppXWfCkC6FA==
+X-Received: by 2002:a9d:7dcb:0:b0:6bd:63a:1a7f with SMTP id k11-20020a9d7dcb000000b006bd063a1a7fmr1584891otn.27.1692182054569;
+        Wed, 16 Aug 2023 03:34:14 -0700 (PDT)
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id w13-20020a9d674d000000b006b8a0c7e14asm5929085otm.55.2023.08.16.03.34.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Aug 2023 03:34:14 -0700 (PDT)
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-56c711a88e8so4672767eaf.2;
+        Wed, 16 Aug 2023 03:34:14 -0700 (PDT)
+X-Received: by 2002:a05:6358:89c:b0:135:96fa:bff3 with SMTP id
+ m28-20020a056358089c00b0013596fabff3mr2224699rwj.4.1692182054046; Wed, 16 Aug
+ 2023 03:34:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Z+q6h2c7HBqfnx+w"
-Content-Disposition: inline
-In-Reply-To: <20230713153401.GA317502@bhelgaas>
+References: <20230816094013.1275068-1-yangyingliang@huawei.com> <20230816094013.1275068-16-yangyingliang@huawei.com>
+In-Reply-To: <20230816094013.1275068-16-yangyingliang@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 16 Aug 2023 12:34:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUAi2f5XdGJpoyYF2Q5o0vxzwzKxZ-fbVan2LD+8TDqhw@mail.gmail.com>
+Message-ID: <CAMuHMdUAi2f5XdGJpoyYF2Q5o0vxzwzKxZ-fbVan2LD+8TDqhw@mail.gmail.com>
+Subject: Re: [PATCH -next 15/24] spi: rspi: switch to use modern name
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     linux-spi@vger.kernel.org, broonie@kernel.org, lukas@wunner.de,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Yang,
 
---Z+q6h2c7HBqfnx+w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 16, 2023 at 11:43 AM Yang Yingliang
+<yangyingliang@huawei.com> wrote:
+> Change legacy name master/slave to modern name host/target.
+>
+> No functional changed.
+>
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 
-On Thu, Jul 13, 2023 at 10:34:01AM -0500, Bjorn Helgaas wrote:
-> On Wed, Jul 12, 2023 at 12:39:16PM +0200, Wolfram Sang wrote:
-> > The KingFisher board has regulators. They just need to be en-/disabled,
-> > so we can leave the handling to devm. Order variables in reverse-xmas
-> > while we are here.
-> >=20
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-> Krzysztof or Lorenzo may fix this up for you, but:
-> s/add support/Add support/ in subject to match history
-> and recast commit log to say what the patch *does* ("enable optional
-> regulators using devm, so devm will automatically disable them when
-> the driver releases the device"), not *what needs to be done*.
+Thanks for your patch!
 
-I will fix the commit messages and resend. But frankly, except the
-latter is a tad more explicit, they both qualify for "what needs to be
-done" for me *shrug* Still, thanks for the review, I appreciate it!
+> --- a/drivers/spi/spi-rspi.c
+> +++ b/drivers/spi/spi-rspi.c
+> @@ -71,7 +71,7 @@
+>  #define SPCR_SPE               0x40    /* Function Enable */
+>  #define SPCR_SPTIE             0x20    /* Transmit Interrupt Enable */
+>  #define SPCR_SPEIE             0x10    /* Error Interrupt Enable */
+> -#define SPCR_MSTR              0x08    /* Master/Slave Mode Select */
+> +#define SPCR_MSTR              0x08    /* Host/Target Mode Select */
 
+Please do not change this register bit definition nor the comment, as
+they match Rev 2.00 of the R-Car Series, 2nd Generation, and Rev. 1.30
+of the RZ/G2L{,C} Group Hardware User's Manual.
 
---Z+q6h2c7HBqfnx+w
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmTcnAsACgkQFA3kzBSg
-KbZriw/+I09tLqG4hjE4xb6HV6gZWEB8x6u5l7Y9HEkqwcyECM/IWZT2iULs1Jf8
-l0MK5fOJB61p+VhicbfwXmcTaVgeOL22o1I0QfrW3bk8a79nueFH87x46jziYu3V
-aAtelZIvxpxYnI50UIM8Vkh1So674QWdfZ9mw70smbj9jF3uGnNdlIENqj0ufo+G
-Viogt7/KlncssCj5GRT1HKqjG5GLZXHPXk9FADMRLJGBJIryqK4hnsjfHymi+PYr
-tW1BtPN5jJDWUMT7wFNpewqO4lqtywJC36hIxdOtaGJlE+W4uHtm0YT4XkW29hlw
-JU0lij5nD/BwpfhW8DJjdhJn9Hggyh/pucizMGfAkpqpK75qnxiUMECFtXtLtiVl
-5Ra2snfJjqj9pse2A/jNs90cN6UkGLqeWp338Rt4dJKbPl9s01j7HdPqCkbKCeSx
-Yhoqjk1iCyXod4WyE6uRvvQ5v+LKw6uwjQVTSCSNICwZJuaUCpltgyc8Zgw0lROo
-TMpoVGKUXMGP5zSejs5bYTWet+JS4kGN/jhy8YHGCKidf/EOY+dRqeLuBSRcvlwD
-SDqfS4lz1CULEywwESn+xQDVAg6JYbzu/eQoaG8pdHXxuQP4N8ZXularhO+7wFlR
-lpnnke2tlPHgyb50k9Ccpzu8pszblXyBRDOogF4yPZ+elhQn5EQ=
-=VFZt
------END PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---Z+q6h2c7HBqfnx+w--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
