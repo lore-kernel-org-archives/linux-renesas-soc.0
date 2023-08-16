@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A472C04FE0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FE9C16B13
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 10:46:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244176AbjHPKpu (ORCPT
+        id S244078AbjHPKpp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 06:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59200 "EHLO
+        Wed, 16 Aug 2023 06:45:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244175AbjHPKpV (ORCPT
+        with ESMTP id S239235AbjHPKpV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 16 Aug 2023 06:45:21 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113AB2737
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E6F8270A
         for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2023 03:45:10 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d0c:f209:12a7:4ce5])
-        by andre.telenet-ops.be with bizsmtp
-        id aAkh2A01745ualL01AkhDM; Wed, 16 Aug 2023 12:44:43 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id aAki2A00A45ualL06AkiRT; Wed, 16 Aug 2023 12:44:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWE0x-000osY-4Z;
-        Wed, 16 Aug 2023 12:44:41 +0200
+        id 1qWE0x-000otB-Pr;
+        Wed, 16 Aug 2023 12:44:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qWDAw-00675D-Km;
+        id 1qWDAw-00674P-Dd;
         Wed, 16 Aug 2023 11:50:50 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -37,12 +37,11 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sui Jingfeng <suijingfeng@loongson.cn>
-Subject: [PATCH v3 14/41] drm: renesas: shmobile: Rename input clocks
-Date:   Wed, 16 Aug 2023 11:50:21 +0200
-Message-Id: <30f5232942b285ecde4e20873497304b2bf18ebc.1692178020.git.geert+renesas@glider.be>
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v3 04/41] drm: renesas: shmobile: Fix overlay plane disable
+Date:   Wed, 16 Aug 2023 11:50:11 +0200
+Message-Id: <7a8c8d3085ef791b5affc277e985fbbf2c0ea5a2.1692178020.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1692178020.git.geert+renesas@glider.be>
 References: <cover.1692178020.git.geert+renesas@glider.be>
@@ -52,19 +51,17 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Merely writing zero to the CHn Source Image Format Register is not
+sufficient to disable a plane, as the programmed register value is not
+propagated immediately to the current side.  This can be seen when using
+the -P option of modetest: the extra plane is displayed correctly, but
+does not disappear after exit.
 
-Prepare for DT bindings by using more appropriate names for the input
-clocks.
+Fix this by doing the full update dance using the Blend Control
+Register, like is done when enabling the plane.
 
-Note that all LDDCKR_ICKSEL_* definitions but the one for the bus clock
-are valid only for SH7724, so the clock selection code needs to be
-updated when extending clock support to other SoCs.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-[geert: Add note]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
 v3:
   - No changes,
@@ -72,32 +69,24 @@ v3:
 v2:
   - Add Reviewed-by.
 ---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index 64fc3fb02e6c6dc8..1157b4894ff319cd 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -74,15 +74,15 @@ static int shmob_drm_setup_clocks(struct shmob_drm_device *sdev,
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+index 850986cee848226a..0e34573c3cb3d032 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+@@ -215,7 +215,10 @@ static int shmob_drm_plane_disable(struct drm_plane *plane,
  
- 	switch (clksrc) {
- 	case SHMOB_DRM_CLK_BUS:
--		clkname = "bus_clk";
-+		clkname = "fck";
- 		sdev->lddckr = LDDCKR_ICKSEL_BUS;
- 		break;
- 	case SHMOB_DRM_CLK_PERIPHERAL:
--		clkname = "peripheral_clk";
-+		clkname = "media";
- 		sdev->lddckr = LDDCKR_ICKSEL_MIPI;
- 		break;
- 	case SHMOB_DRM_CLK_EXTERNAL:
--		clkname = NULL;
-+		clkname = "lclk";
- 		sdev->lddckr = LDDCKR_ICKSEL_HDMI;
- 		break;
- 	default:
+ 	splane->format = NULL;
+ 
++	lcdc_write(sdev, LDBCR, LDBCR_UPC(splane->index));
+ 	lcdc_write(sdev, LDBnBSIFR(splane->index), 0);
++	lcdc_write(sdev, LDBCR,
++		   LDBCR_UPF(splane->index) | LDBCR_UPD(splane->index));
+ 	return 0;
+ }
+ 
 -- 
 2.34.1
 
