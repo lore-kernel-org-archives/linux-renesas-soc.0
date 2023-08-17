@@ -2,87 +2,129 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D444C2FC0F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Aug 2023 03:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B3BC41513
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Aug 2023 08:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347813AbjHQDSz (ORCPT
+        id S1349136AbjHQIyj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 23:18:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35448 "EHLO
+        Thu, 17 Aug 2023 04:54:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347799AbjHQDS2 (ORCPT
+        with ESMTP id S1349184AbjHQIyY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 23:18:28 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43481724;
-        Wed, 16 Aug 2023 20:18:25 -0700 (PDT)
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RR9974m7zzNmyx;
-        Thu, 17 Aug 2023 11:14:51 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Thu, 17 Aug 2023 11:18:23 +0800
-Received: from [10.174.178.174] (10.174.178.174) by
- dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Thu, 17 Aug 2023 11:18:23 +0800
-Subject: Re: [PATCH -next 20/24] spi: sh-msiof: switch to use modern name
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     <linux-spi@vger.kernel.org>, <broonie@kernel.org>,
-        <lukas@wunner.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        <yangyingliang@huawei.com>
-References: <20230816094013.1275068-1-yangyingliang@huawei.com>
- <20230816094013.1275068-21-yangyingliang@huawei.com>
- <CAMuHMdX9R5SQ_GSRhcfBH+UN0rxYP7NOeyrQSgZ3G6zY=zJnHA@mail.gmail.com>
-From:   Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <07483186-d503-2423-e881-2c6db6043ad5@huawei.com>
-Date:   Thu, 17 Aug 2023 11:18:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Thu, 17 Aug 2023 04:54:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 744442D5F;
+        Thu, 17 Aug 2023 01:54:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 125AF64FCD;
+        Thu, 17 Aug 2023 08:54:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8574C433C7;
+        Thu, 17 Aug 2023 08:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692262461;
+        bh=GUqgAMRPiOb7bdxg5p++Fu/53Hyk/pUWyJB+asnngYM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lQ+ubKNjbU9kXbRCqm+5GOYkQgqy0nyu39C0P++cvDtIjLmMjYsvosZ0Gf1mRVfkC
+         qx/ntLLZVVjnwUbYUpncmv9CsTXVtXqRbIjXVxf1sqWpSf3k76JfL9Qv8+DezhGpk3
+         Rj7rbhI555jefptorI+gv0VMNCiVqPJwhzqIhWcPBgfimNoKDP6yJSaplHZNVsIRGr
+         UykwhL3Q7BUzytX/IHwuqtufAtujjZ6GWhjYWG0fIIebLNUtcK9ef1tW7R9i1a8cG2
+         YsxMS2i9s1OQ3oZSoSPWNpYIbcjtoXNdCnn8JERl7VGdRIGiwtO3D0YsxHvLuB6aTm
+         INLkvrBfj2GZQ==
+Date:   Thu, 17 Aug 2023 09:54:17 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: gnss: u-blox: add "reset-gpios"
+ binding
+Message-ID: <20230817-sequence-aftermost-e662486bc2e9@spud>
+References: <20230816173116.1176-1-wsa+renesas@sang-engineering.com>
+ <20230816173116.1176-3-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX9R5SQ_GSRhcfBH+UN0rxYP7NOeyrQSgZ3G6zY=zJnHA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.174.178.174]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yqL3wsbo7nCP/hbJ"
+Content-Disposition: inline
+In-Reply-To: <20230816173116.1176-3-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi
 
-On 2023/8/16 18:37, Geert Uytterhoeven wrote:
-> Hi Yang,
->
-> On Wed, Aug 16, 2023 at 11:43 AM Yang Yingliang
-> <yangyingliang@huawei.com> wrote:
->> Change legacy name master/slave to modern name host/target.
->>
->> No functional changed.
->>
->> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> Thanks for your patch!
->
->> --- a/drivers/spi/spi-sh-msiof.c
->> +++ b/drivers/spi/spi-sh-msiof.c
->> @@ -79,7 +79,7 @@ struct sh_msiof_spi_priv {
->>   #define SIRFDR 0x60    /* Receive FIFO Data Register */
->>
->>   /* SITMDR1 and SIRMDR1 */
->> -#define SIMDR1_TRMD            BIT(31)         /* Transfer Mode (1 = Master mode) */
->> +#define SIMDR1_TRMD            BIT(31)         /* Transfer Mode (1 = Host mode) */
-> Please do not change this register bit definition nor the comment, as
-> they match Rev 0.81 of the R-Car V4H Series Hardware User's Manual.
+--yqL3wsbo7nCP/hbJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your review, I will change them, and send a v2.
+On Wed, Aug 16, 2023 at 07:31:14PM +0200, Wolfram Sang wrote:
+> Needed to enable this chip on a Renesas KingFisher board. Description
+> copied over from the Mediatek driver which already supports it.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
->
-> Gr{oetje,eeting}s,
->
->                          Geert
->
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+> ---
+>=20
+> Changes since v1:
+> * dropped obvious description (Thanks, Geert!)
+> * added missing include (Thanks, Krzysztof and Rob!)
+>=20
+> I build tested the change this time.
+>=20
+>  Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml b/=
+Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+> index 4835a280b3bf..8e97e475613f 100644
+> --- a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+> +++ b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+> @@ -41,6 +41,9 @@ properties:
+>      description: >
+>        Backup voltage regulator
+> =20
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - vcc-supply
+> @@ -49,10 +52,12 @@ unevaluatedProperties: false
+> =20
+>  examples:
+>    - |
+> +    #include <dt-bindings/gpio/gpio.h>
+>      serial {
+>          gnss {
+>              compatible =3D "u-blox,neo-8";
+>              v-bckp-supply =3D <&gnss_v_bckp_reg>;
+>              vcc-supply =3D <&gnss_vcc_reg>;
+> +            reset-gpios =3D <&gpio 1 GPIO_ACTIVE_LOW>;
+>          };
+>      };
+> --=20
+> 2.35.1
+>=20
+
+--yqL3wsbo7nCP/hbJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZN3gOQAKCRB4tDGHoIJi
+0kJZAQCXOYcC9k2SSdWNIkC4KKcnA5NcoN2YZymR3/oEq6x8TQD/eAY6JhSm8tD3
+caRH2tqzlePoKL3WNfBZSf06F1Q4WQk=
+=23qR
+-----END PGP SIGNATURE-----
+
+--yqL3wsbo7nCP/hbJ--
