@@ -2,123 +2,87 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF27C2FC04
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Aug 2023 23:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D444C2FC0F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Aug 2023 03:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347157AbjHPXYJ (ORCPT
+        id S1347813AbjHQDSz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Aug 2023 19:24:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52426 "EHLO
+        Wed, 16 Aug 2023 23:18:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347148AbjHPXXt (ORCPT
+        with ESMTP id S1347799AbjHQDS2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2023 19:23:49 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91B89271E;
-        Wed, 16 Aug 2023 16:23:48 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-31956020336so236981f8f.0;
-        Wed, 16 Aug 2023 16:23:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692228227; x=1692833027;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CGdlWqc1rkzIUGoDyoTEaUD3c+T74fuHGIBlF6hhRXE=;
-        b=i1rMqkAX0KYQmr3hX4gpHJcpZAnDSPY8FLQjmOcFH3IWzsZwip4k+YHeb5V/KxJnpF
-         q4TAqYenmaiCEY3J97LGLYQGw7eJ2N/2/dohn9ZdiJpMRm8Bej5E6vNa/L/rNEbX4Pwd
-         hGhjFUsAvEUj3b7xE3U1OtrsvSSninqiC2JU+tamUiDAcQOpP87MxwfCpaVsQCw8ymh2
-         FztCPo83D2R4gVCMS/kU/XhbDdDdPFnhiNZu5FI4YCkQFkFJZycKAVLvazdTOH5OEmGn
-         U7zf/orzzZgyY6Sn8ZjbSSglKNIJRoRTb6+PNjK87rFAEFx1Ou7YFmyFIlWI9PDI9iCM
-         k+OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692228227; x=1692833027;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CGdlWqc1rkzIUGoDyoTEaUD3c+T74fuHGIBlF6hhRXE=;
-        b=kqMGF/pv8BnnMKKRjm81iP/Aswik3PjBWlQsFkUVlk+NCeti6Msad3FH40f4NXovKF
-         vcoYaqVI6xOqzY9E7ShA5buDPyMKd7XemHtpag/m41mAjoulgljzXeRM04RRwtEULKBI
-         dsIpn7MsCpNE8lSpYgILTu79HlRLjgIQxTwD6p5TBXsdw4Y0oQ1yiB3ICf7Nww04V/aA
-         lTLdWut+EOSnbFZrbHkcUM9J6ENAmVnJduRzwc1M7BWffZojoNKAHFt5Lv+S8TIyjWXh
-         5tr7leKFvnrTml9M1V9GKAcLXGqg/kB8xMgX8rJt575wpnfJYkNA1B2CgZBZ8t4/HlXS
-         ONeA==
-X-Gm-Message-State: AOJu0YwtT7yoQLC50zAJiKCZE9ARHDByYw7d7Lz/I+tjCVGsrOYpVnN1
-        xDUSdggbaAcwgOE8RrF0ZxA=
-X-Google-Smtp-Source: AGHT+IHmS0dmKyTUvNIRhuKNUSwUXxoC4kjuGiODOZEK2LaKsTUEMw6dOQBcO1DBZTrwrVq3tbjfOg==
-X-Received: by 2002:adf:e78e:0:b0:314:2f3e:dca5 with SMTP id n14-20020adfe78e000000b003142f3edca5mr791297wrm.28.1692228226969;
-        Wed, 16 Aug 2023 16:23:46 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:aeb8:832b:ebc0:1bbf])
-        by smtp.gmail.com with ESMTPSA id q4-20020adff944000000b003143c9beeaesm22752617wrr.44.2023.08.16.16.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Aug 2023 16:23:46 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Anup Patel <apatel@ventanamicro.com>,
-        Andrew Jones <ajones@ventanamicro.com>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Palmer Dabbelt <palmer@rivosinc.com>,
-        Guo Ren <guoren@kernel.org>
-Subject: [PATCH v3 2/3] riscv: dma-mapping: skip invalidation before bidirectional DMA
-Date:   Thu, 17 Aug 2023 00:23:35 +0100
-Message-Id: <20230816232336.164413-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230816232336.164413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20230816232336.164413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Wed, 16 Aug 2023 23:18:28 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43481724;
+        Wed, 16 Aug 2023 20:18:25 -0700 (PDT)
+Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RR9974m7zzNmyx;
+        Thu, 17 Aug 2023 11:14:51 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Thu, 17 Aug 2023 11:18:23 +0800
+Received: from [10.174.178.174] (10.174.178.174) by
+ dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Thu, 17 Aug 2023 11:18:23 +0800
+Subject: Re: [PATCH -next 20/24] spi: sh-msiof: switch to use modern name
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     <linux-spi@vger.kernel.org>, <broonie@kernel.org>,
+        <lukas@wunner.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        <yangyingliang@huawei.com>
+References: <20230816094013.1275068-1-yangyingliang@huawei.com>
+ <20230816094013.1275068-21-yangyingliang@huawei.com>
+ <CAMuHMdX9R5SQ_GSRhcfBH+UN0rxYP7NOeyrQSgZ3G6zY=zJnHA@mail.gmail.com>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <07483186-d503-2423-e881-2c6db6043ad5@huawei.com>
+Date:   Thu, 17 Aug 2023 11:18:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
+In-Reply-To: <CAMuHMdX9R5SQ_GSRhcfBH+UN0rxYP7NOeyrQSgZ3G6zY=zJnHA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.174.178.174]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi
 
-For a DMA_BIDIRECTIONAL transfer, the caches have to be cleaned
-first to let the device see data written by the CPU, and invalidated
-after the transfer to let the CPU see data written by the device.
+On 2023/8/16 18:37, Geert Uytterhoeven wrote:
+> Hi Yang,
+>
+> On Wed, Aug 16, 2023 at 11:43 AM Yang Yingliang
+> <yangyingliang@huawei.com> wrote:
+>> Change legacy name master/slave to modern name host/target.
+>>
+>> No functional changed.
+>>
+>> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> Thanks for your patch!
+>
+>> --- a/drivers/spi/spi-sh-msiof.c
+>> +++ b/drivers/spi/spi-sh-msiof.c
+>> @@ -79,7 +79,7 @@ struct sh_msiof_spi_priv {
+>>   #define SIRFDR 0x60    /* Receive FIFO Data Register */
+>>
+>>   /* SITMDR1 and SIRMDR1 */
+>> -#define SIMDR1_TRMD            BIT(31)         /* Transfer Mode (1 = Master mode) */
+>> +#define SIMDR1_TRMD            BIT(31)         /* Transfer Mode (1 = Host mode) */
+> Please do not change this register bit definition nor the comment, as
+> they match Rev 0.81 of the R-Car V4H Series Hardware User's Manual.
 
-riscv also invalidates the caches before the transfer, which does
-not appear to serve any purpose.
+Thanks for your review, I will change them, and send a v2.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Acked-by: Guo Ren <guoren@kernel.org>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v2->v3
-* No change
-
-v1->v2
- * Included RB and ACKs
----
- arch/riscv/mm/dma-noncoherent.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/riscv/mm/dma-noncoherent.c b/arch/riscv/mm/dma-noncoherent.c
-index 94614cf61cdd..fc6377a64c8d 100644
---- a/arch/riscv/mm/dma-noncoherent.c
-+++ b/arch/riscv/mm/dma-noncoherent.c
-@@ -25,7 +25,7 @@ void arch_sync_dma_for_device(phys_addr_t paddr, size_t size,
- 		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
- 		break;
- 	case DMA_BIDIRECTIONAL:
--		ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size);
-+		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
- 		break;
- 	default:
- 		break;
--- 
-2.34.1
-
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
