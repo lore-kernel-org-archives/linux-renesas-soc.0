@@ -2,196 +2,80 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A47C2FC1A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Aug 2023 09:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44A2C2FC1A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Aug 2023 09:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349309AbjHQJIm (ORCPT
+        id S1349734AbjHQJir convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Aug 2023 05:08:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50628 "EHLO
+        Thu, 17 Aug 2023 05:38:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349315AbjHQJIZ (ORCPT
+        with ESMTP id S1349738AbjHQJig (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2023 05:08:25 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 24CA913D;
-        Thu, 17 Aug 2023 02:08:24 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.01,179,1684767600"; 
-   d="scan'208";a="173175574"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Aug 2023 18:08:23 +0900
-Received: from localhost.localdomain (unknown [10.226.93.71])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 634B241B6449;
-        Thu, 17 Aug 2023 18:08:21 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/3] clk: vc3: Fix output clock mapping
-Date:   Thu, 17 Aug 2023 10:08:09 +0100
-Message-Id: <20230817090810.203900-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230817090810.203900-1-biju.das.jz@bp.renesas.com>
-References: <20230817090810.203900-1-biju.das.jz@bp.renesas.com>
+        Thu, 17 Aug 2023 05:38:36 -0400
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0553B271F;
+        Thu, 17 Aug 2023 02:38:36 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-64189860374so38519776d6.0;
+        Thu, 17 Aug 2023 02:38:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692265115; x=1692869915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8lG0PvqsurLUvaF1Y9k3gXKdirngpEpH0CAgcJMxxco=;
+        b=TYdAgnsG0Eiu0morPqqnUr6x+RHBl2qZ3pG4da++25bdxmI+LxmUWr5TtogVdC2TSN
+         TGSBmcTn8NWq2Rms4RhEzUnlNnhRlvhZThhN5aTX4jPvf2RjQaLBSooe6kEFNvoRbBJ4
+         kRGePoj+tlL7m+fCJQwJXa72Lac4TzyIHULIvbFuW5nUYvFTmeK1rm5pk2HXuqq21yQf
+         7jp17IEOfKwDWS8G0pGtAPtbZz9A3kGV9BQfZn5mDeVbfPCquPA1gjVbHPLrEdu1/e3D
+         1SXw7CRIopCgoOW95zN78HFQAkm4GzwF3GZSdIOFlznmBFtcnXbs8Q86QjttBm53OfCj
+         lv5Q==
+X-Gm-Message-State: AOJu0Ywvrotzjih5UZqKYQjI43ZzeG7jqdswgZn1ooA5HCWuoGdFxZ5w
+        NmXtmC86hdFTbMGWIl78A1Bb3hWMpsdQ8g==
+X-Google-Smtp-Source: AGHT+IE6oqzoQc8oVEVMmOd93VeBI3KlUE7iAr688vm1DmxxBqvRO127zvnRQ0P18tEmO39rpL6mow==
+X-Received: by 2002:a0c:e046:0:b0:649:cbd0:8127 with SMTP id y6-20020a0ce046000000b00649cbd08127mr1964219qvk.57.1692265114886;
+        Thu, 17 Aug 2023 02:38:34 -0700 (PDT)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
+        by smtp.gmail.com with ESMTPSA id z11-20020a0cf24b000000b0063d643643b0sm5535820qvl.38.2023.08.17.02.38.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Aug 2023 02:38:34 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-76754b9eac0so502903485a.0;
+        Thu, 17 Aug 2023 02:38:34 -0700 (PDT)
+X-Received: by 2002:a05:620a:2908:b0:76c:b3cb:a7f0 with SMTP id
+ m8-20020a05620a290800b0076cb3cba7f0mr5675858qkp.20.1692265114497; Thu, 17 Aug
+ 2023 02:38:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230802091920.3270703-1-yangyingliang@huawei.com>
+In-Reply-To: <20230802091920.3270703-1-yangyingliang@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 17 Aug 2023 11:38:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXj1PQvZV7=u5Pk-=VwPim1vxvtGqZRtshEwACqhBUoqw@mail.gmail.com>
+Message-ID: <CAMuHMdXj1PQvZV7=u5Pk-=VwPim1vxvtGqZRtshEwACqhBUoqw@mail.gmail.com>
+Subject: Re: [PATCH -next] clk: renesas: r9a06g032: use for_each_compatible_node()
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, magnus.damm@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-According to Table 3. ("Output Source") in the 5P35023 datasheet,
-the output clock mapping should be 0=REF, 1=SE1, 2=SE2, 3=SE3,
-4=DIFF1, 5=DIFF2. But the code uses inverse. Fix this mapping issue.
+On Wed, Aug 2, 2023 at 11:22 AM Yang Yingliang <yangyingliang@huawei.com> wrote:
+> Use for_each_compatible_node() instead of open-coding it.
+>
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/all/CAMuHMdUHD+bEco=WYTYWsTAyRt3dTQQt4Xpaejss0Y2ZpLCMNg@mail.gmail.com/
-Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * No change.
----
- drivers/clk/clk-versaclock3.c | 68 +++++++++++++++++------------------
- 1 file changed, 34 insertions(+), 34 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.7.
 
-diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-index 7ab2447bd203..4ee9078f4bf4 100644
---- a/drivers/clk/clk-versaclock3.c
-+++ b/drivers/clk/clk-versaclock3.c
-@@ -119,20 +119,20 @@ enum vc3_div {
- };
- 
- enum vc3_clk_mux {
--	VC3_DIFF2_MUX,
--	VC3_DIFF1_MUX,
--	VC3_SE3_MUX,
--	VC3_SE2_MUX,
- 	VC3_SE1_MUX,
-+	VC3_SE2_MUX,
-+	VC3_SE3_MUX,
-+	VC3_DIFF1_MUX,
-+	VC3_DIFF2_MUX,
- };
- 
- enum vc3_clk {
--	VC3_DIFF2,
--	VC3_DIFF1,
--	VC3_SE3,
--	VC3_SE2,
--	VC3_SE1,
- 	VC3_REF,
-+	VC3_SE1,
-+	VC3_SE2,
-+	VC3_SE3,
-+	VC3_DIFF1,
-+	VC3_DIFF2,
- };
- 
- struct vc3_clk_data {
-@@ -897,33 +897,33 @@ static struct vc3_hw_data clk_div[] = {
- };
- 
- static struct vc3_hw_data clk_mux[] = {
--	[VC3_DIFF2_MUX] = {
-+	[VC3_SE1_MUX] = {
- 		.data = &(struct vc3_clk_data) {
--			.offs = VC3_DIFF2_CTRL_REG,
--			.bitmsk = VC3_DIFF2_CTRL_REG_DIFF2_CLK_SEL
-+			.offs = VC3_SE1_DIV4_CTRL,
-+			.bitmsk = VC3_SE1_DIV4_CTRL_SE1_CLK_SEL
- 		},
- 		.hw.init = &(struct clk_init_data){
--			.name = "diff2_mux",
-+			.name = "se1_mux",
- 			.ops = &vc3_clk_mux_ops,
- 			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV1].hw,
--				&clk_div[VC3_DIV3].hw
-+				&clk_div[VC3_DIV5].hw,
-+				&clk_div[VC3_DIV4].hw
- 			},
- 			.num_parents = 2,
- 			.flags = CLK_SET_RATE_PARENT
- 		}
- 	},
--	[VC3_DIFF1_MUX] = {
-+	[VC3_SE2_MUX] = {
- 		.data = &(struct vc3_clk_data) {
--			.offs = VC3_DIFF1_CTRL_REG,
--			.bitmsk = VC3_DIFF1_CTRL_REG_DIFF1_CLK_SEL
-+			.offs = VC3_SE2_CTRL_REG0,
-+			.bitmsk = VC3_SE2_CTRL_REG0_SE2_CLK_SEL
- 		},
- 		.hw.init = &(struct clk_init_data){
--			.name = "diff1_mux",
-+			.name = "se2_mux",
- 			.ops = &vc3_clk_mux_ops,
- 			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV1].hw,
--				&clk_div[VC3_DIV3].hw
-+				&clk_div[VC3_DIV5].hw,
-+				&clk_div[VC3_DIV4].hw
- 			},
- 			.num_parents = 2,
- 			.flags = CLK_SET_RATE_PARENT
-@@ -945,33 +945,33 @@ static struct vc3_hw_data clk_mux[] = {
- 			.flags = CLK_SET_RATE_PARENT
- 		}
- 	},
--	[VC3_SE2_MUX] = {
-+	[VC3_DIFF1_MUX] = {
- 		.data = &(struct vc3_clk_data) {
--			.offs = VC3_SE2_CTRL_REG0,
--			.bitmsk = VC3_SE2_CTRL_REG0_SE2_CLK_SEL
-+			.offs = VC3_DIFF1_CTRL_REG,
-+			.bitmsk = VC3_DIFF1_CTRL_REG_DIFF1_CLK_SEL
- 		},
- 		.hw.init = &(struct clk_init_data){
--			.name = "se2_mux",
-+			.name = "diff1_mux",
- 			.ops = &vc3_clk_mux_ops,
- 			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV5].hw,
--				&clk_div[VC3_DIV4].hw
-+				&clk_div[VC3_DIV1].hw,
-+				&clk_div[VC3_DIV3].hw
- 			},
- 			.num_parents = 2,
- 			.flags = CLK_SET_RATE_PARENT
- 		}
- 	},
--	[VC3_SE1_MUX] = {
-+	[VC3_DIFF2_MUX] = {
- 		.data = &(struct vc3_clk_data) {
--			.offs = VC3_SE1_DIV4_CTRL,
--			.bitmsk = VC3_SE1_DIV4_CTRL_SE1_CLK_SEL
-+			.offs = VC3_DIFF2_CTRL_REG,
-+			.bitmsk = VC3_DIFF2_CTRL_REG_DIFF2_CLK_SEL
- 		},
- 		.hw.init = &(struct clk_init_data){
--			.name = "se1_mux",
-+			.name = "diff2_mux",
- 			.ops = &vc3_clk_mux_ops,
- 			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV5].hw,
--				&clk_div[VC3_DIV4].hw
-+				&clk_div[VC3_DIV1].hw,
-+				&clk_div[VC3_DIV3].hw
- 			},
- 			.num_parents = 2,
- 			.flags = CLK_SET_RATE_PARENT
-@@ -1110,7 +1110,7 @@ static int vc3_probe(struct i2c_client *client)
- 				name, 0, CLK_SET_RATE_PARENT, 1, 1);
- 		else
- 			clk_out[i] = devm_clk_hw_register_fixed_factor_parent_hw(dev,
--				name, &clk_mux[i].hw, CLK_SET_RATE_PARENT, 1, 1);
-+				name, &clk_mux[i - 1].hw, CLK_SET_RATE_PARENT, 1, 1);
- 
- 		if (IS_ERR(clk_out[i]))
- 			return PTR_ERR(clk_out[i]);
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
