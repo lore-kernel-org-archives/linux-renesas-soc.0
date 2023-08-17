@@ -2,42 +2,39 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E06C9C2FC20
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Aug 2023 09:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B0CC2FC23
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Aug 2023 09:09:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349307AbjHQJIl (ORCPT
+        id S1349313AbjHQJIn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Aug 2023 05:08:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50616 "EHLO
+        Thu, 17 Aug 2023 05:08:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349313AbjHQJIW (ORCPT
+        with ESMTP id S1349316AbjHQJI3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2023 05:08:22 -0400
+        Thu, 17 Aug 2023 05:08:29 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5A9F51728;
-        Thu, 17 Aug 2023 02:08:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 31CD413D;
+        Thu, 17 Aug 2023 02:08:27 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,179,1684767600"; 
-   d="scan'208";a="176864883"
+   d="scan'208";a="176864895"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Aug 2023 18:08:20 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 17 Aug 2023 18:08:26 +0900
 Received: from localhost.localdomain (unknown [10.226.93.71])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 30D8E41B65BA;
-        Thu, 17 Aug 2023 18:08:16 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 37E5141B6449;
+        Thu, 17 Aug 2023 18:08:23 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/3] dt-bindings: clock: versaclock3: Document clock-output-names
-Date:   Thu, 17 Aug 2023 10:08:08 +0100
-Message-Id: <20230817090810.203900-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 3/3] arm64: dts: renesas: rz-smarc-common: Use versa3 clk for audio mclk
+Date:   Thu, 17 Aug 2023 10:08:10 +0100
+Message-Id: <20230817090810.203900-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230817090810.203900-1-biju.das.jz@bp.renesas.com>
 References: <20230817090810.203900-1-biju.das.jz@bp.renesas.com>
@@ -47,66 +44,175 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document clock-output-names property and fix the "assigned-clock-rates"
-for each clock output in the example based on Table 3. ("Output Source")
-in the 5P35023 datasheet(ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}).
+Currently audio mclk uses a fixed clk of 11.2896MHz (multiple of 44.1kHz).
+Replace this fixed clk with the programmable versa3 clk that can provide
+the clocking to support both 44.1kHz (with a clock of 11.2896MHz) and
+48kHz (with a clock of 12.2880MHz), based on audio sampling rate for
+playback and record.
 
-While at it, replace clocks phandle in the example from x1_x2->x1 as
-X2 is a different 32768 kHz crystal.
-
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/all/CAMuHMdUHD+bEco=WYTYWsTAyRt3dTQQt4Xpaejss0Y2ZpLCMNg@mail.gmail.com/
-Fixes: a03d23f860eb ("dt-bindings: clock: Add Renesas versa3 clock generator bindings")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * Updated commit description to make it clear it fixes
-   "assigned-clock-rates" in the example based on 5P35023 datasheet.
+ * No change.
+v1:
+ * Added this patch as part of this series.
+ * Replaced xtal->x1-clock and x1_x2->x1.
+ * Added clock-output-names.
+ * Updated clock-frequency = <400000> for RZ/G2UL i2c0
+ * Updated assigned-clocks and assigned-clock-rates as per bindings.
+ * Replaced mclk from '<&versa3 3>'->'<&versa3 2>'.
 ---
- .../devicetree/bindings/clock/renesas,5p35023.yaml | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ .../boot/dts/renesas/rz-smarc-common.dtsi     | 14 +++++-----
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 23 ++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 23 ++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 27 +++++++++++++++++++
+ 4 files changed, 80 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-index 839648e753d4..db8d01b291dd 100644
---- a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-@@ -49,6 +49,9 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/uint8-array
-     maxItems: 37
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+index a7594ba3a998..b7a3e6caa386 100644
+--- a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+@@ -32,12 +32,6 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
-+  clock-output-names:
-+    maxItems: 6
+-	audio_mclock: audio_mclock {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <11289600>;
+-	};
+-
+ 	snd_rzg2l: sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,format = "i2s";
+@@ -55,7 +49,7 @@ cpu_dai: simple-audio-card,cpu {
+ 		};
+ 
+ 		codec_dai: simple-audio-card,codec {
+-			clocks = <&audio_mclock>;
++			clocks = <&versa3 2>;
+ 			sound-dai = <&wm8978>;
+ 		};
+ 	};
+@@ -76,6 +70,12 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		gpios-states = <1>;
+ 		states = <3300000 1>, <1800000 0>;
+ 	};
 +
- required:
-   - compatible
-   - reg
-@@ -68,7 +71,7 @@ examples:
-             reg = <0x68>;
-             #clock-cells = <1>;
++	x1: x1-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++	};
+ };
  
--            clocks = <&x1_x2>;
-+            clocks = <&x1>;
+ &audio_clk1 {
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+index 68eab8e26bf2..186ca8f305db 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+@@ -105,6 +105,29 @@ &i2c3 {
  
-             renesas,settings = [
-                 80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
-@@ -76,11 +79,14 @@ examples:
-                 80 b0 45 c4 95
-             ];
+ 	status = "okay";
  
-+            clock-output-names = "ref", "se1", "se2", "se3",
-+                                 "diff1", "diff2";
++	versa3: versa3@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1>;
 +
-             assigned-clocks = <&versa3 0>, <&versa3 1>,
-                               <&versa3 2>, <&versa3 3>,
-                               <&versa3 4>, <&versa3 5>;
--            assigned-clock-rates = <12288000>, <25000000>,
--                                   <12000000>, <11289600>,
--                                   <11289600>, <24000000>;
-+            assigned-clock-rates = <24000000>, <11289600>,
-+                                   <11289600>, <12000000>,
-+                                   <25000000>, <12288000>;
-         };
-     };
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++
++		clock-output-names = "ref", "se1", "se2", "se3",
++				     "diff1", "diff2";
++
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <24000000>, <11289600>,
++				       <11289600>, <12000000>,
++				       <25000000>, <12288000>;
++	};
++
+ 	wm8978: codec@1a {
+ 		compatible = "wlf,wm8978";
+ 		#sound-dai-cells = <0>;
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+index 83fce96a2575..5abac6bc03c9 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+@@ -121,6 +121,29 @@ &i2c2 {
+ 
+ 	status = "okay";
+ 
++	versa3: versa3@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1>;
++
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++
++		clock-output-names = "ref", "se1", "se2", "se3",
++				     "diff1", "diff2";
++
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <24000000>, <11289600>,
++				       <11289600>, <12000000>,
++				       <25000000>, <12288000>;
++	};
++
+ 	wm8978: codec@1a {
+ 		compatible = "wlf,wm8978";
+ 		#sound-dai-cells = <0>;
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+index 8eb411aac80d..7e0a5814824e 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+@@ -20,6 +20,33 @@ &cpu_dai {
+ 	sound-dai = <&ssi1>;
+ };
+ 
++&i2c0 {
++	clock-frequency = <400000>;
++
++	versa3: versa3@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1>;
++
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++
++		clock-output-names = "ref", "se1", "se2", "se3",
++				     "diff1", "diff2";
++
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <24000000>, <11289600>,
++				       <11289600>, <12000000>,
++				       <25000000>, <12288000>;
++	};
++};
++
+ &i2c1 {
+ 	wm8978: codec@1a {
+ 		compatible = "wlf,wm8978";
 -- 
 2.25.1
 
