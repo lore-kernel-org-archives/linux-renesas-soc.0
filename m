@@ -2,110 +2,178 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A01C05052
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 07:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFFDC7112B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 07:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358159AbjHRHYh (ORCPT
+        id S1358383AbjHRH4v (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Aug 2023 03:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35418 "EHLO
+        Fri, 18 Aug 2023 03:56:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358157AbjHRHYC (ORCPT
+        with ESMTP id S1358471AbjHRH4n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2023 03:24:02 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 888C330E6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2023 00:23:59 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-d678b44d1f3so910859276.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2023 00:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692343439; x=1692948239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sz9K2Onn9bfdPHQOzQCpvpbaVuSxlfPcU0V/gxVc1x8=;
-        b=bdM1VMSqbQBDTDMOeZpLfaki3CWKXw+jA3z7OSR+YpzPl5YvDBW34kCagk4AN02GlA
-         Obw2rtIRv36w/kdfv6YX9MBZkSRmCBqocJjfDJOtErktGR6D6PO6uOHM7RE/mgMH95Qy
-         0h3rbzhFfhdGfbfEp73+A7bIgXO/xGm7kMIYFhk34M03AmWkynh+nw9Q7FNCABat/ew7
-         cAy9zAYHJJJpI+FWUyWcdx+wNqPKZMe4Zl2XShHow2wTg4oEJEwe5XCwIkI6CU5kVnYQ
-         8qQkpuZD26oSNFXfuUUWDC5qz6KMom8XXOmwLtyNOG8uWtvC6J5mmqrWe4DhzzTTWBDS
-         ZeaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692343439; x=1692948239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sz9K2Onn9bfdPHQOzQCpvpbaVuSxlfPcU0V/gxVc1x8=;
-        b=Hu1WHSUlbH5vAjy2/U7Qx+1RytyciCcq26CgI/OY5dCIb8/cU3FIoMgUbIIflkulEB
-         PgZDzl3e0Vi9QTaDdhd3AAhhKBe75BCL0Y/GKvxLBnZJLxXos9n+dOt5DZu0/dThVGiR
-         wr4/hvsWeQjh+1Nv2fvbsqNL+fCgYFR+HTCr2wvM9jclfJmTjEr51eJxRZXwbxe/++IY
-         vLqjGGNDdCzj7AdNY31vS7nbEoTHJrElTp4YezbVpXKBowsEmpqlEYX2e63kIlGNfOb0
-         T/JKk+lGnYmFT+zeP93Vy/+XpRwve3SK806Lo3urljysCP07C7EeZDvce23YE1s38b4x
-         0irg==
-X-Gm-Message-State: AOJu0Yx+PqcBMb1IhHlM6/TgkWvXgsNMIWolb3Ay/ErhPU2g5D876RIn
-        eYMCHTy7IoacMDO8RhTg1Ei4RK3732a7wG2jL6HafA==
-X-Google-Smtp-Source: AGHT+IHqkKgS6YVBwP4qI0oCi4uxhD3rHqRdi4aJZEjqBGn9de2hQzw+rH9P77hToYt5Jc5mptuYBhKewoUBmtL25C4=
-X-Received: by 2002:a25:b189:0:b0:d4a:499d:a881 with SMTP id
- h9-20020a25b189000000b00d4a499da881mr6183417ybj.9.1692343438796; Fri, 18 Aug
- 2023 00:23:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230815131558.33787-1-biju.das.jz@bp.renesas.com>
- <20230815131558.33787-2-biju.das.jz@bp.renesas.com> <CAMuHMdV852knZ6UoGO-_B=xir=uUJZx2O1CHL+nsK0_BB_hStg@mail.gmail.com>
- <CACRpkdbWT333HNgSc0HMUvgDBkJdEvb23ZSHsQd-yfCOu3N=Ng@mail.gmail.com>
- <CAMuHMdW658cXSAHow3FoZU1DvXioktP68fBK2nQaGGFw0DDmtg@mail.gmail.com> <CAMuHMdUzNR4vdcu_hxp=mQ0VTWOdcdeg6g5uFw0P2HG+5rGKRg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUzNR4vdcu_hxp=mQ0VTWOdcdeg6g5uFw0P2HG+5rGKRg@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 18 Aug 2023 09:23:47 +0200
-Message-ID: <CACRpkdbUkvjjrvZ_XX14BqznytmQ=M4pWh7fLdZHH7qJUxiK2w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] pinctrl: renesas: rzg2l: Fix NULL pointer
- dereference in rzg2l_dt_subnode_to_map()
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+        Fri, 18 Aug 2023 03:56:43 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A7ABE3A91;
+        Fri, 18 Aug 2023 00:56:18 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,182,1684767600"; 
+   d="scan'208";a="176955322"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 18 Aug 2023 16:56:10 +0900
+Received: from localhost.localdomain (unknown [10.226.93.81])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 54CD141BBD56;
+        Fri, 18 Aug 2023 16:56:07 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Jonathan Cameron <jic23@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        stable@kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Lars-Peter Clausen <lars@metafoo.de>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-iio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/5] iio: magnetometer: ak8975: Convert enum->pointer for data in the match tables
+Date:   Fri, 18 Aug 2023 08:55:56 +0100
+Message-Id: <20230818075600.24277-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230818075600.24277-1-biju.das.jz@bp.renesas.com>
+References: <20230818075600.24277-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 5:57=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Thu, Aug 17, 2023 at 3:54=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Thu, Aug 17, 2023 at 3:38=E2=80=AFPM Linus Walleij <linus.walleij@li=
-naro.org> wrote:
-> > > On Thu, Aug 17, 2023 at 2:44=E2=80=AFPM Geert Uytterhoeven <geert@lin=
-ux-m68k.org> wrote:
-> > > > need protection by a lock.  If no one objects, I will back out that
-> > > > change myself, queue this patch in renesas-pinctrl-for-v6.6, and se=
-nd
-> > > > a PR tomorrow.
-> > >
-> > > Shouldn't this even go in for v6.5?
-> > > Or is it non-urgent?
-> > >
-> > > (Maybe I already asked, I have teflon-memory.)
-> >
-> > If you're still taking fixes for v6.5, I can do that.
-> > Else, it will have to wait for a stable backport after v6.6-rc1.
->
-> IOW, please let me know if I should move these 3 commits to a fixes
-> branch.
+Convert enum->pointer for data in the match tables to simplify the probe()
+by replacing device_get_match_data() and i2c_client_get_device_id by
+i2c_get_match_data() as we have similar I2C, ACPI and DT matching table.
 
-I'd say that is up to the driver maintainer, hehe :D
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v1->v2:
+ * No change
+---
+ drivers/iio/magnetometer/ak8975.c | 75 +++++++++++++------------------
+ 1 file changed, 30 insertions(+), 45 deletions(-)
 
-I can only determine if changes to the core or my own drivers
-are urgent. I am hopefully sending some fixes today but if more
-urgent stuff need to go in, such is life.
+diff --git a/drivers/iio/magnetometer/ak8975.c b/drivers/iio/magnetometer/ak8975.c
+index eb706d0bf70b..104798549de1 100644
+--- a/drivers/iio/magnetometer/ak8975.c
++++ b/drivers/iio/magnetometer/ak8975.c
+@@ -813,13 +813,13 @@ static const struct iio_info ak8975_info = {
+ };
+ 
+ static const struct acpi_device_id ak_acpi_match[] = {
+-	{"AK8975", AK8975},
+-	{"AK8963", AK8963},
+-	{"INVN6500", AK8963},
+-	{"AK009911", AK09911},
+-	{"AK09911", AK09911},
+-	{"AKM9911", AK09911},
+-	{"AK09912", AK09912},
++	{"AK8975", (kernel_ulong_t)&ak_def_array[AK8975] },
++	{"AK8963", (kernel_ulong_t)&ak_def_array[AK8963] },
++	{"INVN6500", (kernel_ulong_t)&ak_def_array[AK8963] },
++	{"AK009911", (kernel_ulong_t)&ak_def_array[AK09911] },
++	{"AK09911", (kernel_ulong_t)&ak_def_array[AK09911] },
++	{"AKM9911", (kernel_ulong_t)&ak_def_array[AK09911] },
++	{"AK09912", (kernel_ulong_t)&ak_def_array[AK09912] },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, ak_acpi_match);
+@@ -883,10 +883,7 @@ static int ak8975_probe(struct i2c_client *client)
+ 	struct iio_dev *indio_dev;
+ 	struct gpio_desc *eoc_gpiod;
+ 	struct gpio_desc *reset_gpiod;
+-	const void *match;
+-	unsigned int i;
+ 	int err;
+-	enum asahi_compass_chipset chipset;
+ 	const char *name = NULL;
+ 
+ 	/*
+@@ -928,27 +925,15 @@ static int ak8975_probe(struct i2c_client *client)
+ 		return err;
+ 
+ 	/* id will be NULL when enumerated via ACPI */
+-	match = device_get_match_data(&client->dev);
+-	if (match) {
+-		chipset = (uintptr_t)match;
+-		name = dev_name(&client->dev);
+-	} else if (id) {
+-		chipset = (enum asahi_compass_chipset)(id->driver_data);
+-		name = id->name;
+-	} else
+-		return -ENOSYS;
+-
+-	for (i = 0; i < ARRAY_SIZE(ak_def_array); i++)
+-		if (ak_def_array[i].type == chipset)
+-			break;
+-
+-	if (i == ARRAY_SIZE(ak_def_array)) {
+-		dev_err(&client->dev, "AKM device type unsupported: %d\n",
+-			chipset);
++	data->def = i2c_get_match_data(client);
++	if (!data->def)
+ 		return -ENODEV;
+-	}
+ 
+-	data->def = &ak_def_array[i];
++	/* If enumerated via firmware node, fix the ABI */
++	if (dev_fwnode(&client->dev))
++		name = dev_name(&client->dev);
++	else
++		name = id->name;
+ 
+ 	/* Fetch the regulators */
+ 	data->vdd = devm_regulator_get(&client->dev, "vdd");
+@@ -1077,28 +1062,28 @@ static DEFINE_RUNTIME_DEV_PM_OPS(ak8975_dev_pm_ops, ak8975_runtime_suspend,
+ 				 ak8975_runtime_resume, NULL);
+ 
+ static const struct i2c_device_id ak8975_id[] = {
+-	{"ak8975", AK8975},
+-	{"ak8963", AK8963},
+-	{"AK8963", AK8963},
+-	{"ak09911", AK09911},
+-	{"ak09912", AK09912},
+-	{"ak09916", AK09916},
++	{"ak8975", (kernel_ulong_t)&ak_def_array[AK8975] },
++	{"ak8963", (kernel_ulong_t)&ak_def_array[AK8963] },
++	{"AK8963", (kernel_ulong_t)&ak_def_array[AK8963] },
++	{"ak09911", (kernel_ulong_t)&ak_def_array[AK09911] },
++	{"ak09912", (kernel_ulong_t)&ak_def_array[AK09912] },
++	{"ak09916", (kernel_ulong_t)&ak_def_array[AK09916] },
+ 	{}
+ };
+ 
+ MODULE_DEVICE_TABLE(i2c, ak8975_id);
+ 
+ static const struct of_device_id ak8975_of_match[] = {
+-	{ .compatible = "asahi-kasei,ak8975", },
+-	{ .compatible = "ak8975", },
+-	{ .compatible = "asahi-kasei,ak8963", },
+-	{ .compatible = "ak8963", },
+-	{ .compatible = "asahi-kasei,ak09911", },
+-	{ .compatible = "ak09911", },
+-	{ .compatible = "asahi-kasei,ak09912", },
+-	{ .compatible = "ak09912", },
+-	{ .compatible = "asahi-kasei,ak09916", },
+-	{ .compatible = "ak09916", },
++	{ .compatible = "asahi-kasei,ak8975", .data = &ak_def_array[AK8975] },
++	{ .compatible = "ak8975", .data = &ak_def_array[AK8975] },
++	{ .compatible = "asahi-kasei,ak8963", .data = &ak_def_array[AK8963] },
++	{ .compatible = "ak8963", .data = &ak_def_array[AK8963] },
++	{ .compatible = "asahi-kasei,ak09911", .data = &ak_def_array[AK09911] },
++	{ .compatible = "ak09911", .data = &ak_def_array[AK09911] },
++	{ .compatible = "asahi-kasei,ak09912", .data = &ak_def_array[AK09912] },
++	{ .compatible = "ak09912", .data = &ak_def_array[AK09912] },
++	{ .compatible = "asahi-kasei,ak09916", .data = &ak_def_array[AK09916] },
++	{ .compatible = "ak09916", .data = &ak_def_array[AK09916] },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, ak8975_of_match);
+-- 
+2.25.1
 
-> BTW, they conflict with commit 060f03e95454a0f4 ("pinctrl:
-> Explicitly include correct DT includes") in pinctrl/for-next...
-
-Yeah, we'll figure it out... I think. Worst case we toss some
-merge conflicts at Torvalds.
-
-Yours,
-Linus Walleij
