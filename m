@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F85C7113C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F870C71156
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 14:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377466AbjHROS4 (ORCPT
+        id S1377141AbjHROS5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Aug 2023 10:18:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52666 "EHLO
+        Fri, 18 Aug 2023 10:18:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377141AbjHROSX (ORCPT
+        with ESMTP id S1377192AbjHROS3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2023 10:18:23 -0400
+        Fri, 18 Aug 2023 10:18:29 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 552F62D65
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2023 07:18:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E0E302D59
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2023 07:18:27 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,183,1684767600"; 
-   d="scan'208";a="176977871"
+   d="scan'208";a="176977880"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Aug 2023 23:18:21 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Aug 2023 23:18:27 +0900
 Received: from localhost.localdomain (unknown [10.226.93.81])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9215240104E0;
-        Fri, 18 Aug 2023 23:18:19 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7432C401091D;
+        Fri, 18 Aug 2023 23:18:25 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
@@ -31,35 +31,43 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Pavel Machek <pavel@denx.de>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 0/3] trivial fixes for raa215300 driver
-Date:   Fri, 18 Aug 2023 15:18:12 +0100
-Message-Id: <20230818141815.314197-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 2/3] regulator: raa215300: Add missing blank space
+Date:   Fri, 18 Aug 2023 15:18:14 +0100
+Message-Id: <20230818141815.314197-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230818141815.314197-1-biju.das.jz@bp.renesas.com>
+References: <20230818141815.314197-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series aims to add trivial fixes for raa215300 driver.
-These issues were reported by Pavel while backporting this patch
-to 6.1.y cip kernel[1].
+Add the missing space in the comment block.
 
-[1] https://lore.kernel.org/all/ZN3%2FSjL50ls+3dnD@duo.ucw.cz/
+Reported-by: Pavel Machek <pavel@denx.de>
+Closes: https://lore.kernel.org/all/ZN3%2FSjL50ls+3dnD@duo.ucw.cz/
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2:
+ * New patch.
+---
+ drivers/regulator/raa215300.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v1->v2:
- * Split Kconfig and add missing space for comment block as separate
-   patch.
-
-Biju Das (3):
-  regulator: raa215300: Change rate from 32000->32768
-  regulator: raa215300: Add missing blank space
-  regulator: raa215300: Update help description
-
- drivers/regulator/Kconfig     | 6 +++++-
- drivers/regulator/raa215300.c | 4 ++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/regulator/raa215300.c b/drivers/regulator/raa215300.c
+index 0628ed3d0a93..6982565c8aa4 100644
+--- a/drivers/regulator/raa215300.c
++++ b/drivers/regulator/raa215300.c
+@@ -86,7 +86,7 @@ static int raa215300_i2c_probe(struct i2c_client *client)
+ 	val &= RAA215300_REG_BLOCK_EN_RTC_EN;
+ 	regmap_write(regmap, RAA215300_REG_BLOCK_EN, val);
+ 
+-	/*Clear the latched registers */
++	/* Clear the latched registers */
+ 	regmap_read(regmap, RAA215300_FAULT_LATCHED_STATUS_1, &val);
+ 	regmap_write(regmap, RAA215300_FAULT_LATCHED_STATUS_1, val);
+ 	regmap_read(regmap, RAA215300_FAULT_LATCHED_STATUS_2, &val);
 -- 
 2.25.1
 
