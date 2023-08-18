@@ -2,141 +2,131 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1A4EE4985
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 17:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3342EE498B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 17:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379149AbjHRRju (ORCPT
+        id S235645AbjHRRth (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Aug 2023 13:39:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56258 "EHLO
+        Fri, 18 Aug 2023 13:49:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379145AbjHRRjT (ORCPT
+        with ESMTP id S1379204AbjHRRtP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2023 13:39:19 -0400
+        Fri, 18 Aug 2023 13:49:15 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 00C6E2102;
-        Fri, 18 Aug 2023 10:39:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6AF8B2D79;
+        Fri, 18 Aug 2023 10:49:14 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,183,1684767600"; 
-   d="scan'208";a="176988069"
+   d="scan'208";a="176988375"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Aug 2023 02:39:17 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 19 Aug 2023 02:49:14 +0900
 Received: from localhost.localdomain (unknown [10.226.93.81])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3720640029B7;
-        Sat, 19 Aug 2023 02:39:13 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1A35C4006DEE;
+        Sat, 19 Aug 2023 02:49:10 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Jonathan Cameron <jic23@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-iio@vger.kernel.org,
+        Marek Vasut <marex@denx.de>, linux-iio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/2] iio: dac: ti-dac5571: Use i2c_get_match_data()
-Date:   Fri, 18 Aug 2023 18:39:06 +0100
-Message-Id: <20230818173907.323640-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 1/2] iio: dac: mcp4725: Replace variable 'id' from struct mcp4725_data
+Date:   Fri, 18 Aug 2023 18:49:04 +0100
+Message-Id: <20230818174905.324623-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230818173907.323640-1-biju.das.jz@bp.renesas.com>
-References: <20230818173907.323640-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230818174905.324623-1-biju.das.jz@bp.renesas.com>
+References: <20230818174905.324623-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace device_get_match_data() and id lookup for retrieving match data
-by i2c_get_match_data() by converting enum->pointer for data in the
-match table.
+Replace the variable 'id' from struct mcp4725_data with local variable
+chip_id in probe() as the id variable is not used elsewhere in the
+driver.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * No change.
+ * Update commit description with reason for change.
 ---
- drivers/iio/dac/ti-dac5571.c | 48 ++++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 27 deletions(-)
+ drivers/iio/dac/mcp4725.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iio/dac/ti-dac5571.c b/drivers/iio/dac/ti-dac5571.c
-index bab11b9adc25..2bb3f76569ee 100644
---- a/drivers/iio/dac/ti-dac5571.c
-+++ b/drivers/iio/dac/ti-dac5571.c
-@@ -313,7 +313,6 @@ static int dac5571_probe(struct i2c_client *client)
- 	const struct dac5571_spec *spec;
- 	struct dac5571_data *data;
+diff --git a/drivers/iio/dac/mcp4725.c b/drivers/iio/dac/mcp4725.c
+index f4a3124d29f2..33a61f65bc25 100644
+--- a/drivers/iio/dac/mcp4725.c
++++ b/drivers/iio/dac/mcp4725.c
+@@ -32,7 +32,6 @@
+ 
+ struct mcp4725_data {
+ 	struct i2c_client *client;
+-	int id;
+ 	unsigned ref_mode;
+ 	bool vref_buffered;
+ 	u16 dac_value;
+@@ -387,6 +386,7 @@ static int mcp4725_probe(struct i2c_client *client)
+ 	struct mcp4725_data *data;
  	struct iio_dev *indio_dev;
--	enum chip_id chip_id;
- 	int ret, i;
+ 	struct mcp4725_platform_data *pdata, pdata_dt;
++	int chip_id;
+ 	u8 inbuf[4];
+ 	u8 pd;
+ 	u8 ref;
+@@ -399,9 +399,9 @@ static int mcp4725_probe(struct i2c_client *client)
+ 	i2c_set_clientdata(client, indio_dev);
+ 	data->client = client;
+ 	if (dev_fwnode(&client->dev))
+-		data->id = (uintptr_t)device_get_match_data(&client->dev);
++		chip_id = (uintptr_t)device_get_match_data(&client->dev);
+ 	else
+-		data->id = id->driver_data;
++		chip_id = id->driver_data;
+ 	pdata = dev_get_platdata(&client->dev);
  
- 	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-@@ -329,12 +328,7 @@ static int dac5571_probe(struct i2c_client *client)
+ 	if (!pdata) {
+@@ -414,7 +414,7 @@ static int mcp4725_probe(struct i2c_client *client)
+ 		pdata = &pdata_dt;
+ 	}
+ 
+-	if (data->id == MCP4725 && pdata->use_vref) {
++	if (chip_id == MCP4725 && pdata->use_vref) {
+ 		dev_err(&client->dev,
+ 			"external reference is unavailable on MCP4725");
+ 		return -EINVAL;
+@@ -455,12 +455,12 @@ static int mcp4725_probe(struct i2c_client *client)
+ 
+ 	indio_dev->name = id->name;
+ 	indio_dev->info = &mcp4725_info;
+-	indio_dev->channels = &mcp472x_channel[id->driver_data];
++	indio_dev->channels = &mcp472x_channel[chip_id];
+ 	indio_dev->num_channels = 1;
  	indio_dev->modes = INDIO_DIRECT_MODE;
- 	indio_dev->channels = dac5571_channels;
  
--	if (dev_fwnode(dev))
--		chip_id = (uintptr_t)device_get_match_data(dev);
--	else
--		chip_id = id->driver_data;
--
--	spec = &dac5571_spec[chip_id];
-+	spec = i2c_get_match_data(client);
+ 	/* read current DAC value and settings */
+-	err = i2c_master_recv(client, inbuf, data->id == MCP4725 ? 3 : 4);
++	err = i2c_master_recv(client, inbuf, chip_id == MCP4725 ? 3 : 4);
  
- 	indio_dev->num_channels = spec->num_channels;
- 	data->spec = spec;
-@@ -392,31 +386,31 @@ static void dac5571_remove(struct i2c_client *i2c)
- }
+ 	if (err < 0) {
+ 		dev_err(&client->dev, "failed to read DAC value");
+@@ -470,10 +470,10 @@ static int mcp4725_probe(struct i2c_client *client)
+ 	data->powerdown = pd > 0;
+ 	data->powerdown_mode = pd ? pd - 1 : 2; /* largest resistor to gnd */
+ 	data->dac_value = (inbuf[1] << 4) | (inbuf[2] >> 4);
+-	if (data->id == MCP4726)
++	if (chip_id == MCP4726)
+ 		ref = (inbuf[3] >> 3) & 0x3;
  
- static const struct of_device_id dac5571_of_id[] = {
--	{.compatible = "ti,dac5571", .data = (void *)single_8bit},
--	{.compatible = "ti,dac6571", .data = (void *)single_10bit},
--	{.compatible = "ti,dac7571", .data = (void *)single_12bit},
--	{.compatible = "ti,dac5574", .data = (void *)quad_8bit},
--	{.compatible = "ti,dac6574", .data = (void *)quad_10bit},
--	{.compatible = "ti,dac7574", .data = (void *)quad_12bit},
--	{.compatible = "ti,dac5573", .data = (void *)quad_8bit},
--	{.compatible = "ti,dac6573", .data = (void *)quad_10bit},
--	{.compatible = "ti,dac7573", .data = (void *)quad_12bit},
--	{.compatible = "ti,dac121c081", .data = (void *)single_12bit},
-+	{.compatible = "ti,dac5571", .data = &dac5571_spec[single_8bit] },
-+	{.compatible = "ti,dac6571", .data = &dac5571_spec[single_10bit] },
-+	{.compatible = "ti,dac7571", .data = &dac5571_spec[single_12bit] },
-+	{.compatible = "ti,dac5574", .data = &dac5571_spec[quad_8bit] },
-+	{.compatible = "ti,dac6574", .data = &dac5571_spec[quad_10bit] },
-+	{.compatible = "ti,dac7574", .data = &dac5571_spec[quad_12bit] },
-+	{.compatible = "ti,dac5573", .data = &dac5571_spec[quad_8bit] },
-+	{.compatible = "ti,dac6573", .data = &dac5571_spec[quad_10bit] },
-+	{.compatible = "ti,dac7573", .data = &dac5571_spec[quad_12bit] },
-+	{.compatible = "ti,dac121c081", .data = &dac5571_spec[single_12bit] },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, dac5571_of_id);
- 
- static const struct i2c_device_id dac5571_id[] = {
--	{"dac5571", single_8bit},
--	{"dac6571", single_10bit},
--	{"dac7571", single_12bit},
--	{"dac5574", quad_8bit},
--	{"dac6574", quad_10bit},
--	{"dac7574", quad_12bit},
--	{"dac5573", quad_8bit},
--	{"dac6573", quad_10bit},
--	{"dac7573", quad_12bit},
--	{"dac121c081", single_12bit},
-+	{"dac5571", (kernel_ulong_t)&dac5571_spec[single_8bit] },
-+	{"dac6571", (kernel_ulong_t)&dac5571_spec[single_10bit] },
-+	{"dac7571", (kernel_ulong_t)&dac5571_spec[single_12bit] },
-+	{"dac5574", (kernel_ulong_t)&dac5571_spec[quad_8bit] },
-+	{"dac6574", (kernel_ulong_t)&dac5571_spec[quad_10bit] },
-+	{"dac7574", (kernel_ulong_t)&dac5571_spec[quad_12bit] },
-+	{"dac5573", (kernel_ulong_t)&dac5571_spec[quad_8bit] },
-+	{"dac6573", (kernel_ulong_t)&dac5571_spec[quad_10bit] },
-+	{"dac7573", (kernel_ulong_t)&dac5571_spec[quad_12bit] },
-+	{"dac121c081", (kernel_ulong_t)&dac5571_spec[single_12bit] },
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, dac5571_id);
+-	if (data->id == MCP4726 && ref != data->ref_mode) {
++	if (chip_id == MCP4726 && ref != data->ref_mode) {
+ 		dev_info(&client->dev,
+ 			"voltage reference mode differs (conf: %u, eeprom: %u), setting %u",
+ 			data->ref_mode, ref, data->ref_mode);
 -- 
 2.25.1
 
