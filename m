@@ -2,216 +2,117 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E91EE498F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 18:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57276EE498E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 18:24:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379371AbjHRSMz (ORCPT
+        id S1379421AbjHRSYJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Aug 2023 14:12:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57158 "EHLO
+        Fri, 18 Aug 2023 14:24:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379386AbjHRSMh (ORCPT
+        with ESMTP id S1379425AbjHRSX7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2023 14:12:37 -0400
+        Fri, 18 Aug 2023 14:23:59 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2CFC92D70;
-        Fri, 18 Aug 2023 11:12:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3C3922D58;
+        Fri, 18 Aug 2023 11:23:58 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,183,1684767600"; 
-   d="scan'208";a="173296054"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Aug 2023 03:12:34 +0900
+   d="scan'208";a="173296403"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 19 Aug 2023 03:23:57 +0900
 Received: from localhost.localdomain (unknown [10.226.93.81])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1E5C8400940C;
-        Sat, 19 Aug 2023 03:12:31 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0EDD54063CA7;
+        Sat, 19 Aug 2023 03:23:53 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Jonathan Cameron <jic23@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Mehdi Djait <mehdi.djait.k@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Rob Herring <robh@kernel.org>, linux-iio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] iio: accel: adxl345: Convert enum->pointer for data in match data table
-Date:   Fri, 18 Aug 2023 19:12:29 +0100
-Message-Id: <20230818181229.329055-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 1/2] iio: accel: mma8452: Convert enum->pointer for data in the ID table
+Date:   Fri, 18 Aug 2023 19:23:46 +0100
+Message-Id: <20230818182347.332507-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230818182347.332507-1-biju.das.jz@bp.renesas.com>
+References: <20230818182347.332507-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert enum->pointer for data in match data table, so that
-device_get_match_data() can do match against OF/ACPI/I2C tables, once i2c
-bus type match support added to it.
+Convert enum->pointer for data in the ID table, so that device_get_match_data()
+can do match against OF/ACPI/I2C tables, once i2c bus type match support
+added to it.
 
-Add struct adxl3x5_chip_info and replace enum->adxl3x5_chip_info in the
-match table and simplify adxl345_probe().
+Replace enum->struct *mma_chip_info for data in the ID table and simplify
+mma8452_probe() by replacing device_get_match_data()->i2c_get_match_data().
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * Replaced EINVAL->ENODEV for invaild chip type.
- * Kept leading commas for adxl345_*_info and adxl375_*_info.
- * Restored switch statement in adxl345_core_probe()
+ * Added Rb tag from Hans de Goede.
 ---
- drivers/iio/accel/adxl345.h      |  5 +++++
- drivers/iio/accel/adxl345_core.c | 16 ++++++----------
- drivers/iio/accel/adxl345_i2c.c  | 20 +++++++++++++++-----
- drivers/iio/accel/adxl345_spi.c  | 20 +++++++++++++++-----
- 4 files changed, 41 insertions(+), 20 deletions(-)
+ drivers/iio/accel/mma8452.c | 26 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
-index d7e67cb08538..8df1b7f43cb9 100644
---- a/drivers/iio/accel/adxl345.h
-+++ b/drivers/iio/accel/adxl345.h
-@@ -13,6 +13,11 @@ enum adxl345_device_type {
- 	ADXL375 = 2,
- };
+diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
+index f42a88711486..5864ad726e97 100644
+--- a/drivers/iio/accel/mma8452.c
++++ b/drivers/iio/accel/mma8452.c
+@@ -1547,7 +1547,6 @@ MODULE_DEVICE_TABLE(of, mma8452_dt_ids);
  
-+struct adxl3x5_chip_info {
-+	const char *name;
-+	unsigned int type;
-+};
-+
- int adxl345_core_probe(struct device *dev, struct regmap *regmap);
- 
- #endif /* _ADXL345_H_ */
-diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-index 1919e0089c11..810048099ba9 100644
---- a/drivers/iio/accel/adxl345_core.c
-+++ b/drivers/iio/accel/adxl345_core.c
-@@ -222,23 +222,19 @@ static void adxl345_powerdown(void *regmap)
- 
- int adxl345_core_probe(struct device *dev, struct regmap *regmap)
+ static int mma8452_probe(struct i2c_client *client)
  {
--	enum adxl345_device_type type;
-+	const struct adxl3x5_chip_info *info;
- 	struct adxl345_data *data;
+-	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+ 	struct mma8452_data *data;
  	struct iio_dev *indio_dev;
--	const char *name;
- 	u32 regval;
  	int ret;
+@@ -1560,15 +1559,10 @@ static int mma8452_probe(struct i2c_client *client)
+ 	data->client = client;
+ 	mutex_init(&data->lock);
  
--	type = (uintptr_t)device_get_match_data(dev);
--	switch (type) {
-+	info = device_get_match_data(dev);
-+	switch (info->type) {
- 	case ADXL345:
--		name = "adxl345";
--		break;
- 	case ADXL375:
--		name = "adxl375";
- 		break;
- 	default:
--		return -EINVAL;
-+		return -ENODEV;
- 	}
+-	data->chip_info = device_get_match_data(&client->dev);
+-	if (!data->chip_info) {
+-		if (id) {
+-			data->chip_info = &mma_chip_info_table[id->driver_data];
+-		} else {
+-			dev_err(&client->dev, "unknown device model\n");
+-			return -ENODEV;
+-		}
+-	}
++	data->chip_info = i2c_get_match_data(client);
++	if (!data->chip_info)
++		return dev_err_probe(&client->dev, -ENODEV,
++				     "unknown device model\n");
  
- 	ret = regmap_read(regmap, ADXL345_REG_DEVID, &regval);
-@@ -255,7 +251,7 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap)
+ 	ret = iio_read_mount_matrix(&client->dev, &data->orientation);
+ 	if (ret)
+@@ -1830,12 +1824,12 @@ static const struct dev_pm_ops mma8452_pm_ops = {
+ };
  
- 	data = iio_priv(indio_dev);
- 	data->regmap = regmap;
--	data->type = type;
-+	data->type = info->type;
- 	/* Enable full-resolution mode */
- 	data->data_range = ADXL345_DATA_FORMAT_FULL_RES;
- 
-@@ -264,7 +260,7 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap)
- 	if (ret < 0)
- 		return dev_err_probe(dev, ret, "Failed to set data range\n");
- 
--	indio_dev->name = name;
-+	indio_dev->name = info->name;
- 	indio_dev->info = &adxl345_info;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 	indio_dev->channels = adxl345_channels;
-diff --git a/drivers/iio/accel/adxl345_i2c.c b/drivers/iio/accel/adxl345_i2c.c
-index e47d12f19602..219de556e81a 100644
---- a/drivers/iio/accel/adxl345_i2c.c
-+++ b/drivers/iio/accel/adxl345_i2c.c
-@@ -30,22 +30,32 @@ static int adxl345_i2c_probe(struct i2c_client *client)
- 	return adxl345_core_probe(&client->dev, regmap);
- }
- 
-+static const struct adxl3x5_chip_info adxl345_i2c_info = {
-+	.name = "adxl345",
-+	.type = ADXL345,
-+};
-+
-+static const struct adxl3x5_chip_info adxl375_i2c_info = {
-+	.name = "adxl375",
-+	.type = ADXL375,
-+};
-+
- static const struct i2c_device_id adxl345_i2c_id[] = {
--	{ "adxl345", ADXL345 },
--	{ "adxl375", ADXL375 },
-+	{ "adxl345", (kernel_ulong_t)&adxl345_i2c_info },
-+	{ "adxl375", (kernel_ulong_t)&adxl375_i2c_info },
+ static const struct i2c_device_id mma8452_id[] = {
+-	{ "mma8451", mma8451 },
+-	{ "mma8452", mma8452 },
+-	{ "mma8453", mma8453 },
+-	{ "mma8652", mma8652 },
+-	{ "mma8653", mma8653 },
+-	{ "fxls8471", fxls8471 },
++	{ "mma8451", (kernel_ulong_t)&mma_chip_info_table[mma8451] },
++	{ "mma8452", (kernel_ulong_t)&mma_chip_info_table[mma8452] },
++	{ "mma8453", (kernel_ulong_t)&mma_chip_info_table[mma8453] },
++	{ "mma8652", (kernel_ulong_t)&mma_chip_info_table[mma8652] },
++	{ "mma8653", (kernel_ulong_t)&mma_chip_info_table[mma8653] },
++	{ "fxls8471", (kernel_ulong_t)&mma_chip_info_table[fxls8471] },
  	{ }
  };
- MODULE_DEVICE_TABLE(i2c, adxl345_i2c_id);
- 
- static const struct of_device_id adxl345_of_match[] = {
--	{ .compatible = "adi,adxl345", .data = (const void *)ADXL345 },
--	{ .compatible = "adi,adxl375", .data = (const void *)ADXL375 },
-+	{ .compatible = "adi,adxl345", .data = &adxl345_i2c_info },
-+	{ .compatible = "adi,adxl375", .data = &adxl375_i2c_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, adxl345_of_match);
- 
- static const struct acpi_device_id adxl345_acpi_match[] = {
--	{ "ADS0345", ADXL345 },
-+	{ "ADS0345", (kernel_ulong_t)&adxl345_i2c_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, adxl345_acpi_match);
-diff --git a/drivers/iio/accel/adxl345_spi.c b/drivers/iio/accel/adxl345_spi.c
-index aaade5808657..3acdacc07293 100644
---- a/drivers/iio/accel/adxl345_spi.c
-+++ b/drivers/iio/accel/adxl345_spi.c
-@@ -36,22 +36,32 @@ static int adxl345_spi_probe(struct spi_device *spi)
- 	return adxl345_core_probe(&spi->dev, regmap);
- }
- 
-+static const struct adxl3x5_chip_info adxl345_spi_info = {
-+	.name = "adxl345",
-+	.type = ADXL345,
-+};
-+
-+static const struct adxl3x5_chip_info adxl375_spi_info = {
-+	.name = "adxl375",
-+	.type = ADXL375,
-+};
-+
- static const struct spi_device_id adxl345_spi_id[] = {
--	{ "adxl345", ADXL345 },
--	{ "adxl375", ADXL375 },
-+	{ "adxl345", (kernel_ulong_t)&adxl345_spi_info },
-+	{ "adxl375", (kernel_ulong_t)&adxl375_spi_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(spi, adxl345_spi_id);
- 
- static const struct of_device_id adxl345_of_match[] = {
--	{ .compatible = "adi,adxl345", .data = (const void *)ADXL345 },
--	{ .compatible = "adi,adxl375", .data = (const void *)ADXL375 },
-+	{ .compatible = "adi,adxl345", .data = &adxl345_spi_info },
-+	{ .compatible = "adi,adxl375", .data = &adxl375_spi_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, adxl345_of_match);
- 
- static const struct acpi_device_id adxl345_acpi_match[] = {
--	{ "ADS0345", ADXL345 },
-+	{ "ADS0345", (kernel_ulong_t)&adxl345_spi_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, adxl345_acpi_match);
+ MODULE_DEVICE_TABLE(i2c, mma8452_id);
 -- 
 2.25.1
 
