@@ -2,74 +2,115 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5828C71159
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 15:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A93DC71159
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 16:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231636AbjHRPve (ORCPT
+        id S1378830AbjHRQzh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Aug 2023 11:51:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47670 "EHLO
+        Fri, 18 Aug 2023 12:55:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378336AbjHRPvA (ORCPT
+        with ESMTP id S1378842AbjHRQzN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2023 11:51:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5D32D4A
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2023 08:50:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A916362F2D
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2023 15:50:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B99C433C8;
-        Fri, 18 Aug 2023 15:50:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692373856;
-        bh=mOPLaxhsWm11sRbr5mlW6jXIR1dpa7TSkWI1q+RWVEE=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=uhyT/Dl50SkExG0BJP8lnmTgeF7Ehsoy32f0IPIAjOjRQdmz/d8vgdRm0aWX8rDZa
-         r3zILfQpTbUJI4Gx5Ma2iCI5P8zEI53uW6v3qfpU0HlcW/kjlFeF7UGjBM7qTPusTd
-         5WNP7S0cf2yfBa2vWO9RQmKdouCxNSrECEz3OVSamJyVcB1+erm3/iveLCbGzDs7Oh
-         ZdSq0A877B5NwqvTUQip3XguYJAftoDRsgpVNmKYSoM14KBPpi0hBbV6NHigc2/XYL
-         7xhLxIvnLVt2obedcmoTIuDaK0blS3FOgRPJo6LYdv1VssisfI2Q4K8v4/89U3MnGa
-         UEXUhhqnxkCHQ==
-From:   Lee Jones <lee@kernel.org>
-To:     Lee Jones <lee@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Pavel Machek <pavel@denx.de>,
+        Fri, 18 Aug 2023 12:55:13 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AD8FA3A8B
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2023 09:55:09 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,183,1684767600"; 
+   d="scan'208";a="176985264"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 19 Aug 2023 01:55:05 +0900
+Received: from localhost.localdomain (unknown [10.226.93.81])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B938D4021B55;
+        Sat, 19 Aug 2023 01:55:00 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Phong LE <ple@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        dri-devel@lists.freedesktop.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20230815073445.9579-1-biju.das.jz@bp.renesas.com>
-References: <20230815073445.9579-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v2 0/2] RZ/G2L MTU3 driver enhancements
-Message-Id: <169237385464.1287367.4893055612071955886.b4-ty@kernel.org>
-Date:   Fri, 18 Aug 2023 16:50:54 +0100
+Subject: [PATCH v2 1/2] drm: bridge: it66121: Extend match support for OF tables
+Date:   Fri, 18 Aug 2023 17:54:51 +0100
+Message-Id: <20230818165452.320984-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230818165452.320984-1-biju.das.jz@bp.renesas.com>
+References: <20230818165452.320984-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, 15 Aug 2023 08:34:43 +0100, Biju Das wrote:
-> This patch series aims to add improvements to RZ/G2L MTU3a driver:
->  * Reduce crical sections on rz_mtu3_start_stop_ch() and
->    rz_mtu3_is_enabled().
->  * Replace raw_spin_lock->spin_lock().
-> 
-> This patch series is based on next.
-> 
-> [...]
+The driver has OF match table, still it uses ID lookup table for
+retrieving match data. Currently the driver is working on the
+assumption that a I2C device registered via OF will always match a
+legacy I2C device ID. The correct approach is to have an OF device ID
+table using of_device_match_data() if the devices are registered via OF.
 
-Applied, thanks!
+Fixes: 9a9f4a01bdae ("drm: bridge: it66121: Move VID/PID to new it66121_chip_info structure")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2:
+ * New patch.
+---
+ drivers/gpu/drm/bridge/ite-it66121.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-[1/2] mfd: rz-mtu3: Reduce critical sections
-      commit: 850180cc315633aea2597f13de13f74e4ddae1f2
-[2/2] mfd: rz-mtu3: Replace raw_spin_lock->spin_lock()
-      commit: 704200a3e113fce52fcc4d98211ae0c30253af77
-
---
-Lee Jones [李琼斯]
+diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
+index 466641c77fe9..ba95ad46e259 100644
+--- a/drivers/gpu/drm/bridge/ite-it66121.c
++++ b/drivers/gpu/drm/bridge/ite-it66121.c
+@@ -1523,7 +1523,10 @@ static int it66121_probe(struct i2c_client *client)
+ 
+ 	ctx->dev = dev;
+ 	ctx->client = client;
+-	ctx->info = (const struct it66121_chip_info *) id->driver_data;
++	if (dev_fwnode(&client->dev))
++		ctx->info = of_device_get_match_data(&client->dev);
++	else
++		ctx->info = (const struct it66121_chip_info *) id->driver_data;
+ 
+ 	of_property_read_u32(ep, "bus-width", &ctx->bus_width);
+ 	of_node_put(ep);
+@@ -1609,13 +1612,6 @@ static void it66121_remove(struct i2c_client *client)
+ 	mutex_destroy(&ctx->lock);
+ }
+ 
+-static const struct of_device_id it66121_dt_match[] = {
+-	{ .compatible = "ite,it66121" },
+-	{ .compatible = "ite,it6610" },
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(of, it66121_dt_match);
+-
+ static const struct it66121_chip_info it66121_chip_info = {
+ 	.id = ID_IT66121,
+ 	.vid = 0x4954,
+@@ -1628,6 +1624,13 @@ static const struct it66121_chip_info it6610_chip_info = {
+ 	.pid = 0x0611,
+ };
+ 
++static const struct of_device_id it66121_dt_match[] = {
++	{ .compatible = "ite,it66121", &it66121_chip_info },
++	{ .compatible = "ite,it6610", &it6610_chip_info },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, it66121_dt_match);
++
+ static const struct i2c_device_id it66121_id[] = {
+ 	{ "it66121", (kernel_ulong_t) &it66121_chip_info },
+ 	{ "it6610", (kernel_ulong_t) &it6610_chip_info },
+-- 
+2.25.1
 
