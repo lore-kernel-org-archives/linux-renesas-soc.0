@@ -2,117 +2,153 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F72EE4996
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Aug 2023 19:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDCDEE49A1
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Aug 2023 01:10:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234410AbjHRTTD (ORCPT
+        id S243285AbjHSBJs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Aug 2023 15:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38218 "EHLO
+        Fri, 18 Aug 2023 21:09:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379594AbjHRTSb (ORCPT
+        with ESMTP id S243275AbjHSBJg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2023 15:18:31 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A8D35CA
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2023 12:18:29 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.01,184,1684767600"; 
-   d="scan'208";a="176991800"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Aug 2023 04:18:28 +0900
-Received: from localhost.localdomain (unknown [10.226.93.81])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9084B409B888;
-        Sat, 19 Aug 2023 04:18:24 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Phong LE <ple@baylibre.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Robert Foss <rfoss@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 1/2] drm: bridge: it66121: Extend match support for OF tables
-Date:   Fri, 18 Aug 2023 20:18:16 +0100
-Message-Id: <20230818191817.340360-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230818191817.340360-1-biju.das.jz@bp.renesas.com>
-References: <20230818191817.340360-1-biju.das.jz@bp.renesas.com>
+        Fri, 18 Aug 2023 21:09:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C0310F1;
+        Fri, 18 Aug 2023 18:09:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B6D696142D;
+        Sat, 19 Aug 2023 01:09:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46580C433C7;
+        Sat, 19 Aug 2023 01:09:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692407374;
+        bh=GgoHcra9ObNeUpMqTTIFhI0O8hWFNszRalZ/9DjEEpY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YtHu/QrehUfHn+7eu9li7sSBi3C8cH3oLD+Pk8q+XvFEA0BH4SwjDKr8RQqvLtrpW
+         uUhQVPidC1TU7kKHnczgnvIpEjZT5Kx5oa1GksQp3UNauNQkfrc3FZiTk+6p8znoO3
+         K6Rmg+vCpQDbmWDQWzjAsEHm2fbVAxQ+69n4YaxDPiMW3gbG7IUgAuHbsdR9PIQHUf
+         eFLJqB8iycd0tM7sE8IyUslw8aeARXq1L1pNURJ2dRcLu+malGOYae7OOpoFJBFEls
+         Kg2JnQh0dv3F/Y05JOoQZzclAfroRc+trbw2jnlwuC92csX1eKcVL+GSyEmc3UEyTk
+         gZaySZXpFUYXA==
+Received: (nullmailer pid 916541 invoked by uid 1000);
+        Sat, 19 Aug 2023 01:09:32 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: renesas,rza2: Use 'additionalProperties' for child nodes
+Date:   Fri, 18 Aug 2023 20:09:27 -0500
+Message-Id: <20230819010928.916438-1-robh@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The driver has OF match table, still it uses ID lookup table for
-retrieving match data. Currently the driver is working on the
-assumption that a I2C device registered via OF will always match a
-legacy I2C device ID. The correct approach is to have an OF device ID
-table using of_device_match_data() if the devices are registered via OF.
+A schema under 'additionalProperties' works better for matching any
+property/node other than the ones explicitly listed. Convert the schema
+to use that rather than the wildcard and if/then schema.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2->v3:
- * Removed fixes tag as nothing broken.
- * Added Rb tag from Andy.
-v2:
- * New patch.
----
- drivers/gpu/drm/bridge/ite-it66121.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Drop 'phandle' properties which never need to be explicitly listed while
+we're here.
 
-diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
-index 466641c77fe9..ba95ad46e259 100644
---- a/drivers/gpu/drm/bridge/ite-it66121.c
-+++ b/drivers/gpu/drm/bridge/ite-it66121.c
-@@ -1523,7 +1523,10 @@ static int it66121_probe(struct i2c_client *client)
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../pinctrl/renesas,rza2-pinctrl.yaml         | 61 +++++++++----------
+ 1 file changed, 28 insertions(+), 33 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
+index 37173a64fed2..8271e7b2c162 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
+@@ -37,40 +37,37 @@ properties:
+   gpio-ranges:
+     maxItems: 1
  
- 	ctx->dev = dev;
- 	ctx->client = client;
--	ctx->info = (const struct it66121_chip_info *) id->driver_data;
-+	if (dev_fwnode(&client->dev))
-+		ctx->info = of_device_get_match_data(&client->dev);
-+	else
-+		ctx->info = (const struct it66121_chip_info *) id->driver_data;
- 
- 	of_property_read_u32(ep, "bus-width", &ctx->bus_width);
- 	of_node_put(ep);
-@@ -1609,13 +1612,6 @@ static void it66121_remove(struct i2c_client *client)
- 	mutex_destroy(&ctx->lock);
- }
- 
--static const struct of_device_id it66121_dt_match[] = {
--	{ .compatible = "ite,it66121" },
--	{ .compatible = "ite,it6610" },
--	{ }
--};
--MODULE_DEVICE_TABLE(of, it66121_dt_match);
--
- static const struct it66121_chip_info it66121_chip_info = {
- 	.id = ID_IT66121,
- 	.vid = 0x4954,
-@@ -1628,6 +1624,13 @@ static const struct it66121_chip_info it6610_chip_info = {
- 	.pid = 0x0611,
- };
- 
-+static const struct of_device_id it66121_dt_match[] = {
-+	{ .compatible = "ite,it66121", &it66121_chip_info },
-+	{ .compatible = "ite,it6610", &it6610_chip_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, it66121_dt_match);
+-patternProperties:
+-  "^.*$":
+-    if:
+-      type: object
+-    then:
+-      allOf:
+-        - $ref: pincfg-node.yaml#
+-        - $ref: pinmux-node.yaml#
++additionalProperties:
++  type: object
 +
- static const struct i2c_device_id it66121_id[] = {
- 	{ "it66121", (kernel_ulong_t) &it66121_chip_info },
- 	{ "it6610", (kernel_ulong_t) &it6610_chip_info },
++  allOf:
++    - $ref: pincfg-node.yaml#
++    - $ref: pinmux-node.yaml#
++
++  description:
++    The child nodes of the pin controller designate pins to be used for
++    specific peripheral functions or as GPIO.
++
++    A pin multiplexing sub-node describes how to configure a set of
++    (or a single) pin in some desired alternate function mode.
++    The values for the pinmux properties are a combination of port name,
++    pin number and the desired function index. Use the RZA2_PINMUX macro
++    located in include/dt-bindings/pinctrl/r7s9210-pinctrl.h to easily
++    define these.
++    For assigning GPIO pins, use the macro RZA2_PIN also in
++    to express the desired port pin.
++
++  properties:
++    pinmux:
+       description:
+-        The child nodes of the pin controller designate pins to be used for
+-        specific peripheral functions or as GPIO.
++        Values are constructed from GPIO port number, pin number, and
++        alternate function configuration number using the RZA2_PINMUX()
++        helper macro in r7s9210-pinctrl.h.
+ 
+-        A pin multiplexing sub-node describes how to configure a set of
+-        (or a single) pin in some desired alternate function mode.
+-        The values for the pinmux properties are a combination of port name,
+-        pin number and the desired function index. Use the RZA2_PINMUX macro
+-        located in include/dt-bindings/pinctrl/r7s9210-pinctrl.h to easily
+-        define these.
+-        For assigning GPIO pins, use the macro RZA2_PIN also in
+-        to express the desired port pin.
++  required:
++    - pinmux
+ 
+-      properties:
+-        phandle: true
+-
+-        pinmux:
+-          description:
+-            Values are constructed from GPIO port number, pin number, and
+-            alternate function configuration number using the RZA2_PINMUX()
+-            helper macro in r7s9210-pinctrl.h.
+-
+-      required:
+-        - pinmux
+-
+-      additionalProperties: false
++  additionalProperties: false
+ 
+ allOf:
+   - $ref: pinctrl.yaml#
+@@ -82,8 +79,6 @@ required:
+   - '#gpio-cells'
+   - gpio-ranges
+ 
+-additionalProperties: false
+-
+ examples:
+   - |
+     #include <dt-bindings/pinctrl/r7s9210-pinctrl.h>
 -- 
-2.25.1
+2.40.1
 
