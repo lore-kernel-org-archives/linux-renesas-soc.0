@@ -2,131 +2,154 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C23EE49A4
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Aug 2023 18:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31780EE4993
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Aug 2023 18:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231501AbjHTSBt (ORCPT
+        id S231614AbjHTSrM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Aug 2023 14:01:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54870 "EHLO
+        Sun, 20 Aug 2023 14:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231442AbjHTSBs (ORCPT
+        with ESMTP id S231635AbjHTSrI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Aug 2023 14:01:48 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20D9C2723;
-        Sun, 20 Aug 2023 10:58:57 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1bf7423ef3eso1439345ad.3;
-        Sun, 20 Aug 2023 10:58:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692554336; x=1693159136;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0vWOJYzMEdARgdU+SCyIcUY2NQEHvYI9NDh/eIJ030M=;
-        b=WNYbHn4NdvP6EUKF7aYTh82fhH6evXtJURnPeMFGruptSO3Q1ekCVcssx2CYsO5KES
-         8axprnoVGGfdsYMzGA3wFefBlyV065MQUogCKnlSMiXmRo6I4JVyEyaiSeolUEKamogL
-         ZnE0vWYsaIFckca+klo9qbAJthaPG8zj1gg0m+5C7AESXGyW9XNLbYBeA2A5E3p4pxzC
-         W9EiLX49om2k+BjwnxjPlF6C09s4vqxqW2kA8uil40PKCNIqurCSplkOd4pgZ+/nIt6t
-         +n2ENOmWGveVGteZJhFzsitcsPiib+ZeWiGC6cRhfggKJbDg2scYqmQ81wnzJxs+TIqs
-         SogQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692554336; x=1693159136;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0vWOJYzMEdARgdU+SCyIcUY2NQEHvYI9NDh/eIJ030M=;
-        b=g6z+v+kjfdBjra/xXN1SfbwtteCW6u1bZCTGgotmhK2s+KOZI+QC7aIG/pZ7tWnjNr
-         ZCjgJl4vAiDwzFaFRyM04cVRYYOWGOdvUjm/iwbZ/HT+z1WdZEU5LwDrJAk6xD6F6JKD
-         uZPqL1fnvkXtEBMBE1NdvmGxxDkVaFkyEkVHltEa5QUpufgkakjhSN56ZNo0J9PrVW2u
-         CgoR67ZVndevXO9MvQLub2ozjUQmtz4Ty5DDbW+Nh9r6K8VA0P8fc6AuAC1Tn1o1flq4
-         pUgtq6k8/Vkcol4GYT7PgqZpdvI8RoXA86dPKcpWnhpwvjtUyDzdeBKLmpj3GXZzSVuh
-         dEFw==
-X-Gm-Message-State: AOJu0YwTFuQD/pE/JMMzC5VmSP9+1FI0L0HnRXxNytN+LDdFIHTG9WKv
-        zXa/txbRVJjR8SdmJDs6b6Y=
-X-Google-Smtp-Source: AGHT+IHsEAttgzpiQG0IguRGxNtHMaTizd4bD6NAO6E1fu40m3p6wkzEDNKsRMCBKycb1Ed0TRktlw==
-X-Received: by 2002:a17:902:f542:b0:1b7:c166:f197 with SMTP id h2-20020a170902f54200b001b7c166f197mr3318687plf.29.1692554336463;
-        Sun, 20 Aug 2023 10:58:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u18-20020a17090341d200b001b9d95945afsm5392358ple.155.2023.08.20.10.58.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Aug 2023 10:58:55 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 20 Aug 2023 10:58:54 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Eric Tremblay <etremblay@distech-controls.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        Sun, 20 Aug 2023 14:47:08 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D01393A85;
+        Sun, 20 Aug 2023 11:44:15 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,188,1684767600"; 
+   d="scan'208";a="177101049"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2023 03:44:15 +0900
+Received: from localhost.localdomain (unknown [10.226.92.18])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 333A5406BF94;
+        Mon, 21 Aug 2023 03:44:11 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 0/2] Convert enum->pointer for data in the tmp51x match
- tables
-Message-ID: <8199dbe3-4fe7-48f0-93c4-6cb3d12542b1@roeck-us.net>
-References: <20230820124910.71526-1-biju.das.jz@bp.renesas.com>
- <ce30e9ad-67e8-4dfb-93f9-e9a6a89d6bbe@roeck-us.net>
- <OS0PR01MB592225A290451B07E5BA42698619A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <ea0eccc0-a29f-41e4-9049-a1a13f8b16f1@roeck-us.net>
- <OS0PR01MB5922C02D0984F36C8CDE98888619A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <OS0PR01MB5922A79C02FF9D934767307E8619A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/4] usb: typec: tcpci_rt1711h: Convert enum->pointer for data in the match tables
+Date:   Sun, 20 Aug 2023 19:44:00 +0100
+Message-Id: <20230820184402.102486-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230820184402.102486-1-biju.das.jz@bp.renesas.com>
+References: <20230820184402.102486-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OS0PR01MB5922A79C02FF9D934767307E8619A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Aug 20, 2023 at 05:36:02PM +0000, Biju Das wrote:
-> Hi Guenter Roeck,
-> 
-> > Subject: RE: [PATCH 0/2] Convert enum->pointer for data in the tmp51x match
-> > tables
-> > 
-> > Hi Guenter Roeck,
-> > 
-> > Thanks for the feedback.
-> > 
-> > > Subject: Re: [PATCH 0/2] Convert enum->pointer for data in the tmp51x
-> > > match tables
-> > >
-> > > Either case, I would want to keep temp_config and the number of
-> > > channels in struct tmp51x_data to avoid repeated double dereferences
-> > > and because temp_config could change (resistance correction
-> > > enabled/disabled should be a devicetree property, conversion rate as
-> > > well as channel enable should be sysfs attributes, and channel
-> > > enable/disable should also be devicetree properties). The value could
-> > > also be used to support suspend/resume in the driver if someone wants to
-> > add that at some point.
-> > >
-> > > In this context,
-> > > 		if (data->id == tmp512 && channel == 4)
-> > > 			return 0;
-> > > is wrong because there are 3 or 4 channels, meaning the channel
-> > > numbers are
-> > > 0..3 and there is no channel 4. This should be "channel == 3"
-> > > to disable the 4th channel on tmp512. Interesting that no one
-> > > (including me ;-) noticed this.
-> > 
-> > If I am correct, as per above, only max number channels supported by the
-> > chip can go to device data. That is the only HW difference between these 2
-> > chips and other chip specific data can be derived from this.
-> 
-> I guess, the below initial values for temp_config
-> is chip specific apart from the number of supported channels
-> as we won't be able to derive from number of channels??
-> 
-> #define TMP512_TEMP_CONFIG_DEFAULT	0xBF80
-> #define TMP513_TEMP_CONFIG_DEFAULT	0xFF80
-> 
-Bit 3-6 enable temperature sensors. The difference in bit 6
-is that the 3rd external temperature sensor (which only exists for
-tmp513) is enabled if the bit is set. So the base value for
-TMP513_TEMP_CONFIG_DEFAULT would be 0xBF80 with bit 6 set if
-the chip has four temperature sensors.
+Convert enum->pointer for data in the match tables, so that
+device_get_match_data() can do match against OF/ACPI/I2C tables, once i2c
+bus type match support added to it and it returns NULL for non-match.
 
-Guenter
+Therefore it is better to convert enum->pointer for data match and extend
+match support for both ID and OF tables by using i2c_get_match_data() by
+adding struct rt1711h_chip_info with did variable and replacing did->info
+in struct rt1711h_chip. Later patches will add more hw differences to
+struct rt1711h_chip_info and avoid checking did for HW differences.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/usb/typec/tcpm/tcpci_rt1711h.c | 30 ++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/usb/typec/tcpm/tcpci_rt1711h.c b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
+index 1e13ce3c4b35..c9392919226a 100644
+--- a/drivers/usb/typec/tcpm/tcpci_rt1711h.c
++++ b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
+@@ -51,13 +51,17 @@
+ /* 1b0 as fixed rx threshold of rd/rp 0.55V, 1b1 depends on RTCRTL4[0] */
+ #define BMCIO_RXDZEN	BIT(0)
+ 
++struct rt1711h_chip_info {
++	u16 did;
++};
++
+ struct rt1711h_chip {
+ 	struct tcpci_data data;
+ 	struct tcpci *tcpci;
+ 	struct device *dev;
+ 	struct regulator *vbus;
+ 	bool src_en;
+-	u16 did;
++	const struct rt1711h_chip_info *info;
+ };
+ 
+ static int rt1711h_read16(struct rt1711h_chip *chip, unsigned int reg, u16 *val)
+@@ -105,7 +109,7 @@ static int rt1711h_init(struct tcpci *tcpci, struct tcpci_data *tdata)
+ 		return ret;
+ 
+ 	/* Enable PD30 extended message for RT1715 */
+-	if (chip->did == RT1715_DID) {
++	if (chip->info->did == RT1715_DID) {
+ 		ret = regmap_update_bits(regmap, RT1711H_RTCTRL8,
+ 					 RT1711H_ENEXTMSG, RT1711H_ENEXTMSG);
+ 		if (ret < 0)
+@@ -200,7 +204,7 @@ static inline int rt1711h_init_cc_params(struct rt1711h_chip *chip, u8 status)
+ 	if ((cc1 >= TYPEC_CC_RP_1_5 && cc2 < TYPEC_CC_RP_DEF) ||
+ 	    (cc2 >= TYPEC_CC_RP_1_5 && cc1 < TYPEC_CC_RP_DEF)) {
+ 		rxdz_en = BMCIO_RXDZEN;
+-		if (chip->did == RT1715_DID)
++		if (chip->info->did == RT1715_DID)
+ 			rxdz_sel = RT1711H_BMCIO_RXDZSEL;
+ 		else
+ 			rxdz_sel = 0;
+@@ -319,7 +323,7 @@ static int rt1711h_check_revision(struct i2c_client *i2c, struct rt1711h_chip *c
+ 	ret = i2c_smbus_read_word_data(i2c, TCPC_BCD_DEV);
+ 	if (ret < 0)
+ 		return ret;
+-	if (ret != chip->did) {
++	if (ret != chip->info->did) {
+ 		dev_err(&i2c->dev, "did is not correct, 0x%04x\n", ret);
+ 		return -ENODEV;
+ 	}
+@@ -336,7 +340,7 @@ static int rt1711h_probe(struct i2c_client *client)
+ 	if (!chip)
+ 		return -ENOMEM;
+ 
+-	chip->did = (size_t)device_get_match_data(&client->dev);
++	chip->info = i2c_get_match_data(client);
+ 
+ 	ret = rt1711h_check_revision(client, chip);
+ 	if (ret < 0) {
+@@ -391,17 +395,25 @@ static void rt1711h_remove(struct i2c_client *client)
+ 	tcpci_unregister_port(chip->tcpci);
+ }
+ 
++static const struct rt1711h_chip_info rt1711h = {
++	.did = RT1711H_DID,
++};
++
++static const struct rt1711h_chip_info rt1715 = {
++	.did = RT1715_DID,
++};
++
+ static const struct i2c_device_id rt1711h_id[] = {
+-	{ "rt1711h", RT1711H_DID },
+-	{ "rt1715", RT1715_DID },
++	{ "rt1711h", (kernel_ulong_t)&rt1711h },
++	{ "rt1715", (kernel_ulong_t)&rt1715 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, rt1711h_id);
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id rt1711h_of_match[] = {
+-	{ .compatible = "richtek,rt1711h", .data = (void *)RT1711H_DID },
+-	{ .compatible = "richtek,rt1715", .data = (void *)RT1715_DID },
++	{ .compatible = "richtek,rt1711h", .data = &rt1711h },
++	{ .compatible = "richtek,rt1715", .data = &rt1715 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, rt1711h_of_match);
+-- 
+2.25.1
+
