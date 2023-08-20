@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092DEEE49A8
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Aug 2023 17:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6363EE49A6
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Aug 2023 17:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbjHTRLi (ORCPT
+        id S229845AbjHTRQT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Aug 2023 13:11:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52262 "EHLO
+        Sun, 20 Aug 2023 13:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229938AbjHTRLg (ORCPT
+        with ESMTP id S229805AbjHTRQM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Aug 2023 13:11:36 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9ED074202;
-        Sun, 20 Aug 2023 10:08:49 -0700 (PDT)
+        Sun, 20 Aug 2023 13:16:12 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2ECB5198C;
+        Sun, 20 Aug 2023 10:11:54 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,188,1684767600"; 
-   d="scan'208";a="173400404"
+   d="scan'208";a="177097985"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Aug 2023 02:08:49 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2023 02:11:53 +0900
 Received: from localhost.localdomain (unknown [10.226.92.18])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EB44A40062AF;
-        Mon, 21 Aug 2023 02:08:46 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1832A40062AF;
+        Mon, 21 Aug 2023 02:11:50 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Sebastian Reichel <sre@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-pm@vger.kernel.org,
@@ -31,12 +31,12 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-pm@vger.kernel.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Andi Shyti <andi.shyti@kernel.org>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] power: supply: sbs-battery: Make similar OF and ID table
-Date:   Sun, 20 Aug 2023 18:08:40 +0100
-Message-Id: <20230820170841.82501-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 1/2 RESEND] power: supply: sbs-battery: Make similar OF and ID table
+Date:   Sun, 20 Aug 2023 18:11:44 +0100
+Message-Id: <20230820171145.82662-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230820170841.82501-1-biju.das.jz@bp.renesas.com>
-References: <20230820170841.82501-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230820171145.82662-1-biju.das.jz@bp.renesas.com>
+References: <20230820171145.82662-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
