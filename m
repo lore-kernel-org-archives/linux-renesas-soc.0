@@ -2,63 +2,80 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BB9EE49AB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Aug 2023 23:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90023EE49A5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Aug 2023 02:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231815AbjHVXx6 (ORCPT
+        id S232210AbjHWCRi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Aug 2023 19:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45728 "EHLO
+        Tue, 22 Aug 2023 22:17:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbjHVXx5 (ORCPT
+        with ESMTP id S230291AbjHWCRd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Aug 2023 19:53:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08B5CFE;
-        Tue, 22 Aug 2023 16:53:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5918563B2C;
-        Tue, 22 Aug 2023 23:53:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BD0AC433C7;
-        Tue, 22 Aug 2023 23:53:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692748434;
-        bh=7wXNh2/0RYoqISXjhJS9rnCgvEFKMCPWJxUcecoVfgU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=F/6MAhkrKyEAg0YwsLKNGx/V1zjqXNl+Evs5K8B4HH8EfQiEWQ8pTK+pOzPXFXMxe
-         AjkauLtsFAjXS3vnYvUThKo9KkJoaxN4Mi0KFLFa9zwhZniZCA69ciqWyU4pCNOLzS
-         FR/ZbZhFHCvNDeItZCV7+0AFa7d3I4Z5IiFi2Qf21h1E4l7J/4Khky6KZEhWHQ5i4N
-         A8ge0YR4s1o2po+ZWvsGaQEQEjXsctXcaneFpAtOJwk+Tehw9b0f+nesoBAwZfJZnF
-         ntw9VsF+KvsyVc3Dih27hAN0e173aLK509OfatUXKRuzMgstAxY9WYLncow+MjyaGk
-         J8TMXfvMS/toQ==
-Message-ID: <35ec88057dd679844b259d9548e08b08.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        Tue, 22 Aug 2023 22:17:33 -0400
+X-Greylist: delayed 908 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Aug 2023 19:17:31 PDT
+Received: from symantec4.comsats.net.pk (symantec4.comsats.net.pk [203.124.41.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34267185
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Aug 2023 19:17:30 -0700 (PDT)
+X-AuditID: cb7c291e-055ff70000002aeb-56-64e553c6a7f0
+Received: from iesco.comsatshosting.com (iesco.comsatshosting.com [210.56.28.11])
+        (using TLS with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        by symantec4.comsats.net.pk (Symantec Messaging Gateway) with SMTP id B4.42.10987.6C355E46; Wed, 23 Aug 2023 05:33:10 +0500 (PKT)
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns;
+        d=iesco.com.pk; s=default;
+        h=received:content-type:mime-version:content-transfer-encoding
+          :content-description:subject:to:from:date:reply-to;
+        b=nOLICcIz7cI0cYA88UZ71+OPc0rY69OohRGNw9A4Q+5d8+SeiKG+iXz0pqNUQzQSp
+          7TnXvyWCvXIPO4t6sJeP529A1YMMR4NDLfowa4hQDhNid92t6le+fj3P0j31QpLwX
+          EwksdyhnPtJM2DsWamso+NOEIn9cZa8ksaJFv4v/I=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iesco.com.pk; s=default;
+        h=reply-to:date:from:to:subject:content-description
+          :content-transfer-encoding:mime-version:content-type;
+        bh=GMzYzcyTxDsE6wX/XHG6MHqAdAiHrhqbmmLQ/TZ1QnQ=;
+        b=ab7xj25U9FhDrNeRkKEkQiQiDv/NVx2HmEHIgMaSgCuOTj10WAhny8BuSQOPHjHfT
+          cwmbIQtiTY+TkCOj3vlY/7LKxJfbmFMW6yEXsmzXc2Z0DqgIB8bzwvzD0AB55G5zx
+          xsTZeafzq5xQkvb3TV+XDlrD+AKGswZWJ7pYdhxoY=
+Received: from [94.156.6.90] (UnknownHost [94.156.6.90]) by iesco.comsatshosting.com with SMTP;
+   Wed, 23 Aug 2023 04:31:06 +0500
+Message-ID: <B4.42.10987.6C355E46@symantec4.comsats.net.pk>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230817142211.311366-5-biju.das.jz@bp.renesas.com>
-References: <20230817142211.311366-1-biju.das.jz@bp.renesas.com> <20230817142211.311366-5-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v3 4/4] clk: vc3: Make vc3_clk_mux enum values based on vc3_clk enum values
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 22 Aug 2023 16:53:52 -0700
-User-Agent: alot/0.10
+Content-Description: Mail message body
+Subject: Re; Interest,
+To:     linux-renesas-soc@vger.kernel.org
+From:   "Chen Yun" <pso.chairmanbod@iesco.com.pk>
+Date:   Tue, 22 Aug 2023 16:31:20 -0700
+Reply-To: chnyne@gmail.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDLMWRmVeSWpSXmKPExsVyyUKGW/dY8NMUg8N/RC22vnzH5MDo8XmT
+        XABjFJdNSmpOZllqkb5dAlfGknUXWAp2M1e09S9iaWB8zNTFyMEhIWAiMe0iaxcjF4eQwB4m
+        iaaLM5hBHBaB1cwS85+9YIFwHjJLTLz4jRmirJlR4k/HTbYuRk4OXgFriZ+/r7GD2MwCehI3
+        pk6BigtKnJz5hAUiri2xbOFrZpB1zAJqEl+7SkDCwgJiEp+mLQNrFRFQlVizeT8jiM0moC+x
+        4mszmM0CFF/+exHYSCEBKYmNV9azTWDkn4Vk2ywk22Yh2TYLYdsCRpZVjBLFlbmJwFBLNtFL
+        zs8tTiwp1stLLdEryN7ECAzD0zWacjsYl15KPMQowMGoxMP7c92TFCHWxDKgrkOMEhzMSiK8
+        0t8fpgjxpiRWVqUW5ccXleakFh9ilOZgURLntRV6liwkkJ5YkpqdmlqQWgSTZeLglGpg3M4U
+        trbr4Ivc/C32idu77py98qLO+cfqzd7WHz9+uhwuILzL9K/Kh9mb8iZrzfn/x+en/RuL61fc
+        b86bG7npqoGWUt6S67KzuJ4d2px2cs86TcaiyS+0fn+7Z79kMrvAcqmOBwe+cTMf0DWvL27f
+        VyIp26Yu85DvQULVD57of5xKhZ1K9p/1LJVYijMSDbWYi4oTAYviECw/AgAA
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Biju Das (2023-08-17 07:22:11)
-> Make vc3_clk_mux enum values depend upon vc3_clk enum values=C2=A0to avoid
-> any accidental breakage in the future.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
+Re; Interest,
 
-Applied to clk-next
+I am interested in discussing the Investment proposal as I explained
+in my previous mail. May you let me know your interest and the
+possibility of a cooperation aimed for mutual interest.
+
+Looking forward to your mail for further discussion.
+
+Regards
+
+------
+Chen Yun - Chairman of CREC
+China Railway Engineering Corporation - CRECG
+China Railway Plaza, No.69 Fuxing Road, Haidian District, Beijing, P.R.
+China
+
