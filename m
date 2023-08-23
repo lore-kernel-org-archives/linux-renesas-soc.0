@@ -2,190 +2,87 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A9FEE49BB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Aug 2023 09:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C604EE49B0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Aug 2023 10:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232127AbjHWJrm (ORCPT
+        id S232322AbjHWKKv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Aug 2023 05:47:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41562 "EHLO
+        Wed, 23 Aug 2023 06:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236105AbjHWJlb (ORCPT
+        with ESMTP id S234334AbjHWI1Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Aug 2023 05:41:31 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 39E2A5BB2;
-        Wed, 23 Aug 2023 02:12:28 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.01,195,1684767600"; 
-   d="scan'208";a="177395342"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 23 Aug 2023 18:12:04 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2434E4002942;
-        Wed, 23 Aug 2023 18:12:04 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
-        manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
-        kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org
-Cc:     marek.vasut+renesas@gmail.com, fancer.lancer@gmail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v19 14/19] dt-bindings: PCI: renesas: Add R-Car Gen4 PCIe Host
-Date:   Wed, 23 Aug 2023 18:11:48 +0900
-Message-Id: <20230823091153.2578417-15-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230823091153.2578417-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230823091153.2578417-1-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 23 Aug 2023 04:27:25 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2183B2723
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Aug 2023 01:24:35 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d66f105634eso4869490276.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Aug 2023 01:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692779074; x=1693383874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GniWlVWGgJe/usin4/V+GE0UMfoAT1xMp6M7UZ1H1gg=;
+        b=EgQAb8hmKslJNMYukltCiGV4bSaCAIN5pfuUQvHWwS774QTzoM8aanZpDAK0hMFS5O
+         Qkuv72IvSnfSgyHS2RhMlRiK8kfK0i5lCuLy9+L2qceO1bABnB06+LpaLRvnoiBTaO/J
+         E09KLk5hfTyzVOsUtXDkUzErGlV783OkQN1L8FnCzWe05ZAdqCanXOKn0Sy48MF1jEID
+         BGmuKg3zvb8a76p9+/wkKA2NVT2nhWqzYhAbz2LEfJF1Sj/QlWN06Mhf7MLysztBUw/u
+         6TjU1AB8p0qmNal0Del8N8r7jdlmA/osRcCVJun0m5rO6OD1jaYQFUB/0brcErZ+XnXq
+         XqxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692779074; x=1693383874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GniWlVWGgJe/usin4/V+GE0UMfoAT1xMp6M7UZ1H1gg=;
+        b=LfK4rRvTKSeIIxTZZGkmmn8HFySB3NGXEY1X3jzdXH6K6Ed/KDCcOp6C4oHSCNb7Zh
+         Js73M2OSUivRvrx9QaHdln9jNkWSwHsJBY2qXgPUXJD7h5lFNBT8hLiOHG2jMRCCtuwY
+         CauOMntWjWhPC1B1lIAMd4Zqd/+6xLOCX0vrMSqGStCON78i8kS3CV93H4DrGHnYS2BW
+         oJkbBB8IPyu7VuWaBvr9C4NW+QjxMfstbYIqrVh9si3CH47ocIzJF9hXbXZljv+k1Hgq
+         5d7sDGxWV/tQ0LD15q2aI1FBB3PSLBDi6ZSRczL6pPogh2Gx/u6kV9hVRBtbFUMwhRB9
+         NVFg==
+X-Gm-Message-State: AOJu0YyYlwS0Me+xyBv+WBIiobaptPhJ0wbI8xwvO3jcxsRN/1LHCDSc
+        eIVHqHvilGngSxA8fDSQeJX76dlqpcDjwh9dM1vJtw==
+X-Google-Smtp-Source: AGHT+IG0ucSlZ5SgGYhp1sPhDWN7q5O1kvR9k/V936eSIUllnP/1qA7Om4HgIbaSVmqUdIsYYVJybDqQB7BY+bKaO28=
+X-Received: by 2002:a25:d847:0:b0:d6b:6b53:d1ab with SMTP id
+ p68-20020a25d847000000b00d6b6b53d1abmr11472536ybg.38.1692779074564; Wed, 23
+ Aug 2023 01:24:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230819010928.916438-1-robh@kernel.org>
+In-Reply-To: <20230819010928.916438-1-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 23 Aug 2023 10:24:23 +0200
+Message-ID: <CACRpkdYA-Yda-bQe_bcZkDFEuz6DvNqYWvWx9X3awiHxNOsLew@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: renesas,rza2: Use
+ 'additionalProperties' for child nodes
+To:     Rob Herring <robh@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document bindings for Renesas R-Car Gen4 and R-Car S4-8 (R8A779F0)
-PCIe host module.
+On Sat, Aug 19, 2023 at 3:09=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
----
- .../bindings/pci/rcar-gen4-pci-host.yaml      | 123 ++++++++++++++++++
- 1 file changed, 123 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
+> A schema under 'additionalProperties' works better for matching any
+> property/node other than the ones explicitly listed. Convert the schema
+> to use that rather than the wildcard and if/then schema.
+>
+> Drop 'phandle' properties which never need to be explicitly listed while
+> we're here.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
-new file mode 100644
-index 000000000000..513a3416dd8e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-host.yaml
-@@ -0,0 +1,123 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2022-2023 Renesas Electronics Corp.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/rcar-gen4-pci-host.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas R-Car Gen4 PCIe Host
-+
-+maintainers:
-+  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-+
-+allOf:
-+  - $ref: snps,dw-pcie.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: renesas,r8a779f0-pcie   # R-Car S4-8
-+      - const: renesas,rcar-gen4-pcie  # R-Car Gen4
-+
-+  reg:
-+    maxItems: 6
-+
-+  reg-names:
-+    items:
-+      - const: dbi
-+      - const: dbi2
-+      - const: atu
-+      - const: dma
-+      - const: app
-+      - const: config
-+
-+  interrupts:
-+    maxItems: 4
-+
-+  interrupt-names:
-+    items:
-+      - const: msi
-+      - const: dma
-+      - const: sft_ce
-+      - const: app
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: ref
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  resets-names:
-+    items:
-+      - const: pwr
-+
-+  max-link-speed:
-+    maximum: 4
-+
-+  num-lanes:
-+    maximum: 4
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - resets
-+  - reset-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r8a779f0-cpg-mssr.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/r8a779f0-sysc.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pcie: pcie@e65d0000 {
-+            compatible = "renesas,r8a779f0-pcie", "renesas,rcar-gen4-pcie";
-+            reg = <0 0xe65d0000 0 0x1000>, <0 0xe65d2000 0 0x0800>,
-+                  <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
-+                  <0 0xe65d6200 0 0x0e00>, <0 0xfe000000 0 0x400000>;
-+            reg-names = "dbi", "dbi2", "atu", "dma", "app", "config";
-+            #address-cells = <3>;
-+            #size-cells = <2>;
-+            bus-range = <0x00 0xff>;
-+            device_type = "pci";
-+            ranges = <0x01000000 0 0x00000000 0 0xfe000000 0 0x00400000>,
-+                     <0x02000000 0 0x30000000 0 0x30000000 0 0x10000000>;
-+            dma-ranges = <0x42000000 0 0x00000000 0 0x00000000 1 0x00000000>;
-+            interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
-+            interrupt-names = "msi", "dma", "sft_ce", "app";
-+            #interrupt-cells = <1>;
-+            interrupt-map-mask = <0 0 0 7>;
-+            interrupt-map = <0 0 0 1 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
-+                            <0 0 0 2 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
-+                            <0 0 0 3 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
-+                            <0 0 0 4 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&cpg CPG_MOD 624>, <&clkref>;
-+            clock-names = "core", "ref";
-+            power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+            resets = <&cpg 624>;
-+            reset-names = "pwr";
-+            num-lanes = <2>;
-+            snps,enable-cdm-check;
-+            max-link-speed = <4>;
-+        };
-+    };
--- 
-2.25.1
+Patch applied to the pinctrl tree.
 
+Yours,
+Linus Walleij
