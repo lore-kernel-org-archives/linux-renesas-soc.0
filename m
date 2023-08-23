@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F8BEE49A0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Aug 2023 09:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9ABEE49A0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Aug 2023 09:30:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235270AbjHWJ3q (ORCPT
+        id S235299AbjHWJ3x (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Aug 2023 05:29:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33046 "EHLO
+        Wed, 23 Aug 2023 05:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235612AbjHWJYH (ORCPT
+        with ESMTP id S235601AbjHWJYG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Aug 2023 05:24:07 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CA17549C8;
+        Wed, 23 Aug 2023 05:24:06 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D64135BAE;
         Wed, 23 Aug 2023 02:12:27 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,195,1684767600"; 
-   d="scan'208";a="177395335"
+   d="scan'208";a="173694724"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 23 Aug 2023 18:12:03 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 23 Aug 2023 18:12:02 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4D042400294A;
-        Wed, 23 Aug 2023 18:12:03 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C3FB2400856C;
+        Wed, 23 Aug 2023 18:12:02 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
         lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
@@ -32,10 +32,11 @@ To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
 Cc:     marek.vasut+renesas@gmail.com, fancer.lancer@gmail.com,
         linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v19 09/19] PCI: dwc: Add EDMA_UNROLL capability flag
-Date:   Wed, 23 Aug 2023 18:11:43 +0900
-Message-Id: <20230823091153.2578417-10-yoshihiro.shimoda.uh@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Subject: [PATCH v19 06/19] PCI: dwc: Add dw_pcie_link_set_max_link_width()
+Date:   Wed, 23 Aug 2023 18:11:40 +0900
+Message-Id: <20230823091153.2578417-7-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230823091153.2578417-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230823091153.2578417-1-yoshihiro.shimoda.uh@renesas.com>
@@ -45,55 +46,122 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Renesas R-Car Gen4 PCIe controllers have an unexpected register value in
-the eDMA CTRL register. So, add a new capability flag "EDMA_UNROLL"
-which would force the unrolled eDMA mapping for the problematic device.
+This patch is a preparation before adding the Max-Link-width capability
+setup which would in its turn complete the max-link-width setup
+procedure defined by Synopsys in the HW-manual. Seeing there is
+a max-link-speed setup method defined in the DW PCIe core driver
+it would be good to have a similar function for the link width setup.
+That's why we need to define a dedicated function first from already
+implemented but incomplete link-width setting up code.
 
-Suggested-by: Serge Semin <fancer.lancer@gmail.com>
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
 ---
- drivers/pci/controller/dwc/pcie-designware.c | 8 +++++++-
- drivers/pci/controller/dwc/pcie-designware.h | 5 +++--
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware.c | 86 ++++++++++----------
+ 1 file changed, 41 insertions(+), 45 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 065644580cdb..7ad4744271f5 100644
+index d1dfe6f2eb4c..976dcc511fdc 100644
 --- a/drivers/pci/controller/dwc/pcie-designware.c
 +++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -877,8 +877,14 @@ static int dw_pcie_edma_find_chip(struct dw_pcie *pci)
- 	 * Indirect eDMA CSRs access has been completely removed since v5.40a
- 	 * thus no space is now reserved for the eDMA channels viewport and
- 	 * former DMA CTRL register is no longer fixed to FFs.
-+	 *
-+	 * Note that Renesas R-Car S4-8's PCIe controllers for unknown reason
-+	 * have zeros in the eDMA CTRL register even though the HW-manual
-+	 * explicitly states there must FFs if the unrolled mapping is enabled.
-+	 * For such cases the low-level drivers are supposed to manually
-+	 * activate the unrolled mapping to bypass the auto-detection procedure.
- 	 */
--	if (dw_pcie_ver_is_ge(pci, 540A))
-+	if (dw_pcie_ver_is_ge(pci, 540A) || dw_pcie_cap_is(pci, EDMA_UNROLL))
- 		val = 0xFFFFFFFF;
- 	else
- 		val = dw_pcie_readl_dbi(pci, PCIE_DMA_VIEWPORT_BASE + PCIE_DMA_CTRL);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 7d02401fc783..89999c483c37 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -51,8 +51,9 @@
+@@ -722,6 +722,46 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 link_gen)
  
- /* DWC PCIe controller capabilities */
- #define DW_PCIE_CAP_REQ_RES		0
--#define DW_PCIE_CAP_IATU_UNROLL		1
--#define DW_PCIE_CAP_CDM_CHECK		2
-+#define DW_PCIE_CAP_EDMA_UNROLL		1
-+#define DW_PCIE_CAP_IATU_UNROLL		2
-+#define DW_PCIE_CAP_CDM_CHECK		3
+ }
  
- #define dw_pcie_cap_is(_pci, _cap) \
- 	test_bit(DW_PCIE_CAP_ ## _cap, &(_pci)->caps)
++static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
++{
++	u32 lwsc, plc;
++
++	if (!num_lanes)
++		return;
++
++	/* Set the number of lanes */
++	plc = dw_pcie_readl_dbi(pci, PCIE_PORT_LINK_CONTROL);
++	plc &= ~PORT_LINK_FAST_LINK_MODE;
++	plc &= ~PORT_LINK_MODE_MASK;
++
++	/* Set link width speed control register */
++	lwsc = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
++	lwsc &= ~PORT_LOGIC_LINK_WIDTH_MASK;
++	switch (num_lanes) {
++	case 1:
++		plc |= PORT_LINK_MODE_1_LANES;
++		lwsc |= PORT_LOGIC_LINK_WIDTH_1_LANES;
++		break;
++	case 2:
++		plc |= PORT_LINK_MODE_2_LANES;
++		lwsc |= PORT_LOGIC_LINK_WIDTH_2_LANES;
++		break;
++	case 4:
++		plc |= PORT_LINK_MODE_4_LANES;
++		lwsc |= PORT_LOGIC_LINK_WIDTH_4_LANES;
++		break;
++	case 8:
++		plc |= PORT_LINK_MODE_8_LANES;
++		lwsc |= PORT_LOGIC_LINK_WIDTH_8_LANES;
++		break;
++	default:
++		dev_err(pci->dev, "num-lanes %u: invalid value\n", num_lanes);
++		return;
++	}
++	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, plc);
++	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, lwsc);
++}
++
+ void dw_pcie_iatu_detect(struct dw_pcie *pci)
+ {
+ 	int max_region, ob, ib;
+@@ -1003,49 +1043,5 @@ void dw_pcie_setup(struct dw_pcie *pci)
+ 	val |= PORT_LINK_DLL_LINK_EN;
+ 	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
+ 
+-	if (!pci->num_lanes) {
+-		dev_dbg(pci->dev, "Using h/w default number of lanes\n");
+-		return;
+-	}
+-
+-	/* Set the number of lanes */
+-	val &= ~PORT_LINK_FAST_LINK_MODE;
+-	val &= ~PORT_LINK_MODE_MASK;
+-	switch (pci->num_lanes) {
+-	case 1:
+-		val |= PORT_LINK_MODE_1_LANES;
+-		break;
+-	case 2:
+-		val |= PORT_LINK_MODE_2_LANES;
+-		break;
+-	case 4:
+-		val |= PORT_LINK_MODE_4_LANES;
+-		break;
+-	case 8:
+-		val |= PORT_LINK_MODE_8_LANES;
+-		break;
+-	default:
+-		dev_err(pci->dev, "num-lanes %u: invalid value\n", pci->num_lanes);
+-		return;
+-	}
+-	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
+-
+-	/* Set link width speed control register */
+-	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+-	val &= ~PORT_LOGIC_LINK_WIDTH_MASK;
+-	switch (pci->num_lanes) {
+-	case 1:
+-		val |= PORT_LOGIC_LINK_WIDTH_1_LANES;
+-		break;
+-	case 2:
+-		val |= PORT_LOGIC_LINK_WIDTH_2_LANES;
+-		break;
+-	case 4:
+-		val |= PORT_LOGIC_LINK_WIDTH_4_LANES;
+-		break;
+-	case 8:
+-		val |= PORT_LOGIC_LINK_WIDTH_8_LANES;
+-		break;
+-	}
+-	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
++	dw_pcie_link_set_max_link_width(pci, pci->num_lanes);
+ }
 -- 
 2.25.1
 
