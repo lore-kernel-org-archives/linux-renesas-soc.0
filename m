@@ -2,133 +2,103 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A1BEE49AE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Aug 2023 09:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9FCEE49B2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Aug 2023 09:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235180AbjHWJPA convert rfc822-to-8bit (ORCPT
+        id S235019AbjHWJ0O (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Aug 2023 05:15:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46158 "EHLO
+        Wed, 23 Aug 2023 05:26:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235396AbjHWJJi (ORCPT
+        with ESMTP id S235609AbjHWJYH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Aug 2023 05:09:38 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B9BD1FFC;
-        Wed, 23 Aug 2023 02:02:13 -0700 (PDT)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-76da4437500so194601885a.1;
-        Wed, 23 Aug 2023 02:02:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692781282; x=1693386082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DtV842noA4k0ZIyALimzf7oD/qGOzDsyzAeC5Bbahhw=;
-        b=Qc19fPJuEe1p3u0oQWV4AkCNYwpP9v3Ic0P7yx6HlKwP6OW8NHgP9k8G8yrQAKJFpG
-         Ix/SSNULDfPePAepcByNJt8spAxHYhnymvLmrgsHLrsKzgsAmaBB6kkVrpKLbuEJmV2H
-         PyOb6abatTlGWYwAxwHrNiGA6RFSMlY2QqOvfxerIZzP5tNny083YMUSD4C6RKGO/OoM
-         keuUu+ZNM/0Fm+yYztg+aWz8SyIeU/nz8B3RvSpfW7Ph2410jNVtC9d/AzjUtvDoS+8Z
-         IRsYUxan5XWWne5Qr5FCOeL8jwzkfbBs0xJEkUqWw9QPFDTqtGJx+sfnDcHa4c7h1KR8
-         Otxw==
-X-Gm-Message-State: AOJu0Yw8ek7rMaQZU7qlRTNaGXfexcM5mp6Ds1QUWKs3fAx3CPNcS7zi
-        ZczwfjbQ417KOQT+94x3ziocLsn97Q6sDg==
-X-Google-Smtp-Source: AGHT+IFKpxmoHYGhsmnguwReHG+/b22cfFCY4nYz+uUUUtSM2GT11veFqVBEGcCX6rtDSKCu+zL9DA==
-X-Received: by 2002:a05:620a:4706:b0:76c:a3ae:1f64 with SMTP id bs6-20020a05620a470600b0076ca3ae1f64mr13828174qkb.49.1692781281995;
-        Wed, 23 Aug 2023 02:01:21 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id t125-20020a0dd183000000b005837fe8dbe8sm3227563ywd.8.2023.08.23.02.01.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Aug 2023 02:01:20 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-d63c0a6568fso5381640276.0;
-        Wed, 23 Aug 2023 02:01:20 -0700 (PDT)
-X-Received: by 2002:a25:cad7:0:b0:d12:46b1:4459 with SMTP id
- a206-20020a25cad7000000b00d1246b14459mr12184522ybg.6.1692781280284; Wed, 23
- Aug 2023 02:01:20 -0700 (PDT)
+        Wed, 23 Aug 2023 05:24:07 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CA2625BAD;
+        Wed, 23 Aug 2023 02:12:27 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,195,1684767600"; 
+   d="scan'208";a="177395332"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 23 Aug 2023 18:12:03 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EA903400294A;
+        Wed, 23 Aug 2023 18:12:02 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
+        manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
+        kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org
+Cc:     marek.vasut+renesas@gmail.com, fancer.lancer@gmail.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v19 07/19] PCI: dwc: Add missing PCI_EXP_LNKCAP_MLW handling
+Date:   Wed, 23 Aug 2023 18:11:41 +0900
+Message-Id: <20230823091153.2578417-8-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230823091153.2578417-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20230823091153.2578417-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-References: <20230823085146.113562-1-krzysztof.kozlowski@linaro.org> <20230823085146.113562-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230823085146.113562-2-krzysztof.kozlowski@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 23 Aug 2023 11:01:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU7Gk5jTkD_hc_BAK0caQjzTBWrXedV+5rYrMRiZF1EAw@mail.gmail.com>
-Message-ID: <CAMuHMdU7Gk5jTkD_hc_BAK0caQjzTBWrXedV+5rYrMRiZF1EAw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: use capital "OR" for multiple licenses in SPDX
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org, soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 10:52 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> Documentation/process/license-rules.rst and checkpatch expect the SPDX
-> identifier syntax for multiple licenses to use capital "OR".  Correct it
-> to keep consistent format and avoid copy-paste issues.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Update dw_pcie_link_set_max_link_width() to set PCI_EXP_LNKCAP_MLW.
+In accordance with the DW PCIe RC/EP HW manuals [1,2,3,...] aside with
+the PORT_LINK_CTRL_OFF.LINK_CAPABLE and GEN2_CTRL_OFF.NUM_OF_LANES[8:0]
+field there is another one which needs to be updated. It's
+LINK_CAPABILITIES_REG.PCIE_CAP_MAX_LINK_WIDTH. If it isn't done at
+the very least the maximum link-width capability CSR won't expose
+the actual maximum capability.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[1] DesignWare Cores PCI Express Controller Databook - DWC PCIe Root Port,
+    Version 4.60a, March 2015, p.1032
+[2] DesignWare Cores PCI Express Controller Databook - DWC PCIe Root Port,
+    Version 4.70a, March 2016, p.1065
+[3] DesignWare Cores PCI Express Controller Databook - DWC PCIe Root Port,
+    Version 4.90a, March 2016, p.1057
+...
+[X] DesignWare Cores PCI Express Controller Databook - DWC PCIe Endpoint,
+      Version 5.40a, March 2019, p.1396
+[X+1] DesignWare Cores PCI Express Controller Databook - DWC PCIe Root Port,
+      Version 5.40a, March 2019, p.1266
 
->  arch/arm64/boot/dts/renesas/r8a77980a.dtsi                     | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi           | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779f0-spider.dts                | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779f0.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m0.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m1-salvator-xs.dts           | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m1-ulcb-kf.dts               | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m1-ulcb.dts                  | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m1.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m2.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m3-salvator-xs.dts           | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m3-ulcb-kf.dts               | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m3-ulcb.dts                  | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m3.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m4.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m5-salvator-xs.dts           | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m5.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m6.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m7.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779m8.dtsi                      | 2 +-
->  arch/arm64/boot/dts/renesas/r8a779mb.dtsi                      | 2 +-
+Suggested-by: Serge Semin <fancer.lancer@gmail.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+---
+ drivers/pci/controller/dwc/pcie-designware.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Mea culpa
-
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 976dcc511fdc..065644580cdb 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -724,7 +724,8 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 link_gen)
+ 
+ static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
+ {
+-	u32 lwsc, plc;
++	u32 lnkcap, lwsc, plc;
++	u8 cap;
+ 
+ 	if (!num_lanes)
+ 		return;
+@@ -760,6 +761,12 @@ static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
+ 	}
+ 	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, plc);
+ 	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, lwsc);
++
++	cap = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	lnkcap = dw_pcie_readl_dbi(pci, cap + PCI_EXP_LNKCAP);
++	lnkcap &= ~PCI_EXP_LNKCAP_MLW;
++	lnkcap |= FIELD_PREP(PCI_EXP_LNKCAP_MLW, num_lanes);
++	dw_pcie_writel_dbi(pci, cap + PCI_EXP_LNKCAP, lnkcap);
+ }
+ 
+ void dw_pcie_iatu_detect(struct dw_pcie *pci)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
