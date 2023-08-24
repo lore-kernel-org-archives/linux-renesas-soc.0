@@ -2,122 +2,75 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B6CC3DA6F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Aug 2023 18:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C977EC3DA6F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Aug 2023 20:45:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242919AbjHXS0l (ORCPT
+        id S243538AbjHXUpJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Aug 2023 14:26:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58390 "EHLO
+        Thu, 24 Aug 2023 16:45:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238588AbjHXS0L (ORCPT
+        with ESMTP id S243580AbjHXUpI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2023 14:26:11 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D83E58
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Aug 2023 11:26:06 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2BB01191A;
-        Thu, 24 Aug 2023 20:24:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1692901485;
-        bh=2AnQjB1urJZiJcrvpwSIzp0BpsDSTYuL7TtrrEOrk/8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KeHAlGkczJR/792WYAFzBhwpG9ZUwgYLrK4fM/+jzLMPSOrgLOKi38YfkCHdQKgkb
-         6Likf1WzIpotsadyflTxrAiYxdAXZ4FXuu04Jz7itGKnjihH/aHgNJojUTcJIX2slt
-         RER/9x6iwmEQujdDWJHIDavyhFxqLC+TIWiz0GAk=
-Date:   Thu, 24 Aug 2023 21:26:09 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Guenter Roeck <groeck@chromium.org>,
-        Zhu Wang <wangzhu9@huawei.com>,
-        dri-devel@lists.freedesktop.org,
+        Thu, 24 Aug 2023 16:45:08 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8552E1707;
+        Thu, 24 Aug 2023 13:45:06 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.02,195,1688396400"; 
+   d="scan'208";a="177573206"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 25 Aug 2023 05:45:05 +0900
+Received: from localhost.localdomain (unknown [10.226.93.115])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 048064005B2F;
+        Fri, 25 Aug 2023 05:45:02 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Eric Tremblay <etremblay@distech-controls.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-hwmon@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3] drm/bridge/analogix/anx78xx: Drop ID table
-Message-ID: <20230824182609.GA6477@pendragon.ideasonboard.com>
-References: <20230824181546.391796-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 1/3] hwmon: tmp513: Fix the channel number in tmp51x_is_visible()
+Date:   Thu, 24 Aug 2023 21:44:54 +0100
+Message-Id: <20230824204456.401580-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230824204456.401580-1-biju.das.jz@bp.renesas.com>
+References: <20230824204456.401580-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230824181546.391796-1-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+The supported channels for this driver are {0..3}. Fix the incorrect
+channel in tmp51x_is_visible().
 
-Thank you for the patch.
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Closes: https://lore.kernel.org/all/ea0eccc0-a29f-41e4-9049-a1a13f8b16f1@roeck-us.net/
+Fixes: 59dfa75e5d82 ("hwmon: Add driver for Texas Instruments TMP512/513 sensor chips.")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2:
+ * New patch
+---
+ drivers/hwmon/tmp513.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Aug 24, 2023 at 07:15:46PM +0100, Biju Das wrote:
-> The driver has an ID table, but it uses the wrong API for retrieving match
-> data and that will lead to a crash, if it is instantiated by user space or
-> using ID. From this, there is no user for the ID table and let's drop it
-> from the driver as it saves some memory.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-I wonder, as the device can only be instantiated from OF, should we add
-
-	depends on OF
-
-to Kconfig, and drop the
-
-#if IS_ENABLED(CONFIG_OF)
-
-from the driver ?
-
-> ---
-> v2->v3:
->  * Updated commit header.
-> v1->v2:
->  * Dropped ID table support.
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
-> index 800555aef97f..6169db73d2fe 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
-> @@ -1367,12 +1367,6 @@ static void anx78xx_i2c_remove(struct i2c_client *client)
->  	kfree(anx78xx->edid);
->  }
->  
-> -static const struct i2c_device_id anx78xx_id[] = {
-> -	{ "anx7814", 0 },
-> -	{ /* sentinel */ }
-> -};
-> -MODULE_DEVICE_TABLE(i2c, anx78xx_id);
-> -
->  static const struct of_device_id anx78xx_match_table[] = {
->  	{ .compatible = "analogix,anx7808", .data = anx7808_i2c_addresses },
->  	{ .compatible = "analogix,anx7812", .data = anx781x_i2c_addresses },
-> @@ -1389,7 +1383,6 @@ static struct i2c_driver anx78xx_driver = {
->  		  },
->  	.probe = anx78xx_i2c_probe,
->  	.remove = anx78xx_i2c_remove,
-> -	.id_table = anx78xx_id,
->  };
->  module_i2c_driver(anx78xx_driver);
->  
-
+diff --git a/drivers/hwmon/tmp513.c b/drivers/hwmon/tmp513.c
+index 7db5d0fc24a4..8ee6e02b02e3 100644
+--- a/drivers/hwmon/tmp513.c
++++ b/drivers/hwmon/tmp513.c
+@@ -434,7 +434,7 @@ static umode_t tmp51x_is_visible(const void *_data,
+ 
+ 	switch (type) {
+ 	case hwmon_temp:
+-		if (data->id == tmp512 && channel == 4)
++		if (data->id == tmp512 && channel == 3)
+ 			return 0;
+ 		switch (attr) {
+ 		case hwmon_temp_input:
 -- 
-Regards,
+2.25.1
 
-Laurent Pinchart
