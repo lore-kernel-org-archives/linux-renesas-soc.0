@@ -2,175 +2,97 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175E6C727C2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Aug 2023 09:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89770C88CB2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Aug 2023 10:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244319AbjHYJcu (ORCPT
+        id S229933AbjHYK5s (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Aug 2023 05:32:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54238 "EHLO
+        Fri, 25 Aug 2023 06:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244266AbjHYJca (ORCPT
+        with ESMTP id S239272AbjHYK5r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Aug 2023 05:32:30 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 466781FF0;
-        Fri, 25 Aug 2023 02:32:28 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.02,195,1688396400"; 
-   d="scan'208";a="177667260"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Aug 2023 18:32:25 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4793640071FF;
-        Fri, 25 Aug 2023 18:32:25 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
-        manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
-        kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org
-Cc:     marek.vasut+renesas@gmail.com, fancer.lancer@gmail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Rob Herring <robh@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Subject: [PATCH v20 15/19] dt-bindings: PCI: renesas: Add R-Car Gen4 PCIe Endpoint
-Date:   Fri, 25 Aug 2023 18:32:15 +0900
-Message-Id: <20230825093219.2685912-16-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230825093219.2685912-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230825093219.2685912-1-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 25 Aug 2023 06:57:47 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFCBF19AD
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Aug 2023 03:57:44 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 22CB96BE;
+        Fri, 25 Aug 2023 12:56:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1692960982;
+        bh=zoR0YokBKd/MGU58llzov4Yik2E+HryM2YY+WoItA3A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qq3vhOHIxOAmD5d13i8ALukwYD2OIjvNyC0KPrdnFNPvgI7IixIBMIjl8E0KYf2Zy
+         H5NKVwgc8Yhtv+VjeZXlwznuyI57Fu7j6RULHvYNWm4Ml/+3GZs7LIG+Mo4fKLhhNU
+         owhEabgOkzb80wHtE2C9fDhMqft1ji8DkzlZHIz8=
+Date:   Fri, 25 Aug 2023 13:57:48 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Guenter Roeck <groeck@chromium.org>,
+        Zhu Wang <wangzhu9@huawei.com>,
+        dri-devel@lists.freedesktop.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3] drm/bridge/analogix/anx78xx: Drop ID table
+Message-ID: <20230825105748.GE14596@pendragon.ideasonboard.com>
+References: <20230824181546.391796-1-biju.das.jz@bp.renesas.com>
+ <20230824182609.GA6477@pendragon.ideasonboard.com>
+ <CAHp75VeK_0MnPtku7W6_ZDUWBTOFgmFZiwnOcnGgiVzbeU6FKQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VeK_0MnPtku7W6_ZDUWBTOFgmFZiwnOcnGgiVzbeU6FKQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document bindings for Renesas R-Car Gen4 and R-Car S4-8 (R8A779F0)
-PCIe endpoint module.
+On Fri, Aug 25, 2023 at 06:48:45AM +0300, Andy Shevchenko wrote:
+> On Thu, Aug 24, 2023 at 9:26 PM Laurent Pinchart wrote:
+> > On Thu, Aug 24, 2023 at 07:15:46PM +0100, Biju Das wrote:
+> 
+> ...
+> 
+> > I wonder, as the device can only be instantiated from OF, should we add
+> >
+> >         depends on OF
+> 
+> Generally speaking this is a bad idea. It prevents a component from
+> being instantiated on ACPI based systems (even if there is no ACPI ID
+> table, due to a gateway called PRP0001).
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-Acked-by: Manivannan Sadhasivam <mani@kernel.org>
----
- .../bindings/pci/rcar-gen4-pci-ep.yaml        | 106 ++++++++++++++++++
- 1 file changed, 106 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
+I'd be surprised if there were systems were that would work out of the
+box for this particular driver, so we could always drop the dependency
+when someone updates the driver to work on ACPI-based systems. I'm
+however not pushing to add the dependency though.
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
-new file mode 100644
-index 000000000000..4e6be856104c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
-@@ -0,0 +1,106 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2022-2023 Renesas Electronics Corp.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/rcar-gen4-pci-ep.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas R-Car Gen4 PCIe Endpoint
-+
-+maintainers:
-+  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-+
-+allOf:
-+  - $ref: snps,dw-pcie-ep.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: renesas,r8a779f0-pcie-ep   # R-Car S4-8
-+      - const: renesas,rcar-gen4-pcie-ep  # R-Car Gen4
-+
-+  reg:
-+    maxItems: 6
-+
-+  reg-names:
-+    items:
-+      - const: dbi
-+      - const: dbi2
-+      - const: atu
-+      - const: dma
-+      - const: app
-+      - const: addr_space
-+
-+  interrupts:
-+    maxItems: 3
-+
-+  interrupt-names:
-+    items:
-+      - const: dma
-+      - const: sft_ce
-+      - const: app
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: ref
-+
-+  max-functions:
-+    maximum: 2
-+
-+  max-link-speed:
-+    maximum: 4
-+
-+  num-lanes:
-+    maximum: 4
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - resets
-+  - power-domains
-+  - clocks
-+  - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r8a779f0-cpg-mssr.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/r8a779f0-sysc.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pcie0_ep: pcie-ep@e65d0000 {
-+            compatible = "renesas,r8a779f0-pcie-ep", "renesas,rcar-gen4-pcie-ep";
-+            reg = <0 0xe65d0000 0 0x2000>, <0 0xe65d2800 0 0x0800>,
-+                  <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
-+                  <0 0xe65d6200 0 0x0e00>, <0 0xfe000000 0 0x400000>;
-+            reg-names = "dbi", "dbi2", "atu", "dma", "app", "addr_space";
-+            interrupts = <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
-+            interrupt-names = "dma", "sft_ce", "app";
-+            clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
-+            clock-names = "core", "ref";
-+            power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+            resets = <&cpg 624>;
-+            num-lanes = <2>;
-+            max-link-speed = <4>;
-+            max-functions = /bits/ 8 <2>;
-+        };
-+    };
+> > to Kconfig, and drop the
+> >
+> > #if IS_ENABLED(CONFIG_OF)
+> >
+> > from the driver ?
+> 
+> Contrary this is an idea I fully support!
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+
 -- 
-2.25.1
+Regards,
 
+Laurent Pinchart
