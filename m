@@ -2,136 +2,108 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD8CC71133
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Aug 2023 11:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53084C7EE2C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Aug 2023 13:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240506AbjHYLOB (ORCPT
+        id S240878AbjHYN01 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Aug 2023 07:14:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52474 "EHLO
+        Fri, 25 Aug 2023 09:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244515AbjHYLN7 (ORCPT
+        with ESMTP id S245212AbjHYN0O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Aug 2023 07:13:59 -0400
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 167B91BDA
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Aug 2023 04:13:58 -0700 (PDT)
-Received: by mail-vs1-xe2a.google.com with SMTP id ada2fe7eead31-44d3b9bc4c3so1163403137.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Aug 2023 04:13:58 -0700 (PDT)
+        Fri, 25 Aug 2023 09:26:14 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A061FF6;
+        Fri, 25 Aug 2023 06:26:10 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-68c0d886ea0so322824b3a.2;
+        Fri, 25 Aug 2023 06:26:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692962037; x=1693566837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zen7peyChUcOOjx95uzAjQLL/qr990ssbbyR06E/zbw=;
-        b=uDxVRqSxWY/VwMvIdQCTKPTLD1KFq1JQwC+J8qFbE1/wK6FgstTwnYI1u933aL5oQR
-         V1TnswaQkoRVRc6KHNnbWcXbORir28Itsa4yPX2uqKr92uMZP5d5Nzm36Ja0OqwyNHUr
-         FkX8EtGaPsM5QQ48E30qXmSjUKPP7Wv1j2kWv+P1F3JD522m6QmWn5jPDGErkoc5LD4k
-         eGHU8fX0aTcCXRAQk8Qay4Id/53gnDvLLCi9kyj82CXn4u4N6LqrrobGt+9+6J6xBnWL
-         e53I4PqfbvfT/UJcsqXDylgZjGtvgyw31LLKtMTJdUAI5Zyik3++U+YK9KpFe4HV0Lem
-         cWSA==
+        d=gmail.com; s=20221208; t=1692969970; x=1693574770;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iGQkkPPLedW8ngn+g15L4K1aW2J4fAuXSXgaLZIP97Y=;
+        b=LSWENwUU3YrhMEuQVW0ee2XHe5/zGUAb2rMqaoXskjlG+y0UfDY+bChgCVeA6ZijQf
+         eBijrKpF0QyWyGIAzEiQLxW64vkx/97wD8qEclF3zNk2PyOW4fCQoFUEVFycH3NjvQ78
+         aX69iVYA2rTE2ARIb5FjIBCQ7JwuEUcJo3oB2T+T1e3LALhSmAYm8ahQ5Mshwu8A4Dts
+         FLAPSrrzck84ZARIVr8dTeSkZ/wDH9KncayM6+un8jyyc955md6UniTnqPNHyr9UplIv
+         kk2b7AYrs2HFce/UBcj/B7zmJgOM0hZY2lJOO2y59AqI1aw/JhzQnjEvdEW6NoOr4DQk
+         nG+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692962037; x=1693566837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1692969970; x=1693574770;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zen7peyChUcOOjx95uzAjQLL/qr990ssbbyR06E/zbw=;
-        b=L9M1Ryk1zSm3L70y9bU+mKJadNjEL2nGuNjqoDx4E1rhgHkRD5ERIpLZJGLK34Z30A
-         4L7uiJo2fVTRfxob69R3iUzqC5SDrQFwhMw9yG0IzyIz5NEKACf2NKCDISSWAg3InzAk
-         3ejf7UwVAg8W5IKdwiOmTtdjwfdMYRRdJnLI00JPax9S7EWxA8Q9M/mxmwGGvgAt4iY4
-         p7GaVejKBoc904+CwS6ibT7ULOFBosJuko8QemKLuBcBrLrxpHJ79r+hQPA2q9ybDHkE
-         AudDECDZTRfVotoJMGvhudfYzBHhTne8HMguZu9gtcJEGir0OyejHKdevPw4kxDdnkxn
-         IqxA==
-X-Gm-Message-State: AOJu0YzMRmSKxub0jsaciG7mKT8BF5SlF/XZIQku43KdPMI/IevtHVu6
-        4dZneO3vggml90M8ZMedPZp6GETMNGsqvm6mfQWN2NtLDvvJJytg
-X-Google-Smtp-Source: AGHT+IHzgfofw/PTgO9XWq2HEls/SuyKirBEcYV6hHZAadFf1hkicM5Wyq73fsWmn6R3GVZvRFt95zGufCTf17QJNSc=
-X-Received: by 2002:a05:6102:3c88:b0:44d:6281:4fc2 with SMTP id
- c8-20020a0561023c8800b0044d62814fc2mr5493656vsv.3.1692962037195; Fri, 25 Aug
- 2023 04:13:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230824160017.368517-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230824160017.368517-1-biju.das.jz@bp.renesas.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 25 Aug 2023 13:13:46 +0200
-Message-ID: <CAMRc=MeG6-7YwHsc++ZjaB+v4MJF_bsepJ+X--BBxs0+XZ_uYA@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: pca953x: Use i2c_get_match_data()
+        bh=iGQkkPPLedW8ngn+g15L4K1aW2J4fAuXSXgaLZIP97Y=;
+        b=Rtu2WiVbAwrm0C0om0RR8CeJjG3/o349yHROUf1ZDaiqxuG5p9DXWDgA+5INWgk52m
+         tLQHKMy0iNfdHDdN1gXSFwKPbYvD8l041OTMKhcsmD5Gv7WQBwzL204d8nTKhXEqPZ4Z
+         yu35N5XsTR/ldytT8y94fQiJPUP3qcnxdrFeImbhWrTQXtm2BX1SveRCTZwbMRXf+fXo
+         z54aupO5tAsRYT19OjhHGY9jtBDdwSGpAKymAFYQzBsB4hPZGuBVue+msRrYotbb7U8o
+         bAQl9DgG5Jd32oae4hfEzgXxpza+gWdyQevjQWG6I8uPO84mEfA77pypZvzYcEP2yNM4
+         7RZA==
+X-Gm-Message-State: AOJu0Yzl/nje4wyB9ne4xzZ14qUrvGni4/ZhJ+dH9R3/7BBuacHxIBRP
+        wOhDsux2ifJ5sNCzkEy1l7U=
+X-Google-Smtp-Source: AGHT+IEfpRZwpVTXZzLtSdxb1deyjrQ46KNbP9gCl6Fc9S2LhZPRqOXock9w8n6VQvf0D6cG6K/dHg==
+X-Received: by 2002:a05:6a20:2443:b0:13e:6447:ce39 with SMTP id t3-20020a056a20244300b0013e6447ce39mr24718193pzc.6.1692969970092;
+        Fri, 25 Aug 2023 06:26:10 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id z22-20020aa791d6000000b00686a80f431dsm1512809pfa.126.2023.08.25.06.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Aug 2023 06:26:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Fri, 25 Aug 2023 06:26:08 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
+Cc:     Eric Tremblay <etremblay@distech-controls.com>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/3] hwmon: tmp513: Simplify probe()
+Message-ID: <94abbea0-a793-407c-92f7-6bfecb5b4974@roeck-us.net>
+References: <20230824204456.401580-1-biju.das.jz@bp.renesas.com>
+ <20230824204456.401580-3-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230824204456.401580-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 6:00=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
->
-> Replace device_get_match_data() and id lookup for retrieving match data
-> by i2c_get_match_data().
->
+On Thu, Aug 24, 2023 at 09:44:55PM +0100, Biju Das wrote:
+> Simpilfy probe() by replacing device_get_match_data() and id lookup for
+> retrieving match data by i2c_get_match_data().
+> 
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+Applied.
+
+Thanks,
+Guenter
+
 > ---
 > v1->v2:
->  * Moved i2c_get_match_data() to be called before devm_regulator_get() as
->    it doesn't require regulator to be enabled for functioning.
+>  * Split from v1.
 > ---
->  drivers/gpio/gpio-pca953x.c | 18 +++---------------
->  1 file changed, 3 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index a806a3c1b801..929a2d075fe4 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -1051,7 +1051,6 @@ static int device_pca957x_init(struct pca953x_chip =
-*chip, u32 invert)
->
->  static int pca953x_probe(struct i2c_client *client)
->  {
-> -       const struct i2c_device_id *i2c_id =3D i2c_client_get_device_id(c=
-lient);
->         struct pca953x_platform_data *pdata;
->         struct pca953x_chip *chip;
->         int irq_base =3D 0;
-> @@ -1090,6 +1089,9 @@ static int pca953x_probe(struct i2c_client *client)
->         }
->
->         chip->client =3D client;
-> +       chip->driver_data =3D (uintptr_t)i2c_get_match_data(client);
-> +       if (!chip->driver_data)
-> +               return -ENODEV;
->
->         reg =3D devm_regulator_get(&client->dev, "vcc");
->         if (IS_ERR(reg))
-> @@ -1102,20 +1104,6 @@ static int pca953x_probe(struct i2c_client *client=
-)
->         }
->         chip->regulator =3D reg;
->
-> -       if (i2c_id) {
-> -               chip->driver_data =3D i2c_id->driver_data;
-> -       } else {
-> -               const void *match;
-> -
-> -               match =3D device_get_match_data(&client->dev);
-> -               if (!match) {
-> -                       ret =3D -ENODEV;
-> -                       goto err_exit;
-> -               }
-> -
-> -               chip->driver_data =3D (uintptr_t)match;
-> -       }
-> -
->         i2c_set_clientdata(client, chip);
->
->         pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
-> --
-> 2.25.1
->
-
-Applied, thanks!
-
-Bart
+>  drivers/hwmon/tmp513.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hwmon/tmp513.c b/drivers/hwmon/tmp513.c
+> index 8ee6e02b02e3..9a180b1030c9 100644
+> --- a/drivers/hwmon/tmp513.c
+> +++ b/drivers/hwmon/tmp513.c
+> @@ -720,10 +720,7 @@ static int tmp51x_probe(struct i2c_client *client)
+>  	if (!data)
+>  		return -ENOMEM;
+>  
+> -	if (client->dev.of_node)
+> -		data->id = (uintptr_t)device_get_match_data(&client->dev);
+> -	else
+> -		data->id = i2c_match_id(tmp51x_id, client)->driver_data;
+> +	data->id = (uintptr_t)i2c_get_match_data(client);
+>  
+>  	ret = tmp51x_configure(dev, data);
+>  	if (ret < 0) {
