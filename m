@@ -2,109 +2,107 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947E2EE49A6
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Aug 2023 13:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4ADC71133
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Aug 2023 14:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231812AbjHYN00 (ORCPT
+        id S1343659AbjHYO36 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Aug 2023 09:26:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48644 "EHLO
+        Fri, 25 Aug 2023 10:29:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245071AbjHYNZ7 (ORCPT
+        with ESMTP id S1343915AbjHYO3p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Aug 2023 09:25:59 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75086272A;
-        Fri, 25 Aug 2023 06:25:27 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-68becf931d0so760331b3a.3;
-        Fri, 25 Aug 2023 06:25:27 -0700 (PDT)
+        Fri, 25 Aug 2023 10:29:45 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBBDD1995;
+        Fri, 25 Aug 2023 07:29:43 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-68a3f1d8be2so835703b3a.3;
+        Fri, 25 Aug 2023 07:29:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692969926; x=1693574726;
+        d=gmail.com; s=20221208; t=1692973783; x=1693578583;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=t/+eFeQANgoDs6BDH6E1eMtzqI4quQex5h6vYPQFVmI=;
-        b=YyY4/70jJdDnQwL6grdE2X0EiGJecqndms19PKo4nILsKk32X7dye5mL7jeUCCIWxG
-         7LUXnmLj5WwB0fUpHDCWAf1BUHaDp73zlcVw0/IcaAg2UddJ4b6JfxRuP8gEOHVFq6Sl
-         SzRwXTsRG/AgN+Ug+OXX8w914naxoOMqx1tQq8Co6ni7rhTqljOZzMfbVpuaKtM9SYS2
-         cHzkIMXCAq6rAj7RF//AnZCDqWwSovm8FX5/V+/IP9DUolgR7mXtrVkPqw5m9XJ+FxwA
-         13+aJTeXsg9WpgwDnh3fIv5QXzzjAtErUqXE+XjfWlcoB47jUDOyFxYGIrevRXCAw78h
-         8RbQ==
+        bh=hTXWmefAxL/7rw5HDKxNWuL5Xr538rX+4SeTiv8Nx2g=;
+        b=kZBzzZDtC5v6mG046blUvHHvssCDlMfRQDryjQhhB04DLNCzuyEL2dZVshqJ65bJ+S
+         tPvPX5W8XsnOJcwvaNDq0Yt9HIKkzsHu7M8wzJv4EFscOi7eT4xIdnPJMFWuhZfLwq1W
+         nus0zZW/0DPH2oZmYV+/f5Ih65E3fRWRnxVGBRb+KceRRtibq/44z/f8Kwj5Iseq7gHD
+         OKczqCl4J39TliFy+IqzkHsETMoxO0AbaeFI2PFqyH/reo1Oyd+Mmj8iGd3YfeUSKHYL
+         OyYZtuYxoK5Qd81qPSRcBir8FxCPj/YSud8AJeKOxcjm4qk0LA0LZzcKKSIW9CWC9F4u
+         UHpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692969926; x=1693574726;
+        d=1e100.net; s=20221208; t=1692973783; x=1693578583;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t/+eFeQANgoDs6BDH6E1eMtzqI4quQex5h6vYPQFVmI=;
-        b=FetitdBBug13jTsdRKlIepF3A3pFL44K2Lh+sy1zl54QqHIoqGJ8KVm+GvKm7cpDtN
-         DKhJNKsYp6F//7wH0dPUdAhD7ByGzKec8Msx2Rx/QBhaxLmlFOG2JyFS/Hszj2R7IqIW
-         ldeSf8jYSMq0rKy/MUxlfJ5QGLAwcy7hwXXkqxTV57cBsgrVbx99blIDyfRpiEoLmJ9K
-         OhDK9MK86u1rU/fv0UwU+Nmes5pdVL341GN3qRHf2ezylQNNUD4vZI5MNJl+zJFCmxix
-         z3yVAuQGdlXqAP3SFVU2YoNNidBRyx2gm8lN0BSSEM4axQA0hCAGjqjascgjmic//Hjm
-         9uow==
-X-Gm-Message-State: AOJu0YzFf+ekuDUTy0fvvOiCMzPCJFjkM/tkfAhCeolxKpBjkh/sTRF0
-        KBI+SBGkTeKbTqz/c7det0FcRtfChvM=
-X-Google-Smtp-Source: AGHT+IHhEVdN020fIPu86aadYFKpL2xmpfC9KZXvY0oHwrK9osnUCn2UgWGzE13kmKVNGKIGvAnScA==
-X-Received: by 2002:a05:6a00:1a13:b0:68a:4bef:5f9a with SMTP id g19-20020a056a001a1300b0068a4bef5f9amr15376622pfv.0.1692969926124;
-        Fri, 25 Aug 2023 06:25:26 -0700 (PDT)
+        bh=hTXWmefAxL/7rw5HDKxNWuL5Xr538rX+4SeTiv8Nx2g=;
+        b=J5KohamiU3zsHUBt+DSXre2JWVbHz2pwpJgXXqb1nPHsphOMdaTFB6GhxBu+ijx2H8
+         HtFKKx25eUDgow2RDv70PV8pPGSsCliX6VlQSHV/guH2p6s+ANxM/+TIhIAFf9OehtpH
+         W0/QhFsdjOdTA+eTF2BB7O9FtBj5e+LdGhmf7wZybSEl3algRF17DSNaaPWruTR8PpFx
+         mvqGxk5Ugk653qSBcx8m0NZgXH/ce/7Zwulh+jfvTFiZcNRJQ3ShTTzh09D8xZ62EQHC
+         QxZRY1zZIg6CrNdEIzVd7amOBIkYpnfICEu8KClKuT7SjREDlmfe9ZfGj9W0vJyFnXk+
+         SVow==
+X-Gm-Message-State: AOJu0YxYlHn6XP/E1HQNH4TPvN3tUCrpQmwUwjMktMoe6WSYNeQ4sG4Z
+        iohesskCu3EjGRkBDMo0fJtyKBYnSTM=
+X-Google-Smtp-Source: AGHT+IHdRNfrK1Qmd0lUIkmUBZKdUIl9Q7GPWYf1g4kOHX2bBYJ/4hBoSeu/O/Wl14x0vGy/i+24uw==
+X-Received: by 2002:a05:6a21:279b:b0:137:a3c9:aaa2 with SMTP id rn27-20020a056a21279b00b00137a3c9aaa2mr17566747pzb.30.1692973783331;
+        Fri, 25 Aug 2023 07:29:43 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d3-20020aa78143000000b00682868714fdsm1569741pfn.95.2023.08.25.06.25.25
+        by smtp.gmail.com with ESMTPSA id k12-20020aa7820c000000b0068beb77468esm1633322pfi.0.2023.08.25.07.29.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Aug 2023 06:25:25 -0700 (PDT)
+        Fri, 25 Aug 2023 07:29:42 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Fri, 25 Aug 2023 06:25:24 -0700
+Date:   Fri, 25 Aug 2023 07:29:41 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Eric Tremblay <etremblay@distech-controls.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Eric Tremblay <etremblay@distech-controls.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] hwmon: tmp513: Fix the channel number in
- tmp51x_is_visible()
-Message-ID: <3baafb4e-58c8-40dc-b1bc-aeb227bbe5f9@roeck-us.net>
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] hwmon: tmp513: Replace tmp51x_ids->max_channels
+ in struct tmp51x_data
+Message-ID: <5a3c48e4-ade8-4563-be75-f594be68cf2e@roeck-us.net>
 References: <20230824204456.401580-1-biju.das.jz@bp.renesas.com>
- <20230824204456.401580-2-biju.das.jz@bp.renesas.com>
+ <20230824204456.401580-4-biju.das.jz@bp.renesas.com>
+ <ZOgQ2Fc1J8V7rdm4@smile.fi.intel.com>
+ <OS0PR01MB592292B941414BF452B14AB086E3A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <258bae5d-3602-4625-8ac1-375856d9b334@roeck-us.net>
+ <OS0PR01MB59224BF249A2B17ADC6EE23686E3A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230824204456.401580-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <OS0PR01MB59224BF249A2B17ADC6EE23686E3A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 09:44:54PM +0100, Biju Das wrote:
-> The supported channels for this driver are {0..3}. Fix the incorrect
-> channel in tmp51x_is_visible().
+On Fri, Aug 25, 2023 at 08:01:49AM +0000, Biju Das wrote:
+> > >
+> > > You mean split this into 2.  First patch with just this logic (channel
+> > > >= data->max_channels) and keep data->id in remaining Places and Second
+> > patch is to replace the id and use max_channels instead.
+> > >
+> > 
+> > There is only one field available in struct i2c_device_id.
+> > Splitting this patch in 2 seems overkill because the first patch would have
+> > to introduce code (set max_channels based on enum tmp51x_ids) only to
+> > remove it in the second patch.
 > 
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/all/ea0eccc0-a29f-41e4-9049-a1a13f8b16f1@roeck-us.net/
-> Fixes: 59dfa75e5d82 ("hwmon: Add driver for Texas Instruments TMP512/513 sensor chips.")
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Applied.
+> The plan was,
+> 
+> First patch will replace id->max_channels in the table
+> and will fill the id based on max_channels and fix the logic for invalid channels.
+> 
+> The Second patch is to remove id altogether.
+> 
+> I am ok with doing it in the same patch. Please let me know.
+> 
+Same here. You can try with your two-step approach, but please do not
+introduce code in step 1 only to remove it in step 2.
 
 Thanks,
 Guenter
-
-> ---
-> v2:
->  * New patch
-> ---
->  drivers/hwmon/tmp513.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/tmp513.c b/drivers/hwmon/tmp513.c
-> index 7db5d0fc24a4..8ee6e02b02e3 100644
-> --- a/drivers/hwmon/tmp513.c
-> +++ b/drivers/hwmon/tmp513.c
-> @@ -434,7 +434,7 @@ static umode_t tmp51x_is_visible(const void *_data,
->  
->  	switch (type) {
->  	case hwmon_temp:
-> -		if (data->id == tmp512 && channel == 4)
-> +		if (data->id == tmp512 && channel == 3)
->  			return 0;
->  		switch (attr) {
->  		case hwmon_temp_input:
