@@ -2,26 +2,26 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE02C727A0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0105FC727A7
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Aug 2023 09:33:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244306AbjHYJcq (ORCPT
+        id S244261AbjHYJcs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Aug 2023 05:32:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54202 "EHLO
+        Fri, 25 Aug 2023 05:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244262AbjHYJca (ORCPT
+        with ESMTP id S244260AbjHYJca (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 25 Aug 2023 05:32:30 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F19F21FE3;
-        Fri, 25 Aug 2023 02:32:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 53A7A1FDF;
+        Fri, 25 Aug 2023 02:32:27 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.02,195,1688396400"; 
-   d="scan'208";a="177667246"
+   d="scan'208";a="177667254"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Aug 2023 18:32:24 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 25 Aug 2023 18:32:25 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 49BDA40134E1;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id ECD2140134E1;
         Fri, 25 Aug 2023 18:32:24 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
@@ -32,10 +32,12 @@ To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
 Cc:     marek.vasut+renesas@gmail.com, fancer.lancer@gmail.com,
         linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v20 09/19] PCI: dwc: Add EDMA_UNROLL capability flag
-Date:   Fri, 25 Aug 2023 18:32:09 +0900
-Message-Id: <20230825093219.2685912-10-yoshihiro.shimoda.uh@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Rob Herring <robh@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Subject: [PATCH v20 13/19] dt-bindings: PCI: dwc: Update maxItems of reg and reg-names
+Date:   Fri, 25 Aug 2023 18:32:13 +0900
+Message-Id: <20230825093219.2685912-14-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230825093219.2685912-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230825093219.2685912-1-yoshihiro.shimoda.uh@renesas.com>
@@ -45,55 +47,54 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Renesas R-Car Gen4 PCIe controllers have an unexpected register value in
-the eDMA CTRL register. So, add a new capability flag "EDMA_UNROLL"
-which would force the unrolled eDMA mapping for the problematic device.
+Update maxItems of reg and reg-names on both host and endpoint
+for supporting Renesas R-Car Gen4 PCIe controllers later.
 
-Suggested-by: Serge Semin <fancer.lancer@gmail.com>
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Manivannan Sadhasivam <mani@kernel.org>
 Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/pci/controller/dwc/pcie-designware.c | 8 +++++++-
- drivers/pci/controller/dwc/pcie-designware.h | 5 +++--
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml | 4 ++--
+ Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index c4998194fe74..4812ce040f1e 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -883,8 +883,14 @@ static int dw_pcie_edma_find_chip(struct dw_pcie *pci)
- 	 * Indirect eDMA CSRs access has been completely removed since v5.40a
- 	 * thus no space is now reserved for the eDMA channels viewport and
- 	 * former DMA CTRL register is no longer fixed to FFs.
-+	 *
-+	 * Note that Renesas R-Car S4-8's PCIe controllers for unknown reason
-+	 * have zeros in the eDMA CTRL register even though the HW-manual
-+	 * explicitly states there must FFs if the unrolled mapping is enabled.
-+	 * For such cases the low-level drivers are supposed to manually
-+	 * activate the unrolled mapping to bypass the auto-detection procedure.
- 	 */
--	if (dw_pcie_ver_is_ge(pci, 540A))
-+	if (dw_pcie_ver_is_ge(pci, 540A) || dw_pcie_cap_is(pci, EDMA_UNROLL))
- 		val = 0xFFFFFFFF;
- 	else
- 		val = dw_pcie_readl_dbi(pci, PCIE_DMA_VIEWPORT_BASE + PCIE_DMA_CTRL);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index b731e38a71fc..c7759a508ca9 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -51,8 +51,9 @@
+diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+index 8fc2151691a4..cb727f60be0b 100644
+--- a/Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+@@ -33,11 +33,11 @@ properties:
+       normal controller functioning. iATU memory IO region is also required
+       if the space is unrolled (IP-core version >= 4.80a).
+     minItems: 2
+-    maxItems: 5
++    maxItems: 6
  
- /* DWC PCIe controller capabilities */
- #define DW_PCIE_CAP_REQ_RES		0
--#define DW_PCIE_CAP_IATU_UNROLL		1
--#define DW_PCIE_CAP_CDM_CHECK		2
-+#define DW_PCIE_CAP_EDMA_UNROLL		1
-+#define DW_PCIE_CAP_IATU_UNROLL		2
-+#define DW_PCIE_CAP_CDM_CHECK		3
+   reg-names:
+     minItems: 2
+-    maxItems: 5
++    maxItems: 6
+     items:
+       oneOf:
+         - description:
+diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
+index 1a83f0f65f19..0bfcfd6ccb5f 100644
+--- a/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
+@@ -33,11 +33,11 @@ properties:
+       are required for the normal controller work. iATU memory IO region is
+       also required if the space is unrolled (IP-core version >= 4.80a).
+     minItems: 2
+-    maxItems: 5
++    maxItems: 6
  
- #define dw_pcie_cap_is(_pci, _cap) \
- 	test_bit(DW_PCIE_CAP_ ## _cap, &(_pci)->caps)
+   reg-names:
+     minItems: 2
+-    maxItems: 5
++    maxItems: 6
+     items:
+       oneOf:
+         - description:
 -- 
 2.25.1
 
