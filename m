@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3417C83F17
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Aug 2023 07:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C76EC83F16
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Aug 2023 07:20:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230476AbjHZHT0 (ORCPT
+        id S229541AbjHZHUA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 26 Aug 2023 03:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60844 "EHLO
+        Sat, 26 Aug 2023 03:20:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjHZHTN (ORCPT
+        with ESMTP id S230076AbjHZHTZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 26 Aug 2023 03:19:13 -0400
+        Sat, 26 Aug 2023 03:19:25 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F2C632136
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 Aug 2023 00:19:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 314452136
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 Aug 2023 00:19:23 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.02,203,1688396400"; 
-   d="scan'208";a="174025554"
+   d="scan'208";a="174025565"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Aug 2023 16:19:10 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 26 Aug 2023 16:19:22 +0900
 Received: from localhost.localdomain (unknown [10.226.92.24])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 792C24167444;
-        Sat, 26 Aug 2023 16:19:04 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BDACC4167444;
+        Sat, 26 Aug 2023 16:19:16 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
@@ -45,37 +45,60 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 0/2] Drop ID table and conditionals around of_node pointers for anx78xx driver
-Date:   Sat, 26 Aug 2023 08:18:59 +0100
-Message-Id: <20230826071901.29420-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v4 2/2] drm/bridge: Drop conditionals around of_node pointers
+Date:   Sat, 26 Aug 2023 08:19:01 +0100
+Message-Id: <20230826071901.29420-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230826071901.29420-1-biju.das.jz@bp.renesas.com>
+References: <20230826071901.29420-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series aims to drop ID table and conditionals around of_node
-pointers for anx78xx driver.
+Having conditional around the of_node pointers turns out to make driver
+code use ugly #ifdef and #if blocks. So drop the conditionals.
 
-While at it, drop conditionals from drm_bridge.h.
-
-v3->v4:
- * Created patch#2 for dropping conditionals around of_node pointers.
- * Added Rb tag from Laurent and Douglas Anderson for patch#1.
-v2->v3:
- * Updated commit header.
-v1->v2:
- * Dropped ID table support.
-
-Biju Das (2):
-  drm/bridge/analogix/anx78xx: Drop ID table
-  drm/bridge: Drop conditionals around of_node pointers
-
- drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c | 9 ---------
+Suggested-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v4:
+ * New patch
+---
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c | 2 --
  include/drm/drm_bridge.h                           | 2 --
- 2 files changed, 11 deletions(-)
+ 2 files changed, 4 deletions(-)
 
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+index 6169db73d2fe..ad8241758896 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+@@ -1231,9 +1231,7 @@ static int anx78xx_i2c_probe(struct i2c_client *client)
+ 
+ 	mutex_init(&anx78xx->lock);
+ 
+-#if IS_ENABLED(CONFIG_OF)
+ 	anx78xx->bridge.of_node = client->dev.of_node;
+-#endif
+ 
+ 	anx78xx->client = client;
+ 	i2c_set_clientdata(client, anx78xx);
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index c339fc85fd07..d49d5c03df3e 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -716,10 +716,8 @@ struct drm_bridge {
+ 	struct drm_encoder *encoder;
+ 	/** @chain_node: used to form a bridge chain */
+ 	struct list_head chain_node;
+-#ifdef CONFIG_OF
+ 	/** @of_node: device node pointer to the bridge */
+ 	struct device_node *of_node;
+-#endif
+ 	/** @list: to keep track of all added bridges */
+ 	struct list_head list;
+ 	/**
 -- 
 2.25.1
 
