@@ -2,103 +2,100 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C76EC83F16
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Aug 2023 07:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC27C83F11
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Aug 2023 08:23:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbjHZHUA (ORCPT
+        id S230381AbjHZIWt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 26 Aug 2023 03:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56842 "EHLO
+        Sat, 26 Aug 2023 04:22:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbjHZHTZ (ORCPT
+        with ESMTP id S229764AbjHZIWa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 26 Aug 2023 03:19:25 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 314452136
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 Aug 2023 00:19:23 -0700 (PDT)
+        Sat, 26 Aug 2023 04:22:30 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2A4511BE6;
+        Sat, 26 Aug 2023 01:22:28 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.02,203,1688396400"; 
-   d="scan'208";a="174025565"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Aug 2023 16:19:22 +0900
+   d="scan'208";a="177735137"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 26 Aug 2023 17:22:27 +0900
 Received: from localhost.localdomain (unknown [10.226.92.24])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BDACC4167444;
-        Sat, 26 Aug 2023 16:19:16 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 70AF440029B4;
+        Sat, 26 Aug 2023 17:22:25 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        Zhu Wang <wangzhu9@huawei.com>,
-        dri-devel@lists.freedesktop.org,
+To:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-omap@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 2/2] drm/bridge: Drop conditionals around of_node pointers
-Date:   Sat, 26 Aug 2023 08:19:01 +0100
-Message-Id: <20230826071901.29420-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 2/2] mfd: palmas: Make similar OF and ID table
+Date:   Sat, 26 Aug 2023 09:22:17 +0100
+Message-Id: <20230826082217.41967-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230826071901.29420-1-biju.das.jz@bp.renesas.com>
-References: <20230826071901.29420-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230826082217.41967-1-biju.das.jz@bp.renesas.com>
+References: <20230826082217.41967-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Having conditional around the of_node pointers turns out to make driver
-code use ugly #ifdef and #if blocks. So drop the conditionals.
+Make similar OF and ID table to extend support for ID match using
+i2c_match_data(). Currently it works only for OF match tables as the
+driver_data is wrong for ID match.
 
-Suggested-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v4:
- * New patch
----
- drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c | 2 --
- include/drm/drm_bridge.h                           | 2 --
- 2 files changed, 4 deletions(-)
+ drivers/mfd/palmas.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
-index 6169db73d2fe..ad8241758896 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
-@@ -1231,9 +1231,7 @@ static int anx78xx_i2c_probe(struct i2c_client *client)
+diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
+index 71df70e1bd33..9f614bbca007 100644
+--- a/drivers/mfd/palmas.c
++++ b/drivers/mfd/palmas.c
+@@ -489,6 +489,15 @@ static const struct of_device_id of_palmas_match_tbl[] = {
+ };
+ MODULE_DEVICE_TABLE(of, of_palmas_match_tbl);
  
- 	mutex_init(&anx78xx->lock);
++static const struct i2c_device_id palmas_i2c_id[] = {
++	{ "palmas", (kernel_ulong_t)&palmas_data },
++	{ "twl6035", (kernel_ulong_t)&palmas_data },
++	{ "twl6037", (kernel_ulong_t)&palmas_data },
++	{ "tps65913", (kernel_ulong_t)&palmas_data },
++	{ /* end */ }
++};
++MODULE_DEVICE_TABLE(i2c, palmas_i2c_id);
++
+ static int palmas_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct palmas *palmas;
+@@ -521,7 +530,7 @@ static int palmas_i2c_probe(struct i2c_client *i2c)
+ 	palmas->dev = &i2c->dev;
+ 	palmas->irq = i2c->irq;
  
--#if IS_ENABLED(CONFIG_OF)
- 	anx78xx->bridge.of_node = client->dev.of_node;
--#endif
+-	driver_data = device_get_match_data(&i2c->dev);
++	driver_data = i2c_get_match_data(i2c);
+ 	palmas->features = driver_data->features;
  
- 	anx78xx->client = client;
- 	i2c_set_clientdata(client, anx78xx);
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index c339fc85fd07..d49d5c03df3e 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -716,10 +716,8 @@ struct drm_bridge {
- 	struct drm_encoder *encoder;
- 	/** @chain_node: used to form a bridge chain */
- 	struct list_head chain_node;
--#ifdef CONFIG_OF
- 	/** @of_node: device node pointer to the bridge */
- 	struct device_node *of_node;
--#endif
- 	/** @list: to keep track of all added bridges */
- 	struct list_head list;
- 	/**
+ 	for (i = 0; i < PALMAS_NUM_CLIENTS; i++) {
+@@ -698,15 +707,6 @@ static void palmas_i2c_remove(struct i2c_client *i2c)
+ 	}
+ }
+ 
+-static const struct i2c_device_id palmas_i2c_id[] = {
+-	{ "palmas", },
+-	{ "twl6035", },
+-	{ "twl6037", },
+-	{ "tps65913", },
+-	{ /* end */ }
+-};
+-MODULE_DEVICE_TABLE(i2c, palmas_i2c_id);
+-
+ static struct i2c_driver palmas_i2c_driver = {
+ 	.driver = {
+ 		   .name = "palmas",
 -- 
 2.25.1
 
