@@ -2,82 +2,79 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2A9C83F11
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Aug 2023 11:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC01C83F11
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Aug 2023 11:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229718AbjH1LU7 (ORCPT
+        id S229670AbjH1LVa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Aug 2023 07:20:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54620 "EHLO
+        Mon, 28 Aug 2023 07:21:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjH1LUc (ORCPT
+        with ESMTP id S232445AbjH1LVY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Aug 2023 07:20:32 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD6DB6
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Aug 2023 04:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693221631; x=1724757631;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=y0o7cPz28oj6gIzjXxgvzLqUnO42LwUmzn0fZtRGTH4=;
-  b=MURFaAAjw2FJli+Jj3fqCxHFYjSB+jacs5mn+Xh+DvKaPyqiY9/eJcZp
-   pzPqfmDZG0EM1WbzzrUGwjVGoAt8x2+riB4H7ZQMZMCoS59WMpaiZZK53
-   gVoR/H9bTkqrWugQHDWXTaLXacmn2g4RLVUVe4lhERm8K0Lh8x18mFgE4
-   TY2nAlIa6qvs/Q/0jUFU2H6cZwzKpWb2ZgPmPWA6XLj04rjq80wGmQtVs
-   TKKCk5iAouxTo8g59ca7yNsR69CuoG6K3DZCig+sdp1I1BbUu3us8nHx2
-   xP8OLiWniVnImoT62yXLXC9r8qDRtaFI/MdcLN+VHrqvB4lfLDLvOqFcO
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="355403993"
-X-IronPort-AV: E=Sophos;i="6.02,207,1688454000"; 
-   d="scan'208";a="355403993"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2023 04:20:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="803661394"
-X-IronPort-AV: E=Sophos;i="6.02,207,1688454000"; 
-   d="scan'208";a="803661394"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga008.fm.intel.com with ESMTP; 28 Aug 2023 04:20:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qaaIF-00Futr-18;
-        Mon, 28 Aug 2023 14:20:27 +0300
-Date:   Mon, 28 Aug 2023 14:20:27 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Lee Jones <lee@kernel.org>,
+        Mon, 28 Aug 2023 07:21:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA6B3E7;
+        Mon, 28 Aug 2023 04:21:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 53CFC621A6;
+        Mon, 28 Aug 2023 11:21:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302C8C433C7;
+        Mon, 28 Aug 2023 11:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693221677;
+        bh=TZmKaBVmangkdek3JbxffDFdaDrgU4VpX7OVExruEfY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CAOIx8+oJ5YLBqNsoJ3Zma8bAKfR58Pw6JZbEQDDSvJLT16zDT3eI56RuFGTNfZV0
+         /ZGbnJHdDm9U1J3SthBVK1nM4Yi51RPkuWXpQyICyqR3IKDrP3Gecnh0OrXXJRNuYy
+         uK0L7dhEg2Ao92mE6wQbZM0ijVGvvoR0fHJNOoP7+l035jY6VoIYbO2tQQ+CHr5ks3
+         19uMRRjGdenyyS6seT8DBIEXoQYsTMSlMVD0iUhDA/Sl0Qpiw9CcXLDIn3Pnk2QKk0
+         hjMJEeg0O7TinVzeZZiEk63zDzHpH3DJh6AAi0p3PfBr0gwJoYZpdRcEfkBd10XhPF
+         CKTskRgK8ft4A==
+Date:   Mon, 28 Aug 2023 12:21:36 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mehdi Djait <mehdi.djait.k@gmail.com>,
+        Rob Herring <robh@kernel.org>, linux-iio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] mfd: max77541: Simplify probe()
-Message-ID: <ZOyC++vjeg4TGCpx@smile.fi.intel.com>
-References: <20230826091020.45621-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2 RESEND 2/2] iio: accel: mma8452: Sort match tables
+Message-ID: <20230828122136.27a3dba7@jic23-huawei>
+In-Reply-To: <ZONiWnLpY7FD/+lj@smile.fi.intel.com>
+References: <20230818184033.335502-1-biju.das.jz@bp.renesas.com>
+        <20230818184033.335502-3-biju.das.jz@bp.renesas.com>
+        <ZONiWnLpY7FD/+lj@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230826091020.45621-1-biju.das.jz@bp.renesas.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Aug 26, 2023 at 10:10:20AM +0100, Biju Das wrote:
-> Simplify probe() by replacing device_get_match_data() and ID lookup for
-> retrieving match data by i2c_get_match_data().
+On Mon, 21 Aug 2023 16:10:50 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> On Fri, Aug 18, 2023 at 07:40:33PM +0100, Biju Das wrote:
+> > Sort ID table alphabetically by name and OF table by compatible.  
 > 
-> While at it, drop leading commas from OF table.
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-...
+Series applied to the togreg branch of iio.git. I'll push that out
+as testing until I can rebase on rc1.
 
-> -		return -EINVAL;
-> +		return -ENODEV;
+Thanks
 
-Why?
+Jonathan
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+> 
 
