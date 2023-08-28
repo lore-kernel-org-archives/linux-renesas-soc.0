@@ -2,86 +2,83 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB23C83F11
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Aug 2023 10:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E89C83F17
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Aug 2023 10:57:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbjH1K4c (ORCPT
+        id S232341AbjH1K5F (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Aug 2023 06:56:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48696 "EHLO
+        Mon, 28 Aug 2023 06:57:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232389AbjH1K4U (ORCPT
+        with ESMTP id S232547AbjH1K4a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Aug 2023 06:56:20 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19F5DD
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Aug 2023 03:55:23 -0700 (PDT)
+        Mon, 28 Aug 2023 06:56:30 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047BF2703
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Aug 2023 03:55:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693220123; x=1724756123;
+  t=1693220158; x=1724756158;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=93Q1+09FZxhS4XNoxqvDb1t4zqKJ0lCyw9SI6NZjvGQ=;
-  b=UPnxuJD3r9HNmK+pDa7d2SMHCJYC2rcQNfAVTb99WeFIwBPSEjHNlSHW
-   0+zHvRABzutUMGuFGs96otHPZ9QP2fuiJ0PHf4yFRa+SYUtm5L3luaEtw
-   iUJX6y6XmTJyEPNFxv+F6kUTZdCypgBDG1q3EXOCAwIw/v3z2gXymWaq5
-   4Bf1TYQetjHf5VdVPNtzdAVdLng0gFhCIPWmq4LKMxV4ZzvmE94tZHKeF
-   PGbanIqK4k42YJ+061/ezfHAFTGLLMKvi/+dXqnsdDMUOotS5ndOR4Qu9
-   LXmTdjfbL7NmiYo2f/ppDRkb2uBSBw8KUGD2WT6zUnmTZWJ8rvNtAh8uj
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="373962706"
+  bh=BYRLaBu0bU3O00zzYsNS65DjNaDaIKA5Bs+hoe4tLJ8=;
+  b=cXLicLKEYcZxLMGKxeGNChtxagOWHt0b2FYIb1XIVyXDbXTExrCZU6/g
+   pM2D/SVbbPuTwMC7WW4HH9ZBg4jlIVa1SwI6ZaU95ez+NCemY6kIFzvd5
+   hoEaUEIBp978Cpcj96+L0heK+wvfX2gNwe0PutnoB9YuQuGP51Q3QYp+J
+   VrJOIqLi11/RnhhvmUIGvFdb092Qsb/cXJtXSaF36ySnpup48TQGwM//4
+   uGokOBYYUZWuCXtohXdPTgndsItTVYsTG2wDicYG+jFsFHxb1LW90eu0H
+   BS+uILeityPniBhijsZeyoPk8MMe1/mRYI7XsH4dIxVdu/G9v/LsQ4mmw
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="372478716"
 X-IronPort-AV: E=Sophos;i="6.02,207,1688454000"; 
-   d="scan'208";a="373962706"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2023 03:55:19 -0700
+   d="scan'208";a="372478716"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2023 03:55:52 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="738201863"
+X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="731783702"
 X-IronPort-AV: E=Sophos;i="6.02,207,1688454000"; 
-   d="scan'208";a="738201863"
+   d="scan'208";a="731783702"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga002.jf.intel.com with ESMTP; 28 Aug 2023 03:55:16 -0700
+  by orsmga007.jf.intel.com with ESMTP; 28 Aug 2023 03:55:48 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.96)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qaZtr-00F6Ig-0Y;
-        Mon, 28 Aug 2023 13:55:15 +0300
-Date:   Mon, 28 Aug 2023 13:55:14 +0300
+        id 1qaZuM-00F7Nk-2Y;
+        Mon, 28 Aug 2023 13:55:46 +0300
+Date:   Mon, 28 Aug 2023 13:55:46 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Lee Jones <lee@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+Cc:     Lee Jones <lee@kernel.org>, patches@opensource.cirrus.com,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] mfd: madera-i2c: Simplify probe()
-Message-ID: <ZOx9Ei3PIioXdQLu@smile.fi.intel.com>
-References: <20230826091751.51634-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH] mfd: arizona-i2c: Simplify probe()
+Message-ID: <ZOx9MoBVYDr+Fv8z@smile.fi.intel.com>
+References: <20230826092721.55225-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230826091751.51634-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230826092721.55225-1-biju.das.jz@bp.renesas.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Aug 26, 2023 at 10:17:51AM +0100, Biju Das wrote:
-> Simplify probe() by replacing of_device_get_match_data() and ID lookup for
+On Sat, Aug 26, 2023 at 10:27:21AM +0100, Biju Das wrote:
+> Simplify probe() by replacing device_get_match_data() and ID lookup for
 > retrieving match data by i2c_get_match_data().
 
 ...
 
-> -	of_data = of_device_get_match_data(&i2c->dev);
-> -	if (of_data)
-> -		type = (unsigned long)of_data;
-> -	else
+> -	match_data = device_get_match_data(&i2c->dev);
+> -	if (match_data)
+> -		type = (unsigned long)match_data;
+> -	else if (id)
 > -		type = id->driver_data;
 > +	type = (unsigned long)i2c_get_match_data(i2c);
 
 >  
 
-This blank line is not needed after this change.
+You now can drop this blank line.
 
 >  	switch (type) {
 
