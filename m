@@ -2,79 +2,87 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A54C83F11
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Aug 2023 11:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B26EC83F12
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Aug 2023 11:24:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230175AbjH1LWC (ORCPT
+        id S229818AbjH1LXi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Aug 2023 07:22:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48544 "EHLO
+        Mon, 28 Aug 2023 07:23:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230187AbjH1LVe (ORCPT
+        with ESMTP id S232462AbjH1LXW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Aug 2023 07:21:34 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A18B6
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Aug 2023 04:21:32 -0700 (PDT)
+        Mon, 28 Aug 2023 07:23:22 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20D2FFF
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Aug 2023 04:23:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693221692; x=1724757692;
+  t=1693221796; x=1724757796;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=OW0R99GwUEkA82/3Aj5gR/CgcGg4fZRBv1sjgN2iO6U=;
-  b=CjKnkOgsC1UtDTu43uaRco1yMSBgqgc+ecbgcbF5/HT5jR4ck5uXIYED
-   2V7pGp4yV/mevxVgPFLjqiJbLvVR2CuXul4rpsGajpRz0V0Ski7QX6Oy+
-   KiRKGD9RttMF8Vj+WefIMil5q5bdbxXY0J13rqoEqJcEPepZT9coXkZfW
-   FNz21nJ6XnlbI/nkfktTb01gQ4JbMwh+B1vgTb29cY1WbsgbSwHjVYRHy
-   LfLATFTdSY7xiwrO/M2x/b3Ka9SSDVoR24XGW/pXZtbcNMoU1LcGHPVPb
-   3hJZw+O5pRgFA3CGFaY5R28vald55SlxWDy2+6AOkduMsVxKKyPDn6nDp
+  bh=PaQk6OirrhkKt09B+KAVZl4h0ucta+HpJVRq6IIutRM=;
+  b=N9zcQlsfyCYVsAywkjTcUkDU4DfZ/Iiufsa62rr5XwMGqvlxmX/GOVJH
+   FfrcXUcS1U/jfHxseXApZRLUFh6Bnx29PW9KVX9dTYS7y9J3i8/ITZAuE
+   2MuMOLgnIhAItlCGCou+c2nBLgSIT6+kPN00GYmW14NUijZsupFQpny5x
+   XU9BeviyXfg0cfFBrzCNgqx/U9pqPojWfakvqu694AnmxchgOlSbgm3Zp
+   wCm0qmIkFvVa7O9lmLqc/IIMMxQ5/f7ZvFHZzwNo1EDsxeSz5IwrIiCmO
+   Ack7GIeSDu2c2CE6dNLo7wLCJcgGFoen3eV6HtdDged2KAC3ZbV2MbvSl
    A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="378853606"
+X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="354599486"
 X-IronPort-AV: E=Sophos;i="6.02,207,1688454000"; 
-   d="scan'208";a="378853606"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2023 04:21:32 -0700
+   d="scan'208";a="354599486"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2023 04:23:15 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="738207069"
+X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="767630597"
 X-IronPort-AV: E=Sophos;i="6.02,207,1688454000"; 
-   d="scan'208";a="738207069"
+   d="scan'208";a="767630597"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga002.jf.intel.com with ESMTP; 28 Aug 2023 04:21:29 -0700
+  by orsmga008.jf.intel.com with ESMTP; 28 Aug 2023 04:23:13 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.96)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qaaJB-00Fwti-3A;
-        Mon, 28 Aug 2023 14:21:25 +0300
-Date:   Mon, 28 Aug 2023 14:21:25 +0300
+        id 1qaaKt-00G0XD-3D;
+        Mon, 28 Aug 2023 14:23:12 +0300
+Date:   Mon, 28 Aug 2023 14:23:11 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Lee Jones <lee@kernel.org>,
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] mfd: max8997: Simplify probe() and drop
- max8997_i2c_get_driver_data()
-Message-ID: <ZOyDNfH7JE3wFa8C@smile.fi.intel.com>
-References: <20230826094905.64430-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH] regulator: fan53555: Simplify probe()
+Message-ID: <ZOyDnyy3i8hk2FbS@smile.fi.intel.com>
+References: <20230826172458.88078-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230826094905.64430-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230826172458.88078-1-biju.das.jz@bp.renesas.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Aug 26, 2023 at 10:49:05AM +0100, Biju Das wrote:
-> Simplify probe() by using i2c_get_match_data() instead of
-> max8997_i2c_get_driver_data() for retrieving match data from
-> OF/ID tables.
+On Sat, Aug 26, 2023 at 06:24:58PM +0100, Biju Das wrote:
+> Simplify probe() by replacing of_device_get_match_data() and ID lookup for
+> retrieving match data by i2c_get_match_data().
 
 ...
 
-> -	max8997->type = max8997_i2c_get_driver_data(i2c, id);
-> +	max8997->type = (unsigned long)i2c_get_match_data(i2c);
+> +	di->vendor = (unsigned long)i2c_get_match_data(client);
 
-You need to be consistent inside your patches with the casting...
+Use standard casting for this type of conversions.
+
+...
+
+
+> +	if (!client->dev.of_node) {
+
+Why?
+
+Note, we discourage dereference of of_node or fwnode from struct device. We
+have APIs for this (in case it's even needed).
 
 -- 
 With Best Regards,
