@@ -2,103 +2,119 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E88BC83F12
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Aug 2023 11:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBA2C83F11
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Aug 2023 11:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230355AbjH1LZq (ORCPT
+        id S232050AbjH1L0z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Aug 2023 07:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37588 "EHLO
+        Mon, 28 Aug 2023 07:26:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231356AbjH1LZh (ORCPT
+        with ESMTP id S232268AbjH1L0k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Aug 2023 07:25:37 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F82192
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Aug 2023 04:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693221934; x=1724757934;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CyWI73CSFvkOIcN2LWNQ42OVDDFnHPtsT54tYyT/6C8=;
-  b=Dhp0/X93DhZUhTa/hJp6Ft+g0RSi21Fj6qJNm4QIzDwXOXIdJXVwjU0N
-   EYPFwGAhRaoi5ILx5Tow44ZjVM7dGDRvNAJG/xQO+e2uIbT7vngYalpXq
-   iaiu27kP+oSoOFgwW6GM9F1EfcirQhlPuiUNRogNbXx+yVMPuXWvyNFwp
-   aJgDMhtC6att7dblN2XQH/uLflo5Pp82PQ+VNH5SQI8cjhbl6fKn/HBt7
-   OVIUmhhK15K7IYViqlNiYPJH/So38APxv6roOIB3Y19sP8JJFTMlmF1Zb
-   JgsNxdabNJBUhkn138sPUH7mZR3krGOR3HCgUQTB+Qb8Ou7miPh9eJKzu
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="355404639"
-X-IronPort-AV: E=Sophos;i="6.02,207,1688454000"; 
-   d="scan'208";a="355404639"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2023 04:25:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="984851951"
-X-IronPort-AV: E=Sophos;i="6.02,207,1688454000"; 
-   d="scan'208";a="984851951"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Aug 2023 04:25:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qaaN8-00G5G4-0i;
-        Mon, 28 Aug 2023 14:25:30 +0300
-Date:   Mon, 28 Aug 2023 14:25:29 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        Mon, 28 Aug 2023 07:26:40 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EBAFC4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Aug 2023 04:26:38 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC49F4E6;
+        Mon, 28 Aug 2023 13:25:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1693221915;
+        bh=GM+XJslD5h10LBk82PdayP/lt6/CuMxY/0uWWK/51EU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rOZWzH1gOxBnBeUesDaljUk2cVi2ppCOYmV+n/e1mZUzC8TWAK9H95VQrF51HBazu
+         4M3dMOJ33yyE695ncwKrD/xQo2Xz7DO5WwytI3eP2V68uJyAKdXVRlG4NLs/hVB3sQ
+         WJSiFiKH46mh6PEHABsDYgeZzuxoUk99Vyg0X3dY=
+Date:   Mon, 28 Aug 2023 14:26:46 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        Zhu Wang <wangzhu9@huawei.com>,
+        dri-devel@lists.freedesktop.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] regulator: ltc3589: Convert enum->pointer for data in
- the match tables
-Message-ID: <ZOyEKbxoJ/rlN7PI@smile.fi.intel.com>
-References: <20230826181909.96318-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v4 2/2] drm/bridge: Drop conditionals around of_node
+ pointers
+Message-ID: <20230828112646.GI14596@pendragon.ideasonboard.com>
+References: <20230826071901.29420-1-biju.das.jz@bp.renesas.com>
+ <20230826071901.29420-3-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230826181909.96318-1-biju.das.jz@bp.renesas.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20230826071901.29420-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Aug 26, 2023 at 07:19:09PM +0100, Biju Das wrote:
-> Convert enum->pointer for data in the match tables, so that the hw
-> differences can be stored in pointer and there by simpily the code.
+Hi Biju,
+
+Thank you for the patch.
+
+On Sat, Aug 26, 2023 at 08:19:01AM +0100, Biju Das wrote:
+> Having conditional around the of_node pointers turns out to make driver
+> code use ugly #ifdef and #if blocks. So drop the conditionals.
 > 
-> Add struct ltc3589_info for hw differences between the devices and replace
-> ltc3589_variant->ltc3589_info for data in the match table. Simplify the
-> probe() by replacing of_device_get_match_data() and ID lookup for
-> retrieving data by i2c_get_match_data(). Drop enum ltc3589_variant and
-> variant from struct ltc3589_info as there are no users.
+> Suggested-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v4:
+>  * New patch
+> ---
+>  drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c | 2 --
+>  include/drm/drm_bridge.h                           | 2 --
 
-...
+This should be split in two patches, one addressing drm_bridge.h (and
+likely referencing the commit that dropped the conditionals in struct
+device, as mentioned by Doug), and one for the drivers.
 
-> +struct ltc3589_info {
-> +	int fixed_uV;
-> +	const unsigned int *volt_table;
-> +};
-
-Can it consume less bytes on some architectures if you swap the order?
-
-...
-
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, ltc3589_i2c_id);
-
->  	{ },
-
-Yeah, a side note about trailing comma in the terminator entries...
-
->  };
->  MODULE_DEVICE_TABLE(of, ltc3589_of_match);
+>  2 files changed, 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+> index 6169db73d2fe..ad8241758896 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+> @@ -1231,9 +1231,7 @@ static int anx78xx_i2c_probe(struct i2c_client *client)
+>  
+>  	mutex_init(&anx78xx->lock);
+>  
+> -#if IS_ENABLED(CONFIG_OF)
+>  	anx78xx->bridge.of_node = client->dev.of_node;
+> -#endif
+>  
+>  	anx78xx->client = client;
+>  	i2c_set_clientdata(client, anx78xx);
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index c339fc85fd07..d49d5c03df3e 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -716,10 +716,8 @@ struct drm_bridge {
+>  	struct drm_encoder *encoder;
+>  	/** @chain_node: used to form a bridge chain */
+>  	struct list_head chain_node;
+> -#ifdef CONFIG_OF
+>  	/** @of_node: device node pointer to the bridge */
+>  	struct device_node *of_node;
+> -#endif
+>  	/** @list: to keep track of all added bridges */
+>  	struct list_head list;
+>  	/**
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards,
 
-
+Laurent Pinchart
