@@ -2,103 +2,92 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19735C83F21
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2761C6FA8F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Aug 2023 22:21:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243167AbjH3Sq0 (ORCPT
+        id S1343769AbjH3WVX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60780 "EHLO
+        Wed, 30 Aug 2023 18:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245264AbjH3O6o (ORCPT
+        with ESMTP id S1343818AbjH3WVQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2023 10:58:44 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 95F3BA3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Aug 2023 07:58:40 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.02,213,1688396400"; 
-   d="scan'208";a="174488241"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Aug 2023 23:58:39 +0900
-Received: from localhost.localdomain (unknown [10.226.92.150])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3B0674218435;
-        Wed, 30 Aug 2023 23:58:37 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] memory: renesas-rpc-if: Fix IO state based on flash type
-Date:   Wed, 30 Aug 2023 15:58:35 +0100
-Message-Id: <20230830145835.296690-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 30 Aug 2023 18:21:16 -0400
+X-Greylist: delayed 3553 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 30 Aug 2023 15:20:55 PDT
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD4BD7;
+        Wed, 30 Aug 2023 15:20:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D4B58B8201F;
+        Wed, 30 Aug 2023 20:30:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8D765C433CA;
+        Wed, 30 Aug 2023 20:30:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693427428;
+        bh=naBzhvIky8R5V5XX3mGlkvV2k61SZTHNrCvojqQlDeU=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=otw5gKsqhj7UlV+5SrWtGY4wxTV4EN0qiJQNgtrYTLUtrVL6FT+2KE0l9FBygwE3d
+         pXd9euQ9iheFeLxPUKAy0JMLBqm94Rfha6YW6pwGXTXCoX22Q6PqzIfUdD9oIBT0go
+         St2lEdowpUMBLc+yx2FsHho7GB2AaBdywuEJwg2eyeGcviOFPgmSFOzYYnhW8r/tmY
+         MlPJEZ+zg4O89EzFIeZwqt5iKkHCOK2U2ugEzoEYg9t+eZ0/XGPCrXl6fvetrNKvjh
+         C3GCPbZmekJtm/AbTaB+xUHCFhaoW/kxu2twdBu/qisRAr6fP5J6zwZQQeD20CiMgG
+         L3GZbLgKTpmNg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 76D63E4509F;
+        Wed, 30 Aug 2023 20:30:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 0/3] riscv: dma-mapping: unify support for cache flushes
+From:   patchwork-bot+linux-riscv@kernel.org
+Message-Id: <169342742848.1913.1099836362504771690.git-patchwork-notify@kernel.org>
+Date:   Wed, 30 Aug 2023 20:30:28 +0000
+References: <20230816232336.164413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20230816232336.164413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     linux-riscv@lists.infradead.org, arnd@arndb.de, hch@lst.de,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, conor.dooley@microchip.com,
+        apatel@ventanamicro.com, ajones@ventanamicro.com,
+        jszhang@kernel.org, linux-kernel@vger.kernel.org,
+        geert+renesas@glider.be, samuel@sholland.org,
+        linux-renesas-soc@vger.kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently, RZ/G2L-alike SoCs use 2 different SPI serial flash memories
- 1) AT25QL128A  embedded in RZ/{G2UL,Five} SMARC EVKs
- 2) MT25QU512AB embedded in RZ/{G2L,G2LC,V2L} SMARC EVKs
+Hello:
 
-As per section 8.14 on the AT25QL128A hardware manual,
-IO1..IO3 must be set to Hi-Z state for this flash for fast read quad IO.
-Snippet from HW manual section 8.14:
-The upper nibble of the Mode(M7-4) controls the length of the next FAST
-Read Quad IO instruction through the inclusion or exclusion of the first
-byte instruction code. The lower nibble bits of the Mode(M3-0) are don't
-care. However, the IO pins must be high-impedance before the falling edge
-of the first data out clock.
+This series was applied to riscv/linux.git (for-next)
+by Palmer Dabbelt <palmer@rivosinc.com>:
 
-As per the Figure 20: QUAD INPUT/OUTPUT FAST READ on MT25QU512AB mentions
-IO1..IO2 to be in Hi-Z state and IO3 in '1' state
+On Thu, 17 Aug 2023 00:23:33 +0100 you wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> This patch series is a subset from Arnd's original series [0]. Ive just
+> picked up the bits required for RISC-V unification of cache flushing.
+> Remaining patches from the series [0] will be taken care by Arnd soon.
+> 
+> Cheers,
+> Prabhakar
+> 
+> [...]
 
-Add a variable io3_fv to struct rpcif_priv and check the child
-node compatible value to detect micron flash and set IO1..IO3 states
-based on flash type.
+Here is the summary with links:
+  - [v3,1/3] riscv: dma-mapping: only invalidate after DMA, not flush
+    https://git.kernel.org/riscv/c/fbfc740ced8f
+  - [v3,2/3] riscv: dma-mapping: skip invalidation before bidirectional DMA
+    https://git.kernel.org/riscv/c/14be7c16d420
+  - [v3,3/3] riscv: dma-mapping: switch over to generic implementation
+    https://git.kernel.org/riscv/c/eb76e5111881
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/memory/renesas-rpc-if.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 9695b2d3ae59..68f2bb3f8e61 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -189,6 +189,7 @@ struct rpcif_priv {
- 	u32 enable;		/* DRENR or SMENR */
- 	u32 dummy;		/* DRDMCR or SMDMCR */
- 	u32 ddr;		/* DRDRENR or SMDRENR */
-+	u32 io3_fv;
- };
- 
- static const struct rpcif_info rpcif_info_r8a7796 = {
-@@ -367,7 +368,8 @@ int rpcif_hw_init(struct device *dev, bool hyperflash)
- 		regmap_update_bits(rpc->regmap, RPCIF_CMNCR,
- 				   RPCIF_CMNCR_MOIIO(3) | RPCIF_CMNCR_IOFV(3) |
- 				   RPCIF_CMNCR_BSZ(3),
--				   RPCIF_CMNCR_MOIIO(1) | RPCIF_CMNCR_IOFV(2) |
-+				   RPCIF_CMNCR_MOIIO(1) | RPCIF_CMNCR_IO0FV(2) |
-+				   RPCIF_CMNCR_IO2FV(3) | rpc->io3_fv |
- 				   RPCIF_CMNCR_BSZ(hyperflash ? 1 : 0));
- 	else
- 		regmap_update_bits(rpc->regmap, RPCIF_CMNCR,
-@@ -774,6 +776,12 @@ static int rpcif_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	if (rpc->info->type == RPCIF_RZ_G2L &&
-+	    of_device_is_compatible(flash, "micron,mt25qu512a"))
-+		rpc->io3_fv = RPCIF_CMNCR_IO3FV(1);
-+	else
-+		rpc->io3_fv = RPCIF_CMNCR_IO3FV(3);
-+
- 	return 0;
- }
- 
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
