@@ -2,119 +2,75 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E094C83F15
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Aug 2023 04:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F98C83F1E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239730AbjH3Eam (ORCPT
+        id S242079AbjH3Spy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Aug 2023 00:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60488 "EHLO
+        Wed, 30 Aug 2023 14:45:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241941AbjH3Eai (ORCPT
+        with ESMTP id S245498AbjH3PVo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2023 00:30:38 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 721EACD2;
-        Tue, 29 Aug 2023 21:30:29 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id 98e67ed59e1d1-26d4e1ba2dbso2948818a91.1;
-        Tue, 29 Aug 2023 21:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693369829; x=1693974629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pnYWkTXfRyVeeYgLLXstaC/GdYz4SXqmNKJW5ZQfQUY=;
-        b=EPjYGsWPMkgYt/AxO7whMJDlqvelgLkVFUrZ8qQE6myMc+ofmngI6Icv34tUGpPlyE
-         FDGBL3gk8GPBZ7WDWeLRz3kG2ZjVQubicPgW9xEZW5X71Edtt2U1F6Aytjzz4yx8iISh
-         Id22lh0NIsIUwq7rOqOINxeT+pr/9OB44djTgCnkVwVjkYX91c18ecTPLXBuSo59cvmA
-         2GrqyYR9ezsnpgqZ0BqjGYXWjm4L6Db2aaBAkCUZSzvlFr6Shr0RYz4rOJq0+Yp/HphP
-         7FDouuldACO1r1gkFVJPnnCuFGC2DVfbv8wWhnCzrievHnjOBcRoxFUOQyxD1I2t9AdT
-         MqAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693369829; x=1693974629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pnYWkTXfRyVeeYgLLXstaC/GdYz4SXqmNKJW5ZQfQUY=;
-        b=OLsGALp43GDwQW/ja9gdPOJCQi+X0mCdygqURF4sh6QuVTH4woVktELEod9sjtCVDV
-         PtUcuNxvGYicmx7wiZOEX8iaZZ4beQD4tESXyVGKdNx5Xd66H29VJWiO5r6zrMDmCVQJ
-         NnIJV/wxx4ueHOPCvN1Yj01dbAryRZpsFIaluXGJPMVBmPYJX/PRQE9qZ9JLdEtbo567
-         oSvXkVnkXRo+SzU6UF7n+UK/bsNsFfEx3N2aM3Xb6WL1v4gJRSuugRbT9g+kQNpkw+Rq
-         tcRvQ3L2gnILVvquzmL/Vk2XXS2xVHbmhhLpFsxpgLWPFKIXeh+iqZcixfBzWeWq7CG1
-         Ul/w==
-X-Gm-Message-State: AOJu0Yx2Q+U71WoGpw8Lx0XdvNNv53rYmaShdhfcLI6mQtOwMe7WCLAM
-        KCjRrNI3+b9ZBMepLNFfMQImzLdkss7Wr9YWEzo=
-X-Google-Smtp-Source: AGHT+IE0m+TewUb+YqF0jpT02UbdDTlFCmxrBqWej0lVTwR0+LgjXhBZv2n+y7uiJVQsMLe65g+JCU7iKaA3NgWgddw=
-X-Received: by 2002:a17:90a:e2c9:b0:26b:f18:799a with SMTP id
- fr9-20020a17090ae2c900b0026b0f18799amr1065576pjb.16.1693369828648; Tue, 29
- Aug 2023 21:30:28 -0700 (PDT)
+        Wed, 30 Aug 2023 11:21:44 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6354E8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Aug 2023 08:21:41 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
+        by laurent.telenet-ops.be with bizsmtp
+        id frMf2A00V3874jb01rMgCG; Wed, 30 Aug 2023 17:21:40 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qbN0Z-0023re-Uh;
+        Wed, 30 Aug 2023 17:21:39 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qbN0l-005Lw4-PM;
+        Wed, 30 Aug 2023 17:21:39 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: dts: renesas: blanche: Fix typo in GP_11_2 pin name
+Date:   Wed, 30 Aug 2023 17:21:38 +0200
+Message-Id: <203128eca2261ffc33b83637818dd39c488f42b0.1693408326.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230725030026.1664873-1-zyytlz.wz@163.com> <20230815100844.GA495519@google.com>
- <20230829134616.GA215597@google.com>
-In-Reply-To: <20230829134616.GA215597@google.com>
-From:   Zheng Hacker <hackerzheng666@gmail.com>
-Date:   Wed, 30 Aug 2023 12:30:17 +0800
-Message-ID: <CAJedcCyFqJiXa9QHM6-Mg1ezF2tOKkyv2ukoOu+_T3YAdEhWdQ@mail.gmail.com>
-Subject: Re: [PATCH v4] net: ravb: Fix possible UAF bug in ravb_remove
-To:     Lee Jones <lee@kernel.org>
-Cc:     Zheng Wang <zyytlz.wz@163.com>, s.shtylyov@omp.ru,
-        linyunsheng@huawei.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, richardcochran@gmail.com,
-        p.zabel@pengutronix.de, geert+renesas@glider.be,
-        magnus.damm@gmail.com, yoshihiro.shimoda.uh@renesas.com,
-        biju.das.jz@bp.renesas.com, wsa+renesas@sang-engineering.com,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, 1395428693sheep@gmail.com,
-        alex000young@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Sorry for my late reply. I'll update another patch later today.
+On blanche, the GPIO keyboard fails to probe with:
 
-Best regards,
-Zheng
+    sh-pfc e6060000.pinctrl: could not map pin config for "GP_11_02"
 
-Lee Jones <lee@kernel.org> =E4=BA=8E2023=E5=B9=B48=E6=9C=8829=E6=97=A5=E5=
-=91=A8=E4=BA=8C 21:46=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, 15 Aug 2023, Lee Jones wrote:
->
-> > On Tue, 25 Jul 2023, Zheng Wang wrote:
-> >
-> > > In ravb_probe, priv->work was bound with ravb_tx_timeout_work.
-> > > If timeout occurs, it will start the work. And if we call
-> > > ravb_remove without finishing the work, there may be a
-> > > use-after-free bug on ndev.
-> > >
-> > > Fix it by finishing the job before cleanup in ravb_remove.
-> > >
-> > > Note that this bug is found by static analysis, it might be
-> > > false positive.
-> > >
-> > > Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-> > > Signed-off-by: Zheng Wang <zyytlz.wz@163.com>
-> > > Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-> > > ---
-> > > v4:
-> > > - add information about the bug was found suggested by Yunsheng Lin
-> > > v3:
-> > > - fix typo in commit message
-> > > v2:
-> > > - stop dev_watchdog so that handle no more timeout work suggested by =
-Yunsheng Lin,
-> > > add an empty line to make code clear suggested by Sergey Shtylyov
-> > > ---
-> > >  drivers/net/ethernet/renesas/ravb_main.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> >
-> > Trying my best not to sound like a broken record, but ...
-> >
-> > What's the latest with this fix?  Is a v5 en route?
->
-> Any update please Zheng Wang?
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+Fix this by correcting the name for this pin to "GP_11_2".
+
+Fixes: 1f27fedead91eb60 ("ARM: dts: blanche: Configure pull-up for SOFT_SW and SW25 GPIO keys")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-devel for v6.7 (unless someone thinks this
+should be fast-tracked; no one reported the issue).
+
+ arch/arm/boot/dts/renesas/r8a7792-blanche.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
+index c66de9dd12dfca38..6a83923aa4612e71 100644
+--- a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
+@@ -239,7 +239,7 @@ du1_pins: du1 {
+ 	};
+ 
+ 	keyboard_pins: keyboard {
+-		pins = "GP_3_10", "GP_3_11", "GP_3_12", "GP_3_15", "GP_11_02";
++		pins = "GP_3_10", "GP_3_11", "GP_3_12", "GP_3_15", "GP_11_2";
+ 		bias-pull-up;
+ 	};
+ 
+-- 
+2.34.1
+
