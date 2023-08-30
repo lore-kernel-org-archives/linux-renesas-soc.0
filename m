@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA24C83F1E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67456C83F21
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243132AbjH3SqF (ORCPT
+        id S243139AbjH3SqK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40138 "EHLO
+        Wed, 30 Aug 2023 14:46:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245050AbjH3OYv (ORCPT
+        with ESMTP id S245054AbjH3OZD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2023 10:24:51 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 78768132
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Aug 2023 07:24:47 -0700 (PDT)
+        Wed, 30 Aug 2023 10:25:03 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EBFC6124
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Aug 2023 07:25:00 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.02,213,1688396400"; 
-   d="scan'208";a="174486550"
+   d="scan'208";a="178194122"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Aug 2023 23:24:47 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 30 Aug 2023 23:25:00 +0900
 Received: from localhost.localdomain (unknown [10.226.92.150])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5E73842170F5;
-        Wed, 30 Aug 2023 23:24:41 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 83DBE42170F5;
+        Wed, 30 Aug 2023 23:24:54 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
@@ -45,9 +45,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         dri-devel@lists.freedesktop.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 6/8] drm: adv7511: Add has_dsi variable to struct adv7511_chip_info
-Date:   Wed, 30 Aug 2023 15:23:56 +0100
-Message-Id: <20230830142358.275459-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 8/8] drm: adv7511: Add hpd_override_enable variable to struct adv7511_chip_info
+Date:   Wed, 30 Aug 2023 15:23:58 +0100
+Message-Id: <20230830142358.275459-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230830142358.275459-1-biju.das.jz@bp.renesas.com>
 References: <20230830142358.275459-1-biju.das.jz@bp.renesas.com>
@@ -57,85 +57,75 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The ADV7533 and ADV7535 have DSI support. Add a variable has_dsi to
-struct adv7511_chip_info for handling configuration related to DSI.
+As per spec, it is allowed to pulse the HPD signal to indicate that the
+EDID information has changed. Some monitors do this when they wake up
+from standby or are enabled. When the HPD goes low the adv7511 is
+reset and the outputs are disabled which might cause the monitor to
+go to standby again. To avoid this we ignore the HPD pin for the
+first few seconds after enabling the output. On the other hand,
+adv7535 require to enable HPD Override bit for proper HPD.
+
+Add hpd_override_enable variable to struct adv7511_chip_info to handle
+this scenario.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
+ * Restored enum adv7511_type as there are users.
  * Replaced variable type from unsigned->bool.
- * Restored check using type for low_refresh_rate and
-   regmap_register_patch().
 ---
- drivers/gpu/drm/bridge/adv7511/adv7511.h     |  1 +
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 10 ++++++----
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/adv7511/adv7511.h     | 1 +
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 7 ++++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-index a728bfb33d03..0dd56e311039 100644
+index 0d39e32b0793..39c9ece373b0 100644
 --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
 +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-@@ -340,6 +340,7 @@ struct adv7511_chip_info {
- 	const char * const *supply_names;
- 	unsigned int num_supplies;
+@@ -342,6 +342,7 @@ struct adv7511_chip_info {
  	unsigned int reg_cec_offset;
-+	bool has_dsi;
+ 	bool has_dsi;
+ 	bool link_config;
++	bool hpd_override_enable;
  };
  
  struct adv7511 {
 diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index d806c870bf76..9d88c29b6f59 100644
+index e0ec3c098225..83ff4206b3b7 100644
 --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
 +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -373,7 +373,7 @@ static void adv7511_power_on(struct adv7511 *adv7511)
+@@ -354,7 +354,7 @@ static void __adv7511_power_on(struct adv7511 *adv7511)
+ 	 * first few seconds after enabling the output. On the other hand
+ 	 * adv7535 require to enable HPD Override bit for proper HPD.
  	 */
- 	regcache_sync(adv7511->regmap);
- 
--	if (adv7511->info->type == ADV7533 || adv7511->info->type == ADV7535)
-+	if (adv7511->info->has_dsi)
- 		adv7533_dsi_power_on(adv7511);
- 	adv7511->powered = true;
- }
-@@ -397,7 +397,7 @@ static void __adv7511_power_off(struct adv7511 *adv7511)
- static void adv7511_power_off(struct adv7511 *adv7511)
+-	if (adv7511->info->type == ADV7535)
++	if (adv7511->info->hpd_override_enable)
+ 		regmap_update_bits(adv7511->regmap, ADV7511_REG_POWER2,
+ 				   ADV7535_REG_POWER2_HPD_OVERRIDE,
+ 				   ADV7535_REG_POWER2_HPD_OVERRIDE);
+@@ -381,7 +381,7 @@ static void adv7511_power_on(struct adv7511 *adv7511)
+ static void __adv7511_power_off(struct adv7511 *adv7511)
  {
- 	__adv7511_power_off(adv7511);
--	if (adv7511->info->type == ADV7533 || adv7511->info->type == ADV7535)
-+	if (adv7511->info->has_dsi)
- 		adv7533_dsi_power_off(adv7511);
- 	adv7511->powered = false;
- }
-@@ -921,7 +921,7 @@ static enum drm_mode_status adv7511_bridge_mode_valid(struct drm_bridge *bridge,
- {
- 	struct adv7511 *adv = bridge_to_adv7511(bridge);
+ 	/* TODO: setup additional power down modes */
+-	if (adv7511->info->type == ADV7535)
++	if (adv7511->info->hpd_override_enable)
+ 		regmap_update_bits(adv7511->regmap, ADV7511_REG_POWER2,
+ 				   ADV7535_REG_POWER2_HPD_OVERRIDE, 0);
  
--	if (adv->info->type == ADV7533 || adv->info->type == ADV7535)
-+	if (adv->info->has_dsi)
- 		return adv7533_mode_valid(adv, mode);
- 	else
- 		return adv7511_mode_valid(adv, mode);
-@@ -1311,7 +1311,7 @@ static int adv7511_probe(struct i2c_client *i2c)
- 
- 	adv7511_audio_init(dev, adv7511);
- 
--	if (adv7511->info->type == ADV7533 || adv7511->info->type == ADV7535) {
-+	if (adv7511->info->has_dsi) {
- 		ret = adv7533_attach_dsi(adv7511);
- 		if (ret)
- 			goto err_unregister_audio;
-@@ -1367,6 +1367,7 @@ static const struct adv7511_chip_info adv7533_chip_info = {
- 	.supply_names = adv7533_supply_names,
+@@ -682,7 +682,7 @@ adv7511_detect(struct adv7511 *adv7511, struct drm_connector *connector)
+ 			status = connector_status_disconnected;
+ 	} else {
+ 		/* Renable HPD sensing */
+-		if (adv7511->info->type == ADV7535)
++		if (adv7511->info->hpd_override_enable)
+ 			regmap_update_bits(adv7511->regmap, ADV7511_REG_POWER2,
+ 					   ADV7535_REG_POWER2_HPD_OVERRIDE,
+ 					   ADV7535_REG_POWER2_HPD_OVERRIDE);
+@@ -1379,6 +1379,7 @@ static const struct adv7511_chip_info adv7535_chip_info = {
  	.num_supplies = ARRAY_SIZE(adv7533_supply_names),
  	.reg_cec_offset = ADV7533_REG_CEC_OFFSET,
-+	.has_dsi = true,
- };
- 
- static const struct adv7511_chip_info adv7535_chip_info = {
-@@ -1376,6 +1377,7 @@ static const struct adv7511_chip_info adv7535_chip_info = {
- 	.supply_names = adv7533_supply_names,
- 	.num_supplies = ARRAY_SIZE(adv7533_supply_names),
- 	.reg_cec_offset = ADV7533_REG_CEC_OFFSET,
-+	.has_dsi = true,
+ 	.has_dsi = true,
++	.hpd_override_enable = true,
  };
  
  static const struct i2c_device_id adv7511_i2c_ids[] = {
