@@ -2,112 +2,107 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F08C83F3A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C283C83F01
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 12:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234387AbjHaLxP (ORCPT
+        id S1345120AbjHaMa4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 07:53:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33182 "EHLO
+        Thu, 31 Aug 2023 08:30:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346178AbjHaLxE (ORCPT
+        with ESMTP id S235106AbjHaMaz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2023 07:53:04 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 221A810DE
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:41 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
-        by michel.telenet-ops.be with bizsmtp
-        id gBse2A00M3874jb06Bse6K; Thu, 31 Aug 2023 13:52:39 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qbgDq-00274K-4j;
-        Thu, 31 Aug 2023 13:52:38 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qbgE2-00CIUV-IS;
-        Thu, 31 Aug 2023 13:52:38 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/13] ARM: dts: renesas: LBSC and FLASH improvements
-Date:   Thu, 31 Aug 2023 13:52:22 +0200
-Message-Id: <cover.1693481518.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        Thu, 31 Aug 2023 08:30:55 -0400
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A3D81A4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 05:30:52 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-bcb6dbc477eso518080276.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 05:30:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693485051; x=1694089851;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uOZtKYeuowmHMRbZ1y5siYD7m0zs+EfxbrDHmKtXmmk=;
+        b=HOKIrWh4NMU/hwFgGj6vwPQ3M/meDCZ5B/6bznvj3wbogigShojWyfMRFiZkbRg1Ch
+         PY7Hn+yL5OkOUyhLAUkE02embDeYD9+skrTJGusBeSvX9BYcI3uyi40Cb+Pc8CmjLDPF
+         +nm+pzSKyZ+3QUn7dE6eaXvRPqlzJyhaGJb7otlyo2pF3FHX26riRuURk1PdGNcSPdvB
+         VXQqaDxS0Ncp9jnGuSUqbdEAI8yxl5B3BsjaTxdmwB+CNj9z1ei63xNU41n/Bkrk7LMf
+         SSw/zLYt+a/EbzQSdkZ+U1HonV8dFSkizEaeM4xJuqvbY0xZNFrLgwpHMpfFkP/hajOI
+         O+cA==
+X-Gm-Message-State: AOJu0YyykqqrnDVDvbHahNygFVB7PDcyRnIOx9+aD5Y28Tu/eolU8SuJ
+        eMfmf2SVNt8lyGq+doe14TtPZvHDBkHpZg==
+X-Google-Smtp-Source: AGHT+IGKfab7WmOjn5TcXho7hQ90zTu/lvZa5ukJxcZ42wPmqzC+WdayKBz3V6XsX7Cx96/gxzbFbg==
+X-Received: by 2002:a25:bbcc:0:b0:d58:6c03:1af0 with SMTP id c12-20020a25bbcc000000b00d586c031af0mr4687571ybk.0.1693485051358;
+        Thu, 31 Aug 2023 05:30:51 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id p11-20020a25420b000000b00d7b8f7f4877sm281461yba.42.2023.08.31.05.30.51
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Aug 2023 05:30:51 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-d77f614243aso530147276.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 05:30:51 -0700 (PDT)
+X-Received: by 2002:a25:bbcc:0:b0:d58:6c03:1af0 with SMTP id
+ c12-20020a25bbcc000000b00d586c031af0mr4687546ybk.0.1693485050960; Thu, 31 Aug
+ 2023 05:30:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <87zg2jsjot.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87zg2jsjot.wl-kuninori.morimoto.gx@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 31 Aug 2023 14:30:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXc2d_oVhM9p8GOQYMV+gzPuqNBmUQ3-fNztKjLnk6GUA@mail.gmail.com>
+Message-ID: <CAMuHMdXc2d_oVhM9p8GOQYMV+gzPuqNBmUQ3-fNztKjLnk6GUA@mail.gmail.com>
+Subject: Re: [PATCH 00/15] arm64: dts: renesas: handles ADG bit for sound clk_i
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Hi Morimoto-san,
 
-This patch series adds support for various FLASH devices on the Blanche,
-Genmai, Marzen, and RSK+RZA1 development boards.  As several of these
-FLASH devices reside in the external address space of a (Local) Bus
-State Controller, the current (too) minimal support for (L)BSC is
-improved first.  All of this is preceded by two small fixes.
+On Tue, Aug 22, 2023 at 7:57 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> Renesas Sound has been using CPG_AUDIO_CLK_I on CPG_CORE for clock,
+> but it is was wrong, it should use CPG_MOD.
+>
+> This patch-set switches to use it.
+> It is based on renesas-clk-for-v6.6-tag2 tag.
 
-As FLASH on Blanche and Marzen conflicts with SMP, the last two patches
-depend on [1], so I marked them RFC.
+Thanks for your series!
 
-This has been tested on the APE6-EVM, Blanche, Genmai, Marzen, and
-RSK+RZA1 development boards.
+> Kuninori Morimoto (15):
+>   arm64: dts: renesas: r8a774a1: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a774b1: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a774c0: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a774e1: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a77951: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a77960: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a77961: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a77965: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a77990: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: r8a77995: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: ulcb: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: hihope-rev4: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: salvator-common: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: beacon-renesom-baseboard: handles ADG bit for sound clk_i
+>   arm64: dts: renesas: remove CPG_AUDIO_CLK_I
 
-Thanks for your comments!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.7.
 
-[1] "[PATCH/RFC 0/4] ARM: shmobile: Reserve boot area when SMP is
-     enabled"
-    https://lore.kernel.org/all/cover.1693409184.git.geert+renesas@glider.be
-
-Geert Uytterhoeven (13):
-  ARM: dts: renesas: ape6evm: Drop bogus "mtd-rom" compatible value
-  ARM: dts: renesas: gr-peach: Remove unneeded probe-type property
-  ARM: dts: renesas: Remove unused LBSC nodes from board DTS
-  ARM: dts: renesas: r7s72100: Add BSC node
-  ARM: dts: renesas: r8a7779: Add LBSC node
-  ARM: dts: renesas: r8a7792: Add LBSC node
-  ARM: dts: renesas: marzen: Move Ethernet node to LBSC
-  ARM: dts: renesas: blanche: Move Ethernet node to LBSC
-  ARM: dts: renesas: wheat: Move Ethernet node to LBSC
-  ARM: dts: renesas: genmai: Add FLASH nodes
-  ARM: dts: renesas: rskrza1: Add FLASH nodes
-  ARM: dts: renesas: marzen: Add FLASH node
-  ARM: dts: renesas: blanche: Add FLASH node
-
- arch/arm/boot/dts/renesas/r7s72100-genmai.dts | 82 ++++++++++++++++++-
- .../boot/dts/renesas/r7s72100-gr-peach.dts    |  6 --
- .../arm/boot/dts/renesas/r7s72100-rskrza1.dts | 71 ++++++++++++++--
- arch/arm/boot/dts/renesas/r7s72100.dtsi       |  7 ++
- .../arm/boot/dts/renesas/r7s9210-rza2mevb.dts |  5 --
- arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts |  2 +-
- arch/arm/boot/dts/renesas/r8a7779-marzen.dts  | 66 +++++++++++----
- arch/arm/boot/dts/renesas/r8a7779.dtsi        |  7 ++
- arch/arm/boot/dts/renesas/r8a7790-lager.dts   |  5 --
- arch/arm/boot/dts/renesas/r8a7791-koelsch.dts |  5 --
- arch/arm/boot/dts/renesas/r8a7792-blanche.dts | 66 +++++++++++----
- arch/arm/boot/dts/renesas/r8a7792-wheat.dts   | 34 ++++----
- arch/arm/boot/dts/renesas/r8a7792.dtsi        |  7 ++
- arch/arm/boot/dts/renesas/r8a7794-alt.dts     |  5 --
- 14 files changed, 289 insertions(+), 79 deletions(-)
-
--- 
-2.34.1
+If you don't mind, I would like to squash this into a single commit.
+Thanks again!
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
