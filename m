@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3596C83F12
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D763CC83F35
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbjHaLxK (ORCPT
+        id S1346129AbjHaLxM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 07:53:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44234 "EHLO
+        Thu, 31 Aug 2023 07:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346136AbjHaLxE (ORCPT
+        with ESMTP id S1346165AbjHaLxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 31 Aug 2023 07:53:04 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03B5E72
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:40 -0700 (PDT)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA3A10D1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
-        by albert.telenet-ops.be with bizsmtp
-        id gBse2A00A3874jb06BseXY; Thu, 31 Aug 2023 13:52:39 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id gBse2A00R3874jb06Bse6N; Thu, 31 Aug 2023 13:52:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgDq-00274S-6N;
+        id 1qbgDq-00274o-AN;
         Thu, 31 Aug 2023 13:52:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgE2-00CIUg-M7;
+        id 1qbgE2-00CIV4-Q7;
         Thu, 31 Aug 2023 13:52:38 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
@@ -37,9 +37,9 @@ To:     Magnus Damm <magnus.damm@gmail.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/13] ARM: dts: renesas: Remove unused LBSC nodes from board DTS
-Date:   Thu, 31 Aug 2023 13:52:25 +0200
-Message-Id: <76ece7602045670cbb8dff684c3366ba6eb89add.1693481518.git.geert+renesas@glider.be>
+Subject: [PATCH 08/13] ARM: dts: renesas: blanche: Move Ethernet node to LBSC
+Date:   Thu, 31 Aug 2023 13:52:30 +0200
+Message-Id: <457239047bc8b5deabf15d816043a89ab00db5ef.1693481518.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1693481518.git.geert+renesas@glider.be>
 References: <cover.1693481518.git.geert+renesas@glider.be>
@@ -49,135 +49,65 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Several board DTS files contain minimal device nodes that represent
-on-SoC Local Bus State Controllers (LBSC), although they belong in the
-SoC-specific DTS files instead.  As these device nodes are incomplete
-and unused, and hamper adding proper nodes later, it is better to just
-remove them.
+The SMSC LAN89218AQ Ethernet controller on the Blanche development board
+resides in the external address space of the Local Bus State Controller
+(LBSC).  Move the Ethernet device node to reflect this.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/renesas/r7s72100-genmai.dts   | 5 -----
- arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts | 5 -----
- arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts  | 5 -----
- arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts  | 5 -----
- arch/arm/boot/dts/renesas/r8a7790-lager.dts     | 5 -----
- arch/arm/boot/dts/renesas/r8a7791-koelsch.dts   | 5 -----
- arch/arm/boot/dts/renesas/r8a7794-alt.dts       | 5 -----
- 7 files changed, 35 deletions(-)
+ arch/arm/boot/dts/renesas/r8a7792-blanche.dts | 32 ++++++++++---------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-index 1e8447176b1051f3..ee52c6d5349d0046 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-@@ -29,11 +29,6 @@ memory@8000000 {
- 		reg = <0x08000000 0x08000000>;
+diff --git a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
+index 6a83923aa4612e71..e793134f32a3020a 100644
+--- a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
+@@ -39,21 +39,6 @@ d3_3v: regulator-3v3 {
+ 		regulator-always-on;
  	};
  
--	lbsc {
--		#address-cells = <1>;
--		#size-cells = <1>;
+-	ethernet@18000000 {
+-		compatible = "smsc,lan89218", "smsc,lan9115";
+-		reg = <0 0x18000000 0 0x100>;
+-		phy-mode = "mii";
+-		interrupt-parent = <&irqc>;
+-		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
+-		smsc,irq-push-pull;
+-		reg-io-width = <4>;
+-		vddvario-supply = <&d3_3v>;
+-		vdd33a-supply = <&d3_3v>;
+-
+-		pinctrl-0 = <&lan89218_pins>;
+-		pinctrl-names = "default";
 -	};
 -
- 	leds {
- 		status = "okay";
- 		compatible = "gpio-leds";
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-index dc05eaf391f8e069..9d29861f23f1d964 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-@@ -29,11 +29,6 @@ memory@20000000 {
- 		reg = <0x20000000 0x00a00000>;
- 	};
+ 	vga-encoder {
+ 		compatible = "adi,adv7123";
  
--	lbsc {
--		#address-cells = <1>;
--		#size-cells = <1>;
--	};
--
- 	flash@18000000 {
- 		compatible = "mtd-rom";
- 		reg = <0x18000000 0x00800000>;
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-index 9bfa7d8e2888b9ee..e95b820e401663eb 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-@@ -60,11 +60,6 @@ key-3 {
- 		};
- 	};
+@@ -196,6 +181,23 @@ &can_clk {
+ 	clock-frequency = <48000000>;
+ };
  
--	lbsc {
--		#address-cells = <1>;
--		#size-cells = <1>;
--	};
--
- 	leds {
- 		compatible = "gpio-leds";
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts b/arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts
-index 69a5a44b8a2fdd74..cd2324b8e8ffbddf 100644
---- a/arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts
-+++ b/arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts
-@@ -63,11 +63,6 @@ key-3 {
- 		};
- 	};
- 
--	lbsc {
--		#address-cells = <1>;
--		#size-cells = <1>;
--	};
--
- 	leds {
- 		compatible = "gpio-leds";
- 
-diff --git a/arch/arm/boot/dts/renesas/r8a7790-lager.dts b/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-index 5ad5349a50dc9b26..4d666ad8b114b33b 100644
---- a/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-@@ -73,11 +73,6 @@ memory@140000000 {
- 		reg = <1 0x40000000 0 0xc0000000>;
- 	};
- 
--	lbsc {
--		#address-cells = <1>;
--		#size-cells = <1>;
--	};
--
- 	keyboard {
- 		compatible = "gpio-keys";
- 
-diff --git a/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts b/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-index 26a40782cc899bd0..545515b41ea3fae1 100644
---- a/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-@@ -73,11 +73,6 @@ memory@200000000 {
- 		reg = <2 0x00000000 0 0x40000000>;
- 	};
- 
--	lbsc {
--		#address-cells = <1>;
--		#size-cells = <1>;
--	};
--
- 	keyboard {
- 		compatible = "gpio-keys";
- 
-diff --git a/arch/arm/boot/dts/renesas/r8a7794-alt.dts b/arch/arm/boot/dts/renesas/r8a7794-alt.dts
-index 4d93319674c6efcf..08df031bc27c9e03 100644
---- a/arch/arm/boot/dts/renesas/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7794-alt.dts
-@@ -90,11 +90,6 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
- 		states = <3300000 1>, <1800000 0>;
- 	};
- 
--	lbsc {
--		#address-cells = <1>;
--		#size-cells = <1>;
--	};
--
- 	keyboard {
- 		compatible = "gpio-keys";
- 
++&lbsc {
++	ethernet@18000000 {
++		compatible = "smsc,lan89218", "smsc,lan9115";
++		reg = <0x18000000 0x100>;
++		phy-mode = "mii";
++		interrupt-parent = <&irqc>;
++		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
++		smsc,irq-push-pull;
++		reg-io-width = <4>;
++		vddvario-supply = <&d3_3v>;
++		vdd33a-supply = <&d3_3v>;
++
++		pinctrl-0 = <&lan89218_pins>;
++		pinctrl-names = "default";
++	};
++};
++
+ &pfc {
+ 	scif0_pins: scif0 {
+ 		groups = "scif0_data";
 -- 
 2.34.1
 
