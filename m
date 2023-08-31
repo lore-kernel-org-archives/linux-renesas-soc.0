@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 595FCC83F2B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 06:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2948C83F10
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 06:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245306AbjHaGgw (ORCPT
+        id S244665AbjHaGg5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 02:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46280 "EHLO
+        Thu, 31 Aug 2023 02:36:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245305AbjHaGgr (ORCPT
+        with ESMTP id S240753AbjHaGgz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2023 02:36:47 -0400
+        Thu, 31 Aug 2023 02:36:55 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9BA52A4;
-        Wed, 30 Aug 2023 23:36:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 729E7B4;
+        Wed, 30 Aug 2023 23:36:52 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.02,215,1688396400"; 
-   d="scan'208";a="174568736"
+   d="scan'208";a="174568752"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Aug 2023 15:36:43 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Aug 2023 15:36:51 +0900
 Received: from localhost.localdomain (unknown [10.226.92.179])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F0C4E418875D;
-        Thu, 31 Aug 2023 15:36:39 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1C562418875E;
+        Thu, 31 Aug 2023 15:36:48 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -30,42 +30,42 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/3] Enable 4-bit tx support
-Date:   Thu, 31 Aug 2023 07:36:32 +0100
-Message-Id: <20230831063635.2816-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 2/3] arm64: dts: renesas: rzg2l-smarc-som: Enable 4-bit tx support
+Date:   Thu, 31 Aug 2023 07:36:34 +0100
+Message-Id: <20230831063635.2816-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230831063635.2816-1-biju.das.jz@bp.renesas.com>
+References: <20230831063635.2816-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series aims to enable 4-bit tx support for
-RZ/{G2L,G2LC,G2UL,V2L} SMARC EVKs.
+Enable 4-bit tx support for sbc node.
 
-v1->v2:
- * Enabled 4-bit tx support.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2:
+ * New patch
+---
+ arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-This patch series dependupon [1]
-[1] https://lore.kernel.org/all/20230830145835.296690-1-biju.das.jz@bp.renesas.com/
-
-Biju Das (3):
-  arm64: dts: renesas: rzg2ul-smarc-som: Enable serial NOR flash
-  arm64: dts: renesas: rzg2l-smarc-som: Enable 4-bit tx support
-  arm64: dts: renesas: rzg2lc-smarc-som: Enable 4-bit tx support
-
- .../boot/dts/renesas/rzg2l-smarc-som.dtsi     |  1 +
- .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    |  1 +
- .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 44 +++++++++++++++++++
- .../boot/dts/renesas/rzfive-smarc-som.dtsi    |  4 ++
- 4 files changed, 50 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+index 547859c388ce..4409c47239b9 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+@@ -312,6 +312,7 @@ flash@0 {
+ 		m25p,fast-read;
+ 		spi-max-frequency = <50000000>;
+ 		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
+ 
+ 		partitions {
+ 			compatible = "fixed-partitions";
 -- 
 2.25.1
 
