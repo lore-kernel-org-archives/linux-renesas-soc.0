@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DB1C83F12
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6766CC83F35
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346133AbjHaLxO (ORCPT
+        id S241600AbjHaLxO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 31 Aug 2023 07:53:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38156 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346167AbjHaLxE (ORCPT
+        with ESMTP id S1346176AbjHaLxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 31 Aug 2023 07:53:04 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B40510D3
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2355010E2
         for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
-        by michel.telenet-ops.be with bizsmtp
-        id gBse2A00N3874jb06Bse6L; Thu, 31 Aug 2023 13:52:39 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id gBsf2A0023874jb01Bsfvy; Thu, 31 Aug 2023 13:52:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgDq-00274e-84;
+        id 1qbgDq-00274z-Cg;
         Thu, 31 Aug 2023 13:52:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgE2-00CIUo-Np;
+        id 1qbgE2-00CIVJ-SJ;
         Thu, 31 Aug 2023 13:52:38 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
@@ -37,9 +37,9 @@ To:     Magnus Damm <magnus.damm@gmail.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/13] ARM: dts: renesas: r8a7779: Add LBSC node
-Date:   Thu, 31 Aug 2023 13:52:27 +0200
-Message-Id: <2d0a6054306b4975355e65fe012f860ec00fcf55.1693481518.git.geert+renesas@glider.be>
+Subject: [PATCH 11/13] ARM: dts: renesas: rskrza1: Add FLASH nodes
+Date:   Thu, 31 Aug 2023 13:52:33 +0200
+Message-Id: <17a221699da14639e72264ffa39d47592d470f9a.1693481518.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1693481518.git.geert+renesas@glider.be>
 References: <cover.1693481518.git.geert+renesas@glider.be>
@@ -49,33 +49,101 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a minimal device node for the Local Bus State Controller (LBSC) on
-the R-Car H1 SoC, to be extended by board DTS files for devices residing
-in the LBSC external address space.
+Add device nodes for the Spansion S29GL512S NOR FLASH and the dual
+Spansion S25FL512S QSPI NOR FLASH on the RSK+RZA1 development board.
+The former resides in the external address space of the Bus State
+Controller (BSC).  The latter is mapped directly through the SPI Multi
+I/O Bus Controller.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/renesas/r8a7779.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../arm/boot/dts/renesas/r7s72100-rskrza1.dts | 66 +++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-diff --git a/arch/arm/boot/dts/renesas/r8a7779.dtsi b/arch/arm/boot/dts/renesas/r8a7779.dtsi
-index bba0c6d2386cd042..eaed2ae339383b34 100644
---- a/arch/arm/boot/dts/renesas/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/renesas/r8a7779.dtsi
-@@ -706,6 +706,13 @@ R8A7779_CLK_MMC1 R8A7779_CLK_MMC0
- 		};
+diff --git a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
+index e95b820e401663eb..f3233290041d0b52 100644
+--- a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
+@@ -29,6 +29,48 @@ memory@8000000 {
+ 		reg = <0x08000000 0x02000000>;
  	};
  
-+	lbsc: lbsc {
-+		compatible = "simple-bus";
++	flash@18000000 {
++		compatible = "mtd-rom";
++		reg = <0x18000000 0x08000000>;
++		clocks = <&mstp9_clks R7S72100_CLK_SPIBSC0>;
++		power-domains = <&cpg_clocks>;
++		bank-width = <4>;
++		device-width = <1>;
 +		#address-cells = <1>;
 +		#size-cells = <1>;
-+		ranges = <0 0 0x1c000000>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "uboot";
++				reg = <0x00000000 0x00080000>;
++			};
++
++			partition@80000 {
++				label = "uboot-env";
++				reg = <0x00080000 0x00040000>;
++			};
++
++			partition@c0000 {
++				label = "dt";
++				reg = <0x000c0000 0x00040000>;
++			};
++
++			partition@100000 {
++				label = "kernel";
++				reg = <0x00100000 0x00280000>;
++			};
++
++			partition@400000 {
++				label = "rootfs";
++				reg = <0x00400000 0x01c00000>;
++			};
++		};
 +	};
 +
- 	prr: chipid@ff000044 {
- 		compatible = "renesas,prr";
- 		reg = <0xff000044 4>;
+ 	keyboard {
+ 		compatible = "gpio-keys";
+ 
+@@ -113,6 +155,30 @@ eeprom@50 {
+ 	};
+ };
+ 
++&bsc {
++	flash@0 {
++		compatible = "cfi-flash";
++		reg = <0x00000000 0x4000000>;
++		bank-width = <2>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "apps";
++				reg = <0x00000000 0x01000000>;
++			};
++
++			partition@1000000 {
++				label = "data";
++				reg = <0x01000000 0x03000000>;
++			};
++		};
++	};
++};
++
+ &usb_x1_clk {
+ 	clock-frequency = <48000000>;
+ };
 -- 
 2.34.1
 
