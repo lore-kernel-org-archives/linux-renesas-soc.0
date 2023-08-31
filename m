@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6766CC83F35
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F929C83F3B
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241600AbjHaLxO (ORCPT
+        id S1346140AbjHaLxO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 31 Aug 2023 07:53:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38186 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346176AbjHaLxE (ORCPT
+        with ESMTP id S234387AbjHaLxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 31 Aug 2023 07:53:04 -0400
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2355010E2
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224D810DF
         for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
         by laurent.telenet-ops.be with bizsmtp
-        id gBsf2A0023874jb01Bsfvy; Thu, 31 Aug 2023 13:52:39 +0200
+        id gBse2A00J3874jb01Bsevr; Thu, 31 Aug 2023 13:52:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgDq-00274z-Cg;
+        id 1qbgDq-00274L-4k;
         Thu, 31 Aug 2023 13:52:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgE2-00CIVJ-SJ;
+        id 1qbgE2-00CIUY-Ja;
         Thu, 31 Aug 2023 13:52:38 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
@@ -37,9 +37,9 @@ To:     Magnus Damm <magnus.damm@gmail.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 11/13] ARM: dts: renesas: rskrza1: Add FLASH nodes
-Date:   Thu, 31 Aug 2023 13:52:33 +0200
-Message-Id: <17a221699da14639e72264ffa39d47592d470f9a.1693481518.git.geert+renesas@glider.be>
+Subject: [PATCH 01/13] ARM: dts: renesas: ape6evm: Drop bogus "mtd-rom" compatible value
+Date:   Thu, 31 Aug 2023 13:52:23 +0200
+Message-Id: <1c773aed6bd794cf36a9a787f77469eaa1359bef.1693481518.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1693481518.git.geert+renesas@glider.be>
 References: <cover.1693481518.git.geert+renesas@glider.be>
@@ -49,101 +49,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device nodes for the Spansion S29GL512S NOR FLASH and the dual
-Spansion S25FL512S QSPI NOR FLASH on the RSK+RZA1 development board.
-The former resides in the external address space of the Bus State
-Controller (BSC).  The latter is mapped directly through the SPI Multi
-I/O Bus Controller.
+make dtbs_check:
+
+    arch/arm/boot/dts/r8a73a4-ape6evm.dtb: flash@0: compatible: 'oneOf' conditional failed, one must be fixed:
+	    ['cfi-flash', 'mtd-rom'] is too long
+	    'cfi-flash' is not one of ['amd,s29gl01gp', 'amd,s29gl032a', 'amd,s29gl256n', 'amd,s29gl512n', 'arm,versatile-flash', 'arm,vexpress-flash', 'cortina,gemini-flash', 'cypress,hyperflash', 'ge,imp3a-firmware-mirror', 'ge,imp3a-paged-flash', 'gef,ppc9a-firmware-mirror', 'gef,ppc9a-paged-flash', 'gef,sbc310-firmware-mirror', 'gef,sbc310-paged-flash', 'gef,sbc610-firmware-mirror', 'gef,sbc610-paged-flash', 'intel,28f128j3', 'intel,dt28f160', 'intel,ixp4xx-flash', 'intel,JS28F128', 'intel,JS28F640', 'intel,PC28F640P30T85', 'numonyx,js28f00a', 'numonyx,js28f128', 'sst,sst39vf320', 'xlnx,xps-mch-emc-2.00.a']
+	    'cfi-flash' is not one of ['cypress,cy7c1019dv33-10zsxi', 'arm,vexpress-psram']
+	    'mtd-rom' is not one of ['cfi-flash', 'jedec-flash']
+	    'mtd-ram' was expected
+	    From schema: Documentation/devicetree/bindings/mtd/mtd-physmap.yaml
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../arm/boot/dts/renesas/r7s72100-rskrza1.dts | 66 +++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-index e95b820e401663eb..f3233290041d0b52 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-@@ -29,6 +29,48 @@ memory@8000000 {
- 		reg = <0x08000000 0x02000000>;
- 	};
+diff --git a/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
+index 91b27258be36ff45..de87f2682e323866 100644
+--- a/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
++++ b/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
+@@ -178,7 +178,7 @@ &cpu0 {
  
-+	flash@18000000 {
-+		compatible = "mtd-rom";
-+		reg = <0x18000000 0x08000000>;
-+		clocks = <&mstp9_clks R7S72100_CLK_SPIBSC0>;
-+		power-domains = <&cpg_clocks>;
-+		bank-width = <4>;
-+		device-width = <1>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "uboot";
-+				reg = <0x00000000 0x00080000>;
-+			};
-+
-+			partition@80000 {
-+				label = "uboot-env";
-+				reg = <0x00080000 0x00040000>;
-+			};
-+
-+			partition@c0000 {
-+				label = "dt";
-+				reg = <0x000c0000 0x00040000>;
-+			};
-+
-+			partition@100000 {
-+				label = "kernel";
-+				reg = <0x00100000 0x00280000>;
-+			};
-+
-+			partition@400000 {
-+				label = "rootfs";
-+				reg = <0x00400000 0x01c00000>;
-+			};
-+		};
-+	};
-+
- 	keyboard {
- 		compatible = "gpio-keys";
- 
-@@ -113,6 +155,30 @@ eeprom@50 {
- 	};
- };
- 
-+&bsc {
-+	flash@0 {
+ &bsc {
+ 	flash@0 {
+-		compatible = "cfi-flash", "mtd-rom";
 +		compatible = "cfi-flash";
-+		reg = <0x00000000 0x4000000>;
-+		bank-width = <2>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "apps";
-+				reg = <0x00000000 0x01000000>;
-+			};
-+
-+			partition@1000000 {
-+				label = "data";
-+				reg = <0x01000000 0x03000000>;
-+			};
-+		};
-+	};
-+};
-+
- &usb_x1_clk {
- 	clock-frequency = <48000000>;
- };
+ 		reg = <0x0 0x08000000>;
+ 		bank-width = <2>;
+ 
 -- 
 2.34.1
 
