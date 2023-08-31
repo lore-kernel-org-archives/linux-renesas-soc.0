@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D763CC83F35
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769E0C83F32
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346129AbjHaLxM (ORCPT
+        id S240114AbjHaLxL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 07:53:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
+        Thu, 31 Aug 2023 07:53:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346165AbjHaLxE (ORCPT
+        with ESMTP id S1346162AbjHaLxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 31 Aug 2023 07:53:04 -0400
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA3A10D1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2154310DD
         for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
         by michel.telenet-ops.be with bizsmtp
-        id gBse2A00R3874jb06Bse6N; Thu, 31 Aug 2023 13:52:39 +0200
+        id gBsf2A0033874jb06Bsf6P; Thu, 31 Aug 2023 13:52:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgDq-00274o-AN;
-        Thu, 31 Aug 2023 13:52:38 +0200
+        id 1qbgDq-002759-F1;
+        Thu, 31 Aug 2023 13:52:39 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgE2-00CIV4-Q7;
+        id 1qbgE2-00CIVT-Tt;
         Thu, 31 Aug 2023 13:52:38 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
@@ -37,9 +37,9 @@ To:     Magnus Damm <magnus.damm@gmail.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 08/13] ARM: dts: renesas: blanche: Move Ethernet node to LBSC
-Date:   Thu, 31 Aug 2023 13:52:30 +0200
-Message-Id: <457239047bc8b5deabf15d816043a89ab00db5ef.1693481518.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 13/13] ARM: dts: renesas: blanche: Add FLASH node
+Date:   Thu, 31 Aug 2023 13:52:35 +0200
+Message-Id: <7edb26bc29ad58198901ae6b6f869684473bb29d.1693481518.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1693481518.git.geert+renesas@glider.be>
 References: <cover.1693481518.git.geert+renesas@glider.be>
@@ -49,65 +49,70 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The SMSC LAN89218AQ Ethernet controller on the Blanche development board
-resides in the external address space of the Local Bus State Controller
-(LBSC).  Move the Ethernet device node to reflect this.
+Add a device node for the Spansion S29GL512S NOR FLASH on the Blanche
+development board.  This FLASH resides in the external address space of
+the Local Bus State Controller.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/renesas/r8a7792-blanche.dts | 32 ++++++++++---------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+This depends on "[PATCH] ARM: shmobile: rcar-gen2: Reserve boot area
+when SMP is enabled".
+---
+ arch/arm/boot/dts/renesas/r8a7792-blanche.dts | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
 diff --git a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
-index 6a83923aa4612e71..e793134f32a3020a 100644
+index e793134f32a3020a..4ee83b8aae2a4f19 100644
 --- a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
 +++ b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
-@@ -39,21 +39,6 @@ d3_3v: regulator-3v3 {
- 		regulator-always-on;
- 	};
- 
--	ethernet@18000000 {
--		compatible = "smsc,lan89218", "smsc,lan9115";
--		reg = <0 0x18000000 0 0x100>;
--		phy-mode = "mii";
--		interrupt-parent = <&irqc>;
--		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
--		smsc,irq-push-pull;
--		reg-io-width = <4>;
--		vddvario-supply = <&d3_3v>;
--		vdd33a-supply = <&d3_3v>;
--
--		pinctrl-0 = <&lan89218_pins>;
--		pinctrl-names = "default";
--	};
--
- 	vga-encoder {
- 		compatible = "adi,adv7123";
- 
-@@ -196,6 +181,23 @@ &can_clk {
- 	clock-frequency = <48000000>;
+@@ -182,6 +182,35 @@ &can_clk {
  };
  
-+&lbsc {
-+	ethernet@18000000 {
-+		compatible = "smsc,lan89218", "smsc,lan9115";
-+		reg = <0x18000000 0x100>;
-+		phy-mode = "mii";
-+		interrupt-parent = <&irqc>;
-+		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
-+		smsc,irq-push-pull;
-+		reg-io-width = <4>;
-+		vddvario-supply = <&d3_3v>;
-+		vdd33a-supply = <&d3_3v>;
-+
-+		pinctrl-0 = <&lan89218_pins>;
+ &lbsc {
++	flash@0 {
++		compatible = "cfi-flash";
++		reg = <0x00000000 0x04000000>;
++		pinctrl-0 = <&flash_pins>;
 +		pinctrl-names = "default";
-+	};
-+};
++		bank-width = <2>;
 +
- &pfc {
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "uboot";
++				reg = <0x00000000 0x00040000>;
++				read-only;
++			};
++			partition@40000 {
++				label = "uboot-env";
++				reg = <0x00040000 0x00040000>;
++				read-only;
++			};
++			partition@80000 {
++				label = "flash";
++				reg = <0x00080000 0x03f80000>;
++			};
++		};
++	};
++
+ 	ethernet@18000000 {
+ 		compatible = "smsc,lan89218", "smsc,lan9115";
+ 		reg = <0x18000000 0x100>;
+@@ -240,6 +269,11 @@ du1_pins: du1 {
+ 		function = "du1";
+ 	};
+ 
++	flash_pins: flash {
++		groups = "lbsc_cs0";
++		function = "lbsc";
++	};
++
+ 	keyboard_pins: keyboard {
+ 		pins = "GP_3_10", "GP_3_11", "GP_3_12", "GP_3_15", "GP_11_2";
+ 		bias-pull-up;
 -- 
 2.34.1
 
