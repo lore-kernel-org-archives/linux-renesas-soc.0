@@ -2,156 +2,169 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC23AC83F34
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE73C83F01
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241118AbjHaLSC (ORCPT
+        id S229718AbjHaLUo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 07:18:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44654 "EHLO
+        Thu, 31 Aug 2023 07:20:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242203AbjHaLSA (ORCPT
+        with ESMTP id S233854AbjHaLUn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2023 07:18:00 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B5CBCF4
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:17:56 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
-        by xavier.telenet-ops.be with bizsmtp
-        id gBHs2A00Y3874jb01BHs0h; Thu, 31 Aug 2023 13:17:53 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qbfgC-0026un-5m;
-        Thu, 31 Aug 2023 13:17:52 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qbfgO-00CHXo-JG;
-        Thu, 31 Aug 2023 13:17:52 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mtd@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/4] ARM: shmobile: Reserve boot area when SMP is enabled
-Date:   Thu, 31 Aug 2023 13:17:43 +0200
-Message-Id: <cover.1693409184.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        Thu, 31 Aug 2023 07:20:43 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51165E79
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:20:12 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3a7e68f4214so408956b6e.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:20:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693480807; x=1694085607;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tvSk/EJ3+mJV+DI450j6sRHdpmwF+1NljqzK7MsmgH4=;
+        b=CBJKlApCGn+VU718pIl8y45YesuulqVUi0SJelT6x9xJ5tmppnj9cwiStsUMn4K7iV
+         U9XRgkvWh+6rF4fAf3OrKcWol+7kkoXaVPpJxqnPTsiudDBw1TE+dM529JJzr9/k0BtV
+         WahuTJEKV7W1dcHiZGpLlCDOilsKNg+tFiSPPgaWLnxIVbdJWht9MEjuN261Enpx8LwQ
+         5gO7NdtL4rf7xbs0uSqzdLrRm9mXszWGtlqZUGoy9sPSInAYQdWdBcV7HuKJFQwYQvP+
+         NciAZM64pWEmKjg+EFO/+0d5BQ9ioRtTh5FeQ/pp36jWdsOCI9W/GrYqbsZiCqGmO1Os
+         hMIw==
+X-Gm-Message-State: AOJu0YxgU7olSEcVQ7wyO+lpzqNIJmKVjFTYvDfrC9pUSNWp6HSd/vVS
+        PLTfUzlPvqRNYvRW+IdKss+IQgRgr+iA0A==
+X-Google-Smtp-Source: AGHT+IFvN8FNIrKVCgyX4ZN65m3rY5Q6QJRgx0V4uuFXd7NYSaNYyl93Eg8SOoxyk6uTEFY/sEfpVQ==
+X-Received: by 2002:a05:6358:701:b0:134:ec9d:ef18 with SMTP id e1-20020a056358070100b00134ec9def18mr4020195rwj.28.1693480807051;
+        Thu, 31 Aug 2023 04:20:07 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id v142-20020a252f94000000b00d17586ff1f7sm251860ybv.28.2023.08.31.04.20.06
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Aug 2023 04:20:06 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-d7ba4c5f581so468559276.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:20:06 -0700 (PDT)
+X-Received: by 2002:a25:2e4d:0:b0:d78:2ca3:b664 with SMTP id
+ b13-20020a252e4d000000b00d782ca3b664mr4852412ybn.51.1693480806388; Thu, 31
+ Aug 2023 04:20:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <07cf5e2b466f3ba217403afc66a8246460609e09.1679330105.git.geert+renesas@glider.be>
+ <4afd79ba-215d-8b33-4999-4afaa88ae051@linaro.org> <CAMuHMdXE=jvjKTekRgWpYRPa7_T51qRdTXTgB3nQn5Dcjjg7bA@mail.gmail.com>
+ <CAMuHMdVsbcuH+UYKb2be34LAk=gu8GMOQ+5+uxk_O585X4rWBg@mail.gmail.com>
+ <CAMuHMdWvVmQ6ZuYAs2z9xAJ9y82UNAckXDmkSQSXxGY_KyT4tg@mail.gmail.com>
+ <8dc85429-5e04-96b6-4e54-85cc823cbe5a@linaro.org> <CAMuHMdV0WqD1FGccKCm9pZQK9MukD3yfsr2krg9dD2D_i=2KXA@mail.gmail.com>
+In-Reply-To: <CAMuHMdV0WqD1FGccKCm9pZQK9MukD3yfsr2krg9dD2D_i=2KXA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 31 Aug 2023 13:19:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU6cLnaxU3z5fMAc+JwXB8z531tN4YXzTYoUwWWyT3jNA@mail.gmail.com>
+Message-ID: <CAMuHMdU6cLnaxU3z5fMAc+JwXB8z531tN4YXzTYoUwWWyT3jNA@mail.gmail.com>
+Subject: Re: [PATCH/RFC] ARM: dts: marzen: Add FLASH node
+To:     Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+On Mon, Apr 10, 2023 at 11:25 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Apr 7, 2023 at 9:16 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+> > On 4/3/23 17:29, Geert Uytterhoeven wrote:
+> > > On Tue, Mar 21, 2023 at 4:01 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > >> On Mon, Mar 20, 2023 at 7:57 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > >>> On Mon, Mar 20, 2023 at 6:04 PM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+> > >>>> Vignesh used to review CFI code, maybe he can intervene. I've never
+> > >>>> worked with CFI, but I can try to help. I'll need more debug data though.
+> > >>>>
+> > >>>> On 3/20/23 16:43, Geert Uytterhoeven wrote:
+> > >>>>> Add a device node for the Spansion S29GL512N NOR FLASH on the Marzen
+> > >>>>> development board.
+> > >>>>>
+> > >>>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >>>>> ---
+> > >>>>> Although the S29GL512N is a CFI FLASH, using "cfi-flash" instead of
+> > >>>>> "mtd-rom" does not work:
+> > >>>>>   1. Probing fails with "physmap-flash 0.flash: map_probe failed",
+> > >>>>
+> > >>>> I would first try to understand why the probe fails.
+> > >
+> > >> I suddenly remembered I have a different board (APE6-EVM), where
+> > >> the CFI-FLASH stopped working after adding support for secondary
+> > >> CPUs. I always thought that was a hardware quirk...
+> > >>
+> > >> Turns out the CFI-FLASH on Marzen (quad Cortex-A9) is detected when
+> > >> booting with "nosmp":
+> > >
+> > >> My first guess was that the probing process is migrated to a different
+> > >> CPU core during probing, but printing smp_processor_id() didn't
+> > >> confirm that; it's just running on a different CPU core than CPU0.
+> > >> Wrapping the body of cfi_qry_mode_on() inside a get_cpu()/put_cpu()
+> > >> pair to prevent migration also didn't fix it.
+> > >>
+> > >> Is CFI-FLASH known-broken on SMP?
+> > >
+> > > After actively looking for more boards with CFI FLASHes, and finding one
+> > > more board where FLASH probing fails on SMP, I dug deeper.
+> > > Turns out they all have in common that (a) the CFI FLASH is located at
+> > > physical address zero, and (b) the secondary CPU bringup code relies
+> > > on mapping (by special hardware) the region at address zero to the
+> > > CPU boot code...
+> > >
+> > > Hence fixing this involves making sure that accessing FLASH and bringing
+> > > CPU cores online do not happen concurrently...
+> >
+> > Would deferring probe for CFI work?
+>
+> Probe deferral of CFI FLASH would not help, as the FLASH is already
+> probed after secondary CPU startup.
+>
+> Sequence of operations is:
+>   1. Map first page(s) of physical address space to RAM containing
+>      CPU startup code (not using the MMU, but using a special
+>      register in the SoC),
+>   2. Boot secondary CPU cores,
+>   3. Probe CFI-FLASH: fails, as accesses to the first page(s) of
+>      physical address space do not address the FLASH, but the CPU
+>      startup code in RAM.
+>   4. After boot, CPU cores can be offlined and onlined using CPU
+>       hotplug through sysfs.
+>
+> When using "mtd-rom" instead of "cfi-flash", the system boots fine,
+> but the first page of /dev/mtd0 does not contain the FLASH contents,
+> but the CPU startup code, which I hadn't noticed originally...
+>
+> Disabling the special mapping for the CPU startup code after all cores
+> have been brought up (in between steps 2 and 3) fixes the CFI-FLASH.
+> However, if a CPU core is offlined and onlined at run-time, the special
+> mapping has to be reinstantiated temporarily again, thus any FLASH
+> accesses (by other CPUs) must be prevented temporarily, too.
+>
+> This issue is present on all Renesas SH/R-Mobile and R-Car SoCs
+> that support SMP. I am wondering if there are any other SMP SoCS that
+> suffer from similar issues, and that have solved them? I couldn't find
+> any in-tree DTS for a board with CFI-FLASH or mtd-rom at address zero
+> using an SMP ARM SoC...
+>
+> I guess the simplest "solution" is to disable in DT any device at address zero
+> when SMP is used (when step 1 is executed)...
 
-On Renesas ARM SoCs predating R-Car Gen3, CPU core bringup does not use
-a hardware register to program the CPU boot address directly.  Instead,
-it uses a set of registers (thus not involving the MMU) to remap any CPU
-access to the page(s) at physical address zero to the specified address
-block containing the CPU core startup code.  the MMU.  Hence when this
-is enabled, any device residing in this low part of physical address
-space cannot be accessed.  On some boards, a CFI FLASH lives there.
-
-Hence this causes conflicts between CPU onlining and FLASH operation:
-  - Reading the first page(s) of FLASH returns the CPU startup code
-    instead of the FLASH contents,
-  - CFI FLASH probing fails, as it operates on the RAM that contains the
-    CPU startup code.  Moreover, as this probing involves writes, it
-    corrupts the CPU startup code, causing any subsequent CPU onlining
-    to fail.
-
-CPU cores can be onlined in 3 places:
-  A. Secondary core bringup, during early boot (FLASH not yet in use),
-  B. Enabling secondary CPUs when resuming after s2ram (FLASH not in
-     use),
-  C. Manual CPU hotplug (at any time, FLASH may or may not be in use).
-
-Possible solutions:
-  1. Disable FLASH in SMP initialization:
-       - Simple to implement,
-       - Accessing the FLASH from Linux needs a reboot with nosmp.
-
-  2. Disable SMP when FLASH@0 is used:
-       - How to check if @0 is actually used/mapped?
-         SMP is initialized before FLASH.
-
-  3. Map core startup code only when needed:
-      - Unmap core startup code after secondary core bringup,
-      - Map/unmap core startup code during s2ram suspend/resume,
-      - Call cpu_hotplug_disable() from smp_cpus_done(),
-	  - CPU hotplug is broken.
-	  - How to check if @0 is actually used/mapped?
-
-  4. As this FLASH is typically used to boot the system, Marek suggested
-     to fix this in the boot loader (e.g. put a (modified) copy of the
-     CPU bringup code in FLASH).  But I think this is fragile, and cannot
-     be a generic solution, as there are other ways to boot the system,
-     and the FLASH may be used for other purposes.
-
-This patch series implements solution 1, by marking the boot area region
-reserved during SMP initialization (an alternative method would be to
-disable any device node in DT that resides in this area).  Subsequent
-probing of FLASH will fail with -EBUSY:
-
-    physmap-flash 0.flash: can't request region for resource [mem 0x00000000-0x03ffffff]
-    physmap-flash: probe of 0.flash failed with error -16
-
-When CONFIG_SMP is disabled, or when booted with "nosmp", the FLASH
-is available again.
-
-The first patch is a small cleanup in code affected by the third patch.
-The other three patches fix the issue on R-Car Gen2 (and RZ/G1), R-Car
-H1, and SH-Mobile AG5 SoCs.
-
-Other Renesas SoCs:
-  - R-Mobile APE6 is also affected, but has no upstream SMP support yet,
-  - EMMA Mobile EV2 is unaffected, as it uses internal boot ROM code
-    that watches a special general purpose register in the SMU block,
-  - RZ/N1 is not affected, as it uses a "cpu-release-addr" property in
-    DT,
-  - R-Car Gen3 is not affected, as it extended the R-Car Gen2 RST block
-    with Cortex-A53/A57 Boot Address Registers for 64-bit mode
-    (CA5[37]CPUnBAR[HL]), which control the boot address directly,
-  - R-Car Gen4 is not affected, as it has Reset Vector Base Address
-    Registers (RVBAR[HL]Cn), which control the boot address directly.
-
-This series has been tested on R-Car V2H (Blanche) and R-Car H1
-(Marzen).  With this, the CFI FLASHes on Marzen[1] and Blanche (DTS
-patch to be posted) work when booted with nosmp.
-
-Thanks for your comments!
-
-[1] "[PATCH/RFC] ARM: dts: marzen: Add FLASH node"
-    https://lore.kernel.org/r/07cf5e2b466f3ba217403afc66a8246460609e09.1679330105.git.geert+renesas@glider.be/
-
-Geert Uytterhoeven (4):
-  ARM: shmobile: rcar-gen2: Remove unneeded once handling
-  ARM: shmobile: rcar-gen2: Reserve boot area when SMP is enabled
-  ARM: shmobile: r8a7779: Reserve boot area when SMP is enabled
-  ARM: shmobile: sh73a0: Reserve boot area when SMP is enabled
-
- arch/arm/mach-shmobile/pm-rcar-gen2.c |  5 +++--
- arch/arm/mach-shmobile/smp-r8a7779.c  |  9 ++++++++-
- arch/arm/mach-shmobile/smp-sh73a0.c   | 10 ++++++++--
- 3 files changed, 19 insertions(+), 5 deletions(-)
-
--- 
-2.34.1
+Or reserve the boot area using request_mem_region().
+I have posted an RFC patch series doing that:
+"[PATCH/RFC 0/4] ARM: shmobile: Reserve boot area when SMP is enabled"
+https://lore.kernel.org/all/cover.1693409184.git.geert+renesas@glider.be
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
