@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAEAC83F38
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DB1C83F12
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbjHaLxN (ORCPT
+        id S1346133AbjHaLxO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 07:53:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
+        Thu, 31 Aug 2023 07:53:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346145AbjHaLxE (ORCPT
+        with ESMTP id S1346167AbjHaLxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 31 Aug 2023 07:53:04 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2138B10DA
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B40510D3
         for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
-        by baptiste.telenet-ops.be with bizsmtp
-        id gBsf2A00B3874jb01BsfNn; Thu, 31 Aug 2023 13:52:39 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id gBse2A00N3874jb06Bse6L; Thu, 31 Aug 2023 13:52:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgDq-002755-Dw;
+        id 1qbgDq-00274e-84;
         Thu, 31 Aug 2023 13:52:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgE2-00CIVN-T8;
+        id 1qbgE2-00CIUo-Np;
         Thu, 31 Aug 2023 13:52:38 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
@@ -37,9 +37,9 @@ To:     Magnus Damm <magnus.damm@gmail.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 12/13] ARM: dts: renesas: marzen: Add FLASH node
-Date:   Thu, 31 Aug 2023 13:52:34 +0200
-Message-Id: <440ce3bb950c34fd57071b4eec83ad9643b682e5.1693481518.git.geert+renesas@glider.be>
+Subject: [PATCH 05/13] ARM: dts: renesas: r8a7779: Add LBSC node
+Date:   Thu, 31 Aug 2023 13:52:27 +0200
+Message-Id: <2d0a6054306b4975355e65fe012f860ec00fcf55.1693481518.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1693481518.git.geert+renesas@glider.be>
 References: <cover.1693481518.git.geert+renesas@glider.be>
@@ -49,80 +49,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a device node for the Spansion S29GL512N NOR FLASH on the Marzen
-development board.  This FLASH resides in the external address space of
-the Local Bus State Controller.
-
-Note that as the CFI-FLASH has a run-time conflict with CPU bring-up, it
-will only be available when booting with SMP disabled.
+Add a minimal device node for the Local Bus State Controller (LBSC) on
+the R-Car H1 SoC, to be extended by board DTS files for devices residing
+in the LBSC external address space.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes compared to RFC:
-  - Use "cfi-flash" compatible value,
-  - Add pin control,
-  - Move to LBSC,
-  - Depends on "[PATCH] ARM: shmobile: r8a7779: Reserve boot area when
-    SMP is enabled".
+ arch/arm/boot/dts/renesas/r8a7779.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-[1] "[PATCH/RFC] ARM: dts: marzen: Add FLASH node"
-    https://lore.kernel.org/r/07cf5e2b466f3ba217403afc66a8246460609e09.1679330105.git.geert+renesas@glider.be/
----
- arch/arm/boot/dts/renesas/r8a7779-marzen.dts | 34 ++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm/boot/dts/renesas/r8a7779-marzen.dts b/arch/arm/boot/dts/renesas/r8a7779-marzen.dts
-index 9c001cbfc02f79f7..dfc6d63a21cd5474 100644
---- a/arch/arm/boot/dts/renesas/r8a7779-marzen.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7779-marzen.dts
-@@ -229,6 +229,35 @@ &extal_clk {
- };
- 
- &lbsc {
-+	flash@0 {
-+		compatible = "cfi-flash";
-+		reg = <0x0 0x04000000>;
-+		pinctrl-0 = <&flash_pins>;
-+		pinctrl-names = "default";
-+		bank-width = <2>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "uboot";
-+				reg = <0x00000000 0x00040000>;
-+				read-only;
-+			};
-+			partition@40000 {
-+				label = "uboot-env";
-+				reg = <0x00040000 0x00040000>;
-+				read-only;
-+			};
-+			partition@80000 {
-+				label = "flash";
-+				reg = <0x00080000 0x03f80000>;
-+			};
-+		};
-+	};
-+
- 	ethernet@18000000 {
- 		compatible = "smsc,lan89218", "smsc,lan9115";
- 		reg = <0x18000000 0x100>;
-@@ -288,6 +317,11 @@ lbsc {
+diff --git a/arch/arm/boot/dts/renesas/r8a7779.dtsi b/arch/arm/boot/dts/renesas/r8a7779.dtsi
+index bba0c6d2386cd042..eaed2ae339383b34 100644
+--- a/arch/arm/boot/dts/renesas/r8a7779.dtsi
++++ b/arch/arm/boot/dts/renesas/r8a7779.dtsi
+@@ -706,6 +706,13 @@ R8A7779_CLK_MMC1 R8A7779_CLK_MMC0
  		};
  	};
  
-+	flash_pins: flash {
-+		groups = "lbsc_cs0";
-+		function = "lbsc";
++	lbsc: lbsc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0 0x1c000000>;
 +	};
 +
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_c";
- 		function = "scif2";
+ 	prr: chipid@ff000044 {
+ 		compatible = "renesas,prr";
+ 		reg = <0xff000044 4>;
 -- 
 2.34.1
 
