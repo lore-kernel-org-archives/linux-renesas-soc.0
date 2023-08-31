@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F929C83F3B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20184C83F3C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346140AbjHaLxO (ORCPT
+        id S1346141AbjHaLxP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 07:53:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38190 "EHLO
+        Thu, 31 Aug 2023 07:53:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234387AbjHaLxE (ORCPT
+        with ESMTP id S1346177AbjHaLxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 31 Aug 2023 07:53:04 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224D810DF
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B7DB10D5
         for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
-        by laurent.telenet-ops.be with bizsmtp
-        id gBse2A00J3874jb01Bsevr; Thu, 31 Aug 2023 13:52:39 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id gBse2A00Q3874jb06Bse6M; Thu, 31 Aug 2023 13:52:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgDq-00274L-4k;
+        id 1qbgDq-00274l-9c;
         Thu, 31 Aug 2023 13:52:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qbgE2-00CIUY-Ja;
+        id 1qbgE2-00CIUz-PN;
         Thu, 31 Aug 2023 13:52:38 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
@@ -37,9 +37,9 @@ To:     Magnus Damm <magnus.damm@gmail.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/13] ARM: dts: renesas: ape6evm: Drop bogus "mtd-rom" compatible value
-Date:   Thu, 31 Aug 2023 13:52:23 +0200
-Message-Id: <1c773aed6bd794cf36a9a787f77469eaa1359bef.1693481518.git.geert+renesas@glider.be>
+Subject: [PATCH 07/13] ARM: dts: renesas: marzen: Move Ethernet node to LBSC
+Date:   Thu, 31 Aug 2023 13:52:29 +0200
+Message-Id: <74a8ee61ed89c9ca0489156a4f135ecb825e56b9.1693481518.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1693481518.git.geert+renesas@glider.be>
 References: <cover.1693481518.git.geert+renesas@glider.be>
@@ -49,34 +49,65 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-make dtbs_check:
-
-    arch/arm/boot/dts/r8a73a4-ape6evm.dtb: flash@0: compatible: 'oneOf' conditional failed, one must be fixed:
-	    ['cfi-flash', 'mtd-rom'] is too long
-	    'cfi-flash' is not one of ['amd,s29gl01gp', 'amd,s29gl032a', 'amd,s29gl256n', 'amd,s29gl512n', 'arm,versatile-flash', 'arm,vexpress-flash', 'cortina,gemini-flash', 'cypress,hyperflash', 'ge,imp3a-firmware-mirror', 'ge,imp3a-paged-flash', 'gef,ppc9a-firmware-mirror', 'gef,ppc9a-paged-flash', 'gef,sbc310-firmware-mirror', 'gef,sbc310-paged-flash', 'gef,sbc610-firmware-mirror', 'gef,sbc610-paged-flash', 'intel,28f128j3', 'intel,dt28f160', 'intel,ixp4xx-flash', 'intel,JS28F128', 'intel,JS28F640', 'intel,PC28F640P30T85', 'numonyx,js28f00a', 'numonyx,js28f128', 'sst,sst39vf320', 'xlnx,xps-mch-emc-2.00.a']
-	    'cfi-flash' is not one of ['cypress,cy7c1019dv33-10zsxi', 'arm,vexpress-psram']
-	    'mtd-rom' is not one of ['cfi-flash', 'jedec-flash']
-	    'mtd-ram' was expected
-	    From schema: Documentation/devicetree/bindings/mtd/mtd-physmap.yaml
+The SMSC LAN89218AQ Ethernet controller on the Marzen development board
+resides in the external address space of the Local Bus State Controller
+(LBSC).  Move the Ethernet device node to reflect this.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/renesas/r8a7779-marzen.dts | 32 +++++++++++---------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
-index 91b27258be36ff45..de87f2682e323866 100644
---- a/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
-+++ b/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
-@@ -178,7 +178,7 @@ &cpu0 {
+diff --git a/arch/arm/boot/dts/renesas/r8a7779-marzen.dts b/arch/arm/boot/dts/renesas/r8a7779-marzen.dts
+index 50a468c8018351df..9c001cbfc02f79f7 100644
+--- a/arch/arm/boot/dts/renesas/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/renesas/r8a7779-marzen.dts
+@@ -52,21 +52,6 @@ vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		states = <3300000 1>, <1800000 0>;
+ 	};
  
- &bsc {
- 	flash@0 {
--		compatible = "cfi-flash", "mtd-rom";
-+		compatible = "cfi-flash";
- 		reg = <0x0 0x08000000>;
- 		bank-width = <2>;
+-	ethernet@18000000 {
+-		compatible = "smsc,lan89218", "smsc,lan9115";
+-		reg = <0x18000000 0x100>;
+-		pinctrl-0 = <&ethernet_pins>;
+-		pinctrl-names = "default";
+-
+-		phy-mode = "mii";
+-		interrupt-parent = <&irqpin0>;
+-		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
+-		smsc,irq-push-pull;
+-		reg-io-width = <4>;
+-		vddvario-supply = <&fixedregulator3v3>;
+-		vdd33a-supply = <&fixedregulator3v3>;
+-	};
+-
+ 	keyboard-irq {
+ 		compatible = "gpio-keys";
  
+@@ -229,6 +214,23 @@ &extal_clk {
+ 	clock-frequency = <31250000>;
+ };
+ 
++&lbsc {
++	ethernet@18000000 {
++		compatible = "smsc,lan89218", "smsc,lan9115";
++		reg = <0x18000000 0x100>;
++		pinctrl-0 = <&ethernet_pins>;
++		pinctrl-names = "default";
++
++		phy-mode = "mii";
++		interrupt-parent = <&irqpin0>;
++		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
++		smsc,irq-push-pull;
++		reg-io-width = <4>;
++		vddvario-supply = <&fixedregulator3v3>;
++		vdd33a-supply = <&fixedregulator3v3>;
++	};
++};
++
+ &tmu0 {
+ 	status = "okay";
+ };
 -- 
 2.34.1
 
