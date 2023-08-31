@@ -2,169 +2,182 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE73C83F01
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3596C83F12
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 11:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229718AbjHaLUo convert rfc822-to-8bit (ORCPT
+        id S230017AbjHaLxK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 07:20:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49780 "EHLO
+        Thu, 31 Aug 2023 07:53:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233854AbjHaLUn (ORCPT
+        with ESMTP id S1346136AbjHaLxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2023 07:20:43 -0400
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51165E79
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:20:12 -0700 (PDT)
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3a7e68f4214so408956b6e.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:20:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693480807; x=1694085607;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tvSk/EJ3+mJV+DI450j6sRHdpmwF+1NljqzK7MsmgH4=;
-        b=CBJKlApCGn+VU718pIl8y45YesuulqVUi0SJelT6x9xJ5tmppnj9cwiStsUMn4K7iV
-         U9XRgkvWh+6rF4fAf3OrKcWol+7kkoXaVPpJxqnPTsiudDBw1TE+dM529JJzr9/k0BtV
-         WahuTJEKV7W1dcHiZGpLlCDOilsKNg+tFiSPPgaWLnxIVbdJWht9MEjuN261Enpx8LwQ
-         5gO7NdtL4rf7xbs0uSqzdLrRm9mXszWGtlqZUGoy9sPSInAYQdWdBcV7HuKJFQwYQvP+
-         NciAZM64pWEmKjg+EFO/+0d5BQ9ioRtTh5FeQ/pp36jWdsOCI9W/GrYqbsZiCqGmO1Os
-         hMIw==
-X-Gm-Message-State: AOJu0YxgU7olSEcVQ7wyO+lpzqNIJmKVjFTYvDfrC9pUSNWp6HSd/vVS
-        PLTfUzlPvqRNYvRW+IdKss+IQgRgr+iA0A==
-X-Google-Smtp-Source: AGHT+IFvN8FNIrKVCgyX4ZN65m3rY5Q6QJRgx0V4uuFXd7NYSaNYyl93Eg8SOoxyk6uTEFY/sEfpVQ==
-X-Received: by 2002:a05:6358:701:b0:134:ec9d:ef18 with SMTP id e1-20020a056358070100b00134ec9def18mr4020195rwj.28.1693480807051;
-        Thu, 31 Aug 2023 04:20:07 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id v142-20020a252f94000000b00d17586ff1f7sm251860ybv.28.2023.08.31.04.20.06
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Aug 2023 04:20:06 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-d7ba4c5f581so468559276.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:20:06 -0700 (PDT)
-X-Received: by 2002:a25:2e4d:0:b0:d78:2ca3:b664 with SMTP id
- b13-20020a252e4d000000b00d782ca3b664mr4852412ybn.51.1693480806388; Thu, 31
- Aug 2023 04:20:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <07cf5e2b466f3ba217403afc66a8246460609e09.1679330105.git.geert+renesas@glider.be>
- <4afd79ba-215d-8b33-4999-4afaa88ae051@linaro.org> <CAMuHMdXE=jvjKTekRgWpYRPa7_T51qRdTXTgB3nQn5Dcjjg7bA@mail.gmail.com>
- <CAMuHMdVsbcuH+UYKb2be34LAk=gu8GMOQ+5+uxk_O585X4rWBg@mail.gmail.com>
- <CAMuHMdWvVmQ6ZuYAs2z9xAJ9y82UNAckXDmkSQSXxGY_KyT4tg@mail.gmail.com>
- <8dc85429-5e04-96b6-4e54-85cc823cbe5a@linaro.org> <CAMuHMdV0WqD1FGccKCm9pZQK9MukD3yfsr2krg9dD2D_i=2KXA@mail.gmail.com>
-In-Reply-To: <CAMuHMdV0WqD1FGccKCm9pZQK9MukD3yfsr2krg9dD2D_i=2KXA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 31 Aug 2023 13:19:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU6cLnaxU3z5fMAc+JwXB8z531tN4YXzTYoUwWWyT3jNA@mail.gmail.com>
-Message-ID: <CAMuHMdU6cLnaxU3z5fMAc+JwXB8z531tN4YXzTYoUwWWyT3jNA@mail.gmail.com>
-Subject: Re: [PATCH/RFC] ARM: dts: marzen: Add FLASH node
-To:     Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Thu, 31 Aug 2023 07:53:04 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03B5E72
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2023 04:52:40 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
+        by albert.telenet-ops.be with bizsmtp
+        id gBse2A00A3874jb06BseXY; Thu, 31 Aug 2023 13:52:39 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qbgDq-00274S-6N;
+        Thu, 31 Aug 2023 13:52:38 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qbgE2-00CIUg-M7;
+        Thu, 31 Aug 2023 13:52:38 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 03/13] ARM: dts: renesas: Remove unused LBSC nodes from board DTS
+Date:   Thu, 31 Aug 2023 13:52:25 +0200
+Message-Id: <76ece7602045670cbb8dff684c3366ba6eb89add.1693481518.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1693481518.git.geert+renesas@glider.be>
+References: <cover.1693481518.git.geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Apr 10, 2023 at 11:25 AM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Apr 7, 2023 at 9:16 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> > On 4/3/23 17:29, Geert Uytterhoeven wrote:
-> > > On Tue, Mar 21, 2023 at 4:01 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > >> On Mon, Mar 20, 2023 at 7:57 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > >>> On Mon, Mar 20, 2023 at 6:04 PM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> > >>>> Vignesh used to review CFI code, maybe he can intervene. I've never
-> > >>>> worked with CFI, but I can try to help. I'll need more debug data though.
-> > >>>>
-> > >>>> On 3/20/23 16:43, Geert Uytterhoeven wrote:
-> > >>>>> Add a device node for the Spansion S29GL512N NOR FLASH on the Marzen
-> > >>>>> development board.
-> > >>>>>
-> > >>>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > >>>>> ---
-> > >>>>> Although the S29GL512N is a CFI FLASH, using "cfi-flash" instead of
-> > >>>>> "mtd-rom" does not work:
-> > >>>>>   1. Probing fails with "physmap-flash 0.flash: map_probe failed",
-> > >>>>
-> > >>>> I would first try to understand why the probe fails.
-> > >
-> > >> I suddenly remembered I have a different board (APE6-EVM), where
-> > >> the CFI-FLASH stopped working after adding support for secondary
-> > >> CPUs. I always thought that was a hardware quirk...
-> > >>
-> > >> Turns out the CFI-FLASH on Marzen (quad Cortex-A9) is detected when
-> > >> booting with "nosmp":
-> > >
-> > >> My first guess was that the probing process is migrated to a different
-> > >> CPU core during probing, but printing smp_processor_id() didn't
-> > >> confirm that; it's just running on a different CPU core than CPU0.
-> > >> Wrapping the body of cfi_qry_mode_on() inside a get_cpu()/put_cpu()
-> > >> pair to prevent migration also didn't fix it.
-> > >>
-> > >> Is CFI-FLASH known-broken on SMP?
-> > >
-> > > After actively looking for more boards with CFI FLASHes, and finding one
-> > > more board where FLASH probing fails on SMP, I dug deeper.
-> > > Turns out they all have in common that (a) the CFI FLASH is located at
-> > > physical address zero, and (b) the secondary CPU bringup code relies
-> > > on mapping (by special hardware) the region at address zero to the
-> > > CPU boot code...
-> > >
-> > > Hence fixing this involves making sure that accessing FLASH and bringing
-> > > CPU cores online do not happen concurrently...
-> >
-> > Would deferring probe for CFI work?
->
-> Probe deferral of CFI FLASH would not help, as the FLASH is already
-> probed after secondary CPU startup.
->
-> Sequence of operations is:
->   1. Map first page(s) of physical address space to RAM containing
->      CPU startup code (not using the MMU, but using a special
->      register in the SoC),
->   2. Boot secondary CPU cores,
->   3. Probe CFI-FLASH: fails, as accesses to the first page(s) of
->      physical address space do not address the FLASH, but the CPU
->      startup code in RAM.
->   4. After boot, CPU cores can be offlined and onlined using CPU
->       hotplug through sysfs.
->
-> When using "mtd-rom" instead of "cfi-flash", the system boots fine,
-> but the first page of /dev/mtd0 does not contain the FLASH contents,
-> but the CPU startup code, which I hadn't noticed originally...
->
-> Disabling the special mapping for the CPU startup code after all cores
-> have been brought up (in between steps 2 and 3) fixes the CFI-FLASH.
-> However, if a CPU core is offlined and onlined at run-time, the special
-> mapping has to be reinstantiated temporarily again, thus any FLASH
-> accesses (by other CPUs) must be prevented temporarily, too.
->
-> This issue is present on all Renesas SH/R-Mobile and R-Car SoCs
-> that support SMP. I am wondering if there are any other SMP SoCS that
-> suffer from similar issues, and that have solved them? I couldn't find
-> any in-tree DTS for a board with CFI-FLASH or mtd-rom at address zero
-> using an SMP ARM SoC...
->
-> I guess the simplest "solution" is to disable in DT any device at address zero
-> when SMP is used (when step 1 is executed)...
+Several board DTS files contain minimal device nodes that represent
+on-SoC Local Bus State Controllers (LBSC), although they belong in the
+SoC-specific DTS files instead.  As these device nodes are incomplete
+and unused, and hamper adding proper nodes later, it is better to just
+remove them.
 
-Or reserve the boot area using request_mem_region().
-I have posted an RFC patch series doing that:
-"[PATCH/RFC 0/4] ARM: shmobile: Reserve boot area when SMP is enabled"
-https://lore.kernel.org/all/cover.1693409184.git.geert+renesas@glider.be
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/renesas/r7s72100-genmai.dts   | 5 -----
+ arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts | 5 -----
+ arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts  | 5 -----
+ arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts  | 5 -----
+ arch/arm/boot/dts/renesas/r8a7790-lager.dts     | 5 -----
+ arch/arm/boot/dts/renesas/r8a7791-koelsch.dts   | 5 -----
+ arch/arm/boot/dts/renesas/r8a7794-alt.dts       | 5 -----
+ 7 files changed, 35 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
+index 1e8447176b1051f3..ee52c6d5349d0046 100644
+--- a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
+@@ -29,11 +29,6 @@ memory@8000000 {
+ 		reg = <0x08000000 0x08000000>;
+ 	};
+ 
+-	lbsc {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-	};
+-
+ 	leds {
+ 		status = "okay";
+ 		compatible = "gpio-leds";
+diff --git a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
+index dc05eaf391f8e069..9d29861f23f1d964 100644
+--- a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
+@@ -29,11 +29,6 @@ memory@20000000 {
+ 		reg = <0x20000000 0x00a00000>;
+ 	};
+ 
+-	lbsc {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-	};
+-
+ 	flash@18000000 {
+ 		compatible = "mtd-rom";
+ 		reg = <0x18000000 0x00800000>;
+diff --git a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
+index 9bfa7d8e2888b9ee..e95b820e401663eb 100644
+--- a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
+@@ -60,11 +60,6 @@ key-3 {
+ 		};
+ 	};
+ 
+-	lbsc {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-	};
+-
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+diff --git a/arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts b/arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts
+index 69a5a44b8a2fdd74..cd2324b8e8ffbddf 100644
+--- a/arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts
++++ b/arch/arm/boot/dts/renesas/r7s9210-rza2mevb.dts
+@@ -63,11 +63,6 @@ key-3 {
+ 		};
+ 	};
+ 
+-	lbsc {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-	};
+-
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+diff --git a/arch/arm/boot/dts/renesas/r8a7790-lager.dts b/arch/arm/boot/dts/renesas/r8a7790-lager.dts
+index 5ad5349a50dc9b26..4d666ad8b114b33b 100644
+--- a/arch/arm/boot/dts/renesas/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/renesas/r8a7790-lager.dts
+@@ -73,11 +73,6 @@ memory@140000000 {
+ 		reg = <1 0x40000000 0 0xc0000000>;
+ 	};
+ 
+-	lbsc {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-	};
+-
+ 	keyboard {
+ 		compatible = "gpio-keys";
+ 
+diff --git a/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts b/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
+index 26a40782cc899bd0..545515b41ea3fae1 100644
+--- a/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
+@@ -73,11 +73,6 @@ memory@200000000 {
+ 		reg = <2 0x00000000 0 0x40000000>;
+ 	};
+ 
+-	lbsc {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-	};
+-
+ 	keyboard {
+ 		compatible = "gpio-keys";
+ 
+diff --git a/arch/arm/boot/dts/renesas/r8a7794-alt.dts b/arch/arm/boot/dts/renesas/r8a7794-alt.dts
+index 4d93319674c6efcf..08df031bc27c9e03 100644
+--- a/arch/arm/boot/dts/renesas/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/renesas/r8a7794-alt.dts
+@@ -90,11 +90,6 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		states = <3300000 1>, <1800000 0>;
+ 	};
+ 
+-	lbsc {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-	};
+-
+ 	keyboard {
+ 		compatible = "gpio-keys";
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
