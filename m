@@ -2,253 +2,141 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AFFC83F10
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 06:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DC5C83F32
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Aug 2023 06:36:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240002AbjHaGG5 (ORCPT
+        id S229666AbjHaGgx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Aug 2023 02:06:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49986 "EHLO
+        Thu, 31 Aug 2023 02:36:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230042AbjHaGG4 (ORCPT
+        with ESMTP id S1346094AbjHaGgw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2023 02:06:56 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72676E0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Aug 2023 23:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693462013; x=1724998013;
-  h=date:from:to:cc:subject:message-id;
-  bh=MIcEULQqXbALYzaM+3dNGrtg5wPlRMzMvmzPQ8WKmjs=;
-  b=bjvjTtfSZ7h4ncDzqo0DGmpjDxBjQjfAUiulEeS3I4VWkC4dZ7b/5sz3
-   LSx1xD5ylqYH8YlbPQDJ5JpJrK3JUlfJJJ3KQjTtbR10Vqk0dqGGR+wJF
-   yRB5lZ/dh8e0qOssU/kjjWWSgxpHf9qpU2z6bbHILJuaqOX/ERbHPgI17
-   roUWPsUC276jUhf2uxhrHdGsIJscetTRSrKtbJlDvy6kPlicSuwtbiBBJ
-   IOJeSvOajWuFm8KT46OcnPKbyBNhAM/gF+WKGWXAHW+K+XLOqYq4rpIWJ
-   IOl+Rp9NAeCi0epxypokKqgMHMAfxkyvSvC9I/T0Sg2+nhKVPvjCixc5S
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10818"; a="373226417"
-X-IronPort-AV: E=Sophos;i="6.02,215,1688454000"; 
-   d="scan'208";a="373226417"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2023 23:06:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10818"; a="716182876"
-X-IronPort-AV: E=Sophos;i="6.02,215,1688454000"; 
-   d="scan'208";a="716182876"
-Received: from lkp-server02.sh.intel.com (HELO daf8bb0a381d) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 30 Aug 2023 23:06:51 -0700
-Received: from kbuild by daf8bb0a381d with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qbapO-000Axf-0m;
-        Thu, 31 Aug 2023 06:06:50 +0000
-Date:   Thu, 31 Aug 2023 14:01:48 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:master] BUILD SUCCESS
- 08e3979a78878f8514a2b3e826eb22609232b421
-Message-ID: <202308311446.UMYxVfmV-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+        Thu, 31 Aug 2023 02:36:52 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 78877A4;
+        Wed, 30 Aug 2023 23:36:49 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.02,215,1688396400"; 
+   d="scan'208";a="178276026"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 31 Aug 2023 15:36:48 +0900
+Received: from localhost.localdomain (unknown [10.226.92.179])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 795A041881A9;
+        Thu, 31 Aug 2023 15:36:44 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 1/3] arm64: dts: renesas: rzg2ul-smarc-som: Enable serial NOR flash
+Date:   Thu, 31 Aug 2023 07:36:33 +0100
+Message-Id: <20230831063635.2816-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230831063635.2816-1-biju.das.jz@bp.renesas.com>
+References: <20230831063635.2816-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
-branch HEAD: 08e3979a78878f8514a2b3e826eb22609232b421  Merge tag 'v6.5' into renesas-devel
+Enable Renesas at25ql128a flash connected to QSPI0. Also disable
+the node from rzfive-smarc-som as it is untested.
 
-elapsed time: 3923m
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v1->v2:
+ * Enabled 4-bit tx support
+---
+ .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 44 +++++++++++++++++++
+ .../boot/dts/renesas/rzfive-smarc-som.dtsi    |  4 ++
+ 2 files changed, 48 insertions(+)
 
-configs tested: 181
-configs skipped: 2
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-alpha                randconfig-r034-20230828   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20230828   gcc  
-arc                  randconfig-r001-20230828   gcc  
-arc                  randconfig-r013-20230828   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                         orion5x_defconfig   clang
-arm                   randconfig-001-20230828   gcc  
-arm64                            allmodconfig   gcc  
-arm64                             allnoconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                randconfig-r015-20230828   clang
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-hexagon               randconfig-001-20230828   clang
-hexagon               randconfig-002-20230828   clang
-hexagon              randconfig-r004-20230828   clang
-hexagon              randconfig-r033-20230828   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20230828   gcc  
-i386         buildonly-randconfig-002-20230828   gcc  
-i386         buildonly-randconfig-003-20230828   gcc  
-i386         buildonly-randconfig-004-20230828   gcc  
-i386         buildonly-randconfig-005-20230828   gcc  
-i386         buildonly-randconfig-006-20230828   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                  randconfig-001-20230828   gcc  
-i386                  randconfig-002-20230828   gcc  
-i386                  randconfig-003-20230828   gcc  
-i386                  randconfig-004-20230828   gcc  
-i386                  randconfig-005-20230828   gcc  
-i386                  randconfig-006-20230828   gcc  
-i386                  randconfig-011-20230828   clang
-i386                  randconfig-012-20230828   clang
-i386                  randconfig-013-20230828   clang
-i386                  randconfig-014-20230828   clang
-i386                  randconfig-015-20230828   clang
-i386                  randconfig-016-20230828   clang
-i386                 randconfig-r024-20230828   clang
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                        allyesconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch                 loongson3_defconfig   gcc  
-loongarch             randconfig-001-20230828   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                 randconfig-r025-20230828   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-microblaze           randconfig-r035-20230828   gcc  
-mips                             allmodconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                     cu1000-neo_defconfig   clang
-mips                       lemote2f_defconfig   clang
-mips                     loongson1c_defconfig   clang
-mips                      maltaaprp_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                randconfig-r036-20230828   gcc  
-openrisc                         allmodconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-openrisc             randconfig-r016-20230828   gcc  
-openrisc             randconfig-r021-20230828   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   gcc  
-powerpc                       eiger_defconfig   gcc  
-powerpc                     kmeter1_defconfig   clang
-powerpc                   lite5200b_defconfig   clang
-powerpc                   motionpro_defconfig   gcc  
-powerpc                     taishan_defconfig   gcc  
-powerpc                     tqm8548_defconfig   gcc  
-powerpc                     tqm8560_defconfig   clang
-powerpc64                           defconfig   gcc  
-powerpc64            randconfig-r012-20230828   clang
-powerpc64            randconfig-r023-20230828   clang
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   gcc  
-riscv                               defconfig   gcc  
-riscv             nommu_k210_sdcard_defconfig   gcc  
-riscv                 randconfig-001-20230828   gcc  
-riscv                randconfig-r022-20230828   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                              allnoconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                  randconfig-001-20230828   clang
-s390                 randconfig-r002-20230828   gcc  
-s390                 randconfig-r003-20230828   gcc  
-s390                 randconfig-r006-20230828   gcc  
-s390                 randconfig-r011-20230828   clang
-s390                 randconfig-r026-20230828   clang
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                     magicpanelr2_defconfig   gcc  
-sh                            migor_defconfig   gcc  
-sh                           se7724_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                            allyesconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64              randconfig-r005-20230828   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   clang
-um                                  defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                   randconfig-r014-20230828   gcc  
-um                   randconfig-r031-20230828   clang
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64       buildonly-randconfig-001-20230828   gcc  
-x86_64       buildonly-randconfig-002-20230828   gcc  
-x86_64       buildonly-randconfig-003-20230828   gcc  
-x86_64       buildonly-randconfig-004-20230828   gcc  
-x86_64       buildonly-randconfig-005-20230828   gcc  
-x86_64       buildonly-randconfig-006-20230828   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20230828   clang
-x86_64                randconfig-002-20230828   clang
-x86_64                randconfig-003-20230828   clang
-x86_64                randconfig-004-20230828   clang
-x86_64                randconfig-005-20230828   clang
-x86_64                randconfig-006-20230828   clang
-x86_64                randconfig-011-20230828   gcc  
-x86_64                randconfig-012-20230828   gcc  
-x86_64                randconfig-013-20230828   gcc  
-x86_64                randconfig-014-20230828   gcc  
-x86_64                randconfig-015-20230828   gcc  
-x86_64                randconfig-016-20230828   gcc  
-x86_64                randconfig-071-20230828   gcc  
-x86_64                randconfig-072-20230828   gcc  
-x86_64                randconfig-073-20230828   gcc  
-x86_64                randconfig-074-20230828   gcc  
-x86_64                randconfig-075-20230828   gcc  
-x86_64                randconfig-076-20230828   gcc  
-x86_64               randconfig-r032-20230828   gcc  
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-xtensa                            allnoconfig   gcc  
-xtensa                           allyesconfig   gcc  
-xtensa                       common_defconfig   gcc  
-xtensa                          iss_defconfig   gcc  
-
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+index 97cdad2a12e2..b9e4e476ff7b 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+@@ -179,6 +179,18 @@ eth1_pins: eth1 {
+ 			 <RZG2L_PORT_PINMUX(18, 5, 1)>; /* IRQ7 */
+ 	};
+ 
++	qspi0_pins: qspi0 {
++		qspi0-data {
++			pins = "QSPI0_IO0", "QSPI0_IO1", "QSPI0_IO2", "QSPI0_IO3";
++			power-source = <1800>;
++		};
++
++		qspi0-ctrl {
++			pins = "QSPI0_SPCLK", "QSPI0_SSL";
++			power-source = <1800>;
++		};
++	};
++
+ 	sdhi0_emmc_pins: sd0emmc {
+ 		sd0_emmc_data {
+ 			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3",
+@@ -230,6 +242,38 @@ sd0_mux_uhs {
+ 	};
+ };
+ 
++&sbc {
++	pinctrl-0 = <&qspi0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++		spi-tx-bus-width = <4>;
++		spi-rx-bus-width = <4>;
++
++		spi-cpol;
++		spi-cpha;
++		m25p,fast-read;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			boot@0 {
++				reg = <0x00000000 0x200000>;
++				read-only;
++			};
++			user@200000 {
++				reg = <0x200000 0xE00000>;
++			};
++		};
++	};
++};
++
+ #if (SW_SW0_DEV_SEL)
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_emmc_pins>;
+diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+index c62debc7ca7e..0c9d72c32879 100644
+--- a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
++++ b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+@@ -42,6 +42,10 @@ phy1: ethernet-phy@7 {
+ 	};
+ };
+ 
++&sbc {
++	status = "disabled";
++};
++
+ &sdhi0 {
+ 	status = "disabled";
+ };
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
