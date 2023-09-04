@@ -2,75 +2,65 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A512ECA0FFA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC79CA0FFB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237358AbjIEQEL (ORCPT
+        id S237374AbjIEQEM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:04:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52708 "EHLO
+        Tue, 5 Sep 2023 12:04:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354433AbjIELgc (ORCPT
+        with ESMTP id S1354089AbjIEJfc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2023 07:36:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CA061AB;
-        Tue,  5 Sep 2023 04:36:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CABA3602E0;
-        Tue,  5 Sep 2023 11:36:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA19C433C8;
-        Tue,  5 Sep 2023 11:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693913788;
-        bh=JJ1xgbKs1Vv5+UBKm7oDOUD1ckh8Fc4bT3kqxnA3/sg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DGQX5q5hkl16T4RhaWAG4GCnv6bCK0EwaWZ9Ztvnh8bfULdbZqoFFL+LN4ptVukir
-         Ib/NOa2YKgggCD2D7iBAegSc5e8caSpP0r48/8O7pR6E8s0CciR8cUuBuOhXeyLXbu
-         AMqEd1pSvTOZUZCR3d8ZDxGwNnXR9HGKZZaRUayB9b1aeHOZsDVDDwLns7sVZAPnEN
-         D31jV9zkSr6fYBtFEAXFCaH0224mkWO1s8Kadr3gcvECqhb8wamOG2UF3poCpaACZ/
-         yf/NRTrWYz/bn0PkiyTwP5o0KZ+IOkZdwwlACkEVZtf3k4lze7Mh6rbxsmicJQKEkb
-         /hXyAvTfIrp+g==
-Date:   Tue, 5 Sep 2023 13:36:24 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] i2c: rcar: introduce Gen4 devices
-Message-ID: <20230905113624.5o2hfjojh3he7aex@zenone.zhora.eu>
-References: <20230904135852.12146-1-wsa+renesas@sang-engineering.com>
- <20230904135852.12146-3-wsa+renesas@sang-engineering.com>
+        Tue, 5 Sep 2023 05:35:32 -0400
+X-Greylist: delayed 4327 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 02:35:29 PDT
+Received: from mail.equinoxrise.pl (mail.equinoxrise.pl [217.61.112.157])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F3FB1A7
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Sep 2023 02:35:29 -0700 (PDT)
+Received: by mail.equinoxrise.pl (Postfix, from userid 1002)
+        id AA03383407; Mon,  4 Sep 2023 09:41:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=equinoxrise.pl;
+        s=mail; t=1693813370;
+        bh=v6OgBfK5dN7P5dQ0wCu59rOfZaiqziJeLNblJ8dOcGI=;
+        h=Date:From:To:Subject:From;
+        b=IqH8Ji6tIycItQiKFsD+X+G6Bs/D2YQ8Y78nYBS1/YQA8KadzDrDTZ7cFrfOMbbO3
+         0pBCXVRISrT9DKjOtQTLBhbnWMRP1oRxuNrJAS/p07MzBsfraToc0ZyWPEPHXfJ1ff
+         6lD9LdccIwyOKSYR4hvGALFgQ7jGPzGlLlXY/K8/JTuwSo3VwKBA04WUP9YGPdiACS
+         ceHW5jy//rjpe0mOS+oMKsILSqQHlX4uxciCVZl9zSRPU6NNFauLS35yMkfONqmNT1
+         1rOVk/0Q3EB1U/FExq0I8brch8AqhEqrl7YX/4AyW4K1QmvqgE44qTpwg9+iTvnQ8r
+         mFCUG9mGBapfQ==
+Received: by mail.equinoxrise.pl for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Sep 2023 07:40:34 GMT
+Message-ID: <20230904084500-0.1.7.qx6.0.2oqeykwua3@equinoxrise.pl>
+Date:   Mon,  4 Sep 2023 07:40:34 GMT
+From:   "Mateusz Talaga" <mateusz.talaga@equinoxrise.pl>
+To:     <linux-renesas-soc@vger.kernel.org>
+Subject: Prezentacja
+X-Mailer: mail.equinoxrise.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230904135852.12146-3-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Dzie=C5=84 dobry!
 
-> @@ -1031,10 +1021,12 @@ static const struct of_device_id rcar_i2c_dt_ids[] = {
->  	{ .compatible = "renesas,i2c-r8a7794", .data = (void *)I2C_RCAR_GEN2 },
->  	{ .compatible = "renesas,i2c-r8a7795", .data = (void *)I2C_RCAR_GEN3 },
->  	{ .compatible = "renesas,i2c-r8a7796", .data = (void *)I2C_RCAR_GEN3 },
-> +	/* S4 has no FM+ bit */
-> +	{ .compatible = "renesas,i2c-r8a779f0", .data = (void *)I2C_RCAR_GEN3 },
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
+=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
+zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
 
-is this I2C_RCAR_GEN3 or I2C_RCAR_GEN4?
+Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
+=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
+dostaw.
 
-Rest looks good.
+Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
+nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
+ co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
 
-Andi
+Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
+=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
+zania w Pa=C5=84stwa firmie.
 
->  	{ .compatible = "renesas,rcar-gen1-i2c", .data = (void *)I2C_RCAR_GEN1 },
->  	{ .compatible = "renesas,rcar-gen2-i2c", .data = (void *)I2C_RCAR_GEN2 },
->  	{ .compatible = "renesas,rcar-gen3-i2c", .data = (void *)I2C_RCAR_GEN3 },
-> -	{ .compatible = "renesas,rcar-gen4-i2c", .data = (void *)I2C_RCAR_GEN3 },
-> +	{ .compatible = "renesas,rcar-gen4-i2c", .data = (void *)I2C_RCAR_GEN4 },
->  	{},
+
+Pozdrawiam
+Mateusz Talaga
