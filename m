@@ -2,112 +2,104 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84633CA0FE2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D816CA0FF8
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231340AbjIEQET (ORCPT
+        id S237466AbjIEQEU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36812 "EHLO
+        Tue, 5 Sep 2023 12:04:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354779AbjIEOTB (ORCPT
+        with ESMTP id S244635AbjIEBYQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2023 10:19:01 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B4A1A7
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Sep 2023 07:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=k1; bh=d5oE
-        VPZounkZyPqSJjsmtIRWD+j5ouluxyYTqoZnQ+s=; b=SfL2lb7f6vxDpXS15/8P
-        4L1xAOIHOiTnlsNiamQ3rD1s0zUp+7ntho7wHhZqury92ytZS3Uap6WRrwr9jmW4
-        g+k7q1okcnHEmagshZIAu2WiBWd8qqNcXdNxZ9GAd7uYLWcZ6zDtCWxfdYLnxxjM
-        piJr8qLerL10kQhweg52r+9+ggZtk98QjEVzXpPSoGmC88bHARR0WGnUsNPlgFLl
-        vHQ0VgrbSkFH+qs/GUSLORsrCihVD6mvu3eD0U5ur1Z/LTsad4AkX/2nLZUQTKEd
-        bkf674LM7mZ22fc9kuKnjB78vDtljj8fWA+ph/B5TlTgelNSL6Mj/nhYkZKNK45r
-        2Q==
-Received: (qmail 2493423 invoked from network); 5 Sep 2023 16:18:53 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Sep 2023 16:18:53 +0200
-X-UD-Smtp-Session: l3s3148p1@g4JWTp0Ejt1ehhrI
-Date:   Tue, 5 Sep 2023 16:18:50 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Andi Shyti <andi.shyti@kernel.org>
+        Mon, 4 Sep 2023 21:24:16 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C50EDCC7
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Sep 2023 18:24:12 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.02,227,1688396400"; 
+   d="scan'208";a="175006403"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 05 Sep 2023 10:24:09 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9C6EC400BBF3;
+        Tue,  5 Sep 2023 10:24:09 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     geert+renesas@glider.be, magnus.damm@gmail.com
 Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] i2c: rcar: introduce Gen4 devices
-Message-ID: <ZPc4ylzR4MJEMlbx@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230904135852.12146-1-wsa+renesas@sang-engineering.com>
- <20230904135852.12146-3-wsa+renesas@sang-engineering.com>
- <20230905113624.5o2hfjojh3he7aex@zenone.zhora.eu>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 2/2] arm64: dts: renesas: r8a779f0: spider: Enable PCIe Host ch0
+Date:   Tue,  5 Sep 2023 10:24:04 +0900
+Message-Id: <20230905012404.2915246-3-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230905012404.2915246-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20230905012404.2915246-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="N/d25QGf6h+4Nz7R"
-Content-Disposition: inline
-In-Reply-To: <20230905113624.5o2hfjojh3he7aex@zenone.zhora.eu>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Enable PCIe Host controller channel 0 on R-Car S4-8 Spider board.
 
---N/d25QGf6h+4Nz7R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Since this board has an Oculink connector, CLKREQ# pin of PFC for PCIe
+should not be used. So, using a GPIO is used to output the clock instead.
+Otherwise the controller cannot detect a PCIe device.
 
-On Tue, Sep 05, 2023 at 01:36:24PM +0200, Andi Shyti wrote:
-> Hi Wolfram,
->=20
-> > @@ -1031,10 +1021,12 @@ static const struct of_device_id rcar_i2c_dt_id=
-s[] =3D {
-> >  	{ .compatible =3D "renesas,i2c-r8a7794", .data =3D (void *)I2C_RCAR_G=
-EN2 },
-> >  	{ .compatible =3D "renesas,i2c-r8a7795", .data =3D (void *)I2C_RCAR_G=
-EN3 },
-> >  	{ .compatible =3D "renesas,i2c-r8a7796", .data =3D (void *)I2C_RCAR_G=
-EN3 },
-> > +	/* S4 has no FM+ bit */
-> > +	{ .compatible =3D "renesas,i2c-r8a779f0", .data =3D (void *)I2C_RCAR_=
-GEN3 },
->=20
-> is this I2C_RCAR_GEN3 or I2C_RCAR_GEN4?
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Technically, it is Gen4. But its I2C controller behaves like Gen3. This
-is why it has a seperate entry to avoid the generic Gen4 fallback...
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+index 76a94812875e..365dfd446eef 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-cpu.dtsi
+@@ -53,6 +53,12 @@ memory@480000000 {
+ 		reg = <0x4 0x80000000 0x0 0x80000000>;
+ 	};
+ 
++	rc21012_pci: clk-rc21012-pci {
++		compatible = "fixed-clock";
++		clock-frequency = <100000000>;
++		#clock-cells = <0>;
++	};
++
+ 	rc21012_ufs: clk-rc21012-ufs {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <38400000>;
+@@ -106,6 +112,12 @@ gpio_exp_20: gpio@20 {
+ 		reg = <0x20>;
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
++
++		rc21012-gpio2-hog {
++			gpio-hog;
++			gpios = <5 GPIO_ACTIVE_LOW>;
++			output-high;
++		};
+ 	};
+ };
+ 
+@@ -145,6 +157,18 @@ &mmc0 {
+ 	status = "okay";
+ };
+ 
++&pcie0_clkref {
++	compatible = "gpio-gate-clock";
++	clocks = <&rc21012_pci>;
++	enable-gpios = <&gpio2 15 GPIO_ACTIVE_LOW>;
++	/delete-property/ clock-frequency;
++};
++
++&pciec0 {
++	reset-gpio = <&gpio_exp_20 0 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.25.1
 
-> > -	{ .compatible =3D "renesas,rcar-gen4-i2c", .data =3D (void *)I2C_RCAR=
-_GEN3 },
-> > +	{ .compatible =3D "renesas,rcar-gen4-i2c", .data =3D (void *)I2C_RCAR=
-_GEN4 },
-
-=2E.. here.
-
-
---N/d25QGf6h+4Nz7R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmT3OMYACgkQFA3kzBSg
-KbYaFg/9Fbrlwi3OToLBSRjgWHy76zRq9Q0XHUIwgaGhdHjUs+1rXuyWVaJhIsfb
-k3KFquWYNODEEJbTDTe6i2K+ZAXMPVuSDru1/ocZ1ksSuKiZvA510UjRRlNRHS0j
-W0jnvZJjt7FbLyERxZR51vu2LjqxW72MIb6LnAAjopk0606jhwkydMF5J68L1uZk
-7fiGrNjPVzf09uKF7uqUQRPevp7m8b7h2P5lo9ng4qX+5o0ra8wzAcPxjt6bzhF4
-MTL9YN41pMC86SwhNLSa5eVvvjh6nnYGgKgz3/lMRbfI1bfj10ZUoeKcdghmvdae
-Ca9+cXBZ7Db8xapXZWQ2sLF3NogORRgdMc1LLfJhUDrGGkvw4D2FIY2fqgIwKzV6
-LCiQqzYKaJyhB55NvskrjqYMA7azGHlpN122oPxFobseeRUljvdmpUFY6Uc9Th3a
-4aiy/Nzq2rLeLCbaBekxr5QDO2sec0PPZOA/FzowMzSJ8RoH2qGhyK1YUs6yv7EC
-YuN0Yg4b/NaGn05pu3tu2SWJwzH2mgKErQfmKUJWihJrFQNPreegVYxLK4bP3hOX
-0EzGhr0nB5EsSQSfBJiy6uZSWaz9ciG+QP+NjtkBnDX86C9XGSD6gDI0EOTx951E
-rQLa1OGkeKQ5bfqP6jJJpHnNOj9pMlmRBgZjWV8JUit6J+/nm8E=
-=5g/h
------END PGP SIGNATURE-----
-
---N/d25QGf6h+4Nz7R--
