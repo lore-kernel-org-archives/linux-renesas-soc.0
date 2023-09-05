@@ -2,107 +2,68 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADE9C83F2C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B19A4CA0FE2
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237497AbjIEQEX (ORCPT
+        id S235145AbjIEQEW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:04:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44128 "EHLO
+        Tue, 5 Sep 2023 12:04:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354620AbjIEM4x (ORCPT
+        with ESMTP id S244627AbjIEBYP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2023 08:56:53 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089CF1A8;
-        Tue,  5 Sep 2023 05:56:48 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2b9338e4695so37616951fa.2;
-        Tue, 05 Sep 2023 05:56:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693918606; x=1694523406; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6UhzA8XSGVCuKKYnfBOKwjgBkteIxN0UPAGvmE+dfX0=;
-        b=mu90wKFv7POwPfWoN7x8dXtQXcEOZGh2Hnd3eBvhpMu9fuiXO59atiaSv2lxc1uEU/
-         rvPjW1ATv7hcOIxa+lMSpZSL/SPi04yxICJ5dWdvOLBjlIKAyHiMJMSMzv4pLHjCKsNw
-         CbnqJYAt2cVcChFnK8c3kNwEaMIz/Ni9uPNtYQmAaa/O+xna22HCMbeL+Lx5mm6J4sKn
-         0o7q/lVmfBr5SHgA7M/x/izey3eQmgaDNJrg/ltzHh5otRS4SwQJwigwlfClLddUee9d
-         W9e0W46w0x0R+X0XektDOMJ/CPJMbnjUJIcmuRva1a81O1ptEN53+e3o89jZAEe7lZFz
-         sBgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693918606; x=1694523406;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6UhzA8XSGVCuKKYnfBOKwjgBkteIxN0UPAGvmE+dfX0=;
-        b=Y/o2QH7m++nKugmXcKL8zDkgYuhIVjKxDZKOeqZz7j9feSU4DTEfNbH3a7xKjKQqk5
-         C2ZeZicTfMdKpJ5OyPqF02/HnBCnemgZmoLm4/K/g1ic62+qSij+mdmfAz5WKsX8bh5a
-         z9WOpLlivcpve/lhN7it+CBsuy9LGgoioNI5PyFjaGEDgKFVEzalOz+vd99uujnr9qNv
-         9IX2TfftUuh8JAjyJKMG9XbwFkWAAv10bg1FxzRB/U24QaHvA4LWHKHNln63aKzvkrAE
-         AiAeD2RPQYrSA6HtN/yk9LaaAFv7mUsv3mIMbBZGRxRpdFp5tEg4/Qk0xSNZPw0gnrEs
-         eIqg==
-X-Gm-Message-State: AOJu0Yxxl9UuEROLLchdVbeukOQpzkXmjSCRapXnnS77sH+Hdn48PVFV
-        4FUsjtVsgxoAXc0Zfbh6Kb8=
-X-Google-Smtp-Source: AGHT+IFN6dIuEYAFAeh9yLMH0Umds7V4Gz6vEzYtzLwlFLejVtQwSpZmueW/N3HZo5D5Mix6iYn1dw==
-X-Received: by 2002:a2e:8012:0:b0:2bd:1908:4432 with SMTP id j18-20020a2e8012000000b002bd19084432mr9333259ljg.3.1693918605899;
-        Tue, 05 Sep 2023 05:56:45 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:2837:58dc:b622:9e39])
-        by smtp.gmail.com with ESMTPSA id l9-20020a1c7909000000b003fe1c332810sm20085767wme.33.2023.09.05.05.56.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 05:56:45 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] pinctrl: renesas: pinctrl-rzg2l: Add validation of GPIO pin in rzg2l_gpio_request()
-Date:   Tue,  5 Sep 2023 13:56:03 +0100
-Message-Id: <20230905125603.74528-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 4 Sep 2023 21:24:15 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DF3AECC5
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Sep 2023 18:24:10 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.02,227,1688396400"; 
+   d="scan'208";a="175006397"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 05 Sep 2023 10:24:09 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6724D400BBEE;
+        Tue,  5 Sep 2023 10:24:09 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     geert+renesas@glider.be, magnus.damm@gmail.com
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 0/2] arm64: dts: renesas: r8a779f0: Add PCIe support
+Date:   Tue,  5 Sep 2023 10:24:02 +0900
+Message-Id: <20230905012404.2915246-1-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Add PCIe support for R-Car S4-8 (r8a779f0).
+This patch series is based on the following pci.git repo:
+https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/rcar
+and the following revised patches about the dt-bindings docs:
+https://lore.kernel.org/linux-pci/20230901131711.2861283-1-yoshihiro.shimoda.uh@renesas.com/
 
-Validate the GPIO pin request in rzg2l_gpio_request() callback using
-rzg2l_validate_gpio_pin() function. This stops any accidental usage
-of GPIO pins which are not supported by the SoCs.
+Changes from v3:
+https://lore.kernel.org/all/20230901132730.2861451-1-yoshihiro.shimoda.uh@renesas.com/
+ - Fix reg and ranges properties of pcie host nodes in the patch 1/2.
+ - Add Reviewed-by in the patch 2/2.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Changes from v2:
+https://lore.kernel.org/all/20230828041434.2747699-1-yoshihiro.shimoda.uh@renesas.com/
+ - Rebased on the revised dt-bindings doc.
+ - Fix node names.
+ - Fix reg property.
+ - Fix some properties position to match dt-bindings doc, and host and endpoint.
+ - Fix a node position to preserve alphabetical sor order.
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 37cdfe4b04f9..4ad08a4b786a 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -795,12 +795,18 @@ static const struct pinconf_ops rzg2l_pinctrl_confops = {
- static int rzg2l_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct rzg2l_pinctrl *pctrl = gpiochip_get_data(chip);
-+	const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[offset];
-+	u64 *pin_data = pin->drv_data;
- 	u32 port = RZG2L_PIN_ID_TO_PORT(offset);
- 	u8 bit = RZG2L_PIN_ID_TO_PIN(offset);
- 	unsigned long flags;
- 	u8 reg8;
- 	int ret;
- 
-+	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit);
-+	if (ret)
-+		return ret;
-+
- 	ret = pinctrl_gpio_request(chip->base + offset);
- 	if (ret)
- 		return ret;
+Yoshihiro Shimoda (2):
+  arm64: dts: renesas: r8a779f0: Add PCIe Host and Endpoint nodes
+  arm64: dts: renesas: r8a779f0: spider: Enable PCIe Host ch0
+
+ .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi |  24 ++++
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi     | 134 ++++++++++++++++++
+ 2 files changed, 158 insertions(+)
+
 -- 
-2.34.1
+2.25.1
 
