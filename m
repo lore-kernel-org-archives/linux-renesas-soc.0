@@ -2,81 +2,89 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931EFC83F2C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1982DCA0FFA
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233371AbjIEQE0 (ORCPT
+        id S237510AbjIEQE2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:04:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59344 "EHLO
+        Tue, 5 Sep 2023 12:04:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344557AbjIEDsH (ORCPT
+        with ESMTP id S1354782AbjIEOUX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Sep 2023 23:48:07 -0400
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B23EBCC7;
-        Mon,  4 Sep 2023 20:48:04 -0700 (PDT)
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-68c0d4cc3a4so1185436b3a.1;
-        Mon, 04 Sep 2023 20:48:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693885684; x=1694490484;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rkgj7j4ZbMunP/6Ha7EX02abkwO7XcucMDifM971QNU=;
-        b=PA2ETLRmqaqRIkH4zJuIttf1f5E5rOOWUf0GEl4wSvg+/WXcuTuXWARJvAIsx06Lru
-         /1T3I2yy6RRqNugGTwnbbNyTb0lHRcIjh/ewgcAsSklIv76RAhYH9qU3NUx8rmjtpVxP
-         8lZEZvwzVPTd6DU2TjjnbZ07/3REq2UJgoU7SbKx9z+CPbD7hzKeKI/iQ2WvjqgvvJhm
-         Y00dP7uRKP55Z8fJpgJRym3lFDwnYlWVTAdnWhPnB0klQSANCV043dEaAn7kB3R0g1Ik
-         WrsVOVVh/GbKzKFWUKNa1IREcOBMAbmGaSR1RYsRVEagBe8BYpNLywI5fzveCub+Bb9D
-         LMzg==
-X-Gm-Message-State: AOJu0YwSs9uzK02ur5WBdYYqiUvYE80TFXfjNWzZvqYO0bX6ZmXY7LMn
-        jXCQgWV7qghmEiZJLsTavgPqkK5zidwQ2A==
-X-Google-Smtp-Source: AGHT+IEWjtGfWAnaLx1Ocj5K4L0KUBha4CgvJK1Eeo+O/EIGVIPbMHldIVaOudCB5mH+/cwAeb7awQ==
-X-Received: by 2002:a05:6a20:4429:b0:130:835b:e34e with SMTP id ce41-20020a056a20442900b00130835be34emr12999327pzb.48.1693885684082;
-        Mon, 04 Sep 2023 20:48:04 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d1-20020a170903230100b001b7fd27144dsm8265792plh.40.2023.09.04.20.48.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Sep 2023 20:48:02 -0700 (PDT)
-Date:   Tue, 5 Sep 2023 12:48:01 +0900
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        mani@kernel.org, marek.vasut+renesas@gmail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/3] dt-bindings: PCI: Revise dwc and rcar-gen4-pcie
-Message-ID: <20230905034801.GA1102453@rocinante>
-References: <20230901131711.2861283-1-yoshihiro.shimoda.uh@renesas.com>
- <20230901-squeak-pacifism-00639bfab28a@spud>
+        Tue, 5 Sep 2023 10:20:23 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB90127
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Sep 2023 07:20:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 225FCCE1184
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Sep 2023 14:20:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAB61C433C8;
+        Tue,  5 Sep 2023 14:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693923615;
+        bh=rlMXztTsnFKQ5FdtU+qNDKYNfX/0zFqzn0aF2XsO+nI=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=Nj43H9G9C8xAEOMJhbXk/x6n3BJ/BO2aXDwzaai1he4vaWLaOmgi2sYPXZN/Ayz7/
+         Fph4qAH+HPCLeJCg6m0+4pFkR0fUwD7ix7uncJf+bWluFb12BkojfyaDQK15Xh4eSQ
+         Q3Gpak0ChwbMB2Xj2hyRP8Y+mGquU4tb7ZEn1QSNZP3TTIfGogfcFbf4IWcuT6TSGj
+         1k0f3c+qZiH1Gl4+fU4OqEJc4T/0hbhw9SaaqXE+luuR7CIt8a1YkjjopqoGstcsya
+         64CYsYuQ2VvTw82Uf+n/hnb+OZy4gfVisGU08ajgqP5V6e00opHuusSQO6JfjSCjV0
+         9+tagMxIMZ7UQ==
+From:   Robert Foss <rfoss@kernel.org>
+To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Phong LE <ple@baylibre.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        linux-renesas-soc@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        dri-devel@lists.freedesktop.org,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+In-Reply-To: <20230818191817.340360-1-biju.das.jz@bp.renesas.com>
+References: <20230818191817.340360-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v3 0/2] Match data improvements for it66121 driver
+Message-Id: <169392361254.1000124.5770510493227185107.b4-ty@kernel.org>
+Date:   Tue, 05 Sep 2023 16:20:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230901-squeak-pacifism-00639bfab28a@spud>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+On Fri, 18 Aug 2023 20:18:15 +0100, Biju Das wrote:
+> This patch series aims to add match data improvements for it66121 driver.
+> 
+> v2->v3:
+>  * Removed fixes tag from patch#1 as nothing broken.
+>  * Added Rb tag from Andy.
+> v1->v2:
+>  * Split the patch into two.
+>  * patch#1 extend match support for OF tables compared to legacy ID
+>    lookup and fixes tag.
+>  * patch#2 simplifies the probe() by using i2c_get_match_data.
+>  * Dropped sentence for dropping local variable as it is integral part of
+>    the patch.
+> 
+> [...]
 
-> > This patch series is based on pci.git / controller/rcar branch
-> > to fix dt-bindings doc patches. Krzysztof mentioned that the paches
-> > will be squashed everything later [1].
-> > 
-> > [1]
-> > https://lore.kernel.org/linux-pci/20230831140426.GA255922@rocinante/
-[...]
->
-> A link to the comments you were addressing would have been nice.
+Applied, thanks!
 
-For posterity, so it's easier to link things together:
+[1/2] drm: bridge: it66121: Extend match support for OF tables
+      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=c11c1a50573e
+[2/2] drm: bridge: it66121: Simplify probe()
+      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=29ff3b7e23af
 
-  - https://lore.kernel.org/linux-pci/20230825093219.2685912-14-yoshihiro.shimoda.uh@renesas.com
-  - https://lore.kernel.org/linux-pci/20230825093219.2685912-15-yoshihiro.shimoda.uh@renesas.com
-  - https://lore.kernel.org/linux-pci/20230825093219.2685912-16-yoshihiro.shimoda.uh@renesas.com
 
-	Krzysztof
+
+Rob
+
