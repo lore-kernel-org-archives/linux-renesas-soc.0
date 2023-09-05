@@ -2,267 +2,202 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EA1C83F3F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Sep 2023 13:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E03CA0FFB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237364AbjIDN7L (ORCPT
+        id S237196AbjIEQEE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 09:59:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32858 "EHLO
+        Tue, 5 Sep 2023 12:04:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350387AbjIDN7J (ORCPT
+        with ESMTP id S244646AbjIEBYQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Sep 2023 09:59:09 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A4ECF6
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Sep 2023 06:59:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :in-reply-to:references:mime-version:content-transfer-encoding;
-         s=k1; bh=fH+PBKZ7A29HHE4AexGRH2brVEprQzOFBvbe2kpdhgM=; b=E7AyXn
-        ZIu6Q+metbRDAm9jz1HQsjKYT0Mob47XMPLj1ST41iTB4AukbIpHnSKAL7GBp40e
-        0qiFIv7Mu4mQ4QRWK1zb/oQN4JR2EdRo0a2fGIm90Hs3JM0jwD+nZc0XKtxlk/uU
-        sb4UP9tBkxLkXrvmr40t9JCB0ThEH4HyH6V+wqZ0qoeWsWNTjJcZnsmNeZ6TVklj
-        Bke3SXBWH2XWCgbeXY6PxpDcZ9mGiphDFryqMjCT2b5uudUCK65HSuYEsUyjXrP2
-        ksUl5ZHFVsivLjOq33IJdU07rm8AVKK66GAtNds8JYrkU4YZ9R3HUFtujj52FTgu
-        HVXgZOoZ8Jb+gvQQ==
-Received: (qmail 2131873 invoked from network); 4 Sep 2023 15:59:01 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Sep 2023 15:59:01 +0200
-X-UD-Smtp-Session: l3s3148p1@p4+Y6YgEGNYgAwDPXx78AHsOvgc204Bb
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] i2c: rcar: add FastMode+ support
-Date:   Mon,  4 Sep 2023 15:58:51 +0200
-Message-Id: <20230904135852.12146-4-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20230904135852.12146-1-wsa+renesas@sang-engineering.com>
-References: <20230904135852.12146-1-wsa+renesas@sang-engineering.com>
+        Mon, 4 Sep 2023 21:24:16 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 76AA5CC6
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Sep 2023 18:24:12 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.02,227,1688396400"; 
+   d="scan'208";a="175006400"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 05 Sep 2023 10:24:09 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 816CC400BBF3;
+        Tue,  5 Sep 2023 10:24:09 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     geert+renesas@glider.be, magnus.damm@gmail.com
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 1/2] arm64: dts: renesas: r8a779f0: Add PCIe Host and Endpoint nodes
+Date:   Tue,  5 Sep 2023 10:24:03 +0900
+Message-Id: <20230905012404.2915246-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230905012404.2915246-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20230905012404.2915246-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Apply the different formula and register setting for activating FM+ on
-Gen4 devtypes.
+Add PCIe Host and Endpoint nodes for R-Car S4-8 (R8A779F0).
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/i2c/busses/i2c-rcar.c | 125 ++++++++++++++++++++++++----------
- 1 file changed, 89 insertions(+), 36 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 134 ++++++++++++++++++++++
+ 1 file changed, 134 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 76aa16bf17b2..a48849b393a3 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -41,6 +41,10 @@
- #define ICSAR	0x1C	/* slave address */
- #define ICMAR	0x20	/* master address */
- #define ICRXTX	0x24	/* data port */
-+#define ICCCR2	0x28	/* Clock control 2 */
-+#define ICMPR	0x2C	/* SCL mask control */
-+#define ICHPR	0x30	/* SCL HIGH control */
-+#define ICLPR	0x34	/* SCL LOW control */
- #define ICFBSCR	0x38	/* first bit setup cycle (Gen3) */
- #define ICDMAER	0x3c	/* DMA enable (Gen3) */
- 
-@@ -84,6 +88,12 @@
- #define RMDMAE	BIT(1)	/* DMA Master Received Enable */
- #define TMDMAE	BIT(0)	/* DMA Master Transmitted Enable */
- 
-+/* ICCCR2 */
-+#define FMPE	BIT(7)	/* Fast Mode Plus Enable */
-+#define CDFD	BIT(2)	/* CDF Disable */
-+#define HLSE	BIT(1)	/* HIGH/LOW Separate Control Enable */
-+#define SME	BIT(0)	/* SCL Mask Enable */
-+
- /* ICFBSCR */
- #define TCYC17	0x0f		/* 17*Tcyc delay 1st bit between SDA and SCL */
- 
-@@ -104,11 +114,12 @@
- #define ID_NACK			BIT(4)
- #define ID_EPROTO		BIT(5)
- /* persistent flags */
-+#define ID_P_FMPLUS		BIT(27)
- #define ID_P_NOT_ATOMIC		BIT(28)
- #define ID_P_HOST_NOTIFY	BIT(29)
- #define ID_P_NO_RXDMA		BIT(30) /* HW forbids RXDMA sometimes */
- #define ID_P_PM_BLOCKED		BIT(31)
--#define ID_P_MASK		GENMASK(31, 28)
-+#define ID_P_MASK		GENMASK(31, 27)
- 
- enum rcar_i2c_type {
- 	I2C_RCAR_GEN1,
-@@ -128,7 +139,7 @@ struct rcar_i2c_priv {
- 	wait_queue_head_t wait;
- 
- 	int pos;
--	u32 icccr;
-+	u32 clock_val;
- 	u8 recovery_icmcr;	/* protected by adapter lock */
- 	enum rcar_i2c_type devtype;
- 	struct i2c_client *slave;
-@@ -217,7 +228,17 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
- 	rcar_i2c_write(priv, ICMCR, MDBS);
- 	rcar_i2c_write(priv, ICMSR, 0);
- 	/* start clock */
--	rcar_i2c_write(priv, ICCCR, priv->icccr);
-+	if (priv->flags & ID_P_FMPLUS) {
-+		rcar_i2c_write(priv, ICCCR, 0);
-+		rcar_i2c_write(priv, ICMPR, priv->clock_val);
-+		rcar_i2c_write(priv, ICHPR, 3 * priv->clock_val);
-+		rcar_i2c_write(priv, ICLPR, 3 * priv->clock_val);
-+		rcar_i2c_write(priv, ICCCR2, FMPE | CDFD | HLSE | SME);
-+	} else {
-+		rcar_i2c_write(priv, ICCCR, priv->clock_val);
-+		if (priv->devtype >= I2C_RCAR_GEN3)
-+			rcar_i2c_write(priv, ICCCR2, 0);
-+	}
- 
- 	if (priv->devtype >= I2C_RCAR_GEN3)
- 		rcar_i2c_write(priv, ICFBSCR, TCYC17);
-@@ -242,7 +263,7 @@ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
- 
- static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv)
- {
--	u32 scgd, cdf, round, ick, sum, scl, cdf_width;
-+	u32 scgd, cdf = 0, round, ick, sum, scl, cdf_width, smd;
- 	unsigned long rate;
- 	struct device *dev = rcar_i2c_priv_to_dev(priv);
- 	struct i2c_timings t = {
-@@ -252,19 +273,26 @@ static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv)
- 		.scl_int_delay_ns	= 50,
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+index 0059c9c580f3..1cd190f392df 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+@@ -262,6 +262,20 @@ extalr_clk: extalr {
+ 		clock-frequency = <0>;
  	};
  
--	cdf_width = (priv->devtype == I2C_RCAR_GEN1) ? 2 : 3;
--
- 	/* Fall back to previously used values if not supplied */
- 	i2c_parse_fw_timings(dev, &t, false);
- 
-+	if (t.bus_freq_hz > I2C_MAX_FAST_MODE_FREQ &&
-+	    priv->devtype >= I2C_RCAR_GEN4)
-+		priv->flags |= ID_P_FMPLUS;
-+	else
-+		priv->flags &= ~ID_P_FMPLUS;
++	pcie0_clkref: pcie0-clkref {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
 +
- 	/*
- 	 * calculate SCL clock
- 	 * see
--	 *	ICCCR
-+	 *	ICCCR (and ICCCR2 for FastMode+)
- 	 *
- 	 * ick	= clkp / (1 + CDF)
- 	 * SCL	= ick / (20 + SCGD * 8 + F[(ticf + tr + intd) * ick])
- 	 *
-+	 * for FastMode+:
-+	 * SCL	= clkp / (8 + SMD * 2 + SCLD + SCHD +F[(ticf + tr + intd) * clkp])
-+	 *
- 	 * ick  : I2C internal clock < 20 MHz
- 	 * ticf : I2C SCL falling time
- 	 * tr   : I2C SCL rising  time
-@@ -273,10 +301,14 @@ static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv)
- 	 * F[]  : integer up-valuation
- 	 */
- 	rate = clk_get_rate(priv->clk);
--	cdf = rate / 20000000;
--	if (cdf >= 1U << cdf_width) {
--		dev_err(dev, "Input clock %lu too high\n", rate);
--		return -EIO;
++	pcie1_clkref: pcie1-clkref {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
 +
-+	if (!(priv->flags & ID_P_FMPLUS)) {
-+		cdf = rate / 20000000;
-+		cdf_width = (priv->devtype == I2C_RCAR_GEN1) ? 2 : 3;
-+		if (cdf >= 1U << cdf_width) {
-+			dev_err(dev, "Input clock %lu too high\n", rate);
-+			return -EIO;
-+		}
- 	}
- 	ick = rate / (cdf + 1);
+ 	pmu_a55 {
+ 		compatible = "arm,cortex-a55-pmu";
+ 		interrupts-extended = <&gic GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+@@ -726,6 +740,126 @@ hscif3: serial@e66a0000 {
+ 			status = "disabled";
+ 		};
  
-@@ -292,34 +324,55 @@ static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv)
- 	round = (ick + 500000) / 1000000 * sum;
- 	round = (round + 500) / 1000;
- 
--	/*
--	 * SCL	= ick / (20 + SCGD * 8 + F[(ticf + tr + intd) * ick])
--	 *
--	 * Calculation result (= SCL) should be less than
--	 * bus_speed for hardware safety
--	 *
--	 * We could use something along the lines of
--	 *	div = ick / (bus_speed + 1) + 1;
--	 *	scgd = (div - 20 - round + 7) / 8;
--	 *	scl = ick / (20 + (scgd * 8) + round);
--	 * (not fully verified) but that would get pretty involved
--	 */
--	for (scgd = 0; scgd < 0x40; scgd++) {
--		scl = ick / (20 + (scgd * 8) + round);
--		if (scl <= t.bus_freq_hz)
--			break;
--	}
-+	if (priv->flags & ID_P_FMPLUS) {
-+		/*
-+		 * SMD should be smaller than SCLD and SCHD, we arbitrarily set
-+		 * the ratio 1:3. SCHD:SCLD ratio is 1:1, thus:
-+		 * SCL	= clkp / (8 + SMD * 2 + SCLD + SCHD + F[(ticf + tr + intd) * clkp])
-+		 * SCL	= clkp / (8 + SMD * 2 + SMD * 3 + SMD * 3 + F[...])
-+		 * SCL	= clkp / (8 + SMD * 8 + F[...])
-+		 */
-+		smd = DIV_ROUND_UP(ick / t.bus_freq_hz - 8 - round, 8);
-+		scl = ick / (8 + 8 * smd + round);
- 
--	if (scgd == 0x40) {
--		dev_err(dev, "it is impossible to calculate best SCL\n");
--		return -EIO;
--	}
-+		if (smd > 0xff) {
-+			dev_err(dev, "it is impossible to calculate best SCL\n");
-+			return -EINVAL;
-+		}
- 
--	dev_dbg(dev, "clk %d/%d(%lu), round %u, CDF:0x%x, SCGD: 0x%x\n",
--		scl, t.bus_freq_hz, rate, round, cdf, scgd);
-+		dev_dbg(dev, "clk %d/%d(%lu), round %u, SMD:0x%x, SCHD: 0x%x\n",
-+			scl, t.bus_freq_hz, rate, round, smd, 3 * smd);
- 
--	/* keep icccr value */
--	priv->icccr = scgd << cdf_width | cdf;
-+		priv->clock_val = smd;
-+	} else {
-+		/*
-+		 * SCL	= ick / (20 + SCGD * 8 + F[(ticf + tr + intd) * ick])
-+		 *
-+		 * Calculation result (= SCL) should be less than
-+		 * bus_speed for hardware safety
-+		 *
-+		 * We could use something along the lines of
-+		 *	div = ick / (bus_speed + 1) + 1;
-+		 *	scgd = (div - 20 - round + 7) / 8;
-+		 *	scl = ick / (20 + (scgd * 8) + round);
-+		 * (not fully verified) but that would get pretty involved
-+		 */
-+		for (scgd = 0; scgd < 0x40; scgd++) {
-+			scl = ick / (20 + (scgd * 8) + round);
-+			if (scl <= t.bus_freq_hz)
-+				break;
-+		}
++		pciec0: pcie@e65d0000 {
++			compatible = "renesas,r8a779f0-pcie",
++				     "renesas,rcar-gen4-pcie";
++			reg = <0 0xe65d0000 0 0x1000>, <0 0xe65d2000 0 0x0800>,
++			      <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
++			      <0 0xe65d6200 0 0x0e00>, <0 0xe65d7000 0 0x0400>,
++			      <0 0xfe000000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "phy", "config";
++			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi", "dma", "sft_ce", "app";
++			clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
++			clock-names = "core", "ref";
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 624>;
++			reset-names = "pwr";
++			max-link-speed = <4>;
++			num-lanes = <2>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x01000000 0 0x00000000 0 0xfe000000 0 0x00400000>,
++				 <0x02000000 0 0x30000000 0 0x30000000 0 0x10000000>;
++			dma-ranges = <0x42000000 0 0x00000000 0 0x00000000 1 0x00000000>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &gic GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>;
++			snps,enable-cdm-check;
++			status = "disabled";
++		};
 +
-+		if (scgd == 0x40) {
-+			dev_err(dev, "it is impossible to calculate best SCL\n");
-+			return -EINVAL;
-+		}
++		pciec1: pcie@e65d8000 {
++			compatible = "renesas,r8a779f0-pcie",
++				     "renesas,rcar-gen4-pcie";
++			reg = <0 0xe65d8000 0 0x1000>, <0 0xe65da000 0 0x0800>,
++			      <0 0xe65db000 0 0x2000>, <0 0xe65dd000 0 0x1200>,
++			      <0 0xe65de200 0 0x0e00>, <0 0xe65df000 0 0x0400>,
++			      <0 0xee900000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "phy", "config";
++			interrupts = <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi", "dma", "sft_ce", "app";
++			clocks = <&cpg CPG_MOD 625>, <&pcie1_clkref>;
++			clock-names = "core", "ref";
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 625>;
++			reset-names = "pwr";
++			max-link-speed = <4>;
++			num-lanes = <2>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x01000000 0 0x00000000 0 0xee900000 0 0x00400000>,
++				 <0x02000000 0 0xc0000000 0 0xc0000000 0 0x10000000>;
++			dma-ranges = <0x42000000 0 0x00000000 0 0x00000000 1 0x00000000>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &gic GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &gic GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &gic GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &gic GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>;
++			snps,enable-cdm-check;
++			status = "disabled";
++		};
 +
-+		dev_dbg(dev, "clk %d/%d(%lu), round %u, CDF:0x%x, SCGD: 0x%x\n",
-+			scl, t.bus_freq_hz, rate, round, cdf, scgd);
++		pciec0_ep: pcie-ep@e65d0000 {
++			compatible = "renesas,r8a779f0-pcie-ep",
++				     "renesas,rcar-gen4-pcie-ep";
++			reg = <0 0xe65d0000 0 0x2000>, <0 0xe65d2000 0 0x1000>,
++			      <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
++			      <0 0xe65d6200 0 0x0e00>, <0 0xe65d7000 0 0x0400>,
++			      <0 0xfe000000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "phy", "addr_space";
++			interrupts = <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "dma", "sft_ce", "app";
++			clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
++			clock-names = "core", "ref";
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 624>;
++			reset-names = "pwr";
++			max-link-speed = <4>;
++			num-lanes = <2>;
++			max-functions = /bits/ 8 <2>;
++			status = "disabled";
++		};
 +
-+		priv->clock_val = scgd << cdf_width | cdf;
-+	}
- 
- 	return 0;
- }
++		pciec1_ep: pcie-ep@e65d8000 {
++			compatible = "renesas,r8a779f0-pcie-ep",
++				     "renesas,rcar-gen4-pcie-ep";
++			reg = <0 0xe65d8000 0 0x2000>, <0 0xe65da000 0 0x1000>,
++			      <0 0xe65db000 0 0x2000>, <0 0xe65dd000 0 0x1200>,
++			      <0 0xe65de200 0 0x0e00>, <0 0xe65df000 0 0x0400>,
++			      <0 0xee900000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "phy", "addr_space";
++			interrupts = <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "dma", "sft_ce", "app";
++			clocks = <&cpg CPG_MOD 625>, <&pcie1_clkref>;
++			clock-names = "core", "ref";
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 625>;
++			reset-names = "pwr";
++			max-link-speed = <4>;
++			num-lanes = <2>;
++			max-functions = /bits/ 8 <2>;
++			status = "disabled";
++		};
++
+ 		ufs: ufs@e6860000 {
+ 			compatible = "renesas,r8a779f0-ufs";
+ 			reg = <0 0xe6860000 0 0x100>;
 -- 
-2.35.1
+2.25.1
 
