@@ -2,75 +2,75 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFFACA0FE2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A512ECA0FFA
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 16:04:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237321AbjIEQEK (ORCPT
+        id S237358AbjIEQEL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:04:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56328 "EHLO
+        Tue, 5 Sep 2023 12:04:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346864AbjIEEXG (ORCPT
+        with ESMTP id S1354433AbjIELgc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2023 00:23:06 -0400
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9529E1B6;
-        Mon,  4 Sep 2023 21:23:02 -0700 (PDT)
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-53482b44007so833111a12.2;
-        Mon, 04 Sep 2023 21:23:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693887782; x=1694492582;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CE7wOb4f3tQJ0IpYRUrURtk1HHBKDBeRdhJ1pSca2yY=;
-        b=OajjDja1Exlrml+zLtAlEQwTIANfGeXxM+jXzxEPCdnQrTOtoBzj+p99zYG+j53UQi
-         gHfNgzem2H+v2OJuAIRnC69iaxT8WqQuWU1wefvd3kM3o0XemUvQNg2AdgkuiKTSZKuX
-         oVs8e2lL1VwEq34HaJjn1VeJv5heF1Fft2fEd3VUeMpmKobt/n4uiin0VHkR9nNG1Td6
-         1J8/9JmAvRjDU5w1hQhfOukdUgmsrdpFtUrjPD2rzMLA3DlSU4jaEL7ee1tyAHhyQfX+
-         JUe2neIjDi2spiTZh24lJxmv78fimcIwFEw5D9TmfRGgfxzKqoYZaPWD4g0ElBLSEXPY
-         /TGA==
-X-Gm-Message-State: AOJu0YzK2Jl8TOappD95WzvY8776gWNT3pDYWoXLS5Yzc1yVv3rGcQrh
-        m/TvDfCm/nVLOipMmiqQR1c=
-X-Google-Smtp-Source: AGHT+IFc03AUpiWiy/oRZskvvaA5OqpDqcG8THI2I2F1zX9fnD1bics6NjU8YxO+SVhTfR8334u5bg==
-X-Received: by 2002:a17:90a:66c7:b0:26d:4ab3:fe11 with SMTP id z7-20020a17090a66c700b0026d4ab3fe11mr8299685pjl.24.1693887781945;
-        Mon, 04 Sep 2023 21:23:01 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id m13-20020a17090a7f8d00b002609cadc56esm8153904pjl.11.2023.09.04.21.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Sep 2023 21:23:01 -0700 (PDT)
-Date:   Tue, 5 Sep 2023 13:22:59 +0900
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        mani@kernel.org, marek.vasut+renesas@gmail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/3] dt-bindings: PCI: Revise dwc and rcar-gen4-pcie
-Message-ID: <20230905042259.GB1102453@rocinante>
-References: <20230901131711.2861283-1-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 5 Sep 2023 07:36:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CA061AB;
+        Tue,  5 Sep 2023 04:36:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CABA3602E0;
+        Tue,  5 Sep 2023 11:36:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA19C433C8;
+        Tue,  5 Sep 2023 11:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693913788;
+        bh=JJ1xgbKs1Vv5+UBKm7oDOUD1ckh8Fc4bT3kqxnA3/sg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DGQX5q5hkl16T4RhaWAG4GCnv6bCK0EwaWZ9Ztvnh8bfULdbZqoFFL+LN4ptVukir
+         Ib/NOa2YKgggCD2D7iBAegSc5e8caSpP0r48/8O7pR6E8s0CciR8cUuBuOhXeyLXbu
+         AMqEd1pSvTOZUZCR3d8ZDxGwNnXR9HGKZZaRUayB9b1aeHOZsDVDDwLns7sVZAPnEN
+         D31jV9zkSr6fYBtFEAXFCaH0224mkWO1s8Kadr3gcvECqhb8wamOG2UF3poCpaACZ/
+         yf/NRTrWYz/bn0PkiyTwP5o0KZ+IOkZdwwlACkEVZtf3k4lze7Mh6rbxsmicJQKEkb
+         /hXyAvTfIrp+g==
+Date:   Tue, 5 Sep 2023 13:36:24 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] i2c: rcar: introduce Gen4 devices
+Message-ID: <20230905113624.5o2hfjojh3he7aex@zenone.zhora.eu>
+References: <20230904135852.12146-1-wsa+renesas@sang-engineering.com>
+ <20230904135852.12146-3-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230901131711.2861283-1-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20230904135852.12146-3-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Hi Wolfram,
 
-> This patch series is based on pci.git / controller/rcar branch
-> to fix dt-bindings doc patches. Krzysztof mentioned that the paches
-> will be squashed everything later [1].
+> @@ -1031,10 +1021,12 @@ static const struct of_device_id rcar_i2c_dt_ids[] = {
+>  	{ .compatible = "renesas,i2c-r8a7794", .data = (void *)I2C_RCAR_GEN2 },
+>  	{ .compatible = "renesas,i2c-r8a7795", .data = (void *)I2C_RCAR_GEN3 },
+>  	{ .compatible = "renesas,i2c-r8a7796", .data = (void *)I2C_RCAR_GEN3 },
+> +	/* S4 has no FM+ bit */
+> +	{ .compatible = "renesas,i2c-r8a779f0", .data = (void *)I2C_RCAR_GEN3 },
 
-Applied and squashed against prior patches:
+is this I2C_RCAR_GEN3 or I2C_RCAR_GEN4?
 
-  - https://git.kernel.org/pci/pci/c/554931ed3795
-  - https://git.kernel.org/pci/pci/c/d828097a0bef
-  - https://git.kernel.org/pci/pci/c/c1ff8c2d1a8c
+Rest looks good.
 
-Thank you, Shimoda-san!
+Andi
 
-	Krzysztof
+>  	{ .compatible = "renesas,rcar-gen1-i2c", .data = (void *)I2C_RCAR_GEN1 },
+>  	{ .compatible = "renesas,rcar-gen2-i2c", .data = (void *)I2C_RCAR_GEN2 },
+>  	{ .compatible = "renesas,rcar-gen3-i2c", .data = (void *)I2C_RCAR_GEN3 },
+> -	{ .compatible = "renesas,rcar-gen4-i2c", .data = (void *)I2C_RCAR_GEN3 },
+> +	{ .compatible = "renesas,rcar-gen4-i2c", .data = (void *)I2C_RCAR_GEN4 },
+>  	{},
