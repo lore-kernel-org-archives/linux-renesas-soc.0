@@ -2,143 +2,135 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8F4C83F3E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 21:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BB5CA100D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Sep 2023 21:37:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242339AbjIEVLQ (ORCPT
+        id S244250AbjIEVhT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 17:11:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49536 "EHLO
+        Tue, 5 Sep 2023 17:37:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241639AbjIEVLP (ORCPT
+        with ESMTP id S232877AbjIEVhS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2023 17:11:15 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2773313E
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Sep 2023 14:11:12 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-500a398cda5so5169320e87.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Sep 2023 14:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1693948269; x=1694553069; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ef2qFmNn3xvEcf4Oez9oM77hxc0tHJu7wEpJkm7cD0k=;
-        b=A1LlaS/xXK/50tzUNIDkH0A6F81s0j1fpIWB45quLX/3CesolIeqyE0+5+W/kUrvXP
-         blrk5Cvjw9CttGEND9h5L+xPfRCeWN0qHBZhhgwVYf180k3p88eo63FY7jGxW2QAqz76
-         r4DH+HN8L6Dv1eMWtmh+4X1c70+CcD00YdJWM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693948269; x=1694553069;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ef2qFmNn3xvEcf4Oez9oM77hxc0tHJu7wEpJkm7cD0k=;
-        b=c2MmjVPnjRIBaTo1/LXtiOr+ORZ+am9aVPonVvNLgiUR+/ywVQ4pIofD0Y3H5hFnzX
-         RedGNDyDP5p+hyo6kfSZDBnBdSfNogKKPK35VKUoLDOAXKJ7UauEXk7PRoNN0JUPh5PE
-         QueiPp8OxH45v2yRH6h/UZOtbfnHTZmNGx+0CPCBl1ueJGjgLORzHAF5OLjY04exMItQ
-         dhlLhaB7QqXzPavV2IhylSRlj7i9+361lT8DREQ1OG41FLDrlDExa1K03HW9lR7MRtD+
-         XECbwhPYPMZISSGlhbM/rhtZuyilDtBOSSNSTRkj+laIp56AjxGl69pcj6rGV0J96ONM
-         EmSg==
-X-Gm-Message-State: AOJu0YwwLZJAUGKD0kE/PBmwn+YX+/B9XT8WJ14tTuE2417pl7L7p6sK
-        klkfKjnqcpvKwxwneTYWKjadSh6EoUiMOi1kfl1/WT/o
-X-Google-Smtp-Source: AGHT+IFFQc7CRGLQc5BWXe8BnUfq2zisWopdRy+izWtdRy9Csm6uTbiBrZOJP0dzhi4LA86MafuqOg==
-X-Received: by 2002:a19:6d11:0:b0:500:b5db:990c with SMTP id i17-20020a196d11000000b00500b5db990cmr582070lfc.57.1693948268974;
-        Tue, 05 Sep 2023 14:11:08 -0700 (PDT)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
-        by smtp.gmail.com with ESMTPSA id b22-20020aa7d496000000b0051dd19d6d6esm7597747edr.73.2023.09.05.14.11.08
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Sep 2023 14:11:08 -0700 (PDT)
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-402bec56ca6so31995e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Sep 2023 14:11:08 -0700 (PDT)
-X-Received: by 2002:a05:600c:3502:b0:3f7:3e85:36a with SMTP id
- h2-20020a05600c350200b003f73e85036amr11498wmq.7.1693948267775; Tue, 05 Sep
- 2023 14:11:07 -0700 (PDT)
+        Tue, 5 Sep 2023 17:37:18 -0400
+X-Greylist: delayed 591 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 14:37:15 PDT
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1711F133;
+        Tue,  5 Sep 2023 14:37:15 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBAA9C433C7;
+        Tue,  5 Sep 2023 21:37:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693949834;
+        bh=1tW/2YmVkVDqbE9TScoPDDYvN/EtPZ3iDJNQoYXntFk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rB1yc9fjSlhx1N807FdykNMbNdeJR6JH1pqqabkB1XrRZorOa0DC80wxLQRF+SBol
+         JBgqszR6mgnozoT0yiOBD39CPCCNFctGwNKc8SaXCky/fjbL9FqMDPxuqWcI+ylUwC
+         2JF0JqiZtpO2DcbeqkkkEB6wyrmgHcqSzbn85NTrKaTo3mX4fVUFWkycYrMcDPgzZw
+         6G5IR22g0/0vG+rj7JEf2zeYsHEJ15OQsbpfy/3LWSWuPqXwP6NjMA1QEKauKCknJ6
+         oyWxbBb7lNe6D0HCIJA3jJafukqb2toqV2woo8X+AScpfRNBihPftHJqCx3F7ntPQX
+         1jftW0YOT9eKg==
+Date:   Tue, 5 Sep 2023 23:37:10 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] i2c: rcar: add FastMode+ support
+Message-ID: <20230905213710.3dv5h6zvwu4tpnby@zenone.zhora.eu>
+References: <20230904135852.12146-1-wsa+renesas@sang-engineering.com>
+ <20230904135852.12146-4-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <20230901234202.566951-1-dianders@chromium.org>
- <20230901164111.RFT.15.Iaf638a1d4c8b3c307a6192efabb4cbb06b195f15@changeid> <CAMuHMdWOB7d-KE3F7aeZvVimNuy_U30uk=PND7=tWmPzCd7_eg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWOB7d-KE3F7aeZvVimNuy_U30uk=PND7=tWmPzCd7_eg@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 5 Sep 2023 14:10:55 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WufC0WrnEZVEi5vQudpGnxiphJpJ6SwsEitm8zEnzJiA@mail.gmail.com>
-Message-ID: <CAD=FV=WufC0WrnEZVEi5vQudpGnxiphJpJ6SwsEitm8zEnzJiA@mail.gmail.com>
-Subject: Re: [RFT PATCH 15/15] drm/renesas/shmobile: Call drm_helper_force_disable_all()
- at shutdown/remove time
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maxime Ripard <mripard@kernel.org>, airlied@gmail.com,
-        biju.das.jz@bp.renesas.com, daniel@ffwll.ch,
-        kieran.bingham+renesas@ideasonboard.com,
-        laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, paul@crapouillou.net,
-        tzimmermann@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230904135852.12146-4-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+Hi Wolfram,
 
-On Mon, Sep 4, 2023 at 12:28=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Douglas,
->
-> On Sat, Sep 2, 2023 at 1:42=E2=80=AFAM Douglas Anderson <dianders@chromiu=
-m.org> wrote:
-> > Based on grepping through the source code, this driver appears to be
-> > missing a call to drm_atomic_helper_shutdown(), or in this case the
-> > non-atomic equivalent drm_helper_force_disable_all(), at system
-> > shutdown time and at driver remove time. This is important because
-> > drm_helper_force_disable_all() will cause panels to get disabled
-> > cleanly which may be important for their power sequencing. Future
-> > changes will remove any custom powering off in individual panel
-> > drivers so the DRM drivers need to start getting this right.
-> >
-> > The fact that we should call drm_atomic_helper_shutdown(), or in this
-> > case the non-atomic equivalent drm_helper_force_disable_all(), in the
-> > case of OS shutdown/restart comes straight out of the kernel doc
-> > "driver instance overview" in drm_drv.c.
-> >
-> > Suggested-by: Maxime Ripard <mripard@kernel.org>
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
->
-> Thanks for your patch!
->
-> > --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-> > +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-> > @@ -179,12 +180,20 @@ static int shmob_drm_remove(struct platform_devic=
-e *pdev)
-> >
-> >         drm_dev_unregister(ddev);
-> >         drm_kms_helper_poll_fini(ddev);
-> > +       drm_helper_force_disable_all(ddev);
->
-> After "[PATCH v3 36/41] drm: renesas: shmobile: Atomic conversion part
-> 1"[1], this function will already call drm_atomic_helper_shutdown()...
->
-> >         free_irq(sdev->irq, ddev);
-> >         drm_dev_put(ddev);
-> >
-> >         return 0;
-> >  }
-> >
-> > +static void shmob_drm_shutdown(struct platform_device *pdev)
-> > +{
-> > +       struct shmob_drm_device *sdev =3D platform_get_drvdata(pdev);
-> > +
-> > +       drm_helper_force_disable_all(sdev->ddev);
->
-> ... and this should be replaced by a call to drm_atomic_helper_shutdown()=
-.
->
-> [1] https://lore.kernel.org/dri-devel/fd7a6702490bd431f314d6591551bb39e77=
-e3304.1692178020.git.geert+renesas@glider.be
+[...]
 
-Ah, thanks! I will put this patch on hold and check back in a few
-weeks to see how things are looking. If you wanted to fold it into
-your series I certainly wouldn't object to it, but if not that's fine
-too. ;-)
+> @@ -217,7 +228,17 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
+>  	rcar_i2c_write(priv, ICMCR, MDBS);
+>  	rcar_i2c_write(priv, ICMSR, 0);
+>  	/* start clock */
+> -	rcar_i2c_write(priv, ICCCR, priv->icccr);
+> +	if (priv->flags & ID_P_FMPLUS) {
+> +		rcar_i2c_write(priv, ICCCR, 0);
+> +		rcar_i2c_write(priv, ICMPR, priv->clock_val);
+> +		rcar_i2c_write(priv, ICHPR, 3 * priv->clock_val);
+> +		rcar_i2c_write(priv, ICLPR, 3 * priv->clock_val);
+> +		rcar_i2c_write(priv, ICCCR2, FMPE | CDFD | HLSE | SME);
+> +	} else {
+> +		rcar_i2c_write(priv, ICCCR, priv->clock_val);
+> +		if (priv->devtype >= I2C_RCAR_GEN3)
+> +			rcar_i2c_write(priv, ICCCR2, 0);
 
--Doug
+is this last bit part of the FM+ enabling or is it part of the
+GEN4 support?
+
+> +	}
+
+[...]
+
+> +	if (priv->flags & ID_P_FMPLUS) {
+> +		/*
+> +		 * SMD should be smaller than SCLD and SCHD, we arbitrarily set
+> +		 * the ratio 1:3. SCHD:SCLD ratio is 1:1, thus:
+> +		 * SCL	= clkp / (8 + SMD * 2 + SCLD + SCHD + F[(ticf + tr + intd) * clkp])
+> +		 * SCL	= clkp / (8 + SMD * 2 + SMD * 3 + SMD * 3 + F[...])
+> +		 * SCL	= clkp / (8 + SMD * 8 + F[...])
+> +		 */
+> +		smd = DIV_ROUND_UP(ick / t.bus_freq_hz - 8 - round, 8);
+> +		scl = ick / (8 + 8 * smd + round);
+>  
+> -	if (scgd == 0x40) {
+> -		dev_err(dev, "it is impossible to calculate best SCL\n");
+> -		return -EIO;
+> -	}
+> +		if (smd > 0xff) {
+> +			dev_err(dev, "it is impossible to calculate best SCL\n");
+> +			return -EINVAL;
+> +		}
+>  
+> -	dev_dbg(dev, "clk %d/%d(%lu), round %u, CDF:0x%x, SCGD: 0x%x\n",
+> -		scl, t.bus_freq_hz, rate, round, cdf, scgd);
+> +		dev_dbg(dev, "clk %d/%d(%lu), round %u, SMD:0x%x, SCHD: 0x%x\n",
+> +			scl, t.bus_freq_hz, rate, round, smd, 3 * smd);
+
+I trust the formula application is right here... I can't say much :)
+I don't see anything odd here.
+
+>  
+> -	/* keep icccr value */
+> -	priv->icccr = scgd << cdf_width | cdf;
+> +		priv->clock_val = smd;
+> +	} else {
+> +		/*
+> +		 * SCL	= ick / (20 + SCGD * 8 + F[(ticf + tr + intd) * ick])
+> +		 *
+> +		 * Calculation result (= SCL) should be less than
+> +		 * bus_speed for hardware safety
+> +		 *
+> +		 * We could use something along the lines of
+> +		 *	div = ick / (bus_speed + 1) + 1;
+> +		 *	scgd = (div - 20 - round + 7) / 8;
+> +		 *	scl = ick / (20 + (scgd * 8) + round);
+> +		 * (not fully verified) but that would get pretty involved
+> +		 */
+> +		for (scgd = 0; scgd < 0x40; scgd++) {
+> +			scl = ick / (20 + (scgd * 8) + round);
+> +			if (scl <= t.bus_freq_hz)
+> +				break;
+> +		}
+> +
+> +		if (scgd == 0x40) {
+
+would be nice to give a meaning to this 0x40 constant... either
+having it in a define or a comment, at least.
+
+Andi
+
+> +			dev_err(dev, "it is impossible to calculate best SCL\n");
+> +			return -EINVAL;
+> +		}
