@@ -2,101 +2,95 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 898B3EE14D6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Sep 2023 20:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 366D8EE14C3
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Sep 2023 20:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243955AbjIFUBK (ORCPT
+        id S233639AbjIFUV4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Sep 2023 16:01:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54146 "EHLO
+        Wed, 6 Sep 2023 16:21:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243650AbjIFUAl (ORCPT
+        with ESMTP id S244380AbjIFUVz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2023 16:00:41 -0400
+        Wed, 6 Sep 2023 16:21:55 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C8D519B4
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Sep 2023 13:00:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A4D019B9
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Sep 2023 13:21:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :in-reply-to:references:mime-version:content-transfer-encoding;
-         s=k1; bh=xJsHUvQhrLbRjhVbZzw9GQZf+nq+ia33sWzU4P2ylJo=; b=LLsSji
-        ouIYueos70JY0o2u+vtusywFfMoaEnLidS6PvOdmV4mHgxGynGnGfcixrXic068k
-        IetzyAorzwCMqmRanV98lI/fGLmh+onLxnL3uUgb5e6RpTjzOSYt0wDjvJ/21Ah1
-        +0kKr8neBy5ptgfxZjICHX2SJzuJsfRYN5sVo5mRwYDnpXfXYf8+l6EIBtYzSD6a
-        tbLBr2+rSAZwzYLg7rP8iCn7bzZSqr8zPOwAfSHPEKD8U9bbZWvT5ClvSkyB+rUP
-        nSxkHiT+2kemliuzqSYlp1moanQNvTaTFoYz9QrFDavMhQa3XCGZcnYvemLSG2hL
-        RG+5fConjg1c2SAA==
-Received: (qmail 2929864 invoked from network); 6 Sep 2023 22:00:28 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Sep 2023 22:00:28 +0200
-X-UD-Smtp-Session: l3s3148p1@CvrqMbYELIsgAQnoAFZhALrSGIaWNE/A
+        sang-engineering.com; h=date:from:to:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=k1; bh=Yv67
+        0y/ikUzAQzPKatK8iaFIZc865ohGwHixJsvpd38=; b=On/rRZ2+A7nwIYp9sZWE
+        wflgBejnTlb7rip0HuhUtB8dOLWKcZR1iD2Q6ZDauKQXC4klQ0j1DJjThpqaF623
+        CGZwqBZ9jD1au/A5vyVgpstnsALYIYUtCwCEq8JYQOJRFR3uYChy+gIT66IduwTU
+        W7Uf6cIJ0cwXlu2H2dzD1nrCJbOjC8d4h6ozImlJh/NHVURDcD7UnaYJfkHK/HGk
+        zT4fSYT73It7TfwaQPdgDzciNp1H/mVkQ8Qdn9Jzl3l5Vjaq7KkYv63+GGNWkaSS
+        vghAQ2SO88NaswGh1uGhgDitrH+othx4vEMGhdC8mGKIW1VxMUy8jQlKfL1tijRO
+        1w==
+Received: (qmail 2934407 invoked from network); 6 Sep 2023 22:21:36 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Sep 2023 22:21:36 +0200
+X-UD-Smtp-Session: l3s3148p1@gyt9fbYEmpEujnuj
+Date:   Wed, 6 Sep 2023 22:21:35 +0200
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] i2c: rcar: calculate divider instead of brute-forcing it
-Date:   Wed,  6 Sep 2023 22:00:21 +0200
-Message-Id: <20230906200024.5305-4-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20230906200024.5305-1-wsa+renesas@sang-engineering.com>
-References: <20230906200024.5305-1-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 2/3] i2c: rcar: introduce Gen4 devices
+Message-ID: <ZPjfT3H42+5id0i+@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230904135852.12146-1-wsa+renesas@sang-engineering.com>
+ <20230904135852.12146-3-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUJnKeLJu4-CuDEFty8oW0p9M-D5mcuDv+fFxo-fHvvaQ@mail.gmail.com>
+ <ZPhKxsj6VTmIlKUY@shikoro>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4syRa1QPYYWNHiH5"
+Content-Disposition: inline
+In-Reply-To: <ZPhKxsj6VTmIlKUY@shikoro>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Instead of trying all values, we can actually compute it as the comment
-suggests. It is unclear what the comment means with "involved", it works
-nicely.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--4syRa1QPYYWNHiH5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-@Geert: I hope the formulas are more clear now?
-@Andi: I don't think that replacing 0x3f with a define helps
-understanding the code, but I am open for discussion.
 
- drivers/i2c/busses/i2c-rcar.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+> I was reluctant to add the reset too often because my measurements back
+> then showed that it costs around 5us every time. Annoying. Maybe I
+> should take it easy and follow the documentation. But then I am still
+> not sure if a large transfer with way more than two messages are OK
+> without reset? I will ask the HW team.
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 4bf47e35094f..2585092bed52 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -303,24 +303,16 @@ static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv)
- 	round = (round + 500) / 1000;
- 
- 	/*
--	 * SCL	= ick / (20 + SCGD * 8 + F[(ticf + tr + intd) * ick])
--	 *
--	 * Calculation result (= SCL) should be less than
--	 * bus_speed for hardware safety
--	 *
--	 * We could use something along the lines of
--	 *	div = ick / (bus_speed + 1) + 1;
--	 *	scgd = (div - 20 - round + 7) / 8;
--	 *	scl = ick / (20 + (scgd * 8) + round);
--	 * (not fully verified) but that would get pretty involved
-+	 * SCL	= ick / (20 + 8 * SCGD + F[(ticf + tr + intd) * ick])
-+	 * 20 + 8 * SCGD + F[...] = ick / SCL
-+	 * SCGD = ((ick / SCL) - 20 - F[...]) / 8
-+	 * Result (= SCL) should be less than bus_speed for hardware safety
- 	 */
--	for (scgd = 0; scgd < 0x40; scgd++) {
--		scl = ick / (20 + (scgd * 8) + round);
--		if (scl <= t.bus_freq_hz)
--			break;
--	}
-+	scgd = DIV_ROUND_UP(ick, t.bus_freq_hz ?: 1);
-+	scgd = DIV_ROUND_UP(scgd - 20 - round, 8);
-+	scl = ick / (20 + 8 * scgd + round);
- 
--	if (scgd == 0x40)
-+	if (scgd > 0x3f)
- 		goto err_no_val;
- 
- 	dev_dbg(dev, "clk %u/%u(%lu), round %u, CDF: %u, SCGD: %u\n",
--- 
-2.35.1
+Stupid me, we are following the documentation. Except that we treat the
+reset property as optional while it should be mandatory for >= Gen3.
 
+
+--4syRa1QPYYWNHiH5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmT430sACgkQFA3kzBSg
+KbaiSg/8CmbA4HsS4DI2wE0sFgFrKf6x2ZptRRDXeoC4vxZxVoFbnW4WpbTA/c8X
+vwab4lX8xfSdQsuGjcakT1GU9SL3lf9uPPWlMELMv5f3RC8gkt1iVjj5K9NptNTY
+4JBWacfHJCKlaN1fEzHaeXe/xWeJYmBJZJ1NMjKNftxcLcpFfVUdDIrM/vMH5tcA
+XhoNNmFXG056fyXO6Up6n/DLx3lq/seHVx5dhu1UjZhb7LiIdaIINKTG0ThoSQN1
+o+R4ziNxKtTGiiFmmvWuMaPUfbILeQ6GQ0ERTSdIZLphJtq+Rtfz7aollGM4wofi
+0B0zqJhePbZHo+gF2XfISkHzOfBMch7Y2xIJ0R3y6iMYPB3bm2KE+1XUi5ctIs5W
+pwnsBbKP9FLpFj/yB3MhuMrqJTZ4esWcEsvZG7kRWgTnAcUXe7cg0kiy0uAsdbjD
+3F/Im0l6QUKsPzjO+W94dqmwHlgwlxRSdMhCi+lWizn42atY6SOxtSwyu479nqDI
+10M/pVfMix+ROjPRPSdW18dfimIQA0/f1maSmTGQa7JY5CX9ra/dLFX45nX5vDBy
+7CbMotH5lpdww6DpAIoXHkNX53ej9LH7LI//hVc2azk16TZ/TMxLyhX0fmS3rhIZ
+8ZSoyQNuZZRc+rJhE5ffQ2/sQsJ+/966+Ps4iIWaKodJnp5xXqs=
+=evcE
+-----END PGP SIGNATURE-----
+
+--4syRa1QPYYWNHiH5--
