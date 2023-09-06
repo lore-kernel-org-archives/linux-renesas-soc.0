@@ -2,66 +2,71 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA001EE14C3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Sep 2023 20:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB069EE14D0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Sep 2023 20:01:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243851AbjIFUA7 (ORCPT
+        id S243632AbjIFUBB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Sep 2023 16:00:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54116 "EHLO
+        Wed, 6 Sep 2023 16:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243611AbjIFUAl (ORCPT
+        with ESMTP id S243684AbjIFUAr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2023 16:00:41 -0400
+        Wed, 6 Sep 2023 16:00:47 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE53719B1
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Sep 2023 13:00:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F65D7
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Sep 2023 13:00:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :mime-version:content-transfer-encoding; s=k1; bh=A3ixWxOf22d750
-        WBlTRj5T+ZBuyZaVvPJI9t1l4g7TY=; b=HdNOkU1Hj07eZC0l1r5gG0NDPhgbcT
-        oHy3xRdz1t00WqjF8QOIEGYZArEiV6autpeM70cQNe4CjeVZ6X2IHrZpFsAnOmQv
-        QVGb1xSngGOTZa8Gj0RhXwSqsfbNZthsFh0rKAJ4sFpS36tV8ZmWUVd7IGYa+lAz
-        R2lz/ChOxz22D4U7LeTkbfqNwfD3NV9nYu3xtVP22ewBaWVqNizFzn6qucar8VCP
-        fIZ1AKT3rXsyY02XlMvYWAwWxaDo084+SZ5/ZkDiA69GxYa+sH0maRalz56GVRbO
-        bl2vSeqMcNqoXuBiw2TfNsud27kHIJXYdlEr9Vd/nw7A15CSl6A97uyA==
-Received: (qmail 2929762 invoked from network); 6 Sep 2023 22:00:26 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Sep 2023 22:00:26 +0200
-X-UD-Smtp-Session: l3s3148p1@a7rIMbYEDIsgAQnoAFZhALrSGIaWNE/A
+        :in-reply-to:references:mime-version:content-transfer-encoding;
+         s=k1; bh=b7rT9wKJbxCEtc/9yaA+sRK1E4pHjRX6I/sjz0k8OFI=; b=XkyC9W
+        SX7VufPiTrmKAmknt+S/jhNIMLXAsM5CelCu9rasnkZBlJcVz8lYKgvAJAxTrKcU
+        RoPxNqXTxx20jVaGWZiq9/umbtkdM3Zb5qIBjrCrXIiCiXdBJZhwBnh2R7zdA3gI
+        9jb6wJ2weDhLDQ/eeaVN1SURDC4aUPY0mjBhzyxhHASxPL6EZ8pzanDZI4eu0I+X
+        oAXFMUq0iR32cGvVPNedhwQ1HcupXLGPJK20bTqs/gGM+XWqHMo5N0lP52Iq5pXB
+        YF0zz1cvHcT4k0gaI1Fqo1xYTtRkjosts1lpOZgxuZNc1yfatSkuyYO3sLrNIWa/
+        mhya5NnN/zYNuIzw==
+Received: (qmail 2929932 invoked from network); 6 Sep 2023 22:00:30 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Sep 2023 22:00:30 +0200
+X-UD-Smtp-Session: l3s3148p1@kxsBMrYEOIsgAQnoAFZhALrSGIaWNE/A
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] i2c: clock calculation cleanups for Renesas devices
-Date:   Wed,  6 Sep 2023 22:00:18 +0200
-Message-Id: <20230906200024.5305-1-wsa+renesas@sang-engineering.com>
+        Chris Brandt <chris.brandt@renesas.com>,
+        Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 5/5] i2c: riic: avoid potential division by zero
+Date:   Wed,  6 Sep 2023 22:00:23 +0200
+Message-Id: <20230906200024.5305-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20230906200024.5305-1-wsa+renesas@sang-engineering.com>
+References: <20230906200024.5305-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-While implementing FastMode+ support for the R-Car IP core, I noticed
-potential for other cleanups. It turned out that it makes sense to apply
-them first, so here is the series. Tested on a Renesas Falcon board with
-an R-Car V3U. The calculated values are identical for 100 and 400kHz.
-The RIIC patch is build tested only.
+Value comes from DT, so it could be 0. Unlikely, but could be.
 
-Looking forward to comments!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-riic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Wolfram Sang (5):
-  i2c: rcar: avoid non-standard use of goto
-  i2c: rcar: properly format a debug output
-  i2c: rcar: calculate divider instead of brute-forcing it
-  i2c: rcar: remove open coded DIV_ROUND_CLOSEST
-  i2c: riic: avoid potential division by zero
-
- drivers/i2c/busses/i2c-rcar.c | 41 +++++++++++++++--------------------
- drivers/i2c/busses/i2c-riic.c |  2 +-
- 2 files changed, 19 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index f0ee8871d5ae..e43ff483c56e 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -313,7 +313,7 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+ 	 * frequency with only 62 clock ticks max (31 high, 31 low).
+ 	 * Aim for a duty of 60% LOW, 40% HIGH.
+ 	 */
+-	total_ticks = DIV_ROUND_UP(rate, t->bus_freq_hz);
++	total_ticks = DIV_ROUND_UP(rate, t->bus_freq_hz ?: 1);
+ 
+ 	for (cks = 0; cks < 7; cks++) {
+ 		/*
 -- 
 2.35.1
 
