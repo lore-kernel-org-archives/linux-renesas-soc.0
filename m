@@ -2,155 +2,84 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6E4EC8744
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Sep 2023 15:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E42EC873E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Sep 2023 16:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231381AbjIGPg1 (ORCPT
+        id S233311AbjIGQVC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:36:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33900 "EHLO
+        Thu, 7 Sep 2023 12:21:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230472AbjIGPWS (ORCPT
+        with ESMTP id S239343AbjIGQUk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:22:18 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2138.outbound.protection.outlook.com [40.107.113.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE6F8135;
-        Thu,  7 Sep 2023 08:21:44 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=B/m5wMs+K2fSy76j6SbPL0T0/LU445SYZ2zzBTA/Y1+cgytOspfy0RJZD40bGPzvdODJpe3EsyYo3L5jlmg2MKd8doEwmCyVNQDX9l5DzuwMYjfWvS0M903CA5yjyUBwJ1dTu9d4XuJ6JCIqxO8aw5RJDIFvmUh1hY7DXtQMVlmiaMdQqAwirIKR9p7MMAFznGOTanUkSTy7Chp3DX/kxnonK/Y2p2ehpLy5XD33tFzsaDrl6jgJs0NGx+sfM7a6RUUtukl1dj3FE67ii/RVIJAQ+yFLGT10kmCxVIyq46GlO/w2fYEPGvIZ/t5EJ84VkgTYxQDD+q7vMLoLs3mjFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nYt/9PHU1sO2yiCs7nnHnyUGkas7ZpO2XBYVOCALZOg=;
- b=KVGRbbanXr6vfrXjDlukCNDbYwetF4CBdCp0RkyN+rxVkm1vkNUcHWbuPWlN8jsUh6EAp38QN9A37nYtJe8a0QQ+dki8P0y4gVAIG0ljNxRK/3XI8ZAfP8TR5JFJlFSOa3M+x8OoYT0l7nVOAF/wIqbZsIAKUdV50yhaDBt+2dyKyjy8NNuENV5L2SlgGXqqcUeTsGiR7u/K820ykmaHmbCDA/7iY2XsgKxmMlm6mg5Z3SOeO74LhlHyu4WrI/ArEc3JlI/I1HKsZe0JX8QqgPdE3af9IxXP8k28IbMNHXbx3ZyLlc0F/ppQhsuSVVpjRn7qPeGx7hAnUS5KbQ3OOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nYt/9PHU1sO2yiCs7nnHnyUGkas7ZpO2XBYVOCALZOg=;
- b=TP09dULcOKVQERepqNl4sCjrdhV6001eoLOKOqrXUSIQ4fq9cwxKZjUFg+Y/iK8nUasUiSoU9Ud7cJpTNl980Qg+tnjNByneO3eHTBnu2q9S41/s+QtoPysATJvFG5SLzxe/D/cZhOGZvMZf93u92/nsI/QGnpQXOOvm94xdoD4=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYWPR01MB11031.jpnprd01.prod.outlook.com (2603:1096:400:398::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Thu, 7 Sep
- 2023 06:42:40 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706%5]) with mapi id 15.20.6745.035; Thu, 7 Sep 2023
- 06:42:38 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-CC:     Chris Brandt <Chris.Brandt@renesas.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 5/5] i2c: riic: avoid potential division by zero
-Thread-Topic: [PATCH 5/5] i2c: riic: avoid potential division by zero
-Thread-Index: AQHZ4Pzpegqncf7PEU+giQkC/rdzgrAO6hPQ
-Date:   Thu, 7 Sep 2023 06:42:38 +0000
-Message-ID: <OS0PR01MB59221A1F4614F30669F3448D86EEA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20230906200024.5305-1-wsa+renesas@sang-engineering.com>
- <20230906200024.5305-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20230906200024.5305-6-wsa+renesas@sang-engineering.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYWPR01MB11031:EE_
-x-ms-office365-filtering-correlation-id: d795bf34-def0-42dc-3593-08dbaf6da0a5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lcgXaV5yYb1as+0FNfisIIY8ua+ZEq1r9dljYZCF4rWPGm20jledhFGUbRkBA9DyYLDQM4rYD2yqcSskQnEYdH7aNMXpOqsGOmjvkHWP55Y3Y/oAaMvQnFKrDzr0/vus2Zzv/2Y3SHrALARl6H/uw5eJ8KqolmedIjpKjKOmU518tcLo4D9w0hhU1XxbHaM8Vqto2wGGPrIdjqIAfenWbp5pATR1iVN6G7fBRXqcBHuROdEZ6pzz0Fdk9QpSqEFS7PfoIoUBqvgHXI7qAyTiuuP2vGlI7XSy/eUNU5P8HeCtpaEymi1J2kIeP78yZ44sQt8jLIw7w3dFSBkM2Rjr/T/3TkbdHdf6JHR77i/c3j3Rvhm+BR482f7jHkQiOkQEJf15qO901A/mg15CeILYyCz1qiNMR72rnpyjOMrLCo4+S26PSYbAhqWXy8gseEgqr/hkPiaGWUaneSxYc7gAb28JaEOc8zOmkEdDhVr+83jZ6TVkp2agIeVpdlAqRCDE0BZoCyMZ4JlkJv0kyKfnKuJji265rHMyeTN2Vuj/bgnWbevwSOpEZs9VuHeGBwAiwT13gKh5ZwawOITPbGyoh01AAVVkm0MhU253k8WdrP3PPK3OMRio7zexlUJlUn5E
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(376002)(136003)(346002)(39860400002)(186009)(451199024)(1800799009)(122000001)(6506007)(7696005)(9686003)(8936002)(71200400001)(86362001)(38070700005)(55016003)(38100700002)(478600001)(4744005)(26005)(2906002)(83380400001)(52536014)(110136005)(33656002)(4326008)(41300700001)(54906003)(316002)(8676002)(5660300002)(66476007)(76116006)(64756008)(66556008)(66446008)(66946007);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?yoXTSJSgo2qMHMdKPEOwZvj7gpRD3UFTmZIpw2pKzZY1hy4WPHOAmNy8Ye+o?=
- =?us-ascii?Q?cMjWXaeSYfxKR+1U9oYDLnMUGIJ38jn3jkN9zZBV5EyqiQDV8r/AuDBxUWKS?=
- =?us-ascii?Q?jvcRd6bsZ3HWMplYvEyuUlNwstp0bkXAJUx4pYiyN8h8cRJls9P8ZDjeynT9?=
- =?us-ascii?Q?N3OliFPN44r/gv/QjLjsJRM/G2dwk+u7MwmjALwVMkM/Gl7ZCegNowhH8H8U?=
- =?us-ascii?Q?fm/rlJSibIrbdkDZbQYhzC8Uo1QcgFpL8bPzr4rzsp2QmdFgGs3JBrKLM9Xt?=
- =?us-ascii?Q?N0rnaPws+ARh/as6jMPwI+VTbl9ljunjjDDqEEf6JXIE+A8XBOALdTrw1Psi?=
- =?us-ascii?Q?3Zd4SVLBP8aCnU2VcgAVvUi5xP7ut/TkYXnAHGGkWjjUR6s2vmVp+x576olX?=
- =?us-ascii?Q?3XHEYdhSMCB0KCYeJz8pFQWRRrai8LB20/haJI00DIvC9cdvhDXCowSPoiSZ?=
- =?us-ascii?Q?LSpt56FUO0BI1BvLNSNtoJHft3mjo0+pTo2k1tzZFBb+KoUR35UF9lu08VgT?=
- =?us-ascii?Q?m+yoMoGMk59Er0Yr+QjhIwxXgWgqc01veBVeS/5Nub8SQQc1qnxdm4TAEib2?=
- =?us-ascii?Q?5oK7FztM4WyIFrAE+VIl5u7fD0TNWp1PlJUKsmVwHdDghvjTIl74zlNdSarR?=
- =?us-ascii?Q?5JWO9DtJLscDRMfy0lhPeG5MysXxLQm0jlpJhqJ8btRhfwbxDXv/do1/9tN1?=
- =?us-ascii?Q?kxUizq0FzVwVi5QNORjcVTOyk+LseGrqyQX+y4iqGYcvcVjSOcBEVqJQUtJe?=
- =?us-ascii?Q?Wd6+GQBo2a1BAAfIWy0quWc115Je1Ste3zfvTdmyQ/l6sBzUZV4BjSENvnuJ?=
- =?us-ascii?Q?22XGGY0UP7Puhpb4DGU9K1ewORUGoeDFgPaPmcYRqZYGWaHNlHdS+oTvVgpi?=
- =?us-ascii?Q?D7MI805IpiAcUKjw2iZ3dlGgVEQ/1F/CuXfEJtgpcMkI93ZLLjZ+Z/LJBJJa?=
- =?us-ascii?Q?XOhbUIDQkiX+TSLUOPwY9DzNTggFICEvsObT7mTsmZxDQIV/epF5LBBj0mZq?=
- =?us-ascii?Q?iyb3vuPsgshTxghgbXwQyqvzQNvjrjcSREMPzDfBmeA95SsoDkQXOn5l2A7e?=
- =?us-ascii?Q?+DTCT5cOCDklwzK4xVEPqwe/BKYHVKZbjaMjxrknBOCbTt3KHm8xgBt2iWN8?=
- =?us-ascii?Q?HHSbcvbVZpC+L1lTDoRUidffZscNVomNdsrmG5MKas7iZTbmyx3j1D74YMc/?=
- =?us-ascii?Q?XNk7S5B7uBKls5clbH3F0X09PCDc1P+JSjgdEWjx7ofh7RJl+sBGMM6dNfPp?=
- =?us-ascii?Q?tzLhle8zikEaf58Bx3pRGJN4y/r8J7aFHMy29muvNSVfHSfX+j2z8sLwCjKN?=
- =?us-ascii?Q?IswTfzogI5Gq81aoOufJcGdusdeQZE0Q+TzAstizca0taQzJbK6uBtpyUBXN?=
- =?us-ascii?Q?4sGeab2ANNOtdwf1bjQKblV12Q71OKafwuUoRQj+xpIQSHdghqi2BfiDrwrK?=
- =?us-ascii?Q?h13Er9yE2CLZE6JjIhOzb2iEIDi+m+VHiHHhLELUq51dCNWDpVGpohK6WNcP?=
- =?us-ascii?Q?iH52e8qcngwso1y63vk02xMgS/GuwezH5acSKp+rXmyAa6+ZMd6Ke5N/hPgO?=
- =?us-ascii?Q?kpLAm/PKavKcaaV0UPi1ld/zq6O+uGbxB2rxTbFrzDDBQ6R1Sjc+VhJW3HBt?=
- =?us-ascii?Q?Kw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 7 Sep 2023 12:20:40 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1203B4ED2;
+        Thu,  7 Sep 2023 09:16:56 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-68a3e943762so1050759b3a.1;
+        Thu, 07 Sep 2023 09:16:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694103303; x=1694708103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bm3Pmr9P0h91Fq080SIB3HpfHrouG3fGksLn8OJ16Uw=;
+        b=UpbkQVJ4A9arFNmMrdDwFXouwdicz9sP58cUtb2ZbiBl1QdngJUkoh3BIOkPwsnzcM
+         sIcMlSqxKVWjGKVarqSpIVZM8kNu6up7ABEcEMevWziQYDpyKQ/qFseVpl0eKBBcsoPZ
+         8hI0MCvwsUbU1cZK9IsqL2eNYyHnxTb891/Ux3VF2LMb3C9woSDskfKQ/s0p+qcYF3DW
+         zTgXo2rB1i6Etzmcowas90+WgBgW0bFLFT1bUeOQMzXMrwVMTlxFyxr2v9zSDosA1pS7
+         me5Cd3Q+2j/e93suKtnTcQFYNYtQjbNSTltkI8jmld4V2c6GF5qWNwJY3X9Iy9TLS+qd
+         ThAw==
+X-Gm-Message-State: AOJu0Yyaf0DdzdkpgwdWQgA6BJsHDdogdOQcX+/666paBpDrBvmJ6tmr
+        tGIx9KosJuU/xSlxQPNG6z58OzUn/AaCxg==
+X-Google-Smtp-Source: AGHT+IFqYZGX4bKZMxlmtbfnIbHqnTv5PBpeh/lnaBf/E7f8W9zM59Ayn2GUvxGdGpBqEIWeX5m1Zg==
+X-Received: by 2002:a05:6358:2822:b0:133:ac7:c84b with SMTP id k34-20020a056358282200b001330ac7c84bmr4901523rwb.12.1694070944428;
+        Thu, 07 Sep 2023 00:15:44 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id o140-20020a0dcc92000000b0058390181d16sm4221929ywd.30.2023.09.07.00.15.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Sep 2023 00:15:43 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-d7225259f52so616567276.0;
+        Thu, 07 Sep 2023 00:15:43 -0700 (PDT)
+X-Received: by 2002:a05:6902:120e:b0:d78:134:9477 with SMTP id
+ s14-20020a056902120e00b00d7801349477mr21940790ybu.58.1694070943694; Thu, 07
+ Sep 2023 00:15:43 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d795bf34-def0-42dc-3593-08dbaf6da0a5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2023 06:42:38.4233
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zi1da4ocFBBw1LTdiZNkLK+SB7+bQKsMALNMJu3p73ZTYBX2zlpeLZw4xhNeMZ4m9Y1snDowE0B2QDvG5aVcLKA49o56fdfz5iSFbXqI7i8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11031
+References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-5-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230824104812.147775-5-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 7 Sep 2023 09:15:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVs0oUv4mL34P_i18jtzUPHrj_7+mc58=rOYTX2xBEeMw@mail.gmail.com>
+Message-ID: <CAMuHMdVs0oUv4mL34P_i18jtzUPHrj_7+mc58=rOYTX2xBEeMw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] clk: vc3: Make vc3_clk_mux enum values based on
+ vc3_clk enum values
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram Sang,
+On Thu, Aug 24, 2023 at 12:48 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Make vc3_clk_mux enum values depend upon vc3_clk enum valuesÂ to avoid
+> any accidental breakage in the future.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-> Subject: [PATCH 5/5] i2c: riic: avoid potential division by zero
->=20
-> Value comes from DT, so it could be 0. Unlikely, but could be.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/i2c/busses/i2c-riic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.=
-c
-> index f0ee8871d5ae..e43ff483c56e 100644
-> --- a/drivers/i2c/busses/i2c-riic.c
-> +++ b/drivers/i2c/busses/i2c-riic.c
-> @@ -313,7 +313,7 @@ static int riic_init_hw(struct riic_dev *riic, struct
-> i2c_timings *t)
->  	 * frequency with only 62 clock ticks max (31 high, 31 low).
->  	 * Aim for a duty of 60% LOW, 40% HIGH.
->  	 */
-> -	total_ticks =3D DIV_ROUND_UP(rate, t->bus_freq_hz);
-> +	total_ticks =3D DIV_ROUND_UP(rate, t->bus_freq_hz ?: 1);
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Not sure clamping function min_t/min(t->bus_freq_hz, 1)
-Or ternary condition is good in this case for avoiding potential division b=
-y 0?
+Gr{oetje,eeting}s,
 
-Cheers,
-Biju
+                        Geert
 
->=20
->  	for (cks =3D 0; cks < 7; cks++) {
->  		/*
-> --
-> 2.35.1
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
