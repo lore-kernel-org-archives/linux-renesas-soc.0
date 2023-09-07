@@ -2,106 +2,99 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEABBEC8743
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Sep 2023 17:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C71EBEC8742
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Sep 2023 17:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243915AbjIGR2l convert rfc822-to-8bit (ORCPT
+        id S232360AbjIGRgp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:28:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57748 "EHLO
+        Thu, 7 Sep 2023 13:36:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243845AbjIGR2k (ORCPT
+        with ESMTP id S241851AbjIGRgo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Sep 2023 13:28:40 -0400
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72A31700;
-        Thu,  7 Sep 2023 10:28:12 -0700 (PDT)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1a28de15c8aso958751fac.2;
-        Thu, 07 Sep 2023 10:28:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694107338; x=1694712138;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0eAo0T4Q7ty5BOJJ1ZPPpf8WGcau2gMsvRbOa9Sut6k=;
-        b=dJfuF8YxZ8nPjyXtmkkpAWgSzx7PNZ7aQl6y1zMUQ0bfeB4zsrh5SD2LhSfvj0zciI
-         eL0qYNLdCdZA8tc9nYX7jcWaxXK0jtVJZGvRYIHiZQfXSMYVWPZR0udWDO1isl41+gik
-         7ar8J60wPEAR9FNhJe5/texcrvT2hMN9a11FlL/ez9rmDpWVDS88Y0vtbagimIja05pB
-         YHWd5WWfzhZCTdZ73zviCDZLXggRFOTqHZs6AoNE7PxHF68gCqmjjy52nqv7Jlrop3x1
-         m/oo1TgEKbCdh6okdFS0EuWOU9pUA/VlPuAxKf0HTy/J/4gy5vgONPIBNfzNT4cuBoX1
-         KLCA==
-X-Gm-Message-State: AOJu0Yx8Rt74CAwww0CO6s2xF4sfpf//GawvEi+dwUk/77ZEQPEFDPSZ
-        CmVBIiKv9zdsGI5TAFDWwB/F0fE55GaCFg==
-X-Google-Smtp-Source: AGHT+IEc4Ap6beIZHT2MzekHqr8DHQwFnYECOD6BVi1xOIrzUCzH/nLhY3+HtKUHusDnSvBJCGSnnA==
-X-Received: by 2002:a05:6870:b016:b0:1c0:a784:cf7e with SMTP id y22-20020a056870b01600b001c0a784cf7emr22067504oae.51.1694070854803;
-        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
-        by smtp.gmail.com with ESMTPSA id c7-20020a9d6c87000000b006bee5535b44sm7095067otr.75.2023.09.07.00.14.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6c0a42a469dso434740a34.2;
-        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
-X-Received: by 2002:a05:6358:2789:b0:12b:c378:b090 with SMTP id
- l9-20020a056358278900b0012bc378b090mr4579788rwb.26.1694070853892; Thu, 07 Sep
- 2023 00:14:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 7 Sep 2023 09:14:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXFhORcYPKYPNYMhzUgpgfWohaPMH8bYSKdOgMN_0z5iA@mail.gmail.com>
-Message-ID: <CAMuHMdXFhORcYPKYPNYMhzUgpgfWohaPMH8bYSKdOgMN_0z5iA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: versaclock3: Add description
- for #clock-cells property
+        Thu, 7 Sep 2023 13:36:44 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0215F1700
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Sep 2023 10:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=date:from:to:cc:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=k1; bh=fmQ7
+        7HCuij64JKsPwzj/UtMCmfu+C1bHJz9wVMrQtWc=; b=CczHYmzr/M8QP+qsYTLP
+        qlNiCtDunym9ynv+irjk+ARgT+IV4O3bzUQENy4vYAsqeSlKkkTHHy2hNX1Hl1ih
+        qiQ/yKDY8x5tgis4xWh7gc7jS44EMAj2VzOz2S+0y5Ege4fO6mIC/qF34ZB/3YfL
+        K6j09a3AYtDhn9pV2zlKGj1Q3U8t1OYJWXVFveBOFOfAI8+EjZuJRfkD1m0JBAQt
+        OzrtRZVXwkxwVriFgf7rYmvPRvH82onC4x1pSN251+47F9XrOH/eLB1189Ue29Zt
+        wPg0GALLQqANmxD8a+ylkiEk7abuhkCTTj72rCeQJlEAMPktd9AOAKgdv4oRzOn6
+        /A==
+Received: (qmail 3139700 invoked from network); 7 Sep 2023 14:08:52 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Sep 2023 14:08:52 +0200
+X-UD-Smtp-Session: l3s3148p1@TdE0ucMEaOVehhtN
+Date:   Thu, 7 Sep 2023 14:08:52 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Cc:     "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/5] i2c: riic: avoid potential division by zero
+Message-ID: <ZPm9VBi+nLrSaUl6@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20230906200024.5305-1-wsa+renesas@sang-engineering.com>
+ <20230906200024.5305-6-wsa+renesas@sang-engineering.com>
+ <OS0PR01MB59221A1F4614F30669F3448D86EEA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YSL5EABNRscBDa20"
+Content-Disposition: inline
+In-Reply-To: <OS0PR01MB59221A1F4614F30669F3448D86EEA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 12:48 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add description for "#clock-cells" property to map indexes to the clock
-> output in the Table 3. ("Output Source") in the 5P35023 datasheet
-> (ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}. Also update the "assigned-clock-rates"
-> in the example.
->
-> While at it, replace clocks phandle in the example from x1_x2->x1 as
-> X2 is a different 32768 kHz crystal.
->
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> v4->v5:
->  * Added description for "#clock-cells" property to map indexes to the
->    clock output.
->  * Updated commit header and description to reflect this change.
->  * Dropped fixes tag.
->  * Retained Ack tag from Conor and Krzysztof as it is trivial change.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--YSL5EABNRscBDa20
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gr{oetje,eeting}s,
 
-                        Geert
+> > -	total_ticks =3D DIV_ROUND_UP(rate, t->bus_freq_hz);
+> > +	total_ticks =3D DIV_ROUND_UP(rate, t->bus_freq_hz ?: 1);
+>=20
+> Not sure clamping function min_t/min(t->bus_freq_hz, 1)
+> Or ternary condition is good in this case for avoiding potential division=
+ by 0?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Both work. I chose the ternary because I believe it involves less
+computation and a tad tighter syntax.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+--YSL5EABNRscBDa20
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmT5vVAACgkQFA3kzBSg
+KbbRAg/+K7Ngrza5kDkThVe4gz++Go2zi/m08rznb+YvC/XcJjT9ZQNOOQYwcmI7
+HQEwVmYmCDXJ++vSiVKJ2W+fPAo9M7f6k/X/7BX4R1lB4NVl/dKL79f28Eadv2u9
+mkR+J8U0pg7uG3UbXXfsXz3Y2b7WMuXyv89Jb9tnXgUgIgBvhdKNWosCaF/xtlZj
+i5YzvfWZIER8h3AqHDukr0Q74WrP4JA5G4aMBDZXEdiEdd+q57eL2Ikt7gLtBECG
+j53+FW6QSRJW+TqJRb605UeII/wu/h8wTOKnR8Ik0Pa/nalZJ1rKu6OujnC63WeJ
+els1RydWO3fRM0zxXG7apwSnxdaVyAmLbYPcXmIHcxws1RgV7bxCDstvryuxUDa4
+IA9Np0G9QBEwHpXwF+0mEIie/Co8YaHHYVkBUtBdV0XYvREfSLVqH6Y6aJGfXx6V
+qj9FyaAlu/jK9F/wk1LHjwkwjJazBDa4kkSQ6K8jbQb1rbbr+UiTDg6zySIggtqy
+6/kXk3X4iQoRRdM+UQ5P291z3gSkUBg45QZ4yLn4D8fcCXZj+ZD3FMGz2/jZbINx
+MFbG2RoE6bFnjT75mcBL1eSbzwESO6d9jXp/Hx+8ImDM5jYWn+t6cikbfzshSMMO
+uYRZYfr/efSPJqkMLHYvwCxCzX5rG0+2fiBsSJtm2asTzcpgtgw=
+=hLmC
+-----END PGP SIGNATURE-----
+
+--YSL5EABNRscBDa20--
