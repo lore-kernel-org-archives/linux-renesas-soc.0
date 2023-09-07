@@ -2,156 +2,155 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE75EC8741
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6E4EC8744
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Sep 2023 15:36:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236017AbjIGPg0 convert rfc822-to-8bit (ORCPT
+        id S231381AbjIGPg1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:36:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35042 "EHLO
+        Thu, 7 Sep 2023 11:36:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343654AbjIGPao (ORCPT
+        with ESMTP id S230472AbjIGPWS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:30:44 -0400
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C1F1FDA;
-        Thu,  7 Sep 2023 08:30:17 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-579de633419so11006347b3.3;
-        Thu, 07 Sep 2023 08:30:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694100535; x=1694705335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IGdCm3ngn4AXhff3BrHDNP55N2x9eM/v8Yjzq97ZIQw=;
-        b=HsomnAYn+M1bNtm/pmGN7agVOcmvQSz0sWdLVWXaptUlkeo4RHXI0Y/A+Z/px1qLjN
-         B0PN/jvxCpewAtLWuRsh+rm9I2BdclBFfYh/BHwAsgjRfW4mdE8P53PEHXjsNYaMJPAW
-         a/aDbCcpviTx6lk1Sdn0qp6HPdlKggdggzkuE5JN1CwC+IjUsaX5+Jej2KMpzOt8eThE
-         j9P4OwEeT6jTHOmvGtefZuCNcRir/xVFD0OgRZyEg882Mzssi+0sljV82lbWQ/qgSapN
-         gsSqq2Xc/9MKPQHMLJ8+tAPZHRYyn9n784H+1+R1i1JclBd7Y02eKDSeX0Bv5abgEk2c
-         Qg9A==
-X-Gm-Message-State: AOJu0Yxcyi51LO0z+5uc2zsIRvjRH/rb07kT3luiXCi3VXcki7ljSMVj
-        ndKuWqt4rSlfkYgavkf2cPXTOqSASDpAhA==
-X-Google-Smtp-Source: AGHT+IH1Kt2dgZnQZNqAjoXPvUTJYHzDfERDgvSAz1KAbJeKLaG0Do5KNmQM/G7Rb3Kfp2OGJUcsMA==
-X-Received: by 2002:a25:778b:0:b0:d78:1360:a484 with SMTP id s133-20020a25778b000000b00d781360a484mr18585654ybc.57.1694081288608;
-        Thu, 07 Sep 2023 03:08:08 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id e10-20020a25690a000000b00d7ba4c5e31fsm3733615ybc.39.2023.09.07.03.08.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Sep 2023 03:08:08 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-d7e87b4a0f2so739522276.0;
-        Thu, 07 Sep 2023 03:08:08 -0700 (PDT)
-X-Received: by 2002:a25:9387:0:b0:d7a:def7:b96a with SMTP id
- a7-20020a259387000000b00d7adef7b96amr16752501ybm.53.1694081288073; Thu, 07
- Sep 2023 03:08:08 -0700 (PDT)
+        Thu, 7 Sep 2023 11:22:18 -0400
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2138.outbound.protection.outlook.com [40.107.113.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE6F8135;
+        Thu,  7 Sep 2023 08:21:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=B/m5wMs+K2fSy76j6SbPL0T0/LU445SYZ2zzBTA/Y1+cgytOspfy0RJZD40bGPzvdODJpe3EsyYo3L5jlmg2MKd8doEwmCyVNQDX9l5DzuwMYjfWvS0M903CA5yjyUBwJ1dTu9d4XuJ6JCIqxO8aw5RJDIFvmUh1hY7DXtQMVlmiaMdQqAwirIKR9p7MMAFznGOTanUkSTy7Chp3DX/kxnonK/Y2p2ehpLy5XD33tFzsaDrl6jgJs0NGx+sfM7a6RUUtukl1dj3FE67ii/RVIJAQ+yFLGT10kmCxVIyq46GlO/w2fYEPGvIZ/t5EJ84VkgTYxQDD+q7vMLoLs3mjFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nYt/9PHU1sO2yiCs7nnHnyUGkas7ZpO2XBYVOCALZOg=;
+ b=KVGRbbanXr6vfrXjDlukCNDbYwetF4CBdCp0RkyN+rxVkm1vkNUcHWbuPWlN8jsUh6EAp38QN9A37nYtJe8a0QQ+dki8P0y4gVAIG0ljNxRK/3XI8ZAfP8TR5JFJlFSOa3M+x8OoYT0l7nVOAF/wIqbZsIAKUdV50yhaDBt+2dyKyjy8NNuENV5L2SlgGXqqcUeTsGiR7u/K820ykmaHmbCDA/7iY2XsgKxmMlm6mg5Z3SOeO74LhlHyu4WrI/ArEc3JlI/I1HKsZe0JX8QqgPdE3af9IxXP8k28IbMNHXbx3ZyLlc0F/ppQhsuSVVpjRn7qPeGx7hAnUS5KbQ3OOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nYt/9PHU1sO2yiCs7nnHnyUGkas7ZpO2XBYVOCALZOg=;
+ b=TP09dULcOKVQERepqNl4sCjrdhV6001eoLOKOqrXUSIQ4fq9cwxKZjUFg+Y/iK8nUasUiSoU9Ud7cJpTNl980Qg+tnjNByneO3eHTBnu2q9S41/s+QtoPysATJvFG5SLzxe/D/cZhOGZvMZf93u92/nsI/QGnpQXOOvm94xdoD4=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by TYWPR01MB11031.jpnprd01.prod.outlook.com (2603:1096:400:398::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Thu, 7 Sep
+ 2023 06:42:40 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::9d23:32f5:9325:3706]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::9d23:32f5:9325:3706%5]) with mapi id 15.20.6745.035; Thu, 7 Sep 2023
+ 06:42:38 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+CC:     Chris Brandt <Chris.Brandt@renesas.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 5/5] i2c: riic: avoid potential division by zero
+Thread-Topic: [PATCH 5/5] i2c: riic: avoid potential division by zero
+Thread-Index: AQHZ4Pzpegqncf7PEU+giQkC/rdzgrAO6hPQ
+Date:   Thu, 7 Sep 2023 06:42:38 +0000
+Message-ID: <OS0PR01MB59221A1F4614F30669F3448D86EEA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20230906200024.5305-1-wsa+renesas@sang-engineering.com>
+ <20230906200024.5305-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20230906200024.5305-6-wsa+renesas@sang-engineering.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYWPR01MB11031:EE_
+x-ms-office365-filtering-correlation-id: d795bf34-def0-42dc-3593-08dbaf6da0a5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: lcgXaV5yYb1as+0FNfisIIY8ua+ZEq1r9dljYZCF4rWPGm20jledhFGUbRkBA9DyYLDQM4rYD2yqcSskQnEYdH7aNMXpOqsGOmjvkHWP55Y3Y/oAaMvQnFKrDzr0/vus2Zzv/2Y3SHrALARl6H/uw5eJ8KqolmedIjpKjKOmU518tcLo4D9w0hhU1XxbHaM8Vqto2wGGPrIdjqIAfenWbp5pATR1iVN6G7fBRXqcBHuROdEZ6pzz0Fdk9QpSqEFS7PfoIoUBqvgHXI7qAyTiuuP2vGlI7XSy/eUNU5P8HeCtpaEymi1J2kIeP78yZ44sQt8jLIw7w3dFSBkM2Rjr/T/3TkbdHdf6JHR77i/c3j3Rvhm+BR482f7jHkQiOkQEJf15qO901A/mg15CeILYyCz1qiNMR72rnpyjOMrLCo4+S26PSYbAhqWXy8gseEgqr/hkPiaGWUaneSxYc7gAb28JaEOc8zOmkEdDhVr+83jZ6TVkp2agIeVpdlAqRCDE0BZoCyMZ4JlkJv0kyKfnKuJji265rHMyeTN2Vuj/bgnWbevwSOpEZs9VuHeGBwAiwT13gKh5ZwawOITPbGyoh01AAVVkm0MhU253k8WdrP3PPK3OMRio7zexlUJlUn5E
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(376002)(136003)(346002)(39860400002)(186009)(451199024)(1800799009)(122000001)(6506007)(7696005)(9686003)(8936002)(71200400001)(86362001)(38070700005)(55016003)(38100700002)(478600001)(4744005)(26005)(2906002)(83380400001)(52536014)(110136005)(33656002)(4326008)(41300700001)(54906003)(316002)(8676002)(5660300002)(66476007)(76116006)(64756008)(66556008)(66446008)(66946007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?yoXTSJSgo2qMHMdKPEOwZvj7gpRD3UFTmZIpw2pKzZY1hy4WPHOAmNy8Ye+o?=
+ =?us-ascii?Q?cMjWXaeSYfxKR+1U9oYDLnMUGIJ38jn3jkN9zZBV5EyqiQDV8r/AuDBxUWKS?=
+ =?us-ascii?Q?jvcRd6bsZ3HWMplYvEyuUlNwstp0bkXAJUx4pYiyN8h8cRJls9P8ZDjeynT9?=
+ =?us-ascii?Q?N3OliFPN44r/gv/QjLjsJRM/G2dwk+u7MwmjALwVMkM/Gl7ZCegNowhH8H8U?=
+ =?us-ascii?Q?fm/rlJSibIrbdkDZbQYhzC8Uo1QcgFpL8bPzr4rzsp2QmdFgGs3JBrKLM9Xt?=
+ =?us-ascii?Q?N0rnaPws+ARh/as6jMPwI+VTbl9ljunjjDDqEEf6JXIE+A8XBOALdTrw1Psi?=
+ =?us-ascii?Q?3Zd4SVLBP8aCnU2VcgAVvUi5xP7ut/TkYXnAHGGkWjjUR6s2vmVp+x576olX?=
+ =?us-ascii?Q?3XHEYdhSMCB0KCYeJz8pFQWRRrai8LB20/haJI00DIvC9cdvhDXCowSPoiSZ?=
+ =?us-ascii?Q?LSpt56FUO0BI1BvLNSNtoJHft3mjo0+pTo2k1tzZFBb+KoUR35UF9lu08VgT?=
+ =?us-ascii?Q?m+yoMoGMk59Er0Yr+QjhIwxXgWgqc01veBVeS/5Nub8SQQc1qnxdm4TAEib2?=
+ =?us-ascii?Q?5oK7FztM4WyIFrAE+VIl5u7fD0TNWp1PlJUKsmVwHdDghvjTIl74zlNdSarR?=
+ =?us-ascii?Q?5JWO9DtJLscDRMfy0lhPeG5MysXxLQm0jlpJhqJ8btRhfwbxDXv/do1/9tN1?=
+ =?us-ascii?Q?kxUizq0FzVwVi5QNORjcVTOyk+LseGrqyQX+y4iqGYcvcVjSOcBEVqJQUtJe?=
+ =?us-ascii?Q?Wd6+GQBo2a1BAAfIWy0quWc115Je1Ste3zfvTdmyQ/l6sBzUZV4BjSENvnuJ?=
+ =?us-ascii?Q?22XGGY0UP7Puhpb4DGU9K1ewORUGoeDFgPaPmcYRqZYGWaHNlHdS+oTvVgpi?=
+ =?us-ascii?Q?D7MI805IpiAcUKjw2iZ3dlGgVEQ/1F/CuXfEJtgpcMkI93ZLLjZ+Z/LJBJJa?=
+ =?us-ascii?Q?XOhbUIDQkiX+TSLUOPwY9DzNTggFICEvsObT7mTsmZxDQIV/epF5LBBj0mZq?=
+ =?us-ascii?Q?iyb3vuPsgshTxghgbXwQyqvzQNvjrjcSREMPzDfBmeA95SsoDkQXOn5l2A7e?=
+ =?us-ascii?Q?+DTCT5cOCDklwzK4xVEPqwe/BKYHVKZbjaMjxrknBOCbTt3KHm8xgBt2iWN8?=
+ =?us-ascii?Q?HHSbcvbVZpC+L1lTDoRUidffZscNVomNdsrmG5MKas7iZTbmyx3j1D74YMc/?=
+ =?us-ascii?Q?XNk7S5B7uBKls5clbH3F0X09PCDc1P+JSjgdEWjx7ofh7RJl+sBGMM6dNfPp?=
+ =?us-ascii?Q?tzLhle8zikEaf58Bx3pRGJN4y/r8J7aFHMy29muvNSVfHSfX+j2z8sLwCjKN?=
+ =?us-ascii?Q?IswTfzogI5Gq81aoOufJcGdusdeQZE0Q+TzAstizca0taQzJbK6uBtpyUBXN?=
+ =?us-ascii?Q?4sGeab2ANNOtdwf1bjQKblV12Q71OKafwuUoRQj+xpIQSHdghqi2BfiDrwrK?=
+ =?us-ascii?Q?h13Er9yE2CLZE6JjIhOzb2iEIDi+m+VHiHHhLELUq51dCNWDpVGpohK6WNcP?=
+ =?us-ascii?Q?iH52e8qcngwso1y63vk02xMgS/GuwezH5acSKp+rXmyAa6+ZMd6Ke5N/hPgO?=
+ =?us-ascii?Q?kpLAm/PKavKcaaV0UPi1ld/zq6O+uGbxB2rxTbFrzDDBQ6R1Sjc+VhJW3HBt?=
+ =?us-ascii?Q?Kw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20230905140008.136263-1-aymeric.aillet@iot.bzh>
-In-Reply-To: <20230905140008.136263-1-aymeric.aillet@iot.bzh>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 7 Sep 2023 12:07:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX4-Bd8EvFE2U6YOL01LxAFg+uCjoD-sodXNgWuD9U5rg@mail.gmail.com>
-Message-ID: <CAMuHMdX4-Bd8EvFE2U6YOL01LxAFg+uCjoD-sodXNgWuD9U5rg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: renesas: Mark concerned clocks as "ignore_unused"
-To:     Aymeric Aillet <aymeric.aillet@iot.bzh>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d795bf34-def0-42dc-3593-08dbaf6da0a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2023 06:42:38.4233
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zi1da4ocFBBw1LTdiZNkLK+SB7+bQKsMALNMJu3p73ZTYBX2zlpeLZw4xhNeMZ4m9Y1snDowE0B2QDvG5aVcLKA49o56fdfz5iSFbXqI7i8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11031
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Aymeric,
+Hi Wolfram Sang,
 
-On Tue, Sep 5, 2023 at 4:00 PM Aymeric Aillet <aymeric.aillet@iot.bzh> wrote:
-> In order to avoid Linux from gating clocks that are used by
-> another OS running at the same time (eg. RTOS), we are adding
-> the "CLK_IGNORE_UNUSED" flag to the concerned clocks.
->
-> As for now, list of clocks to be flagged have been completed
-> depending of features that are supported by Renesas SoCs/boards
-> port in Zephyr RTOS.
->
-> Signed-off-by: Aymeric Aillet <aymeric.aillet@iot.bzh>
+> Subject: [PATCH 5/5] i2c: riic: avoid potential division by zero
+>=20
+> Value comes from DT, so it could be 0. Unlikely, but could be.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/busses/i2c-riic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.=
+c
+> index f0ee8871d5ae..e43ff483c56e 100644
+> --- a/drivers/i2c/busses/i2c-riic.c
+> +++ b/drivers/i2c/busses/i2c-riic.c
+> @@ -313,7 +313,7 @@ static int riic_init_hw(struct riic_dev *riic, struct
+> i2c_timings *t)
+>  	 * frequency with only 62 clock ticks max (31 high, 31 low).
+>  	 * Aim for a duty of 60% LOW, 40% HIGH.
+>  	 */
+> -	total_ticks =3D DIV_ROUND_UP(rate, t->bus_freq_hz);
+> +	total_ticks =3D DIV_ROUND_UP(rate, t->bus_freq_hz ?: 1);
 
-Thanks for your patch!
+Not sure clamping function min_t/min(t->bus_freq_hz, 1)
+Or ternary condition is good in this case for avoiding potential division b=
+y 0?
 
-> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> @@ -288,6 +288,18 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
->         DEF_MOD("scu-src0",             1031,   MOD_CLK_ID(1017)),
->  };
->
-> +static const unsigned int r8a7795_ignore_unused_mod_clks[] __initconst = {
-> +       MOD_CLK_ID(206),        /* SCIF1 */
-> +       MOD_CLK_ID(303),        /* CMT0 */
-> +       MOD_CLK_ID(310),        /* SCIF2 */
-> +       MOD_CLK_ID(523),        /* PWM */
-> +       MOD_CLK_ID(906),        /* GPIO6 */
-> +       MOD_CLK_ID(907),        /* GPIO5 */
-> +       MOD_CLK_ID(916),        /* CAN0 */
-> +       MOD_CLK_ID(929),        /* I2C2 */
-> +       MOD_CLK_ID(927),        /* I2C4 */
+Cheers,
+Biju
 
-All of this is board-specific, so it cannot be handled in the SoC
-clock driver.
+>=20
+>  	for (cks =3D 0; cks < 7; cks++) {
+>  		/*
+> --
+> 2.35.1
 
-E.g. scif2 is the main serial console for Linux on the Salvator-X(S)
-and ULCB development
-boards.
-Pwm, gpio6, gpio5, i2c2, and i2c4 are used on Salvator-X(S).
-I2c2 and i2c4 are also used on ULCB.
-Scif1 and can0 are used on the KingFisher extension board for ULCB.
-
-> --- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-> @@ -168,6 +168,12 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
->         DEF_MOD("ufs",          1514,   R8A779F0_CLK_S0D4_HSC),
->  };
->
-> +static const unsigned int r8a779f0_ignore_unused_mod_clks[] __initconst = {
-> +       MOD_CLK_ID(702),        /* SCIF0 */
-> +       MOD_CLK_ID(704),        /* SCIF3 */
-> +       MOD_CLK_ID(915),        /* PFC0 */
-
-E.g. scif0 is available for use by Linux on the Spider development board.
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-> @@ -140,6 +140,10 @@ struct cpg_mssr_info {
->         unsigned int num_mod_clks;
->         unsigned int num_hw_mod_clks;
->
-> +       /* Module Clocks that should not be gated */
-> +       const unsigned int *ignore_unused_mod_clks;
-> +       unsigned int num_ignore_unused_mod_clks;
-> +
->         /* Critical Module Clocks that should not be disabled */
->         const unsigned int *crit_mod_clks;
->         unsigned int num_crit_mod_clks;
-
-Even if this was considered a good solution, why couldn't these be
-added to the existing crit_mod_clks[] array?
-
-Fortunately, the Renesas SoC developers thought about this use case:
-R-Car H3 has both System (SMSTPCRn) and Realtime  (RMSTPCRn) Module
-Stop Control Registers, and a module clock is not gated unless it is
-stopped in both sets.  Linux uses the System set, while an RTOS like
-Zephyr running on the Cortex-R CPU core should use the Realtime set.
-Note that that mechanism does not protect against both OSes changing
-e.g. a divider for a parent clock.
-
-R-Car S4-8 only has a single set of Module Stop Control Register
-(MSTPCRn), but it does support multiple domains instead, and has Domain
-x Write Access Control Register (DxWACR_yyy) to control access.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
