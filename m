@@ -2,91 +2,136 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29221EC8742
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Sep 2023 17:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D79EE57EB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Sep 2023 09:31:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245255AbjIGRjo (ORCPT
+        id S235892AbjIHJbz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:39:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
+        Fri, 8 Sep 2023 05:31:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245204AbjIGRjO (ORCPT
+        with ESMTP id S229644AbjIHJbw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Sep 2023 13:39:14 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBB3A211C
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Sep 2023 10:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=k1; bh=8xxZ
-        uv9GIrANFMsofrRh7CURyjPBHHbgRzgxc3GM/Mw=; b=lJReuQhuYKROiru/8mub
-        F9bLEuskgD+9MQaNut49LhvUKC7nAJMyv4Apzt7csqEC7wz4Qm8fTtMtwDG2ar0z
-        HzqOXHtUayp8rfUyF0HrngVHnHU9DL9/IoiPPlosPkjvgWBHQqvHeDPpHUwqOJ83
-        e03YtZ/DnnqYzVqrf7Brdh/lwHSj3QnPTmJM1rzM+SPxXec8fp7cAHA05HT4xBx3
-        Q78De/smmG71LG0Sj5NgqBEfcPGFxJj4kYLhuhK1bI+YFadUfAum1vJnEjMCVr5/
-        rxRBJM72U+aO3NWn/nO1dziOzhKwCuuznepauN8C7hv3JGdtVwHBDvMitZh5LZfX
-        ng==
-Received: (qmail 3140429 invoked from network); 7 Sep 2023 14:11:34 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Sep 2023 14:11:34 +0200
-X-UD-Smtp-Session: l3s3148p1@EzXSwsMEuuRehhtN
-Date:   Thu, 7 Sep 2023 14:11:33 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andi Shyti <andi.shyti@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] i2c: rcar: add FastMode+ support
-Message-ID: <ZPm99Y5E74EuxsFE@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230904135852.12146-1-wsa+renesas@sang-engineering.com>
- <20230904135852.12146-4-wsa+renesas@sang-engineering.com>
- <20230905213710.3dv5h6zvwu4tpnby@zenone.zhora.eu>
- <ZPgl4eLYTyDFXiyC@shikoro>
- <CAMuHMdV3Ka9fh6fmyYj7j5xdm3LEYsMjgXDk90be3AC7gDFozA@mail.gmail.com>
+        Fri, 8 Sep 2023 05:31:52 -0400
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B0311B;
+        Fri,  8 Sep 2023 02:31:48 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-58dce1f42d6so41465407b3.0;
+        Fri, 08 Sep 2023 02:31:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694165508; x=1694770308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7In3jR24QqYcvy6RjXqyS7E+iqbgjrxBTgClw17SH70=;
+        b=nq2dorLvSPIABtLMNGQWWjWNl8kZVvFj94DJccgDjfpvtPhuwZjXwCSdoJQoSCemgp
+         Su/aZ5rh8ouIuHuLUheWzUmgIIzplbpnl8kQ0SxDiiaa4IjDP8R2gOY2m/kzHo4QHjBL
+         5RcKV+TZK5a6/bPesdD36CsXdGZ/3W4R4vjTwVeTTw4fm1ehL5+jV2V46e5ZDSBZwnqJ
+         CQHQbsdzNeagz4uGUNxV2GSyfEMo0SVOmjL/zrGXWIq77stZ0eMdSj0B43r2jnS65Twh
+         GE6CraDnDOjNey6NCUrU5p9SbIC6xuacpPJonvPM+ksBbViY/OgkIHxnV7i6hxJz80w+
+         tFdw==
+X-Gm-Message-State: AOJu0YwERo0Z3IpwXJ3yMc+0hqdRPoh92syQrQmk9YfKowxBhMUzBcy/
+        WuwD7Kgwjn6oYnJdKamJ0lLXb71KLbFhRric
+X-Google-Smtp-Source: AGHT+IEoNrLwZvpSekGIl9JE3t0jLTjGytmc3FyOCEjVNnC+moEkI+hbYGIaZxvpx+LeJL6/FxTXpA==
+X-Received: by 2002:a25:ab26:0:b0:d7b:9b3c:7388 with SMTP id u35-20020a25ab26000000b00d7b9b3c7388mr2169078ybi.6.1694165507791;
+        Fri, 08 Sep 2023 02:31:47 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id y18-20020a25bb92000000b00d7e08d9972asm281895ybg.11.2023.09.08.02.31.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Sep 2023 02:31:47 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-d7830c5b20aso2538422276.0;
+        Fri, 08 Sep 2023 02:31:46 -0700 (PDT)
+X-Received: by 2002:a25:ad10:0:b0:d40:3069:b3b1 with SMTP id
+ y16-20020a25ad10000000b00d403069b3b1mr5512491ybi.17.1694165506752; Fri, 08
+ Sep 2023 02:31:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="9MkUAISzK4XZcD10"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV3Ka9fh6fmyYj7j5xdm3LEYsMjgXDk90be3AC7gDFozA@mail.gmail.com>
+References: <20220722151155.21100-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220722151155.21100-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <8735eqdbav.wl-maz@kernel.org> <CAMuHMdVj7J442iMr0PN5jxMhLv1U22+G9jNXLWFzLYkS0JTf5A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVj7J442iMr0PN5jxMhLv1U22+G9jNXLWFzLYkS0JTf5A@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 8 Sep 2023 11:31:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW_d5isU5Y2p6ne6_9j1-uqWnRY=Qw34SqR5EC0CndG+Q@mail.gmail.com>
+Message-ID: <CAMuHMdW_d5isU5Y2p6ne6_9j1-uqWnRY=Qw34SqR5EC0CndG+Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] dt-bindings: interrupt-controller:
+ renesas,rzg2l-irqc: Update description for '#interrupt-cells' property
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Marc,
 
---9MkUAISzK4XZcD10
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, Aug 11, 2022 at 4:50 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Sun, Jul 24, 2022 at 1:01 PM Marc Zyngier <maz@kernel.org> wrote:
+> > On Fri, 22 Jul 2022 16:11:54 +0100,
+> > Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > >
+> > > Update description for '#interrupt-cells' property to utilize the
+> > > RZG2L_{NMI,IRQX} for the first cell defined in the
+> > > include/dt-bindings/interrupt-controller/irqc-rzg2l.h file.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > > v3:
+> > > * New patch
+>
+> > > --- a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+> > > @@ -31,8 +31,9 @@ properties:
+> > >        - const: renesas,rzg2l-irqc
+> > >
+> > >    '#interrupt-cells':
+> > > -    description: The first cell should contain external interrupt number (IRQ0-7) and the
+> > > -                 second cell is used to specify the flag.
+> > > +    description: The first cell should contain a macro RZG2L_{NMI,IRQX} included in the
+> > > +                 include/dt-bindings/interrupt-controller/irqc-rzg2l.h and the second
+> > > +                 cell is used to specify the flag.
+> >
+> > I think a binding should be self describing, and not rely on an opaque
+> > macro. Mentioning that there is a macro that encodes it is fine, but
+> > the values are what matter, specially when considering that other OSs
+> > could (and should be able to) write their own DTs from scratch without
+> > depending on something that is very much Linux-specific.
+>
+> The macros are not Linux-specific, and are part of the bindings.
+> But the only hard dependency on <dt-bindings/interrupt-controller/irqc-rzg2l.h>
+> is the DT source file describing the board.
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Looks like this fell through the cracks?
+The two other patches from this series were applied in v6.1.
 
-> This may become clearer if you first introduce support for ICCCR2
-> on R-Car Gen3 and later, to improve i2c rate accuracy, and add
-> support for FM+ in a separate patch?
+Note that the current DT bindings are incorrect, as they do not take into
+account that the value of zero is used to represent the NMI.
 
-That's my plan for the next revision of this series.
+Fixes: 96fed779d3d4cb3c ("dt-bindings: interrupt-controller: Add
+Renesas RZ/G2L Interrupt Controller")
 
+Should we resend instead?
+Thanks!
 
---9MkUAISzK4XZcD10
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmT5vfUACgkQFA3kzBSg
-KbYRfA/+NTkiIKWLTfK6Gz1R29urm5cSKMa4CezvU5xnQ3kfwlgwAcEVnPE+tyu5
-t754lAuS63fWoQuHe57166GozM0CnN36hBKpM58cfitb7whYTn2XS2JSe8dnTMHL
-PJQo264BRYj8a2Bw//97AL6tmy5S0GTKojjiRMK5Pv0oeBG28xip7N6sR1ObUETS
-L4gO4ynLPqx0HKKPiYMcYN4dEoVNsryaC3C9+aAFtsL6l7id09A1z2hKya/gs/dY
-siv1ZfaoIro1JFRU/vvZGQzHpMe8pjdmsatKj7fjaaDx+nDqJLTl1axUFdwLv8WQ
-Wff0wqAUroxNS3cLUUh+RQ0cDFyKzBTTBWs1z8XpCVWD003VUk/eWcz/gdcIwTdr
-jqCDMITxxd5V4fqPKLOzjotipN7B1BoJuCm/fgqT4kMB/ChRhfuoL+Ysp5PhWYCT
-SN2PbN+Hl75BawtanIpaiErtRuu+o6vjc8QT5ZYAeKzQYLhzCIAQy09LJRhqvoSn
-KrgVmI4ZzCC4Xg1HDc0dfw7rfmhtAlct1o0oEd9Z1xhgT0VZnZKwmBKzG+uwi4ws
-aSDy+tN0FYC6+x7/bcXDxYMDpoO16JedJtq7u1eimC5vs0fzJ/angJXm7Bb0TUBl
-WvjpfzQzzCChvwDQP+qE3J6snrX9MT3SUMgm1pCi5uENapIlDOc=
-=bSsp
------END PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---9MkUAISzK4XZcD10--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
