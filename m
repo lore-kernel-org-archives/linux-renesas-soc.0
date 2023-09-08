@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FB0EE8016
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Sep 2023 15:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7923CEE8015
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Sep 2023 15:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241845AbjIHPDk (ORCPT
+        id S229713AbjIHPGj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Sep 2023 11:03:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
+        Fri, 8 Sep 2023 11:06:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236976AbjIHPDk (ORCPT
+        with ESMTP id S243328AbjIHPGi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Sep 2023 11:03:40 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3FB41BFF
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  8 Sep 2023 08:03:35 -0700 (PDT)
+        Fri, 8 Sep 2023 11:06:38 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9689E1FC6
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  8 Sep 2023 08:06:32 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c214:2eac:128d:f67e])
-        by laurent.telenet-ops.be with bizsmtp
-        id jT3Z2A0082mGBSJ01T3ZZG; Fri, 08 Sep 2023 17:03:33 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id jT6W2A00E2mGBSJ01T6Wc1; Fri, 08 Sep 2023 17:06:30 +0200
 Received: from geert (helo=localhost)
         by ramsan.of.borg with local-esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qed1B-002pMO-9P;
-        Fri, 08 Sep 2023 17:03:33 +0200
-Date:   Fri, 8 Sep 2023 17:03:33 +0200 (CEST)
+        id 1qed42-002pN3-FL;
+        Fri, 08 Sep 2023 17:06:30 +0200
+Date:   Fri, 8 Sep 2023 17:06:30 +0200 (CEST)
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 cc:     linux-renesas-soc@vger.kernel.org,
         Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] i2c: rcar: avoid non-standard use of goto
-In-Reply-To: <20230906200024.5305-2-wsa+renesas@sang-engineering.com>
-Message-ID: <b78da5b1-53ea-d294-48c9-919572721690@linux-m68k.org>
-References: <20230906200024.5305-1-wsa+renesas@sang-engineering.com> <20230906200024.5305-2-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 4/5] i2c: rcar: remove open coded DIV_ROUND_CLOSEST
+In-Reply-To: <20230906200024.5305-5-wsa+renesas@sang-engineering.com>
+Message-ID: <f5f3bf1-2cf6-9f3a-b44b-a1ae96659b5e@linux-m68k.org>
+References: <20230906200024.5305-1-wsa+renesas@sang-engineering.com> <20230906200024.5305-5-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
@@ -41,9 +41,7 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Wed, 6 Sep 2023, Wolfram Sang wrote:
-> Kernel functions goto somewhere on error conditions. Using goto for the
-> default path is irritating. Let's bail out on error instead and use a
-> proper retval.
+> It improves readability if we use the available helper.
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
