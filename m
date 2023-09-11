@@ -2,88 +2,89 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FA5CA0EC1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C14C9CA0ECE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:27:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242111AbjIKVR6 convert rfc822-to-8bit (ORCPT
+        id S236761AbjIKVSF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:17:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
+        Mon, 11 Sep 2023 17:18:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241318AbjIKPGa (ORCPT
+        with ESMTP id S237882AbjIKNRu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 11:06:30 -0400
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977BFFA
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 08:06:25 -0700 (PDT)
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3ab7fb1172cso1155721b6e.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 08:06:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694444784; x=1695049584;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r85M+hTFgVqhtA5+2fVJSsJ9jlo61HWAPqJF0RG2cpA=;
-        b=N1SPBxhzToC48tWxiu3uJnea/HrL4v1CKCmFrkVcLbMsTm+sRrZqXR2IDiDqZxYooF
-         nPBag5OnvCLZjcpfCYRPJzkZ7GEOrqCR8zOFh2gXPrhOB3GCLqbfAZyTKO9GRPbv6wxR
-         2EctWwFpL5uSaxs7v3vKXGLIccfoDGeYhZhTlIxKotGXNyTr2dur519XtZ4BGOPDZLFd
-         QY2BYnmPXri+SK1EKOP0XDgxkpEp+hxYFMRb4AebTRYghKK0tze6fN3B+u+6K5VDLIJp
-         mrARSYywQZi1gjiRbtTgqPwygck/EtzXFoNCBZjQUDU9Dc+E4BE80SBwqb27xkr0WBCz
-         gBzg==
-X-Gm-Message-State: AOJu0Ywg/q//aKJVRHh0g8Lq0hSA6swgUlTlxg4wk5ji+NPpIuBWdX+0
-        XNdMXqNdgN2oesJ5o0GVfqtXdnrh6Ymh3Q==
-X-Google-Smtp-Source: AGHT+IH0yGUaXoLiyEvwBkXpyPWWN0Ds/ga2oNVm4T3NVcPCHkyX4m4UJQ7XN8AOKlsZ5/Q4OlDEnw==
-X-Received: by 2002:a05:6808:18a4:b0:3a3:9df9:1918 with SMTP id bi36-20020a05680818a400b003a39df91918mr10744629oib.20.1694444784544;
-        Mon, 11 Sep 2023 08:06:24 -0700 (PDT)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
-        by smtp.gmail.com with ESMTPSA id a23-20020a05680804d700b003a9b9648202sm3270327oie.26.2023.09.11.08.06.24
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 08:06:24 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6c0f2addaefso366711a34.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 08:06:24 -0700 (PDT)
-X-Received: by 2002:a05:6830:12c4:b0:6be:fb88:8352 with SMTP id
- a4-20020a05683012c400b006befb888352mr8469398otq.8.1694444784041; Mon, 11 Sep
- 2023 08:06:24 -0700 (PDT)
+        Mon, 11 Sep 2023 09:17:50 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DC42EE
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 06:17:44 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:a989:d413:f41f:af52])
+        by laurent.telenet-ops.be with bizsmtp
+        id kdHh2A00C43UkUk01dHhaq; Mon, 11 Sep 2023 15:17:42 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qfgn6-002zwB-WD;
+        Mon, 11 Sep 2023 15:17:41 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qfgnN-007ruf-70;
+        Mon, 11 Sep 2023 15:17:41 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: defconfig: Refresh for v6.6-rc1
+Date:   Mon, 11 Sep 2023 15:17:40 +0200
+Message-Id: <1b8aee0cfcb2fa8c6e73c67f1c85c4630d946159.1694438226.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <CAMuHMdWXPesKV7XE_QwLrM6pZ1z6GFC-SjJ1ceFTs4o=hv71Zg@mail.gmail.com>
- <CAMuHMdX8HtWOAK6MDdN8F8V0aer0hTHzeAcnCGMycpS70hesNQ@mail.gmail.com>
- <CAMuHMdUjse9v=U8=oZHDJx0Oh9uVzxVWYU+C9jaP_23UOBVMaw@mail.gmail.com>
- <CAMuHMdVGnDg=zkjOSmCWAjEnjfSN9rhOCG-ubzeTf3mvjTEavw@mail.gmail.com> <CAMuHMdXkdD0dN93zsQnjCzFo6ijS2xDzbh+GPGe6--_FuuRbHQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXkdD0dN93zsQnjCzFo6ijS2xDzbh+GPGe6--_FuuRbHQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 Sep 2023 17:06:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV0KWN2nHDGT28ysTPwBTrachBSsGWf0hHqrci-d0U33A@mail.gmail.com>
-Message-ID: <CAMuHMdV0KWN2nHDGT28ysTPwBTrachBSsGWf0hHqrci-d0U33A@mail.gmail.com>
-Subject: Re: Future renesas-drivers releases
-To:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Jul 4, 2023 at 9:53 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->   - renesas-drivers-2023-08-29-v6.5 (TBD),
->   - renesas-drivers-2023-09-05-v6.5 (TBD).
+  - Move CONFIG_KEXEC (moved in commit 89cde455915f4611 ("kexec:
+    consolidate kexec and crash options into kernel/Kconfig.kexec")),
+  - Enable CONFIG_FRAMEBUFFER_CONSOLE (no longer auto-enabled since
+    commit a5ae331edb02b664 ("drm: Drop select FRAMEBUFFER_CONSOLE for
+    DRM_FBDEV_EMULATION")).
 
-So that became renesas-drivers-2023-08-29-v6.5.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Perhaps this is worthwhile to be queued as a fix for v6.6, due to the
+text console regression?
+---
+ arch/arm/configs/shmobile_defconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Next planned releases, if all goes well:
-  - renesas-drivers-2023-09-12-v6.6-rc1,
-  - renesas-drivers-2023-09-26-v6.6-rc3,
-  - renesas-drivers-2023-10-10-v6.6-rc5,
-  - renesas-drivers-2023-10-24-v6.6-rc7,
-  - renesas-drivers-2023-10-31-v6.6 (TBD),
-  - renesas-drivers-2023-11-07-v6.6 (TBD).
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 22205ef0f3768420..bd975d105687be39 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -6,6 +6,7 @@ CONFIG_CGROUPS=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_PERF_EVENTS=y
++CONFIG_KEXEC=y
+ CONFIG_ARCH_RENESAS=y
+ CONFIG_PL310_ERRATA_588369=y
+ CONFIG_SMP=y
+@@ -13,7 +14,6 @@ CONFIG_SCHED_MC=y
+ CONFIG_NR_CPUS=8
+ CONFIG_HIGHMEM=y
+ CONFIG_ARM_APPENDED_DTB=y
+-CONFIG_KEXEC=y
+ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT=y
+ CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+@@ -148,6 +148,7 @@ CONFIG_FB=y
+ CONFIG_FB_SH_MOBILE_LCDC=y
+ CONFIG_BACKLIGHT_PWM=y
+ CONFIG_BACKLIGHT_AS3711=y
++CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_SOUND=y
+ CONFIG_SND=y
+ CONFIG_SND_SOC=y
+-- 
+2.34.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
