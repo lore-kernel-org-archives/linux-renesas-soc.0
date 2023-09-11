@@ -2,49 +2,48 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3602CA0EC8
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Sep 2023 02:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0214CA0EC3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Sep 2023 02:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237198AbjILC2S (ORCPT
+        id S237998AbjILC2U (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 22:28:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58600 "EHLO
+        Mon, 11 Sep 2023 22:28:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237447AbjILC2B (ORCPT
+        with ESMTP id S238026AbjILC2C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 22:28:01 -0400
+        Mon, 11 Sep 2023 22:28:02 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95134F37BC
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A93512918C
         for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 18:52:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF77EC116D6;
-        Mon, 11 Sep 2023 23:57:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48232C116CB;
+        Mon, 11 Sep 2023 23:57:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694476644;
-        bh=Q4qDXEJt6oAid1CrVYNdNibOMv2p5JVtH0VzbtF0oWM=;
+        s=k20201202; t=1694476634;
+        bh=9snFwBbBoXitUM3dr7LW8n+9wzN0NmBcRWUrdshcpEg=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=DgiK0kIwu71OJZ+NpAiBPevJiQDNu19qiULN0Yr9pMQzK+HEpcOYfpfXIODNPmkjs
-         Dv2A4miYve0JYXg4MzkZ9YGksvIaKqR/YS2Sq563Vdja4icwDtmg56KdyAKEWWD9Fs
-         X7ABPYVANSHAdlcmNO27xUFUWkmAqhYciWuBxJYoMcznOjDCMNjzVjfm/bsiNZmUVU
-         nC4XTUouOeMJXg2CU8104O/fGt5cV2tgHmbMTvdXAJvjAlgDoQF+lcpje5OHm8MyJV
-         11+owqy/OYHyJY7q6IZXMMM0se95ZjHT6Jz7wJL7TwnIrG1GcsFcqG5xfZtnbsg8vC
-         n4RViAAJWRePA==
+        b=LWv6YbI5tJ9QV/UPRJJ2tAq2HBTzDY9ZA4hwVpuwhTVcBOFy/c8TWp1TrHkgyZoPM
+         /scG2uInKBC/1a/nNu+1Ju0AiiySR4Bq2o13qQCGydygCtpE2tPhgKBQQ/DhEwL6Ul
+         kS+TkvPFMesybu4JUZFr84FWH28SgtUadrvzvj/bYOzro79lFvYR08wQh6Go0F422Q
+         rYodtKmhHz7WyhsSoiRIcq/AjQ25Ug8BpLNPHSGclJm9WI3xlztOblC1jb1zie/HeL
+         iPPpnJwz0CoHaXROGopWa6lhzh4pcwxIYkQTru7kFNUNr5qHqDzLNW6HffVXq/QLC9
+         knG9pkKNHYvVg==
 From:   Mark Brown <broonie@kernel.org>
 To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Kevin Cernekee <cernekee@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kamel Bouhara <kamel.bouhara@bootlin.com>,
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
         =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20230827091525.39263-1-biju.das.jz@bp.renesas.com>
-References: <20230827091525.39263-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH] ASoC: tas571x: Simplify probe()
-Message-Id: <169447664152.2387538.15701808950700785351.b4-ty@kernel.org>
-Date:   Tue, 12 Sep 2023 00:57:21 +0100
+In-Reply-To: <20230827102114.55863-1-biju.das.jz@bp.renesas.com>
+References: <20230827102114.55863-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH] ASoC: wm8580: Simplify probe()
+Message-Id: <169447663194.2387538.5757531864571268154.b4-ty@kernel.org>
+Date:   Tue, 12 Sep 2023 00:57:11 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -53,8 +52,9 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, 27 Aug 2023 10:15:25 +0100, Biju Das wrote:
-> Simplify probe() by replacing of_match_device->i2c_get_match_data().
+On Sun, 27 Aug 2023 11:21:14 +0100, Biju Das wrote:
+> Simplify probe() by replacing of_match_device->i2c_get_match_data() and
+> extend matching support for ID table.
 > 
 > 
 
@@ -64,8 +64,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: tas571x: Simplify probe()
-      commit: e17e892dc8d1404a758d38ec870e44299f97d227
+[1/1] ASoC: wm8580: Simplify probe()
+      commit: 26eacb98ca7dd3ba5a6845028a13d13a7f03123f
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
