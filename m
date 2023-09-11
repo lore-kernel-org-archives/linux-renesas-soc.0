@@ -2,58 +2,100 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297CBCA0EC1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64930CA0ECD
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:27:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237885AbjIKVSQ (ORCPT
+        id S236136AbjIKVSK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36422 "EHLO
+        Mon, 11 Sep 2023 17:18:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235476AbjIKIl5 (ORCPT
+        with ESMTP id S237885AbjIKNS0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 04:41:57 -0400
-X-Greylist: delayed 1432 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 11 Sep 2023 01:41:52 PDT
-Received: from mail.arnisdale.pl (mail.arnisdale.pl [151.80.133.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4214125
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 01:41:52 -0700 (PDT)
-Received: by mail.arnisdale.pl (Postfix, from userid 1002)
-        id 640FC25377; Mon, 11 Sep 2023 08:15:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=arnisdale.pl; s=mail;
-        t=1694420152; bh=6DhEsVYOGxxfetVY3oiVeew+7Cm34ArcvgDq2WQYIRw=;
-        h=Date:From:To:Subject:From;
-        b=KE5iupDHO/bH4ljznZ7G+tl5tnES9JprIbHHhwijPBUTnumPLu6VhwLbDJZALnF4j
-         3sefODaqW24ZwZTjZyzMDvoThEcZXqcFHfGyQOKFlqBYS2H7+RuNcBWnERX1NmkVkQ
-         +wDTflgH42pzGRHd4xowyPE6bJx745+FIKfV1VW9utr/cKOAxS1t4e19uM18aYJFlv
-         P2AqFjWO3ub17jvQd9+84wFHMq9iBndzUeqzhyZI/ekzx/Csqk3U1abmhj934G0poa
-         KhYZA8KTun5l2a0hT+zocKFksIGTROXhTwBPLYhnEPbKXUmS47/HTOwmlxqkti7jMc
-         txgwiXyPHP/zA==
-Received: by mail.arnisdale.pl for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 08:15:18 GMT
-Message-ID: <20230911064501-0.1.6u.1y3zb.0.e3x4fuh4fb@arnisdale.pl>
-Date:   Mon, 11 Sep 2023 08:15:18 GMT
-From:   "Maciej Telka" <maciej.telka@arnisdale.pl>
-To:     <linux-renesas-soc@vger.kernel.org>
-Subject: =?UTF-8?Q?Prosz=C4=99_o_kontakt?=
-X-Mailer: mail.arnisdale.pl
+        Mon, 11 Sep 2023 09:18:26 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04C5EB
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 06:18:21 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:a989:d413:f41f:af52])
+        by albert.telenet-ops.be with bizsmtp
+        id kdJK2A00M43UkUk06dJL6b; Mon, 11 Sep 2023 15:18:20 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qfgnj-002zwG-IB;
+        Mon, 11 Sep 2023 15:18:19 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qfgnz-007rvo-R8;
+        Mon, 11 Sep 2023 15:18:19 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v6.6-rc1
+Date:   Mon, 11 Sep 2023 15:18:19 +0200
+Message-Id: <10a1bd15e35d4407dbb7ab36d98c7d399c6cbf6b.1694438271.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Refresh the defconfig for Renesas ARM64 systems:
 
-Czy jest mo=C5=BCliwo=C5=9B=C4=87 nawi=C4=85zania wsp=C3=B3=C5=82pracy z =
-Pa=C5=84stwem?
+  - Move CONFIG_KEXEC and CONFIG_CRASH_DUMP (moved in commit
+    89cde455915f4611 ("kexec: consolidate kexec and crash options into
+    kernel/Kconfig.kexec")),
+  - Disable frame buffer device drivers and related support (no longer
+    needed since commit 55bffc8170bb5813 ("fbdev: Split frame buffer
+    support in FB and FB_CORE symbols")),
+  - Enable CONFIG_FRAMEBUFFER_CONSOLE (no longer auto-enabled since
+    commit a5ae331edb02b664 ("drm: Drop select FRAMEBUFFER_CONSOLE for
+    DRM_FBDEV_EMULATION")).
 
-Z ch=C4=99ci=C4=85 porozmawiam z osob=C4=85 zajmuj=C4=85c=C4=85 si=C4=99 =
-dzia=C5=82aniami zwi=C4=85zanymi ze sprzeda=C5=BC=C4=85.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
+To be applied to the topic/renesas-defconfig branch.
+---
+ arch/arm64/configs/renesas_defconfig | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Pomagamy skutecznie pozyskiwa=C4=87 nowych klient=C3=B3w.
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 299a38437083b694..796534fd506d4ed5 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -25,6 +25,8 @@ CONFIG_USER_NS=y
+ CONFIG_SCHED_AUTOGROUP=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_PROFILING=y
++CONFIG_KEXEC_FILE=y
++CONFIG_CRASH_DUMP=y
+ CONFIG_ARCH_RENESAS=y
+ # CONFIG_AMPERE_ERRATUM_AC03_CPU_38 is not set
+ # CONFIG_ARM64_ERRATUM_1542419 is not set
+@@ -54,8 +56,6 @@ CONFIG_ARM64_VA_BITS_48=y
+ CONFIG_SCHED_MC=y
+ CONFIG_SCHED_CLUSTER=y
+ CONFIG_NR_CPUS=8
+-CONFIG_KEXEC=y
+-CONFIG_CRASH_DUMP=y
+ CONFIG_XEN=y
+ CONFIG_COMPAT=y
+ # CONFIG_ARM64_PTR_AUTH is not set
+@@ -277,10 +277,9 @@ CONFIG_DRM_I2C_ADV7511_AUDIO=y
+ CONFIG_DRM_DW_HDMI_AHB_AUDIO=y
+ CONFIG_DRM_DW_HDMI_I2S_AUDIO=y
+ CONFIG_DRM_DW_HDMI_CEC=y
+-CONFIG_FB=y
+-CONFIG_FB_MODE_HELPERS=y
+ CONFIG_BACKLIGHT_CLASS_DEVICE=y
+ CONFIG_BACKLIGHT_PWM=y
++CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_LOGO=y
+ # CONFIG_LOGO_LINUX_MONO is not set
+ # CONFIG_LOGO_LINUX_VGA16 is not set
+-- 
+2.34.1
 
-Zapraszam do kontaktu.
-
-
-Pozdrawiam serdecznie
-Maciej Telka
