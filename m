@@ -2,68 +2,98 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 185C7CA0ED7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4682ECA0EC8
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:27:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242524AbjIKVST (ORCPT
+        id S242539AbjIKVSU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53710 "EHLO
+        Mon, 11 Sep 2023 17:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242598AbjIKPx7 (ORCPT
+        with ESMTP id S237289AbjIKM1S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 11:53:59 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D10C1B6;
-        Mon, 11 Sep 2023 08:53:52 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E264560010;
-        Mon, 11 Sep 2023 15:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1694447631;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VlumLDfPViZc0xloFKIh644KDGw78c+ut/NV7iKNtlQ=;
-        b=PGYyhmBDNxgZ23BYOsmdh+lwPt+28Bu0FcRd5Y0euqtud4y8TVkLV5w1nqSLU3RhGc0ged
-        ZMx0YS7XU4RIMdFShZSRG+7+4uq+tYiS7oSIvMd/O0umfw/ZAh+O89Y0qHI5+XaI8QdMw7
-        tqBE/RfhWXmIMGu0bqpYBl9i17WwJxQfRZ0Pwalccef1RMGombaFZaiT387NI50rfg6ehm
-        hJWDgZ/ITNPFRxUySAvfzy0G9acnFCbnvJacSil2KtV/76zis/Ay+tXHP5buSv2KQoCUSC
-        xKAnqYm3NFswi6TeVP9y2dpSpk9C1s6tcx3+my40GVlrHjqceleGPILjemvVwA==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Ricardo Ribalda <ribalda@kernel.org>
-Cc:     linux-mtd@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: physmap-core: Restore map_rom fallback
-Date:   Mon, 11 Sep 2023 17:52:42 +0200
-Message-Id: <20230911155242.610991-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To:  <550e8c8c1da4c4baeb3d71ff79b14a18d4194f9e.1693407371.git.geert+renesas@glider.be>
-References: 
+        Mon, 11 Sep 2023 08:27:18 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23CCF1B9;
+        Mon, 11 Sep 2023 05:27:13 -0700 (PDT)
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1qfg0T-0000WD-Fw; Mon, 11 Sep 2023 14:27:09 +0200
+Message-ID: <7e9735bf-c42b-4f03-8645-8cdbf87a75f3@leemhuis.info>
+Date:   Mon, 11 Sep 2023 14:27:08 +0200
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'6792b7fce610bcd1cf3e07af3607fe7e2c38c1d8'
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] maple_tree: Disable mas_wr_append() when other
+ readers are possible
+Content-Language: en-US, de-DE
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        maple-tree@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20230819004356.1454718-1-Liam.Howlett@oracle.com>
+ <20230819004356.1454718-2-Liam.Howlett@oracle.com>
+ <3f86d58e-7f36-c6b4-c43a-2a7bcffd3bd@linux-m68k.org>
+From:   "Linux regression tracking #adding (Thorsten Leemhuis)" 
+        <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <3f86d58e-7f36-c6b4-c43a-2a7bcffd3bd@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1694435233;82f00e33;
+X-HE-SMSGID: 1qfg0T-0000WD-Fw
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 2023-08-30 at 15:00:34 UTC, Geert Uytterhoeven wrote:
-> When the exact mapping type driver was not available, the old
-> physmap_of_core driver fell back to mapping the region as ROM.
-> Unfortunately this feature was lost when the DT and pdata cases were
-> merged.  Revive this useful feature.
+[TLDR: I'm adding this report to the list of tracked Linux kernel
+regressions; the text you find below is based on a few templates
+paragraphs you might have encountered already in similar form.
+See link in footer if these mails annoy you.]
+
+On 29.08.23 18:42, Geert Uytterhoeven wrote:
 > 
-> Fixes: 642b1e8dbed7bbbf ("mtd: maps: Merge physmap_of.c into physmap-core.c")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On Fri, 18 Aug 2023, Liam R. Howlett wrote:
+>> The current implementation of append may cause duplicate data and/or
+>> incorrect ranges to be returned to a reader during an update.  Although
+>> this has not been reported or seen, disable the append write operation
+>> while the tree is in rcu mode out of an abundance of caution.
+>>
+>> During the analysis of the mas_next_slot() the following was
+>> artificially created by separating the writer and reader code:
+> [...]
+> Thanks for your patch, which is now commit cfeb6ae8bcb96ccf
+> ("maple_tree: disable mas_wr_append() when other readers are
+> possible") in v6.5, and is being backported to stable.
+> 
+> On Renesas RZ/A1 and RZ/A2 (single-core Cortex-A9), this causes the
+> following warning:
+> > […]
+> Reverting this commit fixes the issue.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.
+Thanks for the report. To be sure the issue doesn't fall through the
+cracks unnoticed, I'm adding it to regzbot, the Linux kernel regression
+tracking bot:
 
-Miquel
+#regzbot ^introduced cfeb6ae8bcb96ccf
+#regzbot title maple_tree: warning on Renesas RZ/A1 and RZ/A2
+(single-core Cortex-A9
+#regzbot ignore-activity
+
+This isn't a regression? This issue or a fix for it are already
+discussed somewhere else? It was fixed already? You want to clarify when
+the regression started to happen? Or point out I got the title or
+something else totally wrong? Then just reply and tell me -- ideally
+while also telling regzbot about it, as explained by the page listed in
+the footer of this mail.
+
+Developers: When fixing the issue, remember to add 'Link:' tags pointing
+to the report (the parent of this mail). See page linked in footer for
+details.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+That page also explains what to do if mails like this annoy you.
