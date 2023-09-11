@@ -2,57 +2,87 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAD3CA0EC3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Sep 2023 02:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3602CA0EC8
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Sep 2023 02:28:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237509AbjILCZq (ORCPT
+        id S237198AbjILC2S (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 22:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40208 "EHLO
+        Mon, 11 Sep 2023 22:28:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237586AbjILCZg (ORCPT
+        with ESMTP id S237447AbjILC2B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 22:25:36 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E5BBC64058;
-        Mon, 11 Sep 2023 18:49:44 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.02,244,1688396400"; 
-   d="scan'208";a="179473811"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Sep 2023 10:49:44 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 396BA41065C0;
-        Tue, 12 Sep 2023 10:49:44 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net 0/2] net: renesas: rswitch: Fix a lot of redundant irq issue
-Date:   Tue, 12 Sep 2023 10:49:34 +0900
-Message-Id: <20230912014936.3175430-1-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 11 Sep 2023 22:28:01 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95134F37BC
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 18:52:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF77EC116D6;
+        Mon, 11 Sep 2023 23:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694476644;
+        bh=Q4qDXEJt6oAid1CrVYNdNibOMv2p5JVtH0VzbtF0oWM=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=DgiK0kIwu71OJZ+NpAiBPevJiQDNu19qiULN0Yr9pMQzK+HEpcOYfpfXIODNPmkjs
+         Dv2A4miYve0JYXg4MzkZ9YGksvIaKqR/YS2Sq563Vdja4icwDtmg56KdyAKEWWD9Fs
+         X7ABPYVANSHAdlcmNO27xUFUWkmAqhYciWuBxJYoMcznOjDCMNjzVjfm/bsiNZmUVU
+         nC4XTUouOeMJXg2CU8104O/fGt5cV2tgHmbMTvdXAJvjAlgDoQF+lcpje5OHm8MyJV
+         11+owqy/OYHyJY7q6IZXMMM0se95ZjHT6Jz7wJL7TwnIrG1GcsFcqG5xfZtnbsg8vC
+         n4RViAAJWRePA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Kevin Cernekee <cernekee@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kamel Bouhara <kamel.bouhara@bootlin.com>,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        alsa-devel@alsa-project.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20230827091525.39263-1-biju.das.jz@bp.renesas.com>
+References: <20230827091525.39263-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH] ASoC: tas571x: Simplify probe()
+Message-Id: <169447664152.2387538.15701808950700785351.b4-ty@kernel.org>
+Date:   Tue, 12 Sep 2023 00:57:21 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-099c9
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-After this patch series was applied, a lot of redundant interrupts
-no longer occur.
+On Sun, 27 Aug 2023 10:15:25 +0100, Biju Das wrote:
+> Simplify probe() by replacing of_match_device->i2c_get_match_data().
+> 
+> 
 
-For example: when "iperf3 -c <ipaddr> -R" on R-Car S4-8 Spider
- Before the patches are applied: about 800,000 times happened
- After the patches were applied: about 100,000 times happened
+Applied to
 
-Yoshihiro Shimoda (2):
-  net: renesas: rswitch: Fix unmasking irq condition
-  net: renesas: rswitch: Add spin lock protection for irq {un}mask
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
- drivers/net/ethernet/renesas/rswitch.c | 20 ++++++++++++++++----
- drivers/net/ethernet/renesas/rswitch.h |  2 ++
- 2 files changed, 18 insertions(+), 4 deletions(-)
+Thanks!
 
--- 
-2.25.1
+[1/1] ASoC: tas571x: Simplify probe()
+      commit: e17e892dc8d1404a758d38ec870e44299f97d227
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
