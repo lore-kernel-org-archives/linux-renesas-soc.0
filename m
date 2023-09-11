@@ -2,63 +2,88 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E0ECA0EC2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FA5CA0EC1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242034AbjIKVRw (ORCPT
+        id S242111AbjIKVR6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:17:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36808 "EHLO
+        Mon, 11 Sep 2023 17:17:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244438AbjIKUc0 (ORCPT
+        with ESMTP id S241318AbjIKPGa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 16:32:26 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE233FB;
-        Mon, 11 Sep 2023 13:32:20 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57DB3C433C8;
-        Mon, 11 Sep 2023 20:32:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694464340;
-        bh=gkJtNfISerIA7gwmSqPXIKAOxbGkK5wwyEPfgZ0HhLs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sgs/ROxaHaBrq99VhTdvJCJm+mgJNqnQcuMBloJ6IsXQTemSdVAPRlSkaqq6ukcOm
-         +JUwz7VRBF+5X6PXQxTR96MzJql2jpVIuHg22ntYZ0RNoqgmTNcMV5ERnZqrV3DHuk
-         bl8FxDbWFJmvuWXZI1mvRGcAyh62Vap/tBgX7AKxZb2RfbNreF3sDrtXWO3Llq/UPi
-         ZZ3VQvjaepFUxyOnbDxGJW/pwlykiWPvz1JoL8d9YRfJwh1uXFzBH8vXVJu+2ZWYOw
-         hlaqAVqzyNJHaoselppsyjyEgEjgMDMJ9Ni1PiOcceIiuomYzHwWZJQkN3uGHCn7/6
-         KESdaUonghoTQ==
-Message-ID: <dc833f3a32c583ae474e040db1b2eca0.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 11 Sep 2023 11:06:30 -0400
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977BFFA
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 08:06:25 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3ab7fb1172cso1155721b6e.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 08:06:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694444784; x=1695049584;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r85M+hTFgVqhtA5+2fVJSsJ9jlo61HWAPqJF0RG2cpA=;
+        b=N1SPBxhzToC48tWxiu3uJnea/HrL4v1CKCmFrkVcLbMsTm+sRrZqXR2IDiDqZxYooF
+         nPBag5OnvCLZjcpfCYRPJzkZ7GEOrqCR8zOFh2gXPrhOB3GCLqbfAZyTKO9GRPbv6wxR
+         2EctWwFpL5uSaxs7v3vKXGLIccfoDGeYhZhTlIxKotGXNyTr2dur519XtZ4BGOPDZLFd
+         QY2BYnmPXri+SK1EKOP0XDgxkpEp+hxYFMRb4AebTRYghKK0tze6fN3B+u+6K5VDLIJp
+         mrARSYywQZi1gjiRbtTgqPwygck/EtzXFoNCBZjQUDU9Dc+E4BE80SBwqb27xkr0WBCz
+         gBzg==
+X-Gm-Message-State: AOJu0Ywg/q//aKJVRHh0g8Lq0hSA6swgUlTlxg4wk5ji+NPpIuBWdX+0
+        XNdMXqNdgN2oesJ5o0GVfqtXdnrh6Ymh3Q==
+X-Google-Smtp-Source: AGHT+IH0yGUaXoLiyEvwBkXpyPWWN0Ds/ga2oNVm4T3NVcPCHkyX4m4UJQ7XN8AOKlsZ5/Q4OlDEnw==
+X-Received: by 2002:a05:6808:18a4:b0:3a3:9df9:1918 with SMTP id bi36-20020a05680818a400b003a39df91918mr10744629oib.20.1694444784544;
+        Mon, 11 Sep 2023 08:06:24 -0700 (PDT)
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
+        by smtp.gmail.com with ESMTPSA id a23-20020a05680804d700b003a9b9648202sm3270327oie.26.2023.09.11.08.06.24
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Sep 2023 08:06:24 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6c0f2addaefso366711a34.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 08:06:24 -0700 (PDT)
+X-Received: by 2002:a05:6830:12c4:b0:6be:fb88:8352 with SMTP id
+ a4-20020a05683012c400b006befb888352mr8469398otq.8.1694444784041; Mon, 11 Sep
+ 2023 08:06:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230824104812.147775-4-biju.das.jz@bp.renesas.com>
-References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-4-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v5 3/4] clk: vc3: Fix output clock mapping
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 11 Sep 2023 13:32:18 -0700
-User-Agent: alot/0.10
+References: <CAMuHMdWXPesKV7XE_QwLrM6pZ1z6GFC-SjJ1ceFTs4o=hv71Zg@mail.gmail.com>
+ <CAMuHMdX8HtWOAK6MDdN8F8V0aer0hTHzeAcnCGMycpS70hesNQ@mail.gmail.com>
+ <CAMuHMdUjse9v=U8=oZHDJx0Oh9uVzxVWYU+C9jaP_23UOBVMaw@mail.gmail.com>
+ <CAMuHMdVGnDg=zkjOSmCWAjEnjfSN9rhOCG-ubzeTf3mvjTEavw@mail.gmail.com> <CAMuHMdXkdD0dN93zsQnjCzFo6ijS2xDzbh+GPGe6--_FuuRbHQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXkdD0dN93zsQnjCzFo6ijS2xDzbh+GPGe6--_FuuRbHQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Sep 2023 17:06:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV0KWN2nHDGT28ysTPwBTrachBSsGWf0hHqrci-d0U33A@mail.gmail.com>
+Message-ID: <CAMuHMdV0KWN2nHDGT28ysTPwBTrachBSsGWf0hHqrci-d0U33A@mail.gmail.com>
+Subject: Re: Future renesas-drivers releases
+To:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Biju Das (2023-08-24 03:48:11)
-> According to Table 3. ("Output Source") in the 5P35023 datasheet,
-> the output clock mapping should be 0=3DREF, 1=3DSE1, 2=3DSE2, 3=3DSE3,
-> 4=3DDIFF1, 5=3DDIFF2. But the code uses inverse. Fix this mapping issue.
->=20
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Closes: https://lore.kernel.org/all/CAMuHMdUHD+bEco=3DWYTYWsTAyRt3dTQQt4X=
-paejss0Y2ZpLCMNg@mail.gmail.com/
-> Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+On Tue, Jul 4, 2023 at 9:53 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>   - renesas-drivers-2023-08-29-v6.5 (TBD),
+>   - renesas-drivers-2023-09-05-v6.5 (TBD).
 
-Applied to clk-fixes
+So that became renesas-drivers-2023-08-29-v6.5.
+
+Next planned releases, if all goes well:
+  - renesas-drivers-2023-09-12-v6.6-rc1,
+  - renesas-drivers-2023-09-26-v6.6-rc3,
+  - renesas-drivers-2023-10-10-v6.6-rc5,
+  - renesas-drivers-2023-10-24-v6.6-rc7,
+  - renesas-drivers-2023-10-31-v6.6 (TBD),
+  - renesas-drivers-2023-11-07-v6.6 (TBD).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
