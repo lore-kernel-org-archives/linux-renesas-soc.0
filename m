@@ -2,72 +2,72 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF073CA0EC5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1130FCA0EC2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:26:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240542AbjIKVR3 (ORCPT
+        id S238040AbjIKVRg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:17:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42318 "EHLO
+        Mon, 11 Sep 2023 17:17:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244436AbjIKUcB (ORCPT
+        with ESMTP id S237749AbjIKNNw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 16:32:01 -0400
+        Mon, 11 Sep 2023 09:13:52 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03A5FB;
-        Mon, 11 Sep 2023 13:31:56 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA7DC433C7;
-        Mon, 11 Sep 2023 20:31:56 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0119E9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 06:13:48 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 46BFCC433C7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 13:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694464316;
-        bh=Y+aT8djXB9CKXwdEp5pmxFPUegbaDESTt4aIlc9PZG4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oAFvnvewGgyc+jUnwhQyLdci5Up5KJPqZBqAV5PdPShdVMrVeGQ//3WHuoHQ9jZxY
-         yLiYPnWd47MFYFVoy95wTburWA6StzdZ2/YtudPBYq/yMwUtttM16Mt3gYt+XzRvH1
-         HD8BWI3FaCevr0x8TTPGwR6A6MmmG2HzP9ermf3L04EQasKe9nyHoKf4ZYD0mmAZi4
-         X9jkSem9YLSd8l6N/TPCjrhBLH3cs7/A/+rGRmkD6A0C7vli5oXXplFy94S7eaxwSA
-         QvJDDkxUyj+Egrm7ZfMQ3A/lWp3kAkuN8iooWGWx6s5zgVxaKd90RWRK6cAl6mBNJS
-         H/g8/la8b1Cdg==
-Message-ID: <92a0a9b6800ce1570a21b0bda42ccf2a.sboyd@kernel.org>
+        s=k20201202; t=1694438028;
+        bh=okFwk+T2nPdFWy3SPIDaf83sOvPWwEReMqLLVEx+PwU=;
+        h=Subject:From:Date:To:From;
+        b=Nvra6bQZkkyUtS4uSA0SBWkhtm27KZxn1e6htIVCLenj4AZO7nccKNpY4tWtVnsfX
+         9Np5ePC67iqwdVJIUd5N4iws7tVZ0OJGRNCPkhd14LC9P4AT5VxQuLXHRa0721Mo3H
+         8glSnFjhbP8Qi2mqXS0FhFifhTwcWt0mcH64/XKaTBZ/qMwkP9UMk9EjXtFHSnMszv
+         WwIESLBCWJvwfA0Si8NY0joEZGZv6s9vgrJtVkouJlMQ/0cedWaJEys0RDPNdgyt1q
+         /fd7S1OXSMDi/+ITy7SYV9IzFps3qPmY4n21K/Bkq5PEHp+4PmyFA6e9cPw9VSDm4Q
+         +3I05aRVba7Dg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2979DC64459
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 13:13:48 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
-References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: versaclock3: Add description for #clock-cells property
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 11 Sep 2023 13:31:54 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <169443802809.23253.15510034534153334813.git-patchwork-summary@kernel.org>
+Date:   Mon, 11 Sep 2023 13:13:48 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Biju Das (2023-08-24 03:48:09)
-> Add description for "#clock-cells" property to map indexes to the clock
-> output in the Table 3. ("Output Source") in the 5P35023 datasheet
-> (ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}. Also update the "assigned-clock-rates"
-> in the example.
->=20
-> While at it, replace clocks phandle in the example from x1_x2->x1 as
-> X2 is a different 32768 kHz crystal.
->=20
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+Hello:
 
-Applied to clk-fixes
+The following patches were marked "accepted", because they were applied to
+geert/renesas-devel.git (next):
+
+Patch: [GIT,PULL] clk: renesas: Updates for v6.6 (take two)
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Stephen Boyd <sboyd@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=776909
+  Lore link: https://lore.kernel.org/r/cover.1692262242.git.geert+renesas@glider.be
+
+Series: Renesas SoC updates for v6.6
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Arnd Bergmann <arnd@arndb.de>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=770548
+  Lore link: https://lore.kernel.org/r/cover.1690545139.git.geert+renesas@glider.be
+    Patches: [GIT,PULL,1/3] Renesas ARM defconfig updates for v6.6
+             [GIT,PULL,2/3] Renesas ARM SoC updates for v6.6
+             [GIT,PULL,3/3] Renesas DTS updates for v6.6
+
+
+Total patches: 4
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
