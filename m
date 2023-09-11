@@ -2,89 +2,58 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14C9CA0ECE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297CBCA0EC1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Sep 2023 21:27:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236761AbjIKVSF (ORCPT
+        id S237885AbjIKVSQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:18:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
+        Mon, 11 Sep 2023 17:18:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237882AbjIKNRu (ORCPT
+        with ESMTP id S235476AbjIKIl5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 09:17:50 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DC42EE
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 06:17:44 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:a989:d413:f41f:af52])
-        by laurent.telenet-ops.be with bizsmtp
-        id kdHh2A00C43UkUk01dHhaq; Mon, 11 Sep 2023 15:17:42 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qfgn6-002zwB-WD;
-        Mon, 11 Sep 2023 15:17:41 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qfgnN-007ruf-70;
-        Mon, 11 Sep 2023 15:17:41 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: defconfig: Refresh for v6.6-rc1
-Date:   Mon, 11 Sep 2023 15:17:40 +0200
-Message-Id: <1b8aee0cfcb2fa8c6e73c67f1c85c4630d946159.1694438226.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        Mon, 11 Sep 2023 04:41:57 -0400
+X-Greylist: delayed 1432 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 11 Sep 2023 01:41:52 PDT
+Received: from mail.arnisdale.pl (mail.arnisdale.pl [151.80.133.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4214125
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 01:41:52 -0700 (PDT)
+Received: by mail.arnisdale.pl (Postfix, from userid 1002)
+        id 640FC25377; Mon, 11 Sep 2023 08:15:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=arnisdale.pl; s=mail;
+        t=1694420152; bh=6DhEsVYOGxxfetVY3oiVeew+7Cm34ArcvgDq2WQYIRw=;
+        h=Date:From:To:Subject:From;
+        b=KE5iupDHO/bH4ljznZ7G+tl5tnES9JprIbHHhwijPBUTnumPLu6VhwLbDJZALnF4j
+         3sefODaqW24ZwZTjZyzMDvoThEcZXqcFHfGyQOKFlqBYS2H7+RuNcBWnERX1NmkVkQ
+         +wDTflgH42pzGRHd4xowyPE6bJx745+FIKfV1VW9utr/cKOAxS1t4e19uM18aYJFlv
+         P2AqFjWO3ub17jvQd9+84wFHMq9iBndzUeqzhyZI/ekzx/Csqk3U1abmhj934G0poa
+         KhYZA8KTun5l2a0hT+zocKFksIGTROXhTwBPLYhnEPbKXUmS47/HTOwmlxqkti7jMc
+         txgwiXyPHP/zA==
+Received: by mail.arnisdale.pl for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 08:15:18 GMT
+Message-ID: <20230911064501-0.1.6u.1y3zb.0.e3x4fuh4fb@arnisdale.pl>
+Date:   Mon, 11 Sep 2023 08:15:18 GMT
+From:   "Maciej Telka" <maciej.telka@arnisdale.pl>
+To:     <linux-renesas-soc@vger.kernel.org>
+Subject: =?UTF-8?Q?Prosz=C4=99_o_kontakt?=
+X-Mailer: mail.arnisdale.pl
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-  - Move CONFIG_KEXEC (moved in commit 89cde455915f4611 ("kexec:
-    consolidate kexec and crash options into kernel/Kconfig.kexec")),
-  - Enable CONFIG_FRAMEBUFFER_CONSOLE (no longer auto-enabled since
-    commit a5ae331edb02b664 ("drm: Drop select FRAMEBUFFER_CONSOLE for
-    DRM_FBDEV_EMULATION")).
+Dzie=C5=84 dobry,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Perhaps this is worthwhile to be queued as a fix for v6.6, due to the
-text console regression?
----
- arch/arm/configs/shmobile_defconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Czy jest mo=C5=BCliwo=C5=9B=C4=87 nawi=C4=85zania wsp=C3=B3=C5=82pracy z =
+Pa=C5=84stwem?
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 22205ef0f3768420..bd975d105687be39 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -6,6 +6,7 @@ CONFIG_CGROUPS=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- CONFIG_PERF_EVENTS=y
-+CONFIG_KEXEC=y
- CONFIG_ARCH_RENESAS=y
- CONFIG_PL310_ERRATA_588369=y
- CONFIG_SMP=y
-@@ -13,7 +14,6 @@ CONFIG_SCHED_MC=y
- CONFIG_NR_CPUS=8
- CONFIG_HIGHMEM=y
- CONFIG_ARM_APPENDED_DTB=y
--CONFIG_KEXEC=y
- CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_STAT=y
- CONFIG_CPU_FREQ_GOV_POWERSAVE=y
-@@ -148,6 +148,7 @@ CONFIG_FB=y
- CONFIG_FB_SH_MOBILE_LCDC=y
- CONFIG_BACKLIGHT_PWM=y
- CONFIG_BACKLIGHT_AS3711=y
-+CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_SOUND=y
- CONFIG_SND=y
- CONFIG_SND_SOC=y
--- 
-2.34.1
+Z ch=C4=99ci=C4=85 porozmawiam z osob=C4=85 zajmuj=C4=85c=C4=85 si=C4=99 =
+dzia=C5=82aniami zwi=C4=85zanymi ze sprzeda=C5=BC=C4=85.
 
+Pomagamy skutecznie pozyskiwa=C4=87 nowych klient=C3=B3w.
+
+Zapraszam do kontaktu.
+
+
+Pozdrawiam serdecznie
+Maciej Telka
