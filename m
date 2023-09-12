@@ -2,84 +2,72 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D7BCA0EC6
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Sep 2023 03:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7CDCA0EC6
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Sep 2023 03:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240471AbjILDCu (ORCPT
+        id S241831AbjILDMd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 23:02:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57134 "EHLO
+        Mon, 11 Sep 2023 23:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241026AbjILDCi (ORCPT
+        with ESMTP id S241878AbjILDMV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2023 23:02:38 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8883A1A4BD9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2023 18:32:26 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D597C4163D;
-        Mon, 11 Sep 2023 23:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694476686;
-        bh=TTfQYc+Hydqi5KI+pNsGlabzmpl/p3MdgVxaHvhSSg8=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Bh4pBMw8ZC9Lm6+9zEtcAz+EvTNUvpIW3bPqgh+l1OV5HFTNPoRPZOc13+GEg1hBo
-         aKpqUkFk3xCtw25EhHmMKSQoyBipPnv7BEe6y+Ortk86D3HMqgdHeomAwe+f/HpqM4
-         1e3Ujmprhs6Vd0Vw+d4yJdWyiB4Ztj9tvBBnLrZ2fEJ6NxzxMS7Qr1aYXh/suCj72f
-         xHPGAC6ViN3ysOTsYP7qZVpPldwq7rCsKPnhzPBGnHJnW/uU7cAAuGlCOHjAp7g9v1
-         0tTQo/d3zoU+TdKiTSAZs11ppWP/se6xRvngBQXwlmAU+iLar7AfoyDYfGRkUL+06m
-         bJ9CedQKm585g==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20230826173841.91807-1-biju.das.jz@bp.renesas.com>
-References: <20230826173841.91807-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH] regulator: mp886x: Make similar OF and ID table
-Message-Id: <169447668414.2387765.2805881082689120983.b4-ty@kernel.org>
-Date:   Tue, 12 Sep 2023 00:58:04 +0100
+        Mon, 11 Sep 2023 23:12:21 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 53897AED3;
+        Mon, 11 Sep 2023 18:49:45 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.02,244,1688396400"; 
+   d="scan'208";a="175750581"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 12 Sep 2023 10:49:44 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 56B2841065DE;
+        Tue, 12 Sep 2023 10:49:44 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net 1/2] net: renesas: rswitch: Fix unmasking irq condition
+Date:   Tue, 12 Sep 2023 10:49:35 +0900
+Message-Id: <20230912014936.3175430-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230912014936.3175430-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20230912014936.3175430-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, 26 Aug 2023 18:38:41 +0100, Biju Das wrote:
-> Make similar OF and ID table to extend support for ID match using
-> i2c_match_data(). Currently it works only for OF match tables as the
-> driver_data is wrong for ID match.
-> 
-> 
+Fix unmasking irq condition by using napi_complete_done(). Otherwise,
+redundant interrupts happen.
 
-Applied to
+Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/net/ethernet/renesas/rswitch.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: mp886x: Make similar OF and ID table
-      commit: 9e38482cb562f03fe8d521a001d44eba176a9201
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index 6083b1c8e4fb..26c8807d7dea 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -816,10 +816,10 @@ static int rswitch_poll(struct napi_struct *napi, int budget)
+ 
+ 	netif_wake_subqueue(ndev, 0);
+ 
+-	napi_complete(napi);
+-
+-	rswitch_enadis_data_irq(priv, rdev->tx_queue->index, true);
+-	rswitch_enadis_data_irq(priv, rdev->rx_queue->index, true);
++	if (napi_complete_done(napi, budget - quota)) {
++		rswitch_enadis_data_irq(priv, rdev->tx_queue->index, true);
++		rswitch_enadis_data_irq(priv, rdev->rx_queue->index, true);
++	}
+ 
+ out:
+ 	return budget - quota;
+-- 
+2.25.1
 
