@@ -2,78 +2,77 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27D5EEAA52
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Sep 2023 15:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D43EBEEAA52
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Sep 2023 16:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241161AbjINPrL (ORCPT
+        id S241716AbjINQBc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Sep 2023 11:47:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58872 "EHLO
+        Thu, 14 Sep 2023 12:01:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241163AbjINPrK (ORCPT
+        with ESMTP id S241815AbjINQBT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Sep 2023 11:47:10 -0400
-X-Greylist: delayed 330 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Sep 2023 08:47:06 PDT
-Received: from vps.thesusis.net (vps.thesusis.net [34.202.238.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68104E0;
-        Thu, 14 Sep 2023 08:47:06 -0700 (PDT)
-Received: by vps.thesusis.net (Postfix, from userid 1000)
-        id 122451394AC; Thu, 14 Sep 2023 11:41:35 -0400 (EDT)
-References: <20230731003956.572414-1-dlemoal@kernel.org>
- <8be9c370-2f1-5815-431-f68ab868669@linux-m68k.org>
- <ffc1442b-698e-65ab-9aaf-e4ca076b697c@kernel.org>
- <CAMuHMdXK-pnzMNzbNw=zWaMbQtWtca850eYv98oUjQkypgBfwg@mail.gmail.com>
- <2d90bd7c-5c34-a345-bc29-44dfa923fc19@kernel.org>
-User-agent: mu4e 1.7.12; emacs 27.1
-From:   Phillip Susi <phill@thesusis.net>
-To:     Damien Le Moal <dlemoal@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Paul Ausbeck <paula@soe.ucsc.edu>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        TW <dalzot@gmail.com>, regressions@lists.linux.dev,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ata,scsi: do not issue START STOP UNIT on resume
-Date:   Thu, 14 Sep 2023 11:29:59 -0400
-In-reply-to: <2d90bd7c-5c34-a345-bc29-44dfa923fc19@kernel.org>
-Message-ID: <87edj0yd74.fsf@vps.thesusis.net>
+        Thu, 14 Sep 2023 12:01:19 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C28332716;
+        Thu, 14 Sep 2023 09:01:00 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E00C433C7;
+        Thu, 14 Sep 2023 16:01:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694707260;
+        bh=Nkkv6aDL1D5TTqvjrRRRh4zdX4zcZxoBLRYI9o1UB9M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=tJTs7BD1Sd1brkG65MiVYm8K8L2ti9/t1hqenkLmk5OPz2flwUbQ5agxW+wumyI1e
+         Gl+rqKsX0hgFW32O0RoRIwwqVaE0pG4sA9tL56ynB+oqCf6ot5Wd7tosybFwHlDYI4
+         EyDarBB54e0E+x8gFsf1uc/a8ARD1SO2Ezsdbq6gvJs8WuncVtrNqxD28zWPMhdUqm
+         WWnN2SwvIVEKBB3Y2XF25ssCNLC/ZVCD2vUdiC31iUm6HK4Qia4rHaAF46vWJw8G44
+         pVuesm6H4UDU/SUYUQcv2a+Jze+ByiFSklcuramK7NK0Havv1IMT6LWimOT/BEQ5wP
+         XiNtXmjjDiTsQ==
+Date:   Thu, 14 Sep 2023 11:00:58 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lpieralisi@kernel.org, robh+dt@kernel.org, kw@linux.com,
+        manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
+        kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, marek.vasut+renesas@gmail.com,
+        fancer.lancer@gmail.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v20 07/19] PCI: dwc: Add missing PCI_EXP_LNKCAP_MLW
+ handling
+Message-ID: <20230914160058.GA32113@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230825093219.2685912-8-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Fri, Aug 25, 2023 at 06:32:07PM +0900, Yoshihiro Shimoda wrote:
+> Update dw_pcie_link_set_max_link_width() to set PCI_EXP_LNKCAP_MLW.
+> In accordance with the DW PCIe RC/EP HW manuals [1,2,3,...] aside with
+> the PORT_LINK_CTRL_OFF.LINK_CAPABLE and GEN2_CTRL_OFF.NUM_OF_LANES[8:0]
+> field there is another one which needs to be updated. It's
+> LINK_CAPABILITIES_REG.PCIE_CAP_MAX_LINK_WIDTH. If it isn't done at
+> the very least the maximum link-width capability CSR won't expose
+> the actual maximum capability.
+> 
+> [1] DesignWare Cores PCI Express Controller Databook - DWC PCIe Root Port,
+>     Version 4.60a, March 2015, p.1032
+> [2] DesignWare Cores PCI Express Controller Databook - DWC PCIe Root Port,
+>     Version 4.70a, March 2016, p.1065
+> [3] DesignWare Cores PCI Express Controller Databook - DWC PCIe Root Port,
+>     Version 4.90a, March 2016, p.1057
+> ...
+> [X] DesignWare Cores PCI Express Controller Databook - DWC PCIe Endpoint,
+>       Version 5.40a, March 2019, p.1396
+> [X+1] DesignWare Cores PCI Express Controller Databook - DWC PCIe Root Port,
+>       Version 5.40a, March 2019, p.1266
 
-Damien Le Moal <dlemoal@kernel.org> writes:
+Is there value in keeping all four of these Root Port citations?  I
+assume that if you have the most recent one (X+1), it completely
+obsoletes the older ones, so you should never have to look at the
+older ones?
 
-> VERIFY command is used to spin up the disk). And furthermore, the specs also
-> says that even a reset shall not change the device power state. So issuing a
-> VERIFY command to spin up the drive is required per specs. Note that I do see
-> many of my drives (I have hundreds in the lab) spinning up on reset, which is
-> against the specs. But not all of them. So with the patch "do not issue START
-> STOP UNIT on resume", one risks not seeing the drive resuming correctly (timeout
-> errors on IDENTIFY command issued on resume will get the drive removed).
-
-I tried to get some patches merged a few years back along these lines to
-be able to keep some ATA disks in a mostly permanent state of being
-powered down.  I don't recall the specs saying that a reset would not
-change power states.  What I do recall is that as a general rule, ATA
-disks automatically spin up after power on, unless the Power Up in
-Standby feature is activated, which at least for Western Digital drives,
-requires a jumper to short some pins on the drive.
-
-IIRC, I had a patch to skip the START UNIT command on resume based on a
-sysfs setting.  I think it was rejected because SCSI disks can not be
-accessed without the START UNIT command, and even though the scsi eh
-path will notice when a drive needs this and issue it, there was
-something not good about the eh path.  I think it was something along
-the lines of all IO to all disks on the whole scsi host are suspended
-during eh.
-
-I also tried to have the runtime pm notice whether the drive auto
-powered up or not and set the runtime pm state to correctly indicate
-whether the drive is running or not, as well as to use the deeper ATA
-SLEEP state to save more power over STANDBY and allow the ATA link to be
-runtime pm suspended.
+Bjorn
