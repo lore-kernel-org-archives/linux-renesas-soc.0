@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7386BEE644B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F357CEE644D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233188AbjIOIyY (ORCPT
+        id S233230AbjIOIy0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Sep 2023 04:54:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48444 "EHLO
+        Fri, 15 Sep 2023 04:54:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233170AbjIOIyY (ORCPT
+        with ESMTP id S233189AbjIOIyY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 15 Sep 2023 04:54:24 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0878C271C
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07863271B
         for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 01:54:16 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7135:da8b:ba1d:1a7c])
-        by laurent.telenet-ops.be with bizsmtp
-        id m8uF2A0083q21w7018uFga; Fri, 15 Sep 2023 10:54:15 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id m8uF2A00f3q21w7018uF2l; Fri, 15 Sep 2023 10:54:15 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4aJ-003lHZ-SN;
-        Fri, 15 Sep 2023 10:54:14 +0200
+        id 1qh4aK-003lII-79;
+        Fri, 15 Sep 2023 10:54:15 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4ac-00Gdci-S8;
-        Fri, 15 Sep 2023 10:54:14 +0200
+        id 1qh4ad-00Gddb-7l;
+        Fri, 15 Sep 2023 10:54:15 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 26/41] drm: renesas: shmobile: Unify plane allocation
-Date:   Fri, 15 Sep 2023 10:53:41 +0200
-Message-Id: <adbc5febc0099fd1910f32a7af1c8e0f570f74b4.1694767209.git.geert+renesas@glider.be>
+Subject: [PATCH v4 37/41] drm: renesas: shmobile: Atomic conversion part 2
+Date:   Fri, 15 Sep 2023 10:53:52 +0200
+Message-Id: <ca2a00200ef5ac899a6131087d0a30de1c806119.1694767209.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1694767208.git.geert+renesas@glider.be>
 References: <cover.1694767208.git.geert+renesas@glider.be>
@@ -50,13 +50,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Unify primary and overlay plane allocation:
-  - Enhance shmob_drm_plane_create() so it can be used to create the
-    primary plane, too,
-  - Move overlay plane creation next to primary plane creation.
+Implement atomic mode setting for the CRTC, using the existing dpms
+callback.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+This works, but I had expected that crtc_helper_funcs.atomic_check
+should point to drm_crtc_helper_atomic_check() instead, as the primary
+plane cannot be disabled.  However in doing so, when
+drm_atomic_helper_check_crtc_primary_plane() fails:
+
+    [drm:drm_atomic_helper_check_crtc_primary_plane] [CRTC:41:crtc-0] primary plane missing
+
+the display fails to restore after running "modetest -s", until I run
+modetest without -s.
+
+Letting shmob_drm_plane_atomic_check() return -EINVAL if
+!new_plane_state->crtc && is_primary would fix that, but would cause an
+ugly warning:
+
+    WARNING: CPU: 0 PID: 21 at drivers/gpu/drm/drm_framebuffer.c:1130 drm_framebuffer_remove+0x374/0x4b0
+    atomic remove_fb failed with -22
+
 v4:
   - No changes,
 
@@ -64,191 +79,79 @@ v3:
   - No changes,
 
 v2:
-  - Pass plane type to shmob_drm_plane_create() to avoid having to shift
-    all overlay plane indices by one,
-  - Rename primary_plane_funcs to shmob_drm_primary_plane_funcs,
-  - Rename shmob_drm_plane_funcs to shmob_drm_overlay_plane_funcs.
+  - No changes.
 ---
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 39 +++++--------------
- .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  |  9 -----
- .../drm/renesas/shmobile/shmob_drm_plane.c    | 31 +++++++++++----
- .../drm/renesas/shmobile/shmob_drm_plane.h    |  4 +-
- 4 files changed, 36 insertions(+), 47 deletions(-)
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 41 +++++++------------
+ 1 file changed, 15 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index caafd04acd3d46d0..564051b505ed4ac5 100644
+index c277f93668825e1c..5c0575eed3ab6833 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -19,7 +19,6 @@
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_modeset_helper_vtables.h>
--#include <drm/drm_plane_helper.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_simple_kms_helper.h>
- #include <drm/drm_vblank.h>
-@@ -453,47 +452,29 @@ static const struct drm_crtc_funcs crtc_funcs = {
- 	.disable_vblank = shmob_drm_disable_vblank,
- };
+@@ -11,6 +11,7 @@
+ #include <linux/media-bus-format.h>
+ #include <linux/pm_runtime.h>
  
--static const uint32_t modeset_formats[] = {
--	DRM_FORMAT_RGB565,
--	DRM_FORMAT_RGB888,
--	DRM_FORMAT_ARGB8888,
--	DRM_FORMAT_XRGB8888,
--	DRM_FORMAT_NV12,
--	DRM_FORMAT_NV21,
--	DRM_FORMAT_NV16,
--	DRM_FORMAT_NV61,
--	DRM_FORMAT_NV24,
--	DRM_FORMAT_NV42,
--};
--
--static const struct drm_plane_funcs primary_plane_funcs = {
--	DRM_PLANE_NON_ATOMIC_FUNCS,
--};
--
- int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- {
- 	struct drm_crtc *crtc = &sdev->crtc.crtc;
--	struct drm_plane *primary;
-+	struct drm_plane *primary, *plane;
-+	unsigned int i;
- 	int ret;
- 
- 	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
- 
--	primary = __drm_universal_plane_alloc(&sdev->ddev, sizeof(*primary), 0,
--					      0, &primary_plane_funcs,
--					      modeset_formats,
--					      ARRAY_SIZE(modeset_formats),
--					      NULL, DRM_PLANE_TYPE_PRIMARY,
--					      NULL);
-+	primary = shmob_drm_plane_create(sdev, DRM_PLANE_TYPE_PRIMARY, 0);
- 	if (IS_ERR(primary))
- 		return PTR_ERR(primary);
- 
-+	for (i = 1; i < 5; ++i) {
-+		plane = shmob_drm_plane_create(sdev, DRM_PLANE_TYPE_OVERLAY, i);
-+		if (IS_ERR(plane))
-+			return PTR_ERR(plane);
-+	}
-+
- 	ret = drm_crtc_init_with_planes(&sdev->ddev, crtc, primary, NULL,
- 					&crtc_funcs, NULL);
--	if (ret < 0) {
--		drm_plane_cleanup(primary);
--		kfree(primary);
-+	if (ret < 0)
- 		return ret;
--	}
- 
- 	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
- 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index a971c7bc1fd4b4be..0db41c6317109773 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -180,7 +180,6 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	struct shmob_drm_platform_data *pdata = pdev->dev.platform_data;
- 	struct shmob_drm_device *sdev;
- 	struct drm_device *ddev;
--	unsigned int i;
- 	int ret;
- 
- 	if (pdata == NULL) {
-@@ -221,14 +220,6 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, ret,
- 				     "failed to initialize mode setting\n");
- 
--	for (i = 0; i < 4; ++i) {
--		ret = shmob_drm_plane_create(sdev, i);
--		if (ret < 0) {
--			dev_err(&pdev->dev, "failed to create plane %u\n", i);
--			goto err_modeset_cleanup;
--		}
--	}
--
- 	ret = drm_vblank_init(ddev, 1);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to initialize vblank\n");
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-index c58b9dca34736342..3518f8900c0d1f9e 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-@@ -12,6 +12,7 @@
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_dma_helper.h>
-+#include <drm/drm_plane_helper.h>
- 
- #include "shmob_drm_drv.h"
- #include "shmob_drm_kms.h"
-@@ -179,7 +180,12 @@ static int shmob_drm_plane_disable(struct drm_plane *plane,
- 	return 0;
++#include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_atomic_state_helper.h>
+ #include <drm/drm_atomic_uapi.h>
+@@ -319,27 +320,6 @@ static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 	scrtc->dpms = mode;
  }
  
--static const struct drm_plane_funcs shmob_drm_plane_funcs = {
-+static const struct drm_plane_funcs shmob_drm_primary_plane_funcs = {
-+	.update_plane = drm_plane_helper_update_primary,
-+	.disable_plane = drm_plane_helper_disable_primary,
-+};
-+
-+static const struct drm_plane_funcs shmob_drm_overlay_plane_funcs = {
- 	.update_plane = shmob_drm_plane_update,
- 	.disable_plane = shmob_drm_plane_disable,
- };
-@@ -197,19 +203,28 @@ static const uint32_t formats[] = {
- 	DRM_FORMAT_NV42,
- };
- 
--int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index)
-+struct drm_plane *shmob_drm_plane_create(struct shmob_drm_device *sdev,
-+					 enum drm_plane_type type,
-+					 unsigned int index)
- {
-+	const struct drm_plane_funcs *funcs;
- 	struct shmob_drm_plane *splane;
- 
--	splane = drmm_universal_plane_alloc(&sdev->ddev, struct shmob_drm_plane,
--					    plane, 1, &shmob_drm_plane_funcs,
--					    formats, ARRAY_SIZE(formats), NULL,
--					    DRM_PLANE_TYPE_OVERLAY, NULL);
-+	if (type == DRM_PLANE_TYPE_PRIMARY)
-+		funcs = &shmob_drm_primary_plane_funcs;
-+	else
-+		funcs = &shmob_drm_overlay_plane_funcs;
-+
-+	splane = drmm_universal_plane_alloc(&sdev->ddev,
-+					    struct shmob_drm_plane, plane, 1,
-+					    funcs, formats,
-+					    ARRAY_SIZE(formats),  NULL, type,
-+					    NULL);
- 	if (IS_ERR(splane))
--		return PTR_ERR(splane);
-+		return ERR_CAST(splane);
- 
- 	splane->index = index;
- 	splane->alpha = 255;
- 
+-static void shmob_drm_crtc_mode_prepare(struct drm_crtc *crtc)
+-{
+-	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
+-}
+-
+-static void shmob_drm_crtc_mode_commit(struct drm_crtc *crtc)
+-{
+-	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
+-}
+-
+-static int shmob_drm_crtc_atomic_check(struct drm_crtc *crtc,
+-				       struct drm_atomic_state *state)
+-{
 -	return 0;
-+	return &splane->plane;
+-}
+-
+-static void shmob_drm_crtc_atomic_begin(struct drm_crtc *crtc,
+-					struct drm_atomic_state *state)
+-{
+-}
+-
+ static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
+ 					struct drm_atomic_state *state)
+ {
+@@ -356,13 +336,22 @@ static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
+ 	}
  }
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h
-index e72b21a4288fc23f..8ad12129014016fa 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h
-@@ -13,7 +13,9 @@
- struct drm_plane;
- struct shmob_drm_device;
  
--int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index);
-+struct drm_plane *shmob_drm_plane_create(struct shmob_drm_device *sdev,
-+					 enum drm_plane_type type,
-+					 unsigned int index);
- void shmob_drm_plane_setup(struct drm_plane *plane);
++static void shmob_drm_crtc_atomic_enable(struct drm_crtc *crtc,
++					 struct drm_atomic_state *state)
++{
++	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
++}
++
++static void shmob_drm_crtc_atomic_disable(struct drm_crtc *crtc,
++					  struct drm_atomic_state *state)
++{
++	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
++}
++
+ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+-	.dpms = shmob_drm_crtc_dpms,
+-	.prepare = shmob_drm_crtc_mode_prepare,
+-	.commit = shmob_drm_crtc_mode_commit,
+-	.atomic_check = shmob_drm_crtc_atomic_check,
+-	.atomic_begin = shmob_drm_crtc_atomic_begin,
+ 	.atomic_flush = shmob_drm_crtc_atomic_flush,
++	.atomic_enable = shmob_drm_crtc_atomic_enable,
++	.atomic_disable = shmob_drm_crtc_atomic_disable,
+ };
  
- #endif /* __SHMOB_DRM_PLANE_H__ */
+ static int shmob_drm_crtc_page_flip(struct drm_crtc *crtc,
 -- 
 2.34.1
 
