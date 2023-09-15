@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF2FEE644C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3545EE644A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233351AbjIOIyc (ORCPT
+        id S233179AbjIOIyd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Sep 2023 04:54:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
+        Fri, 15 Sep 2023 04:54:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233171AbjIOIya (ORCPT
+        with ESMTP id S233269AbjIOIy1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2023 04:54:30 -0400
+        Fri, 15 Sep 2023 04:54:27 -0400
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC9D2D40
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A67C4273A
         for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 01:54:17 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7135:da8b:ba1d:1a7c])
         by laurent.telenet-ops.be with bizsmtp
-        id m8uE2A00U3q21w7018uEgN; Fri, 15 Sep 2023 10:54:16 +0200
+        id m8uE2A00N3q21w7018uEgL; Fri, 15 Sep 2023 10:54:15 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4aJ-003lHC-MX;
+        id 1qh4aJ-003lGw-JI;
         Fri, 15 Sep 2023 10:54:14 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4ac-00GdcI-NN;
+        id 1qh4ac-00Gdby-J2;
         Fri, 15 Sep 2023 10:54:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -39,9 +39,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v4 21/41] drm: renesas: shmobile: Convert container helpers to static inline functions
-Date:   Fri, 15 Sep 2023 10:53:36 +0200
-Message-Id: <7d1f1aa4b832499f9e527353ce0ad6d84ff9a74a.1694767209.git.geert+renesas@glider.be>
+Subject: [PATCH v4 17/41] drm: renesas: shmobile: Convert to use devm_request_irq()
+Date:   Fri, 15 Sep 2023 10:53:32 +0200
+Message-Id: <8d870bdc59dd5e2754542388a03095ea09c96297.1694767209.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1694767208.git.geert+renesas@glider.be>
 References: <cover.1694767208.git.geert+renesas@glider.be>
@@ -51,8 +51,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace to conversion helper macros using container_of() by static
-inline functions, to improve type-safety.
+Convert to managed IRQ handling, to simplify cleanup.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
@@ -66,55 +65,48 @@ v3:
 v2:
   - Add Reviewed-by.
 ---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c  | 11 ++++++++---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c |  5 ++++-
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 9c66e00ed70ea582..207fa98fe76d6f88 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -258,7 +258,10 @@ static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
- 	lcdc_write(sdev, LDRCNTR, lcdc_read(sdev, LDRCNTR) ^ LDRCNTR_MRS);
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+index 399fedd42271cb49..bf3a9c1db177095e 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+@@ -196,7 +196,6 @@ static void shmob_drm_remove(struct platform_device *pdev)
+ 
+ 	drm_dev_unregister(ddev);
+ 	drm_kms_helper_poll_fini(ddev);
+-	free_irq(sdev->irq, ddev);
+ 	drm_dev_put(ddev);
  }
  
--#define to_shmob_crtc(c)	container_of(c, struct shmob_drm_crtc, crtc)
-+static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
-+{
-+	return container_of(crtc, struct shmob_drm_crtc, crtc);
-+}
+@@ -277,8 +276,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
+ 		goto err_modeset_cleanup;
+ 	sdev->irq = ret;
  
- static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- {
-@@ -538,8 +541,10 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
-  * Connector
-  */
+-	ret = request_irq(sdev->irq, shmob_drm_irq, 0, ddev->driver->name,
+-			  ddev);
++	ret = devm_request_irq(&pdev->dev, sdev->irq, shmob_drm_irq, 0,
++			       ddev->driver->name, ddev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to install IRQ handler\n");
+ 		goto err_modeset_cleanup;
+@@ -290,14 +289,12 @@ static int shmob_drm_probe(struct platform_device *pdev)
+ 	 */
+ 	ret = drm_dev_register(ddev, 0);
+ 	if (ret < 0)
+-		goto err_irq_uninstall;
++		goto err_modeset_cleanup;
  
--#define to_shmob_connector(c) \
--	container_of(c, struct shmob_drm_connector, connector)
-+static inline struct shmob_drm_connector *to_shmob_connector(struct drm_connector *connector)
-+{
-+	return container_of(connector, struct shmob_drm_connector, connector);
-+}
+ 	drm_fbdev_generic_setup(ddev, 16);
  
- static int shmob_drm_connector_get_modes(struct drm_connector *connector)
- {
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-index 17e66a018689f648..258288c80756bf16 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-@@ -34,7 +34,10 @@ struct shmob_drm_plane {
- 	unsigned int crtc_h;
- };
+ 	return 0;
  
--#define to_shmob_plane(p)	container_of(p, struct shmob_drm_plane, plane)
-+static inline struct shmob_drm_plane *to_shmob_plane(struct drm_plane *plane)
-+{
-+	return container_of(plane, struct shmob_drm_plane, plane);
-+}
- 
- static void shmob_drm_plane_compute_base(struct shmob_drm_plane *splane,
- 					 struct drm_framebuffer *fb,
+-err_irq_uninstall:
+-	free_irq(sdev->irq, ddev);
+ err_modeset_cleanup:
+ 	drm_kms_helper_poll_fini(ddev);
+ err_free_drm_dev:
 -- 
 2.34.1
 
