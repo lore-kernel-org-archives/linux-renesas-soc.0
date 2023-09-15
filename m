@@ -2,74 +2,107 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48E9EE6447
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 09:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D58EE6447
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 09:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232003AbjIOJGe (ORCPT
+        id S233310AbjIOJLa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Sep 2023 05:06:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57832 "EHLO
+        Fri, 15 Sep 2023 05:11:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233197AbjIOJGd (ORCPT
+        with ESMTP id S233462AbjIOJLL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2023 05:06:33 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB08C49CF
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 02:04:52 -0700 (PDT)
-Received: from ramsan.of.borg ([84.195.187.55])
-        by michel.telenet-ops.be with bizsmtp
-        id m94q2A0031C8whw0694qsZ; Fri, 15 Sep 2023 11:04:50 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qh4kZ-003lJd-1N;
-        Fri, 15 Sep 2023 11:04:50 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qh4ks-00Gdl1-1N;
-        Fri, 15 Sep 2023 11:04:50 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFT 0/2] renesas: r8a7778/bockw: Add LBSC pin control and FLASH support
-Date:   Fri, 15 Sep 2023 11:04:44 +0200
-Message-Id: <cover.1694768311.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        Fri, 15 Sep 2023 05:11:11 -0400
+Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA37A1FD0;
+        Fri, 15 Sep 2023 02:10:38 -0700 (PDT)
+Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-4935f87ca26so825794e0c.3;
+        Fri, 15 Sep 2023 02:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1694769038; x=1695373838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gJnx3mkmeAUY7F7tJ/KOS3Ct0lvpI7xMMW+QXJ8wpEw=;
+        b=hM8Il7sM2KaSg4VfKDRnmvT4vob1EE8SFFHOgpBAm5tZIZyCYGX0JsmUmUVjjdRTgN
+         jLvyS8ztTDWlWwilCrb+r3orLi/pvrgU+TWzYGvVEFP3ILGerpSMa5qeZTvS1IVfDHcU
+         WBzBP4fJV+LESVndMrihBR4y6EIcvXi65x5SkG1lnFmLT14hxwVl++JmjC4SjJn4PSfz
+         mRjMNkypXXmTv8oTAXBzyE3I6cGV0IaCkKaDAe+4e8UlMkOojc7O80NqOQbAzSNsn7e6
+         EeaYxmxi1TIx2C+BLFlT/CTwSFFjrDZ58tsYgJJ2kveKXZqvSdvq7rowanRZ5BvP/xyH
+         5XrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694769038; x=1695373838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gJnx3mkmeAUY7F7tJ/KOS3Ct0lvpI7xMMW+QXJ8wpEw=;
+        b=q5efweLK0snmrZArkFS6VKTb/NP4co5EQmIJAuH5jf6LoCsOHCDiwVVVo2RAtfCegT
+         yDc4BCCJ7kkFMPhdFLH6AAw98DJkFqzrGlD75AieqMsMp4HyOWfPhEkJ39XGyWFIgjFJ
+         mY9k+rLL6NvrgPb0ybeTANoH4J+dPlZjLL1ARN684f0oenTYHyuSF1GldovrLQTXp1DN
+         dOFAwZ0cEY3ruqITD3/0lZ57cTTEpwoskucVO9C0hIKvwC1u3vPrkbJE+QQ+yWhIW/DI
+         4aESFoGA2CyP2DxE9khf7Ce6tVP+wQT6qcbWMwe81X1WpZ6C0Womuxn5Li7xZRFsKoOf
+         t3Ow==
+X-Gm-Message-State: AOJu0YyKjUhugC46tW6XoeBr0iGFCHfVcZeeyIZPttAh2HTCDrIxm+pk
+        THZ2qegHt/p+uczTg8pkuDStEsxfiOgzv2WcvXw=
+X-Google-Smtp-Source: AGHT+IGgHtby0Q8edMJxzP9oy0I89jpIG8Wq55oA1wjN17+ida/bzOnHMygNtlXP79OQXCK4LJe0QwrZ2R1RXxMUZ0k=
+X-Received: by 2002:a1f:4b81:0:b0:495:bd33:d1f8 with SMTP id
+ y123-20020a1f4b81000000b00495bd33d1f8mr1029076vka.13.1694769037794; Fri, 15
+ Sep 2023 02:10:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <2a3a9d595579b7cea416c12bf9abcfa2227243bb.1694768174.git.geert+renesas@glider.be>
+In-Reply-To: <2a3a9d595579b7cea416c12bf9abcfa2227243bb.1694768174.git.geert+renesas@glider.be>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Fri, 15 Sep 2023 10:09:26 +0100
+Message-ID: <CA+V-a8vxaspX+VsaJ=ps+R325bDqPvrJ_OwcT=CSe2Vtkf56vw@mail.gmail.com>
+Subject: Re: [PATCH] soc: renesas: Kconfig: Remove blank line before
+ ARCH_R9A07G043 help text
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Palmer Dabbelt <palmer@rivosinc.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Hi Geert,
 
-This patch series adds support for the NOR FLASH on the R-Car M1A-based
-Bock-W development board.
+Thank you for fixing it.
 
-As the remote Bock-W in Magnus' farm is MIA, I could not test this on
-actual hardware.
+On Fri, Sep 15, 2023 at 10:06=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> There should not be a blank line before the "help" keyword in the
+> ARCH_R9A07G043 configuration section.
+>
+> Fixes: c6a906cce61a8015 ("soc: renesas: Kconfig: For ARCH_R9A07G043 selec=
+t the required configs if dependencies are met")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in renesas-devel for v6.7.
+>
+>  drivers/soc/renesas/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for your comments!
+Cheers,
+Prabhakar
 
-Geert Uytterhoeven (2):
-  [RFT] pinctrl: renesas: r8a7778: Add LBSC pins, groups, and functions
-  [RFT] ARM: dts: renesas: bockw: Add FLASH node
-
- arch/arm/boot/dts/renesas/r8a7778-bockw.dts | 34 ++++++++++++++++++
- drivers/pinctrl/renesas/pfc-r8a7778.c       | 38 +++++++++++++++++++++
- 2 files changed, 72 insertions(+)
-
--- 
-2.34.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+> index bb1bb004b6a44b01..dd3f074d7b09b9bb 100644
+> --- a/drivers/soc/renesas/Kconfig
+> +++ b/drivers/soc/renesas/Kconfig
+> @@ -343,7 +343,6 @@ config ARCH_R9A07G043
+>         select DMA_GLOBAL_POOL
+>         select ERRATA_ANDES if RISCV_SBI
+>         select ERRATA_ANDES_CMO if ERRATA_ANDES
+> -
+>         help
+>           This enables support for the Renesas RZ/Five SoC.
+>
+> --
+> 2.34.1
+>
