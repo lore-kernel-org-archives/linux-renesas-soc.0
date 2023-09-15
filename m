@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FC4EE6449
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83362EE644B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:54:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233199AbjIOIy1 (ORCPT
+        id S233203AbjIOIy2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Sep 2023 04:54:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48522 "EHLO
+        Fri, 15 Sep 2023 04:54:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233203AbjIOIyZ (ORCPT
+        with ESMTP id S233227AbjIOIy0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2023 04:54:25 -0400
+        Fri, 15 Sep 2023 04:54:26 -0400
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 117462726
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31163272C
         for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 01:54:16 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7135:da8b:ba1d:1a7c])
         by albert.telenet-ops.be with bizsmtp
-        id m8uE2A00K3q21w7068uEY6; Fri, 15 Sep 2023 10:54:14 +0200
+        id m8uE2A00j3q21w7068uEYC; Fri, 15 Sep 2023 10:54:15 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4aJ-003lFt-3P;
+        id 1qh4aJ-003lH6-L7;
         Fri, 15 Sep 2023 10:54:14 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4ac-00Gdaj-4I;
+        id 1qh4ac-00Gdc9-Lg;
         Fri, 15 Sep 2023 10:54:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 01/41] MAINTAINER: Create entry for Renesas SH-Mobile DRM drivers
-Date:   Fri, 15 Sep 2023 10:53:16 +0200
-Message-Id: <7cbcec72214886b67afa8d724a9245661d8cd675.1694767208.git.geert+renesas@glider.be>
+Subject: [PATCH v4 19/41] drm: renesas: shmobile: Use drmm_universal_plane_alloc()
+Date:   Fri, 15 Sep 2023 10:53:34 +0200
+Message-Id: <65ebf0513e2836227a9636e922f51c668bd69720.1694767209.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1694767208.git.geert+renesas@glider.be>
 References: <cover.1694767208.git.geert+renesas@glider.be>
@@ -50,13 +50,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Split off DRM drivers for Renesas SH-Mobile into its own entry, and add
-Geert Uytterhoeven as a maintainer.
+According to the comments for drm_universal_plane_init(), the plane
+structure should not be allocated with devm_kzalloc().
+
+Fix lifetime issues by using drmm_universal_plane_alloc() instead.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Kieran: do you want to join the club, too? ;-)
-
 v4:
   - No changes,
 
@@ -64,41 +64,50 @@ v3:
   - No changes,
 
 v2:
-  - New.
+  - Split off removal of call to drm_plane_force_disable().
 ---
- MAINTAINERS | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ .../gpu/drm/renesas/shmobile/shmob_drm_plane.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9ceab03332d749fc..70535048b6a96d55 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7015,7 +7015,7 @@ F:	drivers/gpu/host1x/
- F:	include/linux/host1x.h
- F:	include/uapi/drm/tegra_drm.h
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+index 3a5db319bad14218..1fb68b5fe915b8dc 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
+@@ -179,7 +179,6 @@ static int shmob_drm_plane_disable(struct drm_plane *plane,
+ static const struct drm_plane_funcs shmob_drm_plane_funcs = {
+ 	.update_plane = shmob_drm_plane_update,
+ 	.disable_plane = shmob_drm_plane_disable,
+-	.destroy = drm_plane_cleanup,
+ };
  
--DRM DRIVERS FOR RENESAS
-+DRM DRIVERS FOR RENESAS R-CAR
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
- M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
- L:	dri-devel@lists.freedesktop.org
-@@ -7026,7 +7026,15 @@ F:	Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
- F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.yaml
- F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
- F:	Documentation/devicetree/bindings/display/renesas,du.yaml
--F:	drivers/gpu/drm/renesas/
-+F:	drivers/gpu/drm/renesas/rcar-du/
-+
-+DRM DRIVERS FOR RENESAS SHMOBILE
-+M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+M:	Geert Uytterhoeven <geert+renesas@glider.be>
-+L:	dri-devel@lists.freedesktop.org
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Supported
-+F:	drivers/gpu/drm/renesas/shmobile/
- F:	include/linux/platform_data/shmob_drm.h
+ static const uint32_t formats[] = {
+@@ -198,19 +197,16 @@ static const uint32_t formats[] = {
+ int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index)
+ {
+ 	struct shmob_drm_plane *splane;
+-	int ret;
  
- DRM DRIVERS FOR ROCKCHIP
+-	splane = devm_kzalloc(sdev->dev, sizeof(*splane), GFP_KERNEL);
+-	if (splane == NULL)
+-		return -ENOMEM;
++	splane = drmm_universal_plane_alloc(sdev->ddev, struct shmob_drm_plane,
++					    plane, 1, &shmob_drm_plane_funcs,
++					    formats, ARRAY_SIZE(formats), NULL,
++					    DRM_PLANE_TYPE_OVERLAY, NULL);
++	if (IS_ERR(splane))
++		return PTR_ERR(splane);
+ 
+ 	splane->index = index;
+ 	splane->alpha = 255;
+ 
+-	ret = drm_universal_plane_init(sdev->ddev, &splane->plane, 1,
+-				       &shmob_drm_plane_funcs,
+-				       formats, ARRAY_SIZE(formats), NULL,
+-				       DRM_PLANE_TYPE_OVERLAY, NULL);
+-
+-	return ret;
++	return 0;
+ }
 -- 
 2.34.1
 
