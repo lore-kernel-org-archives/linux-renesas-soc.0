@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2430EE6447
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 642E1EE644A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233179AbjIOIyY (ORCPT
+        id S233213AbjIOIyZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Sep 2023 04:54:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48398 "EHLO
+        Fri, 15 Sep 2023 04:54:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232435AbjIOIyX (ORCPT
+        with ESMTP id S233183AbjIOIyY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2023 04:54:23 -0400
+        Fri, 15 Sep 2023 04:54:24 -0400
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088FF271D
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0899B271E
         for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 01:54:16 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7135:da8b:ba1d:1a7c])
         by laurent.telenet-ops.be with bizsmtp
-        id m8uE2A00A3q21w7018uEgK; Fri, 15 Sep 2023 10:54:14 +0200
+        id m8uF2A0073q21w7018uFgZ; Fri, 15 Sep 2023 10:54:15 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4aJ-003lGH-8Q;
+        id 1qh4aJ-003lHV-RG;
         Fri, 15 Sep 2023 10:54:14 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4ac-00GdbB-9M;
+        id 1qh4ac-00Gdcc-Qf;
         Fri, 15 Sep 2023 10:54:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 07/41] drm: renesas: shmobile: Add support for Runtime PM
-Date:   Fri, 15 Sep 2023 10:53:22 +0200
-Message-Id: <e7359a64963bd9a4f1531c2beae850774ce140bc.1694767209.git.geert+renesas@glider.be>
+Subject: [PATCH v4 25/41] drm: renesas: shmobile: Move interface handling to connector setup
+Date:   Fri, 15 Sep 2023 10:53:40 +0200
+Message-Id: <912f615eb87c847804a268200ab57c63453c65d4.1694767209.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1694767208.git.geert+renesas@glider.be>
 References: <cover.1694767208.git.geert+renesas@glider.be>
@@ -50,14 +50,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The SH-Mobile LCD Controller is part of a PM Domain on all relevant SoCs
-(clock domain on all, power domain on some).  Hence it may not be
-sufficient to manage the LCDC module clock explicitly (e.g. if the
-selected clock source differs from SHMOB_DRM_CLK_BUS).
-
-Fix this by using Runtime PM for all clock handling.  Add an explicit
-dependency on CONFIG_PM, which should already be met on all affected
-platforms.
+Move legacy interface handling to the connector setup code.
+Set up bus_flags and bus_formats in display_info according to the
+bus format and panel information from platform data, to make it more
+similar with DT-based connector/bridge/panel setup.
+This will allow us to use the same LCD interface setup code for both
+legacy and DT-based systems.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
@@ -68,162 +66,280 @@ v3:
   - No changes,
 
 v2:
-  - Move explicit clock handling to Runtime PM callbacks,
-  - Move devm_pm_runtime_enable() after shmob_drm_setup_clocks(),
-  - Depend on PM.
+  - Drop superfluous blank lines,
+  - Keep initialization of info fields together,
+  - Use shmob_drm_bus_fmts[],
+  - Keep bus format validation at probe time.
 ---
- drivers/gpu/drm/renesas/shmobile/Kconfig      |  2 +-
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 32 ++--------------
- .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  | 38 +++++++++++++++++--
- 3 files changed, 40 insertions(+), 32 deletions(-)
+ .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 118 +++++++++++++++---
+ .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  |  34 -----
+ .../gpu/drm/renesas/shmobile/shmob_drm_drv.h  |   3 +-
+ 3 files changed, 104 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/Kconfig b/drivers/gpu/drm/renesas/shmobile/Kconfig
-index ad14112999ad8aba..ba941587ca70e08c 100644
---- a/drivers/gpu/drm/renesas/shmobile/Kconfig
-+++ b/drivers/gpu/drm/renesas/shmobile/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config DRM_SHMOBILE
- 	tristate "DRM Support for SH Mobile"
--	depends on DRM
-+	depends on DRM && PM
- 	depends on ARCH_RENESAS || ARCH_SHMOBILE || COMPILE_TEST
- 	select BACKLIGHT_CLASS_DEVICE
- 	select DRM_KMS_HELPER
 diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index fbfd906844da490c..2d9ae0c6ab7b18a8 100644
+index b3ef10b7828de197..caafd04acd3d46d0 100644
 --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
 +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -9,6 +9,7 @@
+@@ -8,6 +8,7 @@
+  */
  
- #include <linux/backlight.h>
  #include <linux/clk.h>
-+#include <linux/pm_runtime.h>
++#include <linux/media-bus-format.h>
+ #include <linux/pm_runtime.h>
  
  #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
-@@ -34,29 +35,6 @@
-  * TODO: panel support
-  */
- 
--/* -----------------------------------------------------------------------------
-- * Clock management
-- */
--
--static int shmob_drm_clk_on(struct shmob_drm_device *sdev)
--{
--	int ret;
--
--	if (sdev->clock) {
--		ret = clk_prepare_enable(sdev->clock);
--		if (ret < 0)
--			return ret;
--	}
--
--	return 0;
--}
--
--static void shmob_drm_clk_off(struct shmob_drm_device *sdev)
--{
--	if (sdev->clock)
--		clk_disable_unprepare(sdev->clock);
--}
--
- /* -----------------------------------------------------------------------------
+@@ -39,20 +40,55 @@
   * CRTC
   */
-@@ -170,9 +148,8 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
- 	if (WARN_ON(format == NULL))
- 		return;
  
--	/* Enable clocks before accessing the hardware. */
--	ret = shmob_drm_clk_on(sdev);
--	if (ret < 0)
-+	ret = pm_runtime_resume_and_get(sdev->dev);
-+	if (ret)
- 		return;
- 
- 	/* Reset and enable the LCDC. */
-@@ -268,8 +245,7 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- 	/* Disable the display output. */
- 	lcdc_write(sdev, LDCNT1R, 0);
- 
--	/* Stop clocks. */
--	shmob_drm_clk_off(sdev);
-+	pm_runtime_put(sdev->dev);
- 
- 	scrtc->started = false;
- }
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index e5db4e0095bad1fe..a0f8b7666ab33365 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
- 
- #include <drm/drm_drv.h>
-@@ -165,8 +166,35 @@ static int shmob_drm_pm_resume(struct device *dev)
- 	return 0;
- }
- 
--static DEFINE_SIMPLE_DEV_PM_OPS(shmob_drm_pm_ops,
--				shmob_drm_pm_suspend, shmob_drm_pm_resume);
-+static int shmob_drm_pm_runtime_suspend(struct device *dev)
-+{
-+	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
-+
-+	if (sdev->clock)
-+		clk_disable_unprepare(sdev->clock);
-+
-+	return 0;
-+}
-+
-+static int shmob_drm_pm_runtime_resume(struct device *dev)
-+{
-+	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
-+	int ret;
-+
-+	if (sdev->clock) {
-+		ret = clk_prepare_enable(sdev->clock);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops shmob_drm_pm_ops = {
-+	SYSTEM_SLEEP_PM_OPS(shmob_drm_pm_suspend, shmob_drm_pm_resume)
-+	RUNTIME_PM_OPS(shmob_drm_pm_runtime_suspend,
-+		       shmob_drm_pm_runtime_resume, NULL)
++static const struct {
++	u32 fmt;
++	u32 ldmt1r;
++} shmob_drm_bus_fmts[] = {
++	{ MEDIA_BUS_FMT_RGB888_3X8,	 LDMT1R_MIFTYP_RGB8 },
++	{ MEDIA_BUS_FMT_RGB666_2X9_BE,	 LDMT1R_MIFTYP_RGB9 },
++	{ MEDIA_BUS_FMT_RGB888_2X12_BE,	 LDMT1R_MIFTYP_RGB12A },
++	{ MEDIA_BUS_FMT_RGB444_1X12,	 LDMT1R_MIFTYP_RGB12B },
++	{ MEDIA_BUS_FMT_RGB565_1X16,	 LDMT1R_MIFTYP_RGB16 },
++	{ MEDIA_BUS_FMT_RGB666_1X18,	 LDMT1R_MIFTYP_RGB18 },
++	{ MEDIA_BUS_FMT_RGB888_1X24,	 LDMT1R_MIFTYP_RGB24 },
++	{ MEDIA_BUS_FMT_UYVY8_1X16,	 LDMT1R_MIFTYP_YCBCR },
 +};
- 
- /* -----------------------------------------------------------------------------
-  * Platform driver
-@@ -218,6 +246,10 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
 +
- 	ret = shmob_drm_init_interface(sdev);
- 	if (ret < 0)
- 		return ret;
-@@ -289,7 +321,7 @@ static struct platform_driver shmob_drm_platform_driver = {
- 	.remove_new	= shmob_drm_remove,
- 	.driver		= {
- 		.name	= "shmob-drm",
--		.pm	= pm_sleep_ptr(&shmob_drm_pm_ops),
-+		.pm	= &shmob_drm_pm_ops,
- 	},
+ static void shmob_drm_crtc_setup_geometry(struct shmob_drm_crtc *scrtc)
+ {
+ 	struct drm_crtc *crtc = &scrtc->crtc;
+ 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
+-	enum display_flags dpy_flags = sdev->connector.mode->flags;
++	const struct drm_display_info *info = &sdev->connector->display_info;
+ 	const struct drm_display_mode *mode = &crtc->mode;
++	unsigned int i;
+ 	u32 value;
+ 
+-	value = sdev->ldmt1r
+-	      | ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? 0 : LDMT1R_VPOL)
+-	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? 0 : LDMT1R_HPOL)
+-	      | ((dpy_flags & DISPLAY_FLAGS_PIXDATA_POSEDGE) ? LDMT1R_DWPOL : 0)
+-	      | ((dpy_flags & DISPLAY_FLAGS_DE_LOW) ? LDMT1R_DIPOL : 0);
++	if (!info->num_bus_formats || !info->bus_formats) {
++		dev_warn(sdev->dev, "No bus format reported, using RGB888\n");
++		value = LDMT1R_MIFTYP_RGB24;
++	} else {
++		for (i = 0; i < ARRAY_SIZE(shmob_drm_bus_fmts); i++) {
++			if (shmob_drm_bus_fmts[i].fmt == info->bus_formats[0])
++				break;
++		}
++		if (i < ARRAY_SIZE(shmob_drm_bus_fmts)) {
++			value = shmob_drm_bus_fmts[i].ldmt1r;
++		} else {
++			dev_warn(sdev->dev,
++				 "unsupported bus format 0x%x, using RGB888\n",
++				 info->bus_formats[0]);
++			value = LDMT1R_MIFTYP_RGB24;
++		}
++	}
+ 
++	if (info->bus_flags & DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE)
++		value |= LDMT1R_DWPOL;
++	if (info->bus_flags & DRM_BUS_FLAG_DE_LOW)
++		value |= LDMT1R_DIPOL;
++	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
++		value |= LDMT1R_VPOL;
++	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
++		value |= LDMT1R_HPOL;
+ 	lcdc_write(sdev, LDMT1R, value);
+ 
+ 	value = ((mode->hdisplay / 8) << 16)			/* HDCN */
+@@ -479,7 +515,7 @@ static bool shmob_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+ {
+ 	struct drm_device *dev = encoder->dev;
+ 	struct shmob_drm_device *sdev = to_shmob_device(dev);
+-	struct drm_connector *connector = &sdev->connector.connector;
++	struct drm_connector *connector = sdev->connector;
+ 	const struct drm_display_mode *panel_mode;
+ 
+ 	if (list_empty(&connector->modes)) {
+@@ -581,6 +617,8 @@ static void shmob_drm_connector_destroy(struct drm_connector *connector)
+ {
+ 	drm_connector_unregister(connector);
+ 	drm_connector_cleanup(connector);
++
++	kfree(connector);
+ }
+ 
+ static const struct drm_connector_funcs connector_funcs = {
+@@ -589,26 +627,74 @@ static const struct drm_connector_funcs connector_funcs = {
+ 	.destroy = shmob_drm_connector_destroy,
  };
  
+-int shmob_drm_connector_create(struct shmob_drm_device *sdev,
+-			       struct drm_encoder *encoder)
++static struct drm_connector *
++shmob_drm_connector_init(struct shmob_drm_device *sdev,
++			 struct drm_encoder *encoder)
+ {
+-	struct shmob_drm_connector *scon = &sdev->connector;
+-	struct drm_connector *connector = &scon->connector;
++	u32 bus_fmt = sdev->pdata->iface.bus_fmt;
++	struct shmob_drm_connector *scon;
++	struct drm_connector *connector;
++	struct drm_display_info *info;
++	unsigned int i;
+ 	int ret;
+ 
++	for (i = 0; i < ARRAY_SIZE(shmob_drm_bus_fmts); i++) {
++		if (shmob_drm_bus_fmts[i].fmt == bus_fmt)
++			break;
++	}
++	if (i == ARRAY_SIZE(shmob_drm_bus_fmts)) {
++		dev_err(sdev->dev, "unsupported bus format 0x%x\n", bus_fmt);
++		return ERR_PTR(-EINVAL);
++	}
++
++	scon = kzalloc(sizeof(*scon), GFP_KERNEL);
++	if (!scon)
++		return ERR_PTR(-ENOMEM);
++
++	connector = &scon->connector;
+ 	scon->encoder = encoder;
+ 	scon->mode = &sdev->pdata->panel.mode;
+ 
+-	connector->display_info.width_mm = sdev->pdata->panel.width_mm;
+-	connector->display_info.height_mm = sdev->pdata->panel.height_mm;
++	info = &connector->display_info;
++	info->width_mm = sdev->pdata->panel.width_mm;
++	info->height_mm = sdev->pdata->panel.height_mm;
++
++	if (scon->mode->flags & DISPLAY_FLAGS_PIXDATA_POSEDGE)
++		info->bus_flags |= DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE;
++	if (scon->mode->flags & DISPLAY_FLAGS_DE_LOW)
++		info->bus_flags |= DRM_BUS_FLAG_DE_LOW;
++
++	ret = drm_display_info_set_bus_formats(info, &bus_fmt, 1);
++	if (ret < 0) {
++		kfree(scon);
++		return ERR_PTR(ret);
++	}
+ 
+ 	ret = drm_connector_init(&sdev->ddev, connector, &connector_funcs,
+ 				 DRM_MODE_CONNECTOR_DPI);
+-	if (ret < 0)
+-		return ret;
++	if (ret < 0) {
++		kfree(scon);
++		return ERR_PTR(ret);
++	}
+ 
+ 	drm_connector_helper_add(connector, &connector_helper_funcs);
+ 
++	return connector;
++}
++
++int shmob_drm_connector_create(struct shmob_drm_device *sdev,
++			       struct drm_encoder *encoder)
++{
++	struct drm_connector *connector;
++	int ret;
++
++	connector = shmob_drm_connector_init(sdev, encoder);
++	if (IS_ERR(connector)) {
++		dev_err(sdev->dev, "failed to created connector: %pe\n",
++			connector);
++		return PTR_ERR(connector);
++	}
++
+ 	ret = drm_connector_attach_encoder(connector, encoder);
+ 	if (ret < 0)
+ 		goto error;
+@@ -617,6 +703,8 @@ int shmob_drm_connector_create(struct shmob_drm_device *sdev,
+ 	drm_object_property_set_value(&connector->base,
+ 		sdev->ddev.mode_config.dpms_property, DRM_MODE_DPMS_OFF);
+ 
++	sdev->connector = connector;
++
+ 	return 0;
+ 
+ error:
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+index db4d081fa3d90f43..a971c7bc1fd4b4be 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
+@@ -9,7 +9,6 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/io.h>
+-#include <linux/media-bus-format.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -33,35 +32,6 @@
+  * Hardware initialization
+  */
+ 
+-static int shmob_drm_init_interface(struct shmob_drm_device *sdev)
+-{
+-	static const struct {
+-		u32 fmt;
+-		u32 ldmt1r;
+-	} bus_fmts[] = {
+-		{ MEDIA_BUS_FMT_RGB888_3X8,	 LDMT1R_MIFTYP_RGB8 },
+-		{ MEDIA_BUS_FMT_RGB666_2X9_BE,	 LDMT1R_MIFTYP_RGB9 },
+-		{ MEDIA_BUS_FMT_RGB888_2X12_BE,	 LDMT1R_MIFTYP_RGB12A },
+-		{ MEDIA_BUS_FMT_RGB444_1X12,	 LDMT1R_MIFTYP_RGB12B },
+-		{ MEDIA_BUS_FMT_RGB565_1X16,	 LDMT1R_MIFTYP_RGB16 },
+-		{ MEDIA_BUS_FMT_RGB666_1X18,	 LDMT1R_MIFTYP_RGB18 },
+-		{ MEDIA_BUS_FMT_RGB888_1X24,	 LDMT1R_MIFTYP_RGB24 },
+-		{ MEDIA_BUS_FMT_UYVY8_1X16,	 LDMT1R_MIFTYP_YCBCR },
+-	};
+-	unsigned int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(bus_fmts); i++) {
+-		if (bus_fmts[i].fmt == sdev->pdata->iface.bus_fmt) {
+-			sdev->ldmt1r = bus_fmts[i].ldmt1r;
+-			return 0;
+-		}
+-	}
+-
+-	dev_err(sdev->dev, "unsupported bus format 0x%x\n",
+-		sdev->pdata->iface.bus_fmt);
+-	return -EINVAL;
+-}
+-
+ static int shmob_drm_setup_clocks(struct shmob_drm_device *sdev,
+ 				  enum shmob_drm_clk_source clksrc)
+ {
+@@ -246,10 +216,6 @@ static int shmob_drm_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = shmob_drm_init_interface(sdev);
+-	if (ret < 0)
+-		return ret;
+-
+ 	ret = shmob_drm_modeset_init(sdev);
+ 	if (ret < 0)
+ 		return dev_err_probe(&pdev->dev, ret,
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
+index 5e55ba7a207865bd..18907e5ace51c681 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
+@@ -27,7 +27,6 @@ struct shmob_drm_device {
+ 	void __iomem *mmio;
+ 	struct clk *clock;
+ 	u32 lddckr;
+-	u32 ldmt1r;
+ 
+ 	unsigned int irq;
+ 	spinlock_t irq_lock;		/* Protects hardware LDINTR register */
+@@ -36,7 +35,7 @@ struct shmob_drm_device {
+ 
+ 	struct shmob_drm_crtc crtc;
+ 	struct drm_encoder encoder;
+-	struct shmob_drm_connector connector;
++	struct drm_connector *connector;
+ };
+ 
+ static inline struct shmob_drm_device *to_shmob_device(struct drm_device *dev)
 -- 
 2.34.1
 
