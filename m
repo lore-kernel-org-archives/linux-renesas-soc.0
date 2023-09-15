@@ -2,35 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B40EE6447
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD49EEE644A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 08:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233592AbjIOIzN (ORCPT
+        id S233609AbjIOIzQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Sep 2023 04:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48650 "EHLO
+        Fri, 15 Sep 2023 04:55:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233427AbjIOIyr (ORCPT
+        with ESMTP id S233434AbjIOIyr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 15 Sep 2023 04:54:47 -0400
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [IPv6:2a02:1800:120:4::f00:10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 552ED271C
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE432D71
         for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 01:54:20 -0700 (PDT)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by cantor.telenet-ops.be (Postfix) with ESMTPS id 4Rn7KN5db3z4xHdW
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 10:54:16 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7135:da8b:ba1d:1a7c])
-        by albert.telenet-ops.be with bizsmtp
-        id m8uF2A00d3q21w7068uFYo; Fri, 15 Sep 2023 10:54:16 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id m8uE2A0053q21w7018uEgJ; Fri, 15 Sep 2023 10:54:19 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4aK-003lIS-8x;
-        Fri, 15 Sep 2023 10:54:15 +0200
+        id 1qh4aJ-003lFx-4D;
+        Fri, 15 Sep 2023 10:54:14 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4ad-00Gddk-9R;
-        Fri, 15 Sep 2023 10:54:15 +0200
+        id 1qh4ac-00Gdam-56;
+        Fri, 15 Sep 2023 10:54:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -41,10 +38,13 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v4 39/41] drm: renesas: shmobile: Remove internal CRTC state tracking
-Date:   Fri, 15 Sep 2023 10:53:54 +0200
-Message-Id: <905b9ca72f43d40438c8cb1199cde140eb123204.1694767209.git.geert+renesas@glider.be>
+        Rob Herring <robh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v4 02/41] dt-bindings: display: Add Renesas SH-Mobile LCDC bindings
+Date:   Fri, 15 Sep 2023 10:53:17 +0200
+Message-Id: <6d0a053502abd6555e9a6cbe055e1bdc3329999d.1694767208.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1694767208.git.geert+renesas@glider.be>
 References: <cover.1694767208.git.geert+renesas@glider.be>
@@ -54,160 +54,194 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Now the suspend/resume methods no longer need to look at internal driver
-state, the dpms and started fields in the shmob_drm_crtc structure can
-be removed, as well as the shmob_drm_crtc_dpms() wrapper.  After this,
-shmob_drm_crtc_atomic_{en,dis}able() became just wrappers around
-shmob_drm_crtc_st{art,op}(), so inline the latter.
+Add device tree bindings for the LCD Controller (LCDC) found in Renesas
+SuperH SH-Mobile and ARM SH/R-Mobile SOCs.
+
+Based on a plain text prototype by Laurent Pinchart.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+
 v4:
   - No changes,
 
 v3:
-  - No changes,
+  - Add Reviewed-by,
 
 v2:
-  - Add Reviewed-by,
-  - Inline shmob_drm_crtc_st{art,op}().
----
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 66 ++++---------------
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.h |  3 -
- 2 files changed, 11 insertions(+), 58 deletions(-)
+  - Add myself as co-maintainer,
+  - Make fck clock required,
+  - Drop ports description referring to obsolete graph.txt,
+  - Condition ports to compatible strings,
+  - Drop label and status from example.
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index a176cd3e494ed2fd..e4d176b1f47654a8 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -191,25 +191,21 @@ static void shmob_drm_crtc_start_stop(struct shmob_drm_crtc *scrtc, bool start)
- 	}
- }
- 
--/*
-- * shmob_drm_crtc_start - Configure and start the LCDC
-- * @scrtc: the SH Mobile CRTC
-- *
-- * Configure and start the LCDC device. External devices (clocks, MERAM, panels,
-- * ...) are not touched by this function.
-- */
--static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
-+static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
- {
--	struct drm_crtc *crtc = &scrtc->base;
-+	return container_of(crtc, struct shmob_drm_crtc, base);
-+}
+Changes compared to Laurent's original:
+  - Convert to json-schema,
+  - Rename compatible values from "renesas,lcdc-<SoC>" to
+    "renesas,<SoC>-lcdc",
+  - Add power-domains property,
+  - Add MIPI-DSI port on SH-Mobile AG5,
+  - Update example to reflect reality,
+  - Add to MAINTAINERS.
+---
+ .../display/renesas,shmobile-lcdc.yaml        | 130 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 2 files changed, 131 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/renesas,shmobile-lcdc.yaml
+
+diff --git a/Documentation/devicetree/bindings/display/renesas,shmobile-lcdc.yaml b/Documentation/devicetree/bindings/display/renesas,shmobile-lcdc.yaml
+new file mode 100644
+index 0000000000000000..9816c4cacc7d9a7f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/renesas,shmobile-lcdc.yaml
+@@ -0,0 +1,130 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/renesas,shmobile-lcdc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+static void shmob_drm_crtc_atomic_enable(struct drm_crtc *crtc,
-+					 struct drm_atomic_state *state)
-+{
-+	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
- 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
- 	const struct shmob_drm_interface_data *idata = &sdev->pdata->iface;
- 	struct device *dev = sdev->dev;
- 	u32 value;
- 	int ret;
++title: Renesas SH-Mobile LCD Controller (LCDC)
++
++maintainers:
++  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
++  - Geert Uytterhoeven <geert+renesas@glider.be>
++
++properties:
++  compatible:
++    enum:
++      - renesas,r8a7740-lcdc # R-Mobile A1
++      - renesas,sh73a0-lcdc  # SH-Mobile AG5
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 5
++    description:
++      Only the functional clock is mandatory.
++      Some of the optional clocks are model-dependent (e.g. "video" (a.k.a.
++      "vou" or "dv_clk") is available on R-Mobile A1 only).
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: fck
++      - enum: [ media, lclk, hdmi, video ]
++      - enum: [ media, lclk, hdmi, video ]
++      - enum: [ media, lclk, hdmi, video ]
++      - enum: [ media, lclk, hdmi, video ]
++
++  power-domains:
++    maxItems: 1
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/properties/port
++        description: LCD port (R-Mobile A1 and SH-Mobile AG5)
++        unevaluatedProperties: false
++
++      port@1:
++        $ref: /schemas/graph.yaml#/properties/port
++        description: HDMI port (R-Mobile A1 LCDC1 and SH-Mobile AG5)
++        unevaluatedProperties: false
++
++      port@2:
++        $ref: /schemas/graph.yaml#/properties/port
++        description: MIPI-DSI port (SH-Mobile AG5)
++        unevaluatedProperties: false
++
++    required:
++      - port@0
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - power-domains
++  - ports
++
++additionalProperties: false
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r8a7740-lcdc
++    then:
++      properties:
++        ports:
++          properties:
++            port@2: false
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,sh73a0-lcdc
++    then:
++      properties:
++        ports:
++          required:
++            - port@1
++            - port@2
++
++examples:
++  - |
++    #include <dt-bindings/clock/r8a7740-clock.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    lcd-controller@fe940000 {
++        compatible = "renesas,r8a7740-lcdc";
++        reg = <0xfe940000 0x4000>;
++        interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&mstp1_clks R8A7740_CLK_LCDC0>,
++                 <&cpg_clocks R8A7740_CLK_M3>, <&lcdlclk0_clk>,
++                 <&vou_clk>;
++        clock-names = "fck", "media", "lclk", "video";
++        power-domains = <&pd_a4lc>;
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            port@0 {
++                reg = <0>;
++
++                lcdc0_rgb: endpoint {
++                };
++            };
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 70535048b6a96d55..c6d4ea533fbc179a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7034,6 +7034,7 @@ M:	Geert Uytterhoeven <geert+renesas@glider.be>
+ L:	dri-devel@lists.freedesktop.org
+ L:	linux-renesas-soc@vger.kernel.org
+ S:	Supported
++F:	Documentation/devicetree/bindings/display/renesas,shmobile-lcdc.yaml
+ F:	drivers/gpu/drm/renesas/shmobile/
+ F:	include/linux/platform_data/shmob_drm.h
  
--	if (scrtc->started)
--		return;
--
- 	ret = pm_runtime_resume_and_get(dev);
- 	if (ret)
- 		return;
-@@ -256,18 +252,14 @@ static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
- 
- 	/* Turn vertical blank interrupt reporting back on. */
- 	drm_crtc_vblank_on(crtc);
--
--	scrtc->started = true;
- }
- 
--static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
-+static void shmob_drm_crtc_atomic_disable(struct drm_crtc *crtc,
-+					  struct drm_atomic_state *state)
- {
--	struct drm_crtc *crtc = &scrtc->base;
-+	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
- 	struct shmob_drm_device *sdev = to_shmob_device(crtc->dev);
- 
--	if (!scrtc->started)
--		return;
--
- 	/*
- 	 * Disable vertical blank interrupt reporting.  We first need to wait
- 	 * for page flip completion before stopping the CRTC as userspace
-@@ -283,28 +275,6 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- 	lcdc_write(sdev, LDCNT1R, 0);
- 
- 	pm_runtime_put(sdev->dev);
--
--	scrtc->started = false;
--}
--
--static inline struct shmob_drm_crtc *to_shmob_crtc(struct drm_crtc *crtc)
--{
--	return container_of(crtc, struct shmob_drm_crtc, base);
--}
--
--static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
--{
--	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
--
--	if (scrtc->dpms == mode)
--		return;
--
--	if (mode == DRM_MODE_DPMS_ON)
--		shmob_drm_crtc_start(scrtc);
--	else
--		shmob_drm_crtc_stop(scrtc);
--
--	scrtc->dpms = mode;
- }
- 
- static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
-@@ -323,18 +293,6 @@ static void shmob_drm_crtc_atomic_flush(struct drm_crtc *crtc,
- 	}
- }
- 
--static void shmob_drm_crtc_atomic_enable(struct drm_crtc *crtc,
--					 struct drm_atomic_state *state)
--{
--	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
--}
--
--static void shmob_drm_crtc_atomic_disable(struct drm_crtc *crtc,
--					  struct drm_atomic_state *state)
--{
--	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
--}
--
- static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
- 	.atomic_flush = shmob_drm_crtc_atomic_flush,
- 	.atomic_enable = shmob_drm_crtc_atomic_enable,
-@@ -424,8 +382,6 @@ int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
- 
- 	init_waitqueue_head(&sdev->crtc.flip_wait);
- 
--	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
--
- 	primary = shmob_drm_plane_create(sdev, DRM_PLANE_TYPE_PRIMARY, 0);
- 	if (IS_ERR(primary))
- 		return PTR_ERR(primary);
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-index 37380c815f1f5a08..89a0746f9a35807d 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-@@ -27,9 +27,6 @@ struct shmob_drm_crtc {
- 
- 	struct drm_pending_vblank_event *event;
- 	wait_queue_head_t flip_wait;
--	int dpms;
--
--	bool started;
- };
- 
- struct shmob_drm_connector {
 -- 
 2.34.1
 
