@@ -2,71 +2,129 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA9BEE644A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 09:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A40EE6447
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Sep 2023 09:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232435AbjIOJDJ (ORCPT
+        id S233269AbjIOJGa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Sep 2023 05:03:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35082 "EHLO
+        Fri, 15 Sep 2023 05:06:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233183AbjIOJDJ (ORCPT
+        with ESMTP id S232633AbjIOJG2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2023 05:03:09 -0400
+        Fri, 15 Sep 2023 05:06:28 -0400
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [IPv6:2a02:1800:110:4::f00:11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEC0049DC
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 02:04:52 -0700 (PDT)
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4463746B3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 02:01:12 -0700 (PDT)
+        by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4Rn7YZ2hCnz4wyV2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2023 11:04:50 +0200 (CEST)
 Received: from ramsan.of.borg ([84.195.187.55])
         by andre.telenet-ops.be with bizsmtp
-        id m8y72A00F1C8whw018y7SS; Fri, 15 Sep 2023 10:58:07 +0200
+        id m94q2A0031C8whw0194qoL; Fri, 15 Sep 2023 11:04:50 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4e4-003lJJ-5b;
-        Fri, 15 Sep 2023 10:58:07 +0200
+        id 1qh4kZ-003lJe-1R;
+        Fri, 15 Sep 2023 11:04:50 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qh4eN-00GdiB-4j;
-        Fri, 15 Sep 2023 10:58:07 +0200
+        id 1qh4ks-00Gdl4-2C;
+        Fri, 15 Sep 2023 11:04:50 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Palmer Dabbelt <palmer@rivosinc.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] soc: renesas: Kconfig: Remove blank line before ARCH_R9A07G043 help text
-Date:   Fri, 15 Sep 2023 10:58:05 +0200
-Message-Id: <2a3a9d595579b7cea416c12bf9abcfa2227243bb.1694768174.git.geert+renesas@glider.be>
+Subject: [PATCH/RFT 1/2] pinctrl: renesas: r8a7778: Add LBSC pins, groups, and functions
+Date:   Fri, 15 Sep 2023 11:04:45 +0200
+Message-Id: <347b9f7627871b45aec04a3351d50219d4d260fe.1694768311.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1694768311.git.geert+renesas@glider.be>
+References: <cover.1694768311.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There should not be a blank line before the "help" keyword in the
-ARCH_R9A07G043 configuration section.
+Add pins, groups, and functions for the Local Bus State Controller
+(LBSC) on the Renesas R-Car M1A (R8A7778) SoC.
 
-Fixes: c6a906cce61a8015 ("soc: renesas: Kconfig: For ARCH_R9A07G043 select the required configs if dependencies are met")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To be queued in renesas-devel for v6.7.
+ drivers/pinctrl/renesas/pfc-r8a7778.c | 38 +++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
- drivers/soc/renesas/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index bb1bb004b6a44b01..dd3f074d7b09b9bb 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -343,7 +343,6 @@ config ARCH_R9A07G043
- 	select DMA_GLOBAL_POOL
- 	select ERRATA_ANDES if RISCV_SBI
- 	select ERRATA_ANDES_CMO if ERRATA_ANDES
--
- 	help
- 	  This enables support for the Renesas RZ/Five SoC.
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7778.c b/drivers/pinctrl/renesas/pfc-r8a7778.c
+index c52761d80f7bed16..db92d6d91d8ee943 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7778.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7778.c
+@@ -1424,6 +1424,24 @@ I2C_PFC_MUX(i2c3_b,	SDA3_B,			SCL3_B);
+ I2C_PFC_PIN(i2c3_c,	RCAR_GP_PIN(1, 22),	RCAR_GP_PIN(1, 23));
+ I2C_PFC_MUX(i2c3_c,	SDA3_C,			SCL3_C);
  
++/* - LBSC ------------------------------------------------------------------- */
++SH_PFC_PINS(lbsc_cs0,		PIN_CS0);
++SH_PFC_MUX1(lbsc_cs0,		CS0);
++SH_PFC_PINS(lbsc_cs1,		PIN_CS1_A26);
++SH_PFC_MUX1(lbsc_cs1,		CS1_A26);
++SH_PFC_PINS(lbsc_ex_cs0,	RCAR_GP_PIN(1, 3));
++SH_PFC_MUX1(lbsc_ex_cs0,	EX_CS0);
++SH_PFC_PINS(lbsc_ex_cs1,	RCAR_GP_PIN(1, 4));
++SH_PFC_MUX1(lbsc_ex_cs1,	EX_CS1);
++SH_PFC_PINS(lbsc_ex_cs2,	RCAR_GP_PIN(1, 5));
++SH_PFC_MUX1(lbsc_ex_cs2,	EX_CS2);
++SH_PFC_PINS(lbsc_ex_cs3,	RCAR_GP_PIN(1, 6));
++SH_PFC_MUX1(lbsc_ex_cs3,	EX_CS3);
++SH_PFC_PINS(lbsc_ex_cs4,	RCAR_GP_PIN(1, 7));
++SH_PFC_MUX1(lbsc_ex_cs4,	EX_CS4);
++SH_PFC_PINS(lbsc_ex_cs5,	RCAR_GP_PIN(1, 8));
++SH_PFC_MUX1(lbsc_ex_cs5,	EX_CS5);
++
+ /* - MMC macro -------------------------------------------------------------- */
+ #define MMC_PFC_PINS(name, args...)		SH_PFC_PINS(name, args)
+ #define MMC_PFC_CTRL(name, clk, cmd)		SH_PFC_MUX2(name, clk, cmd)
+@@ -1724,6 +1742,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(i2c3_a),
+ 	SH_PFC_PIN_GROUP(i2c3_b),
+ 	SH_PFC_PIN_GROUP(i2c3_c),
++	SH_PFC_PIN_GROUP(lbsc_cs0),
++	SH_PFC_PIN_GROUP(lbsc_cs1),
++	SH_PFC_PIN_GROUP(lbsc_ex_cs0),
++	SH_PFC_PIN_GROUP(lbsc_ex_cs1),
++	SH_PFC_PIN_GROUP(lbsc_ex_cs2),
++	SH_PFC_PIN_GROUP(lbsc_ex_cs3),
++	SH_PFC_PIN_GROUP(lbsc_ex_cs4),
++	SH_PFC_PIN_GROUP(lbsc_ex_cs5),
+ 	SH_PFC_PIN_GROUP(mmc_ctrl),
+ 	BUS_DATA_PIN_GROUP(mmc_data, 1),
+ 	BUS_DATA_PIN_GROUP(mmc_data, 4),
+@@ -1897,6 +1923,17 @@ static const char * const i2c3_groups[] = {
+ 	"i2c3_c",
+ };
+ 
++static const char * const lbsc_groups[] = {
++	"lbsc_cs0",
++	"lbsc_cs1",
++	"lbsc_ex_cs0",
++	"lbsc_ex_cs1",
++	"lbsc_ex_cs2",
++	"lbsc_ex_cs3",
++	"lbsc_ex_cs4",
++	"lbsc_ex_cs5",
++};
++
+ static const char * const mmc_groups[] = {
+ 	"mmc_ctrl",
+ 	"mmc_data1",
+@@ -2049,6 +2086,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(i2c1),
+ 	SH_PFC_FUNCTION(i2c2),
+ 	SH_PFC_FUNCTION(i2c3),
++	SH_PFC_FUNCTION(lbsc),
+ 	SH_PFC_FUNCTION(mmc),
+ 	SH_PFC_FUNCTION(scif_clk),
+ 	SH_PFC_FUNCTION(scif0),
 -- 
 2.34.1
 
