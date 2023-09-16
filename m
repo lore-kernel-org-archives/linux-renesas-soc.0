@@ -2,33 +2,34 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E349CD37B7
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Sep 2023 11:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE75CD37B7
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Sep 2023 11:10:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234989AbjIPLJz (ORCPT
+        id S239069AbjIPLK2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 16 Sep 2023 07:09:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42988 "EHLO
+        Sat, 16 Sep 2023 07:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239051AbjIPLJi (ORCPT
+        with ESMTP id S239240AbjIPLKT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Sep 2023 07:09:38 -0400
+        Sat, 16 Sep 2023 07:10:19 -0400
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E604919A;
-        Sat, 16 Sep 2023 04:09:31 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 563A6240002;
-        Sat, 16 Sep 2023 11:09:07 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72B381B0;
+        Sat, 16 Sep 2023 04:10:10 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C6EE8240004;
+        Sat, 16 Sep 2023 11:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-        t=1694862570;
+        t=1694862609;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=CLnt81HC2PDi8+eg097J5b0q3LjbSM2hFWX7ICGCp5g=;
-        b=SivAsr92jUS2r0D2NuCC/Bjn/qkCXjinijlFQKJE8l4HdVRs2nX5x9qJC/rV/xc5w1WPyo
-        LSAm0IcgnIiv/+lpVRPws2MMxkAtbwAcvYX7sL1pKBJMHExKnLRYmMXwDjwhOXY6hxbpHQ
-        DjJ/V+d5/Dv29SXYRMJHsBOklcA2MVm8LHIQ8YC2GRAo9tcHoWSFVTKc9tP0fuIevUbwWH
-        QNgAw5TIo+pETaj4Y9aa6UJBCf2xDfZTpNeCMp6TuU7etbvdZPGsKdcZDSX2ynFbjuLim0
-        i63MG9ODlAa6pGVyT8kJELfj03IJuqB/2aO1Hrb9yvU8a+hEndME6rWnKUcHBw==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bCVsSCUqr94fHC72W488TJM9Q7uBl3U9XOpO5b6zFkI=;
+        b=HFsOWmhU1AcmLExDDgGw+IVR7jUbH2dKOYbsQSzyL2/Y3HtO7H7t2hWrEwTraBnNLF4Hmd
+        2wzXQfuG7cx4+RvoIVZhkyP+aeXXfN7BObZ+w6LTHTSTFxSbHSrbKHPzWN5tPE8TM2pjZ2
+        5B1Hm1Ud+TRTYf16+hrsWr7H2DJn0AUeMfLqf8nGWVsGuak+TQeE12kxIcBCofOtG3lBti
+        fEZjgT02/ye1we3qf17VcgXSc2jHSC9TwLnI0cn4RK4BOmqFNUc7rEX0NyZZs6D3LzKXNa
+        ex0TJsVceQFcxXb2dkoH1PrA/YI1y1xZ8Erzqp1WhvnGaQJCYh4uJ4UdoYU42Q==
 From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
@@ -82,17 +83,21 @@ To:     "David S. Miller" <davem@davemloft.net>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Sekhar Nori <nsekhar@ti.com>,
         Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Cc:     Woojung Huh <Woojung.Huh@microchip.com>,
+Cc:     Florian Fainelli <florian.fainelli@broadcom.com>,
+        Rob Herring <robh@kernel.org>,
+        Woojung Huh <Woojung.Huh@microchip.com>,
         Steen Hegelund <steen.hegelund@microchip.com>,
         mithat.guner@xeront.com, erkin.bozoglu@xeront.com,
         netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v2 00/10] define and enforce phylink bindings
-Date:   Sat, 16 Sep 2023 14:08:52 +0300
-Message-Id: <20230916110902.234273-1-arinc.unal@arinc9.com>
+Subject: [PATCH net-next v2 02/10] dt-bindings: net: dsa: microchip,lan937x: add missing ethernet on example
+Date:   Sat, 16 Sep 2023 14:08:54 +0300
+Message-Id: <20230916110902.234273-3-arinc.unal@arinc9.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230916110902.234273-1-arinc.unal@arinc9.com>
+References: <20230916110902.234273-1-arinc.unal@arinc9.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -101,26 +106,51 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello there.
+The port@5 node on the example is supposed to be used as a CPU port. Add
+the missing ethernet property and remove the label property. Remove the MAC
+bindings on the example as they cannot be validated.
 
-This patch series defines phylink bindings and enforces them for the
-ethernet controllers that need them.
+Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/net/dsa/microchip,lan937x.yaml          | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-Some schemas had to be changed to properly enforce phylink bindings for all
-of the affected ethernet controllers. Some of the documents of these
-ethernet controllers were non json-schema, which had to be converted.
-
-I will convert the remaining documents to json-schema while this patch
-series receives reviews.
-
-Cheers.
-Arınç
-
-v2:
-After many discussions on v1, the concept of the patch series changed a lot
-to document the changes from v1.
-
-Link to v1:
-https://lore.kernel.org/netdev/20230812091708.34665-1-arinc.unal@arinc9.com/
-
+diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
+index 8d7e878b84dc..d187034fb31a 100644
+--- a/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
+@@ -68,16 +68,6 @@ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+ 
+-    macb0 {
+-            #address-cells = <1>;
+-            #size-cells = <0>;
+-
+-            fixed-link {
+-                    speed = <1000>;
+-                    full-duplex;
+-            };
+-    };
+-
+     spi {
+             #address-cells = <1>;
+             #size-cells = <0>;
+@@ -134,10 +124,10 @@ examples:
+ 
+                             port@5 {
+                                     reg = <5>;
+-                                    label = "lan7";
+                                     phy-mode = "rgmii";
+                                     tx-internal-delay-ps = <2000>;
+                                     rx-internal-delay-ps = <2000>;
++                                    ethernet = <&macb1>;
+ 
+                                     fixed-link {
+                                             speed = <1000>;
+-- 
+2.39.2
 
