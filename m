@@ -2,129 +2,98 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 267ABCD37B7
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Sep 2023 11:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6126BC46CA1
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Sep 2023 11:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238089AbjIPLOn (ORCPT
+        id S238907AbjIPLl5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 16 Sep 2023 07:14:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56158 "EHLO
+        Sat, 16 Sep 2023 07:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239181AbjIPLON (ORCPT
+        with ESMTP id S238581AbjIPLl2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Sep 2023 07:14:13 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783D1CE9;
-        Sat, 16 Sep 2023 04:13:46 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A4B67240004;
-        Sat, 16 Sep 2023 11:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-        t=1694862825;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PDRE70R3lGz5ezhDBmTyzAtvLuORLg4w0dd0nsfORgc=;
-        b=Neaf6SAGL7XVuZ5i4UaYHEGAe9v3D5Al2VGQf2Q38vACYLlG1sm2cRx5W3Rh0XMh8REHma
-        f/frjptNDm5AijdY9O1S8i7IlT99bnn2y1dKH0Wt13Dj81J/6uZqd2NDYmNQsKSgOHb4b+
-        i1JN+vAayRvuB1vRJamwKLfUB6BYDx9XKvggqxhWFn7pfTbJ2F6uo+nlJp7F8Wz3zhtOO+
-        3lS8G3atb6Th+AoBgRcGre1ZtuupEFaTQhQtlA9FcXFugFt3jfG99ujrthbkPmKNtlGhxj
-        OE7Zr6czr5evQ71Q84QOEXsNBGF242x4vaBtV24ikCLdenRtlq2zDfmjndAy6Q==
-From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        George McCollister <george.mccollister@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?q?Alvin=20=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-        =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-        =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Marek Vasut <marex@denx.de>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Crispin <john@phrozen.org>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Felix Fietkau <nbd@nbd.name>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Cc:     Woojung Huh <Woojung.Huh@microchip.com>,
-        Steen Hegelund <steen.hegelund@microchip.com>,
-        mithat.guner@xeront.com, erkin.bozoglu@xeront.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v2 09/10] MAINTAINERS: update MARVELL 88E6XXX ETHERNET SWITCH document file name
-Date:   Sat, 16 Sep 2023 14:09:01 +0300
-Message-Id: <20230916110902.234273-10-arinc.unal@arinc9.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230916110902.234273-1-arinc.unal@arinc9.com>
-References: <20230916110902.234273-1-arinc.unal@arinc9.com>
+        Sat, 16 Sep 2023 07:41:28 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85FBFCCD
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 16 Sep 2023 04:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=date:from:to:cc:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=k1; bh=rV3M
+        QAfEUvaD3vTox7p3VRNL07FnlYNAnCdJs33T7MY=; b=dcMlp5EX5pyzz5BopNyp
+        Ki9jl6lG2mp83bX7e2aPUT5syV6blf52C8T2LNkswqdcveAT3lAJZhvXItdccVrl
+        UZDlJJbmW5z2zJ3Y4RD+hhLAqwBrTlLKe/HHiLFWHaUnsoFD1M3vgd68Zij/gXPn
+        6IBlExn4fniM6X0DkWnwKxzXXRfQdJnw1V22DWfMlUOUHGNLnO7vsqD7brDNMNQZ
+        WwJnoRHRa2LNcmr14Y7z9Yc4jF77naS1Iz88uCcSk9LHouBBih/4QNrAIiE3VGYu
+        QSVR/GixCd/NqdBlo2jeNuvBFo6sv9yPZcq9ge6+e/0Z1tEryGSwCKNO4xEemaw0
+        8Q==
+Received: (qmail 1629540 invoked from network); 16 Sep 2023 13:41:16 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Sep 2023 13:41:16 +0200
+X-UD-Smtp-Session: l3s3148p1@JXgLY3gFXyYuciVa
+Date:   Sat, 16 Sep 2023 13:41:15 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 0/2] i2c: rcar: add support for Gen4 devices
+Message-ID: <ZQWUWwi7pR7/negW@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+References: <20230913203242.31505-1-wsa+renesas@sang-engineering.com>
+ <TYBPR01MB5341A56291AFCB54E4918167D8F7A@TYBPR01MB5341.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="w7ODO1pQBBvDsUPV"
+Content-Disposition: inline
+In-Reply-To: <TYBPR01MB5341A56291AFCB54E4918167D8F7A@TYBPR01MB5341.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The dt-bindings document was converted to json-schema. Update the file
-name.
 
-Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--w7ODO1pQBBvDsUPV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 612d6d1dbf36..5d4e6b578c04 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12564,7 +12564,7 @@ MARVELL 88E6XXX ETHERNET SWITCH FABRIC DRIVER
- M:	Andrew Lunn <andrew@lunn.ch>
- L:	netdev@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/net/dsa/marvell.txt
-+F:	Documentation/devicetree/bindings/net/dsa/marvell.yaml
- F:	Documentation/networking/devlink/mv88e6xxx.rst
- F:	drivers/net/dsa/mv88e6xxx/
- F:	include/linux/dsa/mv88e6xxx.h
--- 
-2.39.2
+Hi Shimoda-san,
 
+I had a look now with Kieran's Spider and could reproduce your findings.
+It is not a problem, though, because the system behaves the same with
+plain v6.6-rc1. The only difference with my branch is that DEBUG is
+enabled for the I2C driver, so we see all the messages regarding
+EPROBE_DEFER with DMA. If you add DEBUG to plain v6.6-rc1, then you see
+the same messages. But still, the busses get probed and they also get
+DMA channels after some time when the DMA driver is finally loaded. So,
+this really has nothing to do with the patches themselves, only with the
+additions for debugging. Phew!
+
+Thank you for reporting and testing, still!
+
+   Wolfram
+
+
+--w7ODO1pQBBvDsUPV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmUFlFQACgkQFA3kzBSg
+KbaryQ//TNv5sPXPBuqcTYF0NYlB1kBySuo/YIsEoakO5k+6yYg8H5zG7eFsuj5f
+0NoWzVfzV1eDYnHRl1H0QPhhxHYghl68LRPy/0OFvG0+mPvuqrMjczA2fD8S/uAX
+AkIcyTstRrLDb9iYgy4ZB+fR1Byz0UnDvnzk8cDVy97moyu2tU5vn23qLi6b8l+M
+0G4u3L+13q2SgbwwCZCkWlaqrTCa9vbztUjnQD3k9HS3RZYQltwgLktusrcAXqRL
+409KDk5CxCvIBDbEGmxPxfx8C5NUlNBabDWDz8JXhiNnAAsjhPfACWOXo6xYdEgD
+7i+E1XYszGKU7VZw2DUY2bncUqMpIkmQMdcVByZpB/Sffxl1+HvHfBaELxXeb/rN
+XqTEsr/ptK3aCBZApQUUFUGTu2flUGmLEpnyrlar8oQ6+KzVhJ6AY03kEJg+ab7Y
+wqggs270XUFTv9t8zVInqAm2ouYiHXDLDp+/uvZVrsLBCO887aKmvT4kfl3n14hd
+RlqiZwwmHJELZGjSuHCwMhdYf3QA62Ur2KlDgMw40tkhL+UPxWKGpLJrGGkZK22U
+Sl2nEkpB1WykXK5zSo+W4a9PVqYQOwMaAk8rktl4SJbtBV8xivxoGonI7eKSr1/R
+sg+r6tIYTD/G9D0WQM2JyYK4A/ip5rQ4fx5UpV4w9kOGBD+lObs=
+=KHK6
+-----END PGP SIGNATURE-----
+
+--w7ODO1pQBBvDsUPV--
