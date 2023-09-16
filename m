@@ -2,34 +2,34 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25492CD37BB
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Sep 2023 11:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 501E6CD37BB
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Sep 2023 11:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239270AbjIPLOL (ORCPT
+        id S239169AbjIPLOo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 16 Sep 2023 07:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
+        Sat, 16 Sep 2023 07:14:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234283AbjIPLNk (ORCPT
+        with ESMTP id S239219AbjIPLOR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Sep 2023 07:13:40 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45320E4E;
-        Sat, 16 Sep 2023 04:13:08 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 51BF6240003;
-        Sat, 16 Sep 2023 11:12:40 +0000 (UTC)
+        Sat, 16 Sep 2023 07:14:17 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12A031BD;
+        Sat, 16 Sep 2023 04:14:04 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 89478240005;
+        Sat, 16 Sep 2023 11:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-        t=1694862786;
+        t=1694862843;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=xhIrExaH+Pxga2qgOi/puibscZ/eAZoI/ny/hgH81io=;
-        b=jQd0Gg737dggiZcbuwSo9+ScBsaoWp0hSmSQV+Uw4DHZL9+nAfv+His6tE/s4jcaPECdfS
-        3PGuHtcD6ZBST3GP+GcXpao4T+19AD3mR7a0iFPctDerOEbID43OqogHDjknexA5ZJOMTR
-        3jQreJPImNKLVLB66K/k1GeC6ELcVz0NXoe6iqaEVmyCFzqMiKcrxkYwbQTNGoIiWJ8S2i
-        yKMaMRd2GDcKecgNAeNhq+uSnl0ewa5HnqlZUOUerSkE/fUtuZtuSqfhDSNnZLYA1l01DN
-        p3PY5iRyOgyQh/9bP1g7+HlEF4DT8I/684zeGZ1QKOS/0rQtEvPXZazEW85C9w==
+        bh=HAZCgeoh9KUduxxc51sEyaD/Ww3GnyAUx/PFLTVQyPc=;
+        b=hKK2Wuk79GoaUo/hY/fuO5GNEsYpXvHQTmZHzkmUu1psjYgV5XTyUjTmWeR3yNV65L4Ghz
+        kQB0p3rthYgY0/1iJ1iTHdBtt3XqWLfmGTwb2cQTywTU4YqVAi5uQYhbNk7NK/b0s7wch5
+        o3R6bt5DMAyUXaAkMcviVr7aHL8KquFNdxeplIiYsZKYMMVXrxtHkocr3elHkU4mPcuJqK
+        21vBYwU+gVEk/OLBULj3WcOF61OeP3y7yC+8z+plp1vHHwnnZbaTiVNcvxSGNrMqFtf+FM
+        p6uiuukzlQvtFjbmaBTjXA7kM9QiyQdGrD7nVsUCHlmLE9UgQKwalLOkDla9Pw==
 From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
@@ -90,9 +90,9 @@ Cc:     Woojung Huh <Woojung.Huh@microchip.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v2 07/10] dt-bindings: net: enforce phylink bindings on certain ethernet controllers
-Date:   Sat, 16 Sep 2023 14:08:59 +0300
-Message-Id: <20230916110902.234273-8-arinc.unal@arinc9.com>
+Subject: [PATCH net-next v2 10/10] dt-bindings: net: marvell-armada-370-neta: convert to json-schema
+Date:   Sat, 16 Sep 2023 14:09:02 +0300
+Message-Id: <20230916110902.234273-11-arinc.unal@arinc9.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230916110902.234273-1-arinc.unal@arinc9.com>
 References: <20230916110902.234273-1-arinc.unal@arinc9.com>
@@ -104,605 +104,181 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Phylink bindings are required for ethernet controllers that utilise
-phylink_fwnode_phy_connect() directly or through phylink_of_phy_connect(),
-and register OF-based only MDIO buses, if they register any.
-
-All the drivers that utilise phylink_fwnode_phy_connect() directly or
-through phylink_of_phy_connect():
-
-- DSA
-- drivers/net/ethernet/mscc/ocelot_net.c
-  - mscc,vsc7514-switch.yaml
-- drivers/net/ethernet/microchip/sparx5/sparx5_netdev.c
-  - microchip,sparx5-switch.yaml
-- drivers/net/ethernet/altera/altera_tse_main.c
-  - altr,tse.yaml
-- drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-  - xlnx,axi-ethernet.yaml
-- drivers/net/ethernet/mediatek/mtk_eth_soc.c
-  - mediatek,net.yaml
-- drivers/net/ethernet/ti/am65-cpsw-nuss.c
-  - ti,k3-am654-cpsw-nuss.yaml
-- drivers/net/ethernet/atheros/ag71xx.c
-  - qca,ar71xx.yaml
-- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-  - fsl,fman-dtsec.yaml
-- drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-  - microchip,lan966x-switch.yaml
-- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-  - marvell,pp2.yaml
-- drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.c
-  - fsl,qoriq-mc-dpmac.yaml
-- drivers/net/ethernet/cadence/macb_main.c
-  - cdns,macb.yaml
-  - Can register non-OF-based bus.
-- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-  - snps,dwmac.yaml
-  - Can register non-OF-based bus.
-- drivers/net/ethernet/marvell/mvneta.c
-  - marvell-armada-370-neta.txt
-- drivers/net/ethernet/freescale/enetc/enetc.c
-  - fsl-enetc.txt
-
-RFC: The drivers marked with "can register non-OF-based bus" seem to search
-the MDIO bus to connect the PHY to the MAC using phylink_connect_phy()
-and/or phy_find_first() if phylink bindings don't exist. Should we enforce
-phylink bindings on their schemas regardless?
-
-DSA, like any other driver utilising the Linux MDIO infrastructure,
-can register a bus. On certain conditions, it registers the MDIO
-bus of the switch it controls non-OF-based.
-
-We can know when DSA won't create any non-OF-based buses. That leaves us
-with only OF-based buses in which case we can enforce phylink bindings for
-user ports. The bindings are already enforced for shared ports so we can
-enforce the bindings for all ports on the switch schemas which will achieve
-the same result with fewer lines.
-
-By looking at whether the mdio child node exists and what is explained on
-it, we can enforce phylink bindings.
-
-- mscc,vsc7514-switch.yaml
-  - Enforce phylink bindings for all ports.
-
-- arrow,xrs700x.yaml
-  - Enforce phylink bindings for all ports.
-
-- brcm,b53.yaml
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-- brcm,sf2.yaml
-  - Enforce phylink bindings for all ports.
-
-- hirschmann,hellcreek.yaml
-  - Enforce phylink bindings for all ports.
-
-- mediatek,mt7530.yaml
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-- microchip,ksz.yaml
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-- microchip,lan937x.yaml
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-- mscc,ocelot.yaml
-  - Enforce phylink bindings for all ports.
-
-- nxp,sja1105.yaml
-  - Enforce phylink bindings for all ports.
-
-- qca8k.yaml
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-- realtek.yaml
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-- renesas,rzn1-a5psw.yaml
-  - Enforce phylink bindings for all ports.
-
-- ar9331.txt
-  - Enforce phylink bindings for all ports.
-
-- lan9303.txt
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-- lantiq-gswip.txt
-  - Enforce phylink bindings for all ports.
-
-- marvell.txt
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-- vitesse,vsc73xx.txt
-  - Enforce phylink bindings for all ports if "mdio" is defined.
-
-I will convert the non json-schema documents accordingly.
+Convert the document for Marvell Armada 370 / Armada XP / Armada 3700
+Ethernet Controller (NETA) to json-schema.
 
 Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 ---
- .../devicetree/bindings/net/altr,tse.yaml     |  1 +
- .../devicetree/bindings/net/cdns,macb.yaml    |  1 +
- .../bindings/net/dsa/arrow,xrs700x.yaml       |  6 ++
- .../devicetree/bindings/net/dsa/brcm,b53.yaml |  9 +++
- .../devicetree/bindings/net/dsa/brcm,sf2.yaml |  6 +-
- .../net/dsa/hirschmann,hellcreek.yaml         |  6 ++
- .../bindings/net/dsa/mediatek,mt7530.yaml     |  9 +++
- .../bindings/net/dsa/microchip,ksz.yaml       |  9 +++
- .../bindings/net/dsa/microchip,lan937x.yaml   |  9 +++
- .../bindings/net/dsa/mscc,ocelot.yaml         |  6 ++
- .../bindings/net/dsa/nxp,sja1105.yaml         |  1 +
- .../devicetree/bindings/net/dsa/qca8k.yaml    |  9 +++
- .../devicetree/bindings/net/dsa/realtek.yaml  | 57 +++++++++++--------
- .../bindings/net/dsa/renesas,rzn1-a5psw.yaml  |  2 +-
- .../bindings/net/fsl,fman-dtsec.yaml          |  1 +
- .../bindings/net/fsl,qoriq-mc-dpmac.yaml      |  1 +
- .../devicetree/bindings/net/marvell,pp2.yaml  |  4 +-
- .../devicetree/bindings/net/mediatek,net.yaml |  1 +
- .../net/microchip,lan966x-switch.yaml         |  4 +-
- .../bindings/net/microchip,sparx5-switch.yaml |  5 +-
- .../bindings/net/mscc,vsc7514-switch.yaml     |  5 ++
- .../devicetree/bindings/net/qca,ar71xx.yaml   |  1 +
- .../devicetree/bindings/net/snps,dwmac.yaml   |  1 +
- .../bindings/net/ti,k3-am654-cpsw-nuss.yaml   |  4 +-
- .../bindings/net/xlnx,axi-ethernet.yaml       |  3 +-
- 25 files changed, 130 insertions(+), 31 deletions(-)
+ .../bindings/net/marvell-armada-370-neta.txt  |  50 ---------
+ .../bindings/net/marvell-armada-370-neta.yaml | 102 ++++++++++++++++++
+ 2 files changed, 102 insertions(+), 50 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/net/marvell-armada-370-neta.txt
+ create mode 100644 Documentation/devicetree/bindings/net/marvell-armada-370-neta.yaml
 
-diff --git a/Documentation/devicetree/bindings/net/altr,tse.yaml b/Documentation/devicetree/bindings/net/altr,tse.yaml
-index f5d3b70af07a..24e0f1213109 100644
---- a/Documentation/devicetree/bindings/net/altr,tse.yaml
-+++ b/Documentation/devicetree/bindings/net/altr,tse.yaml
-@@ -67,6 +67,7 @@ required:
- 
- allOf:
-   - $ref: ethernet-controller.yaml#
-+  - $ref: ethernet-controller.yaml#/$defs/phylink
-   - if:
-       properties:
-         compatible:
-diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-index bf8894a0257e..a455de04c5f1 100644
---- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
-+++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-@@ -156,6 +156,7 @@ required:
- 
- allOf:
-   - $ref: ethernet-controller.yaml#
-+  - $ref: ethernet-controller.yaml#/$defs/phylink
- 
-   - if:
-       not:
-diff --git a/Documentation/devicetree/bindings/net/dsa/arrow,xrs700x.yaml b/Documentation/devicetree/bindings/net/dsa/arrow,xrs700x.yaml
-index 9565a7402146..7829fc9e202d 100644
---- a/Documentation/devicetree/bindings/net/dsa/arrow,xrs700x.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/arrow,xrs700x.yaml
-@@ -29,6 +29,12 @@ properties:
-   reg:
-     maxItems: 1
- 
-+patternProperties:
-+  "^(ethernet-)?ports$":
-+    patternProperties:
-+      "^(ethernet-)?port@[0-9]+$":
-+        $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
+diff --git a/Documentation/devicetree/bindings/net/marvell-armada-370-neta.txt b/Documentation/devicetree/bindings/net/marvell-armada-370-neta.txt
+deleted file mode 100644
+index 2bf31572b08d..000000000000
+--- a/Documentation/devicetree/bindings/net/marvell-armada-370-neta.txt
++++ /dev/null
+@@ -1,50 +0,0 @@
+-* Marvell Armada 370 / Armada XP / Armada 3700 Ethernet Controller (NETA)
+-
+-Required properties:
+-- compatible: could be one of the following:
+-	"marvell,armada-370-neta"
+-	"marvell,armada-xp-neta"
+-	"marvell,armada-3700-neta"
+-	"marvell,armada-ac5-neta"
+-- reg: address and length of the register set for the device.
+-- interrupts: interrupt for the device
+-- phy: See ethernet.txt file in the same directory.
+-- phy-mode: See ethernet.txt file in the same directory
+-- clocks: List of clocks for this device. At least one clock is
+-  mandatory for the core clock. If several clocks are given, then the
+-  clock-names property must be used to identify them.
+-
+-Optional properties:
+-- tx-csum-limit: maximum mtu supported by port that allow TX checksum.
+-  Value is presented in bytes. If not used, by default 1600B is set for
+-  "marvell,armada-370-neta" and 9800B for others.
+-- clock-names: List of names corresponding to clocks property; shall be
+-  "core" for core clock and "bus" for the optional bus clock.
+-- phys: comphy for the ethernet port, see ../phy/phy-bindings.txt
+-
+-Optional properties (valid only for Armada XP/38x):
+-
+-- buffer-manager: a phandle to a buffer manager node. Please refer to
+-  Documentation/devicetree/bindings/net/marvell-neta-bm.txt
+-- bm,pool-long: ID of a pool, that will accept all packets of a size
+-  higher than 'short' pool's threshold (if set) and up to MTU value.
+-  Obligatory, when the port is supposed to use hardware
+-  buffer management.
+-- bm,pool-short: ID of a pool, that will be used for accepting
+-  packets of a size lower than given threshold. If not set, the port
+-  will use a single 'long' pool for all packets, as defined above.
+-
+-Example:
+-
+-ethernet@70000 {
+-	compatible = "marvell,armada-370-neta";
+-	reg = <0x70000 0x2500>;
+-	interrupts = <8>;
+-	clocks = <&gate_clk 4>;
+-	tx-csum-limit = <9800>
+-	phy = <&phy0>;
+-	phy-mode = "rgmii-id";
+-	buffer-manager = <&bm>;
+-	bm,pool-long = <0>;
+-	bm,pool-short = <1>;
+-};
+diff --git a/Documentation/devicetree/bindings/net/marvell-armada-370-neta.yaml b/Documentation/devicetree/bindings/net/marvell-armada-370-neta.yaml
+new file mode 100644
+index 000000000000..9283ab74cdb2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/marvell-armada-370-neta.yaml
+@@ -0,0 +1,102 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/marvell-armada-370-neta.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml b/Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml
-index 0bb2ff0cf2d0..ed5b3eab1948 100644
---- a/Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/brcm,b53.yaml
-@@ -142,6 +142,15 @@ allOf:
-         reg:
-           maxItems: 1
- 
-+  - if:
-+      required: [ mdio ]
-+    then:
-+      patternProperties:
-+        "^(ethernet-)?ports$":
-+          patternProperties:
-+            "^(ethernet-)?port@[0-9]+$":
-+              $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
++title: Marvell Armada 370 / Armada XP / Armada 3700 Ethernet Controller (NETA)
 +
- unevaluatedProperties: false
- 
- examples:
-diff --git a/Documentation/devicetree/bindings/net/dsa/brcm,sf2.yaml b/Documentation/devicetree/bindings/net/dsa/brcm,sf2.yaml
-index c745407f2f68..6cffcd35a943 100644
---- a/Documentation/devicetree/bindings/net/dsa/brcm,sf2.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/brcm,sf2.yaml
-@@ -81,7 +81,10 @@ properties:
- 
-     patternProperties:
-       '^port@[0-9a-f]$':
--        $ref: dsa-port.yaml#
-+        type: object
-+        allOf:
-+          - $ref: dsa-port.yaml#
-+          - $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-         unevaluatedProperties: false
- 
-         properties:
-@@ -161,6 +164,7 @@ examples:
-                     port@0 {
-                             label = "gphy";
-                             reg = <0>;
-+                            phy-handle = <&phy8>;
-                     };
-             };
-     };
-diff --git a/Documentation/devicetree/bindings/net/dsa/hirschmann,hellcreek.yaml b/Documentation/devicetree/bindings/net/dsa/hirschmann,hellcreek.yaml
-index 4021b054f684..30b4c7b1fd08 100644
---- a/Documentation/devicetree/bindings/net/dsa/hirschmann,hellcreek.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/hirschmann,hellcreek.yaml
-@@ -67,6 +67,12 @@ properties:
- 
-     additionalProperties: false
- 
-+patternProperties:
-+  "^(ethernet-)?ports$":
-+    patternProperties:
-+      "^(ethernet-)?port@[0-9]+$":
-+        $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-index 31a7dbbf704d..a8e1134707e4 100644
---- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-@@ -297,6 +297,15 @@ allOf:
-         mediatek,mcm: false
-         reset-names: false
- 
-+  - if:
-+      required: [ mdio ]
-+    then:
-+      patternProperties:
-+        "^(ethernet-)?ports$":
-+          patternProperties:
-+            "^(ethernet-)?port@[0-9]+$":
-+              $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-+
- unevaluatedProperties: false
- 
- examples:
-diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-index 20e4174fe1ab..d8f12234eec6 100644
---- a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-@@ -60,6 +60,15 @@ required:
-   - compatible
-   - reg
- 
-+if:
-+  required: [ mdio ]
-+then:
-+  patternProperties:
-+    "^(ethernet-)?ports$":
-+      patternProperties:
-+        "^(ethernet-)?port@[0-9]+$":
-+          $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-+
- unevaluatedProperties: false
- 
- examples:
-diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
-index 33a4926b2d94..44a892b93eca 100644
---- a/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
-@@ -65,6 +65,15 @@ required:
-   - compatible
-   - reg
- 
-+if:
-+  required: [ mdio ]
-+then:
-+  patternProperties:
-+    "^(ethernet-)?ports$":
-+      patternProperties:
-+        "^(ethernet-)?port@[0-9]+$":
-+          $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-+
- unevaluatedProperties: false
- 
- examples:
-diff --git a/Documentation/devicetree/bindings/net/dsa/mscc,ocelot.yaml b/Documentation/devicetree/bindings/net/dsa/mscc,ocelot.yaml
-index fe02d05196e4..80cc9c49282b 100644
---- a/Documentation/devicetree/bindings/net/dsa/mscc,ocelot.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/mscc,ocelot.yaml
-@@ -73,6 +73,12 @@ properties:
-   little-endian: true
-   big-endian: true
- 
-+patternProperties:
-+  "^(ethernet-)?ports$":
-+    patternProperties:
-+      "^(ethernet-)?port@[0-9]+$":
-+        $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml b/Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml
-index 6838dc165d06..1d5c4a81caf6 100644
---- a/Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml
-@@ -79,6 +79,7 @@ patternProperties:
-   "^(ethernet-)?ports$":
-     patternProperties:
-       "^(ethernet-)?port@[0-9]+$":
-+        $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-         allOf:
-           - if:
-               properties:
-diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-index c472050582be..546939ab2053 100644
---- a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-@@ -114,6 +114,15 @@ required:
-   - compatible
-   - reg
- 
-+if:
-+  required: [ mdio ]
-+then:
-+  patternProperties:
-+    "^(ethernet-)?ports$":
-+      patternProperties:
-+        "^(ethernet-)?port@[0-6]$":
-+          $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-+
- unevaluatedProperties: false
- 
- examples:
-diff --git a/Documentation/devicetree/bindings/net/dsa/realtek.yaml b/Documentation/devicetree/bindings/net/dsa/realtek.yaml
-index 62ebaa4b5ae3..ec0428b74157 100644
---- a/Documentation/devicetree/bindings/net/dsa/realtek.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/realtek.yaml
-@@ -6,8 +6,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Realtek switches for unmanaged switches
- 
--allOf:
--  - $ref: dsa.yaml#/$defs/ethernet-ports
-+$ref: dsa.yaml#/$defs/ethernet-ports
- 
- maintainers:
-   - Linus Walleij <linus.walleij@linaro.org>
-@@ -107,33 +106,43 @@ properties:
-       compatible:
-         const: realtek,smi-mdio
- 
--if:
--  required:
--    - reg
 +allOf:
-+  - if:
-+      required:
-+        - reg
- 
--then:
--  $ref: /schemas/spi/spi-peripheral-props.yaml#
--  properties:
--    mdc-gpios: false
--    mdio-gpios: false
--    mdio:
-+    then:
-+      $ref: /schemas/spi/spi-peripheral-props.yaml#
-       properties:
--        compatible: false
-+        mdc-gpios: false
-+        mdio-gpios: false
-+        mdio:
-+          properties:
-+            compatible: false
- 
--else:
--  properties:
--    mdio:
--      required:
--        - compatible
-+    else:
-+      properties:
-+        mdio:
-+          required:
-+            - compatible
- 
--  required:
--    - mdc-gpios
--    - mdio-gpios
--    - mdio
--    - reset-gpios
-+      required:
-+        - mdc-gpios
-+        - mdio-gpios
-+        - mdio
-+        - reset-gpios
- 
--required:
--  - compatible
-+    required:
-+      - compatible
-+
-+  - if:
-+      required: [ mdio ]
-+    then:
-+      patternProperties:
-+        "^(ethernet-)?ports$":
-+          patternProperties:
-+            "^(ethernet-)?port@[0-9]+$":
-+              $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
- 
- unevaluatedProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-index 9ad9f5cdf688..7ec4371932ef 100644
---- a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-@@ -72,7 +72,7 @@ properties:
- 
-     patternProperties:
-       "^(ethernet-)?port@[0-4]$":
--        type: object
-+        $ref: /schemas/net/ethernet-controller.yaml#/$defs/phylink
-         description: Ethernet switch ports
- 
-         properties:
-diff --git a/Documentation/devicetree/bindings/net/fsl,fman-dtsec.yaml b/Documentation/devicetree/bindings/net/fsl,fman-dtsec.yaml
-index c80c880a9dab..c31db5f7d548 100644
---- a/Documentation/devicetree/bindings/net/fsl,fman-dtsec.yaml
-+++ b/Documentation/devicetree/bindings/net/fsl,fman-dtsec.yaml
-@@ -136,6 +136,7 @@ dependencies:
- 
- allOf:
-   - $ref: ethernet-controller.yaml#
-+  - $ref: ethernet-controller.yaml#/$defs/phylink
-   - if:
-       properties:
-         compatible:
-diff --git a/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml b/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
-index a1b71b35319e..b2cab0fa7b35 100644
---- a/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
-+++ b/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
-@@ -15,6 +15,7 @@ description:
- 
- allOf:
-   - $ref: ethernet-controller.yaml#
-+  - $ref: ethernet-controller.yaml#/$defs/phylink
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/net/marvell,pp2.yaml b/Documentation/devicetree/bindings/net/marvell,pp2.yaml
-index 4eadafc43d4f..8e60cc4bbbc9 100644
---- a/Documentation/devicetree/bindings/net/marvell,pp2.yaml
-+++ b/Documentation/devicetree/bindings/net/marvell,pp2.yaml
-@@ -59,7 +59,9 @@ patternProperties:
-   '^(ethernet-)?port@[0-2]$':
-     type: object
-     description: subnode for each ethernet port.
--    $ref: ethernet-controller.yaml#
-+    allOf:
-+      - $ref: ethernet-controller.yaml#
-+      - $ref: ethernet-controller.yaml#/$defs/phylink
-     unevaluatedProperties: false
- 
-     properties:
-diff --git a/Documentation/devicetree/bindings/net/mediatek,net.yaml b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-index e74502a0afe8..7562bb64baa9 100644
---- a/Documentation/devicetree/bindings/net/mediatek,net.yaml
-+++ b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-@@ -391,6 +391,7 @@ patternProperties:
-     unevaluatedProperties: false
-     allOf:
-       - $ref: ethernet-controller.yaml#
-+      - $ref: ethernet-controller.yaml#/$defs/phylink
-     description:
-       Ethernet MAC node
-     properties:
-diff --git a/Documentation/devicetree/bindings/net/microchip,lan966x-switch.yaml b/Documentation/devicetree/bindings/net/microchip,lan966x-switch.yaml
-index 306ef9ecf2b9..a770cfc490a9 100644
---- a/Documentation/devicetree/bindings/net/microchip,lan966x-switch.yaml
-+++ b/Documentation/devicetree/bindings/net/microchip,lan966x-switch.yaml
-@@ -73,7 +73,9 @@ properties:
-       "^port@[0-9a-f]+$":
-         type: object
- 
--        $ref: /schemas/net/ethernet-controller.yaml#
-+        allOf:
-+          - $ref: ethernet-controller.yaml#
-+          - $ref: ethernet-controller.yaml#/$defs/phylink
-         unevaluatedProperties: false
- 
-         properties:
-diff --git a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-index fcafef8d5a33..da4b4d934705 100644
---- a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-+++ b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-@@ -84,7 +84,10 @@ properties:
- 
-     patternProperties:
-       "^port@[0-9a-f]+$":
--        $ref: /schemas/net/ethernet-controller.yaml#
-+        type: object
-+        allOf:
-+          - $ref: ethernet-controller.yaml#
-+          - $ref: ethernet-controller.yaml#/$defs/phylink
-         unevaluatedProperties: false
- 
-         properties:
-diff --git a/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml b/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-index 8ee2c7d7ff42..b3aff7b0790e 100644
---- a/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-+++ b/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-@@ -126,6 +126,11 @@ properties:
-       - const: xtr
-       - const: fdma
- 
-+  ethernet-ports:
-+    patternProperties:
-+      "^port@[0-9a-f]+$":
-+        $ref: ethernet-controller.yaml#/$defs/phylink
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/net/qca,ar71xx.yaml b/Documentation/devicetree/bindings/net/qca,ar71xx.yaml
-index 89f94b31b546..d021bfb4ad20 100644
---- a/Documentation/devicetree/bindings/net/qca,ar71xx.yaml
-+++ b/Documentation/devicetree/bindings/net/qca,ar71xx.yaml
-@@ -8,6 +8,7 @@ title: QCA AR71XX MAC
- 
- allOf:
-   - $ref: ethernet-controller.yaml#
-+  - $ref: ethernet-controller.yaml#/$defs/phylink
- 
- maintainers:
-   - Oleksij Rempel <o.rempel@pengutronix.de>
-diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-index ddf9522a5dc2..62d8c2cfafe9 100644
---- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-@@ -567,6 +567,7 @@ dependencies:
- 
- allOf:
-   - $ref: ethernet-controller.yaml#
-+  - $ref: ethernet-controller.yaml#/$defs/phylink
-   - if:
-       properties:
-         compatible:
-diff --git a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-index c9c25132d154..d4366a11918e 100644
---- a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-+++ b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-@@ -117,7 +117,9 @@ properties:
-         type: object
-         description: CPSWxG NUSS external ports
- 
--        $ref: ethernet-controller.yaml#
-+        allOf:
-+          - $ref: ethernet-controller.yaml#
-+          - $ref: ethernet-controller.yaml#/$defs/phylink
-         unevaluatedProperties: false
- 
-         properties:
-diff --git a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-index 1d33d80af11c..f8894546c02a 100644
---- a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-+++ b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-@@ -130,7 +130,8 @@ required:
-   - phy-handle
- 
- allOf:
--  - $ref: /schemas/net/ethernet-controller.yaml#
 +  - $ref: ethernet-controller.yaml#
 +  - $ref: ethernet-controller.yaml#/$defs/phylink
- 
- additionalProperties: false
- 
++
++maintainers:
++  - Arınç ÜNAL <arinc.unal@arinc9.com>
++
++properties:
++  compatible:
++    enum:
++      - marvell,armada-370-neta
++      - marvell,armada-xp-neta
++      - marvell,armada-3700-neta
++      - marvell,armada-ac5-neta
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    description:
++      List of clocks for this device. At least one clock is mandatory for the
++      core clock. If several clocks are given, then the clock-names property
++      must be used to identify them.
++
++  tx-csum-limit:
++    description:
++      Maximum mtu supported by port that allow TX checksum. Value is presented
++      in bytes. If not used, by default 1600B is set for
++      "marvell,armada-370-neta" and 9800B for others.
++
++  clock-names:
++    description:
++      List of names corresponding to clocks property; shall be "core" for core
++      clock and "bus" for the optional bus clock.
++
++  phys:
++    description:
++      comphy for the ethernet port, see ../phy/phy-bindings.txt.
++
++if:
++  properties:
++    compatible:
++      enum:
++        - marvell,armada-370-neta
++        - marvell,armada-xp-neta
++then:
++  properties:
++    buffer-manager:
++      description:
++        A phandle to a buffer manager node. Please refer to
++        Documentation/devicetree/bindings/net/marvell-neta-bm.txt.
++
++    bm,pool-long:
++      description:
++        ID of a pool, that will accept all packets of a size higher than 'short'
++        pool's threshold (if set) and up to MTU value. Obligatory, when the port
++        is supposed to use hardware buffer management.
++
++    bm,pool-short:
++      description:
++        ID of a pool, that will be used for accepting packets of a size lower
++        than given threshold. If not set, the port will use a single 'long' pool
++        for all packets, as defined above.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - phy-mode
++  - clocks
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    ethernet@70000 {
++        compatible = "marvell,armada-370-neta";
++        reg = <0x70000 0x2500>;
++        interrupts = <8>;
++        clocks = <&gate_clk 4>;
++        tx-csum-limit = <9800>;
++        phy-mode = "rgmii-id";
++        buffer-manager = <&bm>;
++        bm,pool-long = <0>;
++        bm,pool-short = <1>;
++
++        fixed-link {
++            speed = <1000>;
++            full-duplex;
++        };
++    };
 -- 
 2.39.2
 
