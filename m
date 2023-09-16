@@ -2,34 +2,34 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AC2CD37BB
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Sep 2023 11:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801C0CD37B7
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Sep 2023 11:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239018AbjIPLK1 (ORCPT
+        id S234283AbjIPLK7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 16 Sep 2023 07:10:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42704 "EHLO
+        Sat, 16 Sep 2023 07:10:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239094AbjIPLJ4 (ORCPT
+        with ESMTP id S239051AbjIPLKf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Sep 2023 07:09:56 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB70119F;
-        Sat, 16 Sep 2023 04:09:50 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 73E3E240003;
-        Sat, 16 Sep 2023 11:09:30 +0000 (UTC)
+        Sat, 16 Sep 2023 07:10:35 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8148E19A;
+        Sat, 16 Sep 2023 04:10:29 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 91CB3240003;
+        Sat, 16 Sep 2023 11:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-        t=1694862589;
+        t=1694862628;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lscCcidsJMMOQkHcl8eCmBbaHAYgbiEltqPqbGnvzb8=;
-        b=VdvydhjubqnTb7zMzlmvDb1AyuPlHiJU1Pmq977kdg2rTcKM8lqKF5FamXN2RD0kuYAIKy
-        N8Ya1bJkDpYePX037ZX6DqzRS0aKK2BR1qZd/1rKahuc1ZE1+DtjF2ml8+DyuBdJko/L41
-        uVMRjFxnMGH+z0aMGnqqBl5aZtHgnocmV81BBECvLyncbHRVPeGz6eTvI95chAwCXQdidJ
-        S32jFRpQiAwE/WbqdYKdR+VXecLnoA4IslS+9AACuM+g+hehqFq9qshqXUr5pYUhcDGqXJ
-        a4fsb0r7UVYdHD6LyPImW+59xuH2V1lIYn95YPoIeElxjf65EAGYpMe3WTuxug==
+        bh=BgK1RR7PvoKyZDk0Jc59OCF7MxiLvtGydv7ioUqbT0Y=;
+        b=jfHvHtuc+xqfSbVdGtke/CXe36aT3ln5BhveQlDrHTC4bUBcwnisulq7Nq5WitSm3y/Zro
+        v8JuJhLWLr+P6UfJQfQBfkcldkNix/BAG7b5INH2Zo461XHQKOBuaLe6MPW8EfCvMimDe6
+        esnrB0UDXQ23P3rmQZgIXkzecBbPtSgH+S/RokQbhJMm0/w4dI3Mqws6oIHcRuVm6z64UW
+        kV1yltovhTPM93EnMDIBCf7n7vc0phIBwojsrPUnl76AEqrFIKhc1bte9p5fs+MkZjpUVY
+        Lk084pAvydhldmDOQkS9YGPo7O/vNcPTmYi5hOvW9iFD/bqArjKLiqclwu8EJg==
 From:   =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
@@ -83,17 +83,16 @@ To:     "David S. Miller" <davem@davemloft.net>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Sekhar Nori <nsekhar@ti.com>,
         Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Cc:     David Bauer <mail@david-bauer.net>,
-        Woojung Huh <Woojung.Huh@microchip.com>,
+Cc:     Woojung Huh <Woojung.Huh@microchip.com>,
         Steen Hegelund <steen.hegelund@microchip.com>,
         mithat.guner@xeront.com, erkin.bozoglu@xeront.com,
         netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v2 01/10] net: dsa: mt7530: register OF node for internal MDIO bus
-Date:   Sat, 16 Sep 2023 14:08:53 +0300
-Message-Id: <20230916110902.234273-2-arinc.unal@arinc9.com>
+Subject: [PATCH net-next v2 03/10] dt-bindings: net: dsa: realtek: fix MDIO bus child node restrictions
+Date:   Sat, 16 Sep 2023 14:08:55 +0300
+Message-Id: <20230916110902.234273-4-arinc.unal@arinc9.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230916110902.234273-1-arinc.unal@arinc9.com>
 References: <20230916110902.234273-1-arinc.unal@arinc9.com>
@@ -105,50 +104,64 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: David Bauer <mail@david-bauer.net>
+The MDIO controlled Realtek switches (distinguished by the reg property
+being used) are allowed to have their MDIO bus registered OF-based. Allow
+the mdio property for them.
 
-The MT753x switches provide a switch-internal MDIO bus for the embedded
-PHYs.
+Only the SMI controlled Realtek switches require the compatible property of
+the mdio child node. Require it for them and disallow it for the MDIO controlled
+ones.
 
-Register a OF sub-node on the switch OF-node for this internal MDIO bus.
-This allows to configure the embedded PHYs using device-tree.
+Remove the unnecessary if:then:not:required rule and comments.
 
-Signed-off-by: David Bauer <mail@david-bauer.net>
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 ---
- drivers/net/dsa/mt7530.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/net/dsa/realtek.yaml  | 20 ++++++++-----------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
-index 035a34b50f31..7db9af7b9658 100644
---- a/drivers/net/dsa/mt7530.c
-+++ b/drivers/net/dsa/mt7530.c
-@@ -2156,10 +2156,13 @@ mt7530_setup_mdio(struct mt7530_priv *priv)
- {
- 	struct dsa_switch *ds = priv->ds;
- 	struct device *dev = priv->dev;
-+	struct device_node *np, *mnp;
- 	struct mii_bus *bus;
- 	static int idx;
- 	int ret;
+diff --git a/Documentation/devicetree/bindings/net/dsa/realtek.yaml b/Documentation/devicetree/bindings/net/dsa/realtek.yaml
+index cfd69c2604ea..7eb025df0df8 100644
+--- a/Documentation/devicetree/bindings/net/dsa/realtek.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/realtek.yaml
+@@ -109,18 +109,19 @@ if:
  
-+	np = priv->dev->of_node;
+ then:
+   $ref: /schemas/spi/spi-peripheral-props.yaml#
+-  not:
+-    required:
+-      - mdc-gpios
+-      - mdio-gpios
+-      - mdio
+-
+   properties:
+     mdc-gpios: false
+     mdio-gpios: false
+-    mdio: false
++    mdio:
++      properties:
++        compatible: false
+ 
+ else:
++  properties:
++    mdio:
++      required:
++        - compatible
 +
- 	bus = devm_mdiobus_alloc(dev);
- 	if (!bus)
- 		return -ENOMEM;
-@@ -2178,7 +2181,9 @@ mt7530_setup_mdio(struct mt7530_priv *priv)
- 	if (priv->irq)
- 		mt7530_setup_mdio_irq(priv);
+   required:
+     - mdc-gpios
+     - mdio-gpios
+@@ -130,11 +131,6 @@ else:
+ required:
+   - compatible
  
--	ret = devm_mdiobus_register(dev, bus);
-+	mnp = of_get_child_by_name(np, "mdio");
-+	ret = devm_of_mdiobus_register(dev, bus, mnp);
-+	of_node_put(mnp);
- 	if (ret) {
- 		dev_err(dev, "failed to register MDIO bus: %d\n", ret);
- 		if (priv->irq)
+-    #  - mdc-gpios
+-    #  - mdio-gpios
+-    #  - reset-gpios
+-    #  - mdio
+-
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
 2.39.2
 
