@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F099CD13D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E12CD13D8
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Sep 2023 12:25:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241987AbjIRMYq (ORCPT
+        id S241902AbjIRMYs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Sep 2023 08:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53720 "EHLO
+        Mon, 18 Sep 2023 08:24:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241982AbjIRMYb (ORCPT
+        with ESMTP id S242017AbjIRMYi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2023 08:24:31 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 970DA102;
-        Mon, 18 Sep 2023 05:24:18 -0700 (PDT)
+        Mon, 18 Sep 2023 08:24:38 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1DB869F;
+        Mon, 18 Sep 2023 05:24:28 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.02,156,1688396400"; 
-   d="scan'208";a="176397769"
+   d="scan'208";a="180128606"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Sep 2023 21:24:18 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Sep 2023 21:24:28 +0900
 Received: from localhost.localdomain (unknown [10.226.92.107])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3159C41F6AEF;
-        Mon, 18 Sep 2023 21:24:14 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9B45C41F6AEF;
+        Mon, 18 Sep 2023 21:24:25 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -31,35 +31,50 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Biju Das <biju.das.au@gmail.com>, linux-kernel@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/3] Fix IRQ storm with GPIO interrupts
-Date:   Mon, 18 Sep 2023 13:24:08 +0100
-Message-Id: <20230918122411.237635-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 3/3] irqchip: renesas-rzg2l: Fix irq storm with edge trigger detection for TINT
+Date:   Mon, 18 Sep 2023 13:24:11 +0100
+Message-Id: <20230918122411.237635-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230918122411.237635-1-biju.das.jz@bp.renesas.com>
+References: <20230918122411.237635-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following issues observed while adding IRQ support for RTC.
- * The irq_disable is not clearing interrupt source properly.
- * The driver is not following as per hardware manual for changing
-   interrupt settings.
- * IRQ storm due to phantum interrupt, when we select the TINT source.
-   Here IRQ handler disables  the interrupts using disable_irq_nosync()
-   and scheduling a work queue and in the work queue, re-enabling the
-   interrupt with enable_irq().
+In case of edge trigger detection, enabling the TINT source causes a
+phantum interrupt that leads to irq storm. So clear the phantum interrupt
+in rzg2l_irqc_irq_enable().
 
-Biju Das (3):
-  irqchip: renesas-rzg2l: Fix logic to clear TINT interrupt source
-  irqchip: renesas-rzg2l: Mask interrupts for changing interrupt
-    settings
-  irqchip: renesas-rzg2l: Fix irq storm with edge trigger detection for
-    TINT
+This issue is observed when the irq handler disables the interrupts using
+disable_irq_nosync() and scheduling a work queue and in the work queue,
+re-enabling the interrupt with enable_irq().
 
- drivers/irqchip/irq-renesas-rzg2l.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller driver")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/irqchip/irq-renesas-rzg2l.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index 33a22bafedcd..78a9e90512a6 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -144,6 +144,12 @@ static void rzg2l_irqc_irq_enable(struct irq_data *d)
+ 		reg = readl_relaxed(priv->base + TSSR(tssr_index));
+ 		reg |= (TIEN | tint) << TSSEL_SHIFT(tssr_offset);
+ 		writel_relaxed(reg, priv->base + TSSR(tssr_index));
++		/*
++		 * In case of edge trigger detection, enabling the TINT source
++		 * cause a phantum interrupt that leads to irq storm. So clear
++		 * the phantum interrupt.
++		 */
++		rzg2l_tint_eoi(d);
+ 		raw_spin_unlock(&priv->lock);
+ 		irq_chip_unmask_parent(d);
+ 	}
 -- 
 2.25.1
 
