@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023F9C46CA1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29283CD13D2
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Sep 2023 12:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241329AbjIRMez (ORCPT
+        id S240246AbjIRMey (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Sep 2023 08:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40054 "EHLO
+        Mon, 18 Sep 2023 08:34:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241618AbjIRMew (ORCPT
+        with ESMTP id S241470AbjIRMee (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2023 08:34:52 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6B608DE;
-        Mon, 18 Sep 2023 05:34:10 -0700 (PDT)
+        Mon, 18 Sep 2023 08:34:34 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 08F93CE5;
+        Mon, 18 Sep 2023 05:34:02 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.02,156,1688396400"; 
-   d="scan'208";a="176398365"
+   d="scan'208";a="180129093"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Sep 2023 21:34:09 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Sep 2023 21:34:02 +0900
 Received: from localhost.localdomain (unknown [10.226.92.107])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9F6E84005E22;
-        Mon, 18 Sep 2023 21:34:06 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 36EDA4005E22;
+        Mon, 18 Sep 2023 21:33:58 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -32,99 +32,31 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 2/2] pinctrl: renesas: rzg2l: Enable noise filter for GPIO interrupt input
-Date:   Mon, 18 Sep 2023 13:33:55 +0100
-Message-Id: <20230918123355.262115-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 0/2] Fix for GPIO interrupts
+Date:   Mon, 18 Sep 2023 13:33:53 +0100
+Message-Id: <20230918123355.262115-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230918123355.262115-1-biju.das.jz@bp.renesas.com>
-References: <20230918123355.262115-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As per RZ/G2L hardware manual Rev.1.30 section 8.7.3 GPIO Interrupt (TINT)
-and 41.4.1 Operation for GPIO function, we need to set digital noise
-filter for GPIO interrupt.
+The following issues observed while adding IRQ support for RTC.
+ * The driver is not following reverse order of enable() for disable().
+ * The driver is not following as per hardware manual for setting
+   GPIO interrupts. As per HW manual we need to set noise filter
+   for GPIO interrupts.
 
-This patch enables noise filter for GPIO interrupt in
-rzg2l_gpio_irq_enable() and disable it in rzg2l_gpio_irq_disable().
+This patch series fixes those issues.
 
-Fixes: db2e5f21a48e ("pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to handle GPIO interrupt")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Biju Das (2):
+  pinctrl: renesas: rzg2l: Make reverse order of enable() for disable()
+  pinctrl: renesas: rzg2l: Enable noise filter for GPIO interrupt input
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 2ea6ef99cc70..6d3fa962ac97 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -96,6 +96,7 @@
- #define PIN(n)			(0x0800 + 0x10 + (n))
- #define IOLH(n)			(0x1000 + (n) * 8)
- #define IEN(n)			(0x1800 + (n) * 8)
-+#define FILONOFF(n)		(0x2080 + (n) * 8)
- #define ISEL(n)			(0x2c80 + (n) * 8)
- #define PWPR			(0x3014)
- #define SD_CH(n)		(0x3000 + (n) * 4)
-@@ -1169,9 +1170,9 @@ static void rzg2l_gpio_irq_disable(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
-+	void __iomem *addr, *noise_filter_addr;
- 	unsigned int hwirq = irqd_to_hwirq(d);
- 	unsigned long flags;
--	void __iomem *addr;
- 	u32 port;
- 	u8 bit;
- 
-@@ -1181,12 +1182,15 @@ static void rzg2l_gpio_irq_disable(struct irq_data *d)
- 	bit = RZG2L_PIN_ID_TO_PIN(hwirq);
- 
- 	addr = pctrl->base + ISEL(port);
-+	noise_filter_addr = pctrl->base + FILONOFF(port);
- 	if (bit >= 4) {
- 		bit -= 4;
- 		addr += 4;
-+		noise_filter_addr += 4;
- 	}
- 
- 	spin_lock_irqsave(&pctrl->lock, flags);
-+	writel(readl(noise_filter_addr) & ~BIT(bit * 8), noise_filter_addr);
- 	writel(readl(addr) & ~BIT(bit * 8), addr);
- 	spin_unlock_irqrestore(&pctrl->lock, flags);
- 
-@@ -1197,9 +1201,9 @@ static void rzg2l_gpio_irq_enable(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
-+	void __iomem *addr, *noise_filter_addr;
- 	unsigned int hwirq = irqd_to_hwirq(d);
- 	unsigned long flags;
--	void __iomem *addr;
- 	u32 port;
- 	u8 bit;
- 
-@@ -1209,13 +1213,16 @@ static void rzg2l_gpio_irq_enable(struct irq_data *d)
- 	bit = RZG2L_PIN_ID_TO_PIN(hwirq);
- 
- 	addr = pctrl->base + ISEL(port);
-+	noise_filter_addr = pctrl->base + FILONOFF(port);
- 	if (bit >= 4) {
- 		bit -= 4;
- 		addr += 4;
-+		noise_filter_addr += 4;
- 	}
- 
- 	spin_lock_irqsave(&pctrl->lock, flags);
- 	writel(readl(addr) | BIT(bit * 8), addr);
-+	writel(readl(noise_filter_addr) | BIT(bit * 8), noise_filter_addr);
- 	spin_unlock_irqrestore(&pctrl->lock, flags);
- 
- 	irq_chip_enable_parent(d);
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
 -- 
 2.25.1
 
