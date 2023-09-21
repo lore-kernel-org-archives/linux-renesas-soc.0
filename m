@@ -2,148 +2,88 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D18E7D0A6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 19:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1931FE7D0A2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 19:49:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231313AbjIUTsl (ORCPT
+        id S230424AbjIUTtY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 15:48:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32806 "EHLO
+        Thu, 21 Sep 2023 15:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231330AbjIUTsa (ORCPT
+        with ESMTP id S229477AbjIUTtJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 15:48:30 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE8DE83D2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 12:28:49 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1bf55a81eeaso11224395ad.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 12:28:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1695324529; x=1695929329; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6yWq/C0tGEFLQw6PZcuzFNMM1hDy2t48whBia8F49Jg=;
-        b=hxwGXiYb4PM04EE74siGDJwQX0yEZrnJ1g7ZxEaC1XmHA8FSHr5IWWQuQ3KyIueDBO
-         1xH8dUw35rP3xosg/qTRmsRnVEO792m61KxNhpyRukmmOrRA/PQ2wZrE26LMV96yuWTU
-         3B1UBS9/LlKbvQtWtt0zP96Tulxt9Pw+F/Xmw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695324529; x=1695929329;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6yWq/C0tGEFLQw6PZcuzFNMM1hDy2t48whBia8F49Jg=;
-        b=NCnsyPdtWPWmbMSXjEWNGSGN+7fFNdetUGlFlytSB68I5vy1P/Io4AA6J4pz3IQ4zC
-         04ZevowC2OZoMXBYxPPeNBYriRJFCgJdtUnuEAjVHB9ZhKHzShCjvbgKkh2b2hbINAFI
-         cAnwYno2eS1IqVSXhw95PnRIQtPPbHhwzQ55ZfPcTLBc7gPabVpMSGBDnKNIPyXtAyUt
-         f0lwEcFpT8uv0SSewVc8PIA1Xy/iDnzoL7FNkXXXpf2ZIR7zFoqXENbF4S3yyNsu9mag
-         EBip7v/NM0TpBjYJRFAnfCpIYKuG0yRki5YXQ249kUTpnpKaCeX0aRRMiWPYjiLixtrJ
-         78Yg==
-X-Gm-Message-State: AOJu0Yx/UL/4N9m4YwWUqLu4DM7Gw1IgABprc++etyO8OQxF/SUb53r8
-        9qqIdLiGlGwETFNHF5AHjxYGHg==
-X-Google-Smtp-Source: AGHT+IG2w0WDLRZHyuJ2LAJ89ZhWzmeDvnFDIDFpOKHgPfnwnQMLnbx8TB6Jh7P+yKBv1bgwE5yOVg==
-X-Received: by 2002:a17:902:c409:b0:1c4:4a4d:cda with SMTP id k9-20020a170902c40900b001c44a4d0cdamr7404355plk.15.1695324528913;
-        Thu, 21 Sep 2023 12:28:48 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:9d:2:e6ed:6d49:f262:8041])
-        by smtp.gmail.com with ESMTPSA id w8-20020a1709029a8800b001b9f032bb3dsm1892875plp.3.2023.09.21.12.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Sep 2023 12:28:47 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        airlied@gmail.com, biju.das.jz@bp.renesas.com, daniel@ffwll.ch,
-        kieran.bingham+renesas@ideasonboard.com,
-        laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, paul@crapouillou.net,
-        sam@ravnborg.org, tzimmermann@suse.de
-Subject: [RFT PATCH v2 12/12] drm/renesas/shmobile: Call drm_helper_force_disable_all() at shutdown/remove time
-Date:   Thu, 21 Sep 2023 12:26:55 -0700
-Message-ID: <20230921122641.RFT.v2.12.Iaf638a1d4c8b3c307a6192efabb4cbb06b195f15@changeid>
-X-Mailer: git-send-email 2.42.0.515.g380fc7ccd1-goog
-In-Reply-To: <20230921192749.1542462-1-dianders@chromium.org>
-References: <20230921192749.1542462-1-dianders@chromium.org>
+        Thu, 21 Sep 2023 15:49:09 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB8DD2577
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 12:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=date:from:to:cc:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=k1; bh=087g
+        b4mTJbMNzKHUdQuZSfdapJBPBScM7jHtuK+Uu54=; b=NJgp5ttHtqgaL4O+/YOy
+        Jgp+PWSniP3c5btKFMU42uVEV4aeVi0mo6uootbKCvVx50vC8bVreOk5TO1BYS94
+        RiWIqhIFYDCQ2cTKhcVjIUbTvdsm4uX4FODSvNjbqVmJ8tvg4w2Qky9gaIkjPVb4
+        Qd/A7Frb4VifUAREGT6oKWszPQiYiDd3QKwF+2iDLED/MVEorYIZPGMMX+29xSF5
+        6ZkGClspCAUDUZ1T71tIENlWj5tl1xAMgqiy9ABh79HuT4w3HiMs4R2NyyjWagKk
+        ptSnhxexgmwBTYV83VKT73aLidiTd5wTg3CKwTfE0BPKZDMEfZJ+PFoTGyNYIYjD
+        NA==
+Received: (qmail 868390 invoked from network); 21 Sep 2023 09:59:40 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2023 09:59:40 +0200
+X-UD-Smtp-Session: l3s3148p1@Tf7D39kFWJIujntX
+Date:   Thu, 21 Sep 2023 09:59:40 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     "Behme Dirk (CM/ESO2)" <dirk.behme@de.bosch.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Extend SDn divider table
+Message-ID: <ZQv37FcMHNTi6SIE@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "Behme Dirk (CM/ESO2)" <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20230919123722.2338932-1-dirk.behme@de.bosch.com>
+ <ZQtY+NHFzFBWhrZj@shikoro>
+ <7b93fb3b-378a-2c82-e5b8-428dd0b984e4@de.bosch.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="e7uS8NMr9QrDM4hF"
+Content-Disposition: inline
+In-Reply-To: <7b93fb3b-378a-2c82-e5b8-428dd0b984e4@de.bosch.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Based on grepping through the source code, this driver appears to be
-missing a call to drm_atomic_helper_shutdown(), or in this case the
-non-atomic equivalent drm_helper_force_disable_all(), at system
-shutdown time and at driver remove time. This is important because
-drm_helper_force_disable_all() will cause panels to get disabled
-cleanly which may be important for their power sequencing. Future
-changes will remove any custom powering off in individual panel
-drivers so the DRM drivers need to start getting this right.
 
-The fact that we should call drm_atomic_helper_shutdown(), or in this
-case the non-atomic equivalent drm_helper_force_disable_all(), in the
-case of OS shutdown/restart comes straight out of the kernel doc
-"driver instance overview" in drm_drv.c.
+--e7uS8NMr9QrDM4hF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Suggested-by: Maxime Ripard <mripard@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-This commit is only compile-time tested.
 
-As Geert pointed out in response to v1 [1], this patch conflicts with
-the patches doing atomic conversion [2]. Since those patches don't
-appear to be landed yet, I'm simply reposting v1. If those patches
-land, I'm more than happy to re-post this one. I'm also more than
-happy if someone wants to incorporate these changes into a different
-patch.
+> I was just wondering why this table includes STPnHCK? I mean, this is 'just'
+> a translation table between the value read from the register to the divider
+> (1, 2, 4, 8, 16)?
 
-[1] https://lore.kernel.org/r/CAMuHMdWOB7d-KE3F7aeZvVimNuy_U30uk=PND7=tWmPzCd7_eg@mail.gmail.com
-[2] https://lore.kernel.org/dri-devel/fd7a6702490bd431f314d6591551bb39e77e3304.1692178020.git.geert+renesas@glider.be/
+I thought this table was used both ways? Need to check, but can only do
+later today.
 
-Changes in v2:
-- Rebased and resolved conflicts.
 
- drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+--e7uS8NMr9QrDM4hF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-index e5db4e0095ba..8c4c9d17a79e 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-@@ -15,6 +15,7 @@
- #include <linux/pm.h>
- #include <linux/slab.h>
- 
-+#include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fbdev_generic.h>
- #include <drm/drm_gem_dma_helper.h>
-@@ -179,10 +180,18 @@ static void shmob_drm_remove(struct platform_device *pdev)
- 
- 	drm_dev_unregister(ddev);
- 	drm_kms_helper_poll_fini(ddev);
-+	drm_helper_force_disable_all(ddev);
- 	free_irq(sdev->irq, ddev);
- 	drm_dev_put(ddev);
- }
- 
-+static void shmob_drm_shutdown(struct platform_device *pdev)
-+{
-+	struct shmob_drm_device *sdev = platform_get_drvdata(pdev);
-+
-+	drm_helper_force_disable_all(sdev->ddev);
-+}
-+
- static int shmob_drm_probe(struct platform_device *pdev)
- {
- 	struct shmob_drm_platform_data *pdata = pdev->dev.platform_data;
-@@ -287,6 +296,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
- static struct platform_driver shmob_drm_platform_driver = {
- 	.probe		= shmob_drm_probe,
- 	.remove_new	= shmob_drm_remove,
-+	.shutdown	= shmob_drm_shutdown,
- 	.driver		= {
- 		.name	= "shmob-drm",
- 		.pm	= pm_sleep_ptr(&shmob_drm_pm_ops),
--- 
-2.42.0.515.g380fc7ccd1-goog
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmUL9+gACgkQFA3kzBSg
+KbZu2hAAjyzjdmjwuiv/sJcbPUUsMIWj0U+1yk8etZhsasE3wVoOW8fvx+avKtZr
+8Yxx2gRN4KnmjeNDs2jVtP267qxWmvUJT3+Xit4TnWun+dXeDyXxRFLjdCS+QaNe
+LqYHHgy3HQ5cC3PebuBe4j/rVQHHTo9E9GAIIHwUf1ob56/2JjG1bnrigd2Nw79P
+XB8NFRFwGgwE+6di+7uer/wDTGd5kIVFfhnuSrjhtkcaFseCFdu7LFSKGfGPMHlq
+cVvBPo5pHpuDtKfTYC053aLXmvqBftyznHPjIbxXKQG2N8JWdq+UoHPiAtKt+aH8
+uLSFKDL+OaUUPS3W0100Qs9cNMcRn1t1LJCyUKnvtbUs7A23dYaEjLiAnGeYcGId
+bbUFZicgPxICLvUXH9c8RADLnZKFzFZnEAKOM0itL5VGc1OJCaKQZerFDPXiR0vH
+DFMQazAcsabKEZ1uc3WKnAA5lJ8jJWJAUHVsXsj523aqp2xw1pgR4DkwbIkgoFGV
+JkA0V5yj0T8G/Ij/SXYUkX0IQ9oej74rmcq+GvMMOyaXcljHZTlL4AoQDpQ0YWP7
+WzdZrmoiwiwHHkgzffA6KUXpvadwLNUR9CGl5f4/nz2cl6XutheLR2HgivlU870y
+tHfcamSVyXN3x3+TWROFFOcPVhDyPdNxW7r821F/J+4cTuWpLBs=
+=C130
+-----END PGP SIGNATURE-----
+
+--e7uS8NMr9QrDM4hF--
