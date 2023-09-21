@@ -2,258 +2,127 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EA2E7D0AD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 21:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63723E7D0AB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 21:35:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232420AbjIUVUv (ORCPT
+        id S231481AbjIUVfr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 17:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37576 "EHLO
+        Thu, 21 Sep 2023 17:35:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232700AbjIUVOo (ORCPT
+        with ESMTP id S232224AbjIUVfg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 17:14:44 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B18A12453;
-        Thu, 21 Sep 2023 10:06:54 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4CF1A338A4;
-        Thu, 21 Sep 2023 11:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1695294669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=ahSDka+ud/ArrkTUsJLPgqW+LRcwqhCWgbQCB+rwDsI=;
-        b=KI+WiC/Jkz8t6aYBX30t3uf2bg2qpPW9bvtpwE7nBDHP21bpqpUSClRyFN0inVFn3ON1ZD
-        ZMDfZGX7HSnUL9pPw11xVml2HJ+d8Q+aNkwvc0takFHOIWzIW2Mx8NnFjXfdbuLwS8+O+H
-        mhtUp4Up2uCcyFUShwNrms+djOAHuzA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1695294669;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=ahSDka+ud/ArrkTUsJLPgqW+LRcwqhCWgbQCB+rwDsI=;
-        b=bvuq9gZEONaEtkfHUBLEz9zRL0BlI7KNzEMEkX9fv0WVf2+EMyt5X86nT8G6GNkXIFb2ib
-        0gs+QT04NU8eHMBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8E451134B0;
-        Thu, 21 Sep 2023 11:11:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id PQ6gIcwkDGXHbgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 21 Sep 2023 11:11:08 +0000
-Message-ID: <f6413268-5fa5-440e-b35b-98195df150b3@suse.de>
-Date:   Thu, 21 Sep 2023 13:11:07 +0200
+        Thu, 21 Sep 2023 17:35:36 -0400
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E044FC9BCB
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 11:19:20 -0700 (PDT)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-417e013061eso7846561cf.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 11:19:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695320323; x=1695925123;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PMvhYNwFGARBa/MF4HER8mJJeim1I3oHk5U3f+QpCSI=;
+        b=Wo5t6bTOwgrH4QCwUYnfAEwQc7G+23iluuHdYSBSti1SfoNmp55L9/+4nIwZ09YNuG
+         VvBpLIpjdRA0oxixkeeUG7P/CRsbg8UOGFx23UufQyB3RGnMfyJOmmuucM02YRWFNu+q
+         hc0Z0eoXuIM2qhl9wo6MQPnvuig9CElYchWkkJVy66OVodjIKGTctdgaA106JqXJ+RcW
+         cdLODWqY7kmLvf6IcZwbjB9WgsMSAhuOrAuU8zq5+QXSPZLNWS8HFxxZ88UgJNYw42jZ
+         xdaNraT6JtUwuyTtmiqnpzAYcLlnIjlXd+p7IJQhD2tt1pAgFfpUcjuV+MWLhjv7iRuJ
+         p9RQ==
+X-Gm-Message-State: AOJu0YwGCOZ1Xj8SnjJKAwD4kH/NkELo5qPgAoaAeZFRADox0BcmEj8I
+        FigQJd6O+tplqCDH+FrWnBj8vH0j0Srb1EDz
+X-Google-Smtp-Source: AGHT+IGWd5u0CJLvIXSnh5yTl1jTXJ7ERh5f6P++TzlbA3UnzbX9KTHgXJYUlu4BcXdHxj6CAIzZAA==
+X-Received: by 2002:a81:9106:0:b0:59e:7f14:4b48 with SMTP id i6-20020a819106000000b0059e7f144b48mr4336217ywg.41.1695281844501;
+        Thu, 21 Sep 2023 00:37:24 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id g143-20020a815295000000b005897fd75c80sm197666ywb.78.2023.09.21.00.37.23
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Sep 2023 00:37:23 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-59ec6d7bb89so7970697b3.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 00:37:23 -0700 (PDT)
+X-Received: by 2002:a0d:ca86:0:b0:589:e66e:abe4 with SMTP id
+ m128-20020a0dca86000000b00589e66eabe4mr4575374ywd.11.1695281843515; Thu, 21
+ Sep 2023 00:37:23 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] MAINTAINERS: Update drm-misc entry to match all
- drivers
-Content-Language: en-US
-To:     Maxime Ripard <mripard@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc:     Karol Herbst <kherbst@redhat.com>, nouveau@lists.freedesktop.org,
-        Edmund Dea <edmund.j.dea@intel.com>,
-        dri-devel@lists.freedesktop.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Russell King <linux@armlinux.org.uk>,
-        amd-gfx@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        etnaviv@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        linux-tegra@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sean Paul <sean@poorly.run>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-References: <20230921105743.2611263-1-mripard@kernel.org>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20230921105743.2611263-1-mripard@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------dSxprB7Srgjr0Bp5MLVnm0oc"
+References: <87fs382yhk.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87fs382yhk.wl-kuninori.morimoto.gx@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Sep 2023 09:37:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX6Jisc+KgCpzARPvsLZTeGLM-4cMxmDFErm31RWoonCA@mail.gmail.com>
+Message-ID: <CAMuHMdX6Jisc+KgCpzARPvsLZTeGLM-4cMxmDFErm31RWoonCA@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: dts: renesas: use multi Component for ULCB/KF
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------dSxprB7Srgjr0Bp5MLVnm0oc
-Content-Type: multipart/mixed; boundary="------------tN9WGv9Sm3bW15FJqXQwj9oC";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Maxime Ripard <mripard@kernel.org>,
- Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Karol Herbst <kherbst@redhat.com>, nouveau@lists.freedesktop.org,
- Edmund Dea <edmund.j.dea@intel.com>, dri-devel@lists.freedesktop.org,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Russell King <linux@armlinux.org.uk>, amd-gfx@lists.freedesktop.org,
- Ben Skeggs <bskeggs@redhat.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, Jani Nikula
- <jani.nikula@intel.com>, intel-gfx@lists.freedesktop.org,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, etnaviv@lists.freedesktop.org,
- Alex Deucher <alexander.deucher@amd.com>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, linux-tegra@vger.kernel.org,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Sean Paul <sean@poorly.run>,
- Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- linux-renesas-soc@vger.kernel.org,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Message-ID: <f6413268-5fa5-440e-b35b-98195df150b3@suse.de>
-Subject: Re: [PATCH v2] MAINTAINERS: Update drm-misc entry to match all
- drivers
-References: <20230921105743.2611263-1-mripard@kernel.org>
-In-Reply-To: <20230921105743.2611263-1-mripard@kernel.org>
+On Thu, Sep 21, 2023 at 1:53 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>
+>         +-- ULCB -------------------+
+>         |+--------+       +--------+|
+>         ||    SSI0| <---> |ak4613  ||
+>         ||    SSI1| <---> |        ||
+>         ||        |       +--------+|
+>         ||        |       +--------+|
+>         ||    SSI2| <---> |HDMI    ||
+>         ||        |       +--------+|
+>         ||    SSI3| <--+            |
+>         ||    SSI4| <-+|            |
+>         |+--------+   ||            |
+>         +-------------||------------+
+>         +-- Kingfisher -------------+
+>         |             ||  +--------+|
+>         |             |+->|pcm3168a||
+>         |             +-->|        ||
+>         |                 +--------+|
+>         +---------------------------+
+>
+> On UCLB/KF, we intuitively think we want to handle these
+> as "2 Sound Cards".
+>
+>         card0,0: 1st sound of ULCB (SSI0 - ak4613)
+>         card0,1: 2nd sound of ULCB (SSI2 - HDMI)
+>         card1,0: 1st sound of KF   (SSI3 - pcm3168a)
+>             ^ ^
+>
+> But, we needed to handle it as "1 big Sound Card",
+> because of ASoC Component vs Card framework limitation.
+>
+>         card0,0: 1st sound of ULCB/KF (SSI0 - ak4613)
+>         card0,1: 2nd sound of ULCB/KF (SSI2 - HDMI)
+>         card0,2: 3rd sound of ULCB/KF (SSI3 - pcm3168a)
+>             ^ ^
+>
+> Now ASoC support multi Component which allow us to handle "2 Sound Cards"
+> such as "ULCB Sound Card" and "Kingfisher Sound Card".
+>
+> This patch updates all ULCB/KF Audio dtsi.
+> One note is that Sound Card specification method from userland will be
+> changed, especially for Kingfisher Sound.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+> v2 -> v3
+>         - fix type on git-log "framwork" -> framework"
+>         - fix comment-out style
+>         - "rcar_sound,dai" -> "rcar_sound,dai@0" on ulcb
 
---------------tN9WGv9Sm3bW15FJqXQwj9oC
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.7.
 
-DQoNCkFtIDIxLjA5LjIzIHVtIDEyOjU3IHNjaHJpZWIgTWF4aW1lIFJpcGFyZDoNCj4gV2Un
-dmUgaGFkIGEgbnVtYmVyIG9mIHRpbWVzIHdoZW4gYSBwYXRjaCBzbGlwcGVkIHRocm91Z2gg
-YW5kIHdlIGNvdWxkbid0DQo+IHBpY2sgdGhlbSB1cCBlaXRoZXIgYmVjYXVzZSBvdXIgTUFJ
-TlRBSU5FUlMgZW50cnkgb25seSBjb3ZlcnMgdGhlDQo+IGZyYW1ld29yayBhbmQgdGh1cyB3
-ZSB3ZXJlbid0IENjJ2QuDQo+IA0KPiBMZXQncyB0YWtlIGFub3RoZXIgYXBwcm9hY2ggd2hl
-cmUgd2UgbWF0Y2ggZXZlcnl0aGluZywgYW5kIHJlbW92ZSBhbGwNCj4gdGhlIGRyaXZlcnMg
-dGhhdCBhcmUgbm90IG1haW50YWluZWQgdGhyb3VnaCBkcm0tbWlzYy4NCj4gDQo+IEFja2Vk
-LWJ5OiBKYW5pIE5pa3VsYSA8amFuaS5uaWt1bGFAaW50ZWwuY29tPg0KPiBTaWduZWQtb2Zm
-LWJ5OiBNYXhpbWUgUmlwYXJkIDxtcmlwYXJkQGtlcm5lbC5vcmc+DQoNCkFja2VkLWJ5OiBU
-aG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4NCg0KPiANCj4gLS0tDQo+
-IA0KPiBDYzogQWxleCBEZXVjaGVyIDxhbGV4YW5kZXIuZGV1Y2hlckBhbWQuY29tPg0KPiBD
-YzogQ2hyaXN0aWFuIEvDtm5pZyA8Y2hyaXN0aWFuLmtvZW5pZ0BhbWQuY29tPg0KPiBDYzog
-IlBhbiwgWGluaHVpIiA8WGluaHVpLlBhbkBhbWQuY29tPg0KPiBDYzogUnVzc2VsbCBLaW5n
-IDxsaW51eEBhcm1saW51eC5vcmcudWs+DQo+IENjOiBMdWNhcyBTdGFjaCA8bC5zdGFjaEBw
-ZW5ndXRyb25peC5kZT4NCj4gQ2M6IENocmlzdGlhbiBHbWVpbmVyIDxjaHJpc3RpYW4uZ21l
-aW5lckBnbWFpbC5jb20+DQo+IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+
-DQo+IENjOiBTZXVuZy1Xb28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPg0KPiBDYzog
-S3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4NCj4gQ2M6IEphbmkg
-TmlrdWxhIDxqYW5pLm5pa3VsYUBsaW51eC5pbnRlbC5jb20+DQo+IENjOiBKb29uYXMgTGFo
-dGluZW4gPGpvb25hcy5sYWh0aW5lbkBsaW51eC5pbnRlbC5jb20+DQo+IENjOiBSb2RyaWdv
-IFZpdmkgPHJvZHJpZ28udml2aUBpbnRlbC5jb20+DQo+IENjOiBUdnJ0a28gVXJzdWxpbiA8
-dHZydGtvLnVyc3VsaW5AbGludXguaW50ZWwuY29tPg0KPiBDYzogUGhpbGlwcCBaYWJlbCA8
-cC56YWJlbEBwZW5ndXRyb25peC5kZT4NCj4gQ2M6IExhdXJlbnRpdSBQYWxjdSA8bGF1cmVu
-dGl1LnBhbGN1QG9zcy5ueHAuY29tPg0KPiBDYzogQW5pdGhhIENocmlzYW50aHVzIDxhbml0
-aGEuY2hyaXNhbnRodXNAaW50ZWwuY29tPg0KPiBDYzogRWRtdW5kIERlYSA8ZWRtdW5kLmou
-ZGVhQGludGVsLmNvbT4NCj4gQ2M6IENodW4tS3VhbmcgSHUgPGNodW5rdWFuZy5odUBrZXJu
-ZWwub3JnPg0KPiBDYzogUm9iIENsYXJrIDxyb2JkY2xhcmtAZ21haWwuY29tPg0KPiBDYzog
-QWJoaW5hdiBLdW1hciA8cXVpY19hYmhpbmF2a0BxdWljaW5jLmNvbT4NCj4gQ2M6IERtaXRy
-eSBCYXJ5c2hrb3YgPGRtaXRyeS5iYXJ5c2hrb3ZAbGluYXJvLm9yZz4NCj4gQ2M6IFNlYW4g
-UGF1bCA8c2VhbkBwb29ybHkucnVuPg0KPiBDYzogTWFyaWpuIFN1aWp0ZW4gPG1hcmlqbi5z
-dWlqdGVuQHNvbWFpbmxpbmUub3JnPg0KPiBDYzogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRo
-YXQuY29tPg0KPiBDYzogS2Fyb2wgSGVyYnN0IDxraGVyYnN0QHJlZGhhdC5jb20+DQo+IENj
-OiBMeXVkZSBQYXVsIDxseXVkZUByZWRoYXQuY29tPg0KPiBDYzogTGF1cmVudCBQaW5jaGFy
-dCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPg0KPiBDYzogS2llcmFuIEJp
-bmdoYW0gPGtpZXJhbi5iaW5naGFtK3JlbmVzYXNAaWRlYXNvbmJvYXJkLmNvbT4NCj4gQ2M6
-IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+DQo+IENjOiBNaWtr
-byBQZXJ0dHVuZW4gPG1wZXJ0dHVuZW5AbnZpZGlhLmNvbT4NCj4gQ2M6IGRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcNCj4gQ2M6IGFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnDQo+IENjOiBldG5hdml2QGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiBDYzogaW50ZWwt
-Z2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiBDYzogbm91dmVhdUBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcNCj4gQ2M6IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZw0KPiBD
-YzogbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnDQo+IA0KPiBDaGFuZ2VzIGZyb20gdjE6
-DQo+IC0gUmVtb3ZlIGluZ2VuaWMgYW5kIGdtYTUwMCBmcm9tIHRoZSBleGNsdWRlZCBsaXN0
-DQo+IC0tLQ0KPiAgIE1BSU5UQUlORVJTIHwgMjEgKysrKysrKysrKysrKysrKysrLS0tDQo+
-ICAgMSBmaWxlIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+
-IA0KPiBkaWZmIC0tZ2l0IGEvTUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVSUw0KPiBpbmRleCA5
-MGYxMzI4MWQyOTcuLjEwMTI0MDJkYWRhNSAxMDA2NDQNCj4gLS0tIGEvTUFJTlRBSU5FUlMN
-Cj4gKysrIGIvTUFJTlRBSU5FUlMNCj4gQEAgLTY4NjAsMTIgKzY4NjAsMjcgQEAgTToJVGhv
-bWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+DQo+ICAgUzoJTWFpbnRhaW5l
-ZA0KPiAgIFc6CWh0dHBzOi8vMDEub3JnL2xpbnV4Z3JhcGhpY3MvZ2Z4LWRvY3MvbWFpbnRh
-aW5lci10b29scy9kcm0tbWlzYy5odG1sDQo+ICAgVDoJZ2l0IGdpdDovL2Fub25naXQuZnJl
-ZWRlc2t0b3Aub3JnL2RybS9kcm0tbWlzYw0KPiArRjoJRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Rpc3BsYXkvDQo+ICtGOglEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvZ3B1Lw0KPiAgIEY6CURvY3VtZW50YXRpb24vZ3B1Lw0KPiAtRjoJZHJpdmVy
-cy9ncHUvZHJtLyoNCj4gK0Y6CWRyaXZlcnMvZ3B1L2RybS8NCj4gICBGOglkcml2ZXJzL2dw
-dS92Z2EvDQo+IC1GOglpbmNsdWRlL2RybS9kcm0qDQo+ICtGOglpbmNsdWRlL2RybS9kcm0N
-Cj4gICBGOglpbmNsdWRlL2xpbnV4L3ZnYSoNCj4gLUY6CWluY2x1ZGUvdWFwaS9kcm0vZHJt
-Kg0KPiArRjoJaW5jbHVkZS91YXBpL2RybS8NCj4gK1g6CWRyaXZlcnMvZ3B1L2RybS9hbWQv
-DQo+ICtYOglkcml2ZXJzL2dwdS9kcm0vYXJtYWRhLw0KPiArWDoJZHJpdmVycy9ncHUvZHJt
-L2V0bmF2aXYvDQo+ICtYOglkcml2ZXJzL2dwdS9kcm0vZXh5bm9zLw0KPiArWDoJZHJpdmVy
-cy9ncHUvZHJtL2k5MTUvDQo+ICtYOglkcml2ZXJzL2dwdS9kcm0vaW14Lw0KPiArWDoJZHJp
-dmVycy9ncHUvZHJtL2ttYi8NCj4gK1g6CWRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay8NCj4g
-K1g6CWRyaXZlcnMvZ3B1L2RybS9tc20vDQo+ICtYOglkcml2ZXJzL2dwdS9kcm0vbm91dmVh
-dS8NCj4gK1g6CWRyaXZlcnMvZ3B1L2RybS9yYWRlb24vDQo+ICtYOglkcml2ZXJzL2dwdS9k
-cm0vcmVuZXNhcy8NCj4gK1g6CWRyaXZlcnMvZ3B1L2RybS90ZWdyYS8NCj4gICANCj4gICBE
-Uk0gRFJJVkVSUyBGT1IgQUxMV0lOTkVSIEExMA0KPiAgIE06CU1heGltZSBSaXBhcmQgPG1y
-aXBhcmRAa2VybmVsLm9yZz4NCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3Mg
-RHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJI
-DQpGcmFua2Vuc3RyYXNzZSAxNDYsIDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KR0Y6IEl2
-byBUb3RldiwgQW5kcmV3IE15ZXJzLCBBbmRyZXcgTWNEb25hbGQsIEJvdWRpZW4gTW9lcm1h
-bg0KSFJCIDM2ODA5IChBRyBOdWVybmJlcmcpDQo=
+Gr{oetje,eeting}s,
 
---------------tN9WGv9Sm3bW15FJqXQwj9oC--
+                        Geert
 
---------------dSxprB7Srgjr0Bp5MLVnm0oc
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmUMJMwFAwAAAAAACgkQlh/E3EQov+BH
-2BAA0LTZSFZq+OJZiKl/+R8oepbkvZ/YaNFEU74lc3D+RIvllgrlIP9+j8eyt4SXHLeoX19RTPU8
-KB5HM0rSezTANhqPiNO5rb96Bzk/yFmrKXhrLJfRUcFBYrprGlmTcXrDrjtTNEGTB9CE50bcLjeR
-XcOuz7VRyuUbq2gtLv9SI7gWQIuMpfDaTaO10Xt034fad7wI+aFbvB7vWuC2cST8f2zDDpzR799l
-R5k6CHGFSad12dlO0DaXJ2f6jGmj2b5icRKLzYFYt+A3cuTJKKbATQ5Fkl6/3T3Oij2R/q1Y2qZc
-Ojgd5+b7nlC05oartvMGihHyGwHVLnJqbjXCzkJgah8eLZXaW10TnNsLt7EY+4FGI9DfRfQSmBvu
-Fap/MWzMqVdbhSEePpkA5nuPMN0KkzjrLg5yExrYCboj6/YJoVeaWn0qXjVlwJeb4CVahVnxQs0I
-1+rAZ8vpWqhM0GR/6s1kjpzB6SEv8J+NDArsvOC/0nwxxiT9T9KaLAfGRSWU0UFRmZ/ezO9CdHHA
-oD0zFJG4Mhs/yKLo9976evNdoi8EEmmMkyMdsqsyCzP98c+gOuTYrKGvz0lCNzujzk9aeHP8H5SZ
-8W2V7MFPOhaaJJgFdCDv9U+uwxKMOm1K9o2qDqQ1kjXcJhKkBoATfptOou431V2fazE1RMGssLcq
-A/s=
-=AdlW
------END PGP SIGNATURE-----
-
---------------dSxprB7Srgjr0Bp5MLVnm0oc--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
