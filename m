@@ -2,105 +2,110 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27122E7109A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 17:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A2ACE79A9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 17:05:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229600AbjIURBW convert rfc822-to-8bit (ORCPT
+        id S229939AbjIURFW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:01:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40416 "EHLO
+        Thu, 21 Sep 2023 13:05:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229870AbjIURBF (ORCPT
+        with ESMTP id S230416AbjIURFJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:01:05 -0400
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF98FCFC;
-        Thu, 21 Sep 2023 10:00:31 -0700 (PDT)
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1c1e3a4a06fso9671505ad.3;
-        Thu, 21 Sep 2023 10:00:31 -0700 (PDT)
+        Thu, 21 Sep 2023 13:05:09 -0400
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E15B26AE;
+        Thu, 21 Sep 2023 10:04:43 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-59e88a28b98so16622177b3.1;
+        Thu, 21 Sep 2023 10:04:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695315510; x=1695920310;
+        d=1e100.net; s=20230601; t=1695315705; x=1695920505;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=idFDQKNDkzP5RSqt/nkSyZRNM7uFs093DSH/JN+PAAU=;
-        b=fFTvydo4h1rhHMSkuOsaU5d86+b6eIFARZ0Msf8qKg6gcPKeNpiGggU4mw2y577Tkn
-         CXCoDADizXKU8O4IYhUrbqE0cI0NJp0F6D2+X6e7Zl/7u13hIuDwo0uSh6Ot7OsNtJ7/
-         CiLF9+nQax0U9bpa+WTt80G8o7LaipzfhE9KDx/XtfIA7p7rPr4JHqKBOcrf9gl2P/8E
-         6bajL0LNKsbttu4j+xti70fwazDlyPjV6msd5UK8vy596KQvlkGl/VU4KQL56vX8YL5n
-         sX7OgZ+YwMfHwmyzGJGbAxSIGkVptjOfD4Zomitiik0sU6UoOtMsOAZhHVz8DAwQzeYS
-         /nQQ==
-X-Gm-Message-State: AOJu0YwPdTMzzJQXtPnJUswQNN11fUB1WWidrKBLYNRIGihuXgsTmK+O
-        LzMw7PEabOis5DmtZ/UHHn2xtr9DrjYHgUaF
-X-Google-Smtp-Source: AGHT+IG9TawMETPzBfgvTvEik3uLo+46CYkwSSW145R4ndL8xfUPnjLov+cYq7MQY9IKWRebCjtByg==
-X-Received: by 2002:a81:4f4a:0:b0:576:7dfc:e73e with SMTP id d71-20020a814f4a000000b005767dfce73emr5263457ywb.32.1695288144779;
-        Thu, 21 Sep 2023 02:22:24 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id x202-20020a81a0d3000000b0057399b3bd26sm232511ywg.33.2023.09.21.02.22.24
+        bh=VRwAkZSLNnOXU3DV95HgEKiIM/TzYZSIhKT8pNNff1w=;
+        b=etkhXO6dSklwNPzjvSFj9GsohIYpRbSQ+8t7zdcNHKudUOJWy7sbaHdQZvvWZYfLI8
+         Y1lX7dyxw4CGls29j9TyxthaPj7ekbEyyy8s7Nu1pVKsGTjDD21D/1jJ8LwZzdWHiTmw
+         DyDtMocGMB8/7ApLeopWS4PTdeC6oxeSnSSD7v/L1R1PHRLNyfiPctzvTlHDbizy1lBd
+         D6nKOzjXFPXg7U6BwY8epIA2wgpW5MWib105iLSGISBUVNPL8BaBd+Wyy5P5QOiPENBv
+         oubkb745s0WV8KUY2bPTEMCl51aHM/G7DlkQhrRrcJuzRuE5Acw6THcvZhi6ZepqA3ES
+         tUsw==
+X-Gm-Message-State: AOJu0YyxY7yuXzrFOKVYK2BMDMQE0ZD6powfnWLRijA9mQzTm8S4PeUp
+        uC+AQVKoxVHl1ajwYqntqD2rJEzzeCJZ1Fxv
+X-Google-Smtp-Source: AGHT+IF0zB4v7TXI2EcRVhLvy8j6jI6Y3pGWxUDpXfIBxVbWosA2VWP9dsEgTyddf0aAe2297UGA1Q==
+X-Received: by 2002:a05:690c:2b87:b0:583:aca3:469c with SMTP id en7-20020a05690c2b8700b00583aca3469cmr174823ywb.2.1695315705603;
+        Thu, 21 Sep 2023 10:01:45 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id u124-20020a0deb82000000b0059590440338sm424684ywe.43.2023.09.21.10.01.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 02:22:24 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-59c0442a359so9002237b3.0;
-        Thu, 21 Sep 2023 02:22:24 -0700 (PDT)
-X-Received: by 2002:a0d:ea15:0:b0:59b:c11:ad7c with SMTP id
- t21-20020a0dea15000000b0059b0c11ad7cmr4927105ywe.18.1695288143988; Thu, 21
- Sep 2023 02:22:23 -0700 (PDT)
+        Thu, 21 Sep 2023 10:01:45 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-59e88a28b98so16621097b3.1;
+        Thu, 21 Sep 2023 10:01:45 -0700 (PDT)
+X-Received: by 2002:a0d:e2c4:0:b0:59b:b9fe:1838 with SMTP id
+ l187-20020a0de2c4000000b0059bb9fe1838mr164509ywe.1.1695315704940; Thu, 21 Sep
+ 2023 10:01:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230920135439.929695-1-dlemoal@kernel.org> <CAMuHMdWHXC=qPTcLS9VeqfFy7Js84pd84oZqqWdd7E+bAHrcqw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWHXC=qPTcLS9VeqfFy7Js84pd84oZqqWdd7E+bAHrcqw@mail.gmail.com>
+References: <363186079b4269891073f620e3e2353cf7d2559a.1669988238.git.geert+renesas@glider.be>
+ <1503a3857107e3a4f34e0c7fb5dada39@walle.cc> <CAMuHMdXN+HJb=zGeG=3t=Pie9cVpnBLYuEb_qX6=oSxG8eTkAw@mail.gmail.com>
+ <20221205163306.GB2012644-robh@kernel.org> <CAMuHMdUcrh26MNYuiqiC0_FMkeHtq1YnJrZKHEV_WQm5Dgzoaw@mail.gmail.com>
+ <ee03d150-51cf-4e12-ae2c-9475a192fb6c@linaro.org> <CAMuHMdW_-0f8DOmEzYb28XABqU3oFL4KXf9M-qKVyyrE_Lo+jQ@mail.gmail.com>
+ <d4d998cff934328f58cec767f93a59b5@walle.cc>
+In-Reply-To: <d4d998cff934328f58cec767f93a59b5@walle.cc>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Sep 2023 11:22:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXeeDNjwErH7HfCtnxSYF2o-6ZnkDuOe8u_mX14WKqqBQ@mail.gmail.com>
-Message-ID: <CAMuHMdXeeDNjwErH7HfCtnxSYF2o-6ZnkDuOe8u_mX14WKqqBQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/23] Fix libata suspend/resume handling and code cleanup
-To:     Damien Le Moal <dlemoal@kernel.org>
-Cc:     linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        John Garry <john.g.garry@oracle.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Paul Ausbeck <paula@soe.ucsc.edu>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Joe Breuer <linux-kernel@jmbreuer.net>,
-        Chia-Lin Kao <acelan.kao@canonical.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Thu, 21 Sep 2023 19:01:31 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUK=HvvjeTDefzX9sbY-vaRFVixcSvKVqDPgBpGVt2dQA@mail.gmail.com>
+Message-ID: <CAMuHMdUK=HvvjeTDefzX9sbY-vaRFVixcSvKVqDPgBpGVt2dQA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mtd: jedec,spi-nor: Document support for
+ more MT25QU parts
+To:     Michael Walle <michael@walle.cc>
+Cc:     Tudor Ambarus <tudor.ambarus@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Pratyush Yadav <pratyush@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 11:21 AM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Sep 20, 2023 at 3:54 PM Damien Le Moal <dlemoal@kernel.org> wrote:
-> > The first 9 patches of this series fix several issues with suspend/resume
-> > power management operations in scsi and libata. The most significant
-> > changes introduced are in patch 4 and 5, where the manage_start_stop
-> > flag of scsi devices is split into the manage_system_start_stop and
-> > manage_runtime_start_stop flags to allow keeping scsi runtime power
-> > operations for spining up/down ATA devices but have libata do its own
-> > system suspend/resume device power state management using EH.
-> >
-> > The remaining patches are code cleanup that do not introduce any
-> > significant functional change.
-> >
-> > This series was tested on qemu and on various PCs and servers. I am
-> > CC-ing people who recently reported issues with suspend/resume.
-> > Additional testing would be much appreciated.
-> >
-> > Changes from v3:
-> >  * Corrected pathc 1 (typo in commit message and WARN_ON() removal)
-> >  * Changed path 3 as suggested by Niklas (moved definition of
-> >    ->slave_alloc)
-> >  * Rebased on rc2
-> >  * Added review tags
->
-> Thanks for the update!
->
-> I gave this a try on Renesas Salvator-XS with R-Car H3 ES2.0 and
-> a SATA hard drive:
->   - The drive is spun up during system resume,
->   - Accessing the drive after the system was resumed is instantaneous.
+Hi Michael,
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Sep 21, 2023 at 6:01 PM Michael Walle <michael@walle.cc> wrote:
+> >> We won't break compatibility with older DTBs if we use a list of
+> >> compatibles. First the vendor specific one which will use some quirks,
+> >> and if that's not available, have as second the generic jedec,spi-nor
+> >> to
+> >> fallback to.
+> >
+> > Sure, you should use a list.
+> >
+> > But the current recommended practice is to not have a list,
+> > but just "jedec,spi-nor" (using a list with a new FLASH part name
+> > causes checkpatch and dtbs_check warnings). Hence if you follow that
+> > recommendation, you will run into compatibility issues with older DTBs
+> > when you discover the quirk later, and decide to add it to the list.
+>
+> The SPI NOR flashes should be auto discoverable. Why do you need a
+> compatible string? Quirks can be added to the flash_info database.
+
+This assumes you don't need the quirk before you can identify the part.
+I'm not sure that is always the case.
+
+There's a similar issue with Ethernet PHYs on the MDIO bus, which is
+why they are gaining proper compatible values in many board DTS files.
+
+> Also note, that one reason *not* to add a particular flash compatible
+> is that they are usually interchangeable and OEMs do so. So a where
+> today a board might have a macronix flash, tomorrow that board might
+> have a gigadevice one for example.
+
+Yeah, that's indeed happening, and it's already an issue.
 
 Gr{oetje,eeting}s,
 
