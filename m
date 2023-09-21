@@ -2,127 +2,88 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63723E7D0AB
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 21:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B4CE7D0AB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 21:45:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231481AbjIUVfr convert rfc822-to-8bit (ORCPT
+        id S229907AbjIUVpM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 17:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38424 "EHLO
+        Thu, 21 Sep 2023 17:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232224AbjIUVfg (ORCPT
+        with ESMTP id S229730AbjIUVo6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 17:35:36 -0400
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E044FC9BCB
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 11:19:20 -0700 (PDT)
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-417e013061eso7846561cf.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 11:19:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695320323; x=1695925123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PMvhYNwFGARBa/MF4HER8mJJeim1I3oHk5U3f+QpCSI=;
-        b=Wo5t6bTOwgrH4QCwUYnfAEwQc7G+23iluuHdYSBSti1SfoNmp55L9/+4nIwZ09YNuG
-         VvBpLIpjdRA0oxixkeeUG7P/CRsbg8UOGFx23UufQyB3RGnMfyJOmmuucM02YRWFNu+q
-         hc0Z0eoXuIM2qhl9wo6MQPnvuig9CElYchWkkJVy66OVodjIKGTctdgaA106JqXJ+RcW
-         cdLODWqY7kmLvf6IcZwbjB9WgsMSAhuOrAuU8zq5+QXSPZLNWS8HFxxZ88UgJNYw42jZ
-         xdaNraT6JtUwuyTtmiqnpzAYcLlnIjlXd+p7IJQhD2tt1pAgFfpUcjuV+MWLhjv7iRuJ
-         p9RQ==
-X-Gm-Message-State: AOJu0YwGCOZ1Xj8SnjJKAwD4kH/NkELo5qPgAoaAeZFRADox0BcmEj8I
-        FigQJd6O+tplqCDH+FrWnBj8vH0j0Srb1EDz
-X-Google-Smtp-Source: AGHT+IGWd5u0CJLvIXSnh5yTl1jTXJ7ERh5f6P++TzlbA3UnzbX9KTHgXJYUlu4BcXdHxj6CAIzZAA==
-X-Received: by 2002:a81:9106:0:b0:59e:7f14:4b48 with SMTP id i6-20020a819106000000b0059e7f144b48mr4336217ywg.41.1695281844501;
-        Thu, 21 Sep 2023 00:37:24 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id g143-20020a815295000000b005897fd75c80sm197666ywb.78.2023.09.21.00.37.23
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 00:37:23 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-59ec6d7bb89so7970697b3.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 00:37:23 -0700 (PDT)
-X-Received: by 2002:a0d:ca86:0:b0:589:e66e:abe4 with SMTP id
- m128-20020a0dca86000000b00589e66eabe4mr4575374ywd.11.1695281843515; Thu, 21
- Sep 2023 00:37:23 -0700 (PDT)
+        Thu, 21 Sep 2023 17:44:58 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103BC49F7;
+        Thu, 21 Sep 2023 14:22:29 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE9DFC433C7;
+        Thu, 21 Sep 2023 21:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695331348;
+        bh=2sDazNEv47m0wG4jFCM6EJLQTQHyU4bEeUi/sRFwWPQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SAwdWtZWznxlHJ/7maelWwB9vj13QV19V09kv85Nr8jASUGsojjFrnhL7ouGg0/kD
+         UBQCADoEi0EoBanE2wK1tXRDPYXdq3GCKsJJ2+eM+c6yi0KxlvF6c48e2QPuwS9FhU
+         eP4yEXi5jPxO4AVFYgk5l4AX8lvceyMNjZNaJA/Wi70HZl4Q6/WpsctkUmhUumpOgp
+         T3xNAACnvcLBb8VcCX8fpCud9KX7Ni+2tRMSuzZpZ6G1fB9ZjwhSLCcLTBKi849jvn
+         5KxHqGHRHgBfzUVGHuYjfTFGQNPun5w/R5LcypjZS12Pr5TL0hjbkR1jjd5OK2bSHz
+         bTMl++Nv9EmcA==
+Date:   Thu, 21 Sep 2023 23:22:23 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] i2c: rcar: reset controller is mandatory for Gen3+
+Message-ID: <20230921212223.f5vwltckcbi27hh6@zenone.zhora.eu>
+References: <20230921125351.3954-1-wsa+renesas@sang-engineering.com>
+ <20230921125351.3954-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <87fs382yhk.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87fs382yhk.wl-kuninori.morimoto.gx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Sep 2023 09:37:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX6Jisc+KgCpzARPvsLZTeGLM-4cMxmDFErm31RWoonCA@mail.gmail.com>
-Message-ID: <CAMuHMdX6Jisc+KgCpzARPvsLZTeGLM-4cMxmDFErm31RWoonCA@mail.gmail.com>
-Subject: Re: [PATCH v3] arm64: dts: renesas: use multi Component for ULCB/KF
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230921125351.3954-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 1:53 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
->
->         +-- ULCB -------------------+
->         |+--------+       +--------+|
->         ||    SSI0| <---> |ak4613  ||
->         ||    SSI1| <---> |        ||
->         ||        |       +--------+|
->         ||        |       +--------+|
->         ||    SSI2| <---> |HDMI    ||
->         ||        |       +--------+|
->         ||    SSI3| <--+            |
->         ||    SSI4| <-+|            |
->         |+--------+   ||            |
->         +-------------||------------+
->         +-- Kingfisher -------------+
->         |             ||  +--------+|
->         |             |+->|pcm3168a||
->         |             +-->|        ||
->         |                 +--------+|
->         +---------------------------+
->
-> On UCLB/KF, we intuitively think we want to handle these
-> as "2 Sound Cards".
->
->         card0,0: 1st sound of ULCB (SSI0 - ak4613)
->         card0,1: 2nd sound of ULCB (SSI2 - HDMI)
->         card1,0: 1st sound of KF   (SSI3 - pcm3168a)
->             ^ ^
->
-> But, we needed to handle it as "1 big Sound Card",
-> because of ASoC Component vs Card framework limitation.
->
->         card0,0: 1st sound of ULCB/KF (SSI0 - ak4613)
->         card0,1: 2nd sound of ULCB/KF (SSI2 - HDMI)
->         card0,2: 3rd sound of ULCB/KF (SSI3 - pcm3168a)
->             ^ ^
->
-> Now ASoC support multi Component which allow us to handle "2 Sound Cards"
-> such as "ULCB Sound Card" and "Kingfisher Sound Card".
->
-> This patch updates all ULCB/KF Audio dtsi.
-> One note is that Sound Card specification method from userland will be
-> changed, especially for Kingfisher Sound.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
-> v2 -> v3
->         - fix type on git-log "framwork" -> framework"
->         - fix comment-out style
->         - "rcar_sound,dai" -> "rcar_sound,dai@0" on ulcb
+Hi Wolfram,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.7.
+[...]
 
-Gr{oetje,eeting}s,
+>  		irqhandler = rcar_i2c_gen2_irq;
+>  	}
+>  
+> -	if (priv->devtype == I2C_RCAR_GEN3) {
+> -		priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> -		if (!IS_ERR(priv->rstc)) {
+> -			ret = reset_control_status(priv->rstc);
+> -			if (ret < 0)
+> -				priv->rstc = ERR_PTR(-ENOTSUPP);
+> -		}
+> -	}
+> -
+>  	/* Stay always active when multi-master to keep arbitration working */
+>  	if (of_property_read_bool(dev->of_node, "multi-master"))
+>  		priv->flags |= ID_P_PM_BLOCKED;
+> @@ -1112,6 +1101,16 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+>  	if (of_property_read_bool(dev->of_node, "smbus"))
+>  		priv->flags |= ID_P_HOST_NOTIFY;
+>  
+> +	if (priv->devtype == I2C_RCAR_GEN3) {
+> +		priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> +		if (IS_ERR(priv->rstc))
+> +			goto out_pm_put;
+> +
+> +		ret = reset_control_status(priv->rstc);
+> +		if (ret < 0)
+> +			goto out_pm_put;
+> +	}
+> +
 
-                        Geert
+you moved this block to avoid the pm_runtime_put(dev);
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Looks good!
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
+
+Andi
