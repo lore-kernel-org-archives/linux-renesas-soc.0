@@ -2,143 +2,120 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC366E7D0A2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 17:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 395D4E7D0A2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 18:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230137AbjIURvq (ORCPT
+        id S229861AbjIUSNc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:51:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49108 "EHLO
+        Thu, 21 Sep 2023 14:13:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbjIURv0 (ORCPT
+        with ESMTP id S229503AbjIUSMc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:51:26 -0400
+        Thu, 21 Sep 2023 14:12:32 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7F26E99;
-        Thu, 21 Sep 2023 10:22:32 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9943EC07618;
-        Thu, 21 Sep 2023 07:55:18 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18A5E8461A
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:37:31 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51795C32786;
+        Thu, 21 Sep 2023 09:57:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695282918;
-        bh=qvPZ+VCJtPMejE6viuglDi8nXd8o5MD4A3HkT/J6twY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QNsk4p+/lZjcd6Y+rEjxn/UjnbFW/kFDV0pOQKYpCebciHdwyv7OJO2WDztsBPMSd
-         DTLx1JsTnmBClOEJBWftMLGYMD1XwFqb7lW3I4VCRDOZUSqRna9Ltrb+gGUVFX5d5O
-         rKESmAfK4AhmKkPRFk1VK0y6TfkH81F36AsznQ/0R36tHoqTN/EkjsNOfNam0ShW1S
-         aDZOmJDtOB2ij2jtE4cxaGw+Qh9QBHKboq9CiJIUPgRVlx3HFsLUrc6u/6jbZoSAi+
-         c72Szhe25QJZSuX2G9nU5HENKtvkr8UMDwhuBhCMLmUp76a0UxAjry62rIer69adY7
-         NpYkARY2O0TEg==
-Received: from 82-132-232-12.dab.02.net ([82.132.232.12] helo=wait-a-minute.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.95)
-        (envelope-from <maz@kernel.org>)
-        id 1qjEWp-00EsBY-9W;
-        Thu, 21 Sep 2023 08:55:16 +0100
-Date:   Thu, 21 Sep 2023 08:55:10 +0100
-Message-ID: <871qes3qqp.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+        s=k20201202; t=1695290250;
+        bh=b4C6GKOi2llCc/51wf7ZCun/ppmLevoEf7O5GkvTEJ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rpG/WKZfSfFJ08BBtam5NSmxNuu17M8yOcCt5bH/LDlmkJO7/Ml2i2QQPYr7/R4J9
+         S9N9pq/umvS/5oRYiOugpjIBhEasFLHrKnFjaRElGZ8CixJkXfpiJT/QSHILt0XdDG
+         r6HKbiU8a+FPK+62kmkEH17FjrGhHHjkvfH5Ha+4CyU8rOCocs46V8/K3dmaBYzvE0
+         afEeUFNQ5UjnPp1vscVaNiffgjTJ3DgHNqFfuQ1eA83koRortIZ84ilWTzEH4YuZna
+         dqKwrErxVjg4kiKlUK2vcT+/iE1jwWxx/hvGGUCXFmuECD48AWTk00FU02lY9UbzEA
+         KsaprLbvBm++Q==
+From:   Conor Dooley <conor@kernel.org>
+To:     linux-riscv@lists.infradead.org
+Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das.au@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 3/3] irqchip: renesas-rzg2l: Fix irq storm with edge trigger detection for TINT
-In-Reply-To: <OS0PR01MB592242E8A1A3A22CD1B74A1986FAA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20230918122411.237635-1-biju.das.jz@bp.renesas.com>
-        <20230918122411.237635-4-biju.das.jz@bp.renesas.com>
-        <86y1h2cjpb.wl-maz@kernel.org>
-        <OS0PR01MB5922748F489467BE2539AA1886FAA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-        <87cyye3zly.wl-maz@kernel.org>
-        <OS0PR01MB59228AD24951D49F3E639BFF86FAA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-        <87a5ti3y7i.wl-maz@kernel.org>
-        <OS0PR01MB592242E8A1A3A22CD1B74A1986FAA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.232.12
-X-SA-Exim-Rcpt-To: biju.das.jz@bp.renesas.com, tglx@linutronix.de, prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea.uj@bp.renesas.com, geert+renesas@glider.be, biju.das.au@gmail.com, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        Magnus Damm <magnus.damm@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+        devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-renesas-soc@vger.kernel.org
+Subject: [RFC v1 0/6] riscv,isa-extensions additions
+Date:   Thu, 21 Sep 2023 10:57:17 +0100
+Message-ID: <20230921095723.26456-1-conor@kernel.org>
+X-Mailer: git-send-email 2.41.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, 19 Sep 2023 18:06:54 +0100,
-Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> 
-> Hi Marc Zyngier,
-> 
-> > Subject: Re: [PATCH 3/3] irqchip: renesas-rzg2l: Fix irq storm with edge
-> > trigger detection for TINT
-> > 
-> > On Tue, 19 Sep 2023 17:32:05 +0100,
-> > Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > 
-> > [...]
-> > 
-> > > > So you mean that you *already* lose interrupts across a disable
-> > > > followed by an enable? I'm slightly puzzled...
-> > >
-> > > There is no interrupt lost at all.
-> > >
-> > > Currently this patch addresses 2 issues.
-> > >
-> > > Scenario 1: Extra interrupt when we select TINT source on enable_irq()
-> > >
-> > > Getting an extra interrupt, when client drivers calls enable_irq()
-> > > during probe()/resume(). In this case, the irq handler on the Client
-> > > driver just clear the interrupt status bit.
-> > >
-> > > Issue 2: IRQ storm when we select TINT source on enable_irq()
-> > >
-> > > Here as well, we are getting an extra interrupt, when client drivers
-> > > calls enable_irq() during probe() and this Interrupts getting
-> > > generated infinitely, when the client driver calls disable_irq() in
-> > > irq handler and in in work queue calling enable_irq().
-> > 
-> > How do you know this is a spurious interrupt? 
-> 
-> We have PMOD on RZ/G2L SMARC EVK. So I connected it to GPIO pin
-> and other end to ground. During the boot, I get an interrupt
-> even though there is no high to low transition, when the IRQ is setup
-> in the probe(). From this it is a spurious interrupt.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-That doesn't really handle my question. At the point of enabling the
-interrupt and consuming the edge (which is what this patch does), how
-do you know you can readily discard this signal? This is a genuine
-question.
+I'm suffering from a hw failure on my main dev machine & relegated to a
+recently acquired & not really configured laptop for a bit, so hopefully
+nothing with this series goes awry.
 
-Spurious interrupts at boot are common. The HW resets in a funky,
-unspecified state, and it's SW's job to initialise it before letting
-other agents in the system use interrupts.
+I've had two (or more, dunnno) people ask me where the patches for the
+DTs were swapping them over, so here's what I had before the hw failure.
+I've marked this RFC as a result & I'd like to come back and revisit
+these patches once I'm out of this limited environment.
 
-> 
-> > For all you can tell, you are
-> > just consuming an edge. I absolutely don't buy this workaround, because you
-> > have no context that allows you to discriminate between a real spurious
-> > interrupt and a normal interrupt that lands while the interrupt line was
-> > masked.
-> > 
-> > > Currently we are not loosing interrupts, but we are getting additional
-> > > Interrupt(phantom) which is causing the issue.
-> > 
-> > If you get an interrupt at probe time in the endpoint driver, that's
-> > probably because the device is not in a quiescent state when the interrupt
-> > is requested. And it is probably this that needs addressing.
-> 
-> Any pointer for addressing this issue? 
+The canaan stuff is absent here, mostly because I don't actually know
+what to do with it. They don't actually implement the same versions of
+the F stuff as everyone else (Stefan O'Rear pointed that out to me
+somewhere recently).
 
-Nothing but the most basic stuff: you should make sure that the
-interrupt isn't enabled before you can actually handle it, and triage
-it as spurious.
+Cheers,
+Conor.
 
-	M.
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC: Conor Dooley <conor+dt@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: Albert Ou <aou@eecs.berkeley.edu>
+CC: Chen-Yu Tsai <wens@csie.org>
+CC: Jernej Skrabec <jernej.skrabec@gmail.com>
+CC: Samuel Holland <samuel@sholland.org>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>
+CC: Magnus Damm <magnus.damm@gmail.com>
+CC: Emil Renner Berthing <kernel@esmil.dk>
+CC: Jisheng Zhang <jszhang@kernel.org>
+CC: Guo Ren <guoren@kernel.org>
+CC: Fu Wei <wefu@redhat.com>
+CC: devicetree@vger.kernel.org
+CC: linux-riscv@lists.infradead.org
+CC: linux-sunxi@lists.linux.dev
+CC: linux-renesas-soc@vger.kernel.org
+
+Conor Dooley (6):
+  riscv: dts: microchip: convert isa detection to new properties
+  riscv: dts: sifive: convert isa detection to new properties
+  riscv: dts: starfive: convert isa detection to new properties
+  riscv: dts: renesas: convert isa detection to new properties
+  riscv: dts: allwinner: convert isa detection to new properties
+  riscv: dts: thead: convert isa detection to new properties
+
+ arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi |  3 +++
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       | 15 +++++++++++++++
+ arch/riscv/boot/dts/renesas/r9a07g043f.dtsi   |  3 +++
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi    | 15 +++++++++++++++
+ arch/riscv/boot/dts/sifive/fu740-c000.dtsi    | 15 +++++++++++++++
+ arch/riscv/boot/dts/starfive/jh7100.dtsi      |  6 ++++++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      | 15 +++++++++++++++
+ arch/riscv/boot/dts/thead/th1520.dtsi         | 12 ++++++++++++
+ 8 files changed, 84 insertions(+)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.41.0
+
