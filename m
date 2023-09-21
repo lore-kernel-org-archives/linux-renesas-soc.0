@@ -2,176 +2,78 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5F6E7D0A4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 18:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4B0E7D0A2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 18:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230358AbjIUSjT (ORCPT
+        id S230249AbjIUSvB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 14:39:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57182 "EHLO
+        Thu, 21 Sep 2023 14:51:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230257AbjIUSjL (ORCPT
+        with ESMTP id S230004AbjIUSur (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 14:39:11 -0400
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7030BD2052;
-        Thu, 21 Sep 2023 11:22:06 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8DB5DE0003;
-        Thu, 21 Sep 2023 18:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-        t=1695320525;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=j9iU/unn2B5Lg59HKhzCVV0eWDfanHflmRLaK3sdqHo=;
-        b=hIAvQ8dgDH08u0BdHXTRIonGAo3yKFcZMxt3uw1qDZt+5ypJM3sJ8rIIGEcwJHGsRoCaR2
-        nifRNtpjmn7gbCEdBRqJLjOFn75cZwYAcde/5iEG/trGreT3o1bM9iKxU+HgDHKAPKa+G6
-        Jih/l/+El0+VJyWic6ezaTZoSmTUD4vc8twqBfLOUADhLTcNE24hbSjRqw84uEROq3R32d
-        LRudTD7HMQ1tbNO1XwIXQtasht2CBb5tWbQ7fPTz5pMthOnuUlVdU1aMrNn9xUw2PbB83C
-        jw74tIo2/G4YcjHYlpb20jMeWYMc/0OX6IdrPVnzwLA259K7WqTosgU1i6+GRQ==
-Message-ID: <85cc3b27-417e-4cf4-9f77-347a338c9d67@arinc9.com>
-Date:   Thu, 21 Sep 2023 21:21:40 +0300
+        Thu, 21 Sep 2023 14:50:47 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B308A20E
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=from:to:cc:subject:date:message-id
+        :mime-version:content-transfer-encoding; s=k1; bh=BWoG3Cv+9NwMSj
+        Oxgnt6dDveNegqs9pWvhh6JaU1+sY=; b=mYqT33MOiLshEtmkWv7E5tZ4gsTQaw
+        Z49u0NRmMm7GEcTGxlUoayfUctiKXbquROc53D9gXlY0InY8Su3uIlmtDRC2jTW4
+        vKQFJgzOFiT2juQoCzjcBkNNlp6PcTNT637JoA5ZbEGEwCUALC6LoOhMN3V842P3
+        +vrbuSU683OydILnh5UaJrY1a7rKMDJNOA2xKbLAIa2E20EcUs2OaEPSjV/AofvV
+        XUtOu9yw+S9aqV+Gxu8HEq75iNFOgWglql3nCB56Dmd2QNMVEE3COtGYNphnXxWt
+        YyWjwpgVh8120C/ZEPKDolV0UBRAbp/VnXp6Rc0kiS4iOUiHSmDNBCWw==
+Received: (qmail 881727 invoked from network); 21 Sep 2023 10:40:29 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2023 10:40:29 +0200
+X-UD-Smtp-Session: l3s3148p1@xoK6cdoFk1YuciSu
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Minjie Du <duminjie@vivo.com>,
+        Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: gpio: remove error checks with debugfs
+Date:   Thu, 21 Sep 2023 10:40:15 +0200
+Message-Id: <20230921084016.3434-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 07/10] dt-bindings: net: enforce phylink
- bindings on certain ethernet controllers
-Content-Language: en-US
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Rob Herring <robh@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        George McCollister <george.mccollister@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-        =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Marek Vasut <marex@denx.de>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Crispin <john@phrozen.org>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Felix Fietkau <nbd@nbd.name>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
-        mithat.guner@xeront.com, erkin.bozoglu@xeront.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-References: <20230916110902.234273-1-arinc.unal@arinc9.com>
- <20230916110902.234273-8-arinc.unal@arinc9.com>
- <20230918181319.GA1445647-robh@kernel.org>
- <16710cf9-8911-4fed-8e2d-b19b581446c1@arinc9.com>
- <a8d49992-4fa8-4a9f-b954-79011a3040a8@lunn.ch>
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <a8d49992-4fa8-4a9f-b954-79011a3040a8@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 21.09.2023 16:00, Andrew Lunn wrote:
->> - Link descriptions must be required on ethernet controllers. We don't care
->>    whether some Linux driver can or cannot find the PHY or set up a fixed
->>    link without looking at the devicetree.
-> 
-> That can lead to future surprises, and breakage.
-> 
-> Something which is not used is not tested, and so sometimes wrong, and
-> nobody knows. Say the driver is extended to a new device and actually
-> does need to use this never before used information. You then find it
-> is wrong, and you get a regression.
-> 
-> We have had issues like this before. There are four rgmii phy-link
-> modes. We have had PHY drivers which ignored one of those modes, it
-> silently accepted it, but did not change the hardware to actually use
-> that mode. The PHY continues to use its reset defaults or strapping,
-> and it worked. A lot of device trees ended up using this mode. And it
-> was not the same as reset defaults/strapping.
-> 
-> And then somebody needed that fourth mode, and made it actually
-> work. And all those boards wrongly using that mode broke.
-> 
-> The lesson i learned from that episode is that anything in device tree
-> must actually be used and tested.
+debugfs can handle error pointers in subsequent calls. So, remove the
+error checks as suggested by kerneldoc of this function.
 
-It looks like the root cause here was the lack of dt-bindings to only allow
-the phy-mode values the hardware supports. What I see here is the driver
-change should've been tested on all different hardware the driver controls
-then the improper describing of hardware on the devicetree source file
-addressed.
+Reported-by: Minjie Du <duminjie@vivo.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-gpio.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-If a devicetree change that ensures proper describing of hardware is found
-to break a driver in the future, then that exposes a bug on the driver and
-the driver will have to be fixed. I don't see this upholding writing
-dt-bindings that ensures proper describing of the hardware.
+diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+index e5a5b9e8bf2c..fb35a75fe0e3 100644
+--- a/drivers/i2c/busses/i2c-gpio.c
++++ b/drivers/i2c/busses/i2c-gpio.c
+@@ -263,15 +263,10 @@ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
+ 	 * 'fault-injector' dir there. Until then, we have a global dir with
+ 	 * all adapters as subdirs.
+ 	 */
+-	if (!i2c_gpio_debug_dir) {
++	if (!i2c_gpio_debug_dir)
+ 		i2c_gpio_debug_dir = debugfs_create_dir("i2c-fault-injector", NULL);
+-		if (!i2c_gpio_debug_dir)
+-			return;
+-	}
+ 
+ 	priv->debug_dir = debugfs_create_dir(pdev->name, i2c_gpio_debug_dir);
+-	if (!priv->debug_dir)
+-		return;
+ 
+ 	init_completion(&priv->scl_irq_completion);
+ 
+-- 
+2.35.1
 
-> 
->> Although I see dsa.yaml and dsa-port.yaml mostly consist of describing an
->> ethernet switch with CPU port(s), there're properties that are specific to
->> DSA, such as dsa,member on dsa.yaml and dsa-tag-protocol and label on
->> dsa-port.yaml.
-> 
-> I would say dsa,member does describe the hardware. It provides two
-> bits of information:
-> 
-> Which cluster of switches does this switch belong to. You probably can
-> derive it using the DSA links between switches, which is also a
-> hardware property. But having it in device tree makes it simpler.
-> 
-> Which switch is this within a cluster. You need to be able to say:
-> Send this frame out Port X of switch Y. How does a switch know it is
-> Y? It could be strapping, which is clearly a hardware property.
-> 
-> dsa-tag-protocol is similar to phy-mode. It tells you the protocol
-> running between the CPU port and the SoC master interface. You often
-> can imply it, but again, it could be determined by strapping on the
-> switch.
-> 
-> label is an interesting one, and probably would not be accepted if it
-> was proposed now. But it has been around a long time. It also does
-> describe the hardware, it is what is printed on the case next to the
-> RJ45. To make the user experience simpler, we then try to make the
-> linux interface name match the label on the case.
-
-Looks like we can incorporate dsa.port and dsa-port.yaml into
-ethernet-switch.yaml and ethernet-switch-port.yaml with adjustments.
-
-Arınç
