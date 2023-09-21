@@ -2,162 +2,119 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B2CE7D0AD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 20:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6BDE7D0AB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 20:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbjIUU6B (ORCPT
+        id S230010AbjIUU7x (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:58:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
+        Thu, 21 Sep 2023 16:59:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232273AbjIUU5h (ORCPT
+        with ESMTP id S232281AbjIUU7j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 16:57:37 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 490A8880B5;
-        Thu, 21 Sep 2023 10:38:50 -0700 (PDT)
-Received: from relay9-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::229])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id EAB5BC0A2F;
-        Thu, 21 Sep 2023 11:38:53 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 18E4AFF809;
-        Thu, 21 Sep 2023 11:38:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-        t=1695296310;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Jg1KwFh5lSvkfLStS1akS234BD88W219/y2jE+qO6JQ=;
-        b=FB+WZwNSKjLpXhOD9eu3aYO9S6xv7RKPVKfQqt6Yyak4R0XVc2bs16R2Ke/+V/3txgPjPr
-        wNyBzW42Tn7VAFs2jhEpLj1G9U6dnj08SGVZCzFzU+kN0/r6dBMoRCU2I1O3Q8xtwIolig
-        xJ1YEEOth0NiXYYwOeMIAC90CHeyPQYQTN1YQTfV6AKvrznfMYMqllejuEeIHK1xAQoq7D
-        B2wVQWekSUN/HVPKuTr+U8nV6amDRMGb5hUj07YiP5dfthswJzspcJcvSs0Fc397s1bG45
-        3KvHozxpJJGdRulhdH2AcaicpASeaoEDTfZJ6ynuWsTayDIRxLyeQVsxkaRHLg==
-Message-ID: <16710cf9-8911-4fed-8e2d-b19b581446c1@arinc9.com>
-Date:   Thu, 21 Sep 2023 14:38:09 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 07/10] dt-bindings: net: enforce phylink
- bindings on certain ethernet controllers
-To:     Rob Herring <robh@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
+        Thu, 21 Sep 2023 16:59:39 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3038463D
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:37:33 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9DFC32790;
+        Thu, 21 Sep 2023 09:57:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695290278;
+        bh=bkP6W776X16wLbLmad7rMe1hUvjvPfczkQjmqh4ND0g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AH1kjZSvppoXLQq5eXAhl5ExzNVFOiirzoGWCwMb866XLFvJM+1ObRGiHxqfaG0mm
+         faGRoqEuHfvlRHCuImY60lSsH66vKJquHytXe/1NAMl6S6EvU1t5ftlzCQEtwurHIx
+         t2B/9wz7t1URqo/YoIaxTEegOfbGoCbi42QT1pCoBvnRkmwnSW0LeOthvrG0QpoGi2
+         xj/WgvTsfSI0jApLbAFaO8OXWP7FLPja4AkzRHBt9kW0zjPoW+XZ6/zBAnFgI/gguc
+         dLm91SN/PrJVyuI08V3CWTXZrl20RNex9qmJb/9790h2HdLy9Sla3BLhcIztOC7OtV
+         TXLi0cAw+PnVg==
+From:   Conor Dooley <conor@kernel.org>
+To:     linux-riscv@lists.infradead.org
+Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        George McCollister <george.mccollister@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-        =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Marek Vasut <marex@denx.de>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Crispin <john@phrozen.org>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Felix Fietkau <nbd@nbd.name>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
-        mithat.guner@xeront.com, erkin.bozoglu@xeront.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+        devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
         linux-renesas-soc@vger.kernel.org
-References: <20230916110902.234273-1-arinc.unal@arinc9.com>
- <20230916110902.234273-8-arinc.unal@arinc9.com>
- <20230918181319.GA1445647-robh@kernel.org>
-Content-Language: en-US
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <20230918181319.GA1445647-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: [RFC v1 6/6] riscv: dts: thead: convert isa detection to new properties
+Date:   Thu, 21 Sep 2023 10:57:23 +0100
+Message-ID: <20230921095723.26456-7-conor@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230921095723.26456-1-conor@kernel.org>
+References: <20230921095723.26456-1-conor@kernel.org>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 18.09.2023 21:13, Rob Herring wrote:
-> On Sat, Sep 16, 2023 at 02:08:59PM +0300, Arınç ÜNAL wrote:
->> Phylink bindings are required for ethernet controllers that utilise
->> phylink_fwnode_phy_connect() directly or through phylink_of_phy_connect(),
->> and register OF-based only MDIO buses, if they register any.
-> 
-> What is phylink?
-> 
-> Don't describe/justify binding changes based on some Linux functions.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-I'd like to discuss the influence of the Linux drivers on the devicetree
-bindings. Before that let me clarify these "phylink" bindings. They are
-certain rules to properly describe the link of the ethernet controller. Any
-of the phy-handle, pcs-handle, sfp, and fixed-link properties describe the
-link. They are already defined on ethernet-controller.yaml, just not
-enforced.
+Convert the th1520 devicetrees to use the new properties
+"riscv,isa-base" & "riscv,isa-extensions".
+For compatibility with other projects, "riscv,isa" remains.
 
-Why I called them phylink bindings, is because when phylink is used on the
-ethernet controller driver, only then we can be sure that the link
-descriptions on the ethernet controller are needed. Because, some drivers
-don't need the link descriptions on the ethernet controller as they can
-search a certain MDIO bus to find and connect a MAC to a PHY or set up a
-fixed link without looking at the devicetree.
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ arch/riscv/boot/dts/thead/th1520.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-I don't like this approach because, as you said, devicetree bindings should
-describe the hardware, not driver policies. So I propose that we don't let
-Linux drivers interfere with dt-bindings. To that extent:
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index ce708183b6f6..5deac796d1a1 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -20,6 +20,9 @@ c910_0: cpu@0 {
+ 			compatible = "thead,c910", "riscv";
+ 			device_type = "cpu";
+ 			riscv,isa = "rv64imafdc";
++			riscv,base-isa = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			reg = <0>;
+ 			i-cache-block-size = <64>;
+ 			i-cache-size = <65536>;
+@@ -41,6 +44,9 @@ c910_1: cpu@1 {
+ 			compatible = "thead,c910", "riscv";
+ 			device_type = "cpu";
+ 			riscv,isa = "rv64imafdc";
++			riscv,base-isa = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			reg = <1>;
+ 			i-cache-block-size = <64>;
+ 			i-cache-size = <65536>;
+@@ -62,6 +68,9 @@ c910_2: cpu@2 {
+ 			compatible = "thead,c910", "riscv";
+ 			device_type = "cpu";
+ 			riscv,isa = "rv64imafdc";
++			riscv,base-isa = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			reg = <2>;
+ 			i-cache-block-size = <64>;
+ 			i-cache-size = <65536>;
+@@ -83,6 +92,9 @@ c910_3: cpu@3 {
+ 			compatible = "thead,c910", "riscv";
+ 			device_type = "cpu";
+ 			riscv,isa = "rv64imafdc";
++			riscv,base-isa = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			reg = <3>;
+ 			i-cache-block-size = <64>;
+ 			i-cache-size = <65536>;
+-- 
+2.41.0
 
-- Link descriptions must be required on ethernet controllers. We don't care
-   whether some Linux driver can or cannot find the PHY or set up a fixed
-   link without looking at the devicetree.
-
-- The MDIO bus description on an ethernet controller describes that the
-   hardware comes with an MDIO bus. The MDIO property is optional not
-   because some Linux driver can find and map the PHYs to MACs without DT
-   descriptions but because the hardware doesn't have to use that or any
-   MDIO bus.
-
-Let's also talk about the elephant in the room: DSA bindings. Distributed
-Switch Architecture is a Linux subsystem, not a hardware property.
-Devicetree bindings are supposed to describe the hardware, yet we have
-bindings specifically for DSA so that the DSA driver can properly control
-the hardware.
-
-Although I see dsa.yaml and dsa-port.yaml mostly consist of describing an
-ethernet switch with CPU port(s), there're properties that are specific to
-DSA, such as dsa,member on dsa.yaml and dsa-tag-protocol and label on
-dsa-port.yaml.
-
-Depending on how I get responses, I will address my patches. Then I can
-further discuss the DSA bindings.
-
-Arınç
