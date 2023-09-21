@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5B4E7D0AE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 21:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9D9E7D0A2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 21:02:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231487AbjIUVBD (ORCPT
+        id S232262AbjIUVC6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 17:01:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36182 "EHLO
+        Thu, 21 Sep 2023 17:02:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232292AbjIUVAf (ORCPT
+        with ESMTP id S229506AbjIUVCm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 17:00:35 -0400
+        Thu, 21 Sep 2023 17:02:42 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F2EE84623
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:37:31 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C2CAC3277F;
-        Thu, 21 Sep 2023 09:57:49 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3D0984610
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:37:30 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF1FEC32787;
+        Thu, 21 Sep 2023 09:57:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695290273;
-        bh=FSrPmOaSMx7Qkcei56gJBLc+xA1QXErHfQ4fZST4jRw=;
+        s=k20201202; t=1695290255;
+        bh=usFwkQQ5AzcrrD1Rc8yQkp1pUhtIgNBrTFWQdV/KS+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EFNT4OwWarwZ2PiwVpoDC3pBw05MsnkzPxAwOMKCzWiacPbcMBUf378pGIlu35Tpg
-         NJiaTDJWWXcF8YMb/Rn14yeTU7/lbrtDTVoyA7UK+2jTHbnAzK3J1X4GrLAXXzdqLY
-         it4DVEtTcw4miParWFmG7wKCMCse6xdW/87WfLznwWicKSAUmLw9DYxgInS98lz42A
-         DwKVzb59UCkho/r02fF9kESGSnjJjEdOgV+/N2ljSATpb5VAYbqufQFaOFR36gvTmB
-         CxEJK+MSypba7dfr1+Ev6GZ6qx7LChqhQBXAeSXxBbl4oZTr90lQ+rYPQBs4Uov5OQ
-         B1kwlUb39nQGQ==
+        b=cSOgfOurrUWLe2W9kpWfIoY1FtM3Heka7/3gLzQda6IgN0KHm3FtVUF7T6FO4Gb9w
+         gowW/bSmlgZDx4MyrptG0cefsCpW1pIfDzbGv2drcu8Q8aMJYD6KBxvx5AvhdmY+gm
+         BcRLjvP8ch9dtmxIp0i+6Xd/4PABGre3PH7Hl5VhRMV6j0SjGsJPTILR9pM2fWHfm1
+         QXkYKurz7Uy2eckN8jWYu+ZrAcKXrqwHt8rUVrZwmUNwAUOuFa/fegYekeHc/hRnpp
+         oybLFV0vUvpmtd2outaw3Pr9+x0Ij32643fniNuxvTfjyG/mBnzwpr8h8Sk6hs3EAa
+         N68ktYm9dEXsg==
 From:   Conor Dooley <conor@kernel.org>
 To:     linux-riscv@lists.infradead.org
 Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
@@ -48,9 +48,9 @@ Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
         Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
         devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
         linux-renesas-soc@vger.kernel.org
-Subject: [RFC v1 5/6] riscv: dts: allwinner: convert isa detection to new properties
-Date:   Thu, 21 Sep 2023 10:57:22 +0100
-Message-ID: <20230921095723.26456-6-conor@kernel.org>
+Subject: [RFC v1 1/6] riscv: dts: microchip: convert isa detection to new properties
+Date:   Thu, 21 Sep 2023 10:57:18 +0100
+Message-ID: <20230921095723.26456-2-conor@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230921095723.26456-1-conor@kernel.org>
 References: <20230921095723.26456-1-conor@kernel.org>
@@ -62,29 +62,69 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-Convert the D1 devicetrees to use the new properties
+Convert the PolarFire SoC devicetrees to use the new properties
 "riscv,isa-base" & "riscv,isa-extensions".
 For compatibility with other projects, "riscv,isa" remains.
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/riscv/boot/dts/microchip/mpfs.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-index 8275630af977..6b721172390b 100644
---- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-+++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-@@ -25,6 +25,9 @@ cpu0: cpu@0 {
+diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dts/microchip/mpfs.dtsi
+index 104504352e99..b1f873d9246c 100644
+--- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
++++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
+@@ -22,6 +22,9 @@ cpu0: cpu@0 {
+ 			i-cache-size = <16384>;
+ 			reg = <0>;
+ 			riscv,isa = "rv64imac";
++			riscv,base-isa = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "c", "zicntr", "zicsr", "zifencei",
++					       "zihpm";
+ 			clocks = <&clkcfg CLK_CPU>;
+ 			status = "disabled";
+ 
+@@ -48,6 +51,9 @@ cpu1: cpu@1 {
  			mmu-type = "riscv,sv39";
- 			operating-points-v2 = <&opp_table_cpu>;
+ 			reg = <1>;
  			riscv,isa = "rv64imafdc";
 +			riscv,base-isa = "rv64i";
 +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
 +					       "zifencei", "zihpm";
- 			#cooling-cells = <2>;
- 
- 			cpu0_intc: interrupt-controller {
+ 			clocks = <&clkcfg CLK_CPU>;
+ 			tlb-split;
+ 			next-level-cache = <&cctrllr>;
+@@ -76,6 +82,9 @@ cpu2: cpu@2 {
+ 			mmu-type = "riscv,sv39";
+ 			reg = <2>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,base-isa = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			clocks = <&clkcfg CLK_CPU>;
+ 			tlb-split;
+ 			next-level-cache = <&cctrllr>;
+@@ -104,6 +113,9 @@ cpu3: cpu@3 {
+ 			mmu-type = "riscv,sv39";
+ 			reg = <3>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,base-isa = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			clocks = <&clkcfg CLK_CPU>;
+ 			tlb-split;
+ 			next-level-cache = <&cctrllr>;
+@@ -132,6 +144,9 @@ cpu4: cpu@4 {
+ 			mmu-type = "riscv,sv39";
+ 			reg = <4>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,base-isa = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			clocks = <&clkcfg CLK_CPU>;
+ 			tlb-split;
+ 			next-level-cache = <&cctrllr>;
 -- 
 2.41.0
 
