@@ -2,92 +2,111 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0970BE7D0AA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 20:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6299E7D0A9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 20:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231987AbjIUUdL convert rfc822-to-8bit (ORCPT
+        id S231889AbjIUUdY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:33:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57536 "EHLO
+        Thu, 21 Sep 2023 16:33:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232010AbjIUUcv (ORCPT
+        with ESMTP id S231935AbjIUUdG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 16:32:51 -0400
-Received: from mail-ot1-f65.google.com (mail-ot1-f65.google.com [209.85.210.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 906E78922E;
-        Thu, 21 Sep 2023 10:39:46 -0700 (PDT)
-Received: by mail-ot1-f65.google.com with SMTP id 46e09a7af769-6c0b8f42409so743807a34.0;
-        Thu, 21 Sep 2023 10:39:46 -0700 (PDT)
+        Thu, 21 Sep 2023 16:33:06 -0400
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C54C86E7D
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:38:33 -0700 (PDT)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6c228c9a98dso735443a34.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:38:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695317986; x=1695922786;
+        d=1e100.net; s=20230601; t=1695317912; x=1695922712;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+FnksNosVt+Hax24mR+RoN0eh3COVsIdIWx2BS+xejg=;
-        b=rEkx3pMMnIU7MUJ9vcnx/DCHNMC/mOb17XNiDHTnHAIovYhOvhE/8768ey7Fg50mWi
-         a2sDCOSJrJDSp+eWKsYJ5NQ49buCM5LBWumFy7qeSfPz8m4IsMHFmt3saylMWva5OgXd
-         MPpfmb7HSMg9XHCNDPBXvyxfKy/IUud0pMwOwAk5sySBHiN0nOSEOK2hJV1YmTU0DIJn
-         z/Jn7fjglrRBkWa8ZxUsPHae7XaTzGML++/2yKa8LKlTcjK3bAOfu4Flptr5wNE9EgEI
-         HClm3bJbT1aWwetKW4CoKK2jPTvCLldfSb6vgAw4oUC7eYOg1rJS7+yx2IhuUFGhYMpl
-         p0UA==
-X-Gm-Message-State: AOJu0YxAOJnUnrAX9ZKwf9iDhnavooLEUzzrZqejmwa8GLOU/h4eim+A
-        J8SqKKXgzvjdm/b0Nx9TamI2QQfinX0TFqO0qac=
-X-Google-Smtp-Source: AGHT+IEkfGDj8wYGohG9vtgfxj2bFMU98AQDYeQGae+2uTcjv+ZyzSZBMyN3zQhcBm3QftLUqtmlQQ==
-X-Received: by 2002:a81:83c1:0:b0:58d:7ec3:16c4 with SMTP id t184-20020a8183c1000000b0058d7ec316c4mr6054718ywf.34.1695308457056;
-        Thu, 21 Sep 2023 08:00:57 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id e1-20020a0dc201000000b0057a8de72338sm364072ywd.68.2023.09.21.08.00.56
+        bh=mOsTExKI1Kt1Hvu85c0dJDu31qztEwjh68G+KWjd0JA=;
+        b=Mc2Nl2sjmuHRE3NGimKVDhlev7DqsG+3xqVASAq2AgK5c+PBdFyfk9zsFtlni9vmfi
+         YYtM7zh/gbykzQeMpDiSgQ6iDeqL8VIFhoEnDTsUHxTPQYswFyrNpi3CczlLwUAGOgJ0
+         eNdFVneuZqyA6IQVt0kEiz2m/c/IgyHyPirrWR09jq2+i/+L3clYJLdszi7OoUtDfN/h
+         dJk/H9hUkS7vPtN1KoBHXlJByq2Oefl2RtSwOTqP7eg7FHOesua88Z9LNYMffXuaw8Q2
+         EaTaT7vyTQoz+x9aRist6aOVkMRfV6OGeCupmi6xnLI05HCm9VmnSSU331jwBbYE8+PL
+         gs1w==
+X-Gm-Message-State: AOJu0YxRVntHpKscoWILJPbRTwl4yrBp8oH81VjN22Q9JJ9UH33DcHJA
+        pxYrY1HM3jljoiJhFXM5733OiVwrhmcDd1J+
+X-Google-Smtp-Source: AGHT+IFd+EJLjqFA9z9sMORAwN0SngvKvSUhESm20fEk76W9l6/rl0j7WS+BTDBqR4ffSoEq3YmX6Q==
+X-Received: by 2002:a0d:cd43:0:b0:595:2094:f87 with SMTP id p64-20020a0dcd43000000b0059520940f87mr4957994ywd.47.1695282744956;
+        Thu, 21 Sep 2023 00:52:24 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id j68-20020a0de047000000b0059b3d594c04sm204345ywe.125.2023.09.21.00.52.24
+        for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 08:00:57 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-d81afd5273eso1309619276.3;
-        Thu, 21 Sep 2023 08:00:56 -0700 (PDT)
-X-Received: by 2002:a5b:78d:0:b0:d81:bfbf:dd3 with SMTP id b13-20020a5b078d000000b00d81bfbf0dd3mr5437539ybq.51.1695308456709;
- Thu, 21 Sep 2023 08:00:56 -0700 (PDT)
+        Thu, 21 Sep 2023 00:52:24 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-59c07cf02ebso7945787b3.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 00:52:24 -0700 (PDT)
+X-Received: by 2002:a0d:eb93:0:b0:57a:9b2c:51f1 with SMTP id
+ u141-20020a0deb93000000b0057a9b2c51f1mr4428509ywe.1.1695282744530; Thu, 21
+ Sep 2023 00:52:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-30-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20230912045157.177966-30-claudiu.beznea.uj@bp.renesas.com>
+References: <20230919123722.2338932-1-dirk.behme@de.bosch.com> <ZQtY+NHFzFBWhrZj@shikoro>
+In-Reply-To: <ZQtY+NHFzFBWhrZj@shikoro>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Sep 2023 17:00:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWC8W9+a+8mewin5irujsEeVnSQfaoaNpD1GLHES54rCQ@mail.gmail.com>
-Message-ID: <CAMuHMdWC8W9+a+8mewin5irujsEeVnSQfaoaNpD1GLHES54rCQ@mail.gmail.com>
-Subject: Re: [PATCH 29/37] dt-bindings: pinctrl: renesas: document RZ/G3S SoC
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Date:   Thu, 21 Sep 2023 09:52:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU_S7+rgykqtvTVaSSO53zXGHNpiPJ=yzcF1GMf2QXvgg@mail.gmail.com>
+Message-ID: <CAMuHMdU_S7+rgykqtvTVaSSO53zXGHNpiPJ=yzcF1GMf2QXvgg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Extend SDn divider table
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>
+Cc:     linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Claudiu,
+Hi Wolfram,
 
-On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Wed, Sep 20, 2023 at 10:41 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> > There are Renesas ARM Trusted Firmware version out there which e.g.
+> > configure 0x201 (shifted logical right by 2: 0x80) and with this match
+> > the added { STPnHCK | 0, 1 }:
 >
-> Add documentation for pin controller found on RZ/G3S (R9A08G045) SoC.
-> Compared with RZ/G2{L,UL} RZ/G3S has 82 general-purpose IOs, no slew
-> rate and output impedance support and more values for drive strength
-> which needs to be expressed in microamp.
+> IIRC, that means that the ATF uses 200MHz for the data channel but
+> disables the 800MHz for the SCC. Because of that, I assume ATF doesn't
+> do tuning then? Isn't that risky to operate at 200MHz without tuning?
+
+Perhaps these products don't care about using SDHI for booting (i.e. use
+HyperFLASH instead), and thus expect only the application OS (Linux)
+to use SDHI?
+
+> >  static const struct clk_div_table cpg_sdh_div_table[] = {
+> > -     { 0, 1 }, { 1, 2 }, { STPnHCK | 2, 4 }, { STPnHCK | 3, 8 },
+> > -     { STPnHCK | 4, 16 }, { 0, 0 },
+> > +     { 0, 1 }, { 1, 2 }, { STPnHCK | 0, 1 }, { STPnHCK | 1, 2 },
+> > +     { STPnHCK | 2, 4 }, { STPnHCK | 3, 8 }, { STPnHCK | 4, 16 }, { 0, 0 },
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Anyhow, since such ATF seems to be in the wild then, I assume we should
+> at least support reading such configuration values. I'd reorder it like
+> this, though:
+>
+>  +      { 0, 1 }, { STPnHCK | 0, 1 }, { 1, 2 }, { STPnHCK | 1, 2 },
+>  +      { STPnHCK | 2, 4 }, { STPnHCK | 3, 8 }, { STPnHCK | 4, 16 }, { 0, 0 },
+>
+> And probably add a comment that the duplicate entries are only for
+> reading and are not recommended for use with Linux (which will still use
+> the first matching pair i.e. without STPnHCK).
+>
+> Geert, does this all make sense to you?
 
-Thanks for your patch!
+I'm sure you remember better than me the relation between and the
+impact of the stop bit and the various divider values ;-)
 
-LGTM, once you have taken Rob's comments into account.
+An alternative would be to let cpg_sdh_clk_register() sanitize the
+pre-existing contents of the SD-IFn Clock Frequency Control Register,
+so there would be no need to extend cpg_sdh_div_table[].  An advantage
+of that approach would be that it can handle all invalid combinations,
+not just the few that have been seen in the wild.
+(following the old networking mantra: "be strict when sinding, be
+liberal when receiving').
 
 Gr{oetje,eeting}s,
 
