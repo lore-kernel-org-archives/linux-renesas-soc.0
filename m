@@ -2,93 +2,143 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F0AE7D0A3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 17:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC366E7D0A2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 17:51:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbjIURv0 (ORCPT
+        id S230137AbjIURvq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:51:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46998 "EHLO
+        Thu, 21 Sep 2023 13:51:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbjIURvL (ORCPT
+        with ESMTP id S229653AbjIURv0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:51:11 -0400
-Received: from mail.3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7EB66979A;
-        Thu, 21 Sep 2023 10:30:47 -0700 (PDT)
-Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id D1E68EB7;
-        Thu, 21 Sep 2023 18:01:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1695312101;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=x+jXaho0ZIi9BmaRxov9GWSa018Ii/NEh3JmcH5ERxw=;
-        b=qVyNtZ5S6BtOrh3RjVNbJiLuOOkn+zfCRAkBZlicq2gMlcAB0BFZZS5+HRIUy8ERhSunHl
-        yq+Q8qXwUYyE+gU5vWBjpDItpp14+6Kw2u7OKKeHd1b4QY9VA2cLr/ftGySxI376w0C0JS
-        GO57lYZJjfW45ZgV0QrADEcowxA2r8DV9bKICzSM/vr6mVWSkadgnqWDR0VGFZXEVVlyqp
-        1qBgcZTEmUrd4Dziqxd7QBj9PI3Ms9xa60BvH40HLlVh/TJEgLjF9nIYZOiWf71kXmDQpK
-        iLv79GMv0NUL9Q2zIMyMO4ZGPGd52Fxa1qqNJjV+Lr5c5/cRg9iETzGyQMT/1A==
-MIME-Version: 1.0
-Date:   Thu, 21 Sep 2023 18:01:41 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Pratyush Yadav <pratyush@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mtd: jedec,spi-nor: Document support for
- more MT25QU parts
-In-Reply-To: <CAMuHMdW_-0f8DOmEzYb28XABqU3oFL4KXf9M-qKVyyrE_Lo+jQ@mail.gmail.com>
-References: <363186079b4269891073f620e3e2353cf7d2559a.1669988238.git.geert+renesas@glider.be>
- <1503a3857107e3a4f34e0c7fb5dada39@walle.cc>
- <CAMuHMdXN+HJb=zGeG=3t=Pie9cVpnBLYuEb_qX6=oSxG8eTkAw@mail.gmail.com>
- <20221205163306.GB2012644-robh@kernel.org>
- <CAMuHMdUcrh26MNYuiqiC0_FMkeHtq1YnJrZKHEV_WQm5Dgzoaw@mail.gmail.com>
- <ee03d150-51cf-4e12-ae2c-9475a192fb6c@linaro.org>
- <CAMuHMdW_-0f8DOmEzYb28XABqU3oFL4KXf9M-qKVyyrE_Lo+jQ@mail.gmail.com>
-Message-ID: <d4d998cff934328f58cec767f93a59b5@walle.cc>
-X-Sender: michael@walle.cc
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 21 Sep 2023 13:51:26 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7F26E99;
+        Thu, 21 Sep 2023 10:22:32 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9943EC07618;
+        Thu, 21 Sep 2023 07:55:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695282918;
+        bh=qvPZ+VCJtPMejE6viuglDi8nXd8o5MD4A3HkT/J6twY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QNsk4p+/lZjcd6Y+rEjxn/UjnbFW/kFDV0pOQKYpCebciHdwyv7OJO2WDztsBPMSd
+         DTLx1JsTnmBClOEJBWftMLGYMD1XwFqb7lW3I4VCRDOZUSqRna9Ltrb+gGUVFX5d5O
+         rKESmAfK4AhmKkPRFk1VK0y6TfkH81F36AsznQ/0R36tHoqTN/EkjsNOfNam0ShW1S
+         aDZOmJDtOB2ij2jtE4cxaGw+Qh9QBHKboq9CiJIUPgRVlx3HFsLUrc6u/6jbZoSAi+
+         c72Szhe25QJZSuX2G9nU5HENKtvkr8UMDwhuBhCMLmUp76a0UxAjry62rIer69adY7
+         NpYkARY2O0TEg==
+Received: from 82-132-232-12.dab.02.net ([82.132.232.12] helo=wait-a-minute.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <maz@kernel.org>)
+        id 1qjEWp-00EsBY-9W;
+        Thu, 21 Sep 2023 08:55:16 +0100
+Date:   Thu, 21 Sep 2023 08:55:10 +0100
+Message-ID: <871qes3qqp.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das.au@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 3/3] irqchip: renesas-rzg2l: Fix irq storm with edge trigger detection for TINT
+In-Reply-To: <OS0PR01MB592242E8A1A3A22CD1B74A1986FAA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20230918122411.237635-1-biju.das.jz@bp.renesas.com>
+        <20230918122411.237635-4-biju.das.jz@bp.renesas.com>
+        <86y1h2cjpb.wl-maz@kernel.org>
+        <OS0PR01MB5922748F489467BE2539AA1886FAA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        <87cyye3zly.wl-maz@kernel.org>
+        <OS0PR01MB59228AD24951D49F3E639BFF86FAA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        <87a5ti3y7i.wl-maz@kernel.org>
+        <OS0PR01MB592242E8A1A3A22CD1B74A1986FAA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.232.12
+X-SA-Exim-Rcpt-To: biju.das.jz@bp.renesas.com, tglx@linutronix.de, prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea.uj@bp.renesas.com, geert+renesas@glider.be, biju.das.au@gmail.com, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
-
->> We won't break compatibility with older DTBs if we use a list of
->> compatibles. First the vendor specific one which will use some quirks,
->> and if that's not available, have as second the generic jedec,spi-nor 
->> to
->> fallback to.
+On Tue, 19 Sep 2023 18:06:54 +0100,
+Biju Das <biju.das.jz@bp.renesas.com> wrote:
 > 
-> Sure, you should use a list.
+> Hi Marc Zyngier,
 > 
-> But the current recommended practice is to not have a list,
-> but just "jedec,spi-nor" (using a list with a new FLASH part name
-> causes checkpatch and dtbs_check warnings). Hence if you follow that
-> recommendation, you will run into compatibility issues with older DTBs
-> when you discover the quirk later, and decide to add it to the list.
+> > Subject: Re: [PATCH 3/3] irqchip: renesas-rzg2l: Fix irq storm with edge
+> > trigger detection for TINT
+> > 
+> > On Tue, 19 Sep 2023 17:32:05 +0100,
+> > Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > 
+> > [...]
+> > 
+> > > > So you mean that you *already* lose interrupts across a disable
+> > > > followed by an enable? I'm slightly puzzled...
+> > >
+> > > There is no interrupt lost at all.
+> > >
+> > > Currently this patch addresses 2 issues.
+> > >
+> > > Scenario 1: Extra interrupt when we select TINT source on enable_irq()
+> > >
+> > > Getting an extra interrupt, when client drivers calls enable_irq()
+> > > during probe()/resume(). In this case, the irq handler on the Client
+> > > driver just clear the interrupt status bit.
+> > >
+> > > Issue 2: IRQ storm when we select TINT source on enable_irq()
+> > >
+> > > Here as well, we are getting an extra interrupt, when client drivers
+> > > calls enable_irq() during probe() and this Interrupts getting
+> > > generated infinitely, when the client driver calls disable_irq() in
+> > > irq handler and in in work queue calling enable_irq().
+> > 
+> > How do you know this is a spurious interrupt? 
+> 
+> We have PMOD on RZ/G2L SMARC EVK. So I connected it to GPIO pin
+> and other end to ground. During the boot, I get an interrupt
+> even though there is no high to low transition, when the IRQ is setup
+> in the probe(). From this it is a spurious interrupt.
 
-The SPI NOR flashes should be auto discoverable. Why do you need a
-compatible string? Quirks can be added to the flash_info database.
+That doesn't really handle my question. At the point of enabling the
+interrupt and consuming the edge (which is what this patch does), how
+do you know you can readily discard this signal? This is a genuine
+question.
 
-Also note, that one reason *not* to add a particular flash compatible
-is that they are usually interchangeable and OEMs do so. So a where
-today a board might have a macronix flash, tomorrow that board might
-have a gigadevice one for example.
+Spurious interrupts at boot are common. The HW resets in a funky,
+unspecified state, and it's SW's job to initialise it before letting
+other agents in the system use interrupts.
 
--michael
+> 
+> > For all you can tell, you are
+> > just consuming an edge. I absolutely don't buy this workaround, because you
+> > have no context that allows you to discriminate between a real spurious
+> > interrupt and a normal interrupt that lands while the interrupt line was
+> > masked.
+> > 
+> > > Currently we are not loosing interrupts, but we are getting additional
+> > > Interrupt(phantom) which is causing the issue.
+> > 
+> > If you get an interrupt at probe time in the endpoint driver, that's
+> > probably because the device is not in a quiescent state when the interrupt
+> > is requested. And it is probably this that needs addressing.
+> 
+> Any pointer for addressing this issue? 
+
+Nothing but the most basic stuff: you should make sure that the
+interrupt isn't enabled before you can actually handle it, and triage
+it as spurious.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
