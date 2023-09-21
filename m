@@ -2,154 +2,162 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4236DE7D0AC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 20:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B2CE7D0AD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 20:57:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231138AbjIUU4f (ORCPT
+        id S229824AbjIUU6B (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:56:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57952 "EHLO
+        Thu, 21 Sep 2023 16:58:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232263AbjIUUew (ORCPT
+        with ESMTP id S232273AbjIUU5h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 16:34:52 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 590818462B
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:37:32 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36527C32789;
-        Thu, 21 Sep 2023 09:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695290264;
-        bh=vSXizHPWCC3vt7yMn09hNeUOdLEKT3JekAX6LnbrW/g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EujmTCZP09XUJeQzzazy2AXsnaOdQov3DtKFGWWu2oJV1IzU5yXbW2XVRZTEWbzky
-         HT9ThX1/cB8wMSIf0XO2ljugFBQV4y4lakYVE4O81I5Tkm867LFyC2CicyHHfn0Zga
-         z6w8gCibpyYoCk5DitKLjddTaShbAQC7NCupDWYwqd6qBbBF8B+xbTFfEnsir8RFLO
-         rc6Wn6jDGYnDidanS5xt1KtEtIsQNUND8jHLtfEicBlR26x1DLJoP4ryWYAU8UfV0z
-         G2vitSgarNpvvIgbgOMEI23y1gr4CM2PMZwmfEdqWB+VYlJRlCLVDhbSCXYgyeODZb
-         f53BXTTK3pyUw==
-From:   Conor Dooley <conor@kernel.org>
-To:     linux-riscv@lists.infradead.org
-Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Thu, 21 Sep 2023 16:57:37 -0400
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 490A8880B5;
+        Thu, 21 Sep 2023 10:38:50 -0700 (PDT)
+Received: from relay9-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::229])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id EAB5BC0A2F;
+        Thu, 21 Sep 2023 11:38:53 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 18E4AFF809;
+        Thu, 21 Sep 2023 11:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+        t=1695296310;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Jg1KwFh5lSvkfLStS1akS234BD88W219/y2jE+qO6JQ=;
+        b=FB+WZwNSKjLpXhOD9eu3aYO9S6xv7RKPVKfQqt6Yyak4R0XVc2bs16R2Ke/+V/3txgPjPr
+        wNyBzW42Tn7VAFs2jhEpLj1G9U6dnj08SGVZCzFzU+kN0/r6dBMoRCU2I1O3Q8xtwIolig
+        xJ1YEEOth0NiXYYwOeMIAC90CHeyPQYQTN1YQTfV6AKvrznfMYMqllejuEeIHK1xAQoq7D
+        B2wVQWekSUN/HVPKuTr+U8nV6amDRMGb5hUj07YiP5dfthswJzspcJcvSs0Fc397s1bG45
+        3KvHozxpJJGdRulhdH2AcaicpASeaoEDTfZJ6ynuWsTayDIRxLyeQVsxkaRHLg==
+Message-ID: <16710cf9-8911-4fed-8e2d-b19b581446c1@arinc9.com>
+Date:   Thu, 21 Sep 2023 14:38:09 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 07/10] dt-bindings: net: enforce phylink
+ bindings on certain ethernet controllers
+To:     Rob Herring <robh@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
+        George McCollister <george.mccollister@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+        =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        "Russell King (Oracle)" <linux@armlinux.org.uk>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Landen Chao <Landen.Chao@mediatek.com>,
+        DENG Qingfang <dqfext@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-        devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Marek Vasut <marex@denx.de>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Crispin <john@phrozen.org>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Felix Fietkau <nbd@nbd.name>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        mithat.guner@xeront.com, erkin.bozoglu@xeront.com,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [RFC v1 3/6] riscv: dts: starfive: convert isa detection to new properties
-Date:   Thu, 21 Sep 2023 10:57:20 +0100
-Message-ID: <20230921095723.26456-4-conor@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230921095723.26456-1-conor@kernel.org>
-References: <20230921095723.26456-1-conor@kernel.org>
-MIME-Version: 1.0
+References: <20230916110902.234273-1-arinc.unal@arinc9.com>
+ <20230916110902.234273-8-arinc.unal@arinc9.com>
+ <20230918181319.GA1445647-robh@kernel.org>
+Content-Language: en-US
+From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <20230918181319.GA1445647-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On 18.09.2023 21:13, Rob Herring wrote:
+> On Sat, Sep 16, 2023 at 02:08:59PM +0300, Arınç ÜNAL wrote:
+>> Phylink bindings are required for ethernet controllers that utilise
+>> phylink_fwnode_phy_connect() directly or through phylink_of_phy_connect(),
+>> and register OF-based only MDIO buses, if they register any.
+> 
+> What is phylink?
+> 
+> Don't describe/justify binding changes based on some Linux functions.
 
-Convert the jh7100 and jh7110 devicetrees to use the new properties
-"riscv,isa-base" & "riscv,isa-extensions".
-For compatibility with other projects, "riscv,isa" remains.
+I'd like to discuss the influence of the Linux drivers on the devicetree
+bindings. Before that let me clarify these "phylink" bindings. They are
+certain rules to properly describe the link of the ethernet controller. Any
+of the phy-handle, pcs-handle, sfp, and fixed-link properties describe the
+link. They are already defined on ethernet-controller.yaml, just not
+enforced.
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- arch/riscv/boot/dts/starfive/jh7100.dtsi |  6 ++++++
- arch/riscv/boot/dts/starfive/jh7110.dtsi | 15 +++++++++++++++
- 2 files changed, 21 insertions(+)
+Why I called them phylink bindings, is because when phylink is used on the
+ethernet controller driver, only then we can be sure that the link
+descriptions on the ethernet controller are needed. Because, some drivers
+don't need the link descriptions on the ethernet controller as they can
+search a certain MDIO bus to find and connect a MAC to a PHY or set up a
+fixed link without looking at the devicetree.
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7100.dtsi b/arch/riscv/boot/dts/starfive/jh7100.dtsi
-index 35ab54fb235f..d2276357faf7 100644
---- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
-@@ -33,6 +33,9 @@ U74_0: cpu@0 {
- 			i-tlb-size = <32>;
- 			mmu-type = "riscv,sv39";
- 			riscv,isa = "rv64imafdc";
-+			riscv,base-isa = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
-+					       "zifencei", "zihpm";
- 			tlb-split;
- 
- 			cpu0_intc: interrupt-controller {
-@@ -58,6 +61,9 @@ U74_1: cpu@1 {
- 			i-tlb-size = <32>;
- 			mmu-type = "riscv,sv39";
- 			riscv,isa = "rv64imafdc";
-+			riscv,base-isa = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
-+					       "zifencei", "zihpm";
- 			tlb-split;
- 
- 			cpu1_intc: interrupt-controller {
-diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-index e85464c328d0..991090136bcb 100644
---- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-@@ -28,6 +28,9 @@ S7_0: cpu@0 {
- 			i-cache-size = <16384>;
- 			next-level-cache = <&ccache>;
- 			riscv,isa = "rv64imac_zba_zbb";
-+			riscv,base-isa = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "c", "zba", "zbb", "zicntr", "zicsr",
-+					       "zifencei", "zihpm";
- 			status = "disabled";
- 
- 			cpu0_intc: interrupt-controller {
-@@ -54,6 +57,9 @@ U74_1: cpu@1 {
- 			mmu-type = "riscv,sv39";
- 			next-level-cache = <&ccache>;
- 			riscv,isa = "rv64imafdc_zba_zbb";
-+			riscv,base-isa = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zicntr",
-+					       "zicsr", "zifencei", "zihpm";
- 			tlb-split;
- 			operating-points-v2 = <&cpu_opp>;
- 			clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>;
-@@ -84,6 +90,9 @@ U74_2: cpu@2 {
- 			mmu-type = "riscv,sv39";
- 			next-level-cache = <&ccache>;
- 			riscv,isa = "rv64imafdc_zba_zbb";
-+			riscv,base-isa = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zicntr",
-+					       "zicsr", "zifencei", "zihpm";
- 			tlb-split;
- 			operating-points-v2 = <&cpu_opp>;
- 			clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>;
-@@ -114,6 +123,9 @@ U74_3: cpu@3 {
- 			mmu-type = "riscv,sv39";
- 			next-level-cache = <&ccache>;
- 			riscv,isa = "rv64imafdc_zba_zbb";
-+			riscv,base-isa = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zicntr",
-+					       "zicsr", "zifencei", "zihpm";
- 			tlb-split;
- 			operating-points-v2 = <&cpu_opp>;
- 			clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>;
-@@ -144,6 +156,9 @@ U74_4: cpu@4 {
- 			mmu-type = "riscv,sv39";
- 			next-level-cache = <&ccache>;
- 			riscv,isa = "rv64imafdc_zba_zbb";
-+			riscv,base-isa = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zicntr",
-+					       "zicsr", "zifencei", "zihpm";
- 			tlb-split;
- 			operating-points-v2 = <&cpu_opp>;
- 			clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>;
--- 
-2.41.0
+I don't like this approach because, as you said, devicetree bindings should
+describe the hardware, not driver policies. So I propose that we don't let
+Linux drivers interfere with dt-bindings. To that extent:
 
+- Link descriptions must be required on ethernet controllers. We don't care
+   whether some Linux driver can or cannot find the PHY or set up a fixed
+   link without looking at the devicetree.
+
+- The MDIO bus description on an ethernet controller describes that the
+   hardware comes with an MDIO bus. The MDIO property is optional not
+   because some Linux driver can find and map the PHYs to MACs without DT
+   descriptions but because the hardware doesn't have to use that or any
+   MDIO bus.
+
+Let's also talk about the elephant in the room: DSA bindings. Distributed
+Switch Architecture is a Linux subsystem, not a hardware property.
+Devicetree bindings are supposed to describe the hardware, yet we have
+bindings specifically for DSA so that the DSA driver can properly control
+the hardware.
+
+Although I see dsa.yaml and dsa-port.yaml mostly consist of describing an
+ethernet switch with CPU port(s), there're properties that are specific to
+DSA, such as dsa,member on dsa.yaml and dsa-tag-protocol and label on
+dsa-port.yaml.
+
+Depending on how I get responses, I will address my patches. Then I can
+further discuss the DSA bindings.
+
+Arınç
