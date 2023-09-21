@@ -2,88 +2,113 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1931FE7D0A2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 19:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CEFE7D0A6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 19:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230424AbjIUTtY (ORCPT
+        id S230173AbjIUTxY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 15:49:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60412 "EHLO
+        Thu, 21 Sep 2023 15:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjIUTtJ (ORCPT
+        with ESMTP id S230105AbjIUTxG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 15:49:09 -0400
+        Thu, 21 Sep 2023 15:53:06 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB8DD2577
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 12:07:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0772B72407
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 11:58:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=k1; bh=087g
-        b4mTJbMNzKHUdQuZSfdapJBPBScM7jHtuK+Uu54=; b=NJgp5ttHtqgaL4O+/YOy
-        Jgp+PWSniP3c5btKFMU42uVEV4aeVi0mo6uootbKCvVx50vC8bVreOk5TO1BYS94
-        RiWIqhIFYDCQ2cTKhcVjIUbTvdsm4uX4FODSvNjbqVmJ8tvg4w2Qky9gaIkjPVb4
-        Qd/A7Frb4VifUAREGT6oKWszPQiYiDd3QKwF+2iDLED/MVEorYIZPGMMX+29xSF5
-        6ZkGClspCAUDUZ1T71tIENlWj5tl1xAMgqiy9ABh79HuT4w3HiMs4R2NyyjWagKk
-        ptSnhxexgmwBTYV83VKT73aLidiTd5wTg3CKwTfE0BPKZDMEfZJ+PFoTGyNYIYjD
-        NA==
-Received: (qmail 868390 invoked from network); 21 Sep 2023 09:59:40 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2023 09:59:40 +0200
-X-UD-Smtp-Session: l3s3148p1@Tf7D39kFWJIujntX
-Date:   Thu, 21 Sep 2023 09:59:40 +0200
+        sang-engineering.com; h=from:to:cc:subject:date:message-id
+        :in-reply-to:references:mime-version:content-transfer-encoding;
+         s=k1; bh=uK9AT+p6I3q5cMU/FhQSmJyxMmdzZujBNmfXxX9OQ/Y=; b=Ws/F0y
+        IJEUCwYVDuBG8XEfGaRJOOmpS8LZ1ZxuugbH7mpzb9f7oJZq3wD3GmogwiFcof0U
+        Q1l3H/AzKU8TUCiu0bQ5G5onMskbG8xMfleaDnkazoVXu5HXVfNZg2NfjELPgLWj
+        cqBz/ZyrcF8Mj6YEgwLQPECsA73JSU2aln8IVfMSdQQY61GgFHPkIFHHwmL8Q7MQ
+        ZZ8zdV2LM4z8mgxFS2nQ2R9N/ncsB9T5b3eRKXq/E3arY2FWc2zYO/aDWgqhW2zY
+        NEpzmZ9zPFBC2wJ31UjWnbpqyJP1jtWIyNBigtjOkRONIsMlFW95BeLpxqzCVuHS
+        Eop8gWjP3hHFcmyg==
+Received: (qmail 964496 invoked from network); 21 Sep 2023 15:32:14 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2023 15:32:14 +0200
+X-UD-Smtp-Session: l3s3148p1@tYwShd4FDUIuciJ+
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     "Behme Dirk (CM/ESO2)" <dirk.behme@de.bosch.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Extend SDn divider table
-Message-ID: <ZQv37FcMHNTi6SIE@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "Behme Dirk (CM/ESO2)" <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20230919123722.2338932-1-dirk.behme@de.bosch.com>
- <ZQtY+NHFzFBWhrZj@shikoro>
- <7b93fb3b-378a-2c82-e5b8-428dd0b984e4@de.bosch.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/3] gnss: ubx: add support for the reset gpio
+Date:   Thu, 21 Sep 2023 15:32:01 +0200
+Message-Id: <20230921133202.5828-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20230921133202.5828-1-wsa+renesas@sang-engineering.com>
+References: <20230921133202.5828-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="e7uS8NMr9QrDM4hF"
-Content-Disposition: inline
-In-Reply-To: <7b93fb3b-378a-2c82-e5b8-428dd0b984e4@de.bosch.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Tested with a Renesas KingFisher board. Because my GNSS device is hooked
+up via UART and I2C simultaneously, I could verify functionality by
+opening/closing the GNSS device using UART and see if the corresponding
+I2C device was visible on the bus.
 
---e7uS8NMr9QrDM4hF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gnss/ubx.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
+diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
+index 9b76b101ba5e..e7d151cbc8c3 100644
+--- a/drivers/gnss/ubx.c
++++ b/drivers/gnss/ubx.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/errno.h>
+ #include <linux/gnss.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -18,6 +19,7 @@
+ 
+ struct ubx_data {
+ 	struct regulator *vcc;
++	struct gpio_desc *reset_gpio;
+ };
+ 
+ static int ubx_set_active(struct gnss_serial *gserial)
+@@ -29,6 +31,8 @@ static int ubx_set_active(struct gnss_serial *gserial)
+ 	if (ret)
+ 		return ret;
+ 
++	gpiod_set_value_cansleep(data->reset_gpio, 0);
++
+ 	return 0;
+ }
+ 
+@@ -37,6 +41,8 @@ static int ubx_set_standby(struct gnss_serial *gserial)
+ 	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
+ 	int ret;
+ 
++	gpiod_set_value_cansleep(data->reset_gpio, 1);
++
+ 	ret = regulator_disable(data->vcc);
+ 	if (ret)
+ 		return ret;
+@@ -90,6 +96,13 @@ static int ubx_probe(struct serdev_device *serdev)
+ 	if (ret < 0 && ret != -ENODEV)
+ 		goto err_free_gserial;
+ 
++	/* Start with reset asserted */
++	data->reset_gpio = devm_gpiod_get_optional(&serdev->dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(data->reset_gpio)) {
++		ret = PTR_ERR(data->reset_gpio);
++		goto err_free_gserial;
++	}
++
+ 	ret = gnss_serial_register(gserial);
+ 	if (ret)
+ 		goto err_free_gserial;
+-- 
+2.35.1
 
-> I was just wondering why this table includes STPnHCK? I mean, this is 'just'
-> a translation table between the value read from the register to the divider
-> (1, 2, 4, 8, 16)?
-
-I thought this table was used both ways? Need to check, but can only do
-later today.
-
-
---e7uS8NMr9QrDM4hF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmUL9+gACgkQFA3kzBSg
-KbZu2hAAjyzjdmjwuiv/sJcbPUUsMIWj0U+1yk8etZhsasE3wVoOW8fvx+avKtZr
-8Yxx2gRN4KnmjeNDs2jVtP267qxWmvUJT3+Xit4TnWun+dXeDyXxRFLjdCS+QaNe
-LqYHHgy3HQ5cC3PebuBe4j/rVQHHTo9E9GAIIHwUf1ob56/2JjG1bnrigd2Nw79P
-XB8NFRFwGgwE+6di+7uer/wDTGd5kIVFfhnuSrjhtkcaFseCFdu7LFSKGfGPMHlq
-cVvBPo5pHpuDtKfTYC053aLXmvqBftyznHPjIbxXKQG2N8JWdq+UoHPiAtKt+aH8
-uLSFKDL+OaUUPS3W0100Qs9cNMcRn1t1LJCyUKnvtbUs7A23dYaEjLiAnGeYcGId
-bbUFZicgPxICLvUXH9c8RADLnZKFzFZnEAKOM0itL5VGc1OJCaKQZerFDPXiR0vH
-DFMQazAcsabKEZ1uc3WKnAA5lJ8jJWJAUHVsXsj523aqp2xw1pgR4DkwbIkgoFGV
-JkA0V5yj0T8G/Ij/SXYUkX0IQ9oej74rmcq+GvMMOyaXcljHZTlL4AoQDpQ0YWP7
-WzdZrmoiwiwHHkgzffA6KUXpvadwLNUR9CGl5f4/nz2cl6XutheLR2HgivlU870y
-tHfcamSVyXN3x3+TWROFFOcPVhDyPdNxW7r821F/J+4cTuWpLBs=
-=C130
------END PGP SIGNATURE-----
-
---e7uS8NMr9QrDM4hF--
