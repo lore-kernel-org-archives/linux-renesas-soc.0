@@ -2,76 +2,93 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C2EE7D0A4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 17:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F0AE7D0A3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Sep 2023 17:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229499AbjIURs6 (ORCPT
+        id S230076AbjIURv0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:48:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38014 "EHLO
+        Thu, 21 Sep 2023 13:51:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbjIURs4 (ORCPT
+        with ESMTP id S230099AbjIURvL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:48:56 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9ADBE0B5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Sep 2023 10:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :mime-version:content-transfer-encoding; s=k1; bh=GwO52d2vHsQuQT
-        4wL7WfqPFyqFblzEe1Yqp8jz2tu34=; b=kO/2lh4yvRSIWhUjLSFBGu3e8wq+Gp
-        TTRvSCfwNUeB17SKt6VBF+ufjqhYfb9XSzwGLnlqhgvZ8eIe69NPkwXX+RdSthC8
-        xLxd9rmRWntb0iydI0MQSHqv7xrSTAyp+fgpsfE9gkDJR64QjY1qaU08ZMQlCKke
-        5GwWNDOsP2BxyqjeN5WM1tiLBspudPzsWdD722sklenaBZxTkH+J9zHOi3UOrxjg
-        3ZhY6iuhc/Kjjyu4R4IYGLc/+w4T2ZZbKCY5ipZp8v0XZjMtBJe71vw4v+yPl2LW
-        F9wUU3VyxBU9rZ9OPvVycoFDdlSIxt8bHvVrC+At2MBbEUuzXArLmRBg==
-Received: (qmail 963055 invoked from network); 21 Sep 2023 15:28:25 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2023 15:28:25 +0200
-X-UD-Smtp-Session: l3s3148p1@Ivd1d94FfiQuciJ+
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm: renesas: rcar-du: use proper naming for R-Car
-Date:   Thu, 21 Sep 2023 15:28:22 +0200
-Message-Id: <20230921132823.5723-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
+        Thu, 21 Sep 2023 13:51:11 -0400
+Received: from mail.3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7EB66979A;
+        Thu, 21 Sep 2023 10:30:47 -0700 (PDT)
+Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.3ffe.de (Postfix) with ESMTPSA id D1E68EB7;
+        Thu, 21 Sep 2023 18:01:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+        t=1695312101;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=x+jXaho0ZIi9BmaRxov9GWSa018Ii/NEh3JmcH5ERxw=;
+        b=qVyNtZ5S6BtOrh3RjVNbJiLuOOkn+zfCRAkBZlicq2gMlcAB0BFZZS5+HRIUy8ERhSunHl
+        yq+Q8qXwUYyE+gU5vWBjpDItpp14+6Kw2u7OKKeHd1b4QY9VA2cLr/ftGySxI376w0C0JS
+        GO57lYZJjfW45ZgV0QrADEcowxA2r8DV9bKICzSM/vr6mVWSkadgnqWDR0VGFZXEVVlyqp
+        1qBgcZTEmUrd4Dziqxd7QBj9PI3Ms9xa60BvH40HLlVh/TJEgLjF9nIYZOiWf71kXmDQpK
+        iLv79GMv0NUL9Q2zIMyMO4ZGPGd52Fxa1qqNJjV+Lr5c5/cRg9iETzGyQMT/1A==
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date:   Thu, 21 Sep 2023 18:01:41 +0200
+From:   Michael Walle <michael@walle.cc>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Tudor Ambarus <tudor.ambarus@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Pratyush Yadav <pratyush@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mtd: jedec,spi-nor: Document support for
+ more MT25QU parts
+In-Reply-To: <CAMuHMdW_-0f8DOmEzYb28XABqU3oFL4KXf9M-qKVyyrE_Lo+jQ@mail.gmail.com>
+References: <363186079b4269891073f620e3e2353cf7d2559a.1669988238.git.geert+renesas@glider.be>
+ <1503a3857107e3a4f34e0c7fb5dada39@walle.cc>
+ <CAMuHMdXN+HJb=zGeG=3t=Pie9cVpnBLYuEb_qX6=oSxG8eTkAw@mail.gmail.com>
+ <20221205163306.GB2012644-robh@kernel.org>
+ <CAMuHMdUcrh26MNYuiqiC0_FMkeHtq1YnJrZKHEV_WQm5Dgzoaw@mail.gmail.com>
+ <ee03d150-51cf-4e12-ae2c-9475a192fb6c@linaro.org>
+ <CAMuHMdW_-0f8DOmEzYb28XABqU3oFL4KXf9M-qKVyyrE_Lo+jQ@mail.gmail.com>
+Message-ID: <d4d998cff934328f58cec767f93a59b5@walle.cc>
+X-Sender: michael@walle.cc
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Not RCAR, but R-Car.
+Hi Geert,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
+>> We won't break compatibility with older DTBs if we use a list of
+>> compatibles. First the vendor specific one which will use some quirks,
+>> and if that's not available, have as second the generic jedec,spi-nor 
+>> to
+>> fallback to.
+> 
+> Sure, you should use a list.
+> 
+> But the current recommended practice is to not have a list,
+> but just "jedec,spi-nor" (using a list with a new FLASH part name
+> causes checkpatch and dtbs_check warnings). Hence if you follow that
+> recommendation, you will run into compatibility issues with older DTBs
+> when you discover the quirk later, and decide to add it to the list.
 
-Changes since v1:
-* rebased to 6.6-rc2
-* added tag from Kieran (Thanks!)
+The SPI NOR flashes should be auto discoverable. Why do you need a
+compatible string? Quirks can be added to the flash_info database.
 
- drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also note, that one reason *not* to add a particular flash compatible
+is that they are usually interchangeable and OEMs do so. So a where
+today a board might have a macronix flash, tomorrow that board might
+have a gigadevice one for example.
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h
-index f9893d7d6dfc..e9e59c5e70d5 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h
-@@ -16,7 +16,7 @@ struct rcar_du_format_info;
- struct rcar_du_group;
- 
- /*
-- * The RCAR DU has 8 hardware planes, shared between primary and overlay planes.
-+ * The R-Car DU has 8 hardware planes, shared between primary and overlay planes.
-  * As using overlay planes requires at least one of the CRTCs being enabled, no
-  * more than 7 overlay planes can be available. We thus create 1 primary plane
-  * per CRTC and 7 overlay planes, for a total of up to 9 KMS planes.
--- 
-2.35.1
-
+-michael
