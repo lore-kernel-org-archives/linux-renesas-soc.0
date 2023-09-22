@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CEBCD4F2B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 08:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E26CD4F30
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 08:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232130AbjIVIQc (ORCPT
+        id S230183AbjIVIZO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Sep 2023 04:16:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56856 "EHLO
+        Fri, 22 Sep 2023 04:25:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232714AbjIVIQT (ORCPT
+        with ESMTP id S229645AbjIVIZI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Sep 2023 04:16:19 -0400
+        Fri, 22 Sep 2023 04:25:08 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75AF1198C
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2023 01:15:53 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B513BC433D9;
-        Fri, 22 Sep 2023 08:15:48 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10F1C1A6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2023 01:16:03 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBE9C433C9;
+        Fri, 22 Sep 2023 08:15:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695370553;
-        bh=d1ImFYYXezT00el4hcT8tQJFJvjFQvrVeE4jFbcVxns=;
+        s=k20201202; t=1695370562;
+        bh=20GRdAI0ghJYm1B94erRZz3BUYpuWgXuW5ZAojQz2ko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IpqfxJIp55U+wZVD1K+/7YHC5FvK9waxEY2zJ58eqzu0l7k+gXxzNcvQNqC2jjHSy
-         bdTzn8FTRfyFu/8xQdhjBBxhUzrXmtciBxN+sQtYmtdUjIW4yggOpjMs9ikRcfYX2s
-         gVnuD2uLqHwg8UVHh4VbLGVVnODYx4x7tLUukPW8urSWOdKbz+WgqLne3Uv7fanK/E
-         1LUx5+A+++jQotzyshbfoaLhlxLomh/IcDHQScIGlXibMK2mtzs4M64RE3qe8p/QQD
-         lDiBXGB5Q+w9MnpV52rH0xACE5lXUGDqObgPa3quzsitTBFIKBv4qI+ITsUdylFpWT
-         /s8NNqOi0QWCg==
+        b=kNVBOSAzD4BPKKftCIR/9XT1OcpaeYEMbHpeGpHs4LPSfo86nZB8vPTbmKQNhppcl
+         +XVFhNiW/vlTOfOZHAfhkKZ2quKJPioPufOrsHgUNuS3YXblebjM+pM0KhMM0OAeOy
+         15l5OUsjB4hk8aD+t33iwfPGR6REYOIZIzeXkewULouQPV4XZiNay1tHl5MgaIz2Da
+         o8c9M2EvuK+3WJk9z8R2+jaGWto/mh4MgCgDJ5Ey2TaD4t0eb9p7VwA5WOjRvQLKg9
+         rqqBO35VZSJ1nNY0vo7DZMlVfrawlHKjXpkEqpAGHc5rTKG3hk8j7kGdmDjl6szK+J
+         AcEzfvlO4YAuA==
 From:   Conor Dooley <conor@kernel.org>
 To:     linux-riscv@lists.infradead.org
 Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
@@ -49,9 +49,9 @@ Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
         Chen Wang <unicorn_wang@outlook.com>,
         devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
         linux-renesas-soc@vger.kernel.org
-Subject: [RFC v2 4/6] riscv: dts: renesas: convert isa detection to new properties
-Date:   Fri, 22 Sep 2023 09:13:49 +0100
-Message-ID: <20230922081351.30239-6-conor@kernel.org>
+Subject: [RFC v2 6/6] riscv: dts: thead: convert isa detection to new properties
+Date:   Fri, 22 Sep 2023 09:13:51 +0100
+Message-ID: <20230922081351.30239-8-conor@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230922081351.30239-2-conor@kernel.org>
 References: <20230922081351.30239-2-conor@kernel.org>
@@ -63,29 +63,59 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-Convert the RZ/Five devicetrees to use the new properties
+Convert the th1520 devicetrees to use the new properties
 "riscv,isa-base" & "riscv,isa-extensions".
 For compatibility with other projects, "riscv,isa" remains.
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/riscv/boot/dts/thead/th1520.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-index 6ec1c6f9a403..8a726407fb76 100644
---- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-+++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -24,6 +24,9 @@ cpu0: cpu@0 {
- 			reg = <0x0>;
- 			status = "okay";
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index ce708183b6f6..723f65487246 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -20,6 +20,9 @@ c910_0: cpu@0 {
+ 			compatible = "thead,c910", "riscv";
+ 			device_type = "cpu";
  			riscv,isa = "rv64imafdc";
 +			riscv,isa-base = "rv64i";
 +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
 +					       "zifencei", "zihpm";
- 			mmu-type = "riscv,sv39";
- 			i-cache-size = <0x8000>;
- 			i-cache-line-size = <0x40>;
+ 			reg = <0>;
+ 			i-cache-block-size = <64>;
+ 			i-cache-size = <65536>;
+@@ -41,6 +44,9 @@ c910_1: cpu@1 {
+ 			compatible = "thead,c910", "riscv";
+ 			device_type = "cpu";
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			reg = <1>;
+ 			i-cache-block-size = <64>;
+ 			i-cache-size = <65536>;
+@@ -62,6 +68,9 @@ c910_2: cpu@2 {
+ 			compatible = "thead,c910", "riscv";
+ 			device_type = "cpu";
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			reg = <2>;
+ 			i-cache-block-size = <64>;
+ 			i-cache-size = <65536>;
+@@ -83,6 +92,9 @@ c910_3: cpu@3 {
+ 			compatible = "thead,c910", "riscv";
+ 			device_type = "cpu";
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			reg = <3>;
+ 			i-cache-block-size = <64>;
+ 			i-cache-size = <65536>;
 -- 
 2.41.0
 
