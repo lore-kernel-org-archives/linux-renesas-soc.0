@@ -2,63 +2,75 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF16FCD4F32
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 08:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B457CD4F33
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 08:30:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232332AbjIVIaI (ORCPT
+        id S232330AbjIVIaQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Sep 2023 04:30:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51862 "EHLO
+        Fri, 22 Sep 2023 04:30:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232480AbjIVIaH (ORCPT
+        with ESMTP id S232672AbjIVIaN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Sep 2023 04:30:07 -0400
+        Fri, 22 Sep 2023 04:30:13 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F450CC8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2023 01:04:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC59BE6B
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2023 01:04:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :mime-version:content-transfer-encoding; s=k1; bh=HYnYPuxdZs3MNI
-        I4Fa0REwLR5gs9DGxnJZt2OC9uI0w=; b=Z37C/Mbz1yuLH3Sd+/iGfRFYRv5z3t
-        Mfcnzg5P/3oDaklV/uyRxb4wBI2B9aXUREffvpMVWc3pd/qgXPhJp5mHuYp+WYdA
-        WOADqCmPD329BU4KFxTDdNjAX2prf3v7ZQ3TEgqv45dmRZKKOLN6oO5tovy/l8or
-        sOHmOZLrLA8lZOEa/iJrYx32lshekvujBXB7IstaTe5UrRf/qb1D1oESLua2SP3n
-        q7Oq5AvLy6LrYgbbjznwWfwVMQZFl+uL6FUxhxX+Fc4qjCJ28q5Ch5qqx3vvjEsc
-        i8unfd3eMV5WsWVGRCslcWFttxLI2mvH5eo4Jx/D7uPxf+xhSYWg378A==
-Received: (qmail 1310858 invoked from network); 22 Sep 2023 10:04:27 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Sep 2023 10:04:27 +0200
-X-UD-Smtp-Session: l3s3148p1@AXiyDu4FVsIujntX
+        :in-reply-to:references:mime-version:content-transfer-encoding;
+         s=k1; bh=pHJcS4UElq8U7kAaQXym1rTExhuP+pYyemAHmyY2Czw=; b=icSGGA
+        Gfx3nv8ST6SL5e7NRDXsWtKNN50lhY7mgiTjey35koSVNpgWQ00ZyDw6P1wD2S3X
+        Wijo4LbPdMVGmv47f30bvqsvhF96yYBk/RoRaI9V1Xp2UDUCgdt02CMIrxbd2ugm
+        MpK22LQenJwGNdH9wzL89eBaGiqZXFicglg/UwNjlYdiaON8tpE8m8kt7NPLkTyQ
+        lgQqsUVbJSWIK7dN822qesVkAujBLCOb36Q0bXRtBeNVY4Ti2fA7Nhv11H7LTokK
+        rxKchCoFolOSNWHNbpWxwAlRHoJN1efSK7IE+ogk7ZEbMrEtkrmkNr5afuTTOFSY
+        4l4XAGc7lEazAReA==
+Received: (qmail 1310986 invoked from network); 22 Sep 2023 10:04:29 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Sep 2023 10:04:29 +0200
+X-UD-Smtp-Session: l3s3148p1@DQrODu4FesIujntX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH 0/3] treewide: drop check because i2c_unregister_device() is NULL safe
-Date:   Fri, 22 Sep 2023 10:04:17 +0200
-Message-Id: <20230922080421.35145-1-wsa+renesas@sang-engineering.com>
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] media: dvb-frontends: drop check because i2c_unregister_device() is NULL safe
+Date:   Fri, 22 Sep 2023 10:04:20 +0200
+Message-Id: <20230922080421.35145-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230922080421.35145-1-wsa+renesas@sang-engineering.com>
+References: <20230922080421.35145-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix the few drivers missing that i2c_unregister_device() is NULL safe.
-One is left, but this needs discussion and refactoring and will be
-sorted out independently.
+No need to check the argument of i2c_unregister_device() because the
+function itself does it.
 
-
-Wolfram Sang (3):
-  usb: typec: drop check because i2c_unregister_device() is NULL safe
-  media: i2c: drop check because i2c_unregister_device() is NULL safe
-  media: dvb-frontends: drop check because i2c_unregister_device() is
-    NULL safe
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+Build tested only. Please apply to your tree.
 
  drivers/media/dvb-frontends/m88ds3103.c | 3 +--
- drivers/media/i2c/rdacm20.c             | 3 +--
- drivers/usb/typec/anx7411.c             | 3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
+index cf037b61b226..26c67ef05d13 100644
+--- a/drivers/media/dvb-frontends/m88ds3103.c
++++ b/drivers/media/dvb-frontends/m88ds3103.c
+@@ -1920,8 +1920,7 @@ static void m88ds3103_remove(struct i2c_client *client)
+ 
+ 	dev_dbg(&client->dev, "\n");
+ 
+-	if (dev->dt_client)
+-		i2c_unregister_device(dev->dt_client);
++	i2c_unregister_device(dev->dt_client);
+ 
+ 	i2c_mux_del_adapters(dev->muxc);
+ 
 -- 
 2.30.2
 
