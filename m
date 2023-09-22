@@ -2,32 +2,32 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E26CD4F30
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 08:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCEFBCD4F2B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 08:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230183AbjIVIZO (ORCPT
+        id S232651AbjIVIZW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Sep 2023 04:25:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55246 "EHLO
+        Fri, 22 Sep 2023 04:25:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjIVIZI (ORCPT
+        with ESMTP id S232517AbjIVIZL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Sep 2023 04:25:08 -0400
+        Fri, 22 Sep 2023 04:25:11 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10F1C1A6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2023 01:16:03 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBE9C433C9;
-        Fri, 22 Sep 2023 08:15:58 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BEBC10D3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2023 01:15:43 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21535C433C8;
+        Fri, 22 Sep 2023 08:15:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695370562;
-        bh=20GRdAI0ghJYm1B94erRZz3BUYpuWgXuW5ZAojQz2ko=;
+        s=k20201202; t=1695370543;
+        bh=J7c7CSpq+jJvt/X8SgS6zQzZjvo50bIOnu44mdhPcVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kNVBOSAzD4BPKKftCIR/9XT1OcpaeYEMbHpeGpHs4LPSfo86nZB8vPTbmKQNhppcl
-         +XVFhNiW/vlTOfOZHAfhkKZ2quKJPioPufOrsHgUNuS3YXblebjM+pM0KhMM0OAeOy
-         15l5OUsjB4hk8aD+t33iwfPGR6REYOIZIzeXkewULouQPV4XZiNay1tHl5MgaIz2Da
-         o8c9M2EvuK+3WJk9z8R2+jaGWto/mh4MgCgDJ5Ey2TaD4t0eb9p7VwA5WOjRvQLKg9
-         rqqBO35VZSJ1nNY0vo7DZMlVfrawlHKjXpkEqpAGHc5rTKG3hk8j7kGdmDjl6szK+J
-         AcEzfvlO4YAuA==
+        b=jcXyy16U4chszJ31wBu5ayzrJliAmdcJTmJ2bXra0hoZIqcbzNWy5TWmIpktqcDW2
+         Gx5hGNwGL5bOSaXgFAxdof8UnEdAPYGWn8eTbBblqXcyB4cmR9R1rfnFjoV782vdib
+         rk/kzmAHw3aIPo3rDMVMlbFG4TNVOqUMsqj12IytjcrRGfY8WFYaCMDdj5YP/pkacP
+         xMcynAQxsT4s5MOGc/DJZF0OR/mhvPNjI+pMc8T4tyt2eBdLhHJG5KZ1DulePXr7vn
+         T+09ahZJCdjHAwCR06ZUVV43gcJwVI0pi0+wYfrmiOK5/90rzgOY0pXad+YehZvO5y
+         2z3MDDsy3iFSQ==
 From:   Conor Dooley <conor@kernel.org>
 To:     linux-riscv@lists.infradead.org
 Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
@@ -49,9 +49,9 @@ Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
         Chen Wang <unicorn_wang@outlook.com>,
         devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
         linux-renesas-soc@vger.kernel.org
-Subject: [RFC v2 6/6] riscv: dts: thead: convert isa detection to new properties
-Date:   Fri, 22 Sep 2023 09:13:51 +0100
-Message-ID: <20230922081351.30239-8-conor@kernel.org>
+Subject: [RFC v2 2/6] riscv: dts: sifive: convert isa detection to new properties
+Date:   Fri, 22 Sep 2023 09:13:47 +0100
+Message-ID: <20230922081351.30239-4-conor@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230922081351.30239-2-conor@kernel.org>
 References: <20230922081351.30239-2-conor@kernel.org>
@@ -63,59 +63,124 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-Convert the th1520 devicetrees to use the new properties
+Convert the fu540 and fu740 devicetrees to use the new properties
 "riscv,isa-base" & "riscv,isa-extensions".
 For compatibility with other projects, "riscv,isa" remains.
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- arch/riscv/boot/dts/thead/th1520.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi | 15 +++++++++++++++
+ arch/riscv/boot/dts/sifive/fu740-c000.dtsi | 15 +++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index ce708183b6f6..723f65487246 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -20,6 +20,9 @@ c910_0: cpu@0 {
- 			compatible = "thead,c910", "riscv";
- 			device_type = "cpu";
- 			riscv,isa = "rv64imafdc";
-+			riscv,isa-base = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
-+					       "zifencei", "zihpm";
+diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+index 24bba83bec77..156330a9bbf3 100644
+--- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
++++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+@@ -30,6 +30,9 @@ cpu0: cpu@0 {
+ 			i-cache-size = <16384>;
  			reg = <0>;
- 			i-cache-block-size = <64>;
- 			i-cache-size = <65536>;
-@@ -41,6 +44,9 @@ c910_1: cpu@1 {
- 			compatible = "thead,c910", "riscv";
- 			device_type = "cpu";
- 			riscv,isa = "rv64imafdc";
+ 			riscv,isa = "rv64imac";
 +			riscv,isa-base = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
-+					       "zifencei", "zihpm";
++			riscv,isa-extensions = "i", "m", "a", "c", "zicntr", "zicsr", "zifencei",
++					       "zihpm";
+ 			status = "disabled";
+ 			cpu0_intc: interrupt-controller {
+ 				#interrupt-cells = <1>;
+@@ -53,6 +56,9 @@ cpu1: cpu@1 {
+ 			mmu-type = "riscv,sv39";
  			reg = <1>;
- 			i-cache-block-size = <64>;
- 			i-cache-size = <65536>;
-@@ -62,6 +68,9 @@ c910_2: cpu@2 {
- 			compatible = "thead,c910", "riscv";
- 			device_type = "cpu";
  			riscv,isa = "rv64imafdc";
 +			riscv,isa-base = "rv64i";
 +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
 +					       "zifencei", "zihpm";
+ 			tlb-split;
+ 			next-level-cache = <&l2cache>;
+ 			cpu1_intc: interrupt-controller {
+@@ -77,6 +83,9 @@ cpu2: cpu@2 {
+ 			mmu-type = "riscv,sv39";
  			reg = <2>;
- 			i-cache-block-size = <64>;
- 			i-cache-size = <65536>;
-@@ -83,6 +92,9 @@ c910_3: cpu@3 {
- 			compatible = "thead,c910", "riscv";
- 			device_type = "cpu";
  			riscv,isa = "rv64imafdc";
 +			riscv,isa-base = "rv64i";
 +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
 +					       "zifencei", "zihpm";
+ 			tlb-split;
+ 			next-level-cache = <&l2cache>;
+ 			cpu2_intc: interrupt-controller {
+@@ -101,6 +110,9 @@ cpu3: cpu@3 {
+ 			mmu-type = "riscv,sv39";
  			reg = <3>;
- 			i-cache-block-size = <64>;
- 			i-cache-size = <65536>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			tlb-split;
+ 			next-level-cache = <&l2cache>;
+ 			cpu3_intc: interrupt-controller {
+@@ -125,6 +137,9 @@ cpu4: cpu@4 {
+ 			mmu-type = "riscv,sv39";
+ 			reg = <4>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			tlb-split;
+ 			next-level-cache = <&l2cache>;
+ 			cpu4_intc: interrupt-controller {
+diff --git a/arch/riscv/boot/dts/sifive/fu740-c000.dtsi b/arch/riscv/boot/dts/sifive/fu740-c000.dtsi
+index 5235fd1c9cb6..6150f3397bff 100644
+--- a/arch/riscv/boot/dts/sifive/fu740-c000.dtsi
++++ b/arch/riscv/boot/dts/sifive/fu740-c000.dtsi
+@@ -31,6 +31,9 @@ cpu0: cpu@0 {
+ 			next-level-cache = <&ccache>;
+ 			reg = <0x0>;
+ 			riscv,isa = "rv64imac";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "c", "zicntr", "zicsr", "zifencei",
++					       "zihpm";
+ 			status = "disabled";
+ 			cpu0_intc: interrupt-controller {
+ 				#interrupt-cells = <1>;
+@@ -55,6 +58,9 @@ cpu1: cpu@1 {
+ 			next-level-cache = <&ccache>;
+ 			reg = <0x1>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			tlb-split;
+ 			cpu1_intc: interrupt-controller {
+ 				#interrupt-cells = <1>;
+@@ -79,6 +85,9 @@ cpu2: cpu@2 {
+ 			next-level-cache = <&ccache>;
+ 			reg = <0x2>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			tlb-split;
+ 			cpu2_intc: interrupt-controller {
+ 				#interrupt-cells = <1>;
+@@ -103,6 +112,9 @@ cpu3: cpu@3 {
+ 			next-level-cache = <&ccache>;
+ 			reg = <0x3>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			tlb-split;
+ 			cpu3_intc: interrupt-controller {
+ 				#interrupt-cells = <1>;
+@@ -127,6 +139,9 @@ cpu4: cpu@4 {
+ 			next-level-cache = <&ccache>;
+ 			reg = <0x4>;
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			tlb-split;
+ 			cpu4_intc: interrupt-controller {
+ 				#interrupt-cells = <1>;
 -- 
 2.41.0
 
