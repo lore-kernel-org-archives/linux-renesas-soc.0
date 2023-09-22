@@ -2,110 +2,75 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085F7CD4F2B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 07:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14565CD4F30
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 08:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231954AbjIVH7S (ORCPT
+        id S232054AbjIVIFw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Sep 2023 03:59:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48510 "EHLO
+        Fri, 22 Sep 2023 04:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231902AbjIVH7R (ORCPT
+        with ESMTP id S232156AbjIVIFf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Sep 2023 03:59:17 -0400
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3539083
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2023 00:59:11 -0700 (PDT)
-Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id 06FF3FF;
-        Fri, 22 Sep 2023 09:59:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1695369549;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=i5aWRlQvLj0Ai3NtLAWY4Y9rChkOr2OHujz5YgcNF/M=;
-        b=e229GHSIJdvBvaGFssBf4z0racFX5PLrLsrl9SE4SkZiGJgVf0Ypekk9GucFxD9ZvgIZHk
-        QysarpYZpevLLQL9Lc4U9gm73pxE+x+ZDAGMdVXMoGoR3JIlz9ezjyBQeZZ/tLX5LkSnah
-        CW07bcLt5sH7Zz+GJmvJhnE2d4Y0IUMPJgydtMxgY6RdxHy/h5YePTRT+6FsNWYY/hRXp+
-        IWn/PhZ0NPywFRI4jx4s7pI7ScrIXDW+39Jq2PngupXc6VqJbNq8Yg6AxRp8rxDa8Cp021
-        YZleF1G8LvBG7R36JkObrX47yh/VenRHQTk/Rnkm5gmiPMrVHshTGa8yfYB5vw==
+        Fri, 22 Sep 2023 04:05:35 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA44CF3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2023 01:04:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=from:to:cc:subject:date:message-id
+        :in-reply-to:references:mime-version:content-transfer-encoding;
+         s=k1; bh=QKeY3D1+RN2jWEiErP7FIt0WfM1XoXZIvIYk9D2iHHQ=; b=R5CTX7
+        Cc74i2zTJPhTZQsdOeMPilA3jf6l5YB/BPNT6DjiamkKKichgIQfvpJdsnoedKbE
+        jrn3ZzkBABs758k+TSlQGvnSPY1XaSI6U/U+/WB+HtbrZ7GH2S/bdT3cswVy+Mkv
+        6k2Ql38LtDrlbxezTOyWSK/nAHdMmkjkx/loKRx+dhdN3H7sLv7ReV0oZ/kv2IqD
+        phC8Ejx5aoFLgG/F2+O2baVF1078MLZnsyWFjF3W7FAtWbEmgwC5E0ZlF+JCjquV
+        lLZUejURuSL91NjdLKERq+HLNKSwmIQRS0mnsKpIWGz/jNgIVgtCs2ZkkCM6oKKL
+        u+zHtdccfllf9DRA==
+Received: (qmail 1310895 invoked from network); 22 Sep 2023 10:04:28 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Sep 2023 10:04:28 +0200
+X-UD-Smtp-Session: l3s3148p1@J427Du4FZsIujntX
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] usb: typec: drop check because i2c_unregister_device() is NULL safe
+Date:   Fri, 22 Sep 2023 10:04:18 +0200
+Message-Id: <20230922080421.35145-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230922080421.35145-1-wsa+renesas@sang-engineering.com>
+References: <20230922080421.35145-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Date:   Fri, 22 Sep 2023 09:59:08 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Pratyush Yadav <pratyush@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mtd: jedec,spi-nor: Document support for
- more MT25QU parts
-In-Reply-To: <CAMuHMdUKxJDPs3Ow8E-g2bLr7c7jREf5gSqWZ+o5aWbGj6uO=w@mail.gmail.com>
-References: <363186079b4269891073f620e3e2353cf7d2559a.1669988238.git.geert+renesas@glider.be>
- <1503a3857107e3a4f34e0c7fb5dada39@walle.cc>
- <CAMuHMdXN+HJb=zGeG=3t=Pie9cVpnBLYuEb_qX6=oSxG8eTkAw@mail.gmail.com>
- <20221205163306.GB2012644-robh@kernel.org>
- <CAMuHMdUcrh26MNYuiqiC0_FMkeHtq1YnJrZKHEV_WQm5Dgzoaw@mail.gmail.com>
- <ee03d150-51cf-4e12-ae2c-9475a192fb6c@linaro.org>
- <CAMuHMdW_-0f8DOmEzYb28XABqU3oFL4KXf9M-qKVyyrE_Lo+jQ@mail.gmail.com>
- <d4d998cff934328f58cec767f93a59b5@walle.cc>
- <CAMuHMdUK=HvvjeTDefzX9sbY-vaRFVixcSvKVqDPgBpGVt2dQA@mail.gmail.com>
- <CAMuHMdUKxJDPs3Ow8E-g2bLr7c7jREf5gSqWZ+o5aWbGj6uO=w@mail.gmail.com>
-Message-ID: <f4751046b26a86b18aa7e446a4da81e8@walle.cc>
-X-Sender: michael@walle.cc
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Am 2023-09-22 09:10, schrieb Geert Uytterhoeven:
-> On Thu, Sep 21, 2023 at 7:01 PM Geert Uytterhoeven 
-> <geert@linux-m68k.org> wrote:
->> On Thu, Sep 21, 2023 at 6:01 PM Michael Walle <michael@walle.cc> 
->> wrote:
->> > >> We won't break compatibility with older DTBs if we use a list of
->> > >> compatibles. First the vendor specific one which will use some quirks,
->> > >> and if that's not available, have as second the generic jedec,spi-nor
->> > >> to
->> > >> fallback to.
->> > >
->> > > Sure, you should use a list.
->> > >
->> > > But the current recommended practice is to not have a list,
->> > > but just "jedec,spi-nor" (using a list with a new FLASH part name
->> > > causes checkpatch and dtbs_check warnings). Hence if you follow that
->> > > recommendation, you will run into compatibility issues with older DTBs
->> > > when you discover the quirk later, and decide to add it to the list.
->> >
->> > The SPI NOR flashes should be auto discoverable. Why do you need a
->> > compatible string? Quirks can be added to the flash_info database.
->> 
->> This assumes you don't need the quirk before you can identify the 
->> part.
->> I'm not sure that is always the case.
+No need to check the argument of i2c_unregister_device() because the
+function itself does it.
 
-Yes, but that seems a reasonable assumption.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+Build tested only. Please apply to your tree.
 
-> Reminder where this is apparently not the case:
-> https://lore.kernel.org/r/OS0PR01MB5922A4F16DE8923373AA5DD886F7A@OS0PR01MB5922.jpnprd01.prod.outlook.com/
+ drivers/usb/typec/anx7411.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I think that one is still under discussion and there is something
-strange going on there. In any case, the "read id" operation is done
-with just single bit I/O, IOW, RDID should work. Unless there is a
-hardware bug and the SPI controller (!) will hold the flash in reset
-by pulling down IO3. I'd argue, that simply looking at the flash
-compatible is the wrong approach here.
+diff --git a/drivers/usb/typec/anx7411.c b/drivers/usb/typec/anx7411.c
+index 221604f933a4..b12a07edc71b 100644
+--- a/drivers/usb/typec/anx7411.c
++++ b/drivers/usb/typec/anx7411.c
+@@ -1550,8 +1550,7 @@ static void anx7411_i2c_remove(struct i2c_client *client)
+ 	if (plat->workqueue)
+ 		destroy_workqueue(plat->workqueue);
+ 
+-	if (plat->spi_client)
+-		i2c_unregister_device(plat->spi_client);
++	i2c_unregister_device(plat->spi_client);
+ 
+ 	if (plat->typec.role_sw)
+ 		usb_role_switch_put(plat->typec.role_sw);
+-- 
+2.30.2
 
--michael
