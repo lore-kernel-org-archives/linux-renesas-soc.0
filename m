@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC27E7D0D8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 06:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86DBE7D0D2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Sep 2023 06:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbjIVGxx (ORCPT
+        id S230064AbjIVGxv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Sep 2023 02:53:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43004 "EHLO
+        Fri, 22 Sep 2023 02:53:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230153AbjIVGxt (ORCPT
+        with ESMTP id S230086AbjIVGxs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Sep 2023 02:53:49 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BABC31A1;
-        Thu, 21 Sep 2023 23:53:42 -0700 (PDT)
+        Fri, 22 Sep 2023 02:53:48 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 50EF2197;
+        Thu, 21 Sep 2023 23:53:41 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.03,167,1694703600"; 
-   d="scan'208";a="176885449"
+   d="scan'208";a="180618018"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Sep 2023 15:53:40 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Sep 2023 15:53:39 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0ADC0400F799;
-        Fri, 22 Sep 2023 15:53:40 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 32E14400F7A0;
+        Fri, 22 Sep 2023 15:53:39 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
         bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
@@ -30,42 +30,51 @@ To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
         gustavo.pimentel@synopsys.com, mani@kernel.org
 Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v21 12/16] PCI: add T_PVPERL macro
-Date:   Fri, 22 Sep 2023 15:53:27 +0900
-Message-Id: <20230922065331.3806925-13-yoshihiro.shimoda.uh@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Serge Semin <fancer.lancer@gmail.com>
+Subject: [PATCH v21 07/16] PCI: dwc: Expose dw_pcie_write_dbi2() to module
+Date:   Fri, 22 Sep 2023 15:53:22 +0900
+Message-Id: <20230922065331.3806925-8-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230922065331.3806925-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230922065331.3806925-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-According to the PCI Express Card Electromechanical Specification,
-Power stable to PERST# inactive interval is 100 ms as minimum.
-So, add the macro to use PCIe controller drivers.
+Since no PCIe controller drivers call this, this change is not required
+for now. But, Renesas R-Car Gen4 PCIe controller driver will call this
+and if the controller driver is built as a kernel module, the following
+build error happens:
 
+  ERROR: modpost: "dw_pcie_write_dbi2" [drivers/pci/controller/dwc/pcie-rcar-gen4-host-drv.ko] undefined!
+
+So, expose dw_pcie_write_dbi2() for it.
+
+[kwilczynski: commit log]
+Link: https://lore.kernel.org/linux-pci/20230825093219.2685912-12-yoshihiro.shimoda.uh@renesas.com
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/pci/pci.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pci/controller/dwc/pcie-designware.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 39a8932dc340..5ecbcf041179 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -13,6 +13,9 @@
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 1f900be94556..250cf7f40b85 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -365,6 +365,7 @@ void dw_pcie_write_dbi2(struct dw_pcie *pci, u32 reg, size_t size, u32 val)
+ 	if (ret)
+ 		dev_err(pci->dev, "write DBI address failed\n");
+ }
++EXPORT_SYMBOL_GPL(dw_pcie_write_dbi2);
  
- #define PCIE_LINK_RETRAIN_TIMEOUT_MS	1000
- 
-+/* Power stable to PERST# inactive from PCIe card Electromechanical Spec */
-+#define PCIE_T_PVPERL_MS		100
-+
- /*
-  * PCIe r6.0, sec 5.3.3.2.1 <PME Synchronization>
-  * Recommends 1ms to 10ms timeout to check L2 ready.
+ static inline void __iomem *dw_pcie_select_atu(struct dw_pcie *pci, u32 dir,
+ 					       u32 index)
 -- 
 2.25.1
 
