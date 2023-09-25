@@ -2,128 +2,113 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B88CE7A81
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Sep 2023 07:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C390BCE7A81
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Sep 2023 07:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231644AbjIYHWT (ORCPT
+        id S231666AbjIYHkf convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 Sep 2023 03:22:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58936 "EHLO
+        Mon, 25 Sep 2023 03:40:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbjIYHVu (ORCPT
+        with ESMTP id S232251AbjIYHke (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2023 03:21:50 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8FFFFD3;
-        Mon, 25 Sep 2023 00:21:38 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.03,174,1694703600"; 
-   d="scan'208";a="177131124"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Sep 2023 16:21:35 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2E0A84008C70;
-        Mon, 25 Sep 2023 16:21:35 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, mani@kernel.org
-Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v22 08/16] PCI: dwc: endpoint: Introduce .pre_init() and .deinit()
-Date:   Mon, 25 Sep 2023 16:21:22 +0900
-Message-Id: <20230925072130.3901087-9-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230925072130.3901087-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230925072130.3901087-1-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 25 Sep 2023 03:40:34 -0400
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F0BD3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Sep 2023 00:40:28 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-59f4bc88f9fso41173417b3.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Sep 2023 00:40:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695627627; x=1696232427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WMuGQHUUNiSikNxGn4O9hRRxJFnH7Taw0NZCj7fUOBc=;
+        b=bHYPm15ao24aDZnvtS+gPyecERFhZIFHoGY7GT4v018IwR4jdVZTx9ATBAR/2cTay6
+         Qn4q26gtzSg64MrkJQqN7i7lkj0O9+RM7fZmfuxE2RQRBy174pmPELh1/J461QoBDyCa
+         t+3nd3enSVTtCReemgJnqJMPkShQjhoP4mn/OOCM6v237bc4RyQoyDrFrNn6/ymn5bim
+         3MLoYGzrhboVTmsAs0RsEf0bAtTlvTSehgNrVt3rkGwHOCV6HQRin/pRiGlJXZg7So0e
+         d4fmXZhrS8MhtgMudz+/K5G9AB6jCUsLWpsXtOW39njFUPZITEmwZZZ0B2BMvPx79gI6
+         ZzCw==
+X-Gm-Message-State: AOJu0Ywqpnix6QsbvRKny7L/EkhdcqCIo2In7XmCHFBfgQ76TEqX6us5
+        naoReXMQ3NmIVFn0Wd/kJug4iRiSTeZh5Q==
+X-Google-Smtp-Source: AGHT+IGFD16/aXm6hhHGK41JWN3emGc6z6OAj13dXnq/TeRkKccvNV+NJraTyuOqCa1Ifc1e1XMHQQ==
+X-Received: by 2002:a25:ec0c:0:b0:d7e:add7:4de5 with SMTP id j12-20020a25ec0c000000b00d7eadd74de5mr4977303ybh.1.1695627627198;
+        Mon, 25 Sep 2023 00:40:27 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 204-20020a2501d5000000b00d816fa23bd4sm2093698ybb.26.2023.09.25.00.40.26
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Sep 2023 00:40:26 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-59f7f46b326so13087777b3.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Sep 2023 00:40:26 -0700 (PDT)
+X-Received: by 2002:a81:b1c1:0:b0:59f:4ee0:26e8 with SMTP id
+ p184-20020a81b1c1000000b0059f4ee026e8mr4745752ywh.21.1695627626776; Mon, 25
+ Sep 2023 00:40:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1693481518.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1693481518.git.geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 25 Sep 2023 09:40:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUrswehsNECqo9T_r7y7naAOhxA6SPxR-1Nc8RzJwy4Cg@mail.gmail.com>
+Message-ID: <CAMuHMdUrswehsNECqo9T_r7y7naAOhxA6SPxR-1Nc8RzJwy4Cg@mail.gmail.com>
+Subject: Re: [PATCH 00/13] ARM: dts: renesas: LBSC and FLASH improvements
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Renesas R-Car Gen4 PCIe controllers require vendor-specific
-initialization before .init().
+On Thu, Aug 31, 2023 at 1:52 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> This patch series adds support for various FLASH devices on the Blanche,
+> Genmai, Marzen, and RSK+RZA1 development boards.  As several of these
+> FLASH devices reside in the external address space of a (Local) Bus
+> State Controller, the current (too) minimal support for (L)BSC is
+> improved first.  All of this is preceded by two small fixes.
+>
+> As FLASH on Blanche and Marzen conflicts with SMP, the last two patches
+> depend on [1], so I marked them RFC.
+>
+> This has been tested on the APE6-EVM, Blanche, Genmai, Marzen, and
+> RSK+RZA1 development boards.
+>
+> Thanks for your comments!
+>
+> [1] "[PATCH/RFC 0/4] ARM: shmobile: Reserve boot area when SMP is
+>      enabled"
+>     https://lore.kernel.org/all/cover.1693409184.git.geert+renesas@glider.be
+>
+> Geert Uytterhoeven (13):
+>   ARM: dts: renesas: ape6evm: Drop bogus "mtd-rom" compatible value
+>   ARM: dts: renesas: gr-peach: Remove unneeded probe-type property
+>   ARM: dts: renesas: Remove unused LBSC nodes from board DTS
+>   ARM: dts: renesas: r7s72100: Add BSC node
+>   ARM: dts: renesas: r8a7779: Add LBSC node
+>   ARM: dts: renesas: r8a7792: Add LBSC node
+>   ARM: dts: renesas: marzen: Move Ethernet node to LBSC
+>   ARM: dts: renesas: blanche: Move Ethernet node to LBSC
+>   ARM: dts: renesas: wheat: Move Ethernet node to LBSC
+>   ARM: dts: renesas: genmai: Add FLASH nodes
+>   ARM: dts: renesas: rskrza1: Add FLASH nodes
 
-To use dw->dbi and dw->num-lanes in the initialization code,
-introduce .pre_init() into struct dw_pcie_ep_ops. While at it,
-also introduce .deinit() to disable the controller by using
-vendor-specific de-initialization.
+Thanks, queuing 1-11 in renesas-devel for v6.7.
 
-Note that the ep_init in the struct dw_pcie_ep_ops should be
-renamed to init later.
+Gr{oetje,eeting}s,
 
-[kwilczynski: commit log]
-Link: https://lore.kernel.org/linux-pci/20230825093219.2685912-13-yoshihiro.shimoda.uh@renesas.com
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
----
- drivers/pci/controller/dwc/pcie-designware-ep.c | 12 +++++++++++-
- drivers/pci/controller/dwc/pcie-designware.h    |  2 ++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+                        Geert
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index a8bcbc57ef86..d34a5e87ad18 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -637,6 +637,9 @@ void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
- 			      epc->mem->window.page_size);
- 
- 	pci_epc_mem_exit(epc);
-+
-+	if (ep->ops->deinit)
-+		ep->ops->deinit(ep);
- }
- EXPORT_SYMBOL_GPL(dw_pcie_ep_exit);
- 
-@@ -740,6 +743,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- 	ep->phys_base = res->start;
- 	ep->addr_size = resource_size(res);
- 
-+	if (ep->ops->pre_init)
-+		ep->ops->pre_init(ep);
-+
- 	dw_pcie_version_detect(pci);
- 
- 	dw_pcie_iatu_detect(pci);
-@@ -794,7 +800,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- 			       ep->page_size);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to initialize address space\n");
--		return ret;
-+		goto err_ep_deinit;
- 	}
- 
- 	ep->msi_mem = pci_epc_mem_alloc_addr(epc, &ep->msi_mem_phys,
-@@ -831,6 +837,10 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- err_exit_epc_mem:
- 	pci_epc_mem_exit(epc);
- 
-+err_ep_deinit:
-+	if (ep->ops->deinit)
-+		ep->ops->deinit(ep);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(dw_pcie_ep_init);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index e10f7e18b13a..8c637392ab08 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -330,7 +330,9 @@ struct dw_pcie_rp {
- };
- 
- struct dw_pcie_ep_ops {
-+	void	(*pre_init)(struct dw_pcie_ep *ep);
- 	void	(*ep_init)(struct dw_pcie_ep *ep);
-+	void	(*deinit)(struct dw_pcie_ep *ep);
- 	int	(*raise_irq)(struct dw_pcie_ep *ep, u8 func_no,
- 			     enum pci_epc_irq_type type, u16 interrupt_num);
- 	const struct pci_epc_features* (*get_features)(struct dw_pcie_ep *ep);
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
