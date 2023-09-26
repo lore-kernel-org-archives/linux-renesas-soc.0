@@ -2,26 +2,26 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E0DE7E62F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Sep 2023 12:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B1AE7E638
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Sep 2023 12:24:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234620AbjIZMYt (ORCPT
+        id S234623AbjIZMYs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Sep 2023 08:24:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47940 "EHLO
+        Tue, 26 Sep 2023 08:24:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234587AbjIZMYr (ORCPT
+        with ESMTP id S234614AbjIZMYr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 26 Sep 2023 08:24:47 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 00B6A10E;
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E4B2510C;
         Tue, 26 Sep 2023 05:24:39 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.03,177,1694703600"; 
-   d="scan'208";a="177299705"
+   d="scan'208";a="181033394"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Sep 2023 21:24:37 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 26 Sep 2023 21:24:37 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 44FD241FAD06;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BD89441FAD06;
         Tue, 26 Sep 2023 21:24:37 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
@@ -31,13 +31,10 @@ To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
 Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v23 04/16] PCI: tegra194: Drop PCI_EXP_LNKSTA_NLW setting
-Date:   Tue, 26 Sep 2023 21:24:19 +0900
-Message-Id: <20230926122431.3974714-5-yoshihiro.shimoda.uh@renesas.com>
+        Serge Semin <fancer.lancer@gmail.com>
+Subject: [PATCH v23 07/16] PCI: dwc: Expose dw_pcie_write_dbi2() to module
+Date:   Tue, 26 Sep 2023 21:24:22 +0900
+Message-Id: <20230926122431.3974714-8-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230926122431.3974714-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230926122431.3974714-1-yoshihiro.shimoda.uh@renesas.com>
@@ -48,40 +45,36 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-dw_pcie_setup() is already setting PCI_EXP_LNKCAP_MLW to pcie->num_lanes
-in the PCI_EXP_LNKCAP register for programming maximum link width.
+Since no PCIe controller drivers call this, this change is not required
+for now. But, Renesas R-Car Gen4 PCIe controller driver will call this
+and if the controller driver is built as a kernel module, the following
+build error happens:
 
-Hence, remove the redundant setting here.
+  ERROR: modpost: "dw_pcie_write_dbi2" [drivers/pci/controller/dwc/pcie-rcar-gen4-host-drv.ko] undefined!
+
+So, expose dw_pcie_write_dbi2() for it.
 
 [kwilczynski: commit log]
-Link: https://lore.kernel.org/linux-pci/20230825093219.2685912-9-yoshihiro.shimoda.uh@renesas.com
+Link: https://lore.kernel.org/linux-pci/20230825093219.2685912-12-yoshihiro.shimoda.uh@renesas.com
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
 Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 4bba31502ce1..2debdf1a0b52 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -917,12 +917,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 		AMBA_ERROR_RESPONSE_CRS_SHIFT);
- 	dw_pcie_writel_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT, val);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 1f900be94556..250cf7f40b85 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -365,6 +365,7 @@ void dw_pcie_write_dbi2(struct dw_pcie *pci, u32 reg, size_t size, u32 val)
+ 	if (ret)
+ 		dev_err(pci->dev, "write DBI address failed\n");
+ }
++EXPORT_SYMBOL_GPL(dw_pcie_write_dbi2);
  
--	/* Configure Max lane width from DT */
--	val = dw_pcie_readl_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP);
--	val &= ~PCI_EXP_LNKCAP_MLW;
--	val |= (pcie->num_lanes << PCI_EXP_LNKSTA_NLW_SHIFT);
--	dw_pcie_writel_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP, val);
--
- 	/* Clear Slot Clock Configuration bit if SRNS configuration */
- 	if (pcie->enable_srns) {
- 		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
+ static inline void __iomem *dw_pcie_select_atu(struct dw_pcie *pci, u32 dir,
+ 					       u32 index)
 -- 
 2.25.1
 
