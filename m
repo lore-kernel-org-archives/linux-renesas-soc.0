@@ -2,307 +2,138 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BD7E7E647
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Sep 2023 12:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B86E7E62F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Sep 2023 12:31:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234622AbjIZMYx (ORCPT
+        id S234560AbjIZMbM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Sep 2023 08:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44756 "EHLO
+        Tue, 26 Sep 2023 08:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234644AbjIZMYw (ORCPT
+        with ESMTP id S234605AbjIZMbM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2023 08:24:52 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5CBCAFC;
-        Tue, 26 Sep 2023 05:24:44 -0700 (PDT)
+        Tue, 26 Sep 2023 08:31:12 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C3A7910A;
+        Tue, 26 Sep 2023 05:31:02 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.03,177,1694703600"; 
-   d="scan'208";a="177299720"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Sep 2023 21:24:39 +0900
+   d="scan'208";a="181033875"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 26 Sep 2023 21:31:02 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EC38A41FAD06;
-        Tue, 26 Sep 2023 21:24:38 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2A1224004CFB;
+        Tue, 26 Sep 2023 21:31:02 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, mani@kernel.org
-Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v23 14/16] PCI: dwc: rcar-gen4: Add endpoint mode support
-Date:   Tue, 26 Sep 2023 21:24:29 +0900
-Message-Id: <20230926122431.3974714-15-yoshihiro.shimoda.uh@renesas.com>
+        Tam Nguyen <tam.nguyen.xa@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH net v3] rswitch: Fix PHY station management clock setting
+Date:   Tue, 26 Sep 2023 21:30:54 +0900
+Message-Id: <20230926123054.3976752-1-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230926122431.3974714-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20230926122431.3974714-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add R-Car Gen4 PCIe controller for endpoint mode. This controller is based
-on Synopsys DesignWare PCIe.
+Fix the MPIC.PSMCS value following the programming example in the
+section 6.4.2 Management Data Clock (MDC) Setting, Ethernet MAC IP,
+S4 Hardware User Manual Rev.1.00.
 
-Link: https://lore.kernel.org/linux-pci/20230825093219.2685912-18-yoshihiro.shimoda.uh@renesas.com
+The value is calculated by
+    MPIC.PSMCS = clk[MHz] / (MDC frequency[MHz] * 2) - 1
+with the input clock frequency from clk_get_rate() and MDC frequency
+of 2.5MHz. Otherwise, this driver cannot communicate PHYs on the R-Car
+S4 Starter Kit board.
+
+Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
+Reported-by: Tam Nguyen <tam.nguyen.xa@renesas.com>
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+Tested-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- drivers/pci/controller/dwc/Kconfig          |  11 ++
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 156 +++++++++++++++++++-
- 2 files changed, 163 insertions(+), 4 deletions(-)
+Changes from v2:
+https://lore.kernel.org/all/20230926081156.3930074-1-yoshihiro.shimoda.uh@renesas.com/
+ - Change subject.
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index bc69fcab2e2a..e7fd37717998 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -429,4 +429,15 @@ config PCIE_RCAR_GEN4_HOST
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called pcie-rcar-gen4.ko. This uses the DesignWare core.
+Changes from v1:
+https://lore.kernel.org/all/20230925003416.3863560-1-yoshihiro.shimoda.uh@renesas.com/
+ - Revise the formula on the commit description.
+ - Calculate the PSMCS value by using clk_get_raate().
+ -- So, change author and Add Reported-by.
+
+ drivers/net/ethernet/renesas/rswitch.c | 13 ++++++++++++-
+ drivers/net/ethernet/renesas/rswitch.h |  2 ++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index ea9186178091..fc01ad3f340d 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -4,6 +4,7 @@
+  * Copyright (C) 2022 Renesas Electronics Corporation
+  */
  
-+config PCIE_RCAR_GEN4_EP
-+	tristate "Renesas R-Car Gen4 PCIe controller (endpoint mode)"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	select PCIE_RCAR_GEN4
-+	help
-+	  Say Y here if you want PCIe controller (endpoint mode) on R-Car Gen4
-+	  SoCs. To compile this driver as a module, choose M here: the module
-+	  will be called pcie-rcar-gen4.ko. This uses the DesignWare core.
-+
- endmenu
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index 2fb27e97900b..c482fbb3e3bb 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -21,6 +21,7 @@
- /* PCIe Mode Setting Register 0 */
- #define PCIEMSR0		0x0000
- #define BIFUR_MOD_SET_ON	BIT(0)
-+#define DEVICE_TYPE_EP		0
- #define DEVICE_TYPE_RC		BIT(4)
- 
- /* PCIe Interrupt Status 0 */
-@@ -44,6 +45,9 @@
- #define RCAR_NUM_SPEED_CHANGE_RETRIES	10
- #define RCAR_MAX_LINK_SPEED		4
- 
-+#define RCAR_GEN4_PCIE_EP_FUNC_DBI_OFFSET	0x1000
-+#define RCAR_GEN4_PCIE_EP_FUNC_DBI2_OFFSET	0x800
-+
- struct rcar_gen4_pcie {
- 	struct dw_pcie dw;
- 	void __iomem *base;
-@@ -52,6 +56,7 @@ struct rcar_gen4_pcie {
- };
- #define to_rcar_gen4_pcie(_dw)	container_of(_dw, struct rcar_gen4_pcie, dw)
- 
-+/* Common */
- static void rcar_gen4_pcie_ltssm_enable(struct rcar_gen4_pcie *rcar,
- 					bool enable)
++#include <linux/clk.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+ #include <linux/etherdevice.h>
+@@ -1049,7 +1050,7 @@ static void rswitch_rmac_setting(struct rswitch_etha *etha, const u8 *mac)
+ static void rswitch_etha_enable_mii(struct rswitch_etha *etha)
  {
-@@ -169,6 +174,8 @@ static int rcar_gen4_pcie_common_init(struct rcar_gen4_pcie *rcar)
- 	val = readl(rcar->base + PCIEMSR0);
- 	if (rcar->mode == DW_PCIE_RC_TYPE) {
- 		val |= DEVICE_TYPE_RC;
-+	} else if (rcar->mode == DW_PCIE_EP_TYPE) {
-+		val |= DEVICE_TYPE_EP;
- 	} else {
- 		ret = -EINVAL;
- 		goto err_unprepare;
-@@ -308,9 +315,11 @@ static int rcar_gen4_add_dw_pcie_rp(struct rcar_gen4_pcie *rcar)
- {
- 	struct dw_pcie_rp *pp = &rcar->dw.pp;
- 
-+	if (!IS_ENABLED(CONFIG_PCIE_RCAR_GEN4_HOST))
-+		return -ENODEV;
-+
- 	pp->num_vectors = MAX_MSI_IRQS;
- 	pp->ops = &rcar_gen4_pcie_host_ops;
--	rcar->mode = DW_PCIE_RC_TYPE;
- 
- 	return dw_pcie_host_init(pp);
- }
-@@ -320,6 +329,124 @@ static void rcar_gen4_remove_dw_pcie_rp(struct rcar_gen4_pcie *rcar)
- 	dw_pcie_host_deinit(&rcar->dw.pp);
+ 	rswitch_modify(etha->addr, MPIC, MPIC_PSMCS_MASK | MPIC_PSMHT_MASK,
+-		       MPIC_PSMCS(0x05) | MPIC_PSMHT(0x06));
++		       MPIC_PSMCS(etha->psmcs) | MPIC_PSMHT(0x06));
+ 	rswitch_modify(etha->addr, MPSM, 0, MPSM_MFF_C45);
  }
  
-+/* Endpoind mode */
-+static void rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+	int ret;
+@@ -1693,6 +1694,12 @@ static void rswitch_etha_init(struct rswitch_private *priv, int index)
+ 	etha->index = index;
+ 	etha->addr = priv->addr + RSWITCH_ETHA_OFFSET + index * RSWITCH_ETHA_SIZE;
+ 	etha->coma_addr = priv->addr;
 +
-+	ret = rcar_gen4_pcie_common_init(rcar);
-+	if (ret)
-+		return;
-+
-+	writel(PCIEDMAINTSTSEN_INIT, rcar->base + PCIEDMAINTSTSEN);
-+}
-+
-+static void rcar_gen4_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	enum pci_barno bar;
-+
-+	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+}
-+
-+static void rcar_gen4_pcie_ep_deinit(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+	struct rcar_gen4_pcie *rcar = to_rcar_gen4_pcie(dw);
-+
-+	writel(0, rcar->base + PCIEDMAINTSTSEN);
-+	rcar_gen4_pcie_common_deinit(rcar);
-+}
-+
-+static int rcar_gen4_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				       unsigned int type, u16 interrupt_num)
-+{
-+	struct dw_pcie *dw = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_IRQ_LEGACY:
-+		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
-+	case PCI_IRQ_MSI:
-+		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	default:
-+		dev_err(dw->dev, "Unknown IRQ type\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pci_epc_features rcar_gen4_pcie_epc_features = {
-+	.linkup_notifier = false,
-+	.msi_capable = true,
-+	.msix_capable = false,
-+	.reserved_bar = 1 << BAR_1 | 1 << BAR_3 | 1 << BAR_5,
-+	.align = SZ_1M,
-+};
-+
-+static const struct pci_epc_features*
-+rcar_gen4_pcie_ep_get_features(struct dw_pcie_ep *ep)
-+{
-+	return &rcar_gen4_pcie_epc_features;
-+}
-+
-+static unsigned int rcar_gen4_pcie_ep_func_conf_select(struct dw_pcie_ep *ep,
-+						       u8 func_no)
-+{
-+	return func_no * RCAR_GEN4_PCIE_EP_FUNC_DBI_OFFSET;
-+}
-+
-+static unsigned int rcar_gen4_pcie_ep_get_dbi2_offset(struct dw_pcie_ep *ep,
-+						      u8 func_no)
-+{
-+	return func_no * RCAR_GEN4_PCIE_EP_FUNC_DBI2_OFFSET;
-+}
-+
-+static const struct dw_pcie_ep_ops pcie_ep_ops = {
-+	.pre_init = rcar_gen4_pcie_ep_pre_init,
-+	.ep_init = rcar_gen4_pcie_ep_init,
-+	.deinit = rcar_gen4_pcie_ep_deinit,
-+	.raise_irq = rcar_gen4_pcie_ep_raise_irq,
-+	.get_features = rcar_gen4_pcie_ep_get_features,
-+	.func_conf_select = rcar_gen4_pcie_ep_func_conf_select,
-+	.get_dbi2_offset = rcar_gen4_pcie_ep_get_dbi2_offset,
-+};
-+
-+static int rcar_gen4_add_dw_pcie_ep(struct rcar_gen4_pcie *rcar)
-+{
-+	struct dw_pcie_ep *ep = &rcar->dw.ep;
-+
-+	if (!IS_ENABLED(CONFIG_PCIE_RCAR_GEN4_EP))
-+		return -ENODEV;
-+
-+	ep->ops = &pcie_ep_ops;
-+
-+	return dw_pcie_ep_init(ep);
-+}
-+
-+static void rcar_gen4_remove_dw_pcie_ep(struct rcar_gen4_pcie *rcar)
-+{
-+	dw_pcie_ep_exit(&rcar->dw.ep);
-+}
-+
-+/* Common */
-+static int rcar_gen4_add_dw_pcie(struct rcar_gen4_pcie *rcar)
-+{
-+	rcar->mode = (enum dw_pcie_device_mode)of_device_get_match_data(&rcar->pdev->dev);
-+
-+	switch (rcar->mode) {
-+	case DW_PCIE_RC_TYPE:
-+		return rcar_gen4_add_dw_pcie_rp(rcar);
-+	case DW_PCIE_EP_TYPE:
-+		return rcar_gen4_add_dw_pcie_ep(rcar);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static int rcar_gen4_pcie_probe(struct platform_device *pdev)
- {
- 	struct rcar_gen4_pcie *rcar;
-@@ -337,7 +464,7 @@ static int rcar_gen4_pcie_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
--	err = rcar_gen4_add_dw_pcie_rp(rcar);
-+	err = rcar_gen4_add_dw_pcie(rcar);
- 	if (err)
- 		goto err_unprepare;
- 
-@@ -349,16 +476,37 @@ static int rcar_gen4_pcie_probe(struct platform_device *pdev)
- 	return err;
++	/* MPIC.PSMCS = (clk [MHz] / (MDC frequency [MHz] * 2) - 1.
++	 * Calculating PSMCS value as MDC frequency = 2.5MHz. So, multiply
++	 * both the numerator and the denominator by 10.
++	 */
++	etha->psmcs = clk_get_rate(priv->clk) / 100000 / (25 * 2) - 1;
  }
  
-+static void rcar_gen4_remove_dw_pcie(struct rcar_gen4_pcie *rcar)
-+{
-+	switch (rcar->mode) {
-+	case DW_PCIE_RC_TYPE:
-+		rcar_gen4_remove_dw_pcie_rp(rcar);
-+		break;
-+	case DW_PCIE_EP_TYPE:
-+		rcar_gen4_remove_dw_pcie_ep(rcar);
-+		break;
-+	default:
-+		break;
-+	}
-+}
+ static int rswitch_device_alloc(struct rswitch_private *priv, int index)
+@@ -1900,6 +1907,10 @@ static int renesas_eth_sw_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	spin_lock_init(&priv->lock);
+ 
++	priv->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(priv->clk))
++		return PTR_ERR(priv->clk);
 +
- static void rcar_gen4_pcie_remove(struct platform_device *pdev)
- {
- 	struct rcar_gen4_pcie *rcar = platform_get_drvdata(pdev);
+ 	attr = soc_device_match(rswitch_soc_no_speed_change);
+ 	if (attr)
+ 		priv->etha_no_runtime_change = true;
+diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
+index f0c16a37ea55..04f49a7a5843 100644
+--- a/drivers/net/ethernet/renesas/rswitch.h
++++ b/drivers/net/ethernet/renesas/rswitch.h
+@@ -915,6 +915,7 @@ struct rswitch_etha {
+ 	bool external_phy;
+ 	struct mii_bus *mii;
+ 	phy_interface_t phy_interface;
++	u32 psmcs;
+ 	u8 mac_addr[MAX_ADDR_LEN];
+ 	int link;
+ 	int speed;
+@@ -1012,6 +1013,7 @@ struct rswitch_private {
+ 	struct rswitch_mfwd mfwd;
  
--	rcar_gen4_remove_dw_pcie_rp(rcar);
-+	rcar_gen4_remove_dw_pcie(rcar);
- 	rcar_gen4_pcie_unprepare(rcar);
- }
+ 	spinlock_t lock;	/* lock interrupt registers' control */
++	struct clk *clk;
  
- static const struct of_device_id rcar_gen4_pcie_of_match[] = {
--	{ .compatible = "renesas,rcar-gen4-pcie", },
-+	{
-+		.compatible = "renesas,rcar-gen4-pcie",
-+		.data = (void *)DW_PCIE_RC_TYPE,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen4-pcie-ep",
-+		.data = (void *)DW_PCIE_EP_TYPE,
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rcar_gen4_pcie_of_match);
+ 	bool etha_no_runtime_change;
+ 	bool gwca_halt;
 -- 
 2.25.1
 
