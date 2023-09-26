@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6604E7E643
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Sep 2023 12:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 060B3E7E644
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Sep 2023 12:24:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234653AbjIZMYw (ORCPT
+        id S234587AbjIZMYx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Sep 2023 08:24:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44738 "EHLO
+        Tue, 26 Sep 2023 08:24:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234650AbjIZMYv (ORCPT
+        with ESMTP id S234660AbjIZMYv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 26 Sep 2023 08:24:51 -0400
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6D065136;
-        Tue, 26 Sep 2023 05:24:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E49DD10E;
+        Tue, 26 Sep 2023 05:24:44 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.03,177,1694703600"; 
-   d="scan'208";a="177299717"
+   d="scan'208";a="177299723"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Sep 2023 21:24:38 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 26 Sep 2023 21:24:39 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 97BA041FAD06;
-        Tue, 26 Sep 2023 21:24:38 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4927C41FAD06;
+        Tue, 26 Sep 2023 21:24:39 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
         bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
@@ -30,44 +30,53 @@ To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
         gustavo.pimentel@synopsys.com, mani@kernel.org
 Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v23 12/16] PCI: add T_PVPERL macro
-Date:   Tue, 26 Sep 2023 21:24:27 +0900
-Message-Id: <20230926122431.3974714-13-yoshihiro.shimoda.uh@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v23 16/16] misc: pci_endpoint_test: Add Device ID for R-Car S4-8 PCIe controller
+Date:   Tue, 26 Sep 2023 21:24:31 +0900
+Message-Id: <20230926122431.3974714-17-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230926122431.3974714-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20230926122431.3974714-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-According to the PCI Express Card Electromechanical Specification,
-Power stable to PERST# inactive interval is 100 ms as minimum.
-So, add the macro to use PCIe controller drivers.
+Add Renesas R8A779F0 in pci_device_id table so that pci-epf-test
+can be used for testing PCIe EP on R-Car S4-8.
 
+Link: https://lore.kernel.org/linux-pci/20230825093219.2685912-20-yoshihiro.shimoda.uh@renesas.com
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Acked-by: Manivannan Sadhasivam <mani@kernel.org>
 ---
- drivers/pci/pci.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/misc/pci_endpoint_test.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 39a8932dc340..5ecbcf041179 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -13,6 +13,9 @@
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index ed4d0ef5e5c3..150083dab71a 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -81,6 +81,7 @@
+ #define PCI_DEVICE_ID_RENESAS_R8A774B1		0x002b
+ #define PCI_DEVICE_ID_RENESAS_R8A774C0		0x002d
+ #define PCI_DEVICE_ID_RENESAS_R8A774E1		0x0025
++#define PCI_DEVICE_ID_RENESAS_R8A779F0		0x0031
  
- #define PCIE_LINK_RETRAIN_TIMEOUT_MS	1000
+ static DEFINE_IDA(pci_endpoint_test_ida);
  
-+/* Power stable to PERST# inactive from PCIe card Electromechanical Spec */
-+#define PCIE_T_PVPERL_MS		100
-+
- /*
-  * PCIe r6.0, sec 5.3.3.2.1 <PME Synchronization>
-  * Recommends 1ms to 10ms timeout to check L2 ready.
+@@ -990,6 +991,9 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774B1),},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774C0),},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774E1),},
++	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A779F0),
++	  .driver_data = (kernel_ulong_t)&default_data,
++	},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_J721E),
+ 	  .driver_data = (kernel_ulong_t)&j721e_data,
+ 	},
 -- 
 2.25.1
 
