@@ -2,139 +2,110 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84253E82CBF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Sep 2023 18:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77687E82CCF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Sep 2023 19:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229493AbjI0SwV (ORCPT
+        id S229500AbjI0Th7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Sep 2023 14:52:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60572 "EHLO
+        Wed, 27 Sep 2023 15:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjI0SwT (ORCPT
+        with ESMTP id S229744AbjI0Th6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Sep 2023 14:52:19 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 740B4F4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Sep 2023 11:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695840737; x=1727376737;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=bmS4Xa9XAGTCoRhLdbsc0By6bpPy/vQ0LcDcAwDTVw0=;
-  b=Kv9gTc+iANc5PgdPzje+7HLJhQP0IoeO1oLLf/SLWYb0aLJQj3J0gwQ9
-   9+G1rX4ZsRAhoHRs1gmrIMLys2TbDbJ+IaN+a5AS6vP1Wj93KM+3ki1b7
-   X4bX7QWPqIsBbQ1Kl8P83slAolItwBCpmiFulkLLS2nXMrMqLikTqmXZV
-   q/TYiwNz1mFyK9M0V91PUt6weZbacJalSggl0nLO/JdHk1vfmBJk5vE0P
-   h1YGWvEAEYcfAZgfBMihVov3vbfeJlELzSN9VM/eMBljrIvTGN8ZZH/Jq
-   4a755Spa4Jg1wEH4lQkWP6D3eWHRTd4IYjjbWeJIXtjHx/vPv4nM5vFH1
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10846"; a="3441282"
-X-IronPort-AV: E=Sophos;i="6.03,182,1694761200"; 
-   d="scan'208";a="3441282"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2023 11:52:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10846"; a="996279425"
-X-IronPort-AV: E=Sophos;i="6.03,182,1694761200"; 
-   d="scan'208";a="996279425"
-Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Sep 2023 11:52:15 -0700
-Received: from kbuild by c3b01524d57c with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qlZds-0000Y8-1B;
-        Wed, 27 Sep 2023 18:52:12 +0000
-Date:   Thu, 28 Sep 2023 02:52:06 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Cc:     oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [geert-renesas-drivers:topic/renesas-overlays-v6.6-rc1 6/137]
- drivers/of/overlay.c:76: warning: Function parameter or member 'ovcs' not
- described in 'fragment'
-Message-ID: <202309280221.McwYanU6-lkp@intel.com>
+        Wed, 27 Sep 2023 15:37:58 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6007DCC
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Sep 2023 12:37:57 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qlaLz-0002OM-LC; Wed, 27 Sep 2023 21:37:47 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qlaLy-009PaS-Os; Wed, 27 Sep 2023 21:37:46 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qlaLy-005Rgg-Ff; Wed, 27 Sep 2023 21:37:46 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 21/31] thermal: rcar: Convert to platform remove callback returning void
+Date:   Wed, 27 Sep 2023 21:37:26 +0200
+Message-Id: <20230927193736.2236447-22-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
+References: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1911; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=MHKv/28ZnDSs6uYa+MjbkeIeuh0ZUJZusecVTIYcnKU=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFIRxh9fubDtTFTH4kW0IjUOVF52b9nhLkZxwp FPKptJwZXyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRSEcQAKCRCPgPtYfRL+ TiE+B/0d6EBbM3BtHYzSj1FyzSyGPA9x5p83905SQWro7lqSh7IitvUCz6RKvvOu4tmPdXn/mK5 rzHlujPUwp8mshSICKdUR+98zADb72CJUztMg7dRh5YzcimrsOtqwadP7RlXMV/QNT/xcLljQYA 64cyPn07r1oJqrdrhzk7YoDoicBbOStCfLGeU4u3rwksSK2i2dQxC/XwRvWVc3SA+gwbJnaiH9U Boqd64XIsvtTN2pLL9rI6ZUICHYYW9thWKIRJvvyNQWP5KAFcJ0s6FhMBa0+NvBC/Tzn/WVi/5T Jdh27dudsnMNWtKQ0LnWkOp+q7GoSQv9X3slEhaq7+5Fzdkq
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/renesas-overlays-v6.6-rc1
-head:   5b25c3b1c2d80478ded680c33b1067e3faed4c0d
-commit: ccc4bf85f5a94ae31785151f50a3637e4cfe8808 [6/137] of: overlay: Add per overlay sysfs attributes
-config: parisc-allyesconfig (https://download.01.org/0day-ci/archive/20230928/202309280221.McwYanU6-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230928/202309280221.McwYanU6-lkp@intel.com/reproduce)
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309280221.McwYanU6-lkp@intel.com/
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
-All warnings (new ones prefixed by >>):
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
->> drivers/of/overlay.c:76: warning: Function parameter or member 'ovcs' not described in 'fragment'
->> drivers/of/overlay.c:76: warning: Function parameter or member 'attr_group' not described in 'fragment'
->> drivers/of/overlay.c:76: warning: Function parameter or member 'attrs' not described in 'fragment'
->> drivers/of/overlay.c:76: warning: Function parameter or member 'target_attr' not described in 'fragment'
->> drivers/of/overlay.c:104: warning: Function parameter or member 'attr_groups' not described in 'overlay_changeset'
-   drivers/of/overlay.c:104: warning: Function parameter or member 'kobj' not described in 'overlay_changeset'
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/thermal/rcar_thermal.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-
-vim +76 drivers/of/overlay.c
-
-6b4955ba7bc05e Frank Rowand      2018-10-04   61  
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   62  /**
-0290c4ca2536a3 Frank Rowand      2017-10-17   63   * struct fragment - info about fragment nodes in overlay expanded device tree
-ccc4bf85f5a94a Pantelis Antoniou 2015-04-23   64   * @info:	info node that contains the target and overlay
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   65   * @target:	target of the overlay operation
-0290c4ca2536a3 Frank Rowand      2017-10-17   66   * @overlay:	pointer to the __overlay__ node
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   67   */
-0290c4ca2536a3 Frank Rowand      2017-10-17   68  struct fragment {
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   69  	struct device_node *overlay;
-81225ea682f456 Frank Rowand      2018-10-04   70  	struct device_node *target;
-ccc4bf85f5a94a Pantelis Antoniou 2015-04-23   71  	struct overlay_changeset *ovcs;
-ccc4bf85f5a94a Pantelis Antoniou 2015-04-23   72  	struct device_node *info;
-ccc4bf85f5a94a Pantelis Antoniou 2015-04-23   73  	struct attribute_group attr_group;
-ccc4bf85f5a94a Pantelis Antoniou 2015-04-23   74  	struct attribute *attrs[2];
-ccc4bf85f5a94a Pantelis Antoniou 2015-04-23   75  	struct fragment_attribute target_attr;
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28  @76  };
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   77  
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   78  /**
-0290c4ca2536a3 Frank Rowand      2017-10-17   79   * struct overlay_changeset
-39a751a4cb7e47 Frank Rowand      2018-02-12   80   * @id:			changeset identifier
-0290c4ca2536a3 Frank Rowand      2017-10-17   81   * @ovcs_list:		list on which we are located
-1e4089667c7c73 Frank Rowand      2022-04-20   82   * @new_fdt:		Memory allocated to hold unflattened aligned FDT
-067c098766c6af Frank Rowand      2022-04-20   83   * @overlay_mem:	the memory chunk that contains @overlay_root
-1e4089667c7c73 Frank Rowand      2022-04-20   84   * @overlay_root:	expanded device tree that contains the fragment nodes
-067c098766c6af Frank Rowand      2022-04-20   85   * @notify_state:	most recent notify action used on overlay
-3912b7917ab78d Frank Rowand      2017-10-17   86   * @count:		count of fragment structures
-3912b7917ab78d Frank Rowand      2017-10-17   87   * @fragments:		fragment nodes in the overlay expanded device tree
-3912b7917ab78d Frank Rowand      2017-10-17   88   * @symbols_fragment:	last element of @fragments[] is the  __symbols__ node
-0290c4ca2536a3 Frank Rowand      2017-10-17   89   * @cset:		changeset to apply fragments to live device tree
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   90   */
-0290c4ca2536a3 Frank Rowand      2017-10-17   91  struct overlay_changeset {
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   92  	int id;
-0290c4ca2536a3 Frank Rowand      2017-10-17   93  	struct list_head ovcs_list;
-1e4089667c7c73 Frank Rowand      2022-04-20   94  	const void *new_fdt;
-067c098766c6af Frank Rowand      2022-04-20   95  	const void *overlay_mem;
-1e4089667c7c73 Frank Rowand      2022-04-20   96  	struct device_node *overlay_root;
-067c098766c6af Frank Rowand      2022-04-20   97  	enum of_overlay_notify_action notify_state;
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28   98  	int count;
-0290c4ca2536a3 Frank Rowand      2017-10-17   99  	struct fragment *fragments;
-ccc4bf85f5a94a Pantelis Antoniou 2015-04-23  100  	const struct attribute_group **attr_groups;
-3912b7917ab78d Frank Rowand      2017-10-17  101  	bool symbols_fragment;
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28  102  	struct of_changeset cset;
-785f4b55d5d734 Pantelis Antoniou 2015-03-15  103  	struct kobject kobj;
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28 @104  };
-7518b5890d8ac3 Pantelis Antoniou 2014-10-28  105  
-
-:::::: The code at line 76 was first introduced by commit
-:::::: 7518b5890d8ac366faa2326ce2356ef6392ce63d of/overlay: Introduce DT overlay support
-
-:::::: TO: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-:::::: CC: Grant Likely <grant.likely@linaro.org>
-
+diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
+index 293f8dd9fe0a..feb848d595fa 100644
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@ -371,7 +371,7 @@ static irqreturn_t rcar_thermal_irq(int irq, void *data)
+ /*
+  *		platform functions
+  */
+-static int rcar_thermal_remove(struct platform_device *pdev)
++static void rcar_thermal_remove(struct platform_device *pdev)
+ {
+ 	struct rcar_thermal_common *common = platform_get_drvdata(pdev);
+ 	struct device *dev = &pdev->dev;
+@@ -388,8 +388,6 @@ static int rcar_thermal_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_put(dev);
+ 	pm_runtime_disable(dev);
+-
+-	return 0;
+ }
+ 
+ static int rcar_thermal_probe(struct platform_device *pdev)
+@@ -581,7 +579,7 @@ static struct platform_driver rcar_thermal_driver = {
+ 		.of_match_table = rcar_thermal_dt_ids,
+ 	},
+ 	.probe		= rcar_thermal_probe,
+-	.remove		= rcar_thermal_remove,
++	.remove_new	= rcar_thermal_remove,
+ };
+ module_platform_driver(rcar_thermal_driver);
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.40.1
+
