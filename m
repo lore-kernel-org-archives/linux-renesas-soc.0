@@ -2,49 +2,48 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C55E81810
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Sep 2023 11:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6A5E7F154
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Sep 2023 11:18:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231774AbjI2LKc (ORCPT
+        id S232630AbjI2LSF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 07:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57902 "EHLO
+        Fri, 29 Sep 2023 07:18:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232732AbjI2LK2 (ORCPT
+        with ESMTP id S229687AbjI2LSE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2023 07:10:28 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE9B1AA
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Sep 2023 04:10:25 -0700 (PDT)
+        Fri, 29 Sep 2023 07:18:04 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BF4ABF
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Sep 2023 04:18:02 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c2e7:1eb0:4c87:ebc6])
-        by albert.telenet-ops.be with bizsmtp
-        id rnAN2A00B1EgHdD06nANVH; Fri, 29 Sep 2023 13:10:22 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id rnJ02A0041EgHdD01nJ0ME; Fri, 29 Sep 2023 13:18:00 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qmBNd-004qNi-5T;
-        Fri, 29 Sep 2023 13:10:22 +0200
+        id 1qmBV0-004qOI-V6;
+        Fri, 29 Sep 2023 13:18:00 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qmBO2-001frF-5B;
-        Fri, 29 Sep 2023 13:10:22 +0200
+        id 1qmBVP-001fwm-Rb;
+        Fri, 29 Sep 2023 13:17:59 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 4/5] Renesas DT binding updates for v6.7
-Date:   Fri, 29 Sep 2023 13:10:14 +0200
-Message-Id: <cover.1695985425.git.geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.7
+Date:   Fri, 29 Sep 2023 13:17:57 +0200
+Message-Id: <cover.1695985912.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1695985418.git.geert+renesas@glider.be>
-References: <cover.1695985418.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
+
+	Hi Mike, Stephen,
 
 The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
 
@@ -52,22 +51,49 @@ The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v6.7-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.7-tag1
 
-for you to fetch changes up to 111287aa60004e1a58320048c89391056288c455:
+for you to fetch changes up to 87882525e5ddae7ef6f1b1df5e1eda9bcbcd7720:
 
-  dt-bindings: soc: renesas: renesas,rzg2l-sysc: Document RZ/G3S SoC (2023-09-18 09:50:30 +0200)
-
-----------------------------------------------------------------
-Renesas DT binding updates for v6.7
-
-  - Document support for the new RZ/G3S (R9A08G045) SoC variants.
+  clk: renesas: r8a7795: Constify r8a7795_*_clks (2023-09-26 09:38:00 +0200)
 
 ----------------------------------------------------------------
-Claudiu Beznea (2):
-      dt-bindings: soc: renesas: Document Renesas RZ/G3S SoC variants
-      dt-bindings: soc: renesas: renesas,rzg2l-sysc: Document RZ/G3S SoC
+clk: renesas: Updates for v6.7
 
- .../devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml         | 1 +
- Documentation/devicetree/bindings/soc/renesas/renesas.yaml          | 6 ++++++
- 2 files changed, 7 insertions(+)
+  - Miscellaneous fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Claudiu Beznea (4):
+      clk: renesas: rzg2l: Use core->name for clock name
+      clk: renesas: rzg2l: Simplify the logic in rzg2l_mod_clock_endisable()
+      clk: renesas: rzg2l: Use FIELD_GET() for PLL register fields
+      clk: renesas: rzg2l: Use u32 for flag and mux_flags
+
+Marek Vasut (1):
+      clk: renesas: r8a7795: Constify r8a7795_*_clks
+
+Ralph Siemsen (2):
+      clk: renesas: r9a06g032: Fix kerneldoc warning
+      clk: renesas: r9a06g032: Name anonymous structs
+
+Yang Yingliang (1):
+      clk: renesas: r9a06g032: Use for_each_compatible_node()
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c |  4 +-
+ drivers/clk/renesas/r9a06g032-clocks.c | 69 ++++++++++++++++++----------------
+ drivers/clk/renesas/rzg2l-cpg.c        | 17 ++++-----
+ drivers/clk/renesas/rzg2l-cpg.h        |  4 +-
+ 4 files changed, 48 insertions(+), 46 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
