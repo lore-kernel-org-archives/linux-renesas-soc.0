@@ -2,40 +2,39 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6A5E7F154
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Sep 2023 11:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0870CE7F156
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Sep 2023 11:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232630AbjI2LSF (ORCPT
+        id S232748AbjI2LSJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 07:18:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47208 "EHLO
+        Fri, 29 Sep 2023 07:18:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229687AbjI2LSE (ORCPT
+        with ESMTP id S229754AbjI2LSI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2023 07:18:04 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BF4ABF
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Sep 2023 04:18:02 -0700 (PDT)
+        Fri, 29 Sep 2023 07:18:08 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6193BB7
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Sep 2023 04:18:06 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c2e7:1eb0:4c87:ebc6])
-        by andre.telenet-ops.be with bizsmtp
-        id rnJ02A0041EgHdD01nJ0ME; Fri, 29 Sep 2023 13:18:00 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id rnJ42A00Z1EgHdD01nJ497; Fri, 29 Sep 2023 13:18:04 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qmBV0-004qOI-V6;
-        Fri, 29 Sep 2023 13:18:00 +0200
+        id 1qmBV5-004qOO-L6;
+        Fri, 29 Sep 2023 13:18:04 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qmBVP-001fwm-Rb;
-        Fri, 29 Sep 2023 13:17:59 +0200
+        id 1qmBVU-001fx3-KF;
+        Fri, 29 Sep 2023 13:18:04 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.7
-Date:   Fri, 29 Sep 2023 13:17:57 +0200
-Message-Id: <cover.1695985912.git.geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: renesas: Fixes for v6.7
+Date:   Fri, 29 Sep 2023 13:18:03 +0200
+Message-Id: <cover.1695986064.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,7 +42,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Mike, Stephen,
+	Hi Linus,
 
 The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
 
@@ -51,41 +50,33 @@ The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.7-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v6.7-tag1
 
-for you to fetch changes up to 87882525e5ddae7ef6f1b1df5e1eda9bcbcd7720:
+for you to fetch changes up to c385256611b1af79d180e35c07992b43e1be5067:
 
-  clk: renesas: r8a7795: Constify r8a7795_*_clks (2023-09-26 09:38:00 +0200)
+  pinctrl: renesas: rzg2l: Rename rzg2l_gpio_configs[] (2023-09-26 09:44:51 +0200)
 
 ----------------------------------------------------------------
-clk: renesas: Updates for v6.7
+pinctrl: renesas: Updates for v6.7
 
   - Miscellaneous fixes and improvements.
 
 Thanks for pulling!
 
 ----------------------------------------------------------------
-Claudiu Beznea (4):
-      clk: renesas: rzg2l: Use core->name for clock name
-      clk: renesas: rzg2l: Simplify the logic in rzg2l_mod_clock_endisable()
-      clk: renesas: rzg2l: Use FIELD_GET() for PLL register fields
-      clk: renesas: rzg2l: Use u32 for flag and mux_flags
+Biju Das (1):
+      pinctrl: renesas: rzg2l: Make reverse order of enable() for disable()
 
-Marek Vasut (1):
-      clk: renesas: r8a7795: Constify r8a7795_*_clks
+Claudiu Beznea (1):
+      pinctrl: renesas: rzg2l: Make struct rzg2l_pinctrl_data::dedicated_pins constant
 
-Ralph Siemsen (2):
-      clk: renesas: r9a06g032: Fix kerneldoc warning
-      clk: renesas: r9a06g032: Name anonymous structs
+Geert Uytterhoeven (2):
+      pinctrl: renesas: r8a7779: s/LSBC/LBSC/
+      pinctrl: renesas: rzg2l: Rename rzg2l_gpio_configs[]
 
-Yang Yingliang (1):
-      clk: renesas: r9a06g032: Use for_each_compatible_node()
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c |  4 +-
- drivers/clk/renesas/r9a06g032-clocks.c | 69 ++++++++++++++++++----------------
- drivers/clk/renesas/rzg2l-cpg.c        | 17 ++++-----
- drivers/clk/renesas/rzg2l-cpg.h        |  4 +-
- 4 files changed, 48 insertions(+), 46 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a7779.c   |  2 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 17 +++++++++--------
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
 Gr{oetje,eeting}s,
 
