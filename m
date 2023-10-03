@@ -2,87 +2,89 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C92CE75455
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Oct 2023 12:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CEFE75457
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Oct 2023 12:53:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232139AbjJCMxf convert rfc822-to-8bit (ORCPT
+        id S231266AbjJCMxs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 Oct 2023 08:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43412 "EHLO
+        Tue, 3 Oct 2023 08:53:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230461AbjJCMxd (ORCPT
+        with ESMTP id S229803AbjJCMxs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2023 08:53:33 -0400
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92BE29B;
-        Tue,  3 Oct 2023 05:53:29 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-59f4f80d084so10048377b3.1;
-        Tue, 03 Oct 2023 05:53:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696337608; x=1696942408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7GreI765eB2sOrc8ogLZc2cWlkqE2bJ3aCny1Jc1iTs=;
-        b=n5ZxYxTcjVp3sPWy80rt5v2J7XSRpTZKBNSuCugqMtAYR1b2obhEpo9TRlmTZRa9Os
-         A4ZoblET5ezFtXNIWe5oW1aX6A5gaMWOQJL2MRkt7yh8PdLdYUYOfSXcK3L7HRb1nxOO
-         oIF0JpBy5BXzBRU0L6pSNswTkj2WsYYvZmgnGOAXhxl3NSskK8BZHSJllUK2tEk5dUn1
-         SBWwtYLXk4YoonmXrBBemY3LS1eC89ndUh0bnv10DYnn4PW6qPYrC9B79k6WFISUrWvP
-         fFLzkY4Q4r+s+HO6Pc53hyzVolA3An6quvqHN9kjPxDYqZvmLXy+BPqBIKrYSwVJIGIC
-         oMBw==
-X-Gm-Message-State: AOJu0YzABjGFGk4Ydl2aWbqUN9GZUrdGFUoEfULAAeiPtcp1enHSUJMd
-        iKp7c3y8GKO3nWrzyWmSWi6w4GFrL3Ze6A==
-X-Google-Smtp-Source: AGHT+IE1/LBcxALKG2s1sTKo14eGtlcotUUSOpyhu9nhBsesNF4TwdUB1hQMcpyTKGFZoxIFlPvFsg==
-X-Received: by 2002:a0d:c347:0:b0:56d:43cb:da98 with SMTP id f68-20020a0dc347000000b0056d43cbda98mr14712824ywd.29.1696337608580;
-        Tue, 03 Oct 2023 05:53:28 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id x203-20020a0dd5d4000000b00585f60e970esm354502ywd.134.2023.10.03.05.53.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Oct 2023 05:53:28 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-59f4f80d084so10047727b3.1;
-        Tue, 03 Oct 2023 05:53:28 -0700 (PDT)
-X-Received: by 2002:a81:8246:0:b0:58d:f1fe:5954 with SMTP id
- s67-20020a818246000000b0058df1fe5954mr15245418ywf.32.1696337607945; Tue, 03
- Oct 2023 05:53:27 -0700 (PDT)
+        Tue, 3 Oct 2023 08:53:48 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F03C6A6;
+        Tue,  3 Oct 2023 05:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696337625; x=1727873625;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=PaTpYoAT1uZlfzdLbZxjO14jzGyLuKJKiccXqKEpHDw=;
+  b=jv9G6UOZRsdLTDfso+durVv16ewOKuidjMsA0q2cE15XW6h2hlsK6yo1
+   YWEixkRTGl1gOLZA76sibzRdUn91BcQN6Prg/Hi0u/RssKbRWKY89n8JU
+   iXzLpxvJ6CHOQCvgqlvMAKwp7M3ds+Esa8jD+1g4T0kOdSkXH60m+jj+2
+   GqBR4RXVEOhW7DokjBwSyQxopj0zNuFPPi0FlPfGsVg77/eeF17wOp+Ub
+   Clq9pNFwunWK0daXY9L0ZWzgvMLvFRH1pEuTz4b9V7UBbZ/sx702SI1//
+   6jvlJhfD6ypOCPEof/nDKqsWLPVCWAT+gIYFlGxwXIFPt2CShoSRI6U/w
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="4432417"
+X-IronPort-AV: E=Sophos;i="6.03,197,1694761200"; 
+   d="scan'208";a="4432417"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 05:53:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="816665798"
+X-IronPort-AV: E=Sophos;i="6.03,197,1694761200"; 
+   d="scan'208";a="816665798"
+Received: from bmihaile-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.222.64])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 05:53:36 -0700
+From:   =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        bcm-kernel-feedback-list@broadcom.com, jonathan.derrick@linux.dev,
+        kw@linux.com, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        lpieralisi@kernel.org, marek.vasut+renesas@gmail.com,
+        minghuan.Lian@nxp.com, mingkai.hu@nxp.com,
+        m.karthikeyan@mobiveil.co.in, nirmal.patel@linux.intel.com,
+        rjui@broadcom.com, robh@kernel.org, roy.zang@nxp.com,
+        sbranden@broadcom.com, yoshihiro.shimoda.uh@renesas.com,
+        Zhiqiang.Hou@nxp.com, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 2/3] PCI: Add PCI_HEADER_TYPE_MFD pci_regs.h
+Date:   Tue,  3 Oct 2023 15:52:59 +0300
+Message-Id: <20231003125300.5541-3-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20231003125300.5541-1-ilpo.jarvinen@linux.intel.com>
+References: <20231003125300.5541-1-ilpo.jarvinen@linux.intel.com>
 MIME-Version: 1.0
-References: <87v8bofna8.wl-kuninori.morimoto.gx@renesas.com> <87r0mcfn95.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87r0mcfn95.wl-kuninori.morimoto.gx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Oct 2023 14:53:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU05AVYKzYYWieHHG_PfTBXzp+95Lh_5nf33Ndo0BrhDw@mail.gmail.com>
-Message-ID: <CAMuHMdU05AVYKzYYWieHHG_PfTBXzp+95Lh_5nf33Ndo0BrhDw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] arm64: dts: renesas: Add Renesas R8A779F4 SoC support
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Oct 3, 2023 at 4:33 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> R8A779F4 is update version of R8A779F0.
-> This patch adds its support, but is using r8a779f0 dtsi internally.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add PCI_HEADER_TYPE_MFD into pci_regs.h to be able to replace
+literals in the code.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.7.
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ include/uapi/linux/pci_regs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index e5f558d96493..06df65f11c39 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -80,6 +80,7 @@
+ #define  PCI_HEADER_TYPE_NORMAL		0
+ #define  PCI_HEADER_TYPE_BRIDGE		1
+ #define  PCI_HEADER_TYPE_CARDBUS	2
++#define  PCI_HEADER_TYPE_MFD		0x80	/* Multi-Function Device (possible) */
+ 
+ #define PCI_BIST		0x0f	/* 8 bits */
+ #define  PCI_BIST_CODE_MASK	0x0f	/* Return result */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.30.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
