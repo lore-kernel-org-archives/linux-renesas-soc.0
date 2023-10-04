@@ -2,99 +2,84 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D161EE8FDDB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Oct 2023 08:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75C6E8FDDB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Oct 2023 09:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241826AbjJDIui convert rfc822-to-8bit (ORCPT
+        id S232913AbjJDJNL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Oct 2023 04:50:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54886 "EHLO
+        Wed, 4 Oct 2023 05:13:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232988AbjJDIuh (ORCPT
+        with ESMTP id S241893AbjJDJNK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2023 04:50:37 -0400
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D41098;
-        Wed,  4 Oct 2023 01:50:33 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-59f1dff5298so22558247b3.3;
-        Wed, 04 Oct 2023 01:50:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696409432; x=1697014232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PFuSqJ9+W4ZgbXfB+tqrUVzIf0qDtWz3bUcjRAbmN+0=;
-        b=qehOtHxS5w04ZJhzQooxV3EFHeTuycIWCQAiiA3WEuNpNWj+ty8l2m1Vv0o2UxaC4Y
-         wx0amcBISS30OzHdQLbl3A2TkxoDwrzfRYwhX/624ns261U8kpel0d29z0WbaO+aL4DM
-         Q1+Z98EtA8VA+20DPSqVV+w9wjqMSVEnWvObUc+M5pho0z8VNQvor+Uvn1mRlcdm+6V4
-         SHqGZTHTJlciFiDpY3IxTUWqgmNS2i+zwJZNJI2zy+1zY2p5XihyXK3TjZ3r4eAy8aWF
-         hg2GPATE0+ZSMxBp2ajb8RKYdOagQfyZuxOX3PYOzM8qwi+oJ5iq2iObpltuRMknpRMQ
-         ojzg==
-X-Gm-Message-State: AOJu0YzF8p1kOUCHN83GETWyKew6RcPdAofTe00CPmKPQi3dkxUniW4Q
-        dfzq1l9RCz0g9dsFDpJkaIdH9rPBEEMQ3g==
-X-Google-Smtp-Source: AGHT+IH09ObB6fueO6GOHufTRFzHS7YLBPYlXCOcao4kkF11gPWDm7KFBadpF+cOqmnlDmWV3G9sZA==
-X-Received: by 2002:a81:6289:0:b0:59b:eb8:c38a with SMTP id w131-20020a816289000000b0059b0eb8c38amr2006607ywb.30.1696409432367;
-        Wed, 04 Oct 2023 01:50:32 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id m12-20020a819e0c000000b0058c4e33b2d6sm991571ywj.90.2023.10.04.01.50.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Oct 2023 01:50:31 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5a2536adaf3so22645547b3.2;
-        Wed, 04 Oct 2023 01:50:31 -0700 (PDT)
-X-Received: by 2002:a81:5c86:0:b0:59f:4f56:59bc with SMTP id
- q128-20020a815c86000000b0059f4f5659bcmr1915893ywb.42.1696409431412; Wed, 04
- Oct 2023 01:50:31 -0700 (PDT)
+        Wed, 4 Oct 2023 05:13:10 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D610CA7;
+        Wed,  4 Oct 2023 02:13:06 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.03,199,1694703600"; 
+   d="scan'208";a="178147041"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 04 Oct 2023 18:13:06 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id ECDEB41BB248;
+        Wed,  4 Oct 2023 18:13:05 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Zheng Wang <zyytlz.wz@163.com>
+Subject: [PATCH net 2/2] ravb: Fix use-after-free issue in ravb_remove and ravb_tx_timeout_work
+Date:   Wed,  4 Oct 2023 18:12:53 +0900
+Message-Id: <20231004091253.4194205-3-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20231004091253.4194205-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20231004091253.4194205-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com> <20230929053915.1530607-10-claudiu.beznea@bp.renesas.com>
-In-Reply-To: <20230929053915.1530607-10-claudiu.beznea@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Oct 2023 10:50:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVJw8t9QyhFaE38cfP=joLjkQn=jRqYWw-98i9VhCWpdQ@mail.gmail.com>
-Message-ID: <CAMuHMdVJw8t9QyhFaE38cfP=joLjkQn=jRqYWw-98i9VhCWpdQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/28] clk: renesas: rzg2l: remove CPG_SDHI_DSEL from
- generic header
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Remove CPG_SDHI_DSEL and its bits from generic header as RZ/G3S has
-> different offset register and bits for this, thus avoid mixing them.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->
-> Changes in v2:
-> - s/form/from in commit description
-> - removed "G2UL_" prefix from macros' names
-> - collected tags
+The ravb_stop() should call cancel_work_sync(). Otherwise,
+ravb_tx_timeout_work() is possible to use the freed priv after
+ravb_remove() was called like below:
 
-Thanks, will queue in renesas-clk-for-v6.7.
+CPU0			CPU1
+			ravb_tx_timeout()
+ravb_remove()
+unregister_netdev()
+free_netdev(ndev)
+// free priv
+			ravb_tx_timeout_work()
+			// use priv
 
-Gr{oetje,eeting}s,
+unregister_netdev() will call .ndo_stop() so that ravb_stop() is
+called. And, after phy_stop() was called, netif_carrier_off()
+is also called. So that .ndo_tx_timeout() will be not called
+after phy_stop().
 
-                        Geert
+Link: https://lore.kernel.org/netdev/872cf8d7-3bd6-b11a-82ac-a9f4c82d0a02@omp.ru/
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Reported-by: Zheng Wang <zyytlz.wz@163.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 9e2e801049cc..0ef0b88b7145 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2167,6 +2167,8 @@ static int ravb_close(struct net_device *ndev)
+ 			of_phy_deregister_fixed_link(np);
+ 	}
+ 
++	cancel_work_sync(&priv->work);
++
+ 	if (info->multi_irqs) {
+ 		free_irq(priv->tx_irqs[RAVB_NC], ndev);
+ 		free_irq(priv->rx_irqs[RAVB_NC], ndev);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
