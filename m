@@ -2,64 +2,85 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D9CE936EC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 01:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89393E936EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 01:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233152AbjJEBML (ORCPT
+        id S243808AbjJEBMM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Oct 2023 21:12:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40264 "EHLO
+        Wed, 4 Oct 2023 21:12:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241050AbjJEBMK (ORCPT
+        with ESMTP id S241050AbjJEBMM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2023 21:12:10 -0400
+        Wed, 4 Oct 2023 21:12:12 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 86CA5BF;
-        Wed,  4 Oct 2023 18:12:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8E6B2C1;
+        Wed,  4 Oct 2023 18:12:08 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.03,201,1694703600"; 
-   d="scan'208";a="181959968"
+   d="scan'208";a="181959972"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Oct 2023 10:12:05 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 05 Oct 2023 10:12:06 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BB21E41241A4;
-        Thu,  5 Oct 2023 10:12:05 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0462541241A4;
+        Thu,  5 Oct 2023 10:12:06 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
         kuba@kernel.org, pabeni@redhat.com
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net v2 0/2] ravb: Fix use-after-free issues
-Date:   Thu,  5 Oct 2023 10:11:59 +0900
-Message-Id: <20231005011201.14368-1-yoshihiro.shimoda.uh@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Zheng Wang <zyytlz.wz@163.com>
+Subject: [PATCH net v2 2/2] ravb: Fix use-after-free issue in ravb_tx_timeout_work()
+Date:   Thu,  5 Oct 2023 10:12:01 +0900
+Message-Id: <20231005011201.14368-3-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20231005011201.14368-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20231005011201.14368-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series fixes use-after-free issues in ravb_remove().
-The original patch is made by Zheng Wang [1]. And, I made the patch
-1/2 which I found other issue in the ravb_remove().
+The ravb_stop() should call cancel_work_sync(). Otherwise,
+ravb_tx_timeout_work() is possible to use the freed priv after
+ravb_remove() was called like below:
 
-[1]
-https://lore.kernel.org/netdev/20230725030026.1664873-1-zyytlz.wz@163.com/
+CPU0			CPU1
+			ravb_tx_timeout()
+ravb_remove()
+unregister_netdev()
+free_netdev(ndev)
+// free priv
+			ravb_tx_timeout_work()
+			// use priv
 
-Changes from v1:
-https://lore.kernel.org/all/20231004091253.4194205-1-yoshihiro.shimoda.uh@renesas.com/
- - Based on the latest net/main branch.
- - Fix the subjects in the patch [12]/2.
- - Fix commit descriptions in the patch [12]/2.
- - Use Closes tag instead of Link tag for checkpatch.pl in the patch 2/2.
- - Add Reviewed-by tags in the patch [12]/2.
+unregister_netdev() will call .ndo_stop() so that ravb_stop() is
+called. And, after phy_stop() is called, netif_carrier_off()
+is also called. So that .ndo_tx_timeout() will not be called
+after phy_stop().
 
-Yoshihiro Shimoda (2):
-  ravb: Fix up dma_free_coherent() call in ravb_remove()
-  ravb: Fix use-after-free issue in ravb_tx_timeout_work()
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Reported-by: Zheng Wang <zyytlz.wz@163.com>
+Closes: https://lore.kernel.org/netdev/20230725030026.1664873-1-zyytlz.wz@163.com/
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/net/ethernet/renesas/ravb_main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 9e2e801049cc..0ef0b88b7145 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2167,6 +2167,8 @@ static int ravb_close(struct net_device *ndev)
+ 			of_phy_deregister_fixed_link(np);
+ 	}
+ 
++	cancel_work_sync(&priv->work);
++
+ 	if (info->multi_irqs) {
+ 		free_irq(priv->tx_irqs[RAVB_NC], ndev);
+ 		free_irq(priv->rx_irqs[RAVB_NC], ndev);
 -- 
 2.25.1
 
