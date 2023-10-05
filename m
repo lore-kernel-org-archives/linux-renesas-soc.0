@@ -2,85 +2,124 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89393E936EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 01:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B40FE9270A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 13:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243808AbjJEBMM (ORCPT
+        id S230230AbjJEN4D convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Oct 2023 21:12:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40280 "EHLO
+        Thu, 5 Oct 2023 09:56:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241050AbjJEBMM (ORCPT
+        with ESMTP id S244186AbjJENvv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2023 21:12:12 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8E6B2C1;
-        Wed,  4 Oct 2023 18:12:08 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.03,201,1694703600"; 
-   d="scan'208";a="181959972"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Oct 2023 10:12:06 +0900
-Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0462541241A4;
-        Thu,  5 Oct 2023 10:12:06 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Zheng Wang <zyytlz.wz@163.com>
-Subject: [PATCH net v2 2/2] ravb: Fix use-after-free issue in ravb_tx_timeout_work()
-Date:   Thu,  5 Oct 2023 10:12:01 +0900
-Message-Id: <20231005011201.14368-3-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231005011201.14368-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20231005011201.14368-1-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 5 Oct 2023 09:51:51 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04CDD1FEFD;
+        Thu,  5 Oct 2023 03:12:25 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-27740ce6c76so518566a91.0;
+        Thu, 05 Oct 2023 03:12:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696500743; x=1697105543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fv9CC0NKV/kDN0XcdNF3KHHTr6xmrbhe/ImONu1Cags=;
+        b=Giw1I3Ju1d6hfOmKdKuo6YszAyThE9paLeypz1rTzFMw+0yjYZJYrQcVSeO64vqx5V
+         yVyH9GA3VCnRxseyPAjSwprImt3vlWHOE6w4GMntjxHjUP9q10Jl3q/suxBs9x5NagX9
+         nUHK3H9HxrhUr/54hRVqc4u7mBiTUsJiIimOAWJ8bYrNTH7uSqL2wVVkReDVeTUqmsNH
+         SZXSTUa5WQ/ODVC+3Q28VlvtCRgWrSJr3MvLvABQ+tXjsRaoSndM3FMWqttZH31WulAn
+         qdLcbIEahdwCxqJDBs9u+tLKA3FyTdX9G2FTzLCWwi2wI1Su/DVeSb6v8XKTBLVEw58C
+         luiA==
+X-Gm-Message-State: AOJu0YyJ1PUSfOvSV9FW4efGARc72ububnFdvIEKW1RqMnQsrHvSuR/9
+        xGZwoclbkycn/qsestKQzOsHZNEiNS2hHQ==
+X-Google-Smtp-Source: AGHT+IF0FJerdb2vdfKFEdkJKe+kuKwgXZU30X1yZibd2zAGh2N/1/yTzojGTleMwimkCtz8klao0g==
+X-Received: by 2002:a17:90a:43c7:b0:268:2543:723 with SMTP id r65-20020a17090a43c700b0026825430723mr4741800pjg.5.1696500743345;
+        Thu, 05 Oct 2023 03:12:23 -0700 (PDT)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com. [209.85.214.178])
+        by smtp.gmail.com with ESMTPSA id b10-20020a170903228a00b001b03a1a3151sm1256766plh.70.2023.10.05.03.12.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Oct 2023 03:12:23 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1c3d8fb23d9so5368785ad.0;
+        Thu, 05 Oct 2023 03:12:22 -0700 (PDT)
+X-Received: by 2002:a81:a089:0:b0:5a2:47bf:88ec with SMTP id
+ x131-20020a81a089000000b005a247bf88ecmr5134243ywg.19.1696500261276; Thu, 05
+ Oct 2023 03:04:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
+ <20230929053915.1530607-19-claudiu.beznea@bp.renesas.com> <CAMuHMdWQVtroKntVamANrWiheDYa6+=L8K53__1WUZg3bF8EFQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWQVtroKntVamANrWiheDYa6+=L8K53__1WUZg3bF8EFQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 5 Oct 2023 12:04:09 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXsvs886VaKsVgG-h-0iBAhueunUBBcYW0L48GTHApUbA@mail.gmail.com>
+Message-ID: <CAMuHMdXsvs886VaKsVgG-h-0iBAhueunUBBcYW0L48GTHApUbA@mail.gmail.com>
+Subject: Re: [PATCH v2 18/28] pinctrl: renesas: rzg2l: add support for
+ different ds values on different groups
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
+        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The ravb_stop() should call cancel_work_sync(). Otherwise,
-ravb_tx_timeout_work() is possible to use the freed priv after
-ravb_remove() was called like below:
+On Wed, Oct 4, 2023 at 3:17 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > RZ/G3S supports different drive strength values for different power sources
+> > and pin groups (A, B, C). On each group there could be up to 4 drive
+> > strength values per power source. Available power sources are 1v8, 2v5,
+> > 3v3. Drive strength values are fine tuned than what was previously
+> > available on the driver thus the necessity of having micro-amp support.
+> > As drive strength and power source values are linked together the
+> > hardware setup for these was moved at the end of
+> > rzg2l_pinctrl_pinconf_set() to ensure proper validation of the new
+> > values.
+> >
+> > The drive strength values are expected to be initialized though SoC
+> > specific hardware configuration data structure.
+> >
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > ---
+> >
+> > Changes in v2:
+> > - s/strenght/strength, s/togheter/together in commit description
+> > - got rid of RZG2L_INVALID_IOLH_VAL macro and consider zero as invalid
+> >   value for entries in struct rzg2l_hwcfg::iolh_group[abc]_ua[] arrays
+> > - removed spinlock in rzg2l_[sg]et_power_source()
+> > - introduced caps_to_pwr_reg() and simplified the code in
+> >   rzg2l_[sg]et_power_source()
+> > - changed return type of rzg2l_iolh_ua_to_val() to int and return
+> >   -EINVAL on failure cases
+> > - s/rzg2l_ds_supported/rzg2l_ds_is_supported
+> > - inverted the logic in rzg2l_pinctrl_pinconf_set() when applying drive
+> >   strength and power source to hardware registers and thus simplified the
+> >   code
+> > - used devm_kcalloc() instead of devm_kzalloc()
+> > - adderessed the rest of the review comments
 
-CPU0			CPU1
-			ravb_tx_timeout()
-ravb_remove()
-unregister_netdev()
-free_netdev(ndev)
-// free priv
-			ravb_tx_timeout_work()
-			// use priv
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-unregister_netdev() will call .ndo_stop() so that ravb_stop() is
-called. And, after phy_stop() is called, netif_carrier_off()
-is also called. So that .ndo_tx_timeout() will not be called
-after phy_stop().
+> Thanks, will queue in renesas-pinctrl-for-v6.7, with Paul's comment
+> addresses.
 
-Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-Reported-by: Zheng Wang <zyytlz.wz@163.com>
-Closes: https://lore.kernel.org/netdev/20230725030026.1664873-1-zyytlz.wz@163.com/
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
- drivers/net/ethernet/renesas/ravb_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 9e2e801049cc..0ef0b88b7145 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2167,6 +2167,8 @@ static int ravb_close(struct net_device *ndev)
- 			of_phy_deregister_fixed_link(np);
- 	}
- 
-+	cancel_work_sync(&priv->work);
-+
- 	if (info->multi_irqs) {
- 		free_irq(priv->tx_irqs[RAVB_NC], ndev);
- 		free_irq(priv->rx_irqs[RAVB_NC], ndev);
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
