@@ -2,121 +2,86 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CF8E92709
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 15:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E739E9270D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 15:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229732AbjJEPIU (ORCPT
+        id S229877AbjJEPkG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 11:08:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40900 "EHLO
+        Thu, 5 Oct 2023 11:40:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233792AbjJEPHP (ORCPT
+        with ESMTP id S232676AbjJEPjn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 11:07:15 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F49022C89
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Oct 2023 07:41:32 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-59-we0tadfBPmiF8azyarhGZw-1; Thu, 05 Oct 2023 10:40:11 +0100
-X-MC-Unique: we0tadfBPmiF8azyarhGZw-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 5 Oct
- 2023 10:40:10 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Thu, 5 Oct 2023 10:40:09 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Prabhakar Mahadev Lad" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Biju Das <biju.das.au@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clk: vc3: Use clamp() instead of min_t()
-Thread-Topic: [PATCH] clk: vc3: Use clamp() instead of min_t()
-Thread-Index: AQHZ92tiRFkl3d0ZyU+GXpw6cHGohrA66bOQ
-Date:   Thu, 5 Oct 2023 09:40:09 +0000
-Message-ID: <2fd4fce6142b43a19cd39e94e316f059@AcuMS.aculab.com>
-References: <20231004064220.31452-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdXageyQyqaGXJbmmpcKyjoO-VHWGzGk_WJ1YsAne+iiSw@mail.gmail.com>
- <ZR58uDLC99WUwkr2@smile.fi.intel.com>
-In-Reply-To: <ZR58uDLC99WUwkr2@smile.fi.intel.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 5 Oct 2023 11:39:43 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A66257E239;
+        Thu,  5 Oct 2023 07:52:08 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5188DC433CA;
+        Thu,  5 Oct 2023 14:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696517385;
+        bh=3sV+Kpk/aoS9Ewxx5MLDNTFd0TDttPAvuUnzXSdo9/w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=aeBU9A4wkKpVleSQBS0RU912dt7oDQeQVY99NMmTq6YmxKN3dh2VGyPwCPcHPTLHf
+         eOvTC6eLiHg+xAQ3zUdWo0pPbzW8pLq9AtV2oPcyDyuzAriFblF0jfhNonTYZMtv6m
+         161bbkmQQ2I/bWip2oFAG6+Fh6u/memb20bKtw2aBVRyUWyPm4F8b4C/2hZSBAeeDf
+         Ex3h2Of1QH6FLKh61m8Wjm2Og6BroPPDbJLtPun0Mr43p1DVuYJRNsXBSxkse71jT+
+         P0bcnDsNGU35fdXySL3Bj62LbHvU6iS0ioO3opbdBIYqDJjSlbALLxJ4qdcsZ/B5wK
+         9jZegSmhTS7qA==
+Date:   Thu, 5 Oct 2023 09:49:43 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, mani@kernel.org,
+        marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Serge Semin <fancer.lancer@gmail.com>
+Subject: Re: [PATCH v23 12/16] PCI: add T_PVPERL macro
+Message-ID: <20231005144943.GA746077@bhelgaas>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230926122431.3974714-13-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RnJvbTogQW5keSBTaGV2Y2hlbmtvDQo+IFNlbnQ6IDA1IE9jdG9iZXIgMjAyMyAxMDowNw0KPiAN
-Cj4gK0RhdmlkDQo+IA0KPiBPbiBXZWQsIE9jdCAwNCwgMjAyMyBhdCAwOTo1MDowOUFNICswMjAw
-LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gT24gV2VkLCBPY3QgNCwgMjAyMyBhdCA4
-OjQy4oCvQU0gQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4g
-PiA+IFRoZSBtaW5fdCgpIGlzIG9mdGVuIHVzZWQgYXMgYSBzaG9ydGN1dCBmb3IgY2xhbXAoKS4g
-U2Vjb25kbHksIHRoZQ0KPiA+ID4gQklUKDE2KSAtIDEgaXMgc3BlY2lmaWNhbGx5IHVzZWQgYXMg
-dGhlIHZhbHVlIHJlbGF0ZWQgdG8gdGhlIGJpdHMgaW4gdGhlDQo+ID4gPiBoYXJkd2FyZSBhbmQg
-dTE2IGlzIGEgc29mdHdhcmUgdHlwZSB0aGF0IGNvaW5jaWRlbnRhbGx5IGhhcyB0aGUgc2FtZQ0K
-PiA+ID4gbWF4aW11bSBhcyB0aGUgYWJvdmUgbWVudGlvbmVkIGJpdGZpZWxkLg0KPiA+DQo+ID4g
-VGVjaG5pY2FsbHkgaXQgaXMgdHdvIGJ5dGUtc2l6ZWQgcmVnaXN0ZXJzIGZvcm1pbmcgYSAxNi1i
-aXQgZmllbGQgOy0pDQo+ID4NCj4gPiA+IFJlcGxhY2UgbWluX3QoKS0+Y2xhbXAoKSBpbiB2YzNf
-cGxsX3JvdW5kX3JhdGUoKS4NCj4gPiA+DQo+ID4gPiBTdWdnZXN0ZWQtYnk6IEFuZHkgU2hldmNo
-ZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPg0KPiA+ID4gU2lnbmVkLW9m
-Zi1ieTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0KPiA+ID4gLS0tDQo+
-ID4gPiAgZHJpdmVycy9jbGsvY2xrLXZlcnNhY2xvY2szLmMgfCAyICstDQo+ID4gPiAgMSBmaWxl
-IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gPg0KPiA+ID4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay12ZXJzYWNsb2NrMy5jIGIvZHJpdmVycy9jbGsvY2xr
-LXZlcnNhY2xvY2szLmMNCj4gPiA+IGluZGV4IDNkN2RlMzU1ZjhmNi4uNTA3NzJmNjEwOTZmIDEw
-MDY0NA0KPiA+ID4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLXZlcnNhY2xvY2szLmMNCj4gPiA+ICsr
-KyBiL2RyaXZlcnMvY2xrL2Nsay12ZXJzYWNsb2NrMy5jDQo+ID4gPiBAQCAtNDAyLDcgKzQwMiw3
-IEBAIHN0YXRpYyBsb25nIHZjM19wbGxfcm91bmRfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywgdW5z
-aWduZWQgbG9uZyByYXRlLA0KPiA+ID4gICAgICAgICAgICAgICAgIGRpdl9mcmMgPSByYXRlICUg
-KnBhcmVudF9yYXRlOw0KPiA+ID4gICAgICAgICAgICAgICAgIGRpdl9mcmMgKj0gQklUKDE2KSAt
-IDE7DQo+ID4gPg0KPiA+ID4gLSAgICAgICAgICAgICAgIHZjMy0+ZGl2X2ZyYyA9IG1pbl90KHU2
-NCwgZGl2NjRfdWwoZGl2X2ZyYywgKnBhcmVudF9yYXRlKSwgVTE2X01BWCk7DQo+ID4gPiArICAg
-ICAgICAgICAgICAgdmMzLT5kaXZfZnJjID0gY2xhbXAoZGl2NjRfdWwoZGl2X2ZyYywgKnBhcmVu
-dF9yYXRlKSwgMCwgQklUKDE2KSAtIDEpOw0KPiA+DQo+ID4gSSdtIG5vdCBzdXJlIHRoaXMgaXMg
-YWN0dWFsbHkgYW4gaW1wcm92ZW1lbnQuLi4NCj4gDQo+IFRoYXQncyB3aGF0IExpbnVzIGFjdHVh
-bGx5IHN1Z2dlc3RlZCB0byBkby4NCj4gDQo+ID4gV2hpbGUgSSBhZ3JlZSAiQklUKDE2KSAtIDEi
-IG1hdGNoZXMgdGhlIGV4cHJlc3Npb24gdHdvIGxpbmVzIGFib3ZlLA0KPiA+IEkgZmluZCBpdCBo
-YXJkZXIgdG8gcmVhZC4NCj4gPiBQZXJoYXBzIGludHJvZHVjaW5nIGEgVkMzX1BMTDJfRkJfRlJD
-X0RJVl9NQVggZGVmaW5pdGlvbiBtYXkgaGVscC4NCj4gDQo+IEVpdGhlciB3YXksIGJ1dCBVMTZf
-TUFYIGlzIHJlYWxseSBzZW1hbnRpY2FsbHkgd3JvbmcgaGVyZS4NCg0KVGhhdCBjb2RlIGFsbCBs
-b29rcyBjb21wbGV0ZWx5IGhvcnJpZCBhbmQgc3RyYW5nZS4NCkknZCBoYXZlIHRob3VnaHQgdGhl
-IDE2LWJpdCBmcmFjdGlvbmFsIHBhcnQgKDAuLjB4ZmZmZikgd291bGQNCmJhc2ljYWxseSBiZSAo
-KHJhdGUgKiAweDEwMDAwKS9wYXJlbnRfcmF0ZSkgJiAweGZmZmY7DQpCdXQgdGhhdCBpc24ndCB3
-aGF0IGlzIGJlaW5nIGNhbGN1bGF0ZWQuDQooSXQgbWF5IG5lZWQgdHdlYWtpbmcgdG8gYXZvaWQg
-dGhlIG11bHRpcGx5IG92ZXJmbG93aW5nLikNClRoZW4gdGhlcmUgaXMgdGhlIG11bHRpcGx5IGFu
-ZCBkaXZpZGUgYnkgMHgxMDAwMSB3aGljaCBpcw0KZXF1YWxseSBzdHJhbmdlLg0KDQpCdXQgSSdk
-IGp1c3Qgd3JpdGUgMHgxMDAwMHUgYW5kL29yIDB4ZmZmZnUuDQoNCj4gDQo+ID4gQlRXLCBpZiB0
-aGUgaGFyZHdhcmUgd291bGRuJ3QgdXNlIHR3byBieXRlLXNpemVkIHJlZ2lzdGVycywgYnV0IGEg
-cmVhbA0KPiA+IGJpdGlmaWVsZCwgb25lIGNvdWxkIHVzZSBGSUVMRF9HRVQobWFzaywgbWFzaykg
-aW5zdGVhZC4NCj4gDQo+ID4gU2Vjb25kLCBjbGFtcGluZyBhbiB1bnNpZ25lZCB2YWx1ZSB0byB6
-ZXJvIGlzIGZ1dGlsZSwgYW5kIG9wZW5zIHVzIHRvDQo+ID4gd2FybmluZ3MgbGlrZToNCj4gPg0K
-PiA+ICAgICB3YXJuaW5nOiBjb21wYXJpc29uIG9mIHVuc2lnbmVkIGV4cHJlc3Npb24gaW4g4oCY
-Pj0gMOKAmSBpcyBhbHdheXMNCj4gPiB0cnVlIFstV3R5cGUtbGltaXRzXQ0KPiANCj4gRGF2aWQs
-IGlzIHlvdXIgc2VyaWVzIGZpeCB0aGlzIGFzIHdlbGw/DQoNCkl0IHdvdWxkIGxldCBtaW4oKSBi
-ZSB1c2VkLg0KVGhlIGNvbXBpbGVycyBzaG91bGQgcmVhbGx5IGJlIGxlc3MgcGVkYW50aWMgYWJv
-dXQgdGVzdHMgZm9yDQp1bnNpZ25lZCBiZWluZyA+PSAwIC0gZXNwZWNpYWxseSB3aGVuIHRoZXJl
-IGlzIGFuIHVwcGVyIGxpbWl0IGNoZWNrLg0KDQpJIGNvdWxkIG1ha2UgY2xhbXAoKSBhY3QgYXMg
-bWluKCkgZm9yIHVuc2lnbmVkIHdpdGggdGhlIGxvdyBsaW1pdA0KaXMgemVybyAtIGJ1dCBpdCB3
-b3VsZCBiZSByYXRoZXIgb3Zlci1jb21wbGljYXRlZC4NCg0KCURhdmlkDQoNCj4gDQo+ID4gPiAg
-ICAgICAgICAgICAgICAgcmF0ZSA9ICgqcGFyZW50X3JhdGUgKg0KPiA+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgKHZjMy0+ZGl2X2ludCAqIFZDM18yX1BPV18xNiArIHZjMy0+ZGl2X2ZyYykg
-LyBWQzNfMl9QT1dfMTYpOw0KPiA+ID4gICAgICAgICB9IGVsc2Ugew0KPiANCj4gLS0NCj4gV2l0
-aCBCZXN0IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBB
-ZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMs
-IE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Tue, Sep 26, 2023 at 09:24:27PM +0900, Yoshihiro Shimoda wrote:
+> According to the PCI Express Card Electromechanical Specification,
+> Power stable to PERST# inactive interval is 100 ms as minimum.
+> So, add the macro to use PCIe controller drivers.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
 
+Beautiful, thank you!
+
+No need to repost; whoever applies this, please:
+
+  - s/add/Add/ in subject
+  - Add sec 2.9.2 to spec citation in commit log and comment (can use
+    "PCIe CEM r5.0, sec 2.9.2" for brevity)
+
+> ---
+>  drivers/pci/pci.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 39a8932dc340..5ecbcf041179 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -13,6 +13,9 @@
+>  
+>  #define PCIE_LINK_RETRAIN_TIMEOUT_MS	1000
+>  
+> +/* Power stable to PERST# inactive from PCIe card Electromechanical Spec */
+> +#define PCIE_T_PVPERL_MS		100
+> +
+>  /*
+>   * PCIe r6.0, sec 5.3.3.2.1 <PME Synchronization>
+>   * Recommends 1ms to 10ms timeout to check L2 ready.
+> -- 
+> 2.25.1
+> 
