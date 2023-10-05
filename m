@@ -2,97 +2,142 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE27E7B614
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 257A4E92719
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 16:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242772AbjJEQTD (ORCPT
+        id S234853AbjJEQdE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52354 "EHLO
+        Thu, 5 Oct 2023 12:33:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241131AbjJEQQd (ORCPT
+        with ESMTP id S236515AbjJEQc3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 12:16:33 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DCB9385B;
-        Thu,  5 Oct 2023 08:59:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696521577; x=1728057577;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aKjgMuYZsRtSs4xPdMfRl1emk6n46p2cxkShwocdj+Q=;
-  b=K+jujbEUqiQr/HbMCJN9Kld0p6Z71uuB7cQQveTGGPlRrS6BKzTKDs+E
-   g56Wm4ooImq1+LbI2BGpOxERXVKI7xrVOOYHZ0k7UQCKLhBSnTbYZ2IlZ
-   9nDPPM6FXsrahcVu/0W0+2o4xb8H9sTFm4Z43W1vwQRXiWhTKCikbbLnX
-   Wuqm6vfaWeONG+c521fSPrmmEXqOcJn2oWU65ux4M7g572VzRnKffwPCN
-   79Ae9QnSWVsnbcLkULS1sq+AZeTsXcZyHc3ZZNPbOEv3Seu92mPHLV/Qi
-   PatnErkFmQ811oDLTq9mZVZRPHhRNj33ipFWuFk+w89Y4SofuOkQ8UPaq
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="414503502"
-X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="414503502"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 08:59:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="822165819"
-X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="822165819"
-Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Oct 2023 08:59:14 -0700
-Received: from kbuild by c3b01524d57c with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qoQkq-000Lb9-0c;
-        Thu, 05 Oct 2023 15:59:12 +0000
-Date:   Thu, 5 Oct 2023 23:58:36 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v16 3/4] pwm: Add support for RZ/G2L GPT
-Message-ID: <202310052353.flpqN2Di-lkp@intel.com>
-References: <20231004111451.126195-4-biju.das.jz@bp.renesas.com>
+        Thu, 5 Oct 2023 12:32:29 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56DD37DA8
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Oct 2023 00:44:07 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5a4e29928c3so7104547b3.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Oct 2023 00:44:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696491843; x=1697096643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ePQTyaDh1cBEb/a7Xsrhhw/hSqDcvwM+c9qsxwUewoE=;
+        b=AkTQnRY8tNwPm2yWgyVqzJb/2lKZ0vu/hvfIr6b+WxvT+9qq8Y+Xhqu98aks8FMDr/
+         kuPXYIT6e1Aj9lxLuDJNT8NV950bPnYzvIoKwz+vS0PjaiGJ+qTJcWKVUHX91J7iyGw9
+         VYETtPgt1NDHRZclsXV+W3kTw/gALwmKn2uQCOF1JRyy8RhpgjGa4Ai8BSIqsEWwA0yJ
+         OPyOnO4KhIV0a0nug34YK1fx66AyLV2KYOkwAWUVbZJbugO4ppsaaCJptAvhtRwMwUkh
+         ij2iuRVGXykjHDsDS1LB4EXDlg9SBl+Ask/qohUMM6ltupKB1wXn/XJkOQn1T2onh2tU
+         fg1w==
+X-Gm-Message-State: AOJu0YxIyXDpe26j2L3eTMdQuxffI0vQtPdTqQj9ay8DY5bvi83bv5kp
+        xvNnwcLv3qVhVtyF+azxplv+4JQbqChqPw==
+X-Google-Smtp-Source: AGHT+IHmh7USqnffpk9Kl/mdnXjtT+cSkBdrJgeeQNB7AiR0CmweqbtLmcuvpPwgCND8U1XiTHffDA==
+X-Received: by 2002:a81:6587:0:b0:5a1:d352:9fe1 with SMTP id z129-20020a816587000000b005a1d3529fe1mr4874696ywb.42.1696491843388;
+        Thu, 05 Oct 2023 00:44:03 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id s125-20020a0de983000000b00592a065e2a3sm330352ywe.87.2023.10.05.00.44.02
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Oct 2023 00:44:02 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-5a4e29928c3so7104397b3.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Oct 2023 00:44:02 -0700 (PDT)
+X-Received: by 2002:a81:4989:0:b0:59f:61b7:fb71 with SMTP id
+ w131-20020a814989000000b0059f61b7fb71mr4654343ywa.13.1696491842480; Thu, 05
+ Oct 2023 00:44:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231004111451.126195-4-biju.das.jz@bp.renesas.com>
+References: <20230928080317.28224-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20230928080317.28224-1-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 5 Oct 2023 09:43:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWg7QD9xJtqMyAS0oUqYSu6SNKNJPSh113JGFLP1LDSaA@mail.gmail.com>
+Message-ID: <CAMuHMdWg7QD9xJtqMyAS0oUqYSu6SNKNJPSh113JGFLP1LDSaA@mail.gmail.com>
+Subject: Re: [PATCH v2 RFT] clk: renesas: rcar-gen3: Extend SDnH divider table
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Dirk Behme <dirk.behme@de.bosch.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+Hi Wolfram,
 
-kernel test robot noticed the following build errors:
+On Fri, Sep 29, 2023 at 8:14 AM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Dirk Behme <dirk.behme@de.bosch.com>
+>
+> The clock dividers might be used with clock stop bit enabled or not.
+> Current tables only support recommended values from the datasheet. This
+> might result in warnings like below because no valid clock divider is
+> found. Resulting in a 0 divider.
+>
+> There are Renesas ARM Trusted Firmware version out there which e.g.
+> configure 0x201 (shifted logical right by 2: 0x80) and with this match
+> the added { STPnHCK | 0, 1 }:
+>
+> https://github.com/renesas-rcar/arm-trusted-firmware/blob/rcar_gen3_v2.3/drivers/renesas/rcar/emmc/emmc_init.c#L108
+>
+> ------------[ cut here ]------------
+> sd1h: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set
+> WARNING: CPU: 1 PID: 1 at drivers/clk/clk-divider.c:141 divider_recalc_rate+0x48/0x70
+> Modules linked in:
+> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 6.1.52 #1
+> Hardware name: Custom board based on r8a7796 (DT)
+> pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : divider_recalc_rate+0x48/0x70
+> ...
+> ------------[ cut here ]------------
+>
+> Fixes: bb6d3fa98a41 ("clk: renesas: rcar-gen3: Switch to new SD clock handling")
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> [wsa: extended the table to 5 entries, added comments, reword commit message a little]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-[auto build test ERROR on 4aae44f65827f0213a7361cf9c32cfe06114473f]
+Thanks for your patch!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Biju-Das/dt-bindings-pwm-Add-RZ-G2L-GPT-binding/20231004-231907
-base:   4aae44f65827f0213a7361cf9c32cfe06114473f
-patch link:    https://lore.kernel.org/r/20231004111451.126195-4-biju.das.jz%40bp.renesas.com
-patch subject: [PATCH v16 3/4] pwm: Add support for RZ/G2L GPT
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20231005/202310052353.flpqN2Di-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231005/202310052353.flpqN2Di-lkp@intel.com/reproduce)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.7.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310052353.flpqN2Di-lkp@intel.com/
+> --- a/drivers/clk/renesas/rcar-cpg-lib.c
+> +++ b/drivers/clk/renesas/rcar-cpg-lib.c
+> @@ -70,8 +70,20 @@ void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
+>  #define STPnHCK        BIT(9 - SDnSRCFC_SHIFT)
+>
+>  static const struct clk_div_table cpg_sdh_div_table[] = {
+> -       { 0, 1 }, { 1, 2 }, { STPnHCK | 2, 4 }, { STPnHCK | 3, 8 },
+> -       { STPnHCK | 4, 16 }, { 0, 0 },
+> +       /*
+> +        * These values are recommended by the datasheet. Because they come
+> +        * first, Linux will only use these.
+> +        */
+> +       { 0, 1 }, { 1, 2 }, { STPnHCK | 2, 4 }, { STPnHCK | 3, 8 }, { STPnHCK | 4, 16 },
 
-All errors (new ones prefixed by >>):
+Would you mind if I would wrap this to 80 columns (like the original)
+while applying?
 
-   arm-linux-gnueabi-ld: drivers/pwm/pwm-rzg2l-gpt.o: in function `rzg2l_gpt_config':
->> pwm-rzg2l-gpt.c:(.text+0xae8): undefined reference to `__aeabi_uldivmod'
->> arm-linux-gnueabi-ld: pwm-rzg2l-gpt.c:(.text+0xb50): undefined reference to `__aeabi_uldivmod'
+> +       /*
+> +        * These values are not recommended because STPnHCK is wrong. But they
+> +        * have been seen because of broken firmware. So, we support reading
+> +        * them but Linux will sanitize them when initializing through
+> +        * recalc_rate.
+> +        */
+> +       { STPnHCK | 0, 1 }, { STPnHCK | 1, 2 },  { 2, 4 }, { 3, 8 }, { 4, 16 },
+> +       /* Sentinel */
+> +       { 0, 0 }
+>  };
+>
+>  struct clk * __init cpg_sdh_clk_register(const char *name,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
