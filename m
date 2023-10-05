@@ -2,128 +2,131 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E5DE92708
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 14:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B23E92708
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Oct 2023 14:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233683AbjJEOS2 (ORCPT
+        id S233288AbjJEOTJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41564 "EHLO
+        Thu, 5 Oct 2023 10:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244369AbjJENxN (ORCPT
+        with ESMTP id S229581AbjJEOQr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2023 09:53:13 -0400
-Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD0DA262;
-        Thu,  5 Oct 2023 02:20:02 -0700 (PDT)
-Received: by mail-vk1-xa31.google.com with SMTP id 71dfb90a1353d-495c10cec8aso301717e0c.1;
-        Thu, 05 Oct 2023 02:20:02 -0700 (PDT)
+        Thu, 5 Oct 2023 10:16:47 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C751949C3
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Oct 2023 22:05:46 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-53627feca49so821246a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Oct 2023 22:05:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696497601; x=1697102401; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mmCqW9/RdSqKhGNA9TKQ87Kw41v1aHc9awKHSSwaUow=;
-        b=XKZHqhOQtCJjJGu2yjhzCzYiwhgWHYOR9ifK/PkPGWipcTd6dcfdWYbgllr1BpoaTp
-         3nioJnsIxBzu+V0qmUyz8ya+dlHy5Tbx/xu4W0fLmKY7TtdSFhlMDoo37g7A7ifW9EVd
-         gYS5QNL2iLZ1J45ufkr8MHI0YkhYuSNOg+RxYbcn3gfEUCqMUNw2tKQs9A1ClUl6jfH1
-         KaJIzmu384GcQYFqYgpONuoJoHMstU+j05AgCsMAbdfKXxnixV247De27Bo3moMypsHn
-         huQnhCI5SwGveM+GgaaDkorTV2J/kAehyEafUeymOPYUYH5bQ3jj6Vb2n6BE8rahe5RL
-         JOCA==
+        d=tuxon.dev; s=google; t=1696482345; x=1697087145; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tumpG4fZu91mYpt2qQbWwuFfddli9/TW76sKXIYzTOk=;
+        b=deQ7A4mY5ePOw4jHVnPJCqadPHGXWot17MfTlsuzPmL1tAKWWcgtfIzYCl6Y26RH/2
+         Tg5vtPBAu0gJKO7CFEu7p2di+9Zo7ZnGiByuPZRH4rVpEmvI6Ad5Z1u3CH752De5xk+b
+         6k6CTfr0mgVEyVtkEVStiiy6ER34FpSe0ONd2J1hDIrOt+KFaJzkK7e2ZCnkgu2oFmTx
+         hJYJmKEe1oqQ26KbG9i+ATT9szB+0wzhWfDLnsox8IPOw7cn1kAP95Htmm4YSPIftgTn
+         WIV57dECWvJJjG2shxvBLoZgUjtRC3J09TgpgpGGMiZclNTXmV2XoELeTgvgyRXZqaUB
+         pGSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696497601; x=1697102401;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mmCqW9/RdSqKhGNA9TKQ87Kw41v1aHc9awKHSSwaUow=;
-        b=EoNWI4zHlhZzLjWxC/hktuqYB5rSeLkdjaf7vjE8cD3m5M7EID4lzWm453wPNWNG+/
-         4tiL7nCUaPMGNEEf1ogK9DMrlhJwRTsQq23VrQ8sxuv6BxiuSKMCdh7QjOqHqL3n0Tvs
-         0zoaUq3OZsTHL9EmKBiG4P3mbASOjSfGGdraPXKatURwpOewHlyS4ulBOPiIG1ohNUKx
-         /I+hW9vQ4iATPKItM78sPw7+Gf233wiZK7Cr1uQK9HiIILfX2K0aJ1324a1fg1u0pDrb
-         Zv0Gh+h6kcaRAyCEi4O4jAZ5oHT502uEtKtjKkjiJ+bnrtT9wXTKjqEI9oYo83OaZ5Xb
-         CyJg==
-X-Gm-Message-State: AOJu0Yym1gYZ+p+Fh/8w/7zkiNgblTl1SMOT1GkLzxXvLKDUcr9qBjXD
-        7EwT884z2cQlUnRfNA6TWgdXn5xkHSOYdftcMGo=
-X-Google-Smtp-Source: AGHT+IGUrv6tiziv5lNUOurSFPVAQQfdUe8LaLIUvdzpuLVD38jauJwHQ9ABh5kenASpIGpWyVACc47Bj2BBcblpoc8=
-X-Received: by 2002:a1f:6d84:0:b0:496:1bc2:ddf with SMTP id
- i126-20020a1f6d84000000b004961bc20ddfmr4465596vkc.8.1696497601021; Thu, 05
- Oct 2023 02:20:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696482345; x=1697087145;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tumpG4fZu91mYpt2qQbWwuFfddli9/TW76sKXIYzTOk=;
+        b=TI1vub81wZ6K/czJVAxdJmz/EwDWaZkgOV6IlBhXtRG24k3A1nduke6hve7iD93t/K
+         nmX+IhLz8+PAhOZlorhtPPoTh/ZwvmzcMMHbb654bpMkGTGYG0QC68JnOdvehcPTCt9h
+         bkcsy89ZCDauJDVmdybISHs+eMF78nqbbTy4vCdz45ISRU8Jau4mS4vaYrEkQDM2Qwza
+         t14VaJ2ri8PvEjN/cRZswxC2wf4WGsK5uD+47tnMTnHFcz2j0EWZSH/MMNQC4RXePiV2
+         esPbKuPPubndYF/mlMbUR65aQBPblt1GRntXmqBanCwh6pRSOX0G5RZWLPoRRjUZCvwO
+         gBMQ==
+X-Gm-Message-State: AOJu0Ywyt68vlLsnAI4UX3SXshkdGg3tnfUUjbQ/tfBaJ3SczarSB+nf
+        6gmBlSF/5Le+AXF6T26aaMBQUw==
+X-Google-Smtp-Source: AGHT+IE54MO+fhgdky4xkVipD6Wj3FDv6iN+CshxB2o1CFdPuoVHF2KKTNg0ZjphMiuqlQstCFMd7w==
+X-Received: by 2002:aa7:da8c:0:b0:530:9b94:96e with SMTP id q12-20020aa7da8c000000b005309b94096emr3525467eds.41.1696482345190;
+        Wed, 04 Oct 2023 22:05:45 -0700 (PDT)
+Received: from [192.168.32.2] ([147.161.130.252])
+        by smtp.gmail.com with ESMTPSA id u15-20020aa7d98f000000b00533bab9d9f1sm434409eds.1.2023.10.04.22.05.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Oct 2023 22:05:44 -0700 (PDT)
+Message-ID: <08ed16ff-14ca-a7e2-59c2-da949ceaa608@tuxon.dev>
+Date:   Thu, 5 Oct 2023 08:05:42 +0300
 MIME-Version: 1.0
-References: <20231004150856.2540-1-jszhang@kernel.org>
-In-Reply-To: <20231004150856.2540-1-jszhang@kernel.org>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 5 Oct 2023 10:19:06 +0100
-Message-ID: <CA+V-a8uTr9vMNTKJDudjCERjnW9M_wms3LtHcOcpRc2RuhbBBw@mail.gmail.com>
-Subject: Re: [PATCH] soc: renesas: make ARCH_R9A07G043 (riscv version) depend
- on NONPORTABLE
-To:     Jisheng Zhang <jszhang@kernel.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Drew Fustini <dfustini@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 18/28] pinctrl: renesas: rzg2l: add support for
+ different ds values on different groups
+Content-Language: en-US
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
+        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
+ <20230929053915.1530607-19-claudiu.beznea@bp.renesas.com>
+ <CAMuHMdWQVtroKntVamANrWiheDYa6+=L8K53__1WUZg3bF8EFQ@mail.gmail.com>
+From:   claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdWQVtroKntVamANrWiheDYa6+=L8K53__1WUZg3bF8EFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Oct 4, 2023 at 4:21=E2=80=AFPM Jisheng Zhang <jszhang@kernel.org> w=
-rote:
->
-> Drew found "CONFIG_DMA_GLOBAL_POOL=3Dy causes ADMA buffer alloc to fail"
-> the log looks like:
-> [    3.741083] mmc0: Unable to allocate ADMA buffers - falling back to st=
-andard DMA
->
-> The logic is: generic riscv defconfig selects ARCH_RENESAS then
-> ARCH_R9A07G043 which selects DMA_GLOBAL_POOL, which assumes all
-> non-dma-coherent riscv platforms have a dma global pool, this assumption
-> seems not correct. And I believe DMA_GLOBAL_POOL should not be
-> selected by ARCH_SOCFAMILIY, instead, only ARCH under some specific
-> conditions can select it globaly, for example NOMMU ARM and so on,
-> because it's designed for special cases such as "nommu cases where
-> non-cacheable memory lives in a fixed place in the physical address
-> map" as pointed out by Robin.
->
-> Fix the issue by making ARCH_R9A07G043 (riscv version) depend on
-> NONPORTABLE, thus generic defconfig won't select ARCH_R9A07G043 by
-> default. And even for random config case, there will be less debug
-> effort once we see NONPORTABLE is enabled.
->
-> Reported-by: Drew Fustini <dfustini@baylibre.com>
-> Closes: https://lore.kernel.org/linux-riscv/ZRuamJuShOnvP1pr@x1/
-> Fixes: 484861e09f3e ("soc: renesas: Kconfig: Select the required configs =
-for RZ/Five SoC")
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  drivers/soc/renesas/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Cheers,
-Prabhakar
 
 
-> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-> index 5a75ab64d1ed..12040ce116a5 100644
-> --- a/drivers/soc/renesas/Kconfig
-> +++ b/drivers/soc/renesas/Kconfig
-> @@ -333,6 +333,7 @@ if RISCV
->
->  config ARCH_R9A07G043
->         bool "RISC-V Platform support for RZ/Five"
-> +       depends on NONPORTABLE
->         select ARCH_RZG2L
->         select AX45MP_L2_CACHE if RISCV_DMA_NONCOHERENT
->         select DMA_GLOBAL_POOL
-> --
-> 2.40.1
->
+On 04.10.2023 16:17, Geert Uytterhoeven wrote:
+> On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> RZ/G3S supports different drive strength values for different power sources
+>> and pin groups (A, B, C). On each group there could be up to 4 drive
+>> strength values per power source. Available power sources are 1v8, 2v5,
+>> 3v3. Drive strength values are fine tuned than what was previously
+>> available on the driver thus the necessity of having micro-amp support.
+>> As drive strength and power source values are linked together the
+>> hardware setup for these was moved at the end of
+>> rzg2l_pinctrl_pinconf_set() to ensure proper validation of the new
+>> values.
+>>
+>> The drive strength values are expected to be initialized though SoC
+>> specific hardware configuration data structure.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v2:
+>> - s/strenght/strength, s/togheter/together in commit description
+>> - got rid of RZG2L_INVALID_IOLH_VAL macro and consider zero as invalid
+>>   value for entries in struct rzg2l_hwcfg::iolh_group[abc]_ua[] arrays
+>> - removed spinlock in rzg2l_[sg]et_power_source()
+>> - introduced caps_to_pwr_reg() and simplified the code in
+>>   rzg2l_[sg]et_power_source()
+>> - changed return type of rzg2l_iolh_ua_to_val() to int and return
+>>   -EINVAL on failure cases
+>> - s/rzg2l_ds_supported/rzg2l_ds_is_supported
+>> - inverted the logic in rzg2l_pinctrl_pinconf_set() when applying drive
+>>   strength and power source to hardware registers and thus simplified the
+>>   code
+>> - used devm_kcalloc() instead of devm_kzalloc()
+>> - adderessed the rest of the review comments
+> 
+> Thanks, will queue in renesas-pinctrl-for-v6.7, with Paul's comment
+> addresses.
+
+Thank you Geert and Paul!
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
