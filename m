@@ -2,61 +2,61 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 043DCE92FC5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Oct 2023 01:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84F9E92FD3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Oct 2023 01:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbjJFByW (ORCPT
+        id S229670AbjJFByV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Oct 2023 21:54:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43422 "EHLO
+        Thu, 5 Oct 2023 21:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbjJFByV (ORCPT
+        with ESMTP id S229615AbjJFByV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 5 Oct 2023 21:54:21 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA70FDE
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92ABDD8
         for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Oct 2023 18:54:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1696557259; x=1728093259;
   h=date:from:to:cc:subject:message-id;
-  bh=8s3m+bW9mMIfBFkupM5X4Ib5FC9eeypA9HpnyNrZds0=;
-  b=j4yAjxePEBYsOmY2zx9R01EyxbqXysdVts5x5PirJoSR8qZSJw/rT80n
-   NMOIzO++fW7sgLlG6keZmc6HTKoAMgbpx9VCRVxbzlNIdk227+AXg+7H0
-   WUHHutm//cgr7wKNkJ5KFeTxOMdRSjsYGPTW87vR7nu0BSqUfdJU8zPuQ
-   byQc45RLVi2tuTCcsKTY3eEhECeTU7kiHekAGA8H43dJDZpcOPN1JGmuA
-   l0fqlCY0wArng0nPpfvw234sAvaVzQkxBOogiB4/PuN+UKdf7nsO/bHfd
-   SEonBFm9C3y8gHm6EEkGva0JQdZ/GHWeAVrlpsj9JKhkNs+E7wDQMYInu
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="383556166"
+  bh=Cu4uPGJjjehJBT11yspLQMHLXv65Aui0aXimrwgGjIM=;
+  b=KpTfzd2ZvEk851PGTiSQ6HS/NFPTrx4mLouUEiWTGkukrFtvce5YqsDN
+   lkjqU0XaiUuPXJh/OUsk2Ul3EkMuw8e2hppCeWMcXv/EHYoSBZpCIi36g
+   hVFPh8A4PGGLIMHRGGDt8qZ+j/0p/mWAXBxjmOEV/+TVli2UAvVEwsiF9
+   0aGUPMvrMXBQTmQrKrUpXedkuPytA2NL/BeuTeFY57ICwSEMmTppOpVe0
+   LmiXkgEB8VMsSJY6y8hKWno+6THm1BHXNXDQOtylcCJExft1zA2wj+3Sm
+   weAg48dPEwIyJNkKwI5F5CX0+0p22E/vHdxwVuUeqgW8w1F/v4uKRB59/
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="382535311"
 X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="383556166"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 18:54:19 -0700
+   d="scan'208";a="382535311"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 18:54:19 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="755695392"
+X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="842650815"
 X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="755695392"
+   d="scan'208";a="842650815"
 Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by fmsmga007.fm.intel.com with ESMTP; 05 Oct 2023 18:54:18 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Oct 2023 18:54:18 -0700
 Received: from kbuild by c3b01524d57c with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qoa2i-000M7p-01;
-        Fri, 06 Oct 2023 01:54:16 +0000
-Date:   Fri, 06 Oct 2023 09:53:50 +0800
+        id 1qoa2h-000M7g-2v;
+        Fri, 06 Oct 2023 01:54:15 +0000
+Date:   Fri, 06 Oct 2023 09:53:25 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-dts-for-v6.7] BUILD SUCCESS
- c083e9daf4a6f5bc61c5a0eb3ba3e229271fc624
-Message-ID: <202310060947.nMj2CwK8-lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-dt-bindings-for-v6.7] BUILD
+ SUCCESS c0a2c7619666ae857a52219f344fbaa915cd181a
+Message-ID: <202310060923.jusGYzc4-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v6.7
-branch HEAD: c083e9daf4a6f5bc61c5a0eb3ba3e229271fc624  arm64: dts: renesas: ebisu: Document Ebisu-4D support
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dt-bindings-for-v6.7
+branch HEAD: c0a2c7619666ae857a52219f344fbaa915cd181a  dt-bindings: soc: renesas: Document R-Car S4 Starter Kit
 
 elapsed time: 744m
 
