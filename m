@@ -2,60 +2,172 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EE4E95A91
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C066CE95A8E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345326AbjJIJnj (ORCPT
+        id S1345818AbjJIJoi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 05:43:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49620 "EHLO
+        Mon, 9 Oct 2023 05:44:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345763AbjJIJni (ORCPT
+        with ESMTP id S1345863AbjJIJog (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 05:43:38 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA588F;
-        Mon,  9 Oct 2023 02:43:37 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 46F1668D0D; Mon,  9 Oct 2023 11:43:31 +0200 (CEST)
-Date:   Mon, 9 Oct 2023 11:43:30 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Wei Fang <wei.fang@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
-        Jim Quinlan <james.quinlan@broadcom.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 1/6] dma-direct: add depdenencies to
- CONFIG_DMA_GLOBAL_POOL
-Message-ID: <20231009094330.GA24836@lst.de>
-References: <20231009074121.219686-1-hch@lst.de> <20231009074121.219686-2-hch@lst.de> <CAMuHMdWiYDQ5J7R7hPaVAYgXqJvpjdksoF6X-zHrJ_80Ly4XfQ@mail.gmail.com> <20231009091625.GB22463@lst.de> <CAMuHMdUZNewD-QC8J7MWSBP197Vc169meOjjK6=b7M11kVjUzg@mail.gmail.com>
+        Mon, 9 Oct 2023 05:44:36 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C6A7C6;
+        Mon,  9 Oct 2023 02:44:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1696844675; x=1728380675;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ZtQo0AOZyII3HHuuFcu57y2laopGel6BHtBnxFpkQGE=;
+  b=T4FAYotpX4TqsCmLX6gdWUNZal61iEp4RtP2YMti04F1+XdUVJGKuy/D
+   ES1xaHT/LdoAa2HjWC2gAyIAxT2d5RWMawdX+1m5NmcOnK9/hKPsoYvq1
+   YPLaSmd0yEpnmSATnpFWqipksZDBbWiB/2i1IGHNU8T1IcLpS7o6BRfts
+   ZVTBwPwr1ycOAvLOKQDlsgp031pN8Pt/dCWMH1bIOvI60Iztm/uQgGRde
+   PsXpjK9rJQhTNZe0CL4fr58+zU/RQHPAQ+B6sAil9Zned5gKAWKCvmqTg
+   XPVzAZknKrXZWw+XREYcs213y33bx1wkEroxiLpMIKQOB9qo1Fv7sB/V4
+   w==;
+X-CSE-ConnectionGUID: ExFLQ79KS3SJV7MWrGq2IQ==
+X-CSE-MsgGUID: 22lzby5eTqOrBYjjx8mW8w==
+X-ThreatScanner-Verdict: Negative
+X-IronPort-AV: E=Sophos;i="6.03,210,1694761200"; 
+   d="scan'208";a="239927134"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2023 02:40:04 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Mon, 9 Oct 2023 02:39:57 -0700
+Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
+ Transport; Mon, 9 Oct 2023 02:39:52 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     <linux-riscv@lists.indradead.org>
+CC:     <conor@kernel.org>, <conor.dooley@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+        Chen Wang <unicorn_wang@outlook.com>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-sunxi@lists.linux.dev>, <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v3 3/6] riscv: dts: starfive: convert isa detection to new properties
+Date:   Mon, 9 Oct 2023 10:37:47 +0100
+Message-ID: <20231009-unloader-april-e613cf388354@wendy>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231009-approve-verbalize-ce9324858e76@wendy>
+References: <20231009-approve-verbalize-ce9324858e76@wendy>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUZNewD-QC8J7MWSBP197Vc169meOjjK6=b7M11kVjUzg@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3464; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=ZtQo0AOZyII3HHuuFcu57y2laopGel6BHtBnxFpkQGE=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDKnKJ19Gmmcu9DRV5c/f9mdBn9mzNwKr+AXltulnM124mtn5 WC28o5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABMJaWVk2NKv/eHelw8y/q+8WD2qct fai2+YtGP1h/m6XSE2UfIaTxgZvouU8wXJz9q1PcLy9mKdv9nv1p3sPf+i9Yl1qGNH2/kMFgA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Oct 09, 2023 at 11:34:55AM +0200, Geert Uytterhoeven wrote:
-> The fix you are referring too is probably commit c1ec4b450ab729e3
-> ("soc: renesas: Make ARCH_R9A07G043 (riscv version) depend
-> on NONPORTABLE") in next-20231006 and later.  It is not yet upstream.
-> 
-> Still, it merely makes ARCH_R9A07G043 (which selects DMA_GLOBAL_POOL)
-> depend on ARCH_R9A07G043.
-> RISCV_DMA_NONCOHERENT still selects DMA_DIRECT_REMAP, so both can end
-> up being enabled.
+Convert the jh7100 and jh7110 devicetrees to use the new properties
+"riscv,isa-base" & "riscv,isa-extensions".
+For compatibility with other projects, "riscv,isa" remains.
 
-Ok, so we need to actually fix this properly.  Lad, can you respin
-the fix to not select DMA_DIRECT_REMAP, for ARCH_R9A07G043?
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ arch/riscv/boot/dts/starfive/jh7100.dtsi |  6 ++++++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi | 15 +++++++++++++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/arch/riscv/boot/dts/starfive/jh7100.dtsi b/arch/riscv/boot/dts/starfive/jh7100.dtsi
+index 35ab54fb235f..e68cafe7545f 100644
+--- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
+@@ -33,6 +33,9 @@ U74_0: cpu@0 {
+ 			i-tlb-size = <32>;
+ 			mmu-type = "riscv,sv39";
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			tlb-split;
+ 
+ 			cpu0_intc: interrupt-controller {
+@@ -58,6 +61,9 @@ U74_1: cpu@1 {
+ 			i-tlb-size = <32>;
+ 			mmu-type = "riscv,sv39";
+ 			riscv,isa = "rv64imafdc";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			tlb-split;
+ 
+ 			cpu1_intc: interrupt-controller {
+diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+index 9f31dec57c0d..45213cdf50dc 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+@@ -28,6 +28,9 @@ S7_0: cpu@0 {
+ 			i-cache-size = <16384>;
+ 			next-level-cache = <&ccache>;
+ 			riscv,isa = "rv64imac_zba_zbb";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "c", "zba", "zbb", "zicntr", "zicsr",
++					       "zifencei", "zihpm";
+ 			status = "disabled";
+ 
+ 			cpu0_intc: interrupt-controller {
+@@ -54,6 +57,9 @@ U74_1: cpu@1 {
+ 			mmu-type = "riscv,sv39";
+ 			next-level-cache = <&ccache>;
+ 			riscv,isa = "rv64imafdc_zba_zbb";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zicntr",
++					       "zicsr", "zifencei", "zihpm";
+ 			tlb-split;
+ 			operating-points-v2 = <&cpu_opp>;
+ 			clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>;
+@@ -84,6 +90,9 @@ U74_2: cpu@2 {
+ 			mmu-type = "riscv,sv39";
+ 			next-level-cache = <&ccache>;
+ 			riscv,isa = "rv64imafdc_zba_zbb";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zicntr",
++					       "zicsr", "zifencei", "zihpm";
+ 			tlb-split;
+ 			operating-points-v2 = <&cpu_opp>;
+ 			clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>;
+@@ -114,6 +123,9 @@ U74_3: cpu@3 {
+ 			mmu-type = "riscv,sv39";
+ 			next-level-cache = <&ccache>;
+ 			riscv,isa = "rv64imafdc_zba_zbb";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zicntr",
++					       "zicsr", "zifencei", "zihpm";
+ 			tlb-split;
+ 			operating-points-v2 = <&cpu_opp>;
+ 			clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>;
+@@ -144,6 +156,9 @@ U74_4: cpu@4 {
+ 			mmu-type = "riscv,sv39";
+ 			next-level-cache = <&ccache>;
+ 			riscv,isa = "rv64imafdc_zba_zbb";
++			riscv,isa-base = "rv64i";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zicntr",
++					       "zicsr", "zifencei", "zihpm";
+ 			tlb-split;
+ 			operating-points-v2 = <&cpu_opp>;
+ 			clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>;
+-- 
+2.40.1
 
