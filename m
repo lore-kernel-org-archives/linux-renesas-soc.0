@@ -2,107 +2,111 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E125E95A96
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C7CE95A96
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345758AbjJIJom (ORCPT
+        id S1345860AbjJIJvm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 05:44:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38178 "EHLO
+        Mon, 9 Oct 2023 05:51:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345833AbjJIJol (ORCPT
+        with ESMTP id S1345863AbjJIJvl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 05:44:41 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9990AB9;
-        Mon,  9 Oct 2023 02:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1696844677; x=1728380677;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wwhojQUbiO2yCKXGlIk6MkgUnx1T4dUx6yrnvlKxZgQ=;
-  b=OZkR+5oLWFD/FMTnY52PicXzkU5dygMo9+RNUAVb18Ye56DH0ncHb7TV
-   zWaq3MgsMQxrOkBAbY89NA6F1OvQ1VGYgx4ANO0PgQvIo41kGcvrlr4Pp
-   f/PM3MuwJW5qhG/Gie7AvHEeafwo/5+UBSnxxhbjmSlrRBT9x8BcwOU7F
-   SLY5AiacIDy44eNXRf8XiWt3DKUME3D2cZ63iURZIiJAaXp8d9Of/cBEY
-   Y5+cXBHcNJxLHxVSvyEe/SfSYo+5NKkGPGRCJjPCiiWsDHb+crkbhmBtl
-   xz2gTRIThC34bcSH/lAP2DU7iQ/M6UOtr9svNtPf0GrT3npqZjKM7shot
-   Q==;
-X-CSE-ConnectionGUID: 6C+wEfReSDOSi5pQtrvDyg==
-X-CSE-MsgGUID: oHjvTt4pTpOLnmqcgFgL9g==
-X-ThreatScanner-Verdict: Negative
-X-IronPort-AV: E=Sophos;i="6.03,210,1694761200"; 
-   d="scan'208";a="239927172"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2023 02:40:07 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 9 Oct 2023 02:40:01 -0700
-Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
- Transport; Mon, 9 Oct 2023 02:39:57 -0700
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     <linux-riscv@lists.indradead.org>
-CC:     <conor@kernel.org>, <conor.dooley@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Paul Walmsley" <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "Jernej Skrabec" <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "Emil Renner Berthing" <kernel@esmil.dk>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-        Chen Wang <unicorn_wang@outlook.com>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-sunxi@lists.linux.dev>, <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v3 4/6] riscv: dts: renesas: convert isa detection to new properties
-Date:   Mon, 9 Oct 2023 10:37:48 +0100
-Message-ID: <20231009-smog-gag-3ba67e68126b@wendy>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231009-approve-verbalize-ce9324858e76@wendy>
-References: <20231009-approve-verbalize-ce9324858e76@wendy>
+        Mon, 9 Oct 2023 05:51:41 -0400
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D468E94;
+        Mon,  9 Oct 2023 02:51:39 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-5a7a7e9357eso1010397b3.0;
+        Mon, 09 Oct 2023 02:51:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696845099; x=1697449899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EcpLpgd1f1+Ipojmn8r+iB3J9d+aLm5CFxyQ8kyrL4E=;
+        b=KQBggB6UWJsnOxeYnKG5kXuAZomvSrKdbL/7ezdwtOb4KdEA6ttgMmhGBa4ny5DTpy
+         g0ev9DCIHs7b6j9D5DKer9GXuMYled7rNDbBn1iCYj/1QeK9AsMIHe6C2DGJtWEuwJf9
+         hXeLTLmvFXIUiRNTioRINpumbKxNigRDTa6MRr8xRydlINyAzxD9F0ao39QE/3wAb5zz
+         Kqpg6ESyWsPRrp1uT7+2Wvm3nB67z/UZlNBTVVVke6dSAdZmON/yhw5X5Onr2h5WLOk3
+         LW4oygmUX1dGzmvmChidwEhTT7KLhWSwyhoUqKVPLP8EM2DDWT+pRrkHv1kpgGcoIs6M
+         +a6A==
+X-Gm-Message-State: AOJu0Yy6LkKUtEPmH34PNRCaVqH6iSMAX3mjmr/r8UGn4j5zMqNXL49q
+        1mLODnGFqXNkXIR1J9hFYJC6bCxuDa/cWw==
+X-Google-Smtp-Source: AGHT+IEtLwH5kG6+OQ826XHsoxVKcbPtC8Btu4cfakt3LUdz4h4A35b/97NhQFD0i7g1KD3wPBuNhQ==
+X-Received: by 2002:a81:9283:0:b0:59a:ef7f:5c67 with SMTP id j125-20020a819283000000b0059aef7f5c67mr13811929ywg.31.1696845098703;
+        Mon, 09 Oct 2023 02:51:38 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id k132-20020a816f8a000000b00598d67585d7sm3608909ywc.117.2023.10.09.02.51.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Oct 2023 02:51:38 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5a505762c9dso53189907b3.2;
+        Mon, 09 Oct 2023 02:51:38 -0700 (PDT)
+X-Received: by 2002:a25:18c1:0:b0:d81:61fd:ef5d with SMTP id
+ 184-20020a2518c1000000b00d8161fdef5dmr11643273yby.27.1696845098183; Mon, 09
+ Oct 2023 02:51:38 -0700 (PDT)
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=919; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=wwhojQUbiO2yCKXGlIk6MkgUnx1T4dUx6yrnvlKxZgQ=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDKnKJ1/d3VReW7lwhcfHSidR9XfnNy0SuDvpwu4erxfGlf6c G15rdZSyMIhxMMiKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAie+8yMhxZVZxof7RbRiKZd9GiG/ fmzffZMnf2a1ndu21XWGqu8a1h+Kd58vfCslefNX8Ulzb1386Z0Jg2l5l7lsN1y7KsuSqvkrgA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20231009074121.219686-1-hch@lst.de> <20231009074121.219686-2-hch@lst.de>
+ <CAMuHMdWiYDQ5J7R7hPaVAYgXqJvpjdksoF6X-zHrJ_80Ly4XfQ@mail.gmail.com>
+ <20231009091625.GB22463@lst.de> <CAMuHMdUZNewD-QC8J7MWSBP197Vc169meOjjK6=b7M11kVjUzg@mail.gmail.com>
+ <20231009094330.GA24836@lst.de>
+In-Reply-To: <20231009094330.GA24836@lst.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 9 Oct 2023 11:51:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV2FXdUHtjYW8JyXGBgHhR8De0vp3Ee77e6G8Vbs3gG8Q@mail.gmail.com>
+Message-ID: <CAMuHMdV2FXdUHtjYW8JyXGBgHhR8De0vp3Ee77e6G8Vbs3gG8Q@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dma-direct: add depdenencies to CONFIG_DMA_GLOBAL_POOL
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux.dev, Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Wei Fang <wei.fang@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
+        Jim Quinlan <james.quinlan@broadcom.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        arm-soc <soc@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the RZ/Five devicetrees to use the new properties
-"riscv,isa-base" & "riscv,isa-extensions".
-For compatibility with other projects, "riscv,isa" remains.
+Hi Christoph,
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+CC soc
 
-diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-index b0796015e36b..eb301d8eb2b0 100644
---- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-+++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -24,6 +24,9 @@ cpu0: cpu@0 {
- 			reg = <0x0>;
- 			status = "okay";
- 			riscv,isa = "rv64imafdc";
-+			riscv,isa-base = "rv64i";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicntr", "zicsr",
-+					       "zifencei", "zihpm";
- 			mmu-type = "riscv,sv39";
- 			i-cache-size = <0x8000>;
- 			i-cache-line-size = <0x40>;
+On Mon, Oct 9, 2023 at 11:43 AM Christoph Hellwig <hch@lst.de> wrote:
+> On Mon, Oct 09, 2023 at 11:34:55AM +0200, Geert Uytterhoeven wrote:
+> > The fix you are referring too is probably commit c1ec4b450ab729e3
+> > ("soc: renesas: Make ARCH_R9A07G043 (riscv version) depend
+> > on NONPORTABLE") in next-20231006 and later.  It is not yet upstream.
+> >
+> > Still, it merely makes ARCH_R9A07G043 (which selects DMA_GLOBAL_POOL)
+> > depend on ARCH_R9A07G043.
+> > RISCV_DMA_NONCOHERENT still selects DMA_DIRECT_REMAP, so both can end
+> > up being enabled.
+>
+> Ok, so we need to actually fix this properly.  Lad, can you respin
+> the fix to not select DMA_DIRECT_REMAP, for ARCH_R9A07G043?
+
+ARCH_R9A07G043 does not select DMA_DIRECT_REMAP directly,
+RISCV_DMA_NONCOHERENT does.  And there are other users of
+RISCV_DMA_NONCOHERENT (RISCV_ISA_ZICBOM and ERRATA_THEAD_CMO).
+Should the selection of DMA_DIRECT_REMAP moved to their users?
+
+Note that the fix is already in soc/for-next, so we need coordination
+with the soc people.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.40.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
