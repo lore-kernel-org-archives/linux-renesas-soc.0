@@ -2,167 +2,104 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E828E95A91
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5108E95A91
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345675AbjJIJWD (ORCPT
+        id S1345804AbjJIJWs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 05:22:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53820 "EHLO
+        Mon, 9 Oct 2023 05:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345671AbjJIJWC (ORCPT
+        with ESMTP id S1345779AbjJIJWn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 05:22:02 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A47CC97;
-        Mon,  9 Oct 2023 02:22:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1696843320; x=1728379320;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nl/Pb7yNcrRSIji9Rq2BWcaYNm9rNVSMwfevq+ZJbXU=;
-  b=xUIKuTlT4Hl4zOaiT5pfr5MaQgXYhlSCLkdhy7sIMF/4FCdJnoS82G+h
-   xU6MRhuLH44z+pVuXJT+BKAhJx7ihfHlKQT+TkRfT9dnCI8bCrEhiNL1r
-   Y0fivAgu/GkL2K+wJn8LSWcJu201i1CFlDCeeaGnu8Prgkkfy1iVTYKWi
-   lNgBnWY1Il/198TbfmLlQrJ0yTqr6sE5VAj2JaG5ZszlxWi1H3WjSZ6v2
-   qAWINHtMYq2rMzcAi75kvlf/JyRIYG/YqasGO8z93P/jy2a1/gfP5Kh6n
-   3iJ9NCPTcsoY0Y+b09xYsxBk7zSzfL/NXf2wFV264DxmB+b2ANpjcHvgN
-   A==;
-X-CSE-ConnectionGUID: crs7sF3tRlKn6sEwzlDrPg==
-X-CSE-MsgGUID: 9cWccrISQheTSGzag4PSBQ==
-X-ThreatScanner-Verdict: Negative
-X-IronPort-AV: E=Sophos;i="6.03,210,1694761200"; 
-   d="asc'?scan'208";a="176377026"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2023 02:21:59 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 9 Oct 2023 02:21:59 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Mon, 9 Oct 2023 02:21:56 -0700
-Date:   Mon, 9 Oct 2023 10:21:36 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     <linux-renesas-soc@vger.kernel.org>, <conor@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH] soc: renesas: select ERRATA_ANDES for R9A07G043 only
- when alternatives are present
-Message-ID: <20231009-acuteness-nutlike-1f28a2335384@wendy>
-References: <20231009-sandbar-botch-0f398fd2e289@wendy>
- <CAMuHMdVojwgOP8bqHobgbsgUA+7yxUA7v5M6Z800zxrCeuxZjg@mail.gmail.com>
+        Mon, 9 Oct 2023 05:22:43 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A61C9D6
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Oct 2023 02:22:40 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qpmTG-0006vN-Nr; Mon, 09 Oct 2023 11:22:38 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qpmTG-000NXW-B7; Mon, 09 Oct 2023 11:22:38 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qpmTG-00C4pz-21; Mon, 09 Oct 2023 11:22:38 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 19/20] pinctrl: renesas: rzn1: Convert to platform remove callback returning void
+Date:   Mon,  9 Oct 2023 10:38:55 +0200
+Message-Id: <20231009083856.222030-20-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de>
+References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="H8JAiz5CASvgRsHi"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVojwgOP8bqHobgbsgUA+7yxUA7v5M6Z800zxrCeuxZjg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1830; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=whu1K3F7uiPsNXc85/ItXxw8lSWdHF4ifU6FSRE1eb0=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlI7wVKp/h4ZmXafNql0+fn8GJ8n3xLvUqunKyn 9hjgl1/LeSJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZSO8FQAKCRCPgPtYfRL+ Tno+B/4x6SoP3sqUW0skGY4krgmujz6/rJAcDeQTwBv7ti5toHbjFhYFTeyZWzj7JoS+XzO+pru EtVB6g8xRdV8pO8+t8pgjnNzHsNl8yZazWPyuye9g5D4pmKhH+yPlMBQtX3bua5Mqznb4tcc7nK R9I449F3w0NToI7rCRiNt/eEs1One16x8nDJfjH68YDJA7OsXH5Vi4k9m6tYwQxkpwOl1sGMxdh S/va6B43w9zNhP8dfWM/7q7Rpy9P9FAUfhAo4DYnwm5eMSUdXaKbeRSkiJT+pGtSv5o9PyTZPSY ewklrqHyUZK9oPohr3mtuZFOdwBYbxwipnmeVxla9eKGD+PB
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
---H8JAiz5CASvgRsHi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
-On Mon, Oct 09, 2023 at 10:34:34AM +0200, Geert Uytterhoeven wrote:
-> Hi Conor,
->=20
-> On Mon, Oct 9, 2023 at 10:12=E2=80=AFAM Conor Dooley <conor.dooley@microc=
-hip.com> wrote:
-> > Randy reported a randconfig build issue against linux-next:
-> > WARNING: unmet direct dependencies detected for ERRATA_ANDES
-> >   Depends on [n]: RISCV_ALTERNATIVE [=3Dn] && RISCV_SBI [=3Dy]
-> >   Selected by [y]:
-> >   - ARCH_R9A07G043 [=3Dy] && SOC_RENESAS [=3Dy] && RISCV [=3Dy] && NONP=
-ORTABLE [=3Dy] && RISCV_SBI [=3Dy]
-> >
-> > ../arch/riscv/errata/andes/errata.c:59:54: warning: 'struct alt_entry' =
-declared inside parameter list will not be visible outside of this definiti=
-on or declaration
-> >    59 | void __init_or_module andes_errata_patch_func(struct alt_entry =
-*begin, struct alt_entry *end,
-> >
-> > On RISC-V, alternatives are not usable in XIP kernels, which this
-> > randconfig happened to select. Add a check for whether alternatives are
-> > available before selecting the ERRATA_ANDES config option.
-> >
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> > Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> > Closes: https://lore.kernel.org/all/09a6b0f0-76a1-45e3-ab52-329c47393d1=
-d@infradead.org/
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->=20
-> Thanks for your patch!
->=20
-> > --- a/drivers/soc/renesas/Kconfig
-> > +++ b/drivers/soc/renesas/Kconfig
-> > @@ -343,7 +343,7 @@ config ARCH_R9A07G043
-> >         select ARCH_RZG2L
-> >         select AX45MP_L2_CACHE if RISCV_DMA_NONCOHERENT
-> >         select DMA_GLOBAL_POOL
-> > -       select ERRATA_ANDES if RISCV_SBI
-> > +       select ERRATA_ANDES if (RISCV_SBI && RISCV_ALTERNATIVE)
->=20
-> Perhaps ARCH_R9A07G043 should depend on RISCV_ALTERNATIVE (and
-> RISCV_SBI) instead?  It's not like RZ/Five is gonna work without the
-> Andes errata handling present (unless all of them are related to cache
-> handling, and we can run uncached; also see below)).
->=20
-> >         select ERRATA_ANDES_CMO if ERRATA_ANDES
->=20
-> And then this "if" can go as well.
->=20
-> Any other hard dependencies?
-> E.g. can RZ/Five work without RISCV_DMA_NONCOHERENT?
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
-That seems fair to me, it won't work without any of the above, so it's
-probably fair game to make them actual dependencies & likely more user
-friendly since it'll prevent people creating a kernel that cannot
-function.
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Cheers,
-Conor.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pinctrl/renesas/pinctrl-rzn1.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
->=20
-> >         help
-> >           This enables support for the Renesas RZ/Five SoC.
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
->=20
-> --=20
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->=20
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzn1.c b/drivers/pinctrl/renesas/pinctrl-rzn1.c
+index 374b9f281324..4b2f107824fe 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzn1.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzn1.c
+@@ -920,13 +920,11 @@ static int rzn1_pinctrl_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int rzn1_pinctrl_remove(struct platform_device *pdev)
++static void rzn1_pinctrl_remove(struct platform_device *pdev)
+ {
+ 	struct rzn1_pinctrl *ipctl = platform_get_drvdata(pdev);
+ 
+ 	clk_disable_unprepare(ipctl->clk);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id rzn1_pinctrl_match[] = {
+@@ -937,7 +935,7 @@ MODULE_DEVICE_TABLE(of, rzn1_pinctrl_match);
+ 
+ static struct platform_driver rzn1_pinctrl_driver = {
+ 	.probe	= rzn1_pinctrl_probe,
+-	.remove = rzn1_pinctrl_remove,
++	.remove_new = rzn1_pinctrl_remove,
+ 	.driver	= {
+ 		.name		= "rzn1-pinctrl",
+ 		.of_match_table	= rzn1_pinctrl_match,
+-- 
+2.40.1
 
---H8JAiz5CASvgRsHi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZSPGIAAKCRB4tDGHoIJi
-0pQdAQDP0EDastcRyfubosMkIjTRJbu3yHBbxDcEIeHUXE1/2QEAgoXMXZl4RxM7
-cxShvCs8UHEpmf2WuY+pPyQiXnxHvQ4=
-=VHI5
------END PGP SIGNATURE-----
-
---H8JAiz5CASvgRsHi--
