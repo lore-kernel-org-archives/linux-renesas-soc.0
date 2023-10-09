@@ -2,124 +2,110 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA969E95A91
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 08:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEF7E95A96
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 08:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234389AbjJIIew convert rfc822-to-8bit (ORCPT
+        id S1345489AbjJIIoN convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 04:34:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52736 "EHLO
+        Mon, 9 Oct 2023 04:44:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234378AbjJIIev (ORCPT
+        with ESMTP id S1345453AbjJIIoM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 04:34:51 -0400
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 396D49F;
-        Mon,  9 Oct 2023 01:34:48 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-59f6e6b206fso53460597b3.3;
-        Mon, 09 Oct 2023 01:34:48 -0700 (PDT)
+        Mon, 9 Oct 2023 04:44:12 -0400
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D511A9F;
+        Mon,  9 Oct 2023 01:44:10 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-5a24b03e22eso51936107b3.0;
+        Mon, 09 Oct 2023 01:44:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696840487; x=1697445287;
+        d=1e100.net; s=20230601; t=1696841050; x=1697445850;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+3OahYfdCxv80l6RdHzhMjxT84AMNbMTgSYeJWK9cGg=;
-        b=FhaQ0bmWr4pGjG2fPNyJCsGhPuyMXXPxC8mQIQcLscNxOPT/stRjwu9vS7kiy7RZH4
-         bOix44miWmmxfn4AvEbj+H00rTMXEkFp58rc2USHm3pllmD+3S1bVL5rgHuEGv/L/QGO
-         YVPBJKJDkb957p9PrXiurUrmBlQfd4vEVMDvvmUu6g7KZ85JvS14t2K4nC98iCA4jyEV
-         dz58wbZHB0px4tyCD+Rd4WwQUUvKXwHstbYQB51FYYBl+8eJersc83JQsb6/iQm15MHW
-         EkNwlppEiC14EKSppf9con6hCftwgLYKofRq4vabp+Sf3D1zLI7gg1BCGRbBPAZEADQE
-         3bug==
-X-Gm-Message-State: AOJu0YxCt4+kgb0pZYNSRwmRtnRbfwfs/7fNqM5GFuQ69Xdxd6Se9mOa
-        NYp+G8MMu+SA13gpZRxuCifqDHW4blOIcA==
-X-Google-Smtp-Source: AGHT+IGLIT5L2LUhbRl/eEFCDJDZAyVnsDIz9LVzsCkhPnmfExrcAwF7iiJKW0tB6UUA/552jnxY8g==
-X-Received: by 2002:a81:4f94:0:b0:59f:5dc3:9fac with SMTP id d142-20020a814f94000000b0059f5dc39facmr15773219ywb.6.1696840487262;
-        Mon, 09 Oct 2023 01:34:47 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id m188-20020a0dcac5000000b0059beb468cb4sm3520024ywd.1.2023.10.09.01.34.46
+        bh=dqNLFjHn3fj/AL0iMyf/yawddLiaq23Wu30A3Gzqckk=;
+        b=VldaOQR2KU1z5rwLoL5pL0p8YtloH1Pdnj0mceiTSwWnJ3CI6EQfL5szgXgaFbA7Rw
+         4XXbZ/AZtaUN+dDFhYE/ny1pD2COcKpxRG6ji/nmSj9Uf5Fpkntc0Pi5T8z6ovbts8t3
+         mJBCrwVkhAcCi5Moh/4s0AaayEZVwioNLnsbPPuLnmUkEfdv3nM9qFvnGYsBVdEyBppZ
+         Reunls63fC4EBw3ccwgQit15jTxM26XPY8Fw1CwZ9RLL+qlRx70OdopgwzQq5US8/Asj
+         nhFhYT5VXUJm+zlbk9PDgqhcntV0y4JHTHS2BIOY7dcrod4qh0xbvdFZrmlmn0CfzeSX
+         1U5A==
+X-Gm-Message-State: AOJu0YykNubSyb4opUJkMU/IOgNCUai0xT5SrpVijvZOF4zKe+DdQcAP
+        K2d/B/61zl9zW6Zo52eGr4SlmYv1NGavwQ==
+X-Google-Smtp-Source: AGHT+IGs4YBv6PzYrO+Rg9N2PtnM6DnTq+DL8LuBqkf+/JrAHBEJf5ZNe3F461oa96k1Chk2MuPjsA==
+X-Received: by 2002:a81:4fc9:0:b0:599:da80:e1eb with SMTP id d192-20020a814fc9000000b00599da80e1ebmr16645135ywb.24.1696841049848;
+        Mon, 09 Oct 2023 01:44:09 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id z204-20020a0dd7d5000000b0058c8b1ddcc1sm3533084ywd.15.2023.10.09.01.44.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Oct 2023 01:34:46 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-59f6e6b206fso53460437b3.3;
-        Mon, 09 Oct 2023 01:34:46 -0700 (PDT)
-X-Received: by 2002:a81:d24f:0:b0:5a1:d398:2e with SMTP id m15-20020a81d24f000000b005a1d398002emr18003738ywl.37.1696840486754;
- Mon, 09 Oct 2023 01:34:46 -0700 (PDT)
+        Mon, 09 Oct 2023 01:44:09 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-59c215f2f4aso51865307b3.1;
+        Mon, 09 Oct 2023 01:44:09 -0700 (PDT)
+X-Received: by 2002:a0d:d808:0:b0:59b:d796:2a55 with SMTP id
+ a8-20020a0dd808000000b0059bd7962a55mr17521321ywe.1.1696841049412; Mon, 09 Oct
+ 2023 01:44:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231009-sandbar-botch-0f398fd2e289@wendy>
-In-Reply-To: <20231009-sandbar-botch-0f398fd2e289@wendy>
+References: <20231009074121.219686-1-hch@lst.de> <20231009074121.219686-2-hch@lst.de>
+In-Reply-To: <20231009074121.219686-2-hch@lst.de>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 Oct 2023 10:34:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVojwgOP8bqHobgbsgUA+7yxUA7v5M6Z800zxrCeuxZjg@mail.gmail.com>
-Message-ID: <CAMuHMdVojwgOP8bqHobgbsgUA+7yxUA7v5M6Z800zxrCeuxZjg@mail.gmail.com>
-Subject: Re: [PATCH] soc: renesas: select ERRATA_ANDES for R9A07G043 only when
- alternatives are present
-To:     Conor Dooley <conor.dooley@microchip.com>
-Cc:     linux-renesas-soc@vger.kernel.org, conor@kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Date:   Mon, 9 Oct 2023 10:43:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWiYDQ5J7R7hPaVAYgXqJvpjdksoF6X-zHrJ_80Ly4XfQ@mail.gmail.com>
+Message-ID: <CAMuHMdWiYDQ5J7R7hPaVAYgXqJvpjdksoF6X-zHrJ_80Ly4XfQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dma-direct: add depdenencies to CONFIG_DMA_GLOBAL_POOL
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux.dev, Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Wei Fang <wei.fang@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
+        Jim Quinlan <james.quinlan@broadcom.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Conor,
+Hi Christoph,
 
-On Mon, Oct 9, 2023 at 10:12 AM Conor Dooley <conor.dooley@microchip.com> wrote:
-> Randy reported a randconfig build issue against linux-next:
-> WARNING: unmet direct dependencies detected for ERRATA_ANDES
->   Depends on [n]: RISCV_ALTERNATIVE [=n] && RISCV_SBI [=y]
->   Selected by [y]:
->   - ARCH_R9A07G043 [=y] && SOC_RENESAS [=y] && RISCV [=y] && NONPORTABLE [=y] && RISCV_SBI [=y]
+On Mon, Oct 9, 2023 at 9:41 AM Christoph Hellwig <hch@lst.de> wrote:
+> CONFIG_DMA_GLOBAL_POOL can't be combined with other dma-coherent
+> allocators.  Add dependencies to Kconfig to document this, and make
+> kconfig complain about unment dependencies if someone tries.
 >
-> ../arch/riscv/errata/andes/errata.c:59:54: warning: 'struct alt_entry' declared inside parameter list will not be visible outside of this definition or declaration
->    59 | void __init_or_module andes_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
->
-> On RISC-V, alternatives are not usable in XIP kernels, which this
-> randconfig happened to select. Add a check for whether alternatives are
-> available before selecting the ERRATA_ANDES config option.
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> Closes: https://lore.kernel.org/all/09a6b0f0-76a1-45e3-ab52-329c47393d1d@infradead.org/
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
 Thanks for your patch!
 
-> --- a/drivers/soc/renesas/Kconfig
-> +++ b/drivers/soc/renesas/Kconfig
-> @@ -343,7 +343,7 @@ config ARCH_R9A07G043
->         select ARCH_RZG2L
->         select AX45MP_L2_CACHE if RISCV_DMA_NONCOHERENT
->         select DMA_GLOBAL_POOL
-> -       select ERRATA_ANDES if RISCV_SBI
-> +       select ERRATA_ANDES if (RISCV_SBI && RISCV_ALTERNATIVE)
+> --- a/kernel/dma/Kconfig
+> +++ b/kernel/dma/Kconfig
+> @@ -135,6 +135,8 @@ config DMA_COHERENT_POOL
+>
+>  config DMA_GLOBAL_POOL
+>         select DMA_DECLARE_COHERENT
+> +       depends on !ARCH_HAS_DMA_SET_UNCACHED
+> +       depends on !DMA_DIRECT_REMAP
+>         bool
+>
+>  config DMA_DIRECT_REMAP
 
-Perhaps ARCH_R9A07G043 should depend on RISCV_ALTERNATIVE (and
-RISCV_SBI) instead?  It's not like RZ/Five is gonna work without the
-Andes errata handling present (unless all of them are related to cache
-handling, and we can run uncached; also see below)).
+riscv defconfig + CONFIG_NONPORTABLE=y + CONFIG_ARCH_R9A07G043=y:
 
->         select ERRATA_ANDES_CMO if ERRATA_ANDES
-
-And then this "if" can go as well.
-
-Any other hard dependencies?
-E.g. can RZ/Five work without RISCV_DMA_NONCOHERENT?
-
->         help
->           This enables support for the Renesas RZ/Five SoC.
+WARNING: unmet direct dependencies detected for DMA_GLOBAL_POOL
+  Depends on [n]: !ARCH_HAS_DMA_SET_UNCACHED [=n] && !DMA_DIRECT_REMAP [=y]
+  Selected by [y]:
+  - ARCH_R9A07G043 [=y] && SOC_RENESAS [=y] && RISCV [=y] && NONPORTABLE [=y]
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
