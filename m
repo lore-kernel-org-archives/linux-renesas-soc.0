@@ -2,100 +2,95 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CB3E95A96
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FE4E95A91
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Oct 2023 09:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345799AbjJIJf0 convert rfc822-to-8bit (ORCPT
+        id S1345933AbjJIJjR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 05:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36946 "EHLO
+        Mon, 9 Oct 2023 05:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345763AbjJIJfY (ORCPT
+        with ESMTP id S1345928AbjJIJjQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2023 05:35:24 -0400
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3976ED;
-        Mon,  9 Oct 2023 02:35:10 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-59f7f46b326so51486207b3.0;
-        Mon, 09 Oct 2023 02:35:10 -0700 (PDT)
+        Mon, 9 Oct 2023 05:39:16 -0400
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4CF8E;
+        Mon,  9 Oct 2023 02:39:14 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-d849df4f1ffso4446662276.0;
+        Mon, 09 Oct 2023 02:39:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696844110; x=1697448910;
+        d=1e100.net; s=20230601; t=1696844354; x=1697449154;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xr8BhwyyAKTpcM9iiIvbHN9gtfLY84lyd2lf3mY1OqM=;
-        b=Mbinxml7zyVjkCQuqBa/QE+pAhUXFpbxxcJXopuqB910G681RADeEYDETh6Z4cQxds
-         1uiI7sCd4XUll5cW1AeFCaXe0FcA6vx2Jqr3CCQqNo+m3bTUGOJP5oOVwimlOqMsRqa2
-         VFuihfbh+SqVYL8Rbs3oFwY78N4+HQwx9v4sahGMIfmrG+IZN6RqATIYbzNKj1ggsnor
-         f4A/YJiEH/HkZNPdzkQRMmythQ3FJsAtRscaBWc+I25p1yYdEGncXbbmh8hjxwhPOit2
-         jPWxnfKCFd1U8bl7CXm+snLTwj+vZjlIh2ynf0rdsRw72+BhCH5i0z0QC4hO+g5nUZvd
-         sP2w==
-X-Gm-Message-State: AOJu0YylUBCygfzAnjE1D9emudKZdLW52NLt1RK0FIoXJUPksUEb4M8I
-        ICW1OUfhC2U6B+GebC8ILV28CEXUGVqcwg==
-X-Google-Smtp-Source: AGHT+IHFttZ4hFjBnwgCdzGbKR9zUR/6BFNdhwQakJmPN5exLeCPEPhE68PnDYUyq5q9+JhDW8iUbA==
-X-Received: by 2002:a81:5244:0:b0:589:f4ec:4d51 with SMTP id g65-20020a815244000000b00589f4ec4d51mr15081885ywb.3.1696844109871;
-        Mon, 09 Oct 2023 02:35:09 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id d184-20020a0ddbc1000000b00586108dd8f5sm3532544ywe.18.2023.10.09.02.35.08
+        bh=j3YmCgHn7tXgi9jtCY7MITJAzGPAZOtwu79OddVQcyc=;
+        b=QSGUTKoAa/Yf3qZ1vevaCmfLQ9lK0VhQy/uUlqUCQxfS9/HjZcDyt6+tw52pmH/4Pr
+         BkRho7Ody4tklARULl6gdK2cEAuD6hBOC+SLFlt1WT7joRsf+zFgRqzLohSrxQgUTWGd
+         RgvtVHPsVlkqFd0lfugQapHXl6T2/uAd4Pb/TD1RBIAgXNugb2oV0YPCGC4Cz0AVDDwX
+         3mgidFgcJ/m5OdDLLOdMJcVPbweojWp10RAJJIjT1Htdv+OjV47Ym3kmspF5FSVyz0OE
+         YpLnuCwHgKfc/dHW/3sV1we5lCPlquvIaMIVgMGDK3FB5hS4hi9zT68vbUzHUHHslK28
+         Zt0g==
+X-Gm-Message-State: AOJu0Yxkd6mrzLHlJ66maCP7nqW2dENY16kRi/O+KlM74Bm6UTHbYLhI
+        5T2f5ChS9cKhEDr8EnZXYntoKd6GsF9sdg==
+X-Google-Smtp-Source: AGHT+IEO0++uBuATq1+H19O2iHom11TrpvJdyyVHj7vHfTccJKQU6QF6waSlQScMnAFw4Ex5htyeSw==
+X-Received: by 2002:a25:684a:0:b0:d19:40c2:eb03 with SMTP id d71-20020a25684a000000b00d1940c2eb03mr14191237ybc.54.1696844353805;
+        Mon, 09 Oct 2023 02:39:13 -0700 (PDT)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id v138-20020a25c590000000b00d911680fd10sm3010680ybe.50.2023.10.09.02.39.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Oct 2023 02:35:09 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-59f6e6b7600so51131587b3.3;
-        Mon, 09 Oct 2023 02:35:08 -0700 (PDT)
-X-Received: by 2002:a81:8246:0:b0:58d:f1fe:5954 with SMTP id
- s67-20020a818246000000b0058df1fe5954mr15164085ywf.32.1696844108593; Mon, 09
- Oct 2023 02:35:08 -0700 (PDT)
+        Mon, 09 Oct 2023 02:39:13 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5a7a77e736dso1001577b3.1;
+        Mon, 09 Oct 2023 02:39:13 -0700 (PDT)
+X-Received: by 2002:a81:4314:0:b0:5a7:aa54:42b1 with SMTP id
+ q20-20020a814314000000b005a7aa5442b1mr85835ywa.28.1696844353244; Mon, 09 Oct
+ 2023 02:39:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231009074121.219686-1-hch@lst.de> <20231009074121.219686-2-hch@lst.de>
- <CAMuHMdWiYDQ5J7R7hPaVAYgXqJvpjdksoF6X-zHrJ_80Ly4XfQ@mail.gmail.com> <20231009091625.GB22463@lst.de>
-In-Reply-To: <20231009091625.GB22463@lst.de>
+References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de> <20231009083856.222030-20-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20231009083856.222030-20-u.kleine-koenig@pengutronix.de>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 Oct 2023 11:34:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUZNewD-QC8J7MWSBP197Vc169meOjjK6=b7M11kVjUzg@mail.gmail.com>
-Message-ID: <CAMuHMdUZNewD-QC8J7MWSBP197Vc169meOjjK6=b7M11kVjUzg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dma-direct: add depdenencies to CONFIG_DMA_GLOBAL_POOL
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux.dev, Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Wei Fang <wei.fang@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
-        Jim Quinlan <james.quinlan@broadcom.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date:   Mon, 9 Oct 2023 11:39:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX=pESX1PefCXBSHgu8wRMsEiNO02q1-sjsxqysKb1znA@mail.gmail.com>
+Message-ID: <CAMuHMdX=pESX1PefCXBSHgu8wRMsEiNO02q1-sjsxqysKb1znA@mail.gmail.com>
+Subject: Re: [PATCH 19/20] pinctrl: renesas: rzn1: Convert to platform remove
+ callback returning void
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Christoph,
-
-On Mon, Oct 9, 2023 at 11:16 AM Christoph Hellwig <hch@lst.de> wrote:
-> On Mon, Oct 09, 2023 at 10:43:57AM +0200, Geert Uytterhoeven wrote:
-> > >  config DMA_DIRECT_REMAP
-> >
-> > riscv defconfig + CONFIG_NONPORTABLE=y + CONFIG_ARCH_R9A07G043=y:
-> >
-> > WARNING: unmet direct dependencies detected for DMA_GLOBAL_POOL
-> >   Depends on [n]: !ARCH_HAS_DMA_SET_UNCACHED [=n] && !DMA_DIRECT_REMAP [=y]
-> >   Selected by [y]:
-> >   - ARCH_R9A07G043 [=y] && SOC_RENESAS [=y] && RISCV [=y] && NONPORTABLE [=y]
+On Mon, Oct 9, 2023 at 11:22 AM Uwe Kleine-König
+<u.kleine-koenig@pengutronix.de> wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
 >
-> And that's exactly what this patch is supposed to show.  RISCV must not
-> select DMA_DIRECT_REMAP at the same time as DMA_GLOBAL_POOL.  I though
-> the fix for that just went upstream?
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new(), which already returns void. Eventually after all drivers
+> are converted, .remove_new() will be renamed to .remove().
+>
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+>
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-The fix you are referring too is probably commit c1ec4b450ab729e3
-("soc: renesas: Make ARCH_R9A07G043 (riscv version) depend
-on NONPORTABLE") in next-20231006 and later.  It is not yet upstream.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Still, it merely makes ARCH_R9A07G043 (which selects DMA_GLOBAL_POOL)
-depend on ARCH_R9A07G043.
-RISCV_DMA_NONCOHERENT still selects DMA_DIRECT_REMAP, so both can end
-up being enabled.
+Linus: do you plan to take this whole series directly?
+If yes:
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Otherwise, I can queue it in renesas-pinctrl-for-v6.7 for my
+second PR for v6.7 this Friday.
+
+Thanks!
 
 Gr{oetje,eeting}s,
 
