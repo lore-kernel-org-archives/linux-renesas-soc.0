@@ -2,97 +2,166 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5F7CD80D4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Oct 2023 13:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 875C0CD80D5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Oct 2023 13:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232487AbjJJNsp convert rfc822-to-8bit (ORCPT
+        id S233007AbjJJNwz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Oct 2023 09:48:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41632 "EHLO
+        Tue, 10 Oct 2023 09:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232460AbjJJNsp (ORCPT
+        with ESMTP id S232784AbjJJNwn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2023 09:48:45 -0400
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D7DAC;
-        Tue, 10 Oct 2023 06:48:43 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-5a1ec43870cso70087097b3.0;
-        Tue, 10 Oct 2023 06:48:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696945722; x=1697550522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D4RE3zX1nkr5k1ALXTAQSYqGBtL+qOQGbxBra5+ezTA=;
-        b=YnZ7rQ5vCbXtzGoyI+SAXEdLdTIap61X0oaMsnIdsBaIWQQ3gulAbXJt+fHe12c7cB
-         OfQxRzW0VfyOFEVn6zUEAUXBJYNmLxwlyGq+Bap7yFVW3rBGOOawm15zTC5uWxVR6lZw
-         o6IePEyPDN0WMsJurr6mn3tYtEKGXw0MChpMaHCLWcH0rwuoQRCxmHv8aOI0pwfx2NCi
-         JdKO8oELQtIMQnX3EWS6Ye2M8lexNgZ9YgcM37SbLIn75DLlOKQmfOzVCn3wn7zddlir
-         A+vo2eZTYRy19VV3G7o8+cUAJKJVWocUfTe0JuFpHNDy0JbMGxTMu5muhw9SIHO7/7Tz
-         CO5Q==
-X-Gm-Message-State: AOJu0Yxz769j9F78baQj6zouiBML2zK0YXKpyCAuiU7+QhCGim7XPNha
-        OSwCwpBNF6u5pIMFr9yqAV7PWjIradpkBQ==
-X-Google-Smtp-Source: AGHT+IE4IxpnqT3awjxIJbYukaZ5668yaGzS2c3xjIpV5AnAE9LLsRsgvdyvYue1DeSJQCS+A43Gtg==
-X-Received: by 2002:a81:ac20:0:b0:5a7:b900:a373 with SMTP id k32-20020a81ac20000000b005a7b900a373mr2819171ywh.0.1696945722130;
-        Tue, 10 Oct 2023 06:48:42 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id w129-20020a817b87000000b00589c103d00asm4425863ywc.79.2023.10.10.06.48.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Oct 2023 06:48:41 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-59f6441215dso69882367b3.2;
-        Tue, 10 Oct 2023 06:48:41 -0700 (PDT)
-X-Received: by 2002:a25:870e:0:b0:d78:2967:93ea with SMTP id
- a14-20020a25870e000000b00d78296793eamr16105733ybl.1.1696945721710; Tue, 10
- Oct 2023 06:48:41 -0700 (PDT)
+        Tue, 10 Oct 2023 09:52:43 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33F41D7B
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Oct 2023 06:44:27 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:a251:6312:1f1a:2a48])
+        by michel.telenet-ops.be with bizsmtp
+        id wDkM2A00P3RY9Je06DkMaF; Tue, 10 Oct 2023 15:44:25 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qqD23-005sV2-Uc;
+        Tue, 10 Oct 2023 15:44:21 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qqD25-00Gwnx-F5;
+        Tue, 10 Oct 2023 15:44:21 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: renesas: Apply overlays to base dtbs
+Date:   Tue, 10 Oct 2023 15:44:19 +0200
+Message-Id: <44e5c1781b012a38d07a8d2fc68b26b33c3558b6.1696945404.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de>
- <20231009083856.222030-20-u.kleine-koenig@pengutronix.de> <CAMuHMdX=pESX1PefCXBSHgu8wRMsEiNO02q1-sjsxqysKb1znA@mail.gmail.com>
- <CACRpkdZ0xhgEA733XNOehBL0G5u1P=1FGVTf9tcToLhEj5vQCg@mail.gmail.com>
-In-Reply-To: <CACRpkdZ0xhgEA733XNOehBL0G5u1P=1FGVTf9tcToLhEj5vQCg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 10 Oct 2023 15:48:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdURHdnFviekOmm1AVFKDWmabr_jUjVvU51b+-iHUgYNOg@mail.gmail.com>
-Message-ID: <CAMuHMdURHdnFviekOmm1AVFKDWmabr_jUjVvU51b+-iHUgYNOg@mail.gmail.com>
-Subject: Re: [PATCH 19/20] pinctrl: renesas: rzn1: Convert to platform remove
- callback returning void
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Linus,
+From: Rob Herring <robh@kernel.org>
 
-On Tue, Oct 10, 2023 at 3:45 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Oct 9, 2023 at 11:39 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > Linus: do you plan to take this whole series directly?
-> > If yes:
-> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Otherwise, I can queue it in renesas-pinctrl-for-v6.7 for my
-> > second PR for v6.7 this Friday.
->
-> You pick it! Andy is already picking the Intel changes, so it
-> is better to refer to submaintainers where we have them!
+DT overlays in tree need to be applied to a base DTB to validate they
+apply, to run schema checks on them, and to catch any errors at compile
+time.
 
-OK.
+Signed-off-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20230911214623.2201324-1-robh@kernel.org
+[geert: Add missing base/overlay combinations]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Add missing base/overlay combinations.
 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+To be queued in renesas-devel for v6.7.
+---
+ arch/arm64/boot/dts/renesas/Makefile | 35 ++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 4fd83111b0ffcc5d..8ea68d5827105b76 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -29,21 +29,35 @@ dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex-idk-1110wr.dtb
+ dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex-mipi-2.1.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a77951-salvator-x.dtb
++r8a77951-salvator-x-panel-aa104xd12-dtbs := r8a77951-salvator-x.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77951) += r8a77951-salvator-x-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a77951-salvator-xs.dtb
++r8a77951-salvator-xs-panel-aa104xd12-dtbs := r8a77951-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77951) += r8a77951-salvator-xs-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a77951-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a77951-ulcb-kf.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-salvator-x.dtb
++r8a77960-salvator-x-panel-aa104xd12-dtbs := r8a77960-salvator-x.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-salvator-x-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-salvator-xs.dtb
++r8a77960-salvator-xs-panel-aa104xd12-dtbs := r8a77960-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-salvator-xs-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-ulcb-kf.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-salvator-xs.dtb
++r8a77961-salvator-xs-panel-aa104xd12-dtbs := r8a77961-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-salvator-xs-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-ulcb-kf.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
++r8a77965-salvator-x-panel-aa104xd12-dtbs := r8a77965-salvator-x.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs.dtb
++r8a77965-salvator-xs-panel-aa104xd12-dtbs := r8a77965-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb-kf.dtb
+ 
+@@ -55,8 +69,12 @@ dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-v3hsk.dtb
+ dtb-$(CONFIG_ARCH_R8A77980) += r8a77980a-condor-i.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
++r8a77990-ebisu-panel-aa104xd12-dtbs := r8a77990-ebisu.dtb draak-ebisu-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu-panel-aa104xd12.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
++r8a77995-draak-panel-aa104xd12-dtbs := r8a77995-draak.dtb draak-ebisu-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak-panel-aa104xd12.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
+ 
+@@ -65,27 +83,44 @@ dtb-$(CONFIG_ARCH_R8A779F0) += r8a779f4-s4sk.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk.dtb
+ dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk-ard-audio-da7212.dtbo
++r8a779g0-white-hawk-ard-audio-da7212-dtbs := r8a779g0-white-hawk.dtb r8a779g0-white-hawk-ard-audio-da7212.dtbo
++dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk-ard-audio-da7212.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-salvator-xs.dtb
++r8a779m1-salvator-xs-panel-aa104xd12-dtbs := r8a779m1-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-salvator-xs-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb-kf.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-salvator-xs.dtb
++r8a779m3-salvator-xs-panel-aa104xd12-dtbs := r8a779m3-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-salvator-xs-panel-aa104xd12.dtb
+ dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-ulcb-kf.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a779m5-salvator-xs.dtb
++r8a779m5-salvator-xs-panel-aa104xd12-dtbs := r8a779m5-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
++dtb-$(CONFIG_ARCH_R8A77965) += r8a779m5-salvator-xs-panel-aa104xd12.dtb
+ 
+ dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043u11-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043-smarc-pmod.dtbo
++r9a07g043u11-smarc-pmod-dtbs := r9a07g043u11-smarc.dtb r9a07g043-smarc-pmod.dtbo
++dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043u11-smarc-pmod.dtb
+ 
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc-cru-csi-ov5645.dtbo
++r9a07g044c2-smarc-cru-csi-ov5645-dtbs := r9a07g044c2-smarc.dtb r9a07g044c2-smarc-cru-csi-ov5645.dtbo
++dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc-cru-csi-ov5645.dtb
++
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc-cru-csi-ov5645.dtbo
++r9a07g044l2-smarc-cru-csi-ov5645-dtbs := r9a07g044l2-smarc.dtb r9a07g044l2-smarc-cru-csi-ov5645.dtbo
++dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc-cru-csi-ov5645.dtb
+ 
+ dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc-cru-csi-ov5645.dtbo
++r9a07g054l2-smarc-cru-csi-ov5645-dtbs := r9a07g054l2-smarc.dtb r9a07g054l2-smarc-cru-csi-ov5645.dtbo
++dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc-cru-csi-ov5645.dtb
+ 
+ dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc.dtb
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
