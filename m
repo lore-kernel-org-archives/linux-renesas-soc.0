@@ -2,152 +2,131 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B010CDB46E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Oct 2023 20:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAE3CDB474
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Oct 2023 00:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347395AbjJLUet (ORCPT
+        id S234509AbjJMAVB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Oct 2023 16:34:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47348 "EHLO
+        Thu, 12 Oct 2023 20:21:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343834AbjJLUes (ORCPT
+        with ESMTP id S229840AbjJMAVB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2023 16:34:48 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E1D39D;
-        Thu, 12 Oct 2023 13:34:47 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83CDEC433C7;
-        Thu, 12 Oct 2023 20:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697142886;
-        bh=1NmsynG7soJV4+TPuN+O1s9KhLN02NtYFh7WcmBFz8A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I9O2rBWF8gDar/1iXLQ4oZZKDeER69jhL3u6eC5bovsQijynepBATCh0hAMHpTqWw
-         /vXM3y1SG0pkQD8OS+OKBAZ9rn0hsmJzk5VRmpHzXkF0Lu/LHurNnd62SH3TgwUrfa
-         MKAJeZiLT2kX2yjJB0VYjxbaW822eObD5KQ6gyQY7qbeycSYF/QvVL+i3wJBG2+Fn1
-         i1lGoa/2VsAuTKMzanhcWLUwwviGNuHAIjzoOsczqCc9s1mTHT9D6WP4q6N1v4VmX2
-         emS3ZnCa2dbdUphUNYx3TptZIkTbls5KnuJEZM5JJYdfSHoIGXXTiKA/O8JDlHlCcB
-         bSZmUDB1llELA==
-Received: (nullmailer pid 1698490 invoked by uid 1000);
-        Thu, 12 Oct 2023 20:34:44 -0000
-Date:   Thu, 12 Oct 2023 15:34:44 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Florian Fainelli <florian.fainelli@broadcom.com>
-Cc:     netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH net-next 1/2] net: dsa: Use conduit and user terms
-Message-ID: <20231012203444.GA1636217-robh@kernel.org>
-References: <20231010213942.3633407-1-florian.fainelli@broadcom.com>
- <20231010213942.3633407-2-florian.fainelli@broadcom.com>
+        Thu, 12 Oct 2023 20:21:01 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB0DEC0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Oct 2023 17:20:59 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-690d2441b95so1155077b3a.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Oct 2023 17:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1697156459; x=1697761259; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=5nhobMinlmxgfabHaEhekyiIxZ14Y0dm1ozm2fGwmF0=;
+        b=vTkctrPdju+f+gEpjrVWsl2A6+DZPLKb7YTNpJwKq0cVnuHjbzgt76lp0sbMZdBZYP
+         bIfShweoNHMOOcXAJ3liCkH26cXoOsJ1xLC252bUY/OuEBwqD0mE+NHosGKYX2c2BuJ+
+         AY5ajD1firAoEsjBmKy0Zt9IdSs45ipkQfocfdLkXNBogNDMdsFXHqyBW0PN3raQU/I9
+         znMP9PRGebp8g/ps6mNI7UfY4V4p4ehJ9gTmRZq3mvu4QCKClNS/V+ECwId7nG+vD27t
+         1XeaGl9d7ZCgp6g0TONWlRHAqyKoB56aoCn1v6X54J8VjoCj3xWf3GYuUw9CxiGD8LxD
+         QiCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697156459; x=1697761259;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5nhobMinlmxgfabHaEhekyiIxZ14Y0dm1ozm2fGwmF0=;
+        b=b41d51Fg9+6ugG8y+mAYM+GYdwcgfued0Ej+jaSn1hhTZHpdCSI2mkVmMbr2DUukLH
+         Ultc1yn1D5qpvAHRZZsOpyWdu/3UmORbNq1bLgAyUzRB0x6vkoxzLfqL0VfS/+oSLFMV
+         AjKUMh8nQM6c8pEK7XiggB7yEgClnIvCv41LSwd2RUZzyIF3vUVH8MShMHk8csags9Lv
+         3jQV7mcZmHUZu/1ldsvFcKnz9C6NlBI1UqJA64RlxLVVlibOu/zmHvOFyPA4JZsKiDR2
+         IP111FGj/uYq4YSfna0Lea4/aZGWhQ59Nkng47W1NtgnwAkLMe9d2Me7XY5sv40OrhU+
+         Fr9Q==
+X-Gm-Message-State: AOJu0YwxFkvdmU6apLPEdvirKG4zUdOH1crL6/oAsRmow/r+EIetQI5z
+        OPnO4FCM52eFW6CCq35p3bm7kPEpRjNc9qJnBV41lw==
+X-Google-Smtp-Source: AGHT+IGpI33PGNyphB/35rxc+WsGfalC8TGiQbxNeLLWJ2ZdeFAhhqhkAgVvVmL3JQB3zdzm6tmz/g==
+X-Received: by 2002:a05:6a00:1ad1:b0:68f:d44c:22f8 with SMTP id f17-20020a056a001ad100b0068fd44c22f8mr31055876pfv.1.1697156458981;
+        Thu, 12 Oct 2023 17:20:58 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id y3-20020a62b503000000b00692b7011349sm12360448pfe.188.2023.10.12.17.20.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Oct 2023 17:20:58 -0700 (PDT)
+Message-ID: <65288d6a.620a0220.30576.2d3d@mx.google.com>
+Date:   Thu, 12 Oct 2023 17:20:58 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231010213942.3633407-2-florian.fainelli@broadcom.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-devel-2023-10-09-v6.6-rc5-11-g2f3e3edcf49e6
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master baseline-nfs: 12 runs,
+ 1 regressions (renesas-devel-2023-10-09-v6.6-rc5-11-g2f3e3edcf49e6)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Oct 10, 2023 at 02:39:41PM -0700, Florian Fainelli wrote:
-> Use more inclusive terms throughout the DSA subsystem by moving away
-> from "master" which is replaced by "conduit" and "slave" which is
-> replaced by "user". No functional changes.
-> 
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  .../bindings/net/dsa/mediatek,mt7530.yaml     |    2 +-
+renesas/master baseline-nfs: 12 runs, 1 regressions (renesas-devel-2023-10-=
+09-v6.6-rc5-11-g2f3e3edcf49e6)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Regressions Summary
+-------------------
 
->  Documentation/networking/dsa/b53.rst          |   14 +-
->  Documentation/networking/dsa/bcm_sf2.rst      |    2 +-
->  .../networking/dsa/configuration.rst          |  104 +-
->  Documentation/networking/dsa/dsa.rst          |  150 +-
->  Documentation/networking/dsa/lan9303.rst      |    2 +-
->  Documentation/networking/dsa/sja1105.rst      |    8 +-
->  .../dts/marvell/armada-3720-espressobin.dtsi  |    2 +-
->  drivers/net/dsa/b53/b53_common.c              |    4 +-
->  drivers/net/dsa/b53/b53_mdio.c                |    2 +-
->  drivers/net/dsa/bcm_sf2.c                     |   36 +-
->  drivers/net/dsa/bcm_sf2.h                     |    2 +-
->  drivers/net/dsa/bcm_sf2_cfp.c                 |    4 +-
->  drivers/net/dsa/lan9303-core.c                |    4 +-
->  drivers/net/dsa/lantiq_gswip.c                |   34 +-
->  drivers/net/dsa/microchip/ksz9477.c           |    6 +-
->  drivers/net/dsa/microchip/ksz_common.c        |   20 +-
->  drivers/net/dsa/microchip/ksz_ptp.c           |    2 +-
->  drivers/net/dsa/mt7530.c                      |   16 +-
->  drivers/net/dsa/mv88e6xxx/chip.c              |    2 +-
->  drivers/net/dsa/ocelot/felix.c                |   62 +-
->  drivers/net/dsa/ocelot/felix.h                |    4 +-
->  drivers/net/dsa/qca/qca8k-8xxx.c              |   48 +-
->  drivers/net/dsa/qca/qca8k-common.c            |    2 +-
->  drivers/net/dsa/qca/qca8k-leds.c              |    6 +-
->  drivers/net/dsa/qca/qca8k.h                   |    2 +-
->  drivers/net/dsa/realtek/realtek-smi.c         |   28 +-
->  drivers/net/dsa/realtek/realtek.h             |    2 +-
->  drivers/net/dsa/sja1105/sja1105_main.c        |    4 +-
->  drivers/net/dsa/xrs700x/xrs700x.c             |   12 +-
->  drivers/net/ethernet/broadcom/bcmsysport.c    |    2 +-
->  drivers/net/ethernet/mediatek/mtk_eth_soc.c   |    2 +-
->  include/linux/dsa/sja1105.h                   |    2 +-
->  include/net/dsa.h                             |   54 +-
->  include/net/dsa_stubs.h                       |   10 +-
->  net/core/dev_ioctl.c                          |    2 +-
->  net/dsa/Makefile                              |    4 +-
->  net/dsa/{master.c => conduit.c}               |   96 +-
->  net/dsa/conduit.h                             |   22 +
->  net/dsa/dsa.c                                 |  218 +--
->  net/dsa/dsa.h                                 |   10 +-
->  net/dsa/master.h                              |   22 -
->  net/dsa/netlink.c                             |   14 +-
->  net/dsa/port.c                                |  114 +-
->  net/dsa/port.h                                |    2 +-
->  net/dsa/slave.h                               |   69 -
->  net/dsa/switch.c                              |   18 +-
->  net/dsa/switch.h                              |    4 +-
->  net/dsa/tag.c                                 |   10 +-
->  net/dsa/tag.h                                 |   26 +-
->  net/dsa/tag_8021q.c                           |   22 +-
->  net/dsa/tag_8021q.h                           |    2 +-
->  net/dsa/tag_ar9331.c                          |    4 +-
->  net/dsa/tag_brcm.c                            |   14 +-
->  net/dsa/tag_dsa.c                             |    6 +-
->  net/dsa/tag_gswip.c                           |    4 +-
->  net/dsa/tag_hellcreek.c                       |    4 +-
->  net/dsa/tag_ksz.c                             |   12 +-
->  net/dsa/tag_lan9303.c                         |    4 +-
->  net/dsa/tag_mtk.c                             |    4 +-
->  net/dsa/tag_none.c                            |    4 +-
->  net/dsa/tag_ocelot.c                          |   22 +-
->  net/dsa/tag_ocelot_8021q.c                    |   12 +-
->  net/dsa/tag_qca.c                             |    6 +-
->  net/dsa/tag_rtl4_a.c                          |    6 +-
->  net/dsa/tag_rtl8_4.c                          |    6 +-
->  net/dsa/tag_rzn1_a5psw.c                      |    4 +-
->  net/dsa/tag_sja1105.c                         |   30 +-
->  net/dsa/tag_trailer.c                         |    4 +-
->  net/dsa/tag_xrs700x.c                         |    4 +-
->  net/dsa/{slave.c => user.c}                   | 1240 ++++++++---------
->  net/dsa/user.h                                |   69 +
->  72 files changed, 1385 insertions(+), 1385 deletions(-)
->  rename net/dsa/{master.c => conduit.c} (79%)
->  create mode 100644 net/dsa/conduit.h
->  delete mode 100644 net/dsa/master.h
->  delete mode 100644 net/dsa/slave.h
->  rename net/dsa/{slave.c => user.c} (67%)
->  create mode 100644 net/dsa/user.h
+platform                 | arch  | lab     | compiler | defconfig | regress=
+ions
+-------------------------+-------+---------+----------+-----------+--------=
+----
+r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig | 1      =
+    =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-10-09-v6.6-rc5-11-g2f3e3edcf49e6/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-10-09-v6.6-rc5-11-g2f3e3edcf49e6
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      2f3e3edcf49e6363f99490192359aa6662bf55ea =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                 | arch  | lab     | compiler | defconfig | regress=
+ions
+-------------------------+-------+---------+----------+-----------+--------=
+----
+r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig | 1      =
+    =
+
+
+  Details:     https://kernelci.org/test/plan/id/65285fc83d31b68c57efcef3
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-10-09-v6.6-rc5-11-g2f3e3edcf49e6/arm64/defconfig/gcc-10/lab-cip/baselin=
+e-nfs-r8a774a1-hihope-rzg2m-ex.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-10-09-v6.6-rc5-11-g2f3e3edcf49e6/arm64/defconfig/gcc-10/lab-cip/baselin=
+e-nfs-r8a774a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65285fc83d31b68c5=
+7efcef4
+        failing since 59 days (last pass: renesas-devel-2023-07-11-v6.5-rc1=
+, first fail: renesas-devel-2023-08-14-v6.5-rc4) =
+
+ =20
