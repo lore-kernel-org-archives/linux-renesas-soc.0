@@ -2,71 +2,100 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB195CDB483
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Oct 2023 10:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73301CDB47E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Oct 2023 12:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230334AbjJMKns (ORCPT
+        id S231543AbjJMMTp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Oct 2023 06:43:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39228 "EHLO
+        Fri, 13 Oct 2023 08:19:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230299AbjJMKnr (ORCPT
+        with ESMTP id S231349AbjJMMTo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2023 06:43:47 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4644AD
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2023 03:43:45 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44322C433D9;
-        Fri, 13 Oct 2023 10:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697193825;
-        bh=XYLpwKUL8qMIh/EQMQr/uGImOVYyaUVK/fZkpasK5JE=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=O5EeFIvzC1VAynzxayVEvE6G+yy5PN8Qupf+PM7jMDRN3oG9Bmp+UUpSYO3WaE2LX
-         6CXbnE+MncG9ZCs0mlwrjiDpLu1xKtJ3ip+mcnaX+4Ni/2KqbzTIjnBxX6MeKncozo
-         RDEJaPZj4VP5KaGUHbnfuYW7qE+PTi9uieZcmEBgg0Wpn/zhcDr2GKaGhoxzwitNgj
-         BHNwVh/+0X2Q6jsU6z4LI81ciY6DnHxTiCw8KMuyyGnFAfaTdhojSwq7livAWsUvbq
-         LfIDDUmpI+o6aUEKWttd+Q0buQUAoWVZ05D/om7NO3rYpr1US6aFugZhy7MCsllsQr
-         hmICMAESHygIg==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     kishon@kernel.org,
+        Fri, 13 Oct 2023 08:19:44 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 901A3BD;
+        Fri, 13 Oct 2023 05:19:42 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.03,222,1694703600"; 
+   d="scan'208";a="179182869"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 13 Oct 2023 21:19:41 +0900
+Received: from localhost.localdomain (unknown [10.166.15.32])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D4CF3400264B;
+        Fri, 13 Oct 2023 21:19:41 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20231011081817.257113-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20231011081817.257113-1-yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH 0/2] phy: renesas: r8a779f0-ether-serdes: Add
- Re-initialize code
-Message-Id: <169719382387.165658.2498971113931936275.b4-ty@kernel.org>
-Date:   Fri, 13 Oct 2023 16:13:43 +0530
+Subject: [PATCH net-next v2 1/2] rswitch: Use unsigned int for array index
+Date:   Fri, 13 Oct 2023 21:19:35 +0900
+Message-Id: <20231013121936.364678-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20231013121936.364678-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20231013121936.364678-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The array index should not be negative, so modify the condition of
+rswitch_for_each_enabled_port_continue_reverse() macro, and then
+use unsigned int instead.
 
-On Wed, 11 Oct 2023 17:18:15 +0900, Yoshihiro Shimoda wrote:
-> This patch series can re-initialize this PHY after called phy_exit() and
-> phy_init() again. Such re-initializing the PHY will be needed for system
-> suspend/resume.
-> 
-> Yoshihiro Shimoda (2):
->   phy: renesas: r8a779f0-ether-serdes: Reset in .init()
->   phy: renesas: r8a779f0-ether-serdes: Add .exit() ops
-> 
-> [...]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/net/ethernet/renesas/rswitch.c | 8 +++++---
+ drivers/net/ethernet/renesas/rswitch.h | 2 +-
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Applied, thanks!
-
-[1/2] phy: renesas: r8a779f0-ether-serdes: Reset in .init()
-      commit: aa4c0bbf820ddb9dd8105a403aa12df57b9e5129
-[2/2] phy: renesas: r8a779f0-ether-serdes: Add .exit() ops
-      commit: 1a5361189b7acac15b9b086b2300a11b7aa84c06
-
-Best regards,
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index 112e605f104a..7640144db79b 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -1405,7 +1405,8 @@ static void rswitch_ether_port_deinit_one(struct rswitch_device *rdev)
+ 
+ static int rswitch_ether_port_init_all(struct rswitch_private *priv)
+ {
+-	int i, err;
++	unsigned int i;
++	int err;
+ 
+ 	rswitch_for_each_enabled_port(priv, i) {
+ 		err = rswitch_ether_port_init_one(priv->rdev[i]);
+@@ -1786,7 +1787,8 @@ static void rswitch_device_free(struct rswitch_private *priv, int index)
+ 
+ static int rswitch_init(struct rswitch_private *priv)
+ {
+-	int i, err;
++	unsigned int i;
++	int err;
+ 
+ 	for (i = 0; i < RSWITCH_NUM_PORTS; i++)
+ 		rswitch_etha_init(priv, i);
+@@ -1959,7 +1961,7 @@ static int renesas_eth_sw_probe(struct platform_device *pdev)
+ 
+ static void rswitch_deinit(struct rswitch_private *priv)
+ {
+-	int i;
++	unsigned int i;
+ 
+ 	rswitch_gwca_hw_deinit(priv);
+ 	rcar_gen4_ptp_unregister(priv->ptp_priv);
+diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
+index 04f49a7a5843..27c9d3872c0e 100644
+--- a/drivers/net/ethernet/renesas/rswitch.h
++++ b/drivers/net/ethernet/renesas/rswitch.h
+@@ -20,7 +20,7 @@
+ 		else
+ 
+ #define rswitch_for_each_enabled_port_continue_reverse(priv, i)	\
+-	for (i--; i >= 0; i--)					\
++	for (; i-- > 0; )					\
+ 		if (priv->rdev[i]->disabled)			\
+ 			continue;				\
+ 		else
 -- 
-~Vinod
-
+2.25.1
 
