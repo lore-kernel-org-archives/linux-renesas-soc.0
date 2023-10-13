@@ -2,87 +2,76 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 367EECDB483
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Oct 2023 12:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42196CDB47E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Oct 2023 12:39:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231283AbjJMM0z (ORCPT
+        id S231776AbjJMMj0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Oct 2023 08:26:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48676 "EHLO
+        Fri, 13 Oct 2023 08:39:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231661AbjJMM0z (ORCPT
+        with ESMTP id S231768AbjJMMjZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2023 08:26:55 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65678BD
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2023 05:26:51 -0700 (PDT)
+        Fri, 13 Oct 2023 08:39:25 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C00D7
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2023 05:39:23 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:f151:5551:1af6:b316])
-        by michel.telenet-ops.be with bizsmtp
-        id xQSm2A00g56FAx306QSmrh; Fri, 13 Oct 2023 14:26:48 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id xQfM2A00856FAx301QfML5; Fri, 13 Oct 2023 14:39:21 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qrHFb-006Gfe-5a;
-        Fri, 13 Oct 2023 14:26:46 +0200
+        id 1qrHRl-006Ggc-Tb;
+        Fri, 13 Oct 2023 14:39:21 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1qrHFe-002JL0-Hn;
-        Fri, 13 Oct 2023 14:26:46 +0200
+        id 1qrHRp-002Jo2-BP;
+        Fri, 13 Oct 2023 14:39:21 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] Renesas fixes for v6.6 (take two)
-Date:   Fri, 13 Oct 2023 14:26:44 +0200
-Message-Id: <cover.1697199963.git.geert+renesas@glider.be>
+Subject: [GIT PULL 2/3] Renesas DT binding updates for v6.7 (take two)
+Date:   Fri, 13 Oct 2023 14:39:14 +0200
+Message-Id: <cover.1697200121.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1697200117.git.geert+renesas@glider.be>
+References: <cover.1697200117.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi SoC folks,
+The following changes since commit 111287aa60004e1a58320048c89391056288c455:
 
-The following changes since commit c1ec4b450ab729e30d043e927fdfcc9f764f61b7:
-
-  soc: renesas: Make ARCH_R9A07G043 (riscv version) depend on NONPORTABLE (2023-10-05 15:07:57 +0200)
+  dt-bindings: soc: renesas: renesas,rzg2l-sysc: Document RZ/G3S SoC (2023-09-18 09:50:30 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-fixes-for-v6.6-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v6.7-tag2
 
-for you to fetch changes up to 1531309aa2092a96c092fa662863ffa53da3ba93:
+for you to fetch changes up to c0a2c7619666ae857a52219f344fbaa915cd181a:
 
-  soc: renesas: Make ARCH_R9A07G043 depend on required options (2023-10-12 19:46:49 +0200)
+  dt-bindings: soc: renesas: Document R-Car S4 Starter Kit (2023-10-05 11:37:42 +0200)
 
 ----------------------------------------------------------------
-Renesas fixes for v6.6 (take two)
+Renesas DT binding updates for v6.7 (take two)
 
-  - Fix build failures due to missing RZ/Five dependencies.
+  - Document support for the Renesas RZ/G3S SMARC SoM and SMARC
+    Carrier-II EVK development boards,
+  - Document support for the Renesas R-Car S4 Starter Kit.
 
-Note that this conflicts with renesas-drivers-for-v6.7-tag1, which I
-have sent a PR for two weeks ago, but which you haven't merged yet.
-The proper solution is to take the ARCH_R9A07G043 section from
-renesas-fixes-for-v6.6-tag2.
-
-Thanks for pulling!
 ----------------------------------------------------------------
-Conor Dooley (1):
-      soc: renesas: Make ARCH_R9A07G043 depend on required options
+Claudiu Beznea (2):
+      dt-bindings: soc: renesas: Document RZ/G3S SMARC SoM
+      dt-bindings: soc: renesas: Document SMARC Carrier-II EVK
 
- drivers/soc/renesas/Kconfig | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Kuninori Morimoto (1):
+      dt-bindings: soc: renesas: Document R-Car S4 Starter Kit
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ .../devicetree/bindings/soc/renesas/renesas.yaml     | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
