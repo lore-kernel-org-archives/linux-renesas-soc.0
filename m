@@ -2,65 +2,65 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 665F9CDB47E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Oct 2023 20:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E23ECDB482
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Oct 2023 20:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbjJMUmj (ORCPT
+        id S231706AbjJMUmk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Oct 2023 16:42:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49700 "EHLO
+        Fri, 13 Oct 2023 16:42:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231680AbjJMUmi (ORCPT
+        with ESMTP id S229518AbjJMUmj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2023 16:42:38 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE412E3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2023 13:42:36 -0700 (PDT)
+        Fri, 13 Oct 2023 16:42:39 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A4D7BE
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2023 13:42:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697229756; x=1728765756;
+  t=1697229758; x=1728765758;
   h=date:from:to:cc:subject:message-id;
-  bh=1afv8lLeXIYcJArKYRmEEw5EJE1QQPXJ9+dprM/Bd+Y=;
-  b=fykAsxYoAG8lYgaf2u4M1kduIzxHd7MMzgUgyfTKE8WBt9X65BwSiN8r
-   ZQWITKqHGMELiO1cf4BbgvOiqA+03+lODIHWm7m9c5KfXRaGUCGEe2SyC
-   LQaqHfcA9uSCpeAoL02KfHMcs+/fe3DWKYHRPLou/uVw5I+2BTJwk7rGq
-   7IRllnnSOajCAExqVN+AX4aIctxDJkpPwamvrJgHK39stYJ4MRg92NRHM
-   k0kQEFlTp/rM3cCDjwjPv1pydvShnRF/Q1jP7SJewRCcBJgoSRohvBagc
-   RSs/uwXNv7qY+LTmNiVGEnTolysThIXgiKa/XMRDSLNWfjM+Pi2Ewu2rG
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10862"; a="451746231"
+  bh=4YnUHeWOfo58JQwL2cx8st6VYdK8RwWB3Wsmpd5Qty0=;
+  b=awVsN5EbP5jDGlaD3ErgLaQR9uTDRb0k+tyOHrzviNvnCLygAksGfpf/
+   EADecWbpMlRTXQjjO4F7PxaXHqsLmvbCl0OIlqLIliv5gRlLr3a/N49j0
+   TRRLyAT9t4CJWLeTnIMHzMWoKayl+ev+9yigffEs/5vhAM0Pn7C9JYPVI
+   wheou82WGibNgI9UlUKifzjrGq+vLm7K1iByo4nzILyLjdTXRu92eX2NR
+   B4dXy7jvi6qahDKAPNS2tuqFn6TnF0D511XVS2vfgTumDX8Jg7FtEw5j+
+   z+edwaQonBsyIIUPbmQAnqsOU4FnoXit3J8kVQc1WSNp3REiWEXQv9fxC
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10862"; a="471493940"
 X-IronPort-AV: E=Sophos;i="6.03,223,1694761200"; 
-   d="scan'208";a="451746231"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2023 13:42:36 -0700
+   d="scan'208";a="471493940"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2023 13:42:36 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10862"; a="731491713"
+X-IronPort-AV: E=McAfee;i="6600,9927,10862"; a="789990380"
 X-IronPort-AV: E=Sophos;i="6.03,223,1694761200"; 
-   d="scan'208";a="731491713"
+   d="scan'208";a="789990380"
 Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 13 Oct 2023 13:42:35 -0700
+  by orsmga001.jf.intel.com with ESMTP; 13 Oct 2023 13:42:35 -0700
 Received: from kbuild by f64821696465 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qrOzR-0005MV-0U;
+        id 1qrOzR-0005MX-0Y;
         Fri, 13 Oct 2023 20:42:33 +0000
-Date:   Sat, 14 Oct 2023 04:42:05 +0800
+Date:   Sat, 14 Oct 2023 04:41:51 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:topic/renesas-defconfig] BUILD SUCCESS
- c3e22d44b4324c1c3ed9d41a77c473fdb3376eb8
-Message-ID: <202310140401.ulKyHWg0-lkp@intel.com>
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 2f3e3edcf49e6363f99490192359aa6662bf55ea
+Message-ID: <202310140446.IbPHzjYG-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git topic/renesas-defconfig
-branch HEAD: c3e22d44b4324c1c3ed9d41a77c473fdb3376eb8  arm64: renesas: defconfig: Enable RZ/G3S SoC
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 2f3e3edcf49e6363f99490192359aa6662bf55ea  Merge branches 'renesas-next' and 'topic/renesas-defconfig' into renesas-devel
 
-elapsed time: 1539m
+elapsed time: 1540m
 
-configs tested: 107
+configs tested: 99
 configs skipped: 2
 
 The following configs have been built successfully.
@@ -73,15 +73,14 @@ alpha                               defconfig   gcc
 arc                              allmodconfig   gcc  
 arc                               allnoconfig   gcc  
 arc                              allyesconfig   gcc  
-arc                          axs103_defconfig   gcc  
 arc                                 defconfig   gcc  
 arc                   randconfig-001-20231013   gcc  
 arm                              allmodconfig   gcc  
 arm                               allnoconfig   gcc  
 arm                              allyesconfig   gcc  
 arm                                 defconfig   gcc  
-arm                         lpc32xx_defconfig   clang
 arm                   randconfig-001-20231013   gcc  
+arm64                            allmodconfig   gcc  
 arm64                             allnoconfig   gcc  
 arm64                            allyesconfig   gcc  
 arm64                               defconfig   gcc  
@@ -89,10 +88,6 @@ csky                             allmodconfig   gcc
 csky                              allnoconfig   gcc  
 csky                             allyesconfig   gcc  
 csky                                defconfig   gcc  
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
 i386                                defconfig   gcc  
 i386                  randconfig-001-20231013   gcc  
 i386                  randconfig-002-20231013   gcc  
@@ -105,7 +100,6 @@ loongarch                         allnoconfig   gcc
 loongarch                        allyesconfig   gcc  
 loongarch                           defconfig   gcc  
 loongarch             randconfig-001-20231013   gcc  
-m68k                             alldefconfig   gcc  
 m68k                             allmodconfig   gcc  
 m68k                              allnoconfig   gcc  
 m68k                             allyesconfig   gcc  
@@ -133,10 +127,8 @@ parisc64                            defconfig   gcc
 powerpc                          allmodconfig   gcc  
 powerpc                           allnoconfig   gcc  
 powerpc                          allyesconfig   gcc  
-powerpc                      chrp32_defconfig   gcc  
 riscv                            allmodconfig   gcc  
 riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   gcc  
 riscv                               defconfig   gcc  
 riscv                 randconfig-001-20231013   gcc  
 riscv                          rv32_defconfig   gcc  
