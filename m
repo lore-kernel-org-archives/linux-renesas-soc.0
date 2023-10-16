@@ -2,34 +2,34 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3299CDB483
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE17CDB465
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 05:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbjJPFsQ (ORCPT
+        id S231679AbjJPFsQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 16 Oct 2023 01:48:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37112 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbjJPFsO (ORCPT
+        with ESMTP id S231510AbjJPFsP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2023 01:48:14 -0400
+        Mon, 16 Oct 2023 01:48:15 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B9EF2;
-        Sun, 15 Oct 2023 22:48:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 877ACA1;
+        Sun, 15 Oct 2023 22:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=HNzOvxESbvs0T+eHOSkoEf67mG8U/1N0p04PAmqKDXE=; b=2LZ3V85GIZkSezRnfJZYY+41II
-        hAx6KoDUJTBNqUViFNGY1iq1nTy806urFG6DFTIc2y/2hSVyjA5lvblAdhrrnaaZQVtKSHJ0ClxcT
-        btOJq+Bmc7p8nTSIiogtPYQD+ROsKcZY1kAf7rXBV5bTPCqZOXR5zAPo+kJAIpYCRWxWcBhYIWT30
-        W/8ajfCpTAo+9W/ldmJlQlKV4w+tSlA9wi1V8z5VY1wah9B3q7iD5jhMiU2g3oEsK5+9PSm+AfIol
-        T3CyQGbEa0TDUnq9JIaSaM67p8D5JV0MDB3w8KArp2cItSF5Kfm6892pvl119ffXh3wOtu4m6im+q
-        LIlB+54Q==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=z6mlPBQ4mdlVnTNTeM4g6TWg8QEfdqiB3mI+2DaIjVk=; b=YKyyhZdf5dNjANUOyI2HrJCIV0
+        U1b00I+wKUKo117XL/o4YqG/7CSwo82Nt84ERwS2j6D/6oqFSVy2m0PPuid4ijwkV2mZHWK3cl9qP
+        D+Jxn4qLo5ExWSk9zjUYofh7qHwWin0AJJlg2YFfcQcutwo1YiHX4SlWrbPGG+YrefwgIwRdU4y4H
+        WosBEtbP5BtoiIiEJptDJes47mHRPUXh0Jd+7viXZLEugUD9/zb3usGG16gGmPvxxIpiKUP5bKraI
+        IVLlzXBHJoSGwFbBP2iCWYxryZ5ysqqi8iqmbnnU0d2aeNwazNkhToLQ9umEVkTBCfU1JfSL919FN
+        MfOILygA==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qsGSM-008Qdv-36;
-        Mon, 16 Oct 2023 05:47:59 +0000
+        id 1qsGSU-008QhF-0t;
+        Mon, 16 Oct 2023 05:48:06 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Greg Ungerer <gerg@linux-m68k.org>, iommu@lists.linux.dev
 Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
@@ -47,10 +47,12 @@ Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
         linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
         Jim Quinlan <james.quinlan@broadcom.com>
-Subject: fix the non-coherent coldfire dma_alloc_coherent v2
-Date:   Mon, 16 Oct 2023 07:47:42 +0200
-Message-Id: <20231016054755.915155-1-hch@lst.de>
+Subject: [PATCH 03/12] soc: renesas: ARCH_R9A07G043 depends on !RISCV_ISA_ZICBOM
+Date:   Mon, 16 Oct 2023 07:47:45 +0200
+Message-Id: <20231016054755.915155-4-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20231016054755.915155-1-hch@lst.de>
+References: <20231016054755.915155-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
@@ -58,20 +60,27 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi all,
+ARCH_R9A07G043 has it's own non-standard global pool based DMA coherent
+allocator, which conflicts with the remap based RISCV_ISA_ZICBOM version.
+Add a proper dependency.
 
-this is the next attempt to not return memory that is not DMA coherent
-on coldfire/m68knommu.  The last one needed more fixups in the fec
-driver, which this versions includes.  On top of that I've also added
-a few more cleanups to the core DMA allocation code.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/soc/renesas/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Jim: any work to support the set_uncached and remap method for arm32
-should probably be based on this, and patch 3 should make that
-selection a little easier.
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 880c544bb2dfda..f1696d3b5018d0 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -334,6 +334,7 @@ if RISCV
+ config ARCH_R9A07G043
+ 	bool "RISC-V Platform support for RZ/Five"
+ 	depends on NONPORTABLE
++	depends on !RISCV_ISA_ZICBOM
+ 	select ARCH_RZG2L
+ 	select AX45MP_L2_CACHE
+ 	select DMA_GLOBAL_POOL
+-- 
+2.39.2
 
-Changes since v1:
- - sort out the dependency mess in RISCV
- - don't even built non-coherent DMA support for coldfire cores without
-   data caches
- - apply the fec workarounds to all coldfire platforms with data caches
- - add a trivial cleanup for m68k dma.c
