@@ -2,53 +2,53 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5222DCDB465
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 21:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C65DDCDB474
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 21:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234336AbjJPVpU (ORCPT
+        id S232582AbjJPVpZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Oct 2023 17:45:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42848 "EHLO
+        Mon, 16 Oct 2023 17:45:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234203AbjJPVpD (ORCPT
+        with ESMTP id S234309AbjJPVpF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2023 17:45:03 -0400
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13C9EA;
-        Mon, 16 Oct 2023 14:44:55 -0700 (PDT)
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5812eaed1eeso2558045eaf.0;
-        Mon, 16 Oct 2023 14:44:55 -0700 (PDT)
+        Mon, 16 Oct 2023 17:45:05 -0400
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C61F189;
+        Mon, 16 Oct 2023 14:44:58 -0700 (PDT)
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-581cb88f645so180407eaf.1;
+        Mon, 16 Oct 2023 14:44:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697492694; x=1698097494;
+        d=1e100.net; s=20230601; t=1697492697; x=1698097497;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tgkZY4yEAeEqDfcsSpYD9I+A+ikpbLIHeBQl2vVrEO0=;
-        b=mCNwYzOIu6Phljp5Ioh4YFuolzjg8s679O4oNb9nA5W86wfjXQ+XIJDMTLfqT+rFCj
-         XLhHKJb4zMm0+Os4urnAVlNilH2DOpBVUtWHBUZzjLJWck90j624bkonJEW2Wd2Kk2MB
-         gPh6QEU1j9pfoqwN7dkkgEbAeDL+FcdK3sUv35gq9t0pfZfe8hPdyaOy+0Y+giRGGnJ+
-         gHd5QdqXmw/Uq0E86K7Zv95kODflq+w3QTNyQahzuo1USs1eeuz9pne5Ic+w5pNq2QlC
-         /TM49Y5hh6FQkA1KhXyQLUHmS5nwdYo5qEnSoujpX5GDMR2rkd7t2mSggcwRCuw7bPkk
-         ht5g==
-X-Gm-Message-State: AOJu0YwiX/FYOVKZF2MAQ1Us98VJpJWsARQLtTFL0fwdCnFIbRr8P0PL
-        kvs2e/0HA6r3p/j2DEE1pQ==
-X-Google-Smtp-Source: AGHT+IER0+zM9rQTeSBTpDXhq27aL8B0l2V/HFAOMXgvaN9iR4T6Jv7HeoKsOLVk8pksacBkXQt5/g==
-X-Received: by 2002:a05:6870:858c:b0:1d5:aed5:6579 with SMTP id f12-20020a056870858c00b001d5aed56579mr328754oal.4.1697492694494;
-        Mon, 16 Oct 2023 14:44:54 -0700 (PDT)
+        bh=oSTNCx96ijN7xDd+L1blp4PP7h+p+AqB5mCYZJB4VZ8=;
+        b=vf6m29PJYME4P7l3Q2JgZ1iajOF//5aOpP3BLnjp+ar4iWZAIgYzEV0AtbRDUkUuPf
+         mbf1gPbBtXMyaC435p1V18hMeCBdgkeB7guCWuaMvlgEM5HhXPAXebcXgboNveE8UbxV
+         0pKQkkd0oBu4RIToQkHCnjf15QiAObpD1riV/yt+LcrcU3dKxfJtp+bWmYuqC3c0+gig
+         N5pdiX1TEqE+YWlyr7YVxjhrdWCeLwcLc+2H7x21qXiTKLDzz2f6ZT8C9LmVM/eMNwBv
+         ruqS7cG7YwR78eP1IKYzig5TT4LuwpAG/FpcNc6rRLdWBmxaOADXUKqh/719Y2Q5QN/P
+         9uIg==
+X-Gm-Message-State: AOJu0Yz5sBuDgOHFwXe4i71Hefj7jAaeBHq57vItjBxtSb3oylatr/XU
+        B03ZRhHBpQJnJvakAOuCWA==
+X-Google-Smtp-Source: AGHT+IEVE6nFcat2AUCk/HtDxiQnH8SCWVk1YkotfqbKD8WxuVGs5L+W66rn7BVzGf/8xA7s3Ce/Cw==
+X-Received: by 2002:a4a:d757:0:b0:57b:6a40:8a9e with SMTP id h23-20020a4ad757000000b0057b6a408a9emr284863oot.7.1697492697094;
+        Mon, 16 Oct 2023 14:44:57 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r5-20020a05687032c500b001e5dd8a29c6sm8595oac.29.2023.10.16.14.44.52
+        by smtp.gmail.com with ESMTPSA id r3-20020a4ab503000000b0057ae5a8e9bcsm16111ooo.28.2023.10.16.14.44.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 14:44:53 -0700 (PDT)
-Received: (nullmailer pid 3823224 invoked by uid 1000);
+        Mon, 16 Oct 2023 14:44:56 -0700 (PDT)
+Received: (nullmailer pid 3823212 invoked by uid 1000);
         Mon, 16 Oct 2023 21:44:35 -0000
 From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 16 Oct 2023 16:44:27 -0500
-Subject: [PATCH net-next 8/8] dt-bindings: net: dsa: Drop 'ethernet-ports'
- node properties
+Date:   Mon, 16 Oct 2023 16:44:21 -0500
+Subject: [PATCH net-next 2/8] dt-bindings: net: renesas: Drop ethernet-phy
+ node schema
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231016-dt-net-cleanups-v1-8-a525a090b444@kernel.org>
+Message-Id: <20231016-dt-net-cleanups-v1-2-a525a090b444@kernel.org>
 References: <20231016-dt-net-cleanups-v1-0-a525a090b444@kernel.org>
 In-Reply-To: <20231016-dt-net-cleanups-v1-0-a525a090b444@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
@@ -101,35 +101,46 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Constraints on 'ethernet-ports' node properties are already defined by the
-reference to ethernet-switch.yaml, so they can be dropped from the DSA
-schema.
+What's connected on the MDIO bus is outside the scope of the binding for
+ethernet controller's MDIO bus unless it's a fixed internal device, so
+drop the node name and reference to ethernet-phy.yaml.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/net/dsa/dsa.yaml | 9 ---------
- 1 file changed, 9 deletions(-)
+ Documentation/devicetree/bindings/net/renesas,ether.yaml    | 3 +--
+ Documentation/devicetree/bindings/net/renesas,etheravb.yaml | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/dsa.yaml b/Documentation/devicetree/bindings/net/dsa/dsa.yaml
-index e6010821f86f..6107189d276a 100644
---- a/Documentation/devicetree/bindings/net/dsa/dsa.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/dsa.yaml
-@@ -40,15 +40,6 @@ $defs:
+diff --git a/Documentation/devicetree/bindings/net/renesas,ether.yaml b/Documentation/devicetree/bindings/net/renesas,ether.yaml
+index 06b38c9bc6ec..29355ab98569 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ether.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,ether.yaml
+@@ -81,9 +81,8 @@ properties:
+       active-high
  
-     patternProperties:
-       "^(ethernet-)?ports$":
--        type: object
--        additionalProperties: false
--
--        properties:
--          '#address-cells':
--            const: 1
--          '#size-cells':
--            const: 0
--
-         patternProperties:
-           "^(ethernet-)?port@[0-9a-f]+$":
-             description: Ethernet switch ports
+ patternProperties:
+-  "^ethernet-phy@[0-9a-f]$":
++  "@[0-9a-f]$":
+     type: object
+-    $ref: ethernet-phy.yaml#
+ 
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+index 3f41294f5997..5d074f27d462 100644
+--- a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+@@ -109,9 +109,8 @@ properties:
+     enum: [0, 2000]
+ 
+ patternProperties:
+-  "^ethernet-phy@[0-9a-f]$":
++  "@[0-9a-f]$":
+     type: object
+-    $ref: ethernet-phy.yaml#
+ 
+ required:
+   - compatible
 
 -- 
 2.42.0
