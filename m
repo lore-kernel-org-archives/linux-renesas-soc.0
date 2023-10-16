@@ -2,53 +2,53 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C400FC46CA1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 21:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5222DCDB465
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 21:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234254AbjJPVpF (ORCPT
+        id S234336AbjJPVpU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Oct 2023 17:45:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42740 "EHLO
+        Mon, 16 Oct 2023 17:45:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234208AbjJPVo4 (ORCPT
+        with ESMTP id S234203AbjJPVpD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2023 17:44:56 -0400
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E89A1;
-        Mon, 16 Oct 2023 14:44:52 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3af5b26d599so3734417b6e.2;
-        Mon, 16 Oct 2023 14:44:52 -0700 (PDT)
+        Mon, 16 Oct 2023 17:45:03 -0400
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13C9EA;
+        Mon, 16 Oct 2023 14:44:55 -0700 (PDT)
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5812eaed1eeso2558045eaf.0;
+        Mon, 16 Oct 2023 14:44:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697492692; x=1698097492;
+        d=1e100.net; s=20230601; t=1697492694; x=1698097494;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ht8N98xxNnhr4mxygYrnIRrNI1WvXoWdTJ8XF/XP/F8=;
-        b=k2fkkh6m7QR0l9CiFqQO94c9UzS6Ak9FAXaPo2l/EHXDzV6cIPM6IFQQp/Yf3AoPOx
-         2eSnUi6ogO/4TbfLdbpLTUavGr2dM1gJ7MXX1qILhfaOVoh91PX07Xju+6GjByd/5JA4
-         47qQH/vpsFxTx+eLddtqwBVAevGF0wy5moWHOhwOwYoH1CPZYuOYns+rZJW+Ty0pcTcJ
-         B3RVNs41FqBToZpvPaX+IgDcRMU9X23b5CfeWdrRRAhiTACdRQZJHtMIgQo2R1b+5uKT
-         GlJe/Daho2MPu03g+Tkz95rD39BItjfInQCMeBUZlF5slPT2fPw0ZmJGzxjyFMIUs/M0
-         nQkQ==
-X-Gm-Message-State: AOJu0Ywnpftqg6zVOj7WQipP50RWaw7B3qqGx2XwQKAgdiA5tQcOO212
-        fsFRBFLcUm8rDw7JhSG0GA==
-X-Google-Smtp-Source: AGHT+IGRRlSS/F1kWukUHeHHHZmSLPVKA0n8LTYOyHwpWpjScHo01PEc7nh9ywAQ/bdErdN4oiSVXg==
-X-Received: by 2002:a05:6808:3a82:b0:3ae:1446:d48b with SMTP id fb2-20020a0568083a8200b003ae1446d48bmr592595oib.3.1697492691930;
-        Mon, 16 Oct 2023 14:44:51 -0700 (PDT)
+        bh=tgkZY4yEAeEqDfcsSpYD9I+A+ikpbLIHeBQl2vVrEO0=;
+        b=mCNwYzOIu6Phljp5Ioh4YFuolzjg8s679O4oNb9nA5W86wfjXQ+XIJDMTLfqT+rFCj
+         XLhHKJb4zMm0+Os4urnAVlNilH2DOpBVUtWHBUZzjLJWck90j624bkonJEW2Wd2Kk2MB
+         gPh6QEU1j9pfoqwN7dkkgEbAeDL+FcdK3sUv35gq9t0pfZfe8hPdyaOy+0Y+giRGGnJ+
+         gHd5QdqXmw/Uq0E86K7Zv95kODflq+w3QTNyQahzuo1USs1eeuz9pne5Ic+w5pNq2QlC
+         /TM49Y5hh6FQkA1KhXyQLUHmS5nwdYo5qEnSoujpX5GDMR2rkd7t2mSggcwRCuw7bPkk
+         ht5g==
+X-Gm-Message-State: AOJu0YwiX/FYOVKZF2MAQ1Us98VJpJWsARQLtTFL0fwdCnFIbRr8P0PL
+        kvs2e/0HA6r3p/j2DEE1pQ==
+X-Google-Smtp-Source: AGHT+IER0+zM9rQTeSBTpDXhq27aL8B0l2V/HFAOMXgvaN9iR4T6Jv7HeoKsOLVk8pksacBkXQt5/g==
+X-Received: by 2002:a05:6870:858c:b0:1d5:aed5:6579 with SMTP id f12-20020a056870858c00b001d5aed56579mr328754oal.4.1697492694494;
+        Mon, 16 Oct 2023 14:44:54 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id v11-20020a54448b000000b003af732a2054sm28836oiv.57.2023.10.16.14.44.49
+        by smtp.gmail.com with ESMTPSA id r5-20020a05687032c500b001e5dd8a29c6sm8595oac.29.2023.10.16.14.44.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 14:44:51 -0700 (PDT)
-Received: (nullmailer pid 3823220 invoked by uid 1000);
+        Mon, 16 Oct 2023 14:44:53 -0700 (PDT)
+Received: (nullmailer pid 3823224 invoked by uid 1000);
         Mon, 16 Oct 2023 21:44:35 -0000
 From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 16 Oct 2023 16:44:25 -0500
-Subject: [PATCH net-next 6/8] dt-bindings: net: mscc,vsc7514-switch:
- Clean-up example indentation
+Date:   Mon, 16 Oct 2023 16:44:27 -0500
+Subject: [PATCH net-next 8/8] dt-bindings: net: dsa: Drop 'ethernet-ports'
+ node properties
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231016-dt-net-cleanups-v1-6-a525a090b444@kernel.org>
+Message-Id: <20231016-dt-net-cleanups-v1-8-a525a090b444@kernel.org>
 References: <20231016-dt-net-cleanups-v1-0-a525a090b444@kernel.org>
 In-Reply-To: <20231016-dt-net-cleanups-v1-0-a525a090b444@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
@@ -101,65 +101,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The indentation for the example is completely messed up for
-'ethernet-ports'. Fix it.
+Constraints on 'ethernet-ports' node properties are already defined by the
+reference to ethernet-switch.yaml, so they can be dropped from the DSA
+schema.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/net/mscc,vsc7514-switch.yaml          | 32 +++++++++++-----------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ Documentation/devicetree/bindings/net/dsa/dsa.yaml | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml b/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-index 8ee2c7d7ff42..07de52a3a295 100644
---- a/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-+++ b/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-@@ -185,7 +185,7 @@ examples:
-     };
-   # VSC7512 (DSA)
-   - |
--    ethernet-switch@1{
-+    ethernet-switch@1 {
-       compatible = "mscc,vsc7512-switch";
-       reg = <0x71010000 0x10000>,
-             <0x71030000 0x10000>,
-@@ -212,22 +212,22 @@ examples:
-             "port7", "port8", "port9", "port10", "qsys",
-             "ana", "s0", "s1", "s2";
+diff --git a/Documentation/devicetree/bindings/net/dsa/dsa.yaml b/Documentation/devicetree/bindings/net/dsa/dsa.yaml
+index e6010821f86f..6107189d276a 100644
+--- a/Documentation/devicetree/bindings/net/dsa/dsa.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/dsa.yaml
+@@ -40,15 +40,6 @@ $defs:
  
--            ethernet-ports {
--            #address-cells = <1>;
--            #size-cells = <0>;
+     patternProperties:
+       "^(ethernet-)?ports$":
+-        type: object
+-        additionalProperties: false
 -
--           port@0 {
--            reg = <0>;
--            ethernet = <&mac_sw>;
--            phy-handle = <&phy0>;
--            phy-mode = "internal";
--          };
--          port@1 {
--            reg = <1>;
--            phy-handle = <&phy1>;
--            phy-mode = "internal";
--          };
-+      ethernet-ports {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        port@0 {
-+          reg = <0>;
-+          ethernet = <&mac_sw>;
-+          phy-handle = <&phy0>;
-+          phy-mode = "internal";
-+        };
-+        port@1 {
-+          reg = <1>;
-+          phy-handle = <&phy1>;
-+          phy-mode = "internal";
-         };
-       };
-+    };
- 
- ...
+-        properties:
+-          '#address-cells':
+-            const: 1
+-          '#size-cells':
+-            const: 0
+-
+         patternProperties:
+           "^(ethernet-)?port@[0-9a-f]+$":
+             description: Ethernet switch ports
 
 -- 
 2.42.0
