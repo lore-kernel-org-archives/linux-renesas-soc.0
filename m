@@ -2,125 +2,327 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A46C46CA1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 05:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1B6C41513
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 06:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229686AbjJPFsq (ORCPT
+        id S231617AbjJPGRD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Oct 2023 01:48:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57520 "EHLO
+        Mon, 16 Oct 2023 02:17:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231783AbjJPFsn (ORCPT
+        with ESMTP id S230479AbjJPGRC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2023 01:48:43 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B222F7;
-        Sun, 15 Oct 2023 22:48:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Y9DUw/dY172Zls+LRmOYmL30GnIrMabtQP9ggTJL0d8=; b=RE1OhfRU8CYhr7JH6VVDgiplTC
-        gjX3zJyGEe0eyRXQO2v84UfNP9kxd+gvBYj5cYvHZT5Hb+C2bWuiL0Eq5T/MRz9Z1X20ZWW/Rj0GD
-        ffAoypglXTNsoXYikcZIoJIoBCqHijes44y3x10ny1i8ygX5UJPTC/XbxlsGIHa+AQ1fZlD73wnj4
-        fB7uqpCtygxiNMPuHVhF0NHZwH5r9ICNexDt6VFaWcV0KKrhy/Or1+JbMw3ms9w8qvyUOKCKicOc8
-        gHFF2aJrnlt1sG87jjJdVY2r7Y4x2GdxUDJ70y/AMRNQWEmzwWa7kZpPe3qLM9E60mv5FbBsQF1vv
-        5gp46UxA==;
-Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qsGSo-008Qyh-10;
-        Mon, 16 Oct 2023 05:48:26 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Greg Ungerer <gerg@linux-m68k.org>, iommu@lists.linux.dev
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Conor Dooley <conor@kernel.org>,
+        Mon, 16 Oct 2023 02:17:02 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F736E1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Oct 2023 23:16:59 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9bf86b77a2aso166748766b.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Oct 2023 23:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697437018; x=1698041818; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmF5+yStHKKyV0l0IYYnGUX1bf/bvuE2VGird9kSXYY=;
+        b=LfOO4QgwUVndQRyBa6FMS6AOoswCmmNb/p4TiCrF0HcMdL2l2b8lGxgXKznWZUM3bZ
+         defJsQm1MksmxGE/AbUrLm0UcViJSfxBn2Ki2ruPbG+iFi8zRxrt5IH3tJvRBOYCP6WM
+         GS8STZjsmsqCs3sjbcbVlQ3vBBMj570hcV7/KEQuslayh2b+Ma/FDJggNwHNkla8f6Qu
+         eukijTQtenZZ7PyvTGhSUOAv3Ux/RKC4Kg40zdntZ6HzHHIUmiIdfJKZ8D1g7MskLCB0
+         F5VyY8Mz5+Q7j4qaDsvvgpPfqOvvuLgW897YCPcfuEZeqzgZZ25sFmGxhX8oSy7GeOci
+         dj+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697437018; x=1698041818;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rmF5+yStHKKyV0l0IYYnGUX1bf/bvuE2VGird9kSXYY=;
+        b=dVFoHLCx0XAx/BwQPimCC+bWatnyVzNBEwbCFqAmslX3n7T+Vn+RfUTOD/yej1c7u9
+         N2cI+J7a32naqDCi9Yg64VihglirXELz9/Hr0YWCCGTWL/uEsVoaxXUeLW3t5Zr5K2am
+         vP7DMa84MYUr4tzbmGAIcIxuf+e0iOVi+fHSL3rKCiL9ezVOLaSX3HguJvkGFhZbC0zx
+         h2m6t/GTCt6VqXxEEvJC1tnUzLu06neHL2s6YT7e0BEfHyfwlYooOVL8fuvGKQvynJsT
+         TC+ipWf31ywYGZeot4t8p2BZAmA3ISUL2rcl/XHIq1mA4Nl9mbflp1fKhFm5u+pbSui7
+         tPOA==
+X-Gm-Message-State: AOJu0YyojMkZvGEKWxAvfK98mKOlrWfQbor3ptKf8sVCtNVK9tHDrt2G
+        2DDymomxB3ha5n59WHIkaSgn0g==
+X-Google-Smtp-Source: AGHT+IHe5cIN5p6XbzVxAOUtSUAiESZxqFtes9yfDKxd+6qrsRtc0sPgEXvxqQS0q6JeXxxDJNhLZg==
+X-Received: by 2002:a17:906:3156:b0:9b2:b71f:83be with SMTP id e22-20020a170906315600b009b2b71f83bemr27707553eje.1.1697437017808;
+        Sun, 15 Oct 2023 23:16:57 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.154])
+        by smtp.gmail.com with ESMTPSA id rh14-20020a17090720ee00b009b947f81c4asm3318895ejb.155.2023.10.15.23.16.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Oct 2023 23:16:57 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wei Fang <wei.fang@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
-        Jim Quinlan <james.quinlan@broadcom.com>
-Subject: [PATCH 11/12] m68k: don't provide arch_dma_alloc for nommu/coldfire
-Date:   Mon, 16 Oct 2023 07:47:53 +0200
-Message-Id: <20231016054755.915155-12-hch@lst.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231016054755.915155-1-hch@lst.de>
-References: <20231016054755.915155-1-hch@lst.de>
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: serial: re-order entries to match coding convention
+Date:   Mon, 16 Oct 2023 08:16:54 +0200
+Message-Id: <20231016061654.22267-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Coldfire cores configured with a data cache can't provide coherent
-DMA allocations at all.
+The DT schema coding convetion express in
+Documentation/devicetree/bindings/example-schema.yaml expects entries in
+following order:
+ - properties, patternProperties
+ - required
+ - if blocks, allOf with if-blocks
+ - additionalProperties/unevaluatedProperties
 
-Instead of returning non-coherent kernel memory in this case,
-return NULL and fail the allocation.
+Re-order few schemas to match the convention to avoid repeating reviews
+for new patches using existing code as template.  No functional changes.
 
-The only driver that used to rely on the previous behavior (fec) has
-been switched to use non-coherent allocations for this case recently.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/m68k/Kconfig      |  1 -
- arch/m68k/kernel/dma.c | 23 -----------------------
- 2 files changed, 24 deletions(-)
+ .../bindings/serial/nvidia,tegra20-hsuart.yaml   | 10 +++++-----
+ .../bindings/serial/qcom,msm-uart.yaml           |  4 ++--
+ .../bindings/serial/qcom,msm-uartdm.yaml         |  4 ++--
+ .../bindings/serial/renesas,em-uart.yaml         | 14 +++++++-------
+ .../bindings/serial/renesas,hscif.yaml           |  4 ++--
+ .../bindings/serial/renesas,scifa.yaml           |  4 ++--
+ .../bindings/serial/renesas,scifb.yaml           |  4 ++--
+ .../devicetree/bindings/serial/samsung_uart.yaml |  4 ++--
+ .../devicetree/bindings/serial/serial.yaml       | 16 ++++++++--------
+ 9 files changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 6c585eae89f4dc..c1c0faffb0d413 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -3,7 +3,6 @@ config M68K
- 	bool
- 	default y
- 	select ARCH_32BIT_OFF_T
--	select ARCH_DMA_ALLOC if M68K_NONCOHERENT_DMA && COLDFIRE
- 	select ARCH_HAS_BINFMT_FLAT
- 	select ARCH_HAS_CPU_FINALIZE_INIT if MMU
- 	select ARCH_HAS_CURRENT_STACK_POINTER
-diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
-index f83870cfa79b37..eef63d032abb53 100644
---- a/arch/m68k/kernel/dma.c
-+++ b/arch/m68k/kernel/dma.c
-@@ -33,29 +33,6 @@ pgprot_t pgprot_dmacoherent(pgprot_t prot)
- 	}
- 	return prot;
- }
--#else
--void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
--		gfp_t gfp, unsigned long attrs)
--{
--	void *ret;
--
--	if (dev == NULL || (*dev->dma_mask < 0xffffffff))
--		gfp |= GFP_DMA;
--	ret = (void *)__get_free_pages(gfp, get_order(size));
--
--	if (ret != NULL) {
--		memset(ret, 0, size);
--		*dma_handle = virt_to_phys(ret);
--	}
--	return ret;
--}
--
--void arch_dma_free(struct device *dev, size_t size, void *vaddr,
--		dma_addr_t dma_handle, unsigned long attrs)
--{
--	free_pages((unsigned long)vaddr, get_order(size));
--}
--
- #endif /* CONFIG_MMU && !CONFIG_COLDFIRE */
+diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+index 04d55fecf47c..a5d67563cd53 100644
+--- a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
++++ b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+@@ -91,11 +91,6 @@ properties:
+         - description: range upper bound
+         - description: adjustment (in permyriad, i.e. 0.01%)
  
- void arch_sync_dma_for_device(phys_addr_t handle, size_t size,
+-allOf:
+-  - $ref: serial.yaml
+-
+-unevaluatedProperties: false
+-
+ required:
+   - compatible
+   - reg
+@@ -106,6 +101,11 @@ required:
+   - dmas
+   - dma-names
+ 
++allOf:
++  - $ref: serial.yaml
++
++unevaluatedProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/tegra30-car.h>
+diff --git a/Documentation/devicetree/bindings/serial/qcom,msm-uart.yaml b/Documentation/devicetree/bindings/serial/qcom,msm-uart.yaml
+index a052aaef21f4..ea6abfe2d95e 100644
+--- a/Documentation/devicetree/bindings/serial/qcom,msm-uart.yaml
++++ b/Documentation/devicetree/bindings/serial/qcom,msm-uart.yaml
+@@ -40,11 +40,11 @@ required:
+   - interrupts
+   - reg
+ 
+-unevaluatedProperties: false
+-
+ allOf:
+   - $ref: /schemas/serial/serial.yaml#
+ 
++unevaluatedProperties: false
++
+ examples:
+   - |
+     serial@a9c00000 {
+diff --git a/Documentation/devicetree/bindings/serial/qcom,msm-uartdm.yaml b/Documentation/devicetree/bindings/serial/qcom,msm-uartdm.yaml
+index 484b9a51f6a9..ee52bf8e8917 100644
+--- a/Documentation/devicetree/bindings/serial/qcom,msm-uartdm.yaml
++++ b/Documentation/devicetree/bindings/serial/qcom,msm-uartdm.yaml
+@@ -78,8 +78,6 @@ required:
+   - interrupts
+   - reg
+ 
+-unevaluatedProperties: false
+-
+ allOf:
+   - $ref: /schemas/serial/serial.yaml#
+ 
+@@ -97,6 +95,8 @@ allOf:
+         reg:
+           maxItems: 1
+ 
++unevaluatedProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/serial/renesas,em-uart.yaml b/Documentation/devicetree/bindings/serial/renesas,em-uart.yaml
+index 3fc2601f1338..89f1eb0f2c5a 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,em-uart.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,em-uart.yaml
+@@ -38,6 +38,13 @@ properties:
+       - const: sclk
+       - const: pclk
+ 
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
+ allOf:
+   - $ref: serial.yaml#
+ 
+@@ -53,13 +60,6 @@ allOf:
+         clock-names:
+           minItems: 2
+ 
+-required:
+-  - compatible
+-  - reg
+-  - interrupts
+-  - clocks
+-  - clock-names
+-
+ unevaluatedProperties: false
+ 
+ examples:
+diff --git a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
+index 1c7f1276aed6..2046e2dc0a3d 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
+@@ -111,8 +111,6 @@ required:
+   - clock-names
+   - power-domains
+ 
+-unevaluatedProperties: false
+-
+ if:
+   properties:
+     compatible:
+@@ -125,6 +123,8 @@ then:
+   required:
+     - resets
+ 
++unevaluatedProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+diff --git a/Documentation/devicetree/bindings/serial/renesas,scifa.yaml b/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
+index 499507678cdf..c98657cf4666 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
+@@ -77,8 +77,6 @@ required:
+   - clock-names
+   - power-domains
+ 
+-unevaluatedProperties: false
+-
+ if:
+   properties:
+     compatible:
+@@ -89,6 +87,8 @@ then:
+   required:
+     - resets
+ 
++unevaluatedProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/r8a7790-cpg-mssr.h>
+diff --git a/Documentation/devicetree/bindings/serial/renesas,scifb.yaml b/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
+index 810d8a991fdd..fb695b3111ac 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
+@@ -77,8 +77,6 @@ required:
+   - clock-names
+   - power-domains
+ 
+-unevaluatedProperties: false
+-
+ if:
+   properties:
+     compatible:
+@@ -89,6 +87,8 @@ then:
+   required:
+     - resets
+ 
++unevaluatedProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/r8a7740-clock.h>
+diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+index 8bd88d5cbb11..aecb6761b49c 100644
+--- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
++++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+@@ -86,8 +86,6 @@ required:
+   - interrupts
+   - reg
+ 
+-unevaluatedProperties: false
+-
+ allOf:
+   - $ref: serial.yaml#
+ 
+@@ -128,6 +126,8 @@ allOf:
+             - const: uart
+             - const: clk_uart_baud0
+ 
++unevaluatedProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
+diff --git a/Documentation/devicetree/bindings/serial/serial.yaml b/Documentation/devicetree/bindings/serial/serial.yaml
+index 468af429c3e6..65804ca274ae 100644
+--- a/Documentation/devicetree/bindings/serial/serial.yaml
++++ b/Documentation/devicetree/bindings/serial/serial.yaml
+@@ -87,14 +87,6 @@ properties:
+     description:
+       TX FIFO threshold configuration (in bytes).
+ 
+-if:
+-  required:
+-    - uart-has-rtscts
+-then:
+-  properties:
+-    cts-gpios: false
+-    rts-gpios: false
+-
+ patternProperties:
+   "^(bluetooth|bluetooth-gnss|gnss|gps|mcu)$":
+     if:
+@@ -136,6 +128,14 @@ patternProperties:
+       required:
+         - compatible
+ 
++if:
++  required:
++    - uart-has-rtscts
++then:
++  properties:
++    cts-gpios: false
++    rts-gpios: false
++
+ additionalProperties: true
+ 
+ examples:
 -- 
-2.39.2
+2.34.1
 
