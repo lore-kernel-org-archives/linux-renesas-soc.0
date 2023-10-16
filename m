@@ -2,131 +2,95 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D288CDB474
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 21:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6900BCDB465
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 21:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234153AbjJPVpg (ORCPT
+        id S232615AbjJPVsi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Oct 2023 17:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54722 "EHLO
+        Mon, 16 Oct 2023 17:48:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234333AbjJPVpI (ORCPT
+        with ESMTP id S233975AbjJPVsh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2023 17:45:08 -0400
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD9CE1A8;
-        Mon, 16 Oct 2023 14:45:00 -0700 (PDT)
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-1e98e97c824so3068493fac.1;
-        Mon, 16 Oct 2023 14:45:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697492699; x=1698097499;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YU8u+sBPim2K3r5DGxEa61RapakHy3YnHZgIMLk+JTo=;
-        b=dCk4RORZWvICahYV8BhjukWwy0koq9FNNpKIz1ICfogDHD57gr2TCz8ue/1agVCvwB
-         9+TkA9dBWit+SW1JMoEDiwHIF7Duu7OG3uE346DyD8X476d1b5IREsKBna65N2AYfccN
-         GuMoAELOjrX63jKG1ycJmZA9EBb8KFdW8bwKSZNOCnlZ72jWRBgYMAiiSCN7iUipf2DS
-         5gcpGKnsWvE6VKsPGDRxGEQnPKhJWGHks5cIxOjJKjVcokGf6eE03ilfX+KMK3SBPVch
-         k1S9HX6crgb0JqZl58Im99wz4cqWrFbjc2hEh+UPnohXFG57frPuOyilcLWh9RnZPjhN
-         ulYw==
-X-Gm-Message-State: AOJu0YwIk+7KLYIpAL327EOzwGWPF1X5nMmgp38MczQvnLZKYTZgwgub
-        nCUXk8K3LK77uboijRcG7w==
-X-Google-Smtp-Source: AGHT+IHVJZSvo9G+71y8WVX1VKgCtT5MDvO9YigKl0mCdN/122ZVPZKl1yBarH7bSgYTtsYqwjxrTA==
-X-Received: by 2002:a05:6870:310f:b0:1e9:a85a:9ec0 with SMTP id v15-20020a056870310f00b001e9a85a9ec0mr40962oaa.0.1697492699637;
-        Mon, 16 Oct 2023 14:44:59 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id g9-20020a9d5f89000000b006bdcef91e61sm29973oti.17.2023.10.16.14.44.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 14:44:58 -0700 (PDT)
-Received: (nullmailer pid 3823218 invoked by uid 1000);
-        Mon, 16 Oct 2023 21:44:35 -0000
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 16 Oct 2023 16:44:24 -0500
-Subject: [PATCH net-next 5/8] dt-bindings: net: ethernet-switch: Rename
- $defs "base" to 'ethernet-ports'
+        Mon, 16 Oct 2023 17:48:37 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4DEEB;
+        Mon, 16 Oct 2023 14:48:28 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4BCC433CA;
+        Mon, 16 Oct 2023 21:48:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697492908;
+        bh=xmUchrdBa511fTg4ejYwrhmgta3bscCkkCA28jOMO24=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=b+ric6N2xWGyn2oE1pzkDnM6Olyd8pkRLzilhqgqOGJ+pMCuBul4DZyF9Qt0crYHA
+         OVG0jepWdGVMNwwQSXsOrgnBMzFBQAta7dLTHKpKRrMclcdpC8pXLtQGWHlpsKL08z
+         bQVgOiudY5oukcP34Eegb2i1nol/OlUWhW40erTabV0gyi2uYTSjCN5XMyK2XGoJEi
+         H9LrACaA/R1aWC3g7amFAz6SIdynX38NicjmJc78d5r5pNOFM7L6a3zEeQ26umSn7t
+         PYa/Rs6JYFWW/wKp0d9qzUKGLArEheyZVgNcuR+ov91o7vbULlyQCFqpxM+faLrvI8
+         RX6NlR1AxOXGQ==
+Date:   Mon, 16 Oct 2023 16:48:26 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, mani@kernel.org,
+        marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Ravi Gunasekaran <r-gunasekaran@ti.com>,
+        Sriramakrishnan <srk@ti.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v24 08/16] PCI: dwc: Disable two BARs to avoid
+ unnecessary memory assignment
+Message-ID: <20231016214826.GA1226689@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231016-dt-net-cleanups-v1-5-a525a090b444@kernel.org>
-References: <20231016-dt-net-cleanups-v1-0-a525a090b444@kernel.org>
-In-Reply-To: <20231016-dt-net-cleanups-v1-0-a525a090b444@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-        =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        =?UTF-8?B?bsOnIMOcTkFM?= <arinc.unal@arinc9.com>,
-        Landen Chao <Landen.Chao@mediatek.com>,
-        DENG Qingfang <dqfext@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        John Crispin <john@phrozen.org>,
-        Gerhard Engleder <gerhard@engleder-embedded.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Justin Chen <justin.chen@broadcom.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-X-Mailer: b4 0.13-dev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231011071423.249458-9-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The name "base" is misleading as the definition is for a complete schema
-definition without additional properties allowed, not a "base class".
-Align the same to be the same as dsa.yaml. This schema file without any
-json pointer path is the base schema which can be extended.
+[+cc Siddharth, Ravi, Sriramakrishnan]
 
-There are not yet any references to $defs/base to update.
+On Wed, Oct 11, 2023 at 04:14:15PM +0900, Yoshihiro Shimoda wrote:
+> According to the section 3.5.7.2 "RC Mode" in DWC PCIe Dual Mode
+> Rev.5.20a, we should disable two BARs to avoid unnecessary memory
+> assignment during device enumeration. Otherwise, Renesas R-Car Gen4
+> PCIe controllers cannot work correctly in host mode.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index a7170fd0e847..56cc7ff6d508 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -737,6 +737,14 @@ int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
+>  	u32 val, ctrl, num_ctrls;
+>  	int ret;
+>  
+> +	/*
+> +	 * According to the section 3.5.7.2 "RC Mode" in DWC PCIe Dual Mode
+> +	 * Rev.5.20a, we should disable two BARs to avoid unnecessary memory
+> +	 * assignment during device enumeration.
+> +	 */
+> +	dw_pcie_writel_dbi2(pci, PCI_BASE_ADDRESS_0, 0x0);
+> +	dw_pcie_writel_dbi2(pci, PCI_BASE_ADDRESS_1, 0x0);
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/net/ethernet-switch.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I cc'd Siddharth and others because they are working on a Keystone
+issue with MSI-X that requires BAR0; see
+https://lore.kernel.org/r/20231011123451.34827-1-s-vadapalli@ti.com 
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet-switch.yaml b/Documentation/devicetree/bindings/net/ethernet-switch.yaml
-index 688938c2e261..72ac67ca3415 100644
---- a/Documentation/devicetree/bindings/net/ethernet-switch.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-switch.yaml
-@@ -53,7 +53,7 @@ oneOf:
- additionalProperties: true
- 
- $defs:
--  base:
-+  ethernet-ports:
-     description: An ethernet switch without any extra port properties
-     $ref: '#'
- 
+I assume any DWC controller that uses MSI-X would require BAR0 or BAR1
+for the MSI-X Table.
 
--- 
-2.42.0
+I don't have any of the DWC specs and don't know whether any
+controllers use MSI-X, so just heads up in case they do.  This patch
+was recently merged and will appear in v6.7.
 
+Bjorn
