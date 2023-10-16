@@ -2,89 +2,112 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F45CDB47E
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Oct 2023 12:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04DBCDB474
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Oct 2023 05:48:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbjJOMWx (ORCPT
+        id S231561AbjJPFsP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 15 Oct 2023 08:22:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52884 "EHLO
+        Mon, 16 Oct 2023 01:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjJOMWx (ORCPT
+        with ESMTP id S229686AbjJPFsO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 15 Oct 2023 08:22:53 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB93A9
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Oct 2023 05:22:52 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35753C433C8;
-        Sun, 15 Oct 2023 12:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697372571;
-        bh=Vq1x8fNAr/F5R14kzqqNRk9z6bIRBIK9ilwYC/Yu/n8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KUUIcofa5nhhHisGxJQ1HY7JhZZ8wEN/koWoaRST6AsmY13ju+N3Uih7pphdxf8Ck
-         TfP3h7NaqakIsIVlHTC3Aw34UuX0iPjcL0Jw7c3sceNbf7qfUEOAH+3NHz5bAS2T8n
-         1HYGpgModnd2INeLjnamqfCSqa+jhfmJ4khpqgWEQepmUjiOHlsUjGSl0p/+GvbIqk
-         fLjfVlEKB+zrMui7gpV13nIlDPisHHFYZ2lTkkrCFLmLuZOvIn3ibiR52HXfATT3V1
-         IyDF3p/GtG1qSC3/GEfiE/qoD0mzPDEGbedNFcgfyq3Jyxgj9AUl9OD+Hidw7pG07J
-         Q2QkkavLa0bZA==
-From:   Conor Dooley <conor@kernel.org>
-To:     linux-riscv@lists.indradead.org,
-        Conor Dooley <conor.dooley@microchip.com>
-Cc:     conor@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+        Mon, 16 Oct 2023 01:48:14 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921C7F4;
+        Sun, 15 Oct 2023 22:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=WUNnW2AzudcNr4qo2U1qAYpqA55+BUJ9igvSrFrJsk0=; b=k9gRQmW3KX85+dvAm7SRblzVlF
+        8yt/+UihM/RmRRmyHk7PBZmtccb2GrfmrT5QymkNnPZTjG6GkUfDtN/+PBwoFbAtc2nTHA1LofGoZ
+        kh1TQEbcNuFER0Y9kUOxeWC1WE5P4Py6NxanrNWyKv0AR3+Udgz+XfDE9DFlZ/B2w/2c8KMYbxZma
+        RpSFh2lh7P5O/gyf+225JI9+v+QQ0TJkz/9EKr3Bjh0UTx8crzMs8TqaTNr2h9IQ5h0U1knAU9VWB
+        CUnV+4VVZ0xZgseUkikX2np0Wpg+R+/8MsNZAeJDEXqdinkkQKFYAh7i+HIfcbEsQgHcg3oI1I1qA
+        FdymHa9g==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qsGSP-008QfY-1h;
+        Mon, 16 Oct 2023 05:48:01 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Greg Ungerer <gerg@linux-m68k.org>, iommu@lists.linux.dev
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
+        Conor Dooley <conor@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-        Chen Wang <unicorn_wang@outlook.com>,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-renesas-soc@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 0/6] riscv,isa-extensions additions
-Date:   Sun, 15 Oct 2023 13:22:02 +0100
-Message-Id: <20231015-qualifier-campus-97bf09059d51@spud>
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wei Fang <wei.fang@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        Jim Quinlan <james.quinlan@broadcom.com>
+Subject: [PATCH 01/12] riscv: RISCV_NONSTANDARD_CACHE_OPS shouldn't depend on RISCV_DMA_NONCOHERENT
+Date:   Mon, 16 Oct 2023 07:47:43 +0200
+Message-Id: <20231016054755.915155-2-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231009-approve-verbalize-ce9324858e76@wendy>
-References: <20231009-approve-verbalize-ce9324858e76@wendy>
+In-Reply-To: <20231016054755.915155-1-hch@lst.de>
+References: <20231016054755.915155-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=870; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=JxLsg/nX2rHAa/nDvg2BonZ/j7ra8ax29aRGRmkFUGU=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDKnaN9MXZh9OfZttW3bgD9O9h39Tj8kd+3X1nVVa3eZTJ Yyh/zXzOkpZGMQ4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRacwM/93VTu1Mu3pe8cfd nZ0eCnMezgzT645bJ35u6ZRQL6/Pi0IYGVbu/cq9Z+JE6QsdR6fxuVx5UaU/rTfZWmCVugDX7tA 3fOwA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+RISCV_NONSTANDARD_CACHE_OPS is also used for the pmem cache maintenance
+helpers, which are built into the kernel unconditionally.
 
-On Mon, 09 Oct 2023 10:37:44 +0100, Conor Dooley wrote:
-> Now with the RFC tag dropped. There are no changes here from "RFC v2",
-> other than the addition of tags that were provided along the way. I have
-> not added "Zfh" to the T-Head based stuff, as I can't actually read the
-> documentation that would show that they're encoding-for-encoding
-> compatible with the standard extension, since it is apparently only in
-> Chinese.
-> 
-> [...]
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/riscv/Kconfig          | 1 -
+ drivers/cache/Kconfig       | 2 +-
+ drivers/soc/renesas/Kconfig | 2 +-
+ 3 files changed, 2 insertions(+), 3 deletions(-)
 
-The first 3 applied to riscv-dt-for-next, I expect the rest to go via
-their respective platform maintainers.
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index d607ab0f7c6daf..0ac0b538379718 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -277,7 +277,6 @@ config RISCV_DMA_NONCOHERENT
+ 
+ config RISCV_NONSTANDARD_CACHE_OPS
+ 	bool
+-	depends on RISCV_DMA_NONCOHERENT
+ 	help
+ 	  This enables function pointer support for non-standard noncoherent
+ 	  systems to handle cache management.
+diff --git a/drivers/cache/Kconfig b/drivers/cache/Kconfig
+index a57677f908f3ba..d6e5e3abaad8af 100644
+--- a/drivers/cache/Kconfig
++++ b/drivers/cache/Kconfig
+@@ -3,7 +3,7 @@ menu "Cache Drivers"
+ 
+ config AX45MP_L2_CACHE
+ 	bool "Andes Technology AX45MP L2 Cache controller"
+-	depends on RISCV_DMA_NONCOHERENT
++	depends on RISCV
+ 	select RISCV_NONSTANDARD_CACHE_OPS
+ 	help
+ 	  Support for the L2 cache controller on Andes Technology AX45MP platforms.
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 12040ce116a551..880c544bb2dfda 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -335,7 +335,7 @@ config ARCH_R9A07G043
+ 	bool "RISC-V Platform support for RZ/Five"
+ 	depends on NONPORTABLE
+ 	select ARCH_RZG2L
+-	select AX45MP_L2_CACHE if RISCV_DMA_NONCOHERENT
++	select AX45MP_L2_CACHE
+ 	select DMA_GLOBAL_POOL
+ 	select ERRATA_ANDES if RISCV_SBI
+ 	select ERRATA_ANDES_CMO if ERRATA_ANDES
+-- 
+2.39.2
 
-[1/6] riscv: dts: microchip: convert isa detection to new properties
-      https://git.kernel.org/conor/c/561add0da6d3
-[2/6] riscv: dts: sifive: convert isa detection to new properties
-      https://git.kernel.org/conor/c/a54f42722e49
-[3/6] riscv: dts: starfive: convert isa detection to new properties
-      https://git.kernel.org/conor/c/81b5948cf1a7
-
-Thanks,
-Conor.
