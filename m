@@ -2,160 +2,125 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1071CDB482
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Oct 2023 07:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2565FCDB47E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Oct 2023 08:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344584AbjJRHFC convert rfc822-to-8bit (ORCPT
+        id S229615AbjJRIxR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Oct 2023 03:05:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54892 "EHLO
+        Wed, 18 Oct 2023 04:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344581AbjJRHFC (ORCPT
+        with ESMTP id S229453AbjJRIxQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2023 03:05:02 -0400
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D11B0;
-        Wed, 18 Oct 2023 00:04:59 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-5a2536adaf3so87836327b3.2;
-        Wed, 18 Oct 2023 00:04:59 -0700 (PDT)
+        Wed, 18 Oct 2023 04:53:16 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E04106
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Oct 2023 01:53:14 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-59e88a28b98so57513717b3.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Oct 2023 01:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697619193; x=1698223993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nIfc9x+57+MR4MQsFxr/3D1qUh4GWaKbi6uC5iQj2KM=;
+        b=A/Pk8h49ehZ29O0w0iKml7ynBA8zowwZ5tmiz45VAgsXWt7kmtGmzeQLBfhkHzocYl
+         Krfv2TOEq2SVD/VItz5ABk6HxJbMYAFmI5NgVtu8e2f9RgaU5s7jlgzu9SMwYQOLxWAS
+         qZxzejJDGQAomxCUjC+c/WlbPPjnrnBX9GwoRbM0oRAzJYgoKmhIJ/edzmtE4aYiUWgl
+         FAp+pMvng8pSd6SIYe2AueMxTEYhSOyi3nXpbYUix38ROoX4JexPwxOnk1JP7IFWHIgT
+         BTeuw3dZ3A3PBzYvmuDC/Z0RgtQOnTttCGN9mrOb+G7+VBRzuMmpanNXn+LX/K05Tsbc
+         2hZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697612698; x=1698217498;
+        d=1e100.net; s=20230601; t=1697619193; x=1698223993;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ehq7lt09mwOzTppGLck+YyAM10dg6P1xZomRPZqI724=;
-        b=HjPf/v4kfJMOEAb6YAiEuFvS8GPxZ0b0IR3pIsVtQW8lXwT1WboJ8KJrHSe2Z/3fs8
-         dtcowqfMKf4lmSCSwRqsRvx68VFr+VdeWs+TZwY9HTrs3ZKJz8+RKWHFNXeyrxwl4rB7
-         AQDwzqw+nMLTSMTHXG9Rv4nJwKBDdN1RYTqVkhUrpo3/ZGizdscbJss02O9wAoRi1/13
-         jS4LE+ocPcOrpQgkZsggGw+TRri4AxyEfIT2teKj9soBynWVgkdI2e8OOiIjZ4lMnitn
-         4v+vmSSCYVK09WYZtTgOALu9e1maOuCJdAc+vaXTuQujxz1jAz8n0tQS9lyFghwjdqwS
-         cUmw==
-X-Gm-Message-State: AOJu0YwLg9pZt3LazMF5xVhYrzT8ORY4rpmjUMO4YwY8YH0S5rYMBDOs
-        LlgbMdo+5Zg6hF2R06nkDqjjLzv7nIDjRQ==
-X-Google-Smtp-Source: AGHT+IF6u8W8Oksz2vO6EhNr4pbMKHdcWbQZBvtnHLYHWwv0nz3X6t1YGbHsPg6SN7NBaZ27P8TY4A==
-X-Received: by 2002:a81:8407:0:b0:5a7:a81d:e410 with SMTP id u7-20020a818407000000b005a7a81de410mr5004991ywf.18.1697612698487;
-        Wed, 18 Oct 2023 00:04:58 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id i20-20020a81d514000000b00583b144fe51sm1262906ywj.118.2023.10.18.00.04.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Oct 2023 00:04:57 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-d9a64ca9cedso6629977276.1;
-        Wed, 18 Oct 2023 00:04:57 -0700 (PDT)
-X-Received: by 2002:a25:19d7:0:b0:d9a:618a:d727 with SMTP id
- 206-20020a2519d7000000b00d9a618ad727mr3996335ybz.41.1697612697358; Wed, 18
- Oct 2023 00:04:57 -0700 (PDT)
+        bh=nIfc9x+57+MR4MQsFxr/3D1qUh4GWaKbi6uC5iQj2KM=;
+        b=aRsqPMjCA7qaLnUmFWo5cg6E0TA3LLZgqaUB0ScxtIdndElr0UO1A2JUBMi+nklBAP
+         zRxpoFyUTtA78L/ukolB3cw7pasnoAbzRmxxA1rbBA8YpBsqOBxH2VvrQrIvGJp5ZX/s
+         3AcPnhw+1gP5vF2TucTfhTtX25MBmViIo+Zq5ZbGN5BEiCtyxNJxElWyxKQEQYbiET8q
+         /ZRuuuT/Xig6TKlRrM7dRB6C8oJaK8JuV3VQi5Vtx1jMIlmbI6Cvgm5eRFI3tokIsSNa
+         F9yIM+rhziu68AJu0dD5he7kPgRoDj4jva+B4INel5eEVax2iMTejl//TAzB+8JrPVG8
+         18KA==
+X-Gm-Message-State: AOJu0Yyx19Fy7MV9KXJrAwljZa5RW7n/ucuKTEqhVavYua3mma/F459i
+        kntfb0w4dLR5Vt7AhoUmkZ6DZ5D2u1vRtlmneKRsoA==
+X-Google-Smtp-Source: AGHT+IFeFSERqZ0ts/x8xJld6sINEyqZb9YdNFdgX/IXWU45eqvj1p1KrrBezJyPl0/qLY0DPRMIhme6p1Fr7jMtf+o=
+X-Received: by 2002:a05:690c:ed1:b0:5a7:cb5f:ee0a with SMTP id
+ cs17-20020a05690c0ed100b005a7cb5fee0amr4033573ywb.17.1697619193088; Wed, 18
+ Oct 2023 01:53:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230818075600.24277-1-biju.das.jz@bp.renesas.com>
- <20230818075600.24277-2-biju.das.jz@bp.renesas.com> <5e0d2716fb757d408ebe77cb132ae242ef3aa470.camel@apitzsch.eu>
-In-Reply-To: <5e0d2716fb757d408ebe77cb132ae242ef3aa470.camel@apitzsch.eu>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 18 Oct 2023 09:04:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUTxQym7+vYPtnvMQeH8GKSk0iOyuMnLkgr3LH1E8TTYA@mail.gmail.com>
-Message-ID: <CAMuHMdUTxQym7+vYPtnvMQeH8GKSk0iOyuMnLkgr3LH1E8TTYA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] iio: magnetometer: ak8975: Convert enum->pointer
- for data in the match tables
-To:     git@apitzsch.eu
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-iio@vger.kernel.org,
+References: <20231016-dt-net-cleanups-v1-0-a525a090b444@kernel.org>
+In-Reply-To: <20231016-dt-net-cleanups-v1-0-a525a090b444@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 18 Oct 2023 10:53:01 +0200
+Message-ID: <CACRpkdaie8-0W+=9AD49KqyW+-Zrtkhs8BjHJCVDrkxF6hVAkQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/8] dt-bindings: net: Child node schema cleanups
+To:     Rob Herring <robh@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+        =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        =?UTF-8?B?bsOnIMOcTkFM?= <arinc.unal@arinc9.com>,
+        Landen Chao <Landen.Chao@mediatek.com>,
+        DENG Qingfang <dqfext@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        John Crispin <john@phrozen.org>,
+        Gerhard Engleder <gerhard@engleder-embedded.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Justin Chen <justin.chen@broadcom.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi André,
+On Mon, Oct 16, 2023 at 11:44=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
+e:
 
-On Tue, Oct 17, 2023 at 11:12 PM André Apitzsch <git@apitzsch.eu> wrote:
-> Am Freitag, dem 18.08.2023 um 08:55 +0100 schrieb Biju Das:
-> > Convert enum->pointer for data in the match tables to simplify the
-> > probe()
-> > by replacing device_get_match_data() and i2c_client_get_device_id by
-> > i2c_get_match_data() as we have similar I2C, ACPI and DT matching
-> > table.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-> > --- a/drivers/iio/magnetometer/ak8975.c
-> > +++ b/drivers/iio/magnetometer/ak8975.c
-> > @@ -883,10 +883,7 @@ static int ak8975_probe(struct i2c_client
-> > *client)
-> >       struct iio_dev *indio_dev;
-> >       struct gpio_desc *eoc_gpiod;
-> >       struct gpio_desc *reset_gpiod;
-> > -     const void *match;
-> > -     unsigned int i;
-> >       int err;
-> > -     enum asahi_compass_chipset chipset;
-> >       const char *name = NULL;
-> >
-> >       /*
-> > @@ -928,27 +925,15 @@ static int ak8975_probe(struct i2c_client
-> > *client)
-> >               return err;
-> >
-> >       /* id will be NULL when enumerated via ACPI */
-> > -     match = device_get_match_data(&client->dev);
-> > -     if (match) {
-> > -             chipset = (uintptr_t)match;
-> > -             name = dev_name(&client->dev);
-> > -     } else if (id) {
-> > -             chipset = (enum asahi_compass_chipset)(id-
-> > >driver_data);
-> > -             name = id->name;
-> > -     } else
-> > -             return -ENOSYS;
-> > -
-> > -     for (i = 0; i < ARRAY_SIZE(ak_def_array); i++)
-> > -             if (ak_def_array[i].type == chipset)
-> > -                     break;
-> > -
-> > -     if (i == ARRAY_SIZE(ak_def_array)) {
-> > -             dev_err(&client->dev, "AKM device type unsupported:
-> > %d\n",
-> > -                     chipset);
-> > +     data->def = i2c_get_match_data(client);
-> > +     if (!data->def)
-> >               return -ENODEV;
-> > -     }
-> >
-> > -     data->def = &ak_def_array[i];
-> > +     /* If enumerated via firmware node, fix the ABI */
-> > +     if (dev_fwnode(&client->dev))
-> > +             name = dev_name(&client->dev);
-> > +     else
-> > +             name = id->name;
-> >
+> This is a series of clean-ups related to ensuring that child node
+> schemas are constrained to not allow undefined properties. Typically,
+> that means just adding additionalProperties or unevaluatedProperties as
+> appropriate. The DSA/switch schemas turned out to be a bit more
+> involved, so there's some more fixes and a bit of restructuring in them.
 >
-> I just noticed, that with the above change '0-000d' instead of the
-> previous and expected 'ak09911' is shown now as name for the
-> magnetometer in longcheer l9100 [1].
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-While this doesn't help much, note that the old name would break
-the case of having two instances of the same device.
+Oh this drives a truck through my Marvell binding work. Luckily it
+also solves my most annoying problems so I will just rebase on this
+and continue, all good!
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
->
-> id->name contains the expected string ('ak09911'), but because of
-> dev_fwnode(&client->dev) being true, it is not used.
->
-> André
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts?h=next-20231017#n127
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
