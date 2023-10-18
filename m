@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C68CDB48D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Oct 2023 08:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D74BACDB486
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Oct 2023 08:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbjJRI5M (ORCPT
+        id S229713AbjJRI5O (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Oct 2023 04:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34364 "EHLO
+        Wed, 18 Oct 2023 04:57:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbjJRI5I (ORCPT
+        with ESMTP id S229637AbjJRI5J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2023 04:57:08 -0400
+        Wed, 18 Oct 2023 04:57:09 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 18610FD;
-        Wed, 18 Oct 2023 01:57:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 05C8310C;
+        Wed, 18 Oct 2023 01:57:06 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.03,234,1694703600"; 
-   d="scan'208";a="183503693"
+   d="scan'208";a="183503701"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie6.idc.renesas.com with ESMTP; 18 Oct 2023 17:57:02 +0900
 Received: from localhost.localdomain (unknown [10.166.15.32])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C1BEF40116BA;
-        Wed, 18 Oct 2023 17:57:01 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7D76A40116A7;
+        Wed, 18 Oct 2023 17:57:02 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
         bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
@@ -30,13 +30,10 @@ To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
         gustavo.pimentel@synopsys.com, mani@kernel.org
 Cc:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v25 11/15] dt-bindings: PCI: renesas: Add R-Car Gen4 PCIe Endpoint
-Date:   Wed, 18 Oct 2023 17:56:27 +0900
-Message-Id: <20231018085631.1121289-12-yoshihiro.shimoda.uh@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v25 15/15] misc: pci_endpoint_test: Add Device ID for R-Car S4-8 PCIe controller
+Date:   Wed, 18 Oct 2023 17:56:31 +0900
+Message-Id: <20231018085631.1121289-16-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231018085631.1121289-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20231018085631.1121289-1-yoshihiro.shimoda.uh@renesas.com>
@@ -46,141 +43,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document bindings for Renesas R-Car Gen4 and R-Car S4-8 (R8A779F0)
-PCIe endpoint module.
+Add Renesas R8A779F0 in pci_device_id table so that pci-epf-test
+can be used for testing PCIe EP on R-Car S4-8.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Acked-by: Manivannan Sadhasivam <mani@kernel.org>
 ---
- .../bindings/pci/rcar-gen4-pci-ep.yaml        | 115 ++++++++++++++++++
- 1 file changed, 115 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
+ drivers/misc/pci_endpoint_test.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
-new file mode 100644
-index 000000000000..fe38f62da066
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/rcar-gen4-pci-ep.yaml
-@@ -0,0 +1,115 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2022-2023 Renesas Electronics Corp.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/rcar-gen4-pci-ep.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas R-Car Gen4 PCIe Endpoint
-+
-+maintainers:
-+  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-+
-+allOf:
-+  - $ref: snps,dw-pcie-ep.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: renesas,r8a779f0-pcie-ep   # R-Car S4-8
-+      - const: renesas,rcar-gen4-pcie-ep  # R-Car Gen4
-+
-+  reg:
-+    maxItems: 7
-+
-+  reg-names:
-+    items:
-+      - const: dbi
-+      - const: dbi2
-+      - const: atu
-+      - const: dma
-+      - const: app
-+      - const: phy
-+      - const: addr_space
-+
-+  interrupts:
-+    maxItems: 3
-+
-+  interrupt-names:
-+    items:
-+      - const: dma
-+      - const: sft_ce
-+      - const: app
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: ref
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: pwr
-+
-+  max-link-speed:
-+    maximum: 4
-+
-+  num-lanes:
-+    maximum: 4
-+
-+  max-functions:
-+    maximum: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - resets
-+  - reset-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r8a779f0-cpg-mssr.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/r8a779f0-sysc.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pcie0_ep: pcie-ep@e65d0000 {
-+            compatible = "renesas,r8a779f0-pcie-ep", "renesas,rcar-gen4-pcie-ep";
-+            reg = <0 0xe65d0000 0 0x2000>, <0 0xe65d2000 0 0x1000>,
-+                  <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
-+                  <0 0xe65d6200 0 0x0e00>, <0 0xe65d7000 0 0x0400>,
-+                  <0 0xfe000000 0 0x400000>;
-+            reg-names = "dbi", "dbi2", "atu", "dma", "app", "phy", "addr_space";
-+            interrupts = <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
-+            interrupt-names = "dma", "sft_ce", "app";
-+            clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
-+            clock-names = "core", "ref";
-+            power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+            resets = <&cpg 624>;
-+            reset-names = "pwr";
-+            max-link-speed = <4>;
-+            num-lanes = <2>;
-+            max-functions = /bits/ 8 <2>;
-+        };
-+    };
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index ed4d0ef5e5c3..150083dab71a 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -81,6 +81,7 @@
+ #define PCI_DEVICE_ID_RENESAS_R8A774B1		0x002b
+ #define PCI_DEVICE_ID_RENESAS_R8A774C0		0x002d
+ #define PCI_DEVICE_ID_RENESAS_R8A774E1		0x0025
++#define PCI_DEVICE_ID_RENESAS_R8A779F0		0x0031
+ 
+ static DEFINE_IDA(pci_endpoint_test_ida);
+ 
+@@ -990,6 +991,9 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774B1),},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774C0),},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774E1),},
++	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A779F0),
++	  .driver_data = (kernel_ulong_t)&default_data,
++	},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_J721E),
+ 	  .driver_data = (kernel_ulong_t)&j721e_data,
+ 	},
 -- 
 2.25.1
 
