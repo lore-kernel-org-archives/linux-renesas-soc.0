@@ -2,129 +2,151 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D35CDB474
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Oct 2023 18:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E37B8C00A8F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Oct 2023 18:19:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbjJVSAm (ORCPT
+        id S232310AbjJVSTc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 22 Oct 2023 14:00:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50286 "EHLO
+        Sun, 22 Oct 2023 14:19:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjJVSAl (ORCPT
+        with ESMTP id S232328AbjJVSTb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Oct 2023 14:00:41 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0AA5E8;
-        Sun, 22 Oct 2023 11:00:39 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EED4C433C8;
-        Sun, 22 Oct 2023 18:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697997639;
-        bh=9wO5luQQA8YamZzHgZ2c+8fPusMyrapaaEYIJ6WW7d4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hCvWET6DpMgtWpc4RTvFqtnFe/lRb3pvOTc1BbmpzD7II1ggf9IjdzX1rT13qkC/W
-         CceP0hWDUW4bxZqJJCAh2iXQcjGJ4IY9xombM9nW4mmBLJ30cEEfy4iGkkWw27YAhP
-         9nkhlXCuiwMRr9FMucNlHHRApkm/bV71zVP042GkU4jCckh7fTETl4l2VDGocODOtD
-         iVm0eOPrPBAkYRCFBcQv52qjHDEKwKfpOsGo73uG+ZI2FRJ4cs4yyzHVT0xb2zoCN4
-         cTBMUO5QxyRTGCh4NlNoSsFmyF94GjaZ8+XRzAAgsll0kYuiTTmX700T/uYhBOkJy2
-         vdOJEVOK7HDjg==
-Date:   Sun, 22 Oct 2023 19:00:28 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Yu Chien Peter Lin <peterlin@andestech.com>
-Cc:     acme@kernel.org, adrian.hunter@intel.com, ajones@ventanamicro.com,
-        alexander.shishkin@linux.intel.com, andre.przywara@arm.com,
-        anup@brainfault.org, aou@eecs.berkeley.edu, atishp@atishpatra.org,
-        conor+dt@kernel.org, conor.dooley@microchip.com,
-        devicetree@vger.kernel.org, dminus@andestech.com,
-        evan@rivosinc.com, geert+renesas@glider.be, guoren@kernel.org,
-        heiko@sntech.de, irogers@google.com, jernej.skrabec@gmail.com,
-        jolsa@kernel.org, jszhang@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, locus84@andestech.com,
-        magnus.damm@gmail.com, mark.rutland@arm.com, mingo@redhat.com,
-        n.shubin@yadro.com, namhyung@kernel.org, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, peterz@infradead.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com, rdunlap@infradead.org,
-        robh+dt@kernel.org, samuel@sholland.org, sunilvl@ventanamicro.com,
-        tglx@linutronix.de, tim609@andestech.com, uwu@icenowy.me,
-        wens@csie.org, will@kernel.org, ycliang@andestech.com
-Subject: Re: [PATCH v3 00/13] Support Andes PMU extension
-Message-ID: <20231022-cabana-crate-503b6e8d0481@spud>
-References: <20231022151858.2479969-1-peterlin@andestech.com>
+        Sun, 22 Oct 2023 14:19:31 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B08DD
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Oct 2023 11:19:29 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-53e855d7dacso3871071a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Oct 2023 11:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20230601.gappssmtp.com; s=20230601; t=1697998768; x=1698603568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IapM57vvXfzQjqENXtjuM9JSp2fROAyan36M7VaIVMY=;
+        b=P80bdufwEODPnniq0TMeKbnBm/KBDYuv2Wk2XQjdcD6uWLs8xJKxjWMba1JNBGsYFg
+         JkWvYa9/KlDDdKmXbKh7zwZfh8MJgC8QVXbuNL/4uWa5GTB+HbxkzbTyzhs7VQABydyd
+         WKfIbFjdd9x+2CNqYaP/HzafngZqEaBiMkf0TKmnqEo/OO0NnBqxVm80vFtr2TRIyGBB
+         Dz+cQrZZvIF0BFvWRB6L2UGidJo9TK22SR2+bQdpWh7OQEy1ukMg/aAmlnuIRDGrA4Nu
+         HTu2bil0QTDDE0GXXvm90xagIOCZU2MQft0wZnUxKBmvjdQ/xyhgbYDfclbwu6NjTAmR
+         mRkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697998768; x=1698603568;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IapM57vvXfzQjqENXtjuM9JSp2fROAyan36M7VaIVMY=;
+        b=E1HPaPtHrrhie8qwsTlu9vFt5i/wmalyd3O1uPmFo2XY9pEcqinuptpYdFo8bNm4YE
+         nBDptbwh8NniEAmXZkvkRDmkwbhaVF4WiBFtFJNKbYdRZ/wo7W6Kiip/qPGP6IhHadLB
+         8t8qo1g0VTNqk3i9WWyqCPUAbKiQOZpP9p38ducrIoymtpcKt+6KwjLmrAdmneyowYLF
+         jkoHeXV5MN8aKoyh9dxN92w3kaRUa2Ta5T6lUtvh+PsVeGPIL6yvjluzHu+Nc8KyskD2
+         bowRFNbtLclr0W3YHb5j7f48VQtZUxqApKR7kctiNKtXINMumyPS2JKysfA5pENQ+TGs
+         xmjw==
+X-Gm-Message-State: AOJu0Yy93yVceyNhfk3jBTEAuFCC0QchDZ4x2txV4KeYQWZhp43fHFfE
+        G45i34yb7alfU5EEHKA2u5cpBw==
+X-Google-Smtp-Source: AGHT+IFlj5GdhLU2TQwUvjeXwg2wlAakytjgIq95OhK7i9kgBaYhTzVFDrJqC/9ZNKxNpE21GxtN1w==
+X-Received: by 2002:a50:8d11:0:b0:53e:8c4c:ab3e with SMTP id s17-20020a508d11000000b0053e8c4cab3emr5248673eds.19.1697998767640;
+        Sun, 22 Oct 2023 11:19:27 -0700 (PDT)
+Received: from sleipner.berto.se (p4fca2773.dip0.t-ipconnect.de. [79.202.39.115])
+        by smtp.googlemail.com with ESMTPSA id h12-20020aa7de0c000000b0053e43492ef1sm5035159edv.65.2023.10.22.11.19.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Oct 2023 11:19:27 -0700 (PDT)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] arm64: dts: renesas: draak: Make HDMI the default video input
+Date:   Sun, 22 Oct 2023 20:19:09 +0200
+Message-ID: <20231022181910.898040-2-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231022181910.898040-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20231022181910.898040-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kQihSqwF+AlYNzqS"
-Content-Disposition: inline
-In-Reply-To: <20231022151858.2479969-1-peterlin@andestech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Most Gen3 R-Car devices have HDMI as the default video input source,
+align Draak with them and make HDMI the default.
 
---kQihSqwF+AlYNzqS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+* Changes since v1
+- Split moving the incorrect bus properties to separate patch.
+---
+ arch/arm64/boot/dts/renesas/draak.dtsi | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-Hey,
+diff --git a/arch/arm64/boot/dts/renesas/draak.dtsi b/arch/arm64/boot/dts/renesas/draak.dtsi
+index ef3bb835d5c0..08b3458a5025 100644
+--- a/arch/arm64/boot/dts/renesas/draak.dtsi
++++ b/arch/arm64/boot/dts/renesas/draak.dtsi
+@@ -356,12 +356,9 @@ port@3 {
+ 				 * CVBS and HDMI inputs through SW[49-53]
+ 				 * switches.
+ 				 *
+-				 * CVBS is the default selection, link it to
+-				 * VIN4 here.
++				 * HDMI is the default selection, leave CVBS
++				 * not connected here.
+ 				 */
+-				adv7180_out: endpoint {
+-					remote-endpoint = <&vin4_in>;
+-				};
+ 			};
+ 		};
+ 
+@@ -423,13 +420,14 @@ port@2 {
+ 				 * CVBS and HDMI inputs through SW[49-53]
+ 				 * switches.
+ 				 *
+-				 * CVBS is the default selection, leave HDMI
+-				 * not connected here.
++				 * HDMI is the default selection, link it to
++				 * VIN4 here.
+ 				 */
+ 				adv7612_out: endpoint {
+ 					pclk-sample = <0>;
+ 					hsync-active = <0>;
+ 					vsync-active = <0>;
++					remote-endpoint = <&vin4_in>;
+ 				};
+ 			};
+ 		};
+@@ -580,8 +578,8 @@ usb0_pins: usb0 {
+ 		function = "usb0";
+ 	};
+ 
+-	vin4_pins_cvbs: vin4 {
+-		groups = "vin4_data8", "vin4_sync", "vin4_clk";
++	vin4_pins: vin4 {
++		groups = "vin4_data24", "vin4_sync", "vin4_clk";
+ 		function = "vin4";
+ 	};
+ };
+@@ -729,7 +727,7 @@ &usb2_phy0 {
+ };
+ 
+ &vin4 {
+-	pinctrl-0 = <&vin4_pins_cvbs>;
++	pinctrl-0 = <&vin4_pins>;
+ 	pinctrl-names = "default";
+ 
+ 	status = "okay";
+@@ -737,7 +735,7 @@ &vin4 {
+ 	ports {
+ 		port {
+ 			vin4_in: endpoint {
+-				remote-endpoint = <&adv7180_out>;
++				remote-endpoint = <&adv7612_out>;
+ 			};
+ 		};
+ 	};
+-- 
+2.42.0
 
-On Sun, Oct 22, 2023 at 11:18:45PM +0800, Yu Chien Peter Lin wrote:
-> Hi All,
->=20
-> This patch series introduces the Andes PMU extension, which serves
-> the same purpose as Sscofpmf. In this version we use FDT-based
-> probing and the CONFIG_ANDES_CUSTOM_PMU to enable perf sampling
-> and filtering support.
->=20
-> Its non-standard local interrupt is assigned to bit 18 in the
-> custom S-mode local interrupt enable/pending registers (slie/slip),
-> while the interrupt cause is (256 + 18).
->=20
-> The feature needs the PMU device registered in OpenSBI.
-> The OpenSBI and Linux patches can be found on Andes Technology GitHub
-> - https://github.com/andestech/opensbi/commits/andes-pmu-support-v2
-> - https://github.com/andestech/linux/commits/andes-pmu-support-v3
->=20
-> The PMU device tree node used on AX45MP:
-> - https://github.com/andestech/opensbi/blob/andes-pmu-support-v2/docs/pmu=
-_support.md#example-3
->=20
-> Tested hardware:
-> - ASUS  Tinker-V (RZ/Five, AX45MP single core)
-> - Andes AE350    (AX45MP quad core)
->=20
-> Locus Wei-Han Chen (1):
->   riscv: andes: Support symbolic FW and HW raw events
->=20
-> Yu Chien Peter Lin (12):
->   riscv: errata: Rename defines for Andes
->   irqchip/riscv-intc: Allow large non-standard hwirq number
->   irqchip/riscv-intc: Introduce Andes IRQ chip
->   dt-bindings: riscv: Add Andes interrupt controller compatible string
->   riscv: dts: renesas: r9a07g043f: Update compatible string to use Andes
->     INTC
->   perf: RISC-V: Eliminate redundant IRQ enable/disable operations
->   RISC-V: Move T-Head PMU to CPU feature alternative framework
->   perf: RISC-V: Introduce Andes PMU for perf event sampling
->   dt-bindings: riscv: Add T-Head PMU extension description
->   dt-bindings: riscv: Add Andes PMU extension description
->   riscv: dts: allwinner: Add T-Head PMU extension
->   riscv: dts: renesas: Add Andes PMU extension
-
-You only sent 5 of these patches FYI.
-
---kQihSqwF+AlYNzqS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZTVjPAAKCRB4tDGHoIJi
-0o+CAQCs8vdPe2eoLkFKb2hs5d1cvV8J9PlrQHw0kqccpMHL3AD8CQBoM5Sk3hvM
-Gz9PBQeo9LO29BJjkL9Q/nthrSlgIw0=
-=9vNu
------END PGP SIGNATURE-----
-
---kQihSqwF+AlYNzqS--
