@@ -2,451 +2,387 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092F1C25B41
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Oct 2023 13:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950ECC001E0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Oct 2023 13:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229686AbjJWNwf (ORCPT
+        id S229987AbjJWNxI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 23 Oct 2023 09:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54262 "EHLO
+        Mon, 23 Oct 2023 09:53:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230441AbjJWNwb (ORCPT
+        with ESMTP id S229686AbjJWNxH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2023 09:52:31 -0400
+        Mon, 23 Oct 2023 09:53:07 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8879FF
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Oct 2023 06:52:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD52E5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Oct 2023 06:53:04 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:375d:2b56:c03f:d72d])
         by xavier.telenet-ops.be with bizsmtp
-        id 1RsQ2B0053CbNjd01RsQU8; Mon, 23 Oct 2023 15:52:24 +0200
+        id 1Rt32B00C3CbNjd01Rt3e3; Mon, 23 Oct 2023 15:53:03 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1quvLt-007KH9-1f;
-        Mon, 23 Oct 2023 15:52:24 +0200
+        id 1quvMW-007KHO-8p;
+        Mon, 23 Oct 2023 15:53:03 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1quvLz-007oKw-U2;
-        Mon, 23 Oct 2023 15:52:23 +0200
+        id 1quvMd-007oLl-3v;
+        Mon, 23 Oct 2023 15:53:03 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
+To:     Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] ARM: dts: renesas: Add missing ADV751[13] power supply properties
-Date:   Mon, 23 Oct 2023 15:52:16 +0200
-Message-Id: <6c49fd83d327a68040f052bd9fd96fe25b0fc301.1698068647.git.geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: i2c: i2c-demux-pinctrl: Convert to json-schema
+Date:   Mon, 23 Oct 2023 15:53:00 +0200
+Message-Id: <28c173dfbbc17403b0c5a6f27661d7bd33a86f84.1698068607.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1698068646.git.geert+renesas@glider.be>
-References: <cover.1698068646.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-make dtbs_check:
+Convert the pinctrl-based I2C bus demultiplexer Device Tree binding
+documentation to json-schema.
 
-    arch/arm/boot/dts/renesas/r8a7791-koelsch.dtb: hdmi@39: 'avdd-supply' is a required property
-	    from schema $id: http://devicetree.org/schemas/display/bridge/adi,adv7511.yaml#
-    arch/arm/boot/dts/renesas/r8a7791-koelsch.dtb: hdmi@39: 'dvdd-supply' is a required property
-	    from schema $id: http://devicetree.org/schemas/display/bridge/adi,adv7511.yaml#
-    arch/arm/boot/dts/renesas/r8a7791-koelsch.dtb: hdmi@39: 'pvdd-supply' is a required property
-	    from schema $id: http://devicetree.org/schemas/display/bridge/adi,adv7511.yaml#
-    arch/arm/boot/dts/renesas/r8a7791-koelsch.dtb: hdmi@39: 'dvdd-3v-supply' is a required property
-	    from schema $id: http://devicetree.org/schemas/display/bridge/adi,adv7511.yaml#
-    arch/arm/boot/dts/renesas/r8a7791-koelsch.dtb: hdmi@39: 'bgvdd-supply' is a required property
-	    from schema $id: http://devicetree.org/schemas/display/bridge/adi,adv7511.yaml#
-    ...
-
-Fix this by adding the missing power supply properties, and by adding
-fixed regulators where needed.
+Update the example to match reality.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi   | 15 ++++++++++++
- .../renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 15 ++++++++++++
- arch/arm/boot/dts/renesas/r8a7790-lager.dts   | 15 ++++++++++++
- arch/arm/boot/dts/renesas/r8a7790-stout.dts   | 15 ++++++++++++
- arch/arm/boot/dts/renesas/r8a7791-koelsch.dts | 24 +++++++++++++++++++
- arch/arm/boot/dts/renesas/r8a7791-porter.dts  | 24 +++++++++++++++++++
- arch/arm/boot/dts/renesas/r8a7792-blanche.dts | 15 ++++++++++++
- arch/arm/boot/dts/renesas/r8a7792-wheat.dts   | 21 ++++++++++++++++
- arch/arm/boot/dts/renesas/r8a7793-gose.dts    | 24 +++++++++++++++++++
- arch/arm/boot/dts/renesas/r8a7794-silk.dts    | 15 ++++++++++++
- 10 files changed, 183 insertions(+)
+The example includes changes from "[PATCH 0/3] dts: renesas: Fix I2C bus
+demux node names and ADV751[13] power supplies"
+(https://lore.kernel.org/r/cover.1698068646.git.geert+renesas@glider.be)
 
-diff --git a/arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi b/arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi
-index e10f99278c77aa41..de52218ceaa4c0e0 100644
---- a/arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi
-+++ b/arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi
-@@ -27,6 +27,15 @@ hdmi_con_out: endpoint {
- 			};
- 		};
- 	};
+ .../bindings/i2c/i2c-demux-pinctrl.txt        | 135 --------------
+ .../bindings/i2c/i2c-demux-pinctrl.yaml       | 172 ++++++++++++++++++
+ 2 files changed, 172 insertions(+), 135 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.yaml
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt b/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt
+deleted file mode 100644
+index 86b2e433a969013c..0000000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt
++++ /dev/null
+@@ -1,135 +0,0 @@
+-Pinctrl-based I2C Bus DeMux
+-
+-This binding describes an I2C bus demultiplexer that uses pin multiplexing to
+-route the I2C signals, and represents the pin multiplexing configuration using
+-the pinctrl device tree bindings. This may be used to select one I2C IP core at
+-runtime which may have a better feature set for a given task than another I2C
+-IP core on the SoC. The most simple example is to fall back to GPIO bitbanging
+-if your current runtime configuration hits an errata of the internal IP core.
+-
+-    +-------------------------------+
+-    | SoC                           |
+-    |                               |   +-----+  +-----+
+-    |   +------------+              |   | dev |  | dev |
+-    |   |I2C IP Core1|--\           |   +-----+  +-----+
+-    |   +------------+   \-------+  |      |        |
+-    |                    |Pinctrl|--|------+--------+
+-    |   +------------+   +-------+  |
+-    |   |I2C IP Core2|--/           |
+-    |   +------------+              |
+-    |                               |
+-    +-------------------------------+
+-
+-Required properties:
+-- compatible: "i2c-demux-pinctrl"
+-- i2c-parent: List of phandles of I2C masters available for selection. The first
+-	      one will be used as default.
+-- i2c-bus-name: The name of this bus. Also needed as pinctrl-name for the I2C
+-		parents.
+-
+-Furthermore, I2C mux properties and child nodes. See i2c-mux.yaml in this
+-directory.
+-
+-Example:
+-
+-Here is a snipplet for a bus to be demuxed. It contains various i2c clients for
+-HDMI, so the bus is named "i2c-hdmi":
+-
+-	i2chdmi: i2c@8 {
+-
+-		compatible = "i2c-demux-pinctrl";
+-		i2c-parent = <&gpioi2c>, <&iic2>, <&i2c2>;
+-		i2c-bus-name = "i2c-hdmi";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		ak4643: sound-codec@12 {
+-			compatible = "asahi-kasei,ak4643";
+-
+-			#sound-dai-cells = <0>;
+-			reg = <0x12>;
+-		};
+-
+-		composite-in@20 {
+-			compatible = "adi,adv7180";
+-			reg = <0x20>;
+-			remote = <&vin1>;
+-
+-			port {
+-				adv7180: endpoint {
+-					bus-width = <8>;
+-					remote-endpoint = <&vin1ep0>;
+-				};
+-			};
+-		};
+-
+-		hdmi@39 {
+-			compatible = "adi,adv7511w";
+-			reg = <0x39>;
+-			interrupt-parent = <&gpio1>;
+-			interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
+-
+-			adi,input-depth = <8>;
+-			adi,input-colorspace = "rgb";
+-			adi,input-clock = "1x";
+-			adi,input-style = <1>;
+-			adi,input-justification = "evenly";
+-
+-			ports {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-
+-				port@0 {
+-					reg = <0>;
+-					adv7511_in: endpoint {
+-						remote-endpoint = <&du_out_lvds0>;
+-					};
+-				};
+-
+-				port@1 {
+-					reg = <1>;
+-					adv7511_out: endpoint {
+-						remote-endpoint = <&hdmi_con>;
+-					};
+-				};
+-			};
+-		};
+-	};
+-
+-And for clarification, here are the snipplets for the i2c-parents:
+-
+-	gpioi2c: i2c@9 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		compatible = "i2c-gpio";
+-		gpios = <&gpio5 6 GPIO_ACTIVE_HIGH /* sda */
+-			 &gpio5 5 GPIO_ACTIVE_HIGH /* scl */
+-			>;
+-		i2c-gpio,delay-us = <5>;
+-	};
+-
+-...
+-
+-&i2c2	{
+-	pinctrl-0 = <&i2c2_pins>;
+-	pinctrl-names = "i2c-hdmi";
+-
+-	clock-frequency = <100000>;
+-};
+-
+-...
+-
+-&iic2	{
+-	pinctrl-0 = <&iic2_pins>;
+-	pinctrl-names = "i2c-hdmi";
+-
+-	clock-frequency = <100000>;
+-};
+-
+-Please note:
+-
+-- pinctrl properties for the parent I2C controllers need a pinctrl state
+-  with the same name as i2c-bus-name, not "default"!
+-
+-- the i2c masters must have their status "disabled". This driver will
+-  enable them at runtime when needed.
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.yaml b/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.yaml
+new file mode 100644
+index 0000000000000000..2c08f2a7cf1ee28c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.yaml
+@@ -0,0 +1,172 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/i2c-demux-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
- 
- &can1 {
-@@ -69,6 +78,12 @@ hdmi@39 {
- 		clocks = <&cec_clock>;
- 		clock-names = "cec";
- 
-+		avdd-supply = <&reg_1p8v>;
-+		dvdd-supply = <&reg_1p8v>;
-+		pvdd-supply = <&reg_1p8v>;
-+		dvdd-3v-supply = <&reg_3p3v>;
-+		bgvdd-supply = <&reg_1p8v>;
++title: Pinctrl-based I2C Bus Demultiplexer
 +
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
- 		adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-index b1f679da36b2ede1..a0b574398055ad2d 100644
---- a/arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -34,6 +34,15 @@ hdmi_con: endpoint {
- 			};
- 		};
- 	};
++maintainers:
++  - Wolfram Sang <wsa+renesas@sang-engineering.com>
 +
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
- 
- &du {
-@@ -81,6 +90,12 @@ hdmi@39 {
- 		clock-names = "cec";
- 		pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
- 
-+		avdd-supply = <&reg_1p8v>;
-+		dvdd-supply = <&reg_1p8v>;
-+		pvdd-supply = <&reg_1p8v>;
-+		dvdd-3v-supply = <&reg_3p3v>;
-+		bgvdd-supply = <&reg_1p8v>;
++description: |
++  This binding describes an I2C bus demultiplexer that uses pin multiplexing to
++  route the I2C signals, and represents the pin multiplexing configuration
++  using the pinctrl device tree bindings.  This may be used to select one I2C
++  IP core at runtime which may have a better feature set for a given task than
++  another I2C IP core on the SoC.  The most simple example is to fall back to
++  GPIO bitbanging if your current runtime configuration hits an errata of the
++  internal IP core.
 +
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
- 		adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7790-lager.dts b/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-index 2567f5d297227ca9..3764ac7c9285193c 100644
---- a/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-@@ -122,6 +122,15 @@ led8 {
- 		};
- 	};
- 
-+	fixedregulator1v8: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++      +-------------------------------+
++      | SoC                           |
++      |                               |   +-----+  +-----+
++      |   +------------+              |   | dev |  | dev |
++      |   |I2C IP Core1|--\           |   +-----+  +-----+
++      |   +------------+   \-------+  |      |        |
++      |                    |Pinctrl|--|------+--------+
++      |   +------------+   +-------+  |
++      |   |I2C IP Core2|--/           |
++      |   +------------+              |
++      |                               |
++      +-------------------------------+
 +
- 	fixedregulator3v3: regulator-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
-@@ -361,6 +370,12 @@ hdmi@39 {
- 			clocks = <&cec_clock>;
- 			clock-names = "cec";
- 
-+			avdd-supply = <&fixedregulator1v8>;
-+			dvdd-supply = <&fixedregulator1v8>;
-+			pvdd-supply = <&fixedregulator1v8>;
-+			dvdd-3v-supply = <&fixedregulator3v3>;
-+			bgvdd-supply = <&fixedregulator1v8>;
++allOf:
++  - $ref: i2c-mux.yaml
++  - $ref: /schemas/i2c/i2c-controller.yaml#
 +
- 			adi,input-depth = <8>;
- 			adi,input-colorspace = "rgb";
- 			adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7790-stout.dts b/arch/arm/boot/dts/renesas/r8a7790-stout.dts
-index f9213927a1094649..537be288ce35944a 100644
---- a/arch/arm/boot/dts/renesas/r8a7790-stout.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7790-stout.dts
-@@ -44,6 +44,15 @@ led5 {
- 		};
- 	};
- 
-+	fixedregulator1v8: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++properties:
++  compatible:
++    const: i2c-demux-pinctrl
 +
- 	fixedregulator3v3: regulator-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
-@@ -297,6 +306,12 @@ hdmi@39 {
- 		clocks = <&osc4_clk>;
- 		clock-names = "cec";
- 
-+		avdd-supply = <&fixedregulator1v8>;
-+		dvdd-supply = <&fixedregulator1v8>;
-+		pvdd-supply = <&fixedregulator1v8>;
-+		dvdd-3v-supply = <&fixedregulator3v3>;
-+		bgvdd-supply = <&fixedregulator1v8>;
++  i2c-parent:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      List of phandles of I2C masters available for selection.  The first one
++      will be used as default.
 +
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
- 		adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts b/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-index 857d44571f9b9507..8dcf2a8a8ec28335 100644
---- a/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-@@ -171,6 +171,24 @@ led8 {
- 		};
- 	};
- 
-+	reg_1p8v: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++  i2c-bus-name:
++    $ref: /schemas/types.yaml#/definitions/string
++    description:
++      The name of this bus.  Also needed as pinctrl-name for the I2C parents.
 +
-+	reg_3p3v: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++required:
++  - compatible
++  - i2c-parent
++  - i2c-bus-name
 +
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -381,6 +399,12 @@ hdmi@39 {
- 			clocks = <&cec_clock>;
- 			clock-names = "cec";
- 
-+			avdd-supply = <&reg_1p8v>;
-+			dvdd-supply = <&reg_1p8v>;
-+			pvdd-supply = <&reg_1p8v>;
-+			dvdd-3v-supply = <&reg_3p3v>;
-+			bgvdd-supply = <&reg_1p8v>;
++unevaluatedProperties: false
 +
- 			adi,input-depth = <8>;
- 			adi,input-colorspace = "rgb";
- 			adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7791-porter.dts b/arch/arm/boot/dts/renesas/r8a7791-porter.dts
-index 950b7a22dee5743e..ee5b44d0f8f7126d 100644
---- a/arch/arm/boot/dts/renesas/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7791-porter.dts
-@@ -47,6 +47,24 @@ memory@200000000 {
- 		reg = <2 0x00000000 0 0x40000000>;
- 	};
- 
-+	reg_1p8v: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
 +
-+	reg_3p3v: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++    gpioi2c2: i2c-9 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        compatible = "i2c-gpio";
++        scl-gpios = <&gpio5 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++        sda-gpios = <&gpio5 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++        i2c-gpio,delay-us = <5>;
 +
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -179,6 +197,12 @@ hdmi@39 {
- 			interrupt-parent = <&gpio3>;
- 			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
- 
-+			avdd-supply = <&reg_1p8v>;
-+			dvdd-supply = <&reg_1p8v>;
-+			pvdd-supply = <&reg_1p8v>;
-+			dvdd-3v-supply = <&reg_3p3v>;
-+			bgvdd-supply = <&reg_1p8v>;
++        // The I2C controller must have its status "disabled".  The I2C bus
++        // demultiplexer will enable it at runtime when needed.
++        status = "disabled";
++    };
 +
- 			adi,input-depth = <8>;
- 			adi,input-colorspace = "rgb";
- 			adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
-index de9484c6bb8d1675..185b7fd8a9e05805 100644
---- a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
-@@ -30,6 +30,15 @@ memory@40000000 {
- 		reg = <0 0x40000000 0 0x40000000>;
- 	};
- 
-+	d1_8v: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++    iic2: i2c@e6520000 {
++        reg = <0xe6520000 0x425>;
++        pinctrl-0 = <&iic2_pins>;
++        // The pinctrl property for the parent I2C controller needs a pinctrl
++        // state with the same name as i2c-bus-name in the I2C bus demultiplexer
++        // node, not "default"!
++        pinctrl-names = "i2c-hdmi";
 +
- 	d3_3v: regulator-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "D3.3V";
-@@ -331,6 +340,12 @@ hdmi@39 {
- 		interrupt-parent = <&irqc>;
- 		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
- 
-+		avdd-supply = <&d1_8v>;
-+		dvdd-supply = <&d1_8v>;
-+		pvdd-supply = <&d1_8v>;
-+		dvdd-3v-supply = <&d3_3v>;
-+		bgvdd-supply = <&d1_8v>;
++        clock-frequency = <100000>;
 +
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
- 		adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7792-wheat.dts b/arch/arm/boot/dts/renesas/r8a7792-wheat.dts
-index f8207f2eb2b26eea..d90261c40a3ad9c8 100644
---- a/arch/arm/boot/dts/renesas/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7792-wheat.dts
-@@ -29,6 +29,15 @@ memory@40000000 {
- 		reg = <0 0x40000000 0 0x40000000>;
- 	};
- 
-+	d1_8v: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++        // The I2C controller must have its status "disabled".  The I2C bus
++        // demultiplexer will enable it at runtime when needed.
++        status = "disabled";
++    };
 +
- 	d3_3v: regulator-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "D3.3V";
-@@ -255,6 +264,12 @@ hdmi@3d {
- 		reg = <0x3d>, <0x4d>, <0x2d>, <0x5d>;
- 		reg-names = "main", "edid", "cec", "packet";
- 
-+		avdd-supply = <&d1_8v>;
-+		dvdd-supply = <&d1_8v>;
-+		pvdd-supply = <&d1_8v>;
-+		dvdd-3v-supply = <&d3_3v>;
-+		bgvdd-supply = <&d1_8v>;
++    i2c2: i2c@e6530000 {
++        reg = <0 0xe6530000 0 0x40>;
++        pinctrl-0 = <&i2c2_pins>;
++        // The pinctrl property for the parent I2C controller needs a pinctrl
++        // state with the same name as i2c-bus-name in the I2C bus demultiplexer
++        // node, not "default"!
++        pinctrl-names = "i2c-hdmi";
 +
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
- 		adi,input-clock = "1x";
-@@ -284,6 +299,12 @@ hdmi@39 {
- 		reg = <0x39>, <0x49>, <0x29>, <0x59>;
- 		reg-names = "main", "edid", "cec", "packet";
- 
-+		avdd-supply = <&d1_8v>;
-+		dvdd-supply = <&d1_8v>;
-+		pvdd-supply = <&d1_8v>;
-+		dvdd-3v-supply = <&d3_3v>;
-+		bgvdd-supply = <&d1_8v>;
++        clock-frequency = <100000>;
 +
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
- 		adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7793-gose.dts b/arch/arm/boot/dts/renesas/r8a7793-gose.dts
-index af7a8019b4b127f3..33a56c757f107340 100644
---- a/arch/arm/boot/dts/renesas/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7793-gose.dts
-@@ -162,6 +162,24 @@ led8 {
- 		};
- 	};
- 
-+	reg_1p8v: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++        // The I2C controller must have its status "disabled".  The I2C bus
++        // demultiplexer will enable it at runtime when needed.
++        status = "disabled";
++    };
 +
-+	reg_3p3v: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++    // Example for a bus to be demuxed.  It contains various I2C clients for
++    // HDMI, so the bus is named "i2c-hdmi":
++    i2chdmi: i2c-mux3 {
++            compatible = "i2c-demux-pinctrl";
++            i2c-parent = <&iic2>, <&i2c2>, <&gpioi2c2>;
++            i2c-bus-name = "i2c-hdmi";
++            #address-cells = <1>;
++            #size-cells = <0>;
 +
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -365,6 +383,12 @@ hdmi@39 {
- 			interrupt-parent = <&gpio3>;
- 			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
- 
-+			avdd-supply = <&reg_1p8v>;
-+			dvdd-supply = <&reg_1p8v>;
-+			pvdd-supply = <&reg_1p8v>;
-+			dvdd-3v-supply = <&reg_3p3v>;
-+			bgvdd-supply = <&reg_1p8v>;
++            ak4643: codec@12 {
++                    compatible = "asahi-kasei,ak4643";
++                    #sound-dai-cells = <0>;
++                    reg = <0x12>;
++            };
 +
- 			adi,input-depth = <8>;
- 			adi,input-colorspace = "rgb";
- 			adi,input-clock = "1x";
-diff --git a/arch/arm/boot/dts/renesas/r8a7794-silk.dts b/arch/arm/boot/dts/renesas/r8a7794-silk.dts
-index e1110f24f97bdf94..52f0b1d32f84ac27 100644
---- a/arch/arm/boot/dts/renesas/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7794-silk.dts
-@@ -102,6 +102,15 @@ key-d {
- 		};
- 	};
- 
-+	d1_8v: regulator-d1-8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
++            composite-in@20 {
++                    compatible = "adi,adv7180";
++                    reg = <0x20>;
 +
- 	d3_3v: regulator-d3-3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "D3.3V";
-@@ -256,6 +265,12 @@ hdmi@39 {
- 			interrupt-parent = <&gpio5>;
- 			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
- 
-+			avdd-supply = <&d1_8v>;
-+			dvdd-supply = <&d1_8v>;
-+			pvdd-supply = <&d1_8v>;
-+			dvdd-3v-supply = <&d3_3v>;
-+			bgvdd-supply = <&d1_8v>;
++                    port {
++                            adv7180: endpoint {
++                                    bus-width = <8>;
++                                    remote-endpoint = <&vin1ep0>;
++                            };
++                    };
++            };
 +
- 			adi,input-depth = <8>;
- 			adi,input-colorspace = "rgb";
- 			adi,input-clock = "1x";
++            hdmi@39 {
++                    compatible = "adi,adv7511w";
++                    reg = <0x39>;
++                    interrupt-parent = <&gpio1>;
++                    interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
++                    clocks = <&cec_clock>;
++                    clock-names = "cec";
++
++                    avdd-supply = <&fixedregulator1v8>;
++                    dvdd-supply = <&fixedregulator1v8>;
++                    pvdd-supply = <&fixedregulator1v8>;
++                    dvdd-3v-supply = <&fixedregulator3v3>;
++                    bgvdd-supply = <&fixedregulator1v8>;
++
++                    adi,input-depth = <8>;
++                    adi,input-colorspace = "rgb";
++                    adi,input-clock = "1x";
++
++                    ports {
++                            #address-cells = <1>;
++                            #size-cells = <0>;
++
++                            port@0 {
++                                    reg = <0>;
++                                    adv7511_in: endpoint {
++                                            remote-endpoint = <&lvds0_out>;
++                                    };
++                            };
++
++                            port@1 {
++                                    reg = <1>;
++                                    adv7511_out: endpoint {
++                                            remote-endpoint = <&hdmi_con_out>;
++                                    };
++                            };
++                    };
++            };
++    };
 -- 
 2.34.1
 
