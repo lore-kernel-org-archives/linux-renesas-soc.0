@@ -2,39 +2,39 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C897C0032E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Oct 2023 00:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A19CC25B43
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Oct 2023 00:46:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229686AbjJWAPl (ORCPT
+        id S232936AbjJWAqG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 22 Oct 2023 20:15:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35120 "EHLO
+        Sun, 22 Oct 2023 20:46:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbjJWAPk (ORCPT
+        with ESMTP id S232912AbjJWAqD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Oct 2023 20:15:40 -0400
+        Sun, 22 Oct 2023 20:46:03 -0400
 Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A32DA;
-        Sun, 22 Oct 2023 17:15:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB81112;
+        Sun, 22 Oct 2023 17:45:59 -0700 (PDT)
 Received: from mail.andestech.com (ATCPCS16.andestech.com [10.0.1.222])
-        by Atcsqr.andestech.com with ESMTP id 39N0DIsq070639;
-        Mon, 23 Oct 2023 08:13:18 +0800 (+08)
+        by Atcsqr.andestech.com with ESMTP id 39N0iO0S078995;
+        Mon, 23 Oct 2023 08:44:24 +0800 (+08)
         (envelope-from peterlin@andestech.com)
-Received: from APC323 (10.0.12.98) by ATCPCS16.andestech.com (10.0.1.222) with
- Microsoft SMTP Server id 14.3.498.0; Mon, 23 Oct 2023 08:13:17 +0800
-Date:   Mon, 23 Oct 2023 08:13:10 +0800
-From:   Yu-Chien Peter Lin <peterlin@andestech.com>
-To:     Conor Dooley <conor@kernel.org>
-CC:     <acme@kernel.org>, <adrian.hunter@intel.com>,
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.498.0; Mon, 23 Oct 2023
+ 08:44:20 +0800
+From:   Yu Chien Peter Lin <peterlin@andestech.com>
+To:     <acme@kernel.org>, <adrian.hunter@intel.com>,
         <ajones@ventanamicro.com>, <alexander.shishkin@linux.intel.com>,
         <andre.przywara@arm.com>, <anup@brainfault.org>,
         <aou@eecs.berkeley.edu>, <atishp@atishpatra.org>,
         <conor+dt@kernel.org>, <conor.dooley@microchip.com>,
-        <devicetree@vger.kernel.org>, <dminus@andestech.com>,
-        <evan@rivosinc.com>, <geert+renesas@glider.be>,
-        <guoren@kernel.org>, <heiko@sntech.de>, <irogers@google.com>,
-        <jernej.skrabec@gmail.com>, <jolsa@kernel.org>,
-        <jszhang@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor@kernel.org>, <devicetree@vger.kernel.org>,
+        <dminus@andestech.com>, <evan@rivosinc.com>,
+        <geert+renesas@glider.be>, <guoren@kernel.org>, <heiko@sntech.de>,
+        <irogers@google.com>, <jernej.skrabec@gmail.com>,
+        <jolsa@kernel.org>, <jszhang@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
         <linux-renesas-soc@vger.kernel.org>,
@@ -42,80 +42,91 @@ CC:     <acme@kernel.org>, <adrian.hunter@intel.com>,
         <locus84@andestech.com>, <magnus.damm@gmail.com>,
         <mark.rutland@arm.com>, <mingo@redhat.com>, <n.shubin@yadro.com>,
         <namhyung@kernel.org>, <palmer@dabbelt.com>,
-        <paul.walmsley@sifive.com>, <peterz@infradead.org>,
-        <prabhakar.mahadev-lad.rj@bp.renesas.com>, <rdunlap@infradead.org>,
-        <robh+dt@kernel.org>, <samuel@sholland.org>,
-        <sunilvl@ventanamicro.com>, <tglx@linutronix.de>,
-        <tim609@andestech.com>, <uwu@icenowy.me>, <wens@csie.org>,
-        <will@kernel.org>, <ycliang@andestech.com>
-Subject: Re: [PATCH v3 00/13] Support Andes PMU extension
-Message-ID: <ZTW6lgK1oifvtqyH@APC323>
-References: <20231022151858.2479969-1-peterlin@andestech.com>
- <20231022-cabana-crate-503b6e8d0481@spud>
+        <paul.walmsley@sifive.com>, <peterlin@andestech.com>,
+        <peterz@infradead.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        <rdunlap@infradead.org>, <robh+dt@kernel.org>,
+        <samuel@sholland.org>, <sunilvl@ventanamicro.com>,
+        <tglx@linutronix.de>, <tim609@andestech.com>, <uwu@icenowy.me>,
+        <wens@csie.org>, <will@kernel.org>, <ycliang@andestech.com>
+Subject: [RFC PATCH v3 RESEND 02/13] irqchip/riscv-intc: Allow large non-standard hwirq number
+Date:   Mon, 23 Oct 2023 08:40:49 +0800
+Message-ID: <20231023004100.2663486-3-peterlin@andestech.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231023004100.2663486-1-peterlin@andestech.com>
+References: <20231023004100.2663486-1-peterlin@andestech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20231022-cabana-crate-503b6e8d0481@spud>
-User-Agent: Mutt/2.2.10 (2023-03-25)
-X-Originating-IP: [10.0.12.98]
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.0.15.183]
 X-DNSRBL: 
-X-MAIL: Atcsqr.andestech.com 39N0DIsq070639
+X-MAIL: Atcsqr.andestech.com 39N0iO0S078995
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Oct 22, 2023 at 07:00:28PM +0100, Conor Dooley wrote:
-> Hey,
-> 
-> On Sun, Oct 22, 2023 at 11:18:45PM +0800, Yu Chien Peter Lin wrote:
-> > Hi All,
-> > 
-> > This patch series introduces the Andes PMU extension, which serves
-> > the same purpose as Sscofpmf. In this version we use FDT-based
-> > probing and the CONFIG_ANDES_CUSTOM_PMU to enable perf sampling
-> > and filtering support.
-> > 
-> > Its non-standard local interrupt is assigned to bit 18 in the
-> > custom S-mode local interrupt enable/pending registers (slie/slip),
-> > while the interrupt cause is (256 + 18).
-> > 
-> > The feature needs the PMU device registered in OpenSBI.
-> > The OpenSBI and Linux patches can be found on Andes Technology GitHub
-> > - https://github.com/andestech/opensbi/commits/andes-pmu-support-v2
-> > - https://github.com/andestech/linux/commits/andes-pmu-support-v3
-> > 
-> > The PMU device tree node used on AX45MP:
-> > - https://github.com/andestech/opensbi/blob/andes-pmu-support-v2/docs/pmu_support.md#example-3
-> > 
-> > Tested hardware:
-> > - ASUS  Tinker-V (RZ/Five, AX45MP single core)
-> > - Andes AE350    (AX45MP quad core)
-> > 
-> > Locus Wei-Han Chen (1):
-> >   riscv: andes: Support symbolic FW and HW raw events
-> > 
-> > Yu Chien Peter Lin (12):
-> >   riscv: errata: Rename defines for Andes
-> >   irqchip/riscv-intc: Allow large non-standard hwirq number
-> >   irqchip/riscv-intc: Introduce Andes IRQ chip
-> >   dt-bindings: riscv: Add Andes interrupt controller compatible string
-> >   riscv: dts: renesas: r9a07g043f: Update compatible string to use Andes
-> >     INTC
-> >   perf: RISC-V: Eliminate redundant IRQ enable/disable operations
-> >   RISC-V: Move T-Head PMU to CPU feature alternative framework
-> >   perf: RISC-V: Introduce Andes PMU for perf event sampling
-> >   dt-bindings: riscv: Add T-Head PMU extension description
-> >   dt-bindings: riscv: Add Andes PMU extension description
-> >   riscv: dts: allwinner: Add T-Head PMU extension
-> >   riscv: dts: renesas: Add Andes PMU extension
-> 
-> You only sent 5 of these patches FYI.
+Currently, the implementation of the RISC-V INTC driver uses the
+interrupt cause as hwirq and has a limitation of supporting a
+maximum of 64 hwirqs. However, according to the privileged spec,
+interrupt causes >= 16 are defined for platform use.
 
-Hi Conor,
+This limitation prevents us from fully utilizing the available
+local interrupt sources. Additionally, the hwirqs used on RISC-V
+are sparse, with only interrupt numbers 1, 5 and 9 (plus Sscofpmf
+or T-Head's PMU irq) being currently used for supervisor mode.
 
-Yeah... I know. The following emails were intercepted automatically
-due to our data traffic policy. I will resend the whole series soon.
+The patch switches to using irq_domain_create_tree() which
+creates the radix tree map, allowing us to handle a larger
+number of hwirqs.
 
-Best regards,
-Peter Lin
+Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
+Reviewed-by: Charles Ci-Jyun Wu <dminus@andestech.com>
+Reviewed-by: Leo Yu-Chi Liang <ycliang@andestech.com>
+---
+Changes v1 -> v2:
+  - Fixed irq mapping failure checking (suggested by Clément and Anup)
+Changes v2 -> v3:
+  - No change
+---
+ drivers/irqchip/irq-riscv-intc.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
+index e8d01b14ccdd..79d049105384 100644
+--- a/drivers/irqchip/irq-riscv-intc.c
++++ b/drivers/irqchip/irq-riscv-intc.c
+@@ -24,10 +24,8 @@ static asmlinkage void riscv_intc_irq(struct pt_regs *regs)
+ {
+ 	unsigned long cause = regs->cause & ~CAUSE_IRQ_FLAG;
+ 
+-	if (unlikely(cause >= BITS_PER_LONG))
+-		panic("unexpected interrupt cause");
+-
+-	generic_handle_domain_irq(intc_domain, cause);
++	if (generic_handle_domain_irq(intc_domain, cause))
++		pr_warn("Failed to handle interrupt (cause: %ld)\n", cause);
+ }
+ 
+ /*
+@@ -117,8 +115,8 @@ static int __init riscv_intc_init_common(struct fwnode_handle *fn)
+ {
+ 	int rc;
+ 
+-	intc_domain = irq_domain_create_linear(fn, BITS_PER_LONG,
+-					       &riscv_intc_domain_ops, NULL);
++	intc_domain = irq_domain_create_tree(fn, &riscv_intc_domain_ops,
++					     NULL);
+ 	if (!intc_domain) {
+ 		pr_err("unable to add IRQ domain\n");
+ 		return -ENXIO;
+@@ -132,8 +130,6 @@ static int __init riscv_intc_init_common(struct fwnode_handle *fn)
+ 
+ 	riscv_set_intc_hwnode_fn(riscv_intc_hwnode);
+ 
+-	pr_info("%d local interrupts mapped\n", BITS_PER_LONG);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
 
