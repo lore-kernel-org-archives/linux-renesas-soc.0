@@ -2,97 +2,109 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E574AC001E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Oct 2023 09:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C9BC004C0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Oct 2023 10:22:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbjJWJXY (ORCPT
+        id S229725AbjJWKW4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 23 Oct 2023 05:23:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48602 "EHLO
+        Mon, 23 Oct 2023 06:22:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232536AbjJWJXX (ORCPT
+        with ESMTP id S229572AbjJWKWy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2023 05:23:23 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452BBAF;
-        Mon, 23 Oct 2023 02:23:22 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A67AC433C7;
-        Mon, 23 Oct 2023 09:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698053001;
-        bh=aZBFa7fN1EH0urSii1LHTdENO3pg0U4aosD5CcywGOY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VsdUSetCYsPxlm2mEo2erqrcSSEMIbJPN+mwquIMS5v0zBB/zF6vOthd+ohrOuVAZ
-         UVU8ksImL8gz4CcLRlhjrMCeI/Vf2dsFqgU83vgk4pNmOc7UqFNyYyTW7pKzoOdp9i
-         Y4vY6QJg0LyHMsDiraZt8HDlO2JNBvvene6Uegl9FK0uUL/hhd1/WzE5DRS6joh6Iv
-         47DDn0lyl6SBWknnaeb4p/6fbIygzeyZrThucG0QudR/UeulSJsOBp2llQllpS5aTl
-         Pp6NYW3mNjD0amOF2TrdevqGyAWAf6SDvINhvZGhQ6VW5Mtr1w5Djz0iJqMDQmohMQ
-         uv3sSew7XVDkQ==
-Date:   Mon, 23 Oct 2023 10:23:10 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Yu Chien Peter Lin <peterlin@andestech.com>
-Cc:     acme@kernel.org, adrian.hunter@intel.com, ajones@ventanamicro.com,
-        alexander.shishkin@linux.intel.com, andre.przywara@arm.com,
-        anup@brainfault.org, aou@eecs.berkeley.edu, atishp@atishpatra.org,
-        conor+dt@kernel.org, conor.dooley@microchip.com,
-        devicetree@vger.kernel.org, dminus@andestech.com,
-        evan@rivosinc.com, geert+renesas@glider.be, guoren@kernel.org,
-        heiko@sntech.de, irogers@google.com, jernej.skrabec@gmail.com,
-        jolsa@kernel.org, jszhang@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, locus84@andestech.com,
-        magnus.damm@gmail.com, mark.rutland@arm.com, mingo@redhat.com,
-        n.shubin@yadro.com, namhyung@kernel.org, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, peterz@infradead.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com, rdunlap@infradead.org,
-        robh+dt@kernel.org, samuel@sholland.org, sunilvl@ventanamicro.com,
-        tglx@linutronix.de, tim609@andestech.com, uwu@icenowy.me,
-        wens@csie.org, will@kernel.org, ycliang@andestech.com
-Subject: Re: [PATCH v3 RESEND 01/13] riscv: errata: Rename defines for Andes
-Message-ID: <20231023-splashing-dandy-1effebb9ec30@spud>
-References: <20231023004100.2663486-1-peterlin@andestech.com>
- <20231023004100.2663486-2-peterlin@andestech.com>
+        Mon, 23 Oct 2023 06:22:54 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CED69D5D
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Oct 2023 03:22:50 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-408002b5b9fso25771965e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Oct 2023 03:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1698056569; x=1698661369; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wUnnGAdmDfMipB0/9liPZMIOUoXhP0zAlTuz0GroIGc=;
+        b=jFNeP0L5vwS/zBrTIHKxpjJ3G6aUx5EonbyLaKnNV2zF3CVXCZKZhjmf5w4YyVn0H3
+         XTb89EUSTzW55RP7OncMgXrgwI4R3cEQtnR/tA7c+98BX60W8kLhyVqSb5CN5XXyUoUv
+         gxpn7kvcH+k4yOlC4mq+rAfmN50jDQ4YqD1oAS9x70aXKASqSPB3y3HpfgVAxTi3wc/l
+         XdQkQ4O/JPias7dY4y5E4XwjzJDjZBSFZq5n82gNRbtJUM4ghpOoom+Wpu8VrGr+bs0p
+         EVgBn2oAOho+dvU137wejGGlV0bGxCgqdo50iURrb/Du7WUc5gLM8x5S+P+Ucmsh2aUX
+         oBMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698056569; x=1698661369;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wUnnGAdmDfMipB0/9liPZMIOUoXhP0zAlTuz0GroIGc=;
+        b=C1RvsrDFu12iU5bWx+Y/XHdtnpjUhsGBSKisjJiihSJYY/DLP4szH1dXnOvxoglIkI
+         l+u6eAnMrk/rgyMapVbdaEC86os94mLVNlEepaK9y+HkeaXoFzDvcT/3VYWVFTRqSrNS
+         px9qHRYVXxKW8LID7Qfos5aFef1wiWZmpGYTFqMHhgXFDAb0ZtFuG9Es6Kh7JqlveS6J
+         eTyjIyQsYzyI0ZlIShfSOfFZhwZs5reU9e1HwGbR6CwRvNltAYCXHFZtql86ozqBbdRz
+         aRPPme6czA9cyYf2IGj7rR2ssm7Jxejl2TxEmBf1ItjZS9s+WQu3iMLXUeA5Vb/FFO4L
+         EgaQ==
+X-Gm-Message-State: AOJu0Yy0fS4q9btDWlNjznHMMl/u2baeLgI0qeGvKcHLsbqBlKZ5+swE
+        TYvwokLr/VbpDTmbiwampMnVIw==
+X-Google-Smtp-Source: AGHT+IFqYO5bI+Kdl0SkjyRuSYnohDay+J2f9QzfY0pKi3Y493KGEjzuhSot3Dc88fVZ0pL4mUkG7w==
+X-Received: by 2002:a05:600c:3d87:b0:3fe:1232:93fa with SMTP id bi7-20020a05600c3d8700b003fe123293famr6882340wmb.22.1698056569060;
+        Mon, 23 Oct 2023 03:22:49 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.185])
+        by smtp.gmail.com with ESMTPSA id 1-20020a05600c228100b0040596352951sm13593275wmf.5.2023.10.23.03.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Oct 2023 03:22:48 -0700 (PDT)
+From:   Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To:     tglx@linutronix.de, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        geert+renesas@glider.be, magnus.damm@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/7] irqchip/renesas-rzg2l: add support for RZ/G3S SoC
+Date:   Mon, 23 Oct 2023 13:22:16 +0300
+Message-Id: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Dr6k7xdk2Nj78Rm8"
-Content-Disposition: inline
-In-Reply-To: <20231023004100.2663486-2-peterlin@andestech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
---Dr6k7xdk2Nj78Rm8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Mon, Oct 23, 2023 at 08:40:48AM +0800, Yu Chien Peter Lin wrote:
-> Using "ANDES" rather than "ANDESTECH" to unify the naming
-> convention with directory, file names, Kconfig options
-> and other definitions.
->=20
-> Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
-> Reviewed-by: Charles Ci-Jyun Wu <dminus@andestech.com>
-> Reviewed-by: Leo Yu-Chi Liang <ycliang@andestech.com>
+Series adds support for IA55 available on RZ/G3S SoC.
+Patches are split as follows:
+- 1/7 updates documentation
+- 2/7 adds IA55 clock
+- 3/7 minor cleanup on the way TITSR fields are populated
+- 4/7 implement restriction described in HW manual for ISCR register
+- 5/7 adds support for suspend to RAM
+- 6/7 minor cleanup that replaces spaces with tabs on macro definition
+- 7/7 adds IA55 device tree node
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Thank you,
+Claudiu Beznea
 
-Cheers,
-Conor.
+Claudiu Beznea (7):
+  dt-bindings: interrupt-controller: renesas,rzg2l-irqc: document RZ/G3S
+  clk: renesas: r9a08g045: add IA55 pclk and its reset
+  irqchip/renesas-rzg2l: add macros to retrieve TITSR index and
+    associated selector
+  irqchip/renesas-rzg2l: implement restriction when writing ISCR
+    register
+  irqchip/renesas-rzg2l: cache registers on suspend/resume
+  irqchip/renesas-rzg2l: use tabs instead of spaces
+  arm64: dts: renesas: r9108g045: add irqc
 
---Dr6k7xdk2Nj78Rm8
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../renesas,rzg2l-irqc.yaml                   |   5 +-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  68 +++++++++++
+ drivers/clk/renesas/r9a08g045-cpg.c           |   3 +
+ drivers/irqchip/irq-renesas-rzg2l.c           | 111 ++++++++++++------
+ 4 files changed, 152 insertions(+), 35 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.39.2
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZTY7fgAKCRB4tDGHoIJi
-0szrAQDpbVZqytSdG3WsXMLtVH5Uqmw9YxPlcM5oJY5NdKbzngEAsaz52IDy3Sk5
-0HxrIcXgEJ5z+J2YeJShi5+5WFBDYQc=
-=HAN/
------END PGP SIGNATURE-----
-
---Dr6k7xdk2Nj78Rm8--
