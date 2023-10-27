@@ -2,69 +2,146 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E17C25B47
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Oct 2023 12:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D859C25B48
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Oct 2023 17:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345787AbjJ0MPf (ORCPT
+        id S231461AbjJ0R52 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 27 Oct 2023 08:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48618 "EHLO
+        Fri, 27 Oct 2023 13:57:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345740AbjJ0MPe (ORCPT
+        with ESMTP id S230101AbjJ0R52 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Oct 2023 08:15:34 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1F2FA;
-        Fri, 27 Oct 2023 05:15:32 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21DDDC433C8;
-        Fri, 27 Oct 2023 12:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1698408931;
-        bh=kZXcL0pvG1L+KmFF/HHHVHZZ3cpx4UPBud9Z2XG1+jY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Na83yLsXQ8cVXeHxNSVwKpp0JHPuEx2sxfV9fovOyYIALNVibwtYGGnfH062AfuT0
-         S1YuGZbE6dYzksX2Tkn2C0sFdrBGKccEx7YT3Sb/eyTO/fkNxErzvyIHG8YtWmj7xH
-         32m+hHq73zdINDvnx//6sMrgp4r4Xox6uqEEAMMo=
-Date:   Fri, 27 Oct 2023 14:15:28 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@denx.de>, stable@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH v5.10.199] mmc: renesas_sdhi: use custom mask for
- TMIO_MASK_ALL
-Message-ID: <2023102722-parchment-repeated-f684@gregkh>
-References: <1b9fda30f2d86fab50341a947d17b5206a2c7507.1698321354.git.geert+renesas@glider.be>
+        Fri, 27 Oct 2023 13:57:28 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F78512A;
+        Fri, 27 Oct 2023 10:57:25 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1698429443;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=58t0D6ESCSzexSg4v1kt6tJ4hy3mICpcIPZMbCXXn84=;
+        b=keo8ZRjniGvDQH8XixV0C/IW4SmfusttUIfuaDrFMsYMlp9/TLJbbkpIykf1qNT9r2p+X4
+        WOl+pS+ezpf6OmYoxfOTRp+y2m4SKskZ8+gk25re2TmuG22G/++/MukocbZtnKqiIPbrH7
+        wF4CHapZo5B+t0Tqsv0Z+vVQ5KUgR/+TgEkd38qB1EdVSwkm1sX/RC1DlcYHYX3q3LzBif
+        E4u+fhV6uGbQ6Ci+O7aAFp+ANMIsdBObtBs3qCzfiyX2/ZiKEYQg+tmx78X3aerV7zkTm6
+        +bXxdXIt+48AErihL4mNQOE9vr0yWhdCikozeuBbNnBxUJQ8FT2n+Q9gDFUx/w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1698429443;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=58t0D6ESCSzexSg4v1kt6tJ4hy3mICpcIPZMbCXXn84=;
+        b=J8HWFFYgzidROH/s2RBjpBwD4G2jhOYDfrOjJBKITQEJJs9sfRG+xQR+Gff1ptjKKQjZQF
+        O8jeOEWApyIH5jCw==
+To:     Claudiu <claudiu.beznea@tuxon.dev>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        geert+renesas@glider.be, magnus.damm@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 5/7] irqchip/renesas-rzg2l: cache registers on
+ suspend/resume
+In-Reply-To: <20231023102223.1309614-6-claudiu.beznea.uj@bp.renesas.com>
+References: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231023102223.1309614-6-claudiu.beznea.uj@bp.renesas.com>
+Date:   Fri, 27 Oct 2023 19:57:23 +0200
+Message-ID: <87h6mc2bjw.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b9fda30f2d86fab50341a947d17b5206a2c7507.1698321354.git.geert+renesas@glider.be>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Oct 26, 2023 at 02:18:56PM +0200, Geert Uytterhoeven wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> 
-> [ Upstream commit 9f12cac1bb88e3296990e760d867a98308d6b0ac ]
-> 
-> Populate the new member for custom mask values to make sure this value
-> is applied whenever needed. Also, rename the define holding the value
-> because this is not only about initialization anymore.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Link: https://lore.kernel.org/r/20210304092903.8534-1-wsa+renesas@sang-engineering.com
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> [geert: Backport to v5.10.199]
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Fixes: 6d3745bbc3341d3b ("mmc: renesas_sdhi: register irqs before registering controller")
+On Mon, Oct 23 2023 at 13:22, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Cache registers content when going to suspend and restore them in resume
+> as these may be lost when switching to deep sleep states. With this
+> driver data has been marked as static to be able to play with it
+> in struct syscon_ops::{suspend, resume}.
 
-Now queued up, thanks.
+I have no idea what you are trying to tell me here. Why do the
+suspend/resume callbacks need a static data structure and cannot operate
+on a pointer which wastes less builtin memory when the driver is not
+used?
 
-greg k-h
+Also "play with it" is definitely not a technical term. See
+Documentation/process/* which has lots of explanations how to write
+proper change logs.
+
+> Because IA55 input is from pin controller and IA55 resumes before pin
+> controller we don't restore interrupt enable bits here but let the
+> pinctrl to do it on IA55 behalf after pins are in proper state to
+> avoid invalid interrupts.
+> +
+> +static struct rzg2l_irqc_priv {
+>  	void __iomem *base;
+>  	struct irq_fwspec fwspec[IRQC_NUM_IRQ];
+>  	raw_spinlock_t lock;
+> -};
+> +	struct rzg2l_irqc_reg_cache cache;
+> +} priv;
+
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
+
+>  
+>  static struct rzg2l_irqc_priv *irq_data_to_priv(struct irq_data *data)
+>  {
+> @@ -238,6 +251,37 @@ static int rzg2l_irqc_set_type(struct irq_data *d, unsigned int type)
+>  	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
+>  }
+>  
+> +static int rzg2l_irqc_irq_suspend(void)
+> +{
+> +	struct rzg2l_irqc_reg_cache *cache = &priv.cache;
+> +
+> +	cache->iitsr = readl_relaxed(priv.base + IITSR);
+> +	for (u8 i = 0; i < 2; i++)
+> +		cache->titsr[i] = readl_relaxed(priv.base + TITSR(i));
+> +
+> +	return 0;
+> +}
+> +
+> +static void rzg2l_irqc_irq_resume(void)
+> +{
+> +	struct rzg2l_irqc_reg_cache *cache = &priv.cache;
+> +	u8 i;
+> +
+> +	/*
+> +	 * Restore only interrupt type. TSSRx will be restored at the
+> +	 * request of pin controller to avoid spurious interrupts due
+> +	 * to invalid PIN states.
+> +	 */
+> +	for (i = 0; i < 2; i++)
+> +		writel_relaxed(cache->titsr[i], priv.base + TITSR(i));
+> +	writel_relaxed(cache->iitsr, priv.base + IITSR);
+> +}
+> +
+> +static struct syscore_ops rzg2l_irqc_syscore_ops = {
+> +	.suspend = rzg2l_irqc_irq_suspend,
+> +	.resume = rzg2l_irqc_irq_resume,
+> +};
+
+Ditto.
+
+>  static const struct irq_chip irqc_chip = {
+>  	.name			= "rzg2l-irqc",
+>  	.irq_eoi		= rzg2l_irqc_eoi,
+> @@ -323,7 +367,6 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
+>  	struct irq_domain *irq_domain, *parent_domain;
+>  	struct platform_device *pdev;
+>  	struct reset_control *resetn;
+> -	struct rzg2l_irqc_priv *priv;
+
+Make this pointer static at the top level and leave the rest of the code
+alone and please give it a proper name. "priv" at the file level is
+really non-descriptive.
+
+Thanks,
+
+        tglx
