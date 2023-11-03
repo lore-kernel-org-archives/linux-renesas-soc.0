@@ -2,112 +2,93 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35022C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Nov 2023 12:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C16CC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Nov 2023 22:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230187AbjKCMqY (ORCPT
+        id S1377742AbjKCW4U (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Nov 2023 08:46:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43758 "EHLO
+        Fri, 3 Nov 2023 18:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjKCMqY (ORCPT
+        with ESMTP id S1376749AbjKCW4T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Nov 2023 08:46:24 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B070184;
-        Fri,  3 Nov 2023 05:46:21 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F8CEC433C7;
-        Fri,  3 Nov 2023 12:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699015581;
-        bh=it+Ur90waa0oim08aoAhpIaY4KZFUL1HCU6OwZvCS/g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OhSq3YzN9otpUbZjupxrkxUum2SOI8/ixCfg/TcXthjyIqz0QXU67ZZyjbiXUUtIH
-         xi8mjd9LTIIXG3VSv8aO+mG3v6ouLi3QmJuaT+yny3JqPH/HIwJ79WAmCTO6EE9Ywl
-         /H0blyzj93vLYrG3WkxWWdrbtzZ51SyzT30t4S2d+br46+Tp8zhv4P1h3EiuSB4wle
-         nPpmb4jhJ8TkiZKdoPcx/NQzWRepNeO7S8BYA2si+AiOWW+ewRZNVT11+w6gQKyIvk
-         kWCMzuZM2g9tcH3kJzj9NkiUPhS8OIfFMxreT28Q8yKSL7LP5U2oAQkSQiM9uPvxAo
-         q8We0ynRvRMCQ==
-Date:   Fri, 3 Nov 2023 12:46:16 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        Fri, 3 Nov 2023 18:56:19 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB1ED65
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Nov 2023 15:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=from:to:cc:subject:date:message-id
+        :in-reply-to:references:mime-version:content-transfer-encoding;
+         s=k1; bh=TiJf9ojlNhxPnbwNmLPWFg4kCpD3p403c86z54PQPYc=; b=l5gDiE
+        J0Y/10+Tr0gW2tra8ruaauzW5TGXXvtazMBns04VQdHcy2KUfRkR5YcJjq+ofCnx
+        6uqV8ds+yEYX3uDNly1DjG7GAWbd6x2OoVq3qaKY36VVhEZzv1koMan8JWgzdgVd
+        aS9ZG+7ba+pEx0OFpus+p7v0xaQwBOnScr0AHpZeViWw8W3vUXVp7Wj1I8MJdguq
+        15iWnXPj2o9JvT3dzqreWoIosMEcU2xmKy1aVFf2aY0TBPF59hYKPlf++9kwm4Sx
+        /Iph2xaQlcyiE42Qp/x5R1zLuc9Mz7hRh34Cdu9kAU2QSCA/5AUcjtcD5MwEo3ER
+        4eVNYa1G39M1LnWg==
+Received: (qmail 1327910 invoked from network); 3 Nov 2023 23:56:13 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2023 23:56:13 +0100
+X-UD-Smtp-Session: l3s3148p1@iCk8aUcJCM5ehhrK
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] dt-bindings: dma: rz-dmac: Document RZ/Five SoC
-Message-ID: <20231103-depress-dispersed-c5965a853c8a@spud>
-References: <20231102203922.548353-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/3] dt-bindings: gnss: u-blox: add "reset-gpios" binding
+Date:   Fri,  3 Nov 2023 23:55:59 +0100
+Message-Id: <20231103225601.6499-3-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20231103225601.6499-1-wsa+renesas@sang-engineering.com>
+References: <20231103225601.6499-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d4uRiJ5fk19L4hXt"
-Content-Disposition: inline
-In-Reply-To: <20231102203922.548353-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The Renesas KingFisher board includes a U-Blox Neo-M8 chip. This chip
+has a reset pin which is also wired on the board. Introduce a binding to
+support this reset pin.
 
---d4uRiJ5fk19L4hXt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 02, 2023 at 08:39:22PM +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> The DMAC block on the RZ/Five SoC is identical to one found on the RZ/G2UL
-> SoC. "renesas,r9a07g043-dmac" compatible string will be used on the
-> RZ/Five SoC so to make this clear, update the comment to include RZ/Five
-> SoC.
->=20
-> No driver changes are required as generic compatible string
-> "renesas,rz-dmac" will be used as a fallback on RZ/Five SoC.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml b=
-/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> index c284abc6784a..a42b6a26a6d3 100644
-> --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> @@ -16,7 +16,7 @@ properties:
->    compatible:
->      items:
->        - enum:
-> -          - renesas,r9a07g043-dmac # RZ/G2UL
-> +          - renesas,r9a07g043-dmac # RZ/G2UL and RZ/Five
-
-Possibly the most unnecessary ack I've given to date, but
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Cheers,
-Conor.
+diff --git a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+index 4835a280b3bf..8e97e475613f 100644
+--- a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
++++ b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+@@ -41,6 +41,9 @@ properties:
+     description: >
+       Backup voltage regulator
+ 
++  reset-gpios:
++    maxItems: 1
++
+ required:
+   - compatible
+   - vcc-supply
+@@ -49,10 +52,12 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
++    #include <dt-bindings/gpio/gpio.h>
+     serial {
+         gnss {
+             compatible = "u-blox,neo-8";
+             v-bckp-supply = <&gnss_v_bckp_reg>;
+             vcc-supply = <&gnss_vcc_reg>;
++            reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
+         };
+     };
+-- 
+2.35.1
 
->            - renesas,r9a07g044-dmac # RZ/G2{L,LC}
->            - renesas,r9a07g054-dmac # RZ/V2L
->        - const: renesas,rz-dmac
-> --=20
-> 2.34.1
->=20
-
---d4uRiJ5fk19L4hXt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZUTrmAAKCRB4tDGHoIJi
-0gzIAP9omTAPzecIsVU2EmGnnXwI4uLH2ZAEbuainbbgWH4eYQD7BEzDVcYB3ioD
-IcCHf+Ye7G5eM1gLWF6LWdJTEmfi9wg=
-=NqOm
------END PGP SIGNATURE-----
-
---d4uRiJ5fk19L4hXt--
