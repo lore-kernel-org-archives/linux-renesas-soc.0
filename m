@@ -2,115 +2,66 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B8FC41535
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E524C4167B
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Nov 2023 22:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377292AbjKCW4W (ORCPT
+        id S1376811AbjKCW4W (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 3 Nov 2023 18:56:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35000 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377689AbjKCW4U (ORCPT
+        with ESMTP id S1377659AbjKCW4T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Nov 2023 18:56:20 -0400
+        Fri, 3 Nov 2023 18:56:19 -0400
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1487D6D
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Nov 2023 15:56:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E2D0D64
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Nov 2023 15:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :in-reply-to:references:mime-version:content-transfer-encoding;
-         s=k1; bh=fmrU2g6eF1M/O9NhTkCGo0q8tJfP+vuJFadhZEhBZqk=; b=bBNUBH
-        kTPO9XBWgGHWN/xKtJuHwwsT/4ldN0N7Bfhgzj97e8bmNLSdmsfKSwXmQ2a+JTh4
-        /PSSBjswK0XthI/X0n4JxDWvT6U+g8aS6fYDuITqkgJ5ZeRYI7gJTW2GWQ1ia6dZ
-        JymuzTl+Kdf8Vo4AoAXoiC6RZigjkp2IRONIBVwESm8VPKGSZk+L6Sq3FzSV+vqu
-        KXIgzZp8TmUdoFfyLmpFlO9hT3jngZa0xI8ZaAemMahix3flJ16POcv40EC71HmR
-        7CDOiJd4wgTKA4v1ys9UhxFMi0RXikbIn0uSJn+/fi4sRY9hvQYltJACHQjXIaJF
-        uGtY5dn4bCkVNh5g==
-Received: (qmail 1327964 invoked from network); 3 Nov 2023 23:56:14 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2023 23:56:14 +0100
-X-UD-Smtp-Session: l3s3148p1@xx1IaUcJEM5ehhrK
+        :mime-version:content-transfer-encoding; s=k1; bh=//vHDdaoI7preO
+        uPzu7V9aDR11Gy4yS0cSesSqxf2j0=; b=iUsvARtHMQcT4RqRHG3CyfHdzIQLTO
+        00wA9s8kq25uXsxptGsrlKrEnjC0DrdXjTqlNuUQg/g8N0hFG6a8zP9feAtbR7dX
+        H+Fljee9ydaw6hnaVPCIK5swcplWBJF+YptGWedubw67RQThYox878WWQF1FQEtT
+        B4wNIEKb47xziOVr3dkC9MWq6qWUCcx3peSJBtVZwuOz4+K0zIWiJO7bN8JDeTZg
+        vV3WPUGjSzqlcgN5vCdK3QHnDAuU0hDFfNJRf30dn+DDfsSRNiFl2P2lZmbKP/uY
+        vVGUXZD4Qm3aZtQlZh1j3/CPH1um8nfzWzRdxtSmWh8taQWEN2+QgAhA==
+Received: (qmail 1327833 invoked from network); 3 Nov 2023 23:56:11 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2023 23:56:11 +0100
+X-UD-Smtp-Session: l3s3148p1@/tAgaUcJ8s1ehhrK
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] gnss: ubx: add support for the reset gpio
-Date:   Fri,  3 Nov 2023 23:56:00 +0100
-Message-Id: <20231103225601.6499-4-wsa+renesas@sang-engineering.com>
+        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] gnss: ubx: support the reset pin of the Neo-M8 variant
+Date:   Fri,  3 Nov 2023 23:55:57 +0100
+Message-Id: <20231103225601.6499-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20231103225601.6499-1-wsa+renesas@sang-engineering.com>
-References: <20231103225601.6499-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The Renesas KingFisher board includes a U-Blox Neo-M8 chip. This chip
-has a reset pin which is also wired on the board. Add code to the driver
-to support this reset pin. Because my GNSS device is hooked up via UART
-and I2C simultaneously, I could verify functionality by opening/closing
-the GNSS device using UART and see if the corresponding I2C device was
-visible on the bus.
+The Renesas KingFisher board includes a U-Blox Neo-M8 chip with its
+reset pin wired to a GPIO. To support that, we need "reset-gpio" support
+(patches 2+3). But first, simplify regulator handling with a new helper
+(patch 1).
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gnss/ubx.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Changes since v3:
+* rebased to 6.6
+* improved commit messages for patches 2+3
 
-diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
-index 9b76b101ba5e..e7d151cbc8c3 100644
---- a/drivers/gnss/ubx.c
-+++ b/drivers/gnss/ubx.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/errno.h>
- #include <linux/gnss.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -18,6 +19,7 @@
- 
- struct ubx_data {
- 	struct regulator *vcc;
-+	struct gpio_desc *reset_gpio;
- };
- 
- static int ubx_set_active(struct gnss_serial *gserial)
-@@ -29,6 +31,8 @@ static int ubx_set_active(struct gnss_serial *gserial)
- 	if (ret)
- 		return ret;
- 
-+	gpiod_set_value_cansleep(data->reset_gpio, 0);
-+
- 	return 0;
- }
- 
-@@ -37,6 +41,8 @@ static int ubx_set_standby(struct gnss_serial *gserial)
- 	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
- 	int ret;
- 
-+	gpiod_set_value_cansleep(data->reset_gpio, 1);
-+
- 	ret = regulator_disable(data->vcc);
- 	if (ret)
- 		return ret;
-@@ -90,6 +96,13 @@ static int ubx_probe(struct serdev_device *serdev)
- 	if (ret < 0 && ret != -ENODEV)
- 		goto err_free_gserial;
- 
-+	/* Start with reset asserted */
-+	data->reset_gpio = devm_gpiod_get_optional(&serdev->dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(data->reset_gpio)) {
-+		ret = PTR_ERR(data->reset_gpio);
-+		goto err_free_gserial;
-+	}
-+
- 	ret = gnss_serial_register(gserial);
- 	if (ret)
- 		goto err_free_gserial;
+
+Wolfram Sang (3):
+  gnss: ubx: use new helper to remove open coded regulator handling
+  dt-bindings: gnss: u-blox: add "reset-gpios" binding
+  gnss: ubx: add support for the reset gpio
+
+ .../bindings/gnss/u-blox,neo-6m.yaml          |  5 +++
+ drivers/gnss/ubx.c                            | 35 ++++++++-----------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
+
 -- 
 2.35.1
 
