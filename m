@@ -2,97 +2,105 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECECEC4167B
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  5 Nov 2023 09:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D7DC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  5 Nov 2023 20:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229683AbjKEJ3W (ORCPT
+        id S229485AbjKEUHH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 5 Nov 2023 04:29:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36376 "EHLO
+        Sun, 5 Nov 2023 15:07:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjKEJ3V (ORCPT
+        with ESMTP id S229451AbjKEUHG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Nov 2023 04:29:21 -0500
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52273100
-        for <linux-renesas-soc@vger.kernel.org>; Sun,  5 Nov 2023 01:29:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=from:to:cc:subject:date:message-id
-        :in-reply-to:references:mime-version:content-transfer-encoding;
-         s=k1; bh=km1S8zZEcbuRQRFhnQ+j9vTvoJEJFWsqJkELKGUX9fM=; b=kSpmB+
-        WjJUUQlaH8pW9NUeMMQm6llUyaZnex187z5aCpAz8XimaWIUo3ezDAUzZYY7u/4I
-        wrvw9LUQs00afzc79wJHC6TH23rbkScdZermgZa0/xlvbBVXCPuVXFtGY2gB9SoD
-        Ov86eaL1/VbOkqUyZtqF1khqFowpv9fKBZuj5qhHZt3ziIC5NEn7G2Bi1g4nI9fC
-        bIlWrtggx407/p5tW4vCVuTzC1kUoccYJB7lUPnl6CtdROUNeKpfspcTZYHb0Of2
-        i7YOn1ve5jrpJ8qdbQxxCUvcLUx3tZIWfsJfWXwo1QBV1fv0PZVomKUlVAbKo0e/
-        dnzkzutH9f0s/veQ==
-Received: (qmail 1670102 invoked from network); 5 Nov 2023 10:29:16 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Nov 2023 10:29:16 +0100
-X-UD-Smtp-Session: l3s3148p1@wFMDX2QJasQgAQnoAFPQANY41GnTzLIh
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sun, 5 Nov 2023 15:07:06 -0500
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D78E1;
+        Sun,  5 Nov 2023 12:07:03 -0800 (PST)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4SNlr3449Dz9sVN;
+        Sun,  5 Nov 2023 21:06:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1699214819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aTQFv+jxFsY3X5csA/whB9c77q2hCbYcNxae1TskwzQ=;
+        b=c8MsOHYNKCZq+G4vK28jvelMzuh9vV0bIReZeId4FVGLZrShV70vmH+dn4kmBaLXQweddR
+        0gVPDF0GSXrQwszV3wzR9kSHVy00j53ao+hHWru/h7gzSUO82JnO4H0KtwhWVPH+IC6IR4
+        xCri0Qb2a8dINoLliCPPYRDKwPL4idEBhx1bjGbjZxZPnspfCl7a8Vgxu6z3qyfNJKEew4
+        7PIGcNBmk6tlNiDaSUGpVg01Z7GIYknxmqqcADaH7CuTDBqSUsNPeBFOSQgLdMqCIMRJ3N
+        459olyXiJ7yIx6UXDOTdktTQT1OgDMlpz5hup6A19VHGFCFSJjaLwNbSdnRdKg==
+From:   Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1699214817;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aTQFv+jxFsY3X5csA/whB9c77q2hCbYcNxae1TskwzQ=;
+        b=X+55kuiQgnpvrwpqBcNYI9FDdAqRnmhbis7tN9Xo4uWEZOxRJEQaETMHuZTVdoc9DjbLLS
+        MTf1LCx96Kna1fYyHVqzBTp9pFFJICpx5eH4/iIwEKa9TUbEo3snDUMvqTx9+pjZuB5ao0
+        UVPGTN3Vopcu1Jdx9tHXMjJYuwbfjCDvUVy8ck8mIxU+4+QgitHjGLMSxerDP9K9PtSqSw
+        6ll51WSmnlUEjI7AJmsF5yd7A0NPuP/9wtsshtLzEK6zwX9j45o66jroNlZ6pkNe9jzWPC
+        s3DZaRr52qp2Qp5IGvQ8gmgcuH3VFuGtmjBSJ3O1DNLgTiuhxyvURtURxbdtJw==
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Conor Dooley <conor+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 RESEND 1/2] dt-bindings: PCI: rcar-pci-host: add optional regulators
-Date:   Sun,  5 Nov 2023 10:29:07 +0100
-Message-Id: <20231105092908.3792-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20231105092908.3792-1-wsa+renesas@sang-engineering.com>
-References: <20231105092908.3792-1-wsa+renesas@sang-engineering.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: rs9: Fix DIF OEn bit placement on 9FGV0241
+Date:   Sun,  5 Nov 2023 21:06:15 +0100
+Message-ID: <20231105200642.62792-1-marek.vasut+renesas@mailbox.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 7jnrc1r3hg64n4pus16cxxxnohkj5j8e
+X-MBO-RS-ID: a2288b80ca60afe3830
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Support regulators found on the KingFisher board for miniPCIe (1.5 and
-3.3v). For completeness, describe a 12v regulator while we are here.
+On 9FGV0241, the DIF OE0 is BIT(1) and DIF OE1 is BIT(2), on the other
+chips like 9FGV0441 and 9FGV0841 DIF OE0 is BIT(0) and so on. Increment
+the index in BIT() macro instead of the result of BIT() macro to shift
+the bit correctly on 9FGV0241.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: 603df193ec51 ("clk: rs9: Support device specific dif bit calculation")
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
- .../devicetree/bindings/pci/rcar-pci-host.yaml        | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/clk/clk-renesas-pcie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
-index 8fdfbc763d70..b6a7cb32f61e 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
-@@ -68,6 +68,15 @@ properties:
-   phy-names:
-     const: pcie
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 380245f635d6..6606aba253c5 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -163,7 +163,7 @@ static u8 rs9_calc_dif(const struct rs9_driver_data *rs9, int idx)
+ 	enum rs9_model model = rs9->chip_info->model;
  
-+  vpcie1v5-supply:
-+    description: The 1.5v regulator to use for PCIe.
-+
-+  vpcie3v3-supply:
-+    description: The 3.3v regulator to use for PCIe.
-+
-+  vpcie12v-supply:
-+    description: The 12v regulator to use for PCIe.
-+
- required:
-   - compatible
-   - reg
-@@ -121,5 +130,7 @@ examples:
-              clock-names = "pcie", "pcie_bus";
-              power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-              resets = <&cpg 319>;
-+             vpcie3v3-supply = <&pcie_3v3>;
-+             vpcie12v-supply = <&pcie_12v>;
-          };
-     };
+ 	if (model == RENESAS_9FGV0241)
+-		return BIT(idx) + 1;
++		return BIT(idx + 1);
+ 	else if (model == RENESAS_9FGV0441)
+ 		return BIT(idx);
+ 
 -- 
-2.35.1
+2.42.0
 
