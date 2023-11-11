@@ -2,136 +2,121 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B1FC05021
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Nov 2023 17:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D87C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Nov 2023 16:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235241AbjKJRqE (ORCPT
+        id S231295AbjKKQIc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Nov 2023 12:46:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46814 "EHLO
+        Sat, 11 Nov 2023 11:08:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345636AbjKJRpX (ORCPT
+        with ESMTP id S229797AbjKKQIc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2023 12:45:23 -0500
-X-Greylist: delayed 84164 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 10 Nov 2023 02:11:03 PST
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C272705D;
-        Fri, 10 Nov 2023 02:11:02 -0800 (PST)
-Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
+        Sat, 11 Nov 2023 11:08:32 -0500
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D183A8D;
+        Sat, 11 Nov 2023 08:08:28 -0800 (PST)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id B12755D8;
-        Fri, 10 Nov 2023 11:11:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1699611060;
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4SSLG13vSkz9sl1;
+        Sat, 11 Nov 2023 17:08:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1699718905;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=k0xFjiIFSD5filA1PVVjQV2FcRJZkfsau4Nsg7iZLDs=;
-        b=fZ+mEubzdSiREbMnoU6w7eJFH0E3gvRxEKygNGG8/GDWiB8q+RxPTEoW+Gg6x7zarr7E/X
-        S7XKZpfwXhb4p3p4hsPP5L4P3fqPHaivCe/lixztsgemltBGbeBj+wUZMQFbTq67tBNalV
-        /qGw7dmQattNcp4yXY5Mstawa8982tDeKZSITk9cRirofPImIGo4+F0TfLnHg5K+WOM/Mp
-        rbp0x3+unmpO3S2MKKDgqxw67HhBd9nIeDKbt+7u41bn5y0/F3XwOIe7PIwxqPP2n7kLot
-        BUzeQhZJX2dxXIiC1MkmXoYa+I1Q+B5E+wnNv2Jh976mzlm+OdXZthsJNR5SOA==
-MIME-Version: 1.0
-Date:   Fri, 10 Nov 2023 11:11:00 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=THFzGgVQc4ntN9P7VC/aZKmxHiRSLWP038efWlg/W8s=;
+        b=v2N6u4WjsWxb+yxEViiAqRNmSJUDI0z5QDtbanChomCNYY6rRGEkRW7zwvSTeeewWh1wsf
+        oGZoyRIJ4zzuhrAmCULe7et/nyUNrb9tdr2pdTwUcnZ1l6kSQAZUYDSBnzC15rljXfCTz8
+        GY3atyyeDSOydXdar9DBUlG/cq8PvmVm23XOkxmU6I4WHPYOF4FfvieiftGXrVoQXlmD2t
+        9cSu92XSotx0NGHpjTXB4a8hESOfeWHkohnk6j3Sl532mpfcr2XkAzBP/t/aeEPfM7cfug
+        2QcubxZ35gSCUVjfZVOw+0BDhpJyK8eNBFu74YEDc/WnnJI8cDW4yLwJBWml8w==
+From:   Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1699718903;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=THFzGgVQc4ntN9P7VC/aZKmxHiRSLWP038efWlg/W8s=;
+        b=eARE8DLi/T6veLpspYaRKmvMRxSwvyY858xYgiRjOO75s14bAbR3Bt+inz93QhsoFEFxdm
+        u30/BgHMtENh71T6zI/NDFYvE0gEf0XbLpbdiEXVU7B47XtMa+L6F0jni2o1wy2KG9a0oV
+        Ye5V+TvhgTuQ6O37Z+6UxuQAbGpIzpibcozrkE46/i18ufiKqs3G4Yp4TQw0YKN5kiKqJ8
+        q3n1/LuNH4ln5LYOrBl1xA9er+UVn8w6UowAkf2nJXIEliBXd7WLLuUf8S1aF+2q4hiwM3
+        pe6MNf+2QUXzXlDFEUc0QV3TwZRMWbufPpt4PZaiX46i+BP9fKQTWSXmadRLmg==
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Conor Dooley <conor+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "biju.das.au" <biju.das.au@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH RFC 0/4] Add set_iofv() callback
-In-Reply-To: <TYCPR01MB112699263B2EC0EC229746D3786AFA@TYCPR01MB11269.jpnprd01.prod.outlook.com>
-References: <20231108171149.258656-1-biju.das.jz@bp.renesas.com>
- <877590a5e3f8c32ec0a032385049a563@walle.cc>
- <TYVPR01MB11279E535835F2998335F770A86AFA@TYVPR01MB11279.jpnprd01.prod.outlook.com>
- <b9831be88008b9f9960d1d79cd0e5a3a@walle.cc>
- <TYVPR01MB11279575676708170F3B3270D86AFA@TYVPR01MB11279.jpnprd01.prod.outlook.com>
- <f88759f98e865e68da5481fcbb969c47@walle.cc>
- <TYCPR01MB112699263B2EC0EC229746D3786AFA@TYCPR01MB11269.jpnprd01.prod.outlook.com>
-Message-ID: <dcfa2cab21fc85bb9b2b0c1ceb754a1a@walle.cc>
-X-Sender: michael@walle.cc
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 1/4] dt-bindings: clk: rs9: Add 9FGV0841
+Date:   Sat, 11 Nov 2023 17:06:59 +0100
+Message-ID: <20231111160806.32954-1-marek.vasut+renesas@mailbox.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 3d233b5fff2168a1c82
+X-MBO-RS-META: xkah6ukywhykd831kcn4qk9z4kemaddy
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+This is an 8-channel variant of 9FGV series.
 
->> >> Thus I was saying, that we probably wont support that and the easiest
->> >> fix should be to disable this behavior for the atmel flash (there was
->> >> nv setting).
->> >
->> > The fix up is invoked only for quad mode, I believe it is safe to add
->> > fixup for micron flash As it is the one deviating from normal
->> > according to you, rather than adding fixup for generic flash like
->> > ATMEL flash(Now Renesas flash)
->> 
->> Could you please try setting bit 4 in the Nonvolatile Configuration
->> Register (Table 7) and see if the problem goes away?
-> 
-> You mean, if it works, we need to disable reset for all the boards, 
-> maybe at bootloader level??
+Acked-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: Add AB from Alexander and Conor
+---
+ .../devicetree/bindings/clock/renesas,9series.yaml     | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Not necessarily. First, just to confirm that it is actually the reset
-circuit. You can also compare the part numbers of the flash. There
-is a flash with IO3/RESET# and IO3/HOLD# (and a flash with a dedicated
-reset pin).
+diff --git a/Documentation/devicetree/bindings/clock/renesas,9series.yaml b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
+index 3afdebdb52ad..af6319697b1c 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,9series.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
+@@ -21,6 +21,15 @@ description: |
+     1 -- DIF1
+     2 -- DIF2
+     3 -- DIF3
++  - 9FGV0841:
++    0 -- DIF0
++    1 -- DIF1
++    2 -- DIF2
++    3 -- DIF3
++    4 -- DIF4
++    5 -- DIF5
++    6 -- DIF6
++    7 -- DIF7
+ 
+ maintainers:
+   - Marek Vasut <marex@denx.de>
+@@ -30,6 +39,7 @@ properties:
+     enum:
+       - renesas,9fgv0241
+       - renesas,9fgv0441
++      - renesas,9fgv0841
+ 
+   reg:
+     description: I2C device address
+-- 
+2.42.0
 
-If that's the case, it looks like a hardware bug on your board. You
-left the reset pin floating. So you'd also not be able to boot from
-the NOR flash, right?
-
-> OK, I will check that. Currently I have read that register and it is 
-> showing a value
-> Of 0xffbb. I need to do write operation. Before that how do we recover 
-> flash, if
-> something goes wrong during writing for NV register?
-
-You should always be able to write that register from the bootloader.
-Maybe also through raw commands (like sspi in uboot).
-
->> Also could you have a look at the schematics, does the IO3/RESET# have 
->> a
->> pull-up? If not, who is in control of driving the correct value here? 
->> If
->> it has a pull-up, I'm puzzled why you need any other setting than HiZ.
-> 
-> Unfortunately, there is no pullup on IO3 line and also there is no SoC 
-> pullup.
-
-See above.
-
--michael
-
->> The correct fix would be to the information about the missing IO state 
->> in
->> the "struct spi_mem_op". That is, what should be the default values of 
->> all
->> the IO lines which are unused. For example if we have a 1s1s4s
->> transaction, what should be the state of IO0,
->> IO2 and IO3 during the command and address phase. If we have a 1s2s2s,
->> what should be the state of IO0 during the command phase etc.
->> 
->> That can then be used within your driver to set the corresponding IOFV
->> values (for each spi-mem op).
->> 
->> But I'm not sure if other SPI controllers will support that, though.
-> 
-> Currently driving SoC IOFV register, it fixes the issue and it is just 
-> one time
-> operation during post sfdp. I take this as a SoC feature which other 
-> controllers
-> don't have.
-> 
-> Cheers,
-> Biju
