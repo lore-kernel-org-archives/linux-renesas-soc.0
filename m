@@ -2,95 +2,97 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EEBC4167D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Nov 2023 03:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381FAC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Nov 2023 05:55:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbjKNDYi (ORCPT
+        id S229580AbjKNFzG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Nov 2023 22:24:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37152 "EHLO
+        Tue, 14 Nov 2023 00:55:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229827AbjKNDYg (ORCPT
+        with ESMTP id S229457AbjKNFzG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2023 22:24:36 -0500
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C780AD45
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2023 19:24:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699932273; x=1731468273;
-  h=date:from:to:cc:subject:message-id;
-  bh=QQpwRS4nxzdbkrIH/OfROVQ+jV+vPvAu0Heii63FMqU=;
-  b=ibvEuouPdD2Xs4N5PTe1xKrOCyumAoCu1w/kZqH7Pmv0pLv9mKTFLPcc
-   MZQUpi4xd2NcS3gV4Jf48ow7M83TOVM+85HGXIPB/nt7zEaWMqG9XulRR
-   pb7sn3B11NYbqA4PqFv/aKdJzmBGxSFahZv4DKfG4y1UxGTcFJK8/tLey
-   lLAhF+rjt61EtJ7D0ump4WYwToGcO46DG221LrUH+QKljBDr/1Jh5JY3L
-   v+AMPo2XwoKPzSxhD/HMtXKWyEoeQ/uMrdA7+kE1cduet5Mn80QHufXUO
-   g2PGkeGNgHXyHauooHr/ef3HM/JNntPQlUez0hQN+nz9xIDm4GVOzirF+
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10893"; a="457060050"
-X-IronPort-AV: E=Sophos;i="6.03,299,1694761200"; 
-   d="scan'208";a="457060050"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2023 19:24:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10893"; a="740961839"
-X-IronPort-AV: E=Sophos;i="6.03,299,1694761200"; 
-   d="scan'208";a="740961839"
-Received: from lkp-server01.sh.intel.com (HELO 17d9e85e5079) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 13 Nov 2023 19:24:30 -0800
-Received: from kbuild by 17d9e85e5079 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1r2k2O-000CoN-28;
-        Tue, 14 Nov 2023 03:24:28 +0000
-Date:   Tue, 14 Nov 2023 11:23:41 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-dts-for-v6.8] BUILD SUCCESS
- e443f05dfa8f8edfb8f1b684cc413ee8e774b9ac
-Message-ID: <202311141139.zBdOTvrY-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+        Tue, 14 Nov 2023 00:55:06 -0500
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B7C3F1BF;
+        Mon, 13 Nov 2023 21:55:02 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="6.03,301,1694703600"; 
+   d="scan'208";a="186678313"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Nov 2023 14:55:01 +0900
+Received: from localhost.localdomain (unknown [10.166.13.99])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 91F4A4162940;
+        Tue, 14 Nov 2023 14:55:01 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, mani@kernel.org
+Cc:     linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 0/6] PCI: controllers: tidy code up
+Date:   Tue, 14 Nov 2023 14:54:50 +0900
+Message-Id: <20231114055456.2231990-1-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v6.8
-branch HEAD: e443f05dfa8f8edfb8f1b684cc413ee8e774b9ac  arm64: dts: renesas: rzg2lc-smarc-som: Enable 4-bit tx support
+This patch series tidies the code of PCIe dwc controllers and some
+controllers up.
 
-elapsed time: 731m
+Changes from v1:
+https://lore.kernel.org/linux-pci/20231113013300.2132152-1-yoshihiro.shimoda.uh@renesas.com/
+ - Based on the latest pci.git / next branch.
+ - Add a new patch to drop host prefix of members from dw_pcie_host_ops
+   in the patch 1/6.
+ - Add Reviewed-by tag in the patch 3/6.
+ - Drop unneeded local variable in the patch 4/6.
+ - Add new patches to resolve issues of clang warnings in the patch [56]/6.
 
-configs tested: 23
-configs skipped: 171
+Justin Stitt (1):
+  PCI: iproc: fix -Wvoid-pointer-to-enum-cast warning
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Yoshihiro Shimoda (5):
+  PCI: dwc: Drop host prefix from struct dw_pcie_host_ops
+  PCI: dwc: Rename to .init in struct dw_pcie_ep_ops
+  PCI: dwc: Rename to .get_dbi_offset in struct dw_pcie_ep_ops
+  PCI: dwc: Add dw_pcie_ep_{read,write}_dbi[2] helpers
+  PCI: rcar-gen4: fix -Wvoid-pointer-to-enum-cast warning
 
-tested configs:
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                   randconfig-001-20231114   gcc  
-arm                   randconfig-002-20231114   gcc  
-arm                   randconfig-003-20231114   gcc  
-arm                   randconfig-004-20231114   gcc  
-arm64                            allmodconfig   gcc  
-arm64                             allnoconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20231114   gcc  
-arm64                 randconfig-002-20231114   gcc  
-arm64                 randconfig-003-20231114   gcc  
-arm64                 randconfig-004-20231114   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                 randconfig-001-20231114   gcc  
-riscv                 randconfig-002-20231114   gcc  
-riscv                          rv32_defconfig   gcc  
+ drivers/pci/controller/dwc/pci-dra7xx.c       |   4 +-
+ drivers/pci/controller/dwc/pci-exynos.c       |   2 +-
+ drivers/pci/controller/dwc/pci-imx6.c         |   6 +-
+ drivers/pci/controller/dwc/pci-keystone.c     |   8 +-
+ .../pci/controller/dwc/pci-layerscape-ep.c    |   7 +-
+ drivers/pci/controller/dwc/pci-layerscape.c   |   2 +-
+ drivers/pci/controller/dwc/pci-meson.c        |   2 +-
+ drivers/pci/controller/dwc/pcie-al.c          |   2 +-
+ drivers/pci/controller/dwc/pcie-armada8k.c    |   2 +-
+ drivers/pci/controller/dwc/pcie-artpec6.c     |   4 +-
+ drivers/pci/controller/dwc/pcie-bt1.c         |   4 +-
+ .../pci/controller/dwc/pcie-designware-ep.c   | 249 ++++++++++--------
+ .../pci/controller/dwc/pcie-designware-host.c |  30 +--
+ .../pci/controller/dwc/pcie-designware-plat.c |   2 +-
+ drivers/pci/controller/dwc/pcie-designware.h  |  12 +-
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c |   2 +-
+ drivers/pci/controller/dwc/pcie-fu740.c       |   2 +-
+ drivers/pci/controller/dwc/pcie-histb.c       |   2 +-
+ drivers/pci/controller/dwc/pcie-intel-gw.c    |   2 +-
+ drivers/pci/controller/dwc/pcie-keembay.c     |   2 +-
+ drivers/pci/controller/dwc/pcie-kirin.c       |   2 +-
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     |   2 +-
+ drivers/pci/controller/dwc/pcie-qcom.c        |   6 +-
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c   |  12 +-
+ drivers/pci/controller/dwc/pcie-spear13xx.c   |   2 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c    |   2 +-
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c |   2 +-
+ drivers/pci/controller/dwc/pcie-uniphier.c    |   2 +-
+ drivers/pci/controller/dwc/pcie-visconti.c    |   2 +-
+ drivers/pci/controller/pcie-iproc-platform.c  |   2 +-
+ 30 files changed, 203 insertions(+), 177 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
