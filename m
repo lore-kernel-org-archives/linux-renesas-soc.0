@@ -2,36 +2,37 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD38C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Nov 2023 19:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE22C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Nov 2023 21:07:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229456AbjKNTa4 (ORCPT
+        id S229507AbjKNVHT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Nov 2023 14:30:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
+        Tue, 14 Nov 2023 16:07:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjKNTaj (ORCPT
+        with ESMTP id S229456AbjKNVHT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2023 14:30:39 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AFCEBB
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Nov 2023 11:30:33 -0800 (PST)
+        Tue, 14 Nov 2023 16:07:19 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF452BF
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Nov 2023 13:07:14 -0800 (PST)
 Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9C212EBA;
-        Tue, 14 Nov 2023 20:30:04 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 26CF8D49;
+        Tue, 14 Nov 2023 22:06:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1699990204;
-        bh=8Acwfq/QWLPbxnb7H66pazV2DtcmUy4p7ugYI3ApURA=;
+        s=mail; t=1699996007;
+        bh=rm33E8/1rOfXB4A6XF7o0/J8hGu2nPUB6HQ+25V96LU=;
         h=From:To:Cc:Subject:Date:From;
-        b=lYWGS5e40ZQ2+of6B+zffwkwJx6wICE6GU6qO8R7/OWMqQHwzFjU9MdtVnBLA/jtm
-         ZuxEGx81YckPh5novYQWnLTEjbt/amhjQHjCmKDhHyPI9AjaAXxEhdBcW30ne59cQL
-         XULEtRmrtkOxKdLOuxYdr6vPUclXh5W+d/6zUxBU=
+        b=nqeWjvgwhRE+aGViQeNNZapVp1AOT2U7d2Yb6MS3EuG4t9vO93sLR9rdCbIY65Eyb
+         yhSJwh7+c19ZGRxZOoSVQ94qOQomlesXbyOq9t4wHe2kPY/aLgnK3kPlR0qeP9mkij
+         E1WD/sZVZNUfpO7t3O/+OuTj19Rus4RjOUNcC6A8=
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [kmsxx] [PATCH] testpat: Fix memory mapping in threaded drawing
-Date:   Tue, 14 Nov 2023 21:30:36 +0200
-Message-ID: <20231114193036.27049-1-laurent.pinchart@ideasonboard.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [kms-tests] [PATCH] kmstest: Print summary after running tests
+Date:   Tue, 14 Nov 2023 23:07:19 +0200
+Message-ID: <20231114210719.32739-1-laurent.pinchart@ideasonboard.com>
 X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,46 +40,113 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The IFramebuffer::map() function is not thread-safe, which is why the
-threaded implementation of draw_test_pattern_impl() maps all planes
-before starting to draw. A typo slipped in the code, resulting in only
-plane 0 being mapped. This didn't result in an immediate segfault, as
-drawing operations in the worker threads map the remaining planes.
-However, due to the implementation of DumbFramebuffer::map(), this can
-result in the same plane being mapped multiple times, with only one of
-the mapping recorded in the mapping cache. The other mappings are then
-leaked, leading not only to extra memory consumption, but also to the
-DRM device never being released even after the destruction of the Card
-object.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Fix this.
+When running multiple tests, a summary helps getting a quick overview of
+the results. Accumulate the number of success, skip and fail, and print
+them at the end:
 
-Fixes: 40d96062a37c ("Revert "testpat: remove threaded drawing"")
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+	28 tests: 24 SUCCESS, 4 SKIP, 0 FAIL
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-I've noticed this issue when running the DU KMS tests, when the tests
-run right after multi-planar format tests would sometimes fail, while
-running fine in isolation. It was "fun" to debug, for some definition of
-"fun".
----
- kms++util/src/testpat.cpp | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tests/kmstest.py | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/kms++util/src/testpat.cpp b/kms++util/src/testpat.cpp
-index 78c9d19a5ad7..1102588cc9f7 100644
---- a/kms++util/src/testpat.cpp
-+++ b/kms++util/src/testpat.cpp
-@@ -173,7 +173,7 @@ static void draw_test_pattern_impl(IFramebuffer& fb, YUVType yuvt)
+diff --git a/tests/kmstest.py b/tests/kmstest.py
+index a86d689347d9..3cc8f1a3e306 100755
+--- a/tests/kmstest.py
++++ b/tests/kmstest.py
+@@ -3,6 +3,7 @@
+ # SPDX-FileCopyrightText: 2017-2019 Renesas Electronics Corporation
  
- 	// Create the mmaps before starting the threads
- 	for (unsigned i = 0; i < fb.num_planes(); ++i)
--		fb.map(0);
-+		fb.map(i);
+ import collections.abc
++from dataclasses import dataclass
+ import errno
+ import fcntl
+ import os
+@@ -329,6 +330,22 @@ class AtomicRequest(pykms.AtomicReq):
  
- 	unsigned num_threads = thread::hardware_concurrency();
- 	vector<thread> workers;
+ 
+ class KMSTest(object):
++
++    @dataclass
++    class Stats:
++        success: int = 0
++        skip: int = 0
++        fail: int = 0
++
++        def __add__(self, other):
++            return KMSTest.Stats(success=self.success + other.success,
++                                 skip=self.skip + other.skip,
++                                 fail=self.fail + other.fail)
++
++        @property
++        def total(self):
++            return self.success + self.skip + self.fail
++
+     def __init__(self, use_default_key_handler=False):
+         if not getattr(self, 'main', None):
+             raise RuntimeError('Test class must implement main method')
+@@ -348,6 +365,8 @@ class KMSTest(object):
+         if use_default_key_handler:
+             self.loop.register(sys.stdin, selectors.EVENT_READ, self.__read_key)
+ 
++        self.__stats = KMSTest.Stats()
++
+     def __enter__(self):
+         return self
+ 
+@@ -533,6 +552,8 @@ class KMSTest(object):
+         sys.stdout.write(f'\rTesting {self.test_name}: FAIL\n')
+         sys.stdout.flush()
+ 
++        self.__stats.fail += 1
++
+     def skip(self, reason):
+         """Complete a test with skip."""
+         self.logger.log(f'Test skipped. Reason: {reason}')
+@@ -540,6 +561,8 @@ class KMSTest(object):
+         sys.stdout.write('SKIP\n')
+         sys.stdout.flush()
+ 
++        self.__stats.skip += 1
++
+     def success(self):
+         """Complete a test with success."""
+         self.logger.log('Test completed successfully')
+@@ -547,6 +570,12 @@ class KMSTest(object):
+         sys.stdout.write(f'\rTesting {self.test_name}: SUCCESS\n')
+         sys.stdout.flush()
+ 
++        self.__stats.success += 1
++
++    @property
++    def stats(self):
++        return self.__stats
++
+ 
+ if __name__ == '__main__':
+     import argparse
+@@ -567,6 +596,8 @@ if __name__ == '__main__':
+             if path.is_file() and path.name.startswith('kms-test-') and path.name.endswith('.py'):
+                 files.append(path.name)
+ 
++    stats = KMSTest.Stats()
++
+     files.sort()
+     for file in files:
+         print(f'- {file}')
+@@ -586,3 +617,6 @@ if __name__ == '__main__':
+             # objects end up being deleted.
+             with test() as test:
+                 test.execute()
++                stats = stats + test.stats
++
++    print(f'{stats.total} tests: {stats.success} SUCCESS, {stats.skip} SKIP, {stats.fail} FAIL')
 
-base-commit: c23e7548ee317c043660f9b992388257e99f1776
+base-commit: 2264236eefd15450320c0cdb34fa07ac0881f713
+prerequisite-patch-id: d24ee333fe0548c916988bc5c1d9fb2c80d9f149
 -- 
 Regards,
 
