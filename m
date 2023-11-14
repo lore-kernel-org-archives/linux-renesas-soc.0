@@ -2,461 +2,99 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C46B5C07D59
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Nov 2023 05:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C471AC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Nov 2023 08:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232073AbjKNFzM (ORCPT
+        id S232360AbjKNILB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Nov 2023 00:55:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54382 "EHLO
+        Tue, 14 Nov 2023 03:11:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbjKNFzL (ORCPT
+        with ESMTP id S232273AbjKNILA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2023 00:55:11 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 61E59D42;
-        Mon, 13 Nov 2023 21:55:06 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="6.03,301,1694703600"; 
-   d="scan'208";a="182823944"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Nov 2023 14:55:02 +0900
-Received: from localhost.localdomain (unknown [10.166.13.99])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 70B5C4162973;
-        Tue, 14 Nov 2023 14:55:02 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, mani@kernel.org
-Cc:     linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 4/6] PCI: dwc: Add dw_pcie_ep_{read,write}_dbi[2] helpers
-Date:   Tue, 14 Nov 2023 14:54:54 +0900
-Message-Id: <20231114055456.2231990-5-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231114055456.2231990-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20231114055456.2231990-1-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 14 Nov 2023 03:11:00 -0500
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C68A1B3;
+        Tue, 14 Nov 2023 00:10:56 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5a7d9d357faso59485697b3.0;
+        Tue, 14 Nov 2023 00:10:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699949455; x=1700554255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eQyWvVaaG3YYmj7OkmiIuVD+3WVrgTtuqGcCabyOScU=;
+        b=Rn0Z/U9Iy0+3PV8cARa5wLREEDxwo2jdiXdxSmCBlp47/gRCyAiSkcQ4zzwuQQIr0U
+         +AFB6FS72U+tusXr2qdeSYjjCeM07vt+GTuElymGjEsz5SpluoElbjZqVM0SAOzR4h+0
+         bcvgIAHzW0i3WAHHUEExA8kzd7t75bwk6Y5a7nyGOLwGTODsqLguyWECohojuyGYR639
+         lRGZNO3RdGdcPy1jP+y2pYZnY4QhE/0EtMva4ywRrpXr/02OCcbIWLdYNQIeAwwx33F9
+         2PReWP45viBFDwvenSK8bdp35WdyM8L4mztfjXlHSpk5588Ee9PG2mqM45QY/pVWb+wJ
+         kVlA==
+X-Gm-Message-State: AOJu0YzXbX59vNpugXlitA5RQ7/vPv8pCgKs9xMk4Tb+26M2YYddI7Kn
+        2xSiqC+JvrE5EbR5LImVX0NTWpw2JX1xeA==
+X-Google-Smtp-Source: AGHT+IHAvW/VgBqQp9T86sQdAssMESIZGxc0+n9okpt4otfQrJ8ijbNKto/OTYemuruTJAcmkMvyvg==
+X-Received: by 2002:a81:4113:0:b0:5a8:277f:b378 with SMTP id o19-20020a814113000000b005a8277fb378mr6212716ywa.1.1699949455205;
+        Tue, 14 Nov 2023 00:10:55 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id v2-20020a0dd302000000b00576c727498dsm2266640ywd.92.2023.11.14.00.10.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Nov 2023 00:10:54 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-da7238b3eb4so5838478276.1;
+        Tue, 14 Nov 2023 00:10:53 -0800 (PST)
+X-Received: by 2002:a25:4206:0:b0:da0:c80f:5775 with SMTP id
+ p6-20020a254206000000b00da0c80f5775mr8699596yba.61.1699949453644; Tue, 14 Nov
+ 2023 00:10:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231114055456.2231990-1-yoshihiro.shimoda.uh@renesas.com> <20231114055456.2231990-6-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20231114055456.2231990-6-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 14 Nov 2023 09:10:42 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWAa_9prcF3hVE+4DwtjVDzpQqA+qyMfB4P1U_yAVi9Zg@mail.gmail.com>
+Message-ID: <CAMuHMdWAa_9prcF3hVE+4DwtjVDzpQqA+qyMfB4P1U_yAVi9Zg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] PCI: iproc: fix -Wvoid-pointer-to-enum-cast warning
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, mani@kernel.org,
+        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Justin Stitt <justinstitt@google.com>,
+        Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The current code calculated some dbi[2] registers' offset by calling
-dw_pcie_ep_get_dbi[2]_offset() in each function. To improve code
-readability, add dw_pcie_ep_{read,write}_dbi[2} and some data-width
-related helpers.
+On Tue, Nov 14, 2023 at 6:55 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Justin Stitt <justinstitt@google.com>
+>
+> When building with clang 18 I see the following warning:
+> |       drivers/pci/controller/pcie-iproc-platform.c:55:15: warning: cast to smaller
+> |                integer type 'enum iproc_pcie_type' from 'const void *' [-Wvoid-pointer-to-enum-cast]
+> |          55 |         pcie->type = (enum iproc_pcie_type) of_device_get_match_data(dev);
+>
+> This is due to the fact that `of_device_get_match_data` returns a void*
+> while `enum iproc_pcie_type` has the size of an int. This leads to
+> truncation and possible data loss.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- .../pci/controller/dwc/pcie-designware-ep.c   | 231 ++++++++++--------
- 1 file changed, 129 insertions(+), 102 deletions(-)
+Note that in this case there is no data loss, as the original value
+stored is of type enum iproc_pcie_type.
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 1100671db887..2b5b5b0fa7a9 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -65,24 +65,88 @@ static unsigned int dw_pcie_ep_get_dbi2_offset(struct dw_pcie_ep *ep, u8 func_no
- 	return dbi2_offset;
- }
- 
-+static u32 dw_pcie_ep_read_dbi(struct dw_pcie_ep *ep, u8 func_no, u32 reg,
-+			       size_t size)
-+{
-+	unsigned int offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	return dw_pcie_read_dbi(pci, offset + reg, size);
-+}
-+
-+static void dw_pcie_ep_write_dbi(struct dw_pcie_ep *ep, u8 func_no, u32 reg,
-+				 size_t size, u32 val)
-+{
-+	unsigned int offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	dw_pcie_write_dbi(pci, offset + reg, size, val);
-+}
-+
-+static void dw_pcie_ep_write_dbi2(struct dw_pcie_ep *ep, u8 func_no, u32 reg,
-+				  size_t size, u32 val)
-+{
-+	unsigned int offset = dw_pcie_ep_get_dbi2_offset(ep, func_no);
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	dw_pcie_write_dbi2(pci, offset + reg, size, val);
-+}
-+
-+static inline void dw_pcie_ep_writel_dbi(struct dw_pcie_ep *ep, u8 func_no,
-+					 u32 reg, u32 val)
-+{
-+	dw_pcie_ep_write_dbi(ep, func_no, reg, 0x4, val);
-+}
-+
-+static inline u32 dw_pcie_ep_readl_dbi(struct dw_pcie_ep *ep, u8 func_no,
-+				       u32 reg)
-+{
-+	return dw_pcie_ep_read_dbi(ep, func_no, reg, 0x4);
-+}
-+
-+static inline void dw_pcie_ep_writew_dbi(struct dw_pcie_ep *ep, u8 func_no,
-+					 u32 reg, u16 val)
-+{
-+	dw_pcie_ep_write_dbi(ep, func_no, reg, 0x2, val);
-+}
-+
-+static inline u16 dw_pcie_ep_readw_dbi(struct dw_pcie_ep *ep, u8 func_no,
-+				       u32 reg)
-+{
-+	return dw_pcie_ep_read_dbi(ep, func_no, reg, 0x2);
-+}
-+
-+static inline void dw_pcie_ep_writeb_dbi(struct dw_pcie_ep *ep, u8 func_no,
-+					 u32 reg, u8 val)
-+{
-+	dw_pcie_ep_write_dbi(ep, func_no, reg, 0x1, val);
-+}
-+
-+static inline u8 dw_pcie_ep_readb_dbi(struct dw_pcie_ep *ep, u8 func_no,
-+				      u32 reg)
-+{
-+	return dw_pcie_ep_read_dbi(ep, func_no, reg, 0x1);
-+}
-+
-+static inline void dw_pcie_ep_writel_dbi2(struct dw_pcie_ep *ep, u8 func_no,
-+					  u32 reg, u32 val)
-+{
-+	dw_pcie_ep_write_dbi2(ep, func_no, reg, 0x4, val);
-+}
-+
- static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, u8 func_no,
- 				   enum pci_barno bar, int flags)
- {
--	unsigned int dbi_offset, dbi2_offset;
- 	struct dw_pcie_ep *ep = &pci->ep;
--	u32 reg, reg_dbi2;
--
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--	dbi2_offset = dw_pcie_ep_get_dbi2_offset(ep, func_no);
-+	u32 reg;
- 
--	reg = dbi_offset + PCI_BASE_ADDRESS_0 + (4 * bar);
--	reg_dbi2 = dbi2_offset + PCI_BASE_ADDRESS_0 + (4 * bar);
-+	reg = PCI_BASE_ADDRESS_0 + (4 * bar);
- 	dw_pcie_dbi_ro_wr_en(pci);
--	dw_pcie_writel_dbi2(pci, reg_dbi2, 0x0);
--	dw_pcie_writel_dbi(pci, reg, 0x0);
-+	dw_pcie_ep_writel_dbi2(ep, func_no, reg, 0x0);
-+	dw_pcie_ep_writel_dbi(ep, func_no, reg, 0x0);
- 	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
--		dw_pcie_writel_dbi2(pci, reg_dbi2 + 4, 0x0);
--		dw_pcie_writel_dbi(pci, reg + 4, 0x0);
-+		dw_pcie_ep_writel_dbi2(ep, func_no, reg + 4, 0x0);
-+		dw_pcie_ep_writel_dbi(ep, func_no, reg + 4, 0x0);
- 	}
- 	dw_pcie_dbi_ro_wr_dis(pci);
- }
-@@ -99,19 +163,15 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
- EXPORT_SYMBOL_GPL(dw_pcie_ep_reset_bar);
- 
- static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, u8 func_no,
--		u8 cap_ptr, u8 cap)
-+				     u8 cap_ptr, u8 cap)
- {
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	unsigned int dbi_offset = 0;
- 	u8 cap_id, next_cap_ptr;
- 	u16 reg;
- 
- 	if (!cap_ptr)
- 		return 0;
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--
--	reg = dw_pcie_readw_dbi(pci, dbi_offset + cap_ptr);
-+	reg = dw_pcie_ep_readw_dbi(ep, func_no, cap_ptr);
- 	cap_id = (reg & 0x00ff);
- 
- 	if (cap_id > PCI_CAP_ID_MAX)
-@@ -126,14 +186,10 @@ static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, u8 func_no,
- 
- static u8 dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, u8 func_no, u8 cap)
- {
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	unsigned int dbi_offset = 0;
- 	u8 next_cap_ptr;
- 	u16 reg;
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--
--	reg = dw_pcie_readw_dbi(pci, dbi_offset + PCI_CAPABILITY_LIST);
-+	reg = dw_pcie_ep_readw_dbi(ep, func_no, PCI_CAPABILITY_LIST);
- 	next_cap_ptr = (reg & 0x00ff);
- 
- 	return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
-@@ -144,24 +200,21 @@ static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
- {
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	unsigned int dbi_offset = 0;
--
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
- 
- 	dw_pcie_dbi_ro_wr_en(pci);
--	dw_pcie_writew_dbi(pci, dbi_offset + PCI_VENDOR_ID, hdr->vendorid);
--	dw_pcie_writew_dbi(pci, dbi_offset + PCI_DEVICE_ID, hdr->deviceid);
--	dw_pcie_writeb_dbi(pci, dbi_offset + PCI_REVISION_ID, hdr->revid);
--	dw_pcie_writeb_dbi(pci, dbi_offset + PCI_CLASS_PROG, hdr->progif_code);
--	dw_pcie_writew_dbi(pci, dbi_offset + PCI_CLASS_DEVICE,
--			   hdr->subclass_code | hdr->baseclass_code << 8);
--	dw_pcie_writeb_dbi(pci, dbi_offset + PCI_CACHE_LINE_SIZE,
--			   hdr->cache_line_size);
--	dw_pcie_writew_dbi(pci, dbi_offset + PCI_SUBSYSTEM_VENDOR_ID,
--			   hdr->subsys_vendor_id);
--	dw_pcie_writew_dbi(pci, dbi_offset + PCI_SUBSYSTEM_ID, hdr->subsys_id);
--	dw_pcie_writeb_dbi(pci, dbi_offset + PCI_INTERRUPT_PIN,
--			   hdr->interrupt_pin);
-+	dw_pcie_ep_writew_dbi(ep, func_no, PCI_VENDOR_ID, hdr->vendorid);
-+	dw_pcie_ep_writew_dbi(ep, func_no, PCI_DEVICE_ID, hdr->deviceid);
-+	dw_pcie_ep_writeb_dbi(ep, func_no, PCI_REVISION_ID, hdr->revid);
-+	dw_pcie_ep_writeb_dbi(ep, func_no, PCI_CLASS_PROG, hdr->progif_code);
-+	dw_pcie_ep_writew_dbi(ep, func_no, PCI_CLASS_DEVICE,
-+			      hdr->subclass_code | hdr->baseclass_code << 8);
-+	dw_pcie_ep_writeb_dbi(ep, func_no, PCI_CACHE_LINE_SIZE,
-+			      hdr->cache_line_size);
-+	dw_pcie_ep_writew_dbi(ep, func_no, PCI_SUBSYSTEM_VENDOR_ID,
-+			      hdr->subsys_vendor_id);
-+	dw_pcie_ep_writew_dbi(ep, func_no, PCI_SUBSYSTEM_ID, hdr->subsys_id);
-+	dw_pcie_ep_writeb_dbi(ep, func_no, PCI_INTERRUPT_PIN,
-+			      hdr->interrupt_pin);
- 	dw_pcie_dbi_ro_wr_dis(pci);
- 
- 	return 0;
-@@ -243,18 +296,13 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
- {
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	unsigned int dbi_offset, dbi2_offset;
- 	enum pci_barno bar = epf_bar->barno;
- 	size_t size = epf_bar->size;
- 	int flags = epf_bar->flags;
--	u32 reg, reg_dbi2;
- 	int ret, type;
-+	u32 reg;
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--	dbi2_offset = dw_pcie_ep_get_dbi2_offset(ep, func_no);
--
--	reg = PCI_BASE_ADDRESS_0 + (4 * bar) + dbi_offset;
--	reg_dbi2 = PCI_BASE_ADDRESS_0 + (4 * bar) + dbi2_offset;
-+	reg = PCI_BASE_ADDRESS_0 + (4 * bar);
- 
- 	if (!(flags & PCI_BASE_ADDRESS_SPACE))
- 		type = PCIE_ATU_TYPE_MEM;
-@@ -270,12 +318,12 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
- 
- 	dw_pcie_dbi_ro_wr_en(pci);
- 
--	dw_pcie_writel_dbi2(pci, reg_dbi2, lower_32_bits(size - 1));
--	dw_pcie_writel_dbi(pci, reg, flags);
-+	dw_pcie_ep_writel_dbi2(ep, func_no, reg, lower_32_bits(size - 1));
-+	dw_pcie_ep_writel_dbi(ep, func_no, reg, flags);
- 
- 	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
--		dw_pcie_writel_dbi2(pci, reg_dbi2 + 4, upper_32_bits(size - 1));
--		dw_pcie_writel_dbi(pci, reg + 4, 0);
-+		dw_pcie_ep_writel_dbi2(ep, func_no, reg + 4, upper_32_bits(size - 1));
-+		dw_pcie_ep_writel_dbi(ep, func_no, reg + 4, 0);
- 	}
- 
- 	ep->epf_bar[bar] = epf_bar;
-@@ -335,19 +383,15 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
- static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no, u8 vfunc_no)
- {
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	u32 val, reg;
--	unsigned int dbi_offset = 0;
- 	struct dw_pcie_ep_func *ep_func;
-+	u32 val, reg;
- 
- 	ep_func = dw_pcie_ep_get_func_from_ep(ep, func_no);
- 	if (!ep_func || !ep_func->msi_cap)
- 		return -EINVAL;
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--
--	reg = ep_func->msi_cap + dbi_offset + PCI_MSI_FLAGS;
--	val = dw_pcie_readw_dbi(pci, reg);
-+	reg = ep_func->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_ep_readw_dbi(ep, func_no, reg);
- 	if (!(val & PCI_MSI_FLAGS_ENABLE))
- 		return -EINVAL;
- 
-@@ -361,22 +405,19 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
- {
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	u32 val, reg;
--	unsigned int dbi_offset = 0;
- 	struct dw_pcie_ep_func *ep_func;
-+	u32 val, reg;
- 
- 	ep_func = dw_pcie_ep_get_func_from_ep(ep, func_no);
- 	if (!ep_func || !ep_func->msi_cap)
- 		return -EINVAL;
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--
--	reg = ep_func->msi_cap + dbi_offset + PCI_MSI_FLAGS;
--	val = dw_pcie_readw_dbi(pci, reg);
-+	reg = ep_func->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_ep_readw_dbi(ep, func_no, reg);
- 	val &= ~PCI_MSI_FLAGS_QMASK;
- 	val |= FIELD_PREP(PCI_MSI_FLAGS_QMASK, interrupts);
- 	dw_pcie_dbi_ro_wr_en(pci);
--	dw_pcie_writew_dbi(pci, reg, val);
-+	dw_pcie_ep_writew_dbi(ep, func_no, reg, val);
- 	dw_pcie_dbi_ro_wr_dis(pci);
- 
- 	return 0;
-@@ -385,19 +426,15 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
- static int dw_pcie_ep_get_msix(struct pci_epc *epc, u8 func_no, u8 vfunc_no)
- {
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	u32 val, reg;
--	unsigned int dbi_offset = 0;
- 	struct dw_pcie_ep_func *ep_func;
-+	u32 val, reg;
- 
- 	ep_func = dw_pcie_ep_get_func_from_ep(ep, func_no);
- 	if (!ep_func || !ep_func->msix_cap)
- 		return -EINVAL;
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--
--	reg = ep_func->msix_cap + dbi_offset + PCI_MSIX_FLAGS;
--	val = dw_pcie_readw_dbi(pci, reg);
-+	reg = ep_func->msix_cap + PCI_MSIX_FLAGS;
-+	val = dw_pcie_ep_readw_dbi(ep, func_no, reg);
- 	if (!(val & PCI_MSIX_FLAGS_ENABLE))
- 		return -EINVAL;
- 
-@@ -411,9 +448,8 @@ static int dw_pcie_ep_set_msix(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
- {
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	u32 val, reg;
--	unsigned int dbi_offset = 0;
- 	struct dw_pcie_ep_func *ep_func;
-+	u32 val, reg;
- 
- 	ep_func = dw_pcie_ep_get_func_from_ep(ep, func_no);
- 	if (!ep_func || !ep_func->msix_cap)
-@@ -421,21 +457,19 @@ static int dw_pcie_ep_set_msix(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
- 
- 	dw_pcie_dbi_ro_wr_en(pci);
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--
--	reg = ep_func->msix_cap + dbi_offset + PCI_MSIX_FLAGS;
--	val = dw_pcie_readw_dbi(pci, reg);
-+	reg = ep_func->msix_cap + PCI_MSIX_FLAGS;
-+	val = dw_pcie_ep_readw_dbi(ep, func_no, reg);
- 	val &= ~PCI_MSIX_FLAGS_QSIZE;
- 	val |= interrupts;
- 	dw_pcie_writew_dbi(pci, reg, val);
- 
--	reg = ep_func->msix_cap + dbi_offset + PCI_MSIX_TABLE;
-+	reg = ep_func->msix_cap + PCI_MSIX_TABLE;
- 	val = offset | bir;
--	dw_pcie_writel_dbi(pci, reg, val);
-+	dw_pcie_ep_writel_dbi(ep, func_no, reg, val);
- 
--	reg = ep_func->msix_cap + dbi_offset + PCI_MSIX_PBA;
-+	reg = ep_func->msix_cap + PCI_MSIX_PBA;
- 	val = (offset + (interrupts * PCI_MSIX_ENTRY_SIZE)) | bir;
--	dw_pcie_writel_dbi(pci, reg, val);
-+	dw_pcie_ep_writel_dbi(ep, func_no, reg, val);
- 
- 	dw_pcie_dbi_ro_wr_dis(pci);
- 
-@@ -510,38 +544,34 @@ EXPORT_SYMBOL_GPL(dw_pcie_ep_raise_legacy_irq);
- int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 			     u8 interrupt_num)
- {
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 msg_addr_lower, msg_addr_upper, reg;
- 	struct dw_pcie_ep_func *ep_func;
- 	struct pci_epc *epc = ep->epc;
- 	unsigned int aligned_offset;
--	unsigned int dbi_offset = 0;
- 	u16 msg_ctrl, msg_data;
--	u32 msg_addr_lower, msg_addr_upper, reg;
--	u64 msg_addr;
- 	bool has_upper;
-+	u64 msg_addr;
- 	int ret;
- 
- 	ep_func = dw_pcie_ep_get_func_from_ep(ep, func_no);
- 	if (!ep_func || !ep_func->msi_cap)
- 		return -EINVAL;
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--
- 	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
--	reg = ep_func->msi_cap + dbi_offset + PCI_MSI_FLAGS;
--	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
-+	reg = ep_func->msi_cap + PCI_MSI_FLAGS;
-+	msg_ctrl = dw_pcie_ep_readw_dbi(ep, func_no, reg);
- 	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
--	reg = ep_func->msi_cap + dbi_offset + PCI_MSI_ADDRESS_LO;
--	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
-+	reg = ep_func->msi_cap + PCI_MSI_ADDRESS_LO;
-+	msg_addr_lower = dw_pcie_ep_readl_dbi(ep, func_no, reg);
- 	if (has_upper) {
--		reg = ep_func->msi_cap + dbi_offset + PCI_MSI_ADDRESS_HI;
--		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
--		reg = ep_func->msi_cap + dbi_offset + PCI_MSI_DATA_64;
--		msg_data = dw_pcie_readw_dbi(pci, reg);
-+		reg = ep_func->msi_cap + PCI_MSI_ADDRESS_HI;
-+		msg_addr_upper = dw_pcie_ep_readl_dbi(ep, func_no, reg);
-+		reg = ep_func->msi_cap + PCI_MSI_DATA_64;
-+		msg_data = dw_pcie_ep_readw_dbi(ep, func_no, reg);
- 	} else {
- 		msg_addr_upper = 0;
--		reg = ep_func->msi_cap + dbi_offset + PCI_MSI_DATA_32;
--		msg_data = dw_pcie_readw_dbi(pci, reg);
-+		reg = ep_func->msi_cap + PCI_MSI_DATA_32;
-+		msg_data = dw_pcie_ep_readw_dbi(ep, func_no, reg);
- 	}
- 	aligned_offset = msg_addr_lower & (epc->mem->window.page_size - 1);
- 	msg_addr = ((u64)msg_addr_upper) << 32 |
-@@ -582,10 +612,9 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
- 			      u16 interrupt_num)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	struct dw_pcie_ep_func *ep_func;
- 	struct pci_epf_msix_tbl *msix_tbl;
-+	struct dw_pcie_ep_func *ep_func;
- 	struct pci_epc *epc = ep->epc;
--	unsigned int dbi_offset = 0;
- 	u32 reg, msg_data, vec_ctrl;
- 	unsigned int aligned_offset;
- 	u32 tbl_offset;
-@@ -597,10 +626,8 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	if (!ep_func || !ep_func->msix_cap)
- 		return -EINVAL;
- 
--	dbi_offset = dw_pcie_ep_get_dbi_offset(ep, func_no);
--
--	reg = ep_func->msix_cap + dbi_offset + PCI_MSIX_TABLE;
--	tbl_offset = dw_pcie_readl_dbi(pci, reg);
-+	reg = ep_func->msix_cap + PCI_MSIX_TABLE;
-+	tbl_offset = dw_pcie_ep_readl_dbi(ep, func_no, reg);
- 	bir = FIELD_GET(PCI_MSIX_TABLE_BIR, tbl_offset);
- 	tbl_offset &= PCI_MSIX_TABLE_OFFSET;
- 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/1910
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
