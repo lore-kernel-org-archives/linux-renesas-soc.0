@@ -2,89 +2,51 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A2EC07548
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Nov 2023 08:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB6AC07548
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Nov 2023 08:36:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234680AbjKOITR convert rfc822-to-8bit (ORCPT
+        id S234675AbjKOIg6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Nov 2023 03:19:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35332 "EHLO
+        Wed, 15 Nov 2023 03:36:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234651AbjKOITQ (ORCPT
+        with ESMTP id S234680AbjKOIg5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2023 03:19:16 -0500
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E57F4;
-        Wed, 15 Nov 2023 00:19:13 -0800 (PST)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5a90d6ab962so75282217b3.2;
-        Wed, 15 Nov 2023 00:19:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700036352; x=1700641152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wjDVEmD9JR1OfPMPjqIKcU2pjvgfmsvaN1BPdVXkx5Q=;
-        b=JbZcFGqX/NrgFkEXCG6P3OsXpVu9+SqKYdWL0tS4Mgunc+qXpUVF6bhXd4QKqUXAXY
-         oin2w380UWOhyWu1C+XN1jb4zJgFG6U7+/3k/ux2s3DBxsB3WvyqHbP6m3TGApxKmPSX
-         Pnegwxcm/miVwU2zpLrFNXN/iJT4z9y2BnhuCnmV4qjuRZXJq1bm3jotqdgHePy6K8u+
-         6zQNK1Zj6Ud7G2O5a7psCAZMGYLrqdUnl8Q7WiDnEXxUg184utIXLfwCbNlSJhwqIuLU
-         fRdspW8JoXCsxdhJAic0eTDoaWNiiuihCgLA9rG6J0P/mDfXFrRs/fRFqFYu0DecnGV9
-         ytLg==
-X-Gm-Message-State: AOJu0YzjJwE6Pz4uukA5W9B1vz7YBUS3IwAiFDMXyVHMwN0XKGOIAd5k
-        ogwO+SFOXzBImTznooiFdrpEWQ1nkgFXXw==
-X-Google-Smtp-Source: AGHT+IHQb0zWSxXelXZXjHcvvFUFtwMg+y+Ei4Fnz5okSGrKQFNMrT82qcuI0uf76ghCUByl6orv+A==
-X-Received: by 2002:a81:840b:0:b0:5be:ae23:c002 with SMTP id u11-20020a81840b000000b005beae23c002mr12082805ywf.26.1700036352405;
-        Wed, 15 Nov 2023 00:19:12 -0800 (PST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id ck18-20020a05690c0b9200b005a7be2919a1sm247216ywb.14.2023.11.15.00.19.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Nov 2023 00:19:12 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-5a90d6ab962so75281977b3.2;
-        Wed, 15 Nov 2023 00:19:12 -0800 (PST)
-X-Received: by 2002:a81:9141:0:b0:5b3:60c2:5781 with SMTP id
- i62-20020a819141000000b005b360c25781mr13396631ywg.32.1700036351987; Wed, 15
- Nov 2023 00:19:11 -0800 (PST)
+        Wed, 15 Nov 2023 03:36:57 -0500
+Received: from mail.tradestry.pl (mail.tradestry.pl [141.94.250.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC58210F
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2023 00:36:54 -0800 (PST)
+Received: by mail.tradestry.pl (Postfix, from userid 1002)
+        id ABC5CA46AB; Wed, 15 Nov 2023 08:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tradestry.pl; s=mail;
+        t=1700037413; bh=Y0HnXqH+26AP5Uq6M8BQXaj1HIAPQY/WndV9tkpAHHU=;
+        h=Date:From:To:Subject:From;
+        b=ogS92hpWSazToMhSaA95j9LGKrSKh0AgKHfjnAp/7mbY7bhdKVK8nIZL0sVou0lLI
+         u9MyoUK862sZWDjyAqxjRrgpBtNoFNmKLzz6z5I3kogRKMD/qieYxGY+/IVGF+4CVF
+         STkKiEIi8dTY/jaB2u9OLgk6kpOVuTCqvs+xmJYujgqW8irTfVKIBSnNIoTqNQt+WC
+         92rFAyrYXZzaryV5ADl1BElIAQnGC4Ej35nVONJK4tyxLTOpcX50TgWrCgcMGAdMVZ
+         qJl8iln6WHcK3HouXzq57S3NJJ0TstlMlTH9SGL3YfRws57Ic9Dv/fqsEQfolvZGJh
+         rbYL3Fo1v4ikA==
+Received: by mail.tradestry.pl for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2023 08:36:04 GMT
+Message-ID: <20231115074501-0.1.dp.1kee2.0.robedfqicb@tradestry.pl>
+Date:   Wed, 15 Nov 2023 08:36:04 GMT
+From:   "Damian Cichocki" <damian.cichocki@tradestry.pl>
+To:     <linux-renesas-soc@vger.kernel.org>
+Subject: =?UTF-8?Q?Pytanie_o_samoch=C3=B3d?=
+X-Mailer: mail.tradestry.pl
 MIME-Version: 1.0
-References: <20231115082138.2649870-1-liushixin2@huawei.com> <20231115082138.2649870-2-liushixin2@huawei.com>
-In-Reply-To: <20231115082138.2649870-2-liushixin2@huawei.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 15 Nov 2023 09:19:00 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVZ_gEOkyYxhwROA209qimvy6CzwQtk6LGx9=7=ABUoMg@mail.gmail.com>
-Message-ID: <CAMuHMdVZ_gEOkyYxhwROA209qimvy6CzwQtk6LGx9=7=ABUoMg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Revert "mm/kmemleak: move the initialisation of
- object to __link_object"
-To:     Liu Shixin <liushixin2@huawei.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Patrick Wang <patrick.wang.shcn@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Nov 15, 2023 at 8:23 AM Liu Shixin <liushixin2@huawei.com> wrote:
-> Move the initialisation of object back to__alloc_object() because
-> set_track_prepare() attempt to acquire zone->lock(spinlocks) while
-> __link_object is holding kmemleak_lock(raw_spinlocks). This is not
-> right for RT mode.
->
-> This reverts commit 245245c2fffd0050772a3f30ba50e2be92537a32.
->
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+Dzie=C5=84 dobry,
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Czy interesuje Pa=C5=84stwa rozwi=C4=85zanie umo=C5=BCliwiaj=C4=85ce moni=
+torowanie samochod=C3=B3w firmowych oraz optymalizacj=C4=99 koszt=C3=B3w =
+ich utrzymania?=20
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pozdrawiam,
+Damian Cichocki
