@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7730FC5AD4C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Nov 2023 16:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6604C072A2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Nov 2023 16:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231793AbjKQQpB (ORCPT
+        id S231473AbjKQQpE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Nov 2023 11:45:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
+        Fri, 17 Nov 2023 11:45:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231473AbjKQQo7 (ORCPT
+        with ESMTP id S235707AbjKQQpC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2023 11:44:59 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81D3010D5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Nov 2023 08:44:55 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3316d3d11e1so377188f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Nov 2023 08:44:55 -0800 (PST)
+        Fri, 17 Nov 2023 11:45:02 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C920EA4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Nov 2023 08:44:58 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-5094cb3a036so3267645e87.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Nov 2023 08:44:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20230601.gappssmtp.com; s=20230601; t=1700239494; x=1700844294; darn=vger.kernel.org;
+        d=ragnatech-se.20230601.gappssmtp.com; s=20230601; t=1700239497; x=1700844297; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ViJzBZRjaGwQoSegbb0M2YrA8tvFsmfs+BtclsFM6Iw=;
-        b=yc59Asu5dsxUDXwsCNPO2feuNhlmEkKtQFV3Nkyf/5dAVjlyTb2Y9dIfbHwdRQvQ3B
-         6Ei0ynY4CLUt9d5N83otKNQKmyxe8HIVgOI9EHS+tjOikFI0rDCc1vG2e9hlVsOw286b
-         48Su5hOIOlVAxMNdyVYrUCRbSUK49vKAfDM5SMdk4EJzdTDNxxEbcltwsTA4RhzJnp2p
-         miWF32rG/3wXRmUkNJu9umD9aS3+i7tRchkcjudCixljYMMvgH/hvnRbYD3ktjcQ89tw
-         6d6z5xige0DaExYmSwy5djDSUFQr++l3euX3LD/j8e/D2MWIW5O2EMZOV+O6vSh2lYaE
-         6vwg==
+        bh=XdcFTkjJJKdk2tWc8kj9ugAu+k+ZjoJk+1mRNKldi1E=;
+        b=aSgYT9J5L7HzzuU/AEnOMWA1dxngjgQZBZjqEk8QZr9YVQsZahtX1h/xhYmlCSIb0z
+         uhDupq+nnQaLTVQ/FSaWJwBW+zFoVGb2QDQMsx0Mb4XyqNZmJ5ggW0hy4NF9cxidZdi3
+         3iodB/uDpVriWXQWVPgylIpjNou+c/+kCnazVXtRuo/vnHbFslVdk/6yEarpGPJSkJSt
+         DYcM7IdqhKAI3znLiUF4JWBPpFX8gquHS4AGeVzLo3QfmFJ0L7NqUfoHQo7GZTCIEpDP
+         p6rp0pGxGxVLeMbjjLTfsFeh8kVO8fCA80l7BTlMaKPsPA75Kl0BJWiEb2+k9aRQy6t3
+         KA7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700239494; x=1700844294;
+        d=1e100.net; s=20230601; t=1700239497; x=1700844297;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ViJzBZRjaGwQoSegbb0M2YrA8tvFsmfs+BtclsFM6Iw=;
-        b=Sfh6HIILm9RKE2OYWCshlaa506GWwWAANZR99ISR8O2bP331YJLjF/PzxJ+1DpB1QW
-         JZSVbwWk+bWI/e+qJhm/Nw31/09Y2ow4aHolx+u+aJsZncgTFVunOhR113K2kw1DdHMZ
-         PCWQSmlDoofcR7kRYwAzU8OYIPSFVd8feU/zJJG1YP+61y/A7essk3I2iVFMrT04ugL5
-         y76ASmqA4T64xUg9tXdPFpHnsSC4m0L6CX9LYtTSuQB2YNEeF72ZqC3Xoc3ie8/lFAEm
-         S+gposIjbF30O3fHsflUkkE6m9R6Jw8Xg4BT0YXF6F6q38PgUgLviFyHsnf656vWD8OY
-         zmbQ==
-X-Gm-Message-State: AOJu0YwIFf8FAoLYTvcp3Nswg3C4ioMRqvGqquu81bDtDShoZy3v79vK
-        okKc5bKOXwp/2BWr43I9sB6chA==
-X-Google-Smtp-Source: AGHT+IELqDZJhNF3w4cCSF7Pe3KNy3G2/C2ag2xOQm2boFEouK1cJqrXmqQKscXXkk/+QTrSuuJpjA==
-X-Received: by 2002:a5d:47ab:0:b0:31d:caae:982d with SMTP id 11-20020a5d47ab000000b0031dcaae982dmr5929283wrb.12.1700239494093;
-        Fri, 17 Nov 2023 08:44:54 -0800 (PST)
+        bh=XdcFTkjJJKdk2tWc8kj9ugAu+k+ZjoJk+1mRNKldi1E=;
+        b=OcWnoNwkzHWTDz7gcbk3R3xj5JkhHCop8puRgxPtmcatSfYMwyRnP8XURFDv0mYWgc
+         lj96f/Wx0MKhViLlPmJbwgkElCu8Z2QzcpGhm9xusMEN4Cwj5WjzsaTVcjfyK7WGJ+Ee
+         7VlFM7BcgXBcKCEBOMLfYCwMZWXD/byE8+LnQADZuk5je7C9djPiVwp8eua/NGqk6oPd
+         plRon+WyI9QtKfwlP4Ul4cY3QrjteSL6k9sQEPTvC6g1v/GGR/SJrTNv2msRQJ/zqu5n
+         UzeEphPTv8AUOPgIg2VZ0G6x7RmIpzZGIanXUNGppMIAx43lXR2TeFNx+daS0eBoAeMW
+         Oe7g==
+X-Gm-Message-State: AOJu0YwimQ0wM6zvFhnciTFs9tqXSnOl4INvWXw/FpKyVw1q8NmSzx7K
+        O6P+PShTZw7Zn7NQ0o3VnhfCbA==
+X-Google-Smtp-Source: AGHT+IElGFJq6FDin3q1ZNiLN21lTleD22/7v7lYF9GaOGz9+SBbC/qO6c8vYYQwfr8nmi5zNRCp4g==
+X-Received: by 2002:a05:6512:358f:b0:502:a4f4:ced9 with SMTP id m15-20020a056512358f00b00502a4f4ced9mr52784lfr.62.1700239496893;
+        Fri, 17 Nov 2023 08:44:56 -0800 (PST)
 Received: from sleipner.berto.se (p4fcc8a96.dip0.t-ipconnect.de. [79.204.138.150])
-        by smtp.googlemail.com with ESMTPSA id y10-20020adfee0a000000b0032dcb08bf94sm2791947wrn.60.2023.11.17.08.44.53
+        by smtp.googlemail.com with ESMTPSA id y10-20020adfee0a000000b0032dcb08bf94sm2791947wrn.60.2023.11.17.08.44.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Nov 2023 08:44:53 -0800 (PST)
+        Fri, 17 Nov 2023 08:44:56 -0800 (PST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     "David S. Miller" <davem@davemloft.net>,
@@ -62,9 +62,9 @@ To:     "David S. Miller" <davem@davemloft.net>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [net-next 1/5] net: ethernet: renesas: rcar_gen4_ptp: Remove incorrect comment
-Date:   Fri, 17 Nov 2023 17:43:28 +0100
-Message-ID: <20231117164332.354443-2-niklas.soderlund+renesas@ragnatech.se>
+Subject: [net-next 4/5] net: ethernet: renesas: rcar_gen4_ptp: Add V4H clock setting
+Date:   Fri, 17 Nov 2023 17:43:31 +0100
+Message-ID: <20231117164332.354443-5-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.42.1
 In-Reply-To: <20231117164332.354443-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20231117164332.354443-1-niklas.soderlund+renesas@ragnatech.se>
@@ -75,29 +75,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The comments intent was to indicates which function uses the enum. While
-upstreaming rcar_gen4_ptp the function was renamed but this comment was
-left with the old function name.
-
-Instead of correcting the comment remove it, it adds little value.
+The gPTP clock is different between R-Car S4 and R-Car V4H. In
+preparation of adding R-Car V4H support define the clock setting.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/net/ethernet/renesas/rcar_gen4_ptp.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/renesas/rcar_gen4_ptp.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/rcar_gen4_ptp.h b/drivers/net/ethernet/renesas/rcar_gen4_ptp.h
-index b1bbea8d3a52..9f148110df66 100644
+index 35664d1dc472..b83a209e9845 100644
 --- a/drivers/net/ethernet/renesas/rcar_gen4_ptp.h
 +++ b/drivers/net/ethernet/renesas/rcar_gen4_ptp.h
-@@ -13,7 +13,6 @@
- #define RCAR_GEN4_PTP_CLOCK_S4		PTPTIVC_INIT
+@@ -9,8 +9,12 @@
+ 
+ #include <linux/ptp_clock_kernel.h>
+ 
+-#define PTPTIVC_INIT			0x19000000	/* 320MHz */
+-#define RCAR_GEN4_PTP_CLOCK_S4		PTPTIVC_INIT
++#define PTPTIVC_INIT_200MHZ		0x28000000	/* 200MHz */
++#define PTPTIVC_INIT_320MHZ		0x19000000	/* 320MHz */
++
++#define RCAR_GEN4_PTP_CLOCK_S4		PTPTIVC_INIT_320MHZ
++#define RCAR_GEN4_PTP_CLOCK_V4H		PTPTIVC_INIT_200MHZ
++
  #define RCAR_GEN4_GPTP_OFFSET_S4	0x00018000
  
--/* for rcar_gen4_ptp_init */
  enum rcar_gen4_ptp_reg_layout {
- 	RCAR_GEN4_PTP_REG_LAYOUT_S4
- };
 -- 
 2.42.1
 
