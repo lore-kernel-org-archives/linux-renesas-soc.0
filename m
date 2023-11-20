@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE83BC5AD4C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Nov 2023 08:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5043C54E76
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Nov 2023 08:46:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232346AbjKTIq1 (ORCPT
+        id S232298AbjKTIqa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Nov 2023 03:46:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50854 "EHLO
+        Mon, 20 Nov 2023 03:46:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232334AbjKTIq0 (ORCPT
+        with ESMTP id S232361AbjKTIq3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Nov 2023 03:46:26 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 554BDA2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:46:22 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-3316bb1303bso1642937f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:46:22 -0800 (PST)
+        Mon, 20 Nov 2023 03:46:29 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D2BE5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:46:25 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-32f7bd27c2aso3060212f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:46:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1700469981; x=1701074781; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1700469984; x=1701074784; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Cp/UKHVnA714ikdJHZcbqGoPP5UR9IDH6yqWS6ig3mM=;
-        b=pmrFMg4J196kShqfjSh2VBLm0SzHZsKZj+uD7XU4nNdfVg7EJm3DRaouPPq6JE1VV/
-         TFBguly6ExckGVq2Z/Ck6g3mXbNXEbSdFFu2+uh1BKNZxYzvB1/WN2yZwwP0SdW9Go+P
-         /ehFdaz1+kQRhQmQkQpkg4eBy3/2Y8pRecfE2NMezpOfMS4W1CX+xZwEWfxetxAwjFti
-         e4Bz5bwIPGfyCOxJi/9M0rTgU4RjlFdE9Mn/SblEOGyEYinEhWMc9vUhMgePN648KkGn
-         i7/AvH0d4dhl4mjV05fl4C4eQr3MEBi0LG/idtAmANe/kJmKb/a0aMYJmCtZv/Th0H+I
-         IPgA==
+        bh=W5DUTseQ9M13B3c/uNsGDyKmzs8yrYsJMqyVo9/Bt0g=;
+        b=SffkOGBzwA4VLDateY/j88lK4kM93BCcrecM+r8sOsIKiPFqFMkxD0QZCLGS1KDKA8
+         lTV6i6Dnmn9kr14gQvYDiLHLIS/SpKkA/FxTWm+ZoEQP/s5WFg5osYmiwgumnu8SautG
+         Cmr0qYF2ZrSURmdKM6tBsZe+0FIN9XNtFX8xOy4wRL0j7vcmx0ERgJJN3LfITIGIrq4g
+         J1JICItYgP6tOBuNBlnaLIVFRwbxRHOcu6UQ0GkCnAnho21UN5lujm7tOl82twRISzAF
+         pZU0w4/2vTwireL9dEIg7VNqCwabLw9Fs7au5Lzh4+uF6dLL17nB7cQzoDrxX5fhXTDa
+         0CrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700469981; x=1701074781;
+        d=1e100.net; s=20230601; t=1700469984; x=1701074784;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Cp/UKHVnA714ikdJHZcbqGoPP5UR9IDH6yqWS6ig3mM=;
-        b=wjg+i08PeTyjTEa++FX3o0ovugwADtl+7iu3d8s6DcADott/2qTuNb0S8qxfNyL/ep
-         b8NH165U7XGos+5anM2jP8PQgFT83Du41xFLK2H0Vi8Kp0xxQ9C96fuy9rZyN7F9ZoYA
-         ati602vzfOnyqcABokWro9TrGhhNxc2kumHPlsWshp9TYlArLi7obYHMVzVWPCAGZLkd
-         kkEp4UmJQP0ZGuX6ujwQ0EIuMjg1Ua4YqdltzmA3QIvHH7umnGrE0vtaGSG5A2v100pJ
-         VBs3fvAjDlO/1y6IFm2Zl4M5JK/RMG8oOfrnAhbHQcxlIOUlNfg0pFPtnNIQ4Xzqu7vH
-         bphg==
-X-Gm-Message-State: AOJu0YwOwwxsQDB9rmE2+8hOzNe39FEWU50MLaAP3W3vEjEQpbsIIUTe
-        14gjLOJZ2xMRa0f9BwJES7cNfQ==
-X-Google-Smtp-Source: AGHT+IFDUtcL/kItW6Ct8wAYuHmG27hXUs5xVSozigyLzY20qpW+SnjNg8LDtQ8uSwnwos1Zsdc1hA==
-X-Received: by 2002:a05:6000:108f:b0:331:6cfd:e2fc with SMTP id y15-20020a056000108f00b003316cfde2fcmr3780250wrw.21.1700469980699;
-        Mon, 20 Nov 2023 00:46:20 -0800 (PST)
+        bh=W5DUTseQ9M13B3c/uNsGDyKmzs8yrYsJMqyVo9/Bt0g=;
+        b=Pt/e7hAA95RloUixw7cB1gzqs8Idcmnn8W9Emj4Y373h9n0evIpCch+ozWoTD8n6PG
+         pwxFt+WXCZrafR70GxGbnzpfzIiy2BdcWbBgFeyy6W8JqJJowhNbAzXP2sveeglVLaxL
+         4Q7Dmp/h196a0sBE1FqZmJyEzL39/EWtMFmDor8/px05WJfOsdcWHd5PBxjAuIIj3O0A
+         xB3WAG4SbJ/Ic4hTL5ToyuYPlOzCIptXm7N9UnZXqkog2Gzd1bJUR2aNF7UbGOJjTyPD
+         7UYzzNHelfW3Q8+wHxy+aKOCxeR8gLLzArxiXV2dj4KBPb/ay9uHO4ZZx570gnax54lY
+         jjBg==
+X-Gm-Message-State: AOJu0Yw3mP2a7hFZ6Jq1pu1n/YtZPLcRufbB2/ZjQNZt+i4iOeKmjtoy
+        kyEzLdlUb6KNd/gijVXz5FyHbw==
+X-Google-Smtp-Source: AGHT+IH+kw0D3I8hcIjXDKB623M+1uoixo0SRLnUYry7SJ1e2Cyi7IKXMIG8YCxsaQqU/WoO+oYnFw==
+X-Received: by 2002:adf:e406:0:b0:331:6d38:5d18 with SMTP id g6-20020adfe406000000b003316d385d18mr3774080wrm.61.1700469984417;
+        Mon, 20 Nov 2023 00:46:24 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.183])
-        by smtp.gmail.com with ESMTPSA id b8-20020a5d45c8000000b003142e438e8csm10435267wrs.26.2023.11.20.00.46.18
+        by smtp.gmail.com with ESMTPSA id b8-20020a5d45c8000000b003142e438e8csm10435267wrs.26.2023.11.20.00.46.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 00:46:20 -0800 (PST)
+        Mon, 20 Nov 2023 00:46:23 -0800 (PST)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
@@ -63,9 +63,9 @@ To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 02/13] net: ravb: Use pm_runtime_resume_and_get()
-Date:   Mon, 20 Nov 2023 10:45:55 +0200
-Message-Id: <20231120084606.4083194-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 04/13] net: ravb: Start TX queues after HW initialization succeeded
+Date:   Mon, 20 Nov 2023 10:45:57 +0200
+Message-Id: <20231120084606.4083194-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com>
@@ -77,77 +77,36 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-pm_runtime_get_sync() may return with error. In case it returns with error
-dev->power.usage_count needs to be decremented. pm_runtime_resume_and_get()
-takes care of this. Thus use it.
-
-Along with this pm_runtime_resume_and_get() and reset_control_deassert()
-were moved before alloc_etherdev_mqs() to simplify the error path.
-
-Also, in case pm_runtime_resume_and_get() returns error the reset signal
-is deasserted and runtime PM is disabled (by jumping to the proper
-error handling label).
+ravb_phy_start() may fail. If that happens the TX queues remain started.
+Thus move the netif_tx_start_all_queues() after PHY is successfully
+initialized.
 
 Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 28 +++++++++++++-----------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 342978bdbd7e..0486add302b3 100644
+index d798a7109a09..b7e9035cb989 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2635,25 +2635,26 @@ static int ravb_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, PTR_ERR(rstc),
- 				     "failed to get cpg reset\n");
+@@ -1812,13 +1812,13 @@ static int ravb_open(struct net_device *ndev)
+ 	if (info->gptp)
+ 		ravb_ptp_init(ndev, priv->pdev);
  
-+	error = reset_control_deassert(rstc);
-+	if (error)
-+		return error;
+-	netif_tx_start_all_queues(ndev);
+-
+ 	/* PHY control start */
+ 	error = ravb_phy_start(ndev);
+ 	if (error)
+ 		goto out_ptp_stop;
+ 
++	netif_tx_start_all_queues(ndev);
 +
-+	pm_runtime_enable(&pdev->dev);
-+	error = pm_runtime_resume_and_get(&pdev->dev);
-+	if (error < 0)
-+		goto pm_runtime_disable;
-+
- 	ndev = alloc_etherdev_mqs(sizeof(struct ravb_private),
- 				  NUM_TX_QUEUE, NUM_RX_QUEUE);
--	if (!ndev)
--		return -ENOMEM;
--
-+	if (!ndev) {
-+		error = -ENOMEM;
-+		goto pm_runtime_put;
-+	}
- 	info = of_device_get_match_data(&pdev->dev);
+ 	return 0;
  
- 	ndev->features = info->net_features;
- 	ndev->hw_features = info->net_hw_features;
- 
--	error = reset_control_deassert(rstc);
--	if (error) {
--		free_netdev(ndev);
--		return error;
--	}
--
--	pm_runtime_enable(&pdev->dev);
--	pm_runtime_get_sync(&pdev->dev);
--
- 	if (info->multi_irqs) {
- 		if (info->err_mgmt_irqs)
- 			irq = platform_get_irq_byname(pdev, "dia");
-@@ -2878,8 +2879,9 @@ static int ravb_probe(struct platform_device *pdev)
- 	clk_disable_unprepare(priv->refclk);
- out_release:
- 	free_netdev(ndev);
--
-+pm_runtime_put:
- 	pm_runtime_put(&pdev->dev);
-+pm_runtime_disable:
- 	pm_runtime_disable(&pdev->dev);
- 	reset_control_assert(rstc);
- 	return error;
+ out_ptp_stop:
 -- 
 2.39.2
 
