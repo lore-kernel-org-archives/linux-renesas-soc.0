@@ -2,54 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B1CC54FB9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Nov 2023 11:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A76CC54E76
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Nov 2023 11:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233241AbjKTLUE (ORCPT
+        id S233462AbjKTLUJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Nov 2023 06:20:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49894 "EHLO
+        Mon, 20 Nov 2023 06:20:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233386AbjKTLTq (ORCPT
+        with ESMTP id S233520AbjKTLTu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Nov 2023 06:19:46 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CBD2D79
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 03:18:31 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c50cf61f6dso55440171fa.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 03:18:31 -0800 (PST)
+        Mon, 20 Nov 2023 06:19:50 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E981986
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 03:18:40 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c871890c12so29020761fa.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 03:18:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1700479109; x=1701083909; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ta0MJxvruSCk3gKB4JBR+iRqy/ulUdX87ERHRuURIrE=;
-        b=T95/bxIEIYzwcKn9k5Xvx0XOEAZuAQl8l2iGsdoYPxHtn82HWEuWq4PqmNO2eGJVLz
-         peRHInLFxOjYY3lgpDoUGkTOLDR0zMB5bX02DzonwATt4T1GHqaiU4zR5ESQcqTTnhmB
-         844P0lLznVbS6Fu7pWH6DiUgbYH7I8L+E8tOTZShEU3eKwhD/NxmB4EGeapHywHh69cg
-         X5cLq+PdG3Lg8vZHnnKe+iKL3JwXHzz4mcs1dJOd+IzodJRFWtiRQgfmmiV6GAVzjjXz
-         EAxNIiHPmHvneVZso5w0sO7IT3v9njTXhiroLJpu0QQTwzFe330kTLomETzLub72olqD
-         etuw==
+        d=tuxon.dev; s=google; t=1700479118; x=1701083918; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LV9ajd1Vn5neabgAa2TZQ+P/1Gh4jYJqAFrZemb2qP0=;
+        b=hux3o7DxjrSRfQTe46yFrhg0OqyhEEKbHEMxnFPN3DPhRAoSTyjI0Ry19qTas6fJZ9
+         lwaWEKtRxUrjCeo2HmWg7JY4dxPWvDhMkDCtNmoYLKpkG9F219qimmZwI3slnJqWehvM
+         RjmfTI3/8tqVeGi3/I9DPQrGi8h0+8kq7XXJWaUqMbK8Db73tflU3I2Fnd+MgdNURBSc
+         xv71sirvepTkneNsB3xHjsn17Xasn9VPMqY3lnKyAV5KRB9siHJvQBv+PDPmmfHoMewt
+         ddAvqNQ+P88AHXwlM0CRQbfnVo2kqoabNhTPDxWeAC2ekN4+4sj6bj9rYEnkT7Ovs+gK
+         k/Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700479109; x=1701083909;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ta0MJxvruSCk3gKB4JBR+iRqy/ulUdX87ERHRuURIrE=;
-        b=rLrxV4ieycJX7wkUxaduFT5cWxT6S0ftfq8eDcYTBgU9TNZudPVje3i3QMPZ6DsIcA
-         S3ffUm51olVo+jX66IQ7xGsZqNLYAVgvemKcEkYWYRi2xmL0yHHUvyQgzuyrMPS/j8R+
-         XsWsO0XXtz1KR1RaHqzJMbUqBiQP/KbzD/iBD8HZasJBrD26h6aSFpYBzubyz3n4hTFq
-         Hra4y+PNw0JilyB64LMILhrVi29vkHDxlc9ygi2R9yeSXt3ic39E/X18e1wQhbhb6p9j
-         0D7x7TBAr7CL63qZ+yi0vGq29fN1jc6A5BhEGlDfSLiOaCagrAxo6QzBrYbIPi7XuCrT
-         i7Xg==
-X-Gm-Message-State: AOJu0Yy2fPrvDr5lx76NGmsFtXuZrqPXhvtbTuz785jXapJa/fz3o52/
-        VKPmyHirmo8BF8q8H8NhPCD37w==
-X-Google-Smtp-Source: AGHT+IF5FLrdx0L0Gk97U8GMzPHq7HmzPfjAM7JslJn77Qof3Ur5QXy4PuCQ6cM1ZuCnRpy7lp15pA==
-X-Received: by 2002:a2e:9bd7:0:b0:2c8:84ff:4a25 with SMTP id w23-20020a2e9bd7000000b002c884ff4a25mr1146973ljj.5.1700479109421;
-        Mon, 20 Nov 2023 03:18:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700479118; x=1701083918;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LV9ajd1Vn5neabgAa2TZQ+P/1Gh4jYJqAFrZemb2qP0=;
+        b=jJnikZEuQ2/a0xASrBE0aPvkEXpCz0V3jxIdV6Vwd87bM/3e0uXP/KBV4VaoJP8sfo
+         E5BlKmh1C+I7ESIYQMQOVhQEBYOXQpkpBiyIdUZakIGCue78oVYR3MotRmGWf/5EmFL3
+         7vGD1roFUFw8cDYyCL2dlPbAuDeMQr1ZhU/AH0tmEs09ml4cXWCzVPs5lWou6Cti+KIA
+         WPn9njuokxeXH46ND296y51BkqdStT8Ofiuk1BSRwRCoJ3r+CJBXPApgP4DAq89dpTlm
+         Y0c1wgWMI3PpdLsmsoU2zzHzb030mfo+4VMPNea7fcBpt3IJ3C37mw7otsnsgYQ/hoUE
+         6msg==
+X-Gm-Message-State: AOJu0YzGxuZ75zeQyPXUsf0JOKd6sFqpjNw9v7tOvdr4pxAP7UeQz1xQ
+        qkTiQUybqhsaFiC/+ELtdAMPUw==
+X-Google-Smtp-Source: AGHT+IEiQKWoeAHflWfxsYGxW57vdmsVdNEpIhaVkUYjrztJ40uvkrK4CIk91VUscIDSWi9q/5RInA==
+X-Received: by 2002:a2e:9b95:0:b0:2c1:9a8b:f67 with SMTP id z21-20020a2e9b95000000b002c19a8b0f67mr3867505lji.1.1700479118250;
+        Mon, 20 Nov 2023 03:18:38 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.183])
-        by smtp.gmail.com with ESMTPSA id g6-20020a05600c310600b0040651505684sm13142676wmo.29.2023.11.20.03.18.28
+        by smtp.gmail.com with ESMTPSA id g6-20020a05600c310600b0040651505684sm13142676wmo.29.2023.11.20.03.18.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 03:18:29 -0800 (PST)
+        Mon, 20 Nov 2023 03:18:37 -0800 (PST)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     tglx@linutronix.de, robh+dt@kernel.org,
@@ -60,12 +61,13 @@ To:     tglx@linutronix.de, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 0/9] irqchip/renesas-rzg2l: add support for RZ/G3S SoC
-Date:   Mon, 20 Nov 2023 13:18:11 +0200
-Message-Id: <20231120111820.87398-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 6/9] irqchip/renesas-rzg2l: Add macro to retrieve TITSR register offset based on register's index
+Date:   Mon, 20 Nov 2023 13:18:17 +0200
+Message-Id: <20231120111820.87398-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20231120111820.87398-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20231120111820.87398-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -73,61 +75,63 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+There are 2 TITSR registers available on IA55 interrupt controller. A
+single macro could be used to access both of them. Add a macro that
+retrieves TITSR register offset based on it's index. This macro is
+useful in commit that adds suspend/resume support to access both TITSR
+registers in a for loop.
 
-Series adds support for IA55 available on RZ/G3S SoC.
-Patches are split as follows:
-- 1/9 adds IA55 clock
-- 2-4/9 minor cleanups to align with the suggestions at [1] and
-  coding style recommendations
-- 5/9 implement restriction described in HW manual for ISCR register
-- 6/9 add a macro to retrieve TITSR base address based on it's index
-- 7/9 add suspend to RAM support
-- 8/9 updates documentation
-- 9/9 adds IA55 device tree node
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/irqchip/irq-renesas-rzg2l.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-Thank you,
-Claudiu Beznea
-
-[1] https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
-
-Changes in v3:
-- kept driver private data object as pointer
-- moved patch 1/9 from v2 (dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document RZ/G3S)
-  after IRQ controller driver feature patches
-
-Changes in v2:
-- collected Conor's tag
-- updated commit description according to code review comments
-- added patches 4, 5 according to review recommendations
-- updated patch 7/9 to retrieve only TITSR base address; dropped the rest
-  of the changes for the moment
-- in patch 8/9 use local variable in suspend/resume functions for controller's
-  base address, indent initialized structures members to tabs, updated
-  private driver data structure name
-- patch 3/7 from v1 was replaced by patch 7/9 in v2
-- patch 5/7 from v1 was renamed "Add support for suspend to RAM"
-- cleanup patches were kept at the beginning of the series and features at the end
-
-Claudiu Beznea (9):
-  clk: renesas: r9a08g045: Add IA55 pclk and its reset
-  irqchip/renesas-rzg2l: Use tabs instead of spaces
-  irqchip/renesas-rzg2l: Align struct member names to tabs
-  irqchip/renesas-rzg2l: Document structure members
-  irqchip/renesas-rzg2l: Implement restriction when writing ISCR
-    register
-  irqchip/renesas-rzg2l: Add macro to retrieve TITSR register offset
-    based on register's index
-  irqchip/renesas-rzg2l: Add support for suspend to RAM
-  dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document RZ/G3S
-  arm64: dts: renesas: r9108g045: Add IA55 interrupt controller node
-
- .../renesas,rzg2l-irqc.yaml                   |   5 +-
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  68 +++++++++++
- drivers/clk/renesas/r9a08g045-cpg.c           |   3 +
- drivers/irqchip/irq-renesas-rzg2l.c           | 110 +++++++++++++-----
- 4 files changed, 158 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index a77ac6e1606f..45b696db220f 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -28,8 +28,7 @@
+ #define ISCR				0x10
+ #define IITSR				0x14
+ #define TSCR				0x20
+-#define TITSR0				0x24
+-#define TITSR1				0x28
++#define TITSR(n)			(0x24 + (n) * 4)
+ #define TITSR0_MAX_INT			16
+ #define TITSEL_WIDTH			0x2
+ #define TSSR(n)				(0x30 + ((n) * 4))
+@@ -200,8 +199,7 @@ static int rzg2l_tint_set_edge(struct irq_data *d, unsigned int type)
+ 	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
+ 	unsigned int hwirq = irqd_to_hwirq(d);
+ 	u32 titseln = hwirq - IRQC_TINT_START;
+-	u32 offset;
+-	u8 sense;
++	u8 index, sense;
+ 	u32 reg;
+ 
+ 	switch (type & IRQ_TYPE_SENSE_MASK) {
+@@ -217,17 +215,17 @@ static int rzg2l_tint_set_edge(struct irq_data *d, unsigned int type)
+ 		return -EINVAL;
+ 	}
+ 
+-	offset = TITSR0;
++	index = 0;
+ 	if (titseln >= TITSR0_MAX_INT) {
+ 		titseln -= TITSR0_MAX_INT;
+-		offset = TITSR1;
++		index = 1;
+ 	}
+ 
+ 	raw_spin_lock(&priv->lock);
+-	reg = readl_relaxed(priv->base + offset);
++	reg = readl_relaxed(priv->base + TITSR(index));
+ 	reg &= ~(IRQ_MASK << (titseln * TITSEL_WIDTH));
+ 	reg |= sense << (titseln * TITSEL_WIDTH);
+-	writel_relaxed(reg, priv->base + offset);
++	writel_relaxed(reg, priv->base + TITSR(index));
+ 	raw_spin_unlock(&priv->lock);
+ 
+ 	return 0;
 -- 
 2.39.2
 
