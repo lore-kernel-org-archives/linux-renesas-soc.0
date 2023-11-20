@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7749C197A0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Nov 2023 08:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CCFC54E76
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Nov 2023 08:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232419AbjKTIqj (ORCPT
+        id S232427AbjKTIqm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Nov 2023 03:46:39 -0500
+        Mon, 20 Nov 2023 03:46:42 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232431AbjKTIqh (ORCPT
+        with ESMTP id S232425AbjKTIqi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Nov 2023 03:46:37 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B65192
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:46:28 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-32dc9ff4a8fso2579410f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:46:28 -0800 (PST)
+        Mon, 20 Nov 2023 03:46:38 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F5AD6E
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:46:33 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-32faea0fa1fso2323709f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 00:46:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1700469987; x=1701074787; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1700469992; x=1701074792; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yTMsePF1mIhRVZgGZkTVw0dE2aONjlO+ow85WD/JWc8=;
-        b=ktCZkBmkvmQUDiyuap6uQwubSBx7KGSyi5EtxzayIrQ8mSpYn8nEM7yjrs8+RbyHng
-         Rg3Dr7OTYPdQ2I5lYB0Ff2+9k1CSYbG5St9XWKu/diOxFfCW38O75PK0PX+CPusRH/D7
-         mh5m8YPIaILJM6NoK2UH7jn+uWoLwI4QtoWePpC7W/nTojbKAyAgX3RuDNwfhd0uFc25
-         S6BV2OTfxLOZ9FgMedRqAwbMALqpUVONeG7f0chfq2aXWCJSIxca4gaaTlmiisBX6VGd
-         DO1+5vK3+CBGMArf3bmA9Ngzv5Z31sZfIlsiddoSsDQKAvSqbmkaBHzfEwOff/MJq3Ou
-         W2mg==
+        bh=zOeweRIPTzisv61dwOGKybnTDN8hrPF1gwr4IaPej8U=;
+        b=AELpa+2CXCkaWfwEbbZ8yxg91im79/l4D8Gwtc2ZpsFdgHqJsRuUgDw6UhLW5iUOaw
+         0FiEdlYw4OISlH1GyTUZDr29CvwOIgdNDK0oPgR86lR0W/jLE7v9hHi6iLgYyLWovcuN
+         8nur0uYIW1Bf8YnNDsbaRiwB+QzOKdU3PPW0g2zlGNNzThYS9G50PTb54wQqWJqVmp35
+         DK7fjMSqVZYV8AucUi0StDRhUmkXmIespw3zSaSJiIQ4tZeXBzA04osOpfQSZbzKSLyb
+         AgzfNjoIwXTBvehl4Hw9Ac5lQJbtfpQz5vVVuhNcs6g7HIe3K7xK2Q2rF8/7mnnLfpo6
+         uxYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700469987; x=1701074787;
+        d=1e100.net; s=20230601; t=1700469992; x=1701074792;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yTMsePF1mIhRVZgGZkTVw0dE2aONjlO+ow85WD/JWc8=;
-        b=ed8mfar+Cg+QBZF1RJ2YcIXLlhdhuEL8DJbI03QDpTaKLPeSkGihX4b7r3dL5z4krw
-         qDeF9lN627ObPwaIQ0K+sQg6uWTnZTqreLEGxeqcEPCr7tsTbXupMc5/DktTWrMGS3/y
-         jKDOjBYGOiDmourPq/8hXOIZT1WZWv67VkcTfdR5JtC1IdFcgx3kmcA1FVAQzCW8W6Pv
-         VRt/0YETNYZl8Gp3GLhwWAv/Jmxlbr9HY3RefhJ+4MZPH9t1jyXiuSXJ2xaVGpjOkbrQ
-         BiH5xmnEV7b0pC+uF2zLMfWG0e56/gSwkr3M5mVCyTn84qhSFt5yZQv+zj64y2rU57Yt
-         gLDw==
-X-Gm-Message-State: AOJu0Yz382Jn5JNMLsjlxUCfIaDcY+6iM/0rXuwQ+zxGark743qd3Tsf
-        Eb/Zk7+9CLkvuiHFqZstY2NjvQ==
-X-Google-Smtp-Source: AGHT+IHfqiV7VgEqFIq+d6ViMBq15jgGeoQzEC1z36ww167uYWXbfgpS3O66gbmfQWdM9U1Cajw2iQ==
-X-Received: by 2002:a5d:64e5:0:b0:32d:8da0:48d0 with SMTP id g5-20020a5d64e5000000b0032d8da048d0mr4783264wri.68.1700469987164;
-        Mon, 20 Nov 2023 00:46:27 -0800 (PST)
+        bh=zOeweRIPTzisv61dwOGKybnTDN8hrPF1gwr4IaPej8U=;
+        b=WUr1xyIGPcl1gf8xeh6ERekbhetMIFYGHtID/AN9aB9aVr2yh/DAk/tKxL6eu3woUq
+         +xlgt6fbIQurbCx2hMYDQhmy+fYVsxvOu8Jz4ZY4ZBCcC/O78rryY6mDuorHC9onRXAI
+         S50MJOWgCv5VNgC/EehK3Hwpb9+9BtLBwkyAidQTRqwfjhOby1WsLj/x5y7ZRQwPvyoD
+         WAnexS2rbIX0rJe10qA6b2Q+U8eykBMw/VNhBBiOVcOR3p/UmL8hYw9OPN+YBBg8IzRI
+         b5uL39D4szX+mxXFXPIEoDJW9Ll2o1qr+iW6bidwsilPgZsIJ+WKrX4WokK9nqGSVSlL
+         YCiA==
+X-Gm-Message-State: AOJu0YyGE6ANJrDjouoz73qXmvx8HygkjIzA5SB/Mbyb+5Gq6Wa/YdfT
+        oY8lzS4fwCRuB6fKSJmlp2VtyA==
+X-Google-Smtp-Source: AGHT+IGEwTzVgPi+XFKHAI7QWLlDbO9F0/k65IkPe/o0Zgw1EIxZFufAS/j1wVNsDC3NMAVavifbbQ==
+X-Received: by 2002:a05:6000:2ce:b0:331:2f9e:e8a8 with SMTP id o14-20020a05600002ce00b003312f9ee8a8mr6641722wry.8.1700469992303;
+        Mon, 20 Nov 2023 00:46:32 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.183])
-        by smtp.gmail.com with ESMTPSA id b8-20020a5d45c8000000b003142e438e8csm10435267wrs.26.2023.11.20.00.46.24
+        by smtp.gmail.com with ESMTPSA id b8-20020a5d45c8000000b003142e438e8csm10435267wrs.26.2023.11.20.00.46.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 00:46:26 -0800 (PST)
+        Mon, 20 Nov 2023 00:46:31 -0800 (PST)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
@@ -63,9 +63,9 @@ To:     s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 05/13] net: ravb: Stop DMA in case of failures on ravb_open()
-Date:   Mon, 20 Nov 2023 10:45:58 +0200
-Message-Id: <20231120084606.4083194-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 07/13] net: ravb: Rely on PM domain to enable gptp_clk
+Date:   Mon, 20 Nov 2023 10:46:00 +0200
+Message-Id: <20231120084606.4083194-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com>
@@ -77,28 +77,77 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-In case ravb_phy_start() returns with error the settings applied in
-ravb_dma_init() are not reverted (e.g. config mode). For this call
-ravb_stop_dma() on failure path of ravb_open().
+ravb_rzv2m_hw_info::gptp_ref_clk is enabled only for RZ/V2M. RZ/V2M
+is an ARM64 based device which selects power domains by default and
+CONFIG_PM. The RZ/V2M Ethernet DT node has proper power-domain binding
+available in device tree from the commit that added the Ethernet node.
+(4872ca1f92b0 ("arm64: dts: renesas: r9a09g011: Add ethernet nodes")).
 
-Fixes: a0d2f20650e8 ("Renesas Ethernet AVB PTP clock driver")
+Power domain support was available in rzg2l-cpg.c driver when the
+Ethernet DT node has been enabled in RZ/V2M device tree.
+(ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")).
+
+Thus remove the explicit clock enable for gptp_clk (and treat it as the
+other clocks are treated) as it is not needed and removing it doesn't
+break the ABI according to the above explanations.
+
+By removing the enable/disable operation from the driver we can add
+runtime PM support (which operates on clocks) w/o the need to handle
+the gptp_clk in Ethernet driver functions like ravb_runtime_nop().
+PM domain does all that is needed.
+
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/renesas/ravb_main.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index b7e9035cb989..588e3be692d3 100644
+index 0fc9810c5e78..836fdb4b3bfd 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1825,6 +1825,7 @@ static int ravb_open(struct net_device *ndev)
+@@ -2762,7 +2762,6 @@ static int ravb_probe(struct platform_device *pdev)
+ 			error = PTR_ERR(priv->gptp_clk);
+ 			goto out_disable_refclk;
+ 		}
+-		clk_prepare_enable(priv->gptp_clk);
+ 	}
+ 
+ 	ndev->max_mtu = info->rx_max_buf_size - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
+@@ -2786,7 +2785,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 		/* Set GTI value */
+ 		error = ravb_set_gti(ndev);
+ 		if (error)
+-			goto out_disable_gptp_clk;
++			goto out_disable_refclk;
+ 
+ 		/* Request GTI loading */
+ 		ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
+@@ -2806,7 +2805,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 			"Cannot allocate desc base address table (size %d bytes)\n",
+ 			priv->desc_bat_size);
+ 		error = -ENOMEM;
+-		goto out_disable_gptp_clk;
++		goto out_disable_refclk;
+ 	}
+ 	for (q = RAVB_BE; q < DBAT_ENTRY_NUM; q++)
+ 		priv->desc_bat[q].die_dt = DT_EOS;
+@@ -2869,8 +2868,6 @@ static int ravb_probe(struct platform_device *pdev)
  	/* Stop PTP Clock driver */
- 	if (info->gptp)
+ 	if (info->ccc_gac)
  		ravb_ptp_stop(ndev);
-+	ravb_stop_dma(ndev);
- out_free_irq_mgmta:
- 	if (!info->multi_irqs)
- 		goto out_free_irq;
+-out_disable_gptp_clk:
+-	clk_disable_unprepare(priv->gptp_clk);
+ out_disable_refclk:
+ 	clk_disable_unprepare(priv->refclk);
+ out_release:
+@@ -2893,7 +2890,6 @@ static void ravb_remove(struct platform_device *pdev)
+ 	if (info->ccc_gac)
+ 		ravb_ptp_stop(ndev);
+ 
+-	clk_disable_unprepare(priv->gptp_clk);
+ 	clk_disable_unprepare(priv->refclk);
+ 
+ 	/* Set reset mode */
 -- 
 2.39.2
 
