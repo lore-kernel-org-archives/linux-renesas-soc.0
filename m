@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B089DC54E76
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Nov 2023 11:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAED6C197A0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Nov 2023 11:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233392AbjKTL2F (ORCPT
+        id S233345AbjKTL2G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Nov 2023 06:28:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42418 "EHLO
+        Mon, 20 Nov 2023 06:28:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233404AbjKTL1w (ORCPT
+        with ESMTP id S233406AbjKTL1w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 20 Nov 2023 06:27:52 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 758A210DD
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 03:18:32 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-4083f61322fso14942145e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 03:18:32 -0800 (PST)
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A35C1708
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 03:18:38 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40a5a444c3eso12220465e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2023 03:18:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1700479111; x=1701083911; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1700479116; x=1701083916; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C3zrIDT5N9p6eJitAm1oJTITcoW+HOP0VmG8nkt3FV0=;
-        b=Wd8lqIVaCz4zOdau+zWarXenNTr0tUgyzonJJQ849gD475OpVKsomkngmvhBQuCN+Z
-         ZL6CvCaK50rKULg6/fJwMU0vxQ/VzI5lEykagt7oCSfdpi9KxyOVZThKK0tITcp/WYkH
-         7RpFQqqZZ2NK1KQTkVljw6v6nX1NUOKryPZmg8XQJ2vVAiD0vQxLZTP11b2itz9o0CN4
-         gJwlYQ/PFGPHO3M/L14hCvDszgDeGkh3CD8JLrUpTqNwr8KV2XYN4MyIdMHPzBbWxdb1
-         L6MB9fYoMWn4doMIBAa7/9axCfCcZADr0FQXIr9d5RvjZepveFk3yjMpccU6WNiMckyO
-         IYgw==
+        bh=Mx4aN/zGGPbPx5wuHBwZqoZnjcfUFGnzIbzLn9y7CFM=;
+        b=A5lX2XkttnakvOALBo9HgEMO/99tfIMdnWeKfg0aarUCsl1vg4QtB/K3GXZ4Eihxbs
+         FJEEZGHTGECduu3sL63UqbAZ33Gp88XgBzSLa4N3WpFSmtKeUX72NTISinjAPnF/pOCx
+         bRc5nlxZJ9lZKkipMFdLzo8vfSrmeYcNBbmbqD261Xfa3+k7+kS93Eoum3QHH1YOSIza
+         DcSwgdqTXhRfGE+yh8ksTGujHQKs3LfYomnVU2+HQiWc2RUX80siP6PPRd+4auzIpLFF
+         U8Y4wC9lsmP5fgCglaAc/kBVdL1P6m07pbiVVUZO4N/y8XfZGpv3NnxIxSzu65xLxWcp
+         LhnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700479111; x=1701083911;
+        d=1e100.net; s=20230601; t=1700479116; x=1701083916;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C3zrIDT5N9p6eJitAm1oJTITcoW+HOP0VmG8nkt3FV0=;
-        b=vialyZkZhKhcl2bbnhQUKVjTyiWzVNh+unQn2qQWcHZgcTO1pnR9BeDSPPlu+mL3/f
-         +S/mgUdMN7DK9PdMxqhkhPn8zK/P7UF2tKMp7fT2fQRtgZhK1z0G0Pvnq4fywcpa/mKA
-         fppmaaamGP1DLU+gUOJvkh7YMgiNf6ZJVgc1pRtoY2iSSn9faM1asQE9rpbc3VjcU0MG
-         RA85JJAvspES0Kw0DiSvYR17xFdasgb2qcwpXeRwD2MMJxK+H8F+BLNJL9hJHEfmfe/z
-         AgWjasHjz9MRXDeF/lF+EAgVnxO4emZWTIYzl3O53ZInHXh7yA2UaSKKI4njYvMdeb5y
-         JJxw==
-X-Gm-Message-State: AOJu0YzTw+DHw0xow1RjOCLwGi0HK/Od1OC8+dUhRrYoul/vNG18HkQw
-        z4NR3gpaWkHO/J4N5kNC3AbGfA==
-X-Google-Smtp-Source: AGHT+IG7MVqf/6hNKYkRXglolSsIpyxst5mObigjMOwk+LzWWRY5k4ezPeeB8D9kioAMd9xaHO5xCw==
-X-Received: by 2002:a05:600c:510d:b0:408:3bbd:4a82 with SMTP id o13-20020a05600c510d00b004083bbd4a82mr4666391wms.15.1700479110864;
-        Mon, 20 Nov 2023 03:18:30 -0800 (PST)
+        bh=Mx4aN/zGGPbPx5wuHBwZqoZnjcfUFGnzIbzLn9y7CFM=;
+        b=PYTUrFrcnQFGaDeo2e1ZYhsDG4lQyO5vHgbMMkRl4NpsbXVB0XG6TF/usw+Ji7c6so
+         zLF0SfJcuIs5EuqjvlxxIflmpgCFIRHfGKXrFrcfIakr9FHF5XM1fAGD1y/WIdv460KU
+         7CcEuSEU+u2ioLkEXeiqGT4eBp2f+bfznKUBHJZaiGF6xFjkUGMhpsEHOUGYcxTmO1AQ
+         DO8e9m0o/c2R8BYSx11VIDEckYh1DT6BVnqXkm8vxzanG5apQojnqE+VC60YonskLulM
+         I7DqFp/uw0PnM8r3yYQ4O0OW4ylkg0O7pLn/NRefltGEh/xI+cbZOf/ewg3Hn6XnPAY8
+         qFlw==
+X-Gm-Message-State: AOJu0YyWXYaj3wE487TThsuTyfQifvyj23CM60U6D+/XWa27LST5B8Au
+        Knu3d7f3TF0ZGMKMCLOpMnc6Ww==
+X-Google-Smtp-Source: AGHT+IG4q9+CFKWWh1PtV4CMYsm0ublGYiA2GT1Ip89ZJtr+DG+TrKWQY2HA9TpUNmUJDiG8Qb2AvQ==
+X-Received: by 2002:a05:600c:a07:b0:409:703c:b9b1 with SMTP id z7-20020a05600c0a0700b00409703cb9b1mr6455336wmp.40.1700479116562;
+        Mon, 20 Nov 2023 03:18:36 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.183])
-        by smtp.gmail.com with ESMTPSA id g6-20020a05600c310600b0040651505684sm13142676wmo.29.2023.11.20.03.18.29
+        by smtp.gmail.com with ESMTPSA id g6-20020a05600c310600b0040651505684sm13142676wmo.29.2023.11.20.03.18.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 03:18:30 -0800 (PST)
+        Mon, 20 Nov 2023 03:18:36 -0800 (PST)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     tglx@linutronix.de, robh+dt@kernel.org,
@@ -61,13 +61,14 @@ To:     tglx@linutronix.de, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 1/9] clk: renesas: r9a08g045: Add IA55 pclk and its reset
-Date:   Mon, 20 Nov 2023 13:18:12 +0200
-Message-Id: <20231120111820.87398-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 5/9] irqchip/renesas-rzg2l: Implement restriction when writing ISCR register
+Date:   Mon, 20 Nov 2023 13:18:16 +0200
+Message-Id: <20231120111820.87398-6-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231120111820.87398-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231120111820.87398-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -75,42 +76,56 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-IA55 interrupt controller is available on RZ/G3S SoC. Add IA55 pclk and
-its reset.
+The RZ/G2L manual (chapter "IRQ Status Control Register (ISCR)") describes
+the operation to clear interrupts through the ISCR register as follows:
+
+[Write operation]
+When "Falling-edge detection", "Rising-edge detection" or
+"Falling/Rising-edge detection" is set in IITSR:
+- In case ISTAT is 1
+	0: IRQn interrupt detection status is cleared.
+	1: Invalid to write.
+- In case ISTAT is 0
+	Invalid to write.
+
+When “Low-level detection” is set in IITSR.:
+	Invalid to write.
+
+Take the interrupt type into account when clearing interrupts through
+the ISCR register to avoid writing the ISCR when interrupt type is
+level.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/irqchip/irq-renesas-rzg2l.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 4394cb241d99..ea3beca8b4e0 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -188,6 +188,7 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index d666912adc74..a77ac6e1606f 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -78,11 +78,17 @@ static void rzg2l_irq_eoi(struct irq_data *d)
+ 	unsigned int hw_irq = irqd_to_hwirq(d) - IRQC_IRQ_START;
+ 	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
+ 	u32 bit = BIT(hw_irq);
+-	u32 reg;
++	u32 iitsr, iscr;
  
- static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 	DEF_MOD("gic_gicclk",		R9A08G045_GIC600_GICCLK, R9A08G045_CLK_P1, 0x514, 0),
-+	DEF_MOD("ia55_pclk",		R9A08G045_IA55_PCLK, R9A08G045_CLK_P2, 0x518, 0),
- 	DEF_MOD("ia55_clk",		R9A08G045_IA55_CLK, R9A08G045_CLK_P1, 0x518, 1),
- 	DEF_MOD("dmac_aclk",		R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0),
- 	DEF_MOD("sdhi0_imclk",		R9A08G045_SDHI0_IMCLK, CLK_SD0_DIV4, 0x554, 0),
-@@ -209,6 +210,7 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- static const struct rzg2l_reset r9a08g045_resets[] = {
- 	DEF_RST(R9A08G045_GIC600_GICRESET_N, 0x814, 0),
- 	DEF_RST(R9A08G045_GIC600_DBG_GICRESET_N, 0x814, 1),
-+	DEF_RST(R9A08G045_IA55_RESETN, 0x818, 0),
- 	DEF_RST(R9A08G045_SDHI0_IXRST, 0x854, 0),
- 	DEF_RST(R9A08G045_SDHI1_IXRST, 0x854, 1),
- 	DEF_RST(R9A08G045_SDHI2_IXRST, 0x854, 2),
-@@ -220,6 +222,7 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+-	reg = readl_relaxed(priv->base + ISCR);
+-	if (reg & bit)
+-		writel_relaxed(reg & ~bit, priv->base + ISCR);
++	iscr = readl_relaxed(priv->base + ISCR);
++	iitsr = readl_relaxed(priv->base + IITSR);
++
++	/*
++	 * ISCR can only be cleared if the type is falling-edge, rising-edge or
++	 * falling/rising-edge.
++	 */
++	if ((iscr & bit) && (iitsr & IITSR_IITSEL_MASK(hw_irq)))
++		writel_relaxed(iscr & ~bit, priv->base + ISCR);
+ }
  
- static const unsigned int r9a08g045_crit_mod_clks[] __initconst = {
- 	MOD_CLK_BASE + R9A08G045_GIC600_GICCLK,
-+	MOD_CLK_BASE + R9A08G045_IA55_PCLK,
- 	MOD_CLK_BASE + R9A08G045_IA55_CLK,
- 	MOD_CLK_BASE + R9A08G045_DMAC_ACLK,
- };
+ static void rzg2l_tint_eoi(struct irq_data *d)
 -- 
 2.39.2
 
