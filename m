@@ -1,91 +1,107 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5DF51FD7;
-	Wed, 22 Nov 2023 08:36:41 -0800 (PST)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-5c85e8fdd2dso55845627b3.2;
-        Wed, 22 Nov 2023 08:36:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700671000; x=1701275800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YnNltyNH2Qapz/Qt/SgTE3LNVbUWrueMgIGKLwuGujM=;
-        b=dabEhPsZ8hWe1ZhM4I3aw1Fz1FsO/cXksOA4ScePBdyYVn/+uAGAJcXAwphghZfso+
-         ekcW3D9ll/LqPd1q8XZgsEXw2tEr0CLGBn9UweZ9IKj5K5D/g3uQR/8alb2d7u5tuDxv
-         9fjMsRzCnXaN8uLFEmKySEisRkyxk5sBg2PfpQxnAQx0sSBjhrkkgm2bqMvKZCGc3Ppd
-         WtD/IEThn48Iwc07rcsazbwsCkIuKAJwwzf6x2KPa6iIjrdMviDTexbFxkE9PV5RUdPx
-         T/q7NpKC4QaFcKhTwhJDdphWt4Aqxo6Aot/TKTmdVFrHQoNuvxlI+FTyzbCDwOBEi9rm
-         k1QQ==
-X-Gm-Message-State: AOJu0YzrTjUJMUjQwJjGKq+SEhJlPKNgQkhcGMjpeHa/uQL0HAWvQtMZ
-	8+6H3i0axRzOgmA6nh58wJQaJrKI4vnjfA==
-X-Google-Smtp-Source: AGHT+IEtwFQIyER05QBhtqE64v8Xa6vCpxfd4cINyz0QT9Cg8FRMPIaPUjrd36xFGOl3qYaqXRgqTg==
-X-Received: by 2002:a0d:f4c4:0:b0:5a8:e6f4:4b6c with SMTP id d187-20020a0df4c4000000b005a8e6f44b6cmr2848601ywf.25.1700671000549;
-        Wed, 22 Nov 2023 08:36:40 -0800 (PST)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id i6-20020a816d06000000b005ccd9a64bcfsm179841ywc.1.2023.11.22.08.36.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 08:36:38 -0800 (PST)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-5c85e8fdd2dso55845127b3.2;
-        Wed, 22 Nov 2023 08:36:38 -0800 (PST)
-X-Received: by 2002:a0d:d78f:0:b0:5a8:22b5:399c with SMTP id
- z137-20020a0dd78f000000b005a822b5399cmr3089413ywd.24.1700670998325; Wed, 22
- Nov 2023 08:36:38 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O1BlsWJy"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACD3710F2;
+	Wed, 22 Nov 2023 08:40:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700671255; x=1732207255;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=mMbruSBIhN6yytGf1T9i3S2OJs+TIbgzVI2rHK9D8Qk=;
+  b=O1BlsWJyHmLu7qlZSOQ1+NZxyJqVbNdaySGD8rEU6FORi+Cs3BG9iz7e
+   wfmkX7P7AEbWzD0lfXYD+J2LIw6d3FBbudyNoaG5Q2ccwVlauzdLX2cMH
+   cIWlDB1ui2IsR7KAmGFGYFZo6cstdz2evE5KPC4T6DkfDfIhuzZls0AgG
+   tV12H5hx60Iwv8cv+wpcusQz92JaxUcvwZsgDL1FMf11TNtuflSWEMlPD
+   XPWKnLmwJsy3H+GVIUaD/y/7ti7em/zkvu19li/atknxljGMFVWzdLL7e
+   kDKsBykSCMgOwptmog8nQi+6OUv7YtVgYlr76XiHeBaGsepgyo2yQs1j0
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="456414199"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="456414199"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 08:40:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="884681487"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="884681487"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Nov 2023 08:40:46 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0E42738C; Wed, 22 Nov 2023 18:40:45 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org,
+	linux-mips@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>
+Subject: [PATCH v1 03/17] pinctrl: qcom: lpass-lpi: Replace kernel.h with what is being used
+Date: Wed, 22 Nov 2023 18:35:35 +0200
+Message-ID: <20231122164040.2262742-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
+In-Reply-To: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
+References: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122121235.827122-1-peterlin@andestech.com> <20231122121235.827122-6-peterlin@andestech.com>
-In-Reply-To: <20231122121235.827122-6-peterlin@andestech.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Nov 2023 17:36:24 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVL9_VQ7e7-Cr7vcFWqpCTeptczZmgWN4seENcJKTi0eQ@mail.gmail.com>
-Message-ID: <CAMuHMdVL9_VQ7e7-Cr7vcFWqpCTeptczZmgWN4seENcJKTi0eQ@mail.gmail.com>
-Subject: Re: [PATCH v4 05/13] riscv: dts: renesas: r9a07g043f: Update
- compatible string to use Andes INTC
-To: Yu Chien Peter Lin <peterlin@andestech.com>
-Cc: acme@kernel.org, adrian.hunter@intel.com, ajones@ventanamicro.com, 
-	alexander.shishkin@linux.intel.com, andre.przywara@arm.com, 
-	anup@brainfault.org, aou@eecs.berkeley.edu, atishp@atishpatra.org, 
-	conor+dt@kernel.org, conor.dooley@microchip.com, conor@kernel.org, 
-	devicetree@vger.kernel.org, dminus@andestech.com, evan@rivosinc.com, 
-	guoren@kernel.org, heiko@sntech.de, irogers@google.com, 
-	jernej.skrabec@gmail.com, jolsa@kernel.org, jszhang@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, locus84@andestech.com, magnus.damm@gmail.com, 
-	mark.rutland@arm.com, mingo@redhat.com, n.shubin@yadro.com, 
-	namhyung@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	peterz@infradead.org, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	rdunlap@infradead.org, robh+dt@kernel.org, samuel@sholland.org, 
-	sunilvl@ventanamicro.com, tglx@linutronix.de, tim609@andestech.com, 
-	uwu@icenowy.me, wens@csie.org, will@kernel.org, ycliang@andestech.com, 
-	inochiama@outlook.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 22, 2023 at 1:16=E2=80=AFPM Yu Chien Peter Lin
-<peterlin@andestech.com> wrote:
-> The Andes hart-level interrupt controller (Andes INTC) allows AX45MP
-> cores to handle custom local interrupts, such as the performance
-> counter overflow interrupt.
->
-> Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
+Replace kernel.h with what exactly is being used, i.e. array_size.h.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
+index 206b2c0ca828..2017bc80314d 100644
+--- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
++++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
+@@ -6,8 +6,8 @@
+ #ifndef __PINCTRL_LPASS_LPI_H__
+ #define __PINCTRL_LPASS_LPI_H__
+ 
++#include <linux/array_size.h>
+ #include <linux/bits.h>
+-#include <linux/kernel.h>
+ 
+ #include "../core.h"
+ 
+-- 
+2.43.0.rc1.1.gbec44491f096
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
