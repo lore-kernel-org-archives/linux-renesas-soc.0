@@ -1,27 +1,26 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7019892
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Nov 2023 08:01:28 -0800 (PST)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9FB2D8
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Nov 2023 08:03:40 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:d60:3031:68fb:d1ad])
-	by xavier.telenet-ops.be with bizsmtp
-	id DU1P2B0053EmSSH01U1PA0; Wed, 22 Nov 2023 17:01:24 +0100
+	by baptiste.telenet-ops.be with bizsmtp
+	id DU3e2B00k3EmSSH01U3eiS; Wed, 22 Nov 2023 17:03:39 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1r5pf2-009ykF-Ta;
-	Wed, 22 Nov 2023 17:01:22 +0100
+	id 1r5phE-009ykL-Sk;
+	Wed, 22 Nov 2023 17:03:38 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1r5pfG-00Gz1i-PK;
-	Wed, 22 Nov 2023 17:01:22 +0100
+	id 1r5phS-00Gz67-Qm;
+	Wed, 22 Nov 2023 17:03:38 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: defconfig: Refresh for v6.7-rc1
-Date: Wed, 22 Nov 2023 17:01:21 +0100
-Message-Id: <b9bdb0fe3635a7eb51a7eca9a06e8146d6ad82db.1700667824.git.geert+renesas@glider.be>
+Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v6.7-rc1
+Date: Wed, 22 Nov 2023 17:03:36 +0100
+Message-Id: <0c2c8d6bace6b6fc7d7a0ab59e98283d844d00b5.1700668894.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -31,30 +30,42 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refresh the defconfig for Renesas ARM systems:
+Refresh the defconfig for Renesas ARM64 systems:
+  - Enable Renesas R-Car Gen4 PCIe host/endpoint controller support
+    (Spider),
   - Disable CONFIG_SERIAL_8250_EXAR (auto-enabled since commit
     5939ff7ffae095ac ("tty: serial: 8250_exar: Does not use anything
     from 8250_pci")).
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To be queued in renesas-devel for v6.8.
+Not intended for upstream merge.
+To be applied to the topic/renesas-defconfig branch.
+---
+ arch/arm64/configs/renesas_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index dfdea295c4affcfe..e2ea369548eb0a8d 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -75,6 +75,7 @@ CONFIG_SERIAL_8250=y
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index a947a43f97e89cb4..ce5eb65f43641c01 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -108,6 +108,8 @@ CONFIG_HOTPLUG_PCI=y
+ CONFIG_PCI_HOST_GENERIC=y
+ CONFIG_PCIE_RCAR_HOST=y
+ CONFIG_PCIE_RCAR_EP=y
++CONFIG_PCIE_RCAR_GEN4_HOST=y
++CONFIG_PCIE_RCAR_GEN4_EP=y
+ CONFIG_PCI_ENDPOINT=y
+ CONFIG_PCI_ENDPOINT_CONFIGFS=y
+ CONFIG_PCI_EPF_TEST=y
+@@ -159,6 +161,7 @@ CONFIG_SERIAL_8250=y
  # CONFIG_SERIAL_8250_16550A_VARIANTS is not set
  CONFIG_SERIAL_8250_CONSOLE=y
  # CONFIG_SERIAL_8250_PCI is not set
 +# CONFIG_SERIAL_8250_EXAR is not set
- CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_8250_NR_UARTS=2
+ CONFIG_SERIAL_8250_RUNTIME_UARTS=2
  CONFIG_SERIAL_8250_EM=y
- # CONFIG_SERIAL_8250_PERICOM is not set
 -- 
 2.34.1
 
