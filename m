@@ -1,92 +1,123 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4424310C3;
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mEweqi9s"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D15810C7;
 	Wed, 22 Nov 2023 08:41:16 -0800 (PST)
-Received: from [192.168.1.103] (31.173.85.136) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 22 Nov
- 2023 19:41:07 +0300
-Subject: Re: [PATCH 12/13] net: ravb: Assert/deassert reset on suspend/resume
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-To: Claudiu <claudiu.beznea@tuxon.dev>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<p.zabel@pengutronix.de>, <yoshihiro.shimoda.uh@renesas.com>,
-	<geert+renesas@glider.be>, <wsa+renesas@sang-engineering.com>,
-	<biju.das.jz@bp.renesas.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	<sergei.shtylyov@cogentembedded.com>, <mitsuhiro.kimura.kc@renesas.com>,
-	<masaru.nagai.vx@renesas.com>
-CC: <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>
-References: <20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com>
- <20231120084606.4083194-13-claudiu.beznea.uj@bp.renesas.com>
- <c9f68819-7dc0-3035-4bf4-6bda5dfc621e@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <9d0e7d60-51a2-2abe-1cb9-65deca455527@omp.ru>
-Date: Wed, 22 Nov 2023 19:41:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700671275; x=1732207275;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=2IJ5RkmvKb06y4Pls/nYVezIgr9GrpPlE4qXI9p0tOg=;
+  b=mEweqi9sFj9kJx1OhGjlXbj2L+Z2b287QDX23g8ECuUAYiq+ogPd9IEU
+   NiuEE0N2J8lto8tk+AEuDpU5kZRpmZqxh6Ppzw+sDxQtF55rULI/3YfVr
+   fMHPtkAYW9BM6GeaLJwp2yCNd0BkvC7ArPWtKe0H3f1ghdLBiz4YzoeMw
+   g1mVSZLr7kIzBp9ONdhQtxz0n0nSkOKjm9X9Kxjuanj16e5XaPwryC7SF
+   uVkNowjx4bTC5c8ELKm3hKGmHvE1fg4F7p7lqmlRG7l5NG5oedDaDR6mA
+   B1/BkDCvRgU1Ht+tH3OA2HhOIsbgABtjuTwc2WcMUB5GEeIwSGaP1Pzjd
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="456414350"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="456414350"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 08:41:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="884681649"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="884681649"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Nov 2023 08:41:05 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id B90287E4; Wed, 22 Nov 2023 18:40:45 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org,
+	linux-mips@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>
+Subject: [PATCH v1 13/17] pinctrl: keembay: Convert to use grp member
+Date: Wed, 22 Nov 2023 18:35:45 +0200
+Message-ID: <20231122164040.2262742-14-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
+In-Reply-To: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
+References: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c9f68819-7dc0-3035-4bf4-6bda5dfc621e@omp.ru>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.0.0, Database issued on: 11/21/2023 23:48:29
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 181514 [Nov 21 2023]
-X-KSE-AntiSpam-Info: Version: 6.0.0.2
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 3 0.3.3 e5c6a18a9a9bff0226d530c5b790210c0bd117c8
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_arrow_text}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.85.136 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.85.136 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.85.136
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/21/2023 23:54:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/21/2023 8:06:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
 
-On 11/21/23 10:13 PM, Sergey Shtylyov wrote:
-[...]
+Convert drivers to use grp member embedded in struct group_desc.
 
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-[...]
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/pinctrl-keembay.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
->> reinitialized. Deasserting the reset signal for it should also be done.
->> Thus add reset assert/deassert on suspend/resume functions.
-> 
->    Firefox' spell checker trips over deassert[ing] and you have |de-assert"
+diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
+index 152c35bce8ec..ace61f8e8936 100644
+--- a/drivers/pinctrl/pinctrl-keembay.c
++++ b/drivers/pinctrl/pinctrl-keembay.c
+@@ -945,7 +945,7 @@ static int keembay_set_mux(struct pinctrl_dev *pctldev, unsigned int fun_sel,
+ 		return -EINVAL;
+ 
+ 	/* Change modes for pins in the selected group */
+-	pin = *grp->pins;
++	pin = *grp->grp.pins;
+ 	pin_mode = *(u8 *)(func->data);
+ 
+ 	val = keembay_read_reg(kpc->base1 + KEEMBAY_GPIO_MODE, pin);
+@@ -1528,12 +1528,11 @@ static int keembay_build_groups(struct keembay_pinctrl *kpc)
+ 	/* Each pin is categorised as one group */
+ 	for (i = 0; i < kpc->ngroups; i++) {
+ 		const struct pinctrl_pin_desc *pdesc = keembay_pins + i;
+-		struct group_desc *kmb_grp = grp + i;
++		struct pingroup *pgrp = &grp[i].grp;
+ 
+-		kmb_grp->name = pdesc->name;
+-		kmb_grp->pins = (int *)&pdesc->number;
+-		pinctrl_generic_add_group(kpc->pctrl, kmb_grp->name,
+-					  kmb_grp->pins, 1, NULL);
++		pgrp->name = pdesc->name;
++		pgrp->pins = (int *)&pdesc->number;
++		pinctrl_generic_add_group(kpc->pctrl, pgrp->name, pgrp->pins, 1, NULL);
+ 	}
+ 
+ 	return 0;
+-- 
+2.43.0.rc1.1.gbec44491f096
 
-   s/Firefox/Thunderbird/. :-)
-
-[...]
-
-MBR, Sergey
