@@ -1,27 +1,31 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9FB2D8
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Nov 2023 08:03:40 -0800 (PST)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37B7C18E
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Nov 2023 08:12:48 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:d60:3031:68fb:d1ad])
-	by baptiste.telenet-ops.be with bizsmtp
-	id DU3e2B00k3EmSSH01U3eiS; Wed, 22 Nov 2023 17:03:39 +0100
+	by xavier.telenet-ops.be with bizsmtp
+	id DUCm2B00H3EmSSH01UCmsF; Wed, 22 Nov 2023 17:12:46 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1r5phE-009ykL-Sk;
-	Wed, 22 Nov 2023 17:03:38 +0100
+	id 1r5pq4-009ylF-9k;
+	Wed, 22 Nov 2023 17:12:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1r5phS-00Gz67-Qm;
-	Wed, 22 Nov 2023 17:03:38 +0100
+	id 1r5pqI-00GzNX-9A;
+	Wed, 22 Nov 2023 17:12:46 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v6.7-rc1
-Date: Wed, 22 Nov 2023 17:03:36 +0100
-Message-Id: <0c2c8d6bace6b6fc7d7a0ab59e98283d844d00b5.1700668894.git.geert+renesas@glider.be>
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 3/3] ARM: dts: renesas: armadillo800eva: Add LCD panel
+Date: Wed, 22 Nov 2023 17:12:43 +0100
+Message-Id: <278339322dcaaedc0d68fc67f1f1272d880084d7.1700669207.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1700669207.git.geert+renesas@glider.be>
+References: <cover.1700669207.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -30,42 +34,82 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refresh the defconfig for Renesas ARM64 systems:
-  - Enable Renesas R-Car Gen4 PCIe host/endpoint controller support
-    (Spider),
-  - Disable CONFIG_SERIAL_8250_EXAR (auto-enabled since commit
-    5939ff7ffae095ac ("tty: serial: 8250_exar: Does not use anything
-    from 8250_pci")).
+Describe the 5" WVGA TFT LCD panel on the Armadillo-800-EVA development
+board, and enable the LCD controller that drives it.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-Not intended for upstream merge.
-To be applied to the topic/renesas-defconfig branch.
----
- arch/arm64/configs/renesas_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+v2:
+  - Add Reviewed-by.
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index a947a43f97e89cb4..ce5eb65f43641c01 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -108,6 +108,8 @@ CONFIG_HOTPLUG_PCI=y
- CONFIG_PCI_HOST_GENERIC=y
- CONFIG_PCIE_RCAR_HOST=y
- CONFIG_PCIE_RCAR_EP=y
-+CONFIG_PCIE_RCAR_GEN4_HOST=y
-+CONFIG_PCIE_RCAR_GEN4_EP=y
- CONFIG_PCI_ENDPOINT=y
- CONFIG_PCI_ENDPOINT_CONFIGFS=y
- CONFIG_PCI_EPF_TEST=y
-@@ -159,6 +161,7 @@ CONFIG_SERIAL_8250=y
- # CONFIG_SERIAL_8250_16550A_VARIANTS is not set
- CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_SERIAL_8250_PCI is not set
-+# CONFIG_SERIAL_8250_EXAR is not set
- CONFIG_SERIAL_8250_NR_UARTS=2
- CONFIG_SERIAL_8250_RUNTIME_UARTS=2
- CONFIG_SERIAL_8250_EM=y
+For proper operation, this depends on:
+  1. commit 410bb21319f69c2e ("drm/panel: simple: Add Ampire
+     AM-800480L1TMQW-T00H") in drm/drm-next,
+  2. Patch series "[PATCH 00/39] drm: renesas: shmobile: Atomic
+     conversion + DT support"
+     https://lore.kernel.org/r/cover.1687423204.git.geert+renesas@glider.be
+  3. Enabling CONFIG_DRM_SHMOBILE instead of CONFIG_FB_SH_MOBILE_LCDC.
+---
+ .../dts/renesas/r8a7740-armadillo800eva.dts   | 28 +++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
+index d21e00e1f40152d6..e1ac2c161e730342 100644
+--- a/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
+@@ -132,7 +132,7 @@ i2c2: i2c-2 {
+ 		i2c-gpio,delay-us = <5>;
+ 	};
+ 
+-	backlight {
++	backlight: backlight {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&tpu 2 33333 PWM_POLARITY_INVERTED>;
+ 		brightness-levels = <0 1 2 4 8 16 32 64 128 255>;
+@@ -143,6 +143,18 @@ backlight {
+ 		enable-gpios = <&pfc 61 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
++	panel {
++		compatible = "ampire,am-800480l1tmqw-t00h";
++		backlight = <&backlight>;
++		power-supply = <&reg_5p0v>;
++
++		port {
++			panel_in: endpoint {
++				remote-endpoint = <&lcdc0_rgb>;
++			};
++		};
++	};
++
+ 	sound {
+ 		compatible = "simple-audio-card";
+ 
+@@ -228,10 +240,22 @@ rtc@30 {
+ 	};
+ };
+ 
+-&pfc {
++&lcdc0 {
+ 	pinctrl-0 = <&lcd0_pins>;
+ 	pinctrl-names = "default";
+ 
++	status = "okay";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&panel_in>;
++			};
++		};
++	};
++};
++
++&pfc {
+ 	ether_pins: ether {
+ 		groups = "gether_mii", "gether_int";
+ 		function = "gether";
 -- 
 2.34.1
 
