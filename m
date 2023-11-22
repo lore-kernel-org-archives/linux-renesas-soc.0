@@ -1,71 +1,253 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 190FCBD
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Nov 2023 08:12:48 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:d60:3031:68fb:d1ad])
-	by andre.telenet-ops.be with bizsmtp
-	id DUCm2B00G3EmSSH01UCm0e; Wed, 22 Nov 2023 17:12:46 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1r5pq4-009ylB-95;
-	Wed, 22 Nov 2023 17:12:46 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1r5pqI-00GzNM-6U;
-	Wed, 22 Nov 2023 17:12:46 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] ARM: dts: renesas: r8a7740/armadillo800eva: Add LCD support
-Date: Wed, 22 Nov 2023 17:12:40 +0100
-Message-Id: <cover.1700669207.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC758BD;
+	Wed, 22 Nov 2023 08:26:00 -0800 (PST)
+Received: from [192.168.1.103] (31.173.85.136) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 22 Nov
+ 2023 19:25:49 +0300
+Subject: Re: [PATCH 13/13] net: ravb: Add runtime PM support
+To: Claudiu <claudiu.beznea@tuxon.dev>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<p.zabel@pengutronix.de>, <yoshihiro.shimoda.uh@renesas.com>,
+	<geert+renesas@glider.be>, <wsa+renesas@sang-engineering.com>,
+	<biju.das.jz@bp.renesas.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	<sergei.shtylyov@cogentembedded.com>, <mitsuhiro.kimura.kc@renesas.com>,
+	<masaru.nagai.vx@renesas.com>
+CC: <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>
+References: <20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231120084606.4083194-14-claudiu.beznea.uj@bp.renesas.com>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <04cb07fe-cccc-774a-f14d-763ce7ae7b07@omp.ru>
+Date: Wed, 22 Nov 2023 19:25:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231120084606.4083194-14-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.0.0, Database issued on: 11/21/2023 23:48:29
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 181514 [Nov 21 2023]
+X-KSE-AntiSpam-Info: Version: 6.0.0.2
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 3 0.3.3 e5c6a18a9a9bff0226d530c5b790210c0bd117c8
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.85.136 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.85.136
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/21/2023 23:54:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/21/2023 8:06:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-	Hi all,
+On 11/20/23 11:46 AM, Claudiu wrote:
 
-This patch series adds support for the two LCD Controllers (LCDC) on the
-R-Mobile A1 SoC, and for the 5" WVGA TFT LCD panel on the
-Armadillo-800-EVA development board, using the shmobile-drm driver,
-which gained support for DT recently.
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Changes compared to v1:
-  - New patch "ARM: shmobile: defconfig: Switch to DRM_SHMOBILE",
-  - Add Reviewed-by.
+> RZ/G3S supports enabling/disabling clocks for its modules (including
+> Ethernet module). For this commit adds runtime PM support which
+> relies on PM domain to enable/disable Ethernet clocks.
 
-To be queued in renesas-devel for v6.8.
+   That's not exactly something new in RZ/G3S. The ravb driver has unconditional
+RPM calls already in the probe() and remove() methods... And the sh_eth driver
+has RPM support since 2009...
 
-Thanks for your comment!
+> At the end of probe ravb_pm_runtime_put() is called which will turn
 
-Geert Uytterhoeven (3):
-  ARM: shmobile: defconfig: Switch to DRM_SHMOBILE
-  ARM: dts: renesas: r8a7740: Add LCDC nodes
-  ARM: dts: renesas: armadillo800eva: Add LCD panel
+   I'd suggest a shorter name, like ravb_rpm_put() but (looking at this function)
+it doesn't seem hardly needed...
 
- .../dts/renesas/r8a7740-armadillo800eva.dts   | 28 +++++++-
- arch/arm/boot/dts/renesas/r8a7740.dtsi        | 65 +++++++++++++++++++
- arch/arm/configs/shmobile_defconfig           |  5 +-
- 3 files changed, 94 insertions(+), 4 deletions(-)
+> off the Ethernet clocks (if no other request arrives at the driver).
+> After that if the interface is brought up (though ravb_open()) then
+> the clocks remain enabled until interface is brought down (operation
+> done though ravb_close()).
+> 
+> If any request arrives to the driver while the interface is down the
+> clocks are enabled to serve the request and then disabled.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  drivers/net/ethernet/renesas/ravb.h      |  1 +
+>  drivers/net/ethernet/renesas/ravb_main.c | 99 ++++++++++++++++++++++--
+>  2 files changed, 93 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+> index c2d8d890031f..50f358472aab 100644
+> --- a/drivers/net/ethernet/renesas/ravb.h
+> +++ b/drivers/net/ethernet/renesas/ravb.h
+> @@ -1044,6 +1044,7 @@ struct ravb_hw_info {
+>  	unsigned magic_pkt:1;		/* E-MAC supports magic packet detection */
+>  	unsigned half_duplex:1;		/* E-MAC supports half duplex mode */
+>  	unsigned refclk_in_pd:1;	/* Reference clock is part of a power domain. */
+> +	unsigned rpm:1;			/* Runtime PM available. */
 
--- 
-2.34.1
+   No, I don't think this flag makes any sense. We should support RPM
+unconditionally...
 
-Gr{oetje,eeting}s,
+[...]
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index f4634ac0c972..d70ed7e5f7f6 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -145,12 +145,41 @@ static void ravb_read_mac_address(struct device_node *np,
+[...]
+> +static void ravb_pm_runtime_put(struct ravb_private *priv)
+> +{
+> +	const struct ravb_hw_info *info = priv->info;
+> +	struct device *dev = &priv->pdev->dev;
+> +
+> +	if (!info->rpm)
+> +		return;
+> +
+> +	pm_runtime_mark_last_busy(dev);
 
-						Geert
+   Not very familiar with RPM... what's this for?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +	pm_runtime_put_autosuspend(dev);
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+   Why not the usual pm_runtime_put()?
+
+> +}
+> +
+>  static void ravb_mdio_ctrl(struct mdiobb_ctrl *ctrl, u32 mask, int set)
+>  {
+>  	struct ravb_private *priv = container_of(ctrl, struct ravb_private,
+>  						 mdiobb);
+> +	int ret;
+> +
+> +	ret = ravb_pm_runtime_get(priv);
+> +	if (ret < 0)
+> +		return;
+>  
+>  	ravb_modify(priv->ndev, PIR, mask, set ? mask : 0);
+> +
+> +	ravb_pm_runtime_put(priv);
+
+   Hmm, does this even work? :-/ Do the MDIO bits retain the values while
+the AVB core is not clocked or even powered down?
+   Note that the sh_eth driver has RPM calls in the {read|write}_c{22?45}()
+methods which do the full register read/write while the core is powere up
+and clocked...
+
+[...]
+> @@ -2064,6 +2107,11 @@ static struct net_device_stats *ravb_get_stats(struct net_device *ndev)
+>  	struct ravb_private *priv = netdev_priv(ndev);
+>  	const struct ravb_hw_info *info = priv->info;
+>  	struct net_device_stats *nstats, *stats0, *stats1;
+> +	int ret;
+> +
+> +	ret = ravb_pm_runtime_get(priv);
+> +	if (ret < 0)
+> +		return NULL;
+
+   Hm, sh_eth.c doesn't have any RPM calls in this method. Again, do
+the hardware counters remain valid across powering the MAC core down?
+
+[...]
+> @@ -2115,11 +2165,18 @@ static void ravb_set_rx_mode(struct net_device *ndev)
+>  {
+>  	struct ravb_private *priv = netdev_priv(ndev);
+>  	unsigned long flags;
+> +	int ret;
+> +
+> +	ret = ravb_pm_runtime_get(priv);
+> +	if (ret < 0)
+> +		return;
+
+   Hm, sh_eth.c doesn't have any RPM calls in this method either.
+Does changing the promiscous mode have sense for an offlined interface?
+
+[...]
+> @@ -2187,6 +2244,11 @@ static int ravb_close(struct net_device *ndev)
+>  	if (info->nc_queues)
+>  		ravb_ring_free(ndev, RAVB_NC);
+>  
+> +	/* Note that if RPM is enabled on plaforms with ccc_gac=1 this needs to be
+
+   It's "platforms". :-)
+
+> skipped and
+
+   Overly long line?
+
+> +	 * added to suspend function after PTP is stopped.
+
+   I guess we'll have to do that because RPM is actually not RZ/G3
+specific...
+
+> +	 */
+> +	ravb_pm_runtime_put(priv);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -2636,6 +2699,12 @@ static int ravb_probe(struct platform_device *pdev)
+>  	if (error)
+>  		return error;
+>  
+> +	info = of_device_get_match_data(&pdev->dev);
+> +
+> +	if (info->rpm) {
+> +		pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
+
+   Why exactly 100 ms?
+
+> +		pm_runtime_use_autosuspend(&pdev->dev);
+> +	}
+
+   Before calling pm_runtime_enable()?
+
+>  	pm_runtime_enable(&pdev->dev);
+[...]
+> @@ -2880,6 +2950,8 @@ static int ravb_probe(struct platform_device *pdev)
+>  	pm_runtime_put(&pdev->dev);
+>  pm_runtime_disable:
+>  	pm_runtime_disable(&pdev->dev);
+> +	if (info->rpm)
+> +		pm_runtime_dont_use_autosuspend(&pdev->dev);
+
+   After calling pm_runtime_disable()?
+
+[...]
+> @@ -2908,6 +2985,8 @@ static void ravb_remove(struct platform_device *pdev)
+>  			  priv->desc_bat_dma);
+>  	pm_runtime_put_sync(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> +	if (info->rpm)
+> +		pm_runtime_dont_use_autosuspend(&pdev->dev);
+
+   After calling pm_runtime_disable()?
+
+[...]
+
+MBR, Sergey
