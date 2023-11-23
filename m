@@ -1,80 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E685D12A;
-	Thu, 23 Nov 2023 00:49:50 -0800 (PST)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5b383b4184fso6669127b3.1;
-        Thu, 23 Nov 2023 00:49:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700729389; x=1701334189;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hslGwW8weSF/trUGnCGzI7NRZ/1Gm67BIvImSjeFisc=;
-        b=jm2cyCkxNa8RFVosetIJ4sRX7QUjVv5i4xqzGrWGI2S/8Q5M9Md11R0lPqNV6I/wZ6
-         mz3Hov3DMKREEE5HwfQBcTHMczBNFMOvWqcx11nOtRLcbsmNeHm9VCBZJj5flUVMhBpl
-         Qoamnqso3q+pNhezwpYe5ugP6W5LmKD+8mWOjXhQrxNf20PC5EDfcNj4PQ+OAsQlFeC0
-         9HqcfrcccLfYIk97Lt5YEZ2hrZ5CtJZLCmzs1ohkMFN3qgu9fV3wc7Cmdq8MFNjPhTp3
-         iXB/Th7ynCt9G5jMe6v/ZMzEm7MYnnLLUMWX5uvK08KkxvavU1zT8U9EjlbDX3DBJL9O
-         I5zA==
-X-Gm-Message-State: AOJu0YyaO7+bU6qbVY0pYe6GT+W7dZa7KoQ2v3r5cqIaG42cweK2ZfiA
-	/IEOQ7ao71zZTWnmdpOqfUgWDmYnltUJnA==
-X-Google-Smtp-Source: AGHT+IHEgFOTdj3vD34AFdULlM9N21oBAL/SI4LKddnDZRET1ss97usoaQHk+A+2noBQ/byTnTgLUw==
-X-Received: by 2002:a0d:fdc5:0:b0:5cb:7fcc:ffe9 with SMTP id n188-20020a0dfdc5000000b005cb7fccffe9mr4403504ywf.51.1700729389561;
-        Thu, 23 Nov 2023 00:49:49 -0800 (PST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id u78-20020a818451000000b005af5ef0687bsm265708ywf.13.2023.11.23.00.49.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Nov 2023 00:49:49 -0800 (PST)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5cc5988f85eso6601557b3.2;
-        Thu, 23 Nov 2023 00:49:49 -0800 (PST)
-X-Received: by 2002:a0d:dd04:0:b0:5ae:dff7:6159 with SMTP id
- g4-20020a0ddd04000000b005aedff76159mr4958402ywe.18.1700729388887; Thu, 23 Nov
- 2023 00:49:48 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35D01C6A8;
+	Thu, 23 Nov 2023 09:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRjMaWL/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517C6C433C8;
+	Thu, 23 Nov 2023 09:05:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700730319;
+	bh=l6l7rfNq9C2pJ8qB1srfSPaHh2HKOoGwoK/QaWH8w+o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=SRjMaWL/92cYdhNlQ885lbenxszEoiFC7usN8UAnmAzplSCGGVhkyA7DbBI9Sc+42
+	 yf+dkCw3nHh589t8rJw9E+i+Yr5fqRyuE7e5ibjCvk2tSSjqT3jO2UBJYjX+vjK2f6
+	 3PQui++wYwvzZtlhO2p49EITbVUkhMqPFzrAsIYe7jvbmTije9IEB+OP9eneTQMYLQ
+	 k/Wo3tZo6yqURBptLfCyrTwuAHVfJn8TZiS5NxZH/uaO2ymC3XyFtcV5NAEQqEaMTz
+	 6k8ZPWBtKYfaKsEU2WHbXRXP9zQUuXfbr8nGY9KuRzrqZBGqEQ2z86FS+F14KmJZXA
+	 2/wIX1GsTVE1Q==
+From: Lee Jones <lee@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <56a5ebee588696f9022fa29fa8e266c8bdee6fd7.1698228043.git.geert+renesas@glider.be>
+References: <56a5ebee588696f9022fa29fa8e266c8bdee6fd7.1698228043.git.geert+renesas@glider.be>
+Subject: Re: (subset) [PATCH v2] dt-bindings: mfd: ams,as3711: Convert to
+ json-schema
+Message-Id: <170073031703.1185179.18008578184817685295.b4-ty@kernel.org>
+Date: Thu, 23 Nov 2023 09:05:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122224409.2808999-1-robh@kernel.org>
-In-Reply-To: <20231122224409.2808999-1-robh@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Nov 2023 09:49:34 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUsTpjnpmu8axdfxbWRv1DpX5yuJHbCYZ7bwdGESU75fg@mail.gmail.com>
-Message-ID: <CAMuHMdUsTpjnpmu8axdfxbWRv1DpX5yuJHbCYZ7bwdGESU75fg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: renesas: drop unneeded quotes
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.3
 
-On Wed, Nov 22, 2023 at 11:44=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
-e:
-> Drop unneeded quotes over simple string values to fix a soon to be
-> enabled yamllint warning:
->
->   [error] string value is redundantly quoted with any quotes (quoted-stri=
-ngs)
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On Wed, 25 Oct 2023 12:02:34 +0200, Geert Uytterhoeven wrote:
+> Convert the Austria MicroSystems AS3711 Quad Buck High Current PMIC with
+> Charger Device Tree binding documentation to json-schema.
+> 
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl-for-v6.8.
+Applied, thanks!
 
-Gr{oetje,eeting}s,
+[1/1] dt-bindings: mfd: ams,as3711: Convert to json-schema
+      commit: ad7531e58b88eb92032d11c166dd544c434ce3c5
 
-                        Geert
+--
+Lee Jones [李琼斯]
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
