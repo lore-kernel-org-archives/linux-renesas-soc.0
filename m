@@ -1,160 +1,245 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BQXoEmCB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7A871711;
-	Thu, 23 Nov 2023 11:34:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700768072; x=1732304072;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7v2CAg5DroP23VK/yC7/YkMVF79slYQ+EVkLEfbZi+o=;
-  b=BQXoEmCBmncSLgJRkglMoQsPviq86QkhoO3F3Jsqr5E3OgYobX3vx2mg
-   eqn3176poSSVu12hucYqDTaKbyrcCaZxLxKS0wQJVY3e1xVnlicHgI0yE
-   zfj1kJq1JUrwy29JrsiGlU6LovOhXna6p30Rp9Eg1CuqDyFxdyZoRMty8
-   Ej1HlY2aA85YNg+k5NyyZ8tWpJQitcZcwq5ir+pRp4RJ1W0dgdI8BoklK
-   /2uiEualYsB1AfAIhdUoXEX8QOkIIAYwp5dIvDtEqn0UEakWGp4i/LlCF
-   P7y3LSH2vRwCYiLKy7n9+syUmZGeU25vZeL1/wc0JId/aI5QJwhVko0gU
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="371671554"
-X-IronPort-AV: E=Sophos;i="6.04,222,1695711600"; 
-   d="scan'208";a="371671554"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2023 11:34:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="771062272"
-X-IronPort-AV: E=Sophos;i="6.04,222,1695711600"; 
-   d="scan'208";a="771062272"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Nov 2023 11:34:17 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A1209A7A; Thu, 23 Nov 2023 21:33:59 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	openbmc@lists.ozlabs.org,
-	linux-mips@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Sean Wang <sean.wang@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v2 20/21] pinctrl: starfive: Convert to use grp member
-Date: Thu, 23 Nov 2023 21:31:48 +0200
-Message-ID: <20231123193355.3400852-21-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20231123193355.3400852-1-andriy.shevchenko@linux.intel.com>
-References: <20231123193355.3400852-1-andriy.shevchenko@linux.intel.com>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F90D46;
+	Thu, 23 Nov 2023 12:18:05 -0800 (PST)
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3580b94ac2eso3742455ab.0;
+        Thu, 23 Nov 2023 12:18:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700770685; x=1701375485;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RZhnChZzrbhIvmRhOFaFpuCSZmpiqDmB28b17aZVcDg=;
+        b=ZRbyS45/pl0/nD5oNgFRh5cn+SeG9sr3C6u/BtUkyG7i89bn36y+S/1c/F50YLOPfP
+         NIH+fc5FkBclQpy/XlTlBC8ryOLsPinKer9wVigYqkh9NyL0dMKUjq+uPdVZdpPcnpbG
+         S3Mwcm6uUZVounfxWzQ3lTKlRZuVgAkqdKljW7EQRuyhDoRKZRODr9lkm7YP6Yj4VFFN
+         47BQWBGJ+KSbvXl+QtS10tWYa3Np+vUPLL20zXOvPaeSM3HiP1+PNePEBGQoAFoqF8st
+         fs0Ym+cdSuGHPcusA4RZvSPGlG8M7+zQUefkc11CfRnW2CZiimQ+SsT0xQQMQchi91v0
+         hQyw==
+X-Gm-Message-State: AOJu0YyLeofkYFyCNqd+RQivbd+LhvBx1f2pp2rXEHxwhAdLcekwCBzC
+	6zyMUrd1O9pLxIhRdUAg/Q==
+X-Google-Smtp-Source: AGHT+IGDFz1VoxeIi4p1N73Z6ixP8PZnLbhwbX1EgEXgNCS60tLIEw0/jgWdeoIYUAEJBNg2XA4uJA==
+X-Received: by 2002:a05:6e02:1a65:b0:34f:c7f7:18b with SMTP id w5-20020a056e021a6500b0034fc7f7018bmr619622ilv.2.1700770684797;
+        Thu, 23 Nov 2023 12:18:04 -0800 (PST)
+Received: from herring.priv ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id k14-20020a92c9ce000000b0035b0ad262e2sm557205ilq.47.2023.11.23.12.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Nov 2023 12:18:04 -0800 (PST)
+Received: (nullmailer pid 2062268 invoked by uid 1000);
+	Thu, 23 Nov 2023 20:18:02 -0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Rob Herring <robh@kernel.org>
+To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, linux-renesas-soc@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, devicetree@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20231123190612.2427668-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20231123190612.2427668-1-niklas.soderlund+renesas@ragnatech.se>
+Message-Id: <170077068263.2062229.12353898342101477995.robh@kernel.org>
+Subject: Re: [RFC] dt-bindings: renesas: Document preferred compatible
+ naming
+Date: Thu, 23 Nov 2023 13:18:02 -0700
 
-Convert drivers to use grp member embedded in struct group_desc.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c | 8 ++++----
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+On Thu, 23 Nov 2023 20:06:12 +0100, Niklas Söderlund wrote:
+> Compatibles can come in two formats. Either "vendor,ip-soc" or
+> "vendor,soc-ip". Add a DT schema file documenting Renesas preferred
+> policy and enforcing it for all new compatibles, except few existing
+> patterns.
+> 
+> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+> Hello,
+> 
+> I have mixed up the order of soc and ip a few times. The last time I did
+> Krzysztof suggested a schema could help catch this, and this is my
+> attempt to create one.
+> 
+> One thing to note is that the select clause matches on all renesas
+> related bindings, including ones that are SoC agnostic and a few that
+> are Renesas IP that are not related to a SoC e.g. a Renesas regulator.
+> 
+> For this reason these two classes of compatibles have been added to this
+> schema. An alternative solution would be to change the select clause to
+> "^renesas,.+-.+$" and drop these two classes from the schema.
+> 
+> I have tested this schema with all DTBs built for ARM using the in tree
+> shmobile_defconfig and ARM64 using the renesas_defconfig found in
+> Geert's renesas-drivers tree [1].
+> 
+> 1.  https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+> 
+> ---
+>  .../devicetree/bindings/arm/renesas-soc.yaml  | 85 +++++++++++++++++++
+>  1 file changed, 85 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/renesas-soc.yaml
+> 
 
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-index ea70b8c61679..21bfbbaede72 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-@@ -654,7 +654,7 @@ static int starfive_set_mux(struct pinctrl_dev *pctldev,
- 		return -EINVAL;
- 
- 	pinmux = group->data;
--	for (i = 0; i < group->num_pins; i++) {
-+	for (i = 0; i < group->grp.npins; i++) {
- 		u32 v = pinmux[i];
- 		unsigned int gpio = starfive_pinmux_to_gpio(v);
- 		u32 dout = starfive_pinmux_to_dout(v);
-@@ -797,7 +797,7 @@ static int starfive_pinconf_group_get(struct pinctrl_dev *pctldev,
- 	if (!group)
- 		return -EINVAL;
- 
--	return starfive_pinconf_get(pctldev, group->pins[0], config);
-+	return starfive_pinconf_get(pctldev, group->grp.pins[0], config);
- }
- 
- static int starfive_pinconf_group_set(struct pinctrl_dev *pctldev,
-@@ -876,8 +876,8 @@ static int starfive_pinconf_group_set(struct pinctrl_dev *pctldev,
- 		}
- 	}
- 
--	for (i = 0; i < group->num_pins; i++)
--		starfive_padctl_rmw(sfp, group->pins[i], mask, value);
-+	for (i = 0; i < group->grp.npins; i++)
-+		starfive_padctl_rmw(sfp, group->grp.pins[i], mask, value);
- 
- 	return 0;
- }
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-index 9d71e8c13310..60160965cd29 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-@@ -307,7 +307,7 @@ static int jh7110_set_mux(struct pinctrl_dev *pctldev,
- 		return -EINVAL;
- 
- 	pinmux = group->data;
--	for (i = 0; i < group->num_pins; i++) {
-+	for (i = 0; i < group->grp.npins; i++) {
- 		u32 v = pinmux[i];
- 
- 		if (info->jh7110_set_one_pin_mux)
-@@ -437,7 +437,7 @@ static int jh7110_pinconf_group_get(struct pinctrl_dev *pctldev,
- 	if (!group)
- 		return -EINVAL;
- 
--	return jh7110_pinconf_get(pctldev, group->pins[0], config);
-+	return jh7110_pinconf_get(pctldev, group->grp.pins[0], config);
- }
- 
- static int jh7110_pinconf_group_set(struct pinctrl_dev *pctldev,
-@@ -508,8 +508,8 @@ static int jh7110_pinconf_group_set(struct pinctrl_dev *pctldev,
- 		}
- 	}
- 
--	for (i = 0; i < group->num_pins; i++)
--		jh7110_padcfg_rmw(sfp, group->pins[i], mask, value);
-+	for (i = 0; i < group->grp.npins; i++)
-+		jh7110_padcfg_rmw(sfp, group->grp.pins[i], mask, value);
- 
- 	return 0;
- }
--- 
-2.43.0.rc1.1.gbec44491f096
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.example.dtb: cr7: compatible: 'oneOf' conditional failed, one must be fixed:
+	'renesas,rcar-cr7' does not match '^renesas,emev2-[a-z0-9-]+$'
+	'renesas,rcar-cr7' does not match '^renesas,r7s[0-9]+-[a-z0-9-]+$'
+	'renesas,rcar-cr7' does not match '^renesas,r8a[a-z0-9]+-[a-z0-9-]+$'
+	'renesas,rcar-cr7' does not match '^renesas,r9a[0-9]+g[0-9]+-[a-z0-9-]+$'
+	'renesas,rcar-cr7' does not match '^renesas,rzn1-[a-z0-9-]+$'
+	'renesas,rcar-cr7' does not match '^renesas,rzv2m-[a-z0-9-]+$'
+	'renesas,rcar-cr7' does not match '^renesas,sh73a0-[a-z0-9-]+$'
+	'renesas,rcar-cr7' is not one of ['renesas,bsid', 'renesas,fcpf', 'renesas,fcpv', 'renesas,fdp1', 'renesas,prr', 'renesas,smp-sram', 'renesas,vsp1', 'renesas,vsp2']
+	'renesas,rcar-cr7' does not match '^renesas,du-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,ether-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,gether-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,ipmmu-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,pfc-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,sata-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,scif-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,sdhi-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,thermal-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,usb2-phy-[a-z0-9]+$'
+	'renesas,rcar-cr7' does not match '^renesas,vin-[a-z0-9]+$'
+	'renesas,rcar-cr7' is not one of ['renesas,dbsc-r8a73a4', 'renesas,dbsc3-r8a7740', 'renesas,em-gio', 'renesas,em-sti', 'renesas,em-uart', 'renesas,iic-emev2', 'renesas,sbsc-sh73a0', 'renesas,sdhi-mmc-r8a77470']
+	'renesas,rcar-cr7' is not one of ['renesas,5p35023', 'renesas,r2a11302ft', 'renesas,raa215300']
+	from schema $id: http://devicetree.org/schemas/arm/renesas-soc.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/potentiometer/renesas,x9250.example.dtb: potentiometer@0: compatible: 'oneOf' conditional failed, one must be fixed:
+	'renesas,x9250t' does not match '^renesas,emev2-[a-z0-9-]+$'
+	'renesas,x9250t' does not match '^renesas,r7s[0-9]+-[a-z0-9-]+$'
+	'renesas,x9250t' does not match '^renesas,r8a[a-z0-9]+-[a-z0-9-]+$'
+	'renesas,x9250t' does not match '^renesas,r9a[0-9]+g[0-9]+-[a-z0-9-]+$'
+	'renesas,x9250t' does not match '^renesas,rzn1-[a-z0-9-]+$'
+	'renesas,x9250t' does not match '^renesas,rzv2m-[a-z0-9-]+$'
+	'renesas,x9250t' does not match '^renesas,sh73a0-[a-z0-9-]+$'
+	'renesas,x9250t' is not one of ['renesas,bsid', 'renesas,fcpf', 'renesas,fcpv', 'renesas,fdp1', 'renesas,prr', 'renesas,smp-sram', 'renesas,vsp1', 'renesas,vsp2']
+	'renesas,x9250t' does not match '^renesas,du-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,ether-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,gether-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,ipmmu-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,pfc-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,sata-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,scif-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,sdhi-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,thermal-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,usb2-phy-[a-z0-9]+$'
+	'renesas,x9250t' does not match '^renesas,vin-[a-z0-9]+$'
+	'renesas,x9250t' is not one of ['renesas,dbsc-r8a73a4', 'renesas,dbsc3-r8a7740', 'renesas,em-gio', 'renesas,em-sti', 'renesas,em-uart', 'renesas,iic-emev2', 'renesas,sbsc-sh73a0', 'renesas,sdhi-mmc-r8a77470']
+	'renesas,x9250t' is not one of ['renesas,5p35023', 'renesas,r2a11302ft', 'renesas,raa215300']
+	from schema $id: http://devicetree.org/schemas/arm/renesas-soc.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/timer/renesas,tpu.example.dtb: tpu@ffffe0: compatible: 'oneOf' conditional failed, one must be fixed:
+	'renesas,tpu' does not match '^renesas,emev2-[a-z0-9-]+$'
+	'renesas,tpu' does not match '^renesas,r7s[0-9]+-[a-z0-9-]+$'
+	'renesas,tpu' does not match '^renesas,r8a[a-z0-9]+-[a-z0-9-]+$'
+	'renesas,tpu' does not match '^renesas,r9a[0-9]+g[0-9]+-[a-z0-9-]+$'
+	'renesas,tpu' does not match '^renesas,rzn1-[a-z0-9-]+$'
+	'renesas,tpu' does not match '^renesas,rzv2m-[a-z0-9-]+$'
+	'renesas,tpu' does not match '^renesas,sh73a0-[a-z0-9-]+$'
+	'renesas,tpu' is not one of ['renesas,bsid', 'renesas,fcpf', 'renesas,fcpv', 'renesas,fdp1', 'renesas,prr', 'renesas,smp-sram', 'renesas,vsp1', 'renesas,vsp2']
+	'renesas,tpu' does not match '^renesas,du-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,ether-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,gether-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,ipmmu-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,pfc-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,sata-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,scif-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,sdhi-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,thermal-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,usb2-phy-[a-z0-9]+$'
+	'renesas,tpu' does not match '^renesas,vin-[a-z0-9]+$'
+	'renesas,tpu' is not one of ['renesas,dbsc-r8a73a4', 'renesas,dbsc3-r8a7740', 'renesas,em-gio', 'renesas,em-sti', 'renesas,em-uart', 'renesas,iic-emev2', 'renesas,sbsc-sh73a0', 'renesas,sdhi-mmc-r8a77470']
+	'renesas,tpu' is not one of ['renesas,5p35023', 'renesas,r2a11302ft', 'renesas,raa215300']
+	from schema $id: http://devicetree.org/schemas/arm/renesas-soc.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/renesas,9series.example.dtb: clock-generator@6a: compatible: 'oneOf' conditional failed, one must be fixed:
+	'renesas,9fgv0241' does not match '^renesas,emev2-[a-z0-9-]+$'
+	'renesas,9fgv0241' does not match '^renesas,r7s[0-9]+-[a-z0-9-]+$'
+	'renesas,9fgv0241' does not match '^renesas,r8a[a-z0-9]+-[a-z0-9-]+$'
+	'renesas,9fgv0241' does not match '^renesas,r9a[0-9]+g[0-9]+-[a-z0-9-]+$'
+	'renesas,9fgv0241' does not match '^renesas,rzn1-[a-z0-9-]+$'
+	'renesas,9fgv0241' does not match '^renesas,rzv2m-[a-z0-9-]+$'
+	'renesas,9fgv0241' does not match '^renesas,sh73a0-[a-z0-9-]+$'
+	'renesas,9fgv0241' is not one of ['renesas,bsid', 'renesas,fcpf', 'renesas,fcpv', 'renesas,fdp1', 'renesas,prr', 'renesas,smp-sram', 'renesas,vsp1', 'renesas,vsp2']
+	'renesas,9fgv0241' does not match '^renesas,du-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,ether-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,gether-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,ipmmu-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,pfc-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,sata-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,scif-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,sdhi-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,thermal-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,usb2-phy-[a-z0-9]+$'
+	'renesas,9fgv0241' does not match '^renesas,vin-[a-z0-9]+$'
+	'renesas,9fgv0241' is not one of ['renesas,dbsc-r8a73a4', 'renesas,dbsc3-r8a7740', 'renesas,em-gio', 'renesas,em-sti', 'renesas,em-uart', 'renesas,iic-emev2', 'renesas,sbsc-sh73a0', 'renesas,sdhi-mmc-r8a77470']
+	'renesas,9fgv0241' is not one of ['renesas,5p35023', 'renesas,r2a11302ft', 'renesas,raa215300']
+	from schema $id: http://devicetree.org/schemas/arm/renesas-soc.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/renesas,versaclock7.example.dtb: clock-controller@9: compatible: 'oneOf' conditional failed, one must be fixed:
+	'renesas,rc21008a' does not match '^renesas,emev2-[a-z0-9-]+$'
+	'renesas,rc21008a' does not match '^renesas,r7s[0-9]+-[a-z0-9-]+$'
+	'renesas,rc21008a' does not match '^renesas,r8a[a-z0-9]+-[a-z0-9-]+$'
+	'renesas,rc21008a' does not match '^renesas,r9a[0-9]+g[0-9]+-[a-z0-9-]+$'
+	'renesas,rc21008a' does not match '^renesas,rzn1-[a-z0-9-]+$'
+	'renesas,rc21008a' does not match '^renesas,rzv2m-[a-z0-9-]+$'
+	'renesas,rc21008a' does not match '^renesas,sh73a0-[a-z0-9-]+$'
+	'renesas,rc21008a' is not one of ['renesas,bsid', 'renesas,fcpf', 'renesas,fcpv', 'renesas,fdp1', 'renesas,prr', 'renesas,smp-sram', 'renesas,vsp1', 'renesas,vsp2']
+	'renesas,rc21008a' does not match '^renesas,du-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,ether-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,gether-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,ipmmu-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,pfc-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,sata-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,scif-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,sdhi-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,thermal-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,usb2-phy-[a-z0-9]+$'
+	'renesas,rc21008a' does not match '^renesas,vin-[a-z0-9]+$'
+	'renesas,rc21008a' is not one of ['renesas,dbsc-r8a73a4', 'renesas,dbsc3-r8a7740', 'renesas,em-gio', 'renesas,em-sti', 'renesas,em-uart', 'renesas,iic-emev2', 'renesas,sbsc-sh73a0', 'renesas,sdhi-mmc-r8a77470']
+	'renesas,rc21008a' is not one of ['renesas,5p35023', 'renesas,r2a11302ft', 'renesas,raa215300']
+	from schema $id: http://devicetree.org/schemas/arm/renesas-soc.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/renesas,idt821034.example.dtb: audio-codec@0: compatible: 'oneOf' conditional failed, one must be fixed:
+	'renesas,idt821034' does not match '^renesas,emev2-[a-z0-9-]+$'
+	'renesas,idt821034' does not match '^renesas,r7s[0-9]+-[a-z0-9-]+$'
+	'renesas,idt821034' does not match '^renesas,r8a[a-z0-9]+-[a-z0-9-]+$'
+	'renesas,idt821034' does not match '^renesas,r9a[0-9]+g[0-9]+-[a-z0-9-]+$'
+	'renesas,idt821034' does not match '^renesas,rzn1-[a-z0-9-]+$'
+	'renesas,idt821034' does not match '^renesas,rzv2m-[a-z0-9-]+$'
+	'renesas,idt821034' does not match '^renesas,sh73a0-[a-z0-9-]+$'
+	'renesas,idt821034' is not one of ['renesas,bsid', 'renesas,fcpf', 'renesas,fcpv', 'renesas,fdp1', 'renesas,prr', 'renesas,smp-sram', 'renesas,vsp1', 'renesas,vsp2']
+	'renesas,idt821034' does not match '^renesas,du-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,ether-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,gether-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,ipmmu-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,pfc-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,sata-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,scif-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,sdhi-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,thermal-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,usb2-phy-[a-z0-9]+$'
+	'renesas,idt821034' does not match '^renesas,vin-[a-z0-9]+$'
+	'renesas,idt821034' is not one of ['renesas,dbsc-r8a73a4', 'renesas,dbsc3-r8a7740', 'renesas,em-gio', 'renesas,em-sti', 'renesas,em-uart', 'renesas,iic-emev2', 'renesas,sbsc-sh73a0', 'renesas,sdhi-mmc-r8a77470']
+	'renesas,idt821034' is not one of ['renesas,5p35023', 'renesas,r2a11302ft', 'renesas,raa215300']
+	from schema $id: http://devicetree.org/schemas/arm/renesas-soc.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231123190612.2427668-1-niklas.soderlund+renesas@ragnatech.se
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
