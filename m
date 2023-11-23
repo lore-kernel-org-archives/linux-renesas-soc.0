@@ -1,119 +1,151 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NabupWQT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD2A9D6C;
-	Thu, 23 Nov 2023 08:09:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700755762; x=1732291762;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=fI5I6aNI+wBDXkBFPmA1tH6IH8G5H7oF7TFedUg2UCA=;
-  b=NabupWQTZlJqMWeoBE8u9FBPz5l4sGTmdL+FBqkvdWuHupdsqrXzVqWj
-   SJdjx4mc+yVarcyP37/4rnIwsmY0sDotV03+2BK2+zbAmKjduicuLYX0N
-   MIVO/tgV4hJOTLlBEmDuJi8y9BO/BVZyWkqk+1yYPJo8Tchjb2GFOtROg
-   ceu02BVTr8XJQuzhpnaCeu3+JvRPFJmPZ4KN6uFOekwuuYP9WZbcd71F8
-   +p3w2egb7kNSfkEFoWB7DYD/JGzPEO1gWIZL8OwpN431jF+x/1q8MYn2J
-   44TRFWNFtutjC1c8B4NewBQ21GXVtka1BmEZC7zoXzlVF6WbhcJI0P1Ju
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="423422204"
-X-IronPort-AV: E=Sophos;i="6.04,222,1695711600"; 
-   d="scan'208";a="423422204"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2023 08:09:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="771023284"
-X-IronPort-AV: E=Sophos;i="6.04,222,1695711600"; 
-   d="scan'208";a="771023284"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2023 08:09:13 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1r6CGL-0000000GPTF-1VsT;
-	Thu, 23 Nov 2023 18:09:09 +0200
-Date: Thu, 23 Nov 2023 18:09:09 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	openbmc@lists.ozlabs.org, linux-mips@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Sean Wang <sean.wang@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Andy Gross <agross@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-Subject: Re: [PATCH v1 00/17] pinctrl: Convert struct group_desc to use
- struct pingroup
-Message-ID: <ZV95JewcPbh_eKYh@smile.fi.intel.com>
-References: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
- <ZV8zQZyT4Kwom-m_@probook>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB078DD;
+	Thu, 23 Nov 2023 08:37:32 -0800 (PST)
+Received: from [192.168.1.103] (178.176.78.136) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 23 Nov
+ 2023 19:37:28 +0300
+Subject: Re: [PATCH 06/13] net: ravb: Let IP specific receive function to
+ interrogate descriptors
+To: Claudiu <claudiu.beznea@tuxon.dev>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<p.zabel@pengutronix.de>, <yoshihiro.shimoda.uh@renesas.com>,
+	<geert+renesas@glider.be>, <wsa+renesas@sang-engineering.com>,
+	<biju.das.jz@bp.renesas.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	<sergei.shtylyov@cogentembedded.com>, <mitsuhiro.kimura.kc@renesas.com>,
+	<masaru.nagai.vx@renesas.com>
+CC: <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>
+References: <20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231120084606.4083194-7-claudiu.beznea.uj@bp.renesas.com>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <b626455a-f7a4-2684-725c-c679dd75a515@omp.ru>
+Date: Thu, 23 Nov 2023 19:37:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZV8zQZyT4Kwom-m_@probook>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20231120084606.4083194-7-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.0.0, Database issued on: 11/21/2023 23:48:29
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 181514 [Nov 21 2023]
+X-KSE-AntiSpam-Info: Version: 6.0.0.2
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 3 0.3.3 e5c6a18a9a9bff0226d530c5b790210c0bd117c8
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.78.136
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/21/2023 23:54:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/21/2023 8:06:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Thu, Nov 23, 2023 at 12:10:57PM +0100, J. Neuschäfer wrote:
-> On Wed, Nov 22, 2023 at 06:35:32PM +0200, Andy Shevchenko wrote:
-> > The struct group_desc has a lot of duplication with struct pingroup.
-> > Deduplicate that by embeddind the latter in the former and convert
-> > users.
+On 11/20/23 11:45 AM, Claudiu wrote:
+
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> It is strange to me that struct pingroup was introduced without any
-> reference to the pre-existing struct group_desc, but it's good to see
-> them unified at last.
+> ravb_poll() initial code used to interrogate the first descriptor of the
+> RX queue in case gptp is false to know if ravb_rx() should be called.
+> This is done for non GPTP IPs. For GPTP IPs the driver PTP specific
 
-Yep!
+   It's called gPTP, AFAIK.
 
-> Even better might be to move the definitions next to each other in the
-> same file, so that anyone who finds one, also finds the other.
+> information was used to know if receive function should be called. As
+> every IP has it's own receive function that interrogates the RX descriptor
 
-group_desc is a private to pin control generic implementation, pingroup is
-generic for any pin control driver. Their current split is a right thing
-to do, so no action required in this sense.
+   Its own.
 
-Thank you for review!
+> list in the same way the ravb_poll() was doing there is no need to double
+> check this in ravb_poll(). Removing the code form ravb_poll() and
 
-> > Linus, assuming everything is fine, I can push this to my tree.
-> > Or you can apply it (assumming all CIs and people are happy with
-> > the series).
-> > 
-> > NB. This series contains previously sent patches for Qualcomm and
-> > Nuovoton. Here the updated version for Qualcomm that splits previous
-> > patch to two and fixes compilation warnings.
-> > 
-> > NB. The function_desc is in plan to follow the similar deduplication.
+   From ravb_poll().
 
--- 
-With Best Regards,
-Andy Shevchenko
+> adjusting ravb_rx_gbeth() leads to a cleaner code.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 588e3be692d3..0fc9810c5e78 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -771,12 +771,15 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+>  	int limit;
+>  
+>  	entry = priv->cur_rx[q] % priv->num_rx_ring[q];
+> +	desc = &priv->gbeth_rx_ring[entry];
+> +	if (desc->die_dt == DT_FEMPTY)
+> +		return false;
+> +
 
+   I don't understand what this buys us, the following *while* loop will
+be skipped anyway, and the *for* loop as well, I think... And ravb_rx_rcar()
+doesn't have that anyway...
 
+> @@ -1279,25 +1282,16 @@ static int ravb_poll(struct napi_struct *napi, int budget)
+>  	struct net_device *ndev = napi->dev;
+>  	struct ravb_private *priv = netdev_priv(ndev);
+>  	const struct ravb_hw_info *info = priv->info;
+> -	bool gptp = info->gptp || info->ccc_gac;
+> -	struct ravb_rx_desc *desc;
+>  	unsigned long flags;
+>  	int q = napi - priv->napi;
+>  	int mask = BIT(q);
+>  	int quota = budget;
+> -	unsigned int entry;
+>  
+> -	if (!gptp) {
+> -		entry = priv->cur_rx[q] % priv->num_rx_ring[q];
+> -		desc = &priv->gbeth_rx_ring[entry];
+> -	}
+>  	/* Processing RX Descriptor Ring */
+>  	/* Clear RX interrupt */
+>  	ravb_write(ndev, ~(mask | RIS0_RESERVED), RIS0);
+> -	if (gptp || desc->die_dt != DT_FEMPTY) {
+> -		if (ravb_rx(ndev, &quota, q))
+> -			goto out;
+> -	}
+
+  I don't really understand this code (despite I've AKCed it)...
+Biju, could you explain this (well, you tried already but I don't
+buy it anymore)?
+
+> +	if (ravb_rx(ndev, &quota, q))
+> +		goto out;
+
+   This restores the behavior before:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3d4e37df882b0f4f28b7223a42492650b71252c5
+
+   So does look correct. :-)
+
+MBR, Sergey
