@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MPzl9jCx"
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4331182
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2023 01:04:43 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9ffb5a4f622so541090766b.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2023 01:04:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mOW8jygG"
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0439618F
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2023 01:04:47 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-54acdd65c88so3819830a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2023 01:04:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1701075882; x=1701680682; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1701075885; x=1701680685; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f1Odgh8NQ+ymmAyVzkExaOV4kNSDq/6wv5PLiqzNFYg=;
-        b=MPzl9jCxhIUN6DjkTUK94dkPbCkWZ1DjnfDjx6uOOvWT6PjCae5EzmolsWinzmZaDz
-         K2Vixs6mgTPcu+u670olQFdDmbWA0nZf3A+wb15aMQc26Ga6DmyI6Yc1617gtHzxCf0o
-         0Is6WO1rNR1GkZUxprIeqIGRu8ftoxs3D64nP4hGBzj+S/IcDIOlZp+UEJSPHCdoFdpm
-         mttuZ05PnlSdRjjgPNxCtYtOQc/ivHVlSifejBhvbGzOOMMcz880QivPgMcWeACWCYmI
-         IeBip2veRpGlkuGCRxiGYxyAFLZ/CjYkq8CzC13J7MlOe+FyIdyu2owObzrm77AuHCXI
-         cItw==
+        bh=sQu10j0QwV+Ad1UGRhRRU7KzoLHJiBSEBkkZ5ea4Ue8=;
+        b=mOW8jygGTTUSGr7OMcMHFQIUAKrZcmdrT0Lm9SCUKlwpmtlg/4E8Beo5KiXx+LW4tE
+         CWiI0Bu77dttGNPMVAQxqOV8LaevIHY6Lpo54B8c+2ystx8GJxlnSct7WrkFeobHxSrV
+         Tncu3FJt7ZOqm11A5bxL9nr3OFeU2IuQR3zlgAnAOJzpuwLnNw+C9db/NwnW/qGyHd68
+         rTF/zjAJhqIvEhGRfTxPcPLwbzKWPrw/457bv4DZ94JWReWw+GbvkewGnyOtMPwS/CO9
+         G7iWfj6FATirr5rGhp4ECHCV6Al/cBGsyNHjzW2W3HsgsmdZgf2K5tWnaQ0UyoEjICEv
+         XA5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701075882; x=1701680682;
+        d=1e100.net; s=20230601; t=1701075885; x=1701680685;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=f1Odgh8NQ+ymmAyVzkExaOV4kNSDq/6wv5PLiqzNFYg=;
-        b=I8r8BOK1Eej3nebm7OG8/wpqzJVMEXik/sUylNZn83XcgC6ux7W1vmeijXrsT73Rnw
-         OgTjPni0VKGtLrB5OMUeUgylUf5uMHQN2KxptlSEMH2SbY3QfCev90+j8tv0pCM/7gHJ
-         HUrvu2ae2b1TeLKTC32X4UvAyiIyZEX4jkUOFUpF66/YtdTmV748o/6nxJlfhE4hvSYi
-         Cp//pVztP6KgB59PUc9OdfdD/5ij0Tvhr4QO+7Gw3WXzoCt3HfRVQ+qMfxyLEHLXgxQx
-         AsAM6jKy0c+NgM45IhQEXcJSIBNRDpchvN+FA24pVN5RQ7/StEqkN9NRlZPCN3RG6C8X
-         tbBg==
-X-Gm-Message-State: AOJu0Yzluh7oD6I8byECZJGwr+0xoArn8MQNL70iwiOVqE7MmDu6EDrA
-	1ljKcq7XfS70fMo+qWSVpG7inw==
-X-Google-Smtp-Source: AGHT+IGyVXfUv1sDMUPq/6NZ7GqiTKqXeM9iCEMC+wqTiTcYkSKLXtlJyA2qzpJxPGOMLqTAsDKrKA==
-X-Received: by 2002:a17:906:10d:b0:a00:2686:6b40 with SMTP id 13-20020a170906010d00b00a0026866b40mr6513858eje.14.1701075882183;
-        Mon, 27 Nov 2023 01:04:42 -0800 (PST)
+        bh=sQu10j0QwV+Ad1UGRhRRU7KzoLHJiBSEBkkZ5ea4Ue8=;
+        b=L1q5ZbRhQAeZfYwd17V21AFKDQxm81wHS9Y8YU84925NbtlmP0bcyFkfdJj2r2XP+v
+         H3HtUeD0F6CVcKJuu2iP+6xtVR0l1S2IZ6Ta3iNFez21aT5KYHH9eEQabmDJHt94ACrv
+         C4dBBxhHtEtMfjqkXcEz38L4U89Ziu7mQ0ptCpooSjip7dX/BtRH95W7YatVU57ImVqk
+         ROv9u7Gp5W4GIR2d74zAOg7Pc49v94zWZYQKA7C8Q1tZevYwfgmf1/oDLWuWB0DFk3Bg
+         4U3aaKoqAI5N1LMSuEqucXJL8d2A13okyNev9kwduLIeqsftCdVwHkWwYjn5wYTiXTz0
+         AhAw==
+X-Gm-Message-State: AOJu0Ywz2xb2mwg6jp1aBMdqaQWtB+1KboKeYWYqVC18l3ZwNnXoGd47
+	JTXU18IgpAZJyn18bXMWrpEoUQ==
+X-Google-Smtp-Source: AGHT+IGISQK94Ry155vVV8zvw2RP+e6FJAj5j8pFkqlLI+MX3mV1b6v4bHggEslm10y8MkPvbBynTQ==
+X-Received: by 2002:a17:906:eb0f:b0:a02:95ea:1289 with SMTP id mb15-20020a170906eb0f00b00a0295ea1289mr8362060ejb.20.1701075885302;
+        Mon, 27 Nov 2023 01:04:45 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.125])
-        by smtp.gmail.com with ESMTPSA id ay14-20020a170906d28e00b009fad1dfe472sm5456539ejb.153.2023.11.27.01.04.40
+        by smtp.gmail.com with ESMTPSA id ay14-20020a170906d28e00b009fad1dfe472sm5456539ejb.153.2023.11.27.01.04.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 01:04:41 -0800 (PST)
+        Mon, 27 Nov 2023 01:04:44 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: s.shtylyov@omp.ru,
@@ -59,9 +59,9 @@ Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 1/6] net: ravb: Check return value of reset_control_deassert()
-Date: Mon, 27 Nov 2023 11:04:21 +0200
-Message-Id: <20231127090426.3761729-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 3/6] net: ravb: Make write access to CXR35 first before accessing other EMAC registers
+Date: Mon, 27 Nov 2023 11:04:23 +0200
+Message-Id: <20231127090426.3761729-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231127090426.3761729-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231127090426.3761729-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,56 +71,80 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-reset_control_deassert() could return an error. Some devices cannot work
-if reset signal de-assert operation fails. To avoid this check the return
-code of reset_control_deassert() in ravb_probe() and take proper action.
+Hardware manual of RZ/G3S (and RZ/G2L) specifies the following on the
+description of CXR35 register (chapter "PHY interface select register
+(CXR35)"): "After release reset, make write-access to this register before
+making write-access to other registers (except MDIOMOD). Even if not need
+to change the value of this register, make write-access to this register
+at least one time. Because RGMII/MII MODE is recognized by accessing this
+register".
 
-Fixes: 0d13a1a464a0 ("ravb: Add reset support")
+The setup procedure for EMAC module (chapter "Setup procedure" of RZ/G3S,
+RZ/G2L manuals) specifies the E-MAC.CXR35 register is the first EMAC
+register that is to be configured.
+
+Note [A] from chapter "PHY interface select register (CXR35)" specifies
+the following:
+[A] The case which CXR35 SEL_XMII is used for the selection of RGMII/MII
+in APB Clock 100 MHz.
+(1) To use RGMII interface, Set ‘H’03E8_0000’ to this register.
+(2) To use MII interface, Set ‘H’03E8_0002’ to this register.
+
+Take into account these indication.
+
+Fixes: 1089877ada8d ("ravb: Add RZ/G2L MII interface support")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 ---
 
 Changes since [1]:
-- added goto label for free_netdev()
+- collected Rb tag
 
 [1] https://lore.kernel.org/all/20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com/
 
- drivers/net/ethernet/renesas/ravb_main.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index c70cff80cc99..50c4c79be035 100644
+index cd3474168452..2d4f4fb3d16e 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2645,7 +2645,10 @@ static int ravb_probe(struct platform_device *pdev)
- 	ndev->features = info->net_features;
- 	ndev->hw_features = info->net_hw_features;
+@@ -515,6 +515,15 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
+ {
+ 	struct ravb_private *priv = netdev_priv(ndev);
  
--	reset_control_deassert(rstc);
-+	error = reset_control_deassert(rstc);
-+	if (error)
-+		goto out_free_netdev;
++	if (priv->phy_interface == PHY_INTERFACE_MODE_MII) {
++		ravb_write(ndev, (1000 << 16) | CXR35_SEL_XMII_MII, CXR35);
++		ravb_modify(ndev, CXR31, CXR31_SEL_LINK0 | CXR31_SEL_LINK1, 0);
++	} else {
++		ravb_write(ndev, (1000 << 16) | CXR35_SEL_XMII_RGMII, CXR35);
++		ravb_modify(ndev, CXR31, CXR31_SEL_LINK0 | CXR31_SEL_LINK1,
++			    CXR31_SEL_LINK0);
++	}
 +
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
+ 	/* Receive frame limit set register */
+ 	ravb_write(ndev, GBETH_RX_BUFF_MAX + ETH_FCS_LEN, RFLR);
  
-@@ -2872,11 +2875,11 @@ static int ravb_probe(struct platform_device *pdev)
- out_disable_refclk:
- 	clk_disable_unprepare(priv->refclk);
- out_release:
--	free_netdev(ndev);
+@@ -537,14 +546,6 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
+ 
+ 	/* E-MAC interrupt enable register */
+ 	ravb_write(ndev, ECSIPR_ICDIP, ECSIPR);
 -
- 	pm_runtime_put(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	reset_control_assert(rstc);
-+out_free_netdev:
-+	free_netdev(ndev);
- 	return error;
+-	if (priv->phy_interface == PHY_INTERFACE_MODE_MII) {
+-		ravb_modify(ndev, CXR31, CXR31_SEL_LINK0 | CXR31_SEL_LINK1, 0);
+-		ravb_write(ndev, (1000 << 16) | CXR35_SEL_XMII_MII, CXR35);
+-	} else {
+-		ravb_modify(ndev, CXR31, CXR31_SEL_LINK0 | CXR31_SEL_LINK1,
+-			    CXR31_SEL_LINK0);
+-	}
  }
  
+ static void ravb_emac_init_rcar(struct net_device *ndev)
 -- 
 2.39.2
 
