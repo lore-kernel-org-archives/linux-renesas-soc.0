@@ -1,13 +1,13 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1035918F;
-	Mon, 27 Nov 2023 03:53:43 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 227AE193;
+	Mon, 27 Nov 2023 03:53:44 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="6.04,230,1695654000"; 
-   d="scan'208";a="188253126"
+   d="scan'208";a="188253129"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie6.idc.renesas.com with ESMTP; 27 Nov 2023 20:53:40 +0900
 Received: from localhost.localdomain (unknown [10.166.13.99])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6F9AF400C75F;
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9D412400C4CD;
 	Mon, 27 Nov 2023 20:53:40 +0900 (JST)
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: s.shtylyov@omp.ru,
@@ -18,9 +18,9 @@ To: s.shtylyov@omp.ru,
 Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next 7/9] net: rswitch: Add jumbo frames handling for RX
-Date: Mon, 27 Nov 2023 20:53:32 +0900
-Message-Id: <20231127115334.3670790-8-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next 9/9] net: rswitch: Allow jumbo frames
+Date: Mon, 27 Nov 2023 20:53:34 +0900
+Message-Id: <20231127115334.3670790-10-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231127115334.3670790-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20231127115334.3670790-1-yoshihiro.shimoda.uh@renesas.com>
@@ -32,152 +32,43 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If this hardware receives a jumbo frame like 2KiB or more, it will be
-split into multiple queues. In near the future, to support this,
-add handling specific descriptor types F{START,MID,END}. However, such
-jumbo frames will not happen yet because the maximum MTU size is still
-default for now.
+Allow jumbo frames by changing maximum MTU size and number of RX queues.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 86 +++++++++++++++++++++++---
- drivers/net/ethernet/renesas/rswitch.h |  2 +
- 2 files changed, 78 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/renesas/rswitch.c | 2 ++
+ drivers/net/ethernet/renesas/rswitch.h | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index d24ba2411d5e..009e6bfdad27 100644
+index c5e3ee8f82bc..f55e15987dce 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -713,6 +713,80 @@ static int rswitch_gwca_halt(struct rswitch_private *priv)
- 	return err;
- }
+@@ -1882,6 +1882,8 @@ static int rswitch_device_alloc(struct rswitch_private *priv, unsigned int index
+ 	snprintf(ndev->name, IFNAMSIZ, "tsn%d", index);
+ 	ndev->netdev_ops = &rswitch_netdev_ops;
+ 	ndev->ethtool_ops = &rswitch_ethtool_ops;
++	ndev->max_mtu = RSWITCH_MAX_MTU;
++	ndev->min_mtu = ETH_MIN_MTU;
  
-+static struct sk_buff *rswitch_rx_handle_desc(struct net_device *ndev,
-+					      struct rswitch_gwca_queue *gq,
-+					      struct rswitch_ext_ts_desc *desc)
-+{
-+	dma_addr_t dma_addr = rswitch_desc_get_dptr(&desc->desc);
-+	u16 pkt_len = le16_to_cpu(desc->desc.info_ds) & RX_DS;
-+	u8 die_dt = desc->desc.die_dt & DT_MASK;
-+	struct sk_buff *skb = NULL;
-+
-+	dma_unmap_single(ndev->dev.parent, dma_addr, RSWITCH_MAP_BUF_SIZE,
-+			 DMA_FROM_DEVICE);
-+
-+	/* The RX descriptor order will be one of the following:
-+	 * - FSINGLE
-+	 * - FSTART -> FEND
-+	 * - FSTART -> FMID -> FEND
-+	 */
-+
-+	/* Check whether the descriptor is unexpected order */
-+	switch (die_dt) {
-+	case DT_FSTART:
-+	case DT_FSINGLE:
-+		if (gq->skb_fstart) {
-+			dev_kfree_skb_any(gq->skb_fstart);
-+			gq->skb_fstart = NULL;
-+			ndev->stats.rx_dropped++;
-+		}
-+		break;
-+	case DT_FMID:
-+	case DT_FEND:
-+		if (!gq->skb_fstart) {
-+			ndev->stats.rx_dropped++;
-+			return NULL;
-+		}
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	/* Handle the descriptor */
-+	switch (die_dt) {
-+	case DT_FSTART:
-+	case DT_FSINGLE:
-+		skb = build_skb(gq->rx_bufs[gq->cur], RSWITCH_BUF_SIZE);
-+		if (skb) {
-+			skb_reserve(skb, RSWITCH_HEADROOM);
-+			skb_put(skb, pkt_len);
-+			gq->pkt_len = pkt_len;
-+			if (die_dt == DT_FSTART) {
-+				gq->skb_fstart = skb;
-+				skb = NULL;
-+			}
-+		}
-+		break;
-+	case DT_FMID:
-+	case DT_FEND:
-+		skb_add_rx_frag(gq->skb_fstart, skb_shinfo(gq->skb_fstart)->nr_frags,
-+				virt_to_page(gq->rx_bufs[gq->cur]),
-+				offset_in_page(gq->rx_bufs[gq->cur]) + RSWITCH_HEADROOM,
-+				pkt_len, RSWITCH_BUF_SIZE);
-+		if (die_dt == DT_FEND) {
-+			skb = gq->skb_fstart;
-+			gq->skb_fstart = NULL;
-+		}
-+		gq->pkt_len += pkt_len;
-+		break;
-+	default:
-+		netdev_err(ndev, "%s: unexpected value (%x)\n", __func__, die_dt);
-+		break;
-+	}
-+
-+	return skb;
-+}
-+
- static bool rswitch_rx(struct net_device *ndev, int *quota)
- {
- 	struct rswitch_device *rdev = netdev_priv(ndev);
-@@ -720,9 +794,7 @@ static bool rswitch_rx(struct net_device *ndev, int *quota)
- 	struct rswitch_ext_ts_desc *desc;
- 	int limit, boguscnt, ret;
- 	struct sk_buff *skb;
--	dma_addr_t dma_addr;
- 	unsigned int num;
--	u16 pkt_len;
- 	u32 get_ts;
+ 	netif_napi_add(ndev, &rdev->napi, rswitch_poll);
  
- 	if (*quota <= 0)
-@@ -734,15 +806,9 @@ static bool rswitch_rx(struct net_device *ndev, int *quota)
- 	desc = &gq->rx_ring[gq->cur];
- 	while ((desc->desc.die_dt & DT_MASK) != DT_FEMPTY) {
- 		dma_rmb();
--		pkt_len = le16_to_cpu(desc->desc.info_ds) & RX_DS;
--		dma_addr = rswitch_desc_get_dptr(&desc->desc);
--		dma_unmap_single(ndev->dev.parent, dma_addr,
--				 RSWITCH_MAP_BUF_SIZE, DMA_FROM_DEVICE);
--		skb = build_skb(gq->rx_bufs[gq->cur], RSWITCH_BUF_SIZE);
-+		skb = rswitch_rx_handle_desc(ndev, gq, desc);
- 		if (!skb)
- 			goto out;
--		skb_reserve(skb, RSWITCH_HEADROOM);
--		skb_put(skb, pkt_len);
- 
- 		get_ts = rdev->priv->ptp_priv->tstamp_rx_ctrl & RCAR_GEN4_RXTSTAMP_TYPE_V2_L2_EVENT;
- 		if (get_ts) {
-@@ -758,7 +824,7 @@ static bool rswitch_rx(struct net_device *ndev, int *quota)
- 		skb->protocol = eth_type_trans(skb, ndev);
- 		napi_gro_receive(&rdev->napi, skb);
- 		rdev->ndev->stats.rx_packets++;
--		rdev->ndev->stats.rx_bytes += pkt_len;
-+		rdev->ndev->stats.rx_bytes += gq->pkt_len;
- 
- out:
- 		gq->rx_bufs[gq->cur] = NULL;
 diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 17e617ec4187..4252677e2a55 100644
+index 4252677e2a55..72e3ff596d31 100644
 --- a/drivers/net/ethernet/renesas/rswitch.h
 +++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -965,6 +965,8 @@ struct rswitch_gwca_queue {
- 		/* For RX */
- 		struct {
- 			void **rx_bufs;
-+			struct sk_buff *skb_fstart;
-+			u16 pkt_len;
- 		};
- 	};
- };
+@@ -26,9 +26,10 @@
+ 		else
+ 
+ #define TX_RING_SIZE		1024
+-#define RX_RING_SIZE		1024
++#define RX_RING_SIZE		4096
+ #define TS_RING_SIZE		(TX_RING_SIZE * RSWITCH_NUM_PORTS)
+ 
++#define RSWITCH_MAX_MTU		9600
+ #define RSWITCH_HEADROOM	(NET_SKB_PAD + NET_IP_ALIGN)
+ #define RSWITCH_DESC_BUF_SIZE	2048
+ #define RSWITCH_TAILROOM	SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
 -- 
 2.34.1
 
