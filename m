@@ -1,42 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="iZsU6h/H"
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 569F212D
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2023 01:04:42 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9fd0059a967so962898466b.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2023 01:04:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Cy84VwcD"
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3080C189
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2023 01:04:45 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-54a94e68fb1so7884680a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2023 01:04:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1701075881; x=1701680681; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rn3FqN0gmZL0Ari6o42HZwHfSuSPYS/sbuJSeG1c90A=;
-        b=iZsU6h/HsVq3YS2w4Nj4fMq137jbfL1HGWcW7eD+HSMg6KGqUGF7+p4FROQSJVE7Ui
-         p9bhJ/c9gTwZuRcTx2J5A5bU6+cZguvvK2YjYnQO9vufsbsg8rpc9Jtla3wVlCLuNBpW
-         NM8rcK6Yp9h19/SkTk1Em/51RW733LoG5CTMd9ssFlAK7f8vI+1Y7ZDSOO7zIl/WnNYk
-         nGbKvAnCDrKG11Y5nZqClFz3KpyGxMY2cJ9slB5YKWsLdhSR3VrYy4ilX/+yC6HtKfax
-         DFrhVcszV2ICPejkiZAq87DGCjPBX+bi+/bo1OA46DN6PHtfxm5Q2oJZS0n++lzU7zuV
-         guNw==
+        d=tuxon.dev; s=google; t=1701075883; x=1701680683; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SY105oJjqBLJjrNiZ881NJwgu30bKrulY2ZruFXx9EI=;
+        b=Cy84VwcD08LovmdeluY81pY4hAxrPC/7PtZXICdWX86mK7rGn5tzGvr/0Dixx9M34c
+         PrRrOJPAVkN53uadZIHupv8vw8QrB2kHVuEzz4+QiAqiBGrTLo1Eb/XsNircAQ5wcuTK
+         VIaJhxKj5MlCGXgy/5d9FF4SIvYNmyd3Qo7ihEGVwgZCNkhMPEAXtSHgJsfEAyiSeGBB
+         9kAvls/FfeXBq00H6X2HYiBiDZYCvjNk3oyG8ytiw0pudB9Ajc0ifHIUIOBBnz6+ofdh
+         /3KkXn8vCe8fKYN8w1iFlmaWVSYMof2tr+Ht1Jm9Fs0aflYkcDfB2iO1y5ssYiMI0BGV
+         w6pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701075881; x=1701680681;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rn3FqN0gmZL0Ari6o42HZwHfSuSPYS/sbuJSeG1c90A=;
-        b=UeD+uMZeLBJ9UXDJRh4aTTqB/QDR5U1QvzzkusWcoE5aSEg2JdYtmgCwjPIEjfs+Iy
-         EQcv0vIEeSku+taOUITJJ0KWpwztO/OxR/YPTg8nR55sqDhkwpfwAQwxNkjQbCI9M+Sn
-         VsuKFSagu7vOprceKH60Rrr0l6tNhwrPlymE2qVXPYE5O1fIdCXLGMEciFyxHhYZ/Ks1
-         i59AeZJ0w9qcH4WY1dViFm2y6x0bc1EI1vj7i+7BFX9Y1OJxJMup/S1O3S8EDTycBbD6
-         pViN7o4panKx/ejI6ctk2h5H1Rq8GGP6iN4njWhj3gVw6yRiNP8p/MhfixVDsSiMAt4h
-         92qA==
-X-Gm-Message-State: AOJu0YyEiFap3HjKSPShJu70OK1yKb6SQZSenksNDe8bW3kls+gCTtmH
-	4qMqJRzsASRu9PhJQgBnZPjsLg==
-X-Google-Smtp-Source: AGHT+IFufwrQhoJGAA86CiHpYk2HWGHa6HKsgjsjfk1ABg3nn/EADfsaGSESbFlko4QIO5GKSmIpWA==
-X-Received: by 2002:a17:906:49:b0:a0d:fcfb:aa33 with SMTP id 9-20020a170906004900b00a0dfcfbaa33mr3221731ejg.9.1701075880653;
-        Mon, 27 Nov 2023 01:04:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701075883; x=1701680683;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SY105oJjqBLJjrNiZ881NJwgu30bKrulY2ZruFXx9EI=;
+        b=KzsLNRJORz5AwvP/lA9BfB/ZEca0Ax35SKyoGJlS3ykfzpdTbuzN9aIGhIDwzzY2Vr
+         Pfx/GXQ/5/VW0i2Eb7MThh9FGkAlx77F3o71nlWU+5dziIN1HrtfhyOpHKaekuzpb0la
+         CUXYfaZ4YxnwAmGiMZ4cBoBp5c0yKqRhwwly+WqYgKkQ8u2HhxXSGBFFFQH8RY3wlfat
+         BFFz8LhLWG5ni1eJlI5iIfoMLlUTbpfICV3R015iIsX5pkBSaUPNUJt6L1H4+/6Y15+0
+         UyWw5VHHyk+a3DKUwo2xzz83GflX5Xn5kpWolZOh0IPAE/pw9UdMWFHlk7efD2uLFu+P
+         6f3A==
+X-Gm-Message-State: AOJu0YxRmH3+P9/Xns7h4ceyZTnNlcfgU36ij2ssMCZloyGTFl59Cf56
+	rDBZgO8BjUC6AMyMWhXwvyHC5Q==
+X-Google-Smtp-Source: AGHT+IE8VvNviNCZfHfu2FY1K+dZrQy6vqtZ9sx52MzgYilOK6puI7wCb7uyJ3cx0P9Jel53TArD0A==
+X-Received: by 2002:a17:906:c44:b0:9ff:889c:c2ff with SMTP id t4-20020a1709060c4400b009ff889cc2ffmr12596865ejf.22.1701075883737;
+        Mon, 27 Nov 2023 01:04:43 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.125])
-        by smtp.gmail.com with ESMTPSA id ay14-20020a170906d28e00b009fad1dfe472sm5456539ejb.153.2023.11.27.01.04.39
+        by smtp.gmail.com with ESMTPSA id ay14-20020a170906d28e00b009fad1dfe472sm5456539ejb.153.2023.11.27.01.04.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 01:04:40 -0800 (PST)
+        Mon, 27 Nov 2023 01:04:43 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: s.shtylyov@omp.ru,
@@ -58,44 +59,62 @@ Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 0/6] net: ravb: Fixes for the ravb driver
-Date: Mon, 27 Nov 2023 11:04:20 +0200
-Message-Id: <20231127090426.3761729-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 2/6] net: ravb: Use pm_runtime_resume_and_get()
+Date: Mon, 27 Nov 2023 11:04:22 +0200
+Message-Id: <20231127090426.3761729-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20231127090426.3761729-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20231127090426.3761729-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+pm_runtime_get_sync() may return an error. In case it returns with an error
+dev->power.usage_count needs to be decremented. pm_runtime_resume_and_get()
+takes care of this. Thus use it.
 
-This series adds some fixes for ravb driver. Patches in this series
-were initilly part of series at [1].
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
 Changes since [1]:
-- addressed review comments
-- added patch 6/6
+- added goto label for pm_runtime_disable(); with this innecessary
+  changes were removed
 
 [1] https://lore.kernel.org/all/20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com/
 
-Claudiu Beznea (6):
-  net: ravb: Check return value of reset_control_deassert()
-  net: ravb: Use pm_runtime_resume_and_get()
-  net: ravb: Make write access to CXR35 first before accessing other
-    EMAC registers
-  net: ravb: Start TX queues after HW initialization succeeded
-  net: ravb: Stop DMA in case of failures on ravb_open()
-  net: ravb: Keep reverse order of operations in ravb_remove()
+ drivers/net/ethernet/renesas/ravb_main.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- drivers/net/ethernet/renesas/ravb_main.c | 58 ++++++++++++++----------
- 1 file changed, 35 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 50c4c79be035..cd3474168452 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2650,7 +2650,9 @@ static int ravb_probe(struct platform_device *pdev)
+ 		goto out_free_netdev;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+-	pm_runtime_get_sync(&pdev->dev);
++	error = pm_runtime_resume_and_get(&pdev->dev);
++	if (error < 0)
++		goto out_runtime_disable;
+ 
+ 	if (info->multi_irqs) {
+ 		if (info->err_mgmt_irqs)
+@@ -2876,6 +2878,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 	clk_disable_unprepare(priv->refclk);
+ out_release:
+ 	pm_runtime_put(&pdev->dev);
++out_runtime_disable:
+ 	pm_runtime_disable(&pdev->dev);
+ 	reset_control_assert(rstc);
+ out_free_netdev:
 -- 
 2.39.2
 
