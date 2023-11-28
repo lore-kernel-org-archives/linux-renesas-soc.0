@@ -1,107 +1,176 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WGbLa0RO"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCF7C83;
-	Tue, 28 Nov 2023 12:12:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701202343; x=1732738343;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mMbruSBIhN6yytGf1T9i3S2OJs+TIbgzVI2rHK9D8Qk=;
-  b=WGbLa0ROXTm8FHV0ty2/jeuTUBl8FS9FsX0mBcNsph8FvK3qMCkg19nN
-   /Z0fnfF8/dhRZVz/S/qTsWLo+bpXGcxTHcjMYIVz/GRm8kb3MxEwd2McH
-   IwChaLLjoil/ZFREqGlMJhaw5pxp4Id3zQTuQgR/KM9hdjNe/bTUPGy3D
-   1vzrF8MrAbPuKnnuIiwUVOMfA5m17pxaIsiYzO9hm/I+4BmJYtKSNzbzK
-   qHYeHudc49YwvjlKp3vwdL6dr1rm0WbHT4zMObExIXTSsvtDhemojDFmz
-   9JGNfPYbWg2QwWfY7eRz3I7fyhitndTNUp/ly0KA33rn4LvjvBIRvCb6m
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="457348157"
-X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="457348157"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:12:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="772422557"
-X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="772422557"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 28 Nov 2023 12:12:08 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D4B2A24C; Tue, 28 Nov 2023 22:01:57 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	openbmc@lists.ozlabs.org,
-	linux-mips@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Sean Wang <sean.wang@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v3 01/22] pinctrl: qcom: lpass-lpi: Replace kernel.h with what is being used
-Date: Tue, 28 Nov 2023 21:56:50 +0200
-Message-ID: <20231128200155.438722-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
-References: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="nGWYjHCg"
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14CAE197
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Nov 2023 13:54:47 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-6c4eb5fda3cso5962248b3a.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Nov 2023 13:54:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1701208486; x=1701813286; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mgqTaSyUKytg/7yztnhPqs1Bi/McnnQHHQoEsV3COg4=;
+        b=nGWYjHCg/Yer/rUY8DlJjKudSQw2d2vp44v7+EeccpbJa/gZACtHvYWe+UkQC8PcBy
+         /bMXNqorYd6L+acqmCHiB7vLNlskg2PFdmzcZggOFAbzusqgiovReTdv95kQ6JMyPyFZ
+         R550trkAS8QCtpNM+mnr6uJOot7C01DBVPFPrvjf5FAcD7kRM84bn6ZTPqM823GEGb59
+         9cIIGaTTaXX7HJ8fXex9ZqSNBHzwoNbNEostt+I/gmv7Eq5GHhnrXae6orq2ppQ0MvUI
+         Mno5n7Ulk3yR3325T/0eEGk7x5gmhgy2fjKa6wXHIymFO91IXaBN6rcgW+lmDP2F4QbS
+         RwVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701208486; x=1701813286;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mgqTaSyUKytg/7yztnhPqs1Bi/McnnQHHQoEsV3COg4=;
+        b=T+KWgxGghadIEGqcQJCd1wNzR6drndk84EhWSnoHWcVZXNH230Ie2bAbQUS3Qi2lPW
+         ll4nUAOkUproLSzmdqSTSVXPuAXo80scHbETzIGzR6MQ2fOfghxYmaNsWrSK+FCC5V78
+         oEnXJCym/5Y2e5pk9I4lfphcRvfMVS7yEsFHn4pLwVtkcLagwoVIrUOmiLpuTli3MMoK
+         DZdZldSVtwQIeqN7KR7Q5TR72hfQTMns7OkXG0e7uesx2wFPu2a56GLWuvK19TVB/sn/
+         bpae5V/sqKfEU51ehqPK8jTMly3Z/84FMEu9IQb8tyVcQEYSjh6lOnGIY4jeF6bAoz2y
+         Ibpw==
+X-Gm-Message-State: AOJu0YzheqSywt/cIcfLB6p18jtt0ylaK2+3pFsG/CYZ15Jt7s0H5e3O
+	9L+kY7lfrlwp4uWdg8Hs9FZYSElm90qTs5pxXZw=
+X-Google-Smtp-Source: AGHT+IEHkRQ5/lV2NhlXDrgUHciD0cphvQ2vWheP03S283AdOb44f/hPwxWmsiqeWGcA/QCjZPLn7w==
+X-Received: by 2002:a05:6a20:8e12:b0:18c:f73:6133 with SMTP id y18-20020a056a208e1200b0018c0f736133mr22124521pzj.28.1701208485983;
+        Tue, 28 Nov 2023 13:54:45 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id u9-20020a632349000000b005c2422a1171sm9781426pgm.66.2023.11.28.13.54.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Nov 2023 13:54:45 -0800 (PST)
+Message-ID: <656661a5.630a0220.d488e.8cf5@mx.google.com>
+Date: Tue, 28 Nov 2023 13:54:45 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+X-Kernelci-Kernel: renesas-devel-2023-11-28-v6.7-rc3
+Subject: renesas/master baseline-nfs: 22 runs,
+ 2 regressions (renesas-devel-2023-11-28-v6.7-rc3)
+To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 
-Replace kernel.h with what exactly is being used, i.e. array_size.h.
+renesas/master baseline-nfs: 22 runs, 2 regressions (renesas-devel-2023-11-=
+28-v6.7-rc3)
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regressions Summary
+-------------------
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-index 206b2c0ca828..2017bc80314d 100644
---- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-+++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-@@ -6,8 +6,8 @@
- #ifndef __PINCTRL_LPASS_LPI_H__
- #define __PINCTRL_LPASS_LPI_H__
- 
-+#include <linux/array_size.h>
- #include <linux/bits.h>
--#include <linux/kernel.h>
- 
- #include "../core.h"
- 
--- 
-2.43.0.rc1.1.gbec44491f096
+platform         | arch | lab             | compiler | defconfig          |=
+ regressions
+-----------------+------+-----------------+----------+--------------------+=
+------------
+dove-cubox       | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig |=
+ 1          =
 
+imx6dl-riotboard | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig |=
+ 1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-11-28-v6.7-rc3/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-11-28-v6.7-rc3
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      273eac6f81f3427b5219f85d46ef26cc78669a6e =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform         | arch | lab             | compiler | defconfig          |=
+ regressions
+-----------------+------+-----------------+----------+--------------------+=
+------------
+dove-cubox       | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig |=
+ 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65662f3b5c5226c6b07e4aa4
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-11-28-v6.7-rc3/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-n=
+fs-dove-cubox.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-11-28-v6.7-rc3/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-n=
+fs-dove-cubox.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65662f3b5c5226c6b=
+07e4aa5
+        failing since 14 days (last pass: renesas-devel-2023-06-26-v6.4, fi=
+rst fail: renesas-devel-2023-11-13-v6.7-rc1) =
+
+ =
+
+
+
+platform         | arch | lab             | compiler | defconfig          |=
+ regressions
+-----------------+------+-----------------+----------+--------------------+=
+------------
+imx6dl-riotboard | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig |=
+ 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65662f2790f34c7e457e4b4e
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-11-28-v6.7-rc3/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-n=
+fs-imx6dl-riotboard.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-11-28-v6.7-rc3/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-n=
+fs-imx6dl-riotboard.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/65662f2790f34c7e457e4b57
+        new failure (last pass: renesas-devel-2023-11-27-v6.7-rc3)
+
+    2023-11-28T18:19:09.238181  + set[   27.394095] <LAVA_SIGNAL_ENDRUN 0_d=
+mesg 1011924_1.6.2.3.1>
+    2023-11-28T18:19:09.238356   +x
+    2023-11-28T18:19:09.344774  / # #
+    2023-11-28T18:19:09.446460  export SHELL=3D/bin/sh
+    2023-11-28T18:19:09.447094  #
+    2023-11-28T18:19:09.548110  / # export SHELL=3D/bin/sh. /lava-1011924/e=
+nvironment
+    2023-11-28T18:19:09.548575  =
+
+    2023-11-28T18:19:09.649335  / # . /lava-1011924/environment/lava-101192=
+4/bin/lava-test-runner /lava-1011924/1
+    2023-11-28T18:19:09.649884  =
+
+    2023-11-28T18:19:09.653008  / # /lava-1011924/bin/lava-test-runner /lav=
+a-1011924/1 =
+
+    ... (12 line(s) more)  =
+
+ =20
