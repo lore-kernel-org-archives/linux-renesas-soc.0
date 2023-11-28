@@ -1,132 +1,199 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3023268F;
-	Tue, 28 Nov 2023 02:32:34 -0800 (PST)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5d05ff42db0so20094047b3.2;
-        Tue, 28 Nov 2023 02:32:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701167554; x=1701772354;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wr1xUrZ1Ezxs/JZSmLhd1h3l1AFhvakfp0EV1xDi8m4=;
-        b=noYXrXcA1yEhorWO7lqK05h08jtTesEcI/SdYbZ670+U2RCyrTFZlMDTtur/dYJg9v
-         fNnlQS40gbR8KGU7oaUGd2dJqzKZ4lQXPqT7uOUDmmtmPh1/4cO+QkPndqsUWQEjYST3
-         SnVXe7bu49nCn4/APoWyntk0xjn1U7QKCFlrNnxN0JqlIn4zvnvzrD+v/s9ATT7NwSko
-         +yJKwmUGdMq7vpMVXXCrajEvhW/ndjVvGpdgCIRBTqnvE6h1LwffjVP+aZxqnxwy0vYY
-         v+WBqdGNZgzWMy3qH+Y1Mj9IeYK6g2SRmKH17aNTRK5+5kPBoyMZ/KPc0RLeJghlu3mh
-         uV5Q==
-X-Gm-Message-State: AOJu0YyCtB64jmOwuXhy84NpP/Lsh1r/yIk6U6lNXRrD0nBYTgAzv1p/
-	LFjk9/6rwQtJ/z+AjVpBqFzTn5RruUvwrg==
-X-Google-Smtp-Source: AGHT+IE/riOUsksVCt6H5yKuJnXb4X9siQfM3iI7WypAi95v4MAFvlZ5BPgLiLt7G3id34CDjWpWIw==
-X-Received: by 2002:a81:ae59:0:b0:5d0:aa04:6057 with SMTP id g25-20020a81ae59000000b005d0aa046057mr5055418ywk.14.1701167553998;
-        Tue, 28 Nov 2023 02:32:33 -0800 (PST)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id r123-20020a0de881000000b005cc636ddb1esm3855909ywe.41.2023.11.28.02.32.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Nov 2023 02:32:33 -0800 (PST)
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-db3fa47c2f7so4732283276.0;
-        Tue, 28 Nov 2023 02:32:33 -0800 (PST)
-X-Received: by 2002:a25:abeb:0:b0:d9c:efc5:1391 with SMTP id
- v98-20020a25abeb000000b00d9cefc51391mr13969103ybi.60.1701167552874; Tue, 28
- Nov 2023 02:32:32 -0800 (PST)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6621B6
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Nov 2023 02:47:27 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 293DF21985;
+	Tue, 28 Nov 2023 10:47:26 +0000 (UTC)
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id D90CC13AE2;
+	Tue, 28 Nov 2023 10:47:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id MG3tMz3FZWXpagAAn2gu4w
+	(envelope-from <tzimmermann@suse.de>); Tue, 28 Nov 2023 10:47:25 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	daniel@ffwll.ch,
+	airlied@gmail.com,
+	suijingfeng@loongson.cn
+Cc: laurent.pinchart@ideasonboard.com,
+	javierm@redhat.com,
+	dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 1/8] drm/plane-helper: Move drm_plane_helper_atomic_check() into udl
+Date: Tue, 28 Nov 2023 11:45:17 +0100
+Message-ID: <20231128104723.20622-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231128104723.20622-1-tzimmermann@suse.de>
+References: <20231128104723.20622-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231125232821.234631-1-niklas.soderlund+renesas@ragnatech.se> <deacc7ea-6fad-47d6-978b-3f639aa5da35@linaro.org>
-In-Reply-To: <deacc7ea-6fad-47d6-978b-3f639aa5da35@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Nov 2023 11:32:21 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUcbr--3Cs4+2m=hOehXJt0WqiuYqV_j0DBmR+YgoEb-g@mail.gmail.com>
-Message-ID: <CAMuHMdUcbr--3Cs4+2m=hOehXJt0WqiuYqV_j0DBmR+YgoEb-g@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: renesas: Document preferred compatible naming
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++++++++
+X-Spam-Score: 12.09
+X-Rspamd-Server: rspamd1
+Authentication-Results: smtp-out1.suse.de;
+	dkim=none;
+	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of tzimmermann@suse.de) smtp.mailfrom=tzimmermann@suse.de;
+	dmarc=fail reason="No valid SPF, No valid DKIM" header.from=suse.de (policy=none)
+X-Rspamd-Queue-Id: 293DF21985
+X-Spamd-Result: default: False [12.09 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	 TO_DN_SOME(0.00)[];
+	 R_MISSING_CHARSET(2.50)[];
+	 BROKEN_CONTENT_TYPE(1.50)[];
+	 R_SPF_SOFTFAIL(4.60)[~all:c];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,ffwll.ch,gmail.com,loongson.cn];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-3.00)[100.00%];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_SPAM_LONG(3.50)[1.000];
+	 RCPT_COUNT_TWELVE(0.00)[12];
+	 MID_CONTAINS_FROM(1.00)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 DMARC_POLICY_SOFTFAIL(0.10)[suse.de : No valid SPF, No valid DKIM,none]
 
-Hi Krzysztof,
+The udl driver is the only caller of drm_plane_helper_atomic_check().
+Move the function into the driver. No functional changes.
 
-On Tue, Nov 28, 2023 at 10:51=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On 26/11/2023 00:28, Niklas S=C3=B6derlund wrote:
-> > Compatibles can come in two formats. Either "vendor,ip-soc" or
-> > "vendor,soc-ip". Add a DT schema file documenting Renesas preferred
-> > policy and enforcing it for all new compatibles, except few existing
-> > patterns.
-> >
-> > Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
-h.se>
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/drm_plane_helper.c | 32 ------------------------------
+ drivers/gpu/drm/udl/udl_modeset.c  | 19 ++++++++++++++++--
+ include/drm/drm_plane_helper.h     |  2 --
+ 3 files changed, 17 insertions(+), 36 deletions(-)
 
-> > +      # Legacy namings - variations of existing patterns/compatibles a=
-re OK,
-> > +      # but do not add completely new entries to these:
-> > +      - pattern: "^renesas,can-[a-z0-9]+$"
-> > +      - pattern: "^renesas,dmac-[a-z0-9]+$"
-> > +      - pattern: "^renesas,du-[a-z0-9]+$"
-> > +      - pattern: "^renesas,ether-[a-z0-9]+$"
-> > +      - pattern: "^renesas,etheravb-[a-z0-9]+$"
-> > +      - pattern: "^renesas,etheravb-rcar-gen[0-9]$"
-> > +      - pattern: "^renesas,gether-[a-z0-9]+$"
-> > +      - pattern: "^renesas,gpio-[a-z0-9]+$"
-> > +      - pattern: "^renesas,hscif-[a-z0-9]+$"
-> > +      - pattern: "^renesas,i2c-[a-z0-9]+$"
-> > +      - pattern: "^renesas,iic-[a-z0-9]+$"
-> > +      - pattern: "^renesas,intc-ex-[a-z0-9]+$"
-> > +      - pattern: "^renesas,intc-irqpin-[a-z0-9]+$"
-> > +      - pattern: "^renesas,ipmmu-[a-z0-9]+$"
-> > +      - pattern: "^renesas,irqc-[a-z0-9]+$"
-> > +      - pattern: "^renesas,jpu-[a-z0-9]+$"
-> > +      - pattern: "^renesas,mmcif-[a-z0-9]+$"
-> > +      - pattern: "^renesas,msiof-[a-z0-9]+$"
-> > +      - pattern: "^renesas,pci-[a-z0-9]+$"
-> > +      - pattern: "^renesas,pci-rcar-gen[0-9]$"
-> > +      - pattern: "^renesas,pcie-[a-z0-9]+$"
-> > +      - pattern: "^renesas,pcie-rcar-gen[0-9]$"
-> > +      - pattern: "^renesas,pfc-[a-z0-9]+$"
-> > +      - pattern: "^renesas,pwm-[a-z0-9]+$"
-> > +      - pattern: "^renesas,qspi-[a-z0-9]+$"
-> > +      - pattern: "^renesas,rcar_sound-[a-z0-9]+$"
-> > +      - pattern: "^renesas,riic-[a-z0-9]+$"
-> > +      - pattern: "^renesas,rspi-[a-z0-9]+$"
-> > +      - pattern: "^renesas,sata-[a-z0-9]+(-es1)?$"
-> > +      - pattern: "^renesas,scif-[a-z0-9]+$"
-> > +      - pattern: "^renesas,scifa-[a-z0-9]+$"
-> > +      - pattern: "^renesas,scifb-[a-z0-9]+$"
-> > +      - pattern: "^renesas,sdhi-[a-z0-9]+$"
-> > +      - pattern: "^renesas,thermal-[a-z0-9]+$"
-> > +      - pattern: "^renesas,tmu-[a-z0-9]+$"
-> > +      - pattern: "^renesas,tpu-[a-z0-9]+$"
-> > +      - pattern: "^renesas,usb-phy-[a-z0-9]+$"
-> > +      - pattern: "^renesas,usb2-phy-[a-z0-9]+$"
-> > +      - pattern: "^renesas,usbhs-[a-z0-9]+$"
-> > +      - pattern: "^renesas,vin-[a-z0-9]+$"
-> > +      - pattern: "^renesas,xhci-[a-z0-9]+$"
->
-> No, wait, you basically listed most of the SoC as exceptions. What SoC
-> blocks exactly are you going to cover in such case with your rules?
+diff --git a/drivers/gpu/drm/drm_plane_helper.c b/drivers/gpu/drm/drm_plane_helper.c
+index 5e95089676ff8..7982be4b0306d 100644
+--- a/drivers/gpu/drm/drm_plane_helper.c
++++ b/drivers/gpu/drm/drm_plane_helper.c
+@@ -279,35 +279,3 @@ void drm_plane_helper_destroy(struct drm_plane *plane)
+ 	kfree(plane);
+ }
+ EXPORT_SYMBOL(drm_plane_helper_destroy);
+-
+-/**
+- * drm_plane_helper_atomic_check() - Helper to check plane atomic-state
+- * @plane: plane to check
+- * @state: atomic state object
+- *
+- * Provides a default plane-state check handler for planes whose atomic-state
+- * scale and positioning are not expected to change since the plane is always
+- * a fullscreen scanout buffer.
+- *
+- * This is often the case for the primary plane of simple framebuffers. See
+- * also drm_crtc_helper_atomic_check() for the respective CRTC-state check
+- * helper function.
+- *
+- * RETURNS:
+- * Zero on success, or an errno code otherwise.
+- */
+-int drm_plane_helper_atomic_check(struct drm_plane *plane, struct drm_atomic_state *state)
+-{
+-	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
+-	struct drm_crtc *new_crtc = new_plane_state->crtc;
+-	struct drm_crtc_state *new_crtc_state = NULL;
+-
+-	if (new_crtc)
+-		new_crtc_state = drm_atomic_get_new_crtc_state(state, new_crtc);
+-
+-	return drm_atomic_helper_check_plane_state(new_plane_state, new_crtc_state,
+-						   DRM_PLANE_NO_SCALING,
+-						   DRM_PLANE_NO_SCALING,
+-						   false, false);
+-}
+-EXPORT_SYMBOL(drm_plane_helper_atomic_check);
+diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
+index 40876bcdd79a4..7702359c90c22 100644
+--- a/drivers/gpu/drm/udl/udl_modeset.c
++++ b/drivers/gpu/drm/udl/udl_modeset.c
+@@ -21,7 +21,6 @@
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_gem_shmem_helper.h>
+ #include <drm/drm_modeset_helper_vtables.h>
+-#include <drm/drm_plane_helper.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_vblank.h>
+ 
+@@ -261,6 +260,22 @@ static const uint64_t udl_primary_plane_fmtmods[] = {
+ 	DRM_FORMAT_MOD_INVALID
+ };
+ 
++static int udl_primary_plane_helper_atomic_check(struct drm_plane *plane,
++						 struct drm_atomic_state *state)
++{
++	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
++	struct drm_crtc *new_crtc = new_plane_state->crtc;
++	struct drm_crtc_state *new_crtc_state = NULL;
++
++	if (new_crtc)
++		new_crtc_state = drm_atomic_get_new_crtc_state(state, new_crtc);
++
++	return drm_atomic_helper_check_plane_state(new_plane_state, new_crtc_state,
++						   DRM_PLANE_NO_SCALING,
++						   DRM_PLANE_NO_SCALING,
++						   false, false);
++}
++
+ static void udl_primary_plane_helper_atomic_update(struct drm_plane *plane,
+ 						   struct drm_atomic_state *state)
+ {
+@@ -296,7 +311,7 @@ static void udl_primary_plane_helper_atomic_update(struct drm_plane *plane,
+ 
+ static const struct drm_plane_helper_funcs udl_primary_plane_helper_funcs = {
+ 	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
+-	.atomic_check = drm_plane_helper_atomic_check,
++	.atomic_check = udl_primary_plane_helper_atomic_check,
+ 	.atomic_update = udl_primary_plane_helper_atomic_update,
+ };
+ 
+diff --git a/include/drm/drm_plane_helper.h b/include/drm/drm_plane_helper.h
+index 3a574e8cd22f4..75f9c4830564a 100644
+--- a/include/drm/drm_plane_helper.h
++++ b/include/drm/drm_plane_helper.h
+@@ -26,7 +26,6 @@
+ 
+ #include <linux/types.h>
+ 
+-struct drm_atomic_state;
+ struct drm_crtc;
+ struct drm_framebuffer;
+ struct drm_modeset_acquire_ctx;
+@@ -42,7 +41,6 @@ int drm_plane_helper_update_primary(struct drm_plane *plane, struct drm_crtc *cr
+ int drm_plane_helper_disable_primary(struct drm_plane *plane,
+ 				     struct drm_modeset_acquire_ctx *ctx);
+ void drm_plane_helper_destroy(struct drm_plane *plane);
+-int drm_plane_helper_atomic_check(struct drm_plane *plane, struct drm_atomic_state *state);
+ 
+ /**
+  * DRM_PLANE_NON_ATOMIC_FUNCS - Default plane functions for non-atomic drivers
+-- 
+2.43.0
 
-As Renesas was an early adopter of DT, there are a lot of compatible
-values that do not follow current best practices.
-Unfortunately there is not much we can do about that...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
