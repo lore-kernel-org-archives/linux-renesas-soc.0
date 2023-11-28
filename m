@@ -1,38 +1,33 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5AEFF182;
-	Tue, 28 Nov 2023 02:51:51 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5F91C189
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Nov 2023 02:52:02 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="6.04,233,1695654000"; 
-   d="scan'208";a="184518427"
+   d="scan'208";a="184518435"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Nov 2023 19:51:50 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 28 Nov 2023 19:52:01 +0900
 Received: from localhost.localdomain (unknown [10.226.92.91])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A9C4B41DFE31;
-	Tue, 28 Nov 2023 19:51:44 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 43B0341DFE5D;
+	Tue, 28 Nov 2023 19:51:56 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	David Airlie <airlied@gmail.com>,
+To: David Airlie <airlied@gmail.com>,
 	Daniel Vetter <daniel@ffwll.ch>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v15 2/5] dt-bindings: display: renesas,rzg2l-du: Document RZ/V2L DU bindings
-Date: Tue, 28 Nov 2023 10:51:26 +0000
-Message-Id: <20231128105129.161121-3-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v15 4/5] MAINTAINERS: Update entries for Renesas DRM drivers
+Date: Tue, 28 Nov 2023 10:51:28 +0000
+Message-Id: <20231128105129.161121-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231128105129.161121-1-biju.das.jz@bp.renesas.com>
 References: <20231128105129.161121-1-biju.das.jz@bp.renesas.com>
@@ -44,57 +39,38 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document DU found in RZ/V2L SoC. The DU block is identical to RZ/G2L
-SoC and therefore use RZ/G2L fallback to avoid any driver changes.
+The rcar-du has never been maintained in drm-misc. So exclude only
+this driver from drm-misc. Also, add the tree entry for sh_mobile.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v14->v15:
- * No change.
-v13->v14:
- * No change.
-v12->v13:
- * No change.
-v11->v12:
- * No change.
-v10->v11:
- * No change.
-v9->v10:
- * No change.
-V8->v9:
- * Added Rb tag from Laurent and Geert.
-v7->v8:
- * Fixed the typo vsp2->du
- * Added Rb tag from Rob as the change is trivial.
-v7:
- * New patch.
+v15:
+ * New patch
 ---
- .../devicetree/bindings/display/renesas,rzg2l-du.yaml    | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-index c0ad194c538d..08e5b9478051 100644
---- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-+++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-@@ -16,8 +16,13 @@ description: |
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a6d8a15a23dd..2604cb3d9f99 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6976,7 +6976,7 @@ X:	drivers/gpu/drm/mediatek/
+ X:	drivers/gpu/drm/msm/
+ X:	drivers/gpu/drm/nouveau/
+ X:	drivers/gpu/drm/radeon/
+-X:	drivers/gpu/drm/renesas/
++X:	drivers/gpu/drm/renesas/rcar-du/
+ X:	drivers/gpu/drm/tegra/
  
- properties:
-   compatible:
--    enum:
--      - renesas,r9a07g044-du # RZ/G2{L,LC}
-+    oneOf:
-+      - enum:
-+          - renesas,r9a07g044-du # RZ/G2{L,LC}
-+      - items:
-+          - enum:
-+              - renesas,r9a07g054-du    # RZ/V2L
-+          - const: renesas,r9a07g044-du # RZ/G2L fallback
- 
-   reg:
-     maxItems: 1
+ DRM DRIVERS FOR ALLWINNER A10
+@@ -7150,6 +7150,7 @@ M:	Geert Uytterhoeven <geert+renesas@glider.be>
+ L:	dri-devel@lists.freedesktop.org
+ L:	linux-renesas-soc@vger.kernel.org
+ S:	Supported
++T:	git git://anongit.freedesktop.org/drm/drm-misc
+ F:	Documentation/devicetree/bindings/display/renesas,shmobile-lcdc.yaml
+ F:	drivers/gpu/drm/renesas/shmobile/
+ F:	include/linux/platform_data/shmob_drm.h
 -- 
 2.25.1
 
