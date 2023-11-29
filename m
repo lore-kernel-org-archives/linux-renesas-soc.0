@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NcgJ95X8"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Su7DFqOq"
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06CF10D4;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE21010D9;
 	Wed, 29 Nov 2023 08:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1701274527; x=1732810527;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=mX8nkFa+pUFM3JtjtNpLHJ2j2h/kDkAZjOuxZ+/LWq0=;
-  b=NcgJ95X8k3MwKtsmZ2kuhhU+2eS4QYqReMBR08m35MXD+N1nVaYPxJvX
-   FSQ1ghxxgVD068NA96gTAcJAZrPbhoRD9TdgCKjbbwN2y0ttH8B5dO6Hd
-   gFj4jU07erZ3D32JYYjFVntwZfA5xVvNv1rxSvvCOnYV+2zlAhQxDmnRt
-   fO8MaCOAFpUWxTlbJa2h7LIAejvkqqH6Vj1rMzTaAgInI8o1JMUjtOee3
-   nVuQ82wjU/Wvud26JCTbC4v0WoX8i8GaCdo12QIJLkBnIgTDbPMyeP2wX
-   5tx7s9z0lrxBy8bv/f/Cl1mVrNp+2jQzeNka7mpX8jmtM8tAguGO818bC
+  bh=3nCf9Nawx9DZLMwtP7gm5hKJWHmWiIVjJbmiWUav9q4=;
+  b=Su7DFqOqtkI7w82/V7cHpPlodXPQiuHokueBkgOETHA8i4GxPumuVBPV
+   p2kRFmVOhpI/d14WKZfyaaRFw20O6LOgFJgOCWhbX+j3TuUis3banaj8P
+   BMy+loAKtD91qwZBNen1J7pU7a/i8BSkiXa9gLeuJCO/soSNkcYXCgj5x
+   c3fb7ZuzrUHv74xvY3omkThK1PDi1CgadT6bu+slDYojzsImjriFA1apM
+   fJkXqjplWvQknEdNLZW4xGi6nPo6qA1l+3OaTbFa4WRlVf+yQ18AP1EQD
+   LI5c0e7evMmWENx365PYStLI5oQTOl2C5Xu6Z8c95xA3Fgw3F2B6+kIKJ
    g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372749"
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372764"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="373372749"
+   d="scan'208";a="373372764"
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 08:15:23 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498882"
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498890"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="892498882"
+   d="scan'208";a="892498890"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga004.jf.intel.com with ESMTP; 29 Nov 2023 08:15:12 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 9BC91A96; Wed, 29 Nov 2023 18:15:01 +0200 (EET)
+	id DC476B01; Wed, 29 Nov 2023 18:15:01 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v4 08/23] pinctrl: keembay: Convert to use struct pingroup
-Date: Wed, 29 Nov 2023 18:06:31 +0200
-Message-ID: <20231129161459.1002323-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 12/23] pinctrl: mediatek: Make use of PINCTRL_GROUP_DESC()
+Date: Wed, 29 Nov 2023 18:06:35 +0200
+Message-ID: <20231129161459.1002323-13-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
 References: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
@@ -81,36 +81,50 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pin control header provides struct pingroup.
-Utilize it instead of open coded variants in the driver.
+Make use of PINCTRL_GROUP_DESC() instead of open coding it.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-keembay.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-moore.h | 7 +------
+ drivers/pinctrl/mediatek/pinctrl-paris.h | 7 +------
+ 2 files changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
-index 152c35bce8ec..87d328853ae4 100644
---- a/drivers/pinctrl/pinctrl-keembay.c
-+++ b/drivers/pinctrl/pinctrl-keembay.c
-@@ -1517,7 +1517,7 @@ static int keembay_gpiochip_probe(struct keembay_pinctrl *kpc,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.h b/drivers/pinctrl/mediatek/pinctrl-moore.h
+index e1b4b82b9d3d..22ef1ffbcdcb 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.h
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.h
+@@ -38,12 +38,7 @@
+ 	}
  
- static int keembay_build_groups(struct keembay_pinctrl *kpc)
- {
--	struct group_desc *grp;
-+	struct pingroup *grp;
- 	unsigned int i;
+ #define PINCTRL_PIN_GROUP(name, id)			\
+-	{						\
+-		name,					\
+-		id##_pins,				\
+-		ARRAY_SIZE(id##_pins),			\
+-		id##_funcs,				\
+-	}
++	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), id##_funcs)
  
- 	kpc->ngroups = kpc->npins;
-@@ -1528,7 +1528,7 @@ static int keembay_build_groups(struct keembay_pinctrl *kpc)
- 	/* Each pin is categorised as one group */
- 	for (i = 0; i < kpc->ngroups; i++) {
- 		const struct pinctrl_pin_desc *pdesc = keembay_pins + i;
--		struct group_desc *kmb_grp = grp + i;
-+		struct pingroup *kmb_grp = grp + i;
+ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+ 			    const struct mtk_pin_soc *soc);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.h b/drivers/pinctrl/mediatek/pinctrl-paris.h
+index 8762ac599329..f208a904c4a8 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.h
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.h
+@@ -50,12 +50,7 @@
+ 	}
  
- 		kmb_grp->name = pdesc->name;
- 		kmb_grp->pins = (int *)&pdesc->number;
+ #define PINCTRL_PIN_GROUP(name, id)			\
+-	{						\
+-		name,					\
+-		id##_pins,				\
+-		ARRAY_SIZE(id##_pins),			\
+-		id##_funcs,				\
+-	}
++	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), id##_funcs)
+ 
+ int mtk_paris_pinctrl_probe(struct platform_device *pdev);
+ 
 -- 
 2.43.0.rc1.1.gbec44491f096
 
