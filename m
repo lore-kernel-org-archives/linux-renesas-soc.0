@@ -1,73 +1,63 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED0384;
-	Fri,  1 Dec 2023 02:11:28 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-5d3d5b10197so9943577b3.2;
-        Fri, 01 Dec 2023 02:11:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701425487; x=1702030287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4C8ps9IR9RDt6FA4GKz0FWqJd8X49zk3Wo87ga7yHog=;
-        b=D3n7WezcvN2fxvjPyFnUm1tYq+Wm/5DeyOfpyfWZFZCIUctqCJJAocq5mfEYCOkckF
-         /UN60uH5y7jPd5aGghjJkGKqdegzKzH4aK5GV8EKqQ8aGi+svMNpKZTaiXj8Q2Byin5A
-         FMg+IFOv0apa9kABsXXixgjzPAB0X++bauaFGAWC7709Mml7Qby/QxTS5CsL3jQ6N0Yi
-         4QOdT39gzXNxC4B+WAfy488/ctKVqIw39JBTJUhCQ7izINldtc92zcupi6DBLSFXys3/
-         /CrYvd9sztpp8kD+XqZEoHa0B0rLDV7QknJRuf3kcboTywL4nfYeDSVY52N7gX26QsZd
-         J5xg==
-X-Gm-Message-State: AOJu0YykoKXwXFoqKM8vjbBoHmyqhl2WXisdfJhommcRrgmJqqU4wyj4
-	IuDPgLC0grMCt4v3dEFTTnTn9LG416cuIw==
-X-Google-Smtp-Source: AGHT+IElXPkFQv2MRqcGz/dqUx//URpIDYETobdWDnEhnx2SYHy3VxLZzE752GvnAyHgPw9wHD5w8g==
-X-Received: by 2002:a81:ac60:0:b0:5d4:3596:5ace with SMTP id z32-20020a81ac60000000b005d435965acemr848286ywj.12.1701425485244;
-        Fri, 01 Dec 2023 02:11:25 -0800 (PST)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id s127-20020a817785000000b005a7c829dda2sm969144ywc.84.2023.12.01.02.11.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Dec 2023 02:11:21 -0800 (PST)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5d35a952943so16722067b3.3;
-        Fri, 01 Dec 2023 02:11:20 -0800 (PST)
-X-Received: by 2002:a05:690c:f83:b0:5ce:4bb:832d with SMTP id
- df3-20020a05690c0f8300b005ce04bb832dmr22433792ywb.6.1701425480657; Fri, 01
- Dec 2023 02:11:20 -0800 (PST)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1C4C3193;
+	Fri,  1 Dec 2023 03:08:47 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="6.04,241,1695654000"; 
+   d="scan'208";a="185005220"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 01 Dec 2023 20:08:47 +0900
+Received: from localhost.localdomain (unknown [10.226.93.2])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B9FDA40108F2;
+	Fri,  1 Dec 2023 20:08:42 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Lee Jones <lee@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Support Opensource <support.opensource@diasemi.com>,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/6] Add DA9062 PMIC and built-in RTC support for RZ/G2UL SMARC EVK
+Date: Fri,  1 Dec 2023 11:08:34 +0000
+Message-Id: <20231201110840.37408-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231201054655.3731772-1-yoshihiro.shimoda.uh@renesas.com> <20231201054655.3731772-2-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <20231201054655.3731772-2-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 1 Dec 2023 11:11:09 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVeVjV4kYvxXM+5TkVxGp91gCA_K9RW6+B8ugKbEd9K-g@mail.gmail.com>
-Message-ID: <CAMuHMdVeVjV4kYvxXM+5TkVxGp91gCA_K9RW6+B8ugKbEd9K-g@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 1/9] net: rswitch: Drop unused argument/return value
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 1, 2023 at 6:47=E2=80=AFAM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Drop unused argument and return value of rswitch_tx_free() to
-> simplify the code.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+The patch series aims to add support for DA9062 PMIC and built-in RTC found
+on RZ/{G2UL,Five} SMARC EVK. On these platforms there is no IRQ populated
+by default. Add irq optional support and convert the bindings to
+json-schema.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Biju Das (6):
+  rtc: da9063: Make IRQ as optional
+  rtc: da9063: Use device_get_match_data()
+  rtc: da9063: Use dev_err_probe()
+  dt-bindings: mfd: Convert da9062 to json-schema
+  arm64: dts: renesas: rzg2ul-smarc: Enable PMIC and built-in RTC
+  arm64: defconfig: Enable Renesas DA9062 defconfig
 
-Gr{oetje,eeting}s,
+ .../devicetree/bindings/mfd/da9062.txt        | 124 ----------
+ .../devicetree/bindings/mfd/dlg,da9062.yaml   | 220 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi |  29 +++
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/rtc/rtc-da9063.c                      |  88 ++++---
+ 5 files changed, 290 insertions(+), 173 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/da9062.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/dlg,da9062.yaml
 
-                        Geert
+-- 
+2.25.1
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
