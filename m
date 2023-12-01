@@ -1,12 +1,12 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id B79EA1708;
-	Thu, 30 Nov 2023 21:47:05 -0800 (PST)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1E749170D;
+	Thu, 30 Nov 2023 21:47:04 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="6.04,240,1695654000"; 
-   d="scan'208";a="188815809"
+   d="scan'208";a="184959771"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Dec 2023 14:47:01 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 01 Dec 2023 14:47:00 +0900
 Received: from localhost.localdomain (unknown [10.166.13.99])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E10C5417F0F1;
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9F473417F0F1;
 	Fri,  1 Dec 2023 14:47:00 +0900 (JST)
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: s.shtylyov@omp.ru,
@@ -17,9 +17,9 @@ To: s.shtylyov@omp.ru,
 Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v2 7/9] net: rswitch: Add jumbo frames handling for RX
-Date: Fri,  1 Dec 2023 14:46:53 +0900
-Message-Id: <20231201054655.3731772-8-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next v2 4/9] net: rswitch: Add unmap_addrs instead of dma address in each desc
+Date: Fri,  1 Dec 2023 14:46:50 +0900
+Message-Id: <20231201054655.3731772-5-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231201054655.3731772-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20231201054655.3731772-1-yoshihiro.shimoda.uh@renesas.com>
@@ -31,152 +31,95 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If this hardware receives a jumbo frame like 2KiB or more, it will be
-split into multiple queues. In the near future, to support this,
-add handling specific descriptor types F{START,MID,END}. However, such
-jumbo frames will not happen yet because the maximum MTU size is still
-default for now.
+If the driver would like to transmit a jumbo frame like 2KiB or more,
+it should be split into multiple queues. In the near future, to support
+this, add unmap_addrs array to unmap dma mapping address instead of dma
+address in each TX descriptor because the descriptors may not have
+the top dma address.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 86 +++++++++++++++++++++++---
- drivers/net/ethernet/renesas/rswitch.h |  2 +
- 2 files changed, 78 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/renesas/rswitch.c | 19 +++++++++++--------
+ drivers/net/ethernet/renesas/rswitch.h |  1 +
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index d24ba2411d5e..009e6bfdad27 100644
+index 8337c860eb9a..4774130c417b 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -713,6 +713,80 @@ static int rswitch_gwca_halt(struct rswitch_private *priv)
- 	return err;
+@@ -284,6 +284,8 @@ static void rswitch_gwca_queue_free(struct net_device *ndev,
+ 		gq->tx_ring = NULL;
+ 		kfree(gq->skbs);
+ 		gq->skbs = NULL;
++		kfree(gq->unmap_addrs);
++		gq->unmap_addrs = NULL;
+ 	}
  }
  
-+static struct sk_buff *rswitch_rx_handle_desc(struct net_device *ndev,
-+					      struct rswitch_gwca_queue *gq,
-+					      struct rswitch_ext_ts_desc *desc)
-+{
-+	dma_addr_t dma_addr = rswitch_desc_get_dptr(&desc->desc);
-+	u16 pkt_len = le16_to_cpu(desc->desc.info_ds) & RX_DS;
-+	u8 die_dt = desc->desc.die_dt & DT_MASK;
-+	struct sk_buff *skb = NULL;
-+
-+	dma_unmap_single(ndev->dev.parent, dma_addr, RSWITCH_MAP_BUF_SIZE,
-+			 DMA_FROM_DEVICE);
-+
-+	/* The RX descriptor order will be one of the following:
-+	 * - FSINGLE
-+	 * - FSTART -> FEND
-+	 * - FSTART -> FMID -> FEND
-+	 */
-+
-+	/* Check whether the descriptor is unexpected order */
-+	switch (die_dt) {
-+	case DT_FSTART:
-+	case DT_FSINGLE:
-+		if (gq->skb_fstart) {
-+			dev_kfree_skb_any(gq->skb_fstart);
-+			gq->skb_fstart = NULL;
-+			ndev->stats.rx_dropped++;
-+		}
-+		break;
-+	case DT_FMID:
-+	case DT_FEND:
-+		if (!gq->skb_fstart) {
-+			ndev->stats.rx_dropped++;
-+			return NULL;
-+		}
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	/* Handle the descriptor */
-+	switch (die_dt) {
-+	case DT_FSTART:
-+	case DT_FSINGLE:
-+		skb = build_skb(gq->rx_bufs[gq->cur], RSWITCH_BUF_SIZE);
-+		if (skb) {
-+			skb_reserve(skb, RSWITCH_HEADROOM);
-+			skb_put(skb, pkt_len);
-+			gq->pkt_len = pkt_len;
-+			if (die_dt == DT_FSTART) {
-+				gq->skb_fstart = skb;
-+				skb = NULL;
-+			}
-+		}
-+		break;
-+	case DT_FMID:
-+	case DT_FEND:
-+		skb_add_rx_frag(gq->skb_fstart, skb_shinfo(gq->skb_fstart)->nr_frags,
-+				virt_to_page(gq->rx_bufs[gq->cur]),
-+				offset_in_page(gq->rx_bufs[gq->cur]) + RSWITCH_HEADROOM,
-+				pkt_len, RSWITCH_BUF_SIZE);
-+		if (die_dt == DT_FEND) {
-+			skb = gq->skb_fstart;
-+			gq->skb_fstart = NULL;
-+		}
-+		gq->pkt_len += pkt_len;
-+		break;
-+	default:
-+		netdev_err(ndev, "%s: unexpected value (%x)\n", __func__, die_dt);
-+		break;
-+	}
-+
-+	return skb;
-+}
-+
- static bool rswitch_rx(struct net_device *ndev, int *quota)
- {
+@@ -321,6 +323,9 @@ static int rswitch_gwca_queue_alloc(struct net_device *ndev,
+ 		gq->skbs = kcalloc(gq->ring_size, sizeof(*gq->skbs), GFP_KERNEL);
+ 		if (!gq->skbs)
+ 			return -ENOMEM;
++		gq->unmap_addrs = kcalloc(gq->ring_size, sizeof(*gq->unmap_addrs), GFP_KERNEL);
++		if (!gq->unmap_addrs)
++			goto out;
+ 		gq->tx_ring = dma_alloc_coherent(ndev->dev.parent,
+ 						 sizeof(struct rswitch_ext_desc) *
+ 						 (gq->ring_size + 1), &gq->ring_dma, GFP_KERNEL);
+@@ -786,9 +791,7 @@ static void rswitch_tx_free(struct net_device *ndev)
  	struct rswitch_device *rdev = netdev_priv(ndev);
-@@ -720,9 +794,7 @@ static bool rswitch_rx(struct net_device *ndev, int *quota)
- 	struct rswitch_ext_ts_desc *desc;
- 	int limit, boguscnt, ret;
- 	struct sk_buff *skb;
+ 	struct rswitch_gwca_queue *gq = rdev->tx_queue;
+ 	struct rswitch_ext_desc *desc;
 -	dma_addr_t dma_addr;
- 	unsigned int num;
--	u16 pkt_len;
- 	u32 get_ts;
+ 	struct sk_buff *skb;
+-	unsigned int size;
  
- 	if (*quota <= 0)
-@@ -734,15 +806,9 @@ static bool rswitch_rx(struct net_device *ndev, int *quota)
- 	desc = &gq->rx_ring[gq->cur];
- 	while ((desc->desc.die_dt & DT_MASK) != DT_FEMPTY) {
+ 	for (; rswitch_get_num_cur_queues(gq) > 0;
+ 	     gq->dirty = rswitch_next_queue_index(gq, false, 1)) {
+@@ -797,18 +800,17 @@ static void rswitch_tx_free(struct net_device *ndev)
+ 			break;
+ 
  		dma_rmb();
--		pkt_len = le16_to_cpu(desc->desc.info_ds) & RX_DS;
--		dma_addr = rswitch_desc_get_dptr(&desc->desc);
--		dma_unmap_single(ndev->dev.parent, dma_addr,
--				 RSWITCH_MAP_BUF_SIZE, DMA_FROM_DEVICE);
--		skb = build_skb(gq->rx_bufs[gq->cur], RSWITCH_BUF_SIZE);
-+		skb = rswitch_rx_handle_desc(ndev, gq, desc);
- 		if (!skb)
- 			goto out;
--		skb_reserve(skb, RSWITCH_HEADROOM);
--		skb_put(skb, pkt_len);
+-		size = le16_to_cpu(desc->desc.info_ds) & TX_DS;
+ 		skb = gq->skbs[gq->dirty];
+ 		if (skb) {
+-			dma_addr = rswitch_desc_get_dptr(&desc->desc);
+-			dma_unmap_single(ndev->dev.parent, dma_addr,
+-					 size, DMA_TO_DEVICE);
++			dma_unmap_single(ndev->dev.parent,
++					 gq->unmap_addrs[gq->dirty],
++					 skb->len, DMA_TO_DEVICE);
+ 			dev_kfree_skb_any(gq->skbs[gq->dirty]);
+ 			gq->skbs[gq->dirty] = NULL;
++			rdev->ndev->stats.tx_packets++;
++			rdev->ndev->stats.tx_bytes += skb->len;
+ 		}
+ 		desc->desc.die_dt = DT_EEMPTY;
+-		rdev->ndev->stats.tx_packets++;
+-		rdev->ndev->stats.tx_bytes += size;
+ 	}
+ }
  
- 		get_ts = rdev->priv->ptp_priv->tstamp_rx_ctrl & RCAR_GEN4_RXTSTAMP_TYPE_V2_L2_EVENT;
- 		if (get_ts) {
-@@ -758,7 +824,7 @@ static bool rswitch_rx(struct net_device *ndev, int *quota)
- 		skb->protocol = eth_type_trans(skb, ndev);
- 		napi_gro_receive(&rdev->napi, skb);
- 		rdev->ndev->stats.rx_packets++;
--		rdev->ndev->stats.rx_bytes += pkt_len;
-+		rdev->ndev->stats.rx_bytes += gq->pkt_len;
+@@ -1537,6 +1539,7 @@ static netdev_tx_t rswitch_start_xmit(struct sk_buff *skb, struct net_device *nd
+ 		goto err_kfree;
  
- out:
- 		gq->rx_bufs[gq->cur] = NULL;
+ 	gq->skbs[gq->cur] = skb;
++	gq->unmap_addrs[gq->cur] = dma_addr;
+ 	desc = &gq->tx_ring[gq->cur];
+ 	rswitch_desc_set_dptr(&desc->desc, dma_addr);
+ 	desc->desc.info_ds = cpu_to_le16(skb->len);
 diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 17e617ec4187..4252677e2a55 100644
+index a407d85dcfad..2ac9a86b6238 100644
 --- a/drivers/net/ethernet/renesas/rswitch.h
 +++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -965,6 +965,8 @@ struct rswitch_gwca_queue {
+@@ -956,6 +956,7 @@ struct rswitch_gwca_queue {
+ 		/* For TX */
+ 		struct {
+ 			struct sk_buff **skbs;
++			dma_addr_t *unmap_addrs;
+ 		};
  		/* For RX */
  		struct {
- 			void **rx_bufs;
-+			struct sk_buff *skb_fstart;
-+			u16 pkt_len;
- 		};
- 	};
- };
 -- 
 2.34.1
 
