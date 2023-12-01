@@ -1,38 +1,31 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0915B10DE
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Dec 2023 03:09:11 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="6.04,241,1695654000"; 
-   d="scan'208";a="188861603"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Dec 2023 20:09:11 +0900
-Received: from localhost.localdomain (unknown [10.226.93.2])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 183D540108F2;
-	Fri,  1 Dec 2023 20:09:05 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Peng Fan <peng.fan@nxp.com>,
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E54CF1A4
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Dec 2023 04:28:31 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7f2e:4977:a943:cc87])
+	by michel.telenet-ops.be with bizsmtp
+	id H0UU2B00K0rKVV8060UU4s; Fri, 01 Dec 2023 13:28:29 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1r92cr-00ARcB-Sl;
+	Fri, 01 Dec 2023 13:28:28 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1r92dA-00CVD1-JE;
+	Fri, 01 Dec 2023 13:28:28 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: arm-soc <arm@kernel.org>,
+	soc <soc@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 6/6] arm64: defconfig: Enable Renesas DA9062 defconfig
-Date: Fri,  1 Dec 2023 11:08:40 +0000
-Message-Id: <20231201110840.37408-7-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231201110840.37408-1-biju.das.jz@bp.renesas.com>
-References: <20231201110840.37408-1-biju.das.jz@bp.renesas.com>
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 1/2] Renesas ARM defconfig updates for v6.8
+Date: Fri,  1 Dec 2023 13:28:16 +0100
+Message-Id: <cover.1701433487.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1701433485.git.geert+renesas@glider.be>
+References: <cover.1701433485.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -41,34 +34,38 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable the config for the Renesas DA9062 PMIC and RTC, as it is
-populated on RZ/G2UL SMARC EVK.
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5ad2b841aafc..b68b122d1b1e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -714,6 +714,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
- CONFIG_MFD_BD9571MWV=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
-+CONFIG_MFD_DA9062=y
- CONFIG_MFD_EXYNOS_LPASS=m
- CONFIG_MFD_HI6421_PMIC=y
- CONFIG_MFD_HI655X_PMIC=y
-@@ -1130,6 +1131,7 @@ CONFIG_RTC_DRV_RV8803=m
- CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_DS3232=y
- CONFIG_RTC_DRV_PCF2127=m
-+CONFIG_RTC_DRV_DA9063=m
- CONFIG_RTC_DRV_EFI=y
- CONFIG_RTC_DRV_CROS_EC=y
- CONFIG_RTC_DRV_FSL_FTM_ALARM=m
--- 
-2.25.1
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-defconfig-for-v6.8-tag1
+
+for you to fetch changes up to 7c77368b6c42ec87aed9976288a9b50bccb272a6:
+
+  ARM: shmobile: defconfig: Refresh for v6.7-rc1 (2023-11-27 11:01:01 +0100)
+
+----------------------------------------------------------------
+Renesas ARM defconfig updates for v6.8
+
+  - Enable support for the Renesas VersaClock 3 clock generator in the
+    arm64 defconfig,
+  - Enable support for the Renesas EtherAVB module in the arm multi_v7
+    defconfig,
+  - Refresh shmobile_defconfig for v6.7-rc1.
+
+----------------------------------------------------------------
+Biju Das (1):
+      arm64: defconfig: Enable Renesas VersaClock 3 clock generator config
+
+Claudiu Beznea (1):
+      ARM: multi_v7_defconfig: Enable CONFIG_RAVB
+
+Geert Uytterhoeven (1):
+      ARM: shmobile: defconfig: Refresh for v6.7-rc1
+
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ arch/arm/configs/shmobile_defconfig | 1 +
+ arch/arm64/configs/defconfig        | 1 +
+ 3 files changed, 3 insertions(+)
