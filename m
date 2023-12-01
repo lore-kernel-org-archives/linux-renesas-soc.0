@@ -1,13 +1,13 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 190421724;
-	Thu, 30 Nov 2023 21:47:05 -0800 (PST)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6A3411725;
+	Thu, 30 Nov 2023 21:47:06 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="6.04,240,1695654000"; 
-   d="scan'208";a="188815812"
+   d="scan'208";a="184959774"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Dec 2023 14:47:01 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 01 Dec 2023 14:47:00 +0900
 Received: from localhost.localdomain (unknown [10.166.13.99])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1A21C403FE26;
-	Fri,  1 Dec 2023 14:47:01 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CB30E417F0EF;
+	Fri,  1 Dec 2023 14:47:00 +0900 (JST)
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: s.shtylyov@omp.ru,
 	davem@davemloft.net,
@@ -17,9 +17,9 @@ To: s.shtylyov@omp.ru,
 Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v2 9/9] net: rswitch: Allow jumbo frames
-Date: Fri,  1 Dec 2023 14:46:55 +0900
-Message-Id: <20231201054655.3731772-10-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next v2 6/9] net: rswitch: Set GWMDNC register
+Date: Fri,  1 Dec 2023 14:46:52 +0900
+Message-Id: <20231201054655.3731772-7-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231201054655.3731772-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20231201054655.3731772-1-yoshihiro.shimoda.uh@renesas.com>
@@ -31,43 +31,43 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow jumbo frames by changing maximum MTU size and number of RX queues.
+To support jumbo frames, set GWMDNC register with acceptable maximum
+values for TX and RX.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
  drivers/net/ethernet/renesas/rswitch.c | 2 ++
- drivers/net/ethernet/renesas/rswitch.h | 3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/rswitch.h | 4 ++++
+ 2 files changed, 6 insertions(+)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index c5e3ee8f82bc..f55e15987dce 100644
+index f94c76161794..d24ba2411d5e 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -1882,6 +1882,8 @@ static int rswitch_device_alloc(struct rswitch_private *priv, unsigned int index
- 	snprintf(ndev->name, IFNAMSIZ, "tsn%d", index);
- 	ndev->netdev_ops = &rswitch_netdev_ops;
- 	ndev->ethtool_ops = &rswitch_ethtool_ops;
-+	ndev->max_mtu = RSWITCH_MAX_MTU;
-+	ndev->min_mtu = ETH_MIN_MTU;
+@@ -667,6 +667,8 @@ static int rswitch_gwca_hw_init(struct rswitch_private *priv)
+ 	iowrite32(upper_32_bits(priv->gwca.linkfix_table_dma), priv->addr + GWDCBAC0);
+ 	iowrite32(lower_32_bits(priv->gwca.ts_queue.ring_dma), priv->addr + GWTDCAC10);
+ 	iowrite32(upper_32_bits(priv->gwca.ts_queue.ring_dma), priv->addr + GWTDCAC00);
++	iowrite32(GWMDNC_TSDMN(1) | GWMDNC_TXDMN(0x1e) | GWMDNC_RXDMN(0x1f),
++		  priv->addr + GWMDNC);
+ 	iowrite32(GWCA_TS_IRQ_BIT, priv->addr + GWTSDCC0);
  
- 	netif_napi_add(ndev, &rdev->napi, rswitch_poll);
- 
+ 	iowrite32(GWTPC_PPPL(GWCA_IPV_NUM), priv->addr + GWTPC0);
 diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 4252677e2a55..72e3ff596d31 100644
+index 2ac9a86b6238..17e617ec4187 100644
 --- a/drivers/net/ethernet/renesas/rswitch.h
 +++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -26,9 +26,10 @@
- 		else
+@@ -773,6 +773,10 @@ enum rswitch_gwca_mode {
+ #define GWARIRM_ARIOG		BIT(0)
+ #define GWARIRM_ARR		BIT(1)
  
- #define TX_RING_SIZE		1024
--#define RX_RING_SIZE		1024
-+#define RX_RING_SIZE		4096
- #define TS_RING_SIZE		(TX_RING_SIZE * RSWITCH_NUM_PORTS)
- 
-+#define RSWITCH_MAX_MTU		9600
- #define RSWITCH_HEADROOM	(NET_SKB_PAD + NET_IP_ALIGN)
- #define RSWITCH_DESC_BUF_SIZE	2048
- #define RSWITCH_TAILROOM	SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
++#define GWMDNC_TSDMN(num)	(((num) << 16) & GENMASK(17, 16))
++#define GWMDNC_TXDMN(num)	(((num) << 8) & GENMASK(12, 8))
++#define GWMDNC_RXDMN(num)	((num) & GENMASK(4, 0))
++
+ #define GWDCC_BALR		BIT(24)
+ #define GWDCC_DCP_MASK		GENMASK(18, 16)
+ #define GWDCC_DCP(prio)		FIELD_PREP(GWDCC_DCP_MASK, (prio))
 -- 
 2.34.1
 
