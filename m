@@ -1,37 +1,34 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 29E83B6;
-	Sun,  3 Dec 2023 03:32:10 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 48E20C1;
+	Sun,  3 Dec 2023 03:32:17 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="6.04,247,1695654000"; 
-   d="scan'208";a="185128626"
+   d="scan'208";a="185128637"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Dec 2023 20:32:08 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Dec 2023 20:32:16 +0900
 Received: from localhost.localdomain (unknown [10.226.92.30])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A373A403E66D;
-	Sun,  3 Dec 2023 20:32:02 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0C0EF403E66D;
+	Sun,  3 Dec 2023 20:32:11 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Support Opensource <support.opensource@diasemi.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
 	Steve Twiss <stwiss.opensource@diasemi.com>,
-	linux-input@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 00/11] Convert DA906{1,2} bindings to json-schema
-Date: Sun,  3 Dec 2023 11:31:48 +0000
-Message-Id: <20231203113159.92316-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 02/11] dt-bindings: watchdog: dlg,da9062-watchdog: Add fallback for DA9061 watchdog
+Date: Sun,  3 Dec 2023 11:31:50 +0000
+Message-Id: <20231203113159.92316-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20231203113159.92316-1-biju.das.jz@bp.renesas.com>
+References: <20231203113159.92316-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -40,56 +37,42 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the below bindings to json-schema
-1) DA906{1,2} mfd bindings
-2) DA906{1,2,3} onkey bindings
-3) DA906{1,2,3} thermal bindings
+The DA9061 watchdog is identical to DA9062 watchdog, so no driver changes
+are required. The fallback compatible string "dlg,da9062-watchdog" will be
+used on DA9061 watchdog.
 
-Also add fallback for DA9061 watchdog device and document
-DA9063 watchdog device.
-
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v2->v3:
- * Updated Maintainer entries for watchdog,onkey and thermal bindings
- * Fixed bot errors related to MAINTAINERS entry, invalid doc
-   references and thermal examples by merging patch#4. 
+ * No change
+v2:
+ * New patch
+---
+ .../bindings/watchdog/dlg,da9062-watchdog.yaml        | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-v1->v2:
- Ref: https://lore.kernel.org/all/20231201110840.37408-5-biju.das.jz@bp.renesas.com/
- * DA9062 and DA9061 merged with DA9063
- * Sorted the child devices
- * mfd,onkey and thermal are pointing to child bindings
-
-
-
-Biju Das (11):
-  MAINTAINERS: Update da9062-watchdog bindings
-  dt-bindings: watchdog: dlg,da9062-watchdog: Add fallback for DA9061
-    watchdog
-  dt-bindings: watchdog: dlg,da9062-watchdog: Document DA9063 watchdog
-  dt-bindings: input: Convert da906{1,2,3} onkey to json-schema
-  dt-bindings: mfd: dlg,da9063: Update watchdog property
-  dt-bindings: mfd: dlg,da9063: Update onkey property
-  dt-bindings: mfd: dlg,da9063: Sort child devices
-  dt-bindings: mfd: da9062: Update watchdog description
-  dt-bindings: mfd: da9062: Update onkey description
-  dt-bindings: mfd: da9062: Update thermal description
-  dt-bindings: mfd: dlg,da9063: Convert da9062 to json-schema
-
- .../bindings/input/da9062-onkey.txt           |  47 ----
- .../bindings/input/dlg,da9062-onkey.yaml      |  60 +++++
- .../devicetree/bindings/mfd/da9062.txt        | 124 ----------
- .../devicetree/bindings/mfd/dlg,da9063.yaml   | 221 +++++++++++++++---
- .../bindings/thermal/da9062-thermal.txt       |  36 ---
- .../bindings/thermal/dlg,da9062-thermal.yaml  |  78 +++++++
- .../watchdog/dlg,da9062-watchdog.yaml         |  12 +-
- MAINTAINERS                                   |   6 +-
- 8 files changed, 336 insertions(+), 248 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/da9062-onkey.txt
- create mode 100644 Documentation/devicetree/bindings/input/dlg,da9062-onkey.yaml
- delete mode 100644 Documentation/devicetree/bindings/mfd/da9062.txt
- delete mode 100644 Documentation/devicetree/bindings/thermal/da9062-thermal.txt
- create mode 100644 Documentation/devicetree/bindings/thermal/dlg,da9062-thermal.yaml
-
+diff --git a/Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml b/Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml
+index f058628bb632..2b71fdb9251c 100644
+--- a/Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml
++++ b/Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml
+@@ -14,9 +14,14 @@ allOf:
+ 
+ properties:
+   compatible:
+-    enum: 
+-      - dlg,da9061-watchdog
+-      - dlg,da9062-watchdog
++    oneOf:
++      - items:
++          - enum:
++              - dlg,da9062-watchdog
++      - items:
++          - enum:
++              - dlg,da9061-watchdog
++          - const: dlg,da9062-watchdog # da9062-watchdog fallback
+ 
+   dlg,use-sw-pm:
+     type: boolean
 -- 
 2.39.2
 
