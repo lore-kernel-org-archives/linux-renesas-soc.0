@@ -1,41 +1,26 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A853EE6
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Dec 2023 01:09:03 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3BC7221FA7;
-	Mon,  4 Dec 2023 09:09:02 +0000 (UTC)
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id E6ADC13588;
-	Mon,  4 Dec 2023 09:09:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id eENdNy2XbWV+KAAAn2gu4w
-	(envelope-from <tzimmermann@suse.de>); Mon, 04 Dec 2023 09:09:01 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	daniel@ffwll.ch,
-	airlied@gmail.com,
-	suijingfeng@loongson.cn
-Cc: laurent.pinchart@ideasonboard.com,
-	javierm@redhat.com,
-	dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 2/8] drm/amdgpu: Do not include <drm/drm_plane_helper.h>
-Date: Mon,  4 Dec 2023 10:07:47 +0100
-Message-ID: <20231204090852.1650-3-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231204090852.1650-1-tzimmermann@suse.de>
-References: <20231204090852.1650-1-tzimmermann@suse.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C654C8F9
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Dec 2023 09:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeV0eZad"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BD0F3C433C9
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Dec 2023 09:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701681044;
+	bh=+WxpRiAUSazKru6pIyLmJDlz9LLq7kjdBujgqwXGrBY=;
+	h=Subject:From:Date:To:From;
+	b=PeV0eZadUsBF/8rr2Uecbwukzh8U7uYEEpGuY5bLW0Es4GdfnPh7dh3aMMgcMw5Jf
+	 ygtjPP9sffukqY1+GzqVpJ3LF/ZNQ6xURccy/CUzDcWfn99ibM0ysTbdn0+zzb/J4k
+	 pMu0Yv8rUpu9GVwIfsA4FL7loZ8A5Dq+MWBE0vNRuA4DcVg/mS08BRAZQ4sBNSv+9Q
+	 aYBWQyezYakYYF3nDeSnB9kKdZKkoxewXME89LyA7gXTjW9wwlfENASxdj5M0ASh/C
+	 p/MIO22y6nEBpKBwIaakz6kpUq4wJENp2EtgvL7904t1NVm0q6F/GUl5cN0GRYW9rp
+	 PZ/zdvqIbyZmQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9DD57C41677
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Dec 2023 09:10:44 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -43,63 +28,56 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: +++++++++++++++
-X-Spam-Score: 15.96
-X-Rspamd-Server: rspamd1
-Authentication-Results: smtp-out1.suse.de;
-	dkim=none;
-	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of tzimmermann@suse.de) smtp.mailfrom=tzimmermann@suse.de;
-	dmarc=fail reason="No valid SPF, No valid DKIM" header.from=suse.de (policy=none)
-X-Rspamd-Queue-Id: 3BC7221FA7
-X-Spamd-Result: default: False [15.96 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 R_MISSING_CHARSET(2.50)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 R_SPF_SOFTFAIL(4.60)[~all:c];
-	 NEURAL_SPAM_SHORT(2.81)[0.936];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_SPAM_LONG(3.50)[1.000];
-	 RCPT_COUNT_TWELVE(0.00)[12];
-	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
-	 FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,ffwll.ch,gmail.com,loongson.cn];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 R_DKIM_NA(2.20)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-2.14)[95.85%];
-	 DMARC_POLICY_SOFTFAIL(0.10)[suse.de : No valid SPF, No valid DKIM,none]
-X-Spam: Yes
+Subject: Patchwork summary for: linux-renesas-soc
+From: patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: 
+ <170168104459.26380.7779314004763659143.git-patchwork-summary@kernel.org>
+Date: Mon, 04 Dec 2023 09:10:44 +0000
+To: linux-renesas-soc@vger.kernel.org
 
-Remove unnecessary include statements for <drm/drm_plane_helper.h>.
-The file contains helpers for non-atomic code and should not be
-required by most drivers. No functional changes.
+Hello:
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 1 -
- 1 file changed, 1 deletion(-)
+The following patches were marked "mainlined", because they were applied to
+geert/renesas-devel.git (master):
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index aa43f1761acd3..b8c3a9b104a41 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -92,7 +92,6 @@
- #include <drm/drm_vblank.h>
- #include <drm/drm_audio_component.h>
- #include <drm/drm_gem_atomic_helper.h>
--#include <drm/drm_plane_helper.h>
- 
- #include <acpi/video.h>
- 
+Patch: media: vsp1: Remove unbalanced .s_stream(0) calls
+  Submitter: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+  Committer: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=796036
+  Lore link: https://lore.kernel.org/r/20231024142522.29658-1-laurent.pinchart+renesas@ideasonboard.com
+
+Series: net: ravb: Fixes for the ravb driver
+  Submitter: claudiu beznea <claudiu.beznea@tuxon.dev>
+  Committer: Paolo Abeni <pabeni@redhat.com>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=804761
+  Lore link: https://lore.kernel.org/r/20231128080439.852467-1-claudiu.beznea.uj@bp.renesas.com
+    Patches: [v2,1/6] net: ravb: Check return value of reset_control_deassert()
+             [v2,2/6] net: ravb: Use pm_runtime_resume_and_get()
+             [v2,3/6] net: ravb: Make write access to CXR35 first before accessing other EMAC registers
+             [v2,4/6] net: ravb: Start TX queues after HW initialization succeeded
+             [v2,5/6] net: ravb: Stop DMA in case of failures on ravb_open()
+             [v2,6/6] net: ravb: Keep reverse order of operations in ravb_remove()
+
+Series: net: rswitch: Fix issues in rswitch_start_xmit()
+  Submitter: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+  Committer: David S. Miller <davem@davemloft.net>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=803110
+  Lore link: https://lore.kernel.org/r/20231122051143.3660780-1-yoshihiro.shimoda.uh@renesas.com
+    Patches: [net,v3,1/3] net: rswitch: Fix type of ret in rswitch_start_xmit()
+             [net,v3,2/3] net: rswitch: Fix return value in rswitch_start_xmit()
+             [net,v3,3/3] net: rswitch: Fix missing dev_kfree_skb_any() in error path
+
+Patch: [net,v4] ravb: Fix races between ravb_tx_timeout_work() and net related ops
+  Submitter: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+  Committer: Jakub Kicinski <kuba@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=804482
+  Lore link: https://lore.kernel.org/r/20231127122420.3706751-1-yoshihiro.shimoda.uh@renesas.com
+
+
+Total patches: 11
+
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
