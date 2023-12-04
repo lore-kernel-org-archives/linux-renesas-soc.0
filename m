@@ -1,154 +1,109 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7E685;
-	Mon,  4 Dec 2023 01:00:16 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5cd81e76164so46172117b3.1;
-        Mon, 04 Dec 2023 01:00:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701680415; x=1702285215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zv4xm2Lr7Wl/3u3PM4BZ5e6ASOFA8kBT22UWNSzI29A=;
-        b=W4IcEPU/06rXnT8zKoV97sb61dfK4jvSzjiUKRd2h1ZIyGrOSEWewb93tkXsKxgV0A
-         fyS58euO9pu8E/Prk+l6TktdqcACF3vGncdOCtMy+fDvDZoWUOpNizD1SapCF0RWwX6O
-         YsuR8gHtx8OnYuPVHwooZhdRrP1knUbl8uAuUskgOPKHy+oYiguzK/1Ipb8zhRusOrIC
-         8kXq5aHCzc9YPk8ByTt7hGCsXbZUgql4kjw0i8VXu9DUdkYRUM/+v4we+hnqt/wVybT4
-         +KObvOxtQ5ZoAx6J+fPx7AYaFDBBQbUHT6RjAu8f48MK51cg5Usm8EFMslZZ5F9Ycp6b
-         /ozQ==
-X-Gm-Message-State: AOJu0YxZ2wOAHYwftq2KHj7FQYSatZvhZXiVTiKlxHcT9T8CnFhyDdZl
-	iwaID55UoVvq3WjwHFYsTJLOj0auQvS88A==
-X-Google-Smtp-Source: AGHT+IFLHN5lVcrEbK+UZgMtBA8xq+NoiT1Pt2RM2CuumlHSXQwJJCsSPcRznYrTmXwNk4ReaxfVGQ==
-X-Received: by 2002:a81:7847:0:b0:5d7:1940:dd77 with SMTP id t68-20020a817847000000b005d71940dd77mr2172352ywc.77.1701680415246;
-        Mon, 04 Dec 2023 01:00:15 -0800 (PST)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id v136-20020a81488e000000b005d8bb479c51sm458655ywa.11.2023.12.04.01.00.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Dec 2023 01:00:15 -0800 (PST)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5d4f71f7e9fso27337927b3.0;
-        Mon, 04 Dec 2023 01:00:15 -0800 (PST)
-X-Received: by 2002:a81:d206:0:b0:5d7:6089:9617 with SMTP id
- x6-20020a81d206000000b005d760899617mr2012816ywi.24.1701680414955; Mon, 04 Dec
- 2023 01:00:14 -0800 (PST)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BBE6D2
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Dec 2023 01:09:04 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1929321FB6;
+	Mon,  4 Dec 2023 09:09:03 +0000 (UTC)
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id CBC5C13B47;
+	Mon,  4 Dec 2023 09:09:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id MArRMC6XbWV+KAAAn2gu4w
+	(envelope-from <tzimmermann@suse.de>); Mon, 04 Dec 2023 09:09:02 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	daniel@ffwll.ch,
+	airlied@gmail.com,
+	suijingfeng@loongson.cn
+Cc: laurent.pinchart@ideasonboard.com,
+	javierm@redhat.com,
+	dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 5/8] drm/solomon: Do not include <drm/drm_plane_helper.h>
+Date: Mon,  4 Dec 2023 10:07:50 +0100
+Message-ID: <20231204090852.1650-6-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231204090852.1650-1-tzimmermann@suse.de>
+References: <20231204090852.1650-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
- <20231120070024.4079344-11-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdW9Unpw7NQOGWd4SeFV8XgvRYTKTXnt9Tsagb3Q3U9tNA@mail.gmail.com>
- <96dd3f54-9560-4587-b4e8-bf75422ff5ef@tuxon.dev> <CAMuHMdWGbEhBdzK4Swu4uX05vX7H2Ow4uE1C=JVNOrdcbZYL=A@mail.gmail.com>
- <b3701927-e41a-44d8-8f91-da245b76f532@tuxon.dev>
-In-Reply-To: <b3701927-e41a-44d8-8f91-da245b76f532@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Dec 2023 10:00:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVmD7-AUn91SaOq1iOMkcGhi0WNvx8bCX3oD+xa-Bt98g@mail.gmail.com>
-Message-ID: <CAMuHMdVmD7-AUn91SaOq1iOMkcGhi0WNvx8bCX3oD+xa-Bt98g@mail.gmail.com>
-Subject: Re: [PATCH 10/14] arm64: renesas: r9a08g045: Add Ethernet nodes
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux@armlinux.org.uk, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	linus.walleij@linaro.org, p.zabel@pengutronix.de, arnd@arndb.de, 
-	m.szyprowski@samsung.com, alexandre.torgue@foss.st.com, afd@ti.com, 
-	broonie@kernel.org, alexander.stein@ew.tq-group.com, 
-	eugen.hristev@collabora.com, sergei.shtylyov@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: +++++++++++++++
+X-Spam-Score: 15.42
+X-Rspamd-Server: rspamd1
+Authentication-Results: smtp-out1.suse.de;
+	dkim=none;
+	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of tzimmermann@suse.de) smtp.mailfrom=tzimmermann@suse.de;
+	dmarc=fail reason="No valid SPF, No valid DKIM" header.from=suse.de (policy=none)
+X-Rspamd-Queue-Id: 1929321FB6
+X-Spamd-Result: default: False [15.42 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 R_MISSING_CHARSET(2.50)[];
+	 BROKEN_CONTENT_TYPE(1.50)[];
+	 R_SPF_SOFTFAIL(4.60)[~all:c];
+	 R_RATELIMIT(0.00)[to_ip_from(RLw1715dab7ink4c1kuyfofm5y)];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 MX_GOOD(-0.01)[];
+	 FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,ffwll.ch,gmail.com,loongson.cn];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-2.79)[99.09%];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_SPAM_SHORT(2.92)[0.973];
+	 NEURAL_SPAM_LONG(3.50)[1.000];
+	 RCPT_COUNT_TWELVE(0.00)[13];
+	 MID_CONTAINS_FROM(1.00)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[linux-m68k.org:email,suse.de:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 DMARC_POLICY_SOFTFAIL(0.10)[suse.de : No valid SPF, No valid DKIM,none]
+X-Spam: Yes
 
-Hi Claudiu,
+Remove unnecessary include statements for <drm/drm_plane_helper.h>.
+The file contains helpers for non-atomic code and should not be
+required by most drivers. No functional changes.
 
-On Mon, Dec 4, 2023 at 9:38=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxon=
-.dev> wrote:
-> On 04.12.2023 10:02, Geert Uytterhoeven wrote:
-> > On Mon, Dec 4, 2023 at 8:41=E2=80=AFAM claudiu beznea <claudiu.beznea@t=
-uxon.dev> wrote:
-> >> On 01.12.2023 19:35, Geert Uytterhoeven wrote:
-> >>> On Mon, Nov 20, 2023 at 8:01=E2=80=AFAM Claudiu <claudiu.beznea@tuxon=
-.dev> wrote:
-> >>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>>
-> >>>> Add Ethernet nodes available on RZ/G3S (R9A08G045).
-> >>>>
-> >>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>
-> >>> Thanks for your patch!
-> >>>
-> >>>> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> >>>> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> >>>> @@ -149,6 +149,38 @@ sdhi2: mmc@11c20000 {
-> >>>>                         status =3D "disabled";
-> >>>>                 };
-> >>>>
-> >>>> +               eth0: ethernet@11c30000 {
-> >>>> +                       compatible =3D "renesas,r9a08g045-gbeth", "r=
-enesas,rzg2l-gbeth";
-> >>>> +                       reg =3D <0 0x11c30000 0 0x10000>;
-> >>>> +                       interrupts =3D <GIC_SPI 68 IRQ_TYPE_LEVEL_HI=
-GH>,
-> >>>> +                                    <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH=
->,
-> >>>> +                                    <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH=
->;
-> >>>> +                       interrupt-names =3D "mux", "fil", "arp_ns";
-> >>>> +                       clocks =3D <&cpg CPG_MOD R9A08G045_ETH0_CLK_=
-AXI>,
-> >>>> +                                <&cpg CPG_MOD R9A08G045_ETH0_CLK_CH=
-I>,
-> >>>> +                                <&cpg CPG_MOD R9A08G045_ETH0_REFCLK=
->;
-> >>>> +                       clock-names =3D "axi", "chi", "refclk";
-> >>>> +                       resets =3D <&cpg R9A08G045_ETH0_RST_HW_N>;
-> >>>> +                       power-domains =3D <&cpg>;
-> >>>
-> >>> Perhaps add a default phy mode, like on other SoCs?
-> >>>
-> >>>     phy-mode =3D "rgmii"';
-> >>
-> >> I skipped this (even it was available on the other SoCs) as I consider=
- the
-> >> phy-mode is board specific.
-> >
-> > IC.  Still, it's good to have some consistency across boards.
-> >
-> >>> Also missing:
-> >>>
-> >>>     #address-cells =3D <1>;
-> >>>     #size-cells =3D <0>;
-> >>
-> >> Same for these.
-> >
-> > These are required, and always have the same values, so it makes more
-> > sense to have them in the SoC .dtsi file, once.
->
-> I remember I had a compilation warning with an Ethernet controller
-> configured with fixed-link having #address-cells, #size-cells. With
-> fixed-link these were not needed.
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+---
+ drivers/gpu/drm/solomon/ssd130x.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-I think EtherAVB always use MDIO for management, so fixed-link is
-not applicable.
+diff --git a/drivers/gpu/drm/solomon/ssd130x.h b/drivers/gpu/drm/solomon/ssd130x.h
+index acf7cedf0c1ab..075c5c3ee75ac 100644
+--- a/drivers/gpu/drm/solomon/ssd130x.h
++++ b/drivers/gpu/drm/solomon/ssd130x.h
+@@ -17,7 +17,6 @@
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_encoder.h>
+-#include <drm/drm_plane_helper.h>
+ 
+ #include <linux/regmap.h>
+ 
+-- 
+2.43.0
 
-> Anyway... I'll keep all in dtsi if you prefer it this way.
-
-Yes please, thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
