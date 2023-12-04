@@ -1,139 +1,120 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="laBeXsEB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A76DB2;
-	Mon,  4 Dec 2023 05:32:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701696758; x=1733232758;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Dkr4auhuaXm/2CFkaCr6ysuuxc8iZhZ8/KeupfzqlRg=;
-  b=laBeXsEBWrrgfDWBwIBfDhhrlg+aCO5FYS76PfYZuT4mZBvVewWCm4Z4
-   7nPsV3Zz3WlYa+VmKRi/qlh7x4ELsjvce8vw4F5sybk/ALUMfIKLQIieC
-   l/eKbL/G7bMHqtitgNJ9qtMcXSObPh/a/0lrWXHzL+TbrkcWw4PYhmQhR
-   wCFLZDYRoF5ORb7cvpNZiqvbNnx4xszvY5KXxjCnwTfcxkgzIiBe775zo
-   I6WpUv6lgVRgXK0ctKfcxIwS6+F+FFGgzLv4BCJvWFPeQ8Wf9DtBKLFcC
-   XZ+xDqxJEY1eDSKQFp8Pru+yzObEY09ouY/2RQwMWO8O2jC0aMzf0+4kC
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10913"; a="7059246"
-X-IronPort-AV: E=Sophos;i="6.04,249,1695711600"; 
-   d="scan'208";a="7059246"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 05:32:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10913"; a="720323840"
-X-IronPort-AV: E=Sophos;i="6.04,249,1695711600"; 
-   d="scan'208";a="720323840"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 05:32:27 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rA93f-00000001lCW-1RPq;
-	Mon, 04 Dec 2023 15:32:23 +0200
-Date: Mon, 4 Dec 2023 15:32:23 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	openbmc@lists.ozlabs.org, linux-mips@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Sean Wang <sean.wang@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Andy Gross <agross@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 12/23] pinctrl: mediatek: Make use of
- PINCTRL_GROUP_DESC()
-Message-ID: <ZW3U5-LBqWiyxB6-@smile.fi.intel.com>
-References: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
- <20231129161459.1002323-13-andriy.shevchenko@linux.intel.com>
- <CGME20231204114039eucas1p29c6f8a162191e58ff658d3a1c44429bf@eucas1p2.samsung.com>
- <9e4e65de-7234-4234-8091-796277a1f1c5@samsung.com>
- <ZW3PrSQWyZvvhN66@smile.fi.intel.com>
- <CAMuHMdU-E7jemjAS0EunWFPq1LfF9vcNE+50ah4WH9oD1TXYew@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="djehvIjZ"
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E345B2
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Dec 2023 05:35:35 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-6ce403523e5so507501b3a.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Dec 2023 05:35:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1701696934; x=1702301734; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=lxrlAGfqM/8CU5vmWX4/zg57hJUVDiauPt7mhu9KG+Y=;
+        b=djehvIjZ87Gct9n+kH1yfIF9Ds6AFYRVCacl8SAEQGW5KUA9XMYuNQP3k/N1S5IZ8I
+         YHWq4V2F4S/QBTyyke+WIRZTHG71G1keC6EZW81q7mjNZ/8d7JWdzkgqNIn194z+8BLQ
+         50Bva+8x+AH++FarucDU4cFwSNk2sUQjIGoyCuidn6IMrR604yrvmBrWNjSGlhIGGbX8
+         mUES3fClaEYOM2cithEx8c402O5LlSgtyqANzNe3Nnx/rJVZePN7syOHAvCMFIG7rDij
+         OHaQAoP1Er0FGcBeqvhJwGuv+AeYbZkAwJeQ3hrkz5ajzxyLJD0NlIFBct5Y2ITkYAh9
+         68Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701696934; x=1702301734;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lxrlAGfqM/8CU5vmWX4/zg57hJUVDiauPt7mhu9KG+Y=;
+        b=d7wMYuhZyDS/jy54fBX5Utwf6LMOtswpQyeZPPiJGCU9C2Ct/2JaDv1ryQLCpcQ9G3
+         bfl9GMvO17+c7umMWnsCV8OiBx1JwNR3FpxWPRg3PoIL3RhjFduMye1fSbzDxYFn7euR
+         A60jIS/5D0sKNRS3uP5GlTeMRRDjD8IsI+EHXF+U+8h7tQ21d3pMuBSoNnc82FP8KL8D
+         g0ZmEs6qTMLB7lcGIUBSohT9dDOxoYhtOC8v0Cy4b/L2eC6BudkJF+sdkai8uMAkBzXI
+         +YOeFE6uRTwOUPqdcTmDZTIj1Bof/FXMaEsvrpHspi89HTjFvBgnL0HQRn9ea/RdvXee
+         QkzQ==
+X-Gm-Message-State: AOJu0YzKg/GphXi8SRdaZV1TEpUKFrb4SbSYLvpR+Ey7E3rTGbPQtzya
+	cAS5xHIv1q+tPqRoKdDZuD/RMRR7MNcXrk2oHSKoOg==
+X-Google-Smtp-Source: AGHT+IGD4O9B9SXkHXBJnbrfyzDSlEpbKWQIsG5Cxtio5zRHu8WWu0YwC6Zr/tpgzVB4luV45fT/KA==
+X-Received: by 2002:a05:6a20:7f96:b0:18b:d207:d84d with SMTP id d22-20020a056a207f9600b0018bd207d84dmr1410229pzj.0.1701696934264;
+        Mon, 04 Dec 2023 05:35:34 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id ne8-20020a17090b374800b0028669c66e37sm4441000pjb.21.2023.12.04.05.35.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Dec 2023 05:35:33 -0800 (PST)
+Message-ID: <656dd5a5.170a0220.1c294.9b3e@mx.google.com>
+Date: Mon, 04 Dec 2023 05:35:33 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdU-E7jemjAS0EunWFPq1LfF9vcNE+50ah4WH9oD1TXYew@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2023-12-04-v6.7-rc4
+Subject: renesas/master baseline: 61 runs,
+ 1 regressions (renesas-devel-2023-12-04-v6.7-rc4)
+To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 
-On Mon, Dec 04, 2023 at 02:19:10PM +0100, Geert Uytterhoeven wrote:
-> Hi Andy,
-> 
-> On Mon, Dec 4, 2023 at 2:10 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, Dec 04, 2023 at 12:40:38PM +0100, Marek Szyprowski wrote:
-> > > On 29.11.2023 17:06, Andy Shevchenko wrote:
-> > > > Make use of PINCTRL_GROUP_DESC() instead of open coding it.
-> >
-> > > PINCTRL_GROUP_DESC() macro from drivers/pinctrl/core.h contains a cast
-> > > to (struct group_desc), what breaks users of the above macros.
-> >
-> > There is no cast (*).
-> > Thanks for report, I will check.
-> >
-> > But this was v4 of the series and LKP actually sent a positive feedback.
-> > Besides that I have tested this locally with modules enabled.
-> >
-> > *) It's a compound literal, _not_ a cast.
-> >    Taking above into consideration I'm wondering what compilers
-> >    are in use?
-> 
-> kisskb reported the following m68k failures to me:
->     linux-next/m68k-allmodconfig/m68k-gcc8
->     linux-next/m68k-allmodconfig/m68k-gcc11
->     linux-next/m68k-allmodconfig/m68k-gcc12
-> 
-> However, according to [1], linux-next/m68k-allmodconfig/m68k-gcc13
-> did succeed, so I guess you are using gcc13?
+renesas/master baseline: 61 runs, 1 regressions (renesas-devel-2023-12-04-v=
+6.7-rc4)
 
-Yes, I compiled with these:
+Regressions Summary
+-------------------
 
-$ gcc --version
-gcc (Debian 13.2.0-5) 13.2.0
-Copyright (C) 2023 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-$ clang --version
-Debian clang version 16.0.6 (16)
-	Target: x86_64-pc-linux-gnu
-	Thread model: posix
-	InstalledDir: /usr/bin
+platform           | arch  | lab         | compiler | defconfig | regressio=
+ns
+-------------------+-------+-------------+----------+-----------+----------=
+--
+kontron-pitx-imx8m | arm64 | lab-kontron | gcc-10   | defconfig | 1        =
+  =
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-12-04-v6.7-rc4/plan/baseline/
+
+  Test:     baseline
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-12-04-v6.7-rc4
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      0d6b47644d4f0e784fa633859acc89075fba26cb =
 
 
+
+Test Regressions
+---------------- =
+
+
+
+platform           | arch  | lab         | compiler | defconfig | regressio=
+ns
+-------------------+-------+-------------+----------+-----------+----------=
+--
+kontron-pitx-imx8m | arm64 | lab-kontron | gcc-10   | defconfig | 1        =
+  =
+
+
+  Details:     https://kernelci.org/test/plan/id/656da5d4b087778c4fe1347c
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-12-04-v6.7-rc4/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-pitx=
+-imx8m.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-12-04-v6.7-rc4/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-pitx=
+-imx8m.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/656da5d4b087778c4fe13=
+47d
+        new failure (last pass: renesas-devel-2023-11-28-v6.7-rc3) =
+
+ =20
