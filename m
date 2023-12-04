@@ -1,113 +1,79 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F93D2
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Dec 2023 10:32:19 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rADj4-00038w-0z; Mon, 04 Dec 2023 19:31:26 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rADj1-00DZmP-KD; Mon, 04 Dec 2023 19:31:23 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rADj1-00EE78-9y; Mon, 04 Dec 2023 19:31:23 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="MmwSB5MB"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A98CA;
+	Mon,  4 Dec 2023 14:50:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fFWWPwBvSjpA61dgQaSff+CQ0wkrzPLoFdIafT7POfs=; b=MmwSB5MB7HGZIbwBA/CUUWkTT4
+	3gOha10TwRrnS1SLAlTfJsmF2mGEhzlvkeb2uFD5okOiP5Xixx9NpMJqF2SMSRmpwqJ9KvVVNzpNw
+	8YzI1PRjGX7l0mEMNRpohSK7BHkvxaxVe4EkMNsVggNNLkCCELm5/4EOS6fPFVotAu/r2ZF167xgJ
+	6RCZ+L9PUO/Bipta89/QNg9TOQaDQAfgR4fecpLasUImOJFXbAlk7pMitNIyvKxaFu7cIueAz2FvL
+	orUUupQcJU8XVNS9PuIMU94b5aIvJQ6E820bNlcya36onwBo8IKMDbfQEx8MtLqHjFWuoj5udxpFc
+	d9LFiUJg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60080)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1rAHlc-00066D-23;
+	Mon, 04 Dec 2023 22:50:20 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1rAHle-00014w-HX; Mon, 04 Dec 2023 22:50:22 +0000
+Date: Mon, 4 Dec 2023 22:50:22 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Alex Elder <elder@kernel.org>,
-	netdev@vger.kernel.org,
-	kernel@pengutronix.de,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Nick Child <nnac123@linux.ibm.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	=?utf-8?b?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
 	Andrew Lunn <andrew@lunn.ch>,
 	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-renesas-soc@vger.kernel.org,
-	Zhao Qiang <qiang.zhao@nxp.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	Linus Walleij <linusw@kernel.org>,
-	Imre Kaloz <kaloz@openwrt.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	linux-arm-msm@vger.kernel.org,
-	Alexander Aring <alex.aring@gmail.com>,
-	Stefan Schmidt <stefan@datenfreihafen.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	linux-wpan@vger.kernel.org
-Subject: [PATCH net-next v2 0/9] net*: Convert to platform remove callback returning void
-Date: Mon,  4 Dec 2023 19:30:40 +0100
-Message-ID: <cover.1701713943.git.u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	kernel@pengutronix.de, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH net-next v2 3/9] net: pcs: rzn1-miic: Convert to platform
+ remove callback returning void
+Message-ID: <ZW5Xrk1hkKtP1bES@shell.armlinux.org.uk>
+References: <cover.1701713943.git.u.kleine-koenig@pengutronix.de>
+ <82b728e14a68c421e269eff3b8083d9d6e62d956.1701713943.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1746; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=OVvQ8uYjxLMYTaZSJq1OCfRdtPS4cvgLm8vM3BejMRM=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlbhrRA9QNL9A6/+EC/b+KUL8ByuRJhbrVgnSOG 4TWQn68YNaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZW4a0QAKCRCPgPtYfRL+ TjVDB/0eG4VYbw9drfz2A1JiSQIiH+SED39TRg3MQbSa1i7JvhthEdJz3RsgmHJGxuIbvTEaf+G pE3/IiK/WYsAVNlWURx8F58h1MaKSgcCxB6UkK3F13nFcsSdkYViabIu/cyHooy2wVyyCDL31/D kmn9dtqyNwosyXWaN7VXQpLtM+q3Smw5Tl9HVpWdfAenzfShrzn6h5h1vT6pkXsWjucByaEjmjO Ep/nxUhk6mkRawEkvZ2rMZ7/IgkiQ/KfWaIVwkGYHngmAUDeMcuHd3+70YIw50qlOokbuV/k5yW CVge3kM7/CpnqYDmiBU/n7A3crLTVVTN0roUGmeLUQIG0uxJ
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+In-Reply-To: <82b728e14a68c421e269eff3b8083d9d6e62d956.1701713943.git.u.kleine-koenig@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hello,
+On Mon, Dec 04, 2023 at 07:30:43PM +0100, Uwe Kleine-König wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
+> 
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new(), which already returns void. Eventually after all drivers
+> are converted, .remove_new() will be renamed to .remove().
+> 
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Link: https://lore.kernel.org/r/20231117095922.876489-5-u.kleine-koenig@pengutronix.de
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-(implicit) v1 of this series can be found at
-https://lore.kernel.org/netdev/20231117095922.876489-1-u.kleine-koenig@pengutronix.de.
-Changes since then:
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
- - Dropped patch #1 as Alex objected. Patch #1 (was #2 before) now
-   converts ipa to remove_new() and introduces an error message in the
-   error path that failed before.
+Thanks!
 
- - Rebased to today's next
-
- - Add the tags received in the previous round.
-
-Uwe Kleine-KÃ¶nig (9):
-  net: ipa: Convert to platform remove callback returning void
-  net: fjes: Convert to platform remove callback returning void
-  net: pcs: rzn1-miic: Convert to platform remove callback returning
-    void
-  net: sfp: Convert to platform remove callback returning void
-  net: wan/fsl_ucc_hdlc: Convert to platform remove callback returning
-    void
-  net: wan/ixp4xx_hss: Convert to platform remove callback returning
-    void
-  net: wwan: qcom_bam_dmux: Convert to platform remove callback
-    returning void
-  ieee802154: fakelb: Convert to platform remove callback returning void
-  ieee802154: hwsim: Convert to platform remove callback returning void
-
- drivers/net/fjes/fjes_main.c             |  6 ++---
- drivers/net/ieee802154/fakelb.c          |  5 ++--
- drivers/net/ieee802154/mac802154_hwsim.c |  6 ++---
- drivers/net/ipa/ipa_main.c               | 29 +++++++++++-------------
- drivers/net/pcs/pcs-rzn1-miic.c          |  6 ++---
- drivers/net/phy/sfp.c                    |  6 ++---
- drivers/net/wan/fsl_ucc_hdlc.c           |  6 ++---
- drivers/net/wan/ixp4xx_hss.c             |  5 ++--
- drivers/net/wwan/qcom_bam_dmux.c         |  6 ++---
- 9 files changed, 29 insertions(+), 46 deletions(-)
-
-
-base-commit: 629a3b49f3f957e975253c54846090b8d5ed2e9b
 -- 
-2.42.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
