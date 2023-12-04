@@ -1,103 +1,98 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nJ/puh3Y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA26A9;
-	Mon,  4 Dec 2023 08:08:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701706082; x=1733242082;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CyMweha2ZvuLisSoPmNJvwBvM8UVF+24ES7V+e13w7A=;
-  b=nJ/puh3YkMMr4ow4roTP8fCrGxx42pg87in85xDgYJvB1y7Fo6YvlfMY
-   OcV83eHYNa08727X6W0hqakN8VMXMRtLmXdt2nI7LeCrUW6QAb8AUTgWY
-   dUMxRDPuRiRtWvAK0sPRpEfT1lB8bTbeKjiAZCTzm+mXPjhgzcZsoFPEw
-   acwteRsmb+IjskBk9M3z5VWGUb/x9BdNELRpdug3hCRR3sX+kvNuI+SQ5
-   p3cFXC/9gXbmKcKn+T7sNrO2TlCrBKmFYBdZ++VZorXumfPjcLe/3P5hW
-   Sf0X/iMaMIUqE8K+ys4ZQwcTJ6ThA7DLG3r3XjtWseqVaK1KhswL2LkD3
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10914"; a="632533"
-X-IronPort-AV: E=Sophos;i="6.04,250,1695711600"; 
-   d="scan'208";a="632533"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 08:08:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10914"; a="861422786"
-X-IronPort-AV: E=Sophos;i="6.04,250,1695711600"; 
-   d="scan'208";a="861422786"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 Dec 2023 08:07:57 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3C299A7D; Mon,  4 Dec 2023 18:00:43 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-Subject: [PATCH v1 5/5] pinctrl: nuvoton: Convert to use struct pingroup and PINCTRL_PINGROUP()
-Date: Mon,  4 Dec 2023 17:56:36 +0200
-Message-ID: <20231204160033.1872569-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20231204160033.1872569-1-andriy.shevchenko@linux.intel.com>
-References: <20231204160033.1872569-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEZGu5Q3"
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0CD5FD
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Dec 2023 08:16:01 -0800 (PST)
+Received: by mail-ot1-x32d.google.com with SMTP id 46e09a7af769-6d9a1c13ea6so598742a34.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Dec 2023 08:16:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701706561; x=1702311361; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d3Rq26SmtNxjBHL+7sodH6Y3hH55K8uHLftxea/5aOE=;
+        b=MEZGu5Q3khJEbOkNpg1YAx4YZo/JKbjdcTVDAl2kOJ+fMZGoYo2Y1IUNrRtwPxuIL6
+         KEV8V5YFMd8WqZ7NP6mOOeGwf85x6JUq3+t23mWqtk6KZa5smCd8f14A3HGDp3ADS9Fu
+         q7K6oTEy7vfpfRfq3CjkGitTOG8AijPsrwSL8q07yqk6fumklSH01/Zd4aG+DY16/3Ak
+         j8F7ZnnZBwcJIsY0A9smQc7gyUVV5gPiBiC/jP6cNeHEvBlEn7K62eZP0JfeS40OSGUD
+         kRnSBFSS9UnTvxw4pSa+EByg2zVsEuY0r0bz5McG98DiZz9/lTzmd/pIId0UJHLpI1Eu
+         rJFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701706561; x=1702311361;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d3Rq26SmtNxjBHL+7sodH6Y3hH55K8uHLftxea/5aOE=;
+        b=axTuAuuL7ccrX9T/S+rYhIaE/0+hAfNnMDzPZzL6Fg4SZqYLw0XHZOE4xf+i/kvdHP
+         vj8UJ46kihjw/lVdhFhyyJjRz4GljH/R8VOmtPbUWydIlcvPsJRoUK6CpwKnNR1shKsO
+         QqxaTFagHwpWPZ6N3CS75NwCo4Q7WRfI57CQgh6WuHq9d8q1LM3kXPY1H+iDJJGw006k
+         xkkZMB3GDt5Wkey/JmqpDIYFJXppvmeHeH15TCUuyhqC24nXVPvQ9L6Z9olQ8kJTyeWL
+         2ha7bft/vN4s+6bLdKu+3BSrFDcFRBDy3NDfmwRuLmnzV99dRAfd8EwnEBA+ZKXZYty2
+         GwTA==
+X-Gm-Message-State: AOJu0YziVpoAdTZ3hJJ8l1Ey4OXiM6A0WtuCGF9ZtasQas6Z2tK9EPko
+	vtZsldxw4lCng1eyNw474VfqPryEGsSnHIPEMfFnnvxQ
+X-Google-Smtp-Source: AGHT+IHeMg3IqYv1oObxg/a3nddlTB0cG433u6nB+9rzQjWp1RCFYTc4EHF1sSTYAthQMD9Dil0L+gzurrYUA6JyMAM=
+X-Received: by 2002:a05:6870:c152:b0:1fb:75a:778d with SMTP id
+ g18-20020a056870c15200b001fb075a778dmr4120921oad.62.1701706560957; Mon, 04
+ Dec 2023 08:16:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20231204090852.1650-1-tzimmermann@suse.de>
+In-Reply-To: <20231204090852.1650-1-tzimmermann@suse.de>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 4 Dec 2023 11:15:49 -0500
+Message-ID: <CADnq5_PRqcugQHibGbhGb2LvnJ5uEtLFqOf=HQOf8_8zthgt2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] drm/plane-helpers: Minor clean ups
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, daniel@ffwll.ch, 
+	airlied@gmail.com, suijingfeng@loongson.cn, dri-devel@lists.freedesktop.org, 
+	javierm@redhat.com, amd-gfx@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pin control header provides struct pingroup and PINCTRL_PINGROUP() macro.
-Utilize them instead of open coded variants in the driver.
+On Mon, Dec 4, 2023 at 4:09=E2=80=AFAM Thomas Zimmermann <tzimmermann@suse.=
+de> wrote:
+>
+> Move drm_plane_helper_atomic_check() into udl, which is the only
+> driver using it. Remove several unnecessary include statements for
+> <drm/drm_plane_helper.h>.
+>
+> v2:
+>         * fix documentation (Sui)
+>
+> Thomas Zimmermann (8):
+>   drm/plane-helper: Move drm_plane_helper_atomic_check() into udl
+>   drm/amdgpu: Do not include <drm/drm_plane_helper.h>
+>   drm/loongson: Do not include <drm/drm_plane_helper.h>
+>   drm/shmobile: Do not include <drm/drm_plane_helper.h>
+>   drm/solomon: Do not include <drm/drm_plane_helper.h>
+>   drm/ofdrm: Do not include <drm/drm_plane_helper.h>
+>   drm/simpledrm: Do not include <drm/drm_plane_helper.h>
+>   drm/xlnx: Do not include <drm/drm_plane_helper.h>
 
-Reviewed-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/nuvoton/pinctrl-wpcm450.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Series is:
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-index 0cff44b07b29..4589900244c7 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-@@ -474,9 +474,8 @@ enum {
- #undef WPCM450_GRP
- };
- 
--static struct group_desc wpcm450_groups[] = {
--#define WPCM450_GRP(x) { .name = #x, .pins = x ## _pins, \
--			.num_pins = ARRAY_SIZE(x ## _pins) }
-+static struct pingroup wpcm450_groups[] = {
-+#define WPCM450_GRP(x) PINCTRL_PINGROUP(#x, x ## _pins, ARRAY_SIZE(x ## _pins))
- 	WPCM450_GRPS
- #undef WPCM450_GRP
- };
-@@ -852,7 +851,7 @@ static int wpcm450_get_group_pins(struct pinctrl_dev *pctldev,
- 				  const unsigned int **pins,
- 				  unsigned int *npins)
- {
--	*npins = wpcm450_groups[selector].num_pins;
-+	*npins = wpcm450_groups[selector].npins;
- 	*pins  = wpcm450_groups[selector].pins;
- 
- 	return 0;
-@@ -901,7 +900,7 @@ static int wpcm450_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 	struct wpcm450_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	wpcm450_setfunc(pctrl->gcr_regmap, wpcm450_groups[group].pins,
--			wpcm450_groups[group].num_pins, function);
-+			wpcm450_groups[group].npins, function);
- 
- 	return 0;
- }
--- 
-2.43.0.rc1.1.gbec44491f096
-
+>
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  1 -
+>  drivers/gpu/drm/drm_crtc_helper.c             |  7 ++--
+>  drivers/gpu/drm/drm_plane_helper.c            | 32 -------------------
+>  drivers/gpu/drm/loongson/lsdc_plane.c         |  1 -
+>  .../drm/renesas/shmobile/shmob_drm_plane.c    |  1 -
+>  drivers/gpu/drm/solomon/ssd130x.h             |  1 -
+>  drivers/gpu/drm/tiny/ofdrm.c                  |  1 -
+>  drivers/gpu/drm/tiny/simpledrm.c              |  1 -
+>  drivers/gpu/drm/udl/udl_modeset.c             | 19 +++++++++--
+>  drivers/gpu/drm/xlnx/zynqmp_kms.c             |  1 -
+>  include/drm/drm_plane_helper.h                |  2 --
+>  11 files changed, 19 insertions(+), 48 deletions(-)
+>
+> --
+> 2.43.0
+>
