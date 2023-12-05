@@ -1,202 +1,145 @@
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E9081AB;
-	Tue,  5 Dec 2023 06:21:56 -0800 (PST)
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-35d6c5f9579so7259825ab.0;
-        Tue, 05 Dec 2023 06:21:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701786115; x=1702390915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wjEDTZbGLWl0kPzOEjqjXQ57XT0xydUQvJCUY6FowqA=;
-        b=sVt1M6Tprvh5CcP1CA6V7cgPHTd5SEzTyA8LkIczss03OChTZp0Ij4BBuXXQR6kvBN
-         ZHDbZ7h1Hy6tUFw9+NUa+rJt0NcqdRrmf31+NVZuUVI+q8xtR4VhtV/QOtgMyiICCk4i
-         onNQoosikS5VrHQQ5iGTzTU10XqHrKtApOa33S9BlMPgpw9zOpnaEMtSuwIXLcYKrmcw
-         WCg4nsRfkozywtj4gdwgtiy8CeTcReGEub9mrpNarnpRy9oZ3F1OrFi99FKPqYrkBCBY
-         fFZbMOebDko6KkqWoy24aVdNw13u/sFHlAOFCniXgxr75yvkwpFTjVoXXZd+j/tQC1sZ
-         D71A==
-X-Gm-Message-State: AOJu0YzL0nAXJ0lRS2bnc7aqEQiCX8FwA39WO+lC+gKtqVoNo4aS18pR
-	bWVeY9ZCnKVB+xr1hLxWMl9PzkCzPRmhdw==
-X-Google-Smtp-Source: AGHT+IHiJ8ijq3rDLHlUKDIUoapWhxOdwFwIlkcpCJkHcU69YH7LK0vxP4cObCv99jQmSEB1+zHIIA==
-X-Received: by 2002:a92:d292:0:b0:35d:482d:d5b3 with SMTP id p18-20020a92d292000000b0035d482dd5b3mr5821385ilp.10.1701786115219;
-        Tue, 05 Dec 2023 06:21:55 -0800 (PST)
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com. [209.85.166.181])
-        by smtp.gmail.com with ESMTPSA id l2-20020a056e0205c200b0035b0ad262e2sm615130ils.47.2023.12.05.06.21.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Dec 2023 06:21:55 -0800 (PST)
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-35d699ec3caso8281205ab.3;
-        Tue, 05 Dec 2023 06:21:55 -0800 (PST)
-X-Received: by 2002:a81:ee0b:0:b0:5d7:1941:a9a with SMTP id
- l11-20020a81ee0b000000b005d719410a9amr4666145ywm.53.1701785702584; Tue, 05
- Dec 2023 06:15:02 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="isv2tuYR"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06AE6194
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Dec 2023 06:41:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=U3FO31uUQdzbhvZAh1G3aNGX58KtTZmPC+5u5plTH1jA3sBkSHeeL1O9UVsqKEkys3M0IXDkUbHwtv0H1nDpQCVL0X99khss5NM+ffdGNousKRkoeF5JdN5QNa8k0L4GCdIRjItuhRkL/FuLDLrL2u+pHQAQj30clcrZcPezu+V+5lCWqzlySBIlUhcJCAep81cbxWeiKB9ZbIlgSbCMO3KhXBG9Rd1JGmyWtLvommLMumxYhGI178sBRFHCK8x+QrHIQ2f4WjVipjL2QBFjvoAy1SYihbMsqwktTKWiZCnroJNpsAm3Yfz76N3IfZIkX1avtJAxb+3Uqsy3IJcZ6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OAAz11jV4icSbUhhKsMhRtWI538gZZplUGY8x5Oj/Rg=;
+ b=YETlW50eQmH8vEXwTLpgw07mwDE0Lk+JLoJQIQzORdPVMOQOfidZFjzEEOwN7V5LtwEK9L+5xgQvPer6G12CaL/Ikf5Z0O4jEm1pEWZyjr70X+XXhZXWjVr1x4WOVQPygYt96U4qQymd0VvQA1YoLMjqZvjsS7lGeQR2s+iFiK4qhmQ3xXZNjHm7kWZwSr47ICptbaddRtMR4RbPyPqU/pmmqZO+Tyb6zobf7LTOri257aH9Dmo1rSDAqqeeR9E6QGM8CMLoapPQ686dR9mR1/9EQsGxkx6PoyL5hW3Tjl/M86TIAdus/V+k6b2QtYGRteuxDMv7C8MFxgS7NpdAtw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OAAz11jV4icSbUhhKsMhRtWI538gZZplUGY8x5Oj/Rg=;
+ b=isv2tuYR2SY5rscGT15+PMRMavRlDvV+mWlI92GSEMo8l4AFFDPQW5TIBdQ6RlqygFwNuKMyqq7PffcEil1RLVMN2u1O3ZkQScDEXkAGmiTzzObtQQr4xiJeH5DmnrIoNRWOMZzy82gu/nDPOfXcfh/2LrVsEr1oZJvppvsxhpA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
+ by PH7PR12MB6668.namprd12.prod.outlook.com (2603:10b6:510:1aa::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34; Tue, 5 Dec
+ 2023 14:41:34 +0000
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::3a35:139f:8361:ab66]) by CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::3a35:139f:8361:ab66%6]) with mapi id 15.20.7046.034; Tue, 5 Dec 2023
+ 14:41:33 +0000
+Message-ID: <f339bfd5-8748-464a-b6ca-188778ed4371@amd.com>
+Date: Tue, 5 Dec 2023 09:41:29 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] drm/amdgpu: Do not include
+ <drm/drm_plane_helper.h>
+To: Thomas Zimmermann <tzimmermann@suse.de>, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, daniel@ffwll.ch, airlied@gmail.com,
+ suijingfeng@loongson.cn
+Cc: dri-devel@lists.freedesktop.org, javierm@redhat.com,
+ amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org
+References: <20231204090852.1650-1-tzimmermann@suse.de>
+ <20231204090852.1650-3-tzimmermann@suse.de>
+Content-Language: en-US
+From: Harry Wentland <harry.wentland@amd.com>
+In-Reply-To: <20231204090852.1650-3-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0502.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10c::11) To CO6PR12MB5427.namprd12.prod.outlook.com
+ (2603:10b6:5:358::13)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1701768028.git.ysato@users.sourceforge.jp> <ca3122511b201a0da0a3f930c0f894bf11954423.1701768028.git.ysato@users.sourceforge.jp>
-In-Reply-To: <ca3122511b201a0da0a3f930c0f894bf11954423.1701768028.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Dec 2023 15:14:50 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUY1aduN=6kaHFyfT=U3J3K3NPZDK2mCct8vS9XaMfaiA@mail.gmail.com>
-Message-ID: <CAMuHMdUY1aduN=6kaHFyfT=U3J3K3NPZDK2mCct8vS9XaMfaiA@mail.gmail.com>
-Subject: Re: [DO NOT MERGE v5 12/37] dt-bindings: pci: pci-sh7751: Add SH7751 PCI
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
-	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Guo Ren <guoren@kernel.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
-	Max Filippov <jcmvbkbc@gmail.com>, Tom Rix <trix@redhat.com>, 
-	Herve Codina <herve.codina@bootlin.com>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|PH7PR12MB6668:EE_
+X-MS-Office365-Filtering-Correlation-Id: 38683b25-8f86-4cee-111f-08dbf5a046e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	1+l3/4EA5Cmrz5nM7A+kO1iFMcrJFUQttedOUiPa/p1kf139kNI8D4U0PBIT/cVpZSQsZhW6hnAKtvgSexepVSlpN86tGrORsbMKgtUqD+GgxoqbKGYvkIXlAyvlmO+dnnuWVeHQA/HRBlsEyW5En9qLrpy3aQVehKTPvuCwGNeWsV47ClQ4onxjo1D6EQzUOFsWOXUfTEm3pCYhKCcpb2aZWtB/YF65LTDmN4W3GVj/rttglEGcHbD7KeTkTkDbFvQTCcjpLNCg7OS0n22mosfQLXXohmXFKVPXBb1EdvEVdaFINFvBh9Xs4uFwYZJvLF/9UAhYMoawN0/bP6ICfsxEWht3eAcp3muv84+MIvH0u2QeitS13N//mkl0Kv4HCCcToJQiTEFYMcJqhYxav0yo+a3Qn0OnoOUd5uoAfb93/zuvhdHGzz7S+ISFN6hGYn6tV95WzdfOIBFvDfFdm7OVThAk5CEJpx2iUNE4UpCKm4imxJKJlIFHoyxIUGBsCvnNJgjFPmuUiV3KdEa/Xfx37Sb1gonI2tARfLTc57Lr+MAy50gVclMBlQdvys0tYw0Kt4f/JhihlGSES/dDeCkwrnMvdarbQCLQxVg6EsKeLpx42jP2qEuS2XTuwEo6VyEHzphrw7GP0P5klpFJ9w==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(39860400002)(396003)(376002)(136003)(346002)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(2906002)(86362001)(5660300002)(4744005)(7416002)(83380400001)(31686004)(38100700002)(31696002)(53546011)(36756003)(6506007)(44832011)(6512007)(2616005)(6666004)(26005)(8676002)(8936002)(4326008)(41300700001)(478600001)(6486002)(66946007)(316002)(66476007)(66556008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OVpSdnpyMzBuVHBhcGpHV1BPVnM0MEhSMktMNWowOVVxQ05KVlczOEVJRndm?=
+ =?utf-8?B?czRDVnFYMU4zeTBhdWxRNW5XcVFzRHdCKy9vVmkxYXlFOEw1eUtWMTdIdjdi?=
+ =?utf-8?B?Y0dxQlpScXhCL0hocU1HcUhmRXFTaWVCZmZVbEdNa3NGNFpmTXhITldvb2Jj?=
+ =?utf-8?B?WEJZa1JVdUdjMXdQQWhySk10UUJFditwb3FyT0JPVWVIbHE3QnFyTW12eDJm?=
+ =?utf-8?B?S0RPZjdYUWJlSmVuZUhWUnc0bEEzd2VmM3J4c2NsZGlOdkZzWTJiMWVvYXhC?=
+ =?utf-8?B?WWs2c2pDelVrZEFnZ2lmTUVnYjIyNGZ5eDdweERSRkJpMWlHSDhMSUZ0VmZo?=
+ =?utf-8?B?Y2hOZkZ5N1RQVFlsWlkwTGgzaGdFTG5wZ1lFbENpRTdkM29lZ1dzWTA0cm1L?=
+ =?utf-8?B?ZTZ1dWcwbmNaZHVNV3hVYm9ZQnI3bm1tSUZncGdDVmhzR1hva2R4M3JROUgv?=
+ =?utf-8?B?YWtDZW5XYjdOSzJmc1puUVFJb1lKc3ViM3N5d2w4MmhBQXd2VzNEQm94cGEw?=
+ =?utf-8?B?Wlg2TkRxaGI5NTFVM3RPL0I1ck5YQmM4NlZ3akdMQXJNTjFHdVZTS1hJVmtL?=
+ =?utf-8?B?cnRuOFBrMHphNTkxcW81VkswdU1PSkdZKzRJMHB2N29NT0VrK3c5TWxINVU5?=
+ =?utf-8?B?MnBIU1VNZHJYaTQ0eUJ6MDNDMXFpV2VlbnB4akF6RHJiSjYxQzVMODM5a3lt?=
+ =?utf-8?B?cXA2KzVybnJrVDlTQ1hoUmFzQzhUS0FYSnpKM1h6ZitQWnNlKy9yQ3dvOW9P?=
+ =?utf-8?B?eE9rdDNGVzYxUU4xemF4cEl5dExoUXd4VncrOEZvS3dxQmp4NWRVYXZGWFJr?=
+ =?utf-8?B?aUxqeUhrWnhYWWRrcmV3VEF1Z1ZPOWhFODQ4UC9yR1RmNHNZN21USUNleVps?=
+ =?utf-8?B?Q2NBMzdDeFdvVlh6a0dlcGkzdzhhd21sZUoyeXI5OGpGZUQzOEM0UDdRSjhU?=
+ =?utf-8?B?c016b0piMEFWdmdTS2VsbnAwZGt2cnlQRzRBQnAxOXF6R2NUMkU3aTZ5eWFl?=
+ =?utf-8?B?dUI0aUEzN1FiOFZRYnlYenQwZmx1OHBZM1VSa2l6SnUvNVJWZDNJcVhCVTdw?=
+ =?utf-8?B?OVVhSVBwSXNjVWc4U1NzR1N3M0ZZUzZDVWZTWGpOL1AyV2xpZXAvWUJuNU4r?=
+ =?utf-8?B?RXZGdjNwcVMvUVlsNE1DeGgvV2dLak9FK2pSTDRQNE1ib0ZIaTJBQWhqNDYx?=
+ =?utf-8?B?Z3BYMFJEMzdYQnMyMzM5M1pib3hUeVlpMnRzdzBORGJ0QUFHQ3NNSUNSY2o3?=
+ =?utf-8?B?Z3ZLaWVkWWs0MnJjNmE4U0FNa3kra3NuMHhTS0JneVF2TmQ3OU9aL091T29F?=
+ =?utf-8?B?MWNVMHlPeFhyeEpJWWJGc0h5dDRKV0JsdEI3WTFSSG4rQmNBcFZTVDU0MXRx?=
+ =?utf-8?B?a1dIMnI3dG4xNGpXeHNBQXFMTzkyQ1BUUElzWDNnV3Z1T3NmaGFQSGxlYWRV?=
+ =?utf-8?B?TlRtZGhhZHR4NGpZUy9aU2c4OGVmZW9ZQmlrWGkvMytTQVV2dXpUNWQ2cW96?=
+ =?utf-8?B?WGhTNjdUSnBBQnNuSmpBSk9KSTVaaGNmMWUzWkYrNTd4NlB3bk5Md2ErNWdv?=
+ =?utf-8?B?T21zS3NhQ0dITVl2M0NUQlZ0c1VyNFNzS0N1ODVJQVAvS3hyamJCQ3VEaWtk?=
+ =?utf-8?B?aTVDRFcveGQxTVZwbGpKQnA5Mjh1OFFuR0xHTmZaaUFXUXJaUm5sc3crVEpw?=
+ =?utf-8?B?MkJzSG5GZk1OZFlDNkdFUGVsbHA4Q3lqVzROWTJRWEJIWFdkNUVnRzh1MzNV?=
+ =?utf-8?B?bFBVYzRIbVpNQWZhUFVnL3JNeGdjejdZdU8wWHlsU0Q5Y3Vtc1pGV0xYeHlm?=
+ =?utf-8?B?RGN0QWVaeWwya29Nc21KTjJMSnpNSmx1KythK1FSS1RlMFdKbm02S2hBSmNq?=
+ =?utf-8?B?SDRsZGlvbXlmMHQxU3NxOGNNdGg4WXJhR21PNUV3enV5dm55dTlXaCtGRTZy?=
+ =?utf-8?B?Vk85WXNTS2NhZDZuK2w2ZGFNbnN5VkF6TjBYdTBadnh0SjQ2c0tRS0pyRmd5?=
+ =?utf-8?B?YTJBVFc1b2Nxb0ErUXQ3NHE4NFBqYTNpRGlaM1Y1TCtwT3VDQlQrRlp1NEpw?=
+ =?utf-8?B?VURibGNES3NVMUxESU5Xa2t4UjhocWwyekl6ZGFTKzlJekRhMXQrZTY2SXB2?=
+ =?utf-8?Q?QvmKz6xUoIhgLs3w3/BOJWGC8?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38683b25-8f86-4cee-111f-08dbf5a046e8
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2023 14:41:33.8218
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BjhDrvueMtyd1zf0awyeFBepoHRQ5yclkRUF6uSVmpvG5H1Ffhjlad4Sp5WkfiRCrgKoDOUTkduJzW76MERpXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6668
 
-Hi Sato-san,
+On 2023-12-04 04:07, Thomas Zimmermann wrote:
+> Remove unnecessary include statements for <drm/drm_plane_helper.h>.
+> The file contains helpers for non-atomic code and should not be
+> required by most drivers. No functional changes.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-On Tue, Dec 5, 2023 at 10:46=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> Renesas SH7751 PCI Controller json-schema.
->
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 
-Thanks for your patch!
+Harry
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/renesas,sh7751-pci.yaml
-> @@ -0,0 +1,128 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/renesas,sh7751-pci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas SH7751 PCI Host controller
-> +
-> +maintainers:
-> +  - Yoshinori Sato <ysato@users.sourceforge.jp>
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-bus.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - renesas,sh7751-pci
-> +
-> +  reg:
-> +    minItems: 2
-> +    maxItems: 2
+> ---
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index aa43f1761acd3..b8c3a9b104a41 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -92,7 +92,6 @@
+>  #include <drm/drm_vblank.h>
+>  #include <drm/drm_audio_component.h>
+>  #include <drm/drm_gem_atomic_helper.h>
+> -#include <drm/drm_plane_helper.h>
+>  
+>  #include <acpi/video.h>
+>  
 
-Please add "reg-names", as there is more than one entry.
-If that is not sufficient to document what each entry means, please add
-"description"s, too.
-
-> +  renesas,memory:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: |
-> +      PCI BMDMA src/dst memory area.
-
-Isn't that the purpose of the "dma-ranges" property?
-
-> +
-> +  renesas,bcr1:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SH7751 PCIC PCIBCR1 value. This value makes add the value of BSC's=
- BCR1.
-
-What does this mean?
-
-> +
-> +  renesas,mcrmask:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SH7751 PCIC PCIMCR value. This value makes clear bit in the value =
-of BSC's MCR.
-
-What does this mean?
-
-> +
-> +  renesas,intm:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SH7751 PCIC PCIINTM value.
-> +
-> +  renesas,aintm:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SH7751 PCIC PCIIANTM value.
-> +
-> +  renesas,lsr:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SH7751 PCIC PCILSR0 and PCILSR1 values.
-> +      First word is PCILSR0, Second word is PCILSR1.
-> +
-> +  renesas,lar:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SH7751 PCIC PCILSA0 and PCILAR1 values.
-> +      First word is PCILAR0, Second word is PCILAR1.
-> +
-> +  renesas,dmabt:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SH7751 PCIC PCIDMABT value.
-> +
-> +  renesas,pintm:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SH7751 PCIC PCIPINTM value.
-> +
-> +  renesas,config:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: |
-> +      SH7751 PCIC PCICONFIG values array. Register Number and value pair=
- list.
-
-Several of these properties look like pure hardware programming.
-Can these values be derived from other (standard) DT properties?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
