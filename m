@@ -1,97 +1,141 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46115C6
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Dec 2023 04:26:41 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rAUVZ-0005XV-Aq; Tue, 05 Dec 2023 13:26:37 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rAUVW-00Djul-Mr; Tue, 05 Dec 2023 13:26:34 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rAUVW-00EhQX-DJ; Tue, 05 Dec 2023 13:26:34 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	kernel@pengutronix.de
-Subject: [PATCH 0/8] regulator: Convert to platform remove callback returning void
-Date: Tue,  5 Dec 2023 13:26:15 +0100
-Message-ID: <cover.1701778038.git.u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cvgOgYA7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yacRC4BU"
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 677D385;
+	Tue,  5 Dec 2023 05:01:56 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id 2E2795C02C6;
+	Tue,  5 Dec 2023 08:01:53 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 05 Dec 2023 08:01:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm3; t=1701781313; x=1701867713; bh=Vz
+	5fHcnpm58kiwXE8hZp/Ye9ElTOS3WdqAMkMGNeaRk=; b=cvgOgYA7MGSeQTnroK
+	55TwaexI6T0Ar7/K3PpDbIQ/J0PV5KguP1FtgugKmTAtVlWgSKaeDt70Qbpm6NA2
+	fjtBpR9W4wctFEprPmxR0FZxklq02d1JmOTx58/pVUsu+haKEvj1rkrhLWZ8Lhse
+	as4s2nBA47xUgpqBf/Lw+bZ4Mh0Gs5QMo+yq7uoF3GkXPuhTTKKW+QqQED268YnK
+	kF4sLhZ0HzT+UiaqkpDkgi0Ko21Sm5UzxkxHz1IsAoYoCk8/Mf3MtZNerezo5kbM
+	u1e6g1fDnlJSsccZwhH3xpohgzt0KVwiT8jUdF58GIvmOpp0X7geJSAhUTfPKxyB
+	TQPA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1701781313; x=1701867713; bh=Vz5fHcnpm58ki
+	wXE8hZp/Ye9ElTOS3WdqAMkMGNeaRk=; b=yacRC4BUn+jelBSr1r50xeLrSUMCB
+	P6gWdxS8PNmXvS2lwcnI9DrOi1wvxBhoMf/rcRbUuFB9uSFgQlC8vNL90sum4vES
+	5q1gG8eL1N3/1BmRTf4XZb/EQmj5fWHyvMdVvY/ZiHzXWIcpC2xpump8q1MVBWNv
+	gRarAcCi277E4wzsJ91n7IkgGZgzHpjqG6XkHKiQC5zMujdFUyrNlzsRKqnr1vkP
+	S3Y5IDoMX/vCYkl1ca9CMMKzPLtTt6E5P6Cxhe1WfvVhQcyzYfESDXxG/suwT7WS
+	WQrFbEVBupeGfe/ARqv0OnG9byGFqiTYywlG1j0UNEzxpD48p52h5rCsw==
+X-ME-Sender: <xms:Px9vZe8BGJJcjAaWpIBNmHZHQUAg5lk32PhyHWI1PPVAghG_Bel7Vg>
+    <xme:Px9vZeuoPxhZ3ok-vivHK_BSKpjPpWEB3H3KnipZsv-A-LA4xvbJHzK71WgZbELkv
+    LfrV8sKhSIKdBdSyU4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudejkedggeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:Px9vZUBm4v5Q7KA2WQXF-XiajbjsnXVqTq21-2-MlaAkifDTqyf91w>
+    <xmx:Px9vZWd1JvaRpUqFk01U31zGT8hK5cwc_w-5CO1Xs2BI5_uYCZXc4w>
+    <xmx:Px9vZTNLEiUB2a9YJPLTUaVVi1yA8GFJ9bz4xkqAkoe-d2tMhCPxaw>
+    <xmx:QR9vZQla8R70Vm7nNVfKk--auJl8wCkKe6hUzvCK5V4k3_Sw8810jQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7D516B60089; Tue,  5 Dec 2023 08:01:51 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1178-geeaf0069a7-fm-20231114.001-geeaf0069
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1770; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=8all5/IHFXIAXqeYzLVd/ErOOyU8CBOkibjzWo7s07Q=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlbxbmmD94bntqRzhdfRPibGRUIkQg4ZpUucl6c uy9sofkpFuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZW8W5gAKCRCPgPtYfRL+ TkOmB/9/EmP6fTqC77VRMQD4r69MCOPkQ6Gf5bN+WCbkAhMPeVSdIhHxWbT7JUdXHtWiE+tgK2g cVCfMPenzVd+W+p8iesX9IQqsogSys3xirj6eb5v2y8h/gyIpDS8ajg+hiifRTEOzvNPEFOhBJ0 T+oX6QJvXAuQ+K3aQe33V6rdSQxamaOlGmcFGTrCDSgV0lCbeqqBPD5uzVYsGQ3sZ82MeNOfZ4e Ycb/rKiqxKt7kaV8Ladpk++mZ97UPqZlZjm0Z4Hjtrt442WQRT2BJj8IIbbImf1IwFj8beIuaL0 JrTaavDxcQJBZ10cOCLCQViDgatGMdhyxsI4HtD+2SO4UIa+
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Message-Id: <d76fc75e-15c8-4177-a150-6f906233b82e@app.fastmail.com>
+In-Reply-To: 
+ <d6c242c0ab6e25e775284ec1d4b29a1ddd888af0.1701768028.git.ysato@users.sourceforge.jp>
+References: <cover.1701768028.git.ysato@users.sourceforge.jp>
+ <d6c242c0ab6e25e775284ec1d4b29a1ddd888af0.1701768028.git.ysato@users.sourceforge.jp>
+Date: Tue, 05 Dec 2023 14:01:31 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yoshinori Sato" <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Cc: "Damien Le Moal" <dlemoal@kernel.org>,
+ "Rob Herring" <robh+dt@kernel.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Dave Airlie" <airlied@gmail.com>,
+ "Daniel Vetter" <daniel@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ "Magnus Damm" <magnus.damm@gmail.com>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Rich Felker" <dalias@libc.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Lee Jones" <lee@kernel.org>, "Helge Deller" <deller@gmx.de>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Chris Morgan" <macromorgan@hotmail.com>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Randy Dunlap" <rdunlap@infradead.org>,
+ "Hyeonggon Yoo" <42.hyeyoo@gmail.com>,
+ "David Rientjes" <rientjes@google.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Baoquan He" <bhe@redhat.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Guenter Roeck" <linux@roeck-us.net>,
+ "Stephen Rothwell" <sfr@canb.auug.org.au>, guoren <guoren@kernel.org>,
+ "Javier Martinez Canillas" <javierm@redhat.com>,
+ "Azeem Shaikh" <azeemshaikh38@gmail.com>,
+ "Palmer Dabbelt" <palmer@rivosinc.com>, "Bin Meng" <bmeng@tinylab.org>,
+ "Max Filippov" <jcmvbkbc@gmail.com>, "Tom Rix" <trix@redhat.com>,
+ "Herve Codina" <herve.codina@bootlin.com>,
+ "Jacky Huang" <ychuang3@nuvoton.com>,
+ "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
+ "Jonathan Corbet" <corbet@lwn.net>,
+ "Biju Das" <biju.das.jz@bp.renesas.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ "Sam Ravnborg" <sam@ravnborg.org>,
+ "Michael Karcher" <kernel@mkarcher.dialup.fu-berlin.de>,
+ "Sergey Shtylyov" <s.shtylyov@omp.ru>,
+ "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v5 35/37] sh: RTS7751R2D Plus OF defconfig
+Content-Type: text/plain
 
-Hello,
+On Tue, Dec 5, 2023, at 10:45, Yoshinori Sato wrote:
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  arch/sh/configs/rts7751r2dplus-of_defconfig | 93 +++++++++++++++++++++
 
-this series converts all drivers below drivers/regulator to struct
-platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
-Provide a remove callback that returns no value") for an extended
-explanation and the eventual goal.
+This is very similar to the landisk config, so it may be
+easier to just have one of them that works for both, as well
+as future ones.
 
-All conversations are trivial, because all .remove() callbacks returned
-zero unconditionally.
+> +CONFIG_LOG_BUF_SHIFT=14
+> +CONFIG_NAMESPACES=y
+> +CONFIG_EXPERT=y
 
-There are no interdependencies between these patches, so they could be
-picked up individually. However I'd expect them to go in all together
-via Mark's regulator tree.
+You should not normally need to enable CONFIG_EXPERT in a
+defconfig. Is there any particular reason for this?
 
-Best regards
-Uwe
-
-Uwe Kleine-König (8):
-  regulator: arizona-ldo1: Convert to platform remove callback returning
-    void
-  regulator: bd9571mwv: Convert to platform remove callback returning
-    void
-  regulator: db8500-prcmu: Convert to platform remove callback returning
-    void
-  regulator: stm32-vrefbuf: Convert to platform remove callback
-    returning void
-  regulator: uniphier: Convert to platform remove callback returning
-    void
-  regulator: userspace-consumer: Convert to platform remove callback
-    returning void
-  regulator: virtual: Convert to platform remove callback returning void
-  regulator: wm8350: Convert to platform remove callback returning void
-
- drivers/regulator/arizona-ldo1.c        | 8 +++-----
- drivers/regulator/bd9571mwv-regulator.c | 5 ++---
- drivers/regulator/db8500-prcmu.c        | 6 ++----
- drivers/regulator/stm32-vrefbuf.c       | 6 ++----
- drivers/regulator/uniphier-regulator.c  | 6 ++----
- drivers/regulator/userspace-consumer.c  | 6 ++----
- drivers/regulator/virtual.c             | 6 ++----
- drivers/regulator/wm8350-regulator.c    | 6 ++----
- 8 files changed, 17 insertions(+), 32 deletions(-)
-
-
-base-commit: 0f5f12ac05f36f117e793656c3f560625e927f1b
--- 
-2.42.0
-
+    Arnd
