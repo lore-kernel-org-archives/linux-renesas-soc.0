@@ -1,168 +1,73 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 377A218D;
-	Wed,  6 Dec 2023 03:33:00 -0800 (PST)
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-77bcbc14899so447307685a.1;
-        Wed, 06 Dec 2023 03:33:00 -0800 (PST)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98DD31A5;
+	Wed,  6 Dec 2023 03:36:54 -0800 (PST)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-5d74186170fso42084847b3.3;
+        Wed, 06 Dec 2023 03:36:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701862379; x=1702467179;
+        d=1e100.net; s=20230601; t=1701862613; x=1702467413;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b6xQ+cbLe1qqWlxYHut3u2iz76MLl7b5kqAg1yUNs7s=;
-        b=UUSm8PtknUvOz0FJqSLyThRzn4GolchngZXhPKE+rOwwXY+EIPMLgfYIlsJc9nqAAT
-         2ZY2+dB3lLbZndsE4wLqnvKfshUxiL7GszLJ5ROGwizQ6FjxXCIqChzPAuA6/bOMlmvG
-         TG+TcVjPc4UUpsP+szHlojPsozJk17R4OGZNHIVdQCcCwlL8POM9hdPJrSVQMyBlk9xn
-         eUK9iUQdBei13fW7jGZPe6l63LrWog1VUtTm2UUqL/78M8GHxh/EdEHi6UTzSfgrtfDT
-         iPgOBz3+xXIaPDHYS5QKodJ4/KIIbha5zBLIoHlz++H3wLaVx7TG2HDKf0c28g+Ozgvx
-         oYeQ==
-X-Gm-Message-State: AOJu0YwC4+IpOiObq0Ga/z+UsEYmBLsFQ32ZM07L7dzEqSfFroqJ3zzt
-	JOedO28G1ePvMITAw3zJErFCZOXxaHAEIw==
-X-Google-Smtp-Source: AGHT+IGr2lrecMk+lIhfSJy8RHAvh+9FDs6uD0EReZQDutkuAEsLnmMLIuxVOa/PEgnprIyWpFFGjQ==
-X-Received: by 2002:a05:620a:2287:b0:77f:389:21a8 with SMTP id o7-20020a05620a228700b0077f038921a8mr680998qkh.126.1701862378973;
-        Wed, 06 Dec 2023 03:32:58 -0800 (PST)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
-        by smtp.gmail.com with ESMTPSA id j5-20020a05620a288500b0077d8526bcdesm5798759qkp.86.2023.12.06.03.32.58
+        bh=Q7uKADVFo67bwK9oLvgec0xCPe6KYQSC4PqeYTk7K8M=;
+        b=wCd7RJ4chb2r3uf8Qosbe1Fmf4ZKLgAjxaa6mPUk+L8lXAy5heN3NmUZpeGpJ1vjIe
+         shTz7A944KGjzQ0zkahp//hmyRir6iRYz/+4PV9wSAxxfXgwY66AT39BLT9t1cE1593S
+         1Y3ZLzd9UnYhfhX2hGpmGYnuJnbRZwKgd5tclPlr+vKlFe0CkplMNcJ0qn07RMz8pcZg
+         B8hRk3GA3nCv+U2/u/Z6ya/WxJHXFiumY5bIECHvLFiZunvjl14Lc6ii2/Vk2U4HaZjV
+         y1ALkTFpkfAbKbiVBr5NRESLn3uHDOYc//opzffrbRDKoTUh4xTzBwX7NSHRVt+PR/XS
+         WRIw==
+X-Gm-Message-State: AOJu0YzwbN5hcFk+p7+0QOgMJ+o3VcQqP/y2TxlpLFhZTJcbD8GP+jpK
+	Wkm3Hwz3SUMs0IGNW0x0LzSXIdEz7nMq5A==
+X-Google-Smtp-Source: AGHT+IFcRlZyOhU4rv85Tz0KaWEXBAmvUQaQyMJXzGN7o+d/zc8yq6Lrq6M8ZxDlN/A44bkK37MglA==
+X-Received: by 2002:a81:af61:0:b0:5d8:96c:690d with SMTP id x33-20020a81af61000000b005d8096c690dmr575820ywj.7.1701862613612;
+        Wed, 06 Dec 2023 03:36:53 -0800 (PST)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id r20-20020a0de814000000b005d39c874019sm4620372ywe.66.2023.12.06.03.36.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Dec 2023 03:32:58 -0800 (PST)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-77f347b0299so11531285a.3;
-        Wed, 06 Dec 2023 03:32:58 -0800 (PST)
-X-Received: by 2002:a05:690c:3604:b0:5d7:9b1c:a779 with SMTP id
- ft4-20020a05690c360400b005d79b1ca779mr596351ywb.9.1701862046919; Wed, 06 Dec
- 2023 03:27:26 -0800 (PST)
+        Wed, 06 Dec 2023 03:36:51 -0800 (PST)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5d96efd26f8so24131207b3.2;
+        Wed, 06 Dec 2023 03:36:49 -0800 (PST)
+X-Received: by 2002:a81:a103:0:b0:5d1:430e:4c2f with SMTP id
+ y3-20020a81a103000000b005d1430e4c2fmr594560ywg.42.1701862609581; Wed, 06 Dec
+ 2023 03:36:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
- <20231120070024.4079344-12-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUbKe=yiXWNmk5BJFLtF2psx9khiDRGasT9WsnHz4RWsg@mail.gmail.com>
- <CAMuHMdXwSo1L9UuFg9RL0TLL_xzVt2r6QEFc0gtPoydpr4FmSQ@mail.gmail.com> <248d24a9-589e-4b92-94b6-98504f78d7b9@tuxon.dev>
-In-Reply-To: <248d24a9-589e-4b92-94b6-98504f78d7b9@tuxon.dev>
+References: <20231120084606.4083194-1-claudiu.beznea.uj@bp.renesas.com> <20231120084606.4083194-11-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20231120084606.4083194-11-claudiu.beznea.uj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Dec 2023 12:27:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXo9Pj1NJ+XK-XKj18ynZ3gOxrXQpjMsTjfziTAyjYMdA@mail.gmail.com>
-Message-ID: <CAMuHMdXo9Pj1NJ+XK-XKj18ynZ3gOxrXQpjMsTjfziTAyjYMdA@mail.gmail.com>
-Subject: Re: [PATCH 11/14] arm64: renesas: rzg3s-smarc-som: Invert the logic
- for SW_SD2_EN macro
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Date: Wed, 6 Dec 2023 12:36:38 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUe4xNMOqMkRhnD0Ciq19uWoFRVbg0YPzB6-Y2gh6m-1g@mail.gmail.com>
+Message-ID: <CAMuHMdUe4xNMOqMkRhnD0Ciq19uWoFRVbg0YPzB6-Y2gh6m-1g@mail.gmail.com>
+Subject: Re: [PATCH 10/13] net: ravb: Switch to SYSTEM_SLEEP_PM_OPS()/RUNTIME_PM_OPS()
+ and pm_ptr()
+To: Claudiu <claudiu.beznea@tuxon.dev>
 Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux@armlinux.org.uk, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de, 
-	arnd@arndb.de, m.szyprowski@samsung.com, alexandre.torgue@foss.st.com, 
-	afd@ti.com, broonie@kernel.org, alexander.stein@ew.tq-group.com, 
-	eugen.hristev@collabora.com, sergei.shtylyov@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+	kuba@kernel.org, pabeni@redhat.com, p.zabel@pengutronix.de, 
+	yoshihiro.shimoda.uh@renesas.com, wsa+renesas@sang-engineering.com, 
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	sergei.shtylyov@cogentembedded.com, mitsuhiro.kimura.kc@renesas.com, 
+	masaru.nagai.vx@renesas.com, netdev@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
-
-On Wed, Dec 6, 2023 at 12:12=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> On 06.12.2023 12:56, Geert Uytterhoeven wrote:
-> > On Wed, Dec 6, 2023 at 11:33=E2=80=AFAM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> >> On Mon, Nov 20, 2023 at 8:03=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.=
-dev> wrote:
-> >>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>
-> >>> The intention of SW_SD2_EN macro was to reflect the state of SW_CONFI=
-G3
-> >>> switch available on RZ/G3S Smarc Module. According to documentation S=
-D2
-> >>> is enabled when switch is in OFF state. For this, changed the logic o=
-f
-> >>> marco to map value 0 to switch's OFF state and value 1 to switch's ON
-> >>> state. Along with this update the description for each state for bett=
-er
-> >>> understanding.
-> >>>
-> >>> The value of SW_SD2_EN macro was not changed in file because, accordi=
-ng to
-> >>> documentation, the default state for this switch is ON.
-> >>>
-> >>> Fixes: adb4f0c5699c ("arm64: dts: renesas: Add initial support for RZ=
-/G3S SMARC SoM")
-> >>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Thanks for your patch!
-> >>
-> >>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-> >>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-> >>> @@ -14,8 +14,8 @@
-> >>>   *     0 - SD0 is connected to eMMC
-> >>>   *     1 - SD0 is connected to uSD0 card
-> >>>   * @SW_SD2_EN:
-> >>> - *     0 - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
-> >>> - *     1 - SD2 is connected to SoC
-> >>> + *     0 - (switch OFF) SD2 is connected to SoC
-> >>> + *     1 - (switch ON)  SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
-> >>
-> >> I think this is still confusing: SW_SD2_EN refers to an active-low sig=
-nal
-> >> (SW_SD2_EN#) in the schematics.
-> >
-> > OMG, while the signal is called "SW_SD2_EN#" in the schematics, it is
-> > _not_ active-low!
-> > SW_D2_EN# drives a STG3692 quad SPDT switch, and SD2 is enabled
-> > if SW_D2_EN# is high...
-> >
-> > The RZ/G3S SMARC Module User Manual says:
-> >
-> > Signal SW_SD2_EN ON: SD2 is disabled.
-> > Signal SW_SD2_EN OFF: SD2 is enabled.
+On Thu, Nov 23, 2023 at 7:15=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> I followed the description in this manual, chapter 2.1.1 SW_CONFIG. The
-> idea was that these macros to correspond to individual switches, to match
-> that table (describing switches position) with this code as the user in t=
-he
-> end sets those switches described in table at 2.1.1 w/o necessary going
-> deep into schematic (at least in the beginning when trying different
-> functionalities).
+> SET_SYSTEM_SLEEP_PM_OPS() and SET_RUNTIME_PM_OPS() are deprecated now
+> and require __maybe_unused protection against unused function warnings.
+> The usage of pm_ptr() and SYSTEM_SLEEP_PM_OPS()/RUNTIME_PM_OPS() allows
+> the compiler to see the functions, thus suppressing the warning. Thus
+> drop the __maybe_unused markings.
 >
-> Do you think it would be better if we will have these macros named
-> SWCONFIGX, X in {1, 2, 3, 4, 5, 6} ?
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Perhaps. A disadvantage would be that SW_CONFIG%u doesn't
-give any indication about its purpose...
-
-> > So whatever we do, something will look odd :-(
-> >
-> >> Before, SW_SD2_EN used assertion-logic (1 is enabled), and didn't
-> >> match the physical signal level.
-> >> After your patch, SW_SD2_EN matches the active-low physical level, but
-> >> this is not reflected in the name...
-> >>
-> >>>   */
-> >>>  #define SW_SD0_DEV_SEL 1
-> >>>  #define SW_SD2_EN      1
-> >>> @@ -25,7 +25,7 @@ / {
-> >>>
-> >>>         aliases {
-> >>>                 mmc0 =3D &sdhi0;
-> >>> -#if SW_SD2_EN
-> >>> +#if !SW_SD2_EN
-> >>
-> >> ... so this condition looks really weird.
-> >
-> > Still, I think the original looks nicer here.
-> >
-> > So I suggest to keep the original logic, but clarify the position of
-> > the switch.
-> > Does that make sense?
->
-> It will still be odd, AFAICT, as this way as we will map 0 to ON and 1 to
-> OFF... A bit counterintuitive.
-
-Most switches on board pull signals LOW when the switch is ON...
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
