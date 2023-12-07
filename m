@@ -1,13 +1,13 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 218ACDD;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7A5C3D73;
 	Thu,  7 Dec 2023 00:13:00 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="6.04,256,1695654000"; 
-   d="scan'208";a="189512043"
+   d="scan'208";a="189512028"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Dec 2023 17:12:54 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 07 Dec 2023 17:12:53 +0900
 Received: from localhost.localdomain (unknown [10.166.13.99])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 19C0340108E9;
-	Thu,  7 Dec 2023 17:12:54 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 531AD40108EC;
+	Thu,  7 Dec 2023 17:12:53 +0900 (JST)
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: s.shtylyov@omp.ru,
 	davem@davemloft.net,
@@ -16,10 +16,11 @@ To: s.shtylyov@omp.ru,
 	pabeni@redhat.com
 Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v4 9/9] net: rswitch: Allow jumbo frames
-Date: Thu,  7 Dec 2023 17:12:46 +0900
-Message-Id: <20231207081246.1557582-10-yoshihiro.shimoda.uh@renesas.com>
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH net-next v4 1/9] net: rswitch: Drop unused argument/return value
+Date: Thu,  7 Dec 2023 17:12:38 +0900
+Message-Id: <20231207081246.1557582-2-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231207081246.1557582-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20231207081246.1557582-1-yoshihiro.shimoda.uh@renesas.com>
@@ -31,43 +32,66 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow jumbo frames by changing maximum MTU size and number of RX queues.
+Drop unused argument and return value of rswitch_tx_free() to
+simplify the code.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 2 ++
- drivers/net/ethernet/renesas/rswitch.h | 3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/rswitch.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index d43f705f410b..dcab638c57fe 100644
+index 89e7a6551c64..8c03c0e18003 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -1883,6 +1883,8 @@ static int rswitch_device_alloc(struct rswitch_private *priv, unsigned int index
- 	snprintf(ndev->name, IFNAMSIZ, "tsn%d", index);
- 	ndev->netdev_ops = &rswitch_netdev_ops;
- 	ndev->ethtool_ops = &rswitch_ethtool_ops;
-+	ndev->max_mtu = RSWITCH_MAX_MTU;
-+	ndev->min_mtu = ETH_MIN_MTU;
+@@ -761,20 +761,19 @@ static bool rswitch_rx(struct net_device *ndev, int *quota)
+ 	return 0;
+ }
  
- 	netif_napi_add(ndev, &rdev->napi, rswitch_poll);
+-static int rswitch_tx_free(struct net_device *ndev, bool free_txed_only)
++static void rswitch_tx_free(struct net_device *ndev)
+ {
+ 	struct rswitch_device *rdev = netdev_priv(ndev);
+ 	struct rswitch_gwca_queue *gq = rdev->tx_queue;
+ 	struct rswitch_ext_desc *desc;
+ 	dma_addr_t dma_addr;
+ 	struct sk_buff *skb;
+-	int free_num = 0;
+ 	int size;
  
-diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 4252677e2a55..72e3ff596d31 100644
---- a/drivers/net/ethernet/renesas/rswitch.h
-+++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -26,9 +26,10 @@
- 		else
+ 	for (; rswitch_get_num_cur_queues(gq) > 0;
+ 	     gq->dirty = rswitch_next_queue_index(gq, false, 1)) {
+ 		desc = &gq->tx_ring[gq->dirty];
+-		if (free_txed_only && (desc->desc.die_dt & DT_MASK) != DT_FEMPTY)
++		if ((desc->desc.die_dt & DT_MASK) != DT_FEMPTY)
+ 			break;
  
- #define TX_RING_SIZE		1024
--#define RX_RING_SIZE		1024
-+#define RX_RING_SIZE		4096
- #define TS_RING_SIZE		(TX_RING_SIZE * RSWITCH_NUM_PORTS)
+ 		dma_rmb();
+@@ -786,14 +785,11 @@ static int rswitch_tx_free(struct net_device *ndev, bool free_txed_only)
+ 					 size, DMA_TO_DEVICE);
+ 			dev_kfree_skb_any(gq->skbs[gq->dirty]);
+ 			gq->skbs[gq->dirty] = NULL;
+-			free_num++;
+ 		}
+ 		desc->desc.die_dt = DT_EEMPTY;
+ 		rdev->ndev->stats.tx_packets++;
+ 		rdev->ndev->stats.tx_bytes += size;
+ 	}
+-
+-	return free_num;
+ }
  
-+#define RSWITCH_MAX_MTU		9600
- #define RSWITCH_HEADROOM	(NET_SKB_PAD + NET_IP_ALIGN)
- #define RSWITCH_DESC_BUF_SIZE	2048
- #define RSWITCH_TAILROOM	SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
+ static int rswitch_poll(struct napi_struct *napi, int budget)
+@@ -808,7 +804,7 @@ static int rswitch_poll(struct napi_struct *napi, int budget)
+ 	priv = rdev->priv;
+ 
+ retry:
+-	rswitch_tx_free(ndev, true);
++	rswitch_tx_free(ndev);
+ 
+ 	if (rswitch_rx(ndev, &quota))
+ 		goto out;
 -- 
 2.34.1
 
