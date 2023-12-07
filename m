@@ -1,12 +1,12 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id CA4CDB2;
-	Thu,  7 Dec 2023 00:13:01 -0800 (PST)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5D926D59;
+	Thu,  7 Dec 2023 00:13:02 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="6.04,256,1695654000"; 
-   d="scan'208";a="189512036"
+   d="scan'208";a="185639164"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Dec 2023 17:12:53 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 07 Dec 2023 17:12:53 +0900
 Received: from localhost.localdomain (unknown [10.166.13.99])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C9DA340108EC;
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9E29340108EC;
 	Thu,  7 Dec 2023 17:12:53 +0900 (JST)
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: s.shtylyov@omp.ru,
@@ -17,9 +17,9 @@ To: s.shtylyov@omp.ru,
 Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v4 6/9] net: rswitch: Set GWMDNC register
-Date: Thu,  7 Dec 2023 17:12:43 +0900
-Message-Id: <20231207081246.1557582-7-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next v4 4/9] net: rswitch: Add unmap_addrs instead of dma address in each desc
+Date: Thu,  7 Dec 2023 17:12:41 +0900
+Message-Id: <20231207081246.1557582-5-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231207081246.1557582-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20231207081246.1557582-1-yoshihiro.shimoda.uh@renesas.com>
@@ -31,43 +31,95 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To support jumbo frames, set GWMDNC register with acceptable maximum
-values for TX and RX.
+If the driver would like to transmit a jumbo frame like 2KiB or more,
+it should be split into multiple queues. In the near future, to support
+this, add unmap_addrs array to unmap dma mapping address instead of dma
+address in each TX descriptor because the descriptors may not have
+the top dma address.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 2 ++
- drivers/net/ethernet/renesas/rswitch.h | 4 ++++
- 2 files changed, 6 insertions(+)
+ drivers/net/ethernet/renesas/rswitch.c | 19 +++++++++++--------
+ drivers/net/ethernet/renesas/rswitch.h |  1 +
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index eda5ea56674c..6bd76a88bd40 100644
+index c6a96abe9dba..c2125fefc8c5 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -668,6 +668,8 @@ static int rswitch_gwca_hw_init(struct rswitch_private *priv)
- 	iowrite32(upper_32_bits(priv->gwca.linkfix_table_dma), priv->addr + GWDCBAC0);
- 	iowrite32(lower_32_bits(priv->gwca.ts_queue.ring_dma), priv->addr + GWTDCAC10);
- 	iowrite32(upper_32_bits(priv->gwca.ts_queue.ring_dma), priv->addr + GWTDCAC00);
-+	iowrite32(GWMDNC_TSDMN(1) | GWMDNC_TXDMN(0x1e) | GWMDNC_RXDMN(0x1f),
-+		  priv->addr + GWMDNC);
- 	iowrite32(GWCA_TS_IRQ_BIT, priv->addr + GWTSDCC0);
+@@ -284,6 +284,8 @@ static void rswitch_gwca_queue_free(struct net_device *ndev,
+ 		gq->tx_ring = NULL;
+ 		kfree(gq->skbs);
+ 		gq->skbs = NULL;
++		kfree(gq->unmap_addrs);
++		gq->unmap_addrs = NULL;
+ 	}
+ }
  
- 	iowrite32(GWTPC_PPPL(GWCA_IPV_NUM), priv->addr + GWTPC0);
+@@ -322,6 +324,9 @@ static int rswitch_gwca_queue_alloc(struct net_device *ndev,
+ 		gq->skbs = kcalloc(gq->ring_size, sizeof(*gq->skbs), GFP_KERNEL);
+ 		if (!gq->skbs)
+ 			return -ENOMEM;
++		gq->unmap_addrs = kcalloc(gq->ring_size, sizeof(*gq->unmap_addrs), GFP_KERNEL);
++		if (!gq->unmap_addrs)
++			goto out;
+ 		gq->tx_ring = dma_alloc_coherent(ndev->dev.parent,
+ 						 sizeof(struct rswitch_ext_desc) *
+ 						 (gq->ring_size + 1), &gq->ring_dma, GFP_KERNEL);
+@@ -787,9 +792,7 @@ static void rswitch_tx_free(struct net_device *ndev)
+ 	struct rswitch_device *rdev = netdev_priv(ndev);
+ 	struct rswitch_gwca_queue *gq = rdev->tx_queue;
+ 	struct rswitch_ext_desc *desc;
+-	dma_addr_t dma_addr;
+ 	struct sk_buff *skb;
+-	unsigned int size;
+ 
+ 	for (; rswitch_get_num_cur_queues(gq) > 0;
+ 	     gq->dirty = rswitch_next_queue_index(gq, false, 1)) {
+@@ -798,18 +801,17 @@ static void rswitch_tx_free(struct net_device *ndev)
+ 			break;
+ 
+ 		dma_rmb();
+-		size = le16_to_cpu(desc->desc.info_ds) & TX_DS;
+ 		skb = gq->skbs[gq->dirty];
+ 		if (skb) {
+-			dma_addr = rswitch_desc_get_dptr(&desc->desc);
+-			dma_unmap_single(ndev->dev.parent, dma_addr,
+-					 size, DMA_TO_DEVICE);
++			dma_unmap_single(ndev->dev.parent,
++					 gq->unmap_addrs[gq->dirty],
++					 skb->len, DMA_TO_DEVICE);
+ 			dev_kfree_skb_any(gq->skbs[gq->dirty]);
+ 			gq->skbs[gq->dirty] = NULL;
++			rdev->ndev->stats.tx_packets++;
++			rdev->ndev->stats.tx_bytes += skb->len;
+ 		}
+ 		desc->desc.die_dt = DT_EEMPTY;
+-		rdev->ndev->stats.tx_packets++;
+-		rdev->ndev->stats.tx_bytes += size;
+ 	}
+ }
+ 
+@@ -1538,6 +1540,7 @@ static netdev_tx_t rswitch_start_xmit(struct sk_buff *skb, struct net_device *nd
+ 		goto err_kfree;
+ 
+ 	gq->skbs[gq->cur] = skb;
++	gq->unmap_addrs[gq->cur] = dma_addr;
+ 	desc = &gq->tx_ring[gq->cur];
+ 	rswitch_desc_set_dptr(&desc->desc, dma_addr);
+ 	desc->desc.info_ds = cpu_to_le16(skb->len);
 diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 2ac9a86b6238..17e617ec4187 100644
+index a407d85dcfad..2ac9a86b6238 100644
 --- a/drivers/net/ethernet/renesas/rswitch.h
 +++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -773,6 +773,10 @@ enum rswitch_gwca_mode {
- #define GWARIRM_ARIOG		BIT(0)
- #define GWARIRM_ARR		BIT(1)
- 
-+#define GWMDNC_TSDMN(num)	(((num) << 16) & GENMASK(17, 16))
-+#define GWMDNC_TXDMN(num)	(((num) << 8) & GENMASK(12, 8))
-+#define GWMDNC_RXDMN(num)	((num) & GENMASK(4, 0))
-+
- #define GWDCC_BALR		BIT(24)
- #define GWDCC_DCP_MASK		GENMASK(18, 16)
- #define GWDCC_DCP(prio)		FIELD_PREP(GWDCC_DCP_MASK, (prio))
+@@ -956,6 +956,7 @@ struct rswitch_gwca_queue {
+ 		/* For TX */
+ 		struct {
+ 			struct sk_buff **skbs;
++			dma_addr_t *unmap_addrs;
+ 		};
+ 		/* For RX */
+ 		struct {
 -- 
 2.34.1
 
