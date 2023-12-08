@@ -1,13 +1,13 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id E79511719;
-	Thu,  7 Dec 2023 20:10:40 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id C3E5D1723;
+	Thu,  7 Dec 2023 20:10:42 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="6.04,259,1695654000"; 
-   d="scan'208";a="185740757"
+   d="scan'208";a="185740765"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Dec 2023 13:10:37 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 08 Dec 2023 13:10:38 +0900
 Received: from localhost.localdomain (unknown [10.166.13.99])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CB32B415E8E5;
-	Fri,  8 Dec 2023 13:10:37 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2F2A8415E8D6;
+	Fri,  8 Dec 2023 13:10:38 +0900 (JST)
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: s.shtylyov@omp.ru,
 	davem@davemloft.net,
@@ -17,9 +17,9 @@ To: s.shtylyov@omp.ru,
 Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH net-next v5 5/9] net: rswitch: Add a setting ext descriptor function
-Date: Fri,  8 Dec 2023 13:10:26 +0900
-Message-Id: <20231208041030.2497657-6-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH net-next v5 9/9] net: rswitch: Allow jumbo frames
+Date: Fri,  8 Dec 2023 13:10:30 +0900
+Message-Id: <20231208041030.2497657-10-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231208041030.2497657-1-yoshihiro.shimoda.uh@renesas.com>
 References: <20231208041030.2497657-1-yoshihiro.shimoda.uh@renesas.com>
@@ -31,107 +31,43 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the driver would like to transmit a jumbo frame like 2KiB or more,
-it should be split into multiple queues. In the near future, to support
-this, add a setting ext descriptor function to improve code readability.
+Allow jumbo frames by changing maximum MTU size and number of RX queues.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 73 +++++++++++++++++---------
- 1 file changed, 47 insertions(+), 26 deletions(-)
+ drivers/net/ethernet/renesas/rswitch.c | 2 ++
+ drivers/net/ethernet/renesas/rswitch.h | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index c2125fefc8c5..eda5ea56674c 100644
+index d43f705f410b..dcab638c57fe 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -1519,6 +1519,51 @@ static int rswitch_stop(struct net_device *ndev)
- 	return 0;
- };
+@@ -1883,6 +1883,8 @@ static int rswitch_device_alloc(struct rswitch_private *priv, unsigned int index
+ 	snprintf(ndev->name, IFNAMSIZ, "tsn%d", index);
+ 	ndev->netdev_ops = &rswitch_netdev_ops;
+ 	ndev->ethtool_ops = &rswitch_ethtool_ops;
++	ndev->max_mtu = RSWITCH_MAX_MTU;
++	ndev->min_mtu = ETH_MIN_MTU;
  
-+static bool rswitch_ext_desc_set_info1(struct rswitch_device *rdev,
-+				       struct sk_buff *skb,
-+				       struct rswitch_ext_desc *desc)
-+{
-+	desc->info1 = cpu_to_le64(INFO1_DV(BIT(rdev->etha->index)) |
-+				  INFO1_IPV(GWCA_IPV_NUM) | INFO1_FMT);
-+	if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
-+		struct rswitch_gwca_ts_info *ts_info;
-+
-+		ts_info = kzalloc(sizeof(*ts_info), GFP_ATOMIC);
-+		if (!ts_info)
-+			return false;
-+
-+		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-+		rdev->ts_tag++;
-+		desc->info1 |= cpu_to_le64(INFO1_TSUN(rdev->ts_tag) | INFO1_TXC);
-+
-+		ts_info->skb = skb_get(skb);
-+		ts_info->port = rdev->port;
-+		ts_info->tag = rdev->ts_tag;
-+		list_add_tail(&ts_info->list, &rdev->priv->gwca.ts_info_list);
-+
-+		skb_tx_timestamp(skb);
-+	}
-+
-+	return true;
-+}
-+
-+static bool rswitch_ext_desc_set(struct rswitch_device *rdev,
-+				 struct sk_buff *skb,
-+				 struct rswitch_ext_desc *desc,
-+				 dma_addr_t dma_addr, u16 len, u8 die_dt)
-+{
-+	rswitch_desc_set_dptr(&desc->desc, dma_addr);
-+	desc->desc.info_ds = cpu_to_le16(len);
-+	if (!rswitch_ext_desc_set_info1(rdev, skb, desc))
-+		return false;
-+
-+	dma_wmb();
-+
-+	desc->desc.die_dt = die_dt;
-+
-+	return true;
-+}
-+
- static netdev_tx_t rswitch_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct rswitch_device *rdev = netdev_priv(ndev);
-@@ -1542,33 +1587,9 @@ static netdev_tx_t rswitch_start_xmit(struct sk_buff *skb, struct net_device *nd
- 	gq->skbs[gq->cur] = skb;
- 	gq->unmap_addrs[gq->cur] = dma_addr;
- 	desc = &gq->tx_ring[gq->cur];
--	rswitch_desc_set_dptr(&desc->desc, dma_addr);
--	desc->desc.info_ds = cpu_to_le16(skb->len);
--
--	desc->info1 = cpu_to_le64(INFO1_DV(BIT(rdev->etha->index)) |
--				  INFO1_IPV(GWCA_IPV_NUM) | INFO1_FMT);
--	if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
--		struct rswitch_gwca_ts_info *ts_info;
--
--		ts_info = kzalloc(sizeof(*ts_info), GFP_ATOMIC);
--		if (!ts_info)
--			goto err_unmap;
--
--		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
--		rdev->ts_tag++;
--		desc->info1 |= cpu_to_le64(INFO1_TSUN(rdev->ts_tag) | INFO1_TXC);
--
--		ts_info->skb = skb_get(skb);
--		ts_info->port = rdev->port;
--		ts_info->tag = rdev->ts_tag;
--		list_add_tail(&ts_info->list, &rdev->priv->gwca.ts_info_list);
--
--		skb_tx_timestamp(skb);
--	}
--
--	dma_wmb();
-+	if (!rswitch_ext_desc_set(rdev, skb, desc, dma_addr, skb->len, DT_FSINGLE | DIE))
-+		goto err_unmap;
+ 	netif_napi_add(ndev, &rdev->napi, rswitch_poll);
  
--	desc->desc.die_dt = DT_FSINGLE | DIE;
- 	wmb();	/* gq->cur must be incremented after die_dt was set */
+diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
+index 4252677e2a55..72e3ff596d31 100644
+--- a/drivers/net/ethernet/renesas/rswitch.h
++++ b/drivers/net/ethernet/renesas/rswitch.h
+@@ -26,9 +26,10 @@
+ 		else
  
- 	gq->cur = rswitch_next_queue_index(gq, true, 1);
+ #define TX_RING_SIZE		1024
+-#define RX_RING_SIZE		1024
++#define RX_RING_SIZE		4096
+ #define TS_RING_SIZE		(TX_RING_SIZE * RSWITCH_NUM_PORTS)
+ 
++#define RSWITCH_MAX_MTU		9600
+ #define RSWITCH_HEADROOM	(NET_SKB_PAD + NET_IP_ALIGN)
+ #define RSWITCH_DESC_BUF_SIZE	2048
+ #define RSWITCH_TAILROOM	SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
 -- 
 2.25.1
 
