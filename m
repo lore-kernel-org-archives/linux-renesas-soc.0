@@ -1,93 +1,70 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 121F0B8;
-	Mon, 11 Dec 2023 04:59:57 -0800 (PST)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dbc1efc23f7so3431329276.2;
-        Mon, 11 Dec 2023 04:59:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702299596; x=1702904396;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0C2ieL1JqrNcU7KA76mZIHd+67WjieYCcgN34Ch4tRg=;
-        b=FH4rOogtiFI21jaPdLT7B+4y71ezdjgwwk6omSwfJWJYHUUqjpI00R8ga8rlTTJiCt
-         4j+qHmPK/W1NOAaTlWci0Kw+3VeEJMe1BF4xMxTtq4Deqr9LLE7cp9ud/eeFGOW5xBFe
-         Z6BHYooU+Bf4PPfYUokFcmORzKmOeEH/CuGfsWJowQg5UNpGnxnQgSmrnXkIhiahPi4C
-         YuWkrLDEN5BGXcSrwHsRiJUUwRP1V47f39Iqaf3UGojjrnabsMXSR/hu9Vh6GOC9Jq9a
-         N/cye9PzwsHEv7lwh/qQfQqg7Dul4XcTvgILHQl5njn3TwYXKzuwLJCpBJdFlHZdQvHV
-         nvfQ==
-X-Gm-Message-State: AOJu0YwkEuJCOerSlXEdRoWu04J79IISLX8H1/k0T/+jWf8BBo/T2wgK
-	WJbnVGHTm5S0SQ3ZsPyT0nt4wKAlZY5scA==
-X-Google-Smtp-Source: AGHT+IGcGTlztEh1npgsyKNR9Ju4JSAHZ7JnUI0dtAnaXLlJPaoNk6nJhg9yKysPNGVVuSRJD9Fuew==
-X-Received: by 2002:a05:6902:150:b0:db9:6ad7:1abb with SMTP id p16-20020a056902015000b00db96ad71abbmr2408972ybh.12.1702299596074;
-        Mon, 11 Dec 2023 04:59:56 -0800 (PST)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id a12-20020a25938c000000b00d9ac1f0e23csm2469641ybm.56.2023.12.11.04.59.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Dec 2023 04:59:55 -0800 (PST)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-da077db5145so3458878276.0;
-        Mon, 11 Dec 2023 04:59:55 -0800 (PST)
-X-Received: by 2002:a25:6b4d:0:b0:db4:25b7:5f8b with SMTP id
- o13-20020a256b4d000000b00db425b75f8bmr2070527ybm.63.1702299595000; Mon, 11
- Dec 2023 04:59:55 -0800 (PST)
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C4226B1
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Dec 2023 08:01:32 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:dadd:5da9:a38f:8d88])
+	by andre.telenet-ops.be with bizsmtp
+	id M41S2B00E3oFjQr0141SM2; Mon, 11 Dec 2023 17:01:26 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rCiiM-00BkB5-Om;
+	Mon, 11 Dec 2023 17:01:26 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rCiik-00BmVr-Er;
+	Mon, 11 Dec 2023 17:01:26 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/7] dt-bindings: soc: renesas: Document R-Car V4H White Hawk Single
+Date: Mon, 11 Dec 2023 17:01:16 +0100
+Message-Id: <d16b9cc3e8a6ee6f9ee95961671a2d27e585c0aa.1702309604.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1702309604.git.geert+renesas@glider.be>
+References: <cover.1702309604.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Dec 2023 13:59:43 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUqbbjRpkStD7JGQ0r9hfR-sgx23FKGDASofX87AzaEcA@mail.gmail.com>
-Message-ID: <CAMuHMdUqbbjRpkStD7JGQ0r9hfR-sgx23FKGDASofX87AzaEcA@mail.gmail.com>
-Subject: dt-validate crash on <foo>-gpio
-To: Rob Herring <robh+dt@kernel.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Rob,
+Document the compatible values for the Renesas R-Car V4H ES2.0
+(R8A779G2) SoC and the Renesas White Hawk Single board.
+The former is an updated version of R-Car V4H (R8A779G0).
+The latter is a single-board integration of the Renesas White Hawk CPU
+and Breakout board stack.
 
-When running "make dtbs_check" on a DTB in the Renesas BSP, I ran into
-the following backtrace:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Or just drop the "-single" suffix?  The original board stack has a
+"-breakout" suffix.
+The DTBs are called r8a779g0-white-hawk.dtb vs.
+r8a779g2-white-hawk-single.dtb, and I think we better don't rename the
+former.
+---
+ Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-    Traceback (most recent call last):
-      File "dt-validate", line 8, in <module>
-        sys.exit(main())
-      File "dt-schema/dtschema/dtb_validate.py", line 144, in main
-        sg.check_dtb(filename)
-      File "dt-schema/dtschema/dtb_validate.py", line 87, in check_dtb
-        dt = self.validator.decode_dtb(f.read())
-      File "dt-schema/dtschema/validator.py", line 491, in decode_dtb
-        return [dtschema.dtb.fdt_unflatten(self, dtb)]
-      File "dt-schema/dtschema/dtb.py", line 483, in fdt_unflatten
-        fixup_gpios(dt)
-      File "dt-schema/dtschema/dtb.py", line 373, in fixup_gpios
-        fixup_gpios(v)
-      File "dt-schema/dtschema/dtb.py", line 373, in fixup_gpios
-        fixup_gpios(v)
-      File "dt-schema/dtschema/dtb.py", line 373, in fixup_gpios
-        fixup_gpios(v)
-      File "dt-schema/dtschema/dtb.py", line 378, in fixup_gpios
-        val = v[0]
-    TypeError: 'bool' object is not subscriptable
-
-Turns out the issue is triggered by the presence of a (non-documented)
-boolean "no-use-gpio" property.
-
-Apparently anything that matches "*-gpio" is treated as having a list of
-GPIO specifiers, causing a crash if that does not turn out to be true...
-While the introduction of a "no-use-gpio" boolean property might not
-survive public review, it would be good if the tooling wouldn't crash
-on it.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 1bb5888988119455..cc0d699f660f3ca1 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -376,6 +376,13 @@ properties:
+               - renesas,white-hawk-cpu # White Hawk CPU board (RTP8A779G0ASKB0FC0SA000)
+           - const: renesas,r8a779g0
+ 
++      - description: R-Car V4H (R8A779G2)
++        items:
++          - enum:
++              - renesas,white-hawk-single # White Hawk Single board (RTP8A779G2ASKB0F10SA001)
++          - const: renesas,r8a779g2
++          - const: renesas,r8a779g0
++
+       - items:
+           - enum:
+               - renesas,white-hawk-breakout # White Hawk BreakOut board (RTP8A779G0ASKB0SB0SA000)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
