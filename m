@@ -1,27 +1,26 @@
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25BFE26BC
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Dec 2023 08:01:33 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:dadd:5da9:a38f:8d88])
-	by laurent.telenet-ops.be with bizsmtp
-	id M41S2B00f3oFjQr0141SXh; Mon, 11 Dec 2023 17:01:26 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rCiiM-00BkBN-RY;
-	Mon, 11 Dec 2023 17:01:26 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rCiik-00BmWA-I3;
-	Mon, 11 Dec 2023 17:01:26 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 6/7] arm64: dts: renesas: r8a779g0: white-hawk: Factor out common parts
-Date: Mon, 11 Dec 2023 17:01:21 +0100
-Message-Id: <f6c8413b688cbb5648deecb8859162adf442910b.1702309604.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1702309604.git.geert+renesas@glider.be>
-References: <cover.1702309604.git.geert+renesas@glider.be>
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id CA8F3D8;
+	Mon, 11 Dec 2023 08:57:14 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="6.04,268,1695654000"; 
+   d="scan'208";a="189940373"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 12 Dec 2023 01:57:13 +0900
+Received: from localhost.localdomain (unknown [10.226.92.141])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 01A95400A8A6;
+	Tue, 12 Dec 2023 01:57:10 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Support Opensource <support.opensource@diasemi.com>,
+	linux-input@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/3] Add polling support for DA9063 onkey driver
+Date: Mon, 11 Dec 2023 16:57:05 +0000
+Message-Id: <20231211165708.161808-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -30,115 +29,19 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out the parts on the White Hawk BreakOut board that are also
-present on the White Hawk Single board, so they can be reused when
-introducing support for the latter.
+On some platforms (eg: RZ/{G2UL,Five} SMARC EVK), there is no IRQ
+populated by default. This patch series aims to add polling support
+by parsing the polling interval from device tree and then detect
+short key press and long press key.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../boot/dts/renesas/r8a779g0-white-hawk.dts  | 56 +------------------
- ...-white-hawk.dts => white-hawk-common.dtsi} |  8 +--
- 2 files changed, 3 insertions(+), 61 deletions(-)
- copy arch/arm64/boot/dts/renesas/{r8a779g0-white-hawk.dts => white-hawk-common.dtsi} (78%)
+Biju Das (3):
+  Input: da9063 - Simplify obtaining OF match data
+  Input: da9063 - Use dev_err_probe()
+  Input: da9063 - Add polling support
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-index 8d82294a1a56444c..992837e7e7b976b0 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-@@ -7,63 +7,9 @@
- 
- /dts-v1/;
- #include "r8a779g0-white-hawk-cpu.dtsi"
--#include "white-hawk-csi-dsi.dtsi"
--#include "white-hawk-ethernet.dtsi"
-+#include "white-hawk-common.dtsi"
- 
- / {
- 	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
- 	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
--
--	can_transceiver0: can-phy0 {
--		compatible = "nxp,tjr1443";
--		#phy-cells = <0>;
--		enable-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
--		max-bitrate = <5000000>;
--	};
--};
--
--&can_clk {
--	clock-frequency = <40000000>;
--};
--
--&canfd {
--	pinctrl-0 = <&canfd0_pins>, <&canfd1_pins>, <&can_clk_pins>;
--	pinctrl-names = "default";
--
--	status = "okay";
--
--	channel0 {
--		status = "okay";
--		phys = <&can_transceiver0>;
--	};
--
--	channel1 {
--		status = "okay";
--	};
--};
--
--&i2c0 {
--	eeprom@51 {
--		compatible = "rohm,br24g01", "atmel,24c01";
--		label = "breakout-board";
--		reg = <0x51>;
--		pagesize = <8>;
--	};
--};
--
--&pfc {
--	can_clk_pins: can-clk {
--		groups = "can_clk";
--		function = "can_clk";
--	};
--
--	canfd0_pins: canfd0 {
--		groups = "canfd0_data";
--		function = "canfd0";
--	};
--
--	canfd1_pins: canfd1 {
--		groups = "canfd1_data";
--		function = "canfd1";
--	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
-similarity index 78%
-copy from arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-copy to arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
-index 8d82294a1a56444c..c99086edadcaacdb 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
-@@ -1,19 +1,15 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the White Hawk CPU and BreakOut boards
-+ * Device Tree Source for the common parts shared by the White Hawk BreakOut
-+ * and White Hawk Single boards
-  *
-  * Copyright (C) 2022 Renesas Electronics Corp.
-  */
- 
--/dts-v1/;
--#include "r8a779g0-white-hawk-cpu.dtsi"
- #include "white-hawk-csi-dsi.dtsi"
- #include "white-hawk-ethernet.dtsi"
- 
- / {
--	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
--	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
--
- 	can_transceiver0: can-phy0 {
- 		compatible = "nxp,tjr1443";
- 		#phy-cells = <0>;
+ drivers/input/misc/da9063_onkey.c | 153 ++++++++++++++++++------------
+ 1 file changed, 92 insertions(+), 61 deletions(-)
+
 -- 
-2.34.1
+2.25.1
 
