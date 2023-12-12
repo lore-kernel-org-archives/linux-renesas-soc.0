@@ -1,190 +1,120 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8DF4A0;
-	Tue, 12 Dec 2023 00:02:01 -0800 (PST)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dbc8b07ceddso1790793276.1;
-        Tue, 12 Dec 2023 00:02:01 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="u+ZSmU0M"
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2960CF
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Dec 2023 00:12:43 -0800 (PST)
+Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-5c66418decaso2598183a12.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Dec 2023 00:12:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1702368763; x=1702973563; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UDxlPZCXZwKbJgIYo8CPOe6rYVlMlUcLuVPJRyyWVEE=;
+        b=u+ZSmU0MryX3cGrk3y61WAGscKAK2Shl+KzBYZN+PatAeTrvZJOO8Q0lvBKmOvoX0j
+         TwfRwv67QZxxtjevFukEk6GkT/oKfM74gGXJjzEPmYlfYj1tswjikdHO5nukJ52gz8d2
+         PRp6laNIEm818hUU4vagtATzXTU4XUGfKZApPxjlcNXU8BNzv9E1sHZ22LgYAKDFNcGl
+         rj9JM5m7rVUum8FJtrivRiK5RUeobzHjSOmlTvMih5UOhQ4HV2Louu0YjI7UdNQ2RMRq
+         UCQ/rqiE4nIfIPeu5DSWUhGGKg5OMtir77Eo8MrxnSVQ+jowIyIb07oxthIGCzPUvkHt
+         g3gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702368121; x=1702972921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gjnHuBn/sh8CWIcWiOxIEa34FZ6IyXTSmbDfg8QhKyM=;
-        b=sPD5mMyfs7ro6kr/xKE0vMQ3L0RYGIfWEqn7BwSE4sqHY7YOBJZG2h4pDNOAKgd/pS
-         cO6P7nk0mKVtOufsJCO0BfuyMxytCJosvVWctP1/ICiFjHKor1bITzcXsEOSvtDQbBve
-         UezQCbe3FdeSLivyWpMCGmCqM/dHvGHGr9UleapreQKq30h1c7IckpdudYJEVWu1IINK
-         SuBBhrrzRi4N8z9WL/1k3EfXXjh1rP3KLBhGnVAB1IJHnL5NWWTjG+btBUETL8qz3QZz
-         lS1zUzeqW+be+8I/C6ZjUFfVqdEwQx3nz64KUZIysCh1EkR3+i2dJfvAH+z1xSQlOsv0
-         1+6g==
-X-Gm-Message-State: AOJu0YzyMwD1INvIHqCweaOxq1hUru+YvuJevcsh5zbXFbnSJemDrXDP
-	S5z6z6p/fevQQUUWh2SWU5hf0l32B2iRhg==
-X-Google-Smtp-Source: AGHT+IF2e/Fov3My0EOuHH985V1mg9OYHbqnRET84fgK4LcM1KrsWruWcBtFRN3SOcplmC8zvPzdPA==
-X-Received: by 2002:a25:9d09:0:b0:db7:dacf:3f9c with SMTP id i9-20020a259d09000000b00db7dacf3f9cmr3616624ybp.73.1702368120853;
-        Tue, 12 Dec 2023 00:02:00 -0800 (PST)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id f1-20020a056902038100b00db5331d70d5sm3030036ybs.33.2023.12.12.00.02.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Dec 2023 00:02:00 -0800 (PST)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-5b383b4184fso47757837b3.1;
-        Tue, 12 Dec 2023 00:02:00 -0800 (PST)
-X-Received: by 2002:a05:690c:300b:b0:5e1:7ac3:34bb with SMTP id
- ey11-20020a05690c300b00b005e17ac334bbmr1238801ywb.42.1702368120157; Tue, 12
- Dec 2023 00:02:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702368763; x=1702973563;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UDxlPZCXZwKbJgIYo8CPOe6rYVlMlUcLuVPJRyyWVEE=;
+        b=LOOTvg2iUYA+lJ9rtaPu5fXviW7hZOEotXZIgPQWgnovCXR3PBobfePngvRqKnyhGk
+         N8n19XvrOVOqisff+DJP8mDqFWCLiuKYUuTkY8Y3+UYUT5AHuxMShFWyPyCt2081U6bZ
+         IbCcRbu/STmq6o23v82JKCi7o63va1UUVb6ARoWLRCGnbEeQavrkNoIrl8bgvGN9qJV4
+         kREVYU09/XrbP89fFpjQ3WpDvADPj8hXl/nRZ5N/ym4GWjtdE6SywcmfH8sTk0dqtxRo
+         ojklK7RZrynBXtMFNVnJoPvGhVIEg92Fi5yT5qViTa0K9zBkxP8A6idZHoRm2A4yX+d5
+         XJgA==
+X-Gm-Message-State: AOJu0Yx/X2v9cG5dL4MRYsyYuOVocdKjbK6hS5R6w4W7R47DbJySMpKE
+	mzGIP7E7GI4cIrV3xKziOQeUn0rX/+wgMYePWpTodQ==
+X-Google-Smtp-Source: AGHT+IEBLmRMSGIzZpvd9BrxmmgEqRNH5fx1/ZoSNSIQzryuJ8aI0F400J4AP5jogoArsZGwzLqfpw==
+X-Received: by 2002:a05:6a20:1012:b0:18a:b5c3:55db with SMTP id gs18-20020a056a20101200b0018ab5c355dbmr2412544pzc.50.1702368762732;
+        Tue, 12 Dec 2023 00:12:42 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id 11-20020a170902c20b00b001ce664c05b0sm8015849pll.33.2023.12.12.00.12.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Dec 2023 00:12:42 -0800 (PST)
+Message-ID: <657815fa.170a0220.27d4e.73a8@mx.google.com>
+Date: Tue, 12 Dec 2023 00:12:42 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231211165708.161808-1-biju.das.jz@bp.renesas.com> <20231211165708.161808-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20231211165708.161808-3-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Dec 2023 09:01:49 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWEH274CJTpMVY1c7rL0BrpHcjWDp0Acb5evDHotBEzTg@mail.gmail.com>
-Message-ID: <CAMuHMdWEH274CJTpMVY1c7rL0BrpHcjWDp0Acb5evDHotBEzTg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] Input: da9063 - Use dev_err_probe()
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Support Opensource <support.opensource@diasemi.com>, linux-input@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2023-12-11-v6.7-rc5
+Subject: renesas/master baseline: 61 runs,
+ 1 regressions (renesas-devel-2023-12-11-v6.7-rc5)
+To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 
-Hi Biju,
+renesas/master baseline: 61 runs, 1 regressions (renesas-devel-2023-12-11-v=
+6.7-rc5)
 
-On Mon, Dec 11, 2023 at 5:57=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
-> Replace dev_err()->dev_err_probe() to simpilfy probe().
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Regressions Summary
+-------------------
 
-Thanks for your patch!
+platform         | arch | lab         | compiler | defconfig          | reg=
+ressions
+-----------------+------+-------------+----------+--------------------+----=
+--------
+beaglebone-black | arm  | lab-broonie | gcc-10   | multi_v7_defconfig | 1  =
+        =
 
-> --- a/drivers/input/misc/da9063_onkey.c
-> +++ b/drivers/input/misc/da9063_onkey.c
-> @@ -185,10 +185,9 @@ static int da9063_onkey_probe(struct platform_device=
- *pdev)
->
->         onkey =3D devm_kzalloc(&pdev->dev, sizeof(struct da9063_onkey),
->                              GFP_KERNEL);
-> -       if (!onkey) {
-> -               dev_err(&pdev->dev, "Failed to allocate memory.\n");
-> -               return -ENOMEM;
-> -       }
-> +       if (!onkey)
-> +               return dev_err_probe(&pdev->dev, -ENOMEM,
-> +                                    "Failed to allocate memory.\n");
 
-Please drop the error printing instead, the memory allocation core
-code already takes care of that in case of OOM.
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2023-12-11-v6.7-rc5/plan/baseline/
 
->
->         onkey->config =3D device_get_match_data(&pdev->dev);
->         if (!onkey->config)
-> @@ -197,19 +196,17 @@ static int da9063_onkey_probe(struct platform_devic=
-e *pdev)
->         onkey->dev =3D &pdev->dev;
->
->         onkey->regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
-> -       if (!onkey->regmap) {
-> -               dev_err(&pdev->dev, "Parent regmap unavailable.\n");
-> -               return -ENXIO;
-> -       }
-> +       if (!onkey->regmap)
-> +               return dev_err_probe(&pdev->dev, -ENXIO,
-> +                                    "Parent regmap unavailable.\n");
->
->         onkey->key_power =3D !of_property_read_bool(pdev->dev.of_node,
->                                                   "dlg,disable-key-power"=
-);
->
->         onkey->input =3D devm_input_allocate_device(&pdev->dev);
-> -       if (!onkey->input) {
-> -               dev_err(&pdev->dev, "Failed to allocated input device.\n"=
-);
-> -               return -ENOMEM;
-> -       }
-> +       if (!onkey->input)
-> +               return dev_err_probe(&pdev->dev, -ENOMEM,
-> +                                    "Failed to allocated input device.\n=
-");
+  Test:     baseline
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2023-12-11-v6.7-rc5
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      155846af5700613427ba8c67ea1841fdeffe7b96 =
 
-devm_input_allocate_device() only fails on OOM, so no need to
-print anything.
 
->
->         onkey->input->name =3D onkey->config->name;
->         snprintf(onkey->phys, sizeof(onkey->phys), "%s/input0",
-> @@ -221,12 +218,9 @@ static int da9063_onkey_probe(struct platform_device=
- *pdev)
->
->         error =3D devm_delayed_work_autocancel(&pdev->dev, &onkey->work,
->                                              da9063_poll_on);
-> -       if (error) {
-> -               dev_err(&pdev->dev,
-> -                       "Failed to add cancel poll action: %d\n",
-> -                       error);
-> -               return error;
-> -       }
-> +       if (error)
-> +               return dev_err_probe(&pdev->dev, error,
-> +                                    "Failed to add cancel poll action\n"=
-);
 
-devm_delayed_work_autocancel() only fails on OOM, so no need to
-print anything.
+Test Regressions
+---------------- =
 
->
->         irq =3D platform_get_irq_byname(pdev, "ONKEY");
->         if (irq < 0)
-> @@ -236,11 +230,9 @@ static int da9063_onkey_probe(struct platform_device=
- *pdev)
->                                           NULL, da9063_onkey_irq_handler,
->                                           IRQF_TRIGGER_LOW | IRQF_ONESHOT=
-,
->                                           "ONKEY", onkey);
-> -       if (error) {
-> -               dev_err(&pdev->dev,
-> -                       "Failed to request IRQ %d: %d\n", irq, error);
-> -               return error;
-> -       }
-> +       if (error)
-> +               return dev_err_probe(&pdev->dev, error,
-> +                                    "Failed to request IRQ %d\n", irq);
 
-platform_get_irq_byname() already prints an error message on failure.
 
->
->         error =3D dev_pm_set_wake_irq(&pdev->dev, irq);
->         if (error)
-> @@ -251,11 +243,9 @@ static int da9063_onkey_probe(struct platform_device=
- *pdev)
->                 device_init_wakeup(&pdev->dev, true);
->
->         error =3D input_register_device(onkey->input);
-> -       if (error) {
-> -               dev_err(&pdev->dev,
-> -                       "Failed to register input device: %d\n", error);
-> -               return error;
-> -       }
-> +       if (error)
-> +               return dev_err_probe(&pdev->dev, error,
-> +                                    "Failed to register input device\n")=
-;
+platform         | arch | lab         | compiler | defconfig          | reg=
+ressions
+-----------------+------+-------------+----------+--------------------+----=
+--------
+beaglebone-black | arm  | lab-broonie | gcc-10   | multi_v7_defconfig | 1  =
+        =
 
-Looks like all non-OOM failure paths in input_register_device()
-already print an error message, too...
 
-Gr{oetje,eeting}s,
+  Details:     https://kernelci.org/test/plan/id/6577e60140cd0dc3f3e13530
 
-                        Geert
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-12-11-v6.7-rc5/arm/multi_v7_defconfig/gcc-10/lab-broonie/baseline-beagl=
+ebone-black.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+023-12-11-v6.7-rc5/arm/multi_v7_defconfig/gcc-10/lab-broonie/baseline-beagl=
+ebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
+  * baseline.login: https://kernelci.org/test/case/id/6577e60140cd0dc3f3e13=
+531
+        new failure (last pass: renesas-devel-2023-12-04-v6.7-rc4) =
+
+ =20
