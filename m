@@ -1,161 +1,103 @@
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB42F2;
-	Wed, 13 Dec 2023 07:47:42 -0800 (PST)
-Received: from mail.andestech.com (ATCPCS16.andestech.com [10.0.1.222])
-	by Atcsqr.andestech.com with ESMTP id 3BDFis7u072509;
-	Wed, 13 Dec 2023 23:44:54 +0800 (+08)
-	(envelope-from peterlin@andestech.com)
-Received: from APC323 (10.0.12.98) by ATCPCS16.andestech.com (10.0.1.222) with
- Microsoft SMTP Server id 14.3.498.0; Wed, 13 Dec 2023 23:44:53 +0800
-Date: Wed, 13 Dec 2023 23:44:49 +0800
-From: Yu-Chien Peter Lin <peterlin@andestech.com>
-To: Anup Patel <apatel@ventanamicro.com>
-CC: <acme@kernel.org>, <adrian.hunter@intel.com>, <ajones@ventanamicro.com>,
-        <alexander.shishkin@linux.intel.com>, <andre.przywara@arm.com>,
-        <anup@brainfault.org>, <aou@eecs.berkeley.edu>,
-        <atishp@atishpatra.org>, <conor+dt@kernel.org>,
-        <conor.dooley@microchip.com>, <conor@kernel.org>,
-        <devicetree@vger.kernel.org>, <dminus@andestech.com>,
-        <evan@rivosinc.com>, <geert+renesas@glider.be>, <guoren@kernel.org>,
-        <heiko@sntech.de>, <irogers@google.com>, <jernej.skrabec@gmail.com>,
-        <jolsa@kernel.org>, <jszhang@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-perf-users@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-sunxi@lists.linux.dev>, <locus84@andestech.com>,
-        <magnus.damm@gmail.com>, <mark.rutland@arm.com>, <mingo@redhat.com>,
-        <n.shubin@yadro.com>, <namhyung@kernel.org>, <palmer@dabbelt.com>,
-        <paul.walmsley@sifive.com>, <peterz@infradead.org>,
-        <prabhakar.mahadev-lad.rj@bp.renesas.com>, <rdunlap@infradead.org>,
-        <robh+dt@kernel.org>, <samuel@sholland.org>,
-        <sunilvl@ventanamicro.com>, <tglx@linutronix.de>,
-        <tim609@andestech.com>, <uwu@icenowy.me>, <wens@csie.org>,
-        <will@kernel.org>, <ycliang@andestech.com>, <inochiama@outlook.com>
-Subject: Re: [PATCH v5 03/16] irqchip/riscv-intc: Introduce Andes hart-level
- interrupt controller
-Message-ID: <ZXnRcfuvQBo6UDCx@APC323>
-References: <20231213070301.1684751-1-peterlin@andestech.com>
- <20231213070301.1684751-4-peterlin@andestech.com>
- <CAK9=C2WC2i7XkjDgbjccVn03BYfnE_YS4YiA6ZWMj6GDyTjJKA@mail.gmail.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E615E85345
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Dec 2023 15:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhKd+LL2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B9F9C433C7;
+	Wed, 13 Dec 2023 15:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702482506;
+	bh=IiEK6mZm9+yei8LOOrWsSQ4sAQqJti7dLx9mCC+/y+E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uhKd+LL24eJYD6b+ImYK35jInANM4LUdQlIUpnweZ5u+PMTm2LNF+RWm5Ncn+glhw
+	 quZHq909KRaZsqMGaz69eCXw2b3rwPHMx0hrCZN8EUhNW2Begq5zPJlE5pPCd5Dj8g
+	 wFMfqBOC/OzaX9M5CuRs/ra4UmULrdzjVeHe2R5NJDnzL8GfnBk8yCRKuK+vGoOvaD
+	 gGyyx4GDXFXpzuV/gb65dnWup5KKrmYr/qk32p1YkQgf4/QF1Yk5+6CZ1qc06YxB9i
+	 0JtqJJkRNiCgIQ+vnVAL0JN9JxF8Utyoze+2ujLYeIjPKvLBbOcXA9fXSWh75NDU7p
+	 3nGf1RbnSbhog==
+Date: Wed, 13 Dec 2023 16:48:23 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+Subject: Re: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU Support
+Message-ID: <43cy4z45rdlbyzkhbxmsrkd25gj5o4amncl7z7zdsfrgnjjv2s@qozjjjlqmoie>
+References: <20231128105129.161121-1-biju.das.jz@bp.renesas.com>
+ <20231128105129.161121-4-biju.das.jz@bp.renesas.com>
+ <sechknyg33iucaku37vfhk7ie7xgcealfqbvaopm4rrnqbo5g5@s35peonkzzoz>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7jpg6wlujyyr6g5h"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK9=C2WC2i7XkjDgbjccVn03BYfnE_YS4YiA6ZWMj6GDyTjJKA@mail.gmail.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 3BDFis7u072509
+In-Reply-To: <sechknyg33iucaku37vfhk7ie7xgcealfqbvaopm4rrnqbo5g5@s35peonkzzoz>
 
-On Wed, Dec 13, 2023 at 08:15:28PM +0530, Anup Patel wrote:
-> On Wed, Dec 13, 2023 at 12:35 PM Yu Chien Peter Lin
-> <peterlin@andestech.com> wrote:
-> >
-> > Add support for the Andes hart-level interrupt controller. This
-> > controller provides interrupt mask/unmask functions to access the
-> > custom register (SLIE) where the non-standard S-mode local interrupt
-> > enable bits are located.
-> >
-> > To share the riscv_intc_domain_map() with the generic RISC-V INTC and
-> > ACPI, add a chip parameter to riscv_intc_init_common(), so it can be
-> > passed to the irq_domain_set_info() as private data.
-> >
-> > Andes hart-level interrupt controller requires the "andestech,cpu-intc"
-> > compatible string to be present in interrupt-controller of cpu node.
-> > e.g.,
-> >
-> >   cpu0: cpu@0 {
-> >       compatible = "andestech,ax45mp", "riscv";
-> >       ...
-> >       cpu0-intc: interrupt-controller {
-> >           #interrupt-cells = <0x01>;
-> >           compatible = "andestech,cpu-intc", "riscv,cpu-intc";
-> >           interrupt-controller;
-> >       };
-> >   };
-> >
-> > Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
-> > Reviewed-by: Charles Ci-Jyun Wu <dminus@andestech.com>
-> > Reviewed-by: Leo Yu-Chi Liang <ycliang@andestech.com>
-> > ---
-> > Changes v1 -> v2:
-> >   - New patch
-> > Changes v2 -> v3:
-> >   - Return -ENXIO if no valid compatible INTC found
-> >   - Allow falling back to generic RISC-V INTC
-> > Changes v3 -> v4: (Suggested by Thomas [1])
-> >   - Add comment to andes irq chip function
-> >   - Refine code flow to share with generic RISC-V INTC and ACPI
-> >   - Move Andes specific definitions to include/linux/soc/andes/irq.h
-> > Changes v4 -> v5: (Suggested by Thomas)
-> >   - Fix commit message
-> >   - Subtract ANDES_SLI_CAUSE_BASE from d->hwirq to calculate the value of mask
-> >   - Do not set chip_data to the chip itself with irq_domain_set_info()
-> >   - Follow reverse fir tree order variable declarations
-> >
-> > [1] https://patchwork.kernel.org/project/linux-riscv/patch/20231019135723.3657156-1-peterlin@andestech.com/
-> > ---
-> >  drivers/irqchip/irq-riscv-intc.c | 53 ++++++++++++++++++++++++++++----
-> >  include/linux/soc/andes/irq.h    | 17 ++++++++++
-> >  2 files changed, 64 insertions(+), 6 deletions(-)
-> >  create mode 100644 include/linux/soc/andes/irq.h
-> >
-> > diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
-> > index 2fdd40f2a791..0b6bf3fb1dba 100644
-> > --- a/drivers/irqchip/irq-riscv-intc.c
-> > +++ b/drivers/irqchip/irq-riscv-intc.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> >  #include <linux/smp.h>
-> > +#include <linux/soc/andes/irq.h>
-> >
-> >  static struct irq_domain *intc_domain;
-> >
-> > @@ -46,6 +47,31 @@ static void riscv_intc_irq_unmask(struct irq_data *d)
-> >         csr_set(CSR_IE, BIT(d->hwirq));
-> >  }
-> >
-> > +static void andes_intc_irq_mask(struct irq_data *d)
+
+--7jpg6wlujyyr6g5h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Dec 13, 2023 at 04:47:09PM +0100, Maxime Ripard wrote:
+> On Tue, Nov 28, 2023 at 10:51:27AM +0000, Biju Das wrote:
+> > +int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
+> > +		      unsigned int crtcs)
 > > +{
-> > +       /*
-> > +        * Andes specific S-mode local interrupt causes (hwirq)
-> > +        * are defined as (256 + n) and controlled by n-th bit
-> > +        * of SLIE.
-> > +        */
-> > +       unsigned int mask = BIT(d->hwirq - ANDES_SLI_CAUSE_BASE);
+> > +	struct rzg2l_du_device *rcdu =3D vsp->dev;
+> > +	struct platform_device *pdev;
+> > +	unsigned int num_crtcs =3D hweight32(crtcs);
+> > +	unsigned int num_planes =3D 2;
+> > +	unsigned int i;
+> > +	int ret;
 > > +
-> > +       if (d->hwirq < ANDES_SLI_CAUSE_BASE)
-> > +               csr_clear(CSR_IE, mask);
-> > +       else
-> > +               csr_clear(ANDES_CSR_SLIE, mask);
-> > +}
+> > +	/* Find the VSP device and initialize it. */
+> > +	pdev =3D of_find_device_by_node(np);
+> > +	if (!pdev)
+> > +		return -ENXIO;
 > > +
-> > +static void andes_intc_irq_unmask(struct irq_data *d)
-> > +{
-> > +       unsigned int mask = BIT(d->hwirq - ANDES_SLI_CAUSE_BASE);
+> > +	vsp->vsp =3D &pdev->dev;
 > > +
-> > +       if (d->hwirq < ANDES_SLI_CAUSE_BASE)
-> > +               csr_set(CSR_IE, mask);
-> > +       else
-> > +               csr_set(ANDES_CSR_SLIE, mask);
-> 
-> Clearly, Andes does not have any CSR for:
-> XLEN <= local interrupt <ANDES_SLI_CAUSE_BASE
-> and
-> ANDES_SLI_CAUSE_BASE + XLEN <= local interrupt
+> > +	ret =3D drmm_add_action_or_reset(&rcdu->ddev, rzg2l_du_vsp_cleanup, v=
+sp);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret =3D vsp1_du_init(vsp->vsp);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	vsp->planes =3D kcalloc(num_planes, sizeof(*vsp->planes), GFP_KERNEL);
+> > +	if (!vsp->planes)
+> > +		return -ENOMEM;
+>=20
+> drmm_kcalloc or drmm_kmalloc_array
 
-Ah, what am I doing here.
-sorry for that silly patch.
+Also, it doesn't look like you're using that array anywhere once the
+action is gone.
 
-Regards,
-Peter Lin
+Maxime
 
-> Regards,
-> Anup
+--7jpg6wlujyyr6g5h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZXnSRwAKCRDj7w1vZxhR
+xeK7AQCNmF/TJDNpCuyFp8zNTjnqyq4ZfH5Mit88jLs+qdPdKgD/SKFE7p38KOdh
+vLsUscYrrD4UlPVGjg9fkWDyNqga5w0=
+=YUcS
+-----END PGP SIGNATURE-----
+
+--7jpg6wlujyyr6g5h--
