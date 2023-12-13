@@ -1,193 +1,338 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="LnWedB5E"
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7FEA110
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Dec 2023 07:48:31 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1d0bcc0c313so38050735ad.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Dec 2023 07:48:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1702482511; x=1703087311; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJQOr6G595liPThx9YQFt7iREStykDelnicH4b+uNfM=;
-        b=LnWedB5EORjuYY62t7QnxsW/njadtKiTsEDnxKZIkAK5F6vL/LTkKqkrFaMze3VuF7
-         rJrjyy0ndxZXog+l0OpPB8YJ5pt9vHpktvqHHD57uTSJP+soqHO7GVixY1pj1w7m0ujx
-         cYaFQ17Qif/tBhZ28NkdqES4BweFPtjpcAqJtZXqO4AXYOD0M65mwiOPv+97hEjyzhwK
-         LPnP//1jHCdFd53FeGPmd1CBvuLYZj/QKGfSkb3DR99GB7bJhMa9XSuJro0MMajjEvb6
-         HCQaFfRvNKJ4hwxNK5pbDzYw8INu5S6DlpCdVuOKoxhVEeXBMavWp80gYtRuHNkYIxp8
-         tTGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702482511; x=1703087311;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jJQOr6G595liPThx9YQFt7iREStykDelnicH4b+uNfM=;
-        b=fIRg2xxR+Ipd+ymbyYk3+/XbX/7HEzDPHBLRjqRbtUK+wSiYc8XayAMcRlIfzJVZLP
-         xQLFx6j+KJCliwwSgTguzHRmHniGB6NrnxwXx0LFbyRp4m5K9tSLVupeKBHFdH0/Vqxt
-         eF9bxXkGfNQXW65KVSnpMGX2InJ7VIVnSdzi+phT/bF0Kf0NiLxWitXlFiY6JaFQbalE
-         1YzSck362HPoY7YHMTl38kAdrcjRYH/EbzB9Euj9XT2NJgL3kOLf2N9Iel1JhZ5/eTVJ
-         yeLa6zJ5VZb71EhUox3KuTBgOT2HsqTImfU0G10h02abnVuLniEQSueQk3dc+K38ydGR
-         pbZw==
-X-Gm-Message-State: AOJu0Yz674/Ax+l/N4ubSC47JLiw7tdwC0DVal7ms0eEZpVNVXrlB1mJ
-	Kpj80Kboxw35RcW58CCKa+06+r8xAFsiBU6KNN0KNA==
-X-Google-Smtp-Source: AGHT+IGETEWIybG8Cj7o1mZXeX0Cpwd1y0htevZPrsabRyIPn8kV57YkKN614sbxd8+A0O5Bt1rDcCLjsD/w7J5obHk=
-X-Received: by 2002:a17:90a:1049:b0:286:e125:1a3f with SMTP id
- y9-20020a17090a104900b00286e1251a3fmr3741967pjd.5.1702482511032; Wed, 13 Dec
- 2023 07:48:31 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Pz3NQVa7"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D02B7
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Dec 2023 07:50:44 -0800 (PST)
+Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 97DD8BD1;
+	Wed, 13 Dec 2023 16:49:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1702482596;
+	bh=JtO/rPKqKpbxuHjqgc1fa/HQxv1i+GHSYeuvA2dOmtU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pz3NQVa7sxXVBhmu8HFU5Oem9jGyPbOGJLIfSLeWW2ZR/Bdvx4UpoioKHBfMVhgbZ
+	 RiizCjh0A29z1QtahL9QcpfB3YHUBWszffpHEKxaJbFjfRELY59W/4+zuVRKuH9GrV
+	 iPzY6vAjM4nN6bqUWz1ANvdr48aXxmD+mYLZl2aw=
+Date: Wed, 13 Dec 2023 17:50:49 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: Re: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU Support
+Message-ID: <20231213155049.GH12450@pendragon.ideasonboard.com>
+References: <20231128105129.161121-1-biju.das.jz@bp.renesas.com>
+ <20231128105129.161121-4-biju.das.jz@bp.renesas.com>
+ <sechknyg33iucaku37vfhk7ie7xgcealfqbvaopm4rrnqbo5g5@s35peonkzzoz>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231213070301.1684751-1-peterlin@andestech.com>
- <20231213070301.1684751-4-peterlin@andestech.com> <CAK9=C2WC2i7XkjDgbjccVn03BYfnE_YS4YiA6ZWMj6GDyTjJKA@mail.gmail.com>
- <ZXnRcfuvQBo6UDCx@APC323>
-In-Reply-To: <ZXnRcfuvQBo6UDCx@APC323>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 13 Dec 2023 21:18:19 +0530
-Message-ID: <CAAhSdy3t-zAyxikkSOsdLZvHC=uo1E2o35guYnZVuWHKUYH-Pg@mail.gmail.com>
-Subject: Re: [PATCH v5 03/16] irqchip/riscv-intc: Introduce Andes hart-level
- interrupt controller
-To: Yu-Chien Peter Lin <peterlin@andestech.com>
-Cc: Anup Patel <apatel@ventanamicro.com>, acme@kernel.org, adrian.hunter@intel.com, 
-	ajones@ventanamicro.com, alexander.shishkin@linux.intel.com, 
-	andre.przywara@arm.com, aou@eecs.berkeley.edu, atishp@atishpatra.org, 
-	conor+dt@kernel.org, conor.dooley@microchip.com, conor@kernel.org, 
-	devicetree@vger.kernel.org, dminus@andestech.com, evan@rivosinc.com, 
-	geert+renesas@glider.be, guoren@kernel.org, heiko@sntech.de, 
-	irogers@google.com, jernej.skrabec@gmail.com, jolsa@kernel.org, 
-	jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	locus84@andestech.com, magnus.damm@gmail.com, mark.rutland@arm.com, 
-	mingo@redhat.com, n.shubin@yadro.com, namhyung@kernel.org, palmer@dabbelt.com, 
-	paul.walmsley@sifive.com, peterz@infradead.org, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, rdunlap@infradead.org, 
-	robh+dt@kernel.org, samuel@sholland.org, sunilvl@ventanamicro.com, 
-	tglx@linutronix.de, tim609@andestech.com, uwu@icenowy.me, wens@csie.org, 
-	will@kernel.org, ycliang@andestech.com, inochiama@outlook.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <sechknyg33iucaku37vfhk7ie7xgcealfqbvaopm4rrnqbo5g5@s35peonkzzoz>
 
-On Wed, Dec 13, 2023 at 9:15=E2=80=AFPM Yu-Chien Peter Lin
-<peterlin@andestech.com> wrote:
->
-> On Wed, Dec 13, 2023 at 08:15:28PM +0530, Anup Patel wrote:
-> > On Wed, Dec 13, 2023 at 12:35=E2=80=AFPM Yu Chien Peter Lin
-> > <peterlin@andestech.com> wrote:
-> > >
-> > > Add support for the Andes hart-level interrupt controller. This
-> > > controller provides interrupt mask/unmask functions to access the
-> > > custom register (SLIE) where the non-standard S-mode local interrupt
-> > > enable bits are located.
-> > >
-> > > To share the riscv_intc_domain_map() with the generic RISC-V INTC and
-> > > ACPI, add a chip parameter to riscv_intc_init_common(), so it can be
-> > > passed to the irq_domain_set_info() as private data.
-> > >
-> > > Andes hart-level interrupt controller requires the "andestech,cpu-int=
-c"
-> > > compatible string to be present in interrupt-controller of cpu node.
-> > > e.g.,
-> > >
-> > >   cpu0: cpu@0 {
-> > >       compatible =3D "andestech,ax45mp", "riscv";
-> > >       ...
-> > >       cpu0-intc: interrupt-controller {
-> > >           #interrupt-cells =3D <0x01>;
-> > >           compatible =3D "andestech,cpu-intc", "riscv,cpu-intc";
-> > >           interrupt-controller;
-> > >       };
-> > >   };
-> > >
-> > > Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
-> > > Reviewed-by: Charles Ci-Jyun Wu <dminus@andestech.com>
-> > > Reviewed-by: Leo Yu-Chi Liang <ycliang@andestech.com>
-> > > ---
-> > > Changes v1 -> v2:
-> > >   - New patch
-> > > Changes v2 -> v3:
-> > >   - Return -ENXIO if no valid compatible INTC found
-> > >   - Allow falling back to generic RISC-V INTC
-> > > Changes v3 -> v4: (Suggested by Thomas [1])
-> > >   - Add comment to andes irq chip function
-> > >   - Refine code flow to share with generic RISC-V INTC and ACPI
-> > >   - Move Andes specific definitions to include/linux/soc/andes/irq.h
-> > > Changes v4 -> v5: (Suggested by Thomas)
-> > >   - Fix commit message
-> > >   - Subtract ANDES_SLI_CAUSE_BASE from d->hwirq to calculate the valu=
-e of mask
-> > >   - Do not set chip_data to the chip itself with irq_domain_set_info(=
-)
-> > >   - Follow reverse fir tree order variable declarations
-> > >
-> > > [1] https://patchwork.kernel.org/project/linux-riscv/patch/2023101913=
-5723.3657156-1-peterlin@andestech.com/
-> > > ---
-> > >  drivers/irqchip/irq-riscv-intc.c | 53 ++++++++++++++++++++++++++++--=
---
-> > >  include/linux/soc/andes/irq.h    | 17 ++++++++++
-> > >  2 files changed, 64 insertions(+), 6 deletions(-)
-> > >  create mode 100644 include/linux/soc/andes/irq.h
-> > >
-> > > diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-r=
-iscv-intc.c
-> > > index 2fdd40f2a791..0b6bf3fb1dba 100644
-> > > --- a/drivers/irqchip/irq-riscv-intc.c
-> > > +++ b/drivers/irqchip/irq-riscv-intc.c
-> > > @@ -17,6 +17,7 @@
-> > >  #include <linux/module.h>
-> > >  #include <linux/of.h>
-> > >  #include <linux/smp.h>
-> > > +#include <linux/soc/andes/irq.h>
-> > >
-> > >  static struct irq_domain *intc_domain;
-> > >
-> > > @@ -46,6 +47,31 @@ static void riscv_intc_irq_unmask(struct irq_data =
-*d)
-> > >         csr_set(CSR_IE, BIT(d->hwirq));
-> > >  }
-> > >
-> > > +static void andes_intc_irq_mask(struct irq_data *d)
-> > > +{
-> > > +       /*
-> > > +        * Andes specific S-mode local interrupt causes (hwirq)
-> > > +        * are defined as (256 + n) and controlled by n-th bit
-> > > +        * of SLIE.
-> > > +        */
-> > > +       unsigned int mask =3D BIT(d->hwirq - ANDES_SLI_CAUSE_BASE);
-> > > +
-> > > +       if (d->hwirq < ANDES_SLI_CAUSE_BASE)
-> > > +               csr_clear(CSR_IE, mask);
-> > > +       else
-> > > +               csr_clear(ANDES_CSR_SLIE, mask);
-> > > +}
-> > > +
-> > > +static void andes_intc_irq_unmask(struct irq_data *d)
-> > > +{
-> > > +       unsigned int mask =3D BIT(d->hwirq - ANDES_SLI_CAUSE_BASE);
-> > > +
-> > > +       if (d->hwirq < ANDES_SLI_CAUSE_BASE)
-> > > +               csr_set(CSR_IE, mask);
-> > > +       else
-> > > +               csr_set(ANDES_CSR_SLIE, mask);
-> >
-> > Clearly, Andes does not have any CSR for:
-> > XLEN <=3D local interrupt <ANDES_SLI_CAUSE_BASE
-> > and
-> > ANDES_SLI_CAUSE_BASE + XLEN <=3D local interrupt
->
-> Ah, what am I doing here.
-> sorry for that silly patch.
+On Wed, Dec 13, 2023 at 04:47:09PM +0100, Maxime Ripard wrote:
+> On Tue, Nov 28, 2023 at 10:51:27AM +0000, Biju Das wrote:
+> > The LCD controller is composed of Frame Compression Processor (FCPVD),
+> > Video Signal Processor (VSPD), and Display Unit (DU).
+> > 
+> > It has DPI/DSI interfaces and supports a maximum resolution of 1080p
+> > along with 2 RPFs to support the blending of two picture layers and
+> > raster operations (ROPs).
+> > 
+> > The DU module is connected to VSPD. Add RZ/G2L DU support for RZ/G2L
+> > alike SoCs.
+> > 
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> I'd still like a review from Geert or Laurent, I don't know the SoC.
 
-This patch is okay only if we can guarantee that
-hwirq is within accepted range.
+I won't have time soon, and this driver has been blocked for way too
+long due to that :-S
 
-For example, riscv_intc_domain_alloc() can deny
-invalid local interrupts.
+> > +static int rzg2l_du_crtc_get(struct rzg2l_du_crtc *rcrtc)
+> > +{
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * Guard against double-get, as the function is called from both the
+> > +	 * .atomic_enable() and .atomic_flush() handlers.
+> > +	 */
+> > +	if (rcrtc->initialized)
+> > +		return 0;
+> > +
+> > +	ret = clk_prepare_enable(rcrtc->rzg2l_clocks.aclk);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = clk_prepare_enable(rcrtc->rzg2l_clocks.pclk);
+> > +	if (ret < 0)
+> > +		goto error_bus_clock;
+> > +
+> > +	ret = reset_control_deassert(rcrtc->rstc);
+> > +	if (ret < 0)
+> > +		goto error_peri_clock;
+> > +
+> > +	rzg2l_du_crtc_setup(rcrtc);
+> > +	rcrtc->initialized = true;
+> > +
+> > +	return 0;
+> > +
+> > +error_peri_clock:
+> > +	clk_disable_unprepare(rcrtc->rzg2l_clocks.pclk);
+> > +error_bus_clock:
+> > +	clk_disable_unprepare(rcrtc->rzg2l_clocks.aclk);
+> > +	return ret;
+> > +}
+> 
+> [...]
+> 
+> > +static void rzg2l_du_crtc_atomic_flush(struct drm_crtc *crtc,
+> > +				       struct drm_atomic_state *state)
+> > +{
+> > +	struct rzg2l_du_crtc *rcrtc = to_rzg2l_crtc(crtc);
+> > +	struct drm_device *dev = rcrtc->crtc.dev;
+> > +	unsigned long flags;
+> > +
+> > +	WARN_ON(!crtc->state->enable);
+> > +
+> > +	/*
+> > +	 * If a mode set is in progress we can be called with the CRTC disabled.
+> > +	 * We thus need to first get and setup the CRTC in order to configure
+> > +	 * planes. We must *not* put the CRTC, as it must be kept awake until
+> > +	 * the .atomic_enable() call that will follow. The get operation in
+> > +	 * .atomic_enable() will in that case be a no-op, and the CRTC will be
+> > +	 * put later in .atomic_disable().
+> > +	 */
+> > +	rzg2l_du_crtc_get(rcrtc);
+> 
+> That's a bit suspicious. Have you looked at drm_atomic_helper_commit_tail_rpm() ?
+> 
+> > +static int rzg2l_du_crtc_enable_vblank(struct drm_crtc *crtc)
+> > +{
+> > +	struct rzg2l_du_crtc *rcrtc = to_rzg2l_crtc(crtc);
+> > +
+> > +	rcrtc->vblank_enable = true;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void rzg2l_du_crtc_disable_vblank(struct drm_crtc *crtc)
+> > +{
+> > +	struct rzg2l_du_crtc *rcrtc = to_rzg2l_crtc(crtc);
+> > +
+> > +	rcrtc->vblank_enable = false;
+> > +}
+> 
+> You should enable / disable your interrupts here
+> 
+> > +int rzg2l_du_crtc_create(struct rzg2l_du_device *rcdu)
+> > +{
+> > +	struct rzg2l_du_crtc *rcrtc = &rcdu->crtcs[0];
+> > +	struct drm_crtc *crtc = &rcrtc->crtc;
+> > +	struct drm_plane *primary;
+> > +	int ret;
+> > +
+> > +	rcrtc->rstc = devm_reset_control_get_shared(rcdu->dev, NULL);
+> > +	if (IS_ERR(rcrtc->rstc)) {
+> > +		dev_err(rcdu->dev, "can't get cpg reset\n");
+> > +		return PTR_ERR(rcrtc->rstc);
+> > +	}
+> > +
+> > +	rcrtc->rzg2l_clocks.aclk = devm_clk_get(rcdu->dev, "aclk");
+> > +	if (IS_ERR(rcrtc->rzg2l_clocks.aclk)) {
+> > +		dev_err(rcdu->dev, "no axi clock for DU\n");
+> > +		return PTR_ERR(rcrtc->rzg2l_clocks.aclk);
+> > +	}
+> > +
+> > +	rcrtc->rzg2l_clocks.pclk = devm_clk_get(rcdu->dev, "pclk");
+> > +	if (IS_ERR(rcrtc->rzg2l_clocks.pclk)) {
+> > +		dev_err(rcdu->dev, "no peripheral clock for DU\n");
+> > +		return PTR_ERR(rcrtc->rzg2l_clocks.pclk);
+> > +	}
+> > +
+> > +	rcrtc->rzg2l_clocks.dclk = devm_clk_get(rcdu->dev, "vclk");
+> > +	if (IS_ERR(rcrtc->rzg2l_clocks.dclk)) {
+> > +		dev_err(rcdu->dev, "no video clock for DU\n");
+> > +		return PTR_ERR(rcrtc->rzg2l_clocks.dclk);
+> > +	}
+> > +
+> > +	init_waitqueue_head(&rcrtc->flip_wait);
+> > +	rcrtc->dev = rcdu;
+> > +
+> > +	primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe].plane;
+> > +
+> > +	ret = drm_crtc_init_with_planes(&rcdu->ddev, crtc, primary, NULL,
+> > +					&crtc_funcs_rz, NULL);
+> > +	if (ret < 0)
+> > +		return ret;
+> 
+> You should use the drmm variant here
+> 
+> > +static void rzg2l_du_atomic_commit_tail(struct drm_atomic_state *old_state)
+> > +{
+> > +	struct drm_device *dev = old_state->dev;
+> > +
+> > +	/* Apply the atomic update. */
+> > +	drm_atomic_helper_commit_modeset_disables(dev, old_state);
+> > +	drm_atomic_helper_commit_planes(dev, old_state,
+> > +					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+> > +	drm_atomic_helper_commit_modeset_enables(dev, old_state);
+> > +
+> > +	drm_atomic_helper_commit_hw_done(old_state);
+> > +	drm_atomic_helper_wait_for_flip_done(dev, old_state);
+> > +
+> > +	drm_atomic_helper_cleanup_planes(dev, old_state);
+> > +}
+> 
+> AFAIK, there's no reason to roll your commit_tail implementation
+> yourself here. You should at the very least document why you needed to
+> do so.
+> 
+> > +int rzg2l_du_vsp_map_fb(struct rzg2l_du_vsp *vsp, struct drm_framebuffer *fb,
+> > +			struct sg_table sg_tables[3])
+> > +{
+> > +	struct rzg2l_du_device *rcdu = vsp->dev;
+> > +	unsigned int i, j;
+> > +	int ret;
+> > +
+> > +	for (i = 0; i < fb->format->num_planes; ++i) {
+> > +		struct drm_gem_dma_object *gem = drm_fb_dma_get_gem_obj(fb, i);
+> > +		struct sg_table *sgt = &sg_tables[i];
+> > +
+> > +		if (gem->sgt) {
+> > +			struct scatterlist *src;
+> > +			struct scatterlist *dst;
+> > +
+> > +			/*
+> > +			 * If the GEM buffer has a scatter gather table, it has
+> > +			 * been imported from a dma-buf and has no physical
+> > +			 * address as it might not be physically contiguous.
+> > +			 * Copy the original scatter gather table to map it to
+> > +			 * the VSP.
+> > +			 */
+> > +			ret = sg_alloc_table(sgt, gem->sgt->orig_nents,
+> > +					     GFP_KERNEL);
+> > +			if (ret)
+> > +				goto fail;
+> > +
+> > +			src = gem->sgt->sgl;
+> > +			dst = sgt->sgl;
+> > +			for (j = 0; j < gem->sgt->orig_nents; ++j) {
+> > +				sg_set_page(dst, sg_page(src), src->length,
+> > +					    src->offset);
+> > +				src = sg_next(src);
+> > +				dst = sg_next(dst);
+> > +			}
+> > +		} else {
+> > +			ret = dma_get_sgtable(rcdu->dev, sgt, gem->vaddr,
+> > +					      gem->dma_addr, gem->base.size);
+> > +			if (ret)
+> > +				goto fail;
+> > +		}
+> > +
+> > +		ret = vsp1_du_map_sg(vsp->vsp, sgt);
+> > +		if (ret) {
+> > +			sg_free_table(sgt);
+> > +			goto fail;
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> > +
+> > +fail:
+> > +	while (i--) {
+> > +		struct sg_table *sgt = &sg_tables[i];
+> > +
+> > +		vsp1_du_unmap_sg(vsp->vsp, sgt);
+> > +		sg_free_table(sgt);
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> 
+> Ditto, you should at least document why you're not using the helpers.
+> 
+> > +static void rzg2l_du_vsp_cleanup(struct drm_device *dev, void *res)
+> > +{
+> > +	struct rzg2l_du_vsp *vsp = res;
+> > +	unsigned int i;
+> > +
+> > +	for (i = 0; i < vsp->num_planes; ++i) {
+> > +		struct rzg2l_du_vsp_plane *plane = &vsp->planes[i];
+> > +
+> > +		drm_plane_cleanup(&plane->plane);
+> > +	}
+> > +
+> > +	kfree(vsp->planes);
+> > +
+> > +	put_device(vsp->vsp);
+> > +}
+> > +
+> > +int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
+> > +		      unsigned int crtcs)
+> > +{
+> > +	struct rzg2l_du_device *rcdu = vsp->dev;
+> > +	struct platform_device *pdev;
+> > +	unsigned int num_crtcs = hweight32(crtcs);
+> > +	unsigned int num_planes = 2;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	/* Find the VSP device and initialize it. */
+> > +	pdev = of_find_device_by_node(np);
+> > +	if (!pdev)
+> > +		return -ENXIO;
+> > +
+> > +	vsp->vsp = &pdev->dev;
+> > +
+> > +	ret = drmm_add_action_or_reset(&rcdu->ddev, rzg2l_du_vsp_cleanup, vsp);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = vsp1_du_init(vsp->vsp);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	vsp->planes = kcalloc(num_planes, sizeof(*vsp->planes), GFP_KERNEL);
+> > +	if (!vsp->planes)
+> > +		return -ENOMEM;
+> 
+> drmm_kcalloc or drmm_kmalloc_array
+> 
+> > +
+> > +	for (i = 0; i < num_planes; ++i) {
+> > +		enum drm_plane_type type = i < num_crtcs
+> > +					 ? DRM_PLANE_TYPE_PRIMARY
+> > +					 : DRM_PLANE_TYPE_OVERLAY;
+> > +		struct rzg2l_du_vsp_plane *plane = &vsp->planes[i];
+> > +
+> > +		plane->vsp = vsp;
+> > +		plane->index = i;
+> > +		ret = drm_universal_plane_init(&rcdu->ddev, &plane->plane,
+> > +					       crtcs, &rzg2l_du_vsp_plane_funcs,
+> > +					       rzg2l_du_vsp_formats,
+> > +					       ARRAY_SIZE(rzg2l_du_vsp_formats),
+> > +					       NULL, type, NULL);
+> > +		if (ret < 0)
+> > +			return ret;
+> 
+> you need to use drmm variant here too.
 
+-- 
 Regards,
-Anup
+
+Laurent Pinchart
