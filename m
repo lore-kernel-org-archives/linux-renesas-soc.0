@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="W7zLXBgU"
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA183D7F
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:46:48 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-a1ef2f5ed01so1006548266b.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:46:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Y+m+p6IK"
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A41A0D7E
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:46:51 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-a22ed5f0440so390724666b.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:46:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1702554406; x=1703159206; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1702554410; x=1703159210; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tYBn9/laLzrg7Vdv2MX/5C0b5odhy/gUWFCra0JFpOw=;
-        b=W7zLXBgU/MmJZmapmnyy1jmsQHZ7zVFjlgXXG1EsktOvneRpT/IuxMOOMw9WM8K56+
-         SWsoyZ7uC+zoDdYkq+Idik3vzN7uxAA/y3GlzqvxcJS8db8iCKB9Z72NfU0ksgPttFIL
-         Cm0GvfuA7aEYcqrruZpkgwpb3guc/CFjPMCAh3uGWJ3TUOUtqBLlw0TMjvlbqPlvtSTc
-         GteAnq8rhPPTKkTR0IADYOwsJsyrmkouIArwUtjlH4xvHmMM96aRCKb+038EFGSPjpGT
-         iNytUewClQt6tYPHSsY1hhEJnRkFKdZ6BvdZcTLjK3FTah9rN8VmniVvN1ZqgP+E6VTr
-         2zAA==
+        bh=14qVcRtLUoxmGTGt0RCexgzno6C/e+ZUicAuIzWdGM8=;
+        b=Y+m+p6IKW7np4yvKR3QIsaIFRHZ7BtcGXWxM4p8gan3plrP0UJWam9zMILEllQkOzp
+         9nZN8tWs/6VP5hNn3BckBwe7B/eqIQCO7fPH1Oi+aUwC+3Z5UpDue3sPEIHUIi4UfXIw
+         opqQIr70z9f/1eoxLlCdkFD6MeuIcs01NdJ02GBfLxJVFCIa4TEQhspGGBKjZS6oQWA5
+         M6JYjyYoaPDkaubYLYJa22KQLuhKyqaFSabc7V0+ow5EIAOgEe/tmqj3cObCJPrbHmJc
+         u5sf/tc9qqJS8vmUDg0InKcv4zyuaHnqYfJVCYlkQ5nd/cYang+ex3iHP6Igy2DlGDBn
+         vMhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702554406; x=1703159206;
+        d=1e100.net; s=20230601; t=1702554410; x=1703159210;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tYBn9/laLzrg7Vdv2MX/5C0b5odhy/gUWFCra0JFpOw=;
-        b=S3bbvZOHwhR6SkiecivmMbE24VGizE6AqDvID58gFvLxQXDD/E/XlAktODwOFW/H2L
-         Aj85Tb0xsIbiwUDBA4DRs9k00SihHtK4Og0ZEa/sFr2aJxfUwFf3n44R8dm5aJTMwgiP
-         GQiiLFfV0PtSOFav+VHImk3VyNLcCorhdMl4jWcKiT8UB8HwAcY7JCL3mOPFlWW+nVng
-         bl5hvj8hasYb2jxBVfNEkEeursvSDXe+eW6v4uL95IEuMtDlf4Mf6PGWOw8NQ1BbdIea
-         ETbCZjQao2MnPOmTJHAaAJOA/3rQE6gRQbesvxSfPCKSzaGZFtMxP4dLjqDw0ZX9f+Hc
-         AP/A==
-X-Gm-Message-State: AOJu0YxB00t7QpA008UMM5yN3lKio6vYgRvl4yoR0HspoCfa3InF3s53
-	cwHlqRPa+TY9Zy7gPPdT+iBWPA==
-X-Google-Smtp-Source: AGHT+IELfCBw9NbcKSq88512K3cgJnjQwOtGysv+vOQMfS/g+oF4gHBjkLsL02Q1+qt0DyW+mANwkw==
-X-Received: by 2002:a17:906:197:b0:a1b:d7a5:927a with SMTP id 23-20020a170906019700b00a1bd7a5927amr2171533ejb.183.1702554406583;
-        Thu, 14 Dec 2023 03:46:46 -0800 (PST)
+        bh=14qVcRtLUoxmGTGt0RCexgzno6C/e+ZUicAuIzWdGM8=;
+        b=hCXQ+ojBX8bZdCZ5XSTbKNXDYaIAIZK+bxIFPtC2h4kYgdJqi2HGALyI5LErw4JOHV
+         6cH7uAs/MkE8nwjVn8uZm/skZVHtRaE4bNqZlAsbk+8FfcSXeppzI6o9TRrlL77r4QjT
+         ufomH0Hk7ahMMNMiQJTN5gR7USH0OfNywpNmyvKEjFrXzM8DxkviCxk8fchpThis6PEO
+         YLy/nyjf2VQHkMqMCq+jpktwR2rhk3SO45UlzDrdQX57HPYIm9PuvHO6WIUn/mwaV/AE
+         pY1EXDphswzNbZ9INFA1ZPimYlrHpRefTIeon6TsENYKwxQtKv8g6nQGX5XBztWy1yvL
+         ra2g==
+X-Gm-Message-State: AOJu0YxJUjH78YiDOJcJ4IH16jffqkJu+nioza0AL7UoCxUtOufZG5zK
+	LRkA5cfmv5LNyzqKCRWfYveMmg==
+X-Google-Smtp-Source: AGHT+IHmclDok0JjLUg0rjrhrqia2ROzMPs6mwFhPJ8AeOdZc7oPAsNAsr5T6UPZrffIVAhz+HTrRA==
+X-Received: by 2002:a17:907:7d8b:b0:9e3:f24d:5496 with SMTP id oz11-20020a1709077d8b00b009e3f24d5496mr3578988ejc.28.1702554410066;
+        Thu, 14 Dec 2023 03:46:50 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.103])
-        by smtp.gmail.com with ESMTPSA id ll9-20020a170907190900b00a1da2f7c1d8sm9240877ejc.77.2023.12.14.03.46.44
+        by smtp.gmail.com with ESMTPSA id ll9-20020a170907190900b00a1da2f7c1d8sm9240877ejc.77.2023.12.14.03.46.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 03:46:45 -0800 (PST)
+        Thu, 14 Dec 2023 03:46:49 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: s.shtylyov@omp.ru,
@@ -54,9 +54,9 @@ Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH net-next v2 17/21] net: ravb: Keep clock request operations grouped together
-Date: Thu, 14 Dec 2023 13:45:56 +0200
-Message-Id: <20231214114600.2451162-18-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH net-next v2 19/21] net: ravb: Do not set promiscuous mode if the interface is down
+Date: Thu, 14 Dec 2023 13:45:58 +0200
+Message-Id: <20231214114600.2451162-20-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231214114600.2451162-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231214114600.2451162-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,8 +70,12 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Keep clock request operations grouped togeter to have all clock-related
-code in a single place. This makes the code simpler to follow.
+Do not allow setting promiscuous mode if the interface is down. In case
+runtime PM is enabled, and while interface is down, the IP will be in reset
+mode (as for some platforms disabling/enabling the clocks will switch the
+IP to standby mode which will lead to losing registers' content).
+
+Commit prepares for the addition of runtime PM.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
@@ -79,55 +83,23 @@ Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Changes in v2:
 - none; this patch is new
 
- drivers/net/ethernet/renesas/ravb_main.c | 28 ++++++++++++------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 38999ef1ea85..a2a64c22ec41 100644
+index 1995cf7ff084..633346b6cd7c 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2768,6 +2768,20 @@ static int ravb_probe(struct platform_device *pdev)
- 	if (error)
- 		goto out_reset_assert;
+@@ -2164,6 +2164,9 @@ static void ravb_set_rx_mode(struct net_device *ndev)
+ 	struct ravb_private *priv = netdev_priv(ndev);
+ 	unsigned long flags;
  
-+	priv->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(priv->clk)) {
-+		error = PTR_ERR(priv->clk);
-+		goto out_reset_assert;
-+	}
++	if (!netif_running(ndev))
++		return;
 +
-+	if (info->gptp_ref_clk) {
-+		priv->gptp_clk = devm_clk_get(&pdev->dev, "gptp");
-+		if (IS_ERR(priv->gptp_clk)) {
-+			error = PTR_ERR(priv->gptp_clk);
-+			goto out_reset_assert;
-+		}
-+	}
-+
- 	priv->refclk = devm_clk_get_optional(&pdev->dev, "refclk");
- 	if (IS_ERR(priv->refclk)) {
- 		error = PTR_ERR(priv->refclk);
-@@ -2801,20 +2815,6 @@ static int ravb_probe(struct platform_device *pdev)
- 	priv->avb_link_active_low =
- 		of_property_read_bool(np, "renesas,ether-link-active-low");
- 
--	priv->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		error = PTR_ERR(priv->clk);
--		goto out_rpm_put;
--	}
--
--	if (info->gptp_ref_clk) {
--		priv->gptp_clk = devm_clk_get(&pdev->dev, "gptp");
--		if (IS_ERR(priv->gptp_clk)) {
--			error = PTR_ERR(priv->gptp_clk);
--			goto out_rpm_put;
--		}
--	}
--
- 	ndev->max_mtu = info->rx_max_buf_size - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
- 	ndev->min_mtu = ETH_MIN_MTU;
- 
+ 	spin_lock_irqsave(&priv->lock, flags);
+ 	ravb_modify(ndev, ECMR, ECMR_PRM,
+ 		    ndev->flags & IFF_PROMISC ? ECMR_PRM : 0);
 -- 
 2.39.2
 
