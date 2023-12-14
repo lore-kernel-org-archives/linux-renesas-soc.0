@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VDRP0MYq"
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4846BD67
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:46:46 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-54c5d041c23so10540519a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:46:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="l7aXLowx"
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C449210DE
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:46:49 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50bffb64178so9432452e87.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:46:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1702554405; x=1703159205; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1702554408; x=1703159208; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NoiORotVHtzab0Z6R5tqUvsar+MHiUXnH/O7lUfaa34=;
-        b=VDRP0MYqeIxkNCwLg1+URch3+vUo8qgO7a1B9GIQ9sq8G2Jzn6TEJHo4n/kbNcT0TQ
-         UzeoerzztzZ9yt9Jx4oulqrRdu74mLvZQbfL5eT2rsWr8HCLu5BzTj6rk8sHcnFAfTt5
-         CwiGIJlGtcWm4pz+N3VmlQ5HTAr9vERm11jB6w2taQDq2DtHbcdR8lIPym5PgMTbGuoe
-         FaHH8gDnhn2CmZruZFXLO3lPx1+b3C+KXwogPyZ8IRsBfR2v6NJfy/Tt6j+eSymwZ6Mj
-         fCFpOlymA63cxhPLuY1kd5+3o4wS5N9PWYLoXRETnDiSswU4koAfuYFBRutqcZIQRfSV
-         +K2g==
+        bh=hga+Euca2ffWU8RByuMIoZjdDg4sBJqJ6E8Xj3GqHcU=;
+        b=l7aXLowxuHeivrKOLCrOxfXiS1Nkru3oah4VqGlbWzr/wvwFOVe4IafZKyJEBZsLE7
+         Q3Kri5ufiU8CX9ITsqdLvbIe3CNkWNKPN7oywmcvoD6u8ulM/EAcowXe7m/MQ1wWkqPT
+         DUGDkvyLM2kFAC3xfLE9aSmrOvXmDV+doBJbK9ywwWDTBjp7JAaiUXwpaZWaLgRFbTIt
+         i9oSBRGOalagrvRzGbHKOWP3IHnlz/VStR+oT0HpnFUIfc8dv74IbvmTZPgTjzEX1rO2
+         A3H5qLN0KnqwO4A1VU4k8Ur8vxNq9ITQv45AIgcPYmfxRMq5g37AzsTfAVm1/ly/9EYJ
+         3+Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702554405; x=1703159205;
+        d=1e100.net; s=20230601; t=1702554408; x=1703159208;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NoiORotVHtzab0Z6R5tqUvsar+MHiUXnH/O7lUfaa34=;
-        b=utYX+2hBMdVVnnKqYKfbfRHwzGCBptJwqQzbvLMkFXiZk2FttrlGhIWb//LTSQVerB
-         WferonRzhjeIbIYLjVHb4cqQRqRcmEA93o1mjMZpIiG4fcsTszQFSk1Ye1xNY2VbUP/v
-         p9GGj4pdNugDKB7IrQcfhi3hde1QoMzyV+Qb8504OrDxUF0TDv2AvuX0i/BakDqyuKg5
-         gW7XIZWMkZTBjgZpOr0rvfiJvGX++kFgmXlS2w94Xbu4abiA9sDjC7YYZwiTMVkQfTlz
-         EXBWzZ9NI4HDPmFRmRUH9WFXoD0NiTFNZSQmVNmPLQ7yHFwPx9vKeOR/t2DBej47fwUR
-         LuQA==
-X-Gm-Message-State: AOJu0YxZFjoK2nIfPUYHhMFRGbc0YCpnQrKtB5Eu7G2it+F2UgSY5du8
-	jFQPTvlNN/2iic6UMonNkkHXcw==
-X-Google-Smtp-Source: AGHT+IEkHkIjbZxyWNnhWgVzwKp1oLjVB6rkXJC6EiXk5LsZBUGVINMSQUgKJqcBBpk9Att/KP854w==
-X-Received: by 2002:a17:906:de:b0:a19:a1ba:bada with SMTP id 30-20020a17090600de00b00a19a1babadamr2578053eji.128.1702554404767;
-        Thu, 14 Dec 2023 03:46:44 -0800 (PST)
+        bh=hga+Euca2ffWU8RByuMIoZjdDg4sBJqJ6E8Xj3GqHcU=;
+        b=wEdjuAfGikrTmbKJnZzU6lHhu3N7g7jjv1ftipGBhCyw7VrJ1djYt9KG4aISs6av+N
+         t3c2UX4ueiM+txL4MtQ9y4RW0DvK6Rcfi2QklyoOUJCk6v3vkte6lTQD03Gszl/7GeEd
+         1/xTPJw4ovKu9uCiGACifBkcPSKyII1nZninecXDFSblWgjCxnT5PYfV5Vn/Ss1ljC9H
+         z/wHXYLDvH+HkjM9sOofvk95KkM/zmrpfBZDc5fZ4lUyMhCC+lMXpU1/PDsRS5QznWX9
+         ZhH6Kl/Bvzlk7nIjGePjTwZxI19nKQKI59p2pr9Yku2pNxrkLTsflj1LVS5N3ggRyhxK
+         D/9g==
+X-Gm-Message-State: AOJu0YyRvcrZDwRsqsusEmLbrvyrkLS/d1f2JWEIs/kwuqCEur8RUxL5
+	KMzQm6KTOjCeWqGU9vX/SgZlrQ==
+X-Google-Smtp-Source: AGHT+IFnDBljg1qdRWJ1vg6w1v/K2QMbcocaqB1sTTdcbBfsJx37oqwxmTaj3RmyvXHm2M4a86VXcw==
+X-Received: by 2002:ac2:554b:0:b0:50b:f09b:e5a6 with SMTP id l11-20020ac2554b000000b0050bf09be5a6mr4073265lfk.112.1702554408129;
+        Thu, 14 Dec 2023 03:46:48 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.103])
-        by smtp.gmail.com with ESMTPSA id ll9-20020a170907190900b00a1da2f7c1d8sm9240877ejc.77.2023.12.14.03.46.43
+        by smtp.gmail.com with ESMTPSA id ll9-20020a170907190900b00a1da2f7c1d8sm9240877ejc.77.2023.12.14.03.46.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 03:46:44 -0800 (PST)
+        Thu, 14 Dec 2023 03:46:47 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: s.shtylyov@omp.ru,
@@ -54,9 +54,9 @@ Cc: netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH net-next v2 16/21] net: ravb: Keep the reverse order of operations in ravb_close()
-Date: Thu, 14 Dec 2023 13:45:55 +0200
-Message-Id: <20231214114600.2451162-17-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH net-next v2 18/21] net: ravb: Return cached statistics if the interface is down
+Date: Thu, 14 Dec 2023 13:45:57 +0200
+Message-Id: <20231214114600.2451162-19-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231214114600.2451162-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231214114600.2451162-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,52 +70,38 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Keep the reverse order of operations in ravb_close() when comparing with
-ravb_open(). This is the recommended configuration sequence.
+Return the cached statistics in case the interface is down. There should be
+no drawback to this, as most of the statistics are updated on the data path
+and if runtime PM is enabled and the interface is down, the registers that
+are explicitly read on ravb_get_stats() are zero anyway on most of the IP
+variants.
 
+The commit prepares the code for the addition of runtime PM support.
+
+Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
 - none; this patch is new
 
- drivers/net/ethernet/renesas/ravb_main.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index b581666e341f..38999ef1ea85 100644
+index a2a64c22ec41..1995cf7ff084 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2182,6 +2182,14 @@ static int ravb_close(struct net_device *ndev)
- 	ravb_write(ndev, 0, RIC2);
- 	ravb_write(ndev, 0, TIC);
+@@ -2110,6 +2110,9 @@ static struct net_device_stats *ravb_get_stats(struct net_device *ndev)
+ 	const struct ravb_hw_info *info = priv->info;
+ 	struct net_device_stats *nstats, *stats0, *stats1;
  
-+	/* PHY disconnect */
-+	if (ndev->phydev) {
-+		phy_stop(ndev->phydev);
-+		phy_disconnect(ndev->phydev);
-+		if (of_phy_is_fixed_link(np))
-+			of_phy_deregister_fixed_link(np);
-+	}
++	if (!netif_running(ndev))
++		return &ndev->stats;
 +
- 	/* Stop PTP Clock driver */
- 	if (info->gptp || info->ccc_gac)
- 		ravb_ptp_stop(ndev);
-@@ -2200,14 +2208,6 @@ static int ravb_close(struct net_device *ndev)
- 		}
- 	}
+ 	nstats = &ndev->stats;
+ 	stats0 = &priv->stats[RAVB_BE];
  
--	/* PHY disconnect */
--	if (ndev->phydev) {
--		phy_stop(ndev->phydev);
--		phy_disconnect(ndev->phydev);
--		if (of_phy_is_fixed_link(np))
--			of_phy_deregister_fixed_link(np);
--	}
--
- 	cancel_work_sync(&priv->work);
- 
- 	if (info->nc_queues)
 -- 
 2.39.2
 
