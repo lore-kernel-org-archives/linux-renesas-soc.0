@@ -1,46 +1,46 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE17697B9
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 20:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C4F6A006
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2023 20:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GkusnqSf"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lkuire/+"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702584013; x=1734120013;
+  t=1702584088; x=1734120088;
   h=date:from:to:cc:subject:message-id;
-  bh=YQCz8vvHZX1aZjRjl91seX5ShsK1d4ux2w1rzXAUWmc=;
-  b=GkusnqSfhhutQupqmEukyal2M9sVA7lEV69Nk/WxxVbVmjz7qacYbV4c
-   aKSnK1uMMyHMb/d7G/Sjuf57ufmIUgMlW/WrJHKyjePkfsE6y66SZgnHg
-   2/GrIBvbkkhDLsDgDvblS4BLu0O6d5WoiZ3LI+MYimdMxUNR+Pa43q6Cf
-   99SAJ80dpWxl9TkFYBXCsMaoXBYKI5ffddZZjyy6plKjZrcp6yFzJ3mtO
-   jO+jliEY/yEGMw0ICKW7Te7dSYFOj1iXGW6x4wtvoXH3IJj85uEDbz7s/
-   Ox1XTxq3K6noipfNPg6286702CP1uu7DsEiQhWXvgFaBFlIQ660mdAd9F
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="426311321"
+  bh=xx/pdsEowBffpGYXIbO4kDmIpKoHjEBHA/yz9HvEr2w=;
+  b=Lkuire/+vxTM+PXjNNcK0vrpR2s0RzKayo0Ui44HU3oaWFUdDwuG6bvq
+   EjPbdesrkUSa82K0z192euBV1ISDxA3gDl8QF5U8HOiYuW7OwMS/lqTQA
+   sV0OCgv2DsaRmovWvZli+yz+DFicYlo+IxwYOA8bPJW1K2WeMJvtnyRFD
+   Z9QcbiPysjezBPcEqXAXY2BA7zqI5T/7wsD5/ehfWaATw+1xUXSogp75z
+   +wN4OoNyip3Ys23oZTERhAuYmqd5FgX5K5xU61pjRUdNlgAqDHMBLRfvu
+   MZUdB8EyNOzyKioif2Sc7NE38iC6nMVrond861TZOTI8PMZcukH25uCS3
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="481371387"
 X-IronPort-AV: E=Sophos;i="6.04,276,1695711600"; 
-   d="scan'208";a="426311321"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 12:00:11 -0800
+   d="scan'208";a="481371387"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 12:01:27 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="1105850551"
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="840397050"
 X-IronPort-AV: E=Sophos;i="6.04,276,1695711600"; 
-   d="scan'208";a="1105850551"
+   d="scan'208";a="840397050"
 Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Dec 2023 12:00:10 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 14 Dec 2023 12:01:15 -0800
 Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1rDrsO-000MXe-1l;
-	Thu, 14 Dec 2023 20:00:08 +0000
-Date: Fri, 15 Dec 2023 03:59:58 +0800
+	id 1rDrtM-000MXo-2B;
+	Thu, 14 Dec 2023 20:01:08 +0000
+Date: Fri, 15 Dec 2023 04:00:35 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-dts-for-v6.8] BUILD SUCCESS
- fc67495680f60e88bb8ca43421c1dd628928d581
-Message-ID: <202312150355.NeG5ibJa-lkp@intel.com>
+Subject: [geert-renesas-drivers:renesas-pinctrl-for-v6.8] BUILD
+ SUCCESS 0c22012758eadf752d88a760289035b44267e83d
+Message-ID: <202312150432.H8ORgMcf-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -48,13 +48,13 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v6.8
-branch HEAD: fc67495680f60e88bb8ca43421c1dd628928d581  arm64: dts: renesas: white-hawk-cpu: Fix missing serial console pin control
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-pinctrl-for-v6.8
+branch HEAD: 0c22012758eadf752d88a760289035b44267e83d  pinctrl: renesas: rzg2l: Add input enable to the Ethernet pins
 
 elapsed time: 1473m
 
-configs tested: 183
-configs skipped: 83
+configs tested: 199
+configs skipped: 4
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -98,11 +98,25 @@ csky                                defconfig   gcc
 csky                  randconfig-001-20231214   gcc  
 csky                  randconfig-002-20231214   gcc  
 hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
 hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
 i386                             allmodconfig   clang
 i386                              allnoconfig   clang
 i386                             allyesconfig   clang
+i386         buildonly-randconfig-001-20231214   gcc  
+i386         buildonly-randconfig-002-20231214   gcc  
+i386         buildonly-randconfig-003-20231214   gcc  
+i386         buildonly-randconfig-004-20231214   gcc  
+i386         buildonly-randconfig-005-20231214   gcc  
+i386         buildonly-randconfig-006-20231214   gcc  
 i386                                defconfig   gcc  
+i386                  randconfig-001-20231214   gcc  
+i386                  randconfig-002-20231214   gcc  
+i386                  randconfig-003-20231214   gcc  
+i386                  randconfig-004-20231214   gcc  
+i386                  randconfig-005-20231214   gcc  
+i386                  randconfig-006-20231214   gcc  
 i386                  randconfig-011-20231214   clang
 i386                  randconfig-012-20231214   clang
 i386                  randconfig-013-20231214   clang
@@ -125,6 +139,7 @@ microblaze                        allnoconfig   gcc
 microblaze                       allyesconfig   gcc  
 microblaze                          defconfig   gcc  
 mips                             allmodconfig   gcc  
+mips                              allnoconfig   clang
 mips                             allyesconfig   gcc  
 mips                         cobalt_defconfig   gcc  
 mips                           gcw0_defconfig   gcc  
@@ -206,6 +221,7 @@ sparc64                             defconfig   gcc
 sparc64               randconfig-001-20231214   gcc  
 sparc64               randconfig-002-20231214   gcc  
 um                               allmodconfig   clang
+um                                allnoconfig   clang
 um                               allyesconfig   clang
 um                                  defconfig   gcc  
 um                             i386_defconfig   gcc  
