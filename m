@@ -1,112 +1,71 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B375B31721
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2023 14:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npdlo1HQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C83C433C8;
-	Fri, 15 Dec 2023 14:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702650265;
-	bh=n//Zk2gdkH/iGcaZ7tRqNwsbso51mNHgRXktukJtHgI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=npdlo1HQ8Pn+/5wgKaQIVR1AiVBKw/CqspZ8QqAict90UGsCuqr6d48XIDO3/G8Mp
-	 JD19pAmuRfYy2Ec+Kuuun/R6s8bJeGm233mUhhn4Z1iPLl8KBIkvTcqHEJqcfYZDue
-	 zkXuc75JGr1L+97rQOFASW0CGOCuM7o7ST7TLxN39dvgh40UAvUutYFSJrJ/abW4KI
-	 I6bO52e9vR4qDSpIGb+Mhb8tEI4+2ap5bK77X5x+ofcr9Lpu/docxW/XTB2aGvliWI
-	 3jEtNN6kTx52OmdMmaGM4Cu5Eh+kQ0cWMfBtvs19Wpmv9IB+arAV/5/tPh9ABBemnp
-	 SP/sqgSM6b5Wg==
-Date: Fri, 15 Dec 2023 15:24:22 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "biju.das.au" <biju.das.au@gmail.com>
-Subject: Re: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU Support
-Message-ID: <he23e5al3hinegebvq7qai4jdw3qjgbzmnx34xgxqnu3hw4jke@dts2vi5kcs4u>
-References: <20231128105129.161121-1-biju.das.jz@bp.renesas.com>
- <20231128105129.161121-4-biju.das.jz@bp.renesas.com>
- <sechknyg33iucaku37vfhk7ie7xgcealfqbvaopm4rrnqbo5g5@s35peonkzzoz>
- <TYCPR01MB11269767836DEB995747B7ED3868CA@TYCPR01MB11269.jpnprd01.prod.outlook.com>
- <zp2ews2by6fg5irmb7ms6blox6vruezdjlor3rutqtokbvlle2@tl775slyvhyf>
- <TYCPR01MB1126964899D432355ACAF49D18693A@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9C62EB11
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2023 14:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4SsBFv404Tz4x2fB
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2023 15:20:35 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:28e5:a835:e0b1:5291])
+	by laurent.telenet-ops.be with bizsmtp
+	id NeLT2B00E29mzEW01eLTGa; Fri, 15 Dec 2023 15:20:28 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rE92o-00C71z-8Y;
+	Fri, 15 Dec 2023 15:20:27 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rE76H-00GsHf-4u;
+	Fri, 15 Dec 2023 13:15:29 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: arm-soc <arm@kernel.org>,
+	soc <soc@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 1/2] Renesas driver updates for v6.8
+Date: Fri, 15 Dec 2023 13:15:20 +0100
+Message-Id: <cover.1702642340.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1702642338.git.geert+renesas@glider.be>
+References: <cover.1702642338.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zhsfxp6q5wlnvcc3"
-Content-Disposition: inline
-In-Reply-To: <TYCPR01MB1126964899D432355ACAF49D18693A@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
---zhsfxp6q5wlnvcc3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
-On Fri, Dec 15, 2023 at 01:25:48PM +0000, Biju Das wrote:
-> Hi Maxime Ripard,
->=20
-> > -----Original Message-----
-> > From: Maxime Ripard <mripard@kernel.org>
-> > Sent: Friday, December 15, 2023 10:24 AM
-> > Subject: Re: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU Support
-> >=20
-> > On Thu, Dec 14, 2023 at 03:24:17PM +0000, Biju Das wrote:
-> > > Hi Maxime Ripard,
-> > >
-> > > Thanks for the feedback.
-> >=20
-> > Thanks, that's super helpful. The architecture is thus similar to vc4
-> >=20
-> > Some general questions related to bugs we had at some point with vc4:
-> >=20
-> >   * Where is the display list stored? In RAM or in a dedicated SRAM?
->=20
-> [1] It is in DDR (RAM).
->=20
-> >=20
-> >   * Are the pointer to the current display list latched?
-> >=20
-> >   * Is the display list itself latched? If it's not, what happens when
-> >     the display list is changed while the frame is being generated?
->=20
-> There is some protocol defined for SW side and HW side for updating displ=
-ay list
-> See [1] 33.4.8.1 Operation flow of VSPD and DU.
->=20
-> All the display list operations are manged here[2]
->=20
-> [1] https://www.renesas.com/us/en/document/mah/rzg2l-group-rzg2lc-group-u=
-sers-manual-hardware-0
->=20
-> [2] https://elixir.bootlin.com/linux/v6.7-rc5/source/drivers/media/platfo=
-rm/renesas/vsp1/vsp1_dl.c#L863
+are available in the Git repository at:
 
-I'm sorry, but I'm not going to read a 3500+ to try to figure it out.
-Could you answer the questions above?
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v6.8-tag1
 
-Maxime
+for you to fetch changes up to 31b2daea07643d8b83d62c670c76d95acca84f06:
 
---zhsfxp6q5wlnvcc3
-Content-Type: application/pgp-signature; name="signature.asc"
+  soc: renesas: Make RZ/Five depend on !DMA_DIRECT_REMAP (2023-12-13 17:23:28 +0100)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+Renesas driver updates for v6.8
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZXxhlgAKCRDj7w1vZxhR
-xQ97AP9yP2lSDsHP9g4HSUqxtJV7cgXsj9Xauf5TPZ/M7DeWMAD/R6c5ZBcVu2MX
-UhuMQnlqnnHP5Iv8yKhrgkM7DNU0CQ8=
-=qOGM
------END PGP SIGNATURE-----
+  - Remove duplicate setup of soc_device_attribute.family,
+  - Make RZ/Five depend on !DMA_DIRECT_REMAP.
 
---zhsfxp6q5wlnvcc3--
+----------------------------------------------------------------
+Conor Dooley (1):
+      soc: renesas: Make RZ/Five depend on !DMA_DIRECT_REMAP
+
+Geert Uytterhoeven (1):
+      soc: renesas: Remove duplicate setup of soc_device_attribute.family
+
+ drivers/soc/renesas/Kconfig       | 1 +
+ drivers/soc/renesas/renesas-soc.c | 4 ----
+ 2 files changed, 1 insertion(+), 4 deletions(-)
