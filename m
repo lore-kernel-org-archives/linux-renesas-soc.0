@@ -1,82 +1,201 @@
-Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEC930FBC
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2023 14:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4SsBFv43ljz4x1Fj
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2023 15:20:35 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:28e5:a835:e0b1:5291])
-	by xavier.telenet-ops.be with bizsmtp
-	id NeLT2B00729mzEW01eLTf4; Fri, 15 Dec 2023 15:20:27 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rE92o-00C71t-2t;
-	Fri, 15 Dec 2023 15:20:27 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rE7BO-00GsMs-84;
-	Fri, 15 Dec 2023 13:20:46 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.8 (take two)
-Date: Fri, 15 Dec 2023 13:20:44 +0100
-Message-Id: <cover.1702642574.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A4831A72
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2023 14:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDN+3h0s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C77C433C7;
+	Fri, 15 Dec 2023 14:23:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702650184;
+	bh=BZFnYzW7YZTXtkTyTtLONk7MbUaXR0Vw+rIVriH8hSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bDN+3h0sQL1BSRMAbpiHvfzBj7zg4/XJR8MxiYIYluyTpCodrr1dNmIiuu7/g8V5q
+	 1dtS8ewYCSHg8PB3d/XVIm8Nebh9hRmHicU6QDuo6QbOMUlGEVTIlWbpddCLYKbeQr
+	 N1k0QuJkxH6Xu+0hOOyNioxOClNwS1dTMMTM9PDD6n5flPUhQywWTpnHUxZqnkmhgW
+	 a33Msou9/jM+uhWCF8E3E4Fg8YiOvJ/PAGcPqjeavia998JxAvfH7EPOiijSiVZajg
+	 V8dxXHGW/6Xwpb8QF3oTVnIKA5QrsAZ01QlwUeQo6jYzWT3RR4mbUUvSn4JRm7ZRWu
+	 RTFwaxsmdX/pw==
+Date: Fri, 15 Dec 2023 15:23:02 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "biju.das.au" <biju.das.au@gmail.com>
+Subject: Re: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU Support
+Message-ID: <5xmkpbymmvsqdfjxgkrjf7r4b7sgxdd7gq7qmohg5id6ljjg7z@rznod4o464iy>
+References: <20231128105129.161121-1-biju.das.jz@bp.renesas.com>
+ <20231128105129.161121-4-biju.das.jz@bp.renesas.com>
+ <sechknyg33iucaku37vfhk7ie7xgcealfqbvaopm4rrnqbo5g5@s35peonkzzoz>
+ <TYCPR01MB11269767836DEB995747B7ED3868CA@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+ <zp2ews2by6fg5irmb7ms6blox6vruezdjlor3rutqtokbvlle2@tl775slyvhyf>
+ <TYCPR01MB112699C55873FA75B8F4469C18693A@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+ <bw3qxved377k5pmh3dbnimiyxra7k6dgb2tmg23bvxnfglti4g@uqdxmgnqrkg2>
+ <TYCPR01MB11269CC132B84CFAD11D307578693A@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+ <TYCPR01MB11269A92241B3469FAC06AF398693A@TYCPR01MB11269.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cuf2qri4iqampkgy"
+Content-Disposition: inline
+In-Reply-To: <TYCPR01MB11269A92241B3469FAC06AF398693A@TYCPR01MB11269.jpnprd01.prod.outlook.com>
 
-	Hi Mike, Stephen,
 
-The following changes since commit 5f9e29b9159a41fcf6733c3b59fa46a90ce3ae20:
+--cuf2qri4iqampkgy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  clk: renesas: rzg2l-cpg: Reuse code in rzg2l_cpg_reset() (2023-11-27 11:09:53 +0100)
+On Fri, Dec 15, 2023 at 02:19:25PM +0000, Biju Das wrote:
+> Hi Maxime Ripard,
+>=20
+> > -----Original Message-----
+> > From: Biju Das
+> > Sent: Friday, December 15, 2023 1:52 PM
+> > Subject: RE: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU Support
+> >=20
+> > Hi Maxime Ripard,
+> >=20
+> > > -----Original Message-----
+> > > From: Maxime Ripard <mripard@kernel.org>
+> > > Sent: Friday, December 15, 2023 12:58 PM
+> > > Subject: Re: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU Support
+> > >
+> > > On Fri, Dec 15, 2023 at 11:37:07AM +0000, Biju Das wrote:
+> > > > Hi Maxime Ripard,
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Maxime Ripard <mripard@kernel.org>
+> > > > > Sent: Friday, December 15, 2023 10:24 AM
+> > > > > To: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > > Subject: Re: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU Support
+> > > > >
+> > > > > On Thu, Dec 14, 2023 at 03:24:17PM +0000, Biju Das wrote:
+> > > > > > Hi Maxime Ripard,
+> > > > > >
+> > > > > > Thanks for the feedback.
+> > > > > >
+> > > > > > > -----Original Message-----
+> > > > > > > From: Maxime Ripard <mripard@kernel.org>
+> > > > > > > Sent: Wednesday, December 13, 2023 3:47 PM
+> > > > > > > To: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > > > > Subject: Re: [PATCH v15 3/5] drm: renesas: Add RZ/G2L DU
+> > > > > > > Support
+> > > > > > >
+> > > > > > > > +	 */
+> > > > > > > > +	rzg2l_du_crtc_get(rcrtc);
+> > > > > > >
+> > > > > > > That's a bit suspicious. Have you looked at
+> > > > > > > drm_atomic_helper_commit_tail_rpm() ?
+> > > > > >
+> > > > > > Ok, I will drop this and start using
+> > > > > > drm_atomic_helper_commit_tail_rpm()
+> > > > > > instead of rzg2l_du_atomic_commit_tail().
+> > > > >
+> > > > > It was more of a suggestion, really. I'm not sure whether it works
+> > > > > for you, but it usually addresses similar issues in drivers.
+> > > >
+> > > > I confirm, it is working in my case, even after removing
+> > > > rzg2l_du_crtc_get() and using the helper function
+> > > drm_atomic_helper_commit_tail_rpm().
+> > > >
+> > > > >
+> > > > > > >
+> > > > > > > > +static int rzg2l_du_crtc_enable_vblank(struct drm_crtc *cr=
+tc)
+> > {
+> > > > > > > > +	struct rzg2l_du_crtc *rcrtc =3D to_rzg2l_crtc(crtc);
+> > > > > > > > +
+> > > > > > > > +	rcrtc->vblank_enable =3D true;
+> > > > > > > > +
+> > > > > > > > +	return 0;
+> > > > > > > > +}
+> > > > > > > > +
+> > > > > > > > +static void rzg2l_du_crtc_disable_vblank(struct drm_crtc
+> > > > > > > > +*crtc)
+> > > {
+> > > > > > > > +	struct rzg2l_du_crtc *rcrtc =3D to_rzg2l_crtc(crtc);
+> > > > > > > > +
+> > > > > > > > +	rcrtc->vblank_enable =3D false; }
+> > > > > > >
+> > > > > > > You should enable / disable your interrupts here
+> > > > > >
+> > > > > > We don't have dedicated vblank IRQ for enabling/disabling vblan=
+k.
+> > > > > >
+> > > > > > vblank is handled by vspd.
+> > > > > >
+> > > > > > vspd is directly rendering images to display,
+> > > > > > rcar_du_crtc_finish_page_flip() and drm_crtc_handle_vblank()
+> > > > > > called in vspd's pageflip context.
+> > > > > >
+> > > > > > See rzg2l_du_vsp_complete()in rzg2l_du_vsp.c
+> > > > >
+> > > > > Sorry, I couldn't really get how the interrupt flow / vblank
+> > > > > reporting is going to work. Could you explain it a bit more?
+> > > >
+> > > > We just need to handle vertical blanking in the VSP frame end handl=
+er.
+> > > > See the code below.
+> > > >
+> > > > static void rzg2l_du_vsp_complete(void *private, unsigned int
+> > > > status,
+> > > > u32 crc) {
+> > > > 	struct rzg2l_du_crtc *crtc =3D private;
+> > > >
+> > > > 	if (crtc->vblank_enable)
+> > > > 		drm_crtc_handle_vblank(&crtc->crtc);
+> > > >
+> > > > 	if (status & VSP1_DU_STATUS_COMPLETE)
+> > > > 		rzg2l_du_crtc_finish_page_flip(crtc);
+> > > >
+> > > > 	drm_crtc_add_crc_entry(&crtc->crtc, false, 0, &crc); }
+> > >
+> > > Then we're back to the same question :)
+> > >
+> > > Why can't you mask the frame end interrupt?
+> >=20
+> > We are masking interrupts.
+> >=20
+> > [   70.639139] #######rzg2l_du_crtc_disable_vblank#######
+> > [   70.650243] #########rzg2l_du_vsp_disable ############
+> > [   70.652003] ########## vsp1_wpf_stop###
+> >=20
+> > Unmask is,
+> >=20
+> > [ 176.354520] #######rzg2l_du_crtc_enable_vblank#######
+> > [  176.354922] #########rzg2l_du_vsp_atomic_flush ############
+> > [  176.355198] ########## wpf_configure_stream###
+> >=20
+>=20
+> Shall I send V16 now as I am going for xmas vacation or
+> Do you prefer to wait?
 
-are available in the Git repository at:
+Waiting is fine, most of us are going to be in holidays too so you won't
+get any reviews either :)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.8-tag2
+Maxime
 
-for you to fetch changes up to 515f05da372aedf347a1ac99d17fb832ba371d4d:
+--cuf2qri4iqampkgy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  clk: renesas: r9a08g045: Add clock and reset support for ETH0 and ETH1 (2023-12-13 20:05:55 +0100)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-clk: renesas: Updates for v6.8 (take two)
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZXxhRgAKCRDj7w1vZxhR
+xRTYAQCZ5+kRxw5upf2F2fYnch09iMY4aJ+1gIoketVUIpcbWAD/WTeR2Eg8C92x
+dJ8TOIhhaezmP0YS++Gu2wiR54RqnQE=
+=j+/Q
+-----END PGP SIGNATURE-----
 
-  - Add interrupt controller and Ethernet clocks and resets on RZ/G3S,
-  - Check reset monitor registers on RZ/G2L-alike SoCs.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Claudiu Beznea (3):
-      clk: renesas: r9a08g045: Add IA55 pclk and its reset
-      clk: renesas: rzg2l: Check reset monitor registers
-      clk: renesas: r9a08g045: Add clock and reset support for ETH0 and ETH1
-
- drivers/clk/renesas/r9a08g045-cpg.c | 13 ++++++++
- drivers/clk/renesas/rzg2l-cpg.c     | 59 +++++++++++++++++++++++++++----------
- 2 files changed, 57 insertions(+), 15 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--cuf2qri4iqampkgy--
