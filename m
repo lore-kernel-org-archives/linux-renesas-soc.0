@@ -1,24 +1,24 @@
-Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BE353E18
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  8 Jan 2024 15:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FEB524BA
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  8 Jan 2024 15:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4T7ylh71Nfz4x3rJ
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  8 Jan 2024 16:34:08 +0100 (CET)
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4T7ylg47mNz4x40s
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  8 Jan 2024 16:34:07 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:d323:2fd4:4f64:e281])
-	by xavier.telenet-ops.be with bizsmtp
-	id YFZw2B00H0Qz0eJ01FZwDC; Mon, 08 Jan 2024 16:34:08 +0100
+	by andre.telenet-ops.be with bizsmtp
+	id YFZw2B0020Qz0eJ01FZwJy; Mon, 08 Jan 2024 16:34:07 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rMrcp-00EtMO-9w;
+	id 1rMrco-00EtLm-Vn;
 	Mon, 08 Jan 2024 16:33:56 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rMrdU-00D7oW-FY;
+	id 1rMrdU-00D7np-5N;
 	Mon, 08 Jan 2024 16:33:56 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -41,9 +41,9 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/15] soc: renesas: Introduce ARCH_RCAR_GEN4
-Date: Mon,  8 Jan 2024 16:33:49 +0100
-Message-Id: <4f4a2dbdb6ba51e151cbdc128da377083b0d850d.1704726960.git.geert+renesas@glider.be>
+Subject: [PATCH 01/15] dt-bindings: clock: renesas,cpg-mssr: Document R-Car V4M support
+Date: Mon,  8 Jan 2024 16:33:40 +0100
+Message-Id: <81f5a2b55795af06f6fd54b3d566156e91138a17.1704726960.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1704726960.git.geert+renesas@glider.be>
 References: <cover.1704726960.git.geert+renesas@glider.be>
@@ -55,67 +55,26 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, all Kconfig symbols for R-Car Gen4 SoCs select the
-ARCH_RCAR_GEN3 SoC family symbol, which might confuse the casual reader.
-
-Fix this by introducing a new SoC family symbol for R-Car Gen4 SoCs.
-For now this just selects ARCH_RCAR_GEN3, to avoid duplication, and to
-relax dependencies.
+Document support for the Clock Pulse Generator (CPG) and Module Standby
+Software Reset (MSSR) module on the Renesas R-Car V4M (R8A779H0) SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Once "[PATCH] i2c: rcar: Prepare for the advent of ARCH_RCAR_GEN4"[1]
-has been applied, ARCH_RCAR_GEN4 can stop selecting ARCH_RCAR_GEN3.
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-I'm open for suggestions how to improve this.
-Perhaps factor out common parts into ARCH_RCAR?
-
-[1] https://lore.kernel.org/r/bf7b105f7d9728ae5cd9fa99d1cdd278d71e7df2.1704723713.git.geert+renesas@glider.be
----
- drivers/soc/renesas/Kconfig | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 0986672f63757663..784a2b50561d5a97 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -34,6 +34,10 @@ config ARCH_RCAR_GEN3
- 	select SYS_SUPPORTS_SH_CMT
- 	select SYS_SUPPORTS_SH_TMU
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 9c3dc6c4fa94218c..084259d30232aa68 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -50,6 +50,7 @@ properties:
+       - renesas,r8a779a0-cpg-mssr # R-Car V3U
+       - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+       - renesas,r8a779g0-cpg-mssr # R-Car V4H
++      - renesas,r8a779h0-cpg-mssr # R-Car V4M
  
-+config ARCH_RCAR_GEN4
-+	bool
-+	select ARCH_RCAR_GEN3
-+
- config ARCH_RMOBILE
- 	bool
- 	select PM
-@@ -240,7 +244,7 @@ config ARCH_R8A77961
- 
- config ARCH_R8A779F0
- 	bool "ARM64 Platform support for R-Car S4-8"
--	select ARCH_RCAR_GEN3
-+	select ARCH_RCAR_GEN4
- 	select SYSC_R8A779F0
- 	help
- 	  This enables support for the Renesas R-Car S4-8 SoC.
-@@ -261,14 +265,14 @@ config ARCH_R8A77970
- 
- config ARCH_R8A779A0
- 	bool "ARM64 Platform support for R-Car V3U"
--	select ARCH_RCAR_GEN3
-+	select ARCH_RCAR_GEN4
- 	select SYSC_R8A779A0
- 	help
- 	  This enables support for the Renesas R-Car V3U SoC.
- 
- config ARCH_R8A779G0
- 	bool "ARM64 Platform support for R-Car V4H"
--	select ARCH_RCAR_GEN3
-+	select ARCH_RCAR_GEN4
- 	select SYSC_R8A779G0
- 	help
- 	  This enables support for the Renesas R-Car V4H SoC.
+   reg:
+     maxItems: 1
 -- 
 2.34.1
 
