@@ -1,158 +1,207 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C78715A7
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Jan 2024 05:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="nb3pvqSF"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a2a17f3217aso259246666b.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Jan 2024 21:43:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1704778980; x=1705383780; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xcgdr1I9kndIxRfT90cgq6tEB3GwG2M4TsfK1tAjKE0=;
-        b=nb3pvqSFawouaLEgEjyY6rxyx/UbpR5sjVWebS/VxOfEQNZeenGXahcitQtpvkTSHE
-         G8PzgIp91ILZ3MpZkVdyDiIKJ5foOYop33v1x42ObURVminhKZNjgj4ElcP+ZH2acso5
-         za6h+MfVbrR09xOYGIyVDFb1Bb+18qQqFI3tBZKP8vvZL8IAQnhut8sAi4kwm+FZaXjJ
-         +ghSNDNT61MjZ38o3GJTLohmDGiN6/ZigDWGeeM8IgiEtiJGkIowMajmlv7Wo+365dtT
-         hqfHVC394OltAgjSFi8y5Q94gA6Nfwaj10KwK/TaAqPNb3mlZWZOmXrx2gt7HIGfTI6v
-         15XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704778980; x=1705383780;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xcgdr1I9kndIxRfT90cgq6tEB3GwG2M4TsfK1tAjKE0=;
-        b=U7v+NQXW+6zd4nqB5L2xXaRL2Pi6+3ZDBOKEUHBT6dCknqPDQ/gc7KhWlHXothnhNa
-         +WUiIssKm6QB9bt0WEtO7TqA7zsBZOUDwO4v+K2aJgMuykN5Fdb9l9AN4aDxISgTTaN8
-         E/piCYnBMlHkFhRY5fPvJOI/z15x4ql6BaNPZFwKMi2igqO3ALKylUQr7NNxdfEzd4Xb
-         3xtWA99mU7lrDBeFDXM7GTupMxw7aGaB+9vtZ6HzIn5LzB124gbAKRsYm7tEjYhlT4WO
-         uLiPWl4EuN9JJyBNpZIGHH3qpLNnR7nrllgDKsjiet/FjHP8QRMlxG+vzhlNGaBCIStE
-         HZFQ==
-X-Gm-Message-State: AOJu0YybCTr9HfTIDmjS7pYt+bneqvUUwmr8hw3oXKpnSHtzxkNDf38T
-	v3+h4XFvduEgFveF35OXjrlfgMfPpiV7mw==
-X-Google-Smtp-Source: AGHT+IGuhQReqUvlv0RJ3ciCIToVLxlJJB3Esmba5Yo60V5bwghrRTOYWBE89ho73FfJ+oSHxrV7gw==
-X-Received: by 2002:a17:907:9483:b0:a28:cde1:43a9 with SMTP id dm3-20020a170907948300b00a28cde143a9mr303838ejc.9.1704778980269;
-        Mon, 08 Jan 2024 21:43:00 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.5])
-        by smtp.gmail.com with ESMTPSA id i12-20020a170906250c00b00a2693ce340csm632804ejb.59.2024.01.08.21.42.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jan 2024 21:42:59 -0800 (PST)
-Message-ID: <f23e9ff2-9792-460f-863e-72c8d44cfbda@tuxon.dev>
-Date: Tue, 9 Jan 2024 07:42:52 +0200
+Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B947D22063;
+	Tue,  9 Jan 2024 08:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=users.sourceforge.jp
+Received: from SIOS1075.ysato.name (ZM005235.ppp.dion.ne.jp [222.8.5.235])
+	by sakura.ysato.name (Postfix) with ESMTPSA id 3009D1C0572;
+	Tue,  9 Jan 2024 17:23:48 +0900 (JST)
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: linux-sh@vger.kernel.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>,
+	Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Yang Xiwen <forbidden405@foxmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	David Rientjes <rientjes@google.com>,
+	Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Bin Meng <bmeng@tinylab.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: [DO NOT MERGE v6 05/37] sh: GENERIC_IRQ_CHIP support for CONFIG_OF=y
+Date: Tue,  9 Jan 2024 17:23:02 +0900
+Message-Id: <4d01ae9b3c5881b79095e6d98e1bdf8a008e2658.1704788539.git.ysato@users.sourceforge.jp>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1704788539.git.ysato@users.sourceforge.jp>
+References: <cover.1704788539.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 13/19] net: ravb: Set config mode in ndo_open
- and reset mode in ndo_close
-Content-Language: en-US
-To: Sergey Shtylyov <s.shtylyov@omp.ru>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, p.zabel@pengutronix.de,
- yoshihiro.shimoda.uh@renesas.com, wsa+renesas@sang-engineering.com
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, geert+renesas@glider.be,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240105082339.1468817-1-claudiu.beznea.uj@bp.renesas.com>
- <20240105082339.1468817-14-claudiu.beznea.uj@bp.renesas.com>
- <feb1c87e-a84d-4e61-3e58-f61d5402170d@omp.ru>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <feb1c87e-a84d-4e61-3e58-f61d5402170d@omp.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Remove unused function prototype.
+Add helper update_sr_imask. use for SH7751 irq driver.
+Add stub intc_finalize.
 
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+---
+ arch/sh/include/asm/io.h       |  2 ++
+ arch/sh/include/asm/irq.h      | 10 ++++++++--
+ arch/sh/kernel/cpu/Makefile    |  5 +----
+ arch/sh/kernel/cpu/irq/imask.c | 17 +++++++++++++++++
+ include/linux/sh_intc.h        |  7 ++++++-
+ 5 files changed, 34 insertions(+), 7 deletions(-)
 
-On 08.01.2024 21:28, Sergey Shtylyov wrote:
-> On 1/5/24 11:23 AM, Claudiu wrote:
-> 
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> As some IP variants switch to reset mode (and thus registers content is
->> lost) when setting clocks (due to module standby functionality) to be able
->> to implement runtime PM and save more power, set the IP's operating mode to
->> reset at the end of the probe. Along with it, in the ndo_open API the IP
->> will be switched to configuration, then operation mode. In the ndo_close
->> API, the IP will be switched back to reset mode. This allows implementing
->> runtime PM and, along with it, save more power when the IP is not used.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - fixed typos in patch description
->> - in ravb_probe() switch the hardware to reset mode just after phy
->>   initialization
->>
->> Changes in v2:
->> - none; this patch is new
->>
->>
->>  drivers/net/ethernet/renesas/ravb_main.c | 78 ++++++++++++++----------
->>  1 file changed, 46 insertions(+), 32 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
->> index 1cc1ecd8d6a8..434b4777de5e 100644
->> --- a/drivers/net/ethernet/renesas/ravb_main.c
->> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> [...]
->> @@ -2746,11 +2755,6 @@ static int ravb_probe(struct platform_device *pdev)
->>  	ndev->netdev_ops = &ravb_netdev_ops;
->>  	ndev->ethtool_ops = &ravb_ethtool_ops;
->>  
->> -	/* Set AVB config mode */
->> -	error = ravb_set_config_mode(ndev);
->> -	if (error)
->> -		goto out_rpm_put;
->> -
->>  	error = ravb_compute_gti(ndev);
->>  	if (error)
->>  		goto out_rpm_put;
->> @@ -2785,13 +2789,23 @@ static int ravb_probe(struct platform_device *pdev)
->>  		eth_hw_addr_random(ndev);
->>  	}
->>  
->> +	/* Set config mode as this is needed for PHY initialization. */
->> +	error = ravb_set_opmode(ndev, CCC_OPC_CONFIG);
-> 
->    Hm... don't you need this at laest before calling ravb_read_mac_address()
-> just above?
+diff --git a/arch/sh/include/asm/io.h b/arch/sh/include/asm/io.h
+index ac521f287fa5..5429b4169dc8 100644
+--- a/arch/sh/include/asm/io.h
++++ b/arch/sh/include/asm/io.h
+@@ -121,7 +121,9 @@ __BUILD_MEMORY_STRING(__raw_, q, u64)
+ 
+ #define ioport_map ioport_map
+ #define ioport_unmap ioport_unmap
++#ifndef CONFIG_SH_DEVICE_TREE
+ #define pci_iounmap pci_iounmap
++#endif
+ 
+ #define ioread8 ioread8
+ #define ioread16 ioread16
+diff --git a/arch/sh/include/asm/irq.h b/arch/sh/include/asm/irq.h
+index 0f384b1f45ca..3d897229dcc4 100644
+--- a/arch/sh/include/asm/irq.h
++++ b/arch/sh/include/asm/irq.h
+@@ -16,8 +16,8 @@
+ /*
+  * Simple Mask Register Support
+  */
+-extern void make_maskreg_irq(unsigned int irq);
+-extern unsigned short *irq_mask_register;
++
++void update_sr_imask(unsigned int irq, bool enable);
+ 
+ /*
+  * PINT IRQs
+@@ -54,4 +54,10 @@ extern void irq_finish(unsigned int irq);
+ 
+ #include <asm-generic/irq.h>
+ 
++/* SH3/4 INTC stuff */
++/* IRL level 0 - 15 */
++#define NR_IRL 15
++/* IRL0 -> IRQ16 */
++#define IRL_BASE_IRQ	16
++
+ #endif /* __ASM_SH_IRQ_H */
+diff --git a/arch/sh/kernel/cpu/Makefile b/arch/sh/kernel/cpu/Makefile
+index e00ebf134985..ad12807fae9c 100644
+--- a/arch/sh/kernel/cpu/Makefile
++++ b/arch/sh/kernel/cpu/Makefile
+@@ -20,7 +20,4 @@ ifndef CONFIG_COMMON_CLK
+ obj-y += clock.o
+ obj-$(CONFIG_SH_CLK_CPG_LEGACY)	+= clock-cpg.o
+ endif
+-ifndef CONFIG_GENERIC_IRQ_CHIP
+-obj-y	+= irq/
+-endif
+-obj-y	+= init.o fpu.o pfc.o proc.o
++obj-y	+= init.o fpu.o pfc.o proc.o irq/
+diff --git a/arch/sh/kernel/cpu/irq/imask.c b/arch/sh/kernel/cpu/irq/imask.c
+index 572585c3f2fd..7589ca7c506c 100644
+--- a/arch/sh/kernel/cpu/irq/imask.c
++++ b/arch/sh/kernel/cpu/irq/imask.c
+@@ -51,6 +51,7 @@ static inline void set_interrupt_registers(int ip)
+ 		     : "t");
+ }
+ 
++#ifndef CONFIG_GENERIC_IRQ_CHIP
+ static void mask_imask_irq(struct irq_data *data)
+ {
+ 	unsigned int irq = data->irq;
+@@ -83,3 +84,19 @@ void make_imask_irq(unsigned int irq)
+ 	irq_set_chip_and_handler_name(irq, &imask_irq_chip, handle_level_irq,
+ 				      "level");
+ }
++#else
++void update_sr_imask(unsigned int irq, bool enable)
++{
++	if (enable) {
++		set_bit(irq, imask_mask);
++		interrupt_priority = IMASK_PRIORITY -
++		  find_first_bit(imask_mask, IMASK_PRIORITY);
++	} else {
++		clear_bit(irq, imask_mask);
++		if (interrupt_priority < IMASK_PRIORITY - irq)
++			interrupt_priority = IMASK_PRIORITY - irq;
++	}
++	set_interrupt_registers(interrupt_priority);
++}
++EXPORT_SYMBOL(update_sr_imask);
++#endif
+diff --git a/include/linux/sh_intc.h b/include/linux/sh_intc.h
+index 27ae79191bdc..994b5b05a0d7 100644
+--- a/include/linux/sh_intc.h
++++ b/include/linux/sh_intc.h
+@@ -139,8 +139,13 @@ struct intc_desc symbol __initdata = {					\
+ int register_intc_controller(struct intc_desc *desc);
+ int intc_set_priority(unsigned int irq, unsigned int prio);
+ int intc_irq_lookup(const char *chipname, intc_enum enum_id);
++#ifndef CONFIG_SH_DEVICE_TREE
+ void intc_finalize(void);
+-
++#else
++static inline void intc_finalize(void)
++{
++}
++#endif
+ #ifdef CONFIG_INTC_USERIMASK
+ int register_intc_userimask(unsigned long addr);
+ #else
+-- 
+2.39.2
 
-I asked myself this, haven't experienced issues w/ it while working on this
-patch thus I kept it as is. In theory, yes, it should be above that call.
-I'll move it there.
-
-Thank you,
-Claudiu Beznea
-
-> 
->> +	if (error)
->> +		goto out_rpm_put;
->> +
->>  	/* MDIO bus init */
->>  	error = ravb_mdio_init(priv);
->>  	if (error) {
->>  		dev_err(&pdev->dev, "failed to initialize MDIO\n");
->> -		goto out_dma_free;
->> +		goto out_reset_mode;
->>  	}
->>  
->> +	/* Undo previous switch to config opmode. */
->> +	error = ravb_set_opmode(ndev, CCC_OPC_RESET);
->> +	if (error)
->> +		goto out_mdio_release;
->> +
->>  	netif_napi_add(ndev, &priv->napi[RAVB_BE], ravb_poll);
->>  	if (info->nc_queues)
->>  		netif_napi_add(ndev, &priv->napi[RAVB_NC], ravb_poll);
-> [...]
-> 
-> MBR, Sergey
