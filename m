@@ -1,103 +1,136 @@
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4C747A60;
-	Wed, 10 Jan 2024 08:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
-	by Atcsqr.andestech.com with ESMTP id 40A7gY9q089581;
-	Wed, 10 Jan 2024 15:42:34 +0800 (+08)
-	(envelope-from peterlin@andestech.com)
-Received: from mail.andestech.com (ATCPCS16.andestech.com [10.0.1.222])
-	by Atcsqr.andestech.com with ESMTP id 40A7eDxL086721;
-	Wed, 10 Jan 2024 15:40:13 +0800 (+08)
-	(envelope-from peterlin@andestech.com)
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.498.0; Wed, 10 Jan 2024
- 15:40:08 +0800
-From: Yu Chien Peter Lin <peterlin@andestech.com>
-To: <acme@kernel.org>, <adrian.hunter@intel.com>, <ajones@ventanamicro.com>,
-        <alexander.shishkin@linux.intel.com>, <andre.przywara@arm.com>,
-        <anup@brainfault.org>, <aou@eecs.berkeley.edu>,
-        <atishp@atishpatra.org>, <conor+dt@kernel.org>,
-        <conor.dooley@microchip.com>, <conor@kernel.org>,
-        <devicetree@vger.kernel.org>, <dminus@andestech.com>,
-        <evan@rivosinc.com>, <geert+renesas@glider.be>, <guoren@kernel.org>,
-        <heiko@sntech.de>, <irogers@google.com>, <jernej.skrabec@gmail.com>,
-        <jolsa@kernel.org>, <jszhang@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-perf-users@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-sunxi@lists.linux.dev>, <locus84@andestech.com>,
-        <magnus.damm@gmail.com>, <mark.rutland@arm.com>, <mingo@redhat.com>,
-        <n.shubin@yadro.com>, <namhyung@kernel.org>, <palmer@dabbelt.com>,
-        <paul.walmsley@sifive.com>, <peterlin@andestech.com>,
-        <peterz@infradead.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <rdunlap@infradead.org>, <robh+dt@kernel.org>, <samuel@sholland.org>,
-        <sunilvl@ventanamicro.com>, <tglx@linutronix.de>,
-        <tim609@andestech.com>, <uwu@icenowy.me>, <wens@csie.org>,
-        <will@kernel.org>, <ycliang@andestech.com>, <inochiama@outlook.com>,
-        <chao.wei@sophgo.com>, <unicorn_wang@outlook.com>, <wefu@redhat.com>
-Subject: [PATCH v7 09/16] dt-bindings: riscv: Add T-Head PMU extension description
-Date: Wed, 10 Jan 2024 15:39:10 +0800
-Message-ID: <20240110073917.2398826-10-peterlin@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240110073917.2398826-1-peterlin@andestech.com>
-References: <20240110073917.2398826-1-peterlin@andestech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5964347A7C;
+	Wed, 10 Jan 2024 11:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3606ad581a5so18766875ab.1;
+        Wed, 10 Jan 2024 03:31:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704886287; x=1705491087;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rp53vQ2ebf1f54OIMX+oacHnmEBZZdohJKcQphr0pdo=;
+        b=rEpdbTsX+4AcHrZztMQXm/lIvZD+rvzOXMS8LYDwxJaMzEi+XDrl9c9dq+fNHkCeQK
+         vDY7sXlbMKQzxTSkZAmuNDpYxvuheK247POrSrC2/witgEa53HjeMsbmk/tdkF3TudAE
+         pWiVUCH0qXuAk1hyfbJqnKBqNOjDnWB9UCd0lTyEgk+lM6ol11QDzJpjCHiSYH/nz78b
+         rBvIu0qrFIeGBeVAQTwzscWRkmhqkwxmZj4qcnPFt50g91P2TWjJGn2CWkH5Xc9jel7K
+         k5tsEPHNOKWqjThcsQZmaydIH+sJPDAlvO3hfNsYz7JxdKaosUeijs7YCM6U73AVnWg+
+         2kCQ==
+X-Gm-Message-State: AOJu0YyHOmjVGl85PPY1OKOUpiNMRq/oTOAha3txHbN3aVqEDnJrQB5Y
+	DO4twqeLR9wV9vSzfD3rKCJsIV6i2E354Vc7
+X-Google-Smtp-Source: AGHT+IE4ykJgcq2BqiHgDY8T/mT9u8cCQfTLL2octH67MqlQMtVdHLymoA4Q65ngu5TSMaJ1EcyFXg==
+X-Received: by 2002:a05:6e02:1885:b0:360:a195:a142 with SMTP id o5-20020a056e02188500b00360a195a142mr1273026ilu.65.1704886285326;
+        Wed, 10 Jan 2024 03:31:25 -0800 (PST)
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com. [209.85.166.50])
+        by smtp.gmail.com with ESMTPSA id bz4-20020a056e02268400b003606ef496c4sm1215421ilb.63.2024.01.10.03.31.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jan 2024 03:31:25 -0800 (PST)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7bee8f7df35so49536239f.3;
+        Wed, 10 Jan 2024 03:31:25 -0800 (PST)
+X-Received: by 2002:a81:9295:0:b0:5f0:5816:f339 with SMTP id
+ j143-20020a819295000000b005f05816f339mr802434ywg.46.1704885831172; Wed, 10
+ Jan 2024 03:23:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 40A7gY9q089581
+References: <cover.1704788539.git.ysato@users.sourceforge.jp>
+ <c8aaf67e3fcdb7e60632c53a784691aabfc7733e.1704788539.git.ysato@users.sourceforge.jp>
+ <20240109-fructose-bundle-05d01033277b@spud>
+In-Reply-To: <20240109-fructose-bundle-05d01033277b@spud>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Jan 2024 12:23:37 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU1z64QHJOVd3jUsOfyuDApB1+khkUV8PvjoKbwsi327g@mail.gmail.com>
+Message-ID: <CAMuHMdU1z64QHJOVd3jUsOfyuDApB1+khkUV8PvjoKbwsi327g@mail.gmail.com>
+Subject: Re: [DO NOT MERGE v6 26/37] dt-bindings: vendor-prefixes: Add smi
+To: Conor Dooley <conor@kernel.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org, 
+	Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
+	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
+	Yang Xiwen <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
+	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document the ISA string for T-Head performance monitor extension
-which provides counter overflow interrupt mechanism.
+Hi Conor,
 
-Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
-Reviewed-by: Guo Ren <guoren@kernel.org>
-Reviewed-by: Inochi Amaoto <inochiama@outlook.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
-Changes v2 -> v3:
-  - New patch
-Changes v3 -> v4:
-  - No change
-Changes v4 -> v5:
-  - Include Guo's Reviewed-by
-  - Include Inochi's Reviewed-by
-  - Update to C910 documentation with its commit hash
-Changes v5 -> v6:
-  - Include Conor's Acked-by
-Changes v6 -> v7:
-  - No change
----
- Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Tue, Jan 9, 2024 at 7:06=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
+> On Tue, Jan 09, 2024 at 05:23:23PM +0900, Yoshinori Sato wrote:
+> > Add Silicon Mortion Technology Corporation
 
-diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index 27beedb98198..ee0747f29d6d 100644
---- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -477,5 +477,11 @@ properties:
-             latency, as ratified in commit 56ed795 ("Update
-             riscv-crypto-spec-vector.adoc") of riscv-crypto.
- 
-+        - const: xtheadpmu
-+          description:
-+            The T-Head performance monitor extension for counter overflow, as ratified
-+            in commit 4c4981 ("Initial commit") of Xuantie C910 user manual.
-+            https://github.com/T-head-Semi/openc910/tree/main/doc
-+
- additionalProperties: true
- ...
--- 
-2.34.1
+Motion
 
+> > https://www.siliconmotion.com/
+> >
+> > Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> > ---
+> >  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/D=
+ocumentation/devicetree/bindings/vendor-prefixes.yaml
+> > index 94ed63d9f7de..a338bdd743ab 100644
+> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > @@ -1283,6 +1283,8 @@ patternProperties:
+> >      description: Skyworks Solutions, Inc.
+> >    "^smartlabs,.*":
+> >      description: SmartLabs LLC
+> > +  "^smi,.*":
+> > +    description: Silicon Motion Technology Corporation
+>
+> How come "smi" is used for a company with this name?
+> Why is it not something like SMTC? There's probably some history here
+> that I am unaware of.
+
+See Documentation/devicetree/bindings/display/sm501fb.txt
+The stock ticker is "SIMO", though.
+https://www.nasdaq.com/market-activity/stocks/simo
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
