@@ -1,109 +1,127 @@
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB0E17584;
-	Mon, 15 Jan 2024 14:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6ddf1e88e51so3758154a34.0;
-        Mon, 15 Jan 2024 06:09:09 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C09317740
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Jan 2024 15:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TGBmuxBA"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40e67e90d5aso29231565e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Jan 2024 07:35:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1705332908; x=1705937708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7sXP2wWN7OS4lxiu3tRx0xrGyfyR6bYdV+7zNUsquuY=;
+        b=TGBmuxBAZl8Vp63Enop9B5lCqjpcckTKcw/1wJQ59Cs6qHeJRXeYIv7ZCn4tiiVMCm
+         Xc2J9hbKtaS81RmiQQKvfwz/yij2KD3khaBog//GHWrazKSoP714yGI4SmPgKqflThKf
+         iQYZxsYNzoqfzcWh9Nwx3yDpUOSvvL8scf1SeFNxMc99G8tLI44A5MXhKuDO2FG8v8V7
+         rnBxGSRgAD0DPZxTyfUaXtCyuCH4jKsI/srvY5GvSlqdvBagQzhWWaDS7L/KY76PFbIf
+         pCR/X4pg9qJ78dR4SrFZ2io8G1Nr4IauVSd87RLXyRfxguwP18km/gnPnKk82gdWMW7W
+         lPJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705327748; x=1705932548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I77TmnyBV7p1SE2Y2oqkytZuiHCFq9qru4QC+6Q3tDs=;
-        b=U9uViIBqH/AD4sbOTMV4ejA7ZX48hzG2GZFhd3N9cyB1saPhD1AMagV8rvq8mmFon6
-         uffWvqTWQ1Jj701Ne24vHN7Z5l9sMieIl7CChOOEjwFp6xohyXagu3pPBkbU/oljpWXo
-         BktDfjEbVaDzx8J1vIJKEJkETen+XJAOyoPmMA3LL+zUb7pKNZdBGs3jLw6kzdptPQGj
-         7lSyc1rREr2Tdr440cx+8etRAJ8ziyPy9myQkaeL1vcZV1Z5rNGwK+1yqA02zMHKhzSH
-         NVnU0NrXQ9bj4d25PuIi9JaFH+QT/HR9JwrE6r5cVf78ICP90k+61KPc5UphkIF8GhOi
-         vrcQ==
-X-Gm-Message-State: AOJu0YxSjoeYcjX8phln59nx8gSkG/Mr4l/EOE6qxLlHg9xqPaE+Yl25
-	eAPTTggoUURnAoaTRQUYWkvm/K5jYKIzyQ==
-X-Google-Smtp-Source: AGHT+IGUhcozFviZ+UpZqAISh6crRPgTFd8RXsYdibuZdgCpNvHjXlQTJgtyNeXSh97xjtJwlnqQWA==
-X-Received: by 2002:a05:6870:c085:b0:1fb:75a:de6f with SMTP id c5-20020a056870c08500b001fb075ade6fmr7377850oad.93.1705327748372;
-        Mon, 15 Jan 2024 06:09:08 -0800 (PST)
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com. [209.85.160.48])
-        by smtp.gmail.com with ESMTPSA id so11-20020a056871818b00b001fb42001fa7sm2478078oab.36.2024.01.15.06.09.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jan 2024 06:09:08 -0800 (PST)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2044ecf7035so6013496fac.0;
-        Mon, 15 Jan 2024 06:09:08 -0800 (PST)
-X-Received: by 2002:a81:410d:0:b0:5f4:a5ab:4105 with SMTP id
- o13-20020a81410d000000b005f4a5ab4105mr2813928ywa.8.1705327425927; Mon, 15 Jan
- 2024 06:03:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1705332908; x=1705937708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7sXP2wWN7OS4lxiu3tRx0xrGyfyR6bYdV+7zNUsquuY=;
+        b=hssNqaPTpE2/Ezol8i6jcryA3zOa+S/i/TfojFekBHy10II0Obd4vi+cFTldmflh5b
+         DsTRjsnSaK+9wQCcKyxzRFXqtfKxIf5YpYsbnUGNFMvl4uYtx05JKI0+2/0sxJUY+Yk2
+         dHXBW+zYbuibl7EhDD5uNpAz1EM72duLJ8crwnrgkpYWewUzuba1pUziiPhFAWBrNi82
+         5L/z1v3DIc+C/4VL4wRM29g6hjerhVuVjkPlHTo8hGbjurliGW8lKJOrQIQAHwIEuRzr
+         C5vlcI/ikp4LyAF/AsYppLlxC8o9KIftLyxQuGXTDD+o2WO1bnxSlmGwVZA9vlHvXbTS
+         Htug==
+X-Gm-Message-State: AOJu0YwZ7Ydax38s3ZLC9/HJObADFe/6DoBfP2JwBd2e8fQEc+qQenxV
+	havbs4Ksjr2+VwXQz/uGmn0sHagGBUd4kA==
+X-Google-Smtp-Source: AGHT+IGzatJ/7hZOzre8B/o78msUnDuMXcCh6wtybHE/L06ZrvWzCB2OANnn2yShig0nnWnnUXjO1w==
+X-Received: by 2002:a05:600c:46d4:b0:40c:4904:bb72 with SMTP id q20-20020a05600c46d400b0040c4904bb72mr3013214wmo.18.1705332908291;
+        Mon, 15 Jan 2024 07:35:08 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id p31-20020a05600c1d9f00b0040e6ea6d2d0sm476627wms.24.2024.01.15.07.35.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jan 2024 07:35:07 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dan.carpenter@linaro.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] pinctrl: renesas: rzg2l: Fix locking in rzg2l_dt_subnode_to_map()
+Date: Mon, 15 Jan 2024 17:34:53 +0200
+Message-Id: <20240115153453.99226-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1704788539.git.ysato@users.sourceforge.jp> <edd42bb5aa30ac3eb26a9e08b1dc6fc9041aa3b1.1704788539.git.ysato@users.sourceforge.jp>
-In-Reply-To: <edd42bb5aa30ac3eb26a9e08b1dc6fc9041aa3b1.1704788539.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 15 Jan 2024 15:03:34 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU=CZVSc16FeVDc6YmTKw=xa71RUzOE3bappLwH2W8Z4w@mail.gmail.com>
-Message-ID: <CAMuHMdU=CZVSc16FeVDc6YmTKw=xa71RUzOE3bappLwH2W8Z4w@mail.gmail.com>
-Subject: Re: [DO NOT MERGE v6 01/37] sh: passing FDT address to kernel startup.
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
-	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
-	Yang Xiwen <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 9, 2024 at 9:23=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> R4 is caller saved in SH ABI.
-> Save it so it doesn't get corrupted until it's needed for initialization.
->
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-My
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-on v3 is still valid.
+Commit d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration
+support for pinmux groups") introduced the possibility to parse pin
+configuration for pinmux groups. It did that by calling
+rzg2l_map_add_config() at the end of rzg2l_dt_subnode_to_map() and
+jumping to the remove_group label in case rzg2l_map_add_config() failed.
+But if that happens, the mutex will already be unlocked, thus this it will
+lead to double mutex unlock operation. To fix this move the
+rzg2l_map_add_config() call just after all the name argument is ready and
+before the mutex is locked. There is no harm in doing this, as this only
+parses the data from device tree that will be further processed by
+pinctrl core code.
 
-Gr{oetje,eeting}s,
+Fixes: d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration support for pinmux groups")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-                        Geert
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 80fb5011c7bb..01ef6921cb35 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -447,6 +447,16 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		name = np->name;
+ 	}
+ 
++	if (num_configs) {
++		ret = rzg2l_map_add_config(&maps[idx], name,
++					   PIN_MAP_TYPE_CONFIGS_GROUP,
++					   configs, num_configs);
++		if (ret < 0)
++			goto done;
++
++		idx++;
++	}
++
+ 	mutex_lock(&pctrl->mutex);
+ 
+ 	/* Register a single pin group listing all the pins we read from DT */
+@@ -474,16 +484,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	maps[idx].data.mux.function = name;
+ 	idx++;
+ 
+-	if (num_configs) {
+-		ret = rzg2l_map_add_config(&maps[idx], name,
+-					   PIN_MAP_TYPE_CONFIGS_GROUP,
+-					   configs, num_configs);
+-		if (ret < 0)
+-			goto remove_group;
+-
+-		idx++;
+-	}
+-
+ 	dev_dbg(pctrl->dev, "Parsed %pOF with %d pins\n", np, num_pinmux);
+ 	ret = 0;
+ 	goto done;
+-- 
+2.39.2
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
