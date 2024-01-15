@@ -1,21 +1,21 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0FC1E86A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00DD1E86B
 	for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Jan 2024 11:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:1376:70aa:e074:32d3])
-	by andre.telenet-ops.be with bizsmtp
-	id az3A2B00F34Hgv901z3AuH; Mon, 15 Jan 2024 12:03:12 +0100
+	by albert.telenet-ops.be with bizsmtp
+	id az3A2B00W34Hgv906z3A18; Mon, 15 Jan 2024 12:03:12 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rPKjZ-00Fdh2-VE;
+	id 1rPKjZ-00Fdgw-Tq;
 	Mon, 15 Jan 2024 12:03:10 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rPKkI-00Bz8u-O2;
+	id 1rPKkI-00Bz8m-MT;
 	Mon, 15 Jan 2024 12:03:10 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
@@ -23,9 +23,9 @@ Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] ARM: dts: renesas: r8a73a4: Fix thermal parent clock
-Date: Mon, 15 Jan 2024 12:03:05 +0100
-Message-Id: <aac49d67d7a38230875543d49e84fcca587fb9e1.1705315614.git.geert+renesas@glider.be>
+Subject: [PATCH 1/3] ARM: dts: renesas: r8a73a4: Fix external clocks and clock rate
+Date: Mon, 15 Jan 2024 12:03:03 +0100
+Message-Id: <1692bc8cd465d62168cbf110522ad62a7af3f606.1705315614.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1705315614.git.geert+renesas@glider.be>
 References: <cover.1705315614.git.geert+renesas@glider.be>
@@ -37,32 +37,75 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-According to Table 8.1, "Summary of Module Power, Reset condition and
-Clock assignment" of the R-Mobile APE6 Hardware Manual Rev. 0.7, the
-parent clock of the thermal sensor clock is the Common Peripheral (CP)
-clock, which runs at 13 MHz (main clock / 2).
+External clocks should be defined as zero-Hz clocks in the SoC .dtsi,
+and overridden in the board .dts when present.
 
-As the R-Car Thermal driver does not use the clock rate, this change has
-no functional impact.
+Correct the clock rate of extal1 from 25 to 26 MHz, to match the crystal
+oscillator present on the APE6-EVM board.
 
+Fixes: a76809a329d6ebae ("ARM: shmobile: r8a73a4: Common clock framework DT description")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/renesas/r8a73a4.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Before, DMIPS/MHZ for the Cortex-A15 CPU cores was slightly higher
+than on R-Car M2-W, due to most clocks running 4% faster than assumed.
 
+Also verified by measuring I2C clock rates using a logic analyzer.
+---
+ arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts | 12 ++++++++++++
+ arch/arm/boot/dts/renesas/r8a73a4.dtsi        |  9 ++++++---
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
+index de87f2682e323866..ae656ee27124c745 100644
+--- a/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
++++ b/arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts
+@@ -223,6 +223,18 @@ &cmt1 {
+ 	status = "okay";
+ };
+ 
++&extal1_clk {
++	clock-frequency = <26000000>;
++};
++
++&extal2_clk {
++	clock-frequency = <48000000>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
+ &pfc {
+ 	scifa0_pins: scifa0 {
+ 		groups = "scifa0_data";
 diff --git a/arch/arm/boot/dts/renesas/r8a73a4.dtsi b/arch/arm/boot/dts/renesas/r8a73a4.dtsi
-index 6847acaecc809eaa..b3d5c154cfc1b8c1 100644
+index 704b0e4acb4dedf6..b9c20e8ac14f2156 100644
 --- a/arch/arm/boot/dts/renesas/r8a73a4.dtsi
 +++ b/arch/arm/boot/dts/renesas/r8a73a4.dtsi
-@@ -814,7 +814,7 @@ R8A73A4_CLK_IIC3
- 		mstp5_clks: mstp5_clks@e6150144 {
- 			compatible = "renesas,r8a73a4-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
--			clocks = <&extal2_clk>, <&cpg_clocks R8A73A4_CLK_HP>;
-+			clocks = <&cp_clk>, <&cpg_clocks R8A73A4_CLK_HP>;
- 			#clock-cells = <1>;
- 			clock-indices = <
- 				R8A73A4_CLK_THERMAL R8A73A4_CLK_IIC8
+@@ -553,17 +553,20 @@ clocks {
+ 		extalr_clk: extalr {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-frequency = <32768>;
++			/* This value must be overridden by the board. */
++			clock-frequency = <0>;
+ 		};
+ 		extal1_clk: extal1 {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-frequency = <25000000>;
++			/* This value must be overridden by the board. */
++			clock-frequency = <0>;
+ 		};
+ 		extal2_clk: extal2 {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-frequency = <48000000>;
++			/* This value must be overridden by the board. */
++			clock-frequency = <0>;
+ 		};
+ 		fsiack_clk: fsiack {
+ 			compatible = "fixed-clock";
 -- 
 2.34.1
 
