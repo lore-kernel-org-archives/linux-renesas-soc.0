@@ -1,64 +1,46 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523873D963
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 15:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AF53EA8A;
+	Mon, 22 Jan 2024 16:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705937420; cv=none; b=jYz3c8zPK+gJlInQQ8JsUu435zBgj1BlCvw+rXtn2iKXxVH+Ph15rKUmLLAcA6kVDloLvEUZad8zHshUymYZvX7PpVgsBZiHqG/fCUwHlUxRqi+U4y1gsTtTSO8snXCuQJWqKhAZ9NlRAHBfas8hurgTji1Iv2msSElnLdoV+GE=
+	t=1705939463; cv=none; b=NcrSzmGapqYey+CK7KrT+KLORfWyAjzHx4RVWB/uvDNuHHmztOQeepefAbZcG6d316WNNHNd7KzA0Lq/wuYvWLpxz95NsErEvWE3jyyMjfHuzhpr9kTxsjaID5PS8sb+dSFb2HpH3YifyafQy8Pa621zVVBTkfqnPnbD5u5eXZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705937420; c=relaxed/simple;
-	bh=kCZwEZ+wJzaFpV0EvhZAbU5dHsRbuDW5t+QH4LLvk0I=;
+	s=arc-20240116; t=1705939463; c=relaxed/simple;
+	bh=qLSgpbBBjjg35owhN/n1BlJHspH8+vAvlKmDPma2+BA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdRgRYO5O2RiX1fTfRluJMn3crNq83AwaB5VFINHglScaYjtKMHPG9hmCX3Cwtu0f8EsvjeRXGFwJc3tzp4hhwUN+2ndR/FLPgV/QaSpa0kMEYRV+w5rj+/8NXyEZAsOPznGShr7E26nDI6ucywQlZk7Rwu4+WNFlTId+IiQl9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Gn7qjNT4; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	 Content-Type:Content-Disposition:In-Reply-To; b=fsX+Vvj2J/cGARBs7VKH4mCCJYW1Vz2al6YyimPnuGj8bfOEtnkUNjiazMtaG1wxFyxkMXZMo3fokLyYYfpvgPtOw0vjkKhBBRS529Rkcc0Txjfy35C8bazWcsbwEnq4j0J7aVmNDRu/GiRtJK3Tk7A9X64Jyu/yagKMOKYgbwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YO8HccBY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Gn7qjNT4"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-50e7b51b0ceso3856238e87.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 07:30:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech.se; s=google; t=1705937417; x=1706542217; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Aj8EWz+HrScAIC1mY+rzX6PdMR8LuWkCs7D/5OXYQSs=;
-        b=Gn7qjNT411KL1J2ICi4DDdCM1tEO26CZ1dQ4EF9o9mI8HNlLD/6LWJhpss8UOWcZOi
-         CYO5cx0bQtkrizyuL7xmAA/8IkNzDqaNua3cG3B5xn76yCPtIJr3bSqwH1DTjxzk5Kh7
-         DXUedQip93BkPOdxzf2MT2tll6BY1t2ILIwLPD12O9FVD9NgwzrvYd4wQU5zsyHG1cfp
-         XNeApjzzEWvQ+F7fIy89TjC1DMnFfvE2l2d1ZHYjxb3H9dq437gHHNVDo3Vo+iYWHn+R
-         E5Y9BNmciMC2YnsEnDgu0z8mBWA1WKTb+WkZ0yoqDutbGqy4K6qTSEhFy/4uVafWeW8W
-         glwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705937417; x=1706542217;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Aj8EWz+HrScAIC1mY+rzX6PdMR8LuWkCs7D/5OXYQSs=;
-        b=ih1nn6n2x30D+/xRCz3b2cYjvdR7QQJBzJNb/JZkTCJvOU3aM/Qk4CxN0FDlnNeOIk
-         Dm63QGgMOzj7PmGq2R7kDJUjlHh923aTk5f1h7h9DRfwPBjz46meqsuSUk7yhOSi3oxo
-         0lzdGtIsimXh4y8xhpGrKC6JfeEvYzFs4aRMLdq7tHooCqgAUlF3lO8ypAcGMWSkHM1h
-         qMW+vmn+jjPF4gR7s42AO4mP4vV4zkXiaDC2HqnsXasURmiPvb1VPhWNO+0zzI8C9WMT
-         Pby1kfsA2hLMRhH8P+yKKz1jb4C/3jZytLMycUvQONVSwGZJCnbir+736RuKDaM3Y3X0
-         5RPw==
-X-Gm-Message-State: AOJu0YwZZ1Wbodl5Yje6HYKtA+nzECwHsw0b6AW573g40plx9lsjZkQE
-	LiHjfipRVld5+qNUxcBM8Qu8y1qLS0CNvw6hTe3RuK4VdpqhV0cidJyVvtJ0Fls=
-X-Google-Smtp-Source: AGHT+IERzrZnFY8TRrAZ09lXGpKp5t0M6UvuKvOc0P77gSkXTOZ0JqkAiGKf/UTyoTaOsreCPkshnA==
-X-Received: by 2002:ac2:5b41:0:b0:50e:7bbf:f365 with SMTP id i1-20020ac25b41000000b0050e7bbff365mr2107258lfp.31.1705937417129;
-        Mon, 22 Jan 2024 07:30:17 -0800 (PST)
-Received: from localhost (h-46-59-36-113.A463.priv.bahnhof.se. [46.59.36.113])
-        by smtp.gmail.com with ESMTPSA id k17-20020a192d11000000b0050e9323408csm2058818lfj.57.2024.01.22.07.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 07:30:16 -0800 (PST)
-Date: Mon, 22 Jan 2024 16:30:16 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Disable board staging
-Message-ID: <20240122153016.GH4126432@ragnatech.se>
-References: <64c1d4613d5dfc1f70816f2136d66b75c8e39c1f.1705933656.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YO8HccBY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9465AC433F1;
+	Mon, 22 Jan 2024 16:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705939462;
+	bh=qLSgpbBBjjg35owhN/n1BlJHspH8+vAvlKmDPma2+BA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YO8HccBYFKH8Refu6bMmvbllXSeC0OF/Efvh/rVL0L6W9YV0Fqse3g36Jhh8enxa8
+	 avDc+ZvDTR4gXd4Apqd93gGxsC2E73xQanifhYh4+ovSHe5/cfNIePcaJFo8vtW8Rd
+	 UwJuxO3+dKAumwrow+VsBmGMHfTk0Nc9IzdxyY6rdeTY4nOE3HbIWOGbn7VhqlX3E8
+	 kByuuqEcUtCdrm6Xn+t7eTC/QbXzmdmR6h8OkeENMFm+oGRu0AsUurZSZT4ou9l7yU
+	 Ts34s+romNCTlZefwEMLKEIYUdIWuAEh7IOdaH0cgG4ezmgEzNadC15vpqMUXPyiTx
+	 H6fKjzHZP1ZvA==
+Date: Mon, 22 Jan 2024 10:04:20 -0600
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Aymeric Aillet <aymeric.aillet@iot.bzh>,
+	Yusuke Goda <yusuke.goda.sx@renesas.com>
+Subject: Re: [PATCH v5 resend 0/4] drivers: clk: renesas: ignore all clocks
+ which are assigned to non-Linux system
+Message-ID: <20240122160420.GE601827-robh@kernel.org>
+References: <87edeqgfbu.wl-kuninori.morimoto.gx@renesas.com>
+ <CAMuHMdV1GLYZGn_TgYbxfPakkLpUNTsP5hsEk9tUqLzpb5wOdQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -68,48 +50,33 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <64c1d4613d5dfc1f70816f2136d66b75c8e39c1f.1705933656.git.geert+renesas@glider.be>
+In-Reply-To: <CAMuHMdV1GLYZGn_TgYbxfPakkLpUNTsP5hsEk9tUqLzpb5wOdQ@mail.gmail.com>
 
-Hi Geert,
-
-Thanks for your patch.
-
-On 2024-01-22 15:28:59 +0100, Geert Uytterhoeven wrote:
-> After the DT conversion the SH-Mobile and Armadillo-800-EVA display
-> support, and the removal of the EMMA Mobile USB Gadget staging driver,
-> there is no longer a need to enable support for board staging drivers.
+On Fri, Jan 12, 2024 at 03:21:41PM +0100, Geert Uytterhoeven wrote:
+> Hi Morimoto-san, Rob,
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On Wed, Jan 10, 2024 at 2:14 AM Kuninori Morimoto
+> <kuninori.morimoto.gx@renesas.com> wrote:
+> > This is v5 resend of ignoring non Linux system assinged device.
+> 
+> Thanks for the update!
+> 
+> > v5 resend
+> >         - add Acked-by from Rob
+> 
+> You mean Reviewed-by?
+> With an Acked-by, I wouldn't have to ask the next question ;-)
+> 
+> Rob: How to proceed:
+>   1. I give my Acked-by, you merge the series?
+>   2. You give your Acked-by, I merge the series?
+>   3. We do the immutable branch dance?
+>        a. You apply 1-3 to an immutable branch
+>        b. I merge the immutable branch and apply 4.
+> 
+> You get to choose, as there are more DT than renesas-clk patches ;-)
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+You can take it. I don't give Reviewed-by nor Acked-by if I plan to 
+apply it.
 
-> ---
-> To be queued in renesas-devel for v6.9.
-> 
-> EMMA Mobile USB Gadget staging driver removal submitted in "[PATCH v2
-> 0/4] staging: Remove EMMA Mobile USB Gadget and board staging support"
-> https://lore.kernel.org/r/eec1bfb2878237888a8c3bc866d18dc53900739f.1705932585.git.geert+renesas@glider.be
-> ---
->  arch/arm/configs/multi_v7_defconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index ecb3e286107a4c1a..4299f8f8aa9b6b40 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -1047,7 +1047,6 @@ CONFIG_KEYBOARD_NVEC=y
->  CONFIG_SERIO_NVEC_PS2=y
->  CONFIG_NVEC_POWER=y
->  CONFIG_NVEC_PAZ00=y
-> -CONFIG_STAGING_BOARD=y
->  CONFIG_CHROME_PLATFORMS=y
->  CONFIG_CROS_EC=m
->  CONFIG_CROS_EC_I2C=m
-> -- 
-> 2.34.1
-> 
-> 
-
--- 
-Kind Regards,
-Niklas Söderlund
+Rob
