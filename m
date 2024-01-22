@@ -1,94 +1,99 @@
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E365A795
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 15:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144735BAF0
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 15:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936948; cv=none; b=IvlLrZw4qmLLtceZGb34Si1KTMgKZRfgc38XFXgQeKOWlAxX2VcL0i5nycL1ydf0yRp+FKpIdkkZElhfxABqWf+Mo+5hvX5UbgjCx3nTLSoMINqmaXOplkPrd+3E6CFIX1BlDyYsB2ogla6V2gQne9rgsPnoPQV6lKDC20DOX9s=
+	t=1705937217; cv=none; b=EXFSkWCrdKd9mcwAxEjOMPAEOtYxDLih4ZiifgA12Ilc+RGgQNH1NxK8TJ86LQmbXu8781fci41gk5F3VhacC7AJ6VByKvsvBrQlvhIID4I3RdD+yhcR8cO94e6D1m8T34Z0OiHwrxN0QRbzfCitUdCw5OFz1Icojcf5Y4U50z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936948; c=relaxed/simple;
-	bh=s2CEPgXF2dnPJQTkJBzncHW/CdQrBKXkUFM7T6qq52o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pexsiQHdRxOiircZ5NdEZGECLShlBKbLRbOBz6XX5Fjd3qoW5Y1RW3SCnXm7+WWZZRz/OnfYMWyjgRBcY8HgPUC6UgCcgPHGPjmVZru16l8dlLK4cuRFiLvVrg0r32TgGSlWtZ5JkMWH3s3CmHkymU0xf/fqwQ+qXWDK19ekUZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NHOWNqQ/; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705937217; c=relaxed/simple;
+	bh=Z1EVLX63G+WkbjKr492KwFFsPOKWDV0QAZ12/V2x5eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EhSz8VHnmjd82DnEZa+buphPKi2UZm5V9PGCeWChd4HzenmFIXy5FMhXxFiqm+FgMWkhsCJKstLwhwQLMZovLuosstx29oMkliRQlib9VrJo4HNk+D9s39ypJSJ8kTGAEysLzfgiDL6QqD1brMFjXI915cClHVaJ9kndMsW3HSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Y7e96axF; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NHOWNqQ/"
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dbedb1ee3e4so2799467276.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 07:22:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Y7e96axF"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-50e67e37661so4481260e87.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 07:26:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705936945; x=1706541745; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vc0fzJAdCvYQscypRiFgQ18nWFhi2YTnJ0gQXl/95EA=;
-        b=NHOWNqQ/NNciGkr4/qKhFa9YLhy46CaHtbbXoDJeb3h8rsHTo6N0KZzMiru7wiZ+i0
-         oZzVJo7TuDUq0W9K3ocPNF2GZb/iYeYzoTTiLKmvomtk6WlROQRxAogdwGWL9hJciAtz
-         E37BVcvwQf2BraesqttR//0rAcFn/CyLgIPFYXjKNSEgpsFPwLyrmMfti+QHC7Kzh+xB
-         naLZMTpHMhD2LyXi7+7P8ia1sLGvZguZsQrV3c/FAOwHV/29VSGe+UCnWDb04j+8Vjm+
-         WK/XR/b+kDgBpF9qRD5c1ZvqsQQVYCkGrnjp1nb1//N/QiCpnTJm0rWksZaV5UCrNjlD
-         DDYQ==
+        d=ragnatech.se; s=google; t=1705937211; x=1706542011; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uhSC6XuresrDfgru+sp06u+6WUpqJQ0xiyuzeihUlLI=;
+        b=Y7e96axFoAsrjvkdnQdMH7YbwHMxkv/6Qucb7PF6cExHUIaEeJ6av0J+6MaGmwlgRL
+         /5+cvhvimn0DqjqNvHedITu1UcsNFBlqNAi1r5mYpxa1DIxf+WUSnvQqxLEe7YoZBJOD
+         c3SXdzLMr3IAEWXnwcZ5Jmp+ih/jSQHkKk6m8Kl0fJuHqRe7eHg0fu7/NTE+2NrjCEXw
+         NWl9d/Mh4YwEP/L9iZCf5Gb6CiTG3ZTvtSfpmA6ngJD4mdt+UrfVcGgJBd2wNSO3oYA8
+         /3nB63yZ7vPs4KBInJLwutOnrNA0ek8i/h2h01CU9IoAJgQGzmohsOs+7CoHcBOIyMSS
+         gbng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705936945; x=1706541745;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vc0fzJAdCvYQscypRiFgQ18nWFhi2YTnJ0gQXl/95EA=;
-        b=slBTdSVzmjH9NuNUa0lEwaSmAXj03yp/MpL/dBRR9qnZhgkyGjYXfU/y3EbQ7hoAEp
-         eNK+pNkp4hl7VXIGDdelp8/8U7J5mTc02Z936CZZBT64uWdWl6Okx0Gzij03KGfmkYLB
-         TsfiZp9hRkDprFrPqSgj08lGcOt8Z3iSHyDaRMi2kNVYuDG3mFjlmRDiyDzwSoRbezmr
-         VIZylqrHSlJdK7tWP6KUr9Veu4lnepJlvw2yxrGqDU0ck5iNJkePKLy2IDKJdJSAepK8
-         BDmmNtp8SDsdQx6UVkAtZqkEj2GqqUagP0YgP7ZbfZGJzezqbGf/IduqNQX6VyLDXwel
-         MmPQ==
-X-Gm-Message-State: AOJu0Yw0bdMtbGYUCi3cDyFVnLOnbF3+9K+9Lrd9XFAmnnm+3++5RVMX
-	PE5794iHnKYhM+wFsWl9eFYh78f5VR4tC7IuKuPjwN6m69H3gRGMHX+X3ceSy0SmzIX5lF6ab14
-	cD6q7EyEwgb2XPX4sazIT9BOiA7L+3iMRTJHHA2wWN2CeHqYJ14A=
-X-Google-Smtp-Source: AGHT+IGmvmbAGNSnSFXJ8ZKIH1QeBjdt527i6bLFKHt4ckhptNDJJNL2BiFBE/u/DZo+I321dEj84B5Sh0fW5BFj/LQ=
-X-Received: by 2002:a25:820d:0:b0:dc2:3257:913a with SMTP id
- q13-20020a25820d000000b00dc23257913amr2201892ybk.17.1705936944993; Mon, 22
- Jan 2024 07:22:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1705937211; x=1706542011;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uhSC6XuresrDfgru+sp06u+6WUpqJQ0xiyuzeihUlLI=;
+        b=c777k/F4akSxdhPGVw4wKPSeBhbHRvNn3P4bxzQtrtLibDikjTK03Gh4a//wO/L6Le
+         c3m0YvqRAgVWXHF/dwomLrNSFjm5NppbLBD6YnAijVGDbW9mDXbT6pPdw3Apx29ZIh0M
+         HKUHPb6W03DvmP3KmySIWCeeukrd5/F6YbKt4sPkli0XAvZcSmQjh5ye24jaAlXa4kRM
+         GhbwtHpq0QtqPakb0gWfdeU/HpuWyJhfwRrS3RQ4vgfAiAlIe+DfaZd12jvgpDsU0PZa
+         p6e7Ej+aMN8P7c6nqxbTRjxCvzGOn+K3jWZAxlg5YILSLmdS2jUMc3FDP6bnvebb09Nm
+         lV9A==
+X-Gm-Message-State: AOJu0YyeLTWr7XXKo5iZ18v/TFmIQztpoNWAaWWOZ5JbmCNUsJWFcJBD
+	6qy2laDt2K3A7FFiIcP9h/NatvXQd5+yvNxohQkF4bjSYOQqQuRlQPi1rcZNMrE=
+X-Google-Smtp-Source: AGHT+IEFvyTGOnyAc7bq7nyDEqnQfQDJ0E/4goZpL2WmENaJWiw7+i8XUNuppTLV+6pmn3Lv9sDOlw==
+X-Received: by 2002:a19:f014:0:b0:50e:7e55:466 with SMTP id p20-20020a19f014000000b0050e7e550466mr1850513lfc.118.1705937211154;
+        Mon, 22 Jan 2024 07:26:51 -0800 (PST)
+Received: from localhost (h-46-59-36-113.A463.priv.bahnhof.se. [46.59.36.113])
+        by smtp.gmail.com with ESMTPSA id o16-20020ac24bd0000000b0050f097a6e55sm2020542lfq.177.2024.01.22.07.26.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jan 2024 07:26:50 -0800 (PST)
+Date: Mon, 22 Jan 2024 16:26:50 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] pmdomain: renesas: rcar-gen4-sysc: Remove unneeded
+ includes
+Message-ID: <20240122152650.GE4126432@ragnatech.se>
+References: <5b440f84ab8b52499ab307c84154dcbc0f41d1d7.1705931035.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5b440f84ab8b52499ab307c84154dcbc0f41d1d7.1705931035.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <5b440f84ab8b52499ab307c84154dcbc0f41d1d7.1705931035.git.geert+renesas@glider.be>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 22 Jan 2024 16:21:49 +0100
-Message-ID: <CAPDyKFqNpivthZxfzoeDS0FABGxmJjJq4caYRHga6+c6nmR_uA@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: renesas: rcar-gen4-sysc: Remove unneeded includes
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 22 Jan 2024 at 14:44, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
+Hi Geert,
+
+Thanks for your work.
+
+On 2024-01-22 14:44:41 +0100, Geert Uytterhoeven wrote:
 > The R-Car V3U System Controller (SYSC) driver no longer needs these
 > includes since the factoring out of the common R-Car Gen4 SYSC driver in
 > commit e62906d6315f652b ("soc: renesas: rcar-gen4-sysc: Introduce R-Car
 > Gen4 SYSC driver").
->
+> 
 > The R-Car S4-8 and V4H SYSC drivers never needed these includes, as
 > these drivers always used the common R-Car Gen4 SYSC driver.
->
+> 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
 >  drivers/pmdomain/renesas/r8a779a0-sysc.c | 12 ------------
 >  drivers/pmdomain/renesas/r8a779f0-sysc.c | 12 ------------
 >  drivers/pmdomain/renesas/r8a779g0-sysc.c | 12 ------------
 >  3 files changed, 36 deletions(-)
->
+> 
 > diff --git a/drivers/pmdomain/renesas/r8a779a0-sysc.c b/drivers/pmdomain/renesas/r8a779a0-sysc.c
 > index 04f1bc322ae7b671..54cdf250f7c2d143 100644
 > --- a/drivers/pmdomain/renesas/r8a779a0-sysc.c
@@ -96,7 +101,7 @@ Uffe
 > @@ -5,19 +5,7 @@
 >   * Copyright (C) 2020 Renesas Electronics Corp.
 >   */
->
+>  
 > -#include <linux/bits.h>
 > -#include <linux/clk/renesas.h>
 > -#include <linux/delay.h>
@@ -110,9 +115,9 @@ Uffe
 > -#include <linux/slab.h>
 > -#include <linux/spinlock.h>
 > -#include <linux/types.h>
->
+>  
 >  #include <dt-bindings/power/r8a779a0-sysc.h>
->
+>  
 > diff --git a/drivers/pmdomain/renesas/r8a779f0-sysc.c b/drivers/pmdomain/renesas/r8a779f0-sysc.c
 > index 5602aa6bd7ed1529..6ed13cd1cb249df5 100644
 > --- a/drivers/pmdomain/renesas/r8a779f0-sysc.c
@@ -120,7 +125,7 @@ Uffe
 > @@ -5,19 +5,7 @@
 >   * Copyright (C) 2021 Renesas Electronics Corp.
 >   */
->
+>  
 > -#include <linux/bits.h>
 > -#include <linux/clk/renesas.h>
 > -#include <linux/delay.h>
@@ -134,9 +139,9 @@ Uffe
 > -#include <linux/slab.h>
 > -#include <linux/spinlock.h>
 > -#include <linux/types.h>
->
+>  
 >  #include <dt-bindings/power/r8a779f0-sysc.h>
->
+>  
 > diff --git a/drivers/pmdomain/renesas/r8a779g0-sysc.c b/drivers/pmdomain/renesas/r8a779g0-sysc.c
 > index b932eba1b8042d8f..249cf43af45b6445 100644
 > --- a/drivers/pmdomain/renesas/r8a779g0-sysc.c
@@ -144,7 +149,7 @@ Uffe
 > @@ -5,19 +5,7 @@
 >   * Copyright (C) 2022 Renesas Electronics Corp.
 >   */
->
+>  
 > -#include <linux/bits.h>
 > -#include <linux/clk/renesas.h>
 > -#include <linux/delay.h>
@@ -158,9 +163,14 @@ Uffe
 > -#include <linux/slab.h>
 > -#include <linux/spinlock.h>
 > -#include <linux/types.h>
->
+>  
 >  #include <dt-bindings/power/r8a779g0-sysc.h>
->
-> --
+>  
+> -- 
 > 2.34.1
->
+> 
+> 
+
+-- 
+Kind Regards,
+Niklas Söderlund
