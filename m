@@ -1,168 +1,90 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D254D5AF
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 16:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADBB5788B
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 16:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705939566; cv=none; b=a437lbX6quzFRIJJ1h2wCci+a8CCekVKeSMGQsHO1N2dPUCzSrChMqHIyd33jDaCx/3+1loiArwa3ZwzsKoKWc83/gpUO7BAk1W400WFEB0fc+vhORoeNKZW3/eYomjfAS6aIrcxBlitKwIiQIBPCVNgqYZxfSmXE0FsFvYsRjk=
+	t=1705941813; cv=none; b=ZO7AuB+zbbskGGs7dQHz3/LHEgMglwtvkeICN8EIGo66gmOXG6EEY00mZopgbqEjcJEdmtj9jkpNvfw76h3i0I1/uvYNK6+P2VU/9mrQzZ65WkoghUfW34WR3zUkJiHZEgckk8DbDzvB+1VcGozhKUL5NIg5zgpLZ7NdarwJCWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705939566; c=relaxed/simple;
-	bh=8+Jr9Hsh9KgnYxsoSQDSxqXxI1FhclIeUqpZMIYnqKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IVjKAHuAtFpASZF+mcnVawvltMRgWsoJ2NIAGIHYbrC5p/yv6R0lkFgxwb1iDSHTwS+LA5Kv/DNtQVKkK6nfb8lWllZ2bFwNDDUeB2rYOdijKv8bAdrTzB/PTFD7iQ4FkPxfQzGeCMaS53ztPxNij2BKlF73Y0yp8z4GiFBcM7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=f26/bgvK; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="f26/bgvK"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40e9ef9853bso18080235e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 08:06:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech.se; s=google; t=1705939560; x=1706544360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rlarwS5ZWGd/b0VwyKRXYjLC1ZJXtKCaEoHcpJgSB1I=;
-        b=f26/bgvK1C+9QhOISv03gt4KVa9+/qD3fMcS554BpE8qY1N5Vn8m1K/ieGKEKgtk1r
-         F0nZt2fskhEk+4tBltdn4yrSS1SKmOLgWvgFuXe3ONyDuRjfOJTtRr5WTkv8aLB2AnD9
-         M+TqLaqTjNMbsLUwo9lPXg2/S1UECjLH3TlpwI6Wok8GA7Xv1AO3r8CgXSi82sQcB22Z
-         1EdwbD9vpX+ZBN1s0ixHmJRmDybz620fvbrTFL6Owx7NTpynn/8sT/SPyBpvKQQ6owNQ
-         s5ncJQ7Xlf/TrXxqqmzzQT0AP7oM8OtnlTRK4hyHE5XqlDzrshDAZ4+xWT+uCJgoMB8W
-         sulA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705939560; x=1706544360;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rlarwS5ZWGd/b0VwyKRXYjLC1ZJXtKCaEoHcpJgSB1I=;
-        b=i248+BF4iq64baQcTKEuDFimkoVErP9vbBO8c/KnzmGYSH0TfBxU2spErih3tcciWu
-         o4z9A4ryYJCSt6FeAFhON15i3/c4yypVV6gcdnhV5AR52EaLsV8yo6nVGK63fbZ7DLUo
-         4liFq5bhbrjk0S77dRWPYcReB0tk8s+v1ydx5NZsEZJJpPVQ/uX66lPQ2PoRIeFo0rXx
-         sc7xX6SYT1j5lJUQIJ/wZmfW5y5sw7uPShslyCvGxJENyNsylLPEXwanRVHEldSh34eX
-         1c8mrfsgUlBxcaeT3ihd5ajhjnjgg4P4r8YKqOhz1YeyK+xvYSTUio9E3TzeKRg7gdTU
-         WTJg==
-X-Gm-Message-State: AOJu0YwihwtC2gxxo6HZG3fiCMc5jaM6ZzW/PXrdwBy78n9txb3N26sT
-	6JdAGUic9ksTI4BtKYJ9lzhsRViaKMd6Ad5HisicQlXdwnPQVL9l6vYE2hfgoYI=
-X-Google-Smtp-Source: AGHT+IFnJN+3OxQxnArgp3IoR1GNOboQMVz5rwH9l+fuJBi30dSZq7sXPsdB9PKZnV/3C0/Mnh0GQg==
-X-Received: by 2002:a05:600c:63d1:b0:40d:61bc:cf55 with SMTP id dx17-20020a05600c63d100b0040d61bccf55mr2263823wmb.89.1705939560001;
-        Mon, 22 Jan 2024 08:06:00 -0800 (PST)
-Received: from sleipner.berto.se (p4fcc8c6a.dip0.t-ipconnect.de. [79.204.140.106])
-        by smtp.googlemail.com with ESMTPSA id q6-20020a5d6586000000b0033921f48044sm8808860wru.55.2024.01.22.08.05.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 08:05:59 -0800 (PST)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] arm64: dts: renesas: white-hawk: Add Ethernet TSN overlay
-Date: Mon, 22 Jan 2024 17:04:41 +0100
-Message-ID: <20240122160441.759620-3-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122160441.759620-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20240122160441.759620-1-niklas.soderlund+renesas@ragnatech.se>
+	s=arc-20240116; t=1705941813; c=relaxed/simple;
+	bh=AS5d4p/0OQzR1vsQcihheiwohShQ5icpImOAw5K1cpE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P9ZkN6fthdoxrXk9SrK4GZssngbzqMbiImXOZHj4q2fW21Tly1J+FiRNFOkHrsdkK7Ic5UfW2fqGmIZQgqmFBoc3xpnQdm9mfs9ahaSMTN7YTVFZATAEzOvbY9jq95Cqf+IrbWjp6liT4KtX3ZHl8bobMGTY6rF+04j1CGNt+OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.05,211,1701097200"; 
+   d="scan'208";a="191317320"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 23 Jan 2024 01:43:30 +0900
+Received: from localhost.localdomain (unknown [10.226.92.211])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 359AA400387B;
+	Tue, 23 Jan 2024 01:43:25 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v16 4/5] MAINTAINERS: Update entries for Renesas DRM drivers
+Date: Mon, 22 Jan 2024 16:42:56 +0000
+Message-Id: <20240122164257.56326-5-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240122164257.56326-1-biju.das.jz@bp.renesas.com>
+References: <20240122164257.56326-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On the white-hawk development board the Ethernet TSN IP can be connected
-to one of two different external PHYs. One PHY is located on the
-breakout board, and the other on the Ethernet sub-board. Which PHY is
-connected depends on what resistors are mounted on the board.
+The rcar-du has never been maintained in drm-misc. So exclude only
+this driver from drm-misc. Also, add the tree entry for sh_mobile.
 
-The default white-hawk configuration connect the TSN with the PHY on the
-breakout board. Unfortunately the standard breakout board do not
-populate the external PHY.
-
-Add an overlay that can be applied to enable Ethernet TSN support for
-those boards that do populate the breakout board, or mount the
-appropriate resistors to connect TSN with the Ethernet sub-board.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be> # shmob_drm
 ---
- arch/arm64/boot/dts/renesas/Makefile          |  2 +
- .../dts/renesas/r8a779g0-white-hawk-tsn.dtso  | 53 +++++++++++++++++++
- 2 files changed, 55 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-tsn.dtso
+v15->v16:
+ * Added Rb and Ack tag from Geert.
+v15:
+ * New patch
+---
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 8ea68d582710..c26047c9f84a 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -84,7 +84,9 @@ dtb-$(CONFIG_ARCH_R8A779F0) += r8a779f4-s4sk.dtb
- dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk.dtb
- dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk-ard-audio-da7212.dtbo
- r8a779g0-white-hawk-ard-audio-da7212-dtbs := r8a779g0-white-hawk.dtb r8a779g0-white-hawk-ard-audio-da7212.dtbo
-+r8a779g0-white-hawk-tsn-dtbs := r8a779g0-white-hawk.dtb r8a779g0-white-hawk-tsn.dtbo
- dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk-ard-audio-da7212.dtb
-+dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk-tsn.dtb
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9d959a6881f7..bce9369002a1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6988,7 +6988,7 @@ X:	drivers/gpu/drm/mediatek/
+ X:	drivers/gpu/drm/msm/
+ X:	drivers/gpu/drm/nouveau/
+ X:	drivers/gpu/drm/radeon/
+-X:	drivers/gpu/drm/renesas/
++X:	drivers/gpu/drm/renesas/rcar-du/
+ X:	drivers/gpu/drm/tegra/
  
- dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-salvator-xs.dtb
- r8a779m1-salvator-xs-panel-aa104xd12-dtbs := r8a779m1-salvator-xs.dtb salvator-panel-aa104xd12.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-tsn.dtso b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-tsn.dtso
-new file mode 100644
-index 000000000000..d9b6c11c425c
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-tsn.dtso
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the White Hawk board with connected TSN PHY.
-+ *
-+ * Copyright (C) 2023 Niklas Söderlund <niklas.soderlund@ragnatech.se>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+&pfc {
-+	tsn0_pins: tsn0 {
-+		mux {
-+			groups = "tsn0_link", "tsn0_mdio", "tsn0_rgmii",
-+				 "tsn0_txcrefclk";
-+			function = "tsn0";
-+		};
-+
-+		pins_mdio {
-+			groups = "tsn0_mdio";
-+			drive-strength = <21>;
-+		};
-+
-+		pins_mii {
-+			groups = "tsn0_rgmii";
-+			drive-strength = <21>;
-+		};
-+
-+	};
-+};
-+
-+&tsn0 {
-+	pinctrl-0 = <&tsn0_pins>;
-+	pinctrl-names = "default";
-+	phy-mode = "rgmii";
-+	phy-handle = <&phy3>;
-+	tx-internal-delay-ps = <2000>;
-+	status = "okay";
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	phy3: ethernet-phy@3 {
-+		compatible = "ethernet-phy-ieee802.3-c45";
-+		reg = <0>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio1 23 GPIO_ACTIVE_LOW>;
-+	};
-+};
+ DRM DRIVERS FOR ALLWINNER A10
+@@ -7162,6 +7162,7 @@ M:	Geert Uytterhoeven <geert+renesas@glider.be>
+ L:	dri-devel@lists.freedesktop.org
+ L:	linux-renesas-soc@vger.kernel.org
+ S:	Supported
++T:	git git://anongit.freedesktop.org/drm/drm-misc
+ F:	Documentation/devicetree/bindings/display/renesas,shmobile-lcdc.yaml
+ F:	drivers/gpu/drm/renesas/shmobile/
+ F:	include/linux/platform_data/shmob_drm.h
 -- 
-2.43.0
+2.25.1
 
