@@ -1,112 +1,76 @@
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810033D55A
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DD13D54B
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705933485; cv=none; b=MbktQ1rxRa2uDfBdNMdR2aaSrW+KvnLwiLsMhuSHZIK3Wh4qvE4zcpXJnftVjAilGbgHpY6BR+r7c5iWBoyPTIKLI4FgYxcjclIudRUCAe+nuNayE4fH+NUqKhSLp90k47ga8eVnGDBeSzd9DXZJagkFDUJFAJVh3SHuJ7BaYII=
+	t=1705933655; cv=none; b=FpU6o5Ks3Us/CxQneqmw6ts2UO1VRmnVoUteGPpNxVvoxQ5EawhFkvLeogE9z3PfHCXRi+77LTATjpOd5zhrCN6rAFAxTCkKorLsR2D2SgLfU4siBKWLNoUe/30g8WkKUjA74IkI5tWbfHCuu/rFuz3s+5R7JIzo0Nyzt2PdZB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705933485; c=relaxed/simple;
-	bh=5xeF4V2g1z6BIJIvEXeiCjThl4DXXG8UvRJEdC08uxo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S6kNmun9iw0lXfLzZNe6/JxqUQaexiJ58KChllK9kMmmRhQdYaBIOnj6/oed7A+ZvPlPHnqqKgr/o6fg3O94Vhy4NFuNUpQp7fVi11XIg3jAXNfpNBzilrrBVEOa+O6++uQnDz1Q5QR+y2/b8/QkTr1P/gsE8XmOkKhiNq5AA+8=
+	s=arc-20240116; t=1705933655; c=relaxed/simple;
+	bh=DPTpx/enJ42KFi65eyqHeTKZQfLK5XOQ715K4fmJ9Kk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fpxshbEpavYh1DzNDir0NBV7n1ujfON4mbbplgOqqtgDcXK+x6zLw+cLOraz2WEJlDMWlWsoaYhVDYaWnt9CM24sIMMW+i5Y7hak6ydp5h2bHv47qA2ChHyyvz8ptzw+jOaTNMWeW2BE4EzDnKuCft9zFWfV8dJ61OOq71H8VhQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:955e:bba5:7ff4:cfb6])
 	by baptiste.telenet-ops.be with bizsmtp
-	id dqQa2B00S0ZxL6o01qQbH1; Mon, 22 Jan 2024 15:24:35 +0100
+	id dqTY2B0050ZxL6o01qTYoq; Mon, 22 Jan 2024 15:27:32 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rRvDF-00GGwu-R5;
-	Mon, 22 Jan 2024 15:24:34 +0100
+	id 1rRvG6-00GGxK-Uc;
+	Mon, 22 Jan 2024 15:27:32 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rRvE2-00CFAb-Rt;
-	Mon, 22 Jan 2024 15:24:34 +0100
+	id 1rRvGt-00CFG1-VG;
+	Mon, 22 Jan 2024 15:27:31 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-staging@lists.linux.dev,
-	linux-usb@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: [PATCH v2 2/4] staging: board: Remove KZM9D board staging code
-Date: Mon, 22 Jan 2024 15:24:31 +0100
-Message-Id: <f54fe56524e0266a3c705315f04870988912cfcf.1705932585.git.geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: defconfig: Disable staging
+Date: Mon, 22 Jan 2024 15:27:30 +0100
+Message-Id: <7f1fa862cb508a5d29947380b72324be027ac76f.1705933596.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1705932585.git.geert+renesas@glider.be>
-References: <cover.1705932585.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-With the EMMA Mobile USB Gadget staging driver removed, there is no
-longer any use for the EMEV2 KZM9D board staging code.
+After the DT conversion of SH-Mobile and Armadillo-800-EVA display
+support, and the removal of the EMMA Mobile USB Gadget staging driver,
+there is no longer a need to enable support for board staging or any
+other staging drivers.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
 ---
-v2:
-  - Add Acked-by.
----
- drivers/staging/board/Makefile |  1 -
- drivers/staging/board/kzm9d.c  | 26 --------------------------
- 2 files changed, 27 deletions(-)
- delete mode 100644 drivers/staging/board/kzm9d.c
+To be queued in renesas-devel for v6.9.
 
-diff --git a/drivers/staging/board/Makefile b/drivers/staging/board/Makefile
-index ed7839752e129abb..5db091b5ca01596a 100644
---- a/drivers/staging/board/Makefile
-+++ b/drivers/staging/board/Makefile
-@@ -1,4 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-y	:= board.o
--obj-$(CONFIG_ARCH_EMEV2)	+= kzm9d.o
- obj-$(CONFIG_ARCH_R8A7740)	+= armadillo800eva.o
-diff --git a/drivers/staging/board/kzm9d.c b/drivers/staging/board/kzm9d.c
-deleted file mode 100644
-index d449a837414e6934..0000000000000000
---- a/drivers/staging/board/kzm9d.c
-+++ /dev/null
-@@ -1,26 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/* Staging board support for KZM9D. Enable not-yet-DT-capable devices here. */
--
--#include <linux/kernel.h>
--#include <linux/platform_device.h>
--#include "board.h"
--
--static struct resource usbs1_res[] __initdata = {
--	DEFINE_RES_MEM(0xe2800000, 0x2000),
--	DEFINE_RES_IRQ(159),
--};
--
--static void __init kzm9d_init(void)
--{
--	board_staging_gic_setup_xlate("arm,pl390", 32);
--
--	if (!board_staging_dt_node_available(usbs1_res,
--					     ARRAY_SIZE(usbs1_res))) {
--		board_staging_gic_fixup_resources(usbs1_res,
--						  ARRAY_SIZE(usbs1_res));
--		platform_device_register_simple("emxx_udc", -1, usbs1_res,
--						ARRAY_SIZE(usbs1_res));
--	}
--}
--
--board_staging("renesas,kzm9d", kzm9d_init);
+EMMA Mobile USB Gadget staging driver removal submitted in "[PATCH v2
+0/4] staging: Remove EMMA Mobile USB Gadget and board staging support"
+https://lore.kernel.org/r/eec1bfb2878237888a8c3bc866d18dc53900739f.1705932585.git.geert+renesas@glider.be
+---
+ arch/arm/configs/shmobile_defconfig | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index c47a638172a89bfd..091e1840933cf2c6 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -191,8 +191,6 @@ CONFIG_DW_DMAC=y
+ CONFIG_RZN1_DMAMUX=y
+ CONFIG_RCAR_DMAC=y
+ CONFIG_RENESAS_USB_DMAC=y
+-CONFIG_STAGING=y
+-CONFIG_STAGING_BOARD=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_ARCH_EMEV2=y
+ CONFIG_ARCH_R8A7794=y
 -- 
 2.34.1
 
