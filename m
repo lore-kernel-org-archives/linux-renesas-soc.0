@@ -1,30 +1,30 @@
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D656E2CF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D185DF32
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706194151; cv=none; b=bP0Fhk9erxNFP4uHKnkN44QqMdiYLBU5gx23Lf6mreOElMjlizsmcYBaS9uVt7hRNKJF02S3ProySa0YXCMMmUA1S0UxUlAs04YmAENhnEF4blnlNrJ0UxbyXNtJno8BpL4J6kagZ0QbKuC7hj9e52J4OhYtxERH5W+g3/9yuc0=
+	t=1706194152; cv=none; b=g4P7xK40HSFKwW3HVUwh2H40gLhOKKeWTiVblHDb6+9WAH4QeHrkITMhYBhG/slUv3RHhMmHGabAoLgcgmrZBpIz62lwyvduZL2wO3b7TVFyg5Hvxh6SDUuQNe+PIg3tZNrC92hxxq+/OMaWweH9KBgN1XMK6RHVG0kopgrqQh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706194151; c=relaxed/simple;
-	bh=doYO8Z4F+c9Uj5tLUWMforTrLhKJ1dne575sgoD7ncM=;
+	s=arc-20240116; t=1706194152; c=relaxed/simple;
+	bh=T92brzQTI2qbzOot7Dlymqbh7IB2R4r3HdEMQ66oJZs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vCc82Bjk/XTAeQDKm895fZc5T2eAA98Wo6QDcHBcdSg5gTSce/XJ4OP/3I8Edhm2dJtRhPSBQZfOZ1wehYMLjlu5CF7we5WtZ6CjyYBsJNTNKIQZ4jVLPh53xu4eQ3sZXOqkEMdlqz25PpsRPWfjU1YdWye4c7hk2ERMvzWu0Kw=
+	 MIME-Version; b=DsKOk2psmhFnAaeNY10t08ztTihI+FLn2keapsJWYXov9Q6hNigG7xC1jXml/QVxichFUtJa1zLFhbbnW2c1txrST4gR50XI2dnZ1nrKa8nUhv/ymyUkbsGTdcFLMpTgC4BxWVHszVdWTiTEbbDytxPpUN5D/OkKQCNSbzAxCp8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
 	by andre.telenet-ops.be with bizsmtp
-	id f2p02B00P58agq2012p0G9; Thu, 25 Jan 2024 15:49:01 +0100
+	id f2p02B00T58agq2012p0GB; Thu, 25 Jan 2024 15:49:01 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT11W-00GUrw-I1;
+	id 1rT11W-00GUsE-LN;
 	Thu, 25 Jan 2024 15:49:00 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT12K-00Flts-HB;
+	id 1rT12K-00Flu8-Ki;
 	Thu, 25 Jan 2024 15:49:00 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -34,11 +34,10 @@ To: Magnus Damm <magnus.damm@gmail.com>,
 Cc: devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 1/9] dt-bindings: soc: renesas: Document R-Car V4H White Hawk Single
-Date: Thu, 25 Jan 2024 15:48:51 +0100
-Message-Id: <a44d990c962c8e0aac3b133eaa563f8c92b2ce29.1706192990.git.geert+renesas@glider.be>
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 5/9] arm64: dts: renesas: white-hawk: Add SoC name to top-level comment
+Date: Thu, 25 Jan 2024 15:48:55 +0100
+Message-Id: <de81db7ca38c8f4737092bdac6891e9db4bb9bd6.1706192990.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706192990.git.geert+renesas@glider.be>
 References: <cover.1706192990.git.geert+renesas@glider.be>
@@ -50,39 +49,31 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document the compatible values for the Renesas R-Car V4H ES2.0
-(R8A779G2) SoC and the Renesas White Hawk Single board.
-The former is an updated version of R-Car V4H (R8A779G0).
-The latter is a single-board integration of the Renesas White Hawk CPU
-and Breakout board stack.
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The White Hawk CPU and BreakOut board DTS is specific to R-Car V4H.
+Document it in the top-level comment.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
 v2:
-  - Add Reviewed-by.
+  - New.
 ---
- Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-index 16ca3ff7b1aea146..15b9dd52938996f4 100644
---- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-+++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-@@ -348,6 +348,13 @@ properties:
-               - renesas,white-hawk-cpu # White Hawk CPU board (RTP8A779G0ASKB0FC0SA000)
-           - const: renesas,r8a779g0
- 
-+      - description: R-Car V4H (R8A779G2)
-+        items:
-+          - enum:
-+              - renesas,white-hawk-single # White Hawk Single board (RTP8A779G2ASKB0F10SA001)
-+          - const: renesas,r8a779g2
-+          - const: renesas,r8a779g0
-+
-       - items:
-           - enum:
-               - renesas,white-hawk-breakout # White Hawk BreakOut board (RTP8A779G0ASKB0SB0SA000)
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+index 8d82294a1a56444c..a9bc258cbf55587f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ /*
+- * Device Tree Source for the White Hawk CPU and BreakOut boards
++ * Device Tree Source for the R-Car V4H White Hawk CPU and BreakOut boards
+  *
+  * Copyright (C) 2022 Renesas Electronics Corp.
+  */
 -- 
 2.34.1
 
