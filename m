@@ -1,30 +1,30 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DDF6E2D2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EE46E2C9
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706194152; cv=none; b=c5ILmeU3Pt1Pjs6P57ZutrkhVY7PxhCdr3q8gqgxoDEpDlHqg8IZ3DIWy/tynCrTj8qitlY2xgWsmYVeHg2yMfFQMd/MoVxGJ5V3b5oNRMr3OG73b5FFmgL2a1hjCbh3c48gFdurb91cAZJ88RSsYLiO4rrKPHZ29apO/lKDjT0=
+	t=1706194152; cv=none; b=aO8hhE8xcEkSMChqRVFb0C7jhAPd7HKO1OnHySQlX7s1m/4Deu7Pci3XQ6vS/ds4tnaeWswJ9cSp1yqiR3ghsU6B4FRsQBYiwTw5m9EaQCQf+CJLrjZfH19/4I2kHWmYXVjyLg/nCoO15CRm9j+gW4d8YZ+wYeElLovJQ8pK9D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706194152; c=relaxed/simple;
-	bh=x7o7jeI2krSuoJURPzP2NxANKTR9RXMg7aSzVRhnONw=;
+	bh=h2S7gudS05g3P6ahM94tO5OpEENw4AIqEsDRznUjj7k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OcDVCokUB5uqX0COoqWEzzU1pq2/YxLWW13yYSRfFT61TN0wwm9PbuiMdJMz+debzrLLVWQJgpD1veuWADPvv6OqSidrbzGc7R+6ofA2EakrUWbZCgv4T8d6AVdnss0+b6AU/c8edD/SYO/4/m94g//DdLGvLGtt1l4emdAV0m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+	 MIME-Version; b=YihpLcWwRSVNewKSuuK1/qNBTwivHPN+Y3d//TDhoDCispAjIauvLiCHy3tRB/BYvYtare/DlCGYS74GUrJzyNmSeIfXWg5TiGRtopZpVpRStkgB9OO0viTPLKjY9GEH18rVMObXH6PHO/Kos0dw5CeJnPdwWbY81CXWAT8XfwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
-	by andre.telenet-ops.be with bizsmtp
-	id f2p02B00a58agq2012p0GF; Thu, 25 Jan 2024 15:49:01 +0100
+	by baptiste.telenet-ops.be with bizsmtp
+	id f2p02B00Q58agq2012p0l7; Thu, 25 Jan 2024 15:49:01 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT11W-00GUsP-Np;
+	id 1rT11W-00GUs3-Jd;
 	Thu, 25 Jan 2024 15:49:00 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT12K-00FluO-NI;
+	id 1rT12K-00Flu0-J7;
 	Thu, 25 Jan 2024 15:49:00 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -34,11 +34,10 @@ To: Magnus Damm <magnus.damm@gmail.com>,
 Cc: devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 8/9] arm64: dts: renesas: Add Renesas R8A779G2 SoC support
-Date: Thu, 25 Jan 2024 15:48:58 +0100
-Message-Id: <4f773dbb66af5da51d1e171424ec8f97ee933b36.1706192990.git.geert+renesas@glider.be>
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 3/9] arm64: dts: renesas: white-hawk-cpu: Restore sort order
+Date: Thu, 25 Jan 2024 15:48:53 +0100
+Message-Id: <f375293d6e21659ee30a86e2b46e4998a75ea3b5.1706192990.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706192990.git.geert+renesas@glider.be>
 References: <cover.1706192990.git.geert+renesas@glider.be>
@@ -50,37 +49,48 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for the Renesas R-Car V4H ES2.0 (R8A779G2) SoC, which is an
-updated version of the R-Car V4H (R8A779G0) SoC.
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Alphabetical by node name.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
 v2:
-  - Add Reviewed-by.
+  - New.
 ---
- arch/arm64/boot/dts/renesas/r8a779g2.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779g2.dtsi
+ .../boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi    | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g2.dtsi b/arch/arm64/boot/dts/renesas/r8a779g2.dtsi
-new file mode 100644
-index 0000000000000000..e08f531843e28b7f
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779g2.dtsi
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the R-Car V4H (R8A779G2) SoC
-+ *
-+ * Copyright (C) 2023 Glider bv
-+ */
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
+index 19ca831756f78124..6d53b4006db3c27f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk-cpu.dtsi
+@@ -25,6 +25,12 @@ chosen {
+ 		stdout-path = "serial0:921600n8";
+ 	};
+ 
++	sn65dsi86_refclk: clk-x6 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <38400000>;
++	};
 +
-+#include "r8a779g0.dtsi"
-+
-+/ {
-+	compatible = "renesas,r8a779g2", "renesas,r8a779g0";
-+};
+ 	keys {
+ 		compatible = "gpio-keys";
+ 
+@@ -135,12 +141,6 @@ reg_3p3v: regulator-3p3v {
+ 		regulator-boot-on;
+ 		regulator-always-on;
+ 	};
+-
+-	sn65dsi86_refclk: clk-x6 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <38400000>;
+-	};
+ };
+ 
+ &avb0 {
 -- 
 2.34.1
 
