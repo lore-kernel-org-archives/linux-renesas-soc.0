@@ -1,30 +1,30 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607A6E2C5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D656E2CF
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706194151; cv=none; b=dwYihK81KnLjP0AW9kjLO4Mw9jh4lvobKfyVDa8FQgwpyiqS1bt2BYtSRGrv7lwNTzQJQUmxGeVjA8fd4YSZwsZkZLElV8Hk/x241hnJvRO8zsmGwREp2O834dQnFn+eruz1Y0bCjm1B/DFv01TBArcalb915nnFSSnlMmKnc7E=
+	t=1706194151; cv=none; b=bP0Fhk9erxNFP4uHKnkN44QqMdiYLBU5gx23Lf6mreOElMjlizsmcYBaS9uVt7hRNKJF02S3ProySa0YXCMMmUA1S0UxUlAs04YmAENhnEF4blnlNrJ0UxbyXNtJno8BpL4J6kagZ0QbKuC7hj9e52J4OhYtxERH5W+g3/9yuc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706194151; c=relaxed/simple;
-	bh=aupD3kAOcdN2ZGDJhNMx7T0OeVXOL6E9M+5jZxYsg0Q=;
+	bh=doYO8Z4F+c9Uj5tLUWMforTrLhKJ1dne575sgoD7ncM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P5myrdGyzsSKq0obhzYNsLCcFldMz3O7jbkiWYSSKsY/iva2ozqCoKNLUeaOTR4z32CY/LpPRawPG3ds6HkSYp0dl60OGI6ZVxNMOp9O6XgYyw42IpF7wik3gbf7Mut1RR4jA3lHBydi8zSkqBGJffS/uO6hwVffnLIE9INCSBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	 MIME-Version; b=vCc82Bjk/XTAeQDKm895fZc5T2eAA98Wo6QDcHBcdSg5gTSce/XJ4OP/3I8Edhm2dJtRhPSBQZfOZ1wehYMLjlu5CF7we5WtZ6CjyYBsJNTNKIQZ4jVLPh53xu4eQ3sZXOqkEMdlqz25PpsRPWfjU1YdWye4c7hk2ERMvzWu0Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
-	by xavier.telenet-ops.be with bizsmtp
-	id f2p02B00D58agq2012p01K; Thu, 25 Jan 2024 15:49:01 +0100
+	by andre.telenet-ops.be with bizsmtp
+	id f2p02B00P58agq2012p0G9; Thu, 25 Jan 2024 15:49:01 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT11W-00GUsM-N3;
+	id 1rT11W-00GUrw-I1;
 	Thu, 25 Jan 2024 15:49:00 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT12K-00FluJ-Ma;
+	id 1rT12K-00Flts-HB;
 	Thu, 25 Jan 2024 15:49:00 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -36,9 +36,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 7/9] arm64: dts: renesas: white-hawk: Factor out common parts
-Date: Thu, 25 Jan 2024 15:48:57 +0100
-Message-Id: <8c05b4d283b5d765fbc6f64cee9a247cded29409.1706192990.git.geert+renesas@glider.be>
+Subject: [PATCH v2 1/9] dt-bindings: soc: renesas: Document R-Car V4H White Hawk Single
+Date: Thu, 25 Jan 2024 15:48:51 +0100
+Message-Id: <a44d990c962c8e0aac3b133eaa563f8c92b2ce29.1706192990.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706192990.git.geert+renesas@glider.be>
 References: <cover.1706192990.git.geert+renesas@glider.be>
@@ -50,9 +50,11 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out the parts on the White Hawk BreakOut board that are also
-present on the White Hawk Single board, so they can be reused when
-introducing support for the latter.
+Document the compatible values for the Renesas R-Car V4H ES2.0
+(R8A779G2) SoC and the Renesas White Hawk Single board.
+The former is an updated version of R-Car V4H (R8A779G0).
+The latter is a single-board integration of the Renesas White Hawk CPU
+and Breakout board stack.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
@@ -60,109 +62,27 @@ Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 v2:
   - Add Reviewed-by.
 ---
- .../boot/dts/renesas/r8a779g0-white-hawk.dts  | 56 +------------------
- ...-white-hawk.dts => white-hawk-common.dtsi} |  8 +--
- 2 files changed, 3 insertions(+), 61 deletions(-)
- copy arch/arm64/boot/dts/renesas/{r8a779g0-white-hawk.dts => white-hawk-common.dtsi} (77%)
+ Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-index a9bc258cbf55587f..784d4e8b204ce85a 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-@@ -7,63 +7,9 @@
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 16ca3ff7b1aea146..15b9dd52938996f4 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -348,6 +348,13 @@ properties:
+               - renesas,white-hawk-cpu # White Hawk CPU board (RTP8A779G0ASKB0FC0SA000)
+           - const: renesas,r8a779g0
  
- /dts-v1/;
- #include "r8a779g0-white-hawk-cpu.dtsi"
--#include "white-hawk-csi-dsi.dtsi"
--#include "white-hawk-ethernet.dtsi"
-+#include "white-hawk-common.dtsi"
- 
- / {
- 	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
- 	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
--
--	can_transceiver0: can-phy0 {
--		compatible = "nxp,tjr1443";
--		#phy-cells = <0>;
--		enable-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
--		max-bitrate = <5000000>;
--	};
--};
--
--&can_clk {
--	clock-frequency = <40000000>;
--};
--
--&canfd {
--	pinctrl-0 = <&canfd0_pins>, <&canfd1_pins>, <&can_clk_pins>;
--	pinctrl-names = "default";
--
--	status = "okay";
--
--	channel0 {
--		status = "okay";
--		phys = <&can_transceiver0>;
--	};
--
--	channel1 {
--		status = "okay";
--	};
--};
--
--&i2c0 {
--	eeprom@51 {
--		compatible = "rohm,br24g01", "atmel,24c01";
--		label = "breakout-board";
--		reg = <0x51>;
--		pagesize = <8>;
--	};
--};
--
--&pfc {
--	can_clk_pins: can-clk {
--		groups = "can_clk";
--		function = "can_clk";
--	};
--
--	canfd0_pins: canfd0 {
--		groups = "canfd0_data";
--		function = "canfd0";
--	};
--
--	canfd1_pins: canfd1 {
--		groups = "canfd1_data";
--		function = "canfd1";
--	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
-similarity index 77%
-copy from arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-copy to arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
-index a9bc258cbf55587f..c99086edadcaacdb 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
-@@ -1,19 +1,15 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the R-Car V4H White Hawk CPU and BreakOut boards
-+ * Device Tree Source for the common parts shared by the White Hawk BreakOut
-+ * and White Hawk Single boards
-  *
-  * Copyright (C) 2022 Renesas Electronics Corp.
-  */
- 
--/dts-v1/;
--#include "r8a779g0-white-hawk-cpu.dtsi"
- #include "white-hawk-csi-dsi.dtsi"
- #include "white-hawk-ethernet.dtsi"
- 
- / {
--	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
--	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
--
- 	can_transceiver0: can-phy0 {
- 		compatible = "nxp,tjr1443";
- 		#phy-cells = <0>;
++      - description: R-Car V4H (R8A779G2)
++        items:
++          - enum:
++              - renesas,white-hawk-single # White Hawk Single board (RTP8A779G2ASKB0F10SA001)
++          - const: renesas,r8a779g2
++          - const: renesas,r8a779g0
++
+       - items:
+           - enum:
+               - renesas,white-hawk-breakout # White Hawk BreakOut board (RTP8A779G0ASKB0SB0SA000)
 -- 
 2.34.1
 
