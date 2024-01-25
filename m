@@ -1,33 +1,33 @@
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9D374E38
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 15:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A3F74E35
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 15:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706196907; cv=none; b=iCL2NF1mnE47Pdce5/bltEHuojaOEP18ihyOcZ/Wyw/u9IUkoGRzBppqfqeNDV/VRjdboShEvRKygeR/WFmDrTo+tDnqOtn6cLzudNaXG95tvVhyr0WI92t5QdG88h6tWS9VaF4fcdlVj0rxud7dBHUjsdMcHD1Z3GnNcQHjDH8=
+	t=1706196908; cv=none; b=URX/NKlzTmCfQcRWo8FzeWh4QpRUJ2QcAkebNCTih+Al0vn+Ap33sqRpL3TrNCgoQUfZrrVBx+rQq/0hikWgmcmHIUlgx01ZIR0XhlFwoT+WCngRyxEVEUGfl4vRavGXcdkvEblK2mZSwteynBimKVVLH+NJGI/sY33Hskr8TeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706196907; c=relaxed/simple;
-	bh=93GkKmd4fyfQi5SOpTnAYdsS7YxqGZvt4lLw8GcEVM0=;
+	s=arc-20240116; t=1706196908; c=relaxed/simple;
+	bh=f3Q0vahegL/wzrvIfTXsG2xs1ltZa8ZH4YwhV4HJ3a4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dt6mB1q1LrJLFB7L+GWvzvW2vQhaAwcsAiJgC/oo1OG7g7LusJ+XUeTw0UVzqnnebyjus9k+n/njDIj9ht31I+Gmeh6dvc+iOxfH6hqonfDUBmaEPskNy0L6QhkY5lf3+RoUVV11+laB8qWQN6UiCJD3ty+mkL80XoMd+A29sG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
+	 MIME-Version:Content-Type; b=XkvZ5/7tdOB0d0UIAmA19MJHOhdqqU5EghdeEMhbujwBKTtJPL3vUAHm8ewR/pjKOPX49EqQtTlNNppEPe3rxBMn6UnlKKVRpz+Rwmb9vqYnd9c6zweL/I5RTbTu/zjCNJW28Wue79ddi8VSnl9IoldySAa07FebtoneZ36a21s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4TLPyp5Bv7z4x2Nf
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 16:34:58 +0100 (CET)
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4TLPyn6B5gz4x0WB
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 16:34:57 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
-	by xavier.telenet-ops.be with bizsmtp
-	id f3am2B00858agq2013amcN; Thu, 25 Jan 2024 16:34:58 +0100
+	by andre.telenet-ops.be with bizsmtp
+	id f3am2B00B58agq2013amKT; Thu, 25 Jan 2024 16:34:57 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1jo-00GUvt-3q;
+	id 1rT1jo-00GUvh-1D;
 	Thu, 25 Jan 2024 16:34:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1kc-00Fs2l-3A;
+	id 1rT1kc-00Fs2W-0f;
 	Thu, 25 Jan 2024 16:34:46 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -50,11 +50,10 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 07/15] clk: renesas: rcar-gen4: Add support for FRQCRC1
-Date: Thu, 25 Jan 2024 16:34:35 +0100
-Message-Id: <f64d5573a92a18505619ff0ff808d50cfc2bde55.1706194617.git.geert+renesas@glider.be>
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 04/15] dt-bindings: power: Add r8a779h0 SYSC power domain definitions
+Date: Thu, 25 Jan 2024 16:34:32 +0100
+Message-Id: <c5cbef71178cada761e9da7bcbb6f21334f93ef8.1706194617.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706194617.git.geert+renesas@glider.be>
 References: <cover.1706194617.git.geert+renesas@glider.be>
@@ -67,51 +66,78 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-R-Car V4H and V4M have a second Frequency Control Register C.
-Add support for this by treating bit field offsets beyond 31 as
-referring to the second register.
+From: Duy Nguyen <duy.nguyen.rh@renesas.com>
 
+Add power domain indices for the Renesas R-Car V4M (R8A779H0) SoC.
+
+Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Tested by enabling CLOCK_ALLOW_WRITE_DEBUGFS and checking the impact of
-CPU core clk rate on CPU core speed on R-Car V4M.
-
 v2:
-  - Add Reviewed-by.
+  - Add Reviewed-by,
+  - Add vendor-prefix to file name and update include guard.
 ---
- drivers/clk/renesas/rcar-gen4-cpg.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ .../dt-bindings/power/renesas,r8a779h0-sysc.h | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 include/dt-bindings/power/renesas,r8a779h0-sysc.h
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index 8f771fe59bfdc756..8e4559fbb0bc3352 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -220,7 +220,8 @@ static struct clk * __init cpg_pll_clk_register(const char *name,
-  */
- #define CPG_FRQCRB			0x00000804
- #define CPG_FRQCRB_KICK			BIT(31)
--#define CPG_FRQCRC			0x00000808
-+#define CPG_FRQCRC0			0x00000808
-+#define CPG_FRQCRC1			0x000008e0
- 
- struct cpg_z_clk {
- 	struct clk_hw hw;
-@@ -345,7 +346,12 @@ static struct clk * __init cpg_z_clk_register(const char *name,
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
--	zclk->reg = reg + CPG_FRQCRC;
-+	if (offset < 32) {
-+		zclk->reg = reg + CPG_FRQCRC0;
-+	} else {
-+		zclk->reg = reg + CPG_FRQCRC1;
-+		offset -= 32;
-+	}
- 	zclk->kick_reg = reg + CPG_FRQCRB;
- 	zclk->hw.init = &init;
- 	zclk->mask = GENMASK(offset + 4, offset);
+diff --git a/include/dt-bindings/power/renesas,r8a779h0-sysc.h b/include/dt-bindings/power/renesas,r8a779h0-sysc.h
+new file mode 100644
+index 0000000000000000..f27976f523e87822
+--- /dev/null
++++ b/include/dt-bindings/power/renesas,r8a779h0-sysc.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2023 Renesas Electronics Corp.
++ */
++#ifndef __DT_BINDINGS_POWER_RENESAS_R8A779H0_SYSC_H__
++#define __DT_BINDINGS_POWER_RENESAS_R8A779H0_SYSC_H__
++
++/*
++ * These power domain indices match the Power Domain Register Numbers (PDR)
++ */
++
++#define R8A779H0_PD_A1E0D0C0		0
++#define R8A779H0_PD_A1E0D0C1		1
++#define R8A779H0_PD_A1E0D0C2		2
++#define R8A779H0_PD_A1E0D0C3		3
++#define R8A779H0_PD_A2E0D0		16
++#define R8A779H0_PD_A3CR0		21
++#define R8A779H0_PD_A3CR1		22
++#define R8A779H0_PD_A3CR2		23
++#define R8A779H0_PD_A33DGA		24
++#define R8A779H0_PD_A23DGB		25
++#define R8A779H0_PD_C4			31
++#define R8A779H0_PD_A1DSP0		33
++#define R8A779H0_PD_A2IMP01		34
++#define R8A779H0_PD_A2PSC		35
++#define R8A779H0_PD_A2CV0		36
++#define R8A779H0_PD_A2CV1		37
++#define R8A779H0_PD_A3IMR0		38
++#define R8A779H0_PD_A3IMR1		39
++#define R8A779H0_PD_A3VC		40
++#define R8A779H0_PD_A2CN0		42
++#define R8A779H0_PD_A1CN0		44
++#define R8A779H0_PD_A1DSP1		45
++#define R8A779H0_PD_A2DMA		47
++#define R8A779H0_PD_A2CV2		48
++#define R8A779H0_PD_A2CV3		49
++#define R8A779H0_PD_A3IMR2		50
++#define R8A779H0_PD_A3IMR3		51
++#define R8A779H0_PD_A3PCI		52
++#define R8A779H0_PD_A2PCIPHY		53
++#define R8A779H0_PD_A3VIP0		56
++#define R8A779H0_PD_A3VIP2		58
++#define R8A779H0_PD_A3ISP0		60
++#define R8A779H0_PD_A3DUL		62
++
++/* Always-on power area */
++#define R8A779H0_PD_ALWAYS_ON		64
++
++#endif /* __DT_BINDINGS_POWER_RENESAS_R8A779H0_SYSC_H__ */
 -- 
 2.34.1
 
