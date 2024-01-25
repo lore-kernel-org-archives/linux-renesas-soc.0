@@ -1,152 +1,168 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1976EB5B
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607A6E2C5
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706194127; cv=none; b=DZS1+n74ujcPk2ccpwo16cSlTgw4y5XVTdgvoWXM/sIPpLwhOXCNV4wCexLfTwp8R43E87P+zUT2zjg64obV9RzDIxM0VsRIif0OSNl7iP2ynOHamkgA2qiUD82OcL13i9vUfMbcx8RN4ETkH+KsD/fWwCCZ5QafW9S8zR73TCc=
+	t=1706194151; cv=none; b=dwYihK81KnLjP0AW9kjLO4Mw9jh4lvobKfyVDa8FQgwpyiqS1bt2BYtSRGrv7lwNTzQJQUmxGeVjA8fd4YSZwsZkZLElV8Hk/x241hnJvRO8zsmGwREp2O834dQnFn+eruz1Y0bCjm1B/DFv01TBArcalb915nnFSSnlMmKnc7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706194127; c=relaxed/simple;
-	bh=Lri9+r3U5+UXW0b6nYnAwhx2o25q+wQCEH/6xNOMjuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C9Z0uYJ+vXUN6dbo/P96UkZBJalMLEgW08SJ5JiykPHXwzGgsQxqlZ88dYpadbNDqOfs+es/VBQw94jZI+pt/YC5Ln8TCypEnCAIMJL24HGx/HxiGl6sltCqsbjbd7zn+zyOR68Rcr25CPzgNAOBppZlAqrp8iOLSbvkdgOrfRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (2048-bit key) header.d=smile-fr.20230601.gappssmtp.com header.i=@smile-fr.20230601.gappssmtp.com header.b=N0E7HxN7; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smile.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smile-fr.20230601.gappssmtp.com header.i=@smile-fr.20230601.gappssmtp.com header.b="N0E7HxN7"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-55a035669d5so8256649a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 06:48:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile-fr.20230601.gappssmtp.com; s=20230601; t=1706194123; x=1706798923; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=m/VxeZJGjBjcDQmtxAoZtXCX3PaowqHCK6uf1JI14tc=;
-        b=N0E7HxN7yrSYJdbkL0RPXUWLKdPbyPzJm1w0fLFROhNFU9mD5tOnw/weZLaz+Wp1J2
-         ahxtyF+M4KnBVzhXmEuaiN9F7FQvbS5BzLvi48erHyzTNemPtSNlnCT3CdXVPvh3ra5G
-         98vsf+PrdiJl5rs1pZ0LffJ+fia3pUqVh72qmVpAvIBVenQmnzbipGB5ku2YJFtPmsOW
-         iltFVj+iMi78FgzmsPhy0LTBne6gv1KaHCG7LgJyutECi/PVNCqhRoANqnAR/S54lVuz
-         aXKqUCrKJxJNhsp/LMmQRXJRBJp3DdM0Q4f4PBsbuOHM0HWnDYugGmRYU1b401q8+ZSS
-         q/fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706194123; x=1706798923;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m/VxeZJGjBjcDQmtxAoZtXCX3PaowqHCK6uf1JI14tc=;
-        b=MJiRTJ23cVy+maPY5OYOFBxhXFIfLh2FcdOZHaAgBDjTxhZaTfdOzRgoXXOxWM4Tnm
-         I4bDDSsJ3yLjps7Petxd/yYp9rrvZIsP93QWYbNJ7t5WN6hYNk3bSpAS+RSjbNS/ScOt
-         ER4SqBXhY2uQOLwX9xmK0Qgqg229uesdy+gZ4l3H3ub4gHhF/OlPtZJTDzf07nqUyyRC
-         ry5ZpRT/mO7UB2+4jsSVoDPMHYz5+9xez8I+DQfETlWLrtcua76XNC+gyd8d0V31fpet
-         hZ9yKABjr07Gbh+16XYgqNuQ5YbDocI7qEP5/EeZKvI68hqyVIVE3mxpfnubCG2Vk04J
-         V24w==
-X-Gm-Message-State: AOJu0Yz5hZu141rw2lfP4Nl+D9wCdpFaA4UPkHdVUQxEX9J29Sf667OR
-	3VspIj924r91SmBXp+dpDmaHz3H7pnmVKZtvvW6biPHEbAs31kvqh4+yK/WDJPO4+0vRIfoNwmV
-	9Gh8=
-X-Google-Smtp-Source: AGHT+IGhyJMrPQn0fqcKBTnmjxLFuu17Nr0I1Uk6sabd53h7Ly7EF0zOXZMmHZTv9b7Ulo//CtDxyA==
-X-Received: by 2002:a05:600c:212:b0:40e:47fb:fcca with SMTP id 18-20020a05600c021200b0040e47fbfccamr487664wmi.147.1706193753803;
-        Thu, 25 Jan 2024 06:42:33 -0800 (PST)
-Received: from [192.168.0.22] ([89.159.1.53])
-        by smtp.gmail.com with ESMTPSA id o36-20020a05600c512400b0040e52cac976sm2845655wms.29.2024.01.25.06.42.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jan 2024 06:42:33 -0800 (PST)
-Message-ID: <928267c8-2c79-4f76-aa6e-26dc63c77e43@smile.fr>
-Date: Thu, 25 Jan 2024 15:42:32 +0100
+	s=arc-20240116; t=1706194151; c=relaxed/simple;
+	bh=aupD3kAOcdN2ZGDJhNMx7T0OeVXOL6E9M+5jZxYsg0Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P5myrdGyzsSKq0obhzYNsLCcFldMz3O7jbkiWYSSKsY/iva2ozqCoKNLUeaOTR4z32CY/LpPRawPG3ds6HkSYp0dl60OGI6ZVxNMOp9O6XgYyw42IpF7wik3gbf7Mut1RR4jA3lHBydi8zSkqBGJffS/uO6hwVffnLIE9INCSBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
+	by xavier.telenet-ops.be with bizsmtp
+	id f2p02B00D58agq2012p01K; Thu, 25 Jan 2024 15:49:01 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rT11W-00GUsM-N3;
+	Thu, 25 Jan 2024 15:49:00 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rT12K-00FluJ-Ma;
+	Thu, 25 Jan 2024 15:49:00 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 7/9] arm64: dts: renesas: white-hawk: Factor out common parts
+Date: Thu, 25 Jan 2024 15:48:57 +0100
+Message-Id: <8c05b4d283b5d765fbc6f64cee9a247cded29409.1706192990.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1706192990.git.geert+renesas@glider.be>
+References: <cover.1706192990.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] kconfig: remove unneeded symbol_empty variable
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- Vegard Nossum <vegard.nossum@oracle.com>
-References: <20231125163559.824210-1-masahiroy@kernel.org>
- <CAMuHMdWm6u1wX7efZQf=2XUAHascps76YQac6rdnQGhc8nop_Q@mail.gmail.com>
- <d21298d9-fed6-4e08-9780-dbcb388b9ccc@smile.fr>
- <CAK7LNASaG4DpHTb3YHMd8d8DJ5H3z0aiUcSqX+=7CZb99kRU8A@mail.gmail.com>
- <b65a68eb-6b96-41ff-bbb9-38cb2dee940e@smile.fr>
- <CAK7LNARVbjVkP=v7uQDB=Z+Ntcy9MiFa6WowTX9mA47YjS3zTg@mail.gmail.com>
-Content-Language: en-US
-From: Yoann Congal <yoann.congal@smile.fr>
-Organization: Smile ECS
-In-Reply-To: <CAK7LNARVbjVkP=v7uQDB=Z+Ntcy9MiFa6WowTX9mA47YjS3zTg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Factor out the parts on the White Hawk BreakOut board that are also
+present on the White Hawk Single board, so they can be reused when
+introducing support for the latter.
 
-Le 24/01/2024 à 21:12, Masahiro Yamada a écrit :
-> On Wed, Jan 24, 2024 at 5:56 PM Yoann Congal <yoann.congal@smile.fr> wrote:
->> Le 24/01/2024 à 09:09, Masahiro Yamada a écrit :
->>> On Wed, Jan 24, 2024 at 12:11 AM Yoann Congal <yoann.congal@smile.fr> wrote:
->>>> For what it is worth, CONFIG_BASE_SMALL is defined as an int but is only used as a bool :
->>>>    $ git grep BASE_SMALL
->>>>   arch/x86/include/asm/mpspec.h:#if CONFIG_BASE_SMALL == 0
->>>>   drivers/tty/vt/vc_screen.c:#define CON_BUF_SIZE (CONFIG_BASE_SMALL ? 256 : PAGE_SIZE)
->>>>   include/linux/threads.h:#define PID_MAX_DEFAULT (CONFIG_BASE_SMALL ? 0x1000 : 0x8000)
->>>>   include/linux/threads.h:#define PID_MAX_LIMIT (CONFIG_BASE_SMALL ? PAGE_SIZE * 8 : \
->>>>   include/linux/udp.h:#define UDP_HTABLE_SIZE_MIN         (CONFIG_BASE_SMALL ? 128 : 256)
->>>>   include/linux/xarray.h:#define XA_CHUNK_SHIFT           (CONFIG_BASE_SMALL ? 4 : 6)
->>>>   init/Kconfig:   default 12 if !BASE_SMALL
->>>>   init/Kconfig:   default 0 if BASE_SMALL
->>>>   init/Kconfig:config BASE_SMALL
->>>>   kernel/futex/core.c:#if CONFIG_BASE_SMALL
->>>>   kernel/user.c:#define UIDHASH_BITS      (CONFIG_BASE_SMALL ? 3 : 7)
->>>>
->>>> Maybe we should change CONFIG_BASE_SMALL to the bool type?
->>
->> My first test shows that switching CONFIG_BASE_SMALL to bool type does fix the LOG_CPU_MAX_BUF_SHIFT default value.
->>
->>>> I'll poke around to see if I can understand why a int="0" is true for kconfig.
->>
->> Here's what I understood:
->> To get the default value of LOG_CPU_MAX_BUF_SHIFT, kconfig calls sym_get_default_prop(LOG_CPU_MAX_BUF_SHIFT)
->> -> expr_calc_value("BASE_SMALL" as an expr)
->> -> sym_calc_value(BASE_SMALL as a symbol) and returns sym->curr.tri
->>
->> But, if I understood correctly, sym_calc_value() does not set sym->curr.tri in case of a int type config.
-> 
-> Right.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v2:
+  - Add Reviewed-by.
+---
+ .../boot/dts/renesas/r8a779g0-white-hawk.dts  | 56 +------------------
+ ...-white-hawk.dts => white-hawk-common.dtsi} |  8 +--
+ 2 files changed, 3 insertions(+), 61 deletions(-)
+ copy arch/arm64/boot/dts/renesas/{r8a779g0-white-hawk.dts => white-hawk-common.dtsi} (77%)
 
-Thanks :)
-
-> The following will restore the original behavior.
-> 
-> 
-> --- a/scripts/kconfig/symbol.c
-> +++ b/scripts/kconfig/symbol.c
-> @@ -349,12 +349,15 @@ void sym_calc_value(struct symbol *sym)
->         switch (sym->type) {
->         case S_INT:
->                 newval.val = "0";
-> +               newval.tri = no;
->                 break;
->         case S_HEX:
->                 newval.val = "0x0";
-> +               newval.tri = no;
->                 break;
->         case S_STRING:
->                 newval.val = "";
-> +               newval.tri = no;
->                 break;
->         case S_BOOLEAN:
->         case S_TRISTATE:
-> > 
-> But, I do not think that is the right thing to do.
-> 
-> Presumably, turning CONFIG_BASE_SMALL is correct.
-
-I'm working on a patch to do that.
-
-Regards,
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+index a9bc258cbf55587f..784d4e8b204ce85a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+@@ -7,63 +7,9 @@
+ 
+ /dts-v1/;
+ #include "r8a779g0-white-hawk-cpu.dtsi"
+-#include "white-hawk-csi-dsi.dtsi"
+-#include "white-hawk-ethernet.dtsi"
++#include "white-hawk-common.dtsi"
+ 
+ / {
+ 	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
+ 	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
+-
+-	can_transceiver0: can-phy0 {
+-		compatible = "nxp,tjr1443";
+-		#phy-cells = <0>;
+-		enable-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
+-		max-bitrate = <5000000>;
+-	};
+-};
+-
+-&can_clk {
+-	clock-frequency = <40000000>;
+-};
+-
+-&canfd {
+-	pinctrl-0 = <&canfd0_pins>, <&canfd1_pins>, <&can_clk_pins>;
+-	pinctrl-names = "default";
+-
+-	status = "okay";
+-
+-	channel0 {
+-		status = "okay";
+-		phys = <&can_transceiver0>;
+-	};
+-
+-	channel1 {
+-		status = "okay";
+-	};
+-};
+-
+-&i2c0 {
+-	eeprom@51 {
+-		compatible = "rohm,br24g01", "atmel,24c01";
+-		label = "breakout-board";
+-		reg = <0x51>;
+-		pagesize = <8>;
+-	};
+-};
+-
+-&pfc {
+-	can_clk_pins: can-clk {
+-		groups = "can_clk";
+-		function = "can_clk";
+-	};
+-
+-	canfd0_pins: canfd0 {
+-		groups = "canfd0_data";
+-		function = "canfd0";
+-	};
+-
+-	canfd1_pins: canfd1 {
+-		groups = "canfd1_data";
+-		function = "canfd1";
+-	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
+similarity index 77%
+copy from arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+copy to arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
+index a9bc258cbf55587f..c99086edadcaacdb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
++++ b/arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
+@@ -1,19 +1,15 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ /*
+- * Device Tree Source for the R-Car V4H White Hawk CPU and BreakOut boards
++ * Device Tree Source for the common parts shared by the White Hawk BreakOut
++ * and White Hawk Single boards
+  *
+  * Copyright (C) 2022 Renesas Electronics Corp.
+  */
+ 
+-/dts-v1/;
+-#include "r8a779g0-white-hawk-cpu.dtsi"
+ #include "white-hawk-csi-dsi.dtsi"
+ #include "white-hawk-ethernet.dtsi"
+ 
+ / {
+-	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
+-	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
+-
+ 	can_transceiver0: can-phy0 {
+ 		compatible = "nxp,tjr1443";
+ 		#phy-cells = <0>;
 -- 
-Yoann Congal
-Smile ECS - Tech Expert
+2.34.1
+
