@@ -1,30 +1,30 @@
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D185DF32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DDF6E2D2
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706194152; cv=none; b=g4P7xK40HSFKwW3HVUwh2H40gLhOKKeWTiVblHDb6+9WAH4QeHrkITMhYBhG/slUv3RHhMmHGabAoLgcgmrZBpIz62lwyvduZL2wO3b7TVFyg5Hvxh6SDUuQNe+PIg3tZNrC92hxxq+/OMaWweH9KBgN1XMK6RHVG0kopgrqQh4=
+	t=1706194152; cv=none; b=c5ILmeU3Pt1Pjs6P57ZutrkhVY7PxhCdr3q8gqgxoDEpDlHqg8IZ3DIWy/tynCrTj8qitlY2xgWsmYVeHg2yMfFQMd/MoVxGJ5V3b5oNRMr3OG73b5FFmgL2a1hjCbh3c48gFdurb91cAZJ88RSsYLiO4rrKPHZ29apO/lKDjT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706194152; c=relaxed/simple;
-	bh=T92brzQTI2qbzOot7Dlymqbh7IB2R4r3HdEMQ66oJZs=;
+	bh=x7o7jeI2krSuoJURPzP2NxANKTR9RXMg7aSzVRhnONw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DsKOk2psmhFnAaeNY10t08ztTihI+FLn2keapsJWYXov9Q6hNigG7xC1jXml/QVxichFUtJa1zLFhbbnW2c1txrST4gR50XI2dnZ1nrKa8nUhv/ymyUkbsGTdcFLMpTgC4BxWVHszVdWTiTEbbDytxPpUN5D/OkKQCNSbzAxCp8=
+	 MIME-Version; b=OcDVCokUB5uqX0COoqWEzzU1pq2/YxLWW13yYSRfFT61TN0wwm9PbuiMdJMz+debzrLLVWQJgpD1veuWADPvv6OqSidrbzGc7R+6ofA2EakrUWbZCgv4T8d6AVdnss0+b6AU/c8edD/SYO/4/m94g//DdLGvLGtt1l4emdAV0m8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
 	by andre.telenet-ops.be with bizsmtp
-	id f2p02B00T58agq2012p0GB; Thu, 25 Jan 2024 15:49:01 +0100
+	id f2p02B00a58agq2012p0GF; Thu, 25 Jan 2024 15:49:01 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT11W-00GUsE-LN;
+	id 1rT11W-00GUsP-Np;
 	Thu, 25 Jan 2024 15:49:00 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT12K-00Flu8-Ki;
+	id 1rT12K-00FluO-NI;
 	Thu, 25 Jan 2024 15:49:00 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -34,10 +34,11 @@ To: Magnus Damm <magnus.damm@gmail.com>,
 Cc: devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 5/9] arm64: dts: renesas: white-hawk: Add SoC name to top-level comment
-Date: Thu, 25 Jan 2024 15:48:55 +0100
-Message-Id: <de81db7ca38c8f4737092bdac6891e9db4bb9bd6.1706192990.git.geert+renesas@glider.be>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 8/9] arm64: dts: renesas: Add Renesas R8A779G2 SoC support
+Date: Thu, 25 Jan 2024 15:48:58 +0100
+Message-Id: <4f773dbb66af5da51d1e171424ec8f97ee933b36.1706192990.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706192990.git.geert+renesas@glider.be>
 References: <cover.1706192990.git.geert+renesas@glider.be>
@@ -49,31 +50,37 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+Add support for the Renesas R-Car V4H ES2.0 (R8A779G2) SoC, which is an
+updated version of the R-Car V4H (R8A779G0) SoC.
 
-The White Hawk CPU and BreakOut board DTS is specific to R-Car V4H.
-Document it in the top-level comment.
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 v2:
-  - New.
+  - Add Reviewed-by.
 ---
- arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a779g2.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779g2.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-index 8d82294a1a56444c..a9bc258cbf55587f 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the White Hawk CPU and BreakOut boards
-+ * Device Tree Source for the R-Car V4H White Hawk CPU and BreakOut boards
-  *
-  * Copyright (C) 2022 Renesas Electronics Corp.
-  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g2.dtsi b/arch/arm64/boot/dts/renesas/r8a779g2.dtsi
+new file mode 100644
+index 0000000000000000..e08f531843e28b7f
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a779g2.dtsi
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the R-Car V4H (R8A779G2) SoC
++ *
++ * Copyright (C) 2023 Glider bv
++ */
++
++#include "r8a779g0.dtsi"
++
++/ {
++	compatible = "renesas,r8a779g2", "renesas,r8a779g0";
++};
 -- 
 2.34.1
 
