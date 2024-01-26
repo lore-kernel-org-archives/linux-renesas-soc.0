@@ -1,30 +1,32 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C6B14015
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2024 10:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B5C12E72
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2024 10:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706266616; cv=none; b=Qul1VP4NgfnEbd9k9clTH07bOCRpLmurqtHzrqlOCY3/fHs1yGNt+VIOTrnBl7A8qAL9OXw/aQuf90uFd3N2zbFi2Ke4/OsmcahA8GXBHRsZegik9sNr5/j48c+Ofq66OBtLCIljraqLifggs2KOnq/KgAMhjjoAYCrjVIR+Bo8=
+	t=1706266616; cv=none; b=uDZ38P0azUwg4ohouFj2esUw3HQg8XQoXA61sthPkN8pZWdQde6GgCmilSMxsqMW4MfrbMBE9Ixw5TJsNx9Buf5hxRi35Rb6kkgJ4Lm+rZpu8jzrDGrJPRgeKY6iD43ExbCPreg5Vl/2VlL0rv8TUqx/yPfwM6+1DSb5Tk7G6hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706266616; c=relaxed/simple;
-	bh=W1tnPlkrxS73Ylh0wT1Om+vOuMHRZzj3ylFStmVp9ak=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CGB/h2yK9QpQbBRfIK1zhoyc3OknN7adZ/s70fTZb7qB8UzrvIx11m/QUQD0EM7HAineN/QBRDbzzsEd8ECRShKysvRl6A8z6pf4cGwBd+1zn4WdhPxHRlIrqoaSzsVd1uKR2KgxHHCDbZAdK3kkdGWku1dCqcMV8ROslKBYnqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+	bh=lRt42MNJjD/g5ZyL5oWsuIV1Re3nDffjLc0RdDdLCIs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qwdSDJQbjLCtQMUF18hXV6D8ycDkDZFK2dGSvCxidNEeLd+yvyZBs3tFxt6CL9icTVVicKj4YWbeyklvZgGiMxA24/IAaatLa0weGJfQTd1tIwuMUV+A6BeAC5n/r8404OmdBsj06h6HDQD/k4ZdPSmXH0mdYDum6TgOTBPKiPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4TLvlN5V8sz4x663
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2024 11:56:48 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:8d64:ae04:ce87:de06])
-	by andre.telenet-ops.be with bizsmtp
-	id fNwo2B0061AdMdB01NwoVT; Fri, 26 Jan 2024 11:56:48 +0100
+	by michel.telenet-ops.be with bizsmtp
+	id fNwo2B00B1AdMdB06NwoJS; Fri, 26 Jan 2024 11:56:48 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJsL-00GWiM-S1;
-	Fri, 26 Jan 2024 11:56:47 +0100
+	id 1rTJsM-00GWkf-6w;
+	Fri, 26 Jan 2024 11:56:48 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJh0-00G5Sx-2c;
+	id 1rTJgz-00G5Sk-WB;
 	Fri, 26 Jan 2024 11:44:14 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Linus Walleij <linus.walleij@linaro.org>,
@@ -35,351 +37,81 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Cong Dang <cong.dang.xn@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/14] pinctrl: renesas: r8a779h0: Add Ethernet AVB pins, groups, functions
-Date: Fri, 26 Jan 2024 11:44:01 +0100
-Message-Id: <f79d8f75582f44a7441faed550fb37e44a917558.1706264667.git.geert+renesas@glider.be>
+Subject: [PATCH 00/14] pinctrl: renesas: Add support for R-Car V4M
+Date: Fri, 26 Jan 2024 11:43:58 +0100
+Message-Id: <cover.1706264667.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1706264667.git.geert+renesas@glider.be>
-References: <cover.1706264667.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Cong Dang <cong.dang.xn@renesas.com>
+	Hi all,
 
-Add pins, groups and functions for Ethernet AVB on the Renesas R-Car V4M
-(R8A779H0) SoC.
+This patch series adds pin control support for the R-Car V4M (R8A779H0)
+SoC.
 
-Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/renesas/pfc-r8a779h0.c | 302 ++++++++++++++++++++++++-
- 1 file changed, 301 insertions(+), 1 deletion(-)
+Some, but not all, of this has been tested on the Gray Hawk Single
+development board.
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779h0.c b/drivers/pinctrl/renesas/pfc-r8a779h0.c
-index 0635a52828676c37..61d72e0222bcbe95 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779h0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779h0.c
-@@ -1191,12 +1191,312 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_NOGP_ALL(),
- };
- 
-+/* - AVB0 ------------------------------------------------ */
-+static const unsigned int avb0_link_pins[] = {
-+	/* AVB0_LINK */
-+	RCAR_GP_PIN(7, 4),
-+};
-+static const unsigned int avb0_link_mux[] = {
-+	AVB0_LINK_MARK,
-+};
-+static const unsigned int avb0_magic_pins[] = {
-+	/* AVB0_MAGIC */
-+	RCAR_GP_PIN(7, 10),
-+};
-+static const unsigned int avb0_magic_mux[] = {
-+	AVB0_MAGIC_MARK,
-+};
-+static const unsigned int avb0_phy_int_pins[] = {
-+	/* AVB0_PHY_INT */
-+	RCAR_GP_PIN(7, 5),
-+};
-+static const unsigned int avb0_phy_int_mux[] = {
-+	AVB0_PHY_INT_MARK,
-+};
-+static const unsigned int avb0_mdio_pins[] = {
-+	/* AVB0_MDC, AVB0_MDIO */
-+	RCAR_GP_PIN(7, 13), RCAR_GP_PIN(7, 14),
-+};
-+static const unsigned int avb0_mdio_mux[] = {
-+	AVB0_MDC_MARK, AVB0_MDIO_MARK,
-+};
-+static const unsigned int avb0_rgmii_pins[] = {
-+	/*
-+	 * AVB0_TX_CTL, AVB0_TXC, AVB0_TD0, AVB0_TD1, AVB0_TD2, AVB0_TD3,
-+	 * AVB0_RX_CTL, AVB0_RXC, AVB0_RD0, AVB0_RD1, AVB0_RD2, AVB0_RD3,
-+	 */
-+	RCAR_GP_PIN(7, 16), RCAR_GP_PIN(7, 15),
-+	RCAR_GP_PIN(7, 11), RCAR_GP_PIN(7,  7),
-+	RCAR_GP_PIN(7,  6), RCAR_GP_PIN(7,  3),
-+	RCAR_GP_PIN(7, 20), RCAR_GP_PIN(7, 19),
-+	RCAR_GP_PIN(7, 18), RCAR_GP_PIN(7, 17),
-+	RCAR_GP_PIN(7, 12), RCAR_GP_PIN(7,  8),
-+};
-+static const unsigned int avb0_rgmii_mux[] = {
-+	AVB0_TX_CTL_MARK,	AVB0_TXC_MARK,
-+	AVB0_TD0_MARK,		AVB0_TD1_MARK,
-+	AVB0_TD2_MARK,		AVB0_TD3_MARK,
-+	AVB0_RX_CTL_MARK,	AVB0_RXC_MARK,
-+	AVB0_RD0_MARK,		AVB0_RD1_MARK,
-+	AVB0_RD2_MARK,		AVB0_RD3_MARK,
-+};
-+static const unsigned int avb0_txcrefclk_pins[] = {
-+	/* AVB0_TXCREFCLK */
-+	RCAR_GP_PIN(7, 9),
-+};
-+static const unsigned int avb0_txcrefclk_mux[] = {
-+	AVB0_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb0_avtp_pps_pins[] = {
-+	/* AVB0_AVTP_PPS */
-+	RCAR_GP_PIN(7, 0),
-+};
-+static const unsigned int avb0_avtp_pps_mux[] = {
-+	AVB0_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb0_avtp_capture_pins[] = {
-+	/* AVB0_AVTP_CAPTURE */
-+	RCAR_GP_PIN(7, 1),
-+};
-+static const unsigned int avb0_avtp_capture_mux[] = {
-+	AVB0_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb0_avtp_match_pins[] = {
-+	/* AVB0_AVTP_MATCH */
-+	RCAR_GP_PIN(7, 2),
-+};
-+static const unsigned int avb0_avtp_match_mux[] = {
-+	AVB0_AVTP_MATCH_MARK,
-+};
-+
-+/* - AVB1 ------------------------------------------------ */
-+static const unsigned int avb1_link_pins[] = {
-+	/* AVB1_LINK */
-+	RCAR_GP_PIN(6, 4),
-+};
-+static const unsigned int avb1_link_mux[] = {
-+	AVB1_LINK_MARK,
-+};
-+static const unsigned int avb1_magic_pins[] = {
-+	/* AVB1_MAGIC */
-+	RCAR_GP_PIN(6, 1),
-+};
-+static const unsigned int avb1_magic_mux[] = {
-+	AVB1_MAGIC_MARK,
-+};
-+static const unsigned int avb1_phy_int_pins[] = {
-+	/* AVB1_PHY_INT */
-+	RCAR_GP_PIN(6, 3),
-+};
-+static const unsigned int avb1_phy_int_mux[] = {
-+	AVB1_PHY_INT_MARK,
-+};
-+static const unsigned int avb1_mdio_pins[] = {
-+	/* AVB1_MDC, AVB1_MDIO */
-+	RCAR_GP_PIN(6, 2), RCAR_GP_PIN(6, 0),
-+};
-+static const unsigned int avb1_mdio_mux[] = {
-+	AVB1_MDC_MARK, AVB1_MDIO_MARK,
-+};
-+static const unsigned int avb1_rgmii_pins[] = {
-+	/*
-+	 * AVB1_TX_CTL, AVB1_TXC, AVB1_TD0, AVB1_TD1, AVB1_TD2, AVB1_TD3,
-+	 * AVB1_RX_CTL, AVB1_RXC, AVB1_RD0, AVB1_RD1, AVB1_RD2, AVB1_RD3,
-+	 */
-+	RCAR_GP_PIN(6,  7), RCAR_GP_PIN(6,  6),
-+	RCAR_GP_PIN(6, 13), RCAR_GP_PIN(6, 12),
-+	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 18),
-+	RCAR_GP_PIN(6,  9), RCAR_GP_PIN(6,  8),
-+	RCAR_GP_PIN(6, 15), RCAR_GP_PIN(6, 14),
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int avb1_rgmii_mux[] = {
-+	AVB1_TX_CTL_MARK,	AVB1_TXC_MARK,
-+	AVB1_TD0_MARK,		AVB1_TD1_MARK,
-+	AVB1_TD2_MARK,		AVB1_TD3_MARK,
-+	AVB1_RX_CTL_MARK,	AVB1_RXC_MARK,
-+	AVB1_RD0_MARK,		AVB1_RD1_MARK,
-+	AVB1_RD2_MARK,		AVB1_RD3_MARK,
-+};
-+static const unsigned int avb1_txcrefclk_pins[] = {
-+	/* AVB1_TXCREFCLK */
-+	RCAR_GP_PIN(6, 20),
-+};
-+static const unsigned int avb1_txcrefclk_mux[] = {
-+	AVB1_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb1_avtp_pps_pins[] = {
-+	/* AVB1_AVTP_PPS */
-+	RCAR_GP_PIN(6, 10),
-+};
-+static const unsigned int avb1_avtp_pps_mux[] = {
-+	AVB1_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb1_avtp_capture_pins[] = {
-+	/* AVB1_AVTP_CAPTURE */
-+	RCAR_GP_PIN(6, 11),
-+};
-+static const unsigned int avb1_avtp_capture_mux[] = {
-+	AVB1_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb1_avtp_match_pins[] = {
-+	/* AVB1_AVTP_MATCH */
-+	RCAR_GP_PIN(6, 5),
-+};
-+static const unsigned int avb1_avtp_match_mux[] = {
-+	AVB1_AVTP_MATCH_MARK,
-+};
-+
-+/* - AVB2 ------------------------------------------------ */
-+static const unsigned int avb2_link_pins[] = {
-+	/* AVB2_LINK */
-+	RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int avb2_link_mux[] = {
-+	AVB2_LINK_MARK,
-+};
-+static const unsigned int avb2_magic_pins[] = {
-+	/* AVB2_MAGIC */
-+	RCAR_GP_PIN(5, 5),
-+};
-+static const unsigned int avb2_magic_mux[] = {
-+	AVB2_MAGIC_MARK,
-+};
-+static const unsigned int avb2_phy_int_pins[] = {
-+	/* AVB2_PHY_INT */
-+	RCAR_GP_PIN(5, 4),
-+};
-+static const unsigned int avb2_phy_int_mux[] = {
-+	AVB2_PHY_INT_MARK,
-+};
-+static const unsigned int avb2_mdio_pins[] = {
-+	/* AVB2_MDC, AVB2_MDIO */
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int avb2_mdio_mux[] = {
-+	AVB2_MDC_MARK, AVB2_MDIO_MARK,
-+};
-+static const unsigned int avb2_rgmii_pins[] = {
-+	/*
-+	 * AVB2_TX_CTL, AVB2_TXC, AVB2_TD0, AVB2_TD1, AVB2_TD2, AVB2_TD3,
-+	 * AVB2_RX_CTL, AVB2_RXC, AVB2_RD0, AVB2_RD1, AVB2_RD2, AVB2_RD3,
-+	 */
-+	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 16),
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 12),
-+	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5,  8),
-+	RCAR_GP_PIN(5, 20), RCAR_GP_PIN(5, 18),
-+	RCAR_GP_PIN(5, 17), RCAR_GP_PIN(5, 14),
-+	RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5,  9),
-+};
-+static const unsigned int avb2_rgmii_mux[] = {
-+	AVB2_TX_CTL_MARK,	AVB2_TXC_MARK,
-+	AVB2_TD0_MARK,		AVB2_TD1_MARK,
-+	AVB2_TD2_MARK,		AVB2_TD3_MARK,
-+	AVB2_RX_CTL_MARK,	AVB2_RXC_MARK,
-+	AVB2_RD0_MARK,		AVB2_RD1_MARK,
-+	AVB2_RD2_MARK,		AVB2_RD3_MARK,
-+};
-+static const unsigned int avb2_txcrefclk_pins[] = {
-+	/* AVB2_TXCREFCLK */
-+	RCAR_GP_PIN(5, 7),
-+};
-+static const unsigned int avb2_txcrefclk_mux[] = {
-+	AVB2_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb2_avtp_pps_pins[] = {
-+	/* AVB2_AVTP_PPS */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int avb2_avtp_pps_mux[] = {
-+	AVB2_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb2_avtp_capture_pins[] = {
-+	/* AVB2_AVTP_CAPTURE */
-+	RCAR_GP_PIN(5, 1),
-+};
-+static const unsigned int avb2_avtp_capture_mux[] = {
-+	AVB2_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb2_avtp_match_pins[] = {
-+	/* AVB2_AVTP_MATCH */
-+	RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int avb2_avtp_match_mux[] = {
-+	AVB2_AVTP_MATCH_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb0_link),
-+	SH_PFC_PIN_GROUP(avb0_magic),
-+	SH_PFC_PIN_GROUP(avb0_phy_int),
-+	SH_PFC_PIN_GROUP(avb0_mdio),
-+	SH_PFC_PIN_GROUP(avb0_rgmii),
-+	SH_PFC_PIN_GROUP(avb0_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb0_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb0_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb0_avtp_match),
-+
-+	SH_PFC_PIN_GROUP(avb1_link),
-+	SH_PFC_PIN_GROUP(avb1_magic),
-+	SH_PFC_PIN_GROUP(avb1_phy_int),
-+	SH_PFC_PIN_GROUP(avb1_mdio),
-+	SH_PFC_PIN_GROUP(avb1_rgmii),
-+	SH_PFC_PIN_GROUP(avb1_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb1_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb1_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb1_avtp_match),
-+
-+	SH_PFC_PIN_GROUP(avb2_link),
-+	SH_PFC_PIN_GROUP(avb2_magic),
-+	SH_PFC_PIN_GROUP(avb2_phy_int),
-+	SH_PFC_PIN_GROUP(avb2_mdio),
-+	SH_PFC_PIN_GROUP(avb2_rgmii),
-+	SH_PFC_PIN_GROUP(avb2_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb2_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb2_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb2_avtp_match),
-+};
- 
-+static const char * const avb0_groups[] = {
-+	"avb0_link",
-+	"avb0_magic",
-+	"avb0_phy_int",
-+	"avb0_mdio",
-+	"avb0_rgmii",
-+	"avb0_txcrefclk",
-+	"avb0_avtp_pps",
-+	"avb0_avtp_capture",
-+	"avb0_avtp_match",
- };
- 
--static const struct sh_pfc_function pinmux_functions[] = {
-+static const char * const avb1_groups[] = {
-+	"avb1_link",
-+	"avb1_magic",
-+	"avb1_phy_int",
-+	"avb1_mdio",
-+	"avb1_rgmii",
-+	"avb1_txcrefclk",
-+	"avb1_avtp_pps",
-+	"avb1_avtp_capture",
-+	"avb1_avtp_match",
-+};
- 
-+static const char * const avb2_groups[] = {
-+	"avb2_link",
-+	"avb2_magic",
-+	"avb2_phy_int",
-+	"avb2_mdio",
-+	"avb2_rgmii",
-+	"avb2_txcrefclk",
-+	"avb2_avtp_pps",
-+	"avb2_avtp_capture",
-+	"avb2_avtp_match",
-+};
-+
-+static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb0),
-+	SH_PFC_FUNCTION(avb1),
-+	SH_PFC_FUNCTION(avb2),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+There are also a few unresolved questions:
+  - According to the documentation, using I2C requires setting
+    SEL_S{CL,DA}[0-3]_1 instead of SEL_S{CL,DA}[0-3]_0 in the MOD_SEL
+    register.  However, I2C works regardless of this setting, just like
+    on R-Car V4H (see commit 42cbd16e7c547499 ("pinctrl: renesas:
+    r8a779g0: Fixup MODSEL8")),
+  - Using i2c-gpio instead of i2c-rcar for I2C0 does not work, even
+    when using a similar scheme like on R-Car S4 and V3U (see e.g.
+    commit 8bdd369dba7ff2f8 ("pinctrl: renesas: r8a779f0: Fix GPIO
+    function on I2C-capable pins").
+
+For testing, I have updated [1] accordingly.
+Thanks for your comments!
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/v4m-gray-hawk-single-v2
+
+Cong Dang (13):
+  pinctrl: renesas: Initial R8A779H0 (R-Car V4M) PFC support
+  pinctrl: renesas: r8a779h0: Add Ethernet AVB pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add SD/MMC pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add QSPI pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add SCIF pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add SCIF_CLK pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add HSCIF pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add I2C pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add MSIOF pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add PWM/TPU pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add CANFD pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add PCIe pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add Audio pins, groups, functions
+
+Geert Uytterhoeven (1):
+  dt-bindings: pinctrl: renesas,pfc: Document R-Car V4M support
+
+ .../bindings/pinctrl/renesas,pfc.yaml         |    1 +
+ drivers/pinctrl/renesas/Kconfig               |    5 +
+ drivers/pinctrl/renesas/Makefile              |    1 +
+ drivers/pinctrl/renesas/core.c                |    6 +
+ drivers/pinctrl/renesas/pfc-r8a779h0.c        | 3967 +++++++++++++++++
+ drivers/pinctrl/renesas/sh_pfc.h              |    1 +
+ 6 files changed, 3981 insertions(+)
+ create mode 100644 drivers/pinctrl/renesas/pfc-r8a779h0.c
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
