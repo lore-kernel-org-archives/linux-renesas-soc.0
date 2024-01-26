@@ -1,39 +1,42 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34512E4E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8F812B7C
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2024 10:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706266611; cv=none; b=tSixtdN5W6H85FuVFizzaCGezinF5wFrAtEVTwXoejIc/o4fmAx4ymmzSk3qWs/VK3BJYr3RynM+dwJh2+4GNzA2E/Irxie5N1vybEVTbVZC6BPoBKYCaeBCd9tl7iAYNAUJG5v9O7BWbeRH7lJstzesDs1lO8z6hKrHBXkKUxU=
+	t=1706266612; cv=none; b=TMidQEW6duCI0ddOk0jb4lNoqh+jpT9K2mqmiRFvfdflNy18L+NM8FESZYTFXHi0U5LaiULBCXydUKMRD9YxE9dddG7wdB3jnuaYc6W/SCinIIf49mrekYvKeuSd3rhts/9tdSdFZbK5Ccl/DBl1Q26dQc0cEC5ymRiZPcGNGJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706266611; c=relaxed/simple;
-	bh=B9YqpNqanOxGnqv2eSgLBsxguUjZpBi92mZyRpE6ENU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k2WPqBjiK7ElzQBR5KlmZanNso3aJnIf7d4C/PmINBTnpBkgCD/MupvgX6SgBMb/07BoceWokqJRmos7zr0A6C6Pssmauc9K1+PKjg91EJeqIqqvZoLFieiRQQ/vUwGCEmHPjkn+X4w14pY1VRiHNhKDAa6PuqeBMbXf+8uQo40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	s=arc-20240116; t=1706266612; c=relaxed/simple;
+	bh=WVX5zehP1oLA9qOPwOE658bPaXbp2Ne7D7iDtpVP8MQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=f5m58/BvpxWn7DJ3wDlEQronhHfEenQbyeb3JUAIWEKmeUUhOQV+NuJ3ez3YBSyx+3CmIZBfGPYICCJ5yN1kcCmfrglsHcr8chRPoDxaUIBi8ouJILiK/joVmLcGcfv5lL4TpKX7r+Ojvo+Q+PI4eNN46m/zb5zlH6NuDQ1+Ykk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:8d64:ae04:ce87:de06])
-	by albert.telenet-ops.be with bizsmtp
-	id fNwm2B0071AdMdB06NwmNC; Fri, 26 Jan 2024 11:56:46 +0100
+	by baptiste.telenet-ops.be with bizsmtp
+	id fNwm2B0051AdMdB01Nwmk8; Fri, 26 Jan 2024 11:56:46 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJsJ-00GWgK-VN;
-	Fri, 26 Jan 2024 11:56:46 +0100
+	id 1rTJsJ-00GWgH-RJ;
+	Fri, 26 Jan 2024 11:56:45 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJrQ-00G5bt-DW;
+	id 1rTJrQ-00G5c1-HH;
 	Fri, 26 Jan 2024 11:55:00 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: renesas: r8a779h0/gray-hawk-single: Initial pin control support
-Date: Fri, 26 Jan 2024 11:54:56 +0100
-Message-Id: <cover.1706266286.git.geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: renesas: gray-hawk-single: Add serial console pin control
+Date: Fri, 26 Jan 2024 11:54:58 +0100
+Message-Id: <b1eb2d3364d5ead7f7bcf7a737c5914971db64d3.1706266286.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1706266286.git.geert+renesas@glider.be>
+References: <cover.1706266286.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -42,38 +45,49 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+Complete the descriptions of the serial console and the external serial
+clock by adding pin control.
 
-This patch series adds initial pin control support for the R-Car V4M
-(R8A779H0) SoC and the Gray Hawk Single development board.
+Based on patches for Gray Hawk in the BSP by Hai Pham and Nghia Nguyen.
 
-To be queued in renesas-devel for v6.9.
-
-For testing, I have updated [1] accordingly.
-Thanks for your comments!
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/v4m-gray-hawk-single-v2
-
-Geert Uytterhoeven (1):
-  arm64: dts: renesas: gray-hawk-single: Add serial console pin control
-
-Hai Pham (1):
-  arm64: dts: renesas: r8a779h0: Add pinctrl device node
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
  .../dts/renesas/r8a779h0-gray-hawk-single.dts  | 18 ++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi      |  8 ++++++++
- 2 files changed, 26 insertions(+)
+ 1 file changed, 18 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+index 1ed404712d823871..716cb7622f167973 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+@@ -43,10 +43,28 @@ &extalr_clk {
+ };
+ 
+ &hscif0 {
++	pinctrl-0 = <&hscif0_pins>;
++	pinctrl-names = "default";
++
+ 	uart-has-rtscts;
+ 	status = "okay";
+ };
+ 
++&pfc {
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
++	hscif0_pins: hscif0 {
++		groups = "hscif0_data", "hscif0_ctrl";
++		function = "hscif0";
++	};
++
++	scif_clk_pins: scif_clk {
++		groups = "scif_clk";
++		function = "scif_clk";
++	};
++};
++
+ &scif_clk {
+ 	clock-frequency = <24000000>;
+ };
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
