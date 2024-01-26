@@ -1,48 +1,38 @@
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2BB134B2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736A212B6C
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2024 10:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706266613; cv=none; b=E3ONZmVci3R6unjsHdauxIarqJ0Yalql096J+/mUnO/I6estmIwda0wsQjlshYFEsUUcKapnFIr26ZU+vmylqh6H0lyu5ixlfDa0i4+9UIvTs/qLsG3PnoFnRRB2i6KVpZh/LUBj0nqCAujSccd/Vq16PMIPpjJjWpI4sKOCZto=
+	t=1706266613; cv=none; b=oYyKWC/vrC7VhdPvPkieqZoe3HNFVoDEYzLLWXdEbrfyJmac396A1qKpGkRaHwm1twZ7gWZ5oMVSjDLscCN5+WtZkcZTFAX61LfnvWrQEnzfaHkdtUXTOuORUrSIBWZxwbw6MHcQK4qg4CqPngHmxO3r0F44L4EA02fEQTZV7Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706266613; c=relaxed/simple;
-	bh=6Mkbz1Au5XLOrHfRKtTNmYButidTT4C84xwLYmRVEfs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WDbx2VNyLG7X0I0l93MfHWacO0KhY48VSKo11YixVYzNfOAYKGkwfAPx+U8GevctBGIcMfecanAzpYBSk8iiABxiR6IYELbXlwHMGCzhHptBKQf+R3H5z++Ne9HvjNePXZL3doVj8Ysh1EyRQTU/t1B0xhg5Iu15PRqUOcoNhYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+	bh=a3QQL3Z3nHnO8CCDTNdCchtT3i6TZHgg5DXDMsN3sDQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FWMQJw2PO0DcZdRwfwyrNbws7zRYTaTbgQGGZgR022Eqp1m3UWUfHyg1m8PG58bj5xe0xrfoAbcWxp0q4lVD72RTiIyg1oUh4PffqMHRZY+ZIpFewGwpMbQB+homQU6YlAL3wF6VHAgxcUsJF+K+n/SvJuOan5RLtsoN9mRDNFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:8d64:ae04:ce87:de06])
-	by michel.telenet-ops.be with bizsmtp
-	id fNwn2B0011AdMdB06NwnHm; Fri, 26 Jan 2024 11:56:47 +0100
+	by xavier.telenet-ops.be with bizsmtp
+	id fNwm2B0031AdMdB01NwmSY; Fri, 26 Jan 2024 11:56:46 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJsK-00GWga-KO;
-	Fri, 26 Jan 2024 11:56:46 +0100
+	id 1rTJsJ-00GWgE-Ov;
+	Fri, 26 Jan 2024 11:56:45 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJh0-00G5Tg-BH;
-	Fri, 26 Jan 2024 11:44:14 +0100
+	id 1rTJsh-00G5cy-6W;
+	Fri, 26 Jan 2024 11:56:19 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
+To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Cong Dang <cong.dang.xn@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 12/14] pinctrl: renesas: r8a779h0: Add CANFD pins, groups, functions
-Date: Fri, 26 Jan 2024 11:44:10 +0100
-Message-Id: <fd380a402ec4c6238aa8cafc2e602d9e0f1c8cf2.1706264667.git.geert+renesas@glider.be>
+Subject: [PATCH/[LOCAL] arm64: renesas: defconfig: Enable R-Car V4M (R8A779H0) SoC support
+Date: Fri, 26 Jan 2024 11:56:16 +0100
+Message-Id: <378be6f9fb7a0e259eae7855697c6a0675411ce7.1706266517.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1706264667.git.geert+renesas@glider.be>
-References: <cover.1706264667.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -51,126 +41,26 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Cong Dang <cong.dang.xn@renesas.com>
-
-Add pins, groups and functions for the CAN-FD interfaces on the Renesas
-R-Car V4M (R8A779H0) SoC.
-
-Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a779h0.c | 77 ++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+Not intended for upstream merge.
+To be applied to the topic/renesas-defconfig branch.
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779h0.c b/drivers/pinctrl/renesas/pfc-r8a779h0.c
-index b5d1f6108a6efd5d..135628771807d459 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779h0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779h0.c
-@@ -1425,6 +1425,51 @@ static const unsigned int avb2_avtp_match_mux[] = {
- 	AVB2_AVTP_MATCH_MARK,
- };
- 
-+/* - CANFD0 ----------------------------------------------------------------- */
-+static const unsigned int canfd0_data_pins[] = {
-+	/* CANFD0_TX, CANFD0_RX */
-+	RCAR_GP_PIN(2, 10), RCAR_GP_PIN(2, 11),
-+};
-+static const unsigned int canfd0_data_mux[] = {
-+	CANFD0_TX_MARK, CANFD0_RX_MARK,
-+};
-+
-+/* - CANFD1 ----------------------------------------------------------------- */
-+static const unsigned int canfd1_data_pins[] = {
-+	/* CANFD1_TX, CANFD1_RX */
-+	RCAR_GP_PIN(2, 17), RCAR_GP_PIN(2, 19),
-+};
-+static const unsigned int canfd1_data_mux[] = {
-+	CANFD1_TX_MARK, CANFD1_RX_MARK,
-+};
-+
-+/* - CANFD2 ----------------------------------------------------------------- */
-+static const unsigned int canfd2_data_pins[] = {
-+	/* CANFD2_TX, CANFD2_RX */
-+	RCAR_GP_PIN(2, 12), RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int canfd2_data_mux[] = {
-+	CANFD2_TX_MARK, CANFD2_RX_MARK,
-+};
-+
-+/* - CANFD3 ----------------------------------------------------------------- */
-+static const unsigned int canfd3_data_pins[] = {
-+	/* CANFD3_TX, CANFD3_RX */
-+	RCAR_GP_PIN(2, 14), RCAR_GP_PIN(2, 15),
-+};
-+static const unsigned int canfd3_data_mux[] = {
-+	CANFD3_TX_MARK, CANFD3_RX_MARK,
-+};
-+
-+/* - CANFD Clock ------------------------------------------------------------ */
-+static const unsigned int can_clk_pins[] = {
-+	/* CAN_CLK */
-+	RCAR_GP_PIN(2, 9),
-+};
-+static const unsigned int can_clk_mux[] = {
-+	CAN_CLK_MARK,
-+};
-+
- /* - HSCIF0 ----------------------------------------------------------------- */
- static const unsigned int hscif0_data_pins[] = {
- 	/* HRX0, HTX0 */
-@@ -2296,6 +2341,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb2_avtp_capture),
- 	SH_PFC_PIN_GROUP(avb2_avtp_match),
- 
-+	SH_PFC_PIN_GROUP(canfd0_data),
-+	SH_PFC_PIN_GROUP(canfd1_data),
-+	SH_PFC_PIN_GROUP(canfd2_data),
-+	SH_PFC_PIN_GROUP(canfd3_data),
-+	SH_PFC_PIN_GROUP(can_clk),
-+
- 	SH_PFC_PIN_GROUP(hscif0_data),
- 	SH_PFC_PIN_GROUP(hscif0_clk),
- 	SH_PFC_PIN_GROUP(hscif0_ctrl),
-@@ -2457,6 +2508,26 @@ static const char * const avb2_groups[] = {
- 	"avb2_avtp_match",
- };
- 
-+static const char * const canfd0_groups[] = {
-+	"canfd0_data",
-+};
-+
-+static const char * const canfd1_groups[] = {
-+	"canfd1_data",
-+};
-+
-+static const char * const canfd2_groups[] = {
-+	"canfd2_data",
-+};
-+
-+static const char * const canfd3_groups[] = {
-+	"canfd3_data",
-+};
-+
-+static const char * const can_clk_groups[] = {
-+	"can_clk",
-+};
-+
- static const char * const hscif0_groups[] = {
- 	"hscif0_data",
- 	"hscif0_clk",
-@@ -2660,6 +2731,12 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb1),
- 	SH_PFC_FUNCTION(avb2),
- 
-+	SH_PFC_FUNCTION(canfd0),
-+	SH_PFC_FUNCTION(canfd1),
-+	SH_PFC_FUNCTION(canfd2),
-+	SH_PFC_FUNCTION(canfd3),
-+	SH_PFC_FUNCTION(can_clk),
-+
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
- 	SH_PFC_FUNCTION(hscif2),
+ arch/arm64/configs/renesas_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 133a2d164c697a14..1cc2b88a85d0f286 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -382,6 +382,7 @@ CONFIG_ARCH_R8A77980=y
+ CONFIG_ARCH_R8A77970=y
+ CONFIG_ARCH_R8A779A0=y
+ CONFIG_ARCH_R8A779G0=y
++CONFIG_ARCH_R8A779H0=y
+ CONFIG_ARCH_R8A774C0=y
+ CONFIG_ARCH_R8A774E1=y
+ CONFIG_ARCH_R8A774A1=y
 -- 
 2.34.1
 
