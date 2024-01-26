@@ -1,40 +1,38 @@
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC36C12E57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34512E4E
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2024 10:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706266611; cv=none; b=nXfOnapaKkoa0WtplLX2cuCzGsuIMe7CiI/T/q9tUkwbS2WkcKKGgFtBHQkVekIIFVArm6hTtrpgKiNQBTifcLlJ9T1foCEJ0hQPNvGgJ/1UQWSv5Ww8onEm6YdTn5Plsltpe6v9Apyy3j8vuEGO6JoIGlIob1lFaZzxNqgIYp4=
+	t=1706266611; cv=none; b=tSixtdN5W6H85FuVFizzaCGezinF5wFrAtEVTwXoejIc/o4fmAx4ymmzSk3qWs/VK3BJYr3RynM+dwJh2+4GNzA2E/Irxie5N1vybEVTbVZC6BPoBKYCaeBCd9tl7iAYNAUJG5v9O7BWbeRH7lJstzesDs1lO8z6hKrHBXkKUxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706266611; c=relaxed/simple;
-	bh=Z1K8XxAr0NS1rz0ikSX+SB4azNcTAf76x+/v/glo0BM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sKhGuwoyVbqhX46byIAq0uhRi2ULeBaPfmucqAFdOIfmHyB8vZcEzyqpjqoKNAx6Z2N0njEh7/j7mAdPu3w1A4CXLEihKAW1cdZUIea/6e0HqIvw6MKHRwZsjeQg/pYIofqWVzPRugLzaMkhJ9QmB+wL4BMsjvnLK+tMC78Qfbw=
+	bh=B9YqpNqanOxGnqv2eSgLBsxguUjZpBi92mZyRpE6ENU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k2WPqBjiK7ElzQBR5KlmZanNso3aJnIf7d4C/PmINBTnpBkgCD/MupvgX6SgBMb/07BoceWokqJRmos7zr0A6C6Pssmauc9K1+PKjg91EJeqIqqvZoLFieiRQQ/vUwGCEmHPjkn+X4w14pY1VRiHNhKDAa6PuqeBMbXf+8uQo40=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:8d64:ae04:ce87:de06])
 	by albert.telenet-ops.be with bizsmtp
-	id fNwm2B0091AdMdB06NwmND; Fri, 26 Jan 2024 11:56:46 +0100
+	id fNwm2B0071AdMdB06NwmNC; Fri, 26 Jan 2024 11:56:46 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJsK-00GWgN-3W;
+	id 1rTJsJ-00GWgK-VN;
 	Fri, 26 Jan 2024 11:56:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJne-00G5ZK-84;
-	Fri, 26 Jan 2024 11:51:06 +0100
+	id 1rTJrQ-00G5bt-DW;
+	Fri, 26 Jan 2024 11:55:00 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Cong Dang <cong.dang.xn@renesas.com>,
+	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779h0: Add PFC/GPIO clocks
-Date: Fri, 26 Jan 2024 11:50:56 +0100
-Message-Id: <a7d8f4111b87decb825db5ed310de8294f90b9f9.1706266196.git.geert+renesas@glider.be>
+Subject: [PATCH 0/2] arm64: dts: renesas: r8a779h0/gray-hawk-single: Initial pin control support
+Date: Fri, 26 Jan 2024 11:54:56 +0100
+Message-Id: <cover.1706266286.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -44,37 +42,38 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Cong Dang <cong.dang.xn@renesas.com>
+	Hi all,
 
-Add the module clocks used by the Pin Function Controller (PFC) and
-General Purpose Input/Output (GPIO) blocks on the Renesas R-Car V4M
-(R8A779H0) SoC.
+This patch series adds initial pin control support for the R-Car V4M
+(R8A779H0) SoC and the Gray Hawk Single development board.
 
-Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Changes compared to the BSP:
-  - Change parent clock from CL16M to CP.
+To be queued in renesas-devel for v6.9.
 
-To be queued in renesas-clk for v6.9.
----
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 3 +++
- 1 file changed, 3 insertions(+)
+For testing, I have updated [1] accordingly.
+Thanks for your comments!
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index 1259b8544980f07a..219941047291d34d 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -177,6 +177,9 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
- 	DEF_MOD("hscif1",	515,	R8A779H0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif2",	516,	R8A779H0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif3",	517,	R8A779H0_CLK_SASYNCPERD1),
-+	DEF_MOD("pfc0",		915,	R8A779H0_CLK_CP),
-+	DEF_MOD("pfc1",		916,	R8A779H0_CLK_CP),
-+	DEF_MOD("pfc2",		917,	R8A779H0_CLK_CP),
- };
- 
- /*
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/v4m-gray-hawk-single-v2
+
+Geert Uytterhoeven (1):
+  arm64: dts: renesas: gray-hawk-single: Add serial console pin control
+
+Hai Pham (1):
+  arm64: dts: renesas: r8a779h0: Add pinctrl device node
+
+ .../dts/renesas/r8a779h0-gray-hawk-single.dts  | 18 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi      |  8 ++++++++
+ 2 files changed, 26 insertions(+)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
