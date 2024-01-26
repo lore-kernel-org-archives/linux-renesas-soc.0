@@ -1,30 +1,30 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A0D134A9
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2024 10:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C6B14015
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2024 10:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706266616; cv=none; b=YByJUeUO81ZLA7+eanyZSbaDtajDw7HGIBJYFE2g2thHxsm1A++LCngqThVwc4UW+7UfnQeb+hEAYvg3cQyC57JTOU2b9vnCUb4szm0/hwefU+nNVFXglIrpvqob4JcHB2TqTRb/7HWrUjAyv70uqdIpGeP4mx6Z0zFhG+TLCqI=
+	t=1706266616; cv=none; b=Qul1VP4NgfnEbd9k9clTH07bOCRpLmurqtHzrqlOCY3/fHs1yGNt+VIOTrnBl7A8qAL9OXw/aQuf90uFd3N2zbFi2Ke4/OsmcahA8GXBHRsZegik9sNr5/j48c+Ofq66OBtLCIljraqLifggs2KOnq/KgAMhjjoAYCrjVIR+Bo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706266616; c=relaxed/simple;
-	bh=NNnm7gwM05r55sMIKuZN/1R3wYKohsfVsNI7Azt5PzQ=;
+	bh=W1tnPlkrxS73Ylh0wT1Om+vOuMHRZzj3ylFStmVp9ak=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j9bfFqoPBcPFTy1OZ03hFFP6UHxNbwh5XMc+r0qB3O9cRgmgAIr4YNuSUQs+d3TUYVMoyW3wu2vF60GCRI4JCj9gav4fsSJ3IW9vj99ztkEdwd561zAm9RanqluWz46SKC3UqXCti9PEYQW9fw/GewTE6ptEUNeM+/6ju6oIgyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	 MIME-Version; b=CGB/h2yK9QpQbBRfIK1zhoyc3OknN7adZ/s70fTZb7qB8UzrvIx11m/QUQD0EM7HAineN/QBRDbzzsEd8ECRShKysvRl6A8z6pf4cGwBd+1zn4WdhPxHRlIrqoaSzsVd1uKR2KgxHHCDbZAdK3kkdGWku1dCqcMV8ROslKBYnqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:8d64:ae04:ce87:de06])
-	by xavier.telenet-ops.be with bizsmtp
-	id fNwm2B00T1AdMdB01NwmSh; Fri, 26 Jan 2024 11:56:47 +0100
+	by andre.telenet-ops.be with bizsmtp
+	id fNwo2B0061AdMdB01NwoVT; Fri, 26 Jan 2024 11:56:48 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJsK-00GWgW-EA;
-	Fri, 26 Jan 2024 11:56:46 +0100
+	id 1rTJsL-00GWiM-S1;
+	Fri, 26 Jan 2024 11:56:47 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJh0-00G5Tl-CG;
+	id 1rTJh0-00G5Sx-2c;
 	Fri, 26 Jan 2024 11:44:14 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Linus Walleij <linus.walleij@linaro.org>,
@@ -37,9 +37,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Cong Dang <cong.dang.xn@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 13/14] pinctrl: renesas: r8a779h0: Add PCIe pins, groups, functions
-Date: Fri, 26 Jan 2024 11:44:11 +0100
-Message-Id: <d32909f5197fa2df0ca6bd6e5fda7cae8863101e.1706264667.git.geert+renesas@glider.be>
+Subject: [PATCH 03/14] pinctrl: renesas: r8a779h0: Add Ethernet AVB pins, groups, functions
+Date: Fri, 26 Jan 2024 11:44:01 +0100
+Message-Id: <f79d8f75582f44a7441faed550fb37e44a917558.1706264667.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706264667.git.geert+renesas@glider.be>
 References: <cover.1706264667.git.geert+renesas@glider.be>
@@ -53,65 +53,333 @@ Content-Transfer-Encoding: 8bit
 
 From: Cong Dang <cong.dang.xn@renesas.com>
 
-Add pins, groups and functions for the PCIe Controller on the Renesas
-R-Car V4M (R8A779H0) SoC.
+Add pins, groups and functions for Ethernet AVB on the Renesas R-Car V4M
+(R8A779H0) SoC.
 
 Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a779h0.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/pinctrl/renesas/pfc-r8a779h0.c | 302 ++++++++++++++++++++++++-
+ 1 file changed, 301 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/renesas/pfc-r8a779h0.c b/drivers/pinctrl/renesas/pfc-r8a779h0.c
-index 135628771807d459..715fb81a798d4b9b 100644
+index 0635a52828676c37..61d72e0222bcbe95 100644
 --- a/drivers/pinctrl/renesas/pfc-r8a779h0.c
 +++ b/drivers/pinctrl/renesas/pfc-r8a779h0.c
-@@ -1951,6 +1951,16 @@ static const unsigned int msiof5_rxd_mux[] = {
- 	MSIOF5_RXD_MARK,
+@@ -1191,12 +1191,312 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_NOGP_ALL(),
  };
  
-+/* - PCIE ------------------------------------------------------------------- */
-+static const unsigned int pcie0_clkreq_n_pins[] = {
-+	/* PCIE0_CLKREQ_N */
-+	RCAR_GP_PIN(4, 21),
++/* - AVB0 ------------------------------------------------ */
++static const unsigned int avb0_link_pins[] = {
++	/* AVB0_LINK */
++	RCAR_GP_PIN(7, 4),
++};
++static const unsigned int avb0_link_mux[] = {
++	AVB0_LINK_MARK,
++};
++static const unsigned int avb0_magic_pins[] = {
++	/* AVB0_MAGIC */
++	RCAR_GP_PIN(7, 10),
++};
++static const unsigned int avb0_magic_mux[] = {
++	AVB0_MAGIC_MARK,
++};
++static const unsigned int avb0_phy_int_pins[] = {
++	/* AVB0_PHY_INT */
++	RCAR_GP_PIN(7, 5),
++};
++static const unsigned int avb0_phy_int_mux[] = {
++	AVB0_PHY_INT_MARK,
++};
++static const unsigned int avb0_mdio_pins[] = {
++	/* AVB0_MDC, AVB0_MDIO */
++	RCAR_GP_PIN(7, 13), RCAR_GP_PIN(7, 14),
++};
++static const unsigned int avb0_mdio_mux[] = {
++	AVB0_MDC_MARK, AVB0_MDIO_MARK,
++};
++static const unsigned int avb0_rgmii_pins[] = {
++	/*
++	 * AVB0_TX_CTL, AVB0_TXC, AVB0_TD0, AVB0_TD1, AVB0_TD2, AVB0_TD3,
++	 * AVB0_RX_CTL, AVB0_RXC, AVB0_RD0, AVB0_RD1, AVB0_RD2, AVB0_RD3,
++	 */
++	RCAR_GP_PIN(7, 16), RCAR_GP_PIN(7, 15),
++	RCAR_GP_PIN(7, 11), RCAR_GP_PIN(7,  7),
++	RCAR_GP_PIN(7,  6), RCAR_GP_PIN(7,  3),
++	RCAR_GP_PIN(7, 20), RCAR_GP_PIN(7, 19),
++	RCAR_GP_PIN(7, 18), RCAR_GP_PIN(7, 17),
++	RCAR_GP_PIN(7, 12), RCAR_GP_PIN(7,  8),
++};
++static const unsigned int avb0_rgmii_mux[] = {
++	AVB0_TX_CTL_MARK,	AVB0_TXC_MARK,
++	AVB0_TD0_MARK,		AVB0_TD1_MARK,
++	AVB0_TD2_MARK,		AVB0_TD3_MARK,
++	AVB0_RX_CTL_MARK,	AVB0_RXC_MARK,
++	AVB0_RD0_MARK,		AVB0_RD1_MARK,
++	AVB0_RD2_MARK,		AVB0_RD3_MARK,
++};
++static const unsigned int avb0_txcrefclk_pins[] = {
++	/* AVB0_TXCREFCLK */
++	RCAR_GP_PIN(7, 9),
++};
++static const unsigned int avb0_txcrefclk_mux[] = {
++	AVB0_TXCREFCLK_MARK,
++};
++static const unsigned int avb0_avtp_pps_pins[] = {
++	/* AVB0_AVTP_PPS */
++	RCAR_GP_PIN(7, 0),
++};
++static const unsigned int avb0_avtp_pps_mux[] = {
++	AVB0_AVTP_PPS_MARK,
++};
++static const unsigned int avb0_avtp_capture_pins[] = {
++	/* AVB0_AVTP_CAPTURE */
++	RCAR_GP_PIN(7, 1),
++};
++static const unsigned int avb0_avtp_capture_mux[] = {
++	AVB0_AVTP_CAPTURE_MARK,
++};
++static const unsigned int avb0_avtp_match_pins[] = {
++	/* AVB0_AVTP_MATCH */
++	RCAR_GP_PIN(7, 2),
++};
++static const unsigned int avb0_avtp_match_mux[] = {
++	AVB0_AVTP_MATCH_MARK,
 +};
 +
-+static const unsigned int pcie0_clkreq_n_mux[] = {
-+	PCIE0_CLKREQ_N_MARK,
++/* - AVB1 ------------------------------------------------ */
++static const unsigned int avb1_link_pins[] = {
++	/* AVB1_LINK */
++	RCAR_GP_PIN(6, 4),
++};
++static const unsigned int avb1_link_mux[] = {
++	AVB1_LINK_MARK,
++};
++static const unsigned int avb1_magic_pins[] = {
++	/* AVB1_MAGIC */
++	RCAR_GP_PIN(6, 1),
++};
++static const unsigned int avb1_magic_mux[] = {
++	AVB1_MAGIC_MARK,
++};
++static const unsigned int avb1_phy_int_pins[] = {
++	/* AVB1_PHY_INT */
++	RCAR_GP_PIN(6, 3),
++};
++static const unsigned int avb1_phy_int_mux[] = {
++	AVB1_PHY_INT_MARK,
++};
++static const unsigned int avb1_mdio_pins[] = {
++	/* AVB1_MDC, AVB1_MDIO */
++	RCAR_GP_PIN(6, 2), RCAR_GP_PIN(6, 0),
++};
++static const unsigned int avb1_mdio_mux[] = {
++	AVB1_MDC_MARK, AVB1_MDIO_MARK,
++};
++static const unsigned int avb1_rgmii_pins[] = {
++	/*
++	 * AVB1_TX_CTL, AVB1_TXC, AVB1_TD0, AVB1_TD1, AVB1_TD2, AVB1_TD3,
++	 * AVB1_RX_CTL, AVB1_RXC, AVB1_RD0, AVB1_RD1, AVB1_RD2, AVB1_RD3,
++	 */
++	RCAR_GP_PIN(6,  7), RCAR_GP_PIN(6,  6),
++	RCAR_GP_PIN(6, 13), RCAR_GP_PIN(6, 12),
++	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 18),
++	RCAR_GP_PIN(6,  9), RCAR_GP_PIN(6,  8),
++	RCAR_GP_PIN(6, 15), RCAR_GP_PIN(6, 14),
++	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 19),
++};
++static const unsigned int avb1_rgmii_mux[] = {
++	AVB1_TX_CTL_MARK,	AVB1_TXC_MARK,
++	AVB1_TD0_MARK,		AVB1_TD1_MARK,
++	AVB1_TD2_MARK,		AVB1_TD3_MARK,
++	AVB1_RX_CTL_MARK,	AVB1_RXC_MARK,
++	AVB1_RD0_MARK,		AVB1_RD1_MARK,
++	AVB1_RD2_MARK,		AVB1_RD3_MARK,
++};
++static const unsigned int avb1_txcrefclk_pins[] = {
++	/* AVB1_TXCREFCLK */
++	RCAR_GP_PIN(6, 20),
++};
++static const unsigned int avb1_txcrefclk_mux[] = {
++	AVB1_TXCREFCLK_MARK,
++};
++static const unsigned int avb1_avtp_pps_pins[] = {
++	/* AVB1_AVTP_PPS */
++	RCAR_GP_PIN(6, 10),
++};
++static const unsigned int avb1_avtp_pps_mux[] = {
++	AVB1_AVTP_PPS_MARK,
++};
++static const unsigned int avb1_avtp_capture_pins[] = {
++	/* AVB1_AVTP_CAPTURE */
++	RCAR_GP_PIN(6, 11),
++};
++static const unsigned int avb1_avtp_capture_mux[] = {
++	AVB1_AVTP_CAPTURE_MARK,
++};
++static const unsigned int avb1_avtp_match_pins[] = {
++	/* AVB1_AVTP_MATCH */
++	RCAR_GP_PIN(6, 5),
++};
++static const unsigned int avb1_avtp_match_mux[] = {
++	AVB1_AVTP_MATCH_MARK,
 +};
 +
- /* - PWM0_A ------------------------------------------------------------------- */
- static const unsigned int pwm0_a_pins[] = {
- 	/* PWM0_A */
-@@ -2421,6 +2431,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(msiof5_txd),
- 	SH_PFC_PIN_GROUP(msiof5_rxd),
++/* - AVB2 ------------------------------------------------ */
++static const unsigned int avb2_link_pins[] = {
++	/* AVB2_LINK */
++	RCAR_GP_PIN(5, 3),
++};
++static const unsigned int avb2_link_mux[] = {
++	AVB2_LINK_MARK,
++};
++static const unsigned int avb2_magic_pins[] = {
++	/* AVB2_MAGIC */
++	RCAR_GP_PIN(5, 5),
++};
++static const unsigned int avb2_magic_mux[] = {
++	AVB2_MAGIC_MARK,
++};
++static const unsigned int avb2_phy_int_pins[] = {
++	/* AVB2_PHY_INT */
++	RCAR_GP_PIN(5, 4),
++};
++static const unsigned int avb2_phy_int_mux[] = {
++	AVB2_PHY_INT_MARK,
++};
++static const unsigned int avb2_mdio_pins[] = {
++	/* AVB2_MDC, AVB2_MDIO */
++	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 10),
++};
++static const unsigned int avb2_mdio_mux[] = {
++	AVB2_MDC_MARK, AVB2_MDIO_MARK,
++};
++static const unsigned int avb2_rgmii_pins[] = {
++	/*
++	 * AVB2_TX_CTL, AVB2_TXC, AVB2_TD0, AVB2_TD1, AVB2_TD2, AVB2_TD3,
++	 * AVB2_RX_CTL, AVB2_RXC, AVB2_RD0, AVB2_RD1, AVB2_RD2, AVB2_RD3,
++	 */
++	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 16),
++	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 12),
++	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5,  8),
++	RCAR_GP_PIN(5, 20), RCAR_GP_PIN(5, 18),
++	RCAR_GP_PIN(5, 17), RCAR_GP_PIN(5, 14),
++	RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5,  9),
++};
++static const unsigned int avb2_rgmii_mux[] = {
++	AVB2_TX_CTL_MARK,	AVB2_TXC_MARK,
++	AVB2_TD0_MARK,		AVB2_TD1_MARK,
++	AVB2_TD2_MARK,		AVB2_TD3_MARK,
++	AVB2_RX_CTL_MARK,	AVB2_RXC_MARK,
++	AVB2_RD0_MARK,		AVB2_RD1_MARK,
++	AVB2_RD2_MARK,		AVB2_RD3_MARK,
++};
++static const unsigned int avb2_txcrefclk_pins[] = {
++	/* AVB2_TXCREFCLK */
++	RCAR_GP_PIN(5, 7),
++};
++static const unsigned int avb2_txcrefclk_mux[] = {
++	AVB2_TXCREFCLK_MARK,
++};
++static const unsigned int avb2_avtp_pps_pins[] = {
++	/* AVB2_AVTP_PPS */
++	RCAR_GP_PIN(5, 0),
++};
++static const unsigned int avb2_avtp_pps_mux[] = {
++	AVB2_AVTP_PPS_MARK,
++};
++static const unsigned int avb2_avtp_capture_pins[] = {
++	/* AVB2_AVTP_CAPTURE */
++	RCAR_GP_PIN(5, 1),
++};
++static const unsigned int avb2_avtp_capture_mux[] = {
++	AVB2_AVTP_CAPTURE_MARK,
++};
++static const unsigned int avb2_avtp_match_pins[] = {
++	/* AVB2_AVTP_MATCH */
++	RCAR_GP_PIN(5, 2),
++};
++static const unsigned int avb2_avtp_match_mux[] = {
++	AVB2_AVTP_MATCH_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(avb0_link),
++	SH_PFC_PIN_GROUP(avb0_magic),
++	SH_PFC_PIN_GROUP(avb0_phy_int),
++	SH_PFC_PIN_GROUP(avb0_mdio),
++	SH_PFC_PIN_GROUP(avb0_rgmii),
++	SH_PFC_PIN_GROUP(avb0_txcrefclk),
++	SH_PFC_PIN_GROUP(avb0_avtp_pps),
++	SH_PFC_PIN_GROUP(avb0_avtp_capture),
++	SH_PFC_PIN_GROUP(avb0_avtp_match),
++
++	SH_PFC_PIN_GROUP(avb1_link),
++	SH_PFC_PIN_GROUP(avb1_magic),
++	SH_PFC_PIN_GROUP(avb1_phy_int),
++	SH_PFC_PIN_GROUP(avb1_mdio),
++	SH_PFC_PIN_GROUP(avb1_rgmii),
++	SH_PFC_PIN_GROUP(avb1_txcrefclk),
++	SH_PFC_PIN_GROUP(avb1_avtp_pps),
++	SH_PFC_PIN_GROUP(avb1_avtp_capture),
++	SH_PFC_PIN_GROUP(avb1_avtp_match),
++
++	SH_PFC_PIN_GROUP(avb2_link),
++	SH_PFC_PIN_GROUP(avb2_magic),
++	SH_PFC_PIN_GROUP(avb2_phy_int),
++	SH_PFC_PIN_GROUP(avb2_mdio),
++	SH_PFC_PIN_GROUP(avb2_rgmii),
++	SH_PFC_PIN_GROUP(avb2_txcrefclk),
++	SH_PFC_PIN_GROUP(avb2_avtp_pps),
++	SH_PFC_PIN_GROUP(avb2_avtp_capture),
++	SH_PFC_PIN_GROUP(avb2_avtp_match),
++};
  
-+	SH_PFC_PIN_GROUP(pcie0_clkreq_n),
-+
- 	SH_PFC_PIN_GROUP(pwm0_a),
- 	SH_PFC_PIN_GROUP(pwm0_b),
- 	SH_PFC_PIN_GROUP(pwm1_a),
-@@ -2638,6 +2650,10 @@ static const char * const msiof5_groups[] = {
- 	"msiof5_rxd",
++static const char * const avb0_groups[] = {
++	"avb0_link",
++	"avb0_magic",
++	"avb0_phy_int",
++	"avb0_mdio",
++	"avb0_rgmii",
++	"avb0_txcrefclk",
++	"avb0_avtp_pps",
++	"avb0_avtp_capture",
++	"avb0_avtp_match",
  };
  
-+static const char * const pcie_groups[] = {
-+	"pcie0_clkreq_n",
+-static const struct sh_pfc_function pinmux_functions[] = {
++static const char * const avb1_groups[] = {
++	"avb1_link",
++	"avb1_magic",
++	"avb1_phy_int",
++	"avb1_mdio",
++	"avb1_rgmii",
++	"avb1_txcrefclk",
++	"avb1_avtp_pps",
++	"avb1_avtp_capture",
++	"avb1_avtp_match",
++};
+ 
++static const char * const avb2_groups[] = {
++	"avb2_link",
++	"avb2_magic",
++	"avb2_phy_int",
++	"avb2_mdio",
++	"avb2_rgmii",
++	"avb2_txcrefclk",
++	"avb2_avtp_pps",
++	"avb2_avtp_capture",
++	"avb2_avtp_match",
 +};
 +
- static const char * const pwm0_groups[] = {
- 	"pwm0_a",
- 	"pwm0_b",
-@@ -2756,6 +2772,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(msiof4),
- 	SH_PFC_FUNCTION(msiof5),
++static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(avb0),
++	SH_PFC_FUNCTION(avb1),
++	SH_PFC_FUNCTION(avb2),
+ };
  
-+	SH_PFC_FUNCTION(pcie),
-+
- 	SH_PFC_FUNCTION(pwm0),
- 	SH_PFC_FUNCTION(pwm1),
- 	SH_PFC_FUNCTION(pwm2),
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
 2.34.1
 
