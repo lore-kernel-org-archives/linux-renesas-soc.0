@@ -1,58 +1,58 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A2C657B9
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jan 2024 13:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3454D657B2
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jan 2024 13:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706536422; cv=none; b=tXLSppOZ57BqNwelMcEpehRfoR8zGLFPpKdCgR2eQbo03dyHXZbzfDlPxjBhtF8xqOi9Aia6bqLKKIbaFlJBrNdyZLpAoyEpfmDDrUrYG9Vvs4l1mRXeRaY/X1zaDP8vK6A8E1oBPDcYwG9DyMY7SXVLgGv1szsqBUmDS30I/Gk=
+	t=1706536560; cv=none; b=fjnzrXom2K+bO57LV6nUu20ZEOH6jZHTtqTLtlpgrsgD85L9ZQ+aRqm9GAaSCm/72g+ZAG3rwXs41CURBiUkZxsc2RIMxhjJZcXV+YovgsAgSDVch5SgBDKMAhMX4DyBqgq5j6t7kwrxjKqi0QFu56Nf8sqk0Mh1OJ4H6aX9O38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706536422; c=relaxed/simple;
-	bh=oKTtlGKGHzW67q9lNAPeOOHT4ufGfMV2g9iVTJql09M=;
+	s=arc-20240116; t=1706536560; c=relaxed/simple;
+	bh=0kU0XJcwqyXCVZxm+kFwwNR3JQ+C+nscVOHBvBX63BU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Grq1+bXqtfrvoWpa71zmbAsZYO6OhrKkmB5Zwsm091enODS3eeDMEK5RpaR9MMhvWtAEm0sTgOE1iQWsOmEgUmta/sIKoRejjT8qTtgkkGcypC17Okl4OWDaiRGbZwC9+huXnHcBomRgxL7z0ElAJsZsHQDD3K1kEcCFX3B2up8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qH02PZnu; arc=none smtp.client-ip=209.85.218.53
+	 In-Reply-To:Content-Type; b=IzjrCGI2aLxKBmY4BPmhpfM0baYv57oXibwEIYEkFDBcEGK7bXtcbZOK+d4uXOHWsDB9S2+KNkK4i2auOh9DhmJ+gkInq1eBBRHFUOXpri0rV7TquFS2WLBmTQT/4l7ach77Xbt7+rO7FuLsXzDim1dDTb1epv+D1YLZAX+zDMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=hROZEAOj; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qH02PZnu"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a349ed467d9so291966166b.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jan 2024 05:53:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="hROZEAOj"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a2a17f3217aso383876866b.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jan 2024 05:55:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1706536418; x=1707141218; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1706536556; x=1707141356; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=V+091sc1ylf97d/ug8x57mJneSunWTfvE/VbxY6s7r8=;
-        b=qH02PZnuekYwzseOLPC+aBZuSYwSbcQD1pGsvcFrGoDCH3RVghpCtCUUS4/uHy4Kei
-         6kNkrSohvJdIKyKB5RWHQBk4a8xUeEEdgY6xGCHNIY3YINNHfVk8K+ukLN1qh3rK2HMJ
-         9iMSohgRU3pX+j5r0Y8I8CWkgJzLPBzovgmlWJNyLYVUJvHi7PFW8a+ptaQwFwYiKKZ+
-         9frLRyc8oi6fkWZqQvv5II6O7gce4pJzLxiu8biQdfEvKJn4n8OuJl267L648uguyBV3
-         C9Oh064Y6E1YDDH4/CNKEecejduKVOEIEpTx4JgFE53q5qyMbM44laJTiDFNLoP91I4Q
-         b/WA==
+        bh=c2pjxJTJw4PCQDkxC6JWUuLXXl1QpeecImfpOYgGbFk=;
+        b=hROZEAOjLz3J60bpDQybqKcOKTAfOfCWZM1ktDfBXG9EqRZZRx+KL5llybC2WYa2Ze
+         hRkajEAO8ntFw39Oq+MQb0XPtC24dmYmYrSu5wC+VniBLDRbCLedDWd5B4mEaIP61Phx
+         9c03UmMFs9oScGcL9ey3d9swu7NnWAjV1124iDSjmzXhfMBUo7w1SJoBBXCTbea64kMt
+         VRqi8PNdIjXSkegMXHfvAZ40TrC7NPFf6yO6rT0vI+aSeFyiqK/T6JP+YCikybSrUZf7
+         hfSeNPI1VQz1v4c6lZMt4zXEttgLj8Ew6XEwH5/anW+zRG0vQnpvOjJm1qJnEFuy5gEl
+         LttA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706536418; x=1707141218;
+        d=1e100.net; s=20230601; t=1706536556; x=1707141356;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V+091sc1ylf97d/ug8x57mJneSunWTfvE/VbxY6s7r8=;
-        b=Zg1i/LQiFmociA7OhBv6l3Rb67n5fUHsEGFUaD102Sa7TNiE5Q/9BDTsOId3i3Ew9x
-         RyPTKDH8P0laVXHtUNWIwQoaY99HVOg6DSGL+LJUPUQdi4Uyn2L2j8O8uxy3rCUbfqen
-         9zhvjh0gjCLtzBfXQCFyTOWaWZVHyTma/1lFoQO+Fij4ZO3cSBjKkB9lkR89JiiT10qc
-         llUhMI0px1F2KyPP0fMopiiMM3Jy2XnTI2L4c/hL3MBpD9nMjfbQXjvz6MwUT4ION9w7
-         oad2/wBlav2LhijBH4a5w3ySJSPo6wX4dzFhjfOZNS94pApLp+7aZQ/SHz7vU6//+5rp
-         psFg==
-X-Gm-Message-State: AOJu0YyPfho+LAPiq2u7Cf+4MKRnr0E4dogfOwcoRfJK5zHdbVt9q7mG
-	aDRmwmyGFf26fFZe4zWUn5RC6vJtRVfhaWE8kTxTvY99CjoJHS/QAKx0K3bxHlg=
-X-Google-Smtp-Source: AGHT+IFdg6MQ44AuBXJMMqOxMhsWRNVSLr1MdZXI2hQdBMvYhSqahrsgV6sFVLTQdTa1xScAS5CWcg==
-X-Received: by 2002:a17:906:b350:b0:a36:af:3937 with SMTP id cd16-20020a170906b35000b00a3600af3937mr12416ejb.18.1706536418104;
-        Mon, 29 Jan 2024 05:53:38 -0800 (PST)
+        bh=c2pjxJTJw4PCQDkxC6JWUuLXXl1QpeecImfpOYgGbFk=;
+        b=OB+RIAz/HiUsIrb81u9NliDaF0pkpjsVd6gW/Ji5P6WdPSnbamorWSd9dt/erg3FE8
+         2B5TWyAWSJb0NVT5R2j55f4em/bS91nxylNElo485YaaGO6XAs/qP1gv4NENLoVXHf60
+         slc2Bz3syTR5TKkZ1VAZk+XrhwJCYCeBr3xC/c+C/4z7vNKeoUT8w2zxniAjv+uhDVIZ
+         8dAwVtlWPEsErCiYbMVgeD7qNK8lII6qGbA1xxWe/W8L/QKO5HLn3De+0MGdSiaScISy
+         1JA7F1yGvs8XAB926hDu2//Il4nk8NjHvFcT3asChzwYefWjx64xvDknmfTY+I2WUkcj
+         i5qg==
+X-Gm-Message-State: AOJu0YyQaFTEm8H1yEg1Wjbi7pOZwm/R5Cqe/RedEPMmOhq1p9cJrKlO
+	65gwJ19UzrGVI+sWjaAXffeoqcmgG24Oj39UHlLu3pXCD1H/vuAnXOfbJvrqH+c=
+X-Google-Smtp-Source: AGHT+IEdvnhMQ/CDu0i2JcMjQ93Mjck1u0vYpVh300T2TKQ++pg6Wjm5npTJCOfGrbQJZ3bPR/M7rw==
+X-Received: by 2002:a17:906:b0d:b0:a35:dafa:a5d8 with SMTP id u13-20020a1709060b0d00b00a35dafaa5d8mr1224292ejg.73.1706536556328;
+        Mon, 29 Jan 2024 05:55:56 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.87])
-        by smtp.gmail.com with ESMTPSA id i21-20020a170906a29500b00a35d7b6cb3fsm664137ejz.95.2024.01.29.05.53.36
+        by smtp.gmail.com with ESMTPSA id vx6-20020a170907a78600b00a35ea4a21e8sm425895ejc.2.2024.01.29.05.55.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jan 2024 05:53:37 -0800 (PST)
-Message-ID: <6307da2b-aadf-4cd7-85e3-3032153544b5@tuxon.dev>
-Date: Mon, 29 Jan 2024 15:53:36 +0200
+        Mon, 29 Jan 2024 05:55:55 -0800 (PST)
+Message-ID: <1c680be4-67b7-435b-9609-b5f7a45ca675@tuxon.dev>
+Date: Mon, 29 Jan 2024 15:55:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -60,8 +60,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 07/15] net: ravb: Move reference clock
- enable/disable on runtime PM APIs
+Subject: Re: [PATCH net-next v4 10/15] net: ravb: Move delay mode set in the
+ driver's ndo_open API
 Content-Language: en-US
 To: Sergey Shtylyov <s.shtylyov@omp.ru>, davem@davemloft.net,
  edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
@@ -70,76 +70,67 @@ Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org,
  Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 References: <20240123125829.3970325-1-claudiu.beznea.uj@bp.renesas.com>
- <20240123125829.3970325-8-claudiu.beznea.uj@bp.renesas.com>
- <ec3f5d8a-ac38-1134-93a3-c4ceb8b944e0@omp.ru>
+ <20240123125829.3970325-11-claudiu.beznea.uj@bp.renesas.com>
+ <b0a4f320-6218-2631-a5a0-26cfa9a25ee1@omp.ru>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <ec3f5d8a-ac38-1134-93a3-c4ceb8b944e0@omp.ru>
+In-Reply-To: <b0a4f320-6218-2631-a5a0-26cfa9a25ee1@omp.ru>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 23.01.2024 22:43, Sergey Shtylyov wrote:
+On 24.01.2024 22:18, Sergey Shtylyov wrote:
 > On 1/23/24 3:58 PM, Claudiu wrote:
 > 
 >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> Reference clock could be or not part of the power domain. If it is part of
+>> Delay parsing and setting were done in the driver's probe API. As some IP
+>> variants switch to reset mode (and thus registers content is lost) when
 > 
->    Could be or not be, perhaps?
+>    s/registers content/the register contents/, perhaps?
 > 
->> the power domain, the power domain takes care of propertly setting it. In
-> 
->    Properly. :-)
-> 
->> case it is not part of the power domain and full runtime PM support is
->> available in driver the clock will not be propertly disabled/enabled at
->> runtime. For this, keep the prepare/unprepare operations in the driver's
->> probe()/remove() functions and move the enable/disable in runtime PM
->> functions.
+>> setting clocks (due to module standby functionality) to be able to
+>> implement runtime PM keep the delay parsing in the driver's probe function
+>> and move the delay applying function to the driver's ndo_open API.
 >>
->> Along with it, the other clock request operations were moved close to
->> reference clock request and prepare to have all the clock requests
->> specific code grouped together.
+>> Along with it, both delay specific functions were kept together.
 >>
+>> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > [...]
 > 
 >> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
->> index 9fc0e39e33c2..4673cc2faec0 100644
+>> index 8956c33c60e2..69d4854d6738 100644
 >> --- a/drivers/net/ethernet/renesas/ravb_main.c
 >> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> [...]
->> @@ -3060,21 +3058,27 @@ static int ravb_resume(struct device *dev)
->>  	return ret;
+>> @@ -1800,6 +1800,59 @@ static int ravb_compute_gti(struct net_device *ndev)
+>>  	return 0;
 >>  }
 >>  
->> -static int ravb_runtime_nop(struct device *dev)
->> +static int ravb_runtime_suspend(struct device *dev)
->>  {
->> -	/* Runtime PM callback shared between ->runtime_suspend()
->> -	 * and ->runtime_resume(). Simply returns success.
->> -	 *
->> -	 * This driver re-initializes all registers after
->> -	 * pm_runtime_get_sync() anyway so there is no need
->> -	 * to save and restore registers here.
->> -	 */
+>> +/* Set tx and rx clock internal delay modes */
+>> +static void ravb_parse_delay_mode(struct device_node *np, struct net_device *ndev)
 > 
->    I want to pull out the dummy {ravb|sh_eth}_runtime_nop() funcs --
-> they don't seem to be necessary... Then we can implement your clock
-> dance with freshly added ravb_runtime_{suspend|resume}()...
+>    Wait, why are you moving this? Its call site didn't move -- it's still
+> down in the probe() method...
 
-For this series, does it worth having a patch that removes ravb runtime
-suspend/resume ops to then add a new patch that add it it again?
-I can do it but it I see no reason in doing it in this series...
-
-The dummy functions were there and the commit description explains the
-reason they were updated.
-
-Thank you,
-Claudiu Beznea
+As explained in the patch description ("Along with it, both delay specific
+functions were kept together.") functions were moved closed to each other
+to have the code dealing with delay in the same place.
 
 > 
 > [...]
+>> @@ -2785,10 +2793,7 @@ static int ravb_probe(struct platform_device *pdev)
+>>  	if (error)
+>>  		goto out_rpm_put;
+>>  
+>> -	if (info->internal_delay) {
+>> -		ravb_parse_delay_mode(np, ndev);
+>> -		ravb_set_delay_mode(ndev);
+>> -	}
+>> +	ravb_parse_delay_mode(np, ndev);
+>>  
+>>  	/* Allocate descriptor base address table */
+>>  	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
+>>
 > 
 > MBR, Sergey
