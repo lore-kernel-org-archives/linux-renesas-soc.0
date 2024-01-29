@@ -1,54 +1,56 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E102B76040
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jan 2024 20:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2AE7603D
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jan 2024 20:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706559819; cv=none; b=dDXQGUBl4sGmPVIPiAxMQkExgmYoqExUnfiiTedNvIYMXxZ7jv9JceZIlk4u5MzzbzRsHQ231+g7rgTkHGlh+uqec/Y+6x14QoaMS504UWDF2UdEroSPe7mayHj4b+flioorXrrr1NTivEgdqncBu1n1m5Vh3Z4wPSQ7KRJQEzI=
+	t=1706559820; cv=none; b=VjM3NUTb51sa7aIWqQSfYe6LxxFyGIc1NFGenBhLfneQdo63Ku0VZAwfYSYbXRVX0I+0S33jUa6H2d0/JMNcuhbEWogyQsPfxLPMdEd/19DQOV/6a3hUzWhxNtqcZFOuu1+HnoWoPzt+njLbQ//gej3f4VRniyxIcSpfwWHzUe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706559819; c=relaxed/simple;
-	bh=dM6ba2x4HwpYbtuGVDsq1HI2U36g/GnBYneODePkEGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B2QRz7byRgonCLv4pEyVzhg+zVfAdIBdxj5257+L4Ej2eTS5Y0HMhoLU7U71NTg1+Z21hqKMoTov6VXUYXimvJtCBZEoKQAxnnTBxW1mQ31B0E+DT1fiCPsvWC4SGX+e22W2lAYs3Tuj3tLnM0lMVCyuITSimvSFlvNOw6U2Dx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=V0tA0hE+; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1706559820; c=relaxed/simple;
+	bh=Ot4y9HFnz8lYhBsy6M1MCuYOQLMxiWhCczIycUYeTQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cky4OD9yFEcqRoTfUUnPZaA2tS/qWd0Kb+E7Wfl77YMGtagMkWvvogHR8EKOZmvsE2Ag2G0AG1pXvWyIGZGRfwqFGVuSWjuIm8vj/tcGguArFiGK7cuI8BzhECE0AyJNZCMvgcll6VLvvlySng1aUkUrFdgnaUjjDe+LqVFZrJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=gxKLnpUX; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="V0tA0hE+"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-55ef0465507so2083033a12.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jan 2024 12:23:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="gxKLnpUX"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51028fadfe2so3595479e87.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jan 2024 12:23:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech.se; s=google; t=1706559815; x=1707164615; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8QA+buKFMZTRG4ST0AJ8iQJWrU3caTyEcNko8bHD/ks=;
-        b=V0tA0hE+4ee88e29+kX/7H9En2wHirm9xpVj1S2c4bRgDEq+aGLlciLRE0nhu1uR6b
-         kAZ/Cr1zh/Xv7wh9aNxOj8Sl4xMLqhpApuXUHRuNK3YhONDP9ZJlxQKTFp6jvDBchBXB
-         bYkxPC6CE2GsfAQ0g04M1QY70ADtMQwRH6F1FzLmtHnFdruBuDyjqNqR5EMdN4bufK1z
-         4DJNz7dgYtIcPtELgov6rWq/tvHG3IkVcWXrSLqSWAdbyokLTpOC8PVOtxvUIqc3B1MX
-         +scpUKQS3sQ+pDwEeIEVnI612cekUSVy0AbJMlCrneTW1lWR4camJMZQO6ZkqbcEOhQn
-         yMvQ==
+        d=ragnatech.se; s=google; t=1706559816; x=1707164616; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g1EvAfIe+TWbdKFyLsQsg3/MhDZ+EgY9F19+VEh4ohk=;
+        b=gxKLnpUX2FViPz+bwgFN0rMN7AFYbDe/Ne5luiMDUNwEcGrnhaaVSBj3/OH3IFk0qs
+         iD/sFiCVKrN027K+XFN5mn4ITeXiNrigtYoKqLVWDIUpiZ02wCNAkE/cKcBIWZheFrQT
+         6UG33yI3NUn22ElU9dsz+uCTZVuMCJQLBypRBvNyNRBgjFC7qw3rTsvGVt9V97ksbsiP
+         ZEl8lA38Or2YW10J4C+Y7So7gHHRkdnAWBh9frb9HMsYDVBqy8L6ffhw2hzNM5LOLezN
+         LvWgKMs6BPBbAF2ix8/i8gz3UYqFanBiceq7Z89ewBnHA1OLs1zPa2m4CVjk/NZXAzID
+         xjQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706559815; x=1707164615;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8QA+buKFMZTRG4ST0AJ8iQJWrU3caTyEcNko8bHD/ks=;
-        b=qjNYriewoVOffSdZ3D4OlYcfo5EjJmQxjVI5jusUqNYcg1T81mCZxOmGEuO4haRtlZ
-         lJFTXqhBPIflho7e2+UtBPyZNeJ3dbK6goGVyFG2wIG/LrQHdfICC3oSyyZEWWK7TNUa
-         XAuVlJtzn1/mGnn/GDb/TxKhe9uVbCXKwHyZ+DfzQ5Wh284GudHZH1uDGOhGFaoGaLL9
-         4eiZvsw2C5T2MC7ZCxwmm6g3YNCrsCuNhGQx2tz5tzRQLkItqeFEsKQieNixcihc59p6
-         ay57qmCToaX0IvJzj37F1P4vTcd1yeK26hoyCcFQ71R8tHjgnLu/DlLChKswhHPIsA71
-         h2zw==
-X-Gm-Message-State: AOJu0YwdELK/peF7/dGlNbCxV+DqEtYn0AgzrbpHGWmKCEqZlMHJFKRS
-	GrMYYgg3gVPh0+Gnxhy9msCVDSwhPevue1bpIFnqOn3Q+cELWqXeo3P/H6wZrUk=
-X-Google-Smtp-Source: AGHT+IETGB+AFgPofgFxiy09dTmzqQ7BzupeOQ/NuMTc2gGkAMd8OhNl3PVB4cTC15tE8X2SZyZW+g==
-X-Received: by 2002:a17:906:410b:b0:a35:e63d:dcfa with SMTP id j11-20020a170906410b00b00a35e63ddcfamr1717365ejk.7.1706559815102;
-        Mon, 29 Jan 2024 12:23:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706559816; x=1707164616;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g1EvAfIe+TWbdKFyLsQsg3/MhDZ+EgY9F19+VEh4ohk=;
+        b=ZadAyWHfBlusT8jB5iN3GP0e8KZ71+EGgJ7DajjkY0iE1NDTXuuSscV8SV+8+FBGru
+         cF60L5eBSZfbXRpyiIXvAehOtMSb7IbRRqrbqZoWfcmFC8vbf3AvV9rqBCJvfn3w7Lin
+         iUx3aKvHn8jJC917pKebuxYmTAIHHi+Jcho4fLneq31JN3FkPIS/qTUEMYtZQ4ZKtB47
+         4CW8yY60X66fG3xpJbt7ZMPwhVV7LHX9vqEb4NjEAljrufy/MXC7DAPqtp2Qws24YO5J
+         MYUy2kNzQ1eF67St+ok6uhpBQkY8CLAbG46QcRAJjKENtUnHy7UgqnLWIvIGZ8arAady
+         q4mg==
+X-Gm-Message-State: AOJu0Yz5Rb+Wnxu3mec0h50hoynLj5NalzdMhxlpRWzOPWieAonF78dN
+	tgLDXnEiRo9bjgZn1P3dWsORpuaZ0Q9hLeVLrLu5WeEzzjoPaMw3QaLD+cr1BFI=
+X-Google-Smtp-Source: AGHT+IHzvIBnuj+VZVntCxM65I+CUqxr8H86zD1M5FUds+0GiQqHbOUfp9qCBITF2QL9eJBjk4lEiw==
+X-Received: by 2002:ac2:5f0f:0:b0:511:17f1:8e09 with SMTP id 15-20020ac25f0f000000b0051117f18e09mr384810lfq.35.1706559816315;
+        Mon, 29 Jan 2024 12:23:36 -0800 (PST)
 Received: from sleipner.berto.se (p4fcc8c6a.dip0.t-ipconnect.de. [79.204.140.106])
-        by smtp.googlemail.com with ESMTPSA id mc4-20020a170906eb4400b00a338fedb9ebsm4316386ejb.54.2024.01.29.12.23.34
+        by smtp.googlemail.com with ESMTPSA id mc4-20020a170906eb4400b00a338fedb9ebsm4316386ejb.54.2024.01.29.12.23.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jan 2024 12:23:34 -0800 (PST)
+        Mon, 29 Jan 2024 12:23:36 -0800 (PST)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Hans Verkuil <hverkuil@xs4all.nl>,
 	Sakari Ailus <sakari.ailus@linux.intel.com>,
@@ -56,10 +58,12 @@ To: Hans Verkuil <hverkuil@xs4all.nl>,
 	linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
 	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/6] media: rcar-vin: Make use of multiple connections in v4l-async
-Date: Mon, 29 Jan 2024 21:22:48 +0100
-Message-ID: <20240129202254.1126012-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/6] media: rcar-vin: Simplify remote source type detection
+Date: Mon, 29 Jan 2024 21:22:50 +0100
+Message-ID: <20240129202254.1126012-3-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240129202254.1126012-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20240129202254.1126012-1-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -69,69 +73,185 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hello,
+The video source connected to a VIN instance can be either be a CSI-2
+receiver, a CS-ISP or a parallel device. Each one requiring slightly
+different configuration, sometimes reusing the same registers with
+different meaning depending on what video source is used. The video
+source type can change at run-time using the media device API.
 
-Since the addition of Gen3 support to rcar-vin the driver have worked
-around the limitation in v4l-async that a subdevice could only be bound
-to one notifier. This was needed as each VIN instance can be connected
-to the same CSI-2 receiver and each capture a different virtual channel.
+This was introduced with R-Car Gen3 with two possible video sources and
+have since been extended with one more. Instead of adding more flags
+that needs to be set/cleared when changing links in the media graph add
+functionality to use the media device to determine the video source
+type.
 
-The workaround was implemented as a single notifier that was registered
-by the last VIN driver instance to attach to the device, and
-unregistered by the last VIN driver instance to go away. This lead to a
-lot of complexities as the driver had to synchronize between them at
-different points in the life-cycle (probe, v4l-async complete, remove,
-etc).
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ .../platform/renesas/rcar-vin/rcar-core.c     |  3 --
+ .../platform/renesas/rcar-vin/rcar-dma.c      | 48 ++++++++++++++-----
+ .../platform/renesas/rcar-vin/rcar-vin.h      |  2 -
+ 3 files changed, 35 insertions(+), 18 deletions(-)
 
-To complicate things even more some VIN instances had access to its own
-private parallel interface that also needed to be a part of the media
-graph. This lead to some VIN driver instances having to deal with one
-private notifier for the parallel interface and interacting with the
-shared group notifier.
-
-The limitation in v4l-async have now been addressed by [1]. This
-simplify things quiet a bit for drivers and this series removes the
-concept of a shared group notifier and implements a single notifier for
-each VIN instance. This single notifier covers both the parallel
-interface for the VIN instances that have it and all shared subdevices
-that are readable for each VIN. This also simplify the media link
-creation.
-
-This series depends on a fix to the v4l-async multiple connections 
-posted separately in [2]. Without this fix the probe order can cause 
-regressions in functionality if the rcar-vin is not probed after all 
-subdevices it depends on.
-
-Patch 1-4 are small preparation patches getting small things out of the 
-way while patch 6 is a small post cleanup patch. Patch 5 is the real 
-work in this series, it's a bit large but most of it is removal of code 
-no longer needed.
-
-Tested on R-Car Gen2 (M2), Gen3 (H3, M3N, V3M), Gen4 (V4H) with latest 
-v4l2-compilance and other VIN specific tests without regressions.
-
-The work is based on the latest media-next/master branch.
-
-1. commit 28a1295795d8 ("media: v4l: async: Allow multiple connections
-   between entities")
-
-2. [PATCH] media: v4l: async: Fix completion of chained subnotifiers
-   https://lore.kernel.org/linux-media/20240129195954.1110643-1-niklas.soderlund+renesas@ragnatech.se/T/#u
-
-Niklas Söderlund (6):
-  media: rcar-vin: Move media graph pointers to device info
-  media: rcar-vin: Simplify remote source type detection
-  media: rcar-vin: Fold simple functions into only caller
-  media: rcar-vin: Register the media device together with the group
-  media: rcar-vin: Remove the shared group notifier
-  media: rcar-vin Rename notifier helper functions
-
- .../platform/renesas/rcar-vin/rcar-core.c     | 639 +++++++-----------
- .../platform/renesas/rcar-vin/rcar-dma.c      |  48 +-
- .../platform/renesas/rcar-vin/rcar-v4l2.c     |  44 +-
- .../platform/renesas/rcar-vin/rcar-vin.h      |  34 +-
- 4 files changed, 289 insertions(+), 476 deletions(-)
-
+diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-core.c b/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+index 47aeeeb4354e..8555fa446811 100644
+--- a/drivers/media/platform/renesas/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/renesas/rcar-vin/rcar-core.c
+@@ -807,7 +807,6 @@ static int rvin_csi2_link_notify(struct media_link *link, u32 flags,
+ 		for (i = 0; i < RCAR_VIN_NUM; i++) {
+ 			if (group->vin[i] &&
+ 			    group->vin[i]->parallel.subdev == sd) {
+-				group->vin[i]->is_csi = false;
+ 				ret = 0;
+ 				goto out;
+ 			}
+@@ -865,8 +864,6 @@ static int rvin_csi2_link_notify(struct media_link *link, u32 flags,
+ 		ret = rvin_set_channel_routing(group->vin[master_id], chsel);
+ 		if (ret)
+ 			goto out;
+-
+-		vin->is_csi = true;
+ 	}
+ out:
+ 	mutex_unlock(&group->lock);
+diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+index e2c40abc6d3d..f392e177c59b 100644
+--- a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+@@ -178,6 +178,28 @@ static bool rvin_scaler_needed(const struct rvin_dev *vin)
+ 		 vin->compose.height == vin->format.height);
+ }
+ 
++static struct v4l2_subdev *rvin_remote_subdev(const struct rvin_dev *vin)
++{
++	struct media_pad *pad;
++
++	if (!vin->info->use_mc)
++		return vin->parallel.subdev;
++
++	pad = media_pad_remote_pad_first(&vin->pad);
++	if (!pad)
++		return NULL;
++
++	return media_entity_to_v4l2_subdev(pad->entity);
++}
++
++static bool rvin_remote_is_parallel(const struct rvin_dev *vin)
++{
++	if (!vin->parallel.subdev)
++		return false;
++
++	return rvin_remote_subdev(vin) == vin->parallel.subdev;
++}
++
+ struct vin_coeff {
+ 	unsigned short xs_value;
+ 	u32 coeff_set[24];
+@@ -752,7 +774,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	case MEDIA_BUS_FMT_UYVY8_2X8:
+ 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
+-		if (!vin->is_csi &&
++		if (rvin_remote_is_parallel(vin) &&
+ 		    vin->parallel.mbus_type == V4L2_MBUS_BT656)
+ 			vnmc |= VNMC_INF_YUV8_BT656;
+ 		else
+@@ -765,7 +787,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	case MEDIA_BUS_FMT_UYVY10_2X10:
+ 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
+-		if (!vin->is_csi &&
++		if (rvin_remote_is_parallel(vin) &&
+ 		    vin->parallel.mbus_type == V4L2_MBUS_BT656)
+ 			vnmc |= VNMC_INF_YUV10_BT656;
+ 		else
+@@ -791,13 +813,13 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		case VNMC_INF_YUV10_BT656:
+ 		case VNMC_INF_YUV16:
+ 		case VNMC_INF_RGB666:
+-			if (vin->is_csi) {
++			if (!rvin_remote_is_parallel(vin)) {
+ 				vin_err(vin, "Invalid setting in MIPI CSI2\n");
+ 				return -EINVAL;
+ 			}
+ 			break;
+ 		case VNMC_INF_RAW8:
+-			if (!vin->is_csi) {
++			if (rvin_remote_is_parallel(vin)) {
+ 				vin_err(vin, "Invalid setting in Digital Pins\n");
+ 				return -EINVAL;
+ 			}
+@@ -813,7 +835,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	else
+ 		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+ 
+-	if (!vin->is_csi) {
++	if (rvin_remote_is_parallel(vin)) {
+ 		/* Hsync Signal Polarity Select */
+ 		if (!(vin->parallel.bus.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+ 			dmr2 |= VNDMR2_HPS;
+@@ -904,10 +926,10 @@ static int rvin_setup(struct rvin_dev *vin)
+ 
+ 		if (vin->info->model == RCAR_GEN3) {
+ 			/* Select between CSI-2 and parallel input */
+-			if (vin->is_csi)
+-				vnmc &= ~VNMC_DPINE;
+-			else
++			if (rvin_remote_is_parallel(vin))
+ 				vnmc |= VNMC_DPINE;
++			else
++				vnmc &= ~VNMC_DPINE;
+ 		}
+ 	}
+ 
+@@ -1337,14 +1359,16 @@ static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
+ 
+ static int rvin_set_stream(struct rvin_dev *vin, int on)
+ {
+-	struct v4l2_subdev *sd;
++	struct v4l2_subdev *sd = rvin_remote_subdev(vin);
+ 	struct media_pad *pad;
+ 	int ret;
+ 
++	if (!sd)
++		return -EPIPE;
++
+ 	/* No media controller used, simply pass operation to subdevice. */
+ 	if (!vin->info->use_mc) {
+-		ret = v4l2_subdev_call(vin->parallel.subdev, video, s_stream,
+-				       on);
++		ret = v4l2_subdev_call(sd, video, s_stream, on);
+ 
+ 		return ret == -ENOIOCTLCMD ? 0 : ret;
+ 	}
+@@ -1353,8 +1377,6 @@ static int rvin_set_stream(struct rvin_dev *vin, int on)
+ 	if (!pad)
+ 		return -EPIPE;
+ 
+-	sd = media_entity_to_v4l2_subdev(pad->entity);
+-
+ 	if (!on) {
+ 		video_device_pipeline_stop(&vin->vdev);
+ 		return v4l2_subdev_call(sd, video, s_stream, 0);
+diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-vin.h b/drivers/media/platform/renesas/rcar-vin/rcar-vin.h
+index ce5419818b36..4bfe8ea031c5 100644
+--- a/drivers/media/platform/renesas/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/renesas/rcar-vin/rcar-vin.h
+@@ -202,7 +202,6 @@ struct rvin_info {
+  * @sequence:		V4L2 buffers sequence number
+  * @state:		keeps track of operation state
+  *
+- * @is_csi:		flag to mark the VIN as using a CSI-2 subdevice
+  * @chsel:		Cached value of the current CSI-2 channel selection
+  *
+  * @mbus_code:		media bus format code
+@@ -246,7 +245,6 @@ struct rvin_dev {
+ 	unsigned int sequence;
+ 	enum rvin_dma_state state;
+ 
+-	bool is_csi;
+ 	unsigned int chsel;
+ 
+ 	u32 mbus_code;
 -- 
 2.43.0
 
