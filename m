@@ -1,134 +1,108 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8087166B51;
-	Tue, 30 Jan 2024 13:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EA166B51;
+	Tue, 30 Jan 2024 13:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706621187; cv=none; b=h6D5osBGsQpBTS3PmZW7D/b3KPqRwiHNjubfadIcVYh8G/8j3ooGXWKuAPgac1ZWSFwhz9web3KD3WSIMp1eSSGoEsvS6tzv5LY7O19afvzhcibkC5QgqDzDom3t5qvskKAXWSWkm+aLMdhKciPYIqw6ReEQ0Rcl+6N5Sh1AXV8=
+	t=1706622016; cv=none; b=l/RSZZTwr/8S9111sKqQbR930CqieTM59S5LJTaIeB8hxqVUSAx3WJCWBleituZ+Cs5KUv3POn4g+5f1oR7KDk9OFhw8d2jkEucSVXnrfqgph6Z+Sjk/5+P3jRy0a/8frEch6SriOat7VrKe8x8dt/YD1bA1I49zS8LMu7mcZrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706621187; c=relaxed/simple;
-	bh=PF8CAVL4rEFi9w1ZE/f1iolLbWvY7zhJk9STs3r80is=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N0yvkbiH163MfGwzMAG02tBzSRNBrhNVgWY2VMX7Vi1Xw9VcLgPEvZzB7F6rKakLEd8uBrxHvHE/a+HdUytPbSyrrVIPI/OTp7Solbxj+6UKucSm5pkUjqk/E/Zlq9a9WAnZkoPhBeHVxr6+2apCmW9ZB2BcRE/5gyQlPF9EWZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-20536d5c5c7so2476396fac.2;
-        Tue, 30 Jan 2024 05:26:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706621184; x=1707225984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=twRUHDzS8w4WKfQKLf30GrMRPHMUcxhF058BULLzw1Q=;
-        b=T6Cbm5Ook6mzsNmevwT8X4ViTMwLLVkIH0jpqoJ/aPWw1vluaiHZtpervNJaen8zcm
-         y7Efb7Xb2Vkhub8H6rKHu6MlvhKDuADkh5Rd1patBG8UmmQb/oVO3+1Z2qJNnoEgMIT2
-         oTf2/N+RwjflCSfPRKOkBwD8p4mGUACjTaJnp31A86EFu4bGBcTta8XNs+YgZlIChcjl
-         pOT6mMHsGtLk1gAjOHLN1//0jGexPdprqSjhybqPGBYZ4aKtk6TM6Zp37oG7Lx3CKyII
-         LMpuqCF7v9GGpbGf72DmfkSblZI5nWUaq4MnLvaD3qkA/X0qexTcz8vzqD0hAAMvsnB/
-         8SjA==
-X-Gm-Message-State: AOJu0YwtLR6zeQFQ/D4pXEeu0G868bKNtBkuK1ms1DEUVj2KzvDDxzP7
-	xICod1VpcLWfWNGK0SwPTn0WOkLAMRDK8YUCJKVePsSSac7wozFDKJaZucMj8KY=
-X-Google-Smtp-Source: AGHT+IGgq38bhoeG59BH65Ja8KFWXHL5iTihljLt3Fjpux1S3N8uNoMeFoWUPjhw0kO2fb2gO1QH5A==
-X-Received: by 2002:a05:6871:8191:b0:218:61af:1c75 with SMTP id so17-20020a056871819100b0021861af1c75mr5223962oab.37.1706621184274;
-        Tue, 30 Jan 2024 05:26:24 -0800 (PST)
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com. [209.85.210.41])
-        by smtp.gmail.com with ESMTPSA id n13-20020a9d4d0d000000b006e11d51d04csm1292201otf.18.2024.01.30.05.26.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 05:26:23 -0800 (PST)
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6dde5d308c6so2643387a34.0;
-        Tue, 30 Jan 2024 05:26:23 -0800 (PST)
-X-Received: by 2002:a9d:6a8e:0:b0:6dd:e8d5:9afb with SMTP id
- l14-20020a9d6a8e000000b006dde8d59afbmr5897353otq.3.1706621183706; Tue, 30 Jan
- 2024 05:26:23 -0800 (PST)
+	s=arc-20240116; t=1706622016; c=relaxed/simple;
+	bh=G9LEm9bshqz7RWavexvFMjjfPjpGFNeDdMRx5fScUkI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jP42Ii4AQmAIEyI+EDLuO7ijSyXiU7UnWmHIbLgIHyW4S0SU6wKMKex+JqbYD1u/Hc8ibkmrjC/17Y12ANuv3PcrN8yt0r81PVackJcPSAjraak2YIb+5myY1Bkptf7F7viAmN9pdcTjSLjA9lH3+eZFBTxfbBqzAALDDxInkns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LrKfnFVs; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LrKfnFVs"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BB1221C0005;
+	Tue, 30 Jan 2024 13:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1706622010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A3wtrD2uoXhVlXOQf9qkwgkVdNZsFSpbdjrR4OR46j4=;
+	b=LrKfnFVsBIoEn/8B5X8Q4FrVyf8P3XnWHnYRgT04wSxgpV6el0DMo9SCrOYyuTlNWRy9F6
+	HiMifCO0TYFOfj1nXd7yppKz47BmgspAYw26tmMHKIroClhx4tqd94/B2C7y1n9iIs7nM2
+	5AhD1nOEdr729xRmPWHdrlVN+0yjF3PF3u4ih5/SG2gfgZTc7l46mgcAWQ2OhaNeJMiwJd
+	hJmhwDRxnp3iwd88Jqru9WGzBoBTH1yEWeMs6ITKE79IvuRZtRyQzWckvB5Qid55y+yUrd
+	ZCfiUJZfROj1ZhBBYxDvSMdZQrem47kgWHWsZX5uxyP+SYZu1LypAurOGVhPyw==
+Date: Tue, 30 Jan 2024 14:40:31 +0100 (CET)
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+cc: Romain Gantois <romain.gantois@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
+    Heiner Kallweit <hkallweit1@gmail.com>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, 
+    Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+    Jose Abreu <joabreu@synopsys.com>, 
+    Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+    =?ISO-8859-15?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>, 
+    Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+    Miquel Raynal <miquel.raynal@bootlin.com>, 
+    Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+    linux-stm32@st-md-mailman.stormreply.com, 
+    linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/7] net: phy: add rxc_always_on flag to
+ phylink_pcs
+In-Reply-To: <ZbjLN+FzBSohg1c2@shell.armlinux.org.uk>
+Message-ID: <3e1617d8-b8c9-64d6-030d-5b6781544692@bootlin.com>
+References: <20240130-rxc_bugfix-v2-0-5e6c3168e5f0@bootlin.com> <20240130-rxc_bugfix-v2-2-5e6c3168e5f0@bootlin.com> <ZbjLN+FzBSohg1c2@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240130111250.185718-1-angelogioacchino.delregno@collabora.com> <20240130111250.185718-3-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240130111250.185718-3-angelogioacchino.delregno@collabora.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Jan 2024 14:26:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUKXwxAKgtmgMxj+y-8GBWBLWC=ROP31uStTnfLDx6OLQ@mail.gmail.com>
-Message-ID: <CAMuHMdUKXwxAKgtmgMxj+y-8GBWBLWC=ROP31uStTnfLDx6OLQ@mail.gmail.com>
-Subject: Re: [PATCH v1 02/18] thermal: Add new structures and thermal_zone_device_register()
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: daniel.lezcano@linaro.org, miquel.raynal@bootlin.com, rafael@kernel.org, 
-	rui.zhang@intel.com, lukasz.luba@arm.com, support.opensource@diasemi.com, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, linux-imx@nxp.com, andersson@kernel.org, 
-	konrad.dybcio@linaro.org, amitk@kernel.org, thara.gopinath@gmail.com, 
-	niklas.soderlund@ragnatech.se, srinivas.pandruvada@linux.intel.com, 
-	baolin.wang@linux.alibaba.com, u.kleine-koenig@pengutronix.de, 
-	hayashi.kunihiko@socionext.com, d-gole@ti.com, linus.walleij@linaro.org, 
-	DLG-Adam.Ward.opensource@dm.renesas.com, error27@gmail.com, heiko@sntech.de, 
-	hdegoede@redhat.com, jernej.skrabec@gmail.com, f.fainelli@gmail.com, 
-	bchihi@baylibre.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-GND-Sasl: romain.gantois@bootlin.com
 
-Hi Angelo,
+Hello Russell,
 
-On Tue, Jan 30, 2024 at 12:13=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
-> In preparation for extending the thermal zone devices to actually
-> have a name and disambiguate thermal zone types/names, and to do
-> a reorganization in thermal_zone_device, add some new Thermal Zone
-> structures:
->
-> Introduce new thermal_governor_params, thermal_zone_platform_params
-> and thermal_zone_device_params structures which are meant to hold
-> the parameters for thermal zone registration and, in the future, to
-> stop having a catch-all thermal_zone_device structure.
->
-> While at it, also add a new thermal_zone_device_register() function
-> which uses the new structure(s) for registration;
-> the now old functions thermal_tripless_zone_device_register() and
-> thermal_zone_device_register_with_trips() are now advertised as
-> being deprecated and changed to instead act as wrappers around the
-> new thermal_zone_device_register().
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+On Tue, 30 Jan 2024, Russell King (Oracle) wrote:
+...
+> > +int phylink_pcs_pre_init(struct phylink *pl, struct phylink_pcs *pcs)
+> > +{
+> > +	int ret = 0;
+> > +
+> > +	/* Signal to PCS driver that MAC requires RX clock for init */
+> > +	if (pl->config->mac_requires_rxc)
+> > +		pcs->rxc_always_on = true;
+> > +
+> > +	if (pcs->ops->pcs_pre_init)
+> > +		ret = pcs->ops->pcs_pre_init(pcs, pl->link_config.interface);
+> 
+> Given that:
+> 1) phylink supports switching between mutliple different interfaces,
+> 2) from what I can see you are only calling this from stmmac's
+>    initialisation path,
+> 3) you pass the interface mode to the PCS here
+> 
+> then we don't want the PCS to configure itself for the interface mode
+> passed in, because this function won't be called when the interface
+> mode changes - and PCS driver authors will have to bear that in mind.
+> So...
+> 
+...
+> However, do we really need it - if the PCS is supplying the RXC to
+> the MAC, then is the interface mode between the PCS and PHY all that
+> relevant at this point?
 
-Thanks for your patch!
+If a PCS can set the needed clock signal without configuring the details 
+of a particular link mode, then passing the interface mode to pcs_pre_init() 
+would indeed not be relevant. Generally, I agree that setting the interface mode 
+shouldn't be the concern of the pre-initialization function. I'll dig a bit 
+more into the PCS datasheet and run more tests to see if I can get away with 
+enabling the RX clock selectively for this particular PCS model. If not, then 
+maybe I can hardcode a "default" interface mode for the pre-initialization that 
+will not interfere with the rest of the link setup process.
 
-> ---
->  drivers/thermal/gov_power_allocator.c |  38 +++----
->  drivers/thermal/qcom/tsens.c          |   4 +-
->  drivers/thermal/thermal_core.c        | 146 ++++++++++++++++++--------
->  drivers/thermal/thermal_helpers.c     |   8 +-
->  drivers/thermal/thermal_sysfs.c       |  16 +--
->  include/linux/thermal.h               |  73 +++++++++++--
->  6 files changed, 202 insertions(+), 83 deletions(-)
+Best Regards,
 
-This also needs an update to the documentation, which still refers to
-the old function removed in commit edd220b33f479cf9 ("thermal: core:
-Drop thermal_zone_device_register()") in v6.6.:
-
-Documentation/driver-api/thermal/power_allocator.rst:`thermal_zone_device_r=
-egister()`
-Documentation/driver-api/thermal/power_allocator.rst:`thermal_zone_device_r=
-egister()`
-(i.e., platform code), then weights
-Documentation/driver-api/thermal/sysfs-api.rst:
-*thermal_zone_device_register(char *type,
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
