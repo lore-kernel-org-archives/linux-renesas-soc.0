@@ -1,145 +1,116 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AE56EB50;
-	Tue, 30 Jan 2024 11:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E42259B7C;
+	Tue, 30 Jan 2024 11:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706613232; cv=none; b=de3e41KbJzTCrRGcIsvKrM9xsWOQw5+8tayIIFiSQmmPcpkw5yp/0s8non8PoE/PuLJyTT6GXUm9fq0mV+TIxMoiAekGjXViBmSJfBzIo9gqxjumNZwoSGa3JsfjxP+diVBZaNaZV8MA6C57ejNjt01K53L79WaY8n6ptMLiGG4=
+	t=1706613946; cv=none; b=t2Gavn4lGymPzlG5Vsueh/grMsD2rzP5qMkB8sChHoapQXw79VlYIa1SFuqJaC9k93H7SKqkLxq2KgtN18A8nIK1zt5jwwxbjaFyuerumKeSt7e3PJR4fyTXm+LTWsLsLn2O0MoVzxLKOH3pjXtDuHZr0nZomOaYrwqs54afmss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706613232; c=relaxed/simple;
-	bh=1MaXaoAlGaux22185ES05zD+Vc6KSQlHot9SWkJLGp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m/TtpW19r7WBY8lBgKcbGa/sVEKE1PDQeaiJpBOxQuOiBUbPQfTLJhPxXuP4wFISCSYKQHSaG/DmtCkSrroMqUh+R1XomHpaslMYLMouxDHz49bS1AkK2C+CJDgdLvHUGUrgCUq0qKLsMU+aPEHVIg4p9pbGwMx0qGnw8iDmPVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HlU33HM8; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HlU33HM8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1706613229;
-	bh=1MaXaoAlGaux22185ES05zD+Vc6KSQlHot9SWkJLGp0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HlU33HM8DXvNnHd5pfL0Un12V2JosWoeboB5m/VaZSU7mn27JZRL7n0hOSbYmEV63
-	 nbQXPRYgNnV9Tg09ybHmHOhmVp5umMRDpOApeet2UUjPgeUG/2TZDKp/Kpyz+HgXZG
-	 HjC+6zWpXXGHJzQMPFzdZYEqaqQZxazoLeLlMmgd8mLUOxWzvFSmQESaHg+0Dz/Gh2
-	 HAyBQd2ww0Hzr2aKjZ1depqQEX+Q9jSqA9P+yS8KR91henEbqscmEDj2/qaW9sT9sq
-	 9WWEE88qf6woeJXZQ4+1zKcYguqf9dKIOVMXS0iAcsTnVywM4v2EaqrU0mJlnhEql4
-	 bXn5tAHgulcXA==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id CCFE93780FC7;
-	Tue, 30 Jan 2024 11:13:47 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: daniel.lezcano@linaro.org
-Cc: miquel.raynal@bootlin.com,
-	rafael@kernel.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	support.opensource@diasemi.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-imx@nxp.com,
-	andersson@kernel.org,
-	konrad.dybcio@linaro.org,
-	amitk@kernel.org,
-	thara.gopinath@gmail.com,
-	niklas.soderlund@ragnatech.se,
-	srinivas.pandruvada@linux.intel.com,
-	angelogioacchino.delregno@collabora.com,
-	baolin.wang@linux.alibaba.com,
-	u.kleine-koenig@pengutronix.de,
-	hayashi.kunihiko@socionext.com,
-	d-gole@ti.com,
-	linus.walleij@linaro.org,
-	DLG-Adam.Ward.opensource@dm.renesas.com,
-	error27@gmail.com,
-	heiko@sntech.de,
-	hdegoede@redhat.com,
-	jernej.skrabec@gmail.com,
-	f.fainelli@gmail.com,
-	bchihi@baylibre.com,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH v1 18/18] thermal/drivers/int340x: Migrate to thermal_zone_device_register()
-Date: Tue, 30 Jan 2024 12:12:50 +0100
-Message-ID: <20240130111250.185718-19-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240130111250.185718-1-angelogioacchino.delregno@collabora.com>
-References: <20240130111250.185718-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1706613946; c=relaxed/simple;
+	bh=lZFXC4siu4ARAFRn2/Hx/DBP/KEO5uNA29OSiJb3/f8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aLeYfTq5v6+tWs70O5no5P1RWs3atd659XnybCmA1MfwivlMGTrt8om8II+Pkq6XLvSvX27cGHl1UqNvLR1F/j8exITTBRjn8XTopQ8+HjwTiZsMcPO5XFhzl7hFwTWA3Klvd89Kk10RGBTW9ZvYnStvD+qaS/3q7cjHkZe10mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-db4364ecd6aso3101047276.2;
+        Tue, 30 Jan 2024 03:25:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706613943; x=1707218743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fRnlMJumtKu3HGeJaBtjZds244bkDv4Dl9koHy9aL+0=;
+        b=l9nQ2JpPjbARhN4zL1R3pHFAA1CxxWwLbdXpw4pqf0ZpxTMhQJl8Erw5qI5Vh8RoGa
+         +frVGD/+g5TR4L07PBqLpYDE0lKfmmMnl/OJkOFmZLOcuZSKOTJ6CF7VWAc4JBmjbNiD
+         2joNFMFZ9ufjw3njyL38CPESEY81bwswk/RylBAGHNCPy+nLWdknJ2iMeWRsn3uh6obz
+         bawYZGzRyfzwItbwG6wxx2P9HZVjdiCefA0ycU3UiqiWo2DVcNYsBgOBw3aGtucuG3Sz
+         Szt8G59cmcJhnYUS9Mojzct2o9pWXLXpQOe4DcAacvLVmRwx4C7IeQaukjNMX0TX9oZV
+         ytag==
+X-Gm-Message-State: AOJu0YyNzh7YGYhCJSz/JASCp/dphAZBv4RdFhnsh7t2P/PKTVObKnRR
+	TBGK58NvhxXuD6nTGgnufRJ6VxXI40Apz+PxkcX6ezRGAiWRl/AiyrBBldX1lmA=
+X-Google-Smtp-Source: AGHT+IFPlkQJEWJGO12npwfx0+I92P18+pn/rh4GgyqcFB3Tczg+4kA0eKFC6ftqMnladRDM+XZHJw==
+X-Received: by 2002:a25:260c:0:b0:dc2:4e05:4f87 with SMTP id m12-20020a25260c000000b00dc24e054f87mr4228780ybm.56.1706613943371;
+        Tue, 30 Jan 2024 03:25:43 -0800 (PST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id u129-20020a256087000000b00dc230f91674sm2918210ybb.26.2024.01.30.03.25.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jan 2024 03:25:43 -0800 (PST)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dc642cd955fso2886862276.0;
+        Tue, 30 Jan 2024 03:25:43 -0800 (PST)
+X-Received: by 2002:a25:203:0:b0:dc2:4d3e:acf6 with SMTP id
+ 3-20020a250203000000b00dc24d3eacf6mr3997077ybc.13.1706613943089; Tue, 30 Jan
+ 2024 03:25:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240129151618.90922-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240129151618.90922-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240129151618.90922-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 30 Jan 2024 12:25:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV=E5VDZn0QjiGQL73j135LiA1QNrYH-hCve1Yk0PqJ=A@mail.gmail.com>
+Message-ID: <CAMuHMdV=E5VDZn0QjiGQL73j135LiA1QNrYH-hCve1Yk0PqJ=A@mail.gmail.com>
+Subject: Re: [PATCH 3/5] riscv: dts: renesas: r9a07g043f: Add IRQC node to
+ RZ/Five SoC DTSI
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The thermal API has a new thermal_zone_device_register() function which
-is deprecating the older thermal_zone_device_register_with_trips() and
-thermal_tripless_zone_device_register().
+Hi Prabhakar,
 
-Migrate to the new thermal zone device registration function.
+On Mon, Jan 29, 2024 at 4:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add the IRQC node to RZ/Five (R9A07G043F) SoC DTSI.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- .../intel/int340x_thermal/int3400_thermal.c   | 20 +++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+Thanks for your patch!
 
-diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-index 427d370648d5..d8ca7ed37950 100644
---- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-@@ -536,11 +536,6 @@ static struct thermal_zone_device_ops int3400_thermal_ops = {
- 	.change_mode = int3400_thermal_change_mode,
- };
- 
--static struct thermal_zone_params int3400_thermal_params = {
--	.governor_name = "user_space",
--	.no_hwmon = true,
--};
--
- static void int3400_setup_gddv(struct int3400_thermal_priv *priv)
- {
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-@@ -572,6 +567,16 @@ static void int3400_setup_gddv(struct int3400_thermal_priv *priv)
- static int int3400_thermal_probe(struct platform_device *pdev)
- {
- 	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-+	struct thermal_zone_device_params tzdp = {
-+		.tzp = {
-+			.type = "INT3400 Thermal",
-+			.no_hwmon = true,
-+			.ops = &int3400_thermal_ops,
-+		}
-+	};
-+	struct thermal_governor_params tgp = {
-+		.governor_name = "user_space"
-+	};
- 	struct int3400_thermal_priv *priv;
- 	int result;
- 
-@@ -609,9 +614,8 @@ static int int3400_thermal_probe(struct platform_device *pdev)
- 
- 	evaluate_odvp(priv);
- 
--	priv->thermal = thermal_tripless_zone_device_register("INT3400 Thermal", priv,
--							      &int3400_thermal_ops,
--							      &int3400_thermal_params);
-+	tzdp.tgp = &tgp;
-+	priv->thermal = thermal_zone_device_register(&tzdp);
- 	if (IS_ERR(priv->thermal)) {
- 		result = PTR_ERR(priv->thermal);
- 		goto free_art_trt;
--- 
-2.43.0
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+> --- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+> +++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+> @@ -50,6 +50,82 @@ &soc {
+>         dma-noncoherent;
+>         interrupt-parent =3D <&plic>;
+>
+> +       irqc: interrupt-controller@110a0000 {
+> +               compatible =3D "renesas,r9a07g043f-irqc",
+> +                            "renesas,rzg2l-irqc";
+> +               reg =3D <0 0x110a0000 0 0x20000>;
+> +               #interrupt-cells =3D <2>;
+> +               #address-cells =3D <0>;
+> +               interrupt-controller;
+> +               interrupts =3D <SOC_PERIPHERAL_IRQ(0) IRQ_TYPE_LEVEL_HIGH=
+>,
+
+As this is the RZ/Five-specific .dtsi file, and not the common base
+.dtsi, you could avoid using SOC_PERIPHERAL_IRQ() here.
+I am not sure what is most readable...
+
+The rest LGTM (pending interrupt names review comments).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
