@@ -1,38 +1,44 @@
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EA05336D
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Feb 2024 14:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0F55D479
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Feb 2024 14:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706796881; cv=none; b=ES8tQRjupcEHwYKBachNlake+ng7VDnKwv7Ewqn1qOauuz65ul6KTwtSDGiILn/bSNcrndcpaeUpW0LwrbQ310BNzUVFP52o1XgK2tAelVbjkWWlLi73fGf0Aq6MoUB9/WmC3OYXAqTbwpm0UbPZW5wy2eZph/n528H9r/Uuvdw=
+	t=1706796895; cv=none; b=USgZ1fmdxTBsG+fHvqyEpyCc2cYfg6leTi7KsLMO5z3kOIkoheNu5B0nMEYublpZSYLti1UnyiQ7bjEE94TS5T6b+3tHxcy4EkWNErPhTCVSGZV17Ilq7akXm52rxUgecsa1gdzcA+I9xClu1mbRE5gf+CQC7RzHmjV9qOo7NzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706796881; c=relaxed/simple;
-	bh=M3+rHy2AvNp1du11yORHQQdphOQ9nwMsArmaun+yQI4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hOz9/gX9/s+npj3jVfqw+hgR5Soer/LASwa04Ye5W6iI28U1Dlt7JNhdWEsFzJlzw3IGT37nRiXCRzCcDZDrfVHa2tURYAD+YwRUZG4NxUBj4ZAHWrv8NF6rRhmEBzA8en7xeKHfNAcnNcjGoLJKuJpR0ddYHzVnUvffd35AutI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+	s=arc-20240116; t=1706796895; c=relaxed/simple;
+	bh=BvNNcCgpM4Jiz9mYBVe4AsGxR4ONLvy06FnBHPtpQQQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Bl1OPRlmVHLkEI1DKQS/kD4QxWIvMhOYbYxlEG8mVXzl1ZVjdYs1eww1aNq1wEpiUkjg5xFFkW8CVMDuw1+XZdVGqMouSFoGzWEiculnK6jL3DAqg75xYWOHvfQwJFlunw8KpPfBE3WvbvXlcBuRW4C8HmHNlsya1simo7xWruM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4TQgs23kQWz4wyHT
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Feb 2024 15:14:46 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:88f0:c83b:bafa:cdc3])
-	by michel.telenet-ops.be with bizsmtp
-	id hqEd2B00J4efzLr06qEdch; Thu, 01 Feb 2024 15:14:37 +0100
+	by baptiste.telenet-ops.be with bizsmtp
+	id hqEd2B0054efzLr01qEdSR; Thu, 01 Feb 2024 15:14:39 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rVXp2-00Gv44-AP;
+	id 1rVXp2-00Gv46-Ap;
 	Thu, 01 Feb 2024 15:14:37 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rVXpt-00AXZJ-9X;
+	id 1rVXpt-00AXZP-Aw;
 	Thu, 01 Feb 2024 15:14:37 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: renesas: r8a779h0/gray-hawk-single: Add I2C and EEPROM support
-Date: Thu,  1 Feb 2024 15:14:32 +0100
-Message-Id: <cover.1706796660.git.geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: renesas: gray-hawk-single: Add I2C0 and EEPROMs
+Date: Thu,  1 Feb 2024 15:14:34 +0100
+Message-Id: <960595394a274b675f1ec9ec1c324e4cc1ac1f77.1706796660.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1706796660.git.geert+renesas@glider.be>
+References: <cover.1706796660.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -41,36 +47,80 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+Enable the I2C0 bus on the Gray Hawk Single board, and describe the I2C
+EEPROMs present.
 
-This patch series adds I2C support for the Renesas R-Car V4M (R8A779H0)
-Soc, and I2C0 and board ID EEPROM support for the Gray Hawk Single
-development board.
+Based on patches for Gray Hawk in the BSP by Hai Pham.
 
-I intend to queue this in renesas-devel for v6.9.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+The Gray Hawk Single documentation does not mention the purpose of the
+I2C EEPROMs, but the schematics label the last two as "Board ID".
+The labels match the corresponding EEPROMs on the White Hawk CPU and
+BreakOut board stack, from which the Gray Hawk Single board is derived.
+---
+ .../dts/renesas/r8a779h0-gray-hawk-single.dts | 41 +++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Thanks for your comments!
-
-Geert Uytterhoeven (1):
-  arm64: dts: renesas: gray-hawk-single: Add I2C0 and EEPROMs
-
-Hai Pham (1):
-  arm64: dts: renesas: r8a779h0: Add I2C nodes
-
- .../dts/renesas/r8a779h0-gray-hawk-single.dts | 41 ++++++++++++++
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi     | 56 +++++++++++++++++++
- 2 files changed, 97 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+index 1c84fe7171d3fd85..1bee27b2284d2eee 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+@@ -50,6 +50,42 @@ &hscif0 {
+ 	status = "okay";
+ };
+ 
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	eeprom@50 {
++		compatible = "rohm,br24g01", "atmel,24c01";
++		label = "cpu-board";
++		reg = <0x50>;
++		pagesize = <8>;
++	};
++
++	eeprom@51 {
++		compatible = "rohm,br24g01", "atmel,24c01";
++		label = "breakout-board";
++		reg = <0x51>;
++		pagesize = <8>;
++	};
++
++	eeprom@52 {
++		compatible = "rohm,br24g01", "atmel,24c01";
++		label = "csi-dsi-sub-board-id";
++		reg = <0x52>;
++		pagesize = <8>;
++	};
++
++	eeprom@53 {
++		compatible = "rohm,br24g01", "atmel,24c01";
++		label = "ethernet-sub-board-id";
++		reg = <0x53>;
++		pagesize = <8>;
++	};
++};
++
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+@@ -59,6 +95,11 @@ hscif0_pins: hscif0 {
+ 		function = "hscif0";
+ 	};
+ 
++	i2c0_pins: i2c0 {
++		groups = "i2c0";
++		function = "i2c0";
++	};
++
+ 	scif_clk_pins: scif_clk {
+ 		groups = "scif_clk";
+ 		function = "scif_clk";
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
