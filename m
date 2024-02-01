@@ -1,42 +1,38 @@
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3F85D484
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3A65D482
 	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Feb 2024 14:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706797166; cv=none; b=koOeOpLD2Lv8260j1ZAoLYd4Lt0981ESJnhUux20P4hMDlZWkqknj5oXC/yFu8Tup9JQRwQLeWEZx05lYt3HDcsv3NSGx+jjL8jbvtIEb749xL35pr6YVMiN3PxSwedOlVsApz07+QwisjNTVAuy3W/eQyeYbtnMpuQcfikUBOg=
+	t=1706797166; cv=none; b=QbXkawxootyW0ABC/TPmMLfNVFJIfOU5d6k+7AxaI94P8s86yXWkSBSmVwUrRmSqljUzrmhJydJRLGVgXcBNTtTypSM5FrQeCQTy75smkV2x0Jf9KzoMB8uM3qHjk4KL6vNJrf1L2S19R0DT4syzXi4S/Oy6T/xFDF/ARpFc+rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706797166; c=relaxed/simple;
-	bh=BQ5XINEvdzRZUIf76yiuqfyI/qE+NO/uTHHAN4hv/eQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XkZ3UIRlRcOJB3wUQERSA7MX+f7IaT+SX5hebzVflnWeqTkU32TVD6euxyGLLiBySgNiyUQWy9mMu87L7T1yE8hL86rPM4Om+6EeBfweysVqgXxVaseVE0UdX5DIIQJnX7jgLexBkKRuOD53APTpIrvVQ5DUHUqYGyWZ2rRC2nw=
+	bh=n9kkHsS6eiHr/WnXAAxDmtSC9X+OgSNeOnVKCrWyMYg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XsI2DO65Ifv2LURrfVzht4OdBdmHLlKnXAxg0hVV5RW8/qMZqvwn/VLt03alxl0iKl6tiDbBPXDXvZkZBuyEWtRBEQxrhvoJxJFyxmejMTtJhF1GEzaiCFCm9Xx3Wzbo4JhVdSVDYfSfaqxiZZbpTiF5seFvR0wX9MEh3tlBU6w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:88f0:c83b:bafa:cdc3])
 	by xavier.telenet-ops.be with bizsmtp
-	id hqKM2B0084efzLr01qKMiE; Thu, 01 Feb 2024 15:19:21 +0100
+	id hqKM2B0064efzLr01qKMiC; Thu, 01 Feb 2024 15:19:21 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rVXtc-00Gv4l-5P;
+	id 1rVXtc-00Gv4a-2m;
 	Thu, 01 Feb 2024 15:19:21 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rVXuT-00AXdV-4V;
+	id 1rVXuT-00AXdG-1I;
 	Thu, 01 Feb 2024 15:19:21 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-	Duy Nguyen <duy.nguyen.rh@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] arm64: dts: renesas: r8a779h0: Add CPU core clocks
-Date: Thu,  1 Feb 2024 15:19:19 +0100
-Message-Id: <c64cf6ca1590fa1a36b90a18fd70c831d5b8318e.1706796979.git.geert+renesas@glider.be>
+Subject: [PATCH 0/5] arm64: dts: renesas: r8a779h0: Add full CA76 CPU core support
+Date: Thu,  1 Feb 2024 15:19:15 +0100
+Message-Id: <cover.1706796979.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1706796979.git.geert+renesas@glider.be>
-References: <cover.1706796979.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -45,53 +41,37 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Duy Nguyen <duy.nguyen.rh@renesas.com>
+	Hi all,
 
-Describe the clocks for the four Cortex-A76 CPU cores.
-CA76 CPU cores 0,1,2,3 are clocked by ZC0,ZC1,ZC2,ZC3.
+This patch series adds full support for the four Cortex-A76 CPU cores on
+the Renesas R-Car V4M (R8A779H0) Soc.  It has been tested on the Gray
+Hawk Single development board.
 
-Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+I intend to queue this in renesas-devel for v6.9.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index b3255bba69e3e6da..622775f6160f55bd 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -43,6 +43,7 @@ a76_0: cpu@0 {
- 			next-level-cache = <&L3_CA76>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpg CPG_CORE R8A779H0_CLK_ZC0>;
- 		};
- 
- 		a76_1: cpu@100 {
-@@ -53,6 +54,7 @@ a76_1: cpu@100 {
- 			next-level-cache = <&L3_CA76>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpg CPG_CORE R8A779H0_CLK_ZC1>;
- 		};
- 
- 		a76_2: cpu@200 {
-@@ -63,6 +65,7 @@ a76_2: cpu@200 {
- 			next-level-cache = <&L3_CA76>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpg CPG_CORE R8A779H0_CLK_ZC2>;
- 		};
- 
- 		a76_3: cpu@300 {
-@@ -73,6 +76,7 @@ a76_3: cpu@300 {
- 			next-level-cache = <&L3_CA76>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpg CPG_CORE R8A779H0_CLK_ZC3>;
- 		};
- 
- 		idle-states {
+Thanks for your comments!
+
+
+Duy Nguyen (5):
+  arm64: dts: renesas: r8a779h0: Add L3 cache controller
+  arm64: dts: renesas: r8a779h0: Add secondary CA76 CPU cores
+  arm64: dts: renesas: r8a779h0: Add CPUIdle support
+  arm64: dts: renesas: r8a779h0: Add CPU core clocks
+  arm64: dts: renesas: r8a779h0: Add CA76 operating points
+
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 99 +++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
