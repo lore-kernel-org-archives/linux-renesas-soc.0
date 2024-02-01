@@ -1,274 +1,129 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D25441760;
-	Thu,  1 Feb 2024 19:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC0843AC7;
+	Thu,  1 Feb 2024 19:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706816744; cv=none; b=pjiA/bReF24+oTDNporggwPsAWh3ww8PobRagwiYKJr9JxoECPzwCMeZXl4aENbp+ZVQSackpkrpdR/PIUNbLgIads64kcR7fLQdGErmBNrf9ti76dSbQYXlil3Dn8Yu4nozs9ImxcksEVppKl6eQgBDk2Q78CV6qYXXjAAljCg=
+	t=1706817129; cv=none; b=iNXZbCq815JhDAzz4Wvj1CDZFmhjy370wFoz47rk8lMBQuXXKYbmkmHqJGuQTYIElqRxfnsO8WEEjy3BBUvhGDacQJtaDizTNSFDZTbQy3zDXmTs9rWyYlpJxYk0k1fG93v6j+Isfr8oLc72Y69AeafykfUJZysbNaLXM0OA1qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706816744; c=relaxed/simple;
-	bh=3+DfA2G9GAhiy2aSeLexKehUjz5+EhJuO2Fy6LQbvCI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZE+SJXow3OfMFXE+0qcSWvZJpdIF54RthEIh5+yCexyJv3Y5SAXSrvdIh4qqsx1YWYPt7RHcqOQ74iH9MIU5nPi/PYwggS9oQ0E2W1HH/DbDpkAKgnaZNSWUEhowSLZAgdYnynXbhw0SS3SD/vxQLXarb/6j+WUbYhylH6qv9YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.05,236,1701097200"; 
-   d="scan'208";a="192551618"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Feb 2024 04:45:34 +0900
-Received: from localhost.localdomain (unknown [10.226.92.227])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 17BA040741B5;
-	Fri,  2 Feb 2024 04:45:29 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 net-next 1/2] ravb: Add Rx checksum offload support for GbEth
-Date: Thu,  1 Feb 2024 19:45:20 +0000
-Message-Id: <20240201194521.139472-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240201194521.139472-1-biju.das.jz@bp.renesas.com>
-References: <20240201194521.139472-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1706817129; c=relaxed/simple;
+	bh=Xew4gfla9jXfDUHncBpGBh9XjFEK7ZSm6CBMFGhAqEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m37LC7QVhCxkQzfCNuMPT1lkNcXeHkq4I+Nnz6k4+VnQ/nfAsCBJ5Wfij6HkSAQNUiURX/qkWStFroctgYjT9RvrisKzXPV8T1B4+oMiozrL+WPj0++scjo5iMHeok0eHtkTnw1RCL57h0hOeu702uxYxj2TXhXMB168G9zCBkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5958b9cda7aso277826eaf.0;
+        Thu, 01 Feb 2024 11:52:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706817127; x=1707421927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wBl5ou+TD9Mfvm1lNPShNlGf1pFR7KSH1sVazZHfCoo=;
+        b=TNNH+viGuZzgzeZCrGkeHKnAVu2odmk3BtRhzeh3LmS06uvU2seKKDZLz3sQc3tbsF
+         bcttPTPeYiaeeJTqLVN+vvrUcrAO6iDBH8fRzff6fMS1SmgnemkgqViG7GtjWtBizUgN
+         8chO3mWbXgHlsxtcGnS1WGVfjxTimpj5X5it6dJ3iyjUaMKfNXgwS3kBt07vR10J0AqH
+         Qooz/pTzSF5XwsN5sAaallTLkD38ENyxtHMvb4AqvTVYT6K5b15nZdZOAzrqIB+UomZq
+         kESozfZWjfV2GDN8FxPwYMR3sgSFFxJGCvBzq57ONbwmad++Xss3d3Y21FbQDn+xWPgK
+         5d4w==
+X-Gm-Message-State: AOJu0YzfCVH1BzQ348nm/xSrSzysAv969o1xlbLbju7Y0aQ1SnlZmLNN
+	siQ6lpJUCQsP3wA5q1NjvlKVgOArFOF5mPso00GhOARWCirOGq/Bsn+pfncJkK71YMM8VJJZ1jy
+	hzmgXjSnmsGOSLTvHpuRR1GOf+eY=
+X-Google-Smtp-Source: AGHT+IGIX57rgCOZHcRSzGZQRMQVAH2ftzlN0hg9CMRZtySZdlSrx6EQamzGXxueyqs1l1rdkWQ36d9/JVVygPbihns=
+X-Received: by 2002:a05:6820:2c8a:b0:59a:bfb:f556 with SMTP id
+ dx10-20020a0568202c8a00b0059a0bfbf556mr3738842oob.0.1706817127183; Thu, 01
+ Feb 2024 11:52:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240130111250.185718-1-angelogioacchino.delregno@collabora.com> <20240130111250.185718-9-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240130111250.185718-9-angelogioacchino.delregno@collabora.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 1 Feb 2024 20:51:56 +0100
+Message-ID: <CAJZ5v0ifn7eg9WrpNF2_PB62gE_BzV2Vx5_k7ebOoZWdQNVWaQ@mail.gmail.com>
+Subject: Re: [PATCH v1 08/18] thermal: intel: pch_thermal: Migrate to thermal_zone_device_register()
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: daniel.lezcano@linaro.org, miquel.raynal@bootlin.com, rafael@kernel.org, 
+	rui.zhang@intel.com, lukasz.luba@arm.com, support.opensource@diasemi.com, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, linux-imx@nxp.com, andersson@kernel.org, 
+	konrad.dybcio@linaro.org, amitk@kernel.org, thara.gopinath@gmail.com, 
+	niklas.soderlund@ragnatech.se, srinivas.pandruvada@linux.intel.com, 
+	baolin.wang@linux.alibaba.com, u.kleine-koenig@pengutronix.de, 
+	hayashi.kunihiko@socionext.com, d-gole@ti.com, linus.walleij@linaro.org, 
+	DLG-Adam.Ward.opensource@dm.renesas.com, error27@gmail.com, heiko@sntech.de, 
+	hdegoede@redhat.com, jernej.skrabec@gmail.com, f.fainelli@gmail.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-TOE has hardware support for calculating IP header and TCP/UDP/ICMP
-checksum for both IPv4 and IPv6.
+On Tue, Jan 30, 2024 at 12:13=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> The thermal API has a new thermal_zone_device_register() function which
+> is deprecating the older thermal_zone_device_register_with_trips() and
+> thermal_tripless_zone_device_register().
+>
+> Migrate to the new thermal zone device registration function.
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
+>  drivers/thermal/intel/intel_pch_thermal.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/thermal/intel/intel_pch_thermal.c b/drivers/thermal/=
+intel/intel_pch_thermal.c
+> index b3905e34c507..73d7c2ac7dbc 100644
+> --- a/drivers/thermal/intel/intel_pch_thermal.c
+> +++ b/drivers/thermal/intel/intel_pch_thermal.c
+> @@ -160,6 +160,7 @@ static int intel_pch_thermal_probe(struct pci_dev *pd=
+ev,
+>                                    const struct pci_device_id *id)
+>  {
+>         enum pch_board_ids board_id =3D id->driver_data;
+> +       struct thermal_zone_device_params tzdp;
+>         struct pch_thermal_device *ptd;
+>         int nr_trips =3D 0;
+>         u16 trip_temp;
+> @@ -233,10 +234,13 @@ static int intel_pch_thermal_probe(struct pci_dev *=
+pdev,
+>
+>         nr_trips +=3D pch_wpt_add_acpi_psv_trip(ptd, nr_trips);
+>
+> -       ptd->tzd =3D thermal_zone_device_register_with_trips(board_names[=
+board_id],
+> -                                                          ptd->trips, nr=
+_trips,
+> -                                                          0, ptd, &tzd_o=
+ps,
+> -                                                          NULL, 0, 0);
+> +       tzdp.tzp.type =3D board_names[board_id];
+> +       tzdp.tzp.devdata =3D ptd;
+> +       tzdp.tzp.trips =3D ptd->trips;
+> +       tzdp.tzp.num_trips =3D nr_trips;
+> +       tzdp.tzp.ops =3D &tzd_ops;
+> +
+> +       ptd->tzd =3D thermal_zone_device_register(&tzdp);
 
-Add Rx checksum offload supported by TOE for IPv4 and TCP/UDP protocols.
+IMV, this should be
 
-For Rx, the 4-byte result of checksum calculation is attached to the
-Ethernet frames.First 2-bytes is result of IPv4 header checksum and next
-2-bytes is TCP/UDP/ICMP checksum.
+ptd->tzd =3D thermal_zone_device_register(board_names[board_id],
+ptd->trips, nr_trips, &tzd_ops, ptd, NULL);
 
-If a frame does not have checksum error, 0x0000 is attached as checksum
-calculation result. For unsupported frames 0xFFFF is attached as checksum
-calculation result. In case of an IPv6 packet, IPv4 checksum is always set
-to 0xFFFF.
+and the tzdp variable is not necessary even.
 
-We can test this functionality by the below commands
+Analogously in the rest of the series (ie. patches [4-18/18]).
 
-ethtool -K eth0 rx on --> to turn on Rx checksum offload
-ethtool -K eth0 rx off --> to turn off Rx checksum offload
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3:
- * Updated commit header and description suggested by Sergey.
- * Dropped TOE_RX_CSUM_OK macro.
- * Renamed ravb_csum_offload_init_gbeth()->ravb_csum_init_gbeth().
- * Moved enabling {RPE,TPE} in ravb_csum_init_gbeth().
- * Updated the error message in ravb_csum_init_gbeth() as
-   "Timeout enabling hardware checksum"
- * Introduced ravb_endisable_csum_gbeth() for enabling/disabling CSR{1,2} registers.
-   
-v1->v2:
- * Fixed sparse warning by replacing __sum16->__wsum.
----
- drivers/net/ethernet/renesas/ravb.h      | 16 ++++
- drivers/net/ethernet/renesas/ravb_main.c | 93 +++++++++++++++++++++++-
- 2 files changed, 106 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index e0f8276cffed..a7fe9d8b6b41 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -206,6 +206,7 @@ enum ravb_reg {
- 	RFCR	= 0x0760,
- 	MAFCR	= 0x0778,
- 	CSR0    = 0x0800,	/* RZ/G2L only */
-+	CSR2    = 0x0808,	/* RZ/G2L only */
- };
- 
- 
-@@ -978,6 +979,21 @@ enum CSR0_BIT {
- 	CSR0_RPE	= 0x00000020,
- };
- 
-+enum CSR2_BIT {
-+	CSR2_RIP4	= 0x00000001,
-+	CSR2_RTCP4	= 0x00000010,
-+	CSR2_RUDP4	= 0x00000020,
-+	CSR2_RICMP4	= 0x00000040,
-+	CSR2_RTCP6	= 0x00100000,
-+	CSR2_RUDP6	= 0x00200000,
-+	CSR2_RICMP6	= 0x00400000,
-+	CSR2_RHOP	= 0x01000000,
-+	CSR2_RROUT	= 0x02000000,
-+	CSR2_RAHD	= 0x04000000,
-+	CSR2_RDHD	= 0x08000000,
-+	CSR2_ALL	= 0x0F700071,
-+};
-+
- #define DBAT_ENTRY_NUM	22
- #define RX_QUEUE_OFFSET	4
- #define NUM_RX_QUEUE	2
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 0e3731f50fc2..c4dc6ec54287 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -522,6 +522,23 @@ static int ravb_ring_init(struct net_device *ndev, int q)
- 	return -ENOMEM;
- }
- 
-+static void ravb_csum_init_gbeth(struct net_device *ndev)
-+{
-+	if (!(ndev->features & NETIF_F_RXCSUM))
-+		goto done;
-+
-+	ravb_write(ndev, 0, CSR0);
-+	if (ravb_wait(ndev, CSR0, CSR0_RPE, 0)) {
-+		netdev_err(ndev, "Timeout enabling hardware checksum\n");
-+		ndev->features &= ~NETIF_F_RXCSUM;
-+	} else {
-+		ravb_write(ndev, CSR2_ALL, CSR2);
-+	}
-+
-+done:
-+	ravb_write(ndev, CSR0_TPE | CSR0_RPE, CSR0);
-+}
-+
- static void ravb_emac_init_gbeth(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-@@ -553,7 +570,8 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
- 
- 	/* E-MAC status register clear */
- 	ravb_write(ndev, ECSR_ICD | ECSR_LCHNG | ECSR_PFRI, ECSR);
--	ravb_write(ndev, CSR0_TPE | CSR0_RPE, CSR0);
-+
-+	ravb_csum_init_gbeth(ndev);
- 
- 	/* E-MAC interrupt enable register */
- 	ravb_write(ndev, ECSIPR_ICDIP, ECSIPR);
-@@ -734,6 +752,31 @@ static void ravb_get_tx_tstamp(struct net_device *ndev)
- 	}
- }
- 
-+static void ravb_rx_csum_gbeth(struct sk_buff *skb)
-+{
-+	__wsum csum_ip_hdr, csum_proto;
-+	u8 *hw_csum;
-+
-+	/* The hardware checksum status is contained in sizeof(__sum16) * 2 = 4
-+	 * bytes appended to packet data. First 2 bytes is ip header csum and
-+	 * last 2 bytes is protocol csum.
-+	 */
-+	if (unlikely(skb->len < sizeof(__sum16) * 2))
-+		return;
-+
-+	hw_csum = skb_tail_pointer(skb) - sizeof(__sum16);
-+	csum_proto = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
-+
-+	hw_csum -= sizeof(__sum16);
-+	csum_ip_hdr = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
-+	skb_trim(skb, skb->len - 2 * sizeof(__sum16));
-+
-+	/* TODO: IPV6 Rx csum */
-+	if (skb->protocol == htons(ETH_P_IP) && !csum_ip_hdr && !csum_proto)
-+		/* Hardware validated our checksum */
-+		skb->ip_summed = CHECKSUM_UNNECESSARY;
-+}
-+
- static void ravb_rx_csum(struct sk_buff *skb)
- {
- 	u8 *hw_csum;
-@@ -819,6 +862,8 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 				skb = ravb_get_skb_gbeth(ndev, entry, desc);
- 				skb_put(skb, pkt_len);
- 				skb->protocol = eth_type_trans(skb, ndev);
-+				if (ndev->features & NETIF_F_RXCSUM)
-+					ravb_rx_csum_gbeth(skb);
- 				napi_gro_receive(&priv->napi[q], skb);
- 				stats->rx_packets++;
- 				stats->rx_bytes += pkt_len;
-@@ -846,6 +891,8 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 				dev_kfree_skb(skb);
- 				priv->rx_1st_skb->protocol =
- 					eth_type_trans(priv->rx_1st_skb, ndev);
-+				if (ndev->features & NETIF_F_RXCSUM)
-+					ravb_rx_csum_gbeth(skb);
- 				napi_gro_receive(&priv->napi[q],
- 						 priv->rx_1st_skb);
- 				stats->rx_packets++;
-@@ -2334,11 +2381,49 @@ static void ravb_set_rx_csum(struct net_device *ndev, bool enable)
- 	spin_unlock_irqrestore(&priv->lock, flags);
- }
- 
-+static int ravb_endisable_csum_gbeth(struct net_device *ndev, enum ravb_reg reg,
-+				     u32 val, u32 mask)
-+{
-+	u32 csr0;
-+	int ret;
-+
-+	csr0 = ravb_read(ndev, CSR0);
-+	ravb_write(ndev, csr0 & ~mask, CSR0);
-+	ret = ravb_wait(ndev, CSR0, mask, 0);
-+	if (!ret)
-+		ravb_write(ndev, val, reg);
-+
-+	ravb_write(ndev, csr0, CSR0);
-+
-+	return ret;
-+}
-+
- static int ravb_set_features_gbeth(struct net_device *ndev,
- 				   netdev_features_t features)
- {
--	/* Place holder */
--	return 0;
-+	netdev_features_t changed = ndev->features ^ features;
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	unsigned long flags;
-+	int ret = 0;
-+	u32 val;
-+
-+	spin_lock_irqsave(&priv->lock, flags);
-+	if (changed & NETIF_F_RXCSUM) {
-+		if (features & NETIF_F_RXCSUM)
-+			val = CSR2_ALL;
-+		else
-+			val = 0;
-+
-+		ret = ravb_endisable_csum_gbeth(ndev, CSR2, val, CSR0_RPE);
-+		if (ret)
-+			goto done;
-+	}
-+
-+	ndev->features = features;
-+done:
-+	spin_unlock_irqrestore(&priv->lock, flags);
-+
-+	return ret;
- }
- 
- static int ravb_set_features_rcar(struct net_device *ndev,
-@@ -2518,6 +2603,8 @@ static const struct ravb_hw_info gbeth_hw_info = {
- 	.emac_init = ravb_emac_init_gbeth,
- 	.gstrings_stats = ravb_gstrings_stats_gbeth,
- 	.gstrings_size = sizeof(ravb_gstrings_stats_gbeth),
-+	.net_hw_features = NETIF_F_RXCSUM,
-+	.net_features = NETIF_F_RXCSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats_gbeth),
- 	.max_rx_len = ALIGN(GBETH_RX_BUFF_MAX, RAVB_ALIGN),
- 	.tccr_mask = TCCR_TSRQ0,
--- 
-2.25.1
-
+>         if (IS_ERR(ptd->tzd)) {
+>                 dev_err(&pdev->dev, "Failed to register thermal zone %s\n=
+",
+>                         board_names[board_id]);
+> --
