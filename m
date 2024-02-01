@@ -1,42 +1,39 @@
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B395D47D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B895D47F
 	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Feb 2024 14:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706796566; cv=none; b=NSlpg83zYUsmhiUG+Gra1V1SOs+1h8Uej03Hh4IazU0/Y1wJKJg4T/pOZ1iBPlpTFVhvbkBvBkaCczONE2VeiTVH2NOOG0pRlyzXKxXukRibn5mKdIx89++07NogcdMfqy2KAbvTW58gZF/6E6ACBE8xRFAtCeZyBuVVpI6PyQk=
+	t=1706796566; cv=none; b=lOC8+UPqYObFf4gOwJk9LMFF5HYtrTXiqyU3NtEsDM3klDw9eUFLGTBtkJyriHnpO7DTqwX1nbSPP6XEFn5zYCRfIMFhdfhqrNXWjprD7U0An56sPqjdMh/v0ifJI05lllCzpm5r6I/HHbYMsDTewWnAR8UItlaeACPDdNzpPVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706796566; c=relaxed/simple;
-	bh=cMiqMZnDPkpPLcJCn7WbXMBnx0F3yvH/K4gDkImWz34=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qPGUXMNxoDmWKcQgeVWZd7X8jqtFBZnkZEI6tuci0STh137naHtZ5JFOb2MlRCp28Q8b1betHiSAaWbPhvf9HIhqtSu4yRphC1t4FJ0bpCxdSEBefYJ1fEIz5FYykzPkz0U8DHfqsRSWonPoaxHz+QntWkpPQYGZGsjjycSt3LM=
+	bh=bzyYD7jk0os9f3TouHjZe8+oTD/GCayc5xXPpzBEBdo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ut9jjK1x6MwLdl0KslfkbOe3GV5O+pJbptLUoW4v5bBAY8hqW4M5OTue4gZ0nhr3w2uo3fgHMBzWMHjCUn1tshlfSxMe/YfppizYpEiHRhfwAVxtfzyNcxj5QFwjEzfAf6OVDo7zLILSKdOy/7ou9i2MFTzGnktdh6EM3HX1m/I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:88f0:c83b:bafa:cdc3])
 	by michel.telenet-ops.be with bizsmtp
-	id hq9M2B0064efzLr06q9MRr; Thu, 01 Feb 2024 15:09:21 +0100
+	id hq9M2B0074efzLr06q9MRt; Thu, 01 Feb 2024 15:09:21 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rVXjw-00Gv3o-8D;
+	id 1rVXjw-00Gv3m-7r;
 	Thu, 01 Feb 2024 15:09:21 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rVXkn-00AXWm-6y;
+	id 1rVXkn-00AXWg-5C;
 	Thu, 01 Feb 2024 15:09:21 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: renesas: gray-hawk-single: Enable watchdog timer
-Date: Thu,  1 Feb 2024 15:09:17 +0100
-Message-Id: <cf6effafd9e0472a457eed9d84a834abc3e1c833.1706790320.git.geert+renesas@glider.be>
+Subject: [PATCH 0/2] arm64: dts: renesas: r8a779h0/gray-hawk-single: Add watchdog support
+Date: Thu,  1 Feb 2024 15:09:15 +0100
+Message-Id: <cover.1706790320.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1706790320.git.geert+renesas@glider.be>
-References: <cover.1706790320.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -45,29 +42,35 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable the watchdog timer on the Gray Hawk Single board.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+This patch series adds watchdog timer support for the Renesas R-Car V4M
+(R8A779H0) Soc and the Gray Hawk Single development board.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-index 716cb7622f167973..1c84fe7171d3fd85 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-@@ -65,6 +65,11 @@ scif_clk_pins: scif_clk {
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif_clk {
- 	clock-frequency = <24000000>;
- };
+I intend to queue this in renesas-devel for v6.9.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (1):
+  arm64: dts: renesas: gray-hawk-single: Enable watchdog timer
+
+Minh Le (1):
+  arm64: dts: renesas: r8a779h0: Add RWDT node
+
+ .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts    |  5 +++++
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi             | 11 +++++++++++
+ 2 files changed, 16 insertions(+)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
