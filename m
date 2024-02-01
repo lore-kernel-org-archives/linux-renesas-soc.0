@@ -1,39 +1,39 @@
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B025D48B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ABD5D48A
 	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Feb 2024 14:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706797165; cv=none; b=i8Omz/UawBCvcTUR9+ADFzicVhmVNaCFaAI4FS+8/CQRsIsflaXug7qC7syW7oQpF5RSvJGXbjAFUyKVgbWzjLUs9XcL+3/BMT21f0tfjdiuzrzLO4LXILQDzaJfQKWEzn3fzuQeBlfcBJ59F2m8+PxNZZ5TlvGU6hT7t6/nds0=
+	t=1706797165; cv=none; b=rjDlJKV2iortH+bX1qEG1uwZUx4PdhsJQuLYBmwflcYQKOA+LsHP4rjnABh91ZcDbTTO4owPusDsHwZM3KGtljWOdepStNNXUEKb2f2Gw+HC0xFmXU3Sf8kj5Aes3vBpv6uX27ExonctY/tIRZ2cg5LsySdLBjesoy8PCIP6ClI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706797165; c=relaxed/simple;
-	bh=YJTGKYCbGRMvOO9KGyCz1lRYndgqRMLWq4L32TB2e84=;
+	bh=OFrPToGeevujQS1JabxDYjkzzcy/ZA8B8JVFCIId3B4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ITfkLPmkMpJsyIh9tKF0I9x52pqH0PJzHCVSbreWgMNedZYKzVQqO73b38cLa1VbgrB06mLPlcixCOa5CmRLFyQPh81XL66NGfRyH1kTeCM3scU+V2c15t55Q8YDeTRgwGs08a3x2UKnFYwNfxrSBMtlZukAfp/RsgK+fAI2+U8=
+	 MIME-Version; b=I+yzEzDrQLOjy0dOVCPNbayQOubFA9PeOHtl3alILir6OSKqizci95B0ylSMGERgeuHVw+uCtKaZnUhk74A6zX0yt2S9F0snGTNnoFL6VD6Z3jjS7Pa84ifTIzl+ZATewlCDOyw1gcL7Z3tSmCcWBMnJJUdgyEcn4HK2Iup/ZJY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:88f0:c83b:bafa:cdc3])
 	by laurent.telenet-ops.be with bizsmtp
-	id hqKM2B0074efzLr01qKM6R; Thu, 01 Feb 2024 15:19:21 +0100
+	id hqKM2B0084efzLr01qKM6S; Thu, 01 Feb 2024 15:19:21 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rVXtc-00Gv4Z-2m;
+	id 1rVXtc-00Gv4i-4c;
 	Thu, 01 Feb 2024 15:19:21 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rVXuT-00AXdJ-2M;
+	id 1rVXuT-00AXdR-3k;
 	Thu, 01 Feb 2024 15:19:21 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Duy Nguyen <duy.nguyen.rh@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] arm64: dts: renesas: r8a779h0: Add L3 cache controller
-Date: Thu,  1 Feb 2024 15:19:16 +0100
-Message-Id: <9d56a46892c5e0957d244370e6809013cf815905.1706796979.git.geert+renesas@glider.be>
+Subject: [PATCH 3/5] arm64: dts: renesas: r8a779h0: Add CPUIdle support
+Date: Thu,  1 Feb 2024 15:19:18 +0100
+Message-Id: <848d176bdbcaf3bc44e5dae555afa9c812a19fd1.1706796979.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706796979.git.geert+renesas@glider.be>
 References: <cover.1706796979.git.geert+renesas@glider.be>
@@ -47,38 +47,63 @@ Content-Transfer-Encoding: 8bit
 
 From: Duy Nguyen <duy.nguyen.rh@renesas.com>
 
-Describe the cache configuration for the first Cortex-A76 CPU core on
-the Renesas R-Car V4M (R8A779H0) SoC.
+Support CPUIdle for ARM Cortex-A76 on R-Car V4M.
 
 Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes compared to the BSP:
-  - Rename L3_CA76_0 label to L3_CA76,
-  - Rename cache-controller-0 node to cache-controller.
----
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index eb555cbf51a41001..f47695158d991288 100644
+index 88c5dcbc38d59dab..b3255bba69e3e6da 100644
 --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -23,6 +23,14 @@ a76_0: cpu@0 {
- 			reg = <0>;
- 			device_type = "cpu";
+@@ -42,6 +42,7 @@ a76_0: cpu@0 {
  			power-domains = <&sysc R8A779H0_PD_A1E0D0C0>;
-+			next-level-cache = <&L3_CA76>;
+ 			next-level-cache = <&L3_CA76>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a76_1: cpu@100 {
+@@ -51,6 +52,7 @@ a76_1: cpu@100 {
+ 			power-domains = <&sysc R8A779H0_PD_A1E0D0C1>;
+ 			next-level-cache = <&L3_CA76>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a76_2: cpu@200 {
+@@ -60,6 +62,7 @@ a76_2: cpu@200 {
+ 			power-domains = <&sysc R8A779H0_PD_A1E0D0C2>;
+ 			next-level-cache = <&L3_CA76>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 		};
+ 
+ 		a76_3: cpu@300 {
+@@ -69,6 +72,20 @@ a76_3: cpu@300 {
+ 			power-domains = <&sysc R8A779H0_PD_A1E0D0C3>;
+ 			next-level-cache = <&L3_CA76>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
 +		};
 +
-+		L3_CA76: cache-controller {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A779H0_PD_A2E0D0>;
-+			cache-unified;
-+			cache-level = <3>;
++		idle-states {
++			entry-method = "psci";
++
++			CPU_SLEEP_0: cpu-sleep-0 {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x0010000>;
++				local-timer-stop;
++				entry-latency-us = <400>;
++				exit-latency-us = <500>;
++				min-residency-us = <4000>;
++			};
  		};
- 	};
  
+ 		L3_CA76: cache-controller {
 -- 
 2.34.1
 
