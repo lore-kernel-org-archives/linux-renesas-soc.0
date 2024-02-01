@@ -1,59 +1,60 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADD46166F
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Feb 2024 06:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342C130E5C
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Feb 2024 06:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706767897; cv=none; b=BFA2jjHMZGWUuFNKCU2Un1B5XbRBewA+PakVTcIiSl6MDlXXyhiqtyVT6lUrljztEIyg0nC8qefgzTkiPnTpMvREWYK9u4TazmOjM6pu4aSMewOaGWvmwQ6xlHLhVZCQal1YtZ/6xUyUv/f0LeMtGY1ncx25w78q8KZGjaTWfa0=
+	t=1706769099; cv=none; b=isgfROmQwgWyu1TUEXzq+CZ6jIUOFRZMq3uquxoekm1FwgjO3twSnXuivJ25JWDlJnbycyQBdB0VFxp0+xWP7/11ruQ8YCUVcE1trAV0qqCMwpNels5vIfl2jbKmmahGe9uvnBeeRYZPuj5Py6WR6qFmGjFSZ7jPAGC0oE4RYVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706767897; c=relaxed/simple;
-	bh=eTXVyGagwsXV+tO/9Px2ARKRHaX1gUkQoE/SSql8tqs=;
+	s=arc-20240116; t=1706769099; c=relaxed/simple;
+	bh=rhkKqXYx2bfqJ3XZQo1ZFPXeQt4Ok4Ahotcdhk9yTjc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jkOTa3Am6srUqFVFgObskMGMzYm8iOFmCvkiykKEtgHAysUjS1zzIqvqUOwLFZRH2w1tdkU+kgBuWV9Dt7Lmc6u09Y460G+trHJjclCRpoT8VlLx9X4nbHIygrKgTJc+mVbulJonWaR+q5CYth8hM9Y732hUanja4PgDc0G9m+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=DZqeVA14; arc=none smtp.client-ip=209.85.218.41
+	 In-Reply-To:Content-Type; b=oY34doHQZk0Ys5omjj16jSY4MufF2NcJgF/P0owZXjql4ABZ1wzaWR31gqxjI4AYiN8wYCSauxIenC5KZzsTBzco+zQaPkfsw43c3Eqq56kgsv3v1qzpgZcBxpvxEBv2ilSECNh8zTzUnTypW8AJRZehxhEgjVvfkR94dxB6Z5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=pjhXywCe; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="DZqeVA14"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a34c5ca2537so61617666b.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2024 22:11:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="pjhXywCe"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-55eed368b0bso986726a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2024 22:31:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1706767893; x=1707372693; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1706769094; x=1707373894; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hVJSAQ4iKt2rHmFPovap9MlrrFsnqnLo/a/5d2ImBkk=;
-        b=DZqeVA14t5LRFD6UNyuK55X+jT2cAb+2QOzlw4FryAuqX66/cwjKoWc6UamyJiaAhh
-         ZOOR0w9bpdslImHqfHV963nogUrAsn8WIRUHQUy8EHwAzUbWv6L0m/OOOixrK2yqrmnw
-         BjrUM5dRw6n85Foi0ZdJeNTXYo6haSn4q1onR6OgMBpDkeDX9hJws/FHXJBqpZl7kbV7
-         JVoT2XOZ/KXX+7V1vIznPxf0nB/w2Gcn2/xE9a13TnGFiZEZfM/UpULae7zPCVF9Q3aP
-         9Dl/y1S/+eH/oLP8mhv4jgMu0IUS1+U8hcnAn+ih1RIIjpllUAJprDg3QYcYa+uQSghZ
-         fm5w==
+        bh=3ILH3iVCOAXF1BayqkdoSoFZAWJWdaJcxQN309+oN/4=;
+        b=pjhXywCezFnTggORZ+MdQ5ZyxrYhnPfmBxEWd4S02cFLxmg9lthti1xGMzQr9mvvMC
+         SJS6xUj7d9p7FN/q/uwfs2CqnBxrVLbEzOHseAo1NGu2n8FSJSIqlWgiJqfnxHezE0ie
+         r0vs98mlA0Z+DU18ZXQIKngQ9LnnJFh9raEO+fvjmo4rT9bO61IbZL3XDp2wPgQGw5EO
+         H9p/zntYIfM+qPBzGX3eJYAInuqsPOs2KRMhZFrSzz9j/A2FXOxeJB7nGt7DEidRab1a
+         iFqwKCVfQ+70qrBahdGOe2RDwG6uiL38Yc8W8dUUTldem8sJcv24fpNIgI/PhJWJjdtb
+         8OIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706767893; x=1707372693;
+        d=1e100.net; s=20230601; t=1706769094; x=1707373894;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hVJSAQ4iKt2rHmFPovap9MlrrFsnqnLo/a/5d2ImBkk=;
-        b=I25SrD3BJ9ZcRxvgSAq+PPYyatfaHDuC0KCQRZr+CmSCETWiOgdeNlec0pXy4m14zh
-         UXInI2YxUd826xYd37IUNxjLvwqkwhwrs2NnfPWAsExXjemWrwMRg2Dj3cQBhubbXHKM
-         MBEikrmHzSjMKjFNYGjU0P7TKGLCVRm0FzNV+zcz3MOnAj+qamNS3qF9JNJDICvetZhp
-         +KNXGOUntRHDDsB+H1CW5AaT9B3EqrkLUOWJ4MZHt147/+nVHpHxhRXz0I4KvxPPZvAb
-         PU3EjR57xLTZoWKI0/3VkuPmQt7lquswn168vcoCoFq6EookhF16MZrr38OzV9xrdA3x
-         6aTA==
-X-Gm-Message-State: AOJu0YzF3u4qUu2/9Gvcw9q5k+F/ts+R3cNHR0h5v21o8BlbVlDj1YS4
-	TKKnz8aWBfun6eii5mcvbwuQtjvUQzuA7IZGWo8Gf3qNYAh0hQk1SOFLnChXaKw=
-X-Google-Smtp-Source: AGHT+IFXCpyVRrh4kgdwQ7mG5LaIuOmqM78oNd69ZoPCv7lF1CJrBejSJBRfVD4Hav7A/9jASiYSXg==
-X-Received: by 2002:a17:906:4c54:b0:a31:8a51:67df with SMTP id d20-20020a1709064c5400b00a318a5167dfmr2654341ejw.9.1706767892913;
-        Wed, 31 Jan 2024 22:11:32 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVn0qlqNPHF3JU1vV1JcGGcb/0NNVrOSAY6u5lr4r0FTRX/uHuAgrWfBCjXx2BZyR07mStLABqd6+WsigxMBfWejZ+6MZXjkq6WOcWgiMB4bMdjD4QtgKOcSduWgQDq2TVlLnkvIohhNTfKwy7qgCBJ0qY5IM97t9iCHvlsgYRio5BjcTFXwA01vGJdRo52M7suU17wL1qcEtYgHGPJUScTlG52FBQLss8vf7Bu+ah2KzmEdTRqzwxpXYBpvrqrwCxuFb2aR+agzDljipRf2eWxVfKkeui4FFS69vPcjJSfnlNOdl+l6IyTfyDEDDznAl2e5s4HvEMHqs98SmFL+Zf1NoZ6ALwypHlTN4gxvFZdZTBoJDozlYFsat4hQJfI/YdnXKkeSpKbDDIZVPzyGxyTX5GtxqlC0Ey/r6Hu6lXATyUac6uILjUKsEA87/PaXYosw4wxZZzMiZoDwWt05hP5Pa27AfrGImZKpCrCuEVkpwRVlT5aV0CGfWXZ95pjZ0xG1InNBCr+t7zS4hNGcddBOFg/UEUwNZYKcb7K0p5pOJLIuJM7zo1aFoo+/j7eHrA/CMA3uAUenfPjKlakwgSEXN9XpJnzxTurWrgV46jbVwv7xD6t
+        bh=3ILH3iVCOAXF1BayqkdoSoFZAWJWdaJcxQN309+oN/4=;
+        b=LO/PFTnrZkQsiEHXEN+6kCOURCsZmQ9VRMYXh+5RQwphPcOCgk0rc0xsm8amjdTyHR
+         IiAe8DhglCj2jk8p0+bfVr4BLYINWrfjpMtCrwegenW5Td4o6RLI/IIl3BMLIwG3p6Zr
+         pgFPWDhBx+LGWXWQamDi5NKECUplDn8O2tmjTjd64+V2iH9bsaXauIMPX+o96Qo62/E7
+         4yRDXBx0hXduX0bKr36r7jZyWiWXuf3O7cuors4T9gOj0624YqrCDfebwPbqEjHFyJ09
+         uRzklHULy8ivEg2hpyu6A4nneW08YUxalX4umhuTZWmIYBGj2rtKC1zOYqFY6h4nsGDe
+         ckxw==
+X-Gm-Message-State: AOJu0YyTL5AUuksxT9For2+YaPzTw+aFb8t+6wzZa4zLBI1ePLGmR+k9
+	s1z/IRENCGcdxHhnMJdJjOrcSQ5YWbb4CXQuM1OQ1AuKfl6g/eMT7Tf5I6fGa1OrVo1YutJDhMg
+	u
+X-Google-Smtp-Source: AGHT+IFJuMt/iAwHv85KWXo5SEc8zjmjsTXgILaTRKPTGHLtJ10gxSybs1Zm87LeDlgqRJYYa0918w==
+X-Received: by 2002:a50:fa93:0:b0:55f:b5a5:9f6c with SMTP id w19-20020a50fa93000000b0055fb5a59f6cmr633497edr.4.1706769094226;
+        Wed, 31 Jan 2024 22:31:34 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCX0SQhONyb9M3xPhhEr8ZR2V2hwQXJE5ofoOfBa77A0czh8LozpdpefPWdxHGioIGOVwJvrfwd9ZPR2K1cEYHt2TJ588lUoerWDaMNpnWZJ16PEP+jeSiVmMotdJ75Xy8AixWp/1W2ID6MIjkdcvFazy+Dkh4fQGWptDY/CCqZDygxY3sYfiWYZ/AHwo8faWH/6k44kBh4BSsdzj2cRSik0PNolL4YywDb7ESMa+Or48u6rhoCJekqmAPZRtG2ZTC4uB3+HIDRCnPb8sMl1A6xtqNzhV9qOHfsoml5+lFGjN/rmVgSfRyD/sLiiMXfiWiaQhO5Ndo2pzbZZPcHzobqTNun7mELQdPm2CuW2wkgKvEJytvs8k9Y725OTkrI6Gs5FgusODpJlkhDhgw8phVhgNfujg0YScjijdbdmezMNdeobWC4=
 Received: from [192.168.50.4] ([82.78.167.87])
-        by smtp.gmail.com with ESMTPSA id vx4-20020a170907a78400b00a368766676fsm1059551ejc.46.2024.01.31.22.11.31
+        by smtp.gmail.com with ESMTPSA id p14-20020a056402500e00b0055c67e6454asm6573565eda.70.2024.01.31.22.31.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jan 2024 22:11:32 -0800 (PST)
-Message-ID: <d52cded7-fef5-4bfa-a82f-6a6c77dd7ebc@tuxon.dev>
-Date: Thu, 1 Feb 2024 08:11:30 +0200
+        Wed, 31 Jan 2024 22:31:33 -0800 (PST)
+Message-ID: <9321b515-b4da-4d18-9d87-3470caf28b6d@tuxon.dev>
+Date: Thu, 1 Feb 2024 08:31:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -61,135 +62,216 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/11] watchdog: rzg2l_wdt: Check return status of
- pm_runtime_put()
+Subject: Re: [PATCH net-next v5 08/15] net: ravb: Move the IRQs
+ getting/requesting in the probe() method
 Content-Language: en-US
-To: Guenter Roeck <linux@roeck-us.net>, Biju Das
- <biju.das.jz@bp.renesas.com>, "wim@linux-watchdog.org"
- <wim@linux-watchdog.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-Cc: "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+To: Sergey Shtylyov <s.shtylyov@omp.ru>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com, p.zabel@pengutronix.de, geert+renesas@glider.be
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
  Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240131102017.1841495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240131102017.1841495-5-claudiu.beznea.uj@bp.renesas.com>
- <TYCPR01MB11269AD7463C9C7C0A09A43A9867C2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
- <ddc0b42c-bf88-4c0d-b938-8bd7ff7b329a@tuxon.dev>
- <TYCPR01MB11269BFC2DB457049A2B8C0C8867C2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
- <12f458b1-f963-43f4-afcf-715abf635e54@tuxon.dev>
- <4ea02224-e9fa-4ee9-9210-bc7a7ae9e86b@roeck-us.net>
+References: <20240131084133.1671440-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240131084133.1671440-9-claudiu.beznea.uj@bp.renesas.com>
+ <5536e607-e03b-f38e-2909-a6f6a126ff0d@omp.ru>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <4ea02224-e9fa-4ee9-9210-bc7a7ae9e86b@roeck-us.net>
+In-Reply-To: <5536e607-e03b-f38e-2909-a6f6a126ff0d@omp.ru>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 31.01.2024 15:16, Guenter Roeck wrote:
-> On 1/31/24 03:00, claudiu beznea wrote:
->>
->>
->> On 31.01.2024 12:41, Biju Das wrote:
->>> Hi Claudiu,
->>>
->>>> -----Original Message-----
->>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>> Sent: Wednesday, January 31, 2024 10:36 AM
->>>> Subject: Re: [PATCH v2 04/11] watchdog: rzg2l_wdt: Check return status of
->>>> pm_runtime_put()
->>>>
->>>> Hi, Biju,
->>>>
->>>> On 31.01.2024 12:32, Biju Das wrote:
->>>>> Hi Claudiu,
->>>>>
->>>>> Thanks for the feedback.
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>>>> Sent: Wednesday, January 31, 2024 10:20 AM
->>>>>> Subject: [PATCH v2 04/11] watchdog: rzg2l_wdt: Check return status of
->>>>>> pm_runtime_put()
->>>>>>
->>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>
->>>>>> pm_runtime_put() may return an error code. Check its return status.
->>>>>>
->>>>>> Along with it the rzg2l_wdt_set_timeout() function was updated to
->>>>>> propagate the result of rzg2l_wdt_stop() to its caller.
->>>>>>
->>>>>> Fixes: 2cbc5cd0b55f ("watchdog: Add Watchdog Timer driver for
->>>>>> RZ/G2L")
->>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>> ---
->>>>>>
->>>>>> Changes in v2:
->>>>>> - propagate the return code of rzg2l_wdt_stop() to it's callers
->>>>>>
->>>>>>   drivers/watchdog/rzg2l_wdt.c | 11 +++++++++--
->>>>>>   1 file changed, 9 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/watchdog/rzg2l_wdt.c
->>>>>> b/drivers/watchdog/rzg2l_wdt.c index d87d4f50180c..7bce093316c4
->>>>>> 100644
->>>>>> --- a/drivers/watchdog/rzg2l_wdt.c
->>>>>> +++ b/drivers/watchdog/rzg2l_wdt.c
->>>>>> @@ -144,9 +144,13 @@ static int rzg2l_wdt_start(struct
->>>>>> watchdog_device
->>>>>> *wdev)  static int rzg2l_wdt_stop(struct watchdog_device *wdev)  {
->>>>>>       struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
->>>>>> +    int ret;
->>>>>>
->>>>>>       rzg2l_wdt_reset(priv);
->>>>>> -    pm_runtime_put(wdev->parent);
->>>>>> +
->>>>>> +    ret = pm_runtime_put(wdev->parent);
->>>>>> +    if (ret < 0)
->>>>>> +        return ret;
->>>>>
->>>>> Do we need to check the return code? So far we didn't hit this
->>>> condition.
->>>>> If you are planning to do it, then just
->>>>>
->>>>> return pm_runtime_put(wdev->parent);
->>>>
->>>> pm_runtime_put() may return 1 if the device is suspended (which is not
->>>> considered error) as explained here:
->>>
->>> Oops, I missed that discussion. Out of curiosity,
->>> What watchdog framework/consumer is going to do with a
->>> Non-error return value of 1?
->>
->> Looking at this:
->> https://elixir.bootlin.com/linux/latest/source/drivers/watchdog/watchdog_dev.c#L809
->>
->> it seems that the positive values are not considered errors thus, indeed,
->> we may return directly:
->>
->> return pm_runtime_put();
->>
->> Guenter,
->>
->> With this (and previous discussion from [1]), are you OK to change it like:
->>
->> return pm_runtime_put();
->>
-> 
-> Instead of looking at the source, I would kindly ask you to look at the API.
+On 31.01.2024 21:51, Sergey Shtylyov wrote:
+>    I said the subject needs to be changed to "net: ravb: Move getting/requesting IRQs in
+> the probe() method", not "net: ravb: Move IRQs getting/requesting in the probe() method".
+> That's not very proper English, AFAIK! =)
 
-OK, I'll keep the patch as is. Thank you for your input.
-
-Claudiu Beznea
+It seems I messed this up.
 
 > 
-> Guenter
+> On 1/31/24 11:41 AM, Claudiu wrote:
 > 
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The runtime PM implementation will disable clocks at the end of
+>> ravb_probe(). As some IP variants switch to reset mode as a result of
+>> setting module standby through clock disable APIs, to implement runtime PM
+>> the resource parsing and requesting are moved in the probe function and IP
+>> settings are moved in the open function. This is done because at the end of
+>> the probe some IP variants will switch anyway to reset mode and the
+>> registers content is lost. Also keeping only register settings operations
+>> in the ravb_open()/ravb_close() functions will make them faster.
+>>
+>> Commit moves IRQ requests to ravb_probe() to have all the IRQs ready when
+>> the interface is open. As now IRQs getting/requesting are in a single place
+> 
+>    Again, "getting/requesting IRQs is done"...
+> 
+>> there is no need to keep intermediary data (like ravb_rx_irqs[] and
+>> ravb_tx_irqs[] arrays or IRQs in struct ravb_private).
+>>
+>> In order to avoid accessing the IP registers while the IP is runtime
+>> suspended (e.g. in the timeframe b/w the probe requests shared IRQs and
+>> IP clocks are enabled) in the interrupt handlers were introduced
+> 
+>    But can't we just request our IRQs after we call pm_runtime_resume_and_get()?
+> We proaobly can... but then again, we call pm_runtime_put_sync() in the remove()
+> method before the IRQs are freed...  So, it still seems OK that we're adding
+> pm_runtime_active() calls to the IRQ handlers in this very patch, not when we'll
+> start calling the RPM APIs in the ndo_{open|close}() methods, correct? :-)
+
+Yes, it should be safe.
+
+> 
+>> pm_runtime_active() checks. The device runtime PM usage counter has been
+>> incremented to avoid disabling the device's clocks while the check is in
+>> progress (if any).
+>>
+>> This is a preparatory change to add runtime PM support for all IP variants.
+>>
+>> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> [...]
+> 
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>> index e70c930840ce..f9297224e527 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> [...]
+>> @@ -1092,11 +1082,23 @@ static irqreturn_t ravb_emac_interrupt(int irq, void *dev_id)
+>>  {
+>>  	struct net_device *ndev = dev_id;
+>>  	struct ravb_private *priv = netdev_priv(ndev);
+>> +	struct device *dev = &priv->pdev->dev;
+>> +	irqreturn_t result = IRQ_HANDLED;
+>> +
+>> +	pm_runtime_get_noresume(dev);
+>> +
+> 
+>    Not sure we need en empty line here...
+
+That's a personal taste... more like to emphasize that this is PM runtime
+"protected"... Same for the rest of occurrences you signaled below.
+
+> 
+>> +	if (unlikely(!pm_runtime_active(dev))) {
+>> +		result = IRQ_NONE;
+>> +		goto out_rpm_put;
+>> +	}
+>>  
+>>  	spin_lock(&priv->lock);
+>>  	ravb_emac_interrupt_unlocked(ndev);
+>>  	spin_unlock(&priv->lock);
+>> -	return IRQ_HANDLED;
+>> +
+>> +out_rpm_put:
+>> +	pm_runtime_put_noidle(dev);
+>> +	return result;
+>>  }
+>>  
+>>  /* Error interrupt handler */
+>> @@ -1176,9 +1178,15 @@ static irqreturn_t ravb_interrupt(int irq, void *dev_id)
+>>  	struct net_device *ndev = dev_id;
+>>  	struct ravb_private *priv = netdev_priv(ndev);
+>>  	const struct ravb_hw_info *info = priv->info;
+>> +	struct device *dev = &priv->pdev->dev;
+>>  	irqreturn_t result = IRQ_NONE;
+>>  	u32 iss;
+>>  
+>> +	pm_runtime_get_noresume(dev);
+>> +
+> 
+>    And here...
+> 
+>> +	if (unlikely(!pm_runtime_active(dev)))
+>> +		goto out_rpm_put;
+>> +
+>>  	spin_lock(&priv->lock);
+>>  	/* Get interrupt status */
+>>  	iss = ravb_read(ndev, ISS);
+> [...]
+>> @@ -1230,9 +1241,15 @@ static irqreturn_t ravb_multi_interrupt(int irq, void *dev_id)
+>>  {
+>>  	struct net_device *ndev = dev_id;
+>>  	struct ravb_private *priv = netdev_priv(ndev);
+>> +	struct device *dev = &priv->pdev->dev;
+>>  	irqreturn_t result = IRQ_NONE;
+>>  	u32 iss;
+>>  
+>> +	pm_runtime_get_noresume(dev);
+>> +
+> 
+>    Here too...
+> 
+>> +	if (unlikely(!pm_runtime_active(dev)))
+>> +		goto out_rpm_put;
+>> +
+>>  	spin_lock(&priv->lock);
+>>  	/* Get interrupt status */
+>>  	iss = ravb_read(ndev, ISS);
+> [...]
+>> @@ -1261,8 +1281,14 @@ static irqreturn_t ravb_dma_interrupt(int irq, void *dev_id, int q)
+>>  {
+>>  	struct net_device *ndev = dev_id;
+>>  	struct ravb_private *priv = netdev_priv(ndev);
+>> +	struct device *dev = &priv->pdev->dev;
+>>  	irqreturn_t result = IRQ_NONE;
+>>  
+>> +	pm_runtime_get_noresume(dev);
+>> +
+> 
+>    Here as well...
+> 
+>> +	if (unlikely(!pm_runtime_active(dev)))
+>> +		goto out_rpm_put;
+>> +
+>>  	spin_lock(&priv->lock);
+>>  
+>>  	/* Network control/Best effort queue RX/TX */
+> [...]
+>> @@ -2616,6 +2548,90 @@ static void ravb_parse_delay_mode(struct device_node *np, struct net_device *nde
+>>  	}
+>>  }
+>>  
+>> +static int ravb_setup_irq(struct ravb_private *priv, const char *irq_name,
+>> +			  const char *ch, int *irq, irq_handler_t handler)
+>> +{
+>> +	struct platform_device *pdev = priv->pdev;
+>> +	struct net_device *ndev = priv->ndev;
+>> +	struct device *dev = &pdev->dev;
+>> +	const char *dev_name;
+>> +	unsigned long flags;
+>> +	int error;
+>> +
+>> +	if (irq_name) {
+>> +		dev_name = devm_kasprintf(dev, GFP_KERNEL, "%s:%s", ndev->name, ch);
+>> +		if (!dev_name)
+>> +			return -ENOMEM;
+>> +
+>> +		*irq = platform_get_irq_byname(pdev, irq_name);
+>> +		flags = 0;
+>> +	} else {
+>> +		dev_name = ndev->name;
+>> +		*irq = platform_get_irq(pdev, 0);
+>> +		flags = IRQF_SHARED;
+> 
+>    Perhaps it's worth passing flags as a parameter here instead?
+
+I don't see it like this. We need this flag for a single call of
+ravb_setup_irq(), we can determine for which call we need to set this flag
+so I think it is redundant to have an extra argument for it.
+
+> 
+>> +	}
+>> +	if (*irq < 0)
+>> +		return *irq;
+>> +
+>> +	error = devm_request_irq(dev, *irq, handler, flags, dev_name, ndev);
+>> +	if (error)
+>> +		netdev_err(ndev, "cannot request IRQ %s\n", dev_name);
+>> +
+>> +	return error;
+>> +}
+> [...]
+> 
+> MBR, Sergey
