@@ -1,90 +1,98 @@
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B00936D
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Feb 2024 00:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECEA4C80
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Feb 2024 01:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707437447; cv=none; b=CxJQF4R7IDN94TDLd9n+M5KWcXshyWBCYMwSM8rp3/Ftb4z7uX+vcS5CnYekIGpuZr8fIRk0f7TZaVNDg2f8CieKlYoeO7LdNuCqmNe+4IrrOEaUZkhQKhyEY+L001jP8aA9ELjSGOvZOoccIdlmrRYHCoTnx2/kbG9+e/iZxXE=
+	t=1707443936; cv=none; b=u/EaKnthXqCj5wSl7e6LtafLXkmXk3haacbcp66/UYfHRXjewj2tPTdLvOLmgPjVnJ8IBq15GkIF3vCn4zH4ETsoMNpUi0S1b6oDKIQBLs1qzfvocf0ILk8WPmBXO8/xfXvY/fH/qsgLLTzY+zcPHCtQncp/qL2wLC02hS2/cF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707437447; c=relaxed/simple;
-	bh=VeZGmdkWu2a9tcJVHKHFxcVcovTPejnxYaNB+QF/nKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SelM9rwbJZ1rPbR6f2IL1QolLN9tyV3Z5d4hHr4c0OBi8AbSlQxh1oNP3a2dLgoPAGjtWd6I5wKqctBAcPc9oYvQmHXY1VvvlN9KaaLFRoCsUvwxCUAwnEoDMm30Q6mx9wWQTD29KeqtTUgjjL7nROmPCNjI1lBAgLvgcVDO+sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=A/obAKFp; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1707443936; c=relaxed/simple;
+	bh=9K4qlpEjpmKzBQgUkXVOyjVzOou7v33BoUG8m6CCbGg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Nfzgjyto8YJ5DciCs88kurPr0h1e5vgs4+cPgqQ7+stMq6XK2WNVrtXxThnTgxqwCTHhGeExiaIffgInEzkuQT5fDZyC3VlhIrGPxcWzv2Yucwg93LT8eIuxz5Lzz1UtJMkQvh/mPVZoyj/cTCl/88fQcB6JghCAGYaz9hkRn6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Jd8arB0i; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="A/obAKFp"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Jd8arB0i"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=VeZG
-	mdkWu2a9tcJVHKHFxcVcovTPejnxYaNB+QF/nKU=; b=A/obAKFpBGAFUmLPvdQ6
-	zm8LIA8OYziJ93q8wyuCZ+3It425RrgtFUQKQA/yb9HK/+iJCGoweDsOI2J+OhKG
-	nRWV7B5BrnZcxCGI+a+P3i/p8VlWyJ7bF9IcGpc++FiaR2FvGuCNuA1yQjKuI6Rl
-	v3Dj7uulpwPNNEayvdu2XDwkd38O1MbGkYk/QV5wppBMmSnI4lej+9xcmEEwcuUt
-	aT+ULuoVYY2+4LqK8VCp2iWnslCvWGcPr7BsbSYqRcXmuXqbbt9a03AP2MErta4S
-	rhAuLDjHkwgyqB2WYhWmy5PusRv7oqQpV81TVAOKur0atwojLG12IwLYjg7OhhKm
-	LA==
-Received: (qmail 2756342 invoked from network); 9 Feb 2024 01:10:40 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Feb 2024 01:10:40 +0100
-X-UD-Smtp-Session: l3s3148p1@Wq4WwucQQOoujnsZ
-Date: Fri, 9 Feb 2024 01:10:39 +0100
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=hIePBzSeO/3D5e76oY9PllApDN+OlYoSau4JtfpyyAk=; b=Jd8arB
+	0i5IIIb0whlyKCAitOeYKO1e7xb+GvxxzHcNJ5DKkhmkybovHTeuPK7r9ojaZ2aU
+	CpnWUxAFKB1/6PCrDrnbQ2kQc0vcNH2wEn0rFZ5CrA5bmBMt/7Pn66V8puLBNg9h
+	BdL9loFJI/xBSBM3m+R8V1RH7g1s4VgBvLLzWSkGe+DuVrj+rzhXsYNpQtxMGTWu
+	w/VMNozjtDk0iVULKmdrXMCUq6UboeoP8VuRkWi701M0A3Lva9cQiq+44+C3dSCh
+	FzPAvuzvJxNkgr2na5+7VqJi98JBaCDacvKeHm3g8p3vrXgRZ8jp2fOdehLdU/Gc
+	rU2drZp6BMsFEaLQ==
+Received: (qmail 2792299 invoked from network); 9 Feb 2024 02:58:45 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Feb 2024 02:58:45 +0100
+X-UD-Smtp-Session: l3s3148p1@TGKaROkQdLMujnsZ
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: renesas_sdhi: use typedef for dma_filter_fn
-Message-ID: <ZcVtfzeeOnHm6xs-@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240208202137.630281-1-krzysztof.kozlowski@linaro.org>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] mfd: tmio: remove obsolete platform_data
+Date: Fri,  9 Feb 2024 02:58:16 +0100
+Message-ID: <20240209015817.14627-9-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240209015817.14627-8-wsa+renesas@sang-engineering.com>
+References: <20240209015817.14627-8-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gbY9D5s4ZrTDvJIk"
-Content-Disposition: inline
-In-Reply-To: <20240208202137.630281-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+With commit 8971bb812e3c ("mfd: remove toshiba tmio drivers"), all users
+of platform data for NAND and framebuffers are gone. So, remove
+definitions from the header, too.
 
---gbY9D5s4ZrTDvJIk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ include/linux/mfd/tmio.h | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-On Thu, Feb 08, 2024 at 09:21:37PM +0100, Krzysztof Kozlowski wrote:
-> Use existing typedef for dma_filter_fn to avoid duplicating type
-> definition.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index eace8ea6cda0..bc53323293a3 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -103,31 +103,4 @@ struct tmio_mmc_data {
+ 	void (*set_pwr)(struct platform_device *host, int state);
+ 	void (*set_clk_div)(struct platform_device *host, int state);
+ };
+-
+-/*
+- * data for the NAND controller
+- */
+-struct tmio_nand_data {
+-	struct nand_bbt_descr	*badblock_pattern;
+-	struct mtd_partition	*partition;
+-	unsigned int		num_partitions;
+-	const char *const	*part_parsers;
+-};
+-
+-#define FBIO_TMIO_ACC_WRITE	0x7C639300
+-#define FBIO_TMIO_ACC_SYNC	0x7C639301
+-
+-struct tmio_fb_data {
+-	int			(*lcd_set_power)(struct platform_device *fb_dev,
+-						 bool on);
+-	int			(*lcd_mode)(struct platform_device *fb_dev,
+-					    const struct fb_videomode *mode);
+-	int			num_modes;
+-	struct fb_videomode	*modes;
+-
+-	/* in mm: size of screen */
+-	int			height;
+-	int			width;
+-};
+-
+ #endif
+-- 
+2.43.0
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---gbY9D5s4ZrTDvJIk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmXFbXcACgkQFA3kzBSg
-KbYHlg/+NXyqZnSAPRj0qIaGasZogGhPCcNolE9AR+mpZ+nbC/q6I7+bugEFp/FP
-P3Ho9Se9RMjTu77k0a3A5PJ7KsL9v68UYQ3qS0PG60xqCf/ghATY2TrwcV5SH/4X
-JEi5hFyp3pKmTRHBHpCncEhojfK5amOjleZzEjlWbApdfpzT9YFnNFK3aaoHZ1x1
-3k+7kujR5h9a6YOyrHm2ZMMgrhoy6DqwD5XqDlaGZbYHYSeaDei6WXEE4QDLBg3I
-K4dAoRX/lbuY4Q2rJLhKRmv+OxDsvTXmUfx29KpBj1ZR/wVudR09DmLCtzbpd9KJ
-yS3txqoAGQ8UN6/pug+s6rGUayn7arU9ThxVBlMkARWm+TslYsyylqNSDPMNRW4o
-QrQTNzJwSS+EWlKCMjCLTi012dGxvELcCDBsi2V2Dey6riYu9EOI2f9sbUEIkmiF
-m/L1WfIubZduElAXFVaROQksbByvvtHDevd9js85Ip+E1zvT7mBQv8mXVbTTN2LH
-fMHeWpUT6DAIi4Ne3NQqT0b5tV1fRHBvHbizeoAC1IkV3++FsIRRivuQXIbnYUpC
-/kGxd0evCh7bVb7tmgKIjWyOBiJAvevaFuoJKcNxfqFVP5tmccda93AzMRfSZh9f
-LmvXlpMw1vYtFQvHyZP8wcocoIY1GevCzzYdUeleExrBhEIr8Uc=
-=srAI
------END PGP SIGNATURE-----
-
---gbY9D5s4ZrTDvJIk--
