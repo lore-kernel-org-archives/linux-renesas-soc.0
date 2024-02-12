@@ -1,24 +1,24 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B49B39843
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Feb 2024 11:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AA839857
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Feb 2024 11:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707737852; cv=none; b=LFV6LiPfiiLWgzaAKHRqdWbm0oh0MwWbQdTzyMfH2z8geUcPviEkCORvr30Hl8ApgkfJnTUnP8CmD1DeSxpzQssQqE0Q8+hvW8XhlRcjTBDOBjws+W0HDSmd+LVGyE/nuCa2gwQM3UZ1uCtEtaCHjatx287PqTL4QE0tnAAQkUg=
+	t=1707737854; cv=none; b=gg9Uy/cz1yiffpWf2jnqIQEl7stxqh94UXS+1DM22Yh90PJCZe8c9B12zoxvwT86RSg5ay3MnaeHOXCTMLxeICVoGsJB9imRNbpLuEEMkocx6LMjoP4LadTtOtUIMOenaVkmemuN61KdCnaogMpteZifWCR0BVkpMP4J6RtiYIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707737852; c=relaxed/simple;
-	bh=dHYkbNy0rqXKoKhOrkeAWaX2PGmX+UlSFCrXuGbrQ1E=;
+	s=arc-20240116; t=1707737854; c=relaxed/simple;
+	bh=31kDQYqSZnacSM6donzI6RHn00VE0l2Nf29t4XKA6LE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=swuQ5Udhvr4Yi9pRauQ+HFlMBaeYormvp7tonxM3PLeoPpqf66ZHkjNP45Z8tJ7GeVxeJdXRNPuD2CuMhxPR/eSpnvBgZ97Dy8hDE6IBcPK+wtq/7iOaNWJv9+5Bv2TYc3PvqUsSwtuPKwenT53XjujWHD9T+9uAeSJa1l4E660=
+	 MIME-Version; b=DB4djtbagHpuKWqOWtwFMPjYSQct0/k1Rwz+12Y0INgR2OFVDFSHGviy9Lq1Xami/H25wQevFyycSaXGuW1arIv7kliZhj8EBZ/xiUNMb0bov7+0FmR9qsoDNNoMIrREPAAZdom0f+LldW5BOJsJkE74IGdQ+2sghj5pNIZhSJs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.06,263,1705330800"; 
-   d="scan'208";a="197568523"
+   d="scan'208";a="197568527"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Feb 2024 20:37:23 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 12 Feb 2024 20:37:29 +0900
 Received: from localhost.localdomain (unknown [10.226.92.40])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 26DC841A9A88;
-	Mon, 12 Feb 2024 20:37:20 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DD75741A9A88;
+	Mon, 12 Feb 2024 20:37:26 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -27,9 +27,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/5] irqchip/renesas-rzg2l: Rename rzg2l_tint_eoi()
-Date: Mon, 12 Feb 2024 11:37:09 +0000
-Message-Id: <20240212113712.71878-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 4/5] irqchip/renesas-rzg2l: Use TIEN for enable/disable
+Date: Mon, 12 Feb 2024 11:37:11 +0000
+Message-Id: <20240212113712.71878-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240212113712.71878-1-biju.das.jz@bp.renesas.com>
 References: <20240212113712.71878-1-biju.das.jz@bp.renesas.com>
@@ -41,42 +41,54 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename rzg2l_tint_eoi->rzg2l_clear_tint_int and simplify the code by
-removing redundant priv and hw_irq local variables.
+Use TIEN for enable/disable and avoid modifying TINT source selection
+register.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 46f9b07e0e8a..74c8cbb790e9 100644
+index c48c8e836dd1..fbee400985a9 100644
 --- a/drivers/irqchip/irq-renesas-rzg2l.c
 +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -103,11 +103,10 @@ static void rzg2l_irq_eoi(struct irq_data *d)
- 		writel_relaxed(iscr & ~bit, priv->base + ISCR);
- }
+@@ -35,7 +35,6 @@
+ #define TSSR(n)				(0x30 + ((n) * 4))
+ #define TIEN				BIT(7)
+ #define TSSEL_SHIFT(n)			(8 * (n))
+-#define TSSEL_MASK			GENMASK(7, 0)
+ #define IRQ_MASK			0x3
  
--static void rzg2l_tint_eoi(struct irq_data *d)
-+static void rzg2l_clear_tint_int(struct rzg2l_irqc_priv *priv,
-+				 unsigned int hwirq)
- {
--	unsigned int hw_irq = irqd_to_hwirq(d) - IRQC_TINT_START;
--	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
--	u32 bit = BIT(hw_irq);
-+	u32 bit = BIT(hwirq - IRQC_TINT_START);
- 	u32 reg;
+ #define TSSR_OFFSET(n)			((n) % 4)
+@@ -178,8 +177,7 @@ static void rzg2l_irqc_irq_disable(struct irq_data *d)
  
- 	reg = readl_relaxed(priv->base + TSCR);
-@@ -127,7 +126,7 @@ static void rzg2l_irqc_eoi(struct irq_data *d)
- 	if (hw_irq >= IRQC_IRQ_START && hw_irq <= IRQC_IRQ_COUNT)
- 		rzg2l_irq_eoi(d);
- 	else if (hw_irq >= IRQC_TINT_START && hw_irq < IRQC_NUM_IRQ)
--		rzg2l_tint_eoi(d);
-+		rzg2l_clear_tint_int(priv, hw_irq);
- 	raw_spin_unlock(&priv->lock);
- 	irq_chip_eoi_parent(d);
- }
+ 		raw_spin_lock(&priv->lock);
+ 		reg = readl_relaxed(priv->base + TSSR(tssr_index));
+-		reg &= ~(TSSEL_MASK << TSSEL_SHIFT(tssr_offset));
+-		writel_relaxed(reg, priv->base + TSSR(tssr_index));
++		rzg2l_tint_endisable(priv, reg, tssr_offset, tssr_index, false);
+ 		raw_spin_unlock(&priv->lock);
+ 	}
+ 	irq_chip_disable_parent(d);
+@@ -190,7 +188,6 @@ static void rzg2l_irqc_irq_enable(struct irq_data *d)
+ 	unsigned int hw_irq = irqd_to_hwirq(d);
+ 
+ 	if (hw_irq >= IRQC_TINT_START && hw_irq < IRQC_NUM_IRQ) {
+-		unsigned long tint = (uintptr_t)irq_data_get_irq_chip_data(d);
+ 		struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
+ 		u32 offset = hw_irq - IRQC_TINT_START;
+ 		u32 tssr_offset = TSSR_OFFSET(offset);
+@@ -199,8 +196,7 @@ static void rzg2l_irqc_irq_enable(struct irq_data *d)
+ 
+ 		raw_spin_lock(&priv->lock);
+ 		reg = readl_relaxed(priv->base + TSSR(tssr_index));
+-		reg |= (TIEN | tint) << TSSEL_SHIFT(tssr_offset);
+-		writel_relaxed(reg, priv->base + TSSR(tssr_index));
++		rzg2l_tint_endisable(priv, reg, tssr_offset, tssr_index, true);
+ 		raw_spin_unlock(&priv->lock);
+ 	}
+ 	irq_chip_enable_parent(d);
 -- 
 2.25.1
 
