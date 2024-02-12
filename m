@@ -1,24 +1,24 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E18824B57
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Feb 2024 11:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AD638FB2
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Feb 2024 11:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707737849; cv=none; b=ct5DI28fY4RVWtBBFM2vPU16z0K24fr5tfZ6tzH9CsPdmYXMeVgkzDUsHPYXfDPNU/79KO96ysWULzN38OMsnX/KO739WekhSfhy4gAE5wxWmNlLZfV0uv7RmjnuA499uUGQPyZ6YBqAhKzwlkiNYTPcJhquYIBO5j8IVZvznwI=
+	t=1707737850; cv=none; b=KB1hjaIvE+DHyB31g+jgW0IrsvlX1I7T3Igl01JnyV/4/BI3ZuOyXcLV6JeW0keMFGUNvrpXnijDiVaft+ARCgsYUle9fxwySk4JrkczuLMFPOEfUjZVQf9GxlqaC+KdSIE9UL6yL0NX2UsLAPk2rbnoxshX4e2SgdIfJnVBO2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707737849; c=relaxed/simple;
-	bh=RIVxkBsMCAi17kQFjBPikwksQcnIJ9vrtIR7V3mK8U4=;
+	s=arc-20240116; t=1707737850; c=relaxed/simple;
+	bh=gSvCi7qd29H+tj2NAmf+fBPay38d9/OwVw4izpJKzoo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FDnFRUAwCdEWFWMpR91jXkmxUjovFV+S5Ob+3OaiRmW/gGZrLM8OinsOvbydOVpDA32iN2fO1sHzf8WtaVtMt3fTHozY8Xu7UDlO4hK7LCLndrXeJ6kgkDuAx1Em2dkutNiMEAP87Q2oCtxEIIMfKGxE/k9HUApGROntxA89hhk=
+	 MIME-Version; b=WCC176k0IqBvjirEKsFTNDBnz8NVKrG3IgbVl0ZiZolGWxyrOTGySUyNZDHhTXB+0ioQBCqnyxAe+pfZlAazIp+nM2rm1yzlvC+FY7n/OdfsXAZFMacI3/hZQpflyQmRM0NspOtwSNn/elF0r3STzd2mNam65gAMshFnptg0P0U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.05,263,1701097200"; 
-   d="scan'208";a="193656664"
+   d="scan'208";a="193656668"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 12 Feb 2024 20:37:20 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Feb 2024 20:37:26 +0900
 Received: from localhost.localdomain (unknown [10.226.92.40])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4874641A9A9B;
-	Mon, 12 Feb 2024 20:37:18 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 09F7141A9A83;
+	Mon, 12 Feb 2024 20:37:23 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -27,9 +27,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/5] irqchip/renesas-rzg2l: Prevent IRQ HW race
-Date: Mon, 12 Feb 2024 11:37:08 +0000
-Message-Id: <20240212113712.71878-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 3/5] irqchip/renesas-rzg2l: Fix spurious TINT IRQ
+Date: Mon, 12 Feb 2024 11:37:10 +0000
+Message-Id: <20240212113712.71878-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240212113712.71878-1-biju.das.jz@bp.renesas.com>
 References: <20240212113712.71878-1-biju.das.jz@bp.renesas.com>
@@ -41,36 +41,97 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As per section "8.8.2 Clear Timing of Interrupt Cause" of the RZ/G2L
-hardware manual (Rev.1.45 Jan, 2024), it is mentioned that we need to
-clear the interrupt cause flag in the isr. It takes some time for the
-cpu to clear the interrupt cause flag. Therefore, to prevent another
-occurrence of interrupt due to this delay, the interrupt cause flag
-is read after clearing.
+As per RZ/G2L hardware manual Rev.1.45 section 8.8.3 Precaution when
+changing interrupt settings, we need to mask the interrupts while
+setting the interrupt detection method. Apart from this we need to clear
+interrupt status after setting TINT interrupt detection method to the
+edge type.
+
+First disable TINT enable and then set TINT source. After that set edge
+type and then clear the interrupt status register.
 
 Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller driver")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 46 ++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 9494fc26259c..46f9b07e0e8a 100644
+index 74c8cbb790e9..c48c8e836dd1 100644
 --- a/drivers/irqchip/irq-renesas-rzg2l.c
 +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -111,8 +111,11 @@ static void rzg2l_tint_eoi(struct irq_data *d)
- 	u32 reg;
- 
- 	reg = readl_relaxed(priv->base + TSCR);
--	if (reg & bit)
-+	if (reg & bit) {
- 		writel_relaxed(reg & ~bit, priv->base + TSCR);
-+		/* Read to avoid irq generation due to irq clearing delay */
-+		readl_relaxed(priv->base + TSCR);
-+	}
+@@ -117,6 +117,40 @@ static void rzg2l_clear_tint_int(struct rzg2l_irqc_priv *priv,
+ 	}
  }
  
++static void rzg2l_tint_endisable(struct rzg2l_irqc_priv *priv, u32 reg,
++				 u32 tssr_offset, u32 tssr_index,
++				 bool enable)
++{
++	if (enable)
++		reg |= TIEN << TSSEL_SHIFT(tssr_offset);
++	else
++		reg &= ~(TIEN << TSSEL_SHIFT(tssr_offset));
++
++	writel_relaxed(reg, priv->base + TSSR(tssr_index));
++}
++
++static void rzg2l_disable_tint_and_set_tint_source(struct irq_data *d,
++						   struct rzg2l_irqc_priv *priv,
++						   u32 reg, u32 tssr_offset,
++						   u8 tssr_index)
++{
++	unsigned long tint = (uintptr_t)irq_data_get_irq_chip_data(d);
++	u32 val;
++
++	rzg2l_tint_endisable(priv, reg, tssr_offset, tssr_index, false);
++	val = (reg >> TSSEL_SHIFT(tssr_offset)) & ~TIEN;
++	if (tint != val) {
++		reg |= tint << TSSEL_SHIFT(tssr_offset);
++		writel_relaxed(reg, priv->base + TSSR(tssr_index));
++	}
++}
++
++static bool rzg2l_is_tint_enabled(struct rzg2l_irqc_priv *priv, u32 reg,
++				  u32 tssr_offset)
++{
++	return !!(reg & (TIEN << TSSEL_SHIFT(tssr_offset)));
++}
++
  static void rzg2l_irqc_eoi(struct irq_data *d)
+ {
+ 	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
+@@ -214,8 +248,11 @@ static int rzg2l_tint_set_edge(struct irq_data *d, unsigned int type)
+ 	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
+ 	unsigned int hwirq = irqd_to_hwirq(d);
+ 	u32 titseln = hwirq - IRQC_TINT_START;
++	u32 tssr_offset = TSSR_OFFSET(titseln);
++	u8 tssr_index = TSSR_INDEX(titseln);
++	bool tint_enable;
+ 	u8 index, sense;
+-	u32 reg;
++	u32 reg, tssr;
+ 
+ 	switch (type & IRQ_TYPE_SENSE_MASK) {
+ 	case IRQ_TYPE_EDGE_RISING:
+@@ -237,10 +274,17 @@ static int rzg2l_tint_set_edge(struct irq_data *d, unsigned int type)
+ 	}
+ 
+ 	raw_spin_lock(&priv->lock);
++	tssr = readl_relaxed(priv->base + TSSR(tssr_index));
++	tint_enable = rzg2l_is_tint_enabled(priv, tssr, tssr_offset);
++	rzg2l_disable_tint_and_set_tint_source(d, priv, tssr,
++					       tssr_offset, tssr_index);
+ 	reg = readl_relaxed(priv->base + TITSR(index));
+ 	reg &= ~(IRQ_MASK << (titseln * TITSEL_WIDTH));
+ 	reg |= sense << (titseln * TITSEL_WIDTH);
+ 	writel_relaxed(reg, priv->base + TITSR(index));
++	rzg2l_clear_tint_int(priv, hwirq);
++	if (tint_enable)
++		rzg2l_tint_endisable(priv, tssr, tssr_offset, tssr_index, true);
+ 	raw_spin_unlock(&priv->lock);
+ 
+ 	return 0;
 -- 
 2.25.1
 
