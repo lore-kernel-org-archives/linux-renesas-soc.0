@@ -1,172 +1,125 @@
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2064.outbound.protection.outlook.com [40.107.113.64])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C523D984
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Feb 2024 17:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707757597; cv=fail; b=Wki5p61mZRtx8NeKhBqADO7fauzpd6PL4oHLVe57zLCT5xbFp2f5vYQSCFZSuy956ePDfvDTh4yyfsLiIe7BhpW7lqRr6148dmXv1e1xU/JDibxdycqa9tP9irQ20SIuXQ8jfKWHWkGyW0C9lTpkaf24wyIBYzW7YKYlC0yKSTA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707757597; c=relaxed/simple;
-	bh=yMpplJvgqAOhrcwYRJ2srx6wPcBOjtajY7eBs2cY9Do=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZFci2eogTeR7mDPgQDptkh8CD5EgHlxF/pCXt8ukq815xDSC2ihkxQa/q+VsIHfCyPjDYkyRpuZbaQnx64XB2cLOEFqmfb0hHiTrPoYZcVzbWz5Tn9nBB2jzL7lSOEuKJoHPFZ8xUPU4LqHauEXIpvBaayb4r+8lbVrQi0eFJ7c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=SEgluqXv; arc=fail smtp.client-ip=40.107.113.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3114BA9A;
+	Mon, 12 Feb 2024 17:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707760436; cv=none; b=s29ZQDcm6v2977+QTbcEqcF+h3M/gi5+EQX/VvVZ8SAYHTJaVOKyBcd8Rc8g5izq8yKU6y4F4UEjOZUHerVTpEx63ohY5vQp+GCAknJoQUcM7Rghz2RR1YyPXnzWNfXmWP2x+/etegGCO1olG60u1XUSkeKPEop0kHmkXTqZhXw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707760436; c=relaxed/simple;
+	bh=HE4qoCMkNfCr8Tzigwiyj/kHZUGmLMZiIb/PxPu6nS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f96puQ0pjICOawPv7Y2heK1jFY292OTDO5epoWDz7xFEzvt9Bm6z4ZjD1IZMHfQLhdhDPz0ZC44CWiBFCb6R3zLxXKJ3J9ezO9LJpSIxbVcPYbbi1zXIpLfybRQGjxDer/XkYeTx10AQga6awdUYoxEaaKVYcxQyFZdD+xebUpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Wf+FWb25; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="SEgluqXv"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EEj67T0fjqh0ZEljf6nf0lhqDrq5XOqSZ+iIXd10pyG2Lq3KvU+EAPkQx3xv8tW7/hjN+eUV4cSdxUhwGAY3kXdSMo+Akm903xaPjrum9VleyqgCubOC0ZLQnoaP+j1kNu6tjaREJcMjlrrpTKbv6+Bv3JF1q9VTfQQD6hU+dLx8NsEIju8SUEYV+iAi+wmVGMLFiCOmCdi8OPi9fY1K5S1ioeMHeOpHeUf9tCMkM8zwF8o/WJEIXvjMfmKecMt53T8xHWHHc8BJpj/wCxbGyTGeGPc/u80mOofqnz233SlTZZy+4MOntpvJXL1z61+TaY9bD0h1eYlRoLlX0mOTcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yMpplJvgqAOhrcwYRJ2srx6wPcBOjtajY7eBs2cY9Do=;
- b=BZXaMUJv43zGdl/AZuwPg66A4rWLYZb4eY1n3jQ8cuVANrOjZgWmaPSpvDvI18P250e27S15H9PvPN1vtcjsljgSZFxNNCMyitgp5FO3MV3lm5PRykVIrfxMbmYNwNcDf2uVHYVaagEdl7epJkP1o0hRND4ri+f+I292CGbP2ENV5SH+M2Hm64ovTzMSfTJesz4p0u+tlqZRjDzTNcOSInYmw9e6sEkb+lzvqXtT2+wqIyZuxI2fwPTvUT2H+yB6imVWeaP65f/qERsfrBHY7qpaTZugGBWexIv1woBxIYXcicquBmnE6mqPoYyEsthfF22GsuRt07uGku16W7TPlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yMpplJvgqAOhrcwYRJ2srx6wPcBOjtajY7eBs2cY9Do=;
- b=SEgluqXvIZTwEDwqiL4EqnVJ43e8bNz2UXM43lbAeu1SyFhO9+OmkqxPbPdE/OXicxeed50zgmDuryTe90KnR3DAbeg5Dod6zPfOwL/tmmMRBbg2XZw7D/magNaw34mL8ZnoZh1yGauxFp45+cFYUiolppkHAWQtArMEa8E/V6U=
-Received: from TYCPR01MB11269.jpnprd01.prod.outlook.com
- (2603:1096:400:3c0::10) by TYCPR01MB9585.jpnprd01.prod.outlook.com
- (2603:1096:400:192::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7270.35; Mon, 12 Feb
- 2024 17:06:31 +0000
-Received: from TYCPR01MB11269.jpnprd01.prod.outlook.com
- ([fe80::6719:535a:7217:9f0]) by TYCPR01MB11269.jpnprd01.prod.outlook.com
- ([fe80::6719:535a:7217:9f0%3]) with mapi id 15.20.7270.036; Mon, 12 Feb 2024
- 17:06:30 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Marc Zyngier <maz@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, biju.das.au
-	<biju.das.au@gmail.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 2/5] irqchip/renesas-rzg2l: Rename rzg2l_tint_eoi()
-Thread-Topic: [PATCH 2/5] irqchip/renesas-rzg2l: Rename rzg2l_tint_eoi()
-Thread-Index: AQHaXafZ1pY+WzOBgUurMpQ0B2JPLLEG6H0AgAAHkdA=
-Date: Mon, 12 Feb 2024 17:06:30 +0000
-Message-ID:
- <TYCPR01MB1126909E3F8414BB18EB1FAD286482@TYCPR01MB11269.jpnprd01.prod.outlook.com>
-References: <20240212113712.71878-1-biju.das.jz@bp.renesas.com>
- <20240212113712.71878-3-biju.das.jz@bp.renesas.com>
- <CAMuHMdXZ0_O8-bjB9NyOKc3JKHjcE_w3wrhgQN3Ur7A8DvovKA@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdXZ0_O8-bjB9NyOKc3JKHjcE_w3wrhgQN3Ur7A8DvovKA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB11269:EE_|TYCPR01MB9585:EE_
-x-ms-office365-filtering-correlation-id: e1e39174-50e2-4dfa-d1f1-08dc2becf540
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- SI5p75BiY1eYwMdcUGnsXsJ78Vi2/Vqpx4pNkEBpAJzr91pMgx5MhHEDY20PnQ/xTcZSMMDjHXDMw0JN87z6IDNOtGotqaVYWWwh9ktboor4eXIjNILbnlKvseVrZfVDgQqXOUZfcryGYaYxRXEP05QwjCdapkoygrwZM2v/hq2QTz1mWAR0aH71il7d3nAEID3ZJGp/C2VYp6mk3CoEXPyDoLgd/oqP0avEc6pvdPpPAMwuQVSg13b1xV83G9mV8JEN+LTWXbfoCZKXd2ZWH1NEHOPWvI8lN/sArQO/ZvAZZRXt22ucBDgfmhJ5LlyBeKF1hCKPq+tJ9ISBTGxhReRJMIQC6gedvRf9gmPQ/kWFwH/UlosO1ifTVCvt0xukF7uJjeg5I7S33VwcTAO4hKIHF5kvmexgkr9QQm7vIbRxFJEhdR75uY3Gu4z94NrnKHc4ayllMwA4FO1dWwA/9O2xJ/j1syLPhplc0X22zjFp77P7OePMYlXu4fzE64nDhsZGDG9ZRFJqQ4figPUIOLYoHXjnQcp3avjK8Pgmp6Rs9b55yYnsgC8mmH6dmaysoyWQp8fK+AalRMWl6YYGOY76hAVFVOf5T5DBkJjdb8LuqXFheHGcYRH4kHREiXfi
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11269.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(346002)(39860400002)(136003)(376002)(230922051799003)(1800799012)(451199024)(186009)(64100799003)(2906002)(5660300002)(55016003)(9686003)(41300700001)(26005)(122000001)(38100700002)(86362001)(71200400001)(53546011)(7696005)(66556008)(316002)(8936002)(8676002)(54906003)(6506007)(66476007)(66446008)(64756008)(52536014)(6916009)(76116006)(4326008)(66946007)(83380400001)(33656002)(478600001)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SyswUEVNRG5SZWd0WHcxS3Ayb0YvNHIrTGJRVEx4eko5NXAvWGVKaGQ3aTVs?=
- =?utf-8?B?NllrczFrWTMvYnp6anJsQmprSU5pODVBa2NXd3YzRGhwNmJoc21YelpGRkxm?=
- =?utf-8?B?bkgydUZpNXB0YUVWMC83T3NRT3EvMG1sNGFHRW1SUnNmWE4xWmpPWU5lc3Rq?=
- =?utf-8?B?M0F5d2gvWENyTk9WTEdVKzdIN0M5MDRIaGdsVHkrRHJDT3FBVUoxc2dDdDl1?=
- =?utf-8?B?cFdXYXRTUmluanI3YXRuWjZpQ1c3T1NWaWJ3bThjelMwek50WURPUFVTaC9U?=
- =?utf-8?B?SG9qb1lQbUcrU0VRY2hFU1lwaS91TXpIMlFyeDV0RnJkQ2dKZlpxdHBYT0Uv?=
- =?utf-8?B?czRXcnBhSG1zcFV5V25SOEhIV0l2aU1McG4xTFhtREJ0bUJtTkdwaVMvVUVV?=
- =?utf-8?B?R0kzZy9pNm5TL3pYS1Q3bi91Qzc3Q3ZUWDFGV2VMUDRrb3JEZjN3SkVqSm4x?=
- =?utf-8?B?Vk1xSUUwOVg5YWR5a3lncjJwQk8zYTBYMFNKaFRiWjFHdG1hLzNXYXE5WWYz?=
- =?utf-8?B?aThXcG56aVRtY1QxSHdZSDh5bmx2a2tYUWt1N3BFdWUxOGhkUE1xL3NBcDhw?=
- =?utf-8?B?MHpJUzdCM2tBa25zc0M5RVFNRzNKa1FOWmZLekFQUjU2ckdwUk9hSitWZisx?=
- =?utf-8?B?SDd0YW5qL2xpaEdyWkdqWDJQY3l1aTZHdDVrc0o2Z3cxTFJ2VkJqdGl4bUNP?=
- =?utf-8?B?eC9oTkxZdGZiVUpmTE9IT0NkSjNPQkRmVVEwcGFWUHhFSFdqblBLZEFIWHdB?=
- =?utf-8?B?Vkw2ZkFzYXlneGp2bUpoUVRhdGNOSVdQNXg4ZG9TeFptTllWQ0d0OGN2UnFu?=
- =?utf-8?B?aXF4WEhuRzRMVzRsT1gwTERTRSt6N0pOcGpHRWFaSktycnFxVWJ5QkhqWEox?=
- =?utf-8?B?SGk5VEZsMVVOQ2pIWTFoUGJCbVlxL3M2cnNOR0J4dHhUcVcwaXV6S3FXdXF0?=
- =?utf-8?B?ZC9UakxJa3d2N3JaQVpjT3cyWm0wai95SStEUWMwN3NYOGxVMUV3djhqOVFQ?=
- =?utf-8?B?SU5lcnhHRzV0eTlmZ2hOMStNSGxUeEFJcDdEaXlkeUJLbEF5U04zUVlSQ0Jr?=
- =?utf-8?B?TWVma3dSMmY3QTQvSDR0bXR1TS9WQlN5NExWM1FncGplWjVWSVdKSE1MSStZ?=
- =?utf-8?B?U3RTaXJFOEgyRGpUNkN5SCs5d09MSjdDSVlVMTNGRWplZ3N6WGN1S0FMeWZl?=
- =?utf-8?B?R2x0ZDBtaEdMRk9SbEdYbEJlbDB5eHNvZVZJQkhCNkplYlRYaG9zVWgxeEdO?=
- =?utf-8?B?bTB2RkFJRjlTREhTbUMwd2xiZXpTMTFsbUMrWGYvNGhOVTRlUTl1dDdIWm5n?=
- =?utf-8?B?NnZPaURkV1ZiQlE2TjZNTlhTSmg2ZFp0cGlXV0ltYVhza2VUUyt1eHdOY0NM?=
- =?utf-8?B?dk5Fc0J2TVgzdFF0cjg3b2dMbkJMSkp4LzBSWmFDTXdDb1FmMkhHeDBxcngy?=
- =?utf-8?B?TVNHR3RHTUlER1JtR09sRnZPQU9UNnJ6Kzd0VUV6NWtTdUpOU2l4d2x3d0o5?=
- =?utf-8?B?UThlUFFtYmVpN2xQc1hzTFg3cmxaTUMrWE1nbFYyQzJQbHVRdjhvbEkrUWFz?=
- =?utf-8?B?SXFNWVhxYXNENVhkOCtPV1ZheU93ZDVMNy9GOTZGSXVia09jMGt4ejdtWExS?=
- =?utf-8?B?bENZZVpFWEM3TjRTbXZFdnVUT2hPSWFNblp0OHNaSnhaMERKaVI1S0R3ZGU3?=
- =?utf-8?B?TkNQR1U2Q2RaRHBGU2gySjhIdkZOTDBwNDBYRDNTSVZKNWl1MmIveW5vQzBF?=
- =?utf-8?B?cFhmQUdsVTcwR2RUb0lSaDA2OVdaaTNOSDQrNzkveEdyY2ZwZUFHdERsd2Er?=
- =?utf-8?B?Zm1DTVpJUm9yaGpDb3BLSElrUWRNaFNBNUZKM3BxK0hxM3pRYi9Qc1I4WWFh?=
- =?utf-8?B?VlZWR2FwQjNsNUFuU1lBeTEzbVRmQjN5ZURhOEQraVByem40b1ZLTDZ6QS9t?=
- =?utf-8?B?ZlU4YjY5ZTNkRndTZzFzSER1YTVhVy9SVEFYUTQ3WUNaYzNacXBJYXNTN0hZ?=
- =?utf-8?B?OWRPWjI4MEZPY2luYmh2Q1NhOWxDY0RLUEE5YUwzWVBsazR4SVhhSCtObmR3?=
- =?utf-8?B?NWEzVHQ4bEJNd2dpbEtkam9jWko1SEpZWmx4TmZLeVlwcytaZFpaTzR4alBR?=
- =?utf-8?B?djRGKzE5L2ZZKyszTkNWZzFPNjVOMnBzYlNpZnFVMk1UYVlNTnlHNUxsODl3?=
- =?utf-8?B?UFE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Wf+FWb25"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8F233C0005;
+	Mon, 12 Feb 2024 17:53:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1707760424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/gU11AbgjtFz5RC8B4oWWKuN/o3wR/cYTDZ0PY2ujtQ=;
+	b=Wf+FWb25cxP3y/kxWLOxq/1UDuAUYDpVbftVo/1d1BRY46DHlcaXRJVoYy0Ij6Fr1T16Mr
+	mJq6/1RYBo/fJjjWoFvnhBoqTtYdmcQ35phNdfZ15RtlTJ4MY2BtcLhLLRM7RCTavQVnbO
+	LoXbd5LEeRXPEDPQxMXpX6a9zZ6e3KvTj3TTn/f+WPkQiEDvtU2H7DhHaKi6riC2p+50oi
+	XuUyw97uMmPC6l5Wj3WRsIpBrZw4ljluorhRI1KUhg/z9qNWgxExwoewyplm6UhWmnMLaZ
+	AYXcYAYgZz38l9Ba67MTO6if0nBxVZ52ph57tGMHTP/EX+DcNePRKxRhys+PMw==
+Date: Mon, 12 Feb 2024 18:53:32 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
+ <clement.leger@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH net-next v3 7/7] net: pcs: rzn1-miic: Init RX clock
+ early if MAC requires it
+Message-ID: <20240212185332.2ebf2935@device-28.home>
+In-Reply-To: <20240212-rxc_bugfix-v3-7-e9f2eb6b3b05@bootlin.com>
+References: <20240212-rxc_bugfix-v3-0-e9f2eb6b3b05@bootlin.com>
+	<20240212-rxc_bugfix-v3-7-e9f2eb6b3b05@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11269.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1e39174-50e2-4dfa-d1f1-08dc2becf540
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2024 17:06:30.6482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3PdkBfbUJYAnLitXiCaps3Ut0Eu8HxK0wo0xnu5ExkPcB+13Z59ioZcL1B2JzVxPs5hI9H0LUGrH6ZUh2c6GDxE0DtgbaCokSBNCi64Aylk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9585
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IC0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtbTY4
-ay5vcmc+DQo+IFNlbnQ6IE1vbmRheSwgRmVicnVhcnkgMTIsIDIwMjQgNDozOCBQTQ0KPiBTdWJq
-ZWN0OiBSZTogW1BBVENIIDIvNV0gaXJxY2hpcC9yZW5lc2FzLXJ6ZzJsOiBSZW5hbWUgcnpnMmxf
-dGludF9lb2koKQ0KPiANCj4gSGkgQmlqdSwNCj4gDQo+IE9uIE1vbiwgRmViIDEyLCAyMDI0IGF0
-IDEyOjM34oCvUE0gQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0KPiB3cm90
-ZToNCj4gPiBSZW5hbWUgcnpnMmxfdGludF9lb2ktPnJ6ZzJsX2NsZWFyX3RpbnRfaW50IGFuZCBz
-aW1wbGlmeSB0aGUgY29kZSBieQ0KPiA+IHJlbW92aW5nIHJlZHVuZGFudCBwcml2IGFuZCBod19p
-cnEgbG9jYWwgdmFyaWFibGVzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBEYXMgPGJp
-anUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0KPiANCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRl
-cmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+IA0KPiA+IC0tLSBhL2RyaXZlcnMv
-aXJxY2hpcC9pcnEtcmVuZXNhcy1yemcybC5jDQo+ID4gKysrIGIvZHJpdmVycy9pcnFjaGlwL2ly
-cS1yZW5lc2FzLXJ6ZzJsLmMNCj4gPiBAQCAtMTAzLDExICsxMDMsMTAgQEAgc3RhdGljIHZvaWQg
-cnpnMmxfaXJxX2VvaShzdHJ1Y3QgaXJxX2RhdGEgKmQpDQo+ID4gICAgICAgICAgICAgICAgIHdy
-aXRlbF9yZWxheGVkKGlzY3IgJiB+Yml0LCBwcml2LT5iYXNlICsgSVNDUik7ICB9DQo+ID4NCj4g
-PiAtc3RhdGljIHZvaWQgcnpnMmxfdGludF9lb2koc3RydWN0IGlycV9kYXRhICpkKQ0KPiA+ICtz
-dGF0aWMgdm9pZCByemcybF9jbGVhcl90aW50X2ludChzdHJ1Y3QgcnpnMmxfaXJxY19wcml2ICpw
-cml2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBo
-d2lycSkNCj4gPiAgew0KPiA+IC0gICAgICAgdW5zaWduZWQgaW50IGh3X2lycSA9IGlycWRfdG9f
-aHdpcnEoZCkgLSBJUlFDX1RJTlRfU1RBUlQ7DQo+ID4gLSAgICAgICBzdHJ1Y3QgcnpnMmxfaXJx
-Y19wcml2ICpwcml2ID0gaXJxX2RhdGFfdG9fcHJpdihkKTsNCj4gPiAtICAgICAgIHUzMiBiaXQg
-PSBCSVQoaHdfaXJxKTsNCj4gPiArICAgICAgIHUzMiBiaXQgPSBCSVQoaHdpcnEgLSBJUlFDX1RJ
-TlRfU1RBUlQpOw0KPiA+ICAgICAgICAgdTMyIHJlZzsNCj4gPg0KPiA+ICAgICAgICAgcmVnID0g
-cmVhZGxfcmVsYXhlZChwcml2LT5iYXNlICsgVFNDUik7IEBAIC0xMjcsNyArMTI2LDcgQEANCj4g
-PiBzdGF0aWMgdm9pZCByemcybF9pcnFjX2VvaShzdHJ1Y3QgaXJxX2RhdGEgKmQpDQo+ID4gICAg
-ICAgICBpZiAoaHdfaXJxID49IElSUUNfSVJRX1NUQVJUICYmIGh3X2lycSA8PSBJUlFDX0lSUV9D
-T1VOVCkNCj4gPiAgICAgICAgICAgICAgICAgcnpnMmxfaXJxX2VvaShkKTsNCj4gPiAgICAgICAg
-IGVsc2UgaWYgKGh3X2lycSA+PSBJUlFDX1RJTlRfU1RBUlQgJiYgaHdfaXJxIDwgSVJRQ19OVU1f
-SVJRKQ0KPiA+IC0gICAgICAgICAgICAgICByemcybF90aW50X2VvaShkKTsNCj4gPiArICAgICAg
-ICAgICAgICAgcnpnMmxfY2xlYXJfdGludF9pbnQocHJpdiwgaHdfaXJxKTsNCj4gDQo+IFBlcmhh
-cHMgcGFzcyB0aGUgdGludCBudW1iZXIgKGkuZS4gImh3X2lycSAtIElSUUNfVElOVF9TVEFSVCIp
-IGluc3RlYWQ/DQoNCkFncmVlZC4NCg0KPiANCj4gPiAgICAgICAgIHJhd19zcGluX3VubG9jaygm
-cHJpdi0+bG9jayk7DQo+ID4gICAgICAgICBpcnFfY2hpcF9lb2lfcGFyZW50KGQpOw0KPiANCj4g
-SSB0aGluayBpdCBtYWtlcyBzZW5zZSB0byBtYWtlIGEgc2ltaWxhciBjaGFuZ2UgdG8gcnpnMmxf
-aXJxX2VvaSgpLg0KDQpPSyB3aWxsIGRvIHNpbWlsYXIgY2hhbmdlLg0KDQpDaGVlcnMsDQpCaWp1
-DQo=
+Hi Romain,
+
+On Mon, 12 Feb 2024 17:42:14 +0100
+Romain Gantois <romain.gantois@bootlin.com> wrote:
+
+> The GMAC1 controller in the RZN1 IP requires the RX MII clock signal to be
+> started before it initializes its own hardware, thus before it calls
+> phylink_start.
+>=20
+> Check the rxc_always_on pcs flag and enable the clock signal during the
+> link validation phase.
+
+It looks like this commit log doesn't match the content of the commit.
+
+> Reported-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+> Link: https://lore.kernel.org/linux-arm-kernel/20230116103926.276869-4-cl=
+ement.leger@bootlin.com/
+> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> ---
+>  drivers/net/pcs/pcs-rzn1-miic.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>=20
+> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-m=
+iic.c
+> index d93f84fbb1fd..b0d9736c678e 100644
+> --- a/drivers/net/pcs/pcs-rzn1-miic.c
+> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
+> @@ -279,10 +279,37 @@ static int miic_validate(struct phylink_pcs *pcs, u=
+nsigned long *supported,
+>  	return -EINVAL;
+>  }
+> =20
+> +static int miic_pre_init(struct phylink_pcs *pcs)
+> +{
+> +	struct miic_port *miic_port =3D phylink_pcs_to_miic_port(pcs);
+> +	struct miic *miic =3D miic_port->miic;
+> +	u32 val;
+> +
+> +	/* Start RX clock if required */
+> +	if (pcs->rxc_always_on) {
+> +		/* In MII through mode, the clock signals will be driven by the
+> +		 * external PHY, which might not be initialized yet. Set RMII
+> +		 * as default mode to ensure that a reference clock signal is
+> +		 * generated.
+> +		 */
+> +		miic_port->interface =3D PHY_INTERFACE_MODE_RMII;
+
+There's this check in miic_config :
+
+	if (interface !=3D miic_port->interface) {
+		val |=3D FIELD_PREP(MIIC_CONVCTRL_CONV_SPEED, speed);
+		mask |=3D MIIC_CONVCTRL_CONV_SPEED;
+		miic_port->interface =3D interface;
+	}
+
+As you set the interface to RMII and set the CONV_MODE below without
+really looking at the speed, is there any risk of a mismatch between
+the configured mode and the speed ?
+
+Thanks,
+
+Maxime
