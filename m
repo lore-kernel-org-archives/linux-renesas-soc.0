@@ -1,187 +1,117 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3673713AA4B;
-	Thu, 15 Feb 2024 16:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4584134726
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2024 16:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708013444; cv=none; b=f0bwyk+x061gt0jwLVywviLgP7O17Oon2HVQYwcmJjDQhsJk0aznsqdIVt95b+bSaUkNx0/sId/7xKxBFHlOBEi47pb0JhIIjCi2FurmOaUhm4M2KEAu3mjuVmGxpTf1qz9mLsO78x9j2fr5FPSqKZnyXmqLnO2nqwqiZF6xzvY=
+	t=1708013495; cv=none; b=hzvpS3yPeQF7dFTIU4uyzU+JI80GLFGBMl4bzWeKWHz46ykbzEn2NMbkAOrH9kERFty8qgSAfwshYUPVl4MdSp1bCjmZWJdQfyUos2WeJMEq+T5scbeL/tuSOePS2nQjYEuMuK19P6fp2Rz0rZsuPTXdfrwOlrO2Nv4A9wKDujc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708013444; c=relaxed/simple;
-	bh=XwdnEnvzvtWy3yYA3ItC0/WFmixWjF0tLIyu/EGcJpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VgF7ovJW7d7c5p1dhO7grtVZy3ef0Si2z9evyII4IUZ8aAxjo++U5eq+WVAU6ud2bL+zJ1gs3RUPKkjLdFVV9f2Pw/Dp5MMqGueD+WZdvKRMQwk0v5OKuSjDLegE6Z2u73nrQ2+LDJ7zgEED00nwbOiFXYxGZ8t/RBkY9hlj0IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.06,162,1705330800"; 
-   d="asc'?scan'208";a="194064591"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Feb 2024 01:10:33 +0900
-Received: from [10.226.92.74] (unknown [10.226.92.74])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 51DD44020C09;
-	Fri, 16 Feb 2024 01:10:29 +0900 (JST)
-Message-ID: <71486c46-8875-4aad-b5b7-d1032d210023@bp.renesas.com>
-Date: Thu, 15 Feb 2024 16:10:27 +0000
+	s=arc-20240116; t=1708013495; c=relaxed/simple;
+	bh=lzJ1PJbnqmBKntZRfMElMIcQfiMZJ0tVcC0T5Y/YjPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TCuYjZXIf+fLH4D7ZLqNHRCUQxMn73Qa5HbzbgKLwTfxUXlYZfpkfeaSDGOjuuUenfgV4MKRCdMyS+OyfTb8B3gOmatVLVD7IXtahPxEC9ABZ/2CoXdzNSy9Rinv0McgBfurgOXiktXf9bDB9PDT38ptNb/i8RyV2H85LyUkAe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-363b8429f03so3229145ab.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2024 08:11:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708013491; x=1708618291;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lnJbz00w/JQYCLD9aR8Q9Z2Q5vEE4ivGpZ92jW+m+gM=;
+        b=tgh42ILiiQQLHGYJPdNCSdwPbQcKL9vkpzHN8m1FbhFFuRcXwiLJDA4aiQz30Ew8nf
+         QVDphwAxky2Nuc0F3NZ40Mw8ztQ1ixp2yTHchKyRdOgTGjaKTvB3RtYCiCcJjybvLB7N
+         E+Fm8FR5cyOzFWTRVzmGnkkqeWo1Z0lvIfpVEAcd5gKvd1IbzXK2liD1SNNt9HYwvY5n
+         jZAVMSt5LT16YUQefhAH8+sX4sKA5ZqIGE+QYp/TSq0hUhQBD6uOryEWHDiVN4DUZyR/
+         FUqQsqpzV23sacVbZnuqptDmoEaqoIWPDw2CTszZ/J7DkDwyMs43V/0zptoR5/PyPYMc
+         2l0A==
+X-Gm-Message-State: AOJu0YyWxO8KxEDnFqQ0/GWbBKC1ieHQqX5UUIeDt/Qcey3fPsXWxCg5
+	eRVzqKkE3tJVH1dHhpaOZSbz8EYl5H7WzD39vCDBIjJUimi5vTJyqlrVyJKeM/UbUg==
+X-Google-Smtp-Source: AGHT+IHL/OP40RCPkVcK+S3y6NBCU3+kzzIYXgDU+YFFgRnQp2os5CYIubvacKQHi7NLzSk+LFxuzA==
+X-Received: by 2002:a05:6e02:219b:b0:365:279:a04c with SMTP id j27-20020a056e02219b00b003650279a04cmr233254ila.32.1708013491189;
+        Thu, 15 Feb 2024 08:11:31 -0800 (PST)
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com. [209.85.166.177])
+        by smtp.gmail.com with ESMTPSA id cv10-20020a056e023b8a00b00362759b0e4asm460549ilb.32.2024.02.15.08.11.30
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Feb 2024 08:11:31 -0800 (PST)
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-363b8429f03so3229045ab.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2024 08:11:30 -0800 (PST)
+X-Received: by 2002:a92:4a12:0:b0:363:c9cd:e8e3 with SMTP id
+ m18-20020a924a12000000b00363c9cde8e3mr2072960ilf.27.1708013490761; Thu, 15
+ Feb 2024 08:11:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3] net: ravb: Count packets instead of descriptors in
- GbEth RX path
-Content-Language: en-GB
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Sergey Shtylyov <s.shtylyov@omp.ru>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Biju Das <biju.das.jz@bp.renesas.com>, netdev@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240214151204.2976-1-paul.barker.ct@bp.renesas.com>
- <20240215080307.226732cf@kernel.org>
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-Organization: Renesas Electronics Corporation
-In-Reply-To: <20240215080307.226732cf@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------8ZuvPSNk1KIV0W0vM6S3Y5px"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------8ZuvPSNk1KIV0W0vM6S3Y5px
-Content-Type: multipart/mixed; boundary="------------ja8yxROAaz073ds9gribdgye";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Sergey Shtylyov <s.shtylyov@omp.ru>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Biju Das <biju.das.jz@bp.renesas.com>, netdev@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <71486c46-8875-4aad-b5b7-d1032d210023@bp.renesas.com>
-Subject: Re: [PATCH net v3] net: ravb: Count packets instead of descriptors in
- GbEth RX path
-References: <20240214151204.2976-1-paul.barker.ct@bp.renesas.com>
- <20240215080307.226732cf@kernel.org>
-In-Reply-To: <20240215080307.226732cf@kernel.org>
-
---------------ja8yxROAaz073ds9gribdgye
-Content-Type: multipart/mixed; boundary="------------vrFpdohCSzaeBvfHCXqJnO3q"
-
---------------vrFpdohCSzaeBvfHCXqJnO3q
-Content-Type: text/plain; charset=UTF-8
+References: <20240122160441.759620-1-niklas.soderlund+renesas@ragnatech.se> <20240122160441.759620-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20240122160441.759620-2-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Feb 2024 17:11:18 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV_a2u7PPaYbu+zU7-5jN2+ux6e4AAsWxC6+LCFyfvgPQ@mail.gmail.com>
+Message-ID: <CAMuHMdV_a2u7PPaYbu+zU7-5jN2+ux6e4AAsWxC6+LCFyfvgPQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a779g0: R-Car Ethernet TSN support
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 15/02/2024 16:03, Jakub Kicinski wrote:
-> On Wed, 14 Feb 2024 15:12:04 +0000 Paul Barker wrote:
->> The units of "work done" in the RX path should be packets instead of
->> descriptors, as large packets can be spread over multiple descriptors.=
+Hi Niklas,
 
->=20
-> FWIW one of y'all may also want to look into processing Tx completions
-> before Rx. Tx completions can free memory which Rx can then consume.
-> More efficient. Not to mention netconsole being able to reap Tx with
-> budget of 0.
+On Mon, Jan 22, 2024 at 5:06=E2=80=AFPM Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Add Ethernet TSN support for R-Car V4H.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Thanks for the recommendation - I'll make this change as part of v3 of
-the series "Improve GbEth performance on Renesas RZ/G2L and related
-SoCs" [1] once we've completed gPTP testing.
+Thanks for your patch!
 
-[1]: https://lore.kernel.org/netdev/20240206091909.3191-1-paul.barker.ct@=
-bp.renesas.com/
+> --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+> @@ -538,6 +538,22 @@ tmu4: timer@ffc00000 {
+>                         status =3D "disabled";
+>                 };
+>
+> +               tsn0: ethernet@e6460000 {
+> +                       compatible =3D "renesas,r8a779g0-ethertsn", "rene=
+sas,rcar-gen4-ethertsn";
+> +                       reg =3D <0 0xe6460000 0 0x7000>,
+> +                             <0 0xe6449000 0 0x500>;
+> +                       reg-names =3D "tsnes", "gptp";
+> +                       interrupts =3D <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>;
+> +                       interrupt-names =3D "tx", "rx";
+> +                       clocks =3D <&cpg CPG_MOD 2723>;
+> +                       power-domains =3D <&sysc R8A779G0_PD_ALWAYS_ON>;
+> +                       resets =3D <&cpg 2723>;
+> +                       #address-cells =3D <1>;
+> +                       #size-cells =3D <0>;
+> +                       status =3D "disabled";
+> +               };
+> +
+>                 i2c0: i2c@e6500000 {
+>                         compatible =3D "renesas,i2c-r8a779g0",
+>                                      "renesas,rcar-gen4-i2c";
+
+Matches the bindings (for which I did have some comments), so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --=20
-Paul Barker
---------------vrFpdohCSzaeBvfHCXqJnO3q
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
-
---------------vrFpdohCSzaeBvfHCXqJnO3q--
-
---------------ja8yxROAaz073ds9gribdgye--
-
---------------8ZuvPSNk1KIV0W0vM6S3Y5px
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZc43cwUDAAAAAAAKCRDbaV4Vf/JGvUlx
-AQCtGyAW9/kv68aAiuKMIf7s03GdOTR8cbKbgcoomOr0kAD+KGuhJ6jw7/NXj1qXnW0LNE0SBBBs
-309sXufQVSaFAAU=
-=DNJV
------END PGP SIGNATURE-----
-
---------------8ZuvPSNk1KIV0W0vM6S3Y5px--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
