@@ -1,39 +1,39 @@
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB9769954;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBCC69962;
 	Wed, 21 Feb 2024 13:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708520648; cv=none; b=iSu2NL6YbV64fFcVFLytRjHn+t2mx2Z361g9h/BdfA2bEoiwcKrLPV/FcrU4zsfYOsrEQW+YGaYXxgrFmW5Rjh6sLvmy1FxcS0+9kiyptotSjBt65A5xHRZCYkp0DD+tBN3K00D374L8IeExaP+SVTABMC1u5c/K1oZIwKtr2gE=
+	t=1708520648; cv=none; b=qd6v8H+lMPDBEK9P3URFB1Hzw0VFF8hCAZxJtLX+gjQSn+507uTDHoJaIHxduorNuDxDZgBV3eEPriD18QiEzdrCAotINLu+lbbfbuefwbbdqdjyT5J1CVhWYZxkkzo9k6wGabbasQFg8RjY3fUho5pG3vRtvCiomIciEzJg70Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708520648; c=relaxed/simple;
-	bh=v9bDpvvX0RKMMrCA98TweMMDMhM4ZPyJFANVu501FdY=;
+	bh=dL8Hk/UJEVKOioZreOUevoR8aKngcdEnYKcPvWz/9HU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H6WvOLFF5G1PGZuu6mte8Tvm5shxKqctQiEw4HbHE8OraMpDjphisIu6U3+geQqGBPu7/8NApTBhyfkTQyzf3tgqvniN1btYXpZr3/wmd7qAIkYSMPbGw0XexXv/3MP98dFwCC8rCssYp9//jTZ42/4+zQQTlJI4RfyfPQqVJ8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g7ML4NVY; arc=none smtp.client-ip=217.70.183.196
+	 In-Reply-To:To:Cc; b=Fnh85DqRGYxsT2JN1OJdLXyc88VNAbvKvAeawnlD+5rB1Q6jYNLPrstFpTDy1K/dsMfkbUFritxz9jib9VbDdSqMSzNq7qdCnfXvP2myxNLRbe9b50Rlojk1RIO70HMmdWB+sDYqjUAzi1PEcVlb4+GS4NCwuW2xvwd4f9owGNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f/MVobot; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g7ML4NVY"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 56D4FE0013;
-	Wed, 21 Feb 2024 13:04:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f/MVobot"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2960AE0005;
+	Wed, 21 Feb 2024 13:03:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1708520643;
+	t=1708520639;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yRIMbE0unjYrvpCkfTYc04XJCl1PK7tAYUxBqamkw58=;
-	b=g7ML4NVY8iyT9O2/IjPMF/YYSbScra98V9Ku/KO8gL7/au/W7HCg8M22XpWJWII132xFR8
-	WubZeB1JEQLfXTlP/eqwbwRSNiOqHzkwpW+FPCkBFxJghKXNxdtZeq+h7zooCbAPf9MuzZ
-	cbIh2QV1lplkkJW5Q06TYGiXnYgeJIc98H4SqygSyd47sFaCSFL7geSvILBm5IeWbyu0Cz
-	EE9Aa6Wr1JNZWBJkBTh2sTmjBQDlC8Jneeotdg1so6HyXk0JAqur6YdEJ7iZmke7NTcooR
-	lOBVHovuO6OKjc9fb/T94HsgBWh0S33TermwbQaCEFfAXJE+HfKX0s4kzZT62w==
+	bh=01GsuDPlFgc02VZRSE6Ri0zdyu1ks0DXXau7fkqJF6M=;
+	b=f/MVobot3k6Km8R2lQBwAndwTMlbLdwEyv2UTEz65Nh+hGwBeyOVBk0ysqrdvqeG//k89R
+	w4yGPyNaxZxRBhTsHi9dLGW0CE5J/ckJEB3zXpKmti6OAboi00X8zwToufd4P9KRRHYiZt
+	T9IC+RqAiAUniSt668zmLdxgysllSB7pxHYZdZOiOCH7Zb5OLPYR8dP1/rgH/hTkwmGGgr
+	qRLBGDIbGob9oEO1BlbNp1WAQkZ2zviCAX9GEJOsjuGs5rFhqlhrkkOoeTUR1jm21Q+2Xi
+	StWohtjy8oBjCb/eHnXOZHDrAIOL84WzSlRJBi71c7fH1sZDc+6YLZjb/2x4mA==
 From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Wed, 21 Feb 2024 14:04:22 +0100
-Subject: [PATCH net-next v4 5/7] net: stmmac: Signal to PHY/PCS drivers to
- keep RX clock on
+Date: Wed, 21 Feb 2024 14:04:18 +0100
+Subject: [PATCH net-next v4 1/7] net: phylink: add PHY_F_RXC_ALWAYS_ON to
+ PHY dev flags
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -41,8 +41,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240221-rxc_bugfix-v4-5-4883ee1cc7b1@bootlin.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240221-rxc_bugfix-v4-1-4883ee1cc7b1@bootlin.com>
 References: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
 In-Reply-To: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
@@ -58,57 +58,105 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
  linux-stm32@st-md-mailman.stormreply.com, 
  linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
- Clark Wang <xiaoning.wang@nxp.com>, 
  Romain Gantois <romain.gantois@bootlin.com>
 X-Mailer: b4 0.12.4
 X-GND-Sasl: romain.gantois@bootlin.com
 
-There is a reocurring issue with stmmac controllers where the MAC fails to
-initialize its hardware if an RX clock signal isn't provided on the MAC/PHY
-link.
+From: Russell King <linux@armlinux.org.uk>
 
-This causes issues when PHY or PCS devices either go into suspend while
-cutting the RX clock or do not bring the clock signal up early enough for
-the MAC to initialize successfully.
+Some MAC controllers (e.g. stmmac) require their connected PHY to
+continuously provide a receive clock signal. This can cause issues in two
+cases:
 
-Set the mac_requires_rxc flag in the stmmac phylink config so that PHY/PCS
-drivers know to keep the RX clock up at all times.
+  1. The clock signal hasn't been started yet by the time the MAC driver
+     initializes its hardware. This can make the initialization fail, as in
+      the case of the rzn1 GMAC1 driver.
+  2. The clock signal is cut during a power saving event. By the time the
+     MAC is brought back up, the clock signal is still not active since
+     phylink_start hasn't been called yet. This brings us back to case 1.
 
-Reported-by: Clark Wang <xiaoning.wang@nxp.com>
-Link: https://lore.kernel.org/all/20230202081559.3553637-1-xiaoning.wang@nxp.com/
-Reported-by: Clément Léger <clement.leger@bootlin.com>
-Link: https://lore.kernel.org/linux-arm-kernel/20230116103926.276869-4-clement.leger@bootlin.com/
-Suggested-by: Russell King <linux@armlinux.org.uk>
+If a PHY driver reads this flag, it should ensure that the receive clock
+signal is started as soon as possible, and that it isn't brought down when
+the PHY goes into suspend.
+
+Signed-off-by: Russell King <linux@armlinux.org.uk>
+[rgantois: commit log]
 Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/phy/phylink.c | 10 +++++++++-
+ include/linux/phy.h       |  1 +
+ include/linux/phylink.h   |  4 ++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index ec4f6377b5ee..caf71a502ff2 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1218,6 +1218,9 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
- 	priv->phylink_config.type = PHYLINK_NETDEV;
- 	priv->phylink_config.mac_managed_pm = true;
- 
-+	/* Stmmac always requires an RX clock for hardware initialization */
-+	priv->phylink_config.mac_requires_rxc = true;
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 503fd7c40523..2bb583543dea 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -1923,6 +1923,8 @@ static int phylink_bringup_phy(struct phylink *pl, struct phy_device *phy,
+ static int phylink_attach_phy(struct phylink *pl, struct phy_device *phy,
+ 			      phy_interface_t interface)
+ {
++	u32 flags = 0;
 +
- 	mdio_bus_data = priv->plat->mdio_bus_data;
- 	if (mdio_bus_data)
- 		priv->phylink_config.ovr_an_inband =
-@@ -3407,6 +3410,10 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
- 	u32 chan;
- 	int ret;
+ 	if (WARN_ON(pl->cfg_link_an_mode == MLO_AN_FIXED ||
+ 		    (pl->cfg_link_an_mode == MLO_AN_INBAND &&
+ 		     phy_interface_mode_is_8023z(interface) && !pl->sfp_bus)))
+@@ -1931,7 +1933,10 @@ static int phylink_attach_phy(struct phylink *pl, struct phy_device *phy,
+ 	if (pl->phydev)
+ 		return -EBUSY;
  
-+	/* Make sure RX clock is enabled */
-+	if (priv->hw->phylink_pcs)
-+		phylink_pcs_pre_init(priv->phylink, priv->hw->phylink_pcs);
+-	return phy_attach_direct(pl->netdev, phy, 0, interface);
++	if (pl->config->mac_requires_rxc)
++		flags |= PHY_F_RXC_ALWAYS_ON;
 +
- 	/* DMA initialization and SW reset */
- 	ret = stmmac_init_dma_engine(priv);
- 	if (ret < 0) {
++	return phy_attach_direct(pl->netdev, phy, flags, interface);
+ }
+ 
+ /**
+@@ -2034,6 +2039,9 @@ int phylink_fwnode_phy_connect(struct phylink *pl,
+ 		pl->link_config.interface = pl->link_interface;
+ 	}
+ 
++	if (pl->config->mac_requires_rxc)
++		flags |= PHY_F_RXC_ALWAYS_ON;
++
+ 	ret = phy_attach_direct(pl->netdev, phy_dev, flags,
+ 				pl->link_interface);
+ 	phy_device_free(phy_dev);
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 2249cdb5957a..1fef852634bd 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -771,6 +771,7 @@ struct phy_device {
+ 
+ /* Generic phy_device::dev_flags */
+ #define PHY_F_NO_IRQ		0x80000000
++#define PHY_F_RXC_ALWAYS_ON	0x40000000
+ 
+ static inline struct phy_device *to_phy_device(const struct device *dev)
+ {
+diff --git a/include/linux/phylink.h b/include/linux/phylink.h
+index 6ba411732a0d..019993e5f570 100644
+--- a/include/linux/phylink.h
++++ b/include/linux/phylink.h
+@@ -138,6 +138,9 @@ enum phylink_op_type {
+  * @poll_fixed_state: if true, starts link_poll,
+  *		      if MAC link is at %MLO_AN_FIXED mode.
+  * @mac_managed_pm: if true, indicate the MAC driver is responsible for PHY PM.
++ * @mac_requires_rxc: if true, the MAC always requires a receive clock from PHY.
++ *                    The PHY driver should start the clock signal as soon as
++ *                    possible and avoid stopping it during suspend events.
+  * @ovr_an_inband: if true, override PCS to MLO_AN_INBAND
+  * @get_fixed_state: callback to execute to determine the fixed link state,
+  *		     if MAC link is at %MLO_AN_FIXED mode.
+@@ -150,6 +153,7 @@ struct phylink_config {
+ 	enum phylink_op_type type;
+ 	bool poll_fixed_state;
+ 	bool mac_managed_pm;
++	bool mac_requires_rxc;
+ 	bool ovr_an_inband;
+ 	void (*get_fixed_state)(struct phylink_config *config,
+ 				struct phylink_link_state *state);
 
 -- 
 2.43.0
