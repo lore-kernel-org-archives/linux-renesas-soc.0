@@ -1,97 +1,103 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A153F8D3
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Feb 2024 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C422C69967;
+	Wed, 21 Feb 2024 13:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708514046; cv=none; b=Y9/yzAWfBJ4nXfSga8JSh1LVUHF8qQWsuvUj5IvmmzMNL0m0rZZc9qgbY94wjVKRrgemyIoEDVFBN1a7oQqi7/An4ZuCzsNI0YIxjRJGikGUn8lXXj6iZCCboCLrq6iwegLFWbRvb7p/MaRXj1toyC2aLLrjcCaLUX7s+YFwNJI=
+	t=1708520647; cv=none; b=Vf84XL0LSevTYlMlRf8Fyd0fGWhC1333Qv6OdfTTVo8YisjCqJ3ZjfuNl4w/P/sSD5SNwKnW0FDu3ktp1hH4cwJJLh7H+5CR6ykXIjtnE38dcTXp7PoH52CdoBWwSzvQJWRljui78QsrkfqiMvGocURz/wpzWuon5k0ExJfWpb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708514046; c=relaxed/simple;
-	bh=YUnl1mkBfjxZmXre7Pa2U9gjwjHs/Z4R0+N7NlwnAKA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MwiplWQdZGBfR+1BBGTAAL5HQivBQ0chog88m2/8nPk8X0jePS15bOywgEkyVQkaLLM9haWM+PU9uADvQZ3pAV0JR8T2tzrJ6AtBYkg2Xv7j/TDX5ULABOtnesMQyl+G7aefDrUdEYJ8pdAu3htotK1+8B5WqouKWTyJyhqGYkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5450:2f24:6e58:231d])
-	by xavier.telenet-ops.be with bizsmtp
-	id pnE12B00C59vpg201nE1im; Wed, 21 Feb 2024 12:14:02 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rckXw-001FUp-Sv;
-	Wed, 21 Feb 2024 12:14:01 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rckY5-00BmHN-67;
-	Wed, 21 Feb 2024 12:14:01 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: renesas: Allow the compiler to optimize away sh_pfc_pm
-Date: Wed, 21 Feb 2024 12:13:59 +0100
-Message-Id: <6238a78e32fa21f0c795406b6cba7bce7af92577.1708513940.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1708520647; c=relaxed/simple;
+	bh=5VzaDDVtiqqrz1Mwcj/UC006nFz4sJadQdlOvLwqDmU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HAPgJ9zhaOe2ZRhSR7exuGD9dnd7xpkt3PlCUUon1uPnxdSQaN4wU4nQMfmo37YkXvkoUOX1Y9JxBb0vSEWhX1F6bH8ulBox0grRLMCx+r4Ur8xAVLGfNSOYsXQwSAggIHwHFnEfvp2c+5K11iFLSg6+WNEA46+PpXzjQT58NWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IoHri9sx; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IoHri9sx"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5CF2CE0018;
+	Wed, 21 Feb 2024 13:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1708520644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nTYOICYJuQ5UIisiBLtAqZAhBd/IR4LXyUg6LvrTYmk=;
+	b=IoHri9sxwMNAnWPqnA3xstbMYeRTaDORCIVdTDIdWSOOY46N5X0Q2/MueHepcQ6lBoZGsL
+	tsgnufiv/ay44+kVWJvL3yNReTvtp9ZVowD0+F2qBUJXaa5Cc9uj+4SUMl0xwtMi03MhYe
+	VjXtL55U7QvKlyMeDPdCKFzFV1ev3I2XX3pxgIVx/cCxkT7MDoyglrC8ZNlsEk0Vcz3qHB
+	p8WFzaGRcjyijkCMn8G/JQVrWK5DsvTYhhyglASWI5OlVKPy/x+iG0xRB/EILqytIGz+lw
+	8+h4Qbe1M/ixyZHEARSTlE873B8Z3bLRvuMunsyjfyms2KcwtVAYXU56U2GwjQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Wed, 21 Feb 2024 14:04:23 +0100
+Subject: [PATCH net-next v4 6/7] net: phy: qcom: at803x: Avoid hibernating
+ if MAC requires RX clock
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240221-rxc_bugfix-v4-6-4883ee1cc7b1@bootlin.com>
+References: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
+In-Reply-To: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
+To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Jose Abreu <joabreu@synopsys.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+ Clark Wang <xiaoning.wang@nxp.com>, 
+ Romain Gantois <romain.gantois@bootlin.com>
+X-Mailer: b4 0.12.4
+X-GND-Sasl: romain.gantois@bootlin.com
 
-The conversion to DEFINE_NOIRQ_DEV_PM_OPS() lost the ability of the
-compiler to optimize away the struct dev_pm_ops object when it is not
-needed.
+From: Russell King <linux@armlinux.org.uk>
 
-Fix this by replacing the use of pm_sleep_ptr() by a custom wrapper.
+Stmmac controllers connected to an at803x PHY cannot resume properly after
+suspend when WoL is enabled. This happens because the MAC requires an RX
+clock generated by the PHY to initialize its hardware properly. But the RX
+clock is cut when the PHY suspends and isn't brought up until the MAC
+driver resumes the phylink.
 
-Fixes: 727eb02eb753375e ("pinctrl: renesas: Switch to use DEFINE_NOIRQ_DEV_PM_OPS() helper")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Prevent the at803x PHY driver from going into suspend if the attached MAC
+driver always requires an RX clock signal.
+
+Reported-by: Clark Wang <xiaoning.wang@nxp.com>
+Link: https://lore.kernel.org/all/20230202081559.3553637-1-xiaoning.wang@nxp.com/
+Signed-off-by: Russell King <linux@armlinux.org.uk>
+[rgantois: commit log]
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 ---
-To be queued in renesas-pinctrl for v6.9.
+ drivers/net/phy/qcom/at803x.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Alternatively, one could add a unified definition:
-
-    #define pm_psci_sleep_ptr(_ptr)        PTR_IF(IS_ENABLED(CONFIG_PM_SLEEP) && \
-					  IS_ENABLED(CONFIG_ARM_PSCI_FW), (_ptr))
-
-Since there are already separate sections for CONFIG_ARM_PSCI_FW enabled
-vs. disabled, I split in two and simplified the definition.
----
- drivers/pinctrl/renesas/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index 78331d7f7cca9d8c..96d6040a8871419b 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -737,10 +737,12 @@ static int sh_pfc_resume_noirq(struct device *dev)
- 		sh_pfc_walk_regs(pfc, sh_pfc_restore_reg);
- 	return 0;
- }
-+#define pm_psci_sleep_ptr(_ptr)	pm_sleep_ptr(_ptr)
- #else
- static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
- static int sh_pfc_suspend_noirq(struct device *dev) { return 0; }
- static int sh_pfc_resume_noirq(struct device *dev) { return 0; }
-+#define pm_psci_sleep_ptr(_ptr)	PTR_IF(false, (_ptr))
- #endif	/* CONFIG_ARM_PSCI_FW */
+diff --git a/drivers/net/phy/qcom/at803x.c b/drivers/net/phy/qcom/at803x.c
+index 4717c59d51d0..2a221b81cf37 100644
+--- a/drivers/net/phy/qcom/at803x.c
++++ b/drivers/net/phy/qcom/at803x.c
+@@ -426,7 +426,8 @@ static int at803x_hibernation_mode_config(struct phy_device *phydev)
+ 	/* The default after hardware reset is hibernation mode enabled. After
+ 	 * software reset, the value is retained.
+ 	 */
+-	if (!(priv->flags & AT803X_DISABLE_HIBERNATION_MODE))
++	if (!(priv->flags & AT803X_DISABLE_HIBERNATION_MODE) &&
++	    !(phydev->dev_flags & PHY_F_RXC_ALWAYS_ON))
+ 		return 0;
  
- static DEFINE_NOIRQ_DEV_PM_OPS(sh_pfc_pm, sh_pfc_suspend_noirq, sh_pfc_resume_noirq);
-@@ -1423,7 +1425,7 @@ static struct platform_driver sh_pfc_driver = {
- 	.driver		= {
- 		.name	= DRV_NAME,
- 		.of_match_table = of_match_ptr(sh_pfc_of_table),
--		.pm	= pm_sleep_ptr(&sh_pfc_pm),
-+		.pm	= pm_psci_sleep_ptr(&sh_pfc_pm),
- 	},
- };
- 
+ 	return at803x_debug_reg_mask(phydev, AT803X_DEBUG_REG_HIB_CTRL,
+
 -- 
-2.34.1
+2.43.0
 
