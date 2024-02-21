@@ -1,39 +1,39 @@
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92236996B;
-	Wed, 21 Feb 2024 13:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB5A55E5E;
+	Wed, 21 Feb 2024 13:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708520648; cv=none; b=HB2WFAsVm4xNhxyiZLYPWgdroz956ctZ9Dwd/dqYFls5PiHwdoFYQEaPsGVpkL2VlVfgtb0L5hHrQddi1Q1PEtc7/0L+VrlSEvF7ZXg0zLDc3eMje4I5XSwQxDlQ775SEfhNNKvHHwdw52ZGDpKbclUnu8hi9vfxTD1k5GkL0vU=
+	t=1708520649; cv=none; b=eGVQTdhaGrMYOx9591bMkAVItKeREyL6QQsiQ9O1dS796mcI+2qbJh1f028uxYvByVyi4sy+4v2HDCK1wm67tZVU4peucA8WyJkpSWHoyOFsKvODChG0rIw4Tu0ruOABDoE3LNT2ixaMGek6jUnrB0F4iLBTtWYP2Eoxew/5was=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708520648; c=relaxed/simple;
-	bh=5CSqhD9O0ym5FCKW8n55foSJ41M3C6lXFUpUom3cxv0=;
+	s=arc-20240116; t=1708520649; c=relaxed/simple;
+	bh=xFayUEgulXMhdyXpODa+kiQHmo3EKmYmG30okGol07k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EtUh/Mw9qudsWp/MXLEoY6QhemeXF1MMBmSMp1nGCsgIzrzqmKSHo/g8FxHnINms0yyV+LLtyjPjM+Ixb6j7xslovy305ssGf+8FDTInMnMo0IglRSGhcL099wJOIAy8LvcL9EjRxGGFSm2ahxnH4mgKvK6bebnMRS/566dMx9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GNa/TLIv; arc=none smtp.client-ip=217.70.183.196
+	 In-Reply-To:To:Cc; b=X5ZCTq5N/FwqSJfocW3zc8K2WkwZsscDXZL8v5f+eBbK92RBqIqm+Qso5bVi7mQXPP0OduWkpOM8f8GK49X23cE4oehCOUXNJlyK+3e5mWaEXLVfcpGx7ZPBv6MxktqjayfJ5oXiFWNd8r4l93e5ZtvkB8yb2hQwYgZM+SSXBNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HiARg4Di; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GNa/TLIv"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 59B55E0012;
-	Wed, 21 Feb 2024 13:04:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HiARg4Di"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6C4BAE000F;
+	Wed, 21 Feb 2024 13:04:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1708520645;
+	t=1708520642;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/HVv/irSZsVEd7MEnAXEKn02UcIst/9mjY7zWWotaAA=;
-	b=GNa/TLIvrmKwcJiM1BoXd/8/HU7QEh7sVmGZPiKI2vsnY3woLYMhp1/3JXGbu0Ip9Ck9u7
-	2UmukJX4O2IudlUI3YtW0Vr+zMVRojXi80H5u0W0n7vq0epLfR5PU+BjzzKE5v63p8jJHa
-	YVqRHmLCEB7F454fsGvX7agRfcjStaTIeH29XIt8jqqT2IBu70JVajiIQUpWOD+Wo6WaIU
-	twVKw/EOfKtLlxQKvIQiBQuOZNz00rOQyx4dLmFVNAYIMYzzZYcZQiKGU0Ts6xRwiGvzX8
-	25XoSEHmO+uYmW1p8ocPFvdPc4rVV5hplamUOoHBAfv8Dz0ONXkOjj5CL5R3DA==
+	bh=uvjZHLMOPyZvhYtEiNXCG1LQjVmCDnKn5LrGq5/CUOY=;
+	b=HiARg4DiqHiItZ3wZukllFiYv5qEDcnT0rH5wxmZyzTaNHyHa8A6zE3W2Ne8KhpGdOo5HV
+	IitrzwGAfAeIb2BMRNcJfabcVMmojFIOJuPnXOFCDNpPm+Javm12m4/JBpmQvk3K0CcK24
+	z55rCDUXPxnIeHfyrbZNOoXXeJ7OW6VmfznBHrqc+CnUy8a89Nsbg9TayJwT2nDcLjoE87
+	FVyhIYetGfqyUFLVvwUthDt6pbAzGQ+C6p6OjpkGquIWPKb8ZYem/DTWe0KORMlPWR25vS
+	s96daA1U0OcK5Q6Q7JOVBTn/cOB3gHw3WDxkokUqPPuW/mAw71am+gBZmWw27Q==
 From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Wed, 21 Feb 2024 14:04:24 +0100
-Subject: [PATCH net-next v4 7/7] net: pcs: rzn1-miic: Init RX clock early
- if MAC requires it
+Date: Wed, 21 Feb 2024 14:04:21 +0100
+Subject: [PATCH net-next v4 4/7] net: stmmac: Support a generic PCS field
+ in mac_device_info
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -41,8 +41,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240221-rxc_bugfix-v4-7-4883ee1cc7b1@bootlin.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240221-rxc_bugfix-v4-4-4883ee1cc7b1@bootlin.com>
 References: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
 In-Reply-To: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
@@ -62,63 +62,78 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
 X-Mailer: b4 0.12.4
 X-GND-Sasl: romain.gantois@bootlin.com
 
-The GMAC1 controller in the RZN1 IP requires the RX MII clock signal to be
-started before it initializes its own hardware, thus before it calls
-phylink_start.
+Global stmmac support for early initialization of PCS devices requires a
+generic PCS reference that can be passed to phylink_pcs_pre_init().
+Currently, the mac_device_info struct contains only one PCS field, which is
+specific to the Lynx model.
 
-Implement the pcs_pre_init() callback so that the RX clock signal can be
-enabled early if necessary.
+As PCS models are hardware-specific, it is more appropriate to have a
+generic PCS field in the mac_device_info struct.
 
-Reported-by: Clément Léger <clement.leger@bootlin.com>
-Link: https://lore.kernel.org/linux-arm-kernel/20230116103926.276869-4-clement.leger@bootlin.com/
+Refactor the lynx_pcs field into a generic phylink_pcs field.
+
 Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 ---
- drivers/net/pcs/pcs-rzn1-miic.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/common.h        | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 8 ++++----
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c   | 5 +----
+ 3 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
-index d93f84fbb1fd..8a683c76a0f2 100644
---- a/drivers/net/pcs/pcs-rzn1-miic.c
-+++ b/drivers/net/pcs/pcs-rzn1-miic.c
-@@ -279,10 +279,38 @@ static int miic_validate(struct phylink_pcs *pcs, unsigned long *supported,
- 	return -EINVAL;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index a6fefe675ef1..f55cf09f0783 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -593,7 +593,7 @@ struct mac_device_info {
+ 	const struct stmmac_mmc_ops *mmc;
+ 	const struct stmmac_est_ops *est;
+ 	struct dw_xpcs *xpcs;
+-	struct phylink_pcs *lynx_pcs; /* Lynx external PCS */
++	struct phylink_pcs *phylink_pcs;
+ 	struct mii_regs mii;	/* MII register Addresses */
+ 	struct mac_link link;
+ 	void __iomem *pcsr;     /* vpointer to device CSRs */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+index 68f85e4605cb..12b4a80ea3aa 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+@@ -479,9 +479,9 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
+ 			goto err_dvr_remove;
+ 		}
+ 
+-		stpriv->hw->lynx_pcs = lynx_pcs_create_mdiodev(pcs_bus, 0);
+-		if (IS_ERR(stpriv->hw->lynx_pcs)) {
+-			ret = PTR_ERR(stpriv->hw->lynx_pcs);
++		stpriv->hw->phylink_pcs = lynx_pcs_create_mdiodev(pcs_bus, 0);
++		if (IS_ERR(stpriv->hw->phylink_pcs)) {
++			ret = PTR_ERR(stpriv->hw->phylink_pcs);
+ 			goto err_dvr_remove;
+ 		}
+ 	}
+@@ -498,7 +498,7 @@ static void socfpga_dwmac_remove(struct platform_device *pdev)
+ {
+ 	struct net_device *ndev = platform_get_drvdata(pdev);
+ 	struct stmmac_priv *priv = netdev_priv(ndev);
+-	struct phylink_pcs *pcs = priv->hw->lynx_pcs;
++	struct phylink_pcs *pcs = priv->hw->phylink_pcs;
+ 
+ 	stmmac_pltfr_remove(pdev);
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 47cd8666af43..ec4f6377b5ee 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -944,10 +944,7 @@ static struct phylink_pcs *stmmac_mac_select_pcs(struct phylink_config *config,
+ 	if (priv->hw->xpcs)
+ 		return &priv->hw->xpcs->pcs;
+ 
+-	if (priv->hw->lynx_pcs)
+-		return priv->hw->lynx_pcs;
+-
+-	return NULL;
++	return priv->hw->phylink_pcs;
  }
  
-+static int miic_pre_init(struct phylink_pcs *pcs)
-+{
-+	struct miic_port *miic_port = phylink_pcs_to_miic_port(pcs);
-+	struct miic *miic = miic_port->miic;
-+	u32 val, mask;
-+
-+	/* Start RX clock if required */
-+	if (pcs->rxc_always_on) {
-+		/* In MII through mode, the clock signals will be driven by the
-+		 * external PHY, which might not be initialized yet. Set RMII
-+		 * as default mode to ensure that a reference clock signal is
-+		 * generated.
-+		 */
-+		miic_port->interface = PHY_INTERFACE_MODE_RMII;
-+
-+		val = FIELD_PREP(MIIC_CONVCTRL_CONV_MODE, CONV_MODE_RMII) |
-+		      FIELD_PREP(MIIC_CONVCTRL_CONV_SPEED, CONV_MODE_100MBPS);
-+		mask = MIIC_CONVCTRL_CONV_MODE | MIIC_CONVCTRL_CONV_SPEED;
-+
-+		miic_reg_rmw(miic, MIIC_CONVCTRL(miic_port->port), mask, val);
-+
-+		miic_converter_enable(miic, miic_port->port, 1);
-+	}
-+
-+	return 0;
-+}
-+
- static const struct phylink_pcs_ops miic_phylink_ops = {
- 	.pcs_validate = miic_validate,
- 	.pcs_config = miic_config,
- 	.pcs_link_up = miic_link_up,
-+	.pcs_pre_init = miic_pre_init,
- };
- 
- struct phylink_pcs *miic_create(struct device *dev, struct device_node *np)
+ static void stmmac_mac_config(struct phylink_config *config, unsigned int mode,
 
 -- 
 2.43.0
