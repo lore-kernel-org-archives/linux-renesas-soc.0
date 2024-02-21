@@ -1,39 +1,37 @@
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB5A55E5E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE743B794;
 	Wed, 21 Feb 2024 13:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708520649; cv=none; b=eGVQTdhaGrMYOx9591bMkAVItKeREyL6QQsiQ9O1dS796mcI+2qbJh1f028uxYvByVyi4sy+4v2HDCK1wm67tZVU4peucA8WyJkpSWHoyOFsKvODChG0rIw4Tu0ruOABDoE3LNT2ixaMGek6jUnrB0F4iLBTtWYP2Eoxew/5was=
+	t=1708520649; cv=none; b=WdcTneiQCU2GnHL5dEDuBvRCVlMfKWqoKyCwiC9zzK/KkP6Y+KnnLMf8dlh1PQivEPtnt/hHKbKtCfYDCFsiTwPUxP5g0V2oHb3k7wwku9Z5leYjKHEPOwIf0iLkxj/FXJU4k7g/BXVX4oXBfE/g6WpUoUWacPxNQwnUH+eUiF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708520649; c=relaxed/simple;
-	bh=xFayUEgulXMhdyXpODa+kiQHmo3EKmYmG30okGol07k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X5ZCTq5N/FwqSJfocW3zc8K2WkwZsscDXZL8v5f+eBbK92RBqIqm+Qso5bVi7mQXPP0OduWkpOM8f8GK49X23cE4oehCOUXNJlyK+3e5mWaEXLVfcpGx7ZPBv6MxktqjayfJ5oXiFWNd8r4l93e5ZtvkB8yb2hQwYgZM+SSXBNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HiARg4Di; arc=none smtp.client-ip=217.70.183.196
+	bh=dyRuQARdOIcpEZ9/qy4dcfVA++kccnClImrIdukD+ps=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TJTN3iv3ilcktVR6bz+6vd8wNkqUbJMXZGW+eSGaxjuwvp6214PPOHi5BBC3AE+53f05sSnXU3514FfRBnAby0pvdDXQw0mkOA2xdG9ZquoBneBj5OqKYd+rDphjCSES7CrjIx6vG6pgKcGEX9xehQu6OSCnZCq+sATAEevErbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PG+g/mXt; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HiARg4Di"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6C4BAE000F;
-	Wed, 21 Feb 2024 13:04:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PG+g/mXt"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0488EE000A;
+	Wed, 21 Feb 2024 13:03:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1708520642;
+	t=1708520638;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uvjZHLMOPyZvhYtEiNXCG1LQjVmCDnKn5LrGq5/CUOY=;
-	b=HiARg4DiqHiItZ3wZukllFiYv5qEDcnT0rH5wxmZyzTaNHyHa8A6zE3W2Ne8KhpGdOo5HV
-	IitrzwGAfAeIb2BMRNcJfabcVMmojFIOJuPnXOFCDNpPm+Javm12m4/JBpmQvk3K0CcK24
-	z55rCDUXPxnIeHfyrbZNOoXXeJ7OW6VmfznBHrqc+CnUy8a89Nsbg9TayJwT2nDcLjoE87
-	FVyhIYetGfqyUFLVvwUthDt6pbAzGQ+C6p6OjpkGquIWPKb8ZYem/DTWe0KORMlPWR25vS
-	s96daA1U0OcK5Q6Q7JOVBTn/cOB3gHw3WDxkokUqPPuW/mAw71am+gBZmWw27Q==
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=U/mNFUOk9QkXbNNdCkBT6ClRB51umlNcGDF8vmj5WAk=;
+	b=PG+g/mXtmf8iIVdAlwYafoMc4v4JGL/b+sCdkvBP2KtieKTQyrSdcWF0riitqzfkokYstJ
+	wyXO1lR8X0ln3Yrcn2M7TESB4iJ+QwdE5s8D14q3qfF2O3OCFU/bwgsn7+GLOHKkK5UaC/
+	/8kW2zvlaliND6Fla383E4WR63IGm6MnidNplXZKaHxGgncmpLm85iI+t5q1oquVpiVKy9
+	tEnzsxOeSI+JADNwIvON6nqmt8f8NADrAyNvDbE1E24pO/ZSboZ+eGsALhKY4ZEJZb90uD
+	SfTXQYcJdKjPMN+QoJVtSJ0UqIPyem00Gq3lTDce93lK27k9G3cx/CtFQ9n8VQ==
 From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Wed, 21 Feb 2024 14:04:21 +0100
-Subject: [PATCH net-next v4 4/7] net: stmmac: Support a generic PCS field
- in mac_device_info
+Subject: [PATCH net-next v4 0/7] Fix missing PHY-to-MAC RX clock
+Date: Wed, 21 Feb 2024 14:04:17 +0100
+Message-Id: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -41,10 +39,12 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240221-rxc_bugfix-v4-4-4883ee1cc7b1@bootlin.com>
-References: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
-In-Reply-To: <20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANL01WUC/1WPQW7DIBBFrxKxzkQwYDvpqveoogqcwUZqoAJiu
+ Yp890ycRePlH+a9+dxFoRyoiI/dXWSaQgkpcjD7nehHGweCcOEsUKKRClvIc//tboMPM1xM57R
+ TVnfGCwZ+M/F4lX2JSBUizVWc+cXndIU6ZrJvMqmVwSN2B9UeNSpQwFs2xMNgY02hfLqU6g/nP
+ l2f+jGUmvLfWnXC9chLpOV7qwlBQkNtr9lLjZcbz7PNpP9hVLiBNcN08kiu5b/JZgsvy/IAz9u
+ JezIBAAA=
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
  Heiner Kallweit <hkallweit1@gmail.com>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -58,83 +58,115 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
  linux-stm32@st-md-mailman.stormreply.com, 
  linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
- Romain Gantois <romain.gantois@bootlin.com>
+ Romain Gantois <romain.gantois@bootlin.com>, 
+ Clark Wang <xiaoning.wang@nxp.com>
 X-Mailer: b4 0.12.4
 X-GND-Sasl: romain.gantois@bootlin.com
 
-Global stmmac support for early initialization of PCS devices requires a
-generic PCS reference that can be passed to phylink_pcs_pre_init().
-Currently, the mac_device_info struct contains only one PCS field, which is
-specific to the Lynx model.
+Hello everyone,
 
-As PCS models are hardware-specific, it is more appropriate to have a
-generic PCS field in the mac_device_info struct.
+This is version four of my series that addresses the issue with some MAC/PHY
+combinations.
 
-Refactor the lynx_pcs field into a generic phylink_pcs field.
+Notable changes in v4:
+  - Modified miic_pre_init() to also set the default RMII conversion speed.
 
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
- drivers/net/ethernet/stmicro/stmmac/common.h        | 2 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 8 ++++----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c   | 5 +----
- 3 files changed, 6 insertions(+), 9 deletions(-)
+Notable changes in v3:
+  - Removed the "interface" argument from pcs_init().
+  - Added a kernel doc for pcs_init().
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-index a6fefe675ef1..f55cf09f0783 100644
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -593,7 +593,7 @@ struct mac_device_info {
- 	const struct stmmac_mmc_ops *mmc;
- 	const struct stmmac_est_ops *est;
- 	struct dw_xpcs *xpcs;
--	struct phylink_pcs *lynx_pcs; /* Lynx external PCS */
-+	struct phylink_pcs *phylink_pcs;
- 	struct mii_regs mii;	/* MII register Addresses */
- 	struct mac_link link;
- 	void __iomem *pcsr;     /* vpointer to device CSRs */
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-index 68f85e4605cb..12b4a80ea3aa 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -479,9 +479,9 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
- 			goto err_dvr_remove;
- 		}
- 
--		stpriv->hw->lynx_pcs = lynx_pcs_create_mdiodev(pcs_bus, 0);
--		if (IS_ERR(stpriv->hw->lynx_pcs)) {
--			ret = PTR_ERR(stpriv->hw->lynx_pcs);
-+		stpriv->hw->phylink_pcs = lynx_pcs_create_mdiodev(pcs_bus, 0);
-+		if (IS_ERR(stpriv->hw->phylink_pcs)) {
-+			ret = PTR_ERR(stpriv->hw->phylink_pcs);
- 			goto err_dvr_remove;
- 		}
- 	}
-@@ -498,7 +498,7 @@ static void socfpga_dwmac_remove(struct platform_device *pdev)
- {
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct stmmac_priv *priv = netdev_priv(ndev);
--	struct phylink_pcs *pcs = priv->hw->lynx_pcs;
-+	struct phylink_pcs *pcs = priv->hw->phylink_pcs;
- 
- 	stmmac_pltfr_remove(pdev);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 47cd8666af43..ec4f6377b5ee 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -944,10 +944,7 @@ static struct phylink_pcs *stmmac_mac_select_pcs(struct phylink_config *config,
- 	if (priv->hw->xpcs)
- 		return &priv->hw->xpcs->pcs;
- 
--	if (priv->hw->lynx_pcs)
--		return priv->hw->lynx_pcs;
--
--	return NULL;
-+	return priv->hw->phylink_pcs;
- }
- 
- static void stmmac_mac_config(struct phylink_config *config, unsigned int mode,
+Notable changes in v2:
+  - Introduced a pcs op for initializing hardware required for MAC
+    initialization, instead of using phylink_validate() for this purpose.
+  - Refactored stmmac to use a generic PCS reference in mac_device_info
+    instead of a model-specific field.
 
--- 
+There is an issue with some stmmac/PHY combinations that has been reported
+some time ago in a couple of different series:
+
+Clark Wang's report:
+https://lore.kernel.org/all/20230202081559.3553637-1-xiaoning.wang@nxp.com/
+Clément Léger's report:
+https://lore.kernel.org/linux-arm-kernel/20230116103926.276869-4-clement.leger@bootlin.com/
+
+Stmmac controllers require an RX clock signal from the MII bus to perform
+their hardware initialization successfully. This causes issues with some
+PHY/PCS devices. If these devices do not bring the clock signal up before
+the MAC driver initializes its hardware, then said initialization will
+fail. This can happen at probe time or when the system wakes up from a
+suspended state.
+
+This series introduces new flags for phy_device and phylink_pcs. These
+flags allow MAC drivers to signal to PHY/PCS drivers that the RX clock
+signal should be enabled as soon as possible, and that it should always
+stay enabled.
+
+I have included specific uses of these flags that fix the RZN1 GMAC1 stmmac
+driver that I am currently working on and that is not yet upstream. I have
+also included changes to the at803x PHY driver that should fix the issue
+that Clark Wang was having.
+
+Clark, could you please confirm that this series fixes your issue with the
+at803x PHY?
+
+Best Regards,
+
+Romain
+
+Romain Gantois (2):
+  net: phy: add rxc_always_on flag to phylink_pcs
+  net: pcs: rzn1-miic: Init RX clock early if MAC requires it
+
+Russell King (3):
+  net: phy: add PHY_F_RXC_ALWAYS_ON to PHY dev flags
+  net: stmmac: Signal to PHY/PCS drivers to keep RX clock on
+  net: phy: at803x: Avoid hibernating if MAC requires RX clock
+
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c  |  5 +++++
+ drivers/net/pcs/pcs-rzn1-miic.c                | 18 +++++++++++++-----
+ drivers/net/phy/at803x.c                       |  3 ++-
+ drivers/net/phy/phylink.c                      | 13 ++++++++++++-
+ include/linux/phy.h                            |  1 +
+ include/linux/phylink.h                        |  9 +++++++++
+ 6 files changed, 42 insertions(+), 7 deletions(-)
+
+--
 2.43.0
+
+---
+- Link to v2: https://lore.kernel.org/r/20240130-rxc_bugfix-v2-0-5e6c3168e5f0@bootlin.com
+
+---
+- Link to v3: https://lore.kernel.org/r/20240212-rxc_bugfix-v3-0-e9f2eb6b3b05@bootlin.com
+
+---
+Maxime Chevallier (1):
+      net: stmmac: don't rely on lynx_pcs presence to check for a PHY
+
+Romain Gantois (4):
+      net: phylink: add rxc_always_on flag to phylink_pcs
+      net: stmmac: Support a generic PCS field in mac_device_info
+      net: stmmac: Signal to PHY/PCS drivers to keep RX clock on
+      net: pcs: rzn1-miic: Init RX clock early if MAC requires it
+
+Russell King (2):
+      net: phylink: add PHY_F_RXC_ALWAYS_ON to PHY dev flags
+      net: phy: qcom: at803x: Avoid hibernating if MAC requires RX clock
+
+ drivers/net/ethernet/stmicro/stmmac/common.h       |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    |  8 ++---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 15 ++++----
+ drivers/net/pcs/pcs-rzn1-miic.c                    | 28 +++++++++++++++
+ drivers/net/phy/phylink.c                          | 24 ++++++++++++-
+ drivers/net/phy/qcom/at803x.c                      |  3 +-
+ include/linux/phy.h                                |  1 +
+ include/linux/phylink.h                            | 42 ++++++++++++++++++++++
+ 8 files changed, 110 insertions(+), 13 deletions(-)
+---
+base-commit: 0f37666d87d2dea42ec21776c3d562b7cbd71612
+change-id: 20240126-rxc_bugfix-d47b3b1a374f
+
+Best regards,
+-- 
+Romain Gantois <romain.gantois@bootlin.com>
 
