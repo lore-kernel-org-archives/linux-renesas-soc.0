@@ -1,57 +1,57 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370AD14C5B5
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Feb 2024 15:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F9360B99
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Feb 2024 16:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708615897; cv=none; b=dupY+IhRU+Zz/xJrq9UyRVzW6lPYB6gY8iW0JTFFrgdKrCtRdfrUo1MvfzJ2AF4O5QStcCngjflNAf1khQLgWsApVNtlV4uuGNLXm6cUTF9HR6HkBL+yKZZA8rfQzP+zYXqZYVdhZm20yI8r24p9HTQi7sbPhhe9vcG/PxqVXNM=
+	t=1708618008; cv=none; b=lVgFx+4Byda6dWB3HUuzg1nTRNmQ2lfrq51u1QKqk+pGhfC3a7i66kdcjKbSlSy+A+ND+d8MpZ6cTw+ygz8JpWs77699EY8BkjWrpV0yBBmaZytbYSdVH59GVaubMigJefC96hlqz5QkxL7yeL9wWzT0+X0EJqp/uGeFfEpWyvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708615897; c=relaxed/simple;
-	bh=NL7m8X032UwePSKYjLtjZOUC3e2khSHt94CgZxSnIXE=;
-	h=Message-ID:Date:Content-Type:MIME-Version:Subject:To:From; b=HQNs/r0zs7yOEz34NMzYfhKEYFBrSmD2KoS1sJRaYBof6zbItXMcP4XGebyERH0R/DLM1eepoxdH6YQ2W+tg/Se9ELM1xaSTK6ghFFLWCVaZpWvFanNA/WvYOURY7yJCb7t+ufNc5t+Gm5C47bcbOpvQytXXK7YjZco/o9kmTho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=glZHWHaM; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1708618008; c=relaxed/simple;
+	bh=1xvTztAXsxrtBqzyifRsyy8irz3CcQe1peYuyzRdeN0=;
+	h=Message-ID:Date:Content-Type:MIME-Version:Subject:To:From; b=XNjkEGZH69qI7ALgqbFiMji1ntJPhkX9t6X+IzHT4NF4/uQOXbyGfrf09VMdMvByQdwW7QFGJ8PZ75zbf12IiZhv4fALiLscPht7v1rWpQQqbUWkjowYbv0o1atnAqX6MtsbJoWSajbxeWfJcexLAe7Aj+of/sWqApJ7dp5CUcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=HF8FX7Sl; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="glZHWHaM"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1d93edfa76dso53418275ad.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Feb 2024 07:31:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="HF8FX7Sl"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-299a2456948so3393977a91.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Feb 2024 08:06:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1708615895; x=1709220695; darn=vger.kernel.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1708618005; x=1709222805; darn=vger.kernel.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=dbSaFwn42lAIr32FIElr8k1znTtP/8VnNbSqAJ6OO68=;
-        b=glZHWHaMCeEOKJkW1VAsl9OJA00bNX6JLVKP0O5SQzuhWyfsDrKeicjXNo7McpHPa7
-         aOLCGyzobjxo925FG/LEduU5SIwDKO3YyRZ6T7bvuRUdLMrh7I3Xt52eN3Uf/hkbXKyw
-         n/WYrINpHYX4hJEP2Ufr1MT5PuvufLXtSQH6hohRzQ7GHQGC5gKaP50PHM+F1lPU2PIp
-         F7oL6RFU3gnp/3+Cjin3kO9hws1HtVdryqQe8Ar4kPWntgMxG7UDNgvdgzzSZURF5BJ5
-         v42pt+IfqliJng/QANgD/sALuxKAk4+2Ls1Dcn6+qMVU4yKlUfs+N1b6/9p2u/ZdbqJF
-         7B0g==
+        bh=MRU+/kSH+oyHhD84YQ6WxrIVUrZxV2tFd6pLAeg1b64=;
+        b=HF8FX7SlSiwCacg3yDQDGoJ0beCx6Xa61HPynVFI/UGd2wq3VRFzIHpaVuFp0lZwyj
+         IofzOVzEFyNkYdvYnkaSxdLYDZ1r8mg+yRyGQnNdV6y6pY1jGoTMHAmyMS4NGeCgdfNl
+         U/w3/0pV8MJnBDC1p/upFDHRLujxoASyu1DWvYpJ9nGJhGPDHVeiDaX8TmUieTWyvVSf
+         LKYMvyHJTZ9vfwItcWwAxKB8c02oVukXeVMFpXdvgF76nXAYSDe5ZGe1dk8aOoBlUWEp
+         2/OOEw+maqxynyRuwAxgFd5xBlT6tS0NEBqWWVjOj9E+SdOaO22LUNSDKuMKmuXDPte1
+         1vSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708615895; x=1709220695;
+        d=1e100.net; s=20230601; t=1708618005; x=1709222805;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dbSaFwn42lAIr32FIElr8k1znTtP/8VnNbSqAJ6OO68=;
-        b=ACvAPTdVaHoHsUOc+TRspE3Blf45TBHkm4dAO2KOfeE1qOnr/6Mw19vs+gmG2dz0fc
-         T6V9weg8CN3HXGDSLSciwbb9XgX5zFxwYuVM3kIcp3hQQ5yMOnXrB1GzTDs1Qmab45YD
-         zBDIOvC+HQZBNpHxHlVb7JWOLckdP2na72Y+Wt95r/2fUr5U4to7JBZ+fKyvvu1UjrnN
-         YG+AKxYNmI0Ejd6TnEBPo440U7o3LTTq5Q5R5vtf3j74ouOeQPJdPMsxFDhDmPTA6ekH
-         r50M+jL8DfS16wfdh5P+Nh3drEzqSq4WqtlOh1YdQ3WxvxS5gocS4cUjxJyZ390VAg2i
-         f3pw==
-X-Gm-Message-State: AOJu0Yx+98Ws6diSI8bPZecXMVcNXerzHgf5t6JUgQtJp3sei77JgIvt
-	rV/dyfoK9dPbeFwPhqKVYfMMSMvR3MyHc3lnkmqVcQzkgIViQ7cI0CUR68LehEjg1ziv1A3Rlbb
-	S
-X-Google-Smtp-Source: AGHT+IEgMIv2gL3Aatar1mwdCFXhkuOhg+VM/OejHTlFjUKPHyiXi8D9zGL6uAVojkH0+MX9zWIuUQ==
-X-Received: by 2002:a17:903:986:b0:1db:db5e:6712 with SMTP id mb6-20020a170903098600b001dbdb5e6712mr17626693plb.58.1708615865032;
-        Thu, 22 Feb 2024 07:31:05 -0800 (PST)
+        bh=MRU+/kSH+oyHhD84YQ6WxrIVUrZxV2tFd6pLAeg1b64=;
+        b=XzmIr44rz2Wbm++2ZCDQCVelT1EbkkslAmjIYSbveShqXVvFys7xa4q7eDabIeuS9F
+         NfeLZPmhETdW+RKXQvFXfETnfR6O/pBuRaMctzqm6BHc90s7oY6QzlNFtdSkkx0Bg2Y9
+         f1ftkLbaRCOGb335EDX0x1+avsUCPdq0TkSndL3PrbsZOSLc9wo+MMNKws2kTXpGEZdF
+         sGc4LN0yHw8L85mG76tKuJAxhjeIn2akpozVWgxp+KKCweXGlyPRViWAvxUIECZJoP/h
+         T0WEoXd1dba9qNpYoyM7N2kkGI+RifyVbGPHwY8Q60BlFdMSpvSrTIPvtR3Pi1OkN9LR
+         cpRg==
+X-Gm-Message-State: AOJu0YyMo2JH4YkkcVndiLzTUx6/QPzLm6mNEmQp9EjCcrm7Ep2uTFhb
+	MqYc1N9fK4J4gc4EYmYRcP8BhYo3J+mv1Z/u84rB20VqFpTcBD0Jw8GSmncqe3rCA4HMvT7oymC
+	E
+X-Google-Smtp-Source: AGHT+IEtrZf3tNLHzjfwMbDwkG/yg+a9ugrE+5Nnw726HxJz4mN7FhHQr3CeIH5Za7cc78R2JyYJ1A==
+X-Received: by 2002:a17:90a:ca8d:b0:299:4060:3a54 with SMTP id y13-20020a17090aca8d00b0029940603a54mr14255411pjt.1.1708618005492;
+        Thu, 22 Feb 2024 08:06:45 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id y9-20020a17090264c900b001d9a40f50c4sm10356753pli.301.2024.02.22.07.31.04
+        by smtp.gmail.com with ESMTPSA id w4-20020a17090ad60400b00296a23e407csm4258848pju.7.2024.02.22.08.06.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 07:31:04 -0800 (PST)
-Message-ID: <65d768b8.170a0220.a397d.1ea5@mx.google.com>
-Date: Thu, 22 Feb 2024 07:31:04 -0800 (PST)
+        Thu, 22 Feb 2024 08:06:45 -0800 (PST)
+Message-ID: <65d77115.170a0220.7a156.f8f4@mx.google.com>
+Date: Thu, 22 Feb 2024 08:06:45 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -61,38 +61,44 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Tree: renesas
-X-Kernelci-Branch: master
-X-Kernelci-Kernel: renesas-devel-2024-02-22-v6.8-rc5
+X-Kernelci-Branch: next
+X-Kernelci-Kernel: renesas-next-2024-02-22-v6.8-rc1
 X-Kernelci-Report-Type: test
-Subject: renesas/master baseline: 23 runs,
- 1 regressions (renesas-devel-2024-02-22-v6.8-rc5)
+Subject: renesas/next baseline: 50 runs,
+ 8 regressions (renesas-next-2024-02-22-v6.8-rc1)
 To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 
-renesas/master baseline: 23 runs, 1 regressions (renesas-devel-2024-02-22-v=
-6.8-rc5)
+renesas/next baseline: 50 runs, 8 regressions (renesas-next-2024-02-22-v6.8=
+-rc1)
 
 Regressions Summary
 -------------------
 
-platform   | arch | lab             | compiler | defconfig          | regre=
-ssions
------------+------+-----------------+----------+--------------------+------=
-------
-imx53-qsrb | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig | 1    =
-      =
+platform               | arch  | lab             | compiler | defconfig    =
+      | regressions
+-----------------------+-------+-----------------+----------+--------------=
+------+------------
+imx53-qsrb             | arm   | lab-pengutronix | gcc-10   | multi_v7_defc=
+onfig | 1          =
+
+kontron-kbox-a-230-ls  | arm64 | lab-kontron     | gcc-10   | defconfig    =
+      | 5          =
+
+kontron-sl28-var3-ads2 | arm64 | lab-kontron     | gcc-10   | defconfig    =
+      | 2          =
 
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2024-02-22-v6.8-rc5/plan/baseline/
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2024-02-22-v6.8-rc1/plan/baseline/
 
   Test:     baseline
   Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2024-02-22-v6.8-rc5
+  Branch:   next
+  Describe: renesas-next-2024-02-22-v6.8-rc1
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      d93b156af0b8c2afc4cad503eb2be252797d5e42 =
+  SHA:      eb8362db9d70ae053d6286cece6d60a339a9794c =
 
 
 
@@ -101,53 +107,207 @@ Test Regressions
 
 
 
-platform   | arch | lab             | compiler | defconfig          | regre=
-ssions
------------+------+-----------------+----------+--------------------+------=
-------
-imx53-qsrb | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig | 1    =
-      =
+platform               | arch  | lab             | compiler | defconfig    =
+      | regressions
+-----------------------+-------+-----------------+----------+--------------=
+------+------------
+imx53-qsrb             | arm   | lab-pengutronix | gcc-10   | multi_v7_defc=
+onfig | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65d7359c3c2627cbcc637012
+  Details:     https://kernelci.org/test/plan/id/65d73f9bbea7ae8cc8637036
 
   Results:     5 PASS, 1 FAIL, 1 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-024-02-22-v6.8-rc5/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-i=
-mx53-qsrb.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-024-02-22-v6.8-rc5/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-i=
-mx53-qsrb.html
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-02-22-v6.8-rc1/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-imx5=
+3-qsrb.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-02-22-v6.8-rc1/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-imx5=
+3-qsrb.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
 t-baseline/20230623.0/armel/rootfs.cpio.gz =
 
 
 
   * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/65d7359c3c2627cbcc637017
-        failing since 387 days (last pass: v6.1-rc8-929-g112502470f50, firs=
-t fail: renesas-devel-2023-01-30-v6.2-rc6)
+/65d73f9bbea7ae8cc863703b
+        failing since 264 days (last pass: renesas-next-2023-03-06-v6.3-rc1=
+, first fail: renesas-next-2023-06-02-v6.4-rc1)
 
-    2024-02-22T11:52:38.503686  + set +x
-    2024-02-22T11:52:38.503834  [   13.438363] <LAVA_SIGNAL_ENDRUN 0_dmesg =
-1027368_1.5.2.3.1>
-    2024-02-22T11:52:38.611037  / # #
-    2024-02-22T11:52:38.712099  export SHELL=3D/bin/sh
-    2024-02-22T11:52:38.712503  #
-    2024-02-22T11:52:38.813229  / # export SHELL=3D/bin/sh. /lava-1027368/e=
+    2024-02-22T12:35:18.546438  + set +x
+    2024-02-22T12:35:18.546600  [   13.488389] <LAVA_SIGNAL_ENDRUN 0_dmesg =
+1027374_1.5.2.3.1>
+    2024-02-22T12:35:18.654038  / # #
+    2024-02-22T12:35:18.755257  export SHELL=3D/bin/sh
+    2024-02-22T12:35:18.755764  #
+    2024-02-22T12:35:18.856791  / # export SHELL=3D/bin/sh. /lava-1027374/e=
 nvironment
-    2024-02-22T11:52:38.813645  =
+    2024-02-22T12:35:18.857294  =
 
-    2024-02-22T11:52:38.914447  / # . /lava-1027368/environment/lava-102736=
-8/bin/lava-test-runner /lava-1027368/1
-    2024-02-22T11:52:38.915019  =
+    2024-02-22T12:35:18.958199  / # . /lava-1027374/environment/lava-102737=
+4/bin/lava-test-runner /lava-1027374/1
+    2024-02-22T12:35:18.958884  =
 
-    2024-02-22T11:52:38.918418  / # /lava-1027368/bin/lava-test-runner /lav=
-a-1027368/1 =
+    2024-02-22T12:35:18.962315  / # /lava-1027374/bin/lava-test-runner /lav=
+a-1027374/1 =
 
     ... (13 line(s) more)  =
+
+ =
+
+
+
+platform               | arch  | lab             | compiler | defconfig    =
+      | regressions
+-----------------------+-------+-----------------+----------+--------------=
+------+------------
+kontron-kbox-a-230-ls  | arm64 | lab-kontron     | gcc-10   | defconfig    =
+      | 5          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65d740462d8927ce766370a0
+
+  Results:     90 PASS, 5 FAIL, 1 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-02-22-v6.8-rc1/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-kbox-a-=
+230-ls.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-02-22-v6.8-rc1/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-kbox-a-=
+230-ls.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65d740462d8927ce766370a7
+        failing since 31 days (last pass: renesas-next-2023-11-28-v6.7-rc1,=
+ first fail: renesas-next-2024-01-22-v6.8-rc1)
+
+    2024-02-22T12:37:59.154479  / # #
+    2024-02-22T12:37:59.255827  export SHELL=3D/bin/sh
+    2024-02-22T12:37:59.256343  #
+    2024-02-22T12:37:59.357231  / # export SHELL=3D/bin/sh. /lava-433800/en=
+vironment
+    2024-02-22T12:37:59.357572  =
+
+    2024-02-22T12:37:59.458309  / # . /lava-433800/environment/lava-433800/=
+bin/lava-test-runner /lava-433800/1
+    2024-02-22T12:37:59.459174  =
+
+    2024-02-22T12:37:59.467079  / # /lava-433800/bin/lava-test-runner /lava=
+-433800/1
+    2024-02-22T12:37:59.562925  + export 'TESTRUN_ID=3D1_bootrr'
+    2024-02-22T12:37:59.563114  + cd /lava-433800/1/tests/1_bootrr =
+
+    ... (14 line(s) more)  =
+
+
+  * baseline.bootrr.fsl_enetc-enetc2-probed: https://kernelci.org/test/case=
+/id/65d740462d8927ce766370ab
+        failing since 31 days (last pass: renesas-next-2023-11-28-v6.7-rc1,=
+ first fail: renesas-next-2024-01-22-v6.8-rc1)
+
+    2024-02-22T12:38:01.775691  /lava-433800/1/../bin/lava-test-case
+    2024-02-22T12:38:01.804574  <8>[   26.156000] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dfsl_enetc-enetc2-probed RESULT=3Dfail>   =
+
+
+  * baseline.bootrr.mscc_felix-probed: https://kernelci.org/test/case/id/65=
+d740462d8927ce766370ad
+        failing since 31 days (last pass: renesas-next-2023-11-28-v6.7-rc1,=
+ first fail: renesas-next-2024-01-22-v6.8-rc1)
+
+    2024-02-22T12:38:02.864346  /lava-433800/1/../bin/lava-test-case
+    2024-02-22T12:38:02.892232  <8>[   27.243667] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dmscc_felix-probed RESULT=3Dfail>   =
+
+
+  * baseline.bootrr.fsl_enetc-enetc0-probed: https://kernelci.org/test/case=
+/id/65d740462d8927ce766370b2
+        failing since 31 days (last pass: renesas-next-2023-11-28-v6.7-rc1,=
+ first fail: renesas-next-2024-01-22-v6.8-rc1)
+
+    2024-02-22T12:38:04.124811  /lava-433800/1/../bin/lava-test-case
+    2024-02-22T12:38:04.152740  <8>[   28.504122] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dfsl_enetc-enetc0-probed RESULT=3Dfail>   =
+
+
+  * baseline.bootrr.fsl_enetc-enetc1-probed: https://kernelci.org/test/case=
+/id/65d740462d8927ce766370b3
+        failing since 31 days (last pass: renesas-next-2023-11-28-v6.7-rc1,=
+ first fail: renesas-next-2024-01-22-v6.8-rc1)
+
+    2024-02-22T12:38:05.174899  /lava-433800/1/../bin/lava-test-case
+    2024-02-22T12:38:05.202776  <8>[   29.554471] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dfsl_enetc-enetc1-probed RESULT=3Dfail>   =
+
+ =
+
+
+
+platform               | arch  | lab             | compiler | defconfig    =
+      | regressions
+-----------------------+-------+-----------------+----------+--------------=
+------+------------
+kontron-sl28-var3-ads2 | arm64 | lab-kontron     | gcc-10   | defconfig    =
+      | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65d740342d8927ce7663702b
+
+  Results:     101 PASS, 2 FAIL, 1 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-02-22-v6.8-rc1/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-sl28-va=
+r3-ads2.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-02-22-v6.8-rc1/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-sl28-va=
+r3-ads2.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65d740342d8927ce76637032
+        failing since 31 days (last pass: renesas-next-2023-11-28-v6.7-rc1,=
+ first fail: renesas-next-2024-01-22-v6.8-rc1)
+
+    2024-02-22T12:37:41.196329  / # #
+    2024-02-22T12:37:41.297154  export SHELL=3D/bin/sh
+    2024-02-22T12:37:41.297411  #
+    2024-02-22T12:37:41.397876  / # export SHELL=3D/bin/sh. /lava-433802/en=
+vironment
+    2024-02-22T12:37:41.398320  =
+
+    2024-02-22T12:37:41.498917  / # . /lava-433802/environment/lava-433802/=
+bin/lava-test-runner /lava-433802/1
+    2024-02-22T12:37:41.499281  =
+
+    2024-02-22T12:37:41.510738  / # /lava-433802/bin/lava-test-runner /lava=
+-433802/1
+    2024-02-22T12:37:41.603704  + export 'TESTRUN_ID=3D1_bootrr'
+    2024-02-22T12:37:41.603843  + cd /lava-433802/1/tests/1_bootrr =
+
+    ... (10 line(s) more)  =
+
+
+  * baseline.bootrr.fsl_enetc-enetc0-probed: https://kernelci.org/test/case=
+/id/65d740342d8927ce76637045
+        failing since 31 days (last pass: renesas-next-2023-11-28-v6.7-rc1,=
+ first fail: renesas-next-2024-01-22-v6.8-rc1)
+
+    2024-02-22T12:37:44.532850  /lava-433802/1/../bin/lava-test-case
+    2024-02-22T12:37:44.560094  <8>[   27.149225] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dfsl_enetc-enetc0-probed RESULT=3Dfail>   =
 
  =20
