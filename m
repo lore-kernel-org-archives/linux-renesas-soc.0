@@ -1,105 +1,191 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B60B3F8D0;
-	Thu, 22 Feb 2024 14:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9078134CDC
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Feb 2024 15:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708612366; cv=none; b=fkmnBzw/VHkbcov8RbEx7Sci5LBdkR7aX+PrTjfcGGw7tuEdGHtgu/gFlt7Omf6eeuzP9nmE4SrhOhCC4wz1rRELvvJC+k8XoJlL0TMRjzzOtDqWcK5g+2qd4oRNrP80nB8K1Ynqer8Jh+atiu9/m1Vfjt6lC7gyNPYQCWCncYQ=
+	t=1708615869; cv=none; b=HvczAwh49f2W43JeGA0qjQdlMgxKluyGnKtLZyoMTqZbdjQbkDQbXpaD4pTKCJRWHp8pkauE0RLqRQDPt42vNns7cbFHNocFndOdUoZXHK5AkSvimljYYJKsUC6SemE6OoTTIRP0ix5YuoGETU2fREh+0pdwp9dO1SIILc/TKqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708612366; c=relaxed/simple;
-	bh=LZHDN+CsRP+drHIzWcPwzkzGhgWExE0txMHPI86FeWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OqHzPZh0+CarNfF5BLA2Jgur0KZN8YlvcHlvT6uRkQxNXCVaRgzSwGzehVVA4VlHYGW5mCcmNPAEZ97z1GBMOL2nPdVGVJQW0h2LdcSllYBEa+sCBl32x2HHMRCp0rkiUJ/jp83Z/obUDxMPFv1+UG19LP4SKXq9RCZijmL0BNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-60853ad17f9so43029047b3.0;
-        Thu, 22 Feb 2024 06:32:44 -0800 (PST)
+	s=arc-20240116; t=1708615869; c=relaxed/simple;
+	bh=ogOJb+G9y9dA6etESx2Dwk2pQo1LQBGMw3xj3vhgPXQ=;
+	h=Message-ID:Date:Content-Type:MIME-Version:Subject:To:From; b=YL3Nt3RGhXUzmnMtY7iYOYr7Kap2RVQ+Xx6GP+hIW9oQJDZU+xaiqg+ljRiH+m88bJYKkAkq8WSb3y7/6bW+pa2rvMFbBoVVtpEzpNY6ZNhXr5wd+unNFs5/KuqZV9K5FFqITCNgeBzVCfWb+oxRU+f+n8JHPg4OEePcuRPjT4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=j/BY/5zk; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="j/BY/5zk"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6e45bd5014dso2197986b3a.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Feb 2024 07:31:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1708615865; x=1709220665; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=6/Fe2w5LUlunGPEIOU4UezACYUk2+YC0jLNtAiffr0M=;
+        b=j/BY/5zkecqnmZ13d4gRcZJHT2CR6Ct/HK8xa+lk1YAcCEt7NkSTofb+/OBfi+VMZZ
+         RTK14mkoTsSkn4lIgcI+0X2WOyTnMWkMtv7C3hBYLOEeTY2c8aJRIANZGd35Vd5OHBUZ
+         kKx/bORWvYx1AoAnr64PzGpmQOaYdNBBOi/SQodcgr3f/smafABCxrt/iipM4aQhj9J1
+         EBD5F0EtW83YjhSn5PKRvpWSF28/hYAaCH/I3/ve8j1CNVAW/VIQBN1brXYabX36y4Tw
+         10e3RBdahQ+erEb1bt83V2s3F5+wkYfciaLWZLNYecuDIrk1UlqUcBUmBQIpfGxqCoVg
+         KOeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708612363; x=1709217163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TRroxZP7R3yxxPUiepuBbi7r16wL47S6mTJMGmYkUsI=;
-        b=qHy88arV1Gk13mrO88VprueVFiomSSMJx4Y0Qj2ejEd2XyodmJccn6FLIQ4nCqxbgA
-         tlU9J5Nt2zOz8hf+ItUDBQ4mqiFNtL83yFBzIUZCF+aoxFLzGr0/YFeKXhibJ0OpAMt2
-         3ZI8M1EaT3ZAGYx7vp5qYzE1Oef2IpUSiulUBm8sJESwY1QdYtbkDXIqYW5zhCA+in63
-         umn7zDB/wIqB6Nv1y37R1DWya8qJ0nPi/UzklyfALXkU3nLXJw5PUfTZaViE9zoghynE
-         8sdp9GM8uI0fw+ZQqsfrDppO6X6ampDYx4mzGo1eQkYsotSMZUp4Okcgcf8CklkdzAhA
-         vnCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPRSNSVLzM3EisYyows/nBuWzhABpsrEZc7N965/0kGzPNha9Yi+SoYDY4ROFBh6qKAyGadDLMLPHbOkitTSFdgycpUcJN9XkgcfJcWR2GgudXCd30n7dsWaRiu9lGZBrM4oZ5rxi0rGaxCdN9
-X-Gm-Message-State: AOJu0YxOmb+1EojjFG7KPUsEwCCk+fj4jbX2ctfG5xUPBSQfmQooF5GP
-	2acI8ZOn0cOZHh00+h/fquZOTjic3qO5Sn6AkZx1LoGqkvJFPUI1JBw/+4gg56c=
-X-Google-Smtp-Source: AGHT+IE5iQLtLrPLuy7Bh5WNBdItBjJnT/emr8o+W87WhcQxo9kL6pzK8nmpfZrRMoWQ+CAc+iIzow==
-X-Received: by 2002:a0d:e60f:0:b0:607:7e50:1a11 with SMTP id p15-20020a0de60f000000b006077e501a11mr18322476ywe.19.1708612363255;
-        Thu, 22 Feb 2024 06:32:43 -0800 (PST)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id a125-20020a818a83000000b006040f198d3esm3065994ywg.142.2024.02.22.06.32.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Feb 2024 06:32:43 -0800 (PST)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6085b652fc8so36198757b3.2;
-        Thu, 22 Feb 2024 06:32:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVQIq7bMpfhYarll7ENQ3BQRaPlI1fEU49FjW8WpuqFH1eT2Zj4q/oMBgka8xfRn0+Rt98zf0/CpX+gT6bu4pbB7aCigWqBXCJ8JuSwSzEVCnWpZZ27KzBH7zUXmUkJZODvm0ivEpRkMEm8wQIz
-X-Received: by 2002:a81:7184:0:b0:607:75e7:80db with SMTP id
- m126-20020a817184000000b0060775e780dbmr20648117ywc.13.1708612361737; Thu, 22
- Feb 2024 06:32:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708615865; x=1709220665;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6/Fe2w5LUlunGPEIOU4UezACYUk2+YC0jLNtAiffr0M=;
+        b=cv6eGDZeaF2Qk3uQBxvrNfuKZR5M/wBikfz0YHcAaky6+tWtO3UEN+KUMVW9NCnebp
+         mcw98u8mTcWY90zr8rxu5ko+3kgo946oTIjNREpasDlbmA7AMIyIpvJXFTVzX5Neg2DD
+         m3An8whcO/jv3GYwAuq7qcI5//oTJZlfKW+V3BfRv1mDrXQEZEjZi/oyiJjwvOTfeynb
+         553G4xskmvpWW3WuEdW+o68t4dz0hdzV+ErsT64PXU24FM5XG2vziiz6W3P9l7mI/dXz
+         pH3auEqU8WEk+CKBTrAEBjOPom/8DFNMzGa6FwFD6hHPrfPva0qvb6Q5ikV2p/8dV0+i
+         1QTQ==
+X-Gm-Message-State: AOJu0YzHlA0EGLQfFjUfYD7PKifVT6KH6ZqPU/Px7H78v8bP5ZpNnQEd
+	6bJ+JTL2boNvQJ3lg706F17WHCHEDT8tV0g/KSvCl5jI6HwMzpaMJ5AcIGxZju1K6JJQAbDcgPP
+	T
+X-Google-Smtp-Source: AGHT+IHjwfoYyA5GNF1o4Z9axoLduZn+1ztScEHsxdo4/O4asGDdwPGkABSi4OnuqaXFkng1i8ZtDg==
+X-Received: by 2002:a05:6a00:1c8a:b0:6e4:69ac:4c94 with SMTP id y10-20020a056a001c8a00b006e469ac4c94mr11647574pfw.34.1708615865589;
+        Thu, 22 Feb 2024 07:31:05 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id t33-20020a056a0013a100b006e3635c5641sm10347337pfg.25.2024.02.22.07.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Feb 2024 07:31:05 -0800 (PST)
+Message-ID: <65d768b9.050a0220.1b769.0f55@mx.google.com>
+Date: Thu, 22 Feb 2024 07:31:05 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240222132117.137729-1-biju.das.jz@bp.renesas.com> <20240222132117.137729-4-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20240222132117.137729-4-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Feb 2024 15:32:29 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUTDnVR6ALCxdTAW22CvfR2R4Rixo3i7RfVP1f3HKE+FQ@mail.gmail.com>
-Message-ID: <CAMuHMdUTDnVR6ALCxdTAW22CvfR2R4Rixo3i7RfVP1f3HKE+FQ@mail.gmail.com>
-Subject: Re: [PATCH v9 3/3] arm64: dts: renesas: rzg2l-smarc: Enable DU and
- link with DSI
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: renesas-devel-2024-02-22-v6.8-rc5
+X-Kernelci-Report-Type: test
+Subject: renesas/master baseline-nfs: 11 runs,
+ 2 regressions (renesas-devel-2024-02-22-v6.8-rc5)
+To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 
-Hi Biju,
+renesas/master baseline-nfs: 11 runs, 2 regressions (renesas-devel-2024-02-=
+22-v6.8-rc5)
 
-On Thu, Feb 22, 2024 at 2:21=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
-> Enable DU and link with DSI on RZ/{G2L,G2LC,V2L} SMARC EVK.
->
-> Move DSI port properties from board dtsi to SoC dtsi and then link with D=
-U
-> and after that enable DU on the board dtsi.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v8->v9:
->  * Moved port properties from board dtsi to SoC dtsi
->  * Linked DU with DSI in SoC dtsi
->  * Enabled DU on the board dtsi.
+Regressions Summary
+-------------------
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue this in renesas-devel for v6.9 tomorrow, unless
-anyone objects.
+platform   | arch | lab             | compiler | defconfig          | regre=
+ssions
+-----------+------+-----------------+----------+--------------------+------=
+------
+dove-cubox | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig | 1    =
+      =
 
-Gr{oetje,eeting}s,
-
-                        Geert
+imx53-qsrb | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig | 1    =
+      =
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2024-02-22-v6.8-rc5/plan/baseline-nfs/
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2024-02-22-v6.8-rc5
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      d93b156af0b8c2afc4cad503eb2be252797d5e42 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform   | arch | lab             | compiler | defconfig          | regre=
+ssions
+-----------+------+-----------------+----------+--------------------+------=
+------
+dove-cubox | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig | 1    =
+      =
+
+
+  Details:     https://kernelci.org/test/plan/id/65d73613a7eed6a8846370ab
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+024-02-22-v6.8-rc5/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-n=
+fs-dove-cubox.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+024-02-22-v6.8-rc5/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-n=
+fs-dove-cubox.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+240129.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65d73613a7eed6a88=
+46370ac
+        failing since 100 days (last pass: renesas-devel-2023-06-26-v6.4, f=
+irst fail: renesas-devel-2023-11-13-v6.7-rc1) =
+
+ =
+
+
+
+platform   | arch | lab             | compiler | defconfig          | regre=
+ssions
+-----------+------+-----------------+----------+--------------------+------=
+------
+imx53-qsrb | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig | 1    =
+      =
+
+
+  Details:     https://kernelci.org/test/plan/id/65d73600cfdbfdd7a363701f
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+024-02-22-v6.8-rc5/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-n=
+fs-imx53-qsrb.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+024-02-22-v6.8-rc5/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-n=
+fs-imx53-qsrb.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+240129.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/65d73600cfdbfdd7a3637024
+        failing since 352 days (last pass: renesas-devel-2023-02-21-v6.2, f=
+irst fail: renesas-devel-2023-03-06-v6.3-rc1)
+
+    2024-02-22T11:54:28.150422  + set +x
+    2024-02-22T11:54:28.150575  [   29.708773] <LAVA_SIGNAL_ENDRUN 0_dmesg =
+1027370_1.6.2.3.1>
+    2024-02-22T11:54:28.260024  #
+    2024-02-22T11:54:28.361344  / # #export SHELL=3D/bin/sh
+    2024-02-22T11:54:28.361765  =
+
+    2024-02-22T11:54:28.462500  / # export SHELL=3D/bin/sh. /lava-1027370/e=
+nvironment
+    2024-02-22T11:54:28.462966  =
+
+    2024-02-22T11:54:28.563746  / # . /lava-1027370/environment/lava-102737=
+0/bin/lava-test-runner /lava-1027370/1
+    2024-02-22T11:54:28.564353  =
+
+    2024-02-22T11:54:28.567465  / # /lava-1027370/bin/lava-test-runner /lav=
+a-1027370/1 =
+
+    ... (13 line(s) more)  =
+
+ =20
