@@ -1,79 +1,101 @@
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DBC63104
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Feb 2024 11:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A5C67E92
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Feb 2024 11:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708687279; cv=none; b=IpRG3xkeGdRY1AkXqEINi7gVneWxOAK/2wlGphn2pzWqF09duUQZUwA2r5OtFzH59UYzeKlMIy8OiUJ1nN5Ogcx6VSppCCUGFUx2xqwWoWDicc0JHc5fBjgzguIyeB3VjQ6ouWTwxZBxYe4SxmifjU2PILHEWAlGv4+h737p0Hg=
+	t=1708687727; cv=none; b=iacpveoqPtwU1hQe5DSuSPxPcC8KEJy2qOSQ17nMBf7o1jfimmTxPxbr0Mk2zdHbR/9zwOyAXLG34taLuyq8lskL9n914ylbrD16LWvBcwYLFd46vuTlVSy/NsyW5zIpltSIuaj9xvbGctq7jP5nXPOCRwbr4qcRfZ1VYT4Wo/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708687279; c=relaxed/simple;
-	bh=cqH99IJ94yOMfxMJkfeRjPkQlolWQU3UWvLA5hnuR34=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pKgk+V5Vrf9Kyf94pMKxPbWxAkKKVOkjCRcUygjgLs3TU6SqEhlUk8T2xOZo2lDhlG9MdiWhxSSRJ+sQeSme9ERfNfvRXhjhW0ameDCinl+kLeSmyRtb+jO1MMWSwtIGHzUbNpoIp2XyeddSMjCp3nc85uxbnSQcOxuHvHSTa8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+	s=arc-20240116; t=1708687727; c=relaxed/simple;
+	bh=iHQBtZGMPGgdTEXB9sIO8udB6zO09cjsGmfLlAaOME0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PpZB2i2IdnALSjXg7CbrLeRrhmPktGwkd/XnoUQJu06tYQQHnoT9NQ+Qagd5ylIr8Mch2Pg6cnEk8VW7Uz4zDaSInD7P5jtGin70lg4iaB3UQjr/fx+iLKIjalt/TYrYUy5qIx2wLh0mloMpbAgGKIqw41+1P4Ng2WPNmpUQyW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6f61:ab26:80d6:d9d4])
-	by laurent.telenet-ops.be with bizsmtp
-	id qbM72B00H2itsqh01bM7HQ; Fri, 23 Feb 2024 12:21:09 +0100
+	by xavier.telenet-ops.be with bizsmtp
+	id qbUj2B00R2itsqh01bUjqo; Fri, 23 Feb 2024 12:28:43 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rdTbu-001P3m-Vf;
-	Fri, 23 Feb 2024 12:21:07 +0100
+	id 1rdTjH-001P4D-BU;
+	Fri, 23 Feb 2024 12:28:43 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rdTc3-00D0P4-AX;
-	Fri, 23 Feb 2024 12:21:07 +0100
+	id 1rdTjP-00D0VP-LD;
+	Fri, 23 Feb 2024 12:28:43 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: arm-soc <arm@kernel.org>,
-	soc <soc@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 1/2] Renesas DT binding updates for v6.9 (take two)
-Date: Fri, 23 Feb 2024 12:20:58 +0100
-Message-Id: <cover.1708687132.git.geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.9 (take two)
+Date: Fri, 23 Feb 2024 12:28:42 +0100
+Message-Id: <cover.1708687321.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1708687130.git.geert+renesas@glider.be>
-References: <cover.1708687130.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 49558e814fefdf33bf0b2d1c46c30d6a3f9634f3:
+	Hi Mike, Stephen,
 
-  dt-bindings: soc: renesas: Document R-Car V4M Gray Hawk Single (2024-01-31 15:06:52 +0100)
+The following changes since commit 5aaa139b9a03e1a43484a73248c6353a9c4d95c6:
+
+  clk: renesas: r8a779h0: Add I2C clocks (2024-02-06 11:20:12 +0100)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v6.9-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.9-tag2
 
-for you to fetch changes up to 3a9856e830500e20e61b92f5ea6b8cc505e085be:
+for you to fetch changes up to 81a7a88a98062ffcd8d7d5ac3b540a96dbff5490:
 
-  dt-bindings: renesas: Document preferred compatible naming (2024-02-19 11:21:04 +0100)
-
-----------------------------------------------------------------
-Renesas DT binding updates for v6.9 (take two)
-
-  - Restore sort order,
-  - Document preferred compatible naming,
+  clk: renesas: r8a779h0: Add RPC-IF clock (2024-02-20 11:37:34 +0100)
 
 ----------------------------------------------------------------
-Lad Prabhakar (1):
-      dt-bindings: soc: renesas: Preserve the order of SoCs based on their part numbers
+clk: renesas: Updates for v6.9 (take two)
 
-Niklas Söderlund (1):
-      dt-bindings: renesas: Document preferred compatible naming
+  - Add Ethernet, SDHI, DMA, and HyperFLASH/QSPI (RPC-IF) clocks on
+    R-Car V4M,
+  - Miscellaneous fixes and improvements.
 
- .../bindings/soc/renesas/renesas-soc.yaml          | 73 ++++++++++++++++++++++
- .../devicetree/bindings/soc/renesas/renesas.yaml   | 12 ++--
- 2 files changed, 79 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml
+Thanks for pulling!
+
+----------------------------------------------------------------
+Claudiu Beznea (2):
+      clk: renesas: r9a07g04[34]: Use SEL_SDHI1_STS status configuration for SD1 mux
+      clk: renesas: r9a07g04[34]: Fix typo for sel_shdi variable
+
+Cong Dang (4):
+      clk: renesas: r8a779h0: Add EtherAVB clocks
+      clk: renesas: r8a779h0: Add SDHI clock
+      clk: renesas: r8a779h0: Add SYS-DMAC clocks
+      clk: renesas: r8a779h0: Add RPC-IF clock
+
+Geert Uytterhoeven (2):
+      clk: renesas: r8a779g0: Correct PFC/GPIO parent clocks
+      clk: renesas: r8a779f0: Correct PFC/GPIO parent clock
+
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c       |  2 +-
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c       | 11 ++++++-----
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c       |  7 +++++++
+ drivers/clk/renesas/r9a07g043-cpg.c           |  6 +++---
+ drivers/clk/renesas/r9a07g044-cpg.c           |  6 +++---
+ include/dt-bindings/clock/r8a779g0-cpg-mssr.h |  1 +
+ 6 files changed, 21 insertions(+), 12 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
