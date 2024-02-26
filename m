@@ -1,94 +1,117 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4F35FDB5;
-	Mon, 26 Feb 2024 12:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F65604C5;
+	Mon, 26 Feb 2024 12:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708950345; cv=none; b=nkxDGJSoKHj26llC1E3X46FFWvcJI+KkH3m/tT6e/0QIEgi71QwSlYEJZ0ZYSY9XoVzSLPXOqNPEGAHOKUbHEmNxku+3b8OIw0R0uBiad9dSdtY/I5hzMcMcLubS8mCDEBQOSMCuLgjMamDzvgXAbb4wiIrDGymRRUAzFOioGzI=
+	t=1708950513; cv=none; b=u4f6SC9rD3sHw93t/UVjSkU+MTc6v2oeSDTr7fw2hmmBmTxVpOuZbNjbWkuyoOUIRzSWf7Epn/QXb4DQ0GecrAoN835WkbBZFj2OD7Q0MKw9arxLIhM4Zd8PWXQb/qKvbD7h3PDve0Xx78VHwmMlDN5GAdku8ZS+RoHK0hW/wng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708950345; c=relaxed/simple;
-	bh=Wcusuh+lWuagiIH3bqpP54T63/KX8yQIAxdsoq1Okoo=;
+	s=arc-20240116; t=1708950513; c=relaxed/simple;
+	bh=/5+1JvA8PcmHAUYXDe4zLh4GBZ4EEJwzWsb0OhWS0Eg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFRooT6S3kpBJxHgzqB+3sWUmeuvg17JnnIdJQmxdTLljUCpcxRlDiSLvubnK9UBE0OF0XOwy54fNOTxjSNuU+A7dFKyxLmRLQFfOZDISIX/ebLafPOeYKFzYBzPwew+KN3N+GHLe/aqJGVnKbfqHxH03n4OV7VXd/UVdtK8zN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
+	 To:Cc:Content-Type; b=d2Et/HW7PahrsaiFYwnCYdWCUgbx+6qToCJFhN8mPZ5Pw8TVdRZnJowxrcDymlH83FdPhMwCmW+u8+odJbkvprDm4M4q0Q9UMVXWkeA1XDkLKWte3iFw8z+RAjxVwof5VZgw1binXRJd3X9kgjDMafIcwjIjmB3Sq90I/XRZ/as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-608cf2e08f9so21348617b3.0;
-        Mon, 26 Feb 2024 04:25:43 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dcd9e34430cso3171654276.1;
+        Mon, 26 Feb 2024 04:28:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708950342; x=1709555142;
+        d=1e100.net; s=20230601; t=1708950510; x=1709555310;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F3T2uTlXB3ExY2DfXdBhbP4rbR8Cm76B7jSqV3u5yWQ=;
-        b=prXlz/8INbo84GY2I0bsWm3JYwIyni7L9a3CL7Pyfl9EsCDgDIHCb1NkAYSjrr9Tef
-         CFv0m7B36F1s381HK0qtcNzAaU/4kMbHZQyom9OaHwFDsW6ln8XWBEzyzaBQvM6ZLqH5
-         lNZK8gYjWXMz7mISdBso5v1NFYS5V6QsRm5JZsDLW0J/5FcSlHPdIVuMt2nUp4TVbhAR
-         WHIEXTFCvbrGZ3+eSUTlznK3oTqfeI+Z9zgBTVykTtudfYIUVdTkWQII9oULZXR2po6E
-         bF8YHVo5HBHTYaOvu06QbyrvWq4yc6B64hMDjYYAXuk64v+bGYs/sozEXNA0vKJX7z2S
-         9ybw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmNhMzzAyHCmgEIsa2Rd2Pw9NIfAKZca4/4Rx0J5Dw7L5h++S8TpWPSA61lmJIM20gSYuCvVrV0Y1GlQJXlvyswZnha2ZXESZprw==
-X-Gm-Message-State: AOJu0YzZg2acUrcFlZjlvLnLEck3Why8t+6ue+SRMpMCgMYy6uh+A12/
-	pbj/fuotW/tFuBGGiGF6a+EpeW5R7msjMxvjN/fTWs3yYZxtSANLWjgBg7ffdKU=
-X-Google-Smtp-Source: AGHT+IE1gDIsJ1U5D443MMtFoEHHEzHvH/0fEyD8HbVzWqGT2rOXL0m9Zg+x5UnmQfwYAb23MKl1EQ==
-X-Received: by 2002:a81:4cd0:0:b0:608:7af2:f5f5 with SMTP id z199-20020a814cd0000000b006087af2f5f5mr5551308ywa.50.1708950342517;
-        Mon, 26 Feb 2024 04:25:42 -0800 (PST)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id x198-20020a81a0cf000000b0060483b63a1asm1151351ywg.47.2024.02.26.04.25.42
+        bh=IA4QNksb22erWBRN6uBbo69xHUrtQuWcgavfHO0o/70=;
+        b=kn8ZBX62ofZ/pVhPChHmrU+PGM5aIWmNK7YOOQpg/2bvjRK9P75Khec861ABmIiCZ2
+         kb01nxKsT90nsGr4xXydjUPl9WHvJ5xarOC8V/qowyLiu4+XetBGUu42dWpOPi3nOYQq
+         18J5VWWjAeZqmZOzh5nNroYujQZU22KcJu7wreroY7wdOVWWy2M6V112hFAe1ef0EXcD
+         bWa7Vkw+Kc823zHw1G9b2JwF1aBV402+XI4q+Seq6W3IdsWQS9IboTMng1ootjc4cFQX
+         Ev3k37mpJuU+FZoNqEOVrJ+aEej2cwcQvcGxHOxaDFClyt9Khg2Sv2A1FGge9VhEDWI2
+         j6CA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0bVepzR1th55DzrCJa7tlYp8YqI81EcCU6OafbbZamWDDSxSwZDmVhVIWiw0U19XgqPsBKZhOoAezRwyO7crYF1+jGgzjVCbKRgbseQT4Fa5kVgH2Yv+SMNAdkbaY+PQ2Rqd9OxRSXNi1MDTGdJXHQGuLpiYqPBKTbCxG4zXb5HSgYqDAUe83BTYJrPt4SMAC/BPIcdvhfZdPn5kv7w1k8vzZZDBWyhkVRUl6uQ==
+X-Gm-Message-State: AOJu0YxpKwzqYDLEPSajwpL4Zc473BmLuu4wzYiQS1Tz6ctBgItMXHj1
+	eqKF3cNSJKpgVUaoQRZz2eRsVnHBZHp7pO3EMiwcH+ir8Tmj02oPdvhTBmxt2Ew=
+X-Google-Smtp-Source: AGHT+IHuFw8w+R/QcggjrOWYTSDAtHV+Dj8tXbWYhGk6gVshmOzukU8AeQSKKZ1ug61au3b/Ab9b2g==
+X-Received: by 2002:a25:6607:0:b0:dc2:7018:806d with SMTP id a7-20020a256607000000b00dc27018806dmr4124422ybc.16.1708950510353;
+        Mon, 26 Feb 2024 04:28:30 -0800 (PST)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id x6-20020a2584c6000000b00dcbce4abc32sm871973ybm.36.2024.02.26.04.28.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Feb 2024 04:25:42 -0800 (PST)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dcc84ae94c1so2703381276.1;
-        Mon, 26 Feb 2024 04:25:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWgSsxA3ZsfHfhtG1l08L5qdLlv71IyAPa21mjkeIU1BJsGfAWJxzi9MuwSUdFvfJW5Qk1f0dlYyh4RS0cASQgT5/Xh1m7G4E+xWA==
-X-Received: by 2002:a05:6902:98f:b0:dcb:f7b0:4788 with SMTP id
- bv15-20020a056902098f00b00dcbf7b04788mr4904378ybb.60.1708950342152; Mon, 26
- Feb 2024 04:25:42 -0800 (PST)
+        Mon, 26 Feb 2024 04:28:30 -0800 (PST)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-60893d33269so29230267b3.1;
+        Mon, 26 Feb 2024 04:28:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVIfhZpPGsecYFTeV0GlBCxFwxWBhSEO733uJGpoX85qfXtJ6x/0lzGQspZSVGYCC2e4DDnBr6dbUt8RzV/G599trg7/JmJXw4wKfBEgOCksiUdLV4FHpYSwI/wNC22nzH4jKDLgqKeGIopmVzgn2PpWcRdZ29YETj8fDBdBCvK1Yn7+JfreTYx0dtg+uLaGCDG0aTh5HNNLNtGxo7fNgGcsFaPeBB3numaMu0+Wg==
+X-Received: by 2002:a25:ce11:0:b0:dc6:d7de:5b29 with SMTP id
+ x17-20020a25ce11000000b00dc6d7de5b29mr4889354ybe.10.1708950510084; Mon, 26
+ Feb 2024 04:28:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240224191902.2065733-1-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20240224191902.2065733-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20240222083946.3977135-1-peterlin@andestech.com> <20240222083946.3977135-10-peterlin@andestech.com>
+In-Reply-To: <20240222083946.3977135-10-peterlin@andestech.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2024 13:25:30 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW7zWG8_CtjYstR=r1DHCds1vMx4=2qfjMfHb2efjsqnA@mail.gmail.com>
-Message-ID: <CAMuHMdW7zWG8_CtjYstR=r1DHCds1vMx4=2qfjMfHb2efjsqnA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: eagle: Add capture overlay for
- function expansion board
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Date: Mon, 26 Feb 2024 13:28:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV7f_R-_OiP-18rQATVdnS-1yo_kT++O=e1KuUSfeiygw@mail.gmail.com>
+Message-ID: <CAMuHMdV7f_R-_OiP-18rQATVdnS-1yo_kT++O=e1KuUSfeiygw@mail.gmail.com>
+Subject: Re: [PATCH v9 09/10] riscv: dts: renesas: Add Andes PMU extension for r9a07g043f
+To: Yu Chien Peter Lin <peterlin@andestech.com>
+Cc: acme@kernel.org, adrian.hunter@intel.com, ajones@ventanamicro.com, 
+	alexander.shishkin@linux.intel.com, andre.przywara@arm.com, 
+	anup@brainfault.org, aou@eecs.berkeley.edu, atishp@atishpatra.org, 
+	conor+dt@kernel.org, conor.dooley@microchip.com, conor@kernel.org, 
+	devicetree@vger.kernel.org, evan@rivosinc.com, geert+renesas@glider.be, 
+	guoren@kernel.org, heiko@sntech.de, irogers@google.com, 
+	jernej.skrabec@gmail.com, jolsa@kernel.org, jszhang@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, locus84@andestech.com, magnus.damm@gmail.com, 
+	mark.rutland@arm.com, mingo@redhat.com, n.shubin@yadro.com, 
+	namhyung@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	peterz@infradead.org, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	rdunlap@infradead.org, robh+dt@kernel.org, samuel@sholland.org, 
+	sunilvl@ventanamicro.com, tglx@linutronix.de, tim609@andestech.com, 
+	uwu@icenowy.me, wens@csie.org, will@kernel.org, inochiama@outlook.com, 
+	unicorn_wang@outlook.com, wefu@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 24, 2024 at 8:19=E2=80=AFPM Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> The Eagle board supports an optional "Function expansion board". The
-> expansion board adds support for HDMI OUT, HDMI capture from two
-> different sources and eMMC.
+On Thu, Feb 22, 2024 at 9:41=E2=80=AFAM Yu Chien Peter Lin
+<peterlin@andestech.com> wrote:
+> xandespmu stands for Andes Performance Monitor Unit extension.
+> Based on the added Andes PMU ISA string, the SBI PMU driver
+> will make use of the non-standard irq source.
 >
-> This change only adds support for the two HDMI capture sources.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+> Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
-> * Changes since v1
-> - The board is named "Function expansion board", update all references.
-> - Rename the over lay to r8a77970-eagle-function-expansion.dtso.
-> - Add r8a77970-eagle-expansion.dtbo to dtb-$(CONFIG_ARCH_R8A77970) so
->   it's considered for installation.
-> - Move #include statements below /.../; markers.
-> - Sort nodes without addresses in alphabetical order.
-> - Capitalize i2c -> I2C in comments.
-> - Use symbolic values for GPIO flags.
-> - Adjust gpios and output-{low,high} to match that the signal is
->   active-low.
-> - Correct misspelled label and removed unneeded ones.
+> Changes v1 -> v2:
+>   - New patch
+> Changes v2 -> v3:
+>   - No change
+> Changes v3 -> v4:
+>   - No change
+> Changes v4 -> v5:
+>   - Include Geert's Reviewed-by
+>   - Include Prabhakar's Reviewed/Tested-by
+> Changes v5 -> v6:
+>   - Include Conor's Acked-by
+> Changes v6 -> v7:
+>   - No change
+> Changes v7 -> v8:
+>   - No change
+> Changes v8 -> v9:
+>   - No change
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.10.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+so Palmer can pick it up with the rest of the series
+(the Renesas tree merge window for v6.9 has closed)
 
 Gr{oetje,eeting}s,
 
