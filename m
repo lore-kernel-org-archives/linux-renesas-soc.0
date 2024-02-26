@@ -1,23 +1,24 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5156C12FF76;
-	Mon, 26 Feb 2024 19:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FED12C53D;
+	Mon, 26 Feb 2024 19:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708976850; cv=none; b=jT0M0GfnwYNv3RYrUVkO5uJvZg6S749QmNZtqzIzRJDS5wAf1SRdKBvjjPOuwgVzp0YkEhnoZ6LT4LovaWo96LMInZDRVuzKB6Uzf6xTP0NRansNFkaVUBm4r62niLhjmLHxTaK0URgxo6HJlJn1oTzq2zjwCOORjk6to6Aytcw=
+	t=1708976851; cv=none; b=CAmrKUqazDvk0Nud6ZtTKBcnM0R7fQOHy0/udxusvXwUrQ0KBb+5NcsoCTnXZ9RTZcVx1kydXNHXSnco9F+t3r98wLZalQC7T3+SLvXSv+qE+ApRhllWWIaTabPHQgE5FoTKZEjDaE30f8xNzOVIik69zUTMmcCScff5ep4PP80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708976850; c=relaxed/simple;
-	bh=T6WPBIbXET+vtxSpPV/khpA+dkmBCIX+HZRrAkVIPKE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bFhVHnikcDY9Ijep/XSYfZMgFp+bTVV/73dR4QFB9KikdrzmHICwJmRqP7EtL4xH6+RjbXQ+mIp/jhfAadOXdrJVM3emETHBM143ddLv131/ZqV+UCaO/FzPQuoa3JTddTqXgF4csmWh3qGthZeWk2cV/e7Xrb/1g4By2JCKUqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	s=arc-20240116; t=1708976851; c=relaxed/simple;
+	bh=g8lFNMj3/BUbHcOdcwKfxt7R+dQXelKSiV9DzeRbLi8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HP684Q2hpT9nFMehnNYi6d/sWg/QlZknpJBSOQgBywSPLXz8IHMQvrdOt5KOErqBHbMB+nyUalHoUuSRbu4jj3uvrIQFmsGz9yupBns50qSiHhht82MoX5ffJO644o4STXElNZ9E8miRpX7JY5luTi6ngzGBUDYWl3DBYY8vdTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.06,186,1705330800"; 
-   d="scan'208";a="199322571"
+   d="scan'208";a="195384718"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Feb 2024 04:47:21 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 27 Feb 2024 04:47:29 +0900
 Received: from localhost.localdomain (unknown [10.226.93.86])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6B58940065B4;
-	Tue, 27 Feb 2024 04:47:18 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D747E40065B4;
+	Tue, 27 Feb 2024 04:47:25 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -29,10 +30,12 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	devicetree@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 0/2] Enable DA9062 PMIC and built-in RTC, GPIO and ONKEY
-Date: Mon, 26 Feb 2024 19:47:13 +0000
-Message-Id: <20240226194715.427597-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 2/2] arm64: dts: renesas: rzg2ul-smarc: [DO NOT APPLY] Add PMIC IRQ property
+Date: Mon, 26 Feb 2024 19:47:15 +0000
+Message-Id: <20240226194715.427597-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240226194715.427597-1-biju.das.jz@bp.renesas.com>
+References: <20240226194715.427597-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -41,31 +44,42 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series aims to enable DA9062 PMIC and built-in RTC, GPIO and
-ONKEY modules on the RZ/{G2UL,Five} SMARC EVK development boards.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Logs:
-GPIO:
-root@smarc-rzg2ul:~#  cat /sys/kernel/debug/gpio | grep da9062 -A5
-gpiochip1: GPIOs 664-668, parent: platform/da9062-gpio, da9062-gpio, can sleep:
- gpio-665 (                    |SD0_PWR_SEL         ) in  lo
- gpio-666 (                    |SD1_PWR_SEL         ) in  lo
- gpio-667 (                    |SW_ET0_EN#          ) in  hi
- gpio-668 (                    |PMIC_PGOOD          ) out hi
-RTC:
- da9063-rtc da9062-rtc: setting system clock to 2023-06-14T15:45:44 UTC (1686757544)
-ONKEY:
- input: da9062-onkey as /devices/platform/soc/10058000.i2c/i2c-0/0-0058/da9062-onkey/input/input0
-
-Biju Das (2):
-  arm64: dts: renesas: rzg2ul-smarc: Enable PMIC and built-in RTC, GPIO
-    and ONKEY
-  arm64: dts: renesas: rzg2ul-smarc: [DO NOT APPLY] Add PMIC IRQ
-    property
-
- arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+index f6f6f8280df6..812af2891a95 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+@@ -21,14 +21,26 @@ &cpu_dai {
+ 	sound-dai = <&ssi1>;
+ };
+ 
++&pinctrl {
++	pmic_pins: pmic {
++		pinmux = <RZG2L_PORT_PINMUX(18, 4, 1)>;  /* IRQ6 */
++	};
++};
++
+ &i2c0 {
+ 	clock-frequency = <400000>;
+ 
+ 	da9062: pmic@58 {
+ 		compatible = "dlg,da9062";
+ 		reg = <0x58>;
++		pinctrl-0 = <&pmic_pins>;
++		pinctrl-names = "default";
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupt-parent = <&irqc>;
++		interrupts = <RZG2L_IRQ6 IRQ_TYPE_LEVEL_LOW>;
+ 
+ 		gpio {
+ 			compatible = "dlg,da9062-gpio";
 -- 
 2.25.1
 
