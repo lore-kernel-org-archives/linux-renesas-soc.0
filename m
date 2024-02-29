@@ -1,44 +1,48 @@
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6AF7A701
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Feb 2024 10:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CEB7B3CC
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Feb 2024 10:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709204327; cv=none; b=Vzz7kDRldAXp3A4D0Ih8C8NQoDMPgh9IzCWOW1l3pb27bjysHj5OKQiDkjXsSt72sn3YEN5mrx1XHVL2JebSY97Lf/lfhbUimqhh87SLBtUHElZUin7xSsyYdoVRjn8p8mVS/zHIBqJ1bUJVRQfApVI+PcX4Sb0gpKVvvekbrhQ=
+	t=1709204330; cv=none; b=iqKOOKryNmi8iDSBvrHhmquiTHKvlbRPO6awhGMahUPwYDB5Wn72tCZvk0frqi2Hk4E7EtJ0AYJrxk7ZfQzTAAUkuHDW3FaSICLEFIgn5L06TK1JMJNqZvLLVbje92tEHQUaSZc7GBFOg2Z7Lqt3J7AsmvV289Y9tllVB/mgQAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709204327; c=relaxed/simple;
-	bh=Aspv0G+YG9614QQAmWGdnPtXhOIvyhPuhr5UY12xlXY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iIlDlirM+uieWmKqJGclzD8TM3DXLWO6vwGg0jghe7Go3VpRvw/LZnHKMsFzfQmN/9Pf8lzZZa/kNYt7GJRrm+Xr3wtvTZ7sPokqzV6CnDrJn29p3i1h+U7Kc2NGpZirlXNd7GxHNd+qfs8NUFbAy/+2a6sI+bW5M+y45gSkBVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Nw0K+k7S; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1709204330; c=relaxed/simple;
+	bh=ZbKsOmGSKAyPdZNFs9gxN3ij9YHd3GYHGCrOYJ1IK9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tbC/84/gw/IyB0gNUjthOrwCnWK2O/vvQjowXzLzkLewmXLqUIm+xj+S1QQTpVXOAbZjfUtIlZPnLftc5PiQVV3pvaxbnLU1jZLyim/X9jk5UoKYt/ntFmwt80i+buwuzb5dbWk+H/W+gZapFBKUhShxr0A9y4zi8PRJhC2tSPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=l39f0LH5; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Nw0K+k7S"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="l39f0LH5"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=4eke9AvP60x46V
-	nmjd4TBJ7DFqyFYzBhCdKdqGcDHmc=; b=Nw0K+k7SmNbMyafANJF4722nBDDkAZ
-	0Ze+RcEjaxKrUnSR7D78LG9TfWECbQvvYKu1GS7v7bT/5bh80dzVGUM2nSGreUwF
-	tseEO05KXB57Y9NaIuFFXM2lSHuewTuFZSGF3Z6oJFVC0HLlLYYWJm4tx8fhlTuz
-	fdkheIywGwv3rBnXozXUpx5Dk6O7CKcAbRmTYe7m1Bqq9fJKgKKxn2KUULlfRaSe
-	00QYYfiv7IMtW8HIvFtqRXz/GvpUGQ9H8Iqoovy56yf6noX2jZ8q1xERNY4ygunK
-	22+pUleTSAG3T/8nkQ6bhUkwXqI0Pb5qfU9sy72Ky3BoHRMbY8nZjl2g==
-Received: (qmail 2277949 invoked from network); 29 Feb 2024 11:58:40 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Feb 2024 11:58:40 +0100
-X-UD-Smtp-Session: l3s3148p1@jH5VJIMSejltKPFZ
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=zth6cqyN6gI2D0vPZW2SkkUMiLbZva005HC3qhC1wrE=; b=l39f0L
+	H5htQ0M2kR5NZ/hcmyjWVV+a9nvQGpTeFcWkpey3Wu66p2ayE7ToyrrZWTX+mo32
+	jbnCfVjfySnDRzX/7kJvgDiQDUPT9vDqQ431jluGxncZKMsoRhPNEumYAd9Alt+q
+	M3hySeSifv7S2aD/BXkFnDayhF/dGEHauB6DEmuqu/GUXH9bs7WdIuoDKTFpvR0U
+	QmxD3sFOMeg6RHKxT0qO5MfmCmeyBug0aw0lYTC9+epbO/QXGuK6VKoFAXrYM+/A
+	4b+D+czZIGrXdx3tFZl9AMtjMj4fyW9DAo4KPs0JhVowjo9QxYC7TUh4TS+5GQ2O
+	b8xPaSE1JxjCh1Dw==
+Received: (qmail 2278110 invoked from network); 29 Feb 2024 11:58:43 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Feb 2024 11:58:43 +0100
+X-UD-Smtp-Session: l3s3148p1@VO2HJIMSSD5tKPFZ
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
 	Rob Herring <robh+dt@kernel.org>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	devicetree@vger.kernel.org,
+	Andi Shyti <andi.shyti@kernel.org>,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFT 0/3] i2c: mpc: use proper binding for transfer timeouts
-Date: Thu, 29 Feb 2024 11:58:10 +0100
-Message-ID: <20240229105810.29220-5-wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT 3/3] i2c: mpc: remove outdated macro
+Date: Thu, 29 Feb 2024 11:58:13 +0100
+Message-ID: <20240229105810.29220-8-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240229105810.29220-5-wsa+renesas@sang-engineering.com>
+References: <20240229105810.29220-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -47,22 +51,36 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To clean up the confusing situation regarding I2C timeout bindings, here
-is the series to fix up the MPC driver which mixed up clock stretching
-timeout with transfer timeouts. Plus a minor cleanup while here.
+DRV_NAME was useful back in the days. But here, being used once, it is
+only cruft.
 
-Only build tested, so actual testing is welcome.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-mpc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-
-Wolfram Sang (3):
-  dt-bindings: i2c: mpc: use proper binding for transfer timeouts
-  i2c: mpc: use proper binding for transfer timeouts
-  i2c: mpc: remove outdated macro
-
- .../devicetree/bindings/i2c/i2c-mpc.yaml         |  2 +-
- drivers/i2c/busses/i2c-mpc.c                     | 16 +++++++---------
- 2 files changed, 8 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
+index 0b4de9e569ba..8d73c0f405ed 100644
+--- a/drivers/i2c/busses/i2c-mpc.c
++++ b/drivers/i2c/busses/i2c-mpc.c
+@@ -30,8 +30,6 @@
+ #include <asm/mpc85xx.h>
+ #include <sysdev/fsl_soc.h>
+ 
+-#define DRV_NAME "mpc-i2c"
+-
+ #define MPC_I2C_CLOCK_LEGACY   0
+ #define MPC_I2C_CLOCK_PRESERVE (~0U)
+ 
+@@ -960,7 +958,7 @@ static struct platform_driver mpc_i2c_driver = {
+ 	.probe		= fsl_i2c_probe,
+ 	.remove_new	= fsl_i2c_remove,
+ 	.driver = {
+-		.name = DRV_NAME,
++		.name = "mpc-i2c",
+ 		.of_match_table = mpc_i2c_of_match,
+ 		.pm = &mpc_i2c_pm_ops,
+ 	},
 -- 
 2.43.0
 
