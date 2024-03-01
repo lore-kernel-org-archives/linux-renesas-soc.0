@@ -1,89 +1,103 @@
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F52E23AD
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Mar 2024 15:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89CC39FCF;
+	Fri,  1 Mar 2024 15:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709307174; cv=none; b=O98Y0kWCRrvYjX0t/aL+urYkRypC0bYtv4aAp6lN6490hFPOOxaYvDrEbI7BpX2uoe5BIzlEQD93ORF+IBKA96+fJYGZ0ENAiu9hmB3+fmm3z6Nj+Zokp4wGdVttNoPp5NCCEaxWA+2L3nmZrUQRC5xHFRjJyDyak8TMBvJw4oI=
+	t=1709307288; cv=none; b=Ch43BjbeWjIDKZ0XLndJI6TaGOEn0eOQXWqtspADNPWCsQ1V7ge2NSGFzaNGhiOO6kTy3Y89S5B7iAKEtDqhgyLS0Pub1YKC50gX8zII7mT2NxLzyaYcbUN6Z9q9weQqL8G3OMu73YGU/4cILr6AJgDCODxQYQOJGfiAMMd4D+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709307174; c=relaxed/simple;
-	bh=q5kmoix5esv0PNO0rfMoWK5dCcDWLVN+KEQTCH+9bX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hfsIH1eyN0iprDWZEclJEKFhkj0eSopyU8qHzV5ooMZ+BpZbgjtzI1Kd7W9FwaiZvwrcOajr936XZWEkAZDWsO8lRwP/qs8+lGmpB8ejDXxnyhMmjpMwnQllgr4E+rw3x/J9IUB/C1xp1Tg+vyyGRhXPoJdu4mVaan1bDuZbae4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:db22:6af9:7d18:6ee8])
-	by michel.telenet-ops.be with bizsmtp
-	id tTYj2B0021TWuYv06TYj1f; Fri, 01 Mar 2024 16:32:43 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rg4sC-0023yC-C2;
-	Fri, 01 Mar 2024 16:32:43 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rg4sN-00Bfbx-39;
-	Fri, 01 Mar 2024 16:32:43 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: arm-soc <arm@kernel.org>,
-	soc <soc@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] Renesas DT binding updates for v6.9 (take three)
-Date: Fri,  1 Mar 2024 16:32:23 +0100
-Message-Id: <cover.1709307006.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1709307288; c=relaxed/simple;
+	bh=3teBvmWGv2QIb9wnN8Ug62peXilZv+opMKark4W4HdQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=f5YkRyOeJo1dwKmfFjOf5Q8dU++Nk3EqhVpmaPiN5TICd0zZkswAUI5XKRQ4yqKZtLS8804mABoYKLK+Isib0hk351O8uON3689Va66dwD0ag0U3NKX1K8hw2u6wnayCDVKHLoy1HrxinAAPHhhJWDq2yP7sCLfV295DGmKWXus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=U7SDI/pC; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="U7SDI/pC"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5BCB51BF209;
+	Fri,  1 Mar 2024 15:34:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709307284;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZIPNbDER9GD1pk643Vo4atb37f/3Xw0jKatEUes035M=;
+	b=U7SDI/pC+amED2VmvfQeO70arxWnMp3pYtcJbFEdNkJ8BIu5ix+576uoY7iiDQKYnTkomz
+	kLkhIDwqNDT4BWnVjaH1sDcmDgj7yujGJ+2pPKsf7ZQI7fLQ4EB6Q1cGXoCDR3V6X0t786
+	crrF63F/TNUxpvGB5PtxJjT/q6PZ64mBsrFcJVeKK5TpuRMVpFWLHQ94uTkgEV1Y7T3sf/
+	pMjuhN/PDph90SZMdK7F++VacYHKxOTyg2CLQJMeMU97pySvKMC9COvb5OnGThu/kq+Yd8
+	cETWHNco84MnN+Q6B+rNFruIH8n2GL6C0RUNYoNYywcPdwqH/6LSFTHZNpLjVA==
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Fri, 01 Mar 2024 16:35:03 +0100
+Subject: [PATCH net-next v5 6/7] net: phy: qcom: at803x: Avoid hibernating
+ if MAC requires RX clock
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240301-rxc_bugfix-v5-6-8dac30230050@bootlin.com>
+References: <20240301-rxc_bugfix-v5-0-8dac30230050@bootlin.com>
+In-Reply-To: <20240301-rxc_bugfix-v5-0-8dac30230050@bootlin.com>
+To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Jose Abreu <joabreu@synopsys.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+ Clark Wang <xiaoning.wang@nxp.com>, 
+ Romain Gantois <romain.gantois@bootlin.com>
+X-Mailer: b4 0.13.0
+X-GND-Sasl: romain.gantois@bootlin.com
 
-	Hi SoC folks,
+From: Russell King <linux@armlinux.org.uk>
 
-This is my third pull request for the inclusion of Renesas SoC updates
-for v6.9.
+Stmmac controllers connected to an at803x PHY cannot resume properly after
+suspend when WoL is enabled. This happens because the MAC requires an RX
+clock generated by the PHY to initialize its hardware properly. But the RX
+clock is cut when the PHY suspends and isn't brought up until the MAC
+driver resumes the phylink.
 
-The following changes since commit 3a9856e830500e20e61b92f5ea6b8cc505e085be:
+Prevent the at803x PHY driver from going into suspend if the attached MAC
+driver always requires an RX clock signal.
 
-  dt-bindings: renesas: Document preferred compatible naming (2024-02-19 11:21:04 +0100)
+Reported-by: Clark Wang <xiaoning.wang@nxp.com>
+Link: https://lore.kernel.org/all/20230202081559.3553637-1-xiaoning.wang@nxp.com/
+Signed-off-by: Russell King <linux@armlinux.org.uk>
+[rgantois: commit log]
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+---
+ drivers/net/phy/qcom/at803x.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-are available in the Git repository at:
+diff --git a/drivers/net/phy/qcom/at803x.c b/drivers/net/phy/qcom/at803x.c
+index 4717c59d51d0..2a221b81cf37 100644
+--- a/drivers/net/phy/qcom/at803x.c
++++ b/drivers/net/phy/qcom/at803x.c
+@@ -426,7 +426,8 @@ static int at803x_hibernation_mode_config(struct phy_device *phydev)
+ 	/* The default after hardware reset is hibernation mode enabled. After
+ 	 * software reset, the value is retained.
+ 	 */
+-	if (!(priv->flags & AT803X_DISABLE_HIBERNATION_MODE))
++	if (!(priv->flags & AT803X_DISABLE_HIBERNATION_MODE) &&
++	    !(phydev->dev_flags & PHY_F_RXC_ALWAYS_ON))
+ 		return 0;
+ 
+ 	return at803x_debug_reg_mask(phydev, AT803X_DEBUG_REG_HIB_CTRL,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v6.9-tag3
+-- 
+2.43.2
 
-for you to fetch changes up to 0d5a9b5d5d2fe6a138a8a9ff2513f446d69f2672:
-
-  dt-bindings: soc: renesas: renesas-soc: Add pattern for gray-hawk (2024-03-01 15:41:34 +0100)
-
-----------------------------------------------------------------
-Renesas DT binding updates for v6.9 (take three)
-
-  - Add missing gray-hawk pattern to list of preferred compatible names.
-
-This fixes a recently introduced "make dtbs_check" issue.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Lad Prabhakar (1):
-      dt-bindings: soc: renesas: renesas-soc: Add pattern for gray-hawk
-
- Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
