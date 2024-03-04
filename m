@@ -1,56 +1,54 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58B539AD0
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Mar 2024 11:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678993984B
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Mar 2024 11:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709550576; cv=none; b=FVcApdkt5dwAv2O1afe1F1v0TiFjlc9FyUQhgJfVqzaEY4IYfEsQt4cZZcXr09bwSle0PNjg+c19/QXxdhMZ1H9pfBvlQXIurxEvtWhASCDNJZDi+9rZoZrko54W5cXzPrcpXIvjf98t+v6p7yH6Z1nQIig2K2T5j0dBsIU6RfE=
+	t=1709550577; cv=none; b=XhlOHwbRoxEKmasO00Uzj/cViY/F5LSAySpZR0/ZKgZRYxH7JNdG6jBhnTfQEsDWar6Ye1HGQuOKY98+Ll4UMQPaOVuq8Wz4mrt4tm7bJzSQj0xah9u59vQWGwgPsKteAu1efBXX+W4v+iJN6MvMonsShTj4EX+LGmeOc0xvAeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709550576; c=relaxed/simple;
-	bh=7rvM7KHmkZqdCtn/ZmKFDkHM4BUELNr4VNeFdPCyFuY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JGbrIgTBxIrA8qf2F12oYcfoJE+M5WezTJ3NaW4UBUGp60Lf0wOoNlqIrrzld3W9qVo/iv2QcNHY2wBg8mQfUpeYuK8DPXprgmaU1wOiNszY87Wqa5PinrZJZJFURlzWjSUkOOVu9WFADmVh7wdwRYJNsAfoF228q/dq1QVm7Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=HAWt1yux; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1709550577; c=relaxed/simple;
+	bh=lXzdrdhwZ5b2tIn/5LyFAdEolZJTtG1XdtTq3siwjA4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uuUJtGfXYpdeS8nF6kB5Y5Dp/cp2mTtvW3MuIASm3ZzPk4pilJj6v86CfNOKkTfJuIvYS3bbL1dor2boqmGUKABzHA7LjxCz8+S88y0M61g10M1sibW8Guhmzlh3Kup0wKutpZ3nogej3AZclvUND02UHhVYdvH85FCyy9yLh5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=A2HjNnOJ; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="HAWt1yux"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a3fb8b0b7acso560833766b.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2024 03:09:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="A2HjNnOJ"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5673f7b3196so1240694a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2024 03:09:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech.se; s=google; t=1709550573; x=1710155373; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qVPD/NxXDf57V6SzvfkkCbcoaNN8Ir/J+IyX7tMPcEg=;
-        b=HAWt1yuxbct6YFxLZ30rzl92HzfQCRYbF99SswMVVgYY7XAH/m9MHfORh+Rv2wYp5X
-         YjrMgqnVvLsjWh0NtKh8Qy39KYMXvtFTW0/UtOqmjtyDcLKvI9JI43T5yY60DqCKyvzv
-         HluhcH4zvniYv5FQg0bTBNTrclJMiU9EabAjenC2otbnNaYWph0VkJ+a6UZCggtcHOAp
-         X0iqY/91i0byWnUIF3ejiwZbzJdhkfazUKD2eTxqaAVUktSNASrgttrp5S8F4luhLu5F
-         YeANklFpyuNULkdF1+Vg39rMDHKZYkpiXcaLa+LfL5ITiOY4e0Ae8w7D2bj2qL9EjMa9
-         uYPA==
+        d=ragnatech.se; s=google; t=1709550571; x=1710155371; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fnvdle85bFN9s4tk+YWOcM02aqwKrMEFnGRHcj6TJUk=;
+        b=A2HjNnOJ8UOj9UDhL2AUaveCmPH52vAqUSO7PMa5W3bcgv8UJkAuwVusX2FhUoWpEm
+         Fefzoe+QpLxP6l40vb3KSoNlOuH9g7QqgHCHeieD/viIVkM0Yr3oMYFoT+2grnRLRWT9
+         z1hLe0AjRGL337DanMFr/d6WS7uxqG2M9g2toBna20T6RQL/iIXB55NwR403K5lOeyU8
+         rXJbfrAybyfI3tHH9HsK89/woAxCrPu5oM4wXlFISOxBYxD9ZlBBdmfMjp7YYPRnZZM0
+         4hdS7PsvRrUA7hlokptJuUvmuBrnCEs1Zjqb69R2XQ4wsaVmU2K0r6MLlNoOO/mPaDOt
+         gugA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709550573; x=1710155373;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qVPD/NxXDf57V6SzvfkkCbcoaNN8Ir/J+IyX7tMPcEg=;
-        b=ac0sItEhN8zk9T06gkkL/UaNfhJltEFeG1GyEvdf9vLJtWBDIGKvmvPjrj61712VhS
-         DR1ae1DhabZzNbZYokFGNCSeL3E158uA+zAlLiaNWIc2haPYqbY5lewwkl9EeSfewxZ1
-         dtBO2/BTEBd0Cf1Wl8x4SeMq1GYjADH3Zy+CT2zCjwEusmhCEOvGUX3gYrKBJfyeRJus
-         VFbG0UcLiufYLmSiCqtQhLL3iAtA4R5KHAcDDFUmMcow4Vl99fCUCWxkLbi+A4mzYzXp
-         eLZq7WjIK1sq0OQbj/YWUUhniJ0l29Y0dmXVWUuel9mbfrXR8Q5s5O5D72pd/4S69PSV
-         jyJw==
-X-Gm-Message-State: AOJu0YzwejMA3OpjntT6kFi8NeQh2RV/0sivI/U6BGw+li+8TihBSSq4
-	y67ETXuLccSMIv9U6zPITg7WFlfFk5afB0vmvmlF4oYQHvkp3F7XCtTLM4SSLyA=
-X-Google-Smtp-Source: AGHT+IGdiGiTnre7/RjRmCO+1eWWgLByHvN68vK7VO9X2uxrMkEFSS/fZJ9/qL0oGmHDLATmy0KfyA==
-X-Received: by 2002:a17:906:2789:b0:a3f:bcff:18b8 with SMTP id j9-20020a170906278900b00a3fbcff18b8mr6145562ejc.27.1709550573120;
-        Mon, 04 Mar 2024 03:09:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709550571; x=1710155371;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fnvdle85bFN9s4tk+YWOcM02aqwKrMEFnGRHcj6TJUk=;
+        b=nNMXW/5SmExYAEdFwBHRcrj3bH/N+Ozr/bvMCjjQhFXxiNlM2oFxp5hpCiS8tEcZFk
+         1DRxmy3iKKG0v/vAuTtxk1Jf6Cp+xOVRJtVPlNaI0Gj066CKgBQcoKclZaxU8YqpwmbQ
+         LXbvebw/VJuXjvu05tBmpfo6uGr4lpKU3ZyZG0gezoWX+8ocgAEMaw7hQ+KUr/VZzsAv
+         EwwxYyOWtpiq9TMVoTBuHC9W0ZN/ridM6SAE0KXmsrAd60BSuo7rJATcZpWnbZbxXdSF
+         ocsE3ugo83+gLtvJLtsJn9vbSOpQg7Rf+JD/UynsUVB7sUAu4OGLMJPBsdC7voBiOXdF
+         CqkQ==
+X-Gm-Message-State: AOJu0YwwtL9mCPHOsCac+QF4dzovOtRhIMQ1pkL31w+hLFh1NXy3yZ7l
+	CLY4soIo41VnzoZqoNIRGnTglUxmeG+DpGsaraYno4UYyuDfgE+/KxB9qckG4as=
+X-Google-Smtp-Source: AGHT+IFAo9TwFaILny0b2KqmEaX7ntbt2e1pdgT9fQcuYhViFWqYw+MMhi4Wq6uqlHrlQXBtif4wOw==
+X-Received: by 2002:a17:906:b78c:b0:a44:44e0:868f with SMTP id dt12-20020a170906b78c00b00a4444e0868fmr5899780ejb.11.1709550571560;
+        Mon, 04 Mar 2024 03:09:31 -0800 (PST)
 Received: from sleipner.berto.se (p4fcc8c6a.dip0.t-ipconnect.de. [79.204.140.106])
-        by smtp.googlemail.com with ESMTPSA id v23-20020a170906565700b00a455ff77e7bsm688420ejr.88.2024.03.04.03.09.32
+        by smtp.googlemail.com with ESMTPSA id v23-20020a170906565700b00a455ff77e7bsm688420ejr.88.2024.03.04.03.09.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 03:09:32 -0800 (PST)
+        Mon, 04 Mar 2024 03:09:31 -0800 (PST)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Sergey Shtylyov <s.shtylyov@omp.ru>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -62,14 +60,11 @@ To: Sergey Shtylyov <s.shtylyov@omp.ru>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	netdev@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>
-Subject: [net-next,v3 2/6] ravb: Make it clear the information relates to maximum frame size
-Date: Mon,  4 Mar 2024 12:08:54 +0100
-Message-ID: <20240304110858.117100-3-niklas.soderlund+renesas@ragnatech.se>
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [net-next,v3 0/6] ravb: Align Rx descriptor setup and maintenance
+Date: Mon,  4 Mar 2024 12:08:52 +0100
+Message-ID: <20240304110858.117100-1-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240304110858.117100-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20240304110858.117100-1-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -79,88 +74,51 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The struct member rx_max_buf_size was added before split descriptor
-support was added. It is unclear if the value describes the full skb
-frame buffer or the data descriptor buffer which can be combined into a
-single skb.
+Hello,
 
-Rename it to make it clear it referees to the maximum frame size and can
-cover multiple descriptors.
+When RZ/G2L support was added the Rx code path was split in two, one to
+support R-Car and one to support RZ/G2L. One reason for this is that
+R-Car uses the extended Rx descriptor format, while RZ/G2L uses the
+normal descriptor format.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
-* Changes since v2
-- Fix spelling in commit message.
----
- drivers/net/ethernet/renesas/ravb.h      |  2 +-
- drivers/net/ethernet/renesas/ravb_main.c | 11 ++++++-----
- 2 files changed, 7 insertions(+), 6 deletions(-)
+In many aspects this is not needed as the extended descriptor format is
+just a normal descriptor with extra metadata (timestamsp) appended. And
+the R-Car SoCs can also use normal descriptors if hardware timestamps
+were not desired. This split has led to RZ/G2L gaining support for
+split descriptors in the Rx path while R-Car still lacks this.
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index aecc98282c7e..7f9e8b2c012a 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1059,7 +1059,7 @@ struct ravb_hw_info {
- 	int stats_len;
- 	size_t max_rx_len;
- 	u32 tccr_mask;
--	u32 rx_max_buf_size;
-+	u32 rx_max_frame_size;
- 	unsigned aligned_tx: 1;
- 
- 	/* hardware features */
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index c25a80f4d3b9..5c72b780d623 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2684,7 +2684,7 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
- 	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
--	.rx_max_buf_size = SZ_2K,
-+	.rx_max_frame_size = SZ_2K,
- 	.internal_delay = 1,
- 	.tx_counters = 1,
- 	.multi_irqs = 1,
-@@ -2710,7 +2710,7 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
- 	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
--	.rx_max_buf_size = SZ_2K,
-+	.rx_max_frame_size = SZ_2K,
- 	.aligned_tx = 1,
- 	.gptp = 1,
- 	.nc_queues = 1,
-@@ -2733,7 +2733,7 @@ static const struct ravb_hw_info ravb_rzv2m_hw_info = {
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
- 	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
--	.rx_max_buf_size = SZ_2K,
-+	.rx_max_frame_size = SZ_2K,
- 	.multi_irqs = 1,
- 	.err_mgmt_irqs = 1,
- 	.gptp = 1,
-@@ -2758,7 +2758,7 @@ static const struct ravb_hw_info gbeth_hw_info = {
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats_gbeth),
- 	.max_rx_len = ALIGN(GBETH_RX_BUFF_MAX, RAVB_ALIGN),
- 	.tccr_mask = TCCR_TSRQ0,
--	.rx_max_buf_size = SZ_8K,
-+	.rx_max_frame_size = SZ_8K,
- 	.aligned_tx = 1,
- 	.tx_counters = 1,
- 	.carrier_counters = 1,
-@@ -2967,7 +2967,8 @@ static int ravb_probe(struct platform_device *pdev)
- 	priv->avb_link_active_low =
- 		of_property_read_bool(np, "renesas,ether-link-active-low");
- 
--	ndev->max_mtu = info->rx_max_buf_size - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
-+	ndev->max_mtu = info->rx_max_frame_size -
-+		(ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
- 	ndev->min_mtu = ETH_MIN_MTU;
- 
- 	/* FIXME: R-Car Gen2 has 4byte alignment restriction for tx buffer
+This series is the first step in trying to merge the R-Car and RZ/G2L Rx
+paths so features and bugs corrected in one will benefit the other.
+
+The first patch in the series clarifies that the driver now supports
+either normal or extended descriptors, not both at the same time by
+grouping them in a union. This is the foundation that later patches will
+build on the aligning the two Rx paths.
+
+Patches 2-5 deals with correcting small issues in the Rx frame and
+descriptor sizes that either were incorrect at the time they were added
+in 2017 (my bad) or concepts built on-top of this initial incorrect
+design.
+
+While finally patch 6 merges the R-Car and RZ/G2L for Rx descriptor
+setup and maintenance.
+
+When this work has landed I plan to follow up with more work aligning
+the rest of the Rx code paths and hopefully bring split descriptor
+support to the R-Car SoCs.
+
+Niklas Söderlund (6):
+  ravb: Group descriptor types used in Rx ring
+  ravb: Make it clear the information relates to maximum frame size
+  ravb: Create helper to allocate skb and align it
+  ravb: Use the max frame size from hardware info for RZ/G2L
+  ravb: Move maximum Rx descriptor data usage to info struct
+  ravb: Unify Rx ring maintenance code paths
+
+ drivers/net/ethernet/renesas/ravb.h      |  20 +--
+ drivers/net/ethernet/renesas/ravb_main.c | 210 ++++++++---------------
+ 2 files changed, 83 insertions(+), 147 deletions(-)
+
 -- 
 2.44.0
 
