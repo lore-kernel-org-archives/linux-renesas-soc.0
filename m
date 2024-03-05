@@ -1,111 +1,134 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DFD5C057
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Mar 2024 12:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9219758AB6
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Mar 2024 12:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709640927; cv=none; b=hHB7zn2jyaznlV25iozyqsG4I/tYlhR52PltawF7BaEze0poGLsKY5o0xLqx4bfU5izYpKHQpEfmUrkUumSP79pSEZAmTX0lWm1ozb04x8xWfSqe4RZmb5ALlr2ic0YX2fG3DXUUG0ogjO/Ztdfj1oP//lKKWjRIIMxflzCaT2s=
+	t=1709643168; cv=none; b=UghMlEpbJ1jvVmNhdAmCzM3nfMOce2e5YDsdkmZf7mdaZOxf75tJhF7WhFyGVI+biAOwKd+sIikmcgKHFUXlEQ6GR+mkJsgNd34fWqeS5jnlCa4SQVvU/BEwquwksW0E8VcS2u6f7LwDUxpnlXSPLhkioGRHfecsYRJnuYTtfaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709640927; c=relaxed/simple;
-	bh=DcnzC15jjmF1MCyU9zIkSIhTwgFm9vccBcmaQItPkJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IvuP8Le1LL9Q9Z7mA9pioUOLJ/QjpCbZTyQTqG+PXrbUIVYXuR/PEdu6KDWu7KkYqBd5nZJxEW1YSCb+zXIERUA9nuGNro/MxMk/nG61LT13tNRC8YLnOcs6A7oAADUamS+zZTrpg8lBUDyoz1QhVWzfB4Fxs9aJqjinM79w3Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZMb+mZMy; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709643168; c=relaxed/simple;
+	bh=NYK1lFs9R1JaBe3hWfssGjH14JG/KUlg+sMrK2movOI=;
+	h=Message-ID:Date:Content-Type:MIME-Version:Subject:To:From; b=bMgA7EIdhFy9S/yo9UGnLAGmPI1+8ApFbZXeBd90tP6X9dw/xs3f3N6Gd7yx0T9M3IqoZp272u/1cL19giWt3AH5iMUvfXvAfHzk2Aa/2PPo2mMsKGqnzzkzG8iZKjBtAYyox/E0dJhGj04Pqr4BDvWf9TtomqE87DonJX8jg3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=KaoPsZfx; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZMb+mZMy"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcc7cdb3a98so5396273276.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Mar 2024 04:15:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="KaoPsZfx"
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-5c6bd3100fcso4008645a12.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Mar 2024 04:52:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709640923; x=1710245723; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZ5xx2edHD5FMmLecpHNeUGAP2uUzcBfz2t1dwA+19A=;
-        b=ZMb+mZMye31AX8BUxTkQi0P/LOw3S6FuUIQ7H0+F39vTNu2l7MQIO85lr2HMZjtB7q
-         shpCenLHdBUqe5PMUd8gUAVet5XkbHyovNHZAiRk4tGiJETpKxjNV5DkOHpILzwfC2jc
-         X1XQtgUKLgDjmUpDtTtRxmxY9cDxF8nIq1IlzKZGVJ2CLHU4GB0lhNRz0qmKD32llPXg
-         MoqBMRQSJywPXHJL+OVSkjVe8hSl537PvR1543TVNgfA3SP+zqSXpJvxuZHLgp1F0Ei+
-         nl6JNXv3eesRUmXBx231qvY2wgSZiHX5SKiLiPrJDYf8QQQ8PTpY5NytVWottJ+AofR2
-         qZCQ==
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1709643165; x=1710247965; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=jpeQG316aBmDqm9s8pNBkjjHtHPMVNgrY3tvhBPMd2M=;
+        b=KaoPsZfxDfDqcZ8jizJLgZRh/V93vhBmFLy9rqV4v2QhKCGyaWL2uZ5wONzuT7d8zk
+         S8UlEl8x5+ehutt9oqKd1oEyg6c2k21py8lFyPWOD5CSM3zoMrnUXdi+tH3JfpypXre+
+         RUPxV4xRL8n+egFIJCLvPAlpZ+RwE1j4IM84go6Q0shlP0ley2P20ZQf5M7F/P9jryKo
+         8VDDXdtAM71WexvXlArxPoyI6U5yNMFvwqIfu/tcDqklaKFhv+7QR2iU9qXQdyjR7O0F
+         x/Is4T5YnfqU6cvhzdXZrVn4kFuiE0OTB6WsjhhWAhkE1jxA2k009Jm9MJ6sovuuO8lE
+         IrzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709640923; x=1710245723;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1709643165; x=1710247965;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jZ5xx2edHD5FMmLecpHNeUGAP2uUzcBfz2t1dwA+19A=;
-        b=xGTBfz22Gv26wEMba4ohanTHLbb+WcOLR2CPGLWbIfVWQRmsu2ZmICr00OKRdYVqSe
-         8lvO9ZqNrw7upzE1kWKR0/tLNxWI7+8Y6zU1hPCjR7rYDNdJCImlVg/dneB4mczTPrxv
-         dkc4GINv4kaOnI+rnnPvKxfeNmwGymKMYZ3XGZFd7XYlFe6L3hyV2oRUSdOhLdtX71ci
-         1hvima9MWWxR4sjyJbJDCRWcdBtMjj75MPybeTEryPq2xQ90EzaOg/mtc8+DSwYOvzxp
-         pmX/GrFQ6sahFraAlM9Cs3x8vQ5yJ74iWxem1MljE3RsAEFeJKMl1MD1d56DSxWWm74w
-         v0CA==
-X-Gm-Message-State: AOJu0YwYxiRfN1qC+ZCO4fBc4gfRGUO6/OlGM/avmy4A+smZ18RahuWd
-	cyHZXb1e0Aeecnm9Ku10VhF00Lsup5kGqDC196lWtuou7K9TzVWwami3EzGXa+88dcu7hWv7N4d
-	RbgQfF01Ql/erP3WsOO9BLOhb3bY9P91JqB8bbw==
-X-Google-Smtp-Source: AGHT+IFRHrlt93okZ8pF8wCozXRKOrxXQZtOR31rF4Oxv2ktk0VBMY0lfxSqY9Tg9+i8KGWI6harXSX+rrTSNtu1DrM=
-X-Received: by 2002:a25:b91:0:b0:dc7:46b7:6d67 with SMTP id
- 139-20020a250b91000000b00dc746b76d67mr9606155ybl.33.1709640923661; Tue, 05
- Mar 2024 04:15:23 -0800 (PST)
+        bh=jpeQG316aBmDqm9s8pNBkjjHtHPMVNgrY3tvhBPMd2M=;
+        b=PulkjejLPhGn10uL3FaUej4VK94MYqPkOrsZOVM1HRcYCzTHbdFEEwWFzmZljszin6
+         7Udw0MrHvz+NkqYAt3y4YfI9DeBD/MAbrUlRP0zefHIA5YLjv73qY56hdfsZLpc/RQy1
+         9N7jB/6QbEsF/D45mGwA+uDaRzFN2G7Rgetzz5UYMOlZBcteV7eEU7d/5Ce0GuhajLAB
+         jyn+fYlY8ny8L1bRDQlZbZFqtBmpvpOspg7jLAiHVh1fTXJbhWJi5MKPZljS+ApPUpDt
+         4VwzBGv4VdvJCGzDVIvWUL5bOp1sgDvvOpHk6nrTfW7NgKG+dV/OhiYQpKxNFtUlyGF/
+         Zoug==
+X-Gm-Message-State: AOJu0YwNr5AZDBeRgwUhtN7+a0lsYc0QV991tVc9rq1yWPAv8vsScsaN
+	4sh6JT6q1SIGA37aG2X6DG9+u53RxZi8aKSoGKhy2BeCpuu61t6svmQ3aLOhqcumWZklJR9FkLG
+	JNNU=
+X-Google-Smtp-Source: AGHT+IEwQLV62UTsnxJSs2o7DR7j5OLxJDQXohSf3+Ad4GXQknkmA1TETrZjFWLV5SnlTRropenafg==
+X-Received: by 2002:a05:6a21:3403:b0:1a0:e089:e25e with SMTP id yn3-20020a056a21340300b001a0e089e25emr1706351pzb.46.1709643165274;
+        Tue, 05 Mar 2024 04:52:45 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id b6-20020a170902650600b001dbb0348733sm10655339plk.67.2024.03.05.04.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Mar 2024 04:52:44 -0800 (PST)
+Message-ID: <65e7159c.170a0220.526e2.8024@mx.google.com>
+Date: Tue, 05 Mar 2024 04:52:44 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240305105623.3379-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20240305105623.3379-2-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 5 Mar 2024 13:14:48 +0100
-Message-ID: <CAPDyKFr_GyWVXPbaeLf5hp_SKuRpr9sixhDQxoYBbFEU2qiJ-Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: tmio: comment the ERR_PTR usage in this driver
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>, 
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+X-Kernelci-Kernel: renesas-devel-2024-03-04-v6.8-rc7
+X-Kernelci-Report-Type: test
+Subject: renesas/master baseline-nfs: 16 runs,
+ 1 regressions (renesas-devel-2024-03-04-v6.8-rc7)
+To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 
-On Tue, 5 Mar 2024 at 11:56, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> It is not super obvious why the driver sometimes uses an ERR_PTR for the
-> current mrq. Explain why in comments.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+renesas/master baseline-nfs: 16 runs, 1 regressions (renesas-devel-2024-03-=
+04-v6.8-rc7)
 
-Applied for next, thanks!
+Regressions Summary
+-------------------
 
-Kind regards
-Uffe
+platform              | arch  | lab         | compiler | defconfig | regres=
+sions
+----------------------+-------+-------------+----------+-----------+-------=
+-----
+kontron-kbox-a-230-ls | arm64 | lab-kontron | gcc-10   | defconfig | 1     =
+     =
 
 
-> ---
->  drivers/mmc/host/tmio_mmc_core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-> index c253d176db69..93e912afd3ae 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -972,6 +972,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->                 return;
->         }
->
-> +       /* Disallow new mrqs and work handlers to run */
->         host->mrq = ERR_PTR(-EBUSY);
->
->         spin_unlock_irqrestore(&host->lock, flags);
-> @@ -1006,8 +1007,9 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->                         "%s.%d: IOS interrupted: clk %u, mode %u",
->                         current->comm, task_pid_nr(current),
->                         ios->clock, ios->power_mode);
-> -       host->mrq = NULL;
->
-> +       /* Ready for new mrqs */
-> +       host->mrq = NULL;
->         host->clk_cache = ios->clock;
->
->         mutex_unlock(&host->ios_lock);
-> --
-> 2.43.0
->
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2024-03-04-v6.8-rc7/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2024-03-04-v6.8-rc7
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      2a101ea53f7984907ab2f8b22b5a294f8d5992a3 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform              | arch  | lab         | compiler | defconfig | regres=
+sions
+----------------------+-------+-------------+----------+-----------+-------=
+-----
+kontron-kbox-a-230-ls | arm64 | lab-kontron | gcc-10   | defconfig | 1     =
+     =
+
+
+  Details:     https://kernelci.org/test/plan/id/65e6e2b7a06a2c6b044c4324
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+024-03-04-v6.8-rc7/arm64/defconfig/gcc-10/lab-kontron/baseline-nfs-kontron-=
+kbox-a-230-ls.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+024-03-04-v6.8-rc7/arm64/defconfig/gcc-10/lab-kontron/baseline-nfs-kontron-=
+kbox-a-230-ls.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+240129.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65e6e2b7a06a2c6b0=
+44c4325
+        failing since 42 days (last pass: renesas-devel-2024-01-08-v6.7, fi=
+rst fail: renesas-devel-2024-01-22-v6.8-rc1) =
+
+ =20
