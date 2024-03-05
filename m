@@ -1,24 +1,24 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BD114A8D
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27DC179AB
 	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Mar 2024 18:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709663979; cv=none; b=DhJcoovzI1GJzi5m9QTkwomIYyMfxIxF++tp23MAvAiVxABY+jKA3/rPNqcaSGkK9eUxto6Uj4PfGdQVG0LI5FxE4v/iJIr8izMnL7xAiC+UsEdhgsoNluo+bdiwbFHq8nydykuabTGpyKDSndkoB9MvYZ4Yot1IqkWHNcqEOQM=
+	t=1709663980; cv=none; b=h2y8/xd7e1CzU/E4J0BGqrqXNZkjdD1VQPV6VNdkTgogqG5efy+j6XS8k1Ajhbia6ADFmslvaaE65Y90hKCnoa5EUmjKHzEBx4YQZeZifVCP9PeUnkaFIWwN9jtrnqw/Rh6j2U5ztqmNEnSsSjBmN+hU/MZ1C+5Z8zb+DrlKLH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709663979; c=relaxed/simple;
-	bh=ahazKZKOviH4mPbZcEO6wWTF8NcreQPhkrWjL4vqsGY=;
+	s=arc-20240116; t=1709663980; c=relaxed/simple;
+	bh=2bREaKTLqOh8r/VPFsqtGB9u04i/XY0mNtQd6Qb9ByE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=skN5H5k7Dz0yJumx9q98z6XBLiqxfPZBtwCBq5wVjRaBePYrGFu1y/1aII/vnZC44A/FSlz8af7XNbFaBZwJtkJ9qSso/VwwhI+NWJSYkdQa6dg5+B+w/Jysa+QryJUOBUoDTrZM8i5J5sEH30kTbnv4QggABesFXh4t3pCyOR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=XABWfA+FEMDRX0kqAc2LGEsJNTcHj5Muh3sZ7bipV2h4K2/Q2hPcSg+uV9T/IpRk9AbpFxhABya0vwKJDAXU+ufKDkYVL4/+wE05/FVQF5+P8Q2x1+Fp2e7wh9K7ta51Ai28IHWpC32pqNWjjdZoRG/ZsIyuX1T3jx+xyE7DbCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.06,206,1705330800"; 
-   d="scan'208";a="200436907"
+   d="scan'208";a="196498258"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Mar 2024 03:39:36 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Mar 2024 03:39:31 +0900
 Received: from localhost.localdomain (unknown [10.226.92.185])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id AFD894003ED1;
-	Wed,  6 Mar 2024 03:39:34 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6AA4F4003ED1;
+	Wed,  6 Mar 2024 03:39:29 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -27,9 +27,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 3/5] irqchip/renesas-rzg2l: Rename rzg2l_irq_eoi()
-Date: Tue,  5 Mar 2024 18:39:20 +0000
-Message-Id: <20240305183922.138727-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 1/5] irqchip/renesas-rzg2l: Flush posted write
+Date: Tue,  5 Mar 2024 18:39:18 +0000
+Message-Id: <20240305183922.138727-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240305183922.138727-1-biju.das.jz@bp.renesas.com>
 References: <20240305183922.138727-1-biju.das.jz@bp.renesas.com>
@@ -41,44 +41,62 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename rzg2l_irq_eoi()->rzg2l_clear_irq_int() and simplify the code by
-removing redundant priv local variable.
+The irq_eoi() callback of the RZ/G2L interrupt chip clears the
+relevant interrupt cause bit in the TSCR register.
 
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This write is not sufficient because the write is posted and therefore
+not guaranteed to immediately clear the bit. Due to that delay the CPU
+can raise the just handled interrupt again.
+
+Prevent this by reading the register back which causes the posted
+write to be flushed to the hardware before the read completes.
+
+Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller driver")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * New patch.
+ * Updated commit header and description.
+ * Extended the flushing of posted write to IRQ interrupt aswell.
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 599e0aba5cc0..8133f05590b6 100644
+index 9494fc26259c..5285bc817dd0 100644
 --- a/drivers/irqchip/irq-renesas-rzg2l.c
 +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -85,10 +85,9 @@ static struct rzg2l_irqc_priv *irq_data_to_priv(struct irq_data *data)
- 	return data->domain->host_data;
+@@ -99,8 +99,14 @@ static void rzg2l_irq_eoi(struct irq_data *d)
+ 	 * ISCR can only be cleared if the type is falling-edge, rising-edge or
+ 	 * falling/rising-edge.
+ 	 */
+-	if ((iscr & bit) && (iitsr & IITSR_IITSEL_MASK(hw_irq)))
++	if ((iscr & bit) && (iitsr & IITSR_IITSEL_MASK(hw_irq))) {
+ 		writel_relaxed(iscr & ~bit, priv->base + ISCR);
++		/*
++		 * Enforce that the posted write is flushed to prevent that the
++		 * just handled interrupt is raised again.
++		 */
++		readl_relaxed(priv->base + ISCR);
++	}
  }
  
--static void rzg2l_irq_eoi(struct irq_data *d)
-+static void rzg2l_clear_irq_int(struct rzg2l_irqc_priv *priv, unsigned int hwirq)
- {
--	unsigned int hw_irq = irqd_to_hwirq(d) - IRQC_IRQ_START;
--	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
-+	unsigned int hw_irq = hwirq - IRQC_IRQ_START;
- 	u32 bit = BIT(hw_irq);
- 	u32 iitsr, iscr;
+ static void rzg2l_tint_eoi(struct irq_data *d)
+@@ -111,8 +117,14 @@ static void rzg2l_tint_eoi(struct irq_data *d)
+ 	u32 reg;
  
-@@ -132,7 +131,7 @@ static void rzg2l_irqc_eoi(struct irq_data *d)
+ 	reg = readl_relaxed(priv->base + TSCR);
+-	if (reg & bit)
++	if (reg & bit) {
+ 		writel_relaxed(reg & ~bit, priv->base + TSCR);
++		/*
++		 * Enforce that the posted write is flushed to prevent that the
++		 * just handled interrupt is raised again.
++		 */
++		readl_relaxed(priv->base + TSCR);
++	}
+ }
  
- 	raw_spin_lock(&priv->lock);
- 	if (hw_irq >= IRQC_IRQ_START && hw_irq <= IRQC_IRQ_COUNT)
--		rzg2l_irq_eoi(d);
-+		rzg2l_clear_irq_int(priv, hw_irq);
- 	else if (hw_irq >= IRQC_TINT_START && hw_irq < IRQC_NUM_IRQ)
- 		rzg2l_clear_tint_int(priv, hw_irq);
- 	raw_spin_unlock(&priv->lock);
+ static void rzg2l_irqc_eoi(struct irq_data *d)
 -- 
 2.25.1
 
