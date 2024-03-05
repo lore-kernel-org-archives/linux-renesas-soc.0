@@ -1,263 +1,221 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3C55C61F
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Mar 2024 12:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42958593E;
+	Tue,  5 Mar 2024 13:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709643168; cv=none; b=rWWf4vgKnrEF7p4ZOVFYjzL6j/3V3/0ZLDdhPN5SVTLqzb44BdA6REdMWAcKXYfEj5jTRC4sDWopA35kNMGiUy5PvMqw+VcyCEGUbS1hkut2uazZz+hOf6i8IBGMAJqpEYfInhGI+eLYlXxWaF14jpdaHZ8HAfy0AyN/H7XAUWk=
+	t=1709646456; cv=none; b=p1qf/Wgd12Il4iPUkhtWJiwE24/bzw0DxVLe+MR81l8lDBqlcfNnqyo1Rj+w57Aie0O2FISq/RayNiDHkawiBX7awKqwlf4g44Hg6SxanNPp3t63uOGanGsJk3/K6wCO0c5yYv3EGA655MOvdBYqnCinIgCOV/FsLJTU1kNLu/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709643168; c=relaxed/simple;
-	bh=hLg0N8KSQki0T17mKs4XiJMcX7wQgJ4Vdi0v8O5vkUU=;
-	h=Message-ID:Date:Content-Type:MIME-Version:Subject:To:From; b=r3oBC/jBBXmYvAJ8575ftGFamEhOJcNujSuMQvB/6C4numWSrII7iACP+EFF76aY/Vl5ab0SyXGd8oIavY2yYMOYjVZJxo83FCzaKmnIrexY/+VQqaS83LCINFfkI4CwV7qwzBVEtBEcCPJZaJnaiTfNo42nl03sR+lFDnukkN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=nS4IPGLS; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1709646456; c=relaxed/simple;
+	bh=S5ZNv7E8RgnA9nV9q0H3S6osZ6ssuaeHV9OzVm1dFFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cnqVEiRM9r+j5nTXRkRhxadh0SbOOGJjNjL2SKkvsuRd/eybMkv+TBgGUpDLsTrLZ2G54nZmOwX1vFGAUxTilSFwhyP8guJQqdBy4Y8elqhsfB/eqoP/jjH/+iVwU5OabQWU0HFdhRUBxfUi7Gbp4kiCpV1joPBYYCX259PLgSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvxHncYk; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="nS4IPGLS"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6e5e4b1d1f1so2057621b3a.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Mar 2024 04:52:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvxHncYk"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5d3907ff128so5532918a12.3;
+        Tue, 05 Mar 2024 05:47:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1709643165; x=1710247965; darn=vger.kernel.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0i3ID5QWejLcTactJZP9moWGumZHauAPcy7zRk4muCQ=;
-        b=nS4IPGLSeHui1QKCJ81r25jU42UP5muM7adzL7N85e4PDuY2Dbx6hT88sshjYANNFr
-         a/C3mFZtGzMJRhwe9c9Pi8wJCXnswemFw+OF1ySzXG9LwnSs50XQQATKaP1JlHIJkdgh
-         ba8Zq2r2l8Fq0UffKaMzyiqAQdCuVrIz0p30hFNXfveZ6gXQr5SJ6q3/WYENVzkTOHTL
-         cUxIWZxyhPEoWYlndKQHh1LSSBB4bcavjVsGd3KIRGsU1Wk3ac1e+VHQIg4UqKAZcaI+
-         21ZJsLzY1X/Abiz8dA2W5p3UKe9Nr7+4VmKwQaooBq5Smse3e+uzSgsaAxLoJGC1ypZU
-         mgTQ==
+        d=gmail.com; s=20230601; t=1709646454; x=1710251254; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NdMAZiRIAHsJUc1Mjq85NsXecYABbu9svdLTciq/OhY=;
+        b=UvxHncYk8g9gYclCWu6+WJ0YfIESBUGAfXLOPTzGrMzb96ZJTh8WjIcoNso+4o716O
+         vPXOMHLbyPAik5cncIgLfkBnl4Urlbclqh7rpqzd8Aa8FB+PEJ7xjCBg1H8BNXBESyrT
+         czratn4oUa6bTZd96tUiorray17uM8YGjlQT0dIG/d6Hb9Ax4Ashb7FBCQ6h/PUmm5Xm
+         Y00Jv+br8ogtoD9ux1BvP+Ilc8+9sJx+KRme04ViZmh4gCYUxRvD6L3ovmi2NZB5Zky3
+         b0Ffb0uXTFoC8phcO76H4As80+ucLQVjuDgT1d3MdtDAJPKjycONXbMY9FwXIpR0wd65
+         Kf0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709643165; x=1710247965;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0i3ID5QWejLcTactJZP9moWGumZHauAPcy7zRk4muCQ=;
-        b=EZR2oRlwBKs3PKMSeMY5kLMEld/8TPueScxVjKz5fEBg1/dzDrqymdwxT4teUlfp6C
-         PnYnFTfhC5HjZAopaxpaiCY7f0TbjhU+XY7+rw3/ILkiIWl2XE1qCcNC9W4NQ9Gz62PJ
-         fBZUqqQFb/xOIrrKNSZE5jKZwxRkz42fV6h4bZpdjZnj4mwqZJ6g4EqBSx5YYqeWHm/i
-         UKqDwCPdGVTxPCw1hz2pTyJPHHWZEyaIdmu5LtzYx275jRD4U3X9nqrEemrMsCa3phD5
-         2iDdLf4JtUaqYAAvns72BaTTj95BwFR0NfiOPOvjEjUsweplCEkacTDE8mmthKtUDFY3
-         zkoA==
-X-Gm-Message-State: AOJu0Yym5GfKsMWk32FYgayLDSqtPEr+PQABk+mBda7pQoOqd8kuW/Iz
-	+gap1XHdeAURczcMSer4E4/gAxV+vcq8NUyrtHVfAAZY5Px2UrJ9QsF6cx4R5CHFN5adnj/94Pe
-	LSrY=
-X-Google-Smtp-Source: AGHT+IEqNf+2K3ATjXkDcMz14R/cNjae46gF8Fpl48cuBQtKN9+nrOsK+JxUp0RxRGp1zn+57oL6YQ==
-X-Received: by 2002:a05:6a20:3c9f:b0:1a0:8897:85f1 with SMTP id b31-20020a056a203c9f00b001a0889785f1mr1872813pzj.6.1709643165677;
-        Tue, 05 Mar 2024 04:52:45 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id c6-20020a056a000ac600b006e627f33178sm2894002pfl.213.2024.03.05.04.52.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 04:52:44 -0800 (PST)
-Message-ID: <65e7159c.050a0220.94f1.a730@mx.google.com>
-Date: Tue, 05 Mar 2024 04:52:44 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        d=1e100.net; s=20230601; t=1709646454; x=1710251254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NdMAZiRIAHsJUc1Mjq85NsXecYABbu9svdLTciq/OhY=;
+        b=mo26yhWPQvDjuyAzEIL8d80Yn5yaFXDz2hMf8jvHj6GympEhgn1euTX+84kjm+PdNG
+         dArtRqksPExfCCaxRC5z3q+vfPX067vZLPLciNtsZ0D2uyBUrod6SzXwxanFJKKU1oSO
+         cxADsT2J2FrWP3LpUOUtDDaV3KZuZWtDm0JGvCVt9s3zozOZlf1kn0ooqRMIJDcZmnOA
+         1nGGp9fOi2aKJXr0y4GXgkxFd2JVGgfn64AHXRL1k2dAP9aUJ1bIJSpxdkS5naDE/elZ
+         aJhH0Q96UcbJ4jkykUTdoX8GcIXVn4TenU9Aclv26e45LHaK2lPmEVWOGFlrBVIVNR2F
+         VB1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUvNIA9E19VKV+5BTJsTIT0EvQxBHl7XStAT4GlIKE/M/lTLgfa1bMNov0JeYZgMXqIBhTkR9KjDt7CS3Tz+RxgNF20udm9pD208wPe14i8ZG8oyfhLs5BK4/dwEVEb8Toig9c/pNXZc62g2+J0ghw=
+X-Gm-Message-State: AOJu0Yzs3hC2Vbd42uhwDgS5Et3q6y5JWDXsvOvoIb7BIHH5iJpKuVNh
+	V1pOnYzfrwZQa0kyMHTtq1jjSJax8tkSdcVXmPFtwICeUxfF/Go5wJJ0ewzRMKfOrwQqu16FNZf
+	h/YiT4R9kIBzGiR/I6W0zMlZSn7Y=
+X-Google-Smtp-Source: AGHT+IFIyTA9lyBuwaMRD+Ynxt5VrqnElevZJi9yhFl7HItD+Z67hgXbxvk0yLdnGIfu0In26xytbWEI6KxA1jrOO28=
+X-Received: by 2002:a17:90a:f191:b0:29b:2a8:9a89 with SMTP id
+ bv17-20020a17090af19100b0029b02a89a89mr10234445pjb.21.1709646453778; Tue, 05
+ Mar 2024 05:47:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <6be2558b8462fc08095c24c9257563ab5f3ae013.1708001398.git.geert+renesas@glider.be>
+ <kycepdxukfsww3tnxoo5hoiuo3vcgpqqmynokzhtl4vodgm6zc@ih4uhw7gz4jh>
+ <CAMuHMdVf7ophCwKt-n_N-LBHV4+t14Gjb4d1O0T8FDk_9xMFtA@mail.gmail.com>
+ <CAHCN7xJ65RP8TO7cS0p5DwE6zru5NEF0_JA+8siT_OpSeLD7pA@mail.gmail.com>
+ <CAHCN7x+EnSU8qk5dBFco=0vkeknGq18qEN7vFmZs0_q83T_3+w@mail.gmail.com> <76065296ad514898e2b8c29cd921c104b3692ae0.camel@imgtec.com>
+In-Reply-To: <76065296ad514898e2b8c29cd921c104b3692ae0.camel@imgtec.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 5 Mar 2024 07:47:22 -0600
+Message-ID: <CAHCN7xJ6uEghqDcUTKKQg7Lcg8uF55rz=vEHF=1xHRYfsDNGsA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/imagination: DRM_POWERVR should depend on ARCH_K3
+To: Frank Binns <Frank.Binns@imgtec.com>
+Cc: "geert@linux-m68k.org" <geert@linux-m68k.org>, 
+	"marek.vasut@mailbox.org" <marek.vasut@mailbox.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	Matt Coster <Matt.Coster@imgtec.com>, "javierm@redhat.com" <javierm@redhat.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nm@ti.com" <nm@ti.com>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, Sarah Walker <Sarah.Walker@imgtec.com>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "mripard@kernel.org" <mripard@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-devel-2024-03-04-v6.8-rc7
-X-Kernelci-Report-Type: test
-Subject: renesas/master baseline: 33 runs,
- 7 regressions (renesas-devel-2024-03-04-v6.8-rc7)
-To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
 
-renesas/master baseline: 33 runs, 7 regressions (renesas-devel-2024-03-04-v=
-6.8-rc7)
+On Tue, Mar 5, 2024 at 5:58=E2=80=AFAM Frank Binns <Frank.Binns@imgtec.com>=
+ wrote:
+>
+> Hi Adam,
+>
+> Sorry for not responding sooner. I've recently just returned from paterni=
+ty
+> leave, so just catching up on everything.
 
-Regressions Summary
--------------------
+Congratulations!
 
-platform               | arch  | lab         | compiler | defconfig | regre=
-ssions
------------------------+-------+-------------+----------+-----------+------=
-------
-kontron-kbox-a-230-ls  | arm64 | lab-kontron | gcc-10   | defconfig | 5    =
-      =
+>
+> On Thu, 2024-02-15 at 11:22 -0600, Adam Ford wrote:
+> > On Thu, Feb 15, 2024 at 11:10=E2=80=AFAM Adam Ford <aford173@gmail.com>=
+ wrote:
+> > > On Thu, Feb 15, 2024 at 10:54=E2=80=AFAM Geert Uytterhoeven
+> > > <geert@linux-m68k.org> wrote:
+> > > > Hi Maxime,
+> > > >
+> > > > On Thu, Feb 15, 2024 at 5:18=E2=80=AFPM Maxime Ripard <mripard@kern=
+el.org> wrote:
+> > > > > On Thu, Feb 15, 2024 at 01:50:09PM +0100, Geert Uytterhoeven wrot=
+e:
+> > > > > > Using the Imagination Technologies PowerVR Series 6 GPU require=
+s a
+> > > > > > proprietary firmware image, which is currently only available f=
+or Texas
+> > > > > > Instruments K3 AM62x SoCs.  Hence add a dependency on ARCH_K3, =
+to
+> > > > > > prevent asking the user about this driver when configuring a ke=
+rnel
+> > > > > > without Texas Instruments K3 Multicore SoC support.
+> > > > >
+> > > > > This wasn't making sense the first time you sent it, and now that=
+ commit
+> > > > > log is just plain wrong. We have firmwares for the G6110, GX6250,
+> > > > > GX6650, BXE-4-32, and BXS-4-64 models, which can be found on (at =
+least)
+> > > > > Renesas, Mediatek, Rockchip, TI and StarFive, so across three
+> > > >
+> > > > I am so happy to be proven wrong!
+> > > > Yeah, GX6650 is found on e.g. R-Car H3, and GX6250 on e.g. R-Car M3=
+-W.
+> > > >
+> > > > > architectures and 5 platforms. In two months.
+> > > >
+> > > > That sounds like great progress, thanks a lot!
+> > > >
+> > > Geert,
+> > >
+> > > > Where can I find these firmwares? Linux-firmware[1] seems to lack a=
+ll
+> > > > but the original K3 AM62x one.
+> > >
+> > > I think PowerVR has a repo [1], but the last time I checked it, the
+> > > BVNC for the firmware didn't match what was necessary for the GX6250
+> > > on the RZ/G2M.  I can't remember what the corresponding R-Car3 model
+> > > is.  I haven't tried recently because I was told more documentation
+> > > for firmware porting would be delayed until everything was pushed int=
+o
+> > > the kernel and Mesa.  Maybe there is a better repo and/or newer
+> > > firmware somewhere else.
+> > >
+> > I should have doubled checked the repo contents before I sent my last
+> > e-mail , but it appears the firmware  [2] for the RZ/G2M, might be
+> > present now. I don't know if there are driver updates necessary. I
+> > checked my e-mails, but I didn't see any notification, or I would have
+> > tried it earlier.  Either way, thank you Frank for adding it.  I'll
+> > try to test when I have some time.
+> >
+>
+> You may have noticed from one of Matt's emails that we now have a set of =
+repos
+> (linux, linux-firmware and Mesa) in our own area on freedesktop.org GitLa=
+b:
+> https://gitlab.freedesktop.org/imagination/
+>
+> We'll be using this as a staging area for work that isn't ready to be ups=
+treamed
+> yet (including firmware binaries).
+>
 
-kontron-sl28-var3-ads2 | arm64 | lab-kontron | gcc-10   | defconfig | 2    =
-      =
+I tried to play with these a little, but it seems like there is still
+a fair amount of work to be done on the 6XT series. I tried to add the
+device tree support for several Renesas boards, but the series was
+NAK'd due to an inability to test it.
+>
+> > > adam
+> > >
+> > > [1] https://gitlab.freedesktop.org/frankbinns/linux-firmware/-/tree/p=
+owervr/powervr?ref_type=3Dheads
+> >
+> > [2] - https://gitlab.freedesktop.org/frankbinns/linux-firmware/-/commit=
+/fecb3caebf29f37221fe0a20236e5e1415d39d0b
+> >
+>
+> This is now the place to get the firmware for devices that aren't yet sup=
+ported
+> upstream:
+> https://gitlab.freedesktop.org/imagination/linux-firmware/-/commits/power=
+vr/?ref_type=3DHEADS
+>
+I've been following several of these repos and checking for software
+updates in both the Firmware, driver and userspace layers.
 
+> With the firmware for the Renesas variant of GX6250 being found in this c=
+ommit:
+> https://gitlab.freedesktop.org/imagination/linux-firmware/-/commit/fecb3c=
+aebf29f37221fe0a20236e5e1415d39d0b
+>
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2024-03-04-v6.8-rc7/plan/baseline/
+If your group thinks they have stuff they want tested, I am willing to
+test them on the two platforms I have if I am CC'd on anything.
 
-  Test:     baseline
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2024-03-04-v6.8-rc7
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      2a101ea53f7984907ab2f8b22b5a294f8d5992a3 =
+Thanks for the work your group has done so far.  It'll be nice to see the w=
+ork.
 
+adam
 
-
-Test Regressions
----------------- =
-
-
-
-platform               | arch  | lab         | compiler | defconfig | regre=
-ssions
------------------------+-------+-------------+----------+-----------+------=
-------
-kontron-kbox-a-230-ls  | arm64 | lab-kontron | gcc-10   | defconfig | 5    =
-      =
-
-
-  Details:     https://kernelci.org/test/plan/id/65e6e1ebc6bdd128dd4c4304
-
-  Results:     90 PASS, 5 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-024-03-04-v6.8-rc7/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-kbox=
--a-230-ls.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-024-03-04-v6.8-rc7/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-kbox=
--a-230-ls.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/65e6e1ebc6bdd128dd4c430b
-        failing since 42 days (last pass: renesas-devel-2024-01-08-v6.7, fi=
-rst fail: renesas-devel-2024-01-22-v6.8-rc1)
-
-    2024-03-05T09:11:44.293569  <8>[   20.168823] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 438839_1.5.2.4.1>
-    2024-03-05T09:11:44.399133  / # #
-    2024-03-05T09:11:44.501338  export SHELL=3D/bin/sh
-    2024-03-05T09:11:44.502078  #
-    2024-03-05T09:11:44.603385  / # export SHELL=3D/bin/sh. /lava-438839/en=
-vironment
-    2024-03-05T09:11:44.604115  =
-
-    2024-03-05T09:11:44.705530  / # . /lava-438839/environment/lava-438839/=
-bin/lava-test-runner /lava-438839/1
-    2024-03-05T09:11:44.706704  =
-
-    2024-03-05T09:11:44.725122  / # /lava-438839/bin/lava-test-runner /lava=
--438839/1
-    2024-03-05T09:11:44.769330  + export 'TESTRUN_ID=3D1_bootrr' =
-
-    ... (15 line(s) more)  =
-
-
-  * baseline.bootrr.fsl_enetc-enetc2-probed: https://kernelci.org/test/case=
-/id/65e6e1ebc6bdd128dd4c430f
-        failing since 42 days (last pass: renesas-devel-2024-01-08-v6.7, fi=
-rst fail: renesas-devel-2024-01-22-v6.8-rc1)
-
-    2024-03-05T09:11:46.878334  /lava-438839/1/../bin/lava-test-case   =
-
-
-  * baseline.bootrr.mscc_felix-probed: https://kernelci.org/test/case/id/65=
-e6e1ebc6bdd128dd4c4311
-        failing since 42 days (last pass: renesas-devel-2024-01-08-v6.7, fi=
-rst fail: renesas-devel-2024-01-22-v6.8-rc1)
-
-    2024-03-05T09:11:47.936683  /lava-438839/1/../bin/lava-test-case
-    2024-03-05T09:11:47.937121  <8>[   23.774741] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dmscc_felix-probed RESULT=3Dfail>
-    2024-03-05T09:11:47.937399  /lava-438839/1/../bin/lava-test-case
-    2024-03-05T09:11:47.937621  <8>[   23.791823] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dleds-gpio-driver-present RESULT=3Dpass>
-    2024-03-05T09:11:47.937836  /lava-438839/1/../bin/lava-test-case   =
-
-
-  * baseline.bootrr.fsl_enetc-enetc0-probed: https://kernelci.org/test/case=
-/id/65e6e1ecc6bdd128dd4c4316
-        failing since 42 days (last pass: renesas-devel-2024-01-08-v6.7, fi=
-rst fail: renesas-devel-2024-01-22-v6.8-rc1)
-
-    2024-03-05T09:11:49.013405  /lava-438839/1/../bin/lava-test-case   =
-
-
-  * baseline.bootrr.fsl_enetc-enetc1-probed: https://kernelci.org/test/case=
-/id/65e6e1ecc6bdd128dd4c4317
-        failing since 42 days (last pass: renesas-devel-2024-01-08-v6.7, fi=
-rst fail: renesas-devel-2024-01-22-v6.8-rc1)
-
-    2024-03-05T09:11:49.016733  <8>[   24.887924] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dfsl_enetc-enetc0-probed RESULT=3Dfail>
-    2024-03-05T09:11:50.075700  /lava-438839/1/../bin/lava-test-case
-    2024-03-05T09:11:50.076184  <8>[   25.909462] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dfsl_enetc-enetc1-probed RESULT=3Dfail>
-    2024-03-05T09:11:50.076495  /lava-438839/1/../bin/lava-test-case   =
-
- =
-
-
-
-platform               | arch  | lab         | compiler | defconfig | regre=
-ssions
------------------------+-------+-------------+----------+-----------+------=
-------
-kontron-sl28-var3-ads2 | arm64 | lab-kontron | gcc-10   | defconfig | 2    =
-      =
-
-
-  Details:     https://kernelci.org/test/plan/id/65e6e1eec6bdd128dd4c4365
-
-  Results:     101 PASS, 2 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-024-03-04-v6.8-rc7/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-sl28=
--var3-ads2.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-024-03-04-v6.8-rc7/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-sl28=
--var3-ads2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/65e6e1eec6bdd128dd4c436c
-        failing since 42 days (last pass: renesas-devel-2024-01-08-v6.7, fi=
-rst fail: renesas-devel-2024-01-22-v6.8-rc1)
-
-    2024-03-05T09:11:53.786940  / # #
-    2024-03-05T09:11:53.889085  export SHELL=3D/bin/sh
-    2024-03-05T09:11:53.889790  #
-    2024-03-05T09:11:53.991345  / # export SHELL=3D/bin/sh. /lava-438842/en=
-vironment
-    2024-03-05T09:11:53.992048  =
-
-    2024-03-05T09:11:54.093571  / # . /lava-438842/environment/lava-438842/=
-bin/lava-test-runner /lava-438842/1
-    2024-03-05T09:11:54.094796  =
-
-    2024-03-05T09:11:54.114271  / # /lava-438842/bin/lava-test-runner /lava=
--438842/1
-    2024-03-05T09:11:54.167341  + export 'TESTRUN_ID=3D1_bootrr'
-    2024-03-05T09:11:54.167763  + <8>[   20.975346] <LAVA_SIGNAL_STARTRUN 1=
-_bootrr 438842_1.5.2.4.5> =
-
-    ... (10 line(s) more)  =
-
-
-  * baseline.bootrr.fsl_enetc-enetc0-probed: https://kernelci.org/test/case=
-/id/65e6e1eec6bdd128dd4c437f
-        failing since 42 days (last pass: renesas-devel-2024-01-08-v6.7, fi=
-rst fail: renesas-devel-2024-01-22-v6.8-rc1)
-
-    2024-03-05T09:11:56.602467  /lava-438842/1/../bin/lava-test-case
-    2024-03-05T09:11:56.602924  <8>[   23.397543] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dfsl_enetc-enetc0-probed RESULT=3Dfail>
-    2024-03-05T09:11:56.603212  /lava-438842/1/../bin/lava-test-case   =
-
- =20
+> Thanks
+> Frank
+>
+> > >
+> > > > Thanks again!
+> > > >
+> > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-=
+firmware.git/
+> > > >
+> > > > Gr{oetje,eeting}s,
+> > > >
+> > > >                         Geert
+> > > >
+> > > > --
+> > > > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@li=
+nux-m68k.org
+> > > >
+> > > > In personal conversations with technical people, I call myself a ha=
+cker. But
+> > > > when I'm talking to journalists I just say "programmer" or somethin=
+g like that.
+> > > >                                 -- Linus Torvalds
