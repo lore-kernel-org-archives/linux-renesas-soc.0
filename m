@@ -1,83 +1,90 @@
-Received: from 6.mo561.mail-out.ovh.net (6.mo561.mail-out.ovh.net [188.165.43.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35FB13790A
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Mar 2024 16:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.43.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525A513D309;
+	Wed,  6 Mar 2024 18:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709740987; cv=none; b=CV2SRcOFA72V64jY5SmQKWy3Yw1g/PT1ijUYegIcw0ZRxK+3SAvCZ5gaHL2Qjv4+49ybHqaT48sJod8EGz0f1gYUl5bJDq/DZZTF+wzxOsEWdWn9M8trN1ZzOUXIplrRse+lStbNgMdHyBbOEi7EtErxYt4e1n5UlJ+CTqZDBno=
+	t=1709748779; cv=none; b=u8itYV7IK3SwwP63/hS8EIEe8DAOohLMlzN/0CyN/zHvwVt4SYslUrTe238NasNwwebavRc8Lq7LbIM8fDd8gIIW4NG+rbtNgJk5Z6Kc3CaXDBusmZh4u7GP0+HtFa99QVqY5B8XZpwh+6TIf68nopXY5pmoyqXEgcgQMyfDPeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709740987; c=relaxed/simple;
-	bh=mOQMYrOjFL+BfYA9OZsNjIxxOcLbq6gJ3vaPs7tvY3E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BHnwu4Jzm9nW4voKQCL8QUsxZnzvp/4AYt7pMWXVfH0idqa63zdrcmoo74oaVoFTbGGBga+b5z5YIYT0EIVHFmfKxy9qBkbRxpNXh+uck0N4JIqSZbit6LjBcuzod7A/yEfhwuWekMo7nrovQQqscgIzre+HQJUfsdJBvJzj/wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=etezian.org; arc=none smtp.client-ip=188.165.43.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etezian.org
-Received: from director7.ghost.mail-out.ovh.net (unknown [10.108.25.233])
-	by mo561.mail-out.ovh.net (Postfix) with ESMTP id 4TqcCh3Ffxz1F9v
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Mar 2024 15:43:28 +0000 (UTC)
-Received: from ghost-submission-6684bf9d7b-5vngl (unknown [10.110.96.50])
-	by director7.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 1E06F1FEDE;
-	Wed,  6 Mar 2024 15:43:26 +0000 (UTC)
-Received: from etezian.org ([37.59.142.102])
-	by ghost-submission-6684bf9d7b-5vngl with ESMTPSA
-	id dc+OAB6P6GXZFQIAO0zOww
-	(envelope-from <andi@etezian.org>); Wed, 06 Mar 2024 15:43:26 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-102R0045dce9fec-5935-488d-8dc9-5f4c41f889d9,
-                    62DEF991EB217AB86F953B10C2782167B22AFEEB) smtp.auth=andi@etezian.org
-X-OVh-ClientIp:89.217.109.169
-From: Andi Shyti <andi.shyti@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, 
- Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240229105810.29220-5-wsa+renesas@sang-engineering.com>
-References: <20240229105810.29220-5-wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH RFT 0/3] i2c: mpc: use proper binding for transfer
- timeouts
-Message-Id: <170973980502.1763249.4893089217110620791.b4-ty@kernel.org>
-Date: Wed, 06 Mar 2024 16:43:25 +0100
+	s=arc-20240116; t=1709748779; c=relaxed/simple;
+	bh=oDl9i8wVopENg8HbcqfcwU5Qsqz8CfV8yBnuXQyY7cU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=djjFT8AYhRwJkXvAm8p/R2vyF/zyyZie6W5GcY0TxqaXFvPhrRVW/RvKyNS71FbbjsbygTyzbvRwl5mH3AbtBq1JQOYL8EbnDTJ5DyVrkPnE/xxLFYKd7vR4H449ylopwGpCFVeXAXL67Lq8JqwCCJzB8ZR8jeicPPKXcRm6UX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7y99w7c; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7y99w7c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39FADC433C7;
+	Wed,  6 Mar 2024 18:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709748778;
+	bh=oDl9i8wVopENg8HbcqfcwU5Qsqz8CfV8yBnuXQyY7cU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U7y99w7cc7rbC2VCe02xdhPhernanjr5yhjHnseoyF/dhziSp3uG1eyhZL+qr0dKd
+	 M5/BiuOIqv5fgRssDLurOQQLyr0aZjUAFof6Wn1tRf4mHb6+uISC4N9TAFQn0JtkMv
+	 UP4CqsMBDvJYkU7jHkaY5A+leEqisiCqwbrpG1A1n4CrYmFRkl358dAu9/KWxb4was
+	 VJyodc8l/xwSA2qw4kBIplFevpjYoE0270EEhodtqLVvcogVEwnOKaCPrDFmZvbuYB
+	 CXE5LFgD/vPqR6Uk+2Hj9Ho9MB+VwMSKP82xDzfEX0/eaMeaVQneJfKFgb1imeV1Iv
+	 GNMfkgW3FXViQ==
+Date: Wed, 6 Mar 2024 18:12:53 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, Duy Nguyen <duy.nguyen.rh@renesas.com>
+Subject: Re: [PATCH 1/2] dt-bindings: thermal: rcar-gen3-thermal: Add
+ r8a779h0 support
+Message-ID: <20240306-discover-outshoot-2e0716d5d3ce@spud>
+References: <cover.1709722342.git.geert+renesas@glider.be>
+ <b3d135f8b63b9fe2d0f0aa2e48c8a2211b2e947e.1709722342.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
-X-Ovh-Tracer-Id: 10313243148287740663
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledriedugdejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthejredtredtjeenucfhrhhomheptehnughiucfuhhihthhiuceorghnughirdhshhihthhisehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnhepffetheduffdvhfdugfffudfgjeejudehheegfeeguefhieeugffhgfeuffdvgfefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpkeelrddvudejrddutdelrdduieelpdefjedrheelrddugedvrddutddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpegrnhguihesvghtvgiiihgrnhdrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedupdhmohguvgepshhmthhpohhuth
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="42iu+UqCSUQQDnvJ"
+Content-Disposition: inline
+In-Reply-To: <b3d135f8b63b9fe2d0f0aa2e48c8a2211b2e947e.1709722342.git.geert+renesas@glider.be>
 
-Hi
 
-On Thu, 29 Feb 2024 11:58:10 +0100, Wolfram Sang wrote:
-> To clean up the confusing situation regarding I2C timeout bindings, here
-> is the series to fix up the MPC driver which mixed up clock stretching
-> timeout with transfer timeouts. Plus a minor cleanup while here.
-> 
-> Only build tested, so actual testing is welcome.
-> 
-> 
-> [...]
+--42iu+UqCSUQQDnvJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied to i2c/i2c-host on
+On Wed, Mar 06, 2024 at 11:56:02AM +0100, Geert Uytterhoeven wrote:
+> From: Duy Nguyen <duy.nguyen.rh@renesas.com>
+>=20
+> Document support for the Thermal Sensor/Chip Internal Voltage
+> Monitor/Core Voltage Monitor (THS/CIVM/CVM) on the Renesas R-Car V4M
+> (R8A779H0) SoC.
+>=20
+> Just like on other R-Car Gen4 SoCs, interrupts are not routed to the
+> INTC-AP (GIC) but to the Error Control Module (ECM).
+>=20
+> Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thank you,
-Andi
 
-Patches applied
-===============
-[1/3] dt-bindings: i2c: mpc: use proper binding for transfer timeouts
-      commit: f9ccb4533bdcf31f1225a9a09805329b8020a4e3
-[2/3] i2c: mpc: use proper binding for transfer timeouts
-      commit: 401a8e9e3d697b75c2e237b9b405bb0f388dd7ed
-[3/3] i2c: mpc: remove outdated macro
-      commit: d0e944150446d8056a050049a8f0e98241ba6194
+--42iu+UqCSUQQDnvJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZeiyJQAKCRB4tDGHoIJi
+0pBaAP4jB17YQumW0L2miIINAAmjpdyZcV+hNwFRGq9Tj2fZrwEA0yoGS1zRmMgA
+Nh50LHjtU4c/tX4ZJ8fJKLAiFa9PNAA=
+=AuLQ
+-----END PGP SIGNATURE-----
+
+--42iu+UqCSUQQDnvJ--
