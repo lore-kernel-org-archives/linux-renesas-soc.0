@@ -1,176 +1,161 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B210125DC;
-	Thu,  7 Mar 2024 10:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFACD126F2A
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Mar 2024 11:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709808980; cv=none; b=rOL+BIVGuk/6YKFuhdPqSe96plhxnzXP4qEKfVcN224DXGS9v+yRPZtRjz0eBprnC6oEpP84jGq1gF/xGucrgukWXmPQgx4xLt9xEQqkz0FErSKixZZESVp2W2K1+nEoCJC0sdQ/4WqYteSeJHJ9FWKO0iBzqtszljgxrp+g8kI=
+	t=1709809387; cv=none; b=CRFBae3uECzycQPAWne/VHwFu98Nld90nv6bwQ203SPEeKYqoNrlzUggDROk22if3iL7/wENYn75RI4gCtXnamQgTUn60oBPhhZmPJWSZNa2STShvfBh+t7FKqYJJLh4cttBSsH6b7oHd60uTp/uIWJnI6T6FCVw+XhLv0sLbVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709808980; c=relaxed/simple;
-	bh=2GgQweUhzFLfzUjhti26P2U1kq5XmI/CYrNVeRbxi+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DAAhpm7UpqvNKz62rNI6gxKgIx/CqLk39iqg6CIOeQ3okqVzcSRZS4LjkrEXoTZYvoWcb5bCYlZ161KZDC6Ptf2pWk2BA/FUE9BW1aVtDQd18X7TnNpRoGPoe75As5KC9CRPbeTEreHBWPXTpWjLOWvtyqjh/0EDtsKr9lfbQ0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5fvhh+y; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709809387; c=relaxed/simple;
+	bh=mkQxESZx7XzBrzRBPALpIuDYSAuVnZKyaXQ619EMRxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RxDbQqQUB+61/Z/MydvHF4cljdSQBdGpGlUZFFeSdYLKdkMBTmnwIOgm3/fXdtXOz5EAaPR627XR1J5mh74P0vi5V6GtWuSXvFycTWKvbjgzhgELrInf5bZkEoU5bhYW/wzWP4KHANsWLl5EJOeE/Mh+O1EqCxOt6Tk5yJXK+Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=C3bmehjd; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5fvhh+y"
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4d35b644c1bso231863e0c.3;
-        Thu, 07 Mar 2024 02:56:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="C3bmehjd"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a4467d570cdso95895166b.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Mar 2024 03:03:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709808978; x=1710413778; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=ragnatech.se; s=google; t=1709809383; x=1710414183; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=APg0N8EtrD5ihsxq8VybDP8ajvEhmkrsMBzTGWpbS9c=;
-        b=T5fvhh+y8uVwaLMrEYnaOyYOT7Ua2AocIGzkBp1T1wAo1TOPuoB8LI5h6/Vv8OPyFe
-         1rTcuwdlrsi/Xl2ZLUZEVDiy5yd1SwiiXlj+KluYSzvjIkNIxr9qlRoN03TD8Hrr0MOI
-         DcbAw8lHqFgDgsb92x0O9OxtnKr2sGJCYJ+ElCFtkB97Q0abi4kBS9LiT9XKHRVIpR/h
-         ebMlkuzzdI9l6z6XFMZhgaRkmHZbBe54ANYDbqgF1XSXHWcqznKGK8LiIuewX+sKncjf
-         gGGF4rvUZRl/ajQ9QAYB7P83kT0QQnB0ui8RRAhmZGo4dOFcQlTlqRccByAGQZHkSCVb
-         T7DA==
+        bh=jrdoUk5yLq9JELO82ucEpyuoRJmhADQXtuT0g38B928=;
+        b=C3bmehjdmOujDEzv26YaQHtBS1hhMPx46T964+L+HhWlEuEs5HgcjF0tMgZIMCpI+/
+         sA+c68nltVNw8IJFT9l1rMiKVNftdyVuE6ar0/YqbHVB99KHC7OqJNEP1q+p0+nLZ/uJ
+         P1LxBY3bccfhp/G6CQ4Uk5fMxVdICMBvOWBbGchmjSduzQsAzcOoULdfKYUGyZ1bNk2H
+         H7/pP/zpzYik/uqgjxAzq0Ts7Gzw6ZnIoKAhYHFJ22v5LtAs7aYlOYzvaqyj8nyHwB/o
+         qNlV3Og1QcoAtKeU+O7AO7Bgb6erYpF6NPfHhV4ax8uxyCmqAoXzG2YPJyJKzlVoMoyP
+         S6dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709808978; x=1710413778;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1709809383; x=1710414183;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=APg0N8EtrD5ihsxq8VybDP8ajvEhmkrsMBzTGWpbS9c=;
-        b=N7xS82WdhZriDKLx6hpHopI+tGsPTLAM3yyzMzuYgbysFk+GL6jd4ihLlb/jWq907Y
-         /BfCznTm4XdbUkkqE3bfR8ECESHhjTS0sjUB+2TkfsBIotNbLDkATkEWIC8gMfgpSzy1
-         Z7iPzE8xVsmchg3RgG1BKUm5D9wtNvkoLmcZ8A7jsOc3w4s3QV3pHsaw4Uk2qXoftIbp
-         oMqj6xtyiRGVRe4u7vprNgQ1DOkkhN2S/Ayt+8LQiVNfy+5YVibZCGS3bseFyImb4Fk8
-         ZQP1WoJvzvBqSFyLQ0D4ogBd29gxhchuzzOCwtF/WD+gxjW9lfuQXXG3kcPA+aL1pwij
-         VfdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcCpU9jaaLGTC50FSnYv2yeBU0Wi1BFleASAgEyIOnN7zlsumxpupE+EiCtHnb+ST+YgIveBAiLYrj/4HvgXJslcxQcQ2Ucj4YaajqrcGkV5wltduldExo1j6BHnINyfjXbrbFsdZX/QLUit4QTDT8vf+CjLnFOkerM56oJhkjSe1O7Uf4Uxzx4oi/5+H+DUBnp9IRt3TaWrVHrKrxi0NUMoKZDrglzCVe
-X-Gm-Message-State: AOJu0YwaJwfJocpTwTWYWXt0PLR5DgrpqFThCwpk8v763VTQapD2y5x5
-	XaEc4u7xBuLBST4LZRKVaSdx9TIw0MbT48mbgfha0nOS8uXJtGdP5a2g+qrGOLdd6PL16TPuK9Y
-	Ig1k4w7Bhg5cTclJzDS5gK5PlB3g=
-X-Google-Smtp-Source: AGHT+IHwiECTYUsVDlle5F8w3ZHAzBBT1vnPBCdYReaj9r/gIrBvUM1my/kEbtph3MIKxEtZR711+TWUoBbC32iGjfY=
-X-Received: by 2002:a05:6122:200d:b0:4d3:3878:a523 with SMTP id
- l13-20020a056122200d00b004d33878a523mr7038781vkd.12.1709808976570; Thu, 07
- Mar 2024 02:56:16 -0800 (PST)
+        bh=jrdoUk5yLq9JELO82ucEpyuoRJmhADQXtuT0g38B928=;
+        b=QK/H/SfWZ+YeDUT+8Ii/tqOpVZrgtZX9zVC+Rj1v6PYXs6+Z10vmhBeO0smPgXfiSG
+         w0sKhls7F+Wk0Mzi/FtB93F2HvAfk/l8gN4p/FqbRbiohtW12FYuOTdEIGK2p+sQssKN
+         EEXa6tv9CNoYwDnFBVBMxmvM8yotI2eSRuxnRAhGXO/kmoZQ5NIV6KI8mFi00QlVxI3G
+         9ahtyyMJ3NmguLwAL08OF0hrZtzpp4QzPXlOYapPACpQJCyX2fHR/he7cToVrjK4cfsN
+         49+jILF3E92+tgqocHYvbR/ltOSJ014JtrVlhuEN3Te8GvFVNY4IZCwtI2rXRG5o39cZ
+         0eIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNWeqK0dNmv6GAQMCImR+fTVgw+EOMz1UtYEOvUpstpox6nUmpmflvJcH1BGmBSv5vccGFBYkYHNORfLOwge3MrEfe1uooiydeD2K+HzenChM=
+X-Gm-Message-State: AOJu0YxXzWiUHseAddognYym7zdleya1Ar7g6E8sHToM4tsaOO0umTdL
+	ciz33GfTx8PPJgoKtAvRltsQN39h1TNjbLxJalv9GN9fdAIAqxJIw58mLCHG97I=
+X-Google-Smtp-Source: AGHT+IEeyC4P1DENXfIOcK2GUsKPhvs6KngkZcKHheszcCMwlHHkE4KLYt3mfW6lVHn2tnFHHG/Pdg==
+X-Received: by 2002:a17:906:a456:b0:a3f:5144:ada2 with SMTP id cb22-20020a170906a45600b00a3f5144ada2mr12036046ejb.2.1709809382694;
+        Thu, 07 Mar 2024 03:03:02 -0800 (PST)
+Received: from sleipner.berto.se (p4fcc8c6a.dip0.t-ipconnect.de. [79.204.140.106])
+        by smtp.googlemail.com with ESMTPSA id md20-20020a170906ae9400b00a45c3a3390esm1167188ejb.200.2024.03.07.03.03.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Mar 2024 03:03:02 -0800 (PST)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/3] thermal: rcar_gen3: Move Tj_T storage to shared private data
+Date: Thu,  7 Mar 2024 12:02:14 +0100
+Message-ID: <20240307110216.2962918-2-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240307110216.2962918-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20240307110216.2962918-1-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240305171600.328699-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdW0MxqxRwULhLsRtnYXYK8NYxq-uU7E2BscbvPh3axYFg@mail.gmail.com>
- <CA+V-a8vKo8ADB_R==vgBhVpSH43DOzdeA_NhZ1BCBdNuam3UmQ@mail.gmail.com>
- <CAMuHMdWX=OZJ3DE0vb4=k=6yH_L5JhusLRpVqJkJ0Xv3oT8_TQ@mail.gmail.com>
- <CA+V-a8uq=gw0_EVT3_CZD0TO+-DnSqXJtFakFcNWHOfq58g4aA@mail.gmail.com>
- <CA+V-a8vunmsUfGkFO30nwvqFkiks7vceLgG1jo7TcsFajeckmQ@mail.gmail.com> <CAMuHMdU0pTGg72r4+PkwyTin6pp1kApHruJUE5oSrdGucLYV7Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdU0pTGg72r4+PkwyTin6pp1kApHruJUE5oSrdGucLYV7Q@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 7 Mar 2024 10:55:10 +0000
-Message-ID: <CA+V-a8vmOv3qZEzz8jAHMmhT2d4kVTQ4ZZ5iOz4Lf3rN4nHbhg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: serial: renesas,scif: Document R9A09G057 support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+The calculated Tj_T constant is calculated from the PTAT data either
+read from the first TSC zone on the device if calibration data is fused,
+or from fallback values in the driver itself. The value calculated is
+shared among all TSC zones.
 
-On Thu, Mar 7, 2024 at 10:18=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, Mar 7, 2024 at 11:09=E2=80=AFAM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Wed, Mar 6, 2024 at 10:21=E2=80=AFAM Lad, Prabhakar
-> > <prabhakar.csengg@gmail.com> wrote:
-> > > On Wed, Mar 6, 2024 at 10:15=E2=80=AFAM Geert Uytterhoeven <geert@lin=
-ux-m68k.org> wrote:
-> > > > On Wed, Mar 6, 2024 at 11:06=E2=80=AFAM Lad, Prabhakar
-> > > > <prabhakar.csengg@gmail.com> wrote:
-> > > > > On Wed, Mar 6, 2024 at 9:53=E2=80=AFAM Geert Uytterhoeven <geert@=
-linux-m68k.org> wrote:
-> > > > > > On Tue, Mar 5, 2024 at 6:16=E2=80=AFPM Prabhakar <prabhakar.cse=
-ngg@gmail.com> wrote:
-> > > > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > > >
-> > > > > > > Document support for the Serial Communication Interface with =
-FIFO (SCIF)
-> > > > > > > available in the Renesas RZ/V2H(P) (R9A09G057) SoC. The SCIF =
-interface in
-> > > > > > > the Renesas RZ/V2H(P) is similar to that available in the RZ/=
-G2L
-> > > > > > > (R9A07G044) SoC, with the only difference being that the RZ/V=
-2H(P) SoC has
-> > > > > > > three additional interrupts: one for Tx end/Rx ready and the =
-other two for
-> > > > > > > Rx and Tx buffer full, which are edge-triggered.
-> > > > > > >
-> > > > > > > No driver changes are required as generic compatible string
-> > > > > > > "renesas,scif-r9a07g044" will be used as a fallback on RZ/V2H=
-(P) SoC.
-> > > > > >
-> > > > > > If you declare SCIF on RZ/V2H compatible with SCIF on RZ/G2L, y=
-ou
-> > > > > > state that the current driver works fine (but perhaps suboptima=
-l),
-> > > > > > without adding support for the extra 3 interrupts?
-> > > > > >
-> > > > > Yes the current driver works without using the extra interrupts o=
-n the
-> > > > > RZ/V2H. The extra interrupts on the RZ/V2H are just sort of dupli=
-cate
-> > > > > ie
-> > > > > - Transmit End/Data Ready interrupt , for which we we have two
-> > > > > seperate interrupts already
-> > > > > - Receive buffer full interrupt (EDGE trigger), for which we alre=
-ady
-> > > > > have a Level triggered interrupt
-> > > > > - Transmit buffer empty interrupt (EDGE trigger), for which we al=
-ready
-> > > > > have a Level triggered interrupt
-> > > >
-> > > > Thanks for the confirmation!
-> > > >
-> > > > > Are you suggesting to not fallback on RZ/G2L and instead make RZ/=
-V2H
-> > > > > an explicit one so that in future we handle these 3 extra interru=
-pts?
-> > > >
-> > > > In light of the confirmation above, I am _not_ suggesting that.
-> > > >
-> > With the introduction of validation checks for interrupts, falling
-> > back to "renesas,scif-r9a07g044" for RZ/V2H will be difficult for
-> > validating interrupt count.
-> >
-> >   - if:
-> >       properties:
-> >         compatible:
-> >           contains:
-> >             enum:
-> >               - renesas,scif-r7s9210
-> >               - renesas,scif-r9a07g044
-> >     then:
-> >       properties:
-> >         interrupts:
-> >           minItems: 6
-> >
-> >         interrupt-names:
-> >           minItems: 6
-> >
-> > With the above check RZ/V2H fall into this if block,
-> >
-> > Is there any way I can specify to match two compat strings?
->
-> if r9a09g057 then ... else if r7s9210 || r9a07g044 then ...?
->
-Thanks for the pointer (I was grepping for elif ;)).
+Move the Tj_T constant to the shared private data structure instead of
+duplicating it in each TSC private data. This requires adding a pointer
+to the shared data to the TSC private data structure. This back pointer
+make it easier to curter rework the temperature conversion logic.
 
-Cheers,
-Prabhakar
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index cafcb6d6e235..da1b971b287d 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -81,10 +81,10 @@ struct rcar_thermal_info {
+ };
+ 
+ struct rcar_gen3_thermal_tsc {
++	struct rcar_gen3_thermal_priv *priv;
+ 	void __iomem *base;
+ 	struct thermal_zone_device *zone;
+ 	struct equation_coefs coef;
+-	int tj_t;
+ 	int thcode[3];
+ };
+ 
+@@ -92,6 +92,7 @@ struct rcar_gen3_thermal_priv {
+ 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
+ 	struct thermal_zone_device_ops ops;
+ 	unsigned int num_tscs;
++	int tj_t;
+ 	int ptat[3];
+ 	const struct rcar_thermal_info *info;
+ };
+@@ -146,15 +147,15 @@ static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_priv *priv,
+ 	 * Division is not scaled in BSP and if scaled it might overflow
+ 	 * the dividend (4095 * 4095 << 14 > INT_MAX) so keep it unscaled
+ 	 */
+-	tsc->tj_t = (FIXPT_INT((priv->ptat[1] - priv->ptat[2]) * (ths_tj_1 - TJ_3))
+-		     / (priv->ptat[0] - priv->ptat[2])) + FIXPT_INT(TJ_3);
++	priv->tj_t = (FIXPT_INT((priv->ptat[1] - priv->ptat[2]) * (ths_tj_1 - TJ_3))
++		      / (priv->ptat[0] - priv->ptat[2])) + FIXPT_INT(TJ_3);
+ 
+ 	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(tsc->thcode[1] - tsc->thcode[2]),
+-				 tsc->tj_t - FIXPT_INT(TJ_3));
++				 priv->tj_t - FIXPT_INT(TJ_3));
+ 	tsc->coef.b1 = FIXPT_INT(tsc->thcode[2]) - tsc->coef.a1 * TJ_3;
+ 
+ 	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(tsc->thcode[1] - tsc->thcode[0]),
+-				 tsc->tj_t - FIXPT_INT(ths_tj_1));
++				 priv->tj_t - FIXPT_INT(ths_tj_1));
+ 	tsc->coef.b2 = FIXPT_INT(tsc->thcode[0]) - tsc->coef.a2 * ths_tj_1;
+ }
+ 
+@@ -196,10 +197,11 @@ static int rcar_gen3_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+ static int rcar_gen3_thermal_mcelsius_to_temp(struct rcar_gen3_thermal_tsc *tsc,
+ 					      int mcelsius)
+ {
++	struct rcar_gen3_thermal_priv *priv = tsc->priv;
+ 	int celsius, val;
+ 
+ 	celsius = DIV_ROUND_CLOSEST(mcelsius, 1000);
+-	if (celsius <= INT_FIXPT(tsc->tj_t))
++	if (celsius <= INT_FIXPT(priv->tj_t))
+ 		val = celsius * tsc->coef.a1 + tsc->coef.b1;
+ 	else
+ 		val = celsius * tsc->coef.a2 + tsc->coef.b2;
+@@ -512,6 +514,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 			goto error_unregister;
+ 		}
+ 
++		tsc->priv = priv;
+ 		tsc->base = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(tsc->base)) {
+ 			ret = PTR_ERR(tsc->base);
+-- 
+2.44.0
+
