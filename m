@@ -1,55 +1,58 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954591E52A
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Mar 2024 11:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214BA1272D0
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Mar 2024 11:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709809388; cv=none; b=Xb8ieDmINrLC0up48FOZQGYcqTdBgt8aVc+DDzmwe2E3afpEGeTafkylrdM4BSCzms3rHoUXfpk7177FH3gJuACKuPEC21BKV0M2e10fc38kArwuBClay9kC5iG94iBLQvGilcM8I9ZMSWQ6d91opSZXEtNhjg1pEXppf0nosXM=
+	t=1709809388; cv=none; b=oHRvl823d0u38/+KlzDrU97GmIMKJKRLjcx/YXrcsvMPraXVEAvy8RYa0hZ7l0nrA7LfI0wF2TvwolgGNrbve4FPPS+7/n0kHCGCUk7I81iXu7V2qXYR53h1n9PViMmPApwEvgzkObLmsRSc6l1XJnIfg5iARu3Oxozu8QzDMjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1709809388; c=relaxed/simple;
-	bh=nlNivs7rD5YJwH04Lk714LzjEUSuotnGi/sybNgRJQY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VBl2ZYYAhAVxPnXiJyi+LgWBtcPUBUtMU9JWyy1eVWVtRYRpNM/2q9/A8JZ6uAHdHNqe/VxzjFty+BfbEokBrpx7MBxONWTIYLCI0Ug7BqJ4fIkIMuG80teOTVZaGGomOVMT9cxqaL0ktmEatJqET+fdCtd6N5Yjixmy1Ywo0ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=uyg9+0AH; arc=none smtp.client-ip=209.85.218.52
+	bh=2m1YY0rIly3m5sSThMMcZIbdwY/oz9s5q3dfrcm+iUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jMldAXuEYWKrNH4g8nrRo1Tl4x0WYYnzzkf1ufxKMmaltpo9gBdBQ7gID3IRorq5Syr0W09HmiDQpymjdPVyL0eVp247UJrTC1zweRdtId7xosA6q9pTsWYf6mSqbzjY1nt+B+FcZKRQW5mOyjNnAYOIiNZwE04C84yThghm6bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=AodWp4R4; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="uyg9+0AH"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a449c5411e1so99300966b.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Mar 2024 03:03:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="AodWp4R4"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3ed9cae56fso340523666b.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Mar 2024 03:03:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech.se; s=google; t=1709809382; x=1710414182; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NqolVEWIRy6yFR+kt3iidNkcLmT4T2SqJQf6i9fsoSY=;
-        b=uyg9+0AHttvsg6YdBqwkIW1eMI4IYprxsRMucD7H9bQMfEKwphj3oSzKLUBzqSLyQm
-         fEfP7JYxnohTPYkQS5ChRMnodGdzzcbBM/fC+k76FPkIPI+/7QuVBRrb8bkGV12AGGnN
-         E3xbLI+/Dc23Az9tEYig+NJpNWESfpbdLy/2e3uzcStO8WQWlcxkIGk+i0chcqVKWs6N
-         NJVHjlCekCrKKnWnAeD63t7ToILw6ahipCbYKqnbV+8Cqys+SD2lNY07WIAbJQOf03Xp
-         Buahon0+u4fUeFlXmoo1DbwGBqqT2sh2VlZ2iYglBmklnYuO4i9GuaAgCuFg40aXWBS9
-         8iXg==
+        d=ragnatech.se; s=google; t=1709809383; x=1710414183; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VNeWp6TemAEi1Zm1Q4VxUUy/msfWwrXc5r2iSOQoraY=;
+        b=AodWp4R4RmWjootnDJbZwIsS028MSA6WkcNL9UgdJ0rlXp7EqJcw+4hVUCfoqVM7iu
+         MuIHpqqYc4hp55xDzIZ4TX5NspEvv4Ujc3/p2Pu9msHYH+vC+OhaAYY3C+gx3u56rhM7
+         JQn4WGWTVH5Ng76omNf4ml4abKzDnAI8CsXocGoO/tMmFCSbJWL0Pv3Vay9aDaJBXRQs
+         yqZK7quovnDVzK3EEO4XB7S605epAgJ3Cyfig7V03Tw8jF9lCV+n9AOfjHu6ihSB3e8M
+         x6iQ5i6apBHyAyA3JQbjOEGO8ab6j/7VBrh8aspGj0+XDjD+yz4HGAJpfHxZhd+zxPqj
+         zEKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709809382; x=1710414182;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NqolVEWIRy6yFR+kt3iidNkcLmT4T2SqJQf6i9fsoSY=;
-        b=MQM8mj1TAKfm7p2PcY2UFxq16tz3bjhscOhIHq+pqVd9IhQXq531GIyCOdrFzLG5zE
-         0MaiAUqrQGxs+2qVPpAGqnD2wqLqGpcwmcbP5ju0aw/m20dEg4adz47CvkgnKInG6eSY
-         Ue6vxTuZjTP29CAOwqyyTTCBAcbJKpSTc2zV0obYG+eVra4dwoOuS9JcR+Ql4gw2nWph
-         +Wnn6FP833Nj+dLiylakde+0MZQvSbRLVHfU9ZRcJWmiiuaGRXtbqHneHQD8SOBHoxUM
-         DfGvYGloCqrHovRilwnZQLx7TtBgGtLLojBrWsn9o4CIgH1uVeoA/axifQy5qVYeiHMM
-         fEKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXylfoIo6we4OeYqEgGqRG/886wmOEp+NW8m9tgvJ1VsC2xlGnYOZ1P1iD5OsKHEHoPWiau1bg2h7cnhih/2FGYqHoPp8l2Xk3oAB/EZJ8987c=
-X-Gm-Message-State: AOJu0YwdyepTNALouGTHyHfpemNiK2MBoMJ/alMTth35gQxFNtqFgZdu
-	6bTgF5PetSviuFmLwbSVKDni4ZngmuAvVOMInkhmjFc1x8pvZjY3rfQbPlpQcOM=
-X-Google-Smtp-Source: AGHT+IE5EE4EODozLFWVd8Zgtsy0SYU4E84Y2pBElKsn64AnmsFtrHgnEw9kdau7NOus+fecutqW3w==
-X-Received: by 2002:a17:906:2754:b0:a45:ab61:7a47 with SMTP id a20-20020a170906275400b00a45ab617a47mr4284482ejd.16.1709809381816;
-        Thu, 07 Mar 2024 03:03:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709809383; x=1710414183;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VNeWp6TemAEi1Zm1Q4VxUUy/msfWwrXc5r2iSOQoraY=;
+        b=dPbhJmqLMG+KKu1JXpArIT3X0l4oaVJw4UJ17vsocMdkwsZ/dfc+BtFs0CNniFk7K8
+         386fJ59BZbH8duWa4FW/QeF4tCgLoJSkVj2j+ecw1yNdPQM4Q7QY2i2eCMsa7NDWG7k8
+         zG5jZ8lpKsf2U9+k+eyQDcnq3PqieAvoPi92pDLp1L3nDam253AKvWHOPL9Dd2zNSMdI
+         ets5Jfyl4S+oeNwvwcL2TQvUn/P8mlYo6sUkv0Fi6XxRFIgo8nzT8Bbeh8IOUDWfTmO/
+         fmOX/sgVMKRXH4EOItO1TJT8e5d4mv7jQZ4EJJRrMtArki02w4E5jMuHEeQE9SJXBnRq
+         cwMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRlB7/mmomAIAwMRjiOKgpvDNI7SAQxv9bQzDDSDZ7hCEEICGlBVqe/z2lHPpEJ9T4Xp4eUU2bLsxoXCFDdZk6RRCJUcIv4LTwMPyKqacb2pg=
+X-Gm-Message-State: AOJu0YyXO103eCwJ3o5H7kBbsWyKvprCIO6N6Sj7jVAADHSYuXQCGUUX
+	iDz5ZhZciEaXld75/VRBIc1TJaQ5Q4KSsLlfyog6/3kGKu5au9OKSzLscvoAv18T7x34N3bKKbp
+	ooYA=
+X-Google-Smtp-Source: AGHT+IE37aWoVannLoNptWOFB8cwPoqQoADSb2zhzRrUCgqgTvWh55Fo27VtzawKbxvuKXeulB6G0Q==
+X-Received: by 2002:a17:906:1804:b0:a44:144e:3463 with SMTP id v4-20020a170906180400b00a44144e3463mr1037203eje.7.1709809383568;
+        Thu, 07 Mar 2024 03:03:03 -0800 (PST)
 Received: from sleipner.berto.se (p4fcc8c6a.dip0.t-ipconnect.de. [79.204.140.106])
-        by smtp.googlemail.com with ESMTPSA id md20-20020a170906ae9400b00a45c3a3390esm1167188ejb.200.2024.03.07.03.03.01
+        by smtp.googlemail.com with ESMTPSA id md20-20020a170906ae9400b00a45c3a3390esm1167188ejb.200.2024.03.07.03.03.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Mar 2024 03:03:01 -0800 (PST)
+        Thu, 07 Mar 2024 03:03:03 -0800 (PST)
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -59,10 +62,12 @@ To: "Rafael J. Wysocki" <rafael@kernel.org>,
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	linux-renesas-soc@vger.kernel.org,
 	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/3] thermal: rcar_gen3: Use temperature approximation from datasheet
-Date: Thu,  7 Mar 2024 12:02:13 +0100
-Message-ID: <20240307110216.2962918-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/3] thermal: rcar_gen3: Update temperature approximation calculation
+Date: Thu,  7 Mar 2024 12:02:15 +0100
+Message-ID: <20240307110216.2962918-3-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240307110216.2962918-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20240307110216.2962918-1-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -72,30 +77,254 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hello,
+The initial driver used a formula to approximation the temperature and
+register value reversed engineered form an out-of-tree BSP driver. This
+was needed as the datasheet at the time did not contain any information
+on how to do this. Later Gen3 (Rev 2.30) and Gen4 (all) now contains
+this information.
 
-When the driver was first added the temperature approximation was 
-reversed engineered from an out-of-tree driver as the datasheets of the 
-time did not contain this information. Recent datasheets, both Gen3 and 
-Gen4, now contains this information.
+Update the approximation formula to use the datasheets information
+instead of the reversed engineered one.
 
-This series changes the temperature approximation formula to match 
-what's described in the datasheets. It has been tested on both Gen3 and 
-Gen4 with minimal changes in temperatures reported.
+On an idle M3-N without fused calibration values for PTAT and THCODE the
+old formula reports,
 
-Patch 1 is a cleanup making the scope of a constant more clear. Patch 3 
-increases the granularity of the readout to 1 decimal to match recent 
-datasheets. While Patch 2 is the real work changing the approximation 
-formula.
+    zone0: 52000
+    zone1: 53000
+    zone2: 52500
 
-Niklas Söderlund (3):
-  thermal: rcar_gen3: Move Tj_T storage to shared private data
-  thermal: rcar_gen3: Update temperature approximation calculation
-  thermal: rcar_gen3: Increase granularity of readings
+While the new formula under the same circumstances reports,
 
- drivers/thermal/rcar_gen3_thermal.c | 144 ++++++++++++++++------------
- 1 file changed, 81 insertions(+), 63 deletions(-)
+    zone0: 52500
+    zone1: 54000
+    zone2: 54000
 
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 137 +++++++++++++++-------------
+ 1 file changed, 76 insertions(+), 61 deletions(-)
+
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index da1b971b287d..56fba675b986 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -65,26 +65,29 @@
+ 
+ #define TSC_MAX_NUM	5
+ 
+-/* Structure for thermal temperature calculation */
+-struct equation_coefs {
+-	int a1;
+-	int b1;
+-	int a2;
+-	int b2;
+-};
+-
+ struct rcar_gen3_thermal_priv;
+ 
+ struct rcar_thermal_info {
+-	int ths_tj_1;
++	int scale;
++	int adj_below;
++	int adj_above;
+ 	void (*read_fuses)(struct rcar_gen3_thermal_priv *priv);
+ };
+ 
++struct equation_set_coef {
++	int a;
++	int b;
++};
++
+ struct rcar_gen3_thermal_tsc {
+ 	struct rcar_gen3_thermal_priv *priv;
+ 	void __iomem *base;
+ 	struct thermal_zone_device *zone;
+-	struct equation_coefs coef;
++	/* Different coefficients are used depending on a threshold. */
++	struct {
++		struct equation_set_coef below;
++		struct equation_set_coef above;
++	} coef;
+ 	int thcode[3];
+ };
+ 
+@@ -112,51 +115,41 @@ static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
+ /*
+  * Linear approximation for temperature
+  *
+- * [reg] = [temp] * a + b => [temp] = ([reg] - b) / a
++ * [temp] = ((thadj - [reg]) * a) / b + adj
++ * [reg] = thadj - ([temp] - adj) * b / a
+  *
+  * The constants a and b are calculated using two triplets of int values PTAT
+  * and THCODE. PTAT and THCODE can either be read from hardware or use hard
+  * coded values from driver. The formula to calculate a and b are taken from
+- * BSP and sparsely documented and understood.
++ * the datasheet. Different calculations are needed for a and b depending on
++ * if the input variable ([temp] or [reg]) are above or below a threshold. The
++ * threshold is also calculated from PTAT and THCODE using formula from the
++ * datasheet.
+  *
+- * Examining the linear formula and the formula used to calculate constants a
+- * and b while knowing that the span for PTAT and THCODE values are between
+- * 0x000 and 0xfff the largest integer possible is 0xfff * 0xfff == 0xffe001.
+- * Integer also needs to be signed so that leaves 7 bits for binary
+- * fixed point scaling.
++ * The constant thadj is one of the THCODE values, which one to use depends on
++ * the threshold and input value.
++ *
++ * The constants adj is taken verbatim from the datasheet. Two values exists,
++ * which one to use depends on the input value and the calculated threshold.
++ * Furthermore different SoCs models supported by the driver have different sets
++ * of values. The values for each model is stored in the device match data.
+  */
+ 
+-#define FIXPT_SHIFT 7
+-#define FIXPT_INT(_x) ((_x) << FIXPT_SHIFT)
+-#define INT_FIXPT(_x) ((_x) >> FIXPT_SHIFT)
+-#define FIXPT_DIV(_a, _b) DIV_ROUND_CLOSEST(((_a) << FIXPT_SHIFT), (_b))
+-#define FIXPT_TO_MCELSIUS(_x) ((_x) * 1000 >> FIXPT_SHIFT)
+-
+ #define RCAR3_THERMAL_GRAN 500 /* mili Celsius */
+ 
+-/* no idea where these constants come from */
+-#define TJ_3 -41
+-
+ static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_priv *priv,
+-					 struct rcar_gen3_thermal_tsc *tsc,
+-					 int ths_tj_1)
++					 struct rcar_gen3_thermal_tsc *tsc)
+ {
+-	/* TODO: Find documentation and document constant calculation formula */
++	priv->tj_t =
++		DIV_ROUND_CLOSEST((priv->ptat[1] - priv->ptat[2]) * priv->info->scale,
++				  priv->ptat[0] - priv->ptat[2])
++		+ priv->info->adj_below;
+ 
+-	/*
+-	 * Division is not scaled in BSP and if scaled it might overflow
+-	 * the dividend (4095 * 4095 << 14 > INT_MAX) so keep it unscaled
+-	 */
+-	priv->tj_t = (FIXPT_INT((priv->ptat[1] - priv->ptat[2]) * (ths_tj_1 - TJ_3))
+-		      / (priv->ptat[0] - priv->ptat[2])) + FIXPT_INT(TJ_3);
++	tsc->coef.below.a = priv->info->scale * (priv->ptat[2] - priv->ptat[1]);
++	tsc->coef.above.a = priv->info->scale * (priv->ptat[0] - priv->ptat[1]);
+ 
+-	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(tsc->thcode[1] - tsc->thcode[2]),
+-				 priv->tj_t - FIXPT_INT(TJ_3));
+-	tsc->coef.b1 = FIXPT_INT(tsc->thcode[2]) - tsc->coef.a1 * TJ_3;
+-
+-	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(tsc->thcode[1] - tsc->thcode[0]),
+-				 priv->tj_t - FIXPT_INT(ths_tj_1));
+-	tsc->coef.b2 = FIXPT_INT(tsc->thcode[0]) - tsc->coef.a2 * ths_tj_1;
++	tsc->coef.below.b = (priv->ptat[2] - priv->ptat[0]) * (tsc->thcode[2] - tsc->thcode[1]);
++	tsc->coef.above.b = (priv->ptat[0] - priv->ptat[2]) * (tsc->thcode[1] - tsc->thcode[0]);
+ }
+ 
+ static int rcar_gen3_thermal_round(int temp)
+@@ -172,19 +165,29 @@ static int rcar_gen3_thermal_round(int temp)
+ static int rcar_gen3_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+ {
+ 	struct rcar_gen3_thermal_tsc *tsc = thermal_zone_device_priv(tz);
+-	int mcelsius, val;
+-	int reg;
++	struct rcar_gen3_thermal_priv *priv = tsc->priv;
++	const struct equation_set_coef *coef;
++	int adj, mcelsius, reg, thcode;
+ 
+ 	/* Read register and convert to mili Celsius */
+ 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
+ 
+-	if (reg <= tsc->thcode[1])
+-		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1,
+-				tsc->coef.a1);
+-	else
+-		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2,
+-				tsc->coef.a2);
+-	mcelsius = FIXPT_TO_MCELSIUS(val);
++	if (reg < tsc->thcode[1]) {
++		adj = priv->info->adj_below;
++		coef = &tsc->coef.below;
++		thcode = tsc->thcode[2];
++	} else {
++		adj = priv->info->adj_above;
++		coef = &tsc->coef.above;
++		thcode = tsc->thcode[0];
++	}
++
++	/*
++	 * The dividend can't be grown as it might overflow, instead shorten the
++	 * divisor to convert to millidegree Celsius. If we convert after the
++	 * division precision is lost to a full degree Celsius.
++	 */
++	mcelsius = DIV_ROUND_CLOSEST(coef->a * (thcode - reg), coef->b / 1000) + adj * 1000;
+ 
+ 	/* Guaranteed operating range is -40C to 125C. */
+ 
+@@ -198,15 +201,21 @@ static int rcar_gen3_thermal_mcelsius_to_temp(struct rcar_gen3_thermal_tsc *tsc,
+ 					      int mcelsius)
+ {
+ 	struct rcar_gen3_thermal_priv *priv = tsc->priv;
+-	int celsius, val;
++	const struct equation_set_coef *coef;
++	int adj, celsius, thcode;
+ 
+ 	celsius = DIV_ROUND_CLOSEST(mcelsius, 1000);
+-	if (celsius <= INT_FIXPT(priv->tj_t))
+-		val = celsius * tsc->coef.a1 + tsc->coef.b1;
+-	else
+-		val = celsius * tsc->coef.a2 + tsc->coef.b2;
++	if (celsius < priv->tj_t) {
++		coef = &tsc->coef.below;
++		adj = priv->info->adj_below;
++		thcode = tsc->thcode[2];
++	} else {
++		coef = &tsc->coef.above;
++		adj = priv->info->adj_above;
++		thcode = tsc->thcode[0];
++	}
+ 
+-	return INT_FIXPT(val);
++	return thcode - DIV_ROUND_CLOSEST((celsius - adj) * coef->b, coef->a);
+ }
+ 
+ static int rcar_gen3_thermal_set_trips(struct thermal_zone_device *tz, int low, int high)
+@@ -371,17 +380,23 @@ static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_priv *priv,
+ }
+ 
+ static const struct rcar_thermal_info rcar_m3w_thermal_info = {
+-	.ths_tj_1 = 116,
++	.scale = 157,
++	.adj_below = -41,
++	.adj_above = 116,
+ 	.read_fuses = rcar_gen3_thermal_read_fuses_gen3,
+ };
+ 
+ static const struct rcar_thermal_info rcar_gen3_thermal_info = {
+-	.ths_tj_1 = 126,
++	.scale = 167,
++	.adj_below = -41,
++	.adj_above = 126,
+ 	.read_fuses = rcar_gen3_thermal_read_fuses_gen3,
+ };
+ 
+ static const struct rcar_thermal_info rcar_gen4_thermal_info = {
+-	.ths_tj_1 = 126,
++	.scale = 167,
++	.adj_below = -41,
++	.adj_above = 126,
+ 	.read_fuses = rcar_gen3_thermal_read_fuses_gen4,
+ };
+ 
+@@ -533,7 +548,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
+ 
+ 		rcar_gen3_thermal_init(priv, tsc);
+-		rcar_gen3_thermal_calc_coefs(priv, tsc, priv->info->ths_tj_1);
++		rcar_gen3_thermal_calc_coefs(priv, tsc);
+ 
+ 		zone = devm_thermal_of_zone_register(dev, i, tsc, &priv->ops);
+ 		if (IS_ERR(zone)) {
 -- 
 2.44.0
 
