@@ -1,56 +1,56 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9332212F586
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Mar 2024 14:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5AE12FF70
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Mar 2024 14:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709820480; cv=none; b=CJkyyfvlmQ3BYsIEbxCM87DgTmotuDMzGuwRz3PMuCDdBqvdeXgqVFL7wrx7wzmMkjmmsOs+Itkxv8JolbQzehSd3uchNHeoRMQO2KfgIdQeuU1XyUc2dPpcVHFNJc4whMj2xxBw0aPjOBERNGWtxR8C4qKkpcmo5HFdshfxA9k=
+	t=1709820481; cv=none; b=TfnuPPk5MHJBLgGq3DKLba4/lu4+rZbW0jfpWTFQDphqLzjsuojfv6/5kGx8TTefzAgD6x+TzStosGUUwghoEAdZVj/GcfKDkj7whbflJcFp1peESovbwk00XppzuLMOjOP7ioMF5jNDI8x5sLkKb/371tt/DAJEhilg2bU0uf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709820480; c=relaxed/simple;
-	bh=nuP8iR6n4tjbNw9I4rOh+AhUGQC1ujLuyQM3qb1k9pA=;
+	s=arc-20240116; t=1709820481; c=relaxed/simple;
+	bh=/AU+pESc4q39VuYj6dvjJTIjPU1eYaspCrgu+4GKZvM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bexw/UluUM7DCci9EYIC477p+4wxnTb4uc4eNWHOomaZynP+G4NYOtamDH7cxDS+1i0lPLh3iErJ87JrEwKrqeKXKoi6AphaLPx1LE89LJzNYyUatu7GDte2btXWoYz/sBwAoLEdQFitka69vcxD2iZZ4bq3ndSjuknaPe2E4bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LoQ5FucE; arc=none smtp.client-ip=209.85.208.42
+	 MIME-Version; b=lYBhjmuT9OrIl+G+1A2ApjupQK+r6KrKEk1i+o7nnVP0k3CFFKy39dGwaYisBps2du6cDkGQYm34/kcqaJCCzFU4cVU5tymCiZUr4ffxf4chzGS7kPZdQuZL8JHZGiE+ocF7FIJI8G50Lo6srSO2A321JinnZ/niK2S3q89pbvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KGBSS+MS; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LoQ5FucE"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-565c6cf4819so3814772a12.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Mar 2024 06:07:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KGBSS+MS"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a44ad785a44so126338166b.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Mar 2024 06:07:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1709820473; x=1710425273; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1709820477; x=1710425277; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SBHulM5tgA9Yu4QDRPLiTWrU5crZRQDlADBuEJV4VhY=;
-        b=LoQ5FucEPH7FNhZqIn8gees2QK5x6Iq7ap41Z5jt6qEEumczVDO98pAhZwb+7cI46P
-         tPyZxGatbuIwUf9qCLAEhvMvVVwmOyh5ib6bZon36xO68iFIXAqgmmW0v0oXwnMet7nM
-         de1/Rn3O1G1v76UDg0t8d4JYavBww1M6d/NuQk3U9T+ehnaq0Q4yLsZJTheLFD/HeSWP
-         3YB7a7N1xNlGCFHXGfrbhPSpew+bbJNgGU+NP6EZzID8X7JBuQJwth1btQpjWAHVDWN5
-         pMiVVJ+6/3iWfp54QZK0OGk04b3NVmVq5JzwVzO0xXLPulyFadmSmX4DUFKEQqc+hnnh
-         jkRA==
+        bh=N1enE41924FjnPvc41bprhOHCOVjCwwdMHom0HcmXLA=;
+        b=KGBSS+MSq3YJQ1swQ5us/jY5/JrUPFq+eA4hUTC4ymI7poJ6D9tcRmSZbs9AsTdsDR
+         GwwLAxhmOGnH3iFSbMNGPky2RJZJ8HNhIG3YISRLXLsaPW4T5pEoy457OFpQzR0MAZvW
+         iDgSQa93Z8dvrDHj3SA1pU13UkODPVAdtCVnmX/uEekfOecB7jdZhZYmA5/pLt4A2q+9
+         bskNeLCUdPZe+Mxrxl31PuDNATSLLxdnpm+t7g7cZtF0ud8086wKTwg1ZB6cY1JmCSHy
+         8zHLa75Lfktg5UiQ+Inzg0IBRQ/sbjoj31MPLey0iHfd/rYyvgl+AS9mnwapaI27SLJS
+         +8fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709820473; x=1710425273;
+        d=1e100.net; s=20230601; t=1709820477; x=1710425277;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SBHulM5tgA9Yu4QDRPLiTWrU5crZRQDlADBuEJV4VhY=;
-        b=WUKrgiHuErAqJb9LQtgf+HlwfHCtt3cIQFCnn5dmIRztt5nFDfyy7sSX6ZEuluJMUu
-         l2lj0G3AGiq8TK8Weo8SsMlOGeEsJYb8Q45aaOzfgpJZKGzpCO0I4c82Zu5TFsoPid9B
-         f+dzYGCYEQHQ3Yo6PQl6lKHFGPwusvWEHP2bVGkcUp2yGrFpZhcxFIN7gnrosxDyO3aA
-         wVqpGlE8WGRddN+iRFIJvAyMSydC0FQtxHV3O40Gp31fi5bju7JTP7D58bfaHSXIq7BA
-         3B8TuskxSKvALNnCWi/xBvycM3uIdY9+G8MjJQG5iu273RtcV4WpnoIptdhFn8mOv4B7
-         433w==
-X-Gm-Message-State: AOJu0YyYYbR5jWhRqRGoPdEFEET1abXZh8/tgwwWitZTsfgvY0qA0ZOv
-	4ktdyiRbawJcarjhn/RtyVakPPAZcRh3O0X6+SUEnSdhrsvehIs+t1EagNH1ynQ=
-X-Google-Smtp-Source: AGHT+IFO1qzZI4vXATKgcIXml+TT3amKFBy42cnqOC58zMQxN5FKCP88n3FmIdjFGol396HkLTMb4g==
-X-Received: by 2002:a17:906:589:b0:a45:163a:c08e with SMTP id 9-20020a170906058900b00a45163ac08emr322255ejn.0.1709820472972;
-        Thu, 07 Mar 2024 06:07:52 -0800 (PST)
+        bh=N1enE41924FjnPvc41bprhOHCOVjCwwdMHom0HcmXLA=;
+        b=Vhb0Xc7lF0y+j69pp7jvZ8G+QlxzVgMd8bJXN0fXcAlMUKnwt9YEqoIn4L1wXLREhm
+         vd+TG5nS/CI2xqL9uTEwECNz2WXCQYe/5nzSXCXQENNzJd0NbP6TAHWH8mA5xWjTiUOh
+         LoyZmbqUuvmz4xUY5fWN6mI4VOGD/U6BbV5iEn2xeA7A96OHeAd0kcK/1okHF2rGcihb
+         BJGz9i8U7K4sgcD5KiqcGwYaU59npbiQW1umk4KMketyh7qihCrk0PG+WjeevNjbwmTG
+         1dZKzb+0ReVyfxY9PTJsuvq2gsEZVTNVfqIB4lGV4qBqu5zCuTFJm+oKljz2KAYhWyiX
+         uJmQ==
+X-Gm-Message-State: AOJu0YwHN+6r/RJLlECNro0RPVLdxsKDqOD9Thw0QsPnfLllRmv19AwT
+	bPrWW3f28cMPM4DvwVBlALxkxjVyps94J6nUnPSwzpK0V12mA4Lu4UAsfK8gwS8=
+X-Google-Smtp-Source: AGHT+IFDtF3Rr1S3adBb0GZlaHYYf10NNukNNS7tU1R2HGoIfSaU6y9HctOXpPo5TVVlG7o67kamjw==
+X-Received: by 2002:a17:906:24d4:b0:a44:2761:b6db with SMTP id f20-20020a17090624d400b00a442761b6dbmr11499734ejb.67.1709820477650;
+        Thu, 07 Mar 2024 06:07:57 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.38])
-        by smtp.gmail.com with ESMTPSA id v23-20020a1709067d9700b00a42ee62b634sm8200648ejo.106.2024.03.07.06.07.51
+        by smtp.gmail.com with ESMTPSA id v23-20020a1709067d9700b00a42ee62b634sm8200648ejo.106.2024.03.07.06.07.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Mar 2024 06:07:52 -0800 (PST)
+        Thu, 07 Mar 2024 06:07:57 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -66,9 +66,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 05/10] dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells = <1> for RZ/G3S
-Date: Thu,  7 Mar 2024 16:07:23 +0200
-Message-Id: <20240307140728.190184-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 08/10] clk: renesas: rzg2l-cpg: Add suspend/resume support for power domains
+Date: Thu,  7 Mar 2024 16:07:26 +0200
+Message-Id: <20240307140728.190184-9-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240307140728.190184-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240307140728.190184-1-claudiu.beznea.uj@bp.renesas.com>
@@ -82,68 +82,222 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The driver will be modified (in the next commits) to be able to specify
-individual power domain ID for each IP. The driver will still
-support #power-domain-cells = <0>, thus, previous users are not
-affected.
+RZ/G3S supports deep sleep states that it can reach with the help of the
+TF-A.
 
-The #power-domain-cells = <1> has been instantiated only for RZ/G3S at
-the moment as individual platform clock drivers need to be adapted for
-this to be supported on the rest of the SoCs.
+RZ/G3S has a few power domains (e.g. GIC) that need to be always-on while
+Linux is running. These domains are initialized (and powered on) when
+clock driver is probed.
 
-Also, the description for #power-domain-cells was updated with the links
-to per-SoC power domain IDs.
+As the TF-A takes control at the very last(suspend)/first(resume)
+phase of configuring the deep sleep state, it can do it's own settings on
+power domains.
+
+Thus, to restore the proper Linux state, add rzg2l_cpg_resume() which
+powers on the always-on domains and rzg2l_cpg_complete() which activates
+the power down mode for the IPs selected through CPG_PWRDN_IP{1, 2}.
+
+Along with it, added the suspend_check member to the RZ/G2L power domain
+data structure whose purpose is to checks if a domain can be powered off
+while the system is going to suspend. This is necessary for the serial
+console domain which needs to be powered on if no_console_suspend is
+available in bootargs.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- updated patch title and description
-- kept both 0 and 1 for #power-domain-cells as not all the drivers,
-  device trees are adpated with this series
-- added a reference to dt-bindings/clock/r9a0*-cpg.h for power domain
-  specifiers
-- dropped the changes from examples section
+- none; this patch is new
 
- .../bindings/clock/renesas,rzg2l-cpg.yaml      | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 66 ++++++++++++++++++++++++++++++---
+ drivers/clk/renesas/rzg2l-cpg.h |  1 +
+ 2 files changed, 62 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-index 80a8c7114c31..4e3b0c45124a 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-@@ -57,7 +57,8 @@ properties:
-       can be power-managed through Module Standby should refer to the CPG device
-       node in their "power-domains" property, as documented by the generic PM
-       Domain bindings in Documentation/devicetree/bindings/power/power-domain.yaml.
--    const: 0
-+      The power domain specifiers defined in <dt-bindings/clock/r9a0*-cpg.h> could
-+      be used to reference individual CPG power domains.
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index b36700f4a9f5..b18af227177e 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -15,6 +15,7 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clk/renesas.h>
++#include <linux/console.h>
+ #include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+@@ -139,6 +140,7 @@ struct rzg2l_pll5_mux_dsi_div_param {
+  * @num_resets: Number of Module Resets in info->resets[]
+  * @last_dt_core_clk: ID of the last Core Clock exported to DT
+  * @info: Pointer to platform data
++ * @domains: generic PM domains
+  * @mux_dsi_div_params: pll5 mux and dsi div parameters
+  */
+ struct rzg2l_cpg_priv {
+@@ -155,6 +157,8 @@ struct rzg2l_cpg_priv {
  
-   '#reset-cells':
-     description:
-@@ -76,6 +77,21 @@ required:
+ 	const struct rzg2l_cpg_info *info;
  
- additionalProperties: false
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a08g045-cpg
-+    then:
-+      properties:
-+        '#power-domain-cells':
-+          const: 1
-+    else:
-+      properties:
-+        '#power-domain-cells':
-+          const: 0
++	struct generic_pm_domain **domains;
 +
- examples:
-   - |
-     cpg: clock-controller@11010000 {
+ 	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
+ };
+ 
+@@ -1570,12 +1574,14 @@ struct rzg2l_cpg_pm_domains {
+  * struct rzg2l_cpg_pd - RZ/G2L power domain data structure
+  * @genpd: generic PM domain
+  * @priv: pointer to CPG private data structure
++ * @suspend_check: check if domain could be powered off in suspend
+  * @conf: CPG PM domain configuration info
+  * @id: RZ/G2L power domain ID
+  */
+ struct rzg2l_cpg_pd {
+ 	struct generic_pm_domain genpd;
+ 	struct rzg2l_cpg_priv *priv;
++	int (*suspend_check)(void);
+ 	struct rzg2l_cpg_pm_domain_conf conf;
+ 	u16 id;
+ };
+@@ -1676,6 +1682,13 @@ static int rzg2l_cpg_power_off(struct generic_pm_domain *domain)
+ 	struct rzg2l_cpg_reg_conf pwrdn = pd->conf.pwrdn;
+ 	struct rzg2l_cpg_priv *priv = pd->priv;
+ 
++	if (pd->suspend_check) {
++		int ret = pd->suspend_check();
++
++		if (ret)
++			return ret;
++	}
++
+ 	/* Set MSTOP. */
+ 	if (mstop.mask)
+ 		writel(mstop.mask | (mstop.mask << 16), priv->base + mstop.off);
+@@ -1687,8 +1700,14 @@ static int rzg2l_cpg_power_off(struct generic_pm_domain *domain)
+ 	return 0;
+ }
+ 
+-static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, bool always_on)
++static int rzg2l_pd_suspend_check_console(void)
+ {
++	return console_suspend_enabled ? 0 : -EBUSY;
++}
++
++static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, u32 flags)
++{
++	bool always_on = !!(flags & RZG2L_PD_F_ALWAYS_ON);
+ 	struct dev_power_governor *governor;
+ 
+ 	pd->genpd.flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+@@ -1700,6 +1719,8 @@ static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, bool always_on)
+ 	} else {
+ 		pd->genpd.power_on = rzg2l_cpg_power_on;
+ 		pd->genpd.power_off = rzg2l_cpg_power_off;
++		if (flags & RZG2L_PD_F_CONSOLE)
++			pd->suspend_check = rzg2l_pd_suspend_check_console;
+ 		governor = &simple_qos_governor;
+ 	}
+ 
+@@ -1719,7 +1740,7 @@ static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
+ 
+ 	pd->genpd.name = np->name;
+ 	pd->priv = priv;
+-	ret = rzg2l_cpg_pd_setup(pd, true);
++	ret = rzg2l_cpg_pd_setup(pd, RZG2L_PD_F_ALWAYS_ON);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1778,13 +1799,13 @@ static int __init rzg2l_cpg_add_pm_domains(struct rzg2l_cpg_priv *priv)
+ 	domains->onecell_data.domains = domains->domains;
+ 	domains->onecell_data.num_domains = info->num_pm_domains;
+ 	domains->onecell_data.xlate = rzg2l_cpg_pm_domain_xlate;
++	priv->domains = domains->domains;
+ 
+ 	ret = devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, &domains->onecell_data);
+ 	if (ret)
+ 		return ret;
+ 
+ 	for (unsigned int i = 0; i < info->num_pm_domains; i++) {
+-		bool always_on = !!(info->pm_domains[i].flags & RZG2L_PD_F_ALWAYS_ON);
+ 		struct rzg2l_cpg_pd *pd;
+ 
+ 		pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+@@ -1796,11 +1817,11 @@ static int __init rzg2l_cpg_add_pm_domains(struct rzg2l_cpg_priv *priv)
+ 		pd->id = info->pm_domains[i].id;
+ 		pd->priv = priv;
+ 
+-		ret = rzg2l_cpg_pd_setup(pd, always_on);
++		ret = rzg2l_cpg_pd_setup(pd, info->pm_domains[i].flags);
+ 		if (ret)
+ 			return ret;
+ 
+-		if (always_on) {
++		if (info->pm_domains[i].flags & RZG2L_PD_F_ALWAYS_ON) {
+ 			ret = rzg2l_cpg_power_on(&pd->genpd);
+ 			if (ret)
+ 				return ret;
+@@ -1890,9 +1911,43 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
++	dev_set_drvdata(dev, priv);
++
+ 	return 0;
+ }
+ 
++static int rzg2l_cpg_resume(struct device *dev)
++{
++	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
++	const struct rzg2l_cpg_info *info = priv->info;
++
++	/* Power on always ON domains. */
++	for (unsigned int i = 0; i < info->num_pm_domains; i++) {
++		if (info->pm_domains[i].flags & RZG2L_PD_F_ALWAYS_ON) {
++			int ret = rzg2l_cpg_power_on(priv->domains[i]);
++
++			if (ret)
++				return ret;
++		}
++	}
++
++	return 0;
++}
++
++static void rzg2l_cpg_complete(struct device *dev)
++{
++	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
++
++	/* Prepare for power down the BUSes in power down mode. */
++	if (priv->info->pm_domain_pwrdn_mstop)
++		writel(CPG_PWRDN_MSTOP_ENABLE, priv->base + CPG_PWRDN_MSTOP);
++}
++
++static const struct dev_pm_ops rzg2l_cpg_pm_ops = {
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, rzg2l_cpg_resume)
++	.complete = rzg2l_cpg_complete,
++};
++
+ static const struct of_device_id rzg2l_cpg_match[] = {
+ #ifdef CONFIG_CLK_R9A07G043
+ 	{
+@@ -1931,6 +1986,7 @@ static struct platform_driver rzg2l_cpg_driver = {
+ 	.driver		= {
+ 		.name	= "rzg2l-cpg",
+ 		.of_match_table = rzg2l_cpg_match,
++		.pm	= pm_sleep_ptr(&rzg2l_cpg_pm_ops),
+ 	},
+ };
+ 
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index d9a7357c4873..abff85644270 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -301,6 +301,7 @@ struct rzg2l_cpg_pm_domain_init_data {
+ 
+ /* Power domain flags. */
+ #define RZG2L_PD_F_ALWAYS_ON	BIT(0)
++#define RZG2L_PD_F_CONSOLE	BIT(1)
+ #define RZG2L_PD_F_NONE		(0)
+ 
+ /**
 -- 
 2.39.2
 
