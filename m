@@ -1,37 +1,39 @@
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90EF1947E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91261A27D;
 	Mon, 11 Mar 2024 09:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710150927; cv=none; b=Jk+b1XIAc4xtz8SoIIDYQgNg/mm2KkNGlW2veEiQv+nyF4V84iR1uSKTMWYi8a6KeswXivZMX6q0mHAHSNNzl4W3DnF41whc+g9jPIytCmGIWv2dRHilLBz0HD8sUwZrHV2cMk9iHoeVgvW/jq+kfIY/m4YbRAX0i8/j59zTou8=
+	t=1710150927; cv=none; b=hWY/zK0RsBjS9UchSTjoSZIMmpMVN5x2bEIP+nlwnKWEfZWQyG1X7X1o2qyXDQFZ9mvzgsUJy8YSD0Ou1ZsVNe+xMUY6V4jX3MX9xZr09/Qweeen/vWMvXCWgamkxFfg1b2QEkKF0buFzmH/gIlSVBrxcIyqLf28MeQTGlj9Dng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710150927; c=relaxed/simple;
-	bh=MbnrA4AVe6jnpS941KmIbmKU2IuYVS5iVM7mTPKsmqo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WkbNZXbfEG/bhHwlf81siCEt5TKya9rz+ylhrWL/s8XbycZ7NyAEK/R3fg5VZ/C4uemurmWgllM/eUGykpKM3NbPR4MNG0tnP+hurhyyIfLHK+N98CjZomWKwaarZ9hyA/ucA+PmQNP/P9YyGbJmYWif3CPAKJgQOMzFjXGpTQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fZb1rYim; arc=none smtp.client-ip=217.70.183.196
+	bh=b9ie/BFgYZejT3fzU45NYJ1UTBtGro5jd1feeyVUSQM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=F7Wa6ABnCkaIxFKVC+86l8kf6MckXc90bn++JN+JOj6AHgXriIrjPvQqceLOOJXcsT3feobdulSpRYMYXCRgN10E1/bKM0KavaxgZCpVQuQRLQQiqVORz4l6jlAVvVUBoJMNtHPCnWmaXBHDxKOZaIIAEmB9QazenPKEEjPJpVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P06NKASv; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fZb1rYim"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 51A93E001C;
-	Mon, 11 Mar 2024 09:55:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P06NKASv"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C7BF9E0009;
+	Mon, 11 Mar 2024 09:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1710150916;
+	t=1710150923;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Su4anKYfguw45iKaUAiZJzbAMOQ95uSYJX0GLHgexbw=;
-	b=fZb1rYimgFAJ5RBGOvFYLuAwVzkQAt5VYGQ3z8W0YEzR53uuoA6UazQsrMqb1ztswvYBsa
-	uuX1NYO5MjKmM1XXUKrac7gkxKQNANF5pNckxPeTj6KhqhRMD+cV1F6nalQGgqE6BqqCcj
-	PjOmmfYykpo7b20BYLs3B9pcJ1YYHdo3goCz4s8OYaqJMACJwdWUb6B1gfcD2l2Qp2lgJi
-	T+Fk3zIAsPimt84TZ/q3xjUyndrIaHhf4yo84BLweqsNH3MSM0Gzq3YdYw9gZrbjtkSihz
-	VcQpiTDzSR69y/iuCFG7gA2zIUIlw0RNqRuqK5C8z1IwaaVA82PvTtbHe1TNNw==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kOpNMTW/vA5X/6RU5HQH0KSBKcCLzUFZqJhHW5arx8w=;
+	b=P06NKASvvtTJHKCRwMq+LaEKG+9ZSn3II8sLtWeUmx0WxdeinCoubLSStj1Z5EKk2mukdy
+	TYZlfbWC2+d8DHAvlzZYwqvdUKenfpzUeNgOZ+xFjcuAXj/N7BQ9J6ZTF6QknNUonZTYdN
+	+OHh18q08x7h/fhRCy3Y5PFkXZPvpotLt51DID0hlPuPKZRb6OSy64aMe4ahS69rRNggdw
+	WpV8Z1ESImEI6a89o9YPa/iS+HgnmxiIuaomywmJ4qusxXNb3iGr23VIb0N3jt8MWItusM
+	oWyQpcvF1xKnD3k51jETvqsqVgDf4VxSyxGQMp+AkwhmohJ4kEqv3nn761rKTA==
 From: Romain Gantois <romain.gantois@bootlin.com>
-Subject: [PATCH net-next v6 0/7] Fix missing PHY-to-MAC RX clock
-Date: Mon, 11 Mar 2024 10:55:43 +0100
-Message-Id: <20240311-rxc_bugfix-v6-0-adf5133829a2@bootlin.com>
+Date: Mon, 11 Mar 2024 10:55:49 +0100
+Subject: [PATCH net-next v6 6/7] net: phy: qcom: at803x: Avoid hibernating
+ if MAC requires RX clock
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -39,12 +41,10 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAB/V7mUC/2XPwW6EIBAG4FfZcC4bmAG1PfU9mqYRHJWkCw1SY
- 7Px3TtrD6vd48B8Pz9XMVEONImX01VkmsMUUuShejoJP7ZxIBk6ngUoMEpDJfPiP9z30IdFdqZ
- 26HSLtekFg69MfLyFvYlIRUZainjnmz6niyxjpnYXplAbaKA+66pB0FJL3mpDPA9tLClMry6l8
- smzT5db/BimkvLPVnWG7ZG/IFT7VjNIJS1VHjmXbK8OObc2M94xaDhgZEzPPZCr+G/KPmKzw9x
- 6jw1j0zRIpL2vnX7E9o5RHbFl3HStRwWolP1Xe13XX9oQHECsAQAA
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240311-rxc_bugfix-v6-6-adf5133829a2@bootlin.com>
+References: <20240311-rxc_bugfix-v6-0-adf5133829a2@bootlin.com>
+In-Reply-To: <20240311-rxc_bugfix-v6-0-adf5133829a2@bootlin.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
  Heiner Kallweit <hkallweit1@gmail.com>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -59,128 +59,47 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
  linux-stm32@st-md-mailman.stormreply.com, 
  linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
  "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
- Romain Gantois <romain.gantois@bootlin.com>, 
- Clark Wang <xiaoning.wang@nxp.com>
+ Clark Wang <xiaoning.wang@nxp.com>, 
+ Romain Gantois <romain.gantois@bootlin.com>
 X-Mailer: b4 0.13.0
 X-GND-Sasl: romain.gantois@bootlin.com
 
-Hello everyone,
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
 
-This is version six of my series that addresses the issue with some MAC/PHY
-combinations.
+Stmmac controllers connected to an at803x PHY cannot resume properly after
+suspend when WoL is enabled. This happens because the MAC requires an RX
+clock generated by the PHY to initialize its hardware properly. But the RX
+clock is cut when the PHY suspends and isn't brought up until the MAC
+driver resumes the phylink.
 
-Notable changes in v6:
-  - Corrected trailers
+Prevent the at803x PHY driver from going into suspend if the attached MAC
+driver always requires an RX clock signal.
 
-Notable changes in v5:
-  - Exported phylink_pcs_pre_init() as a GPL symbol
-  - Corrected kernel doc for phylink_pcs_pre_init()
-
-Notable changes in v4:
-  - Modified miic_pre_init() to also set the default RMII conversion speed.
-
-Notable changes in v3:
-  - Removed the "interface" argument from pcs_init().
-  - Added a kernel doc for pcs_init().
-
-Notable changes in v2:
-  - Introduced a pcs op for initializing hardware required for MAC
-    initialization, instead of using phylink_validate() for this purpose.
-  - Refactored stmmac to use a generic PCS reference in mac_device_info
-    instead of a model-specific field.
-
-There is an issue with some stmmac/PHY combinations that has been reported
-some time ago in a couple of different series:
-
-Clark Wang's report:
-https://lore.kernel.org/all/20230202081559.3553637-1-xiaoning.wang@nxp.com/
-Clément Léger's report:
-https://lore.kernel.org/linux-arm-kernel/20230116103926.276869-4-clement.leger@bootlin.com/
-
-Stmmac controllers require an RX clock signal from the MII bus to perform
-their hardware initialization successfully. This causes issues with some
-PHY/PCS devices. If these devices do not bring the clock signal up before
-the MAC driver initializes its hardware, then said initialization will
-fail. This can happen at probe time or when the system wakes up from a
-suspended state.
-
-This series introduces new flags for phy_device and phylink_pcs. These
-flags allow MAC drivers to signal to PHY/PCS drivers that the RX clock
-signal should be enabled as soon as possible, and that it should always
-stay enabled.
-
-I have included specific uses of these flags that fix the RZN1 GMAC1 stmmac
-driver that I am currently working on and that is not yet upstream. I have
-also included changes to the at803x PHY driver that should fix the issue
-that Clark Wang was having.
-
-Clark, could you please confirm that this series fixes your issue with the
-at803x PHY?
-
-Best Regards,
-
-Romain
-
-Romain Gantois (2):
-  net: phy: add rxc_always_on flag to phylink_pcs
-  net: pcs: rzn1-miic: Init RX clock early if MAC requires it
-
-Russell King (3):
-  net: phy: add PHY_F_RXC_ALWAYS_ON to PHY dev flags
-  net: stmmac: Signal to PHY/PCS drivers to keep RX clock on
-  net: phy: at803x: Avoid hibernating if MAC requires RX clock
-
- .../net/ethernet/stmicro/stmmac/stmmac_main.c  |  5 +++++
- drivers/net/pcs/pcs-rzn1-miic.c                | 18 +++++++++++++-----
- drivers/net/phy/at803x.c                       |  3 ++-
- drivers/net/phy/phylink.c                      | 13 ++++++++++++-
- include/linux/phy.h                            |  1 +
- include/linux/phylink.h                        |  9 +++++++++
- 6 files changed, 42 insertions(+), 7 deletions(-)
-
---
-2.43.0
-
+Reported-by: Clark Wang <xiaoning.wang@nxp.com>
+Link: https://lore.kernel.org/all/20230202081559.3553637-1-xiaoning.wang@nxp.com/
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+[rgantois: commit log]
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
-- Link to v2: https://lore.kernel.org/r/20240130-rxc_bugfix-v2-0-5e6c3168e5f0@bootlin.com
+ drivers/net/phy/qcom/at803x.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
----
-- Link to v3: https://lore.kernel.org/r/20240212-rxc_bugfix-v3-0-e9f2eb6b3b05@bootlin.com
+diff --git a/drivers/net/phy/qcom/at803x.c b/drivers/net/phy/qcom/at803x.c
+index 4717c59d51d0..2a221b81cf37 100644
+--- a/drivers/net/phy/qcom/at803x.c
++++ b/drivers/net/phy/qcom/at803x.c
+@@ -426,7 +426,8 @@ static int at803x_hibernation_mode_config(struct phy_device *phydev)
+ 	/* The default after hardware reset is hibernation mode enabled. After
+ 	 * software reset, the value is retained.
+ 	 */
+-	if (!(priv->flags & AT803X_DISABLE_HIBERNATION_MODE))
++	if (!(priv->flags & AT803X_DISABLE_HIBERNATION_MODE) &&
++	    !(phydev->dev_flags & PHY_F_RXC_ALWAYS_ON))
+ 		return 0;
+ 
+ 	return at803x_debug_reg_mask(phydev, AT803X_DEBUG_REG_HIB_CTRL,
 
----
-- Link to v4: https://lore.kernel.org/r/20240221-rxc_bugfix-v4-0-4883ee1cc7b1@bootlin.com
-
----
-- Link to v5: https://lore.kernel.org/r/20240301-rxc_bugfix-v5-0-8dac30230050@bootlin.com
-
----
-Maxime Chevallier (1):
-      net: stmmac: don't rely on lynx_pcs presence to check for a PHY
-
-Romain Gantois (4):
-      net: phylink: add rxc_always_on flag to phylink_pcs
-      net: stmmac: Support a generic PCS field in mac_device_info
-      net: stmmac: Signal to PHY/PCS drivers to keep RX clock on
-      net: pcs: rzn1-miic: Init RX clock early if MAC requires it
-
-Russell King (Oracle) (2):
-      net: phylink: add PHY_F_RXC_ALWAYS_ON to PHY dev flags
-      net: phy: qcom: at803x: Avoid hibernating if MAC requires RX clock
-
- drivers/net/ethernet/stmicro/stmmac/common.h       |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    |  8 ++---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 15 ++++----
- drivers/net/pcs/pcs-rzn1-miic.c                    | 28 +++++++++++++++
- drivers/net/phy/phylink.c                          | 25 ++++++++++++-
- drivers/net/phy/qcom/at803x.c                      |  3 +-
- include/linux/phy.h                                |  1 +
- include/linux/phylink.h                            | 42 ++++++++++++++++++++++
- 8 files changed, 111 insertions(+), 13 deletions(-)
----
-base-commit: d7e14e534493328cc5f67baaff2b0c23d32b0a57
-change-id: 20240126-rxc_bugfix-d47b3b1a374f
-
-Best regards,
 -- 
-Romain Gantois <romain.gantois@bootlin.com>
+2.44.0
 
