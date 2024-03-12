@@ -1,39 +1,42 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7A877F12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF38577F1C
 	for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2024 09:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710234167; cv=none; b=Yo0TDNouaLzU488413Qe+NXhlPsT/rcZSrnwe7HPFArGt5LuELebT2gl2eqYLf3d/Anj8WydRrN/cb0ZSjOYupxuHIL0MumeW9b7Jv35Wt730yy6qo5vKtO0yL9kRdx/G4jVbLNPsXRleffu2jETJaLTMJFn4nun/SItnMPIrVc=
+	t=1710234167; cv=none; b=kVuESoGoX3nWaZmRkM4ffIjsDazqJ29UYA6Txg23ps0qythZhAVgYoBJKJZtV8CqAWcjLAKT8FonFheKb6RTiTYg/VCEBiurB9lJXQLoq++HhbhXnbClbNxmWbI0x5cPTgQHjofvcmjk9HZ1nctW5hYHjtPHmEbsDdtTdaCwu48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710234167; c=relaxed/simple;
-	bh=9gnvzaueSysRfcvDGgD8244oB8z4z8auVBAL03DSCgI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SdYgMAnP6esohgfppK8VyyYWa3SR1tN71fXeDj6irPnSOaXx027/4KZ8DbHyRg/E9XTZJ4H0IKl7/EVUH24OMgaAxPuoC0lpBfOxoIZBZBno+XPKrAQNtfFFiK6fdBMBdgrQhPSZJud28HAYiB21unxC8vk/hpivF6HxZBAws5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	bh=OLr9LeT9Hfp1wzFU4tuO63HS0mEUDnRlNc6XgefmHps=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=F6nHOI3guiAUuQqZDNCJqOQDM8vJa6WmkVidGnnFRnxCHicPDCOxw0R4Qc81WzTwPvhvLDpjUQ6bSPBNrtLRc4adbAFB+sMAQ0wuIUYWAD8bB3XyVH0whloMQ0Tzdx6rH4lXLjQQ9TDtoNM3CdLJx0Bijti/uRnWgmXw/PfDs7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
-	by xavier.telenet-ops.be with bizsmtp
-	id xl2d2B0090SSLxL01l2ds8; Tue, 12 Mar 2024 10:02:38 +0100
+	by andre.telenet-ops.be with bizsmtp
+	id xl2d2B00E0SSLxL01l2dRe; Tue, 12 Mar 2024 10:02:37 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rjy1d-003QlU-8U;
+	id 1rjy1d-003Qlc-BG;
 	Tue, 12 Mar 2024 10:02:37 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rjy1t-005m6s-Es;
+	id 1rjy1t-005m73-IJ;
 	Tue, 12 Mar 2024 10:02:37 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] arm64: dts: renesas: r8a779h0/gray-hawk-single: Add remaining serial ports
-Date: Tue, 12 Mar 2024 10:02:33 +0100
-Message-Id: <cover.1709741303.git.geert+renesas@glider.be>
+Subject: [PATCH 3/3] arm64: dts: renesas: gray-hawk-single: Add second debug serial port
+Date: Tue, 12 Mar 2024 10:02:36 +0100
+Message-Id: <6e1faff6a717cb8344661bafcae5db5dcfb53a90.1709741303.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1709741303.git.geert+renesas@glider.be>
+References: <cover.1709741303.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -42,39 +45,85 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+Describe the second debug serial port (CN9800) on the Gray Hawk Single
+board, as provided by HSCIF2, including the SCIF_CLK2 external clock
+source, and all related pin control.
 
-This patch series adds the remaining (High) Speed Serial Communication
-Interfaces with FIFO ((H)SCIF) on the Renesas R-Car V4M (R8A779H0) SoC,
-and enables the second debug serial port on the Renesas Gray Hawk Single
-development board.
+Based on a patch for Gray Hawk in the BSP by Nghia Nguyen.
 
-As SCIF0 can use the same pins as HSCIF0, it has been tested by
-switching the first debug serial port from HSCIF0 to SCIF0.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../dts/renesas/r8a779h0-gray-hawk-single.dts | 25 ++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-I plan to queue this in renesas-devel for v6.10.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  arm64: dts: renesas: r8a779h0: Add remaining HSCIF nodes
-  arm64: dts: renesas: r8a779h0: Add SCIF nodes
-  arm64: dts: renesas: gray-hawk-single: Add second debug serial port
-
- .../dts/renesas/r8a779h0-gray-hawk-single.dts |  25 +++-
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi     | 127 +++++++++++++++++-
- 2 files changed, 150 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+index bc8616a56c039b20..acf1d625ec410e55 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+@@ -18,6 +18,7 @@ / {
+ 
+ 	aliases {
+ 		serial0 = &hscif0;
++		serial1 = &hscif2;
+ 		ethernet0 = &avb0;
+ 	};
+ 
+@@ -90,6 +91,14 @@ &hscif0 {
+ 	status = "okay";
+ };
+ 
++&hscif2 {
++	pinctrl-0 = <&hscif2_pins>;
++	pinctrl-names = "default";
++
++	uart-has-rtscts;
++	status = "okay";
++};
++
+ &i2c0 {
+ 	pinctrl-0 = <&i2c0_pins>;
+ 	pinctrl-names = "default";
+@@ -144,7 +153,7 @@ &mmc0 {
+ };
+ 
+ &pfc {
+-	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-0 = <&scif_clk_pins>, <&scif_clk2_pins>;
+ 	pinctrl-names = "default";
+ 
+ 	avb0_pins: avb0 {
+@@ -170,6 +179,11 @@ hscif0_pins: hscif0 {
+ 		function = "hscif0";
+ 	};
+ 
++	hscif2_pins: hscif2 {
++		groups = "hscif2_data", "hscif2_ctrl";
++		function = "hscif2";
++	};
++
+ 	i2c0_pins: i2c0 {
+ 		groups = "i2c0";
+ 		function = "i2c0";
+@@ -190,6 +204,11 @@ scif_clk_pins: scif-clk {
+ 		groups = "scif_clk";
+ 		function = "scif_clk";
+ 	};
++
++	scif_clk2_pins: scif-clk2 {
++		groups = "scif_clk2";
++		function = "scif_clk2";
++	};
+ };
+ 
+ &rpc {
+@@ -228,3 +247,7 @@ &rwdt {
+ &scif_clk {
+ 	clock-frequency = <24000000>;
+ };
++
++&scif_clk2 {
++	clock-frequency = <24000000>;
++};
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
