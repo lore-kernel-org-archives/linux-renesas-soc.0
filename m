@@ -1,131 +1,493 @@
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563B12C1B1;
-	Fri, 15 Mar 2024 13:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2211A37145;
+	Fri, 15 Mar 2024 14:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710510583; cv=none; b=X3quPi6kVcJN0e79REJ5S4YWr6+4aTXT3/vnXg15I+Rz61n+38dupoz/mIjh7j0Xy91mMCHlAdXcrQ9CQE0N39azt+Qa177hmu+Xv+YcOPmHe4+goMDVbrL1N6y7hTrQkrV4FYv19E63vAynIa25igweZE5QSfvtCb8PVzFZjPU=
+	t=1710513383; cv=none; b=l2MI08FfQNcJ4Mlo23S7T187WneR5Ifzsh+sRn0mn+5efOTM+PeIOBlpItxDmeBMesemDd3sA/Zk3eLnAYuwY615Cv3PlYj3hfgVJe1czS0vPX61QGznbPnukrTeLIbGQK7fcUtcJQBJnYfsFWnszHtHSEX8NKcNDgum1ekqmEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710510583; c=relaxed/simple;
-	bh=h/4Lk/SMGsdQgDM8jcVCYB2+YgZckD6icPn+NiY1FHI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=puXiLzALAOzp8XgPE5YdnAGgzdA8edO6hcdJKvKKE9rednbCZIaphzpnPWrDbW8N3GYw+bWyv1kIfgMvoV6w1+FslKDUal/7TGfhSNFe35Y/9AIx+Cv3DUiqVli9akuYhaIsC/DwfexrpjrYZF2U46Ei/IeRz33Aw683iS3SimI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRJoNyPA; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRJoNyPA"
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-429de32dad9so13223221cf.2;
-        Fri, 15 Mar 2024 06:49:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710510580; x=1711115380; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Wk5gVJOPGfeho8JPzSGCN6ya15q71s7clvvSXBk97w=;
-        b=mRJoNyPAZtvHsbAvBmw/S/sgsuS5SYVg7T6nGfaoklQ8LVGc8Y3AV9472gnfkqAl4r
-         DUp1QVIkcpVgWBiU0o2nAb800HgKNDLt7ofjypiAMHpjch4Qd+T7qxOTWSUYeRSWpIzv
-         yEck0wwKjsos+cTPonhYN+dNd3DSY1JyjNLf4xprOGIgVlior3MmX8n76Ypf4DLlLPmw
-         TmxloVlDeP1tOA/A9cLjTz9JIOqCbnCS1BHGxZMIMfpdMWR2jWCiahpogSjwI+SnXlr3
-         fX961Mo2GdKEDfyfakYOam1Ygp3E2Nbjp2Ip2ycnAcJhBVleBHsSrh8vQjU4VhI8qBF2
-         4Fgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710510580; x=1711115380;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Wk5gVJOPGfeho8JPzSGCN6ya15q71s7clvvSXBk97w=;
-        b=qwz1MTEuS94H77DvnrvOFNapAllUmWJX2ywC6eTQD1LCcezrr94rl77hCbJPvWDeU5
-         UnzB7g6rESqEV+bp//tX+OCwPyvtS/0vzcQlg1VY2HEHI5S7HMiztFYa32oJiwDjiJSC
-         M5sE6ELYMdtylSsDW2vlJrZUZYIrGvF6cfmhv6WLfiXHE51tBrkMxMwh2pB9ueGsm0Dj
-         WnJMnmnMiBrJ14APV61kOomP/jfa+UosSZcgRhEA8Czh2i+ASwA5JvYnFcub6oPDrVDS
-         QvVPQDr+zQt1B5Zt2mgAvpG+jMU4kqhJ0dCbk0PcbC+gt75pNiHXYd9h2BebseYc8/ug
-         EmsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpAkoLvI11ODnZKaVOF0yyRSv8gVES8AQaMm1Wdys/rNBDrE2sXSEn2DPaqHQMLeTE88c/fmkSSovnZzv9fHTUIXejKpnsZZi2VzjwzcTGth7brHItJ0JaM+2b0EKsfIbziNRgxsUMnpu77DOYYNiE6V0dHFXehQVczPXgxwlG5uw2qFr7WCrZmt2+CdYM2jv1ZIlzR4DYabEOFbAdRZ6sNVdniAPX
-X-Gm-Message-State: AOJu0Yyh9uMmCwOyMIjD6lYETcjnn9zQhDq8vNwpB6tayyNZiBDjJQdY
-	FiNy5aN0mh2HP8VtWqrOjDkDA1EyPKZ0sKc8z5PnAhVkCb2oae6SpZMp8gl6YCOWM03kBbQ5O+e
-	gWWdxhD6NIDoPXPCqyNEVYdvYLxM=
-X-Google-Smtp-Source: AGHT+IFgbluFhi9bT4nQa92X1wjIoWmS3ECfzn7cYD7XLw63BZtbQsJ5VYXfx6k5w9DPAygksDQ9/hzBifoHk66galw=
-X-Received: by 2002:ac8:7f8e:0:b0:430:9754:aece with SMTP id
- z14-20020ac87f8e000000b004309754aecemr5898888qtj.42.1710510580223; Fri, 15
- Mar 2024 06:49:40 -0700 (PDT)
+	s=arc-20240116; t=1710513383; c=relaxed/simple;
+	bh=2x1aC9o19gLgK+YXLsUZoQMQ1ZELG3SU5UOC7zlgy4s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P3yM6zSwGIwhe4D3/AMOJtdHeTLdg2I+ymAEdZaaIUM+ZGVt6+S/lVHn8WGG7DBLnjnWH//uCrNqjdlimdRceFcIzAm61RwQ4fSOILit7KrUHcud2TqcnEfHnVGZrDoszSd1ltrm27hvxdqPwNN1g2cQRw3/m53o+zPKZMmDPgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.07,128,1708354800"; 
+   d="scan'208";a="197901593"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 15 Mar 2024 23:36:10 +0900
+Received: from localhost.localdomain (unknown [10.226.93.102])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 85F10435BA56;
+	Fri, 15 Mar 2024 23:36:06 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v19 1/4] dt-bindings: pwm: Add RZ/G2L GPT binding
+Date: Fri, 15 Mar 2024 14:35:55 +0000
+Message-Id: <20240315143558.221340-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240315143558.221340-1-biju.das.jz@bp.renesas.com>
+References: <20240315143558.221340-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240315103033.141226-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240315103033.141226-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdW8qKy4p4vefhrdK861dEi93Awr6NcQBHbLTwO0NWq6kA@mail.gmail.com>
-In-Reply-To: <CAMuHMdW8qKy4p4vefhrdK861dEi93Awr6NcQBHbLTwO0NWq6kA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 15 Mar 2024 13:48:22 +0000
-Message-ID: <CA+V-a8u5SguphwZ2H4xpn=ZX2OaC442bLMBVJtPC+1Rj1GF=9g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] i2c: riic: Introduce helper functions for I2C
- read/write operations
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+Add device tree bindings for the General PWM Timer (GPT).
 
-Thank you for the review.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+v18->v19:
+ * No change.
+v17->v18:
+ * No change.
+v16->v17:
+ * No change.
+v15->v16:
+ * No change.
+v14->v15:
+ * No change.
+v13->v14:
+ * No change.
+v12->v13:
+ * No change.
+v11->v12:
+ * No change.
+v10->v11:
+ * No change.
+v9->v10:
+ * Updated the example gpt4: pwm@10048400-> gpt: pwm@10048000
+ * Keep Rb tag from Rob as the above change is trivial one.
+v8->v9:
+ * Added Rb tag from Rob.
+v7->v8:
+ * Removed Rb tags from Rob and Geert as it modelled as single GPT
+   device handling multiple channels.
+ * Updated description
+ * Updated interrupts and interrupt-names properties
+ * Updated example
+v6->v7:
+ * No change.
+v5->v6:
+ * No change.
+v4->v5:
+ * No change.
+v3->v4:
+ * No change.
+v2->v3:
+ * Added Rb tag from Rob.
+v1->v2:
+ * Added '|' after 'description:' to preserve formatting.
+ * Removed description for pwm_cells as it is common property.
+ * Changed the reg size in example from 0xa4->0x100
+ * Added Rb tag from Geert.
+RFC->v1:
+ * Added Description
+ * Removed comments from reg and clock
+---
+ .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 378 ++++++++++++++++++
+ 1 file changed, 378 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
 
-On Fri, Mar 15, 2024 at 12:59=E2=80=AFPM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Mar 15, 2024 at 11:31=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
-l.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Introduce helper functions for performing I2C read and write operations
-> > in the RIIC driver.
-> >
-> > These helper functions lay the groundwork for adding support for the
-> > RZ/V2H SoC. This is essential because the register offsets for the RZ/V=
-2H
-> > SoC differ from those of the RZ/A SoC. By abstracting the read and writ=
-e
-> > operations, we can seamlessly adapt the driver to support different SoC
-> > variants without extensive modifications.
-> >
-> > This patch is part of the preparation process for integrating support f=
-or
-> > the RZ/V2H SoC into the RIIC driver.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2
-> > - Renamed i2c read/write to riic_readb/riic_writeb
-> > - Made riic as first parameter for riic_writeb
->
-> Thanks for the update!
->
-> > --- a/drivers/i2c/busses/i2c-riic.c
-> > +++ b/drivers/i2c/busses/i2c-riic.c
-> > @@ -105,9 +105,19 @@ struct riic_irq_desc {
-> >         char *name;
-> >  };
-> >
-> > +static inline void riic_writeb(struct riic_dev *riic, u8 offset, u8 va=
-l)
->
-> Please use the same parameter order as writeb(), i.e. "val" before
-> "offset"), to increase uniformity.  This also would make it easier
-> to review your changes using "git {diff,show} --color-words".
->
-Agreed, I will update it in the next version.
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+new file mode 100644
+index 000000000000..d9374144d82d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pwm/renesas,rzg2l-gpt.yaml
+@@ -0,0 +1,378 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pwm/renesas,rzg2l-gpt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G2L General PWM Timer (GPT)
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |
++  RZ/G2L General PWM Timer (GPT) composed of 8 channels with 32-bit timer
++  (GPT32E). It supports the following functions
++  * 32 bits x 8 channels.
++  * Up-counting or down-counting (saw waves) or up/down-counting
++    (triangle waves) for each counter.
++  * Clock sources independently selectable for each channel.
++  * Two I/O pins per channel.
++  * Two output compare/input capture registers per channel.
++  * For the two output compare/input capture registers of each channel,
++    four registers are provided as buffer registers and are capable of
++    operating as comparison registers when buffering is not in use.
++  * In output compare operation, buffer switching can be at crests or
++    troughs, enabling the generation of laterally asymmetric PWM waveforms.
++  * Registers for setting up frame cycles in each channel (with capability
++    for generating interrupts at overflow or underflow)
++  * Generation of dead times in PWM operation.
++  * Synchronous starting, stopping and clearing counters for arbitrary
++    channels.
++  * Starting, stopping, clearing and up/down counters in response to input
++    level comparison.
++  * Starting, clearing, stopping and up/down counters in response to a
++    maximum of four external triggers.
++  * Output pin disable function by dead time error and detected
++    short-circuits between output pins.
++  * A/D converter start triggers can be generated (GPT32E0 to GPT32E3)
++  * Enables the noise filter for input capture and external trigger
++    operation.
++
++  The below pwm channels are supported.
++    pwm0  - GPT32E0.GTIOC0A channel
++    pwm1  - GPT32E0.GTIOC0B channel
++    pwm2  - GPT32E1.GTIOC1A channel
++    pwm3  - GPT32E1.GTIOC1B channel
++    pwm4  - GPT32E2.GTIOC2A channel
++    pwm5  - GPT32E2.GTIOC2B channel
++    pwm6  - GPT32E3.GTIOC3A channel
++    pwm7  - GPT32E3.GTIOC3B channel
++    pwm8  - GPT32E4.GTIOC4A channel
++    pwm9  - GPT32E4.GTIOC4B channel
++    pwm10 - GPT32E5.GTIOC5A channel
++    pwm11 - GPT32E5.GTIOC5B channel
++    pwm12 - GPT32E6.GTIOC6A channel
++    pwm13 - GPT32E6.GTIOC6B channel
++    pwm14 - GPT32E7.GTIOC7A channel
++    pwm15 - GPT32E7.GTIOC7B channel
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-gpt  # RZ/G2{L,LC}
++          - renesas,r9a07g054-gpt  # RZ/V2L
++      - const: renesas,rzg2l-gpt
++
++  reg:
++    maxItems: 1
++
++  '#pwm-cells':
++    const: 2
++
++  interrupts:
++    items:
++      - description: GPT32E0.GTCCRA input capture/compare match
++      - description: GPT32E0.GTCCRB input capture/compare
++      - description: GPT32E0.GTCCRC compare match
++      - description: GPT32E0.GTCCRD compare match
++      - description: GPT32E0.GTCCRE compare match
++      - description: GPT32E0.GTCCRF compare match
++      - description: GPT32E0.GTADTRA compare match
++      - description: GPT32E0.GTADTRB compare match
++      - description: GPT32E0.GTCNT overflow/GTPR compare match
++      - description: GPT32E0.GTCNT underflow
++      - description: GPT32E1.GTCCRA input capture/compare match
++      - description: GPT32E1.GTCCRB input capture/compare
++      - description: GPT32E1.GTCCRC compare match
++      - description: GPT32E1.GTCCRD compare match
++      - description: GPT32E1.GTCCRE compare match
++      - description: GPT32E1.GTCCRF compare match
++      - description: GPT32E1.GTADTRA compare match
++      - description: GPT32E1.GTADTRB compare match
++      - description: GPT32E1.GTCNT overflow/GTPR compare match
++      - description: GPT32E1.GTCNT underflow
++      - description: GPT32E2.GTCCRA input capture/compare match
++      - description: GPT32E2.GTCCRB input capture/compare
++      - description: GPT32E2.GTCCRC compare match
++      - description: GPT32E2.GTCCRD compare match
++      - description: GPT32E2.GTCCRE compare match
++      - description: GPT32E2.GTCCRF compare match
++      - description: GPT32E2.GTADTRA compare match
++      - description: GPT32E2.GTADTRB compare match
++      - description: GPT32E2.GTCNT overflow/GTPR compare match
++      - description: GPT32E2.GTCNT underflow
++      - description: GPT32E3.GTCCRA input capture/compare match
++      - description: GPT32E3.GTCCRB input capture/compare
++      - description: GPT32E3.GTCCRC compare match
++      - description: GPT32E3.GTCCRD compare match
++      - description: GPT32E3.GTCCRE compare match
++      - description: GPT32E3.GTCCRF compare match
++      - description: GPT32E3.GTADTRA compare match
++      - description: GPT32E3.GTADTRB compare match
++      - description: GPT32E3.GTCNT overflow/GTPR compare match
++      - description: GPT32E3.GTCNT underflow
++      - description: GPT32E4.GTCCRA input capture/compare match
++      - description: GPT32E4.GTCCRB input capture/compare
++      - description: GPT32E4.GTCCRC compare match
++      - description: GPT32E4.GTCCRD compare match
++      - description: GPT32E4.GTCCRE compare match
++      - description: GPT32E4.GTCCRF compare match
++      - description: GPT32E4.GTADTRA compare match
++      - description: GPT32E4.GTADTRB compare match
++      - description: GPT32E4.GTCNT overflow/GTPR compare match
++      - description: GPT32E4.GTCNT underflow
++      - description: GPT32E5.GTCCRA input capture/compare match
++      - description: GPT32E5.GTCCRB input capture/compare
++      - description: GPT32E5.GTCCRC compare match
++      - description: GPT32E5.GTCCRD compare match
++      - description: GPT32E5.GTCCRE compare match
++      - description: GPT32E5.GTCCRF compare match
++      - description: GPT32E5.GTADTRA compare match
++      - description: GPT32E5.GTADTRB compare match
++      - description: GPT32E5.GTCNT overflow/GTPR compare match
++      - description: GPT32E5.GTCNT underflow
++      - description: GPT32E6.GTCCRA input capture/compare match
++      - description: GPT32E6.GTCCRB input capture/compare
++      - description: GPT32E6.GTCCRC compare match
++      - description: GPT32E6.GTCCRD compare match
++      - description: GPT32E6.GTCCRE compare match
++      - description: GPT32E6.GTCCRF compare match
++      - description: GPT32E6.GTADTRA compare match
++      - description: GPT32E6.GTADTRB compare match
++      - description: GPT32E6.GTCNT overflow/GTPR compare match
++      - description: GPT32E6.GTCNT underflow
++      - description: GPT32E7.GTCCRA input capture/compare match
++      - description: GPT32E7.GTCCRB input capture/compare
++      - description: GPT32E7.GTCCRC compare match
++      - description: GPT32E7.GTCCRD compare match
++      - description: GPT32E7.GTCCRE compare match
++      - description: GPT32E7.GTCCRF compare match
++      - description: GPT32E7.GTADTRA compare match
++      - description: GPT32E7.GTADTRB compare match
++      - description: GPT32E7.GTCNT overflow/GTPR compare match
++      - description: GPT32E7.GTCNT underflow
++
++  interrupt-names:
++    items:
++      - const: ccmpa0
++      - const: ccmpb0
++      - const: cmpc0
++      - const: cmpd0
++      - const: cmpe0
++      - const: cmpf0
++      - const: adtrga0
++      - const: adtrgb0
++      - const: ovf0
++      - const: unf0
++      - const: ccmpa1
++      - const: ccmpb1
++      - const: cmpc1
++      - const: cmpd1
++      - const: cmpe1
++      - const: cmpf1
++      - const: adtrga1
++      - const: adtrgb1
++      - const: ovf1
++      - const: unf1
++      - const: ccmpa2
++      - const: ccmpb2
++      - const: cmpc2
++      - const: cmpd2
++      - const: cmpe2
++      - const: cmpf2
++      - const: adtrga2
++      - const: adtrgb2
++      - const: ovf2
++      - const: unf2
++      - const: ccmpa3
++      - const: ccmpb3
++      - const: cmpc3
++      - const: cmpd3
++      - const: cmpe3
++      - const: cmpf3
++      - const: adtrga3
++      - const: adtrgb3
++      - const: ovf3
++      - const: unf3
++      - const: ccmpa4
++      - const: ccmpb4
++      - const: cmpc4
++      - const: cmpd4
++      - const: cmpe4
++      - const: cmpf4
++      - const: adtrga4
++      - const: adtrgb4
++      - const: ovf4
++      - const: unf4
++      - const: ccmpa5
++      - const: ccmpb5
++      - const: cmpc5
++      - const: cmpd5
++      - const: cmpe5
++      - const: cmpf5
++      - const: adtrga5
++      - const: adtrgb5
++      - const: ovf5
++      - const: unf5
++      - const: ccmpa6
++      - const: ccmpb6
++      - const: cmpc6
++      - const: cmpd6
++      - const: cmpe6
++      - const: cmpf6
++      - const: adtrga6
++      - const: adtrgb6
++      - const: ovf6
++      - const: unf6
++      - const: ccmpa7
++      - const: ccmpb7
++      - const: cmpc7
++      - const: cmpd7
++      - const: cmpe7
++      - const: cmpf7
++      - const: adtrga7
++      - const: adtrgb7
++      - const: ovf7
++      - const: unf7
++
++  clocks:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - power-domains
++  - resets
++
++allOf:
++  - $ref: pwm.yaml#
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    gpt: pwm@10048000 {
++        compatible = "renesas,r9a07g044-gpt", "renesas,rzg2l-gpt";
++        reg = <0x10048000 0x800>;
++        interrupts = <GIC_SPI 218 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 219 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 220 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 221 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 222 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 223 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 224 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 225 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 226 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 227 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 231 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 232 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 233 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 234 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 235 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 236 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 237 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 238 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 239 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 240 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 244 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 245 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 246 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 247 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 248 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 249 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 251 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 252 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 253 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 257 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 258 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 259 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 260 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 261 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 262 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 263 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 265 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 270 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 271 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 272 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 273 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 274 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 275 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 276 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 277 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 278 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 279 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 283 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 284 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 285 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 286 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 287 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 288 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 289 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 290 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 292 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 296 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 297 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 298 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 299 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 300 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 301 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 302 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 303 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 304 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 305 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 309 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 310 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 311 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 312 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 313 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 314 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 315 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 316 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 317 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 318 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names = "ccmpa0", "ccmpb0", "cmpc0", "cmpd0",
++                          "cmpe0", "cmpf0", "adtrga0", "adtrgb0",
++                          "ovf0", "unf0",
++                          "ccmpa1", "ccmpb1", "cmpc1", "cmpd1",
++                          "cmpe1", "cmpf1", "adtrga1", "adtrgb1",
++                          "ovf1", "unf1",
++                          "ccmpa2", "ccmpb2", "cmpc2", "cmpd2",
++                          "cmpe2", "cmpf2", "adtrga2", "adtrgb2",
++                          "ovf2", "unf2",
++                          "ccmpa3", "ccmpb3", "cmpc3", "cmpd3",
++                          "cmpe3", "cmpf3", "adtrga3", "adtrgb3",
++                          "ovf3", "unf3",
++                          "ccmpa4", "ccmpb4", "cmpc4", "cmpd4",
++                          "cmpe4", "cmpf4", "adtrga4", "adtrgb4",
++                          "ovf4", "unf4",
++                          "ccmpa5", "ccmpb5", "cmpc5", "cmpd5",
++                          "cmpe5", "cmpf5", "adtrga5", "adtrgb5",
++                          "ovf5", "unf5",
++                          "ccmpa6", "ccmpb6", "cmpc6", "cmpd6",
++                          "cmpe6", "cmpf6", "adtrga6", "adtrgb6",
++                          "ovf6", "unf6",
++                          "ccmpa7", "ccmpb7", "cmpc7", "cmpd7",
++                          "cmpe7", "cmpf7", "adtrga7", "adtrgb7",
++                          "ovf7", "unf7";
++        clocks = <&cpg CPG_MOD R9A07G044_GPT_PCLK>;
++        power-domains = <&cpg>;
++        resets = <&cpg R9A07G044_GPT_RST_C>;
++        #pwm-cells = <2>;
++    };
+-- 
+2.25.1
 
-Cheers,
-Prabhakar
