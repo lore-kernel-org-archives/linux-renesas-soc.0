@@ -1,147 +1,110 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBF6376F5;
-	Mon, 18 Mar 2024 09:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF9636103;
+	Mon, 18 Mar 2024 11:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710755528; cv=none; b=OSAeSrEgfxK2aqu93TSpMSweX2UtEQZrCUCkNFx2cuxJVXOCi+V6AbyiO66xUoxDp3oWg2TFSnWDUI+tHmYRwUQYF0z3aRsiZ7h/U/LC6oA+xA3TcAPJP3QFzBwRbEipstRV7zohIYe9V0Vc9Qs2qcH8pJDDoCO6HcRnW7853RQ=
+	t=1710760138; cv=none; b=Qt8wuWsopn3oLj1SQGWOOMDcesmdNdWuuQrH3wBTBHEHUOSyOpMbFuSbmbqlnU3s0xVMoS9P25oppasb1uWOTuN7Ed0c57bblqF6ieXPTEsdQqRx7Hz3VqP00zGmYxKP05HofwqTWFW5WmvtZNKA+y+qB5FLNcQHLij++mTek9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710755528; c=relaxed/simple;
-	bh=QepCC4jh/z1oyfrAB08Nh/+RtZkJcjdQvGuSYzUyAXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XXo/M/Q273n2IfkH83lIWxRJveGhg2fJhJgvcqY2g39xPqjVT19D7OSe5Lr5Vg0nD69+IkH0BKPLpF11SIwFyBF89Imv0Lhc9VocqOpSAb4PXsKNr0imk6htBJ6AETmVF8Esy2kL9Dnpvtq0ytg4Dj/3TIV4GLco51So69MWX4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dc23bf7e5aaso3852817276.0;
-        Mon, 18 Mar 2024 02:52:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710755525; x=1711360325;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hbC4jkIjZgELDVdlA/y+TC0dWbtax/sF1ynKF0NWsYI=;
-        b=gNTuk0C70iicW1VEOSK7h+Ue79Y4IIgKE5sh5Jbl95wgQKNqj6BaX/JVol22oebNdB
-         6517VGoq7YnBQmASrUGQLNNhQ5F7eW98E+hAtiMCcSQHp5g7Y7pkbgvkOvq6a+AfKnXd
-         k6X939R3j/cnlDs1pBn222wiLNQvMGcnFCbldh8I3pgy0P2qv4j+HnEyGUdac/I4q1yM
-         YvXTgsy1ET/OQiiPtqhgCcUh2FOIo+tpOjdYI1/StzYodVYPI03c4/TpPoZjroNC1aMt
-         76yhaj8sMbd4USx6raYsO/OdxWb3Jj+/4135KHEHs9rO6B4Uk5St2g1vchcforGGvTxa
-         SIqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVil0hXWtzWhx1bnaURkNQ3AuL/lU/MdG/u+Oqp5TpqHFhKjaHeJqYPK+WHbSYcFd0E10pQ8FpL0V75iLkkcyn2tn8nNJaFXqG2rDFKN6ntiQ9I3bp64g5NhUUATQCsgwKH3FJ3vExcjn7tq2s=
-X-Gm-Message-State: AOJu0YxAiAr22uF4CzjkmTgAKWdz5/h2VkNGYd5VcCuzO8vHPxRiLQwa
-	PqVC/vwgt8k0Nkyf9uQSo+Rb+p840Qg2N4g1Uveyrm7jOezvM9lEf/VbWVY6KIw=
-X-Google-Smtp-Source: AGHT+IFX4cSvfRhJAQTdOXWimB5MIi6ohfvPHPlkKuUVChiy+XvN/8rq0x9F/ZJ1ej9BIYkYMghhJQ==
-X-Received: by 2002:a25:8591:0:b0:dcd:59e4:620c with SMTP id x17-20020a258591000000b00dcd59e4620cmr9342436ybk.49.1710755524844;
-        Mon, 18 Mar 2024 02:52:04 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id b11-20020a252e4b000000b00dc7622402b9sm1692646ybn.43.2024.03.18.02.52.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 02:52:04 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-609f060cbafso48302837b3.0;
-        Mon, 18 Mar 2024 02:52:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXj33tVkEB0Vg/l5qTHbcKcpFqpZxqOqyTpZMn/zwZ5AZgIJCbNPhh8qzW21aMobFz958zX5IT1eEYmof1AfxwX4L3/ajtgwmMGMV0BtWpeM7utrqUwIJamkUtM+3WdM+rP2vifx7RNKvmgcok=
-X-Received: by 2002:a81:9e44:0:b0:608:3785:707a with SMTP id
- n4-20020a819e44000000b006083785707amr11164943ywj.52.1710755524097; Mon, 18
- Mar 2024 02:52:04 -0700 (PDT)
+	s=arc-20240116; t=1710760138; c=relaxed/simple;
+	bh=GusU4Gh1xCjEiEhu443u79bs/aqaVM5wHvkScYkv2ow=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Nb+hF62FmiZ0iuRhP6QFF4ts76oGs78rZaZhMl0HmMVO/QbPsvRUX6Q0esC8CePLCs4o5tndWSZjA9oQdROA/McugBIFY1kYaaUZobNb3Ir6WQS47H4TuC/QfaxROATpB8gFuQrbi1hPJRfXRWI6dHMlGS0w46Lw4boo1Zg0DUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.07,134,1708354800"; 
+   d="scan'208";a="198188837"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 18 Mar 2024 20:08:53 +0900
+Received: from localhost.localdomain (unknown [10.226.93.20])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C78CD4253BDA;
+	Mon, 18 Mar 2024 20:08:49 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 1/3] clk: Update API documentation related to clock disable
+Date: Mon, 18 Mar 2024 11:08:40 +0000
+Message-Id: <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240318110842.41956-1-biju.das.jz@bp.renesas.com>
+References: <20240318110842.41956-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240315183921.375751-1-biju.das.jz@bp.renesas.com>
- <20240315183921.375751-6-biju.das.jz@bp.renesas.com> <CAMuHMdW5ZWOXuWc+thDTJ6+h7mcH7o+N6tVLhhkH=TKG2BZC6A@mail.gmail.com>
- <OSAPR01MB1587E4455F259156CE371F04862D2@OSAPR01MB1587.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSAPR01MB1587E4455F259156CE371F04862D2@OSAPR01MB1587.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Mar 2024 10:51:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV4BEr7uO8FiHbPSiRFhRwdXu0+=xqbG65UhStdpcy2BA@mail.gmail.com>
-Message-ID: <CAMuHMdV4BEr7uO8FiHbPSiRFhRwdXu0+=xqbG65UhStdpcy2BA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] usb: renesas_usbhs: Update usbhs pipe
- configuration for RZ/G2L family
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Huy Nguyen <huy.nguyen.wh@renesas.com>, Rob Herring <robh@kernel.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"biju.das.au" <biju.das.au@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Biju,
 
-On Mon, Mar 18, 2024 at 10:46=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Fri, Mar 15, 2024 at 7:39=E2=80=AFPM Biju Das <biju.das.jz@bp.renesa=
-s.com> wrote:
-> > > The RZ/G2L family SoCs has 10 PIPE buffers compared to 16 pipe buffer=
-s
-> > > on RZ/A2M. Update the pipe configuration for RZ/G2L family SoCs and
-> > > use family SoC specific compatible to handle this difference.
-> > >
-> > > Added SoC specific compatible to OF table to avoid ABI breakage with
-> > > old DTB. To optimize memory usage the SoC specific compatible will be
-> > > removed later.
-> > >
-> > > The pipe configuration of RZ/G2L is same as the default one, so reuse
-> > > the common table by renaming
-> > > usbhs_default_pipe[]->usbhs_rcar_default_pipe[]
-> > > and changing static qualifier to global to fill the pipe configuratio=
-n
-> > > data.
-> > >
-> > > Signed-off-by: Huy Nguyen <huy.nguyen.wh@renesas.com>
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > ---
-> > > v2->v3:
-> > >  * Updated commit description
-> > >  * Dropped usbhsc_rzg2l_pipe[] and reusing the default_pipe[].
-> >
-> > Thanks for the update!
-> >
-> > > --- a/drivers/usb/renesas_usbhs/common.c
-> > > +++ b/drivers/usb/renesas_usbhs/common.c
-> > > @@ -363,8 +363,8 @@ static void usbhsc_clk_disable_unprepare(struct u=
-sbhs_priv *priv)
-> > >   *             platform default param
-> > >   */
-> > >
-> > > -/* commonly used on old SH-Mobile SoCs */ -static struct
-> > > renesas_usbhs_driver_pipe_config usbhsc_default_pipe[] =3D {
-> > > +/* commonly used on old SH-Mobile and RZ/G2L family SoCs */ struct
-> > > +renesas_usbhs_driver_pipe_config usbhsc_rcar_default_pipe[] =3D {
-> >
-> > So why rename this to have "rcar" in the name?
->
-> Oops, it is not used by R-Car, but used by old SH SoCs and RZ/G2L
-> As this structure becomes global now, Will use usbhsc_rzg2l_default_pipe[=
-] instead??
->
-> Or
->
-> Will make this as static like current driver and drop filling pipe config=
-s in info and
-> use .has_new_pipe_configs to zero for devices using usbhsc_default_pipe[]=
-??
+The API's related to clk disable operation does not explicitly
+states the synchoronous or asynchrous behaviour as it is driver
+dependent. So make this part clear in API documentation.
 
-I think just using .has_new_pipe_configs is the simplest solution.
+Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2->v3:
+ * No change.
+v2:
+ * New patch.
+---
+ drivers/clk/clk.c            | 3 ++-
+ include/linux/clk-provider.h | 3 ++-
+ include/linux/clk.h          | 3 ++-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 25371c91a58f..f5fa91a339d7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1010,7 +1010,8 @@ static void clk_core_unprepare_lock(struct clk_core *core)
+  * if the operation may sleep.  One example is a clk which is accessed over
+  * I2c.  In the complex case a clk gate operation may require a fast and a slow
+  * part.  It is this reason that clk_unprepare and clk_disable are not mutually
+- * exclusive.  In fact clk_disable must be called before clk_unprepare.
++ * exclusive.  In fact clk_disable must be called before clk_unprepare.  The
++ * synchronous or asynchronous clock gating operation is driver dependent.
+  */
+ void clk_unprepare(struct clk *clk)
+ {
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 4a537260f655..5b493024e1ec 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -113,7 +113,8 @@ struct clk_duty {
+  *		sleep.
+  *
+  * @disable:	Disable the clock atomically. Called with enable_lock held.
+- *		This function must not sleep.
++ *		This function must not sleep. The synchronous or asynchronous
++ *		disabling of the clock is driver dependent.
+  *
+  * @is_enabled:	Queries the hardware to determine if the clock is enabled.
+  *		This function must not sleep. Optional, if this op is not
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 00623f4de5e1..84b02518791f 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -681,7 +681,8 @@ int __must_check clk_bulk_enable(int num_clks,
+  * @clk: clock source
+  *
+  * Inform the system that a clock source is no longer required by
+- * a driver and may be shut down.
++ * a driver and may be shut down. It is not guaranteed to ever actually
++ * be stopped, that will be driver dependent.
+  *
+  * May be called from atomic contexts.
+  *
+-- 
+2.25.1
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
