@@ -1,33 +1,33 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0765657BA
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Mar 2024 15:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4AA7FBAB
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Mar 2024 15:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710863715; cv=none; b=LUFNJmBqRhU4G8nxLuSJ74P1neGmYN+U2KMMBwum39qndGNFwJIVZq6UTwzlme79genwRJWjDNrWUB2kyUzqH1V+44tgkNhY6Io9yGAX9EEwQI2oPlPvmU1+4XvecwNWCPxIrAHUBWPi0Nxuqu8Aie5ecCcDss6b6igWyub74iU=
+	t=1710863750; cv=none; b=U18KA953T4KFek2v80rvRuJ2+R7cj/6KSLylC7PtX60FdkByxCYe46nYcDZ/0Ch/03DZPVH34PXhDStZD9bpVRmJ0Tcp7IaMDbKOfeIvDvhnmSNRk16Gyh7OjvrcLSanjWifa5zED77UAfyH1pHCmbldczKCmdHY3dUOvq4L2l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710863715; c=relaxed/simple;
-	bh=idyn9pxC0Yq94AhE8IsXjpuWnDxrKpAXO5lMswt/S9I=;
+	s=arc-20240116; t=1710863750; c=relaxed/simple;
+	bh=l3fAhMFwXdTrWlgZNWbnVdbuoEcQXgaCLUpfAHd+muQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GSrbh/TVgKX+FKQvu6/mE0bIjKtMcYluJdSCx9xkqW8jcDQYQOz7MXMO2DCSUvB6j8U4YwxdK43rvhYbYoD/IlEc5aBYrgq1mLuspr6VPEAaXZBKqTJxIyr9aX80lY7bYJ0zaXPCSKW1rCVNq3OVvX2zBPhixpl4eytPyfwUz9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
+	 MIME-Version; b=PXKTYoZooNXucdiEEdhj2b7l74kPpwoxIQb7eZoRkzafTWMTS1kh4DTOkqnlgvhjN9L565VnD0FxlHhu0bANl0uN4TUcLFyBrOUcbgzCR0N9G3ZKQvd+YD56pOs00/X9L3ZNcYddRRN/QKhdO47ynXJ+HlPj9kYP8/wGCEoKG8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4Tzbfx2KwFz4wxrs
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4Tzbfx2MPHz4wxhF
 	for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Mar 2024 16:46:17 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
 	by andre.telenet-ops.be with bizsmtp
-	id 0fm82C00H0SSLxL01fm8mn; Tue, 19 Mar 2024 16:46:10 +0100
+	id 0fm82C00K0SSLxL01fm8mp; Tue, 19 Mar 2024 16:46:10 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rmbev-00468o-GC;
+	id 1rmbev-00468j-Ez;
 	Tue, 19 Mar 2024 16:46:08 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rmbfE-000pFd-Dd;
+	id 1rmbfE-000pFV-Bw;
 	Tue, 19 Mar 2024 16:46:08 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -41,9 +41,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support
-Date: Tue, 19 Mar 2024 16:46:05 +0100
-Message-Id: <dd77275fef23ef3dc335a43ffa9aeca0ff7c41c6.1710862701.git.geert+renesas@glider.be>
+Subject: [PATCH 1/3] dt-bindings: timer: renesas,tmu: Add R-Mobile APE6 support
+Date: Tue, 19 Mar 2024 16:46:03 +0100
+Message-Id: <18b3778031f939a8e40a9865f9be0a9ec2e28a1e.1710862701.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1710862701.git.geert+renesas@glider.be>
 References: <cover.1710862701.git.geert+renesas@glider.be>
@@ -55,29 +55,34 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document support for the Timer Unit (TMU) on R-Car Gen2 SoCs.
+Document support for the Timer Unit (TMU) on the R-Mobile APE6 (R8A73A4)
+Soc.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/timer/renesas,tmu.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/devicetree/bindings/timer/renesas,tmu.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-index 7670ec74eabdf4c3..50b5225ceb10b64c 100644
+index 2c915101d7bcec68..8df9d4718cf82a28 100644
 --- a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
 +++ b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-@@ -34,6 +34,11 @@ properties:
-           - renesas,tmu-r8a774e1 # RZ/G2H
-           - renesas,tmu-r8a7778  # R-Car M1A
-           - renesas,tmu-r8a7779  # R-Car H1
-+          - renesas,tmu-r8a7790  # R-Car H2
-+          - renesas,tmu-r8a7791  # R-Car M2-W
-+          - renesas,tmu-r8a7792  # R-Car V2H
-+          - renesas,tmu-r8a7793  # R-Car M2-N
-+          - renesas,tmu-r8a7794  # R-Car E2
-           - renesas,tmu-r8a7795  # R-Car H3
-           - renesas,tmu-r8a7796  # R-Car M3-W
-           - renesas,tmu-r8a77961 # R-Car M3-W+
+@@ -21,6 +21,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - renesas,tmu-r8a73a4  # R-Mobile APE6
+           - renesas,tmu-r8a7740  # R-Mobile A1
+           - renesas,tmu-r8a774a1 # RZ/G2M
+           - renesas,tmu-r8a774b1 # RZ/G2N
+@@ -94,6 +95,7 @@ if:
+       compatible:
+         contains:
+           enum:
++            - renesas,tmu-r8a73a4
+             - renesas,tmu-r8a7740
+             - renesas,tmu-r8a7778
+             - renesas,tmu-r8a7779
 -- 
 2.34.1
 
