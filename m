@@ -1,102 +1,121 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A1E2BB1A
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2024 08:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3F039FFF
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2024 09:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710923672; cv=none; b=MOFS5DwWUre4VkxsXc9YByy3CKaCI8zXTTf8a7Q56ppxdZ6k8R6SE8mPnilEKbM/Jt+wNDUN+p35MDz57MC76hP2rZez3at3vg5b5SzzN1sdHgYX/6+nX1KInUrJI+UvZlEtqR/XFbplZjRU1plpKZDXlNXFsnC/BaYlVGbhGi0=
+	t=1710927229; cv=none; b=bbFy4gjPb2uMFZyj62fRqe0K/ktRoNEdT7ZiFP1j32o732RpeVHWuXIzyuXejUbJx65P5r3V5ljI8WFM5xaIuo8qfaBKbtdWXbasHg79n4Hm3n/TdqRkXzQDesPCYqENIdONRkqHDYWoadSiTf0C5Xgd+/EYZTgx1k0ODrZhzos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710923672; c=relaxed/simple;
-	bh=V4yOTkQZEp9Ehct/lijhmR5PM9ahoFWVV8uJLjz0EQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SUckX6RURsApfCgge31Fkt3gCJHGPCavsq8983vTyxHq991+hyz3J6XIZkobEb2UVNlk0HbVu7LGC2z1Fjx5Sr+tpQcpOmV+Ql91UwoVljvf5QGOn7h2NNi8/2snxM8qbkSp3KROPiwUs5Cvz2/FqKK3z08wvXnKPk88u2Zv31c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PtzjQZ6h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710927229; c=relaxed/simple;
+	bh=K81Snpx/PZKt1ic2UM/mhDTGjLrRTC+A2BXoNJtKzHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lP+oUYDttquyYwwA8eIm4Wb8eVML8FUxdkj0vVkxZtAxJdvARLGtti8LVr+J+9MfYWex0vUuZRB3HiplNRTb9UBAtUzU3Lovg5Y2R5XjHr5h+bY+/wRUOAkxuUcB7P+17rJ51cyI0lfDjh/UIBz0LjSo65M44qarHR2lfEyHEAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HApt/a6P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtzjQZ6h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56018C433C7;
-	Wed, 20 Mar 2024 08:34:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HApt/a6P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11C97C433C7;
+	Wed, 20 Mar 2024 09:33:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710923671;
-	bh=V4yOTkQZEp9Ehct/lijhmR5PM9ahoFWVV8uJLjz0EQc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PtzjQZ6hO9o1q9N1GHETHUO6m0ZRTErUZ+R6V5JFqlc9j3FDTqLmf2WxlSzvOg+/f
-	 rGKwdxrO40DJNeWCRySbBJne/X9gVXLiAuEPa3sXBpphpK4LERZqQN8TpDpv46SQrY
-	 7gJTWNRY/0MFhh51KXLL6vdqRjd7TbK4beDfc9AoEjOm7n4tez0um3374n0biWkS3M
-	 AncnIhO0NgFA+essmqCNl4l0ymFaTYZwKVWaEq/1+mblbl2/pYeTcwXL7tz7NJhrLd
-	 KZJGS12txoPtU+YC0GygJ1Y1ypZvvM0pPSHehSxYYHsZ2H/CVPUTk2gfEnubB8MD72
-	 R9BykcS+ImPZw==
-Date: Wed, 20 Mar 2024 09:34:28 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] ARM: dts: renesas: Add more TMU support
-Message-ID: <ZfqflGGizKDALEU5@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-References: <cover.1710864964.git.geert+renesas@glider.be>
- <ZfqLY8Ej6kNnAMQA@ninjato>
- <CAMuHMdWeq6c8F=i7SgEt+HBBpknaEFTsrxM26OrDpjzOS_YTZw@mail.gmail.com>
+	s=k20201202; t=1710927228;
+	bh=K81Snpx/PZKt1ic2UM/mhDTGjLrRTC+A2BXoNJtKzHw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HApt/a6PPxjB0TVGU8kl4zFwOuylx9fRiXCB/LhrFwv0AVBhHw+3u8lYtRXcNQZaW
+	 JRgO64eRK4RM9oVcqO3tJjqSrKuGE0Sw1uOc3MbWomYOj+VDfT9m/KishEHgGKsrjZ
+	 v2/VA5BaEUUKCiVSbmkAPw4HyS0CviSXavKa9eXGyXWfHLdPR9FRrMFKC5yuB2VXZz
+	 JeeWiTwBTwnYukS+H7zhxNaB95KdZG++vIjmKer0gbiRj0AIEZnTzFeDkvpxtbLzS4
+	 N/oi5A80/zL/RSctmdL8qTv08dHYFcz9lWn7EwIlDeaVmTQvT4R5MxAmV4KipPYVdU
+	 EI+CsIXlu/uOg==
+Message-ID: <48276bf6-75d3-411e-b29a-2303e5d4bfbd@kernel.org>
+Date: Wed, 20 Mar 2024 10:33:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iPEihJ1eaoYQqJr7"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWeq6c8F=i7SgEt+HBBpknaEFTsrxM26OrDpjzOS_YTZw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] ARM: dts: renesas: r8a73a4: Add TMU nodes
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <cover.1710864964.git.geert+renesas@glider.be>
+ <1a60832f3ba37afb4a5791f4e5db4610ab31beb3.1710864964.git.geert+renesas@glider.be>
+ <20240319224223.GC3438308@ragnatech.se>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240319224223.GC3438308@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 19/03/2024 23:42, Niklas Söderlund wrote:
+> Hi Geert,
+> 
+> Thanks for your patch.
+> 
+> On 2024-03-19 17:29:05 +0100, Geert Uytterhoeven wrote:
+>> Add device nodes for the Timer Units (TMU) on the R-Mobile APE6 SoC,
+>> and the clocks serving them.
+>>
+>> Note that TMU channels 1 and 2 are not added, as their interrupts are
+>> not wired to the interrupt controller for the AP-System Core (INTC-SYS),
+>> only to the interrupt controller for the AP-Realtime Core (INTC-RT).
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
---iPEihJ1eaoYQqJr7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please run scripts/checkpatch.pl and fix reported warnings. Some
+warnings can be ignored, but the code here looks like it needs a fix.
+Feel free to get in touch if the warning is not clear.
 
-Hi Geert,
+DT bindings are separate patches.
 
-> > Huh? It works on Lager and fails on Koelsch? Do you have a log file?
->=20
-> Of course it succeeded on the next try...
+Best regards,
+Krzysztof
 
-Interesting. I will try Lager then and see if it fails there as well. It
-is only TMU3, right?
-
-> Perhaps a subtle driver issue, or an issue with the test?
-
-My gut feeling says "the latter", but I have no real proof.
-
-Happy hacking,
-
-   Wolfram
-
-
---iPEihJ1eaoYQqJr7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmX6n5EACgkQFA3kzBSg
-KbaYFg/+IrnzFG08gVYHbm54NX2xz43L7CheDDQ8IlDngJPewTX0SEn0cJwCNufs
-n8AUJJKVB22VNHL+KCiRuZwWOS+DmEtI8Eoh2Rb6MBXGlNiejRX5qRw3jZwon3+d
-eHOsHlKk/hwzoQXLBQCouYprVYOWIIMtuiardI0F4VuS6iZG0P9PbRiOvoJZU6Yo
-Dxcp95ITZtgT/8yJsjkQU86YRSZGMKTLXHLG7auBAIoLQ0Q/eTgJ8m2hBGARfFx1
-Vx35R0VJC7swI/MiCeLwKE2PqgPLVbn+CjjBbNyNLaG0FpSnhSzmop/6zGApq4u8
-pXBvz8OSb/ZqJPcmyCz3bv463kFO9F158+amFqu5j4tVrvPQvqN7mMZ9S6abNFe0
-xk9OYCUba8ns2T2MULfkqrhGZ+WaI2cVVOyddmrtXuF9uYOuV8JmqH39VS1+0TFi
-FjQtOtxTUNtTFx9Iszv5YhJNhdjc1L71B5u7aZSSOllQG+vBnMVVfpLr2DWurAE6
-Zf5sq2JOy2NRob54xg++vzEx22X5WkQVg7iE81KKymilwWA4MatDXxL5R0W4yu5b
-oVCXeKbq2h+SSCW8PCLGZrCSLvJnr5ilxbb2yGnCUa0dSOVpu8FQgsa/TGhh7ckU
-U1r+lWWAmSxdHTPq3slpEaDh9JXequSorH8mLHJ8H+VvyQLqdOw=
-=/h0L
------END PGP SIGNATURE-----
-
---iPEihJ1eaoYQqJr7--
