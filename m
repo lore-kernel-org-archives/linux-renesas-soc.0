@@ -1,101 +1,87 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7656A3D980
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2024 10:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE83A38F82
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2024 10:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710929232; cv=none; b=iBLA3mfMRFI8KldIs+aKfUhBEK0Scfi/Ajk2VEQtrc7eKCzDDje5KYUg6ZTn90ZImKtl8Rg2jnHXQGBiPTwZKPrCePSKz2pIuhl2v5BiIocOdOpG4CPwOP9RqsYCLZNq4nHYfMQ8XWkAZFUforUsc0CZnXeiXFtyCQwPx+Z5JYk=
+	t=1710929369; cv=none; b=WzjZbXfSTh81tAnocW2WqAjdaWP82UPMS4FyIwTHLITynR/GorCN5Zw1csD6RDwKeSFSyOjAcY9c+JTAcoMKjKCVlmQcZ8m6R0xOCccsa9Eefh49oks99MXZGUZ0AK83hHMhFC4ekSfnwxPC/vP/iJ+5h15m9OT2gy+lywhLGeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710929232; c=relaxed/simple;
-	bh=yFj574tlq7YFiCTNPKHv/jo8zeCSbfS4pUwH+mSz6e4=;
+	s=arc-20240116; t=1710929369; c=relaxed/simple;
+	bh=RXWKnZM/iz+NQ+l83Xr5PIGl0+xH2yg2mtS8J9MgK7k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DAE0LqNIZB+xfDTL3l2sY4lcMDx2QSfcs0o6EPB29+yX+o+eDlaSiGwbQ4YAjSriuhATQ3MUtDAhUmmwRW4h5UtmZJh9gujgHG+qhaxmQtZg6TvTB57yVhcmacTmRLsDPijWAHdXVb05samAcV6geHMOnJSb7sucU9dZVweYris=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=L2LFtgAVyfs86kJZpc5Cfb6hMCPaAeWUw926R16HJX11qk5PFPjRBMaiX1s9ZVX6qtV8nCMgcvDgh2KvVgGAji8m+Ct0zjgDA261NeP5xvhkFs+GsT08AZvRohvS1JUDx1La7Qiuqq0ms2SX8E5UdJByazryalScjU8BqzGDZ6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dcc80d6006aso6147972276.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2024 03:07:10 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-60cbcd04de9so62767377b3.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2024 03:09:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710929229; x=1711534029;
+        d=1e100.net; s=20230601; t=1710929366; x=1711534166;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w4jsxh0mMrpskS3o6tIyEhxUJk7pnrbzIEz6f3B1s7w=;
-        b=jT58eW2QlmakGeFDjDrwTgEBrIm5kkGvT/QVRGf4bWhE863+LkslShqWx7gLIIYy7J
-         5ogLk49Sjre6C2obRSKJOxxfJVAWQHubkFlRfx+5bbDJlFpK6pbUVDfW+yJsUUT8X6to
-         L2tea7fcXWnaI3c1KDaJQtL3CduKYE+gCprTTSCEXMLbiCHyikD45QX+MwnykxymH4kw
-         XzX0fV4qY+KZwV5doJeYtg82FolhVUZNATQ21p3/H09waaSFPTVxho0Ut5aRklljbiNR
-         /4miROEW95vrCas1R1vdcVQmEHFdrUYU0s9kRhLBG03M0bBZKplXZnYGUMXa/EuNRfRH
-         k0bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUb3//T1sYUQILyrvFrfuGs/Y56wXcI/kXELjjw4Dk19RzRpgt4SoCNzTKxDz9xDisVANMjA9F4YPMOGrx1udaX9V5mPY72f2NiscKXs7c+kjE=
-X-Gm-Message-State: AOJu0Yzy+p0vPSADu1vCCx6OD9W+/nJM1GVHTlm7gzVJPgodVaq+xW3u
-	oUxnOd2fmTc4y2FJqAijqyp0O6X7f5V2rvoWlB6SB9pGG026kdnieyTpo5v+6Uw=
-X-Google-Smtp-Source: AGHT+IEmIIUxcDk3Z2g+j8DO2IFW+l9xikM7lNfCgOqgj5GULvbEF4ltCQApYkVoVVymx5e7e/V6eQ==
-X-Received: by 2002:a25:ac47:0:b0:dcc:b719:4e4f with SMTP id r7-20020a25ac47000000b00dccb7194e4fmr12240027ybd.53.1710929228930;
-        Wed, 20 Mar 2024 03:07:08 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id m1-20020a258001000000b00dce0f2db9acsm2465486ybk.34.2024.03.20.03.07.08
+        bh=OM2co56xfae06ZAGOw7vqz7MiouDdSWH0MOOEW9dV/E=;
+        b=AkNzgCFKhuAbxcDfHWRZMPCI812/j263/f3S4wGprezK1242Q5lgpLzHlfiyHDx6Ds
+         vnzWHyfm16mSzLRtmyYCl64MUJz91laYmpEihxanq1M0YPfubadFe0RG1m32cL+EWJOA
+         knLdRvI3mI0ITDyr3ja+J6nLvozYAiGN6q7x+IvPuWwL8eyZKKlmLfi+7Eg3SSU4uktt
+         TpCy/GlAbBGeYKRr2I6sAtqltwiyHVgTfdOESLpRf7tNl2/9LaW/jvnIaSKhKgjra5z7
+         rIP9DuEwbFrhru1jz0VHF9xcw4XE0i5Da6M/FUGHckM1G+crlnvl/oXcXczs3tF/nR61
+         JeGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHVJ09vtVWam0ZQ6mqd3r0Vqi1671dEMp6bFziJh4FMg3u0wkmuSTIIi+cIImVvz0/iOClgaNXdXnVY/MiN2esQJ7xQGRRruQzHqcxj0Fz/yA=
+X-Gm-Message-State: AOJu0Yy5bAuw3XEBLy6FwrZDq+wfniT0KDdWEyzwyCi2s0qUdMNH1Qud
+	OZsSXgiGfcm5RVyeR4moToZL/w/e//LxqEgTDEsrhpsSbYPyrErCMJQPgKet+2Q=
+X-Google-Smtp-Source: AGHT+IEP38+QFNEkZAVLaye43U9wBEeKvZ6adCkU8jPWqmyZLl/3o362C++hVYZ0qJrdDV4m509e8w==
+X-Received: by 2002:a81:a54d:0:b0:60a:32b1:d489 with SMTP id v13-20020a81a54d000000b0060a32b1d489mr15342300ywg.31.1710929366401;
+        Wed, 20 Mar 2024 03:09:26 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id y74-20020a81a14d000000b0060894d466ffsm2789049ywg.121.2024.03.20.03.09.26
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 03:07:08 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dbed0710c74so5253711276.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2024 03:07:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKk+HBmm4bP/rK9XSzYFTdVuaDxFL+y9hb50ogmtJRVjH2vYCf5bfi6gnE7LUK1TFkOyZumCJI4uLh58LzHrVehm/jOgEcxSKRiNrlZhI8gUw=
-X-Received: by 2002:a25:688b:0:b0:dcf:c6d2:6c5f with SMTP id
- d133-20020a25688b000000b00dcfc6d26c5fmr12807429ybc.26.1710929227862; Wed, 20
- Mar 2024 03:07:07 -0700 (PDT)
+        Wed, 20 Mar 2024 03:09:26 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-609ed7ca444so61654147b3.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2024 03:09:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWzCjOuQOBB5LhtXLvxy9Uzw8S53/PU3PhnhPh/Im+OKniH4/L3S1NadJ8YfhMjLHOktPsMOfulUBeZL9wAMCZtqFHhlkMcnX3/tIb1fVEF4fk=
+X-Received: by 2002:a0d:e8c7:0:b0:609:fa49:2112 with SMTP id
+ r190-20020a0de8c7000000b00609fa492112mr17683030ywe.27.1710929366007; Wed, 20
+ Mar 2024 03:09:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1710864964.git.geert+renesas@glider.be> <1a60832f3ba37afb4a5791f4e5db4610ab31beb3.1710864964.git.geert+renesas@glider.be>
- <20240319224223.GC3438308@ragnatech.se> <48276bf6-75d3-411e-b29a-2303e5d4bfbd@kernel.org>
-In-Reply-To: <48276bf6-75d3-411e-b29a-2303e5d4bfbd@kernel.org>
+References: <cover.1710864964.git.geert+renesas@glider.be> <ZfqLY8Ej6kNnAMQA@ninjato>
+ <CAMuHMdWeq6c8F=i7SgEt+HBBpknaEFTsrxM26OrDpjzOS_YTZw@mail.gmail.com> <ZfqflGGizKDALEU5@shikoro>
+In-Reply-To: <ZfqflGGizKDALEU5@shikoro>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 20 Mar 2024 11:06:56 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUk5RuhnkuX0=zdDSemZDe1F0icDE6ayioCujpgP4CYvg@mail.gmail.com>
-Message-ID: <CAMuHMdUk5RuhnkuX0=zdDSemZDe1F0icDE6ayioCujpgP4CYvg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ARM: dts: renesas: r8a73a4: Add TMU nodes
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
+Date: Wed, 20 Mar 2024 11:09:14 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUfdcOnPXLuwtfKXub=TrVA9wxM=etNxN1hqkbQ+cLNrw@mail.gmail.com>
+Message-ID: <CAMuHMdUfdcOnPXLuwtfKXub=TrVA9wxM=etNxN1hqkbQ+cLNrw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ARM: dts: renesas: Add more TMU support
+To: Wolfram Sang <wsa@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hi Wolfram,
 
-On Wed, Mar 20, 2024 at 10:33=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
-> On 19/03/2024 23:42, Niklas S=C3=B6derlund wrote:
-> > On 2024-03-19 17:29:05 +0100, Geert Uytterhoeven wrote:
-> >> Add device nodes for the Timer Units (TMU) on the R-Mobile APE6 SoC,
-> >> and the clocks serving them.
-> >>
-> >> Note that TMU channels 1 and 2 are not added, as their interrupts are
-> >> not wired to the interrupt controller for the AP-System Core (INTC-SYS=
-),
-> >> only to the interrupt controller for the AP-Realtime Core (INTC-RT).
-> >>
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Mar 20, 2024 at 9:34=E2=80=AFAM Wolfram Sang <wsa@kernel.org> wrote=
+:
+> > > Huh? It works on Lager and fails on Koelsch? Do you have a log file?
 > >
-> > Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+> > Of course it succeeded on the next try...
 >
-> Please run scripts/checkpatch.pl and fix reported warnings. Some
-> warnings can be ignored, but the code here looks like it needs a fix.
-> Feel free to get in touch if the warning is not clear.
->
-> DT bindings are separate patches.
+> Interesting. I will try Lager then and see if it fails there as well. It
+> is only TMU3, right?
 
-Sorry, I don't see a point in making that a separate patch: the
-clock-indices in the DT binding header are only used by the DTS.
-R-Mobile APE6 still uses the legacy CPG/MSTP DT bindings. The DTS
-for newer SoCs just hardcodes the indices (as part of the full module
-clock number, straight from the hardware documentation).
+On Koelsch TMU3 is rather erratic.
+On other SoCs, I did see a few sporadic test failures, even for
+arch_sys_counter instead of TMUx.
+
+Thanks!
 
 Gr{oetje,eeting}s,
 
