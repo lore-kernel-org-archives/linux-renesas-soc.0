@@ -1,43 +1,38 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310C812C520
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  2 Apr 2024 14:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7402F3398A;
+	Tue,  2 Apr 2024 14:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712069069; cv=none; b=mcJN9tPeMki92m/OExVYqOTJ0l799soXbWpWjvFOfsxJhiERepf3gUXsnirj9GnkYmNCaaTmarrmgLkNchHeJYFm9x98QpsvhbdcKp9ZtEoBScn+gC9U5BQdnGD2tmQxWHtduWRl0xNIjgHpdsecvrrMaTiNG9bumjEkZ+NjXqE=
+	t=1712069619; cv=none; b=f2o0lCTOT97UXwEBOtryI5Vw1y/v1R0doqMQ5oR1m93DCD5JLWJmrLW8jIqS4HDbA2mikg/Swhgkv5IDG0t4aybu8GIMgBXaf8rASMp9Y8YoMjBT4kXsX4SHwgYeQ/lb+pdocHq0GdnOv3P+m5Yu11NSuNgitj5agHE3Dp8H7zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712069069; c=relaxed/simple;
-	bh=g5qwqW/djN5FzrMp3Sh/+o2wCCUTg3+0TLBExhgH87s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KWZi0PeMm2ttmTxvMnPAflisVhx2FSB8uA35Jgq103cdQpibu62/qUvd6fEt+r8rEC9ZQN6eT8RyqpiZLzYHaiR16FF9IcIj0T29Y8LreRToIwdvoNnuGZwUw/7B/lRD7oHu4/qoKZw+EARM42ah924y9JqCTygqHUPmE7qG3Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
-	by baptiste.telenet-ops.be with bizsmtp
-	id 6EkJ2C00N0SSLxL01EkJ0N; Tue, 02 Apr 2024 16:44:18 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rrfMc-00GCjJ-TJ;
-	Tue, 02 Apr 2024 16:44:18 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rrfN4-009rU6-8d;
-	Tue, 02 Apr 2024 16:44:18 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Thanh Quan <thanh.quan.xn@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a779h0: Add CMT nodes
-Date: Tue,  2 Apr 2024 16:44:16 +0200
-Message-Id: <3c7821e051b880d46be5441dcb571f4c9d0ba408.1712068688.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1712068688.git.geert+renesas@glider.be>
-References: <cover.1712068688.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1712069619; c=relaxed/simple;
+	bh=3YQe4QnlUHJrCHfA4ZLPv1MwEhOpdVQet3ppNtXhx/g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g1tRUxlGO9tyK2us1VfeXk/+vNou7hbaowM65NyLyEzRsOOCoRrZ7tc4UyUcyDbJZatCkkx4YthAzlvTe5fC/7RaK3I6Mu8HbNgi9++bnCqPPkvS8Y54MyuvpDWbdgql5dGrud4WymYCDnnJZ0fAezrWrMEbgbaxZq4ZzULexoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.07,175,1708354800"; 
+   d="scan'208";a="200115238"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2024 23:53:29 +0900
+Received: from renesas-deb12.cephei.uk (unknown [10.226.93.98])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4B20F4254199;
+	Tue,  2 Apr 2024 23:53:24 +0900 (JST)
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] net: ravb: Always process TX descriptor ring
+Date: Tue,  2 Apr 2024 15:53:04 +0100
+Message-Id: <20240402145305.82148-1-paul.barker.ct@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -46,101 +41,52 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Thanh Quan <thanh.quan.xn@renesas.com>
+The TX queue should be serviced each time the poll function is called,
+even if the full RX work budget has been consumed. This prevents
+starvation of the TX queue when RX bandwidth usage is high.
 
-Add device nodes for the Compare Match Timer Type0 (CMT0) and Type1
-(CMT1/2/3) instances on the R-Car V4M (R8A779H0) SoC.
-
-Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 ---
-Changes compared to the BSP:
-  - Dropped board DTS changes.
----
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 70 +++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+Changes from v1:
+  * Use the correct 'Fixes' tag.
+  * Call the new variable 'unmask' and drop the unnecessary initializer,
+    as requested by Sergey.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index 3a40b56c4dcf113c..e192588e0f68fa57 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -303,6 +303,76 @@ gpio7: gpio@e6061980 {
- 			resets = <&cpg 917>;
- 		};
+ drivers/net/ethernet/renesas/ravb_main.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index d1be030c8848..48803050abdb 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1324,12 +1324,12 @@ static int ravb_poll(struct napi_struct *napi, int budget)
+ 	int q = napi - priv->napi;
+ 	int mask = BIT(q);
+ 	int quota = budget;
++	bool unmask;
  
-+		cmt0: timer@e60f0000 {
-+			compatible = "renesas,r8a779h0-cmt0",
-+				     "renesas,rcar-gen4-cmt0";
-+			reg = <0 0xe60f0000 0 0x1004>;
-+			interrupts = <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 910>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 910>;
-+			status = "disabled";
-+		};
+ 	/* Processing RX Descriptor Ring */
+ 	/* Clear RX interrupt */
+ 	ravb_write(ndev, ~(mask | RIS0_RESERVED), RIS0);
+-	if (ravb_rx(ndev, &quota, q))
+-		goto out;
++	unmask = !ravb_rx(ndev, &quota, q);
+ 
+ 	/* Processing TX Descriptor Ring */
+ 	spin_lock_irqsave(&priv->lock, flags);
+@@ -1339,6 +1339,9 @@ static int ravb_poll(struct napi_struct *napi, int budget)
+ 	netif_wake_subqueue(ndev, q);
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 
++	if (!unmask)
++		goto out;
 +
-+		cmt1: timer@e6130000 {
-+			compatible = "renesas,r8a779h0-cmt1",
-+				     "renesas,rcar-gen4-cmt1";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 911>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 911>;
-+			status = "disabled";
-+		};
-+
-+		cmt2: timer@e6140000 {
-+			compatible = "renesas,r8a779h0-cmt1",
-+				     "renesas,rcar-gen4-cmt1";
-+			reg = <0 0xe6140000 0 0x1004>;
-+			interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 912>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 912>;
-+			status = "disabled";
-+		};
-+
-+		cmt3: timer@e6148000 {
-+			compatible = "renesas,r8a779h0-cmt1",
-+				     "renesas,rcar-gen4-cmt1";
-+			reg = <0 0xe6148000 0 0x1004>;
-+			interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 913>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 913>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a779h0-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x4000>;
+ 	napi_complete(napi);
+ 
+ 	/* Re-enable RX/TX interrupts */
+
+base-commit: ea2a1cfc3b2019bdea6324acd3c03606b60d71ad
 -- 
-2.34.1
+2.39.2
 
