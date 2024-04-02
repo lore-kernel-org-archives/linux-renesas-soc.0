@@ -1,41 +1,43 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072988662E
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  2 Apr 2024 14:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26038662E
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  2 Apr 2024 14:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712068677; cv=none; b=tNt6U+4v2iT1jB/km97vdg4LPDt05X7XcVZzQfOs+OLf6wOwx/TJ31BQotemZLy6SCZKv7Z9TlKqi5zWX0q39i9o/6RG6X1SL2jgDT04+Dvw9fVdEwWj+uT9WrgFFh8k3SdCAqhk5XmHw9NTlWCuQA9eCm1g4Ea5WxZX4eHt6AE=
+	t=1712069062; cv=none; b=A9ONrvmSKVsY0yUANp5vJRkK+FOPdtCifppldIGfDNxtJrjBpaDPew9JEqP22shXzzdFWe/0BvSdh8Lcj+sCKLG4z+bpzCxeGVThEKRrtCg92w9C9PZhslo/kImbxnbM0gdjRd7PTIme0MBsFxQRufzSLMLf6ngi0ZYm1+Xy1ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712068677; c=relaxed/simple;
-	bh=bRBCTLEp98wnVwLznUJRCNoPp1mxWI1F+xHRtLnh7FM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CexfYIqOa+9VngpchqVXNOHpDONK6ksAay6I+QB6ZiuKUYUTtZlJZjcXV6OfX7Mr2GL6UgEPxgAt1z901WWIjRilNF47YqMJnHytYtQYfavmH0n2+PrqA96NeGwTIGJ+puHnCzi5RoZrZh4LH/zMugtQs96of0HhNUMsMsPh+gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	s=arc-20240116; t=1712069062; c=relaxed/simple;
+	bh=8nJ5b8Zcv/ttaMC7q27fOG2cgbld0OXtsuDxLWo6KuQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Km9DqduZzk3MVKz0YrGb8aY5BdxAzt115R4Mh1DysBrGoHhpvBzRTKAZ3GKxoqKhoz3daFwgLjM5roNUP+AUDv5JOAQompOFZEO8Pb9EalECH0x1HJhgV4bE/JY7AYTE1tW3jWpo32orMPvKniGOWawhEn2MvMoCQRLY+cJkmyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
-	by xavier.telenet-ops.be with bizsmtp
-	id 6Edu2C0060SSLxL01EduRh; Tue, 02 Apr 2024 16:37:54 +0200
+	by michel.telenet-ops.be with bizsmtp
+	id 6EkJ2C00E0SSLxL06EkJhu; Tue, 02 Apr 2024 16:44:18 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rrfGQ-00GBit-Q4;
-	Tue, 02 Apr 2024 16:37:54 +0200
+	id 1rrfMc-00GCjK-Tr;
+	Tue, 02 Apr 2024 16:44:18 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rrfGs-009rSU-4G;
-	Tue, 02 Apr 2024 16:37:54 +0200
+	id 1rrfN4-009rU9-9I;
+	Tue, 02 Apr 2024 16:44:18 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Thanh Quan <thanh.quan.xn@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779h0: Add timer clocks
-Date: Tue,  2 Apr 2024 16:37:52 +0200
-Message-Id: <79a66e8ff84378d7f65d5f55cfb01b9b745edd12.1712068639.git.geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a779h0: Add TMU nodes
+Date: Tue,  2 Apr 2024 16:44:17 +0200
+Message-Id: <9b82bcb345f14ffd740156b6d41088e02d45e72d.1712068688.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1712068688.git.geert+renesas@glider.be>
+References: <cover.1712068688.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -46,41 +48,105 @@ Content-Transfer-Encoding: 8bit
 
 From: Thanh Quan <thanh.quan.xn@renesas.com>
 
-Add the module clocks used by Timer (CMT/TMU) blocks on the Renesas
-R-Car V4M (R8A779H0) SoC.
+Add device nodes for the Timer Units (TMU) on the R-Car V4M (R8A779H0)
+SoC.
 
 Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To be queued in renesas-clk for v6.10.
-
 Changes compared to the BSP:
-  - Use TABs instead of spaces.
+  - Drop board DTS changes,
+  - Add ticpi interrupts,
+  - Add interrupt-names properties.
 ---
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 74 +++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index 4bc35bc912547f07..a7d272285db04490 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -192,7 +192,16 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
- 	DEF_MOD("sdhi0",	706,	R8A779H0_CLK_SD0),
- 	DEF_MOD("sydm1",	709,	R8A779H0_CLK_S0D6_PER),
- 	DEF_MOD("sydm2",	710,	R8A779H0_CLK_S0D6_PER),
-+	DEF_MOD("tmu0",		713,	R8A779H0_CLK_SASYNCRT),
-+	DEF_MOD("tmu1",		714,	R8A779H0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu2",		715,	R8A779H0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu3",		716,	R8A779H0_CLK_SASYNCPERD2),
-+	DEF_MOD("tmu4",		717,	R8A779H0_CLK_SASYNCPERD2),
- 	DEF_MOD("wdt1:wdt0",	907,	R8A779H0_CLK_R),
-+	DEF_MOD("cmt0",		910,	R8A779H0_CLK_R),
-+	DEF_MOD("cmt1",		911,	R8A779H0_CLK_R),
-+	DEF_MOD("cmt2",		912,	R8A779H0_CLK_R),
-+	DEF_MOD("cmt3",		913,	R8A779H0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779H0_CLK_CP),
- 	DEF_MOD("pfc1",		916,	R8A779H0_CLK_CP),
- 	DEF_MOD("pfc2",		917,	R8A779H0_CLK_CP),
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+index e192588e0f68fa57..0e97799fa55aabc8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+@@ -404,6 +404,80 @@ tsc: thermal@e6198000 {
+ 			#thermal-sensor-cells = <1>;
+ 		};
+ 
++		tmu0: timer@e61e0000 {
++			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
++			reg = <0 0xe61e0000 0 0x30>;
++			interrupts = <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "tuni0", "tuni1", "tuni2";
++			clocks = <&cpg CPG_MOD 713>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
++			resets = <&cpg 713>;
++			status = "disabled";
++		};
++
++		tmu1: timer@e6fc0000 {
++			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
++			reg = <0 0xe6fc0000 0 0x30>;
++			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 295 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "tuni0", "tuni1", "tuni2", "ticpi2";
++			clocks = <&cpg CPG_MOD 714>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
++			resets = <&cpg 714>;
++			status = "disabled";
++		};
++
++		tmu2: timer@e6fd0000 {
++			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
++			reg = <0 0xe6fd0000 0 0x30>;
++			interrupts = <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "tuni0", "tuni1", "tuni2", "ticpi2";
++			clocks = <&cpg CPG_MOD 715>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
++			resets = <&cpg 715>;
++			status = "disabled";
++		};
++
++		tmu3: timer@e6fe0000 {
++			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
++			reg = <0 0xe6fe0000 0 0x30>;
++			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "tuni0", "tuni1", "tuni2", "ticpi2";
++			clocks = <&cpg CPG_MOD 716>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
++			resets = <&cpg 716>;
++			status = "disabled";
++		};
++
++		tmu4: timer@ffc00000 {
++			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
++			reg = <0 0xffc00000 0 0x30>;
++			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "tuni0", "tuni1", "tuni2", "ticpi2";
++			clocks = <&cpg CPG_MOD 717>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
++			resets = <&cpg 717>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6500000 {
+ 			compatible = "renesas,i2c-r8a779h0",
+ 				     "renesas,rcar-gen4-i2c";
 -- 
 2.34.1
 
