@@ -1,43 +1,39 @@
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26038662E
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  2 Apr 2024 14:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB031272C9
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  2 Apr 2024 14:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712069062; cv=none; b=A9ONrvmSKVsY0yUANp5vJRkK+FOPdtCifppldIGfDNxtJrjBpaDPew9JEqP22shXzzdFWe/0BvSdh8Lcj+sCKLG4z+bpzCxeGVThEKRrtCg92w9C9PZhslo/kImbxnbM0gdjRd7PTIme0MBsFxQRufzSLMLf6ngi0ZYm1+Xy1ls=
+	t=1712069063; cv=none; b=Qu8GaMxMPo0RvcA1RMYrCsLHrHchY5qxJl2k89mcduC+LuNRscEksDsnp2oRjlWfwpdbI3o9hokNoTdV+IRfIdjVf+PVjGnRozAdYcxQMYrrSVktqbn6jdb8Re/G3bRr9q7LO45htYdhilK1zwARsAYnSXBK/xcX/P4l0HfkSy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712069062; c=relaxed/simple;
-	bh=8nJ5b8Zcv/ttaMC7q27fOG2cgbld0OXtsuDxLWo6KuQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Km9DqduZzk3MVKz0YrGb8aY5BdxAzt115R4Mh1DysBrGoHhpvBzRTKAZ3GKxoqKhoz3daFwgLjM5roNUP+AUDv5JOAQompOFZEO8Pb9EalECH0x1HJhgV4bE/JY7AYTE1tW3jWpo32orMPvKniGOWawhEn2MvMoCQRLY+cJkmyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+	s=arc-20240116; t=1712069063; c=relaxed/simple;
+	bh=O+8ARZdutSj9Uhl+VxiYTgGPsxjzkUrOBEkjBc6/7iw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FIvs6f7w8kCT/77k26Rs2AbgnKMXr1wanicjqa7Q5ZjJcaIeSy4bTfpFdH442XV7ID1RGvckkZNph6EL47pyqIsuIMb224YY17yeNEMWqa+2U4wQBsZ1XSBp9emzvHBynuYH094fK0oGTAog2SY2YKP5IlN+GZRifjRVv9AKbSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
-	by michel.telenet-ops.be with bizsmtp
-	id 6EkJ2C00E0SSLxL06EkJhu; Tue, 02 Apr 2024 16:44:18 +0200
+	by xavier.telenet-ops.be with bizsmtp
+	id 6EkJ2C00K0SSLxL01EkJcs; Tue, 02 Apr 2024 16:44:20 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rrfMc-00GCjK-Tr;
+	id 1rrfMc-00GCjI-TF;
 	Tue, 02 Apr 2024 16:44:18 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rrfN4-009rU9-9I;
+	id 1rrfN4-009rU3-7N;
 	Tue, 02 Apr 2024 16:44:18 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Thanh Quan <thanh.quan.xn@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a779h0: Add TMU nodes
-Date: Tue,  2 Apr 2024 16:44:17 +0200
-Message-Id: <9b82bcb345f14ffd740156b6d41088e02d45e72d.1712068688.git.geert+renesas@glider.be>
+Subject: [PATCH 0/2] arm64: dts: renesas: r8a779h0: Add CMT and TMU timer nodes
+Date: Tue,  2 Apr 2024 16:44:15 +0200
+Message-Id: <cover.1712068688.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1712068688.git.geert+renesas@glider.be>
-References: <cover.1712068688.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -46,107 +42,39 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Thanh Quan <thanh.quan.xn@renesas.com>
+	Hi all,
 
-Add device nodes for the Timer Units (TMU) on the R-Car V4M (R8A779H0)
-SoC.
+This patch series adds device nodes for the Compare Match Timer Type0
+(CMT0) and Type1 (CMT1/2/3), and for the Timer Units (TMU) on the R-Car
+V4M (R8A779H0) SoC.  As usual, these device nodes are disabled by
+default, but can be enabled in a board DTS file when deemed necessary.
 
-Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Changes compared to the BSP:
-  - Drop board DTS changes,
-  - Add ticpi interrupts,
-  - Add interrupt-names properties.
----
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 74 +++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+All instances have been tested successfully using [1] on the Renesas
+Gray Hawk Single development board.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index e192588e0f68fa57..0e97799fa55aabc8 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -404,6 +404,80 @@ tsc: thermal@e6198000 {
- 			#thermal-sensor-cells = <1>;
- 		};
- 
-+		tmu0: timer@e61e0000 {
-+			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
-+			reg = <0 0xe61e0000 0 0x30>;
-+			interrupts = <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tuni0", "tuni1", "tuni2";
-+			clocks = <&cpg CPG_MOD 713>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 713>;
-+			status = "disabled";
-+		};
-+
-+		tmu1: timer@e6fc0000 {
-+			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
-+			reg = <0 0xe6fc0000 0 0x30>;
-+			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 295 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tuni0", "tuni1", "tuni2", "ticpi2";
-+			clocks = <&cpg CPG_MOD 714>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 714>;
-+			status = "disabled";
-+		};
-+
-+		tmu2: timer@e6fd0000 {
-+			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
-+			reg = <0 0xe6fd0000 0 0x30>;
-+			interrupts = <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tuni0", "tuni1", "tuni2", "ticpi2";
-+			clocks = <&cpg CPG_MOD 715>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 715>;
-+			status = "disabled";
-+		};
-+
-+		tmu3: timer@e6fe0000 {
-+			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
-+			reg = <0 0xe6fe0000 0 0x30>;
-+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tuni0", "tuni1", "tuni2", "ticpi2";
-+			clocks = <&cpg CPG_MOD 716>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+		};
-+
-+		tmu4: timer@ffc00000 {
-+			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
-+			reg = <0 0xffc00000 0 0x30>;
-+			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tuni0", "tuni1", "tuni2", "ticpi2";
-+			clocks = <&cpg CPG_MOD 717>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 717>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			compatible = "renesas,i2c-r8a779h0",
- 				     "renesas,rcar-gen4-i2c";
+I plan to queue this in renesas-devel for v6.10.
+
+Thanks for your comments!
+
+[1] https://elinux.org/R-Car/Tests:timers
+
+Thanh Quan (2):
+  arm64: dts: renesas: r8a779h0: Add CMT nodes
+  arm64: dts: renesas: r8a779h0: Add TMU nodes
+
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 144 ++++++++++++++++++++++
+ 1 file changed, 144 insertions(+)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
