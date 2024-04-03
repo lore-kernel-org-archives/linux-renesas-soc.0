@@ -1,133 +1,121 @@
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DA6524DC
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Apr 2024 19:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247CA1553B3;
+	Wed,  3 Apr 2024 20:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712173165; cv=none; b=ADiLavKg1Be+ufR5Yrpa4McKSFcnDsnswBdNhLQ63bEekltiOznofrSufQKd3nxJn9yTndom+M4Q/kksqp8IaILwMTJXfmnW5d2bl/sknMTYaVTAsl+awVKfvdVD7ftXoVjKV/rIGEASQBAlK7YSjzTqGZQp/2pj87sUcV97TA0=
+	t=1712175085; cv=none; b=pnZ54BkaO2HBrUrcm3rXNZNMxtxgACJ7Zo3ndYLv67VgtMfiOs5HWeyjIMeXSTHcNEr7tUd2ID8lzvipH+v/uejeYB/JOv6wFr6EjztvGO3329otym7Q/UzlAK4QkFLmrRh/FN+yL4Pq8Dd8PiUF61bWOkNbkwZ/+4ObrFVRHA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712173165; c=relaxed/simple;
-	bh=hxhzwntv3AAxddjsIFsCCUjSvEA0vDAVlQdmfZnUA3g=;
-	h=Message-ID:Date:Content-Type:MIME-Version:Subject:To:From; b=qz+e9JnVaoCnq/upS9+pTHoUH8s7tUh46JWfxWhQj62QK2E3SXGyWt6hffo+88IHXwdsIBJXEwYQOVxQ4ViGXH5Kaw/11aw2Jkl+f4UujQueuq+B/O/bXMt5Yrn4w7S6fmEYfjHjaJ1dpZxp/lBIxHFizbXLivglV8MI/dnaRy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=29BZVjet; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
+	s=arc-20240116; t=1712175085; c=relaxed/simple;
+	bh=sun1NsHk2vEsIXt3sZXU+hXzHiz0Ux6ixOcTuUjI7kk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uzbamiNV3165kO7Uol0UBmmGW00NjhYE9LRMYvqG2MazWtBQqHam116R1FWo5AKTESvsiixvQ9FYSe5LxpFOPp7eJTRHZJvuC2kkAlVP3kKNgqMl/XpCoUITTiu9HSg0yUHysQUAc7x/iaY11HWOoBCt06M75MufnjXo63PHZ94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRYnYMVP; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="29BZVjet"
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5a7bbafb8c0so162493eaf.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Apr 2024 12:39:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRYnYMVP"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-415523d9824so2141265e9.3;
+        Wed, 03 Apr 2024 13:11:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1712173163; x=1712777963; darn=vger.kernel.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=uIqXAn9sAz1DQYjLCAOu2v9YGRXPyi3XMfoKV6N34ro=;
-        b=29BZVjet6ENTnlB7c1qqipkYq+6mmuk9vGnyQWcA26Q2EO9ehPRFKmwT1SfKQ0cfEu
-         PmLRgf7B6C2yIlhENqayl2LeNMbVgPXVkIxrt4zD2ssYxT4warhwQcU4/LiqZXhOktDW
-         VGLmxbXIokYOtxLBK/9oXqtH2a6IwKBim157+J7KrGimPDQdo0XvI+8J33paHTY2CXiN
-         ZJRsZCM76MZYSVvRDthxot8fIiJw0bnStEG49VCIHo14XPHHBLca3GDtlxWgxBwDnTuh
-         4McG86VkXVs2jMtbswv7Y51K9BHpqN/zLs1KQ6G1f4HkpelyfkCmq4BnanE+XN0y3GSO
-         7xzw==
+        d=gmail.com; s=20230601; t=1712175082; x=1712779882; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MOcLWgLOgrNtkAnYfPiCGepAqkA5lMiMzdb5KR8b+o0=;
+        b=mRYnYMVPkUR+564YGKX8uEAazIDaS/KePWUhN4a4MYCkl7JTYZvcs+HgQqoFV64OiW
+         Afegr+QkblOYKe7XT5Ma5OwpbL+XBp4V55mKi2wNJswihgmeVvrri9YjdLelGxGhT8Bj
+         eZ1ubR44iZbsK/Nll3btaKZ8WCJ84bF9C/0RGoQ8huruXYyH5fkDXvw9FAAqdsZs8AWP
+         M5mlV14nyYgTbbsNpyvcbSQuMP3wouuS/hrP6xm54xjjLFRYUGFoV9sz7jI9bfPruAO4
+         /cyNiCl9plQo8qkKkqsuY1kiZ9pkKbn+WLXkWpCZWl+s785qmMvrpytmsb8bCd5kjSZn
+         B5aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712173163; x=1712777963;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1712175082; x=1712779882;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uIqXAn9sAz1DQYjLCAOu2v9YGRXPyi3XMfoKV6N34ro=;
-        b=HYpU9/cEQ8ZYCTjOsc7fuVQBxqk/24q+a6R2Ci18sSOEbPwlT4KQPzRyRn7lF0UjlF
-         JlvopUAErtMlYDsfHRzuZMcwfEgXFJk9OPmD0iENwSJKIt9zTTh0nMh28p68UiRpW03u
-         K0l9xTXrrOie4xMeBR9wFJhUgfQasg6J5ESMETNtIPu/Ks/veTiOGaxiZAp6CZkfNH0a
-         GhEgf9BKjtUkMLH71+on5S2ep1WtnTGmFMH1xqhWsNni5GdVI9sgSVeQ4tKqxwmtKFrK
-         pde5qir6hcuvZbfdWj2S7l6+HCWSaLi+BPnfrB8FxMoh023vhize8J9kRNQ/7DIeAwh+
-         swZA==
-X-Gm-Message-State: AOJu0Yxks5VRdFa/FW/1T9TGrfH2dbiZGSL7KVhD1ZB4fjrqHR+xop2H
-	aI4kSrIijHzUvEmAPe9Iu0FQKxJl28Vvwbbi3FF2Qb3FX2mmeKHz084spbvkwXG8IMD4imuoRgQ
-	xhT0=
-X-Google-Smtp-Source: AGHT+IGzTtiXwyj39amZDcbDMD7MgkN2P8bKEvytu9Sb49QjTGz6mwuF2MhK5Z19FbuWaSgl9LGuNQ==
-X-Received: by 2002:a05:6358:4681:b0:183:bbd3:ee37 with SMTP id w1-20020a056358468100b00183bbd3ee37mr267484rwl.8.1712173162588;
-        Wed, 03 Apr 2024 12:39:22 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id l198-20020a633ecf000000b005f05c9ee8d3sm11766995pga.93.2024.04.03.12.39.21
+        bh=MOcLWgLOgrNtkAnYfPiCGepAqkA5lMiMzdb5KR8b+o0=;
+        b=aqFQ7VAHugwD+hPTVguiEX9wKE22KfEabBFbDVUb9EXuNKkD23134UkxdWAZD5gSCV
+         GgVDgjwfGCEH8Qc4lFXvvQ5P1vGAjhEEwzv3o24EKifkELmxk3Q3hV7sYPbRqFcY46nw
+         nNSDFAJ+xfRYnVephfK6xkFLJiRNZdrq+0MZHfrn7yrcmT5jzV4RHFl2FBG0vicpvYVS
+         +qbi+d8TI6BMOiHg6Lujy9tZbiasbYkrrgwqR2FRzPJCuoBVVztyHq2ld1KwQwrtg4gT
+         83lKXum8Hysv1SZI5Xhho7KJcFiyaGehfeucKG63bX1Kezr3AHUseonDUIRiq48WvBMy
+         QtdA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3EPyvGGbKyYbIhq3KG1PBk57Zlc00loTDQPLlLuhASPwYPjCwjkOVdjqNDJHfGWLphGROAX9X1ExrKtDLwtgl34ZTC0RxDIc55WJctqQRUQRl/Pqq+bGPgxY1i46K0rOoBQkC5ex/Kd1pzJvJ+9Y=
+X-Gm-Message-State: AOJu0YxPVEccYC5xrehC1PiQfb6Ggajad+cVA6TSNhvzIIgSqctqbns+
+	YFs8gcTyU0uTlkGwvU9utVR7y6gyo+XbHVy7Ox7edCMe7Wbf7VZ//Y68hAwR
+X-Google-Smtp-Source: AGHT+IHtLaUCwwkgS1vtIEW1V174Y94xNXH3nSrut92Q5koJYf4Y2HWj56P76mXN+xJub7xa6PNmqQ==
+X-Received: by 2002:a05:600c:4f91:b0:414:227:fc66 with SMTP id n17-20020a05600c4f9100b004140227fc66mr584172wmq.2.1712175082076;
+        Wed, 03 Apr 2024 13:11:22 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:5eb:3d93:f2b6:25e8])
+        by smtp.gmail.com with ESMTPSA id u1-20020a7bcb01000000b004155a32841bsm211197wmj.39.2024.04.03.13.11.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Apr 2024 12:39:21 -0700 (PDT)
-Message-ID: <660db069.630a0220.28cd0.0cbe@mx.google.com>
-Date: Wed, 03 Apr 2024 12:39:21 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 03 Apr 2024 13:11:21 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a07g043: Add clock and reset entry for PLIC
+Date: Wed,  3 Apr 2024 21:09:52 +0100
+Message-Id: <20240403200952.633084-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-devel-2024-04-02-v6.9-rc2
-X-Kernelci-Report-Type: test
-Subject: renesas/master baseline: 64 runs,
- 1 regressions (renesas-devel-2024-04-02-v6.9-rc2)
-To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 
-renesas/master baseline: 64 runs, 1 regressions (renesas-devel-2024-04-02-v=
-6.9-rc2)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Regressions Summary
--------------------
+Add the missing clock and reset entry for PLIC. Also add
+R9A07G043_NCEPLIC_ACLK to critical clocks list.
 
-platform                 | arch  | lab             | compiler | defconfig |=
- regressions
--------------------------+-------+-----------------+----------+-----------+=
-------------
-imx8mm-innocomm-wb15-evk | arm64 | lab-pengutronix | gcc-10   | defconfig |=
- 1          =
+Fixes: b3e77da00f1b ("riscv: dts: renesas: Add initial devicetree for Renesas RZ/Five SoC")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g043-cpg.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
+diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
+index e36d2ec2c0f5..16acc95f3c62 100644
+--- a/drivers/clk/renesas/r9a07g043-cpg.c
++++ b/drivers/clk/renesas/r9a07g043-cpg.c
+@@ -280,6 +280,10 @@ static const struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
+ 				0x5a8, 1),
+ 	DEF_MOD("tsu_pclk",	R9A07G043_TSU_PCLK, R9A07G043_CLK_TSU,
+ 				0x5ac, 0),
++#ifdef CONFIG_RISCV
++	DEF_MOD("nceplic_aclk",	R9A07G043_NCEPLIC_ACLK, R9A07G043_CLK_P1,
++				0x608, 0),
++#endif
+ };
+ 
+ static const struct rzg2l_reset r9a07g043_resets[] = {
+@@ -338,6 +342,10 @@ static const struct rzg2l_reset r9a07g043_resets[] = {
+ 	DEF_RST(R9A07G043_ADC_PRESETN, 0x8a8, 0),
+ 	DEF_RST(R9A07G043_ADC_ADRST_N, 0x8a8, 1),
+ 	DEF_RST(R9A07G043_TSU_PRESETN, 0x8ac, 0),
++#ifdef CONFIG_RISCV
++	DEF_RST(R9A07G043_NCEPLIC_ARESETN, 0x908, 0),
++#endif
++
+ };
+ 
+ static const unsigned int r9a07g043_crit_mod_clks[] __initconst = {
+@@ -347,6 +355,7 @@ static const unsigned int r9a07g043_crit_mod_clks[] __initconst = {
+ #endif
+ #ifdef CONFIG_RISCV
+ 	MOD_CLK_BASE + R9A07G043_IAX45_CLK,
++	MOD_CLK_BASE + R9A07G043_NCEPLIC_ACLK,
+ #endif
+ 	MOD_CLK_BASE + R9A07G043_DMAC_ACLK,
+ };
+-- 
+2.34.1
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2024-04-02-v6.9-rc2/plan/baseline/
-
-  Test:     baseline
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2024-04-02-v6.9-rc2
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      8a5076d03555d412a898f91ba3db257233fc4c83 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig |=
- regressions
--------------------------+-------+-----------------+----------+-----------+=
-------------
-imx8mm-innocomm-wb15-evk | arm64 | lab-pengutronix | gcc-10   | defconfig |=
- 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/660d7f00adbaecccca4c42ec
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-024-04-02-v6.9-rc2/arm64/defconfig/gcc-10/lab-pengutronix/baseline-imx8mm-i=
-nnocomm-wb15-evk.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-024-04-02-v6.9-rc2/arm64/defconfig/gcc-10/lab-pengutronix/baseline-imx8mm-i=
-nnocomm-wb15-evk.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230703.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/660d7f00adbaecccca4c4=
-2ed
-        new failure (last pass: renesas-devel-2024-03-12-v6.8) =
-
- =20
