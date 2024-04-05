@@ -1,51 +1,47 @@
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F69481B5
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  5 Apr 2024 07:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8D74EB30
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  5 Apr 2024 07:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712302481; cv=none; b=QjYK+sCBVW2z7I6QZR6+I5nDmActxcsTxwLvaIa6hljyOXb7MpWD0bujH7Ig8mu6+xoowmU/OWZn50AJP90z/AgTnWxlUaqvgWW+vNjixI5g58/Q+2wHyvhOvMmcRHpuZDgupJS3bHKrP7eOESaKXY/U3gyb+qYpEcTXs6789jM=
+	t=1712302615; cv=none; b=XC1t0jsiZ1Lt81MyMRbIR6o25VM+QyIKPKTTk3W9ZWSI0Aa5YICkzkFIL8fTqw81H7JQgP9NdLwGKaHSnjkMEBdMM9zNiLqU1wukrotUYDarvt1oc1Ypx5+HKbXjNYYVXpePnvt0LT039LdznKoKsv9ScEPsS0VOPf+sVnsQtCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712302481; c=relaxed/simple;
-	bh=7M3cQvDCPQ15Ipq1SLSpKCIO0TLQHtQq5IMbzaCBwik=;
+	s=arc-20240116; t=1712302615; c=relaxed/simple;
+	bh=N1ReYLLoeB9GenjYlMRHZNhM3gyiOhTPz6iblC9S2nw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JwQhCMd9TM3NT8//iE0onutSy3uoKfNo5hidqNtY7cEoV8jl2jQEp/cb046MDvkEWKYAt2Mi69Y+j5yD607hsySYmNB5+FH9chxwHetSeVbaY4A/qWN+E3HMt9KqO7LrLWVlznSUvu+0GVvjqmegnpAlXq2pJq2s7u5fAZ90TF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eagfUzh0; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=IVaj1Aju+VXLKxdWGe7MmZlxtBSv9ki/5WQQM06p78D+q2S2jm5zPtBG3AzFD4QpZ9X4P/mGdvse0yXeVzqtG4ZMVV/y1cpDLyYYIt6k47r/jS5vk3fVG4BTQ3G4Xf/2JZ4lxZGQnxAFubiXmoeR+Jqgo//Gu4gP8SJM91pnmGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=g2wmg619; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eagfUzh0"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="g2wmg619"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=7M3c
-	QvDCPQ15Ipq1SLSpKCIO0TLQHtQq5IMbzaCBwik=; b=eagfUzh0uDDxDrhpbBwG
-	OmiYf5gcuYT3JRsumYOKuFO9554K66T+KvlonARVbDuzqSWPI3Qh40UNqkkOTxfV
-	NVhnEpDDXt/dilJjZWoBO9KbXEWrGwg9mtVP+gLp109lfI2Vh19uDLj4jAwgYSD8
-	O+iIi41BbOlQGW+HGkVsyZuuizFlLCBCqJkn3beYQbiid18qjYQUzFOt1m7I3ggS
-	Bawi99MwbGkqY8DCraWHHI+NSvtomJZDneGVN/USVNi3V6qlB95/ycliz8LaEoSi
-	NMsmd0nwuE/VSz22c3cm9LrotstS7ZgaPC3B1sXYaS5vzNmR2YEXNv6c/AV86tkA
-	tg==
-Received: (qmail 4020841 invoked from network); 5 Apr 2024 09:27:56 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Apr 2024 09:27:56 +0200
-X-UD-Smtp-Session: l3s3148p1@dqX+ZFQVXL8gAwDPXwEGAANOsN0UmmrN
-Date: Fri, 5 Apr 2024 09:27:55 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=N1Re
+	YLLoeB9GenjYlMRHZNhM3gyiOhTPz6iblC9S2nw=; b=g2wmg619I/HR8gxkBA+z
+	DxSW2RQtT/7OJJ9aVJzZwA1Yqr0r7zixm9QT9j0ZuZhk/tpe8YMdZOB6M76u4ien
+	TA594boc2mWPN6ALcSCeCM8jbCS1YBtxjmWblFwE1PUudehD0utzL+pGnMIfd4jR
+	DHOdBy1xXNZUv8zxWVeHIXIhmvpv55Ft5AIXvRCi7RDoI1GMq2sFpzIh9VmTDCiK
+	PcJCvNT0fRkkmZU7jPjmExP/NqHvKFwT/vMlLJRYBpDXQ/yF2Wh/H1Gdah3ni1Xi
+	ayy9nKk5iD2WhTeGHmBugxZIPHaixr+tjc9TE5Pd1ceGC/NPtfdD3/SHd8foLWwg
+	8Q==
+Received: (qmail 4024194 invoked from network); 5 Apr 2024 09:36:51 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Apr 2024 09:36:51 +0200
+X-UD-Smtp-Session: l3s3148p1@YmHghFQV0NIgAwDPXwEGAANOsN0UmmrN
+Date: Fri, 5 Apr 2024 09:36:50 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: timer: renesas,cmt: Add R-Car V4M support
-Message-ID: <btlrc2vhov7ly7zpyf5zcxqja4xwucs3z3ipjscfaesohbaqyp@kckmgpqo4dc7>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Thanh Quan <thanh.quan.xn@renesas.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a779h0: Add CMT nodes
+Message-ID: <jms42dcj6l2u4i2pkrnf7z7nv3yqqvwg6p2c3skxlm4iwuaxwj@ibr6sts7xsxq>
 Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-References: <3e8a7a93261d8ad264dec2fa2784fe1bbfc4a23c.1712068536.git.geert+renesas@glider.be>
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Thanh Quan <thanh.quan.xn@renesas.com>
+References: <cover.1712068688.git.geert+renesas@glider.be>
+ <3c7821e051b880d46be5441dcb571f4c9d0ba408.1712068688.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -53,43 +49,46 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uvt3z7g2yxj454zw"
+	protocol="application/pgp-signature"; boundary="o37rqljuleghvnge"
 Content-Disposition: inline
-In-Reply-To: <3e8a7a93261d8ad264dec2fa2784fe1bbfc4a23c.1712068536.git.geert+renesas@glider.be>
+In-Reply-To: <3c7821e051b880d46be5441dcb571f4c9d0ba408.1712068688.git.geert+renesas@glider.be>
 
 
---uvt3z7g2yxj454zw
+--o37rqljuleghvnge
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 02, 2024 at 04:36:05PM +0200, Geert Uytterhoeven wrote:
-> Document support for the Compare Match Timer Type0 (CMT0) and Type1
-> (CMT1) in the Renesas R-Car V4M (R8A779H0) SoC.
+On Tue, Apr 02, 2024 at 04:44:16PM +0200, Geert Uytterhoeven wrote:
+> From: Thanh Quan <thanh.quan.xn@renesas.com>
 >=20
+> Add device nodes for the Compare Match Timer Type0 (CMT0) and Type1
+> (CMT1/2/3) instances on the R-Car V4M (R8A779H0) SoC.
+>=20
+> Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---uvt3z7g2yxj454zw
+--o37rqljuleghvnge
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmYPp/gACgkQFA3kzBSg
-KbZfXA/9FpBbMM/HxAeSBJY01GFV6/OTJ1SznEGG5u/3PXZaWiji0dIgcndJH41C
-aAVxRTByKSWuWYRKrVpZLT3Ij3tdz3k5sIOssqwxhSkG6sMPYaJpDLYgMs4gv80q
-peo1X4tmtuxyVFhL0HuK+jVUFdLV4EZMZQcC0817boAsr+yxNIx3noVp4fJyHx6v
-Af+vltXzKLzLHFbm31PHOu0FrhI3Bnqglr7Xp22br/OYX9bJyXRijr71Z02JA2U9
-PLGz+XyF6vogEuxBzLfhO2w5qc4JKd6hW9R2lVlBpTbSYLHd9miX+6v08SDxjgh4
-Opb7r4hb7Z3NnUOtHYlyBmNU1j4ilp7C5LkLNrfk/8zTXAEN8cfmS5ILirFq44/j
-R6HtMzpRWPzwc17hDNYS6DFUmJy3AONHtYmmb8ZrhO+ITv4tcp12IhO+p+IWuCKY
-25vf0tbLSzgHFgbpnGV46v+/+BiIHpsEsCgw5l4TPEP94lFDbBBuIwSEkb28081L
-oD9qypdxjlodwJle+iMx14YHjb8kbximy5robGKszycVdtTcv29X6FdE6d+ekV0+
-aDfP39ask7euSrUWFlhlKz8tM7mEseP7THo/1+BRiOrHnkngESG8FlvUciAVsZrz
-1T8f+VQyA4Z5KppGZBBU57OdPxStfu4CwM6ToxYFQ/TST/1SNQc=
-=bpbZ
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmYPqhIACgkQFA3kzBSg
+KbaO6g//c1IZv9UpRNwfATZdrY0F5S6Tp8/QcXweMgVHomaZw3VhXu7+8dOmk2r7
+8SBQ2d/3h+EiuJ+DQV/m3G9qjuylcdiCA4qJNk5eiBJ9k77BVLJj8mF0h4/NRMU/
+cUebNN8Hckdoj6SrxWG3qfb2W2RJ/ENs97uOmPnI72mXytsNQILXhJKm57gu5n5h
+TwiXdT/DRff7cAiW4akIiwKxjxzSqigj9OQVUjJXN2gBufhvZkr+2QA6ur/i27z8
+iPro7pyeMKRxlJwGQwMDqrIqUic9wR9lvmzySXJMae2rBwGnAw1KxxJPNxy7K2Po
+ja8IzSCrggzj1+HHlknyPmgv+70RPx/gaRi7nw0dZYVVxqxoQs3pjnshQR4vm+ga
+Nihg77EAxs/YmyEQd3h9Jo8YXVJNq0hQhutfyIVkQhvxIaxRULgAFPecf64n487Y
+aslcOFg+ab0bZqpY+NS5o9vdPOj2YEUdO/WnOibtUgkco6lzVxxZAIT/mtDOaewL
+G/kuTilMDde5igexCEyomGciDQcg8bx/KuuRwPh31XzV5uMaviYrGa8TXyqCBOB4
+9x5/NbrRQviJbcaotH1wJwIn7gUPPe/8s+K/hONrCZTeUUxcZpbs6mZkhhrvKdOv
+Vlhxj/t2DnIAgEFNm2aLE2TZEEtlGZAilMxihBTR/g8+5SIJWjM=
+=YhKr
 -----END PGP SIGNATURE-----
 
---uvt3z7g2yxj454zw--
+--o37rqljuleghvnge--
