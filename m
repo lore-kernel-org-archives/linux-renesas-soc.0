@@ -1,24 +1,24 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C7F14AD3F;
-	Thu, 11 Apr 2024 11:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D50B147C9D;
+	Thu, 11 Apr 2024 11:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712835908; cv=none; b=UjFzeE5gUnw+nfxQiHaInSco9S4V5M+6SmPV1lhdXkodExGHVPln+7v83BB9u9nh94d+zLkuhjlkCKvdwJQ5rVBCRE7xq5vydRRGLSfORzi7SLZa3FAdizg+O6tQeDGbVNnWW65PG4iV2OHwopmpfP0nAxDY1+0bj1Bc2l194PQ=
+	t=1712835909; cv=none; b=lY4OCIuidVC5t1NpUxci22PgececBhEv6XZTnC06SP+3NEpFa/Ni20DZnzozASefhgwnXG7cjArMgBn+81U9/j82tRarHVwfkROVg2B6uMNYb2Y6aXD17ElaVipHrQZzQ1MU7T8ha/QDuHmjqtJiQd+SNxY6RFrIIMqOLaT2p84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712835908; c=relaxed/simple;
-	bh=rpjBKncb2PPsMI+z0Kjkp03iK4cJcujdCC28t4DeLjI=;
+	s=arc-20240116; t=1712835909; c=relaxed/simple;
+	bh=vnqWqqap9+fQ4BzCnsXTPQ93EcTt8RJgBFAXaAY6kT0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ehMNGAfE17AcpO7RwYFxU3YEll9HZdNFsEZCa+WuJHMIVouXQEB+Gr6yfWnGz7OcYd9IIKH5jBhLh8mJm1wpK1LJ+lW3gVfbHvQLKK0l+TFk6eQB1yLmf0/s5aPzWwQ5BxnG4z3ZVMclrEujRIGiHE3vV/X/0FVBOdYbdMeYKzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=fhmv1usktw67TyYezozZcxud25gJ18T7kNoa+5df+zMg2IA5dKgvxqbUyPst0Vr2nlt8a0zaGFhwd4GcERyMXSPzOvCKNtDoJYFpjgTiAsoclGcJRtIPDAcwuAPFV6vZk1ptwlfvo8oOJngmLJN9JE/6i7tFraaux00hac7L8kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.07,193,1708354800"; 
-   d="scan'208";a="205076264"
+   d="scan'208";a="201123388"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2024 20:44:59 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Apr 2024 20:45:07 +0900
 Received: from renesas-deb12.cephei.uk (unknown [10.226.93.85])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 982B742017D7;
-	Thu, 11 Apr 2024 20:44:55 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B5E0D4202AC3;
+	Thu, 11 Apr 2024 20:45:03 +0900 (JST)
 From: Paul Barker <paul.barker.ct@bp.renesas.com>
 To: Sergey Shtylyov <s.shtylyov@omp.ru>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -31,9 +31,9 @@ Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
 	netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net 1/4] net: ravb: Count packets instead of descriptors in R-Car RX path
-Date: Thu, 11 Apr 2024 12:44:30 +0100
-Message-Id: <20240411114434.26186-2-paul.barker.ct@bp.renesas.com>
+Subject: [PATCH net 3/4] net: ravb: Fix GbEth jumbo packet RX checksum handling
+Date: Thu, 11 Apr 2024 12:44:32 +0100
+Message-Id: <20240411114434.26186-4-paul.barker.ct@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240411114434.26186-1-paul.barker.ct@bp.renesas.com>
 References: <20240411114434.26186-1-paul.barker.ct@bp.renesas.com>
@@ -45,79 +45,72 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The units of "work done" in the RX path should be packets instead of
-descriptors.
+Sending a 7kB ping packet to the RZ/G2L in Linux v6.9-rc2 causes the
+following backtrace:
 
-Descriptors which are used by the hardware to record error conditions or
-are empty in the case of a DMA mapping error should not count towards
-our RX work budget.
+	WARNING: CPU: 0 PID: 0 at include/linux/skbuff.h:3127 skb_trim+0x30/0x38
+	Modules linked in:
+	CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W          6.9.0-rc1-00222-gde11614025b1 #3
+	Hardware name: Renesas SMARC EVK based on r9a07g044l2 (DT)
+	pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+	pc : skb_trim+0x30/0x38
+	lr : ravb_rx_csum_gbeth+0x40/0x90
+	sp : ffff800080003d40
+	x29: ffff800080003d40 x28: 0000000000000400 x27: ffff00000d0f0000
+	x26: 0000000000000001 x25: ffff800080003e84 x24: 0000000000000e52
+	x23: 0000000000000000 x22: ffff00000d0f0960 x21: 000000000000ffff
+	x20: 000000000000f6ff x19: ffff00000cf4cb00 x18: 0000000000000000
+	x17: ffff7ffffdd4f000 x16: ffff800080000000 x15: e7e6e5e4e3e2e1e0
+	x14: dfdedddcdbdad9d8 x13: 0000131211100f0e x12: 0d0c0b0a09080706
+	x11: 0000000013121110 x10: 0000000000000000 x9 : 0000000000000001
+	x8 : ffff800080003cf0 x7 : 0000000000000000 x6 : ffff00007faf4590
+	x5 : 000000000010000b x4 : a1a8362deecb53ea x3 : 0000000000000080
+	x2 : 00000000ffff0000 x1 : 000000000cf4ccfc x0 : ffff00000cf4cb00
+	Call trace:
+	 skb_trim+0x30/0x38
+	 ravb_rx_gbeth+0x56c/0x5cc
+	 ravb_poll+0xa0/0x204
+	 __napi_poll+0x38/0x17c
+	 net_rx_action+0x124/0x268
+	 __do_softirq+0x100/0x26c
+	 ____do_softirq+0x10/0x1c
+	 call_on_irq_stack+0x24/0x4c
+	 do_softirq_own_stack+0x1c/0x2c
+	 irq_exit_rcu+0xbc/0xd8
+	 el1_interrupt+0x38/0x68
+	 el1h_64_irq_handler+0x18/0x24
+	 el1h_64_irq+0x64/0x68
+	 default_idle_call+0x28/0x3c
+	 do_idle+0x204/0x25c
+	 cpu_startup_entry+0x38/0x3c
+	 kernel_init+0x0/0x1d8
+	 start_kernel+0x504/0x5f0
+	 __primary_switched+0x80/0x88
+	---[ end trace 0000000000000000 ]---
 
-Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+This is caused by ravb_rx_gbeth() calling ravb_rx_csum_gbeth() with the
+wrong skb for a packet which spans multiple descriptors. To fix this,
+use the correct skb.
+
+Fixes: c2da9408579d ("ravb: Add Rx checksum offload support for GbEth")
 Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index ba01c8cc3c90..70f2900648d4 100644
+index 028ab5c6aaf7..e1e39f65224c 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -892,29 +892,25 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	const struct ravb_hw_info *info = priv->info;
- 	int entry = priv->cur_rx[q] % priv->num_rx_ring[q];
--	int boguscnt = (priv->dirty_rx[q] + priv->num_rx_ring[q]) -
--			priv->cur_rx[q];
- 	struct net_device_stats *stats = &priv->stats[q];
- 	struct ravb_ex_rx_desc *desc;
- 	struct sk_buff *skb;
- 	dma_addr_t dma_addr;
- 	struct timespec64 ts;
-+	int rx_packets = 0;
- 	u8  desc_status;
- 	u16 pkt_len;
- 	int limit;
-+	int i;
- 
--	boguscnt = min(boguscnt, *quota);
--	limit = boguscnt;
-+	limit = priv->dirty_rx[q] + priv->num_rx_ring[q] - priv->cur_rx[q];
- 	desc = &priv->rx_ring[q].ex_desc[entry];
--	while (desc->die_dt != DT_FEMPTY) {
-+	for (i = 0; i < limit && rx_packets < *quota && desc->die_dt != DT_FEMPTY; i++) {
- 		/* Descriptor type must be checked before all other reads */
- 		dma_rmb();
- 		desc_status = desc->msc;
- 		pkt_len = le16_to_cpu(desc->ds_cc) & RX_DS;
- 
--		if (--boguscnt < 0)
--			break;
--
- 		/* We use 0-byte descriptors to mark the DMA mapping errors */
- 		if (!pkt_len)
- 			continue;
-@@ -960,7 +956,7 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- 			if (ndev->features & NETIF_F_RXCSUM)
- 				ravb_rx_csum(skb);
- 			napi_gro_receive(&priv->napi[q], skb);
--			stats->rx_packets++;
-+			rx_packets++;
- 			stats->rx_bytes += pkt_len;
- 		}
- 
-@@ -995,9 +991,9 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- 		desc->die_dt = DT_FEMPTY;
- 	}
- 
--	*quota -= limit - (++boguscnt);
--
--	return boguscnt <= 0;
-+	stats->rx_packets += rx_packets;
-+	*quota -= rx_packets;
-+	return *quota == 0;
- }
- 
- /* Packet receive function for Ethernet AVB */
+@@ -843,7 +843,7 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+ 				priv->rx_1st_skb->protocol =
+ 					eth_type_trans(priv->rx_1st_skb, ndev);
+ 				if (ndev->features & NETIF_F_RXCSUM)
+-					ravb_rx_csum_gbeth(skb);
++					ravb_rx_csum_gbeth(priv->rx_1st_skb);
+ 				napi_gro_receive(&priv->napi[q],
+ 						 priv->rx_1st_skb);
+ 				rx_packets++;
 -- 
 2.39.2
 
