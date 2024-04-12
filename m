@@ -1,149 +1,227 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A8455774;
-	Fri, 12 Apr 2024 10:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4F753E0D
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Apr 2024 10:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712916085; cv=none; b=dM07XuYnWfVT4PAd/8XXfNd+S5iLhgUBP5t7QQBxE0oAT7w5nTVAhPsIXvoUhxmYEgrUnyIzT5k+FxEh3m7Slnp1YZdpVOruJqLLTz0ezuw5s/oj7XeHwtos1xnVRi9bl76xVZI6PzBbQVo2NZKD6Npw2badA1cKQBeRIIFMjUs=
+	t=1712916306; cv=none; b=H74v9HuKJgUCXR6PF6zPNyZFlSj4o9voRIhjrfQKb9+H3ez7oL/YwI12CXG5xYL9ugsLF4cRyt4aDx29ZJ12EYiv+OHaZkzibt6g7Lyu/m6JWoGmoiLshUq0uRuWXALnAOAC7lyRmXonhAT92PQXK/t1dnDYHWAN2FJujf4iXUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712916085; c=relaxed/simple;
-	bh=MsTjAOc8LxDsKaFl5Csrf742XdcLyMoxIe5ic/J1zcs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gs/LpPW9zZXbvpLL0+2lbY4rDt3LHHRN65J6SKe1TQuv1DTyNsdBXW2icGfLvsrUn5od0UCLR/msNiq8jVb5XOggQScMP+J8j87e0aX7s9W1Ln1IejSYc28Kiwd/rzB69gzc5U0sHtIpyBekwjtxcAsw+xT5jG9MBnMSTsZk9fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.07,195,1708354800"; 
-   d="scan'208";a="205195042"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Apr 2024 19:01:20 +0900
-Received: from renesas-deb12.cephei.uk (unknown [10.226.93.65])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C03AF41E0D3A;
-	Fri, 12 Apr 2024 19:01:15 +0900 (JST)
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	YueHaibing <yuehaibing@huawei.com>,
-	netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [net PATCH v2 4/4] net: ravb: Fix RX byte accounting for jumbo packets
-Date: Fri, 12 Apr 2024 11:00:24 +0100
-Message-Id: <20240412100024.2296-5-paul.barker.ct@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240412100024.2296-1-paul.barker.ct@bp.renesas.com>
-References: <20240412100024.2296-1-paul.barker.ct@bp.renesas.com>
+	s=arc-20240116; t=1712916306; c=relaxed/simple;
+	bh=m7SZnyJBVQZSm3/ZMgPP8KmAohN82QOdxqDUo61ETQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6+inFhryAlOPT9G9Jji212CxRslMblEc7ESeppgOb2eZWIB/78DOQdopc8Is5kS5L7slpVwp95oEzYrmsc/iQnxia8JQJK8+GL1asA7DMvoS23p6BuO5NsGRcTTnBWesZjoPyqExYY6HkKJ0y3r6OKbclmTZWQ8LYBZY6ccRSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Z7HYXTPb; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Z7HYXTPb"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-56e509baddaso718570a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Apr 2024 03:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1712916302; x=1713521102; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NmvVpGqH/YnUJn3EKn9NCfL9fG7zsGqsH7iqYTHHqXM=;
+        b=Z7HYXTPbEgHcFEGia5f3Cjw4XQFfFdF11UzWrXfj5n/Cr013pUpChNuVE3Gfi2LXBZ
+         z4MTf+vkcVMv/ixTP04YBHG9LKgTqvq6OqAHs+IuL0l5uDdN4EDadc0x36a8d9OcB/g6
+         K43uquGDN8TlGSmwvb2pk8Ltv4YCTTHny3ZbtWRIPJu5GUX3Fk65V8abkN/385fonp3N
+         FSH17u0IAOZ7rRTg4R6O+hivA7sErjQHtQht5ccslYOAaSCe6RFyxjPrjdgthWUTaF+Y
+         qdw10Cy83XX+CPOc9JdLjLH5FLYZl0F8bI+KSxnAKLRbBban0ytnVIXTOWCwV2wLZY+i
+         tzuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712916302; x=1713521102;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NmvVpGqH/YnUJn3EKn9NCfL9fG7zsGqsH7iqYTHHqXM=;
+        b=QxdVpA8nbkbE0jMBZ/5wkPgKSJyUm1XvBSDbnPNly6PO3WIis6idTk5qZzycWgarqX
+         PaMmc3TkxGswjXbLimiwR9yyCP4DJbQtu0Bg+wwR5wqwfHJOZr8vaXFeZSjr1A2rqgFB
+         A6eN+Db+KwhJGtX5L+CgA/++NJTDxUdYxK4/5WroLKvzYjhjbhkTZK1BL6Is4s4lUHt9
+         VF0jQ16djdYhs2BcF+4FUf3G/oFr5Oosq1F5XidnrS0qjkF02TAlXj3f7VubCLFDzvdG
+         tms9d5zWV0Ew7LbxX9X56zE3Xjzahl3+rV/h616b1ntKBj26hUxILD4Ipo2599yvouOq
+         Fd5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXJWBSCAnRLUgaiAtscI3q823Y/6qoa+dNM1rmhL2A9yCxWU9vuZ+fFQA63uewDCyy0EGbf8q76Xs2W3MbBctP9CxPYOm+A+OyASKxEWhf9BuE=
+X-Gm-Message-State: AOJu0YxhYkSLqxY8uw8KIhyfa9Sa7zBDEhBYFOUNQNrx5wZ9hP7SN+oo
+	A8+rrpuCu2w/OdaiLQZjgAlAWpzXe6YzvxHCGIurGKLiRVqZPykWlCzQ4L0oOiE=
+X-Google-Smtp-Source: AGHT+IHQMQDAmt/KUMiRX2jfsv9Ugd19LQKa3XJw1aZ7aEKYJ1UBxTCpp3X0iWhacATHBs5n4+le0A==
+X-Received: by 2002:a17:906:36d6:b0:a51:d7f3:324b with SMTP id b22-20020a17090636d600b00a51d7f3324bmr1290933ejc.66.1712916301420;
+        Fri, 12 Apr 2024 03:05:01 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.8])
+        by smtp.gmail.com with ESMTPSA id g22-20020a1709063b1600b00a4e533085aesm1637200ejf.129.2024.04.12.03.04.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Apr 2024 03:05:00 -0700 (PDT)
+Message-ID: <2a07d159-fdd4-48d4-b351-01f5e2579c3a@tuxon.dev>
+Date: Fri, 12 Apr 2024 13:04:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/9] clk: renesas: rzg2l: Add support for power domains
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Linux PM list <linux-pm@vger.kernel.org>, Guenter Roeck
+ <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>
+References: <20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUesJe0396MsH9PSUMEq=sWx3BYc=QrAFzR2EVcLhm03Q@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdUesJe0396MsH9PSUMEq=sWx3BYc=QrAFzR2EVcLhm03Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The RX byte accounting for jumbo packets was changed to fix a potential
-use-after-free bug. However, that fix used the wrong variable and so
-only accounted for the number of bytes in the final descriptor, not the
-number of bytes in the whole packet.
+Hi, Geert,
 
-To fix this, we can simply update our stats with the correct number of
-bytes before calling napi_gro_receive().
+On 11.04.2024 18:30, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> CC pmdomain, watchdog
+> 
+> On Wed, Apr 10, 2024 at 2:27 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> Series adds support for power domains on rzg2l driver.
+>>
+>> RZ/G2L kind of devices support a functionality called MSTOP (module
+>> stop/standby). According to hardware manual the module could be switch
+>> to standby after its clocks are disabled. The reverse order of operation
+>> should be done when enabling a module (get the module out of standby,
+>> enable its clocks etc).
+>>
+>> In [1] the MSTOP settings were implemented by adding code in driver
+>> to attach the MSTOP state to the IP clocks. But it has been proposed
+>> to implement it as power domain. The result is this series.
+>>
+>> Along with MSTOP functionality there is also module power down
+>> functionality (which is currently available only on RZ/G3S). This has
+>> been also implemented through power domains.
+>>
+>> The DT bindings were updated with power domain IDs (plain integers
+>> that matches the DT with driver data structures). The current DT
+>> bindings were updated with module IDs for the modules listed in tables
+>> with name "Registers for Module Standby Mode" (see HW manual) exception
+>> being RZ/G3S where, due to the power down functionality, the DDR,
+>> TZCDDR, OTFDE_DDR were also added, to avoid system being blocked due
+>> to the following lines of code from patch 6/9.
+>>
+>> +       /* Prepare for power down the BUSes in power down mode. */
+>> +       if (info->pm_domain_pwrdn_mstop)
+>> +               writel(CPG_PWRDN_MSTOP_ENABLE, priv->base + CPG_PWRDN_MSTOP);
+>>
+>> Domain IDs were added to all SoC specific bindings.
+>>
+>> Thank you,
+>> Claudiu Beznea
+>>
+>> Changes in v3:
+>> - collected tags
+>> - dinamically detect if a SCIF is serial console and populate
+>>   pd->suspend_check
+>> - dropped patch 09/10 from v2
+> 
+> Thanks for the update!
+> 
+> I have provided my R-b for all patches, and the usual path for these
+> patches would be for me to queue patches 1-8 in renesas-clk for v6.10,
+> and to queue 9 in renesas-devel.
+> 
+> However:
+>   1. I had missed before the pmdomain people weren't CCed before,
+>      they still might have some comments,
 
-Also rename pkt_len to desc_len in ravb_rx_gbeth() to avoid any future
-confusion. The variable name pkt_len is correct in ravb_rx_rcar() as
-that function does not handle packets spanning multiple descriptors.
+My bad here, I missed it too.
 
-Fixes: 5a5a3e564de6 ("ravb: Fix potential use-after-free in ravb_rx_gbeth()")
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
- drivers/net/ethernet/renesas/ravb_main.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+>   2. Patch 9 has a hard dependency on the rest of the series, so
+>      it has to wait one more cycle,
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index e1e39f65224c..c4ac9fbe0af4 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -769,7 +769,7 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 	dma_addr_t dma_addr;
- 	int rx_packets = 0;
- 	u8  desc_status;
--	u16 pkt_len;
-+	u16 desc_len;
- 	u8  die_dt;
- 	int entry;
- 	int limit;
-@@ -787,10 +787,10 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 		/* Descriptor type must be checked before all other reads */
- 		dma_rmb();
- 		desc_status = desc->msc;
--		pkt_len = le16_to_cpu(desc->ds_cc) & RX_DS;
-+		desc_len = le16_to_cpu(desc->ds_cc) & RX_DS;
- 
- 		/* We use 0-byte descriptors to mark the DMA mapping errors */
--		if (!pkt_len)
-+		if (!desc_len)
- 			continue;
- 
- 		if (desc_status & MSC_MC)
-@@ -811,25 +811,25 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 			switch (die_dt) {
- 			case DT_FSINGLE:
- 				skb = ravb_get_skb_gbeth(ndev, entry, desc);
--				skb_put(skb, pkt_len);
-+				skb_put(skb, desc_len);
- 				skb->protocol = eth_type_trans(skb, ndev);
- 				if (ndev->features & NETIF_F_RXCSUM)
- 					ravb_rx_csum_gbeth(skb);
- 				napi_gro_receive(&priv->napi[q], skb);
- 				rx_packets++;
--				stats->rx_bytes += pkt_len;
-+				stats->rx_bytes += desc_len;
- 				break;
- 			case DT_FSTART:
- 				priv->rx_1st_skb = ravb_get_skb_gbeth(ndev, entry, desc);
--				skb_put(priv->rx_1st_skb, pkt_len);
-+				skb_put(priv->rx_1st_skb, desc_len);
- 				break;
- 			case DT_FMID:
- 				skb = ravb_get_skb_gbeth(ndev, entry, desc);
- 				skb_copy_to_linear_data_offset(priv->rx_1st_skb,
- 							       priv->rx_1st_skb->len,
- 							       skb->data,
--							       pkt_len);
--				skb_put(priv->rx_1st_skb, pkt_len);
-+							       desc_len);
-+				skb_put(priv->rx_1st_skb, desc_len);
- 				dev_kfree_skb(skb);
- 				break;
- 			case DT_FEND:
-@@ -837,17 +837,17 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 				skb_copy_to_linear_data_offset(priv->rx_1st_skb,
- 							       priv->rx_1st_skb->len,
- 							       skb->data,
--							       pkt_len);
--				skb_put(priv->rx_1st_skb, pkt_len);
-+							       desc_len);
-+				skb_put(priv->rx_1st_skb, desc_len);
- 				dev_kfree_skb(skb);
- 				priv->rx_1st_skb->protocol =
- 					eth_type_trans(priv->rx_1st_skb, ndev);
- 				if (ndev->features & NETIF_F_RXCSUM)
- 					ravb_rx_csum_gbeth(priv->rx_1st_skb);
-+				stats->rx_bytes += priv->rx_1st_skb->len;
- 				napi_gro_receive(&priv->napi[q],
- 						 priv->rx_1st_skb);
- 				rx_packets++;
--				stats->rx_bytes += pkt_len;
- 				break;
- 			}
- 		}
--- 
-2.39.2
+I think 5/9 should also wait to avoid binding validation failures.
 
+>   3. Adding the watchdog domain has a dependency on [1].
+
+Adding the code for it in patch 7/9 w/o passing it as reference to watchdog
+node (as in patch 9/9) is harmless. The previous behavior will be in place.
+
+At the moment the watchdog domain initialization code is not in patch 7/9
+and the patch 9/9 has reference to watchdog domain to pass the DT binding
+validation. The probe will fail though, as I wasn't sure what should be
+better to drop: device probe or reset functionality. I mentioned it in
+patch for suggestions.
+
+> 
+> 2 and 2 may be resolved using an immutable branch.
+
+2 and 3?
+
+Immutable branch should be good, AFAICT. If that would be the strategy I
+can send an update to also add the initialization data for watchdog domain
+in 7/9. Or I can send an update afterwards. Please let me know how would
+you prefer.
+
+Thank you,
+Claudiu Beznea
+
+> Are my assumptions correct?
+> 
+> Thanks!
+> 
+> [1] "[PATCH RESEND v8 09/10] watchdog: rzg2l_wdt: Power on the PM
+>     domain in rzg2l_wdt_restart()"
+>     https://lore.kernel.org/all/20240410134044.2138310-10-claudiu.beznea.uj@bp.renesas.com
+> 
+>> Changes in v2:
+>> - addressed review comments
+>> - dropped:
+>>     - dt-bindings: clock: r9a09g011-cpg: Add always-on power domain IDs
+>>     - clk: renesas: r9a07g043: Add initial support for power domains
+>>     - clk: renesas: r9a07g044: Add initial support for power domains
+>>     - clk: renesas: r9a09g011: Add initial support for power domains
+>>     - clk: renesas: r9a09g011: Add initial support for power domains
+>>     - arm64: dts: renesas: r9a07g043: Update #power-domain-cells = <1>
+>>     - arm64: dts: renesas: r9a07g044: Update #power-domain-cells = <1>
+>>     - arm64: dts: renesas: r9a07g054: Update #power-domain-cells = <1>
+>>     - arm64: dts: renesas: r9a09g011: Update #power-domain-cells = <1>
+>>   as suggested in the review process
+>> - dropped "arm64: dts: renesas: rzg3s-smarc-som: Guard the ethernet IRQ
+>>   GPIOs with proper flags" patch as it was integrated
+>> - added suspend to RAM support
+>> - collected tag
+>>
+>> [1] https://lore.kernel.org/all/20231120070024.4079344-4-claudiu.beznea.uj@bp.renesas.com/
+>>
+>>
+>> Claudiu Beznea (9):
+>>   dt-bindings: clock: r9a07g043-cpg: Add power domain IDs
+>>   dt-bindings: clock: r9a07g044-cpg: Add power domain IDs
+>>   dt-bindings: clock: r9a07g054-cpg: Add power domain IDs
+>>   dt-bindings: clock: r9a08g045-cpg: Add power domain IDs
+>>   dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells =
+>>     <1> for RZ/G3S
+>>   clk: renesas: rzg2l: Extend power domain support
+>>   clk: renesas: r9a08g045: Add support for power domains
+>>   clk: renesas: rzg2l-cpg: Add suspend/resume support for power domains
+>>   arm64: dts: renesas: r9a08g045: Update #power-domain-cells = <1>
+>>
+>>  .../bindings/clock/renesas,rzg2l-cpg.yaml     |  18 +-
+>>  arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  20 +-
+>>  drivers/clk/renesas/r9a08g045-cpg.c           |  61 ++++
+>>  drivers/clk/renesas/rzg2l-cpg.c               | 269 +++++++++++++++++-
+>>  drivers/clk/renesas/rzg2l-cpg.h               |  77 +++++
+>>  include/dt-bindings/clock/r9a07g043-cpg.h     |  52 ++++
+>>  include/dt-bindings/clock/r9a07g044-cpg.h     |  58 ++++
+>>  include/dt-bindings/clock/r9a07g054-cpg.h     |  58 ++++
+>>  include/dt-bindings/clock/r9a08g045-cpg.h     |  70 +++++
+>>  9 files changed, 659 insertions(+), 24 deletions(-)
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
