@@ -1,29 +1,30 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127234C624
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Apr 2024 10:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB5550A68
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Apr 2024 10:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712918948; cv=none; b=edlMLCp2mGNHeT28YoiWBc9LeUYe16ixoEUoVBCeFDGRZ3ZbQZKaO5NAoDDCQ0Hvc8mlCYP5T/dLLVYazai8qtM8CvwIzrj8Xn+TWGqPep6NuBXwtUlQzEpumW1D+eon/z8fKABeZmFX50/aGklZQMq/d+xdIwtEuVjt87mMSLM=
+	t=1712918948; cv=none; b=JZ5h3xZF6E3mX6T7gto5+WJ0MQBhjjPH8gPjHXlWmh7nhnx6l0BkPekMd4iWm7vzb4/kIhZoaw+ZwWn+F5wkDtX42SkULowBA3qeVwPSIpvHDaTDFLbx0NVWV1OvQsq3k3l7LSx8kTgN9bjmygYNwvcnanBz0ZInu3hQ3w9n1UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712918948; c=relaxed/simple;
-	bh=/TSbk8ixG8Ov0afWZN2BKF/1U7in3EOVQDQFyeNUCIM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M2FBKP0M1PHrxCaBGvvumQGVAF53LITDqZgQ01XQGqFSl30Wbbqs91RfFzsYsmKKoBiCdQVrLKfCvtMI7Yf7AIsQVCTh/fyzzonCJGpZwYgAc+8WtMOhSgFlVS8df9gNTKYB4NKtawAnwYP1zD8tRUXFrSoChjRQhRKILxq0q1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	bh=kmGKfs9J5G7p/Y7Sfpya7WUA9UbPV5vOnW2k7rsVSV8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GruUWx1nO8yOC6eWPG8fN6pmwheUJ2i+xRIB1oeJXlRsftBdwVDbQY39nTs4v20uf37HVUHbkJ85xJuSZdoklAYMV+EZExuXLn6jUZQ50AtqTAeKwnh8EmjsuvUAHUDGe/D3FgByw//AaOuvKGT7lUBOxJBmAEZoG3/jcWVZQe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
-	by xavier.telenet-ops.be with bizsmtp
-	id AAoy2C0030SSLxL01Aoylo; Fri, 12 Apr 2024 12:48:58 +0200
+	by michel.telenet-ops.be with bizsmtp
+	id AAox2C00L0SSLxL06Aox05; Fri, 12 Apr 2024 12:48:59 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rvESG-00GpCB-8Q;
-	Fri, 12 Apr 2024 12:48:57 +0200
+	id 1rvESG-00GpBx-0q;
+	Fri, 12 Apr 2024 12:48:56 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rvDj5-004eQD-Ot;
+	id 1rvDj5-004eQQ-SH;
 	Fri, 12 Apr 2024 12:01:43 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: arm-soc <arm@kernel.org>,
@@ -32,10 +33,12 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/4] Renesas SoC updates for v6.10
-Date: Fri, 12 Apr 2024 12:01:36 +0200
-Message-Id: <cover.1712915528.git.geert+renesas@glider.be>
+Subject: [GIT PULL 3/4] Renesas DT binding updates for v6.10
+Date: Fri, 12 Apr 2024 12:01:39 +0200
+Message-Id: <cover.1712915534.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1712915528.git.geert+renesas@glider.be>
+References: <cover.1712915528.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,48 +47,29 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi SoC folks,
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-This is my first pull request for the inclusion of Renesas SoC updates
-for v6.10.
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-It consists of 4 parts:
+are available in the Git repository at:
 
-  [GIT PULL 1/4] Renesas ARM defconfig updates for v6.10
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v6.10-tag1
 
-    - Enable support for the Renesas RZ/G2L display unit, DA9062 PMIC, and
-      RZ/V2H (R9A09G057) SoC in the ARM64 defconfig,
-    - Refresh shmobile_defconfig for v6.9-rc1.
+for you to fetch changes up to d4319f220f577156200ad43c823e22be05f34523:
 
-  [GIT PULL 2/4] Renesas driver updates for v6.10
+  dt-bindings: arm: renesas: Document Renesas RZ/V2H(P) System Controller (2024-03-26 09:33:29 +0100)
 
-    - Identify the new RZ/V2H (R9A09G057) SoC,
-    - Enable support for the TMU (Timer Unit) on R-Car Gen2 SoCs.
+----------------------------------------------------------------
+Renesas DT binding updates for v6.10
 
-  [GIT PULL 3/4] Renesas DT binding updates for v6.10
+  - Document support for the Renesas RZ/V2H(P) (R9A09G057) SoC variants.
 
-    - Document support for the Renesas RZ/V2H(P) (R9A09G057) SoC variants.
+----------------------------------------------------------------
+Lad Prabhakar (2):
+      dt-bindings: soc: renesas: Document Renesas RZ/V2H(P) SoC variants
+      dt-bindings: arm: renesas: Document Renesas RZ/V2H(P) System Controller
 
-  [GIT PULL 4/4] Renesas DTS updates for v6.10
-
-    - Add HDMI capture support for the Function expansion board for the
-      Eagle development board,
-    - Add PMIC support for the RZ/G2UL SMARC EVK development board,
-    - Add thermal, more serial ((H)SCIF), and timer (CMT and TMU) support
-      for the R-Car V4M SoC,
-    - Add Timer Unit (TMU) support for the R-Mobile APE6, R-Car Gen2, and
-      RZ/G1 SoCs,
-    - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ .../soc/renesas/renesas,r9a09g057-sys.yaml         | 51 ++++++++++++++++++++++
+ .../devicetree/bindings/soc/renesas/renesas.yaml   |  8 ++++
+ 2 files changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,r9a09g057-sys.yaml
