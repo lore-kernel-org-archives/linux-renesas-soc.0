@@ -1,39 +1,38 @@
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DDC3C062;
-	Mon, 15 Apr 2024 09:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720613C46B;
+	Mon, 15 Apr 2024 09:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713172695; cv=none; b=HsEmv1EaTOfE2GnXJbj3x1taZ/0nQ/gfUxj+V5NSwFuTTBgeICk5hC16v9xWbvG5VT7po/oe/Eia91SRWTGTOXkAhXVSD8yaP7VxC5fk5bt/RQc9Lyo+ZCFUEb3xWKhbHfXWy40Z1JVwS3so0n4RMHDTv6FSCWIavQN9maxLFEU=
+	t=1713172695; cv=none; b=nxvSjLKkEX0STEcZS/GPlVLgUfPXUdgrC5oi/rBzufP3kuLLXHpsag/ECKyw5pUFjUQ/xlxaOxQfZ6sv9gnNgHAGym4rwKh4KAqVoKqZ24ZW1xI8WH9rMgn9xeLsYe+vN1ZyZ3I3MHIAKGZe1gjxOBRWfCWPki9qMVvXLOn0WvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1713172695; c=relaxed/simple;
-	bh=JlipWTqEvFfQTtHquvnGGCVbkan86ax7Rgyip7JjCTQ=;
+	bh=EVWWtwc2jfMtciuuUmMQgfZws80NVqY2ctp2dsXFtIw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QVsXW56BLOSDlw0jiQEdiPFDQ2rV/6tNHxGRVj2AGa+lMrJpfKpgmlx9eoSaM7IeUBTOGulORC5UccIKHwxS/hx4iNY2oQR0fccZ/1r3YkBlyf/bJhKLSX2wIUHHZpYg0Uyx6bO8LEb1NoPc4FpfMVQhgrpFjdnSJ3yNxNlnSY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bn5gMH51; arc=none smtp.client-ip=217.70.183.198
+	 In-Reply-To:To:Cc; b=eInSOVT2u6yJElGtR5l7Z2wIhjISkYOQ9+7tZgRFTkrmxCmaI+tI7mUOXvkSCxRhPKg4AGRNQ6d4LEVplIjlffEX7v387WxTwufHVB133Bri4Qq2ZNah5/Es44pejZR2UqNJo+D1DHab9W6wcaOrqfYqmfGAiw8QgLCDGwcc4x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=egpSyiSm; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bn5gMH51"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1B9EBC0006;
-	Mon, 15 Apr 2024 09:18:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="egpSyiSm"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A11BEC0003;
+	Mon, 15 Apr 2024 09:18:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1713172688;
+	t=1713172691;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=A19k6baTLXSBQkEi4H/AzD3+Dk/DAyLFObqgM59V3T8=;
-	b=bn5gMH51sneL9p2mZMc1UJHQDBfyjoK4ujFqgOSAyypGyUWDX5jNKy2QF8y1adtDvNqEM4
-	tTCfYxHj3972CuIx5fMO0p6TXy2l11Hndq8YbNNCiiQAE8oe2tXz41i4/9Bef4Fu/ZH60o
-	GSjkF+KEUzHqWZtFGywaP3dV7tI0YpmCP5M+iDsjyKs8t2PGQLcr2IZ5yEMIXqLloWX5t9
-	Agxe8Y3qhI/W6L5QGViMt9atc2TxmTV97W5zdoJ0LLoxXWJElpQEoGS8j/wrZ7t9RRCEF9
-	6CMBzl2do3ooVJhcmrokrAS00CuSANov5CsW3WLYKZTZHnON05cBctblTd16Ww==
+	bh=6yPvr6s2b9jEW/76txTr1//1bx3sVGpsDrq5Rf+/UwM=;
+	b=egpSyiSm0w3DKPD2KCpWBJjlWcgowDU8+0klocKb2oeXiCIIbI/fl9TMs18kQ+66YGAM8w
+	WFhS4xMI7pQaiuhxApGC5aoL8XVflRGegUkH/UM6ulfZKhOQOy/psKKHgzJwUL5nsiqGUw
+	cGfq37mh92yr8QSN8HFDEOuzIeoUsYn57dHkdA3v83bgmrspscWhf4MZzuurAMNTAIhTpF
+	0CstaX5sGpFmyQvKnm8cgiB6ybnJ+so3eOoBWiS1IDBm9UhnGk6f3rjHod0geP2DiydLfv
+	MhH9AL+xnVtX29QOTS16Cjmoy7MQH5n08S1SoU4njirppVmTQYZ1cFCsagVXPw==
 From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Mon, 15 Apr 2024 11:18:41 +0200
-Subject: [PATCH net-next v3 1/5] dt-bindings: net: renesas,rzn1-gmac:
- Document RZ/N1 GMAC support
+Date: Mon, 15 Apr 2024 11:18:44 +0200
+Subject: [PATCH net-next v3 4/5] net: stmmac: add support for RZ/N1 GMAC
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -42,7 +41,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240415-rzn1-gmac1-v3-1-ab12f2c4401d@bootlin.com>
+Message-Id: <20240415-rzn1-gmac1-v3-4-ab12f2c4401d@bootlin.com>
 References: <20240415-rzn1-gmac1-v3-0-ab12f2c4401d@bootlin.com>
 In-Reply-To: <20240415-rzn1-gmac1-v3-0-ab12f2c4401d@bootlin.com>
 To: "David S. Miller" <davem@davemloft.net>, 
@@ -67,92 +66,166 @@ X-GND-Sasl: romain.gantois@bootlin.com
 
 From: Clément Léger <clement.leger@bootlin.com>
 
-The RZ/N1 series of MPUs feature up to two Gigabit Ethernet controllers.
-These controllers are based on Synopsys IPs. They can be connected to
-RZ/N1 RGMII/RMII converters.
+Add support for the Renesas RZ/N1 GMAC. This support can make use of a
+custom RZ/N1 PCS which is fetched by parsing the pcs-handle device tree
+property.
 
-Add a binding that describes these GMAC devices.
-
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-[rgantois: commit log]
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: "Clément Léger" <clement.leger@bootlin.com>
+Co-developed-by: Romain Gantois <romain.gantois@bootlin.com>
 Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 ---
- .../devicetree/bindings/net/renesas,rzn1-gmac.yaml | 66 ++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ MAINTAINERS                                      |  6 ++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig      | 12 ++++
+ drivers/net/ethernet/stmicro/stmmac/Makefile     |  1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c | 88 ++++++++++++++++++++++++
+ 4 files changed, 107 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml b/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5ba3fe6ac09ce..20f92241e0058 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18845,6 +18845,12 @@ F:	include/dt-bindings/net/pcs-rzn1-miic.h
+ F:	include/linux/pcs-rzn1-miic.h
+ F:	net/dsa/tag_rzn1_a5psw.c
+ 
++RENESAS RZ/N1 DWMAC GLUE LAYER
++M:	Romain Gantois <romain.gantois@bootlin.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
++F:	drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c
++
+ RENESAS RZ/N1 RTC CONTROLLER DRIVER
+ M:	Miquel Raynal <miquel.raynal@bootlin.com>
+ L:	linux-rtc@vger.kernel.org
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+index 4ec61f1ee71a2..05cc07b8f48c0 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+@@ -142,6 +142,18 @@ config DWMAC_ROCKCHIP
+ 	  This selects the Rockchip RK3288 SoC glue layer support for
+ 	  the stmmac device driver.
+ 
++config DWMAC_RZN1
++	tristate "Renesas RZ/N1 dwmac support"
++	default ARCH_RZN1
++	depends on OF && (ARCH_RZN1 || COMPILE_TEST)
++	select PCS_RZN1_MIIC
++	help
++	  Support for Ethernet controller on Renesas RZ/N1 SoC family.
++
++	  This selects the Renesas RZ/N1 SoC glue layer support for
++	  the stmmac device driver. This support can make use of a custom MII
++	  converter PCS device.
++
+ config DWMAC_SOCFPGA
+ 	tristate "SOCFPGA dwmac support"
+ 	default ARCH_INTEL_SOCFPGA
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+index 26cad4344701e..c2f0e91f6bf83 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Makefile
++++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_DWMAC_MEDIATEK)	+= dwmac-mediatek.o
+ obj-$(CONFIG_DWMAC_MESON)	+= dwmac-meson.o dwmac-meson8b.o
+ obj-$(CONFIG_DWMAC_QCOM_ETHQOS)	+= dwmac-qcom-ethqos.o
+ obj-$(CONFIG_DWMAC_ROCKCHIP)	+= dwmac-rk.o
++obj-$(CONFIG_DWMAC_RZN1)	+= dwmac-rzn1.o
+ obj-$(CONFIG_DWMAC_SOCFPGA)	+= dwmac-altr-socfpga.o
+ obj-$(CONFIG_DWMAC_STARFIVE)	+= dwmac-starfive.o
+ obj-$(CONFIG_DWMAC_STI)		+= dwmac-sti.o
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c
 new file mode 100644
-index 0000000000000..d9a8d586e260c
+index 0000000000000..e85524c2017cf
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/renesas,rzn1-gmac.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rzn1.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (C) 2024 Schneider-Electric
++ *
++ * Clément Léger <clement.leger@bootlin.com>
++ */
 +
-+title: Renesas GMAC
++#include <linux/of.h>
++#include <linux/pcs-rzn1-miic.h>
++#include <linux/phylink.h>
++#include <linux/platform_device.h>
 +
-+maintainers:
-+  - Romain Gantois <romain.gantois@bootlin.com>
++#include "stmmac_platform.h"
++#include "stmmac.h"
 +
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - renesas,r9a06g032-gmac
-+          - renesas,rzn1-gmac
-+  required:
-+    - compatible
++static int rzn1_dwmac_pcs_init(struct stmmac_priv *priv,
++			       struct mac_device_info *hw)
++{
++	struct device_node *np = priv->device->of_node;
++	struct device_node *pcs_node;
++	struct phylink_pcs *pcs;
 +
-+allOf:
-+  - $ref: snps,dwmac.yaml#
++	pcs_node = of_parse_phandle(np, "pcs-handle", 0);
 +
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a06g032-gmac
-+      - const: renesas,rzn1-gmac
-+      - const: snps,dwmac
++	if (pcs_node) {
++		pcs = miic_create(priv->device, pcs_node);
++		of_node_put(pcs_node);
++		if (IS_ERR(pcs))
++			return PTR_ERR(pcs);
 +
-+  pcs-handle:
-+    description:
-+      phandle pointing to a PCS sub-node compatible with
-+      renesas,rzn1-miic.yaml#
++		priv->hw->phylink_pcs = pcs;
++	}
 +
-+required:
-+  - compatible
++	return 0;
++}
 +
-+unevaluatedProperties: false
++static void rzn1_dwmac_pcs_exit(struct stmmac_priv *priv,
++				struct mac_device_info *hw)
++{
++	if (priv->hw->phylink_pcs)
++		miic_destroy(priv->hw->phylink_pcs);
++}
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
++static int rzn1_dwmac_probe(struct platform_device *pdev)
++{
++	struct plat_stmmacenet_data *plat_dat;
++	struct stmmac_resources stmmac_res;
++	struct device *dev = &pdev->dev;
++	int ret;
 +
-+    ethernet@44000000 {
-+      compatible = "renesas,r9a06g032-gmac", "renesas,rzn1-gmac", "snps,dwmac";
-+      reg = <0x44000000 0x2000>;
-+      interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+                   <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+                   <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+      interrupt-names = "macirq", "eth_wake_irq", "eth_lpi";
-+      clock-names = "stmmaceth";
-+      clocks = <&sysctrl R9A06G032_HCLK_GMAC0>;
-+      power-domains = <&sysctrl>;
-+      snps,multicast-filter-bins = <256>;
-+      snps,perfect-filter-entries = <128>;
-+      tx-fifo-depth = <2048>;
-+      rx-fifo-depth = <4096>;
-+      pcs-handle = <&mii_conv1>;
-+      phy-mode = "mii";
-+    };
++	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
++	if (ret)
++		return ret;
 +
-+...
++	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
++	if (IS_ERR(plat_dat))
++		return PTR_ERR(plat_dat);
++
++	plat_dat->bsp_priv = plat_dat;
++	plat_dat->pcs_init = rzn1_dwmac_pcs_init;
++	plat_dat->pcs_exit = rzn1_dwmac_pcs_exit;
++
++	ret = stmmac_dvr_probe(dev, plat_dat, &stmmac_res);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static const struct of_device_id rzn1_dwmac_match[] = {
++	{ .compatible = "renesas,rzn1-gmac" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rzn1_dwmac_match);
++
++static struct platform_driver rzn1_dwmac_driver = {
++	.probe  = rzn1_dwmac_probe,
++	.remove_new = stmmac_pltfr_remove,
++	.driver = {
++		.name           = "rzn1-dwmac",
++		.of_match_table = rzn1_dwmac_match,
++	},
++};
++module_platform_driver(rzn1_dwmac_driver);
++
++MODULE_AUTHOR("Clément Léger <clement.leger@bootlin.com>");
++MODULE_DESCRIPTION("Renesas RZN1 DWMAC specific glue layer");
++MODULE_LICENSE("GPL");
 
 -- 
 2.44.0
