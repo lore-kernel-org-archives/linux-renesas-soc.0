@@ -1,39 +1,44 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D2A125B2
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 16 Apr 2024 15:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DF0130E30
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 16 Apr 2024 15:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713282022; cv=none; b=X2Djb7YjeCcsQI4ErVnd1c9ZXPvzPxJivtX7Ju4CRDwciF5dnKbW03aISr/NgLbC/kRmDw+xU/FeXm5e6cgCK72DpyB3owsolHaS/+n4tBd1dcwgYWTCVpres449EZCDKkoVo27SblO8gcMc2K5K6nt6iSzJbr3GkmCmVe9yxIo=
+	t=1713282454; cv=none; b=LOWiaYy7UtfpN6o8oCUDCM7qRR+9lBGaBaulEZhIR1rLzM2OI325SvvdEyxhtqLw/HB/8OD1ZpdEh3+UynLobOZ4NW2RS1si5d2SmXzD67b2vajBJNSogM497uwFAM9TOgC+zIdIXPMxvHrvmXWvIaGxtFGF1y5sa33U9tbQsoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713282022; c=relaxed/simple;
-	bh=XYsbBIW98nvB0oBWhwJwax2g/OUkO+0MtmXT8fZzqqQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZsoEqWdUoIslffslJkmkZkTmUE1prqd3EdTV3uoHvOlk5i6dFy5T80jjdZCFMXgFaa7ubW0zKo7V4aWhcH5rcD6rJ2Xnwl2S+fwGYs7HMh8KrEerhBhdKIB6i0MrLwexFT6ls/+pL9qZ+T9t6yFTiqPHWSlJO0G6l1pRKY+a1xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+	s=arc-20240116; t=1713282454; c=relaxed/simple;
+	bh=/acYgz3kJaLA/vBHE8yKL25SRSKCtv2KUbyuhCBZmo8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cEcga/fkjqINJrEjJSqlSdEQzir3O1QR4EyVOf+62EMFJzhjAsqK3P69zXo/QqkUQhv3YX8wJSZ1YmB8kqVFmupFergkoT08gISOgSG0+OD1TEul5ZU5wUIYt7dOZ3WQA4Rw18az6KX/7RP6jng0/GKAWMuHzvrbGef+/wO73A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
-	by baptiste.telenet-ops.be with bizsmtp
-	id BrgB2C00M0SSLxL01rgBSH; Tue, 16 Apr 2024 17:40:13 +0200
+	by michel.telenet-ops.be with bizsmtp
+	id BrnV2C00L0SSLxL06rnVye; Tue, 16 Apr 2024 17:47:30 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rwkuF-008IBM-QD;
-	Tue, 16 Apr 2024 17:40:11 +0200
+	id 1rwl1K-008J5u-9p;
+	Tue, 16 Apr 2024 17:47:29 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rwkup-00Ebhh-6B;
-	Tue, 16 Apr 2024 17:40:11 +0200
+	id 1rwl1t-00Ebkf-Mw;
+	Tue, 16 Apr 2024 17:47:29 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Cong Dang <cong.dang.xn@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a779h0: Add INTC-EX node
-Date: Tue, 16 Apr 2024 17:40:01 +0200
-Message-Id: <66aba473186df9a137e7f95393209b23a5916fd1.1713281889.git.geert+renesas@glider.be>
+Subject: [PATCH 1/2] pinctrl: renesas: r8a779h0: Fix IRQ suffixes
+Date: Tue, 16 Apr 2024 17:47:22 +0200
+Message-Id: <7d3c7498d9e8eda5583b15f9163eb25bb797ed24.1713282028.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1713282028.git.geert+renesas@glider.be>
+References: <cover.1713282028.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -42,48 +47,72 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the device node for the Interrupt Controller for External Devices
-(INTC-EX) on the Renesas R-Car V4M (R8A779H0) SoC, which serves external
-IRQ pins IRQ[0-5].
+The suffixes of the IRQ identifiers, as used for pins related to the
+Interrupt Controller for External Devices (INTC-EX), are inconsistent.
+Correct them to match the Pin Multiplex attachment in Rev.0.51 of the
+R-Car V4M Series Hardware User's Manual.
 
+Fixes: 291f7856fc451cbe ("pinctrl: renesas: Initial R8A779H0 (R-Car V4M) PFC support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-IRQ2 was tested on the Gray Hawk Single development board using
-gpio-keys.  With the default hardware setup, this causes an interrupt
-storm, as expected (pin is shared with MD0).
+ drivers/pinctrl/renesas/pfc-r8a779h0.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-To be queued in renesas-devel for v6.10.
----
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index 530219f21295f76f..bd3955316a88c8f2 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -404,6 +404,22 @@ tsc: thermal@e6198000 {
- 			#thermal-sensor-cells = <1>;
- 		};
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779h0.c b/drivers/pinctrl/renesas/pfc-r8a779h0.c
+index afa8f06c85cf5bd6..0cbfe7637fc97743 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779h0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779h0.c
+@@ -75,10 +75,10 @@
+ #define GPSR0_9		F_(MSIOF5_SYNC,		IP1SR0_7_4)
+ #define GPSR0_8		F_(MSIOF5_SS1,		IP1SR0_3_0)
+ #define GPSR0_7		F_(MSIOF5_SS2,		IP0SR0_31_28)
+-#define GPSR0_6		F_(IRQ0,		IP0SR0_27_24)
+-#define GPSR0_5		F_(IRQ1,		IP0SR0_23_20)
+-#define GPSR0_4		F_(IRQ2,		IP0SR0_19_16)
+-#define GPSR0_3		F_(IRQ3,		IP0SR0_15_12)
++#define GPSR0_6		F_(IRQ0_A,		IP0SR0_27_24)
++#define GPSR0_5		F_(IRQ1_A,		IP0SR0_23_20)
++#define GPSR0_4		F_(IRQ2_A,		IP0SR0_19_16)
++#define GPSR0_3		F_(IRQ3_A,		IP0SR0_15_12)
+ #define GPSR0_2		F_(GP0_02,		IP0SR0_11_8)
+ #define GPSR0_1		F_(GP0_01,		IP0SR0_7_4)
+ #define GPSR0_0		F_(GP0_00,		IP0SR0_3_0)
+@@ -265,10 +265,10 @@
+ #define IP0SR0_3_0	F_(0, 0)		FM(ERROROUTC_N_B)	FM(TCLK2_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR0_7_4	F_(0, 0)		FM(MSIOF3_SS1)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR0_11_8	F_(0, 0)		FM(MSIOF3_SS2)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR0_15_12	FM(IRQ3)		FM(MSIOF3_SCK)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR0_19_16	FM(IRQ2)		FM(MSIOF3_TXD)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR0_23_20	FM(IRQ1)		FM(MSIOF3_RXD)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR0_27_24	FM(IRQ0)		FM(MSIOF3_SYNC)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR0_15_12	FM(IRQ3_A)		FM(MSIOF3_SCK)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR0_19_16	FM(IRQ2_A)		FM(MSIOF3_TXD)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR0_23_20	FM(IRQ1_A)		FM(MSIOF3_RXD)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR0_27_24	FM(IRQ0_A)		FM(MSIOF3_SYNC)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR0_31_28	FM(MSIOF5_SS2)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
  
-+		intc_ex: interrupt-controller@e61c0000 {
-+			compatible = "renesas,intc-ex-r8a779h0", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 611>;
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 611>;
-+		};
-+
- 		tmu0: timer@e61e0000 {
- 			compatible = "renesas,tmu-r8a779h0", "renesas,tmu";
- 			reg = <0 0xe61e0000 0 0x30>;
+ /* IP1SR0 */		/* 0 */			/* 1 */			/* 2 */		/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
+@@ -672,16 +672,16 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR0_11_8,	MSIOF3_SS2),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR0_15_12,	IRQ3),
++	PINMUX_IPSR_GPSR(IP0SR0_15_12,	IRQ3_A),
+ 	PINMUX_IPSR_GPSR(IP0SR0_15_12,	MSIOF3_SCK),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR0_19_16,	IRQ2),
++	PINMUX_IPSR_GPSR(IP0SR0_19_16,	IRQ2_A),
+ 	PINMUX_IPSR_GPSR(IP0SR0_19_16,	MSIOF3_TXD),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR0_23_20,	IRQ1),
++	PINMUX_IPSR_GPSR(IP0SR0_23_20,	IRQ1_A),
+ 	PINMUX_IPSR_GPSR(IP0SR0_23_20,	MSIOF3_RXD),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR0_27_24,	IRQ0),
++	PINMUX_IPSR_GPSR(IP0SR0_27_24,	IRQ0_A),
+ 	PINMUX_IPSR_GPSR(IP0SR0_27_24,	MSIOF3_SYNC),
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR0_31_28,	MSIOF5_SS2),
 -- 
 2.34.1
 
