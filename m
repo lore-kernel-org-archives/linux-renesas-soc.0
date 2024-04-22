@@ -1,130 +1,109 @@
-Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6465110A20
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Apr 2024 10:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E23E1465BD
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Apr 2024 10:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713782458; cv=none; b=Dp6IyYkiggGlda/00sceA7Ys2z6kILEvy2bdIPCkJbTktUjvA2qWQgrVYMO3s09xHeVENlu6BW63A2o+HevHbZWsuojvBxeYjb9iXRFM2CqHOGgOjqADd9c9gOhxwO52JI1aJvx/gsizbQ36hlHckSWEANfpx0jbjV+saYq+iLI=
+	t=1713782691; cv=none; b=imV2YvwbArSkWv8soG35HeIXpUvEf39n3AEbMFpsjyAiSV2E6jjDUQcjBPMzRN//dpw3Ik5Zimv497Y3tyPWhHRbKyzWrohw8aOy+lW4YLlU5DqaVyOilsvacPqYT9d4pmVU6hn6omytaRneFrgzbzIGw3M5Ui6FxWLn7QLWfvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713782458; c=relaxed/simple;
-	bh=1CXNvotAMQnIGPSbHcaV7HaPO7twZYw/r9xyNVOHBdE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f6R956ErWHcp6YuX+Hlny1FCSU37xB9LvfYxGsklvYi+n+Suc9cg9vVODPnSGJzTG1AGJZli1mGXu3SmyuPeU8XYCGTNrRMr1kFCWyM2An8eRZ5LS7kaUxhjjGsqZXfibE8FUzMIubrCBeb5Q+rVX9or8LTTwlAfkwUAKWZCJMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4VNM3J2MZsz4x1PM
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Apr 2024 12:30:52 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
-	by michel.telenet-ops.be with bizsmtp
-	id EAWj2C00B0SSLxL06AWjTr; Mon, 22 Apr 2024 12:30:45 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1ryqw1-001cvn-4S;
-	Mon, 22 Apr 2024 12:30:43 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1ryqwd-005i3S-3e;
-	Mon, 22 Apr 2024 12:30:43 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/11] drm: Restore helper usability
-Date: Mon, 22 Apr 2024 12:30:28 +0200
-Message-Id: <cover.1713780345.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1713782691; c=relaxed/simple;
+	bh=bzcewTEZp8Wbd6KSaSgbrbH+qvbZxzp23uj9WiUjdUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrNUhTdeQD2d8HdvrPjKXVkOM7RQtCb9+p2QhYDXLWTlTUCxouC5gX2W41xIO6BKxyqA6B9cs/1iuzkdbsISXAI8TscYSQbKUP8C5PrMJcYjoy7enHGUNr80teaeqb8x5MMnsU+isoybc/XwSsFpp9t2r/qhuqL3Iek04mDFto8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9CpuyAd; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9CpuyAd"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-344047ac7e4so3062581f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Apr 2024 03:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713782688; x=1714387488; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wR97KP7K22vcCUiLNn0X4KfDnNwelS8JUEnq9UX2UNk=;
+        b=m9CpuyAdmtDXEQV035cywFXV5WJmesQilOXrkjzBZmTJHssq+aOYgtu19zy8X+uVfJ
+         f1Wi6YKaP+aSgMSmeORYODqY08dcXSaRf3TNxBzDYQQsyLQMzdRJIuhNKccNmIVaEgrY
+         EVD++Co14+VZzs+9yQdsvwiIg5qgBADxvhbklx6DtKP3fqEcG56HyWZ6a2mw3S6BU2oi
+         Rjd2WU6IyGe5OxWS9UrqQ3Su0QtuCAllP4gkXM2DZAT5BnOksBJ0v2pENzySrVeKMsFX
+         +xod4kFoLOFOPIxiUn1hQp0n4GSuF01N1hTjqsfVFJ4KCqSXNjPOAjlOe7B1TvGkwpw+
+         4wow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713782688; x=1714387488;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wR97KP7K22vcCUiLNn0X4KfDnNwelS8JUEnq9UX2UNk=;
+        b=vKsEJGiW6ORfuAcD9jYXZBV+Uo1cGkO2/LBdyNk93szqwb8e/+7DsoetbvOorK/B6n
+         eQZKbfWKhkUrD5bvg8CH5gSnsZ9I+scC9VmatoBsAhxtiIzqRHu6Zfe5w/gbnerZpJ9l
+         kvEQAI17kYp2KNuIsFYD2EJbjcO5fPGZttZPHwn6xTmni+2TxUC4KEiQnoYGs3cDO50m
+         DFK4ARfuCmWoYk3TudlACcV6r6rffsygaX6SHUXZwWrlsVtcTG9AVIe51NkxW3LeCrT7
+         FzUW9o9NgfqhqT+mP0OkKJLgNVY4TVTkXg2diq5+NLZehuwjobz0N7LOpO9aZc4aZF2P
+         p3Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCWBYkhTAbSjx/1Pk8y0eyoAnx4LAfr4UHYAkmxJt9IXQzUSu0YgUjnoWtbXlDwhBMSl8mAWxd+8UL82fusyk/qqs3LGoUhgTHoNkhtHF5/0+gY=
+X-Gm-Message-State: AOJu0Yx9H0pplcS8g4a+sHZWP5qTIWmjbE+7btrX/32ZahAWc7kcgU3n
+	X+ttNgLBh4FLWSHRF8LCtRVd3IfHP51lo8s46xKmp/K+M1jIxArQPCGpv6nm67w=
+X-Google-Smtp-Source: AGHT+IHEVYgt9vgZzUvOGj9DvGZzF9NFHN00yyy4hZi+7IPr9wmffeRfEUo3Gjiacp8SiOwFg51jtg==
+X-Received: by 2002:adf:ec0a:0:b0:34a:eb4e:2633 with SMTP id x10-20020adfec0a000000b0034aeb4e2633mr2464786wrn.10.1713782687876;
+        Mon, 22 Apr 2024 03:44:47 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id g30-20020adfa49e000000b00343f662327bsm11845256wrb.77.2024.04.22.03.44.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Apr 2024 03:44:47 -0700 (PDT)
+Message-ID: <5020e895-2810-4895-9f1f-9e15f7cec357@linaro.org>
+Date: Mon, 22 Apr 2024 12:44:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] thermal: rcar_gen3: Use temperature approximation
+ from datasheet
+Content-Language: en-US
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ linux-renesas-soc@vger.kernel.org
+References: <20240327133013.3982199-1-niklas.soderlund+renesas@ragnatech.se>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240327133013.3982199-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+On 27/03/2024 14:30, Niklas Söderlund wrote:
+> Hello,
+> 
+> When the driver was first added the temperature approximation was
+> reversed engineered from an out-of-tree driver as the datasheets of the
+> time did not contain this information. Recent datasheets, both Gen3 and
+> Gen4, now contains this information.
+> 
+> This series changes the temperature approximation formula to match
+> what's described in the datasheets. It has been tested on both Gen3 and
+> Gen4 with minimal changes in temperatures reported.
+> 
+> Patch 1 is a cleanup making the scope of a constant more clear. Patch
+> 2 is the real work changing the approximation formula.
+> 
+> Compared to v1 patch 3/3 have been squashed intro v2 patch 2/2. This is
+> due to a suggestion from Geert where the precision in approximation
+> could be increased while removing the need for the changed done in v1
+> 3/3, thanks Geert!
+> 
+> See individual patches for detailed changelog.
 
-As discussed on IRC with Maxime and Arnd, this series reverts the
-conversion of select to depends for various DRM helpers in series
-"[PATCH v3 00/13] drm/display: Convert helpers Kconfig symbols to
-depends on"[1], and various fixes for it.  This conversion introduced a
-big usability issue when configuring a kernel and enabling DRM drivers
-that use DRM helper code: as drivers now depend on helpers, the user
-needs to know which helpers to enable, before the driver he is
-interested even becomes visible.  The user should not need to know that,
-and drivers should select the helpers they need.
-
-Hence revert back to what we had before, where drivers selected the
-helpers (and any of their dependencies, if they can be met) they need.
-In general, when a symbol selects another symbol, it should just make
-sure the dependencies of the target symbol are met, which may mean
-adding dependencies to the source symbol.
-
-Thanks for applying!
-
-[1] https://lore.kernel.org/r/20240327-kms-kconfig-helpers-v3-0-eafee11b84b3@kernel.org/
-
-Geert Uytterhoeven (11):
-  Revert "drm: fix DRM_DISPLAY_DP_HELPER dependencies, part 2"
-  Revert "drm/display: Select DRM_KMS_HELPER for DP helpers"
-  Revert "drm/bridge: dw-hdmi: Make DRM_DW_HDMI selectable"
-  Revert "drm: fix DRM_DISPLAY_DP_HELPER dependencies"
-  Revert "drm: Switch DRM_DISPLAY_HDMI_HELPER to depends on"
-  Revert "drm: Switch DRM_DISPLAY_HDCP_HELPER to depends on"
-  Revert "drm: Switch DRM_DISPLAY_DP_HELPER to depends on"
-  Revert "drm: Switch DRM_DISPLAY_DP_AUX_BUS to depends on"
-  Revert "drm: Switch DRM_DISPLAY_HELPER to depends on"
-  Revert "drm: Make drivers depends on DRM_DW_HDMI"
-  Revert "drm/display: Make all helpers visible and switch to depends
-    on"
-
- drivers/gpu/drm/Kconfig                 |  8 +++----
- drivers/gpu/drm/amd/amdgpu/Kconfig      | 12 ++++------
- drivers/gpu/drm/bridge/Kconfig          | 28 +++++++++++-----------
- drivers/gpu/drm/bridge/analogix/Kconfig | 18 +++++++-------
- drivers/gpu/drm/bridge/cadence/Kconfig  |  8 +++----
- drivers/gpu/drm/bridge/imx/Kconfig      |  4 ++--
- drivers/gpu/drm/bridge/synopsys/Kconfig |  6 ++---
- drivers/gpu/drm/display/Kconfig         | 32 ++++++++++---------------
- drivers/gpu/drm/exynos/Kconfig          |  4 ++--
- drivers/gpu/drm/i915/Kconfig            |  8 +++----
- drivers/gpu/drm/imx/ipuv3/Kconfig       |  5 ++--
- drivers/gpu/drm/ingenic/Kconfig         |  2 +-
- drivers/gpu/drm/mediatek/Kconfig        |  6 ++---
- drivers/gpu/drm/meson/Kconfig           |  2 +-
- drivers/gpu/drm/msm/Kconfig             |  8 +++----
- drivers/gpu/drm/nouveau/Kconfig         | 10 ++++----
- drivers/gpu/drm/panel/Kconfig           | 32 ++++++++++++-------------
- drivers/gpu/drm/radeon/Kconfig          |  8 +++----
- drivers/gpu/drm/renesas/rcar-du/Kconfig |  2 +-
- drivers/gpu/drm/rockchip/Kconfig        | 10 ++++----
- drivers/gpu/drm/sun4i/Kconfig           |  2 +-
- drivers/gpu/drm/tegra/Kconfig           |  8 +++----
- drivers/gpu/drm/vc4/Kconfig             | 10 ++++----
- drivers/gpu/drm/xe/Kconfig              | 13 ++++------
- drivers/gpu/drm/xlnx/Kconfig            |  8 +++----
- 25 files changed, 116 insertions(+), 138 deletions(-)
+Applied, thanks
 
 -- 
-2.34.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Gr{oetje,eeting}s,
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
