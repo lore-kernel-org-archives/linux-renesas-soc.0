@@ -1,34 +1,49 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994BE50246
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Apr 2024 08:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEB4143C50
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Apr 2024 10:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713774047; cv=none; b=k6duTLhVUPIbK40d3VVigo/3l/iB9I/QySFyf/5vrsodwt0xutNPTgxXoxwg5gylI07SagLjFavHIjFwppnrRM4bpJzuQ0sBcSPyTgBuEHrqj2Ks2HQKwY+sGQF6LLupSzHj3UZ2rlgVC9Haw/ACk41a5emV7HUE+bcRxMPFNXQ=
+	t=1713781850; cv=none; b=ZgdIZIAWt5aeSaJ+qdxEGoRaed0N9/xzDDoPEjDNKHCh7Zq+qSKW4dhgwxIby8xW+ODu4LOyK8sZOaqKo1oKSMmB7zgVgSugV9UgywijnLQ5aMtbxVAAsXeJ8rrsBxvhv8InDHt9D9AInRY3V2B/yiVtrFFEYxhXdWmBhY/BJUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713774047; c=relaxed/simple;
-	bh=dZFn+1dEDGdLOYAQ8w3UtozsZkQt3gyZt5JPBG3mr5c=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=DGXKMHZja2OWwWlQNGqJ5YmqLmH/8t+x38895yt1UkV5AjSpHZtQ2Mc1ARZXDkNMxmaWZOTJfj9MoS9uwvIJtNMUffzg/vZk2Dny18XtE9jlYD3Cg8TMujk+FJy9wsz9j8X7et9K6nPPz4nNBkkz81mcbhzy3odNzktqB2BG444=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLoWmC7X; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLoWmC7X"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 28F43C113CC
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Apr 2024 08:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713774047;
-	bh=dZFn+1dEDGdLOYAQ8w3UtozsZkQt3gyZt5JPBG3mr5c=;
-	h=Subject:From:Date:To:From;
-	b=WLoWmC7XTKncAEMayGFHC2hZOPQV6nSl5MQKsqjgFixm6GnPDbvKjYv6NRJBD8CmD
-	 d9bvtBwA5L0AuFdbw2xUZv7XkzNbHUedhWiYF8iN5zXROw3OEwOJFgg0QWTyXz2gEo
-	 TWvG7BEbDYvCelsR2fruTDjAOfiPGYESwSQDXRAj96lhsCkKSgcOoY9APbKWz/D287
-	 p5TK3rAstFdY60mUlvuJbdnc9Bh3K8+7KsZozuPbLx0PCq+E74yjMfmR+DwbP2M7ob
-	 cPFbDwsyHV3hUw7tiHuVQG7f6NirPJ+XXk6YpEvI6lTXO8Qd8OB56K0LqJXbZRdOa5
-	 CY+EoyUi8mniw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1C565C4339F
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Apr 2024 08:20:47 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1713781850; c=relaxed/simple;
+	bh=XUpU/WsAuGiRymcAesknj0rNtivwE8CJFMdxaXR4K1w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=n5JiIjAecLsLGg2alVqs97ZnpPudWZPGpTGqK1o5YGiXvCKQqeFqtQMPIK6xq10wyw/CGqVrLJGxjjtLrwdc0SzVj9bXLEabD3upVb4tgRS5oN33u3Ub1n/cR6CCK07A0vbPCcYn9v/6+doGtWcqXdXcNu9JNMM+SY0UDJw/Q/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
+	by baptiste.telenet-ops.be with bizsmtp
+	id EAWj2C00N0SSLxL01AWjQj; Mon, 22 Apr 2024 12:30:45 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1ryqw1-001cw4-8e;
+	Mon, 22 Apr 2024 12:30:43 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1ryqwd-005i3l-9B;
+	Mon, 22 Apr 2024 12:30:43 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 05/11] Revert "drm: Switch DRM_DISPLAY_HDMI_HELPER to depends on"
+Date: Mon, 22 Apr 2024 12:30:33 +0200
+Message-Id: <bd288a5943dab8609f2d1f2bf413595a61df727a.1713780345.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1713780345.git.geert+renesas@glider.be>
+References: <cover.1713780345.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -36,48 +51,163 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From: patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: 
- <171377404704.21182.5760306475414159398.git-patchwork-summary@kernel.org>
-Date: Mon, 22 Apr 2024 08:20:47 +0000
-To: linux-renesas-soc@vger.kernel.org
 
-Hello:
+This reverts commit f6d2dc03fa8546b284dd8c1af027d9fac5725921, as helper
+code should always be selected by the driver that needs it, for the
+convenience of the final user configuring a kernel.
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+The user who configures a kernel should not need to know which helpers
+are needed for the driver he is interested in.  Making a driver depend
+on helper code means that the user needs to know which helpers to enable
+first, which is very user-unfriendly.
 
-Series: ravb Ethernet driver bugfixes
-  Submitter: Paul Barker <paul.barker.ct@bp.renesas.com>
-  Committer: Paolo Abeni <pabeni@redhat.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=845023
-  Lore link: https://lore.kernel.org/r/20240416120254.2620-1-paul.barker.ct@bp.renesas.com
-    Patches: [net,v3,1/4] net: ravb: Count packets instead of descriptors in R-Car RX path
-             [net,v3,2/4] net: ravb: Allow RX loop to move past DMA mapping errors
-             [net,v3,3/4] net: ravb: Fix GbEth jumbo packet RX checksum handling
-             [net,v3,4/4] net: ravb: Fix RX byte accounting for jumbo packets
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpu/drm/amd/amdgpu/Kconfig      | 2 +-
+ drivers/gpu/drm/bridge/synopsys/Kconfig | 2 +-
+ drivers/gpu/drm/display/Kconfig         | 1 -
+ drivers/gpu/drm/i915/Kconfig            | 2 +-
+ drivers/gpu/drm/nouveau/Kconfig         | 2 +-
+ drivers/gpu/drm/tegra/Kconfig           | 2 +-
+ drivers/gpu/drm/vc4/Kconfig             | 2 +-
+ drivers/gpu/drm/xe/Kconfig              | 2 +-
+ 8 files changed, 7 insertions(+), 8 deletions(-)
 
-Patch: arm64: dts: renesas: rzg3s-smarc-som: Enable eMMC by default
-  Submitter: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=845410
-  Lore link: https://lore.kernel.org/r/20240417112003.428348-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-
-Series: Add IAX45 support for RZ/Five SoC
-  Submitter: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=841218
-  Lore link: https://lore.kernel.org/r/20240403203503.634465-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-    Patches: [v2,1/5] dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document RZ/Five SoC
-             [v2,3/5] riscv: dts: renesas: r9a07g043f: Add IRQC node to RZ/Five SoC DTSI
-             [v2,4/5] arm64: dts: renesas: r9a07g043: Move interrupt-parent property to common DTSI
-             [v2,5/5] riscv: dts: renesas: rzfive-smarc-som: Drop deleting interrupt properties from ETH0/1 nodes
-
-
-Total patches: 9
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
+index b0365cc1374ee50a..1662dc49f18ed11e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/Kconfig
++++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
+@@ -5,12 +5,12 @@ config DRM_AMDGPU
+ 	depends on DRM
+ 	depends on DRM_DISPLAY_DP_HELPER
+ 	depends on DRM_DISPLAY_HDCP_HELPER
+-	depends on DRM_DISPLAY_HDMI_HELPER
+ 	depends on DRM_DISPLAY_HELPER
+ 	depends on MMU
+ 	depends on PCI
+ 	depends on !UML
+ 	select FW_LOADER
++	select DRM_DISPLAY_HDMI_HELPER
+ 	select DRM_KMS_HELPER
+ 	select DRM_SCHED
+ 	select DRM_TTM
+diff --git a/drivers/gpu/drm/bridge/synopsys/Kconfig b/drivers/gpu/drm/bridge/synopsys/Kconfig
+index 387f5bd86089fb5c..f366ece471462a70 100644
+--- a/drivers/gpu/drm/bridge/synopsys/Kconfig
++++ b/drivers/gpu/drm/bridge/synopsys/Kconfig
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_DW_HDMI
+ 	tristate
+-	depends on DRM_DISPLAY_HDMI_HELPER
+ 	depends on DRM_DISPLAY_HELPER
++	select DRM_DISPLAY_HDMI_HELPER
+ 	select DRM_KMS_HELPER
+ 	select REGMAP_MMIO
+ 	select CEC_CORE if CEC_NOTIFIER
+diff --git a/drivers/gpu/drm/display/Kconfig b/drivers/gpu/drm/display/Kconfig
+index 01f2a231aa5f04bd..d65f1a37c08c7cf8 100644
+--- a/drivers/gpu/drm/display/Kconfig
++++ b/drivers/gpu/drm/display/Kconfig
+@@ -74,6 +74,5 @@ config DRM_DISPLAY_HDCP_HELPER
+ config DRM_DISPLAY_HDMI_HELPER
+ 	bool "DRM HDMI Helpers"
+ 	depends on DRM_DISPLAY_HELPER
+-	default y
+ 	help
+ 	  DRM display helpers for HDMI.
+diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+index 4f0d18a16b0f4f99..87ef8c4d72a53768 100644
+--- a/drivers/gpu/drm/i915/Kconfig
++++ b/drivers/gpu/drm/i915/Kconfig
+@@ -4,7 +4,6 @@ config DRM_I915
+ 	depends on DRM
+ 	depends on DRM_DISPLAY_DP_HELPER
+ 	depends on DRM_DISPLAY_HDCP_HELPER
+-	depends on DRM_DISPLAY_HDMI_HELPER
+ 	depends on DRM_DISPLAY_HELPER
+ 	depends on X86 && PCI
+ 	depends on !PREEMPT_RT
+@@ -14,6 +13,7 @@ config DRM_I915
+ 	# the shmem_readpage() which depends upon tmpfs
+ 	select SHMEM
+ 	select TMPFS
++	select DRM_DISPLAY_HDMI_HELPER
+ 	select DRM_KMS_HELPER
+ 	select DRM_PANEL
+ 	select DRM_MIPI_DSI
+diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
+index 4c10b400658c519c..7cc305b2826d6abc 100644
+--- a/drivers/gpu/drm/nouveau/Kconfig
++++ b/drivers/gpu/drm/nouveau/Kconfig
+@@ -3,12 +3,12 @@ config DRM_NOUVEAU
+ 	tristate "Nouveau (NVIDIA) cards"
+ 	depends on DRM
+ 	depends on DRM_DISPLAY_DP_HELPER
+-	depends on DRM_DISPLAY_HDMI_HELPER
+ 	depends on DRM_DISPLAY_HELPER
+ 	depends on PCI
+ 	depends on MMU
+ 	select IOMMU_API
+ 	select FW_LOADER
++	select DRM_DISPLAY_HDMI_HELPER
+ 	select DRM_KMS_HELPER
+ 	select DRM_TTM
+ 	select DRM_TTM_HELPER
+diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
+index 6974caa99ece94e1..bb6e35261f1144b1 100644
+--- a/drivers/gpu/drm/tegra/Kconfig
++++ b/drivers/gpu/drm/tegra/Kconfig
+@@ -6,9 +6,9 @@ config DRM_TEGRA
+ 	depends on DRM
+ 	depends on DRM_DISPLAY_DP_AUX_BUS
+ 	depends on DRM_DISPLAY_DP_HELPER
+-	depends on DRM_DISPLAY_HDMI_HELPER
+ 	depends on DRM_DISPLAY_HELPER
+ 	depends on OF
++	select DRM_DISPLAY_HDMI_HELPER
+ 	select DRM_KMS_HELPER
+ 	select DRM_MIPI_DSI
+ 	select DRM_PANEL
+diff --git a/drivers/gpu/drm/vc4/Kconfig b/drivers/gpu/drm/vc4/Kconfig
+index 4801f8b64d3d70cd..98772a6b5bf0df54 100644
+--- a/drivers/gpu/drm/vc4/Kconfig
++++ b/drivers/gpu/drm/vc4/Kconfig
+@@ -4,13 +4,13 @@ config DRM_VC4
+ 	depends on ARCH_BCM || ARCH_BCM2835 || COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	depends on DRM
+-	depends on DRM_DISPLAY_HDMI_HELPER
+ 	depends on DRM_DISPLAY_HELPER
+ 	depends on PM
+ 	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
+ 	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
+ 	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
+ 	depends on SND && SND_SOC
++	select DRM_DISPLAY_HDMI_HELPER
+ 	select DRM_KMS_HELPER
+ 	select DRM_GEM_DMA_HELPER
+ 	select DRM_PANEL_BRIDGE
+diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+index bfa0e9d4bd64f83b..1fa8ef75823c7a6b 100644
+--- a/drivers/gpu/drm/xe/Kconfig
++++ b/drivers/gpu/drm/xe/Kconfig
+@@ -5,7 +5,6 @@ config DRM_XE
+ 	depends on DRM
+ 	depends on DRM_DISPLAY_DP_HELPER
+ 	depends on DRM_DISPLAY_HDCP_HELPER
+-	depends on DRM_DISPLAY_HDMI_HELPER
+ 	depends on DRM_DISPLAY_HELPER
+ 	depends on MMU
+ 	depends on PCI
+@@ -20,6 +19,7 @@ config DRM_XE
+ 	select DRM_KUNIT_TEST_HELPERS if DRM_XE_KUNIT_TEST != n
+ 	select DRM_PANEL
+ 	select DRM_SUBALLOC_HELPER
++	select DRM_DISPLAY_HDMI_HELPER
+ 	select DRM_MIPI_DSI
+ 	select RELAY
+ 	select IRQ_WORK
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
