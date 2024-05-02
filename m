@@ -1,140 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B7355783;
-	Thu,  2 May 2024 09:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058B85674B
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 May 2024 09:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714643120; cv=none; b=JmONAqOM+RmrQMLnu5V9vT6CZaWNXunjfR5TobAWdrmvMrgFKTyVJU6tipS8736IKVYlRVtuRegIwHpmYiR0sDiCs+IoyXOyGgcuGBEhMEDueMUDGINC2uDfYGZdU9fBdXdOrqfKkGRWX626c+/p3h10CCXcRS9KWWxjYRToi/I=
+	t=1714643843; cv=none; b=Oaydi8qULGXMTW6NAa2UiN0SMJQ8+Kxw5NeDrZorKZIgGB4pyzQiS0/McAPq2h3/+D7T2/HuGhZ02lRSz90Ozd68Y7JOAzrnhnUqThQvc54tMaswSwiUb5U4r7MF9S/0LSdP1DsEzB9RBYIxLVJx7Ow3iuRitYdQcPmILeipQQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714643120; c=relaxed/simple;
-	bh=KMKmbjNxDjaQW/0y4bty5ahkkoXZGQdtL8KqJYUhwyE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jye0JU9wZma8jHPfRlVCgkwzVu6n+DQpIxCY9sZDFapxY2O6jRUBoSSr1MbvX33rsWrxPV5dYCjw+Qb+Ya3lHsFLcRo3AhkW9g0w6h++bd4VEcLxeJn4TpIV4BCkgT1S7Cgp4OASuPm+0D5g311Urw6qX2rif6Ri0Qz3CVRAUB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAfQwcFE; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAfQwcFE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC6A9C113CC;
-	Thu,  2 May 2024 09:45:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714643119;
-	bh=KMKmbjNxDjaQW/0y4bty5ahkkoXZGQdtL8KqJYUhwyE=;
-	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To:From;
-	b=oAfQwcFEFQ4YSvMqY1Xbh/lsc5LPNSzumgD/oGqD14ngGgVPaEs7MibpgzzKx9oki
-	 Zagn8sEO8gj46WZhp4lLi4tBXFTB+pnYiA73nYZaFmp60rxFnqFwc6JU+DjWzL67dG
-	 /MZ0o36PB32nJVFZyZuANe63Rb2438n1oBk0vqlifHQrplthsktdyd/SJ9MqUjTqSh
-	 S4MhcJVVnSWRNuZQtI579Q7AgypadRVel2Bn/9DPwLpuM9kooXWaDgrnlLnFOcgFi9
-	 WcmGesxwuIsoxe8I2o27QKIei0xaWcNAItuJ4mp51iYpDI3BxfZTFiHOR9LfE7YUv9
-	 8qqWoV1TVGUXg==
-Message-ID: <dfde41a3-9d7d-4253-8297-c7684372f6f0@kernel.org>
-Date: Thu, 2 May 2024 18:45:09 +0900
+	s=arc-20240116; t=1714643843; c=relaxed/simple;
+	bh=ekClIaVeU7FniI7QxtD2BQawc20SAF5Bd0LNDcoSWXs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=B/nXQtf2VHXvbKRFVvyiP4Fm3U5ODtFMYiEvDVBfBLS9caKMJpuP1z+sRPXHzz+zIFfcgOgXE9RdtqG4RM3/2ECt7hPWOhgpKpjIfvu5f1ENr3SzmzI7R+g9N3cQS760EufpsPSZYp28Tkz+ZTh/cNlIgpnUz/NkeqOfHhs5Q1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:93f:7d7e:5c98:dabc])
+	by baptiste.telenet-ops.be with bizsmtp
+	id J9xC2C0083PjoSD019xCKA; Thu, 02 May 2024 11:57:12 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1s2TAw-002nZe-0s;
+	Thu, 02 May 2024 11:57:12 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1s2TBg-004jYj-87;
+	Thu, 02 May 2024 11:57:12 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 8/8] arm64: dts: renesas: r8a779h0: Add OTP_MEM node
+Date: Thu,  2 May 2024 11:57:11 +0200
+Message-Id: <4139a68854d258a8f989900cb75d51a2a496df27.1714642390.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1714642390.git.geert+renesas@glider.be>
+References: <cover.1714642390.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/21] pinctrl: k210: Use scope based of_node_put()
- cleanups
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>,
- Wells Lu <wellslutw@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Emil Renner Berthing <kernel@esmil.dk>,
- Jianlong Huang <jianlong.huang@starfivetech.com>,
- Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Viresh Kumar <vireshk@kernel.org>,
- Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Heiko Stuebner <heiko@sntech.de>,
- Ludovic Desroches <ludovic.desroches@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
- Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org,
- imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org,
- openbmc@lists.ozlabs.org, Peng Fan <peng.fan@nxp.com>
-References: <20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com>
- <20240501-pinctrl-cleanup-v1-12-797ceca46e5c@nxp.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240501-pinctrl-cleanup-v1-12-797ceca46e5c@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/1/24 21:56, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Use scope based of_node_put() cleanup to simplify code.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/pinctrl/pinctrl-k210.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-> index b6d1ed9ec9a3..2753e14c3e38 100644
-> --- a/drivers/pinctrl/pinctrl-k210.c
-> +++ b/drivers/pinctrl/pinctrl-k210.c
-> @@ -849,7 +849,6 @@ static int k210_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
->  				       unsigned int *num_maps)
->  {
->  	unsigned int reserved_maps;
-> -	struct device_node *np;
->  	int ret;
->  
->  	reserved_maps = 0;
-> @@ -861,13 +860,11 @@ static int k210_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
->  	if (ret < 0)
->  		goto err;
->  
-> -	for_each_available_child_of_node(np_config, np) {
-> +	for_each_available_child_of_node_scoped(np_config, np) {
->  		ret = k210_pinctrl_dt_subnode_to_map(pctldev, np, map,
->  						     &reserved_maps, num_maps);
-> -		if (ret < 0) {
-> -			of_node_put(np);
+Add a device node for the OTP non-volatile memory on the R-Car V4M
+(R8A779H0) SoC, which provides E-FUSE services.
 
-Personally, I am really not a fan of things that hide code like that scoped
-thing... If I want a language that hides code, I would be doing C++ :)
-That said, I am not opposed to this so I will let Linus (Walleij) decide.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Also, I think that "for_each_available_child_of_node" is a bad name... It really
-should be something like for_each_available_child_of_node_get() to make it clear
-that a of_node_put() is needed.
-
-> +		if (ret < 0)
->  			goto err;
-> -		}
->  	}
->  	return 0;
->  
-> 
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+index 6d791024cabe1b94..ea3d2b2de10b2999 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+@@ -404,6 +404,11 @@ tsc: thermal@e6198000 {
+ 			#thermal-sensor-cells = <1>;
+ 		};
+ 
++		otp: otp@e61be000 {
++			compatible = "renesas,r8a779h0-otp";
++			reg = <0 0xe61be000 0 0x1000>, <0 0xe61bf000 0 0x1000>;
++		};
++
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a779h0", "renesas,irqc";
+ 			#interrupt-cells = <2>;
 -- 
-Damien Le Moal
-Western Digital Research
+2.34.1
 
