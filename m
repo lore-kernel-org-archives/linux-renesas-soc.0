@@ -1,34 +1,34 @@
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B9214262C
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 May 2024 11:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E13143864
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  6 May 2024 11:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714995635; cv=none; b=TQhLzBS94EtlY1XFA/IoX7eFa9n1gM4rbRZA5hb+X4hJAymWLnDUaCj4LDKq8V0IBGg1laYGw6YoU9ojU8NDX8EJpZIFEK/v8AsWdd1rIIx+5IML+EpXR9wBX1PD1/V9FD2HdvN2db9PnEHSd+5dvQ3L/wXpaR/oWqKQXeiJYZo=
+	t=1714995636; cv=none; b=GhUHPxY7DiCHDPcb1aoMch2+Om4sZgSGdqNyX5Yfwn3WqV7/y6lCQ6JVLhbydxqpM5Y0ZjFaVtViBBxzkQ1Jd5ILltifKBzt9pLHNo34xalO/4wrjkBl1Rkysdnoh1omv1dRnzlYiGPjaYKoPKnLYkjR0Hrqlj1pwleVcIuLrX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714995635; c=relaxed/simple;
-	bh=tZekCqwesM0TH7zbeTcT2ilFSjF/za++SpAUFY+hRMU=;
+	s=arc-20240116; t=1714995636; c=relaxed/simple;
+	bh=BsQOXq+ahxAfweHQAWj5mwNGLsEtbwecliFaCCUsygw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HDoWUAhdkzN44dgXyUwgepr6imROUqmiVe3zz4abk5BW4k/T/9EUnv2k1p62a4gtNMFhCBDVov0ZEYBmbVNw/9lHF08KQTrJX1rPSxiQyFRaQtpLiUdKi81If4hoPZl9WHZUcwOSdLTAOuLd01gDQ8cksWf4B6lj2HuSgKKf1lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HD4MITfX; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=a6jW7nAheX3FBNxkxG/Q/Wen9051bEkKw2pZ1NRmwZyB+RmAAwO5LiHeU5g0BbM1AizrMAKI6B+xj4jwPWcY9tgNP4D1wxDHxbBak6hpM4c82J/f+ywQ1LrfPgwfMSy1M6LKmfSnF7k9Mc7Co0o7dpHSM4wNjQ8mB7XrjkJySiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gmbYN0eW; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HD4MITfX"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gmbYN0eW"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=b0eZn/5/l2EZquZuG8Vtq1BaQMNdvpMDot1jtzd3GNg=; b=HD4MIT
-	fXtOLqSvs5hTbA609YvGcnRMuFmzuICm/BtAj+c7CFjQ+FcgZvTdguYi26x4Gx5x
-	aUwskDia3s9CmBxlYF0vK4tcwVMJWYq0JGmpBQetCLRpJ3MBZMmLR/xejuf7j8iL
-	JLURDLYzEnAFWI2iDSS2dfOzdaAThty39XSG33dTBxgL7IndmgVjAUsw2jsrXVNo
-	O6P7ChA2KzQZQpEuNb0JzAl8IRzJS4viA2Foado0LN/0QR5Uqinl6a32202excsa
-	va0+l5ivdZgiLfM/pFxO+I/0EmdqzX9hH0wL9YoiFQQlUNAn42T1GEteyK6X9oDQ
-	exAdH/P/YqpZfaeA==
-Received: (qmail 172901 invoked from network); 6 May 2024 13:40:32 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 May 2024 13:40:32 +0200
-X-UD-Smtp-Session: l3s3148p1@fa5riccXlLYgAwDPX0CuAO+oYiCi4tWm
+	 s=k1; bh=3vmDFjar/7zOCQ0E0AN2tIN3W6sFdzg+LLuJUacu2Pw=; b=gmbYN0
+	eWVvpz13qeB+CpgJkjp6DR7VNk0TN2JEzS1AL2OvdXgr3olGLemUU6Zh0VJyg2ii
+	ZHU8EGzAz6BY08+lbGpAD6Fhvsw/CqnPalBxo/pLbucRc3qG5vJzQFnKPy2zWQ/V
+	tejPXcu6/l1Hf5iZFNanvcwYc8CMSo3TyopoZDkofxjZuFjj4TcBs0pxasac7U5k
+	f4xCkxy3Sanuynmpo1bsKF5sa67UVIhK9VfWwnM1r/uwYF7ZldyTZoKDRPVVbBeu
+	WEaSsrch/ny8MflRmLpTxh/nO0Z2PvsIFzLomm4u7NFfPcTjGeb/dOYU1F7WaPsh
+	los4Y2U4t2QcdLoA==
+Received: (qmail 172821 invoked from network); 6 May 2024 13:40:30 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 May 2024 13:40:30 +0200
+X-UD-Smtp-Session: l3s3148p1@hUhTiccXfrYgAwDPX0CuAO+oYiCi4tWm
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -36,9 +36,9 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Jiri Slaby <jirislaby@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org
-Subject: [PATCH 4/4] serial: sh-sci: simplify locking when re-issuing RXDMA fails
-Date: Mon,  6 May 2024 13:40:20 +0200
-Message-ID: <20240506114016.30498-10-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 2/4] serial: sh-sci: describe locking requirements for invalidating RXDMA
+Date: Mon,  6 May 2024 13:40:18 +0200
+Message-ID: <20240506114016.30498-8-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240506114016.30498-6-wsa+renesas@sang-engineering.com>
 References: <20240506114016.30498-6-wsa+renesas@sang-engineering.com>
@@ -50,34 +50,25 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Avoid a superfluous unlock/lock-pair by simply moving the printout to
-the end of bailing out.
+Make sure everyone knows that calling this function needs protection.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/tty/serial/sh-sci.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 7cc354ee6305..4dc9c142690a 100644
+index a6f3517dce74..09eb0c824b10 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -1361,14 +1361,12 @@ static void sci_dma_rx_complete(void *arg)
- 	return;
- 
- fail:
--	uart_port_unlock_irqrestore(port, flags);
--	dev_warn(port->dev, "Failed submitting Rx DMA descriptor\n");
- 	/* Switch to PIO */
--	uart_port_lock_irqsave(port, &flags);
- 	dmaengine_terminate_async(chan);
- 	sci_dma_rx_chan_invalidate(s);
- 	sci_dma_rx_reenable_irq(s);
- 	uart_port_unlock_irqrestore(port, flags);
-+	dev_warn(port->dev, "Failed submitting Rx DMA descriptor\n");
+@@ -1258,6 +1258,7 @@ static int sci_dma_rx_find_active(struct sci_port *s)
+ 	return -1;
  }
  
- static void sci_dma_tx_release(struct sci_port *s)
++/* Must only be called with uart_port_lock taken */
+ static void sci_dma_rx_chan_invalidate(struct sci_port *s)
+ {
+ 	unsigned int i;
 -- 
 2.43.0
 
