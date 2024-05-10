@@ -1,38 +1,39 @@
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844C415ECFC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8447915ECF1;
 	Fri, 10 May 2024 07:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715326663; cv=none; b=IKRQAxU47qwojFceupl4k2n/qu7SDr20Pei8gfEhjQOeWxtu6oMrhlL9OxTpghkYFnlrlS5y8ILvRxevIDhfISKYNwDcDEsKLrRjVC0MTXg2qSowGxr8/xirVjxF/2cv+M3/oafwVGyhLyDLVzMEwyRLZgp4eusn1Fi3wt2D+GU=
+	t=1715326663; cv=none; b=KnN2U2rpP6gIkJ9NH/rA0EnbAnnbGj+8O8JvrGbpnLGsfsbxKBiAsvZiTeBoRn++CvjiNSd4voVWSNEusLF2CCRVMTx7O1IqMRNSZPJ09Jyl27Bp/nnQbRusTFbH1HvRsWYvjyzB90NcST3/cw5odjXklB25L+I6zt8D7jXbI1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715326663; c=relaxed/simple;
-	bh=oecI1I5F8ploSJtFJdVODKUb+t2YKq7ntuJtu7bZFnU=;
+	bh=jKoOYbwP+MiZkFwajW202qtdxaWWXKJ3pajvhaWPdXc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sn/TsJHchWkMt/g48KOsnZKeZ3N+KDNmmy7mx90f4k7W5DwfuupFaqAK3f6KFppS52sPT/W693+8CPcejqFsYPuAlvcMy8qgdraRlUwdEb25BSvN2ExgIdP6yW1yeTZcgPFSkiRm3kBAnFZDV40IsyFHYkv4OFFXrPnW9YuNuXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ArbBT7pM; arc=none smtp.client-ip=217.70.183.193
+	 In-Reply-To:To:Cc; b=NU/GiFQq2o4GUXJcj16DYzmVXyblQnVpAFiSBSFGsh+D5Pwk0Rw84Kf5dGGOHw131zFHnJ/+7DN5Y3nmbJRM797tqPkpbSNv3pB1U8EIj58zxfuUNWVeL48TKLd86s4pc2EoZQYYkf7LT3vJsKf5EZyxfqNcepDd7Mib6vFrutI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UPl9+D8c; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ArbBT7pM"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E9D4224000F;
-	Fri, 10 May 2024 07:37:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UPl9+D8c"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C7706240006;
+	Fri, 10 May 2024 07:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715326660;
+	t=1715326653;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NzNqKTpVWMnrcgcJVGgyUqBdfYphefuKpHkJ0PXLDgQ=;
-	b=ArbBT7pMFK270xL/zfMMmZ02B7LsXveQ1nHlFTKIYeuWNK2iHxGOv+STyrVZ5UaVHmnebb
-	XDIijZ+YmYGtH2HiJsqhGeNbqndYkenPl9xd19D1uYrjV3GYcWxwqjM2Bq5P6Hl25xEMbX
-	D7dCfHBaCo+9JJBo+8IKen2D4+HnSDdnXpZSIF14hDv2p+vuJqxIAq/hasUbemp+aLh+XJ
-	GkLCjoJc4BWIc1ge65QLSQgjy1BuehIPKSj3LqgDUjWYAnMlUtsX8h+/zFcXhpWL9lFmju
-	TYM8rJGa733OrYMPN7n+FOD8nMipXs4nUcD3qvf9o8fzc4Lbk3TokRifKj7NQQ==
+	bh=7rIpZAk8Wec4E2PAYnFztgJW8F7HaR4BB0LLl7tUusw=;
+	b=UPl9+D8cgsOH1S+lx1D0pngAsI3a7o768jWCFoQSMDcbS0wWKKGBXQ9QbgrcWDDzhH9O1k
+	9orAUeI3HhSJCyW5zxO5osRhozCg94i/0p2mt/jXWRlkPyp/uYwKCpfdIJDKxM5V4m0YPv
+	z1kwaukUDu/nRCbcNxAJ33QW0vdjMQi/Oy7oGanz3DwH7uckCjKTaH7Kt8cuqDgyg9HR2B
+	NS3nxkh+A2yXhxa4u5/E+/uDaCqspaFHyle81z50twC/r+gHtSaoEswslA4LeyaRviGVCw
+	D+XebuO8eKB9osbWdZZBUtKIBPJ4ZTFX+0pGpaJqpqLmJtfWkYmI5oI5/9uYaA==
 From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Fri, 10 May 2024 09:38:14 +0200
-Subject: [PATCH net-next v6 7/7] ARM: dts: r9a06g032: describe GMAC1
+Date: Fri, 10 May 2024 09:38:09 +0200
+Subject: [PATCH net-next v6 2/7] net: stmmac: Add dedicated XPCS cleanup
+ method
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -40,8 +41,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240510-rzn1-gmac1-v6-7-b63942be334c@bootlin.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240510-rzn1-gmac1-v6-2-b63942be334c@bootlin.com>
 References: <20240510-rzn1-gmac1-v6-0-b63942be334c@bootlin.com>
 In-Reply-To: <20240510-rzn1-gmac1-v6-0-b63942be334c@bootlin.com>
 To: "David S. Miller" <davem@davemloft.net>, 
@@ -65,49 +66,98 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
 X-Mailer: b4 0.13.0
 X-GND-Sasl: romain.gantois@bootlin.com
 
-From: Clément Léger <clement.leger@bootlin.com>
+From: Serge Semin <fancer.lancer@gmail.com>
 
-The r9a06g032 SoC of the RZ/N1 family features two GMAC devices named
-GMAC1/2, that are based on Synopsys cores. GMAC1 is connected to a
-RGMII/RMII converter that is already described in this device tree.
+Currently the XPCS handler destruction is performed in the
+stmmac_mdio_unregister() method. It doesn't look good because the handler
+isn't originally created in the corresponding protagonist
+stmmac_mdio_unregister(), but in the stmmac_xpcs_setup() function. In
+order to have more coherent MDIO and XPCS setup/cleanup procedures,
+let's move the DW XPCS destruction to the dedicated stmmac_pcs_clean()
+method.
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-[rgantois: commit log]
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This method will also be used to cleanup PCS hardware using the
+pcs_exit() callback that will be introduced to stmmac in a subsequent
+patch.
+
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+Co-developed-by: Romain Gantois <romain.gantois@bootlin.com>
 Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 ---
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  1 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  6 +++++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 14 +++++++++++---
+ 3 files changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index fa63e1afc4ef4..57c730f43442e 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -316,6 +316,24 @@ dma1: dma-controller@40105000 {
- 			data-width = <8>;
- 		};
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+index dddcaa9220cc3..badfe686a5702 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -361,6 +361,7 @@ int stmmac_mdio_unregister(struct net_device *ndev);
+ int stmmac_mdio_register(struct net_device *ndev);
+ int stmmac_mdio_reset(struct mii_bus *mii);
+ int stmmac_xpcs_setup(struct mii_bus *mii);
++void stmmac_pcs_clean(struct net_device *ndev);
+ void stmmac_set_ethtool_ops(struct net_device *netdev);
  
-+		gmac1: ethernet@44000000 {
-+			compatible = "renesas,r9a06g032-gmac", "renesas,rzn1-gmac", "snps,dwmac";
-+			reg = <0x44000000 0x2000>;
-+			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi";
-+			clocks = <&sysctrl R9A06G032_HCLK_GMAC0>;
-+			clock-names = "stmmaceth";
-+			power-domains = <&sysctrl>;
-+			snps,multicast-filter-bins = <256>;
-+			snps,perfect-filter-entries = <128>;
-+			tx-fifo-depth = <2048>;
-+			rx-fifo-depth = <4096>;
-+			pcs-handle = <&mii_conv1>;
-+			status = "disabled";
-+		};
+ int stmmac_init_tstamp_counter(struct stmmac_priv *priv, u32 systime_flags);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 3d828904db0d3..0ac99c132733d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -7789,8 +7789,9 @@ int stmmac_dvr_probe(struct device *device,
+ 
+ error_netdev_register:
+ 	phylink_destroy(priv->phylink);
+-error_xpcs_setup:
+ error_phy_setup:
++	stmmac_pcs_clean(ndev);
++error_xpcs_setup:
+ 	if (priv->hw->pcs != STMMAC_PCS_TBI &&
+ 	    priv->hw->pcs != STMMAC_PCS_RTBI)
+ 		stmmac_mdio_unregister(ndev);
+@@ -7832,6 +7833,9 @@ void stmmac_dvr_remove(struct device *dev)
+ 	if (priv->plat->stmmac_rst)
+ 		reset_control_assert(priv->plat->stmmac_rst);
+ 	reset_control_assert(priv->plat->stmmac_ahb_rst);
 +
- 		gmac2: ethernet@44002000 {
- 			compatible = "renesas,r9a06g032-gmac", "renesas,rzn1-gmac", "snps,dwmac";
- 			reg = <0x44002000 0x2000>;
++	stmmac_pcs_clean(ndev);
++
+ 	if (priv->hw->pcs != STMMAC_PCS_TBI &&
+ 	    priv->hw->pcs != STMMAC_PCS_RTBI)
+ 		stmmac_mdio_unregister(ndev);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+index 0542cfd1817e6..73ba9901a4439 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+@@ -523,6 +523,17 @@ int stmmac_xpcs_setup(struct mii_bus *bus)
+ 	return 0;
+ }
+ 
++void stmmac_pcs_clean(struct net_device *ndev)
++{
++	struct stmmac_priv *priv = netdev_priv(ndev);
++
++	if (!priv->hw->xpcs)
++		return;
++
++	xpcs_destroy(priv->hw->xpcs);
++	priv->hw->xpcs = NULL;
++}
++
+ /**
+  * stmmac_mdio_register
+  * @ndev: net device structure
+@@ -679,9 +690,6 @@ int stmmac_mdio_unregister(struct net_device *ndev)
+ 	if (!priv->mii)
+ 		return 0;
+ 
+-	if (priv->hw->xpcs)
+-		xpcs_destroy(priv->hw->xpcs);
+-
+ 	mdiobus_unregister(priv->mii);
+ 	priv->mii->priv = NULL;
+ 	mdiobus_free(priv->mii);
 
 -- 
 2.44.0
