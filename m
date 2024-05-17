@@ -1,37 +1,41 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC8E6A039
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 May 2024 14:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F3C6A039
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 May 2024 14:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715957850; cv=none; b=qxrJvLNQQAc4bnfcVzmeV6/H7WIq22lT3x2WXvoHihOJ7i44g1hGlSOZSVZ7McQGWHvwY5DpwmW3+l6igm/KT0umhBr/IWL41zYUjh05jcDjOvjBPqSBShhBgM0Mqxpb11zJbKExNeDPf9e4o88N1BToz4s6tPUNqYqF+311cKI=
+	t=1715957856; cv=none; b=FVcrXY/o4doS3VmuNZ/EAKisIn912JsBCsdHxvkY41wQGTS6V9MVdzMkXH+iz03HNXO12XXDs1tnQY7r+UNpFjtLlSDakWgbownyTsA6/8kRy/6xxh+uM1IlY5VuBHNCAJMgv9Rv3DnLMTx/vBkvHLo1Vz/QPoaMlTAosFw1w8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715957850; c=relaxed/simple;
-	bh=ry/+zh6uwEiR0ySTkyMz7QdC4jqfSug6fEkCCJhP1yw=;
+	s=arc-20240116; t=1715957856; c=relaxed/simple;
+	bh=i+eoLY9l1EHK4ty6OVIKVK28ZFe264agnKOjrfX2PD0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tLvsyz4FRJMvH+icyipC7owlYcmxRBBv795lJ0fl3NOCqB1LLSYxYnfu+R7EdVsVb92NSurmMwJKzCcYo0UsG0wX7E/82Ofe4gSPhrWftnMgV8fefPaCV+M1mVTKr0A9iRUUpGbsF8tIORnTuaa9OI/37QlIPmuyjoRu6V5YBcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+	 MIME-Version; b=gxn2PWb0b4QOMB57V3Z7qhOiJ5MIP10kcc7Nt8Nyuhm57uhtrTDMSNBP9ScZc0eoNfOexHb52yvedkxTMKPA0wZps6bYyrbcF7nidRcD94ybVsQjU9O5OxpdYmQ4gspsddHXSsPOAjb2FWpPOVdkC9YRbKqkzOuKPyG4dPJ9ob4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4VgqnM3lpCz4x0lm
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 17 May 2024 16:57:27 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:9706:8977:9494:a7c7])
-	by andre.telenet-ops.be with bizsmtp
-	id QExK2C00R0bc1Xv01ExKm7; Fri, 17 May 2024 16:57:19 +0200
+	by baptiste.telenet-ops.be with bizsmtp
+	id QExK2C00F0bc1Xv01ExKSx; Fri, 17 May 2024 16:57:20 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1s7z0U-00BDnI-FT;
+	id 1s7z0U-00BDn9-Cj;
 	Fri, 17 May 2024 16:57:19 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1s7z1L-00C63T-HE;
+	id 1s7z1L-00C63H-E5;
 	Fri, 17 May 2024 16:57:19 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 4/4] arm64: dts: renesas: gray-hawk-single: Add CAN-FD support
-Date: Fri, 17 May 2024 16:57:16 +0200
-Message-Id: <2fe3c8e38b566de09e49056c62fa954ed306a497.1715956819.git.geert+renesas@glider.be>
+Cc: Cong Dang <cong.dang.xn@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/4] clk: renesas: r8a779h0: Add CANFD clock
+Date: Fri, 17 May 2024 16:57:13 +0200
+Message-Id: <f4ab47f0fec40d5352ad8714407ef70f378581ba.1715956819.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1715956819.git.geert+renesas@glider.be>
 References: <cover.1715956819.git.geert+renesas@glider.be>
@@ -43,91 +47,32 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable CAN-FD channels 0 and 1 on the Gray Hawk Single development
-board:
-  - Channel 0 uses an NXP TJR1443AT CAN transceiver, which must be
-    enabled through a GPIO,
-  - Channel 1 uses a Microchip MCP2558FD-H/SN CAN transceiver, which
-    does not need explicit description.
+From: Cong Dang <cong.dang.xn@renesas.com>
 
-Inspired by a patch for Gray Hawk in the BSP by Duy Nguyen.
+Add the CANFD module clock on the Renesas R-Car V4M (R8A779H0) SoC.
 
+Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Changes compared to the BSP:
-  - Add can_clk,
-  - Add missing can_transceiver0,
-  - Keep channels 2 and 3 disabled,
-  - Preserve sort order.
+  - Change clock name from can-fd to canfd0,
+  - Change parent clock from CANFD to SASYNCPERD2.
 ---
- .../dts/renesas/r8a779h0-gray-hawk-single.dts | 40 +++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-index cfbe8c8680cd8947..294ed2d5a17cbfd5 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-@@ -22,6 +22,13 @@ aliases {
- 		ethernet0 = &avb0;
- 	};
- 
-+	can_transceiver0: can-phy0 {
-+		compatible = "nxp,tjr1443";
-+		#phy-cells = <0>;
-+		enable-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
-+		max-bitrate = <5000000>;
-+	};
-+
- 	chosen {
- 		bootargs = "ignore_loglevel rw root=/dev/nfs ip=on";
- 		stdout-path = "serial0:921600n8";
-@@ -75,6 +82,24 @@ phy0: ethernet-phy@0 {
- 	};
- };
- 
-+&can_clk {
-+	clock-frequency = <40000000>;
-+};
-+
-+&canfd {
-+	pinctrl-0 = <&canfd0_pins>, <&canfd1_pins>, <&can_clk_pins>;
-+	status = "okay";
-+
-+	channel0 {
-+		status = "okay";
-+		phys = <&can_transceiver0>;
-+	};
-+
-+	channel1 {
-+		status = "okay";
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
-@@ -174,6 +199,21 @@ pins_mii {
- 		};
- 	};
- 
-+	can_clk_pins: can-clk {
-+		groups = "can_clk";
-+		function = "can_clk";
-+	};
-+
-+	canfd0_pins: canfd0 {
-+		groups = "canfd0_data";
-+		function = "canfd0";
-+	};
-+
-+	canfd1_pins: canfd1 {
-+		groups = "canfd1_data";
-+		function = "canfd1";
-+	};
-+
- 	hscif0_pins: hscif0 {
- 		groups = "hscif0_data", "hscif0_ctrl";
- 		function = "hscif0";
+diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+index 079b55b30b23bd50..4b237bb2ca69dc2c 100644
+--- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+@@ -176,6 +176,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
+ 	DEF_MOD("avb0:rgmii0",	211,	R8A779H0_CLK_S0D8_HSC),
+ 	DEF_MOD("avb1:rgmii1",	212,	R8A779H0_CLK_S0D8_HSC),
+ 	DEF_MOD("avb2:rgmii2",	213,	R8A779H0_CLK_S0D8_HSC),
++	DEF_MOD("canfd0",	328,	R8A779H0_CLK_SASYNCPERD2),
+ 	DEF_MOD("hscif0",	514,	R8A779H0_CLK_SASYNCPERD1),
+ 	DEF_MOD("hscif1",	515,	R8A779H0_CLK_SASYNCPERD1),
+ 	DEF_MOD("hscif2",	516,	R8A779H0_CLK_SASYNCPERD1),
 -- 
 2.34.1
 
