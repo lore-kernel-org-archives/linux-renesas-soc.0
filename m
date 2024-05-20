@@ -1,70 +1,45 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8974017C6C
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 20 May 2024 07:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B634D17BB7;
+	Mon, 20 May 2024 07:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716189649; cv=none; b=BO/re5AdVwlv75SB7x+QPP4Q6Iwm3F8dG36H/Z0DBWWyb1J0eNVRTMDeT7QDHbzyxAij4Bdkj9f7sRo4OTf4WjxXLZEoBM7Aohm/kPhZqAQNVUmt6G+AwDoHCYt+ndDWVTyBxnUaXdfHDXYFE1O8GFD90tSb+sdMANAXewBl8lc=
+	t=1716191295; cv=none; b=civd4ru2md5Z0rRd4jrP3Z5o8zKJLWwp4MBxgwJ1Cye0M7N4R3fR2UFpGKX1u6TuUrVaB9arWyTb70I16yqPsp1hlJXYv5ycS2mEdzZI39kstq8khYuEwartwclLakJPNBY/HfLCTsJDIc3GoJ2Mz4JscIJxqEDSSz2BpffGvYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716189649; c=relaxed/simple;
-	bh=gqIAUbUBH0zrLm1kxTzRh/nI+40++QuEy6cZC2eVlCs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mv1b952jfpiXzHD8yKwlYsz5K9FMo/pLdGguCfIqJjf5jKN4amXzXKcQIx+w5plJVBHESBLNn34Oy/56HhLwpA9IcgnkXPBQQ7DcAgb2GWDkfJ8W1r9duEoHvq2thtECosRTuopvPWA/bSp/ix8podNYQtRbM20kUnrQOXrstfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VWy2YJrD; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VWy2YJrD"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5210684cee6so3306931e87.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 May 2024 00:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716189644; x=1716794444; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NZBUhRNFLDmCI2ChcjlpR99DNWg+Cc8ceERhi6tF0ro=;
-        b=VWy2YJrDkuo5GTVgOdg3Di5KaEVvjlYbz2ISbYzR7L1lfW5h/AHaNR9xwse942g3t2
-         JRDGY8pHIeC+pOkmqHyJKsP1LlsDJacUrZzENQ/hIVQp19xFYZYnelUWkfRPefrG077k
-         FU0uc0LwopogE9cT1f2MgXqG3vGqiVjJrwR9ZHQVbMTxPSsuqCy8/FgF3TvqkkioeVMm
-         H31gFXNPKPL72foU0fP1OTDvlx1aCoUzUXgwwC5jjajdCVBs7x7Di4st0o2kFUHClGWR
-         +tiITXY1fyOXz3PgjJf9XuH6U4Ra1KuOzbuY7/QmVHgXVcjt+1RqwrnmcEKSHlo1j9Lm
-         yqLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716189644; x=1716794444;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NZBUhRNFLDmCI2ChcjlpR99DNWg+Cc8ceERhi6tF0ro=;
-        b=Vzw3SwxTtId3PEcJ1NKK9GcAVtcfiGQ1VkaNNw0Nrk1zjM2V2wnjYNrXJNezdGCtRl
-         eipy5M/6sonP8Dm3/fkvfzxuMRcuaRLg6wTR2bh23AdFSw9oI7IUGrsw3+eaomgstERW
-         eDEINX85vwHyRg7RMl9gfsRZcI7ga8GERRSKbGOGoheNy96rtjrYVvzYEQ3NRJNSx/w7
-         cyyoD0HjBh47E5VhzJkMp4ZubNAW93OtwkYKQl8HRXsGmFEmwiXWnBjFz0rj6ueA3G3j
-         uKWeSapipVzyEQ5VNGc2c50um4JYIw0xFerslNOBDU8mmW1Q7wfDxYaVejGedoPRKMgU
-         PW4w==
-X-Gm-Message-State: AOJu0Yw39Vk4F2pgaN1Q+hrdW+zMs6TvOqwXpRLJlTHCJtOLiAg4WYOr
-	3f/IWUDMi/MqfwL/uKRNbhgjBIH2okqsEcGwtUj+f/WIIErumaNnfHNdqKovMnI=
-X-Google-Smtp-Source: AGHT+IGTMldOTJK/Mk84R/2R/3qaWKsKo9JQiM+f1Bi56FP9zReRBJfFHH+CDVcKkrFNNmSxx9oDag==
-X-Received: by 2002:a05:6512:3091:b0:51e:f1a6:ac39 with SMTP id 2adb3069b0e04-5220fa71b46mr23227383e87.12.1716189643948;
-        Mon, 20 May 2024 00:20:43 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccfe1277sm398943205e9.42.2024.05.20.00.20.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 00:20:43 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	linus.walleij@linaro.org,
-	didi.debian@cknow.org,
-	efault@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	linux-rt-users@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH] pinctrl: renesas: rzg2l: use spin_{lock,unlock}_irq{save,restore}
-Date: Mon, 20 May 2024 10:20:33 +0300
-Message-Id: <20240520072033.228049-1-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716191295; c=relaxed/simple;
+	bh=Wus5ztxg2Fes61KWp+gSdjO9QTU7mb8kYvG/fmzgTVc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NcKmml46eZeef3ly8q/Wl50SCCIrvlKAkLIZc/RlOrQxPt7pFkVRLcvs6bLB2X9wMSafj1BiY1HeOgV5Xm+KwD5OOs1UpGEGrGp3WuBNLVUYhMXckMz9829JU0cGC38s3/jRgbyBOUdllW7wx3tL/NtaMNZFdh0Ik7H3+qpa7ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.08,174,1712588400"; 
+   d="scan'208";a="205072511"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 20 May 2024 16:43:04 +0900
+Received: from localhost.localdomain (unknown [10.166.13.99])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7CB0C4005658;
+	Mon, 20 May 2024 16:43:04 +0900 (JST)
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	jingoohan1@gmail.com,
+	mani@kernel.org
+Cc: marek.vasut+renesas@gmail.com,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v8 1/5] PCI: dwc: Add PCIE_PORT_{FORCE,LANE_SKEW} macros
+Date: Mon, 20 May 2024 16:42:56 +0900
+Message-Id: <20240520074300.125969-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240520074300.125969-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20240520074300.125969-1-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -73,39 +48,39 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+R-Car Gen4 PCIe controller needs to use the Synopsys-specific PCIe
+configuration registers. So, add the macros.
 
-On PREEMPT_RT kernels the spinlock_t maps to an rtmutex. Using
-raw_spin_lock_irqsave()/raw_spin_unlock_irqrestore() on
-&pctrl->lock.rlock breaks the PREEMPT_RT builds. To fix this use
-spin_lock_irqsave()/spin_unlock_irqrestore() on &pctrl->lock.
-
-Fixes: e1fd1f9f457b ("pinctrl: renesas: rzg2l: Configure the interrupt type on resume")
-Reported-by: Diederik de Haas <didi.debian@cknow.org>
-Closes: https://lore.kernel.org/all/131999629.KQPSlr0Zke@bagend
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 20425afc6b33..78f947a8e26e 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -2069,11 +2069,11 @@ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
- 		 * This has to be atomically executed to protect against a concurrent
- 		 * interrupt.
- 		 */
--		raw_spin_lock_irqsave(&pctrl->lock.rlock, flags);
-+		spin_lock_irqsave(&pctrl->lock, flags);
- 		ret = rzg2l_gpio_irq_set_type(data, irqd_get_trigger_type(data));
- 		if (!ret && !irqd_irq_disabled(data))
- 			rzg2l_gpio_irq_enable(data);
--		raw_spin_unlock_irqrestore(&pctrl->lock.rlock, flags);
-+		spin_unlock_irqrestore(&pctrl->lock, flags);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 26dae4837462..aa4db6eaf02a 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -71,6 +71,9 @@
+ #define LINK_WAIT_IATU			9
  
- 		if (ret)
- 			dev_crit(pctrl->dev, "Failed to set IRQ type for virq=%u\n", virq);
+ /* Synopsys-specific PCIe configuration registers */
++#define PCIE_PORT_FORCE			0x708
++#define PORT_FORCE_DO_DESKEW_FOR_SRIS	BIT(23)
++
+ #define PCIE_PORT_AFR			0x70C
+ #define PORT_AFR_N_FTS_MASK		GENMASK(15, 8)
+ #define PORT_AFR_N_FTS(n)		FIELD_PREP(PORT_AFR_N_FTS_MASK, n)
+@@ -92,6 +95,9 @@
+ #define PORT_LINK_MODE_4_LANES		PORT_LINK_MODE(0x7)
+ #define PORT_LINK_MODE_8_LANES		PORT_LINK_MODE(0xf)
+ 
++#define PCIE_PORT_LANE_SKEW		0x714
++#define PORT_LANE_SKEW_INSERT_MASK	GENMASK(23, 0)
++
+ #define PCIE_PORT_DEBUG0		0x728
+ #define PORT_LOGIC_LTSSM_STATE_MASK	0x1f
+ #define PORT_LOGIC_LTSSM_STATE_L0	0x11
 -- 
-2.39.2
+2.25.1
 
