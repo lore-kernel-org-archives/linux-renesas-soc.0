@@ -1,131 +1,139 @@
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B647C143C5B
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 21 May 2024 15:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3754C66
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 21 May 2024 16:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716304102; cv=none; b=iuGUmb5jXX0aN3gEiO1DmxX9/sVuOBBrz1r/WP7y0CjrkMcb78IaRsIBJwXvL9H/N7vJq3n/psdTQRaNmMNmAEO3QG2Gwxto7/0AxZ70qAM6aRHDt1OHxZ4BAPk8lDBXuLOcqBdekMKLdbTPlkJcss96CwM+ein5/ohxPs1HUH4=
+	t=1716308920; cv=none; b=BoWzGnNT20s8U8cN+e/XBdOPoh7qQvIKWF4tgJy8O+LGz1olKMFJ2/3+P7193eJOm9XZLjUDbSlY2L2+y6LcrtxIB4VdPXElv/y7E/McB8Iwh5+mO6ZkwwR+dRlxQXG3VYHt/rZrh36tWuO0ny1PfgjPjEtLbwXeebSKMMcMDhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716304102; c=relaxed/simple;
-	bh=XbwB6Y1ncfxvFcAluUNDlB2Uk3g7I/vYkgRiL0JeCwE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k99rVDKDI1g0E6j+whbxgdHauLUg6SGr9+eKZahVoF2ofHsr9X1ddLnJhjlyMDxkHIVKRLR31u0XgNhvgiIZ6YBz3mxLI8vpIVOsIMrmHLmIdbPYPlpoRWpvvkwzMjFOA2N5AVeLCvkMK+EsAIU3dS5iUR64e0dveJMUwknqA20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=xH3OScQO; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="xH3OScQO"
-X-Envelope-To: geert+renesas@glider.be
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1716304095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7huwlz6e+OJTDpkqE9pk3NgcFlZcNZLJZwH9Yh0gUb0=;
-	b=xH3OScQOnERJ0m65qBvqlVgCWgjvFXfSPRX1tZVYhS73pVeKCe043+2s8cYuhBQIA7AVXM
-	2LKEXv8lS07ur8cWPXYtgXNjqyaur6UFfvPjPKKWwbAQ2lFORVO2oKe1/DKRnF89Ny7C2g
-	DLoFNBCOI7PbEko0S1Be85GtbqruXPfFLaBQD3IIyBBmHjw3UcLRlv6QxuB6xqbOUDWBam
-	bZg0NakLT9kpXwbJis/GG9hoeewT9LW5FHXnPthD98tDo3FNbY5P4cidd8qLoFX+8uuzIf
-	Gf2L2auEfCSxijy2eXPKmXTp/UeHYzEMtTryLrqmHSBcaRES5m6URWYoe+j9Ag==
-X-Envelope-To: linus.walleij@linaro.org
-X-Envelope-To: efault@gmx.de
-X-Envelope-To: claudiu.beznea@tuxon.dev
-X-Envelope-To: linux-renesas-soc@vger.kernel.org
-X-Envelope-To: linux-gpio@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: claudiu.beznea@tuxon.dev
-X-Envelope-To: linux-rt-users@vger.kernel.org
-X-Envelope-To: claudiu.beznea.uj@bp.renesas.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: geert+renesas@glider.be, linus.walleij@linaro.org, efault@gmx.de,
- Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, claudiu.beznea@tuxon.dev,
- linux-rt-users@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject:
- Re: [PATCH] pinctrl: renesas: rzg2l: use spin_{lock,unlock}_irq{save,restore}
-Date: Tue, 21 May 2024 17:08:04 +0200
-Message-ID: <1909974.d4bNfQZPDi@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240520072033.228049-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240520072033.228049-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1716308920; c=relaxed/simple;
+	bh=154KM+x4Nja/RiQpNOxEA9S3rerXJR9lOLYlQ7piwpE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=GU70j+tXMGr4FHZIKcsC51VR8OdpUyLMzE9XC9Wpaf2lUuVtUCl/IlBswdM7Q8+mul57dyr8HPyLrwgcsyaMAORrrAJBQcxXE6vzI1oIJriLcsb8r8M27iXdGDT2vG5Zna5HZ+EqwX9KCXI4yY2vXgXOV8VnJ+8LiyNbT4rbzQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-ddda842c399so3712816276.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 May 2024 09:28:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716308917; x=1716913717;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R3ZEPLPB2S4JIgrMC0Ufy9mtSBnsPnGS+PDbxeRNCUc=;
+        b=ktu0HPNETIzAR+MkCfAQ3ZYVERI3lm3M3j8FN8EQAMlIUPpKfGpjJsNRZFrLs2WtFZ
+         TZlrXWYZFM59kWnGXxki1lQAfMo3pjvD09Xt2ffeqGaN276MpAuzwRhTGak64tEU6LJE
+         6hcztwy/pLO9ZohsJx857RiM7Rq1L54zP6pp6dx9Hzd6YgmQSRXLbAvS9tOsvRgnZCrm
+         XYWdMSgVSPhxt7VElUbpPXj2M8LIrcL9H/TIZs8uFz/H46p2loDdI8jQw2ztugxUl3Os
+         RETDi8gb+cksR6FUpZgkobOmDRuU4S7oc52BDugOJaQWbR+7q6Nf1CAYlGDldfaNPIzd
+         MT9w==
+X-Gm-Message-State: AOJu0Yxaj9geUfYZRLqEGclIf8r/0ExtcAQ2IJGDKGx+l/Rc+OmEk6gV
+	//9Pub23xXtsT7GQD6aVAiHPAFo/2kPHepZOhFtdWd1gteqG7ogwKVmijc0s
+X-Google-Smtp-Source: AGHT+IEYov4lN+HwSx11WA0GkUTbmyuZS2TyWhHNur1KfpFBLL/GZaaKVbaErwa07wa0GpzvkXUGRg==
+X-Received: by 2002:a25:ad21:0:b0:de6:151a:2813 with SMTP id 3f1490d57ef6-dee4f4c281emr41088657276.40.1716308916981;
+        Tue, 21 May 2024 09:28:36 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df4a4d93841sm957663276.27.2024.05.21.09.28.36
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 09:28:36 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df4ada85a82so2712679276.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 May 2024 09:28:36 -0700 (PDT)
+X-Received: by 2002:a25:ec03:0:b0:de5:9eb4:1ec1 with SMTP id
+ 3f1490d57ef6-dee4f4d9c2emr38873340276.48.1716308916128; Tue, 21 May 2024
+ 09:28:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5820949.HBZXY12uQI";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+References: <cover.1715956819.git.geert+renesas@glider.be> <2fe3c8e38b566de09e49056c62fa954ed306a497.1715956819.git.geert+renesas@glider.be>
+In-Reply-To: <2fe3c8e38b566de09e49056c62fa954ed306a497.1715956819.git.geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 May 2024 18:28:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWUNH07weDPdbxhJ7bDtvRhSeOftqm23HnVd35j+A2G8Q@mail.gmail.com>
+Message-ID: <CAMuHMdWUNH07weDPdbxhJ7bDtvRhSeOftqm23HnVd35j+A2G8Q@mail.gmail.com>
+Subject: Re: [PATCH/RFC 4/4] arm64: dts: renesas: gray-hawk-single: Add CAN-FD support
+To: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---nextPart5820949.HBZXY12uQI
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Date: Tue, 21 May 2024 17:08:04 +0200
-Message-ID: <1909974.d4bNfQZPDi@bagend>
-Organization: Connecting Knowledge
-References: <20240520072033.228049-1-claudiu.beznea.uj@bp.renesas.com>
-MIME-Version: 1.0
-
-On Monday, 20 May 2024 09:20:33 CEST Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> On PREEMPT_RT kernels the spinlock_t maps to an rtmutex. Using
-> raw_spin_lock_irqsave()/raw_spin_unlock_irqrestore() on
-> &pctrl->lock.rlock breaks the PREEMPT_RT builds. To fix this use
-> spin_lock_irqsave()/spin_unlock_irqrestore() on &pctrl->lock.
-> 
-> Fixes: e1fd1f9f457b ("pinctrl: renesas: rzg2l: Configure the interrupt type
-> on resume") Reported-by: Diederik de Haas <didi.debian@cknow.org>
-> Closes: https://lore.kernel.org/all/131999629.KQPSlr0Zke@bagend
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, May 17, 2024 at 4:57=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Enable CAN-FD channels 0 and 1 on the Gray Hawk Single development
+> board:
+>   - Channel 0 uses an NXP TJR1443AT CAN transceiver, which must be
+>     enabled through a GPIO,
+>   - Channel 1 uses a Microchip MCP2558FD-H/SN CAN transceiver, which
+>     does not need explicit description.
+>
+> Inspired by a patch for Gray Hawk in the BSP by Duy Nguyen.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> b/drivers/pinctrl/renesas/pinctrl-rzg2l.c index 20425afc6b33..78f947a8e26e
-> 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -2069,11 +2069,11 @@ static void rzg2l_gpio_irq_restore(struct
-> rzg2l_pinctrl *pctrl) * This has to be atomically executed to protect
-> against a concurrent * interrupt.
->  		 */
-> -		raw_spin_lock_irqsave(&pctrl->lock.rlock, flags);
-> +		spin_lock_irqsave(&pctrl->lock, flags);
->  		ret = rzg2l_gpio_irq_set_type(data, 
-irqd_get_trigger_type(data));
->  		if (!ret && !irqd_irq_disabled(data))
->  			rzg2l_gpio_irq_enable(data);
-> -		raw_spin_unlock_irqrestore(&pctrl->lock.rlock, flags);
-> +		spin_unlock_irqrestore(&pctrl->lock, flags);
-> 
->  		if (ret)
->  			dev_crit(pctrl->dev, "Failed to set IRQ type 
-for virq=%u\n", virq);
+> Changes compared to the BSP:
+>   - Add can_clk,
+>   - Add missing can_transceiver0,
+>   - Keep channels 2 and 3 disabled,
+>   - Preserve sort order.
 
-Now the build succeeds on both amd64 and arm64.
-Thanks!
---nextPart5820949.HBZXY12uQI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+> --- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
 
------BEGIN PGP SIGNATURE-----
+> @@ -75,6 +82,24 @@ phy0: ethernet-phy@0 {
+>         };
+>  };
+>
+> +&can_clk {
+> +       clock-frequency =3D <40000000>;
+> +};
+> +
+> +&canfd {
+> +       pinctrl-0 =3D <&canfd0_pins>, <&canfd1_pins>, <&can_clk_pins>;
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZky41AAKCRDXblvOeH7b
-bv6EAP0YuCZoGdztw1jivJ1yX2r7Z1UJqSpTOJGtwl10KZCmmAD8D6BkuzDB3RCH
-yIhCrbJaTvdW+PJeKOqh6hG2Mb85nw0=
-=x0p+
------END PGP SIGNATURE-----
+This lacks
 
---nextPart5820949.HBZXY12uQI--
+    pinctrl-names =3D "default";
 
+(the BSP did have that, but it was badly indented, and accidentally
+ removed while disabling channels 2 and 3).
 
+Unfortunately adding the missing line doesn't help:
 
+    ( sleep 1; cansend can1 '5A1#11.2233.44556677.88') & candump can0
+
+doesn't do anything.
+
+( sleep 1; cansend can0 '5A1#11.2233.44556677.88') & candump can1
+
+triggers:
+
+    rcar_canfd e6660000.can can0: bus-off
+
+> +       status =3D "okay";
+> +
+> +       channel0 {
+> +               status =3D "okay";
+> +               phys =3D <&can_transceiver0>;
+> +       };
+> +
+> +       channel1 {
+> +               status =3D "okay";
+> +       };
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
