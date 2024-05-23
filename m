@@ -1,34 +1,34 @@
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838C684FDB
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 May 2024 20:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52ABF8528D
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 23 May 2024 20:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716497459; cv=none; b=kPhSzSQEgcPVCeIOy+Mt0OnGyJr+StbOLgRi2/387Ikfe/Ubwp0y1/M49bKJNPuaf3YeBN2NfU2c05Ys0X8G/yRGAV6ykWzKBrpdutgamTzZIfBFdTdfa6VQHGUk7WAiu8jBG+IsinRGKKN0/qT3h5IzhiqKfQEo8/+xwOqeTIA=
+	t=1716497460; cv=none; b=M6F+qQtIOcKaDUAxjCveprK39MzUyTs7YKGBySpmxBK4w356H0qOQqp0Ke12RRv1OvEDVbjuz55dGH/bD9Mhg1tKenHgDj8ch/FnrJ8JaQwK53GvJwFIPY1BfvYwRJPn6B3mi6BXSmoqzhd2qmLt4CLE/5Whq/9Q+cPALB3gxec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716497459; c=relaxed/simple;
-	bh=0H5ds9q2DSJgjTyWbK82cqoC23estI7HL/4gPHD38PU=;
+	s=arc-20240116; t=1716497460; c=relaxed/simple;
+	bh=Lb7aQv/jCWZEkjo/MBRTjEpGHLpyfik4U6GSsO8cnxY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TKshGAV+4jz1uhp2cwjnb6OVRN6RIfh29imVJBbuogX4tDCTO7Zey/gSU31G98uzyIx2Ga7nRLeoYi86iOEXGkvPNPCawec5kbh5eIekgCD1wIa2Fr7ZRLsljxKj1vS5zxPQ6VrASEz33T/TIiGkvegvxX5K0L0pCDEaUAfCtyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fOi13X2i; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=q84Vz8aUyIwOQrR9icLqPcaWHIrT6wctWnZ90Ur8SjEBxTZOtYZ1AgTt9H6gPoK84e/r2PonuSb/Wwukp79rl6mL6t5+TDIPOqtszH9HgbZvea9t5xGDZPlaSbYn762H9lzgTACpyCWBwvQIYCxtwbwS//I0YVPNKBrlUB08Uh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lOeET0Oh; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fOi13X2i"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lOeET0Oh"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=E25JDW0kKXyLblFk5xYuF4BRAocUQkU7ena+GumnnaY=; b=fOi13X
-	2iXwWczyp6uAd/CycarsOa4N1KqwZ7Sppv4M/sB8k8l5L75XlQduERHj42jBiZ6D
-	1fMqPK/CC8zEIoOBwuRd7BJ0S/ITubanfp+NQc4v2XU2rc9K3ANESnM//f+hmdpn
-	EQXMfKic9zrLSMJtD5NlscyX4ucQN4pAY1p5z8GYBQtfptlhJh7tBpcZOlO2Xfrc
-	uNRVn+E8awUKggpflfc9vU71ychRdBFKBgQV9zeuTrQgJElRL4Jva+heOH/xPFRS
-	YXz/aXWPRAIcMWkMOcaOlSqKO98rJopZ2EXMsBd/hRW75sohCylauTl+ImM0U4sE
-	8WVVFE/s5rwD7nMA==
-Received: (qmail 1241513 invoked from network); 23 May 2024 22:50:54 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2024 22:50:54 +0200
-X-UD-Smtp-Session: l3s3148p1@oyAHNSUZMLQujntm
+	 s=k1; bh=lsSnHUVHE78hNDPEyLUdkJNnaHPK8GUk22hXh6E4MTw=; b=lOeET0
+	OhqFVZF7jNi7fVZLzqMM2E3wBXNhTbvdyPWjjid3CSAKs6P5gcBeuypYqxslEOTQ
+	a66xfFVdGi4umNkCVnFQhphIPBFWGOC7buSfB5u/ObxVQd+GIWXSdks4Inw8XU2z
+	iXChVkgjzhWtlRIiwE9Tpe81cff3WqjcLzW8A1s91ZGv6OZ13PpGlegqq7DWd7j+
+	sD6CqAU1kxmr/hwYkdmOYDIHcsaaEZXtRhJJDDWDUJ/t7urrOy/irauiIUmAeXLw
+	jJgoLt5XYb3Q0TgmO33Zpkknf9lTPjaNUW4zMgAsP41NCzU/BlMDCM+CnETc2hlS
+	tdMwxmqiQG4d4Sew==
+Received: (qmail 1241594 invoked from network); 23 May 2024 22:50:55 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2024 22:50:55 +0200
+X-UD-Smtp-Session: l3s3148p1@tEMZNSUZQLQujntm
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -39,9 +39,9 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] arm64: dts: renesas: white-hawk-cpu: add aliases for I2C busses
-Date: Thu, 23 May 2024 22:50:38 +0200
-Message-Id: <20240523205041.7356-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/3] arm64: dts: renesas: s4sk: add aliases for I2C busses
+Date: Thu, 23 May 2024 22:50:40 +0200
+Message-Id: <20240523205041.7356-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240523205041.7356-1-wsa+renesas@sang-engineering.com>
 References: <20240523205041.7356-1-wsa+renesas@sang-engineering.com>
@@ -58,17 +58,17 @@ Linux the same.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi | 6 ++++++
+ arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi b/arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi
-index 8ac17370ff36..dd201f587e15 100644
---- a/arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi
-@@ -13,6 +13,12 @@
- / {
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts b/arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts
+index bc65a7b4d999..fa910b85859e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779f4-s4sk.dts
+@@ -14,6 +14,12 @@ / {
+ 	compatible = "renesas,s4sk", "renesas,r8a779f4", "renesas,r8a779f0";
+ 
  	aliases {
- 		ethernet0 = &avb0;
 +		i2c0 = &i2c0;
 +		i2c1 = &i2c1;
 +		i2c2 = &i2c2;
@@ -76,8 +76,8 @@ index 8ac17370ff36..dd201f587e15 100644
 +		i2c4 = &i2c4;
 +		i2c5 = &i2c5;
  		serial0 = &hscif0;
- 	};
- 
+ 		serial1 = &hscif1;
+ 		ethernet0 = &rswitch;
 -- 
 2.39.2
 
