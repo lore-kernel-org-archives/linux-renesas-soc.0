@@ -1,93 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A615EFD5;
-	Mon, 27 May 2024 12:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861F015E5A2
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 May 2024 12:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716812346; cv=none; b=ul9qW3D4eVc/jSKlUwAXdhThQf+yJZVgKjANVi7DFxKbmDU89OFwYD9s19AuEdAWrU1JeS4kEpg1rhT+gvENKhE02ZK5DuJC+5wlIdMwsGn/2RRhTemkEDQIDijUsqZ6fJxmPOetWikdZKhxbMI07GRFdqcoLFN+ydsRWkpXg2M=
+	t=1716813684; cv=none; b=Gv6k/ZR8/KpzWoKts4B3TZJHvX347BYyMnGuzGu3zv5vGUx38Hw/u0GwNuJqOKY0XczewUIvqRKvAFqCZPg5NzUUmHB8u2Ut4ICWvm6bD2BJhGTJ+SRDhr9Lml1Ki1/vpGpLsEOaO+rCTvZtRv7NxLTmOFr2Yf6vueTE/x6G4+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716812346; c=relaxed/simple;
-	bh=fMUVC1wYfmgk+F283qmAnsiUZxdqaVd6XznWp+CLxmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=durVqEwl6qjRQCiKQ7g6oh6PlrtzWwI7QhlujCmYd7o8JNiZ2WpFwpaQWwhm0+UOJ1pFUEivsMD2dk/eGrJqyHXNlsTk1VwuEg/qyS2kyKK0lsdXbiOnRJ2pP2U0tdL1ktWpSGtz+su+5XBTuI5+00OQCDYyI0ludtRYjdJDvdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4BqrTUc; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4BqrTUc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04D5C2BBFC;
-	Mon, 27 May 2024 12:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716812346;
-	bh=fMUVC1wYfmgk+F283qmAnsiUZxdqaVd6XznWp+CLxmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h4BqrTUcVVUR/nO1MVwypxsUWquVKtD8crHnsaVQEZsJL6icI8A6k4CjHC/BXClRe
-	 89Wb2ziK/WLkqr0LuAyUfz0eHCGsTdxxYx+Eo+GFWNrg9aJBztf7Gan3Z+fZ4lE/vx
-	 nDu7U4ldKlpicgAv33PihNGtV2P4NFZkpwcZJvkQ+WAWEYX0R3cikwtoVpYADyFxhx
-	 W8ajq8wqp5aS8uQZ8wj+PuS+ZxulDrs4JcYH5G/oHvEhoUnBHK708nmduLo0Ur1cEV
-	 EhngvDzkchvKvC75ba0+UEmjtPAVqYtj5kMGa+D1O2fG41qB/CwfLga9NeEbY4N5eB
-	 4Uwl8MCnlxdaA==
-Date: Mon, 27 May 2024 14:19:01 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Eric Sandeen <sandeen@redhat.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, David Howells <dhowells@redhat.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-Message-ID: <20240527-pittoresk-kneipen-652000baed56@brauner>
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <20240527100618.np2wqiw5mz7as3vk@ninjato>
+	s=arc-20240116; t=1716813684; c=relaxed/simple;
+	bh=EIepfrHfmhIc9MJ0QvPBLJEXp/OzidtfVr/2NHCOLWI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Q+MB6k/wvJ/EPA492BdeUlFly8NxUKQFS5u1Cx/hf5J1q5BFqp5EHMaGJ2dHQ1qUoe6oSIah+udheZK42SlOQIO62RQVeR/6S4Js9FDl6u25o34ImrwkfORsBed7UENN9cFrTaFHP+kVLUQY/Oze7X0SMYUoEqzS8+grQmKFj5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:c993:5573:f894:7353])
+	by laurent.telenet-ops.be with bizsmtp
+	id UChF2C0022nC7mg01ChFPu; Mon, 27 May 2024 14:41:19 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sBZeD-00CfTe-4S;
+	Mon, 27 May 2024 14:41:14 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sBZf8-003hdZ-Sf;
+	Mon, 27 May 2024 14:41:14 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	linux-pm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/3] earlycon: Export clock and PM Domain info from FDT
+Date: Mon, 27 May 2024 14:41:11 +0200
+Message-Id: <efd9397662ff743f95298ca6aad4efdfa0ba1962.1716811405.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1716811405.git.geert+renesas@glider.be>
+References: <cover.1716811405.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240527100618.np2wqiw5mz7as3vk@ninjato>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 12:06:18PM +0200, Wolfram Sang wrote:
-> Hi Christian,
-> 
-> > Afaict, the "auto" option has either never existent or it was removed before
-> > the new mount api conversion time ago for debugfs.
-> 
-> Frankly, I have no idea why I put this 'auto' in my fstab ages ago. But
-> it seems, I am not the only one[1].
-> 
-> [1] https://www.ibm.com/docs/en/linux-on-systems?topic=assumptions-debugfs
-> 
-> > diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> > index dc51df0b118d..713b6f76e75d 100644
-> > --- a/fs/debugfs/inode.c
-> > +++ b/fs/debugfs/inode.c
-> > @@ -107,8 +107,16 @@ static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param
-> >         int opt;
-> > 
-> >         opt = fs_parse(fc, debugfs_param_specs, param, &result);
-> > -       if (opt < 0)
-> > +       if (opt < 0) {
-> > +               /*
-> > +                * We might like to report bad mount options here; but
-> > +                * traditionally debugfs has ignored all mount options
-> > +                */
-> > +               if (opt == -ENOPARAM)
-> > +                       return 0;
-> > +
-> >                 return opt;
-> > +       }
-> > 
-> >         switch (opt) {
-> >         case Opt_uid:
-> > 
-> > 
-> > Does that fix it for you?
-> 
-> Yes, it does, thank you.
-> 
-> Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Earlycon relies on the serial port to be initialized by the firmware
+and/or bootloader.  Linux is not aware of any hardware dependencies that
+must be met to keep the port working, and thus cannot guarantee they
+stay met, until the full serial driver takes over.
 
-Thanks, applied. Should be fixed by end of the week.
+E.g. all unused clocks and unused PM Domains are disabled in a late
+initcall.  As this happens after the full serial driver has taken over,
+the serial port's clock and/or PM Domain are no longer deemed unused,
+and this is typically not a problem.
+
+However, if the serial port's clock or PM Domain is shared with another
+device, and that other device is runtime-suspended before the full
+serial driver has probed, the serial port's clock and/or PM Domain will
+be disabled inadvertently.  Any subsequent serial console output will
+cause a crash or system lock-up.
+
+Provide a mechanism to let the clock and/or PM Domain subsystem or
+drivers handle this, by exporting the clock and PM Domain dependencies
+for the serial port, as available in the system's device tree.
+Note that as this is done during early boot-up, the device_node
+structure pointing to the earlycon console is not yet created, so this
+has to resort to raw property data.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/earlycon.c | 14 +++++++++++++-
+ include/linux/serial_core.h   | 10 ++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
+index a5fbb6ed38aed681..abe4831d9685e2b8 100644
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -250,11 +250,14 @@ early_param("earlycon", param_setup_earlycon);
+ 
+ #ifdef CONFIG_OF_EARLY_FLATTREE
+ 
++const __be32 *earlycon_clocks, *earlycon_power_domains;
++int earlycon_clocks_ncells, earlycon_power_domains_ncells;
++
+ int __init of_setup_earlycon(const struct earlycon_id *match,
+ 			     unsigned long node,
+ 			     const char *options)
+ {
+-	int err;
++	int err, size;
+ 	struct uart_port *port = &early_console_dev.port;
+ 	const __be32 *val;
+ 	bool big_endian;
+@@ -309,6 +312,15 @@ int __init of_setup_earlycon(const struct earlycon_id *match,
+ 	if (val)
+ 		port->uartclk = be32_to_cpu(*val);
+ 
++	earlycon_clocks = of_get_flat_dt_prop(node, "clocks", &size);
++	if (earlycon_clocks)
++		earlycon_clocks_ncells = size / sizeof(u32);
++
++	earlycon_power_domains = of_get_flat_dt_prop(node, "power-domains",
++						     &size);
++	if (earlycon_power_domains)
++		earlycon_power_domains_ncells = size / sizeof(u32);
++
+ 	if (options) {
+ 		early_console_dev.baud = simple_strtoul(options, NULL, 0);
+ 		strscpy(early_console_dev.options, options,
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index 8cb65f50e830c8d4..70689a3363951dac 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -954,6 +954,16 @@ static const bool earlycon_acpi_spcr_enable EARLYCON_USED_OR_UNUSED;
+ static inline int setup_earlycon(char *buf) { return 0; }
+ #endif
+ 
++#ifdef CONFIG_OF_EARLY_FLATTREE
++extern const __be32 *earlycon_clocks, *earlycon_power_domains;
++extern int earlycon_clocks_ncells, earlycon_power_domains_ncells;
++#else
++#define earlycon_clocks			NULL
++#define earlycon_clocks_ncells		0
++#define earlycon_power_domains		NULL
++#define earlycon_power_domains_ncells	0
++#endif
++
+ /* Variant of uart_console_registered() when the console_list_lock is held. */
+ static inline bool uart_console_registered_locked(struct uart_port *port)
+ {
+-- 
+2.34.1
+
