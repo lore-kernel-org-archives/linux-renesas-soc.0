@@ -1,30 +1,30 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F20169AF0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B0D16A373
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 May 2024 09:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716974986; cv=none; b=pmPGepZ/bCjUmPabHVw/lGMb/UBplWJ4F8HBJ3N93V4enTY+05WQ+vq/xWFv5bQMgFrpGoL4ChM+HTmPxFR81y/JElHuzzOvUsaUkuJFEQPjciWdr+g3cx6m6QMUbbXWnakV2iFSTs+vfjRMnv7FbGzE4JPYV8YIhENOsPnn+DQ=
+	t=1716974987; cv=none; b=KxsUOARPc36cTN7MbaPC0sGH5yIW1yBZWuxTlgXZ/eXkM0SMsO+FU7uBAoHQxC7kKGCnrXDZI9JMCZ5PabFsn9IHd3KCRUgEQR6W8RhLhtw8hwAyeIiSLKhjGcE41XptUv90wo9E8WnToxUhvRthGKGNdOdgwRQh20RdEiggg1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716974986; c=relaxed/simple;
-	bh=lC9HYilaLEPRJNvUV/3RHQldHaDnLJhOOG8MTKQS3II=;
+	s=arc-20240116; t=1716974987; c=relaxed/simple;
+	bh=Fimg7RAC7/UiTVwu8Mu0fP7Gwstf2zrA/lN7Pjti7Oc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=selq6qoSjgYNHg5IfxgNLd9yDANWYAsuspULcr/V4YBZbjqh9FxO00/ngJ7u+mo6k9NWMIlZrn0wOSq4RAIn85+TMxxDuqwjZKixaqE1cvKX6Awf3TKHMJiuuRnlhkG2KTuLQKuOq8h5emghAZgcjWVd3lclRsqezoJTZpKHPeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	 MIME-Version; b=t89/apKAXr+wlntQ0NZ1z8uOl91jailZHcjLZ9GrOnzffPzHsIVmQ+tgGFGrWqG4cZxgt9/FK3TSNvuGaVIvWcDX/Qsr6jh4xJyREAmRVQANwLHWf1GuZBo+5IFFeXOxi0wofuGdd/YB8u56tYshmM2Cl8nDVXuE0fN+Yjx5/bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
-	by albert.telenet-ops.be with bizsmtp
-	id UxVg2C00S3VPV9V06xVglU; Wed, 29 May 2024 11:29:43 +0200
+	by baptiste.telenet-ops.be with bizsmtp
+	id UxVg2C00i3VPV9V01xVgkg; Wed, 29 May 2024 11:29:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sCFbu-00GHL2-42;
+	id 1sCFbt-00GHKc-WE;
 	Wed, 29 May 2024 11:29:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sCFcq-008wSQ-HS;
+	id 1sCFcq-008wRx-DK;
 	Wed, 29 May 2024 11:29:40 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Rob Herring <robh@kernel.org>,
@@ -39,9 +39,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 8/8] arm64: dts: renesas: r8a779h0: Add OTP_MEM node
-Date: Wed, 29 May 2024 11:29:37 +0200
-Message-Id: <0e4af5b32b74f901945e24ad2baefbfce37e957f.1716974503.git.geert+renesas@glider.be>
+Subject: [PATCH v2 2/8] dt-bindings: fuse: Document R-Car E-FUSE / OTP_MEM
+Date: Wed, 29 May 2024 11:29:31 +0200
+Message-Id: <436506babe4ce468fda19380d9373470468e3752.1716974502.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1716974502.git.geert+renesas@glider.be>
 References: <cover.1716974502.git.geert+renesas@glider.be>
@@ -53,8 +53,8 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a device node for the OTP non-volatile memory on the R-Car V4M
-(R8A779H0) SoC, which provides E-FUSE services.
+Document support for E-FUSE non-volatile memory accessible through
+OTP_MEM on R-Car V4H and V4M.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
@@ -62,25 +62,54 @@ Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 v2:
   - Add Reviewed-by.
 ---
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/fuse/renesas,rcar-otp.yaml       | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/fuse/renesas,rcar-otp.yaml
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index 28ac930e7db1f234..3766652623fd8e5e 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -411,6 +411,11 @@ tsc: thermal@e6198000 {
- 			#thermal-sensor-cells = <1>;
- 		};
- 
-+		otp: otp@e61be000 {
-+			compatible = "renesas,r8a779h0-otp";
-+			reg = <0 0xe61be000 0 0x1000>, <0 0xe61bf000 0 0x1000>;
-+		};
+diff --git a/Documentation/devicetree/bindings/fuse/renesas,rcar-otp.yaml b/Documentation/devicetree/bindings/fuse/renesas,rcar-otp.yaml
+new file mode 100644
+index 0000000000000000..d74872ae9ff378f9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/fuse/renesas,rcar-otp.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/fuse/renesas,rcar-otp.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a779h0", "renesas,irqc";
- 			#interrupt-cells = <2>;
++title: R-Car E-FUSE connected to OTP_MEM
++
++maintainers:
++  - Geert Uytterhoeven <geert+renesas@glider.be>
++
++description:
++  The E-FUSE is a type of non-volatile memory, which is accessible through the
++  One-Time Programmable Memory (OTP_MEM) module on some R-Car Gen4 SoCs.
++
++properties:
++  compatible:
++    enum:
++      - renesas,r8a779g0-otp # R-CarV4H
++      - renesas,r8a779h0-otp # R-CarV4M
++
++  reg:
++    items:
++      - description: OTP_MEM_0
++      - description: OTP_MEM_1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    otp: otp@e61be000 {
++            compatible = "renesas,r8a779g0-otp";
++            reg = <0xe61be000 0x1000>, <0xe61bf000 0x1000>;
++    };
 -- 
 2.34.1
 
