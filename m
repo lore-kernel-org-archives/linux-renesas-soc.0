@@ -1,29 +1,30 @@
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C10216A37C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6830B16A381
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 May 2024 09:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716973949; cv=none; b=KCDCkGLE6DhNowSv7Ui3qIMlbLFNsKR3gPlLKVypt9gBkTpjxNMkHRlAjapGe8FBRyFKKz4IHlrHORMWz4BJS2fXAdkJI9P2UxUU9zS4sv0kXEFrcHjWNruwLXgnUwSmXgdtzThDCPusvh/DfsNGmzg4doRip2tQ/TgV/nGwYWg=
+	t=1716973949; cv=none; b=VjSzb/R+OL6NBlmkngB/Er6NmhedvrJL+RsJiY+BhvPZxfjKYqMllJW9l77JQghfx4nAeLi9DMBil3bhbxe7h9EOCpRVwiiW2ETa1ZSLnqJUVMjQ9Z5xbHA7wsUcJcAYh10Wtl67j5NvKeOSzuW5CGyLR/rmhsZb2AB+HsbYFRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716973949; c=relaxed/simple;
-	bh=ciGSw9CwiJtOVA2c8bbGIC8epjuY/q7YZs5GBXMJOek=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tWc8YCYVmubKO0Vq+LZlBqKMqCqUxclyYLE2vueghNpTo3m+u32lqTb1oGgfj+/mt60t6caAyQ6h7aI9cHmcB85+o6kpn4cYkyCMnsVZDc/UXrc+egXp97fIHKOwJAMP2wa+wb8zihkBhBtrXP+C0xOypmivSigkGFaQ+dbAPmg=
+	bh=FaQW69bwWIIghwkQdBMochv1fi+x9fc0JtNMz7gRvgY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PMkGo3qVc7LNNtNUeuzb99e9FQww3hOApwkGUhTUybbWu2a2D5HfW1dQeZMXDOJvdcFXPpwlN9ahGYzRAsTtOSyCFZB0uHixCAPfcrjIkQZF1JTaCv6IZBf1EQOj4ZndyQBL56/N4UHbIO21/AazG3TerwdT6Q6NNdv0wySXOxU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
 	by michel.telenet-ops.be with bizsmtp
-	id UxCJ2C0023VPV9V06xCJ26; Wed, 29 May 2024 11:12:18 +0200
+	id UxCJ2C0013VPV9V06xCJ24; Wed, 29 May 2024 11:12:18 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sCFL5-00GF9W-EB;
+	id 1sCFL5-00GF9Y-Ek;
 	Wed, 29 May 2024 11:12:17 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sCFM1-008w8W-Q4;
+	id 1sCFM1-008w8c-RZ;
 	Wed, 29 May 2024 11:12:17 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Marc Kleine-Budde <mkl@pengutronix.de>,
@@ -33,10 +34,12 @@ Cc: linux-can@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	netdev@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] can: rcar_canfd: Small improvements and cleanups
-Date: Wed, 29 May 2024 11:12:12 +0200
-Message-Id: <cover.1716973640.git.geert+renesas@glider.be>
+Subject: [PATCH 2/3] can: rcar_canfd: Improve printing of global operational state
+Date: Wed, 29 May 2024 11:12:14 +0200
+Message-Id: <14c8c5ce026e9fec128404706d1c73c8ffa11ced.1716973640.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1716973640.git.geert+renesas@glider.be>
+References: <cover.1716973640.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -45,33 +48,30 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+Replace the printing of internal numerical values by the printing of
+strings reflecting their meaning, to make the message self-explanatory.
 
-This series containssome improvements and cleanups for the R-Car CAN-FD
-driver.  It has been tested on R-Car V4H (White Hawk and White Hawk
-Single).
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/net/can/rcar/rcar_canfd.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  can: rcar_canfd: Simplify clock handling
-  can: rcar_canfd: Improve printing of global operational state
-  can: rcar_canfd: Remove superfluous parentheses in address
-    calculations
-
- drivers/net/can/rcar/rcar_canfd.c | 41 ++++++++++++-------------------
- 1 file changed, 16 insertions(+), 25 deletions(-)
-
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 474840b58e8f13f1..c2c1c47bcc7a166c 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -2049,8 +2049,9 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	platform_set_drvdata(pdev, gpriv);
+-	dev_info(dev, "global operational state (clk %d, fdmode %d)\n",
+-		 gpriv->extclk, gpriv->fdmode);
++	dev_info(dev, "global operational state (%s clk, %s mode)\n",
++		 gpriv->extclk ? "ext" : "canfd",
++		 gpriv->fdmode ? "fd" : "classical");
+ 	return 0;
+ 
+ fail_channel:
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
