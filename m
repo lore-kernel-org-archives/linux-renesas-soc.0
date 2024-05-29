@@ -1,99 +1,167 @@
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192D314291E
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 29 May 2024 16:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44141836DA;
+	Wed, 29 May 2024 16:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716998807; cv=none; b=srTk4o0UnrbF+9CJEYUg0f2bofFyMoPLpZjJbGr6p8jMli6D/1jZp8z6Yov9l0KBzlpL7iGuAKXCvTFrEAzH+d17samdN+mRe85KrXula2BQAn3ISCLq5t0dcRtKHuj3NsDpK6haQvvKRLqKFCkgJXRPSeJ4rW/qgXmJtwSvQkg=
+	t=1716999934; cv=none; b=DyF1RvSsLXtZwRvtjzWb4vn8raCKXpd+KoKrD1ZIoUzcLrVjeujIAI0tbBD8w91iBJRQAREjLkIeKluSmlEuw9to8pXE5Bn8pHfIsttw2eN7IpuJazX40UIvs2yE2h8wQhmmolmZXsrWfprfBmeuYQrGbZN2BxUtMAPc9lhzOOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716998807; c=relaxed/simple;
-	bh=fDnly2tUhRuwmNSrfSy+Wd07EpJqc4K96zVcqbux54U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jxR7M6AoAPnOKAHH2LmxHgPIVl3AQmSLPVkp6D4HoGcHSGMuDuYembjkPloKI6bUP8DNCYSR2l8gSNzDMo/JQE1MvWD3B4UucJ4dfOxussLTdYL51HfN285YwOtSHArrTOIFL9lavU0CBcKtd/ZI9OdoBJxrh1wEQ1i+cnd47BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eHBxF7Fo; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1716999934; c=relaxed/simple;
+	bh=XWTvgOpa/ROLa55P7YiVGDQAHxuXZkHUHPhWeWr2A8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hurRMpza75ysobGAbTsou1ieVHn/j7FD/qTr7BZUNgYtb51X/vqdefAS7j3y4uV0VUDri8n7jiyqDkXWBeNvuPuxzNnWVD4uX7a10cRJzdAZkv4DZn7poJ3bcK+HsEWqP/nnxEY5V1s1M/jC9niLqedETXizUX6AzkHY6+KvmIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ns2ZIr6V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eHBxF7Fo"
-X-Envelope-To: geert+renesas@glider.be
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716998802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D0B0orRSVXeRsISQcfG64605/nqIQ5aF+rELBmkvuJc=;
-	b=eHBxF7FoYnQeIJdXyrbp9wXAwXze6wqtzgUmOrfal4uvv7S2DWwITXkGQbLw5p+PWGLsWu
-	mLj7UsNfX2ozuBS5aWD1eHvxtq6EtsZORZozhm3JFO/JKgK2yQgdmjvIv6LS8KG0vHUKLs
-	+aWnDv3fsTqCMA82Crl7Y6Vb+4FsXA8=
-X-Envelope-To: laurent.pinchart@ideasonboard.com
-X-Envelope-To: maarten.lankhorst@linux.intel.com
-X-Envelope-To: mripard@kernel.org
-X-Envelope-To: tzimmermann@suse.de
-X-Envelope-To: airlied@gmail.com
-X-Envelope-To: daniel@ffwll.ch
-X-Envelope-To: dri-devel@lists.freedesktop.org
-X-Envelope-To: linux-renesas-soc@vger.kernel.org
-X-Envelope-To: dianders@chromium.org
-Message-ID: <170bf071-fc33-4892-bf65-b52eddd796b0@linux.dev>
-Date: Thu, 30 May 2024 00:03:59 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ns2ZIr6V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79A2C116B1;
+	Wed, 29 May 2024 16:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716999933;
+	bh=XWTvgOpa/ROLa55P7YiVGDQAHxuXZkHUHPhWeWr2A8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ns2ZIr6VvO8DHPaypxlYrKfLH9G+32HhMEMwz/5JSbWg0D6qa4LfRSxhqKONCYa0R
+	 El5E2QewPGDcyBtgrGO4tkwMqTN+3Jkp4f7g57lV1+0mb/SSgaRIoCQ0TsIOuUugUv
+	 ee7i9V20WwHOmybWFY2JFqFiSMTAyw+jyguINTU0H+RDKDomlq1x0YEdX6wZy8B4I6
+	 U/brKIm/WxSoAKYHXNsoKaALvFcMjVN4mVCG5tfctZ17jIFlgw/Yf0EGjkDtN0V9I+
+	 9uwDykhAK3o4VunkJZ0BSmHGUaZSSqaHLNkYzJ96Vojh+b/yogx4ZSvfnX4gpTEa5j
+	 rxXvfmWYGvmqA==
+Date: Wed, 29 May 2024 17:25:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v8 26/36] dt-bindings: ata: ata-generic: Add new
+ targets
+Message-ID: <20240529-arise-small-f3277feee4e4@spud>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp>
+ <8ff46a90c7be5eea45984f60b9b0db99219c82e6.1716965617.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [resend,v2] drm: renesas: shmobile: Call
- drm_helper_force_disable_all() at shutdown time
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- Douglas Anderson <dianders@chromium.org>
-References: <6ae804c7163b4d933dbcf940b8dbd5f4c961f037.1716984934.git.geert+renesas@glider.be>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <6ae804c7163b4d933dbcf940b8dbd5f4c961f037.1716984934.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-
-Hi,
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EwaFJRsUcMIAwW3R"
+Content-Disposition: inline
+In-Reply-To: <8ff46a90c7be5eea45984f60b9b0db99219c82e6.1716965617.git.ysato@users.sourceforge.jp>
 
 
-On 2024/5/29 20:16, Geert Uytterhoeven wrote:
-> From: Douglas Anderson <dianders@chromium.org>
->
-> Based on grepping through the source code, this driver appears to be
-> missing a call to drm_atomic_helper_shutdown() at system shutdown time.
-> This is important because drm_helper_force_disable_all() will cause
-> panels to get disabled cleanly which may be important for their power
-> sequencing.  Future changes will remove any custom powering off in
-> individual panel drivers so the DRM drivers need to start getting this
-> right.
->
-> The fact that we should call drm_atomic_helper_shutdown() in the case of
-> OS shutdown comes straight out of the kernel doc "driver instance
-> overview" in drm_drv.c.
+--EwaFJRsUcMIAwW3R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hey,
 
-True, looks safer.
+On Wed, May 29, 2024 at 05:01:12PM +0900, Yoshinori Sato wrote:
+> Added new ata-generic target.
+> - iodata,usl-5p-ata
+> - renesas,rts7751r2d-ata
+>=20
+> Each boards have simple IDE Interface. Use ATA generic driver.
+>=20
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
+Why do you keep dropping tags? Damien and I acked this back in v6 and
+Krzysztof reminded you in v7:
+https://lore.kernel.org/all/06fdb2cf7927681acf3099b826390ef75ba321af.170478=
+8539.git.ysato@users.sourceforge.jp/
+https://lore.kernel.org/all/53f85cc2e124d1c2e7394458b73293d797817d6d.171220=
+7606.git.ysato@users.sourceforge.jp/
 
-> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Link: https://lore.kernel.org/r/20230901164111.RFT.15.Iaf638a1d4c8b3c307a6192efabb4cbb06b195f15@changeid
-> [geert: s/drm_helper_force_disable_all/drm_atomic_helper_shutdown/]
-> [geert: shmob_drm_remove() already calls drm_atomic_helper_shutdown]
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Dropping the tags just leads to wasted time re-reviewing patches that
+already got approved. I don't see any valid reason to drop them on a
+trivial patch like this :/ Please check back to previous revisions and
+make sure that you picked up applicable tags.
 
-Reviewed-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+Thanks,
+Conor.
 
-Best regards,
-Sui
+> ---
+>  Documentation/devicetree/bindings/ata/ata-generic.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/ata/ata-generic.yaml b/Doc=
+umentation/devicetree/bindings/ata/ata-generic.yaml
+> index 0697927f3d7e..1025b3b351d0 100644
+> --- a/Documentation/devicetree/bindings/ata/ata-generic.yaml
+> +++ b/Documentation/devicetree/bindings/ata/ata-generic.yaml
+> @@ -18,6 +18,8 @@ properties:
+>        - enum:
+>            - arm,vexpress-cf
+>            - fsl,mpc8349emitx-pata
+> +          - iodata,usl-5p-ata
+> +          - renesas,rts7751r2d-ata
+>        - const: ata-generic
+> =20
+>    reg:
+> --=20
+> 2.39.2
+>=20
 
+--EwaFJRsUcMIAwW3R
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZldW7wAKCRB4tDGHoIJi
+0rICAP9V1iNf3aedUZq4py3MAFbhxEMXF2XlH0Il+KuD+J/ZuAD9Eti+5ySYfFAX
+cxCmNqYe51qJCuNdyoXp6/hLh6B1JwY=
+=l0ak
+-----END PGP SIGNATURE-----
+
+--EwaFJRsUcMIAwW3R--
