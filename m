@@ -1,140 +1,151 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50A238DC0;
-	Tue, 11 Jun 2024 12:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806B017C213;
+	Tue, 11 Jun 2024 12:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718109935; cv=none; b=ZWkMLT2Y1TG8OFn3PAIyP2JxvFaYWakGp4XHccRBvfKxdpkr9b5aibqQtSdH8tRx8vWx1gvhT4ckjqwwND5obg3L+4VGVkhPJdfIAua3L8QAyJPI0Fs8mkI5o+oXTpbBWbSmQ/QRLLfxEMMrbLbI3mWA4VW7Sr+XQX6W2RqegFg=
+	t=1718110269; cv=none; b=jBTgiOroZjIZ2j7r4tfKKPo/jK5WkYNIM6HnGcLyWZC6Fh0g0dysXZfLiib/qspjrOtNdRENEW9WzpbuvSAkYb0Re0XbX3KwfaSkWIC7UbrDiQxBitVdYehBlN9gx+xLT0e1mwdWIQf7okDYqaQpDjXa+RBNnxOFRBsM42xmSSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718109935; c=relaxed/simple;
-	bh=nY8+G6+Wc+iKEOD8LIKa0F5xqH0+KD8ciWBL2bCrMIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IpuMAQeI9gZUvZZkC9ovyCpYrWO8EZN2KjL3z7hxJ5PoFWnwaCabC1tGXd4hNQD/UC4njdguYpoVI1xah1mmj9yD2+/HjG2L2FUILUTXuIAbfeIec37h9K6FJGjYqSIGg/WO2nEQiDg4NPNzH136WrV9qmZ+IhT2KQlRwuY6xNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfb3ff45c06so1154303276.3;
-        Tue, 11 Jun 2024 05:45:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718109930; x=1718714730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LA50fIPVA2O1q5A6lERTjC6jOEdlOMiNnypF6hx5p6s=;
-        b=YTOWC8DsqEjvA4YgO02pMEUt+TNjeDZPbhGRq2F5DJN6qz1x1t+wNd69uYd00YwbRE
-         0F100BW+6RW/mCbvlgqcJ0W/2XEw1V1ZZIb3vyv+6IsE5N3czc7xVsOxl/CMTkA0yNqH
-         dK+0yNrxONddK8C8tvOEYElpHTDkiX0B3Rch/F3ZlxYySLSJGndEJwd52EowZifRKUI7
-         orMvPA91GCAL6tWL/XS2hmeRnGGjcpgQZ+Emd9GcSo5qjYFIjjCe1AMoCmrjPqJGPsfq
-         W320Pd5gKYx2QWBXqodpxnPApRNWbT3uWe0G02S3pRFtEZXuV9TMhZf0K5zhluacuxcx
-         H3xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbdw4AHKzPp0OWazSWHKNuV4VSShYfOLsjm2NG6AQ/g6isqB2FQgNXHixETqaPl6hAHP4Po3l1uHR/uJuB5F360EaCecW91g5F2afAb6LKB30N0aeE4UUyciTnP0ss3W6BQyxH7gzw3gaFdeOosqg=
-X-Gm-Message-State: AOJu0YzzFyYBycmF3dFyxOcKigDtV3qwRoymKLPS1OxCWiWz2LZkVc4U
-	gNmkS6pXkrjkUfmy3jpf0Thm+V0vFiKHkLqhW4ZKNLuQlAOTTv1TfddVLCQ/
-X-Google-Smtp-Source: AGHT+IEaZi1qP8PiLgXfz3IwsNbouC/zw/oGMEkqXMbGzcSbS+tOupwYkTAfSrC9cre8t+5N/59xOw==
-X-Received: by 2002:a25:bfc8:0:b0:df4:d29a:6897 with SMTP id 3f1490d57ef6-dfaf65c55aemr11105864276.35.1718109929625;
-        Tue, 11 Jun 2024 05:45:29 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfb0138fd2bsm1512911276.51.2024.06.11.05.45.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 05:45:28 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfb3ff45c06so1154178276.3;
-        Tue, 11 Jun 2024 05:45:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXPH8wW/2DKVkKayODXxO6QHartBiuUNLNIUxIBXW0u2rZuFHEcDZNggNTbSKxXkyp8lKkndgDfoVcnpOwlpt5iom6eNCQEVhE0FJZLuSGgnVgxKwRYVMlDFoIIbjf9JSMgX/0WO+leYQil8Gwj4sE=
-X-Received: by 2002:a25:744d:0:b0:dfa:528d:e8f4 with SMTP id
- 3f1490d57ef6-dfaf65c01c4mr11427597276.33.1718109927736; Tue, 11 Jun 2024
- 05:45:27 -0700 (PDT)
+	s=arc-20240116; t=1718110269; c=relaxed/simple;
+	bh=Kb+D628CEHKpo9KY8JPhLtMpFlYRZZXD8jfyDESS7Lc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=t/uFAU85SRgs9lRxxv2dvG+CxtJgnR3p1OCJhl9zAwyD6DW2zM79BkbP5mwHIp14N/H/kBkX5Sp20fuWODM34TAAOQimr2Mtvl/D8k37TgOIZ+F/bicLJ1ww8y2AC8e1ehHyYwz3o0GCIj1wvYn+tS8jSzR3ubTz6UbgDQFAihE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.08,230,1712588400"; 
+   d="scan'208";a="207497069"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 11 Jun 2024 21:51:06 +0900
+Received: from localhost.localdomain (unknown [10.166.13.99])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F3C6F40104E9;
+	Tue, 11 Jun 2024 21:51:05 +0900 (JST)
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	jingoohan1@gmail.com,
+	mani@kernel.org
+Cc: marek.vasut+renesas@gmail.com,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v9 2/5] PCI: rcar-gen4: Add rcar_gen4_pcie_drvdata
+Date: Tue, 11 Jun 2024 21:50:54 +0900
+Message-Id: <20240611125057.1232873-3-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240611125057.1232873-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20240611125057.1232873-1-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240316023932.700685-1-liuyuntao12@huawei.com>
-In-Reply-To: <20240316023932.700685-1-liuyuntao12@huawei.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Jun 2024 14:45:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWMAg59p+hzeLG9Uc3X55Vt9ccNy5BRoPX0RJbxrMOFLA@mail.gmail.com>
-Message-ID: <CAMuHMdWMAg59p+hzeLG9Uc3X55Vt9ccNy5BRoPX0RJbxrMOFLA@mail.gmail.com>
-Subject: Re: [PATCH-next v4] arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION
-To: Yuntao Liu <liuyuntao12@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	arnd@arndb.de, ardb@kernel.org, linux@armlinux.org.uk, afd@ti.com, 
-	akpm@linux-foundation.org, kirill.shutemov@linux.intel.com, corbet@lwn.net, 
-	rppt@kernel.org, robh@kernel.org, tglx@linutronix.de, 
-	linus.walleij@linaro.org, maskray@google.com, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Chris Brandt <Chris.Brandt@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Yuntao,
+In order to support future SoCs such as r8a779g0 and r8a779h0 that
+require different initialization settings, introduce SoC specific
+driver data with the initial member being the device mode.
+No functional change.
 
-On Sat, Mar 16, 2024 at 3:44=E2=80=AFAM Yuntao Liu <liuyuntao12@huawei.com>=
- wrote:
-> The current arm32 architecture does not yet support the
-> HAVE_LD_DEAD_CODE_DATA_ELIMINATION feature. arm32 is widely used in
-> embedded scenarios, and enabling this feature would be beneficial for
-> reducing the size of the kernel image.
->
-> In order to make this work, we keep the necessary tables by annotating
-> them with KEEP, also it requires further changes to linker script to KEEP
-> some tables and wildcard compiler generated sections into the right place=
-.
-> When using ld.lld for linking, KEEP is not recognized within the OVERLAY
-> command, and Ard proposed a concise method to solve this problem.
->
-> It boots normally with defconfig, vexpress_defconfig and tinyconfig.
->
-> The size comparison of zImage is as follows:
-> defconfig       vexpress_defconfig      tinyconfig
-> 5137712         5138024                 424192          no dce
-> 5032560         4997824                 298384          dce
-> 2.0%            2.7%                    29.7%           shrink
->
-> When using smaller config file, there is a significant reduction in the
-> size of the zImage.
->
-> We also tested this patch on a commercially available single-board
-> computer, and the comparison is as follows:
-> a15eb_config
-> 2161384         no dce
-> 2092240         dce
-> 3.2%            shrink
->
-> The zImage size has been reduced by approximately 3.2%, which is 70KB on
-> 2.1M.
->
-> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
-> Tested-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c | 32 +++++++++++++++------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-Thanks for your patch, which is now commit ed0f941022515ff4 ("ARM:
-9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION") in
-arm/for-next (next-20240611).
+diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+index cfeccc2f9ee1..eb3ea4a5fd0a 100644
+--- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
++++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+@@ -48,11 +48,15 @@
+ #define RCAR_GEN4_PCIE_EP_FUNC_DBI_OFFSET	0x1000
+ #define RCAR_GEN4_PCIE_EP_FUNC_DBI2_OFFSET	0x800
+ 
++struct rcar_gen4_pcie_drvdata {
++	enum dw_pcie_device_mode mode;
++};
++
+ struct rcar_gen4_pcie {
+ 	struct dw_pcie dw;
+ 	void __iomem *base;
+ 	struct platform_device *pdev;
+-	enum dw_pcie_device_mode mode;
++	const struct rcar_gen4_pcie_drvdata *drvdata;
+ };
+ #define to_rcar_gen4_pcie(_dw)	container_of(_dw, struct rcar_gen4_pcie, dw)
+ 
+@@ -137,7 +141,7 @@ static int rcar_gen4_pcie_start_link(struct dw_pcie *dw)
+ 	 * Since dw_pcie_setup_rc() sets it once, PCIe Gen2 will be trained.
+ 	 * So, this needs remaining times for up to PCIe Gen4 if RC mode.
+ 	 */
+-	if (changes && rcar->mode == DW_PCIE_RC_TYPE)
++	if (changes && rcar->drvdata->mode == DW_PCIE_RC_TYPE)
+ 		changes--;
+ 
+ 	for (i = 0; i < changes; i++) {
+@@ -172,9 +176,9 @@ static int rcar_gen4_pcie_common_init(struct rcar_gen4_pcie *rcar)
+ 		reset_control_assert(dw->core_rsts[DW_PCIE_PWR_RST].rstc);
+ 
+ 	val = readl(rcar->base + PCIEMSR0);
+-	if (rcar->mode == DW_PCIE_RC_TYPE) {
++	if (rcar->drvdata->mode == DW_PCIE_RC_TYPE) {
+ 		val |= DEVICE_TYPE_RC;
+-	} else if (rcar->mode == DW_PCIE_EP_TYPE) {
++	} else if (rcar->drvdata->mode == DW_PCIE_EP_TYPE) {
+ 		val |= DEVICE_TYPE_EP;
+ 	} else {
+ 		ret = -EINVAL;
+@@ -451,9 +455,11 @@ static void rcar_gen4_remove_dw_pcie_ep(struct rcar_gen4_pcie *rcar)
+ /* Common */
+ static int rcar_gen4_add_dw_pcie(struct rcar_gen4_pcie *rcar)
+ {
+-	rcar->mode = (uintptr_t)of_device_get_match_data(&rcar->pdev->dev);
++	rcar->drvdata = of_device_get_match_data(&rcar->pdev->dev);
++	if (!rcar->drvdata)
++		return -EINVAL;
+ 
+-	switch (rcar->mode) {
++	switch (rcar->drvdata->mode) {
+ 	case DW_PCIE_RC_TYPE:
+ 		return rcar_gen4_add_dw_pcie_rp(rcar);
+ 	case DW_PCIE_EP_TYPE:
+@@ -494,7 +500,7 @@ static int rcar_gen4_pcie_probe(struct platform_device *pdev)
+ 
+ static void rcar_gen4_remove_dw_pcie(struct rcar_gen4_pcie *rcar)
+ {
+-	switch (rcar->mode) {
++	switch (rcar->drvdata->mode) {
+ 	case DW_PCIE_RC_TYPE:
+ 		rcar_gen4_remove_dw_pcie_rp(rcar);
+ 		break;
+@@ -514,14 +520,22 @@ static void rcar_gen4_pcie_remove(struct platform_device *pdev)
+ 	rcar_gen4_pcie_unprepare(rcar);
+ }
+ 
++static struct rcar_gen4_pcie_drvdata drvdata_rcar_gen4_pcie = {
++	.mode = DW_PCIE_RC_TYPE,
++};
++
++static struct rcar_gen4_pcie_drvdata drvdata_rcar_gen4_pcie_ep = {
++	.mode = DW_PCIE_EP_TYPE,
++};
++
+ static const struct of_device_id rcar_gen4_pcie_of_match[] = {
+ 	{
+ 		.compatible = "renesas,rcar-gen4-pcie",
+-		.data = (void *)DW_PCIE_RC_TYPE,
++		.data = &drvdata_rcar_gen4_pcie,
+ 	},
+ 	{
+ 		.compatible = "renesas,rcar-gen4-pcie-ep",
+-		.data = (void *)DW_PCIE_EP_TYPE,
++		.data = &drvdata_rcar_gen4_pcie_ep,
+ 	},
+ 	{},
+ };
+-- 
+2.25.1
 
-I gave this a try on my custom configs for RSK+RZA1 (RZ/A1H)
-and RZA2MEVB (RZ/A2M).  According to bloat-o-meter, enabling
-HAVE_LD_DEAD_CODE_DATA_ELIMINATION reduced kernel size by almost
-500 KiB (-8.3%).  The figures reported in "Memory: ... available"
-were even more impressive: 1032 KiB more free memory than before.
-
-As these boards have only 32 resp. 64 MiB of RAM, and some products
-even use RZ/A1H with just the 10 MiB of on-chip SRAM, this is a good
-improvement to have!
-Thanks!
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
