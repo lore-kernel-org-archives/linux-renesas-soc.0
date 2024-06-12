@@ -1,108 +1,120 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1AC17E8E9
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Jun 2024 13:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDBD17E908;
+	Wed, 12 Jun 2024 14:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200469; cv=none; b=u5fet4n6SS4k+OkPQQ4uMPjvVMpNaxt1DABkGMPww1XldXfrs5vgLIYYkBe//vHJ0Crjs+at6OTLNM1V/ATkQKaEK0o0HqVthdKU9XmXn9M7/qDZYwNbbYradk4oltdjrznp2+PcDMwcwmye/HnA2/2vWljPcWK/zNHjYrACX9Y=
+	t=1718204390; cv=none; b=r3zmAO3A7j8NswgI4ighBC9/Bpek6d1QsFEd9ZUUi/inC3yUk/qZz1043TFBlBOztwqyZZF+DQfQB4oD0LyJ7EChcSZADYmVZIaw1yT4/MROFUGukbA3QxhOFNjlnyPBJkRffHAETpXghoInp8arV2mmTqAQQg9GBcR3PtMLajw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200469; c=relaxed/simple;
-	bh=bxaBmUQHMQJLyNBPXSw1HR9XBCjR2cyvQd4Uy9kJryI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KxxcHriTzT/QXx3JFFh33UkIquyj6ROJ1m3Jc7bh8JEd06khMJyK06v6sXzDTYipLc6BTRuJtOgBC8RoSEyXCZy2uJ9+fMQN+UhLSiYttDmetY2nP9cJrW/Cba7rkS487yAKmETYqR3MZ3Eqh6yrUpDHMmz5sntPb9/7dKwb6dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:170b:1b4a:247:a009])
-	by xavier.telenet-ops.be with bizsmtp
-	id aduH2C0043axqkY01duH1A; Wed, 12 Jun 2024 15:54:18 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sHOPX-008eJl-SV;
-	Wed, 12 Jun 2024 15:54:17 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sHOQb-00EdFk-0V;
-	Wed, 12 Jun 2024 15:54:17 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Helge Deller <deller@gmx.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] drm/panic: Rename logo to logo_ascii
-Date: Wed, 12 Jun 2024 15:54:09 +0200
-Message-Id: <d1077f6b28e4f0b6f052a084e7397000f282e7d6.1718199918.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1718199918.git.geert+renesas@glider.be>
-References: <cover.1718199918.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1718204390; c=relaxed/simple;
+	bh=xjUBwltqpAe6aYRnfriue1Gh2w11fmbRUGTxTQAXaYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WY8nN6xezMkfFsQQhFjlnaQ94nqDJojco1hRTZjYrZfqKIYhhHHohwMdg4fcBVjFTrupoUoSIhp/fx3vT3Ujh9QH2r6UyyWYS9jmgS8FX2QejhuHOq/Vwz9vnwUhy3Ts84T88q5CDAWZyYHwdH3MTLMtb5dx8zWPV799A2LKf/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tPP5HYTw; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tPP5HYTw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A70C4AF1A;
+	Wed, 12 Jun 2024 14:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718204389;
+	bh=xjUBwltqpAe6aYRnfriue1Gh2w11fmbRUGTxTQAXaYs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tPP5HYTwgbOgZecxq8aShvk9LnNbGElMzF2+hLVKYBiH0im11j6KEK+BXzjdF9XXA
+	 snF7aFCimfCsZmCl6+ialg8qrZpsKH2AD2/LnWQrcjmS+9Eh5Kph3FmiElC2KmXwAo
+	 H7ROI58qlZBRlVq2FJQRyhYvmx3LniZ3cS1Z3PO3/wpfPIjS7bNREgMH4HiL5NQYe1
+	 xsPWQr/Oe9u3oHRXRSpkW3JsEpL2Ic2amMftS5oiVft0H7s9MdycMUVhMj7M8TPCNN
+	 GvjGRtTk+bgWnkoE0MSWuqPERUFOS9wSm/dk/cck5Ju5mHAP9Kc7aThLydsiERXWm/
+	 YoMZI/lSV65qA==
+Date: Wed, 12 Jun 2024 20:29:33 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+	"marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v8 4/5] PCI: rcar-gen4: Add support for r8a779g0
+Message-ID: <20240612145933.GC58302@thinkpad>
+References: <20240520074300.125969-1-yoshihiro.shimoda.uh@renesas.com>
+ <20240520074300.125969-5-yoshihiro.shimoda.uh@renesas.com>
+ <20240608082455.GA3282@thinkpad>
+ <TYCPR01MB11040691A48BD866E9F387D78D8C72@TYCPR01MB11040.jpnprd01.prod.outlook.com>
+ <CAMuHMdXStQGDNP8c79Bc46kM7BMkbxi=2aVKnLrupWj9Ytn7Ug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXStQGDNP8c79Bc46kM7BMkbxi=2aVKnLrupWj9Ytn7Ug@mail.gmail.com>
 
-Rename variables related to the ASCII logo, to prepare for the advent of
-support for graphical logos.
+On Tue, Jun 11, 2024 at 12:10:22PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Jun 11, 2024 at 11:21 AM Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > > From: Manivannan Sadhasivam, Sent: Saturday, June 8, 2024 5:25 PM
+> > > On Mon, May 20, 2024 at 04:42:59PM +0900, Yoshihiro Shimoda wrote:
+> > > > +static void rcar_gen4_pcie_phy_reg_update_bits(struct rcar_gen4_pcie *rcar,
+> > > > +                                          u32 offset, u32 mask, u32 val)
+> > > > +{
+> > > > +   u32 tmp;
+> > > > +
+> > > > +   tmp = readl(rcar->phy_base + offset);
+> > > > +   tmp &= ~mask;
+> > > > +   tmp |= val;
+> > >
+> > > Use FIELD_* macros to avoid using the shift value.
+> >
+> > According to the bitfield.h,
+> > ---
+> > * FIELD_{GET,PREP} macros take as first parameter shifted mask
+> >  * from which they extract the base mask and shift amount.
+> >  * Mask must be a compilation time constant.
+> > ---
+> > So, since the mask is a variable here, we cannot use FIELD_* macros for this function.
+> 
+> Indeed.
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpu/drm/drm_panic.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+I just can't keep the constant factor in mind for some reason.
 
-diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-index 52d8a96b7dedff2c..05b406a7034bb295 100644
---- a/drivers/gpu/drm/drm_panic.c
-+++ b/drivers/gpu/drm/drm_panic.c
-@@ -71,7 +71,7 @@ static struct drm_panic_line panic_msg[] = {
- 	PANIC_LINE("Please reboot your computer."),
- };
- 
--static const struct drm_panic_line logo[] = {
-+static const struct drm_panic_line logo_ascii[] = {
- 	PANIC_LINE("     .--.        _"),
- 	PANIC_LINE("    |o_o |      | |"),
- 	PANIC_LINE("    |:_/ |      | |"),
-@@ -417,7 +417,7 @@ static void draw_txt_rectangle(struct drm_scanout_buffer *sb,
- static void draw_panic_static(struct drm_scanout_buffer *sb)
- {
- 	size_t msg_lines = ARRAY_SIZE(panic_msg);
--	size_t logo_lines = ARRAY_SIZE(logo);
-+	size_t logo_ascii_lines = ARRAY_SIZE(logo_ascii);
- 	u32 fg_color = CONFIG_DRM_PANIC_FOREGROUND_COLOR;
- 	u32 bg_color = CONFIG_DRM_PANIC_BACKGROUND_COLOR;
- 	const struct font_desc *font = get_default_font(sb->width, sb->height, NULL, NULL);
-@@ -430,8 +430,8 @@ static void draw_panic_static(struct drm_scanout_buffer *sb)
- 	bg_color = convert_from_xrgb8888(bg_color, sb->format->format);
- 
- 	r_logo = DRM_RECT_INIT(0, 0,
--			       get_max_line_len(logo, logo_lines) * font->width,
--			       logo_lines * font->height);
-+			       get_max_line_len(logo_ascii, logo_ascii_lines) * font->width,
-+			       logo_ascii_lines * font->height);
- 	r_msg = DRM_RECT_INIT(0, 0,
- 			      min(get_max_line_len(panic_msg, msg_lines) * font->width, sb->width),
- 			      min(msg_lines * font->height, sb->height));
-@@ -445,7 +445,8 @@ static void draw_panic_static(struct drm_scanout_buffer *sb)
- 
- 	if ((r_msg.x1 >= drm_rect_width(&r_logo) || r_msg.y1 >= drm_rect_height(&r_logo)) &&
- 	    drm_rect_width(&r_logo) <= sb->width && drm_rect_height(&r_logo) <= sb->height) {
--		draw_txt_rectangle(sb, font, logo, logo_lines, false, &r_logo, fg_color, bg_color);
-+		draw_txt_rectangle(sb, font, logo_ascii, logo_ascii_lines, false, &r_logo,
-+				   fg_color, bg_color);
- 	}
- 	draw_txt_rectangle(sb, font, panic_msg, msg_lines, true, &r_msg, fg_color, bg_color);
- }
+> I tried introducing non-constant field_{prep,get}() helpers[1] in series
+> [2], but there were some pushbacks.
+> 
+> Feel free to up-vote ;-)
+> 
+
+For sure! This will be very useful, thanks.
+
+- Mani
+
+> [1] "[PATCH 01/17] bitfield: Add non-constant field_{prep,get}() helpers"
+> https://lore.kernel.org/all/3a54a6703879d10f08cf0275a2a69297ebd2b1d4.1637592133.git.geert+renesas@glider.be/
+> 
+> [2] "[PATCH 00/17] Non-const bitfield helper conversions"
+> https://lore.kernel.org/all/cover.1637592133.git.geert+renesas@glider.be/
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
+
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
