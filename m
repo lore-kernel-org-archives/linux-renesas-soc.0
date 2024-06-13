@@ -1,30 +1,30 @@
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E2A15253B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AF61534EC
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jun 2024 19:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718306298; cv=none; b=ScJZwm4cijtJvH/r07SS0xIvEYQ0XnoggsnFaKyCRGOqtCgGTAR/50xDmGRocnYICvMJBoLOnb5H+jcaH9ld2ITJfvSOPRX9vGGa6R0BjDBrwPHr+IhDmNyVbYwRUnHhtifVRCyrLhuRkBrYAY1E3hnpWWxnZ90QmlyEHjzexWA=
+	t=1718306298; cv=none; b=Xq+jbpdDkUkzmBttDnz0p05ngQKFpL72gkW09DuEHoj9hV7yo1C/NN6+KyuGRw8JYdRHWDDMJ9VW6zNeXNNJE/rO0OvWBBU20lcyYbTaiujdx87iukUNAVATh9JTFCAjPtKT8vp1vm/qdpXtb1b5UA9EIlx1S2iol5iXfIOkxo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718306298; c=relaxed/simple;
-	bh=Rg4B6D/bwEKjMcrukcRStwxKfCFviBM5ZIM1wC7n26A=;
+	bh=1gl9Qdl+e+Gxc6KhMzCUTue4x7qBw6QoLAZQjk+A1tE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b63LekkH9pvOrU4xi7W8sPkeuvB9hMugXT0R9VbDhrUm+d7uIiZZOvARy7W6GyUAPddXsuSXMLCkohg4UkHAjK/yx6BEwegfXQd1vTM1OHsauqmRCqw/MmTPMi88Zs9vTdRuydG/QMSvMzdwD96DQluTSBTmlZDcajr7GdfPMO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+	 MIME-Version; b=HUsb93kHnVC04Qq9Jwpmkccizx3ks8SP4fYNi4wvSNnOqZYxyAxAycvooZ4Js82xdzxiyiR4Ea6MjS6cIk/Nd1iAnVbBbRExnOhmsyvssUUcU6pnmSk0ySlIqS7kVE/2tn7Z3iW8SldRXHZ8aqOBg7p5iicKxIe0QfaT50Jrm/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:be2a:f066:50f0:dff7])
-	by laurent.telenet-ops.be with bizsmtp
-	id b7J62C0073w30qz017J6YW; Thu, 13 Jun 2024 21:18:08 +0200
+	by andre.telenet-ops.be with bizsmtp
+	id b7J62C00F3w30qz017J6rL; Thu, 13 Jun 2024 21:18:08 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sHpwS-00Ax6j-CJ;
+	id 1sHpwS-00Ax76-IT;
 	Thu, 13 Jun 2024 21:18:06 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sHpxW-00FL8T-CT;
+	id 1sHpxW-00FL8q-Id;
 	Thu, 13 Jun 2024 21:18:06 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Jocelyn Falempe <jfalempe@redhat.com>,
@@ -38,9 +38,9 @@ Cc: Helge Deller <deller@gmx.de>,
 	linux-fbdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/7] drm/panic: Fix uninitialized drm_scanout_buffer.set_pixel() crash
-Date: Thu, 13 Jun 2024 21:17:59 +0200
-Message-Id: <4c250d21880ca0b97e41da7b6a101bdf07e9d015.1718305355.git.geert+renesas@glider.be>
+Subject: [PATCH v2 6/7] drm/panic: Rename logo to logo_ascii
+Date: Thu, 13 Jun 2024 21:18:04 +0200
+Message-Id: <df77372c16153655c321a290b5a3191ee2dcbc6b.1718305355.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1718305355.git.geert+renesas@glider.be>
 References: <cover.1718305355.git.geert+renesas@glider.be>
@@ -52,36 +52,60 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-No implementations of drm_plane_helper_funcs.get_scanout_buffer() fill
-in the optional drm_scanout_buffer.set_pixel() member.  Hence the member
-may contain non-zero garbage, causing a crash when deferencing it during
-drm panic.
+Rename variables related to the ASCII logo, to prepare for the advent of
+support for graphical logos.
 
-Fix this by pre-initializing the drm_scanout_buffer object before
-calling drm_plane_helper_funcs.get_scanout_buffer().
-
-Fixes: 24d07f114e4ec760 ("drm/panic: Add a set_pixel() callback to drm_scanout_buffer")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
-  - New.
+  - Rebased.
 ---
- drivers/gpu/drm/drm_panic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_panic.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-index 293d4dcbc80da7ba..fc04ed4e0b399f55 100644
+index 5b0acf8c86e402a8..f7e22b69bb25d3be 100644
 --- a/drivers/gpu/drm/drm_panic.c
 +++ b/drivers/gpu/drm/drm_panic.c
-@@ -582,7 +582,7 @@ static void draw_panic_dispatch(struct drm_scanout_buffer *sb)
+@@ -78,7 +78,7 @@ static struct drm_panic_line panic_msg[] = {
+ 	PANIC_LINE("Please reboot your computer."),
+ };
  
- static void draw_panic_plane(struct drm_plane *plane)
+-static const struct drm_panic_line logo[] = {
++static const struct drm_panic_line logo_ascii[] = {
+ 	PANIC_LINE("     .--.        _"),
+ 	PANIC_LINE("    |o_o |      | |"),
+ 	PANIC_LINE("    |:_/ |      | |"),
+@@ -447,7 +447,7 @@ static void draw_txt_rectangle(struct drm_scanout_buffer *sb,
+ static void draw_panic_static_user(struct drm_scanout_buffer *sb)
  {
--	struct drm_scanout_buffer sb;
-+	struct drm_scanout_buffer sb = { };
- 	int ret;
- 	unsigned long flags;
+ 	size_t msg_lines = ARRAY_SIZE(panic_msg);
+-	size_t logo_lines = ARRAY_SIZE(logo);
++	size_t logo_ascii_lines = ARRAY_SIZE(logo_ascii);
+ 	u32 fg_color = convert_from_xrgb8888(CONFIG_DRM_PANIC_FOREGROUND_COLOR, sb->format->format);
+ 	u32 bg_color = convert_from_xrgb8888(CONFIG_DRM_PANIC_BACKGROUND_COLOR, sb->format->format);
+ 	const struct font_desc *font = get_default_font(sb->width, sb->height, NULL, NULL);
+@@ -459,8 +459,8 @@ static void draw_panic_static_user(struct drm_scanout_buffer *sb)
+ 	r_screen = DRM_RECT_INIT(0, 0, sb->width, sb->height);
  
+ 	r_logo = DRM_RECT_INIT(0, 0,
+-			       get_max_line_len(logo, logo_lines) * font->width,
+-			       logo_lines * font->height);
++			       get_max_line_len(logo_ascii, logo_ascii_lines) * font->width,
++			       logo_ascii_lines * font->height);
+ 	r_msg = DRM_RECT_INIT(0, 0,
+ 			      min(get_max_line_len(panic_msg, msg_lines) * font->width, sb->width),
+ 			      min(msg_lines * font->height, sb->height));
+@@ -473,7 +473,8 @@ static void draw_panic_static_user(struct drm_scanout_buffer *sb)
+ 
+ 	if ((r_msg.x1 >= drm_rect_width(&r_logo) || r_msg.y1 >= drm_rect_height(&r_logo)) &&
+ 	    drm_rect_width(&r_logo) <= sb->width && drm_rect_height(&r_logo) <= sb->height) {
+-		draw_txt_rectangle(sb, font, logo, logo_lines, false, &r_logo, fg_color);
++		draw_txt_rectangle(sb, font, logo_ascii, logo_ascii_lines, false, &r_logo,
++				   fg_color);
+ 	}
+ 	draw_txt_rectangle(sb, font, panic_msg, msg_lines, true, &r_msg, fg_color);
+ }
 -- 
 2.34.1
 
