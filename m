@@ -1,30 +1,30 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C90515444E
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jun 2024 19:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F63B154430
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jun 2024 19:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718306299; cv=none; b=Ng1r4ts/cUVAhGKpgyeNXrOtSm9tYCptVbVVxcbHNv3JAbYbfLW1tReJx6icBKl6+NA1PktHqekkXl9XBT7uqlSLAsi+VmY/4naiwIW1O6Ak7H80t5vIuQFgczpAYCPGSaI1YrF3Bo+YACBOBbAkJQX9LApqEXBbAdLyg3oX4J4=
+	t=1718306300; cv=none; b=Pd+iX3ZbPQIH7OEe8TXoItHhj7ucvOcpHtlFtyiHLonzKq7IHDFxq39ZkaGVpWREa5qd4cUV3ICsWGWX877tBv7jWuv4VkXjiPRIUZRWlHSLXrEDjXX8Ve3UB1onasjXFu0qP0quirCkNUxlPUNt3TwXlDdnLlreCAhjFN0PiIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718306299; c=relaxed/simple;
-	bh=wTfhc+5qe9USjIEvskfQ4A/ZHi14nOoEz6awhHKpCrE=;
+	s=arc-20240116; t=1718306300; c=relaxed/simple;
+	bh=UxAu9ZpRkWvWbNN1J/6zVy6HrV4IEqX1PYFL/kiWvDU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kh0M+Rmiwymtiz7KL54zKvEPTBb7lb8ZReYF8qwoM8yhyyk6TLdy/WzICe7MIzUUNgS1BTLzsBQpXUGCIGH+dRDZTNW3RzIQHNrnuQTBwBy7Cqro/2dI+89eMqZW46lVF4bZDefavwgY+P7XQhPMJT7JzKtjdaFOJUC9WVCxUpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+	 MIME-Version; b=MRqPBDM7TYiJCaRbmPXvsfZ+ZMTL6ll/Ib/F3XwapzBNezjgIW4QB0xK9W4CCH7A7zmAWyx8/P/pZyjasmt6E0PEbRInls20y0LA4HbGESQcng0DzjR6aJ4sjNtSKR+HLmxo736Nfgix2NAoS7xsUXMILGy1tlx5zdPUlJDVokU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:be2a:f066:50f0:dff7])
-	by baptiste.telenet-ops.be with bizsmtp
-	id b7J62C00T3w30qz017J6ok; Thu, 13 Jun 2024 21:18:09 +0200
+	by albert.telenet-ops.be with bizsmtp
+	id b7J62C00K3w30qz067J6PC; Thu, 13 Jun 2024 21:18:08 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sHpwS-00Ax71-Gm;
+	id 1sHpwS-00Ax6q-EI;
 	Thu, 13 Jun 2024 21:18:06 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sHpxW-00FL8j-H0;
+	id 1sHpxW-00FL8b-F6;
 	Thu, 13 Jun 2024 21:18:06 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Jocelyn Falempe <jfalempe@redhat.com>,
@@ -38,9 +38,9 @@ Cc: Helge Deller <deller@gmx.de>,
 	linux-fbdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/7] drm/panic: Convert to drm_fb_clip_offset()
-Date: Thu, 13 Jun 2024 21:18:03 +0200
-Message-Id: <3121082eb4beb461773ebb6f656ed9b4286967ee.1718305355.git.geert+renesas@glider.be>
+Subject: [PATCH v2 3/7] lib/fonts: Fix visiblity of SUN12x22 and TER16x32 if DRM_PANIC
+Date: Thu, 13 Jun 2024 21:18:01 +0200
+Message-Id: <ac474c6755800e61e18bd5af407c6acb449c5149.1718305355.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1718305355.git.geert+renesas@glider.be>
 References: <cover.1718305355.git.geert+renesas@glider.be>
@@ -52,41 +52,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the drm_fb_clip_offset() helper instead of open-coding the same
-operation.
+When CONFIG_FONTS ("Select compiled-in fonts") is not enabled, the user
+should not be asked about any fonts.  However, when CONFIG_DRM_PANIC is
+enabled, the user is still asked about the Sparc console 12x22 and
+Terminus 16x32 fonts.
 
+Fix this by moving the "|| DRM_PANIC" to where it belongs.
+Split the dependency in two rules to improve readability.
+
+Fixes: b94605a3889b9084 ("lib/fonts: Allow to select fonts for drm_panic")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-DRM_PANIC already selects DRM_KMS_HELPER.
-
 v2:
   - New.
 ---
- drivers/gpu/drm/drm_panic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/fonts/Kconfig | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-index 814ef5c20c08ee42..5b0acf8c86e402a8 100644
---- a/drivers/gpu/drm/drm_panic.c
-+++ b/drivers/gpu/drm/drm_panic.c
-@@ -285,7 +285,7 @@ static void drm_panic_blit(struct drm_scanout_buffer *sb, struct drm_rect *clip,
- 		return drm_panic_blit_pixel(sb, clip, sbuf8, spitch, fg_color);
+diff --git a/lib/fonts/Kconfig b/lib/fonts/Kconfig
+index befcb463f7381d1a..3ac26bdbc3ff01a3 100644
+--- a/lib/fonts/Kconfig
++++ b/lib/fonts/Kconfig
+@@ -105,7 +105,8 @@ config FONT_SUN8x16
  
- 	map = sb->map[0];
--	iosys_map_incr(&map, clip->y1 * sb->pitch[0] + clip->x1 * sb->format->cpp[0]);
-+	iosys_map_incr(&map, drm_fb_clip_offset(sb->pitch[0], sb->format, clip));
+ config FONT_SUN12x22
+ 	bool "Sparc console 12x22 font (not supported by all drivers)"
+-	depends on (FRAMEBUFFER_CONSOLE && (!SPARC && FONTS || SPARC)) || DRM_PANIC
++	depends on FRAMEBUFFER_CONSOLE || DRM_PANIC
++	depends on !SPARC && FONTS
+ 	help
+ 	  This is the high resolution console font for Sun machines with very
+ 	  big letters (like the letters used in the SPARC PROM). If the
+@@ -113,7 +114,8 @@ config FONT_SUN12x22
  
- 	switch (sb->format->cpp[0]) {
- 	case 2:
-@@ -373,7 +373,7 @@ static void drm_panic_fill(struct drm_scanout_buffer *sb, struct drm_rect *clip,
- 		return drm_panic_fill_pixel(sb, clip, color);
- 
- 	map = sb->map[0];
--	iosys_map_incr(&map, clip->y1 * sb->pitch[0] + clip->x1 * sb->format->cpp[0]);
-+	iosys_map_incr(&map, drm_fb_clip_offset(sb->pitch[0], sb->format, clip));
- 
- 	switch (sb->format->cpp[0]) {
- 	case 2:
+ config FONT_TER16x32
+ 	bool "Terminus 16x32 font (not supported by all drivers)"
+-	depends on (FRAMEBUFFER_CONSOLE && (!SPARC && FONTS || SPARC)) || DRM_PANIC
++	depends on FRAMEBUFFER_CONSOLE || DRM_PANIC
++	depends on !SPARC && FONTS || SPARC
+ 	help
+ 	  Terminus Font is a clean, fixed width bitmap font, designed
+ 	  for long (8 and more hours per day) work with computers.
 -- 
 2.34.1
 
