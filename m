@@ -1,148 +1,205 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC3B3C062;
-	Sat, 15 Jun 2024 12:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646BD45023
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Jun 2024 12:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718453869; cv=none; b=T6YDR+7KOeTzpfhifVUXNnxAWlZAesuryQG+tGsR75tc9tReZU93J0vg2MQ26780fasFVsKYODa3H7Li8Mr/AHwVDSq85qzqHeQa/uq+YsptsKAB0HveGJbd/BERvlbv9ipIGpsSr+PTYTPRAsrRiGL0z8Y1PHLbDCIAamMF0kQ=
+	t=1718453921; cv=none; b=bhCRziCQsBi1ckoPKUXlaFTXc0x2wa5dE5nKuaagIpKSzf57NyvrbMY7RtutNQIEsh+bX8fmjWykGW1HJPoQe+1Dv5tiB+/6oDaAlc+J+fXveRRGreVKiAX4KrQj1br5Fa3zzQoUqVXFg1suMW+UouLtP3fAONoRe3DvrRRudc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718453869; c=relaxed/simple;
-	bh=jvQAeWCdVaD0BjCP05AvOEcJtz935J6YiPM0ZLxh6iQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmYc91JbFYQrNdTSXZqFXiVpYozFssE8ira+toYE+hi9JTCB49zfjYmjXikre0cS6wdKB69oflyPa/S7B27xmg7R0OEUanH5nsWyGe05GqdVRjtnVo2+guSaOWQTD6PKcsqVfjO2egPm7ee9g+qCpi65EVvJ1+U9zzDWbC0Yp+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7A6z8tz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718453921; c=relaxed/simple;
+	bh=OBFsQz+fugFyT4RChDZ4sBg6SqYiDCwC4pb8ApIAcek=;
+	h=Message-ID:Date:Content-Type:MIME-Version:Subject:To:From; b=bXOOp8KfxQqyaitqMxJoGSE74fgrtaC4OWg7OPV36uO4KJ4IBUmOqEffo7wolrA8iXGgKBwrGhH0W4ObwcmTbYGOxcUDFce9bKOgvngNRpK05SO1254wRLb7B574gSq1AyDLTu/BMgfAkxq0xoQYCR+5XgKE4gSFX7V9hROLQ24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=SdkTVcZg; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7A6z8tz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD8E7C116B1;
-	Sat, 15 Jun 2024 12:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718453868;
-	bh=jvQAeWCdVaD0BjCP05AvOEcJtz935J6YiPM0ZLxh6iQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b7A6z8tziamb8sri2a2XV1owVztyaG5/O1VaCMT1FXpTcMWyu4QMhWHzz6ra46Q/b
-	 HBGJ7uWpvp9TH1FtAa3Tbgo2WoGxSltneXHKgwW3EXMvR/mfkR+96Ay9Ne2UCXcj0Z
-	 1TEfrM2YQCtpTCUuxOQJnKLj9FO8wFqEYDLVwdzUrj9uFtOxXfhgDMXsRXnxcswdSZ
-	 w8fXAFDcoM1Qla88Tv4GFJ4yXYOu3/6yC6GH/F1hOguRztqxNSl7+MDejqJFN4dUEW
-	 lO8NXRtI4EiKFsagjfnxJ+NDZ/unNCTjvhi6fanQBhy9lNUnJ0/Xjq7C3tbjqRtOhQ
-	 PKMOkfuzL7AQQ==
-Date: Sat, 15 Jun 2024 13:17:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	lee@kernel.org, alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 02/12] dt-bindings: clock: renesas,rzg3s-vbattb-clk:
- Document the VBATTB clock driver
-Message-ID: <20240615-angler-occupier-6188a3187655@spud>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="SdkTVcZg"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6f4603237e0so2193675b3a.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Jun 2024 05:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1718453918; x=1719058718; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/JhE1J3Mui2Y1BrcHGxGeYalp5jL3H2aH6e5Rxfc/WY=;
+        b=SdkTVcZg7+K8kUEIS7J2fbANGjkDcSxeFZJw5szriUR7mGivEyaYq5qr3Gio7ohqoi
+         15KVM7bJ/N+qolrc73kDkrJtx3O79INT08oGacXFW4/DT43GXbsNeiSzgLZ1WhajFn0b
+         8+mbXmpA0tRUlb9IanWxELTsouJhLaICnRQq6XWiD+FxuoI5kiJLyHMzczGzddebstxy
+         EA0HkGetNzorkGBNSDaFseG+/+wZWcBwBBPT62eCGPnsHap81H2KyqEhnXx0xd+uV4PF
+         6l9wfL/k2gHOavUz4VkWwDHvKMmUBEvfQlBFuMokidkbKQAlXMkYtQvJ9Q60v/GCQQsT
+         fXXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718453918; x=1719058718;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/JhE1J3Mui2Y1BrcHGxGeYalp5jL3H2aH6e5Rxfc/WY=;
+        b=csP8U+IZlknvgUEWtiqcMG41K725bCO07+uFWZnds0GHz/Fxto5a36oM+D2iUcnB+B
+         Vpdq7r0mtb6bNSt4p7/kqumuol9X73Z/XdUxEhYBqIXuNrZpDd08o+HOFdHtsHZXd4Me
+         F5Gpz/Ce56/JW2yod7He4Pa5v59R/OWEStUCu5P0y3MjRz+SMbmFbzosSRsMi/hJgVzQ
+         d/CI5iES30pGFaT3Y/mg9LNO1O/oFJCCfO+p/jiem3LAAI1VVwTtv4wPAmDIf9dH93IO
+         VJJb35lOYMT2SdrV5tcX2smZDHMd2mGbpoUaaoExqsJLkKOOuqU5maRbn4MQThFdwgYs
+         9gWw==
+X-Gm-Message-State: AOJu0YzNtYStOSLLB7EPbuxFZGn9Vcks/wfhrAy59IGiAuEoO+i5/EKr
+	YgjyL+jHBW7nueRunra5+Sry4+/qBM0RN0/1XyvFLYPcV3I5CuT1UoxXvynal6YWRRweSHLrq4A
+	f
+X-Google-Smtp-Source: AGHT+IFFD9x7sB9nYi45SuatcK3nm3r/b/2mNiDyYmVz4CUEGskeJFCnmhPmxmt7IqmyMOGOy6aoZw==
+X-Received: by 2002:a05:6a20:daa8:b0:1a9:d27c:3151 with SMTP id adf61e73a8af0-1b8bf0c4483mr12613523637.23.1718453917888;
+        Sat, 15 Jun 2024 05:18:37 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee2d3673dsm4033641a12.69.2024.06.15.05.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jun 2024 05:18:37 -0700 (PDT)
+Message-ID: <666d869d.630a0220.5ae09.bdbe@mx.google.com>
+Date: Sat, 15 Jun 2024 05:18:37 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nsLO3LjWINDswJxd"
-Content-Disposition: inline
-In-Reply-To: <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
-
-
---nsLO3LjWINDswJxd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-next-2024-06-07-v6.10-rc1
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: next
+X-Kernelci-Tree: renesas
+Subject: renesas/next baseline: 62 runs,
+ 3 regressions (renesas-next-2024-06-07-v6.10-rc1)
+To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 
-On Fri, Jun 14, 2024 at 10:19:22AM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that feeds
-> the RTC and the tamper detector. Add documentation for the VBATTB clock
-> driver.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->  .../clock/renesas,rzg3s-vbattb-clk.yaml       | 90 +++++++++++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzg3s=
--vbattb-clk.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb=
--clk.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-cl=
-k.yaml
-> new file mode 100644
-> index 000000000000..ef52a0c0f874
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.ya=
-ml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,rzg3s-vbattb-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas VBATTB clock
-> +
-> +maintainers:
-> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> +
-> +description:
-> +  Renesas VBATTB module is an always on powered module (backed by batter=
-y) which
-> +  generates a clock (VBATTCLK). This clocks feeds the RTC and the tamper=
- detector
-> +  modules.
-> +
-> +properties:
-> +  compatible:
-> +    const: renesas,rzg3s-vbattb-clk
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: VBATTB module clock
-> +      - description: VBATTB input xtal
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bclk
-> +      - const: vbattb_xtal
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  renesas,vbattb-load-nanofarads:
-> +    description: load capacitance of the on board xtal
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 4000, 7000, 9000, 12500 ]
-> +
-> +  renesas,vbattb-osc-bypass:
-> +    description: set when external clock is connected to RTXOUT pin
-> +    type: boolean
+renesas/next baseline: 62 runs, 3 regressions (renesas-next-2024-06-07-v6.1=
+0-rc1)
 
-When you say "external clock", is that an input or an output?
+Regressions Summary
+-------------------
 
---nsLO3LjWINDswJxd
-Content-Type: application/pgp-signature; name="signature.asc"
+platform                     | arch  | lab             | compiler | defconf=
+ig | regressions
+-----------------------------+-------+-----------------+----------+--------=
+---+------------
+imx8mm-innocomm-wb15-evk     | arm64 | lab-pengutronix | gcc-10   | defconf=
+ig | 1          =
 
------BEGIN PGP SIGNATURE-----
+imx8mp-evk                   | arm64 | lab-broonie     | gcc-10   | defconf=
+ig | 1          =
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZm2GZgAKCRB4tDGHoIJi
-0rtkAQCi6OWcwXo4FHX+1PWlyVi63NIjfF9JgLRdiachrjUaFAEAtuwUzfHaFzsm
-8P+5obAmJteBZtgVJyrjtHfszACu3Ak=
-=BI4B
------END PGP SIGNATURE-----
+imx8mp-verdin-nonwifi-dahlia | arm64 | lab-broonie     | gcc-10   | defconf=
+ig | 1          =
 
---nsLO3LjWINDswJxd--
+
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2024-06-07-v6.10-rc1/plan/baseline/
+
+  Test:     baseline
+  Tree:     renesas
+  Branch:   next
+  Describe: renesas-next-2024-06-07-v6.10-rc1
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      d1ef2e3bcb03040dfe57f59896a00a69a5eb4b54 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch  | lab             | compiler | defconf=
+ig | regressions
+-----------------------------+-------+-----------------+----------+--------=
+---+------------
+imx8mm-innocomm-wb15-evk     | arm64 | lab-pengutronix | gcc-10   | defconf=
+ig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/66631298303cb0447d7e7079
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-06-07-v6.10-rc1/arm64/defconfig/gcc-10/lab-pengutronix/baseline-imx8mm-inn=
+ocomm-wb15-evk.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-06-07-v6.10-rc1/arm64/defconfig/gcc-10/lab-pengutronix/baseline-imx8mm-inn=
+ocomm-wb15-evk.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230703.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/66631298303cb0447d7e7=
+07a
+        new failure (last pass: renesas-next-2024-06-03-v6.10-rc1) =
+
+ =
+
+
+
+platform                     | arch  | lab             | compiler | defconf=
+ig | regressions
+-----------------------------+-------+-----------------+----------+--------=
+---+------------
+imx8mp-evk                   | arm64 | lab-broonie     | gcc-10   | defconf=
+ig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6663487b865678ac577e706d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-06-07-v6.10-rc1/arm64/defconfig/gcc-10/lab-broonie/baseline-imx8mp-evk.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-06-07-v6.10-rc1/arm64/defconfig/gcc-10/lab-broonie/baseline-imx8mp-evk.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230703.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/6663487b865678ac577e7=
+06e
+        failing since 9 days (last pass: renesas-next-2024-04-22-v6.9-rc1, =
+first fail: renesas-next-2024-05-28-v6.10-rc1) =
+
+ =
+
+
+
+platform                     | arch  | lab             | compiler | defconf=
+ig | regressions
+-----------------------------+-------+-----------------+----------+--------=
+---+------------
+imx8mp-verdin-nonwifi-dahlia | arm64 | lab-broonie     | gcc-10   | defconf=
+ig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/66633bd7a4e502d36a7e706d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-06-07-v6.10-rc1/arm64/defconfig/gcc-10/lab-broonie/baseline-imx8mp-verdin-=
+nonwifi-dahlia.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2024=
+-06-07-v6.10-rc1/arm64/defconfig/gcc-10/lab-broonie/baseline-imx8mp-verdin-=
+nonwifi-dahlia.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230703.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/66633bd7a4e502d36a7e7=
+06e
+        failing since 9 days (last pass: renesas-next-2024-04-22-v6.9-rc1, =
+first fail: renesas-next-2024-05-28-v6.10-rc1) =
+
+ =20
