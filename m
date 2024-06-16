@@ -1,42 +1,44 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85034186E58;
-	Sun, 16 Jun 2024 10:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616FF49635;
+	Sun, 16 Jun 2024 10:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718535263; cv=none; b=YvEBJXtoJXJBrTG7c7ArPzc+XmULhq6/4CFOyarzVjzEoYYEcryWD80qdKWmAGw69oqk5itTwiPbbxnp57shF7eY1a94ySWgnUyA7Ljt33I6mjHARGLIo4Lz9jDTEwL79rQz3uvVq8MsmOcnRqc0pkOUqjnLUdQ2aqTpjclDybM=
+	t=1718535266; cv=none; b=osATJoWdf2XaIWg0+FyVqC5tuKEplSp5t+UxQWMYftvlyIs/4rj1NlXcn1AZ8IyO8pawNbesV1ezvQDWn/MqIexpBcS8yEbyY0DBITsLYtIAXHRUk+xC4hww1mgN1ss9L4ctp5BAQc2c2NRXcrThOwJH7nZ93gbcTCYZQfcUR9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718535263; c=relaxed/simple;
-	bh=l0H7eM7cNPjwvMIHCvURoHcI7RUDw207O6+JfcMpUJo=;
+	s=arc-20240116; t=1718535266; c=relaxed/simple;
+	bh=7FP5SW/pQQFUtd/2FgZIG6Ih4VXyqX1czkFZfRsthsA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YK6cQH/L2Ae+qEcwCnYBtkBCHUJF9NluJtRwACRJcd4vlDQU9XERkg0/JwVKUGOAvOvwHIX/dyPa++PJ9iOJkuSvVHwP/jfyipzhMFIZWb2XjVJ6ZFB7DCDtmi6owrB6faJ+Fmo0W6mr5ZfssixFy9UocfXon0hx1qIuE13ZfJQ=
+	 MIME-Version; b=YyE+gpKRQjF/g5BxUx5irVOAhExX/hpqUr5LY8OdUvfN1L60AEJtrytPGxR5tDZvQaDwkbE8MHmalRxJUC8u2fzdMLAo8aRvWR3YDSQeCZ8PktGFULVubH4pfbrtNAagbybHOyGVxrVxdM7FCXb5P84F/C8QLye/WiC7S5LijqE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.08,242,1712588400"; 
-   d="scan'208";a="208104626"
+   d="scan'208";a="208104636"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Jun 2024 19:54:14 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Jun 2024 19:54:24 +0900
 Received: from localhost.localdomain (unknown [10.226.92.60])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 040AC41FEF44;
-	Sun, 16 Jun 2024 19:54:09 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 566A841FEF55;
+	Sun, 16 Jun 2024 19:54:19 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v4 1/6] dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document USB VBUS regulator
-Date: Sun, 16 Jun 2024 11:53:53 +0100
-Message-ID: <20240616105402.45211-2-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 3/6] regulator: core: Add helper for allow HW access to enable/disable regulator
+Date: Sun, 16 Jun 2024 11:53:55 +0100
+Message-ID: <20240616105402.45211-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240616105402.45211-1-biju.das.jz@bp.renesas.com>
 References: <20240616105402.45211-1-biju.das.jz@bp.renesas.com>
@@ -48,55 +50,106 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The VBUS enable can be controlled by the VBOUT bit of the VBUS control
-register. This register is part of usbphy-ctrl IP.
+Add a helper function that allow regulator consumers to allow low-level
+HW access, in order to enable/disable regulator in atomic context.
 
-Document the USB VBUS regulator object.
+The use-case for RZ/G2L SoC is to enable VBUS selection register based
+on vbus detection that happens in interrupt context.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v3->v4:
- * Fixed example indentation to 4 char spaces
- * Dropped regulator-{min,max}-microvolt from example.
+ * Updated commit header and description
+ * Replaced regulator_set_hardware_enable_register()->regulator_hardware_enable()
+ * Updated documentation to "must use of regulator_get_exclusive() for consumers"
+ * Enforced exclusive access in regulator_hardware_enable().
+ * Added generic support regulator_hardware_enable().
 v3:
- * New patch
+ * New patch.
 ---
- .../bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml      | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/power/regulator/consumer.rst |  6 +++++
+ drivers/regulator/core.c                   | 28 ++++++++++++++++++++++
+ include/linux/regulator/consumer.h         |  7 ++++++
+ 3 files changed, 41 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
-index 03c18611e42d..b0b20af15313 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
-+++ b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
-@@ -42,6 +42,12 @@ properties:
-       0 = Port 1 Phy reset
-       1 = Port 2 Phy reset
+diff --git a/Documentation/power/regulator/consumer.rst b/Documentation/power/regulator/consumer.rst
+index 85c2bf5ac07e..9d2416f63f6e 100644
+--- a/Documentation/power/regulator/consumer.rst
++++ b/Documentation/power/regulator/consumer.rst
+@@ -227,3 +227,9 @@ directly written to the voltage selector register, use::
  
-+  regulator-vbus:
-+    type: object
-+    description: USB VBUS regulator
-+    $ref: /schemas/regulator/regulator.yaml#
-+    unevaluatedProperties: false
+ 	int regulator_list_hardware_vsel(struct regulator *regulator,
+ 					 unsigned selector);
 +
- required:
-   - compatible
-   - reg
-@@ -49,6 +55,7 @@ required:
-   - resets
-   - power-domains
-   - '#reset-cells'
-+  - regulator-vbus
++To access the hardware for enabling/disabling the regulator, consumers must
++use regulator_get_exclusive(), as it can't work if there's more than one
++consumer. To enable/disable regulator use::
++
++	int regulator_hardware_enable(struct regulator *regulator, bool enable);
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 844e9587a880..7674b7f2df14 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3408,6 +3408,34 @@ int regulator_list_hardware_vsel(struct regulator *regulator,
+ }
+ EXPORT_SYMBOL_GPL(regulator_list_hardware_vsel);
  
- additionalProperties: false
++/**
++ * regulator_hardware_enable - access the HW for enable/disable regulator
++ * @regulator: regulator source
++ * @enable: true for enable, false for disable
++ *
++ * Request that the regulator be enabled/disabled with the regulator output at
++ * the predefined voltage or current value.
++ *
++ * On success 0 is returned, otherwise a negative errno is returned.
++ */
++int regulator_hardware_enable(struct regulator *regulator, bool enable)
++{
++	struct regulator_dev *rdev = regulator->rdev;
++	const struct regulator_ops *ops = rdev->desc->ops;
++	int ret = -EOPNOTSUPP;
++
++	if (!rdev->exclusive || !ops || !ops->enable || !ops->disable)
++		return ret;
++
++	if (enable)
++		ret = ops->enable(rdev);
++	else
++		ret = ops->disable(rdev);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(regulator_hardware_enable);
++
+ /**
+  * regulator_get_linear_step - return the voltage step size between VSEL values
+  * @regulator: regulator source
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
+index e6f81fc1fb17..d986ec13092e 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -250,6 +250,7 @@ int regulator_get_hardware_vsel_register(struct regulator *regulator,
+ 					 unsigned *vsel_mask);
+ int regulator_list_hardware_vsel(struct regulator *regulator,
+ 				 unsigned selector);
++int regulator_hardware_enable(struct regulator *regulator, bool enable);
  
-@@ -64,4 +71,7 @@ examples:
-         resets = <&cpg R9A07G044_USB_PRESETN>;
-         power-domains = <&cpg>;
-         #reset-cells = <1>;
-+        regulator-vbus {
-+            regulator-name = "vbus";
-+        };
-     };
+ /* regulator notifier block */
+ int regulator_register_notifier(struct regulator *regulator,
+@@ -571,6 +572,12 @@ static inline int regulator_list_hardware_vsel(struct regulator *regulator,
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int regulator_hardware_enable(struct regulator *regulator,
++					    bool enable)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline int regulator_register_notifier(struct regulator *regulator,
+ 			      struct notifier_block *nb)
+ {
 -- 
 2.43.0
 
