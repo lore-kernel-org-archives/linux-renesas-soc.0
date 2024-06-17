@@ -1,105 +1,135 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90049190480
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2024 09:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF6B53AD
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2024 09:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616686; cv=none; b=Ew8EVe50vRjQTe93oe4KcYg8ePcryoqcoeauWjV9GeloLLzGO0q+LWg57A8nY5op35vLykzFGAS+zsLHBSuXpuIVflWVAJuCpOYwEaWgTtfHg5xV4VuNFBtdGcvkdJx/6d6PjW8xE6rQN63ekRJxV2BHosDjWeOERck8FMh/ImI=
+	t=1718618076; cv=none; b=MmC1OTUIASga+Qp7ggbdJrujSR/xS9uhrbrVdIN+2ej9JGXRqLjrivJmCwMYjsMAFZgXwPSTbIJGlKC7kEiMFAFqleJMKO/K3XSHLPEmgawff3E9520wDmL7R9+p1IK4un8MvXl1pr1w0gFBAxqzKv2f6ySN7AnXKkGda/a5CsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616686; c=relaxed/simple;
-	bh=ZdedvZWlo1R/wrky6M8ITuvK2Y78RSb9b/mj86Q2LXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cJzFIWD9mJyfMJ+ZdKjaAJis3m2mAMOTeqTVp4uLZRWlYjhgt9B1fuVWV8VXqCYMapif8obULPtDSAx8BfdScCUYPMYfjwj4RzeCFhF5dEO5THT8wLt9eWRXU8Lwu8du40+Z1fS/VbS58hwv31i+rykLjF8ktfcKqHT88Drq6B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vMshC/X9; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718618076; c=relaxed/simple;
+	bh=28pZlD9AR/hW+Jbx1zy/h7GuHsAmsR+Mo9atbJXtnXY=;
+	h=Message-ID:Date:Content-Type:MIME-Version:Subject:To:From; b=GVlUox2GqsxtLTIOuGFsmfmnIIpZscT6fZZEWqbhLWTc6qBNkbQltr6pfaJ/RjJXy+g9zR6McoSkz5MB3d7vaIw6NrP9e88yrPT90njwW0OYjcw2ccnlkHiYg+9M7ZJYbi6yiYvR09r+umYw5dduRfqYsLe2uc87SA8QUn+tjYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=jOl5iSiK; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vMshC/X9"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc121fb1eso4963225e87.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2024 02:31:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="jOl5iSiK"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f717b3f2d8so36688815ad.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2024 02:54:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718616683; x=1719221483; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GAguOle9srt7pvchQZTzWqXM3OKcSwyupTpNJxWPs+s=;
-        b=vMshC/X970Zfaeo3UAswskBRybWFSB2jNN2V97iR/Sg1G14w3dT2JN10sqIxpLo4tB
-         vPtxpjoySVasKsRK/T1kr0yrn4DjOkDPqV5xov8sUqwa6M4EzSGKaY7FTpDy+lI5Fi9W
-         QZeyFj9LyZme8sUnPZzhmgyKy6nf/xNuPAO/sr+iz5V89a0WkKqSl15TxguL+77r0iZ9
-         Lt8izF/Wiw/ScNU9x8qjrJAZOYa36hm0G6tcgQTZ5w7sdVoZ+QODnAbP/7WfGH0I9fxw
-         2IXEE1bemOBuAummmhvv8PpImGgBo0GVyWi7P5XsgD7uJXWegub/+7tq9p+NgH+3F/DN
-         C14A==
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1718618073; x=1719222873; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=F65WluQdYasiAPGpi/RVMvZaU06JEm8yEV5ehQJkNso=;
+        b=jOl5iSiKhl8dffAu2WPyWuwjz/okyUJWxbyqBlTyKD1m/5NTCRTcUSWlL8wUPvYBQU
+         RymxRDoGnaKIgnc0jCGcoV3gTPXIRtKSkEG6ApHw8Ubv1QXm+i1138/PMU07/fmsPPlo
+         l5rNUOyrQzV4Q1Ow9FYWdhM6K0h1zwWhh2qntadZ/kP5/75v5/52m9+vXwK5ubtAcf7a
+         Y5867KNvZd1beMsZSKoobDGsNmqQ7NC7fPK8dxBXE/h9jrxNxmFmZhz7jiKaQE3XgAJL
+         KasP2e7p1+ToI2exT0fJ2/gQHrIxUGIvnfjTg7OSYjfR2NvISIhf/23hUxxOyqTVi3nQ
+         hz4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718616683; x=1719221483;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GAguOle9srt7pvchQZTzWqXM3OKcSwyupTpNJxWPs+s=;
-        b=EF2eyH56GBAbKlsXqr7kE8tYlY8IZN71qhSwRkv6Mbr51f5dlv7rR/YtmW3nFfiCDa
-         iTCATy5JaoDGgBsUQyO3ydmbF4Mxpyf24WRY88T0B9gFo7u+DXgoB45elXQArArRL8Ni
-         k2aySV4f3IQxAgWgysL+/BYnyrj1NmXDk5E3iUzCwCQjFOe7PT9eDjjRedw7rgTksPIj
-         QTDfrmApI0KyWpipjUPRGbLXlmAcMFme+LsbMy/R6ONiiNIoOISEPtP4E4Nz6VDfJbUZ
-         DVQjtoQzr1JCgDyP8pOeolIPMczkLsp4ixSoxzod1fylnzAe2V668iSnbTaCONTphVM7
-         qv0Q==
-X-Gm-Message-State: AOJu0YwJgkVHD74ITtYJ6VBEeTsCgQokg2XI4IbbHMmUAn48fIy8peNK
-	fhckF7c4B8cOkZ0Jgaa1CbAqXeJacdmga+onlfrsKLkHFqRxtCXb3bYcgpYg2cw=
-X-Google-Smtp-Source: AGHT+IGK6vlWNUsdBXMOO97tV6CeJy3H7d6/voqu66BZW890IgmHGXwHr/w0y/LBnO3QRqZGHgqK9g==
-X-Received: by 2002:a05:6512:1319:b0:52c:845e:3194 with SMTP id 2adb3069b0e04-52ca6e6d4b3mr6821968e87.29.1718616682445;
-        Mon, 17 Jun 2024 02:31:22 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe9230sm189573815e9.17.2024.06.17.02.31.21
+        d=1e100.net; s=20230601; t=1718618073; x=1719222873;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F65WluQdYasiAPGpi/RVMvZaU06JEm8yEV5ehQJkNso=;
+        b=HQhYHVF4B3i40XE155z6s3VJuVUSDqnl558V77poGPXk9IVtzW/Dn0hs43kN0s+wbS
+         aY6i3FET6mluhesciRKbznNvtPBCKitHz4hMKhpIAqkg+a1qdo/8HJR6wva0/0+YpxgK
+         kfm69mfKAOfPYsscYv9V2kfthxWCgSqmkKiJox3AcBW5FUz0A3Bs7GgGrrOJdoUmvLC5
+         yjRA83ZHXmeA+fZOHrqDT+0OIDVfaSztlMIs1IyvgNkEGMlkotoZcLrgnZxUlBO/E/wp
+         a6awElXa1YwUHApyzKj/CXmMJKfjtf1bB5ZF9no+N35w2PGoYh5i5dmloe82cMK/FXnz
+         hJig==
+X-Gm-Message-State: AOJu0Yz0xKO8GxrHg3rV/vflvUb2ymsK7z9U86ytcp/usHrO7c3ZoD32
+	VV3hSnwi1XuyYtD/TPF3Tfy7Uo9IxASv96RKu/7PJbQ3iBGlRQershmoMlZiN4RnA0WF+KsmmUC
+	8Ljw=
+X-Google-Smtp-Source: AGHT+IFDiFApmq0MeOb11fs/+PhicarV/9wLbnzlcrkvtYHjHWZriXrLQAZFoR51bkfMjEHIVmFSBw==
+X-Received: by 2002:a17:902:ef50:b0:1f8:4a12:ed6e with SMTP id d9443c01a7336-1f84e42e34dmr204854565ad.25.1718618073323;
+        Mon, 17 Jun 2024 02:54:33 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee8331sm75841125ad.141.2024.06.17.02.54.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:31:22 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:31:18 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [bug report] pinctrl: renesas: rzg2l: Drop struct
- rzg2l_variable_pin_cfg
-Message-ID: <5c1bf20b-7e94-4b06-95e5-da9f99750203@moroto.mountain>
+        Mon, 17 Jun 2024 02:54:32 -0700 (PDT)
+Message-ID: <667007d8.170a0220.cad27.46f2@mx.google.com>
+Date: Mon, 17 Jun 2024 02:54:32 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-devel-2024-06-17-v6.10-rc4
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master igt-kms-rockchip: 1 runs,
+ 1 regressions (renesas-devel-2024-06-17-v6.10-rc4)
+To: linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 
-Hello Lad Prabhakar,
+renesas/master igt-kms-rockchip: 1 runs, 1 regressions (renesas-devel-2024-=
+06-17-v6.10-rc4)
 
-Commit 13a8cae6e561 ("pinctrl: renesas: rzg2l: Drop struct
-rzg2l_variable_pin_cfg") from May 30, 2024 (linux-next), leads to the
-following Smatch static checker warning:
+Regressions Summary
+-------------------
 
-	drivers/pinctrl/renesas/pinctrl-rzg2l.c:374 rzg2l_pinctrl_get_variable_pin_cfg()
-	warn: was expecting a 64 bit value instead of '~((((1))) << (16))'
+platform      | arch  | lab         | compiler | defconfig | regressions
+--------------+-------+-------------+----------+-----------+------------
+rk3399-roc-pc | arm64 | lab-broonie | gcc-10   | defconfig | 1          =
 
-drivers/pinctrl/renesas/pinctrl-rzg2l.c
-    362 static u64 rzg2l_pinctrl_get_variable_pin_cfg(struct rzg2l_pinctrl *pctrl,
-    363                                               u64 pincfg,
-    364                                               unsigned int port,
-    365                                               u8 pin)
-    366 {
-    367         unsigned int i;
-    368 
-    369         for (i = 0; i < pctrl->data->n_variable_pin_cfg; i++) {
-    370                 u64 cfg = pctrl->data->variable_pin_cfg[i];
-    371 
-    372                 if (FIELD_GET(VARIABLE_PIN_CFG_PORT_MASK, cfg) == port &&
-    373                     FIELD_GET(VARIABLE_PIN_CFG_PIN_MASK, cfg) == pin)
---> 374                         return (pincfg & ~PIN_CFG_VARIABLE) | FIELD_GET(PIN_CFG_MASK, cfg);
 
-pincfg is a u64 and we're returning a u64.  The code here is trying to
-mask out PIN_CFG_VARIABLE which is BIT(16).  But because it's BIT()
-instead of BIT_ULL(16) then it ends up masking the high 32 bits as well.
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2024-06-17-v6.10-rc4/plan/igt-kms-rockchip/
 
-PIN_CFG_MASK is GENMASK_ULL(46, 0) which further suggests that the high
-32 bits are important.
+  Test:     igt-kms-rockchip
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2024-06-17-v6.10-rc4
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      d94f2b83d8f763608dc1f5c5cdd5e4d262663292
 
-    375         }
-    376 
-    377         return 0;
-    378 }
+  Test suite revisions:
+    drm
+      URL:  git://anongit.freedesktop.org/mesa/drm
+      SHA:  c8f327ce9cb504a6c2185487d576be3d5254556a
+    igt-gpu-tools
+      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
+      SHA:  a44ebfe43edc96acab22a19b6a8850eef9202eea =
 
-regards,
-dan carpenter
+
+
+Test Regressions
+---------------- =
+
+
+
+platform      | arch  | lab         | compiler | defconfig | regressions
+--------------+-------+-------------+----------+-----------+------------
+rk3399-roc-pc | arm64 | lab-broonie | gcc-10   | defconfig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/666ffca32a7a12bbfe7e706d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+024-06-17-v6.10-rc4/arm64/defconfig/gcc-10/lab-broonie/igt-kms-rockchip-rk3=
+399-roc-pc.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+024-06-17-v6.10-rc4/arm64/defconfig/gcc-10/lab-broonie/igt-kms-rockchip-rk3=
+399-roc-pc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bookworm-ig=
+t/20240313.0/arm64/rootfs.cpio.gz =
+
+
+
+  * igt-kms-rockchip.login: https://kernelci.org/test/case/id/666ffca32a7a1=
+2bbfe7e706e
+        new failure (last pass: renesas-devel-2024-06-10-v6.10-rc3) =
+
+ =20
