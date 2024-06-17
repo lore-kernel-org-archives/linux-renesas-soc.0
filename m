@@ -1,150 +1,93 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7724E18FC87;
-	Mon, 17 Jun 2024 07:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF4E18C349
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2024 07:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718609164; cv=none; b=Fea8i5cOBLuI/v6fB9zHcuHtlOLXYpHonWewbHK9y9/G0tEOxNtU4jQD3j9MQ7BzJZMPd0FXJFg9wJgxZL+Ce8+yJotn2JMMYYXxJdHcG6oXlYj+UxXcEsS1ORjj//A2o21/jWAMoc+cKu7+r2+qFB5Q3RzLcu3ifbklIdDdhkk=
+	t=1718609318; cv=none; b=Fx9g16iHdLn4a4YFk5UyAKmNFW2tnNwZTKkk7yHuR3gMlez7bgJqr9pQ5aFBdmpNjjVry6uG+y2Hd6J9xn2UUn5XHJMEbaQOOM1e/JgdY0XtqlzQ8aBJ9dzeoaGsq2qBOxrXkFF05mFbg04fhlDFRmlv/HacD9l1P+ODWsMfXW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718609164; c=relaxed/simple;
-	bh=i6NAFodh155HxgDBdsWn0alGhHpUg5koWMcFe9WmJO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDYzmeBwlN5srmad3wuMK2+D25WbJVVH21lZUsl1gNNQlFVHr18vIamDrADiSphq8q7wcLM873mg7cMn6UBsjoYFy0lCgikGryBSgFld0kWGsTg0CAx3L9ffnMUeK3qpUlkX4SoUwZnj635RBfJpcWkRds4TtzNJdQhInke/Ewk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H7CheRsI; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1718609318; c=relaxed/simple;
+	bh=RjqBKeGOSxgGBf7S3OsZ85a5sdG5XhMRG6WOllvDOTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h9tac4LSCXg7nbXi7MRwEk0e0XprF1URxWedMvLN8SVpCJ7lHyTwdR6UbsHI6WRlOQatf7nR3/oh25I8RAzq2S8c7cBi1k/gjIMddvZcX7Z2826QaoA7ZZpMUFxu1FJcYzxygOR6c4IYgLFvJc0UNz3JdF+VVWM7q6HEI08Mimw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h9TWqKA4; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H7CheRsI"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 196A51C0005;
-	Mon, 17 Jun 2024 07:25:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718609153;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fSd7U9I5o9yX7iVBpTAQ36n54Po1dEsuSVr47xJjN/8=;
-	b=H7CheRsIqsyTag/HRZuce2JzgPV1thWsTJW24N0t5hr/38A36dolPIH+50mWsWBU5FP4A0
-	MqrRONanAeQsH4XxplHVid6JXPRYTVhjUF2tHfWE97A/80aje5QYmXKytuEnlFzhzQFhv4
-	HrVhdWYuL/H/qNwpG1CLoBFgTdQXq1blmbNZEvrFNnkF7mr6om3EP9onII3yg1vVHdVKwn
-	4xlj4EUQL1YpT//oCGsADw3JBj1mY224nfz3MqVIbV4IfY8sLV+Z3vVTRai61ntJ8ud14R
-	lQKRFBUsRwCLv7qf20Y3E2E6SbF14QsmOFw7x9ITHjBtlJDxW61kWIneKwKA+w==
-Date: Mon, 17 Jun 2024 09:25:51 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	lee@kernel.org, magnus.damm@gmail.com,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <20240617072551acf731aa@mail.local>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-7-claudiu.beznea.uj@bp.renesas.com>
- <2024061409215756e6a10c@mail.local>
- <4a477079-b4a6-4861-ae24-b3b87adb8ecd@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h9TWqKA4"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52c84a21c62so4603033e87.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2024 00:28:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718609315; x=1719214115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yq4fscHRPtrzf745XjM2Gn6nzaK5dlrVOgHk/n3Bln8=;
+        b=h9TWqKA4wENbajE2nMWlOpXsS5ciHwVHEVq97KZdyqwqQb5iV6RI815puG6hwuSZoj
+         /Quj0zOY196fZN0yK7Kne2c5onRft41DidlRsPr1LPwvgMsPYwMw3kJ8giOO58By7rqf
+         ZY8S3owA0uk2LlgRxvCUPNA2F7V8MYoiP+TXuUGX+XCcDzil5o5apRdNaC6lknB6B0uY
+         53PF7tJ7hotoqv7NVaLSFBd959B4m/8CftCEPKaRq5k2YuX4NKVn/TA5ENsNKT8okHen
+         Mte56ZB20jvQ4a8arIggjJFPifCsSj0CzEt5cDrB/XuGEU5CtkrQgZt5Rv3xhjdasKNb
+         avzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718609315; x=1719214115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yq4fscHRPtrzf745XjM2Gn6nzaK5dlrVOgHk/n3Bln8=;
+        b=Z7IXd4HI9K022XGUviUb7K/S8J1RrQCTrqLJ99TeijTBsKqnwMrE4yDefSEsmO+a/M
+         zZuPUy/2zhEOCdoJIeWXlYinlSotHjizNz5qCtgch9kZW19AbKPmhrhCY/vyYYCaKR21
+         GsnlZfCK1XoDGkgcg0JKiiShuV/uzOPDLAuj9x1G7uQZyKn+yKv3/Sngm92+5yuGGiwl
+         YN3avUK9RmE2Dysi4JCZDjUiH/Nwh872TMmzWUmZ92XrXHSYQtrFY4nuUBEO17pIw72q
+         NP6cD8zQvQeykD2cZ4gtjAkATMmR+pFO4EcU746/Br5ZHH9ZZzRcmrbVq72rYJxr5piv
+         8arw==
+X-Forwarded-Encrypted: i=1; AJvYcCWb4SEjlD21QXRvTEMbvTvvMu2ZoxXhmIDBsl25ZsFFI8t9CDHB/jVw5GZntznpPz3sEpU49fXekSoqREivKFsGVwwInKpcnY8U4I4UkxEhUho=
+X-Gm-Message-State: AOJu0YzrWNRfXBRPqqFVYcrCemnMUN1wr6z/Zs/YyHMaL0zwIme7zZJV
+	wx5W7ICFF941PD0/p0O5t7qpWAmAuwhO5aiEk/wHZI66gdr1zr+O56pjZrq5o5SPQYVk/YQG6WF
+	9gA0+FOgSZvxA13Wg7q/n1hrYMXmCWUbpGtD2xL3+sUhrFK4r
+X-Google-Smtp-Source: AGHT+IGpK3NHOO8C8rUcsresgTT9K/Yx1lfadCHo9dfWB+YwtCNKlaQDh4zm+laBNu5XTG4oLXwtw63W+7bcb0Y/Jr0=
+X-Received: by 2002:ac2:514f:0:b0:52c:7fc7:f40d with SMTP id
+ 2adb3069b0e04-52ca6e6585bmr5668159e87.21.1718609315006; Mon, 17 Jun 2024
+ 00:28:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a477079-b4a6-4861-ae24-b3b87adb8ecd@tuxon.dev>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+References: <cover.1718355498.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1718355498.git.geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 17 Jun 2024 09:28:23 +0200
+Message-ID: <CACRpkdaK0DqRyouzTD4Qp_jJ+fx6MLXjBDNC7=661s8AeSt=Rw@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: renesas: Updates for v6.11
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14/06/2024 14:06:38+0300, claudiu beznea wrote:
-> >> +	/*
-> >> +	 * Stop the RTC and set to 12 hours mode and calendar count mode.
-> >> +	 * RCR2.START initial value is undefined so we need to stop here
-> >> +	 * all the time.
-> >> +	 */
-> > 
-> > Certainly not, if you stop the RTC on probe, you lose the time
-> > information, this must only be done when the RTC has never been
-> > initialised. The whole goal of the RTC is the keep time across reboots,
-> > its lifecycle is longer than the system.
-> 
-> This was also my first thought when I read the HW manual.
-> 
-> It has been done like this to follow the HW manual. According to HW manual
-> [1], chapter 22.3.19 RTC Control Register 2 (RCR2), initial value of START
-> bit is undefined.
-> 
-> If it's 1 while probing but it has never been initialized, we can falsely
-> detect that RTC is started and skip the rest of the initialization steps.
-> W/o initialization configuration, the RTC will not be able to work.
-> 
-> Even with this implementation we don't loose the time b/w reboots. Here is
-> the output on my board [2]. The steps I did were the following:
-> 1/ remove the power to the board (I don't have a battery for RTC installed
->    at the moment)
-> 2/ boot the board and issue hwclock -w
-> 3/ reboot
-> 4/ check the systime and rtc time
-> 5/ poweroff
-> 6/ poweron
-> 7/ boot and check systime and RTC time
-> 
-> As you can see the time is not lost but continue to increment. I presume
-> the hardware takes into account that time needs to increment when initial
-> configuration is executed.
+On Fri, Jun 14, 2024 at 11:07=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-I don't think so, I guess it stops ticking but the registers are not
-reset so when ts starts ticking again, you are not too far from the time
-that it should report.
+> The following changes since commit a39741d38c048a48ae0d65226d9548005a088f=
+5f:
+>
+>   pinctrl: renesas: rzg2l: Use spin_{lock,unlock}_irq{save,restore} (2024=
+-05-27 17:13:31 +0200)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-pinctrl-for-v6.11-tag1
+>
+> for you to fetch changes up to 9bd95ac86e700ab8b1a6c225685e0e5afe426b4e:
+>
+>   pinctrl: renesas: rzg2l: Add support for RZ/V2H SoC (2024-06-11 09:50:2=
+5 +0200)
 
-> 
-> [1]
-> https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
-> [2] https://p.fr33tux.org/585cd6
-> 
-> > 
-> > Also, why do you insist on 12H-mode? The proper thing to do is to support
-> > 12H-mode on read but always use 24H-mode when setting the time.
-> 
-> OK, I wasn't aware of this. I think I followed this approach as it looked
-> to me the number of operation to update the hardware registers was lower
-> for 12h mode.
+Pulled in, thanks Geert!
+Excellent work as usual.
 
-How come, using 12H-mode implies testing for the AM/PM bit and doing and
-addition while 24H-mode would simply be a read?
-
-> >> +	priv->rtc_dev->ops = &rtca3_ops;
-> >> +	priv->rtc_dev->max_user_freq = 256;
-> >> +	priv->rtc_dev->range_min = mktime64(1999, 1, 1, 0, 0, 0);
-> >> +	priv->rtc_dev->range_max = mktime64(2098, 12, 31, 23, 59, 59);
-> > 
-> > This very much looks like the range should be 2000 to 2099, why do you
-> > want to shift it?
-> 
-> 2000-2099 was my first option for this but then I saw one of your old
-> commits on this topic and, since I'm not very familiar with RTC,
-> I took it as example. I'll adjust as you proposed.
-> 
-> commit beee05dfbead
-> Author: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Date:   Wed Mar 20 12:30:10 2019 +0100
-> 
->     rtc: sh: set range
-> 
->     The SH RTC is a BCD RTC with some version having 4 digits for the year.
-> 
->     The range for the RTCs with only 2 digits for the year was unfortunately
->     shifted to handle 1999 to 2098.
-> 
->     Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->     Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-This is because the sh driver predated the introduction of the range and
-was already shifting it.
-
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Yours,
+Linus Walleij
