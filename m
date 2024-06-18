@@ -1,140 +1,105 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99AB3B79C;
-	Tue, 18 Jun 2024 15:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF7B4D8A2
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jun 2024 16:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718726271; cv=none; b=XaVh+ZatJp4sCvdd6afKg+4tIkE3jWQNiEde64YATdMEVkogCqATf51Ku3Xqzi5i2/lVDSHOm8Ya9c2wwco3bg3ljoVPx+0PoYQXSbKOFplgdH31HLyygjj/bk2BRHr9uzfB2qXKvkvaflU6/ljgzkpTVfFDCkAV5K4NsAdqnTk=
+	t=1718726995; cv=none; b=UxF62ecEA/tYs3admctNnXDVvW53yQYq0KqvSHdYZBCTRCVNz42amucxes/7jJRiQt8w5aOUkoU6znVQVKV27WSx/h8JfdzQQNO2Hz9COSlxs7gKuppIuJUt+DFr4Mf0GC4VvXKoklFwFvR2ifQZUPaVweS8Ru+EYhMgtPUEYBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718726271; c=relaxed/simple;
-	bh=c6TT+JCTXSFMRD6Gi7HHvuTxQFYRtZL+BvBjCJn7KqA=;
+	s=arc-20240116; t=1718726995; c=relaxed/simple;
+	bh=b9bXeRoJpbw3v2jWIi5RGRiSok5QY8bOI/A5YxVa18M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q71r/5IpUCUzA20DwfwtF5dPPGE/3Jr225nuug2QSNFF1QR41lylsyVQFqmApWkbwWVPwrMyQx+RaJ89u1aP/81aUtROpOupErBlCtOWtRb7ev/y6K8+fHmNQU0r3qor6PPxr4kUd17k82sArzDQ2x1/odZLgjSzO8kp6n39DQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Kbk1AsDh; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4T6V8NxVoBuSqAJ1xpX07C7NofAbnaWjp1Ye2FyKmULrbwfJ8BE52p/MNtjtotm0Br+fY9Mf/fcuIJYhJLpVTA3LTcGDQO+HA9ck0qk5f84d8kpz7f9SQeeC+ToRjtbeIlC/VWDAmNixsUt9SxkFXa88lDaW7qwhG8nh3nV0Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=i8MEH4C+; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Kbk1AsDh"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F3F63908;
-	Tue, 18 Jun 2024 17:57:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718726250;
-	bh=c6TT+JCTXSFMRD6Gi7HHvuTxQFYRtZL+BvBjCJn7KqA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kbk1AsDh2NLGNhebDr0JIUcb06mL7sjUtq25fbcOcAUBhCRMVO5cUrJwcczrlhlc3
-	 NY8Mv2a+9tLdVl36YWeYV9oW+ka7grJgbtSOjrOfNK2B9oTNrsjnoKwSap4lWYgWQ0
-	 zuFkf4tjvI7ropMW5ZN20mZ8pk1oMJUkap7tBuuc=
-Date: Tue, 18 Jun 2024 18:57:25 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@iki.fi>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [RFC PATCH v1 05/19] media: renesas: vsp1: Drop custom
- .get_fmt() handler for histogram
-Message-ID: <20240618155725.GC32669@pendragon.ideasonboard.com>
-References: <20231122043009.2741-1-laurent.pinchart+renesas@ideasonboard.com>
- <20231122043009.2741-6-laurent.pinchart+renesas@ideasonboard.com>
- <fuzqtinkh2q7ifkrrrop5gsivxsqsbcnb6vyojw746yphcg4uo@zumsbndqckij>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="i8MEH4C+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=b9bX
+	eRoJpbw3v2jWIi5RGRiSok5QY8bOI/A5YxVa18M=; b=i8MEH4C+KhQrmah/GsWt
+	YohMHFdrtjifBFIvfyEkECENzHCGiFqJkQ1UGAAv+RduAH4TGmBxw+WAFApjGHGr
+	yax9HqsewdTs4Qz/IxPEipUh8cbSfWcaFwx1QGQTXPYft7H7jpkhie2+14oAnsaJ
+	uvpHd+BRwbqFnWQGqmzQW0jd51U8qn+AfXsYDwoCPH2bGadKM+N7CHred1BQUg5X
+	4aCowllIPE6uQwFYV7jFDaFqzRUq19dVdU4cnOICGiIMIKtBClAFlSMbQBv3q+3M
+	Tq8pIdNj/DHfq6oj3hfaRCAAR9mqwmCGpdkb6R9F6Q9YFGYj046IMRFuoaQ0+mGg
+	kg==
+Received: (qmail 283759 invoked from network); 18 Jun 2024 18:09:47 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jun 2024 18:09:47 +0200
+X-UD-Smtp-Session: l3s3148p1@hlyRTywbJohehh9j
+Date: Tue, 18 Jun 2024 18:09:47 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+	Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
+Message-ID: <ekuchwcgvggsriqodasx6pneybqbwe3cc2j3huisb7mnacnj3z@mhx4snzwbbqj>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>, 
+	Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
+ <20240610112700.80819-2-wsa+renesas@sang-engineering.com>
+ <CAMRc=MfZ11U+kAh1+K=DxtJ=QL+cY7Q_sBN4sQDF-RNgjpV0QA@mail.gmail.com>
+ <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
+ <CAMRc=Mc4__0zzJZG3BPnmbua88SLuEbX=Wk=EZnKH5HQvB+JPg@mail.gmail.com>
+ <CACRpkda==5S75Bw6F3ZLUmf7kwgi_JkByiizR=m-61nrMDWuvQ@mail.gmail.com>
+ <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
+ <CAMRc=McpRjQO8mUrOA4bU_YqO8Tc9-Ujytfy1fcjGUEgH9NW0A@mail.gmail.com>
+ <3h63msxchuuxqa5liufoivss4raqtzjlusjn7ufti5nyjkshcb@pqevlpuvrm5q>
+ <CAMRc=Mff2L_M=zkxQTqoFjMxbi4ZXBHPxm48UGnYFEnwfDWFHQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t6vvdwno3oriajiw"
 Content-Disposition: inline
-In-Reply-To: <fuzqtinkh2q7ifkrrrop5gsivxsqsbcnb6vyojw746yphcg4uo@zumsbndqckij>
+In-Reply-To: <CAMRc=Mff2L_M=zkxQTqoFjMxbi4ZXBHPxm48UGnYFEnwfDWFHQ@mail.gmail.com>
 
-On Tue, Jun 18, 2024 at 12:05:32PM +0200, Jacopo Mondi wrote:
-> On Wed, Nov 22, 2023 at 06:29:55AM GMT, Laurent Pinchart wrote:
-> > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >
-> > The histogram module is the only one that has a custom .get_fmt()
-> > handler, to handle the special case of the output format being fixed.
-> > This can equally well be handled in the .set_fmt() handler instead.
-> > Beside avoiding special cases and using the same .get_fmt() handler in
-> > all modules, it ensures that the correct format is stored in the active
-> > state for the source pad, including when .set_fmt() is called from
-> > vsp1_entity_init_state(). Both are needed to later switch to the V4L2
-> > subdev active state API.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> >  .../media/platform/renesas/vsp1/vsp1_histo.c  | 29 +++++++------------
-> >  1 file changed, 10 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_histo.c b/drivers/media/platform/renesas/vsp1/vsp1_histo.c
-> > index 576270cb3e63..a4076d82651e 100644
-> > --- a/drivers/media/platform/renesas/vsp1/vsp1_histo.c
-> > +++ b/drivers/media/platform/renesas/vsp1/vsp1_histo.c
-> > @@ -356,30 +356,21 @@ static int histo_set_selection(struct v4l2_subdev *subdev,
-> >  	return ret;
-> >  }
-> >
-> > -static int histo_get_format(struct v4l2_subdev *subdev,
-> > -			    struct v4l2_subdev_state *sd_state,
-> > -			    struct v4l2_subdev_format *fmt)
-> > -{
-> > -	if (fmt->pad == HISTO_PAD_SOURCE) {
-> > -		fmt->format.code = MEDIA_BUS_FMT_FIXED;
-> > -		fmt->format.width = 0;
-> > -		fmt->format.height = 0;
-> 
-> Suprising!
 
-For metadata formats that are not line-based, the width and height are
-not applicable.
+--t6vvdwno3oriajiw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Anyway:
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> 
-> Thanks
->   j
-> 
-> > -		fmt->format.field = V4L2_FIELD_NONE;
-> > -		fmt->format.colorspace = V4L2_COLORSPACE_RAW;
-> > -		return 0;
-> > -	}
-> > -
-> > -	return vsp1_subdev_get_pad_format(subdev, sd_state, fmt);
-> > -}
-> > -
-> >  static int histo_set_format(struct v4l2_subdev *subdev,
-> >  			    struct v4l2_subdev_state *sd_state,
-> >  			    struct v4l2_subdev_format *fmt)
-> >  {
-> >  	struct vsp1_histogram *histo = subdev_to_histo(subdev);
-> >
-> > -	if (fmt->pad != HISTO_PAD_SINK)
-> > -		return histo_get_format(subdev, sd_state, fmt);
-> > +	if (fmt->pad == HISTO_PAD_SOURCE) {
-> > +		fmt->format.code = MEDIA_BUS_FMT_FIXED;
-> > +		fmt->format.width = 0;
-> > +		fmt->format.height = 0;
-> > +		fmt->format.field = V4L2_FIELD_NONE;
-> > +		fmt->format.colorspace = V4L2_COLORSPACE_RAW;
-> > +
-> > +		return 0;
-> > +	}
-> >
-> >  	return vsp1_subdev_set_pad_format(subdev, sd_state, fmt,
-> >  					  histo->formats, histo->num_formats,
-> > @@ -390,7 +381,7 @@ static int histo_set_format(struct v4l2_subdev *subdev,
-> >  static const struct v4l2_subdev_pad_ops histo_pad_ops = {
-> >  	.enum_mbus_code = histo_enum_mbus_code,
-> >  	.enum_frame_size = histo_enum_frame_size,
-> > -	.get_fmt = histo_get_format,
-> > +	.get_fmt = vsp1_subdev_get_pad_format,
-> >  	.set_fmt = histo_set_format,
-> >  	.get_selection = histo_get_selection,
-> >  	.set_selection = histo_set_selection,
 
--- 
-Regards,
+> You mean configfs? Please take a look at my proposed gpio-virtuser
 
-Laurent Pinchart
+Oops, yes, configfs.
+
+> module, it should do what you want:
+> https://lore.kernel.org/linux-gpio/20240613092830.15761-1-brgl@bgdev.pl/
+
+Thank you! Exactly what I was looking for. What I like is the symmetry
+of instantiating GPIOs in either DT or configfs. Very elegant for the
+user. But boy, this is a lot of non-trivial code for it.
+
+
+--t6vvdwno3oriajiw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZxsUsACgkQFA3kzBSg
+KbYV8RAAmlV7dakmx/ZeWbYLcZ7onJJ62V7CTKNFPwN28NQpGyBK9yTWVMRhBwF/
+vQS2johY+4ah2/f8h8/6NnShb8EBZ+Zco6nfb2bAAC4+RfHZ3S7PXYJSDn+VE+Pu
+wt3Y1toC6yWKhPA6n0bQXwC5YlbSIc2fp9X/R+FjTw1nUV9sHkNiOOmPeThdm6E6
+j7lgSe8Z2/F9wvigbormsMyfqxEvl2f9mTi3MWKNiWivwYUu7+NmMtARHu8lDaIW
+s5K/Xf+/SLoM/UFGkeCI6guz5nkSBFvWDruxQZDCiLFE/hFaTTLo3XDMf84nUg9y
+QEelfrCeBtUztvPy/THkbTOzOEapJ1tk299NzQwUF2ppa0hgQ/Eudq3pAHMO49QA
+FZ63984Ge7TQGLD1yNmsnGcCa1b1Jblv8kW3Ksv9K88rOmmr8VqCUbctWd3PmQmT
+GLqKCL6/oVxN6RX5gko5D7oQJ2phvte4HRphQ1VD9kqSh+R/FruWyURr92jT6pF+
+Qwr9js0ksCd/6d5wITPnYp7vZZe1YjedZYbGVNR8w3wHnUEzt9JniHXdmJN4qyDs
+CFBFv5fkCnuEjOWcRSxtOS61w9b9kd+H+lsFFCtt5RmJg30DFVmnHJITJ2jw9zm0
+IKGGIRfr01M7YYU67OqxdK/2pc1pP9COtbVpvvjAa2lPNHbwA/g=
+=zQ52
+-----END PGP SIGNATURE-----
+
+--t6vvdwno3oriajiw--
