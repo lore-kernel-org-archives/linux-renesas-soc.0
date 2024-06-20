@@ -1,189 +1,131 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DADA1E52F;
-	Thu, 20 Jun 2024 15:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87FA1B013D
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Jun 2024 15:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718897493; cv=none; b=ZEoKVCsrfnTT1jD0nDLZoI6dlemrY5OufPb+yEfOj+cUXkxdW/rYTjOomBqQ2twgm6YP9ES/bZMO302FlBc/nMEWGEGJs8JrUI9k3AP3D/6UBB8t9DJq4y84HKsTCqTgP4kSUp68oy/DR47Ns8ozaruqDr8qse814GH6mmvcyXc=
+	t=1718897999; cv=none; b=GAsetmyxYm0kPgOBhz8bA2h1W+Ge8mJtOh+0oyYKDupsReNrz/eSVVGptyHxqMuE22k44TM4YXSPSbm4KpjTZwxbxnCFGw9e6VlOJ9GPribgxQ2cAFzP03EsIwmjTRVV/94Z2VAThGo1F+ntQz8ExnrxmvKwTyjNkKu/yiprQkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718897493; c=relaxed/simple;
-	bh=ARSBC7yLTcnp/pqnpPOI57zF+ilkvpeQEb6s7WIO16g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H3ggRwU7UBudwHkbiAqIlnF8h1/Ugc5hEdAd75xNUD7BHAeS07z8yqYyicM2/leTPpC8hDJynMVYOPNsuxjDh5m+PYeZzd4QwxXJahkeFN4Y9QhVvIzzVAkPtdoTtCHniTgquSqFNozSjZMEPGY4JoM6QTHCBskScygGQgZqFKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HX1t4But; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HX1t4But"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5babfde1c04so440567eaf.2;
-        Thu, 20 Jun 2024 08:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718897490; x=1719502290; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kt2+2PTw+WUyvoeIVUnfeBTtCiiz/yh/xagrQfb3Rno=;
-        b=HX1t4ButI6JR9gmf7UkzU8GxJWpsPbrvfEgCgKmsjlnJ/mXf7k4uPVDuRomjMw/xcw
-         KBDULv1SqZnMF2UzhPoUbNe8D2VOdhAuFOxtJWE/6U/7KGX3zz018nBlzlumzqVNev6s
-         DRfsf4NXLRCPAU58EvfprTkC4cBM0FORCVsitggFonTSZ79CxqCQYiU1i1AQcMWe14fo
-         a8CyoCcgeFHUM3L68bxTb1vO9KkhDmAMfSvCGWsG4WnXGJJjepO1xONn/8cazI1S17Hu
-         RQfNLu0TNJ5ctBTNMcEFjRdNjmybPwLlzFcRJkH1vzNpyjgqBokJ9pZhcWnaz0y3ccvj
-         uUSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718897490; x=1719502290;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kt2+2PTw+WUyvoeIVUnfeBTtCiiz/yh/xagrQfb3Rno=;
-        b=HW0tu+lYcwfjrRzyp5LD8XZMzIX6dDyMry5DB1JeeT1g3WvW352r+Xn65L/ZxSQtPg
-         vMFvGG/x+1Y0QD7Ksyv6+Q/wKcdep86sxZk+KhUFQUxsQsWFt9WdTZRb1N32TYzxWvtn
-         PY2Sz8nkmcmYfrnj71nv+gfI4uqx4+ah1cINVBblBBP4m5C0aH+6Ln2z+4xN9JTiHm5t
-         rh2OU+DYfPV0w/3LFuwLl9W4Jlhtmj3saREB0G+jQmPs6HnZTaqEPOQFnChq447k3YkM
-         amPGlRm9rG3xiU7jMCWu3gueHgl9RgPUvLXcVFvemzhec14LjkC18K2tUqa1pwVPSfeO
-         CStQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPFzLKGgjGMA8GN2acCfzirJ/Sh9EBR/w/YP8bhpr80VOcW6lK+ofQCmTHJ4HVTORuwRVWmzjCUVC1c+DxD9tHWnaMUbl0OLszPbZDwmEfM6DgAz3ZNDlr4JJFBs3sA3ujl8WBEYeRxSoo7ryw8tsTah8sK1ha1KBuVpLNE1aEExvjzBwek2wGxdtjNJRww9BHJyta6egsJpLPfXVM9j9n0V0bheCAgbHc
-X-Gm-Message-State: AOJu0YwXvuctCym64jliDpLf0L9Iuwt4EoDDevScBNOigBMI25dbo901
-	b1kmxvjWU4z84UiVfbXnL0hWjdsY4q9f/jIvLgFzXqifeq5FCr7cSzJLwvJjIxCc6srz6/ZNZT2
-	FNmZPBH8qdxI+KrwSffnXanaM1Hshau5eTqjVNQ==
-X-Google-Smtp-Source: AGHT+IFNpfr2jSnuExITl+ds5bqhiqdYJjyiZvjeYYXSNVzTjJWTZDJ+5te0gNBG31OjvyRJvbUPfq4HEb3xCfGvrH8=
-X-Received: by 2002:a05:6358:478e:b0:1a0:d4b4:5eb3 with SMTP id
- e5c5f4694b2df-1a1fd52528fmr674606355d.23.1718897490357; Thu, 20 Jun 2024
- 08:31:30 -0700 (PDT)
+	s=arc-20240116; t=1718897999; c=relaxed/simple;
+	bh=+pCPQOwZ4goEl17+gE0wRx2tGE+ovtbPspVmKKlAWtM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aTX2muE9rff8OJsL4h3nHa+UjWKpOGX/oui1BZSqHmVDm48P1zyROsXj4ED1zjs+pn9bUeL4jXgflUfjEV/YKnKRDSsPg50x1Qx33EjhoW916CnhdORuaJrtTrdf7pTEqJ6O1nJ2ga9zgfXTw0a4phLvRrUl4VEeE3YbdRNnqsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:260f:cd5c:91b1:523c])
+	by michel.telenet-ops.be with bizsmtp
+	id drfo2C00R0Y0hZi06rfouL; Thu, 20 Jun 2024 17:39:49 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sKJt6-0005LX-P5;
+	Thu, 20 Jun 2024 17:39:48 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sKJt6-000LnX-N7;
+	Thu, 20 Jun 2024 17:39:48 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Lee Jones <lee@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] mmc: tmio: Remove obsolete .set_pwr() callback()
+Date: Thu, 20 Jun 2024 17:39:46 +0200
+Message-Id: <fbbc13ddd19df2c40933ffa3b82fb14841bf1d4c.1718897545.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1718897545.git.geert+renesas@glider.be>
+References: <cover.1718897545.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com> <20240619120920.2703605-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240619120920.2703605-3-claudiu.beznea.uj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 20 Jun 2024 16:31:04 +0100
-Message-ID: <CA+V-a8v7hxhhiT4X28kKJ5yTuMahCuCUWX_nFKd4cWL9GAWxug@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/3] watchdog: rzg2l_wdt: Keep the clocks prepared
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: ulf.hansson@linaro.org, wim@linux-watchdog.org, linux@roeck-us.net, 
-	rafael@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, geert+renesas@glider.be, 
-	linux-renesas-soc@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
+Commit ca78476e4888f1f1 ("mfd: Remove toshiba tmio drivers") removed the
+last users of the .set_pwr() callback in the tmio_mmc_data structure.
+Remove the callback, and all related infrastructure.
 
-Thank you for the patch.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Laurent tried this before in commit 3af9d15c719017fe
+("mmc: tmio-mmc: Remove .set_pwr() callback from platform data"),
+but it had to be reverted in commit 9d731e7539713acc ("Revert
+"mmc: tmio-mmc: Remove .set_pwr() callback from platform data"")
+because there were still users at that time.
+---
+ drivers/mmc/host/tmio_mmc.h      | 3 ---
+ drivers/mmc/host/tmio_mmc_core.c | 8 --------
+ include/linux/mfd/tmio.h         | 1 -
+ 3 files changed, 12 deletions(-)
 
-On Thu, Jun 20, 2024 at 9:29=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The watchdog restart handler is called with interrupts disabled. In
-> rzg2l_wdt_restart() we call clk_prepare_enable() to enable the watchdog
-> clocks. The prepare part of clk_prepare_enable() may sleep. Sleep in
-> atomic context should not happen. The clock drivers for all the
-> micro-architectures where the RZ/G2L watchdog driver is used are not
-> implementing struct clk_ops::prepare(). Even so, to be sure we are
-> not hitted by this at some point, keep the watchdog clocks prepared
-> and only enable them in restart handler. It is guaranteed that
-> clk_enable() can be called in atomic context.
->
-> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Closes: https://lore.kernel.org/all/CAPDyKFq1+cL1M9qGY0P58ETHUZHGymxQL0w9=
-2emUJPMe7a_GxA@mail.gmail.com
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->  drivers/watchdog/rzg2l_wdt.c | 31 ++++++++++++++++++++++++++-----
->  1 file changed, 26 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-> index 2a35f890a288..6e3d7512f38c 100644
-> --- a/drivers/watchdog/rzg2l_wdt.c
-> +++ b/drivers/watchdog/rzg2l_wdt.c
-> @@ -166,8 +166,8 @@ static int rzg2l_wdt_restart(struct watchdog_device *=
-wdev,
->         struct rzg2l_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
->         int ret;
->
-> -       clk_prepare_enable(priv->pclk);
-> -       clk_prepare_enable(priv->osc_clk);
-> +       clk_enable(priv->pclk);
-> +       clk_enable(priv->osc_clk);
->
-I think we need to add a check before enabling the clocks:
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index de56e6534aeaaa10..2af5730c21f4a98d 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -139,9 +139,6 @@ struct tmio_mmc_host {
+ 	struct mmc_host         *mmc;
+ 	struct mmc_host_ops     ops;
+ 
+-	/* Callbacks for clock / power control */
+-	void (*set_pwr)(struct platform_device *host, int state);
+-
+ 	/* pio related stuff */
+ 	struct scatterlist      *sg_ptr;
+ 	struct scatterlist      *sg_orig;
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 93e912afd3ae5aa0..7b4256f0cbe77028 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -880,9 +880,6 @@ static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
+ 
+ 	/* .set_ios() is returning void, so, no chance to report an error */
+ 
+-	if (host->set_pwr)
+-		host->set_pwr(host->pdev, 1);
+-
+ 	if (!IS_ERR(mmc->supply.vmmc)) {
+ 		ret = mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
+ 		/*
+@@ -916,9 +913,6 @@ static void tmio_mmc_power_off(struct tmio_mmc_host *host)
+ 
+ 	if (!IS_ERR(mmc->supply.vmmc))
+ 		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, 0);
+-
+-	if (host->set_pwr)
+-		host->set_pwr(host->pdev, 0);
+ }
+ 
+ static unsigned int tmio_mmc_get_timeout_cycles(struct tmio_mmc_host *host)
+@@ -1160,8 +1154,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (pdata->flags & TMIO_MMC_USE_BUSY_TIMEOUT && !_host->get_timeout_cycles)
+ 		_host->get_timeout_cycles = tmio_mmc_get_timeout_cycles;
+ 
+-	_host->set_pwr = pdata->set_pwr;
+-
+ 	ret = tmio_mmc_init_ocr(_host);
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index aca74ac1ff69e6f7..8c09d14a3a286ca0 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -100,7 +100,6 @@ struct tmio_mmc_data {
+ 	dma_addr_t			dma_rx_offset;
+ 	unsigned int			max_blk_count;
+ 	unsigned short			max_segs;
+-	void (*set_pwr)(struct platform_device *host, int state);
+ };
+ 
+ /*
+-- 
+2.34.1
 
-if (!watchdog_active(wdev)) {
-         clk_enable(priv->pclk);
-         clk_enable(priv->osc_clk);
-}
-
->         if (priv->devtype =3D=3D WDT_RZG2L) {
->                 ret =3D reset_control_deassert(priv->rstc);
-> @@ -226,11 +226,28 @@ static const struct watchdog_ops rzg2l_wdt_ops =3D =
-{
->         .restart =3D rzg2l_wdt_restart,
->  };
->
-> +static int rzg2l_clks_prepare(struct rzg2l_wdt_priv *priv)
-> +{
-> +       int ret;
-> +
-> +       ret =3D clk_prepare(priv->pclk);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D clk_prepare(priv->osc_clk);
-> +       if (ret)
-> +               clk_unprepare(priv->pclk);
-> +
-> +       return ret;
-> +}
-> +
->  static void rzg2l_wdt_pm_disable(void *data)
->  {
-> -       struct watchdog_device *wdev =3D data;
-> +       struct rzg2l_wdt_priv *priv =3D data;
->
-> -       pm_runtime_disable(wdev->parent);
-> +       pm_runtime_disable(priv->wdev.parent);
-> +       clk_unprepare(priv->osc_clk);
-> +       clk_unprepare(priv->pclk);
->  }
->
-All the above chunk can go away if we use devm_clk_get_prepared()
-while requesting the clocks in the probe.
-
-Cheers,
-Prabhakar
-
->  static int rzg2l_wdt_probe(struct platform_device *pdev)
-> @@ -275,6 +292,10 @@ static int rzg2l_wdt_probe(struct platform_device *p=
-dev)
->
->         priv->devtype =3D (uintptr_t)of_device_get_match_data(dev);
->
-> +       ret =3D rzg2l_clks_prepare(priv);
-> +       if (ret)
-> +               return ret;
-> +
->         pm_runtime_enable(&pdev->dev);
->
->         priv->wdev.info =3D &rzg2l_wdt_ident;
-> @@ -287,7 +308,7 @@ static int rzg2l_wdt_probe(struct platform_device *pd=
-ev)
->
->         watchdog_set_drvdata(&priv->wdev, priv);
->         dev_set_drvdata(dev, priv);
-> -       ret =3D devm_add_action_or_reset(&pdev->dev, rzg2l_wdt_pm_disable=
-, &priv->wdev);
-> +       ret =3D devm_add_action_or_reset(&pdev->dev, rzg2l_wdt_pm_disable=
-, &priv);
->         if (ret)
->                 return ret;
->
-> --
-> 2.39.2
->
->
