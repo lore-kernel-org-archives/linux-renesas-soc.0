@@ -1,39 +1,49 @@
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F291AAE20
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Jun 2024 13:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969241AE0A9
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Jun 2024 13:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718890740; cv=none; b=gF/+t/VC/b6+dB10cPuaJunaeiIPjukIJHYiWrdM9cRwDIgM9IsZDkQBQsTNuPvupgDoPHRgGDksqAcvJh6f7tZ6DSkVVMhkREaKeccxJIn3/PB3ICbwauGI4kTnZeIfWvsJFNjSMXkBRtEhz7EFjfF8GnSY3BRtFgM2Q8f8s7I=
+	t=1718891872; cv=none; b=J+fnV3ca/yt5qhsuTlEw8UPBFVEPEgD4p0YB8ANh+SKVGxH3uGfeYEmhei8JlnHGVud0hbTXQhRDBgQoA4fXe0O9ELb/sQXhguDh7mkLfkg1Mg11B1nuLbeA9LCGVdF4reguFxEFcn02XFQAn9km5ie3F7TNX68UQRHKuCmB61A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718890740; c=relaxed/simple;
-	bh=J1xLRjB+2LDobLZdH9OO94pzYkxMRQDxiI/Cel2ARss=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DAAK+PrPPgmxkscVqmeGX7JiptyMSWYF/py8yIYTD66tRmSmotz0P5SCZb0xVNipvf57aG7OloMhZk2/X+vL1kKQl0uaq4xr7qZZcWOyPqo2Pb5EVwLuOEDvwJOWdSU5hG+ThYgc5ft15hi4kMf5ZWen4dGJIOr3NblDnjhjDUQ=
+	s=arc-20240116; t=1718891872; c=relaxed/simple;
+	bh=FztDS2O8Pp/Et4r0TpkZuhKQZhiW8X89KNuZKI3pLqw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=vFH9klaXM8X6lSWhTdJO+RUls92VgvzFg9JcYMjxnKElHhrnZmUjyTO3q6/G4GBDtJUVJ8I8PzfzxtPN9snbPsoCExCzcf+mzXL4p3xAfkdSnhHFJvoNBFSw2I1ZbfYLLO2Y/kOZHm5S4FgyUvlYkWCc4oaFY3+h7qu19qa1ws0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:260f:cd5c:91b1:523c])
 	by xavier.telenet-ops.be with bizsmtp
-	id dpen2C00K0Y0hZi01pensV; Thu, 20 Jun 2024 15:38:49 +0200
+	id dpxm2C0030Y0hZi01pxm6o; Thu, 20 Jun 2024 15:57:47 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sKHzz-00056t-Rt;
-	Thu, 20 Jun 2024 15:38:47 +0200
+	id 1sKIIL-00057p-Ur;
+	Thu, 20 Jun 2024 15:57:45 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sKHzz-000Cdr-OM;
-	Thu, 20 Jun 2024 15:38:47 +0200
+	id 1sKIIL-000Cop-Rs;
+	Thu, 20 Jun 2024 15:57:45 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+To: Magnus Damm <magnus.damm@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a779h0: Drop "opp-shared" from opp-table-0
-Date: Thu, 20 Jun 2024 15:38:45 +0200
-Message-Id: <4e0227ff4388485cdb1ca2855ee6df92754e756e.1718890585.git.geert+renesas@glider.be>
+Subject: [PATCH 1/9] arm64: dts: renesas: r8a779a0: Add missing hypervisor virtual timer IRQ
+Date: Thu, 20 Jun 2024 15:57:31 +0200
+Message-Id: <671416fb31e3992101c32fe7e46147fe4cd623ae.1718890849.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1718890849.git.geert+renesas@glider.be>
+References: <cover.1718890849.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -42,52 +52,31 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The four Cortex-A76 CPU cores on R-Car V4M share their Operating
-Performance Points (OPP) table, but they have independent clocks.
-All cores in the cluster can switch DVFS states independently, hence
-the cluster's OPP table should not have an "opp-shared" property.
+Add the missing fifth interrupt to the device node that represents the
+ARM architected timer.  While at it, add an interrupt-names property for
+clarity,
 
-Fixes: 6bd8b0bc444eae56 ("arm64: dts: renesas: r8a779h0: Add CA76 operating points")
+Fixes: 834c310f541839b6 ("arm64: dts: renesas: Add Renesas R8A779A0 SoC support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Before, only a single CPU frequency policy is created:
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-    cpufreq: cpufreq_online: CPU0: Running at unlisted initial frequency: 999999 KHz, changing to: 1000000 KHz
-
-    /sys/devices/system/cpu/cpu0/cpufreq -> ../cpufreq/policy0
-    /sys/devices/system/cpu/cpu1/cpufreq -> ../cpufreq/policy0
-    /sys/devices/system/cpu/cpu2/cpufreq -> ../cpufreq/policy0
-    /sys/devices/system/cpu/cpu3/cpufreq -> ../cpufreq/policy0
-
-After, four independent CPU frequency policies are created:
-
-    cpufreq: cpufreq_online: CPU0: Running at unlisted initial frequency: 999999 KHz, changing to: 1000000 KHz
-    cpufreq: cpufreq_online: CPU1: Running at unlisted initial frequency: 999999 KHz, changing to: 1000000 KHz
-    cpufreq: cpufreq_online: CPU2: Running at unlisted initial frequency: 999999 KHz, changing to: 1000000 KHz
-    cpufreq: cpufreq_online: CPU3: Running at unlisted initial frequency: 999999 KHz, changing to: 1000000 KHz
-
-    /sys/devices/system/cpu/cpu0/cpufreq -> ../cpufreq/policy0
-    /sys/devices/system/cpu/cpu1/cpufreq -> ../cpufreq/policy1
-    /sys/devices/system/cpu/cpu2/cpufreq -> ../cpufreq/policy2
-    /sys/devices/system/cpu/cpu3/cpufreq -> ../cpufreq/policy3
-
-To be queued in renesas-devel for v6.11.
----
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index 00ac730c26cb7202..163bbcbccc9fcde4 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -23,7 +23,6 @@ can_clk: can-clk {
- 
- 	cluster0_opp: opp-table-0 {
- 		compatible = "operating-points-v2";
--		opp-shared;
- 
- 		opp-500000000 {
- 			opp-hz = /bits/ 64 <500000000>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+index 1abe92c98358eddb..395f8d43ce2db92d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+@@ -2927,6 +2927,9 @@ timer {
+ 		interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+ 				      <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+ 				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+-				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
++				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "sec-phys", "phys", "virt", "hyp-phys",
++				  "hyp-virt";
+ 	};
+ };
 -- 
 2.34.1
 
