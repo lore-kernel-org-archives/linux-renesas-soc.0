@@ -1,30 +1,29 @@
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B703B1B013C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02041B0139
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Jun 2024 15:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898000; cv=none; b=Fl2tWN61o6immwInPrlr3ZCCfnNRo/UCCcFe4s9mU3dxeP/UM7FNhVFQYl1eKutbFh/WkRxI+LXebMABgp2kuLUWIiawqVG+dxYymoogKL4BWIYktBzypoFZ1pYix3mPmPLlNw90dNwQcKRQa+Wzh3iHOjOu1abmtaTIGlDpYJE=
+	t=1718898000; cv=none; b=OXU0azd72gbbnhpQW2RyddXoWRcuRrAF/EaZm8jk7WuHWLlnnrH5hN7Q6/UCdoYENmHvDG62fXUvISiLAJ1ShRvzO9N7NrO5rflmtHOjXnwEoV0nxqsNww8jUQMZa/DdybfbHDiGa7OPlkvGco6uaGMZve+3rDer68iD2QQuC04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718898000; c=relaxed/simple;
-	bh=Oh/XNnIXMWckXGB3LZdCngk6WfCW3KRvbELGvIZUJGM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nn8meI6cJQ4ikfWNvYihu6b2FDZkGKdb303sRDqhLgihGBoTGcQboHmWSdsd4g2dSYXYWokQxKk55BdHVJFJqHxbtKWMczuy2eUL4sTDtQrpVAV517+sk9HUfKNzT/GPkX09QMdjC8AVlDi9F72nijviDUwzxY1rlNF0IjJsN6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+	bh=EGan0DPRyj1iH/qlzBQ+qSQPs0ak1SMhLvLNyPKTR4s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s7GCLCOj6kdips8b5Do5XD6T0mcXItTEDU/JFwtJnR2VGO5Yg8tdY30fnXWa1Wmx0u5/VtDbFyDZfqOdP9exom7Fe4HDTfwMDHoXuWdDJD12wG1M/hFN7EyxyVCrY44D5pfbJi5AdZI9m88E1GcWE89wR7aOUXJPZMIiMOLpUJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:260f:cd5c:91b1:523c])
-	by michel.telenet-ops.be with bizsmtp
-	id drfo2C00S0Y0hZi06rfouM; Thu, 20 Jun 2024 17:39:49 +0200
+	by laurent.telenet-ops.be with bizsmtp
+	id drfo2C00R0Y0hZi01rfocP; Thu, 20 Jun 2024 17:39:49 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sKJt6-0005LV-Oa;
+	id 1sKJt6-0005LW-Oa;
 	Thu, 20 Jun 2024 17:39:48 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sKJt6-000LnU-MK;
+	id 1sKJt6-000LnR-Le;
 	Thu, 20 Jun 2024 17:39:48 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -36,12 +35,10 @@ To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 Cc: linux-mmc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] mfd: tmio: Remove obsolete .set_clk_div() callback
-Date: Thu, 20 Jun 2024 17:39:45 +0200
-Message-Id: <e0fa98f138a7b2836128178f8b3a757978517307.1718897545.git.geert+renesas@glider.be>
+Subject: [PATCH 0/2] mmc: tmio: Remove obsolete callbacks
+Date: Thu, 20 Jun 2024 17:39:44 +0200
+Message-Id: <cover.1718897545.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1718897545.git.geert+renesas@glider.be>
-References: <cover.1718897545.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -50,26 +47,37 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit bef64d2908e825c5 ("mmc: remove tmio_mmc driver") removed the last
-user of the .set_clk_div() callback in the tmio_mmc_data structure.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/linux/mfd/tmio.h | 1 -
- 1 file changed, 1 deletion(-)
+This patch series removes two unused callbacks from the tmio_mmc_data
+structure, and related infrastructure code.
+  - The first patch touches only the MFD subsystem.
+  - The second patch touches both the MMC and MFD subsystems, and has a
+    contextual dependency on the first patch.  If really needed, it can
+    be split in an MMC and MFD part, but the MFD part depends on the MMC
+    part anyway.
 
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index eace8ea6cda05a3d..aca74ac1ff69e6f7 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -101,7 +101,6 @@ struct tmio_mmc_data {
- 	unsigned int			max_blk_count;
- 	unsigned short			max_segs;
- 	void (*set_pwr)(struct platform_device *host, int state);
--	void (*set_clk_div)(struct platform_device *host, int state);
- };
- 
- /*
+Thanks for your comments!
+
+Geert Uytterhoeven (2):
+  mfd: tmio: Remove obsolete .set_clk_div() callback
+  mmc: tmio: Remove obsolete .set_pwr() callback()
+
+ drivers/mmc/host/tmio_mmc.h      | 3 ---
+ drivers/mmc/host/tmio_mmc_core.c | 8 --------
+ include/linux/mfd/tmio.h         | 2 --
+ 3 files changed, 13 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
