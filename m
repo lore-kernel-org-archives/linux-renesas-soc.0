@@ -1,29 +1,30 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A11AE85B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882D51AE85D
 	for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Jun 2024 13:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718891877; cv=none; b=mmxQN/55Tz9AAhoeD9bSUiU7Df6w/VAUTwdCez33p/YG90TwITfodA4uNIaguH7iqIRY3w+9V6UNAP6nGsHzm8AYkxpamnrcmw4v/pFkwMxphIEqTyNkfaVTgx1sdOjvpBHbK4QmpfBW5gvZAmpLW5jfGEef69azVDEXr+bQU/E=
+	t=1718891878; cv=none; b=bN9B+pb/CakEDLKDGmLPN4/gAbzdkJqe6W9MfBUw1CWqOnfhNkH2HrKcZ76pro396BpLmcaKYvDxd85nyU5jRj6+S60ItYbWurmTAi6EijcASbEysMvaN+WgqTshGZmyJnwfZRbpo6aZgNWzl40xrOnCbDzeBwACt89A48VQ4tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718891877; c=relaxed/simple;
-	bh=Q4TcSVNStTxtsPmVeYRqOnYR2eA7vSzu88AqX8i9SLY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gusK2JNuWhfEQK87FIF0/dSRVkX8dboSwr1Ht8gkKigHMQMicqEl9XQQL4FpUMpX9HlP3OQpt8JZUvQXeoX2pDmeAW3Ni+fBGUtS0ghzjEi/hXub6ASKHRsKABs8Qo7eBP6SXL2HO0HoJISMwSBGXzKBNaBiP09ZofMykCpr4e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+	s=arc-20240116; t=1718891878; c=relaxed/simple;
+	bh=HW02G0GzSgkc5j8kPzEVYxFX415b95zPttIFlHDJ4vc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kZseL9BKOIMaeW5wsxZLoHhJFukC0H4b1bhPW9rirKAzJy7SZIbZZkN4JLjfZS/N34sXFlOzuGpnLv7k5d6JR+Io3zgBI7C8Rq/jjy+BcjzOjQ0JyEmOas9q6LO6dEg1akh3cGpkvDGjrqa1MbxZxDCjuHr+dIngw+7iCKlst0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:260f:cd5c:91b1:523c])
-	by baptiste.telenet-ops.be with bizsmtp
-	id dpxm2C0010Y0hZi01pxmK8; Thu, 20 Jun 2024 15:57:48 +0200
+	by andre.telenet-ops.be with bizsmtp
+	id dpxm2C0030Y0hZi01pxmJR; Thu, 20 Jun 2024 15:57:48 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sKIIL-00057o-Ur;
-	Thu, 20 Jun 2024 15:57:45 +0200
+	id 1sKIIM-000586-1h;
+	Thu, 20 Jun 2024 15:57:46 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sKIIL-000Com-R5;
+	id 1sKIIL-000Cp5-Vl;
 	Thu, 20 Jun 2024 15:57:45 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -37,10 +38,12 @@ Cc: Mark Rutland <mark.rutland@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/9] dts: renesas: Add missing hypervisor virtual timer IRQs and interrupt-names
-Date: Thu, 20 Jun 2024 15:57:30 +0200
-Message-Id: <cover.1718890849.git.geert+renesas@glider.be>
+Subject: [PATCH 5/9] arm64: dts: renesas: r9a07g044: Add missing hypervisor virtual timer IRQ
+Date: Thu, 20 Jun 2024 15:57:35 +0200
+Message-Id: <21f556eb7e903d5b9f4c96188fd4b6ae0db71856.1718890849.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1718890849.git.geert+renesas@glider.be>
+References: <cover.1718890849.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -49,85 +52,31 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+Add the missing fifth interrupt to the device node that represents the
+ARM architected timer.  While at it, add an interrupt-names property for
+clarity,
 
-Support for the hypervisor virtual timer interrupt of the ARM
-architected timer was only added, together with interrupt-names support,
-in commits a6cf39fbe133857a ("dt-bindings: timer: arm,arch_timer: Add
-interrupt-names support") and 86332e9e3477af8f ("arm64: arch_timer:
-Implement support for interrupt-names") in v5.13.
+Fixes: 68a45525297b2e9a ("arm64: dts: renesas: Add initial DTSI for RZ/G2{L,LC} SoC's")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-This patch series enhances device nodes that represent ARM architected
-timers on Renesas SoCs, by (a) adding the missing hypervisor virtual
-timer interrupts, and (b) adding interrupt-names properties for clarity.
-
-I plan to queue this in renesas-devel for v6.11.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (9):
-  arm64: dts: renesas: r8a779a0: Add missing hypervisor virtual timer
-    IRQ
-  arm64: dts: renesas: r8a779f0: Add missing hypervisor virtual timer
-    IRQ
-  arm64: dts: renesas: r8a779g0: Add missing hypervisor virtual timer
-    IRQ
-  arm64: dts: renesas: r9a07g043u: Add missing hypervisor virtual timer
-    IRQ
-  arm64: dts: renesas: r9a07g044: Add missing hypervisor virtual timer
-    IRQ
-  arm64: dts: renesas: r9a07g054: Add missing hypervisor virtual timer
-    IRQ
-  arm64: dts: renesas: r9a08g045: Add missing hypervisor virtual timer
-    IRQ
-  ARM: dts: renesas: Add interrupt-names to arch timer nodes
-  arm64: dts: renesas: Add interrupt-names to arch timer nodes
-
- arch/arm/boot/dts/renesas/r8a73a4.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a7742.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a7743.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a7744.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a7745.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a77470.dtsi     | 1 +
- arch/arm/boot/dts/renesas/r8a7790.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a7791.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a7792.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a7793.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r8a7794.dtsi      | 1 +
- arch/arm/boot/dts/renesas/r9a06g032.dtsi    | 1 +
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a77951.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a77960.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a77961.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a77965.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a77970.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a77980.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a77990.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a77995.dtsi   | 1 +
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi   | 5 ++++-
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi   | 5 ++++-
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi   | 5 ++++-
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi   | 2 ++
- arch/arm64/boot/dts/renesas/r9a07g043u.dtsi | 5 ++++-
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi  | 5 ++++-
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi  | 5 ++++-
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi  | 5 ++++-
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi  | 1 +
- 33 files changed, 55 insertions(+), 7 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index c07ddd8124e6804c..d3838e5820fca19f 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -1334,6 +1334,9 @@ timer {
+ 		interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+ 				      <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+ 				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+-				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
++				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "sec-phys", "phys", "virt", "hyp-phys",
++				  "hyp-virt";
+ 	};
+ };
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
