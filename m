@@ -1,119 +1,126 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8590E13E046
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jun 2024 13:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E13414199C;
+	Mon, 24 Jun 2024 13:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719235887; cv=none; b=Yc16clXt3a+0+vfFbFAuG1AA/ZlC8yiG3nH+f+IY7j/yt7sCEA7jKVb3yI+BvlGDPo0RTPGM0sD/YL+8L+ktg94F2hbZjX60RG9vYpykosjdMDFCtcY+ipH4htnd3HYlQByN8OHsPsFmURNjc6tzSGwl252RAeSBt0Jj1DV71kI=
+	t=1719237272; cv=none; b=Hob10lwcHgt3UcQ4au1OV6z9Cxt9QVc1U7Yx7mkZoDYHXs9IhXlyufzXKq8DYfLDZg+FrC/7YugRiu9exKip92etOvYJ9EKcXy/UCiPB+5K/rnroU8b740h+9xoaWUjbZMwBN1Vu8kZkCbuabp9uYWOT6A4yJCa03v1TzA5hjhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719235887; c=relaxed/simple;
-	bh=H3LL2YSxXaLgsqNQRkKFKgHJh4jLqO69pPcbgow43B4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NAW8aYxrxvuSgjAuq/JrVID4Z+jue3NmNj3WRzYZCjkGdCbdf3nhgR4SvduhYDIBSicoKMoEp8sOppoUDWwNpjJX8+BDDukYQUcMSgnu9joX2xV1ghLeN5VBc90yenZzSDhd7UZCeoTVlM1yrYZuMAzB6gRIvG3Ii8EBE2ZDVTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4W77xv3HChz4wy9Z
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jun 2024 15:25:39 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:d11f:2bfd:8d32:701a])
-	by laurent.telenet-ops.be with bizsmtp
-	id fRRT2C00U4jBKfC01RRTBf; Mon, 24 Jun 2024 15:25:32 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sLjhF-000HSU-6r;
-	Mon, 24 Jun 2024 15:25:27 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sLjhH-007u9A-N8;
-	Mon, 24 Jun 2024 15:25:27 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH net-next v2 1/2] ravb: Improve ravb_hw_info instance order
-Date: Mon, 24 Jun 2024 15:25:24 +0200
-Message-Id: <a76febe3737e26365a784e9193da9363f22aa550.1719234830.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1719234830.git.geert+renesas@glider.be>
-References: <cover.1719234830.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1719237272; c=relaxed/simple;
+	bh=bSuD+8D7Rz+hm5eVrQsl9osZv3K6KDZA9Wtay1ky1vA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eA64j9CqYD/Cq/n5ry6mtIDMxNlPc9TFMdfx/7F7uZe0Fa5uzg+jMVGZG6SfkGwy3VHBF6GIX1DLbvIQ1j/0BXPCqOmZ3Epreqey03Wm7aiJbpC83MQHwdVqvsPcPn3lqLvjFTwfx2SyZFkSuSU6KF1massq2rUoz86ivnDsXn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-63bdb089ffdso33478827b3.3;
+        Mon, 24 Jun 2024 06:54:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719237269; x=1719842069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RfAlnFTJHlQKWIhVQFUuWrbtwp9vlom9Wv0aMSus9tA=;
+        b=nqkhIdkR5Jd5htvwMxZQJxpgPQJKju4iZb9Cg7vLrsx0vzTBR9l0ZTuxBjUE6/n46A
+         0l2L0k8Uwp5mgeWyeFdX7vDb6RW1GdGZjl/aQaT380VUSRtsLjZcal0wrXAk2//0oE/e
+         Kz1kWOqjdd9q9jhFa78Fob/wioeXPxiREE2SKt+loJDlM5Pb5QIm+UV3c3J1t2UnDL4Y
+         /HzT/iuK+HOJFeZhCVmGyK6g6SwA8lvwySgvNFDeCrWu6lLCDVB5MDSpV0a5GE4uFeo6
+         jDaeT4Q2WMBde5axDpXx6eOYdGc/cDZLc9ZN6yT872/08hOMZ9W7adEjClK3sLkJD26A
+         UciQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwhDNr+P1NWuR9uEcrYz3JXjYVPd1QXRKXXkFVzGnoHN10RYEbDC6gzAl88JPCEuE4ivPHAjnMNhN+wP/fC44LPvPxJsZsq9SaqQp3Zlo8ndVNu6wwi78GkjLdGmq8vNFHsmE1Y4SHbXKgUuGo
+X-Gm-Message-State: AOJu0Yw2UeSTTp5Ef9xphrJlAtS9hhYKGbLtoNO20hVFst2vKGGOJHu2
+	zVdl+Cqp2mKI/7Nv/cuSlDohtA4WEN7gCJDFoywU/ijnh9glY6gCzFIZ1Zbl
+X-Google-Smtp-Source: AGHT+IFj2iqKo6IwSGSTKMxP1hl7lvCh/4I86/czEEPTycv9qlQ0zrWAnDukQl86y1ZiJn1aFkP5dA==
+X-Received: by 2002:a0d:d047:0:b0:61d:fcf7:3377 with SMTP id 00721157ae682-64343efc76dmr32323797b3.44.1719237268590;
+        Mon, 24 Jun 2024 06:54:28 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f156c307dsm28442057b3.124.2024.06.24.06.54.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 06:54:28 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-643603b1feaso15191917b3.0;
+        Mon, 24 Jun 2024 06:54:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhsEMp81+t+SHoXwiQ3aziRy9kEjxYoYATMjWZ3TbjBQk2fXqTi/5McDP9XVvOPMjrh4mSJ1dWAXAckphGKjkJ+uIRikjctv/e8iyrxfN68IzXB+KkMTw0Lhm91TRh9dCWEl6AZX/k2sc7IejR
+X-Received: by 2002:a81:c741:0:b0:61b:e62e:82a2 with SMTP id
+ 00721157ae682-64342e91b81mr35950887b3.34.1719237267852; Mon, 24 Jun 2024
+ 06:54:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1717754960.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1717754960.git.geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Jun 2024 15:54:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVu5iNSZLALBasS6vSzMrPT-Cba8wXO5X-_xSF-xyRUHw@mail.gmail.com>
+Message-ID: <CAMuHMdVu5iNSZLALBasS6vSzMrPT-Cba8wXO5X-_xSF-xyRUHw@mail.gmail.com>
+Subject: Re: [PATCH 0/8] pinctrl: renesas: r8a779g0: Fix pin group suffixes
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>, LUU HOAI <hoai.luu.ub@renesas.com>, 
+	Kazuya Mizuguch <kazuya.mizuguchi.ks@renesas.com>, Phong Hoang <phong.hoang.wz@renesas.com>, 
+	CongDang <cong.dang.xn@renesas.com>, Thanh Quan <thanh.quan.xn@renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Move ravb_gen2_hw_info before ravb_gen3_hw_info to match
-ravb_match_table[] order.
+On Fri, Jun 7, 2024 at 12:14=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> On R-Car SoCs, pin group names usually have a suffix ("_a", "_b", ...)
+> if and only if there are alternate pin groups for the same function.
+> At the time initial pin control support for the R-Car V4H (R8A779G0) SoC
+> was introduced, there were lots of ambiguities and inconsistencies in
+> the naming of pin groups in the documentation, violating this convention:
+>   1. Some alternate pin groups may be named identically, without any
+>      suffix to differentiate,
+>   2. In case of two alternate pin groups, the primary may not carry a
+>      suffix, while the alternate may carry an "_a" or "_b" suffix,
+>   3. A pin group without an alternate may have an "_a" or even a "_b"
+>      suffix.
+> So far the driver followed the documentation, except for case 1, where
+> an "_x" suffix was added to one of the alternates.  The plan was to
+> update the pin group names when they were clarified in the documentation.
+> As technically these names are part of the ABI, they were clearly marked
+> with "suffix might be updated" in the driver.
+>
+> Unfortunately the pin group names are still not updated in the latest
+> revision (Rev.1.10) of the R-Car V4H Series Hardware User's Manual.
+> However, the newer R-Car V4M (R8A779H0) SoC is mostly signal-compatible
+> with R-Car V4H (they are not pin-compatible, as R-Car V4H has many more
+> pins).  Hence this series bites the bullet, and fixes the ambiguities
+> and inconsistencies by adopting R-Car V4M pin group naming (from Rev.0.51
+> of the R-Car V4M Series Hardware User's Manual), and following the
+> traditional naming convention.
+>
+> Note that this does not affect any upstream DTS files.
+>
+> Thanks for your comments!
+>
+> Geert Uytterhoeven (8):
+>   pinctrl: renesas: r8a779g0: Fix CANFD5 suffix
+>   pinctrl: renesas: r8a779g0: Fix FXR_TXEN[AB] suffixes
+>   pinctrl: renesas: r8a779g0: Fix (H)SCIF1 suffixes
+>   pinctrl: renesas: r8a779g0: Fix (H)SCIF3 suffixes
+>   pinctrl: renesas: r8a779g0: Fix IRQ suffixes
+>   pinctrl: renesas: r8a779g0: FIX PWM suffixes
+>   pinctrl: renesas: r8a779g0: Fix TCLK suffixes
+>   pinctrl: renesas: r8a779g0: Fix TPU suffixes
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/net/ethernet/renesas/ravb_main.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Unless someone objects, I plan to queue these in renesas-pinctrl for v6.11.
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index c1546b916e4ef581..974e0bb9da1947f2 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2652,7 +2652,7 @@ static int ravb_mdio_release(struct ravb_private *priv)
- 	return 0;
- }
- 
--static const struct ravb_hw_info ravb_gen3_hw_info = {
-+static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.receive = ravb_rx_rcar,
- 	.set_rate = ravb_set_rate_rcar,
- 	.set_feature = ravb_set_features_rcar,
-@@ -2668,16 +2668,13 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.rx_buffer_size = SZ_2K +
- 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
--	.internal_delay = 1,
--	.tx_counters = 1,
--	.multi_irqs = 1,
--	.irq_en_dis = 1,
--	.ccc_gac = 1,
-+	.aligned_tx = 1,
-+	.gptp = 1,
- 	.nc_queues = 1,
- 	.magic_pkt = 1,
- };
- 
--static const struct ravb_hw_info ravb_gen2_hw_info = {
-+static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.receive = ravb_rx_rcar,
- 	.set_rate = ravb_set_rate_rcar,
- 	.set_feature = ravb_set_features_rcar,
-@@ -2693,8 +2690,11 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.rx_buffer_size = SZ_2K +
- 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
--	.aligned_tx = 1,
--	.gptp = 1,
-+	.internal_delay = 1,
-+	.tx_counters = 1,
-+	.multi_irqs = 1,
-+	.irq_en_dis = 1,
-+	.ccc_gac = 1,
- 	.nc_queues = 1,
- 	.magic_pkt = 1,
- };
--- 
-2.34.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
