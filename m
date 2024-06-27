@@ -1,77 +1,95 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A1D1487F4
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Jun 2024 11:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4938F79FD;
+	Thu, 27 Jun 2024 11:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486914; cv=none; b=cGBgF3XKhXIr/XPkuK480Xkea6vk2BIPu4HpuOZzOX563qucaFl5EJa/4EkVHQpkH8YE/t/73yaWZADge4Kz9fqaCzXvOHIcUVgaX/Ooa6+ISx1BV0u0wUwl2nQjnstWScwKN7VGEVJLKfF/5SDlMEMjaKJeiLK2On96FY5p0Wo=
+	t=1719487078; cv=none; b=BroVCt/tRU6bYM4nwSiWUsgqsZFmARAvU4o6B5g01sz6eV+os6DU4jR0gij2YkiXJH/KWAi3j3Z+1QypF8J/nKDRmSLetk8oJyLNXMfbBhNaZtXzBFx8u/sysYfqDiX7R1NG9UkV5JPlzMuvISTCgujJhRyMPy9/1mk7ZLlYWMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486914; c=relaxed/simple;
-	bh=RAbZbjeBtc6a7qu4AxdmmKvnZivhLbCxSUQNFtQiqM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HV/sMtHQxtdGktZh+l+EIMKQju60lbbGLNXyBI5+8SiypF+kGjBxuiC1a58/rBKO9dkT02pyut/D+66ulHaX8+tjjX/DCdYJ+tead7iIajYVE2AA8jGNSL/5mbqDzZhrwfLioW7n/4d6cgsck6lQ1btXTFGCAJTVh2RxTPZzBFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lYJfzuvK; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1719487078; c=relaxed/simple;
+	bh=lYXCKK3L8/DSkekHvSq+N+Z2VYSpxXcAEISKHGObnxE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YWsQ4XpHIUpEBVfPDSzMkWLh3laQiygm8x314z8D/NM+yN19CuQaIyISHFBDzxCIUMDExPe5QmwXBC3r1pICs6fLxEa4YYPoRq/+5NugicOIouxDJto9RgUhVwzBwk8SjvzX+g7vMIyWleYKjk1Kk+Q8bb64a8w+0n6F8SHBwpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmpW9XsQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lYJfzuvK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=KluZUpbtf9AhXUF1zfxrw1TrFjuQLu2ulyUBXImrMrA=; b=lYJfzu
-	vKdllx0ND0MeXG4Cvb5rcQYYZKk0B0U7KLWUN6KpWlS/YJ6kG29BEQ7Psdm+nJ49
-	hixcyY4AywFTlpbJXhO67uzYggOpZEPga3fHyJEEZxTTPf0FjYUjX7+mMjJn6pe8
-	Vq0bISRWTkjJQQ8zlAbt9qaQ549FrFyqhKgydyE+Sz9UKV5Qb8rrWYKpRfnabqih
-	LXzohesDzE+iLXMf/gX/46vDN3dauzEtYNcSlYyIZO/utzIC2XCYxLBKVQc3jLA+
-	58udCzZjqpqckq/Efzmr8/Gzy5cELejBPNVuRd2u6TiZiBgtyyL15iyDQktV9VIi
-	hAxtHSzRhJbYHHXA==
-Received: (qmail 884566 invoked from network); 27 Jun 2024 13:15:02 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jun 2024 13:15:02 +0200
-X-UD-Smtp-Session: l3s3148p1@NUn7Pd0b5MMgAwDPXys0AFWnEn9dr4bp
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] i2c: testunit: don't erase registers after STOP
-Date: Thu, 27 Jun 2024 13:14:47 +0200
-Message-ID: <20240627111445.29751-5-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240627111445.29751-4-wsa+renesas@sang-engineering.com>
-References: <20240627111445.29751-4-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmpW9XsQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 204E5C2BBFC;
+	Thu, 27 Jun 2024 11:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719487077;
+	bh=lYXCKK3L8/DSkekHvSq+N+Z2VYSpxXcAEISKHGObnxE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=tmpW9XsQG/WwI+RcUrAMLEvl/Gih+sV+nymxc4UnjuU116Pgi8wCKIeG4SH1W9HUI
+	 dNj9asjQqMODOc0cEjFhcvs/F6rGg+En9yLuES52GXot1qw4QvlCLl11JMib6gJYcd
+	 WQhJMpK81xdBiKAmpfGeFyX7Z7wZ19IXHADiVQ3Sj1WB5PiIRQccC8DnqKfhJf+Zit
+	 8KSO+9JCZOyKsvTLlZzEzW0vsnXB4mmNB2ajjeHcSmfOYMpLlv78tPFo37lM77bUyk
+	 dTrd6sXOSuiErLWAehEebVLr2ZmzTA5lFhHX0/h5KJ4TOypIY+Ovl3HigBkb6kL8pW
+	 s2twWSv9FvthQ==
+From: Mark Brown <broonie@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Biju Das <biju.das.au@gmail.com>, devicetree@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20240616105402.45211-1-biju.das.jz@bp.renesas.com>
+References: <20240616105402.45211-1-biju.das.jz@bp.renesas.com>
+Subject: Re: (subset) [PATCH v4 0/6] Add USB VBUS regulator for RZ/G2L
+Message-Id: <171948707484.56488.11243036600032850483.b4-ty@kernel.org>
+Date: Thu, 27 Jun 2024 12:17:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-STOP fallsthrough to WRITE_REQUESTED but this became problematic when
-clearing the testunit registers was added to the latter. Actually, there
-is no reason to clear the testunit state after STOP. Doing it when a new
-WRITE_REQUESTED arrives is enough. So, no need to fallthrough, at all.
+On Sun, 16 Jun 2024 11:53:52 +0100, Biju Das wrote:
+> As per RZ/G2L HW manual, VBUS enable can be controlled by the VBOUT bit of
+> the VBUS Control Register(VBENCTL) register in the USBPHY Control. But
+> this IP is in the Reset block.
+> 
+> Reset driver exposes this register as regmap and instantiate the USB VBUS
+> regulator device. Consumers(phy device) can use regulator APIs to control
+> VBUS as controlling is done in the atomic context.
+> 
+> [...]
 
-Fixes: b39ab96aa894 ("i2c: testunit: add support for block process calls")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-slave-testunit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to
 
-diff --git a/drivers/i2c/i2c-slave-testunit.c b/drivers/i2c/i2c-slave-testunit.c
-index a49642bbae4b..a5dcbc3c2c14 100644
---- a/drivers/i2c/i2c-slave-testunit.c
-+++ b/drivers/i2c/i2c-slave-testunit.c
-@@ -118,7 +118,7 @@ static int i2c_slave_testunit_slave_cb(struct i2c_client *client,
- 			queue_delayed_work(system_long_wq, &tu->worker,
- 					   msecs_to_jiffies(10 * tu->regs[TU_REG_DELAY]));
- 		}
--		fallthrough;
-+		break;
- 
- 	case I2C_SLAVE_WRITE_REQUESTED:
- 		memset(tu->regs, 0, TU_NUM_REGS);
--- 
-2.43.0
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[3/6] regulator: core: Add helper for allow HW access to enable/disable regulator
+      commit: 1cb7d29157603561af4c38535e936850ceb99f0f
+[4/6] regulator: Add Renesas RZ/G2L USB VBUS regulator driver
+      commit: 84fbd6198766336f627ba08f073fd9970729074e
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
