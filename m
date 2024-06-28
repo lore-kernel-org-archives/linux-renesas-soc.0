@@ -1,113 +1,91 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C8F156653
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jun 2024 13:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AD6154434
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jun 2024 13:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719580566; cv=none; b=iUXQINldOUZi30sWEpMR7h0mu95B/h1AKzYQ7vR4mNVuLOwxJH0Ee+YM3R0yVsm1QfmfIHNsZJNcfTTlPZUQTdrUzyPf1Q/OviZdbR41fKZv1kOvMdsOpac/lPQGOxWS+1z5C6LEiPI2i4DFNUrw99MR1tlF1BiiHpjbOLKperU=
+	t=1719581036; cv=none; b=BXR6UHaFFBp1I+Eb4xK335CuodVDEOvguoxg5S8a13Z2oJE2lYLZXWWobR/5lv6PyqMDCU5rGkCgp1tI716BRk3rXYj9jGsdmV9oGmN7JsmraKjo9X5AF5ZZqSQRGb5+Luufpa8x9UroJzGzSq6YS6ujAygJ6uVlLalyZ6qU/+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719580566; c=relaxed/simple;
-	bh=r/mHKZdQLqlpGC7g5dGwpMeeKMzSbf9wwJHTgeGdDvY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eM2jX0W8XOezlTAO8xtoxNor0jklaFnaD3oJ7B88yOy2L/NNtYJpo7W5xrBiAq1rJdae6WJT8RO4PY40NP4zZDcdBSpctzMwMEdJ+i5DRGFelocgk6zdxSR+ANhZq9p+TywbEMoBmtWR1wQIxT1q8oF6l8GsWorctxkdOgbZoQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	s=arc-20240116; t=1719581036; c=relaxed/simple;
+	bh=bmFJ9AZXbjNi/4pTTLQljSY7ECzLXd+RwEVvizCS89E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hymYAb90jaNkRuXw5Zs9DouJ7QsCrjj/TvwksYPnN68cUXtDTAMhXLNN5DjpwMQa3Vd5SID203d5tOH6PdyUz6I75TgIAVZ0O3zacpdKxTFx8xJ4twN74aV6TWmzxYMqacATRn/nu2Hhnj3wXH5kIcfT2dXZT0OaQBRgRtbp08A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4W9bXx2sZkz4wwn5
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Jun 2024 15:16:01 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:acf4:1256:ab55:12e6])
-	by albert.telenet-ops.be with bizsmtp
-	id h1G22C00E5ECAAU061G2jd; Fri, 28 Jun 2024 15:16:02 +0200
+	by baptiste.telenet-ops.be with bizsmtp
+	id h1Fs2C0035ECAAU011Fs38; Fri, 28 Jun 2024 15:15:52 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sNBSG-000VGj-LP;
-	Fri, 28 Jun 2024 15:16:02 +0200
+	id 1sNBS6-000VGS-7c;
+	Fri, 28 Jun 2024 15:15:52 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sNBSM-00BlRv-H5;
-	Fri, 28 Jun 2024 15:16:02 +0200
+	id 1sNBSC-00BlRI-3P;
+	Fri, 28 Jun 2024 15:15:52 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
+To: arm-soc <arm@kernel.org>,
+	soc <soc@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.11 (take two)
-Date: Fri, 28 Jun 2024 15:15:59 +0200
-Message-Id: <cover.1719579479.git.geert+renesas@glider.be>
+Subject: [GIT PULL 1/3] Renesas driver updates for v6.11
+Date: Fri, 28 Jun 2024 15:15:47 +0200
+Message-Id: <cover.1719578275.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1719578273.git.geert+renesas@glider.be>
+References: <cover.1719578273.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-	Hi Mike, Stephen,
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-The following changes since commit f92d44a00bd559f411b2c70b677afbc7c4723019:
-
-  clk: renesas: r8a779h0: Add VIN clocks (2024-06-11 09:36:27 +0200)
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.11-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v6.11-tag1
 
-for you to fetch changes up to c7e58843d1e49a6b54d528a8ea34933cafb713f2:
+for you to fetch changes up to 0aea2e4bbc584dd92e0483a6d249f11054a8923c:
 
-  clk: renesas: r9a08g045: Add clock, reset and power domain support for I2C (2024-06-27 18:17:13 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.11 (take two)
-
-  - Remove obsolete clock DT binding header files,
-  - Add Battery Backup (VBATTB) and I2C clocks, resets, and power
-    domains on RZ/G3S,
-  - Add audio clocks on R-Car V4M,
-  - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
+  soc: renesas: rcar-fuse: Remove unneeded semicolon (2024-06-28 09:32:33 +0200)
 
 ----------------------------------------------------------------
-Claudiu Beznea (2):
-      clk: renesas: r9a08g045: Add clock, reset and power domain support for the VBATTB IP
-      clk: renesas: r9a08g045: Add clock, reset and power domain support for I2C
+Renesas driver updates for v6.11
 
+  - Add R-Car fuse driver.
+
+----------------------------------------------------------------
 Geert Uytterhoeven (3):
-      clk: renesas: r8a779h0: Fix PLL2/PLL4 multipliers in comments
-      clk: renesas: Drop "Renesas" from individual driver descriptions
-      dt-bindings: clock: rcar-gen2: Remove obsolete header files
+      dt-bindings: fuse: Document R-Car E-FUSE / PFC
+      dt-bindings: fuse: Document R-Car E-FUSE / OTP_MEM
+      soc: renesas: Add R-Car fuse driver
 
-Kuninori Morimoto (1):
-      clk: renesas: r8a779h0: Add Audio clocks
+Yang Li (1):
+      soc: renesas: rcar-fuse: Remove unneeded semicolon
 
-Marek Vasut (1):
-      dt-bindings: clock: r8a7779: Remove duplicate newline
-
- drivers/clk/renesas/Kconfig               |   4 +-
- drivers/clk/renesas/r8a779h0-cpg-mssr.c   |   8 +-
- drivers/clk/renesas/r9a08g045-cpg.c       |  26 +++++
- include/dt-bindings/clock/r8a7779-clock.h |   1 -
- include/dt-bindings/clock/r8a7790-clock.h | 158 -----------------------------
- include/dt-bindings/clock/r8a7791-clock.h | 161 ------------------------------
- include/dt-bindings/clock/r8a7792-clock.h |  98 ------------------
- include/dt-bindings/clock/r8a7793-clock.h | 159 -----------------------------
- include/dt-bindings/clock/r8a7794-clock.h | 137 -------------------------
- 9 files changed, 33 insertions(+), 719 deletions(-)
- delete mode 100644 include/dt-bindings/clock/r8a7790-clock.h
- delete mode 100644 include/dt-bindings/clock/r8a7791-clock.h
- delete mode 100644 include/dt-bindings/clock/r8a7792-clock.h
- delete mode 100644 include/dt-bindings/clock/r8a7793-clock.h
- delete mode 100644 include/dt-bindings/clock/r8a7794-clock.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ .../bindings/fuse/renesas,rcar-efuse.yaml          |  55 ++++++
+ .../devicetree/bindings/fuse/renesas,rcar-otp.yaml |  38 ++++
+ drivers/soc/renesas/Kconfig                        |   8 +
+ drivers/soc/renesas/Makefile                       |   1 +
+ drivers/soc/renesas/rcar-fuse.c                    | 201 +++++++++++++++++++++
+ include/linux/platform_data/rcar_fuse.h            |  11 ++
+ include/linux/soc/renesas/rcar-fuse.h              |  41 +++++
+ 7 files changed, 355 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/fuse/renesas,rcar-efuse.yaml
+ create mode 100644 Documentation/devicetree/bindings/fuse/renesas,rcar-otp.yaml
+ create mode 100644 drivers/soc/renesas/rcar-fuse.c
+ create mode 100644 include/linux/platform_data/rcar_fuse.h
+ create mode 100644 include/linux/soc/renesas/rcar-fuse.h
