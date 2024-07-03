@@ -1,37 +1,41 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB3117C205
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Jul 2024 14:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FAE17DA1A;
+	Wed,  3 Jul 2024 14:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018741; cv=none; b=c469EAyc6fl/W/1n7aIA3lU6X+j50ZxU5zNp9h16jQcPtHhZqGZQuLssgf52xBJxrBqjGyy1roh8tQzbQbyso/PI3hz9b1uqwMVnq/JI4mkJnxlxXVWogZK/CzV5Lc3WRYj9Q0AT760cDmwK5YheD/t5Pz/F0JIrAK/920SGADE=
+	t=1720018746; cv=none; b=P3SwhafZtu8jhp6H+q1FwTJ1cDiODEz5uLTccxVsnTPH3z7IWALDAip5QQ5pxHmBi4V05L1yZJPhmKXOEorRp8/2UmXmlaaaVLk789S1HRvdCOFdfwp4R/Ug7lpAwWSVw2sm4MRcPZSYNRW7HBr2eyvGUIqYIAoeAuIpeiVFAd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018741; c=relaxed/simple;
-	bh=uMXhJuzOx98Ibkf2JSJEzShQIOJEvbVY+1JxNX5o7FI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UfkXaaPp4jIa24OsH1IRZlU47c3QOUZB2/NC4YYFls+zPxSVlgc+KnCnkV9EuWflXBGu1wDYioSzYe8L8cKl/qaM9I6dphaxd5S7As4M/neHyfq0/0CHGU7mVxNOXymjGP2iQ3e3hXak8gzSP8lZe8pMtGMHE/yO2u02G1yiV0w=
+	s=arc-20240116; t=1720018746; c=relaxed/simple;
+	bh=32YNlq8d3tFHTi0yLSizyetEShioEHHtzIwkcTJ7jXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qKBZfbeV/+Noc05EbNvb19r59PTcAGgFENm9EeuI5z3MZQ6S7gt17+O1XZlYQphTPWubSEMjVT/D5satfEm48BjgUOdCpx9cupeVm1KZArk03pJjAsvlM13zBc6cu6m287++ZUALVlcVk0mrtx47tbvDMCi/nkTfdS5qelbKDEI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.09,182,1716217200"; 
-   d="scan'208";a="214125765"
+   d="scan'208";a="214125777"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Jul 2024 23:58:56 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 03 Jul 2024 23:59:03 +0900
 Received: from localhost.localdomain (unknown [10.226.92.104])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E69334561783;
-	Wed,  3 Jul 2024 23:58:53 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4FB5B4561784;
+	Wed,  3 Jul 2024 23:59:00 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Walle <michael@walle.cc>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 0/3] Enable serial NOR flash on RZ/G2UL SMARC EVK
-Date: Wed,  3 Jul 2024 15:58:45 +0100
-Message-ID: <20240703145851.204306-1-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 2/3] arm64: dts: renesas: rzg2ul-smarc-som: Enable serial NOR flash
+Date: Wed,  3 Jul 2024 15:58:47 +0100
+Message-ID: <20240703145851.204306-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240703145851.204306-1-biju.das.jz@bp.renesas.com>
+References: <20240703145851.204306-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -40,49 +44,88 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series aims to enable serial NOR flash on RZ/G2UL SMARC EVK.
+Enable Renesas at25ql128a flash connected to QSPI0.
 
-The RZ/{G2L,G2LC,V2L} SMARC EVK uses Micron MT25QU412A flash and RZ/G2UL
-SMARC EVK uses Renesas AT25QL128A flash. With current pin setting for
-IOVF pin, 4-bit flash write fails for AT25QL128A flash. Use Hi-Z state
-as the default for IOVF pins, so that spi controller driver in linux will
-be independent of flash type.
-
-To support this, during board production, the bit 4 of the NV config
-register must be cleared by the bootloader for Micron flash.
-
-Output from u-boot after clearing bit4 of NVCR register.
-=> renesas_micron_flash_nvcr
-SF: Detected mt25qu512a with page size 256 Bytes, erase size 64 KiB, total 64 MiB
-
-Update partition table for spi-nor flash, so that we can flash bootloaders
-in Linux by executing the below commands:
+Tested the flash by flashing bootloaders:
 flash_erase /dev/mtd0  0 0
 flash_erase /dev/mtd1  0 0
 mtd_debug write /dev/mtd0 0 ${BL2_FILE_SIZE} ${BL2_IMAGE}
 mtd_debug write /dev/mtd1 512 ${FIP_FILE_SIZE} ${FIP_IMAGE}
 
-RFC->v1:
- * Dropped patches related to set_iofv() callback
- * Used Hi-Z state as the default for IOVF pin state.
- * Enabled Serial NOR flash on RZ/G2UL SMARC EVK
- * Updated partition table on RZ/{G2L,G2LC,V2L} SMARC EVK in order to
-   flash bootloader images from Linux.
- 
-RFC: https://lore.kernel.org/linux-renesas-soc/e8ed909b39b5a7de46a07d2b57c0393a@walle.cc/T/#t
-
-Biju Das (3):
-  memory: renesas-rpc-if: Use Hi-Z state as the default for IOVF pin
-  arm64: dts: renesas: rzg2ul-smarc-som: Enable serial NOR flash
-  arm64: dts: renesas: rz{g2l,g2lc}-smarc-som: Update partition table
-    for spi-nor flash
-
- .../boot/dts/renesas/rzg2l-smarc-som.dtsi     | 15 ++++--
- .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    | 15 ++++--
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2:
+ * New patch.
+---
  .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 48 +++++++++++++++++++
- drivers/memory/renesas-rpc-if.c               |  2 +-
- 4 files changed, 71 insertions(+), 9 deletions(-)
+ 1 file changed, 48 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+index 97cdad2a12e2..db41970ac9a0 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+@@ -179,6 +179,18 @@ eth1_pins: eth1 {
+ 			 <RZG2L_PORT_PINMUX(18, 5, 1)>; /* IRQ7 */
+ 	};
+ 
++	qspi0_pins: qspi0 {
++		qspi0-data {
++			pins = "QSPI0_IO0", "QSPI0_IO1", "QSPI0_IO2", "QSPI0_IO3";
++			power-source = <1800>;
++		};
++
++		qspi0-ctrl {
++			pins = "QSPI0_SPCLK", "QSPI0_SSL";
++			power-source = <1800>;
++		};
++	};
++
+ 	sdhi0_emmc_pins: sd0emmc {
+ 		sd0_emmc_data {
+ 			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3",
+@@ -230,6 +242,42 @@ sd0_mux_uhs {
+ 	};
+ };
+ 
++&sbc {
++	pinctrl-0 = <&qspi0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		m25p,fast-read;
++		spi-max-frequency = <50000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "bl2";
++				reg = <0x00000000 0x0001c000>;
++			};
++
++			partition@1d000 { /* fip is at offset 0x200 */
++				label = "fip";
++				reg = <0x0001d000 0x7e3000>;
++			};
++
++			partition@800000 {
++				label = "user";
++				reg = <0x800000 0x800000>;
++			};
++		};
++	};
++};
++
+ #if (SW_SW0_DEV_SEL)
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_emmc_pins>;
 -- 
 2.43.0
 
