@@ -1,117 +1,123 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD426FB8
-	for <linux-renesas-soc@vger.kernel.org>; Sun,  7 Jul 2024 05:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6335318059
+	for <linux-renesas-soc@vger.kernel.org>; Sun,  7 Jul 2024 08:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720330885; cv=none; b=off6KST/XaQF/XYZV7JRXcNuDroxD1VWlEEu7bD0aIjIYY6X3Ts2El+BjQOrTXAk/OssSnr0ZgumndMFbnkjpkDyXa1dS+eCVuPkFRUIyB8C+UNfFgiEEVPvP2I1CdRkdhN03hOMZElzQg9EgdFDPgGom57czn7xmyh3VpFvhyM=
+	t=1720340943; cv=none; b=Gfnswcbbialaq/HuYkUIjyu8h7Cvphxw1iypsMLSv4AA7CM3/1c3MxIo+rlyJOOkLjjEFcBpgwHecRw6xpPDMp1TGpmzPA7IEzfUgNccBwXxGzlcCM3ualX8c9wWPwbUZWiwfhHccdsGpD0/Q/hpQo3UWSGt34j4X2up7F+yG6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720330885; c=relaxed/simple;
-	bh=54TshYdjTFTyT0bm//p325eJ7KyUzGZQ/yI61XlND3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQDDgMmYmLr2LyVnWnwlqCnaqZlZVvIIkkqCAKUZWfY0o6v/+nbwY0X5vbntm32Ri69J+0e8Z9NYFOjE2jv2gw4Yi4rZS5ds94AQ89oElZKnD5pwcC8bCdKaRXIDKMqR1+Q+HMkNZcNRii/Zxv0BDATW41jiktfBLcUScx7UdIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IPlYaaXA; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1720340943; c=relaxed/simple;
+	bh=OzHvO6rVAWLMwGOBglvI6ki+1drfBQjh5lYtrpaYyX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=A5+BNTKWu+Agj9OEZdUdbhcLC9TPzDz4S6U/gJdfsd/Cvw+UlSQ3x9vAEtNhjeqFelQxv6EO1AZ5l/zSYNS2IkmEd0+Ka307zWj9SA/sCjqwpIZU3NCZ60+6O7deOH1jZOFjFHjec6roOO4Zqh2cJgBcOPRH1Di8BreCjH14QQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=arzLq/Nt; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IPlYaaXA"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="arzLq/Nt"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Id5g
-	KhGTHs9OJ43RUBWKvLyw6xg79PIts1vBUkV6i60=; b=IPlYaaXAWna59U4y+1jZ
-	Z2SbWi3/wd64EkaXPb/PfeNE6HACwhWlOltgXV78dsbZrxxQFSdItx422EpFOi5n
-	+dOu8Ma6/98xbBDTS8UTst3canFKMXvYHDNcD8J4hBdB+ELYA1zN6v+VXMiVz7xB
-	wKjh/emkMBqIzBGjfvW1RWRKzmHnANHJ5nP2zJEPcfKDisp5aWIa7fQuHigkVYyD
-	8tmCxGDfdQT21bEHbXv6tw+EgO/1k+UlF7vchP1KEdEIOZOcOOqHkpaf/QQ6euKA
-	SV9AZ8wk5SDo1DNqVmtj5RotU8sn+hwgHMA4IIZ4GWK2cesq3uB+JQNX/fp6XXif
-	Yw==
-Received: (qmail 4010647 invoked from network); 7 Jul 2024 07:41:18 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Jul 2024 07:41:18 +0200
-X-UD-Smtp-Session: l3s3148p1@N7zmvqEc3qxQT+F6
-Date: Sun, 7 Jul 2024 07:41:17 +0200
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=nc77Nyudax4dUYLrDvKpXrdOETKQVPpzHynxuO9OHTM=; b=arzLq/
+	Nt8S9/n3TfoP5EIKzzC3wBgZKnGNfmkbosqRFGu58ZslWTP7n9F/iYadhoC4wTK2
+	v9Ctt+/9uQCoc8+hzooVNyvf31AXpmTlG2R+z+kcJfS72UF47gYm9GqJ96jHteHu
+	pxa0m75AQjd+CwGwIcAAfKBqr6wp4wHFDvEXGDXS2WolV0lDHBlG81tG/KTmPNr5
+	R78cfkhPXGRPNYlBclBtfM3mILrMdcNVd631MlO94Avk55GuIszRy9ezFeqMsZmH
+	ABht3fXjFuRqrJPswLcFxf1rwl55CnkZQ3J0gSdtBb7FOnrTn01oIXDi/oi1r3J4
+	2f4iNuDhj7qYTpzw==
+Received: (qmail 4044189 invoked from network); 7 Jul 2024 10:28:57 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Jul 2024 10:28:57 +0200
+X-UD-Smtp-Session: l3s3148p1@okB2FqQcRpRQT+F6
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-sh@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] mfd: tmio: simplify header and move to
- platform_data
-Message-ID: <Zooqfe1sJQsvltwj@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lee Jones <lee@kernel.org>, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org
-References: <20240213220221.2380-8-wsa+renesas@sang-engineering.com>
- <170870160052.1698319.4712751560931025638.b4-ty@kernel.org>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] i2c: rcar: bring hardware to known state when probing
+Date: Sun,  7 Jul 2024 10:28:46 +0200
+Message-ID: <20240707082848.5424-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240707082848.5424-1-wsa+renesas@sang-engineering.com>
+References: <20240707082848.5424-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fNHf+Thy2CjldTx0"
-Content-Disposition: inline
-In-Reply-To: <170870160052.1698319.4712751560931025638.b4-ty@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+When probing, the hardware is not brought into a known state. This may
+be a problem when a hypervisor restarts Linux without resetting the
+hardware, leaving an old state running. Make sure the hardware gets
+initialized, especially interrupts should be cleared and disabled.
 
---fNHf+Thy2CjldTx0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Closes: https://lore.kernel.org/r/20240702045535.2000393-1-dirk.behme@de.bosch.com
+Fixes: 6ccbe607132b ("i2c: add Renesas R-Car I2C driver")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On Fri, Feb 23, 2024 at 03:20:00PM +0000, Lee Jones wrote:
-> On Tue, 13 Feb 2024 23:02:19 +0100, Wolfram Sang wrote:
-> > Changes since v1:
-> >=20
-> > * rebased to rc4
-> > * collected all needed acks (Thanks!)
-> > * capitalized first letter in commit subject
-> >=20
-> > The MFD parts of the TMIO have been removed by Arnd, so that only the
-> > SD/MMC related functionality is left. Remove the outdated remains in the
-> > public header file and then move it to platform_data as the data is now
-> > specific for the SD/MMC part.
-> >=20
-> > [...]
->=20
-> Applied, thanks!
->=20
-> [1/6] mfd: tmio: Remove obsolete platform_data
->       commit: 58d6d15662e4039fab7d786f0426843befa77ad4
-> [2/6] mfd: tmio: Remove obsolete io accessors
->       commit: e927d7bac109d8ca1729dda47a8dbc220efdb50e
-> [3/6] mmc: tmio/sdhi: Fix includes
->       commit: bed05c68aa8f078206143700cd37e42a0084155f
-> [4/6] mfd: tmio: Update include files
->       commit: 3ef94c41db82573dc1e1dd6c259aec8ef6caaaf3
-> [5/6] mfd: tmio: Sanitize comments
->       commit: 2d417dda59123b9523a19ce75fea3fd1056c3b4c
-> [6/6] mfd: tmio: Move header to platform_data
->       commit: 858b29729c9d319b9cd1441646cc3af246d3c3f9
+Should go to for-current.
 
-This series is not upstream yet?
+Changes since v1:
+* renamed new function to *_reset_slave() instead of *_init_slave()
+  which is more appropriate
+* do not mention refactorization in commit message
+* added Fixes tag
 
+ drivers/i2c/busses/i2c-rcar.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---fNHf+Thy2CjldTx0
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 828aa2ea0fe4..ec73463ea9b5 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -257,6 +257,14 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
+ 	}
+ }
+ 
++static void rcar_i2c_reset_slave(struct rcar_i2c_priv *priv)
++{
++	rcar_i2c_write(priv, ICSIER, 0);
++	rcar_i2c_write(priv, ICSSR, 0);
++	rcar_i2c_write(priv, ICSCR, SDBS);
++	rcar_i2c_write(priv, ICSAR, 0); /* Gen2: must be 0 if not using slave */
++}
++
+ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
+ {
+ 	int ret;
+@@ -1033,11 +1041,8 @@ static int rcar_unreg_slave(struct i2c_client *slave)
+ 
+ 	/* ensure no irq is running before clearing ptr */
+ 	disable_irq(priv->irq);
+-	rcar_i2c_write(priv, ICSIER, 0);
+-	rcar_i2c_write(priv, ICSSR, 0);
++	rcar_i2c_reset_slave(priv);
+ 	enable_irq(priv->irq);
+-	rcar_i2c_write(priv, ICSCR, SDBS);
+-	rcar_i2c_write(priv, ICSAR, 0); /* Gen2: must be 0 if not using slave */
+ 
+ 	priv->slave = NULL;
+ 
+@@ -1152,7 +1157,9 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 		goto out_pm_disable;
+ 	}
+ 
+-	rcar_i2c_write(priv, ICSAR, 0); /* Gen2: must be 0 if not using slave */
++	/* Bring hardware to known state */
++	rcar_i2c_init(priv);
++	rcar_i2c_reset_slave(priv);
+ 
+ 	if (priv->devtype < I2C_RCAR_GEN3) {
+ 		irqflags |= IRQF_NO_THREAD;
+-- 
+2.43.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaKKnoACgkQFA3kzBSg
-KbZIKw/+JIjCcXe3JYSrcOsZWdIj7JXJJLj4HILlSIJ9N8wZC3897IMZ7+aAHyze
-115MselHsV3BfY4oyRfKJSXZQKkCYRE7jXkN03Ly398PHxhlpW52ej9jAOjHXH2s
-hpWADUCc/Z7rlgMINAF+0yndCmLpEB7MkjFJswED7DFcwlMg+jg8hN7LE439wN1B
-a+l5ZnNegAOtBwQPGXNAuYzG8alS4jSc1+HoSKwtLCFyKSTLT4ONDW8+QnAxNge0
-6i7hoCiZtVp7N9rhpTtAv+lpA15Low9o+Msp9R0wWTKWLyFTBn7Ok/QbZT6Cz1c3
-sVYvEVismu5HnB7if5tN6rtH3G83p5rusZyo6qLPptCevBNCJD4eGPAjM26UOhed
-B4fZbCztyXg9npCZtZjzS1Ta4QMmQ79Bo14TQNfB5Z2C28gjijSOes7FrWO7V6nr
-gDxwQOMPkyAmSCusyd19ftSd0aMWo8vr2f/AZV30j3IO0GM/jcWZCPtqLxIsIIJD
-pG+xa8oLku3zfmgGMv1oIe7tXoXZSw2/+uD6yID38L/8cNVaBzYsCmqKUDswfiPy
-6vKqjsCXnD87ATA6TM1H6ClJiwW5JqXtuZptIFvocpIdfwTkQEFjgH0IxsUNfvdN
-1YDDp1Qlbe63FW5twOIJYQ1BrRqfsqmEnC0vEKdepokFQG5IIJM=
-=sLOL
------END PGP SIGNATURE-----
-
---fNHf+Thy2CjldTx0--
