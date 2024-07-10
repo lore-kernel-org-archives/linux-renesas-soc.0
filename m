@@ -1,121 +1,221 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F4B192480
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jul 2024 13:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0B019248A
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jul 2024 13:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616402; cv=none; b=KGlolKASplfVnhmhb5FK5/bb2JXmPtMw6UljPgHZ50VdqaIEAqHxmMZYQwQ9IEC552a+IeB07jHOO5D+0tp0a7gMzueMX66n+Uo03Mhi+MexjjhrQqqzcYDq7iFMdviaRus4FHZ09A9OghJTxRlYDudT6Qlar8/IugE+k4zU/mc=
+	t=1720617054; cv=none; b=SPOS0Th8xIYHjyPsqOvI2LlTF2Err58J6RS+xCeXFFtqh9DGa9ACXXyhyatMXqRfPcg8TH/RECIvPxV5apHUkvJuMRP+kN/Y3h1Lb/Gf8XV1983Jj9aetuQ7Ioc3Zf0ZtWMlZMgKQkQ89cbcVJD+8Gs2CY9hRSmuLAvTsDo2QsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616402; c=relaxed/simple;
-	bh=+q8K+JhEmrQnBJLkJsy7lFA+cisrhXhsBdLSScjyYmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MjjPwgkWtx7qJix11JBlV4SqWwF30koZVl0bimoLrpcagHDN6Uj7cpHSImwPjCyfP9aDniPXrtk+ubacN2i1UESBs4kfhbRE8QC36d+v00wNHNhu6MR9yHND1v0BV6FenqmN7x7URTjGT+jLDVtp4c/WqSoJJHq2V428eY7k8Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=H/pXqN6N; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="H/pXqN6N"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee910d6a8bso56781561fa.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jul 2024 06:00:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720616398; x=1721221198; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VGdJpvqIEQU8RX9NGwZGOHnsVHJRF022GnfIot2nots=;
-        b=H/pXqN6Ni5GIa/0lwuWvURtitRPQTpC6tgkWVPIUVd7seDFf1KkPsy6AsiTKhrlffQ
-         sqqne0JaKEDdQLicFH4fhbh5ZhQ54TzWG3xyIZ5oOc2SpTo5r582kO7aF8Ntq6VvHBsC
-         WR5HY8SGW04btEjfM276HTqngrI3yWBkSBe8EHN8ccKUUfHp9q9wycHzfOrVS3Bq8h9e
-         Hnk6jjtwnSDZt6xN7B3i4lkEz6b8/lRyKf83yRSSBW+xE6BQInJB+pTFgiZDlltFNJrR
-         ltOO8+FvBSooMQNIQDnz81QRj9tkvmsWaiJccrnVmiF6eCo0/nhyiYFOGvoFbk7JTyzd
-         zmwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720616398; x=1721221198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VGdJpvqIEQU8RX9NGwZGOHnsVHJRF022GnfIot2nots=;
-        b=rWeUS3Fv+aUnLNxadBlaIlDQzRuUmMg7c+Kfbbw8KTGTXD8dfSFhM0o8X5w0/B3y8q
-         YujPGOy8x7BJrPBLoDCYDi9J9hB9lSEMq9Ozkh955PZiwkQQ8sHtr03w2mPKDGLKPNYp
-         FX8lfFGAfe087E9zz2vIOsA0UcR0o6Dm6lpfibc9+BIDPtQ8LiRUQp+MqSQIR1Kua65R
-         l1YkwN0DGfpr4KvZclHgVU5lR1xrlh/FKBXzWKYI7qUaBoY7fxdDZ+eTmGfVw2KXc6dP
-         P15iMx8OunVAJcOED8LxIESLYl8Rr1tacNXirTDWyqguAE1jmQ3OYogFXI0oS6GT6CWK
-         NwgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEENIOiBu9MlaA6e6pSerduE6EqEs6ABXKmwVF7bH6HrguSeXEkr/GbBc2InGZSZz9a2fqfs/8qVo5Tg0I+QVahIaPUD+/Nbt3GxnWCAt7E5U=
-X-Gm-Message-State: AOJu0Yw02hH0ECRbqAACgflIV+GM+kEZSKETdnSGjnSZLHxjzEJuy7Lm
-	upL/IDLb67LAECZI6hTcB29f6KhH3SwwWkORc76I+IpJkxn8kGpYjQvqaQyMUGW+/0/jdvVeunI
-	GE/k/cy+dgyQMLgR3HKN52SPX1uX9DRjQZ52fvQ==
-X-Google-Smtp-Source: AGHT+IH/j0tB3q6Oob0h+dYBea8dzUqqOODjZONtdFvf3j/P6dPoyQJkhUenc2mYLdwUqlwO12I2J5bpi1srvsWqmLs=
-X-Received: by 2002:a2e:b046:0:b0:2ee:83f7:8b32 with SMTP id
- 38308e7fff4ca-2eeb30dc45amr34980521fa.21.1720616398404; Wed, 10 Jul 2024
- 05:59:58 -0700 (PDT)
+	s=arc-20240116; t=1720617054; c=relaxed/simple;
+	bh=KsuUndYJ7Itbt5bOzufgL1SLDka5p03JjfsGb7E9M54=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uWdcKddm5ALER8R//ycaRYs3JD8SsTkxcKXFxN6x/1xsaV5qXsQYGKw/HQ4adnV9JJk6EPQ3UOI/FDYXtLjq6oZEyCKraiVUH4tMDvEWAK+I++c03mS+AWeTCDf3vu8vn7IJLTf3K9BLVR/nyer+Vb0qXTb0q4KsJ9UNuNmBQgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2340:18a1:4138:37d2])
+	by xavier.telenet-ops.be with bizsmtp
+	id lpAp2C00J4znMfS01pApdw; Wed, 10 Jul 2024 15:10:50 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sRX5f-001cTJ-ST;
+	Wed, 10 Jul 2024 15:10:49 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sRX5t-00CQBt-Fa;
+	Wed, 10 Jul 2024 15:10:49 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 05/14] clk: renesas: rcar-gen4: Add support for fractional multiplication
+Date: Wed, 10 Jul 2024 15:10:39 +0200
+Message-Id: <3b3e769977dba9c487ec12cf9594e99af4eaceb7.1720616233.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1720616233.git.geert+renesas@glider.be>
+References: <cover.1720616233.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
- <20240701-b4-v6-10-topic-usbc-tcpci-v1-5-3fd5f4a193cc@pengutronix.de> <27cf3056-5c7b-4759-b03a-1fa9b785611e@app.fastmail.com>
-In-Reply-To: <27cf3056-5c7b-4759-b03a-1fa9b785611e@app.fastmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 10 Jul 2024 14:59:47 +0200
-Message-ID: <CAMRc=McvRLeCTTXgC_OD5z5OAxQ0pZ46dTKP8XO+T-LkXKgRfQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] ARM: defconfig: convert to MTD_EEPROM_AT24
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Marco Felsch <m.felsch@pengutronix.de>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@armlinux.org.uk>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jon Hunter <jonathanh@nvidia.com>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	imx@lists.linux.dev, Linux-OMAP <linux-omap@vger.kernel.org>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 10, 2024 at 2:49=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Mon, Jul 1, 2024, at 15:53, Marco Felsch wrote:
-> > The EEPROM_AT24 Kconfig symbol is marked as deprecated. Make use of the
-> > new Kconfig symbol to select the I2C EEPROM driver support.
-> >
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >  arch/arm/configs/aspeed_g4_defconfig   | 2 +-
-> >  arch/arm/configs/aspeed_g5_defconfig   | 2 +-
-> >  arch/arm/configs/at91_dt_defconfig     | 2 +-
-> >  arch/arm/configs/axm55xx_defconfig     | 2 +-
-> >  arch/arm/configs/davinci_all_defconfig | 2 +-
-> >  arch/arm/configs/imx_v4_v5_defconfig   | 2 +-
-> >  arch/arm/configs/imx_v6_v7_defconfig   | 2 +-
-> >  arch/arm/configs/ixp4xx_defconfig      | 2 +-
-> >  arch/arm/configs/keystone_defconfig    | 2 +-
-> >  arch/arm/configs/lpc18xx_defconfig     | 2 +-
->
-> Applied to soc/defconfig, thanks
->
->    Arnd
+R-Car Gen4 PLLs support fractional multiplication, which can improve
+accuracy when configuring a specific frequency.
 
-No! Why? This is still being discussed and it's not clear it will even
-make it upstream.
+Add support for fractional multiplication to the custom clock driver
+for PLLs, which is currently used only for PLL2 on R-Car V4H.
+While at it, add the missing blank line after the function.
 
-Bart
+Note that Fractional Multiplication is not enabled by the driver,
+but used only if the boot loaded enabled it before.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is v2 of "[PATCH 2/3] clk: renesas: rcar-gen4: Add support for
+fractional multiplication", which was deemed not useful at that time,
+due to the limited accuracy improvements[1].  However, this is needed
+for using the current configuration from the hardware.
+
+v2:
+  - Drop unused variable error,
+  - Add missing register field write of CPG_PLLxCR1_NF in
+    cpg_pll_clk_set_rate(),
+  - Do not enable Fractional Multiplication unconditionally,
+  - Adapt to "8_25" naming,
+  - Add missing blank line.
+
+[1] https://lore.kernel.org/all/a174da512fb1cba0a001c9aed130a2adca14e60a.1670492384.git.geert+renesas@glider.be/
+---
+ drivers/clk/renesas/rcar-gen4-cpg.c | 70 ++++++++++++++++++++++-------
+ 1 file changed, 54 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+index ae18470d9732ec3a..7232c81bfcc7a5b7 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.c
++++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+@@ -54,6 +54,7 @@ static u32 cpg_mode __initdata;
+ 
+ /* Fractional 8.25 PLL */
+ #define CPG_PLLxCR0_NI8		GENMASK(27, 20)	/* Integer mult. factor */
++#define CPG_PLLxCR1_NF25	GENMASK(24, 0)	/* Fractional mult. factor */
+ 
+ #define CPG_PLLxCR_STC		GENMASK(30, 24)	/* R_Car V3U PLLxCR */
+ 
+@@ -67,6 +68,7 @@ static u32 cpg_mode __initdata;
+ struct cpg_pll_clk {
+ 	struct clk_hw hw;
+ 	void __iomem *pllcr0_reg;
++	void __iomem *pllcr1_reg;
+ 	void __iomem *pllecr_reg;
+ 	u32 pllecr_pllst_mask;
+ };
+@@ -77,17 +79,26 @@ static unsigned long cpg_pll_8_25_clk_recalc_rate(struct clk_hw *hw,
+ 						  unsigned long parent_rate)
+ {
+ 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
+-	unsigned int mult;
+-
+-	mult = FIELD_GET(CPG_PLLxCR0_NI8, readl(pll_clk->pllcr0_reg)) + 1;
++	u32 cr0 = readl(pll_clk->pllcr0_reg);
++	unsigned int ni, nf;
++	unsigned long rate;
++
++	ni = (FIELD_GET(CPG_PLLxCR0_NI8, cr0) + 1) * 2;
++	rate = parent_rate * ni;
++	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
++		nf = FIELD_GET(CPG_PLLxCR1_NF25, readl(pll_clk->pllcr1_reg));
++		rate += ((u64)parent_rate * nf) >> 24;
++	}
+ 
+-	return parent_rate * mult * 2;
++	return rate;
+ }
+ 
+ static int cpg_pll_8_25_clk_determine_rate(struct clk_hw *hw,
+ 					   struct clk_rate_request *req)
+ {
+-	unsigned int min_mult, max_mult, mult;
++	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
++	unsigned int min_mult, max_mult, ni, nf;
++	u32 cr0 = readl(pll_clk->pllcr0_reg);
+ 	unsigned long prate;
+ 
+ 	prate = req->best_parent_rate * 2;
+@@ -96,10 +107,23 @@ static int cpg_pll_8_25_clk_determine_rate(struct clk_hw *hw,
+ 	if (max_mult < min_mult)
+ 		return -EINVAL;
+ 
+-	mult = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
+-	mult = clamp(mult, min_mult, max_mult);
++	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
++		ni = div64_ul(req->rate, prate);
++		if (ni < min_mult) {
++			ni = min_mult;
++			nf = 0;
++		} else {
++			ni = min(ni, max_mult);
++			nf = ((u64)(req->rate - prate * ni) << 24) /
++			     req->best_parent_rate;
++		}
++	} else {
++		ni = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
++		ni = clamp(ni, min_mult, max_mult);
++		nf = 0;
++	}
++	req->rate = prate * ni + (((u64)req->best_parent_rate * nf) >> 24);
+ 
+-	req->rate = prate * mult;
+ 	return 0;
+ }
+ 
+@@ -107,17 +131,33 @@ static int cpg_pll_8_25_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				     unsigned long parent_rate)
+ {
+ 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
+-	unsigned int mult;
++	unsigned long prate = parent_rate * 2;
++	u32 cr0 = readl(pll_clk->pllcr0_reg);
++	unsigned int ni, nf;
+ 	u32 val;
+ 
+-	mult = DIV_ROUND_CLOSEST_ULL(rate, parent_rate * 2);
+-	mult = clamp(mult, 1U, 256U);
++	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
++		ni = div64_ul(rate, prate);
++		if (ni < 1) {
++			ni = 1;
++			nf = 0;
++		} else {
++			ni = min(ni, 256U);
++			nf = ((u64)(rate - prate * ni) << 24) / parent_rate;
++		}
++	} else {
++		ni = DIV_ROUND_CLOSEST_ULL(rate, prate);
++		ni = clamp(ni, 1U, 256U);
++	}
+ 
+ 	if (readl(pll_clk->pllcr0_reg) & CPG_PLLxCR0_KICK)
+ 		return -EBUSY;
+ 
+ 	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_NI8,
+-		       FIELD_PREP(CPG_PLLxCR0_NI8, mult - 1));
++		       FIELD_PREP(CPG_PLLxCR0_NI8, ni - 1));
++	if (cr0 & CPG_PLLxCR0_SSMODE_FM)
++		cpg_reg_modify(pll_clk->pllcr1_reg, CPG_PLLxCR1_NF25,
++			       FIELD_PREP(CPG_PLLxCR1_NF25, nf));
+ 
+ 	/*
+ 	 * Set KICK bit in PLLxCR0 to update hardware setting and wait for
+@@ -167,19 +207,17 @@ static struct clk * __init cpg_pll_clk_register(const char *name,
+ 
+ 	pll_clk->hw.init = &init;
+ 	pll_clk->pllcr0_reg = base + cr0_offset;
++	pll_clk->pllcr1_reg = base + cr1_offset;
+ 	pll_clk->pllecr_reg = base + CPG_PLLECR;
+ 	pll_clk->pllecr_pllst_mask = CPG_PLLECR_PLLST(index);
+ 
+-	/* Disable Fractional Multiplication and Frequency Dithering */
+-	writel(0, base + cr1_offset);
+-	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_SSMODE, 0);
+-
+ 	clk = clk_register(NULL, &pll_clk->hw);
+ 	if (IS_ERR(clk))
+ 		kfree(pll_clk);
+ 
+ 	return clk;
+ }
++
+ /*
+  * Z0 Clock & Z1 Clock
+  */
+-- 
+2.34.1
+
