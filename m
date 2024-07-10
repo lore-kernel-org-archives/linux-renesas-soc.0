@@ -1,30 +1,30 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C198192492
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D96192B68
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jul 2024 13:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617055; cv=none; b=c0g6l7aiYrHwJk2uEGWoB0GjTkOI2ITIkbUZagv9kbND/Ildcg7fL4i28W8TFdUTRNiTp4d2cI3S9Rim+2ycxBPI1+rvFeiMUZbNeMEZFdq3LWuncCg9jy5uaiUoZTCcV6OdQrpeGfqUbzwi8fjjJKaRiY7a1hbR5v3BiIE5bmo=
+	t=1720617055; cv=none; b=Mr3Z+XvFP0zw8BTLz1J0mB7o3IeXYbKT5DblYcI3nQ+zx72AuNfO6BaD2RsGSUNBnYu7AlqSghlO2OXlj+rY0ocRcnndiy2/dNVL25Oqu1tAV5hwurbn57qsOJ9QzvVD4TZBoaWvMVM8YyiK/9MD+EEEahqkVX9xSIrV+o0di54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720617055; c=relaxed/simple;
-	bh=2zaL63BasDX6Cc1M1ENcL5Tg9TJHWj4bAbNE170bn+s=;
+	bh=i8FmB2FewFO6W+F454TlJcpbHgBsZJrrz/h/NZvUENM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iu3Du3Gp8zOncjpA2WUoPGqlJJbMYQsYCnyrkwd7DEY7VG9u4fdjrlHt4sfPrM/vieGzuI+q6u/xiteO8iwl3xYnzD6Yp0sqQGviVAFzqWb+kpiJwYz3/am8h/msnsO2qF9iANZqt545oYxGbUTuX+hZyT+jhe0qN7c1zlUB/qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	 MIME-Version; b=fBbvCy5ZzKHu8QuTCBUTEi2K30E6MtKdI2FjntqR8he5IFmxrZb7zd12n1wGkDr7DXZ1+s2E0144xPj6pA7+O63WjLUt+HpXqXkF0GD6JEytlEkUT91G8T3t7b8780i2yFslF2EnCbCyp8QqMf+xMm8ajD27Zr460SqyBrPsRw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2340:18a1:4138:37d2])
-	by xavier.telenet-ops.be with bizsmtp
-	id lpAp2C00P4znMfS01pApdy; Wed, 10 Jul 2024 15:10:50 +0200
+	by laurent.telenet-ops.be with bizsmtp
+	id lpAp2C00C4znMfS01pApEy; Wed, 10 Jul 2024 15:10:50 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5g-001cTb-0j;
+	id 1sRX5f-001cTA-R4;
 	Wed, 10 Jul 2024 15:10:49 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5t-00CQCE-Is;
+	id 1sRX5t-00CQBl-DI;
 	Wed, 10 Jul 2024 15:10:49 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -33,9 +33,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/14] clk: renesas: r8a779a0: Use defines for PLL control registers
-Date: Wed, 10 Jul 2024 15:10:43 +0200
-Message-Id: <baff62509ec185713380c2f306ae37061b5a467a.1720616233.git.geert+renesas@glider.be>
+Subject: [PATCH 03/14] clk: renesas: rcar-gen4: Use FIELD_GET()
+Date: Wed, 10 Jul 2024 15:10:37 +0200
+Message-Id: <62ef9e93807f18e62b3f58445aedd7aeaa2adf5e.1720616233.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1720616233.git.geert+renesas@glider.be>
 References: <cover.1720616233.git.geert+renesas@glider.be>
@@ -47,45 +47,72 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add symbolic definitions for the various PLL control registers.
-Replace hardcoded register offsets by the new definitions.
+Improve readability by using the FIELD_GET() helper instead of
+open-coding the same operation, and by adding field definitions to get
+rid of hardcoded values.
+
+While at it, move register definitions that are only used inside the
+rcar-gen4-cpg.c source file out of the rcar-gen4-cpg.h header file.
+Add a "CPG_" prefix to SD0CKCR1.  Add comments where appropriate.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/rcar-gen4-cpg.c | 13 +++++++++++--
+ drivers/clk/renesas/rcar-gen4-cpg.h |  3 ---
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index 291e08ae7321670c..caa7e0ff2ed3efdb 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -61,6 +61,11 @@ enum clk_ids {
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN4_PLL2X_3X, CLK_MAIN, \
- 		 .offset = _offset)
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+index cd8799e04b37556e..ae18470d9732ec3a 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.c
++++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+@@ -55,6 +55,14 @@ static u32 cpg_mode __initdata;
+ /* Fractional 8.25 PLL */
+ #define CPG_PLLxCR0_NI8		GENMASK(27, 20)	/* Integer mult. factor */
  
-+#define CPG_PLL20CR	0x0834	/* PLL20 Control Register */
-+#define CPG_PLL21CR	0x0838	/* PLL21 Control Register */
-+#define CPG_PLL30CR	0x083c	/* PLL30 Control Register */
-+#define CPG_PLL31CR	0x0840	/* PLL31 Control Register */
++#define CPG_PLLxCR_STC		GENMASK(30, 24)	/* R_Car V3U PLLxCR */
 +
- static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("extal",  CLK_EXTAL),
-@@ -70,10 +75,10 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
- 	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN, CLK_EXTAL),
- 	DEF_BASE(".pll1", CLK_PLL1,	CLK_TYPE_GEN4_PLL1, CLK_MAIN),
- 	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5, CLK_MAIN),
--	DEF_PLL(".pll20", CLK_PLL20,	0x0834),
--	DEF_PLL(".pll21", CLK_PLL21,	0x0838),
--	DEF_PLL(".pll30", CLK_PLL30,	0x083c),
--	DEF_PLL(".pll31", CLK_PLL31,	0x0840),
-+	DEF_PLL(".pll20", CLK_PLL20,	CPG_PLL20CR),
-+	DEF_PLL(".pll21", CLK_PLL21,	CPG_PLL21CR),
-+	DEF_PLL(".pll30", CLK_PLL30,	CPG_PLL30CR),
-+	DEF_PLL(".pll31", CLK_PLL31,	CPG_PLL31CR),
++#define CPG_RPCCKCR		0x874	/* RPC Clock Freq. Control Register */
++
++#define CPG_SD0CKCR1		0x8a4	/* SD-IF0 Clock Freq. Control Reg. 1 */
++
++#define CPG_SD0CKCR1_SDSRC_SEL	GENMASK(30, 29)	/* SDSRC clock freq. select */
++
+ /* PLL Clocks */
+ struct cpg_pll_clk {
+ 	struct clk_hw hw;
+@@ -392,7 +400,7 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
  
- 	DEF_FIXED(".pll1_div2",		CLK_PLL1_DIV2,	CLK_PLL1,	2, 1),
- 	DEF_FIXED(".pll20_div2",	CLK_PLL20_DIV2,	CLK_PLL20,	2, 1),
+ 	case CLK_TYPE_GEN4_PLL2X_3X:
+ 		value = readl(base + core->offset);
+-		mult = (((value >> 24) & 0x7f) + 1) * 2;
++		mult = (FIELD_GET(CPG_PLLxCR_STC, value) + 1) * 2;
+ 		break;
+ 
+ 	case CLK_TYPE_GEN4_Z:
+@@ -400,7 +408,8 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
+ 					  base, core->div, core->offset);
+ 
+ 	case CLK_TYPE_GEN4_SDSRC:
+-		div = ((readl(base + SD0CKCR1) >> 29) & 0x03) + 4;
++		value = readl(base + CPG_SD0CKCR1);
++		div = FIELD_GET(CPG_SD0CKCR1_SDSRC_SEL, value) + 4;
+ 		break;
+ 
+ 	case CLK_TYPE_GEN4_SDH:
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
+index 006537e29e4eb10e..d0329ac84730d681 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.h
++++ b/drivers/clk/renesas/rcar-gen4-cpg.h
+@@ -67,9 +67,6 @@ struct rcar_gen4_cpg_pll_config {
+ 	u8 osc_prediv;
+ };
+ 
+-#define CPG_RPCCKCR	0x874
+-#define SD0CKCR1	0x8a4
+-
+ struct clk *rcar_gen4_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+ 	struct clk **clks, void __iomem *base,
 -- 
 2.34.1
 
