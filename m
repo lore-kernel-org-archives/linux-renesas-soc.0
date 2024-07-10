@@ -1,30 +1,30 @@
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26467192B65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F4E192B63
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jul 2024 13:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617057; cv=none; b=SGYRmqsFNMG6GKvkU6IRg43h0NjzE/wbYVN1Em7lz99Wv06eo+kx2UoRo5kVt8HtCDo/MfCOribJPzOpu0tu9MXVFYxKMQKE+ccVcrBIAzOWbKD4bbpwN3gxI4wVS7E/r3QK913e0ApXytyauENLJ1eXQ78OzxUB0CUujU2oGnE=
+	t=1720617057; cv=none; b=OyyWWt0lajAzBBioaEuuwDGuEOz9STvgQh5Kc0Pycg/xDrpjItKXjLyVgRrudKaUv3Jr0+A3Ryiutj12rCINzK7YutcsQMjqy1x1h3rD5odKZRMyrnvoAoN0oNVtehJSduYja7PrhYJQ8hbf5Ck6/9+zIfrniLSzssGIC29cRXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720617057; c=relaxed/simple;
-	bh=n2TASd3TZdWoh9fgkpoKHEQ7tawGZgtX3/NFoowI/A0=;
+	bh=M40v1S90URYO+AMa8R2GFOh3eRwpbMW52zNqbJQCY8Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j8Jvl6XSZy0RwMfxTdyEvMmBPpKPcx4B429QHz8e440a8qFZPKGaT5+5K1apNnpGR8wdrx51eSJn5qjfUVlwqjrG0eDIFBz9C/8to9/FR5Gi2Oy4Vf3cCD3UC0/vCIf/aXtqfngOyLBzCdHfaVj1XitwwumW/GJtZdP1Z8nPrIU=
+	 MIME-Version; b=XuzNxqKRc+4LpqqPSAIyzk/ET1uzvvIKok4afja3uT0kA2d9g6FFA+MZ/0w/gQXaUYdyVlcajCBlS5OirAx+otWVyTpyXzk2xOgoCBMkZNz4WMnyO2+2k2yxy8RhcHos6Ih+RQOMpE40O9E70ozAa2or3BZII8J1eVIvnD5qJQg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2340:18a1:4138:37d2])
 	by laurent.telenet-ops.be with bizsmtp
-	id lpAp2C00G4znMfS01pApF0; Wed, 10 Jul 2024 15:10:50 +0200
+	id lpAp2C00A4znMfS01pApEx; Wed, 10 Jul 2024 15:10:50 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5g-001cTf-1g;
+	id 1sRX5f-001cT4-PY;
 	Wed, 10 Jul 2024 15:10:49 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5t-00CQCK-KC;
+	id 1sRX5t-00CQBg-Cf;
 	Wed, 10 Jul 2024 15:10:49 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -33,9 +33,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/14] clk: renesas: r8a779f0: Model PLL1/2/3/6 as fractional PLLs
-Date: Wed, 10 Jul 2024 15:10:44 +0200
-Message-Id: <7f0f381e43debbcf86a8fbe2a1295e6e6e7f2200.1720616233.git.geert+renesas@glider.be>
+Subject: [PATCH 02/14] clk: renesas: rcar-gen4: Clarify custom PLL clock support
+Date: Wed, 10 Jul 2024 15:10:36 +0200
+Message-Id: <c2ab25a0c1bbbfa1ecd756dff8ff193fd4d8935e.1720616233.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1720616233.git.geert+renesas@glider.be>
 References: <cover.1720616233.git.geert+renesas@glider.be>
@@ -47,46 +47,114 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, all PLLs are modelled as fixed divider clocks, based on the
-state of the mode pins.  However, the boot loader stack may have changed
-the actual PLL configuration from the default, leading to incorrect
-clock frequencies.
+The custom clock driver that models the PLL clocks on R-Car Gen4 assumes
+the integer and fractional[*] multiplication field sizes as used on
+R-Car V4H and V4M, representing a fractional 8.25 number.
 
-Describe PLL1 as a fixed fractional PLL instead, and PLL2, PLL3, and
-PLL6 as variable fractional PLLs.  Note that the R-Car Gen4 clock driver
-does not support variable 9.24 PLLs yet, so the driver will downgrade
-them to fixed fractional PLLs, too.
+Rename the related definitions, functions, and structures to clarify
+this, and to prepare for the advent of support for the different field
+sizes on R-Car S4-8.
 
-Reformat nearby lines to retain a consistent layout.
+[*] The fractional part is not yet supported.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/renesas/rcar-gen4-cpg.c | 32 +++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index f05390558a22a367..46b21cca7409010f 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -57,12 +57,12 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
- 	DEF_INPUT("extalr",	CLK_EXTALR),
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+index 72c740f18ac9b370..cd8799e04b37556e 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.c
++++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+@@ -45,7 +45,6 @@ static u32 cpg_mode __initdata;
+ #define CPG_PLL6CR1		0x8d8
  
- 	/* Internal Core Clocks */
--	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN, CLK_EXTAL),
--	DEF_BASE(".pll1", CLK_PLL1,	CLK_TYPE_GEN4_PLL1, CLK_MAIN),
--	DEF_BASE(".pll2", CLK_PLL2,	CLK_TYPE_GEN4_PLL2, CLK_MAIN),
--	DEF_BASE(".pll3", CLK_PLL3,	CLK_TYPE_GEN4_PLL3, CLK_MAIN),
--	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5, CLK_MAIN),
--	DEF_BASE(".pll6", CLK_PLL6,	CLK_TYPE_GEN4_PLL6, CLK_MAIN),
-+	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN,	CLK_EXTAL),
-+	DEF_GEN4_PLL_F9_24(".pll1", 1,	CLK_PLL1,		CLK_MAIN),
-+	DEF_GEN4_PLL_V9_24(".pll2", 2,	CLK_PLL2,		CLK_MAIN),
-+	DEF_GEN4_PLL_V9_24(".pll3", 3,	CLK_PLL3,		CLK_MAIN),
-+	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5,	CLK_MAIN),
-+	DEF_GEN4_PLL_V9_24(".pll6", 6,	CLK_PLL6,		CLK_MAIN),
+ #define CPG_PLLxCR0_KICK	BIT(31)
+-#define CPG_PLLxCR0_NI		GENMASK(27, 20)	/* Integer mult. factor */
+ #define CPG_PLLxCR0_SSMODE	GENMASK(18, 16)	/* PLL mode */
+ #define CPG_PLLxCR0_SSMODE_FM	BIT(18)	/* Fractional Multiplication */
+ #define CPG_PLLxCR0_SSMODE_DITH	BIT(17) /* Frequency Dithering */
+@@ -53,6 +52,9 @@ static u32 cpg_mode __initdata;
+ #define CPG_PLLxCR0_SSFREQ	GENMASK(14, 8)	/* SSCG Modulation Frequency */
+ #define CPG_PLLxCR0_SSDEPT	GENMASK(6, 0)	/* SSCG Modulation Depth */
  
- 	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2,	CLK_PLL1,	2, 1),
- 	DEF_FIXED(".pll2_div2",	CLK_PLL2_DIV2,	CLK_PLL2,	2, 1),
++/* Fractional 8.25 PLL */
++#define CPG_PLLxCR0_NI8		GENMASK(27, 20)	/* Integer mult. factor */
++
+ /* PLL Clocks */
+ struct cpg_pll_clk {
+ 	struct clk_hw hw;
+@@ -63,19 +65,19 @@ struct cpg_pll_clk {
+ 
+ #define to_pll_clk(_hw)   container_of(_hw, struct cpg_pll_clk, hw)
+ 
+-static unsigned long cpg_pll_clk_recalc_rate(struct clk_hw *hw,
+-					     unsigned long parent_rate)
++static unsigned long cpg_pll_8_25_clk_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
+ {
+ 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
+ 	unsigned int mult;
+ 
+-	mult = FIELD_GET(CPG_PLLxCR0_NI, readl(pll_clk->pllcr0_reg)) + 1;
++	mult = FIELD_GET(CPG_PLLxCR0_NI8, readl(pll_clk->pllcr0_reg)) + 1;
+ 
+ 	return parent_rate * mult * 2;
+ }
+ 
+-static int cpg_pll_clk_determine_rate(struct clk_hw *hw,
+-				      struct clk_rate_request *req)
++static int cpg_pll_8_25_clk_determine_rate(struct clk_hw *hw,
++					   struct clk_rate_request *req)
+ {
+ 	unsigned int min_mult, max_mult, mult;
+ 	unsigned long prate;
+@@ -93,8 +95,8 @@ static int cpg_pll_clk_determine_rate(struct clk_hw *hw,
+ 	return 0;
+ }
+ 
+-static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+-				unsigned long parent_rate)
++static int cpg_pll_8_25_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long parent_rate)
+ {
+ 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
+ 	unsigned int mult;
+@@ -106,8 +108,8 @@ static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (readl(pll_clk->pllcr0_reg) & CPG_PLLxCR0_KICK)
+ 		return -EBUSY;
+ 
+-	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_NI,
+-		       FIELD_PREP(CPG_PLLxCR0_NI, mult - 1));
++	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_NI8,
++		       FIELD_PREP(CPG_PLLxCR0_NI8, mult - 1));
+ 
+ 	/*
+ 	 * Set KICK bit in PLLxCR0 to update hardware setting and wait for
+@@ -128,10 +130,10 @@ static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				  val & pll_clk->pllecr_pllst_mask, 0, 1000);
+ }
+ 
+-static const struct clk_ops cpg_pll_clk_ops = {
+-	.recalc_rate = cpg_pll_clk_recalc_rate,
+-	.determine_rate = cpg_pll_clk_determine_rate,
+-	.set_rate = cpg_pll_clk_set_rate,
++static const struct clk_ops cpg_pll_v8_25_clk_ops = {
++	.recalc_rate = cpg_pll_8_25_clk_recalc_rate,
++	.determine_rate = cpg_pll_8_25_clk_determine_rate,
++	.set_rate = cpg_pll_8_25_clk_set_rate,
+ };
+ 
+ static struct clk * __init cpg_pll_clk_register(const char *name,
+@@ -151,7 +153,7 @@ static struct clk * __init cpg_pll_clk_register(const char *name,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	init.name = name;
+-	init.ops = &cpg_pll_clk_ops;
++	init.ops = &cpg_pll_v8_25_clk_ops;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
 -- 
 2.34.1
 
