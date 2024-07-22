@@ -1,47 +1,46 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A3116D32D
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 11:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F58F16D4CE
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 12:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721649564; cv=none; b=UWgdL3KF4LWMRro/jI83ltNV6nYjZNwb1nMGOZrWDajIDxT5W8KNppFMUl2Ia5rzW767SxhUYI60OOxRz3CvDXflV7kCpOHMYGqwq1oMk1khhZPeWTNGaG0N5UHDU8eMu4DZNECecvUBmg6a8V49lcIS6crXLmeGvXT62nCDfsI=
+	t=1721649850; cv=none; b=tbJljY2d5bMBEPwOgaYHnchIrd4dPTaA5rz46zA//9gM1oPja1dteoXsXFdCqIL9ag1MVHd2NXihvr1Quxplji4KoycEIV1lRC7ZrfxiTA9uXUXve91UCEeF+Y7FPWvOeEftjD5xcMKe50pIZREwL8W/1wNFoTX6mlwbil1vvDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721649564; c=relaxed/simple;
-	bh=1JGBM2c2i0taYR3WRvlCq854iuRTAD2V7HF0ASv/PVw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jLaw4sOlLflRi0GMTa3sISrd4pdB6iqB1a0uf0kP50MM7s4Wbqz4TMdEh3eOY4tcQ+B973W/WlzQqbTwF1Fzk7PAgMsFsDDzRasdBbsS5C69zNrTajMkmjAgRFtmLvuYTSRiXSX0Ull7HcxUK8qqrOdkdk1jlV+0HpF9tC80RmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
+	s=arc-20240116; t=1721649850; c=relaxed/simple;
+	bh=qWy9RXASZTPs6u+xH3wHysH2cA1hSPDfQUjvLKSWxbc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k35nMtaCihLONNB6hprWTJn5Ula8Bdi9X9Fs6CnRnsYeRwvVjoYqm1mzeSJgPqnGgOgGr35jIWQ2D+YudAMswkIjMWePAhZCTtSgZDKjplqVcoTMqCeTBLiSRK5IE1lX0q3sk5LXtNg1zZs62aZsfHHaXrONaJAbj/mnpLtlQ00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4WSJWS2hkcz4wxrH
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 13:50:44 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:173b:9414:53f5:de4c])
-	by laurent.telenet-ops.be with bizsmtp
-	id qbqd2C0051wvoRx01bqdRA; Mon, 22 Jul 2024 13:50:37 +0200
+	by andre.telenet-ops.be with bizsmtp
+	id qc452C00B1wvoRx01c45Lh; Mon, 22 Jul 2024 14:04:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrYY-002zB6-En;
-	Mon, 22 Jul 2024 13:50:37 +0200
+	id 1sVrla-002zES-HX;
+	Mon, 22 Jul 2024 14:04:05 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrYq-0020iX-UQ;
-	Mon, 22 Jul 2024 13:50:36 +0200
+	id 1sVrls-00210E-Vl;
+	Mon, 22 Jul 2024 14:04:05 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 14/15] clk: renesas: rcar-gen4: Remove unused fixed PLL clock types
-Date: Mon, 22 Jul 2024 13:50:34 +0200
-Message-Id: <c0229eb3518444f61173c6fb83bdcedb058dd079.1721648548.git.geert+renesas@glider.be>
+To: Support Opensource <support.opensource@diasemi.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: sound: dlg,da7213: Convert to json-schema
+Date: Mon, 22 Jul 2024 14:04:00 +0200
+Message-Id: <7645c9024a1762d281f4067504bc32a7a3d27caa.1721649741.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1721648548.git.geert+renesas@glider.be>
-References: <cover.1721648548.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -50,72 +49,192 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All users of the fixed default PLL2/3/4/6 clock types have been
-converted to fixed or variable fractional PLL clock types.
+Convert the Dialog Semiconductor DA7212/DA7213 Audio Codec Device Tree
+binding documentation to json-schema.
+
+Add missing properties.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-v2:
-  - Add Reviewed-by.
----
- drivers/clk/renesas/rcar-gen4-cpg.c | 20 --------------------
- drivers/clk/renesas/rcar-gen4-cpg.h |  4 ----
- 2 files changed, 24 deletions(-)
+ .../devicetree/bindings/sound/da7213.txt      |  45 --------
+ .../devicetree/bindings/sound/dlg,da7213.yaml | 103 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 3 files changed, 104 insertions(+), 45 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/da7213.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/dlg,da7213.yaml
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index 2a0f520d56b5aa96..31aa790fd003d45e 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -440,31 +440,11 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
- 		div = cpg_pll_config->pll1_div;
- 		break;
- 
--	case CLK_TYPE_GEN4_PLL2:
--		mult = cpg_pll_config->pll2_mult;
--		div = cpg_pll_config->pll2_div;
--		break;
+diff --git a/Documentation/devicetree/bindings/sound/da7213.txt b/Documentation/devicetree/bindings/sound/da7213.txt
+deleted file mode 100644
+index 94584c96c4ae2237..0000000000000000
+--- a/Documentation/devicetree/bindings/sound/da7213.txt
++++ /dev/null
+@@ -1,45 +0,0 @@
+-Dialog Semiconductor DA7212/DA7213 Audio Codec bindings
 -
--	case CLK_TYPE_GEN4_PLL3:
--		mult = cpg_pll_config->pll3_mult;
--		div = cpg_pll_config->pll3_div;
--		break;
+-======
 -
--	case CLK_TYPE_GEN4_PLL4:
--		mult = cpg_pll_config->pll4_mult;
--		div = cpg_pll_config->pll4_div;
--		break;
+-Required properties:
+-- compatible : Should be "dlg,da7212" or "dlg,da7213"
+-- reg: Specifies the I2C slave address
 -
- 	case CLK_TYPE_GEN4_PLL5:
- 		mult = cpg_pll_config->pll5_mult;
- 		div = cpg_pll_config->pll5_div;
- 		break;
- 
--	case CLK_TYPE_GEN4_PLL6:
--		mult = cpg_pll_config->pll6_mult;
--		div = cpg_pll_config->pll6_div;
--		break;
+-Optional properties:
+-- clocks : phandle and clock specifier for codec MCLK.
+-- clock-names : Clock name string for 'clocks' attribute, should be "mclk".
 -
- 	case CLK_TYPE_GEN4_PLL2X_3X:
- 		value = readl(base + core->offset);
- 		mult = (FIELD_GET(CPG_PLLxCR_STC, value) + 1) * 2;
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
-index 2dadacacf3f911e2..fccc3090c7c34b70 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.h
-@@ -12,12 +12,8 @@
- enum rcar_gen4_clk_types {
- 	CLK_TYPE_GEN4_MAIN = CLK_TYPE_CUSTOM,
- 	CLK_TYPE_GEN4_PLL1,
--	CLK_TYPE_GEN4_PLL2,
- 	CLK_TYPE_GEN4_PLL2X_3X,	/* r8a779a0 only */
--	CLK_TYPE_GEN4_PLL3,
--	CLK_TYPE_GEN4_PLL4,
- 	CLK_TYPE_GEN4_PLL5,
--	CLK_TYPE_GEN4_PLL6,
- 	CLK_TYPE_GEN4_PLL_F8_25,	/* Fixed fractional 8.25 PLL */
- 	CLK_TYPE_GEN4_PLL_V8_25,	/* Variable fractional 8.25 PLL */
- 	CLK_TYPE_GEN4_PLL_F9_24,	/* Fixed fractional 9.24 PLL */
+-- dlg,micbias1-lvl : Voltage (mV) for Mic Bias 1
+-	[<1600>, <2200>, <2500>, <3000>]
+-- dlg,micbias2-lvl : Voltage (mV) for Mic Bias 2
+-	[<1600>, <2200>, <2500>, <3000>]
+-- dlg,dmic-data-sel : DMIC channel select based on clock edge.
+-	["lrise_rfall", "lfall_rrise"]
+-- dlg,dmic-samplephase : When to sample audio from DMIC.
+-	["on_clkedge", "between_clkedge"]
+-- dlg,dmic-clkrate : DMIC clock frequency (Hz).
+-	[<1500000>, <3000000>]
+-
+- - VDDA-supply : Regulator phandle for Analogue power supply
+- - VDDMIC-supply : Regulator phandle for Mic Bias
+- - VDDIO-supply : Regulator phandle for I/O power supply
+-
+-======
+-
+-Example:
+-
+-	codec_i2c: da7213@1a {
+-		compatible = "dlg,da7213";
+- 		reg = <0x1a>;
+-
+- 		clocks = <&clks 201>;
+-		clock-names = "mclk";
+-
+-		dlg,micbias1-lvl = <2500>;
+-		dlg,micbias2-lvl = <2500>;
+-
+-		dlg,dmic-data-sel = "lrise_rfall";
+-		dlg,dmic-samplephase = "between_clkedge";
+-		dlg,dmic-clkrate = <3000000>;
+-	};
+diff --git a/Documentation/devicetree/bindings/sound/dlg,da7213.yaml b/Documentation/devicetree/bindings/sound/dlg,da7213.yaml
+new file mode 100644
+index 0000000000000000..c2dede1e82ffa4d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/dlg,da7213.yaml
+@@ -0,0 +1,103 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/dlg,da7213.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Dialog Semiconductor DA7212/DA7213 Audio Codec
++
++maintainers:
++  - Support Opensource <support.opensource@diasemi.com>
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    enum:
++      - dlg,da7212
++      - dlg,da7213
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: mclk
++
++  "#sound-dai-cells":
++    const: 0
++
++  dlg,micbias1-lvl:
++    description: Voltage (mV) for Mic Bias 1
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 1600, 2200, 2500, 3000 ]
++
++  dlg,micbias2-lvl:
++    description: Voltage (mV) for Mic Bias 2
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 1600, 2200, 2500, 3000 ]
++
++  dlg,dmic-data-sel:
++    description: DMIC channel select based on clock edge
++    enum: [ lrise_rfall, lfall_rrise ]
++
++  dlg,dmic-samplephase:
++    description: When to sample audio from DMIC
++    enum: [ on_clkedge, between_clkedge ]
++
++  dlg,dmic-clkrate:
++    description: DMIC clock frequency (Hz)
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 1500000, 3000000 ]
++
++  VDDA-supply:
++    description: Analogue power supply
++
++  VDDIO-supply:
++    description: I/O power supply
++
++  VDDMIC-supply:
++    description: Mic Bias
++
++  VDDSP-supply:
++    description: Speaker supply
++
++  ports:
++    $ref: audio-graph-port.yaml#/definitions/ports
++
++  port:
++    $ref: audio-graph-port.yaml#
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        codec@1a {
++            compatible = "dlg,da7213";
++            reg = <0x1a>;
++
++            clocks = <&clks 201>;
++            clock-names = "mclk";
++
++            #sound-dai-cells = <0>;
++
++            dlg,micbias1-lvl = <2500>;
++            dlg,micbias2-lvl = <2500>;
++
++            dlg,dmic-data-sel = "lrise_rfall";
++            dlg,dmic-samplephase = "between_clkedge";
++            dlg,dmic-clkrate = <3000000>;
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a577e41bd90cb1ac..990aced7e7a57e1f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6458,6 +6458,7 @@ F:	Documentation/devicetree/bindings/regulator/da92*.txt
+ F:	Documentation/devicetree/bindings/regulator/dlg,da9*.yaml
+ F:	Documentation/devicetree/bindings/regulator/dlg,slg51000.yaml
+ F:	Documentation/devicetree/bindings/sound/da[79]*.txt
++F:	Documentation/devicetree/bindings/sound/dlg,da7213.yaml
+ F:	Documentation/devicetree/bindings/thermal/dlg,da9062-thermal.yaml
+ F:	Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml
+ F:	Documentation/hwmon/da90??.rst
 -- 
 2.34.1
 
