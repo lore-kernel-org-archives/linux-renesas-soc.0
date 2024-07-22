@@ -1,123 +1,97 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FA217597
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 11:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D0116D308
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 11:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721648175; cv=none; b=V0e/YnFUA8uCQi7guMncQ/KOjl3TNDQiOWbZfOpCf+BpH5W/TNxG0Z+ar2J9kMR6du5orL/vWAJtCEtH6USLXeowkmZ45CPlz8jfN+LkWaL93Ksl4R/c423D0/xi5d1/lgwFmmsd7ALbgYWZXN7lBmIJfEwcYyppoV/GOinmlS0=
+	t=1721649047; cv=none; b=cWHLE4Oz12pbfsd7RgNnR93SqMiFtIagS4ZshB11WO5MmQteDINQ8SfadkCYqgRLwpMx+M6fFsTNXyq82bWYquHWvqtPDZtDV8rINm8m1fzB0tTpX+HCAwOeP/8CmxW0X+t4cpnwMa2FZ/4TxK3Nn22L7t+pP+W1mcOuIeUJqXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721648175; c=relaxed/simple;
-	bh=KNrCQlH/uLWxaJRmaUau+JTh0iwHCPF55QlGmTEWVCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=btCuhigdCRYRQYOi0kacQDZ/INQBsNRntGBcOu2++N8RflVmu8w9spdA0Wt2VusQ+mKYjfxXK4/bjNG6aqxk6hNwm0QqJodXwDIlhchvy94Zj16xD3wBnIRB1BuQIqO6hTBUFCsQ/DDyckd9G8gS4pvs6MwLbB8UPV03DF0+vGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6694b50a937so31705317b3.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 04:36:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721648172; x=1722252972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=trBxW1zbNAD4GJYbmM/X6M6pR5uxsPplVtqgvGSEuIQ=;
-        b=Z3WwC5vKiVayyRBcXAckJbIut14hg72iTqCgeZBDxFpE0nrScmGVhAoSD43xlkGPuM
-         kwC4STh9HHQQVifTru7QByGRvvwRqESJUWpv+P9dbhijiuplVvs58DROzeEGAZkijLNP
-         vn2igB9obaWIWOEMZcEOJYHTrgqXarjU6+h2KGkLj6WbAnOKTkEphxoYWYE/lCOCSgIe
-         R4s0V6e/58xZMj46HwRuJgovgR3uL3KbbHLsQyVzWufapCETr+adEps2urGqBrMFZ9fQ
-         +cqj29NzqfAjCaDJgsNIlOT30tCurlboUUlxsk3VOpiL2EaM8dsQPxIeygUjrPC2CUy+
-         lQNw==
-X-Gm-Message-State: AOJu0Yx3Ho+mYwKVjUAEpmyExZXJLJ8Jqz3M3uxjWf9N8hib5bDqLoAJ
-	mdXhBAq4k1CwPUe+oSBW85SmSe6DBwWy9XAJIKN3dfsEVKHTZ/tOlBDM6b1O
-X-Google-Smtp-Source: AGHT+IGLNoaRKAT3ADCi6HrrNUesJvPCLqSLUGD/fsKSHmmaMl41VP/TBB7YHFW2+2Ptd/kqlVW5TQ==
-X-Received: by 2002:a05:690c:6604:b0:646:5f0b:e54 with SMTP id 00721157ae682-66a682cbfa1mr112495957b3.8.1721648171878;
-        Mon, 22 Jul 2024 04:36:11 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-66951f727f3sm15880157b3.22.2024.07.22.04.36.11
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 04:36:11 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-65faa0614dbso42578047b3.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 04:36:11 -0700 (PDT)
-X-Received: by 2002:a05:690c:2f13:b0:615:10f8:124a with SMTP id
- 00721157ae682-66a6a417054mr79066537b3.29.1721648171469; Mon, 22 Jul 2024
- 04:36:11 -0700 (PDT)
+	s=arc-20240116; t=1721649047; c=relaxed/simple;
+	bh=z17gZ01wDDMdBg4K87TjRj6f7/4kfXUvn2XGiqCD1QY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=c8TC4xMQBtA4aSvg/FXYTNOhI98QOoDT/cUH4zucbHFE3lwTc3AOrO8QCl5BjsgtuZCwZZ77fKWg1z6VW7jfMEmu8clRO40k+igqxgK0p9aoujmtSbwDHxHdmQ2aFLSznmHwPcLCjNYvK02FpGdUhylY+74OApioajf6ayKTu98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:173b:9414:53f5:de4c])
+	by xavier.telenet-ops.be with bizsmtp
+	id qbqd2C0021wvoRx01bqd6R; Mon, 22 Jul 2024 13:50:37 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sVrYY-002zB3-E8;
+	Mon, 22 Jul 2024 13:50:37 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sVrYq-0020iS-Tf;
+	Mon, 22 Jul 2024 13:50:36 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 13/15] clk: renesas: rcar-gen4: Remove unused variable PLL2 clock type
+Date: Mon, 22 Jul 2024 13:50:33 +0200
+Message-Id: <8e5564958002351f29435f63de1304fb3b51a725.1721648548.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1721648548.git.geert+renesas@glider.be>
+References: <cover.1721648548.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87ed8bbae7.wl-kuninori.morimoto.gx@renesas.com> <87cynvbadm.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87cynvbadm.wl-kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Jul 2024 13:35:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWUsFkVO8oB19j=LitzRRCdbW5i0b2T1tx4Y1X6coXk=g@mail.gmail.com>
-Message-ID: <CAMuHMdWUsFkVO8oB19j=LitzRRCdbW5i0b2T1tx4Y1X6coXk=g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: gray-hawk-single: Add Sound support
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, Khanh Le <khanh.le.xr@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Morimoto-san,
+The variable PLL2 clock type was superseded by the more generic
+variable fractional 8.25 PLL clock type, and its sole user was converted.
 
-On Wed, Jul 3, 2024 at 2:13=E2=80=AFAM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> Because V4M supports only 1 SSI, it can't use Playback/Capture
-> in the same time. It select Playback as default.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+v2:
+  - Add Reviewed-by.
+---
+ drivers/clk/renesas/rcar-gen4-cpg.c | 9 ---------
+ drivers/clk/renesas/rcar-gen4-cpg.h | 1 -
+ 2 files changed, 10 deletions(-)
 
-Thanks for your patch^W^Wthe update!
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+index d3db602d7c5ec617..2a0f520d56b5aa96 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.c
++++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+@@ -440,15 +440,6 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
+ 		div = cpg_pll_config->pll1_div;
+ 		break;
+ 
+-	case CLK_TYPE_GEN4_PLL2_VAR:
+-		/*
+-		 * PLL2 is implemented as a custom clock, to change the
+-		 * multiplier when cpufreq changes between normal and boost
+-		 * modes.
+-		 */
+-		return cpg_pll_clk_register(core->name, __clk_get_name(parent),
+-					    base, 2, &cpg_pll_v8_25_clk_ops);
+-
+ 	case CLK_TYPE_GEN4_PLL2:
+ 		mult = cpg_pll_config->pll2_mult;
+ 		div = cpg_pll_config->pll2_div;
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
+index 80a455e62cc1321e..2dadacacf3f911e2 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.h
++++ b/drivers/clk/renesas/rcar-gen4-cpg.h
+@@ -13,7 +13,6 @@ enum rcar_gen4_clk_types {
+ 	CLK_TYPE_GEN4_MAIN = CLK_TYPE_CUSTOM,
+ 	CLK_TYPE_GEN4_PLL1,
+ 	CLK_TYPE_GEN4_PLL2,
+-	CLK_TYPE_GEN4_PLL2_VAR,
+ 	CLK_TYPE_GEN4_PLL2X_3X,	/* r8a779a0 only */
+ 	CLK_TYPE_GEN4_PLL3,
+ 	CLK_TYPE_GEN4_PLL4,
+-- 
+2.34.1
 
-> --- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-> @@ -59,6 +78,24 @@ reg_3p3v: regulator-3p3v {
->                         regulator-boot-on;
->                         regulator-always-on;
->         };
-> +
-> +       sound_mux: mux {
-
-"sound-mux", to avoid potential conflicts.
-
-> +               compatible =3D "simple-audio-mux";
-> +               mux-gpios =3D <&gpio0 1 GPIO_ACTIVE_HIGH>;
-> +               state-labels =3D "Playback", "Capture";
-> +       };
-
-> @@ -139,6 +185,29 @@ eeprom@53 {
->         };
->  };
->
-> +&i2c3 {
-> +       pinctrl-0 =3D <&i2c3_pins>;
-> +       pinctrl-names =3D "default";
-> +
-> +       status =3D "okay";
-> +       clock-frequency =3D <400000>;
-> +
-> +       ak4619@10 {
-
-codec@10
-
-> +               compatible =3D "asahi-kasei,ak4619";
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.12, with the above fixed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
