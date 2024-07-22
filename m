@@ -1,41 +1,40 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F61016C6B2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5E616D318
 	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 11:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721649047; cv=none; b=b2Z7f3x7EPy2Egtm+y6YicVqY9TWfw+b+OzhRoV92XTLkv/FX4BkzIiBCz2q5pXIz4DxO7VIRtWsBIbw0hPjDKMZd9hgMtzZqj621y8Izb5bJfCWcOP9PZOaDtg5zTEYi5/OAXxKgSM3yAwNzVZ1fvwxW7xWa7UDSHOQn2fJX/c=
+	t=1721649047; cv=none; b=AMSyBKDGfGZbg6B6g7mDXfDOLrbBbJBY56MfVwOsb6uhTkd6UZEY2PCbQlcagjzpkUoIRqHB5CTm7q2IQZCda9RDEPaUCULYoZ0+1Y1uqu7PcAd+Oahs98/XkKNH7xcLQb8d+ZEtso3BfLzI+Eg5MAyNersYgnwXbDjPz7C8dJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721649047; c=relaxed/simple;
-	bh=e2Avde2FIJuKz+a2cFf2G8iSNR0ypdypJ/+7Qx6W0AQ=;
+	bh=ufDf9sUJqnKGCfA7UHR+T+raR9P7V2MQBxiJU+xPtvQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FoBzZXzuGv2hExqqxw00+RO9RLKWAEQWK9q1fj02r2VwW3PiZYGaxMkbjSMfWAy0wH1T/IQMFIk1BnN1uji1Gxn2oLLs42aXAOcRyu5okXi9lw/tY8Hu18dgMtldrqmdeIFz1xrQFRDZJ/WWLSwZIi7Myi4/99xda8nJMlx4ZEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	 MIME-Version; b=K9stlLsxjY9g+C3Ug1Et3sbmc5NeuGxcn3vB852hIzZJy0ySRFy8IMd7/Y/5ilzIHkgIF5n4AalnO2LBb9fkcXcAtbCL7G2LL+pSGeWj5pwYEad8Jk9M5IyX4ZVvQta0rWoej7upvwwU9SBD4AwUit8cUeomAR4jXJ59ghb4Yw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:173b:9414:53f5:de4c])
-	by xavier.telenet-ops.be with bizsmtp
-	id qbqc2C00T1wvoRx01bqc6P; Mon, 22 Jul 2024 13:50:37 +0200
+	by albert.telenet-ops.be with bizsmtp
+	id qbqd2C0091wvoRx06bqdvh; Mon, 22 Jul 2024 13:50:37 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrYY-002zAO-5X;
-	Mon, 22 Jul 2024 13:50:36 +0200
+	id 1sVrYY-002zB9-FK;
+	Mon, 22 Jul 2024 13:50:37 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrYq-0020hm-M3;
+	id 1sVrYq-0020ib-Vg;
 	Mon, 22 Jul 2024 13:50:36 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 05/15] clk: renesas: rcar-gen4: Add support for fractional multiplication
-Date: Mon, 22 Jul 2024 13:50:25 +0200
-Message-Id: <1a58ebef6f54460f49fb81ba9bbf288164de2646.1721648548.git.geert+renesas@glider.be>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 15/15] clk: renesas: rcar-gen4: Remove unused default PLL2/3/4/6 configs
+Date: Mon, 22 Jul 2024 13:50:35 +0200
+Message-Id: <d13526a86066992d6afdf9bee7c1a18da72f914f.1721648548.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1721648548.git.geert+renesas@glider.be>
 References: <cover.1721648548.git.geert+renesas@glider.be>
@@ -47,183 +46,130 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-R-Car Gen4 PLLs support fractional multiplication, which can improve
-accuracy when configuring a specific frequency.
+The default PLL2/3/4/6 multiplier and divider configurations are no
+longer used after the conversion to fixed or variable fractional PLL
+clock types.
 
-Add support for fractional multiplication to the custom clock driver
-for PLLs, which is currently used only for PLL2 on R-Car V4H.
-While at it, add the missing blank line after the function.
-
-Note that Fractional Multiplication is not enabled by the driver,
-but used only if the boot loaded enabled it before.
+Note that the default configurations are still documented in the
+comments above the individual rcar_gen4_cpg_pll_config instances.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
 v2:
-  - Add Reviewed-by,
-  - Use mul_u64_u32_shr() helper,
-  - Use div64_ul() for remaining 64-by-unsigned-long divisions to fix
-    32-bit compile-test failures.
-
-v1:
-  - Drop unused variable error,
-  - Add missing register field write of CPG_PLLxCR1_NF in
-    cpg_pll_clk_set_rate(),
-  - Do not enable Fractional Multiplication unconditionally,
-  - Adapt to "8_25" naming,
-  - Add missing blank line.
-
-Initial version was "[PATCH 2/3] clk: renesas: rcar-gen4: Add support
-for fractional multiplication", which was deemed not useful at that
-time, due to the limited accuracy improvements[1].  However, this is
-needed for reading the current configuration from the hardware.
-
-[1] https://lore.kernel.org/all/a174da512fb1cba0a001c9aed130a2adca14e60a.1670492384.git.geert+renesas@glider.be/
+  - New.
 ---
- drivers/clk/renesas/rcar-gen4-cpg.c | 71 ++++++++++++++++++++++-------
- 1 file changed, 55 insertions(+), 16 deletions(-)
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 10 +++++-----
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c | 10 +++++-----
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 10 +++++-----
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c | 10 +++++-----
+ drivers/clk/renesas/rcar-gen4-cpg.h     |  8 --------
+ 5 files changed, 20 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index ae18470d9732ec3a..8bc96f22e41fdfca 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -54,6 +54,7 @@ static u32 cpg_mode __initdata;
- 
- /* Fractional 8.25 PLL */
- #define CPG_PLLxCR0_NI8		GENMASK(27, 20)	/* Integer mult. factor */
-+#define CPG_PLLxCR1_NF25	GENMASK(24, 0)	/* Fractional mult. factor */
- 
- #define CPG_PLLxCR_STC		GENMASK(30, 24)	/* R_Car V3U PLLxCR */
- 
-@@ -67,6 +68,7 @@ static u32 cpg_mode __initdata;
- struct cpg_pll_clk {
- 	struct clk_hw hw;
- 	void __iomem *pllcr0_reg;
-+	void __iomem *pllcr1_reg;
- 	void __iomem *pllecr_reg;
- 	u32 pllecr_pllst_mask;
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index e6e2c3c16c8d5bef..4c8e4c69c1bfaaa0 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -259,11 +259,11 @@ static const unsigned int r8a779a0_crit_mod_clks[] __initconst = {
+ #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
+ 					 (((md) & BIT(13)) >> 13))
+ static const struct rcar_gen4_cpg_pll_config cpg_pll_configs[4] __initconst = {
+-	/* EXTAL div	PLL1 mult/div	PLL2 mult/div	PLL3 mult/div	PLL4 mult/div	PLL5 mult/div	PLL6 mult/div	OSC prediv */
+-	{ 1,		128,	1,	0,	0,	0,	0,	144,	1,	192,	1,	0,	0,	16,	},
+-	{ 1,		106,	1,	0,	0,	0,	0,	120,	1,	160,	1,	0,	0,	19,	},
+-	{ 0,		0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	},
+-	{ 2,		128,	1,	0,	0,	0,	0,	144,	1,	192,	1,	0,	0,	32,	},
++	/* EXTAL div	PLL1 mult/div	PLL5 mult/div	OSC prediv */
++	{ 1,		128,	1,	192,	1,	16,	},
++	{ 1,		106,	1,	160,	1,	19,	},
++	{ 0,		0,	0,	0,	0,	0,	},
++	{ 2,		128,	1,	192,	1,	32,	},
  };
-@@ -77,17 +79,26 @@ static unsigned long cpg_pll_8_25_clk_recalc_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
- {
- 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
--	unsigned int mult;
--
--	mult = FIELD_GET(CPG_PLLxCR0_NI8, readl(pll_clk->pllcr0_reg)) + 1;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
-+	unsigned int ni, nf;
-+	unsigned long rate;
-+
-+	ni = (FIELD_GET(CPG_PLLxCR0_NI8, cr0) + 1) * 2;
-+	rate = parent_rate * ni;
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		nf = FIELD_GET(CPG_PLLxCR1_NF25, readl(pll_clk->pllcr1_reg));
-+		rate += mul_u64_u32_shr(parent_rate, nf, 24);
-+	}
  
--	return parent_rate * mult * 2;
-+	return rate;
- }
  
- static int cpg_pll_8_25_clk_determine_rate(struct clk_hw *hw,
- 					   struct clk_rate_request *req)
- {
--	unsigned int min_mult, max_mult, mult;
-+	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
-+	unsigned int min_mult, max_mult, ni, nf;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
- 	unsigned long prate;
+diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+index b6b6012f71238627..f33342314b2ef99e 100644
+--- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+@@ -188,11 +188,11 @@ static const unsigned int r8a779f0_crit_mod_clks[] __initconst = {
+ 					 (((md) & BIT(13)) >> 13))
  
- 	prate = req->best_parent_rate * 2;
-@@ -96,10 +107,23 @@ static int cpg_pll_8_25_clk_determine_rate(struct clk_hw *hw,
- 	if (max_mult < min_mult)
- 		return -EINVAL;
+ static const struct rcar_gen4_cpg_pll_config cpg_pll_configs[4] __initconst = {
+-	/* EXTAL div	PLL1 mult/div	PLL2 mult/div	PLL3 mult/div	PLL4 mult/div	PLL5 mult/div	PLL6 mult/div	OSC prediv */
+-	{ 1,		200,	1,	150,	1,	200,	1,	0,	0,	200,	1,	134,	1,	15,	},
+-	{ 1,		160,	1,	120,	1,	160,	1,	0,	0,	160,	1,	106,	1,	19,	},
+-	{ 0,		0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	},
+-	{ 2,		160,	1,	120,	1,	160,	1,	0,	0,	160,	1,	106,	1,	38,	},
++	/* EXTAL div	PLL1 mult/div	PLL5 mult/div	OSC prediv */
++	{ 1,		200,	1,	200,	1,	15,	},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 0,		0,	0,	0,	0,	0,	},
++	{ 2,		160,	1,	160,	1,	38,	},
+ };
  
--	mult = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
--	mult = clamp(mult, min_mult, max_mult);
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		ni = div64_ul(req->rate, prate);
-+		if (ni < min_mult) {
-+			ni = min_mult;
-+			nf = 0;
-+		} else {
-+			ni = min(ni, max_mult);
-+			nf = div64_ul((u64)(req->rate - prate * ni) << 24,
-+				      req->best_parent_rate);
-+		}
-+	} else {
-+		ni = DIV_ROUND_CLOSEST_ULL(req->rate, prate);
-+		ni = clamp(ni, min_mult, max_mult);
-+		nf = 0;
-+	}
-+	req->rate = prate * ni + mul_u64_u32_shr(req->best_parent_rate, nf, 24);
+ static int __init r8a779f0_cpg_mssr_init(struct device *dev)
+diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+index 901a86c6432298ed..55c8dd032fc325c6 100644
+--- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+@@ -259,11 +259,11 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
+ 					 (((md) & BIT(13)) >> 13))
  
--	req->rate = prate * mult;
- 	return 0;
- }
+ static const struct rcar_gen4_cpg_pll_config cpg_pll_configs[4] __initconst = {
+-	/* EXTAL div	PLL1 mult/div	PLL2 mult/div	PLL3 mult/div	PLL4 mult/div	PLL5 mult/div	PLL6 mult/div	OSC prediv */
+-	{ 1,		192,	1,	204,	1,	192,	1,	144,	1,	192,	1,	168,	1,	16,	},
+-	{ 1,		160,	1,	170,	1,	160,	1,	120,	1,	160,	1,	140,	1,	19,	},
+-	{ 0,		0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	},
+-	{ 2,		192,	1,	204,	1,	192,	1,	144,	1,	192,	1,	168,	1,	32,	},
++	/* EXTAL div	PLL1 mult/div	PLL5 mult/div	OSC prediv */
++	{ 1,		192,	1,	192,	1,	16,	},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 0,		0,	0,	0,	0,	0,	},
++	{ 2,		192,	1,	192,	1,	32,	},
+ };
  
-@@ -107,17 +131,34 @@ static int cpg_pll_8_25_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 				     unsigned long parent_rate)
- {
- 	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
--	unsigned int mult;
-+	unsigned long prate = parent_rate * 2;
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
-+	unsigned int ni, nf;
- 	u32 val;
+ static int __init r8a779g0_cpg_mssr_init(struct device *dev)
+diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+index 389d4054a514e00d..67c45d14218411f5 100644
+--- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+@@ -255,11 +255,11 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
+ 					 (((md) & BIT(13)) >> 13))
  
--	mult = DIV_ROUND_CLOSEST_ULL(rate, parent_rate * 2);
--	mult = clamp(mult, 1U, 256U);
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		ni = div64_ul(rate, prate);
-+		if (ni < 1) {
-+			ni = 1;
-+			nf = 0;
-+		} else {
-+			ni = min(ni, 256U);
-+			nf = div64_ul((u64)(rate - prate * ni) << 24,
-+				      parent_rate);
-+		}
-+	} else {
-+		ni = DIV_ROUND_CLOSEST_ULL(rate, prate);
-+		ni = clamp(ni, 1U, 256U);
-+	}
+ static const struct rcar_gen4_cpg_pll_config cpg_pll_configs[4] __initconst = {
+-	/* EXTAL div	PLL1 mult/div	PLL2 mult/div	PLL3 mult/div	PLL4 mult/div	PLL5 mult/div	PLL6 mult/div	OSC prediv */
+-	{ 1,		192,	1,	240,	1,	192,	1,	240,	1,	192,	1,	168,	1,	16,	},
+-	{ 1,		160,	1,	200,	1,	160,	1,	200,	1,	160,	1,	140,	1,	19,	},
+-	{ 0,		0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	},
+-	{ 2,		192,	1,	240,	1,	192,	1,	240,	1,	192,	1,	168,	1,	32,	},
++	/* EXTAL div	PLL1 mult/div	PLL5 mult/div	OSC prediv */
++	{ 1,		192,	1,	192,	1,	16,	},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 0,		0,	0,	0,	0,	0,	},
++	{ 2,		192,	1,	192,	1,	32,	},
+ };
  
- 	if (readl(pll_clk->pllcr0_reg) & CPG_PLLxCR0_KICK)
- 		return -EBUSY;
+ static int __init r8a779h0_cpg_mssr_init(struct device *dev)
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
+index fccc3090c7c34b70..717fd148464fed96 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.h
++++ b/drivers/clk/renesas/rcar-gen4-cpg.h
+@@ -65,16 +65,8 @@ struct rcar_gen4_cpg_pll_config {
+ 	u8 extal_div;
+ 	u8 pll1_mult;
+ 	u8 pll1_div;
+-	u8 pll2_mult;
+-	u8 pll2_div;
+-	u8 pll3_mult;
+-	u8 pll3_div;
+-	u8 pll4_mult;
+-	u8 pll4_div;
+ 	u8 pll5_mult;
+ 	u8 pll5_div;
+-	u8 pll6_mult;
+-	u8 pll6_div;
+ 	u8 osc_prediv;
+ };
  
- 	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_NI8,
--		       FIELD_PREP(CPG_PLLxCR0_NI8, mult - 1));
-+		       FIELD_PREP(CPG_PLLxCR0_NI8, ni - 1));
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM)
-+		cpg_reg_modify(pll_clk->pllcr1_reg, CPG_PLLxCR1_NF25,
-+			       FIELD_PREP(CPG_PLLxCR1_NF25, nf));
- 
- 	/*
- 	 * Set KICK bit in PLLxCR0 to update hardware setting and wait for
-@@ -167,19 +208,17 @@ static struct clk * __init cpg_pll_clk_register(const char *name,
- 
- 	pll_clk->hw.init = &init;
- 	pll_clk->pllcr0_reg = base + cr0_offset;
-+	pll_clk->pllcr1_reg = base + cr1_offset;
- 	pll_clk->pllecr_reg = base + CPG_PLLECR;
- 	pll_clk->pllecr_pllst_mask = CPG_PLLECR_PLLST(index);
- 
--	/* Disable Fractional Multiplication and Frequency Dithering */
--	writel(0, base + cr1_offset);
--	cpg_reg_modify(pll_clk->pllcr0_reg, CPG_PLLxCR0_SSMODE, 0);
--
- 	clk = clk_register(NULL, &pll_clk->hw);
- 	if (IS_ERR(clk))
- 		kfree(pll_clk);
- 
- 	return clk;
- }
-+
- /*
-  * Z0 Clock & Z1 Clock
-  */
 -- 
 2.34.1
 
