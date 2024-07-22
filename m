@@ -1,39 +1,42 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6BC16D304
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B9B16CD3B
 	for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jul 2024 11:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721649353; cv=none; b=REmaq6txxR/jnkwUWHZw7tnb8/g5hRJudVMGBUSUJoJ4GLORJ5q2vW+bk+KQ+BsTVMiAG6nG510n4OM4W9MEq1918PMCc2BNFHKq9ZXVTeWCubyP5987iMw2It6MUdTNxzrudRD3aVJgvKKfSZzowX57b8LSUS0IgaGzH2PrCPc=
+	t=1721649354; cv=none; b=mp/M68n1gW5ptot/2ta20coMB02vuwUC0ecom+yN6ckfy5BvLpQz5CA1EUCU/ubl5FKu/BCtkj860Hl1Z0Uhz/l/PfBwShm6mICrs/R+WrmDzDlu4LnVTgA0tWvlBMebCp+D4VOMPw4NvNqxl7JRQbRkw7hQhp251THFkAwxpL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721649353; c=relaxed/simple;
-	bh=x1Mmpf3Yqszb2q27Wnd333bLf8BNIgyrrAHgBUdJ3zc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EPz5cyifIjj0gwpi8c4iOD/hPqfj6bWqBN9LBz2AG4bF2XekL4fkvXVXt7SXcnGwX3V6+65dd8IGxSG/BmAumrpdymFkJTPk093yv25zvj62waYfRS9NeJkWHmEVy4+7BhrvyNyoGPwMDW6enfNOEGKLz2zNdIuS9j7Xw2gQ0t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+	s=arc-20240116; t=1721649354; c=relaxed/simple;
+	bh=JRQC81sGpPetOzsVvokfWkDkZvpohfUibThQhJoxfTY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dhuvLO6V/bh6kgjS2cc7hytzWYTXKEJCTzAL2QwM4MK1Lj1XxwQLv1Eew4fAxrQ/h3gpZFnu9hjQRe3BkQ2WMPbLM4ns2uhcMRDauBPPZY4CL8GoNK+Lzmhx7mIJgmdkvi9zA6/qRL6jIBAhYYwyui91OqHEnMEF4vTPo3JVcUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:173b:9414:53f5:de4c])
-	by andre.telenet-ops.be with bizsmtp
-	id qbvo2C0021wvoRx01bvoM9; Mon, 22 Jul 2024 13:55:49 +0200
+	by michel.telenet-ops.be with bizsmtp
+	id qbvo2C0091wvoRx06bvoCY; Mon, 22 Jul 2024 13:55:49 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrdZ-002zCb-H3;
+	id 1sVrdZ-002zCc-HP;
 	Mon, 22 Jul 2024 13:55:48 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrdr-0020l1-Vi;
+	id 1sVrds-0020l7-1H;
 	Mon, 22 Jul 2024 13:55:48 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: renesas: gray-hawk-single: Add push switches and GP LEDs
-Date: Mon, 22 Jul 2024 13:55:39 +0200
-Message-Id: <cover.1721649057.git.geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: renesas: gray-hawk-single: Add GP LEDs
+Date: Mon, 22 Jul 2024 13:55:41 +0200
+Message-Id: <408eac88ec61cf4c56c96397fbb93b4b8c2c8f5b.1721649057.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1721649057.git.geert+renesas@glider.be>
+References: <cover.1721649057.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -42,33 +45,58 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+Describe the three General Purpose LEDs on the Gray Hawk Single board,
+so they can be used as indicator LEDs.
 
-This patch series adds support for the Push Switches and General Purpose
-LEDs on the Gray Hawk Single board, so the former can be used for user
-input, and the latter can be used as indicator LEDs.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../dts/renesas/r8a779h0-gray-hawk-single.dts | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-To be queued in renesas-devel for v6.12.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  arm64: dts: renesas: gray-hawk-single: Add push switches
-  arm64: dts: renesas: gray-hawk-single: Add GP LEDs
-
- .../dts/renesas/r8a779h0-gray-hawk-single.dts | 63 +++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+index b4fcf6c0cea26840..b8ed1d0edd5a92b5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+@@ -10,6 +10,7 @@
+ 
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
+ 
+ #include "r8a779h0.dtsi"
+ 
+@@ -70,6 +71,31 @@ key-3 {
+ 		};
+ 	};
+ 
++	leds {
++		compatible = "gpio-leds";
++
++		led-1 {
++			gpios = <&gpio7 0 GPIO_ACTIVE_HIGH>;
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <1>;
++		};
++
++		led-2 {
++			gpios = <&gpio7 1 GPIO_ACTIVE_HIGH>;
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <2>;
++		};
++
++		led-3 {
++			gpios = <&gpio7 2 GPIO_ACTIVE_HIGH>;
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <3>;
++		};
++	};
++
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
