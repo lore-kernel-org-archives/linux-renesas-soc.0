@@ -1,24 +1,24 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC0118F2FA;
-	Thu, 25 Jul 2024 08:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C109018FC78;
+	Thu, 25 Jul 2024 08:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721897180; cv=none; b=DurULL5dztDrzKbwlYe/rTdONxm+oqjHEC6T2i8LZDG9PHtnIEB1mhVQJwXEBCvEpGaMUEFc7YsC4NPS+OAnJ5lpAoqDHtwiEURAOMtP/ov5NHC9NxX9uYWqVo+Ohgrz+F4gAUZDWxiWMXgIQMQbScdBP70Oq+qp9RKjQ8yOPng=
+	t=1721897182; cv=none; b=i1HzAWIDKD8gca3Zi7yvTf4bch03MMEq2ga6RARgB/B4p02aKa86LSycgmKHx+NMllkTa51JCuxaTMl8YiUBtnVZiQIQD6+Y9R8mFOScwCc0qMoUO1PegP+2VyDgEriTR6z8QgoKRXV3nntHDFYhMlMBrpj7seH2iqHk/gtE560=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721897180; c=relaxed/simple;
-	bh=+l8vR9sFf+0zlEZ7KiHK/VU64V35gF2wSeir7GCvcDk=;
+	s=arc-20240116; t=1721897182; c=relaxed/simple;
+	bh=Axg6Tr+e3vOSKZSFYX0jjF09QIltBaVfNGnXcYUpYkQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GLaDLToj1cm5hbBel69DIoiOOdWpp8dLI9Fl+IJUT5l/p6rcTFXokqTpSQdx5QJ8iVrT0u+eWo57B++0m3MMip5aHcM8RzL+Ymr67RBNjcka7bc/BeTrokPEXn+KuWVcclLRbZlRjjcrcPYf+kVPF8t0bNQWH04MhosZuMa0Y6s=
+	 MIME-Version; b=BftU3hM6uNcdw43Devhv1bkk/ipl2nHpbVlgukFSKsXv+8VFQ5AEbXOYsZL+hVfzs6KXZd06AP3GKUJlfCxZKsl1cOMQ7lNfD5QGKlHvVuTFqaSJ0FgNgbpVYGvFS7o+Q911eIPWlhaKVajwTnj7f0/n5s9gIzwyHylquZ8rx4A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.09,235,1716217200"; 
-   d="scan'208";a="212736790"
+   d="scan'208";a="212736815"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Jul 2024 17:46:11 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 25 Jul 2024 17:46:20 +0900
 Received: from localhost.localdomain (unknown [10.226.92.190])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B6B004010093;
-	Thu, 25 Jul 2024 17:46:07 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9FAF74009673;
+	Thu, 25 Jul 2024 17:46:16 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -33,9 +33,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 1/3] ASoC: dt-bindings: renesas,rz-ssi: Document port property
-Date: Thu, 25 Jul 2024 09:45:54 +0100
-Message-ID: <20240725084559.13127-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 3/3] arm64: dts: renesas: rzg2lc-smarc: Enable HDMI audio
+Date: Thu, 25 Jul 2024 09:45:56 +0100
+Message-ID: <20240725084559.13127-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240725084559.13127-1-biju.das.jz@bp.renesas.com>
 References: <20240725084559.13127-1-biju.das.jz@bp.renesas.com>
@@ -47,28 +47,102 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document optional port property that connects to I2S signals.
+Enable HDMI audio on RZ/G2LC SMARC EVK. Set SW 1.5 to OFF
+position on the SoM module to turn on HDMI audio.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../boot/dts/renesas/r9a07g044c2-smarc.dts    |  3 ++
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 37 +++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-index 8b9695f5decc..f4610eaed1e1 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-+++ b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-@@ -87,6 +87,10 @@ properties:
-   '#sound-dai-cells':
-     const: 0
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+index 0b90367b6d1e..ee5bf2c58051 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+@@ -47,6 +47,9 @@
+ #error "Cannot set as both PMOD_MTU3 and SW_RSPI_CAN are mutually exclusive"
+ #endif
  
-+  port:
-+    $ref: audio-graph-port.yaml#/definitions/port-base
-+    description: Connection to controller providing I2S signals
++/* Please set SW_I2S0_I2S1. Default value is 0 */
++#define SW_I2S0_I2S1   0
 +
- required:
-   - compatible
-   - reg
+ #include "r9a07g044c2.dtsi"
+ #include "rzg2lc-smarc-som.dtsi"
+ #include "rzg2lc-smarc.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+index f21508640b6e..dc5d976e9316 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+@@ -33,6 +33,16 @@ hdmi_con_out: endpoint {
+ 			};
+ 		};
+ 	};
++
++#if (SW_I2S0_I2S1)
++	/delete-node/ sound;
++
++	sound_card {
++		compatible = "audio-graph-card";
++		label = "HDMI-Audio";
++		dais = <&i2s2_port>;
++	};
++#endif
+ };
+ 
+ #if (SW_SCIF_CAN || SW_RSPI_CAN)
+@@ -48,10 +58,16 @@ &canfd {
+ };
+ #endif
+ 
++#if (!SW_I2S0_I2S1)
+ &cpu_dai {
+ 	sound-dai = <&ssi0>;
+ };
+ 
++&ssi0 {
++	/delete-node/ port;
++};
++#endif
++
+ &dsi {
+ 	status = "okay";
+ 
+@@ -104,6 +120,15 @@ adv7535_out: endpoint {
+ 					remote-endpoint = <&hdmi_con_out>;
+ 				};
+ 			};
++
++#if (SW_I2S0_I2S1)
++			port@2 {
++				reg = <2>;
++				codec_endpoint: endpoint {
++					remote-endpoint = <&i2s2_cpu_endpoint>;
++				};
++			};
++#endif
+ 		};
+ 	};
+ };
+@@ -177,6 +202,18 @@ &ssi0 {
+ 	pinctrl-names = "default";
+ 
+ 	status = "okay";
++
++#if (SW_I2S0_I2S1)
++	i2s2_port: port {
++		i2s2_cpu_endpoint: endpoint {
++			remote-endpoint = <&codec_endpoint>;
++			dai-format = "i2s";
++
++			bitclock-master = <&i2s2_cpu_endpoint>;
++			frame-master = <&i2s2_cpu_endpoint>;
++		};
++	};
++#endif
+ };
+ 
+ #if (SW_RSPI_CAN)
 -- 
 2.43.0
 
