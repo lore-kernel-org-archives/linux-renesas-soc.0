@@ -1,49 +1,39 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177E85381A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jul 2024 19:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1E83FBB2
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jul 2024 19:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721936313; cv=none; b=Zo/gV0a1bls/7Ln5ICxcU8+liViyqCxHbf8+RAgK1q6GSMHp156cz3bWQQmz5Pp5RXskuJ4Pq5X6MiPbIOJmYT79vjp2h6MhFdirawenryAq1LBYHkHBMb6KHQMWkVhFQgeC46MjqTpYJOazI8w+cJ3w3XCVduoDRsZ6UTO+2v0=
+	t=1721936971; cv=none; b=BLXJwSrGohRiya5p71ENDMi8lYwgkBR2yMQ4H6yZTZdYPZ0OXx27DU8nlG30FSMWIOW/f+K8PRa9jsWmrj3uYILSS7OITdIDm52LgVAV0pfHjuveHrj8JrI4H1tRltRYrFmKxkoRLfCp8VReJxunOD83YiqyacvK2pIRnnozp7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721936313; c=relaxed/simple;
-	bh=OJ6dL3Tb55sqLB2qXtO+nrcNiUTuai5OfQ7n4rAEV/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jKy+itHRt8gFW0p24+nfkILIHq/zUZ2tZDad4u0rP8mkDigqU/XmA88E7+xY/TK733GqjXBZlJxDAK5d6fSJzLxGeyGtbVOJgOc1I6D4rjMyq1m99UwU6uY9l+1Is3vH88H1Z0wCiKhbHTDK6Z4GoFLna4MPFbhE19GiNTpgd8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SX9p6/ru; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1721936971; c=relaxed/simple;
+	bh=5y8zmYy8bN0Ppbl/ubeA0HBnlO/gy/ufkcPd2sblBnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HZnfmwNhhzpLflgyjziIXXIxm021teJEtPaAN1wzWuXxwr9F9UyHO3R0pAJ1W/le5AMKt6zlVdnQW1MtQUIblhUat0fkoJ0dtIdrZ3rW0ZEqztQ5bMpYojGXb4H2W1EoP6yfKosiE3KSQfql7kXRPLhpkYrI2LHKGKi2Zh8uBOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KYXRMePk; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SX9p6/ru"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KYXRMePk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=/j/emlq9Wcwhx/
-	OO5NxgFzHCdkszYejrWhvvaOBz9tE=; b=SX9p6/ruqMFj1iCehsX3slXDEdmLzA
-	Cxx0unhmHnub60eGzYNKX+i8cUES2CvR83WuEiEYOAGbnDqSO0Qj5SDG/RaWIrxq
-	ed6qMNXxu2LMdQbbEgpqOQ/gqYXlOMzeppnt8kN+M9GQHxwdK/UEVoeCTGymA1N4
-	Wx0vMu1sSURgokYWA0hbUA6lDJxzD6rde+r81z0FlpWWu9xu+9Po5GU9jBrsFRYf
-	NSkdfeoHmTJPsQk8YrobwhNFgqie1LJiHyFC0xlJBuGv1OO9owSxFhSGwnCbFT4C
-	f0Zs9cz6aGVZGyh5UeO0nUkwTDXNvYSf+42OmuDAivcQxqAUOG/JhkZg==
-Received: (qmail 3086194 invoked from network); 25 Jul 2024 21:38:26 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jul 2024 21:38:26 +0200
-X-UD-Smtp-Session: l3s3148p1@GvTRiRceXtUujnsv
+	:mime-version:content-transfer-encoding; s=k1; bh=UbVniGohyDYLEa
+	KWwquh2lWfYt+CfUIXE7GcIc0f3jY=; b=KYXRMePkpN215M9Yg57RfB34zth88K
+	uOrbTZKQ6zaQAbwq4G9iayRC7vS6xoVj034JjBfjjIcjiftzxNPJmW80ff7UTqua
+	My7I7c7PxSvzgyu5s0s1Kg7xoKWAUSBlUac7R+iBzn5U+2ORVHCSz1waSocft70X
+	MFxsR7k8XB0ykwlfufmp3Mpyd5M5YvPMz1okZbvj7V4u/I46Fo0IOdsS3JIeg6xa
+	ATac1EYXkLAIPEeuCQEHty6CTiVrWFWapnwrIf78JiA8XNotGqwhmDA25YAj2LSy
+	bB25xlW/p8AJ9LraWCXiZ6iFinS3cyssdJ/5aFBz1diXroZFwrBLAXAQ==
+Received: (qmail 3088267 invoked from network); 25 Jul 2024 21:49:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jul 2024 21:49:27 +0200
+X-UD-Smtp-Session: l3s3148p1@u7g/sRcejIgujnsv
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] dt-bindings: pwm: Add r8a779h0 support
-Date: Thu, 25 Jul 2024 21:38:03 +0200
-Message-ID: <20240725193803.14130-4-wsa+renesas@sang-engineering.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT 0/6] PWM & TPU patches for V4M
+Date: Thu, 25 Jul 2024 21:49:07 +0200
+Message-ID: <20240725194906.14644-8-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -53,15 +43,31 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the bindings for both PWM controllers in this SoC.
+Here are the patches I prepared to enable PWM and TPU on the R-Car V4M
+SoC. Only patches 1-4 are for upstream, the rest are convenience patches
+for testers. They are based on linus-git as of today.
 
-Wolfram Sang (2):
-  dt-bindings: pwm: renesas,pwm-rcar: Add r8a779h0 support
-  dt-bindings: pwm: renesas,tpu: Add r8a779h0 support
+As discussed privately, Geert wants to have a try testing these. I
+cannot because testing needs physical access to HW which I don't have.
+Thanks, Geert!
 
- Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.yaml | 1 +
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml  | 1 +
- 2 files changed, 2 insertions(+)
+
+Cong Dang (2):
+  clk: renesas: r8a779h0: Add PWM clock
+  clk: renesas: r8a779h0: Add TPU clock
+
+Khanh Le (1):
+  arm64: dts: renesas: r8a779h0: Add PWM device node
+
+Wolfram Sang (3):
+  arm64: dts: renesas: r8a779h0: Add TPU device node
+  arm64: dts: r8a779h0-gray-hawk-single: Add PWM support
+  arm64: dts: r8a779h0-gray-hawk-single: Add TPU support
+
+ .../dts/renesas/r8a779h0-gray-hawk-single.dts | 36 +++++++++++
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi     | 61 +++++++++++++++++++
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c       |  2 +
+ 3 files changed, 99 insertions(+)
 
 -- 
 2.43.0
