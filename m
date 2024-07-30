@@ -1,41 +1,38 @@
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001D51A00CB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA69319DF41
 	for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Jul 2024 14:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722350209; cv=none; b=XiTib9PyU6yq2AspYFIv/blfB8ynZ89MQXLgnKC/hvGroNCZ7uckrMGhVPyZ58eukN/oBQfQpz0GFvhzOPgGMI2MTkal1hBggEEpyyQhFWDpIjCuMYUdKpO2OJac+1sBKAEINE3/E/tUtEnY8WCxFmO7k4NNYOXxugWSZlZrCB4=
+	t=1722350209; cv=none; b=UxQ/S1mdb2lUYzqkMKzJulojRFWiTFIlBA7LkOI/zXp8MA7nhzUFrer5G5zVh7NqUIERsHm+7Zi11rRLdMda29b4zRrMo2iP6t+VLIw3dKDk5fkz0+UjCJT0T5GVDtKtxNETHsESr6pTokVVXf6bKPHfQn2BaIAn1vSe+ErjJPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722350209; c=relaxed/simple;
-	bh=89LrhPEBJnBAe3bSd0rOJTveZ30QjtlRDBJMSCxbu1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BJ9KRrSvwwxQFXR6mfXNSAJ7i+4chn5uD+PaDmerGsLduxDjIt0BKWSjnvKEfLhd1d8bOGft64Bha8sXCu8+NbmvF9i2dGMAleD3TeTRIUhAN9qsYMFk0UxbYwA9GPmpnac88dv23hxmNOn4vGHXrh1uN1Z75vjVV9ZbeOWx0C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+	bh=pr/z1TuNHT/HRdTRw5sNGrPViowH5UsNykPSK2wYXW8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iEw5gLp7Tbu66hncssKW20rNKHUuA0QbmwWXuK7zrIfZKOOZ5Xpd/klW6bxbkfVu57Z1t9gyorNDUJfCGTCICf7YCEL83FQImZahom1lIEtq6iTaS3sutgvR5wZmBELfwT4IdYHJ1BUYqE7DKqaOZfbP4xOq1ZDtkjfigyAR3As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:520d:93ad:ff6d:335e])
-	by michel.telenet-ops.be with bizsmtp
-	id tqck2C00a30Ayot06qckpW; Tue, 30 Jul 2024 16:36:45 +0200
+	by albert.telenet-ops.be with bizsmtp
+	id tqck2C00X30Ayot06qckbf; Tue, 30 Jul 2024 16:36:45 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sYnxd-004B1l-L4;
+	id 1sYnxd-004B1i-Ke;
 	Tue, 30 Jul 2024 16:36:44 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sYny0-00E1Fb-Nv;
+	id 1sYny0-00E1FV-MW;
 	Tue, 30 Jul 2024 16:36:44 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL 2/3] arm64: renesas: defconfig: Enable Renesas Ethernet-TSN support
-Date: Tue, 30 Jul 2024 16:36:41 +0200
-Message-Id: <072ea4b37445b994732ecd8235664ba988d67480.1722349965.git.geert+renesas@glider.be>
+Subject: [PATCH/LOCAL 0/3] arm64: renesas: defconfig: Updates after v6.11-rc1
+Date: Tue, 30 Jul 2024 16:36:39 +0200
+Message-Id: <cover.1722349965.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1722349965.git.geert+renesas@glider.be>
-References: <cover.1722349965.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,26 +41,30 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable support for Renesas Ethernet-TSN, as found on R-Car V4H in the
-White Hawk Single development board.
+        Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Regular updates for the defconfig for Renesas ARM64 systems.
+As usual, these are not intended for upstream merge, but to be applied
+to the topic/renesas-defconfig branch. 
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index ec8af3ed1b382ac2..f6231582a066365c 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -143,6 +143,7 @@ CONFIG_VIRTIO_NET=y
- CONFIG_SH_ETH=y
- CONFIG_RAVB=y
- CONFIG_RENESAS_ETHER_SWITCH=y
-+CONFIG_RTSN=y
- CONFIG_MARVELL_10G_PHY=y
- CONFIG_MARVELL_88Q2XXX_PHY=y
- CONFIG_MICREL_PHY=y
+Geert Uytterhoeven (3):
+  arm64: renesas: defconfig: Enable slab hardening and kmalloc buckets
+  arm64: renesas: defconfig: Enable Renesas Ethernet-TSN support
+  arm64: renesas: defconfig: Refresh for v6.11-rc1
+
+ arch/arm64/configs/renesas_defconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
