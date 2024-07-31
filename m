@@ -1,278 +1,146 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3251A76D4
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jul 2024 07:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDA61A71FE;
+	Wed, 31 Jul 2024 07:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722411269; cv=none; b=Qrehq4WPa/hNc0/zd6hovFb0U4T+Ju11BEtgdiQtnHF76pcK2nFKwYb9kDCopog4uGCsujjZi4NRbG3ixOVVeMlaOz/zuvqtdzcoU+/+2uwqKNNWv8kB4Hox/LOAK3ev2f2sgxsH/kkd7ugu+oq9L3GdWOmv++9+jOGVj8ASYbw=
+	t=1722411472; cv=none; b=BOj3guGf2ItBJjeMdsFKhy8KQgVBKWgWFt5Ooh6zsEVGSGjk0P73cmrwoj8nwvlPKfG2IOrNaYcuokYrDQBuWsC7JcSfNEOjPTQmw/64wECWr3sbPxKVGKCsXitnJTGdr17fdA3Xh+GlwZdvhhKmYGjjFlPrdh8pFsIDgYyxBww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722411269; c=relaxed/simple;
-	bh=FruzkeSQ/IAOEQ+HiWFr1IkNfd/VFEfh8jyz3BxpPdw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=pfcr1ZROR79TUm5FsdDbrx504CYwWm2MJn2uwU8L7lddI2YFSQrSZgEKEbuKt+fjIcnlfVpv59HyYw1Ufz5RDn2lqiZkuRgZRpMrp9DcDKmSCsjP3y6UH23uI8pfB8+rTk3cxSgn+Ibj24UpsaoxMY7GoeGlHtuSzuE33XpUXKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iN1Xp7vW; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iN1Xp7vW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722411268; x=1753947268;
-  h=date:from:to:cc:subject:message-id;
-  bh=FruzkeSQ/IAOEQ+HiWFr1IkNfd/VFEfh8jyz3BxpPdw=;
-  b=iN1Xp7vWKKM0vGK7pFKU/ApcIPDeVjJk/vSadlVB5ZDSmVc2S73KzQcK
-   A7iUwiEiXXkr38y7RPioHm/juM3PphIWSrqPxSWTRj+p1HHJsMqgi9Hb/
-   7mnzEoJ6o/67xbyhgXNlkager9DAJ7F5yNeZydD5LjH8oNbwo0dU4/Q9d
-   EylTBxeGvmP2CGL2LwcqD8YLmXhALm8Quzy1GLN7OmJsmPHmAsuYqFkm7
-   yD0KyIugTrKpm4DKnplN8NhZPDeWuVR8/OpOJTvHPNvR2yS7PC5cmfsLQ
-   +xD7lboln4t6XbFXBFHBTFOCd5e2qdUIrCGRjkzt8msTkfg2Rrd1K9ApL
-   Q==;
-X-CSE-ConnectionGUID: G8Xd5KQzQCydInCxWJc59Q==
-X-CSE-MsgGUID: qZR4C7cdQda2zi8spz1cdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="31422053"
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="31422053"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 00:34:27 -0700
-X-CSE-ConnectionGUID: 2Of9liKETA2snPPJ05HbtA==
-X-CSE-MsgGUID: bquv0biURjGYFKH6waY3Rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="59452829"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 31 Jul 2024 00:34:26 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZ3qp-000tzU-0X;
-	Wed, 31 Jul 2024 07:34:23 +0000
-Date: Wed, 31 Jul 2024 15:33:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:topic/renesas-overlays-v6.11-rc1]
- BUILD SUCCESS 5ec9d67ea0fd101a3be5b08ebf18080d17957145
-Message-ID: <202407311528.VcDznHy0-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722411472; c=relaxed/simple;
+	bh=wO9HL+BBteRiiD6YU6w4KeCMRtqOK+b0HwVJpjaEA+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rtj+CIqXCetBxpqlOZZX4Hdh47pzwlIUivJCSZydWMduo3NCeSKoMOvONPzBIhDGqFKDKV4xfbgq1nDImfs0RLjfGxDBelOlCwE+eQbdkQMZej6AqVU9HM6c3/M93BK8YKa+OdHuX5KicIbTWuMIppjdVOv0pj7uxLDxPDJAZ0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6518f8bc182so5241147b3.0;
+        Wed, 31 Jul 2024 00:37:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722411469; x=1723016269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6GuGpj0zw/Kgo7p95Nh9RRAk92Vob5VEzeOvHJ4rFPE=;
+        b=xSoMJeacNn9Rh8l4o6GRXRUnC6QOlNLXq6qNBP+/7yZUz5jSfCIYaaLiPomKxFyCT6
+         Sq8AfpqzxiNVfkvapdWExcUcetr+kXOYVxfEJcLIxVmKCUkfS87/NOLlsrj44pgR8kL3
+         FO2oCmI+K0Dx8eX7xmL9u0Ai6nnyj//wygTjOHHa6qwfMggtvzsAqP6G6D5242mv2Jx9
+         Lsp3jOwOqr0CpMDRixSdCeh2esoUMhqdH4ZCDktoImfmK8CArQv2PV8zfd9/SOQq6+yY
+         6DxZ2Gxs78sjlwgDZIAkcSFELvLAWQR1y+vTqH2UcZ4eU5l5M9OMlq7Hb8dHIsnkBsrx
+         R+7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVOQu6w/7RZmNjPHZSOqKlNqbjWFlE9AOw5RGdLPbuwnhGQr7IIzeQaBBrclZJAveqrnNbkkGqcUIaqkLJMQezwYFPXpniXasEsMB8k9Zn2IW96pU7xMYEPmov3LZJ15w0GGvH/Reh+/Btt6tHqQEK+HyOZVLaUtY6ogjceQq+DbW2hLctAS1d9n1v
+X-Gm-Message-State: AOJu0Yx9dpKMLH0cureWjRlAI8/iOjX5GC7t5GrEN3iK1aZ4/Mf6X1oc
+	pA+r4s9McXvDzQnf0sTkfWVSSI0VZ8TRJCkYBRXIHj6itTYdlpBkFBQIIXVX
+X-Google-Smtp-Source: AGHT+IHrf7iQRAp2MwxsqCYaAzo0M1izP1o8/HnL3f8+p/uC69RIKOmqGUC1YKB80JlCMMKyQO97hA==
+X-Received: by 2002:a0d:ed03:0:b0:615:2fa1:c55d with SMTP id 00721157ae682-6826ef4c6d7mr40169117b3.19.1722411469440;
+        Wed, 31 Jul 2024 00:37:49 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756811415fsm28826707b3.71.2024.07.31.00.37.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 00:37:49 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-664b4589b1aso5365847b3.1;
+        Wed, 31 Jul 2024 00:37:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXdL8aeYciUWGCVgycPbmTqq9h5QALccHU5mItZplQJBzLbI5Jp6NO89sCwbhJr4mQ47r81Qm/5bbwpdua1aJPZXaL/SP2cbBoumod5egUHfmdPH50NHADTXHdTFDZrlH2QwWZ6aQDnh2l2U6nssC80RDnbYlHEi/iPWVKVqtZhuEr5f2snzgLo9jip
+X-Received: by 2002:a0d:f285:0:b0:627:e3ba:2ad7 with SMTP id
+ 00721157ae682-6826b064b56mr43000577b3.9.1722411468553; Wed, 31 Jul 2024
+ 00:37:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <cover.1721999833.git.geert+renesas@glider.be> <1a3d4ff8ce34a5e676d1cb1fafd40525378e29a4.1721999833.git.geert+renesas@glider.be>
+ <20240730162435.GA1480758-robh@kernel.org>
+In-Reply-To: <20240730162435.GA1480758-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 31 Jul 2024 09:37:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUwATmjM3E7WmwnCK739CwuyZH1w_YVYbroDcWEpzh8ig@mail.gmail.com>
+Message-ID: <CAMuHMdUwATmjM3E7WmwnCK739CwuyZH1w_YVYbroDcWEpzh8ig@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] dt-bindings: fuse: Move renesas,rcar-{efuse,otp}
+ to nvmem
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Arnd Bergmann <arnd@arndb.de>, 
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/renesas-overlays-v6.11-rc1
-branch HEAD: 5ec9d67ea0fd101a3be5b08ebf18080d17957145  arm64: dts: renesas: white-hawk-cpu: Add overlay for CP97/98
+Hi Rob,
 
-elapsed time: 1022m
+On Tue, Jul 30, 2024 at 6:24=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+> On Fri, Jul 26, 2024 at 03:38:06PM +0200, Geert Uytterhoeven wrote:
+> > The R-Car E-FUSE blocks can be modelled better using the nvmem
+> > framework.
+> >
+> > Replace the R-Car V3U example by an R-Car S4-8 ES1.2 example, to show
+> > the definition of nvmem cells.  While at it, drop unneeded labels from
+> > the examples, and fix indentation.
+> >
+> > Add an entry to the MAINTAINERS file.
+> >
+> > Reported-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > v3:
+> >   - New.
+> >
+> > I would expect that the calib@144 node needs:
+> >
+> >     #nvmem-cell-cells =3D <0>;
+> >
+> > but after adding that, "make dt_binding_check" starts complaining:
+> >
+> >     Documentation/devicetree/bindings/nvmem/renesas,rcar-efuse.example.=
+dtb: fuse@e6078800: nvmem-layout: 'oneOf' conditional failed, one must be f=
+ixed:
+> >           '#address-cells', '#size-cells', 'calib@144' do not match any=
+ of the regexes: 'pinctrl-[0-9]+'
+> >           Unevaluated properties are not allowed ('nvmem-cell-cells' wa=
+s unexpected)
+>
+> Did you want 'nvmem-cell-cells' or '#nvmem-cell-cells'?
 
-configs tested: 201
-configs skipped: 4
+Oops, I've been (manually) re-adding and removing it again too many
+times during my investigations. "#nvmem-cell-cells", of course.
+According to my build logs, I had it right at least once ;-)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> >           'kontron,sl28-vpd' was expected
+> >           'onie,tlv-layout' was expected
+> >           from schema $id: http://devicetree.org/schemas/nvmem/renesas,=
+rcar-efuse.yaml#
+> >     Documentation/devicetree/bindings/nvmem/renesas,rcar-efuse.example.=
+dtb: fuse@e6078800: nvmem-layout: Unevaluated properties are not allowed ('=
+#address-cells', '#size-cells', 'calib@144' were unexpected)
+> >           from schema $id: http://devicetree.org/schemas/nvmem/renesas,=
+rcar-efuse.yaml#
+> >     Documentation/devicetree/bindings/nvmem/renesas,rcar-efuse.example.=
+dtb: fuse@e6078800: Unevaluated properties are not allowed ('nvmem-layout' =
+was unexpected)
+> >           from schema $id: http://devicetree.org/schemas/nvmem/renesas,=
+rcar-efuse.yaml#
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240731   gcc-13.2.0
-arc                   randconfig-002-20240731   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   gcc-13.2.0
-arm                            hisi_defconfig   gcc-14.1.0
-arm                         lpc18xx_defconfig   gcc-14.1.0
-arm                          pxa910_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240731   gcc-14.1.0
-arm                   randconfig-002-20240731   clang-20
-arm                   randconfig-003-20240731   clang-20
-arm                   randconfig-004-20240731   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240731   clang-15
-arm64                 randconfig-002-20240731   clang-20
-arm64                 randconfig-003-20240731   gcc-14.1.0
-arm64                 randconfig-004-20240731   clang-20
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                                defconfig   gcc-14.1.0
-csky                  randconfig-001-20240731   gcc-14.1.0
-csky                  randconfig-002-20240731   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                          allyesconfig   clang-20
-hexagon               randconfig-001-20240731   clang-16
-hexagon               randconfig-002-20240731   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240731   clang-18
-i386         buildonly-randconfig-002-20240731   clang-18
-i386         buildonly-randconfig-003-20240731   clang-18
-i386         buildonly-randconfig-004-20240731   clang-18
-i386         buildonly-randconfig-004-20240731   gcc-13
-i386         buildonly-randconfig-005-20240731   clang-18
-i386         buildonly-randconfig-006-20240731   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240731   clang-18
-i386                  randconfig-001-20240731   gcc-13
-i386                  randconfig-002-20240731   clang-18
-i386                  randconfig-003-20240731   clang-18
-i386                  randconfig-004-20240731   clang-18
-i386                  randconfig-005-20240731   clang-18
-i386                  randconfig-005-20240731   gcc-13
-i386                  randconfig-006-20240731   clang-18
-i386                  randconfig-011-20240731   clang-18
-i386                  randconfig-011-20240731   gcc-12
-i386                  randconfig-012-20240731   clang-18
-i386                  randconfig-012-20240731   gcc-13
-i386                  randconfig-013-20240731   clang-18
-i386                  randconfig-014-20240731   clang-18
-i386                  randconfig-014-20240731   gcc-8
-i386                  randconfig-015-20240731   clang-18
-i386                  randconfig-015-20240731   gcc-10
-i386                  randconfig-016-20240731   clang-18
-i386                  randconfig-016-20240731   gcc-13
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240731   gcc-14.1.0
-loongarch             randconfig-002-20240731   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-m68k                          multi_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                      loongson3_defconfig   gcc-14.1.0
-nios2                            alldefconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240731   gcc-14.1.0
-nios2                 randconfig-002-20240731   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240731   gcc-14.1.0
-parisc                randconfig-002-20240731   gcc-14.1.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc               randconfig-001-20240731   clang-20
-powerpc               randconfig-002-20240731   gcc-14.1.0
-powerpc               randconfig-003-20240731   clang-20
-powerpc                     tqm5200_defconfig   gcc-14.1.0
-powerpc                     tqm8541_defconfig   gcc-14.1.0
-powerpc64             randconfig-001-20240731   clang-20
-powerpc64             randconfig-002-20240731   clang-15
-powerpc64             randconfig-003-20240731   clang-20
-riscv                            allmodconfig   clang-20
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240731   clang-20
-riscv                 randconfig-002-20240731   clang-15
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240731   gcc-14.1.0
-s390                  randconfig-002-20240731   gcc-14.1.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                        edosk7705_defconfig   gcc-14.1.0
-sh                          kfr2r09_defconfig   gcc-14.1.0
-sh                          landisk_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240731   gcc-14.1.0
-sh                    randconfig-002-20240731   gcc-14.1.0
-sh                        sh7763rdp_defconfig   gcc-14.1.0
-sh                          urquell_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240731   gcc-14.1.0
-sparc64               randconfig-002-20240731   gcc-14.1.0
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-13
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240731   clang-20
-um                    randconfig-002-20240731   clang-20
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240731   gcc-13
-x86_64       buildonly-randconfig-002-20240731   gcc-13
-x86_64       buildonly-randconfig-003-20240731   clang-18
-x86_64       buildonly-randconfig-003-20240731   gcc-13
-x86_64       buildonly-randconfig-004-20240731   gcc-13
-x86_64       buildonly-randconfig-005-20240731   gcc-13
-x86_64       buildonly-randconfig-006-20240731   clang-18
-x86_64       buildonly-randconfig-006-20240731   gcc-13
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240731   gcc-12
-x86_64                randconfig-001-20240731   gcc-13
-x86_64                randconfig-002-20240731   gcc-12
-x86_64                randconfig-002-20240731   gcc-13
-x86_64                randconfig-003-20240731   clang-18
-x86_64                randconfig-003-20240731   gcc-13
-x86_64                randconfig-004-20240731   gcc-10
-x86_64                randconfig-004-20240731   gcc-13
-x86_64                randconfig-005-20240731   gcc-13
-x86_64                randconfig-006-20240731   clang-18
-x86_64                randconfig-006-20240731   gcc-13
-x86_64                randconfig-011-20240731   clang-18
-x86_64                randconfig-011-20240731   gcc-13
-x86_64                randconfig-012-20240731   clang-18
-x86_64                randconfig-012-20240731   gcc-13
-x86_64                randconfig-013-20240731   gcc-13
-x86_64                randconfig-013-20240731   gcc-7
-x86_64                randconfig-014-20240731   clang-18
-x86_64                randconfig-014-20240731   gcc-13
-x86_64                randconfig-015-20240731   clang-18
-x86_64                randconfig-015-20240731   gcc-13
-x86_64                randconfig-016-20240731   clang-18
-x86_64                randconfig-016-20240731   gcc-13
-x86_64                randconfig-071-20240731   clang-18
-x86_64                randconfig-071-20240731   gcc-13
-x86_64                randconfig-072-20240731   gcc-13
-x86_64                randconfig-073-20240731   clang-18
-x86_64                randconfig-073-20240731   gcc-13
-x86_64                randconfig-074-20240731   clang-18
-x86_64                randconfig-074-20240731   gcc-13
-x86_64                randconfig-075-20240731   clang-18
-x86_64                randconfig-075-20240731   gcc-13
-x86_64                randconfig-076-20240731   clang-18
-x86_64                randconfig-076-20240731   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                          iss_defconfig   gcc-14.1.0
-xtensa                randconfig-001-20240731   gcc-14.1.0
-xtensa                randconfig-002-20240731   gcc-14.1.0
+Anyway, with or without the typo, the error message is about the same:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Unevaluated properties are not allowed ('nvmem-cell-cells' was unexpected=
+)
++ Unevaluated properties are not allowed ('#nvmem-cell-cells' was unexpecte=
+d)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
