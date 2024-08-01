@@ -1,43 +1,51 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9591A3BBF
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Aug 2024 13:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391051A38C1
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Aug 2024 14:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722520492; cv=none; b=EIOL+W3E+1CG/exlmMASI3I9Vx50uCGOkCousGMaIFcTvHHH+UECmNH0pg3YgDrz/K3ju1+4jg6T4xRDyh7HL42A/fGG2u/mELmoWofuVeEeDqkZEwtuuZkl+fFL7FPjn9EhJLXxaDD40yDbRu9Kj44EYty/I+Xq2jX8cqgzfmI=
+	t=1722521009; cv=none; b=uvde8BLGq3aXKMClIdpUDv4eQ3QR1f1x96F3KUDzrbvhtdZP5upYjRPVgszGGK0cz1e3ECIVvAjuiTxEglqEEWx5t6JLyE8ahsl6ARdnN1o/CunT+BFewXjYJds8UQG6+C2VPLIiuR7cQSByKGAb97Qx6Z10sv3aTrA4EBIY7G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722520492; c=relaxed/simple;
-	bh=bVlsDp3q8Lsz/ulyawet4QT8Hb75VzOJY8/9Ucfu/gA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l1AXpvPGyfjgMeaztDEszXWrUS7vukfEJylWnuKZbaLCTvP2/qAcWp61KXKtdYO5I8Qd46GtAlgZtxVI522W1HONJb9xEyTC/l49wDJVii2MwZxU2E5sTCZphOE2xYeCFHxZuO7PCO3Yv0iPQpyqm5Lw+8LdB3MkM6qqUeONhC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	s=arc-20240116; t=1722521009; c=relaxed/simple;
+	bh=4B5qeLnXbkiU9/+d8ETfOpEIsw0uhhnpcY7UwqgINbU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H16Zz+N3TCw1E8ZIoam//IljSwMo5+retYeSxxUUsuYSlfxpTJmEFBBK8nUrmxtEno1BLK8hWgFj8xGBobGVAwqBvc/7ja4zKk4z3h/3szx9FtDjdIYSZnlNqEGcaRnP7N1ljIg+kmgDU/FC+3JyeyVAgLoyzQH+bPfYzOnJ8Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:fff7:d11a:41d8:a195])
-	by albert.telenet-ops.be with bizsmtp
-	id uduh2C00J5XJrhx06duhEc; Thu, 01 Aug 2024 15:54:41 +0200
+	by michel.telenet-ops.be with bizsmtp
+	id ue3J2C00d5XJrhx06e3KpT; Thu, 01 Aug 2024 16:03:25 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sZWG0-004S9v-Uc;
-	Thu, 01 Aug 2024 15:54:41 +0200
+	id 1sZWOM-004SD5-LV;
+	Thu, 01 Aug 2024 16:03:18 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sZWGP-00HOE3-4d;
-	Thu, 01 Aug 2024 15:54:41 +0200
+	id 1sZWOk-00HOMB-Q8;
+	Thu, 01 Aug 2024 16:03:18 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-can@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	Duy Nguyen <duy.nguyen.rh@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] arm64: dts: renesas: r8a779h0: Add CAN-FD node
-Date: Thu,  1 Aug 2024 15:54:35 +0200
-Message-Id: <43b786db932f5c53103d34fd530365c445c0425e.1722519717.git.geert+renesas@glider.be>
+Subject: [PATCH v3] dt-bindings: can: renesas,rcar-canfd: Document R-Car V4M support
+Date: Thu,  1 Aug 2024 16:03:17 +0200
+Message-Id: <68b5f910bef89508e3455c768844ebe859d6ff1d.1722520779.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1722519717.git.geert+renesas@glider.be>
-References: <cover.1722519717.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,81 +56,74 @@ Content-Transfer-Encoding: 8bit
 
 From: Duy Nguyen <duy.nguyen.rh@renesas.com>
 
-Add device nodes for the CAN-FD interface and the related external CAN
-clock on the Renesas R-Car V4M (R8A779H0) SoC.
+Document support for the CAN-FD Interface on the Renesas R-Car V4M
+(R8A779H0) SoC, which supports up to four channels.
+
+The CAN-FD module on R-Car V4M is very similar to the one on R-Car V4H,
+but differs in some hardware parameters, as reflected by the Parameter
+Status Information part of the Global IP Version Register.  However,
+none of this parameterization should have any impact on the driver, as
+the driver does not access any register that is impacted by the
+parameterization (except for the number of channels).
 
 Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+[geert: Clarify R-Car V4M differences]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+v3:
+  - Add more clarification,
+
 v2:
-  - No changes.
+  - Drop RFC state now it works.
 
 Changes compared to the BSP:
-  - Add can_clk comment,
-  - Add "-clk" suffix to clock node name.
+  - Restrict number of channels to four.
 ---
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 41 +++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ .../bindings/net/can/renesas,rcar-canfd.yaml  | 22 ++++++++++++++-----
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index 7147f88401893d3d..c18a70b5552fef93 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -21,6 +21,13 @@ audio_clkin: audio_clkin {
- 		clock-frequency = <0>;
- 	};
+diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+index d3f45d29fa0a550a..7c5ac5d2e880bbb8 100644
+--- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
++++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+@@ -32,6 +32,7 @@ properties:
+           - enum:
+               - renesas,r8a779a0-canfd     # R-Car V3U
+               - renesas,r8a779g0-canfd     # R-Car V4H
++              - renesas,r8a779h0-canfd     # R-Car V4M
+           - const: renesas,rcar-gen4-canfd # R-Car Gen4
  
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	cluster0_opp: opp-table-0 {
- 		compatible = "operating-points-v2";
+       - items:
+@@ -163,14 +164,23 @@ allOf:
+           maxItems: 1
  
-@@ -641,6 +648,40 @@ hscif3: serial@e66a0000 {
- 			status = "disabled";
- 		};
+   - if:
+-      not:
+-        properties:
+-          compatible:
+-            contains:
+-              const: renesas,rcar-gen4-canfd
++      properties:
++        compatible:
++          contains:
++            const: renesas,r8a779h0-canfd
+     then:
+       patternProperties:
+-        "^channel[2-7]$": false
++        "^channel[5-7]$": false
++    else:
++      if:
++        not:
++          properties:
++            compatible:
++              contains:
++                const: renesas,rcar-gen4-canfd
++      then:
++        patternProperties:
++          "^channel[2-7]$": false
  
-+		canfd: can@e6660000 {
-+			compatible = "renesas,r8a779h0-canfd",
-+				     "renesas,rcar-gen4-canfd";
-+			reg = <0 0xe6660000 0 0x8500>;
-+			interrupts = <GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 413 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch_int", "g_int";
-+			clocks = <&cpg CPG_MOD 328>,
-+				 <&cpg CPG_CORE R8A779H0_CLK_CANFD>,
-+				 <&can_clk>;
-+			clock-names = "fck", "canfd", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A779H0_CLK_CANFD>;
-+			assigned-clock-rates = <80000000>;
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+
-+			channel0 {
-+				status = "disabled";
-+			};
-+
-+			channel1 {
-+				status = "disabled";
-+			};
-+
-+			channel2 {
-+				status = "disabled";
-+			};
-+
-+			channel3 {
-+				status = "disabled";
-+			};
-+		};
-+
- 		avb0: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a779h0",
- 				     "renesas,etheravb-rcar-gen4";
+ unevaluatedProperties: false
+ 
 -- 
 2.34.1
 
