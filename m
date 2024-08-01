@@ -1,51 +1,42 @@
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC01D1A255A
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Aug 2024 13:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418941A38C1
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Aug 2024 13:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722519712; cv=none; b=LoYtPUXo5Sfg40Iqi9K1pAzdhqzX+hsxzZ1wAfCJ/e3E2QODxLPTN/WYBjZZHf7fxDJ5jRkgOd84+I9S3zyOxieIB5MuYdhTJri58nqWX3SJFeImqYPyEtQ85Kgtal4WtkLnZqmGNOdOVu2/VRGxVIimtvC7F+SS3ngiV2iok90=
+	t=1722520487; cv=none; b=i+msDwsmEZ2W2f07+QAwPJLKxBtCz/V5+AgFxKBacePGAvNO5i8GOzRh7HOxvCjicgK0/ICJ5hshHRF771HADnQ45rjKo7/LQdwXsl85jQbZor1mLFh5ak0Tevb73m9LpH11FW2NRkEX+A0MHvmJc0TlyZe9dlUBmJOBthx+uC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722519712; c=relaxed/simple;
-	bh=2pBooiMpVZcLBbSFYVW0Xm0PsJcpq1lqLkpVUrdr49Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XjCqDT9EgpW4/2+Y4tFnvLNDir7Becr6iHQdiaS+/OE9wrvrr5vSuwCEwJI76TnlH1Wo7wdQlsTt/x7YhX3tDx9NLR14Fy/sKtaYzjH5hO8Q+W6y5wEwcedDHXIyFtldaoihbL9mkA8Opbd4uDXNRFYCRz7lm4WIivw3NZLtOMk=
+	s=arc-20240116; t=1722520487; c=relaxed/simple;
+	bh=kZTC55fVtc1syZyla3VHu7OwHXa6zhGl4Vscl0x/BEA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uMd/w0tyTU/PxXVR1/e0xXYJeBxxMz8BvxbcsjfIqph4FIQ1yiALabrX3Xv4UC+2fcdGtxyldYIQlvxBk5RTnnMm1n4WfYjOsaTPlgy+w8pO6jeTxQU7fib+P3WMDKbU3n9RAGTUAwWOvhkzs3wqVrpt/C8ohBQSsAiccDSL22I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:fff7:d11a:41d8:a195])
 	by andre.telenet-ops.be with bizsmtp
-	id udhb2C00W5XJrhx01dhbHr; Thu, 01 Aug 2024 15:41:42 +0200
+	id uduh2C0085XJrhx01duhqM; Thu, 01 Aug 2024 15:54:44 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sZW3L-004S6w-Jn;
-	Thu, 01 Aug 2024 15:41:35 +0200
+	id 1sZWG0-004S9w-V5;
+	Thu, 01 Aug 2024 15:54:41 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sZW3j-00HO83-OF;
-	Thu, 01 Aug 2024 15:41:35 +0200
+	id 1sZWGP-00HOE6-5G;
+	Thu, 01 Aug 2024 15:54:41 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Duy Nguyen <duy.nguyen.rh@renesas.com>,
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dt-bindings: can: renesas,rcar-canfd: Document R-Car V4M support
-Date: Thu,  1 Aug 2024 15:41:34 +0200
-Message-Id: <2c40290b3948ef1b9a5fa2e38794dc95ed3b2fd4.1722519580.git.geert+renesas@glider.be>
+Subject: [PATCH v2 2/2] arm64: dts: renesas: gray-hawk-single: Add CAN-FD support
+Date: Thu,  1 Aug 2024 15:54:36 +0200
+Message-Id: <7c2a06b7abec4ce1025761003ccdbce559789708.1722519717.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1722519717.git.geert+renesas@glider.be>
+References: <cover.1722519717.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -54,65 +45,97 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Duy Nguyen <duy.nguyen.rh@renesas.com>
+Enable confirmed-working CAN-FD channels 0 and 1 on the Gray Hawk Single
+development board:
+  - Channel 0 uses an NXP TJR1443AT CAN transceiver, which must be
+    enabled through a GPIO,
+  - Channels 1-3 use Microchip MCP2558FD-H/SN CAN transceivers, which do
+    not need explicit description, but channels 2-3 do not seem to work.
 
-Document support for the CAN-FD Interface on the Renesas R-Car V4M
-(R8A779H0) SoC, which supports up to four channels.
+Inspired by a patch for Gray Hawk in the BSP by Duy Nguyen.
 
-Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
-  - Drop RFC state now it works.
+  - Add missing pinctrl-names,
+  - Correct TJR1443AT Enable GPIO,
+  - Reword now channels 0 and 1 work.
 
 Changes compared to the BSP:
-  - Restrict number of channels to four.
+  - Add can_clk,
+  - Add missing can_transceiver0,
+  - Keep channels 2 and 3 disabled,
+  - Preserve sort order.
 ---
- .../bindings/net/can/renesas,rcar-canfd.yaml  | 22 ++++++++++++++-----
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ .../dts/renesas/r8a779h0-gray-hawk-single.dts | 41 +++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-index d3f45d29fa0a550a..7c5ac5d2e880bbb8 100644
---- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-+++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-@@ -32,6 +32,7 @@ properties:
-           - enum:
-               - renesas,r8a779a0-canfd     # R-Car V3U
-               - renesas,r8a779g0-canfd     # R-Car V4H
-+              - renesas,r8a779h0-canfd     # R-Car V4M
-           - const: renesas,rcar-gen4-canfd # R-Car Gen4
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+index 88f813562832c21b..9a1917b87f6138af 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+@@ -47,6 +47,13 @@ aliases {
+ 		ethernet0 = &avb0;
+ 	};
  
-       - items:
-@@ -163,14 +164,23 @@ allOf:
-           maxItems: 1
++	can_transceiver0: can-phy0 {
++		compatible = "nxp,tjr1443";
++		#phy-cells = <0>;
++		enable-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
++		max-bitrate = <5000000>;
++	};
++
+ 	chosen {
+ 		bootargs = "ignore_loglevel rw root=/dev/nfs ip=on";
+ 		stdout-path = "serial0:921600n8";
+@@ -174,6 +181,25 @@ phy0: ethernet-phy@0 {
+ 	};
+ };
  
-   - if:
--      not:
--        properties:
--          compatible:
--            contains:
--              const: renesas,rcar-gen4-canfd
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r8a779h0-canfd
-     then:
-       patternProperties:
--        "^channel[2-7]$": false
-+        "^channel[5-7]$": false
-+    else:
-+      if:
-+        not:
-+          properties:
-+            compatible:
-+              contains:
-+                const: renesas,rcar-gen4-canfd
-+      then:
-+        patternProperties:
-+          "^channel[2-7]$": false
++&can_clk {
++	clock-frequency = <40000000>;
++};
++
++&canfd {
++	pinctrl-0 = <&canfd0_pins>, <&canfd1_pins>, <&can_clk_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	channel0 {
++		status = "okay";
++		phys = <&can_transceiver0>;
++	};
++
++	channel1 {
++		status = "okay";
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+@@ -305,6 +331,21 @@ pins_mii {
+ 		};
+ 	};
  
- unevaluatedProperties: false
- 
++	can_clk_pins: can-clk {
++		groups = "can_clk";
++		function = "can_clk";
++	};
++
++	canfd0_pins: canfd0 {
++		groups = "canfd0_data";
++		function = "canfd0";
++	};
++
++	canfd1_pins: canfd1 {
++		groups = "canfd1_data";
++		function = "canfd1";
++	};
++
+ 	hscif0_pins: hscif0 {
+ 		groups = "hscif0_data", "hscif0_ctrl";
+ 		function = "hscif0";
 -- 
 2.34.1
 
