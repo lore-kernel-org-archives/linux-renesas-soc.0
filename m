@@ -1,147 +1,83 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A05254658;
-	Mon,  5 Aug 2024 10:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C51A13CFAB;
+	Mon,  5 Aug 2024 10:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722852712; cv=none; b=mT5BKPN3UfB9LQJWn1kCy0/VM/37WzglzZSq5I5HxCtxaRZ5N0X4sB5psrvCdmrw0tKzLazSo8igFpxLVUuoDapTxiqOIEQDzucyL0V469jGxmBTo7hQKmC+MGZ3vYX7Hea+8nZzrFEBLaljGRgXneMs87bdTek5Rxz9OIdg3Eo=
+	t=1722854172; cv=none; b=ngW03hYJWHY6y2aoXzSYgQWvb6vSqHrgawyCp0llvVA59fvjvBEff/7ec+16HJLke6J6vGh7HH/KD4DZsIzqqgQMuYeT0XfRhCKym/oWZxEUodyAm3V8115l245F7XMmatAZ50Ry/E6v8Jpi/Ul5urmq/eTcD8JvqBBC9tWldis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722852712; c=relaxed/simple;
-	bh=uz3PDbQf/CwBdPu+FujzDuwVltGEBBlEGjdTm3NRYUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pNNlwwcegOWfCffiH0RT6Un5+Piuyk1xM7dCU5nDdbCEtm4+fzm+qRHy02/GD2lIJSmQPHs9XDVvdEEBZ7DJX82uG23a4U4EHghxy3CQCYle49uNOEME0e/xXjxcnAATJ1m1g6Oe9A2cpmT/xLspfSJVhUg3lD0B1fmIBqGXPOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMuU8+/o; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMuU8+/o"
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4f6abcf0567so4004548e0c.0;
-        Mon, 05 Aug 2024 03:11:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722852710; x=1723457510; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wqFy68ctx8OCSrJN8siALtfuI02hTJzmjF8cLmFCihg=;
-        b=AMuU8+/o4hoMZCeooc4tnygU7WujjPGgc3o3YvsJ2PM7A/bKxG78gRD7l6OKZC31Rp
-         M+4KgAzQPU/9bIfJMHrhVftHYS/9KM6JiNX4PtCs54q4qH5/Bcy57mo6LcIdTq0UKERK
-         NOEEvq/Yv+aMzOYwqG3MzZidcZ12zb4h1htVsqfBx189ShSso5yqNz33rjAQuVftOMs/
-         +sQh0QGn/HRijkBWdHmS5hkiuYDgLMJ7yu29uVFauWbdxYBZ4mFiioLo73kxC08Uwese
-         vMCceK+Km9/5sHdrclS96Mky4tQzu/rOsp2NLxAcAhZZy+H8nSYwzWKTQqPb2PYgx1D2
-         0OOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722852710; x=1723457510;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wqFy68ctx8OCSrJN8siALtfuI02hTJzmjF8cLmFCihg=;
-        b=JqR1nTkoHW6QwsSD3w+Aid2zrpgLvpYysBtXoZxZw2pa+piB4+tmMz1vGC4XwYvb1T
-         E4tW5U9ryIzecNnd1O137cfGwt9WlVHU019xF/PX+BWQjzPIsJYa1QYa4XVCl3hbC2qF
-         Ii7oHpb8VYe4JKwRfQ2nya6CepqPgCUCtAGcu/cu2dMyhejPcvP7WDCyeAGW0LvGMYxn
-         5mFOgK8le1PYdTBD/zRmNYzVafDoVKeLCH957AGrKCOIwmuvtVPZ/ksAgZ2GEbXK5yhE
-         Rh0d5YbJZS77aRQrCPrFRAKnev8Ll/qX7QbSamVy4YaFiZxdPHTlfApyI3rzNwgZujYQ
-         Yk0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSVLOJexRN6bhLjiD6tfdiTN4XQ+Ak2Bfm4mn+M4uYJsGPrEZ8hRUgbZ0JNSawTs0J4DBEJaiBOXfCebxzHTAYxKwX2vLz01D4NY7TBLqG0eK9xQV1sDaFFHyVG8rewiMrV3khQo0HONtMpYvkjzMta93rNrXVKzBNdVWWMcEyQann95hB/lbdHRwqD4pDC/3A7rpvBAcRVrAPsv5obVJf3lyEmG7H
-X-Gm-Message-State: AOJu0YzSXo+TF8O84b9FTtgLJW6y2aNtkNJScX2dGOQf6gpcAOQz7IgR
-	dNywE6ej7O24kVTGvQ+KDfK+n3mzPFpMjYOzBT0VV5F7mXHMNyf0qdxHVlUR9fc1eCRBRv0h5fD
-	AUWkjz/7GMxJrnLS69WzctdVR4UE=
-X-Google-Smtp-Source: AGHT+IFg7GqQOIIN2kz6j2VWZtb0Tq4sECQzl2p977ZAZCgH3AQoNCnI8QcpGbtOt8/SiBP5RCfGJHndYciSyyiUG2w=
-X-Received: by 2002:a05:6122:2027:b0:4f6:b240:4af8 with SMTP id
- 71dfb90a1353d-4f89ffc8d2cmr12151574e0c.11.1722852710137; Mon, 05 Aug 2024
- 03:11:50 -0700 (PDT)
+	s=arc-20240116; t=1722854172; c=relaxed/simple;
+	bh=uK41p1ZCIfr+T8EVi+2lTTM4Apys4PQBO6/by8nTW58=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GW9b8gF/rMYdjv+t9NHazM8wo8uO2RQ/HORI5TauMmJ1DarqURGXFJQRRy6YMyFpZ45+TUM+8xQGs+aK1X2jAnKdCfJpfhcAXT2YaYRZuRmtKkJeaJHa+Pd532tSn/378KJkTkTJ4Y2xaTZWlU+xr+GxKHE+0pPuU4j//o9iGRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.09,264,1716217200"; 
+   d="scan'208";a="214716788"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 05 Aug 2024 19:36:03 +0900
+Received: from localhost.localdomain (unknown [10.226.92.197])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B51FA41FB3B1;
+	Mon,  5 Aug 2024 19:35:58 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v3 1/2] media: dt-bindings: media: renesas,vsp1: Document RZ/G2UL VSPD bindings
+Date: Mon,  5 Aug 2024 11:35:43 +0100
+Message-ID: <20240805103549.92369-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240805103549.92369-1-biju.das.jz@bp.renesas.com>
+References: <20240805103549.92369-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724182119.652080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240724182119.652080-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdXkPwfVT-iJp70pEi5ubpc5YBKt=a2C5NmL_tjbocXKRQ@mail.gmail.com>
- <CA+V-a8ttfEHwXqUU2OqxhjJ3E2jt+xCBrbziHtOUs1g74tandA@mail.gmail.com> <CAPDyKFppZPadtEBocoVyQJkchKzQ4WgnLb0_CYgeHWk+noVbFg@mail.gmail.com>
-In-Reply-To: <CAPDyKFppZPadtEBocoVyQJkchKzQ4WgnLb0_CYgeHWk+noVbFg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 5 Aug 2024 11:11:24 +0100
-Message-ID: <CA+V-a8tjDjaGMBgdyuxUxjA=O4DqXdpMjAu5GN3i+ADOFZoGKQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Ulf,
+Document VSPD found in RZ/G2UL SoC. The VSPD block is identical to RZ/G2L
+SoC and therefore use RZ/G2L fallback to avoid any driver changes.
 
-On Mon, Aug 5, 2024 at 11:09=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> On Fri, 2 Aug 2024 at 11:32, Lad, Prabhakar <prabhakar.csengg@gmail.com> =
-wrote:
-> >
-> > Hi Geert,
-> >
-> > On Fri, Aug 2, 2024 at 10:11=E2=80=AFAM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > >
-> > > Hi Prabhakar,
-> > >
-> > > On Wed, Jul 24, 2024 at 8:22=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
-mail.com> wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to t=
-hat
-> > > > of the R-Car Gen3, but it has some differences:
-> > > > - HS400 is not supported.
-> > > > - It has additional SD_STATUS register to control voltage,
-> > > >   power enable and reset.
-> > > > - It supports fixed address mode.
-> > > >
-> > > > To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a0=
-9g057'
-> > > > compatible string is added.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > > > ---
-> > > > v4->v5
-> > > > - Dropped regulator node.
-> > >
-> > > Thanks for your patch, which is now commit 32842af74abc8ff9
-> > > ("dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support") in
-> > > mmc/next.
-> > >
-> > > > --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> > > > +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> > > > @@ -18,6 +18,7 @@ properties:
-> > > >            - renesas,sdhi-r7s9210 # SH-Mobile AG5
-> > > >            - renesas,sdhi-r8a73a4 # R-Mobile APE6
-> > > >            - renesas,sdhi-r8a7740 # R-Mobile A1
-> > > > +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
-> > > >            - renesas,sdhi-sh73a0  # R-Mobile APE6
-> > > >        - items:
-> > > >            - enum:
-> > > > @@ -66,6 +67,7 @@ properties:
-> > > >                - renesas,sdhi-r9a07g054 # RZ/V2L
-> > > >                - renesas,sdhi-r9a08g045 # RZ/G3S
-> > > >                - renesas,sdhi-r9a09g011 # RZ/V2M
-> > > > +              - renesas,sdhi-r9a09g057 # RZ/V2H(P)
-> > >
-> > > This looks wrong to me.
-> > > Did you want to add it to the clocks constraint, like the third hunk
-> > > in v4[1], and was it mangled in a rebase?
-> > >
-> > Oouch, yes you are correct, this had to go in the clock constraint.
->
-> I am happy to apply a fix on top for that.
->
-Thanks, I'll send out a fix today.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2->v3:
+ * Added Rb tag from Geert and Laurent.
+v1->v2:
+ * Added Ack from Conor.
+---
+ Documentation/devicetree/bindings/media/renesas,vsp1.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Cheers,
-Prabhakar
+diff --git a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
+index 3265e922647c..1a03e67462a4 100644
+--- a/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,vsp1.yaml
+@@ -23,6 +23,7 @@ properties:
+           - renesas,vsp2 # R-Car Gen3 and RZ/G2
+       - items:
+           - enum:
++              - renesas,r9a07g043u-vsp2   # RZ/G2UL
+               - renesas,r9a07g054-vsp2    # RZ/V2L
+           - const: renesas,r9a07g044-vsp2 # RZ/G2L fallback
+ 
+-- 
+2.43.0
+
