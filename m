@@ -1,48 +1,48 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C106115B155;
-	Mon,  5 Aug 2024 16:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D10515C133;
+	Mon,  5 Aug 2024 16:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722874926; cv=none; b=YEHS5+UgQnaa1I9SePvb+SyigMMbD8QofkHbN5w4ZY0S+r/SMkO71dXdluuyNBEBLsH+HNSvM1pR9flKQa6qN8ewkP0cArwA8ppp2pbQetWWgB2TWlEMF/aNEt4qObHGRW3Y+eg9IzJwdzg3CCUS0Z3dSgMYO/EW6JqXD9Cc5HA=
+	t=1722874928; cv=none; b=ow/VzbS0voZRLuGRXPM9Ux6/9YFPlOr2i8nG4t1SnUnKGyLFU/FRd+6ptAyzhALNSqxuI/ktI19q5sY7m60qvPNjUUtRQ/gvEkei0pS6l3aDYt8ybgwW7rsGUcZMlhF1EJXvmjp+9NZm3SO2j5C8gIcMYek/7aUZp6nA6sVBrw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722874926; c=relaxed/simple;
-	bh=6a3BS3tV0Qv+SfzqBC0TevIcJzOJzC5EoJ12fFLAMS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qr6LVuNRT2rph8YXb0MoebzbTKYzSmq1ZfHdF2tlcu8+KBRTG6BqiV0lnPi32sh6zBgsISV/DgutFVetxnjECuWX1qTbErp8wMYQPkIOAG/r4MHNYMbN1NWUB2M91M6+o63hnIPkBGNOhtgIfLHuFHW/blmDzGPfs0ESIYCHkiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	s=arc-20240116; t=1722874928; c=relaxed/simple;
+	bh=Fvv83yoWgMqTaYbY5iVvHu/h69nZdopCjP2naLrE0tg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kC3rWbOimQEsFrkjGgq1a/Y87oUZ1IAsBbAciU/wlyEG4rWbku3/VaIx3YvGfh/iWc25CmYqHf5BHE3rk8h3Dz1ZIoj+lp4m6BxLosEMXcjkX3+wj2QUHI/KCEx05H5g9f9EPzfHlDkASgnzM/apjSpDZmj9DPk/oexoJlhpEzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.09,265,1716217200"; 
-   d="scan'208";a="218709707"
+   d="scan'208";a="214738518"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Aug 2024 01:22:01 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Aug 2024 01:22:02 +0900
 Received: from localhost.localdomain (unknown [10.226.92.197])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 273BC4009400;
-	Tue,  6 Aug 2024 00:52:44 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id CBB294009413;
+	Tue,  6 Aug 2024 00:53:06 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
 	Conor Dooley <conor+dt@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
 	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 0/4] Add support for RZ/G2UL Display Unit
-Date: Mon,  5 Aug 2024 16:52:34 +0100
-Message-ID: <20240805155242.151661-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 4/4] arm64: dts: renesas: r9a07g043u11-smarc: Enable DU
+Date: Mon,  5 Aug 2024 16:52:38 +0100
+Message-ID: <20240805155242.151661-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240805155242.151661-1-biju.das.jz@bp.renesas.com>
+References: <20240805155242.151661-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -51,51 +51,137 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series aims to add support for RZ/G2UL DU.
+Enable DU and link with the HDMI add-on board connected with
+the parallel connector on RZ/G2UL SMARC EVK.
 
-The LCD controller is composed of Frame Compression Processor (FCPVD),
-Video Signal Processor (VSPD), and Display Unit (DU).
-
-The output of LCDC is connected display parallel interface (DPI) and
-supports a maximum resolution of WXGA along with 2 RPFs to support the
-blending of two picture layers and raster operations (ROPs)
-
-It is similar to LCDC IP on RZ/G2L SoCs, but does not have DSI interface.
-
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v2->v3:
- * Split patch series based on subsystem from DU patch series [1].
- * Replaced ports->port property for RZ/G2UL as it supports only DPI
-   and retained ports property for RZ/{G2L,V2L} as it supports both DSI
-   and DPI output interface.
- * Added missing blank line before example.
- * Dropped tags from Conor and Geert as there are new changes in bindings
- * Avoided the line break in rzg2l_du_start_stop() for rstate.
- * Replaced port->du_output in  struct rzg2l_du_output_routing and
-   dropped using the port number to indicate the output type in
-   rzg2l_du_encoders_init().
- * Updated rzg2l_du_r9a07g043u_info and rzg2l_du_r9a07g044_info.
-
- [1] https://lore.kernel.org/all/20240709135152.185042-1-biju.das.jz@bp.renesas.com/
+ * Replaced ports->port in du node as it support only DPI output.
 v1->v2:
- * Updated cover letter header "DU IP->Display Unit".
- * Updated commit description related to non ABI breakage for patch#3.
- * Added Ack from Conor for binding patches.
-
-Biju Das (4):
-  dt-bindings: display: renesas,rzg2l-du: Document RZ/G2UL DU bindings
-  drm: renesas: rz-du: Add RZ/G2UL DU Support
-  arm64: dts: renesas: r9a07g043u: Add DU node
-  arm64: dts: renesas: r9a07g043u11-smarc: Enable DU
-
- .../bindings/display/renesas,rzg2l-du.yaml    |  35 +++++-
- arch/arm64/boot/dts/renesas/r9a07g043u.dtsi   |  19 +++
+ * No change.
+---
  .../boot/dts/renesas/r9a07g043u11-smarc.dts   | 109 ++++++++++++++++++
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c |   8 +-
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  |  18 ++-
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h  |   5 +-
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c  |   4 +-
- 7 files changed, 188 insertions(+), 10 deletions(-)
+ 1 file changed, 109 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+index 8e0107df2d46..418902e1370e 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+@@ -35,4 +35,113 @@
+ / {
+ 	model = "Renesas SMARC EVK based on r9a07g043u11";
+ 	compatible = "renesas,smarc-evk", "renesas,r9a07g043u11", "renesas,r9a07g043";
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "d";
++
++		port {
++			hdmi_con_out: endpoint {
++				remote-endpoint = <&adv7513_out>;
++			};
++		};
++	};
++};
++
++&du {
++	pinctrl-0 = <&du_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	port {
++		du_out_rgb: endpoint {
++			remote-endpoint = <&adv7513_in>;
++		};
++	};
++};
++
++&i2c1 {
++	adv7513: adv7513@39 {
++		compatible = "adi,adv7513";
++		reg = <0x39>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++
++		avdd-supply = <&reg_1p8v>;
++		dvdd-supply = <&reg_1p8v>;
++		pvdd-supply = <&reg_1p8v>;
++		dvdd-3v-supply = <&reg_3p3v>;
++		bgvdd-supply = <&reg_1p8v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				adv7513_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++
++				adv7513_out: endpoint {
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
++};
++
++&pinctrl {
++	du_pins: du {
++		data {
++			pinmux = <RZG2L_PORT_PINMUX(11, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 4, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 3, 6)>,
++				 <RZG2L_PORT_PINMUX(12, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(14, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(14, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(14, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(16, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(15, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(16, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(15, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(15, 3, 6)>,
++				 <RZG2L_PORT_PINMUX(18, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(15, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(17, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(17, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(17, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(18, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(18, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(17, 3, 6)>,
++				 <RZG2L_PORT_PINMUX(18, 3, 6)>;
++			drive-strength = <2>;
++		};
++
++		sync {
++			pinmux = <RZG2L_PORT_PINMUX(11, 0, 6)>, /* HSYNC */
++				 <RZG2L_PORT_PINMUX(12, 0, 6)>; /* VSYNC */
++			drive-strength = <2>;
++		};
++
++		de {
++			pinmux = <RZG2L_PORT_PINMUX(11, 1, 6)>; /* DE */
++			drive-strength = <2>;
++		};
++
++		clk {
++			pinmux = <RZG2L_PORT_PINMUX(11, 3, 6)>; /* CLK */
++		};
++	};
+ };
 -- 
 2.43.0
 
