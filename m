@@ -1,48 +1,48 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BB015B13B;
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C106115B155;
 	Mon,  5 Aug 2024 16:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722874926; cv=none; b=pMqL7NF+z+0s8yHeRw81Qac6IuQrDuo3DwD7wSIUYh3hdQ9WD+lms0k6jeKRoOGUymp9fCxqpWCyjyFttBo7lkuKSY7AMkCf2dbcyBoiPs18kCy4VMCVghQmR6+7UnsVnbF17bsR5wfH7rtQLOBCBT93C5J5FpdmN3n+pjraBsk=
+	t=1722874926; cv=none; b=YEHS5+UgQnaa1I9SePvb+SyigMMbD8QofkHbN5w4ZY0S+r/SMkO71dXdluuyNBEBLsH+HNSvM1pR9flKQa6qN8ewkP0cArwA8ppp2pbQetWWgB2TWlEMF/aNEt4qObHGRW3Y+eg9IzJwdzg3CCUS0Z3dSgMYO/EW6JqXD9Cc5HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722874926; c=relaxed/simple;
-	bh=PAan1aJRP8MucfPhoa+QmqqzfjZMU9RrSbuhN0XTfbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AdDunUFN7cUtjGA5lsFjxFdglfqKlmOoNDT45sKiMOKZqk89tysw300WXS7XDkiPUXb+8ikQppJ7aOpcS0Jytd07gffCwViJODmRdsTaOU0ibV/j9tNsLg8bBP33ZZMK1hY/5nGpOwvvrIdKPPrkmTGiZO1q/jO1ossxEAafYD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+	bh=6a3BS3tV0Qv+SfzqBC0TevIcJzOJzC5EoJ12fFLAMS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qr6LVuNRT2rph8YXb0MoebzbTKYzSmq1ZfHdF2tlcu8+KBRTG6BqiV0lnPi32sh6zBgsISV/DgutFVetxnjECuWX1qTbErp8wMYQPkIOAG/r4MHNYMbN1NWUB2M91M6+o63hnIPkBGNOhtgIfLHuFHW/blmDzGPfs0ESIYCHkiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.09,265,1716217200"; 
-   d="scan'208";a="214738307"
+   d="scan'208";a="218709707"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Aug 2024 01:22:01 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Aug 2024 01:22:01 +0900
 Received: from localhost.localdomain (unknown [10.226.92.197])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 19EF34009403;
-	Tue,  6 Aug 2024 00:52:50 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 273BC4009400;
+	Tue,  6 Aug 2024 00:52:44 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
 	Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-media@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 1/4] dt-bindings: display: renesas,rzg2l-du: Document RZ/G2UL DU bindings
-Date: Mon,  5 Aug 2024 16:52:35 +0100
-Message-ID: <20240805155242.151661-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v3 0/4] Add support for RZ/G2UL Display Unit
+Date: Mon,  5 Aug 2024 16:52:34 +0100
+Message-ID: <20240805155242.151661-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240805155242.151661-1-biju.das.jz@bp.renesas.com>
-References: <20240805155242.151661-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -51,93 +51,51 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document DU found in RZ/G2UL SoC. The DU block is identical to RZ/G2L
-SoC, but has only DPI interface.
+This patch series aims to add support for RZ/G2UL DU.
 
-While at it, add missing required property port@1 for RZ/G2L and RZ/V2L
-SoCs. Currently there is no user for the DPI interface and hence there
-won't be any ABI breakage for adding port@1 as required property for
-RZ/G2L and RZ/V2L SoCs.
+The LCD controller is composed of Frame Compression Processor (FCPVD),
+Video Signal Processor (VSPD), and Display Unit (DU).
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
+The output of LCDC is connected display parallel interface (DPI) and
+supports a maximum resolution of WXGA along with 2 RPFs to support the
+blending of two picture layers and raster operations (ROPs)
+
+It is similar to LCDC IP on RZ/G2L SoCs, but does not have DSI interface.
+
 v2->v3:
- * Replaced ports->port property for RZ/G2UL as it supports only DPI.
+ * Split patch series based on subsystem from DU patch series [1].
+ * Replaced ports->port property for RZ/G2UL as it supports only DPI
    and retained ports property for RZ/{G2L,V2L} as it supports both DSI
    and DPI output interface.
  * Added missing blank line before example.
- * Dropped tags from Conor and Geert as there are new changes.
-v1->v2:
- * Updated commit description related to non ABI breakage.
- * Added Ack from Conor.
----
- .../bindings/display/renesas,rzg2l-du.yaml    | 35 +++++++++++++++++--
- 1 file changed, 32 insertions(+), 3 deletions(-)
+ * Dropped tags from Conor and Geert as there are new changes in bindings
+ * Avoided the line break in rzg2l_du_start_stop() for rstate.
+ * Replaced port->du_output in  struct rzg2l_du_output_routing and
+   dropped using the port number to indicate the output type in
+   rzg2l_du_encoders_init().
+ * Updated rzg2l_du_r9a07g043u_info and rzg2l_du_r9a07g044_info.
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-index 08e5b9478051..ca01bf26c4c0 100644
---- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-+++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-@@ -18,6 +18,7 @@ properties:
-   compatible:
-     oneOf:
-       - enum:
-+          - renesas,r9a07g043u-du # RZ/G2UL
-           - renesas,r9a07g044-du # RZ/G2{L,LC}
-       - items:
-           - enum:
-@@ -60,8 +61,9 @@ properties:
-         $ref: /schemas/graph.yaml#/properties/port
-         unevaluatedProperties: false
- 
--    required:
--      - port@0
-+  port:
-+    $ref: /schemas/graph.yaml#/properties/port
-+    description: Connection to the DU output video port.
- 
-     unevaluatedProperties: false
- 
-@@ -83,11 +85,38 @@ required:
-   - clock-names
-   - resets
-   - power-domains
--  - ports
-   - renesas,vsps
- 
- additionalProperties: false
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a07g043u-du
-+    then:
-+      properties:
-+        port:
-+          description: DPI
-+
-+      required:
-+        - port
-+    else:
-+      properties:
-+        ports:
-+          properties:
-+            port@0:
-+              description: DSI
-+            port@1:
-+              description: DPI
-+
-+          required:
-+            - port@0
-+            - port@1
-+      required:
-+        - ports
-+
- examples:
-   # RZ/G2L DU
-   - |
+ [1] https://lore.kernel.org/all/20240709135152.185042-1-biju.das.jz@bp.renesas.com/
+v1->v2:
+ * Updated cover letter header "DU IP->Display Unit".
+ * Updated commit description related to non ABI breakage for patch#3.
+ * Added Ack from Conor for binding patches.
+
+Biju Das (4):
+  dt-bindings: display: renesas,rzg2l-du: Document RZ/G2UL DU bindings
+  drm: renesas: rz-du: Add RZ/G2UL DU Support
+  arm64: dts: renesas: r9a07g043u: Add DU node
+  arm64: dts: renesas: r9a07g043u11-smarc: Enable DU
+
+ .../bindings/display/renesas,rzg2l-du.yaml    |  35 +++++-
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi   |  19 +++
+ .../boot/dts/renesas/r9a07g043u11-smarc.dts   | 109 ++++++++++++++++++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c |   8 +-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  |  18 ++-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h  |   5 +-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c  |   4 +-
+ 7 files changed, 188 insertions(+), 10 deletions(-)
+
 -- 
 2.43.0
 
