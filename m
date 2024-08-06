@@ -1,44 +1,40 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A0E18D64B
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Aug 2024 14:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158618D631
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Aug 2024 14:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954044; cv=none; b=OpAQ6E15AGQC/jR86LWXe+oRNGKHodxeUY1YQhmgrTNl/QKz/HAcBT5CJuGk6A7oLEtfsZzcstUZCCVeX1Bd/sTxnZU1OS8VDfT+iBFm4Y8OfHe/sJE7WGVwxm16i8bfs6L+dMKmeUz/+Pp57bX97p1IlOngMqxe8NQrXKG+ZVc=
+	t=1722954045; cv=none; b=fEWVBxqvHTQ7AL5pIhs/J8l35qgK2svi1+m5cxsuSnBXDKz0BUWUwgs74Io/UTKrMZFlKW923lH+rgQbBJj6UdF9oB2mI9OR79cfpYhpqe9FWL97T0Y75gozlv1ISs1LeHoP4qS9A7MzYYsiRaGaNd0dN2QICg6R9D2BVFqYHyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954044; c=relaxed/simple;
-	bh=GcbsOglTmhNNwZpS47DIxBLpCSQcEHlfmE9HWgnOAXU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fFCvH2jhLqYJn++r0yon2XmNF9HFRTCITXO12BqmF/Vak+0BsaFov523uj3jt5n5ejryr3qYNZgi8M/vrmLpQyqeRx7uukybJiL1/9RDRO8/3rulrdiBcaz2FlBYNca5WJpL8SUdw3yCQ2+2k7ia7GiP9lgA3GPp9P1xcR58/e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Xc9U1iDh; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1722954045; c=relaxed/simple;
+	bh=VJcYVzWxs+vXvSSDlJo4H6o0JJ8oED4u3PXvLG5sW04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VJMBWLp060CdGZRKVUUAyYuIg0NRzvo/rtSLEzU4fy0vj+joaBhxKn22frU3EJzF7gJ2S2yS3rVRe+rv4V1d5aqug4A8QpzFBB1Jjji3FDK+cwTptDPf9r0Jy4KoM/tvrYCksvcra6uyHzfND1lATsgSJl5Jcnp0u7vJ3oGN86o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iyr/c8Vl; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Xc9U1iDh"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iyr/c8Vl"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=OWcMsHYr3RRRiGrn/KyEpFLqpH5pnaD2wsuOUNsaofg=; b=Xc9U1i
-	DhLf9ZxwegNhwsBTr2yNg/6TuxZ+kQrQ2bOzJtLWwFfnb4ASxanE9dlY8WZThwwu
-	9U95wUEXJGqeAq1ABNnCb/iqc4VT59CYfxutg4JzMzUiX8LdlEZYDFrDct/ysgUS
-	R/4gqr3c7HGczcVORjl33f6almX4uTgTKQ65GCmQhS4sCmrL9kfuiBQlo8MxMrGT
-	gnyzytQxlf5RMFco9XJknwIZvyZRDkIOdbGygrEX5/LcxCqrWdVMZFROYHaylMeX
-	n7RHKLUa+wtNfSZHRzzAFZrecKhdu2P/luWqY/P6pSyE3ke7LphdWtqkdOYW6plk
-	vZylCLEggYb2qZ1A==
-Received: (qmail 249214 invoked from network); 6 Aug 2024 16:20:39 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Aug 2024 16:20:39 +0200
-X-UD-Smtp-Session: l3s3148p1@/I96fwQfIIYgAwDPXxLGAIH3oZkcU6AS
+	:mime-version:content-transfer-encoding; s=k1; bh=eHozqRtR+0XFHu
+	NKYIsT3ljFRBGekEofoPaAeRrHhLQ=; b=iyr/c8VlGvrICgPo/Rn9GYAggsYBSu
+	JpeiJNQsC2KehRId9/vi15sVBdue2w4OFZVT80ozZv/XJYniSX87pRic5v/kjH7o
+	Cfl8ukf7sB1T5E+vD/JgkX4pgsGIL3pt57QGpHjgbILYr8cG5ekToX+JTe9NFAQI
+	nlKGMlvDmn3kJBBWkDur4mID2ElmQOcFibKzPy1nxcxLchFdWAlaa7wKSttqwWSF
+	/lcY5xYVUcJbdsSoHxw/BiUBOTAD0JRrKfCI096OLQOF/8EruHgtXaJoxn8kthJX
+	SPpoxf1rD6Zyy+bpyoufu/j6Jbv8wCjaOGgwzJ6wM3PVhuV3r17aDA+Q==
+Received: (qmail 249145 invoked from network); 6 Aug 2024 16:20:36 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Aug 2024 16:20:36 +0200
+X-UD-Smtp-Session: l3s3148p1@NoZHfwQfDoYgAwDPXxLGAIH3oZkcU6AS
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	linux-i2c@vger.kernel.org
-Subject: [PATCH 3/3] i2c: testunit: return current command on read messages
-Date: Tue,  6 Aug 2024 16:20:32 +0200
-Message-ID: <20240806142033.2697-4-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/3] i2c: testunit: add rep_start test and rework versioning
+Date: Tue,  6 Aug 2024 16:20:29 +0200
+Message-ID: <20240806142033.2697-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240806142033.2697-1-wsa+renesas@sang-engineering.com>
-References: <20240806142033.2697-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -47,68 +43,35 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Because the testunit can start tests in the future via the DELAY
-register, it may happen that a command is still pending. Support
-detecting that by returning the number of a command in progress (if
-there is one).
+On my way to let the testunit trigger SMBusAlert interrupts, I needed to
+rework the way the testunit responds to read messages. This series is
+the result of that with some very nice side effects. First, we now have
+a new test to check for proper repeated starts between messages in a
+transfer, patch 2. Also, the versioning has been improved, patch 3.
+Patch 1 makes the state machine a little easiert to follow.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/i2c/slave-testunit-backend.rst | 14 ++++++++------
- drivers/i2c/i2c-slave-testunit.c             |  4 ++--
- 2 files changed, 10 insertions(+), 8 deletions(-)
+The patches are based on i2c/for-current + a naming fix[1] and has been
+tested on a Renesas Lager board (R-Car H2) and a Renesas Falcon board
+(R-Car V3U).
 
-diff --git a/Documentation/i2c/slave-testunit-backend.rst b/Documentation/i2c/slave-testunit-backend.rst
-index a0335782d109..b558adc59af2 100644
---- a/Documentation/i2c/slave-testunit-backend.rst
-+++ b/Documentation/i2c/slave-testunit-backend.rst
-@@ -20,11 +20,13 @@ Instantiating the device is regular. Example for bus 0, address 0x30::
- 
-   # echo "slave-testunit 0x1030" > /sys/bus/i2c/devices/i2c-0/new_device
- 
--After that, you will have a write-only device listening. Reads will just return
--an 8-bit version number of the testunit. When writing, the device consists of 4
--8-bit registers and, except for some "partial" commands, all registers must be
--written to start a testcase, i.e. you usually write 4 bytes to the device. The
--registers are:
-+After that, you will have the device listening. Reading will return a single
-+byte. Its value is 0 if the testunit is idle, otherwise the command number of
-+the currently running command.
-+
-+When writing, the device consists of 4 8-bit registers and, except for some
-+"partial" commands, all registers must be written to start a testcase, i.e. you
-+usually write 4 bytes to the device. The registers are:
- 
- .. csv-table::
-   :header: "Offset", "Name", "Description"
-@@ -170,4 +172,4 @@ are not equivalent to a REPEATED START. As an example, this returns just the
- default response::
- 
-   # i2cset -y 0 0x30 4 0 0 i; i2cget -y 0 0x30
--  0x01
-+  0x00
-diff --git a/drivers/i2c/i2c-slave-testunit.c b/drivers/i2c/i2c-slave-testunit.c
-index 19296ff09930..a3e1b5e8b659 100644
---- a/drivers/i2c/i2c-slave-testunit.c
-+++ b/drivers/i2c/i2c-slave-testunit.c
-@@ -15,7 +15,6 @@
- #include <linux/slab.h>
- #include <linux/workqueue.h> /* FIXME: is system_long_wq the best choice? */
- 
--#define TU_CUR_VERSION 0x01
- #define TU_VERSION_MAX_LENGTH 128
- 
- enum testunit_cmds {
-@@ -159,7 +158,8 @@ static int i2c_slave_testunit_slave_cb(struct i2c_client *client,
- 		else if (is_proc_call)
- 			*val = tu->regs[TU_REG_DATAH];
- 		else
--			*val = TU_CUR_VERSION;
-+			*val = test_bit(TU_FLAG_IN_PROCESS, &tu->flags) ?
-+					tu->regs[TU_REG_CMD] : 0;
- 		break;
- 	}
- 
+Looking forward to comments. Once we got this in, I will send out the
+SMBusAlert additions. They do work already, they just need some
+documentation.
+
+Happy hacking!
+
+[1] https://lore.kernel.org/r/20240806113532.32679-2-wsa+renesas@sang-engineering.com
+
+
+Wolfram Sang (3):
+  i2c: testunit: sort case blocks
+  i2c: testunit: add command to support versioning and test rep_start
+  i2c: testunit: return current command on read messages
+
+ Documentation/i2c/slave-testunit-backend.rst | 50 ++++++++++++++++++--
+ drivers/i2c/i2c-slave-testunit.c             | 43 ++++++++++++-----
+ 2 files changed, 77 insertions(+), 16 deletions(-)
+
 -- 
 2.43.0
 
