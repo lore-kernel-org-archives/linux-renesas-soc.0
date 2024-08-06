@@ -1,77 +1,376 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158618D631
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Aug 2024 14:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F312B1BC08F
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Aug 2024 15:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954045; cv=none; b=fEWVBxqvHTQ7AL5pIhs/J8l35qgK2svi1+m5cxsuSnBXDKz0BUWUwgs74Io/UTKrMZFlKW923lH+rgQbBJj6UdF9oB2mI9OR79cfpYhpqe9FWL97T0Y75gozlv1ISs1LeHoP4qS9A7MzYYsiRaGaNd0dN2QICg6R9D2BVFqYHyA=
+	t=1722957183; cv=none; b=Y/fTTLSbFbWjbH4WXsda6CA9Y4OTdE482rCGJP8NBB9SoL5HVw1cbeHC+J9EgcoG2KgBPZWt6lQrsqN8hyT73xow3bVXeNp7eFeMIrHmQquH51RGV54q+DS0WJjlshyxYVCO3rhMbaIwrHbstrJb1pyKo9bnwc95DZ85Ny6WcsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954045; c=relaxed/simple;
-	bh=VJcYVzWxs+vXvSSDlJo4H6o0JJ8oED4u3PXvLG5sW04=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VJMBWLp060CdGZRKVUUAyYuIg0NRzvo/rtSLEzU4fy0vj+joaBhxKn22frU3EJzF7gJ2S2yS3rVRe+rv4V1d5aqug4A8QpzFBB1Jjji3FDK+cwTptDPf9r0Jy4KoM/tvrYCksvcra6uyHzfND1lATsgSJl5Jcnp0u7vJ3oGN86o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iyr/c8Vl; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1722957183; c=relaxed/simple;
+	bh=pjR8Os6yrA/j8jdP7OCLYVREIGpqEpvc+amwNGlooCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOH9/srjod6GHXVZ0c5xoVbpKUA0aBAU3Q0RMSdQnVMJUt8zwPijMo/GJPciCfkNTFwTK6rQEzhdVptVKy9kQfK3D0V/9Xz9LFEeXDwiV2HFC2K5BRcRPn2P9T+nxPOUlrT0C4AqFYDwJRp6MZ++QV80ms9EmNakfI18Q7gKNLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Nyexg0HP; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iyr/c8Vl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=eHozqRtR+0XFHu
-	NKYIsT3ljFRBGekEofoPaAeRrHhLQ=; b=iyr/c8VlGvrICgPo/Rn9GYAggsYBSu
-	JpeiJNQsC2KehRId9/vi15sVBdue2w4OFZVT80ozZv/XJYniSX87pRic5v/kjH7o
-	Cfl8ukf7sB1T5E+vD/JgkX4pgsGIL3pt57QGpHjgbILYr8cG5ekToX+JTe9NFAQI
-	nlKGMlvDmn3kJBBWkDur4mID2ElmQOcFibKzPy1nxcxLchFdWAlaa7wKSttqwWSF
-	/lcY5xYVUcJbdsSoHxw/BiUBOTAD0JRrKfCI096OLQOF/8EruHgtXaJoxn8kthJX
-	SPpoxf1rD6Zyy+bpyoufu/j6Jbv8wCjaOGgwzJ6wM3PVhuV3r17aDA+Q==
-Received: (qmail 249145 invoked from network); 6 Aug 2024 16:20:36 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Aug 2024 16:20:36 +0200
-X-UD-Smtp-Session: l3s3148p1@NoZHfwQfDoYgAwDPXxLGAIH3oZkcU6AS
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH 0/3] i2c: testunit: add rep_start test and rework versioning
-Date: Tue,  6 Aug 2024 16:20:29 +0200
-Message-ID: <20240806142033.2697-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Nyexg0HP"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so960452a12.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Aug 2024 08:12:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722957177; x=1723561977; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7a4P/FyUJ5dmvEi2k87q9zZKNUEe1jU6FxpoN7R+XCo=;
+        b=Nyexg0HP78kDJkLS+QsSSGGIJ7anZB9kJsVUe7pcLYnCFyfZSjLb6t/IhRJIku25/m
+         Q0eOK/D9396Jc59X2lHkjsX3ucEQlxc6cXZa4AmGDwmeNkFKm28g3miRCM1TWItqS95r
+         PqxtBNkiQnamPbj3/eqhEsvxcuSWvt/jrq7dCUKH7VDv/tRChAUVmHuw4x5RfI4IvQtE
+         TOd0D5YeCB1zzZFr1Tlu0y4L++YST8g+diRj2RIL0mkf8le7Q8idIUSrILMSWfefhtxF
+         ZRM7nvAtXgf6uzSqONi2Xs+vQP4USIOd3b3rxyMTaJREvmEz4dNr8rNMvPcRiQvp9KtQ
+         nGOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722957177; x=1723561977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7a4P/FyUJ5dmvEi2k87q9zZKNUEe1jU6FxpoN7R+XCo=;
+        b=NDyFwes6N/GtuIVHd0wCt/vJuVkRX2deBkNocsvD3nDVJHtzidNwu1LiPMzTrqGWRI
+         XtHmtDnYpVkPZhgBUfQzAQL4HMACT9bDbd+voLllnQx2uZAa6KGUkZd3okwtm1b5FJWt
+         07Fv6Y+zwtQIX+cyuA/jyerv87g3jihz1tywaq+i3wXLdhXf4bEuABpLRt78tDpdcJt6
+         tRvJIfnl/UwkvY6DMIc34sgf9+iCoWe0mKsAg/G8Wh02uBT3HJ6x3XX/irItmLfr1Vmt
+         jLz6PTTfXkBEUILwdsN2YIQ+Wsl/sGXZnTSnpkP1klpEMk4VeRXJxuvW1whhQPhPwhjs
+         laMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUv3Xzhhxh1oIUBd0/VL1Ru0be1xWgF5VDD3t4Ty/c+H9yJG0FB7pMIRkxvWIVYrcydQVKDpYTbE00p3QUxV4hwV0d/Qi+gYbx6pBSJsdHts7Y=
+X-Gm-Message-State: AOJu0YwBxGqpL6XscX2I8/XVLkO4QnjWhKB7Wqic4mMmOCCxOLB95cAR
+	baUlP1XyBhfkp4qKs5Koao2mYBxuQMKLzYtFgyk7Ew697qZGyZfLLC61WZ0apao=
+X-Google-Smtp-Source: AGHT+IGqCJvLc1QNKQS80dPtrqP6daybCUfoTTLK3gct/kU9ydPH2EzJg+PPNGeKJN74PsrRMr/ZTA==
+X-Received: by 2002:a50:ff0b:0:b0:5a1:a447:9fab with SMTP id 4fb4d7f45d1cf-5b7f54148a1mr9785330a12.28.1722957177259;
+        Tue, 06 Aug 2024 08:12:57 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:deb2:1e03:7213:3dc4])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83a24fdedsm5970184a12.50.2024.08.06.08.12.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 08:12:56 -0700 (PDT)
+Date: Tue, 6 Aug 2024 17:12:53 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	"biju.das.au" <biju.das.au@gmail.com>
+Subject: Re: [PATCH v20 3/4] pwm: Add support for RZ/G2L GPT
+Message-ID: <azkn7g7fsoupilafhuu3walz5ecwyqeb42citlrimuey2oyuc6@4tmsaq2kaymd>
+References: <20240614154242.419043-1-biju.das.jz@bp.renesas.com>
+ <20240614154242.419043-4-biju.das.jz@bp.renesas.com>
+ <yli3bq6i2467mzdtwkn3czls4w2snvegkzyun3uq4lto35wuhv@2wcju755otau>
+ <TY3PR01MB11346D2E29B1A8E4F71EFF15E86B32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <cbgy643dk54zx2l6px7oe6vgqc6swihymmcyjrtcorflgi5t3l@aqnd5byiqwt6>
+ <TY3PR01MB11346F097EF5CEB6C05884B1286BF2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-On my way to let the testunit trigger SMBusAlert interrupts, I needed to
-rework the way the testunit responds to read messages. This series is
-the result of that with some very nice side effects. First, we now have
-a new test to check for proper repeated starts between messages in a
-transfer, patch 2. Also, the versioning has been improved, patch 3.
-Patch 1 makes the state machine a little easiert to follow.
-
-The patches are based on i2c/for-current + a naming fix[1] and has been
-tested on a Renesas Lager board (R-Car H2) and a Renesas Falcon board
-(R-Car V3U).
-
-Looking forward to comments. Once we got this in, I will send out the
-SMBusAlert additions. They do work already, they just need some
-documentation.
-
-Happy hacking!
-
-[1] https://lore.kernel.org/r/20240806113532.32679-2-wsa+renesas@sang-engineering.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kephizyyiahpjuov"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB11346F097EF5CEB6C05884B1286BF2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
 
-Wolfram Sang (3):
-  i2c: testunit: sort case blocks
-  i2c: testunit: add command to support versioning and test rep_start
-  i2c: testunit: return current command on read messages
+--kephizyyiahpjuov
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- Documentation/i2c/slave-testunit-backend.rst | 50 ++++++++++++++++++--
- drivers/i2c/i2c-slave-testunit.c             | 43 ++++++++++++-----
- 2 files changed, 77 insertions(+), 16 deletions(-)
+Hello Biju,
 
--- 
-2.43.0
+On Tue, Aug 06, 2024 at 08:35:39AM +0000, Biju Das wrote:
+> > -----Original Message-----
+> > From: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> > Sent: Tuesday, August 6, 2024 7:47 AM
+> > Subject: Re: [PATCH v20 3/4] pwm: Add support for RZ/G2L GPT
+> >=20
+> > Hello Biju,
+> >=20
+> > On Fri, Aug 02, 2024 at 07:02:19AM +0000, Biju Das wrote:
+> > > > -----Original Message-----
+> > > > From: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> > > > Sent: Tuesday, July 30, 2024 8:54 PM
+> > > > Subject: Re: [PATCH v20 3/4] pwm: Add support for RZ/G2L GPT
+> > > >
+> > > > Hello,
+> > > >
+> > > > I'm a bit unlucky about this driver. I have the impression it is
+> > > > complicated and wonder if that is necessary because the hardware is=
+ unusual or if we just have to
+> > spot some simplifications.
+> > >
+> > > I agree it is little bit complex driver. Once this driver is accepted,
+> > > going forward, I need to support other drivers like (Counter , ADC tr=
+iggering and POEG(Output
+> > disable) support).
+> > >
+> > > > I guess another problem is that the time between two consecutive
+> > > > reviews is long and I forget most things I learned about the
+> > > > hardware from one to the other. While this is mostly my problem, the
+> > > > same problem arises if the driver is touched later again. So I
+> > > > wonder if some more documentation is needed about the relation
+> > > > between channels and outputs and subchannels. If the driver only su=
+pported one output per channel,
+> > it could be considerably simpler (I think). But I guess that would be a=
+ practically relevant
+> > restriction??
+> > >
+> > > Yes, one output per channel means, we cannot use POEG IP which is for
+> > > short circuit protection in switching circuits.  So, we need to use b=
+oth IOs in the channel.
+> > >
+> > > I will add the below documentation to make it clear.
+> > >
+> > > * - General PWM Timer (GPT) has 8 HW channels for PWM operations and
+> > > *   each HW channel have 2 IOs.
+> > > * - Each IO is modelled as an independent PWM channel.
+> > >
+> > > Please let me know is it ok with respect to the initial driver?
+> >=20
+> > looks fine.
+> >=20
+> > > > Some simplifications spotted below.
+> > > >
+> > > > On Fri, Jun 14, 2024 at 04:42:41PM +0100, Biju Das wrote:
+> > > > > RZ/G2L General PWM Timer (GPT) composed of 8 channels with 32-bit
+> > > > > timer (GPT32E). It supports the following functions
+> > > > >  * 32 bits x 8 channels
+> > > > >  * Up-counting or down-counting (saw waves) or up/down-counting
+> > > > >    (triangle waves) for each counter.
+> > > > >  * Clock sources independently selectable for each channel
+> > > > >  * Two I/O pins per channel
+> > > > >  * Two output compare/input capture registers per channel
+> > > > >  * For the two output compare/input capture registers of each cha=
+nnel,
+> > > > >    four registers are provided as buffer registers and are capabl=
+e of
+> > > > >    operating as comparison registers when buffering is not in use.
+> > > > >  * In output compare operation, buffer switching can be at crests=
+ or
+> > > > >    troughs, enabling the generation of laterally asymmetric PWM w=
+aveforms.
+> > > > >  * Registers for setting up frame cycles in each channel (with ca=
+pability
+> > > > >    for generating interrupts at overflow or underflow)
+> > > > >  * Generation of dead times in PWM operation
+> > > > >  * Synchronous starting, stopping and clearing counters for arbit=
+rary
+> > > > >    channels
+> > > > >  * Starting, stopping, clearing and up/down counters in response =
+to input
+> > > > >    level comparison
+> > > > >  * Starting, clearing, stopping and up/down counters in response =
+to a
+> > > > >    maximum of four external triggers
+> > > > >  * Output pin disable function by dead time error and detected
+> > > > >    short-circuits between output pins
+> > > > >  * A/D converter start triggers can be generated (GPT32E0 to
+> > > > > GPT32E3)
+> > > > >  * Enables the noise filter for input capture and external trigger
+> > > > >    operation
+> > > > >
+> > > > > Add basic pwm support for RZ/G2L GPT driver by creating separate
+> > > > > logical channels for each IOs.
+> > > > >
+> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > > ---
+> > > > > v19->v20:
+> > > > >  * Added locks for rmw operations in rzg2l_gpt_{en,dis}able().
+> > > > >  * Dropped decremeng enable_count based ch_en_bits in rzg2l_gpt_d=
+isable().
+> > > > >  * Added a comment in calculate_period_or_duty() related to overf=
+low.
+> > > > >  * Replaced ch_en_bits->bootloader_enabled_channels and used this=
+ variable
+> > > > >    in probe(), apply() and remove() for simplification
+> > > > >  * Replaced pm_runtime_enable()->devm_pm_runtime_enable()
+> > > > > [...]
+> > > > > ---
+> > > > >  drivers/pwm/Kconfig         |  11 +
+> > > > >  drivers/pwm/Makefile        |   1 +
+> > > > >  drivers/pwm/pwm-rzg2l-gpt.c | 555
+> > > > > ++++++++++++++++++++++++++++++++++++
+> > > > >  3 files changed, 567 insertions(+)  create mode 100644
+> > > > > drivers/pwm/pwm-rzg2l-gpt.c
+> > > > >
+> > > > > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig index
+> > > > > 00a543de8f82..3d398b308e3f 100644
+> > > > > --- a/drivers/pwm/Kconfig
+> > > > > +++ b/drivers/pwm/Kconfig
+> > > > > @@ -522,6 +522,17 @@ config PWM_ROCKCHIP
+> > > > >  	  Generic PWM framework driver for the PWM controller found on
+> > > > >  	  Rockchip SoCs.
+> > > > >
+> > > > > +config PWM_RZG2L_GPT
+> > > > > +	tristate "Renesas RZ/G2L General PWM Timer support"
+> > > > > +	depends on ARCH_RZG2L || COMPILE_TEST
+> > > > > +	depends on HAS_IOMEM
+> > > > > +	help
+> > > > > +	  This driver exposes the General PWM Timer controller found in=
+ Renesas
+> > > > > +	  RZ/G2L like chips through the PWM API.
+> > > > > +
+> > > > > +	  To compile this driver as a module, choose M here: the module
+> > > > > +	  will be called pwm-rzg2l-gpt.
+> > > > > +
+> > > > >  config PWM_RZ_MTU3
+> > > > >  	tristate "Renesas RZ/G2L MTU3a PWM Timer support"
+> > > > >  	depends on RZ_MTU3
+> > > > > diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile index
+> > > > > 6964ba45c795..fb9a2d9b9adb 100644
+> > > > > --- a/drivers/pwm/Makefile
+> > > > > +++ b/drivers/pwm/Makefile
+> > > > > @@ -47,6 +47,7 @@ obj-$(CONFIG_PWM_RASPBERRYPI_POE)	+=3D pwm-rasp=
+berrypi-poe.o
+> > > > >  obj-$(CONFIG_PWM_RCAR)		+=3D pwm-rcar.o
+> > > > >  obj-$(CONFIG_PWM_RENESAS_TPU)	+=3D pwm-renesas-tpu.o
+> > > > >  obj-$(CONFIG_PWM_ROCKCHIP)	+=3D pwm-rockchip.o
+> > > > > +obj-$(CONFIG_PWM_RZG2L_GPT)	+=3D pwm-rzg2l-gpt.o
+> > > > >  obj-$(CONFIG_PWM_RZ_MTU3)	+=3D pwm-rz-mtu3.o
+> > > > >  obj-$(CONFIG_PWM_SAMSUNG)	+=3D pwm-samsung.o
+> > > > >  obj-$(CONFIG_PWM_SIFIVE)	+=3D pwm-sifive.o
+> > > > > diff --git a/drivers/pwm/pwm-rzg2l-gpt.c
+> > > > > b/drivers/pwm/pwm-rzg2l-gpt.c new file mode 100644 index
+> > > > > 000000000000..6005a689173e
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/pwm/pwm-rzg2l-gpt.c
+> > > > > @@ -0,0 +1,555 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > +/*
+> > > > > + * Renesas RZ/G2L General PWM Timer (GPT) driver
+> > > > > + *
+> > > > > + * Copyright (C) 2024 Renesas Electronics Corporation
+> > > > > + *
+> > > > > + * Hardware manual for this IP can be found here
+> > > > > + *
+> > > > > +https://www.renesas.com/eu/en/document/mah/rzg2l-group-rzg2lc-gro
+> > > > > +up-u sers-manual-hardware-0?language=3Den
+> > > > > + *
+> > > > > + * Limitations:
+> > > > > + * - Counter must be stopped before modifying Mode and Prescaler.
+> > > > > + * - When PWM is disabled, the output is driven to inactive.
+> > > > > + * - While the hardware supports both polarities, the driver (fo=
+r now)
+> > > > > + *   only handles normal polarity.
+> > > > > + * - When both channels are used, disabling the channel on one s=
+tops the
+> > > > > + *   other.
+> > > > > + */
+> > > > > +
+> > > > > +#include <linux/bitfield.h>
+> > > > > +#include <linux/clk.h>
+> > > > > +#include <linux/io.h>
+> > > > > +#include <linux/limits.h>
+> > > > > +#include <linux/module.h>
+> > > > > +#include <linux/of.h>
+> > > > > +#include <linux/platform_device.h> #include <linux/pm_runtime.h>
+> > > > > +#include <linux/pwm.h> #include <linux/reset.h> #include
+> > > > > +<linux/time.h> #include <linux/units.h>
+> > > > > +
+> > > > > +#define RZG2L_GTCR		0x2c
+> > > > > +#define RZG2L_GTUDDTYC		0x30
+> > > > > +#define RZG2L_GTIOR		0x34
+> > > > > +#define RZG2L_GTBER		0x40
+> > > > > +#define RZG2L_GTCNT		0x48
+> > > > > +#define RZG2L_GTCCR(i)		(0x4c + 4 * (i))
+> > > > > +#define RZG2L_GTPR		0x64
+> > >
+> > > These will be replaced as
+> > >
+> > > +#define RZG2L_GET_CH_OFFS(i)   (0x100 * (i))
+> > > +
+> > > +#define RZG2L_GTCR(ch)         (0x2c + RZG2L_GET_CH_OFFS(ch))
+> > > +#define RZG2L_GTUDDTYC(ch)     (0x30 + RZG2L_GET_CH_OFFS(ch))
+> > > +#define RZG2L_GTIOR(ch)                (0x34 + RZG2L_GET_CH_OFFS(ch))
+> > > +#define RZG2L_GTINTAD(ch)      (0x38 + RZG2L_GET_CH_OFFS(ch))
+> > > +#define RZG2L_GTBER(ch)                (0x40 + RZG2L_GET_CH_OFFS(ch))
+> > > +#define RZG2L_GTCNT(ch)                (0x48 + RZG2L_GET_CH_OFFS(ch))
+> > > +#define RZG2L_GTCCR(ch, sub_ch)        (0x4c + RZG2L_GET_CH_OFFS(ch)=
+ + 4 * (sub_ch))
+> > > +#define RZG2L_GTPR(ch)         (0x64 + RZG2L_GET_CH_OFFS(ch))
+> >=20
+> > I like this better, thanks.
+> >=20
+> > > > > +	 */
+> > > > > +	tmp =3D (u64)val << (2 * prescale);
+> > > > > +	tmp *=3D USEC_PER_SEC;
+> > > > > +
+> > > > > +	return DIV64_U64_ROUND_UP(tmp, rzg2l_gpt->rate_khz); }
+> > > > > +
+> > > > > +static int rzg2l_gpt_get_state(struct pwm_chip *chip, struct pwm=
+_device *pwm,
+> > > > > +			       struct pwm_state *state) {
+> > > > > +	struct rzg2l_gpt_chip *rzg2l_gpt =3D to_rzg2l_gpt_chip(chip);
+> > > > > +	int rc;
+> > > > > +
+> > > > > +	rc =3D pm_runtime_resume_and_get(pwmchip_parent(chip));
+> > > > > +	if (rc)
+> > > > > +		return rc;
+> > > > > +
+> > > > > +	state->enabled =3D rzg2l_gpt_is_ch_enabled(rzg2l_gpt, pwm->hwpw=
+m);
+> > > > > +	if (state->enabled) {
+> > > > > +		u32 ch =3D RZG2L_GET_CH(pwm->hwpwm);
+> > > > > +		u32 offs =3D RZG2L_GET_CH_OFFS(ch);
+> > > > > +		u8 prescale;
+> > > > > +		u32 val;
+> > > > > +
+> > > > > +		val =3D rzg2l_gpt_read(rzg2l_gpt, offs + RZG2L_GTCR);
+> > > > > +		prescale =3D FIELD_GET(RZG2L_GTCR_TPCS, val);
+> > > >
+> > > > Can it happen that prescale is > 5 here?
+> > >
+> > > Yes, if bootloader wrongly set it to 6 or 7. I will add a check in
+> > > Probe and forcefully set to 5, if that the case. Is it ok?
+> >=20
+> > >
+> > > +                       if (prescale > 5) {
+> > > +                               dev_warn(dev, "Invalid prescale %d > =
+5, force setting to 5",
+> > prescale);
+> > > +                               /* Set prescale value of 5. */
+> > > +                               rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTC=
+R(ch), RZG2L_GTCR_TPCS,
+> > > +                                                FIELD_PREP(RZG2L_GTC=
+R_TPCS, 5));
+> > > +                       }
+> >=20
+> > I wouldn't write back the 5 then. Just assume that the value read back =
+was 5. (Well unless the
+> > hardware behaves according to the normal formula that applies for presc=
+ale =E2=89=A4 5, then it might make
+> > sense to continue with the read value.)
+>=20
+> OK, will just print the warning.
+>=20
+> dev_warn(dev, "Invalid prescale set %d > 5, prescale);
 
+No, please don't warn (or do it at most once per pwm_device).
+
+Best regards
+Uwe
+
+--kephizyyiahpjuov
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmayPXIACgkQj4D7WH0S
+/k4eLQf/RgjYIPMG+rMsEppe4QEm3ObH5u6/lZdla9x6WgyncZZ0fQ0TR9dbgT1e
+Je3aO8OgdjrKtU3W17Finco5PViuo9FeZSbyLEaSlISJQcG9AEPc/pucx/n9ZqJW
+MVgJ0+9svNr1bQ0KuwpUEIHZJg4RFcew/BFPP9ElRnM62FU0qgtUPVBgtRBlz9c+
+8a5dcI/JoHCLNiWXa6tsd10r37lnZgbMIiF+iQU9JZL3LRS0DSmtif/m5RnVcUKo
+CoZZiycvb9wEfTXWojsvO6pMM4RI1j87VY0JoCyD5vh0dBGcNDEi0a7vH0IhLxPS
+dSajVoavtYlBLzqBA6mXKCzqtRXppA==
+=NyBs
+-----END PGP SIGNATURE-----
+
+--kephizyyiahpjuov--
