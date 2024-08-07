@@ -1,172 +1,69 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EDC1DD39A
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  7 Aug 2024 11:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D138144D39;
+	Wed,  7 Aug 2024 20:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723029735; cv=none; b=i0ygkt71/R1jA7LUpvlSl+sdjmF+v9dCz7z+tGlFWkV4a5hk9oXDjNSFvJvVq6iq5yVBbJjhRBXiSFIal2T+iT0LfnlV12C+T57NC6xM/jqvWvzdRVDmsQHdE7WJyURoaAlbQSCoZ7Wb4wdhd0rnrvmHI5gxN1WLgiWK7+nnQKk=
+	t=1723063947; cv=none; b=qmZn4RwqtzdweJs6/dhYw8nzs+qzdSgUNC9MK7GfgKrdeuOENR02vdvOeYNTGQmJ0jHddyF97fbwCiYNSG218BLiZamxd6zOdYvDiAQREtNAzbA+zQmW9iuROixfipr7jNh4JJ5Rt3L8HC47USbwDC1j4Tt01t91nFEeJN9am3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723029735; c=relaxed/simple;
-	bh=RL2Kdpjxh/6tm8mA7lCbMT3LlrbbJpNEflhEsjatbMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X91KkAXfBW4NenC8/KPY3DkE8sMh5GF5Pj2bOzKF5xKXTdzNDItFn2IgcRJy+AOv3uMQAEnRSwH0+FOdbj504UYmR+N3Bfl3VlByqQZlQ3B/07Gj/ByiFK/gEK3eu/ceRGbN4HYSai9i22Rdo6FkDZpateP+7xP4zsuHiSIaXVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=atlznK3e; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1723063947; c=relaxed/simple;
+	bh=oj70GTHHWvPsRBx5GczXvZFla0MTvPyt6ASgDnA5YR4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Uff0Vz8pxxMH4FsN8c5MKBBGd/1DGRyD+ge/2YmCf8H6M9fU1xugCY34nQANRcJ39rrJTwh+d+HVCPbKhyJJDTywftY8hA5O9/MQnc22JU5TKvpSR9ln3S538pr4XznkJnnd6TvjPdHj2vHbudhGirdHLPAurgLrLM1Ss4dlJ0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSqNjpDl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="atlznK3e"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=ius/u1ssY9is3wNke9UO81KNtegVaYpnlYlTvxwlqsc=; b=atlznK
-	3e93otrzhU+hpTSW2wXvqPcnQjk8Umc7PvvTaCqyxmVSxueBH/Bmptn5OBBGKHMe
-	FR1nbv9VEivJUh4b6i5Go654SSt3s29WVKaxB5n1/b1fZxQztqh8nuqLLHfjpBhw
-	JxW5CLYMsoQ7wfPaUhfDgAPd292PO3jDsoe+UYc3HQdKIYtZR1Wtd0RGi17sHvpm
-	HnmhJVvC2GHHyNPpL5PX8NnqM30YM+YSjETFMnGaUGA9doAPjpnJuVE1VYBWjUG+
-	6+XatYVqx9KJ72xWf769j9gC1812m4iuuMqD7NARiz+d7niCp2wnp1ckTAHdlPkA
-	BZ4MzcIcaDIF2ZtQ==
-Received: (qmail 534536 invoked from network); 7 Aug 2024 13:22:02 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Aug 2024 13:22:02 +0200
-X-UD-Smtp-Session: l3s3148p1@wXmBHhYfrswgAwDPXxLGAIH3oZkcU6AS
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH i2c-tools 2/3] i2ctransfer: add option to print binary data
-Date: Wed,  7 Aug 2024 13:21:58 +0200
-Message-ID: <20240807112159.14220-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240807112159.14220-1-wsa+renesas@sang-engineering.com>
-References: <20240807112159.14220-1-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSqNjpDl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A930C32781;
+	Wed,  7 Aug 2024 20:52:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723063944;
+	bh=oj70GTHHWvPsRBx5GczXvZFla0MTvPyt6ASgDnA5YR4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=dSqNjpDlDZBAyB5EyI+LYsy7nnQHn/jUtw+F7FvPM7rvlnD3UXSqGabVUw5efHwVH
+	 k5vH0uEo8Y2W8dkme7QQfWmt0paR8bSNMcHB8tOD/H3X9HJsJeauh8hX3cJq3BptqX
+	 pFESMPq7witMNuohNEbAfOreIk+LxPd+cQJvJk1yIYhpYNje1tSs2JxueA3vhikZfU
+	 JvnLr2m9W4CK7P6N8PUcc6g6FY74fnJF8jYqI/ZG8JnOW6bCXcD0cHbgT0PAGU0O4Z
+	 DT6Z0lUu7o6rae9S7SAwj4PZTLlyS8Cvde6DxzwFWVm6zHtY24YP5HZd73lHrwxZ/V
+	 h/AGuKTz41S2g==
+Message-ID: <a0c8bb91f1645d1769e4cd2945bf36f8.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240807075714.2156445-1-arnd@kernel.org>
+References: <20240807075714.2156445-1-arnd@kernel.org>
+Subject: Re: [PATCH] clk: renesas: fix r9a09g057_cpg_info link error
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Michael Turquette <mturquette@baylibre.com>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Wed, 07 Aug 2024 13:52:22 -0700
+User-Agent: alot/0.10
 
-Useful to pipe data to other commands for further inspection. Or to just
-print out ASCII responses.
+Quoting Arnd Bergmann (2024-08-07 00:56:58)
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The rzv2g-cpg.c driver unconditionally links into the r9a09g057
+> one, but that may be disabled:
+>=20
+> aarch64-linux-ld: drivers/clk/renesas/rzv2h-cpg.o:(.rodata+0x440): undefi=
+ned reference to `r9a09g057_cpg_info'
+>=20
+> Use the same approach here as with the rzg2l variant, using an #ifdef
+> around tha data.
+>=20
+> I think both drivers would be better off doing the abstraction the other
+> way round, with the platform_driver structure defined in the most specific
+> file and the common bits as a library that exports common functions.
+> Changing it that way would require a larger rework of course.
+>=20
+> Fixes: 42b54d52ecb7 ("clk: renesas: Add RZ/V2H(P) CPG driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- tools/i2ctransfer.8 |  8 ++++++++
- tools/i2ctransfer.c | 31 ++++++++++++++++++++++---------
- 2 files changed, 30 insertions(+), 9 deletions(-)
-
-diff --git a/tools/i2ctransfer.8 b/tools/i2ctransfer.8
-index 88d5eb3..4bdf436 100644
---- a/tools/i2ctransfer.8
-+++ b/tools/i2ctransfer.8
-@@ -5,6 +5,7 @@ i2ctransfer \- send user-defined I2C messages in one transfer
- .SH SYNOPSIS
- .B i2ctransfer
- .RB [ -a ]
-+.RB [ -b ]
- .RB [ -f ]
- .RB [ -v ]
- .RB [ -y ]
-@@ -43,6 +44,13 @@ This program helps you to create proper transfers for your needs.
- .B -a
- Allow using addresses between 0x00 - 0x07 and 0x78 - 0x7f. Not recommended.
- .TP
-+.B -b
-+Print data from read messages as binary data. Disables
-+.I -v
-+(verbose). Useful for piping into a pretty printing tool like
-+.B hexdump
-+or for redirecting into a file to be analyzed later.
-+.TP
- .B -f
- Force access to the device even if it is already busy.
- By default,
-diff --git a/tools/i2ctransfer.c b/tools/i2ctransfer.c
-index 15e774b..a7bbbaa 100644
---- a/tools/i2ctransfer.c
-+++ b/tools/i2ctransfer.c
-@@ -38,12 +38,14 @@ enum parse_state {
- #define PRINT_READ_BUF	(1 << 1)
- #define PRINT_WRITE_BUF	(1 << 2)
- #define PRINT_HEADER	(1 << 3)
-+#define PRINT_BINARY	(1 << 4)
- 
- static void help(void)
- {
- 	fprintf(stderr,
- 		"Usage: i2ctransfer [OPTIONS] I2CBUS DESC [DATA] [DESC [DATA]]...\n"
- 		"  OPTIONS: -a allow even reserved addresses\n"
-+		"           -b print read data as binary, disables -v\n"
- 		"           -f force access even if address is marked used\n"
- 		"           -h this help text\n"
- 		"           -v verbose mode\n"
-@@ -106,12 +108,16 @@ static void print_msgs(struct i2c_msg *msgs, __u32 nmsgs, unsigned flags)
- 		}
- 
- 		if (len && print_buf) {
--			if (flags & PRINT_HEADER)
--				fprintf(output, ", buf ");
--			for (j = 0; j < len - 1; j++)
--				fprintf(output, "0x%02x ", msgs[i].buf[j]);
--			/* Print final byte with newline */
--			fprintf(output, "0x%02x\n", msgs[i].buf[j]);
-+			if (flags & PRINT_BINARY) {
-+				fwrite(msgs[i].buf, 1, len, output);
-+			} else {
-+				if (flags & PRINT_HEADER)
-+					fprintf(output, ", buf ");
-+				for (j = 0; j < len - 1; j++)
-+					fprintf(output, "0x%02x ", msgs[i].buf[j]);
-+				/* Print final byte with newline */
-+				fprintf(output, "0x%02x\n", msgs[i].buf[j]);
-+			}
- 		} else if (flags & PRINT_HEADER) {
- 			fprintf(output, "\n");
- 		}
-@@ -138,7 +144,7 @@ int main(int argc, char *argv[])
- {
- 	char filename[20];
- 	int i2cbus, address = -1, file, opt, arg_idx, nmsgs = 0, nmsgs_sent, i;
--	int force = 0, yes = 0, version = 0, verbose = 0, all_addrs = 0;
-+	int force = 0, yes = 0, version = 0, verbose = 0, all_addrs = 0, binary = 0;
- 	struct i2c_msg msgs[I2C_RDRW_IOCTL_MAX_MSGS];
- 	enum parse_state state = PARSE_GET_DESC;
- 	unsigned buf_idx = 0;
-@@ -147,9 +153,10 @@ int main(int argc, char *argv[])
- 		msgs[i].buf = NULL;
- 
- 	/* handle (optional) flags first */
--	while ((opt = getopt(argc, argv, "afhvVy")) != -1) {
-+	while ((opt = getopt(argc, argv, "abfhvVy")) != -1) {
- 		switch (opt) {
- 		case 'a': all_addrs = 1; break;
-+		case 'b': binary = 1; break;
- 		case 'f': force = 1; break;
- 		case 'v': verbose = 1; break;
- 		case 'V': version = 1; break;
-@@ -326,6 +333,7 @@ int main(int argc, char *argv[])
- 
- 	if (yes || confirm(filename, msgs, nmsgs)) {
- 		struct i2c_rdwr_ioctl_data rdwr;
-+		unsigned print_flags = PRINT_READ_BUF;
- 
- 		rdwr.msgs = msgs;
- 		rdwr.nmsgs = nmsgs;
-@@ -337,7 +345,12 @@ int main(int argc, char *argv[])
- 			fprintf(stderr, "Warning: only %d/%d messages were sent\n", nmsgs_sent, nmsgs);
- 		}
- 
--		print_msgs(msgs, nmsgs_sent, PRINT_READ_BUF | (verbose ? PRINT_HEADER | PRINT_WRITE_BUF : 0));
-+		if (binary)
-+			print_flags |= PRINT_BINARY;
-+		else if (verbose)
-+			print_flags |= PRINT_HEADER | PRINT_WRITE_BUF;
-+
-+		print_msgs(msgs, nmsgs_sent, print_flags);
- 	}
- 
- 	close(file);
--- 
-2.43.0
-
+This is https://lore.kernel.org/r/20240805095842.277792-1-prabhakar.mahadev=
+-lad.rj@bp.renesas.com
