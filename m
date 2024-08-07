@@ -1,145 +1,95 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6830B1DD39A
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  7 Aug 2024 11:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973C91E3CB2
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  7 Aug 2024 11:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723029693; cv=none; b=XH2og1OBl1dEy38FOdOggB2h1B2GSZQ9at7u1F/ZJoW6876tuwFNW0pjGlfkwH11AOwcgdu9iQU1Dy2iqUihtKDSc0OcimPJUs0mk61WZMKOsqv7BX+KBYIIuzoebLPUYh4Ub8yhPPcY+6XdCuPziZ66piKBWpSkTIxIZBSAr+k=
+	t=1723029734; cv=none; b=TYomgl8Vdai3yRjnNIUzDffdVSVzU6FDc4p3ZyLh3CD8MrYbGjPwThhQrHMkJJOifOWpaEm99BBBzP4j70e9SLbUonJ+l9VDUdPbKtEKVLCxX9NU2Y7yAnKipz0JSJDT1Y3e/14rc/w443/wsF2XOxRADYOD2OIslFlTJ/6P42w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723029693; c=relaxed/simple;
-	bh=LDuVR8Q8SBltlZ0Y7R0bvpdndZWmNaepum4NflH3uEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NR1MfmYHNOzSjn2HFQVyzXKpnluuo9K1RhhG229x1HLhxw8jIcDfjqMHNdia/Q+C981Ca15VH2SfKkjfGdd0ShUl6HOqtm2Mf47EHp4zlf9BymY69sfJkUgRd2H1O3uSUyQcVsIFfb0OLqViFeBREh7jp/wo+cvLsFAjknMZMAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FD6+mn5Z; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1723029734; c=relaxed/simple;
+	bh=8e+pcsSgfgWifMQ/0sz6sL8iNOv0ZE0Jv2P3vOt2LP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GKZHkxyre5u7efTJgTLIoHuNAyhv0oNQ8gcGLXeJHeiUhtuTKtmXep7PeokdEnbXUuMycg3/vC7QYmmeWbZfepazY9mA584XPF5iwhloQtXcnwKscs8KwvTkYKuKMtWIiK6f0m1l3m9TNJPAVWVvtN+Co+mqO32CNNQXrrJ4TsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Zm/iFYse; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FD6+mn5Z"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so2249959a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Aug 2024 04:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1723029690; x=1723634490; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O63kDKJnx9fmZjMbiNZsuL2wJTTHJuwzpsSd5JTI0e0=;
-        b=FD6+mn5ZHCrD3MxYmmtC0VaBk3LNHgpKvrKG5BG3p7OaFGG7h9rG8czOmjZX4nQImD
-         y5ee6jjh5mbznkAxusuMXeZBaBZwGdBSbi90RAx756W3xWr2Tps20+RC416Ig9BMDolB
-         AZLU7VeCBkhpciT+ZgCXq7YK7axvCZ0IObzUNM5T2fBIsh3pP6O8GIcfNUdRCmUQvV1s
-         KXPMcISCImcynppr/bYpfaysZDx08IXPZnXVMIDkSanxVmvRKgYuoXIrfQlbDYSSIOpV
-         uowFo+3ggvY+8kzhhpGbNZnhfxNB7K8Wq/ciJnod3aoPoeXZ6LnEki3cSHhMLFO563zq
-         /kxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723029690; x=1723634490;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O63kDKJnx9fmZjMbiNZsuL2wJTTHJuwzpsSd5JTI0e0=;
-        b=pVzUMhhB+BaoQ9FnGuaImqp6IZk2JJONPVIUv9aZULN9A5//j4hMflWWSkOu29p32J
-         QlKzqWIQXHsk//8ZST9Ma6Ry1YIsQndbr5oW7YPn1/CJSzK5ganBHhtYcKamf0U94f68
-         2isBvq83hl4q0f9K/c/vjaIH9QXX71ESq985JE3s7aEDZPohrageRgzsgLgLw/c1D/zr
-         ZdHQgCE61bo0v6oNxe7YxI942mg1bDhFyIinEVPEatjBCEIatlWg8vK2f1Lc42qDrGfm
-         RMUqH+Gg1cmMxeJgNVuWm2HrYlQaSRYo/fDOL1PqUNgIRQmXjRZDzufBSvQh6pk/o2b5
-         k26Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUF3uvouHW43W2yRW5yLBCQNXZqo21wAA75W4RX8bpdwK6zcr2nwf2Gn3G81QVQXCRdIRn9SHNyIQdDkiY341UzJdfIY69NsY1RabZ836LuBQY=
-X-Gm-Message-State: AOJu0Yx1/O9Uqj300IOh8F0O9WlHODEapBAeiB8GAOQpMCcZzsVHtS1u
-	mrdNpYUFE+C0G7cccv3eKpkdyIaVsP/rn1GZfeRCVXHmVZW522BAU37ReyG4ezY=
-X-Google-Smtp-Source: AGHT+IHM3r2bAdSLrg/pmt0OrZB5Bhj5Th6878fNVzaGx5MeOuvAuO1T3w9OQvFHUVXk+68bCP5iCA==
-X-Received: by 2002:a17:906:fe41:b0:a7a:a46e:dc3f with SMTP id a640c23a62f3a-a7dc50a345bmr1206383166b.45.1723029689288;
-        Wed, 07 Aug 2024 04:21:29 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0cc95sm624246766b.85.2024.08.07.04.21.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 04:21:28 -0700 (PDT)
-Message-ID: <201cbbe6-99eb-4622-bc5f-3d298f9e30b4@tuxon.dev>
-Date: Wed, 7 Aug 2024 14:21:25 +0300
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Zm/iFYse"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=3w40K+hpoJ5Sqdlb/k7ILXsFKaZoegkfAL5K/38G9V0=; b=Zm/iFY
+	seyVQ2FkpPhwJa/2kME2nOzY3Kk8p8ZeyY1Z0pwX0nXbyHSDPKscmnAJKCpW8+8n
+	cCnnh+ZWpse7AR4i6GgenQbEhvtUUvZbnk4sIRpFd8fhstfAnnBTWwNCACH7xjHJ
+	Q1P7deMlYKlLErXwFA2q7wIZHu24BkT9eh50cpXRjMhRyMhzsiIM6G3GAg22CDZW
+	QZ4qsZhKIi3x//NAYicDQ20snwTgcXNYGfkVJLHivwpEkn2Sh39AYCKatU7yy6bH
+	8rK2zni7rYrICrvKKhsIcIBUVZisREw93TWBsXznlRY+kXWzN4+WjD2iTHFOKx9g
+	fm16BCzoii8E6n0g==
+Received: (qmail 534556 invoked from network); 7 Aug 2024 13:22:02 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Aug 2024 13:22:02 +0200
+X-UD-Smtp-Session: l3s3148p1@3xyKHhYfuswgAwDPXxLGAIH3oZkcU6AS
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH i2c-tools 3/3] i2ctransfer: don't use plain 'unsigned'
+Date: Wed,  7 Aug 2024 13:21:59 +0200
+Message-ID: <20240807112159.14220-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240807112159.14220-1-wsa+renesas@sang-engineering.com>
+References: <20240807112159.14220-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] watchdog: rzg2l_wdt: Enable properly the watchdog
- clocks and power domain
-Content-Language: en-US
-To: ulf.hansson@linaro.org, wim@linux-watchdog.org, linux@roeck-us.net,
- rafael@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-watchdog@vger.kernel.org, geert+renesas@glider.be,
- linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Ulf,
+Make those explicit 'unsigned int'. I got used to the explicit Kernel
+coding style and prefer it meanwhile.
 
-Please, do you have any input/suggestions on this?
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ tools/i2ctransfer.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thank you,
-Claudiu Beznea
+diff --git a/tools/i2ctransfer.c b/tools/i2ctransfer.c
+index a7bbbaa..c9a30cf 100644
+--- a/tools/i2ctransfer.c
++++ b/tools/i2ctransfer.c
+@@ -85,10 +85,10 @@ static int check_funcs(int file)
+ 	return 0;
+ }
+ 
+-static void print_msgs(struct i2c_msg *msgs, __u32 nmsgs, unsigned flags)
++static void print_msgs(struct i2c_msg *msgs, __u32 nmsgs, unsigned int flags)
+ {
+ 	FILE *output = flags & PRINT_STDERR ? stderr : stdout;
+-	unsigned i;
++	unsigned int i;
+ 	__u16 j;
+ 
+ 	for (i = 0; i < nmsgs; i++) {
+@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
+ 	int force = 0, yes = 0, version = 0, verbose = 0, all_addrs = 0, binary = 0;
+ 	struct i2c_msg msgs[I2C_RDRW_IOCTL_MAX_MSGS];
+ 	enum parse_state state = PARSE_GET_DESC;
+-	unsigned buf_idx = 0;
++	unsigned int buf_idx = 0;
+ 
+ 	for (i = 0; i < I2C_RDRW_IOCTL_MAX_MSGS; i++)
+ 		msgs[i].buf = NULL;
+@@ -333,7 +333,7 @@ int main(int argc, char *argv[])
+ 
+ 	if (yes || confirm(filename, msgs, nmsgs)) {
+ 		struct i2c_rdwr_ioctl_data rdwr;
+-		unsigned print_flags = PRINT_READ_BUF;
++		unsigned int print_flags = PRINT_READ_BUF;
+ 
+ 		rdwr.msgs = msgs;
+ 		rdwr.nmsgs = nmsgs;
+-- 
+2.43.0
 
-On 19.06.2024 15:09, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Hi,
-> 
-> Watchdog device available on RZ/G3S SoC is part of a software-controlled
-> power domain. The watchdog driver implements struct
-> watchdog_ops::restart() handler which is called in atomic context via
-> this call chain:
-> 
-> kernel_restart() ->
->   machine_restart() ->
->     do_kernel_restart() ->
->       atomic_notifier_call_chain() ->
->         watchdog_restart_notifier()
-> 	  rzg2l_wdt_restart()
-> 
-> When the rzg2l_wdt_restart() is called it may happen that the watchdog
-> clocks to be disabled and the associated power domain to be off.
-> Accessing watchdog registers in this state leads to aborts and system
-> blocks.
-> 
-> To solve this issue the series proposes a new API called
-> dev_pm_genpd_resume_restart_dev() that is intended to be called in
-> scenarios like this. In this RFC series the
-> dev_pm_genpd_resume_restart_dev() checks if the system is in
-> SYSTEM_RESTART context and call dev_pm_genpd_resume(). I also wanted to
-> mark the device as a restart device with a new member in struct dev_pm_info
-> (similar to struct dev_pm_info::syscore) and check it in the newly
-> introduced API but then I told myself maybe it would be better to keep it
-> simpler for the moment.
-> 
-> Please let me know how do you consider this.
-> 
-> Along with it, series addresses the usage of clk_prepare_enable() in
-> rzg2l_wdt_restart() reported by Ulf Hansson at [1] and use the
-> dev_pm_genpd_resume_restart_dev() in rzg2l_wdt driver.
-> 
-> Please note that series is built on top of [1].
-> 
-> A similar approach (using directly the dev_pm_genpd_resume() function in
-> rzg2l_wdt was proposed at [2]). This series was posted separatelly to
-> avoid blocking the initial support for the RZ/G3S SoC.
-> 
-> Thank you,
-> Claudiu Beznea
-> 
-> [1] https://lore.kernel.org/all/20240531065723.1085423-1-claudiu.beznea.uj@bp.renesas.com/
-> [2] https://lore.kernel.org/all/20240410134044.2138310-10-claudiu.beznea.uj@bp.renesas.com/
-> 
-> Claudiu Beznea (3):
->   pmdomain: core: Add a helper to power on the restart devices
->   watchdog: rzg2l_wdt: Keep the clocks prepared
->   watchdog: rzg2l_wdt: Power on the PM domain in rzg2l_wdt_restart()
-> 
->  drivers/pmdomain/core.c      | 18 +++++++++++++++
->  drivers/watchdog/rzg2l_wdt.c | 43 +++++++++++++++++++++++++++++++-----
->  include/linux/pm_domain.h    |  2 ++
->  3 files changed, 58 insertions(+), 5 deletions(-)
-> 
