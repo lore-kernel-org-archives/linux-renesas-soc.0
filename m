@@ -1,91 +1,83 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30FE1BD00F
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Aug 2024 17:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EA51B9B43
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Aug 2024 18:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723658272; cv=none; b=nvz05NQSFmfgWMonov0AMwUqQiOyN3lRkKerWbXVSq/Xz+ueDDTKIcAPpFR5EGswSCzYmzExMdmw6/R+gd+K98hPeeeZhDt2nUVgbPqmaC1H+o2K9tPv08+oQOsFPJN5rYzQWqx55J4NDQHoJ2ANE0kpyCB0NdqcErwYvHF5FUA=
+	t=1723659737; cv=none; b=uHLOxfulRSE1H4/KtZ7hk1qK7uFGJ8A043h8g6ovlzBW841oqNCVk4R9gtFvR+O/K4UhvacaBeixXtg3vSoG/lu2dG+Ujk6DUHrjt42m0FBL2gmHcp4hjUATay32oP9qwlej85eYDJtQhbgQGzFpON/YFhMC1gLWNll7XPykMb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723658272; c=relaxed/simple;
-	bh=g1AR0/vLsPUhf8e8RmulhJTIF1DTc0hoVCJ573rFeMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAiKEVpThWORV5gtGws/foLdfHkwr/BDvdO5qyaGQ3aGrKzuheW1Um3e1Lb0dO9uq4BlP7eKRCC3QhzIqLHZaOWzOAO4oBejyfb3zCbVdpUUAzX8Q//COSqPrmTb+7Xoo8efGQ8zepNHt0Y0DN676ceCLGgAVuUwVWKAzhTlxyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=V2VhDOQj; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1723659737; c=relaxed/simple;
+	bh=tQjuUaxdat+2KEGQjyVmeSbf2fFsAcFpB+QxVnFBRvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=g27VXaQyuK5vIPAXsE1kUslnxB2RZGblO4AhVy0sPiyeBRTNAeFyq3L11FE1b7pC1X1OcZi8+n41419HFOECiNVAub0Mrub6vPJDs8WsjuSOvICMwrfv0kktKlviG3AGjCJX8PnrSZLfhEyRb2zI38iun/xYG2En0ADdZZHVOXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=O9uSC4wM; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="V2VhDOQj"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O9uSC4wM"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=g1AR
-	0/vLsPUhf8e8RmulhJTIF1DTc0hoVCJ573rFeMM=; b=V2VhDOQj2dB7H6YAQwF/
-	xmkW/5Xco0vt1YiZb3lyAYVATTnbKY+6D0bSTXHJJTUciLGgrrGE8T9jR0EKMhij
-	aaHwek+QWed7kXHzJqAdInhj1ZQC1pqz60e6BayCJX0qUKJ4FZ63JWxeStgGdT44
-	ti836BGFAXK8W0kT7GekrbYVIpOIV8EozBSXrfkGIxo45C6LenRuWEqKO+00Qt8T
-	2VNrKD60u3mtn72+5ZxGdeGx5ffY+7pQhLO5/8gAhIvrDRzp/FA+qLEERGod6wD4
-	QLwvYOJBo7t2ogTlO7z7CsvM7mOJorMUbAOv9UqL9hXqDMyW0ilbXja8QIg7y0hK
-	zw==
-Received: (qmail 2060345 invoked from network); 14 Aug 2024 19:57:48 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Aug 2024 19:57:48 +0200
-X-UD-Smtp-Session: l3s3148p1@IZjGdqgf4JIgAQnoAHipAGJRnFk/ZdC8
-Date: Wed, 14 Aug 2024 19:57:47 +0200
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=EZuSu/YjWTn+/F93ud8G89tPT7KFtw5MjmqiM/N9sro=; b=O9uSC4
+	wM5ANZqIIcNGRDMX5OM5K7Vd3nZr0+6SqQ0IbSPDol19DHiIHrDY0Tj/94+d3rfO
+	3f7Z7Jz5HfMEcl/SZZIGIqjQ1SMAp0ykTgYks5kCd7iMZqOcDgpLWuHC1lscFbw+
+	7BWT7XjkWkYif2QPGSnwV3uMY0INoBSA3EP9FlB+O0mk6iFaOrWNxjGAysNMJP4y
+	+NrhRJauRCcQPd2ZfJ7W/BbME5qOvr1mXTdHVwFVKueci5y4X93bT3eJ2XD5v7Tx
+	YgB+JHtXGhBLEEt64GW/yJEeKKTir0jXuAab4W9ZzCUM+9gdUClQai1JwcHMmLfC
+	tNbosPRJZbTEhgdQ==
+Received: (qmail 2065475 invoked from network); 14 Aug 2024 20:22:12 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Aug 2024 20:22:12 +0200
+X-UD-Smtp-Session: l3s3148p1@UfIPzqgf5sogAQnoAHipAGJRnFk/ZdC8
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] i2c: testunit: return current command on read
- messages
-Message-ID: <ZrzwG981HvC0Jsga@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20240811212317.16119-1-wsa+renesas@sang-engineering.com>
- <20240811212317.16119-5-wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH 1/3] i2c: testunit: describe fwnode based instantiation
+Date: Wed, 14 Aug 2024 20:22:07 +0200
+Message-ID: <20240814182210.15382-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240814182210.15382-1-wsa+renesas@sang-engineering.com>
+References: <20240814182210.15382-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MsjtRCeo7UHaHX8a"
-Content-Disposition: inline
-In-Reply-To: <20240811212317.16119-5-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 
+The testunit can also be instantiated via firmware nodes. Give a
+devicetree node as an example.
 
---MsjtRCeo7UHaHX8a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ Documentation/i2c/slave-testunit-backend.rst | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-On Sun, Aug 11, 2024 at 11:23:16PM +0200, Wolfram Sang wrote:
-> Because the testunit can start tests in the future via the DELAY
-> register, it may happen that a command is still pending. Support
-> detecting that by returning the number of a command in progress (if
-> there is one).
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+diff --git a/Documentation/i2c/slave-testunit-backend.rst b/Documentation/i2c/slave-testunit-backend.rst
+index d3ab5944877d..3743188ecfc7 100644
+--- a/Documentation/i2c/slave-testunit-backend.rst
++++ b/Documentation/i2c/slave-testunit-backend.rst
+@@ -20,6 +20,18 @@ Instantiating the device is regular. Example for bus 0, address 0x30::
+ 
+   # echo "slave-testunit 0x1030" > /sys/bus/i2c/devices/i2c-0/new_device
+ 
++Or using firmware nodes. Here is a devicetree example (note this is only a
++debug device, so there are no official DT bindings)::
++
++  &i2c0	{
++        ...
++
++	testunit@30 {
++		compatible = "slave-testunit";
++		reg = <(0x30 | I2C_OWN_SLAVE_ADDRESS)>;
++	};
++  };
++
+ After that, you will have the device listening. Reading will return a single
+ byte. Its value is 0 if the testunit is idle, otherwise the command number of
+ the currently running command.
+-- 
+2.43.0
 
-Applied to for-next, thanks!
-
-
---MsjtRCeo7UHaHX8a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma88BsACgkQFA3kzBSg
-Kbb3Yw//dYYehwYQqGZM/fuS4uvjpEaUb6aW2jHWkN2mCvAp5netUpThdNRtI9Xb
-TVl/pMhViBdewh8FCdf1eZcG3irrl+SvcuEsCyihUABjfCGxv6ec+rTOYn5zlMZB
-qeY7N2mBuaH7RhFOl3RnH8NGhFErVhsA2sT7DisoEcBDQxiK3VvyXziIO/GCy2Al
-zXp0DquIqht77oEFCqoljKD2GokKusxZsXCjOJz4cLNQbcT6ppHAz6fs84G7NtHc
-XKkOjeK5VVpsdTOUSXoHOwDOWWedDr7D/mMRlMJpRdMNLf1T//h1lBD7FpOceJYi
-9Kryr9YGuVauo1X/dre0PKSFnPW7Xc+/e6ntjVqXeVc2T1DWX8yMb3ZulQ9Gh6Zf
-DXYQskP801L/M97oTKR7MODGPVRGyjbtSMLtNg5506OJeq/guTnZ+78ESFXDvSqT
-ce3gTamGVL7Wn2geKT7F7sqCFjhZpYiCPyZYhXU7/t4FqhoaOZpHpscss5ShE50r
-JvMZGLM6IvObiNbNhPLDGP5Afw712sYwA3mAHyLrp/n0rZBzfdEfwO7go6wBjraw
-U13nQs5tWuAUvDE4XVM1nK+4h0niJBr7K4zK0nyRThVAMPV1uUO5SuaS8hikjkrk
-HjRm7ceLi7fSMHT9C4psPbYqxeTfDNG4TokYg78xD4bZaetBtQA=
-=XlY5
------END PGP SIGNATURE-----
-
---MsjtRCeo7UHaHX8a--
