@@ -1,42 +1,42 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA8F1509AF
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Aug 2024 21:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB2D15381F
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Aug 2024 21:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723758020; cv=none; b=DRe7nHHA03y3Na+CBspjFJ9Vq5fLuFEn8IlERgJwGCCI87y/+uXZMC2NyhxzRwAlHsjhhyfvkCm84XouiH/IMKdhLQvtWti7sezb2xV3I2sEaqi2G9wOjFS4fbEn9DL/V0LMzlwDfcAxXS6bSsr3aARpFmEZcZmYBkiYJYtjQY0=
+	t=1723758021; cv=none; b=FyGDPZXSQDTG1fOtIM1bR91zz6GJTuMl5CmVb+Ews3O5SxVl8a2vHLPgHFtHjhkCO2t7cBUspuMjosAc5e2pZFY3qihik3aU1dg+Vd1UHB29o9qe1r/cITcLAvY3QCH+tNH5o8WX+j7pW32AXiM5qWxFnedpkiWrywYDH/2Cb+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723758020; c=relaxed/simple;
-	bh=2MED1jBw+Hc1lSdAWZynFsgB1k7IXozgIvLSzMA1Lts=;
+	s=arc-20240116; t=1723758021; c=relaxed/simple;
+	bh=EXxKVP9wze1+GWixvMjhq/LYI1QHRZcPF6P1jWQ2DBk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pBu3E3t1y95nUYH4+QOQp0nhB/bel1gqgmdUzJdLIBrKikGKVsejr74XbNn9EwObl645mXfI6aYF+LOvE0PThUCTpjnJXp+8u6bl0rP/s9bGpvaHh+zW1MRFDm9VMxBi0yww+4AGBBow9d/am3FJgt/bodrovn1xKxSvvLxw4to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Z6zDSuVj; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=EdmyLcezkC0QBSmmFLWDq8+fdP0d/YdK/vw/uvRzVHMWscWjJLJyMwhdh+wGsnaqn4auPru4e62felCzx5LHqW5zNiWDgL48r4pflYO/7JX2m60IsOfv05WPmQx6OBHC+6XTcwFiR+pObkae8dJXlXCIooVBtUgIdKll9lm8mK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=MN5zuBtT; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Z6zDSuVj"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MN5zuBtT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=ViA3Mk3fR/Sm00+jfPS2M9yvOzEGe6KD8x0Qw7mz9YU=; b=Z6zDSu
-	VjgLHmx50mcA+7mCpqC0wQRVmBY3R6JDXxLHBN7cg5Bia3TPj+drKA1AaiZmCyvI
-	LtwYH7FOroZo2UcEJ6IRM1O5QsZnhlkYpe8oD3upaHlP2lVFCFXtgijRR9DpQ0ql
-	rRePVFP9E8V41V/ijLg3IBcsmcH45DASqtFWICZh4jveF/N0bXoOpTRXbshxbvoP
-	LGwaIoq5LQld+bAOwMk55MBZCS2Wrktd8mndvPIR7kNfXKy/fLWjT/1P6XBwZVFR
-	kmsCN10fxQk9ga3prpYvt0NWQLeJU5OqSXUWKD4BTX3b5V96AalipS/e+bVvlKdb
-	PgZnykMpD9lV5Weg==
-Received: (qmail 2404103 invoked from network); 15 Aug 2024 23:40:15 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Aug 2024 23:40:15 +0200
-X-UD-Smtp-Session: l3s3148p1@TB8wsL8fdKsgAQnoAH4zAClVBN/DeGcx
+	 s=k1; bh=qq3ScW5pg08u1UFPZa79aJfX7ldEfNzfsS0vXLeKG/4=; b=MN5zuB
+	tTnANhH5KeMJxk0ZsRnE5DYlsTHLT3FEdEz/rC4ZNERU/PnS1/lfl5YTbnMU1giV
+	92QxVqpEXzOyNvKv9V/W64/sJkyQprTP1aA74hfaaXjf/l3RIrNmwhjOvCiAtcF6
+	U8ka+AVy/3BWPK/xad6ncOsK/GXBLGpnJJGLjersNWEpiMXCXc+JVOrIjc0AyUV4
+	vDNKlfVLTWNS8sWT5isbuERS3bVEmMLT/GOfsl6/gtfcOiytrnM6QnvqjRQU1kdG
+	MXEpH32OfUf3DHPELB1lofQsR0giujMNyHR3P1tcYwUamjfOS80ZdyvP8cYR9wDN
+	l4c2DqI0JOXEA2Vg==
+Received: (qmail 2404152 invoked from network); 15 Aug 2024 23:40:17 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Aug 2024 23:40:17 +0200
+X-UD-Smtp-Session: l3s3148p1@6DdIsL8faI0gAQnoAH4zAClVBN/DeGcx
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-i2c@vger.kernel.org,
 	devicetree-spec@vger.kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 dt-schema 1/3] schemas: i2c: reword descriptions for inclusive language
-Date: Thu, 15 Aug 2024 23:40:11 +0200
-Message-ID: <20240815214013.6519-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 dt-schema 3/3] schemas: i2c: add generic interrupt name for I2C controllers
+Date: Thu, 15 Aug 2024 23:40:13 +0200
+Message-ID: <20240815214013.6519-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240815214013.6519-1-wsa+renesas@sang-engineering.com>
 References: <20240815214013.6519-1-wsa+renesas@sang-engineering.com>
@@ -48,60 +48,40 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changing bindings is hard, changing descriptions is easy. Let's start
-with the low-hanging fruits and use the official I2C terminology (as of
-specs v7) in the descriptions. Drop a superfluous 'a' from the
-description of 'reg' for targets.
+"smbus_alert" is a generic interrupt name for controllers, so document
+it.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- dtschema/schemas/i2c/i2c-controller.yaml | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ dtschema/schemas/i2c/i2c-controller.yaml | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/dtschema/schemas/i2c/i2c-controller.yaml b/dtschema/schemas/i2c/i2c-controller.yaml
-index 9670082..e475ead 100644
+index 6dc73f8..97d0aaa 100644
 --- a/dtschema/schemas/i2c/i2c-controller.yaml
 +++ b/dtschema/schemas/i2c/i2c-controller.yaml
-@@ -99,7 +99,7 @@ properties:
-   multi-master:
+@@ -90,6 +90,21 @@ properties:
+       low-pass analog filter). Typical value should be above the normal i2c bus
+       clock frequency (clock-frequency). Specified in Hz.
+ 
++  interrupts:
++    description:
++      If not using interrupt-names, the first interrupt will be treated as the
++      primary interrupt for the controller.
++
++  interrupt-names:
++    anyOf:
++      - {} # Any name is allowed.
++      - contains:
++          enum:
++            - smbus_alert
++        description:
++          Generic name is "smbus_alert" for the SMBusAlert signal. Other names
++          are left to individual bindings.
++
+   mctp-controller:
      type: boolean
      description:
--      States that there is another master active on this bus. The OS can use
-+      States that there is another controller active on this bus. The OS can use
-       this information to adapt power management to keep the arbitration awake
-       all the time, for example. Can not be combined with 'single-master'.
- 
-@@ -116,9 +116,9 @@ properties:
-   single-master:
-     type: boolean
-     description:
--      States that there is no other master active on this bus. The OS can use
--      this information to detect a stalled bus more reliably, for example. Can
--      not be combined with 'multi-master'.
-+      States that there is no other controller active on this bus. The OS can
-+      use this information to detect a stalled bus more reliably, for example.
-+      Can not be combined with 'multi-master'.
- 
-   smbus:
-     type: boolean
-@@ -155,7 +155,7 @@ patternProperties:
-                 - minimum: 0xc0000000
-                   maximum: 0xc00003ff
-         description: |
--          One or many I2C slave addresses. These are usually a 7 bit addresses.
-+          One or many I2C target addresses. These are usually 7 bit addresses.
-           However, flags can be attached to an address. I2C_TEN_BIT_ADDRESS is
-           used to mark a 10 bit address. It is needed to avoid the ambiguity
-           between e.g. a 7 bit address of 0x50 and a 10 bit address of 0x050
-@@ -172,7 +172,7 @@ patternProperties:
-       interrupts:
-         description:
-           I2C core will treat "irq" interrupt (or the very first interrupt if
--          not using interrupt names) as primary interrupt for the slave.
-+          not using interrupt names) as primary interrupt for the target.
- 
-       interrupt-names:
-         anyOf:
 -- 
 2.43.0
 
