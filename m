@@ -1,107 +1,80 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A281714AC
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Aug 2024 12:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899121714A5;
+	Thu, 15 Aug 2024 14:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723723785; cv=none; b=o4fHo6XUaPy+f76U/PQ2hrWpbK+1uJcg6RPPQiDhRr6XxMjfXdlANHz2RzmPmvv+4KUsT9WQX6oIh4R+hZ34yYb0G71k+H93xfUmuug51Cgbt5Vq9K99jsE8ZX7TTeGQgKqUfcQooGUkZQcZTHg6kOaBogBsnQtge5nlNrUsFOg=
+	t=1723733213; cv=none; b=ud3QCGKG1JjCULPQKNDEgUb+eow59wZ5sR0tU+epgb247kOjfnH+YeDkMBCmRnXYnx5CRPqHYMwtMjIAq4lRbzuFL89lfJSeanaQwwFWkKXVvCSHRnMKheckffldwd8ezdsD5ApBD2Ouaan6rnQp5/Qtnh2gj8HVqx0hSCLJvIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723723785; c=relaxed/simple;
-	bh=2MED1jBw+Hc1lSdAWZynFsgB1k7IXozgIvLSzMA1Lts=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IPaO8dy0GsFSGS9ts7vnAPJRFDDivvxvGERFkZDHfVV+7ETpJbdlxcnISScn0AqI3ED53BvpqXikrYXwsn0IpZRsqwFqdoUODRxOEOELm4O60siL6FBDAGsjgbeor9f6Rm4m+J0jSmTxYP4GZ8vcwI+0WuE7muvGVI8tNNTVsnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Rhwn/nou; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1723733213; c=relaxed/simple;
+	bh=LXg2YKKYe4ZHeUhto+8rttrwbZ/5Uqwzbnc9OdSipXA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rq9nnQI0wc1+ghLff1bNIi3nhVvhFGbV7RB7vJJtqQUxwo29i1xJSCRMC9JeYOg8BKV4XF4QWn7nV/LzLoPK94CBH/wXcfS4jUichackCieuyMU8rMik7jTCTJNMDspYhAUMUZ5H0/NVZ9EchB6dPA7rc7+0BvKbeimEZ50OaUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ioa417Ws; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Rhwn/nou"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=ViA3Mk3fR/Sm00+jfPS2M9yvOzEGe6KD8x0Qw7mz9YU=; b=Rhwn/n
-	ouqeQ0xVKIeuy6RmAsWIkxQ/ZGx0hzum3SIpNSgiev1Zj9VyKYWwZOAwQPg3uirl
-	b5rUzp+gSUdXClHGvg5KEglBzKlPsdj3RiS/rSMg/UMOJifWcR+0EBXQNg5+Bqa3
-	3HbNKr8FjyOYOwvD0W8Rn3bw6jSagQZMPCGJxnkuZDrCH2uYCEU7voF/H3K9UZIW
-	15aNNJNLxKCwQ4ejIVltKCAjLJXVQeny/YpOk3dR9g3xnj9hQZRhjXqS5KT666FZ
-	dsaVmbnm2x7ZZqufV5sYgG6VACXEs2IIEgWsh9k4L/VtLv9Z0OpZ4kHkRbI8lVtZ
-	Uuj9Oa7Ij3frCAKQ==
-Received: (qmail 2281982 invoked from network); 15 Aug 2024 14:09:38 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Aug 2024 14:09:38 +0200
-X-UD-Smtp-Session: l3s3148p1@VCZ9t7cf7tBehhrc
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org,
-	devicetree-spec@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH dt-schema 1/3] schemas: i2c: reword descriptions for inclusive language
-Date: Thu, 15 Aug 2024 14:09:33 +0200
-Message-ID: <20240815120935.5871-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240815120935.5871-1-wsa+renesas@sang-engineering.com>
-References: <20240815120935.5871-1-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ioa417Ws"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679ABC32786;
+	Thu, 15 Aug 2024 14:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723733213;
+	bh=LXg2YKKYe4ZHeUhto+8rttrwbZ/5Uqwzbnc9OdSipXA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ioa417WsQOfqzQ7ze8+q8mUQlvNMJmsxqZoyhhR45pYR9PB3EqoQHhu1JMOYXR7Y8
+	 y6RlGblWWYQw3oQRuyFZord53ilwuXsSWvIsDS/lFVkzV9OtjOe+Fi4AUc7Vsy+Bmw
+	 F2k450xNdnIU0xedbpq5LRtnboOS7At38wEZmAey5eUOs+cN0eTJV+4I4xiUqBmuk/
+	 NZi/9rEXXzqHTf3nIDoSIB2ak3vN01LitdvFu/mNPfrt5T1yZQ8q/26nnaS6rCq9ms
+	 OEYc6oRubrMUm5yibaM/0N+9GGGnBikFoNkFI+mxdtg+IR+ts3+yqmO7VufJEJ2s57
+	 aSaNXZy16aZEw==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f01afa11cso1243873e87.0;
+        Thu, 15 Aug 2024 07:46:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHepuvXrL8NJyluHwF8AMfm81rkAqoZtehm2svb3aimEKtZbBGwEv3OQwQoVFRHWN41ZINN9WZFd/j@vger.kernel.org, AJvYcCXttqx6Hls+Y8DT2mXDpSBb5cy7iB74R7IdpcU8AdZdaY11XD8yDmhqBiILM20ch9UkR6F7cm/N15llCc3hu/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj+RWmjPz+QO16xVwdLS7JimiVrRq28hT6oqMMx87j86gE8X+U
+	Dd1KXEJL5NWkFr/8IIHQXfQMHBBWIMCCwxdZXdnUKOEwBJS381PpQIz7S2mTmptHT3pbm3/zfTc
+	CPiPH7xKN5fLe7VgVkycKZvgdGg==
+X-Google-Smtp-Source: AGHT+IGHdz6/Pimw8uzLCB1lhJ+53+05RgSheafx7bjMaD7PkIr2T0iiwcbsOfir91LpaFaf5Y6+XfOkOgfyoymAx/4=
+X-Received: by 2002:a05:6512:3a88:b0:52e:bf53:1c2b with SMTP id
+ 2adb3069b0e04-532eda64678mr4145730e87.12.1723733211720; Thu, 15 Aug 2024
+ 07:46:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240815120935.5871-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20240815120935.5871-1-wsa+renesas@sang-engineering.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 15 Aug 2024 08:46:39 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKJRhq9UzsjqbOAam0GSkm4R7m82FZ0zzYFp-mY2HS+Yw@mail.gmail.com>
+Message-ID: <CAL_JsqKJRhq9UzsjqbOAam0GSkm4R7m82FZ0zzYFp-mY2HS+Yw@mail.gmail.com>
+Subject: Re: [PATCH dt-schema 0/3] schemas: i2c: fix "smbus_alert" handling
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	devicetree-spec@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Changing bindings is hard, changing descriptions is easy. Let's start
-with the low-hanging fruits and use the official I2C terminology (as of
-specs v7) in the descriptions. Drop a superfluous 'a' from the
-description of 'reg' for targets.
+On Thu, Aug 15, 2024 at 6:09=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> "smbus_alert" is currently listed as an interrupt for targets. This is
+> wrong, it is an interrupt for the controller. The mistake (mea culpa!)
+> was already in the originating "i2c.txt" file in the Linux Kernel. Time
+> to fix it. Make small changes to descriptions to use inclusive language
+> while we are here.
+>
+> Sadly, not tested with 'dt-doc-validate'. I tried to install my local
+> dtschema repo with
+>
+>  $ ~/.venv/bin/pip3 install -e .
+>
+> and got:
+>
+>  error: Multiple top-level packages discovered in a flat-layout: ['patche=
+s', 'dtschema'].
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- dtschema/schemas/i2c/i2c-controller.yaml | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Do you have a 'patches' directory? Not sure why that's a problem other
+than python having specific ideas on directory structures.
 
-diff --git a/dtschema/schemas/i2c/i2c-controller.yaml b/dtschema/schemas/i2c/i2c-controller.yaml
-index 9670082..e475ead 100644
---- a/dtschema/schemas/i2c/i2c-controller.yaml
-+++ b/dtschema/schemas/i2c/i2c-controller.yaml
-@@ -99,7 +99,7 @@ properties:
-   multi-master:
-     type: boolean
-     description:
--      States that there is another master active on this bus. The OS can use
-+      States that there is another controller active on this bus. The OS can use
-       this information to adapt power management to keep the arbitration awake
-       all the time, for example. Can not be combined with 'single-master'.
- 
-@@ -116,9 +116,9 @@ properties:
-   single-master:
-     type: boolean
-     description:
--      States that there is no other master active on this bus. The OS can use
--      this information to detect a stalled bus more reliably, for example. Can
--      not be combined with 'multi-master'.
-+      States that there is no other controller active on this bus. The OS can
-+      use this information to detect a stalled bus more reliably, for example.
-+      Can not be combined with 'multi-master'.
- 
-   smbus:
-     type: boolean
-@@ -155,7 +155,7 @@ patternProperties:
-                 - minimum: 0xc0000000
-                   maximum: 0xc00003ff
-         description: |
--          One or many I2C slave addresses. These are usually a 7 bit addresses.
-+          One or many I2C target addresses. These are usually 7 bit addresses.
-           However, flags can be attached to an address. I2C_TEN_BIT_ADDRESS is
-           used to mark a 10 bit address. It is needed to avoid the ambiguity
-           between e.g. a 7 bit address of 0x50 and a 10 bit address of 0x050
-@@ -172,7 +172,7 @@ patternProperties:
-       interrupts:
-         description:
-           I2C core will treat "irq" interrupt (or the very first interrupt if
--          not using interrupt names) as primary interrupt for the slave.
-+          not using interrupt names) as primary interrupt for the target.
- 
-       interrupt-names:
-         anyOf:
--- 
-2.43.0
-
+Rob
