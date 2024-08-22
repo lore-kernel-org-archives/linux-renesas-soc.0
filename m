@@ -1,30 +1,29 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2236A1CF8B
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Aug 2024 08:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371F816DEB4
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Aug 2024 08:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724316734; cv=none; b=og4isJmB1Pl1ZotY5Lu1LJXOUMfpsNQCdTlNEPKfyxSlXQZOqoe8W2wU0dpeCK7aNOEqYbUdlxjeQ+qN5g1o6JDO6uJ+rAM+Ool+0HTM/1oygWkK7epMcGzM1Ww+NnoZPWV1iVQPUYg2GXg7TRomKlyz4QY6WA78QFl6YTVd48c=
+	t=1724316734; cv=none; b=eXdihkI4oGDeqNzhz4PdFvH01eE6dd6PcdhihUEHHy0XbLYVo9jIytBBcbeDZazRE/XmkhJyHW5eEagvAdTSA91nT3Hl8FX9zkeq/TUeG898V9XMkq5d2ebl3o7TVclVtfmlFa20cEmgPXtsOg5hG9E8JOCAWx62BE4MLecbI1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724316734; c=relaxed/simple;
-	bh=qhfXCmEObnAK2W8F8ACPSIlgszjoAaObyVQ+WZ0KQeQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u4/8MKO/n30dYfNE1guyQOz9VP86ZOsyBOorRijsx46OJ15xbtZCfnwz2osh5YCR0OuE5j7K4xPkn1mmYqWoad5wCTX2Hi8sqSQpU8E7iH6tj9wgJrtlfOZy2L6gvHCC9D0kobI55c6glj//gPqNLpnyt9AqOkLzmNhtgYXaZe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	bh=Q8f3Aq61vQRwFvL+CffNn2g+APWskM2YIgGhXl7Cm4A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HtGwu4mtZLEox9qspqFSzQ+FDZ6QDzyrVd3SvH88ai/oLRDC18JRemUBxj0a1rFzlwoc9EXAzhe8bj8OggeZS7+fr5tKOsB97cfA0vpdUJ2wYR/vQszIhdYDZOCYgr8SDaoy7XIIAmFLf8nGTgZBbcG5tqEvI/L743ZxSGgi4Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:410c:b78a:c35b:cd3e])
-	by albert.telenet-ops.be with bizsmtp
-	id 2ws22D00W22R5AR06ws2yo; Thu, 22 Aug 2024 10:52:02 +0200
+	by baptiste.telenet-ops.be with bizsmtp
+	id 2ws22D00B22R5AR01ws2p5; Thu, 22 Aug 2024 10:52:04 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sh3Y0-000VWx-23;
+	id 1sh3Y0-000VWs-16;
 	Thu, 22 Aug 2024 10:52:02 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sh3Y2-002L5u-Ay;
+	id 1sh3Y2-002L5j-8Q;
 	Thu, 22 Aug 2024 10:52:02 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: arm-soc <arm@kernel.org>,
@@ -33,12 +32,10 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 3/3] Renesas DTS updates for v6.12
-Date: Thu, 22 Aug 2024 10:51:53 +0200
-Message-Id: <cover.1724316485.git.geert+renesas@glider.be>
+Subject: [GIT PULL 0/3] Renesas SoC updates for v6.12
+Date: Thu, 22 Aug 2024 10:51:50 +0200
+Message-Id: <cover.1724316478.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1724316478.git.geert+renesas@glider.be>
-References: <cover.1724316478.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -47,84 +44,45 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+	Hi SoC folks,
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+This is my first pull request for the inclusion of Renesas SoC updates
+for v6.12.
 
-are available in the Git repository at:
+It consists of 3 parts:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dts-for-v6.12-tag1
+  [GIT PULL 1/3] Renesas ARM defconfig updates for v6.12
 
-for you to fetch changes up to ab7d885a33a7ef328a97ccae0d1340b68c3db9ad:
+    - Enable support for AK4619 codecs and Renesas R-Car Ethernet-TSN
+      controllers in the ARM64 defconfig,
+    - Enable slab hardening and kmalloc buckets in the Renesas ARM
+      defconfig.
 
-  arm64: dts: renesas: gray-hawk-single: Add CAN-FD support (2024-08-20 09:40:52 +0200)
+  [GIT PULL 2/3] Renesas DT binding updates for v6.12
 
-----------------------------------------------------------------
-Renesas DTS updates for v6.12
+    - Document support for the Renesas RZ/G2M v3.0 (r8a774a3) SoC.
 
-  - Add support for sound, push switches, and GP LEDs on the Gray Hawk
-    Single development board,
-  - Add missing iommus properties on R-Car Gen3/Gen4 and RZ/G2 SoCs,
-  - Add PWM support for the R-Car V4M SoC,
-  - Improve Ethernet descriptions on the RZ/G2L, RZ/G2LC, and RZ/G2UL
-    SMARC SoMs,
-  - Add DMAC support for the RZ/G3S SoC,
-  - Add CAN-FD support for the R-Car V4M SoC and the Gray Hawk Single
-    development board.
+  [GIT PULL 3/3] Renesas DTS updates for v6.12
 
-----------------------------------------------------------------
-Claudiu Beznea (1):
-      arm64: dts: renesas: r9a08g045: Add DMAC node
+    - Add support for sound, push switches, and GP LEDs on the Gray Hawk
+      Single development board,
+    - Add missing iommus properties on R-Car Gen3/Gen4 and RZ/G2 SoCs,
+    - Add PWM support for the R-Car V4M SoC,
+    - Improve Ethernet descriptions on the RZ/G2L, RZ/G2LC, and RZ/G2UL
+      SMARC SoMs,
+    - Add DMAC support for the RZ/G3S SoC,
+    - Add CAN-FD support for the R-Car V4M SoC and the Gray Hawk Single
+      development board.
 
-Duy Nguyen (1):
-      arm64: dts: renesas: r8a779h0: Add CAN-FD node
+Thanks for pulling!
 
-Geert Uytterhoeven (15):
-      arm64: dts: renesas: r8a774a1: Add missing iommus properties
-      arm64: dts: renesas: r8a774b1: Add missing iommus properties
-      arm64: dts: renesas: r8a774c0: Add missing iommus properties
-      arm64: dts: renesas: r8a774e1: Add missing iommus properties
-      arm64: dts: renesas: r8a77960: Add missing iommus properties
-      arm64: dts: renesas: r8a77961: Add missing iommus properties
-      arm64: dts: renesas: r8a77965: Add missing iommus properties
-      arm64: dts: renesas: r8a77970: Add missing iommus property
-      arm64: dts: renesas: r8a77980: Add missing iommus properties
-      arm64: dts: renesas: r8a779a0: Add missing iommus properties
-      arm64: dts: renesas: r8a779g0: Add missing iommus properties
-      arm64: dts: renesas: r8a779h0: Add missing iommus properties
-      arm64: dts: renesas: gray-hawk-single: Add push switches
-      arm64: dts: renesas: gray-hawk-single: Add GP LEDs
-      arm64: dts: renesas: gray-hawk-single: Add CAN-FD support
+Gr{oetje,eeting}s,
 
-Khanh Le (1):
-      arm64: dts: renesas: r8a779h0: Add PWM device nodes
+						Geert
 
-Kuninori Morimoto (1):
-      arm64: dts: renesas: gray-hawk-single: Add Sound support
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Paul Barker (6):
-      arm64: dts: renesas: rzg2l: Enable Ethernet TXC output
-      arm64: dts: renesas: rzg2lc: Enable Ethernet TXC output
-      arm64: dts: renesas: rzg2ul: Enable Ethernet TXC output
-      arm64: dts: renesas: rzg2l: Set Ethernet PVDD to 1.8V
-      arm64: dts: renesas: rzg2lc: Set Ethernet PVDD to 1.8V
-      arm64: dts: renesas: rzg2ul: Set Ethernet PVDD to 1.8V
-
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi          |   6 +
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi          |  26 +++
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi          |   3 +
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi          |   8 +
- arch/arm64/boot/dts/renesas/r8a77960.dtsi          |   2 +
- arch/arm64/boot/dts/renesas/r8a77961.dtsi          |   2 +
- arch/arm64/boot/dts/renesas/r8a77965.dtsi          |  22 +++
- arch/arm64/boot/dts/renesas/r8a77970.dtsi          |   1 +
- arch/arm64/boot/dts/renesas/r8a77980.dtsi          |   2 +
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi          |  20 ++
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi          |   5 +
- .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts | 212 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi          |  93 +++++++++
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi         |  38 ++++
- arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi   |  86 +++++----
- arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi  |  43 +++--
- arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi  |  86 +++++----
- 17 files changed, 575 insertions(+), 80 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
