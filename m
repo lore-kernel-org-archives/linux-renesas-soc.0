@@ -1,132 +1,99 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B88113E8AE;
-	Mon, 26 Aug 2024 09:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE5E81741
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Aug 2024 09:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663301; cv=none; b=FldRoFTfTzzlj29DL3KL5Hnx5fBAJdgN7g3kkzbqcImm90+oeN8uQreeKweGiMmylhJXr24JneXRuOY+9EYdaXuvbzbvx0GNjI4sNy5WWplmUWoMiR2oyz3HJEyHcxoT92eltx1x6AZ3AEJvTh3JoAicAuJqVOdkf/1/+VLFxhc=
+	t=1724663544; cv=none; b=SDjurbRh001FCbRyfrf3hBKMURu9epaQgsLYfDo4KVuv8DD3Tknhh1VmahH0/JHMsjs97dGG9wIkyM/t3EVrQH1d1eQi9iiX+PCxEP23C8R56CqUAArPE6wi03KlURpVHW3A9NTMtR3lestv8nqFOlnCgGNR1JLjM7P1CmIYF90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663301; c=relaxed/simple;
-	bh=9g4Z2BS4YevR77wP1EA7gzY3bEMh8Xe8K+iXUPcpCpE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CpkjXhiQ+MT7Ks4vchiAtIqRhBeniORCZnRcXDhvUPBYR7PwiC0xppGeEEAYGn7PT9wCxSWmOQpYw26EjqkAHyCzUNb6zkEApWlR8Rn6MiCCAwTWWnGn5c4/W8IZ8/T5G/i5lW6YziNi4WnDoTqiL1QmsaIFtiodZ1uabXTy0CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.10,177,1719846000"; 
-   d="scan'208";a="220556651"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Aug 2024 18:08:11 +0900
-Received: from localhost.localdomain (unknown [10.226.92.68])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id ED05D4007554;
-	Mon, 26 Aug 2024 18:08:08 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	s=arc-20240116; t=1724663544; c=relaxed/simple;
+	bh=N/qDni5Xn3M9bMzbPruKh54SksQXwxZQa5JjdJAfnPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sqHb+2V2YqAVGkAV5RvyciOz2R2ngV2V4qXlVrfGgY/ilrWWkY8XBEjYV0t33wGmi2DYnaf8mE+rCXU/TB4x6/uA2O3alwpR5b6kFxYiYh/DhIp0f3qswxv1EwdX5mYlMKciMLTgtXX1/i8XjRoqZB/K+53nAff8JKt4ccDwjIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IO4jZL2f; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IO4jZL2f"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=N/qD
+	ni5Xn3M9bMzbPruKh54SksQXwxZQa5JjdJAfnPo=; b=IO4jZL2fVAIDA36Wp1hM
+	aCu/9XuCS5E+/JHF6Tu8VHtYfIg4N9m2L02QEwTir4VFBoK89nuVLkM+6wrSYAgd
+	JhsqBf2mTtl4/7FHvz/dhsWTg+CrdiBqK2eyEPgmDrNgijzElSLDVGsWgt02dT5N
+	zzRe9+yg0x9PRijUl6NSaATkMB/zFDgp246gS465RqfUPH5/16AiVyMwuSYGCNfE
+	dGbRTZIPGTuuaGjzjScokkaNwKgEBSl15F45ZWfAMR4qFtqUm+wWp68W8kumGURL
+	YW4VHkQjvChS5SMqGvl/dZieMM0UVndvmMh22UdpkgCtONpybSYVW+Lw3R45ps89
+	jA==
+Received: (qmail 1932606 invoked from network); 26 Aug 2024 11:12:16 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Aug 2024 11:12:16 +0200
+X-UD-Smtp-Session: l3s3148p1@eJN0hZIgCNtehhrU
+Date: Mon, 26 Aug 2024 11:12:16 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: riic: Simplify unsupported bus speed handling
+Message-ID: <ZsxG8GBMSWjc9VU1@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 1/2] arm64: dts: renesas: rzg2l-smarc: Enable HDMI audio
-Date: Mon, 26 Aug 2024 10:07:59 +0100
-Message-ID: <20240826090803.56176-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240826090803.56176-1-biju.das.jz@bp.renesas.com>
-References: <20240826090803.56176-1-biju.das.jz@bp.renesas.com>
+	Chris Brandt <chris.brandt@renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+References: <dc6b10a56be9c90f580c50c55d829766fe2956a7.1724337807.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ckD8gVbLDARe3TpI"
+Content-Disposition: inline
+In-Reply-To: <dc6b10a56be9c90f580c50c55d829766fe2956a7.1724337807.git.geert+renesas@glider.be>
 
-Enable HDMI audio on RZ/{G2L,V2L} SMARC EVK.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Dropped SSI1 RXD pin as it is not connected on carrier board
----
- .../dts/renesas/rzg2l-smarc-pinfunction.dtsi  |  6 ++++
- arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 30 +++++++++++++++++++
- 2 files changed, 36 insertions(+)
+--ckD8gVbLDARe3TpI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
-index 18c526c7a4cf..e9f244c33d55 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
-@@ -143,6 +143,12 @@ ssi0_pins: ssi0 {
- 			 <RZG2L_PORT_PINMUX(45, 3, 1)>; /* RXD */
- 	};
- 
-+	ssi1_pins: ssi1 {
-+		pinmux = <RZG2L_PORT_PINMUX(46, 0, 1)>, /* BCK */
-+			 <RZG2L_PORT_PINMUX(46, 1, 1)>, /* RCK */
-+			 <RZG2L_PORT_PINMUX(46, 2, 1)>; /* TXD */
-+	};
-+
- 	usb0_pins: usb0 {
- 		pinmux = <RZG2L_PORT_PINMUX(4, 0, 1)>, /* VBUS */
- 			 <RZG2L_PORT_PINMUX(5, 0, 1)>, /* OVC */
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-index 887dffe14910..ee3d96fdb616 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-@@ -30,6 +30,12 @@ hdmi_con_out: endpoint {
- 			};
- 		};
- 	};
-+
-+	sound_card {
-+		compatible = "audio-graph-card";
-+		label = "HDMI-Audio";
-+		dais = <&i2s2_port>;
-+	};
- };
- 
- &cpu_dai {
-@@ -88,6 +94,13 @@ adv7535_out: endpoint {
- 					remote-endpoint = <&hdmi_con_out>;
- 				};
- 			};
-+
-+			port@2 {
-+				reg = <2>;
-+				codec_endpoint: endpoint {
-+					remote-endpoint = <&i2s2_cpu_endpoint>;
-+				};
-+			};
- 		};
- 	};
- };
-@@ -170,6 +183,23 @@ &ssi0 {
- 	status = "okay";
- };
- 
-+&ssi1 {
-+	pinctrl-0 = <&ssi1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	i2s2_port: port {
-+		i2s2_cpu_endpoint: endpoint {
-+			remote-endpoint = <&codec_endpoint>;
-+			dai-format = "i2s";
-+
-+			bitclock-master = <&i2s2_cpu_endpoint>;
-+			frame-master = <&i2s2_cpu_endpoint>;
-+		};
-+	};
-+};
-+
- &vccq_sdhi1 {
- 	gpios = <&pinctrl RZG2L_GPIO(39, 1) GPIO_ACTIVE_HIGH>;
- };
--- 
-2.43.0
+On Thu, Aug 22, 2024 at 04:45:54PM +0200, Geert Uytterhoeven wrote:
+> Simplify checking for unsupported bus speeds and reporting errors by
+> factoring out the calculation of the maximum bus speed, and by using the
+> dev_err_probe() helper.
+>=20
+> While at it, use "%u" for u32, and improve the error message.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Nice!
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--ckD8gVbLDARe3TpI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbMRvAACgkQFA3kzBSg
+KbacDA/+KtUGcIp1GFRWEOHk5DuZ2CVr53GdRCVTNaI4Mfb4JTdu+78SrC4gj+jt
+gxsZQ891siy2PH/A6alWepN1jfmOszQvPXmVzKUEf5QMdx5uWXpuOgtXi1DkjLiH
+1GZClc4P3Y5A2MsbJyVTEQanXsTqgf6g0eezfHbDarMEjdkv6x4I1O84obyVE4d+
+ytYP+UESx9dgMQTRCt2A1FCYXK4e0G8Kz/23W9cOc716Is/MkfSNMVUng5Nw04Bq
+AswxdB/XAABN+4rU1g1EIbXTLnBnug7nhShdiuVTbbovDoBhn+Te5Xd6gwPs3ZOp
+Is+fE237JAYobJzxMxJeLoBCg1yInCXi0geTj1i3L+KNfsQ4ZWcBxFLYPpJkIK6P
+xNc5ydvakSu/jsdSKZ+ObLtFPPpf4frUiFAhs/YlF0KzKTKiZUXOmqdEitzvqCMn
+R9XeBh3/bLZ5xvNc80/TZN1s+Cx17e9maAxUShhQ1m2JRBRgUwXGb0hcAc7BloCn
+c+9/8hBJpUq+6GZW5LT5MHUggtLV3vvKGEBXYJX2Bs4pUcXRFDMshAjker5oAmg7
+t3eayOPF4Y0jUPtO+BUGTkPjfvboFDp6sg9LcEZhvAf486I8mT6X7/Hr5mcgBRhd
+8zKa+0zWDSWFoL6vKXj30ZbM3MpMWwzjESvFoygNfA20hFRh1oc=
+=lQI+
+-----END PGP SIGNATURE-----
+
+--ckD8gVbLDARe3TpI--
