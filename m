@@ -1,239 +1,135 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AA413C667;
-	Mon, 26 Aug 2024 09:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC4C78C98;
+	Mon, 26 Aug 2024 09:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724665400; cv=none; b=OXRrx0QNkk0CMJJWbBDEi17iaTKrgIDhmAXoojFVHML/X9byBfuKOO9yz8PzDyrXnK8bo99kPLLqdZb4xrZH+hV1FqR3jOJCNsbT/QA4ZVdBF01KuNbDWoX1Y+Tiwl38qu7mf1sa7ZXbaWRv88wgsuRZWKRWITPn86qbBIAx19k=
+	t=1724665796; cv=none; b=mti6CtemJd5159mOLYnxg4ylVrJE6Prm2uDyUUnNklZv0bSOAvvsMg9cd8oAq0T+J0HTW0Eakuby+NqOAKKrEa3FguyLfNt7nZZMpo9i2cyICbrAku4eR/D4nythmuIDqVClZD1BcX3jQ0IN9Kb4Gw7gajd0RRls6bcEPh2JZ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724665400; c=relaxed/simple;
-	bh=v70iVqIy22nhqbATkIon/UL25fCmNBuSpmm3WTAapV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+a8aMLtDntvPHadnwZYP4VWXL7oJktrFmVK9xkeONySCnQRT+6VRvqp7yZ4NVpFfvK979XXZt+cwJ1xDDaoYO98Rb8Gb2jt7w+AOI9AlWpDhKmXEbU5HcmOHTMzzE866Becn+LBAPgomFFNer0v6KJwzfWWap2fUwKucS8yPRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RqnuwcP1; arc=none smtp.client-ip=213.167.242.64
+	s=arc-20240116; t=1724665796; c=relaxed/simple;
+	bh=5iA5k46fL5uSOMx85+P9za1OlnUFhudV1CuRxjH1Y6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Khnvbz8iW+aNlQkSDB+cUaE/h0S7jIY+4C4ovgiRvP5kR22twUdraCIhO3qV/nZtFVQSgdVmPMdzuZX4WYqO0MI6ncusETx6J0xO3yKNc4g1yGsq7azSWEBA1m6On+MW3VBasPwilWRfz2Pgulyj3M/1UvA7OlD4GvtA/rt56iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jpetuzTo; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RqnuwcP1"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2D107480;
-	Mon, 26 Aug 2024 11:42:09 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jpetuzTo"
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 642CD480;
+	Mon, 26 Aug 2024 11:48:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724665329;
-	bh=v70iVqIy22nhqbATkIon/UL25fCmNBuSpmm3WTAapV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RqnuwcP16vqYRMeTM+k3f5XhLDdnIeo1y/atrX44r7iTGtgpl99n5ffLF2EkhN3lV
-	 LEy3gZlU3rVoGlnjlkueL4LmBaU9bwrfCSqqT+JVGXHlaT0USI7t2vNyetuji9xlpp
-	 UVGZ9dc+A1SvGAQZGbGlw6GCYwgYbjvQEWloNKV0=
-Date: Mon, 26 Aug 2024 12:43:11 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"biju.das.au" <biju.das.au@gmail.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3] media: platform: rzg2l-cru: rzg2l-video: Move
- request_irq() to probe()
-Message-ID: <20240826094311.GA27596@pendragon.ideasonboard.com>
-References: <20240824182120.320751-1-biju.das.jz@bp.renesas.com>
- <6f16a3f7-99bb-47c4-9034-c1f0ccd59546@tuxon.dev>
- <TY3PR01MB11346F3C71013AD71C1556BA1868B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	s=mail; t=1724665727;
+	bh=5iA5k46fL5uSOMx85+P9za1OlnUFhudV1CuRxjH1Y6g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jpetuzToyGX8G6dJ2OI4suQ5IFBsWH1SqNgJ2GFL9AUKXQm2LGIUvDatkDzAyJ3Xb
+	 sdhauvDV6SpC2yPuOq38EJHvxewjon84dZ/v6d5vt027Sm2DMf++osn32LJbbCAOt7
+	 XspEQrql4lidryVaEyOF/6kzYtDKtvjV0Bz40nnk=
+Message-ID: <ad8ecccc-76dc-4072-9ecc-ecc48330267d@ideasonboard.com>
+Date: Mon, 26 Aug 2024 12:49:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB11346F3C71013AD71C1556BA1868B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240625123244.200533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240626055108.GA10453@pendragon.ideasonboard.com>
+ <CA+V-a8tcWVTzDgBMhn8aQaX934MKwOePp3PhMF4TcXqBK2nhAA@mail.gmail.com>
+ <20240823150054.GP26098@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240823150054.GP26098@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 08:08:33AM +0000, Biju Das wrote:
-> On Monday, August 26, 2024 8:27 AM, claudiu beznea wrote:
-> > On 24.08.2024 21:21, Biju Das wrote:
-> > > Move request_irq() to probe(), in order to avoid requesting IRQ during
-> > > device start which happens frequently. As this function is in probe(),
-> > > it is better to replace it with its devm variant for managing the
-> > > resource efficiently.
-> > >
-> > > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > ---
-> > > v2->v3:
-> > >  * Dropped wrapper function rzg2l_cru_process_irq() and made
-> > >    rzg2l_cru_irq() global.
-> > >  * Added Rb tag from Laurent.
-> > > v1->v2:
-> > >  * Updated commit header and description.
-> > >  * Moved rzg2l_cru_irq from rzg2l-video.c->rzg2l-core.c and introduced
-> > >    rzg2l_cru_process_irq() in video.c to process irq.
-> > >  * Dropped image_conv_irq from struct rzg2l_cru_dev
-> > >  * Replaced request_irq with its devm variant.
-> > > ---
-> > >  .../media/platform/renesas/rzg2l-cru/rzg2l-core.c | 13 +++++++++----
-> > > .../media/platform/renesas/rzg2l-cru/rzg2l-cru.h  |  6 ++----
-> > >  .../platform/renesas/rzg2l-cru/rzg2l-video.c      | 15 ++-------------
-> > >  3 files changed, 13 insertions(+), 21 deletions(-)
-> > >
-> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > > index 280efd2a8185..2a2907beb722 100644
-> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > > @@ -242,7 +242,7 @@ static int rzg2l_cru_media_init(struct rzg2l_cru_dev *cru)
-> > >  static int rzg2l_cru_probe(struct platform_device *pdev)
-> > >  {
-> > >  	struct rzg2l_cru_dev *cru;
-> > > -	int ret;
-> > > +	int irq, ret;
-> > >
-> > >  	cru = devm_kzalloc(&pdev->dev, sizeof(*cru), GFP_KERNEL);
-> > >  	if (!cru)
-> > > @@ -270,9 +270,14 @@ static int rzg2l_cru_probe(struct platform_device *pdev)
-> > >  	cru->dev = &pdev->dev;
-> > >  	cru->info = of_device_get_match_data(&pdev->dev);
-> > >
-> > > -	cru->image_conv_irq = platform_get_irq(pdev, 0);
-> > > -	if (cru->image_conv_irq < 0)
-> > > -		return cru->image_conv_irq;
-> > > +	irq = platform_get_irq(pdev, 0);
-> > > +	if (irq < 0)
-> > > +		return irq;
-> > > +
-> > > +	ret = devm_request_irq(&pdev->dev, irq, rzg2l_cru_irq, IRQF_SHARED,
-> > > +			       KBUILD_MODNAME, cru);
-> > 
-> > Because this is requested w/ IRQF_SHARED the free_irq() ->
-> > __free_irq() [1] will call the IRQ handler to simulate an IRQ SHARE
-> > scenario where other device generate an interrupt.
+Hi,
 
-Good point, I had missed that.
+On 23/08/2024 18:00, Laurent Pinchart wrote:
+> On Fri, Aug 23, 2024 at 02:33:49PM +0100, Lad, Prabhakar wrote:
+>> On Wed, Jun 26, 2024 at 6:51 AM Laurent Pinchart wrote:
+>>> On Tue, Jun 25, 2024 at 01:32:44PM +0100, Prabhakar wrote:
+>>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>>>
+>>>> All the RZ/G2L DU specific components are located under the rz-du folder,
+>>>> so it makes sense to move the RZ/G2L MIPI DSI driver there instead of
+>>>> keeping it in the rcar-du folder. This change improves the organization
+>>>> and modularity of the driver configuration by grouping related settings together.
+>>>
+>>> I was thinking the same the other day. Thanks for beating me at sending
+>>> a patch :-)
+>>>
+>>> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>>
+>>> Do you or Biju has committer rights to drm-misc to push this patch ?
+>>
+>> We dont, can you please queue this patch via your tree?
+> 
+> I don't have other pending patches for DRM at the moment. Tomi, could
+> you push this to drm-misc ?
 
-> Currently CSI driver is not registered any interrupts and CRU is the single user.
+I have pushed this.
 
-Regardless, the fact that the IRQ is requested with IRQF_SHARED means
-that the IRQ handler needs to be prepared to be called at any time from
-the point of registration to the point the IRQ is freed. This is tested
-by CONFIG_DEBUG_SHIRQ=y, which you should enable for testing.
+Should the DSI driver depend on the DU driver in the kconfig? It 
+compiles fine without the DU, but can it ever be used alone?
 
-If you don't need to share the interrupt with any other device, you can
-drop the IRQF_SHARED. Otherwise, you will need to fix the issue
-properly. You can probably wrap the interrupt handling with
-pm_runtime_get_if_in_use() and pm_runtime_put() (hoping those functions
-can be called from interrupt context).
+  Tomi
 
-On a side note, I also I wonder if this issue precludesusage of
-devm_request_irq() for shared interrupts, requiring calling free_irq()
-manually at remove time to control the sequence of cleanup operations.
-
-> > > +	if (ret)
-> > > +		return dev_err_probe(&pdev->dev, ret, "failed to request irq\n");
-> > >
-> > >  	platform_set_drvdata(pdev, cru);
-> > >
-> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > > index a5a99b004322..174760239548 100644
-> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > > @@ -8,6 +8,7 @@
-> > >  #ifndef __RZG2L_CRU__
-> > >  #define __RZG2L_CRU__
-> > >
-> > > +#include <linux/irqreturn.h>
-> > >  #include <linux/reset.h>
-> > >
-> > >  #include <media/v4l2-async.h>
-> > > @@ -68,8 +69,6 @@ struct rzg2l_cru_ip {
-> > >   *
-> > >   * @vclk:		CRU Main clock
-> > >   *
-> > > - * @image_conv_irq:	Holds image conversion interrupt number
-> > > - *
-> > >   * @vdev:		V4L2 video device associated with CRU
-> > >   * @v4l2_dev:		V4L2 device
-> > >   * @num_buf:		Holds the current number of buffers enabled
-> > > @@ -105,8 +104,6 @@ struct rzg2l_cru_dev {
-> > >
-> > >  	struct clk *vclk;
-> > >
-> > > -	int image_conv_irq;
-> > > -
-> > >  	struct video_device vdev;
-> > >  	struct v4l2_device v4l2_dev;
-> > >  	u8 num_buf;
-> > > @@ -141,6 +138,7 @@ void rzg2l_cru_dma_unregister(struct rzg2l_cru_dev *cru);
-> > >
-> > >  int rzg2l_cru_video_register(struct rzg2l_cru_dev *cru);
-> > >  void rzg2l_cru_video_unregister(struct rzg2l_cru_dev *cru);
-> > > +irqreturn_t rzg2l_cru_irq(int irq, void *data);
-> > >
-> > >  const struct v4l2_format_info *rzg2l_cru_format_from_pixel(u32 format);
-> > >
-> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > index b16b8af6e8f8..e80bfb9fc1af 100644
-> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > @@ -527,7 +527,7 @@ static void rzg2l_cru_stop_streaming(struct rzg2l_cru_dev *cru)
-> > >  	rzg2l_cru_set_stream(cru, 0);
-> > >  }
-> > >
-> > > -static irqreturn_t rzg2l_cru_irq(int irq, void *data)
-> > > +irqreturn_t rzg2l_cru_irq(int irq, void *data)
-> > >  {
-> > >  	struct rzg2l_cru_dev *cru = data;
-> > >  	unsigned int handled = 0;
-> > > @@ -637,13 +637,6 @@ static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
-> > >  		goto assert_aresetn;
-> > >  	}
-> > >
-> > > -	ret = request_irq(cru->image_conv_irq, rzg2l_cru_irq,
-> > > -			  IRQF_SHARED, KBUILD_MODNAME, cru);
-> > > -	if (ret) {
-> > > -		dev_err(cru->dev, "failed to request irq\n");
-> > > -		goto assert_presetn;
-> > > -	}
-> > > -
-> > >  	/* Allocate scratch buffer. */
-> > >  	cru->scratch = dma_alloc_coherent(cru->dev, cru->format.sizeimage,
-> > >  					  &cru->scratch_phys, GFP_KERNEL); @@ -651,7 +644,7 @@ static
-> > > int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
-> > >  		return_unused_buffers(cru, VB2_BUF_STATE_QUEUED);
-> > >  		dev_err(cru->dev, "Failed to allocate scratch buffer\n");
-> > >  		ret = -ENOMEM;
-> > > -		goto free_image_conv_irq;
-> > > +		goto assert_presetn;
-> > >  	}
-> > >
-> > >  	cru->sequence = 0;
-> > > @@ -670,9 +663,6 @@ static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
-> > >  	if (ret)
-> > >  		dma_free_coherent(cru->dev, cru->format.sizeimage, cru->scratch,
-> > >  				  cru->scratch_phys);
-> > > -free_image_conv_irq:
-> > > -	free_irq(cru->image_conv_irq, cru);
-> > > -
-> > >  assert_presetn:
-> > >  	reset_control_assert(cru->presetn);
-> > >
-> > > @@ -698,7 +688,6 @@ static void rzg2l_cru_stop_streaming_vq(struct vb2_queue *vq)
-> > >  	dma_free_coherent(cru->dev, cru->format.sizeimage,
-> > >  			  cru->scratch, cru->scratch_phys);
-> > >
-> > > -	free_irq(cru->image_conv_irq, cru);
-> > >  	return_unused_buffers(cru, VB2_BUF_STATE_ERROR);
-> > >
-> > >  	reset_control_assert(cru->presetn);
-
--- 
-Regards,
-
-Laurent Pinchart
