@@ -1,97 +1,92 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0852A142915
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Aug 2024 09:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E24147C96;
+	Mon, 26 Aug 2024 09:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663765; cv=none; b=VDyJ/bH+rLRgwudEi3D8LaxpR+MNPl26V5V/tuvB1vIir9fYe5EfxjoBJycP3PTWkZ2ZdU8641+FcLYknzyuWFzucsA0ci+llR9Qfi7GHeOtSCk9Xx8L0607FGCuDfz3qLviFPbmh1LRYpdfLB3ghLB0GKksgoNirAjcNoRoYMg=
+	t=1724664437; cv=none; b=nHNwQ2OA9oDJrh0sGo5Y/dl6tYPR3YdUNLR1+PKqj2lLqs7sG8ZusxChDdYAvLkWE6ieGhv3YeXjIP1TUNvufgpzetMPp4vqsZiSimVJnQjQF4afhbfSWXJcWp8DNDjMdnCA0uS/Gpe7MeK5mRrVF12jaXBTNvVCENdszmeJw4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663765; c=relaxed/simple;
-	bh=K0ePHJHSuul5y3bsWp3mOBJT5h0AY8uuwLn8hFDUiq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSp8PGhaiFGLsVynYn9IyfftzSSpkF5KI8BoqCGhCATyRB8fsH4TwXYTkgMJrYv2PXPuhmExb/jYPAvk3rNdM8a1NoXdYuu9s00C6Rvb7gC5SDnWalOdn/86L6+w0y//6AdiQrKO9EbGQ4FCBrnCSW3QRYZSV+XMDyt/GcFAiBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CkrIopJR; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CkrIopJR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=K0eP
-	HJHSuul5y3bsWp3mOBJT5h0AY8uuwLn8hFDUiq0=; b=CkrIopJRG3isFkgYx+Fz
-	VsD8l2djumyu4rOilgyIDdoH/pxoTYTNb4e9WMPfh3F4IBk8lO/JfIqH7tdALopI
-	Ea52mx+S67vDmPwejpnA/SHXErgZGFh7Iq6HIdO+v2ceeGwGP73uZKPGN0AQ5fuv
-	/1wl+WhHPeVBEGqahLKzzEvT2Qr/cquMOB1ovEVaewm8K9smCN/T9tPP+AFMQHmk
-	EOBihaqhlFq7z+sw9rOcxau+QLthYMUQWlcaodq347GXQeerT+pzxg2fxacHtTaS
-	mji0C9rXb7937hFLAcLTSwM2Z/m+JC9a8JyJk1W3W5wKUQZgCZm65fVUGRWNaS2O
-	7w==
-Received: (qmail 1931663 invoked from network); 26 Aug 2024 11:09:20 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Aug 2024 11:09:20 +0200
-X-UD-Smtp-Session: l3s3148p1@R33sepIg7IBehhrU
-Date: Mon, 26 Aug 2024 11:09:19 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Rong Qianfeng <rongqianfeng@vivo.com>
-Cc: biju.das.jz@bp.renesas.com, Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v3 2/4] i2c: emev2: drop sclk from struct em_i2c_device
-Message-ID: <ZsxGP6HKQnBuEE7_@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Rong Qianfeng <rongqianfeng@vivo.com>, biju.das.jz@bp.renesas.com,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	opensource.kernel@vivo.com
-References: <20240823035116.21590-1-rongqianfeng@vivo.com>
- <20240823035116.21590-3-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1724664437; c=relaxed/simple;
+	bh=wsp7KJjGbrXKs3WqH9lL0M00zqLheI0fPK5ShhhUhRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pksfJy+EoWdAMWiyXPGBaBlJZIwG8NvavA7DtY7vQ5g+TB3t0IBvEkYGQGtW2oSm5XZDePkm6k7qcZHmOXw7/yQPJsFdETDzj/KCnYDGMLsVQFmtY6FSyQbK7S2N6aY8l2HaemRB46t+xm/fCP12rIH6vx4MoB2kf27umrWpPGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1651f48c31so3872458276.0;
+        Mon, 26 Aug 2024 02:27:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724664433; x=1725269233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h6ROosA98TA6pN3xRVUuKKY9mzmPVa5kKQyDsm2BmrE=;
+        b=wjPMPALF6/91z2cjfVyTMTXXO5FU7L3O9zToUXaAA/DlhdfBRmJe+44mQBIhcACbi0
+         A9O0iBPWqKZMuE7HFWj3WZ1AqzAxAZ57T0zCYj1z6aEwS0t6mUPQa1x09o3lb9nC3dnv
+         Xp/k/YxxHy6M7qyvpZuipkEvb5QFJYlQ9BabwqzCQIdJUI/ibDZp8ORtQc43JB9azDy4
+         hO59wB6PYMwRwUaGQbZEIX67eqZQDP7tjpaZKm/A2ZPjafRSmUKMEy5MOlh8VXUgvHea
+         kX69RI8+2EbRm2zsBiv03YdVJtMxItgHHjVpmzaEb2JSYq4SIRzdDsQIjslNScWzHcTo
+         uAEA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6yO60enav+E3I28B/LAKkVgnkFLtQqX4qFz6VBPpNO3jwalCYcP7sPgjo7lxX2BbV4seKW2puUT16@vger.kernel.org, AJvYcCVQ5Z+9af/t/dhvaYkd3CjpY36rm2/mFeguVnJfK6V/vGnaczda2eEyXVX2gB4FPaSO4mVju21KZPwWSbqlgTabR7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkXXksSORoqEDoNdpw7fQbxcRRY8o4fwv+NEbNSX6W1NNTg42S
+	0IaAAhoTQExHgIVZpipBmW1zfdRIt39lZPbSwf1Vwa+sMyUMNJYlwG6RE3kZ
+X-Google-Smtp-Source: AGHT+IFKc4a/MFz28Z/9pet/Rxgd+7qHuRECsYzsr1r+ELsQWsmcL5exWz1UUpyOzP3FctWkZ9lLFw==
+X-Received: by 2002:a05:6902:2313:b0:e13:c959:2d3f with SMTP id 3f1490d57ef6-e17a85ecdb0mr12321744276.28.1724664433641;
+        Mon, 26 Aug 2024 02:27:13 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e487e2csm1895172276.21.2024.08.26.02.27.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 02:27:13 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6b4412fac76so36684017b3.1;
+        Mon, 26 Aug 2024 02:27:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8YZtE+n8QyjvSGXEuRRiLFTsYpLOUOg4ZJCu9/V7Ths264lMEm160xxHNneVGOemb5YnvG6lNXfuLbL0GlnsHe1M=@vger.kernel.org, AJvYcCWIfwD7R1BtxfOSIQrwJWXNhmjAxN9fETgS9y+G/81TteqiQ+17DGQH5wDRhC6WuYS9Y7N28Q4UodTs@vger.kernel.org
+X-Received: by 2002:a05:690c:ec9:b0:6b2:28c3:b6fe with SMTP id
+ 00721157ae682-6c62422c0cfmr122647077b3.2.1724664433168; Mon, 26 Aug 2024
+ 02:27:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GzVTah3YJcw5sKqN"
-Content-Disposition: inline
-In-Reply-To: <20240823035116.21590-3-rongqianfeng@vivo.com>
-
-
---GzVTah3YJcw5sKqN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240826090803.56176-1-biju.das.jz@bp.renesas.com> <20240826090803.56176-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20240826090803.56176-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Aug 2024 11:27:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWd4xUKY_avnp+77HT+bTn=TCqjTjM=VEwYQjEoLp_hSA@mail.gmail.com>
+Message-ID: <CAMuHMdWd4xUKY_avnp+77HT+bTn=TCqjTjM=VEwYQjEoLp_hSA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: rzg2l-smarc: Enable HDMI audio
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 11:51:14AM +0800, Rong Qianfeng wrote:
-> For no need to save clk pointer, drop sclk from struct em_i2c_device.
->=20
-> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+On Mon, Aug 26, 2024 at 11:08=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+> Enable HDMI audio on RZ/{G2L,V2L} SMARC EVK.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Dropped SSI1 RXD pin as it is not connected on carrier board
 
-Should be folded into patch 1 IMO.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.12.
 
+Gr{oetje,eeting}s,
 
---GzVTah3YJcw5sKqN
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbMRj8ACgkQFA3kzBSg
-Kbaa4A//QRGxIflqtho+uXF6Bvym6CoHccm4nUUu4tjLRLtWsjsIT2mggNsr4KFW
-UwKinEPvouGc0EXeuq8zlmLiPvps42rhwlMok2yYNcf9+/QjnTe2Xlw2TgwqFpT5
-dXSDQqtF/bnXaE+jWEYESddXMCqiiMZxn81bXKKenYXdUSsYzZFGsQlBhOp33if0
-UlIH+GlJhivzRDVdYTZcdiFTK+hvSvLMRuHYLHst/Dnhko5kRjfxxIry10VOeWuX
-i7bt/0nGQNa5veXnpVhYYhuHRwTCPGifIWMNGErHAJ5t7PWGqf/Ch7m89F+HyiqT
-Qw+KGodk0FI2ebYwQrUXG4PGzV/nxXLc7R/1FtdfxUNm3+IYK9M3Kr34v+u1C9Bm
-ABeL+4CrCoTi6jIHFsICsOGwxfgiFZA5EUK1r60biqqXz+5TrvQte3iv52GctDf8
-SveEzZnkWGLmZr2Ef5ubQ5nCecAVhQ4bt3cUYF+QrvUWAH61X3a0v5yK5w4lPdB6
-Pzan4WfNyeNKn8Xg8RRiyGSsm+pEANO61reyaPn6cp9I6Cl8sqQZJ/HpLLPPI4gF
-l2s8LlpFYryAEUQ2JixIP66fCoMuGm0+W/iHujDvdCsv9Ggy+5xFkPKv05KrtMAh
-W3lp+Cy33PgJ6YdA6x2xt3kZYNlpY3+oWLeEM86Nt05JEaB2eK4=
-=cjT8
------END PGP SIGNATURE-----
-
---GzVTah3YJcw5sKqN--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
