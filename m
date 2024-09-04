@@ -1,32 +1,35 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8A363D
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Sep 2024 00:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF6C1FA5
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Sep 2024 00:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725410061; cv=none; b=qyQcaD/kyQhuIcdmLK78Ckw8w1aysRi/IW7gdiGMDkBwQUSunNFigdbObc7PtxuMqEBkzB1nen8qloeSxHfV60AOyzfNfcG7b7znsNLTgqXIs7hgrO/kjZTLxnIfyCpjGZMVtBHvWhknP29mLEttUN9G89p9nBpUaD6Dxx7xum4=
+	t=1725410063; cv=none; b=GxBuwM0ZlDiocyMXbVzEbwjZ19XY5cCFMhfOwWxik5mRN9wjcFg2HQiBIFpe4E2tYFURyan1re0FVpL8yQba3qQH2n9o4TC01RzQGfZFB/PQCwLF5NvapAiODt2ZlO3Shpd318S/w4wA2Z97GP/CVUfYR4kO24FMfUK/9z6BdMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725410061; c=relaxed/simple;
-	bh=Cu4SIVMt55y8/m+q4qG5N8NuvA40L4PX++E7+hSx/rs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p9h7INVIEFKLBd51AFxXRs/HFIH2kDtozSGB6H3LUIHn1Wp1sF7gI2LqQ6TcMjqd9cinVDFQMixPDNetnqsDNHvIc+TPGG+VHAsvLQBibx2DKfjMTZAThPLY2I875M0kwZaO1ZE3rBDhQlRW1cyCc9+TP51aLC9CzkIkeICNgd4=
+	s=arc-20240116; t=1725410063; c=relaxed/simple;
+	bh=dIQlnqbEXdQBWI9mheFFrQ1Wu57rLJhB+1DuQcjkCSA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=haf4u4+j6I4v2kkSQ4/ZJlu7f6NLNTJojIXtNzBX255t+8dNWZl3MXN0AfsvdbLKsz1Tcwi06KFqhd5QU/ypkUqdVp6bhfdt/OERhbU74qKaMgUet5jcB9vWkvlJwwCeI9LbAO6myq1q284flWm1Mj9hCk8/kQEClWqDxar2pCQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 X-IronPort-AV: E=Sophos;i="6.10,200,1719846000"; 
-   d="scan'208";a="217429957"
+   d="scan'208";a="217429960"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie5.idc.renesas.com with ESMTP; 04 Sep 2024 09:34:12 +0900
 Received: from localhost.localdomain (unknown [10.166.13.99])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0542F4003FB8;
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 269184003FB8;
 	Wed,  4 Sep 2024 09:34:12 +0900 (JST)
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: geert+renesas@glider.be,
 	magnus.damm@gmail.com
 Cc: linux-renesas-soc@vger.kernel.org,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] arm64: dts: renesas: r8a779h0: Enable PCIe Host
-Date: Wed,  4 Sep 2024 09:34:07 +0900
-Message-Id: <20240904003409.1578212-1-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a779h0: gray-hawk-single: Enable PCIe Host
+Date: Wed,  4 Sep 2024 09:34:09 +0900
+Message-Id: <20240904003409.1578212-3-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240904003409.1578212-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20240904003409.1578212-1-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,22 +38,67 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add PCIe controller nodes for R-Car V4M (R8A779H0).
+Enable PCIe Host controller on R-Car V4M Gray Hawk board.
 
-The dt-bindings patches for R-Car V4M have been merged into the pci.git /
-next branch now [1]. And, it will be merged into v6.12-rc1. So, I think
-this patch will be merged into v6.13-rc1?
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ .../dts/renesas/r8a779h0-gray-hawk-single.dts | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=next
-
-Yoshihiro Shimoda (2):
-  arm64: dts: renesas: r8a779h0: Add PCIe Host and Endpoint nodes
-  arm64: dts: renesas: r8a779h0: gray-hawk-single: Enable PCIe Host
-
- .../dts/renesas/r8a779h0-gray-hawk-single.dts | 29 ++++++++
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi     | 67 +++++++++++++++++++
- 2 files changed, 96 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+index 9a1917b87f61..a5faff87aa26 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+@@ -126,6 +126,12 @@ memory@480000000 {
+ 		reg = <0x4 0x80000000 0x1 0x80000000>;
+ 	};
+ 
++	pcie_clk: clk-9fgv0841-pci {
++		compatible = "fixed-clock";
++		clock-frequency = <100000000>;
++		#clock-cells = <0>;
++	};
++
+ 	reg_1p8v: regulator-1p8v {
+ 			compatible = "regulator-fixed";
+ 			regulator-name = "fixed-1.8V";
+@@ -240,6 +246,17 @@ &i2c0 {
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+ 
++	io_expander_a: gpio@20 {
++		compatible = "onnn,pca9654";
++		reg = <0x20>;
++		interrupt-parent = <&gpio0>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
+ 	eeprom@50 {
+ 		compatible = "rohm,br24g01", "atmel,24c01";
+ 		label = "cpu-board";
+@@ -309,6 +326,18 @@ &mmc0 {
+ 	status = "okay";
+ };
+ 
++&pcie0_clkref {
++	compatible = "gpio-gate-clock";
++	clocks = <&pcie_clk>;
++	enable-gpios = <&gpio4 21 GPIO_ACTIVE_LOW>;
++	/delete-property/ clock-frequency;
++};
++
++&pciec0 {
++	reset-gpio = <&io_expander_a 0 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>, <&scif_clk2_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.25.1
 
