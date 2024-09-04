@@ -1,194 +1,135 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6D41EC01E
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Sep 2024 22:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324A210E3
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Sep 2024 00:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725403602; cv=none; b=Yejb01yXmh8qHB3o4JWhLgfjB8za1/1Hl922OFFMi97pHmZMey0yBfrnyB2OZUs2HueFuHFsYBAVnt2/+Jk9LYhMjU1CiPh9pOomaK0zpJ/K74G+3Maxu/W+7se1RbF0nDQXVPAmjuJMUhaF3KqJsgv9xx7n8ausnaQtMjkfqo4=
+	t=1725410061; cv=none; b=FXmNguBZcU9Tka6udLc9TkzrJJxpgouXs3Us2kgziW71kyuSgdkI0Dj6E+UUXe6ebjDXp7P0GZ1jwW+plr0WkkK4mVTbit7WmK1Sj/XMZwjuqYYgTWkHg5tAo3TlZ4h9ZoVdzRt+CIbkbPzzXLMfYFJb889iBCevvuFgS6MK7Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725403602; c=relaxed/simple;
-	bh=7AY69sfSvaEaNowuB/9AcUmcqv1cK2hgfWhISrqoJ+o=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=LKi0X2uXlH845hx7NhQxdANnk7uD7SnW9CCMfzXuDpDhvW8EvyQrzTMJt08wDFRYwt32gqd85AqXv76Po0NkqZ3IDz/H86DUDOxBCxlhoDoAzpzYCMuhfye1GACht3vCPyX1RRl8FhkIMWj19n9mIvXfJ2LjLxK9HGtFn0xY3zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SJ8kisbq; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SJ8kisbq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725403601; x=1756939601;
-  h=date:from:to:cc:subject:message-id;
-  bh=7AY69sfSvaEaNowuB/9AcUmcqv1cK2hgfWhISrqoJ+o=;
-  b=SJ8kisbq1q+mZ/l68ZBY6P7tzS7iyqg1vkUPSAOqyPB5+RkKKIAn/heW
-   HSELLfljAiQsE0YIcTszaXD//nk1FYyIiQ67N0B3jGsG9ln/L0smqTEQf
-   vmJKa3p8ltkp9f8j0+P0v0xdqiuE95WVEDhM2wv3BLUo8vxGZ3qTLgZZm
-   VoiwTZKKrOoCAn208iPkUw2GyzcH55zJdtvno9V+1IYs2TcGP8sOec/0X
-   JxknxtBg0jpSAUH3deftIDmdRJ4FCigJOscgqgefiE9/RSyR7XsIg1fUq
-   LDMJ5rUOIvVyR/jaqX+0pHyy/PCqzA4IEEzukpwZP1FNoted7bcbBpIra
-   w==;
-X-CSE-ConnectionGUID: xtxVSjeWTUiwXO0t/FCaNA==
-X-CSE-MsgGUID: F4pkOxr9TrubAFbWdvVr4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23547886"
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="23547886"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 15:46:39 -0700
-X-CSE-ConnectionGUID: Me4MgaQ9TwWsub9CPWkdKQ==
-X-CSE-MsgGUID: qqgaiPBeQlKehYx2Q67uBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="88306255"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 03 Sep 2024 15:46:38 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slcIF-0007J5-2t;
-	Tue, 03 Sep 2024 22:46:35 +0000
-Date: Wed, 04 Sep 2024 06:46:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:master] BUILD SUCCESS
- eb506fd73109d2792435a811247040b2d00f379e
-Message-ID: <202409040623.Q0ffweSB-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1725410061; c=relaxed/simple;
+	bh=kzCX7/cwu371iWyvHeGyNdxyZLksh8pbdiJsojfoNPs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZqXe86w6I1D4RYl2K5o6GwxBPFOHXQEf7/ixZ/cZ6cCYTIIZdf3NJ53mNAUPOfB+xKgjSkeoS0WkB8gXe0/VgUti7fFrbvSthcQBSqrXed6+ap/VGoqA60Z3bcTM3b8ZKxPqje1icMCgoQBkChfhldFiaDA3v03xmx7FtU0iiOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.10,200,1719846000"; 
+   d="scan'208";a="221402773"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 04 Sep 2024 09:34:12 +0900
+Received: from localhost.localdomain (unknown [10.166.13.99])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1A9EE40015FA;
+	Wed,  4 Sep 2024 09:34:12 +0900 (JST)
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: geert+renesas@glider.be,
+	magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] arm64: dts: renesas: r8a779h0: Add PCIe Host and Endpoint nodes
+Date: Wed,  4 Sep 2024 09:34:08 +0900
+Message-Id: <20240904003409.1578212-2-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240904003409.1578212-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20240904003409.1578212-1-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
-branch HEAD: eb506fd73109d2792435a811247040b2d00f379e  Merge branch 'renesas-next' into renesas-devel
+Add PCIe Host and Endpoint nodes for R-Car V4M (R8A779H0).
 
-elapsed time: 791m
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 67 +++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-configs tested: 117
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                                 defconfig   gcc-14.1.0
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                     am200epdkit_defconfig   clang-20
-arm                         assabet_defconfig   clang-20
-arm                         axm55xx_defconfig   clang-20
-arm                                 defconfig   gcc-14.1.0
-arm                      jornada720_defconfig   clang-20
-arm                        spear3xx_defconfig   clang-20
-arm                        spear6xx_defconfig   clang-20
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386                                defconfig   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-m68k                        m5407c3_defconfig   clang-20
-m68k                       m5475evb_defconfig   clang-20
-m68k                           virt_defconfig   clang-20
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                           ip28_defconfig   clang-20
-mips                     loongson2k_defconfig   clang-20
-mips                      malta_kvm_defconfig   clang-20
-mips                         rt305x_defconfig   clang-20
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                        icon_defconfig   clang-20
-powerpc                  mpc885_ads_defconfig   clang-20
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   clang-20
-riscv                               defconfig   gcc-12
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                          alldefconfig   clang-20
-sparc64                             defconfig   gcc-12
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   gcc-12
-um                           x86_64_defconfig   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240904   clang-18
-x86_64       buildonly-randconfig-002-20240904   clang-18
-x86_64       buildonly-randconfig-003-20240904   clang-18
-x86_64       buildonly-randconfig-004-20240904   clang-18
-x86_64       buildonly-randconfig-005-20240904   clang-18
-x86_64       buildonly-randconfig-006-20240904   clang-18
-x86_64                              defconfig   clang-18
-x86_64                                  kexec   gcc-12
-x86_64                randconfig-001-20240904   clang-18
-x86_64                randconfig-002-20240904   clang-18
-x86_64                randconfig-003-20240904   clang-18
-x86_64                randconfig-004-20240904   clang-18
-x86_64                randconfig-005-20240904   clang-18
-x86_64                randconfig-006-20240904   clang-18
-x86_64                randconfig-011-20240904   clang-18
-x86_64                randconfig-012-20240904   clang-18
-x86_64                randconfig-013-20240904   clang-18
-x86_64                randconfig-014-20240904   clang-18
-x86_64                randconfig-015-20240904   clang-18
-x86_64                randconfig-016-20240904   clang-18
-x86_64                randconfig-071-20240904   clang-18
-x86_64                randconfig-072-20240904   clang-18
-x86_64                randconfig-073-20240904   clang-18
-x86_64                randconfig-074-20240904   clang-18
-x86_64                randconfig-075-20240904   clang-18
-x86_64                randconfig-076-20240904   clang-18
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   gcc-12
-xtensa                            allnoconfig   gcc-14.1.0
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+index 12d8be3fd579..ab55ab4fe9be 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+@@ -147,6 +147,13 @@ extalr_clk: extalr-clk {
+ 		clock-frequency = <0>;
+ 	};
+ 
++	pcie0_clkref: pcie0-clkref {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
+ 	pmu-a76 {
+ 		compatible = "arm,cortex-a76-pmu";
+ 		interrupts-extended = <&gic GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+@@ -677,6 +684,66 @@ channel3 {
+ 			};
+ 		};
+ 
++		pciec0: pcie@e65d0000 {
++			compatible = "renesas,r8a779h0-pcie",
++				     "renesas,rcar-gen4-pcie";
++			reg = <0 0xe65d0000 0 0x1000>, <0 0xe65d2000 0 0x0800>,
++			      <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
++			      <0 0xe65d6200 0 0x0e00>, <0 0xe65d7000 0 0x0400>,
++			      <0 0xfe000000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "phy", "config";
++			interrupts = <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi", "dma", "sft_ce", "app";
++			clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
++			clock-names = "core", "ref";
++			power-domains = <&sysc R8A779H0_PD_A2PCIPHY>;
++			resets = <&cpg 624>;
++			reset-names = "pwr";
++			max-link-speed = <4>;
++			num-lanes = <2>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x01000000 0 0x00000000 0 0xfe000000 0 0x00400000>,
++				 <0x02000000 0 0x30000000 0 0x30000000 0 0x10000000>;
++			dma-ranges = <0x42000000 0 0x00000000 0 0x00000000 1 0x00000000>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &gic GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &gic GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &gic GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &gic GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>;
++			snps,enable-cdm-check;
++			status = "disabled";
++		};
++
++		pciec0_ep: pcie-ep@e65d0000 {
++			compatible = "renesas,r8a779h0-pcie-ep",
++				     "renesas,rcar-gen4-pcie-ep";
++			reg = <0 0xe65d0000 0 0x2000>, <0 0xe65d2000 0 0x1000>,
++			      <0 0xe65d3000 0 0x2000>, <0 0xe65d5000 0 0x1200>,
++			      <0 0xe65d6200 0 0x0e00>, <0 0xe65d7000 0 0x0400>,
++			      <0 0xfe000000 0 0x400000>;
++			reg-names = "dbi", "dbi2", "atu", "dma", "app", "phy", "addr_space";
++			interrupts = <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "dma", "sft_ce", "app";
++			clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
++			clock-names = "core", "ref";
++			power-domains = <&sysc R8A779H0_PD_A2PCIPHY>;
++			resets = <&cpg 624>;
++			reset-names = "pwr";
++			max-link-speed = <4>;
++			num-lanes = <2>;
++			max-functions = /bits/ 8 <2>;
++			status = "disabled";
++		};
++
+ 		avb0: ethernet@e6800000 {
+ 			compatible = "renesas,etheravb-r8a779h0",
+ 				     "renesas,etheravb-rcar-gen4";
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
