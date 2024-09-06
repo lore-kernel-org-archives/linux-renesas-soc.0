@@ -1,35 +1,35 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06CC1D1F4F;
-	Fri,  6 Sep 2024 15:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364561D3191;
+	Fri,  6 Sep 2024 15:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725635033; cv=none; b=GH2nID92eHQnAfpmpaAyzgA/hQaypDRtTAHKIMrJVV0tsDmDQTWtkU3A2JUfDfafVtL0/kRrkT1uu49WquLHMXUS8GYVLtVShprcFpKgFtuQCfzr8FRPS26GcqLo2xZojO56U1PyNErxmXi0m1QElSNntl0f3u/wIDxuTkMymog=
+	t=1725635038; cv=none; b=SEnb5sWNH6SitRu7k4N/HgPaf3lcBEpxonrSUTY4XZ7SpVtDIC6/5GMOP5RA6YdhiwjPeXklW4lPiMJp68mow/pao3bGlUB2YfQXghcokdJrL8D23f5LskjkqbTRwKUoNdlTr7cb18Zux4k9l/+CzERPfFx9ZC1B2113xItGYN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725635033; c=relaxed/simple;
-	bh=2oeQEBkTdVNWGwtz6+y1GsN4AO/sM4yT7WaXmgyvhJ0=;
+	s=arc-20240116; t=1725635038; c=relaxed/simple;
+	bh=ig73HJ1hICNEBudefCF5l8HV1ZnEF+cq1GVFvVXOviU=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tDmZnIToq4puLWaitgPHmUYpo30EjVDGZwnVjwsY7irUVIWWdRcHqz5RoMYHl9uRO3nfvnrngobrGYNeSlbXgpCGvdaVKFwG3lTgoc0DLxnsEw6tQTPqUbIJb5RF54dot0FYXcgPSABN8M4+KnfdOASD5CTZX7oXU2GQCb+iR1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QFdduUky; arc=none smtp.client-ip=217.70.183.196
+	 MIME-Version; b=jhzl1sdo5CREmbMummC9O56lhNM7tVP7swNf0RCWgMgvoxRVbBVovsi+JXkrn9OMK40NfXXtIQfb3m4hTaM+KYx634hx8tasobjx9oilqrtg1YgYHbtzH8kom11xxyV9jJ4fNt7mLK0ZkT7V5qLC+gNkd4MYyN5Vu1jrKh+4dZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PunlC78B; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QFdduUky"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 79075E000F;
-	Fri,  6 Sep 2024 15:03:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PunlC78B"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 32D6E60009;
+	Fri,  6 Sep 2024 15:03:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725635023;
+	t=1725635034;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ee9E1EaKOTlVdaGoV/jFTAD6cKrW6LwAZgqUGO3N8fI=;
-	b=QFdduUkyT1+QwBo+jlvyJMYP3/45JVTkmvu1YL4mwpOQaUBF1aV/jkT92vRfa8v3SRbIqZ
-	fk9Sf+TsTdH61rs3UzxlhLpC6Q7AP2yYrvo/6ici5ot19NZWbvbWuJfXIYTzRGW42988WJ
-	I1KJDnY/Ysxq2db8P9yqJosCZpcc9iOTgQHFx0HO/ZV9wGiXDrwCM4Vh869XCOF3T0EIaI
-	f0PA4B8JkRH1iJDwhoFpLxZtxIecWCDA4tbGw9FV9w6IFu2pwt0SpkPOS4cXDtMPFRNxPz
-	Tfxgn6/Nl/KYg78OmDL12HTvgIlWD5IXAnugF/St6P5p8E03rJPuCp5gAa7Mbw==
+	bh=KCE2Aeig1Xtcqxsj6OCesMJmx0Bzx3NcYdEg1kOU9Wc=;
+	b=PunlC78BePp6i3CMkcel19x4PHIcMkhAoQtwHCtPb3f/8vgyKhRc4njyM1R8yUlHP5IadP
+	4sOrUMZ86RJ2cXmTOITw+HIRlggZDpVCzT1VfBUqZ0dsb3MfwlpJjo/M8jDPUYN8Gont70
+	AGNqpJRGxlaEzQCk6b+C1UTPQOwqsylksrCZyxc7QEQov8J9L8XwvpD9TAcgqkefj5o3Fl
+	8pUErSqOrREkixPF39G2m0nTzGI8PwKQZDMPVfFVuKfwEYv4Fp6hWOpYUfnhClb4mglzrU
+	+5co91phMXuldBvfqhxTKq44tpZqr82YMIlNc35Ul7+vcL1gK92/acbVnNnVOw==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Jinjie Ruan <ruanjinjie@huawei.com>,
 	miquel.raynal@bootlin.com,
@@ -68,11 +68,11 @@ To: Jinjie Ruan <ruanjinjie@huawei.com>,
 	linux-stm32@st-md-mailman.stormreply.com,
 	krzk@kernel.org,
 	jic23@kernel.org
-Subject: Re: [PATCH -next RESEND 07/10] mtd: rawnand: mtk: Use for_each_child_of_node_scoped()
-Date: Fri,  6 Sep 2024 17:03:40 +0200
-Message-ID: <20240906150341.734598-1-miquel.raynal@bootlin.com>
+Subject: Re: [PATCH -next RESEND 05/10] mtd: rawnand: rockchip: Use for_each_child_of_node_scoped()
+Date: Fri,  6 Sep 2024 17:03:51 +0200
+Message-ID: <20240906150351.734658-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240826094328.2991664-8-ruanjinjie@huawei.com>
+In-Reply-To: <20240826094328.2991664-6-ruanjinjie@huawei.com>
 References: 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -81,11 +81,11 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'8795952679494b111b7b2ba08bb54ac408daca3b'
+X-linux-mtd-patch-commit: b'0d5c32b5c877d61afc954c760dc58f3b8626ec04'
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, 2024-08-26 at 09:43:25 UTC, Jinjie Ruan wrote:
+On Mon, 2024-08-26 at 09:43:23 UTC, Jinjie Ruan wrote:
 > Avoids the need for manual cleanup of_node_put() in early exits
 > from the loop.
 > 
