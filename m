@@ -1,112 +1,96 @@
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A448414C5B3;
-	Fri,  6 Sep 2024 20:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5425C13C3F2;
+	Fri,  6 Sep 2024 20:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725654691; cv=none; b=usQUzbHtb2agv/wpU+3ydd3eTyqPprrgFuELaPceA2JwbzJq2IAJy0eAMFZ05+31I3yNwiXeP8AiEWOARxBgL9V4yjSMddbMi18dDjLa0JfeYdQ2VdjUd9UQCe9XbPmwq5QYqF2jsgYA14f/UejhmXCwLjx0XLtWMcMbCflJZtg=
+	t=1725655023; cv=none; b=R0+PgGKgDICVWvkMSA8MnUc9NBT/bRPLiZp7ilvi4zzjxRzUkIZEqNmulrQOJ/6vJ772ZUnvhYqlAcorDuoCqfg7OrGll9WhQvzappA5t6ZErLtyGvHLSGjYwODfceOoB0APYdhTHAMbHGTSZjNEq0gt0xinfHok1U6wKf3woyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725654691; c=relaxed/simple;
-	bh=5OSiCUxRsvtARcou56wXI3cDIiAdAe6GQc7hKq0JdXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qqbfVMIXEHgM5EhTeQeqFQRBTLWmqvCF7ZkXc2Ro4rKCSg50GWsVblzodVDxuAX2b0pqdCIBPdVt1cZ+fAkHSJQQjBaS0CvdrR00ZJrrE0rjEqZazmnl2xuBNZFg1RjNdswb7FH9zEOkPeWbJWFacRtRLo0hA7YXLYfe8yRSAbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UKRALhwG; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1725655023; c=relaxed/simple;
+	bh=t8YNNTqYRRbmcQdAG5OK5iWCGtztKg26juRhi71GzM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pIa36mV6u86MZOace4XeDy+QbtPXAOfIlCfYtzQL5ajYzKBZZ7SLsav3RFF48ePendxrmUUo7K5APRcReTY7O7K5KXohvmWsmgAqApOmUn8ZtljTAQOJr1FfJ1FgjjrMw9C5lNwqIt+3vJgn7B/P9eD/kgvXS+L/uXkc8qmCPU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DfJgY94q; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UKRALhwG"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id mf5asaRIOjDE7mf5asHg0n; Fri, 06 Sep 2024 21:57:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725652674;
-	bh=xYR3kPiysp0DAu3hHTCdnVZ7J5OM+i5euxXxIpGksJ4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UKRALhwGsYTuYigKVxKoo0JZ69+DDjBvnn6qfJcKI3njUqRapI3Rh51o8+diJHjuE
-	 MhgHF9HQnh1G5UdkHXe+Ijsp4HwEphBpO9KK5OVMJFcd1p0m1Pev8lY98FjLHnsM6f
-	 14VKjI/kFW9y/n/yw4te7mKEm3UoVH3om1zmYXAzE5RkqmUOR1DrZpSaEDSD0NMSMp
-	 eejwB1pfMfRrESQd9sqWBRs0d/TIwnau3gBlyaEzdY2962egpIlD+AW0VPde039ebG
-	 vvN3mh6SEx9MoGRI1HzwpCnk8TLGWyHyaCnwki82Fl13TdSFCPotd6vRaQjmVzARAG
-	 bK5cf5AD8YdUA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 06 Sep 2024 21:57:54 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Subject: [PATCH] phy: renesas: rcar-gen3-usb2: Fix an error handling path in rcar_gen3_phy_usb2_probe()
-Date: Fri,  6 Sep 2024 21:57:47 +0200
-Message-ID: <fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DfJgY94q"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=Tp21UrDua1a3GT+yOVfFg1PUUg94Nlf+7saY6rn/Y4g=; b=Df
+	JgY94qgqcOb2CJdTdoTgx0aq8k0S7OLZoGWPTkEybA4YM2bdoCd6BoH3PuZeYeDhaI1gPHm6jL68m
+	tGjIy9+LvB6qOjab9O6rv094swY9yp87rJMTDW+WdRBHucUo+TwC63KmFG/AqdZvNmN82jGN20wVt
+	m8XxfHJbpPzH6ac=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1smfhJ-006rEu-CH; Fri, 06 Sep 2024 22:36:49 +0200
+Date: Fri, 6 Sep 2024 22:36:49 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Stefan Eichenberger <eichest@gmail.com>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [net-next 3/3] net: phy: marvell-88q2xxx: Enable auto
+ negotiation for mv88q2110
+Message-ID: <c334205e-6289-48da-b0c7-7ba82c6d2709@lunn.ch>
+References: <20240906133951.3433788-1-niklas.soderlund+renesas@ragnatech.se>
+ <20240906133951.3433788-4-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240906133951.3433788-4-niklas.soderlund+renesas@ragnatech.se>
 
-If an error occurs after the rcar_gen3_phy_usb2_init_bus(),
-reset_control_assert() must be called, as already done in the remove
-function.
+On Fri, Sep 06, 2024 at 03:39:51PM +0200, Niklas Söderlund wrote:
+> The initial marvell-88q2xxx driver only supported the Marvell 88Q2110
+> PHY without auto negotiation support. The reason documented states that
+> the provided initialization sequence did not to work. Now a method to
+> enable auto negotiation have been found by comparing the initialization
+> of other supported devices and an out-of-tree PHY driver.
+> 
+> Perform the minimal needed initialization of the PHY to get auto
+> negotiation working and remove the limitation that disables the auto
+> negotiation feature for the mv88q2110 device.
+> 
+> With this change a 1000Mbps full duplex link is able to be negotiated
+> between two mv88q2110 and the link works perfectly. The other side also
+> reflects the manually configure settings of the master device.
+> 
+>     # ethtool eth0
+>     Settings for eth0:
+>             Supported ports: [  ]
+>             Supported link modes:   100baseT1/Full
+>                                     1000baseT1/Full
+>             Supported pause frame use: Symmetric Receive-only
+>             Supports auto-negotiation: Yes
 
-Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+My understanding is that most automotive applications using T1 don't
+actually want auto-neg, because it is slow. Given the static use case,
+everything can be statically configured.
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 58e123305152..8577056491de 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -770,7 +770,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		if (IS_ERR(channel->rphys[i].phy)) {
- 			dev_err(dev, "Failed to create USB2 PHY\n");
- 			ret = PTR_ERR(channel->rphys[i].phy);
--			goto error;
-+			goto err_control_assert;
- 		}
- 		channel->rphys[i].ch = channel;
- 		channel->rphys[i].int_enable_bits = rcar_gen3_int_enable[i];
-@@ -784,7 +784,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (IS_ERR(channel->vbus)) {
- 		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER) {
- 			ret = PTR_ERR(channel->vbus);
--			goto error;
-+			goto err_control_assert;
- 		}
- 		channel->vbus = NULL;
- 	}
-@@ -793,15 +793,17 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (IS_ERR(provider)) {
- 		dev_err(dev, "Failed to register PHY provider\n");
- 		ret = PTR_ERR(provider);
--		goto error;
-+		goto err_control_assert;
- 	} else if (channel->is_otg_channel) {
- 		ret = device_create_file(dev, &dev_attr_role);
- 		if (ret < 0)
--			goto error;
-+			goto err_control_assert;
- 	}
- 
- 	return 0;
- 
-+err_control_assert:
-+	reset_control_assert(channel->rstc);
- error:
- 	pm_runtime_disable(dev);
- 
--- 
-2.46.0
+Is there a danger this change is going to cause regressions? There are
+users who are happy for it to use 100BaseT1 without negotiation, and
+the link partner is not offering any sort of negotiation. But with
+this change, autoneg is now the default, and the link fails to come
+up?
 
+To me, this actually seems like a generic problem for automotive. We
+want to indicate the device does support autoneg, but we don't want it
+on by default? I don't know if we can express that at the moment?
+
+	Andrew
