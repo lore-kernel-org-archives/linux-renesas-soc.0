@@ -1,72 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF59E15C3;
-	Sat, 21 Sep 2024 00:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21B5155CAC
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Sep 2024 11:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726879967; cv=none; b=qpLPRwQo6SDnoYfx+IxchD/N3rMgy6WYJCH3DhVb327/ok1vslnYrnkDI3E4s8jYLWoWjImKpRT7zk6JqA0axt1xhM3dvi44VSPzVmOeNpUUmRpZo9EMEq5nj81DfTdJDu466xqD+BQdN8vKXCSRUcopuv+Wg1bKxoqQzPPVdeM=
+	t=1726919322; cv=none; b=iT+5kvNHV9CkJPv7RR2Q3r4qpUbzqf6HNop/eIiQ/5w56gw9cRt733fi+cP4jacSCCbZEtxRahU+bcgoG27wt62mvQYg5bcFHq0H9K/tJlzMexDysY7hNYaQ3Anl9aQbexOH52n+Ukts9AnjefIbBh2oluBNcMsVeVy2l7jhWAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726879967; c=relaxed/simple;
-	bh=Ew4IcMCEa8YzyxrVwkXd+y/Nq+B0O5bzEquyaZoikgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSZBCvKImaNU2YAcf/vuKhKjREFR6BByr4qvXpnaQAi2N+fG6TR8gO/HR4V106GClOevsWjoLQXO57JRC3zIsF9lL6tj3uhuZTniI/Czp6lc226pTx7JVY655+hQndUSJ9qikYJi0G19Zg3uy0CsvAQHX5FIMbN2aNlEYpI171A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSoK4n68; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726919322; c=relaxed/simple;
+	bh=s46YgXjYEgUlMZp3wPtzbQDCksgk0DSAsPR2iu4O/b4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YrR7W/MdxTJLPfGVqLRhEbyw7hFpp39qSjpBaQfgUaOOGLs7EMF7aCuktUosBjx6MMWhiMyCR0atF94FGKIsrH3Vil1ZJZEcCXVFXoiyTf7s2OLnYVjsJ1ijFQvy/5924tg0e4EOc3HJhGKbAvMmOVPttOzOGVTN7IDlXw69op4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KpssY+K0; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSoK4n68"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1DEC4CEC3;
-	Sat, 21 Sep 2024 00:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726879966;
-	bh=Ew4IcMCEa8YzyxrVwkXd+y/Nq+B0O5bzEquyaZoikgM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LSoK4n68mb6GjY/LyqV67r3PQRcQypBSo/NljlG18Oq5RoxyH4/sszulryAkIqVB9
-	 Fi7lZVmH6hx//DPBp0v6qlDA83EyXzaeYx3AaxTiM9HzxmD/ZVP3TY9+Q+Og5oBqC5
-	 Q8vQavEhHSaL6g2xFOs+aekyXpf6D8LVlHJkWt3y1VOYq54pFbHb1d9QcEvYAptWw8
-	 lGw+lSjirlGvgnXqXA+iZNRKYmgPGKrVuz/ZXDJ9bTa7M063+o3vkKO2/VayY0baFd
-	 tkLsAWjQeaejMPIb32iHV7vMQuWpIQa0JDY5qaV7pgW8BsDBoqqLF53DmvYf8Pqu7v
-	 z+2fu7fTARfrQ==
-Date: Fri, 20 Sep 2024 19:52:45 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KpssY+K0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=YSf6tpbbA7tJf8yOz0uyncmkQ9adf9l+BY+hCm7lS+4=; b=KpssY+
+	K0PJAL2DHpKLJkp3Yye6JkK81Lp2IEBcftoChIvFZiS83wy3+Zb2tNfnAJjF5MzE
+	+NO5IO0V18vWov+9+1o8JqC1Jssywxr7THgSDgbaJrUaz6R5UBes3NIlCEPwdc4/
+	PR9ZzayPZKeJyRWGMZIUZvkcxcrgtQyCj1ulYnH3LdXGGRiWaqsN8lkNB4xRcI3h
+	ft8RPeR6p6Gn30uF7nbLbssVWeJakmzksDB0fAlyFBwChWok1tPv1mv4KiJmNKqh
+	10hdsYw+faTBHm0sH80TWYrezoMK2veXvDgS4LOT7mk6Nq6/sGfI383kuoKoJJHG
+	yI0xKPie+WmNM34g==
+Received: (qmail 3652761 invoked from network); 21 Sep 2024 13:48:37 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2024 13:48:37 +0200
+X-UD-Smtp-Session: l3s3148p1@EKt0vJ8iiuEgAwDwn0Nz2qARpwvTE8dN
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
- 'input-schmitt-{enable,disable}' and 'drive-open-drain' properties
-Message-ID: <172687996507.184385.8256447340209726726.robh@kernel.org>
-References: <20240918120909.284930-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 2/5] ARM: dts: renesas: genmai: enable OS timer modules
+Date: Sat, 21 Sep 2024 13:48:14 +0200
+Message-ID: <20240921114813.4124-9-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240921114813.4124-7-wsa+renesas@sang-engineering.com>
+References: <20240921114813.4124-7-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 
+Driver has been submitted meanwhile. Activate the devices.
 
-On Wed, 18 Sep 2024 13:09:07 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> On the RZ/V2H(P) SoC we can configure the 'input-schmitt-{enable,disable}'
-> and 'drive-open-drain' of multiplexed pins. Update the binding
-> documentation to include these properties.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml     | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/renesas/r7s72100-genmai.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
+index 226bcff180bb..c4c2d750ad79 100644
+--- a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
+@@ -208,6 +208,14 @@ eeprom@50 {
+ 	};
+ };
+ 
++&ostm0 {
++	status = "okay";
++};
++
++&ostm1 {
++	status = "okay";
++};
++
+ &rtc {
+ 	status = "okay";
+ };
+-- 
+2.45.2
 
