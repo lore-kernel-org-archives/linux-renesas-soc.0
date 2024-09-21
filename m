@@ -1,34 +1,34 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21B5155CAC
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Sep 2024 11:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2061142E86
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Sep 2024 11:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726919322; cv=none; b=iT+5kvNHV9CkJPv7RR2Q3r4qpUbzqf6HNop/eIiQ/5w56gw9cRt733fi+cP4jacSCCbZEtxRahU+bcgoG27wt62mvQYg5bcFHq0H9K/tJlzMexDysY7hNYaQ3Anl9aQbexOH52n+Ukts9AnjefIbBh2oluBNcMsVeVy2l7jhWAw=
+	t=1726919322; cv=none; b=sGLAr+QAVxPsiINq+IBbZwDURoyOoDa6gqgxrzNzxOha8ouPELgrjNlMK52hvXTX1BudfcDpilREwDCPHKX84oA7c6JGQ/sNFJzcPdd9VMph0cVfSlyrsnW7qG70Z9pqmtym23k0oiOVdnixYHK+/L0AR8XWF/ibxWjHQG+gv1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726919322; c=relaxed/simple;
-	bh=s46YgXjYEgUlMZp3wPtzbQDCksgk0DSAsPR2iu4O/b4=;
+	bh=ZKF6GZdrKjJEkQLXS1jNMiP8WsyaciPv/gNPDGSaiGI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YrR7W/MdxTJLPfGVqLRhEbyw7hFpp39qSjpBaQfgUaOOGLs7EMF7aCuktUosBjx6MMWhiMyCR0atF94FGKIsrH3Vil1ZJZEcCXVFXoiyTf7s2OLnYVjsJ1ijFQvy/5924tg0e4EOc3HJhGKbAvMmOVPttOzOGVTN7IDlXw69op4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KpssY+K0; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=Z6mm8r7ViUkUgE2Nit3kJXOfJQA3AG/Ycd6VTNFPMcH+wGGTek3motfZe/XuOkIdSh9HFgqO4IRf2nv/xjAz2C+Lr5374AsmvTqObl94TBDEoSQxq+FQJmxq3MAvS9cwkzAeYXEzhYts9jCIBLZfjkBfwugAZd8WNKW7kj374GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DAMaGG6g; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KpssY+K0"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DAMaGG6g"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=YSf6tpbbA7tJf8yOz0uyncmkQ9adf9l+BY+hCm7lS+4=; b=KpssY+
-	K0PJAL2DHpKLJkp3Yye6JkK81Lp2IEBcftoChIvFZiS83wy3+Zb2tNfnAJjF5MzE
-	+NO5IO0V18vWov+9+1o8JqC1Jssywxr7THgSDgbaJrUaz6R5UBes3NIlCEPwdc4/
-	PR9ZzayPZKeJyRWGMZIUZvkcxcrgtQyCj1ulYnH3LdXGGRiWaqsN8lkNB4xRcI3h
-	ft8RPeR6p6Gn30uF7nbLbssVWeJakmzksDB0fAlyFBwChWok1tPv1mv4KiJmNKqh
-	10hdsYw+faTBHm0sH80TWYrezoMK2veXvDgS4LOT7mk6Nq6/sGfI383kuoKoJJHG
-	yI0xKPie+WmNM34g==
-Received: (qmail 3652761 invoked from network); 21 Sep 2024 13:48:37 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2024 13:48:37 +0200
-X-UD-Smtp-Session: l3s3148p1@EKt0vJ8iiuEgAwDwn0Nz2qARpwvTE8dN
+	 s=k1; bh=tnfdwWPQ4oVF7+DpN/t6fQbAt+FexciXlBD+vZPPLCk=; b=DAMaGG
+	6g7KJNIHd1vxLGhO1QDdCinVBg+nijH9qymjZ6mOKpmnT55KCo7puYW4ba+Yn1M4
+	jCyWhZkjXn/qAK/23GlUzKZrIEdlfYGLZNpiR7sHXM4jAEMbMe3olbU5rk+P1hbJ
+	qFPFq4ts7SpMTVdHydqqlG4nzJqyK6ccydE9ZQlCrLozuhujEc63iAzoppFN7J+M
+	NmyyAMfwwp8s5XKnriOxlzzqHjFUJ2kgUcZyisCLLq3eQQO0o+h+BD5VswBxYrUN
+	6oJGPkz2RfLWPwre9ASvok1IGysM9dXJ/psZZUxLLr8Mho7qhCuGTqcO4O7ZueJ7
+	bvZ4XEcAk/gW135w==
+Received: (qmail 3652718 invoked from network); 21 Sep 2024 13:48:36 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2024 13:48:36 +0200
+X-UD-Smtp-Session: l3s3148p1@cM1lvJ8ifuEgAwDwn0Nz2qARpwvTE8dN
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -38,9 +38,9 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org
-Subject: [PATCH 2/5] ARM: dts: renesas: genmai: enable OS timer modules
-Date: Sat, 21 Sep 2024 13:48:14 +0200
-Message-ID: <20240921114813.4124-9-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/5] ARM: dts: renesas: genmai: enable watchdog
+Date: Sat, 21 Sep 2024 13:48:13 +0200
+Message-ID: <20240921114813.4124-8-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240921114813.4124-7-wsa+renesas@sang-engineering.com>
 References: <20240921114813.4124-7-wsa+renesas@sang-engineering.com>
@@ -52,32 +52,26 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Driver has been submitted meanwhile. Activate the devices.
+Driver has been submitted meanwhile. Activate the device.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/renesas/r7s72100-genmai.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/renesas/r7s72100-genmai.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-index 226bcff180bb..c4c2d750ad79 100644
+index 28e703e0f152..226bcff180bb 100644
 --- a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
 +++ b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-@@ -208,6 +208,14 @@ eeprom@50 {
+@@ -228,3 +228,8 @@ codec: codec@0 {
+ 		spi-max-frequency = <5000000>;
  	};
  };
- 
-+&ostm0 {
++
++&wdt {
++	timeout-sec = <60>;
 +	status = "okay";
 +};
-+
-+&ostm1 {
-+	status = "okay";
-+};
-+
- &rtc {
- 	status = "okay";
- };
 -- 
 2.45.2
 
