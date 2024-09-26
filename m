@@ -1,49 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9741AD9C1
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Sep 2024 11:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC780158DCC
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Sep 2024 11:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727348854; cv=none; b=uJ77hqi8ac/Mbw9MUDVGA5F89EG3DJaRLOq2ZamsZVULvLiL5qca9DE5xxuSKaU5+PP0bLyYmUZbD4XSDfrLrc1jEBdPl/E7zLANsHztnDXbhofTj6jmyc2BPjVfZdpT9hVTZKQ0cciN3ZwF9gLZ0QqQInHNAtebTv4hixQgq00=
+	t=1727350370; cv=none; b=hAafBrb4gBKMOwwcFUyQPd5MfxIvX32hMEUC6Hc8HT6KKftriZEKrxkHda1d0l6EFXmIrwzSCzhrYxA2hCPY+7/7Z+4jf5ZsOTmQKu0y4e3Relqmj+6c1yVddjGvVOFUkWaZgiJAN9cjzxYYcFED70hlKF4Wv/GEXyX6/KgPOa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727348854; c=relaxed/simple;
-	bh=V9Ay8JAq4S8DENcsrnoXGlS9vimeAb8wlGRwmXwfMJk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YhGM4s+5fwsPBuS+UYPKeLJq9E7wFsg7zzP04aQ9+gtzoy8ke1I2P/3pn6Q2/UIQgRpIREgOLRW6N0ApeZag/XMQWDaQNgxdkzlGO7Uly4OKQhuwvSBzzjJeXiEEZavDqLBFNXXLDzTYBCAK16GgQRGPEwOqncAM8EQ1DctgR1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Qh393lcb; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1727350370; c=relaxed/simple;
+	bh=C92cajfc1zWt3AsbM8+xxbkh6KK6i7ng0wWyiZR/2Zs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BxRW9VQHRPFRC4QaqLsNWz3QwR9c8xT7FkUtSSYnQamkQb4AnhrxykTvxKV2vlT8Djnr03zP4YYLeyP5Hy3J4tqtSl+mw1ODw1yPyFxpL/CaF2JiOz+xRizMYPl9/loiF4Ts7REZ4Z7aucNNxFwAGiCDQm5Vv+68jk/sj+NsuvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VFdCfQXG; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Qh393lcb"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VFdCfQXG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=a8DjMxCm0od+c3OPWc76GqeF31DstQ8paL8D6K89IPk=; b=Qh393l
-	cb+cxYXD42iwJqU1LQh8VQHmWSxvgM0agIDp6tAahytdkbG/8Ap3E74GanXiV+K6
-	cZzBG2QiKP2qoEYfJKU/ONus56SaETr4ZILubbNLShF9xtYmCmgFDm40TZ6VBwRx
-	soavKhH3mtrVdnmqMQezDVu4bKK2TniBTXm0hq3PTAZP451cMmIdz2L6yCLo3pXV
-	1n+Unia8rI0zNzfXpJ2PqI1OaJUmHHrq3rz3hLw0UplWlAV6hhmfet3xV8t0YFg1
-	357yo81TN4AzDfCkgk8i7SO2PS3EhYm3FPsf37JIW0DLSQvvKnNOpO33jcxjOBv1
-	t5qAw6K3wkz1QJRA==
-Received: (qmail 960836 invoked from network); 26 Sep 2024 13:07:29 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Sep 2024 13:07:29 +0200
-X-UD-Smtp-Session: l3s3148p1@B6yKvgMj6swgAwDPXzRXADDuo30Z+IZ9
+	:mime-version:content-transfer-encoding; s=k1; bh=Xk5IwM942c2UCl
+	npnRtRUWbQmkY5G+4beG1YYt8qI90=; b=VFdCfQXGC0ckb9N4qUJ1Nv54COz2ei
+	OjXOl3hYCjKzOFL4ieHBRNjfloo47MERf29wZHwakOXjswYEk3qKC4tdBL4++4Xg
+	hDnsjrJmsmt2hbU+isyKD93xFM4HSwi/YPLwKj7oe0zFx7LkZr74C+Q0oDwrDsBi
+	Io78wXD36LO2uxQDIfep1QvztrCiWdEdZ7T1m59zwk3TlmgA5naFS5RK6cHhOT+R
+	+UtP56KmjFyhcnRpf9VWg9d8hoxllHQW0Q112lHer2AklMsFqRs6Z/68HeBa+WRh
+	w86umLJrNK7NqPAmtMcS3+43F/WKjdLe7JPtSBT+ySPB4Om6ThyRPxlA==
+Received: (qmail 967860 invoked from network); 26 Sep 2024 13:32:44 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Sep 2024 13:32:44 +0200
+X-UD-Smtp-Session: l3s3148p1@MkvfGAQjHpEgAwDPXzRXADDuo30Z+IZ9
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 2/3] ARM: dts: renesas: alt: use proper node names for keys
-Date: Thu, 26 Sep 2024 13:07:20 +0200
-Message-ID: <20240926110718.20519-7-wsa+renesas@sang-engineering.com>
+Subject: [PATCH] ASoC: dt-bindings: renesas,rsnd: correct reg-names for R-Car Gen1
+Date: Thu, 26 Sep 2024 13:32:41 +0200
+Message-ID: <20240926113241.24060-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240926110718.20519-5-wsa+renesas@sang-engineering.com>
-References: <20240926110718.20519-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -52,51 +52,29 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Avoids 'keyboard: 'four', 'one', 'three', 'two' do not match any of the
-regexes: ...
+The device at 0xffd90000 is named SRU, both in the datasheet and SoC
+DTSI. Fix the typo in the bindings to avoid the false positive report:
+
+  sound@ffd90000: reg-names:0: 'sru' is not one of ['scu', 'ssi', 'adg']
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/renesas/r8a7794-alt.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/sound/renesas,rsnd.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/renesas/r8a7794-alt.dts b/arch/arm/boot/dts/renesas/r8a7794-alt.dts
-index b5ecafbb2e4d..ac541c2af798 100644
---- a/arch/arm/boot/dts/renesas/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7794-alt.dts
-@@ -96,28 +96,28 @@ keyboard {
- 		pinctrl-0 = <&keyboard_pins>;
- 		pinctrl-names = "default";
- 
--		one {
-+		key-1 {
- 			linux,code = <KEY_1>;
- 			label = "SW2-1";
- 			wakeup-source;
- 			debounce-interval = <20>;
- 			gpios = <&gpio3 9 GPIO_ACTIVE_LOW>;
- 		};
--		two {
-+		key-2 {
- 			linux,code = <KEY_2>;
- 			label = "SW2-2";
- 			wakeup-source;
- 			debounce-interval = <20>;
- 			gpios = <&gpio3 10 GPIO_ACTIVE_LOW>;
- 		};
--		three {
-+		key-3 {
- 			linux,code = <KEY_3>;
- 			label = "SW2-3";
- 			wakeup-source;
- 			debounce-interval = <20>;
- 			gpios = <&gpio3 11 GPIO_ACTIVE_LOW>;
- 		};
--		four {
-+		key-4 {
- 			linux,code = <KEY_4>;
- 			label = "SW2-4";
- 			wakeup-source;
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml b/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
+index 3bc93c59535e..6d0d1514cd42 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
+@@ -302,7 +302,7 @@ allOf:
+         reg-names:
+           items:
+             enum:
+-              - scu
++              - sru
+               - ssi
+               - adg
+   # for Gen2/Gen3
 -- 
 2.45.2
 
