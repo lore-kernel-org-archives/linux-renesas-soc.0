@@ -1,30 +1,30 @@
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A6718C90C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Sep 2024 12:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9D118C928
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Sep 2024 12:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727440988; cv=none; b=mcqmhdx6L3odWgfcEpOo1BteB06qlJwSHE9BXyfVvJDh8rmx8BxgyTAQFz+rrDZ+iM010neSOH8+DMkZh8bdRZN0IdM5PV2V/9km0KCV/XOFXEQZ018cfZ4yKCxQQsdHrjyr3LgUAgbuE4ETqq3EJQQOWz/e+g6DFlGkGhUyxBc=
+	t=1727440989; cv=none; b=Zwqa/qtKSmdbh3WzeJoQcXw5gSCaWMcjhN8dlAxUwVIFayhee3ZHPdP0nltG6xGWvrLcCE5IQFKLhVoGHy2uOLsNc9GmMii2g+gZsFqBSU5Kc32DZnkcc2MqyL+vRHP2OFx+dN/69BRLntp/YdvY5V+m4unF1V05Uuua0vNKZ0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727440988; c=relaxed/simple;
-	bh=qZMQP9Pxla42En9Gk638J2dnegrtAevouU1hZQr5nqw=;
+	s=arc-20240116; t=1727440989; c=relaxed/simple;
+	bh=H04kX0shIMHo/Br80lC188m3VFriBQiy/Kjtvzl6jHs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bjIqmRU9uRj4yHUaVVQXLiDhA+Ikc6uwKF7WnmW1SNId4e5yiyLMvAxISB+NrVn0qfzonL5JCtYgnTWg/to3AEX09R8fE8PvVvCpRzBICO6kYaeeNxwdAZjj67eIZ3/2jaPGz8Wyftd5eLK7M2tc9jRBsjF8kpGj2rZu4f/eJNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+	 MIME-Version; b=JtHRqzUM1bB/QtQEbMRDH2wqIzIkUuoZJ5MBQx0pjvaf3EyH88EefTrcowd3wB+vLGTr0OU4HIQRAnFgo7lTMrDtSWQaNQmV7mCBcZueLni5vSIetpgGbb5JwRlyZeTG94JSow+PCQeL0BHWmu1IyIiNQflaf+YpAoSUo1Atthg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b47d:fd74:3975:15b7])
-	by laurent.telenet-ops.be with cmsmtp
-	id HQic2D00F3BfLyr01QicDy; Fri, 27 Sep 2024 14:43:02 +0200
+	by andre.telenet-ops.be with cmsmtp
+	id HQic2D0043BfLyr01Qicie; Fri, 27 Sep 2024 14:43:02 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1suAIj-000fPt-HH;
+	id 1suAIj-000fPx-HO;
 	Fri, 27 Sep 2024 14:42:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1suAIp-008IDp-17;
+	id 1suAIp-008IDy-3S;
 	Fri, 27 Sep 2024 14:42:31 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Liam Girdwood <lgirdwood@gmail.com>,
@@ -62,9 +62,9 @@ Cc: linux-sound@vger.kernel.org,
 	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH treewide 05/11] arm64: dts: renesas: beacon-renesom: Switch to mic-det-gpios
-Date: Fri, 27 Sep 2024 14:42:20 +0200
-Message-Id: <750d6ac7911aef9a461dca6d07e5c1fab6211ecb.1727438777.git.geert+renesas@glider.be>
+Subject: [PATCH treewide 08/11] arm64: dts: uniphier: Switch to hp-det-gpios
+Date: Fri, 27 Sep 2024 14:42:23 +0200
+Message-Id: <b14b8512181c2a3b0744698e8a21b4e16451d7b3.1727438777.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1727438777.git.geert+renesas@glider.be>
 References: <cover.1727438777.git.geert+renesas@glider.be>
@@ -76,27 +76,41 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace the deprecated "mic-det-gpio" property by "mic-det-gpios" in
-Audio Graph Card device nodes.
+Replace the deprecated "hp-det-gpio" property by "hp-det-gpios" in Audio
+Graph Card device nodes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts | 2 +-
+ arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index 5a14f116f7a1eedf..9436b249ebdd9dcd 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -200,7 +200,7 @@ sound_card {
- 		widgets = "Microphone", "Mic Jack",
- 			  "Line", "Line In Jack",
- 			  "Headphone", "Headphone Jack";
--		mic-det-gpio = <&gpio0 2 GPIO_ACTIVE_LOW>;
-+		mic-det-gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
- 		routing = "Headphone Jack", "HPOUTL",
- 			 "Headphone Jack", "HPOUTR",
- 			 "IN3R", "MICBIAS",
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
+index a251c4343548f477..de219570bbc933e3 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
+@@ -61,7 +61,7 @@ &i2s_port3
+ 			&i2s_port4
+ 			&spdif_port0
+ 			&comp_spdif_port0>;
+-		hp-det-gpio = <&gpio UNIPHIER_GPIO_IRQ(0) GPIO_ACTIVE_LOW>;
++		hp-det-gpios = <&gpio UNIPHIER_GPIO_IRQ(0) GPIO_ACTIVE_LOW>;
+ 	};
+ 
+ 	spdif-out {
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
+index 79f6db2455c1726f..20e5fb724fae39f1 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
+@@ -61,7 +61,7 @@ &i2s_port3
+ 			&i2s_port4
+ 			&spdif_port0
+ 			&comp_spdif_port0>;
+-		hp-det-gpio = <&gpio UNIPHIER_GPIO_IRQ(0) GPIO_ACTIVE_LOW>;
++		hp-det-gpios = <&gpio UNIPHIER_GPIO_IRQ(0) GPIO_ACTIVE_LOW>;
+ 	};
+ 
+ 	spdif-out {
 -- 
 2.34.1
 
