@@ -1,31 +1,33 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E9D18C90D
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Sep 2024 12:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A43E18DF74
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Sep 2024 12:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727440992; cv=none; b=UQ/FWjk85dOJqITzR/alHa96HpAEtWNFiv7YxFjYMjnAxaR5ECinDqKrON+zCO6IuI9xThUgguKSdUolzSy5zXNwkF+DlnRpjODHWyv7nQckl46IzO8o0Ga3wlI6H9vAVez0/QSmplb6Y1jADhUdWA8D/fJkyquEPuOdutNRr6Y=
+	t=1727440993; cv=none; b=PtfiXydimbB3IqUDr6mSze+SSk1jkvDv3H72XiUrMvAQEL7Qnmb0I8edb+T8GU6+x6zVIRcjWXmTi17JSeK3uKy4UEaldFso7d/0DlmnFy8536rvOGR6YFFKRk9PEJmid2kQzlavPfGdaq3GXKp9jqZmUgGyyRYe/Cc66qZd9KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727440992; c=relaxed/simple;
-	bh=iT5rXWgkVPcbkFWW81Uc2zGRtQvQkpapAwr3dLRdXHs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nOGBkDeJNvDj2gGZa+294sNeW+zPrhpm9ltCdjZRqd6wLnmEt3D0jVV5D70vJ6uDu2+a9I1FO8JVQXfBuSjVrb0j2mdeTKwIR8oagFBLxNgxD+h4T/u8pDCkiAtvnWp4q1cXLoDypXKFdQUd5fVu4GDmguzshwEBrUV+dLG5Teo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	s=arc-20240116; t=1727440993; c=relaxed/simple;
+	bh=2QXljp1dC/8iHwUW7hKb7vZR7RspRKinKvyyOkLSgtI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XQbgiH9KWcBKjHdxLgnxUwV9HZMV+WY5bdkzGTZppYMiE6BwFsEeP5kU4cYKqe4tA/ond4jdadjMEpzQl50WvmnB37JNd5WQDq0SAKLqteKYVL58oZ0e+H2d/MFVzLwyURPcMbRZqicRG6wwnocbodRLi6HlOMoGLxYQSPMmylY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4XFVVt5S6lz4xT7q
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Sep 2024 14:43:02 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b47d:fd74:3975:15b7])
-	by albert.telenet-ops.be with cmsmtp
-	id HQic2D00E3BfLyr06Qiclu; Fri, 27 Sep 2024 14:43:02 +0200
+	by baptiste.telenet-ops.be with cmsmtp
+	id HQic2D00C3BfLyr01Qicjs; Fri, 27 Sep 2024 14:43:02 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1suAIj-000fPu-HI;
+	id 1suAIj-000fPq-HD;
 	Fri, 27 Sep 2024 14:42:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1suAIp-008IDm-0M;
-	Fri, 27 Sep 2024 14:42:31 +0200
+	id 1suAIo-008IDa-TV;
+	Fri, 27 Sep 2024 14:42:30 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -62,12 +64,10 @@ Cc: linux-sound@vger.kernel.org,
 	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH treewide 04/11] arm64: dts: freescale: imx: Switch to simple-audio-card,hp-det-gpios
-Date: Fri, 27 Sep 2024 14:42:19 +0200
-Message-Id: <b38545c29d6cbf0b394ddb4747ce810c679f95d1.1727438777.git.geert+renesas@glider.be>
+Subject: [PATCH treewide 00/11] ASoC: Clean up {hp,mic}-det-gpio handling
+Date: Fri, 27 Sep 2024 14:42:15 +0200
+Message-Id: <cover.1727438777.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1727438777.git.geert+renesas@glider.be>
-References: <cover.1727438777.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -76,41 +76,107 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace the deprecated "simple-audio-card,hp-det-gpio" property by
-"simple-audio-card,hp-det-gpios" in Simple Audio Card device nodes.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 2 +-
- arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+The "gpio" suffix for GPIO consumers was deprecated a while ago, in
+favor of the "gpios" suffix.  However, there are still several users of
+the "hp-det-gpio" and "mic-det-gpio" properties, in DT bindings,
+drivers, and DT source files.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-index b268ba7a0e12a3f8..9d8e7231b7c63742 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-@@ -172,7 +172,7 @@ sound {
- 			"Headphones", "HP_OUT",
- 			"Builtin Speaker", "Speaker Amp OUTR",
- 			"Speaker Amp INR", "LINE_OUT";
--		simple-audio-card,hp-det-gpio = <&gpio3 20 GPIO_ACTIVE_HIGH>;
-+		simple-audio-card,hp-det-gpios = <&gpio3 20 GPIO_ACTIVE_HIGH>;
- 
- 		simple-audio-card,cpu {
- 			sound-dai = <&sai2>;
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-index 1b39514d5c12aafc..bb37a32ce4616d9f 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-@@ -241,7 +241,7 @@ sound {
- 			"Headset Mic", "MICBIAS",
- 			"IN3R", "Headset Mic",
- 			"DMICDAT", "Digital Mic";
--		simple-audio-card,hp-det-gpio = <&gpio3 9 GPIO_ACTIVE_HIGH>;
-+		simple-audio-card,hp-det-gpios = <&gpio3 9 GPIO_ACTIVE_HIGH>;
- 
- 		simple-audio-card,cpu {
- 			sound-dai = <&sai2>;
+Drivers that use gpiolib handle both the deprecated and new properties
+transparently, but that is not the case when using of_property_*() calls
+directly.
+
+  - The first patch fixes a bug, as the Freescale Generic ASoC Sound
+    driver handles only the deprecated properties, while there is
+    already a user of the new variants,
+  - The second patch updates the Audio Graph and Simple Audio Card DT
+    bindings,
+  - Patches 3-9 converts various DTS files to use the new properties,
+  - The last 2 patches convert Freescale sound device nodes to use the
+    new properties.
+
+All patches can be applied independently, except for the last two, which
+depend on the first patch to avoid regressions.
+This series was compile-tested only.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (11):
+  ASoC: fsl-asoc-card: Add missing handling of {hp,mic}-dt-gpios
+  ASoC: dt-bindings: Deprecate {hp,mic}-det-gpio
+  ARM: dts: marvell: mmp2-olpc-xo-1-75: Switch to {hp,mic}-det-gpios
+  arm64: dts: freescale: imx: Switch to simple-audio-card,hp-det-gpios
+  arm64: dts: renesas: beacon-renesom: Switch to mic-det-gpios
+  arm64: dts: rockchip: Switch to simple-audio-card,hp-det-gpios
+  arm64: dts: rockchip: Switch to hp-det-gpios
+  arm64: dts: uniphier: Switch to hp-det-gpios
+  mips: dts: ingenic: Switch to simple-audio-card,hp-det-gpios
+  ARM: dts: nxp: imx: Switch to {hp,mic}-det-gpios
+  arm64: dts: freescale: imx: Switch to hp-det-gpios
+
+ .../devicetree/bindings/sound/audio-graph.yaml       |  6 ++++++
+ .../devicetree/bindings/sound/simple-card.yaml       | 12 ++++++++++++
+ arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dts      |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-sabresd.dtsi       |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6sl-evk.dts             |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6sll-evk.dts            |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6sx-sdb.dtsi            |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6ul-14x14-evk.dtsi      |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx7d-sdb.dts              |  2 +-
+ .../boot/dts/freescale/imx8mq-librem5-devkit.dts     |  2 +-
+ arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi    |  2 +-
+ arch/arm64/boot/dts/freescale/imx8qm-mek.dts         |  2 +-
+ arch/arm64/boot/dts/freescale/imx8qxp-mek.dts        |  2 +-
+ arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts    |  2 +-
+ .../boot/dts/renesas/beacon-renesom-baseboard.dtsi   |  2 +-
+ .../boot/dts/rockchip/rk3326-anbernic-rg351m.dtsi    |  2 +-
+ .../arm64/boot/dts/rockchip/rk3326-gameforce-chi.dts |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3326-odroid-go.dtsi   |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3368-lba3368.dts      |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-eaidk-610.dts    |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts  |  2 +-
+ .../boot/dts/rockchip/rk3399-rock-pi-4a-plus.dts     |  2 +-
+ .../boot/dts/rockchip/rk3399-rock-pi-4b-plus.dts     |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4c.dts   |  2 +-
+ .../boot/dts/rockchip/rk3399-sapphire-excavator.dts  |  2 +-
+ .../boot/dts/rockchip/rk3566-anbernic-rg-arc.dtsi    |  2 +-
+ .../boot/dts/rockchip/rk3566-anbernic-rg353p.dts     |  2 +-
+ .../boot/dts/rockchip/rk3566-anbernic-rg353ps.dts    |  2 +-
+ .../boot/dts/rockchip/rk3566-anbernic-rg353v.dts     |  2 +-
+ .../boot/dts/rockchip/rk3566-anbernic-rg353vs.dts    |  2 +-
+ .../boot/dts/rockchip/rk3566-anbernic-rg503.dts      |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi    |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3566-powkiddy-x55.dts |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts    |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts     |  2 +-
+ .../dts/rockchip/rk3588-friendlyelec-cm3588-nas.dts  |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi   |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts     |  2 +-
+ .../boot/dts/rockchip/rk3588-orangepi-5-plus.dts     |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts  |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts   |  2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts      |  2 +-
+ .../boot/dts/rockchip/rk3588s-gameforce-ace.dts      |  2 +-
+ .../boot/dts/socionext/uniphier-ld11-global.dts      |  2 +-
+ .../boot/dts/socionext/uniphier-ld20-global.dts      |  2 +-
+ arch/mips/boot/dts/ingenic/gcw0.dts                  |  2 +-
+ arch/mips/boot/dts/ingenic/rs90.dts                  |  2 +-
+ sound/soc/fsl/fsl-asoc-card.c                        |  8 +++++---
+ 50 files changed, 72 insertions(+), 52 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
