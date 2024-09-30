@@ -1,24 +1,24 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D56190667;
-	Mon, 30 Sep 2024 16:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D82C192D71;
+	Mon, 30 Sep 2024 16:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727712577; cv=none; b=PRFByUj/IuLXJf4crcbTmfuqVkL9eIKJZV03d8v6/EQ80v/sqS0Z3Avj9z2xT8DQ5uLS1pHhhUF1a1gP0/FLDH/KvUpYHtJgabTZjr5hhOzsVJ05fxhPrUvfyQrxruMKqdT91JRUrML9k3vgIMjyNR6EGOStcZJtPJSG0rI3sY8=
+	t=1727712578; cv=none; b=Aw08/a6iZ+bRBfjaXEEwk9VguFNKHaqjUeYV45Ji2bOt/E5AfmrJvD/QLP3MxLi6+Ga48QKaq5aUmk8EY66S7qHU6h1EfuHHqyD1/AvvBVlF5ZgnPP4cm0Z6Ipk5+xRIsW5yVORWSodgiBG7JJRhoZpzFP/ZQPbVba1tNcY3luY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727712577; c=relaxed/simple;
-	bh=k2BG4Wh6IclsjFlxRTyHQ9kTeZa9kLRDBXyfoMuI6GU=;
+	s=arc-20240116; t=1727712578; c=relaxed/simple;
+	bh=GAkTF+MVXTsBDvyOAjsGLZIHTuFjLwJ1GRQYar1BjnM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RYssiv6QAuclGGrHMx8Vw6Arcsg664lCKEcYb6CMyCjqBu5Ohf5odq0/5KAoB9oygSiYLDAtqiwK+KMLF10hHiUKJWU14aJftPdPs+LV4otct2bqV5nhkzg28xF0x5Ksnnmvav/SFb7Z1WZ+EnUlU3hPmg9srp31Qhsp8KSQf1o=
+	 MIME-Version; b=fv8Sq2Q+aOqjedYjxUS8Y0O5aN3gG23f7ChyPZFTie2km/UnUVUHFRMypaornir9X6oAp/l0M4YWcJTZ4ZzxkzZqqhMYAyNjavv7KFkVK1F2p2NnhEBsZSOoCyG8PUWp3z3pDRsjredZ1XjhCMMQSq3NWiMJkUrDhC9EK0cbz2Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev; spf=fail smtp.mailfrom=pbarker.dev; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=pbarker.dev
 X-IronPort-AV: E=Sophos;i="6.11,166,1725289200"; 
-   d="scan'208";a="224347959"
+   d="scan'208";a="224347962"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Oct 2024 01:09:34 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 01 Oct 2024 01:09:35 +0900
 Received: from GBR-5CG2373LKG.adwin.renesas.com (unknown [10.226.93.43])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EB0034015135;
-	Tue,  1 Oct 2024 01:09:16 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 586474015141;
+	Tue,  1 Oct 2024 01:09:31 +0900 (JST)
 From: Paul Barker <paul@pbarker.dev>
 To: Sergey Shtylyov <s.shtylyov@omp.ru>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -33,9 +33,9 @@ Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
 	netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [net-next PATCH 04/11] net: ravb: Combine if conditions in RX csum validation
-Date: Mon, 30 Sep 2024 17:08:38 +0100
-Message-Id: <20240930160845.8520-5-paul@pbarker.dev>
+Subject: [net-next PATCH 07/11] net: ravb: Simplify UDP TX checksum offload
+Date: Mon, 30 Sep 2024 17:08:41 +0100
+Message-Id: <20240930160845.8520-8-paul@pbarker.dev>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240930160845.8520-1-paul@pbarker.dev>
 References: <20240930160845.8520-1-paul@pbarker.dev>
@@ -49,40 +49,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-We can merge the two if conditions on skb_is_nonlinear(). Since
-skb_frag_size_sub() and skb_trim() do not free memory, it is still safe
-to access the trimmed bytes at the end of the packet after these calls.
+The GbEth IP will pass through a null UDP checksum without asserting any
+error flags so we do not need to resort to software checksum calculation
+in this case.
 
 Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index f3913c164161..1dd2152734b0 100644
+index 9350ca10ab22..ae0268f2eb04 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -769,18 +769,15 @@ static void ravb_rx_csum_gbeth(struct sk_buff *skb)
- 		last_frag = &shinfo->frags[shinfo->nr_frags - 1];
- 		hw_csum = skb_frag_address(last_frag) +
- 			  skb_frag_size(last_frag);
-+		skb_frag_size_sub(last_frag, 2 * sizeof(__sum16));
- 	} else {
- 		hw_csum = skb_tail_pointer(skb);
-+		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
+@@ -2075,20 +2075,12 @@ static bool ravb_can_tx_csum_gbeth(struct sk_buff *skb)
+ 
+ 	switch (ip->protocol) {
+ 	case IPPROTO_TCP:
+-		break;
+ 	case IPPROTO_UDP:
+-		/* If the checksum value in the UDP header field is 0, TOE does
+-		 * not calculate checksum for UDP part of this frame as it is
+-		 * optional function as per standards.
+-		 */
+-		if (udp_hdr(skb)->check == 0)
+-			return false;
+-		break;
++		return true;
++
+ 	default:
+ 		return false;
  	}
- 
- 	hw_csum -= sizeof(__sum16);
- 	csum_proto = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
- 
--	if (skb_is_nonlinear(skb))
--		skb_frag_size_sub(last_frag, 2 * sizeof(__sum16));
--	else
--		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
 -
- 	if (!csum_proto)
- 		skb->ip_summed = CHECKSUM_UNNECESSARY;
+-	return true;
  }
+ 
+ /* Packet transmit function for Ethernet AVB */
 -- 
 2.43.0
 
