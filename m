@@ -1,24 +1,24 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EE6191F6B;
-	Mon, 30 Sep 2024 16:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA2219309C;
+	Mon, 30 Sep 2024 16:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727712569; cv=none; b=CM1dlI1gMVvuIRbkFY+YonBh8CiCZBZpT82rrZ88rJmQAuuO7ENzSugoyAUsveGYQQS/KCzSHvRJyhU0DLWsyJUb5WFdJ8DM+dhyhrD/Q8XYEE0cJBiEjTnI2Lr31quWCM1ULm9x753JNLBJ2IM914L8eu7mW8qCEaVS7neEMTY=
+	t=1727712569; cv=none; b=Xz/DE/wnOLpS+0LFZ3HCrhw5aw9JeP+mO8nhUmLGKS2f9cEe7MgiIryCD224XHV5g1NgMmdsj/AoHU1nUF9KS0lnUIzsgyaaRPjQ0dUlPODpzHx68yapN6zBJDMEFchciY/3CT8SSG6pB0TDRuOqqu5TBdTGKUk14cR5e89qJIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727712569; c=relaxed/simple;
-	bh=u4YF1e11CPAbUSMc2KCNJi1M7BvEl88Iop1muAvdQc0=;
+	bh=GzmTAqGiA1JIN0S7y4kJ5+tKoxXPYz/HRSBLWMDxsG8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E7RuPrQIfi5PuIVy5RcEbjWacgWqxvMU8EBIO5kwfA6pFRneGjxFHqw8W6TAuMM8a3wSY8Ebwmpy/hNenEg/0kqq5rSZ8u8o0BPiQ84oAOn8JjDqV+QF4nYe8fAwqj+2MIib/bqSyT/RxN1+av8AyzfjsoY6muS/s6SWAv6bqOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev; spf=fail smtp.mailfrom=pbarker.dev; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=CWZ0UdSR7EbxUP8NK7G872OV0kp3rISjr2qvjZYeOPvzkHIc3PFTwO1GXK7gx5GqJBCWjoIWywp4tDKA7beOnTBt1eQmfYU0TNcYeoVDFa2GmPVgmh0NIgiFhTHR7FqFTB0Q53UfeC5Q3odSdh9PPlvOl8R5q7p/pwJHierCPfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev; spf=fail smtp.mailfrom=pbarker.dev; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=pbarker.dev
 X-IronPort-AV: E=Sophos;i="6.11,166,1725289200"; 
-   d="scan'208";a="224347950"
+   d="scan'208";a="220371951"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Oct 2024 01:09:25 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 01 Oct 2024 01:09:24 +0900
 Received: from GBR-5CG2373LKG.adwin.renesas.com (unknown [10.226.93.43])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B56394015141;
-	Tue,  1 Oct 2024 01:09:21 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 21E8140156B5;
+	Tue,  1 Oct 2024 01:09:11 +0900 (JST)
 From: Paul Barker <paul@pbarker.dev>
 To: Sergey Shtylyov <s.shtylyov@omp.ru>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -33,9 +33,9 @@ Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
 	netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [net-next PATCH 05/11] net: ravb: Simplify types in RX csum validation
-Date: Mon, 30 Sep 2024 17:08:39 +0100
-Message-Id: <20240930160845.8520-6-paul@pbarker.dev>
+Subject: [net-next PATCH 03/11] net: ravb: Drop IP protocol check from RX csum verification
+Date: Mon, 30 Sep 2024 17:08:37 +0100
+Message-Id: <20240930160845.8520-4-paul@pbarker.dev>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240930160845.8520-1-paul@pbarker.dev>
 References: <20240930160845.8520-1-paul@pbarker.dev>
@@ -49,68 +49,26 @@ Content-Transfer-Encoding: 8bit
 
 From: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-The HW checksum value is used as a 16-bit flag, it is zero when the
-checksum has been validated and non-zero otherwise. Therefore we don't
-need to treat this as an actual __wsum type or call csum_unfold(), we
-can just use a u16 pointer.
+We do not need to confirm that the protocol is IPv4. If the hardware
+encounters an unsupported protocol, it will set the checksum value to
+0xFFFF.
 
 Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 30 +++++++++++-------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 1dd2152734b0..9350ca10ab22 100644
+index f1b487152555..f3913c164161 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -749,12 +749,11 @@ static void ravb_get_tx_tstamp(struct net_device *ndev)
- static void ravb_rx_csum_gbeth(struct sk_buff *skb)
- {
- 	struct skb_shared_info *shinfo = skb_shinfo(skb);
--	__wsum csum_proto;
--	skb_frag_t *last_frag;
--	u8 *hw_csum;
-+	size_t csum_len;
-+	u16 *hw_csum;
+@@ -781,8 +781,7 @@ static void ravb_rx_csum_gbeth(struct sk_buff *skb)
+ 	else
+ 		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
  
--	/* The hardware checksum status is contained in sizeof(__sum16) * 2 = 4
--	 * bytes appended to packet data.
-+	/* The hardware checksum status is contained in 4 bytes appended to
-+	 * packet data.
- 	 *
- 	 * For ipv4, the first 2 bytes are the ip header checksum status. We can
- 	 * ignore this as it will always be re-checked in inet_gro_receive().
-@@ -762,23 +761,22 @@ static void ravb_rx_csum_gbeth(struct sk_buff *skb)
- 	 * The last 2 bytes are the protocol checksum status which will be zero
- 	 * if the checksum has been validated.
- 	 */
--	if (unlikely(skb->len < sizeof(__sum16) * 2))
-+	csum_len = sizeof(*hw_csum) * 2;
-+	if (unlikely(skb->len < csum_len))
- 		return;
- 
- 	if (skb_is_nonlinear(skb)) {
--		last_frag = &shinfo->frags[shinfo->nr_frags - 1];
--		hw_csum = skb_frag_address(last_frag) +
--			  skb_frag_size(last_frag);
--		skb_frag_size_sub(last_frag, 2 * sizeof(__sum16));
-+		skb_frag_t *last_frag = &shinfo->frags[shinfo->nr_frags - 1];
-+
-+		hw_csum = (u16 *)(skb_frag_address(last_frag) +
-+				  skb_frag_size(last_frag));
-+		skb_frag_size_sub(last_frag, csum_len);
- 	} else {
--		hw_csum = skb_tail_pointer(skb);
--		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
-+		hw_csum = (u16 *)skb_tail_pointer(skb);
-+		skb_trim(skb, skb->len - csum_len);
- 	}
- 
--	hw_csum -= sizeof(__sum16);
--	csum_proto = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
--
--	if (!csum_proto)
-+	if (!*--hw_csum)
+-	/* TODO: IPV6 Rx checksum */
+-	if (skb->protocol == htons(ETH_P_IP) && !csum_proto)
++	if (!csum_proto)
  		skb->ip_summed = CHECKSUM_UNNECESSARY;
  }
  
