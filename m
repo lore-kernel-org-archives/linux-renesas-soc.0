@@ -1,148 +1,119 @@
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707911991D3;
-	Mon, 30 Sep 2024 19:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75998194C92;
+	Mon, 30 Sep 2024 19:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727723494; cv=none; b=kg5+OqKwySpobOF6myYDrPUBoW8jyA0ez6LmGF17X4v8jpfY+20tpNyzvlWK5NTmt53j6889w8oARoEVcsu0FZP4YNG9wrCeA5uCWLv570VSQ64de8jPnJmXb4WGsQwkn11NtyZDyWFBA5v+ON0n63zV/As4K53n8wY6Rsg8sEY=
+	t=1727723695; cv=none; b=nmm8w0i7UeNIo/OOo5sMVgsftoIVOyh9qs/Ec4E39fde7iTcaMMy/hCN6ys/el2adFuyNDK5hohgGZyydvjDm3Yx9ecYQQrOmUMBbvTnsvnK0a9Bv3P0iWvw3o9ZErM/zuCRBYG54iBEIOWIc6MsaEQ9PZfHlIyV/wQhkvHJF1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727723494; c=relaxed/simple;
-	bh=nlN3tNCZ6HWT3Bpw4JsI9Ww2HIUiOECQXGJjadRjQlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rkH5EMF74fSSs9zk0H9lJZIExe7NhCt71mHGPOi1MakZKR5BJ8BaxFJnlhjJxiRnmaeI1h3cvNcIXr4PPpOJ0LKQ1+HoqmD469WykEI2QVk+qedQST6YbwehJqsH1rnMPSv1KAALAgldm4vs/u9/xKKTU5c4NjnCKl0x1RIFYqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
- 2024 22:11:17 +0300
-Message-ID: <b4707880-2be4-4132-a3e1-8b104b89828c@omp.ru>
-Date: Mon, 30 Sep 2024 22:11:17 +0300
+	s=arc-20240116; t=1727723695; c=relaxed/simple;
+	bh=yPPWd8LSLMPsco9pid8gUD9uR0sV8t8Iz+vJoaDxXpQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AQ2oWkCC5DUBZlDyUq2tEmlti8zZ09eWgcr7dvPiGBSo5qZg4JUmVjLTD+gJ602/wkk8e57xExphFgBgbvRTcNEfH/d6BbzwiS1lPKtNycgixfYbMaBwTZw/XLP0HYrhCiwIUGEE8CnLPKJDWwQ/unmBveZd9letIQPDcYdKS/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqWvpOiL; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqWvpOiL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03108C4CEC7;
+	Mon, 30 Sep 2024 19:14:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727723695;
+	bh=yPPWd8LSLMPsco9pid8gUD9uR0sV8t8Iz+vJoaDxXpQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jqWvpOiLHHYA8d2epXFWjWXbZbJZV40SDaFwKv+tRZjpZNJlkX7BdQNdlbQGxUtK+
+	 1+Cye02uzLaVUM38omXZqQQo6QzqdTKoKwTFI0+YhnVoO0c7NKMDPoYAwGoEIY5frg
+	 RY7KrbmuZMjYg3JJqcVPOY3rM2zPdqM61xvPNEPuIvEMmiXjIxpm4Yp9xdB2UdlAOj
+	 DJlJNCFrRxhNH8cqFJWZaAKRRZM0R7K3SY3JSP0NHa07yBs0nt93s+owvnCe4WmYqH
+	 TMN2TBk0M7AVu3fM72tojiGZKf+Z5vEu61d1Esic8jn8pBY0MJCq+k/LMUJqL8otGi
+	 dOEiQy6STUyYQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1svLrA-00GXWp-SB;
+	Mon, 30 Sep 2024 20:14:52 +0100
+Date: Mon, 30 Sep 2024 20:14:52 +0100
+Message-ID: <86frph6jir.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	"linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+In-Reply-To: <TYCPR01MB12093A2984117267AC18D679CC2762@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+References: <20240930145539.357573-1-fabrizio.castro.jz@renesas.com>
+	<87ldz9uomz.wl-maz@kernel.org>
+	<TYCPR01MB12093A2984117267AC18D679CC2762@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH 05/11] net: ravb: Simplify types in RX csum
- validation
-To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240930160845.8520-1-paul@pbarker.dev>
- <20240930160845.8520-6-paul@pbarker.dev>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20240930160845.8520-6-paul@pbarker.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 18:54:28
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 188102 [Sep 30 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
- d90443ea3cdf6e421a9ef5a0a400f1251229ba23
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/30/2024 18:58:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 3:37:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: fabrizio.castro.jz@renesas.com, tglx@linutronix.de, geert+renesas@glider.be, prabhakar.mahadev-lad.rj@bp.renesas.com, linux-kernel@vger.kernel.org, Chris.Paterson2@renesas.com, biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 9/30/24 19:08, Paul Barker wrote:
-
-> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+On Mon, 30 Sep 2024 17:36:20 +0100,
+Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
 > 
-> The HW checksum value is used as a 16-bit flag, it is zero when the
-
-   I think I prefer s/HW/hardware/ but there's no hard feelings... :-)
-
-> checksum has been validated and non-zero otherwise. Therefore we don't
-> need to treat this as an actual __wsum type or call csum_unfold(), we
-> can just use a u16 pointer.
+> Hi Marc,
 > 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-[...]
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 1dd2152734b0..9350ca10ab22 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-[...]
-> @@ -762,23 +761,22 @@ static void ravb_rx_csum_gbeth(struct sk_buff *skb)
->  	 * The last 2 bytes are the protocol checksum status which will be zero
->  	 * if the checksum has been validated.
->  	 */
-> -	if (unlikely(skb->len < sizeof(__sum16) * 2))
-> +	csum_len = sizeof(*hw_csum) * 2;
+> Thanks for your feedback.
+> 
+> > From: Marc Zyngier <maz@kernel.org>
+> > Sent: Monday, September 30, 2024 4:50 PM
+> > To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+> > 
+> > On Mon, 30 Sep 2024 15:55:39 +0100,
+> > Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
+> > >
+> > > rzg2l_irqc_common_init calls of_find_device_by_node, but the
+> > > corresponding put_device call is missing.
+> > >
+> > > Make sure we call put_device both when failing and when succeeding.
+> > 
+> > What sort of lifetime are you trying to enforce?
+> 
+> Function rzg2l_irqc_common_init uses pdev->dev until its very end.
+> My understanding is that we should decrement the reference counter
+> once we are fully done with it. Is my understanding correct?
 
-   Could've been done by an initializer instead?
+"done with it" is what scares me. Specially when I see code like this:
 
-> +	if (unlikely(skb->len < csum_len))
->  		return;
->  
->  	if (skb_is_nonlinear(skb)) {
-> -		last_frag = &shinfo->frags[shinfo->nr_frags - 1];
-> -		hw_csum = skb_frag_address(last_frag) +
-> -			  skb_frag_size(last_frag);
-> -		skb_frag_size_sub(last_frag, 2 * sizeof(__sum16));
-> +		skb_frag_t *last_frag = &shinfo->frags[shinfo->nr_frags - 1];
+	rzg2l_irqc_data = devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_data), GFP_KERNEL);
+	if (!rzg2l_irqc_data)
+		return -ENOMEM;
 
-   Could've been done in the previous patch...
+	rzg2l_irqc_data->irqchip = irq_chip;
 
-> +
-> +		hw_csum = (u16 *)(skb_frag_address(last_frag) +
-> +				  skb_frag_size(last_frag));
-> +		skb_frag_size_sub(last_frag, csum_len);
->  	} else {
-> -		hw_csum = skb_tail_pointer(skb);
-> -		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
-> +		hw_csum = (u16 *)skb_tail_pointer(skb);
-> +		skb_trim(skb, skb->len - csum_len);
->  	}
->  
-> -	hw_csum -= sizeof(__sum16);
-> -	csum_proto = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
-> -
-> -	if (!csum_proto)
-> +	if (!*--hw_csum)
+	rzg2l_irqc_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
+	if (IS_ERR(rzg2l_irqc_data->base))
+		return PTR_ERR(rzg2l_irqc_data->base);
 
-   Hm, you lost get_unaligned_le16() here. The checksum can be anywhere,
-unaligned too...
+If you drop the reference on the device, you are allowing it to be
+removed, and everything the driver cares about to disappear behind its
+back.
 
-[...]
+I can't really see how this is safe, because in general, removing an
+interrupt controller driver from the system is a pretty bad idea, and
+I'm worried that's you are implicitly enabling.
 
-MBR, Sergey
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
