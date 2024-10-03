@@ -1,38 +1,38 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F74E13D278
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA571487E5
 	for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Oct 2024 10:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727949767; cv=none; b=Za/BszVbFfTATdQsOx20emB179sFTh10dIGkH0y7hLNvbkXEpXen+kp8lgTm+CRtbSSfPN0Qlv4jgEHoBD+9bo/7npzIf0bMT+ufFTOV+FaCtpO4Rv0+aPHfGY30VLej4Dh7Ifrt64fJbknS14029ZDsZMz13MdvGs3zQWMRzJo=
+	t=1727949767; cv=none; b=F6OkpbTU4/eoKATh7Xz+LnSQOtblLUCSWPBtgu493ulgd3StMzaPZRWIFFTzfbY/onVSt0yQxumRRH8CSaNZUl510e7DPCiGNakvi3bMGd9/augLsYJ4Qgd0hxbAE3m274zcOZCnbJt3WRDovyevADVKfYy3+OjdMcWWvm2Herw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727949767; c=relaxed/simple;
-	bh=1htXzSZZEPTg1BVc91Rik/bVQ3W36hkBfmf5GLYM0hM=;
+	bh=+TPp7UoE2gvhF28gv7mpambqVCaH/3UtV/sM495vzXI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Lcv0sd7J3gQhgP6nWVMfnkKGsycCxHSmGp/ierynF4clXj+JSSHVQtxIjpA6FEUB1Dg4IViVxAy75GdZgvCPrUJ86PaZoB9+ggygEwtGkx58StiAzRcN1G3kZ1fmtY9i95OuPq4yikA+Pl8+H7fnADO+f7UmbZGXHdDh0dEu0x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	 MIME-Version; b=pIiEgUCznVN4Qco1XIltVrCUH2vLKhlf4bn9c5V8zXfNPDTogvdrTiQyvCiGyJ3q7ZW+aOCOSp6vmw0NM4EatCh6baP/xUGZeJDXbkYb6F9IBPr5MIWm3j7fcQBiOfvawFnVonaT3syQzDax7z78aB7l8lJCqJJjdZj5LqabM/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:d4db:7463:4f08:3c82])
-	by xavier.telenet-ops.be with cmsmtp
-	id Km2c2D00d5K8SYz01m2cdY; Thu, 03 Oct 2024 12:02:37 +0200
+	by laurent.telenet-ops.be with cmsmtp
+	id Km2c2D00S5K8SYz01m2cRT; Thu, 03 Oct 2024 12:02:36 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swIfE-001BCr-DH;
+	id 1swIfE-001BCo-Cz;
 	Thu, 03 Oct 2024 12:02:36 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swIfM-0068YV-MY;
+	id 1swIfM-0068YS-Lv;
 	Thu, 03 Oct 2024 12:02:36 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL 2/3] arm64: renesas: defconfig: Enable RZ/V2H(P) Watchdog support
-Date: Thu,  3 Oct 2024 12:02:33 +0200
-Message-Id: <c235eb87c51d044939df0631fd5ad53723133e79.1727949523.git.geert+renesas@glider.be>
+Subject: [PATCH/LOCAL 1/3] arm64: renesas: defconfig: Disable Synopsys DesignWare I2C support
+Date: Thu,  3 Oct 2024 12:02:32 +0200
+Message-Id: <a46e8faac557755c2ab97582797b52224247fbe7.1727949523.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1727949523.git.geert+renesas@glider.be>
 References: <cover.1727949523.git.geert+renesas@glider.be>
@@ -44,26 +44,25 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable Renesas RZ/V2H(P) Watchdog support, as used on the RZ/V2H EVK
-board.
+Renesas ARM64 systems do not use Synopsys DesignWare I2C adapters.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/configs/renesas_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 4e3e138da69b2d8a..ee49b343313d958a 100644
+index d3cfbc4315632d89..4e3e138da69b2d8a 100644
 --- a/arch/arm64/configs/renesas_defconfig
 +++ b/arch/arm64/configs/renesas_defconfig
-@@ -201,6 +201,7 @@ CONFIG_RZG2L_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_RENESAS_WDT=y
- CONFIG_RENESAS_RZG2LWDT=y
-+CONFIG_RENESAS_RZV2HWDT=y
- CONFIG_MFD_BD9571MWV=y
- CONFIG_MFD_DA9062=y
- CONFIG_RZ_MTU3=y
+@@ -177,7 +177,6 @@ CONFIG_VIRTIO_CONSOLE=y
+ CONFIG_I2C_CHARDEV=y
+ CONFIG_I2C_MUX=y
+ CONFIG_I2C_MUX_PCA954x=y
+-CONFIG_I2C_DESIGNWARE_PLATFORM=y
+ CONFIG_I2C_RIIC=y
+ CONFIG_I2C_RZV2M=y
+ CONFIG_I2C_SH_MOBILE=y
 -- 
 2.34.1
 
