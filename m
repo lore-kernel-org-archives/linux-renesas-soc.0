@@ -1,155 +1,108 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2091DEFF3
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Oct 2024 12:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CCF157494;
+	Fri,  4 Oct 2024 13:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728046032; cv=none; b=UC/zAZFiut4woNM70snD3LNeChUDSOKUe9TBMvl6foNyR5kfCgrfH1BQsq0wPvHOd05MVxjo79fymePbqlAzrMY/RBDJwYfwLVnLfaCF0dxkFlHyY2ZW4vk/+7oXHpqd7P+bd29RRHgEqK6zGQ507QbNI+LDOUHLeCeDUxqLApU=
+	t=1728047089; cv=none; b=GBYcqgZetEBrdJG1LhXTDCYDHg4+h8G/vZ1If37aqH7wyJxKwvcBQYSnNMeFEyawroZjMtHyebRIkBuCJbZnnfksKaKM5hbMay1XCbH6DV2Lcq3/wxPqaD7/vq545Zjki9zALNfmhYN2W5udJieaEjDrJ3hgElgqRZW+Ycmd8x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728046032; c=relaxed/simple;
-	bh=HICytwfdtw7/SipI7fgXAgtcwBx5F7Vc9P9Ftg8QFHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BSVizekmvtyqECWc92cXZ8ceXjtlICbPvVw6Tg70xc92skFSPt8l9uY6WSg4qvK023ObcAaKeI4WSEpd30e5FxTJPYNnSIcZckgPJm/85PQxPNrEtHuprqw95ED3SKIJ8m82sAKJqp1y7/SnJkHVQjUUuQB67NuYrUkSoQWpUOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Zqe161aI; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Zqe161aI"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c87ab540b3so5700618a12.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Oct 2024 05:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728046029; x=1728650829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ihg4pApurv/9QiOH9PKnVypV3KdqAXrF75Gx9rMVrc4=;
-        b=Zqe161aItsdTe5YLuEhMysDmfNET+6Sc1udDxFAtna9AELL4NbzaAcZEmOifxZIalm
-         iA5rsLHIUFuVHhLqHWNXjcjT+maZx/UsdHxK89nriWCCXERUBfaEZnuVIKdZHKmj63hb
-         nBJsQdIUp9PmyI7e6we0ND8ahqABVXze/qmygjyOeBGvk6S3tupo4HRwDjbpFNzPYIhD
-         UW9OBomdw6vC8jcgnHA2BMXwEAj9QGDmg5j/kG7d5/UVQEtt5xdHLZxjwjnwtXqWV34J
-         qRkzEteGSlUC473cXE1JRr+98bCSz9yj3+aPUGDX9riUe8j3wVV8yGiPnI8H68zGGGxa
-         jq0w==
+	s=arc-20240116; t=1728047089; c=relaxed/simple;
+	bh=QdQmrZm7ty9NtOo3apEXaRMY4IeNfNBJqs1EKlHsObM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dNOugKUArHmjqFMwdILEeRIky41SIMwhfEV/hji6BzMesuSEQN5ee+WohHv6IMX2MbpvRSMcL4d0nbil9bihn+dv/bDF8cdPByvKIZDH6sgmwS+oAKZEofdbMNomBSu+qip5gPEzpk7HCw0J7vLf0ZMLLg992yDg9ODk7D01ais=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e2b9e945b9so15794817b3.0;
+        Fri, 04 Oct 2024 06:04:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728046029; x=1728650829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ihg4pApurv/9QiOH9PKnVypV3KdqAXrF75Gx9rMVrc4=;
-        b=Petmhe2G3xLFgEXOOLpNpoQgL5b9SVqmAAslgfaIOZlZPLcDzKf4lu6XfyBtTO00QO
-         Iotdh8M3jqTJOCsGI+GYKuv/mxpVgXEvYJdl93XmYp6qT846Km7Gp+s4/wBl01216VDZ
-         nDZ7WcwR7q343zJTxYDhrtUzXRVCduPpVMRjuvncgim/Hw4BYG9/ZYq15mye/J9DeLFS
-         xYMQlmobB7r/gKUZrH0Cb+uyDQtFcCTQ8su4vV+DJx2sGNtfTJLCwxYR9J0+t8EadzVw
-         CvJIGpVBl1U6J9twc16v+8ps1T94lgw1p754hapwzID/dRCGXC/chm5J7mbkRyS3C0ac
-         jEEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYlsJEx2xPr1yLUKyEp6z+l7jd4x5uO7NMear4LIF9XzuXHuoOGAd8bVLxas5l3Cewb0LsSdkIEahvjN477OmuAA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzokKATXpIvM2zEtpx/VGk4zH7FoBwskl9/1nWsx8otcGJ0Zwz7
-	xkLnq1xmpHTvH8tDlEBumegd6LolkMqwD5OcqE3V8fdXy/Hw7knfQowdUz2Pc3E=
-X-Google-Smtp-Source: AGHT+IHw5OL6aWlKerVdXesc8DNMCsK4I0j59/2VIZC5lLt+vP5Gw/EU7fPESgWG9X+4R8TXDNt5uw==
-X-Received: by 2002:a17:907:7e82:b0:a8d:4c83:d85d with SMTP id a640c23a62f3a-a990a04e25bmr678199666b.12.1728046028595;
-        Fri, 04 Oct 2024 05:47:08 -0700 (PDT)
-Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99102a6553sm223316166b.82.2024.10.04.05.47.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 05:47:08 -0700 (PDT)
-Date: Fri, 4 Oct 2024 14:47:06 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"biju.das.au" <biju.das.au@gmail.com>
-Subject: Re: [PATCH v21 3/4] pwm: Add support for RZ/G2L GPT
-Message-ID: <thfymed6o42wcascazgpvgq6zcqrjxloz3nt5h2pwypqgs4fra@zeyh36lcphia>
-References: <20240808131626.87748-1-biju.das.jz@bp.renesas.com>
- <20240808131626.87748-4-biju.das.jz@bp.renesas.com>
- <slpywmbmamr4kw4jg2vyydheop44ioladvvm52aocnojgjkcsy@3eoztwsej5mn>
- <TYCPR01MB113320CDF49DB0564A958241A86722@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1728047086; x=1728651886;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ruv3nAghpejgQO903vPRqxuDL21r+6DHIyGybH2hS5Y=;
+        b=OnHu/emV9lFMvzyXaXf982lhKHZNw1qvkeozTq7rJPW6e/Ro3O9W9i3dc+jN6OAVdI
+         F9rPiYOv+GG8R7QjR8K7+KT0T9axQj3ZUwggGVqGQRD/x/Fyw8ATJX+XlbPm32MeRNif
+         Rnlhe3MAHjtvHmEoKYoR8dB4aes3L3Qzgyj79lJYc1PUwwl9GotYuQJEZzC3qwoczJX+
+         +h+ko/k7oy8GzLDHRYzjsT4Yt0pHsHwcAv49Ih5vGK04Fni4Endw04dqFPspBKQkBVUN
+         p7j/9b3bF4ollAOJTZ7e8SLZb7rHzYyH6N9bZZjsAb5HKzb8is0COB7An3xHzTZfzyYU
+         V3Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCV0rwhg4qtpY3oXiS2h8LmZqdJRZmYMQWTCSfFG99Vd6WvT6mnYfPYRpg3XUKcd9/caGqmmHmIkM3m4kZE6l15/LcI=@vger.kernel.org, AJvYcCVSpXIxxRRqwkPjN2qsZAEqRZL9rGNEjjw+5qqY+2jQXjEabz3BnIzj71tqYyfQC23fBunjt99+bwpZyQ==@vger.kernel.org, AJvYcCWmAZJ4sXN/XZLEhdaMSuGsFcpOaYYLjxoJVlS2YArcFph7CAd99NPtw8lhGysBxsSkw5eUTZ90LRWNylnK@vger.kernel.org, AJvYcCWt6zFUimwSd3h8tfA4YcthYpLUtdb9NlzG5R7xCz5RcIg2aqKiOSWlz04QZXrhSGR7wOOTs+DMU4bx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0gnXD1KdwNqbfbwKRY1zES0G48x2um23RPm8XtSjZYJeJbBYu
+	6bH0Cu3131tj7eVnELpx3ribyG9rXg6Imp2idsPcgUj9cHVWTkKgS44Mdp9u
+X-Google-Smtp-Source: AGHT+IHeBegiMa3kc2BX0hxuJpZdwpgZ3fL2GPCvaRce1CTnp8xJB7w+v5P/xs8IIn43YCO07WIUoA==
+X-Received: by 2002:a05:690c:6610:b0:6e2:a962:d80f with SMTP id 00721157ae682-6e2c6fcb63emr23079957b3.8.1728047085955;
+        Fri, 04 Oct 2024 06:04:45 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bcfb3683sm6212807b3.126.2024.10.04.06.04.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 06:04:45 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e2772f7df9so17457017b3.2;
+        Fri, 04 Oct 2024 06:04:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULl1kcEYAmGisXnUyjn9JAy8tMYFepPMFqymIcIutnmlAz1lIGbBvLsj8RvDtjmYptQuvbwhQFj3Pr3w==@vger.kernel.org, AJvYcCUWTXSH+SVMdcUQFcTh5CfQtnLHOsgKviPRavUoIHatzTKIbX8ryl8Qv3vXyutD1ncejJlhSTIZ2oO68MhlSDfW/rw=@vger.kernel.org, AJvYcCVz7EkrM1dOE3/IFBTqUoBBqsr2KrTtTGIadYoOTW34quzKdeke8nIaJPPU7GEyujqUdRlrnjDcZkMFp1kJ@vger.kernel.org, AJvYcCWFdsMg9332B3FQtfGTcWD1TZcGnLbwADjHhAe4n6rfXMKlj+jpaWuXKYvx3hmsvj37sYuYqoJZRZV7@vger.kernel.org
+X-Received: by 2002:a05:690c:2a93:b0:6af:eaaf:2527 with SMTP id
+ 00721157ae682-6e2c7024d93mr17581667b3.18.1728047084814; Fri, 04 Oct 2024
+ 06:04:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s2ajehwltv5lgpne"
-Content-Disposition: inline
-In-Reply-To: <TYCPR01MB113320CDF49DB0564A958241A86722@TYCPR01MB11332.jpnprd01.prod.outlook.com>
-
-
---s2ajehwltv5lgpne
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20241004123658.764557-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241004123658.764557-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241004123658.764557-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Oct 2024 15:04:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV2MXE3XhRQuSxX1Du0Tu4d2ucigfZopVBJZ7tJL8mcVQ@mail.gmail.com>
+Message-ID: <CAMuHMdV2MXE3XhRQuSxX1Du0Tu4d2ucigfZopVBJZ7tJL8mcVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
+ schmitt and open drain properties
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Biju,
+On Fri, Oct 4, 2024 at 2:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> On the RZ/V2H(P) SoC we can configure the 'input-schmitt-{enable,disable}=
+'
+> , 'drive-open-drain' and 'drive-push-pull' of multiplexed pins. Update th=
+e
+> binding documentation to include these properties.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> Hi Rob,
+> I have dropped your Ack from v1 as I have updated the commit message and
+> included `drive-push-pull` property in v2.
+>
+> Cheers, Prabhakar
+>
+> v1->v2
+> - Added `drive-push-pull` property
 
-On Fri, Oct 04, 2024 at 09:53:08AM +0000, Biju Das wrote:
-> On Wed, Sep 25, Uwe Kleine-K=F6nig wrote:
-> > On Thu, Aug 08, 2024 at 02:16:19PM +0100, Biju Das wrote:
-> > > +static int rzg2l_gpt_request(struct pwm_chip *chip, struct pwm_device
-> > > +*pwm) {
-> > > +	struct rzg2l_gpt_chip *rzg2l_gpt =3D to_rzg2l_gpt_chip(chip);
-> > > +	u32 ch =3D RZG2L_GET_CH(pwm->hwpwm);
-> > > +
-> > > +	mutex_lock(&rzg2l_gpt->lock);
-> > > +	rzg2l_gpt->user_count[ch]++;
-> > > +	mutex_unlock(&rzg2l_gpt->lock);
-> >=20
-> > Please consider using guard(mutex)(&rzg2l_gpt->lock);
->=20
-> Agreed. expect rzg2l_gpt_apply() as it will cause
-> deadlock as rzg2l_gpt_enable acquires same lock.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.13.
 
-Note there is scoped_guard() if you don't want to hold the lock for the
-whole function but only for a block. Regarding rzg2l_gpt_apply() calling
-rzg2l_gpt_enable(): It might make sense to shift the semantic of
-rzg2l_gpt_enable() to expect the caller to hold the lock already. This
-way you won't release the lock just to allow a called function to retake
-it. This is usually also safer, consider someone manages to grab the
-lock in between.
-=20
-> > > +	 * clearing the flag will avoid errors during unbind.
-> > > +	 */
-> > > +	if (enabled && rzg2l_gpt->bootloader_enabled_channels[pwm->hwpwm])
-> > > +		rzg2l_gpt->bootloader_enabled_channels[pwm->hwpwm] =3D false;
-> >=20
-> > Hmm, not 100% sure, but I think if rzg2l_gpt_config() below fails, clea=
-ning this flag is wrong.
-> >=20
-> > Does rzg2l_gpt->bootloader_enabled_channels[pwm->hwpwm] =3D=3D true imp=
-ly enabled =3D=3D true? If so, the if
-> > condition can be simplified to just the right hand side of the &&. Then=
- even an unconditional
-> > assignment works, because
-> >=20
-> > 	rzg2l_gpt->bootloader_enabled_channels[pwm->hwpwm] =3D false;
-> >=20
-> > is a nop if the flag is already false.
->=20
-> I am planning to drop "bootloader_enabled_channels" based on your comment=
- in probe()
-> which simplifies the driver.
+Gr{oetje,eeting}s,
 
-If by saying "drop" you mean that you remove bootloader_enabled_channels
-completely from the driver, that is the wrong conclusion.
+                        Geert
 
-Best regards
-Uwe
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
---s2ajehwltv5lgpne
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmb/48gACgkQj4D7WH0S
-/k6NaggAiQi3Y76HgjjED3RCzql93qWlJLrzWhShgwCXJDxAol/sYWCNZ3uKFoA7
-lg84/KRGSKi+FAnh4ljqZkMCUHgggKttBxewS5PdEBgABPtmHf6QvFlbC6o3hX0G
-BoPeruYCePjnj6EvtwMNF+3me0rQvja6KLPAxlz2dLEhYKyO0p7kAUOfabYyX64M
-EUOJdxlQUiI3OZJMXUYejzIZlwmGCnWjlJxHfxYsBtz6QlX0VUzLG60JvG0bPTPH
-2OsNQFKbjGMR6+qWBJqBx6YOO0VKEDdmu2TafXQgfmRbRNJrP7EiaBS8c4kyt3qa
-IvXmgDDX46VvBnne6S/pn+031HL5qQ==
-=FXoC
------END PGP SIGNATURE-----
-
---s2ajehwltv5lgpne--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
