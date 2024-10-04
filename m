@@ -1,30 +1,30 @@
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED051215F6F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8545215F4F
 	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Oct 2024 13:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048169; cv=none; b=E3aAtyLm5qOnP9t6x7A4GzGa4CbB625b5YEt7SDWYzTYvFfk2anmP7fHeEX7cbKlyIShikldhULifoULrr/yPZrVCcxC4EykCH6laxe0NQ/sQ3mQqMCq9+Y6VaMhUAXbRN8+qRPSD5Fe0f3cd+Z/rVQcuHOA/Kek/5ujW0N3Nx8=
+	t=1728048169; cv=none; b=f2pa/WE4k5cIEzKxEHFtiJkYMmEdmwLaGGGrDUorKMT3xGjkD2GGa5vXgIuV/zCttaAoxPw4abg5isXqphf4bBJrm0Dr4ib1Qy+jMQBdNG2hoX4vmo8lqQTARGyKVG/4RNJcij31I4OtZYdvYyFWUV6OmDTAPxigq0o4fl0389Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728048169; c=relaxed/simple;
-	bh=TaHAlMVbe4ttfgir7gaZkpIdYpdq0Wy4/hRIBWI0qKw=;
+	bh=JGqeVPHispg4Q2MBdzGCb0XEQ6IIAnxQFi+rVbt4WKA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=glzdPjVyZnEi8PejJdeH08TKnyxGjapHXf7W8Tni1oejibh/AaJGggzpEDUf/2G1/on6DMs4PWAnDbPIIO7U63len8XC2brWU647q88K5LY8PATVOVsURajNw6zGUnKQDJPy3+6ejrwADiliarRSeFqng/n/Phoz2TDwlsrOh20=
+	 MIME-Version; b=W7gv45CnGYpOw7aIKVwusRdNN0DPUDVUt7Fil933Nz1G21vijnGIqpImYn3SHnT0GYtNZ5KlBFO9kkx/S0XCecKVdJGkM9e33MfbZACDtgjrJbj4DOSzj6XKKkTMbWTKMvUvTSoQv7OgnxqWqGGF9ffbBXxpIm6r5CMORMIViQ8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:5518:aeb:d9c0:fc7c])
 	by michel.telenet-ops.be with cmsmtp
-	id LDNc2D00A4NXpdT06DNce2; Fri, 04 Oct 2024 15:22:37 +0200
+	id LDNc2D0034NXpdT06DNcdz; Fri, 04 Oct 2024 15:22:37 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swiGJ-001ElS-Vc;
+	id 1swiGJ-001ElI-NU;
 	Fri, 04 Oct 2024 15:22:36 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swhnu-006yUk-Lv;
+	id 1swhnu-006yUz-Pp;
 	Fri, 04 Oct 2024 14:53:06 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -33,9 +33,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 14/20] arm64: dts: renesas: Use interrupts-extended for I/O expanders
-Date: Fri,  4 Oct 2024 14:52:56 +0200
-Message-Id: <8409a184db92b8d03d95beffde2cc9a9752366a9.1728045620.git.geert+renesas@glider.be>
+Subject: [PATCH 17/20] arm64: dts: renesas: Use interrupts-extended for video decoders
+Date: Fri,  4 Oct 2024 14:52:59 +0200
+Message-Id: <4ee2e3e1e0e174782bd4d2af44bb6150d24af551.1728045620.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1728045620.git.geert+renesas@glider.be>
 References: <cover.1728045620.git.geert+renesas@glider.be>
@@ -52,113 +52,70 @@ interrupts.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi  |  3 +--
- arch/arm64/boot/dts/renesas/ebisu.dtsi               |  3 +--
- .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts   |  3 +--
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi             | 12 ++++--------
- .../boot/dts/renesas/white-hawk-cpu-common.dtsi      |  3 +--
- 5 files changed, 8 insertions(+), 16 deletions(-)
+ arch/arm64/boot/dts/renesas/ebisu.dtsi                     | 5 ++---
+ .../dts/renesas/r8a77970-eagle-function-expansion.dtso     | 7 +++----
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi           | 5 ++---
+ 3 files changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index 5a15a956702a6be8..4a9d20249eaa9bc0 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -130,8 +130,7 @@ pca9654: gpio@20 {
- 	pca9654_lte: gpio@21 {
- 		compatible = "onnn,pca9654";
- 		reg = <0x21>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-+		interrupts-extended = <&gpio5 25 IRQ_TYPE_EDGE_FALLING>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		gpio-controller;
 diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
-index 4d16b8f0eae5474b..54ebffcd82d4337b 100644
+index b4e0347d3617a83e..ab8283656660059a 100644
 --- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
 +++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
-@@ -392,8 +392,7 @@ io_expander: gpio@20 {
- 		reg = <0x20>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
--		interrupt-parent = <&gpio2>;
--		interrupts = <22 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio2 22 IRQ_TYPE_LEVEL_LOW>;
- 	};
+@@ -434,10 +434,9 @@ video-receiver@70 {
+ 		compatible = "adi,adv7482";
+ 		reg = <0x70>;
  
- 	hdmi-encoder@39 {
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-index b1d035ca4d97a51a..58eabcc7e0e07f49 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-@@ -248,8 +248,7 @@ &i2c0 {
- 	io_expander_a: gpio@20 {
- 		compatible = "onnn,pca9654";
- 		reg = <0x20>;
 -		interrupt-parent = <&gpio0>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio0 0 IRQ_TYPE_LEVEL_LOW>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		interrupt-controller;
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 5a5dd5ecb75e0e7c..f7330b2262b8af0c 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -235,8 +235,7 @@ gpio_exp_74: gpio@74 {
- 		#gpio-cells = <2>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
++		interrupts-extended = <&gpio0 7 IRQ_TYPE_LEVEL_LOW>,
++				      <&gpio0 17 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-names = "intrq1", "intrq2";
+-		interrupts = <7 IRQ_TYPE_LEVEL_LOW>,
+-			     <17 IRQ_TYPE_LEVEL_LOW>;
+ 
+ 		ports {
+ 			#address-cells = <1>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle-function-expansion.dtso b/arch/arm64/boot/dts/renesas/r8a77970-eagle-function-expansion.dtso
+index 3aa243c5f04c8022..9450d8ac94cbe977 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle-function-expansion.dtso
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle-function-expansion.dtso
+@@ -82,8 +82,7 @@ hdmi-decoder@4c {
+ 		compatible = "adi,adv7612";
+ 		reg = <0x4c>, <0x50>, <0x52>, <0x54>, <0x56>, <0x58>;
+ 		reg-names = "main", "afe", "rep", "edid", "hdmi", "cp";
+-		interrupt-parent = <&gpio3>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		interrupts-extended = <&gpio3 2 IRQ_TYPE_LEVEL_LOW>;
+ 		default-input = <0>;
+ 
+ 		ports {
+@@ -114,8 +113,8 @@ video-receiver@70 {
+ 		       0x60 0x61 0x62 0x63 0x64 0x65>;
+ 		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
+ 			    "infoframe", "cbus", "cec", "sdp", "txa", "txb" ;
+-		interrupt-parent = <&gpio3>;
+-		interrupts = <03 IRQ_TYPE_LEVEL_LOW>, <04 IRQ_TYPE_LEVEL_LOW>;
++		interrupts-extended = <&gpio3 3 IRQ_TYPE_LEVEL_LOW>,
++				      <&gpio3 4 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-names = "intrq1", "intrq2";
+ 
+ 		ports {
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 08f4e35c414ebbcf..269cda6fae21de70 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -544,10 +544,9 @@ video-receiver@70 {
+ 		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
+ 			    "infoframe", "cbus", "cec", "sdp", "txa", "txb" ;
+ 
 -		interrupt-parent = <&gpio6>;
--		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
-+		interrupts-extended = <&gpio6 8 IRQ_TYPE_EDGE_FALLING>;
++		interrupts-extended = <&gpio6 30 IRQ_TYPE_LEVEL_LOW>,
++				      <&gpio6 31 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-names = "intrq1", "intrq2";
+-		interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
+-			     <31 IRQ_TYPE_LEVEL_LOW>;
  
- 		audio-out-off-hog {
- 			gpio-hog;
-@@ -296,8 +295,7 @@ gpio_exp_75: gpio@75 {
- 		#gpio-cells = <2>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
--		interrupt-parent = <&gpio6>;
--		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-+		interrupts-extended = <&gpio6 4 IRQ_TYPE_EDGE_FALLING>;
- 	};
- };
- 
-@@ -317,8 +315,7 @@ gpio_exp_76: gpio@76 {
- 		#gpio-cells = <2>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
--		interrupt-parent = <&gpio7>;
--		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+		interrupts-extended = <&gpio7 3 IRQ_TYPE_EDGE_FALLING>;
- 	};
- 
- 	gpio_exp_77: gpio@77 {
-@@ -328,8 +325,7 @@ gpio_exp_77: gpio@77 {
- 		#gpio-cells = <2>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
-+		interrupts-extended = <&gpio5 9 IRQ_TYPE_EDGE_FALLING>;
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi b/arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi
-index 209cba75adec6d6c..337ba68342c475b5 100644
---- a/arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi
-@@ -215,8 +215,7 @@ &i2c0 {
- 	io_expander_a: gpio@20 {
- 		compatible = "onnn,pca9654";
- 		reg = <0x20>;
--		interrupt-parent = <&gpio0>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio0 0 IRQ_TYPE_LEVEL_LOW>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		interrupt-controller;
+ 		ports {
+ 			#address-cells = <1>;
 -- 
 2.34.1
 
