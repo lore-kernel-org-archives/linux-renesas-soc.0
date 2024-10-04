@@ -1,30 +1,30 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D16215F4F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76684215F43
 	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Oct 2024 13:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048165; cv=none; b=eHw0Yhuspl1OMqgNa4AS89INK2UPRKWyokNERK/rNmZeJUs2Nyfr6K9bCT3ZYUEJ+MrmbaFwMKqtvDW30HZH4lGibGTx6W6Z0l7tPPYZRhn0ldWDRQ0pE77J8z9y1f7RKGpEc5J8k/HXQK25g6nU/UXhtloBP2UqFxua3rQx7Ks=
+	t=1728048165; cv=none; b=pPWmPgiPhedJcW5lqoWhnz4fJ8jwVMuZydyMnACkkLdHcZg5zXZxjAgO/2Fo3bjWZYqZAeY48O74zj4gQGejspdpcqUdYxJ66YKF69CoNVMBbS2QF3jmOxhdR8BztHCEmukn+jJFlWtErFdDHkx0bFINfYDZ6Ss17ya7KUjJWjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728048165; c=relaxed/simple;
-	bh=2Ct/W+/Fv9oGCuBYd22Dz0JWJDHs6dvBmldQc/twBK0=;
+	bh=NnkVJOPLzPKaN9z9gyX044fIa3hBuJnK2zLgF9MC+ho=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fvjsxa2b6aht9AmFYlUi5BgdurwE4NWwuzxPfSUOPv2bFtzTCJFmX0lmClOWgX9Mc1ktzytJ3+b8NEfrj/7MK/t3mLQE3AFXJJSAkD/zCk2OQ7esqgjiPv+5ESYNJV/PNJMPBRNvC5dTctKPEmQHLscfbqPStPTepnGar7hF/BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	 MIME-Version; b=delkn0ESar8wJKPvFaEeNFPD9U4TqIgaRfVM1Ux4+SuLlsNSkrcwnBPHk56cw7+RAcw0NT72OCoL+5uvaq+1O2y05QFRy1B0ogAtP7vO1L/EmQokmbDyEAHkauqKqOdmrXouJ7R6j2XvEPpcEHVomNwPkmCGGLFu2GmFiMevniA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:5518:aeb:d9c0:fc7c])
-	by albert.telenet-ops.be with cmsmtp
-	id LDNc2D0064NXpdT06DNcJW; Fri, 04 Oct 2024 15:22:36 +0200
+	by andre.telenet-ops.be with cmsmtp
+	id LDNc2D0014NXpdT01DNcuP; Fri, 04 Oct 2024 15:22:36 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swiGJ-001ElL-Ph;
+	id 1swiGJ-001ElO-S1;
 	Fri, 04 Oct 2024 15:22:36 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swhnu-006yUu-OW;
+	id 1swhnu-006yUp-NH;
 	Fri, 04 Oct 2024 14:53:06 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -33,9 +33,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 16/20] arm64: dts: renesas: Use interrupts-extended for USB muxes
-Date: Fri,  4 Oct 2024 14:52:58 +0200
-Message-Id: <b65bc4b90074f13f7b36e61a8ea47afa07eb1221.1728045620.git.geert+renesas@glider.be>
+Subject: [PATCH 15/20] arm64: dts: renesas: Use interrupts-extended for PMICs
+Date: Fri,  4 Oct 2024 14:52:57 +0200
+Message-Id: <14948b763694f3e78e8c4af35fa9c17ec91b2997.1728045620.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1728045620.git.geert+renesas@glider.be>
 References: <cover.1728045620.git.geert+renesas@glider.be>
@@ -52,38 +52,53 @@ interrupts.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 3 +--
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts           | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/ebisu.dtsi           | 3 +--
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 3 +--
+ arch/arm64/boot/dts/renesas/ulcb.dtsi            | 3 +--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index 9436b249ebdd9dcd..fd1dd2875644dd60 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -448,8 +448,7 @@ touchscreen@26 {
- 	hd3ss3220@47 {
- 		compatible = "ti,hd3ss3220";
- 		reg = <0x47>;
--		interrupt-parent = <&gpio6>;
--		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio6 4 IRQ_TYPE_LEVEL_LOW>;
+diff --git a/arch/arm64/boot/dts/renesas/ebisu.dtsi b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+index 54ebffcd82d4337b..b4e0347d3617a83e 100644
+--- a/arch/arm64/boot/dts/renesas/ebisu.dtsi
++++ b/arch/arm64/boot/dts/renesas/ebisu.dtsi
+@@ -514,8 +514,7 @@ pmic: pmic@30 {
  
- 		ports {
- 			#address-cells = <1>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index 486688b789b8cd58..94d85273064e9bc8 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -208,8 +208,7 @@ &i2c0 {
- 	hd3ss3220@47 {
- 		compatible = "ti,hd3ss3220";
- 		reg = <0x47>;
--		interrupt-parent = <&gpio6>;
--		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio6 3 IRQ_TYPE_LEVEL_LOW>;
+ 		compatible = "rohm,bd9571mwv";
+ 		reg = <0x30>;
+-		interrupt-parent = <&intc_ex>;
+-		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupts-extended = <&intc_ex 0 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 		gpio-controller;
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index ca0b5c070ae57dce..08f4e35c414ebbcf 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -617,8 +617,7 @@ pmic: pmic@30 {
  
- 		ports {
- 			#address-cells = <1>;
+ 		compatible = "rohm,bd9571mwv";
+ 		reg = <0x30>;
+-		interrupt-parent = <&intc_ex>;
+-		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupts-extended = <&intc_ex 0 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 		gpio-controller;
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 4cf141a701c0625a..3d4a64d103b64bfa 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -247,8 +247,7 @@ pmic: pmic@30 {
+ 
+ 		compatible = "rohm,bd9571mwv";
+ 		reg = <0x30>;
+-		interrupt-parent = <&intc_ex>;
+-		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupts-extended = <&intc_ex 0 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 		gpio-controller;
 -- 
 2.34.1
 
