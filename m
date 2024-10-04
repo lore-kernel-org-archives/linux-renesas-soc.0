@@ -1,30 +1,30 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE242101AC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20E8215F59
 	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Oct 2024 13:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048167; cv=none; b=jqrHjxF+oIjf/2FVCNI1LBSyU80mmHJk9ORjmlzIpnKcnI4UU+EhQ3oV3ECNtXQ76rT3djouvHAt8SEBc4QBiyLbcTwHG/koHFPi5sEWQWBWWRXmiRUr21x3VhQEGhYlHDuQECTwaZUYmdPXNKUUnTpetcqLhqN2+WtDd3npgxs=
+	t=1728048167; cv=none; b=DSLE4b5bzs+rAesBxGVX0BamNllsPk9Mf/dJyiETVCH6s66b83/ST6ftNYX4yC0+Ssl97viUi3+Z4Xj1IppVImwAoPTTxEiFRUaeAWYEFEd4T6pfPEFukdeILp7O2MHkgy3E4QO/wyOPO41xVUZ25cstpWj19b5MryZ+nudVZFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728048167; c=relaxed/simple;
-	bh=iqhTVbqw4V3qc/FXdh+rx6p0ZfEao4i5X0+Y9Epcubs=;
+	bh=SmfQwYrr/4yQyUEMmjIXMkUpcZ+9PA2WLE9oN0f/0Qo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fdPUJ0PJeBTIpjgKEUADVpdKQ0B292hWvkettjzDMdupKkV+omMexws4cgCvuvY4LHhow8L99tln664l1gRE5Og3Khf7RSBJOTeOAskxX5aZI2cqGo9sDaW9qHgDNYxpV3ivCple6cQYCz5O5asxjXagwnVwZWcy5GFRXlqsXjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	 MIME-Version; b=oM3UIApSfJG2KlMHge97ESTJz5VxZfm8lqVs1a9ND/SsKE3WDNOFMDxkhtFn26t3gAKbDWrj6vPnYMpj2SNnnoJo1b8+q4B0KWgQUHimU8EKCutQWTGH4qzL32XQwSI8SAzVTHnCOmcLSjTJj1jLypU1de8B0vbTbU8oQ2kkQ7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:5518:aeb:d9c0:fc7c])
-	by albert.telenet-ops.be with cmsmtp
-	id LDNc2D00S4NXpdT06DNcJj; Fri, 04 Oct 2024 15:22:37 +0200
+	by xavier.telenet-ops.be with cmsmtp
+	id LDNd2D00D4NXpdT01DNdHF; Fri, 04 Oct 2024 15:22:37 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swiGK-001Ell-Hg;
-	Fri, 04 Oct 2024 15:22:36 +0200
+	id 1swiGL-001Em1-0j;
+	Fri, 04 Oct 2024 15:22:37 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swhnu-006yUL-F5;
+	id 1swhnu-006yU1-B2;
 	Fri, 04 Oct 2024 14:53:06 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -33,9 +33,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/20] ARM: dts: renesas: kzm9g: Use interrupts-extended for I/O expander
-Date: Fri,  4 Oct 2024 14:52:51 +0200
-Message-Id: <c77ffcd01d6e9e90cd1e5578c2af98c9ec6030c9.1728045620.git.geert+renesas@glider.be>
+Subject: [PATCH 05/20] ARM: dts: renesas: Use interrupts-extended for touchpanels
+Date: Fri,  4 Oct 2024 14:52:47 +0200
+Message-Id: <d081d986e3a2b695bc27dbe00aa0fb244a22ffdf.1728045620.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1728045620.git.geert+renesas@glider.be>
 References: <cover.1728045620.git.geert+renesas@glider.be>
@@ -48,27 +48,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Use the more concise interrupts-extended property to fully describe the
-interrupt.
+interrupts.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/renesas/iwg20d-q7-common.dtsi       | 3 +--
+ arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts | 3 +--
+ arch/arm/boot/dts/renesas/r8a7742-iwg21d-q7.dts       | 3 +--
+ arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts            | 3 +--
+ 4 files changed, 4 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm/boot/dts/renesas/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/renesas/iwg20d-q7-common.dtsi
+index 4351c5a02fa596de..2cc2908b48ca1b9f 100644
+--- a/arch/arm/boot/dts/renesas/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/renesas/iwg20d-q7-common.dtsi
+@@ -219,8 +219,7 @@ sgtl5000: codec@a {
+ 	touch: touchpanel@38 {
+ 		compatible = "edt,edt-ft5406";
+ 		reg = <0x38>;
+-		interrupt-parent = <&gpio2>;
+-		interrupts = <12 IRQ_TYPE_EDGE_FALLING>;
++		interrupts-extended = <&gpio2 12 IRQ_TYPE_EDGE_FALLING>;
+ 		vcc-supply = <&vcc_3v3_tft1>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
+index 9ec0f098bf6eb5d7..3d32cf068abc20f1 100644
+--- a/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts
+@@ -238,8 +238,7 @@ eeprom@50 {
+ 	touchscreen@55 {
+ 		compatible = "sitronix,st1232";
+ 		reg = <0x55>;
+-		interrupt-parent = <&irqpin1>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		interrupts-extended = <&irqpin1 2 IRQ_TYPE_LEVEL_LOW>;
+ 		pinctrl-0 = <&st1232_pins>;
+ 		pinctrl-names = "default";
+ 		gpios = <&pfc 166 GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm/boot/dts/renesas/r8a7742-iwg21d-q7.dts b/arch/arm/boot/dts/renesas/r8a7742-iwg21d-q7.dts
+index 64102b664055b475..6a8a0d2113b020c7 100644
+--- a/arch/arm/boot/dts/renesas/r8a7742-iwg21d-q7.dts
++++ b/arch/arm/boot/dts/renesas/r8a7742-iwg21d-q7.dts
+@@ -202,8 +202,7 @@ sgtl5000: codec@a {
+ 	touch: touchpanel@38 {
+ 		compatible = "edt,edt-ft5406";
+ 		reg = <0x38>;
+-		interrupt-parent = <&gpio0>;
+-		interrupts = <24 IRQ_TYPE_EDGE_FALLING>;
++		interrupts-extended = <&gpio0 24 IRQ_TYPE_EDGE_FALLING>;
+ 		/* GP1_29 is also shared with audio codec reset pin */
+ 		reset-gpios = <&gpio1 29 GPIO_ACTIVE_LOW>;
+ 		vcc-supply = <&vcc_3v3_tft1>;
 diff --git a/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts b/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
-index fe96ea07628779c6..ae7e68a44f493e1b 100644
+index 15d89c20618a16b7..fe96ea07628779c6 100644
 --- a/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
 +++ b/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
-@@ -308,8 +308,7 @@ &i2c3 {
- 	pcf8575: gpio@20 {
- 		compatible = "nxp,pcf8575";
- 		reg = <0x20>;
--		interrupt-parent = <&irqpin2>;
--		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+		interrupts-extended = <&irqpin2 3 IRQ_TYPE_EDGE_FALLING>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		interrupt-controller;
+@@ -296,8 +296,7 @@ &i2c1 {
+ 	touchscreen@55 {
+ 		compatible = "sitronix,st1232";
+ 		reg = <0x55>;
+-		interrupt-parent = <&irqpin1>;
+-		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
++		interrupts-extended = <&irqpin1 0 IRQ_TYPE_EDGE_FALLING>;
+ 	};
+ };
+ 
 -- 
 2.34.1
 
