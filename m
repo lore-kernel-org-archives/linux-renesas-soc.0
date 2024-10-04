@@ -1,30 +1,30 @@
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8D72141C1
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Oct 2024 13:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026892101AC
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Oct 2024 13:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048161; cv=none; b=RMcbfdub1eZNvMNoemB1JHN4FxPVm41wCU6MPgbfpeunuzRGBuJHCRn+xWQJPNST2XhM6tasEJ57NCRf4U3tqi1df8G/36+AJfScVl564cPPNptdxhULaL5nWlJ9pnMcc0lTYLJl6rrBkMdWfUom2rOP93xnqlUtNAV4Ix5UvpY=
+	t=1728048161; cv=none; b=ZOGNGG+a7eoGHR0CyZMg2YCoruMDiqNnYxiQwc6R1n0lRMVLTXGX31NOLt90LfaBC3UKb8B8NImKsh7MNmHrYkWkvNwnLMOt4cIzu/Oeo1J0cZen0qFTaYaH3tLj51q+iiAetNhhrhUPmghvJK5N9Cm4sr8vvrxkcP57idt172w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728048161; c=relaxed/simple;
-	bh=UTaXKNFcV5kJyka6FmennBYK3InD4FV80nrO2FLnDQ4=;
+	bh=lMMu+WORYW0px9ukDBaHFKXv7rJZP16fEMKRmKjMJSw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=akCYL6zDnvtD6L5I4G0N63qq42Xdo56joZQenjXDXHdS/aAgnpxZvD9sM0UgrBxpp8AygfVq4PCpaOcYEQR3gZdObn2j62epeoD9Zxnp/fQZkjkel6RGidsUr0mhphhePD0ayobLIAVHQJJnuXKFzf0LdJaIqM4lvvJFLDXK61U=
+	 MIME-Version; b=VbdPTqGbH0HbP9uBM9GYmnYQ9h2qbRETZoHO6+osCtj3qRU82Bw5v2b+DjH1kR1eb0iT/sX6LIdeJ4y71t1UdrHCyeNFqg6a5fz0lfPzBrW+BYzfM1uuC9q1BRQYt7oklv/PQuNUiqDA3E8TKlm4uJ+svd45SPbtJPRukuKUy6U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:5518:aeb:d9c0:fc7c])
 	by baptiste.telenet-ops.be with cmsmtp
-	id LDNd2D00E4NXpdT01DNdjq; Fri, 04 Oct 2024 15:22:37 +0200
+	id LDNb2D0094NXpdT01DNbjK; Fri, 04 Oct 2024 15:22:36 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swiGL-001Em8-7L;
-	Fri, 04 Oct 2024 15:22:37 +0200
+	id 1swiGJ-001El9-G5;
+	Fri, 04 Oct 2024 15:22:35 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swhnu-006yTr-8y;
+	id 1swhnu-006yVE-UF;
 	Fri, 04 Oct 2024 14:53:06 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -33,9 +33,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/20] ARM: dts: renesas: Use interrupts-extended for HDMI bridges
-Date: Fri,  4 Oct 2024 14:52:45 +0200
-Message-Id: <850317c7818b100f9afe026e80b6d685affe81a0.1728045620.git.geert+renesas@glider.be>
+Subject: [PATCH 20/20] arm64: dts: renesas: rzg3s-smarc: Use interrupts-extended for gpio-keys
+Date: Fri,  4 Oct 2024 14:53:02 +0200
+Message-Id: <6214cd8ed068e3fc60a7b972093e4d99cdc0be1a.1728045620.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1728045620.git.geert+renesas@glider.be>
 References: <cover.1728045620.git.geert+renesas@glider.be>
@@ -52,158 +52,43 @@ interrupts.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi            | 3 +--
- arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 3 +--
- arch/arm/boot/dts/renesas/r8a77470-iwg23s-sbc.dts           | 3 +--
- arch/arm/boot/dts/renesas/r8a7790-lager.dts                 | 3 +--
- arch/arm/boot/dts/renesas/r8a7790-stout.dts                 | 3 +--
- arch/arm/boot/dts/renesas/r8a7791-koelsch.dts               | 3 +--
- arch/arm/boot/dts/renesas/r8a7791-porter.dts                | 3 +--
- arch/arm/boot/dts/renesas/r8a7792-blanche.dts               | 3 +--
- arch/arm/boot/dts/renesas/r8a7793-gose.dts                  | 3 +--
- arch/arm/boot/dts/renesas/r8a7794-silk.dts                  | 3 +--
- 10 files changed, 10 insertions(+), 20 deletions(-)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi b/arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi
-index de52218ceaa4c0e0..ca58ea93f58fbbb1 100644
---- a/arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi
-+++ b/arch/arm/boot/dts/renesas/iwg20d-q7-dbcm-ca.dtsi
-@@ -73,8 +73,7 @@ &i2c5 {
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
--		interrupt-parent = <&gpio0>;
--		interrupts = <13 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio0 13 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&cec_clock>;
- 		clock-names = "cec";
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+index 7945d44e6ee159f4..4509151344c430de 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+@@ -20,8 +20,7 @@ keys {
+ 		compatible = "gpio-keys";
  
-diff --git a/arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-index a0b574398055ad2d..5903c1f1356f26c6 100644
---- a/arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -84,8 +84,7 @@ &i2c1 {
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio1 0 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&cec_clock>;
- 		clock-names = "cec";
- 		pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm/boot/dts/renesas/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/renesas/r8a77470-iwg23s-sbc.dts
-index 7c7a9f257567d4f8..e511eb425bc550e9 100644
---- a/arch/arm/boot/dts/renesas/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/renesas/r8a77470-iwg23s-sbc.dts
-@@ -150,8 +150,7 @@ &i2c4 {
- 	hdmi@39 {
- 		compatible = "sil,sii9022";
- 		reg = <0x39>;
--		interrupt-parent = <&gpio2>;
--		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio2 29 IRQ_TYPE_LEVEL_LOW>;
+ 		key-1 {
+-			interrupts = <RZG2L_GPIO(18, 0) IRQ_TYPE_EDGE_FALLING>;
+-			interrupt-parent = <&pinctrl>;
++			interrupts-extended = <&pinctrl RZG2L_GPIO(18, 0) IRQ_TYPE_EDGE_FALLING>;
+ 			linux,code = <KEY_1>;
+ 			label = "USER_SW1";
+ 			wakeup-source;
+@@ -29,8 +28,7 @@ key-1 {
+ 		};
  
- 		ports {
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/renesas/r8a7790-lager.dts b/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-index 97c13b31f476505c..5ef87f8088c4c81c 100644
---- a/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7790-lager.dts
-@@ -365,8 +365,7 @@ adv7180: endpoint {
- 		hdmi@39 {
- 			compatible = "adi,adv7511w";
- 			reg = <0x39>;
--			interrupt-parent = <&gpio1>;
--			interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+			interrupts-extended = <&gpio1 15 IRQ_TYPE_LEVEL_LOW>;
- 			clocks = <&cec_clock>;
- 			clock-names = "cec";
+ 		key-2 {
+-			interrupts = <RZG2L_GPIO(0, 1) IRQ_TYPE_EDGE_FALLING>;
+-			interrupt-parent = <&pinctrl>;
++			interrupts-extended = <&pinctrl RZG2L_GPIO(0, 1) IRQ_TYPE_EDGE_FALLING>;
+ 			linux,code = <KEY_2>;
+ 			label = "USER_SW2";
+ 			wakeup-source;
+@@ -38,8 +36,7 @@ key-2 {
+ 		};
  
-diff --git a/arch/arm/boot/dts/renesas/r8a7790-stout.dts b/arch/arm/boot/dts/renesas/r8a7790-stout.dts
-index 1593609064104ae4..9287724187ef3b69 100644
---- a/arch/arm/boot/dts/renesas/r8a7790-stout.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7790-stout.dts
-@@ -299,8 +299,7 @@ &iic2	{
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts-extended = <&gpio1 15 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&osc4_clk>;
- 		clock-names = "cec";
- 
-diff --git a/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts b/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-index 758d8331e7af66c4..bce93db4c9df5e18 100644
---- a/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7791-koelsch.dts
-@@ -397,8 +397,7 @@ adv7180: endpoint {
- 		hdmi@39 {
- 			compatible = "adi,adv7511w";
- 			reg = <0x39>;
--			interrupt-parent = <&gpio3>;
--			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+			interrupts-extended = <&gpio3 29 IRQ_TYPE_LEVEL_LOW>;
- 			clocks = <&cec_clock>;
- 			clock-names = "cec";
- 
-diff --git a/arch/arm/boot/dts/renesas/r8a7791-porter.dts b/arch/arm/boot/dts/renesas/r8a7791-porter.dts
-index 267b3623655fbc38..92b54e043795ba08 100644
---- a/arch/arm/boot/dts/renesas/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7791-porter.dts
-@@ -194,8 +194,7 @@ adv7180: endpoint {
- 		hdmi@39 {
- 			compatible = "adi,adv7511w";
- 			reg = <0x39>;
--			interrupt-parent = <&gpio3>;
--			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+			interrupts-extended = <&gpio3 29 IRQ_TYPE_LEVEL_LOW>;
- 
- 			avdd-supply = <&reg_1p8v>;
- 			dvdd-supply = <&reg_1p8v>;
-diff --git a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
-index 7eefa227d65514a9..69009535814406fe 100644
---- a/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7792-blanche.dts
-@@ -335,8 +335,7 @@ &i2c1 {
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
--		interrupt-parent = <&irqc>;
--		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+		interrupts-extended = <&irqc 3 IRQ_TYPE_EDGE_FALLING>;
- 
- 		avdd-supply = <&d1_8v>;
- 		dvdd-supply = <&d1_8v>;
-diff --git a/arch/arm/boot/dts/renesas/r8a7793-gose.dts b/arch/arm/boot/dts/renesas/r8a7793-gose.dts
-index f3f62206088348c6..45ef1d1900245a11 100644
---- a/arch/arm/boot/dts/renesas/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7793-gose.dts
-@@ -383,8 +383,7 @@ adv7180_out: endpoint {
- 		hdmi@39 {
- 			compatible = "adi,adv7511w";
- 			reg = <0x39>;
--			interrupt-parent = <&gpio3>;
--			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+			interrupts-extended = <&gpio3 29 IRQ_TYPE_LEVEL_LOW>;
- 
- 			avdd-supply = <&reg_1p8v>;
- 			dvdd-supply = <&reg_1p8v>;
-diff --git a/arch/arm/boot/dts/renesas/r8a7794-silk.dts b/arch/arm/boot/dts/renesas/r8a7794-silk.dts
-index 8857bb4a9b91d969..5ed5b426f9639775 100644
---- a/arch/arm/boot/dts/renesas/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/renesas/r8a7794-silk.dts
-@@ -262,8 +262,7 @@ adv7180: endpoint {
- 		hdmi@39 {
- 			compatible = "adi,adv7511w";
- 			reg = <0x39>;
--			interrupt-parent = <&gpio5>;
--			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+			interrupts-extended = <&gpio5 23 IRQ_TYPE_LEVEL_LOW>;
- 
- 			avdd-supply = <&d1_8v>;
- 			dvdd-supply = <&d1_8v>;
+ 		key-3 {
+-			interrupts = <RZG2L_GPIO(0, 3) IRQ_TYPE_EDGE_FALLING>;
+-			interrupt-parent = <&pinctrl>;
++			interrupts-extended = <&pinctrl RZG2L_GPIO(0, 3) IRQ_TYPE_EDGE_FALLING>;
+ 			linux,code = <KEY_3>;
+ 			label = "USER_SW3";
+ 			wakeup-source;
 -- 
 2.34.1
 
