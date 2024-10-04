@@ -1,30 +1,30 @@
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B026215F69
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Oct 2024 13:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D10216A12
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Oct 2024 13:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728048169; cv=none; b=ZuvNC6WopYPenwHbfqya2wdTHhpN9evXTvR1khkYNRT7Ljn+8exS3GGwasybEu5D2aFeLo4WAxF8g22hzTSztPxd0lkTp0InAZ6iLuC4w/STaS8Hy0FyNHHWlZYKsFpwl3DnvbHCf/c7D95E7N5ZasyetFfjIAmgqUjjuSLtD3E=
+	t=1728048169; cv=none; b=AE/kgaEV91SUKr63x6j9dBaZux84hmw7YCcMO9RVW54AMJy04kwzppQK3bzYhUI5zoJK2nvwgKh/R7jMFfmqaNI8RJRZrStNMyG7uAxfoQ/F9HOmXzLZIHSvBnwnp0VhR2BbcMJnNcfVsJtosMF1a0qEn+qvhU4RKn9+BHisDQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728048169; c=relaxed/simple;
-	bh=VHRchS1sR1T0efmS1i4HpM2O1WiLOHaNuqx5H+0LbEc=;
+	bh=iSuOCfYraD+Fda/NPdn068wqfdVMc6SfcvPQIQs9hRc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b7EqMvwvFmnxf8jONAr5iJoqH3H1EXt+PMLk0HmDj69DmGptY+mpPvL7QRmB4FgSOYWuvMA/ZQKcif/WjP0k+oW9mKy7JoiNu/nTtHS03p06+/O7LPkAsNDQ8Efg/kVxEkiQPvqn6Gw2ddhmBn/e8Fbmwz72aAijm0fDSqf1x0g=
+	 MIME-Version; b=O4d7FjHeOsbLWcoy9ps1/ypA2K/0OvItC1xeHih6oWo2vj6bkk3FgJ3YL9Sk6uDkZFBiR4xs/1UiXDXayip3LvrFl5/RePKJWTk3HJcFjhIDnHxp1X5HgHzyKpLG2RHwO+U3ymXiyiZEHlr1xvpsb9AE0xgD+2OHyVt+S2PTS38=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:5518:aeb:d9c0:fc7c])
 	by laurent.telenet-ops.be with cmsmtp
-	id LDNb2D00F4NXpdT01DNbUM; Fri, 04 Oct 2024 15:22:37 +0200
+	id LDNc2D00F4NXpdT01DNcUQ; Fri, 04 Oct 2024 15:22:37 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swiGJ-001ElC-IR;
-	Fri, 04 Oct 2024 15:22:35 +0200
+	id 1swiGK-001Eli-ET;
+	Fri, 04 Oct 2024 15:22:36 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1swhnu-006yV9-Sj;
+	id 1swhnu-006yUQ-G7;
 	Fri, 04 Oct 2024 14:53:06 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -33,9 +33,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 19/20] arm64: dts: renesas: beacon-renesom: Use interrupts-extended for touchscreen
-Date: Fri,  4 Oct 2024 14:53:01 +0200
-Message-Id: <c1ee39ab194f1d04d56af6804fd9e7632710154f.1728045620.git.geert+renesas@glider.be>
+Subject: [PATCH 10/20] ARM: dts: renesas: kzm9g: Use interrupts-extended for sensors
+Date: Fri,  4 Oct 2024 14:52:52 +0200
+Message-Id: <e04fff0e6d7d9ffebf5e3d3fe7682f0d411b60d9.1728045620.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1728045620.git.geert+renesas@glider.be>
 References: <cover.1728045620.git.geert+renesas@glider.be>
@@ -48,27 +48,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Use the more concise interrupts-extended property to fully describe the
-interrupt.
+interrupts.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index fd1dd2875644dd60..729d165f909a5257 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -440,8 +440,7 @@ wm8962_endpoint: endpoint {
- 	touchscreen@26 {
- 		compatible = "ilitek,ili2117";
- 		reg = <0x26>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <9 IRQ_TYPE_EDGE_RISING>;
-+		interrupts-extended = <&gpio5 9 IRQ_TYPE_EDGE_RISING>;
- 		wakeup-source;
+diff --git a/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts b/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
+index ae7e68a44f493e1b..1ce07d0878dc635a 100644
+--- a/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
++++ b/arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts
+@@ -195,8 +195,7 @@ &i2c0 {
+ 	compass@c {
+ 		compatible = "asahi-kasei,ak8975";
+ 		reg = <0x0c>;
+-		interrupt-parent = <&irqpin3>;
+-		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
++		interrupts-extended = <&irqpin3 4 IRQ_TYPE_EDGE_FALLING>;
  	};
  
+ 	ak4648: codec@12 {
+@@ -208,9 +207,8 @@ ak4648: codec@12 {
+ 	accelerometer@1d {
+ 		compatible = "adi,adxl345";
+ 		reg = <0x1d>;
+-		interrupt-parent = <&irqpin3>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_HIGH>,
+-			     <3 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts-extended = <&irqpin3 2 IRQ_TYPE_LEVEL_HIGH>,
++				      <&irqpin3 3 IRQ_TYPE_LEVEL_HIGH>;
+ 	};
+ 
+ 	rtc@32 {
 -- 
 2.34.1
 
