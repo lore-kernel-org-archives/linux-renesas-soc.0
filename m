@@ -1,247 +1,114 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077181C878E;
-	Mon,  7 Oct 2024 10:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8901C9DC8
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Oct 2024 11:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728298146; cv=none; b=tdbXMMJBvmwkNjIS8MQG4GHeAjW8/7gTr/8RhO/PK+xUs7LXKZwYaof56PxXosR9wKUweKR06giXKkDG6O+nryFfr8ZW+DoxYaqi8cxhDx/Xjw71/gV3LgzRHR+I0K6JQOZxYWCD0Rviq3MrsEv2fT84dSGQ71vK6itnBrIRll4=
+	t=1728298943; cv=none; b=VdOCnY+KqFEY8v9HUw4DhCARkm3NAagJ505DoNjKyfVsYlBdqCRou7Y95QPL0NRU85vgzDvpCbE16xRyX5pLgKgZuzm0CDnb+e0oAy6lbjGwlOLjD9ClP7xDRMIOGeh6iogOs/EzThXNWSf2dQn1DDNe4G6Zog5SWgKKdwMR14I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728298146; c=relaxed/simple;
-	bh=GiVGZEa2IQeWE2UVxCtpQJDbRZFjZHoVO6B1KXrrr2w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Se7U/UpM7/teOTVzp4kodm8kE/y2I0eNBSFYS6hAlOVqnSP3KgjIV+RB1a348d0rTvNPSp6Zrzj72hzf4zGW6PffIs3zHt6JkF6No/3mmvcJ+CW6SNE3UVz+/v5UUZz/kJ7nAZfA5FjvUp73H5Qhib3JG/q9so1aoi80WEC9KlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y96zapP3; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728298943; c=relaxed/simple;
+	bh=nngkMCmzlD5/KK2C1otq3AMCD9ZO8njuW2Mc4Pw1Jm8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ghgv8Zxji+kdUtWcXMSILEIPsnSdGZWTkydtLqw7ErxLCkNCyrj3G6gmbF38nhLmW01EuuljM4V8nYOeWQtQxRFRMcNuRyx8BmyqH/65/H0fRJstRKBp1mLNKiyjDabgmM8S4hxfGv8zsK4GxZy++5xVCrc4OBFhdN+Vqit7HyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=AtyVKDjC; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y96zapP3"
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-50c9fb5751cso585354e0c.0;
-        Mon, 07 Oct 2024 03:49:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728298144; x=1728902944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PRtlhxa5HpDdgMOpevsoEPxJRhvi+Dx1yjhg3IEIWbE=;
-        b=Y96zapP3Grm7qt4BHnk5U4h7Hrt2p+r4tHDIpAYwQioLMsHC6uR1HHC3A7pAQiUGzd
-         xE/Ekofc19SF7c0rseOdzLwuraIzT4oAG3eyO5ygFEzmzTy+FzY3TX0kjoRTHfE3xUkF
-         S8EPpY2/RsBcmarW8N2VeEWnVIspkwo7xJS0AzlREy1Z77SS+F+2WVGO/r49FURv7621
-         XRm1XgSLLir74E9PAq/0tDsoIkFoUA2UZiUplEhKG7TI7Hm35E+VE8eeWuQvysh1xHEo
-         UvnXm6TI0k4abofv7RN/f60VRDIx7FJO0SMTLaJnijGpLIoFlJiNeer6YnwR+JP/lxIx
-         Qtvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728298144; x=1728902944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PRtlhxa5HpDdgMOpevsoEPxJRhvi+Dx1yjhg3IEIWbE=;
-        b=tjMAYrAW28gKZiQjg01NWy240sEgU5dGICW87CGV290AecL1A99NXz+bYlw7LnlczY
-         uoEEn0imTuWOv/X0yD7pLgZgVD2JPlEP/kGFEifTrHA4TgCuywzb6jacqorVmjWUsCqk
-         DyO/Q6NZ5uZbjpiMdIUF8BqXxbkYg16lTKGoqk7n+D4l+gu5hpRcNWX0pRnlwNgZDDyE
-         xz+L8VWAU88mHprWXwFDAeUvu3HUHppksWdmsfes3moq149K2ix1Bn0FDPLZlamAvlm+
-         4svoXr/Q24O9RfrxMmXKnMMH6HAfDOlpscF4C8urNKdJlf8fQPzRkks+H6NPTu4mt74f
-         9ktA==
-X-Forwarded-Encrypted: i=1; AJvYcCUh0hw8xu6x98osPREtOImR7k9fY+hLP+GNDEvKB/LjMS0mVaY6h8YGCLZ0QETdV+dVjuLB86Tkf1BGo/E=@vger.kernel.org, AJvYcCVw0j7+SR9pkvrwYR/q+jP2og6zYTsu0qwR2Z8KJYH/xz9r4JStJPwHlIRGCnhXd6vm7iEKDW9qZQwxKAqze8U8TyA=@vger.kernel.org, AJvYcCWSRDgq4si2z7ic4vHfwXie6BGI9xoL6YTKQgqsXKf57p9sttVn8k07phy1WofjZYMM8dotaNS6trSxVmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqkZNe6qBx80nlw9id3W4fAa+4Ko5r9Pdwcq4fuX58jxoJ/QjA
-	5cO+pB4p2C0SnizZmNB2M39eSP46dniAhIJbtVxOyV9AklWEbpXz1+qw85EgFgNcJhzNEEswZ4p
-	8n89uQmew4t1jRycLE9pu6fEL6zI=
-X-Google-Smtp-Source: AGHT+IHehaPUBSxW//F/OgBrXY4lNPZ//6JPmW1b2lYfQQBZIG9PFAOF9kmMe64JteLU4XtQdwAZmR8wIXWjXJTsyJs=
-X-Received: by 2002:a05:6122:1816:b0:50a:7044:7b2a with SMTP id
- 71dfb90a1353d-50c8548f7admr8089516e0c.4.1728298143714; Mon, 07 Oct 2024
- 03:49:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="AtyVKDjC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=5nn0eQkafRUSLXQ4NP1rAJgTSymJ6mkYq8l8n/TCLFU=; b=AtyVKD
+	jCdYpyfqb52c+/EvJ9NaGZD1nBAwrrS91l9lUw9aOpxTBJ7ScsY2zAf1cqPVL+i4
+	cHYLzP1OxNsYaGKw5/tGHLhdo3Lfhb2sxC+Ke7DGqdGPyiCqgzaPu9PzrdoezxYC
+	+9aByF1miwdOHLfZqqS+I95/hXy/FBpsgxco1PB8Ug8epFcBauLM4I//JBKCOBrv
+	2ND0kGChhpMCuXxXUhwsj1zfkXZkry8hyYpmpNb7k824YuaFshc5aylr9E+UwSyy
+	UUW0Lrh108jvfu8/V2SPiO78MFqcTlt9/fa4YMY7TUXxf9XoCorFjRFmsQrigeIb
+	Y6X4+VSZGP/D48bA==
+Received: (qmail 100788 invoked from network); 7 Oct 2024 13:02:16 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Oct 2024 13:02:16 +0200
+X-UD-Smtp-Session: l3s3148p1@myEt9OAjsI0gAwDPXxi/APzxl2QXB/xr
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	dmaengine@vger.kernel.org
+Subject: [PATCH v3 1/3] dmaengine: sh: rz-dmac: handle configs where one address is zero
+Date: Mon,  7 Oct 2024 13:02:01 +0200
+Message-ID: <20241007110200.43166-6-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241007110200.43166-5-wsa+renesas@sang-engineering.com>
+References: <20241007110200.43166-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241001140919.206139-14-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241003145112.GE5468@pendragon.ideasonboard.com>
-In-Reply-To: <20241003145112.GE5468@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 7 Oct 2024 11:48:37 +0100
-Message-ID: <CA+V-a8teWvx++_dFFT_H156VVHwgKKcdGB71i9MBs0mDAdmvVQ@mail.gmail.com>
-Subject: Re: [PATCH v3 13/17] media: rzg2l-cru: video: Implement
- .link_validate() callback
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Laurent,
+Configs like the ones coming from the MMC subsystem will have either
+'src' or 'dst' zeroed, resulting in an unknown bus width. This will bail
+out on the RZ DMA driver because of the sanity check for a valid bus
+width. Reorder the code, so that the check will only be applied when the
+corresponding address is non-zero.
 
-Thank you for the review.
+Fixes: 5000d37042a6 ("dmaengine: sh: Add DMAC driver for RZ/G2L SoC")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/dma/sh/rz-dmac.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-On Thu, Oct 3, 2024 at 3:51=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Tue, Oct 01, 2024 at 03:09:15PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Implement the `.link_validate()` callback for the video node and move t=
-he
-> > format checking into this function. This change allows the removal of
-> > `rzg2l_cru_mc_validate_format()`.
-> >
-> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v2->v3
-> > - New patch
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 99 ++++++++++---------
-> >  1 file changed, 55 insertions(+), 44 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
-rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index ceb9012c9d70..c6c82b9b130a 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -189,46 +189,6 @@ static void rzg2l_cru_buffer_queue(struct vb2_buff=
-er *vb)
-> >       spin_unlock_irqrestore(&cru->qlock, flags);
-> >  }
-> >
-> > -static int rzg2l_cru_mc_validate_format(struct rzg2l_cru_dev *cru,
-> > -                                     struct v4l2_subdev *sd,
-> > -                                     struct media_pad *pad)
-> > -{
-> > -     struct v4l2_subdev_format fmt =3D {
-> > -             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
-> > -     };
-> > -
-> > -     fmt.pad =3D pad->index;
-> > -     if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
-> > -             return -EPIPE;
-> > -
-> > -     switch (fmt.format.code) {
-> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
-> > -             break;
-> > -     default:
-> > -             return -EPIPE;
-> > -     }
-> > -
-> > -     switch (fmt.format.field) {
-> > -     case V4L2_FIELD_TOP:
-> > -     case V4L2_FIELD_BOTTOM:
-> > -     case V4L2_FIELD_NONE:
-> > -     case V4L2_FIELD_INTERLACED_TB:
-> > -     case V4L2_FIELD_INTERLACED_BT:
-> > -     case V4L2_FIELD_INTERLACED:
-> > -     case V4L2_FIELD_SEQ_TB:
-> > -     case V4L2_FIELD_SEQ_BT:
-> > -             break;
-> > -     default:
-> > -             return -EPIPE;
-> > -     }
-> > -
-> > -     if (fmt.format.width !=3D cru->format.width ||
-> > -         fmt.format.height !=3D cru->format.height)
-> > -             return -EPIPE;
-> > -
-> > -     return 0;
-> > -}
-> > -
-> >  static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
-> >                                   int slot, dma_addr_t addr)
-> >  {
-> > @@ -531,10 +491,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_d=
-ev *cru, int on)
-> >               return stream_off_ret;
-> >       }
-> >
-> > -     ret =3D rzg2l_cru_mc_validate_format(cru, sd, pad);
-> > -     if (ret)
-> > -             return ret;
-> > -
-> >       pipe =3D media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
-> >       ret =3D video_device_pipeline_start(&cru->vdev, pipe);
-> >       if (ret)
-> > @@ -995,6 +951,60 @@ static const struct v4l2_file_operations rzg2l_cru=
-_fops =3D {
-> >       .read           =3D vb2_fop_read,
-> >  };
-> >
-> > +/* -------------------------------------------------------------------=
-----------
-> > + * Media entity operations
-> > + */
-> > +
-> > +static int rzg2l_cru_video_link_validate(struct media_link *link)
-> > +{
-> > +     struct v4l2_subdev_format fmt =3D {
-> > +             .which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
-> > +     };
-> > +     struct v4l2_subdev *subdev;
-> > +     struct media_entity *entity;
-> > +     struct rzg2l_cru_dev *cru;
-> > +     struct media_pad *remote;
-> > +     int ret;
-> > +
-> > +     entity =3D link->sink->entity;
-> > +     remote =3D link->source;
-> > +
-> > +     subdev =3D media_entity_to_v4l2_subdev(remote->entity);
-> > +     fmt.pad =3D remote->index;
-> > +     ret =3D v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
-> > +     if (ret < 0)
-> > +             return ret =3D=3D -ENOIOCTLCMD ? -EINVAL : ret;
-> > +
-> > +     if (!rzg2l_cru_ip_code_to_fmt(fmt.format.code))
-> > +             return -EPIPE;
->
-> Here you should check that the format on the subdev matches the format
-> on the video device.
->
-OK, I'll use the return value from rzg2l_cru_ip_code_to_fmt() and
-match it with the video device node.
+diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+index 65a27c5a7bce..811389fc9cb8 100644
+--- a/drivers/dma/sh/rz-dmac.c
++++ b/drivers/dma/sh/rz-dmac.c
+@@ -601,22 +601,25 @@ static int rz_dmac_config(struct dma_chan *chan,
+ 	struct rz_dmac_chan *channel = to_rz_dmac_chan(chan);
+ 	u32 val;
+ 
+-	channel->src_per_address = config->src_addr;
+ 	channel->dst_per_address = config->dst_addr;
+-
+-	val = rz_dmac_ds_to_val_mapping(config->dst_addr_width);
+-	if (val == CHCFG_DS_INVALID)
+-		return -EINVAL;
+-
+ 	channel->chcfg &= ~CHCFG_FILL_DDS_MASK;
+-	channel->chcfg |= FIELD_PREP(CHCFG_FILL_DDS_MASK, val);
++	if (channel->dst_per_address) {
++		val = rz_dmac_ds_to_val_mapping(config->dst_addr_width);
++		if (val == CHCFG_DS_INVALID)
++			return -EINVAL;
+ 
+-	val = rz_dmac_ds_to_val_mapping(config->src_addr_width);
+-	if (val == CHCFG_DS_INVALID)
+-		return -EINVAL;
++		channel->chcfg |= FIELD_PREP(CHCFG_FILL_DDS_MASK, val);
++	}
+ 
++	channel->src_per_address = config->src_addr;
+ 	channel->chcfg &= ~CHCFG_FILL_SDS_MASK;
+-	channel->chcfg |= FIELD_PREP(CHCFG_FILL_SDS_MASK, val);
++	if (channel->src_per_address) {
++		val = rz_dmac_ds_to_val_mapping(config->src_addr_width);
++		if (val == CHCFG_DS_INVALID)
++			return -EINVAL;
++
++		channel->chcfg |= FIELD_PREP(CHCFG_FILL_SDS_MASK, val);
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.45.2
 
-> > +
-> > +     switch (fmt.format.field) {
-> > +     case V4L2_FIELD_TOP:
-> > +     case V4L2_FIELD_BOTTOM:
-> > +     case V4L2_FIELD_NONE:
-> > +     case V4L2_FIELD_INTERLACED_TB:
-> > +     case V4L2_FIELD_INTERLACED_BT:
-> > +     case V4L2_FIELD_INTERLACED:
-> > +     case V4L2_FIELD_SEQ_TB:
-> > +     case V4L2_FIELD_SEQ_BT:
-> > +             break;
-> > +     default:
-> > +             return -EPIPE;
-> > +     }
->
-> Instead of checking the field here, shouldn't it be forced to a valid
-> value in the subdev .set_fmt() function ? The link validation handler is
-> responsible for validating that the configuration of the two sides of
-> the link (IP subdev and video device) match. The driver shouldn't allow
-> setting formats that can't be supported.
->
-Agreed, this is already taken care of in .set_fmt(), so I'll drop this
-check here.
-
-> What you should check here is that the field of the subdev and the
-> field of the video device match.
->
-OK, I'll add a check for this.
-
-> > +
-> > +     cru =3D container_of(media_entity_to_video_device(entity),
->
-> You can drop the local entity variable and write
->
-OK.
-
-Cheers,
-Prabhakar
