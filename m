@@ -1,52 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F4D3FBA5
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Oct 2024 11:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB28A19340B
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Oct 2024 11:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728298943; cv=none; b=LKyDD5xdSc9PUjih6DOqveTZoLX0YbOLZxE8wSAJcrZwQmbv9/2Bj/2erR9Zdd1Yu9thyPBGFCZjuQL9Y0FJ85g+za800t/zGapoz/R1IB9+9fb/gocGX7aJLSdgdBw1YYpdaQNaEjPMAVd2mmswD2U/Waaw4eUMRMmsnvyCUwA=
+	t=1728298944; cv=none; b=lft9UUnj/4ege34wuUzR4CQNcA3/ZNjEzIENdEDEeoTjXSkf7RwDDu9e44aAfdPHwYSnVhbR4RptPqhg/fc7Yhzkhk5p9cWzpzLrn0EhVfwwa+QMfUVTYS5/aFk+9NIPdXN9N4AHzehByUE+vzQUMzmmxGyJs2kpSCjNyClDmHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728298943; c=relaxed/simple;
-	bh=nPDzpkhwnZneV4ZhOIuJ374ANgo/ZP1pDNP/dJMHxHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CHwGgGi0znAt7Eip6lORlZFcs2kzgje0PAzhQjX0RaIOt5WakRkMKj34s3fxhS6C8Ovy2Kr+Y0CgyHj6NbJSm72PLWIAZGUffP4Dh6NrL1Tt8hFnun0lo6ndcc3N1zuhrQHv4cwPkqRfC2MNJsCqDtRUvCw0XQN4ulYI6MbvkNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZUm40TNo; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1728298944; c=relaxed/simple;
+	bh=1Gr8CNUfBPkKnUcdj+3Pl/LpjisREwim33BZIWVvmcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QH/tyYEA/Ph7vjQm7crgaWdudKRYbL7yjbcrkcd88S2i08OyBootFIdn15nRVarwWCrrNdKTLxO2suV9+Uq700u7BBCleSt1w2Ci7CFBAbDsYqQvWcYO5vYTgmWy9W1XQbqtM2AIV3DwxJdU2pM+S6pUHMsn1VU5QNFsVCFqV6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SBIROjjj; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZUm40TNo"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SBIROjjj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=8U4zbOHZPANN624Q6CgoQqtTEPcotZAd8bEERsFbJaw=; b=ZUm40T
-	Norr6FCYURLVUfPQdkgFx+ylqixLSZr6JS1WOUrt+m5E2ZJCWWt+9cahqGlZ6nEv
-	G4GXO9P94Axpyq5krUCY5QsEcqwtQLuNUoyt6NgOGhZxN088v+o3gdMk82G6+S2e
-	3tNh1wxmRKX6NDquMpaCmnIa4VVP4TPCjSfATSTKVbADyFHybzDnWNh3NkeH4co0
-	pWFWXlFdaDaJyqv9WdQigFm81sYQ5bn6x19X1cTeIlL+31OkAzcjTxWGOEc1k8LM
-	PyDn+DX3RhPnazUrW8qpRZkXvYE6RFPsvYtX5yPRwRdPsjSF5L872fu1hfCJM0By
-	EcYh6DP907TExxRg==
-Received: (qmail 100829 invoked from network); 7 Oct 2024 13:02:17 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Oct 2024 13:02:17 +0200
-X-UD-Smtp-Session: l3s3148p1@4Wg59OAjuI0gAwDPXxi/APzxl2QXB/xr
+	:mime-version:content-transfer-encoding; s=k1; bh=6eImMP0EEM92b6
+	pNacEsrxltX+lRpawqIlUaa+mvNEE=; b=SBIROjjj3y+/2kAN29srAhBHtJunVl
+	t77C27vZrGuZACKqgHHQKtnEDXySAqPa4V2KJ+/irx9VOyT2v//C7xEwyVHm+o8C
+	hjVu1Vi8UBZSyiiQ0W7jIz5C566Roby9qui70VDW7LdIFEXsE0KEOlN0/rK8Y/VV
+	N+Ylm5wGfeha+euAvDFbsV2kFSwlFs7nUuS/irOXF3RmDxkus9W+Fu+piorYxvDf
+	awMyI3hgtIkqS4oU9lRLTp9nn5NigtHm+Co1msJ9aHki/zesaNOTLGOX+UNls+Ts
+	fJusyWaruCdeOuaE6ywfeEb+RO/YglAzOi8rYvHK5ErsSLQ7p9OOs1kw==
+Received: (qmail 100731 invoked from network); 7 Oct 2024 13:02:15 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Oct 2024 13:02:15 +0200
+X-UD-Smtp-Session: l3s3148p1@+A8g9OAjqo0gAwDPXxi/APzxl2QXB/xr
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
 	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 2/3] dt-bindings: dma: rz-dmac: Document RZ/A1H SoC
-Date: Mon,  7 Oct 2024 13:02:02 +0200
-Message-ID: <20241007110200.43166-7-wsa+renesas@sang-engineering.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v3 0/3] dmaengine: sh: rz-dmac: add r7s72100 support
+Date: Mon,  7 Oct 2024 13:02:00 +0200
+Message-ID: <20241007110200.43166-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241007110200.43166-5-wsa+renesas@sang-engineering.com>
-References: <20241007110200.43166-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -55,72 +52,35 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document the Renesas RZ/A1H DMAC block. This one does not have clocks,
-resets and power domains. Update the bindings accordingly. Introduce a
-generic name in the header to make future additions easier.
+Changes since v2:
+* added tags to patches 1 and 3
+* reword commit message 2 to make clear 'clocks' are not needed
+* 'power-domains' is also not required for RZA1
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks to Geert for the tags and for the input!
+
+Trimmed down initial cover-letter:
+
+When activating good old Genmai board for regression testing, I found
+out that not much is needed to activate the DMA controller for A1H.
+
+Patch 1 is a generic fix. The other patches are the actual enablement.
+A branch with DTS additions for MMCIF can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/genmai-upstreaming
+
+These will be upstreamed once the driver parts are in next.
+
+Wolfram Sang (3):
+  dmaengine: sh: rz-dmac: handle configs where one address is zero
+  dt-bindings: dma: rz-dmac: Document RZ/A1H SoC
+  dmaengine: sh: rz-dmac: add r7s72100 support
+
  .../bindings/dma/renesas,rz-dmac.yaml         | 29 +++++++++++++------
- 1 file changed, 20 insertions(+), 9 deletions(-)
+ drivers/dma/sh/Kconfig                        |  8 ++---
+ drivers/dma/sh/rz-dmac.c                      | 27 +++++++++--------
+ 3 files changed, 39 insertions(+), 25 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-index ca24cf48769f..b356251de5a8 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-+++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-@@ -4,18 +4,16 @@
- $id: http://devicetree.org/schemas/dma/renesas,rz-dmac.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Renesas RZ/{G2L,G2UL,V2L} DMA Controller
-+title: Renesas RZ DMA Controller
- 
- maintainers:
-   - Biju Das <biju.das.jz@bp.renesas.com>
- 
--allOf:
--  - $ref: dma-controller.yaml#
--
- properties:
-   compatible:
-     items:
-       - enum:
-+          - renesas,r7s72100-dmac # RZ/A1H
-           - renesas,r9a07g043-dmac # RZ/G2UL and RZ/Five
-           - renesas,r9a07g044-dmac # RZ/G2{L,LC}
-           - renesas,r9a07g054-dmac # RZ/V2L
-@@ -93,13 +91,26 @@ required:
-   - reg
-   - interrupts
-   - interrupt-names
--  - clocks
--  - clock-names
-   - '#dma-cells'
-   - dma-channels
--  - power-domains
--  - resets
--  - reset-names
-+
-+allOf:
-+  - $ref: dma-controller.yaml#
-+
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              enum:
-+                - renesas,r7s72100-dmac
-+    then:
-+      required:
-+        - clocks
-+        - clock-names
-+        - power-domains
-+        - resets
-+        - reset-names
- 
- additionalProperties: false
- 
 -- 
 2.45.2
 
