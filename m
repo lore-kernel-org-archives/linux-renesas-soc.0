@@ -1,111 +1,129 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0C11D5CC2
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Oct 2024 11:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9B41D9A63;
+	Thu, 17 Oct 2024 11:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729163049; cv=none; b=qlxISIPvt3e1rHFOEnlT5wKvWVk+kJqsk4MdyY/2crXo2y5DuKp0haXq8QBAZRxlKBDk575XoZh+SnpEqbbRKzaw7/zQfgCTNhSIwrBqxIaMhJ1YYpW6Ud/+nzF9pL/Y2GD25vZaYQZ/dQRTcxuyMWzXDXOeGl2gS/bNS0ZSbTw=
+	t=1729165196; cv=none; b=UZ+GIv0BHSmuUf6ZI8SQrbUf6mjjxHAktusODwLuGLjWB2redNribY82/TmnPe77cHlD69kop0W5mWVDS2WlgOJOkN1U3wZER56G3SCOjIDkU/8N4ZhXFeCb6Bac0Gh6U0UFn/ITM8s4QCd8ykZzAtnTYa7n103UX+qSHRMMTTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729163049; c=relaxed/simple;
-	bh=M02vPbZefKtzgbtnglUdvhk8inJ/586iO3nEwG12f9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDNgPAMyaujvO6QN6K52ykWpbL4UdrLB+vMB+vvIe6oBq5KWE/25fuKrrYjaRkYY0OR3h4h+iy1ijzJGny67rNyQ4llPIjSKToKbR6JesOD80pRFKcBUFzGJrZM1eN8aQuRNNjZ5Kr9rmytHyoTsuq1d/byL6cqspII/1qOVE6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=O61kXz6V; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1729165196; c=relaxed/simple;
+	bh=ZM+GQmScKTO9CCTK7eWxy1efNsPTqt7vxhJZmJa8IKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EO9FcxJ4GIRpEOsAeti1eQ2EhA/nG4KIHEJBWlZpW9nEZD2hliOGUBGY1vAn9BQ7Y9rOLGVKLHwihA9f2uqKr9xlGX+I1J+R0xAISVnK13Vi41kBwfRbkgfrjqKp6gPd+uaN54PPfbohrKo4SIfPaLkGza9Kbmzxfemo52qB/Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejxogFT1; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O61kXz6V"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=M02v
-	PbZefKtzgbtnglUdvhk8inJ/586iO3nEwG12f9A=; b=O61kXz6VJz9lGprNXARt
-	RZ9Cg4RlmikIp0nJ6cfrHZ7FmYvJC5gXF/deT+gaZdEGBKKQU7VR0c8L1fPHqJ5t
-	fStipJ26Xn3A0v2eMNNWIz+MTxZVktZLZrNbfwk3BRXXFUdRYNoEegyhw9dt2lg0
-	unZdKHwHl13jLH02q6jDLXt5hPFuZJqaFfgcJpf5SafnXqtB7nVD99G1AgeYyGpO
-	FBYiYW6MGWx5CMfGCJu0PIOkazucB9tpwGxfOH8D1TnqauLXYrWgstI9SKJc20qP
-	ZrQqXiILOdiDdM38jahSvIkGmy1ocSNm0jXSEL5vGVNF4cCJfhu4wOA8p5J3VrAD
-	BA==
-Received: (qmail 3358213 invoked from network); 17 Oct 2024 13:04:05 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2024 13:04:05 +0200
-X-UD-Smtp-Session: l3s3148p1@l0sMJaokT31tKPEX
-Date: Thu, 17 Oct 2024 13:04:04 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <ZxDvJCq_GOBm8nUC@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
- <ZxDqzeA2mz0Ml6cZ@shikoro>
- <CAMuHMdU=o0MzQUoEs5-HrEVP-snXN-hUef1K3U8Ppj18P6HVCg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejxogFT1"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315baec69eso4815455e9.2;
+        Thu, 17 Oct 2024 04:39:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729165191; x=1729769991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vtcWZjFWCr+3plb6g0CnGBT71iiUiGqc8kg3xOiLHtM=;
+        b=ejxogFT1opCsf+hUh53HC4o4rglL7evZuKGKZLOt3kSLNXGZjda0U5UL5h8fNAujnI
+         Lq+mE5uXjYl1GF2JLcyfCOq8Gbjtxi8AvcvbnHQafEA3ojcxHfiXyf5jveQ7Rh0OkSKL
+         HJnCDac18oL43AKLBdQCg5kH/znVCUgxrTRS6K6FoyERNLKhIS2CwDrxwxgUf3Pr9yg6
+         pRv++jCpxQCMHEEYPJ4i/mVpXM+9ktSe/8BnfnVD1ij33afDoLoZHuCis/SVZHlJZD6r
+         f1F20oIpgYSgsxAjQOYCCUJmQm1MerThWfi3ARj2EP2VT9wUhgbdT1AxQf3Ww5gZ4CR0
+         Kfpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729165191; x=1729769991;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vtcWZjFWCr+3plb6g0CnGBT71iiUiGqc8kg3xOiLHtM=;
+        b=BuBsaaCZLzGdRbcBfsaQ4WsNNXwYqweWIPlRKF+exm1mbBFZMFWgxz3KgpmxZAUfO2
+         HrK1F1WVh7DuOfwBAVhMhVSElqKxtf4zzF1aftNYNlk8V62vAPcacj+rMLxNkiNmTNIn
+         tnn5TiKBHJ+3+MIH4bHSGfu/mVbI/03+l7rX/LuCe3L1O2lWcUKR84i91FymKmLgY5IS
+         JsRER+NtIie0rk5ipwQWMNN1MQwnVl2wFFTUk083zgM3wPKAOTOOmFhYyYX/7DirbBkW
+         yGkDCsr3sO8EeI5uSwW3jpw5I1z/1eSRcrEuzGMUceRvP+HivMoy5Hi3rxZIi7Qxp7BR
+         zC3g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+rR8Nkoc7NVVM7RDw4VuJQMYtjB9O6X3QQaqJtoZ5Zu5wokJbhG+kUNtFs0KrrDGZrTwBc0e+sOcY@vger.kernel.org, AJvYcCWB2gAeeYFUwV9H5rH0ORpcYDvJVDg3TvYtayI2o5gV3uB4D78l/+HP2F7avVkuoEvRRN8kNrZNLXQWDKi9u3DEjkE=@vger.kernel.org, AJvYcCXIYuD4E6fUc5pK4bBwK+lYurze0Bix1jmJ2YakrkTXr/Rb1YtbEx7n/8bAQDpDyqMEmr2CI9WRlFdQJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1Lk/j33lboufyOOf0lgDk1hVuKCPjUfOgIGVGkF0fDkRxjA1U
+	jOfjtYzlTr8smB/eSNu4+fILC6ZSrRFtIj+fuffeDL1xtulezoCE
+X-Google-Smtp-Source: AGHT+IE4W2oVMvYqCn3CNsCQCsKnfZXEwQTrg4Gj7EWKW0quFbdwKQxU3mCuLo6luDI5xt0QWMZTsg==
+X-Received: by 2002:a05:600c:58d7:b0:431:54f3:11af with SMTP id 5b1f17b1804b1-43154f312eemr32846005e9.31.1729165191246;
+        Thu, 17 Oct 2024 04:39:51 -0700 (PDT)
+Received: from prasmi.Home ([2a02:c7c:e309:f400:f6f5:4306:392d:908d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf82b1sm7060399f8f.72.2024.10.17.04.39.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 04:39:50 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/7] pinctrl: renesas: rzg2l: Use gpiochip_populate_parent_fwspec_twocell helper
+Date: Thu, 17 Oct 2024 12:39:37 +0100
+Message-ID: <20241017113942.139712-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241017113942.139712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241017113942.139712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lNCG8WzO0TPLyYgP"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU=o0MzQUoEs5-HrEVP-snXN-hUef1K3U8Ppj18P6HVCg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
---lNCG8WzO0TPLyYgP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 5eefbace7d91..8ffb9430a134 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -2433,21 +2433,6 @@ static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
+ 	return ret;
+ }
+ 
+-static int rzg2l_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+-					     union gpio_irq_fwspec *gfwspec,
+-					     unsigned int parent_hwirq,
+-					     unsigned int parent_type)
+-{
+-	struct irq_fwspec *fwspec = &gfwspec->fwspec;
+-
+-	fwspec->fwnode = chip->irq.parent_domain->fwnode;
+-	fwspec->param_count = 2;
+-	fwspec->param[0] = parent_hwirq;
+-	fwspec->param[1] = parent_type;
+-
+-	return 0;
+-}
+-
+ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
+ {
+ 	struct irq_domain *domain = pctrl->gpio_chip.irq.domain;
+@@ -2649,7 +2634,7 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
+ 	girq->fwnode = dev_fwnode(pctrl->dev);
+ 	girq->parent_domain = parent_domain;
+ 	girq->child_to_parent_hwirq = rzg2l_gpio_child_to_parent_hwirq;
+-	girq->populate_parent_alloc_arg = rzg2l_gpio_populate_parent_fwspec;
++	girq->populate_parent_alloc_arg = gpiochip_populate_parent_fwspec_twocell;
+ 	girq->child_irq_domain_ops.free = rzg2l_gpio_irq_domain_free;
+ 	girq->init_valid_mask = rzg2l_init_irq_valid_mask;
+ 
+-- 
+2.43.0
 
-> > ... if it has been considered to expand the existing rtc-sh driver? The
-
-...
-
-> Yes it has ;-)
-
-Thanks for the pointer. Well, a few of the limitations apply for RZA1 as
-well but they are not handled in the rtc-sh driver yet (from a glimpse).
-
-Nonetheless, given the other limitations and the bit shuffling in the
-control registers, I agree that a new driver makes sense here.
-
-
---lNCG8WzO0TPLyYgP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcQ7yQACgkQFA3kzBSg
-Kbbb9A//YJ9DUgYEiBVtqS/ma7iA7F8MGfIClcoTBk3HhHlJIaxdXSRQ9Ld19DTB
-5fXKn9jRUQwsOK/O6WU62VW+jr9b70D+EXu0PEEAI2qUI9/LX1acdHwTdp9EVhGg
-JPp1Hn0CGPGQVwgTbe/veNTXMUakpHWP2h+QbSMwRka+a+skEDshgiyZZqeo2l1E
-+o1wseF8obYpb2+iydJA4Vp+DdEEJoHpMJZ0DZbgrIGicnVhDRi1O0tiQ+RIqiBP
-XcP5VWGb9ceABCJuBaXxW3uSJ+2fdJy6Q7f4Tmh7DP+r1R5q5lTO4wEQ9QiGVjvx
-S4JAA2hJskl6wQVcfHeG/tCWByahC3APq2PFGV/4YtvysyK7mke3GEhPknT/aIfu
-UZTkqZottd6vNcHJM+knvTuT+5WJ7Y5kOUpVZ8Ed83Oa3LtuVjTRg7iG+VT01plo
-yaLY0++R5uZNF+ABlM5lO91BSl5VpRAb6xWYOzCq7vU8U99fpXnwGwWw3Wmk7Z/f
-fDMDEz1XhpmR6ETIjCVtIGu9t/Deyyg5tC9esoDe6FP80hhdFps6Mi0/sKW//iiA
-/NaB2XsnC7H1GV7yCSQKCGTKcJNvzSdGFQnsq0DWWHloOfl6nbFdfpjiy/lAcolU
-N2X59O6146VnHrhWtwaC2rt2nBz6qPVobXn+d1L6TA6Xx3ww6kg=
-=bTvk
------END PGP SIGNATURE-----
-
---lNCG8WzO0TPLyYgP--
