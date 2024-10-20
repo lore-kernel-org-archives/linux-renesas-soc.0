@@ -1,54 +1,47 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEE92B9C6
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Oct 2024 14:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FB6440C;
+	Sun, 20 Oct 2024 22:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729434998; cv=none; b=fd+YOUietifIiddOzc9yYlPYN3AupDD6bffr4QTv+2c6SFLGDc+/KKZXQMoy7LpoHKbWvP4JUwNClBCbHPZcLoBBYwM5ostP6v1iWxyCXluLQOu9ATGnKOkAAeWxrobI4cicBLlXumXJemyFmN9HRWjzHEtrj2harqSmT8VY+ac=
+	t=1729463590; cv=none; b=RFC22Nno3k2I4B0rtgAZ4w7bJTaYHGCwMinBfUwX9EuYOdunqOroxsSCl8r+KyqwIk8MpdyLre8mtCN3Wt1qS4+Kp2sqqzufBXpVZROh3JWMEeXbdQInMMW0lJ+TEUERZsxkpA6cyGhDU8rjOJH34akle8iHTANuauIXO9WRRPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729434998; c=relaxed/simple;
-	bh=0sSBQ0AgvT+5mlAQvbezHnEfs7nP96DG1KzWG5CPujY=;
+	s=arc-20240116; t=1729463590; c=relaxed/simple;
+	bh=NqL/RqKWZLPioK03xgIwuUNSNcnm0YbSBNMS3AiuEPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YYP0Cyv++ojPDzh4bSwrH6BF0e/uriWpX0wJtQk0+k+mCYrUNYzjSJKhNfpsIkdQ7CvtrIfrxitmVVA1U0Q31AZ0N+8n/mMtkFl49r13vK8n4bodOnyA63n4hraupqs+QHhPgf9HRTBkYMo41KUuaEPZsUiTsXtRZ2Thgxt0VFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Py/oGZgR; arc=none smtp.client-ip=213.167.242.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNkyBnnm8M9O+piFwSfV+aofpJ7B5CA256/3zelOh6x4SEBwVs+UG1iAFOwaetaHAFj9oyyFi/LCR41ew5hQ7ltU4Rw9ELgphfXbK5i0jIcWlVW1dkCpIE3ruQyCN8UhFQFrQHLHlvf4bG20UJKZkLG6abhRO/D2uD8PH14hl7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YQZjGCpk; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Py/oGZgR"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YQZjGCpk"
 Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6ED2D502;
-	Sun, 20 Oct 2024 16:34:49 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7E3FC4CF;
+	Mon, 21 Oct 2024 00:31:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729434889;
-	bh=0sSBQ0AgvT+5mlAQvbezHnEfs7nP96DG1KzWG5CPujY=;
+	s=mail; t=1729463481;
+	bh=NqL/RqKWZLPioK03xgIwuUNSNcnm0YbSBNMS3AiuEPg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Py/oGZgRYQN8xaY/A5rPKNv2qUhlbp7iRFUkhexVD9pti9kuOUOv7DOc6f7Fio99A
-	 uxUAu/fCjwmM/6cAE8kINRCARQCJ6q/LX/sqXv6cZUiijKWE75TU0MIBx0F/eCLNDz
-	 kOG3EvFeHPktGgf6TmhiATDz2QA0Jy3TXVUwTk94=
-Date: Sun, 20 Oct 2024 17:36:29 +0300
+	b=YQZjGCpk0+i+f9MNG9LqgG6O5bI916fso0V911xafXlzCMEirR17GmA004rzUdqMl
+	 LTnGSdZMBPl8Tjh/LrbmJ3f/UmsLAygdr71o67cQQf5aU6SeluAAh30ecDBluAC6fd
+	 SgkRViZNfzfNU+MudA8/bYUCYJRfzIb9+X6HUjjo=
+Date: Mon, 21 Oct 2024 01:33:01 +0300
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: ti-sn65dsi86: Fix multiple instances
-Message-ID: <20241020143629.GC28934@pendragon.ideasonboard.com>
-References: <8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.1729180470.git.geert+renesas@glider.be>
- <20241018131035.GA20602@pendragon.ideasonboard.com>
- <CAMuHMdVrahM9GYDX4FBZ31YBUZWm67-KoG-EBTDL8LU9bv2qsg@mail.gmail.com>
- <2024101855-judo-tattered-bc3c@gregkh>
- <20241018142522.GA28934@pendragon.ideasonboard.com>
- <2024101837-crushed-emphasis-b496@gregkh>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v3 03/10] media: i2c: ov5645: Replace dev_err with
+ dev_err_probe in probe function
+Message-ID: <20241020223301.GA14328@pendragon.ideasonboard.com>
+References: <20241018153230.235647-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241018153230.235647-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -57,76 +50,209 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024101837-crushed-emphasis-b496@gregkh>
+In-Reply-To: <20241018153230.235647-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Oct 18, 2024 at 04:31:21PM +0200, Greg KH wrote:
-> On Fri, Oct 18, 2024 at 05:25:22PM +0300, Laurent Pinchart wrote:
-> > On Fri, Oct 18, 2024 at 04:09:26PM +0200, Greg KH wrote:
-> > > On Fri, Oct 18, 2024 at 03:36:48PM +0200, Geert Uytterhoeven wrote:
-> > > > On Fri, Oct 18, 2024 at 3:10 PM Laurent Pinchart wrote:
-> > > > > On Fri, Oct 18, 2024 at 09:45:52AM +0200, Geert Uytterhoeven wrote:
-> > > > > > Each bridge instance creates up to four auxiliary devices with different
-> > > > > > names.  However, their IDs are always zero, causing duplicate filename
-> > > > > > errors when a system has multiple bridges:
-> > > > > >
-> > > > > >     sysfs: cannot create duplicate filename '/bus/auxiliary/devices/ti_sn65dsi86.gpio.0'
-> > > > > >
-> > > > > > Fix this by using a unique instance ID per bridge instance.
-> > > > >
-> > > > > Isn't this something that should be handled by the AUX core ? The code
-> > > > > below would otherwise need to be duplicated by all drivers, which seems
-> > > > > a burden we should avoid.
-> > > > 
-> > > > According to the documentation, this is the responsibility of the caller
-> > > > https://elixir.bootlin.com/linux/v6.11.4/source/include/linux/auxiliary_bus.h#L81
-> > > > I believe this is the same for platform devices.
-> > > > See also the example at
-> > > > https://elixir.bootlin.com/linux/v6.11.4/source/include/linux/auxiliary_bus.h#L116
-> > > > 
-> > > > Note: the platform bus supports PLATFORM_DEVID_AUTO, but the auxiliary
-> > > > bus does not.
-> > > 
-> > > Yes, it does not as it's up to the caller to create a unique name, like
-> > > your patch here does.  I'd argue that platform should also not do
-> > > automatic device ids, but that's a different argument :)
-> > 
-> > __auxiliary_device_add() creates the device name with
-> > 
-> > 	dev_set_name(dev, "%s.%s.%d", modname, auxdev->name, auxdev->id);
-> > 
-> > I'm not calling for a PLATFORM_DEVID_AUTO-like feature here, but
-> > shouldn't the first component of the device name use the parent's name
-> > instead of the module name ?
+Hi Prabhakar,
+
+Thank you for the patch.
+
+On Fri, Oct 18, 2024 at 04:32:23PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Why would the parent's name not be the module name?  That name is
-> guaranteed unique in the system.  If you want "uniqueness" within the
-> driver/module, use the name and id field please.
+> Refactor error handling in the ov5645_probe() function by replacing
+> multiple dev_err() calls with dev_err_probe().
 > 
-> That's worked well so far, but to be fair, aux devices are pretty new.
-> What problem is this naming scheme causing?
+> - Note that during this process, the error string "external clock
+>   frequency %u is not supported" was replaced with "unsupported xclk
+>   frequency %u" to ensure it wraps at 80 columns.
+> - Additionally, the error string for control initialization failure was
+>   changed from "%s: control initialization error %d\n" to "failed to add
+>   controls\n" as there is no need to print the function name and error code
+>   in the string, since dev_err_probe() already provides this information.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Auxiliary devices are created as children of a parent device. When
-multiple instances of the same parent type exist, this will be reflected
-in the /sys/devices/ devices tree hierarchy without any issue. The
-problem comes from the fact the the auxiliary devices need a unique name
-for /sys/bus/auxialiary/devices/, where we somehow have to differenciate
-devices of identical types.
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Essentially, we're trying to summarize a whole hierarchy (path in
-/sys/devices/) into a single string. There are different ways to solve
-this. For platform devices, we use a device ID. For I2C devices, we use
-the parent's bus number. Other buses use different schemes.
-
-Geert's patch implements a mechanism in the ti-sn65dsi86 driver to
-handle this, and assign an id managed by the parent. In a sense we could
-consider this to be similar to what is done for I2C, where the bus
-number is also a property of the parent. However, the big difference is
-that the I2C bus number is managed by the I2C subsystem, while here the
-id is managed by the ti-sn65dsi86 driver, not by the auxiliary device
-core. This would require duplicating the same mechanism in every single
-driver creating auxiliary devices. This strikes me as a fairly bad idea.
-The problem should be solved by the core, not by individual drivers.
+> ---
+>  drivers/media/i2c/ov5645.c | 82 +++++++++++++++++---------------------
+>  1 file changed, 36 insertions(+), 46 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> index d344d3447a95..520afd3d2aa3 100644
+> --- a/drivers/media/i2c/ov5645.c
+> +++ b/drivers/media/i2c/ov5645.c
+> @@ -1076,51 +1076,44 @@ static int ov5645_probe(struct i2c_client *client)
+>  	ov5645->dev = dev;
+>  
+>  	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
+> -	if (!endpoint) {
+> -		dev_err(dev, "endpoint node not found\n");
+> -		return -EINVAL;
+> -	}
+> +	if (!endpoint)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "endpoint node not found\n");
+>  
+>  	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(endpoint),
+>  					 &ov5645->ep);
+>  
+>  	of_node_put(endpoint);
+>  
+> -	if (ret < 0) {
+> -		dev_err(dev, "parsing endpoint node failed\n");
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret,
+> +				     "parsing endpoint node failed\n");
+>  
+> -	if (ov5645->ep.bus_type != V4L2_MBUS_CSI2_DPHY) {
+> -		dev_err(dev, "invalid bus type, must be CSI2\n");
+> -		return -EINVAL;
+> -	}
+> +	if (ov5645->ep.bus_type != V4L2_MBUS_CSI2_DPHY)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "invalid bus type, must be CSI2\n");
+>  
+>  	/* get system clock (xclk) */
+>  	ov5645->xclk = devm_clk_get(dev, NULL);
+> -	if (IS_ERR(ov5645->xclk)) {
+> -		dev_err(dev, "could not get xclk");
+> -		return PTR_ERR(ov5645->xclk);
+> -	}
+> +	if (IS_ERR(ov5645->xclk))
+> +		return dev_err_probe(dev, PTR_ERR(ov5645->xclk),
+> +				     "could not get xclk");
+>  
+>  	ret = of_property_read_u32(dev->of_node, "clock-frequency", &xclk_freq);
+> -	if (ret) {
+> -		dev_err(dev, "could not get xclk frequency\n");
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "could not get xclk frequency\n");
+>  
+>  	/* external clock must be 24MHz, allow 1% tolerance */
+> -	if (xclk_freq < 23760000 || xclk_freq > 24240000) {
+> -		dev_err(dev, "external clock frequency %u is not supported\n",
+> -			xclk_freq);
+> -		return -EINVAL;
+> -	}
+> +	if (xclk_freq < 23760000 || xclk_freq > 24240000)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "unsupported xclk frequency %u\n",
+> +				     xclk_freq);
+>  
+>  	ret = clk_set_rate(ov5645->xclk, xclk_freq);
+> -	if (ret) {
+> -		dev_err(dev, "could not set xclk frequency\n");
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "could not set xclk frequency\n");
+>  
+>  	for (i = 0; i < OV5645_NUM_SUPPLIES; i++)
+>  		ov5645->supplies[i].supply = ov5645_supply_name[i];
+> @@ -1131,16 +1124,14 @@ static int ov5645_probe(struct i2c_client *client)
+>  		return ret;
+>  
+>  	ov5645->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
+> -	if (IS_ERR(ov5645->enable_gpio)) {
+> -		dev_err(dev, "cannot get enable gpio\n");
+> -		return PTR_ERR(ov5645->enable_gpio);
+> -	}
+> +	if (IS_ERR(ov5645->enable_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(ov5645->enable_gpio),
+> +				     "cannot get enable gpio\n");
+>  
+>  	ov5645->rst_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+> -	if (IS_ERR(ov5645->rst_gpio)) {
+> -		dev_err(dev, "cannot get reset gpio\n");
+> -		return PTR_ERR(ov5645->rst_gpio);
+> -	}
+> +	if (IS_ERR(ov5645->rst_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(ov5645->rst_gpio),
+> +				     "cannot get reset gpio\n");
+>  
+>  	mutex_init(&ov5645->power_lock);
+>  
+> @@ -1177,9 +1168,8 @@ static int ov5645_probe(struct i2c_client *client)
+>  	ov5645->sd.ctrl_handler = &ov5645->ctrls;
+>  
+>  	if (ov5645->ctrls.error) {
+> -		dev_err(dev, "%s: control initialization error %d\n",
+> -		       __func__, ov5645->ctrls.error);
+>  		ret = ov5645->ctrls.error;
+> +		dev_err_probe(dev, ret, "failed to add controls\n");
+>  		goto free_ctrl;
+>  	}
+>  
+> @@ -1193,7 +1183,7 @@ static int ov5645_probe(struct i2c_client *client)
+>  
+>  	ret = media_entity_pads_init(&ov5645->sd.entity, 1, &ov5645->pad);
+>  	if (ret < 0) {
+> -		dev_err(dev, "could not register media entity\n");
+> +		dev_err_probe(dev, ret, "could not register media entity\n");
+>  		goto free_ctrl;
+>  	}
+>  
+> @@ -1203,14 +1193,14 @@ static int ov5645_probe(struct i2c_client *client)
+>  
+>  	ret = ov5645_read_reg(ov5645, OV5645_CHIP_ID_HIGH, &chip_id_high);
+>  	if (ret < 0 || chip_id_high != OV5645_CHIP_ID_HIGH_BYTE) {
+> -		dev_err(dev, "could not read ID high\n");
+>  		ret = -ENODEV;
+> +		dev_err_probe(dev, ret, "could not read ID high\n");
+>  		goto power_down;
+>  	}
+>  	ret = ov5645_read_reg(ov5645, OV5645_CHIP_ID_LOW, &chip_id_low);
+>  	if (ret < 0 || chip_id_low != OV5645_CHIP_ID_LOW_BYTE) {
+> -		dev_err(dev, "could not read ID low\n");
+>  		ret = -ENODEV;
+> +		dev_err_probe(dev, ret, "could not read ID low\n");
+>  		goto power_down;
+>  	}
+>  
+> @@ -1219,24 +1209,24 @@ static int ov5645_probe(struct i2c_client *client)
+>  	ret = ov5645_read_reg(ov5645, OV5645_AEC_PK_MANUAL,
+>  			      &ov5645->aec_pk_manual);
+>  	if (ret < 0) {
+> -		dev_err(dev, "could not read AEC/AGC mode\n");
+>  		ret = -ENODEV;
+> +		dev_err_probe(dev, ret, "could not read AEC/AGC mode\n");
+>  		goto power_down;
+>  	}
+>  
+>  	ret = ov5645_read_reg(ov5645, OV5645_TIMING_TC_REG20,
+>  			      &ov5645->timing_tc_reg20);
+>  	if (ret < 0) {
+> -		dev_err(dev, "could not read vflip value\n");
+>  		ret = -ENODEV;
+> +		dev_err_probe(dev, ret, "could not read vflip value\n");
+>  		goto power_down;
+>  	}
+>  
+>  	ret = ov5645_read_reg(ov5645, OV5645_TIMING_TC_REG21,
+>  			      &ov5645->timing_tc_reg21);
+>  	if (ret < 0) {
+> -		dev_err(dev, "could not read hflip value\n");
+>  		ret = -ENODEV;
+> +		dev_err_probe(dev, ret, "could not read hflip value\n");
+>  		goto power_down;
+>  	}
+>  
+> @@ -1248,7 +1238,7 @@ static int ov5645_probe(struct i2c_client *client)
+>  
+>  	ret = v4l2_async_register_subdev(&ov5645->sd);
+>  	if (ret < 0) {
+> -		dev_err(dev, "could not register v4l2 device\n");
+> +		dev_err_probe(dev, ret, "could not register v4l2 device\n");
+>  		goto err_pm_runtime;
+>  	}
+>  
 
 -- 
 Regards,
