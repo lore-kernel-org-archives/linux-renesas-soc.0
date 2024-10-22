@@ -1,24 +1,24 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11930158D7B
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Oct 2024 08:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DCD1714BA
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Oct 2024 08:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729585505; cv=none; b=mtjDq4p3ihpubTs+qJK+D6RRQcBCX1dlACBH441OpuZXH0DLCd2ZuEp3UJjBT6YiZ2EeZ/1Bkcjs81bzNya4o2xX8w9Sg6e3QpoeeWdY7xx/b2dJToxjArHWcQx8TdczH9m/xQoE1bRRsLOBZeqpBYNFVivaA+m6UK5oG+7ysUs=
+	t=1729585507; cv=none; b=DZswMcqJ/LeX/02ULfiuif4N+b5AIV6caekV1GzCAem6sRriH4BeZ2PxXW6h5n6txFX8aKMJE6fg+U5zI/pozzBKe/G364D8hq8osOcfUpo7ODn0DDpqdUJULgwpdAdSaZGcJ+ldwQ+eZ08muxUYNAXd2MA+K6a2SMib2J4Vp1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729585505; c=relaxed/simple;
-	bh=xGGGp2fjHwvpxTkrKABbwwZE5P4G5L4imiE79pLHht8=;
+	s=arc-20240116; t=1729585507; c=relaxed/simple;
+	bh=V1++dtSoJmL+8x4dywEDnzZKPGeqBOuWIvuux/U42YE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q1EJ6YfuMVF3+Hu7YCqj+Zs/YLQscSHWtK2gZSRh3AW05lj4YXFITyaJdrE/Gykew7ewEnljJrKwSyCzieE+b2BDG5D8pIUqJ6e8vvXyc2gtnI3mnlOGp6k2fWXNIGOOQclqGLxwmPXvvshY0SyVBo29mo4D5sDKOOEPfBw6fxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=CeHG1kjvEO+bisgzTPJHd8o8d+tr9T0JlrbrwybWXpZQQY4btXjNODkpb1Io/EIe+GISgqsNkrUoJtPPgfAwaKr19/k2y5MppnaxfQCqLWSeKvWyZdn8W3N/skpJb6+kyi9b3vpCKWEBmGRBger9FqwFovyWEZwl63B0R6zGJc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.11,222,1725289200"; 
-   d="scan'208";a="226623645"
+   d="scan'208";a="222639851"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Oct 2024 17:24:56 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 22 Oct 2024 17:25:03 +0900
 Received: from localhost.localdomain (unknown [10.226.92.236])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B6AA74003FAB;
-	Tue, 22 Oct 2024 17:24:40 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id EB336400754D;
+	Tue, 22 Oct 2024 17:24:44 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Biju Das <biju.das.jz@bp.renesas.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -33,9 +33,9 @@ Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 1/2] drm: renesas: rz-du: Drop DU_MCR0_DPI_OE macro
-Date: Tue, 22 Oct 2024 09:24:23 +0100
-Message-ID: <20241022082433.32513-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 2/2] drm: renesas: rz-du: rzg2l_du_encoder: Fix max dot clock for DPI
+Date: Tue, 22 Oct 2024 09:24:24 +0100
+Message-ID: <20241022082433.32513-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241022082433.32513-1-biju.das.jz@bp.renesas.com>
 References: <20241022082433.32513-1-biju.das.jz@bp.renesas.com>
@@ -47,46 +47,65 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The DPI_OE bit is removed from the latest RZ/G2UL and RZ/G2L hardware
-manual. So, drop this macro.
+As per the RZ/G2UL hardware manual Table 33.4 Clock List, the maximum
+dot clock for the DPI interface is 83.5 MHz. Add mode_valid callback
+to reject modes greater than 83.5 MHz.
 
-Fixes: b330f1480172 ("drm: renesas: rz-du: Add RZ/G2UL DU Support")
+Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v1->v2:
- * Added Fixes tag.
+Changes in v2:
+ * Moved .mode_valid from crtc to encoder as the new state is not
+   available in crtc and instead, we could check renc->output for
+   .mode_valid() function of drm_encoder.
+ * Dropped rzg2l_du_crtc_atomic_check().
 ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ .../gpu/drm/renesas/rz-du/rzg2l_du_encoder.c   | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-index c4c1474d487e..6e7aac6219be 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-@@ -28,7 +28,6 @@
- #include "rzg2l_du_vsp.h"
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
+index 339cbaaea0b5..564ab4cb3d37 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
+@@ -10,6 +10,7 @@
+ #include <linux/export.h>
+ #include <linux/of.h>
  
- #define DU_MCR0			0x00
--#define DU_MCR0_DPI_OE		BIT(0)
- #define DU_MCR0_DI_EN		BIT(8)
++#include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_bridge_connector.h>
+ #include <drm/drm_panel.h>
+@@ -24,6 +25,22 @@
+ static const struct drm_encoder_funcs rzg2l_du_encoder_funcs = {
+ };
  
- #define DU_DITR0		0x10
-@@ -217,14 +216,9 @@ static void rzg2l_du_crtc_put(struct rzg2l_du_crtc *rcrtc)
++static enum drm_mode_status
++rzg2l_du_encoder_mode_valid(struct drm_encoder *encoder,
++			    const struct drm_display_mode *mode)
++{
++	struct rzg2l_du_encoder *renc = to_rzg2l_encoder(encoder);
++
++	if (renc->output == RZG2L_DU_OUTPUT_DPAD0 && mode->clock > 83500)
++		return MODE_CLOCK_HIGH;
++
++	return MODE_OK;
++}
++
++static const struct drm_encoder_helper_funcs rzg2l_du_encoder_helper_funcs = {
++	.mode_valid = rzg2l_du_encoder_mode_valid,
++};
++
+ int rzg2l_du_encoder_init(struct rzg2l_du_device  *rcdu,
+ 			  enum rzg2l_du_output output,
+ 			  struct device_node *enc_node)
+@@ -48,6 +65,7 @@ int rzg2l_du_encoder_init(struct rzg2l_du_device  *rcdu,
+ 		return PTR_ERR(renc);
  
- static void rzg2l_du_start_stop(struct rzg2l_du_crtc *rcrtc, bool start)
- {
--	struct rzg2l_du_crtc_state *rstate = to_rzg2l_crtc_state(rcrtc->crtc.state);
- 	struct rzg2l_du_device *rcdu = rcrtc->dev;
--	u32 val = DU_MCR0_DI_EN;
+ 	renc->output = output;
++	drm_encoder_helper_add(&renc->base, &rzg2l_du_encoder_helper_funcs);
  
--	if (rstate->outputs & BIT(RZG2L_DU_OUTPUT_DPAD0))
--		val |= DU_MCR0_DPI_OE;
--
--	writel(start ? val : 0, rcdu->mmio + DU_MCR0);
-+	writel(start ? DU_MCR0_DI_EN : 0, rcdu->mmio + DU_MCR0);
- }
- 
- static void rzg2l_du_crtc_start(struct rzg2l_du_crtc *rcrtc)
+ 	/* Attach the bridge to the encoder. */
+ 	ret = drm_bridge_attach(&renc->base, bridge, NULL,
 -- 
 2.43.0
 
