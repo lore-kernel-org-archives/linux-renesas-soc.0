@@ -1,265 +1,122 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8733223CB;
-	Thu, 24 Oct 2024 08:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773A91AC8B9;
+	Thu, 24 Oct 2024 09:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729759419; cv=none; b=AyEnYKxHQ991ijFw0HV41Fw4shZcaMt5Zj5DfRE5KLCgRA+YQn8jYl+eD96kLooe8BGSkrDBJ0SGCJ7ELv+tu/Sqo/aXKgFk/UK2gX3z7IYi+SvsPEu9/GjcmfsoqQfVj3OfSu4egX/bB2FNETEv6hM67CBKrFHrxVD8b/QEr3I=
+	t=1729763659; cv=none; b=D6ctiiZme0fCpDFbnZIjOEsqd2R0qIWv/73EwffrwvF74A7BqzEkLNUcL1I0Y7tcD+uOa8SZSNIC5RvR+bnLWnqis+dZ6psIHGH3B8nm9Frc1w5AHNehJxGO+scCyfRTK4yejCL+jjQ03FbqSfrZCJ+vm4Zb6mIvzpcL9BbJC7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729759419; c=relaxed/simple;
-	bh=jQ83AzUv/DC8tU0P+N4GjoXN80FxENOn+WqCZHMMxiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PvePStFpB7rgIPl5G8eKzwfNhiLX/3hAICbzzPPc2YIR6ovhy2g08H6DhooS7VkFlc8chdobsZwUDL4kpv00R5mZM3ggqAoMXJwLzejJgKr25B0x0TVNHuoeSBqy19LSzXoQ3zCZXLNoo0e1mNFCUTch9dc59WgzTHK70Z0IZhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1729763659; c=relaxed/simple;
+	bh=FKxWNgpm5Kd3t6VYzCpTSntmFd4Q0I0hT0G3IkO8d/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tPKOivUXv2Hv92rM6fvwzWvz1FfQi/IyZlDa51E164YZLou0sQNuP3bH7nWz/q91sX9/ObddMnqP6OMSljVJ7lt7YN1MPM7MMiVGTCgxwZ7V4ByiQGMM4VzOM6OWJNDrbIDs7faqPX6hwAVRnYUnlnniwIkabk26a2GUudiLSFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mHKiZjLg; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e28fd83b5bbso732867276.0;
-        Thu, 24 Oct 2024 01:43:36 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mHKiZjLg"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539fe76e802so857413e87.1;
+        Thu, 24 Oct 2024 02:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729763655; x=1730368455; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dWFrbyngtx/okFnAnXziGIwpshdD52HD2rAoJDGqVCM=;
+        b=mHKiZjLg72cPQkRNKT3vrbt6usW+O+wb3Ec+E/+xe+/rKirbTediOVLWfcAI9XSB0K
+         Zn/p9gzyi/GL5MafzAU+kU+IPgTkffhFjIEIMHUKAXcMNWE6wR174zH9RN+gJBRuI9zW
+         sK16P3/vYRiSnp8hC9Elyx6NrfsZk60t6N7jeobN9xIQnnhYgrQHpDwCogzW6kHX5bWs
+         tuc/9f+tAiioJOhi8dGNyjhoQdIQg5vCA1OtzUf+vy7L+ejevIVAy6HSUrwzPLtN1aU3
+         9kuzvZ6KeR+UbEyXFA59+8kikuLNiJLEoDr16A1eUc03OxQsBq2joVU0iCOTNfFiSLQM
+         2tWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729759414; x=1730364214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0EdHvJaPlIyM5TMupEvLhPEXXyn9Awd20txGlqEPek4=;
-        b=p4rYbYJ0HppQrdoy48eabnCxis+QUcFRlte7PYLUV9XVY9nODLtNEzgUYyhiThAp71
-         hWa9g3W7/AsLwrButUhDVQjHXIMOc57IA4/U9VuxefmFO6PWjGoFsmr3p4CYOqn9EFqG
-         AIFWI5ywMkPwhMLwQB6IVMPAZWmjpXfVQR1pc+K6d2l0srwYiLp/m0DEqob1o7Bn2CMf
-         YcBN417zFvhV/iTXzsRbslm2T7+jnkd1HQGOxQwZSYiIXcwvj60HCS5XPISvjx1ml159
-         MG7CRlgGWHDN9fSTY+q5kcTU50cSxRIGKL+mxW4AtTLxx5XKQWe8vnWc05CbWGjPMEkl
-         M+uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8kUFaQ+eZClcbOdjRSnfWA6hi0KzHHSPiJvz+mCuqKH6DKjiqqAhO4MXKCFrzMuKqhTYvaUFTIT6uqLA=@vger.kernel.org, AJvYcCXpFmQwWhAZO0XkbH72iTgMEAKamqCthd4m8j96hkpzMLbmm5qZoNLPn+bjb1Wo6SLDyeoR/7MoDTLvc1zE9Ou8Qlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyBW6mFITu+U24dCC1HY4rWSB73tSmp8hpnKWVBbt9Y/l6BfOd
-	25mRoJanQQAlGq4k4Qh18FDF3taa5tWzpqEg8oM5BbSyILkKEk0lnjhmkHN4
-X-Google-Smtp-Source: AGHT+IHH44HVf6UumnATwUziyNnkrEDuGYM5rVTEwjkef/+ZrLRxhEOYgNuQO8l7ifjtPP56m+oQRw==
-X-Received: by 2002:a05:690c:e21:b0:6e2:a129:1623 with SMTP id 00721157ae682-6e7f0fc11dfmr58907447b3.38.1729759414131;
-        Thu, 24 Oct 2024 01:43:34 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ad18adsm18807107b3.67.2024.10.24.01.43.32
+        d=1e100.net; s=20230601; t=1729763655; x=1730368455;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dWFrbyngtx/okFnAnXziGIwpshdD52HD2rAoJDGqVCM=;
+        b=gQ99bSPJDyWNGvIHXaO/HiQEzK+tt9eRsz629P5FO61uLy3WknvmAwyzeo6YyQF/+d
+         4zn4yS6BOUw2fJ340hjD8JFawh6DEY/6Abx4mo8WHl6ab+jWG4PeisH31UlsiEIHCNM6
+         6pQv+tGRkPUBo4FpC23hCb8RM61B73TtWTgE1vntoSXYf4dFuU6Qw5yeVFIdPp9/HF9q
+         h4NU6Iev81SB+nNO5eRQxXCL5DRpdJ439VIDKD33+h83A/GXj2OLKvkLZmrNbUFXtZoY
+         OXPqqml+cZTpH+Ucpym7iimqwhXWrtI9/XwN5QHZ9HU8p1g65GtnSAqZyFOsSpQIuDtZ
+         Dj6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUO2SqY8pCCDtEuM3MQhSh5BxPaXrgVJLyGD5xJ9Cb3MC6Rpe9oQq2ZemCwsdI6eqG8OIjKZ4uaMJBJT8Y=@vger.kernel.org, AJvYcCUXTka7NZeabZ71I5DO05qmitf8fC0otSVqtujeq+b+kXZkkYoMZQqiAuqFvbAyrTkpbKb+4tQsY/Mqsg==@vger.kernel.org, AJvYcCUaBBpSyiIqZxmPR/h+3+VFgU0/3MlxICfSwkGvn2dIVE8/SkV6BIoMVjOtid4w7eDcPNMD5ulFCTXLfxS+Ox0jghU=@vger.kernel.org, AJvYcCVSGw/mIua7EK/UvhLig4u5yKomjcuNlZMe1gCD2LjzaLOLhHG1JJLrLKazi/YAfRMUDKZoVCZy5tsM50A=@vger.kernel.org, AJvYcCVSbXKWYc6vqR4UyvfuoDogPuLwMwlv0Wazd1NXzSV3lzIzroM0hKVY4OVJDlYP0bYeVfamw4BLLR46i1Y=@vger.kernel.org, AJvYcCW0017L0Xcdr3LLSNY9psuMPBy5Ts2m0dF3LAiUPHRnYm1EhveRbv+PS/P1gSINJ87Y7SG6BoXJPPVJ@vger.kernel.org, AJvYcCWbLeWXgvBZLsC8DaSVyD4NcB66wS2I9X+gsriVbaRPZNmOEcHcO05ZF6PJoMqflodqQvp+fJAmZ+thHA==@vger.kernel.org, AJvYcCWyROLnR4eju7J8uFDskP4Rc0rplMxBTltFQgDlKgeD04i50J2uAOxAaqChGFMiYO6R0B/vYshh1y234Q==@vger.kernel.org, AJvYcCX3ep4/d8pn4PUAmCKXe/9uTRFF3b2KfTytzemVHVUDkjMdTyNGQw8pyLt1v77rjnJcJ+fGCtcu71U=@vger.kernel.org, AJvYcCXYonwE5bWSlsJQI9K4CaeeaS24s0jjeqASNtPIvx4XTspyrqRFV8KYw6ojApe5TWCKMm9P1RVmiQQP@vger.kernel.org, AJvYcCXrHAzcets9h5AqfcMOjxg83GPsA6zUv/Q+QnRcZgs1oyPO4EmiFuwn8nT9uc/8Ia6PbIaZku6bSA+U@vger.kernel.org, AJvYcCXyNYiYJ7WUidwUqKHoQiiELMBUdlSGmZoJ2RuoODW2zCKwJBF5bpRvJjEPaE7roHLJPa9ezVCJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOOboEqf5dDveryMIPOtBJR7l6jlTdMo4Zvih9IDiPpYahEGMF
+	RSBK4qTOpM/di1eIuMNS+5LQAuP9b8ZuQ4KxDCc6dijK/22rv+t/
+X-Google-Smtp-Source: AGHT+IESS/b985DjGqxcVR4TpFmyKByLbgcGL5xpKJP8FcedH7Cq7mq7giZwGEwbp0hOURP0H6AUbw==
+X-Received: by 2002:a05:6512:1583:b0:52e:9762:2ba4 with SMTP id 2adb3069b0e04-53b1a315eeemr2629947e87.25.1729763655208;
+        Thu, 24 Oct 2024 02:54:15 -0700 (PDT)
+Received: from [10.110.248.100] ([79.110.251.190])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b1ade1875sm455020e87.18.2024.10.24.02.54.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 01:43:32 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e38fc62b9fso5970047b3.2;
-        Thu, 24 Oct 2024 01:43:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgrSrWKpYLWEqA8W1ioal7NmYlDfMHiAZlU1a1/c5jmCpwEemcjlm+iDQsLE6upkl+P7S6PXISQ7181J0=@vger.kernel.org, AJvYcCXaZmw639uKFm8/AQPEKjxXvxZkOVivOD7CO4Vq/1d72l4YyQTcIQUzpHuZoUjW6BQ8Y1S4fwuxglBeicOneLW25Hg=@vger.kernel.org
-X-Received: by 2002:a05:690c:30e:b0:6c7:a120:e0ec with SMTP id
- 00721157ae682-6e7f0e445acmr58794887b3.22.1729759412579; Thu, 24 Oct 2024
- 01:43:32 -0700 (PDT)
+        Thu, 24 Oct 2024 02:54:11 -0700 (PDT)
+Message-ID: <3448a096-849a-4f61-8017-c03a83e22c38@gmail.com>
+Date: Thu, 24 Oct 2024 14:54:04 +0500
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009230817.798582-1-fabrizio.castro.jz@renesas.com> <20241009230817.798582-3-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20241009230817.798582-3-fabrizio.castro.jz@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Oct 2024 10:43:20 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXxJhQ2Ra+PiR-UUv1HhL69Zpva2b-N9KygSMKUApHdwQ@mail.gmail.com>
-Message-ID: <CAMuHMdXxJhQ2Ra+PiR-UUv1HhL69Zpva2b-N9KygSMKUApHdwQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] irqchip: Add RZ/V2H(P) Interrupt Control Unit
- (ICU) driver
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "MAINTAINERS: Remove some entries due to various
+ compliance requirements."
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Tor Vic <torvic9@mailbox.org>
+Cc: Kexy Biscuit <kexybiscuit@aosc.io>, jeffbai@aosc.io,
+ gregkh@linuxfoundation.org, wangyuli@uniontech.com, aospan@netup.ru,
+ conor.dooley@microchip.com, ddrokosov@sberdevices.ru,
+ dmaengine@vger.kernel.org, dushistov@mail.ru, fancer.lancer@gmail.com,
+ geert@linux-m68k.org, hoan@os.amperecomputing.com, ink@jurassic.park.msu.ru,
+ linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-ide@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-spi@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+ mattst88@gmail.com, netdev@vger.kernel.org, nikita@trvn.ru,
+ ntb@lists.linux.dev, patches@lists.linux.dev, richard.henderson@linaro.org,
+ s.shtylyov@omp.ru, serjk@netup.ru, shc_work@mail.ru,
+ tsbogend@alpha.franken.de, v.georgiev@metrotek.ru,
+ wsa+renesas@sang-engineering.com, xeb@mail.ru
+References: <a08dc31ab773604d8f206ba005dc4c7a@aosc.io>
+ <20241023080935.2945-2-kexybiscuit@aosc.io>
+ <124c1b03-24c9-4f19-99a9-6eb2241406c2@mailbox.org>
+ <CAHk-=whNGNVnYHHSXUAsWds_MoZ-iEgRMQMxZZ0z-jY4uHT+Gg@mail.gmail.com>
+Content-Language: ru
+From: B4D_US3R <producerkgb@gmail.com>
+In-Reply-To: <CAHk-=whNGNVnYHHSXUAsWds_MoZ-iEgRMQMxZZ0z-jY4uHT+Gg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Fabrizio,
+Grandpa, take the pills or you'll get your ass kicked.
 
-On Thu, Oct 10, 2024 at 1:08=E2=80=AFAM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> Add driver for the Renesas RZ/V2H(P) Interrupt Control Unit (ICU).
+
+
+Дед, пей таблетки, а не то получишь по жопе
+
+23.10.2024 22:45, Linus Torvalds пишет:
+> Ok, lots of Russian trolls out and about.
 >
-> This driver supports the external interrupts NMI, IRQn, and TINTn.
+> It's entirely clear why the change was done, it's not getting
+> reverted, and using multiple random anonymous accounts to try to
+> "grass root" it by Russian troll factories isn't going to change
+> anything.
 >
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> ---
+> And FYI for the actual innocent bystanders who aren't troll farm
+> accounts - the "various compliance requirements" are not just a US
+> thing.
 >
-> v2->v3:
-> * Reworked line breaks
-> * Improved performance of rzv2h_icu_eoi
-> * Replaced raw_spin_lock with guards
-> * Improved the style of rzv2h_icu_domain_ops
-> * Removed put_device from the successful path of rzv2h_icu_init
-
-Thanks for the update!
-
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-
-> +static void rzv2h_clear_irq_int(struct rzv2h_icu_priv *priv, unsigned in=
-t hwirq)
-> +{
-> +       unsigned int irq_nr =3D hwirq - ICU_IRQ_START;
-> +       u32 isctr, iitsr, iitsel;
-> +       u32 bit =3D BIT(irq_nr);
-> +
-> +       isctr =3D readl_relaxed(priv->base + ICU_ISCTR);
-> +       iitsr =3D readl_relaxed(priv->base + ICU_IITSR);
-> +       iitsel =3D ICU_IITSR_IITSEL_GET(iitsr, irq_nr);
-> +
-> +       /*
-> +        * When level sensing is used, the interrupt flag gets automatica=
-lly cleared when the
-> +        * interrupt signal is de-asserted by the source of the interrupt=
- request, therefore clear
-> +        * the interrupt only for edge triggered interrupts.
-> +        */
-> +       if ((isctr & bit) && (iitsel !=3D ICU_IRQ_LEVEL_LOW))
-> +               writel_relaxed(bit, priv->base + ICU_ISCLR);
-> +}
-
-Given you already manually inlined one call of this function in this v2,
-I am not sure it's worthwhile to keep this helper.  Manually inlining the
-single remaining call would drop some boilerplate.
-
-> +
-> +static int rzv2h_irq_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +       struct rzv2h_icu_priv *priv =3D irq_data_to_priv(d);
-> +       unsigned int hwirq =3D irqd_to_hwirq(d);
-> +       u32 irq_nr =3D hwirq - ICU_IRQ_START;
-> +       u32 iitsr, sense;
-> +
-> +       switch (type & IRQ_TYPE_SENSE_MASK) {
-> +       case IRQ_TYPE_LEVEL_LOW:
-> +               sense =3D ICU_IRQ_LEVEL_LOW;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_FALLING:
-> +               sense =3D ICU_IRQ_EDGE_FALLING;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_RISING:
-> +               sense =3D ICU_IRQ_EDGE_RISING;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_BOTH:
-> +               sense =3D ICU_IRQ_EDGE_BOTH;
-> +               break;
-> +
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +
-> +       guard(raw_spinlock)(&priv->lock);
-> +       iitsr =3D readl_relaxed(priv->base + ICU_IITSR);
-> +       iitsr &=3D ~ICU_IITSR_IITSEL_MASK(irq_nr);
-> +       iitsr |=3D ICU_IITSR_IITSEL_PREP(sense, irq_nr);
-> +       rzv2h_clear_irq_int(priv, hwirq);
-> +       writel_relaxed(iitsr, priv->base + ICU_IITSR);
-> +
-> +       return 0;
-> +}
-> +
-> +static void rzv2h_clear_tint_int(struct rzv2h_icu_priv *priv, unsigned i=
-nt hwirq)
-> +{
-> +       unsigned int tint_nr =3D hwirq - ICU_TINT_START;
-> +       int titsel_n =3D ICU_TITSR_TITSEL_N(tint_nr);
-> +       u32 tsctr, titsr, titsel;
-> +       u32 bit =3D BIT(tint_nr);
-> +       int k =3D tint_nr / 16;
-> +
-> +       tsctr =3D readl_relaxed(priv->base + ICU_TSCTR);
-> +       titsr =3D readl_relaxed(priv->base + ICU_TITSR(k));
-> +       titsel =3D ICU_TITSR_TITSEL_GET(titsr, titsel_n);
-> +
-> +       /*
-> +        * Writing 1 to the corresponding flag from register ICU_TSCTR on=
-ly has effect if
-> +        * TSTATn =3D 1b and if it's a rising edge or a falling edge inte=
-rrupt.
-> +        */
-> +       if ((tsctr & bit) && ((titsel =3D=3D ICU_TINT_EDGE_RISING) ||
-> +                             (titsel =3D=3D ICU_TINT_EDGE_FALLING)))
-> +               writel_relaxed(bit, priv->base + ICU_TSCLR);
-> +}
-
-Likewise.
-
-> +
-> +static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +       u32 titsr, titsr_k, titsel_n, tien;
-> +       struct rzv2h_icu_priv *priv;
-> +       u32 tssr, tssr_k, tssel_n;
-> +       unsigned int hwirq;
-> +       u32 tint, sense;
-> +       int tint_nr;
-> +
-> +       switch (type & IRQ_TYPE_SENSE_MASK) {
-> +       case IRQ_TYPE_LEVEL_LOW:
-> +               sense =3D ICU_TINT_LEVEL_LOW;
-> +               break;
-> +
-> +       case IRQ_TYPE_LEVEL_HIGH:
-> +               sense =3D ICU_TINT_LEVEL_HIGH;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_RISING:
-> +               sense =3D ICU_TINT_EDGE_RISING;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_FALLING:
-> +               sense =3D ICU_TINT_EDGE_FALLING;
-> +               break;
-> +
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +
-> +       tint =3D (u32)(uintptr_t)irq_data_get_irq_chip_data(d);
-> +       if (tint > ICU_PB5_TINT)
-> +               return -EINVAL;
-> +
-> +       priv =3D irq_data_to_priv(d);
-> +       hwirq =3D irqd_to_hwirq(d);
-> +
-> +       tint_nr =3D hwirq - ICU_TINT_START;
-> +
-> +       tssr_k =3D ICU_TSSR_K(tint_nr);
-> +       tssel_n =3D ICU_TSSR_TSSEL_N(tint_nr);
-> +
-> +       titsr_k =3D ICU_TITSR_K(tint_nr);
-> +       titsel_n =3D ICU_TITSR_TITSEL_N(tint_nr);
-> +       tien =3D ICU_TSSR_TIEN(titsel_n);
-> +
-> +       guard(raw_spinlock)(&priv->lock);
-> +
-> +       tssr =3D readl_relaxed(priv->base + ICU_TSSR(tssr_k));
-> +       tssr &=3D ~(ICU_TSSR_TSSEL_MASK(tssel_n) | tien);
-> +       tssr |=3D ICU_TSSR_TSSEL_PREP(tint, tssel_n);
-> +
-> +       writel_relaxed(tssr, priv->base + ICU_TSSR(tssr_k));
-> +
-> +       titsr =3D readl_relaxed(priv->base + ICU_TITSR(titsr_k));
-> +       titsr &=3D ~ICU_TITSR_TITSEL_MASK(titsel_n);
-> +       titsr |=3D ICU_TITSR_TITSEL_PREP(sense, titsel_n);
-> +
-> +       writel_relaxed(titsr, priv->base + ICU_TITSR(titsr_k));
-> +
-> +       rzv2h_clear_tint_int(priv, hwirq);
-> +
-> +       writel_relaxed(tssr | tien, priv->base + ICU_TSSR(tssr_k));
-> +
-> +       return 0;
-> +}
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> If you haven't heard of Russian sanctions yet, you should try to read
+> the news some day.  And by "news", I don't mean Russian
+> state-sponsored spam.
+>
+> As to sending me a revert patch - please use whatever mush you call
+> brains. I'm Finnish. Did you think I'd be *supporting* Russian
+> aggression? Apparently it's not just lack of real news, it's lack of
+> history knowledge too.
+>
+>                        Linus
+>
