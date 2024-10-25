@@ -1,100 +1,87 @@
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D602161E9
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Oct 2024 15:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177431F7550
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Oct 2024 15:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869499; cv=none; b=LuubkxzdtsRXrahw+9GX4RxB/c73quLm+xvsXrlVqNX7nWW+sKPkLKlD6wnhcVI9M8riSvDu6WIMC5CuKIwCc5+gvv8Xylgh5fb8BehVssuiOkSeK5clzrSxes0DiqGmXbwoTDwajozeH0iIEh75T37k4iDcu5XHrHePxE0k8bY=
+	t=1729869528; cv=none; b=PfjgJASNn1CsoMwO17/IGZA7xKJP1894/WpZWKLCd3Wwa5JSBlBwjVVyBn3yeDNuvFy2Hopn2KBhQk6HldpeBGvcTdzim0KFHxd/yUbG1809JGaAONycdhXlCDv0MEboVYDQvDpExFRicdx7I/xlhnjSiSJnNtJMWXHcQNBdxHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869499; c=relaxed/simple;
-	bh=Cp9FSnTlH6bdvVMpEKMvRbQ5i2H60iAjX87XIB2uWE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/o8ofQNMRFxJthft7JN4dmiNrWpIHtTUG36nAbm0/TtlrZstrjgm1Z7pLDJ8yiLvAVEUQEpVVjBLXl3ngHkyFbXLXO60i4wrG+GmA7XskRsWug6S50N/LhbLiZn5NleBurXDGd32hz2iQMetHkjHprRpE/WZFt1x7/smQrC/pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=QnvAp3tY; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="QnvAp3tY"
-Received: from cwcc.thunk.org (pool-173-48-115-113.bstnma.fios.verizon.net [173.48.115.113])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 49PFI2wH026442
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 11:18:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1729869484; bh=+3/YlMW+NiPuVTOTB6zPtTx6MGg/Ovh8Uq4NZbG/uyg=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=QnvAp3tYpFsuWp5t6MYLl3aEfmGEHnXsYn3xojrYaP7hfyadCIz6ul249CuoovpUA
-	 Q/ZRiCbCtkKpoJEewwmK2oksxGgkoj3gUKwI7DC4VLXKsTjZXxCNiFBKejH61UoH+w
-	 yXYNJeGvoLFpeWlnvQmGzEgkqKKOo75fOmihQOlVnvaN5Hmky+GtPAnVjY7KvA0sIa
-	 SF7vmZc+rwxBiLglrVldK+znmbyAG3zk3UsAId0ihgwylnx0dNRsY+PBDDgF8UZ3u1
-	 N73wPFu6LL8zbXNfiMp33II4/Lo2dHic7WcScSjWD9siXkJD7Cag6J82MmmeHDnDly
-	 NMT9//KY/BIxw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 28BF715C0329; Fri, 25 Oct 2024 11:18:02 -0400 (EDT)
-Date: Fri, 25 Oct 2024 11:18:02 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: Hantong Chen <cxwdyx620@gmail.com>, james.bottomley@hansenpartnership.com,
-        ajhalaney@gmail.com, allenbh@gmail.com, andrew@lunn.ch,
-        andriy.shevchenko@linux.intel.com, andy@kernel.org, arnd@arndb.de,
-        bhelgaas@google.com, bp@alien8.de, broonie@kernel.org,
-        cai.huoqing@linux.dev, dave.jiang@intel.com, davem@davemloft.net,
-        dlemoal@kernel.org, dmaengine@vger.kernel.org, dushistov@mail.ru,
-        fancer.lancer@gmail.com, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org, ink@jurassic.park.msu.ru, jdmason@kudzu.us,
-        jiaxun.yang@flygoat.com, keguang.zhang@gmail.com,
-        kory.maincent@bootlin.com, krzk@kernel.org, kuba@kernel.org,
-        linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux@armlinux.org.uk, linux@roeck-us.net,
-        manivannan.sadhasivam@linaro.org, netdev@vger.kernel.org,
-        nikita.shubin@maquefel.me, nikita@trvn.ru, ntb@lists.linux.dev,
-        olteanv@gmail.com, pabeni@redhat.com, paulburton@kernel.org,
-        robh@kernel.org, s.shtylyov@omp.ru, sergio.paracuellos@gmail.com,
-        shc_work@mail.ru, siyanteng@loongson.cn, tsbogend@alpha.franken.de,
-        xeb@mail.ru, yoshihiro.shimoda.uh@renesas.com, phoronix@phoronix.com
-Subject: Re: linux: Goodbye from a Linux community volunteer
-Message-ID: <20241025151802.GC3307207@mit.edu>
-References: <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
- <20241024165650.174-1-cxwdyx620@gmail.com>
- <20241024173504.GN3204734@mit.edu>
- <cc264780-0c16-4209-8736-ada156994eaa@metux.net>
+	s=arc-20240116; t=1729869528; c=relaxed/simple;
+	bh=Zw5LzwuhEUKiQEzoSZYvx6X6L5GiUzKRz/H836fxUqI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VpgTvQHa3GPchVLhM6WnaP1W1FBabx6lhZJx4zgmbXNgZ/2j9rbadhiDLJTcpwu4qOUWEhyCeAn4m9wjNXD71lz+lLqLXmxuAFZlk6CeIhgl3YsniMHt5Rlrp8vBpYhPxKLLtGzzi57lg2KxT527X6V+L0+hhC9MjNH4lZS8mVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4XZmVb26fhz4wwyR
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Oct 2024 17:12:39 +0200 (CEST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:6cce:9fcf:3351:6a67])
+	by xavier.telenet-ops.be with cmsmtp
+	id UfCS2D00M54cQus01fCStU; Fri, 25 Oct 2024 17:12:31 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t4Lyz-005Vqz-4L;
+	Fri, 25 Oct 2024 17:12:26 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t4LzG-00DnZc-B6;
+	Fri, 25 Oct 2024 17:12:26 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: net: renesas,ether: Add iommus property
+Date: Fri, 25 Oct 2024 17:12:24 +0200
+Message-Id: <2ca890323477a21c22e13f6a1328288f4ee816f9.1729868894.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc264780-0c16-4209-8736-ada156994eaa@metux.net>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 25, 2024 at 03:35:37PM +0200, Enrico Weigelt, metux IT consult wrote:
-> 
-> Okay, great. I'm fully on your side: let's sanction all countries that
-> like to wage wars of aggressions against other countries and kick out
-> all maintainers from there.
+make dtbs_check:
 
-Sanctions are imposed by Governments --- for example, the US,
-European, Japan, Switzerland, Norway, etc.  Not Linux developers, nor
-Russian troll farms, nor Russia's useful idiots on the internet.  It's
-not up to anyone on this mail thread.
+    arch/arm64/boot/dts/renesas/r8a77980-condor.dtb: ethernet@e7400000: 'iommus' does not match any of the regexes: '@[0-9a-f]$', 'pinctrl-[0-9]+'
+	    from schema $id: http://devicetree.org/schemas/net/renesas,ether.yaml#
 
-I see from your country code in your signature that you apparently
-live in Germany.  Please note that if you violate Germany's laws and
-regulations, whether it's by supplying bomb-making technical
-assistance to a terrorist group, or lending technical assistance to
-sanctioned entities directly or indirectly controlled by the Russian
-Military-Intelligence, you could be subject to civil or criminal
-penalties.  And that's not up to me; it's up to your elected leaders
-and Germany's judicial system.
+Ethernet Controllers on R-Car Gen2/Gen3 SoCs can make use of the IOMMU,
+so add the missing iommus property.
 
-If you don't like this, I cordially invite you to exercise your
-democratic rights and make your opinions known to your fellow citizens
-and to your elected politicians.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/net/renesas,ether.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-      	      		       	       - Ted
+diff --git a/Documentation/devicetree/bindings/net/renesas,ether.yaml b/Documentation/devicetree/bindings/net/renesas,ether.yaml
+index 29355ab98569daf6..d6c5983499b87d64 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ether.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,ether.yaml
+@@ -59,6 +59,9 @@ properties:
+   clocks:
+     maxItems: 1
+ 
++  iommus:
++    maxItems: 1
++
+   power-domains:
+     maxItems: 1
+ 
+-- 
+2.34.1
+
