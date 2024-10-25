@@ -1,55 +1,57 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1082A21F4D7;
-	Fri, 25 Oct 2024 15:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CA621F4DA;
+	Fri, 25 Oct 2024 15:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868724; cv=none; b=aupY3IhwgFdOKnC9IBqP/u0WsxK3MSpbmyyh4oq47W7IDj+r0GOiX2BbX86X4+ihvdnB/h3ZwHBYjwqcoHXstbS4kTquHIYYB7liUZkqpns/NbMJ2Fe1L2nwnawvFPC05tQiofwRv3wvIpVfKPyyC/zmOdippGZa3oTfzKEhhso=
+	t=1729868726; cv=none; b=GO5xkX3NCqpipJ5j07xXflvrvHlkHDCnExNRRtgIgNgGghmsg5qRLn8CQQcsf2TEBl8CgMhHv6o4+Bngwrg4faVg2Lq3edYVTuPeFUEU0WjlFVx7PHmA80g+z1jcQ+cIb7E/kbDBY3YWYVwr/uQE9GV4zvZHEC4nu8UIs3X5a38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868724; c=relaxed/simple;
-	bh=bfPrR0zwy73NWJ8fPJX9oUrz7Zb4M0HWAhJmV4sKJDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YoLfshXbgBQmZH8QkChqRPFX09eZqO2jRODpgnDCZgIZIz2lkIGdgx/xVsGBHGzBnHzJZadXXkZDGs9J+p2Cx4P/aGRj+OhdPE4FLy33lBiNPgIUnuUIMQt6TMkApGirhBDIhUPnd+w8QCBc00wms+cD8ySlGyWb4RFGclazf5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c20/G+vv; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1729868726; c=relaxed/simple;
+	bh=IyonAmKq0ZXAULmY3+PDBoQYB4H6I4G7D5Vm5kNOI5g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pesmKgQ49zR7QaUiiOx5n6umWD1TvT2P7OJMsU7mdEloUgHVeZBvzv60hzmtFY4bVEVFwBom5Og8dsdPXlHcrRmAtsAXKZkccR9dESwgTH0MCtDGhKlkWE+rcOSFPto71zb7b4B8aA8lmGsYykE8XLgIatpPt7lWGTAiXmgGP9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwKxjGHW; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c20/G+vv"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ed3bd6114so1288198f8f.2;
-        Fri, 25 Oct 2024 08:05:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwKxjGHW"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53a097aa3daso2004713e87.1;
+        Fri, 25 Oct 2024 08:05:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729868720; x=1730473520; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ntrH5sZXkLov6m6pn3kJJxwmprPBkU56JOUk30KmUnU=;
-        b=c20/G+vvcVa/1hpBaTJkcNjwi5fODUW03++VGyK8ZBhzUd2xRlQUTK2Mf1K82Zf36r
-         ggzoc1qBnYNsQ3CKNZWBr5ndDR7e4nrHTxYdOs400bNimVOcYptSuqbkZbFg7ulwN1ni
-         jjj6nh8zTNGK0Gp6XM+/9i68f3AOzfTQzJaXorz8CHxqBc1XsjHCs2nOq4GKWaVPiZbe
-         4p8wDbS7np0h7iDPMWKGoki5pfPzdb5CpzuycFxA1JPLbo6il1NcXTnbegtwNYo+nSjc
-         L3KtxZVMuHMiPNYLoqJOK9N7LzkRxeOA//m6+woWC1uEkfeOpIz7DQhKMDxgBJbN1ici
-         vaTQ==
+        d=gmail.com; s=20230601; t=1729868722; x=1730473522; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J8PgFaYSXbYxlUGQOc4NTq+xSY/C2TaX6+49YKSFz30=;
+        b=iwKxjGHWtFYI7Q3XbIFYodrlWY8CAO9cTUAizf6438xax9gkRzArR6GmcE6DRYTVIN
+         r/B2fI8uyxLGJEq6DldYIsvmhOTsLsXsIbQwAay2FTeGjQfKURiaAWKCb/xlosIyigaQ
+         ZW28IemdBV4bk17GB2nHV+h1/4lOMsLc+r8+9fKd/zkPooMass2hyJO3inwWM7+P+mKL
+         cfjU/0v2axXIOjM86QKDmC3bVFF24y4QuAk5ZVygPX7UDg0x0bkDZpAfxPy1mUGX80mf
+         5Wh0+lZYHnP/h9JdD5cfOwdKxHR2NXDuTcMeFYqoVO0OOvllVUQ9G+MoykksMRtjKGgx
+         7bBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729868720; x=1730473520;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ntrH5sZXkLov6m6pn3kJJxwmprPBkU56JOUk30KmUnU=;
-        b=n2w36wtvANLEj1OwK5x1/kQAZRcuYsbBRsYjgY34U0UJf9zxqMG3hfbgPpiYFjSkyk
-         DNATDAu3rIK1S+DnCJmpFsoifZzUz6l/YcypFEFE1vYzP8gpfRkc5PIHvRQPv5t6HfJQ
-         7ulyCJxMAxfjuF/MgPiuHWmv/8CKSo7LdgqhFtitt8VygtAodyjefy4g/mUD0LLefLSb
-         PJ1skFg0ekXdI3f7v+egsaAd7RJBI3Os9CLZGog4rTLYEAv1UIjd227v5ICdOXvTQ2aE
-         91oqE2vyC5KtTGWnDOjfxVZYN9OKEhlA+qm/X1TyfexwP+goJ3tqU4mRkshcOoesiVOD
-         IAOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSK9/5nOk59ZlyT3cEZgsdXXabZU/Y8qHd51BXC+ZapNECpRHmr006lmipZLEkU2nStSL9qYK7sZrK+JA=@vger.kernel.org, AJvYcCXOlYSxaAAMutZ9jsO7TNimwxwzB391nldl7qenpXRbSNQuwKfdZI7ERqS3t1evTPp8L8gSJ27WbSzJ73RlOb9Xv4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEpWYStn+fZmJtwrhyDfncG9i+od6DhZF3gcCzFNSnwhSYYRHa
-	mx+SS69q2+WANn1LOaOYWLX6xYMfbLVOUtT3v4Zi8dT+dig7dE7a4Mwq/w==
-X-Google-Smtp-Source: AGHT+IGEUfjIbnltBQHGpvmo4xuG/UePskohtNrh6DLVMJTaxnSFIFmGdfxRTzmw57PFlBBGc+c40Q==
-X-Received: by 2002:a5d:434e:0:b0:37d:4d3f:51e9 with SMTP id ffacd0b85a97d-37efcf7665amr6768174f8f.40.1729868719829;
-        Fri, 25 Oct 2024 08:05:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729868722; x=1730473522;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J8PgFaYSXbYxlUGQOc4NTq+xSY/C2TaX6+49YKSFz30=;
+        b=MsM4WDz2ikspKlP/4Erw4NjZqZFCVViRn5y89LjKGvdNK/xJqRzPT40oaMQiz3XMZ/
+         J9966Wwmouz0klx1x/UHiPwviO0/FmVCrAL2UxX7ahE7qj/euWWP3LHicEYPOCYtkiuN
+         Igzg30pJzwuYkd75FbRriNrjcKWtWmi7/wAzPcTUOB7LSQkYP6AQIUnKAZMVqUKDJL7p
+         suywEFeGAp9xgu91N8tvvRaHuTwbAtqmBe5HCS3CKT+TmT8jfZS0xHJv2edNjxTgPsXy
+         /r6r5lsPZ0Uac9Sb04W4UBaCcNo6aP5gwsos+bTXfGrl85HnZJlK145Mt/MXA6L4YKHg
+         5mig==
+X-Forwarded-Encrypted: i=1; AJvYcCWxJHHR8/Ir3IUvJ2IjbwTq7i6dP9wvvThyntvk8NrlIax0lQC+IyYslcIn9NLzsHV7zWngIbLMhgCqfWo=@vger.kernel.org, AJvYcCXBj/CZZnx6g71Uk4CaWNKD51WtmVjFbXzm0S+QtoHKbBpkC+n8jtrEtvZ+vhL7qyDoA1OhsDCtjXjoHknjQ8ridhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg/wIihfqJtUw62/xJsXXdv311RrYtDgP3S9huCjH8nfzLgnno
+	ucBwnqNkE5vKxUnJxUGQD4xptkpByakpb0fOOmIqhT9OX1Me8S6F
+X-Google-Smtp-Source: AGHT+IHj4F3QdgNRfVLDSNU1G7vcnM8IXI32lmjRYvkYQ64qDpcyY6MgosCjGYXQ5pQBneAidHf3/g==
+X-Received: by 2002:a05:6512:3f17:b0:535:645b:fb33 with SMTP id 2adb3069b0e04-53b1a2f21b5mr5077470e87.2.1729868721629;
+        Fri, 25 Oct 2024 08:05:21 -0700 (PDT)
 Received: from prasmi.Home ([2a06:5906:61b:2d00:1044:9cc9:b89d:54cd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3b57bsm1764349f8f.26.2024.10.25.08.05.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3b57bsm1764349f8f.26.2024.10.25.08.05.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 08:05:19 -0700 (PDT)
+        Fri, 25 Oct 2024 08:05:21 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -65,10 +67,12 @@ Cc: linux-sound@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 0/5] ASoC: Rename "sh" to "renesas"
-Date: Fri, 25 Oct 2024 16:05:06 +0100
-Message-ID: <20241025150511.722040-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 2/5] ASoC: renesas, rsnd: Update file path
+Date: Fri, 25 Oct 2024 16:05:08 +0100
+Message-ID: <20241025150511.722040-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241025150511.722040-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241025150511.722040-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -79,96 +83,29 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+The "sound/soc/sh" directory has been renamed to "sound/soc/renesas".
+Update the reference in renesas,rsnd.txt to reflect the new file path
+for consistency.
 
-This patch series aims to rename "sh" to "renesas", along with this
-the references to this path have been updated.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note,
-- This patch series applies on top of [0]
-- This change was agrreed based on the discussion [1]
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-[1] https://lore.kernel.org/all/87v7xuqm84.wl-kuninori.morimoto.gx@renesas.com/
-
-v2->v3
-- Updated entries in MAINTAINERS file as requested by Morimoto-san
-- Added new entry in MAINTAINERS file for RZ/ driver.
-
-v1->v2
-- Rebased changes on sound.git for-next
-- Collected Acks from Morimoto-san for patches 1-3
-- Added entry in MAINTAINERS file
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (5):
-  ASoC: Rename "sh" to "renesas"
-  ASoC: renesas, rsnd: Update file path
-  ASoC: audio-graph-card2: Update comment with renamed file path
-  MAINTAINERS: Add entry for Renesas R-Car and FSI ASoC drivers
-  MAINTAINERS: Add entry for Renesas RZ ASoC driver
-
- .../bindings/sound/renesas,rsnd.txt           |  2 +-
- MAINTAINERS                                   | 20 +++++++++++++++++++
- sound/soc/Kconfig                             |  2 +-
- sound/soc/Makefile                            |  2 +-
- sound/soc/generic/audio-graph-card2.c         |  2 +-
- sound/soc/{sh => renesas}/Kconfig             |  0
- sound/soc/{sh => renesas}/Makefile            |  0
- sound/soc/{sh => renesas}/dma-sh7760.c        |  0
- sound/soc/{sh => renesas}/fsi.c               |  0
- sound/soc/{sh => renesas}/hac.c               |  0
- sound/soc/{sh => renesas}/migor.c             |  0
- sound/soc/{sh => renesas}/rcar/Makefile       |  0
- sound/soc/{sh => renesas}/rcar/adg.c          |  0
- sound/soc/{sh => renesas}/rcar/cmd.c          |  0
- sound/soc/{sh => renesas}/rcar/core.c         |  0
- sound/soc/{sh => renesas}/rcar/ctu.c          |  0
- sound/soc/{sh => renesas}/rcar/debugfs.c      |  0
- sound/soc/{sh => renesas}/rcar/dma.c          |  0
- sound/soc/{sh => renesas}/rcar/dvc.c          |  0
- sound/soc/{sh => renesas}/rcar/gen.c          |  0
- sound/soc/{sh => renesas}/rcar/mix.c          |  0
- sound/soc/{sh => renesas}/rcar/rsnd.h         |  0
- sound/soc/{sh => renesas}/rcar/src.c          |  0
- sound/soc/{sh => renesas}/rcar/ssi.c          |  0
- sound/soc/{sh => renesas}/rcar/ssiu.c         |  0
- sound/soc/{sh => renesas}/rz-ssi.c            |  0
- sound/soc/{sh => renesas}/sh7760-ac97.c       |  0
- sound/soc/{sh => renesas}/siu.h               |  0
- sound/soc/{sh => renesas}/siu_dai.c           |  0
- sound/soc/{sh => renesas}/siu_pcm.c           |  0
- sound/soc/{sh => renesas}/ssi.c               |  0
- 31 files changed, 24 insertions(+), 4 deletions(-)
- rename sound/soc/{sh => renesas}/Kconfig (100%)
- rename sound/soc/{sh => renesas}/Makefile (100%)
- rename sound/soc/{sh => renesas}/dma-sh7760.c (100%)
- rename sound/soc/{sh => renesas}/fsi.c (100%)
- rename sound/soc/{sh => renesas}/hac.c (100%)
- rename sound/soc/{sh => renesas}/migor.c (100%)
- rename sound/soc/{sh => renesas}/rcar/Makefile (100%)
- rename sound/soc/{sh => renesas}/rcar/adg.c (100%)
- rename sound/soc/{sh => renesas}/rcar/cmd.c (100%)
- rename sound/soc/{sh => renesas}/rcar/core.c (100%)
- rename sound/soc/{sh => renesas}/rcar/ctu.c (100%)
- rename sound/soc/{sh => renesas}/rcar/debugfs.c (100%)
- rename sound/soc/{sh => renesas}/rcar/dma.c (100%)
- rename sound/soc/{sh => renesas}/rcar/dvc.c (100%)
- rename sound/soc/{sh => renesas}/rcar/gen.c (100%)
- rename sound/soc/{sh => renesas}/rcar/mix.c (100%)
- rename sound/soc/{sh => renesas}/rcar/rsnd.h (100%)
- rename sound/soc/{sh => renesas}/rcar/src.c (100%)
- rename sound/soc/{sh => renesas}/rcar/ssi.c (100%)
- rename sound/soc/{sh => renesas}/rcar/ssiu.c (100%)
- rename sound/soc/{sh => renesas}/rz-ssi.c (100%)
- rename sound/soc/{sh => renesas}/sh7760-ac97.c (100%)
- rename sound/soc/{sh => renesas}/siu.h (100%)
- rename sound/soc/{sh => renesas}/siu_dai.c (100%)
- rename sound/soc/{sh => renesas}/siu_pcm.c (100%)
- rename sound/soc/{sh => renesas}/ssi.c (100%)
-
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index dfd768b1ad7d..3f07b072d995 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -109,7 +109,7 @@ For more detail information, see below
+ 	  - Register Description
+ 	   - CTUn Scale Value exx Register (CTUn_SVxxR)
+ 
+-	${LINUX}/sound/soc/sh/rcar/ctu.c
++	${LINUX}/sound/soc/renesas/rcar/ctu.c
+ 	 - comment of header
+ 
+ You need to use "simple-scu-audio-card" or "audio-graph-scu-card" for it.
 -- 
 2.43.0
 
