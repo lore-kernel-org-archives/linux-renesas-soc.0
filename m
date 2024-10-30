@@ -1,96 +1,110 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA57213159;
-	Wed, 30 Oct 2024 15:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35812C8EB;
+	Wed, 30 Oct 2024 16:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303706; cv=none; b=tFf9TTv2sTJjUQifPGrqUxyD+y4mbGCWOuTAYbqiexNKuLUJD4x9ZNrMGHupig1NEwyM2cvz6zzQWtj7bKzOLTIVCBTTyTQOyiGlO8DrqDXUg/fmxcBXYKsL0pva5c8544rAlMmnHJ0FLB4o9DBaxUVeRElPvZnCQkERz128HoM=
+	t=1730307146; cv=none; b=blN9jsDU0Zllkjh7DdoWbHkwWyEVyTD8SX9VOornuTnAEXa4OplASLRt5Z6cdC6kMCWLvbXFxIWJxNPEaJoG3vSlVT0hlsIqBZYbJlmxdA7Cex+9yKSZSUkkoX80DtdVPJHBvbLT+gcueGdw+H++E+HzqQaovKcDXjSVED6CUO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303706; c=relaxed/simple;
-	bh=9cmfTty+Ipu13L9T8CQ1vS7VMrr0rkjnBonrJEz97Bk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L794ouGIEoqLJ7zWQDXpfC1o2CVgqU2MehRrejPiaeyI6IuO9PPcFLwCdU3RoB6+Nq9qqKvvh6GHrDKELFKahu+ZhLk0gxFy1CiZJYs98I26eAszTTCJbS9xxZILoXAkyiRoPRQr47WIKXh+/AT1vnUzYJj6HZiBGY3mvbOfkTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e38fa1f82fso61818687b3.1;
-        Wed, 30 Oct 2024 08:55:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730303703; x=1730908503;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8dRvzEBRsZkD+ke4A1uzj82RQvXDshPwi69THlS2muo=;
-        b=PcW3ROfmFgdBJuOSs4oBjTkr3W+zQ+tV46ivOLfl1Fa/L7vzCnpLlUXP+VfhJxV2YW
-         Z3ZTa7lck8qPDYXFlgaTSSB7x7vhup274rj2bbvVCkeUkFhVap2ut0HUDWGN5Sn3mzs/
-         7ljrslIJEpXmXpo1P/GV/WKUSxGlVLSrlsUjTIsK4OAQYeJ9Z+zqX4o4+AZjuOPbeGPZ
-         r/FtrY1mzM+DBtJiHCWAspd/3RWc95kjDAab2BX/4edHTd9dB2lP27od4ZX53FTHUXaw
-         rhD4PFmTPRDgx5xLaUzzxkzTUPn4m3W2Xtsj6qmOAJDFdz1YYwyqaRtwtM47lnc7tmwk
-         dnUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2e7nZkVNaSEzvjKxWvPp1xvCZDP+WtvVlNXjNf3R160A3Ir3naTgVI3tdo71KoMmd9qscGxdCXHE=@vger.kernel.org, AJvYcCWyjRUGxr6c5wdRbhpmiOB5iXu9EyHLofnuR1AXkRCOv0yHs1BvmP4QEhwbE+VpkT0sJdgiSe+zghajPQUumUcpzEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkts7Ps6KC3MeSlcJEYLnhZtHyvwNhNMW/xFAIcuAuvyl5DIpT
-	3eovdbwfvHmokX2reesUrJULGLH0x5AJbq3HaZn7eTPmedrjeKxVKn9jCfvH
-X-Google-Smtp-Source: AGHT+IFYRn+mE09+LEgTs381khOLWVxnqJDCr5EF7XIUhukg41GUG/COgq9U8F3FnmzfaSSXeqbqgw==
-X-Received: by 2002:a05:690c:5:b0:6e3:29ae:a3a5 with SMTP id 00721157ae682-6e9d8b001eamr167270117b3.34.1730303703521;
-        Wed, 30 Oct 2024 08:55:03 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6caf8b8sm24333567b3.140.2024.10.30.08.55.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 08:55:03 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e2e3e4f65dso72178757b3.3;
-        Wed, 30 Oct 2024 08:55:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8qYKNI+EqgfPk1tNpC02vXr9hybRDFFm1PdvnroL3MMLKWvCJ+iLJDrWKOVd2EnAXwjGnNbek1q6FZ9ttAodLZCs=@vger.kernel.org, AJvYcCX25++SDDPWIsRE15k/QoYzO/4/t63DtsvRuabndBX2bQY0UzcT2T+2jE0KB/GlYTz1fbVyjkqkX5E=@vger.kernel.org
-X-Received: by 2002:a05:690c:45c4:b0:6e3:23df:cc25 with SMTP id
- 00721157ae682-6e9d8a76a3emr188156517b3.26.1730303703108; Wed, 30 Oct 2024
- 08:55:03 -0700 (PDT)
+	s=arc-20240116; t=1730307146; c=relaxed/simple;
+	bh=lTE5B4Q0DvJ0K8kws/zE6MD1HtyarAGLFRHInpfDi0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cywtva+VDebu7WkWCspmB6kT3o9vK3Epppy0sc3oEhjqmz6fFvC6oIgvXKknSQ4ZTiO5U5hQDgBnfMGul5m0ltujmbg3hWO0q3NDGgIy1ZE/EVSBJtrQQNGQLCiqjbQ9jRD8EmmOBsT7N/MCE2uSm5wb++ucqS+XsXGjdf2fEoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=hMRAxvtk; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="hMRAxvtk"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 08FAC88C05;
+	Wed, 30 Oct 2024 17:52:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1730307142;
+	bh=x+Yr7pJg5mP2ZbYGiOeNesNXBUpmKdLZpizfZOIamOs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hMRAxvtkj6ba2o6ARABi+wku7kxQGehhXOvqdvBrm9ytYcDzT/YiWaVsN6rj/PRBQ
+	 z3aWHRCdEJog8CX7cdF75P4X0lF3cvjB9iBCUmJcRqupZLr3SVSQrsBnWkxD7lLNzB
+	 OMq+kZI7/JGqtQCwD5rmUAgZHGVSclZxC4iX5Xalg2YA/F3EHYOBxOk0/IK4NfeFy7
+	 YQCQa9Cc+8kNL9+2k3AlmIYb3zc5YSD546q5PjCDn6BhOlJ3ovh9nrSjVg05JrgjmB
+	 z2xPZ9Tqv+iL0bwn0rkcdXuqzISSw96cWh6nRSe4ornup1AIzEIBk4rt5k5ZQLxRMy
+	 ThbEi33vgkLuQ==
+Message-ID: <021aee32-795a-42c8-80e7-89cb8a45f935@denx.de>
+Date: Wed, 30 Oct 2024 15:45:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024134236.315289-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20241024134236.315289-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 Oct 2024 16:54:51 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWkUuqgvAdOo+hBOEYxBs5bKvsBEJjL8SPMS4+nkKVVkw@mail.gmail.com>
-Message-ID: <CAMuHMdWkUuqgvAdOo+hBOEYxBs5bKvsBEJjL8SPMS4+nkKVVkw@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, 
-	Hien Huynh <hien.huynh.px@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: renesas: white-hawk-cpu: Move avb0 reset gpio
+ to mdio node
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240704152610.1345709-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdUZAVAkPVus2T_O3sWT7f1PciRYjxm6ecLy0QUyh50OEw@mail.gmail.com>
+ <d1b36858-da21-4e2a-bc54-175524a7d3b4@denx.de>
+ <CAMuHMdXRhUr1My-w0+hoAhQKgOq9iwecjow4iZTh82ED5DEfdA@mail.gmail.com>
+ <50b37c36-643c-4307-9d4e-ad49b306ba8a@denx.de>
+ <20241015144810.GD2838422@ragnatech.se>
+ <825e3b22-340c-4618-8d80-5d1b004fc0e4@denx.de>
+ <CAMuHMdV9XoJHHUM42YFwackdM+oRgP4k-SwZOTwqg0RJGETViw@mail.gmail.com>
+ <d6b35a1b-3f42-4071-99c1-dc87999c5cce@denx.de>
+ <CAMuHMdXW332YZahLw=vzfB6fZwc_9jL8uY-Uxj=Qyfov5vYQFw@mail.gmail.com>
+ <2f9df6fa-2474-4f35-af29-a1c280d5fe6f@denx.de>
+ <CAMuHMdUH32upHwwY7dXqk085LDWzkOz9cBv83FezVUbi27Ygpw@mail.gmail.com>
+ <4d7d6a7d-cbe8-4cbf-9fb1-2cdec0f11ce2@denx.de>
+ <CAMuHMdVnJPMLx=39=f+7S4vdRAC-0q0hKS6Ww=ELYEaLBx+gZw@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <CAMuHMdVnJPMLx=39=f+7S4vdRAC-0q0hKS6Ww=ELYEaLBx+gZw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Thu, Oct 24, 2024 at 3:42=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
-> While computing foutpostdiv_rate, the value of params->pl5_fracin
-> is discarded, which results in the wrong refresh rate. Fix the formula
-> for computing foutpostdiv_rate.
->
-> Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
-> Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> Changes in v4:
->  * Used div_u64() helper as the division is a 64-by-32 division.
+On 10/29/24 9:26 AM, Geert Uytterhoeven wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.13.
+[...]
 
-Gr{oetje,eeting}s,
+>>>>>> revision, we can revisit this discussion ? Maybe bootloader-applied DTOs
+>>>>>> could work then ?
+>>>>>
+>>>>> So, what would you suggest when the PHY nodes would not have compatible
+>>>>> strings?
+>>>> I hope I already answered that question before.
+>>>
+>>> Sorry, I may have missed that?
+>>>
+>>> I really prefer not having the PHY compatible strings, as DT should
+>>> describe only what cannot be auto-detected.
+>> See paragraph above (*). My take on this is the exact opposite, better
+>> describe the PHY in DT fully, including compatible strings, so that if
+>> the PHY driver needs to do some sort of bring up tweak/fix/errata
+>> workaround/... , it can do so by matching on the compatible string
+>> without trying to bring the PHY up in some generic and potentially
+>> problematic way.
+>>
+>> The MDIO bus is not discoverable the same way as PCIe or USB is, so I
+>> don't think the "DT should describe only what cannot be detected" is
+>> really applicable to MDIO bus the same way it applies to PCIe or USB.
+> 
+> So you think this is similar to SPI NOR, where most FLASHes can be
+> discovered with the JEDEC READ ID opcode?
 
-                        Geert
+Possibly, if you take broken-flash-reset DT property into account 
+somehow. Even SPI NOR does require a proper reset after all, else the 
+READ ID opcode may not work.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> See commit 4b0cb4e7ab2f777c
+> ("dt-bindings: mtd: spi-nor: clarify the need for spi-nor compatibles"),
+> which clarified why no new compatible values are accepted.
+This works as long as your SPI NOR reset works.
