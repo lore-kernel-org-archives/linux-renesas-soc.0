@@ -1,23 +1,23 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A101D279B;
-	Tue,  5 Nov 2024 11:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5F01D278B
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Nov 2024 11:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730804886; cv=none; b=HbHxv/xJeyVtzTa4LBhx/iVDR+zML8rCvK18DVMhh8n7rAYkJ5cVa4rEChjTkemiOwa7Qn/5/y4it9w3dSBA0hiL1rBxTtFY88LZgzEMWogjC9bOwe1iO2jKKHKmjIn0prlT+F2sToGS0L9JuZHt2CobYmqXUPTKC6J3Y9Ov1cE=
+	t=1730805161; cv=none; b=hlnkARpl3C9wge6ZAYvkfmWoA+6QnDhr6maIfGbyfnO6D/Un0appxZIms8EYXFIZof/nrT2PZU2yBwKyrp1JnLIncQcgdlGXRNlJJrNqCIpGPHR0Gny9HKGu3/RcJ8ehUgYXd1GIZZC37H1+tS0uSgLofJNnnu/9GQkPGGtBXgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730804886; c=relaxed/simple;
-	bh=hI/47Eg3K1lDBTwD1w32TeXPM+NX9gFtFhPh+Om9y9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h4jG0mI/oADz2pcHilO2nMTPnxt98gz1AZbGLBgJ3lV4cDk1ENci7B4JqkoqCbv9rW4ncYPtB2f4/CqId5W8YriErlPeh33TxMihwSMKHTo14Q4ZX7NHEM6vvLq0wFgzaZm+zuGVEgaW4nUFqzy9mEHJa4T4s8ee1WdR8T+h7b8=
+	s=arc-20240116; t=1730805161; c=relaxed/simple;
+	bh=g5+lIM1ExpaUD/upDG6aYgLPjxhxJxWIjuKyv2slXXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oCaL/musAyAWzMPRoGdIoqKzWZykfhHroyJdKH+dMsgUCaOu11v+IrD126mp1PKPMQly7x69oHYSSEszDXYCB6k4S7ROhdI8Be1h6wC0Uo7p0xbfpgjCRvq4/JUsB70k15zYpFUzr7jfpHl/jrtnRZAOc2ZOKKrn9gpcb4vcC40=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.11,259,1725289200"; 
-   d="scan'208";a="223929690"
+   d="scan'208";a="223930453"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Nov 2024 20:02:54 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 05 Nov 2024 20:12:38 +0900
 Received: from localhost.localdomain (unknown [10.226.92.174])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2FE0041CF38C;
-	Tue,  5 Nov 2024 20:02:38 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6EAFF41D0022;
+	Tue,  5 Nov 2024 20:12:31 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -36,11 +36,10 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
-	stable@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/2] drm: adv7511: ADV7535 fixes
-Date: Tue,  5 Nov 2024 11:02:26 +0000
-Message-ID: <20241105110236.112631-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 0/2] drm: adv7511: ADV7535 fixes
+Date: Tue,  5 Nov 2024 11:12:17 +0000
+Message-ID: <20241105111228.112813-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -54,6 +53,10 @@ This patch series aims to fix 2 bugs in ADV7535 driver
 1) use-after-free bug in adv7533_attach_dsi()
 2) out-of-bounds array in adv7511_dsi_config_timing_gen() for
    clock_div_by_lanes[].
+
+changes in v2:
+ * Added the tag "Cc: stable@vger.kernel.org" in the sign-off area.
+ * Dropped invalid Mail address Archit Taneja <architt@codeaurora.org>.
 
 Biju Das (2):
   drm: adv7511: Fix use-after-free in adv7533_attach_dsi()
