@@ -1,124 +1,274 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418E220B801
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Nov 2024 07:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC59920B1E8
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Nov 2024 08:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397773; cv=none; b=nvolAGn1M0y7N6/QrX//obm4aevjWGdPK5nuEg2PIkMlk8oOhEJ5r0H1QLviQKsabh8SEzaS21xFA9y/A7AS4K7rGjWtRdJDFGFdtHy9+wZX2SDEc9Oo9+b5Zn5kLWA/J5ml6qAE5eZ9jr8g6YnaPUTl/HMvqg8KLpOJE9MrQvk=
+	t=1731400292; cv=none; b=OODtYexesMjIPA1YcbjOnX5y5jKFV3FISOuvHx2iJRodKj796wKgl3xyViS1jm/EBHBjgkaAByLuvJODgkJ3EttCf/ULG3FswNDTNlgWqXhCBnvD4rt24nJRK+pYZzxB5Az+AM54+GFOhoG3OgnUxnpQmI2JPxUqEe1BAl6eQOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397773; c=relaxed/simple;
-	bh=ioQKK4dXSmQBeOnpnLIlwoF5ZBUimKGiicmxIH+Y1dI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SvBN8Mo3dW/ZNIccLITTpHpDBlkTOKwXrVGliJJ7sY/UUCJfnKu/ZAV2ptokt6CucUsqp5weW2K0B0CyRIIheoRA2BOSLq2JVIR61pQZBrGhmUex/GPMoZ9L3PINCl1q4slri+wGDDKgmvnE+t0BKXl1MUDnxMeWxTMKGSptiug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tAldo-0006wT-TJ; Tue, 12 Nov 2024 08:48:48 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tAldk-000NF1-2N;
-	Tue, 12 Nov 2024 08:48:44 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 4663C37128A;
-	Tue, 12 Nov 2024 07:48:44 +0000 (UTC)
-Date: Tue, 12 Nov 2024 08:48:43 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, 
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Kurt Kanzenbach <kurt@linutronix.de>, 
-	Vladimir Oltean <olteanv@gmail.com>, Chris Snook <chris.snook@gmail.com>, 
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	"maintainer:MICROCHIP LAN966X ETHERNET DRIVER" <UNGLinuxDriver@microchip.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Doug Berger <opendmb@gmail.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Richard Cochran <richardcochran@gmail.com>, "open list:MCAN MMIO DEVICE DRIVER" <linux-can@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:RENESAS ETHERNET SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCHv2 net-next] net: modernize ioremap in probe
-Message-ID: <20241112-snobbish-cocky-hyena-d0834a-mkl@pengutronix.de>
-References: <20241111200212.5907-1-rosenp@gmail.com>
+	s=arc-20240116; t=1731400292; c=relaxed/simple;
+	bh=xXCEJcHrEMjxlrj3J5Wc7ZCHF18/8gNCnF+VCp09UQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AQV7UpIeqZvCZSJk9hLF1CmSvgVCGXB2/LsUBXbKihxxwShOb68xN9LAXIT+9Y3X0j02XAZHXQSm7lx98efN8T+4xSAsRcg3xa9UhEq0tAJN3H4IEJ8jZ7Ry0qrxE7bhseouvAs073YROyF4cL23sF5woujuRzY55Cnotm/HyQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LB4TeJ2r; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LB4TeJ2r"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso68785021fa.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Nov 2024 00:31:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1731400287; x=1732005087; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rAnhdJuivGo9yNtQ2A0g972HDr7huhPiocLItX4d5N8=;
+        b=LB4TeJ2r6klLgmNGmftgm1CuicnjPfWdd6l/EXobEKoPRyzjXSXGerHrh3sJ7v/YeK
+         w5//cC/6j4qzo0PkYHSXV7xDhpjKsClqS29urublNc1CbZavPcVFF1VPkg9KbiYsM4gF
+         T5wkH1fwX5ep9xaxCPY/plyduJ6y2V4tK9CyIq+cLaT/avR6cHX6Qxrq5f1yXsY7YmEd
+         Rg1WDtcKMAtSrs77zCAHh9Clq18x4rV6EOQdSfQgVsiomFQsHZOKSmRS4rq4yjXlBNf6
+         lggXOVe39da3in3+QET69WVVmHw9mSDJboSmt5i31FIANOo33XQ9PEunwzXDEjIulTUw
+         0SgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731400287; x=1732005087;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rAnhdJuivGo9yNtQ2A0g972HDr7huhPiocLItX4d5N8=;
+        b=DOBN6xpFCyOBXgn2OP8Dd9kSOKrZkS27efS6VD8NRfwcKkAAU9OQLnRyOLn1Ie/eRI
+         qvgonnJF4cbQ5sL0mpvf8v0aZUJOZ+WMzD8zeAi486tK809TdF6uL353LPXdTJ0NHwo0
+         Q4TrPfTN8JJJ1bue41FgQt4FLPNJallS1aIsIKnOwQdGfcvhvl2wcfRSS0Zy34lqNVSf
+         +zIPnZiALWwvjeF6izLnNxHaLmQ8UfX86mQ7Zo0ZD299CZRjuMNNsRuyJcv1Lmefyyzv
+         nT917IVgxnLr66nIpBdOIXbRsj/UdWoeBimiNDxSJhYg4RTPTIE+XSzIUyQc4zqKvviE
+         chHQ==
+X-Gm-Message-State: AOJu0YzLE7qg1VcPh8gZ451tVJ9BjSWHdzVvBt3lBJGke1TmXmao0Yde
+	4Rj1Uab9I1mXxgj4bRLQ07ATPIlQoFEMGfEmYtg03Ezhq7AsdSh03g3B9J7aH6Q=
+X-Google-Smtp-Source: AGHT+IErWU2LiF5Ga+iyyaA3F58LkgbkpQmJW54uHLJyzIyElx/+t9OewFq3ElClX5zbBzsEIKDxIg==
+X-Received: by 2002:a2e:9a0a:0:b0:2f0:27da:6864 with SMTP id 38308e7fff4ca-2ff201bc4a3mr91446101fa.17.1731400286863;
+        Tue, 12 Nov 2024 00:31:26 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def7e1sm689117266b.148.2024.11.12.00.31.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 00:31:26 -0800 (PST)
+Message-ID: <ce074521-7d4b-4514-9b2b-59b246686210@tuxon.dev>
+Date: Tue, 12 Nov 2024 10:31:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yivnidfints257kn"
-Content-Disposition: inline
-In-Reply-To: <20241111200212.5907-1-rosenp@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241108104958.2931943-25-claudiu.beznea.uj@bp.renesas.com>
+ <TYCPR01MB113329FE5E9E610BEF45DC001865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+ <c15bb621-6cd9-4be3-beec-20fecd411547@tuxon.dev>
+ <TY3PR01MB1134600DEBF0096A67950441086582@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB1134600DEBF0096A67950441086582@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Biju,
 
---yivnidfints257kn
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCHv2 net-next] net: modernize ioremap in probe
-MIME-Version: 1.0
+On 11.11.2024 13:30, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+>> Sent: 11 November 2024 11:20
+>> Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+>>
+>> Hi, Biju,
+>>
+>> On 10.11.2024 10:54, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>> Thanks for the patch.
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>> Sent: 08 November 2024 10:50
+>>>> Subject: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable
+>>>> SSI3
+>>>>
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> Enable SSI3.
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>
+>>>> Changes in v2:
+>>>> - none
+>>>>
+>>>>  arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 26
+>>>> ++++++++++++++++++++
+>>>>  1 file changed, 26 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>> b/arch/arm64/boot/dts/renesas/rzg3s-
+>>>> smarc.dtsi
+>>>> index 4aa99814b808..6dd439e68bd4 100644
+>>>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>>>> @@ -64,6 +64,11 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+>>>>  	};
+>>>>  };
+>>>>
+>>>
+>>> &audio_clk1 {
+>>>        assigned-clocks = <&versa3 xx>;
+>>>        clock-frequency = <11289600>;
+>>> };
+>>
+>> audio_clk1 node is in the RZ/G3S dtsi to keep the compilation happy.
+>>
+>> For this board the audio clock1 for the SSI 3 is from <&versa3 2>.
+>>
+>> If we fill in the audio_clk1 here it will be useless, there will be no consumers for it and it is not
+>> available on board.
+> 
+> As per SSI IP needs external clks AUDIO_CLK1 and AUDIO_CLK2. 
+> 
+> AUDIO_CLK1 is provided by versa3 generator and
+> AUDIO_CLK2 is provided by Crystal.
+> 
+> Currently AUDIO_CLK2 it reports a frequency of 12288000 which is a multiple of 48kHz
+> whereas for AUDIO_CLK1, it reports a frequency of 0. 
 
-On 11.11.2024 12:02:12, Rosen Penev wrote:
-> I changed resource acquisition to be performed in a single step. Possible
-> because devm is used here.
+Why? You mentioned above that "AUDIO_CLK1 is provided by versa3 generator".
+It will report the frequency provided by the versa3 clock generator, isn't it?
 
-You should describe in an imperative way your changes. Something like:
+> By defining the node, it will report as the value as
+> 11289600 which is a multiple of 44.1kHZ.
 
-Resource acquisition can be performed in a single step.
+Defining the node as you proposed have no meaning as it will be anyway
+disabled (see the dtsi) and will appear nowhere as no driver will be probed
+for it.
 
-Replace platform_get_resource_byname() + devm_ioremap() by
-devm_platform_ioremap_resource_byname().
+Defining it's frequency and enabling will have no meaning either for the
+SSI3, as the SSI3 is connected to <&versa3 2> (as of the binding proposed
+in this patch).
 
-=2E..and list the other changes, too.
+> 
+> From the schematic we know that versa 3 is providing this clock and the audio_clk1 has
+> a frequency of "11289600".
 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  v2: fixed compilation errors on PPC and reworded commit message
->  drivers/net/can/m_can/m_can_platform.c        | 13 +++-------
->  drivers/net/can/sja1000/sja1000_platform.c    | 15 +++--------
+<&versa3 2> connected to AUDIO_CLK1 pin is configured at 11.2896MHz in this
+series. See patch 22/25:
 
-Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de> # for CAN
++	versa3: clock-generator@68 {
++		compatible = "renesas,5l35023";
++		reg = <0x68>;
++		clocks = <&x3_clk>;
++		#clock-cells = <1>;
++		assigned-clocks = <&versa3 0>,
++				  <&versa3 1>,
++				  *<&versa3 2>*,
++				  <&versa3 3>,
++				  <&versa3 4>,
++				  <&versa3 5>;
++		assigned-clock-rates = <24000000>,
++				       <12288000>,
++				       *<11289600>*,
++				       <25000000>,
++				       <100000000>,
++				       <100000000>;
++		renesas,settings = [
++		  80 00 11 19 4c 42 dc 2f 06 7d 20 1a 5f 1e f2 27
++		  00 40 00 00 00 00 00 00 06 0c 19 02 3f f0 90 86
++		  a0 80 30 30 9c
++		];
++	};
 
-regards,
-Marc
+Thank you,
+Claudiu Beznea
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---yivnidfints257kn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmczCFkACgkQKDiiPnot
-vG/ajAf+I2q6yukaCiZ8l35kZU1eukgdk9t6XyKDMtT9KqDmbw1cU0QNEJTWp/Ht
-sMGGbP6LGX62Rjs+iGYfgsgvKFxDTwcQMYKW/sLL7hHmRkvcmgq1HQA113R+2bz5
-7NAZ526PH/esweR172ghpzpnkrjh1YI7fjAJcxfj2GE/91O7hlCyosUaeapCrPzh
-WvZkmbUXlt/ZY795yGCG8zlgjN0S4iAYMGezFVVdJ8foE1TRUFm/L4IBCHBzMEmL
-4k7Vx9yxtM+OFHZjjZeE2f3ZQUGU5+ouEmr3TddeIPLAGa2i4xiftttYKphFxlnT
-z+VY8lNrteObfdHws6wEr1bnVc36qA==
-=8JOR
------END PGP SIGNATURE-----
-
---yivnidfints257kn--
+> 
+> Cheers,
+> Biju
+> 
+> 
+>>
+>> Thank you,
+>> Claudiu Beznea
+>>
+>>>
+>>> Maybe add audio_clk1, so that it described properly in clock tree??
+>>>
+>>> Cheers,
+>>> Biju
+>>>
+>>>> +&audio_clk2 {
+>>>> +	clock-frequency = <12288000>;
+>>>> +	status = "okay";
+>>>> +};
+>>>> +
+>>>>  &i2c0 {
+>>>>  	status = "okay";
+>>>>
+>>>> @@ -94,6 +99,11 @@ da7212: codec@1a {  };
+>>>>
+>>>>  &pinctrl {
+>>>> +	audio_clock_pins: audio-clock {
+>>>> +		pins = "AUDIO_CLK1", "AUDIO_CLK2";
+>>>> +		input-enable;
+>>>> +	};
+>>>> +
+>>>>  	key-1-gpio-hog {
+>>>>  		gpio-hog;
+>>>>  		gpios = <RZG2L_GPIO(18, 0) GPIO_ACTIVE_LOW>; @@ -151,6 +161,13 @@ cd {
+>>>>  			pinmux = <RZG2L_PORT_PINMUX(0, 2, 1)>; /* SD1_CD */
+>>>>  		};
+>>>>  	};
+>>>> +
+>>>> +	ssi3_pins: ssi3 {
+>>>> +		pinmux = <RZG2L_PORT_PINMUX(18, 2, 8)>, /* BCK */
+>>>> +			 <RZG2L_PORT_PINMUX(18, 3, 8)>, /* RCK */
+>>>> +			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
+>>>> +			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
+>>>> +	};
+>>>>  };
+>>>>
+>>>>  &scif0 {
+>>>> @@ -171,3 +188,12 @@ &sdhi1 {
+>>>>  	max-frequency = <125000000>;
+>>>>  	status = "okay";
+>>>>  };
+>>>> +
+>>>> +&ssi3 {
+>>>> +	clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
+>>>> +		 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
+>>>> +		 <&versa3 2>, <&audio_clk2>;
+>>>> +	pinctrl-names = "default";
+>>>> +	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
+>>>> +	status = "okay";
+>>>> +};
+>>>> --
+>>>> 2.39.2
+>>>
