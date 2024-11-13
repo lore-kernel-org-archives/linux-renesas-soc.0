@@ -1,310 +1,216 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010048.outbound.protection.outlook.com [52.101.229.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53F71DF73C;
-	Wed, 13 Nov 2024 13:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731506275; cv=fail; b=bhiGKz/Ul8HEKMrRTF/J2hHFLJgfxJzHL1a2gJO87E82CN2VnC4KZYGlfL8a7w567Q+0pPYy96c1j9D5AzXC84rboK9/drxKxAmRSLMFoFzMklOBf2+bJAM6LUIMebbt5NmttU1XlKvs4czZMWtHTu2ujR9J64RVH+wDONvzHr8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731506275; c=relaxed/simple;
-	bh=cxaPOGQFW6f9bSWumZo9yVz9HeB/0mylP+lNGeMIE6c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nrWen0q9lEfdNC761FkEDsze0O5SxgS1tBCDYRDZ9SoLlvyffK87ldtq9+sAqlmbOQxm583Wz91NB0X8p/zxgotE+tvPaIHUYj6U4KGwJraEL/yFK43Kfl6LrFC4Nua1BcunC22QOH8I7TwLCjf1oCyUAPeVTDfL469v7wDy1No=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=wy/Kr0mo; arc=fail smtp.client-ip=52.101.229.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="wy/Kr0mo"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uasNUHmo39JthyeutwVqIuwZIXF1gIrvhtr7qhccT95qwh71qahK1YjsRaCF7cdl1y8FdbflpwymNi2B8dYUb4xQvEs9/vJlPtK05mPPH8OQwctxGKA6dvJQTbyiui/vb0EkEG9e6/9RmycbvDgKx+A7CFvbCS6McuJlcvBotoVNLZi8rumgNZmGjwltcSSW6Xx26/WPcXceEitANYlrjpgQf8fucjwaX1AwH7moSRO8Jt0sVekp3vY4ZvvDcnMaGDIkMOvYetZjGY62yySHtVtr1wQH7U3CSOO9mnRMLzqn8naDjHHqqNM4lmEDALfVRzJ1vO+zniO79F67cJe3IQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zVCT6v7ASg0TuJ7+eda/hZarlfXo/qIGuqQrtDUapLI=;
- b=XYoBZXFlb2KWOKj64+busAv6uESUlJpzQQU9+RcPleojGAZqOvSpY0TZFyz5Gey/VYvxagDrn04IFRoEVy1zfrH4kCpZfSeFt0k4bPPIg3J75Nml8GDtP5ov9x1wK+TqseEGJvfkWGFmftXN4T35WP9POkySkaw6AOkRFlF+ecgZu8N3BENUgiaPy6ccO0TY/9zNFrlx6kys3v/7oMWlfjtt4xoQwVKiuZeG/qNpQS3HL5PTzkSxJzfhAY3RzqwHDqS0KO/RMyclCWWM4Y74vdtd4lgZM0oxuJ+3M3ZZa5JX7wfLqDTel0UHB/IaxfiJ8RN3fVCoAk5AuERmG+sd4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zVCT6v7ASg0TuJ7+eda/hZarlfXo/qIGuqQrtDUapLI=;
- b=wy/Kr0motm3b7XkdyMbkB78NxEaETmRR1+R1PyuZuTdfosUuvhXxDUpFLIABZMYrkeXLoBe6tYGePbn4KmIYykNR/RjwpsmVXLYebedZTvWIkd7pY6cZNODcdeKxouyZDKWg9PmVi7MomXmtCu9AYAegMR7DFuPLpNIfY3mS2GI=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSCPR01MB12948.jpnprd01.prod.outlook.com (2603:1096:604:33d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Wed, 13 Nov
- 2024 13:57:50 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8158.013; Wed, 13 Nov 2024
- 13:57:50 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "geert+renesas@glider.be"
-	<geert+renesas@glider.be>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Prabhakar
- Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "lgirdwood@gmail.com"
-	<lgirdwood@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>,
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "linus.walleij@linaro.org"
-	<linus.walleij@linaro.org>, "perex@perex.cz" <perex@perex.cz>,
-	"tiwai@suse.com" <tiwai@suse.com>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Claudiu.Beznea
-	<claudiu.beznea@tuxon.dev>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: RE: [PATCH v3 21/25] arm64: dts: renesas: r9a08g045: Add SSI nodes
-Thread-Topic: [PATCH v3 21/25] arm64: dts: renesas: r9a08g045: Add SSI nodes
-Thread-Index: AQHbNdENanMZJWVJh0it+i+AxTKSgrK1PE6A
-Date: Wed, 13 Nov 2024 13:57:50 +0000
-Message-ID:
- <TY3PR01MB11346C711262273318BA18615865A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
- <20241113133540.2005850-22-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-22-claudiu.beznea.uj@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSCPR01MB12948:EE_
-x-ms-office365-filtering-correlation-id: ec6ca472-e1ba-4f30-f09a-08dd03eb295d
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?cmvgIVKGcQTz+VRowAL83GPL1q+SvqoZhoKMSBtrKWaesMceI6qq1CgdvvY6?=
- =?us-ascii?Q?+8KjhBOha6QB6Z+HGSRiilZapxb5JF98roYZWmWqEwN/IinvylbJMnxYNB1s?=
- =?us-ascii?Q?UVcoiZRxRIqV8PHKUi3frgUxj09ZIDZ5hEtd1s/VAFNRGcn/C0Xql7+v1rOp?=
- =?us-ascii?Q?ltiPZHda8A2BBepOoc26sRRKL9mL9Mg2jz8kFx+BGH8F6IANT3I4kyQ3MHQv?=
- =?us-ascii?Q?PvOiQad7GI3zLXxQtPr0AzIUu5q2P94yzIM3223EzdP1Ooi0uj2EaSJdv4xZ?=
- =?us-ascii?Q?0wzpzzNfpertMXxJY9BZRY2IqmcHU0JvWRj/QWhDn6gqM6o437JxkeLgVv5A?=
- =?us-ascii?Q?fJrBAo/lazCLIwv1KDS6wWMHRwHiMUDea8yzuJzF0pHjutGvjfrulLkMTkA0?=
- =?us-ascii?Q?P0bQvD+6FvUM1Hk9MeUcynNgrgWkkYJOa1QIKjDZmBcA4BtWgfAG4p2vs/QO?=
- =?us-ascii?Q?stTY9V6zhwebp8L/tjavS++JrjHpaXZR1H/c1r4Gakb7zqFl3PTlshZegMjA?=
- =?us-ascii?Q?rAUwh9Aebhb+Keosa2oznmkKv//H/Ui6gXklhtUHxP477WhUYLGO2Z4VnYfw?=
- =?us-ascii?Q?tDv6ZljbrUXPMrWJQeZP6uMh8d8mFjJGvqiLhODTpZ1nktkRQ4rP+wdnrRs7?=
- =?us-ascii?Q?kuCDQyLDSWuCauXvmJT2qrjku0nJJSqvN4TYSgciyUeJNbOVBLxbS9OOadQr?=
- =?us-ascii?Q?4YSHAB1gApKj3LpBqdj+NB6PkQ1qIpvOU4gwpp3FKLb4i3ZXWqLEJMiJVsaA?=
- =?us-ascii?Q?6pCcMay+z2N4pVF93fvrbRPALXs5jQpVLFrdRpi8vlfWTTpLM/0ItnPuFMEH?=
- =?us-ascii?Q?3ri2TRkc9cY899PSW4kaoJKIIhPzLctYq+ImZ/wkDBKyg88f4P/sTOymFga5?=
- =?us-ascii?Q?xTVfbyeQy2XxOrVB8+wvag6ky8eEIbnwMFNQjJhjy4uwvB5I1WbEYw/ebED8?=
- =?us-ascii?Q?+mxrbushio15PQuir7UBU/zT+1p/+KZW0Up9LQxiJ++MO3KoZicTUNmgVULd?=
- =?us-ascii?Q?c5hcFL+z+bA1p7imZXoF745/6cgAow9CCpmhr8zyIMAUU5XIxYPZb2wyYqeo?=
- =?us-ascii?Q?rfk/0LGubi4l2a+kuTPikNs21SrcsusLqO8wL9KaKVX78Fzot6jE/HeFW2j3?=
- =?us-ascii?Q?FlTsvLHdcS0ZV7glN2flxwGWQ5rM8210a1cuCzQvoL9tJtFJM2Dg3WwsLdmY?=
- =?us-ascii?Q?KRyMkmb/BQ6WGOfF3aqooRcGGXjYQiLpaZvsE6aq0NNaJjdH3frm7mxm6ZRa?=
- =?us-ascii?Q?FqeScYG+x0pZ1o/ugWcIlZBCZGJ3GLl+KPHXj3IrQIZJQhuSeB7T+dFbrd+4?=
- =?us-ascii?Q?+a4Viuqs8EtFqnQdBhWCtANpg/f80kvjWjslNC8UF0u3O5mEDZkHhmRosX/v?=
- =?us-ascii?Q?vlRq7xjEjUfMt3ntwNdWnD2RP8hQ?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?JnMiASgb1uVjGx6u5JM4WoEOV5/eq/O5zW6LtxEcBHsgS7UcBrHQIxXUEWLe?=
- =?us-ascii?Q?2Mqrd9iV1/xp/phpjFk4/YWJP/bvn/80cWDu/D7As7Yk0isJcWAuteF0vOga?=
- =?us-ascii?Q?HipBg7QfFjaHshmyBSB9+rDh9AJ12wh2kj3AJefKlkSZYfO3bzTJuyXTpfEi?=
- =?us-ascii?Q?vLguLl3d4bzlGYkttv0xaF6ozdhztupOD3QD49gPMyVWd/Htl7NlwGxvEYTR?=
- =?us-ascii?Q?OMjsspRhoOVige4uDJer3ZAJKd07EoH75Q9RSlo+cwkCb/5edJbtXeJQrCOv?=
- =?us-ascii?Q?TLMiueKwYlaVH2GwicgH3A9jDH1HqHg7x3x5DeJcMbL/L+91dv0Xn3oZfhiP?=
- =?us-ascii?Q?mIGjDHs31rRI1YhXRap9yAlMGeROeSNN+3h/ZfAf8PoIuZuhlLx6pOTVmaHX?=
- =?us-ascii?Q?32Ld5jevzC8WbUJqzsWtjH7qH80GuQZGA/1zWgs9LC3cx/LEs1powUuKc8HX?=
- =?us-ascii?Q?gmHEiXWi/bI4vVjOQL4JTBhzBkmN8Y+ivIMyyPqkfQLTicBNihE+HqXVor0d?=
- =?us-ascii?Q?vGs7zqpI6h3hjSr0t62/X3RD5LNAXp5QZ6U172lWyDuFeXZvxRGFU8tXG5yk?=
- =?us-ascii?Q?+2WEGih4bvOiLDZ9rVkGlT0Qx5gBkxi0uudSbU0fPHzycJkglWg+A7EFfyft?=
- =?us-ascii?Q?td+WcvnNnltL2tAFw5ghJQjNfHkn8n+B1+8bEQOARfvmPULsaBttp1eJBqzj?=
- =?us-ascii?Q?L2BJQwSQMm/5TwMVEmJRDY6HOnP6eUyw+jkqinLSkTsMT6ZdSvZGOAm1p0TS?=
- =?us-ascii?Q?woDDOR2VoEauYYiR3yAWGM/+7DsBcaU/USTVai7ds7cn6+RuOMtacSt7gHZY?=
- =?us-ascii?Q?3L9+zxdTDq0Z/fW+o3WnNtAtp4HOHAKsfWB5QNQ4SMysl2U2IpJKeEt7oS19?=
- =?us-ascii?Q?pZPdCP76lr7OTVXilAHQTYxhygh5YFLpoiKIvcwXpGCMqtJcft/Jtp7VrwF/?=
- =?us-ascii?Q?uej31OeWlaIzF/sFTMjdbiJiE/m+P0LA9hqiDraWlhygpd669uc3yDSxumPV?=
- =?us-ascii?Q?ctd/rPkQUbvvEB6pzjYCADa0T7sHR4wgFKk5IUTuCvPECilPOLix4yEA2gVX?=
- =?us-ascii?Q?Dewx0TTme7oOJtQd0OKO+gakK61pN3/ary+U/dJ4ssr5HBlAwIvyj+KVniSW?=
- =?us-ascii?Q?qlafy99zhPrK9+fk8DfRzJk1qlrFd8P10Dxwb1LJM13tYugVTiRMSzDEKTgP?=
- =?us-ascii?Q?AxqEqh6nZhaeJUDXZSIOZmlkh4OhZpDzqDA/GbaILIX34XdRlmJhQ5Cs9MnO?=
- =?us-ascii?Q?X/hoj0MyHjSTDMbM1B6FEix6cB4KE2+R9XFNbrBj/seFS1r5k4lvbJHlSrle?=
- =?us-ascii?Q?CWb6uDZVzkbgPIui64T+1mZvOxjrqHMnJHdj7ynZ3xbg9RB0ilLRd0zzUAW/?=
- =?us-ascii?Q?rFjkzA0yFEoEQ0iJVigZjgnb4WRwedsMmpKDhqO5QQfk+5BxRUTgqb1sohPx?=
- =?us-ascii?Q?Uzu/LO34nKo5KGZ2HNJth9TkDKupwUeBzNpC1g06y2qj9yyAIP0370PNXJsj?=
- =?us-ascii?Q?CfvIlecFtwJqmwnpMgTwEldNU8BSUDPVPxllwSbKZ8bTpsjn52/fs4QpfYe0?=
- =?us-ascii?Q?KfUdjzS904XXBbLvwmfKNw8HeLCfF7N6GP2MWJ4ECddcYvl/z4cfE1v3abfO?=
- =?us-ascii?Q?4Q=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0014570829;
+	Wed, 13 Nov 2024 16:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731517107; cv=none; b=afXDNf38iF2qiaT4HTh3623rL6+RrvkNaTrJVc0v9Yo+CrS6yxqb2IzRYex4bL1TPQ1yWIcQZHf0jwPo+CHLBylLDDACFhsMK43SRSexICy6joYQgVR/O3+6W7y+591StQe+SAF5s0Ib5/gdKVTOC3w6WnXqlfQgeHw9mQTJC6I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731517107; c=relaxed/simple;
+	bh=gD/sP2apq312NCyFdt+mOE929V1VWqMCLhc5GAaFiOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cs1I7gVGDWL2npjYzx4r0ujq9w8B1L64Uqj0iKhFrmQmT0LCth7Fv2VD+wlPe3aJBlCVCj4Vp2w0R98sdKgYKLWo83USg4hRXcILAhVZLkMVg0Lm5rkSNh9j9sd60ogUdKp7MW8IDO9gohehXZmWtD/Sei2iVYH8vJB1CT1WXug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6ea7c9227bfso72139207b3.2;
+        Wed, 13 Nov 2024 08:58:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731517104; x=1732121904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=90S5lqnEohvVcnB+BzdzmQ6LdpwxbZFL3C+GHVFnOiE=;
+        b=tJcmZ6WCKv4fN9IFh0f6pKOxbaxmz1hJxkbYFrW3H14kyOAAe46/lhnihO2WUyBvBT
+         RkGjgbwttDR1YxIbyalGWffxvI0gSQvx12C3p/AgE/0onzMHNWTsKWJK5JLfm14v1Iir
+         6PgQ6Vea5w8pRA5sd3E95rbM5wMMb71vCXENPth2B7yHD/t64XiPl5n2loAmoke/eOQk
+         jzgKfbblHDcmNXic+43h9tIaqlNEEH9vhNzv69s4PYrtqGrjPbaHHPTNHkGhRCaWJTwK
+         DXo6lD+KJKvbwtKSlb1Zoa3fpRY4Df/eFyq8eCB6nDgdo/v2i37apBg78GJW1ThUl84o
+         6KpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUzcaLrXcEUMFLC+gsxGP3aW4sunWdoIMvkf/X6s9NcFYRk6Qx9bR8bPvyox4nmvZ2gYpirIsf+IoW@vger.kernel.org, AJvYcCUabd+eC+58ubvEi77I0tlfBcLAjPYr1c8oa91VlA2/JDy1zJCgS6lNLytqOe5a8Na/wCB6Y/ajNYCLUXIk5IEgYto=@vger.kernel.org, AJvYcCX8r2VTGoKJ4pmLhdUE5MN9Bo7oErMPlx8tbIQcvRe15hmCtMmMVF04+cSEySi0rDLg+15AgKF3ppk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzQQ56GqBsS57EOVcULZuNfptLvmzat/z3/9UeePiM55MO85zB
+	ez9+KuaC4eHzRFQe7fHXdwtKUx4DrqiD/P3gIu0NwsIOPOMOC7LtOQiz0clI
+X-Google-Smtp-Source: AGHT+IECvKMKdp5KOHb0o5AH7X/YtcLJVvFuwFvrv8YKePwghXkIC2Y9EGGEX7htYwuw7eImtLdpVA==
+X-Received: by 2002:a05:690c:6408:b0:6e2:f61e:8c9 with SMTP id 00721157ae682-6eaddf9751cmr231768527b3.30.1731517103361;
+        Wed, 13 Nov 2024 08:58:23 -0800 (PST)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb6562fsm32169657b3.84.2024.11.13.08.58.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 08:58:23 -0800 (PST)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e292926104bso6430940276.0;
+        Wed, 13 Nov 2024 08:58:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV9Cm6WH/U257tsu5sWSXnvxqF2zB8UGM1Xi7otN3F4dvAim3/UKk2V9Nq/AoeOcSzZIxwqTGbQWyE=@vger.kernel.org, AJvYcCX1gVL47iw0g4dZ8jMjl4iLB8K38q4yr/vX2rf0MuJls8SBdh/izTuy0lO1TKOQK06og/Jl4XWg991j@vger.kernel.org, AJvYcCXFjGNDC+LXjNN/3MgNIhZxtKRDVwHhMPnQJY0juzCXfBIn/j6RJrq4NKA2IZj3AORZoXrQuWFiODuI6mBGGT6TIm0=@vger.kernel.org
+X-Received: by 2002:a05:690c:6603:b0:652:5838:54ef with SMTP id
+ 00721157ae682-6eaddfd41ccmr221610017b3.37.1731517102600; Wed, 13 Nov 2024
+ 08:58:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec6ca472-e1ba-4f30-f09a-08dd03eb295d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2024 13:57:50.2119
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kAjxO9sUfPPLwUr91hqC48x0xmYxgQHDu67orPA2on0K8N4hwq6Ac/kXECTlJu93PoRUSvuKprERWXs7kngDW/0JF8CXBh9R0TCkR/ZL1Fo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB12948
+References: <cover.1728377971.git.geert+renesas@glider.be> <CAMuHMdXsmAqQL+2+D_y+u1z4nn8JO+xF-mq6wWJ0pAH58n5Wiw@mail.gmail.com>
+ <b273599f-8653-4e98-ac64-09c91b0a1592@arm.com> <CAMuHMdUYnTRDHRdWYHBdJ3hNBKOXBtRMOsu1NiJFET7P-+zc4g@mail.gmail.com>
+ <96d1f356-b36b-4c14-bdd5-c38836bac418@arm.com> <CAMuHMdW25MC-RoCw72_EJ22e4Ae36N1CM8a-r=r7e=kA2-AgHA@mail.gmail.com>
+In-Reply-To: <CAMuHMdW25MC-RoCw72_EJ22e4Ae36N1CM8a-r=r7e=kA2-AgHA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Nov 2024 17:58:10 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUoEA0W_1jmUPZ48Zi7N1wbo435-LvAf35O=EvYvO6KDQ@mail.gmail.com>
+Message-ID: <CAMuHMdUoEA0W_1jmUPZ48Zi7N1wbo435-LvAf35O=EvYvO6KDQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC 0/2] arm64: dts: renesas: Re-add voltages to OPP tables
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
+Hi Lukasz,
 
-> -----Original Message-----
-> From: Claudiu <claudiu.beznea@tuxon.dev>
-> Sent: 13 November 2024 13:36
-> Subject: [PATCH v3 21/25] arm64: dts: renesas: r9a08g045: Add SSI nodes
->=20
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> Add DT nodes for the SSI IPs available on the Renesas RZ/G3S SoC. Along w=
-ith it external audio clocks
-> were added. Board device tree could use it and update the frequencies.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Mon, Nov 4, 2024 at 4:15=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+> On Mon, Oct 28, 2024 at 2:41=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.com>=
+ wrote:
+> > On 10/28/24 11:34, Geert Uytterhoeven wrote:
+> > > On Fri, Oct 25, 2024 at 5:40=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.=
+com> wrote:
+> > >> On 10/22/24 14:36, Geert Uytterhoeven wrote:
+> > >>> On Tue, Oct 8, 2024 at 11:14=E2=80=AFAM Geert Uytterhoeven
+> > >>> <geert+renesas@glider.be> wrote:
+> > >>>> When CONFIG_ENERGY_MODEL=3Dy, an error is printed on RZ/G2E and R-=
+Car E3:
+> > >>>>
+> > >>>>       cpu cpu0: EM: invalid perf. state: -22
+> > >>>>
+> > >>>> This happens because the Operating Points Parameters tables do not=
+ list
+> > >>>> voltages, as they are all identical.  Previously, it was assumed t=
+hey
+> > >>>> were optional, and unused, when none of the CPU nodes is tied to a
+> > >>>> regulator using the "cpu-supply" property.  This assumption turned=
+ out
+> > >>>> to be incorrect, causing the reported error message.
+> > >>>>
+> > >>>> This RFC patch series fixes this by adding the missing voltages.
+> > >>>>
+> > >>>> Note that the Energy Model calculates energy efficiency by dividin=
+g the
+> > >>>> (estimated) CPU power consumption by CPU core clock frequency.  Wh=
+en all
+> > >>>> voltages have the same value, the former is proportional to clock
+> > >>>> frequency, and energy efficiency becomes a constant.  Hence all
+> > >>>> operating points are considered to have the same efficiency, and t=
+he
+> > >>>> Energy Model always picks the one with the highest clock rate (see=
+ also
+> > >>>> [1]).
+> > >>>>
+> > >>>> Alternatively, the Energy Model could be changed to silently ignor=
+e OPP
+> > >>>> tables with missing frequencies.  IMHO this is not an unusual case=
+.
+> > >>>>
+> > >>>> Which approach should be taken?
+> > >>>> Thanks for your comments!
+> > >>>
+> > >>> Any comments from the Energy Model and PM people?
+> > >>
+> > >> My apologies for delay.
+> > >>
+> > >> So you had issue with bogus Voltage values and removed them.
+> > >>
+> > >> There is another way to setup EM properly, via DT:
+> > >> "opp-microwatt" [1].
+> > >>
+> > >> That micro watt value won't confuse other subsystems, like
+> > >> your regulator fwk. It will only be used by the EM fwk.
+> > >>
+> > >> This would be an alternative to your voltage values.
+> > >> Sounds better to you?
+> > >
+> > > For opp-microwatt, I do need to know the actual power consumption
+> > > of the core, right?
+> >
+> > Correct. You can try to derived that in a way you did and put below.
+> > Although, Dhrystone is a synthetic micro-benchmark with small
+> > impact to data caches, so it will not use much power.
+>
+> Do you have a suggestion for a better load test? stress-ng?
+>
+> > > Full system power consumption while running the in-kernel
+> > > Dhrystones benchmark:
+> > >
+> > > 800 MHz: avg 4972,55 mW, stdef 20,474 mW
+> > > 1000 MHz: avg 5025,93 mW, stdef 18,644 mW
+> > > 1200 MHz: avg 5059,63 mW, stdef 15,425 mW
+> >
+> > Right. From those power values can be try to derive the
+> > 'CPU only power' values - assuming only one core was
+> > running the test.
+> >
+> > AFAIU you don't have proper DVFS due to missing voltage scaling.
+>
+> Indeed.
+>
+> > Therefore...
+> > Out of that I got these CPU power values:
+> > 800MHz -> 174mW
+>
+> =3D> 217.5 =C2=B5W/MHz
+>
+> > 1000MHz -> 212mW
+>
+> =3D> 212 =C2=B5W/MHz
+>
+> > 1200MHz -> 261mW
 
+BTW, how did you get from my avg mW values above to your CPU power mW
+values? I seem to be missing something...
 
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> =3D> 217.5 =C2=B5W/MHz.
+>
+> So 1000 MHz seems to be the most power-efficient.
+>
+> > > The system also has test points across a 0.005 Ohm sense resistor in
+> > > the DVFS power supply line, but no on-board measurement sensor (like
+> > > the MAX9611 on Salvator-X(S)), so I haven't measured anything
+> > > there yet.
+>
+> I'll try to do some measurements at these test points.
 
-Cheers,
-Biju
-> ---
->=20
-> Changes in v3:
-> - none
->=20
-> Changes in v2:
-> - none
->=20
->  arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 96 ++++++++++++++++++++++
->  1 file changed, 96 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
-/dts/renesas/r9a08g045.dtsi
-> index be8a0a768c65..24c6388cd0d5 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> @@ -14,6 +14,22 @@ / {
->  	#address-cells =3D <2>;
->  	#size-cells =3D <2>;
->=20
-> +	audio_clk1: audio-clk1 {
-> +		compatible =3D "fixed-clock";
-> +		#clock-cells =3D <0>;
-> +		/* This value must be overridden by boards that provide it. */
-> +		clock-frequency =3D <0>;
-> +		status =3D "disabled";
-> +	};
-> +
-> +	audio_clk2: audio-clk2 {
-> +		compatible =3D "fixed-clock";
-> +		#clock-cells =3D <0>;
-> +		/* This value must be overridden by boards that provide it. */
-> +		clock-frequency =3D <0>;
-> +		status =3D "disabled";
-> +	};
-> +
->  	cpus {
->  		#address-cells =3D <1>;
->  		#size-cells =3D <0>;
-> @@ -187,6 +203,86 @@ i2c3: i2c@10090c00 {
->  			status =3D "disabled";
->  		};
->=20
-> +		ssi0: ssi@100a8000 {
-> +			compatible =3D "renesas,r9a08g045-ssi",
-> +				     "renesas,rz-ssi";
-> +			reg =3D <0 0x100a8000 0 0x400>;
-> +			interrupts =3D <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 241 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 242 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names =3D "int_req", "dma_rx", "dma_tx";
-> +			clocks =3D <&cpg CPG_MOD R9A08G045_SSI0_PCLK2>,
-> +				 <&cpg CPG_MOD R9A08G045_SSI0_PCLK_SFR>,
-> +				 <&audio_clk1>, <&audio_clk2>;
-> +			clock-names =3D "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-> +			resets =3D <&cpg R9A08G045_SSI0_RST_M2_REG>;
-> +			dmas =3D <&dmac 0x2665>, <&dmac 0x2666>;
-> +			dma-names =3D "tx", "rx";
-> +			power-domains =3D <&cpg>;
-> +			#sound-dai-cells =3D <0>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		ssi1: ssi@100a8400 {
-> +			compatible =3D "renesas,r9a08g045-ssi",
-> +				     "renesas,rz-ssi";
-> +			reg =3D <0 0x100a8400 0 0x400>;
-> +			interrupts =3D <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 244 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 245 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names =3D "int_req", "dma_rx", "dma_tx";
-> +			clocks =3D <&cpg CPG_MOD R9A08G045_SSI1_PCLK2>,
-> +				 <&cpg CPG_MOD R9A08G045_SSI1_PCLK_SFR>,
-> +				 <&audio_clk1>, <&audio_clk2>;
-> +			clock-names =3D "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-> +			resets =3D <&cpg R9A08G045_SSI1_RST_M2_REG>;
-> +			dmas =3D <&dmac 0x2669>, <&dmac 0x266a>;
-> +			dma-names =3D "tx", "rx";
-> +			power-domains =3D <&cpg>;
-> +			#sound-dai-cells =3D <0>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		ssi2: ssi@100a8800 {
-> +			compatible =3D "renesas,r9a08g045-ssi",
-> +				     "renesas,rz-ssi";
-> +			reg =3D <0 0x100a8800 0 0x400>;
-> +			interrupts =3D <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 247 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 248 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names =3D "int_req", "dma_rx", "dma_tx";
-> +			clocks =3D <&cpg CPG_MOD R9A08G045_SSI2_PCLK2>,
-> +				 <&cpg CPG_MOD R9A08G045_SSI2_PCLK_SFR>,
-> +				 <&audio_clk1>, <&audio_clk2>;
-> +			clock-names =3D "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-> +			resets =3D <&cpg R9A08G045_SSI2_RST_M2_REG>;
-> +			dmas =3D <&dmac 0x266d>, <&dmac 0x266e>;
-> +			dma-names =3D "tx", "rx";
-> +			power-domains =3D <&cpg>;
-> +			#sound-dai-cells =3D <0>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		ssi3: ssi@100a8c00 {
-> +			compatible =3D "renesas,r9a08g045-ssi",
-> +				     "renesas,rz-ssi";
-> +			reg =3D <0 0x100a8c00 0 0x400>;
-> +			interrupts =3D <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 251 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names =3D "int_req", "dma_rx", "dma_tx";
-> +			clocks =3D <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
-> +				 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
-> +				 <&audio_clk1>, <&audio_clk2>;
-> +			clock-names =3D "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-> +			resets =3D <&cpg R9A08G045_SSI3_RST_M2_REG>;
-> +			dmas =3D <&dmac 0x2671>, <&dmac 0x2672>;
-> +			dma-names =3D "tx", "rx";
-> +			power-domains =3D <&cpg>;
-> +			#sound-dai-cells =3D <0>;
-> +			status =3D "disabled";
-> +		};
-> +
->  		cpg: clock-controller@11010000 {
->  			compatible =3D "renesas,r9a08g045-cpg";
->  			reg =3D <0 0x11010000 0 0x10000>;
-> --
-> 2.39.2
+So I measured the voltage across the sense resistor, and used that to
+calculate the actual power draw:
+  A. Idle (1 or 2 CPU cores online doesn't seem to matter):
+      -  765 mW @  800 MHz,
+      -  786 mW @ 1000 MHz,
+      -  807 mW @ 1200 MHz.
+  B. Maximum seen during "stress-ng -c 10" with 1 CPU core online:
+      -  993 mW @  800 MHz,
+      - 1055 mW @ 1000 MHz,
+      - 1096 mW @ 1200 MHz.
+  C. Maximum seen during "stress-ng -c 10" with 2 CPU cores online:
+      - 1179 mW @  800 MHz,
+      - 1303 mW @ 1000 MHz,
+      - 1386 mW @ 1200 MHz.
 
+As expected, the A-C increase is about the double of the A-B increase,
+due to the use of 2 CPU cores.
+
+Thanks again!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
