@@ -1,47 +1,57 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C299145B00
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Nov 2024 18:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A8013E8AE;
+	Tue, 19 Nov 2024 18:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732041882; cv=none; b=Ivyhs3hrE35U8P9K2X5y/hCVWxdSWCTlXwACE+9jpXNjwLaajjv1wl5xMS4vGuzon1C3uITxzGfqdJTjUWJTaGqTMBUIMdE/ZNIwiFb/bdvlCa06CEkcJAJXribOswpAtoEYtqQO/ZdO4P54Z2IkUxJHK97UvT4NlDt/+EpVJsM=
+	t=1732041885; cv=none; b=dHM8kqR2vC3h4YyQ+ll1ajV1sgAfZ/xSZ/CvQmA4AVcBF5UoNNQUnP0mcLtc7+0XSyTMuMNfJ0NxXxO1LyKYjnp+mttgBV/8t7j8+XmDdT8OT/HJIt8qhgULPT6iO98zCRVb2/M20on/Tu/MSHKHl+L161Z1S+VEDibkYZw3Js0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732041882; c=relaxed/simple;
-	bh=A0KvyNAjRFIeE5GjIATQVrZYHQ5YFhFdztdhxwuebzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NPXp93dPawDn47Z/XeTGoSJnGCEkRdxVO6T7o0LiKpL1o6yND8rbcjSSO7x066XgwX9rvGGc3fDdtb/ZWNK1Z7tSw3Zz9xXaXjkGCwH4O4iWrs+NdwbF+DMYZjrunkI4woyzSHGxx55tkcCp26ffAsFDixxltryD+cRcORQ7ukU=
+	s=arc-20240116; t=1732041885; c=relaxed/simple;
+	bh=3KA3TlKuz+4Clh9tcAZUjdBCfOLkImacutUGi4HwvMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Wujq7njPSU6WC2AypP86Z3/4F30Xv+r4p64xfDpSXo2h4dqeuz/oaN9wxT3UGB4ZVIBPAv2EznCIiXadli83xpRXdK6JnwpkqElZyLsrT+/CFsPNn15ScqW5xCvmiquSl6+aKezTZvmqPl6HVFcaHwSNpwp3LmzQ4vQc8DNhzqs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: idwUfOZJT7uxvCdOwL4tpA==
-X-CSE-MsgGUID: vFEUuC8iQzyHWPp6+Nyqlw==
+X-CSE-ConnectionGUID: BbYHDOkUScqzd8jTItoKcQ==
+X-CSE-MsgGUID: f/sg6/mCQy6elY+PriFzjg==
 X-IronPort-AV: E=Sophos;i="6.12,166,1728918000"; 
-   d="scan'208";a="225334498"
+   d="scan'208";a="225334501"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Nov 2024 03:44:39 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Nov 2024 03:44:40 +0900
 Received: from localhost.localdomain (unknown [10.226.92.216])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 86947400752D;
-	Wed, 20 Nov 2024 03:44:22 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9E3BB4000C7D;
+	Wed, 20 Nov 2024 03:44:33 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
 	Robert Foss <rfoss@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	Jonas Karlman <jonas@kwiboo.se>,
 	Jernej Skrabec <jernej.skrabec@gmail.com>,
 	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 0/3] drm: adv7511: ADV7535 fixes
-Date: Tue, 19 Nov 2024 18:44:13 +0000
-Message-ID: <20241119184420.138785-1-biju.das.jz@bp.renesas.com>
+	linux-renesas-soc@vger.kernel.org,
+	stable@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v6 2/3] dt-bindings: display: adi,adv7533: Drop single lane support
+Date: Tue, 19 Nov 2024 18:44:15 +0000
+Message-ID: <20241119184420.138785-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241119184420.138785-1-biju.das.jz@bp.renesas.com>
+References: <20241119184420.138785-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -50,44 +60,45 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series aims to fix 2 bugs in the ADV7535 driver
+As per [1] and [2], ADV7535/7533 supports only 2-, 3-, or 4-lane. Drop
+unsupported 1-lane from bindings.
 
-1) use-after-free bug in adv7533_attach_dsi()
-2) Drop unsupported single lane.
+[1] https://www.analog.com/media/en/technical-documentation/data-sheets/ADV7535.pdf
+[2] https://www.analog.com/media/en/technical-documentation/data-sheets/ADV7533.pdf
 
-Changes in v6:
- - Fixed memory leak by adding goto stattement in error path of
-   adv7511_init_regulators().
- - Added Rb tag from Adam for patch#3.
-Changes in v5:
- - Updated commit description for patch#1.
- - restored host_node in struct adv7511.
- - Dropped of_node_put() in adv7533_parse_dt() and calling of_node_put()
-   in error path of probe() and also in the remove().
-Changes in v4:
- - Updated commit description for patch#1.
- - Dropped host_node from struct adv7511 and instead used a local pointer
-   in probe(). Also freeing of host_node pointer after use is done in
-   probe().
- - Added link to ADV7533 data sheet.
- - Collected tags
-Changes in v3:
- - Replace __free construct with readable of_node_put().
- - Dropped single lane support from bindings and driver.
-changes in v2:
- - Added the tag "Cc: stable@vger.kernel.org" in the sign-off area.
- - Dropped invalid Mail address Archit Taneja <architt@codeaurora.org>.
+Fixes: 1e4d58cd7f88 ("drm/bridge: adv7533: Create a MIPI DSI device")
+Cc: stable@vger.kernel.org
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v5->v6:
+ * No change.
+v4->v5:
+ * No change.
+v3->v4:
+ * Added link to ADV7533 data sheet.
+ * Collected tags.
+v3:
+ * New patch.
+---
+ .../devicetree/bindings/display/bridge/adi,adv7533.yaml         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Biju Das (3):
-  drm: adv7511: Fix use-after-free in adv7533_attach_dsi()
-  dt-bindings: display: adi,adv7533: Drop single lane support
-  drm: adv7511: Drop dsi single lane support
-
- .../bindings/display/bridge/adi,adv7533.yaml         |  2 +-
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c         | 12 ++++++++++--
- drivers/gpu/drm/bridge/adv7511/adv7533.c             |  4 +---
- 3 files changed, 12 insertions(+), 6 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7533.yaml b/Documentation/devicetree/bindings/display/bridge/adi,adv7533.yaml
+index df20a3c9c744..ec89115c74e4 100644
+--- a/Documentation/devicetree/bindings/display/bridge/adi,adv7533.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7533.yaml
+@@ -90,7 +90,7 @@ properties:
+   adi,dsi-lanes:
+     description: Number of DSI data lanes connected to the DSI host.
+     $ref: /schemas/types.yaml#/definitions/uint32
+-    enum: [ 1, 2, 3, 4 ]
++    enum: [ 2, 3, 4 ]
+ 
+   "#sound-dai-cells":
+     const: 0
 -- 
 2.43.0
 
