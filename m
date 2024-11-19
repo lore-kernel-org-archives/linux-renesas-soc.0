@@ -1,26 +1,26 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033CD1D0E22;
-	Tue, 19 Nov 2024 18:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35BC152E0C;
+	Tue, 19 Nov 2024 18:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732041887; cv=none; b=CzathE4KjZunbud3WtHLQ2b+ziASq5mREIGYDNco/k4SK11DsqmvgITmG+uBw0+XE7b3frv5dvZ1wCoV6KQsBT7yXIzq5PO8PP9xr5VYmVkwW0t29TYO+tMXoDukHAJ9GmsKgkVua9PhrreXEJOzu7aF6nC5OL94j1gEFGumd/w=
+	t=1732041898; cv=none; b=BNfLpLsQ8Bo+5TgW7ZPPnl5f17GWGSsBjM3ctoyDaaYiPhvOZB5/Pp04gcGavNkHo9u49Z+OIkndEMlf/ME2GIqs/lxkgWJoPlZKCRqZxlXHb2v3+uztc9J3pprxhR4FxVQIW+Q040edN8QNVkg7gX9nMEK95yzgSRVgG54Qhqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732041887; c=relaxed/simple;
-	bh=LHjb+OvdjSLDLMpwNkdhd66G63JCmx4pXbNZgf+jsJY=;
+	s=arc-20240116; t=1732041898; c=relaxed/simple;
+	bh=ZAUL8XzC3MXUdAhY80NcqXT27KA0/qQlOqmSdso/aFM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bQ+KZkXutYeUKLvhNAGhMRZZZ22CsEyKmEEMk4AD09/eqtj/g6pZOBv8CjZsp3hj5StGKaJS0lspHvzV8bOyhlNXXeJ/L0tdzfnMr5+K3Q4YDS+LL/hVIE5BsFhsvDuBz6+fzhnBW8hgcOOfn9I3HA6q3J8RmNoEydPP1czlSok=
+	 MIME-Version; b=hfxMjPWsVuEHZhvFAUQqMVW8jrccfjiWLA3msh6E54b8Q00OPhr+xs6oUJWy+F+K82/Zp7f2M3avFRiVWBexUv/a4xeZdJs0UCZrK1IL4QZAc/Pxiz9K0RWBhU3PAcL7LORuBc8+SCcNLaiWGLEAQ+UQX5Br7JwPMtXu98YOr6E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: GUmpTOLOQ+u2l1OOq0MFEA==
-X-CSE-MsgGUID: hOHYxKI1QhykDf5ChSMJVQ==
+X-CSE-ConnectionGUID: 6U02yTBZRBSoY7sIm405dg==
+X-CSE-MsgGUID: yxohofwSQtijYVefabaheA==
 X-IronPort-AV: E=Sophos;i="6.12,166,1728918000"; 
-   d="scan'208";a="229318280"
+   d="scan'208";a="229318287"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Nov 2024 03:44:44 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Nov 2024 03:44:55 +0900
 Received: from localhost.localdomain (unknown [10.226.92.216])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C78BF4005620;
-	Wed, 20 Nov 2024 03:44:27 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B3D3F400752D;
+	Wed, 20 Nov 2024 03:44:40 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -39,10 +39,13 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v6 1/3] drm: adv7511: Fix use-after-free in adv7533_attach_dsi()
-Date: Tue, 19 Nov 2024 18:44:14 +0000
-Message-ID: <20241119184420.138785-2-biju.das.jz@bp.renesas.com>
+	Hien Huynh <hien.huynh.px@renesas.com>,
+	stable@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Adam Ford <aford173@gmail.com>
+Subject: [PATCH v6 3/3] drm: adv7511: Drop dsi single lane support
+Date: Tue, 19 Nov 2024 18:44:16 +0000
+Message-ID: <20241119184420.138785-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241119184420.138785-1-biju.das.jz@bp.renesas.com>
 References: <20241119184420.138785-1-biju.das.jz@bp.renesas.com>
@@ -52,91 +55,52 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The host_node pointer was assigned and freed in adv7533_parse_dt(), and
-later, adv7533_attach_dsi() uses the same. Fix this use-after-free issue
-by dropping of_node_put() in adv7533_parse_dt() and calling of_node_put()
-in error path of probe() and also in the remove().
+As per [1] and [2], ADV7535/7533 supports only 2-, 3-, or 4-lane. Drop
+unsupported 1-lane.
+
+[1] https://www.analog.com/media/en/technical-documentation/data-sheets/ADV7535.pdf
+[2] https://www.analog.com/media/en/technical-documentation/data-sheets/ADV7533.pdf
 
 Fixes: 1e4d58cd7f88 ("drm/bridge: adv7533: Create a MIPI DSI device")
+Reported-by: Hien Huynh <hien.huynh.px@renesas.com>
 Cc: stable@vger.kernel.org
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Adam Ford <aford173@gmail.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 Changes in v6:
- - Fixed memory leak by adding goto stattement in error path of
-   adv7511_init_regulators().
+ - Added Rb tag from Adam.
 Changes in v5:
- - Updated commit description.
- - restored host_node in struct adv7511.
- - Dropped of_node_put() in adv7533_parse_dt() and calling of_node_put()
-   in error path of probe() and also in the remove().
+ - No change.
 Changes in v4:
- - Updated commit description.
- - Dropped host_node from struct adv7511 and instead used a local pointer
-   in probe(). Also freeing of host_node pointer after use is done in
-   probe().
+ - Added link to ADV7533 data sheet.
+ - Collected tags
 Changes in v3:
- - Replace __free construct with readable of_node_put().
+ - Updated commit header and description
+ - Updated fixes tag
+ - Dropped single lane support
 Changes in v2:
  - Added the tag "Cc: stable@vger.kernel.org" in the sign-off area.
  - Dropped Archit Taneja invalid Mail address
 ---
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 12 ++++++++++--
- drivers/gpu/drm/bridge/adv7511/adv7533.c     |  2 --
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/adv7511/adv7533.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index eb5919b38263..f5525c12f0cd 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -1241,8 +1241,10 @@ static int adv7511_probe(struct i2c_client *i2c)
- 		return ret;
- 
- 	ret = adv7511_init_regulators(adv7511);
--	if (ret)
--		return dev_err_probe(dev, ret, "failed to init regulators\n");
-+	if (ret) {
-+		dev_err_probe(dev, ret, "failed to init regulators\n");
-+		goto err_of_node_put;
-+	}
- 
- 	/*
- 	 * The power down GPIO is optional. If present, toggle it from active to
-@@ -1363,6 +1365,9 @@ static int adv7511_probe(struct i2c_client *i2c)
- 	i2c_unregister_device(adv7511->i2c_edid);
- uninit_regulators:
- 	adv7511_uninit_regulators(adv7511);
-+err_of_node_put:
-+	if (adv7511->host_node)
-+		of_node_put(adv7511->host_node);
- 
- 	return ret;
- }
-@@ -1371,6 +1376,9 @@ static void adv7511_remove(struct i2c_client *i2c)
- {
- 	struct adv7511 *adv7511 = i2c_get_clientdata(i2c);
- 
-+	if (adv7511->host_node)
-+		of_node_put(adv7511->host_node);
-+
- 	adv7511_uninit_regulators(adv7511);
- 
- 	drm_bridge_remove(&adv7511->bridge);
 diff --git a/drivers/gpu/drm/bridge/adv7511/adv7533.c b/drivers/gpu/drm/bridge/adv7511/adv7533.c
-index 4481489aaf5e..5f195e91b3e6 100644
+index 5f195e91b3e6..122ad91e8a32 100644
 --- a/drivers/gpu/drm/bridge/adv7511/adv7533.c
 +++ b/drivers/gpu/drm/bridge/adv7511/adv7533.c
-@@ -181,8 +181,6 @@ int adv7533_parse_dt(struct device_node *np, struct adv7511 *adv)
- 	if (!adv->host_node)
- 		return -ENODEV;
+@@ -172,7 +172,7 @@ int adv7533_parse_dt(struct device_node *np, struct adv7511 *adv)
  
--	of_node_put(adv->host_node);
--
- 	adv->use_timing_gen = !of_property_read_bool(np,
- 						"adi,disable-timing-generator");
+ 	of_property_read_u32(np, "adi,dsi-lanes", &num_lanes);
  
+-	if (num_lanes < 1 || num_lanes > 4)
++	if (num_lanes < 2 || num_lanes > 4)
+ 		return -EINVAL;
+ 
+ 	adv->num_dsi_lanes = num_lanes;
 -- 
 2.43.0
 
