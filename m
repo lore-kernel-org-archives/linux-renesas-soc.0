@@ -1,227 +1,77 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0FA1586DB;
-	Wed, 20 Nov 2024 08:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0321171650
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Nov 2024 08:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732090267; cv=none; b=s5luPLo53gQcaMlC81yVEKe7+je2Z5ldYaD9JRXE3eXa6kWZynClMu89csdLI2NJV/WBpOckU0fx50OYGaLmdfTtlZqatxyRGhNAElO+Gj5ayMfYQweUq99RwWfE8XAWs+pinsDmEbOQi10BmTaNHaUVlku+vw1r9/rbKcEn45w=
+	t=1732091650; cv=none; b=ocHScluof0YPbMXt1T52B9DQNQBzDsJnsaAG3zCf1Mlmtqm/als6v9sWBrWFXVIsKJU7NHu76b0UvoE81jFnFlHlb+AL2iDsueqCBIVfjapd7dk8cSI09OWDAOBsk0O1xoqn/OZfbfd7PlIDlaCdMliltovSWT6p+6CZfZRE1DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732090267; c=relaxed/simple;
-	bh=v1wo4bxWJLud4VLSRj8I8xAVToMBv7f3W9r2hPkVfT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vn7hVRVOCYscI1JdJP7G2mr+8gaS0xDb5LIAVQPYuYvbb9lehsl9fyN195ljyoigRi7OqblSYKVVHIyGZojvJ0QCiwI5LEOa6yq7sRR9F7XVSk3tUfxMTFqTwej7C6Qm0AOoMDWzYQQzUBkmZQh7185oEUegEpmD08YRtpmTU9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DnX8Z4jz; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1732091650; c=relaxed/simple;
+	bh=GRDqG9yY6Z32OOYsdvevy8HmejjBUPykoAD8smWEtKU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=taengj+FEVjHNo6dhlB+/AH8KH8BXXYPU7HwBRTkEDQH5ZR9Fb4jigUcJtrNQok+V1mCY4qVl6igU4tVyHlljPMMbYMmxnzqYacObjIuyS5c3zELLtbLrYDEb5dsKT+zmguVvvbHzUBcVjafdCYVw6+sLC5LsvvYfvz7d4J4plI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=M139WiQr; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DnX8Z4jz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732090266; x=1763626266;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=v1wo4bxWJLud4VLSRj8I8xAVToMBv7f3W9r2hPkVfT8=;
-  b=DnX8Z4jzXyb4x2tUZktifpGXdp4wXR3b45Wfynk1osiSsxfAlPTyRKZl
-   s62JuEkrpQ/X11RsM1CMsXHJeEcnAvBkhwr5wF7GjgEwKrpYbDhDVwCjZ
-   M5lHM6ggefthauPVwNvuWjrjPhdoIoRkcqg+plx/nSa6GpNAehtfC6MU4
-   7h+elpfvNGuakCnKccUxHN45mSZaLEGxS3pyG3VkhQj8tN9tG/L5FNhuR
-   Ldq9wwwwWc+bpQ6TSOZYfCKfCkDX3Zwy5LT5JcDXlsCPBydKlXTuN6EAB
-   nC5mDMOUnC4Kg3y4IuGJpq5019oVn+dhYs/nYDrzXSJsELfcSWnrmotxZ
-   w==;
-X-CSE-ConnectionGUID: hvtkSwVOQ+CUpbZXVU34qg==
-X-CSE-MsgGUID: wEm6VjhSRNWxAfFoS9CYzw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11261"; a="49561230"
-X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
-   d="scan'208";a="49561230"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 00:10:48 -0800
-X-CSE-ConnectionGUID: 5Z+o/VGvQwuNE/Poyedy8Q==
-X-CSE-MsgGUID: N5elFeXnSrqn8Msyfy7bhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
-   d="scan'208";a="90214947"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 00:10:45 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 4C1D711F89A;
-	Wed, 20 Nov 2024 10:10:42 +0200 (EET)
-Date: Wed, 20 Nov 2024 08:10:42 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/4] media: v4l: fwnode: Parse MiPI DisCo for C-PHY
- line-orders
-Message-ID: <Zz2Zgvjm21iv-qtc@kekkonen.localdomain>
-References: <20241119221249.539610-1-niklas.soderlund+renesas@ragnatech.se>
- <20241119221249.539610-3-niklas.soderlund+renesas@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="M139WiQr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=BzKhmpSdjWou+wACtFt1L+9aYWsfG8g74XVaa5mSLyc=; b=M139Wi
+	QrWASRnXh/ERotb2z4380COf1jGcx/LqmRsQy+/Or1RlST7DlX/wmls7eSkY+NU+
+	o5HyRCHK32+RIQHyinBbjNYJJTztHAJGUoe1MkH19a2yFXTS9skJmuw2HzaSV/Wv
+	22R24EwuYuhh70GSeuAzmuyyCRh6aMNGU1PX0kfxYApqX9r6TlFYF1sZnrin8ZXH
+	PkXlWYze19RasiLjavNQZ9/D1UBVj3ZEg9uxsFHrR8sEqobuPlFfJ2TRd8zg8XTL
+	1TwQIkvttMOFlcx+Yvf0xQur6apQv1FendmyoNwONZakcaD9diLh+tURcGAgQjfT
+	7Zo7vKgj3r+kfkjA==
+Received: (qmail 832297 invoked from network); 20 Nov 2024 09:34:04 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2024 09:34:04 +0100
+X-UD-Smtp-Session: l3s3148p1@MlEtA1QnyLIgAwDPXxznANR4Jedc6XSv
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	=?UTF-8?q?Carsten=20Spie=C3=9F?= <mail@carsten-spiess.de>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH 2/3] hwmon: (isl28022) document shunt voltage channel
+Date: Wed, 20 Nov 2024 09:33:51 +0100
+Message-ID: <20241120083349.22226-7-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241120083349.22226-5-wsa+renesas@sang-engineering.com>
+References: <20241120083349.22226-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241119221249.539610-3-niklas.soderlund+renesas@ragnatech.se>
 
-Hejssan,
+During the upstreaming process, the driver has been extended to report
+the shunt voltage as well. Document that.
 
-On Tue, Nov 19, 2024 at 11:12:47PM +0100, Niklas Söderlund wrote:
-> Extend the fwnode parsing to validate and fill in the CSI-2 C-PHY
-> line-orders order properties as defined in MIPI Discovery and
-> Configuration (DisCo) Specification for Imaging.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/v4l2-core/v4l2-fwnode.c | 56 ++++++++++++++++++++++++++-
->  include/media/v4l2-mediabus.h         | 21 ++++++++++
->  2 files changed, 76 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-> index f19c8adf2c61..b8b2b7fb685e 100644
-> --- a/drivers/media/v4l2-core/v4l2-fwnode.c
-> +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-> @@ -127,7 +127,7 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
->  {
->  	struct v4l2_mbus_config_mipi_csi2 *bus = &vep->bus.mipi_csi2;
->  	bool have_clk_lane = false, have_data_lanes = false,
-> -		have_lane_polarities = false;
-> +		have_lane_polarities = false, have_line_orders = false;
->  	unsigned int flags = 0, lanes_used = 0;
->  	u32 array[1 + V4L2_MBUS_CSI2_MAX_DATA_LANES];
->  	u32 clock_lane = 0;
-> @@ -197,6 +197,17 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
->  		have_lane_polarities = true;
->  	}
->  
-> +	rval = fwnode_property_count_u32(fwnode, "line-orders");
-> +	if (rval > 0) {
-> +		if (rval != num_data_lanes) {
-> +			pr_warn("invalid number of line-orders entries (need %u, got %u)\n",
-> +				num_data_lanes, rval);
-> +			return -EINVAL;
-> +		}
-> +
-> +		have_line_orders = true;
-> +	}
-> +
->  	if (!fwnode_property_read_u32(fwnode, "clock-lanes", &v)) {
->  		clock_lane = v;
->  		pr_debug("clock lane position %u\n", v);
-> @@ -250,6 +261,49 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
->  		} else {
->  			pr_debug("no lane polarities defined, assuming not inverted\n");
->  		}
-> +
-> +		if (have_line_orders) {
-> +			fwnode_property_read_u32_array(fwnode,
-> +						       "line-orders", array,
-> +						       num_data_lanes);
-> +
-> +			for (i = 0; i < num_data_lanes; i++) {
-> +				const char *order;
-> +
-> +				switch (array[i]) {
-> +				case 0:
-> +					order = "ABC";
-> +					break;
-> +				case 1:
-> +					order = "ACB";
-> +					break;
-> +				case 2:
-> +					order = "BAC";
-> +					break;
-> +				case 3:
-> +					order = "BCA";
-> +					break;
-> +				case 4:
-> +					order = "CAB";
-> +					break;
-> +				case 5:
-> +					order = "CBA";
-> +					break;
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ Documentation/hwmon/isl28022.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please use an array instead.
-
-> +				default:
-> +					pr_warn("lane %u invalid line-order assuming ABC (got %u)\n",
-> +						i, array[i]);
-> +					bus->line_orders[i] = V4L2_MBUS_CSI2_CPHY_LINE_ORDER_ABC;
-> +					continue;
-> +				}
-> +				bus->line_orders[i] = array[i];
-> +				pr_debug("lane %u line order %s", i, order);
-> +			}
-> +		} else {
-> +			for (i = 0; i < num_data_lanes; i++)
-> +				bus->line_orders[i] = V4L2_MBUS_CSI2_CPHY_LINE_ORDER_ABC;
-
-A few lines could be wrapped above.
-
-> +
-> +			pr_debug("no line orders defined, assuming ABC\n");
-> +		}
->  	}
->  
->  	return 0;
-> diff --git a/include/media/v4l2-mediabus.h b/include/media/v4l2-mediabus.h
-> index 5bce6e423e94..e7f019f68c8d 100644
-> --- a/include/media/v4l2-mediabus.h
-> +++ b/include/media/v4l2-mediabus.h
-> @@ -73,6 +73,24 @@
->  
->  #define V4L2_MBUS_CSI2_MAX_DATA_LANES		8
->  
-> +/**
-> + * enum v4l2_mbus_csi2_cphy_line_orders_type - CSI-2 C-PHY line order
-> + * @V4L2_MBUS_CSI2_CPHY_LINE_ORDER_ABC: C-PHY line order ABC (default)
-> + * @V4L2_MBUS_CSI2_CPHY_LINE_ORDER_ACB: C-PHY line order ACB
-> + * @V4L2_MBUS_CSI2_CPHY_LINE_ORDER_BAC: C-PHY line order BAC
-> + * @V4L2_MBUS_CSI2_CPHY_LINE_ORDER_BCA: C-PHY line order BCA
-> + * @V4L2_MBUS_CSI2_CPHY_LINE_ORDER_CAB: C-PHY line order CAB
-> + * @V4L2_MBUS_CSI2_CPHY_LINE_ORDER_CBA: C-PHY line order CBA
-> + */
-> +enum v4l2_mbus_csi2_cphy_line_orders_type {
-> +	V4L2_MBUS_CSI2_CPHY_LINE_ORDER_ABC,
-> +	V4L2_MBUS_CSI2_CPHY_LINE_ORDER_ACB,
-> +	V4L2_MBUS_CSI2_CPHY_LINE_ORDER_BAC,
-> +	V4L2_MBUS_CSI2_CPHY_LINE_ORDER_BCA,
-> +	V4L2_MBUS_CSI2_CPHY_LINE_ORDER_CAB,
-> +	V4L2_MBUS_CSI2_CPHY_LINE_ORDER_CBA,
-> +};
-> +
->  /**
->   * struct v4l2_mbus_config_mipi_csi2 - MIPI CSI-2 data bus configuration
->   * @flags: media bus (V4L2_MBUS_*) flags
-> @@ -81,6 +99,8 @@
->   * @num_data_lanes: number of data lanes
->   * @lane_polarities: polarity of the lanes. The order is the same of
->   *		   the physical lanes.
-> + * @line_orders: line order of the data lanes. The order is the same of the
-> + *		   physical lanes.
->   */
->  struct v4l2_mbus_config_mipi_csi2 {
->  	unsigned int flags;
-> @@ -88,6 +108,7 @@ struct v4l2_mbus_config_mipi_csi2 {
->  	unsigned char clock_lane;
->  	unsigned char num_data_lanes;
->  	bool lane_polarities[1 + V4L2_MBUS_CSI2_MAX_DATA_LANES];
-> +	enum v4l2_mbus_csi2_cphy_line_orders_type line_orders[V4L2_MBUS_CSI2_MAX_DATA_LANES];
->  };
->  
->  /**
-
+diff --git a/Documentation/hwmon/isl28022.rst b/Documentation/hwmon/isl28022.rst
+index a7920a884b9f..273ce5460135 100644
+--- a/Documentation/hwmon/isl28022.rst
++++ b/Documentation/hwmon/isl28022.rst
+@@ -48,6 +48,7 @@ The following attributes are supported. All attributes are read-only.
+ 
+ ======================= =======================================================
+ in0_input		bus voltage (milli Volt)
++in1_input		shunt voltage (milli Volt)
+ 
+ curr1_input		current (milli Ampere)
+ power1_input		power (micro Watt)
 -- 
-Med vänliga hälsningar,
+2.45.2
 
-Sakari Ailus
