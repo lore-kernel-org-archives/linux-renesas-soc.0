@@ -1,26 +1,26 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55881DF962
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Nov 2024 12:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFB079FE
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Nov 2024 12:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732279616; cv=none; b=KlYekVF4JDXMlq2agxR+aMisI+si5ItyyT4pAmfR5d3ArG5OTzFGLWRN85NCGBo/0K0umtYNQDKn1LCQ/3t+Ct6r36tFXU2rd9Hu0qnUA5dCKF+a5PWcCOHARfjYIiqfydG0lKjRVALySxKmCAclj0MjgZPCjO63tt6nTxX0GHc=
+	t=1732279618; cv=none; b=m4Ye7zNDZcqvLeHYCj7vz84JTTW2TeSmAEDxAsoh9pHsC0Z6Coek+GI5xIa26UrATZPUKvqNcQkhKjav2qnw0sDGmd0ErAq97L2p4so5+OW9w1RL5waM9W0yW9EATR319cHPXqYZzql0iFGgOUdnTg2Ecpu0xDYY/sVXh/IX3nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732279616; c=relaxed/simple;
-	bh=76kHwKJWm47we08ucTpVYmFlPgROxENoY5qA6JqmV6k=;
+	s=arc-20240116; t=1732279618; c=relaxed/simple;
+	bh=/Ms07VEYcOPd1DHTH+ge3lVoVf+wyC0kLdAQQ37En2Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YoNLxWCk5dKvnxkKr0RiCbcyW0siAY4z0JhI7U9lN40EKkSWBbtOQ3Nq8RyRd0l7itKqnMz29262iu3KQU49wFJpDOQ5VMgoU3Kz6RlpfKKAN5P5AOL4lua3SdTjIYifPRjHAKNgD6pN7OlSGZfvNAhPFoEgft9sMUpfSo2S8Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=dtuR71PNDoWb2ncC7Gi29OBhztnI/1/USVyWNpN1HpL/sqGCb1EqK44BUKcRpInHASU+r96dXKlkWUR1WqVAkPgWxIiHfa+tFpID9KbiOgOSD3/a+xJrsDhMizWiHoXoVYUntGY5ZdpubtTMkh4rKfG8NlBrDjt2/lhbojDDFXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 8JsaGGckQvmza+6Gef9Xqw==
-X-CSE-MsgGUID: rhrhEtuWQVWqcfDWg+9xKQ==
+X-CSE-ConnectionGUID: tO0sgjd6S0KA52xWvar3PA==
+X-CSE-MsgGUID: BJ3+jKqcSJqiMHO+NH/51g==
 X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
-   d="scan'208";a="229765879"
+   d="scan'208";a="225786461"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Nov 2024 21:46:53 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 22 Nov 2024 21:46:56 +0900
 Received: from localhost.localdomain (unknown [10.226.92.254])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id AB237423A757;
-	Fri, 22 Nov 2024 21:46:40 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 67CB0423A742;
+	Fri, 22 Nov 2024 21:46:45 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>
@@ -29,7 +29,6 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
@@ -37,9 +36,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 11/12] arm64: defconfig: Enable R9A09G047 SoC
-Date: Fri, 22 Nov 2024 12:45:47 +0000
-Message-ID: <20241122124558.149827-12-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 12/12] HACK-DO-NOT-APPLY-defconfig: Enable INIT RAMFS
+Date: Fri, 22 Nov 2024 12:45:48 +0000
+Message-ID: <20241122124558.149827-13-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
 References: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
@@ -51,26 +50,20 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable support for the Renesas RZ/G3E (R9A09G047) SoC in the ARM64
-defconfig.
-
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
  arch/arm64/configs/defconfig | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index d13218d0c30f..a14d48444bd8 100644
+index a14d48444bd8..7ead266f8ee2 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -1458,6 +1458,7 @@ CONFIG_ARCH_R9A07G044=y
- CONFIG_ARCH_R9A07G054=y
- CONFIG_ARCH_R9A08G045=y
- CONFIG_ARCH_R9A09G011=y
-+CONFIG_ARCH_R9A09G047=y
- CONFIG_ARCH_R9A09G057=y
- CONFIG_ROCKCHIP_IODOMAIN=y
- CONFIG_ARCH_TEGRA_132_SOC=y
+@@ -1734,3 +1734,4 @@ CONFIG_CORESIGHT_STM=m
+ CONFIG_CORESIGHT_CPU_DEBUG=m
+ CONFIG_CORESIGHT_CTI=m
+ CONFIG_MEMTEST=y
++CONFIG_INITRAMFS_SOURCE="/usr/src/initramfs_aarch64_new"
 -- 
 2.43.0
 
