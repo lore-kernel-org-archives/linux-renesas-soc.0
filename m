@@ -1,75 +1,82 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D45418133F;
-	Fri, 22 Nov 2024 10:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3B8800;
+	Fri, 22 Nov 2024 12:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732271975; cv=none; b=A6Q03AmeE0oLXrcr+BPe7LZX/JMtpwqzrESl5hn/5b7UlZsRuSpQIbdGLFKKOQSzyzJZUQPdtP93P4E0RcyijBdu3hfR17XEtzQq/WjNFs3KVCBMJ7cUd7nRCbjtJyzz2EItr7wLs+NShqiH4zbvxnJuahQFL7YzYUdJbQBp4/I=
+	t=1732279583; cv=none; b=Q4swVT6eADsmnjJpnKiblyQaBPFbHx9rSbEkfjQYHyC9xHX5iuP5TqXHUYU7ubrRpSLITmOFkrzIc1Z+6aemEnf/VgmjZiXXlh7+5mPBSOCXiAE9nWELJvdvct/z/Dow0tCDnmKHvU8JdBTpLFfy59mOsLIg7gjpcdNfnkoltNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732271975; c=relaxed/simple;
-	bh=8fifDnFSA75+FxWf9yIkSc1x6x+Sy3nBrkjwA4JtshY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uZ2B+knlnKUViqXu6Z8eT52/70CD5AleE0GOQL76RKcOtmCFDolsJTIERcPLgxRY1bgy0umTU3I75qKkEFQC5iVxuMM6bKUAouPeVx2ts3G+f/o0Itigo1x42TL+VH47Fgf27dkkzYfR9MoxvRTXS9u7PoNam3X3Dc2l2Myadzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M27819ws; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M27819ws"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B24F5FF805;
-	Fri, 22 Nov 2024 10:39:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732271971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8fifDnFSA75+FxWf9yIkSc1x6x+Sy3nBrkjwA4JtshY=;
-	b=M27819wsY9gEoZOw/7ha/XJQuehzhz4cflnAySZO8M4w901/iL4IqGHPjr5AdwAUENo5PJ
-	c6rGVNYrNR0k+XhDZNozF5g+JCzxO6kCHDP2RvxgFk0BSG/Q68UYz4sXZ9WBbE/gW28Z32
-	7cV7QVBYW/G+AOijAV3FrR3aPJvDjhdue/EmwIxVjgctGey8KyMOcEWUX9aJ2a3n5mLjht
-	OGlI0e+WxNd1HNrmYnB1+zvbjbFiGuQ9D4qT+ksPvGdnIOgYPuqLrx4wnoE2EuQnVOhnd2
-	PJqEmCP3Ty0q7o43dA/3GXiIzDWRJMQgEyzAR7DHXEoJEDDF1uC5z30kQHGHDQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,  Alexandre Belloni
- <alexandre.belloni@bootlin.com>,  linux-rtc@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] rtc: rzn1: reduce register access
-In-Reply-To: <20241122101448.4374-3-wsa+renesas@sang-engineering.com> (Wolfram
-	Sang's message of "Fri, 22 Nov 2024 11:14:48 +0100")
-References: <20241122101448.4374-1-wsa+renesas@sang-engineering.com>
-	<20241122101448.4374-3-wsa+renesas@sang-engineering.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 22 Nov 2024 11:39:29 +0100
-Message-ID: <87frnjpn6m.fsf@bootlin.com>
+	s=arc-20240116; t=1732279583; c=relaxed/simple;
+	bh=3jfMjTowWC6zFBJWKcGP+O+KnJLTl+M1GWlygnX+oxQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xy9TvyRN5bmXhucMisnRfqIfsRxM1xJNuazaXWKUznZ2n7GJ0UtVo2PPE+gegaEyT+zAB3ZM9cYAtaoS4EAaPBW25NddK38uQxf1I1zzW0f2QfzFwZZI59vlBR0L1LKXHzga+Jnec/cGdSR0Afb3ZGUSmY813ftrlJWt/RUFp6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: BPUbWp5BSUWkRWG8c6UyEA==
+X-CSE-MsgGUID: uqnoRtHYSQK7pZMxG7V1XQ==
+X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
+   d="scan'208";a="229765855"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 22 Nov 2024 21:46:14 +0900
+Received: from localhost.localdomain (unknown [10.226.92.254])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9CD39423A742;
+	Fri, 22 Nov 2024 21:46:10 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 02/12] dt-bindings: soc: renesas: Document Renesas RZ/G3E SoC variants
+Date: Fri, 22 Nov 2024 12:45:38 +0000
+Message-ID: <20241122124558.149827-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
+References: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 22/11/2024 at 11:14:48 +01, Wolfram Sang <wsa+renesas@sang-engineering.c=
-om> wrote:
+Document Renesas RZ/G3E (R9A09G047) SoC variants.
 
-> This RTC has special 32bit registers which return multiple of the same
-> 8bit registers at once. Use these to minimize register access. Also, do
-> the to/from BCD conversions right away, so 'tm' always contains values
-> as described in time.h.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../devicetree/bindings/soc/renesas/renesas.yaml    | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-IIRC it was easier to write the other way, but it is probably more optimized
-like that, so
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index b7acb65bdecd..7cc2bb97db13 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -525,6 +525,19 @@ properties:
+               - renesas,rzv2mevk2   # RZ/V2M Eval Board v2.0
+           - const: renesas,r9a09g011
+ 
++      - description: RZ/G3E (R9A09G047)
++        items:
++          - enum:
++              - renesas,r9a09g047e58 # Quad Cortex-A55 + Cortex-M33 + Ethos-U55 (21mm BGA)
++              - renesas,r9a09g047e57 # Quad Cortex-A55 + Cortex-M33 + Ethos-U55 (15mm BGA)
++              - renesas,r9a09g047e48 # Quad Cortex-A55 + Cortex-M33 (21mm BGA)
++              - renesas,r9a09g047e47 # Quad Cortex-A55 + Cortex-M33 (15mm BGA)
++              - renesas,r9a09g047e38 # Dual Cortex-A55 + Cortex-M33 + Ethos-U55 (21mm BGA)
++              - renesas,r9a09g047e37 # Dual Cortex-A55 + Cortex-M33 + Ethos-U55 (15mm BGA)
++              - renesas,r9a09g047e28 # Dual Cortex-A55 + Cortex-M33 (21mm BGA)
++              - renesas,r9a09g047e27 # Dual Cortex-A55 + Cortex-M33 (15mm BGA)
++          - const: renesas,r9a09g047
++
+       - description: RZ/V2H(P) (R9A09G057)
+         items:
+           - enum:
+-- 
+2.43.0
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-However I don't feel comfortable commenting on patch 1, I'll let Alex check.
-
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-
-Thanks,
-Miqu=C3=A8l
