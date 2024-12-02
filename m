@@ -1,30 +1,33 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54C91AF0B2
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Dec 2024 16:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9564A1C2DDE
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Dec 2024 16:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733157026; cv=none; b=lDS8xeT9bRKdb3FVw9GRKD1kqwRbTdsJSY8tpJNUpDdAYJUdxngxqUjfbeWSXQMtsCPTkPSYp74+uiJ0qOUfPmc0shD5iMaiEOgN+mMlgBk/ZWymsZACUFGxwkb6CeRb7t6PC8MCf4Pd5tmufD5hAYcs6hfXFGEPeP+2+Yc+ogE=
+	t=1733157031; cv=none; b=TZ4j8YshZzhPEHas8AwHWnjgwqX0h86F2OYmJd55nyrJ4K+YEmjNf1BgbgfDNOmet8wzRny9auWHmq85r1nz4hjE+IXN+yd1RbB5NDuiV/z+HjVqeyap87syigof3Opt7zm3uKpWQpG+E4xH65Jsv2F3i6eLPb/m5QwVtrmqXRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733157026; c=relaxed/simple;
-	bh=I8iHjxGgTdPnhzeNO0K62aarBXPBsI3IAmHasDm2JjU=;
+	s=arc-20240116; t=1733157031; c=relaxed/simple;
+	bh=fMorSY2Phkub/EUMYHb/ZGS4ZZLKSKvAWmraUt1MBis=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=STED/FHwZm3v6DqN1+bJ6mqY/8rUU5t/UEI7s0xVc7qRXgJRuS/Vvc6i/lX3vQMF2i89AI4VsoF0NWXmqSaWhPWjuGfJvHq6QapZnMAbG1O/KNHpxTInXUr2KJospeeXO2vTvpU1ZiDwNhnC1/37Wltj6RBahKabQ42vJLymIpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+	 MIME-Version; b=s+And/BHBfdmDayin+wG3ZM5ty/UTNEX8twCTSVgulGAQbyaUlHbE6vBgCMQl47Vt2qR3fCx5l/8BGuDrfPALARkzNShsRaSj5GNxJPCTEDkI62PmM3xTCOVvZcyiKnWCzvlosaNQ6BHNnp+1cCNR4AAZZrO8kI9pyHKimTW66Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4Y28Qk3S1Qz4x79Q
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Dec 2024 17:30:22 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:17fe:4001:68cd:b1ae])
-	by baptiste.telenet-ops.be with cmsmtp
-	id jsWE2D00Q1yjZj401sWEo5; Mon, 02 Dec 2024 17:30:15 +0100
+	by xavier.telenet-ops.be with cmsmtp
+	id jsWE2D00X1yjZj401sWEWe; Mon, 02 Dec 2024 17:30:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tI9JO-0007uS-QY;
+	id 1tI9JO-0007uJ-OA;
 	Mon, 02 Dec 2024 17:30:14 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tI9JO-007Png-Nv;
+	id 1tI9JO-007PnW-Le;
 	Mon, 02 Dec 2024 17:30:14 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -36,9 +39,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/5] arm64: dts: renesas: r8a779g3: Add White Hawk Single support
-Date: Mon,  2 Dec 2024 17:30:11 +0100
-Message-Id: <66d0fe78c393e6df2775287c730464e91732ec56.1733156661.git.geert+renesas@glider.be>
+Subject: [PATCH 3/5] arm64: dts: renesas: Factor out White Hawk Single board support
+Date: Mon,  2 Dec 2024 17:30:09 +0100
+Message-Id: <1661743b18a9ff9fac716f98a663b39fc8488d7e.1733156661.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1733156661.git.geert+renesas@glider.be>
 References: <cover.1733156661.git.geert+renesas@glider.be>
@@ -50,54 +53,123 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The White Hawk Single board with R-Car V4H ES3.0 (R8A779G3) uses an
-updated version of the R-Car V4H (R8A779G0) SoC.
-
-For now, there are no visible differences compared to the variant
-equipped with an R-Car V4H ES2.0 (R8A779G2) SoC.
+Move the common parts for the Renesas White Hawk Single board to
+white-hawk-single.dtsi, to enable future reuse.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/Makefile             |  2 ++
- .../dts/renesas/r8a779g3-white-hawk-single.dts   | 16 ++++++++++++++++
- 2 files changed, 18 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779g3-white-hawk-single.dts
+ .../renesas/r8a779g2-white-hawk-single.dts    | 62 +------------------
+ ...hawk-single.dts => white-hawk-single.dtsi} | 11 ++--
+ 2 files changed, 5 insertions(+), 68 deletions(-)
+ copy arch/arm64/boot/dts/renesas/{r8a779g2-white-hawk-single.dts => white-hawk-single.dtsi} (78%)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 97228a3cb99c163d..df9ea5b2e20818f4 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -92,6 +92,8 @@ dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk-ard-audio-da7212.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g2-white-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779g2-white-hawk-single.dts
+index 0062362b0ba06885..48befde389376bf2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g2-white-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779g2-white-hawk-single.dts
+@@ -7,70 +7,10 @@
  
- dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g2-white-hawk-single.dtb
- 
-+dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g3-white-hawk-single.dtb
-+
- dtb-$(CONFIG_ARCH_R8A779H0) += r8a779h0-gray-hawk-single.dtb
- 
- dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-salvator-xs.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-white-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779g3-white-hawk-single.dts
-new file mode 100644
-index 0000000000000000..cd466d858854bf92
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779g3-white-hawk-single.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the R-Car V4H ES3.0 White Hawk Single board
-+ *
-+ * Copyright (C) 2024 Glider bv
-+ */
-+
-+/dts-v1/;
-+#include "r8a779g3.dtsi"
+ /dts-v1/;
+ #include "r8a779g2.dtsi"
+-#include "white-hawk-cpu-common.dtsi"
+-#include "white-hawk-common.dtsi"
 +#include "white-hawk-single.dtsi"
-+
-+/ {
-+	model = "Renesas White Hawk Single board based on r8a779g3";
-+	compatible = "renesas,white-hawk-single", "renesas,r8a779g3",
-+		     "renesas,r8a779g0";
-+};
+ 
+ / {
+ 	model = "Renesas White Hawk Single board based on r8a779g2";
+ 	compatible = "renesas,white-hawk-single", "renesas,r8a779g2",
+ 		     "renesas,r8a779g0";
+ };
+-
+-&hscif0 {
+-	uart-has-rtscts;
+-};
+-
+-&hscif0_pins {
+-	groups = "hscif0_data", "hscif0_ctrl";
+-	function = "hscif0";
+-};
+-
+-&pfc {
+-	tsn0_pins: tsn0 {
+-		mux {
+-			groups = "tsn0_link", "tsn0_mdio", "tsn0_rgmii",
+-				 "tsn0_txcrefclk";
+-			function = "tsn0";
+-		};
+-
+-		link {
+-			groups = "tsn0_link";
+-			bias-disable;
+-		};
+-
+-		mdio {
+-			groups = "tsn0_mdio";
+-			drive-strength = <24>;
+-			bias-disable;
+-		};
+-
+-		rgmii {
+-			groups = "tsn0_rgmii";
+-			drive-strength = <24>;
+-			bias-disable;
+-		};
+-	};
+-};
+-
+-&tsn0 {
+-	pinctrl-0 = <&tsn0_pins>;
+-	pinctrl-names = "default";
+-	phy-mode = "rgmii";
+-	phy-handle = <&phy3>;
+-	status = "okay";
+-
+-	mdio {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		reset-gpios = <&gpio1 23 GPIO_ACTIVE_LOW>;
+-		reset-post-delay-us = <4000>;
+-
+-		phy3: ethernet-phy@0 {
+-			compatible = "ethernet-phy-id002b.0980",
+-				     "ethernet-phy-ieee802.3-c22";
+-			reg = <0>;
+-			interrupts-extended = <&gpio4 3 IRQ_TYPE_LEVEL_LOW>;
+-		};
+-	};
+-};
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g2-white-hawk-single.dts b/arch/arm64/boot/dts/renesas/white-hawk-single.dtsi
+similarity index 78%
+copy from arch/arm64/boot/dts/renesas/r8a779g2-white-hawk-single.dts
+copy to arch/arm64/boot/dts/renesas/white-hawk-single.dtsi
+index 0062362b0ba06885..20e8232f2f3234e2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g2-white-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/white-hawk-single.dtsi
+@@ -1,19 +1,16 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ /*
+- * Device Tree Source for the R-Car V4H ES2.0 White Hawk Single board
++ * Device Tree Source for the White Hawk Single board
+  *
+- * Copyright (C) 2023 Glider bv
++ * Copyright (C) 2023-2024 Glider bv
+  */
+ 
+-/dts-v1/;
+-#include "r8a779g2.dtsi"
+ #include "white-hawk-cpu-common.dtsi"
+ #include "white-hawk-common.dtsi"
+ 
+ / {
+-	model = "Renesas White Hawk Single board based on r8a779g2";
+-	compatible = "renesas,white-hawk-single", "renesas,r8a779g2",
+-		     "renesas,r8a779g0";
++	model = "Renesas White Hawk Single board";
++	compatible = "renesas,white-hawk-single";
+ };
+ 
+ &hscif0 {
 -- 
 2.34.1
 
