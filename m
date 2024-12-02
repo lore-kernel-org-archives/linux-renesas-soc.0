@@ -1,129 +1,130 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B5E204F72
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Dec 2024 13:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1FC7DA87
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Dec 2024 15:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733147377; cv=none; b=e09wKHXQcJfqP9ydzr84W/dbguCmntAh/CwVUGO07w2LXeyui4On8dQUftUakbIUbu7jd7AUW3fL1n9w1+WnBRCFyoZ6GhHluzNnOEk+ZfFIJY1uOsV4TP71nI1hbNSB5iqnOtZUH8xyVq2i/zk67BW3CJqaqHlisNN+sK0AgqU=
+	t=1733154557; cv=none; b=AEHH3gQ92ppPqwavHqSiBt9YwR1oMDCXuOrNQa3WeVXBDNK+lWb53pZCG89QBJYjdtWlBlDTBiD7361ei+OejQgE/ofVpLwjHS1nqoJhghUPf9X4PdSshOasUfQqmtp14d9ozlXmrlAtoXE6yKv+dhh6YWQqgIoNRlOwJ8nhJRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733147377; c=relaxed/simple;
-	bh=gi4r/9fiAEQcJ1/VpsFKftfVoGeRUSEvG5SkeQqi7t8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CjOqqrThX/7TGTZYhrvKTnlwiHHOaP32CPklTpetg3tDbhC4TKGxCrgEqAd0OdDzY8UGmfmTzYjF1Qe6BbohmVkXFtmxpaDGT479Q8tgajSxTgZ9K2IMholsES90Qu8XPWk7oR0eOwtuWKCQcrSlSU7IFxez41kXdo/LvCif82E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=X5Cjly/K; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="X5Cjly/K"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffc3f2b3a9so54562211fa.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Dec 2024 05:49:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733147374; x=1733752174; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fwe209DAaje+GcWep9b6H0DEbfZW0MKQs07MfOwMWx4=;
-        b=X5Cjly/KKUHZFYcDu1VQKm21CzLtryFHPMONpoaSCvLJL9wXEvLnlzYJV2IXy8qu5o
-         LdBW5v6M5A+gFG9cXDnnN3BsYSA2gwMTB0slzdOhaEI6O1gp+EAut5bCKTspmQ9/uU2+
-         X45mj0IDppXB+EHNj5sXaVTgiLHYaV+o2ol1lvp5Go+wllXUXJ/sGzlCpM/qLzuYDWO0
-         +RY7gNcr2O2qv6t3UvqCjimuYBvPZU5fVwe3ucdgVnrTAhUNQubnOQkeo1Gk0T3/NOQc
-         e9S9MUrba3uuwDUFPVPgqbQV7c1b58SDrupqXSk3uPoUWa7SJiDnEMuldd1KxqRf3WGt
-         lyFw==
+	s=arc-20240116; t=1733154557; c=relaxed/simple;
+	bh=mgyHCLEjF9RtnbsmkKNhqg2TRs27CtlsbVASJsYOLng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S3r7wcACLGJ8JbIeTNWQd3n16VZBAZBdNYqtfjHtbhhyQKhe5KS4o0m/sTefF3PLv4Cvn7jhXS2w67/XISI2Zoza6vrVEYWd9UHpk6F3bt8XH4xLTUcUU132tXT42Ba7VyqzEVCPem/njDUfAvCfx8pQ8T4Y3qYl8wAjiOTF/tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3ea427001c5so2287329b6e.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Dec 2024 07:49:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733147374; x=1733752174;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733154553; x=1733759353;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Fwe209DAaje+GcWep9b6H0DEbfZW0MKQs07MfOwMWx4=;
-        b=R64oIfqh3ZgI0CgQ1CAg6+A8Pecf90DRydWs0bGoOuM2JRJhVY6URx6uxHhvD8zV21
-         qOiDzBdW2Be8Nbxj8vlxwu9j5+IWHa9piHbz6V3qanXDfc3jR2jrDV/cZcdn8c6tqQ1N
-         BKH/FCBjhSqLEfmnR7lY3l9MXcypCL6NnZxZyg7h/J0gsnFNVsScFhNm/K40vL61gNj6
-         DCuUfb3u5h/2a8wUb4jiSnTLFMtu+3a4CPbAtctxcnXVLAvccNA+caZI4h2JMLY9CCFE
-         jIp0yHcOX0zu65SYgJGP4L6FyA30t8BknAmyn7sh7exQQ7bvbOfP17Rj5RGqnzMdscO6
-         Fg3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUUmn6+vbPWMRwVp8FGGeu7lVD9wB47e9Ld/WB3o97SHuuXVCoyxg5hDQMdC6g/oeYtCwjp2b6SZGiCGyMVp5uTwQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/5/As7SNC2nAR+fufMtUs5+4gk+fMyeYgu9FC5EUyUVEsvWV7
-	KPw5VuLHp8AEy09dmojMehPIV70PhMheiige3TEBDTCuoy6oYwxBsPGu7/HcrZaiuNEZHSRbHHP
-	Xtww=
-X-Gm-Gg: ASbGncu4Krz17SNJRKCRSm1IhMg+X/vPg6edIEck7Z5OZJoL4OdKFznkVnvDbcAcbr1
-	FUeuNSz0UmOgXJzoW1i1yBRP0/uLgePM5LhuNg3hugE1eV5SG8jF3HRXUK7Zfn1Da7YLe4VOcJJ
-	fhaiJhpnx3aYpjl2LCoOaa5ge4DA8PqUVDuIiRrpPA2csPdznUrg16n1kSR0BXrKW0Zn5od0A63
-	oUyUqm6UekLykA4pm+sWNjCBliiPz7EMLVbTk6BD/2Ft16Lm/XQkQm67ba9HAFt
-X-Google-Smtp-Source: AGHT+IGPDUqvNQWOZK2p/wfCfolkShxEPG/W6xNxeCm8LRmsFRVGzSdVT9pHra7gpWP6h2+ulPowbQ==
-X-Received: by 2002:a2e:a583:0:b0:2f7:5a41:b0b with SMTP id 38308e7fff4ca-2ffd60a96f8mr185401491fa.26.1733147373869;
-        Mon, 02 Dec 2024 05:49:33 -0800 (PST)
-Received: from cobook.home ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbb8f2csm12972661fa.15.2024.12.02.05.49.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 05:49:33 -0800 (PST)
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH 5/5] net: renesas: rswitch: remove speed from gwca structure
-Date: Mon,  2 Dec 2024 18:49:04 +0500
-Message-Id: <20241202134904.3882317-6-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241202134904.3882317-1-nikita.yoush@cogentembedded.com>
-References: <20241202134904.3882317-1-nikita.yoush@cogentembedded.com>
+        bh=xTp4g4VRNCG7oohqIoTb4BN+LBRl4zZrMDqw/w4OdvI=;
+        b=OYqi47BJkytrkofNf0MXjCglIQvZugIQFlj7/Kfnyt0Lnu7iBcF2IP+rMqJ5K975xM
+         WGPwhcpkznpI2pxfh+96cX/3KwWxr7b7ediInSShCpbmJkhjmduQz6j5/WqfSmbiZL04
+         jU5X37Xq62wKAdobV6YzS5e3GIw668neIoVkrzgIMmk5o2E54XwDe8JyWjfu4T3CyPam
+         oSn+7hDPAHrxtmv9HyTHogZYqCq87zryBcdTQe52GWN/E1ToNqEXaDYRNaWhEZZLiCQr
+         AWN6obN3THFdONgtt35rCfBkK7WzDjDwfRCWtIPr/IiuQSXaWTV+E+MtHH2VuAb1U2PU
+         DymA==
+X-Gm-Message-State: AOJu0YwefgRQHb743QpnWud0Sh3TvlkwjNt992Tdu0LjiiuwBw455CX2
+	qwlzFeqlrxvlWaYZ5sMXi6qXUJZnPdhYXSFX95kIDgw3XHlmNiKFfVL+9W7V
+X-Gm-Gg: ASbGncvjhKdPOLJShG2Y9kn1bQzch1ZliwN4L2CCppO8tyOmO7jrqokn4i0SQ+3AosZ
+	jXL5Kt0Ki1OjX8aQP5oB+7esVzxRP48a9K1jYuSMoJhgOU5PF2epHoKpRcsWbzd7MACSK9Cxqrf
+	0w9JCbCdS4sA+0PED+xPzjSuOwtyXqbnfyuTWfzLGIFiCCOvmeiYBR2rLaa3EZS3VVx8icofqIg
+	WJI0V2g+7Uqnb81BmKHVSt9vUP0WarX2dxyRVqgLHSQyMhi6hiNKEFhp3SJySuPgMN1NFNFIByW
+	Mc2Hc9DpothP
+X-Google-Smtp-Source: AGHT+IE90ADP8CCj/ipHIeQrSf3OTqmUiA2TBt69mVyLASSPrPSKi6CzXKo8EJul2qxt5N2izBREaQ==
+X-Received: by 2002:a05:6808:2f07:b0:3e3:ee40:204d with SMTP id 5614622812f47-3ea6dbd61cbmr16760001b6e.14.1733154552963;
+        Mon, 02 Dec 2024 07:49:12 -0800 (PST)
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea86037c6fsm2342802b6e.5.2024.12.02.07.49.12
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 07:49:12 -0800 (PST)
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f1d3e74ea4so1803318eaf.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Dec 2024 07:49:12 -0800 (PST)
+X-Received: by 2002:a05:6358:6f18:b0:1ca:a296:f6fe with SMTP id
+ e5c5f4694b2df-1cab15cff10mr919477055d.6.1733154551856; Mon, 02 Dec 2024
+ 07:49:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1729240989.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1729240989.git.geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 2 Dec 2024 16:49:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXok5W7d5XBOCrUY3gqd5_xKXrOmqOC33re0-OiZjOH6w@mail.gmail.com>
+Message-ID: <CAMuHMdXok5W7d5XBOCrUY3gqd5_xKXrOmqOC33re0-OiZjOH6w@mail.gmail.com>
+Subject: Re: [PATCH/RFC 0/1] arm64: dts: renesas: white-hawk: Add mini-DP
+ output support
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This field is set but never used.
+On Fri, Oct 18, 2024 at 11:32=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> As I had to test Tomi's WIP patches to add mini-DP output support to
+> Gray Hawk Single, I moved my (old and new) DisplayPort gear to my board
+> farm, and thought this was a good opportunity to test mini-DP output on
+> White Hawk as a baseline (CN5), and add support for the second mini-DP
+> output on the White Hawk BreakOut board (CN15).
+>
+> For testing, I used the following hardware:
+>   (A) BenQ BL2420PT desktop display (2560x1440),
+>   (B) Joy-It Joy-View 15 portable display (1920x1080),
+>   (C) Lindy DisplayPort to 2 Port HDMI MST Hub,
+>   (D) Passive mini-DP to HDMI cable,
+>   (E) LogiLink Mini DisplayPort to VGA Converter.
+>
+> (A)-(C) are known to work with my Intel desktop.
+> (D)-(E) are known to work with an old Dell XPS13.
+>
+> Software-wise, I used the frame buffer text console, "modetest -M
+> rcar-du -s 86:1920x1080@XR24" or "modetest -M rcar-du -s
+> 86:2560x1440@XR24", and fbtest.
+>
+> White Hawk CN5
+> --------------
+>
+>   1. Mini-DP to (A) DP:
+>        - 2560x1440 works but flickers (flickering shifts image
+>          horizontally; perhaps a cable issue, as 2 below does work?)
+>        - 1920x1080 is stable
 
-GWCA is rswitch CPU interface module which connects rswitch to the
-host over AXI bus. Speed of the switch ports is not anyhow related to
-GWCA operation.
+While I don't have a second Mini-DP-to-DP-M cable, I tried a few
+other combos (now on Gray Hawk Single):
+  7. (D) + HDMI-F-F adapter + passive HDMI-F-to-DP-cable to (A) DP,
+  8. Mini-DP-to-DP-F cable (=3DX) + plain DP cable (=3DY) to (A) DP,
+unfortunately with the same results.  Note that (X) is the same cable
+as used in scenario 2 below, and (Y) works fine with my Intel desktop.
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/net/ethernet/renesas/rswitch.c | 3 ---
- drivers/net/ethernet/renesas/rswitch.h | 1 -
- 2 files changed, 4 deletions(-)
+However, the maximum cable length for eDP seems to be 30 cm, so that
+may explain why 2 below is the only wiring that works at 2560x1440
+(despite cable (X) being 1m, i.e. still too long)?
 
-diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index 5980084d9211..bef344e0b1fd 100644
---- a/drivers/net/ethernet/renesas/rswitch.c
-+++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -1902,9 +1902,6 @@ static int rswitch_device_alloc(struct rswitch_private *priv, unsigned int index
- 	if (err < 0)
- 		goto out_get_params;
- 
--	if (rdev->priv->gwca.speed < rdev->etha->speed)
--		rdev->priv->gwca.speed = rdev->etha->speed;
--
- 	err = rswitch_rxdmac_alloc(ndev);
- 	if (err < 0)
- 		goto out_rxdmac;
-diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 72e3ff596d31..303883369b94 100644
---- a/drivers/net/ethernet/renesas/rswitch.h
-+++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -993,7 +993,6 @@ struct rswitch_gwca {
- 	DECLARE_BITMAP(used, RSWITCH_MAX_NUM_QUEUES);
- 	u32 tx_irq_bits[RSWITCH_NUM_IRQ_REGS];
- 	u32 rx_irq_bits[RSWITCH_NUM_IRQ_REGS];
--	int speed;
- };
- 
- #define NUM_QUEUES_PER_NDEV	2
--- 
-2.39.5
+>   2. Mini-DP to (C) to (A) HDMI:
+>        - 2560x1440 OK
+>        - 1920x1080 OK
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
