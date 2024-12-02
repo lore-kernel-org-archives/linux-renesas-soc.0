@@ -1,33 +1,33 @@
 Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945D13C6BA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94610126C13
 	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Dec 2024 16:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733157499; cv=none; b=g0lR7YiWiXCaaDyCBzvvXeQhrBDWUZvDHK8qsj7HrrJRyT4QTgezg5BlQRWR4XynLgEow3LQq+owzVF7ltw7Ghg9mTX94MEGp/4/jTlH3GGoLIcEsRhJCEhoJGBq3rGvo9Hws87OWEq4vSkXzL8teTRj+39WqJlPP3yIa6SSOSk=
+	t=1733157500; cv=none; b=TR+E4GTaGS2DdyqmQ5ksXrqlDI2zujOUiuCeQj4fgMvotrpWXntkt0efDkUxlnsy7Fz5XNIvVKqKu3iZws3ZZT4UVkrBXEVbpKUX4YCUL1Xx3MMyEOnuZDaCVp2A5eeSuKdeVB/F++mDjqooEmq7hirhvzy8+f7NeQz56JAXS0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733157499; c=relaxed/simple;
-	bh=8hQjpiRxrY2RwgnJAWl8oZ7Q5rlWydofxkcc7yQXHSk=;
+	s=arc-20240116; t=1733157500; c=relaxed/simple;
+	bh=Lez2g9uLCxAsVCIfMqm4W3OGs1nFWxwmVadcE8DZCh8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f53jTK+GY/M8ucCFIUfV2G/qSaMBLr2fDglkqwhhaFaC23U3WwMvy9kxALBMUQIOmUcBT0FT7FuKjuGIvhAJJYXhQTVEqlZxHYkl2FOajM04KM4t/BIBVI80AdBBYRIQY+hX6SNjfx+1PwKgYUr1HFSZ0OnpbZSwDxcixmv+PTM=
+	 MIME-Version; b=gL8IGATsLKxWezIxQBrnmJqtt4IcPecNO06Y2R1JR8GkogE20Zhaapt13OE9vPUToXhiEiRj9SGGD292w01qz7aEHG1vcA2jInAL/B025zuptkZA+raF630TYR2/yQpaSnY9i+yGCXFlnwSOA2i+RPECAzjTtGSECc0by4gKdl0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4Y28Qm3B6hz4x4qw
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Dec 2024 17:30:24 +0100 (CET)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4Y28Qk37kMz4x6qX
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Dec 2024 17:30:22 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:17fe:4001:68cd:b1ae])
-	by laurent.telenet-ops.be with cmsmtp
-	id jsWE2D00j1yjZj401sWEem; Mon, 02 Dec 2024 17:30:16 +0100
+	by albert.telenet-ops.be with cmsmtp
+	id jsWE2D00d1yjZj406sWEyJ; Mon, 02 Dec 2024 17:30:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tI9JO-0007uA-Ls;
+	id 1tI9JO-0007uE-Mt;
 	Mon, 02 Dec 2024 17:30:14 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tI9JO-007PnO-JV;
+	id 1tI9JO-007PnS-Ke;
 	Mon, 02 Dec 2024 17:30:14 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Magnus Damm <magnus.damm@gmail.com>,
@@ -39,9 +39,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] dt-bindings: soc: renesas: Move R8A779G0 White Hawk up
-Date: Mon,  2 Dec 2024 17:30:07 +0100
-Message-Id: <d553ef4b1f969f72e384f274d42ac7a62fe45fd4.1733156661.git.geert+renesas@glider.be>
+Subject: [PATCH 2/5] dt-bindings: soc: renesas: Document R8A779G3 White Hawk Single
+Date: Mon,  2 Dec 2024 17:30:08 +0100
+Message-Id: <1d2d2a6cbf31c817f574f6eed310a960e6175afe.1733156661.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1733156661.git.geert+renesas@glider.be>
 References: <cover.1733156661.git.geert+renesas@glider.be>
@@ -53,44 +53,35 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move the R8A779G0-only White Hawk board stack section up, just below the
-R8A779G0-only White Hawk CPU section, to improve sort order.
+Document the compatible value for the Renesas R-Car V4H ES3.0
+(R8A779G3) SoC, as used on the Renesas White Hawk Single board.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/soc/renesas/renesas.yaml     | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/soc/renesas/renesas.yaml          | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-index b7acb65bdecd2a38..dab6667970325dcd 100644
+index dab6667970325dcd..0f3fa341fd87924b 100644
 --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
 +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-@@ -360,6 +360,12 @@ properties:
-               - renesas,white-hawk-cpu # White Hawk CPU board (RTP8A779G0ASKB0FC0SA000)
+@@ -366,11 +366,13 @@ properties:
+           - const: renesas,white-hawk-cpu
            - const: renesas,r8a779g0
  
-+      - items:
+-      - description: R-Car V4H (R8A779G2)
++      - description: R-Car V4H (R8A779G[23])
+         items:
+           - enum:
+-              - renesas,white-hawk-single # White Hawk Single board (RTP8A779G2ASKB0F10SA001)
+-          - const: renesas,r8a779g2
++              - renesas,white-hawk-single # White Hawk Single board (RTP8A779G[23]ASKB0F10SA001)
 +          - enum:
-+              - renesas,white-hawk-breakout # White Hawk BreakOut board (RTP8A779G0ASKB0SB0SA000)
-+          - const: renesas,white-hawk-cpu
-+          - const: renesas,r8a779g0
-+
-       - description: R-Car V4H (R8A779G2)
-         items:
-           - enum:
-@@ -367,12 +373,6 @@ properties:
-           - const: renesas,r8a779g2
++              - renesas,r8a779g2
++              - renesas,r8a779g3
            - const: renesas,r8a779g0
  
--      - items:
--          - enum:
--              - renesas,white-hawk-breakout # White Hawk BreakOut board (RTP8A779G0ASKB0SB0SA000)
--          - const: renesas,white-hawk-cpu
--          - const: renesas,r8a779g0
--
        - description: R-Car V4M (R8A779H0)
-         items:
-           - enum:
 -- 
 2.34.1
 
