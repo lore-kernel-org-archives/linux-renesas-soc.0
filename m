@@ -1,130 +1,89 @@
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1FC7DA87
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Dec 2024 15:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4B01C2DDE
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Dec 2024 16:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154557; cv=none; b=AEHH3gQ92ppPqwavHqSiBt9YwR1oMDCXuOrNQa3WeVXBDNK+lWb53pZCG89QBJYjdtWlBlDTBiD7361ei+OejQgE/ofVpLwjHS1nqoJhghUPf9X4PdSshOasUfQqmtp14d9ozlXmrlAtoXE6yKv+dhh6YWQqgIoNRlOwJ8nhJRc=
+	t=1733157025; cv=none; b=fSpqAY8oFCgu9aLNLelncI2fE7SQ1PpVzMzW1QytsUVGRhd9937vAbYelC4g3B0Z44tOfX8iRuQwUZ81Xz1SE7LvDFymE+KEAjAYdOMz03CuZpxdfOsKFFpWtFndY6LvF15M8F1XzBU6sK8Iz4t1DLmkEKFRet+bD5Gpa2NNML8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154557; c=relaxed/simple;
-	bh=mgyHCLEjF9RtnbsmkKNhqg2TRs27CtlsbVASJsYOLng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S3r7wcACLGJ8JbIeTNWQd3n16VZBAZBdNYqtfjHtbhhyQKhe5KS4o0m/sTefF3PLv4Cvn7jhXS2w67/XISI2Zoza6vrVEYWd9UHpk6F3bt8XH4xLTUcUU132tXT42Ba7VyqzEVCPem/njDUfAvCfx8pQ8T4Y3qYl8wAjiOTF/tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3ea427001c5so2287329b6e.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Dec 2024 07:49:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733154553; x=1733759353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xTp4g4VRNCG7oohqIoTb4BN+LBRl4zZrMDqw/w4OdvI=;
-        b=OYqi47BJkytrkofNf0MXjCglIQvZugIQFlj7/Kfnyt0Lnu7iBcF2IP+rMqJ5K975xM
-         WGPwhcpkznpI2pxfh+96cX/3KwWxr7b7ediInSShCpbmJkhjmduQz6j5/WqfSmbiZL04
-         jU5X37Xq62wKAdobV6YzS5e3GIw668neIoVkrzgIMmk5o2E54XwDe8JyWjfu4T3CyPam
-         oSn+7hDPAHrxtmv9HyTHogZYqCq87zryBcdTQe52GWN/E1ToNqEXaDYRNaWhEZZLiCQr
-         AWN6obN3THFdONgtt35rCfBkK7WzDjDwfRCWtIPr/IiuQSXaWTV+E+MtHH2VuAb1U2PU
-         DymA==
-X-Gm-Message-State: AOJu0YwefgRQHb743QpnWud0Sh3TvlkwjNt992Tdu0LjiiuwBw455CX2
-	qwlzFeqlrxvlWaYZ5sMXi6qXUJZnPdhYXSFX95kIDgw3XHlmNiKFfVL+9W7V
-X-Gm-Gg: ASbGncvjhKdPOLJShG2Y9kn1bQzch1ZliwN4L2CCppO8tyOmO7jrqokn4i0SQ+3AosZ
-	jXL5Kt0Ki1OjX8aQP5oB+7esVzxRP48a9K1jYuSMoJhgOU5PF2epHoKpRcsWbzd7MACSK9Cxqrf
-	0w9JCbCdS4sA+0PED+xPzjSuOwtyXqbnfyuTWfzLGIFiCCOvmeiYBR2rLaa3EZS3VVx8icofqIg
-	WJI0V2g+7Uqnb81BmKHVSt9vUP0WarX2dxyRVqgLHSQyMhi6hiNKEFhp3SJySuPgMN1NFNFIByW
-	Mc2Hc9DpothP
-X-Google-Smtp-Source: AGHT+IE90ADP8CCj/ipHIeQrSf3OTqmUiA2TBt69mVyLASSPrPSKi6CzXKo8EJul2qxt5N2izBREaQ==
-X-Received: by 2002:a05:6808:2f07:b0:3e3:ee40:204d with SMTP id 5614622812f47-3ea6dbd61cbmr16760001b6e.14.1733154552963;
-        Mon, 02 Dec 2024 07:49:12 -0800 (PST)
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea86037c6fsm2342802b6e.5.2024.12.02.07.49.12
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 07:49:12 -0800 (PST)
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f1d3e74ea4so1803318eaf.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Dec 2024 07:49:12 -0800 (PST)
-X-Received: by 2002:a05:6358:6f18:b0:1ca:a296:f6fe with SMTP id
- e5c5f4694b2df-1cab15cff10mr919477055d.6.1733154551856; Mon, 02 Dec 2024
- 07:49:11 -0800 (PST)
+	s=arc-20240116; t=1733157025; c=relaxed/simple;
+	bh=2n/5D7/C1BRHXkJ6FiB2gY6t0+aUjQHAT9SgGQJACDY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e1ERhC1JyegnfNIIsHqcdh0Go6NZ/bcoiIjLwXmvRi/cPcDUxx0BFtVc9BW4H+OORf1L0UtgkMBS4ywYRjzzTcosbiFxe1xT2VPCTXhSVsj0YvXgocxAQZlOE0DEFZcmtqnWxo8LvRGvecOdMlSC6P0zRYL13QjnApfT4d0jr3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:17fe:4001:68cd:b1ae])
+	by baptiste.telenet-ops.be with cmsmtp
+	id jsWE2D00N1yjZj401sWEo4; Mon, 02 Dec 2024 17:30:15 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tI9JO-0007u9-LW;
+	Mon, 02 Dec 2024 17:30:14 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tI9JO-007PnL-I4;
+	Mon, 02 Dec 2024 17:30:14 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/5] arm64: renesas: Add R8A779G3 White Hawk Single support
+Date: Mon,  2 Dec 2024 17:30:06 +0100
+Message-Id: <cover.1733156661.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1729240989.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1729240989.git.geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Dec 2024 16:49:00 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXok5W7d5XBOCrUY3gqd5_xKXrOmqOC33re0-OiZjOH6w@mail.gmail.com>
-Message-ID: <CAMuHMdXok5W7d5XBOCrUY3gqd5_xKXrOmqOC33re0-OiZjOH6w@mail.gmail.com>
-Subject: Re: [PATCH/RFC 0/1] arm64: dts: renesas: white-hawk: Add mini-DP
- output support
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 11:32=E2=80=AFAM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> As I had to test Tomi's WIP patches to add mini-DP output support to
-> Gray Hawk Single, I moved my (old and new) DisplayPort gear to my board
-> farm, and thought this was a good opportunity to test mini-DP output on
-> White Hawk as a baseline (CN5), and add support for the second mini-DP
-> output on the White Hawk BreakOut board (CN15).
->
-> For testing, I used the following hardware:
->   (A) BenQ BL2420PT desktop display (2560x1440),
->   (B) Joy-It Joy-View 15 portable display (1920x1080),
->   (C) Lindy DisplayPort to 2 Port HDMI MST Hub,
->   (D) Passive mini-DP to HDMI cable,
->   (E) LogiLink Mini DisplayPort to VGA Converter.
->
-> (A)-(C) are known to work with my Intel desktop.
-> (D)-(E) are known to work with an old Dell XPS13.
->
-> Software-wise, I used the frame buffer text console, "modetest -M
-> rcar-du -s 86:1920x1080@XR24" or "modetest -M rcar-du -s
-> 86:2560x1440@XR24", and fbtest.
->
-> White Hawk CN5
-> --------------
->
->   1. Mini-DP to (A) DP:
->        - 2560x1440 works but flickers (flickering shifts image
->          horizontally; perhaps a cable issue, as 2 below does work?)
->        - 1920x1080 is stable
+	Hi all,
 
-While I don't have a second Mini-DP-to-DP-M cable, I tried a few
-other combos (now on Gray Hawk Single):
-  7. (D) + HDMI-F-F adapter + passive HDMI-F-to-DP-cable to (A) DP,
-  8. Mini-DP-to-DP-F cable (=3DX) + plain DP cable (=3DY) to (A) DP,
-unfortunately with the same results.  Note that (X) is the same cable
-as used in scenario 2 below, and (Y) works fine with my Intel desktop.
+This patch series adds support for the Renesas R-Car V4H ES3.0 (R8A779G3)
+SoC on the Renesas White Hawk Single board.  R-Car V4H ES3.0 (R8A779G3)
+is an updated version of R-Car V4H (R8A779G0).
 
-However, the maximum cable length for eDP seems to be 30 cm, so that
-may explain why 2 below is the only wiring that works at 2560x1440
-(despite cable (X) being 1m, i.e. still too long)?
+I intend to queue these in renesas-devel for v6.14.
+Thanks for your comments!
 
->   2. Mini-DP to (C) to (A) HDMI:
->        - 2560x1440 OK
->        - 1920x1080 OK
+Geert Uytterhoeven (5):
+  dt-bindings: soc: renesas: Move R8A779G0 White Hawk up
+  dt-bindings: soc: renesas: Document R8A779G3 White Hawk Single
+  arm64: dts: renesas: Factor out White Hawk Single board support
+  arm64: dts: renesas: Add R8A779G3 SoC support
+  arm64: dts: renesas: r8a779g3: Add White Hawk Single support
+
+ .../bindings/soc/renesas/renesas.yaml         | 16 ++---
+ arch/arm64/boot/dts/renesas/Makefile          |  2 +
+ .../renesas/r8a779g2-white-hawk-single.dts    | 62 +------------------
+ .../renesas/r8a779g3-white-hawk-single.dts    | 16 +++++
+ arch/arm64/boot/dts/renesas/r8a779g3.dtsi     | 12 ++++
+ ...hawk-single.dts => white-hawk-single.dtsi} | 11 ++--
+ 6 files changed, 44 insertions(+), 75 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779g3-white-hawk-single.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779g3.dtsi
+ copy arch/arm64/boot/dts/renesas/{r8a779g2-white-hawk-single.dts => white-hawk-single.dtsi} (78%)
+
+-- 
+2.34.1
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
