@@ -1,40 +1,45 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2141E25EE;
-	Tue,  3 Dec 2024 10:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2781DE4FD
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Dec 2024 10:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733223059; cv=none; b=WnpL1rGqBVPGgrWIO3vTaLwJeenyp57kJFMR6QVzkEbYSzKEX5ia+SrEUfdfCIN6jvUIzAUUslevjNaMOXBAdSSyrV0jzQezdyiCbSMi7zbVAR52YMs7mXq9qcYzvsXQBKJ0fN+aHgTXDF3MvI9DzUZV/GTRmBX2e9bBhC2Gmp4=
+	t=1733223070; cv=none; b=kaLg0XenCy8yk4LVDArJJA24fo0nbB4jbvfGqCJS321EIOqgvLcYI+pqNIP46P984XwEvmevoUSvpH4wxP18QUrLGd9H+rg6KUoqEVR5KK3yToxxJ48kv8QP8pHQYK5Nlc4BbWTryhn2Nf/VkHYgXxZf9u6eWRIEXjgeD227WJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733223059; c=relaxed/simple;
-	bh=5aJZWQLjQySciuqeTRJaWpCd00N91lfD1GyA0/Tmxxg=;
+	s=arc-20240116; t=1733223070; c=relaxed/simple;
+	bh=fAoVZOONDdq7jeJxMjmWzsDc/11bWlARMdxT1HpjmZI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FzdbN1yg3AZl6L4nYTSeNEgH2eec6KDvsj+28WW+JC+VzBOGla+8LU5TPe11VxktdGgMWAENTYNG+89m5SlCuKqGH9sW35rxbPp4EP/0mM5NGRzTtpPKwyu1LmXlyYSmhgblzr8ovBVhzv+54E6wn4IBLTMGaK0SeGRHWzpealY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=cZzENnUQ69Xn/TzYD8MHzJtXw5Q59qlwNg3wItqV96TebJfpyFXcnRuYO6oLi4ekQ241dHw+QnuAZrxPfL7X8evNtaFLxV0KkjR+XwgA7uMbaZVXX+LHeRpeu1t3LBLFBxDVt5E6ZeKfC35pZACfx3kQWJoDN16wTnZVqp1Sd3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 1QC8HeuNTl2sooijPKcPQw==
-X-CSE-MsgGUID: Kp7I2tsyTgScQWgut/ZCLw==
+X-CSE-ConnectionGUID: dnEh4QHzS/G6FrHe7XWF3g==
+X-CSE-MsgGUID: vrghDf0tTNeQ1BHutAf9/w==
 X-IronPort-AV: E=Sophos;i="6.12,204,1728918000"; 
-   d="scan'208";a="230754431"
+   d="scan'208";a="226779526"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Dec 2024 19:50:55 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Dec 2024 19:51:07 +0900
 Received: from localhost.localdomain (unknown [10.226.93.2])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 10168400753A;
-	Tue,  3 Dec 2024 19:50:50 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 773DE40031FE;
+	Tue,  3 Dec 2024 19:50:54 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 12/13] arm64: dts: renesas: Add initial device tree for RZ/G3E SMARC EVK board
-Date: Tue,  3 Dec 2024 10:49:39 +0000
-Message-ID: <20241203105005.103927-13-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 13/13] arm64: defconfig: Enable R9A09G047 SoC
+Date: Tue,  3 Dec 2024 10:49:40 +0000
+Message-ID: <20241203105005.103927-14-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241203105005.103927-1-biju.das.jz@bp.renesas.com>
 References: <20241203105005.103927-1-biju.das.jz@bp.renesas.com>
@@ -46,87 +51,29 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the initial device tree for the Renesas RZ/G3E SMARC EVK board.
+Enable support for the Renesas RZ/G3E (R9A09G047) SoC in the ARM64
+defconfig.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
  * No change.
 ---
- arch/arm64/boot/dts/renesas/Makefile          |  2 ++
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 18 ++++++++++++++
- .../boot/dts/renesas/renesas-smarc2.dtsi      | 24 +++++++++++++++++++
- 3 files changed, 44 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
- create mode 100644 arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 97228a3cb99c..bf5b49f47ce8 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -140,6 +140,8 @@ dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
-+dtb-$(CONFIG_ARCH_R9A09G047) += r9a09g047e57-smarc.dtb
-+
- dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk.dtb
- 
- dtb-$(CONFIG_ARCH_RCAR_GEN3) += draak-ebisu-panel-aa104xd12.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-new file mode 100644
-index 000000000000..d4d61bd03969
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G3E SMARC EVK board
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+
-+#include "r9a09g047e57.dtsi"
-+#include "rzg3e-smarc-som.dtsi"
-+#include "renesas-smarc2.dtsi"
-+
-+/ {
-+	model = "Renesas SMARC EVK version 2 based on r9a09g047e57";
-+	compatible = "renesas,smarc2-evk", "renesas,rzg3e-smarcm",
-+		     "renesas,r9a09g047e57", "renesas,r9a09g047";
-+};
-diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-new file mode 100644
-index 000000000000..e378d55e6e9b
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-@@ -0,0 +1,24 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ SMARC Carrier-II Board.
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+/ {
-+	model = "Renesas RZ SMARC Carrier-II Board";
-+	compatible = "renesas,smarc2-evk";
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial3:115200n8";
-+	};
-+
-+	aliases {
-+		serial3 = &scif0;
-+	};
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index d13218d0c30f..a14d48444bd8 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1458,6 +1458,7 @@ CONFIG_ARCH_R9A07G044=y
+ CONFIG_ARCH_R9A07G054=y
+ CONFIG_ARCH_R9A08G045=y
+ CONFIG_ARCH_R9A09G011=y
++CONFIG_ARCH_R9A09G047=y
+ CONFIG_ARCH_R9A09G057=y
+ CONFIG_ROCKCHIP_IODOMAIN=y
+ CONFIG_ARCH_TEGRA_132_SOC=y
 -- 
 2.43.0
 
