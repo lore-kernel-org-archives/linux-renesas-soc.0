@@ -1,63 +1,63 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C95015B10D
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Dec 2024 16:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEABD20ADCA
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Dec 2024 16:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733328775; cv=none; b=YaiGmxcHbll3ZZ3cEHw1NMdhyxSkuNw34TXBC8xVtCFY2ewXVTzG7GDQP6pB0Jdop6IBcvnYUrM5JAkhtgvPIhpGyAs8d/z7MWP/LQ//p3Bgt5T2FPgdXtohHW+IB3evnWEgnMcRQYCornJCm5javXN3IBb3JAlGOaF4QGRIyMw=
+	t=1733329823; cv=none; b=oce8F+ZwY8JAo1MEcapHCYS/uETVBqzKvKDHgV9+a9xeV4QA/l+H8NHGKqLy1JS7KP9ORjgNQWIwEAizFuvf43zPWzJ77zSfQYsMiH3sPGUkj3QJQx1wtixRKOMLjse3qT00TRgGlRWa7ZEoqJI40xEPmrRATerz5Cz8RjVPEJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733328775; c=relaxed/simple;
-	bh=WMotf16BNP2hl+VFEpZRiKSDivn8XEcTtqQ7ghZ/DsY=;
+	s=arc-20240116; t=1733329823; c=relaxed/simple;
+	bh=thgMt5oOkCDSC48kZPkzM7HNTCLSaLWJrJuzdHUbcoo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EJuQ/VNeIymygFVqiv7f8x6M8UeyAk/xlxb49fflTnol/hpSM5fuhYGYPWvzY5pl0aKAmrd0G3xIeYRS5K8xvPTS0Mmg9mhSnSl2Nacu9MTZJz1ttRXJPqiEhBWV7YXtghsXYn9YuY5olOyF1G0Ua7ZwVZhZZ3GY3YVsoP4Z8Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=WBedOOG/; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=P+jA9cGBXD58V9ymKFbrfIDCsbsC8Bqh978BMFDP7x9CBAunnebtOE3nkLX22TCkn+kkXoeK86ZL2CKdQun3nxYbXDi1z0EYbQg3nXH5A0JWCxssA7ZIJu3auR6JP67wsTs0ySRuu516wCuW02bwHafompkBjH/CwLevaI53CXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=X+zfg9iu; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="WBedOOG/"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so64936815e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Dec 2024 08:12:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="X+zfg9iu"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so3187586f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Dec 2024 08:30:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733328771; x=1733933571; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733329820; x=1733934620; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hQTQKeCKhE7MCIO8rjYyScRAwZVqxhfCtHNY0N/EVfU=;
-        b=WBedOOG/+cUqDyNvxcPeikjnyJG+pPqA8DckCC0q0CIKPZWjBx5842PCKtvmVNA9Di
-         d5CtgrbUrbJCWw6VBQodsnNaQxYilSxj/l5C+PGyQs+Meih5jpzZ7ZmqPXQU6MkwAkWm
-         Dr7lbIirLOZxq8XN4sFN3LpBvGL+afxcw51SYWc6hud4nrDpkgO2CJ5mtkojNoLH7C4z
-         nQqJEcquknH3baW1JWspGUPPFcCMSH8DCMWPGneTwfcMoq7ASaMlGVdimQcvrlEsIZS8
-         zGHX1/eGn2nRAgQw8zgQoV2bcgabENqChk9FKLWKqQfFpy4XctzjZtWQN3/9ejOSEuC0
-         BDoA==
+        bh=BrQinLFv8ymHrMMRcJBp3H6sh/YyzVemksPWSpbvKz0=;
+        b=X+zfg9iuUiA4wH9umB+ftgLHQ+WyXmY2eGhHuiHwMRCAYqmkjzQccYZ2eefGIiw1I6
+         34ACmv9z6CtQlPt+n53xbSULPxHWPYHygsK6hZT1MvBDzEljIIBKuYiA1YVPOwH1/2e0
+         54XeGgAdxLCUdhxTIwtL1IzbBUP68exD2yvMeoSTVQg5c/SczQvdLSQ3vw85CZXxABsc
+         1OvMbxKcOveREYw31KUknwWEuF9+evzSi1+JOWaRmhaTEcFBobT6iaDahjXctN/J5IfK
+         C3STuN3zukxXvoeX3hyAZPTgQ8m0Mf2AfvOJv5MrCpJ7zIXWb0GAK+0cmdI/3UCLaBsA
+         j9vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733328771; x=1733933571;
+        d=1e100.net; s=20230601; t=1733329820; x=1733934620;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQTQKeCKhE7MCIO8rjYyScRAwZVqxhfCtHNY0N/EVfU=;
-        b=fT6ay/rjU8JInArHziK8ggCTI9E5mceoIDuev9zWi19C6SHA6p8HHYt8Vzdk+pruqM
-         CfuplpQEaKzhMmQChMxie4vw2ZwviM57MdQa+W1RXOsq0O7cn52zYHTc3wBUA+t5CE6W
-         mj82bexOCHjrzNJfljyix5PXqQV7aYYSh60I/pkdDZxA3cjTcY9mIfNsZ2OBvZRj5JWZ
-         7I/0U8ZIszcFZiEaYGtX5Da9fi4Fj7tQ4zlPmAFwjOnbpyAHLcod1EvEiVSg4aycTf7T
-         me77xH1ZCA/gQO+pheb832m38X7tg6sI41OCRF26XrVCkFAb+b5VdKqG4JRg8CILj/zs
-         Al+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVyeJ4ZRe+XAvBL2l7hEHe1qq+jWwHMywkfsRJK8qQ7yCdHpSG7sSitesC40pG77p1teM206gE1DlzOu/V8cugxFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJq/SKk7kp3Ncu5Q0jx4leikhabXiRWJUZuOpSzgJTfWIOLbSJ
-	qexMPpVKQGIJQ+jERveOILDgLPrX0dHInuk5XcQ9cdy6cbWJ9Xk5TNIJkqkmB+4=
-X-Gm-Gg: ASbGncsYVhBvmax91SlwiCQ05oOKXIvJe6ewD3hnYofbCv7bK4cFzHcbiNuS66sUZui
-	WLy3JtQ4LxujC4ApavHoVnnFo38iisigz92JvQiqHBZUcFQrTBWZ1F3c2wYi+wG4wZWIW5UkZZ2
-	nG4oLGfuMkoyhfJ9PoR9oqvhIoPyQdDztv2U3VIbMfYK9WXRFo/k8Vpf9RzKDqeogTJQsrJF/1X
-	FZG8cdMi7T3xfp3YqFFhF4ECNzcBN6Y7AakfWs2nv/a0QVAlARmNd47w44=
-X-Google-Smtp-Source: AGHT+IHSduioKZEL8oXnhOPYaiOLYjsifTz/WCnsJQmND2DTXtSP9onkHLbSag5wfD9W0f7uppzcdg==
-X-Received: by 2002:a05:600c:3550:b0:434:a781:f5d5 with SMTP id 5b1f17b1804b1-434d0a15047mr70591065e9.30.1733328770818;
-        Wed, 04 Dec 2024 08:12:50 -0800 (PST)
+        bh=BrQinLFv8ymHrMMRcJBp3H6sh/YyzVemksPWSpbvKz0=;
+        b=flWBUulAYCNuhmx1qBOlonifTSolXka3uzI2RmHAQXU1Gb5gtLwTPtKdMfN/FQ736q
+         7pgXAwHYt4KVyxmnY4Jmwqd7YjYNb0YjV6mwkBZZWASm6BZYzjgnKibUN+XkIswAu39P
+         egHGQrA0kZ21N1p5F1OyFezchYpfd/iJZ2zfQEm1RD/8zuIZoCi7/5t+MBJ8t1gRXHqs
+         3AYF2b4k6hpsCXI/yH2omkMeWApIGapqwRhd8opcm5MfDdTpcwsS8rPs8vaKUAnK31KT
+         bB+J3G8Nlr/lvqXvX4vvrSJgztDqmEteMiUh9QwocmEpTObdha0qfsWucv3kT8dHrUIG
+         M5+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVZxUoXpQHO0KRx5WXIARky/AAMNh82RiJ0kLXHB5/Gb5Vuojl+BlD63IkcraqiqD/6H4JGMRUpwwdNGclQfmJwCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa/3fco+puDic6Ysh8GWuUR8biXZUOGZc6gciUZGGQxST+lLLz
+	DaGlToyhbggnoDz6CNf05YNXkN/7hmnXSgpxlzRg+6/nlBrnsXvyOJUYcgrfldo=
+X-Gm-Gg: ASbGncu83Wu+/1CfQgdsbzqRlMkJ3fAhCBcY8Bz5nn54BI8oP5eAYrr7cI0TxyuacU/
+	oFDHkTO8U4Dz2bjCykHcMUTR9qbn2yqn0fN2HiKjUVINg+YC3wWaFxiEySnLFFAkkK2XpWSxQnn
+	rU27RefLksUHSvvc7Sn/wo2tOuMdmgKtjAkIbBioMg0gCG2/qERldwX2bcEeYCMj+OHIHRx37DP
+	1ggoJUoYB8o+B4TyLOqoS86so0bcXiHyg+5TES8hsEwqjG8D5F7MoSy8d4=
+X-Google-Smtp-Source: AGHT+IEJjin9oQpmKSImnwO7+sXeF3u6nObq01UhSCPPk/+4V+h/bVgDfEFHT0Nc3qSjHT5jWzKGFg==
+X-Received: by 2002:a5d:5888:0:b0:385:ebaf:3826 with SMTP id ffacd0b85a97d-385fd3f19dbmr5021359f8f.33.1733329820069;
+        Wed, 04 Dec 2024 08:30:20 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e3b99249sm13430700f8f.88.2024.12.04.08.12.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ebaf3bccsm11283335f8f.68.2024.12.04.08.30.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 08:12:50 -0800 (PST)
-Message-ID: <ae80262c-82c6-466f-bbcf-90ba3551dabc@tuxon.dev>
-Date: Wed, 4 Dec 2024 18:12:49 +0200
+        Wed, 04 Dec 2024 08:30:19 -0800 (PST)
+Message-ID: <1b691ff5-2240-4eba-bc3a-b33193ba0630@tuxon.dev>
+Date: Wed, 4 Dec 2024 18:30:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -65,70 +65,77 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: sh-sci: Use plain struct copy in
- early_console_setup()
+Subject: Re: [PATCH] arm64: dts: renesas: rzg3s-smarc: Enable I2C1 and
+ connected power monitor
 Content-Language: en-US
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-sh@vger.kernel.org
-References: <e097e5c11afe5bd4c01135779c9a40e707ef6374.1733243287.git.geert+renesas@glider.be>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org
+References: <20241120085345.24638-2-wsa+renesas@sang-engineering.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <e097e5c11afe5bd4c01135779c9a40e707ef6374.1733243287.git.geert+renesas@glider.be>
+In-Reply-To: <20241120085345.24638-2-wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Geert,
+Hi, Wolfram,
 
-On 03.12.2024 18:30, Geert Uytterhoeven wrote:
-> Using memcpy() prevents the compiler from doing any checking on the
-> types of the passed pointer parameters.  Copy the structure using struct
-> assignment instead, to increase type-safety.
+On 20.11.2024 10:49, Wolfram Sang wrote:
+> Enable I2C1 for the carrier board and the connected power monitor
+> ISL28022. Limit the bus speed to the maximum the power monitor supports.
 > 
-> No change in generated code on all relevant architectures
-> (arm/arm64/riscv/sh).
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i2c1 gets enabled in the current SoM-DTSI as well, but to be safe
+> regarding other SoM DTSIs to come, I opted for explicitly enabling it in
+> the carrier board as well.
+> 
+> I picked the 'average-samples' value using my gut feeling. If someone
+> has a reason to pick a better one, I am all for it.
+> 
+>  arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+> index 7945d44e6ee1..5e4bfaeafd20 100644
+> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+> @@ -73,6 +73,19 @@ &i2c0 {
+>  	clock-frequency = <1000000>;
+>  };
+>  
+> +&i2c1 {
+> +	status = "okay";
+> +
+> +	clock-frequency = <400000>;
 
-I've tested this on RZ/G3S on top of series at [1] and device tree + clock
-patches from [2], with renesas_defconfig and with upstream config, in the
-following scenarios:
+This could be moved before status to comply with [1]. I can take care of it
+later as I failed to follow [1] for i2c0 as well.
 
-1/ "earlycon keep_bootcon" in bootargs
-2/ "earlycon" in bootargs
-3/ none of the "earlycon keep_bootcon", "earlycon" in bootargs
-
-All good!
-
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Other than this:
 Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+I gave it a try on RZ/G3S:
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
 Thank you,
 Claudiu
 
 [1]
-https://lore.kernel.org/all/20241204155806.3781200-1-claudiu.beznea.uj@bp.renesas.com/
-[2]
-https://lore.kernel.org/all/20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com/
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n112
 
-> ---
->  drivers/tty/serial/sh-sci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index df523c7444230836..1ed13ce2c2952547 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -3542,7 +3542,7 @@ static int __init early_console_setup(struct earlycon_device *device,
->  		return -ENODEV;
->  
->  	device->port.type = type;
-> -	memcpy(&sci_ports[0].port, &device->port, sizeof(struct uart_port));
-> +	sci_ports[0].port = device->port;
->  	port_cfg.type = type;
->  	sci_ports[0].cfg = &port_cfg;
->  	sci_ports[0].params = sci_probe_regmap(&port_cfg);
+> +
+> +	power-monitor@44 {
+> +		compatible = "renesas,isl28022";
+> +		reg = <0x44>;
+> +		shunt-resistor-micro-ohms = <8000>;
+> +		renesas,average-samples = <32>;
+> +	};
+> +};
+> +
+>  &pinctrl {
+>  	key-1-gpio-hog {
+>  		gpio-hog;
