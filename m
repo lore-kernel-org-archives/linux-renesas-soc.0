@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FA120ADDD
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Dec 2024 14:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403D820ADC3
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Dec 2024 14:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323741; cv=none; b=Jf+L0kKCXFxI6B7VUY3yGBFpvIGUKZ2nXloGvyd8rWQBt0VoVLiD0t8UBx+qe+eqTBwaWndi9SQUZB8G9PWqSk9/Bn1JmzeQy3aQ9JPK24TNTB2/LqLQvjkjUN/juziABXG8UgVIgmZbGWNjubBAGJh6TmGyUYbBaYTEhWPtEy0=
+	t=1733323864; cv=none; b=VnMwbVG1oMhYLUcMTyRhL6UFFFqiJdvW1cybcXsKgmJwTRP789VxdBL/BMob85ZDJE7SunJVal6sFkprcNYlHOa8bK1v+X1oX2fukg5p/eHTuLCjqss1FVaD2crBT5P/N3ej2Iv0Y04pIbi2PAwAkCf/YsY9RoPKdFyHG/JxieU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323741; c=relaxed/simple;
-	bh=UNHnRrRlL9xiNOFu+pFZsgdm6QZUcNtq6dL67bk6/q4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=KP30wBTCBzBrgOCIu5NmeHn9ESNt4pItXTFcDcOSJypjt0gDI4Y7uQ1c7Fv8f1tzSzZxqRCbRaaZIGGrLVoJbQ0jUyDgWwbRKNaXa0bnUfIyCk7rTsY2wBYuDuleZ9fdW0Na+YD7tTA8oPjfQCu5aP0ldoycU9anP80mIqqrEBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NY3dUcl4; arc=none smtp.client-ip=198.175.65.12
+	s=arc-20240116; t=1733323864; c=relaxed/simple;
+	bh=sSDuZPRkXbzM+hot15reFp1Tf2cfLckndJt/uX9Yc9I=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=nRsj6RsYTpYa+97pnyVpXh8mdIu9p2hZ8QDU8xD+uTGFyq7UJqcDrChme7qkCS50si/Cp76M8L4gzBvEY/l268VPb1icM7AZVavlK4VonzluU+bCduc58jnTpHCIWhpMgpbur0bCg5IZ7LjBX84ZS1IK5kL0a8DfBEfg2rjOs7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lMi8PiC7; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NY3dUcl4"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lMi8PiC7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733323739; x=1764859739;
+  t=1733323863; x=1764859863;
   h=date:from:to:cc:subject:message-id;
-  bh=UNHnRrRlL9xiNOFu+pFZsgdm6QZUcNtq6dL67bk6/q4=;
-  b=NY3dUcl49Fn2voQERajZt3OFRxfcgObGTkM53YBmuMFYHmTWpNPk5RsB
-   BxIUuExd+r0ETQ1Zl1EWcoh6o32gl+xhLXODA8Eg/ZCy5vJsDeFZbi0fk
-   3l1vflodTJsG0FwaZZAoS/eEUcdAU/X+KjXRphCER/S/9at/S7NG6739b
-   KHlD4KrB+tOcpHNwqg9+4sxuCiLRzNdilDpemEkbc5l0RrMQWMtkA+IaC
-   T/jWw2GIsPrHGZ5ZIiqsKQUtNZHNtnyQdV9ZchCL9Kz5yGxnFi8WNqg86
-   tpdK0mN8d5xDSrRXA0vgKadVIrWAP7r18uLmJiFTYjNfil3XlAHYojKLs
-   g==;
-X-CSE-ConnectionGUID: 1ttQTwBKTb+idkhV2NgpjA==
-X-CSE-MsgGUID: 5CA2i4LIT36WObtJ/aWmvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="44970907"
+  bh=sSDuZPRkXbzM+hot15reFp1Tf2cfLckndJt/uX9Yc9I=;
+  b=lMi8PiC7g1Emhh52YDlOZO36in9w/zLz8YFMOCQ1EHbtVdRuuNBYNNKw
+   VgGra8dO/QXzj+/Q+ZhkszdVUHFGHo0b1h46ti1cqzK0fHfxOqTdho7CE
+   4mJaBJ0ZH6Xu3uq21cBJh9voEhUQLN6ZVHsLlLZM0VF1JyFsxP8L7QcRU
+   5cTPg4q184GzJQmA2WAfYUSAkfFFSRpn2GJp+ORfK9vIj4p+S981+M6IO
+   5NggtJPnJ6zJ8LpFMOWfED1k/eAqYqLPU2iWDXplW0CGTBSFkDcE/6imW
+   1DWzMZWs3tOVg0k/YNmixcptcwI9fBNANzvNzNzImVtO/lTde384AKdD7
+   Q==;
+X-CSE-ConnectionGUID: zhjUEw44QcSoZfuvFN7C5A==
+X-CSE-MsgGUID: AkJ794zPSRePvL4TlwS0/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="51124973"
 X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="44970907"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 06:48:59 -0800
-X-CSE-ConnectionGUID: Dk6/BGSCT3mxyT4t/JuZeg==
-X-CSE-MsgGUID: WlaHnJ/LTFqi7kQLFQfmuw==
+   d="scan'208";a="51124973"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 06:51:02 -0800
+X-CSE-ConnectionGUID: 3BkoQ/6oQe2Xx4I4L+zsBQ==
+X-CSE-MsgGUID: rDLyHb+wQjuFm+tYSxGM/w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="93675248"
+   d="scan'208";a="93633006"
 Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 04 Dec 2024 06:48:58 -0800
+  by orviesa010.jf.intel.com with ESMTP; 04 Dec 2024 06:51:02 -0800
 Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tIqgS-000396-0h;
-	Wed, 04 Dec 2024 14:48:56 +0000
-Date: Wed, 04 Dec 2024 22:45:33 +0800
+	id 1tIqiQ-00039n-2T;
+	Wed, 04 Dec 2024 14:50:58 +0000
+Date: Wed, 04 Dec 2024 22:48:06 +0800
 From: kernel test robot <lkp@intel.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:topic/overlays] BUILD SUCCESS
- bcbede4b77f674b6140af1faaab0308872bc7136
-Message-ID: <202412042223.vTBVThK9-lkp@intel.com>
+Subject: [geert-renesas-drivers:master] BUILD SUCCESS
+ 50d451b19cc58cf374160e30cbf72a5ed5b1b129
+Message-ID: <202412042255.ELw8nwav-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,10 +59,10 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/overlays
-branch HEAD: bcbede4b77f674b6140af1faaab0308872bc7136  kbuild: Enable DT symbols when CONFIG_OF_OVERLAY is used
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: 50d451b19cc58cf374160e30cbf72a5ed5b1b129  [LOCAL] riscv: renesas: defconfig: Update rzfive_defconfig
 
-elapsed time: 726m
+elapsed time: 730m
 
 configs tested: 183
 configs skipped: 7
@@ -88,7 +88,7 @@ arm                               allnoconfig    gcc-14.2.0
 arm                              allyesconfig    clang-20
 arm                       aspeed_g4_defconfig    clang-20
 arm                         at91_dt_defconfig    clang-20
-arm                     davinci_all_defconfig    clang-20
+arm                            dove_defconfig    gcc-14.2.0
 arm                          ep93xx_defconfig    gcc-14.2.0
 arm                       imx_v6_v7_defconfig    clang-20
 arm                          ixp4xx_defconfig    gcc-14.2.0
@@ -109,6 +109,7 @@ arm                   randconfig-003-20241204    clang-14
 arm                            randconfig-004    clang-20
 arm                   randconfig-004-20241204    clang-14
 arm                             rpc_defconfig    gcc-14.2.0
+arm                         s5pv210_defconfig    gcc-14.2.0
 arm                        shmobile_defconfig    clang-18
 arm                        shmobile_defconfig    gcc-14.2.0
 arm                          sp7021_defconfig    clang-20
@@ -198,7 +199,6 @@ powerpc                   motionpro_defconfig    gcc-14.2.0
 powerpc                 mpc8313_rdb_defconfig    clang-20
 powerpc                 mpc8315_rdb_defconfig    clang-15
 powerpc                  mpc866_ads_defconfig    clang-20
-powerpc                  mpc885_ads_defconfig    clang-20
 powerpc                      pmac32_defconfig    gcc-14.2.0
 powerpc                     ppa8548_defconfig    clang-20
 powerpc                     skiroot_defconfig    gcc-14.2.0
