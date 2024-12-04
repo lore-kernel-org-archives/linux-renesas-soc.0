@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FD520DD5B;
-	Wed,  4 Dec 2024 16:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A14A202C44;
+	Wed,  4 Dec 2024 17:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331502; cv=none; b=IMfhes2/OVkKcaOC11NpOxVbxAGvgnlWvGe+qKJ0SZNHO5+NxWnBfREdAlc6WlI4JvJV3syc7OiFjCizaHpQHEjO20cfJMy3RFF+1otikPqnW8fx37eJBbY4HWS/u58kW08ovbGvy1TlxEv5Grqq4EdcnTiDGEnT6K+PzphuGL4=
+	t=1733331615; cv=none; b=BhoPZ6DNJWf+o5t2lEVN9EYpNkfT7bMkHaSz60eRCtrrRJJabJlBwzt5Wchp0f8KkoRMopPe5dSR/X/2LmLRvSGmFg0v6Nl6dhNlihw85omNT84CFNMMhfIdEmsDWlAoQsbaKLM3pudsVy/1C6pcy2YSZFIch0tBBSZ1uE+JVT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331502; c=relaxed/simple;
-	bh=rj/vtyBLlm1VVH5rilqfdOdaVTaN+8/ElgCqvqGAZK4=;
+	s=arc-20240116; t=1733331615; c=relaxed/simple;
+	bh=PrS5dMApRuvYtyE1/G9FbY88WGrmssJalLtkRCLFrXg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bpqZYmMDj1jnh6AmZjkrR9B9csANszFvDqBrfk6Z/srLdx094UDcbYIvEF/CFXHFBfLUZc8WHmJOYGg3zOhSg0tIDWq/eqJt8SfVP6XR715EmGm7nZ3Bl9ng3BO6T4jhLnK96G0iC8SanckFhbyIdvanVDM5X2SQge1LZeBldZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGKDgDdk; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=d1d2JEFUdnumBHs8krHiYsG93NuPtpjiffTpn/xGYdttH81BiiCrVJVuk+OujbP6N6wwtqW48eyHdpFQxCxRP5BPaBjUo6S8fJS135EhhO+O/d2LUjkZXOtXWEq+Uo4ljfzFvGQhwPhJO/H8GQ0EBkhFATbvANGK2eOPsX8REk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ni5wsxV7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGKDgDdk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD580C4CECD;
-	Wed,  4 Dec 2024 16:58:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ni5wsxV7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C56C4CECD;
+	Wed,  4 Dec 2024 17:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331502;
-	bh=rj/vtyBLlm1VVH5rilqfdOdaVTaN+8/ElgCqvqGAZK4=;
+	s=k20201202; t=1733331615;
+	bh=PrS5dMApRuvYtyE1/G9FbY88WGrmssJalLtkRCLFrXg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kGKDgDdkIfhdRD6kUbVshqP7byRdBI1SUDbohM4JRbL1EeVsd1B60QjfyWhrBsXbI
-	 7A46wYSnAMb21y9UHimOYb/d81lQTbbR3e7YytWoDYPzlpU3rl+PxOqFU6rOR8sGxA
-	 lzUO3L1RTv7dnzv5EQYVYu/20TaRPJ2CfNXMefBSeATgE/kaQ+ME+NlYwT84YmDKLb
-	 GmDGXCk27t3tshzULpbpD8rlXDjN59nm42+24oWnqFApD1p3yQdbodoCPMFEdztwMR
-	 v9L0nm69kjGpkYCEmtPCZO6NUIY2aHRSURtm4vov6ObB3hKWyRr+Ij30jIYkIQ1Cd3
-	 53WxAX86jIMQQ==
+	b=Ni5wsxV7DiLLTobBia7tM2LkD/0vkHhNBmNQrL8U+FSNr8LHr23Xt1NsQUE5VRvxg
+	 D3Jf7PAo9vR2IvNiodpwx0T0zLRBX8193m9BGijJTGeiJzjwQbY8puCi9D7Qpg4YTi
+	 L7RHgp9HK3wiXcHui7VD80Xz6BJtJt7d7F99O7kqEK+H3QbUngbq54x98PRvXdsA0/
+	 5VqwMUdADkZ7J4gIGrknoWX/MGanqWbawSIFiQ/jWuJEjwY5ZjvlR4Ejo+/MDkV9ln
+	 ty5ZNs/p4DRkveCOMp7z+COn3QLLc+rJpDcSDcK+ebNCSsRvwf9N3A4qoMj83B5tNQ
+	 13S3Y7GvlYEoA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Bart Van Assche <bvanassche@acm.org>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 13/36] scsi: ufs: core: Make DMA mask configuration more flexible
-Date: Wed,  4 Dec 2024 10:45:29 -0500
-Message-ID: <20241204154626.2211476-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.11 13/33] scsi: ufs: core: Make DMA mask configuration more flexible
+Date: Wed,  4 Dec 2024 10:47:26 -0500
+Message-ID: <20241204154817.2212455-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
-References: <20241204154626.2211476-1-sashal@kernel.org>
+In-Reply-To: <20241204154817.2212455-1-sashal@kernel.org>
+References: <20241204154817.2212455-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.1
+X-stable-base: Linux 6.11.10
 Content-Transfer-Encoding: 8bit
 
 From: Bart Van Assche <bvanassche@acm.org>
@@ -88,10 +88,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  3 files changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index abbe7135a9778..2b445a8699dbc 100644
+index 03490f062d63a..5c64ef7334546 100644
 --- a/drivers/ufs/core/ufshcd.c
 +++ b/drivers/ufs/core/ufshcd.c
-@@ -2411,8 +2411,6 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
+@@ -2398,8 +2398,6 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
  	int err;
  
  	hba->capabilities = ufshcd_readl(hba, REG_CONTROLLER_CAPABILITIES);
@@ -100,7 +100,7 @@ index abbe7135a9778..2b445a8699dbc 100644
  
  	/* nutrs and nutmrs are 0 based values */
  	hba->nutrs = (hba->capabilities & MASK_TRANSFER_REQUESTS_SLOTS_SDB) + 1;
-@@ -10309,6 +10307,8 @@ EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
+@@ -10314,6 +10312,8 @@ EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
   */
  static int ufshcd_set_dma_mask(struct ufs_hba *hba)
  {
@@ -144,10 +144,10 @@ index 8711e5cbc9680..3ff97112e1f6d 100644
  	.hce_enable_notify = ufs_renesas_hce_enable_notify,
  	.dbg_register_dump = ufs_renesas_dbg_register_dump,
 diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 3f68ae3e4330d..0b0fba9f1383c 100644
+index 0fd2aebac7286..3fee38029bfee 100644
 --- a/include/ufs/ufshcd.h
 +++ b/include/ufs/ufshcd.h
-@@ -299,6 +299,8 @@ struct ufs_pwr_mode_info {
+@@ -298,6 +298,8 @@ struct ufs_pwr_mode_info {
   * @max_num_rtt: maximum RTT supported by the host
   * @init: called when the driver is initialized
   * @exit: called to cleanup everything done in init
@@ -156,7 +156,7 @@ index 3f68ae3e4330d..0b0fba9f1383c 100644
   * @get_ufs_hci_version: called to get UFS HCI version
   * @clk_scale_notify: notifies that clks are scaled up/down
   * @setup_clocks: called before touching any of the controller registers
-@@ -341,6 +343,7 @@ struct ufs_hba_variant_ops {
+@@ -340,6 +342,7 @@ struct ufs_hba_variant_ops {
  	int	(*init)(struct ufs_hba *);
  	void    (*exit)(struct ufs_hba *);
  	u32	(*get_ufs_hci_version)(struct ufs_hba *);
@@ -164,7 +164,7 @@ index 3f68ae3e4330d..0b0fba9f1383c 100644
  	int	(*clk_scale_notify)(struct ufs_hba *, bool,
  				    enum ufs_notify_change_status);
  	int	(*setup_clocks)(struct ufs_hba *, bool,
-@@ -623,12 +626,6 @@ enum ufshcd_quirks {
+@@ -622,12 +625,6 @@ enum ufshcd_quirks {
  	 */
  	UFSHCD_QUIRK_SKIP_PH_CONFIGURATION		= 1 << 16,
  
