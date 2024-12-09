@@ -1,66 +1,62 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA5921481E;
-	Mon,  9 Dec 2024 07:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E5E5FEE6;
+	Mon,  9 Dec 2024 07:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733729297; cv=none; b=IbaXXmTPxPHk/kCwg+h3ZXH77WgkMoKEsyOUMqozoDa/zj7d4wNhv98KnrOTs6ngfCdNM3TmPJGjSL4tO7IUbkhrwAhzLCzdQfbmhOAiEaRDPoYEd6RQ66r9nzYOzJ0iHKBUVxOsWACKaYNZriuACDsln093ahDh8RBsEC+gCP4=
+	t=1733729484; cv=none; b=RPyexid2FLYiaRiytix0Me9MgC+jCwnU7A7gmkcZTZfEC7rl7ryPWdvtMFHCgeiWvE6tmeDwDGWW+ST7+pm0t0RtzWAP+aBq6n1U5QkvT2uH1jKPEZz3lU/BPvDmJY6fycr7g7Se16cZ/uB3Nl27daEnFnfUOPiY7udPF96bRl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733729297; c=relaxed/simple;
-	bh=prcaXDT+z5dqkQpWq6cORrkF5QNJffwsfXcM0q0PUlM=;
+	s=arc-20240116; t=1733729484; c=relaxed/simple;
+	bh=JlVF6x0+d/bzmlLoYVXR8KZAC5ObMonJdxOXrS/bSkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gaHfjfcTGa+QGlg1hdELrYQ7iUTXuuBccauzXSUZ1PnOK+V/pu7c/10QcwfSDL9SXsQbmOrqcLQbrfVGT0H07D/RVhykEpevnLS5yETtiXyU3aLmPY01gTcyHLINZ0k0qm95dR1bT5LqCwJUn6wWQOREmYjH0nCL3BGkpT86/do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WR7lHDoP; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=OstwKuyP2MEiQ+m0jwkrbDN7WBjeeo4qe7t1qZMc5dVqfwbLHew3ZtBOC2wYFaSjdVEqihQuSKaKH41CFEl1gLSQ8PuDTe3j6Dg90H7oT7BV9AcImlO9EEPa3iKBphgt0ic/hpHXKd7wbU/oNE9eJ5Nb0RyCwCM5d6Bo9YPV4fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=N97k7Cry; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WR7lHDoP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733729295; x=1765265295;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=prcaXDT+z5dqkQpWq6cORrkF5QNJffwsfXcM0q0PUlM=;
-  b=WR7lHDoP8sWbDOdp+3wgjt9sSSsCsvTGZRXo9FucZNHSkDz5ZUva0g79
-   z85XuGPEQVbXlDMd3pQnO8C3B5QNmpCOUf8YEQhAe7Zm5BOt5Jyzb1mJj
-   oMIgc3pMWaOdAw510S0MQ5axNlYx93xzU1NMAziAKsFlnAxjHOcjspCvH
-   DRC73thfgBJH07yArqiWNg2r0f+ulAYPRDgccydsuKguBC09VXj2ZnBIA
-   7IQjLvHGKb2z+Kj6w7+EY8Nce8zAo+h2heBUVlWhTZf7OkpFZmEOacewQ
-   tXbmDnwx8E0mUX6JFtqqQPupnapqLESu+QxRfjMDqKqYu465Xxir2w5pV
-   A==;
-X-CSE-ConnectionGUID: dM2nwamdTSqPIvzauc3efQ==
-X-CSE-MsgGUID: TLq3nHWwSnCwqyyge3wJkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="34159118"
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="34159118"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 23:28:15 -0800
-X-CSE-ConnectionGUID: MDLohgWuTfefHLPXNB1pEg==
-X-CSE-MsgGUID: bqXj/5B8QBuXCYPT26AAcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="94860246"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 23:28:12 -0800
-Date: Mon, 9 Dec 2024 08:25:12 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>
-Subject: Re: [PATCH net-next 1/2] net: renesas: rswitch: do not deinit
- disabled ports
-Message-ID: <Z1abWKCVKbaLFfcr@mev-dev.igk.intel.com>
-References: <20241206192140.1714-1-nikita.yoush@cogentembedded.com>
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="N97k7Cry"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=/kuYzy4TvOvrW5Ysb7raR4QcHn1lxSFVuvD5F5LoL8s=;
+	b=N97k7CryICfX9jh86hJTeBgEADIbl2Lo29RYU94PkaJvrZv89euFfIkA+t8m7E
+	4sFUhL9EKlkhDetYq+lXjqDHhehecPNcCMscua1nbfV9cUrYp0s75prWk5006qpI
+	EuKiOPQXYyTPxhfdREhNVONR9ejRz9VYvu3+9sJopUgX4=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCHe+ZOnFZnMep5BA--.46497S3;
+	Mon, 09 Dec 2024 15:29:20 +0800 (CST)
+Date: Mon, 9 Dec 2024 15:29:18 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Adrien Grassein <adrien.grassein@gmail.com>,
+	Adam Ford <aford173@gmail.com>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-mips@vger.kernel.org,
+	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH treewide 04/11] arm64: dts: freescale: imx: Switch to
+ simple-audio-card,hp-det-gpios
+Message-ID: <Z1acTq/JV/JTHllY@dragon>
+References: <cover.1727438777.git.geert+renesas@glider.be>
+ <b38545c29d6cbf0b394ddb4747ce810c679f95d1.1727438777.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -69,33 +65,17 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206192140.1714-1-nikita.yoush@cogentembedded.com>
+In-Reply-To: <b38545c29d6cbf0b394ddb4747ce810c679f95d1.1727438777.git.geert+renesas@glider.be>
+X-CM-TRANSID:Mc8vCgCHe+ZOnFZnMep5BA--.46497S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUodgAUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiERiwZWdWZpHlSgAAs1
 
-On Sat, Dec 07, 2024 at 12:21:39AM +0500, Nikita Yushchenko wrote:
-> In rswitch_ether_port_init_all(), only enabled ports are initialized.
-> Then, rswitch_ether_port_deinit_all() shall also only deinitialize
-> enabled ports.
+On Fri, Sep 27, 2024 at 02:42:19PM +0200, Geert Uytterhoeven wrote:
+> Replace the deprecated "simple-audio-card,hp-det-gpio" property by
+> "simple-audio-card,hp-det-gpios" in Simple Audio Card device nodes.
 > 
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> ---
->  drivers/net/ethernet/renesas/rswitch.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-> index 3b57abada200..cba80ccc3ce2 100644
-> --- a/drivers/net/ethernet/renesas/rswitch.c
-> +++ b/drivers/net/ethernet/renesas/rswitch.c
-> @@ -1527,7 +1527,7 @@ static void rswitch_ether_port_deinit_all(struct rswitch_private *priv)
->  {
->  	unsigned int i;
->  
-> -	for (i = 0; i < RSWITCH_NUM_PORTS; i++) {
-> +	rswitch_for_each_enabled_port(priv, i) {
->  		phy_exit(priv->rdev[i]->serdes);
->  		rswitch_ether_port_deinit_one(priv->rdev[i]);
->  	}
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Applied, thanks!
 
-> -- 
-> 2.39.5
