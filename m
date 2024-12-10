@@ -1,144 +1,158 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5914F243540
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Dec 2024 17:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D30086332
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Dec 2024 17:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850666; cv=none; b=WFaB2nnrXiBw8VEFFLpIXLh7Nf9mmhvxSG1BsIfxIwzNNExKLU1k2UOZF6HDCv06+12p+DFYeXrE5k+YqX6QX6sPAONu4RXMZgidVbyED2yCiCc91zWcToldqighDwJxnzIA9sPuytPI4CNZcJJlWTZquAEZR7LTKtl8EUkd20U=
+	t=1733850995; cv=none; b=Rv615QqCNfRjuEy3VHl6RZuj5j9Kr5bRe56MqWW1BQ1pxM7hOnhQBxbdQxODyZvq2hc23RCk1hUlg3zkfpQw05tVqMzR4/jLTv2oMEGIJ/2O4DxJv3i+UuRfr6l8fO4jG0qN6D+SlqeE0MPaaCBmvL0zrtbVYLmWN94HmfygAt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850666; c=relaxed/simple;
-	bh=hJDCv1TyaQlo/L0tvA82G+IiLtzZURDjCsIXt6YWZzI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GkBqIror7TfsDl0vVDO0Z4mL6DqbVhyPeUwXwaCp8wek0+Mx0WUrPsvH1YSmk9hd/H2/kQXog2Bq3xt6lIqW9wPyAs/aXiDalfI1inEyOE0R0rb1tUKcGlRhrhb+xtXAQajOeLKqOwWBkioR+J+AW/TgVXun/QLE6RzcoVpOpk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H4Oo73oc; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1733850995; c=relaxed/simple;
+	bh=kmpw+MU85Klv2VgMx3ZqVirEPF5gOEEsCLRROZYzfzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LjlenAanQv0GlmCqw1FLL1DowNwWjBmclXKa82w8yzwBiJmR0XazC72gws+kX2fXdDTj2+F10NIWeCZ7/tw2l93+p/zl/a5LJeEaBJ3Ko1fpekXUIHpU7mjzxz5YuU5xVr4xI+6QIjgeAt/fiin3Iq1+bIPCtx1fB2/OVYyGhsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IaOOglHM; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H4Oo73oc"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d2726c0d45so8939978a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Dec 2024 09:11:04 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IaOOglHM"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa5ec8d6f64so697286366b.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Dec 2024 09:16:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733850663; x=1734455463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1733850991; x=1734455791; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TwyXnruxyE1MIUM59wwP+urrQ2EdZ5O+ybJnem/vHTM=;
-        b=H4Oo73ocUU6EO5L86bsbLakxd18SGRoMb/J2jzJtaIAmNhotmttFlW/TmdIeordbJZ
-         Dq+bShklzmdfREDBwuxJjDLed5ej3M+XFdsU4eDmnuGhRUVNt+PJ40Ionl0av+NKnuam
-         20kW6ycQNBXnYADF2aarxkcua1Z23wHlFv4RkB10Mzt9g4G4T1wVBNpetas+bTy1Y/ra
-         QxlTvkMagWUEayvqovJIrXb6kvLmnSdz5LF+mTMRyfpXgNdPR5z4JALaPwtMfAI4Jqk2
-         ssmNkWomPf8q8YXmUV3JnL5oqVsbP/qx81usGKG8bDL3iWU+IqMU+2BeYTV4XYrxA9yj
-         pM7w==
+        bh=LuhRNegPQNd7+gF/yjuNpjthxXavGQO/1ZgSXezZky4=;
+        b=IaOOglHMwSmrFfOnB4GcPSRqJjA0KVpEKpVQ3nkvBb74wG9gHCaSOmw1nzAdhV/ORF
+         KIuBpDfhPNuIRJZMTWfAH95Bizk+lwLPZKKJs56rpRmn5WY/DqbmsF9efD8ja7kTwsN7
+         +2eRtLkTJupUMb8SRQ3HCeTNneSrUOa1aSV9Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850663; x=1734455463;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733850991; x=1734455791;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TwyXnruxyE1MIUM59wwP+urrQ2EdZ5O+ybJnem/vHTM=;
-        b=ZRWODKwWewH8ebvlWk/Qo8gq5bNGQLLRQrSKtoXArBMrFQYQxLo3ihARN+b15F028V
-         OnSPKX25Csxfq6c5Ls84h7sOVkLGjXjLE+zc4nYQ8XhZz62FweYcR1Z1OJKjQfdZNLxD
-         DpJMUOnAGM4+2QyTv9xgx8whhLvoMgSIS5inCpuFVe+F3RPU/Hsm1fN3dF+k1lpB3TjJ
-         zq9Bp8bqP9w4Rd2O3Xy6kBcaMvaqc472JZBIsntd05rABhx4BocY14nrAIuB6QbZ1ync
-         W6QReA0pp2uizwR+bhzTL0lebZthPY34VPt6rQZ7mq6bpZO40TN2FbO9XO7ZBcQzfQN/
-         3UbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKkADXaDq4b2lYHDQ3e276VTrzw73DgRoGhr6P4AmIFxGG6MsBQt+g42199wBb6mC3+Dg5/CvYac/55FGtlk9r4w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxprkomBkZFrHUfe/D6WDxYCImQtGUn3xy2r0q6Rt7MbW9hIq7a
-	cdMbmE3KBUbM2LJcNWGKCgvZH9aWgZgc144VnjglnuvqEiu1GKmaTYzdg918qDk=
-X-Gm-Gg: ASbGnctRwHdgPWDp9TAzkra/01uAjK5N8ih6WoQZc0v5l3y5ux+VZQ+U2KArnz8d8i9
-	qQryGY3tNO+gYnEzKyTDFfQcVFnNILyfTBKVFtrtqPtkyFo4H0BmvgyIcMtbS9Pcgh1YqQ5JQew
-	NylSJAKPrgHEtEEDV4vupIHKBMbD7qUQBh9nXE/UKwivQ44ZT0vwq8OBwr6PvwVdapHvlvZkRj1
-	zxmsfot/FPxmLpr1nv7b6ry19aDSyVbNFmMvh36C7tGxFfzaBEC6Ue+UXqUdPNTyD+kZ0AZ6IHA
-	MRCa3+Iy
-X-Google-Smtp-Source: AGHT+IGQNruuJ2fmbhGEBR6v4EYtbwtUlKzpp82KdDiJC4wYZhl0SU6OosybB2Txg3S5RjOBSBjG+g==
-X-Received: by 2002:a05:6402:3490:b0:5d0:d5af:d417 with SMTP id 4fb4d7f45d1cf-5d418502c64mr5890914a12.1.1733850662767;
-        Tue, 10 Dec 2024 09:11:02 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:11:01 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh+dt@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	magnus.damm@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	p.zabel@pengutronix.de,
-	biju.das.jz@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v4 24/24] arm64: dts: renesas: rzg3s-smarc: Add sound card
-Date: Tue, 10 Dec 2024 19:09:53 +0200
-Message-Id: <20241210170953.2936724-25-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
+        bh=LuhRNegPQNd7+gF/yjuNpjthxXavGQO/1ZgSXezZky4=;
+        b=Nj96j+Upzv9F0uL4mtoKpeF3t+PVerpWVVHae808mYh8Bz2BYHidAmNoFkKp6FSHzL
+         RwAiJJLaihdNgXaLcNhUMie0Dz8bs+qKsNeyUWwDyp9tbWZDgDMzlYboyvclBb08+R7A
+         z15F3JIOisfZoM8WV9Kem32lB6gExW/NwIwNLepyWykN+53/fk4B2cE7ZTJeWmxBRyuT
+         7Ay2eNHA40zSn+Nt/ZWb10XeMJ+B5QH61MVD3CmLAZ2VfABBB9flso+TB19f+fMxzGKX
+         stp78/3ngQvOv00Rd9RAk6ZTJLYi+1WLzxpE890L1QsmDi4zi3UkZIj7QS1j6JJLnZvI
+         epOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYEkMPoG8/ADesn3ZvK+9WVrASKMbSRNRbNDTdGQWTLhmpPG85M12QH9Ya0ie8fmX+BpxwECKoZCIvtNUbz07XIw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyACo7X0s072J+/UObp1YlBdlYUEulTBm2MsOgtX22P6Mf973wn
+	H6ja38IbN5kJJhxcjFu0FsJ/PeBokFV+K4FtHllbmkKoX20OcuGpByFV3tp9VSy4k73Fuoer1oX
+	Vxur8
+X-Gm-Gg: ASbGncvcgDkA+SJSY5cBximq0rMrkerSLHpy/L+1s/7TCUaZbLePibGTYJrLgeLPBjj
+	3dvHxqJHmbBth1LbE+witfaOhieHiNwAr50gw+H3WWJmJ6iJuRN09pCPFecWMPuczBG7ChLG/hC
+	SpoZ29VOLLq8u0rJprPJ9mZh6oBAoAzmp1nMNpmeOjcxD0DkiygHZTjPP6/bwCWI0ysz79OU3Gf
+	0dSJ7OiRIArso11T6IIyWGOdpiQgfQrFNkkdwf5S9KNUJqXhF+XvYoS7qnMdfI/7uLHill3zSCt
+	JUDxhf+v1F2xZ1R7ng==
+X-Google-Smtp-Source: AGHT+IFW9xJDZuBM+4jbvJqnL8IdMWV9GarDL92KWrlMd/RbEO5UhbWZKU2FUszJD7vYa6fRPMW7Qg==
+X-Received: by 2002:a05:6402:3210:b0:5d0:bf5e:eb8 with SMTP id 4fb4d7f45d1cf-5d4185d651cmr12275598a12.23.1733850991405;
+        Tue, 10 Dec 2024 09:16:31 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3cf972f6dsm6271575a12.61.2024.12.10.09.16.31
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 09:16:31 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d3f28881d6so3334896a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Dec 2024 09:16:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW0PuHBoidX6Cb8K6uiv2BL9IUeOnCd11eMKt6VGUqi4z9U1kfur5bgqUSjap9tElieV0vJ+IzDQ3Ktpwrmha6StA==@vger.kernel.org
+X-Received: by 2002:a05:6512:33d0:b0:53e:368c:ac43 with SMTP id
+ 2adb3069b0e04-540240aac8fmr2378233e87.5.1733850544359; Tue, 10 Dec 2024
+ 09:09:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
+In-Reply-To: <7a68a0e3f927e26edca6040067fb653eb06efb79.1733840089.git.geert+renesas@glider.be>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 10 Dec 2024 09:08:52 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XpRt_ivSDz0Lzc=A+z3KFrXkVYTn716TD1kZMAyoGQ_A@mail.gmail.com>
+X-Gm-Features: AZHOrDkvV4hXVBzL5LdGwv2-ywEkfcu0N74i9maLRg8R7KrBlypjtg_v-QyKEuk
+Message-ID: <CAD=FV=XpRt_ivSDz0Lzc=A+z3KFrXkVYTn716TD1kZMAyoGQ_A@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/bridge: ti-sn65dsi86: Fix multiple instances
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Linus Walleij <linus.walleij@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Greg KH <gregkh@linuxfoundation.org>, dri-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi,
 
-Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
+On Tue, Dec 10, 2024 at 6:19=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Each bridge instance creates up to four auxiliary devices with different
+> names.  However, their IDs are always zero, causing duplicate filename
+> errors when a system has multiple bridges:
+>
+>     sysfs: cannot create duplicate filename '/bus/auxiliary/devices/ti_sn=
+65dsi86.gpio.0'
+>
+> Fix this by using a unique instance ID per bridge instance.  The
+> instance ID is derived from the I2C adapter number and the bridge's I2C
+> address, to support multiple instances on the same bus.
+>
+> Fixes: bf73537f411b0d4f ("drm/bridge: ti-sn65dsi86: Break GPIO and MIPI-t=
+o-eDP bridge into sub-drivers")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> On the White Hawk development board:
+>
+>     /sys/bus/auxiliary/devices/
+>     |-- ti_sn65dsi86.aux.1068
+>     |-- ti_sn65dsi86.aux.4140
+>     |-- ti_sn65dsi86.bridge.1068
+>     |-- ti_sn65dsi86.bridge.4140
+>     |-- ti_sn65dsi86.gpio.1068
+>     |-- ti_sn65dsi86.gpio.4140
+>     |-- ti_sn65dsi86.pwm.1068
+>     `-- ti_sn65dsi86.pwm.4140
+>
+> Discussion after v1:
+>   - https://lore.kernel.org/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.1729=
+180470.git.geert+renesas@glider.be
+>
+> Notes:
+>   - While the bridge supports only two possible I2C addresses, I2C
+>     translators may be present, increasing the address space.  Hence the
+>     instance ID calculation assumes 10-bit addressing.  Perhaps it makes
+>     sense to introduce a global I2C helper function for this?
+>
+>   - I think this is the simplest solution.  If/when the auxiliary bus
+>     receives support =C3=A0 la PLATFORM_DEVID_AUTO, the driver can be
+>     updated.
+>
+> v2:
+>   - Use I2C adapter/address instead of ida_alloc().
+> ---
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+While I agree with Laurent that having a more automatic solution would
+be nice, this is small and fixes a real problem. I'd be of the opinion
+that we should land it.
 
-Changes in v4:
-- collected tags
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Changes in v3:
-- none
+If I personally end up being the person to land it, I'll likely wait
+until January since I'll be on vacation soon for the holidays and I
+don't want to check something that's slightly controversial in and
+then disappear. If someone else feels it's ready to land before then I
+have no objections.
 
-Changes in v2:
-- none
-
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-index 1944468a2961..5329f3461990 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -44,6 +44,23 @@ key-3 {
- 		};
- 	};
- 
-+	snd_rzg3s: sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&cpu_dai>;
-+		simple-audio-card,frame-master = <&cpu_dai>;
-+		simple-audio-card,mclk-fs = <256>;
-+
-+		cpu_dai: simple-audio-card,cpu {
-+			sound-dai = <&ssi3>;
-+		};
-+
-+		codec_dai: simple-audio-card,codec {
-+			sound-dai = <&da7212>;
-+			clocks = <&versa3 1>;
-+		};
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SDHI1 Vcc";
--- 
-2.39.2
-
+-Doug
