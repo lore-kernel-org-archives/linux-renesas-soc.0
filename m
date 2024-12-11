@@ -1,171 +1,244 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BA9187872;
-	Wed, 11 Dec 2024 11:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B66A1C1F10
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Dec 2024 12:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733916020; cv=none; b=E2+flM5AbmP+3YGlBPZ3wg9VRPmbwROq6sbwqdFMGDDJ7w8QUFca+g6MrVl4mSwNUG0jh6ThV8DNAns6q1PTwuXTL5Jy2T55fakp0Io36+6hiAiO+PDFH7xG2m3rdY3foMUBJH+ceAkfyTIRsz2VKdH0pzA/uz17SBD1nx4y9xY=
+	t=1733919792; cv=none; b=nuee2R2tj36xcF17oNmaZpAn0LHByoFkQbD4yXdGI+RoQhpC9wHsLyA+7TG26szRjd/nXgTArNK7105UA86sSuC61Ur4w5izE1p6/qrmRYu3B2AI37aPjXfelXbhesZWDR0VViWfRetBrI9UjSx1S2aOOvg6joMqiNgJZHSVbu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733916020; c=relaxed/simple;
-	bh=W5sH/BUvR3Vg2JFLycXph7Qauev5/AAKrJsrnlwUCso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMI7ZsbOjJ8HBJVoiaI09vimHmV7aLt35NNJILMJ4zW3C/jNXkl/D3c5NjcvWl6fCQ1dt00ErJr3fFMnIRTi50YloRjdMpc0008UTRrUFSY1w/YWdvgnPkV1quUA0fHztUE0Ta1+q2DuGF80EfeIdLwPCPz3PAycGICY1eT/Eps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBQKwEZo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733919792; c=relaxed/simple;
+	bh=4LmoThFKiCg6NPxt1pwJQOCUq4Ty9Yrn6QdEkSulcGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jqEIOaG3q5hzbGtV0h/X1LNAebwmQJvM5OAwTrl8D/ceAxN3plipwgmoBOLUuJbtAoqO714Wxy3SPkZwi02PlPX89f6ACt0XQlVzgd7n3BfW/SkTPPcXqDEWmS4tlbNkGafN+WsOSodBolLvfi4fwj9MH88jowYaewAsbNVOMls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GcnlZ1le; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBQKwEZo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC62C4CED2;
-	Wed, 11 Dec 2024 11:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733916020;
-	bh=W5sH/BUvR3Vg2JFLycXph7Qauev5/AAKrJsrnlwUCso=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dBQKwEZorV1rWaXhfZgkpXWc5vio0gv0T49rLoCqiE22UyoukxSf3GRTULRtvgb9G
-	 xlwPpV6bIWOn4ibx1zBDCTRc/Is1DyqrsP2Ns4ASXYpmKhrspunM2r77/N0cb2ZZzb
-	 LWW31BPBNDgt1eZvd8i8dVfue7CChl0eLkDfNGe+Sd2a/YGsGgmEh0hMJqm0XG2wH2
-	 Thu/NtZCVtPD0781h3bTX5S2cYB+UOECMxNE+Jonj/p9LgnQJWhjm8j3Hb/FfUILvW
-	 sxK9d0adpDAlS3807l0QmyRsNZZwr0t3RREvZsO8K6nxsREydw4EAtFfACus8ydNi7
-	 gNLcwjLNQBTzA==
-Date: Wed, 11 Dec 2024 12:20:15 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Chris Brandt <chris.brandt@renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Adam Ford <aford173@gmail.com>, linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] i2c: riic: Always round-up when calculating bus period
-Message-ID: <ljyho2ftsxmjkyi44hgc5zavxv3ytbvi2iuoht3gjetr3b4jq3@mjuvcrwm4klt>
-References: <c59aea77998dfea1b4456c4b33b55ab216fcbf5e.1732284746.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GcnlZ1le"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8e52so10567133a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Dec 2024 04:23:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1733919788; x=1734524588; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ASQKGpCO7s4KPkalfOXfelNyrTTyYMkGNmfArDEmeBM=;
+        b=GcnlZ1leTt1dsahBLq9jtbzrF5Pac0t0OTfPep3wmLSznG3bp99gbGHJykUPgrJa1D
+         UbBKKdwv6ytOjGz8rvT5bJwyTntg245NuHeDrgQuQdACLrCM2jtpdTBFihzb90WvxPdi
+         4/8WTry2UzERCxS+XDvYeyVviYK1MwUw+NlrhqN2hC18O+KUykMwXzr8jWreVJSjozdt
+         6VC2zLm7P9imTSQD3rBbSDQ3yw/DrXP2fcVVFsZ52CMHqa9GcPZRUSjNg5+hjvzFtswU
+         ORDmhc4k4297RaMxUDLaYLPPp3uKsgLmnksRvRfYpXkqlS8nEi3l4cuSqAsrjs0IoiRe
+         kpAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733919788; x=1734524588;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ASQKGpCO7s4KPkalfOXfelNyrTTyYMkGNmfArDEmeBM=;
+        b=Aiy1hdaKnpKsJpdhr+QO07Fi9HZyMPyLIzb6h8abymR8cmVyh87BwStf4XBjIM5y0l
+         9HQjwfXoMwqlI8LEOG2gvzBCu7pBajtVUdrGcJugW7mo5hW7gvu9EOcEKyLMGepNfjXh
+         EG8ws8n2bL5tGLVjEi8zTEcIh2UHD4b9QnflBm62ZYQmY7rfGVMfZe2B9tKrj7bVxTi3
+         RH5ZkVDjAg/1lYJyXHx8X/fyJSP3rrdOq3O1Aq42DYTWphs9juR+FSNBevAdEPIexUxr
+         cfitwLuAVjRCsE9PCvjnoKSQI/4pxzmEx8DOaf4+R1Np4hzvc0nVopw+VOD3vRdmEPXi
+         +faQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSLdEQNZ6/A279USnDlAJnQpKgfMOyWJtoKuW8xsc7bG4EDW6hQYqYjJDfjEWkUExLWWJdhPTccEnTWJkA+FYOLQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzihm3kFnL5HN9AgWBPxGjKWEN4/SLkLqryD7nJ9QME1dPP1buc
+	qmkqvL+rkQy/KL/VISJHtiVHrsLcdIChHGuBmu6OAGjPmPdvsT/LGLfh7KJpIQg=
+X-Gm-Gg: ASbGnctGcaPCRXkTVxG2lbQIwe03puWAUHzyMMmhV05Ql7UbOUfSces93JXjs3r1P0a
+	YONtnqB59f5Avpl0XPQYOyQDVCeMYfM3lKRZMSURn0DbQQ/FMZMHX/E7OVR8wHJ3kwj+scsGX6J
+	c2wAnJCr6H3p4pTeKS23Y35yOF01upjWaYdO+gsqZhlfrPZRu5NOfElvm5jUyHYQ1vKdCvRhBC8
+	6/WTpS7v65UR7o6QFsLTG8f6Jo8nqTrUGvLbHbqw/83AytH2UtNmUAGHu0XbRs=
+X-Google-Smtp-Source: AGHT+IGes3nVxEDSBxlaHGZVONLhxg58Ob1fOjsVMtO4m5ilIn457hh6A+FzVBWpzlcY83VX6o4HaQ==
+X-Received: by 2002:a05:6402:4305:b0:5d0:8498:8bed with SMTP id 4fb4d7f45d1cf-5d4330a5ce2mr2727865a12.15.1733919787869;
+        Wed, 11 Dec 2024 04:23:07 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c7aa441sm8847370a12.72.2024.12.11.04.23.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 04:23:07 -0800 (PST)
+Message-ID: <437b8d13-8ec1-40c7-b95c-ddb836e123d6@tuxon.dev>
+Date: Wed, 11 Dec 2024 14:23:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c59aea77998dfea1b4456c4b33b55ab216fcbf5e.1732284746.git.geert+renesas@glider.be>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
+ Add #renesas,sysc-signal-cells
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org,
+ yoshihiro.shimoda.uh@renesas.com, christophe.jaillet@wanadoo.fr,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-usb@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
+ <20241210184542.GA4077820-robh@kernel.org>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20241210184542.GA4077820-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024 at 03:14:35PM +0100, Geert Uytterhoeven wrote:
-> Currently, the RIIC driver may run the I2C bus faster than requested,
-> which may cause subtle failures.  E.g. Biju reported a measured bus
-> speed of 450 kHz instead of the expected maximum of 400 kHz on RZ/G2L.
-> 
-> The initial calculation of the bus period uses DIV_ROUND_UP(), to make
-> sure the actual bus speed never becomes faster than the requested bus
-> speed.  However, the subsequent division-by-two steps do not use
-> round-up, which may lead to a too-small period, hence a too-fast and
-> possible out-of-spec bus speed.  E.g. on RZ/Five, requesting a bus speed
-> of 100 resp. 400 kHz will yield too-fast target bus speeds of 100806
-> resp. 403226 Hz instead of 97656 resp. 390625 Hz.
-> 
-> Fix this by using DIV_ROUND_UP() in the subsequent divisions, too.
-> 
-> Tested on RZ/A1H, RZ/A2M, and RZ/Five.
-> 
-> Fixes: d982d66514192cdb ("i2c: riic: remove clock and frequency restrictions")
-> Reported-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Apart from the rounding issue fixed by this patch, I could not find any
-> bugs in the calculation of the various parameters (based on the formulas
-> in the documentation).  Still, the actual (measured) bus speed may still
-> be higher than the target bus speed.  Hence this patch is not sufficient
-> to reduce the actual bus speed to safe levels, and I have not yet addded
-> 
->     Closes: https://lore.kernel.org/TYCPR01MB11269BFE7A9D3DC605BA2A2A9864E2@TYCPR01MB11269.jpnprd01.prod.outlook.com/
+Hi, Rob,
 
-Can I add this in the commit log?
+On 10.12.2024 20:45, Rob Herring wrote:
+> On Tue, Nov 26, 2024 at 11:20:36AM +0200, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The RZ/G3S system controller (SYSC) has registers to control signals that
+>> are routed to various IPs. These signals must be controlled during
+>> configuration of the respective IPs. One such signal is the USB PWRRDY,
+>> which connects the SYSC and the USB PHY. This signal must to be controlled
+>> before and after the power to the USB PHY is turned off/on.
+>>
+>> Other similar signals include the following (according to the RZ/G3S
+>> hardware manual):
+>>
+>> * PCIe:
+>> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+>> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>>   register
+>> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+>>
+>> * SPI:
+>> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>>   register
+>>
+>> * I2C/I3C:
+>> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>>   (x=0..3)
+>> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+>>
+>> * Ethernet:
+>> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>>   registers (x=0..1)
+>>
+>> Add #renesas,sysc-signal-cells DT property to allow different SYSC signals
+>> consumers to manage these signals.
+>>
+>> The goal is to enable consumers to specify the required access data for
+>> these signals (through device tree) and let their respective drivers
+>> control these signals via the syscon regmap provided by the system
+>> controller driver. For example, the USB PHY will describe this relation
+>> using the following DT property:
+>>
+>> usb2_phy1: usb-phy@11e30200 {
+>> 	// ...
+>> 	renesas,sysc-signal = <&sysc 0xd70 0x1>;
+>> 	// ...
+>> };
+>>
+>> Along with it, add the syscon to the compatible list as it will be
+>> requested by the consumer drivers. The syscon was added to the rest of
+>> system controller variants as these are similar with RZ/G3S and can
+>> benefit from the implementation proposed in this series.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v2:
+>> - none; this patch is new
+>>
+>>
+>>  .../soc/renesas/renesas,rzg2l-sysc.yaml       | 23 ++++++++++++++-----
+>>  1 file changed, 17 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> index 4386b2c3fa4d..90f827e8de3e 100644
+>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> @@ -19,11 +19,13 @@ description:
+>>  
+>>  properties:
+>>    compatible:
+>> -    enum:
+>> -      - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+>> -      - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+>> -      - renesas,r9a07g054-sysc # RZ/V2L
+>> -      - renesas,r9a08g045-sysc # RZ/G3S
+>> +    items:
+>> +      - enum:
+>> +          - renesas,r9a07g043-sysc # RZ/G2UL and RZ/Five
+>> +          - renesas,r9a07g044-sysc # RZ/G2{L,LC}
+>> +          - renesas,r9a07g054-sysc # RZ/V2L
+>> +          - renesas,r9a08g045-sysc # RZ/G3S
+>> +      - const: syscon
+>>  
+>>    reg:
+>>      maxItems: 1
+>> @@ -42,9 +44,17 @@ properties:
+>>        - const: cm33stbyr_int
+>>        - const: ca55_deny
+>>  
+>> +  "#renesas,sysc-signal-cells":
+>> +    description:
+>> +      The number of cells needed to configure a SYSC controlled signal. First
+>> +      cell specifies the SYSC offset of the configuration register, second cell
+>> +      specifies the bitmask in register.
+>> +    const: 2
+> 
+> If there's only one possible value, then just fix the size in the users. 
+> We don't need #foo-cells until things are really generic. Plus patch 
+> 8 already ignores this based on the schema. And there's implications to 
+> defining them. For example, the pattern is that the consumer property 
+> name is renesas,sysc-signals, not renesas,sysc-signal.
 
-> On RZ/A1H (RSK+RZA1):
-> 
->               speed    actual  duty  fall  rise  cks  brl  brh
->              ------  --------  ----  ----  ----  ---  ---  ---
->     before:  101600   113 kHz    63     1     4    3   20   10
->     after:    99181   110 kHz    64     1     4    3   21   10
-> 
->     before:  396726   407 kHz    62     5     5    1   17    9
->     after:   396726   407 kHz    62     5     5    1   17    9
-> 
->     Note that before commit d982d66514192cdb, the actual values were
->     within spec, so probably the parameters were hand-tuned with the
->     help of scope:
->              101600    99.2 kHz  63     1     4    3   19   16
-> 	     396726   370   kHz  62     5     5    1   21    9
-> 
-> RZ/A2M (RZA2MEVB):
-> 
->               speed    actual  duty  fall  rise  cks  brl  brh
->              ------  --------  ----  ----  ----  ---  ---  ---
->     before:  100609   115 kHz    63     1     4    4   20   10
->     after:    98214   111 kHz    64     1     4    4   21   10
-> 
->     before:  402439   459 kHz    61     5     5    2   16    9
->     after:   392857   446 kHz    62     5     5    2   17    9
-> 
-> RZ/Five (RZ/Five  SMARC):
-> 
->               speed    actual  duty  fall  rise  cks  brl  brh
->              ------  --------  ----  ----  ----  ---  ---  ---
->     before:  100806   112 kHz    64     0     3    5   15    7
->     after:    97656   108 kHz    65     0     3    5   16    7
-> 
->     before:  403225   446 kHz    60     3     3    3   12    7
->     after:   390625   431 kHz    61     3     3    3   13    7
-> 
-> I.e. the actual bus speed is still up to 10% higher than requested.
-> 
-> The driver assumes the default register settings:
->   - FER.SCLE = 1 (SCL sync circuit enabled, adds 2 or 3 cycles)
->   - FER.NFE = 1 (noise circuit enabled)
->   - MR3.NF = 0 (1 cycle of noise filtered out)
-> As these are not explicitly set by the driver, I verified that the
-> assumptions are true on all affected platforms.
-> 
-> I also tried disabling FER.SCLE and removing the compensation for SCLE
-> on RZ/Five.  For a bus speed of 100 kHz, that gave:
-> 
->               speed    actual     duty  fall  rise  cks  brl  brh
->              ------  ----------   ----  ----  ----  ---  ---  ---
->     before:   97656   108   kHz   65     0     3    5   16    7
->     after:    97656    94.7 kHz   63     0     3    5   18    9
-> 
-> which looks better, but obviously the SCL sync circuit must add some
-> value?
-> 
-> So it looks like the default values provided by i2c_parse_fw_timings()
-> do not work well for us, and all board DTS files should provide suitable
-> values explicitly, using the "i2c-scl-rising-time-ns" and
-> "i2c-scl-falling-time-ns" properties.
-> Adam submitted something similar for R-Car a while ago[1].
+OK, I'll fix the size in users.
 
-It's a pity that all this description is lost. I love long
-explanations especially when they come from test results.
-
-Can I add it in the commit log?
-
-Andi
-
-> Thanks for your comments!
 > 
-> [1] "[PATCH] arm64: dts: renesas: beacon: Fix i2c2 speed calcuation"
->     https://lore.kernel.org/20210825122757.91133-1-aford173@gmail.com
-> ---
->  drivers/i2c/busses/i2c-riic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Maybe someone wants to create a 'h/w (signal) control' subsystem (and 
+> binding) that is just 'read, assert, or deassert a h/w signal'. Perhaps 
+
+Until then, is it OK for you to keep it as proposed here?
+
+> even the reset subsystem could be morphed into that as I think there 
+> would be a lot of overlap. 
+
+The USB PWRRDY signal handling has been initially implemented though a
+reset controller driver but, after discussion with Philipp it has been
+concluded that it should be handled differently, since it is not a reset
+signal.
+
+> Maybe that would cut down on a lot of these 
+> syscon phandle properties. I would find that a lot more acceptable than 
+> the generic 'syscons' and '#syscon-cells' binding that was proposed at 
+> some point.
 > 
-> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-> index 0c2342f86d3d2fbe..a6aeb40aae04d607 100644
-> --- a/drivers/i2c/busses/i2c-riic.c
-> +++ b/drivers/i2c/busses/i2c-riic.c
-> @@ -352,7 +352,7 @@ static int riic_init_hw(struct riic_dev *riic)
->  		if (brl <= (0x1F + 3))
->  			break;
->  
-> -		total_ticks /= 2;
-> +		total_ticks = DIV_ROUND_UP(total_ticks, 2);
->  		rate /= 2;
->  	}
->  
-> -- 
-> 2.34.1
 > 
+>> +
+>>  required:
+>>    - compatible
+>>    - reg
+>> +  - "#renesas,sysc-signal-cells"
+> 
+> New required properties are an ABI break.
+
+I've added it as in the old DTs the system-controller node is disabled.
+With that, do you consider it OK to keep it?
+
+> 
+>>  
+>>  additionalProperties: false
+>>  
+>> @@ -53,7 +63,7 @@ examples:
+>>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>  
+>>      sysc: system-controller@11020000 {
+>> -            compatible = "renesas,r9a07g044-sysc";
+>> +            compatible = "renesas,r9a07g044-sysc", "syscon";
+> 
+> What happens on a new kernel and a DT without this change?
+
+The older DT have the system-controller node disabled, thus nothing will be
+probed for it.
+
+Thank you for your review,
+Claudiu
+
+> 
+> Rob
