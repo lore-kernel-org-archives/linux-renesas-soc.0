@@ -1,103 +1,80 @@
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4070238E23;
-	Wed, 11 Dec 2024 12:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CFA238E23;
+	Wed, 11 Dec 2024 12:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733920749; cv=none; b=ofE1H3XNTQsoLanMxMsIzZg8HwFAyBAF3/3S4f/VHPfOKhkgicdJZRdp0aErQBCBoqS2Wbe9INyBdMuV7CVk3h+zi/1ouSZf8O3mgapFR7r/x/kSFlyyp26jSWqL9kEjXuIw71Gs6YEKkJmT6EKlTXLxsdve9C0G8SZJIupbTGk=
+	t=1733920814; cv=none; b=lbLVU9T7/Npg8X+x4MTd/7Irm9nNHVsMBRdw5TqwV4RcBpNEDPVsi0uL5rLxLHeiKpdoyanAA9Cb30ZJls9Rc/g+EK/+1gYBALCDJkUh22uvdHN2SgVNwIJWHxvwznbrTvIvZdRp2U+5vJZu4zgf1TdT9JcHCAIFcG2b7lQ32ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733920749; c=relaxed/simple;
-	bh=2oPVCiOpfzdgUocAiOmCaUCA+McSWuIVDnTGbrhLjag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e9n0DM5Y9TIqDQhfWnLgNLNA0qQZ7zG8EmBr2wxlghOtgfZ6GBq38bKgTYqICFlGD1ta8A2D4F9MkrV6ZPbgvujF6OfRt4n9N5XY1h3Hon4G1Fdpw9FLpM0sDq2J7VEAKLq6rzZcvlYhnfdXMuI134idZImeynWgTsygE5xF4fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4affab62589so1015610137.1;
-        Wed, 11 Dec 2024 04:39:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733920743; x=1734525543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T8clGLSswQIYjPop5dRjsL3kTCtkKbt4z9Zj1iJmYdk=;
-        b=lyAqRTIdC+UVF2+8rX45BoW+WIo0ulhMOzTLiEzAxwiL0SnXPS57CLW8rR6XyB4/DP
-         gafkD25QaVRRLcpefK3X04WaePcyoqdexwtfx8vUU/+XxfqJYwQNgpfVKZiFp9JZ2pHo
-         FzeEEFmtCK8XPGhtLqvsPzABlrhlLfqJIKzM8DV855slCXYNAtlJ6i6i1xWXg6AKe7Bx
-         VJTnZxOuJ+vo1iPx7x3D4GD+Aypa1TrJoHgS+Yca3tHHm77oZZlerGsRuqmkTOvePU+n
-         AyTylbhFW2cxPH++EVNXPmG+Py8F1tf6i9lOvgkGSym4vVnnqwFF6mPDw40My8wkGQc1
-         ZmDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3z+C4QO1qZRzXQNdHJVKL/c4Wg9avId9vQ4UqDALVb5IB2Gy8mNP5N+GyT6Qkn8BzdGHqBXoEqorG@vger.kernel.org, AJvYcCUIXqbufP1uiq+IlS77gZb6yEllRJtTNAJjo6GWktByB37Ah645QRAF+0/mWUOey/71Ra2TV61y6eWwNJxFQJAuzSE=@vger.kernel.org, AJvYcCUsiJMb/X3Uk64crsjiGF/LahJWZRw0W80NC7XlNxEsTXWjYa5miIYzwhG6ym83G+fCDiItisPfx61Izt5N@vger.kernel.org, AJvYcCXTr4srh3bHDBNv4WRLa5KuzU1W0A8CpT9cRw+++MQmVPFs1VFGJLY2RRUPQs3CP5/wmRuAhmmdwTfr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4rHDHFIB8rsNHP+xm6qDLBtv4kl7xDds1ChRxS9RKcJitw3Sb
-	vbQJVZTMh3AOie9OXm6KVzNxvD505PN5qGPYdht7FC8+vDkUS6+8rFCLi/HW
-X-Gm-Gg: ASbGncu85MxmbeKIB4DsmtXTmiMB13g603CBgm+kyKRIjecGWInMdkudYuXjrVynADP
-	d3fZop0FS22A4f8GISc+RnvvJKS9T1Qt8MoETUD3X5L0VDwf3MivNsQpA6UGefcHXYQzIbhdQWn
-	xUTLdOT8+wBfh80qb5dBO7Qy76QyC57hdKUnV5Ov1Dg1ZC4Run7a3LvH0yzrsiuJPbJLvVGvHnh
-	KXz+wkhUyqff/ICGAeJiEhta8dnFzir7A64scXWXBWtw8GczFX2ryJ8olITtxwSCFDverSQlyvJ
-	mvFJR8CGZaDGTDIR
-X-Google-Smtp-Source: AGHT+IHueB9pq60ljnqj2PUmQ7dZ4hPGnGiC9wHluCJ2kJ+U1mDzAD4AH/GF3C8dv5OCjy1jXYI7bg==
-X-Received: by 2002:a05:6102:cd3:b0:4b1:1a3b:a62a with SMTP id ada2fe7eead31-4b1291a544fmr2457873137.26.1733920743716;
-        Wed, 11 Dec 2024 04:39:03 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c66b1ee44sm1031206241.11.2024.12.11.04.39.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 04:39:03 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4afed7b7d1bso1066583137.2;
-        Wed, 11 Dec 2024 04:39:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUiHLUp2Ouav7Zktn4o2xlTiC98V7kVPzz6AcMFNUlgd6IXOY/J+WfIIirzvL8f8OAflbF01exQunlp@vger.kernel.org, AJvYcCWDFglzv2N1VNajPCDNoCLEknVBTUQTrqFRZh/8Fesqu9Fu0V6CjeLYPanU6bXhNBIVGqISDWeFxPhp@vger.kernel.org, AJvYcCWDVDqjj74iutKZaApxQeq4C2EccCQZPxeYPprIJ/51djAU9dLqpjSUrIDBKYuBhEcyehrzya5Cn+mk+eE6@vger.kernel.org, AJvYcCXvf1MMPifHbVNvsxb3Ga1+N6y+ImkxBpoFJgGiq8v66ieKqJmHZyKdDJHb639DxBDkRvTjSc1CTlwyRmB/M/VOuNQ=@vger.kernel.org
-X-Received: by 2002:a05:6102:5125:b0:4b1:1def:3d10 with SMTP id
- ada2fe7eead31-4b12913b56cmr2358595137.19.1733920742652; Wed, 11 Dec 2024
- 04:39:02 -0800 (PST)
+	s=arc-20240116; t=1733920814; c=relaxed/simple;
+	bh=ISEDiDx58NfMq+G2quYCkJa03ldLg7tklPMLuoxVBBs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=TW0fHJSwGxKppiMA/LaJPftQu93KB6amsnFTJFfgviKiN8ru5+Gpo3jrPrH02Guf4mpZoeElXQ4rN/lKZRBQiyxXS89u+E+MUUOi70HIP6CunGbongxNzWhYKLIdmc6gefU3Znbl/hdYNcxQvj/L7rGUr7IIucmlRKDHTp3KGnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/czkwgQ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/czkwgQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F79CC4CED2;
+	Wed, 11 Dec 2024 12:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733920814;
+	bh=ISEDiDx58NfMq+G2quYCkJa03ldLg7tklPMLuoxVBBs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=u/czkwgQcm2SnRRAfLP5r9Tof6X9Yy/Z527vIp7J6bVe3SJExsdNf5a4Utml82FKP
+	 hC5mVsm1mbbTJPeJ99bwFuW31r4rdMCHb4FhEPYdHRqi+6s0x94+YoYvgcP97Hf5eg
+	 OjGzxNrWS4ZSAz+IjmyuKRH9aRgDGdyP8NGy9JO/srmrhU6zIbB0pr6uZvbb7Z5DWB
+	 OgPcOYaIDU6GMlbx2MnULpXALBW99DZyQBQbkTQvv5ZO7agaHgO5jnWNwGlmPb5HuN
+	 yo9/5DEZ93eBoWB+SmxJ2a6ohiVKZQM4ylSp5k4piCTFG71SORlax6P3XBO8Hejfbq
+	 mQn1VoUZuWDkw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 41964380A962;
+	Wed, 11 Dec 2024 12:40:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com> <20241210170953.2936724-20-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241210170953.2936724-20-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Dec 2024 13:38:51 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVPkq6SgQ4rQHf=_LeqhMP6fm_45mpfLUf8apuCoJCFSA@mail.gmail.com>
-Message-ID: <CAMuHMdVPkq6SgQ4rQHf=_LeqhMP6fm_45mpfLUf8apuCoJCFSA@mail.gmail.com>
-Subject: Re: [PATCH v4 19/24] ASoC: dt-bindings: renesas,rz-ssi: Document the
- Renesas RZ/G3S SoC
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
-	lgirdwood@gmail.com, broonie@kernel.org, magnus.damm@gmail.com, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: renesas: rswitch: enable only used MFWD
+ features
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173392083018.1562676.10619517710119884740.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Dec 2024 12:40:30 +0000
+References: <20241209062411.152927-1-nikita.yoush@cogentembedded.com>
+In-Reply-To: <20241209062411.152927-1-nikita.yoush@cogentembedded.com>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: yoshihiro.shimoda.uh@renesas.com, andrew@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ geert+renesas@glider.be, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ michael.dege@renesas.com, christian.mardmoeller@renesas.com,
+ dennis.ostermann@renesas.com
 
-On Tue, Dec 10, 2024 at 6:10=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The SSI IP variant present on the Renesas RZ/G3S SoC is similar to the
-> one found on the Renesas RZ/G2{UL, L, LC} SoCs. Add documentation for
-> it.
->
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hello:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Gr{oetje,eeting}s,
+On Mon,  9 Dec 2024 11:24:11 +0500 you wrote:
+> Currently, rswitch driver does not utilize most of MFWD forwarding
+> and processing features. It only uses port-based forwarding for ETHA
+> ports, and direct descriptor forwarding for GWCA port.
+> 
+> Update rswitch_fwd_init() to enable exactly that, and keep everything
+> else disabled.
+> 
+> [...]
 
-                        Geert
+Here is the summary with links:
+  - [net-next] net: renesas: rswitch: enable only used MFWD features
+    https://git.kernel.org/netdev/net-next/c/54d3970548bd
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
