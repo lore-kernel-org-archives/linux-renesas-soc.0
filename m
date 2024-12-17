@@ -1,112 +1,114 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49DB1D54E3;
-	Tue, 17 Dec 2024 05:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0460D83CC7
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Dec 2024 05:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734413560; cv=none; b=HB89/ZW9JzjhC9fTNjFG1hshYKhr7FY1zVdwW5FNBlgxbeb1rUgtkSVJGDaFjyVFEk8FE/PBlhQFJPbAbLZQ9wfoom252fAQMaLp7ojShUhW/M/LDT0BzLmp818I0lNnR8OLXzXwSklsbUldBSryMXFAsYOqdlJgeUXosWk5qK8=
+	t=1734415045; cv=none; b=GCIpHacdlfcSsLeI081xPrZ+ISwhEv/X4+PpHnnyof90gWglr/H6Fp6YDCvUQQwYrttTm9kpy103Of5093t8wPlj7Jsnb8TexHDEPMRDU9cfa8nvHeYYHBjEGupIHfKq+m/G9DpAkOMcPtTrgDTsVfeyH5+BFl32RO6J7zs653s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734413560; c=relaxed/simple;
-	bh=47sDiubgqaQkaDbcosAByaG1Ni6cOzGOKnQlTVO76og=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hIqHTmFX0a+nNvhXbae9WX7/9yKXpj2cAwGoRlbXMaLzJleoPhudcKLIpuAtc3jWvzy9D+Im7zZbXvJo99gTChfa4tvjWzBcw2B1EU5YT594pIYSJDslfq9v5A4MFYtZIgrGy2NX+GLW1TQdUGt52AQI3P1ic49fxc2SR4h/AlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=T4ZFC3Ps; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1734415045; c=relaxed/simple;
+	bh=yWkvKPPV/ze/7mn7+IE+lAOxYJSRUtwgKXwbbYbg4Gc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJbtn3MekXsYOtD1EWK4MHGfjVJH1LMtOpsA22g00HW9rN3kGx+cYJ5k5mVFleUEe1gjHetlyFhWpqd12PniKyG/r7rAOwg1IV0rTeVkVjYMePGtUO59p4RDvioiptyI1mc8V1JpvKAHZSZ0q8hPmA7Zz9fLDFPh6B44XR+3xnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=M32O1Ls2; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T4ZFC3Ps"
-Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 562CC55;
-	Tue, 17 Dec 2024 06:31:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734413516;
-	bh=47sDiubgqaQkaDbcosAByaG1Ni6cOzGOKnQlTVO76og=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=T4ZFC3PsTYJd0oxdmEB2iEdEgxcrrosy2D4E7TVzm48hbM8SbG0f23LqlBQIfe4D4
-	 P8jWyUJ18M1Rs+EUaRyMTR7U6/sMspMDTp0KyjQut2j89VTWiK3UhRcdRSwxu1SsG4
-	 VcDfS5eqhFGyOG9PZ1m1h8EpUxE/MWA0KPOTBLPc=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Tue, 17 Dec 2024 07:31:40 +0200
-Subject: [PATCH v5 6/7] drm/rcar-du: dsi: Add r8a779h0 support
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="M32O1Ls2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=yWkv
+	KPPV/ze/7mn7+IE+lAOxYJSRUtwgKXwbbYbg4Gc=; b=M32O1Ls2cyomHp77l8EL
+	WDo8FG0UrBV6rkt4NPe+jj6HkSylkymnrB25HPA4gFMTVs9BVCknchpKUt2M/tNn
+	za85bkT6vjznTrttD/i82BTP690F/uu00p6GXetVOjRYsbuXg2PmdpvpNTK7VYLH
+	rPly4v1jCI1c9BMDkI/nmB/G8MXu2qh+Gzqy+JvWGxLLgg6cEW2HsCLGamWKgQ1o
+	kXE+r70odc3lRGYqL8SStUjR45ctFb+pCRsWW4ey/Gg+6ClP/DQr/VYIbJiXt20P
+	H816hdSBHVuNPjonsiNIIpBQTP02M80FXOynnb0X31D40BOtTnJPWXiC1LiHQNqM
+	Kw==
+Received: (qmail 3963030 invoked from network); 17 Dec 2024 06:57:11 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Dec 2024 06:57:11 +0100
+X-UD-Smtp-Session: l3s3148p1@/3LP93ApoqIgAQnoAGvhANJNcnpwwj5L
+Date: Tue, 17 Dec 2024 06:57:10 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [RFC PATCH 1/2] bitops: add generic parity calculation for u8
+Message-ID: <Z2ESttIzF4kX7JA-@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com>
+ <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
+ <Z2Dg6ydwN6CfxgTe@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-rcar-gh-dsi-v5-6-e77421093c05@ideasonboard.com>
-References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-In-Reply-To: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-clk@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1132;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=dOcoxtMfzjVQWbNdCVgHPfsgULtxlauUf/dbpEGcHa8=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnYQzk76RXTNsgekr9Z29j8YIdp9ab9gkeRLB6c
- XMH1nfMASSJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ2EM5AAKCRD6PaqMvJYe
- 9WuOD/93Mj5teiUnCSzU7gfu+YPsrcWv7fDZsbCaMm0utaX1X53evehI1enUxHjIZc056Lbq+Xf
- K5AnvhMieZbOsV8kTaRg3XDS43wbYoG65fCOC2KoR1Culprny+ett3k/6/zPga21boDqAnEzCFa
- JVZbiEfdUKy63ViLtQMhRYlQg94u/GCkxxA/HswHrOja5n7QG5wV04+PJizsXVJHcBvMo750//4
- Nuo1ycxlWtrx0vepS1xypdX5P37iQKwpjiXEpsVavt7EWCGx0WAA6KeHOGmPJ4Ms5uoj5L87/me
- XRL446Z1f2wUpV6BEtzGSiVaEYoLgyGWMYHP1fepSmyqLlIGSaNJT/AMz9pc6bFTG/w255BV63B
- O1Ha7FuVOylVFTPgvDhjAFH62JE7Ki/Xw5ef4JO0dqcwHIT59Gzlnb0VvpRndyFnW5xQfC5DB/Z
- vXO+eBZst5lLd08OVg8wTobBKYWZibnw0fJ8hY4obf8RPZroEucu8sfpEDMjFK4CszuoCGM564s
- DQq8fgl8CdX7K2kr82MY1P3Ht5hrWiONfirPQimPskum5CguKOzh+m/UULjI5+obOfGoMQhlK5i
- HzdlAyLzbZf7s7PPk1bRNImhPQvKBw5rOWG99Iui646v/yyYg/NaScUjvNyxlaTu30jsdUOKRFL
- iJ1gj/uF87ISRUg==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yZvFp6W1xzXD/xL8"
+Content-Disposition: inline
+In-Reply-To: <Z2Dg6ydwN6CfxgTe@yury-ThinkPad>
 
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Add support for DSI on r8a779h0. As it is identical to DSI on r8a779g0,
-all we need is to handle the compatible string.
+--yZvFp6W1xzXD/xL8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, Dec 16, 2024 at 06:24:43PM -0800, Yury Norov wrote:
+> On Sat, Dec 14, 2024 at 09:58:31AM +0100, Wolfram Sang wrote:
+> > There are multiple open coded implementations for getting the parity of
+> > a byte in the kernel, even using different approaches. Take the pretty
+> > efficient version from SPD5118 driver and make it generally available by
+> > putting it into the bitops header. As long as there is just one parity
+> > calculation helper, the creation of a distinct 'parity.h' header was
+> > discarded. Also, the usage of hweight8() for architectures having a
+> > popcnt instruction is postponed until a use case within hot paths is
+> > desired. The motivation for this patch is the frequent use of odd parity
+> > in the I3C specification and to simplify drivers there.
+> >=20
+> > Changes compared to the original SPD5118 version are the addition of
+> > kernel documentation, switching the return type from bool to int, and
+> > renaming the argument of the function.
+> >=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Acked-by: Yury Norov <yury.norov@gmail.com>
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-index 92f4261305bd..36e902601f84 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-@@ -1081,6 +1081,8 @@ static const struct rcar_mipi_dsi_device_info v4h_data = {
- static const struct of_device_id rcar_mipi_dsi_of_table[] = {
- 	{ .compatible = "renesas,r8a779a0-dsi-csi2-tx", .data = &v3u_data },
- 	{ .compatible = "renesas,r8a779g0-dsi-csi2-tx", .data = &v4h_data },
-+	/* DSI in r8a779h0 is identical to r8a779g0 */
-+	{ .compatible = "renesas,r8a779h0-dsi-csi2-tx", .data = &v4h_data },
- 	{ }
- };
- 
+Cool, thank you!
 
--- 
-2.43.0
+> Would you like me to move this patch in bitmap-for-next?
 
+I hope that both patches can be applied in one go to avoid a dependency.
+I'd think the hwmon-tree is a tad more suitable, but I am also fine with
+bitmap as long as both patches go in. What do you maintainers thing?
+
+
+--yZvFp6W1xzXD/xL8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdhErIACgkQFA3kzBSg
+KbYj9xAAkJ1bWQzXu33Jsvjilcx+g2gaXpmFCYiBw6wGM9uuEKeMgV6fW6WOdylA
++N7nrxUf6iYieXakIgn/yzhQTS4CmwWd+XsTuPDLRPWRtC8CXGL6tj+ezp70Fthb
+aNM9yt3SzWuTVMoUxloAKDzRUTsuIOVmcx5offoXrWMdaN7XhfcEGPx1M8Q1G7Go
+k3NVT6rJfeEP/r7TpOxLtIXbkrfEWKVRsOcuUSG0KZI0n1u46qI/auSCfYTh7scZ
+2+u+82AiFArDZIpQiVzjAqF8UZ1mNNBQf7qJmSdz22XP/4jSn6MdJKPn+/aUQSHB
+OdsQ92qwFa33yFuoIXMtSH8p66CYt+PoNzmcmGMM0B9/q6j2kOn0FC/sJzNAZZ3b
+WsmDh9u2Z9/Wh3QQ/MuDhkKjHqiaK2i0a0joAU75/HR8Tg6FU6INSHjn9NUYudc/
+57HPHJ1vYf5XDxPMsBnSO6vXDv3xFHY32ZtI7+xXF3CjBd+l+2ftVu5bJBTlPvx1
+3WqRcvCxzWUpBl/511CYxY9RfbWcSg/heH0fJdPyO95xs1U0cwwFqY3NZZlQsN+X
+Dljnvxg2fptjH8fFHu27k4rnB9/Gnex1yHNknGdRIs7dSUepxlqorXifJBtvSsUu
+o3ZjvrpBbG6radSHEAic3FpkiafarN4o2U3HXh2fWH0TDtkLAz4=
+=3RK6
+-----END PGP SIGNATURE-----
+
+--yZvFp6W1xzXD/xL8--
