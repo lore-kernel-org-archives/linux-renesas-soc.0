@@ -1,41 +1,46 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA6A5FDA7
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Dec 2024 22:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBC71C9DF0
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Dec 2024 22:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734645839; cv=none; b=Xgm5rd0WI1DI5/ETSYIWx7mspeqV+PXs+IgZ8CrYz/alAuBib/nMnbURB0rz7MPli1RLP0WdmNSah0nsZq8bYZzVnYquwuZ8ya4n079HqEFpy5O8aWM3w09kz3FL+kQpzpQg1Q3Iv8H7k1oa4o9NgI4avBhYbiggd2TEiaUzhZ0=
+	t=1734648953; cv=none; b=oVmnZg/ewcn5F8gTHPViJ0PnnUT8kouLnrfqKfk+hSuv9EwGL2jNRr1JFpUsZU6ODim47BeiRAslrEseqQLo5noF6VKbgbX1gMatFIK2stOBywxLuNA60QgFKatNWsLxRs01Zd0+rgzCNF29TzFnOMPeHcxo7o07FQI4L1dbYbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734645839; c=relaxed/simple;
-	bh=W9yFxASL8AEAI5SDdxKIXjq075hBSqK88HgarWHVoNg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uXwuzO6sdDYwBfz4EKCJH70sBfR1ouCIaPE4frXQk9OnxQq98WRKyqLSyElARmSyvwgmST+nrgiuyIaozBMYyYxpWa1LckueMIrO8XJD2DbOBaw2CU9RLJbrVegH5lvhtgySWLMbYkRKH6DIeus1HSoP/trCFeZJ5ky5WySPchs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WVbnNipw; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1734648953; c=relaxed/simple;
+	bh=fRaBiCoerYtSXXFqhmhM8BO1GEchg6Xp0E+QB3DJQ7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UXFdpe76jknaKuzPXAw/V6a30wsXAUdumdpWa/T6Jm9n4AYZYlPnXcaLM19EnPzIeMqiiNhKWg23cxbZqubZb2MaR0enyTKyb9ExtBNHEPXMv+mB1i0pV0MPRYLiNNEHSiMsM+hRBrCmBzadqfQLdC+vhs648pQ8vIKQIdIfu2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=MgBBkrgO; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WVbnNipw"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MgBBkrgO"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=uGlTtA8dfC0JBT
-	3H+WliQ5pXLzrJZXTAJT9PHkh9Nqk=; b=WVbnNipwPfikfuDVlTNUUNpzkhhDK8
-	PWIwVm5z3Irso3gkLN6fobFbuI8lqyCRcK0EzwNa4VA/DykrrYIaDVP7h9nTJbMk
-	ZMnLjye/1RIkXnCv5mkip2hWlPGMbgGIEm+hPBzEpkxtF2d7YM9Di6qEqslBPelU
-	p0WGy57TnOCK9TxkxRxldBS5Aj6ip4HjsqdbILV+seBc3Vmn6UvtCUuyzM6AUasG
-	hiNrefy3hOJVljbqUUFFsRAi/9kCXpo8cUytoyfC6C5aWnsTJ/nK+ZnBt+Uhe9kr
-	hI/1rzoNR97aRr9wOZ4B5Ioq90reFCB7G5jt1oXdB4iJz7WSat0ojfkQ==
-Received: (qmail 817637 invoked from network); 19 Dec 2024 23:03:48 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Dec 2024 23:03:48 +0100
-X-UD-Smtp-Session: l3s3148p1@oRNktKYpUOYujnsY
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=PltsfRgtPshB11QnLxkk5tBvWzyj5OepdzLg0lgkrMg=; b=MgBBkr
+	gOafqD55q41NXV3mUTZ2ktb7zze4pdzooD21gDjZ2i70dsPq/AWa6RDrHy6rFLEj
+	T23rchTdUAzXNpQg4lFVPlzpuSyc5G5HbuMW+Vi7G/7FNCds1NrIkk6u9+oajBqh
+	T70wRmJvkAVf71G/G2EExzC/mP1Ykv/xyHsWyLYlydDr0jO598tBJN1PukT/QaVj
+	8FRHUowzH//pAn5On1LtSiZl0dS8B7jm7ua24tful/qd7LkOfVps/G06U+QgSVKC
+	cL2+02qMmriS+5Lkllc0gLpoZw1noRTu51DwqKiTjLmC0cFT2Vi2JAHbGvDwPM2R
+	r4F+OG2pQWqxbEDw==
+Received: (qmail 826593 invoked from network); 19 Dec 2024 23:55:48 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Dec 2024 23:55:48 +0100
+X-UD-Smtp-Session: l3s3148p1@X1Rhbqcp+KgujnsY
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-i3c@lists.infradead.org
-Subject: [PATCH] i3c: fix kdoc parameter description for module_i3c_i2c_driver()
-Date: Thu, 19 Dec 2024 23:03:37 +0100
-Message-Id: <20241219220338.10315-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.39.2
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org
+Subject: [RFC PATCH 1/5] hwmon: (lm75) simplify lm75_write_config()
+Date: Thu, 19 Dec 2024 23:55:23 +0100
+Message-ID: <20241219225522.3490-8-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241219225522.3490-7-wsa+renesas@sang-engineering.com>
+References: <20241219225522.3490-7-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,26 +49,40 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A typo mentioned I3C when it should have been I2C.
+After previous refactoring, it is now possible to make
+lm75_write_config() a simple inline function.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- include/linux/i3c/device.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/lm75.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/i3c/device.h b/include/linux/i3c/device.h
-index 0a8a44ac2f02..b674f64d0822 100644
---- a/include/linux/i3c/device.h
-+++ b/include/linux/i3c/device.h
-@@ -283,7 +283,7 @@ static inline void i3c_i2c_driver_unregister(struct i3c_driver *i3cdrv,
-  * module_i3c_i2c_driver() - Register a module providing an I3C and an I2C
-  *			     driver
-  * @__i3cdrv: the I3C driver to register
-- * @__i2cdrv: the I3C driver to register
-+ * @__i2cdrv: the I2C driver to register
-  *
-  * Provide generic init/exit functions that simply register/unregister an I3C
-  * and an I2C driver.
+diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
+index b8889392d5da..b03e760cf3a1 100644
+--- a/drivers/hwmon/lm75.c
++++ b/drivers/hwmon/lm75.c
+@@ -340,17 +340,11 @@ static inline long lm75_reg_to_mc(s16 temp, u8 resolution)
+ 	return ((temp >> (16 - resolution)) * 1000) >> (resolution - 8);
+ }
+ 
+-static int lm75_write_config(struct lm75_data *data, u16 set_mask,
+-			     u16 clr_mask)
++static inline int lm75_write_config(struct lm75_data *data, u16 set_mask,
++				    u16 clr_mask)
+ {
+-	int err;
+-
+-	err = regmap_update_bits(data->regmap, LM75_REG_CONF,
+-				 clr_mask | LM75_SHUTDOWN, set_mask);
+-	if (err)
+-		return err;
+-
+-	return 0;
++	return regmap_update_bits(data->regmap, LM75_REG_CONF,
++				  clr_mask | LM75_SHUTDOWN, set_mask);
+ }
+ 
+ static irqreturn_t lm75_alarm_handler(int irq, void *private)
 -- 
-2.39.2
+2.45.2
 
