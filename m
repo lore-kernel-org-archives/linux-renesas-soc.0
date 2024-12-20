@@ -1,44 +1,43 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC6E1C5CDC
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Dec 2024 11:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817ED1C5F03
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Dec 2024 11:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734694231; cv=none; b=fhSwl25KPcZf1A2skszb4HPd2LPRSVv8TcLJP2VlnJhAIdQb9SMYmpRjZqTc94KlIVthetqYeP8P3fdNSLN0PBnb2wHXoJCbaw3hFkU7ZxtE8/nLXBovusLNNHOM2FcJenQacipZaiuAPF3Tcp4BzacbBGkCYTfwrQj8W/gd3Z8=
+	t=1734694231; cv=none; b=ub26slQMZtq1iRhU3DYLKnS4opHpv4ENPAl9M4g3wrU6Yopp4OPete3hq5EDVI/HBpvLHgWNstgVu7iSdf350UyXOwh9BahjSc75/s0vIJaPlKS/es6bmrXPqOkOlQgbJgE0l4FCq8eUnp6aan1CIo4f/PofCoTUvbjSZG76NmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734694231; c=relaxed/simple;
-	bh=nuc0RZ7/2GFIN6GG8WZzbZFnq0y+SsYQBbRS2ZzaVq4=;
+	bh=+r130rckWcX6jYdn+Ln3jDvzy6JOxhEl+3WKkuSt1qw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Wf6UaK8i3vXStU9JiP/zlUba6Axs6OIZORwjG1P9hujkuUXhWa95J+VFj2k/XSHQcTkiTPTJ+gxxD5Ew1b7D3XUbCNiwF2x4sZzAK6nHx4fO9aIV7lAVzaHov5XqbGDURlWS8CFyECkQtJcI4Zdrf2ySY1BnRFUn1xneB/ZIQBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Rfb4poHg; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=n/lJXNIRgBQJexpAZC7tB39rFXXEnRrNg5MiWEbyjkeVNFwXgOjRKTdCfzATIPUPPbKSoHs1VYnrwtF1g7hlaC2NpMwuk+NFsfzS2KwyJ4tOqsiu9w9krgrDvusfPoUDNWjGHkqqahAxZkbu6TTCyvdhrtAxtXV+5voo9zY0tFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=kwlhKMAN; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Rfb4poHg"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="kwlhKMAN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=rsDE8URaHTqtvoHB8Si3sxcYn73y38+s7yQFTYbHb2I=; b=Rfb4po
-	HgqpyesKVuDDivS2ZFzUzRwZK7+gL8A5R6A6xlwpQ6wO5eid5OpOVKmeuteAdAl3
-	Sg9fLQ+khYWj8Q3wWPByxRFDBN5B3Npg7pAo+KTFkxgjFY5fmJXfXx72bPPVG/Kg
-	T+d8/T4ORf2/PtY+mNYgA2oHQ38RpqjBxrBT03witTgpNw4y2xJRENMuDv5Wky3E
-	spD/IaJAr/j0iLFYkle6O7IVQiJJIFcYL+Etv/YZEhREjqjTEq4ktJ8p3LgphRkJ
-	2WY4UP07xLe/3PG9Dkdx7rTNxaOm6ROoB5wJK80/exqzLJsWfFU4JHXKvW+uOYPh
-	iIO6DsADxkxy5T3g==
-Received: (qmail 989817 invoked from network); 20 Dec 2024 12:30:22 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Dec 2024 12:30:22 +0100
-X-UD-Smtp-Session: l3s3148p1@I5Pi+LEpFp8ujnsY
+	 s=k1; bh=JTVYffu7bObqCnm7BryRbyhmBYXN9UAwW1f5OWePOno=; b=kwlhKM
+	AN3DbBvDjh703OIGKen6f2vvMi0WWJR+pV3xIf5N3tjLc9GN9hrflnww6AKhLtR3
+	tuhnlxFnb0DP2HEe/ikJMnYxuSCZNYnpEZiro5fm1+goDLf7Lqt8xypxv08XWBeD
+	b1XMWwe/3ktGrHppyVnBW+MI0ysPYkJ43l68koEe2dJkHfqzV0d/hO93Rtsa3AaW
+	GSWPE23CNwgiLT/F33nTB4oSTuuWRnr/PEJmFN+ZXjwfixpXwobiOi+RjVEDyGrL
+	voVKiW2CXx1KRcO7AmEzxkqOScfV9Gr/xipmdPj9nQB3PLk7mWknVJQ+j7QzVrA2
+	pKn7FyPtdx3tf85g==
+Received: (qmail 989755 invoked from network); 20 Dec 2024 12:30:20 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Dec 2024 12:30:20 +0100
+X-UD-Smtp-Session: l3s3148p1@NOjP+LEpDJ8ujnsY
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Yury Norov <yury.norov@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Przemys=C5=82aw=20Gaj?= <pgaj@cadence.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	linux-i3c@lists.infradead.org
-Subject: [PATCH RFT 5/5] i3c: cdns: use get_parity8 helper instead of open coding it
-Date: Fri, 20 Dec 2024 12:29:59 +0100
-Message-Id: <20241220113000.17537-6-wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT 3/5] i3c: dw: use get_parity8 helper instead of open coding it
+Date: Fri, 20 Dec 2024 12:29:57 +0100
+Message-Id: <20241220113000.17537-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241220113000.17537-1-wsa+renesas@sang-engineering.com>
 References: <20241220113000.17537-1-wsa+renesas@sang-engineering.com>
@@ -55,26 +54,49 @@ understand semantics. Make use of it.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+ drivers/i3c/master/dw-i3c-master.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-Can't the '& 0x7f' be left out here?
-
- drivers/i3c/master/i3c-master-cdns.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
-index 06c0592487d3..abeef6f70b53 100644
---- a/drivers/i3c/master/i3c-master-cdns.c
-+++ b/drivers/i3c/master/i3c-master-cdns.c
-@@ -889,8 +889,7 @@ static u32 prepare_rr0_dev_address(u32 addr)
- 	ret |= (addr & GENMASK(9, 7)) << 6;
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index d4b80eb8cecd..a6d7fade5007 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -251,14 +251,6 @@ struct dw_i3c_i2c_dev_data {
+ 	struct i3c_generic_ibi_pool *ibi_pool;
+ };
  
- 	/* RR0[0] = ~XOR(addr[6:0]) */
--	if (!(hweight8(addr & 0x7f) & 1))
--		ret |= 1;
-+	ret |= get_parity8(addr & 0x7f) ? 0 : BIT(0);
+-static u8 even_parity(u8 p)
+-{
+-	p ^= p >> 4;
+-	p &= 0xf;
+-
+-	return (0x9669 >> p) & 1;
+-}
+-
+ static bool dw_i3c_master_supports_ccc_cmd(struct i3c_master_controller *m,
+ 					   const struct i3c_ccc_cmd *cmd)
+ {
+@@ -848,7 +840,7 @@ static int dw_i3c_master_daa(struct i3c_master_controller *m)
+ 	struct dw_i3c_xfer *xfer;
+ 	struct dw_i3c_cmd *cmd;
+ 	u32 olddevs, newdevs;
+-	u8 p, last_addr = 0;
++	u8 last_addr = 0;
+ 	int ret, pos;
  
- 	return ret;
- }
+ 	ret = pm_runtime_resume_and_get(master->dev);
+@@ -873,9 +865,9 @@ static int dw_i3c_master_daa(struct i3c_master_controller *m)
+ 		}
+ 
+ 		master->devs[pos].addr = ret;
+-		p = even_parity(ret);
+ 		last_addr = ret;
+-		ret |= (p << 7);
++
++		ret |= get_parity8(ret) ? 0 : BIT(7);
+ 
+ 		writel(DEV_ADDR_TABLE_DYNAMIC_ADDR(ret),
+ 		       master->regs +
 -- 
 2.39.2
 
