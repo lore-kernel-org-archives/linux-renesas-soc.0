@@ -1,40 +1,38 @@
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57A71B392C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Dec 2024 10:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62CE19F41C
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Dec 2024 10:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734690660; cv=none; b=ov0Zv5xiyta4MafVDGFdXMH1fEtpdBVciGPm9AiK256XrS8iRwNjGf/aWefsudlbw0mJzlSKaJH2TRnMkB0uxvS0HC9RzjA3xcFcNWopTM8pF1fJbjlL6UsGx5lYskAELUsSzabquW5IUQdk4NekNQwkHanzXB+VrEhBdyaB/K0=
+	t=1734690661; cv=none; b=QaaonE2CuRaZ24Cl4diYSo8uwD8Uh7k/zQQAvwhkttGG6WmcNKdJzkDZWYMZRJ4cj99XomRPy1INyS3rJ60AKZoqLQ0KG5BFUVRRpX3NAfMlUceinDCnFE0klGnFhzlkhPTTAXf1B4d+4OVxd46LpIz369ZvMTEtG632QuqgeMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734690660; c=relaxed/simple;
-	bh=I6iLdSW1Gwmw1A2qxjhBIVnsmW575NIgE1U82sKhDb0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rz4DSFJT+Km14Q0JhjR9efsa7qgmuDhMAxcFJdoTydcP0kZl0FM6zu2jmMooxlOvbfQd4aU6E3Y/SmmLQDVIcI4VCQ7PIDVAh80cEIS2UZm1hFFqLaKBoRfQkGapz97syBTbthnTc5mThYg2/9SpfslnANiATPYbqtWCsxwi2Do=
+	s=arc-20240116; t=1734690661; c=relaxed/simple;
+	bh=qIe+lColQq+8aCZKpPrUPx8KcreNFTRmVQQgi4TRyOo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VhTjYtMfwC/XWiCuc5vw84ndpENEc5oMYCrlWd92vNvO0t3kvxSmRdb1zwQPXFoF2SUPb3Fzpex4AeGQCWhnHaCyGcTITH6sXa8VphOcSj2iDVZct23UiI+Uolgix6StGXBWkVMm2LXbQdCX/rc/xgBw6Uk5yPQ+FhhitdIEbg0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:7a4e:e361:29f2:181c])
 	by baptiste.telenet-ops.be with cmsmtp
-	id qyWq2D00X5V3mYk01yWqKA; Fri, 20 Dec 2024 11:30:51 +0100
+	id qyWq2D00B5V3mYk01yWqK1; Fri, 20 Dec 2024 11:30:50 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tOaHN-001s3r-LJ;
+	id 1tOaHN-001s3a-2f;
 	Fri, 20 Dec 2024 11:30:50 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tOaFY-000gN8-Di;
-	Fri, 20 Dec 2024 11:28:52 +0100
+	id 1tOaG3-000gOf-0c;
+	Fri, 20 Dec 2024 11:29:23 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: soc@lists.linux.dev,
-	soc <soc@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/3] Renesas SoC updates for v6.14
-Date: Fri, 20 Dec 2024 11:28:44 +0100
-Message-Id: <cover.1734689797.git.geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: renesas: Updates for v6.14
+Date: Fri, 20 Dec 2024 11:29:18 +0100
+Message-Id: <cover.1734690011.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -44,45 +42,33 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi SoC folks,
+	Hi Linus,
 
-This is my first pull request for the inclusion of Renesas SoC updates
-for v6.14.
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
-It consists of 3 parts:
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 
-  [GIT PULL 1/3] Renesas ARM defconfig updates for v6.14
+are available in the Git repository at:
 
-    - Enable Watchdog support for the RZ/V2H(P) SoC and the RZ/V2H EVK
-      board in the ARM64 defconfig,
-    - Refresh shmobile_defconfig for v6.13-rc1,
-    - Enable support for the Renesas RZ/G3E (R9A09G047) SoC in the ARM64
-      defconfig.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v6.14-tag1
 
-  [GIT PULL 2/3] Renesas driver updates for v6.14
+for you to fetch changes up to 03fc60cd8e7b7e6f330d0a48c54545740addd9d8:
 
-    - Initial support for the Renesas RZ/G3E (R9A09G047) SoC.
+  pinctrl: renesas: rzg2l: Add audio clock pins on RZ/G3S (2024-12-20 10:58:46 +0100)
 
-  [GIT PULL 3/3] Renesas DTS updates for v6.14
+----------------------------------------------------------------
+pinctrl: renesas: Updates for v6.14
 
-    - Add more serial (SCIF), power monitor, ADC, and sound support for
-      the RZ/G3S SoC and the RZ/G3S SMARC SoM and development board,
-    - Add support for the R-Car V4H ES3.0 (R8A779G3) SoC on the White Hawk
-      Single development board,
-    - Add display support for the R-Car V4M SoC and the Gray Hawk Single
-      development board,
-    - Add video capture support for the Gray Hawk Single development
-      board,
-    - Add initial support for the RZ/G3E (R9A09G047) SoC and the RZ/G3E
-      SMARC SoM and Carrier-II EVK development board,
-    - Add support for 5-port MATEnet on the Falcon Ethernet sub-board,
-    - Miscellaneous fixes and improvements.
-
-Note that the third part includes DT bindings and binding definitions
-for the RZ/G3E SoC, which are shared by DT source files and the clock
-driver.
+  - Add audio clock pin support for the RZ/G3S SoC.
 
 Thanks for pulling!
+
+----------------------------------------------------------------
+Claudiu Beznea (1):
+      pinctrl: renesas: rzg2l: Add audio clock pins on RZ/G3S
+
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 Gr{oetje,eeting}s,
 
