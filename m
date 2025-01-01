@@ -1,24 +1,24 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FCD1854;
-	Wed,  1 Jan 2025 16:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D489163D;
+	Wed,  1 Jan 2025 16:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735749272; cv=none; b=kWcZjYWFOPVzUUOPWApxkcmCVrPT0HgVP76dHB1lxMo44H4Ewgp1mdX5EghBYwi1U4mw5fUlHmprSS79ZYoSphUpdGKrR/1sEbBhzDOflsLwFP12s59M2o8dHrco0D5pwCD+T1F1IxVtMe2sN8oUPYQL2J0xQVOuQ9dP/zGe7do=
+	t=1735749566; cv=none; b=QiCM4hTMSSXtJrB+9+DvL0mjZdhBxQKq4t/xK2EVDuI2vxak7/REJFClQXrJUTsgAh+YrL4NfeBV4V8vMFxlwb/+fe3XW74WXZCS2JyBxtjChUIxxPrbPbRJ13bJ4n0RZchz0M/s4mTvw0AtXZcdDZVNotw/tqNjuHFkJ9FxwUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735749272; c=relaxed/simple;
-	bh=W/e4htr/3OTwn1h55S4V1UPq/N97BFKGOw5vRfOg+ow=;
+	s=arc-20240116; t=1735749566; c=relaxed/simple;
+	bh=SZPWdvjzSR5Gjrhdof7jrAfgyq9F7GKZ3srx+60M37w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BusBzpqDrGUxDtmE9TwFe9qmYwZ8jT7mWrd5tboxNSI41goDWDfzmH8HvbmCu/YaUSf1P699l5bKmlhp66Wn6TfzhifuLy9mUyB6BRQuSOF+0Ls9osSgqVdg18Lsg4r/Bu+z3SZcpG/K2hqJJRsQRxlNZon6d1BXTLyVjViVuhA=
+	 MIME-Version; b=Tne4at+JcFZ9QwS9ZuqBdxWb/Vo6JL+CSGMSiNUJakB/AAZy0ODUFTFDuUI6rO05r5r9lT+vJmMxLRz7OiBepG3+PHM70MMBjzLwk12HPIADB1/JwdrSifrlv3jmiVFAz30OPVCA10jIr1NXffzM4G4tCqYabk5moRQbgLEChpg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: VFhNedirSpavQdxJM9ervw==
-X-CSE-MsgGUID: 9j0ecfesTDKGDRTA3b15aA==
+X-CSE-ConnectionGUID: aSrp/3oQRDyTPHdOSOeH+A==
+X-CSE-MsgGUID: 3ML1KrSJTuujTV76CI1fNA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Jan 2025 01:34:29 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Jan 2025 01:34:13 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.21])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 638884026B1F;
-	Thu,  2 Jan 2025 01:34:19 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D94244026B15;
+	Thu,  2 Jan 2025 01:34:02 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: john.madieu.xa@bp.renesas.com
 Cc: biju.das.jz@bp.renesas.com,
@@ -32,13 +32,12 @@ Cc: biju.das.jz@bp.renesas.com,
 	linux-renesas-soc@vger.kernel.org,
 	magnus.damm@gmail.com,
 	robh@kernel.org
-Subject: [PATCH v2 4/4] arm64: dts: renesas: r9a09g047: add sys node
-Date: Wed,  1 Jan 2025 17:33:44 +0100
-Message-ID: <20250101163344.128139-5-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v2 0/4] soc: renesas: Add system controller support for RZ/G3E SoC
+Date: Wed,  1 Jan 2025 17:33:40 +0100
+Message-ID: <20250101163344.128139-1-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250101163344.128139-1-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
 References: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
- <20250101163344.128139-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -47,31 +46,56 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add system controller node to RZ/G3E (R9A09G047) SoC DTSI.
+This patch series adds support for the RZ/G3E system controller and extends
+the existing RZ/V2H(P) system controller to support syscon. The RZ/G3E
+system controller allows detecting various SoC features like core count,
+NPU availability, and CA55 PLL configuration.
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Changes in v2:
+- Fixed code style issues in rz-sysc.c and r9a09g047-sysc.c
+- Fixed device tree documentation, getting rid of syscon compatible string
+- Handled non signal-aware readable/writeable regmap callback
+- Consolidated common code between RZ/V2H and RZ/G3E drivers
+- Moved SoC ID detection from the compatible string fix into a new patch
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index b73daf43683f..e87521cf9a0b 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -162,6 +162,13 @@ cpg: clock-controller@10420000 {
- 			#power-domain-cells = <0>;
- 		};
- 
-+		sys: system-controller@10430000 {
-+			compatible = "renesas,r9a09g047-sys";
-+			reg = <0 0x10430000 0 0x10000>;
-+			clocks = <&cpg CPG_CORE R9A09G047_SYS_0_PCLK>;
-+			resets = <&cpg 0x30>;
-+		};
-+
- 		ostm0: timer@11800000 {
- 			compatible = "renesas,r9a09g047-ostm", "renesas,ostm";
- 			reg = <0x0 0x11800000 0x0 0x1000>;
+Key features:
+- Syscon support for both RZ/V2H and RZ/G3E system controllers
+- Detection of quad/dual core configuration
+- Detection of Ethos-U55 NPU presence
+- Validation of CA55 PLL frequency setting
+- SoC-specific extended identification through callbacks
+
+This patch series depends upon [1], [2], and [3].
+
+Tested:
+- Example of SoC detection:
+[    0.065608] renesas-rz-sysc 10430000.system-controller: Detected Renesas 
+Quad Core RZ/G3E r9a09g047 Rev 0  with Ethos-U55
+
+- Example of PLL misconfiguration warning:
+[    0.065616] renesas-rz-sysc 10430000.system-controller: CA55 PLL is not 
+set to 1.7GHz
+
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=914097
+[2] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=912455
+[3] https://lore.kernel.org/lkml/Z2HTAJmBeIUlWysh@google.com/T/
+
+John Madieu (4):
+  dt-bindings: soc: renesas: Add RZ/G3E variant SYS bindings
+  soc: renesas: rz-sysc: Fix SoC ID string extraction
+  soc: renesas: rz-sysc: Add support for RZ/G3E family
+  arm64: dts: renesas: r9a09g047: add sys node
+
+ .../soc/renesas/renesas,r9a09g057-sys.yaml    |  5 +-
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  7 ++
+ drivers/soc/renesas/Kconfig                   |  6 ++
+ drivers/soc/renesas/Makefile                  |  1 +
+ drivers/soc/renesas/r9a09g047-sysc.c          | 73 +++++++++++++++++++
+ drivers/soc/renesas/rz-sysc.c                 | 24 +++++-
+ drivers/soc/renesas/rz-sysc.h                 |  6 ++
+ 7 files changed, 118 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/soc/renesas/r9a09g047-sysc.c
+
 -- 
 2.25.1
 
