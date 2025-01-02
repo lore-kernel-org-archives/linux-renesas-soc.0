@@ -1,148 +1,105 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F603209;
-	Thu,  2 Jan 2025 08:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E8217996
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  2 Jan 2025 09:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735808023; cv=none; b=LZ54Sen4TVISZUYxfL8f/cJ/AhADLcGptLHWVjSD1CQEe7E63Az5bNSmO7gDM04xAZHuoQV1mPz0u93q3fZ7MFGozQq5wdc/qmf2BHFriI7fBebc/6q6X/maFrc3yl+hsp99lSaHvoV7nWqDQy1H740nZlCsm+C1JqG1/4Je1j0=
+	t=1735808520; cv=none; b=YjBrSvzwArOcM/rV1ojydzhSS/fO8u6JlU6LMmgvO+5rCelpdB0c2eR6Yx+lRBmHgh9zLyIwD4hX3RaOpN8S7Fn/HphlLklICZhtz7n69Q/BSI6lHQtXBByf1D0cejiWeZhc1oVXnHpIvg8twMi4VmEAj6vhBVypPvkXNl+M1bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735808023; c=relaxed/simple;
-	bh=dqLbAvV/AzANVgpDBDfFuH8ZLlxPQ3xRoVz9pRNoSTs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L4D7LHQPHYCGMHCYWDtFEXWfQebMDkWFiyBmKo/SkUNDaF4G5t0QI4zsBQ0PyOW4Bnq8VcMD7VPk7T+UorItRzIpexx20PsL8puYWs/ESIpgAJlZHsEFJRKDdpTI2Q6tm0vC+SKyJb8aQBZoASNZOrrly1fVfbXIvGtHBNcm+VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0/uiYjA; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1735808520; c=relaxed/simple;
+	bh=tQ9iKik+1vdh62SOC1kAGU9RKXy9iom2AweADUGAT1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NOHSxvNItIYKOcvFsCdET5H7RlbPJ2tOdPLU6eai9p8y70m+Njj524cd9UdNHH+D5W0wzpoisnDOqXchqetq35aptM0sFuCWjTsBL6ZidVcBAQbWdeoHvscMWIEKOTBlJnTeZGKSyRw5eKB3yceUNDOlk7V/nMNEUzoqb0nQc/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=L4tV58IC; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0/uiYjA"
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-51623968932so5965704e0c.1;
-        Thu, 02 Jan 2025 00:53:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735808020; x=1736412820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y3x1fDjCGsfpjPLJt2EoweT4CAcY7YO8elqKZSG8axI=;
-        b=X0/uiYjAB4HkNeiklMtHK6ueIsCKTIAC6rceJEOyODKLH9SIoa0EIZtl0wudDecX6X
-         w9OtnwnpD5TogYhzjQg/qGsbB73LjIJAnfaaoe9BwuNIhMNpvRlzvCmwjwrWo+SJ9hXZ
-         pc903yTktPzZdZBGhRvjamT+qlFkzYO4HxHO0Gwi2InU/j6oJyhePk5sHNDXxzjaoKAi
-         S9flsQCfxAo41zHfDtaJkvSdF2I257HWr3cOR+Y4SMoRFJxtB8ELHoFJ18Mn2XfbhnQ9
-         CX1FDM5BAoKylRfGCqPl06OgivPu6p4QtqEu6sJV56qb+tLwmAZ1OXR97yi71CtcyiI3
-         mAAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735808020; x=1736412820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y3x1fDjCGsfpjPLJt2EoweT4CAcY7YO8elqKZSG8axI=;
-        b=k98rF7pje0Wmtc+4qGf+OM+XS4Y/XrKAxW9jk+G30kqzuclrEspo19FLm7UMF37ZSL
-         8t4CPI1CLCZqKtZUHfBXl5Hg/f9ywATApVAQ8rWFXwVNf8qb1gflSvI2ywaFO+2WefS3
-         dZsDYz7a5QuLNfY+S2LnOxzH0Ows2DiZrBPYmn+xtJ3A1GhT5RhECBAbHe4vIzhXuoCQ
-         13TsFWg23kPJWZKGXtlB57Hk/BaNVdcQTJD5taaE679nY+4zjzvfDyFlkvkq1hX+gSpY
-         qncbvMlBhvZE3jwVj6pjV4c6phRweYF9M6xIWf48qrsGglAfynklGO2wxx7MlTyihY+F
-         8OZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEMBGC2bKICtL1H/zFUerWvUamkEXss7VH4NTXoCrhADO5iIDyFVkdc1N/cbMXkwsmKYmBsDZlEEdpi18Os/ByTfw=@vger.kernel.org, AJvYcCWKmKcFcP6BXIyeBgoIckF8YTkxeYT4dhj0MvRqsuz51UNU2P1enDfSCSJ/ikroCl25S067iuLBPP156ZYi@vger.kernel.org, AJvYcCX4HXVwyhxk5TeJ11oQbNgvu5bms9sv54ixQtG2M7prlEbJPpBply/mTSKKjO/Quj6rZNHeQIW2/Mw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMUMB+49EdEXaDYGtjh9rxqPNBPxZgK5X0uhmZkgwJTcCF2d3L
-	pegokMBer1Hkz0NYhwbDNwj3twXhWZay7mZZerZSCuWZlauFZ+dhD7XM03OFrwj7Mg6JYZYeSRK
-	M03AN0JMgxBlCL3pbRRqh3ImfiTs=
-X-Gm-Gg: ASbGncs8fbX404+r3qTUk7p6zKDNQC9LkqHU0wf9m+RzZhNv4CTwuocvrrh6CxchKHS
-	BqZO9of1vfcneRombYr7zCu869Tz3aRjxER8n12I=
-X-Google-Smtp-Source: AGHT+IGkEWcX5Pm+TMvZqATtCpIQUhnPuFtv6ogQRR3N8Q8G+zx0BDuw9LUywc5F4WvmQ9ZOX2zIciH8IoVM10ZNudE=
-X-Received: by 2002:a05:6122:2490:b0:518:a287:56e3 with SMTP id
- 71dfb90a1353d-51b75d3cd79mr31726921e0c.7.1735808020458; Thu, 02 Jan 2025
- 00:53:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="L4tV58IC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=idVy
+	9nflDildKn3Cz7/1Fj/okAWdKkzQab36qGM2gPw=; b=L4tV58ICByLgm2+jK6Mr
+	Hvsrfsd1RBqOSlIu74pHM2p33mDNXzuR/6o663EEPCE9zwgHD7zYYhc4uiJSl18S
+	0ICP0IqMNRJHzImLvByzwivfUciRO0lP8SGXvIEIOxXTum1OEJKoxOUhOAgGFP7d
+	Uifr2IwltB/QWDjoEIPVxjfL2gXkTelxoU4+FPWeCvF0PZ8865zOpq8CBYpDI7nz
+	nc18zQ9MDQb/QC/GMV3E2JRktBNIiKXdMEhbNj7wQ0Vj2udMEc+V1SIJkONn4gKN
+	NowUsOv4NTVRgplNsd20AjNjedq7Jc6fsVnVI2RzDFaO2u06+cfH5ql1Wf5X8RHA
+	Sw==
+Received: (qmail 566898 invoked from network); 2 Jan 2025 10:01:52 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jan 2025 10:01:52 +0100
+X-UD-Smtp-Session: l3s3148p1@V87LabUqluwujnsY
+Date: Thu, 2 Jan 2025 10:01:48 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH RFT v2 4/5] i3c: mipi-i3c-hci: use get_parity8 helper
+ instead of open coding it
+Message-ID: <Z3ZV_D5AIUxFR1Bw@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+References: <20241229101234.2896-1-wsa+renesas@sang-engineering.com>
+ <20241229101234.2896-5-wsa+renesas@sang-engineering.com>
+ <20250101121431.05d831c7@dsl-u17-10>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241227115154.56154-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241227115154.56154-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250101121122.3c3a8e0a@dsl-u17-10>
-In-Reply-To: <20250101121122.3c3a8e0a@dsl-u17-10>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 2 Jan 2025 08:53:14 +0000
-Message-ID: <CA+V-a8u03DjtUFf8j_y+bgbotiRt3fbBZGhrCTNqSVSdD8D8Uw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/8] i2c: riic: Use GENMASK() macro for bitmask definitions
-To: Andi Shyti <andi.shyti@kernel.org>, David Laight <david.laight.linux@gmail.com>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dXJvEpTHZBt+iica"
+Content-Disposition: inline
+In-Reply-To: <20250101121431.05d831c7@dsl-u17-10>
+
+
+--dXJvEpTHZBt+iica
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andi,
 
-On Wed, Jan 1, 2025 at 12:11=E2=80=AFPM David Laight
-<david.laight.linux@gmail.com> wrote:
->
-> On Fri, 27 Dec 2024 11:51:50 +0000
-> Prabhakar <prabhakar.csengg@gmail.com> wrote:
->
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Replace raw bitmask values with the `GENMASK()` macro in the `i2c-riic`
-> > driver to improve readability and maintain consistency.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > ---
-> > v2->v3
-> > - Collected RB and tested tags
-> >
-> > v1->v2
-> > - Collected RB tag from Geert
-> > ---
-> >  drivers/i2c/busses/i2c-riic.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-rii=
-c.c
-> > index 954e066d61a8..ddae4b74a86b 100644
-> > --- a/drivers/i2c/busses/i2c-riic.c
-> > +++ b/drivers/i2c/busses/i2c-riic.c
-> > @@ -55,7 +55,7 @@
-> >  #define ICCR2_RS     BIT(2)
-> >  #define ICCR2_ST     BIT(1)
-> >
-> > -#define ICMR1_CKS_MASK       0x70
-> > +#define ICMR1_CKS_MASK       GENMASK(6, 4)
-> >  #define ICMR1_BCWP   BIT(3)
-> >  #define ICMR1_CKS(_x)        ((((_x) << 4) & ICMR1_CKS_MASK) | ICMR1_B=
-CWP)
->
-> I'm really not at all sure how this makes it 'more readable'.
-> Call me 'old fashioned' but I like hex constants - especially for bytes.
-> In this case it might be best to be consistent with the hardware datashee=
-t.
->
-Let me know if you dont accept such patches. I'll drop it from the next ver=
-sion.
+> > @@ -123,7 +114,7 @@ static void hci_dat_v1_set_dynamic_addr(struct i3c_=
+hci *hci,
+> >  	dat_w0 =3D dat_w0_read(dat_idx);
+> >  	dat_w0 &=3D ~(DAT_0_DYNAMIC_ADDRESS | DAT_0_DYNADDR_PARITY);
+> >  	dat_w0 |=3D FIELD_PREP(DAT_0_DYNAMIC_ADDRESS, address) |
+> > -		  (dynaddr_parity(address) ? DAT_0_DYNADDR_PARITY : 0);
+> > +		  (parity8(address) ? 0 : DAT_0_DYNADDR_PARITY);
+>=20
+> NAK - that isn't the same code at all.
 
-> Pretty much the only time I've actually used anything like BIT() was
-> for a spec that numbered the bits from 1 to 32 with bit 1 being the most
-> significant.
->
-> >
-> > @@ -73,7 +73,7 @@
-> >
-> >  #define ICSR2_NACKF  BIT(4)
-> >
-> > -#define ICBR_RESERVED        0xe0 /* Should be 1 on writes */
-> > +#define ICBR_RESERVED        GENMASK(7, 5) /* Should be 1 on writes */
->
->         'Should all be set on writes' ?
->
-Yes.
+But the same algorithm? Please elaborate where you think the new code
+will fail compared to the old one. And frankly, are you aware of
+different parity calculations? Have you read the link which was in the
+kdocs of my new function?
 
-Cheers,
-Prabhakar
+
+--dXJvEpTHZBt+iica
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmd2VfwACgkQFA3kzBSg
+KbZ5zhAAob7Y0sqPuY/wfQbTgch2x+PU58hHwjvNs0QZ/hmPo/h4l2g8Klied6or
+g0QlBPpSRZ1hZSotK2rwlbNtC9aRyGOi8kn39EjiN+8utI0G4JOkXxOuwn+x+mom
+rmy7Nh2d03nNcYCk/EIB3WCEMMSlvJyoGYEJ/EK6N7voYTOjPrIzTpKg2nc2EmXl
+jtN4SkjBtE8OnzNAfz8OpcdJlYlKvL2AL+4okn52I+LbwV95AXxd2JsQmIwWR9HW
+qkQjKiR/vEaMEvWw5iwFZ8PYdFpaZ2R5QZwJRC7r+Bs7cq4mSQ3Q7ga1YLDtCbwM
+64bzm+qj5X8hVTvCL5yVRGF1YYIHNnSymagIyb7/1JHdeteQqSjCu0/8xRSEcrZa
+VhuyrtZzE2n15WcbQv7377vXilSnFF0K3OoZ3XLXyABN4XeqWTmrCeCQug1f6UQ+
+pQnq89Xy+I1cMSgDVFUa10khxzClWSjepZdOIeDLpQXjFlxDFUcDp6/KaARzhvpC
+oa5xPCYOOX1uTmBnJZlHYI0rQieteJ4FZCtar5Z7D0D7GuWiFHQ3DJQUlHP+2eTw
+ZM3p/XvgSRqXFVRCdD6ZlPJggn9cBmiWFNxc2VHgi5JJ4sgQXhsZYVfdeilfGYSo
+evpYXwUCFlHGheZQLrYebDddJTQIm6UdcExJZCFqpESmx5wOGcs=
+=6+IL
+-----END PGP SIGNATURE-----
+
+--dXJvEpTHZBt+iica--
