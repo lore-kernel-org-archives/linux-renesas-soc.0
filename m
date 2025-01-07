@@ -1,89 +1,68 @@
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005D018D65E;
-	Tue,  7 Jan 2025 17:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543FF18BC2F;
+	Tue,  7 Jan 2025 19:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736271702; cv=none; b=mNOlVHtdZFQI11mmeZZ98S3mTDtak0g3GMRpzMIrXPOjcdHQ17Fz4sUembFosIbzzTpxwnzx8rFahkpzwtDdtZyKgpHSZxs2n5rf1s4jNwP2ElNipvsjgPGWVB4eNo/CXhQjgVjSPdMAnYu4CSgyaUtcLhBZb9iFw3flyEQXlxA=
+	t=1736279177; cv=none; b=oByY60cQKIty+e8/IHwD7QI9KR5zs749hX+RfEpgD6JpXmfEuzziqvjQ64tJAhlzLiUbqiWK/zrEIuIyB3SlqITsKYgKpCwR4Ys32Haw2BlRjd42qg1w8VVE0gPFLkUsWKmRmKwZl0wNFyT8eXTzQCfBDS3TRa0fLw9Q57WwIgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736271702; c=relaxed/simple;
-	bh=IwmQlZDt/c/ViM0VlGii+rqTlbSEHzq3jdwuJizOcJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnGvb3rjznE9UDae2R5wBX6tSVhVTxq1RXmlKnB7/f+UA8PPJ77oIzmoPhzdLT4q+ENM3492Q0PlDR83DREeUu8KLgqVYb1Pfb/Fj8tnk6rcBD7MLXPBEaDKT5U3CCT3tSzfRR1zScyT8/YEiwrsrcWPAOPEEzE8tEn9R2crQmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=dZXZV8FC; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+	s=arc-20240116; t=1736279177; c=relaxed/simple;
+	bh=yMH/AA8yA5oBjguQozADNzh+FTMjBSQL953ePmP40bY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Bu8JXiH5zPJonL61hzdZ1sNsU6Q+bVGcBt3eDgDY6qctznP12nyKoIM73IQSWF/iA8JuLHtMI7EaTm7WxU63xITF8dBZVHDSJN9yehZkzclE5YQUlGG05YMh6Q60zmhqZu5RZ1ZlsU4tz8V0yHIboN0kybkyguDJWyv4/FsjFrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0CSjGgv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="dZXZV8FC"
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id BEB121F948;
-	Tue,  7 Jan 2025 18:33:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1736271195;
-	bh=YpsA1hCVY3ewqxQ7j406xH50/PlVnUrpfZDhJ2TaT4A=; h=From:To:Subject;
-	b=dZXZV8FCflkSbXZf2ez6Y/NLj/wwpNR69lN/ozvq6wc0hHsv7aNHN7bcmznN1fdB1
-	 8nR/aEIIP3JLTbzZhig7PZp7yrl0IFr4Zr1/jDq7/s4oA3XAZKIk27q1Yl8knhi4Cm
-	 /UyHsYkvK+OMnN01osdNq0nQH6wZLtjMutCoy5r5VyrM6fNWTibTQhWJTC0coHFvM8
-	 AMa/AAx+f+KLs2A38kPgagH0qrkgOm+K/deSLLzj1Uhk2rHErYdrWDDkqDkkVSWOH6
-	 y/dvfV7H0prkHth0t+jSdD20DJp085U9PyAYfNDEnuYZqi34cJY+/bpQG9CK5LGqW9
-	 av41Gza7na4cg==
-Date: Tue, 7 Jan 2025 18:33:11 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Justin Chen <justin.chen@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Benjamin Bara <benjamin.bara@skidata.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
-	Del Regno <angelogioacchino.delregno@collabora.com>,
-	Tianping Fang <tianping.fang@mediatek.com>,
-	Jassi Brar <jaswinder.singh@linaro.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: usb: Correct indentation and style in DTS
- example
-Message-ID: <20250107173311.GA72209@francesco-nb>
-References: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0CSjGgv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C42C5C4CED6;
+	Tue,  7 Jan 2025 19:46:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736279176;
+	bh=yMH/AA8yA5oBjguQozADNzh+FTMjBSQL953ePmP40bY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=H0CSjGgvY8qZujd1cUv/4ZeuTYgsdipBDJ6hGQOfxS+J+7WaUrAAPmcJo/SneOE2a
+	 VEhXd1YUdPoDXt27WTfG800YF0EZ8y6tRPZpA4dOIvYOSWiAd9xFA0hmPzpuWm3YwQ
+	 pvsEKD8+mwKMg5RuqsSpIdZFwFVO+iCQPJEC9xI3hxqJMLevBnBp8auODW9XQKrirb
+	 FdYg7FyN4MfFIWViWbOKusENSvKiw+Oo21Bs5kxu9A3VsM4bZCxoTo2g2N6W2kn2Mq
+	 6iVDwBUaLq/fwFStcpjMieh9JbhrPcjxG/FvbXEi1n9tmzV1taaCFRQQQAaJKd0uLK
+	 N2DBZCzPhJj5g==
+Message-ID: <7084be40e8a77a5b47b64cb41d66437f.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1736266782.git.geert+renesas@glider.be>
+References: <cover.1736266782.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.14 (take two)
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Tue, 07 Jan 2025 11:46:14 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Tue, Jan 07, 2025 at 02:10:13PM +0100, Krzysztof Kozlowski wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
-> 
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Quoting Geert Uytterhoeven (2025-01-07 08:25:28)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit f962745289958e89bf520407728e384e52ea8e=
+27:
+>=20
+>   clk: renesas: r9a08g045: Add clocks, resets and power domain support fo=
+r the ADC IP (2024-12-10 12:02:24 +0100)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.14-tag2
+>=20
+> for you to fetch changes up to e91609f1c3b0ce06d80b1b3bd0e6b942782be016:
+>=20
+>   dt-bindings: clock: renesas,r9a08g045-vbattb: Fix include guard (2025-0=
+1-07 17:03:01 +0100)
+>=20
+> ----------------------------------------------------------------
 
-Acked-by: Francesco Dolcini <francesco.dolcini@toradex.com> # ti,tusb73x0-pci.yaml
-
-
+Thanks. Pulled into clk-next
