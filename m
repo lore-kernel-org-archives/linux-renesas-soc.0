@@ -1,146 +1,104 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A1B1E0DED;
-	Tue,  7 Jan 2025 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928481F12F4;
+	Tue,  7 Jan 2025 13:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736257671; cv=none; b=Hdw33S3QojFMSjDhizcpdYp9C+tRYViMS2yPzzCSJaxe2VQxeusOy1atSzsszcqGZzHotO/VUi9GDfITF1+5jBVTYm6ecf6Tqm2lXNccXz1Vmum8CJgoXz6146Ukbq94BmsMbqBI+7n7hvqj3CJytgdxgFfE5ZSM/0y2yMUfaeU=
+	t=1736257724; cv=none; b=mHkD0hYTSid4rmIdOh2AumQcANVm2loZSe3CHDkS8wguzHGq8K0HdyVlNbY6XpezFUK20UOFMyI3CkoGMEUK8P4wE4rDrDz4FiRzLrPdOO3S6ZZoguO5t6/PZRHhoa9GKpsLM69WPLGr1JDmZ1z3U4MGvRM94USy69vWxSJGuAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736257671; c=relaxed/simple;
-	bh=bCMttcWQirNicytx6ykU0QZpRRftXACwB5o3zdvB5x8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UGD10H9o5Yp66T8Eoe/5tjQvEdKwoWi/h5UHsxXBZ5Sp0qNMCoq7bR+qVxNZ/eR7aceq9/eavPGr28tmu9WTenN3sFctucJXsnZcuC+3zRlFNxChPKmUGKxOTt3VYzxkF5D4J5l1Bj4kVGf03GJ5WCm8b+bDowSCAGdqforo5U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=CAuHcqGN; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Gp8ECD2a reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1736257724; c=relaxed/simple;
+	bh=mHxcNU8y0mx2f5AbwxDnCTwc0E5sP4xfZxt2aoMnJ5w=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=n7lVhweNM0l1gtucmll3b0T+k5LEsQxwkMZS54yJdlZH/mCR6aWchauu+68mTIBzMcvXJ+zu1KYB4PtR2VFa+VTi8vS4t8w12L+Qm9dsDHDdvDtslDZMB4uMTIAYl8ftRPyCl7GBnFTzEQOv2mpvoZOi/dgApcvobYE4Hc/fiOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=muni3Yx0; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="CAuHcqGN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Gp8ECD2a"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1736257666; x=1767793666;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=H2JiFyCh/Tl5YOwhVHC+9/o2zm1iU1FIoUS3LVDCVQM=;
-  b=CAuHcqGNaufqPWJp7fGS5bsTGqRC6pb794W+/8MZkaL4uQn4ahO/wePn
-   01mgAosms7/ZUOmDZc/ERincOyBSOjdWKUkOxj5LnogmDG1mUVk+3B1XX
-   BYtZr2E1Ab19/sZnGhznkJczMBek3d5bqAi4nmxgCyWPusMbPpEPxRu3h
-   koDUZg0L1EQKMdiA8un2Z9BMpE79iq45Av0wRaYuNEuShC+yDH3HBrBtY
-   WKvJ+5+H6PIyjzJPHDwckFPUbGZzJ1hJh8NihF87savy7co0jdrYx6L2Y
-   1BBe9RC4nz3+yaZel5x/ha4mjhXNucttajc4sQIVuNJTOh81aHr2FTNsv
-   A==;
-X-CSE-ConnectionGUID: OVZasUpRQum1PZsDd73xFw==
-X-CSE-MsgGUID: mYpmTubRRzSDooSbu505XQ==
-X-IronPort-AV: E=Sophos;i="6.12,295,1728943200"; 
-   d="scan'208";a="40895891"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 Jan 2025 14:47:43 +0100
-X-CheckPoint: {677D307F-16-3C670366-E45AD810}
-X-MAIL-CPID: D9326B8D606E51C9C554D2FC41D37A2A_4
-X-Control-Analysis: str=0001.0A682F28.677D307F.00A7,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12BB0164990;
-	Tue,  7 Jan 2025 14:47:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1736257658;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H2JiFyCh/Tl5YOwhVHC+9/o2zm1iU1FIoUS3LVDCVQM=;
-	b=Gp8ECD2aEaJ2EoPlQW15Ikeq6rQoBFt/xYZHffSmoaiTRcEt3DyE1007ghx7QUsh6rWleF
-	lVKVhAGrvYWx+CEhDIzb+u3GFfHUIrNePQeY7nizrT961wk3aoCy86jbq9k1WGCr1X2RnA
-	ooMJ7bMSMZAzRbH4f4WwI+NhT3Gr9T1Q7ZZihIWPpiYe4ojX3SOqQh+a2FQ3vSheOrwhcX
-	F5L14kcteB5aHapjOda7uYt6BTq6MW8VaLetOMmY5he1vQAsX4D0qjLcLXWBDFl5WpEvRR
-	JInTk5xg/jzac1LcmHiQQC7oyqGly+SMY4vt8KxMP12YKK3wIRlQbd7PMldfJg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Justin Chen <justin.chen@broadcom.com>, Al Cooper <alcooperx@gmail.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Florian Fainelli <f.fainelli@gmail.com>, Benjamin Bara <benjamin.bara@skidata.com>, Bjorn Andersson <andersson@kernel.org>, Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>, Del Regno <angelogioacchino.delregno@collabora.com>, Tianping Fang <tianping.fang@mediatek.com>, Jassi Brar <jaswinder.singh@linaro.org>, Biju Das <biju.das.jz@bp.renesas.com>, Yoshihiro Shimoda <yoshihiro.shimod
- a.uh@renesas.com>, Francesco Dolcini <francesco.dolcini@toradex.com>, Macpaul Lin <macpaul.lin@mediatek.com>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: usb: Correct indentation and style in DTS example
-Date: Tue, 07 Jan 2025 14:47:27 +0100
-Message-ID: <10618962.nUPlyArG6x@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
-References: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="muni3Yx0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1736257408; bh=HDGS018z8SZ+VUzFh7FhhspHyPs0aJJXv4Qlbf/4mf8=;
+	h=From:To:Cc:Subject:Date;
+	b=muni3Yx0nT4QdXlq3fsPaCAuco9xgSjrH8hOpTiIgEo0SbAc0ZtitFdQ5rlB3Kpkf
+	 n5hw3Gnk0bkLWfJIMyiBFEirJepGGcUHA8QiJZN4fWaWanLoS0US2qpFwaWyv4of8X
+	 QkvNdYntHokKmzf01PyDWuLfaga4pQmOw001lKVs=
+Received: from Ubuntu.. ([240e:305:25d4:e300:6504:4e8:136:29f6])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 945B9C89; Tue, 07 Jan 2025 21:37:06 +0800
+X-QQ-mid: xmsmtpt1736257026t2v8dbnvw
+Message-ID: <tencent_464C8D4A8F6D1EEEC05A30EDF0112FA58805@qq.com>
+X-QQ-XMAILINFO: OVFdYp27KdlJPhSdrpMqEpNSP5FxBeB/LIn8wSIE8f6wGjyU02BfSfvCaltyc9
+	 nZY08NiRdaiV+wiEC/ENNuFh3hzlbIN42nzi4S34DEpKbBWC0y5KS7delEieI16l79NsaZk6Y8T8
+	 0G5J4/qd0yScO5kUdfH65cuDwdLUcUUW+Goa2x4elLivhfWZkAhJkz52BnoH4234k2osjO7VMiZH
+	 ji4RxYfgwmIm2O21oPcc6hUTM4ytG7PjAUIPajQA98/ihSg30Jr473Fai93+Gq6kit0Ayoqimgoy
+	 mfQgSObB5jkgEkXF9dcI/T44WUqFnsDL7blM9IegPPk+KT7pv9PCmoJW1o5SVrFdps5lrz9JcA3t
+	 /c6ELV2NRkwwTRZFBFKC0k5Bi5zVi135hB2vW0U/Hf+/5MnA+cQLZGL6TJuSLdrUAgbREcOklJxx
+	 1RRgjbdusrtSeKO9QJ5zZUJR7Gyg2lcIWicUCO7W/TzGfsosmuUt+LwWh9UgSAdVuIjGc3bUwz3G
+	 rbOhxZ9gjtjmT/SiUeoInHmP3lzOfH2SkVPht9/bS7b1Do+zEjzdNe6TehZVfcNdnt1Vdrstggst
+	 3T5GEbEFqnVn6Nw7ODuuay25kAYPyWMXh/GSn7LnQSqAUnsCwtAwleT01vq0JSaIyfsOdjQjGdMz
+	 j/QQk607Qhl9or7uU5Di0Pu0C9Dn+yK/lNNN0IuJEcBisbH8/r7p47PZI1Fa6Yshkqfjl5T1w0hV
+	 HOYEdrbuCuvCqMdMsBRPs6+CaRI8My4iW/aE+kSlWAtFUXqZd2Lizd5YGb3BUU95ALORudd1Yeu3
+	 635cequL2SbH6ds/jpogvTTqqYkgKd3s8Yt/McDtJC14luW+nrPZWUwSEc21nXwLaJj6j6wvb8xc
+	 2HMbYAadauyh4JTvUz6dQSqrg3jlaa7FBlN1XN8AI0h2e0ch49c7zA8sO9iwmo+fT7Pwt5GGFWA3
+	 SoVxa0dByz60sotOSS8BWSl+j09rlwKZT/MxrthVIsLrQF99pX7BCcYfDjbWzLQPmkK44Gzcb0f6
+	 1j7SjDldI95P+w45aeF5QizoNC4gzsHoVLKSp0PD/2RbMtCuzl3fFvmSwK23A=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: kingdix10@qq.com
+To: marek.vasut+renesas@gmail.com,
+	yoshihiro.shimoda.uh@renesas.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	prabhakar.csengg@gmail.com
+Cc: linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	King Dix <kingdix10@qq.com>
+Subject: [PATCH v3] PCI: rcar-ep: Fix the issue of the name parameter when calling devm_request_mem_region
+Date: Tue,  7 Jan 2025 21:36:54 +0800
+X-OQ-MSGID: <20250107133655.758670-1-kingdix10@qq.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Am Dienstag, 7. Januar 2025, 14:10:13 CET schrieb Krzysztof Kozlowski:
+From: King Dix <kingdix10@qq.com>
 
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
->=20
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/usb/aspeed,usb-vhub.yaml         | 40 +++++++++----------
->  .../devicetree/bindings/usb/brcm,bdc.yaml     | 14 +++----
->  .../devicetree/bindings/usb/cypress,hx3.yaml  | 24 +++++------
->  .../devicetree/bindings/usb/dwc2.yaml         |  4 +-
->  .../devicetree/bindings/usb/fcs,fsa4480.yaml  | 20 +++++-----
->  .../bindings/usb/intel,keembay-dwc3.yaml      | 30 +++++++-------
->  .../devicetree/bindings/usb/ite,it5205.yaml   | 18 ++++-----
->  .../bindings/usb/maxim,max3420-udc.yaml       | 28 ++++++-------
->  .../bindings/usb/nvidia,tegra210-xusb.yaml    |  4 +-
->  .../bindings/usb/renesas,rzv2m-usb3drd.yaml   | 36 ++++++++---------
->  .../bindings/usb/renesas,usb3-peri.yaml       | 24 +++++------
->  .../devicetree/bindings/usb/ti,hd3ss3220.yaml | 38 +++++++++---------
->  .../bindings/usb/ti,tusb73x0-pci.yaml         |  6 +--
->  .../devicetree/bindings/usb/ti,usb8020b.yaml  | 20 +++++-----
->  .../devicetree/bindings/usb/ti,usb8041.yaml   | 16 ++++----
->  15 files changed, 161 insertions(+), 161 deletions(-)
->=20
-> [snip]
-> diff --git a/Documentation/devicetree/bindings/usb/ti,usb8041.yaml b/Docu=
-mentation/devicetree/bindings/usb/ti,usb8041.yaml
-> index c2e29bd61e11..bce730a5e237 100644
-> --- a/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-> @@ -51,17 +51,17 @@ examples:
-> =20
->          /* 2.0 hub on port 1 */
->          hub_2_0: hub@1 {
-> -          compatible =3D "usb451,8142";
-> -          reg =3D <1>;
-> -          peer-hub =3D <&hub_3_0>;
-> -          reset-gpios =3D <&gpio1 11 GPIO_ACTIVE_LOW>;
-> +            compatible =3D "usb451,8142";
-> +            reg =3D <1>;
-> +            peer-hub =3D <&hub_3_0>;
-> +            reset-gpios =3D <&gpio1 11 GPIO_ACTIVE_LOW>;
->          };
-> =20
->          /* 3.0 hub on port 2 */
->          hub_3_0: hub@2 {
-> -          compatible =3D "usb451,8140";
-> -          reg =3D <2>;
-> -          peer-hub =3D <&hub_2_0>;
-> -          reset-gpios =3D <&gpio1 11 GPIO_ACTIVE_LOW>;
-> +            compatible =3D "usb451,8140";
-> +            reg =3D <2>;
-> +            peer-hub =3D <&hub_2_0>;
-> +            reset-gpios =3D <&gpio1 11 GPIO_ACTIVE_LOW>;
->          };
->      };
->=20
+When using devm_request_mem_region to request a resource, if the passed
+variable is a stack string variable, it will lead to an oops issue when
+executing the command cat /proc/iomem.
 
-=46or ti,usb8041.yaml:
-Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+Fix this by replacing outbound_name with the name of the previously
+requested resource.
 
+Signed-off-by: King Dix <kingdix10@qq.com>
+---
+Changes in v3:
+  - Fix the spelling issue in the comment.
+Changes in v2:
+  - Fix the code indentation issue.
+---
+ drivers/pci/controller/pcie-rcar-ep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/controller/pcie-rcar-ep.c b/drivers/pci/controller/pcie-rcar-ep.c
+index 047e2cef5afc..c5e0d025bc43 100644
+--- a/drivers/pci/controller/pcie-rcar-ep.c
++++ b/drivers/pci/controller/pcie-rcar-ep.c
+@@ -107,7 +107,7 @@ static int rcar_pcie_parse_outbound_ranges(struct rcar_pcie_endpoint *ep,
+ 		}
+ 		if (!devm_request_mem_region(&pdev->dev, res->start,
+ 					     resource_size(res),
+-					     outbound_name)) {
++					     res->name)) {
+ 			dev_err(pcie->dev, "Cannot request memory region %s.\n",
+ 				outbound_name);
+ 			return -EIO;
+-- 
+2.43.0
 
