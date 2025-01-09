@@ -1,107 +1,114 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EE7217712
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Jan 2025 12:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5452185A9
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Jan 2025 12:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736425285; cv=none; b=szeFyqhb951ioWoYNhfDOncCH6XJtfxjRy1vkf5xlsC0zA1w+8+BxH9r76Cvg+cPr+6UyCRG/4JidqccOMt749oHriyFn+GokK/HowDn5YF6BK9mBJ+ZzGvP4XCslt5ELnn2qe4aoO/LSfjrZjXj5ua5nlzFlpcDIPcfKIoTIYQ=
+	t=1736426573; cv=none; b=N4C1VDwmP17tK9dIuI6LzxWlS5Q+ErO2WyFa07lg/S8pjpnSYw5TxQA9kvN69nToxMdv0s0w0jYJNaVPr2ZaK/1u3PjEnpEdJKlWcPzsc06UnOSBfzb/uP3lexl5biCXHTfQMq7sQZpSUjczWVCNwVxkJhPOny0Eg/OB3ZcdeUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736425285; c=relaxed/simple;
-	bh=Vl7aEibJYyHLkU899tI+Ja6Fj2+G/QAcR+0T3tzOPX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mjF6Nh8X9JEm8yT9zvoS5jOfuBdaXzxRyj84fKyoogbR60GHxDfJqBVOr7p4+rlE0JtdqI2B1uvgjn6aGG9Jiut2b4Kw5Mn+RqH5o5tcFsPAO3XeMg+4AfDAsDn1stBqfcyVB3LOrsrPIiKN9sKaDR3iPvtbdfQhyiu0xIPXuyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=E6q4n0IW; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1736426573; c=relaxed/simple;
+	bh=pXb3J5/MDM/JRxgrXrNymwNsZk7Vq3QCDxx/Unn1YIo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eCxw3LE1UDrt9ogwk7Hxd73/F4pnzJDUBKPMii5TCtvX5R6v0TzOCJcZOr8x5X03MJz5SHxh+JPBYVBWTBndpMhWUmd8GMdIFw87tU1PHW2iYoXwF260NvWPpc+Io7jjIEUuGNnIQ+wUpu5oC62JDmU2oLV+H3UZp24HXVwMeuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eqo3iJ9n; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="E6q4n0IW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=454BCUBzqC7PUbBBGcyFvNB53HXu7K7rZZdfoXl0+O8=; b=E6q4n0
-	IWnculoAFt/x8iGBeWHC/UIcrvh+ohKaFokm/f3iXehbBnFIqhyw+3e3lgFxg4w/
-	LrvYW/2+mLAKNZY23ro5GBQn/acP9Tp1vKbh2bAmmpx9qXWjcm/nFoRuP7xLXk9K
-	sLnky8bvUF7IEEIAj5j7fwMwesNWYX34h7Ev+AnEs6ekHXM6xCZDFdPvP+DF/SX+
-	pl0MKK3osrxW1P6EF54AaHQ6vhNRCcW19q2ZZGVBwximetC+vPZflc5a1qICFnHD
-	nRsMP35GMPJf81RlXpsuhcepalwhJnZZEDtbhQ4aS0ipFAbSoWVUurfx3loT/9/B
-	oZLFGbcbViOOD3KA==
-Received: (qmail 2902248 invoked from network); 9 Jan 2025 13:21:18 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Jan 2025 13:21:18 +0100
-X-UD-Smtp-Session: l3s3148p1@kuHdA0UrZr0gAwDPXw20AOMQ2KO98fSH
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH 1/2] i2c: add core-managed per-client directory in debugfs
-Date: Thu,  9 Jan 2025 13:21:10 +0100
-Message-ID: <20250109122112.45810-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250109122112.45810-1-wsa+renesas@sang-engineering.com>
-References: <20250109122112.45810-1-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eqo3iJ9n"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736426573; x=1767962573;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=pXb3J5/MDM/JRxgrXrNymwNsZk7Vq3QCDxx/Unn1YIo=;
+  b=Eqo3iJ9n/O90jO5nFOc9W4Xq6H94DE1QahVXB1Z+njlGktcnriWzZLpW
+   L2mTOxIvmbUGKOInZKHxud9bfHo4eRj+GupAC6m1Yle7Ons6caMuw0E1X
+   ARrVBs37r/zMXc0I3sk2QYsZxaYy1wfUhj7sSQ6TS4QeXDfVPWSkrV+L1
+   CRMrdw3zsYNSsjQ/aPxyfzo8doD5zYWVT7JFUbpkcMBGPSKIrsz0IjfPp
+   +ltQxR6n/of5RaYprfTPOZXxxW1Nmxck6TEvEvSOeBMQBL3BlAofBDB08
+   ObvB9/LtxQXIZ0uHRQ6i2yQTH8Jy0mxjOy0DUzyLVhdZl+Pk24rAm6/+R
+   Q==;
+X-CSE-ConnectionGUID: Gwb7h/C0QxuQGxsPnjBHBA==
+X-CSE-MsgGUID: 91Og5lnWQTq2C+iRxs2a9w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11310"; a="47671281"
+X-IronPort-AV: E=Sophos;i="6.12,301,1728975600"; 
+   d="scan'208";a="47671281"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2025 04:42:52 -0800
+X-CSE-ConnectionGUID: 8RNv4ig7TICaN3a9JpE2Cg==
+X-CSE-MsgGUID: An8aZnsBRcq/dF7jnC8qWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="104270578"
+Received: from unknown (HELO localhost) ([10.237.66.160])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2025 04:42:49 -0800
+From: Jani Nikula <jani.nikula@intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, Kieran
+ Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ linux-renesas-soc@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v2 2/3] drm: renesas: rcar-du: annotate rcar_cmm_read()
+ with __maybe_unused
+In-Reply-To: <20241205160234.GN10736@pendragon.ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1733410889.git.jani.nikula@intel.com>
+ <5b0df175e8b86e5d8746ee32e63bb633bc2765b1.1733410889.git.jani.nikula@intel.com>
+ <20241205160234.GN10736@pendragon.ideasonboard.com>
+Date: Thu, 09 Jan 2025 14:42:41 +0200
+Message-ID: <87plkwjgzi.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-More and more I2C client drivers use debugfs entries and currently they
-need to manage a subdir for their files on their own. This means
-inconsistent naming for these subdirs and they are scattered all over
-the debugfs-tree as well. Not to mention the duplicated code.
+On Thu, 05 Dec 2024, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+> On Thu, Dec 05, 2024 at 05:03:00PM +0200, Jani Nikula wrote:
+>> Building with clang and and W=1 leads to warning about unused
+>> rcar_cmm_read(). Fix by annotating it with __maybe_unused.
+>> 
+>> See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+>> inline functions for W=1 build").
+>> 
+>> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+>
+> https://lore.kernel.org/r/20240911095113.GB4470@pendragon.ideasonboard.com
+>
+> I wonder if Dave and Sima are starting to ignore my pull request in the
+> hope I'll switch to using drm-misc :-S I'll send another one.
 
-Let the I2C core provide and maintain a proper directory per client.
+Have you sent the pull request again? I haven't seen one.
 
-Note: It was considered to save the additional pointer in 'struct
-i2c_client' and only provide a subdir when requested via a helper
-function. When sketching this approach, more and more corner cases
-appeared, though, so the current solution with its simple and unabiguous
-code was chosen.
+BR,
+Jani.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 4 ++++
- include/linux/i2c.h         | 1 +
- 2 files changed, 5 insertions(+)
+>
+>> ---
+>> 
+>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> Cc: Nathan Chancellor <nathan@kernel.org>
+>> ---
+>>  drivers/gpu/drm/renesas/rcar-du/rcar_cmm.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_cmm.c b/drivers/gpu/drm/renesas/rcar-du/rcar_cmm.c
+>> index 26a2f5ad8ee5..ea52b0af9226 100644
+>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_cmm.c
+>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_cmm.c
+>> @@ -32,7 +32,7 @@ struct rcar_cmm {
+>>  	} lut;
+>>  };
+>>  
+>> -static inline int rcar_cmm_read(struct rcar_cmm *rcmm, u32 reg)
+>> +static inline __maybe_unused int rcar_cmm_read(struct rcar_cmm *rcmm, u32 reg)
+>>  {
+>>  	return ioread32(rcmm->base + reg);
+>>  }
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index b072030a9105..00f171ebc01f 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1015,6 +1015,8 @@ i2c_new_client_device(struct i2c_adapter *adap, struct i2c_board_info const *inf
- 	if (status)
- 		goto out_remove_swnode;
- 
-+	client->debugfs = debugfs_create_dir(dev_name(&client->dev), adap->debugfs);
-+
- 	dev_dbg(&adap->dev, "client [%s] registered with bus id %s\n",
- 		client->name, dev_name(&client->dev));
- 
-@@ -1058,6 +1060,8 @@ void i2c_unregister_device(struct i2c_client *client)
- 
- 	if (ACPI_COMPANION(&client->dev))
- 		acpi_device_clear_enumerated(ACPI_COMPANION(&client->dev));
-+
-+	debugfs_remove_recursive(client->debugfs);
- 	device_remove_software_node(&client->dev);
- 	device_unregister(&client->dev);
- }
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 66fb3d6cf686..36de788dc7fe 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -347,6 +347,7 @@ struct i2c_client {
- 	i2c_slave_cb_t slave_cb;	/* callback for slave mode	*/
- #endif
- 	void *devres_group_id;		/* ID of probe devres group	*/
-+	struct dentry *debugfs;		/* per-client debugfs dir	*/
- };
- #define to_i2c_client(d) container_of(d, struct i2c_client, dev)
- 
 -- 
-2.45.2
-
+Jani Nikula, Intel
