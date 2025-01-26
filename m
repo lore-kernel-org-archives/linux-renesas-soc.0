@@ -1,36 +1,38 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541E2D057;
-	Sun, 26 Jan 2025 13:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9546578F5B;
+	Sun, 26 Jan 2025 13:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737899206; cv=none; b=g1B+uxdaD6Qdemb9L/PzGkmD+BkKC0G4B+Sj7XhJi2U+8IUa5nY+JeAdkI+Z+9jApzYuWlNtz9dq6w+OFfuZ79UnMbADThDhXTej/GfRhN5ZRCRH9F7OVwIXOEr+wItGxZUttas0LWd0MrGbea2rJDDTCV/iVppsM+wJNr4BzRA=
+	t=1737899206; cv=none; b=ANrSOPfZmsmxoHwxZfRUjnsmmIJZHOgWMiLcJcL046JWo7OSGDf7W1p8qttBPxjRQvTvop2blZl7eXiYePjphxIrmKoWc0fu5/CUOS3eT2TCH1le8WhjneuaULZ388azTJeDmqd9rV+0rWqfiZsM5zkk1DWon810BNpFuLgjzRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1737899206; c=relaxed/simple;
-	bh=WefMHa81IgA5jTULkLJB5v0338ahisA7uCWwqoG/poI=;
+	bh=d8dCY4JpHbY03zSh+bKbfneBBBzTTvdZdpQJ4YCFGfk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RczN2C7MHS76xgigggNxWu++Vig8nysTEsg9dx+Xx3mJys+cKtjxaPfa3yETaViFCFWQL+HOb4Hzt5Jovt0NYAmXM4E0Pd7EvJtIAGh4bABQ+bJNdzC93MVKcjLltpqfknpdASY1EIi4R4EYy5HO1R3kiAqlg44TMG0mvKijxuQ=
+	 MIME-Version; b=IH3NBP7YffxZU2aWV2OK+kOg/P6b/UIbVeaWF3rxVC/Ije4uGQ0Hws9vWNxn3JuPwnx5HeLAuppvmCFnqrb7SlYd4+oBg1ey3T9T3hF790WuYqkhOfkeWkBELAJa2bMjRFNI/wIJmJ5BHX05HmEwXakdTHuEvupSmC6TieYENM8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: BDmoBzXWRHuFJ65ZSbtW4g==
-X-CSE-MsgGUID: 3athBfeSQlGsKvzqbG0stQ==
+X-CSE-ConnectionGUID: 2tE0m/GFRAOfyH8KajxykA==
+X-CSE-MsgGUID: PH7stv96Tv2nBsV4uWvQ2w==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Jan 2025 22:46:42 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 26 Jan 2025 22:46:43 +0900
 Received: from localhost.localdomain (unknown [10.226.92.41])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 16D644002654;
-	Sun, 26 Jan 2025 22:46:27 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 95CA640061A7;
+	Sun, 26 Jan 2025 22:46:40 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 2/7] clk: renesas: r9a09g047: Add SDHI clocks/resets
-Date: Sun, 26 Jan 2025 13:46:04 +0000
-Message-ID: <20250126134616.37334-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6/7] arm64: dts: renesas: rzg3e-smarc-som: Enable SDHI{0,2}
+Date: Sun, 26 Jan 2025 13:46:08 +0000
+Message-ID: <20250126134616.37334-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250126134616.37334-1-biju.das.jz@bp.renesas.com>
 References: <20250126134616.37334-1-biju.das.jz@bp.renesas.com>
@@ -42,79 +44,131 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add SDHI{0..2} clock and reset entries.
+Enable eMMC on SDHI0 and SD on SDHI2 on RZ/G3E SMARC SoM.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-This patch depend upon [1]
-[1] https://lore.kernel.org/all/20250120094715.25802-3-biju.das.jz@bp.renesas.com/
----
- drivers/clk/renesas/r9a09g047-cpg.c | 31 +++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     | 89 +++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
-index 1181e7b605e8..51fd24c20ed5 100644
---- a/drivers/clk/renesas/r9a09g047-cpg.c
-+++ b/drivers/clk/renesas/r9a09g047-cpg.c
-@@ -31,6 +31,8 @@ enum clk_ids {
+diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+index f4ba050beb0d..81f4f738482b 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+@@ -8,17 +8,79 @@
+ / {
+ 	compatible = "renesas,rzg3e-smarcm", "renesas,r9a09g047e57", "renesas,r9a09g047";
  
- 	/* Internal Core Clocks */
- 	CLK_PLLCM33_DIV16,
-+	CLK_PLLCLN_DIV2,
-+	CLK_PLLCLN_DIV8,
- 	CLK_PLLCLN_DIV16,
- 	CLK_PLLDTY_ACPU,
- 	CLK_PLLDTY_ACPU_DIV4,
-@@ -71,6 +73,8 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
- 	/* Internal Core Clocks */
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
- 
-+	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
-+	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
- 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
- 
- 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
-@@ -126,6 +130,30 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
- 						BUS_MSTOP(1, BIT(7))),
- 	DEF_MOD("riic_7_ckm",			CLK_PLLCLN_DIV16, 9, 11, 4, 27,
- 						BUS_MSTOP(1, BIT(8))),
-+	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_clk_hs",		CLK_PLLCLN_DIV2, 10, 5, 5, 5,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 6, 5, 6,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_1_imclk",			CLK_PLLCLN_DIV8, 10, 7, 5, 7,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_imclk2",		CLK_PLLCLN_DIV8, 10, 8, 5, 8,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_clk_hs",		CLK_PLLCLN_DIV2, 10, 9, 5, 9,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 10, 5, 10,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_2_imclk",			CLK_PLLCLN_DIV8, 10, 11, 5, 11,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_imclk2",		CLK_PLLCLN_DIV8, 10, 12, 5, 12,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_clk_hs",		CLK_PLLCLN_DIV2, 10, 13, 5, 13,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
-+						BUS_MSTOP(8, BIT(4))),
++	aliases {
++		mmc0 = &sdhi0;
++		mmc2 = &sdhi2;
++	};
++
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* First 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0xf8000000>;
+ 	};
++
++	reg_3p3v: regulator-3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
  };
  
- static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
-@@ -146,6 +174,9 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
- 	DEF_RST(9, 14, 4, 15),		/* RIIC_6_MRST */
- 	DEF_RST(9, 15, 4, 16),		/* RIIC_7_MRST */
- 	DEF_RST(10, 0, 4, 17),		/* RIIC_8_MRST */
-+	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
-+	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
-+	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
+ &audio_extal_clk {
+ 	clock-frequency = <48000000>;
  };
  
- const struct rzv2h_cpg_info r9a09g047_cpg_info __initconst = {
++&pinctrl {
++	sdhi0_emmc_pins: sd0emmc {
++		sd0-emmc-ctrl {
++			pins = "SD0CLK", "SD0CMD";
++			renesas,output-impedance = <3>;
++		};
++
++		sd0-iovs {
++			pins = "SD0IOVS";
++			renesas,output-impedance = <3>;
++		};
++
++		sd0-emmc-data {
++			pins = "SD0DAT0", "SD0DAT1", "SD0DAT2", "SD0DAT3",
++			       "SD0DAT4", "SD0DAT5", "SD0DAT6", "SD0DAT7";
++			renesas,output-impedance = <3>;
++		};
++
++		sd0-emmc-rst {
++			pins = "SD0RSTN";
++			renesas,output-impedance = <3>;
++		};
++	};
++
++	sdhi2_pins: sd2 {
++		sd2-cd {
++			pinmux = <RZG3E_PORT_PINMUX(K, 0, 1)>; /* SD2CD */
++		};
++
++		sd2-io {
++			pinmux = <RZG3E_PORT_PINMUX(K, 1, 1)>, /* SD2IOVS */
++				 <RZG3E_PORT_PINMUX(K, 2, 1)>; /* SD2IOPWEN */
++		};
++
++		sd2-data {
++			pinmux = <RZG3E_PORT_PINMUX(H, 2, 1)>, /* SD2DAT0 */
++				 <RZG3E_PORT_PINMUX(H, 3, 1)>, /* SD2DAT1 */
++				 <RZG3E_PORT_PINMUX(H, 4, 1)>, /* SD2DAT2 */
++				 <RZG3E_PORT_PINMUX(H, 5, 1)>; /* SD2DAT3 */
++		};
++
++		sd2-ctrl {
++			pinmux = <RZG3E_PORT_PINMUX(H, 0, 1)>, /* SD2CLK */
++				 <RZG3E_PORT_PINMUX(H, 1, 1)>; /* SD2CMD */
++		};
++	};
++};
++
+ &qextal_clk {
+ 	clock-frequency = <24000000>;
+ };
+@@ -27,6 +89,33 @@ &rtxin_clk {
+ 	clock-frequency = <32768>;
+ };
+ 
++&sdhi0 {
++	pinctrl-0 = <&sdhi0_emmc_pins>;
++	pinctrl-1 = <&sdhi0_emmc_pins>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&vqmmc_sdhi0>;
++	bus-width = <8>;
++	mmc-hs200-1_8v;
++	non-removable;
++	fixed-emmc-driver-type = <1>;
++	status = "okay";
++};
++
++&sdhi2 {
++	pinctrl-0 = <&sdhi2_pins>;
++	pinctrl-1 = <&sdhi2_pins>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&vqmmc_sdhi2>;
++	bus-width = <4>;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
++	status = "okay";
++};
++
+ &wdt1 {
+ 	status = "okay";
+ };
 -- 
 2.43.0
 
