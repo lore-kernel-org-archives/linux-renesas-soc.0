@@ -1,27 +1,25 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3C6EEDE;
-	Sun, 26 Jan 2025 13:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5AA25A653;
+	Sun, 26 Jan 2025 13:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737898028; cv=none; b=jPY3tb5OrMtdvqJXt1GkiCbfUvBivUWQAzgseIaABF3c3gXuSCNegoiyNzkr2+cD3zHk9Qs8BeeZQcE5gaIxX/lYBFcvGdfqEA7zzIXoUqFtQIOdxewZjhfyC/dGjuCoaHZRfqHUQASfDxzc3xICNiExgY48a8ehMot+dgBiO/M=
+	t=1737899195; cv=none; b=GWRbDG16DHYTGnpSNWCu41a5ExY+rAxjoHgICYd8KzGCvGsV9Lz0mYtFtlRNtzHqx3rcNGyp1RNWTGIwKfYC2bQB1LbgwaseLspETP5dlvP52pVHWBoQH0Ghnb9/jQRyfKyekkuh2nhiSedfZPvyi5ARiNQIvH8zIHzYnJ2qkJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737898028; c=relaxed/simple;
-	bh=WzUAR9LGv5gv8IYpuaY81t8A+CdxUq8/ut4yqHVn5d4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nSwo+oluyeXe41+GOBAvylPJveSrI31vCdyiQTN4JG1m1sTDX/QicqBHyIlxKy36FC5ah/2cFWAevkkKzkFdDKmzLacbcSYDlXGyhTRHYvwInCdXXU18BoxnYXe5XhQ2Gl6omadsl5B4hxJc2riJaiR7DxUVu1H0P6Si4+FebSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+	s=arc-20240116; t=1737899195; c=relaxed/simple;
+	bh=I8htk56yCQqWvtHXnwPQk+SpzplwyeO+eWzx14Z/5Ws=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sFEYXyX/+YQjrOjw7cRYosmCP9wJW4MZSZFJSOHPKd0SYcx7eyAiER8j6xDJzmx32s/xpHCrfzSrmh1ApKcj3WfSZJ/K7HDQw0Piwjo4A/HSCowMG6X/tYT3hyZ/ymx69lEB3A2gRAC9sATL74ovZUU2wKA46/uj662UwUppaZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: JVzG+WatT5mDZBCr1Oxn8Q==
-X-CSE-MsgGUID: Po5huIFBQVqA7CjqVBFkxw==
+X-CSE-ConnectionGUID: SbUwMhuNSEm0V1fktbOtfw==
+X-CSE-MsgGUID: 7IRuzLtCSPCsoaIks3R74g==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Jan 2025 22:26:58 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 26 Jan 2025 22:46:31 +0900
 Received: from localhost.localdomain (unknown [10.226.92.41])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C418F4002C29;
-	Sun, 26 Jan 2025 22:26:41 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 61A1740031E4;
+	Sun, 26 Jan 2025 22:46:19 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
+To: Ulf Hansson <ulf.hansson@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
@@ -29,19 +27,15 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-watchdog@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Subject: [PATCH v2 1/2] dt-bindings: watchdog: renesas,wdt: Document RZ/G3E support
-Date: Sun, 26 Jan 2025 13:26:30 +0000
-Message-ID: <20250126132633.31956-2-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/7] Add RZ/G3E SDHI support
+Date: Sun, 26 Jan 2025 13:46:02 +0000
+Message-ID: <20250126134616.37334-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250126132633.31956-1-biju.das.jz@bp.renesas.com>
-References: <20250126132633.31956-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -50,36 +44,34 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document the support for the watchdog IP available on RZ/G3E SoC. The
-watchdog IP available on RZ/G3E SoC is identical to the one found on
-RZ/V2H SoC.
+The SD/MMC block on the RZ/G3E ("R9A09G047") SoC is similar to that
+of the RZ/V2H, but the SD0 channel has only dedicated pins, so we must
+use SD_STATUS register to control voltage and power enable (internal
+regulator).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Collected tags.
----
- Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+For SD1 and SD2 channel we can either use gpio regulator or internal
+regulator (using SD_STATUS register) for voltage switching.
 
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-index 29ada89fdcdc..3e0a8747a357 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-@@ -75,6 +75,10 @@ properties:
-               - renesas,r8a779h0-wdt     # R-Car V4M
-           - const: renesas,rcar-gen4-wdt # R-Car Gen4
- 
-+      - items:
-+          - const: renesas,r9a09g047-wdt # RZ/G3E
-+          - const: renesas,r9a09g057-wdt # RZ/V2H(P)
-+
-       - const: renesas,r9a09g057-wdt       # RZ/V2H(P)
- 
-   reg:
+Biju Das (7):
+  dt-bindings: mmc: renesas,sdhi: Document RZ/G3E support
+  clk: renesas: r9a09g047: Add SDHI clocks/resets
+  mmc: renesas_sdhi: Arrange local variables in reverse xmas tree order
+  mmc: renesas_sdhi: Add support for RZ/G3E SoC
+  arm64: dts: renesas: r9a09g047: Add SDHI0-SDHI2 nodes
+  arm64: dts: renesas: rzg3e-smarc-som: Enable SDHI{0,2}
+  arm64: dts: renesas: r9a09g047e57-smarc: Enable SDHI1
+
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml |  20 +++
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  57 ++++++++
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  65 +++++++++
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |   9 ++
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |  89 ++++++++++++
+ drivers/clk/renesas/r9a09g047-cpg.c           |  31 +++++
+ drivers/mmc/host/renesas_sdhi.h               |   1 +
+ drivers/mmc/host/renesas_sdhi_core.c          | 131 +++++++++++++++++-
+ drivers/mmc/host/tmio_mmc.h                   |   5 +
+ 9 files changed, 407 insertions(+), 1 deletion(-)
+
 -- 
 2.43.0
 
