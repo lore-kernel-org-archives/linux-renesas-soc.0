@@ -1,38 +1,35 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D55A1FECC3;
-	Mon, 27 Jan 2025 11:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6AB1FECCD
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jan 2025 11:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737977872; cv=none; b=laXWlfvoezpRdowp6K614YNZgTwfUF9penN3zBNBquxKNkae3q6I0uoa6BZVpV1d1vG4rCJYtHzInBQYv5IpTIFnC8eUY8mcMkrVd3ay8pyI4pML2tIvzI+MmLm6eDvwqy3fUXyePavgae4gMSWUjq9hNEbtsHqPyGKGdMn1esw=
+	t=1737977873; cv=none; b=f5VzLzhT3HdkLbGwXhDCfbpGKLPTudLnol+v+3z+CCBSt5u4rnzuA1W2HxgBE3dcRAoK+7YJ6E9M15JA9vncPmIsaZnQMeX8P6ChHUtA3pYD4B5/5qEv6UjIREKxCIs0cOd7ZzVRof6zp4gYkjwyAe9CvAhfRjBhMkhFQ7ciEnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737977872; c=relaxed/simple;
-	bh=mAn+2FCOMP1AT2RkiSpT2aTw+e4/P0GLysBlTQ3/PiU=;
+	s=arc-20240116; t=1737977873; c=relaxed/simple;
+	bh=vvhhNmJ7JnncN3IH8Bfe+4DKsW9/AtiaICDXAvgNApo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZbJrAwV9HSZV7XhYb8h32uKs5rQHTegbeG0Ad4gnLn+EsZ4nM2ARiHR8jOQBPhEpKICncF7R7keP0muyEYiaeztx74la48IgfxrukrGqgDr0kn/qVedriauHBkraeHzEx4edxSvdNfyigM/VVpkDQDR5BVJteA92B+z/KzI/jtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+	 MIME-Version; b=Wvl6AR09ekZJp95WyqRFDSHyiLG2DL4hgF1NQR3zJ+SYUmQ9y3LiMg/iiS+uhF1b/CYxUTYFxaFSh6oOjTtaBjuoD1Z31ewcJ4dCInlzzIlluZV0hPki7sSVi5e9u7RlRkFDWof9K0g2hYHcYJAYXZkyxLVgl1DyHjEFNIah9/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: /fNWoL4uQUidvr35ORumlQ==
-X-CSE-MsgGUID: GU5CWnjLTZKaOQ86/LQHIw==
+X-CSE-ConnectionGUID: 65QK8hO6RSqH0Dv7Y1T6rA==
+X-CSE-MsgGUID: fgsWO7PSQAu36FGINmujgA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 27 Jan 2025 20:37:48 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 27 Jan 2025 20:37:48 +0900
 Received: from localhost.localdomain (unknown [10.226.94.28])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 12C0441F25BF;
-	Mon, 27 Jan 2025 20:37:33 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5B1A341F25A5;
+	Mon, 27 Jan 2025 20:37:43 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Subject: [PATCH v2 02/12] clk: renesas: r9a09g047: Add ICU clock/reset
-Date: Mon, 27 Jan 2025 11:36:57 +0000
-Message-ID: <20250127113723.24479-3-biju.das.jz@bp.renesas.com>
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 05/12] irqchip/renesas-rzv2h: Simplify rzv2h_icu_init()
+Date: Mon, 27 Jan 2025 11:37:00 +0000
+Message-ID: <20250127113723.24479-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250127113723.24479-1-biju.das.jz@bp.renesas.com>
 References: <20250127113723.24479-1-biju.das.jz@bp.renesas.com>
@@ -44,39 +41,48 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add ICU clock and reset entries.
+Simplify rzv2h_icu_init() by using devm_pm_runtime_enable().
 
-Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v1->v2:
- * Collected tags.
+v2:
+ * New patch.
 ---
- drivers/clk/renesas/r9a09g047-cpg.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/irqchip/irq-renesas-rzv2h.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
-index 1886eab9ef9e..1181e7b605e8 100644
---- a/drivers/clk/renesas/r9a09g047-cpg.c
-+++ b/drivers/clk/renesas/r9a09g047-cpg.c
-@@ -90,6 +90,8 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
- };
+diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
+index 5c5d2e015a88..f90652013082 100644
+--- a/drivers/irqchip/irq-renesas-rzv2h.c
++++ b/drivers/irqchip/irq-renesas-rzv2h.c
+@@ -463,11 +463,16 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
+ 		goto put_dev;
+ 	}
  
- static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
-+	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5,
-+						BUS_MSTOP_NONE),
- 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
- 						BUS_MSTOP(3, BIT(5))),
- 	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
-@@ -128,6 +130,7 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+-	pm_runtime_enable(&pdev->dev);
++	ret = devm_pm_runtime_enable(&pdev->dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "devm_pm_runtime_enable failed, %d\n", ret);
++		goto put_dev;
++	}
++
+ 	ret = pm_runtime_resume_and_get(&pdev->dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "pm_runtime_resume_and_get failed: %d\n", ret);
+-		goto pm_disable;
++		goto put_dev;
+ 	}
  
- static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
- 	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
-+	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
- 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
- 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
- 	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
+ 	raw_spin_lock_init(&rzv2h_icu_data->lock);
+@@ -488,8 +493,6 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
+ 
+ pm_put:
+ 	pm_runtime_put(&pdev->dev);
+-pm_disable:
+-	pm_runtime_disable(&pdev->dev);
+ put_dev:
+ 	put_device(&pdev->dev);
+ 
 -- 
 2.43.0
 
