@@ -1,36 +1,35 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6BF1FECBF
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jan 2025 11:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A791FECC3
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Jan 2025 11:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737977873; cv=none; b=m7G9d/e/6Lkk6RbcvR9BKfhseC4DbaQpZbtJQJ9idVUMLmfpEuv07d3I1gMR6n9WV6RK3ByubuoNUii7ubcptis8y87b0GtDeS1RrJnXT42fp4r2XBVKWWTEdg4pBkQzCnBsx1V6/wFm2BiKy6OWdDJTXz4bcWPA6UvYF2eszpY=
+	t=1737977874; cv=none; b=raFF5uLzC2QwggaQhJmufzQUFLU5cysPRHFAVwzMr61AZFEf5kudWcjLtx2a2vu2v5XaYo5vC/ia1yCJsFY4k55b4fEAGQoTZEySovNGrwdZjQ9rR7a30Jy9JWl8s7oOhTBDh6PpGJvO72BRMLiose1Rm47esDKphLCTTfQ2e1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737977873; c=relaxed/simple;
-	bh=OT0bh4toV/mYEs7J/nXQPmM1s4vdHhfX4tEQ7UOGGY8=;
+	s=arc-20240116; t=1737977874; c=relaxed/simple;
+	bh=JlNWG9SE5RxFmBANlQUrR8SUcn8OcPtFIyX1WlO3EhY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KndDkCvYiPS2ZeS3XE/a/1lWtwYhb1qkZs8NKu/sUgm1w/YV4SCxzVBd4N77X1bNy0v2qkERdzwMG8jdM74+PVBM9UXphqDjp2xTxZ6Wqt1JRod4C7fhW3pTcytP91cNHn+A0nV8HzgDhqTY7zudfqdDHcgCfOWvsxNueYXekAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=Il9nrgD5lM3fGI3PNuemSq1D9YXusSHySu8OAqAjoyDwh/PVN80FEEZb/63AwrRVFT+Ksekx7r/Y8saBWJSvCr2nCTD9qcV+mjhysKBJXMOvNLbIC0WYX4v/NRQSXbihe22aH0pjUjHK7XC7gXbHj3u7msNQpM6MwGzM6Le0sdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: FdFN44J0TC2KZ7QA2Jpwsw==
-X-CSE-MsgGUID: 5uOI2lD+TyyNG+SF9erhKQ==
+X-CSE-ConnectionGUID: pXwEBHqOSlGPfutcqZ/40g==
+X-CSE-MsgGUID: QV1XSH12SA+cPMFmmxzNxQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Jan 2025 20:37:48 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 27 Jan 2025 20:37:48 +0900
 Received: from localhost.localdomain (unknown [10.226.94.28])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1782941F25B2;
-	Mon, 27 Jan 2025 20:37:45 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9F79A41F2797;
+	Mon, 27 Jan 2025 20:37:40 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Subject: [PATCH v2 06/12] irqchip/renesas-rzv2h: Add struct rzv2h_hw_info with t_offs variable
-Date: Mon, 27 Jan 2025 11:37:01 +0000
-Message-ID: <20250127113723.24479-7-biju.das.jz@bp.renesas.com>
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 04/12] irqchip/renesas-rzv2h: Use devm_reset_control_get_exclusive_deasserted()
+Date: Mon, 27 Jan 2025 11:36:59 +0000
+Message-ID: <20250127113723.24479-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250127113723.24479-1-biju.das.jz@bp.renesas.com>
 References: <20250127113723.24479-1-biju.das.jz@bp.renesas.com>
@@ -40,173 +39,53 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The ICU block on the RZ/G3E SoC is almost identical to the one found on
-the RZ/V2H SoC, with the following differences:
- - The TINT register offset starts at 0x830 instead of 0x30.
- - The number of GPIO interrupts for TINT selection is 141 instead of 86.
- - The pin index and TINT selection index are not in the 1:1 map
- - The number of TSSR registers is 15 instead of 8
- - Each TSSR register can program 2 TINTs instead of 4 TINTs
+Use devm_reset_control_get_exclusive_deasserted() to simplify
+rzv2h_icu_init().
 
-Introduce struct rzv2h_hw_info to handle these differences and add t_offs
-variable to take care of the TINT register offset difference between
-RZ/G3E and RZ/V2H.
-
-Refactor the code by moving rzv2h_icu_init() into rzv2h_icu_init_common()
-and pass the varable containing hw difference to support both these SoCs.
-
-Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * Collected tags
- * Started aligning kernel doc, struct members and struct initializers in
-   a tabular fashion.
+ * Split the simplification patch into two.
+ * Updated commit header and description.
+ * Replaced devm_reset_control_get_optional_exclusive_deasserted()->
+   devm_reset_control_get_exclusive_deasserted().
+ * Moved simplification using devm_pm_runtime_enable() to next patch.
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 46 +++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index f90652013082..663f8a69c916 100644
+index fd432b43506b..5c5d2e015a88 100644
 --- a/drivers/irqchip/irq-renesas-rzv2h.c
 +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -80,16 +80,26 @@
- #define ICU_TINT_EXTRACT_GPIOINT(x)		FIELD_GET(GENMASK(31, 16), (x))
- #define ICU_PB5_TINT				0x55
- 
-+/**
-+ * struct rzv2h_hw_info - Interrupt Control Unit controller hardware info structure.
-+ * @t_offs:		TINT offset
-+ */
-+struct rzv2h_hw_info {
-+	u16		t_offs;
-+};
-+
- /**
-  * struct rzv2h_icu_priv - Interrupt Control Unit controller private data structure.
-  * @base:	Controller's base address
-  * @fwspec:	IRQ firmware specific data
-  * @lock:	Lock to serialize access to hardware registers
-+ * @info:	Pointer to struct rzv2h_hw_info
-  */
- struct rzv2h_icu_priv {
- 	void __iomem			*base;
- 	struct irq_fwspec		fwspec[ICU_NUM_IRQ];
- 	raw_spinlock_t			lock;
-+	const struct rzv2h_hw_info	*info;
- };
- 
- static inline struct rzv2h_icu_priv *irq_data_to_priv(struct irq_data *data)
-@@ -109,7 +119,7 @@ static void rzv2h_icu_eoi(struct irq_data *d)
- 			tintirq_nr = hw_irq - ICU_TINT_START;
- 			bit = BIT(tintirq_nr);
- 			if (!irqd_is_level_type(d))
--				writel_relaxed(bit, priv->base + ICU_TSCLR);
-+				writel_relaxed(bit, priv->base + priv->info->t_offs + ICU_TSCLR);
- 		} else if (hw_irq >= ICU_IRQ_START) {
- 			tintirq_nr = hw_irq - ICU_IRQ_START;
- 			bit = BIT(tintirq_nr);
-@@ -137,12 +147,12 @@ static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
- 	tssel_n = ICU_TSSR_TSSEL_N(tint_nr);
- 
- 	guard(raw_spinlock)(&priv->lock);
--	tssr = readl_relaxed(priv->base + ICU_TSSR(k));
-+	tssr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TSSR(k));
- 	if (enable)
- 		tssr |= ICU_TSSR_TIEN(tssel_n);
- 	else
- 		tssr &= ~ICU_TSSR_TIEN(tssel_n);
--	writel_relaxed(tssr, priv->base + ICU_TSSR(k));
-+	writel_relaxed(tssr, priv->base + priv->info->t_offs + ICU_TSSR(k));
- }
- 
- static void rzv2h_icu_irq_disable(struct irq_data *d)
-@@ -245,8 +255,8 @@ static void rzv2h_clear_tint_int(struct rzv2h_icu_priv *priv, unsigned int hwirq
- 	u32 bit = BIT(tint_nr);
- 	int k = tint_nr / 16;
- 
--	tsctr = readl_relaxed(priv->base + ICU_TSCTR);
--	titsr = readl_relaxed(priv->base + ICU_TITSR(k));
-+	tsctr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TSCTR);
-+	titsr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TITSR(k));
- 	titsel = ICU_TITSR_TITSEL_GET(titsr, titsel_n);
- 
- 	/*
-@@ -255,7 +265,7 @@ static void rzv2h_clear_tint_int(struct rzv2h_icu_priv *priv, unsigned int hwirq
- 	 */
- 	if ((tsctr & bit) && ((titsel == ICU_TINT_EDGE_RISING) ||
- 			      (titsel == ICU_TINT_EDGE_FALLING)))
--		writel_relaxed(bit, priv->base + ICU_TSCLR);
-+		writel_relaxed(bit, priv->base + priv->info->t_offs + ICU_TSCLR);
- }
- 
- static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
-@@ -306,21 +316,21 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
- 
- 	guard(raw_spinlock)(&priv->lock);
- 
--	tssr = readl_relaxed(priv->base + ICU_TSSR(tssr_k));
-+	tssr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
- 	tssr &= ~(ICU_TSSR_TSSEL_MASK(tssel_n) | tien);
- 	tssr |= ICU_TSSR_TSSEL_PREP(tint, tssel_n);
- 
--	writel_relaxed(tssr, priv->base + ICU_TSSR(tssr_k));
-+	writel_relaxed(tssr, priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
- 
--	titsr = readl_relaxed(priv->base + ICU_TITSR(titsr_k));
-+	titsr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TITSR(titsr_k));
- 	titsr &= ~ICU_TITSR_TITSEL_MASK(titsel_n);
- 	titsr |= ICU_TITSR_TITSEL_PREP(sense, titsel_n);
- 
--	writel_relaxed(titsr, priv->base + ICU_TITSR(titsr_k));
-+	writel_relaxed(titsr, priv->base + priv->info->t_offs + ICU_TITSR(titsr_k));
- 
- 	rzv2h_clear_tint_int(priv, hwirq);
- 
--	writel_relaxed(tssr | tien, priv->base + ICU_TSSR(tssr_k));
-+	writel_relaxed(tssr | tien, priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
- 
- 	return 0;
- }
-@@ -419,7 +429,8 @@ static int rzv2h_icu_parse_interrupts(struct rzv2h_icu_priv *priv, struct device
- 	return 0;
- }
- 
--static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
-+static int rzv2h_icu_init_common(struct device_node *node, struct device_node *parent,
-+				 const struct rzv2h_hw_info *hw_info)
- {
- 	struct irq_domain *irq_domain, *parent_domain;
- 	struct rzv2h_icu_priv *rzv2h_icu_data;
-@@ -485,6 +496,8 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
- 		goto pm_put;
+@@ -456,15 +456,10 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
+ 		goto put_dev;
  	}
  
-+	rzv2h_icu_data->info = hw_info;
-+
- 	/*
- 	 * coccicheck complains about a missing put_device call before returning, but it's a false
- 	 * positive. We still need &pdev->dev after successfully returning from this function.
-@@ -499,6 +512,15 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
- 	return ret;
- }
+-	resetn = devm_reset_control_get_exclusive(&pdev->dev, NULL);
++	resetn = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
+ 	if (IS_ERR(resetn)) {
+ 		ret = PTR_ERR(resetn);
+-		goto put_dev;
+-	}
+-
+-	ret = reset_control_deassert(resetn);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to deassert resetn pin, %d\n", ret);
++		dev_err(&pdev->dev, "failed to acquire deasserted reset: %d\n", ret);
+ 		goto put_dev;
+ 	}
  
-+static const struct rzv2h_hw_info rzv2h_hw_params = {
-+	.t_offs		= 0,
-+};
-+
-+static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
-+{
-+	return rzv2h_icu_init_common(node, parent, &rzv2h_hw_params);
-+}
-+
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzv2h_icu)
- IRQCHIP_MATCH("renesas,r9a09g057-icu", rzv2h_icu_init)
- IRQCHIP_PLATFORM_DRIVER_END(rzv2h_icu)
+@@ -495,7 +490,6 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
+ 	pm_runtime_put(&pdev->dev);
+ pm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+-	reset_control_assert(resetn);
+ put_dev:
+ 	put_device(&pdev->dev);
+ 
 -- 
 2.43.0
 
