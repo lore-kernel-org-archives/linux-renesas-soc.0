@@ -1,204 +1,151 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CE44430;
-	Mon, 27 Jan 2025 12:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAFF1FECBE;
+	Mon, 27 Jan 2025 12:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737981178; cv=none; b=aTV/fk3Z1RbxxuJK8kPDejOoBJ/eHzArNGKRR9xhzKpUzzEFZH7Mhjk0F6vNOSlezSOzcD/m/Ih9b+4vOart1vWkUdgaCtiImmeBHdT359yGavRRoYk3FWFgeMylti/73ujVfLINU2lC7dC2jKrkeWlbOi/ukGwDL9Dh8bxFOyY=
+	t=1737982002; cv=none; b=DxzQHtbBYgekWbrlWBa1EBB1X1gLIFIbno5U8t9/hIkWuX2HYg5B1L9dJfyvYHA7py/cw28pzfFRgl7Vr8LNNi6x4Y3DqnbG6H+kVFldTChWTEgqXkqCoDDCrhyGDiZbIvrcaLnEMZorqnFcNs/VdKXL/ECFVOnu5fjGfnWGa2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737981178; c=relaxed/simple;
-	bh=Q9A0tZM4tp7Ov928s5DzDKtrr9Bj/LCV2rz5XG6VF0s=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QGGLAwriQ5CIufxLhp0XyIyB4fh90pOQo7zZQHN9EGRYvYlfgaAgmbUOqsK99xxBr4raJd5bDhHf0vtBjALHu/n2SLsEA1Mmskkdx/C1t14xrR5vYq/bwrCdMMmPzPxT6a9q9iWYOFULCbjf7ad5wnfu42QVZrh9EnC8VWI4mRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YhSVG1Yxpz6K99p;
-	Mon, 27 Jan 2025 20:32:22 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 68FE31400C8;
-	Mon, 27 Jan 2025 20:32:52 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 27 Jan
- 2025 13:32:51 +0100
-Date: Mon, 27 Jan 2025 12:32:50 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Jonathan Cameron
-	<jic23@kernel.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	<lars@metafoo.de>, <linux-iio@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Claudiu
- Beznea" <claudiu.beznea.uj@bp.renesas.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, <linux-pm@vger.kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 1/2] iio: adc: rzg2l_adc: Drop devm_pm_runtime_enable()
-Message-ID: <20250127123250.00002784@huawei.com>
-In-Reply-To: <CAPDyKFrqDfYEQHk0RsRi2LnMw_HgGozMW9JP9xmkAq52O7eztg@mail.gmail.com>
-References: <20250103140042.1619703-1-claudiu.beznea.uj@bp.renesas.com>
-	<20250103140042.1619703-2-claudiu.beznea.uj@bp.renesas.com>
-	<20250104135225.2573285b@jic23-huawei>
-	<44e4a6b4-39a4-49d0-b3a5-fc5545c39a56@tuxon.dev>
-	<20250111131409.36bebfd3@jic23-huawei>
-	<bb987a1b-a999-478c-8e35-124fcf41561d@tuxon.dev>
-	<CAPDyKFoJ3pLU-5_b5MSxMZd7B1cfOvmcdqR4FGkU2Wb7No0mcw@mail.gmail.com>
-	<20250117155226.00002691@huawei.com>
-	<CAPDyKFpQUMOFtA-QCbYdaeKSDGJpnjcA+tiKZ=kzmrjYRtFZdw@mail.gmail.com>
-	<20250124184137.0000047a@huawei.com>
-	<CAPDyKFrqDfYEQHk0RsRi2LnMw_HgGozMW9JP9xmkAq52O7eztg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1737982002; c=relaxed/simple;
+	bh=4mWrBHSk0HW6moMZXG5yPVWArdrATyoEJrN0gimIFl0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=EZw0g66N/0antDSDJgDo7tAJ1rKaz5rNP1jub5R2rRgwCsEYAAgaz5mH6jFfLnDrAomgOsgZCoeBoUrT3O8s+udvUPXsmZRfGWDDJmfiyf/pm8TmwWU7NruSgtssDDvCjGPzvilPZwCekKYDsOf+IFCoGsSE2gXOI3G1mVd9FKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F3lENvnn; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F3lENvnn"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436a03197b2so28897395e9.2;
+        Mon, 27 Jan 2025 04:46:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737981999; x=1738586799; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5UXpQLaAZHWEyD0pxCkPC9tyYvCIT3KFA3QpJPSo0x8=;
+        b=F3lENvnnyIdBXJiRuyenMBlDOFUYRotmz4NYSF3Lvod3+HJPsvpjEyWRXg2f9SHFVt
+         DEQtC4qlTlYK2sDilwEDRUt25hmsp33HQo49Bb2DcZTMFZvjrOMwuTbY2k+W+2lxx/sT
+         SDGS13Vb5F4PAs3ljRAayhrg/z8JKai1Wp6NgrY+OEJXVTQWQ4zwAfbDy7WRJjP8szSs
+         kWik1XLTT9+Pefai6YkMYmu8lYxTAIImYTiO/1AyxatFNm/wR2kmLPTfDNd5U5uVNHWo
+         /VmaXDP5nE+fk/JtMmRsFaRi1T3HUepKn0J8fu6JJ+3nel51Ex4yMu8lWgGd4oF2mKAv
+         3/Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737981999; x=1738586799;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5UXpQLaAZHWEyD0pxCkPC9tyYvCIT3KFA3QpJPSo0x8=;
+        b=sP7OZmjqna7do7mbyWcNtxt7hj/rQtZEyQ2lOGY4hrTHJRy/wOlEOEOXmdovU9FHH/
+         DIiot6ITKNPqjHqHG1T7WozgmK0DjH3nyv2YulT1MFRK3hB5i71Ll+CR43IlYqsezNtg
+         eerKKDMNC+aB99LFwkge5/79SQRy11jh+hIAwlRfXowAEHCYBRnX6Eq5gvypPJzbU4mK
+         xiCSUcpWgSqO9qQoGAt3i7ZiBsW66WR+Z0rBirsp/MlIRA4Bi3GdcyfHlldthwr+so7u
+         sWautuKObrrHeZ4zrBDTOhmSkp+fOs2u/PhRJaZkoRrX+hIkn8+cPv0YR0ieCAuUbrxU
+         eypg==
+X-Forwarded-Encrypted: i=1; AJvYcCUB2haBoRrUbeEJgSDnCVmd43AG4ZzZ2MfMdxPzhO48phGnCdiiPnYmf8iAuKAWFnTW+iHpBfTxKHX6yjQI87wlYOo=@vger.kernel.org, AJvYcCUdkyDJIaUpo3TkahO7mcFF6VYhD2w0E9f4ayTkT1i2XtMb3Lp7nWlnVVGsVqRIV51dY15QpdGB1jvv04A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqpDTxh/S9NwSdcsSSEAyBpMKK7OKWYag+raXlxTCbOJsZ+VVu
+	XLN30NVw6xGQeYUUFRVkMpSIq2ifBVvqKt+f4hlOFuLDHhkctnl1
+X-Gm-Gg: ASbGncvwAs1SiQFPNRA/BQijdnqgUTKBcvnEHWakK31hR88d+DdKe+8R9YhscnBwhGZ
+	TCFePU484EhLy8uNH1lvIqEt6apDBQmntCqU8/K3Rt4OZbrITWxzLtX9Z8Rn8r5szT+0075W3IC
+	0UeaMqAi+66tlpcuXyiUT+whoVgvIwyQB6gqkK1DOtAfLkvI2E7O5O0JDwAGIV4+Vqm17Ar7t3d
+	GLUgcOV/rkpcs7Ib+kD5UP8cN18Y7p+fHbmltUd7MxiQSkH1mQDuIcC95K4OQx352g9ovBAv3OG
+	brPN
+X-Google-Smtp-Source: AGHT+IFcpebGZaqOLXYWPaGFtndOOwU8Vjebxht6JbYpi1k2FlAk2skEDPVNNfLGXRNNRoy7L722kw==
+X-Received: by 2002:a05:600c:b8a:b0:431:5e3c:2ff0 with SMTP id 5b1f17b1804b1-438913c9f66mr357781595e9.8.1737981998728;
+        Mon, 27 Jan 2025 04:46:38 -0800 (PST)
+Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd501c2dsm129176715e9.13.2025.01.27.04.46.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2025 04:46:38 -0800 (PST)
+From: Raphael Gallais-Pou <rgallaispou@gmail.com>
+Date: Mon, 27 Jan 2025 13:45:56 +0100
+Subject: [PATCH RFC 01/14] ahci: brcm: Switch from CONFIG_PM_SLEEP guards
+ to pm_sleep_ptr()
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Message-Id: <20250127-pm_ata-v1-1-f8f50c821a2a@gmail.com>
+References: <20250127-pm_ata-v1-0-f8f50c821a2a@gmail.com>
+In-Reply-To: <20250127-pm_ata-v1-0-f8f50c821a2a@gmail.com>
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Patrice Chotard <patrice.chotard@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Viresh Kumar <vireshk@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ linux-renesas-soc@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1571; i=rgallaispou@gmail.com;
+ h=from:subject:message-id; bh=4mWrBHSk0HW6moMZXG5yPVWArdrATyoEJrN0gimIFl0=;
+ b=owEBbQKS/ZANAwAIAechimjUEsK1AcsmYgBnl4AqwZw5/RPua7LmhyMMUY1qD4nk4fuWdEjvn
+ fkcBz0A+ICJAjMEAAEIAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCZ5eAKgAKCRDnIYpo1BLC
+ tZSMD/9QFx/Dg/L9PZ311iYUySiZ5aaWZQ+jU5ysXXdpxQh+9iGpTrscQRBVfUbxFgoRJOSW2Kz
+ /LxP0K7C6laA7kH3NsToFv20OKKvAo8JE/WrsxBNU2jNxzXaaIq/qRjOFJFXOGqFduVyTxASc/D
+ rtGK8zEksr6Ulazfl5E0iRx1TPrAR9NlKBvV0KAVSkAlDV+MZQ+S7Ym6ZmXk+6ilwUZeFANJY6V
+ gEdR88tKc1CpsaswbsvubsiNYIoES3v4zcEGFWVJ87Zfe9Z9wqmEHrgB6G4DExJA1BkUzMDNKOt
+ jCw1z1SJ05MeOeoDOaTWUKNBLjXsa9aqII8RXNQG+DQIlHq8ucSEbgEtYkhspqDfet8IBpPo/Gn
+ lsRRuzRsrL/BthLog1m9OUJ7ex7384StiA+Xk1HgskC6pid6pOIUUEXB0irM3UvKWfAmCtvCiW9
+ o2eReO7PMqmkdf98ZwYMiP51i6TTly7NcLNSJOvYsQL0RqJaXTx3DMrb76yAQMCgex5b35hVK+7
+ wIY8Mvcvf+Qf+TOMoGYpx0AYeDw08fHub0truLO8SjYyrgmQh9QK+uF5pbweufGV/RxBxMjiAAs
+ WoIUly+qQrUHuAK8PEwzjqcw1LDHLo4xd+sDE3Y55CJrne0v2nDd0QTopi3kcz7woJeJWjG8b0i
+ wvyJKOEETeFoxvQ==
+X-Developer-Key: i=rgallaispou@gmail.com; a=openpgp;
+ fpr=20997BF613E7EF6D5FFDBA2FE7218A68D412C2B5
 
-On Mon, 27 Jan 2025 11:47:44 +0100
-Ulf Hansson <ulf.hansson@linaro.org> wrote:
+Letting the compiler remove these functions when the kernel is built
+without CONFIG_PM_SLEEP support is simpler and less error prone than the
+use of #ifdef based kernel configuration guards.
 
-> [...]
-> 
-> > > > > > Do consider OK to change the order in pm_runtime_disable_action() to get
-> > > > > > rid of these issues, e.g.:
-> > > > > >
-> > > > > > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > > > > > index 2ee45841486b..f27d311d2619 100644
-> > > > > > --- a/drivers/base/power/runtime.c
-> > > > > > +++ b/drivers/base/power/runtime.c
-> > > > > > @@ -1547,8 +1547,8 @@ EXPORT_SYMBOL_GPL(pm_runtime_enable);
-> > > > > >
-> > > > > >  static void pm_runtime_disable_action(void *data)
-> > > > > >  {
-> > > > > > -       pm_runtime_dont_use_autosuspend(data);
-> > > > > >         pm_runtime_disable(data);
-> > > > > > +       pm_runtime_dont_use_autosuspend(data);
-> > > > > >  }
-> > > > > >
-> > > > > > though I see a rpm_resume() call is still possible though pm_runtime_disable().  
-> > > > >
-> > > > > I am still worried about keeping the device runtime enabled during a
-> > > > > window when we have turned off all resources for the device. Typically
-> > > > > we want to leave the device in a low power state after unbind.
-> > > > >
-> > > > > That said, I would rather just drop the devm_pm_runtime_enable() API
-> > > > > altogether and convert all users of it into
-> > > > > pm_runtime_enable|disable(), similar to what your patch does.  
-> > > >
-> > > > That is making a mess of a lot of automated cleanup for a strange
-> > > > runtime pm related path.  This is pain a driver should not have
-> > > > to deal with, though I'm not clear what the right solution is!
-> > > >
-> > > > Key is that drivers should not mix devm managed cleanup and not, so
-> > > > that means that anything that happens after runtime pm is enabled
-> > > > has to be torn down manually.  One solution to this might be to
-> > > > always enable it late assuming that is safe to do so there is
-> > > > never anything else done after it in the probe path of a driver.  
-> > >
-> > > The problem is that runtime PM isn't really comparable to other
-> > > resources that we are managing through devm* functions.
-> > >
-> > > Enabling runtime PM for a device changes the behaviour for how
-> > > power-mgmt is handled for the device. Enabling/disabling of runtime PM
-> > > really needs to be explicitly controlled by the driver for the device.  
-> >
-> > I'm sorry to say I'm not yet convinced.  
-> 
-> Okay, let me try one more time. :-)
+Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+---
+ drivers/ata/ahci_brcm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-+CC Greg as the disagreement here is really a philosophy of what
-devm cleanup is relative to remove.  Perhaps Greg or Rafael can
-given some guidance on the intent there.
+diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
+index 29be74fedcf01934e436481c66cb8d329284d599..3d43ed5db6078b3f07440f21aae6edf73d1da7f2 100644
+--- a/drivers/ata/ahci_brcm.c
++++ b/drivers/ata/ahci_brcm.c
+@@ -362,7 +362,7 @@ static int brcm_ahci_suspend(struct device *dev)
+ 	return ret;
+ }
+ 
+-static int __maybe_unused brcm_ahci_resume(struct device *dev)
++static int brcm_ahci_resume(struct device *dev)
+ {
+ 	struct ata_host *host = dev_get_drvdata(dev);
+ 	struct ahci_host_priv *hpriv = host->private_data;
+@@ -570,7 +570,7 @@ static void brcm_ahci_shutdown(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "failed to shutdown\n");
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(ahci_brcm_pm_ops, brcm_ahci_suspend, brcm_ahci_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(ahci_brcm_pm_ops, brcm_ahci_suspend, brcm_ahci_resume);
+ 
+ static struct platform_driver brcm_ahci_driver = {
+ 	.probe = brcm_ahci_probe,
+@@ -579,7 +579,7 @@ static struct platform_driver brcm_ahci_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.of_match_table = ahci_of_match,
+-		.pm = &ahci_brcm_pm_ops,
++		.pm = pm_sleep_ptr(&ahci_brcm_pm_ops),
+ 	},
+ };
+ module_platform_driver(brcm_ahci_driver);
 
-Mind you I think I found another subsystem working around this
-and in a somewhat more elegant, general way (to my eyes anyway!)
-
-https://elixir.bootlin.com/linux/v6.12.6/source/drivers/i2c/i2c-core-base.c#L630
-https://lore.kernel.org/all/YFf1GFPephFxC0mC@google.com/
-
-+CC Dmitry.
-
-I2C creates an extra devres group and releases it before devm_pm_domain_detach()
-As all devm calls from the driver end up in that group, they are released
-before dev_pm_domain_detach()
-
-
-> 
-> >
-> > Devm callbacks are explicitly registered by the driver so that they
-> > are unwound in a specific order.  Many other parts of driver
-> > registration rely on this ordering.  This does not seem different
-> > for runtime PM than anything else.  
-> 
-> If you compare clocks, for example. It's the driver that is in full
-> control of the clock gating/ungating. When the ->remove() callback
-> runs, the driver typically makes sure that it leaves the clock gated.
-> Then it doesn't really matter when the clock resource gets released.
-> The point is, the driver is in full control of the resource.
-
-Not a good example. devm_clk_get_enabled() does not gate the clock until
-the devm cleanup. The assumption being that nothing that affects
-it runs between the remove() and devm cleanup.  So pretty much identical
-to the runtime pm case.  They being that you have to obey ordering so
-that if you need to run something after the clock is disabled then
-you register that callback before you call devm_clk_get_enabled()
-
-> 
-> If runtime PM would remain enabled beyond the call to the ->remove()
-> callback, it would mean that the driver's runtime PM callbacks could
-> be called too. For example, userspace via sysfs may at any point
-> decide to runtime resume the device. In other words, we may end up
-> calling the runtime PM callbacks in the driver, when they are not
-> intended to be called. In the worst case, I guess we could even end up
-> trying to control resources (like a clock) from the ->runtime
-> _resume() callback, when the references to these resources may already
-> have been released.
-
-This is all about what we consider remove. To me, with devm_ manged cleanup
-in place, both remove() and devm_ cleanup count as parts of that remove
-process.  
-
-One option I did wonder about was having a devm_pm_domain_attach()
-A little cheeky but I think the call in platform_probe() is late enough
-that we don't run into the checks on no devm_ calls before driver probe.
-
-That would shuffle the dev_pm_domain_detach() to the end of the
-devm_ cleanup.  Mind you the i2c approach above seems better.
-
-Jonathan
-
-> 
-> >
-> > Superficially the issue here looks to me to be that a non devm
-> > cleanup is inserted by the bus->remove() callback into drivers
-> > that are otherwise relying on explicit ordering provided
-> > by managed cleanup.
-> >
-> > I appreciate there may be no trivial solution.
-> >
-> > Maybe we can minimize that impact by always doing runtime pm last
-> > in any probe() function?  Can that work here?
-> >
-> >  
-> > >
-> > > If there are cleanups to be made for runtime PM, beyond disabling
-> > > runtime PM, we could instead consider adding that code in
-> > > pm_runtime_reinit().  
-> >
-> > I'm not familiar enough to comment on this option beyond it being
-> > after devres_release_all() so, maybe?  It seems superficially
-> > a better point in the sequence.
-> >
-> > Jonathan  
-> > >
-> > > [...]  
-> 
-> Kind regards
-> Uffe
+-- 
+2.48.0
 
