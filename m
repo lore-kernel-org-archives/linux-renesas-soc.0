@@ -1,24 +1,24 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B138188A3A;
-	Tue, 28 Jan 2025 03:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4BA2943F;
+	Tue, 28 Jan 2025 03:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738034052; cv=none; b=iq6+2+KTHkEaoKs37rn/ssnXKxUkXu5k2ixuO48L/iAxjulI+RU/VY9YbRGiNZfcEtMjFo3Q0wLXGzLbxg/P4IavO0mcrwG5ln41gJU1rzoigy1CiQtj92gOZHfpEL+hZ5ZQkB5PHhkvrBBiekqYT3K8z0PGt4WNYsTmy51S3A8=
+	t=1738034062; cv=none; b=Um2qWIvgnY1YQQijbEvHFaj/bNucsPivH5EGyVr2eWiH41DcAYeQbXOBWaao44pgb4Dv53/zqgIAom6ubY4W3APccoUIPkV2Wv1BgRfhGadTbbKp35T5k32RJhIMyUBvzl7Lu6dc4RqEh9CL1lw21GkgT087mvOYLagCmAUJfYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738034052; c=relaxed/simple;
-	bh=0tCNKhuMcUUbwvAPZ99nziXyOj0W+rx6Nqq352OCLaY=;
+	s=arc-20240116; t=1738034062; c=relaxed/simple;
+	bh=ZifLhwkUHQPjlGqenjVnjk5H/dURy1+77QEluu/KYso=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=axsFP7zf9KLYktyIW86h/oz2cuJoi2eUZI8qCJZL71tE/HWxCSZ4syG0ZLAAALCxDrR5/MeIHTlqns+wFn//i86DegAWG9hwAPIf5rOcvm7AR1hL1PuOIerWNnVVF4deS3BVy4RYLBG7moBBW5rSeIzNvSf7llCId0Jsga1vCT8=
+	 MIME-Version; b=dFNsRI9UWwR9jqNnww5i4dhR+CFqg65TRFF62T5e/i6Sx9JcwGf9ogQS9iJ+Fpq9rtlXiC3BEUxnl0SPkSMGhrXg6QgI0FNUhR9QMm3ZFBDcsf73uMW0udx1VKv98fnpw4W+Fy1+Oqa734VexrAjDCRDaRiE9MJCPPYbTNcj7ZA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: jKHPnmYWRuKfRleYFNKpdw==
-X-CSE-MsgGUID: fH70R0G4Q9aEHXSiFGD+6A==
+X-CSE-ConnectionGUID: +ukLjo47TUCv09tz2gnpEw==
+X-CSE-MsgGUID: aHfz1MP/Rb+MrqLqBXesuQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Jan 2025 12:14:07 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 28 Jan 2025 12:14:19 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.38])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 12DEA412D601;
-	Tue, 28 Jan 2025 12:13:51 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1CCBD412D80E;
+	Tue, 28 Jan 2025 12:14:02 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: john.madieu.xa@bp.renesas.com,
 	geert+renesas@glider.be,
@@ -32,9 +32,9 @@ Cc: biju.das.jz@bp.renesas.com,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	magnus.damm@gmail.com
-Subject: [PATCH v5 1/5] soc: renesas: Add SYSC driver for Renesas RZ family
-Date: Tue, 28 Jan 2025 04:13:38 +0100
-Message-ID: <20250128031342.52675-2-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v5 3/5] soc: renesas: rz-sysc: Add support for RZ/G3E family
+Date: Tue, 28 Jan 2025 04:13:40 +0100
+Message-ID: <20250128031342.52675-4-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250128031342.52675-1-john.madieu.xa@bp.renesas.com>
 References: <20250128031342.52675-1-john.madieu.xa@bp.renesas.com>
@@ -46,223 +46,209 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Add SoC detection support for RZ/G3E SoC. Also add support for detecting
+the number of cores and ETHOS-U55 NPU and also detect PLL mismatch for SW
+settings other than 1.7GHz.
 
-The RZ/G3S system controller (SYSC) has various registers that control
-different functionalities. One of the exposed register offsers information
-about the SoC identification.
-
-Add a driver that identifies the SoC. Later the driver will be extended
-with other functionalities.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
-Changes:
-v5: added sanity check after devm_kstrdup().
-v4: No changes
-v3: new patch
+Changes in v5:
+- Avoided using common include file for register definition for both RZ/G3E and RZ/V2H
+- Do not use macro for register definitions
+- Do not use a variable per line while printing messages
 
- drivers/soc/renesas/Kconfig   |   3 +
- drivers/soc/renesas/Makefile  |   1 +
- drivers/soc/renesas/rz-sysc.c | 122 ++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rz-sysc.h |  37 +++++++++++
- 4 files changed, 163 insertions(+)
- create mode 100644 drivers/soc/renesas/rz-sysc.c
- create mode 100644 drivers/soc/renesas/rz-sysc.h
+v3 -> v4: No changes
+
+Changes in v3:
+- removed syscon support
+
+Changes in v2:
+- Group bitfields ordered by registers
+- Rename SoC-specific callback field to 'print_id'
+- Explicitely select 'MFD_SYSCON' config option
+- Do not rely on 'syscon'-compatible probing anymore
+
+ drivers/soc/renesas/Kconfig         |  5 +++
+ drivers/soc/renesas/Makefile        |  1 +
+ drivers/soc/renesas/r9a09g047-sys.c | 66 +++++++++++++++++++++++++++++
+ drivers/soc/renesas/rz-sysc.c       | 12 +++++-
+ drivers/soc/renesas/rz-sysc.h       |  6 +++
+ 5 files changed, 88 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/soc/renesas/r9a09g047-sys.c
 
 diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 6d2e135eed89..937ab43fae6a 100644
+index a792a3e915fe..d3ba74b5fa11 100644
 --- a/drivers/soc/renesas/Kconfig
 +++ b/drivers/soc/renesas/Kconfig
-@@ -383,4 +383,7 @@ config PWC_RZV2M
- config RST_RCAR
- 	bool "Reset Controller support for R-Car" if COMPILE_TEST
+@@ -348,6 +348,7 @@ config ARCH_R9A09G011
  
-+config SYSC_RZ
-+	bool "System controller for RZ SoCs" if COMPILE_TEST
+ config ARCH_R9A09G047
+ 	bool "ARM64 Platform support for RZ/G3E"
++	select SYS_R9A09G047
+ 	help
+ 	  This enables support for the Renesas RZ/G3E SoC variants.
+ 
+@@ -391,4 +392,8 @@ config SYSC_R9A08G045
+ 	bool "Renesas RZ/G3S System controller support" if COMPILE_TEST
+ 	select SYSC_RZ
+ 
++config SYS_R9A09G047
++	bool "Renesas RZ/G3E System controller support" if COMPILE_TEST
++	select SYSC_RZ
 +
  endif # SOC_RENESAS
 diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 734f8f8cefa4..3d5f847ed889 100644
+index 8cd139b3dd0a..17b86d3ae478 100644
 --- a/drivers/soc/renesas/Makefile
 +++ b/drivers/soc/renesas/Makefile
-@@ -10,3 +10,4 @@ endif
+@@ -7,6 +7,7 @@ ifdef CONFIG_SMP
+ obj-$(CONFIG_ARCH_R9A06G032)	+= r9a06g032-smp.o
+ endif
+ obj-$(CONFIG_SYSC_R9A08G045)	+= r9a08g045-sysc.o
++obj-$(CONFIG_SYS_R9A09G047)	+= r9a09g047-sys.o
+ 
  # Family
  obj-$(CONFIG_PWC_RZV2M)		+= pwc-rzv2m.o
- obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
-+obj-$(CONFIG_SYSC_RZ)		+= rz-sysc.o
-diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
+diff --git a/drivers/soc/renesas/r9a09g047-sys.c b/drivers/soc/renesas/r9a09g047-sys.c
 new file mode 100644
-index 000000000000..990d76c539a8
+index 000000000000..91b091d930f5
 --- /dev/null
-+++ b/drivers/soc/renesas/rz-sysc.c
-@@ -0,0 +1,122 @@
++++ b/drivers/soc/renesas/r9a09g047-sys.c
+@@ -0,0 +1,66 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * RZ System controller driver
++ * RZ/G3E System controller (SYS) driver
 + *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
++ * Copyright (C) 2025 Renesas Electronics Corp.
 + */
 +
++#include <linux/bits.h>
++#include <linux/device.h>
++#include <linux/init.h>
 +#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/sys_soc.h>
 +
 +#include "rz-sysc.h"
 +
-+#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-+
-+/**
-+ * struct rz_sysc - RZ SYSC private data structure
-+ * @base: SYSC base address
-+ * @dev: SYSC device pointer
-+ */
-+struct rz_sysc {
-+	void __iomem *base;
-+	struct device *dev;
-+};
-+
-+static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device_id *match)
-+{
-+	const struct rz_sysc_init_data *sysc_data = match->data;
-+	const struct rz_sysc_soc_id_init_data *soc_data = sysc_data->soc_id_init_data;
-+	struct soc_device_attribute *soc_dev_attr;
-+	const char *soc_id_start, *soc_id_end;
-+	u32 val, revision, specific_id;
-+	struct soc_device *soc_dev;
-+	char soc_id[32] = {0};
-+	size_t size;
-+
-+	soc_id_start = strchr(match->compatible, ',') + 1;
-+	soc_id_end = strchr(match->compatible, '-');
-+	size = soc_id_end - soc_id_start + 1;
-+	if (size > 32)
-+		size = sizeof(soc_id);
-+	strscpy(soc_id, soc_id_start, size);
-+
-+	soc_dev_attr = devm_kzalloc(sysc->dev, sizeof(*soc_dev_attr), GFP_KERNEL);
-+	if (!soc_dev_attr)
-+		return -ENOMEM;
-+
-+	soc_dev_attr->family = devm_kstrdup(sysc->dev, soc_data->family, GFP_KERNEL);
-+	if (!soc_dev_attr->family)
-+		return -ENOMEM;
-+
-+	soc_dev_attr->soc_id = devm_kstrdup(sysc->dev, soc_id, GFP_KERNEL);
-+	if (!soc_dev_attr->soc_id)
-+		return -ENOMEM;
-+
-+	val = readl(sysc->base + soc_data->devid_offset);
-+	revision = field_get(soc_data->revision_mask, val);
-+	specific_id = field_get(soc_data->specific_id_mask, val);
-+	soc_dev_attr->revision = devm_kasprintf(sysc->dev, GFP_KERNEL, "%u", revision);
-+	if (!soc_dev_attr->revision)
-+		return -ENOMEM;
-+
-+	if (soc_data->id && specific_id != soc_data->id) {
-+		dev_warn(sysc->dev, "SoC mismatch (product = 0x%x)\n", specific_id);
-+		return -ENODEV;
-+	}
-+
-+	dev_info(sysc->dev, "Detected Renesas %s %s Rev %s\n", soc_dev_attr->family,
-+		 soc_dev_attr->soc_id, soc_dev_attr->revision);
-+
-+	soc_dev = soc_device_register(soc_dev_attr);
-+	if (IS_ERR(soc_dev))
-+		return PTR_ERR(soc_dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rz_sysc_match[] = {
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rz_sysc_match);
-+
-+static int rz_sysc_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *match;
-+	struct device *dev = &pdev->dev;
-+	struct rz_sysc *sysc;
-+
-+	match = of_match_node(rz_sysc_match, dev->of_node);
-+	if (!match)
-+		return -ENODEV;
-+
-+	sysc = devm_kzalloc(dev, sizeof(*sysc), GFP_KERNEL);
-+	if (!sysc)
-+		return -ENOMEM;
-+
-+	sysc->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(sysc->base))
-+		return PTR_ERR(sysc->base);
-+
-+	sysc->dev = dev;
-+	return rz_sysc_soc_init(sysc, match);
-+}
-+
-+static struct platform_driver rz_sysc_driver = {
-+	.driver = {
-+		.name = "renesas-rz-sysc",
-+		.of_match_table = rz_sysc_match
-+	},
-+	.probe = rz_sysc_probe
-+};
-+
-+static int __init rz_sysc_init(void)
-+{
-+	return platform_driver_register(&rz_sysc_driver);
-+}
-+subsys_initcall(rz_sysc_init);
-+
-+MODULE_DESCRIPTION("Renesas RZ System Controller Driver");
-+MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
-new file mode 100644
-index 000000000000..c9ef7e83de59
---- /dev/null
-+++ b/drivers/soc/renesas/rz-sysc.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++/* Register Offsets */
++#define SYS_LSI_MODE		0x300
 +/*
-+ * Renesas RZ System Controller
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
++ * BOOTPLLCA[1:0]
++ *	    [0,0] => 1.1GHZ
++ *	    [0,1] => 1.5GHZ
++ *	    [1,0] => 1.6GHZ
++ *	    [1,1] => 1.7GHZ
 + */
++#define SYS_LSI_MODE_STAT_BOOTPLLCA55	GENMASK(12, 11)
++#define SYS_LSI_MODE_CA55_1_7GHZ	0x3
 +
-+#ifndef __SOC_RENESAS_RZ_SYSC_H__
-+#define __SOC_RENESAS_RZ_SYSC_H__
++#define SYS_LSI_PRR			0x308
++#define SYS_LSI_PRR_CA55_DIS		BIT(8)
++#define SYS_LSI_PRR_NPU_DIS		BIT(1)
 +
-+#include <linux/types.h>
++static void rzg3e_sys_print_id(struct device *dev,
++				void __iomem *sysc_base,
++				struct soc_device_attribute *soc_dev_attr)
++{
++	bool is_quad_core, npu_enabled;
++	u32 prr_val, mode_val;
 +
-+/**
-+ * struct rz_syc_soc_id_init_data - RZ SYSC SoC identification initialization data
-+ * @family: RZ SoC family
-+ * @id: RZ SoC expected ID
-+ * @devid_offset: SYSC SoC ID register offset
-+ * @revision_mask: SYSC SoC ID revision mask
-+ * @specific_id_mask: SYSC SoC ID specific ID mask
-+ */
-+struct rz_sysc_soc_id_init_data {
-+	const char * const family;
-+	u32 id;
-+	u32 devid_offset;
-+	u32 revision_mask;
-+	u32 specific_id_mask;
++	prr_val = readl(sysc_base + SYS_LSI_PRR);
++	mode_val = readl(sysc_base + SYS_LSI_MODE);
++
++	/* Check CPU and NPU configuration */
++	is_quad_core = !(prr_val & SYS_LSI_PRR_CA55_DIS);
++	npu_enabled = !(prr_val & SYS_LSI_PRR_NPU_DIS);
++
++	dev_info(dev, "Detected Renesas %s Core %s %s Rev %s%s\n",
++		 is_quad_core ? "Quad" : "Dual", soc_dev_attr->family,
++		 soc_dev_attr->soc_id, soc_dev_attr->revision,
++		 npu_enabled ? " with Ethos-U55" : "");
++
++	/* Check CA55 PLL configuration */
++	if (FIELD_GET(SYS_LSI_MODE_STAT_BOOTPLLCA55, mode_val) != SYS_LSI_MODE_CA55_1_7GHZ)
++		dev_warn(dev, "CA55 PLL is not set to 1.7GHz\n");
++}
++
++static const struct rz_sysc_soc_id_init_data rzg3e_sys_soc_id_init_data __initconst = {
++	.family = "RZ/G3E",
++	.id = 0x8679447,
++	.devid_offset = 0x304,
++	.revision_mask = 0xf0000000,
++	.specific_id_mask = 0x0fffffff,
++	.print_id = rzg3e_sys_print_id,
 +};
 +
-+/**
-+ * struct rz_sysc_init_data - RZ SYSC initialization data
-+ * @soc_id_init_data: RZ SYSC SoC ID initialization data
-+ */
-+struct rz_sysc_init_data {
-+	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
++const struct rz_sysc_init_data rzg3e_sys_init_data = {
++	.soc_id_init_data = &rzg3e_sys_soc_id_init_data,
 +};
-+
-+#endif /* __SOC_RENESAS_RZ_SYSC_H__ */
+diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
+index 6df69beef0a4..9c94e764aef4 100644
+--- a/drivers/soc/renesas/rz-sysc.c
++++ b/drivers/soc/renesas/rz-sysc.c
+@@ -66,8 +66,13 @@ static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device_id *mat
+ 		return -ENODEV;
+ 	}
+ 
+-	dev_info(sysc->dev, "Detected Renesas %s %s Rev %s\n", soc_dev_attr->family,
+-		 soc_dev_attr->soc_id, soc_dev_attr->revision);
++	/* Try to call SoC-specific device identification */
++	if (soc_data->print_id) {
++		soc_data->print_id(sysc->dev, sysc->base, soc_dev_attr);
++	} else {
++		dev_info(sysc->dev, "Detected Renesas %s %s Rev %s\n",
++			 soc_dev_attr->family, soc_dev_attr->soc_id, soc_dev_attr->revision);
++	}
+ 
+ 	soc_dev = soc_device_register(soc_dev_attr);
+ 	if (IS_ERR(soc_dev))
+@@ -79,6 +84,9 @@ static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device_id *mat
+ static const struct of_device_id rz_sysc_match[] = {
+ #ifdef CONFIG_SYSC_R9A08G045
+ 	{ .compatible = "renesas,r9a08g045-sysc", .data = &rzg3s_sysc_init_data },
++#endif
++#ifdef CONFIG_SYS_R9A09G047
++	{ .compatible = "renesas,r9a09g047-sys", .data = &rzg3e_sys_init_data },
+ #endif
+ 	{ }
+ };
+diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
+index 908f09fa4fc9..715c5f6037e4 100644
+--- a/drivers/soc/renesas/rz-sysc.h
++++ b/drivers/soc/renesas/rz-sysc.h
+@@ -8,6 +8,8 @@
+ #ifndef __SOC_RENESAS_RZ_SYSC_H__
+ #define __SOC_RENESAS_RZ_SYSC_H__
+ 
++#include <linux/device.h>
++#include <linux/sys_soc.h>
+ #include <linux/types.h>
+ 
+ /**
+@@ -17,6 +19,7 @@
+  * @devid_offset: SYSC SoC ID register offset
+  * @revision_mask: SYSC SoC ID revision mask
+  * @specific_id_mask: SYSC SoC ID specific ID mask
++ * @print_id: SoC-specific extended device identification
+  */
+ struct rz_sysc_soc_id_init_data {
+ 	const char * const family;
+@@ -24,6 +27,8 @@ struct rz_sysc_soc_id_init_data {
+ 	u32 devid_offset;
+ 	u32 revision_mask;
+ 	u32 specific_id_mask;
++	void (*print_id)(struct device *dev, void __iomem *sysc_base,
++			 struct soc_device_attribute *soc_dev_attr);
+ };
+ 
+ /**
+@@ -34,6 +39,7 @@ struct rz_sysc_init_data {
+ 	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
+ };
+ 
++extern const struct rz_sysc_init_data rzg3e_sys_init_data;
+ extern const struct rz_sysc_init_data rzg3s_sysc_init_data;
+ 
+ #endif /* __SOC_RENESAS_RZ_SYSC_H__ */
 -- 
 2.25.1
 
