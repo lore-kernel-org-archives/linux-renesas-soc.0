@@ -1,40 +1,33 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5C51E0DB5;
-	Wed, 29 Jan 2025 16:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA161DFD98;
+	Wed, 29 Jan 2025 16:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738169521; cv=none; b=F7rvXZkCrZ2+/nNDEYAaOY1yWl7rVMSntRdNE2ycv41yt8svL5s+1zEBd5woFTGCGXzVT1q9cy4q34e8yxYtgog3Kktf3J2KR0v5Nan2lyJMAjlp0o9gyZ7swRB09aDqu9J7q7YsB5p31h+BXWa8QTUZDJsHo76rbLLgUx0RfIE=
+	t=1738169531; cv=none; b=jG4q1dDVY3wYK2jvG6o5nWIl/lmHr1bQfYEXRo4zp1jZrwaPoJ0jF0WHU/T5iSroB7sKo4HvvjfoTxD57aCSM06iBorybZEW8Dg+INMOVrhLU2rBnbt9TW5TL3yGfxHFPBtk3TC4gQyyqXTPfu/JglCOYpnR8EDSq9xisJWqDNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738169521; c=relaxed/simple;
-	bh=CUH9n+oPHOWyM3u6BZlgaSX/u3UOlrz9vO5jpb8oU30=;
+	s=arc-20240116; t=1738169531; c=relaxed/simple;
+	bh=fArnd/g1q3Lal8ltbXDDUmvyw4F0F0EdSzPoDiA7lXM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D7jJFxRtnb6oohp8GwwpERhAFXnS6lGIGLqRXltqf5qTX4SgFoPVAbgxZmLn3F/1WwdH8rSNW7cSVqWqgPxjUUfxVepefvhZBslx0sQC3LCAMnpr0LJVe08jHXHP3kUXXdlYCPKaSVzSJR4sQYAfvYCYvjhdEzaZyNy0ZTS4nR4=
+	 MIME-Version; b=tz2LdaBYqECYg6+oQd4SL/d1R1lNqSi0vmMsG90Id+yalR//lKLXTrVlJvydzrCPb26fkdrs72pHjLz/I6RvX2udUz9pnHBZR1TLLnfG6nc98OKo4slZnUqW3JL+WVmquyArOyX3R5siNjG5WWqXgT8iyN4uoFJJuXHtpt62DZU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: hShsvux3TAmY5SDmWSSOGA==
-X-CSE-MsgGUID: CJI+EUM4RICmJ+c+MDvTyQ==
+X-CSE-ConnectionGUID: 1UlhR4+aSqqjxmJpMQ3vLw==
+X-CSE-MsgGUID: FBY7j5B9RiqtMztNRX/I/w==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Jan 2025 01:51:58 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 30 Jan 2025 01:52:07 +0900
 Received: from wvbox.administration.lan (unknown [10.226.92.145])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9567F402EEE6;
-	Thu, 30 Jan 2025 01:51:46 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6C29B402F96D;
+	Thu, 30 Jan 2025 01:52:05 +0900 (JST)
 From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 02/14] dt-bindings: serial: Document sci bindings for the Renesas RZ/T2H (a.k.a r9a09g077) SoC
-Date: Wed, 29 Jan 2025 16:37:38 +0000
-Message-ID: <20250129165122.2980-3-thierry.bultel.yh@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 05/14] soc: renesas: Add RZ/T2H (R9A09G077) config option
+Date: Wed, 29 Jan 2025 16:37:41 +0000
+Message-ID: <20250129165122.2980-6-thierry.bultel.yh@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com>
 References: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com>
@@ -46,120 +39,29 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document RZ/T2H (a.k.a r9a09g077) in SCI binding.
+Add a configuration option for the RZ/T2H SoC.
 
 Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 ---
- .../bindings/serial/renesas,rzsci.yaml        | 100 ++++++++++++++++++
- 1 file changed, 100 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/serial/renesas,rzsci.yaml
+ drivers/soc/renesas/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,rzsci.yaml b/Documentation/devicetree/bindings/serial/renesas,rzsci.yaml
-new file mode 100644
-index 000000000000..70e83bbcc79d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/renesas,rzsci.yaml
-@@ -0,0 +1,100 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/serial/renesas,rzsci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 9f7fe02310b9..058ac0b53ffe 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -351,6 +351,11 @@ config ARCH_R9A09G057
+ 	help
+ 	  This enables support for the Renesas RZ/V2H(P) SoC variants.
+ 
++config ARCH_R9A09G077
++	bool "ARM64 Platform support for RZ/T2H"
++	help
++	  This enables support for the Renesas RZ/T2H SoC variants.
 +
-+title: Renesas Serial Communication Interface
-+
-+maintainers:
-+  - Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
-+
-+allOf:
-+  - $ref: serial.yaml#
-+
-+description: |
-+  The SCI is configurable to asynchronous and synchronous serial
-+  interfaces:
-+  - Asynchronous interfaces (UART and Asynchronous Communications Interface
-+    Adapter (ACIA))
-+  - 8-bit clock synchronous interface
-+  - Simple I2C (master-only)
-+  - Simple SPI
-+  - Smart card interface
-+  - Manchester mode
-+  - Asynchronous interfaces (UART, RS485 and Asynchronous Communications
-+    Interface Adapter (ACIA))
-+  The smart card interface complies with the ISO/IEC 7816-3 standard for
-+  electronic signals and transmission protocol. Each SCI has FIFO buffers to
-+  enable continuous and full-duplex communication, and the data transfer speed
-+  can be configured independently using a baud rate generator.
-+
-+properties:
-+  compatible:
-+    const: renesas,r9a09g077-sci     # RZ/T2H
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    items:
-+      - description: Error interrupt
-+      - description: Receive buffer full interrupt
-+      - description: Transmit buffer empty interrupt
-+      - description: Transmit end interrupt
-+
-+  interrupt-names:
-+    items:
-+      - const: eri
-+      - const: rxi
-+      - const: txi
-+      - const: tei
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 2
-+    items:
-+      enum:
-+        - fck # UART functional clock
-+        - sck # optional external clock input
-+
-+  power-domains:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - power-domains
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r9a09g077-cpg.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    aliases {
-+        serial0 = &sci0;
-+    };
-+
-+    sci0: serial@80005000 {
-+        compatible = "renesas,r9a09g077-sci";
-+        reg = <0x80005000 0x400>;
-+        interrupts = <GIC_SPI 590 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 591 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 592 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 593 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "eri", "rxi", "txi", "tei";
-+        clocks = <&cpg CPG_MOD R9A09G077_SCI0_CLK>;
-+        clock-names = "fck";
-+        power-domains = <&cpg>;
-+    };
+ endif # ARM64
+ 
+ if RISCV
 -- 
 2.43.0
 
