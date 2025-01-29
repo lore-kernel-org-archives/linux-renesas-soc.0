@@ -1,33 +1,37 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA161DFD98;
-	Wed, 29 Jan 2025 16:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A47D1DFD9D;
+	Wed, 29 Jan 2025 16:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738169531; cv=none; b=jG4q1dDVY3wYK2jvG6o5nWIl/lmHr1bQfYEXRo4zp1jZrwaPoJ0jF0WHU/T5iSroB7sKo4HvvjfoTxD57aCSM06iBorybZEW8Dg+INMOVrhLU2rBnbt9TW5TL3yGfxHFPBtk3TC4gQyyqXTPfu/JglCOYpnR8EDSq9xisJWqDNc=
+	t=1738169535; cv=none; b=KGTFS5PL3UQP+ZspkxfGilzpvZQaH57ZM0OV4ik8IzXky+VIYnJfYDEhyBcpAjHyIBajdbwH7ajNPIJFhRRk7R+B0ZPJmEKNsXngW3DdGQiDuXAlYC68eNID2FSby7caFUyzYvRJZq6VXklYETMSW4G1PB3Z+3vQse9nDsto4ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738169531; c=relaxed/simple;
-	bh=fArnd/g1q3Lal8ltbXDDUmvyw4F0F0EdSzPoDiA7lXM=;
+	s=arc-20240116; t=1738169535; c=relaxed/simple;
+	bh=PciLRxlqOAQOhDRRebMPFJhjUC7nYaS41DSDwIYNE6E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tz2LdaBYqECYg6+oQd4SL/d1R1lNqSi0vmMsG90Id+yalR//lKLXTrVlJvydzrCPb26fkdrs72pHjLz/I6RvX2udUz9pnHBZR1TLLnfG6nc98OKo4slZnUqW3JL+WVmquyArOyX3R5siNjG5WWqXgT8iyN4uoFJJuXHtpt62DZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+	 MIME-Version; b=O8jmvtE/v0xhowLTo/X81iSw121lprAWL+E5TPqgLJ13X7OlpXxCsaSQRjeJGXGv4eKm0XXaU5EZZv3BnSzDo6q3drmRiVilXAyivHB12GLmNPQOiagYiFTZfJsqHYzuERhkkMoyVlZZmqbkIfBnCV5AKMDrSNDZpW4DV2rBYeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 1UlhR4+aSqqjxmJpMQ3vLw==
-X-CSE-MsgGUID: FBY7j5B9RiqtMztNRX/I/w==
+X-CSE-ConnectionGUID: ACh6jKLUSzS6w8fYzSYjNQ==
+X-CSE-MsgGUID: VJZKxVavRAutuoqbQz9xjQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Jan 2025 01:52:07 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 30 Jan 2025 01:52:07 +0900
 Received: from wvbox.administration.lan (unknown [10.226.92.145])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6C29B402F96D;
-	Thu, 30 Jan 2025 01:52:05 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 166E8402F520;
+	Thu, 30 Jan 2025 01:51:53 +0900 (JST)
 From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
 Cc: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 05/14] soc: renesas: Add RZ/T2H (R9A09G077) config option
-Date: Wed, 29 Jan 2025 16:37:41 +0000
-Message-ID: <20250129165122.2980-6-thierry.bultel.yh@bp.renesas.com>
+Subject: [PATCH 03/14] dt-bindings: soc: Document the Renesas RZ/T2H Evaluation board for the R9A09G077 SoC
+Date: Wed, 29 Jan 2025 16:37:39 +0000
+Message-ID: <20250129165122.2980-4-thierry.bultel.yh@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com>
 References: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com>
@@ -39,29 +43,26 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a configuration option for the RZ/T2H SoC.
+Add the RZ/T2H Evaluation board (r9a9g077m44-dev) in documentation.
 
 Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 ---
- drivers/soc/renesas/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 9f7fe02310b9..058ac0b53ffe 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -351,6 +351,11 @@ config ARCH_R9A09G057
- 	help
- 	  This enables support for the Renesas RZ/V2H(P) SoC variants.
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 33f9e37a3d3d..331a007dbe35 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -537,6 +537,8 @@ properties:
  
-+config ARCH_R9A09G077
-+	bool "ARM64 Platform support for RZ/T2H"
-+	help
-+	  This enables support for the Renesas RZ/T2H SoC variants.
-+
- endif # ARM64
- 
- if RISCV
+       - description: RZ/T2H (R9A09G077)
+         items:
++          - enum:
++            - renesas,r9a9g077m44-dev # RZ/T2H Evaluation Board
+           - enum:
+             - renesas,r9a09g077 # RZ/T2H with Quad Cortex-A55 + Dual Cortex-R52
+             - renesas,r9a09g077m04 # RZ/T2H with Single Cortex-A55 + Dual Cortex-R52 - no security
 -- 
 2.43.0
 
