@@ -1,41 +1,73 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923AC1C173D;
-	Fri, 31 Jan 2025 11:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6291C3BE9
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Jan 2025 13:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738322952; cv=none; b=PDykL5YIRaUJrwszLXFB2lDmDtbh2LPfc7cWCBRJmtKZxOtjUCQ8rMp8UlFnjgHKtaFaOH4mrXFWJlqrZR1IHYHQwbBAQdRzVtrKhSNIb9YvGrf4RyjgFG1TmOVn4wB5ZFAIRdQ6d2I7oBsCpYrQNIpw5lVn2DAG6J3QKsEIl9s=
+	t=1738331255; cv=none; b=ozy9w11gCQsPcljkfrwmwgz+DqYlbon+WM1d9u0ZI4ILgToruA1a5NaEk9pnTMYb4sAsxcYK44zroEi+eriJH4GWnQzQ/YigWQrzAoPqo1bJZhEpPxBBs8GKobypfu/nAkU5CidC95KrTUXzG0kKe7JGcxrDbVk0WY+Cefspe+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738322952; c=relaxed/simple;
-	bh=i1uj7+Uas0u6N3Sko6/zoEab3vA4a3EBIJ2E5MD2fhg=;
+	s=arc-20240116; t=1738331255; c=relaxed/simple;
+	bh=RUzAHuSg5kb0I8eWtHDvCtXlRyFitEVUQddmb7BMrlk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jzf/cvFzLdunFKe5R5kGdg/UqSiTV45M1C+gNfcFVguVpZaSy0HET7jApG5RmMzhSMd0F4mrjcZqSCeymcpON+q0MXyo4jWV1G3rA6FAeCz9iwcH7nFgneu5RpXmBa9fu5hmY1ACDyGeqC779LxpXHCStqi9xBykE8d7d7U9r+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: c5rCoLmwTg2G+3RwrjQPWw==
-X-CSE-MsgGUID: 7sf8hJ92Q4SLXxuQeCLpsg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2025 20:29:09 +0900
-Received: from localhost.localdomain (unknown [10.226.92.122])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8F56A42E4450;
-	Fri, 31 Jan 2025 20:28:55 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	 MIME-Version; b=qcUS0pbIFI93Nc4crY194PFFJgzioDPT4yVO0KNgVHOSmriKYteemZExjx92mYaWpMiwuGYD9O8SM5s1nYz/ymMoP7RsfMRw4WuZlAs+YwJF2IEOY7WluajGg3XET5iof3FtTR/btUM4jI1O0fDUekf8zUt3/hvFNGKOfHbvqfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:a916:3147:9f19:c260])
+	by michel.telenet-ops.be with cmsmtp
+	id 7pmw2E00F0naHe806pmw9p; Fri, 31 Jan 2025 14:47:24 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tdrM6-0000000FHy2-2GRm;
+	Fri, 31 Jan 2025 14:46:56 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tdrMG-0000000DFVY-2Fc9;
+	Fri, 31 Jan 2025 14:46:56 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alex Elder <elder@ieee.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 5/8] arm64: dts: renesas: r9a09g057: Add support for enabling SDHI internal regulator
-Date: Fri, 31 Jan 2025 11:28:46 +0000
-Message-ID: <20250131112849.120078-2-biju.das.jz@bp.renesas.com>
+	linux-crypto@vger.kernel.org,
+	qat-linux@intel.com,
+	linux-gpio@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-iio@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/3] soc: renesas: Use bitfield helpers
+Date: Fri, 31 Jan 2025 14:46:53 +0100
+Message-ID: <cbec042a7e7fd12673b2d20cca325b096421fc83.1738329459.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250131112849.120078-1-biju.das.jz@bp.renesas.com>
-References: <20250131112849.120078-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <cover.1738329458.git.geert+renesas@glider.be>
+References: <cover.1738329458.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,89 +76,38 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for enabling SDHI internal regulator, by overriding the
-status on the board DTS, when needed.
+Use the field_get() helper, instead of open-coding the same operation.
 
-While at it, rename the gpio regulator label vqmmc_sdhi1->vqmmc_sdhi1_gpio
-to avoid conflicts with internal regulator node names.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
- * New patch.
+  - Drop RFC, as a dependency was applied.
 ---
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 21 +++++++++++++++++++
- .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    |  4 ++--
- 2 files changed, 23 insertions(+), 2 deletions(-)
+ drivers/soc/renesas/renesas-soc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index f7a2f8ca864f..3b8dae0b2eb6 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -602,6 +602,13 @@ sdhi0: mmc@15c00000  {
- 			resets = <&cpg 0xa7>;
- 			power-domains = <&cpg>;
- 			status = "disabled";
-+
-+			vqmmc_sdhi0: vqmmc-regulator {
-+				regulator-name = "SDHI0-VQMMC";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				status = "disabled";
-+			};
- 		};
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index df2b38417b8042fc..8030b9a62ec46668 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2014-2016 Glider bvba
+  */
  
- 		sdhi1: mmc@15c10000 {
-@@ -615,6 +622,13 @@ sdhi1: mmc@15c10000 {
- 			resets = <&cpg 0xa8>;
- 			power-domains = <&cpg>;
- 			status = "disabled";
-+
-+			vqmmc_sdhi1: vqmmc-regulator {
-+				regulator-name = "SDHI1-VQMMC";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				status = "disabled";
-+			};
- 		};
++#include <linux/bitfield.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -512,8 +513,7 @@ static int __init renesas_soc_init(void)
+ 							   eshi, eslo);
+ 		}
  
- 		sdhi2: mmc@15c20000 {
-@@ -628,6 +642,13 @@ sdhi2: mmc@15c20000 {
- 			resets = <&cpg 0xa9>;
- 			power-domains = <&cpg>;
- 			status = "disabled";
-+
-+			vqmmc_sdhi2: vqmmc-regulator {
-+				regulator-name = "SDHI2-VQMMC";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				status = "disabled";
-+			};
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index 0b705c987b6c..1ecea3872e94 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -53,7 +53,7 @@ reg_3p3v: regulator1 {
- 		regulator-always-on;
- 	};
- 
--	vqmmc_sdhi1: regulator-vccq-sdhi1 {
-+	vqmmc_sdhi1_gpio: regulator-vccq-sdhi1 {
- 		compatible = "regulator-gpio";
- 		regulator-name = "SDHI1 VccQ";
- 		gpios = <&pinctrl RZV2H_GPIO(A, 2) GPIO_ACTIVE_HIGH>;
-@@ -244,7 +244,7 @@ &sdhi1 {
- 	pinctrl-1 = <&sdhi1_pins>;
- 	pinctrl-names = "default", "state_uhs";
- 	vmmc-supply = <&reg_3p3v>;
--	vqmmc-supply = <&vqmmc_sdhi1>;
-+	vqmmc-supply = <&vqmmc_sdhi1_gpio>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
- 	sd-uhs-sdr104;
+-		if (soc->id &&
+-		    ((product & id->mask) >> __ffs(id->mask)) != soc->id) {
++		if (soc->id && field_get(id->mask, product) != soc->id) {
+ 			pr_warn("SoC mismatch (product = 0x%x)\n", product);
+ 			ret = -ENODEV;
+ 			goto free_soc_dev_attr;
 -- 
 2.43.0
 
