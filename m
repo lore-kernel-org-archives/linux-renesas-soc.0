@@ -1,185 +1,151 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B076322B
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Jan 2025 09:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7525D199223;
+	Fri, 31 Jan 2025 09:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738317128; cv=none; b=Tv1Xer7qjnPUn5GmCLnpq2P1LLNhrHHCUfjX3TyW/9+9xnZmLCSKAVN8Y2vYQqEv94meprdR72VFrikZBtHI/3MB0aiNNC6udeA6uYmu22cdYtKU8NElXLzvNgJsNzfIhMw9m4f3iMCI3re0VK8QfhxrigIBWWJVMK+5vkKFIas=
+	t=1738317209; cv=none; b=PKX7bAiAu26RfPlEX6pNgaTNM/Nwcbemjt1lFz0LJMyBGM0CRsIiJj9RQylE2ukTzrdI9SzMwZ/vUEhjVUTKT9H4gyMJejOERSyROgOOaRJVGJNpPfsSnzdvad+Twl/epWQ//q9qnpvMrJaD3BtwFlRkj6a5+59ImtOUXaOsdTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738317128; c=relaxed/simple;
-	bh=K1TXyVW5bPul3rv1mntw5KppCFA4J3Nw0P1vJbZMmxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gohu1ocKqczjg+Z3EVuukEqszHdR+GFtS7SPRsy0XsgGK6GWRs3Xqva2Lfoutvi2OEVqfx7BjQ1kvEixbo+x7aQwJ9zjO6mHnlDdTvFCnxqRAPJVTBpGztAQJb9cd1C+opYOAz8RPaWpDmybc4UuAzoBYHEc1NovhcICSOqaD7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WDD6JEBf; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WDD6JEBf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=k8WpRTQc3VzRF1
-	yWfB/ww6H8EJvhuH9q1nfV8TJ5lNE=; b=WDD6JEBfHsraz0az4DLwwJGbGKjQtN
-	7AxSRVIOCgKh+gSu4BzjVuSS57aEiNB/UM58qDrrZumhLpXkTgim/AneY1vzKb6M
-	0jxEcEPrqjM/d929Oh61AzDKHmD0qkjF6BtkRQuvp7iHWoGX5lT7H2fqFtrTPHzA
-	9vml+g99nj9Oj0N5Cgebe+AiOuLpa0BiyxXlXIklPCqmLiOBfxakT9nJqObPKIch
-	TCt0TX6mluzSujRjkgvTVw6q7JNXuBBQqwqgJWFzLHDsiOB0xieijgNu+qgguniK
-	cfwqG8+07rDuBQB7TVrOjTp23P+3hzE8Y8KQZmfHhbWyTcN21hN6Ud6w==
-Received: (qmail 1620055 invoked from network); 31 Jan 2025 10:51:52 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Jan 2025 10:51:52 +0100
-X-UD-Smtp-Session: l3s3148p1@al36ff0srPjUph5e
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org
-Subject: [PATCH v2] hwmon: (sht3x) Use per-client debugfs entry
-Date: Fri, 31 Jan 2025 10:38:33 +0100
-Message-ID: <20250131095148.11973-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1738317209; c=relaxed/simple;
+	bh=OJ9M0fx8f061oFJ5AwEPS5f50xIUEZg/bNTDXpQnMKI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Thgdkkr9xfKhFVqmbUYq4j/UeA1bKn06ju33BpumG/gD7TeuxOPuMoUIPjQmSXrYHvYsqREhnBuiqyg7atE7kFV2ufb0EbVijwPMmu9Up3gay5ZHudonFV2kvSm4rv09Tr8+AIrZhw4pCJ22snGZLR+UGQF6gvGi+iqTYr/aY1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5187f0b893dso557477e0c.3;
+        Fri, 31 Jan 2025 01:53:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738317205; x=1738922005;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o58uTMMNFS4Q0L85ZfDPFylZSbgHXx097G7NyDQv2i8=;
+        b=q7BR/WrdVXMUT0rTsb3FpNKZFnvFyEx3+gNV7RRn4WjHQpAV9s5Hab5pB3KA641GA2
+         Msq0PXrhKj4f+i14ctFlMP8i1fSkJ717SVYc03N2/SQhZCHEJG0iFGNbEJiMkorDLl7n
+         6tYz+0SeklDdTMf3m++dHJo04qzH27D2j0xiEnQrZoHUlS+0XwSzdZlQaZMgVg5kczI8
+         zAyPoGoYJ9SoFLE4aL+kCjGvRaKF3shJgSYsKvW5nX1Mld3s1grPbaHnv8kzLTY/XtT6
+         foKL9Rjj0B1SPV7lT1zWohpU9fo9QbPx4lgW9RAH2J0OZGoCkHCYli/II/h3Jgkg6R6y
+         1JNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJCh7vM0hBsVQdze2sEXITpUHnndkQtHtKm07J3p5Tis0ol4HH865XQz39+ODy3pM5dxxkR0NzDoqe@vger.kernel.org, AJvYcCWDFgA7t10RoU33fs3pWLKMpJHWX+kVMoNLpetySvLxBJ+6suiCJI7wNjhNrbWArYcbXyO1N/POxU7KNFCMYrH6v8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCcMM7mjA11b7e+xYUh8NSO7F22CnoP45xAfAAsqwNu6nfgu/x
+	FYp6oZeNHUgaMLo1JHbfH8Fz8A48hTtr9yman3k4JWAJlGV2p2UknUdJ+x2updU=
+X-Gm-Gg: ASbGncskZw6tZTYfX9QXaNlmrLV4ZdtMn34I0MrVU3nKkn83tu/ez3U4XpP6c1/nvtm
+	SCKbyrQOBn8B4DKPNXwQO8yq2e2x5XvegMUWMU/aVRgPkze4XwkDFip6p3V4+zQkzDgnursTAGu
+	QIXciYwO5U3JML3YNiupTciJ2IyW3AsnGPQA/ZYaPkGv6IsLCSUnSawuKXxdq5dpFD6BMgMGRDj
+	xDCI4GnuVsHxQqsYPrEv/NjAZPKwna7/ISKl5/brfeWD8Aq3Ky8SOTZ0Z355Z8seCdr+J/Wmv5J
+	QU9xHdsOj0o10IaHs0zXcjTN+A/aUjjH7jW46i0MfPIz59MMny1l4w==
+X-Google-Smtp-Source: AGHT+IE1WlxdUMwaUnS0laEw9w1wmuW0YDLBoeF9pTg5u1dDHlCxc+whaFLD1NcllQhdjSnOzT8GBg==
+X-Received: by 2002:a05:6122:238c:b0:50d:5e21:ef39 with SMTP id 71dfb90a1353d-51e9e3e8c6fmr7649659e0c.1.1738317205094;
+        Fri, 31 Jan 2025 01:53:25 -0800 (PST)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51eb1be84ddsm473752e0c.9.2025.01.31.01.53.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2025 01:53:24 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-85c4c9349b3so474783241.3;
+        Fri, 31 Jan 2025 01:53:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX8qT8GzGPA2NTupU1ZofGRWYe4ui3gfu0DLuZ68wiDnZdrBjVUkQRxUzWHhJ6YnoT4jMg9Mp/uRgLX@vger.kernel.org, AJvYcCXXiwSqCcckUCPZs4t9O9D9JMDBOwBjXYqCIenZ/6z5mCc/Dgp4RW6OW897R4RhG3Fb6x1t+Sd1Egmk1u1ZKKB1miU=@vger.kernel.org
+X-Received: by 2002:a05:6102:3ed5:b0:4b2:5d10:2cc6 with SMTP id
+ ada2fe7eead31-4b9a4f23e07mr7603457137.6.1738317204143; Fri, 31 Jan 2025
+ 01:53:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250131094812.118340-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250131094812.118340-1-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Jan 2025 10:53:12 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWyEEPLTc7y+3PP2xWH8e0Ho-fxpO2=SgxW0O6+S0pAAQ@mail.gmail.com>
+X-Gm-Features: AWEUYZmGjIbMT5HT7Ryhuh9-zuTjarNP4o4GHQiQZq3NCHMcWFbcty6bTmSHSqI
+Message-ID: <CAMuHMdWyEEPLTc7y+3PP2xWH8e0Ho-fxpO2=SgxW0O6+S0pAAQ@mail.gmail.com>
+Subject: Re: [PATCH] of: base: Add of_get_available_child_by_name()
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The I2C core now offers a debugfs-directory per client. Use it and
-remove the custom handling.
+Hi Biju,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Fri, 31 Jan 2025 at 10:48, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> There are lot of drivers using of_get_child_by_name() followed
+> by of_device_is_available() to check the child node availabilty
+> by name for a given parent. Provide a helper for these users to
+> simplify the code.
+>
+> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Changes since v1:
+Thanks for your patch!
 
-* like previously, only create the file if the serial number could
-  be read.
-* remove the now superfluous sensor_dir member
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -824,6 +824,34 @@ struct device_node *of_get_child_by_name(const struct device_node *node,
+>  }
+>  EXPORT_SYMBOL(of_get_child_by_name);
+>
+> +/**
+> + * of_get_available_child_by_name - Find the child node availabilty by name for a given parent
 
-Locally build tested only.
+available child node?
 
- drivers/hwmon/sht3x.c | 67 +++++++------------------------------------
- 1 file changed, 11 insertions(+), 56 deletions(-)
+> + * @node:      parent node
+> + * @name:      child name to look for.
+> + *
+> + * This function looks for child node for given matching name and check the
 
-diff --git a/drivers/hwmon/sht3x.c b/drivers/hwmon/sht3x.c
-index 650b0bcc2359..557ad3e7752a 100644
---- a/drivers/hwmon/sht3x.c
-+++ b/drivers/hwmon/sht3x.c
-@@ -44,8 +44,6 @@ static const unsigned char sht3x_cmd_read_status_reg[]         = { 0xf3, 0x2d };
- static const unsigned char sht3x_cmd_clear_status_reg[]        = { 0x30, 0x41 };
- static const unsigned char sht3x_cmd_read_serial_number[]      = { 0x37, 0x80 };
- 
--static struct dentry *debugfs;
--
- /* delays for single-shot mode i2c commands, both in us */
- #define SHT3X_SINGLE_WAIT_TIME_HPM  15000
- #define SHT3X_SINGLE_WAIT_TIME_MPM   6000
-@@ -167,7 +165,6 @@ struct sht3x_data {
- 	enum sht3x_chips chip_id;
- 	struct mutex i2c_lock; /* lock for sending i2c commands */
- 	struct mutex data_lock; /* lock for updating driver data */
--	struct dentry *sensor_dir;
- 
- 	u8 mode;
- 	const unsigned char *command;
-@@ -837,23 +834,7 @@ static int sht3x_write(struct device *dev, enum hwmon_sensor_types type,
- 	}
- }
- 
--static void sht3x_debugfs_init(struct sht3x_data *data)
--{
--	char name[32];
--
--	snprintf(name, sizeof(name), "i2c%u-%02x",
--		 data->client->adapter->nr, data->client->addr);
--	data->sensor_dir = debugfs_create_dir(name, debugfs);
--	debugfs_create_u32("serial_number", 0444,
--			   data->sensor_dir, &data->serial_number);
--}
--
--static void sht3x_debugfs_remove(void *sensor_dir)
--{
--	debugfs_remove_recursive(sensor_dir);
--}
--
--static int sht3x_serial_number_read(struct sht3x_data *data)
-+static void sht3x_serial_number_read(struct sht3x_data *data)
- {
- 	int ret;
- 	char buffer[SHT3X_RESPONSE_LENGTH];
-@@ -864,11 +845,12 @@ static int sht3x_serial_number_read(struct sht3x_data *data)
- 				      buffer,
- 				      SHT3X_RESPONSE_LENGTH, 0);
- 	if (ret)
--		return ret;
-+		return;
- 
- 	data->serial_number = (buffer[0] << 24) | (buffer[1] << 16) |
- 			      (buffer[3] << 8) | buffer[4];
--	return ret;
-+
-+	debugfs_create_u32("serial_number", 0444, client->debugfs, &data->serial_number);
- }
- 
- static const struct hwmon_ops sht3x_ops = {
-@@ -930,28 +912,14 @@ static int sht3x_probe(struct i2c_client *client)
- 	if (ret)
- 		return ret;
- 
--	ret = sht3x_serial_number_read(data);
--	if (ret) {
--		dev_dbg(dev, "unable to read serial number\n");
--	} else {
--		sht3x_debugfs_init(data);
--		ret = devm_add_action_or_reset(dev,
--					       sht3x_debugfs_remove,
--					       data->sensor_dir);
--		if (ret)
--			return ret;
--	}
--
--	hwmon_dev = devm_hwmon_device_register_with_info(dev,
--							 client->name,
--							 data,
--							 &sht3x_chip_info,
--							 sht3x_groups);
--
-+	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, data,
-+							 &sht3x_chip_info, sht3x_groups);
- 	if (IS_ERR(hwmon_dev))
--		dev_dbg(dev, "unable to register hwmon device\n");
-+		return PTR_ERR(hwmon_dev);
-+
-+	sht3x_serial_number_read(data);
- 
--	return PTR_ERR_OR_ZERO(hwmon_dev);
-+	return 0;
- }
- 
- /* device ID table */
-@@ -968,20 +936,7 @@ static struct i2c_driver sht3x_i2c_driver = {
- 	.probe       = sht3x_probe,
- 	.id_table    = sht3x_ids,
- };
--
--static int __init sht3x_init(void)
--{
--	debugfs = debugfs_create_dir("sht3x", NULL);
--	return i2c_add_driver(&sht3x_i2c_driver);
--}
--module_init(sht3x_init);
--
--static void __exit sht3x_cleanup(void)
--{
--	debugfs_remove_recursive(debugfs);
--	i2c_del_driver(&sht3x_i2c_driver);
--}
--module_exit(sht3x_cleanup);
-+module_i2c_driver(sht3x_i2c_driver);
- 
- MODULE_AUTHOR("David Frey <david.frey@sensirion.com>");
- MODULE_AUTHOR("Pascal Sachs <pascal.sachs@sensirion.com>");
+checks
+
+> + * device availability for use.
+
+device's
+
+> + *
+> + * Return: A node pointer if found, with refcount incremented, use
+> + * of_node_put() on it when done.
+> + * Returns NULL if node is not found.
+> + */
+> +struct device_node *of_get_available_child_by_name(const struct device_node *node,
+> +                                                  const char *name)
+> +{
+> +       struct device_node *child;
+> +
+> +       for_each_child_of_node(node, child)
+> +               if (of_node_name_eq(child, name))
+> +                       break;
+
+child = of_get_child_by_name(node, name);
+
+> +
+> +       if (child && !of_device_is_available(child))
+> +               of_node_put(child);
+
+Missing return NULL.
+
+> +
+> +       return child;
+> +}
+> +EXPORT_SYMBOL(of_get_available_child_by_name);
+> +
+>  struct device_node *__of_find_node_by_path(const struct device_node *parent,
+>                                                 const char *path)
+>  {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.45.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
