@@ -1,24 +1,24 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E281C1F19;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236501C3039;
 	Fri, 31 Jan 2025 11:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738322712; cv=none; b=gOIejY+AgaEO3b5f2kOqV9RR0k3093KSbkbfPYxRDeoohTe/zymAyyAHADmAd2tVGhblTaeICBe3HFFNS2QcCbP0bNwaq6zEhrKvyXXfRqUVH6+1Vf5uLyaBNSWMmz1lwmn4TlmaTUqvO1M8fjAZE4Hwfb8p7f9pSQFtWcau7sQ=
+	t=1738322713; cv=none; b=S9Sum1lnh724c63jGABRfM/mblCO5wrHaAHj1CjN/PHv+kns9FjC0yN3aJKGprR62QdHaM8iZxIAhtmmX+uT9/Qazpvgxcv3fJJDD8VSB0vIS6PAyWyYtdzF5IX5C5VlnD81qf8JRwmeRX5AAgMToqsgmwi06+9OvzFj43iAPy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738322712; c=relaxed/simple;
-	bh=m8dgM0drA2fKaM8x3CJoi9rAqOs/Y6NSCRe34oOoMhU=;
+	s=arc-20240116; t=1738322713; c=relaxed/simple;
+	bh=fU5DEK012uQVuv9eQeLiEuxNjAdKW5AlXAORYqPYyAU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a0TxyEomIUCTm2AJnpebi6jBL+B6GgiTRCc+cYmP8PDw2FXy8EEEPuEussZOS2kNuY10tfRQ0vIh8aDW9y+JIC6WTSNwsi0qKT5vklKJqdjeq0RiF6ElLsBIX1T4ovoOPSCYbuGeYrmmVP7zyM4ytM004KXOv71R7vti959xho4=
+	 MIME-Version; b=MMmocyriJu+0zEa89PDWFHO/13t0AiPBn1IKkdEWfDZrBfMzfur1xpqI4xdr2HL4esZqw1flyRJpBx/pwQXYtrLXlSIAuRvMrr5QEtyx/T9XtcOYrFwI3wPmPUtT/GPJo9YPqZa6QY097mJMD/RixkwA7BM55Ii8nDz2TBCWvxU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 4VEXfEKTTlWknYvp2kEqfg==
-X-CSE-MsgGUID: i5StwDapRMCt1mzOLs0VFA==
+X-CSE-ConnectionGUID: c/LMmQIhSkG/5DlGbpPUHA==
+X-CSE-MsgGUID: V4MJuhdASFaafAU5TzdOKg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2025 20:25:01 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2025 20:25:05 +0900
 Received: from localhost.localdomain (unknown [10.226.92.122])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 09B9D4018228;
-	Fri, 31 Jan 2025 20:24:56 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7DB224017BBB;
+	Fri, 31 Jan 2025 20:24:53 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -30,9 +30,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	devicetree@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 8/8] arm64: dts: renesas: r9a09g047e57-smarc: Enable SDHI1
-Date: Fri, 31 Jan 2025 11:24:23 +0000
-Message-ID: <20250131112429.119882-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 7/8] arm64: dts: renesas: rzg3e-smarc-som: Add support for enable SD on SDHI0
+Date: Fri, 31 Jan 2025 11:24:22 +0000
+Message-ID: <20250131112429.119882-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250131112429.119882-1-biju.das.jz@bp.renesas.com>
 References: <20250131112429.119882-1-biju.das.jz@bp.renesas.com>
@@ -44,132 +44,122 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable SDHI1 on the RZ/G3E SMARC EVK platform using gpio regulator for
-voltage switching.
+Add support for enabling SD on SDHI0 on RZ/G3E SMARC SoM. It is enabled
+by setting the macro SW_SD0_DEV_SEL to 1 in board DTS and setting the
+switch SYS.1 to ON position on the SoM.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v1->v2:
- * Replaced the regulator usd_vdd_3p3v->reg_3p3v.
- * Renamed the gpio-hog node sd1-pwr-en->sd1-pwr-en-hog.
- * Sorted sd1 pin ctrl nodes.
+v2:
+ * New patch
 ---
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 45 +++++++++++++++++++
- .../boot/dts/renesas/renesas-smarc2.dtsi      | 18 ++++++++
- 2 files changed, 63 insertions(+)
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  3 +
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     | 57 +++++++++++++++++++
+ 2 files changed, 60 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index fe67bce26d75..5d7983812c70 100644
+index f9248037de9e..fe67bce26d75 100644
 --- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
 +++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -9,6 +9,7 @@
+@@ -7,6 +7,9 @@
  
- /* Switch selection settings */
- #define SW_SD0_DEV_SEL		0
-+#define SW_SDIO_M2E		0
+ /dts-v1/;
  
++/* Switch selection settings */
++#define SW_SD0_DEV_SEL		0
++
  #include <dt-bindings/gpio/gpio.h>
  #include <dt-bindings/pinctrl/renesas,r9a09g047-pinctrl.h>
-@@ -20,6 +21,16 @@ / {
- 	model = "Renesas SMARC EVK version 2 based on r9a09g047e57";
- 	compatible = "renesas,smarc2-evk", "renesas,rzg3e-smarcm",
- 		     "renesas,r9a09g047e57", "renesas,r9a09g047";
-+
-+	vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
-+		compatible = "regulator-gpio";
-+		regulator-name = "SD1_PVDD";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&pinctrl RZG3E_GPIO(1, 5) GPIO_ACTIVE_HIGH>;
-+		gpios-states = <0>;
-+		states = <3300000 0>, <1800000 1>;
-+	};
- };
- 
- &pinctrl {
-@@ -27,9 +38,43 @@ scif_pins: scif {
- 		pins = "SCIF_TXD", "SCIF_RXD";
- 		renesas,output-impedance = <1>;
- 	};
-+
-+	sd1-pwr-en-hog {
-+		gpio-hog;
-+		gpios = <RZG3E_GPIO(1, 6) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "sd1_pwr_en";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		sd1-cd {
-+			pinmux = <RZG3E_PORT_PINMUX(1, 4, 8)>; /* SD1CD */
-+		};
-+
-+		sd1-ctrl {
-+			pinmux = <RZG3E_PORT_PINMUX(G, 0, 1)>, /* SD1CLK */
-+				 <RZG3E_PORT_PINMUX(G, 1, 1)>; /* SD1CMD */
-+		};
-+
-+		sd1-data {
-+			pinmux = <RZG3E_PORT_PINMUX(G, 2, 1)>, /* SD1DAT0 */
-+				 <RZG3E_PORT_PINMUX(G, 3, 1)>, /* SD1DAT1 */
-+				 <RZG3E_PORT_PINMUX(G, 4, 1)>, /* SD1DAT2 */
-+				 <RZG3E_PORT_PINMUX(G, 5, 1)>; /* SD1DAT3 */
-+		};
-+	};
- };
- 
- &scif0 {
- 	pinctrl-0 = <&scif_pins>;
- 	pinctrl-names = "default";
- };
-+
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vqmmc_sd1_pvdd>;
-+};
-diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-index e378d55e6e9b..fd82df8adc1e 100644
---- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-+++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+ #include "r9a09g047e57.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+index 9b5e5fd76c29..d3b47c792454 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
 @@ -5,6 +5,15 @@
   * Copyright (C) 2024 Renesas Electronics Corp.
   */
  
 +/*
-+ * Please set the switch position SW_OPT_MUX.1 on the carrier board and the
-+ * corresponding macro SW_SDIO_M2E on the board DTS:
++ * Please set the switch position SYS.1 on the SoM and the corresponding macro
++ * SW_SD0_DEV_SEL on the board DTS:
 + *
-+ * SW_SDIO_M2E:
-+ *     0 - SMARC SDIO signal is connected to uSD1
-+ *     1 - SMARC SDIO signal is connected to M.2 Key E connector
++ * SW_SD0_DEV_SEL:
++ *      0 - SD0 is connected to eMMC (default)
++ *      1 - SD0 is connected to uSD0 card
 + */
 +
  / {
- 	model = "Renesas RZ SMARC Carrier-II Board";
- 	compatible = "renesas,smarc2-evk";
-@@ -16,9 +25,18 @@ chosen {
+ 	compatible = "renesas,rzg3e-smarcm", "renesas,r9a09g047e57", "renesas,r9a09g047";
  
- 	aliases {
- 		serial3 = &scif0;
-+		mmc1 = &sdhi1;
- 	};
+@@ -43,6 +52,34 @@ &audio_extal_clk {
  };
  
- &scif0 {
- 	status = "okay";
- };
+ &pinctrl {
++#if (SW_SD0_DEV_SEL)
++	sdhi0_pins: sd0 {
++		sd0-cd {
++			pinmux = <RZG3E_PORT_PINMUX(5, 0, 8)>;
++		};
 +
-+&sdhi1 {
++		sd0-ctrl {
++			pins = "SD0CLK", "SD0CMD";
++			renesas,output-impedance = <3>;
++		};
++
++		sd0-data {
++			pins = "SD0DAT0", "SD0DAT1", "SD0DAT2", "SD0DAT3";
++			renesas,output-impedance = <3>;
++		};
++
++		sd0-iovs {
++			pins = "SD0IOVS";
++			renesas,output-impedance = <3>;
++		};
++
++		sd0-pwen {
++			pins = "SD0PWEN";
++			renesas,output-impedance = <3>;
++		};
++	};
++#endif
++
+ 	sdhi0_emmc_pins: sd0emmc {
+ 		sd0-emmc-ctrl {
+ 			pins = "SD0CLK", "SD0CMD";
+@@ -96,6 +133,25 @@ &rtxin_clk {
+ 	clock-frequency = <32768>;
+ };
+ 
++#if (SW_SD0_DEV_SEL)
++&sdhi0 {
++	pinctrl-0 = <&sdhi0_pins>;
++	pinctrl-1 = <&sdhi0_pins>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&vqmmc_sdhi0>;
 +	bus-width = <4>;
 +	sd-uhs-sdr50;
 +	sd-uhs-sdr104;
-+
 +	status = "okay";
 +};
++
++&vqmmc_sdhi0 {
++	regulator-name = "SD0_PVDD";
++	status = "okay";
++};
++#else
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_emmc_pins>;
+ 	pinctrl-1 = <&sdhi0_emmc_pins>;
+@@ -109,6 +165,7 @@ &sdhi0 {
+ 	fixed-emmc-driver-type = <1>;
+ 	status = "okay";
+ };
++#endif
+ 
+ &sdhi2 {
+ 	pinctrl-0 = <&sdhi2_pins>;
 -- 
 2.43.0
 
