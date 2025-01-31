@@ -1,312 +1,88 @@
-Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC6E1C5D73
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Jan 2025 13:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23E270807;
+	Fri, 31 Jan 2025 16:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738331641; cv=none; b=Dl8bVTLPkykO+nMdID+WuZF/98qa0jjkS86YsDBZwkzWK1HdrFwP5wOPe6iQcLS8yRTAQJKROii2IRb9UsevHQUkXiRL9NEGx2N0fbDM8oQGDEvezmPLYi/bHd/ds4vr16P0rObTrReg+cIPIll3+1pzx58AFhHR4nATlv/pnRQ=
+	t=1738340862; cv=none; b=n/yZ4lvZa/ChRAtk5K28zKFFYwNdVDwv2QceqTp4hJjA2FVdQX7zBe/wJ34giHP3P7e1igEUtPqEgQp6MEusT6vnyRARu999KqzviUksgLkA6kON8fUMrZuSizI9no2BeBceL1HYg8JrMBI8oJkp+X9ABgXWCPX7L6s0GxbbC0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738331641; c=relaxed/simple;
-	bh=ZyIeyj8p150WqvNw9FQz8qSzdIzpboqEjOszWkDs8aw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GBDKh3FSgPD2XHnHQArDxP/CPF/2HFgW207URjmpHzKGEjVoieQ8Sdpl6vy3ko69rKfUileSp60/5WQ3OIF+TbeqAfgSypvNBq4guhXNMJuNavn+ppsKmVXIgHCMEnP3hLgxPj0VHXE9yJt/pl0I3qceGF6xcp1O6waCM3tM9js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4Ykxz10fMLz4x4Ft
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Jan 2025 14:47:25 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:a916:3147:9f19:c260])
-	by baptiste.telenet-ops.be with cmsmtp
-	id 7pmw2E00X0naHe801pmwxJ; Fri, 31 Jan 2025 14:47:24 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tdrM6-0000000FHxs-1tvt;
-	Fri, 31 Jan 2025 14:46:56 +0100
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tdrMG-0000000DFVQ-1qJR;
-	Fri, 31 Jan 2025 14:46:56 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alex Elder <elder@ieee.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	qat-linux@intel.com,
-	linux-gpio@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH treewide v2 1/3] bitfield: Add non-constant field_{prep,get}() helpers
-Date: Fri, 31 Jan 2025 14:46:51 +0100
-Message-ID: <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1738329458.git.geert+renesas@glider.be>
-References: <cover.1738329458.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1738340862; c=relaxed/simple;
+	bh=9d8iz3atJ8SFmBq95SorE+zCnvCzuJ+4nJxphzpsd8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ir2lf3HTKHvFDiITrnsMhDUqUISvmxderzJkIINPMk/LEGZPQDVAG52kMm/sfnIF1R+mnX4KNcOAJPhzKQaQTZNaHl/OuDlhLhDa27BYf7liqYCwdPIx3x2pD2MVY1oRe43xSGF2Aakeliz7uAC/V8AiGbV6S+tmfVgfWFSkrx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGo7BHJO; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGo7BHJO"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-219f8263ae0so41960755ad.0;
+        Fri, 31 Jan 2025 08:27:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738340860; x=1738945660; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eFPs3L8nL4rExUqip6npmMartw/p4+W7rTsGvL4C22E=;
+        b=jGo7BHJOD+HCCGKXBQOcbmR/ng6fOZQl6X4cUnIXnKc44kCBpDrpYjaPM5vxJ0aTsE
+         +McmCcvIwRwWyTalneildSK3tsco7glAQKaQ5Z/8L7ZidmtSsOevvZ0x8XfFdYIn/uiW
+         N5o/WzbjAtrK85Jn0dbtkPw8TTxadI3wqkOPZE0C11DvsLZ27MXf+VpOOdpnsxwGJ7Wz
+         QXPepSjrTjJktds/DPIWDX3t/zQS+Q5kGifgZFlcCDYLW548lt+L3nmHoc1Mvlzsxfrg
+         MY/Xgf39yfmrf3ie1YDwb8bVUomUult/sjJuI01mKuiPYO9lH1P/V8SOY4Nnyce8Xois
+         Eatw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738340860; x=1738945660;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eFPs3L8nL4rExUqip6npmMartw/p4+W7rTsGvL4C22E=;
+        b=sceAPMlBKhAvvSXVBWA08ARtMmszibuDZQW8xNzzza3ZeZcijRoBSob7tCzF9TSkD8
+         np0AyT2NJsRLiXJEpxiNpRhgPxmwfv174nciW+uN4slMJBm8YZoGJsub/YWCmZ9VkpYa
+         TiJeVhhfweOFXAZOdOUpwGx9CshqO/qpue2VSgj1e+z8YSqXd1JSp6x0BM0oGaLGwKK6
+         uqSgSbHOJixD1mGG3zKoPnYGjEskdJEhjiQVKtKBYJTg0zXEAaz5tuiiaYTPVJhYEkNv
+         fT68sZku+W9l0cv9EzcvzA2qS+NLB6ntYEm/sRb5TVfgiUVurAmlSgNd3f0E1PVOqHa1
+         WSOA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6HUz/KDEZU8QvwGFrZyqYqoKwGcfdpBg76QHWxv/+z8BhLjBg1uLTYp/d9AQ1bMstPjbn8JtUSoLkPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQHj67uMRsLSSf0keQeo1h6CFkvqdIyu40KB8Yi4oVDTisCeBh
+	a8AuajVURUpdwHfm1/FCXtP1/v0O+OMlFtgXeHzRm+CI20inZPXI0ZLArw==
+X-Gm-Gg: ASbGncscVP9Bx8JwfxAylblSf3iUhOcGCdfBYdXkZ6JmZMY5RaVssEuTmfEx5zczCRW
+	gzGZBdfKSLjEtgYUDluj6OXiwDPEFmjzu9imhR/dFEmiXqnfGv8x/xfGLvg861XgowhRBiyMHWE
+	GXAbsqizr4rPV/BVEs6eBlnc8QQwxaCcKwXCCZqkWt0qu7Z8ROhpMJMtK9GR/7MttKeFnNgIG36
+	/ZrkXcIBKEEFQSw6pABk5cCTA4Gw/bnHiafezq586Xx+jPj6C67rUDIv7tDWmSpe9az8OhHIBd/
+	38TVL9YCZGwShlbyOykGXE2hPZa7
+X-Google-Smtp-Source: AGHT+IG/6Pk+E31jTp0ry9eFaDJMEDcSozZZv4x6t6eTxZjAfsaQL+9PbJl9fDiHp0A4taUyUF/UAQ==
+X-Received: by 2002:a17:902:ea0e:b0:216:5e6e:68ae with SMTP id d9443c01a7336-21dd7d93709mr169379435ad.31.1738340859963;
+        Fri, 31 Jan 2025 08:27:39 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21de31f5f01sm32688425ad.71.2025.01.31.08.27.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jan 2025 08:27:39 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 31 Jan 2025 08:27:38 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v2] hwmon: (sht3x) Use per-client debugfs entry
+Message-ID: <3efd2cfb-3d09-48ea-843c-5a640c0fe7a2@roeck-us.net>
+References: <20250131095148.11973-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250131095148.11973-2-wsa+renesas@sang-engineering.com>
 
-The existing FIELD_{GET,PREP}() macros are limited to compile-time
-constants.  However, it is very common to prepare or extract bitfield
-elements where the bitfield mask is not a compile-time constant.
+On Fri, Jan 31, 2025 at 10:38:33AM +0100, Wolfram Sang wrote:
+> The I2C core now offers a debugfs-directory per client. Use it and
+> remove the custom handling.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-To avoid this limitation, the AT91 clock driver and several other
-drivers already have their own non-const field_{prep,get}() macros.
-Make them available for general use by consolidating them in
-<linux/bitfield.h>, and improve them slightly:
-  1. Avoid evaluating macro parameters more than once,
-  2. Replace "ffs() - 1" by "__ffs()",
-  3. Support 64-bit use on 32-bit architectures.
+Applied to hwmon-next.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Cast val resp. reg to the mask type,
-  - Fix 64-bit use on 32-bit architectures,
-  - Convert new upstream users:
-      - drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
-      - drivers/gpio/gpio-aspeed.c
-      - drivers/iio/temperature/mlx90614.c
-      - drivers/pinctrl/nuvoton/pinctrl-ma35.c
-      - sound/usb/mixer_quirks.c
-  - Convert new user queued in renesas-devel for v6.15:
-      - drivers/soc/renesas/rz-sysc.c
----
- drivers/clk/at91/clk-peripheral.c             |  1 +
- drivers/clk/at91/pmc.h                        |  3 --
- .../qat/qat_common/adf_gen4_pm_debugfs.c      |  8 +----
- drivers/gpio/gpio-aspeed.c                    |  5 +--
- drivers/iio/temperature/mlx90614.c            |  5 +--
- drivers/pinctrl/nuvoton/pinctrl-ma35.c        |  4 ---
- drivers/soc/renesas/rz-sysc.c                 |  3 +-
- include/linux/bitfield.h                      | 34 +++++++++++++++++++
- sound/usb/mixer_quirks.c                      |  4 ---
- 9 files changed, 39 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-index c173a44c800aa8cc..60208bdc3fe4797e 100644
---- a/drivers/clk/at91/clk-peripheral.c
-+++ b/drivers/clk/at91/clk-peripheral.c
-@@ -3,6 +3,7 @@
-  *  Copyright (C) 2013 Boris BREZILLON <b.brezillon@overkiz.com>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/bitops.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 4fb29ca111f7d427..3838e4f7df2d4a70 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -116,9 +116,6 @@ struct at91_clk_pms {
- 	unsigned int parent;
- };
- 
--#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
--#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
--
- #define ndck(a, s) (a[s - 1].id + 1)
- #define nck(a) (a[ARRAY_SIZE(a) - 1].id + 1)
- 
-diff --git a/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c b/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
-index 2e4095c4c12c94f9..ebaa59e934178309 100644
---- a/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
-+++ b/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /* Copyright(c) 2023 Intel Corporation */
-+#include <linux/bitfield.h>
- #include <linux/dma-mapping.h>
- #include <linux/kernel.h>
- #include <linux/string_helpers.h>
-@@ -11,13 +12,6 @@
- #include "adf_gen4_pm.h"
- #include "icp_qat_fw_init_admin.h"
- 
--/*
-- * This is needed because a variable is used to index the mask at
-- * pm_scnprint_table(), making it not compile time constant, so the compile
-- * asserts from FIELD_GET() or u32_get_bits() won't be fulfilled.
-- */
--#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
--
- #define PM_INFO_MEMBER_OFF(member)	\
- 	(offsetof(struct icp_qat_fw_init_admin_pm_info, member) / sizeof(u32))
- 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 40c1bd80f8b0434d..b45e4dd8d8e4f00a 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -5,6 +5,7 @@
-  * Joel Stanley <joel@jms.id.au>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/gpio/aspeed.h>
- #include <linux/gpio/driver.h>
-@@ -30,10 +31,6 @@
- #include <linux/gpio/consumer.h>
- #include "gpiolib.h"
- 
--/* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
--#define field_get(_mask, _reg)	(((_reg) & (_mask)) >> (ffs(_mask) - 1))
--#define field_prep(_mask, _val)	(((_val) << (ffs(_mask) - 1)) & (_mask))
--
- #define GPIO_G7_IRQ_STS_BASE 0x100
- #define GPIO_G7_IRQ_STS_OFFSET(x) (GPIO_G7_IRQ_STS_BASE + (x) * 0x4)
- #define GPIO_G7_CTRL_REG_BASE 0x180
-diff --git a/drivers/iio/temperature/mlx90614.c b/drivers/iio/temperature/mlx90614.c
-index 740018d4b3dfb35e..c58dc59d4f570831 100644
---- a/drivers/iio/temperature/mlx90614.c
-+++ b/drivers/iio/temperature/mlx90614.c
-@@ -22,6 +22,7 @@
-  * the "wakeup" GPIO is not given, power management will be disabled.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/gpio/consumer.h>
-@@ -68,10 +69,6 @@
- #define MLX90614_CONST_SCALE 20 /* Scale in milliKelvin (0.02 * 1000) */
- #define MLX90614_CONST_FIR 0x7 /* Fixed value for FIR part of low pass filter */
- 
--/* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
--#define field_get(_mask, _reg)	(((_reg) & (_mask)) >> (ffs(_mask) - 1))
--#define field_prep(_mask, _val)	(((_val) << (ffs(_mask) - 1)) & (_mask))
--
- struct mlx_chip_info {
- 	/* EEPROM offsets with 16-bit data, MSB first */
- 	/* emissivity correction coefficient */
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-ma35.c b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-index 59c4e7c6cddea127..3ba28faa8e1418a9 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-@@ -81,10 +81,6 @@
- #define MVOLT_1800			0
- #define MVOLT_3300			1
- 
--/* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
--#define field_get(_mask, _reg)	(((_reg) & (_mask)) >> (ffs(_mask) - 1))
--#define field_prep(_mask, _val)	(((_val) << (ffs(_mask) - 1)) & (_mask))
--
- static const char * const gpio_group_name[] = {
- 	"gpioa", "gpiob", "gpioc", "gpiod", "gpioe", "gpiof", "gpiog",
- 	"gpioh", "gpioi", "gpioj", "gpiok", "gpiol", "gpiom", "gpion",
-diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
-index 1c98da37b7d18745..917a029d849585cd 100644
---- a/drivers/soc/renesas/rz-sysc.c
-+++ b/drivers/soc/renesas/rz-sysc.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2024 Renesas Electronics Corp.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -12,8 +13,6 @@
- 
- #include "rz-sysc.h"
- 
--#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
--
- /**
-  * struct rz_sysc - RZ SYSC private data structure
-  * @base: SYSC base address
-diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-index 63928f1732230700..c62324a9fcc81241 100644
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -203,4 +203,38 @@ __MAKE_OP(64)
- #undef __MAKE_OP
- #undef ____MAKE_OP
- 
-+/**
-+ * field_prep() - prepare a bitfield element
-+ * @_mask: shifted mask defining the field's length and position
-+ * @_val:  value to put in the field
-+ *
-+ * field_prep() masks and shifts up the value.  The result should be
-+ * combined with other fields of the bitfield using logical OR.
-+ * Unlike FIELD_PREP(), @_mask is not limited to a compile-time constant.
-+ */
-+#define field_prep(_mask, _val)						\
-+	({								\
-+		typeof(_mask) __mask = (_mask);				\
-+		unsigned int __shift = sizeof(_mask) <= 4 ?		\
-+				       __ffs(__mask) : __ffs64(__mask);	\
-+		(((typeof(_mask))(_val) << __shift) & (__mask));	\
-+	})
-+
-+/**
-+ * field_get() - extract a bitfield element
-+ * @_mask: shifted mask defining the field's length and position
-+ * @_reg:  value of entire bitfield
-+ *
-+ * field_get() extracts the field specified by @_mask from the
-+ * bitfield passed in as @_reg by masking and shifting it down.
-+ * Unlike FIELD_GET(), @_mask is not limited to a compile-time constant.
-+ */
-+#define field_get(_mask, _reg)						\
-+	({								\
-+		typeof(_mask) __mask = _mask;				\
-+		unsigned int __shift = sizeof(_mask) <= 4 ?		\
-+				       __ffs(__mask) : __ffs64(__mask);	\
-+		(typeof(_mask))(((_reg) & (__mask)) >> __shift);	\
-+	})
-+
- #endif
-diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
-index 23fcd680167d0298..00ab811e4b11a573 100644
---- a/sound/usb/mixer_quirks.c
-+++ b/sound/usb/mixer_quirks.c
-@@ -3109,10 +3109,6 @@ static int snd_bbfpro_controls_create(struct usb_mixer_interface *mixer)
- #define RME_DIGIFACE_REGISTER(reg, mask) (((reg) << 16) | (mask))
- #define RME_DIGIFACE_INVERT BIT(31)
- 
--/* Nonconst helpers */
--#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
--#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
--
- static int snd_rme_digiface_write_reg(struct snd_kcontrol *kcontrol, int item, u16 mask, u16 val)
- {
- 	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
--- 
-2.43.0
-
+Thanks,
+Guenter
