@@ -1,101 +1,146 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1403913A3ED;
-	Fri, 31 Jan 2025 09:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6054322B;
+	Fri, 31 Jan 2025 09:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738314816; cv=none; b=VI5+guax5AxuP6rf8bRhHbTu6Ddspk5zxPabBB5R/APU/q2tgzThTr5Y4Eb/TimnnO/jcQ4P/4tdO2F4I8OolhM1TkM2qvCP1Q4RPX/iRtpVGZlcc54vRYcbN610KvknS1Q29o1ikKGFmjNa2b50HH+BbVlHAkym0mRhATk4FGY=
+	t=1738316908; cv=none; b=s7Us+DfIyo/NI8p+7OnhwDt2mLTnrRcjt6xRQuN6iZ762j3wAcZmaNp+Bp8R0eM6GvyWWzF0YOW7zy5tgbDdyHcLL9H30N8PSUwJ/f3pjpDRR3U6sRR62vm3nSjecyn9IXvdjQx74OyFYbv3P71+zna4GjsLawlRw/idV7MafhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738314816; c=relaxed/simple;
-	bh=yQ2A2NUuo8OMQ8PvY1ofFoghCOGv6PtwtuqqXelW+ao=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QEw9df68tHHzC8M5rEvFIrD9uabMKdGl6EZbZfYRw4IE5rZatsOgK2PdV7bI5pLkKzmKdvM12XYPuNEkVdmxy4nvOkK7nKhuc7Qmktd7NVMDe5Ul99DgjkRxRESvjvA74i23DudtXrEirZH7CeFqs86f1YjNd611bl7nwCD3yMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SwcMhS4P; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SwcMhS4P"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1738314812;
-	bh=yQ2A2NUuo8OMQ8PvY1ofFoghCOGv6PtwtuqqXelW+ao=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SwcMhS4PxhMUVqN7taWYTWjz2VlzIaCKe6Xke2Px+l30/+NxTnruiKSJyfzp52/cb
-	 A5DN48YlTMlvIPwgR14Gi47r+YZ2Ni32XuQLhPFy3tta2MIiGqkFexpmGZ5nhwDeJs
-	 bSIROd8gf1gumS7XdgZKSEvpaR9SeKQTvFGjVUQJZ4g+JqsKWNW1fTlYIupry9y2Fb
-	 hBaOPxDbWDd/cHdERKNBMz2I6VWe7GTvqb67eSVA8QPJYFFCgD1SJXkv8u56QrpSOf
-	 ivjvs6rKg4mwWVvzxxXgs/GnJy3YHmxjFfCHdvIblr3XlH8LnEVDOC034canAj+PPO
-	 d1f37cV/lTJ5A==
-Received: from apertis-1.home (2a01cb088CCA73006086f5F072c6a07A.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:8cca:7300:6086:f5f0:72c6:a07a])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C817417E05D9;
-	Fri, 31 Jan 2025 10:13:31 +0100 (CET)
-Message-ID: <10fa27aea77adafe32f6492c894ccb381c8f4051.camel@collabora.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: soc: renesas: Document MyIR Remi Pi
- board
-From: Julien Massot <julien.massot@collabora.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski
-	 <krzysztof.kozlowski@linaro.org>
-Date: Fri, 31 Jan 2025 10:13:31 +0100
-In-Reply-To: <CAMuHMdW16Uf+khp7viesn7YtZXahCp6QuOHY4bnp2DG_KYee9Q@mail.gmail.com>
-References: <20250127-myir-remi-pi-v2-0-7bd3a1c62752@collabora.com>
-	 <20250127-myir-remi-pi-v2-1-7bd3a1c62752@collabora.com>
-	 <CAMuHMdW16Uf+khp7viesn7YtZXahCp6QuOHY4bnp2DG_KYee9Q@mail.gmail.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	s=arc-20240116; t=1738316908; c=relaxed/simple;
+	bh=xRljolmy4EZjS4PJvqMfPGESDbrhnm1m1LnJSC7HGq4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bQetQE6Dii+pHULnMyntfBqc0w/EpVtfvCWGNHRuxcbGxTMewVfmFWANJjIvWCf/9wJ/ezjNKTCzI8fkjSzlBaJ6R3D0nnRxYqt5r5vs65a42bc4ONoec5bj9RRDw6j+bBCPOq7Jvv3Cy110ax42rEPiFio71Tx3ijo8teQe4Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: Z+PrpjS4SYKuLNBTu5ZRNg==
+X-CSE-MsgGUID: VxM4iI87TweP3hHFzGXvqg==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2025 18:48:18 +0900
+Received: from localhost.localdomain (unknown [10.226.92.122])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E4CBC40165B8;
+	Fri, 31 Jan 2025 18:48:14 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] of: base: Add of_get_available_child_by_name()
+Date: Fri, 31 Jan 2025 09:48:10 +0000
+Message-ID: <20250131094812.118340-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+There are lot of drivers using of_get_child_by_name() followed
+by of_device_is_available() to check the child node availabilty
+by name for a given parent. Provide a helper for these users to
+simplify the code.
 
-On Wed, 2025-01-29 at 15:11 +0100, Geert Uytterhoeven wrote:
-> Hi Julien,
->=20
-> On Mon, 27 Jan 2025 at 10:39, Julien Massot <julien.massot@collabora.com>=
- wrote:
-> > Document the MyIR Remi Pi" which is based on the Renesas
-> > RZ/G2L ("R9A07G044L2") SoC.
-> >=20
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
->=20
-> Thanks for your patch!
->=20
-> > --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> > +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> > @@ -491,6 +491,13 @@ properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 - renesas,r9a07g044l2 # Dual Cortex-A55 RZ/G2L
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: r=
-enesas,r9a07g044
-> >=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 # MYIR Remi Pi SBC (MYB-YG2LX-REMI)
->=20
-> What is the correct spelling? Your patch series has "MYIR", "MyIR", and
-> "MYir".=C2=A0 The website seems to use "MYIR", except in the graphical lo=
-go,
-> which shows a dotted-I.
-We already have "MYIR" in the 'vendor-prefix.yaml', and the corporate webpa=
-ge
-use "MYIR". I will make sure to use "MYIR" spelling only :)
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+grep showed the below files will be the user for this new API.
+I will be updating these drivers once this patch is in mainline.
 
+drivers/net/dsa/rzn1_a5psw.c
+drivers/net/can/rcar/rcar_canfd.c
 
---
-Julien
+drivers/net/ethernet/mediatek/mtk_star_emac.c
+drivers/net/dsa/mt7530.c
+drivers/net/dsa/sja1105/sja1105_mdio.c
+drivers/net/dsa/qca/qca8k-8xxx.c
+drivers/net/wireless/mediatek/mt76/mac80211.c
+drivers/net/ethernet/ibm/emac/core.c
+drivers/net/ethernet/ti/am65-cpsw-nuss.c
+drivers/net/ethernet/actions/owl-emac.c
+drivers/net/ethernet/mediatek/mtk_eth_soc.c
+drivers/media/platform/samsung/exynos4-is/media-dev.h
+drivers/gpu/drm/tegra/rgb.c
+drivers/gpu/drm/msm/adreno/adreno_gpu.c
+drivers/clk/davinci/pll.c
+---
+ drivers/of/base.c  | 28 ++++++++++++++++++++++++++++
+ include/linux/of.h |  9 +++++++++
+ 2 files changed, 37 insertions(+)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index af6c68bbb427..3f5119fbfdb4 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -824,6 +824,34 @@ struct device_node *of_get_child_by_name(const struct device_node *node,
+ }
+ EXPORT_SYMBOL(of_get_child_by_name);
+ 
++/**
++ * of_get_available_child_by_name - Find the child node availabilty by name for a given parent
++ * @node:	parent node
++ * @name:	child name to look for.
++ *
++ * This function looks for child node for given matching name and check the
++ * device availability for use.
++ *
++ * Return: A node pointer if found, with refcount incremented, use
++ * of_node_put() on it when done.
++ * Returns NULL if node is not found.
++ */
++struct device_node *of_get_available_child_by_name(const struct device_node *node,
++						   const char *name)
++{
++	struct device_node *child;
++
++	for_each_child_of_node(node, child)
++		if (of_node_name_eq(child, name))
++			break;
++
++	if (child && !of_device_is_available(child))
++		of_node_put(child);
++
++	return child;
++}
++EXPORT_SYMBOL(of_get_available_child_by_name);
++
+ struct device_node *__of_find_node_by_path(const struct device_node *parent,
+ 						const char *path)
+ {
+diff --git a/include/linux/of.h b/include/linux/of.h
+index eaf0e2a2b75c..9d6b8a61607f 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -301,6 +301,8 @@ extern struct device_node *of_get_compatible_child(const struct device_node *par
+ 					const char *compatible);
+ extern struct device_node *of_get_child_by_name(const struct device_node *node,
+ 					const char *name);
++extern struct device_node *of_get_available_child_by_name(const struct device_node *node,
++							  const char *name);
+ 
+ /* cache lookup */
+ extern struct device_node *of_find_next_cache_node(const struct device_node *);
+@@ -578,6 +580,13 @@ static inline struct device_node *of_get_child_by_name(
+ 	return NULL;
+ }
+ 
++static inline struct device_node *of_get_available_child_by_name(
++					const struct device_node *node,
++					const char *name)
++{
++	return NULL;
++}
++
+ static inline int of_device_is_compatible(const struct device_node *device,
+ 					  const char *name)
+ {
+-- 
+2.43.0
+
