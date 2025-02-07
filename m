@@ -1,116 +1,285 @@
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC35221DBD
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Feb 2025 14:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE94B238D38;
+	Fri,  7 Feb 2025 15:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738937305; cv=none; b=ZcahHwjd2q3g6Q+7Ebq0RcdlzWz4ML/NPiPbpwqzsRBbiqExBxp7oQLMY/ac1muBVJb66T0E6o+YoygFg7wVJ/EEXhHRZmOMGnflA2d7AnozhbhsnwwoNPv8L9dClWRhOgMc3AFBR5DuJhzNVIUsQ9gCHR6Wn2A2CsYo6R5y5m8=
+	t=1738940913; cv=none; b=Rs8oyFqj0hdIAsXyqYgNSxqNCIk8RCO3R8l/n6Voyyi2TRNuL/dkzeJqbL8ThlZFaMd+7xAlHSS2dv0a0sAlGxXMS1nxDxphyzZMoeQadkLneEQnMMUTbciY9w7vyV/iufxcahjZFbztrsfnxZ8KcF7sG5d4o3RoH1YIU6+Motc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738937305; c=relaxed/simple;
-	bh=NbV5++rJzflBrbVw9AgGVCZTq9YsRaT1/xa1DeUxS/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZNZ7CMM3Bs/RY+x0WIqjTxz4n9LCMlEvXXLvZH/fLnxFewwfA+jl82XAxKqquyyYBOLE6KMb5sucTR9wDbEI3PhCXIBP4DilUDqy6V9ii0uMleVB0KGCz3lTheUIyDnZYWrSKm9rvTP+XIjJ5WMPu8o2CZ3oI/c4OjsjsKgOy8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.102] (213.87.160.224) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 7 Feb
- 2025 16:53:00 +0300
-Message-ID: <8fb03758-d256-4e8d-aacc-e97639892a33@omp.ru>
-Date: Fri, 7 Feb 2025 16:53:00 +0300
+	s=arc-20240116; t=1738940913; c=relaxed/simple;
+	bh=zYuf6TUsXT/+dJqMM/PvaXxrdJGQJcs9Oh0qoGLCmIo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dVYewE98Do1aEVbvpPG1SesGjAiIU4NktrIEMXG4YKaPTfsoRpp1RjgjJcMHdM1+2H2en22m2NPdjBV4ALS7DVsu/rr94BpHm49iFvnF+dVYmFQ6VcQdwCww/LrPhVxT9zITk4QKJKvyribDSzVqyYiDa4YWPXVqdVocIPKZQWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e435639b59so14761066d6.3;
+        Fri, 07 Feb 2025 07:08:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738940909; x=1739545709;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=01cDeR3Iu0g3SXSPowpC+AUnI029ht/uxmzvpymnUns=;
+        b=MfT4TfeUJ+vwDzgkwHSGAcT8QZ2XB/wzPV8PiTVlxY7OkiQIFzqhjmfo9wiM0ctQ3c
+         G1RffFzjQTsCszD1hxDkiaiIRyxNbDTfwLSy1DUXoOn/RPf+QwufXt4Bet3AryGZ1diZ
+         7DLm1jhe0y86IWcpwHMYO0hbVfSXOcaI4QLFsVNTqM1tKR/t//5DxB6hq+Ji7UfZQc1b
+         ojX7n8Ct5fXFhPGLygHmROo1S7WVVITVJQ09xFTATdvo3anoVb+AGYFCRBn5KrIsCFcV
+         rFsoS2px4XJSZIfPGDk7UJAZb2ZqAdd4D8rAq1tpLqi76PKQrA0kMJOzy3X9sbfe3LDV
+         ijvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfW+1wPBa7aqhX0ufwo45s0c9IL9GPI3a3JLtHU9Jmp8BOU0fhYmxpl87VEGmxZmIm8VX6thZ1pNsa64Tgqw1neSs=@vger.kernel.org, AJvYcCWo2Ua2aqf1bLXVLn7GQhwRUwyv+YPROTR/Ng76IxffjXmHR8QigydwTIMFVln4rctjT7ETauAKAw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YydpDpQ1rQ2ifRw9WEe8RGzcyVJFX336iorc36f2EVeFaV6w7Us
+	Wy4UNqEqejs2C8syLLG2QJXZyJO+m24ZyUThF+OfHu2hdXd/BeYdQl2vzze2
+X-Gm-Gg: ASbGncuyQkenTgn++7oap08rM6juKyrqOxfhbaSl98yIP+X8g3Shlf+YSk68SfMDx2s
+	Vjgyu7zuUoOVDfmezzhNdWmQV1iG2DvzN9E2ZGe2ZYZtMLr26Qb6FVytycrB6fxbXRZtnhYSsJb
+	yOC8WR8wuMgbyagzb9pdVzE9oZPFZMuz8XCCiNbS8dmB9qp39pWaK+G7AXwxhbZCez8dEQmSqIn
+	CclsrLSZdLx6zwXT2FPn1E+2RcoUG8dlWkDwlG/lAidolthjean+w/IXcPlhKZxW+UJSfqgxqqC
+	QlQvrf/OOMQk4U3ZrcQ8BY2NtcwqWwN9BpHzyVfw2q0NMLgP8i8TaJMQ5g==
+X-Google-Smtp-Source: AGHT+IGcXBC3lgO/lSFdVMSbYjiSbqcc23UGH4oY8BsTfKEhP4FERAO9dQf0EwFCbgJ1Gi9WVZmPwA==
+X-Received: by 2002:ad4:5caf:0:b0:6e2:55b5:91d1 with SMTP id 6a1803df08f44-6e4453f58demr50669926d6.0.1738940909151;
+        Fri, 07 Feb 2025 07:08:29 -0800 (PST)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com. [209.85.160.180])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e43ba368a9sm17882536d6.29.2025.02.07.07.08.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Feb 2025 07:08:28 -0800 (PST)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4679eacf25cso12530871cf.3;
+        Fri, 07 Feb 2025 07:08:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVStjtFLxzfHYMfS3hlBkdtwCCl4pJDobRH1dxArJQrKJeDbb9k83kn9+BQxzS0bhue5939TiC1WQ==@vger.kernel.org, AJvYcCX4XZk/cYKu+mEfs5mYMDejDLH4y6635PSifotP8blPHpCmtalHliAw9n4nmTDh8Pb/9p0rZWOVmnB/yO+aFRfkSb8=@vger.kernel.org
+X-Received: by 2002:ac8:578a:0:b0:467:86fa:6b72 with SMTP id
+ d75a77b69052e-47167a153ecmr41919931cf.12.1738940908576; Fri, 07 Feb 2025
+ 07:08:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 10/12] irqchip/renesas-rzv2h: Drop macros
- ICU_TSSR_TSSEL_{MASK,PREP}
-To: Biju Das <biju.das.jz@bp.renesas.com>, Thomas Gleixner
-	<tglx@linutronix.de>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>,
-	<linux-renesas-soc@vger.kernel.org>
-References: <20250207113653.21641-1-biju.das.jz@bp.renesas.com>
- <20250207113653.21641-11-biju.das.jz@bp.renesas.com>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20250207113653.21641-11-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 7 Feb 2025 16:08:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXN9A-1P_qe=BwKjLaoqxU8iJUQK6h8=s-apR4Y0em_0Q@mail.gmail.com>
+X-Gm-Features: AWEUYZnfmu9ofX_U8GML-ED_GiKpQUNGLT-ryiYdtSrvpzE9zKK6M0UBLhLvj7M
+Message-ID: <CAMuHMdXN9A-1P_qe=BwKjLaoqxU8iJUQK6h8=s-apR4Y0em_0Q@mail.gmail.com>
+Subject: s2idle blocked on dev->power.completion
+To: Saravana Kannan <saravanak@google.com>
+Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Linux PM list <linux-pm@vger.kernel.org>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 02/07/2025 13:26:54
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 190873 [Feb 07 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.7
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 50 0.3.50
- df4aeb250ed63fd3baa80a493fa6caee5dd9e10f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.160.224 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.160.224 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	213.87.160.224:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.160.224
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 02/07/2025 13:29:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 2/7/2025 9:59:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 2/7/25 2:36 PM, Biju Das wrote:
+Hi Saravana,
 
-> On RZ/G3E, TSSEL register field is 8 bits wide compared to 7 on RZ/V2H.
-> Also bits 8..14 is reserved on RZ/G3E and any writes on these reserved
-> bits is ignored. Use the bitmask GENMASK(field_width - 2, 0) on both SoCs
-> for extracting TSSEL and we can drop the macros ICU_TSSR_TSSEL_PREP and
-> ICU_TSSR_TSSEL_MASK.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-[...]
+I am investigating a hang during resume from s2idle on the Gray
+Hawk Single development board[1].  It was reported first in [2].
+The issue was detected when support for DisplayPort was added, due to
+DTS and driver updates following different paths to upstream.
 
-> diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-> index 6d1de9277c7d..71d06820e598 100644
-> --- a/drivers/irqchip/irq-renesas-rzv2h.c
-> +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-[...]
-> @@ -321,8 +318,9 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
->  	guard(raw_spinlock)(&priv->lock);
->  
->  	tssr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
-> -	tssr &= ~(ICU_TSSR_TSSEL_MASK(tssel_n) | tien);
-> -	tssr |= ICU_TSSR_TSSEL_PREP(tint, tssel_n);
-> +	tssr &= ~((GENMASK(priv->info->field_width - 2, 0) <<
-> +		   (tssel_n * priv->info->field_width)) | tien);
-> +	tssr |= (tint << (tssel_n * priv->info->field_width));
+When using a DTS with DisplayPort support, but booting a kernel that
+lacks support for the DSI block, the display and DSI-DP bridge drivers
+fail to probe, as expected:
 
-   Don't need () around the |='s rvalue.
+    # cat /sys/kernel/debug/devices_deferred
+    feb00000.display        rcar-du: failed to initialize encoders
+    ti_sn65dsi86.bridge.0   ti_sn65dsi86.bridge: failed to attach dsi host
 
-[...]
+However, when using s2idle, the system fails to wake-up, which is
+not expected.
 
-MBR, Sergey
+The issue can be reproduced by reverting commit c303814c38cde135
+("drm/rcar-du: dsi: Add r8a779h0 support") on top of v6.14-rc1.
 
+Instrumenting all dev->power.completion accesses in
+drivers/base/power/main.c reveals that resume is blocked in dpm_wait()
+in the call to wait_for_completion() for regulator-1p2v, which is
+indeed a dependency for the SN65DSI86 DSI-DP bridge.  Comparing
+this to plain v6.14-rc1 (where resume works fine) shows that the regulator
+is woken by complete_all() there.  As the logs are rather large,
+I made them available at [3] and [4] (I added "----" sync markers for
+"diff -y"). The important difference bad vs. good is:
+
+    -ti_sn65dsi86 1-002c: PM: dpm_wait:241: wait_for_completion
+    -i2c i2c-0: PM: device_resume_noirq:700: complete_all
+    -i2c i2c-1: PM: device_resume_noirq:700: complete_all
+    -i2c i2c-1: PM: dpm_wait:241: completed
+    -i2c i2c-0: PM: dpm_wait:241: completed
+    +rcar-mipi-dsi fed80000.dsi-encoder: PM: device_resume_noirq:700:
+complete_all
+    +platform fff00044.chipid: PM: device_resume_noirq:700: complete_all
+    +platform timer: PM: device_resume_noirq:700: complete_all
+    +gpio-keys keys: PM: device_resume_noirq:700: complete_all
+    +leds-gpio leds: PM: device_resume_noirq:700: complete_all
+    +display-connector mini-dp-con: PM: device_resume_noirq:700: complete_all
+    +reg-fixed-voltage regulator-1p2v: PM: device_resume_noirq:700: complete_all
+    +reg-fixed-voltage regulator-1p8v: PM: device_resume_noirq:700: complete_all
+    +reg-fixed-voltage regulator-3p3v: PM: device_resume_noirq:700: complete_all
+    +simple-mux sound-mux: PM: device_resume_noirq:700: complete_all
+    +workqueue writeback: PM: device_resume_noirq:700: complete_all
+    +graphics fbcon: PM: device_resume_noirq:700: complete_all
+    +regulator regulator.1: PM: device_resume_noirq:700: complete_all
+    +regulator regulator.2: PM: device_resume_noirq:700: complete_all
+    +regulator regulator.3: PM: device_resume_noirq:700: complete_all
+    +net lo: PM: device_resume_noirq:700: complete_all
+    +misc vga_arbiter: PM: device_resume_noirq:700: complete_all
+    +mem mem: PM: device_resume_noirq:700: complete_all
+    +mem null: PM: device_resume_noirq:700: complete_all
+    +mem port: PM: device_resume_noirq:700: complete_all
+    +mem zero: PM: device_resume_noirq:700: complete_all
+    +mem full: PM: device_resume_noirq:700: complete_all
+    +mem random: PM: device_resume_noirq:700: complete_all
+    +mem urandom: PM: device_resume_noirq:700: complete_all
+    +mem kmsg: PM: device_resume_noirq:700: complete_all
+    +tty tty: PM: device_resume_noirq:700: complete_all
+    +tty console: PM: device_resume_noirq:700: complete_all
+    +tty tty0: PM: device_resume_noirq:700: complete_all
+    +vc vcs: PM: device_resume_noirq:700: complete_all
+    +vc vcsu: PM: device_resume_noirq:700: complete_all
+    +vc vcsa: PM: device_resume_noirq:700: complete_all
+    +vc vcs1: PM: device_resume_noirq:700: complete_all
+    +vc vcsu1: PM: device_resume_noirq:700: complete_all
+    +vc vcsa1: PM: device_resume_noirq:700: complete_all
+    +tty tty1: PM: device_resume_noirq:700: complete_all
+    +tty tty2: PM: device_resume_noirq:700: complete_all
+    +tty tty3: PM: device_resume_noirq:700: complete_all
+    +tty tty4: PM: device_resume_noirq:700: complete_all
+    +tty tty5: PM: device_resume_noirq:700: complete_all
+    +tty tty6: PM: device_resume_noirq:700: complete_all
+    +tty tty7: PM: device_resume_noirq:700: complete_all
+    +tty tty8: PM: device_resume_noirq:700: complete_all
+    +tty tty9: PM: device_resume_noirq:700: complete_all
+    +tty tty10: PM: device_resume_noirq:700: complete_all
+    +tty tty11: PM: device_resume_noirq:700: complete_all
+    +tty tty12: PM: device_resume_noirq:700: complete_all
+    +tty tty13: PM: device_resume_noirq:700: complete_all
+    +tty tty14: PM: device_resume_noirq:700: complete_all
+    +tty tty15: PM: device_resume_noirq:700: complete_all
+    +i2c i2c-0: PM: dpm_wait:241: wait_for_completion
+    +i2c i2c-0: PM: dpm_wait:241: wait_for_completion
+     i2c i2c-0: PM: dpm_wait:241: completed
+     regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+     regulator regulator.0: PM: dpm_wait:241: completed
+    -at24 0-0051: PM: device_resume_noirq:700: complete_all
+    +pca953x 0-0021: PM: device_resume_noirq:700: complete_all
+    +i2c i2c-0: PM: dpm_wait:241: wait_for_completion
+     i2c i2c-0: PM: dpm_wait:241: completed
+     regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+     regulator regulator.0: PM: dpm_wait:241: completed
+    -at24 0-0050: PM: device_resume_noirq:700: complete_all
+    +pca953x 0-0022: PM: device_resume_noirq:700: complete_all
+    +i2c i2c-0: PM: dpm_wait:241: wait_for_completion
+     i2c i2c-0: PM: dpm_wait:241: completed
+     regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+     regulator regulator.0: PM: dpm_wait:241: completed
+    -at24 0-0052: PM: device_resume_noirq:700: complete_all
+    -i2c i2c-0: PM: dpm_wait:241: completed
+    +at24 0-0051: PM: device_resume_noirq:700: complete_all
+    +tty tty16: PM: device_resume_noirq:700: complete_all
+     i2c i2c-0: PM: dpm_wait:241: completed
+    -regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+    -regulator regulator.0: PM: dpm_wait:241: completed
+    +tty tty17: PM: device_resume_noirq:700: complete_all
+     gpio_rcar e6050180.gpio: PM: dpm_wait:241: wait_for_completion
+    -at24 0-0053: PM: device_resume_noirq:700: complete_all
+    +tty tty18: PM: device_resume_noirq:700: complete_all
+     gpio_rcar e6050180.gpio: PM: dpm_wait:241: completed
+    +tty tty19: PM: device_resume_noirq:700: complete_all
+    +i2c i2c-0: PM: dpm_wait:241: wait_for_completion
+    +i2c i2c-0: PM: dpm_wait:241: wait_for_completion
+    +i2c-rcar e6508000.i2c: PM: dpm_wait:241: wait_for_completion
+     i2c i2c-0: PM: dpm_wait:241: completed
+    +i2c-rcar e6508000.i2c: PM: dpm_wait:241: completed
+    +i2c i2c-1: PM: device_resume_noirq:700: complete_all
+     regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+    -regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+    +i2c i2c-0: PM: dpm_wait:241: wait_for_completion
+     regulator regulator.0: PM: dpm_wait:241: completed
+    +i2c i2c-0: PM: dpm_wait:241: completed
+    +regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+     regulator regulator.0: PM: dpm_wait:241: completed
+    -pca953x 0-0020: PM: device_resume_noirq:700: complete_all
+    -pca953x 0-0021: PM: device_resume_noirq:700: complete_all
+    +at24 0-0052: PM: device_resume_noirq:700: complete_all
+    +at24 0-0053: PM: device_resume_noirq:700: complete_all
+    +mmc_host mmc0: PM: dpm_wait:241: wait_for_completion
+    +tty tty20: PM: device_resume_noirq:700: complete_all
+    +i2c i2c-0: PM: dpm_wait:241: completed
+    +tty tty21: PM: device_resume_noirq:700: complete_all
+    +regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+    +tty tty22: PM: device_resume_noirq:700: complete_all
+    +i2c i2c-1: PM: dpm_wait:241: completed
+    +tty tty23: PM: device_resume_noirq:700: complete_all
+     sh-pfc e6050000.pinctrl: PM: dpm_wait:241: wait_for_completion
+    +tty tty24: PM: device_resume_noirq:700: complete_all
+    +regulator regulator.0: PM: dpm_wait:241: completed
+    +tty tty25: PM: device_resume_noirq:700: complete_all
+    +at24 0-0050: PM: device_resume_noirq:700: complete_all
+    +tty tty26: PM: device_resume_noirq:700: complete_all
+     regulator regulator.0: PM: dpm_wait:241: wait_for_completion
+    -sh-pfc e6050000.pinctrl: PM: dpm_wait:241: completed
+    +tty tty27: PM: device_resume_noirq:700: complete_all
+     regulator regulator.0: PM: dpm_wait:241: completed
+    +tty tty28: PM: device_resume_noirq:700: complete_all
+    +sh-pfc e6050000.pinctrl: PM: dpm_wait:241: completed
+    +tty tty29: PM: device_resume_noirq:700: complete_all
+     reg-fixed-voltage regulator-1p2v: PM: dpm_wait:241: wait_for_completion
+    -pca953x 0-0022: PM: device_resume_noirq:700: complete_all
+    +tty tty30: PM: device_resume_noirq:700: complete_all
+    +pca953x 0-0020: PM: device_resume_noirq:700: complete_all
+
+Looking at /sys/devices/virtual/devlink, the non-working case has the
+following extra entries:
+
+    /sys/devices/virtual/devlink/i2c:1-002c--platform:fed80000.dsi-encoder:
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM auto_remove_on
+    lrwxrwxrwx 1 root root    0 Feb  7 HH:MM consumer ->
+../../../platform/soc/fed80000.dsi-encoder
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM runtime_pm
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM status
+    lrwxrwxrwx 1 root root    0 Dec  1 HH:MM subsystem ->
+../../../../class/devlink
+    lrwxrwxrwx 1 root root    0 Feb  7 HH:MM supplier ->
+../../../platform/soc/e6508000.i2c/i2c-1/1-002c
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM sync_state_only
+    -rw-r--r-- 1 root root 4096 Dec  1 HH:MM uevent
+
+    /sys/devices/virtual/devlink/platform:feb00000.display--platform:fed80000.dsi-encoder:
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM auto_remove_on
+    lrwxrwxrwx 1 root root    0 Feb  7 HH:MM consumer ->
+../../../platform/soc/fed80000.dsi-encoder
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM runtime_pm
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM status
+    lrwxrwxrwx 1 root root    0 Dec  1 HH:MM subsystem ->
+../../../../class/devlink
+    lrwxrwxrwx 1 root root    0 Feb  7 HH:MM supplier ->
+../../../platform/soc/feb00000.display
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM sync_state_only
+    -rw-r--r-- 1 root root 4096 Dec  1 HH:MM uevent
+
+    /sys/devices/virtual/devlink/platform:fed80000.dsi-encoder--platform:feb00000.display:
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM auto_remove_on
+    lrwxrwxrwx 1 root root    0 Feb  7 HH:MM consumer ->
+../../../platform/soc/feb00000.display
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM runtime_pm
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM status
+    lrwxrwxrwx 1 root root    0 Dec  1 HH:MM subsystem ->
+../../../../class/devlink
+    lrwxrwxrwx 1 root root    0 Feb  7 HH:MM supplier ->
+../../../platform/soc/fed80000.dsi-encoder
+    -r--r--r-- 1 root root 4096 Feb  7 HH:MM sync_state_only
+    -rw-r--r-- 1 root root 4096 Dec  1 HH:MM uevent
+
+Do you have a clue, or suggestions for further investigation?
+Thanks!
+
+[1] arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+[2] https://lore.kernel.org/CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com
+[3] https://drive.google.com/file/d/1yH_PjihKIauK44NZhVHtZeka6PaIPY78/view?usp=sharing
+[4] https://drive.google.com/file/d/1zjGSQhEqsSLRw5cxP_xsBDcy3t3dkpcj/view?usp=sharing
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
