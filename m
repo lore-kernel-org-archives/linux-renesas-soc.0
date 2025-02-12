@@ -1,41 +1,36 @@
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6561F2365;
-	Wed, 12 Feb 2025 11:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039541B21AD
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Feb 2025 11:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359070; cv=none; b=SHqy4/bwSGHGNrfgWbYCEm1f+lE9rrJNMewDXxLk6mPNdq8wReqZnTJlevsWN6GWYPDG2j4MGd3AuA4HhxnQn8kTJiQgUubVoTWL3KCQUpllATqZ7FjJq75Iv6IBYMzg8I+QLr4FnuWzBX/0xxZWMTg9agcF26R4whTMtkjQBeo=
+	t=1739359071; cv=none; b=hAsI9Ez21QMiG5cLZfc2bes2XQY2+gHVc06/bWF8oKuzn/xS+oIvD6wgcn1vhBDMHuvr82LUqiAfpnfZeLLOR3rqoinOZvdh2Q6brjKyuADFmstN1YEBV2/R98jULSFhU8vpgfU0qiQujmruyAwzM0OVOdPsBCE1yDQUW71aYG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359070; c=relaxed/simple;
-	bh=aiwZ8oWAMTfB13+j0CWxxs9DddWkHa4KjZz3+SIRYlU=;
+	s=arc-20240116; t=1739359071; c=relaxed/simple;
+	bh=ZMqN4PyAm0rTadsVCrRsIvy/r2y+DZVes66x8/DgAqg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N9YQf+vYYElBHzty1peqdrBoNjjOy4C79JVv9NLZmCkIyemTLLbWz/HCUClc6yf1z3acDtQhAUgKjgi4KJNYF6XjYACFi0CC6pBBBuy/M4Z3B7cBNJSnz7yMHcA22BKjZZ7Q1u8yRBRkEA7G1mJmoymRtkZBqT3sJ1PUGOThi0A=
+	 MIME-Version; b=EzeKehDIc5rVwRnl78XNQTUl8uYKZjCU1n+VxxkXsnaK224FsH8SmbJK8qlzn5KBJMX+c2e+Jkx+hR7xdsiao9qLyZLwe4sAJmwBBc8+lHK8g/IH8zO5urEclwMmmVZfCW9H0AzM+lq47QzPkskWxU7Qkrs0yDPis+LFHafaFSQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: LiY0wLY1SxC7V143jjB6Tg==
-X-CSE-MsgGUID: kUL3uXcjRcevleL0aKic9g==
+X-CSE-ConnectionGUID: fWEhHVwNRc2CaQ8je1UhXg==
+X-CSE-MsgGUID: OevECTJUQjS9lUWSjn4SgA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Feb 2025 20:12:41 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 12 Feb 2025 20:12:46 +0900
 Received: from localhost.localdomain (unknown [10.226.92.135])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 95777425C955;
-	Wed, 12 Feb 2025 20:12:37 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 666B3425C777;
+	Wed, 12 Feb 2025 20:12:44 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Subject: [PATCH v5 01/12] dt-bindings: interrupt-controller: renesas,rzv2h-icu: Document RZ/G3E SoC
-Date: Wed, 12 Feb 2025 11:12:10 +0000
-Message-ID: <20250212111231.143277-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v5 03/12] irqchip/renesas-rzv2h: Drop irqchip from struct rzv2h_icu_priv
+Date: Wed, 12 Feb 2025 11:12:12 +0000
+Message-ID: <20250212111231.143277-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250212111231.143277-1-biju.das.jz@bp.renesas.com>
 References: <20250212111231.143277-1-biju.das.jz@bp.renesas.com>
@@ -47,20 +42,9 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document RZ/G3E (R9A09G047) ICU bindings. The ICU block on the RZ/G3E
-SoC is almost identical to the one found on the RZ/V2H SoC, with the
-following differences:
- - The TINT register base offset is 0x800 instead of zero.
- - The number of supported GPIO interrupts for TINT selection is 141
-   instead of 86.
- - The pin index and TINT selection index are not in the 1:1 map
- - The number of TSSR registers is 16 instead of 8
- - Each TSSR register can program 2 TINTs instead of 4 TINTs
+Use rzv2h_icu_chip directly on irq_domain_set_hwirq_and_chip() and drop
+the global variable irqchip from struct rzv2h_icu_priv.
 
-Hence new compatible string "renesas,r9a09g047-icu" is added for RZ/G3E
-SoC.
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -69,41 +53,51 @@ Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 v4->v5:
  * No change.
 v3->v4:
- * Updated typo in commit description offset->base offset.
- * Update typo 15->16 for the number of TSSR registers in RZ/G3E
- * Collected tags.
+ * Collected tag from Geert.
 v2->v3:
  * No change.
 v1->v2:
  * Collected tags.
 ---
- .../bindings/interrupt-controller/renesas,rzv2h-icu.yaml    | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
-index d7ef4f1323a7..3f99c8645767 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/interrupt-controller/renesas,rzv2h-icu.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
+index f6363246a71a..0573062c89c4 100644
+--- a/drivers/irqchip/irq-renesas-rzv2h.c
++++ b/drivers/irqchip/irq-renesas-rzv2h.c
+@@ -83,13 +83,11 @@
+ /**
+  * struct rzv2h_icu_priv - Interrupt Control Unit controller private data structure.
+  * @base:	Controller's base address
+- * @irqchip:	Pointer to struct irq_chip
+  * @fwspec:	IRQ firmware specific data
+  * @lock:	Lock to serialize access to hardware registers
+  */
+ struct rzv2h_icu_priv {
+ 	void __iomem			*base;
+-	const struct irq_chip		*irqchip;
+ 	struct irq_fwspec		fwspec[ICU_NUM_IRQ];
+ 	raw_spinlock_t			lock;
+ };
+@@ -390,7 +388,7 @@ static int rzv2h_icu_alloc(struct irq_domain *domain, unsigned int virq, unsigne
+ 	if (hwirq > (ICU_NUM_IRQ - 1))
+ 		return -EINVAL;
  
--title: Renesas RZ/V2H(P) Interrupt Control Unit
-+title: Renesas RZ/{G3E,V2H(P)} Interrupt Control Unit
+-	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq, priv->irqchip,
++	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq, &rzv2h_icu_chip,
+ 					    (void *)(uintptr_t)tint);
+ 	if (ret)
+ 		return ret;
+@@ -446,8 +444,6 @@ static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
+ 		goto put_dev;
+ 	}
  
- maintainers:
-   - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-@@ -20,7 +20,9 @@ description:
- 
- properties:
-   compatible:
--    const: renesas,r9a09g057-icu # RZ/V2H(P)
-+    enum:
-+      - renesas,r9a09g047-icu # RZ/G3E
-+      - renesas,r9a09g057-icu # RZ/V2H(P)
- 
-   '#interrupt-cells':
-     description: The first cell is the SPI number of the NMI or the
+-	rzv2h_icu_data->irqchip = &rzv2h_icu_chip;
+-
+ 	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
+ 	if (IS_ERR(rzv2h_icu_data->base)) {
+ 		ret = PTR_ERR(rzv2h_icu_data->base);
 -- 
 2.43.0
 
