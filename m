@@ -1,34 +1,48 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE4D22D79D
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Feb 2025 09:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7635223A9AA
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Feb 2025 09:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524202; cv=none; b=m4qJTYDK6Ex7DVV+fK8AaSgqVOt8n2ijhJi9kVcIvQ/4lkoEvfEECxCesd6B6Hc+rt3o3VUs815vDQznkcG/gvQGcGHkC/7HRm9hu7c7KVCwBUyrK6rVCxreLnBSL6wPSrWGtKx0F9sa6hUWTMcB0HSkt6qO+196/+vUJIxIiMU=
+	t=1739526138; cv=none; b=sQ3UmjeAqwj7l4uIuWdiosaPZFQV2NJChMy35kFYNkdh5cFur8Zu8zHAPNPFI3fj3wAVIGeVhpgVUsTqSqvr/6wspuwYuEMMnfsjplmjXLT6rlFPTbNRSMwAXz7gnL1rLReI1fFl5OCVsW+5g5osTDmSwNLupf5yY8fD0e7yaZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524202; c=relaxed/simple;
-	bh=fQqa1LLJGi3peqLMoThHlKnSPnhlJAHNqbCYOXYBhfc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=OJJ44gb/DPFjKM5HS5OIXmn9PAmvUtsaIBkfycj8cwkkGTz0balhyfg76evakbfDKoKATQeJeITGNxKxNnHra1IGy7z2any/4XpxnN3hE0xyFBJzwxb7ism2Krf2CMWgeIIrHe/rgdlwT9Dt6oXzcv1L9wnMHLBWSP18EkD3ihY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZ4FhnsA; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZ4FhnsA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D2DC4CEE2
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Feb 2025 09:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739524202;
-	bh=fQqa1LLJGi3peqLMoThHlKnSPnhlJAHNqbCYOXYBhfc=;
-	h=Subject:From:Date:To:From;
-	b=qZ4FhnsAbIf4UUidNNmkAhmtOKQQMyqJJE6uchwBzNkMSaRGDrgIu6Y/7HL5UhYi1
-	 Lix1c9RIi6JaNERED56Me2ll63+/cVLi2PiL/sstjAABy4kEVmWRlyNzkxisVrb/4N
-	 sNTqhYQ+YhCtP9il6XucRPM6NuqfncD1SV2MYcI8X1zDyUeRYgJHRshZHlmpC1a/h4
-	 6wNXovDE/j9/G1kZ0OYgkT3/w4ZSFdGOHC9llq4Us+yTAoz8X0a0HR6Cs5uOEFbXFN
-	 WogscaGTYqM/A0hSx7A7HabnSzOXcih7t1TWvCRAhpGZ1Gsil+1O6wwpc/XY7kv3V1
-	 z5RW4r6gQNfuA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7AAF3380CEE8
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Feb 2025 09:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1739526138; c=relaxed/simple;
+	bh=8k+NU+/0uqZFr2UdsDW/kOxEr4reqzjxJAbx7dqhIaQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=agF9Pt6tvoWPy5V7yzxkMNXB2HtPp72lYK+eNRbWER+7FdceuYmBcsIyrS42LE9GFImepkkBU/tG4ltFhxYS8HujM8bLa6HTyHXjXToCU5QYQ3rw20NqhJVn+2VEfihL6b5QlhJG0haOBUkaYfnESO/thaAGgtpX96l95iDGyMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4YvRsf5Bhgz4wxPQ
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Feb 2025 10:42:14 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:6395:73cc:7fc4:4cab])
+	by baptiste.telenet-ops.be with cmsmtp
+	id DMi72E0041MuxXz01Mi7PJ; Fri, 14 Feb 2025 10:42:07 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tisCj-00000006Xjj-3LeY;
+	Fri, 14 Feb 2025 10:42:07 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tisD1-00000000ggX-05HU;
+	Fri, 14 Feb 2025 10:42:07 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: dts: renesas: r9a06g032: Fix UART dma channel order
+Date: Fri, 14 Feb 2025 10:42:03 +0100
+Message-ID: <bcb604ad6e567de4e0410756ba840c82a32ff7d3.1739525488.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1739525488.git.geert+renesas@glider.be>
+References: <cover.1739525488.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -36,38 +50,84 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From: patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: 
- <173952423109.1559798.2477082500030108249.git-patchwork-summary@kernel.org>
-Date: Fri, 14 Feb 2025 09:10:31 +0000
-To: linux-renesas-soc@vger.kernel.org
 
-Hello:
+make dtbs_check:
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (master):
+    arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dtb: serial@50000000: dma-names:0: 'tx' was expected
+	    from schema $id: http://devicetree.org/schemas/serial/snps-dw-apb-uart.yaml#
+    arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dtb: serial@50000000: dma-names:1: 'rx' was expected
+	    from schema $id: http://devicetree.org/schemas/serial/snps-dw-apb-uart.yaml#
+    ...
 
-Patch: arm64: dts: renesas: ulcb/kf: Use TDM Split Mode for capture
-  Submitter: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=929875
-  Lore link: https://lore.kernel.org/r/875xlrshp5.wl-kuninori.morimoto.gx@renesas.com
+The DT bindings specify a fixed order of the channels in the dmas and
+dma-names properties, while the Linux driver does not care.
+Get rid of the warnings by changing the order in the DTS to match the
+bindings.
 
-Series: [1/3] ARM: dts: renesas: Add boot phase tags marking to Renesas R-Car Gen2
-  Submitter: Marek Vasut <marek.vasut+renesas@mailbox.org>
-  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=932046
-  Lore link: https://lore.kernel.org/r/20250209180616.160253-1-marek.vasut+renesas@mailbox.org
-    Patches: [1/3] ARM: dts: renesas: Add boot phase tags marking to Renesas R-Car Gen2
-             [2/3] arm64: dts: renesas: Add boot phase tags marking to Renesas R-Car Gen3 and Gen4
-             [3/3] arm64: dts: renesas: Add boot phase tags marking to Renesas RZ/G2
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-
-Total patches: 4
-
+diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
+index 7548291c8d7ede43..87e03446fb4de705 100644
+--- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
+@@ -211,8 +211,8 @@ uart3: serial@50000000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART3>, <&sysctrl R9A06G032_HCLK_UART3>;
+ 			clock-names = "baudclk", "apb_pclk";
+-			dmas = <&dmamux 0 0 0 0 0 1>, <&dmamux 1 0 0 0 1 1>;
+-			dma-names = "rx", "tx";
++			dmas = <&dmamux 1 0 0 0 1 1>, <&dmamux 0 0 0 0 0 1>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -224,8 +224,8 @@ uart4: serial@50001000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART4>, <&sysctrl R9A06G032_HCLK_UART4>;
+ 			clock-names = "baudclk", "apb_pclk";
+-			dmas = <&dmamux 2 0 0 0 2 1>, <&dmamux 3 0 0 0 3 1>;
+-			dma-names = "rx", "tx";
++			dmas = <&dmamux 3 0 0 0 3 1>, <&dmamux 2 0 0 0 2 1>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -237,8 +237,8 @@ uart5: serial@50002000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART5>, <&sysctrl R9A06G032_HCLK_UART5>;
+ 			clock-names = "baudclk", "apb_pclk";
+-			dmas = <&dmamux 4 0 0 0 4 1>, <&dmamux 5 0 0 0 5 1>;
+-			dma-names = "rx", "tx";
++			dmas = <&dmamux 5 0 0 0 5 1>, <&dmamux 4 0 0 0 4 1>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -250,8 +250,8 @@ uart6: serial@50003000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART6>, <&sysctrl R9A06G032_HCLK_UART6>;
+ 			clock-names = "baudclk", "apb_pclk";
+-			dmas = <&dmamux 6 0 0 0 6 1>, <&dmamux 7 0 0 0 7 1>;
+-			dma-names = "rx", "tx";
++			dmas = <&dmamux 7 0 0 0 7 1>, <&dmamux 6 0 0 0 6 1>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -263,8 +263,8 @@ uart7: serial@50004000 {
+ 			reg-io-width = <4>;
+ 			clocks = <&sysctrl R9A06G032_CLK_UART7>, <&sysctrl R9A06G032_HCLK_UART7>;
+ 			clock-names = "baudclk", "apb_pclk";
+-			dmas = <&dmamux 4 0 0 0 20 1>, <&dmamux 5 0 0 0 21 1>;
+-			dma-names = "rx", "tx";
++			dmas = <&dmamux 5 0 0 0 21 1>, <&dmamux 4 0 0 0 20 1>;
++			dma-names = "tx", "rx";
+ 			status = "disabled";
+ 		};
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
