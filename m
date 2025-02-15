@@ -1,187 +1,236 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463371946B1
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Feb 2025 09:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6D7623
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Feb 2025 13:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739611286; cv=none; b=P+wpm63n6xD9LG2x/NhRC1b/RocJrgegsl0tYo+W+ONRknr+I2FzwSN9aMFRx0a246XbZTZgZ0BmiN8StvWFCG0zKLTJmzn6x52JP6suJW8FuFmzhF0B7mXOUqerZIY71IovqsyYe0KbTDu1MrxNCW7EbCWVz4f3Hu1k2PBPzxY=
+	t=1739624942; cv=none; b=qJMARsPONw32QeXB0cY/T54Sqf6m+aitDBe/ILvAjzo4XrBKd1xcuP+PQP7a4OOKejJrv6BU90l6HnB3mB8wrbWiITQcA2NGkcedf7Xm/6+vPd9w0nn6DrvW2x2qtTyS+Hmi35mzo9dBNR5GdR4TbtzcGtOw9FmrgfEY13RSOTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739611286; c=relaxed/simple;
-	bh=xpBLrRItb5j6j8lPYabvH3QaU8V5qF0TqYPz+NPx00A=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ogpFuA5DSTB91OYopgiFi1fCLhRuZoRSSrgO0cFX1EhRy3Cok3iaxKDgM9/FNcLybtryo/sxI4Tvr68QwCTXUkR4JJOb/2SnVpO/0r6v0VjbofF8jpQZ4mFK8Y45MEznipGnCF7XiziXQq/Ok8lR+rwuiEh2mQRwnFsnbjGiIX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZR1VSMpG; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1739624942; c=relaxed/simple;
+	bh=s4htX+F1zzRD0lYov4+9prU+b0yfaEjXX+1u/e48NXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WQaBHCtAM4od0O5/hXASnCYqlAILc564fmK47zDjpSYRSVPSK3wxwOq2j8f094v/43y27mycFUCybRaitA2SZNMfv/VTba/iASqnsDtCMprmESX6Wkle9X2TUXD/D2kZ/85Aypw5q31+vH5hRBG08qon/18swmbRGjhhfsWSmpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Wn4ZBtai; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZR1VSMpG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739611284; x=1771147284;
-  h=date:from:to:cc:subject:message-id;
-  bh=xpBLrRItb5j6j8lPYabvH3QaU8V5qF0TqYPz+NPx00A=;
-  b=ZR1VSMpGYW7++ZVkzSkwH+Ow+jn29XO8xj02QSJ0Nm9+heH5Crdt9lzl
-   ce7FqLDUSGik1x648L0umXAmZtcSUh18PlmP97SR+35JRpfgYIKUvhcSg
-   c3fMpEsg+bVPlEyT+6d5N+WfAE/X2Q1ydjVsmzYeeGuD5DC4yu7Iuh9Wt
-   ZBl2bCPYrEysuKUyumA8PyAuGZg0iaS146IUBvY63QCQGwCovdES1FGr1
-   h6Bf7Gue4XzjGhR+ml17aOZ4QjT4I8VMmGu0phVrfJlVtaUZrtZFXTSk8
-   P5KK0CsHH13Hun8SDo8VreWRLIFaPn2X7kOTXf0zzEVWcrxZj4myyYao6
-   w==;
-X-CSE-ConnectionGUID: 50QWXB8JQmOTmFGbggw5/w==
-X-CSE-MsgGUID: aAnYSpWPTOOeuAuR2WKo6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40390757"
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="40390757"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:21:23 -0800
-X-CSE-ConnectionGUID: ieYm6g2TRPu++M+XGMOGtA==
-X-CSE-MsgGUID: wkNOzL91Qhm8ddj+iGnReA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="113855357"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 15 Feb 2025 01:21:22 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjEMS-001Aft-1G;
-	Sat, 15 Feb 2025 09:21:20 +0000
-Date: Sat, 15 Feb 2025 17:20:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:next] BUILD SUCCESS
- 17765ca5d082acd5e94b41eeae638e7e8c5b51ae
-Message-ID: <202502151737.vyhzVOWO-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Wn4ZBtai"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5ded51d31f1so4559394a12.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Feb 2025 05:08:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1739624938; x=1740229738; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TPr0RA4sTxfMrblR7pYl2liz/ysOC6e1FaOIdebj5hk=;
+        b=Wn4ZBtai/Eh60ePuwzYAWINMvABoAQ60hH8jAxjQoR8qMHg5AiBRj/DAxpIv9UNavu
+         KUJgs3jUlD5Ca0oz0LHBhLtjvaK8EldV0sa0ghsXyOaV3S2MDrJgipBGEqHOiFNSgQ5F
+         PmTzir/nQeWlJh6TDzlZvX6/v5nPAa4Xtiam+V3He284o2szQgdPqFWOa4RDsIH4BCt/
+         09M/DwPcReI+JR0jF+KHlhMfpE67lf/VJWI8vKXYwzYqFA7XfzM4Gx0uO8V1ClJQWicj
+         ogSqfnHidEFrHKhbwG6jk7XGvuq+ggiAqxv4lYefh/WPfFVY3DEyP/2ZNZpB7uFpxtoD
+         nTlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739624938; x=1740229738;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TPr0RA4sTxfMrblR7pYl2liz/ysOC6e1FaOIdebj5hk=;
+        b=wn0Hp9sbxbnu61IwjG/TBAGDhYWLQmb2ovOwIU/KpVEvkwW13u0+oDnVJfCy/Nm+Qi
+         5TLBXLRgTMgbLgBXOB9JBDFPq4lzDWsA/qNJlScoLaeu8NYr40u9YYs9ANDRNMSx++Lv
+         JsWCVz7kaFQVTqzXL5qe39hrH8X+yRGQ5wwhPbiaWa9M3C5dzMJlYWI3rnIdeXXwkm+v
+         4sQHXXRneD6nrUQES8ZvnogZxWA+Y0Nr6zACKeQ1hSG0rncsiG4a+O5xjhOHtYaILHo+
+         NUxWQvR4dPX0sVpo+WVYIEsBPfH+4+gYn/XHanZVeggjWfFs61rGEqT2h5gI8xSiZJ3u
+         FrAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzh7Ar2U7lH/saLrIbE7Aq6Du3Zr9NbXPC3IiQSNmH+0yObjeCGDWYP5HAfw/t6H4dO0ItyrcCsUWeaL4V3+p8LQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMx5+aW8laKI2Ee/p4qgtw0yIUI8p1wuZiCA5uZ2m20+Bvyj2P
+	xJ4Ca+JqqayByAU/169EZ3T0sF7ynk9wd+6OEapOi78BSFEH10/Ps/xYQmLOhPA=
+X-Gm-Gg: ASbGncvMsB1n+Laa4KXwWaDyxTRisQffHb48B26Dl0zyQCYDlm7qhYuRhhKMqkBhd0X
+	LKiKPyYMW2pyRPOHfel6vKfMxi4r1hdtnBT3oFcKU8DZ09V9OQULTGBr/I0GCUKOy/UAl20/M/c
+	fiAosDEhcVPhHSuIAHI/JG4P+IfdYq+IlkuAzkfMYjNeQtCZ0hm7c1DmEZGNUUhP0mumkUsbQpt
+	3TTRTtWsKvF5YMJkyjPh8YWuhRxVUS7//Hh9kYDEoY15Bfw50DSu8tVoCJUD2AUzAqa32hLYUyQ
+	15ajgLfWnMcS0m39mCH0v8IANbmtrJqEgNoDLd9mP2hQLQ==
+X-Google-Smtp-Source: AGHT+IE2gOOcTHNza2EOhRpbFKVQn95DHRKBHAZlBuKwZYla0cd1eeJ63caSvBI9Z702VIK30UtwcA==
+X-Received: by 2002:a05:6402:42ca:b0:5de:cf0c:cb37 with SMTP id 4fb4d7f45d1cf-5e03608d918mr2811400a12.12.1739624937833;
+        Sat, 15 Feb 2025 05:08:57 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.173])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d3693sm4444316a12.39.2025.02.15.05.08.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 05:08:56 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	jic23@kernel.org,
+	ulf.hansson@linaro.org,
+	daniel.lezcano@linaro.org
+Cc: claudiu.beznea@tuxon.dev,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] driver core: platform: Use devres group to free driver probe resources
+Date: Sat, 15 Feb 2025 15:08:49 +0200
+Message-ID: <20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: 17765ca5d082acd5e94b41eeae638e7e8c5b51ae  Merge branch 'renesas-dts-for-v6.15' into renesas-next
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-elapsed time: 1449m
+On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
+clocks are managed through PM domains. These PM domains, registered on
+behalf of the clock controller driver, are configured with
+GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
+clocks are enabled/disabled using runtime PM APIs. The power domains may
+also have power_on/power_off support implemented. After the device PM
+domain is powered off any CPU accesses to these domains leads to system
+aborts.
 
-configs tested: 110
-configs skipped: 1
+During probe, devices are attached to the PM domain controlling their
+clocks and power. Similarly, during removal, devices are detached from the
+PM domain.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+The detachment call stack is as follows:
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250214    gcc-13.2.0
-arc                   randconfig-002-20250214    gcc-13.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                        multi_v5_defconfig    gcc-14.2.0
-arm                   randconfig-001-20250214    clang-16
-arm                   randconfig-002-20250214    gcc-14.2.0
-arm                   randconfig-003-20250214    clang-21
-arm                   randconfig-004-20250214    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250214    gcc-14.2.0
-arm64                 randconfig-002-20250214    gcc-14.2.0
-arm64                 randconfig-003-20250214    gcc-14.2.0
-arm64                 randconfig-004-20250214    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250214    gcc-14.2.0
-csky                  randconfig-002-20250214    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250214    clang-21
-hexagon               randconfig-002-20250214    clang-15
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250214    gcc-12
-i386        buildonly-randconfig-002-20250214    gcc-12
-i386        buildonly-randconfig-003-20250214    clang-19
-i386        buildonly-randconfig-004-20250214    gcc-12
-i386        buildonly-randconfig-005-20250214    gcc-12
-i386        buildonly-randconfig-006-20250214    gcc-12
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250214    gcc-14.2.0
-loongarch             randconfig-002-20250214    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                       bmips_be_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250214    gcc-14.2.0
-nios2                 randconfig-002-20250214    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                generic-64bit_defconfig    gcc-14.2.0
-parisc                randconfig-001-20250214    gcc-14.2.0
-parisc                randconfig-002-20250214    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc                  iss476-smp_defconfig    gcc-14.2.0
-powerpc                      pasemi_defconfig    clang-21
-powerpc                      ppc44x_defconfig    clang-21
-powerpc               randconfig-001-20250214    gcc-14.2.0
-powerpc               randconfig-002-20250214    clang-18
-powerpc               randconfig-003-20250214    clang-21
-powerpc                    sam440ep_defconfig    gcc-14.2.0
-powerpc64             randconfig-001-20250214    clang-18
-powerpc64             randconfig-002-20250214    gcc-14.2.0
-powerpc64             randconfig-003-20250214    gcc-14.2.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                 randconfig-001-20250214    clang-18
-riscv                 randconfig-002-20250214    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250214    gcc-14.2.0
-s390                  randconfig-002-20250214    clang-19
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250214    gcc-14.2.0
-sh                    randconfig-002-20250214    gcc-14.2.0
-sh                        sh7763rdp_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250214    gcc-14.2.0
-sparc                 randconfig-002-20250214    gcc-14.2.0
-sparc64               randconfig-001-20250214    gcc-14.2.0
-sparc64               randconfig-002-20250214    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250214    gcc-12
-um                    randconfig-002-20250214    clang-16
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250214    clang-19
-x86_64      buildonly-randconfig-002-20250214    clang-19
-x86_64      buildonly-randconfig-003-20250214    gcc-12
-x86_64      buildonly-randconfig-004-20250214    clang-19
-x86_64      buildonly-randconfig-005-20250214    gcc-12
-x86_64      buildonly-randconfig-006-20250214    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250214    gcc-14.2.0
-xtensa                randconfig-002-20250214    gcc-14.2.0
+device_driver_detach() ->
+  device_release_driver_internal() ->
+    __device_release_driver() ->
+      device_remove() ->
+        platform_remove() ->
+	  dev_pm_domain_detach()
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+During driver unbind, after the device is detached from its PM domain,
+the device_unbind_cleanup() function is called, which subsequently invokes
+devres_release_all(). This function handles devres resource cleanup.
+
+If runtime PM is enabled in driver probe via devm_pm_runtime_enable(), the
+cleanup process triggers the action or reset function for disabling runtime
+PM. This function is pm_runtime_disable_action(), which leads to the
+following call stack of interest when called:
+
+pm_runtime_disable_action() ->
+  pm_runtime_dont_use_autosuspend() ->
+    __pm_runtime_use_autosuspend() ->
+      update_autosuspend() ->
+        rpm_idle()
+
+The rpm_idle() function attempts to resume the device at runtime. However,
+at the point it is called, the device is no longer part of a PM domain
+(which manages clocks and power states). If the driver implements its own
+runtime PM APIs for specific functionalities - such as the rzg2l_adc
+driver - while also relying on the power domain subsystem for power
+management, rpm_idle() will invoke the driver's runtime PM API. However,
+since the device is no longer part of a PM domain at this point, the PM
+domain's runtime PM APIs will not be called. This leads to system aborts on
+Renesas SoCs.
+
+Another identified case is when a subsystem performs various cleanups
+using device_unbind_cleanup(), calling driver-specific APIs in the process.
+A known example is the thermal subsystem, which may call driver-specific
+APIs to disable the thermal device. The relevant call stack in this case
+is:
+
+device_driver_detach() ->
+  device_release_driver_internal() ->
+    device_unbind_cleanup() ->
+      devres_release_all() ->
+        devm_thermal_of_zone_release() ->
+	  thermal_zone_device_disable() ->
+	    thermal_zone_device_set_mode() ->
+	      struct thermal_zone_device_ops::change_mode()
+
+At the moment the driver-specific change_mode() API is called, the device
+is no longer part of its PM domain. Accessing its registers without proper
+power management leads to system aborts.
+
+Open a devres group before calling the driver probe, and close it
+immediately after the driver remove function is called and before
+dev_pm_domain_detach(). This ensures that driver-specific devm actions or
+reset functions are executed immediately after the driver remove function
+completes. Additionally, it prevents driver-specific runtime PM APIs from
+being called when the device is no longer part of its power domain.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+
+Hi,
+
+Although Ulf gave its green light for the approaches on both IIO [1],
+[2] and thermal subsystems [3], Jonathan considered unacceptable the
+approaches in [1], [2] as he considered it may lead to dificult to
+maintain code and code opened to subtle bugs (due to the potential of
+mixing devres and non-devres calls). He pointed out a similar approach
+that was done for the I2C bus [4], [5].
+
+As the discussions in [1], [2] stopped w/o a clear conclusion, this
+patch tries to revive it by proposing a similar approach that was done
+for the I2C bus.
+
+Please let me know you input.
+
+Thank you,
+Claudiu
+
+[1] https://lore.kernel.org/all/20250103140042.1619703-2-claudiu.beznea.uj@bp.renesas.com/
+[2] https://lore.kernel.org/all/20250117114540.289248-2-claudiu.beznea.uj@bp.renesas.com/
+[3] https://lore.kernel.org/all/20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com/
+[4] https://elixir.bootlin.com/linux/v6.12.6/source/drivers/i2c/i2c-core-base.c#L579
+[5] https://elixir.bootlin.com/linux/v6.12.6/source/drivers/i2c/i2c-core-base.c#L630
+
+ drivers/base/platform.c         | 10 +++++++++-
+ include/linux/platform_device.h |  3 +++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 6f2a33722c52..1b64c4a44263 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1401,9 +1401,15 @@ static int platform_probe(struct device *_dev)
+ 		goto out;
+ 
+ 	if (drv->probe) {
++		dev->devres_group_id = devres_open_group(&dev->dev, NULL, GFP_KERNEL);
++		if (!dev->devres_group_id)
++			return -ENOMEM;
++
+ 		ret = drv->probe(dev);
+-		if (ret)
++		if (ret) {
++			devres_close_group(&dev->dev, dev->devres_group_id);
+ 			dev_pm_domain_detach(_dev, true);
++		}
+ 	}
+ 
+ out:
+@@ -1422,6 +1428,8 @@ static void platform_remove(struct device *_dev)
+ 
+ 	if (drv->remove)
+ 		drv->remove(dev);
++	if (dev->devres_group_id)
++		devres_release_group(&dev->dev, dev->devres_group_id);
+ 	dev_pm_domain_detach(_dev, true);
+ }
+ 
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index 074754c23d33..e842ad243bef 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -40,6 +40,9 @@ struct platform_device {
+ 	/* MFD cell pointer */
+ 	struct mfd_cell *mfd_cell;
+ 
++	/* ID of the probe devres group. */
++	void *devres_group_id;
++
+ 	/* arch specific additions */
+ 	struct pdev_archdata	archdata;
+ };
+-- 
+2.43.0
+
