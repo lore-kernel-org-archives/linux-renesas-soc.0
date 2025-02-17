@@ -1,170 +1,128 @@
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D1118DB1C
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Feb 2025 10:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BB12163B6;
+	Mon, 17 Feb 2025 10:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739789242; cv=none; b=cJ4RirrnnuHHr9Dbb3aw7V0Xkb0fcyHBhbalWz8+e/Kn2BD0gu05mncfPCxDbpag9rE3A+FqEnTb0FXWuK/neUqU6IrCRYaKtDjGlNX5cDhk0RUVEKKgKpOYEOU/k8vOnH/wYaYUgG5P3Eh47r5X0lcwoZNJYcQ/4lhOBSPt/W8=
+	t=1739789679; cv=none; b=FAVSrpQgVtR6OCKNlSArhP6nuVjrJ6uWGNdpEq2xuCrpyMVcpnbpWOGkoCDz7mau19FvKOBg/9BT32azBbutlBX1qeKHCS2CTZjtTC0siyysIKoCW6k/SS7vMkOLP0L78xQjx9t7RvhMcZMbqiEEJypZEImFKq/e7zN1bwr1TAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739789242; c=relaxed/simple;
-	bh=z3G/N5s9PRO0SmGXytGU2yJTK3fSoSBJmZ88EEdRNcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sHBEXIh22nmgEeQtxtze50Tud///AmCKz8ecYgrQXfOhLcL+qoYp2OSQgPQzCjbTBA3sCSm/7xv7lUUeHQwnYwexPDZwJjio9SIPzdNF9z7yejcyDGjqgcnBK0VFRD36vDHQ8MMpHMDUErfaCUWctW9Nxk6v0xHYA/QKrqkYtc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4bd35d4407aso733911137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Feb 2025 02:47:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739789239; x=1740394039;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GNIrSBTo7CoUqEdD87iAh6/rkoZ2HPiUKPOq8KbToTU=;
-        b=Tx8HOhBjTCRl/kqmCdTc3geKTvfYs2vNnZ7WZNyZ8oQgxswat7FEy2RwUtdm/4Hlrw
-         lSgJwgZznN5LfCJT5QlZFrD7/GtROF2Y0FrV9nrx+fjQVvhkHdPT/EQkLO+rAcFb8+ca
-         kNEYUWOi3lqniqGYm30L2KvE0Nl9WfYflMFGUbEI6+lAK5tZIu0ow6PsziIQC673VZx4
-         WWlS3virstN1P16giWrsLCad0e5iydVp+uQdpGQ+O5EyTUu05V3S4ymIgbL9xLjL2y7J
-         Gw8hw0Rpwfr4OwafLUzhaF2NKM3QhMLWh2fXieKApIpZY7BMVRX+3O+9NLP2XAjrVxTv
-         gbJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYt+qC0lQZdwYBoLPWh6QLeXvpfSuu5EeLZexkMhv7/TeSFUxUWPYsQ8V8i8sSNg7ZNSayFWMR5swrLmtSs1MhKA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4jKgcyyUEX7qeRdiZYLCQA5jRSGveELSZX1HnvKdlddkw7D3j
-	xUqLGAmXeUQsiNEmIP34boIIN8ikqyK5nDrFFXupmJZFNJUUky9HaRWFlU+2
-X-Gm-Gg: ASbGncvtaQiSgzTVkQTP3PIEORg3avRY9u0kVXfDr4qJanDXm+fP5jL3xDFJGZPyeOS
-	mxzuHEbqew2aFzNSk7GhcVmRlE6u3E0K/MwXrkChHclp8B/8SEFK7NrrbFfocE8Q/+ela1SQmjq
-	JnJSZF0jtDm3AqktPAwMMOpUYQUZPThg+YdpggEMmwgpM9MCGeicpVLOcCiCO4CJatNCLxGuUwN
-	RzVsgi36yJ0TPral+U+xsuf38spR+k4dIjbsOzaN+MsML1EXHxhCt3LiOz/Lhlm+sh9FptqIcfx
-	Zg73TVOmkSQDZ2h4z3DINP1rstHWTxZ4SYgATU1PYiXc0RByToiwXA==
-X-Google-Smtp-Source: AGHT+IFa4cWQvyDqz9kMyNrUvUICPZz8bHeptYoWQaSx55hv6YkzEkSBwsya+fmLu/qftuT6dBXTDA==
-X-Received: by 2002:a67:e70a:0:b0:4bb:e8c5:b172 with SMTP id ada2fe7eead31-4bd3fcadbe6mr4884352137.8.1739789238938;
-        Mon, 17 Feb 2025 02:47:18 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4be54009b3esm612530137.0.2025.02.17.02.47.18
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 02:47:18 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4bd35d4407aso733908137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Feb 2025 02:47:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXg2UwfNMbcTwARx+85ELCqd5QA5/ik4ZwHH7jp0qGyCeuy9wnesJ0C2fC61jVwS+V6OcodabcFrX+cbGVJyKGseA==@vger.kernel.org
-X-Received: by 2002:a05:6102:c89:b0:4bb:eb4a:f9f2 with SMTP id
- ada2fe7eead31-4bd3fcc5af7mr3377704137.9.1739789238572; Mon, 17 Feb 2025
- 02:47:18 -0800 (PST)
+	s=arc-20240116; t=1739789679; c=relaxed/simple;
+	bh=aZTht+TSWw8f5DrTjGvycp3e+AZMQiHqsfpC/jdp7d4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gK5ZjrxbwBEz3IZX4vR8vZpNMoRmkglT6ZCSmfCb9sdn1OAoAbymE9b8FaOrjWZncFRhDkd2qD8HO/Y7226lLZXIwddX0uCXyeH61TDtzAPaoWkbOVdyODhIo2FyeoVasEKxZn5Lu4262MFnKge3inDJI3AIQq/wkzGt44OeYG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: PD6Kg1XiQ3u0mN2pRoz2YA==
+X-CSE-MsgGUID: O1J+Ij7FQKiQapk+JOdWEg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Feb 2025 19:54:30 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.93.254])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E44BB428055E;
+	Mon, 17 Feb 2025 19:54:25 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 02/13] dt-bindings: clock: Add cpg for the Renesas RZ/T2H SoC
+Date: Mon, 17 Feb 2025 11:52:03 +0100
+Message-ID: <20250217105354.551788-3-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212111231.143277-1-biju.das.jz@bp.renesas.com>
- <20250212111231.143277-11-biju.das.jz@bp.renesas.com> <TY3PR01MB11346A06D40667624E88E4E1E86FB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346A06D40667624E88E4E1E86FB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Feb 2025 11:47:06 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVfORkBnP-Ygz8WFv-bpXv4mFHw33Z97AiOBRV0G8sv5A@mail.gmail.com>
-X-Gm-Features: AWEUYZnzYuGkaB8WGWPj1IzWSpuzMv7Fp2sVxAFy06fRi_dIh5LtLZZ2DSsTxC0
-Message-ID: <CAMuHMdVfORkBnP-Ygz8WFv-bpXv4mFHw33Z97AiOBRV0G8sv5A@mail.gmail.com>
-Subject: Re: [PATCH v5 10/12] irqchip/renesas-rzv2h: Drop TSSR_TIEN macro
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"biju.das.au" <biju.das.au@gmail.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Biju,
+Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
 
-On Mon, 17 Feb 2025 at 10:36, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+ .../bindings/clock/renesas,cpg-mssr.yaml      |  1 +
+ .../dt-bindings/clock/r9a09g077-cpg-mssr.h    | 49 +++++++++++++++++++
+ 2 files changed, 50 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r9a09g077-cpg-mssr.h
 
-> > -----Original Message-----
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > Sent: 12 February 2025 11:12
-> > Subject: [PATCH v5 10/12] irqchip/renesas-rzv2h: Drop TSSR_TIEN macro
-> >
-> > On RZ/G3E, TIEN bit position is at 15 compared to 7 on RZ/V2H. The macro
-> > ICU_TSSR_TIEN(n) can be replaced with the inline logic BIT(field_width - 1) << (n * fieldwidth) for
-> > supporting both SoCs.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > ---
-> > v4->v5:
-> >  * Shortened tssr calculation in rzv2h_tint_irq_endisable().
-> >  * Added tssr_shift_factor variable for optimizing the calculation
-> >    in rzv2h_tint_set_type() as the next patch uses the same factor.
-> > v4:
-> >  * New patch
-> > ---
-> >  drivers/irqchip/irq-renesas-rzv2h.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-> > index 98a6a7cd3611..3635597ae4c1 100644
-> > --- a/drivers/irqchip/irq-renesas-rzv2h.c
-> > +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-> > @@ -66,7 +66,6 @@
-> >
-> >  #define ICU_TSSR_TSSEL_PREP(tssel, n)                ((tssel) << ((n) * 8))
-> >  #define ICU_TSSR_TSSEL_MASK(n)                       ICU_TSSR_TSSEL_PREP(0x7F, n)
-> > -#define ICU_TSSR_TIEN(n)                     (BIT(7) << ((n) * 8))
->
->
-> Please let me know, instead I should retain this macro with[1] and see changes below inlined??
-
-What does [1] refer to?
-
-> #define ICU_TSSR_TIEN(mask, n, shift) ((mask) << ((n) * (shift)))
-
-Isn't "mask" always "BIT(shift -1)"?
-
-"shift" is not the shift value (that is "n * shift"), but the field width.
-
-> >  #define ICU_TITSR_K(tint_nr)                 ((tint_nr) / 16)
-> >  #define ICU_TITSR_TITSEL_N(tint_nr)          ((tint_nr) % 16)
-> > @@ -153,9 +152,9 @@ static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
-> >       guard(raw_spinlock)(&priv->lock);
-> >       tssr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TSSR(k));
-> >       if (enable)
-> > -             tssr |= ICU_TSSR_TIEN(tssel_n);
-> > +             tssr |= BIT((tssel_n + 1) * priv->info->field_width - 1);
->                 tssr |= ICU_TSSR_TIEN(priv->info->field_width - 1, tssel_n, priv->info->field_width);
-
-Missing BIT()?
-
-> >       else
-> > -             tssr &= ~ICU_TSSR_TIEN(tssel_n);
-> > +             tssr &= ~(BIT((tssel_n + 1) * priv->info->field_width - 1));
->                 tssr &= ~ICU_TSSR_TIEN(priv->info->field_width - 1, tssel_n, priv->info->field_width);
-
-Likewise?
-
->
-> >       writel_relaxed(tssr, priv->base + priv->info->t_offs + ICU_TSSR(k));  }
-> >
-> > @@ -277,6 +276,7 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
-> >       u32 titsr, titsr_k, titsel_n, tien;
-> >       struct rzv2h_icu_priv *priv;
-> >       u32 tssr, tssr_k, tssel_n;
-> > +     u32 tssr_shift_factor;
-> >       unsigned int hwirq;
-> >       u32 tint, sense;
-> >       int tint_nr;
-> > @@ -314,7 +314,8 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
-> >       nr_tint = 32 / priv->info->field_width;
-> >       tssr_k = tint_nr / nr_tint;
-> >       tssel_n = tint_nr % nr_tint;
-> > -     tien = ICU_TSSR_TIEN(tssel_n);
->
-> tien = ICU_TSSR_TIEN(priv->info->field_width - 1, tssel_n, priv->info->field_width);
-
-Likewise?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 77ce3615c65a..5649dee7178a 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -52,6 +52,7 @@ properties:
+       - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+       - renesas,r8a779g0-cpg-mssr # R-Car V4H
+       - renesas,r8a779h0-cpg-mssr # R-Car V4M
++      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+ 
+   reg:
+     maxItems: 1
+diff --git a/include/dt-bindings/clock/r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/r9a09g077-cpg-mssr.h
+new file mode 100644
+index 000000000000..27c9cdcdf7c8
+--- /dev/null
++++ b/include/dt-bindings/clock/r9a09g077-cpg-mssr.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A09G077 CPG Core Clocks */
++#define R9A09G077_CA55C0		0
++#define R9A09G077_CA55C1		1
++#define R9A09G077_CA55C2		2
++#define R9A09G077_CA55C3		3
++#define R9A09G077_SDHIHS		4
++#define R9A09G077_CLK_PLL1_ETH_PHY	5
++#define R9A09G077_CLK_OSC_ETH_PHY	6
++#define R9A09G077_CLK_ETHPHY		7
++#define R9A09G077_PCLKAH		8
++#define R9A09G077_PCLKAM		9
++#define R9A09G077_PCLKAL		10
++#define R9A09G077_CLK_SEL_ETH_PHY	11
++#define R9A09G077_DFI			12
++#define R9A09G077_PCLKH			13
++#define R9A09G077_PCLKM			14
++#define R9A09G077_PCLKL			15
++#define R9A09G077_PCLKGPTL		16
++#define R9A09G077_PCLKSHOST		17
++#define R9A09G077_PCLKRTC		18
++#define R9A09G077_USB			19
++#define R9A09G077_SPI0			20
++#define R9A09G077_SPI1			21
++#define R9A09G077_SPI2			22
++#define R9A09G077_SPI3			23
++#define R9A09G077_ETCLKA		24
++#define R9A09G077_ETCLKB		25
++#define R9A09G077_ETCLKC		26
++#define R9A09G077_ETCLKD		27
++#define R9A09G077_ETCLKE		28
++#define R9A09G077_ETHCLKE		29
++#define R9A09G077_ETHCLK_EXTAL		30
++#define R9A09G077_ETH_REFCLK		31
++#define R9A09G077_LCDC_CLKA		32
++#define R9A09G077_LCDC_CLKP		33
++#define R9A09G077_CA55			34
++#define R9A09G077_LCDC_CLKD		35
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
