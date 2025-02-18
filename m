@@ -1,173 +1,107 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948B826BD97
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Feb 2025 14:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49266269B11;
+	Tue, 18 Feb 2025 14:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888828; cv=none; b=SrnGWFxqcaG7s3z5m0wdFCsq9pxgOhGud/Pe/KUZk3n6vpYf8KXHgLFkyuaTxMu1e1uy72/xXVzlWqkFw74RiQ/HEwz0aVigEyS3Ww2p6e6zpLLuAX3+VSSOumn4SYtCxbBYaT9LvauwOerVTyOwA/YCS0VeMGIGXptw5u2u6sI=
+	t=1739888923; cv=none; b=KPYqoMqqNQ2/j2MLTYDqLAh9nZGZbfBgDZxR0bZqFXt+6iSegHKDCPsweS0am6ZWhA1RAv3JCNtHeNLwzgrsVEC9/7LPC/Q1ykz0HUTMnyTevZbyeQ9BbgulagHw+E2mpxnGUwgiIuBwBN30ziPs/+T2vvLSRqtlpe15HhtXJ10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888828; c=relaxed/simple;
-	bh=+wkO4ylEQw3m6UriT4tf8JdVK9ESjllOE18AKynb3bY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qOApWP5dIs04n4K5yN9mPDKOyJzMZLJ8BN2pLM5gKbp6WUhGs/QdR3o3hEnC0XNzePIXmkp50DfkXE6RHloc/ECK0kv+EjDVoOwHu2uNBTL0uTH7s3usTt51LMU7oKYY3wOPkLl9uJuSGPZzPFR0IR1ZCE5KgDCdz5BFdS/Vanw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=fail smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=P0DzMUOk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y/8NzS9w; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CzYD2cIk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/Vd7FgY6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P0DzMUOk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y/8NzS9w";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CzYD2cIk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/Vd7FgY6"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ED0FC1F74B;
-	Tue, 18 Feb 2025 14:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739888761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ShM7QkYxOUzYuiM1Xi5REKpzUXaj1yvUsfwZ2Eb5boc=;
-	b=P0DzMUOkzhNee5YMvxt+TptgMRyrR0naEmKseEk0+yoS+uNXa8gqBr3CcGgJCPJ6UDytVB
-	nULuORCwAUmJUQKFCTevDc4rbYUy+jnXDkshKkycqYNioq17bLUzfWmZNAh32UUIeHwMrc
-	5ZwIaEuYD2KpYBIrNRbkT7u/6WF/l70=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739888761;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ShM7QkYxOUzYuiM1Xi5REKpzUXaj1yvUsfwZ2Eb5boc=;
-	b=Y/8NzS9wPXF88gq8uhM7kXPdT04bUcroDr/olCIEIy4hI89cpF2XZ4jGIJQRwmhkS2RWIx
-	PRbqBTxpxwGL6ADQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739888760; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ShM7QkYxOUzYuiM1Xi5REKpzUXaj1yvUsfwZ2Eb5boc=;
-	b=CzYD2cIkX2JeGUzpQfsWLX9uDcFJyf72/IDfLy7vTscWhNoMwERu9cEkalomkDK0hEE9XV
-	khalFLgD9VOfK9wc+JTM3Np4U1icuJPWHgqDVlrkO7Yp/MXB8hKgLGmP1xzEZ6rpnHis26
-	sviqU+A1/uTw5tPfXup5141NVcvSzXk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739888760;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ShM7QkYxOUzYuiM1Xi5REKpzUXaj1yvUsfwZ2Eb5boc=;
-	b=/Vd7FgY6APVWwhDXgEq7svE5tTcQ4a7vRk9ABBhbYidnUfFH6agMaJaI+JSgErZs4/9e0l
-	9gtQNqLTgI+A/wAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C80D132C7;
-	Tue, 18 Feb 2025 14:26:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CLopGXiYtGdXYQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 18 Feb 2025 14:26:00 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org,
-	nouveau@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	spice-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	intel-xe@lists.freedesktop.org,
-	xen-devel@lists.xenproject.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v3 24/25] drm/xen: Compute dumb-buffer sizes with drm_mode_size_dumb()
-Date: Tue, 18 Feb 2025 15:23:47 +0100
-Message-ID: <20250218142542.438557-25-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250218142542.438557-1-tzimmermann@suse.de>
-References: <20250218142542.438557-1-tzimmermann@suse.de>
+	s=arc-20240116; t=1739888923; c=relaxed/simple;
+	bh=Z9rlFMQcTaXGXJtgSgn0wszw+r58kBJN6c8X9V6cb/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GrkwdimDsSdQT95q1uF0r75uxBPQvmW0nOfjRL4WeXcB9E/P31Y+g6Al0sXxJJNz+5N6JGt5FAs2LPDQMD78HfJd3Nur18w3+YinYM4b5pJLXkZKrnkwszEe+Mmip5WAcXgJmsnCZIbpg/9cdO6PXg5HaI0qz7C7TEgzScOoQ0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4be55c93be1so439814137.0;
+        Tue, 18 Feb 2025 06:28:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739888919; x=1740493719;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WM9l/UfrQw+Mtu9b3G/axW371PcduIizjNc8jc9K35M=;
+        b=OCBIvK2IURWajHd8Dhw1mqChZHK9Aj3dfz4BH+OnEbDl4a7e4er2fnfB+rmZt0imwv
+         dxwt3GX8dT7GJwW1VBEhc1yA30FI1l1vzXk8+sldiz6RzFZK7JbkU6cZ9kB0hE4waScw
+         rP+pWq3rn9C+A8NzxiqDThOlvpcvqcsMmARNa/Y9urUvnQWk6AHViuQ9Hz21gjfdBsg6
+         +Ghw8Kyw+4Lp8Coy6K+kkCxvMvz04X6D4+ztBS+crDvewLmsfqHTO4IyflpRZkAUQvC6
+         +x6Nsnz8+scFWxlsmVQTZ/E7tYT4scJy9N4X33EyvhWtNO+NTQ8uVf9Vth40zdL7Nifd
+         Q3lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcyHwZjY8vXgSnCQXAKPgC0n/GG9T0UDNo2FvX0ObERVW9gTmmJFCPzufkn9aDg54Mjdo92KwEewc=@vger.kernel.org, AJvYcCViWD/YlT0z97eezlKoyUIhmb18SRXOoxq8Xy0QdrCvuZ2NKAMoAjsaChE+N8sfqz8J3PxGM6SnooNKb/K7NhVd7Qc=@vger.kernel.org, AJvYcCXjqIlwy1Lxqd/LiAHNCPlrkBj/0ph8b0LT7rnnZUHoOC19/6Z8cxqF4KpyN9g72+fUhtJYfl4ZkKRwVlKb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWOHoBbXwk/UQp+AWKaYrvbHd+UIFFNdIG0ljMNZXjIrWXgxy5
+	C9aRs5iuDAY4BXSAIf3V0Qtlh+fL8AGY8nBAJR2IoSp33zsyX4Cwmv6qtTf7
+X-Gm-Gg: ASbGncvAIDYVIZ1L+tcUiSQ/Fc3Kliw3T7JTV7FgtX7rBEblB4bSONUlkwCxPwilRoM
+	XJy3Yia3ZNcMSpIiLy3CtGzl7kNpz1oFBQuvSyde+lT8li6yiiCq51P95dwZEqSrIEAorMmLy11
+	cPJ9LXJrloYAFE8nYwG5HbUEQYa4doA31vrKQkCR+k7LlvOnEbi7u6W82vcL+cuAPNg+63T8Mba
+	RJOJ26Jny8RTBwFHgoIGU8njXiasAtI7yLHopNi5CJIsnvwKO1puyHXuSfOZ+IC8BDQ6M9VCcat
+	S2Uz5x4EhV1KODd0WgfJE+7cZNeaRSR1sUtFh7lzpVvKHC2q47qK6oLRyA==
+X-Google-Smtp-Source: AGHT+IFom9kAQjltWdnqKeMQcEIOS8FlqBQ02cRRDUXOCckSGuhBu8QQ5tyByph0ietrOGyb0X485g==
+X-Received: by 2002:a05:6102:4b0d:b0:4ba:eb24:fb02 with SMTP id ada2fe7eead31-4bd3fc818c2mr8746030137.3.1739888919229;
+        Tue, 18 Feb 2025 06:28:39 -0800 (PST)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e86cbfa7sm2457763241.31.2025.02.18.06.28.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 06:28:38 -0800 (PST)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5209ca3e9a6so995232e0c.2;
+        Tue, 18 Feb 2025 06:28:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWfugqgNPFcZeWn7UyJ69DachFm2Pdr8VHRF4zkj2EwUmyuln0SlYf6bQDtK7/sOwsnc9Dh4SnRj5uFu6O/fd0GTyQ=@vger.kernel.org, AJvYcCXLrsiIwxZnUWw+WLqizsCEvrRFx1/XVeiym2Y9Pa14MIraylxOF5z75iO3RulfmqUD+1ikfNIlj6Y=@vger.kernel.org, AJvYcCXi+cqKhWYacfepBRdbs5erSBjDj3DWJOe1sksx1K5rmjh2k9djsTwuQGagm/6Dg+HyMLzmFPa/wezFglaM@vger.kernel.org
+X-Received: by 2002:a05:6122:488a:b0:519:fcf2:ef51 with SMTP id
+ 71dfb90a1353d-5209dbc02a2mr7024460e0c.5.1739888918607; Tue, 18 Feb 2025
+ 06:28:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_TWO(0.00)[2];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Score: -1.30
-X-Spam-Flag: NO
+References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com> <20250217105354.551788-6-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250217105354.551788-6-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Feb 2025 15:28:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXAfrLOFFbt63tJvU_g08zCR_QBQQMzUz-Ceg=G5FQnOA@mail.gmail.com>
+X-Gm-Features: AWEUYZmBgG79ffvBXB4gPQQg9HaeWPl4SFfOE4EOdmrMgWSoOWsSQYwJL7kGJYE
+Message-ID: <CAMuHMdXAfrLOFFbt63tJvU_g08zCR_QBQQMzUz-Ceg=G5FQnOA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/13] clk: renesas: Pass sub struct of cpg_mssr_priv
+ to cpg_clk_register
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch
-and buffer size. Align the pitch to a multiple of 8.
+Hi Thierry,
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- drivers/gpu/drm/xen/xen_drm_front.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+On Mon, 17 Feb 2025 at 11:54, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> In a coming evolution, the registration callback will need more parameters
+> from cpg_mssr_priv (like another base address with clock controllers
+> with double register block).
+> Instead of adding more parameters, mode the needed parameters to a public
+> sub-struct.
 
-diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
-index 1bda7ef606cc..fd2f250fbc33 100644
---- a/drivers/gpu/drm/xen/xen_drm_front.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front.c
-@@ -14,6 +14,7 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_drv.h>
-+#include <drm/drm_dumb_buffers.h>
- #include <drm/drm_ioctl.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_file.h>
-@@ -414,8 +415,10 @@ static int xen_drm_drv_dumb_create(struct drm_file *filp,
- 	 * object without pages etc.
- 	 * For details also see drm_gem_handle_create
- 	 */
--	args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
--	args->size = args->pitch * args->height;
-+
-+	ret = drm_mode_size_dumb(dev, args, SZ_8, 0);
-+	if (ret)
-+		return ret;
- 
- 	obj = xen_drm_front_gem_create(dev, args->size);
- 	if (IS_ERR(obj)) {
+No SoB?
+
+>  drivers/clk/renesas/r7s9210-cpg-mssr.c  |  7 +-
+>  drivers/clk/renesas/r8a77970-cpg-mssr.c | 11 +--
+>  drivers/clk/renesas/rcar-gen3-cpg.c     |  8 +-
+>  drivers/clk/renesas/rcar-gen3-cpg.h     |  6 +-
+>  drivers/clk/renesas/rcar-gen4-cpg.c     |  9 ++-
+>  drivers/clk/renesas/rcar-gen4-cpg.h     |  3 +-
+>  drivers/clk/renesas/renesas-cpg-mssr.c  | 99 +++++++++++++------------
+>  drivers/clk/renesas/renesas-cpg-mssr.h  | 21 +++++-
+>  8 files changed, 93 insertions(+), 71 deletions(-)
+
+As you forgot to update drivers/clk/renesas/rcar-gen2-cpg.[ch], this
+breaks the build for R-Car Gen2 and RZ/G1 (e.g. shmobile_defconfig),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.48.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
