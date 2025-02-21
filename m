@@ -1,80 +1,117 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BC3201005
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Feb 2025 08:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B862D200BB8;
+	Fri, 21 Feb 2025 09:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127500; cv=none; b=bTzSgZoRfrXK/GclIFt3zyuzenIpjeuA1yfB/un6zzbA5rw3SDmtNrtbjyKtEI1NNCTLMsuDNu18xxyNNKU3yh9nVAiHH6R8Mhk10EMe8q8OyommjNdoCHWoontt70bV3HHwV0YLR7sh9VY2lnEzrV6+7ZP0jGFKRXKRKDLdQjA=
+	t=1740128907; cv=none; b=dtuYBdF7RPyEPMkRXo8YeCzp6MYwHV/EC1PdPrytE13ne5Npkhpo+garUbw7P/BM1cBgWwDlTxU8FXls/1Y95Ul1s81odacj8EnEqtAxVfO3e+Y9moLsfotCSiPplI+DhAs+RWKiY92OPRwjMq5tNjbR7ZhflomZwzoe/Q8rXOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127500; c=relaxed/simple;
-	bh=j/3PdtzWpWzBm2J9MQh8FH2EGJEGksBmZ1DN/D/ISNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K8bVBxvz5X9KDsiLa5z4hsuJwWlPmmGjQBkq2Dw9h86ZqWnJ7mxmJbYkMR8q/zBvFRu4fOHJ079brmVyBMYOY4lV+kna/Mi447p+csOYc45U1wU9MSYJ8tn5ME0hO0buBTwNK38H2kX3OlXOj9l0EqNrVrGpyxXCwbEVECoXOfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ae9a:419e:d123:9695])
-	by baptiste.telenet-ops.be with cmsmtp
-	id G8kp2E0070y8aK5018kp1P; Fri, 21 Feb 2025 09:44:50 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tlOe4-0000000BKsb-2yMc;
-	Fri, 21 Feb 2025 09:44:49 +0100
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tlOeP-0000000E5K1-0W1i;
-	Fri, 21 Feb 2025 09:44:49 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chris Brandt <chris.brandt@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] clk: renesas: cpg-mssr: Remove obsolete nullify check
-Date: Fri, 21 Feb 2025 09:44:45 +0100
-Message-ID: <59ef3eccde0b0b63626480f27e77d5c68948ca98.1740126560.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1740126560.git.geert+renesas@glider.be>
-References: <cover.1740126560.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1740128907; c=relaxed/simple;
+	bh=oimX8Q/LxRwlfk+t54o1mqJdiaT+zvHD2n1g78Yevyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWZCVOFrUNvxzn2axlrnulSo6WCxUhb1oA/77+mXqDtwQKhwjTQ/QVd6GSsTEyyE1f/OT2AK32Smbd917zITAGIAJnhDSuZAv74apBy5GVYcqUIozvGSouXx5LL24B1UxtxOzpsRDRTt50zZJ/5W+/GiCMi6mwOFf8SgItrugXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JClM5MEs; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JClM5MEs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0642C4CED6;
+	Fri, 21 Feb 2025 09:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740128907;
+	bh=oimX8Q/LxRwlfk+t54o1mqJdiaT+zvHD2n1g78Yevyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JClM5MEstLWw6w/T8uUGehpMEt3dq/s2eDp9+GtkyXyLoak10+VKVrUaDo3SVYzBr
+	 qOJILi55XlxfVFZBj8KyETVvp3mTXn5W5WoMcO9mnzsld87a3jr7aMrqOSOJBAZf41
+	 Alqg95mv/MI43DgUp2Q8dRXA5bBFE1Gi1DZg92lmDDwz5V609dFscVct1r+LxFXMb0
+	 keBbOaEpJSLcTdgo4DtdXvWxqX9aBqoE+zjJUpnSjiXX35F6yL4EjxUe52ywu5J0aQ
+	 AnFQKfV+44glIbtY3xwzA0Sq6kqATZ0JF3rJHNbq+M4NZkn/5BwbCXYuybXLRKnIdB
+	 2EL+uArOtSmkQ==
+Date: Fri, 21 Feb 2025 10:08:24 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: kernel test robot <lkp@intel.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v23 3/4] pwm: Add support for RZ/G2L GPT
+Message-ID: <hb7agtiqcuotiie646a2nzwg2cfwmahtgzzexxsf4tqu3rztf6@qqq2a7qkazh5>
+References: <20241217132921.169640-4-biju.das.jz@bp.renesas.com>
+ <202412182358.9wma1UUE-lkp@intel.com>
+ <TY3PR01MB11346CC402843A628226F5C6186122@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <b7woae7iquvuzs4vcollns7qcyand4ginrbjqs75bnsiockrjc@c4pyody6zdcr>
+ <TY3PR01MB1134690173EBB583582DE8E3386132@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k2zrcougat4y5ihj"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB1134690173EBB583582DE8E3386132@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-All core clock nullify users and helpers were removed in commit
-b1dec4e78599a2ce ("clk: renesas: rcar-gen3: Disable R-Car H3 ES1.*"),
-but the CPG/MSSR driver still checks for nullified core clocks.
-Remove the obsolete check.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 5 -----
- 1 file changed, 5 deletions(-)
+--k2zrcougat4y5ihj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v23 3/4] pwm: Add support for RZ/G2L GPT
+MIME-Version: 1.0
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index bf85501709f03b91..da021ee446ec8120 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -338,11 +338,6 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 	WARN_DEBUG(id >= priv->num_core_clks);
- 	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
- 
--	if (!core->name) {
--		/* Skip NULLified clock */
--		return;
--	}
--
- 	switch (core->type) {
- 	case CLK_TYPE_IN:
- 		clk = of_clk_get_by_name(priv->np, core->name);
--- 
-2.43.0
+Hello Biju,
 
+On Thu, Jan 09, 2025 at 09:32:58AM +0000, Biju Das wrote:
+> > On Wed, Jan 08, 2025 at 02:13:09PM +0000, Biju Das wrote:
+> > > Please let me know, if there is any feedback for this patch series or
+> > > any new API to be adapted in next kernel version which simplifies the=
+ code, So that I can send next
+> > version.
+> >=20
+> > I didn't look, but if you're ambitious you can convert your driver to t=
+he waveform callbacks.
+>=20
+> Is it ok, after the acceptance of initial version, will switch to wavefor=
+m callbacks to enable
+> the users of GPT(Reason: lot of customers are using GPT for backlight for=
+ LCD panels)?
+>=20
+> Please let me know.
+
+I'd still accept your driver with the legacy callbacks, mostly because
+your effort is already that old (which I consider my fault mostly).
+
+> Is there any documentation available for waveform callback? What scenario=
+s we can use
+> Waveform callbacks compared to traditional one?=20
+
+There is no nice documentation available yet. The improvements include:
+
+ - arbitrary offsets for the duty cycle, so the active phase doesn't
+   need to be at the start or the end of a period any more
+ - consumers can query the result of a configuration request (before and
+   also after the request was issued).
+
+Both are of little importance if your focus is mostly backlights.
+
+Best regards
+Uwe
+
+--k2zrcougat4y5ihj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAme4Qn8ACgkQj4D7WH0S
+/k7FvAf/SOI19tb6fGsBqVcRMh6WfkohHjyd+hY6mT9Ldu9nlH+O/29gn2WT7q0V
+0Vxl7YzQFTAg6yi9CJVFTTxUYI0Lguc6axHEZJpEqbgGHTa6wxL5xBEFneEbZ2O3
+PbMfFIFtGrpYWz9ThcDbdwlamRBaAVFOFgP3zIubK7m3Qn/Esdvtj88ZVGur+D6n
+DvuxxmaN1wD3d4YWI/prGd1LwlGAarvjWDVzFOIvlUOE1fooxeN0mvlam/sDl1x4
+O++C/ldxqSRhEl7pL1iZy7321/ofkqdlBlIPLgDF2azF98jDAfUvYy3wUOklj8Vo
+r0daeIGYwIoCRibBTvmkRTIlNrhCFw==
+=ajkb
+-----END PGP SIGNATURE-----
+
+--k2zrcougat4y5ihj--
