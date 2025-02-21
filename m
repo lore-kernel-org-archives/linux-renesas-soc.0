@@ -1,29 +1,30 @@
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845A2225401
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B0D2253BC
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Feb 2025 16:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157062; cv=none; b=XoagkkJjFGZsezAZtPCqHDz5BCP0jiVKqQsWGsjyx1dKhTzTZmdPE2RXdacGvomE+2sWAB0uWDJFB8KQ6qVr0BPLz/IjfsN/sBADv0ndEH5JOx+dM/6OaG8EGqu1EysIf7vHkRxTabiUphey/beI/8GG/1LflRZ7bdLJ3DdMp5k=
+	t=1740157063; cv=none; b=ccXOUPS9OXWUu8YMNCPsEB8UO0JRcSydST5iGVu0GuQNpsM5D3OIl+4G8dcCQr+4XbFcbMoFTaZQ8znnPdw+Z/CGt/b4J+ptI1FDCL2g9xqyqf0d/9ONWUpgx7w/GERDGskTWEfXNkhwb6vWMft6Gjf1mHIUKxq/0H2ZHTiqcJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157062; c=relaxed/simple;
-	bh=KSWs0QhcV2YupcJqSYD2hlxsh7j9tFBb8ih1MS30eNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mTmBrYFynivTJu/RsrNT27d15SqTbX8s+RxpdUjZq+cubDTW9Ow9HPupF44X2YOb2hh2343VhIVN7MJ2vaVy6kJJZFERUc9hO77lmDqv9b4lBqldVczIBpCV8IjPQflQGyNKDpDN9KQCBGr+S7FWex0VT2X/YkSm/fmvoeXzU1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+	s=arc-20240116; t=1740157063; c=relaxed/simple;
+	bh=xjVQPNsSP5xutsNtSPNHqsvu5vFNdRiGsOu0gHGOtzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=V6Y9oq4NWBAaGXeHsmtYS4D1/gGxk0P8BvfBdGSXCEZ1OwKPJWFSaTtuqAkK87Goy6h3HxoryYEbf34GdmBDuR60/Y/rkktGoUXX+SoWAMXF9euVsEKxKUCNCNXA9ZUBX5eg3bKLNsYE8X5LyzZu9aF6dGkxTJ5R8geeBJ1Qbk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ae9a:419e:d123:9695])
-	by laurent.telenet-ops.be with cmsmtp
-	id GGxX2E00C0y8aK501GxXFX; Fri, 21 Feb 2025 17:57:33 +0100
+	by michel.telenet-ops.be with cmsmtp
+	id GGxX2E00D0y8aK506GxXtj; Fri, 21 Feb 2025 17:57:33 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tlWKs-0000000BMsL-3MQD;
+	id 1tlWKs-0000000BMsR-3Why;
 	Fri, 21 Feb 2025 17:57:31 +0100
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tlWLD-0000000EOqh-0jKj;
+	id 1tlWLD-0000000EOqo-12jX;
 	Fri, 21 Feb 2025 17:57:31 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: soc@lists.linux.dev,
@@ -32,10 +33,12 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/5] Renesas SoC updates for v6.15
-Date: Fri, 21 Feb 2025 17:57:21 +0100
-Message-ID: <cover.1740156736.git.geert+renesas@glider.be>
+Subject: [GIT PULL 2/5] Renesas ARM SoC updates for v6.15
+Date: Fri, 21 Feb 2025 17:57:23 +0100
+Message-ID: <cover.1740156740.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1740156736.git.geert+renesas@glider.be>
+References: <cover.1740156736.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,58 +47,27 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi SoC folks,
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-This is my first pull request for the inclusion of Renesas SoC updates
-for v6.15.
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-It consists of 5 parts:
+are available in the Git repository at:
 
-  [GIT PULL 1/5] Renesas ARM defconfig updates for v6.15
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-soc-for-v6.15-tag1
 
-    - Supplement DTB with ATAG information, for older boards.
+for you to fetch changes up to 490a6291b17fbc65e31c54a0fd9301669ad283c0:
 
-  [GIT PULL 2/5] Renesas ARM SoC updates for v6.15
+  ARM: shmobile: rcar-gen2: Remove CMA reservation code (2025-02-03 11:04:28 +0100)
 
-    - Remove the legacy CMA reservation code on R-Car Gen2, which causes
-      issues with highmem.
+----------------------------------------------------------------
+Renesas ARM SoC updates for v6.15
 
-  [GIT PULL 3/5] Renesas driver updates for v6.15
+  - Remove the legacy CMA reservation code on R-Car Gen2, which causes
+    issues with highmem.
 
-    - Add a driver for the System Controller on RZ/G3S, RZ/G3E, and
-      RZ/V2H.
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      ARM: shmobile: rcar-gen2: Remove CMA reservation code
 
-  [GIT PULL 4/5] Renesas DT binding updates for v6.15
-
-    - Document support for the Yuridenki-Shokai Kakip (based on RZ/V2H)
-      and MYIR Remi Pi (based on RZ/G2L) boards,
-    - Document support for the RZ/G3E System Controller.
-
-  [GIT PULL 5/5] Renesas DTS updates for v6.15
-
-    - Add support for the second and third Ethernet interfaces on the Gray
-      Hawk Single development board,
-    - Add Image Signal Processor helper block (FCPVX and VSPX) support for
-      the R-Car V3U and V4M SoCs,
-    - Add Watchdog and System Controller support for the RZ/G3E SoC and
-      the RZ/G3E SMARC Carrier-II EVK development board,
-    - Add initial support for the Yuridenki-Shokai Kakip and MYIR Remi Pi
-      boards,
-    - Add support for the spare UART and PMOD serial ports on the RZ/G3S
-      SMARC Carrier II board,
-    - Add a CPU Operating Performance Points table for the RZ/G3S SoC,
-    - Add boot phase tags on R-Car Gen2/3/4 and RZ/G2 boards,
-    - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 76 --------------------------------
+ 1 file changed, 76 deletions(-)
