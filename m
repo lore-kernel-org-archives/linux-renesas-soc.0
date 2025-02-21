@@ -1,30 +1,30 @@
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84626225408
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2D322577C
 	for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Feb 2025 16:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157062; cv=none; b=Y/QxuEAuKu6x455FwjDmRi2VfhN6uO8A6v/cVLV7wajOY8S43oNgnNuWgFOeZ1AbMSbYK+uiPY7wLrXHcJA9R4KcWAFA5IFNRhr2RtgwyyVZqLltQ83abDRZ8RU9NIL6fV5Z5QPUBvX/yjdukLfZ4H8KftvWq8NgbYL/k3hCyZU=
+	t=1740157062; cv=none; b=MzDBigT/xsFYNcCd3oje+2OxD9kyi+XRJo1WgA2vAImvZrknzzgOpZtPATj8+SxJu7hzJpc9KtMGiJOelJqiu3awBn8YCfBxfl6+aK25YpRAcv5rkyh9Zq68xQPc8K5l7tE8dZMP94yu3A+wn7Fsdbsze53tqe1jDvLSEJwhG/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740157062; c=relaxed/simple;
-	bh=sEzbR+8wnxjHYAm+PwwXcksHb5zg62jDZ8nHsC5WBR8=;
+	bh=AYOmPqcxiI2fDrybH4xIrj3aYh+mqWf6obMMpZ1cfQg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U5eKJyu9aXTczExO3VP6GIvFuGOF7rHNsiZfZkRMQgI+ZIon7pk1/dsIa/z495On68PURtvaTExBOiC1uN5uG8PN6t2ReFKskhybSefL//CCkKEG+YSlTFNzz/PGfiQ/3+URlRMzeBCuYyEKcgwytguo12QLyht4UOYlKwSvtCA=
+	 MIME-Version:Content-Type; b=rSBnDOxC/tcjmTh8awJgW1YrZ13wsu7nNHTxMmY8NENj3UAtMneSz9AzCt88fxKXz3yOMYL7VgWZXolk49EVQLBCQNouZ1T2WG2eSFitiRarPzfvq7tEKmweMNxlJS8tiWwm0tsZ63TOxVBDUfkKsEBTyZxj/5J3XL7ca+9KE7U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ae9a:419e:d123:9695])
 	by laurent.telenet-ops.be with cmsmtp
-	id GGxX2E00F0y8aK501GxXFZ; Fri, 21 Feb 2025 17:57:33 +0100
+	id GGxX2E00E0y8aK501GxXFY; Fri, 21 Feb 2025 17:57:33 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tlWKs-0000000BMsS-3cAS;
+	id 1tlWKs-0000000BMsN-3PeM;
 	Fri, 21 Feb 2025 17:57:31 +0100
 Received: from geert by rox.of.borg with local (Exim 4.97)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1tlWLD-0000000EOqt-1Ain;
+	id 1tlWLD-0000000EOql-0uqo;
 	Fri, 21 Feb 2025 17:57:31 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: soc@lists.linux.dev,
@@ -33,9 +33,9 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 3/5] Renesas driver updates for v6.15
-Date: Fri, 21 Feb 2025 17:57:24 +0100
-Message-ID: <cover.1740156741.git.geert+renesas@glider.be>
+Subject: [GIT PULL 1/5] Renesas ARM defconfig updates for v6.15
+Date: Fri, 21 Feb 2025 17:57:22 +0100
+Message-ID: <cover.1740156738.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1740156736.git.geert+renesas@glider.be>
 References: <cover.1740156736.git.geert+renesas@glider.be>
@@ -45,6 +45,7 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
@@ -53,39 +54,20 @@ The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v6.15-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-defconfig-for-v6.15-tag1
 
-for you to fetch changes up to 25a5246b0e564d238e917b5a3684171718c950fd:
+for you to fetch changes up to ff5a81e0178e5c032ac9700093f4877632d28c0a:
 
-  soc: renesas: r9a09g057-sys: Add a callback to print SoC-specific extra features (2025-02-20 17:38:33 +0100)
-
-----------------------------------------------------------------
-Renesas driver updates for v6.15
-
-  - Add a driver for the System Controller on RZ/G3S, RZ/G3E, and
-    RZ/V2H.
+  ARM: shmobile: defconfig: Supplement DTB with ATAG information (2025-02-03 11:03:40 +0100)
 
 ----------------------------------------------------------------
-Claudiu Beznea (2):
-      soc: renesas: Add SYSC driver for Renesas RZ family
-      soc: renesas: rz-sysc: Move RZ/G3S SoC detection to the SYSC driver
+Renesas ARM defconfig updates for v6.15
 
-John Madieu (3):
-      soc: renesas: rz-sysc: Add support for RZ/G3E family
-      soc: renesas: rz-sysc: Move RZ/V2H SoC detection to the SYS driver
-      soc: renesas: r9a09g057-sys: Add a callback to print SoC-specific extra features
+  - Supplement DTB with ATAG information, for older boards.
 
- drivers/soc/renesas/Kconfig          |  18 +++++
- drivers/soc/renesas/Makefile         |   4 +
- drivers/soc/renesas/r9a08g045-sysc.c |  23 ++++++
- drivers/soc/renesas/r9a09g047-sys.c  |  67 +++++++++++++++++
- drivers/soc/renesas/r9a09g057-sys.c  |  67 +++++++++++++++++
- drivers/soc/renesas/renesas-soc.c    |  33 +--------
- drivers/soc/renesas/rz-sysc.c        | 137 +++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rz-sysc.h        |  46 ++++++++++++
- 8 files changed, 363 insertions(+), 32 deletions(-)
- create mode 100644 drivers/soc/renesas/r9a08g045-sysc.c
- create mode 100644 drivers/soc/renesas/r9a09g047-sys.c
- create mode 100644 drivers/soc/renesas/r9a09g057-sys.c
- create mode 100644 drivers/soc/renesas/rz-sysc.c
- create mode 100644 drivers/soc/renesas/rz-sysc.h
+----------------------------------------------------------------
+Niklas Söderlund (1):
+      ARM: shmobile: defconfig: Supplement DTB with ATAG information
+
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
